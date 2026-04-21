@@ -1,0 +1,830 @@
+{
+  "lessons": [
+    {
+      "topic": "research grant proposals",
+      "topicEmoji": "🔍",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Basics of Grant Proposals",
+          "desc": "Introduzione alle proposte di finanziamento",
+          "icon": "💰",
+          "vocab": [
+            {
+              "it": "ricerca",
+              "en": "research",
+              "pron": "REH-serch"
+            },
+            {
+              "it": "progetto",
+              "en": "project",
+              "pron": "PROH-jeht"
+            },
+            {
+              "it": "obiettivo",
+              "en": "objective",
+              "pron": "oh-BYET-tivo"
+            },
+            {
+              "it": "metodologia",
+              "en": "methodology",
+              "pron": "me-toh-doh-LAH-jo-lee-uh"
+            },
+            {
+              "it": "risorse",
+              "en": "resources",
+              "pron": "ree-SORHZ"
+            },
+            {
+              "it": "previsioni",
+              "en": "projections",
+              "pron": "preh-vee-ZHEE-nee"
+            },
+            {
+              "it": "valutazione",
+              "en": "evaluation",
+              "pron": "val-you-TAH-zhee-oh"
+            },
+            {
+              "it": "finanziamento",
+              "en": "funding",
+              "pron": "fin-AN-zih-muhnt"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Scrivi un progetto.",
+              "en": "Write a project.",
+              "words": [
+                "Scrivi",
+                "un",
+                "progetto",
+                "."
+              ]
+            },
+            {
+              "it": "Definisci gli obiettivi.",
+              "en": "Define the objectives.",
+              "words": [
+                "Definisci",
+                "gli",
+                "obiettivi",
+                "."
+              ]
+            },
+            {
+              "it": "Elabora la metodologia.",
+              "en": "Develop the methodology.",
+              "words": [
+                "Elabora",
+                "la",
+                "metodologia",
+                "."
+              ]
+            },
+            {
+              "it": "Descrivi le risorse.",
+              "en": "Describe the resources.",
+              "words": [
+                "Descrivi",
+                "le",
+                "risorse",
+                "."
+              ]
+            },
+            {
+              "it": "Fornisci previsioni.",
+              "en": "Provide projections.",
+              "words": [
+                "Fornisci",
+                "previsioni",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Intermediate Grant Proposal Phrases",
+          "desc": "Frasi avanzate per le proposte di finanziamento",
+          "icon": "📝",
+          "vocab": [
+            {
+              "it": "innovazione",
+              "en": "innovation",
+              "pron": "in-NOH-vay-shun"
+            },
+            {
+              "it": "collaborazione",
+              "en": "collaboration",
+              "pron": "kol-uh-BOR-ay-see-ohn"
+            },
+            {
+              "it": "sostenibilità",
+              "en": "sustainability",
+              "pron": "suh-stuh-NEE-tih-bil-i-tee"
+            },
+            {
+              "it": "cooperazione",
+              "en": "cooperation",
+              "pron": "kuh-uh-PER-ay-see-ohn"
+            },
+            {
+              "it": "partecipazione",
+              "en": "participation",
+              "pron": "pahr-tuh-see-PAY-see-ohn"
+            },
+            {
+              "it": "competitività",
+              "en": "competitiveness",
+              "pron": "kuhm-puh-tee-TIH-vih-tee"
+            },
+            {
+              "it": "efficienza",
+              "en": "efficiency",
+              "pron": "eh-fih-SIH-uhn-see"
+            },
+            {
+              "it": "transparenza",
+              "en": "transparency",
+              "pron": "truh-SPER-uh-nee-uh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Promuovi l'innovazione.",
+              "en": "Promote innovation.",
+              "words": [
+                "Promuovi",
+                "l'innovazione",
+                "."
+              ]
+            },
+            {
+              "it": "Rafforzate la collaborazione.",
+              "en": "Strengthen the collaboration.",
+              "words": [
+                "Rafforzate",
+                "la",
+                "collaborazione",
+                "."
+              ]
+            },
+            {
+              "it": "Migliorate la sostenibilità.",
+              "en": "Improve sustainability.",
+              "words": [
+                "Migliorate",
+                "la",
+                "sostenibilità",
+                "."
+              ]
+            },
+            {
+              "it": "Favorite la cooperazione.",
+              "en": "Foster cooperation.",
+              "words": [
+                "Favorite",
+                "la",
+                "cooperazione",
+                "."
+              ]
+            },
+            {
+              "it": "Aumentate la partecipazione.",
+              "en": "Increase participation.",
+              "words": [
+                "Aumentate",
+                "la",
+                "partecipazione",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Advanced Grant Proposal Phrases",
+          "desc": "Frasi specifiche per le proposte di finanziamento",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "it": "validità",
+              "en": "validity",
+              "pron": "vuh-LIH-dee-tee"
+            },
+            {
+              "it": "relevanza",
+              "en": "relevance",
+              "pron": "rih-LEH-vuh-nee"
+            },
+            {
+              "it": "consistenza",
+              "en": "consistency",
+              "pron": "kuhn-see-STEN-shee-uh"
+            },
+            {
+              "it": "coerenza",
+              "en": "coherence",
+              "pron": "kuh-uh-REN-suh"
+            },
+            {
+              "it": "efficacia",
+              "en": "effectiveness",
+              "pron": "ef-uh-KAY-shee-uh"
+            },
+            {
+              "it": "efficienza",
+              "en": "efficiency",
+              "pron": "eh-fih-SIH-uhn-see"
+            },
+            {
+              "it": "valutazione",
+              "en": "evaluation",
+              "pron": "val-you-TAH-zhee-oh"
+            },
+            {
+              "it": "previsione",
+              "en": "projection",
+              "pron": "preh-vee-ZHEE-nee"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Dimostra la validità.",
+              "en": "Demonstrate validity.",
+              "words": [
+                "Dimostra",
+                "la",
+                "validità",
+                "."
+              ]
+            },
+            {
+              "it": "Ricorda la relevanza.",
+              "en": "Remind of relevance.",
+              "words": [
+                "Ricorda",
+                "la",
+                "relevanza",
+                "."
+              ]
+            },
+            {
+              "it": "Assicura la consistenza.",
+              "en": "Ensure consistency.",
+              "words": [
+                "Assicura",
+                "la",
+                "consistenza",
+                "."
+              ]
+            },
+            {
+              "it": "Mantieni la coerenza.",
+              "en": "Maintain coherence.",
+              "words": [
+                "Mantieni",
+                "la",
+                "coerenza",
+                "."
+              ]
+            },
+            {
+              "it": "Valuta l'efficacia.",
+              "en": "Evaluate effectiveness.",
+              "words": [
+                "Valuta",
+                "l'efficacia",
+                "."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-21T11:43:08.476Z"
+    },
+    {
+      "topic": "Italian cooking & recipes",
+      "topicEmoji": "🍝",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Basics of Italian Cooking",
+          "desc": "Simple ingredients and techniques",
+          "icon": "👩‍🍳",
+          "vocab": [
+            {
+              "it": "farina",
+              "en": "flour",
+              "pron": "FA-ree-nah"
+            },
+            {
+              "it": "sale",
+              "en": "salt",
+              "pron": "SAH-lee"
+            },
+            {
+              "it": "olio",
+              "en": "oil",
+              "pron": "OH-lee-yo"
+            },
+            {
+              "it": "acqua",
+              "en": "water",
+              "pron": "AH-kwah"
+            },
+            {
+              "it": "padella",
+              "en": "pan",
+              "pron": "PAH-deh-lah"
+            },
+            {
+              "it": "forchette",
+              "en": "fork",
+              "pron": "FOR-chet-tah"
+            },
+            {
+              "it": "spatola",
+              "en": "spatula",
+              "pron": "spa-TOH-lah"
+            },
+            {
+              "it": "tavola",
+              "en": "table",
+              "pron": "TAH-voh-lah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Metti sale nell'acqua.",
+              "en": "Put salt in the water.",
+              "words": [
+                "Metti",
+                "sale",
+                "nell'acqua"
+              ]
+            },
+            {
+              "it": "Friggi l'aglio in olio.",
+              "en": "Fry the garlic in oil.",
+              "words": [
+                "Friggi",
+                "l'aglio",
+                "in",
+                "olio"
+              ]
+            },
+            {
+              "it": "Spezzetta la carne.",
+              "en": "Slice the meat.",
+              "words": [
+                "Spezzetta",
+                "la",
+                "carne"
+              ]
+            },
+            {
+              "it": "Porta il vino al tavolo.",
+              "en": "Bring the wine to the table.",
+              "words": [
+                "Porta",
+                "il",
+                "vino",
+                "al",
+                "tavolo"
+              ]
+            },
+            {
+              "it": "Sovrappuoi la pasta.",
+              "en": "Layer the pasta.",
+              "words": [
+                "Sovrappuoi",
+                "la",
+                "pasta"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Intermediate Italian Cooking Phrases",
+          "desc": "More complex phrases for cooking",
+          "icon": "🔥",
+          "vocab": [
+            {
+              "it": "sugo",
+              "en": "sauce",
+              "pron": "SOO-joh"
+            },
+            {
+              "it": "riso",
+              "en": "rice",
+              "pron": "REE-so"
+            },
+            {
+              "it": "panna",
+              "en": "cream",
+              "pron": "PAHN-nah"
+            },
+            {
+              "it": "sugo di pomodoro",
+              "en": "tomato sauce",
+              "pron": "SOO-joh dee POH-moh-doh-roh"
+            },
+            {
+              "it": "zucchero",
+              "en": "sugar",
+              "pron": "zoo-CHEH-roh"
+            },
+            {
+              "it": "sale grosso",
+              "en": "coarse salt",
+              "pron": "SAH-lee groh-soh"
+            },
+            {
+              "it": "sugo al pomodoro",
+              "en": "tomato sauce",
+              "pron": "SOO-joh al POH-moh-doh-roh"
+            },
+            {
+              "it": "risotto",
+              "en": "risotto",
+              "pron": "ree-SOH-toh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Sovrappuoi il sugo.",
+              "en": "Layer the sauce.",
+              "words": [
+                "Sovrappuoi",
+                "il",
+                "sugo"
+              ]
+            },
+            {
+              "it": "Mescola il riso con il sugo.",
+              "en": "Stir the rice with the sauce.",
+              "words": [
+                "Mescola",
+                "il",
+                "riso",
+                "con",
+                "il",
+                "sugo"
+              ]
+            },
+            {
+              "it": "Aggiungi la panna al sugo.",
+              "en": "Add cream to the sauce.",
+              "words": [
+                "Aggiungi",
+                "la",
+                "panna",
+                "al",
+                "sugo"
+              ]
+            },
+            {
+              "it": "Sovrappuoi il risotto.",
+              "en": "Layer the risotto.",
+              "words": [
+                "Sovrappuoi",
+                "il",
+                "risotto"
+              ]
+            },
+            {
+              "it": "Sovrappuoi il risotto con il sugo.",
+              "en": "Layer the risotto with the sauce.",
+              "words": [
+                "Sovrappuoi",
+                "il",
+                "risotto",
+                "con",
+                "il",
+                "sugo"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Advanced Italian Cooking Techniques",
+          "desc": "Specialized cooking techniques",
+          "icon": "👩‍🍳🔥",
+          "vocab": [
+            {
+              "it": "tagliatelle",
+              "en": "tagliatelle",
+              "pron": "tah-lee-AH-tel-le"
+            },
+            {
+              "it": "burrata",
+              "en": "burrata",
+              "pron": "boor-RAH-tah"
+            },
+            {
+              "it": "parmigiano reggiano",
+              "en": "parmesan cheese",
+              "pron": "par-mee-JEY-noh reh-JAH-noh"
+            },
+            {
+              "it": "risotto al tartufo",
+              "en": "truffle risotto",
+              "pron": "ree-SOH-toh al tar-TOO-foh"
+            },
+            {
+              "it": "besciamella",
+              "en": "béchamel sauce",
+              "pron": "be-shee-ah-MEL-lah"
+            },
+            {
+              "it": "risotto al ragù",
+              "en": "ragù risotto",
+              "pron": "ree-SOH-toh al rah-GOO"
+            },
+            {
+              "it": "tagliere",
+              "en": "cheese board",
+              "pron": "tah-lee-YEH-reh"
+            },
+            {
+              "it": "burrata al tartufo",
+              "en": "truffle burrata",
+              "pron": "boor-RAH-tah al tar-TOO-foh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Taglia i funghi.",
+              "en": "Slice the mushrooms.",
+              "words": [
+                "Taglia",
+                "i",
+                "funghi"
+              ]
+            },
+            {
+              "it": "Sovrappuoi la besciamella.",
+              "en": "Layer the béchamel sauce.",
+              "words": [
+                "Sovrappuoi",
+                "la",
+                "besciamella"
+              ]
+            },
+            {
+              "it": "Sovrappuoi la burrata.",
+              "en": "Layer the burrata.",
+              "words": [
+                "Sovrappuoi",
+                "la",
+                "burrata"
+              ]
+            },
+            {
+              "it": "Sovrappuoi il tagliere.",
+              "en": "Layer the cheese board.",
+              "words": [
+                "Sovrappuoi",
+                "il",
+                "tagliere"
+              ]
+            },
+            {
+              "it": "Sovrappuoi la burrata al tartufo.",
+              "en": "Layer the truffle burrata.",
+              "words": [
+                "Sovrappuoi",
+                "la",
+                "burrata",
+                "al",
+                "tartufo"
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-21T10:28:55.222Z"
+    },
+    {
+      "topic": "business & negotiations",
+      "topicEmoji": "🤝",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Basics of Business",
+          "desc": "Introductions and greetings",
+          "icon": "🤝",
+          "vocab": [
+            {
+              "it": "buongiorno",
+              "en": "good morning",
+              "pron": "BOO-ong-je-ro"
+            },
+            {
+              "it": "salve",
+              "en": "hello",
+              "pron": "SAL-vay"
+            },
+            {
+              "it": "signore",
+              "en": "sir",
+              "pron": "see-GOR-ray"
+            },
+            {
+              "it": "donna",
+              "en": "lady",
+              "pron": "DOH-nah"
+            },
+            {
+              "it": "signora",
+              "en": "madam",
+              "pron": "see-GOR-rah"
+            },
+            {
+              "it": "signorina",
+              "en": "miss",
+              "pron": "see-GOR-ree-nah"
+            },
+            {
+              "it": "affari",
+              "en": "business",
+              "pron": "ahf-FAH-ree"
+            },
+            {
+              "it": "negoziare",
+              "en": "to negotiate",
+              "pron": "neh-goh-tsee-AH-re"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Buongiorno, signore.",
+              "en": "Good morning, sir."
+            },
+            {
+              "it": "Salve, signora.",
+              "en": "Hello, madam."
+            },
+            {
+              "it": "Signorina, affari?",
+              "en": "Miss, business?"
+            },
+            {
+              "it": "Negoziare è importante.",
+              "en": "Negotiating is important."
+            },
+            {
+              "it": "Affari sono importanti.",
+              "en": "Business is important."
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Intermediate Phrases",
+          "desc": "Offering and accepting terms",
+          "icon": "🤝",
+          "vocab": [
+            {
+              "it": "accettare",
+              "en": "to accept",
+              "pron": "ah-keh-TAY-re"
+            },
+            {
+              "it": "negoziare con",
+              "en": "to negotiate with",
+              "pron": "neh-goh-tsee-AH-re con"
+            },
+            {
+              "it": "condizioni",
+              "en": "conditions",
+              "pron": "con-dih-TEE-oh-nees"
+            },
+            {
+              "it": "negoziare a mente aperta",
+              "en": "to negotiate with an open mind",
+              "pron": "neh-goh-tsee-AH-re ah MENT-eh ah-PEH-trah"
+            },
+            {
+              "it": "negoziare a cuore aperto",
+              "en": "to negotiate with an open heart",
+              "pron": "neh-goh-tsee-AH-re ah KOHR-eh ah-PEH-trah"
+            },
+            {
+              "it": "negoziare a mente fredda",
+              "en": "to negotiate with a cold mind",
+              "pron": "neh-goh-tsee-AH-re ah MENT-eh FREH-dah"
+            },
+            {
+              "it": "negoziare a cuore freddo",
+              "en": "to negotiate with a cold heart",
+              "pron": "neh-goh-tsee-AH-re ah KOHR-eh FREH-doh"
+            },
+            {
+              "it": "negoziare a mente calma",
+              "en": "to negotiate with a calm mind",
+              "pron": "neh-goh-tsee-AH-re ah MENT-eh CAH-lmah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Accettiamo le condizioni.",
+              "en": "We accept the conditions."
+            },
+            {
+              "it": "Negoziamo con mente aperta.",
+              "en": "We negotiate with an open mind."
+            },
+            {
+              "it": "Negoziamo a cuore aperto.",
+              "en": "We negotiate with an open heart."
+            },
+            {
+              "it": "Negoziamo a mente fredda.",
+              "en": "We negotiate with a cold mind."
+            },
+            {
+              "it": "Negoziamo a cuore freddo.",
+              "en": "We negotiate with a cold heart."
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Advanced Negotiation Techniques",
+          "desc": "Using specific negotiation strategies",
+          "icon": "🤝",
+          "vocab": [
+            {
+              "it": "negoziare a mente fredda",
+              "en": "to negotiate with a cold mind",
+              "pron": "neh-goh-tsee-AH-re ah MENT-eh FREH-dah"
+            },
+            {
+              "it": "negoziare a cuore freddo",
+              "en": "to negotiate with a cold heart",
+              "pron": "neh-goh-tsee-AH-re ah KOHR-eh FREH-doh"
+            },
+            {
+              "it": "negoziare a mente calma",
+              "en": "to negotiate with a calm mind",
+              "pron": "neh-goh-tsee-AH-re ah MENT-eh CAH-lmah"
+            },
+            {
+              "it": "negoziare con calma",
+              "en": "to negotiate calmly",
+              "pron": "neh-goh-tsee-AH-re con CAH-lmah"
+            },
+            {
+              "it": "negoziare con convinzione",
+              "en": "to negotiate with conviction",
+              "pron": "neh-goh-tsee-AH-re con kuh-vihn-ZEHN-tsee-oh"
+            },
+            {
+              "it": "negoziare con sicurezza",
+              "en": "to negotiate with confidence",
+              "pron": "neh-goh-tsee-AH-re con see-koo-roo-ZEH-ah"
+            },
+            {
+              "it": "negoziare con determinazione",
+              "en": "to negotiate with determination",
+              "pron": "neh-goh-tsee-AH-re con deh-tur-mih-NAH-tee-oh"
+            },
+            {
+              "it": "negoziare con passione",
+              "en": "to negotiate with passion",
+              "pron": "neh-goh-tsee-AH-re con pahs-SION-eh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Negoziamo a mente calma.",
+              "en": "We negotiate calmly."
+            },
+            {
+              "it": "Negoziamo con convinzione.",
+              "en": "We negotiate with conviction."
+            },
+            {
+              "it": "Negoziamo con sicurezza.",
+              "en": "We negotiate with confidence."
+            },
+            {
+              "it": "Negoziamo con determinazione.",
+              "en": "We negotiate with determination."
+            },
+            {
+              "it": "Negoziamo con passione.",
+              "en": "We negotiate with passion."
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-21T09:52:31.149Z"
+    }
+  ]
+}

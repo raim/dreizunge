@@ -1,0 +1,12 @@
+{
+  "name": "impara-italiano",
+  "version": "2.0.0",
+  "description": "Duolingo-style Italian learning app — Anthropic, Ollama/Qwen, or offline",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:ollama": "LLM_BACKEND=ollama node server.js",
+    "start:offline": "LLM_BACKEND=none node server.js"
+  },
+  "engines": { "node": ">=16" }
+}
