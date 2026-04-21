@@ -1,6 +1,379 @@
 {
   "lessons": [
     {
+      "topic": "architecture",
+      "topicEmoji": "🏠",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "architecture basics",
+          "desc": "basic words about buildings",
+          "icon": "🏠",
+          "vocab": [
+            {
+              "it": "edificio",
+              "en": "building",
+              "pron": "E-dee-fee-ee-o"
+            },
+            {
+              "it": "chiesa",
+              "en": "church",
+              "pron": "Key-es-sa"
+            },
+            {
+              "it": "palazzo",
+              "en": "palace",
+              "pron": "Pal-azzo"
+            },
+            {
+              "it": "ponte",
+              "en": "bridge",
+              "pron": "Pon-te"
+            },
+            {
+              "it": "torre",
+              "en": "tower",
+              "pron": "Tor-re"
+            },
+            {
+              "it": "muraglia",
+              "en": "wall",
+              "pron": "Moo-ra-lya"
+            },
+            {
+              "it": "porta",
+              "en": "gate",
+              "pron": "Por-ta"
+            },
+            {
+              "it": "piazza",
+              "en": "square",
+              "pron": "Pee-a-tsa"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La chiesa è grande.",
+              "en": "The church is big.",
+              "words": [
+                "La",
+                "chiesa",
+                "è",
+                "grande",
+                "."
+              ]
+            },
+            {
+              "it": "Il palazzo ha una torre.",
+              "en": "The palace has a tower.",
+              "words": [
+                "Il",
+                "palazzo",
+                "ha",
+                "una",
+                "torre",
+                "."
+              ]
+            },
+            {
+              "it": "Sotto il ponte c'è un fiume.",
+              "en": "Under the bridge there is a river.",
+              "words": [
+                "Sotto",
+                "il",
+                "ponte",
+                "c'",
+                "è",
+                "un",
+                "fiume",
+                "."
+              ]
+            },
+            {
+              "it": "La piazza è piena di gente.",
+              "en": "The square is full of people.",
+              "words": [
+                "La",
+                "piazza",
+                "è",
+                "piena",
+                "di",
+                "gente",
+                "."
+              ]
+            },
+            {
+              "it": "Il muro è alto e lungo.",
+              "en": "The wall is tall and long.",
+              "words": [
+                "Il",
+                "muro",
+                "è",
+                "alto",
+                "e",
+                "lungo",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "architecture",
+          "desc": "Italian words for famous buildings",
+          "icon": "🏛️",
+          "vocab": [
+            {
+              "it": "edificio storico",
+              "en": "historic building",
+              "pron": "EDEEfeeEYLO stoeRREE feeLO"
+            },
+            {
+              "it": "castello",
+              "en": "castle",
+              "pron": "kaSTELlo"
+            },
+            {
+              "it": "tempio",
+              "en": "temple",
+              "pron": "TEMpyo"
+            },
+            {
+              "it": "osservatorio",
+              "en": "observatory",
+              "pron": "osservATORio"
+            },
+            {
+              "it": "teatro",
+              "en": "theater",
+              "pron": "TEATro"
+            },
+            {
+              "it": "museo",
+              "en": "museum",
+              "pron": "MOOseeo"
+            },
+            {
+              "it": "fontana",
+              "en": "fountain",
+              "pron": "fonTANNA"
+            },
+            {
+              "it": "arcata",
+              "en": "arch",
+              "pron": "ARCAta"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il castello è un edificio storico.",
+              "en": "The castle is a historic building.",
+              "words": [
+                "Il",
+                "castello",
+                "è",
+                "un",
+                "edificio",
+                "storico",
+                ".",
+                ""
+              ]
+            },
+            {
+              "it": "La chiesa vicino al palazzo è un tempio.",
+              "en": "The church near the palace is a temple.",
+              "words": [
+                "La",
+                "chiesa",
+                "vicino",
+                "al",
+                "palazzo",
+                "è",
+                "un",
+                "tempio",
+                "."
+              ]
+            },
+            {
+              "it": "Il ponte sopra la piazza è un osservatorio.",
+              "en": "The bridge over the square is an observatory.",
+              "words": [
+                "Il",
+                "ponte",
+                "sopra",
+                "la",
+                "piazza",
+                "è",
+                "un",
+                "osservatorio",
+                "."
+              ]
+            },
+            {
+              "it": "Il teatro vicino al museo è un edificio storico.",
+              "en": "The theater near the museum is a historic building.",
+              "words": [
+                "Il",
+                "teatro",
+                "vicino",
+                "al",
+                "museo",
+                "è",
+                "un",
+                "edificio",
+                "storico",
+                "."
+              ]
+            },
+            {
+              "it": "La fontana nel centro della piazza è un arcata.",
+              "en": "The fountain in the center of the square is an arch.",
+              "words": [
+                "La",
+                "fontana",
+                "nel",
+                "centro",
+                "della",
+                "piazza",
+                "è",
+                "un",
+                "arcata",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "architecture",
+          "desc": "advanced architectural terms",
+          "icon": "🏠",
+          "vocab": [
+            {
+              "it": "osservatorio",
+              "en": "observatory",
+              "pron": "oss-ER-va-TOE-ree"
+            },
+            {
+              "it": "teatro",
+              "en": "theater",
+              "pron": "TAY-ah-tro"
+            },
+            {
+              "it": "museo",
+              "en": "museum",
+              "pron": "MOO-zee-oh"
+            },
+            {
+              "it": "fontana",
+              "en": "fountain",
+              "pron": "fon-TAN-ah"
+            },
+            {
+              "it": "arcata",
+              "en": "arch",
+              "pron": "ar-KAH-tah"
+            },
+            {
+              "it": "cupola",
+              "en": "dome",
+              "pron": "COO-poh-lah"
+            },
+            {
+              "it": "loggia",
+              "en": "loggia",
+              "pron": "loh-GHEE-ah"
+            },
+            {
+              "it": "basilica",
+              "en": "basilica",
+              "pron": "bah-see-LIKH-ah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il castello ha una cupola imponente.",
+              "en": "The castle has a magnificent dome.",
+              "words": [
+                "IL",
+                "CASTELLO",
+                "HA",
+                "UNA",
+                "CUPOLA",
+                "IMPONENTE",
+                ".",
+                ""
+              ]
+            },
+            {
+              "it": "La basilica è famosa per la sua loggia.",
+              "en": "The basilica is famous for its loggia.",
+              "words": [
+                "LA",
+                "BASILICA",
+                "E",
+                "FAMOSA",
+                "PER",
+                "LA",
+                "SU",
+                "LOGGIA",
+                ".",
+                ""
+              ]
+            },
+            {
+              "it": "Il teatro ospita spettacoli teatrali e musicali.",
+              "en": "The theater hosts theatrical and musical performances.",
+              "words": [
+                "IL",
+                "TEATRO",
+                "OSPITA",
+                "SPEZZ-TA-COLI",
+                "TEATRA-LI",
+                "E",
+                "MU-SI-KAL-I",
+                ".",
+                ""
+              ]
+            },
+            {
+              "it": "Il museo contiene opere d'arte antiche e moderne.",
+              "en": "The museum contains ancient and modern artworks.",
+              "words": [
+                "IL",
+                "MU-SE-O",
+                "CONTI-NEN-TE",
+                "OPERE",
+                "D'-ARTE",
+                "AN-TI-CHE",
+                "E",
+                "MU-DO-RNE",
+                ".",
+                ""
+              ]
+            },
+            {
+              "it": "La fontana è un elemento decorativo della piazza.",
+              "en": "The fountain is a decorative element of the square.",
+              "words": [
+                "LA",
+                "FONTANA",
+                "E",
+                "UN",
+                "ELE-LE-MEN-TO",
+                "DECOR-A-TI-VO",
+                "DELLA",
+                "PIAZZA",
+                ".",
+                ""
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-21T16:28:08.468Z"
+    },
+    {
       "topic": "yeast metabolic oscillations",
       "topicEmoji": "🧬",
       "lessons": [
