@@ -1,6 +1,361 @@
 {
   "lessons": [
     {
+      "topic": "yeast metabolic oscillations",
+      "topicEmoji": "🧬",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Basic Greetings",
+          "desc": "Learn simple Italian phrases",
+          "icon": "👋",
+          "vocab": [
+            {
+              "it": "ciao",
+              "en": "hello",
+              "pron": "CHAW-oh"
+            },
+            {
+              "it": "buongiorno",
+              "en": "good morning",
+              "pron": "BOO-ON-jee-OHR-no"
+            },
+            {
+              "it": "arrivederci",
+              "en": "goodbye",
+              "pron": "ar-ri-VEHR-deh-chee"
+            },
+            {
+              "it": "per favore",
+              "en": "please",
+              "pron": "PEHR feh-VAH-roh"
+            },
+            {
+              "it": "grazie",
+              "en": "thank you",
+              "pron": "GRah-zee-eh"
+            },
+            {
+              "it": "scusi",
+              "en": "excuse me",
+              "pron": "SKOO-see"
+            },
+            {
+              "it": "sì",
+              "en": "yes",
+              "pron": "see"
+            },
+            {
+              "it": "no",
+              "en": "no",
+              "pron": "noh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Ciao, come stai?",
+              "en": "Hello, how are you?",
+              "words": [
+                "CIAO",
+                ",",
+                "COME",
+                "STA",
+                "?"
+              ]
+            },
+            {
+              "it": "Buongiorno, posso aiutarti?",
+              "en": "Good morning, can I help you?",
+              "words": [
+                "BUONGIORNO",
+                ",",
+                "POS-so",
+                "AIU-tar-te",
+                "?"
+              ]
+            },
+            {
+              "it": "Grazie per la tua cortesia.",
+              "en": "Thank you for your kindness.",
+              "words": [
+                "GRATZ-ee-eh",
+                "PER",
+                "LA",
+                "TU-ah",
+                "COR-teh-see-ah",
+                "."
+              ]
+            },
+            {
+              "it": "Scusi, dove è il bagno?",
+              "en": "Excuse me, where is the bathroom?",
+              "words": [
+                "SKOO-see",
+                ",",
+                "DOH-ve",
+                "EH",
+                "IL",
+                "BAH-no",
+                "?"
+              ]
+            },
+            {
+              "it": "Sì, no.",
+              "en": "Yes, no.",
+              "words": [
+                "SI",
+                ",",
+                "NO",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Metabolic Oscillations",
+          "desc": "Learn key terms for yeast metabolism",
+          "icon": "🔬",
+          "vocab": [
+            {
+              "it": "ossillazione metabolica",
+              "en": "metabolic oscillation",
+              "pron": "ossi-LILL-a-ZEY-ta-mo-LO-ka"
+            },
+            {
+              "it": "yeast",
+              "en": "yeast",
+              "pron": "YEE-st"
+            },
+            {
+              "it": "enzima",
+              "en": "enzyme",
+              "pron": "en-ZEEM-a"
+            },
+            {
+              "it": "substrato",
+              "en": "substrate",
+              "pron": "sub-STRAT-o"
+            },
+            {
+              "it": "reazione chimica",
+              "en": "chemical reaction",
+              "pron": "ree-AZZ-zyo-NEE-ka KIM-i-ca"
+            },
+            {
+              "it": "oscillatore",
+              "en": "oscillator",
+              "pron": "os-sil-LA-to-re"
+            },
+            {
+              "it": "periodicità",
+              "en": "periodicity",
+              "pron": "per-i-DI-si-TA"
+            },
+            {
+              "it": "simulazione",
+              "en": "simulation",
+              "pron": "sim-yoo-LA-ta-zione"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'ossillazione metabolica del yeast è complessa.",
+              "en": "The metabolic oscillation of yeast is complex.",
+              "words": [
+                "L'",
+                "ossillazione",
+                "metabolica",
+                "del",
+                "yeast",
+                "è",
+                "complessa",
+                "."
+              ]
+            },
+            {
+              "it": "L'enzima catalizza la reazione chimica.",
+              "en": "The enzyme catalyzes the chemical reaction.",
+              "words": [
+                "L'",
+                "enzima",
+                "catalizza",
+                "la",
+                "reazione",
+                "chimica",
+                "."
+              ]
+            },
+            {
+              "it": "Il substrato viene convertito in prodotti.",
+              "en": "The substrate is converted into products.",
+              "words": [
+                "Il",
+                "substrato",
+                "viene",
+                "convertito",
+                "in",
+                "prodotti",
+                "."
+              ]
+            },
+            {
+              "it": "L'oscillatore regola la periodicità.",
+              "en": "The oscillator regulates the periodicity.",
+              "words": [
+                "L'",
+                "oscillatore",
+                "regola",
+                "la",
+                "periodicità",
+                "."
+              ]
+            },
+            {
+              "it": "La simulazione aiuta a comprendere le oscillazioni.",
+              "en": "The simulation helps understand the oscillations.",
+              "words": [
+                "La",
+                "simulazione",
+                "aiuta",
+                "a",
+                "comprendere",
+                "le",
+                "oscillazioni",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Oscillazioni Metaboliche",
+          "desc": "Metabolismo e oscillazioni in batteri",
+          "icon": "🔬",
+          "vocab": [
+            {
+              "it": "oscillatore metabolico",
+              "en": "metabolic oscillator",
+              "pron": "os-CIL-la-to-re met-ab-o-LET-ico"
+            },
+            {
+              "it": "periodicità metabolica",
+              "en": "metabolic periodicity",
+              "pron": "pe-ro-di-CI-ta met-ab-o-LET-ica"
+            },
+            {
+              "it": "enzima catalitico",
+              "en": "catalytic enzyme",
+              "pron": "en-ZIMA ca-la-TI-ti-co"
+            },
+            {
+              "it": "substrato specifico",
+              "en": "specific substrate",
+              "pron": "su-STRAT-to spes-i-fi-CO"
+            },
+            {
+              "it": "simulazione numerica",
+              "en": "numerical simulation",
+              "pron": "sim-yu-la-ZI-zione nu-MER-i-cal-e"
+            },
+            {
+              "it": "oscillazione chimica",
+              "en": "chemical oscillation",
+              "pron": "os-sil-la-ZI-o-ne kim-i-cal-e"
+            },
+            {
+              "it": "reazione auto-catalitica",
+              "en": "auto-catalytic reaction",
+              "pron": "re-a-ZI-o-ne au-to-ca-la-TI-ti-ca"
+            },
+            {
+              "it": "batterio modello",
+              "en": "model bacterium",
+              "pron": "bat-te-RI-o mo-del-lo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'enzima catalitico regola l'oscillazione chimica.",
+              "en": "The catalytic enzyme regulates the chemical oscillation.",
+              "words": [
+                "L'",
+                "enzima",
+                "catalitico",
+                "regola",
+                "l'",
+                "oscillazione",
+                "chimica",
+                "."
+              ]
+            },
+            {
+              "it": "La periodicità metabolica è influenzata dal substrato specifico.",
+              "en": "Metabolic periodicity is influenced by the specific substrate.",
+              "words": [
+                "La",
+                "periodicità",
+                "metabolica",
+                "è",
+                "influenzata",
+                "dal",
+                "substrato",
+                "specifico",
+                "."
+              ]
+            },
+            {
+              "it": "La simulazione numerica mostra oscillazioni in batterio modello.",
+              "en": "The numerical simulation shows oscillations in the model bacterium.",
+              "words": [
+                "La",
+                "simulazione",
+                "numerica",
+                "mostra",
+                "oscillazioni",
+                "in",
+                "batterio",
+                "modello",
+                "."
+              ]
+            },
+            {
+              "it": "Oscillatore metabolico e reazione auto-catalitica sono intimamente legati.",
+              "en": "Metabolic oscillator and auto-catalytic reaction are intimately linked.",
+              "words": [
+                "Oscillatore",
+                "metabolico",
+                "e",
+                "reazione",
+                "auto-catalitica",
+                "sono",
+                "intimamente",
+                "legati",
+                "."
+              ]
+            },
+            {
+              "it": "Simulazione numerica e osservazioni sperimentali confermano l'oscillazione chimica.",
+              "en": "Numerical simulation and experimental observations confirm the chemical oscillation.",
+              "words": [
+                "Simulazione",
+                "numerica",
+                "e",
+                "osservazioni",
+                "sperimentali",
+                "confermano",
+                "l'",
+                "oscillazione",
+                "chimica",
+                "."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-21T15:47:05.064Z"
+    },
+    {
       "topic": "neuroscience",
       "topicEmoji": "🧠",
       "lessons": [
