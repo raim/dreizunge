@@ -1,6 +1,369 @@
 {
   "lessons": [
     {
+      "topic": "modern art",
+      "topicEmoji": "🎨",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Modern Art",
+          "desc": "Basics of modern art vocabulary",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "it": "arte moderna",
+              "en": "modern art",
+              "pron": "AR-tee mo-RAN-da"
+            },
+            {
+              "it": "pittura",
+              "en": "painting",
+              "pron": "pee-TU-ra"
+            },
+            {
+              "it": "scultura",
+              "en": "sculpture",
+              "pron": "skul-TOO-ra"
+            },
+            {
+              "it": "installazione",
+              "en": "installation",
+              "pron": "in-stal-LA-tsoo-ne"
+            },
+            {
+              "it": "performance",
+              "en": "performance",
+              "pron": "per-FORM-ahns"
+            },
+            {
+              "it": "abstracto",
+              "en": "abstract",
+              "pron": "ab-strak-to"
+            },
+            {
+              "it": "concreto",
+              "en": "concrete",
+              "pron": "kon-kret-to"
+            },
+            {
+              "it": "espressionismo",
+              "en": "expressionism",
+              "pron": "es-pres-soo-RIZ-mo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'arte moderna è molto diversa.",
+              "en": "Modern art is very different.",
+              "words": [
+                "L'",
+                "'arte','modern",
+                "a",
+                "è",
+                "molto",
+                "divers",
+                "a",
+                "."
+              ]
+            },
+            {
+              "it": "La pittura è un'arte visiva.",
+              "en": "Painting is a visual art.",
+              "words": [
+                "La",
+                "pittura",
+                "è",
+                "un'",
+                "arte",
+                "vis",
+                "i",
+                "va",
+                "."
+              ]
+            },
+            {
+              "it": "La scultura può essere astratta.",
+              "en": "Sculpture can be abstract.",
+              "words": [
+                "La",
+                "scultura",
+                "può",
+                "essere",
+                "astratta",
+                "."
+              ]
+            },
+            {
+              "it": "L'installazione è un'arte spaziale.",
+              "en": "Installation is a spatial art.",
+              "words": [
+                "L'",
+                "installazione",
+                "è",
+                "un'",
+                "arte",
+                "spa-ziale",
+                "."
+              ]
+            },
+            {
+              "it": "La performance è un'arte temporale.",
+              "en": "Performance is a temporal art.",
+              "words": [
+                "La",
+                "performance",
+                "è",
+                "un'",
+                "arte",
+                "tem-po-ra-le",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Modern Art",
+          "desc": "Explore modern art forms and concepts",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "it": "installazione",
+              "en": "installation",
+              "pron": "in-sta-la-zion"
+            },
+            {
+              "it": "performance",
+              "en": "performance",
+              "pron": "per-fur-ma-nce"
+            },
+            {
+              "it": "abstracto",
+              "en": "abstract",
+              "pron": "ab-strak-to"
+            },
+            {
+              "it": "concreto",
+              "en": "concrete",
+              "pron": "kon-kret-to"
+            },
+            {
+              "it": "espressionismo",
+              "en": "expressionism",
+              "pron": "es-pre-zsh-iz-mo"
+            },
+            {
+              "it": "arte contemporanea",
+              "en": "contemporary art",
+              "pron": "ar-te con-ta-mer-ta-ne-a"
+            },
+            {
+              "it": "arte concettuale",
+              "en": "conceptual art",
+              "pron": "ar-te con-cep-tu-al-e"
+            },
+            {
+              "it": "arte astratta",
+              "en": "abstract art",
+              "pron": "ar-te as-trak-to"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'arte astratta è molto controversa.",
+              "en": "Abstract art is very controversial.",
+              "words": [
+                "L'",
+                "'",
+                "'arte",
+                "astratta",
+                "è",
+                "molto",
+                "controversa",
+                "."
+              ]
+            },
+            {
+              "it": "La performance è un'arte visiva.",
+              "en": "Performance is a visual art.",
+              "words": [
+                "La",
+                "performance",
+                "è",
+                "un'",
+                "'",
+                "'arte",
+                "visiva",
+                "."
+              ]
+            },
+            {
+              "it": "L'espressionismo è tipico del primo Novecento.",
+              "en": "Expressionism is typical of the early 20th century.",
+              "words": [
+                "L'",
+                "'",
+                "'espressionismo",
+                "è",
+                "tipico",
+                "del",
+                "primo",
+                "Novecento",
+                "."
+              ]
+            },
+            {
+              "it": "L'arte concettuale si concentra sul concetto.",
+              "en": "Conceptual art focuses on the concept.",
+              "words": [
+                "L'",
+                "'",
+                "'arte",
+                "concettuale",
+                "si",
+                "concentra",
+                "sul",
+                "concetto",
+                "."
+              ]
+            },
+            {
+              "it": "L'arte contemporanea include molte forme.",
+              "en": "Contemporary art includes many forms.",
+              "words": [
+                "L'",
+                "'",
+                "'arte",
+                "contemporanea",
+                "include",
+                "molte",
+                "forme",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Modern Art",
+          "desc": "Explore contemporary art forms and movements",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "it": "arte contemporanea",
+              "en": "contemporary art",
+              "pron": "AR-te con-temp-or-a-NE-a"
+            },
+            {
+              "it": "arte concettuale",
+              "en": "conceptual art",
+              "pron": "AR-te con-cep-tu-a-LE"
+            },
+            {
+              "it": "arte astratta",
+              "en": "abstract art",
+              "pron": "AR-te as-tra-DA"
+            },
+            {
+              "it": "realismo critico",
+              "en": "critical realism",
+              "pron": "re-a-Li-smo cri-TI-cal"
+            },
+            {
+              "it": "minimalismo",
+              "en": "minimalism",
+              "pron": "mi-ni-MAL-i-smo"
+            },
+            {
+              "it": "pop art",
+              "en": "pop art",
+              "pron": "POP art"
+            },
+            {
+              "it": "street art",
+              "en": "street art",
+              "pron": "STREET art"
+            },
+            {
+              "it": "hyperrealismo",
+              "en": "hyperrealism",
+              "pron": "hi-PER-re-a-LI-smo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'arte astratta è molto popolare.",
+              "en": "Abstract art is very popular.",
+              "words": [
+                "L'",
+                "arte",
+                "astratta",
+                "è",
+                "molto",
+                "popolare",
+                "."
+              ]
+            },
+            {
+              "it": "Il realismo critico critica la società.",
+              "en": "Critical realism criticizes society.",
+              "words": [
+                "Il",
+                "realismo",
+                "critico",
+                "critica",
+                "la",
+                "società",
+                "."
+              ]
+            },
+            {
+              "it": "Il minimalismo usa pochi elementi.",
+              "en": "Minimalism uses few elements.",
+              "words": [
+                "Il",
+                "minimalismo",
+                "usa",
+                "pochi",
+                "elementi",
+                "."
+              ]
+            },
+            {
+              "it": "Il pop art si ispira alla cultura pop.",
+              "en": "Pop art is inspired by pop culture.",
+              "words": [
+                "Il",
+                "pop",
+                "art",
+                "si",
+                "ispira",
+                "alla",
+                "cultura",
+                "pop",
+                "."
+              ]
+            },
+            {
+              "it": "Il street art si trova nelle strade.",
+              "en": "Street art can be found in the streets.",
+              "words": [
+                "Il",
+                "street",
+                "art",
+                "si",
+                "trova",
+                "nelle",
+                "strade",
+                "."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-21T12:58:30.681Z"
+    },
+    {
       "topic": "research grant proposals",
       "topicEmoji": "🔍",
       "lessons": [

@@ -37,55 +37,107 @@ function upsert(data) {
   saveStore(store);
 }
 
-// ── Prompt ────────────────────────────────────────────────────────────
-const SYS = `You are an Italian language lesson generator for a Duolingo-style app.
-Return ONLY a valid JSON object — no markdown, no explanation, no extra text before or after.
+// ── Prompts — one lesson at a time to avoid truncation ────────────────
+function sysPromptForLesson(lessonNum, totalLessons) {
+  return `You are an Italian language lesson generator for a Duolingo-style app.
+Return ONLY a valid, complete JSON object — no markdown fences, no explanation, nothing else.
 
-Schema:
+Generate lesson ${lessonNum} of ${totalLessons}. Schema:
 {
-  "topic": "string",
-  "topicEmoji": "one emoji",
-  "lessons": [
+  "id": ${lessonNum},
+  "title": "short lesson theme (3-5 words)",
+  "desc": "up to 8 words describing this lesson",
+  "icon": "one relevant emoji",
+  "vocab": [
+    {"it":"Italian word or short phrase","en":"English meaning","pron":"phonetic for English speakers, CAPS for stressed syllable"}
+  ],
+  "sentences": [
     {
-      "id": 1,
-      "title": "lesson theme",
-      "desc": "up to 8 words",
-      "icon": "one emoji",
-      "vocab": [
-        {"it":"Italian word/phrase","en":"English meaning","pron":"phonetic for English speakers, CAPS for stress"}
-      ],
-      "sentences": [
-        {
-          "it":"Italian sentence 5-9 words",
-          "en":"English translation",
-          "words":["each","token","separate","punctuation","."]
-        }
-      ]
+      "it":"A natural Italian sentence, 5-9 words",
+      "en":"English translation",
+      "words":["each","word","as","separate","token","punctuation","."]
     }
   ]
 }
 
 Rules:
-- Produce exactly 3 lessons, each with exactly 8 vocab items and exactly 5 sentences.
-- words[] joined by spaces must equal the 'it' sentence exactly.
-- Lesson 1=basics, Lesson 2=intermediate phrases, Lesson 3=advanced/specific.
-- Later lessons may reuse earlier vocab inside sentences.
-- All content must be relevant to the given topic.`;
+- vocab: exactly 8 items, topic-relevant, no duplicates
+- sentences: exactly 5 items
+- words[] must be the 'it' sentence split into tokens; joined by single spaces must reproduce 'it' exactly
+- Lesson difficulty: ${lessonNum === 1 ? 'beginner basics' : lessonNum === 2 ? 'intermediate phrases' : 'advanced/specific vocabulary'}
+- All content must relate to the topic provided`;
+}
 
-// ── LLM backends ──────────────────────────────────────────────────────
-function callAnthropic(msg) {
+const SYS_META = `You are a lesson plan creator. Return ONLY a valid JSON object, no markdown, no explanation.
+Schema: {"topic":"cleaned topic string","topicEmoji":"one emoji","lessonThemes":["theme1","theme2","theme3"]}
+Rules: topic is the user's topic, normalized. Choose 3 progressive lesson themes for that topic.`;
+
+// ── JSON extraction — robust against prose and fences ──────────────────
+function extractJSON(raw) {
+  // strip markdown fences
+  let s = raw.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
+  // find first { and last }
+  const start = s.indexOf('{');
+  const end   = s.lastIndexOf('}');
+  if (start < 0 || end < 0 || end <= start) throw new Error('No JSON object found in output');
+  return JSON.parse(s.slice(start, end + 1));
+}
+
+// ── Attempt to salvage a truncated lesson by trimming arrays ───────────
+function salvageLesson(raw) {
+  // Try to close an unclosed JSON by trimming trailing incomplete items
+  let s = raw.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
+  const start = s.indexOf('{');
+  if (start < 0) throw new Error('No JSON found');
+  s = s.slice(start);
+
+  // Try parsing as-is first
+  try { return JSON.parse(s); } catch(_) {}
+
+  // Remove trailing incomplete object/array entries and close
+  // Strategy: find the last complete item in vocab and sentences arrays
+  // by looking for the last '}' before any truncation
+  let attempt = s;
+  // Remove trailing comma and incomplete entry, then close all open brackets
+  attempt = attempt.replace(/,\s*\{[^}]*$/, '');  // remove last incomplete {}
+  attempt = attempt.replace(/,\s*"[^"]*"\s*:\s*[^,}\]]*$/, ''); // remove last incomplete key:val
+  attempt = attempt.replace(/,\s*$/, ''); // remove trailing comma
+
+  // Count open brackets to close
+  let opens = 0, openSquare = 0;
+  for (const ch of attempt) {
+    if (ch === '{') opens++;
+    else if (ch === '}') opens--;
+    else if (ch === '[') openSquare++;
+    else if (ch === ']') openSquare--;
+  }
+  attempt += ']'.repeat(Math.max(0, openSquare)) + '}'.repeat(Math.max(0, opens));
+
+  return JSON.parse(attempt);
+}
+
+// ── LLM call — shared low-level ────────────────────────────────────────
+function callAnthropicRaw(system, userMsg, maxTokens) {
   return new Promise((resolve, reject) => {
-    const body = JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 4096, system: SYS,
-      messages: [{ role: 'user', content: msg }] });
+    const body = JSON.stringify({
+      model: CLAUDE_MODEL, max_tokens: maxTokens || 2048,
+      system,
+      messages: [{ role: 'user', content: userMsg }]
+    });
     const req = https.request({
       hostname: 'api.anthropic.com', path: '/v1/messages', method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01', 'Content-Length': Buffer.byteLength(body) }
+      headers: {
+        'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01', 'Content-Length': Buffer.byteLength(body)
+      }
     }, res => {
       let d = ''; res.on('data', c => d += c);
       res.on('end', () => {
-        try { const p = JSON.parse(d); if (p.error) return reject(new Error('Anthropic: ' + p.error.message)); resolve(p.content[0].text); }
-        catch(e) { reject(new Error('Anthropic parse: ' + e.message)); }
+        try {
+          const p = JSON.parse(d);
+          if (p.error) return reject(new Error('Anthropic: ' + p.error.message));
+          resolve(p.content[0].text);
+        } catch(e) { reject(new Error('Anthropic parse: ' + e.message)); }
       });
     });
     req.on('error', e => reject(new Error('Anthropic network: ' + e.message)));
@@ -93,14 +145,17 @@ function callAnthropic(msg) {
   });
 }
 
-function callOllama(msg) {
+function callOllamaRaw(system, userMsg, maxTokens) {
   return new Promise((resolve, reject) => {
     const u = new URL('/api/chat', OLLAMA_HOST);
     const lib = u.protocol === 'https:' ? https : http;
     const body = JSON.stringify({
       model: OLLAMA_MODEL, stream: false,
-      options: { temperature: 0.2, num_predict: 4096 },
-      messages: [{ role: 'system', content: SYS }, { role: 'user', content: msg }]
+      options: { temperature: 0.15, num_predict: maxTokens || 2048 },
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user',   content: userMsg }
+      ]
     });
     const req = lib.request({
       hostname: u.hostname,
@@ -116,23 +171,121 @@ function callOllama(msg) {
           const text = p.message?.content || p.response || '';
           if (!text) return reject(new Error('Ollama returned empty response'));
           resolve(text);
-        } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0, 300))); }
+        } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0, 200))); }
       });
     });
-    req.setTimeout(1200000, () => { req.destroy(); reject(new Error('Ollama timeout after 1200s')); });
-    req.on('error', e => reject(new Error('Ollama network: ' + e.message + ' — is Ollama running on ' + OLLAMA_HOST + '?')));
+    req.setTimeout(180000, () => { req.destroy(); reject(new Error('Ollama timeout')); });
+    req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
     req.write(body); req.end();
   });
 }
 
+function callLLM(active, system, userMsg, maxTokens) {
+  if (active === 'anthropic') return callAnthropicRaw(system, userMsg, maxTokens);
+  if (active === 'ollama')    return callOllamaRaw(system, userMsg, maxTokens);
+  throw new Error('No LLM backend configured.');
+}
+
+// ── Generate one lesson with retry ─────────────────────────────────────
+async function generateOneLesson(active, topic, lessonNum, totalLessons, prevVocab) {
+  const sys = sysPromptForLesson(lessonNum, totalLessons);
+  const prevHint = prevVocab.length
+    ? `\nVocab already introduced in earlier lessons (you may reuse these in sentences but must add 8 NEW vocab items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
+    : '';
+  const userMsg = `Topic: "${topic}"\nGenerate lesson ${lessonNum} now. Return only the JSON object.${prevHint}`;
+
+  const MAX_TOKENS = 1800; // safe budget per lesson
+  let lastErr;
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    console.log(`    Lesson ${lessonNum} attempt ${attempt}…`);
+    try {
+      const raw = await callLLM(active, sys, userMsg, MAX_TOKENS);
+
+      let lesson;
+      try {
+        lesson = extractJSON(raw);
+      } catch(parseErr) {
+        console.warn(`    Parse failed, trying salvage…`);
+        lesson = salvageLesson(raw);
+      }
+
+      // Validate and patch
+      if (!lesson.vocab || !Array.isArray(lesson.vocab)) throw new Error('Missing vocab array');
+      if (!lesson.sentences || !Array.isArray(lesson.sentences)) throw new Error('Missing sentences array');
+
+      // Trim to expected counts if model over-generated
+      lesson.vocab     = lesson.vocab.slice(0, 8);
+      lesson.sentences = lesson.sentences.slice(0, 5);
+
+      // Ensure minimum counts (pad if salvage trimmed too much)
+      if (lesson.vocab.length < 4)     throw new Error(`Only ${lesson.vocab.length} vocab items — too few`);
+      if (lesson.sentences.length < 3) throw new Error(`Only ${lesson.sentences.length} sentences — too few`);
+
+      // Ensure words[] is present and correct for each sentence
+      lesson.sentences = lesson.sentences.map(s => {
+        if (!s.words || !Array.isArray(s.words) || s.words.length === 0) {
+          // Auto-split if missing
+          s.words = s.it.split(' ');
+        }
+        return s;
+      });
+
+      lesson.id = lessonNum;
+      return lesson;
+
+    } catch(e) {
+      console.warn(`    Attempt ${attempt} failed: ${e.message}`);
+      lastErr = e;
+      if (attempt < 3) await new Promise(r => setTimeout(r, 800));
+    }
+  }
+  throw new Error(`Failed to generate lesson ${lessonNum} after 3 attempts: ${lastErr.message}`);
+}
+
+// ── Generate all lessons for a topic ──────────────────────────────────
+async function generate(topic, active) {
+  // Step 1: get meta (topic emoji + lesson themes)
+  console.log(`  [1/4] Generating topic meta…`);
+  let meta;
+  try {
+    const metaRaw = await callLLM(active, SYS_META,
+      `Topic: "${topic}". Return the JSON with topicEmoji and 3 lessonThemes.`, 256);
+    meta = extractJSON(metaRaw);
+  } catch(e) {
+    // fallback meta
+    meta = { topic, topicEmoji: '📚', lessonThemes: ['Basics', 'Phrases', 'Advanced'] };
+    console.warn('  Meta generation failed, using fallback:', e.message);
+  }
+
+  const TOTAL = 3;
+  const lessons = [];
+  let prevVocab = [];
+
+  for (let i = 1; i <= TOTAL; i++) {
+    console.log(`  [${i + 1}/4] Generating lesson ${i}…`);
+    const lesson = await generateOneLesson(active, topic, i, TOTAL, prevVocab);
+    lessons.push(lesson);
+    prevVocab = prevVocab.concat(lesson.vocab);
+  }
+
+  return {
+    topic: meta.topic || topic,
+    topicEmoji: meta.topicEmoji || '📚',
+    lessons
+  };
+}
+
+// ── Ollama ping ────────────────────────────────────────────────────────
 function pingOllama() {
   return new Promise(resolve => {
     try {
       const u = new URL('/api/tags', OLLAMA_HOST);
       const lib = u.protocol === 'https:' ? https : http;
-      const req = lib.request({
-        hostname: u.hostname, port: u.port || 11434, path: u.pathname, method: 'GET'
-      }, res => { res.resume(); resolve(res.statusCode < 500); });
+      const req = lib.request(
+        { hostname: u.hostname, port: u.port || 11434, path: u.pathname, method: 'GET' },
+        res => { res.resume(); resolve(res.statusCode < 500); }
+      );
       req.setTimeout(2000, () => { req.destroy(); resolve(false); });
       req.on('error', () => resolve(false));
       req.end();
@@ -140,37 +293,18 @@ function pingOllama() {
   });
 }
 
-async function generate(topic, active) {
-  const msg = `Generate 3 Italian lessons for the topic: "${topic}". Return only the JSON object.`;
-  let raw;
-  if      (active === 'anthropic') raw = await callAnthropic(msg);
-  else if (active === 'ollama')    raw = await callOllama(msg);
-  else throw new Error('No LLM backend. Use a saved lesson or set ANTHROPIC_API_KEY / start Ollama.');
-
-  let clean = raw.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
-  const brace = clean.indexOf('{');
-  if (brace > 0) clean = clean.slice(brace);
-  const lastBrace = clean.lastIndexOf('}');
-  if (lastBrace >= 0 && lastBrace < clean.length - 1) clean = clean.slice(0, lastBrace + 1);
-
-  let data;
-  try { data = JSON.parse(clean); }
-  catch(e) { throw new Error('JSON parse failed: ' + e.message + '\nOutput:\n' + clean.slice(0, 400)); }
-  if (!Array.isArray(data.lessons) || data.lessons.length === 0)
-    throw new Error('Model returned invalid lesson structure.');
-  return data;
-}
-
-// ── HTTP helpers ──────────────────────────────────────────────────────
+// ── HTTP helpers ───────────────────────────────────────────────────────
 function readBody(req) {
-  return new Promise((res, rej) => { let b = ''; req.on('data', c => b += c); req.on('end', () => res(b)); req.on('error', rej); });
+  return new Promise((res, rej) => {
+    let b = ''; req.on('data', c => b += c); req.on('end', () => res(b)); req.on('error', rej);
+  });
 }
 function json(res, code, obj) {
   res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8' });
   res.end(JSON.stringify(obj));
 }
 
-// ── Boot: resolve backend then start ─────────────────────────────────
+// ── Boot ───────────────────────────────────────────────────────────────
 async function boot() {
   let active;
   if      (BACKEND === 'anthropic') active = 'anthropic';
@@ -179,9 +313,8 @@ async function boot() {
   else if (ANTHROPIC_KEY)           active = 'anthropic';
   else {
     process.stdout.write('  Checking Ollama… ');
-    const up = await pingOllama();
-    active = up ? 'ollama' : 'none';
-    console.log(up ? 'reachable ✓' : 'not found — offline mode');
+    active = (await pingOllama()) ? 'ollama' : 'none';
+    console.log(active === 'ollama' ? 'reachable ✓' : 'not found — offline mode');
   }
 
   console.log('\n\u{1F1EE}\u{1F1F9}  Impara l\'Italiano');
@@ -236,14 +369,17 @@ async function boot() {
     if (M === 'POST' && url.pathname === '/api/generate') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
-      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
 
       const { topic, forceRegenerate } = body;
       if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
 
       if (!forceRegenerate) {
         const cached = findSaved(topic.trim());
-        if (cached) { console.log(`  Cache hit: "${topic}"`); return json(res, 200, { ...cached, fromCache: true }); }
+        if (cached) {
+          console.log(`  Cache hit: "${topic}"`);
+          return json(res, 200, { ...cached, fromCache: true });
+        }
       }
 
       if (active === 'none')
@@ -256,12 +392,13 @@ async function boot() {
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         return json(res, 200, { ...data, fromCache: false });
       } catch(e) {
-        console.error('  Error:', e.message);
+        console.error('  Generation error:', e.message);
         return json(res, 500, { error: e.message });
       }
     }
 
     res.writeHead(404); res.end('Not found');
+
   }).listen(PORT, '127.0.0.1', () => {
     console.log(`  Open: http://localhost:${PORT}\n`);
   });
