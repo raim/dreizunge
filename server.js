@@ -174,7 +174,7 @@ function callOllamaRaw(system, userMsg, maxTokens) {
         } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0, 200))); }
       });
     });
-    req.setTimeout(180000, () => { req.destroy(); reject(new Error('Ollama timeout')); });
+    req.setTimeout(360000, () => { req.destroy(); reject(new Error('Ollama timeout')); });
     req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
     req.write(body); req.end();
   });
