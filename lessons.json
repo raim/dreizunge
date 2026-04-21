@@ -1,6 +1,363 @@
 {
   "lessons": [
     {
+      "topic": "neuroscience",
+      "topicEmoji": "🧠",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Neuroscience Basics",
+          "desc": "Simple words about the brain",
+          "icon": "🧠",
+          "vocab": [
+            {
+              "it": "cervello",
+              "en": "brain",
+              "pron": "CER-vel-lo"
+            },
+            {
+              "it": "neurologia",
+              "en": "neurology",
+              "pron": "ne-ro-lo-GIA"
+            },
+            {
+              "it": "neurone",
+              "en": "neuron",
+              "pron": "NE-ro-ne"
+            },
+            {
+              "it": "sinapsi",
+              "en": "synapse",
+              "pron": "si-NAP-si"
+            },
+            {
+              "it": "stimolare",
+              "en": "stimulate",
+              "pron": "STIM-o-la-re"
+            },
+            {
+              "it": "funzione",
+              "en": "function",
+              "pron": "fun-ZI-o-ne"
+            },
+            {
+              "it": "ricerca",
+              "en": "research",
+              "pron": "ri-KEHR-tsa"
+            },
+            {
+              "it": "neuroscienze",
+              "en": "neuroscience",
+              "pron": "ne-ro-scheyn-ZEES"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il cervello è importante.",
+              "en": "The brain is important.",
+              "words": [
+                "IL",
+                "cervello",
+                "È",
+                "IMPORTANTE",
+                "."
+              ]
+            },
+            {
+              "it": "La neurologia studia il cervello.",
+              "en": "Neurology studies the brain.",
+              "words": [
+                "LA",
+                "neurologia",
+                "STUDIA",
+                "IL",
+                "cervello",
+                "."
+              ]
+            },
+            {
+              "it": "I neuroni sono piccole cellule.",
+              "en": "Neurons are small cells.",
+              "words": [
+                "I",
+                "neuroni",
+                "SONO",
+                "PICCOLE",
+                "CELLULE",
+                "."
+              ]
+            },
+            {
+              "it": "Le sinapsi connettono i neuroni.",
+              "en": "Synapses connect neurons.",
+              "words": [
+                "LE",
+                "sinapsi",
+                "CONNETTONO",
+                "I",
+                "neuroni",
+                "."
+              ]
+            },
+            {
+              "it": "La ricerca cerca nuove informazioni.",
+              "en": "Research seeks new information.",
+              "words": [
+                "LA",
+                "ricerca",
+                "CERCA",
+                "NUOVE",
+                "INFORMAZIONI",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "neuroscience",
+          "desc": "neurons, synapses, brain, research",
+          "icon": "🧠",
+          "vocab": [
+            {
+              "it": "neurona",
+              "en": "neuron",
+              "pron": "NOOR-on-ah"
+            },
+            {
+              "it": "sinapsi",
+              "en": "synapse",
+              "pron": "sin-AP-psee"
+            },
+            {
+              "it": "funzionalità",
+              "en": "functionality",
+              "pron": "fun-ZHI-nah-LAH-chee-ah"
+            },
+            {
+              "it": "stimolazione",
+              "en": "stimulation",
+              "pron": "stim-oh-LAY-zah-tsee"
+            },
+            {
+              "it": "esperimento",
+              "en": "experiment",
+              "pron": "es-PEHR-ment-oh"
+            },
+            {
+              "it": "ricerca",
+              "en": "research",
+              "pron": "ree-CHER-kah"
+            },
+            {
+              "it": "neuroscienziato",
+              "en": "neuroscientist",
+              "pron": "neu-ro-schayn-tsee-AH-toh"
+            },
+            {
+              "it": "comunicazione",
+              "en": "communication",
+              "pron": "ku-mu-nee-KAH-chee-oh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Neuroni comunicano attraverso sinapsi.",
+              "en": "Neurons communicate through synapses.",
+              "words": [
+                "Neuroni",
+                "comunicano",
+                "attraverso",
+                "sinapsi",
+                "."
+              ]
+            },
+            {
+              "it": "La neurologia studia le funzioni del cervello.",
+              "en": "Neurology studies the functions of the brain.",
+              "words": [
+                "La",
+                "neurologia",
+                "studia",
+                "le",
+                "funzioni",
+                "del",
+                "cervello",
+                "."
+              ]
+            },
+            {
+              "it": "Stimolazione elettrica può migliorare la funzionalità.",
+              "en": "Electrical stimulation can improve functionality.",
+              "words": [
+                "Stimolazione",
+                "elettrica",
+                "può",
+                "migliorare",
+                "la",
+                "funzionalità",
+                "."
+              ]
+            },
+            {
+              "it": "Un neuroscienziato esegue esperimenti per capire meglio.",
+              "en": "A neuroscientist performs experiments to understand better.",
+              "words": [
+                "Un",
+                "neuroscienziato",
+                "esegue",
+                "esperimenti",
+                "per",
+                "capire",
+                "meglio",
+                "."
+              ]
+            },
+            {
+              "it": "La ricerca in neuroscienze è sempre in evoluzione.",
+              "en": "Research in neuroscience is always evolving.",
+              "words": [
+                "La",
+                "ricerca",
+                "in",
+                "neuroscienze",
+                "è",
+                "sempre",
+                "in",
+                "evoluzione",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Neuroscience",
+          "desc": "Advanced vocabulary in neuroscience",
+          "icon": "🧠",
+          "vocab": [
+            {
+              "it": "neuroscienziato",
+              "en": "neuroscientist",
+              "pron": "neuro-sci-en-ti-a-to"
+            },
+            {
+              "it": "comunicazione",
+              "en": "communication",
+              "pron": "ku-mu-ni-ca-zio-ne"
+            },
+            {
+              "it": "funzionalità",
+              "en": "functionality",
+              "pron": "fun-zio-na-li-ta"
+            },
+            {
+              "it": "stimolazione",
+              "en": "stimulation",
+              "pron": "sti-mo-la-zio-ne"
+            },
+            {
+              "it": "esperimento",
+              "en": "experiment",
+              "pron": "es-pe-ri-men-to"
+            },
+            {
+              "it": "neurotrasmettore",
+              "en": "neurotransmitter",
+              "pron": "neuro-tras-met-to-re"
+            },
+            {
+              "it": "plasticità",
+              "en": "plasticity",
+              "pron": "pla-sti-ci-ta"
+            },
+            {
+              "it": "connessione",
+              "en": "connection",
+              "pron": "con-ne-zio-ne"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il neuroscienziato esplora le funzionalità del cervello.",
+              "en": "The neuroscientist explores the functionality of the brain.",
+              "words": [
+                "Il",
+                "neuroscienziato",
+                "esplora",
+                "le",
+                "funzionalità",
+                "del",
+                "cervello",
+                "."
+              ]
+            },
+            {
+              "it": "La stimolazione può migliorare la comunicazione tra neuroni.",
+              "en": "Stimulation can improve communication between neurons.",
+              "words": [
+                "La",
+                "stimolazione",
+                "può",
+                "migliorare",
+                "la",
+                "comunicazione",
+                "tra",
+                "neuroni",
+                "."
+              ]
+            },
+            {
+              "it": "L'esperimento dimostra la plasticità del cervello.",
+              "en": "The experiment demonstrates the plasticity of the brain.",
+              "words": [
+                "L'esperimento",
+                "dimostra",
+                "la",
+                "plasticità",
+                "del",
+                "cervello",
+                "."
+              ]
+            },
+            {
+              "it": "Le sinapsi sono fondamentali per la funzione del cervello.",
+              "en": "Synapses are fundamental for brain function.",
+              "words": [
+                "Le",
+                "sinapsi",
+                "sono",
+                "fondamentali",
+                "per",
+                "la",
+                "funzione",
+                "del",
+                "cervello",
+                "."
+              ]
+            },
+            {
+              "it": "La neurotrasmissione è cruciale per la comunicazione tra neuroni.",
+              "en": "Neurotransmission is crucial for communication between neurons.",
+              "words": [
+                "La",
+                "neurotrasmissione",
+                "è",
+                "cruciale",
+                "per",
+                "la",
+                "comunicazione",
+                "tra",
+                "neuroni",
+                "."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-21T14:58:59.701Z"
+    },
+    {
       "topic": "modern art",
       "topicEmoji": "🎨",
       "lessons": [
