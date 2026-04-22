@@ -1,6 +1,354 @@
 {
   "lessons": [
     {
+      "topic": "medical & healthcare",
+      "topicEmoji": "🩺",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Medical Basics",
+          "desc": "Learn basic medical vocabulary",
+          "icon": "🩺",
+          "vocab": [
+            {
+              "it": "medico",
+              "en": "doctor",
+              "pron": "ME-dee-co"
+            },
+            {
+              "it": "farmacia",
+              "en": "pharmacy",
+              "pron": "far-MAY-kee-ah"
+            },
+            {
+              "it": "malato",
+              "en": "patient",
+              "pron": "ma-LA-to"
+            },
+            {
+              "it": "ospedale",
+              "en": "hospital",
+              "pron": "os-pe-DAL-eh"
+            },
+            {
+              "it": "malattia",
+              "en": "illness",
+              "pron": "ma-la-TCH-ia"
+            },
+            {
+              "it": "medicamento",
+              "en": "medicine",
+              "pron": "me-di-CA-men-to"
+            },
+            {
+              "it": "appuntamento",
+              "en": "appointment",
+              "pron": "a-pun-TAH-men-to"
+            },
+            {
+              "it": "infermiera",
+              "en": "nurse",
+              "pron": "in-fe-RE-mee-ah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il medico prescrive il medicamento.",
+              "en": "The doctor prescribes the medicine.",
+              "words": [
+                "IL",
+                "MEDICO",
+                "PRESCRIVE",
+                "IL",
+                "MEDICAMENTO",
+                "."
+              ]
+            },
+            {
+              "it": "Andiamo all'ospedale.",
+              "en": "We go to the hospital.",
+              "words": [
+                "AN-dee-AH-mo",
+                "AL",
+                "OS-pe-DAL-eh",
+                "."
+              ]
+            },
+            {
+              "it": "Il farmacista mi ha dato la farmacia.",
+              "en": "The pharmacist gave me the pharmacy.",
+              "words": [
+                "IL",
+                "FAR-ma-CHI-sta",
+                "MI",
+                "HA",
+                "DAT-to",
+                "LA",
+                "FAR-ma-CHI-ah",
+                "."
+              ]
+            },
+            {
+              "it": "La malattia è grave.",
+              "en": "The illness is serious.",
+              "words": [
+                "LA",
+                "MALAT-TCH-ia",
+                "E",
+                "GRAVE",
+                "."
+              ]
+            },
+            {
+              "it": "Ho un appuntamento con l'infermiera.",
+              "en": "I have an appointment with the nurse.",
+              "words": [
+                "HO",
+                "UN",
+                "AP-pun-TAH-men-to",
+                "CON",
+                "L'",
+                "IN-fe-RE-mee-ah",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Medical & Healthcare",
+          "desc": "Visit the doctor, buy medicine, and more",
+          "icon": "👩‍⚕️",
+          "vocab": [
+            {
+              "it": "farmacista",
+              "en": "pharmacist",
+              "pron": "FARMAH-kah-tee"
+            },
+            {
+              "it": "consulenza",
+              "en": "consultation",
+              "pron": "con-sul-LEN-za"
+            },
+            {
+              "it": "prescrizione",
+              "en": "prescription",
+              "pron": "pre-skriz-EE-ehn-za"
+            },
+            {
+              "it": "sintomi",
+              "en": "symptoms",
+              "pron": "sin-TOH-mee"
+            },
+            {
+              "it": "terapia",
+              "en": "therapy",
+              "pron": "teh-REE-ah-pea"
+            },
+            {
+              "it": "appuntamento medico",
+              "en": "medical appointment",
+              "pron": "ap-poon-TAHN-dohm meh-dee-KOH-ro"
+            },
+            {
+              "it": "trattamento",
+              "en": "treatment",
+              "pron": "trah-tah-RAH-mehnt"
+            },
+            {
+              "it": "ricovero",
+              "en": "admission",
+              "pron": "ree-koh-VEH-roh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Vado a farmacia per comprare il farmaco.",
+              "en": "I go to the pharmacy to buy the medicine.",
+              "words": [
+                "Vado",
+                "a",
+                "farmacia",
+                "per",
+                "comprare",
+                "il",
+                "farmaco",
+                "."
+              ]
+            },
+            {
+              "it": "Il medico prescrive una terapia.",
+              "en": "The doctor prescribes a therapy.",
+              "words": [
+                "Il",
+                "medico",
+                "prescrive",
+                "una",
+                "terapia",
+                "."
+              ]
+            },
+            {
+              "it": "Ho avuto dei sintomi di malattia.",
+              "en": "I have had symptoms of illness.",
+              "words": [
+                "Ho",
+                "avuto",
+                "dei",
+                "sintomi",
+                "di",
+                "malattia",
+                "."
+              ]
+            },
+            {
+              "it": "L'infermiera mi ha dato un appuntamento.",
+              "en": "The nurse gave me an appointment.",
+              "words": [
+                "L'",
+                "infermiera",
+                "mi",
+                "ha",
+                "dato",
+                "un",
+                "appuntamento",
+                "."
+              ]
+            },
+            {
+              "it": "Ho bisogno di ricovero all'ospedale.",
+              "en": "I need to be admitted to the hospital.",
+              "words": [
+                "Ho",
+                "bisogno",
+                "di",
+                "ricovero",
+                "all'",
+                "ospedale",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Medical Procedures",
+          "desc": "Advanced medical terms and phrases",
+          "icon": "🩺",
+          "vocab": [
+            {
+              "it": "tracheotomia",
+              "en": "tracheotomy",
+              "pron": "tra-KHEE-oh-toh-mee"
+            },
+            {
+              "it": "angiografia",
+              "en": "angiography",
+              "pron": "an-jee-oh-GRAH-fee"
+            },
+            {
+              "it": "cateterismo",
+              "en": "angioplasty",
+              "pron": "an-jee-oh-plas-tee"
+            },
+            {
+              "it": "colposcopia",
+              "en": "colposcopy",
+              "pron": "ko-lpo-SKOH-pee"
+            },
+            {
+              "it": "laparoscopia",
+              "en": "laparoscopy",
+              "pron": "lap-ar-oh-SKOH-pee"
+            },
+            {
+              "it": "endoscopia",
+              "en": "endoscopy",
+              "pron": "en-doh-SKOH-pee"
+            },
+            {
+              "it": "biopsia",
+              "en": "biopsy",
+              "pron": "BY-oh-spie"
+            },
+            {
+              "it": "terapia intensiva",
+              "en": "intensive care",
+              "pron": "in-tens-IV-uh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'operazione è stata un successo.",
+              "en": "The operation was a success.",
+              "words": [
+                "L'",
+                "operazione",
+                "è",
+                "stata",
+                "un",
+                "successo",
+                ".",
+                " "
+              ]
+            },
+            {
+              "it": "Il medico prescrisse un farmaco.",
+              "en": "The doctor prescribed a medication.",
+              "words": [
+                "Il",
+                "medico",
+                "prescrisse",
+                "un",
+                "farmaco",
+                ".",
+                " "
+              ]
+            },
+            {
+              "it": "Il paziente ha bisogno di una terapia.",
+              "en": "The patient needs a therapy.",
+              "words": [
+                "Il",
+                "paziente",
+                "ha",
+                "bisogno",
+                "di",
+                "una",
+                "terapia",
+                "."
+              ]
+            },
+            {
+              "it": "La farmacista controllò la prescrizione.",
+              "en": "The pharmacist checked the prescription.",
+              "words": [
+                "La",
+                "farmacista",
+                "controllò",
+                "la",
+                "prescrizione",
+                "."
+              ]
+            },
+            {
+              "it": "L'infermiera prese i sintomi.",
+              "en": "The nurse took the symptoms.",
+              "words": [
+                "L'",
+                "infermiera",
+                "prese",
+                "i",
+                "sintomi",
+                "."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-22T09:44:29.313Z"
+    },
+    {
       "topic": "architecture",
       "topicEmoji": "🏠",
       "lessons": [
