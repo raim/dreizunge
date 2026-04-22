@@ -72,7 +72,7 @@ function findLine(marker, fromLine) {
 }
 
 const serverFuncsStart = findLine('async function init()');  // first server-talking function
-const engineStart      = findLine('function shuffle(');       // start of pure exercise engine
+const engineStart      = findLine('function buildPath(');     // start of pure exercise engine
 const initCallLine     = findLine('init();', engineStart);    // final init() call
 
 // Script parts:

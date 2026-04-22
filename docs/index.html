@@ -3852,6 +3852,42 @@ function  setTopic(t) {
   document.getElementById('topic-input').value = t;
 }
 
+function buildPath(){
+  if(!APP.lessonData)return;
+  const d=APP.lessonData, topicKey=d.topic;
+  if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
+  const done=APP.progress.completed[topicKey];
+  document.getElementById('topic-emoji-big').textContent=d.topicEmoji||'📚';
+  document.getElementById('topic-name-big').textContent=d.topic;
+  document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
+  document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
+  const path=document.getElementById('lesson-path');
+  path.innerHTML='';
+  d.lessons.forEach((L,i)=>{
+    const isDone=!!done[L.id], isLocked=i>0&&!done[d.lessons[i-1].id], isActive=!isDone&&!isLocked;
+    if(i>0){ const ln=document.createElement('div'); ln.className='path-line'+(done[d.lessons[i-1].id]?' done':''); path.appendChild(ln); }
+    const node=document.createElement('div');
+    node.className='lesson-node'+(isDone?' done-node':isLocked?' locked':isActive?' active-node':'');
+    if(isActive){ const b=document.createElement('div'); b.className='next-badge'; b.textContent='Next up'; node.appendChild(b); }
+    node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
+      <div class="node-lbl"><div class="node-title">Lesson ${L.id}: ${L.title}</div><div class="node-desc">${L.desc}</div></div>
+      ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
+    if(!isLocked) node.onclick=()=>startLesson(i);
+    path.appendChild(node);
+  });
+  const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
+  const btn=document.getElementById('start-btn');
+  if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=()=>{}; }
+  else{ btn.textContent='Start lesson '+(nextIdx+1); btn.onclick=()=>startLesson(nextIdx); }
+}
+function startNextLesson(){
+  if(!APP.lessonData)return;
+  const d=APP.lessonData, done=APP.progress.completed[d.topic]||{};
+  const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
+  if(nextIdx>=0) startLesson(nextIdx);
+}
+
+// ── exercises ──
 function shuffle(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
 function pick(arr,n){ return shuffle(arr).slice(0,n); }
 
