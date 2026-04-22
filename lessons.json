@@ -1,6 +1,394 @@
 {
   "lessons": [
     {
+      "topic": "pilze suchen",
+      "topicEmoji": "🍄",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Pilze Suchen",
+          "desc": "Einführung in Pilze",
+          "icon": "fungi",
+          "vocab": [
+            {
+              "it": "caccia",
+              "en": "hunt",
+              "pron": "KAH-tcha"
+            },
+            {
+              "it": "bosco",
+              "en": "forest",
+              "pron": "BOSS-ko"
+            },
+            {
+              "it": "fungo",
+              "en": "mushroom",
+              "pron": "FOO-no"
+            },
+            {
+              "it": "pattumiera",
+              "en": "rubbish bin",
+              "pron": "pah-too-MEER-ah"
+            },
+            {
+              "it": "giro",
+              "en": "round, tour",
+              "pron": "JEE-ro"
+            },
+            {
+              "it": "pista",
+              "en": "path, trail",
+              "pron": "PEE-sta"
+            },
+            {
+              "it": "sacchetto",
+              "en": "small bag",
+              "pron": "sah-khe-TTO"
+            },
+            {
+              "it": "zaino",
+              "en": "backpack",
+              "pron": "ZAI-no"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Caccia i funghi nel bosco.",
+              "en": "Hunt mushrooms in the forest.",
+              "words": [
+                "Caccia",
+                "i",
+                "funghi",
+                "nel",
+                "bosco",
+                ".",
+                "caccia",
+                "fungo",
+                "bosco"
+              ]
+            },
+            {
+              "it": "Non mettere i sacchetti nel bosco.",
+              "en": "Don't put the bags in the forest.",
+              "words": [
+                "Non",
+                "mettere",
+                "i",
+                "sacchetti",
+                "nel",
+                "bosco",
+                ".",
+                "pattumiera",
+                "bosco"
+              ]
+            },
+            {
+              "it": "Fai un giro per le piste.",
+              "en": "Do a tour for the trails.",
+              "words": [
+                "Fai",
+                "un",
+                "giro",
+                "per",
+                "le",
+                "piste",
+                ".",
+                "pista",
+                "giro"
+              ]
+            },
+            {
+              "it": "Porta il tuo zaino con i funghi.",
+              "en": "Take your backpack with the mushrooms.",
+              "words": [
+                "Porta",
+                "il",
+                "tuo",
+                "zaino",
+                "con",
+                "i",
+                "fungi",
+                ".",
+                "zaino",
+                "fungo"
+              ]
+            },
+            {
+              "it": "Non mettere i funghi nella pattumiera.",
+              "en": "Don't put the mushrooms in the rubbish bin.",
+              "words": [
+                "Non",
+                "mettere",
+                "i",
+                "fungi",
+                "nella",
+                "pattumiera",
+                ".",
+                "fungo",
+                "pattumiera"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Pilze Suchen",
+          "desc": "Intermediate mushroom hunting",
+          "icon": "fungi",
+          "vocab": [
+            {
+              "it": "catacomba",
+              "en": "catacomb",
+              "pron": "ka-TAT-kom-ba"
+            },
+            {
+              "it": "esplorare",
+              "en": "explore",
+              "pron": "es-pluh-RAYR-e"
+            },
+            {
+              "it": "rame",
+              "en": "bramble",
+              "pron": "RAH-meh"
+            },
+            {
+              "it": "sferzate",
+              "en": "whipped",
+              "pron": "sfehr-ZAH-tay"
+            },
+            {
+              "it": " muschiato",
+              "en": "musty",
+              "pron": "mus-KEE-ah-to"
+            },
+            {
+              "it": "lucertola",
+              "en": "lizard",
+              "pron": "loo-ker-REH-tol-ah"
+            },
+            {
+              "it": " muschiato",
+              "en": "musty",
+              "pron": "mus-KEE-ah-to"
+            },
+            {
+              "it": "sottoterra",
+              "en": "underground",
+              "pron": "soh-toh-TOHR-rah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Esplorare le catacombe può essere pericoloso.",
+              "en": "Exploring the catacombs can be dangerous.",
+              "words": [
+                "Esplorare",
+                "le",
+                "catacombe",
+                "può",
+                "essere",
+                "pericoloso",
+                "."
+              ]
+            },
+            {
+              "it": "I rami sferzati dai venti sembrano muschiusi.",
+              "en": "The branches whipped by the wind seem musty.",
+              "words": [
+                "I",
+                "rami",
+                "sferzati",
+                "dai",
+                "venti",
+                "sembrano",
+                "muschiusi",
+                "."
+              ]
+            },
+            {
+              "it": "Una lucertola sottoterra si nasconde in un angolo.",
+              "en": "A lizard underground hides in a corner.",
+              "words": [
+                "Una",
+                "lucertola",
+                "sottoterra",
+                "si",
+                "nasconde",
+                "in",
+                "un",
+                "angolo",
+                "."
+              ]
+            },
+            {
+              "it": "Le pilze sottoterra sono difficili da trovare.",
+              "en": "The mushrooms underground are hard to find.",
+              "words": [
+                "Le",
+                "pilze",
+                "sottoterra",
+                "sono",
+                "difficili",
+                "da",
+                "trovare",
+                "."
+              ]
+            },
+            {
+              "it": "Il sentiero è coperto di muschiato rami.",
+              "en": "The path is covered in musty branches.",
+              "words": [
+                "Il",
+                "sentiero",
+                "è",
+                "coperto",
+                "di",
+                "muschiano",
+                "rami",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Pilze Suchen",
+          "desc": "高级课程：寻找蘑菇",
+          "icon": "🍄",
+          "vocab": [
+            {
+              "it": "mycologo",
+              "en": "mycologist",
+              "pron": "my-si-OL-o-go"
+            },
+            {
+              "it": "fungicida",
+              "en": "fungicide",
+              "pron": "fun-gi-SID-a"
+            },
+            {
+              "it": "bozzolo",
+              "en": "mushroom spore",
+              "pron": "boz-ZO-lo"
+            },
+            {
+              "it": "champignon",
+              "en": "mushroom (common name, esp. in France)",
+              "pron": "cam-PI-nyon"
+            },
+            {
+              "it": "bracconiere",
+              "en": "poacher",
+              "pron": "bra-kon-YE-re"
+            },
+            {
+              "it": "chiarore",
+              "en": "dim light",
+              "pron": "kya-RO-re"
+            },
+            {
+              "it": "sottobosco",
+              "en": "underbrush",
+              "pron": "so-to-bo-SKO"
+            },
+            {
+              "it": "taccheggio",
+              "en": "foraging",
+              "pron": "ta-khe-JE-go"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il mycologo esaminò il sottobosco alla ricerca di bozzoli.",
+              "en": "The mycologist examined the underbrush in search of mushroom spores.",
+              "words": [
+                "Il",
+                "mycologo",
+                "esaminò",
+                "il",
+                "sottobosco",
+                "alla",
+                "ricerca",
+                "di",
+                "bozzoli",
+                "."
+              ]
+            },
+            {
+              "it": "Il bracconiere taccheggiò nel chiarore della luna, cercando champignoni.",
+              "en": "The poacher foraged in the dim light of the moon, looking for mushrooms.",
+              "words": [
+                "Il",
+                "bracconiere",
+                "taccheggiò",
+                "nel",
+                "chiarore",
+                "della",
+                "luna",
+                ",",
+                "cercando",
+                "champignoni",
+                "."
+              ]
+            },
+            {
+              "it": "Il fungicida è stato applicato per prevenire l'infezione dei bozzoli.",
+              "en": "The fungicide was applied to prevent the infection of mushroom spores.",
+              "words": [
+                "Il",
+                "fungicida",
+                "è",
+                "stato",
+                "applicato",
+                "per",
+                "prevenire",
+                "l'infezione",
+                "dei",
+                "bozzoli",
+                "."
+              ]
+            },
+            {
+              "it": "Nella foresta, i bozzoli nascondono i futuri champignoni.",
+              "en": "In the forest, the bozzoli hide the future mushrooms.",
+              "words": [
+                "Nella",
+                "foresta",
+                ",",
+                "i",
+                "bozzoli",
+                "nascondono",
+                "i",
+                "futuri",
+                "champignoni",
+                "."
+              ]
+            },
+            {
+              "it": "Il mycologo studia i bozzoli per capire quando i champignoni saranno pronti.",
+              "en": "The mycologist studies the bozzoli to understand when the mushrooms will be ready.",
+              "words": [
+                "Il",
+                "mycologo",
+                "studia",
+                "i",
+                "bozzoli",
+                "per",
+                "capire",
+                "quando",
+                "i",
+                "champignoni",
+                "saranno",
+                "pronti",
+                "."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-22T14:27:37.364Z"
+    },
+    {
       "topic": "table tennis",
       "topicEmoji": "🏓",
       "lessons": [
