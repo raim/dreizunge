@@ -20,16 +20,20 @@ node server.js
 # 1. Install Ollama on Xubuntu 24.04
 curl -fsSL https://ollama.com/install.sh | sh
 
-# 2. Pull a Qwen model (choose one)
+# 2. Pull a model (choose one)
 ollama pull qwen2.5:7b          # good quality, ~4 GB
 ollama pull qwen2.5:3b          # lighter, ~2 GB
 ollama pull qwen2.5:14b         # best quality, ~8 GB
+ollama pull qwen3.6:35b-a3b     # NOT RECOMMENDED: slow and fails, overkill
+ollama pull gemma3:12b          # NOT TESTED
 
 # 3. Start the app — Ollama is auto-detected
 node server.js
 
 # Or set the model explicitly:
 OLLAMA_MODEL=qwen2.5:7b node server.js
+OLLAMA_MODEL=qwen2.5:14b node server.js
+OLLAMA_MODEL=gemma3:12b node server.js
 ```
 
 ### Option C — Offline only (no LLM)
