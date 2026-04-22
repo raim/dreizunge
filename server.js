@@ -11,8 +11,9 @@ const STORAGE_FILE = path.join(__dirname, 'lessons.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const ANTHROPIC_KEY  = process.env.ANTHROPIC_API_KEY || '';
 const CLAUDE_MODEL   = process.env.CLAUDE_MODEL || 'claude-sonnet-4-20250514';
-const OLLAMA_HOST    = process.env.OLLAMA_HOST  || 'http://localhost:11434';
-const OLLAMA_MODEL   = process.env.OLLAMA_MODEL || 'qwen2.5:7b';
+const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
+const OLLAMA_MODEL   = process.env.OLLAMA_MODEL   || 'qwen2.5:7b';
+const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '360000', 10);
 
 // ── Storage ───────────────────────────────────────────────────────────
 function loadStore() {
@@ -72,10 +73,12 @@ const SYS_META = `You are a lesson plan creator. Return ONLY a valid JSON object
 Schema: {"topic":"cleaned topic string","topicEmoji":"one emoji","lessonThemes":["theme1","theme2","theme3"]}
 Rules: topic is the user's topic, normalized. Choose 3 progressive lesson themes for that topic.`;
 
-// ── JSON extraction — robust against prose and fences ──────────────────
+// ── JSON extraction — robust against prose, fences, and qwen3 <think> tags ──
 function extractJSON(raw) {
+  // strip qwen3 thinking blocks
+  let s = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
   // strip markdown fences
-  let s = raw.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
+  s = s.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
   // find first { and last }
   const start = s.indexOf('{');
   const end   = s.lastIndexOf('}');
@@ -86,7 +89,8 @@ function extractJSON(raw) {
 // ── Attempt to salvage a truncated lesson by trimming arrays ───────────
 function salvageLesson(raw) {
   // Try to close an unclosed JSON by trimming trailing incomplete items
-  let s = raw.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
+  let s = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+  s = s.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
   const start = s.indexOf('{');
   if (start < 0) throw new Error('No JSON found');
   s = s.slice(start);
@@ -146,11 +150,11 @@ function callAnthropicRaw(system, userMsg, maxTokens) {
 }
 
 function callOllamaRaw(system, userMsg, maxTokens) {
-  return new Promise((resolve, reject) => {
+  const call = new Promise((resolve, reject) => {
     const u = new URL('/api/chat', OLLAMA_HOST);
     const lib = u.protocol === 'https:' ? https : http;
     const body = JSON.stringify({
-      model: OLLAMA_MODEL, stream: false,
+      model: OLLAMA_MODEL, stream: false, keep_alive: -1,
       options: { temperature: 0.15, num_predict: maxTokens || 2048 },
       messages: [
         { role: 'system', content: system },
@@ -174,10 +178,15 @@ function callOllamaRaw(system, userMsg, maxTokens) {
         } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0, 200))); }
       });
     });
-    req.setTimeout(360000, () => { req.destroy(); reject(new Error('Ollama timeout')); });
     req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
     req.write(body); req.end();
   });
+
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Ollama timeout')), OLLAMA_TIMEOUT)
+  );
+
+  return Promise.race([call, timeout]);
 }
 
 function callLLM(active, system, userMsg, maxTokens) {
@@ -194,7 +203,7 @@ async function generateOneLesson(active, topic, lessonNum, totalLessons, prevVoc
     : '';
   const userMsg = `Topic: "${topic}"\nGenerate lesson ${lessonNum} now. Return only the JSON object.${prevHint}`;
 
-  const MAX_TOKENS = 1800; // safe budget per lesson
+  const MAX_TOKENS = 4096; // large enough for thinking models (qwen3 etc.)
   let lastErr;
 
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -250,7 +259,7 @@ async function generate(topic, active) {
   let meta;
   try {
     const metaRaw = await callLLM(active, SYS_META,
-      `Topic: "${topic}". Return the JSON with topicEmoji and 3 lessonThemes.`, 256);
+      `Topic: "${topic}". Return the JSON with topicEmoji and 3 lessonThemes.`, 1024);
     meta = extractJSON(metaRaw);
   } catch(e) {
     // fallback meta
@@ -305,6 +314,33 @@ function json(res, code, obj) {
 }
 
 // ── Boot ───────────────────────────────────────────────────────────────
+
+// ── Warmup — load model into memory before first user request ─────────
+async function warmupOllama() {
+  process.stdout.write('  Warming up model… ');
+  return new Promise(resolve => {
+    const u = new URL('/api/chat', OLLAMA_HOST);
+    const lib = u.protocol === 'https:' ? https : http;
+    const body = JSON.stringify({
+      model: OLLAMA_MODEL, stream: false, keep_alive: -1,
+      options: { num_predict: 1 },
+      messages: [{ role: 'user', content: 'hi' }]
+    });
+    const req = lib.request({
+      hostname: u.hostname,
+      port: u.port || (u.protocol === 'https:' ? 443 : 80),
+      path: u.pathname, method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    }, res => {
+      res.resume();
+      res.on('end', () => { console.log('ready ✓'); resolve(); });
+    });
+    req.setTimeout(OLLAMA_TIMEOUT, () => { req.destroy(); console.log('timed out (continuing anyway)'); resolve(); });
+    req.on('error', () => { console.log('failed (continuing anyway)'); resolve(); });
+    req.write(body); req.end();
+  });
+}
+
 async function boot() {
   let active;
   if      (BACKEND === 'anthropic') active = 'anthropic';
@@ -316,6 +352,8 @@ async function boot() {
     active = (await pingOllama()) ? 'ollama' : 'none';
     console.log(active === 'ollama' ? 'reachable ✓' : 'not found — offline mode');
   }
+
+  if (active === 'ollama') await warmupOllama();
 
   console.log('\n\u{1F1EE}\u{1F1F9}  Impara l\'Italiano');
   console.log('='.repeat(44));
@@ -399,8 +437,9 @@ async function boot() {
 
     res.writeHead(404); res.end('Not found');
 
-  }).listen(PORT, '127.0.0.1', () => {
-    console.log(`  Open: http://localhost:${PORT}\n`);
+  }).listen(PORT, '0.0.0.0', () => {
+    const os = require('os'); const lanIp = Object.values(os.networkInterfaces()).flat().find(i => i.family === 'IPv4' && !i.internal)?.address || 'unknown'; console.log(`  Local : http://localhost:${PORT}`); console.log(`  LAN   : http://${lanIp}:${PORT}
+`);
   });
 }
 
