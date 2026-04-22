@@ -1,0 +1,4012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impara l'Italiano</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:#58cc02;--green-dark:#46a502;--green-light:#d7ffb2;
+  --blue:#1cb0f6;--blue-dark:#0a93d3;--blue-light:#ddf4ff;
+  --red:#ff4b4b;--red-light:#ffd4d4;
+  --yellow:#ffc800;
+  --gray:#afafaf;--gray-light:#f7f7f7;--gray-mid:#e5e5e5;--gray-dark:#777;
+  --text:#3c3c3c;--white:#fff;
+  --radius:12px;--radius-lg:16px;--radius-xl:24px;
+  --shadow-card:0 4px 0 rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-height:100vh}
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center}
+.screen.active{display:flex}
+
+/* ══ LANDING ═════════════════════════════════════════════════════════ */
+#landing{background:linear-gradient(160deg,#e8f4ff 0%,#f0ffe8 100%);padding:32px 20px 48px}
+.landing-inner{max-width:540px;width:100%}
+.land-top{text-align:center;margin-bottom:24px}
+.flag{font-size:56px;display:block;animation:float 3s ease-in-out infinite;margin-bottom:8px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.app-name{font-size:34px;font-weight:900;color:var(--green);letter-spacing:-1px;margin-bottom:4px}
+.app-tagline{font-size:15px;color:var(--gray-dark)}
+
+.backend-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.bpill{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;border:2px solid}
+.bpill.anthropic{background:#fff8f0;border-color:#ff9f1c;color:#c26000}
+.bpill.ollama{background:#f0fff4;border-color:var(--green);color:var(--green-dark)}
+.bpill.none{background:#fff5f5;border-color:var(--red);color:#990000}
+.bdot{width:8px;height:8px;border-radius:50%}
+.bpill.anthropic .bdot{background:#ff9f1c}
+.bpill.ollama .bdot{background:var(--green)}
+.bpill.none .bdot{background:var(--red)}
+
+.topic-form{background:var(--white);border-radius:var(--radius-xl);padding:22px;box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:14px}
+.form-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;display:block}
+.topic-input{width:100%;padding:14px 16px;font-size:16px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);font-family:'Nunito',sans-serif;color:var(--text);background:var(--gray-light);outline:none;transition:border-color .15s,background .15s;margin-bottom:12px}
+.topic-input:focus{border-color:var(--blue);background:var(--white)}
+.topic-input::placeholder{color:var(--gray);font-weight:600}
+.topic-input:disabled{opacity:.5;cursor:not-allowed}
+.gen-btn{width:100%;padding:16px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:17px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);transition:transform .1s,box-shadow .1s}
+.gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
+.gen-btn:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 var(--green-dark)}
+.gen-btn:disabled{background:var(--gray-mid);color:var(--gray);box-shadow:0 4px 0 #ccc;cursor:not-allowed}
+.offline-note{font-size:12px;color:#990000;font-weight:700;text-align:center;margin-top:8px;display:none}
+
+.examples{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px}
+.chip{background:var(--white);border:2px solid var(--gray-mid);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--gray-dark);font-family:'Nunito',sans-serif;transition:border-color .1s,color .1s}
+.chip:hover{border-color:var(--blue);color:var(--blue-dark)}
+
+.library{background:var(--white);border-radius:var(--radius-xl);padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.06);border:2px solid var(--gray-mid)}
+.lib-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.lib-title{font-size:15px;font-weight:900;color:var(--text)}
+.lib-cnt{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:12px;padding:3px 10px}
+.lib-empty{text-align:center;padding:18px;color:var(--gray);font-size:14px;font-weight:600}
+.saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
+.saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s}
+.saved-item:hover{border-color:var(--blue);background:var(--blue-light)}
+.saved-emoji{font-size:22px;flex-shrink:0}
+.saved-info{flex:1;min-width:0}
+.saved-topic{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.saved-meta{font-size:11px;color:var(--gray-dark);font-weight:600;margin-top:1px}
+.saved-actions{display:flex;gap:5px;flex-shrink:0}
+.ico-btn{background:none;border:2px solid var(--gray-mid);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:border-color .1s}
+.ico-btn:hover{border-color:var(--red)}
+.ico-btn.regen:hover{border-color:var(--blue)}
+
+.gen-overlay{position:fixed;inset:0;background:rgba(240,244,248,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:14px}
+.spinner{width:52px;height:52px;border:5px solid var(--gray-mid);border-top-color:var(--green);border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gen-lbl{font-size:18px;font-weight:900;color:var(--text)}
+.gen-sub{font-size:14px;color:var(--gray-dark);font-weight:600}
+
+/* ══ HOME ════════════════════════════════════════════════════════════ */
+#home{padding:0 16px 40px}
+.home-inner{max-width:520px;width:100%}
+.home-hdr{display:flex;align-items:center;gap:10px;padding:18px 0 8px}
+.topic-emoji-big{font-size:28px}
+.topic-name-big{font-size:19px;font-weight:900;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:7px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);white-space:nowrap}
+.hdr-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
+.xp-strip{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:10px 16px;margin:10px 0 20px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
+.xp-val{font-size:17px;font-weight:900;color:var(--yellow)}
+.path-wrap{display:flex;flex-direction:column;align-items:center}
+.path-line{width:4px;height:26px;background:var(--gray-mid);margin:0 auto}
+.path-line.done{background:var(--green)}
+.lesson-node{width:100%;background:var(--white);border-radius:var(--radius-xl);border:3px solid var(--gray-mid);padding:15px 17px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:transform .12s,box-shadow .12s;box-shadow:var(--shadow-card);position:relative}
+.lesson-node:hover:not(.locked){transform:translateY(-3px);box-shadow:0 8px 0 rgba(0,0,0,.1)}
+.lesson-node.done-node{border-color:var(--green)}
+.lesson-node.locked{opacity:.55;cursor:not-allowed}
+.lesson-node.active-node{border-color:var(--blue);box-shadow:0 0 0 4px rgba(28,176,246,.18),var(--shadow-card)}
+.node-circle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:3px solid var(--gray-mid)}
+.done-node .node-circle{border-color:var(--green);background:var(--green-light)}
+.active-node .node-circle{border-color:var(--blue);background:var(--blue-light)}
+.node-lbl{flex:1}
+.node-title{font-size:15px;font-weight:900;color:var(--text);margin-bottom:2px}
+.node-desc{font-size:12px;color:var(--gray-dark);font-weight:600}
+.next-badge{position:absolute;top:-10px;right:14px;background:var(--yellow);color:#6a5000;font-size:11px;font-weight:900;padding:3px 10px;border-radius:10px}
+.start-strip{display:flex;justify-content:center;margin-top:20px}
+.big-btn{padding:15px 40px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);transition:transform .1s,box-shadow .1s}
+.big-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
+
+/* ══ LESSON ══════════════════════════════════════════════════════════ */
+#lesson-screen{background:var(--white);padding:0 16px 32px;max-width:600px;width:100%;margin:0 auto}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 0 16px;width:100%}
+.close-x{background:none;border:none;cursor:pointer;color:var(--gray);font-size:22px;padding:4px;line-height:1;font-family:'Nunito',sans-serif}
+.close-x:hover{color:var(--gray-dark)}
+.prog-bar{flex:1;height:16px;background:var(--gray-mid);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:8px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.hearts{display:flex;gap:2px}
+.heart{font-size:21px;transition:transform .2s}
+.heart.lost{filter:grayscale(1);opacity:.3;transform:scale(.85)}
+.ex-area{width:100%}
+.ex-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.09em;margin-bottom:12px;background:var(--gray-light);padding:5px 12px;border-radius:20px}
+.card{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:20px;margin-bottom:12px;box-shadow:var(--shadow-card)}
+.qtext{font-size:17px;font-weight:700;color:var(--text);line-height:1.5}
+.it-word{color:var(--blue);font-weight:900}
+.it-box{background:var(--blue-light);border:2px solid var(--blue);border-radius:var(--radius);padding:12px 15px;margin:10px 0 4px;display:flex;align-items:center;gap:8px}
+.it-box-text{font-size:18px;font-weight:800;color:var(--blue-dark);flex:1}
+.spk-ico{background:none;border:none;cursor:pointer;font-size:20px;padding:2px}
+.pron{font-size:11px;color:var(--gray-dark);font-style:italic;margin-top:3px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.choices.one-col{grid-template-columns:1fr}
+.choice{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:var(--radius);padding:12px 14px;font-size:14px;font-weight:700;cursor:pointer;color:var(--text);text-align:left;font-family:'Nunito',sans-serif;box-shadow:0 3px 0 var(--gray-mid);transition:border-color .1s,transform .05s}
+.choice:hover:not(:disabled){border-color:var(--blue);box-shadow:0 3px 0 #84d8ff;transform:translateY(-1px)}
+.choice.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark);box-shadow:0 3px 0 #84d8ff}
+.choice.ok{border-color:var(--green);background:var(--green-light);color:#266300;box-shadow:0 3px 0 #9be27a}
+.choice.bad{border-color:var(--red);background:var(--red-light);color:#990000;box-shadow:0 3px 0 #ffaaaa}
+.listen-big{display:flex;align-items:center;gap:12px;background:var(--blue-light);border:2.5px solid var(--blue);border-radius:var(--radius-lg);padding:15px 18px;cursor:pointer;margin:8px 0 3px;font-family:'Nunito',sans-serif;transition:background .1s;width:100%;text-align:left}
+.listen-big:hover{background:#bde9ff}
+.listen-icon{font-size:26px}
+.listen-lbl{font-size:11px;font-weight:800;color:var(--blue-dark);text-transform:uppercase;letter-spacing:.07em}
+.listen-word{font-size:18px;font-weight:900;color:var(--blue-dark)}
+.slow-btn{background:none;border:2px solid var(--blue);border-radius:var(--radius);padding:5px 11px;font-size:11px;font-weight:800;color:var(--blue-dark);cursor:pointer;font-family:'Nunito',sans-serif;margin-top:3px}
+.sbox{min-height:48px;border:2.5px dashed var(--gray-mid);border-radius:var(--radius);padding:7px 9px;display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;align-items:center;background:var(--gray-light);transition:border-color .2s,background .2s}
+.sbox.filled{border-color:var(--blue);background:var(--blue-light)}
+.placed-tok{background:var(--white);border:2.5px solid var(--blue);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:800;cursor:pointer;color:var(--blue-dark);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 #84d8ff}
+.placed-tok:hover{opacity:.75}
+.sbox-ph{font-size:13px;color:var(--gray);font-style:italic}
+.wbank{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}
+.tok:hover{border-color:var(--blue)}
+.tok.used{opacity:.15;pointer-events:none}
+.type-input{width:100%;padding:12px 14px;font-size:16px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);outline:none;margin-top:8px}
+.type-input:focus{border-color:var(--blue)}
+.type-input.ok{border-color:var(--green);background:var(--green-light)}
+.type-input.bad{border-color:var(--red);background:var(--red-light)}
+.feedback{width:100%;border-radius:var(--radius-lg);padding:13px 16px;margin-bottom:12px;display:none}
+.feedback.ok{background:var(--green-light);border:2.5px solid var(--green);display:block}
+.feedback.bad{background:var(--red-light);border:2.5px solid var(--red);display:block}
+.fb-head{font-size:15px;font-weight:900;margin-bottom:2px}
+.feedback.ok .fb-head{color:#266300}
+.feedback.bad .fb-head{color:#990000}
+.fb-body{font-size:13px;font-weight:700}
+.feedback.ok .fb-body{color:#3a8800}
+.feedback.bad .fb-body{color:#cc0000}
+.check-btn{width:100%;padding:15px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);transition:transform .1s,box-shadow .1s}
+.check-btn:disabled{background:var(--gray-mid);color:var(--gray);box-shadow:0 4px 0 #ccc;cursor:not-allowed}
+.check-btn:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
+.check-btn:not(:disabled):active{transform:translateY(2px);box-shadow:0 2px 0 var(--green-dark)}
+.check-btn.cont{background:var(--blue);box-shadow:0 5px 0 var(--blue-dark)}
+.check-btn.cont:not(:disabled):hover{box-shadow:0 7px 0 var(--blue-dark)}
+
+/* ══ COMPLETE ════════════════════════════════════════════════════════ */
+#complete-screen{padding:24px 20px 40px;max-width:520px;width:100%;text-align:center}
+.trophy{font-size:72px;display:block;margin-bottom:8px;animation:popIn .5s cubic-bezier(.4,0,.2,1)}
+@keyframes popIn{0%{transform:scale(0) rotate(-10deg)}70%{transform:scale(1.1) rotate(2deg)}100%{transform:scale(1) rotate(0)}}
+.comp-title{font-size:28px;font-weight:900;color:var(--text);margin-bottom:4px}
+.comp-sub{font-size:14px;color:var(--gray-dark);margin-bottom:16px}
+.xp-pill{display:inline-block;background:var(--yellow);color:#6a5000;border-radius:24px;padding:10px 28px;font-weight:900;font-size:20px;margin-bottom:18px;box-shadow:0 4px 0 #d4a800}
+.stat-row{display:flex;gap:10px;margin-bottom:20px}
+.stat-box{flex:1;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:12px 8px;box-shadow:var(--shadow-card)}
+.stat-num{font-size:24px;font-weight:900;margin-bottom:2px}
+.stat-lbl{font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.05em}
+.vocab-box{width:100%;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:14px 16px;margin-bottom:18px;text-align:left;box-shadow:var(--shadow-card)}
+.vocab-hdr{font-size:11px;font-weight:900;color:var(--gray);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}
+.vrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1.5px solid var(--gray-mid)}
+.vrow:last-child{border:none}
+.vit{font-size:14px;font-weight:800;color:var(--blue);cursor:pointer}
+.vit:hover{text-decoration:underline}
+.ven{font-size:13px;color:var(--gray-dark);font-weight:600}
+.vpron{font-size:10px;color:var(--gray);font-style:italic}
+.cont-btn{width:100%;padding:15px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);margin-bottom:10px;transition:transform .1s,box-shadow .1s}
+.cont-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
+.sec-btn{width:100%;padding:12px;background:none;border:2.5px solid var(--gray-mid);border-radius:var(--radius-lg);font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark)}
+.sec-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
+
+.shake{animation:shake .35s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+</style>
+</head>
+<body>
+
+<div id="gen-overlay" class="gen-overlay" style="display:none">
+  <div class="spinner"></div>
+  <div class="gen-lbl" id="gen-lbl">Building your lessons…</div>
+  <div class="gen-sub" id="gen-sub">Generating vocabulary &amp; exercises</div>
+</div>
+
+<!-- ══ LANDING ════════════════════════════════════════════════════════ -->
+<div id="landing" class="screen active">
+<div class="landing-inner">
+  <div class="land-top">
+    <span class="flag">🇮🇹</span>
+    <div class="app-name">Impara l'Italiano</div>
+    <div class="app-tagline">Learn Italian vocabulary for any topic, Duolingo-style</div>
+  </div>
+
+  <div class="backend-row">
+    <span style="font-size:12px;font-weight:700;color:var(--gray-dark)">Backend:</span>
+    <div id="bpill" class="bpill none"><span class="bdot"></span><span id="blbl">Checking…</span></div>
+    <span id="bmodel" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
+  </div>
+
+  <div class="topic-form">
+    <label class="form-lbl" for="topic-input">What do you want to learn Italian for?</label>
+    <input class="topic-input" id="topic-input" type="text"
+      placeholder="e.g. cooking, architecture, medicine…" maxlength="80"
+      onkeydown="if(event.key==='Enter')doGenerate()">
+    <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
+    <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
+  </div>
+
+  <div class="examples">
+    <span style="font-size:12px;color:var(--gray-dark);font-weight:700;align-self:center">Try:</span>
+    <button class="chip" onclick="setTopic('research grant proposals')">🔬 Research grants</button>
+    <button class="chip" onclick="setTopic('Italian cooking & recipes')">🍝 Cooking</button>
+    <button class="chip" onclick="setTopic('architecture & design')">🏛 Architecture</button>
+    <button class="chip" onclick="setTopic('medical & healthcare')">🏥 Medicine</button>
+    <button class="chip" onclick="setTopic('business & negotiations')">💼 Business</button>
+    <button class="chip" onclick="setTopic('art history & museums')">🎨 Art history</button>
+  </div>
+
+  <div class="library">
+    <div class="lib-hdr">
+      <div class="lib-title">📚 Saved lessons</div>
+      <div class="lib-cnt" id="lib-cnt">0 topics</div>
+    </div>
+    <div id="saved-list">
+      <div class="lib-empty">No saved lessons yet — generate one above!</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ HOME ══════════════════════════════════════════════════════════ -->
+<div id="home" class="screen">
+<div class="home-inner">
+  <div class="home-hdr">
+    <span class="topic-emoji-big" id="topic-emoji-big">📚</span>
+    <span class="topic-name-big" id="topic-name-big">Topic</span>
+    <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
+    <button class="hdr-btn" onclick="goLanding()">← Topics</button>
+  </div>
+  <div class="xp-strip">
+    <span style="font-size:20px">⚡</span>
+    <div style="flex:1">
+      <div style="font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.07em">Total XP</div>
+      <div class="xp-val" id="total-xp">0 XP</div>
+    </div>
+  </div>
+  <div class="path-wrap" id="lesson-path"></div>
+  <div class="start-strip">
+    <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ LESSON ════════════════════════════════════════════════════════ -->
+<div id="lesson-screen" class="screen">
+  <div class="topbar">
+    <button class="close-x" onclick="confirmQuit()">✕</button>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="hearts" id="hearts"></div>
+  </div>
+  <div class="ex-area" id="ex-area"></div>
+</div>
+
+<!-- ══ COMPLETE ════════════════════════════════════════════════════════ -->
+<div id="complete-screen" class="screen">
+  <span class="trophy">🏆</span>
+  <div class="comp-title">Lesson complete!</div>
+  <div class="comp-sub" id="comp-sub">Ottimo lavoro!</div>
+  <div class="xp-pill" id="comp-xp">+0 XP</div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">Correct</div></div>
+    <div class="stat-box"><div class="stat-num" id="s-mistakes" style="color:var(--red)">0</div><div class="stat-lbl">Mistakes</div></div>
+    <div class="stat-box"><div class="stat-num" id="s-streak" style="color:var(--yellow)">0🔥</div><div class="stat-lbl">Best streak</div></div>
+  </div>
+  <div class="vocab-box"><div class="vocab-hdr">Words from this lesson</div><div id="comp-vocab"></div></div>
+  <button class="cont-btn" id="comp-next" onclick="afterComplete()">Continue</button>
+  <button class="sec-btn" onclick="goHome()">Back to lessons</button>
+</div>
+
+<script>
+var APP = {
+  info: {backend:'none',canGenerate:false},
+  lessonData: null,
+  progress: loadProg(),
+  cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,xp:0,mistakes:0,streak:0,bestStreak:0,
+        answered:false,sel:null,placed:[],usedIdx:[]}
+};
+
+function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'{"xp":0,"completed":{}}'); }catch(e){ return {xp:0,completed:{}}; } }
+function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function goLanding(){ loadSavedList(); show('landing'); }
+function goHome(){ buildPath(); show('home'); }
+
+// ── init ──
+
+// ═══════════════════════════════════════════════════════════════════════
+//  STATIC MODE — no server, all lessons baked in at build time
+// ═══════════════════════════════════════════════════════════════════════
+
+const STATIC_LESSONS = [
+  {
+    "topic": "pilze suchen",
+    "topicEmoji": "🍄",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Pilze Suchen",
+        "desc": "Einführung in Pilze",
+        "icon": "fungi",
+        "vocab": [
+          {
+            "it": "caccia",
+            "en": "hunt",
+            "pron": "KAH-tcha"
+          },
+          {
+            "it": "bosco",
+            "en": "forest",
+            "pron": "BOSS-ko"
+          },
+          {
+            "it": "fungo",
+            "en": "mushroom",
+            "pron": "FOO-no"
+          },
+          {
+            "it": "pattumiera",
+            "en": "rubbish bin",
+            "pron": "pah-too-MEER-ah"
+          },
+          {
+            "it": "giro",
+            "en": "round, tour",
+            "pron": "JEE-ro"
+          },
+          {
+            "it": "pista",
+            "en": "path, trail",
+            "pron": "PEE-sta"
+          },
+          {
+            "it": "sacchetto",
+            "en": "small bag",
+            "pron": "sah-khe-TTO"
+          },
+          {
+            "it": "zaino",
+            "en": "backpack",
+            "pron": "ZAI-no"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Caccia i funghi nel bosco.",
+            "en": "Hunt mushrooms in the forest.",
+            "words": [
+              "Caccia",
+              "i",
+              "funghi",
+              "nel",
+              "bosco",
+              ".",
+              "caccia",
+              "fungo",
+              "bosco"
+            ]
+          },
+          {
+            "it": "Non mettere i sacchetti nel bosco.",
+            "en": "Don't put the bags in the forest.",
+            "words": [
+              "Non",
+              "mettere",
+              "i",
+              "sacchetti",
+              "nel",
+              "bosco",
+              ".",
+              "pattumiera",
+              "bosco"
+            ]
+          },
+          {
+            "it": "Fai un giro per le piste.",
+            "en": "Do a tour for the trails.",
+            "words": [
+              "Fai",
+              "un",
+              "giro",
+              "per",
+              "le",
+              "piste",
+              ".",
+              "pista",
+              "giro"
+            ]
+          },
+          {
+            "it": "Porta il tuo zaino con i funghi.",
+            "en": "Take your backpack with the mushrooms.",
+            "words": [
+              "Porta",
+              "il",
+              "tuo",
+              "zaino",
+              "con",
+              "i",
+              "fungi",
+              ".",
+              "zaino",
+              "fungo"
+            ]
+          },
+          {
+            "it": "Non mettere i funghi nella pattumiera.",
+            "en": "Don't put the mushrooms in the rubbish bin.",
+            "words": [
+              "Non",
+              "mettere",
+              "i",
+              "fungi",
+              "nella",
+              "pattumiera",
+              ".",
+              "fungo",
+              "pattumiera"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Pilze Suchen",
+        "desc": "Intermediate mushroom hunting",
+        "icon": "fungi",
+        "vocab": [
+          {
+            "it": "catacomba",
+            "en": "catacomb",
+            "pron": "ka-TAT-kom-ba"
+          },
+          {
+            "it": "esplorare",
+            "en": "explore",
+            "pron": "es-pluh-RAYR-e"
+          },
+          {
+            "it": "rame",
+            "en": "bramble",
+            "pron": "RAH-meh"
+          },
+          {
+            "it": "sferzate",
+            "en": "whipped",
+            "pron": "sfehr-ZAH-tay"
+          },
+          {
+            "it": " muschiato",
+            "en": "musty",
+            "pron": "mus-KEE-ah-to"
+          },
+          {
+            "it": "lucertola",
+            "en": "lizard",
+            "pron": "loo-ker-REH-tol-ah"
+          },
+          {
+            "it": " muschiato",
+            "en": "musty",
+            "pron": "mus-KEE-ah-to"
+          },
+          {
+            "it": "sottoterra",
+            "en": "underground",
+            "pron": "soh-toh-TOHR-rah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Esplorare le catacombe può essere pericoloso.",
+            "en": "Exploring the catacombs can be dangerous.",
+            "words": [
+              "Esplorare",
+              "le",
+              "catacombe",
+              "può",
+              "essere",
+              "pericoloso",
+              "."
+            ]
+          },
+          {
+            "it": "I rami sferzati dai venti sembrano muschiusi.",
+            "en": "The branches whipped by the wind seem musty.",
+            "words": [
+              "I",
+              "rami",
+              "sferzati",
+              "dai",
+              "venti",
+              "sembrano",
+              "muschiusi",
+              "."
+            ]
+          },
+          {
+            "it": "Una lucertola sottoterra si nasconde in un angolo.",
+            "en": "A lizard underground hides in a corner.",
+            "words": [
+              "Una",
+              "lucertola",
+              "sottoterra",
+              "si",
+              "nasconde",
+              "in",
+              "un",
+              "angolo",
+              "."
+            ]
+          },
+          {
+            "it": "Le pilze sottoterra sono difficili da trovare.",
+            "en": "The mushrooms underground are hard to find.",
+            "words": [
+              "Le",
+              "pilze",
+              "sottoterra",
+              "sono",
+              "difficili",
+              "da",
+              "trovare",
+              "."
+            ]
+          },
+          {
+            "it": "Il sentiero è coperto di muschiato rami.",
+            "en": "The path is covered in musty branches.",
+            "words": [
+              "Il",
+              "sentiero",
+              "è",
+              "coperto",
+              "di",
+              "muschiano",
+              "rami",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Pilze Suchen",
+        "desc": "高级课程：寻找蘑菇",
+        "icon": "🍄",
+        "vocab": [
+          {
+            "it": "mycologo",
+            "en": "mycologist",
+            "pron": "my-si-OL-o-go"
+          },
+          {
+            "it": "fungicida",
+            "en": "fungicide",
+            "pron": "fun-gi-SID-a"
+          },
+          {
+            "it": "bozzolo",
+            "en": "mushroom spore",
+            "pron": "boz-ZO-lo"
+          },
+          {
+            "it": "champignon",
+            "en": "mushroom (common name, esp. in France)",
+            "pron": "cam-PI-nyon"
+          },
+          {
+            "it": "bracconiere",
+            "en": "poacher",
+            "pron": "bra-kon-YE-re"
+          },
+          {
+            "it": "chiarore",
+            "en": "dim light",
+            "pron": "kya-RO-re"
+          },
+          {
+            "it": "sottobosco",
+            "en": "underbrush",
+            "pron": "so-to-bo-SKO"
+          },
+          {
+            "it": "taccheggio",
+            "en": "foraging",
+            "pron": "ta-khe-JE-go"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il mycologo esaminò il sottobosco alla ricerca di bozzoli.",
+            "en": "The mycologist examined the underbrush in search of mushroom spores.",
+            "words": [
+              "Il",
+              "mycologo",
+              "esaminò",
+              "il",
+              "sottobosco",
+              "alla",
+              "ricerca",
+              "di",
+              "bozzoli",
+              "."
+            ]
+          },
+          {
+            "it": "Il bracconiere taccheggiò nel chiarore della luna, cercando champignoni.",
+            "en": "The poacher foraged in the dim light of the moon, looking for mushrooms.",
+            "words": [
+              "Il",
+              "bracconiere",
+              "taccheggiò",
+              "nel",
+              "chiarore",
+              "della",
+              "luna",
+              ",",
+              "cercando",
+              "champignoni",
+              "."
+            ]
+          },
+          {
+            "it": "Il fungicida è stato applicato per prevenire l'infezione dei bozzoli.",
+            "en": "The fungicide was applied to prevent the infection of mushroom spores.",
+            "words": [
+              "Il",
+              "fungicida",
+              "è",
+              "stato",
+              "applicato",
+              "per",
+              "prevenire",
+              "l'infezione",
+              "dei",
+              "bozzoli",
+              "."
+            ]
+          },
+          {
+            "it": "Nella foresta, i bozzoli nascondono i futuri champignoni.",
+            "en": "In the forest, the bozzoli hide the future mushrooms.",
+            "words": [
+              "Nella",
+              "foresta",
+              ",",
+              "i",
+              "bozzoli",
+              "nascondono",
+              "i",
+              "futuri",
+              "champignoni",
+              "."
+            ]
+          },
+          {
+            "it": "Il mycologo studia i bozzoli per capire quando i champignoni saranno pronti.",
+            "en": "The mycologist studies the bozzoli to understand when the mushrooms will be ready.",
+            "words": [
+              "Il",
+              "mycologo",
+              "studia",
+              "i",
+              "bozzoli",
+              "per",
+              "capire",
+              "quando",
+              "i",
+              "champignoni",
+              "saranno",
+              "pronti",
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-22T14:27:37.364Z"
+  },
+  {
+    "topic": "table tennis",
+    "topicEmoji": "🏓",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Table Tennis Basics",
+        "desc": "Introduction and equipment",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "palla da ping-pong",
+            "en": "ping-pong ball",
+            "pron": "PAH-lah DAH ping-PONG ball"
+          },
+          {
+            "it": "tavolo da ping-pong",
+            "en": "ping-pong table",
+            "pron": "TAH-voh-loh DAH ping-PONG table"
+          },
+          {
+            "it": "pala da ping-pong",
+            "en": "ping-pong paddle",
+            "pron": "PAH-lah DAH ping-PONG paddle"
+          },
+          {
+            "it": "giocatore",
+            "en": "player",
+            "pron": "joh-KAH-tore"
+          },
+          {
+            "it": "giocatrice",
+            "en": "player (female)",
+            "pron": "joh-kah-TAH-tre"
+          },
+          {
+            "it": "gioco",
+            "en": "game",
+            "pron": "JEE-ko"
+          },
+          {
+            "it": "servizio",
+            "en": "serve",
+            "pron": "ser-VEE-zee-oh"
+          },
+          {
+            "it": "rete",
+            "en": "net",
+            "pron": "REH-teh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il giocatore serve la palla da ping-pong.",
+            "en": "The player serves the ping-pong ball.",
+            "words": [
+              "Il",
+              "giocatore",
+              "serve",
+              "la",
+              "palla",
+              "da",
+              "ping-pong",
+              "."
+            ]
+          },
+          {
+            "it": "La giocatrice sta giocando al tavolo da ping-pong.",
+            "en": "The female player is playing at the ping-pong table.",
+            "words": [
+              "La",
+              "giocatrice",
+              "sta",
+              "giocando",
+              "al",
+              "tavolo",
+              "da",
+              "ping-pong",
+              "."
+            ]
+          },
+          {
+            "it": "Il rete separa i due giocatori.",
+            "en": "The net separates the two players.",
+            "words": [
+              "Il",
+              "rete",
+              "separa",
+              "i",
+              "due",
+              "giocatori",
+              "."
+            ]
+          },
+          {
+            "it": "Ogni pala da ping-pong è diversa.",
+            "en": "Each ping-pong paddle is different.",
+            "words": [
+              "Ogni",
+              "pala",
+              "da",
+              "ping-pong",
+              "è",
+              "diversa",
+              "."
+            ]
+          },
+          {
+            "it": "Il gioco inizia con il servizio.",
+            "en": "The game starts with the serve.",
+            "words": [
+              "Il",
+              "gioco",
+              "inizia",
+              "con",
+              "il",
+              "servizio",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Table Tennis Techniques",
+        "desc": "Intermediate strokes and strategies",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "risposta",
+            "en": "answer",
+            "pron": "ri-SPO-ta"
+          },
+          {
+            "it": "punti",
+            "en": "points",
+            "pron": "PUN-ti"
+          },
+          {
+            "it": "giro",
+            "en": "rotation",
+            "pron": "GI-ro"
+          },
+          {
+            "it": "doppio",
+            "en": "double",
+            "pron": "DOP-pio"
+          },
+          {
+            "it": "triplo",
+            "en": "triple",
+            "pron": "TRI-plo"
+          },
+          {
+            "it": "falla",
+            "en": "error",
+            "pron": "FA-la"
+          },
+          {
+            "it": "tavolino",
+            "en": "table",
+            "pron": "ta-VO-li-no"
+          },
+          {
+            "it": "scacco",
+            "en": "check",
+            "pron": "SKA-tso"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il doppio giro fa tre punti.",
+            "en": "The double rotation gives three points.",
+            "words": [
+              "Il",
+              "doppio",
+              "giro",
+              "fa",
+              "tre",
+              "punti",
+              ".",
+              " ",
+              "The",
+              "double",
+              "rotation",
+              "gives",
+              "three",
+              "points",
+              "."
+            ]
+          },
+          {
+            "it": "Una falla è un errore.",
+            "en": "A falla is an error.",
+            "words": [
+              "Una",
+              "falla",
+              "è",
+              "un",
+              "errore",
+              ".",
+              " ",
+              "A",
+              "falla",
+              "is",
+              "an",
+              "error",
+              "."
+            ]
+          },
+          {
+            "it": "Il triplo giro è più difficile del doppio.",
+            "en": "The triple rotation is more difficult than the double.",
+            "words": [
+              "Il",
+              "triplo",
+              "giro",
+              "è",
+              "più",
+              "difficile",
+              "del",
+              "doppio",
+              ".",
+              " ",
+              "The",
+              "triple",
+              "rotation",
+              "is",
+              "more",
+              "difficult",
+              "than",
+              "the",
+              "double",
+              "."
+            ]
+          },
+          {
+            "it": "Durante il giro, rispondi al servizio.",
+            "en": "During the rotation, answer the serve.",
+            "words": [
+              "Durante",
+              "il",
+              "giro",
+              ",",
+              "rispondi",
+              "al",
+              "servizio",
+              ".",
+              " ",
+              "During",
+              "the",
+              "rotation",
+              ",",
+              "answer",
+              "the",
+              "serve",
+              "."
+            ]
+          },
+          {
+            "it": "Un scacco sul tavolino è una risposta veloce.",
+            "en": "A check on the table is a quick answer.",
+            "words": [
+              "Un",
+              "scacco",
+              "sul",
+              "tavolino",
+              "è",
+              "una",
+              "risposta",
+              "veloce",
+              ".",
+              " ",
+              "A",
+              "check",
+              "on",
+              "the",
+              "table",
+              "is",
+              "a",
+              "quick",
+              "answer",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Advanced Table Tennis",
+        "desc": "Final strategies and drills",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "attacco",
+            "en": "attack",
+            "pron": "AT-ta-koh"
+          },
+          {
+            "it": "rimbalzo",
+            "en": "bounce",
+            "pron": "ri-MBAHL-zoh"
+          },
+          {
+            "it": "doppio falla",
+            "en": "double fault",
+            "pron": "DOH-pyo fah-LAH"
+          },
+          {
+            "it": "tiro corto",
+            "en": "short shot",
+            "pron": "TEE-roh KOHR-to"
+          },
+          {
+            "it": "tiro lungo",
+            "en": "long shot",
+            "pron": "TEE-roh LOONG-ho"
+          },
+          {
+            "it": "tavolino da ping-pong",
+            "en": "ping-pong table",
+            "pron": "TAH-voh-lee-noh DAH peeng-pon"
+          },
+          {
+            "it": "restituzione",
+            "en": "return",
+            "pron": "re-stih-tee-DOO-zhun"
+          },
+          {
+            "it": "tiro al volo",
+            "en": "volley",
+            "pron": "TEE-roh ah VOH-lo"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'attacco deve essere preciso per evitare il rimbalzo.",
+            "en": "The attack must be precise to avoid the bounce.",
+            "words": [
+              "L'",
+              "attacco",
+              "deve",
+              "essere",
+              "preciso",
+              "per",
+              "evitare",
+              "il",
+              "rimbalzo",
+              "."
+            ]
+          },
+          {
+            "it": "Un tiro corto può diventare un doppio falla se non è ben calcolato.",
+            "en": "A short shot can become a double fault if it's not well calculated.",
+            "words": [
+              "Un",
+              "tiro",
+              "corto",
+              "può",
+              "diventare",
+              "un",
+              "doppio",
+              "falla",
+              "se",
+              "non",
+              "è",
+              "ben",
+              "calcolato",
+              "."
+            ]
+          },
+          {
+            "it": "La rimozione di un tiro al volo richiede una buona restituzione.",
+            "en": "The removal of a volley requires a good return.",
+            "words": [
+              "La",
+              "rimozione",
+              "di",
+              "un",
+              "tiro",
+              "al",
+              "volo",
+              "richiede",
+              "una",
+              "buona",
+              "restituzione",
+              "."
+            ]
+          },
+          {
+            "it": "Un tiro lungo può essere usato per distrarre l'avversario.",
+            "en": "A long shot can be used to distract the opponent.",
+            "words": [
+              "Un",
+              "tiro",
+              "lungo",
+              "può",
+              "essere",
+              "usato",
+              "per",
+              "distrarre",
+              "l'",
+              "avversario",
+              "."
+            ]
+          },
+          {
+            "it": "Il tavolino da ping-pong è il campo di battaglia per ogni attacco.",
+            "en": "The ping-pong table is the battlefield for every attack.",
+            "words": [
+              "Il",
+              "tavolino",
+              "da",
+              "ping-pong",
+              "è",
+              "il",
+              "campo",
+              "di",
+              "battaglia",
+              "per",
+              "ogni",
+              "attacco",
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-22T12:19:22.743Z"
+  },
+  {
+    "topic": "medical & healthcare",
+    "topicEmoji": "🩺",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Medical Basics",
+        "desc": "Learn basic medical vocabulary",
+        "icon": "🩺",
+        "vocab": [
+          {
+            "it": "medico",
+            "en": "doctor",
+            "pron": "ME-dee-co"
+          },
+          {
+            "it": "farmacia",
+            "en": "pharmacy",
+            "pron": "far-MAY-kee-ah"
+          },
+          {
+            "it": "malato",
+            "en": "patient",
+            "pron": "ma-LA-to"
+          },
+          {
+            "it": "ospedale",
+            "en": "hospital",
+            "pron": "os-pe-DAL-eh"
+          },
+          {
+            "it": "malattia",
+            "en": "illness",
+            "pron": "ma-la-TCH-ia"
+          },
+          {
+            "it": "medicamento",
+            "en": "medicine",
+            "pron": "me-di-CA-men-to"
+          },
+          {
+            "it": "appuntamento",
+            "en": "appointment",
+            "pron": "a-pun-TAH-men-to"
+          },
+          {
+            "it": "infermiera",
+            "en": "nurse",
+            "pron": "in-fe-RE-mee-ah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il medico prescrive il medicamento.",
+            "en": "The doctor prescribes the medicine.",
+            "words": [
+              "IL",
+              "MEDICO",
+              "PRESCRIVE",
+              "IL",
+              "MEDICAMENTO",
+              "."
+            ]
+          },
+          {
+            "it": "Andiamo all'ospedale.",
+            "en": "We go to the hospital.",
+            "words": [
+              "AN-dee-AH-mo",
+              "AL",
+              "OS-pe-DAL-eh",
+              "."
+            ]
+          },
+          {
+            "it": "Il farmacista mi ha dato la farmacia.",
+            "en": "The pharmacist gave me the pharmacy.",
+            "words": [
+              "IL",
+              "FAR-ma-CHI-sta",
+              "MI",
+              "HA",
+              "DAT-to",
+              "LA",
+              "FAR-ma-CHI-ah",
+              "."
+            ]
+          },
+          {
+            "it": "La malattia è grave.",
+            "en": "The illness is serious.",
+            "words": [
+              "LA",
+              "MALAT-TCH-ia",
+              "E",
+              "GRAVE",
+              "."
+            ]
+          },
+          {
+            "it": "Ho un appuntamento con l'infermiera.",
+            "en": "I have an appointment with the nurse.",
+            "words": [
+              "HO",
+              "UN",
+              "AP-pun-TAH-men-to",
+              "CON",
+              "L'",
+              "IN-fe-RE-mee-ah",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Medical & Healthcare",
+        "desc": "Visit the doctor, buy medicine, and more",
+        "icon": "👩‍⚕️",
+        "vocab": [
+          {
+            "it": "farmacista",
+            "en": "pharmacist",
+            "pron": "FARMAH-kah-tee"
+          },
+          {
+            "it": "consulenza",
+            "en": "consultation",
+            "pron": "con-sul-LEN-za"
+          },
+          {
+            "it": "prescrizione",
+            "en": "prescription",
+            "pron": "pre-skriz-EE-ehn-za"
+          },
+          {
+            "it": "sintomi",
+            "en": "symptoms",
+            "pron": "sin-TOH-mee"
+          },
+          {
+            "it": "terapia",
+            "en": "therapy",
+            "pron": "teh-REE-ah-pea"
+          },
+          {
+            "it": "appuntamento medico",
+            "en": "medical appointment",
+            "pron": "ap-poon-TAHN-dohm meh-dee-KOH-ro"
+          },
+          {
+            "it": "trattamento",
+            "en": "treatment",
+            "pron": "trah-tah-RAH-mehnt"
+          },
+          {
+            "it": "ricovero",
+            "en": "admission",
+            "pron": "ree-koh-VEH-roh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Vado a farmacia per comprare il farmaco.",
+            "en": "I go to the pharmacy to buy the medicine.",
+            "words": [
+              "Vado",
+              "a",
+              "farmacia",
+              "per",
+              "comprare",
+              "il",
+              "farmaco",
+              "."
+            ]
+          },
+          {
+            "it": "Il medico prescrive una terapia.",
+            "en": "The doctor prescribes a therapy.",
+            "words": [
+              "Il",
+              "medico",
+              "prescrive",
+              "una",
+              "terapia",
+              "."
+            ]
+          },
+          {
+            "it": "Ho avuto dei sintomi di malattia.",
+            "en": "I have had symptoms of illness.",
+            "words": [
+              "Ho",
+              "avuto",
+              "dei",
+              "sintomi",
+              "di",
+              "malattia",
+              "."
+            ]
+          },
+          {
+            "it": "L'infermiera mi ha dato un appuntamento.",
+            "en": "The nurse gave me an appointment.",
+            "words": [
+              "L'",
+              "infermiera",
+              "mi",
+              "ha",
+              "dato",
+              "un",
+              "appuntamento",
+              "."
+            ]
+          },
+          {
+            "it": "Ho bisogno di ricovero all'ospedale.",
+            "en": "I need to be admitted to the hospital.",
+            "words": [
+              "Ho",
+              "bisogno",
+              "di",
+              "ricovero",
+              "all'",
+              "ospedale",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Medical Procedures",
+        "desc": "Advanced medical terms and phrases",
+        "icon": "🩺",
+        "vocab": [
+          {
+            "it": "tracheotomia",
+            "en": "tracheotomy",
+            "pron": "tra-KHEE-oh-toh-mee"
+          },
+          {
+            "it": "angiografia",
+            "en": "angiography",
+            "pron": "an-jee-oh-GRAH-fee"
+          },
+          {
+            "it": "cateterismo",
+            "en": "angioplasty",
+            "pron": "an-jee-oh-plas-tee"
+          },
+          {
+            "it": "colposcopia",
+            "en": "colposcopy",
+            "pron": "ko-lpo-SKOH-pee"
+          },
+          {
+            "it": "laparoscopia",
+            "en": "laparoscopy",
+            "pron": "lap-ar-oh-SKOH-pee"
+          },
+          {
+            "it": "endoscopia",
+            "en": "endoscopy",
+            "pron": "en-doh-SKOH-pee"
+          },
+          {
+            "it": "biopsia",
+            "en": "biopsy",
+            "pron": "BY-oh-spie"
+          },
+          {
+            "it": "terapia intensiva",
+            "en": "intensive care",
+            "pron": "in-tens-IV-uh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'operazione è stata un successo.",
+            "en": "The operation was a success.",
+            "words": [
+              "L'",
+              "operazione",
+              "è",
+              "stata",
+              "un",
+              "successo",
+              ".",
+              " "
+            ]
+          },
+          {
+            "it": "Il medico prescrisse un farmaco.",
+            "en": "The doctor prescribed a medication.",
+            "words": [
+              "Il",
+              "medico",
+              "prescrisse",
+              "un",
+              "farmaco",
+              ".",
+              " "
+            ]
+          },
+          {
+            "it": "Il paziente ha bisogno di una terapia.",
+            "en": "The patient needs a therapy.",
+            "words": [
+              "Il",
+              "paziente",
+              "ha",
+              "bisogno",
+              "di",
+              "una",
+              "terapia",
+              "."
+            ]
+          },
+          {
+            "it": "La farmacista controllò la prescrizione.",
+            "en": "The pharmacist checked the prescription.",
+            "words": [
+              "La",
+              "farmacista",
+              "controllò",
+              "la",
+              "prescrizione",
+              "."
+            ]
+          },
+          {
+            "it": "L'infermiera prese i sintomi.",
+            "en": "The nurse took the symptoms.",
+            "words": [
+              "L'",
+              "infermiera",
+              "prese",
+              "i",
+              "sintomi",
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-22T09:44:29.313Z"
+  },
+  {
+    "topic": "architecture",
+    "topicEmoji": "🏠",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "architecture basics",
+        "desc": "basic words about buildings",
+        "icon": "🏠",
+        "vocab": [
+          {
+            "it": "edificio",
+            "en": "building",
+            "pron": "E-dee-fee-ee-o"
+          },
+          {
+            "it": "chiesa",
+            "en": "church",
+            "pron": "Key-es-sa"
+          },
+          {
+            "it": "palazzo",
+            "en": "palace",
+            "pron": "Pal-azzo"
+          },
+          {
+            "it": "ponte",
+            "en": "bridge",
+            "pron": "Pon-te"
+          },
+          {
+            "it": "torre",
+            "en": "tower",
+            "pron": "Tor-re"
+          },
+          {
+            "it": "muraglia",
+            "en": "wall",
+            "pron": "Moo-ra-lya"
+          },
+          {
+            "it": "porta",
+            "en": "gate",
+            "pron": "Por-ta"
+          },
+          {
+            "it": "piazza",
+            "en": "square",
+            "pron": "Pee-a-tsa"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La chiesa è grande.",
+            "en": "The church is big.",
+            "words": [
+              "La",
+              "chiesa",
+              "è",
+              "grande",
+              "."
+            ]
+          },
+          {
+            "it": "Il palazzo ha una torre.",
+            "en": "The palace has a tower.",
+            "words": [
+              "Il",
+              "palazzo",
+              "ha",
+              "una",
+              "torre",
+              "."
+            ]
+          },
+          {
+            "it": "Sotto il ponte c'è un fiume.",
+            "en": "Under the bridge there is a river.",
+            "words": [
+              "Sotto",
+              "il",
+              "ponte",
+              "c'",
+              "è",
+              "un",
+              "fiume",
+              "."
+            ]
+          },
+          {
+            "it": "La piazza è piena di gente.",
+            "en": "The square is full of people.",
+            "words": [
+              "La",
+              "piazza",
+              "è",
+              "piena",
+              "di",
+              "gente",
+              "."
+            ]
+          },
+          {
+            "it": "Il muro è alto e lungo.",
+            "en": "The wall is tall and long.",
+            "words": [
+              "Il",
+              "muro",
+              "è",
+              "alto",
+              "e",
+              "lungo",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "architecture",
+        "desc": "Italian words for famous buildings",
+        "icon": "🏛️",
+        "vocab": [
+          {
+            "it": "edificio storico",
+            "en": "historic building",
+            "pron": "EDEEfeeEYLO stoeRREE feeLO"
+          },
+          {
+            "it": "castello",
+            "en": "castle",
+            "pron": "kaSTELlo"
+          },
+          {
+            "it": "tempio",
+            "en": "temple",
+            "pron": "TEMpyo"
+          },
+          {
+            "it": "osservatorio",
+            "en": "observatory",
+            "pron": "osservATORio"
+          },
+          {
+            "it": "teatro",
+            "en": "theater",
+            "pron": "TEATro"
+          },
+          {
+            "it": "museo",
+            "en": "museum",
+            "pron": "MOOseeo"
+          },
+          {
+            "it": "fontana",
+            "en": "fountain",
+            "pron": "fonTANNA"
+          },
+          {
+            "it": "arcata",
+            "en": "arch",
+            "pron": "ARCAta"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il castello è un edificio storico.",
+            "en": "The castle is a historic building.",
+            "words": [
+              "Il",
+              "castello",
+              "è",
+              "un",
+              "edificio",
+              "storico",
+              ".",
+              ""
+            ]
+          },
+          {
+            "it": "La chiesa vicino al palazzo è un tempio.",
+            "en": "The church near the palace is a temple.",
+            "words": [
+              "La",
+              "chiesa",
+              "vicino",
+              "al",
+              "palazzo",
+              "è",
+              "un",
+              "tempio",
+              "."
+            ]
+          },
+          {
+            "it": "Il ponte sopra la piazza è un osservatorio.",
+            "en": "The bridge over the square is an observatory.",
+            "words": [
+              "Il",
+              "ponte",
+              "sopra",
+              "la",
+              "piazza",
+              "è",
+              "un",
+              "osservatorio",
+              "."
+            ]
+          },
+          {
+            "it": "Il teatro vicino al museo è un edificio storico.",
+            "en": "The theater near the museum is a historic building.",
+            "words": [
+              "Il",
+              "teatro",
+              "vicino",
+              "al",
+              "museo",
+              "è",
+              "un",
+              "edificio",
+              "storico",
+              "."
+            ]
+          },
+          {
+            "it": "La fontana nel centro della piazza è un arcata.",
+            "en": "The fountain in the center of the square is an arch.",
+            "words": [
+              "La",
+              "fontana",
+              "nel",
+              "centro",
+              "della",
+              "piazza",
+              "è",
+              "un",
+              "arcata",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "architecture",
+        "desc": "advanced architectural terms",
+        "icon": "🏠",
+        "vocab": [
+          {
+            "it": "osservatorio",
+            "en": "observatory",
+            "pron": "oss-ER-va-TOE-ree"
+          },
+          {
+            "it": "teatro",
+            "en": "theater",
+            "pron": "TAY-ah-tro"
+          },
+          {
+            "it": "museo",
+            "en": "museum",
+            "pron": "MOO-zee-oh"
+          },
+          {
+            "it": "fontana",
+            "en": "fountain",
+            "pron": "fon-TAN-ah"
+          },
+          {
+            "it": "arcata",
+            "en": "arch",
+            "pron": "ar-KAH-tah"
+          },
+          {
+            "it": "cupola",
+            "en": "dome",
+            "pron": "COO-poh-lah"
+          },
+          {
+            "it": "loggia",
+            "en": "loggia",
+            "pron": "loh-GHEE-ah"
+          },
+          {
+            "it": "basilica",
+            "en": "basilica",
+            "pron": "bah-see-LIKH-ah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il castello ha una cupola imponente.",
+            "en": "The castle has a magnificent dome.",
+            "words": [
+              "IL",
+              "CASTELLO",
+              "HA",
+              "UNA",
+              "CUPOLA",
+              "IMPONENTE",
+              ".",
+              ""
+            ]
+          },
+          {
+            "it": "La basilica è famosa per la sua loggia.",
+            "en": "The basilica is famous for its loggia.",
+            "words": [
+              "LA",
+              "BASILICA",
+              "E",
+              "FAMOSA",
+              "PER",
+              "LA",
+              "SU",
+              "LOGGIA",
+              ".",
+              ""
+            ]
+          },
+          {
+            "it": "Il teatro ospita spettacoli teatrali e musicali.",
+            "en": "The theater hosts theatrical and musical performances.",
+            "words": [
+              "IL",
+              "TEATRO",
+              "OSPITA",
+              "SPEZZ-TA-COLI",
+              "TEATRA-LI",
+              "E",
+              "MU-SI-KAL-I",
+              ".",
+              ""
+            ]
+          },
+          {
+            "it": "Il museo contiene opere d'arte antiche e moderne.",
+            "en": "The museum contains ancient and modern artworks.",
+            "words": [
+              "IL",
+              "MU-SE-O",
+              "CONTI-NEN-TE",
+              "OPERE",
+              "D'-ARTE",
+              "AN-TI-CHE",
+              "E",
+              "MU-DO-RNE",
+              ".",
+              ""
+            ]
+          },
+          {
+            "it": "La fontana è un elemento decorativo della piazza.",
+            "en": "The fountain is a decorative element of the square.",
+            "words": [
+              "LA",
+              "FONTANA",
+              "E",
+              "UN",
+              "ELE-LE-MEN-TO",
+              "DECOR-A-TI-VO",
+              "DELLA",
+              "PIAZZA",
+              ".",
+              ""
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-21T16:28:08.468Z"
+  },
+  {
+    "topic": "yeast metabolic oscillations",
+    "topicEmoji": "🧬",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Basic Greetings",
+        "desc": "Learn simple Italian phrases",
+        "icon": "👋",
+        "vocab": [
+          {
+            "it": "ciao",
+            "en": "hello",
+            "pron": "CHAW-oh"
+          },
+          {
+            "it": "buongiorno",
+            "en": "good morning",
+            "pron": "BOO-ON-jee-OHR-no"
+          },
+          {
+            "it": "arrivederci",
+            "en": "goodbye",
+            "pron": "ar-ri-VEHR-deh-chee"
+          },
+          {
+            "it": "per favore",
+            "en": "please",
+            "pron": "PEHR feh-VAH-roh"
+          },
+          {
+            "it": "grazie",
+            "en": "thank you",
+            "pron": "GRah-zee-eh"
+          },
+          {
+            "it": "scusi",
+            "en": "excuse me",
+            "pron": "SKOO-see"
+          },
+          {
+            "it": "sì",
+            "en": "yes",
+            "pron": "see"
+          },
+          {
+            "it": "no",
+            "en": "no",
+            "pron": "noh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Ciao, come stai?",
+            "en": "Hello, how are you?",
+            "words": [
+              "CIAO",
+              ",",
+              "COME",
+              "STA",
+              "?"
+            ]
+          },
+          {
+            "it": "Buongiorno, posso aiutarti?",
+            "en": "Good morning, can I help you?",
+            "words": [
+              "BUONGIORNO",
+              ",",
+              "POS-so",
+              "AIU-tar-te",
+              "?"
+            ]
+          },
+          {
+            "it": "Grazie per la tua cortesia.",
+            "en": "Thank you for your kindness.",
+            "words": [
+              "GRATZ-ee-eh",
+              "PER",
+              "LA",
+              "TU-ah",
+              "COR-teh-see-ah",
+              "."
+            ]
+          },
+          {
+            "it": "Scusi, dove è il bagno?",
+            "en": "Excuse me, where is the bathroom?",
+            "words": [
+              "SKOO-see",
+              ",",
+              "DOH-ve",
+              "EH",
+              "IL",
+              "BAH-no",
+              "?"
+            ]
+          },
+          {
+            "it": "Sì, no.",
+            "en": "Yes, no.",
+            "words": [
+              "SI",
+              ",",
+              "NO",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Metabolic Oscillations",
+        "desc": "Learn key terms for yeast metabolism",
+        "icon": "🔬",
+        "vocab": [
+          {
+            "it": "ossillazione metabolica",
+            "en": "metabolic oscillation",
+            "pron": "ossi-LILL-a-ZEY-ta-mo-LO-ka"
+          },
+          {
+            "it": "yeast",
+            "en": "yeast",
+            "pron": "YEE-st"
+          },
+          {
+            "it": "enzima",
+            "en": "enzyme",
+            "pron": "en-ZEEM-a"
+          },
+          {
+            "it": "substrato",
+            "en": "substrate",
+            "pron": "sub-STRAT-o"
+          },
+          {
+            "it": "reazione chimica",
+            "en": "chemical reaction",
+            "pron": "ree-AZZ-zyo-NEE-ka KIM-i-ca"
+          },
+          {
+            "it": "oscillatore",
+            "en": "oscillator",
+            "pron": "os-sil-LA-to-re"
+          },
+          {
+            "it": "periodicità",
+            "en": "periodicity",
+            "pron": "per-i-DI-si-TA"
+          },
+          {
+            "it": "simulazione",
+            "en": "simulation",
+            "pron": "sim-yoo-LA-ta-zione"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'ossillazione metabolica del yeast è complessa.",
+            "en": "The metabolic oscillation of yeast is complex.",
+            "words": [
+              "L'",
+              "ossillazione",
+              "metabolica",
+              "del",
+              "yeast",
+              "è",
+              "complessa",
+              "."
+            ]
+          },
+          {
+            "it": "L'enzima catalizza la reazione chimica.",
+            "en": "The enzyme catalyzes the chemical reaction.",
+            "words": [
+              "L'",
+              "enzima",
+              "catalizza",
+              "la",
+              "reazione",
+              "chimica",
+              "."
+            ]
+          },
+          {
+            "it": "Il substrato viene convertito in prodotti.",
+            "en": "The substrate is converted into products.",
+            "words": [
+              "Il",
+              "substrato",
+              "viene",
+              "convertito",
+              "in",
+              "prodotti",
+              "."
+            ]
+          },
+          {
+            "it": "L'oscillatore regola la periodicità.",
+            "en": "The oscillator regulates the periodicity.",
+            "words": [
+              "L'",
+              "oscillatore",
+              "regola",
+              "la",
+              "periodicità",
+              "."
+            ]
+          },
+          {
+            "it": "La simulazione aiuta a comprendere le oscillazioni.",
+            "en": "The simulation helps understand the oscillations.",
+            "words": [
+              "La",
+              "simulazione",
+              "aiuta",
+              "a",
+              "comprendere",
+              "le",
+              "oscillazioni",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Oscillazioni Metaboliche",
+        "desc": "Metabolismo e oscillazioni in batteri",
+        "icon": "🔬",
+        "vocab": [
+          {
+            "it": "oscillatore metabolico",
+            "en": "metabolic oscillator",
+            "pron": "os-CIL-la-to-re met-ab-o-LET-ico"
+          },
+          {
+            "it": "periodicità metabolica",
+            "en": "metabolic periodicity",
+            "pron": "pe-ro-di-CI-ta met-ab-o-LET-ica"
+          },
+          {
+            "it": "enzima catalitico",
+            "en": "catalytic enzyme",
+            "pron": "en-ZIMA ca-la-TI-ti-co"
+          },
+          {
+            "it": "substrato specifico",
+            "en": "specific substrate",
+            "pron": "su-STRAT-to spes-i-fi-CO"
+          },
+          {
+            "it": "simulazione numerica",
+            "en": "numerical simulation",
+            "pron": "sim-yu-la-ZI-zione nu-MER-i-cal-e"
+          },
+          {
+            "it": "oscillazione chimica",
+            "en": "chemical oscillation",
+            "pron": "os-sil-la-ZI-o-ne kim-i-cal-e"
+          },
+          {
+            "it": "reazione auto-catalitica",
+            "en": "auto-catalytic reaction",
+            "pron": "re-a-ZI-o-ne au-to-ca-la-TI-ti-ca"
+          },
+          {
+            "it": "batterio modello",
+            "en": "model bacterium",
+            "pron": "bat-te-RI-o mo-del-lo"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'enzima catalitico regola l'oscillazione chimica.",
+            "en": "The catalytic enzyme regulates the chemical oscillation.",
+            "words": [
+              "L'",
+              "enzima",
+              "catalitico",
+              "regola",
+              "l'",
+              "oscillazione",
+              "chimica",
+              "."
+            ]
+          },
+          {
+            "it": "La periodicità metabolica è influenzata dal substrato specifico.",
+            "en": "Metabolic periodicity is influenced by the specific substrate.",
+            "words": [
+              "La",
+              "periodicità",
+              "metabolica",
+              "è",
+              "influenzata",
+              "dal",
+              "substrato",
+              "specifico",
+              "."
+            ]
+          },
+          {
+            "it": "La simulazione numerica mostra oscillazioni in batterio modello.",
+            "en": "The numerical simulation shows oscillations in the model bacterium.",
+            "words": [
+              "La",
+              "simulazione",
+              "numerica",
+              "mostra",
+              "oscillazioni",
+              "in",
+              "batterio",
+              "modello",
+              "."
+            ]
+          },
+          {
+            "it": "Oscillatore metabolico e reazione auto-catalitica sono intimamente legati.",
+            "en": "Metabolic oscillator and auto-catalytic reaction are intimately linked.",
+            "words": [
+              "Oscillatore",
+              "metabolico",
+              "e",
+              "reazione",
+              "auto-catalitica",
+              "sono",
+              "intimamente",
+              "legati",
+              "."
+            ]
+          },
+          {
+            "it": "Simulazione numerica e osservazioni sperimentali confermano l'oscillazione chimica.",
+            "en": "Numerical simulation and experimental observations confirm the chemical oscillation.",
+            "words": [
+              "Simulazione",
+              "numerica",
+              "e",
+              "osservazioni",
+              "sperimentali",
+              "confermano",
+              "l'",
+              "oscillazione",
+              "chimica",
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-21T15:47:05.064Z"
+  },
+  {
+    "topic": "neuroscience",
+    "topicEmoji": "🧠",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Neuroscience Basics",
+        "desc": "Simple words about the brain",
+        "icon": "🧠",
+        "vocab": [
+          {
+            "it": "cervello",
+            "en": "brain",
+            "pron": "CER-vel-lo"
+          },
+          {
+            "it": "neurologia",
+            "en": "neurology",
+            "pron": "ne-ro-lo-GIA"
+          },
+          {
+            "it": "neurone",
+            "en": "neuron",
+            "pron": "NE-ro-ne"
+          },
+          {
+            "it": "sinapsi",
+            "en": "synapse",
+            "pron": "si-NAP-si"
+          },
+          {
+            "it": "stimolare",
+            "en": "stimulate",
+            "pron": "STIM-o-la-re"
+          },
+          {
+            "it": "funzione",
+            "en": "function",
+            "pron": "fun-ZI-o-ne"
+          },
+          {
+            "it": "ricerca",
+            "en": "research",
+            "pron": "ri-KEHR-tsa"
+          },
+          {
+            "it": "neuroscienze",
+            "en": "neuroscience",
+            "pron": "ne-ro-scheyn-ZEES"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il cervello è importante.",
+            "en": "The brain is important.",
+            "words": [
+              "IL",
+              "cervello",
+              "È",
+              "IMPORTANTE",
+              "."
+            ]
+          },
+          {
+            "it": "La neurologia studia il cervello.",
+            "en": "Neurology studies the brain.",
+            "words": [
+              "LA",
+              "neurologia",
+              "STUDIA",
+              "IL",
+              "cervello",
+              "."
+            ]
+          },
+          {
+            "it": "I neuroni sono piccole cellule.",
+            "en": "Neurons are small cells.",
+            "words": [
+              "I",
+              "neuroni",
+              "SONO",
+              "PICCOLE",
+              "CELLULE",
+              "."
+            ]
+          },
+          {
+            "it": "Le sinapsi connettono i neuroni.",
+            "en": "Synapses connect neurons.",
+            "words": [
+              "LE",
+              "sinapsi",
+              "CONNETTONO",
+              "I",
+              "neuroni",
+              "."
+            ]
+          },
+          {
+            "it": "La ricerca cerca nuove informazioni.",
+            "en": "Research seeks new information.",
+            "words": [
+              "LA",
+              "ricerca",
+              "CERCA",
+              "NUOVE",
+              "INFORMAZIONI",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "neuroscience",
+        "desc": "neurons, synapses, brain, research",
+        "icon": "🧠",
+        "vocab": [
+          {
+            "it": "neurona",
+            "en": "neuron",
+            "pron": "NOOR-on-ah"
+          },
+          {
+            "it": "sinapsi",
+            "en": "synapse",
+            "pron": "sin-AP-psee"
+          },
+          {
+            "it": "funzionalità",
+            "en": "functionality",
+            "pron": "fun-ZHI-nah-LAH-chee-ah"
+          },
+          {
+            "it": "stimolazione",
+            "en": "stimulation",
+            "pron": "stim-oh-LAY-zah-tsee"
+          },
+          {
+            "it": "esperimento",
+            "en": "experiment",
+            "pron": "es-PEHR-ment-oh"
+          },
+          {
+            "it": "ricerca",
+            "en": "research",
+            "pron": "ree-CHER-kah"
+          },
+          {
+            "it": "neuroscienziato",
+            "en": "neuroscientist",
+            "pron": "neu-ro-schayn-tsee-AH-toh"
+          },
+          {
+            "it": "comunicazione",
+            "en": "communication",
+            "pron": "ku-mu-nee-KAH-chee-oh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Neuroni comunicano attraverso sinapsi.",
+            "en": "Neurons communicate through synapses.",
+            "words": [
+              "Neuroni",
+              "comunicano",
+              "attraverso",
+              "sinapsi",
+              "."
+            ]
+          },
+          {
+            "it": "La neurologia studia le funzioni del cervello.",
+            "en": "Neurology studies the functions of the brain.",
+            "words": [
+              "La",
+              "neurologia",
+              "studia",
+              "le",
+              "funzioni",
+              "del",
+              "cervello",
+              "."
+            ]
+          },
+          {
+            "it": "Stimolazione elettrica può migliorare la funzionalità.",
+            "en": "Electrical stimulation can improve functionality.",
+            "words": [
+              "Stimolazione",
+              "elettrica",
+              "può",
+              "migliorare",
+              "la",
+              "funzionalità",
+              "."
+            ]
+          },
+          {
+            "it": "Un neuroscienziato esegue esperimenti per capire meglio.",
+            "en": "A neuroscientist performs experiments to understand better.",
+            "words": [
+              "Un",
+              "neuroscienziato",
+              "esegue",
+              "esperimenti",
+              "per",
+              "capire",
+              "meglio",
+              "."
+            ]
+          },
+          {
+            "it": "La ricerca in neuroscienze è sempre in evoluzione.",
+            "en": "Research in neuroscience is always evolving.",
+            "words": [
+              "La",
+              "ricerca",
+              "in",
+              "neuroscienze",
+              "è",
+              "sempre",
+              "in",
+              "evoluzione",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Neuroscience",
+        "desc": "Advanced vocabulary in neuroscience",
+        "icon": "🧠",
+        "vocab": [
+          {
+            "it": "neuroscienziato",
+            "en": "neuroscientist",
+            "pron": "neuro-sci-en-ti-a-to"
+          },
+          {
+            "it": "comunicazione",
+            "en": "communication",
+            "pron": "ku-mu-ni-ca-zio-ne"
+          },
+          {
+            "it": "funzionalità",
+            "en": "functionality",
+            "pron": "fun-zio-na-li-ta"
+          },
+          {
+            "it": "stimolazione",
+            "en": "stimulation",
+            "pron": "sti-mo-la-zio-ne"
+          },
+          {
+            "it": "esperimento",
+            "en": "experiment",
+            "pron": "es-pe-ri-men-to"
+          },
+          {
+            "it": "neurotrasmettore",
+            "en": "neurotransmitter",
+            "pron": "neuro-tras-met-to-re"
+          },
+          {
+            "it": "plasticità",
+            "en": "plasticity",
+            "pron": "pla-sti-ci-ta"
+          },
+          {
+            "it": "connessione",
+            "en": "connection",
+            "pron": "con-ne-zio-ne"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il neuroscienziato esplora le funzionalità del cervello.",
+            "en": "The neuroscientist explores the functionality of the brain.",
+            "words": [
+              "Il",
+              "neuroscienziato",
+              "esplora",
+              "le",
+              "funzionalità",
+              "del",
+              "cervello",
+              "."
+            ]
+          },
+          {
+            "it": "La stimolazione può migliorare la comunicazione tra neuroni.",
+            "en": "Stimulation can improve communication between neurons.",
+            "words": [
+              "La",
+              "stimolazione",
+              "può",
+              "migliorare",
+              "la",
+              "comunicazione",
+              "tra",
+              "neuroni",
+              "."
+            ]
+          },
+          {
+            "it": "L'esperimento dimostra la plasticità del cervello.",
+            "en": "The experiment demonstrates the plasticity of the brain.",
+            "words": [
+              "L'esperimento",
+              "dimostra",
+              "la",
+              "plasticità",
+              "del",
+              "cervello",
+              "."
+            ]
+          },
+          {
+            "it": "Le sinapsi sono fondamentali per la funzione del cervello.",
+            "en": "Synapses are fundamental for brain function.",
+            "words": [
+              "Le",
+              "sinapsi",
+              "sono",
+              "fondamentali",
+              "per",
+              "la",
+              "funzione",
+              "del",
+              "cervello",
+              "."
+            ]
+          },
+          {
+            "it": "La neurotrasmissione è cruciale per la comunicazione tra neuroni.",
+            "en": "Neurotransmission is crucial for communication between neurons.",
+            "words": [
+              "La",
+              "neurotrasmissione",
+              "è",
+              "cruciale",
+              "per",
+              "la",
+              "comunicazione",
+              "tra",
+              "neuroni",
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-21T14:58:59.701Z"
+  },
+  {
+    "topic": "modern art",
+    "topicEmoji": "🎨",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Modern Art",
+        "desc": "Basics of modern art vocabulary",
+        "icon": "🎨",
+        "vocab": [
+          {
+            "it": "arte moderna",
+            "en": "modern art",
+            "pron": "AR-tee mo-RAN-da"
+          },
+          {
+            "it": "pittura",
+            "en": "painting",
+            "pron": "pee-TU-ra"
+          },
+          {
+            "it": "scultura",
+            "en": "sculpture",
+            "pron": "skul-TOO-ra"
+          },
+          {
+            "it": "installazione",
+            "en": "installation",
+            "pron": "in-stal-LA-tsoo-ne"
+          },
+          {
+            "it": "performance",
+            "en": "performance",
+            "pron": "per-FORM-ahns"
+          },
+          {
+            "it": "abstracto",
+            "en": "abstract",
+            "pron": "ab-strak-to"
+          },
+          {
+            "it": "concreto",
+            "en": "concrete",
+            "pron": "kon-kret-to"
+          },
+          {
+            "it": "espressionismo",
+            "en": "expressionism",
+            "pron": "es-pres-soo-RIZ-mo"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'arte moderna è molto diversa.",
+            "en": "Modern art is very different.",
+            "words": [
+              "L'",
+              "'arte','modern",
+              "a",
+              "è",
+              "molto",
+              "divers",
+              "a",
+              "."
+            ]
+          },
+          {
+            "it": "La pittura è un'arte visiva.",
+            "en": "Painting is a visual art.",
+            "words": [
+              "La",
+              "pittura",
+              "è",
+              "un'",
+              "arte",
+              "vis",
+              "i",
+              "va",
+              "."
+            ]
+          },
+          {
+            "it": "La scultura può essere astratta.",
+            "en": "Sculpture can be abstract.",
+            "words": [
+              "La",
+              "scultura",
+              "può",
+              "essere",
+              "astratta",
+              "."
+            ]
+          },
+          {
+            "it": "L'installazione è un'arte spaziale.",
+            "en": "Installation is a spatial art.",
+            "words": [
+              "L'",
+              "installazione",
+              "è",
+              "un'",
+              "arte",
+              "spa-ziale",
+              "."
+            ]
+          },
+          {
+            "it": "La performance è un'arte temporale.",
+            "en": "Performance is a temporal art.",
+            "words": [
+              "La",
+              "performance",
+              "è",
+              "un'",
+              "arte",
+              "tem-po-ra-le",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Modern Art",
+        "desc": "Explore modern art forms and concepts",
+        "icon": "🎨",
+        "vocab": [
+          {
+            "it": "installazione",
+            "en": "installation",
+            "pron": "in-sta-la-zion"
+          },
+          {
+            "it": "performance",
+            "en": "performance",
+            "pron": "per-fur-ma-nce"
+          },
+          {
+            "it": "abstracto",
+            "en": "abstract",
+            "pron": "ab-strak-to"
+          },
+          {
+            "it": "concreto",
+            "en": "concrete",
+            "pron": "kon-kret-to"
+          },
+          {
+            "it": "espressionismo",
+            "en": "expressionism",
+            "pron": "es-pre-zsh-iz-mo"
+          },
+          {
+            "it": "arte contemporanea",
+            "en": "contemporary art",
+            "pron": "ar-te con-ta-mer-ta-ne-a"
+          },
+          {
+            "it": "arte concettuale",
+            "en": "conceptual art",
+            "pron": "ar-te con-cep-tu-al-e"
+          },
+          {
+            "it": "arte astratta",
+            "en": "abstract art",
+            "pron": "ar-te as-trak-to"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'arte astratta è molto controversa.",
+            "en": "Abstract art is very controversial.",
+            "words": [
+              "L'",
+              "'",
+              "'arte",
+              "astratta",
+              "è",
+              "molto",
+              "controversa",
+              "."
+            ]
+          },
+          {
+            "it": "La performance è un'arte visiva.",
+            "en": "Performance is a visual art.",
+            "words": [
+              "La",
+              "performance",
+              "è",
+              "un'",
+              "'",
+              "'arte",
+              "visiva",
+              "."
+            ]
+          },
+          {
+            "it": "L'espressionismo è tipico del primo Novecento.",
+            "en": "Expressionism is typical of the early 20th century.",
+            "words": [
+              "L'",
+              "'",
+              "'espressionismo",
+              "è",
+              "tipico",
+              "del",
+              "primo",
+              "Novecento",
+              "."
+            ]
+          },
+          {
+            "it": "L'arte concettuale si concentra sul concetto.",
+            "en": "Conceptual art focuses on the concept.",
+            "words": [
+              "L'",
+              "'",
+              "'arte",
+              "concettuale",
+              "si",
+              "concentra",
+              "sul",
+              "concetto",
+              "."
+            ]
+          },
+          {
+            "it": "L'arte contemporanea include molte forme.",
+            "en": "Contemporary art includes many forms.",
+            "words": [
+              "L'",
+              "'",
+              "'arte",
+              "contemporanea",
+              "include",
+              "molte",
+              "forme",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Modern Art",
+        "desc": "Explore contemporary art forms and movements",
+        "icon": "🎨",
+        "vocab": [
+          {
+            "it": "arte contemporanea",
+            "en": "contemporary art",
+            "pron": "AR-te con-temp-or-a-NE-a"
+          },
+          {
+            "it": "arte concettuale",
+            "en": "conceptual art",
+            "pron": "AR-te con-cep-tu-a-LE"
+          },
+          {
+            "it": "arte astratta",
+            "en": "abstract art",
+            "pron": "AR-te as-tra-DA"
+          },
+          {
+            "it": "realismo critico",
+            "en": "critical realism",
+            "pron": "re-a-Li-smo cri-TI-cal"
+          },
+          {
+            "it": "minimalismo",
+            "en": "minimalism",
+            "pron": "mi-ni-MAL-i-smo"
+          },
+          {
+            "it": "pop art",
+            "en": "pop art",
+            "pron": "POP art"
+          },
+          {
+            "it": "street art",
+            "en": "street art",
+            "pron": "STREET art"
+          },
+          {
+            "it": "hyperrealismo",
+            "en": "hyperrealism",
+            "pron": "hi-PER-re-a-LI-smo"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'arte astratta è molto popolare.",
+            "en": "Abstract art is very popular.",
+            "words": [
+              "L'",
+              "arte",
+              "astratta",
+              "è",
+              "molto",
+              "popolare",
+              "."
+            ]
+          },
+          {
+            "it": "Il realismo critico critica la società.",
+            "en": "Critical realism criticizes society.",
+            "words": [
+              "Il",
+              "realismo",
+              "critico",
+              "critica",
+              "la",
+              "società",
+              "."
+            ]
+          },
+          {
+            "it": "Il minimalismo usa pochi elementi.",
+            "en": "Minimalism uses few elements.",
+            "words": [
+              "Il",
+              "minimalismo",
+              "usa",
+              "pochi",
+              "elementi",
+              "."
+            ]
+          },
+          {
+            "it": "Il pop art si ispira alla cultura pop.",
+            "en": "Pop art is inspired by pop culture.",
+            "words": [
+              "Il",
+              "pop",
+              "art",
+              "si",
+              "ispira",
+              "alla",
+              "cultura",
+              "pop",
+              "."
+            ]
+          },
+          {
+            "it": "Il street art si trova nelle strade.",
+            "en": "Street art can be found in the streets.",
+            "words": [
+              "Il",
+              "street",
+              "art",
+              "si",
+              "trova",
+              "nelle",
+              "strade",
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-21T12:58:30.681Z"
+  },
+  {
+    "topic": "research grant proposals",
+    "topicEmoji": "🔍",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Basics of Grant Proposals",
+        "desc": "Introduzione alle proposte di finanziamento",
+        "icon": "💰",
+        "vocab": [
+          {
+            "it": "ricerca",
+            "en": "research",
+            "pron": "REH-serch"
+          },
+          {
+            "it": "progetto",
+            "en": "project",
+            "pron": "PROH-jeht"
+          },
+          {
+            "it": "obiettivo",
+            "en": "objective",
+            "pron": "oh-BYET-tivo"
+          },
+          {
+            "it": "metodologia",
+            "en": "methodology",
+            "pron": "me-toh-doh-LAH-jo-lee-uh"
+          },
+          {
+            "it": "risorse",
+            "en": "resources",
+            "pron": "ree-SORHZ"
+          },
+          {
+            "it": "previsioni",
+            "en": "projections",
+            "pron": "preh-vee-ZHEE-nee"
+          },
+          {
+            "it": "valutazione",
+            "en": "evaluation",
+            "pron": "val-you-TAH-zhee-oh"
+          },
+          {
+            "it": "finanziamento",
+            "en": "funding",
+            "pron": "fin-AN-zih-muhnt"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Scrivi un progetto.",
+            "en": "Write a project.",
+            "words": [
+              "Scrivi",
+              "un",
+              "progetto",
+              "."
+            ]
+          },
+          {
+            "it": "Definisci gli obiettivi.",
+            "en": "Define the objectives.",
+            "words": [
+              "Definisci",
+              "gli",
+              "obiettivi",
+              "."
+            ]
+          },
+          {
+            "it": "Elabora la metodologia.",
+            "en": "Develop the methodology.",
+            "words": [
+              "Elabora",
+              "la",
+              "metodologia",
+              "."
+            ]
+          },
+          {
+            "it": "Descrivi le risorse.",
+            "en": "Describe the resources.",
+            "words": [
+              "Descrivi",
+              "le",
+              "risorse",
+              "."
+            ]
+          },
+          {
+            "it": "Fornisci previsioni.",
+            "en": "Provide projections.",
+            "words": [
+              "Fornisci",
+              "previsioni",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Intermediate Grant Proposal Phrases",
+        "desc": "Frasi avanzate per le proposte di finanziamento",
+        "icon": "📝",
+        "vocab": [
+          {
+            "it": "innovazione",
+            "en": "innovation",
+            "pron": "in-NOH-vay-shun"
+          },
+          {
+            "it": "collaborazione",
+            "en": "collaboration",
+            "pron": "kol-uh-BOR-ay-see-ohn"
+          },
+          {
+            "it": "sostenibilità",
+            "en": "sustainability",
+            "pron": "suh-stuh-NEE-tih-bil-i-tee"
+          },
+          {
+            "it": "cooperazione",
+            "en": "cooperation",
+            "pron": "kuh-uh-PER-ay-see-ohn"
+          },
+          {
+            "it": "partecipazione",
+            "en": "participation",
+            "pron": "pahr-tuh-see-PAY-see-ohn"
+          },
+          {
+            "it": "competitività",
+            "en": "competitiveness",
+            "pron": "kuhm-puh-tee-TIH-vih-tee"
+          },
+          {
+            "it": "efficienza",
+            "en": "efficiency",
+            "pron": "eh-fih-SIH-uhn-see"
+          },
+          {
+            "it": "transparenza",
+            "en": "transparency",
+            "pron": "truh-SPER-uh-nee-uh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Promuovi l'innovazione.",
+            "en": "Promote innovation.",
+            "words": [
+              "Promuovi",
+              "l'innovazione",
+              "."
+            ]
+          },
+          {
+            "it": "Rafforzate la collaborazione.",
+            "en": "Strengthen the collaboration.",
+            "words": [
+              "Rafforzate",
+              "la",
+              "collaborazione",
+              "."
+            ]
+          },
+          {
+            "it": "Migliorate la sostenibilità.",
+            "en": "Improve sustainability.",
+            "words": [
+              "Migliorate",
+              "la",
+              "sostenibilità",
+              "."
+            ]
+          },
+          {
+            "it": "Favorite la cooperazione.",
+            "en": "Foster cooperation.",
+            "words": [
+              "Favorite",
+              "la",
+              "cooperazione",
+              "."
+            ]
+          },
+          {
+            "it": "Aumentate la partecipazione.",
+            "en": "Increase participation.",
+            "words": [
+              "Aumentate",
+              "la",
+              "partecipazione",
+              "."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Advanced Grant Proposal Phrases",
+        "desc": "Frasi specifiche per le proposte di finanziamento",
+        "icon": "🔍",
+        "vocab": [
+          {
+            "it": "validità",
+            "en": "validity",
+            "pron": "vuh-LIH-dee-tee"
+          },
+          {
+            "it": "relevanza",
+            "en": "relevance",
+            "pron": "rih-LEH-vuh-nee"
+          },
+          {
+            "it": "consistenza",
+            "en": "consistency",
+            "pron": "kuhn-see-STEN-shee-uh"
+          },
+          {
+            "it": "coerenza",
+            "en": "coherence",
+            "pron": "kuh-uh-REN-suh"
+          },
+          {
+            "it": "efficacia",
+            "en": "effectiveness",
+            "pron": "ef-uh-KAY-shee-uh"
+          },
+          {
+            "it": "efficienza",
+            "en": "efficiency",
+            "pron": "eh-fih-SIH-uhn-see"
+          },
+          {
+            "it": "valutazione",
+            "en": "evaluation",
+            "pron": "val-you-TAH-zhee-oh"
+          },
+          {
+            "it": "previsione",
+            "en": "projection",
+            "pron": "preh-vee-ZHEE-nee"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Dimostra la validità.",
+            "en": "Demonstrate validity.",
+            "words": [
+              "Dimostra",
+              "la",
+              "validità",
+              "."
+            ]
+          },
+          {
+            "it": "Ricorda la relevanza.",
+            "en": "Remind of relevance.",
+            "words": [
+              "Ricorda",
+              "la",
+              "relevanza",
+              "."
+            ]
+          },
+          {
+            "it": "Assicura la consistenza.",
+            "en": "Ensure consistency.",
+            "words": [
+              "Assicura",
+              "la",
+              "consistenza",
+              "."
+            ]
+          },
+          {
+            "it": "Mantieni la coerenza.",
+            "en": "Maintain coherence.",
+            "words": [
+              "Mantieni",
+              "la",
+              "coerenza",
+              "."
+            ]
+          },
+          {
+            "it": "Valuta l'efficacia.",
+            "en": "Evaluate effectiveness.",
+            "words": [
+              "Valuta",
+              "l'efficacia",
+              "."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-21T11:43:08.476Z"
+  },
+  {
+    "topic": "Italian cooking & recipes",
+    "topicEmoji": "🍝",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Basics of Italian Cooking",
+        "desc": "Simple ingredients and techniques",
+        "icon": "👩‍🍳",
+        "vocab": [
+          {
+            "it": "farina",
+            "en": "flour",
+            "pron": "FA-ree-nah"
+          },
+          {
+            "it": "sale",
+            "en": "salt",
+            "pron": "SAH-lee"
+          },
+          {
+            "it": "olio",
+            "en": "oil",
+            "pron": "OH-lee-yo"
+          },
+          {
+            "it": "acqua",
+            "en": "water",
+            "pron": "AH-kwah"
+          },
+          {
+            "it": "padella",
+            "en": "pan",
+            "pron": "PAH-deh-lah"
+          },
+          {
+            "it": "forchette",
+            "en": "fork",
+            "pron": "FOR-chet-tah"
+          },
+          {
+            "it": "spatola",
+            "en": "spatula",
+            "pron": "spa-TOH-lah"
+          },
+          {
+            "it": "tavola",
+            "en": "table",
+            "pron": "TAH-voh-lah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Metti sale nell'acqua.",
+            "en": "Put salt in the water.",
+            "words": [
+              "Metti",
+              "sale",
+              "nell'acqua"
+            ]
+          },
+          {
+            "it": "Friggi l'aglio in olio.",
+            "en": "Fry the garlic in oil.",
+            "words": [
+              "Friggi",
+              "l'aglio",
+              "in",
+              "olio"
+            ]
+          },
+          {
+            "it": "Spezzetta la carne.",
+            "en": "Slice the meat.",
+            "words": [
+              "Spezzetta",
+              "la",
+              "carne"
+            ]
+          },
+          {
+            "it": "Porta il vino al tavolo.",
+            "en": "Bring the wine to the table.",
+            "words": [
+              "Porta",
+              "il",
+              "vino",
+              "al",
+              "tavolo"
+            ]
+          },
+          {
+            "it": "Sovrappuoi la pasta.",
+            "en": "Layer the pasta.",
+            "words": [
+              "Sovrappuoi",
+              "la",
+              "pasta"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Intermediate Italian Cooking Phrases",
+        "desc": "More complex phrases for cooking",
+        "icon": "🔥",
+        "vocab": [
+          {
+            "it": "sugo",
+            "en": "sauce",
+            "pron": "SOO-joh"
+          },
+          {
+            "it": "riso",
+            "en": "rice",
+            "pron": "REE-so"
+          },
+          {
+            "it": "panna",
+            "en": "cream",
+            "pron": "PAHN-nah"
+          },
+          {
+            "it": "sugo di pomodoro",
+            "en": "tomato sauce",
+            "pron": "SOO-joh dee POH-moh-doh-roh"
+          },
+          {
+            "it": "zucchero",
+            "en": "sugar",
+            "pron": "zoo-CHEH-roh"
+          },
+          {
+            "it": "sale grosso",
+            "en": "coarse salt",
+            "pron": "SAH-lee groh-soh"
+          },
+          {
+            "it": "sugo al pomodoro",
+            "en": "tomato sauce",
+            "pron": "SOO-joh al POH-moh-doh-roh"
+          },
+          {
+            "it": "risotto",
+            "en": "risotto",
+            "pron": "ree-SOH-toh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Sovrappuoi il sugo.",
+            "en": "Layer the sauce.",
+            "words": [
+              "Sovrappuoi",
+              "il",
+              "sugo"
+            ]
+          },
+          {
+            "it": "Mescola il riso con il sugo.",
+            "en": "Stir the rice with the sauce.",
+            "words": [
+              "Mescola",
+              "il",
+              "riso",
+              "con",
+              "il",
+              "sugo"
+            ]
+          },
+          {
+            "it": "Aggiungi la panna al sugo.",
+            "en": "Add cream to the sauce.",
+            "words": [
+              "Aggiungi",
+              "la",
+              "panna",
+              "al",
+              "sugo"
+            ]
+          },
+          {
+            "it": "Sovrappuoi il risotto.",
+            "en": "Layer the risotto.",
+            "words": [
+              "Sovrappuoi",
+              "il",
+              "risotto"
+            ]
+          },
+          {
+            "it": "Sovrappuoi il risotto con il sugo.",
+            "en": "Layer the risotto with the sauce.",
+            "words": [
+              "Sovrappuoi",
+              "il",
+              "risotto",
+              "con",
+              "il",
+              "sugo"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Advanced Italian Cooking Techniques",
+        "desc": "Specialized cooking techniques",
+        "icon": "👩‍🍳🔥",
+        "vocab": [
+          {
+            "it": "tagliatelle",
+            "en": "tagliatelle",
+            "pron": "tah-lee-AH-tel-le"
+          },
+          {
+            "it": "burrata",
+            "en": "burrata",
+            "pron": "boor-RAH-tah"
+          },
+          {
+            "it": "parmigiano reggiano",
+            "en": "parmesan cheese",
+            "pron": "par-mee-JEY-noh reh-JAH-noh"
+          },
+          {
+            "it": "risotto al tartufo",
+            "en": "truffle risotto",
+            "pron": "ree-SOH-toh al tar-TOO-foh"
+          },
+          {
+            "it": "besciamella",
+            "en": "béchamel sauce",
+            "pron": "be-shee-ah-MEL-lah"
+          },
+          {
+            "it": "risotto al ragù",
+            "en": "ragù risotto",
+            "pron": "ree-SOH-toh al rah-GOO"
+          },
+          {
+            "it": "tagliere",
+            "en": "cheese board",
+            "pron": "tah-lee-YEH-reh"
+          },
+          {
+            "it": "burrata al tartufo",
+            "en": "truffle burrata",
+            "pron": "boor-RAH-tah al tar-TOO-foh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Taglia i funghi.",
+            "en": "Slice the mushrooms.",
+            "words": [
+              "Taglia",
+              "i",
+              "funghi"
+            ]
+          },
+          {
+            "it": "Sovrappuoi la besciamella.",
+            "en": "Layer the béchamel sauce.",
+            "words": [
+              "Sovrappuoi",
+              "la",
+              "besciamella"
+            ]
+          },
+          {
+            "it": "Sovrappuoi la burrata.",
+            "en": "Layer the burrata.",
+            "words": [
+              "Sovrappuoi",
+              "la",
+              "burrata"
+            ]
+          },
+          {
+            "it": "Sovrappuoi il tagliere.",
+            "en": "Layer the cheese board.",
+            "words": [
+              "Sovrappuoi",
+              "il",
+              "tagliere"
+            ]
+          },
+          {
+            "it": "Sovrappuoi la burrata al tartufo.",
+            "en": "Layer the truffle burrata.",
+            "words": [
+              "Sovrappuoi",
+              "la",
+              "burrata",
+              "al",
+              "tartufo"
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-21T10:28:55.222Z"
+  },
+  {
+    "topic": "business & negotiations",
+    "topicEmoji": "🤝",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Basics of Business",
+        "desc": "Introductions and greetings",
+        "icon": "🤝",
+        "vocab": [
+          {
+            "it": "buongiorno",
+            "en": "good morning",
+            "pron": "BOO-ong-je-ro"
+          },
+          {
+            "it": "salve",
+            "en": "hello",
+            "pron": "SAL-vay"
+          },
+          {
+            "it": "signore",
+            "en": "sir",
+            "pron": "see-GOR-ray"
+          },
+          {
+            "it": "donna",
+            "en": "lady",
+            "pron": "DOH-nah"
+          },
+          {
+            "it": "signora",
+            "en": "madam",
+            "pron": "see-GOR-rah"
+          },
+          {
+            "it": "signorina",
+            "en": "miss",
+            "pron": "see-GOR-ree-nah"
+          },
+          {
+            "it": "affari",
+            "en": "business",
+            "pron": "ahf-FAH-ree"
+          },
+          {
+            "it": "negoziare",
+            "en": "to negotiate",
+            "pron": "neh-goh-tsee-AH-re"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Buongiorno, signore.",
+            "en": "Good morning, sir."
+          },
+          {
+            "it": "Salve, signora.",
+            "en": "Hello, madam."
+          },
+          {
+            "it": "Signorina, affari?",
+            "en": "Miss, business?"
+          },
+          {
+            "it": "Negoziare è importante.",
+            "en": "Negotiating is important."
+          },
+          {
+            "it": "Affari sono importanti.",
+            "en": "Business is important."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Intermediate Phrases",
+        "desc": "Offering and accepting terms",
+        "icon": "🤝",
+        "vocab": [
+          {
+            "it": "accettare",
+            "en": "to accept",
+            "pron": "ah-keh-TAY-re"
+          },
+          {
+            "it": "negoziare con",
+            "en": "to negotiate with",
+            "pron": "neh-goh-tsee-AH-re con"
+          },
+          {
+            "it": "condizioni",
+            "en": "conditions",
+            "pron": "con-dih-TEE-oh-nees"
+          },
+          {
+            "it": "negoziare a mente aperta",
+            "en": "to negotiate with an open mind",
+            "pron": "neh-goh-tsee-AH-re ah MENT-eh ah-PEH-trah"
+          },
+          {
+            "it": "negoziare a cuore aperto",
+            "en": "to negotiate with an open heart",
+            "pron": "neh-goh-tsee-AH-re ah KOHR-eh ah-PEH-trah"
+          },
+          {
+            "it": "negoziare a mente fredda",
+            "en": "to negotiate with a cold mind",
+            "pron": "neh-goh-tsee-AH-re ah MENT-eh FREH-dah"
+          },
+          {
+            "it": "negoziare a cuore freddo",
+            "en": "to negotiate with a cold heart",
+            "pron": "neh-goh-tsee-AH-re ah KOHR-eh FREH-doh"
+          },
+          {
+            "it": "negoziare a mente calma",
+            "en": "to negotiate with a calm mind",
+            "pron": "neh-goh-tsee-AH-re ah MENT-eh CAH-lmah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Accettiamo le condizioni.",
+            "en": "We accept the conditions."
+          },
+          {
+            "it": "Negoziamo con mente aperta.",
+            "en": "We negotiate with an open mind."
+          },
+          {
+            "it": "Negoziamo a cuore aperto.",
+            "en": "We negotiate with an open heart."
+          },
+          {
+            "it": "Negoziamo a mente fredda.",
+            "en": "We negotiate with a cold mind."
+          },
+          {
+            "it": "Negoziamo a cuore freddo.",
+            "en": "We negotiate with a cold heart."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Advanced Negotiation Techniques",
+        "desc": "Using specific negotiation strategies",
+        "icon": "🤝",
+        "vocab": [
+          {
+            "it": "negoziare a mente fredda",
+            "en": "to negotiate with a cold mind",
+            "pron": "neh-goh-tsee-AH-re ah MENT-eh FREH-dah"
+          },
+          {
+            "it": "negoziare a cuore freddo",
+            "en": "to negotiate with a cold heart",
+            "pron": "neh-goh-tsee-AH-re ah KOHR-eh FREH-doh"
+          },
+          {
+            "it": "negoziare a mente calma",
+            "en": "to negotiate with a calm mind",
+            "pron": "neh-goh-tsee-AH-re ah MENT-eh CAH-lmah"
+          },
+          {
+            "it": "negoziare con calma",
+            "en": "to negotiate calmly",
+            "pron": "neh-goh-tsee-AH-re con CAH-lmah"
+          },
+          {
+            "it": "negoziare con convinzione",
+            "en": "to negotiate with conviction",
+            "pron": "neh-goh-tsee-AH-re con kuh-vihn-ZEHN-tsee-oh"
+          },
+          {
+            "it": "negoziare con sicurezza",
+            "en": "to negotiate with confidence",
+            "pron": "neh-goh-tsee-AH-re con see-koo-roo-ZEH-ah"
+          },
+          {
+            "it": "negoziare con determinazione",
+            "en": "to negotiate with determination",
+            "pron": "neh-goh-tsee-AH-re con deh-tur-mih-NAH-tee-oh"
+          },
+          {
+            "it": "negoziare con passione",
+            "en": "to negotiate with passion",
+            "pron": "neh-goh-tsee-AH-re con pahs-SION-eh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Negoziamo a mente calma.",
+            "en": "We negotiate calmly."
+          },
+          {
+            "it": "Negoziamo con convinzione.",
+            "en": "We negotiate with conviction."
+          },
+          {
+            "it": "Negoziamo con sicurezza.",
+            "en": "We negotiate with confidence."
+          },
+          {
+            "it": "Negoziamo con determinazione.",
+            "en": "We negotiate with determination."
+          },
+          {
+            "it": "Negoziamo con passione.",
+            "en": "We negotiate with passion."
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-21T09:52:31.149Z"
+  }
+];
+
+// localStorage: store progress and the saved-lessons list
+const LS_SAVED = 'imp_static_saved';
+
+function staticGetSaved() {
+  try { return JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); }
+  catch(_) { return []; }
+}
+function staticPutSaved(arr) {
+  localStorage.setItem(LS_SAVED, JSON.stringify(arr));
+}
+function staticUpsert(data) {
+  const arr = staticGetSaved();
+  const k = data.topic.toLowerCase();
+  const i = arr.findIndex(l => l.topic.toLowerCase() === k);
+  const entry = { ...data, generatedAt: data.generatedAt || new Date().toISOString() };
+  if (i >= 0) arr[i] = entry; else arr.unshift(entry);
+  staticPutSaved(arr);
+}
+
+// Seed built-in lessons into localStorage on first visit
+(function seedBuiltins() {
+  const existing = staticGetSaved().map(l => l.topic.toLowerCase());
+  for (const l of STATIC_LESSONS) {
+    if (!existing.includes(l.topic.toLowerCase())) {
+      staticUpsert(l);
+    }
+  }
+})();
+
+// ── Routing ───────────────────────────────────────────────────────────
+async function init() {
+  APP.info = { backend: 'none', canGenerate: false };
+  renderPill();
+  loadSavedList();
+}
+
+function renderPill() {
+  const pill = document.getElementById('bpill');
+  const lbl  = document.getElementById('blbl');
+  document.getElementById('bmodel').textContent = '';
+  pill.className = 'bpill none';
+  lbl.textContent = 'Static — built-in lessons only';
+  document.getElementById('gen-btn').disabled = true;
+  document.getElementById('topic-input').disabled = true;
+  const note = document.getElementById('offline-note');
+  note.style.display = 'block';
+  note.textContent = '📦 Static version — select a topic below to start';
+}
+
+async function loadSavedList() {
+  const saved = staticGetSaved();
+  document.getElementById('lib-cnt').textContent =
+    saved.length + ' topic' + (saved.length !== 1 ? 's' : '');
+  const list = document.getElementById('saved-list');
+  if (!saved.length) {
+    list.innerHTML = '<div class="lib-empty">No lessons available.</div>';
+    return;
+  }
+  list.innerHTML = saved.map(s => {
+    const count = s.lessons ? s.lessons.length : 0;
+    const t = encodeURIComponent(s.topic);
+    return `<div class="saved-item" onclick="loadSaved('${t}')">
+      <span class="saved-emoji">${s.topicEmoji || '📚'}</span>
+      <div class="saved-info">
+        <div class="saved-topic">${s.topic}</div>
+        <div class="saved-meta">${count} lesson${count !== 1 ? 's' : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadSaved(topic) {
+  const dec = decodeURIComponent(topic);
+  const found = staticGetSaved().find(l => l.topic.toLowerCase() === dec.toLowerCase());
+  if (!found) { alert('Lesson not found.'); return; }
+  APP.lessonData = found;
+  goHome();
+}
+
+// Disabled in static mode
+async function deleteSaved()  {}
+async function regenSaved()   {}
+function  regenCurrent()      {}
+async function doGenerate()   {}
+function  setTopic(t) {
+  document.getElementById('topic-input').value = t;
+}
+
+function shuffle(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
+function pick(arr,n){ return shuffle(arr).slice(0,n); }
+
+function buildExercises(lessonIdx){
+  const d=APP.lessonData, lesson=d.lessons[lessonIdx];
+  const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
+  const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
+  const tv=lesson.vocab, ts=lesson.sentences;
+  const fb=['This is incorrect.','Another wrong answer.','Not the right translation.'];
+
+  function wV(c,f,p,n){ return shuffle(p.filter(v=>v.it!==c.it)).slice(0,n).map(v=>v[f]); }
+  function wS(c,p,n){ return shuffle(p.filter(s=>s.en!==c.en)).slice(0,n).map(s=>s.en); }
+  function mkMcqIE(v,p){ const w=wV(v,'en',p,3); if(w.length<3)return null; return {type:'mcq_it_en',it:v.it,en:v.en,pron:v.pron,correct:v.en,choices:shuffle([v.en,...w])}; }
+  function mkMcqEI(v,p){ const w=wV(v,'it',p,3); if(w.length<3)return null; return {type:'mcq_en_it',en:v.en,it:v.it,correct:v.it,choices:shuffle([v.it,...w])}; }
+  function mkLMcq(v,p){ const w=wV(v,'en',p,3); if(w.length<3)return null; return {type:'listen_mcq',it:v.it,pron:v.pron,correct:v.en,choices:shuffle([v.en,...w])}; }
+  function mkLType(v){ return {type:'listen_type',it:v.it,pron:v.pron,correct:v.it}; }
+  function mkOrder(s){
+    const words=s.words.slice(); let sh=shuffle(words),tries=0;
+    while(sh.join(' ')===words.join(' ')&&tries++<30) sh=shuffle(words);
+    return {type:'order',en:s.en,it:s.it,words:sh,correct:words.join(' ')};
+  }
+  function mkRead(s,pool){
+    const w=wS(s,pool,3); const padded=w.length>=3?w:[...fb.slice(0,3-w.length),...w];
+    return {type:'read_translate',it:s.it,en:s.en,correct:s.en,choices:shuffle([s.en,...padded]).slice(0,4)};
+  }
+
+  const exs=[];
+  tv.forEach(v=>{ const e=mkLMcq(v,allV); if(e)exs.push(e); });
+  pick(tv,Math.ceil(tv.length/2)).forEach(v=>{ const e=mkMcqEI(v,allV); if(e)exs.push(e); });
+  pick(ts,3).forEach(s=>exs.push(mkOrder(s)));
+  pick(ts,3).forEach(s=>exs.push(mkRead(s,allS)));
+  pick(tv,2).forEach(v=>exs.push(mkLType(v)));
+  const prevV=d.lessons.slice(0,lessonIdx).flatMap(L=>L.vocab);
+  if(prevV.length>=4) pick(prevV,3).forEach(v=>{ const e=mkMcqIE(v,allV); if(e)exs.push(e); });
+  return shuffle(exs).slice(0,12);
+}
+
+// ── lesson ──
+function startLesson(idx){
+  const C=APP.cur;
+  C.lessonIdx=idx; C.exercises=buildExercises(idx); C.cur=0;
+  C.hearts=3; C.xp=0; C.mistakes=0; C.streak=0; C.bestStreak=0;
+  C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
+  show('lesson-screen'); renderEx();
+}
+function renderHearts(){
+  document.getElementById('hearts').innerHTML=Array.from({length:3},(_,i)=>`<span class="heart${i>=APP.cur.hearts?' lost':''}">❤️</span>`).join('');
+}
+function renderEx(){
+  const C=APP.cur;
+  if(C.cur>=C.exercises.length){ showComplete(); return; }
+  const ex=C.exercises[C.cur];
+  C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
+  document.getElementById('prog-fill').style.width=Math.round(C.cur/C.exercises.length*100)+'%';
+  renderHearts();
+  let html='';
+  if(ex.type==='mcq_it_en') html=tMcqIE(ex);
+  else if(ex.type==='mcq_en_it') html=tMcqEI(ex);
+  else if(ex.type==='listen_mcq') html=tLMcq(ex);
+  else if(ex.type==='listen_type') html=tLType(ex);
+  else if(ex.type==='order') html=tOrder(ex);
+  else if(ex.type==='read_translate') html=tRead(ex);
+  document.getElementById('ex-area').innerHTML=html+'<div id="fb" class="feedback"></div><button class="check-btn" id="cbtn" onclick="check()" disabled>Check</button>';
+  if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>speak(ex.it),350);
+}
+
+function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" id="c${i}" onclick="pickChoice(${i},this)">${c}</button>`).join('')}</div>`; }
+function lBlock(it,pron){
+  return `<button class="listen-big" onclick="speak('${esc(it)}')">
+      <span class="listen-icon">🔊</span>
+      <div><div class="listen-lbl">Tap to listen</div><div class="listen-word">${it}</div></div>
+    </button>${pron?`<div class="pron">&nbsp;🗣 ${pron}</div>`:''}<button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
+}
+function tMcqIE(ex){ return `<div class="ex-badge">🇮🇹→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${ex.it}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ return `<div class="ex-badge">🇬🇧→🇮🇹 Translate to Italian</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in Italian?</div>${cGrid(ex.choices,false)}</div>`; }
+function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ return `<div class="ex-badge">🎧 Listening — type what you hear</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the Italian word you hear:</div>${lBlock(ex.it,ex.pron)}<input class="type-input" id="type-in" type="text" placeholder="Type in Italian…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
+function tOrder(ex){ return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${ex.words.map((w,i)=>`<span class="tok" id="t${i}" onclick="addTok(${i})">${w}</span>`).join('')}</div></div>`; }
+function tRead(ex){ return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this sentence:</div><div class="it-box"><div class="it-box-text">${ex.it}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+
+function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
+function onType(){ document.getElementById('cbtn').disabled=document.getElementById('type-in').value.trim().length<1; }
+function addTok(i){
+  const C=APP.cur; if(C.answered||C.usedIdx.includes(i))return;
+  const w=C.exercises[C.cur].words[i]; C.placed.push({i,w}); C.usedIdx.push(i);
+  document.getElementById('t'+i).classList.add('used'); updateSbox(); document.getElementById('cbtn').disabled=false;
+}
+function remTok(pos){
+  const C=APP.cur; if(C.answered)return;
+  const idx=C.placed[pos].i; C.placed.splice(pos,1); C.usedIdx=C.usedIdx.filter(x=>x!==idx);
+  document.getElementById('t'+idx).classList.remove('used'); updateSbox();
+  if(C.placed.length===0) document.getElementById('cbtn').disabled=true;
+}
+function updateSbox(){
+  const C=APP.cur, sb=document.getElementById('sbox'); if(!sb)return;
+  if(!C.placed.length){ sb.innerHTML='<span class="sbox-ph">Tap words to build the sentence</span>'; sb.classList.remove('filled'); return; }
+  sb.classList.add('filled');
+  sb.innerHTML=C.placed.map((p,pos)=>`<span class="placed-tok" onclick="remTok(${pos})">${p.w}</span>`).join('');
+}
+
+function check(){
+  const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
+  const ex=C.exercises[C.cur]; let ok=false;
+  if(ex.type==='listen_type'){ ok=document.getElementById('type-in').value.trim().toLowerCase()===ex.correct.toLowerCase(); }
+  else if(ex.type==='order'){ ok=C.placed.map(p=>p.w).join(' ')===ex.correct; }
+  else { ok=(C.sel||'')===ex.correct; }
+  C.answered=true;
+  const btn=document.getElementById('cbtn'); btn.textContent='Continue'; btn.className='check-btn cont'; btn.disabled=false;
+  const fb=document.getElementById('fb');
+  if(ok){
+    C.xp+=10; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
+    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">Correct! +10 XP</div><div class="fb-body">${ex.it||ex.correct}</div>`;
+    if(ex.it) speak(ex.it);
+    document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
+    if(ex.type==='listen_type') document.getElementById('type-in').classList.add('ok');
+  } else {
+    C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.streak=0;
+    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">Not quite!</div><div class="fb-body">Correct answer: <strong>${ex.correct}</strong></div>`;
+    if(ex.it) speak(ex.it,0.75);
+    document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===ex.correct)b.classList.add('ok'); });
+    if(ex.type==='listen_type') document.getElementById('type-in').classList.add('bad');
+    const a=document.getElementById('ex-area'); a.classList.add('shake'); setTimeout(()=>a.classList.remove('shake'),380);
+    renderHearts();
+  }
+}
+
+// ── complete ──
+function showComplete(){
+  const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
+  if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
+  APP.progress.completed[topicKey][lesson.id]=true;
+  APP.progress.xp=(APP.progress.xp||0)+C.xp;
+  saveProg();
+  document.getElementById('comp-xp').textContent='+'+C.xp+' XP';
+  document.getElementById('s-correct').textContent=C.exercises.length-C.mistakes;
+  document.getElementById('s-mistakes').textContent=C.mistakes;
+  document.getElementById('s-streak').textContent=C.bestStreak+'🔥';
+  const hasNext=C.lessonIdx+1<APP.lessonData.lessons.length;
+  document.getElementById('comp-next').textContent=hasNext?'Next lesson →':'Back to home';
+  document.getElementById('comp-vocab').innerHTML=lesson.vocab.map(v=>`<div class="vrow">
+    <div><div class="vit" onclick="speak('${esc(v.it)}')" title="Click to hear">🔊 ${v.it}</div><div class="vpron">${v.pron||''}</div></div>
+    <div class="ven">${v.en}</div></div>`).join('');
+  show('complete-screen');
+}
+function afterComplete(){
+  const C=APP.cur;
+  if(C.lessonIdx+1<APP.lessonData.lessons.length) startLesson(C.lessonIdx+1); else goHome();
+}
+
+// ── tts + misc ──
+function speak(text,rate){ if(!window.speechSynthesis)return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='it-IT'; u.rate=rate||0.9; u.pitch=1; speechSynthesis.speak(u); }
+function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
+
+
+init();</script>
+</body>
+</html>
