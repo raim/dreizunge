@@ -10,7 +10,7 @@ const PORT         = parseInt(process.env.PORT || '3000', 10);
 const STORAGE_FILE = path.join(__dirname, 'lessons.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const ANTHROPIC_KEY  = process.env.ANTHROPIC_API_KEY || '';
-const CLAUDE_MODEL   = process.env.CLAUDE_MODEL || 'claude-sonnet-4-20250514';
+const CLAUDE_MODEL   = process.env.CLAUDE_MODEL   || 'claude-sonnet-4-20250514';
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 const OLLAMA_MODEL   = process.env.OLLAMA_MODEL   || 'qwen2.5:7b';
 const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '360000', 10);
@@ -38,93 +38,105 @@ function upsert(data) {
   saveStore(store);
 }
 
-// ── Prompts — one lesson at a time to avoid truncation ────────────────
-function sysPromptForLesson(lessonNum, totalLessons) {
-  return `You are an Italian language lesson generator for a Duolingo-style app.
-Return ONLY a valid, complete JSON object — no markdown fences, no explanation, nothing else.
+// ── Generation lock — prevent concurrent requests for the same topic ──
+const generatingTopics = new Set();
 
-Generate lesson ${lessonNum} of ${totalLessons}. Schema:
-{
-  "id": ${lessonNum},
-  "title": "short lesson theme (3-5 words)",
-  "desc": "up to 8 words describing this lesson",
-  "icon": "one relevant emoji",
-  "vocab": [
-    {"it":"Italian word or short phrase","en":"English meaning","pron":"phonetic for English speakers, CAPS for stressed syllable"}
-  ],
-  "sentences": [
-    {
-      "it":"A natural Italian sentence, 5-9 words",
-      "en":"English translation",
-      "words":["each","word","as","separate","token","punctuation","."]
-    }
-  ]
-}
-
-Rules:
-- vocab: exactly 8 items, topic-relevant, no duplicates
-- sentences: exactly 5 items
-- words[] must be the 'it' sentence split into tokens; joined by single spaces must reproduce 'it' exactly
-- Lesson difficulty: ${lessonNum === 1 ? 'beginner basics' : lessonNum === 2 ? 'intermediate phrases' : 'advanced/specific vocabulary'}
-- All content must relate to the topic provided`;
-}
-
+// ── Prompts ───────────────────────────────────────────────────────────
 const SYS_META = `You are a lesson plan creator. Return ONLY a valid JSON object, no markdown, no explanation.
 Schema: {"topic":"cleaned topic string","topicEmoji":"one emoji","lessonThemes":["theme1","theme2","theme3"]}
 Rules: topic is the user's topic, normalized. Choose 3 progressive lesson themes for that topic.`;
 
-// ── JSON extraction — robust against prose, fences, and qwen3 <think> tags ──
+function sysVocab(lessonNum, totalLessons) {
+  return `You are an Italian vocabulary generator for a Duolingo-style app.
+Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
+
+Schema:
+[
+  {"it":"Italian word or short phrase","en":"English meaning","pron":"phonetic for English speakers, CAPS for stressed syllable"}
+]
+
+Rules:
+- Return exactly 8 items
+- Topic-relevant, no duplicates
+- Lesson ${lessonNum} of ${totalLessons} difficulty: ${lessonNum === 1 ? 'beginner basics' : lessonNum === 2 ? 'intermediate phrases' : 'advanced/specific vocabulary'}`;
+}
+
+function sysSentences(lessonNum, totalLessons) {
+  return `You are an Italian sentence generator for a Duolingo-style app.
+Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
+
+Schema:
+[
+  {
+    "it": "A natural Italian sentence, 5-9 words",
+    "en": "English translation",
+    "words": ["each","word","as","separate","token","punctuation","."]
+  }
+]
+
+Rules:
+- Return exactly 5 sentences
+- words[] must be the 'it' sentence split into tokens; joined by single spaces must reproduce 'it' exactly
+- Use the provided vocabulary words naturally in the sentences
+- Lesson ${lessonNum} of ${totalLessons} difficulty: ${lessonNum === 1 ? 'beginner basics' : lessonNum === 2 ? 'intermediate phrases' : 'advanced/specific vocabulary'}`;
+}
+
+function sysLessonMeta() {
+  return `You are an Italian lesson titler. Return ONLY a valid JSON object, no markdown, no explanation.
+Schema: {"title":"short lesson theme (3-5 words)","desc":"up to 8 words describing this lesson","icon":"one relevant emoji"}`;
+}
+
+// ── JSON extraction — robust against prose, fences, qwen3 <think> tags ─
+function stripRaw(raw) {
+  return raw
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .replace(/^```(?:json)?\s*/im, '')
+    .replace(/\s*```\s*$/m, '')
+    .trim();
+}
+
 function extractJSON(raw) {
-  // strip qwen3 thinking blocks
-  let s = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-  // strip markdown fences
-  s = s.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
-  // find first { and last }
+  const s = stripRaw(raw);
   const start = s.indexOf('{');
   const end   = s.lastIndexOf('}');
-  if (start < 0 || end < 0 || end <= start) throw new Error('No JSON object found in output');
+  if (start < 0 || end < 0 || end <= start) throw new Error('No JSON object found');
   return JSON.parse(s.slice(start, end + 1));
 }
 
-// ── Attempt to salvage a truncated lesson by trimming arrays ───────────
-function salvageLesson(raw) {
-  // Try to close an unclosed JSON by trimming trailing incomplete items
-  let s = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-  s = s.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
-  const start = s.indexOf('{');
-  if (start < 0) throw new Error('No JSON found');
+function extractArray(raw) {
+  const s = stripRaw(raw);
+  const start = s.indexOf('[');
+  const end   = s.lastIndexOf(']');
+  if (start < 0 || end < 0 || end <= start) throw new Error('No JSON array found');
+  return JSON.parse(s.slice(start, end + 1));
+}
+
+// ── Salvage a truncated JSON array ────────────────────────────────────
+function salvageArray(raw) {
+  let s = stripRaw(raw);
+  const start = s.indexOf('[');
+  if (start < 0) throw new Error('No array found');
   s = s.slice(start);
-
-  // Try parsing as-is first
   try { return JSON.parse(s); } catch(_) {}
-
-  // Remove trailing incomplete object/array entries and close
-  // Strategy: find the last complete item in vocab and sentences arrays
-  // by looking for the last '}' before any truncation
-  let attempt = s;
-  // Remove trailing comma and incomplete entry, then close all open brackets
-  attempt = attempt.replace(/,\s*\{[^}]*$/, '');  // remove last incomplete {}
-  attempt = attempt.replace(/,\s*"[^"]*"\s*:\s*[^,}\]]*$/, ''); // remove last incomplete key:val
-  attempt = attempt.replace(/,\s*$/, ''); // remove trailing comma
-
-  // Count open brackets to close
+  // Remove last incomplete item and close
+  s = s.replace(/,\s*\{[^}]*$/, '');
+  s = s.replace(/,\s*$/, '');
   let opens = 0, openSquare = 0;
-  for (const ch of attempt) {
+  for (const ch of s) {
     if (ch === '{') opens++;
     else if (ch === '}') opens--;
     else if (ch === '[') openSquare++;
     else if (ch === ']') openSquare--;
   }
-  attempt += ']'.repeat(Math.max(0, openSquare)) + '}'.repeat(Math.max(0, opens));
-
-  return JSON.parse(attempt);
+  s += '}'.repeat(Math.max(0, opens)) + ']'.repeat(Math.max(0, openSquare));
+  return JSON.parse(s);
 }
 
-// ── LLM call — shared low-level ────────────────────────────────────────
+// ── LLM backends ──────────────────────────────────────────────────────
 function callAnthropicRaw(system, userMsg, maxTokens) {
   return new Promise((resolve, reject) => {
     const body = JSON.stringify({
-      model: CLAUDE_MODEL, max_tokens: maxTokens || 2048,
+      model: CLAUDE_MODEL, max_tokens: maxTokens || 1024,
       system,
       messages: [{ role: 'user', content: userMsg }]
     });
@@ -155,7 +167,7 @@ function callOllamaRaw(system, userMsg, maxTokens) {
     const lib = u.protocol === 'https:' ? https : http;
     const body = JSON.stringify({
       model: OLLAMA_MODEL, stream: false, keep_alive: -1,
-      options: { temperature: 0.15, num_predict: maxTokens || 2048 },
+      options: { temperature: 0.15, num_predict: maxTokens || 1024 },
       messages: [
         { role: 'system', content: system },
         { role: 'user',   content: userMsg }
@@ -195,74 +207,95 @@ function callLLM(active, system, userMsg, maxTokens) {
   throw new Error('No LLM backend configured.');
 }
 
-// ── Generate one lesson with retry ─────────────────────────────────────
-async function generateOneLesson(active, topic, lessonNum, totalLessons, prevVocab) {
-  const sys = sysPromptForLesson(lessonNum, totalLessons);
-  const prevHint = prevVocab.length
-    ? `\nVocab already introduced in earlier lessons (you may reuse these in sentences but must add 8 NEW vocab items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
-    : '';
-  const userMsg = `Topic: "${topic}"\nGenerate lesson ${lessonNum} now. Return only the JSON object.${prevHint}`;
-
-  const MAX_TOKENS = 4096; // large enough for thinking models (qwen3 etc.)
+// ── Retry helper ──────────────────────────────────────────────────────
+async function withRetry(label, fn, retries = 3, delay = 800) {
   let lastErr;
-
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    console.log(`    Lesson ${lessonNum} attempt ${attempt}…`);
-    try {
-      const raw = await callLLM(active, sys, userMsg, MAX_TOKENS);
-
-      let lesson;
-      try {
-        lesson = extractJSON(raw);
-      } catch(parseErr) {
-        console.warn(`    Parse failed, trying salvage…`);
-        lesson = salvageLesson(raw);
-      }
-
-      // Validate and patch
-      if (!lesson.vocab || !Array.isArray(lesson.vocab)) throw new Error('Missing vocab array');
-      if (!lesson.sentences || !Array.isArray(lesson.sentences)) throw new Error('Missing sentences array');
-
-      // Trim to expected counts if model over-generated
-      lesson.vocab     = lesson.vocab.slice(0, 8);
-      lesson.sentences = lesson.sentences.slice(0, 5);
-
-      // Ensure minimum counts (pad if salvage trimmed too much)
-      if (lesson.vocab.length < 4)     throw new Error(`Only ${lesson.vocab.length} vocab items — too few`);
-      if (lesson.sentences.length < 3) throw new Error(`Only ${lesson.sentences.length} sentences — too few`);
-
-      // Ensure words[] is present and correct for each sentence
-      lesson.sentences = lesson.sentences.map(s => {
-        if (!s.words || !Array.isArray(s.words) || s.words.length === 0) {
-          // Auto-split if missing
-          s.words = s.it.split(' ');
-        }
-        return s;
-      });
-
-      lesson.id = lessonNum;
-      return lesson;
-
-    } catch(e) {
-      console.warn(`    Attempt ${attempt} failed: ${e.message}`);
+  for (let i = 1; i <= retries; i++) {
+    console.log(`    ${label} attempt ${i}…`);
+    try { return await fn(); }
+    catch(e) {
+      console.warn(`    Attempt ${i} failed: ${e.message}`);
       lastErr = e;
-      if (attempt < 3) await new Promise(r => setTimeout(r, 800));
+      if (i < retries) await new Promise(r => setTimeout(r, delay));
     }
   }
-  throw new Error(`Failed to generate lesson ${lessonNum} after 3 attempts: ${lastErr.message}`);
+  throw new Error(`${label} failed after ${retries} attempts: ${lastErr.message}`);
+}
+
+// ── Generate vocab (8 items) ──────────────────────────────────────────
+async function generateVocab(active, topic, lessonNum, totalLessons, prevVocab) {
+  const prevHint = prevVocab.length
+    ? `\nAlready introduced (do NOT repeat these, generate 8 NEW items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
+    : '';
+  const userMsg = `Topic: "${topic}". Generate 8 Italian vocabulary items. Return only the JSON array.${prevHint}`;
+
+  return withRetry(`Vocab ${lessonNum}`, async () => {
+    const raw = await callLLM(active, sysVocab(lessonNum, totalLessons), userMsg, 1024);
+    let arr;
+    try { arr = extractArray(raw); }
+    catch(_) { arr = salvageArray(raw); }
+    if (!Array.isArray(arr) || arr.length < 4)
+      throw new Error(`Only ${arr?.length ?? 0} vocab items`);
+    return arr.slice(0, 8);
+  });
+}
+
+// ── Generate sentences (5 items) ─────────────────────────────────────
+async function generateSentences(active, topic, lessonNum, totalLessons, vocab) {
+  const vocabList = vocab.map(v => `${v.it} (${v.en})`).join(', ');
+  const userMsg = `Topic: "${topic}". Use these Italian words naturally: ${vocabList}.\nGenerate 5 Italian sentences. Return only the JSON array.`;
+
+  return withRetry(`Sentences ${lessonNum}`, async () => {
+    const raw = await callLLM(active, sysSentences(lessonNum, totalLessons), userMsg, 1024);
+    let arr;
+    try { arr = extractArray(raw); }
+    catch(_) { arr = salvageArray(raw); }
+    if (!Array.isArray(arr) || arr.length < 3)
+      throw new Error(`Only ${arr?.length ?? 0} sentences`);
+    // Ensure words[] exists
+    arr = arr.slice(0, 5).map(s => {
+      if (!s.words || !Array.isArray(s.words) || s.words.length === 0)
+        s.words = s.it.split(' ');
+      return s;
+    });
+    return arr;
+  });
+}
+
+// ── Generate lesson meta (title, desc, icon) ──────────────────────────
+async function generateLessonMeta(active, topic, lessonNum, totalLessons) {
+  const userMsg = `Topic: "${topic}", lesson ${lessonNum} of ${totalLessons} (${lessonNum === 1 ? 'beginner' : lessonNum === 2 ? 'intermediate' : 'advanced'}). Return only the JSON object.`;
+  try {
+    const raw = await callLLM(active, sysLessonMeta(), userMsg, 256);
+    return extractJSON(raw);
+  } catch(_) {
+    return { title: `Lesson ${lessonNum}`, desc: topic, icon: '📖' };
+  }
+}
+
+// ── Generate one full lesson (meta + vocab + sentences) ───────────────
+async function generateOneLesson(active, topic, lessonNum, totalLessons, prevVocab) {
+  console.log(`  [${lessonNum + 1}/${totalLessons + 1}] Generating lesson ${lessonNum}…`);
+
+  const [meta, vocab] = await Promise.all([
+    generateLessonMeta(active, topic, lessonNum, totalLessons),
+    generateVocab(active, topic, lessonNum, totalLessons, prevVocab)
+  ]);
+
+  const sentences = await generateSentences(active, topic, lessonNum, totalLessons, vocab);
+
+  return { id: lessonNum, title: meta.title, desc: meta.desc, icon: meta.icon, vocab, sentences };
 }
 
 // ── Generate all lessons for a topic ──────────────────────────────────
 async function generate(topic, active) {
-  // Step 1: get meta (topic emoji + lesson themes)
-  console.log(`  [1/4] Generating topic meta…`);
+  console.log(`  [1/${3 + 1}] Generating topic meta…`);
   let meta;
   try {
-    const metaRaw = await callLLM(active, SYS_META,
-      `Topic: "${topic}". Return the JSON with topicEmoji and 3 lessonThemes.`, 1024);
-    meta = extractJSON(metaRaw);
+    const raw = await callLLM(active, SYS_META,
+      `Topic: "${topic}". Return the JSON with topicEmoji and 3 lessonThemes.`, 512);
+    meta = extractJSON(raw);
   } catch(e) {
-    // fallback meta
     meta = { topic, topicEmoji: '📚', lessonThemes: ['Basics', 'Phrases', 'Advanced'] };
     console.warn('  Meta generation failed, using fallback:', e.message);
   }
@@ -272,17 +305,12 @@ async function generate(topic, active) {
   let prevVocab = [];
 
   for (let i = 1; i <= TOTAL; i++) {
-    console.log(`  [${i + 1}/4] Generating lesson ${i}…`);
     const lesson = await generateOneLesson(active, topic, i, TOTAL, prevVocab);
     lessons.push(lesson);
     prevVocab = prevVocab.concat(lesson.vocab);
   }
 
-  return {
-    topic: meta.topic || topic,
-    topicEmoji: meta.topicEmoji || '📚',
-    lessons
-  };
+  return { topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚', lessons };
 }
 
 // ── Ollama ping ────────────────────────────────────────────────────────
@@ -302,20 +330,7 @@ function pingOllama() {
   });
 }
 
-// ── HTTP helpers ───────────────────────────────────────────────────────
-function readBody(req) {
-  return new Promise((res, rej) => {
-    let b = ''; req.on('data', c => b += c); req.on('end', () => res(b)); req.on('error', rej);
-  });
-}
-function json(res, code, obj) {
-  res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8' });
-  res.end(JSON.stringify(obj));
-}
-
-// ── Boot ───────────────────────────────────────────────────────────────
-
-// ── Warmup — load model into memory before first user request ─────────
+// ── Warmup ────────────────────────────────────────────────────────────
 async function warmupOllama() {
   process.stdout.write('  Warming up model… ');
   return new Promise(resolve => {
@@ -341,6 +356,18 @@ async function warmupOllama() {
   });
 }
 
+// ── HTTP helpers ──────────────────────────────────────────────────────
+function readBody(req) {
+  return new Promise((res, rej) => {
+    let b = ''; req.on('data', c => b += c); req.on('end', () => res(b)); req.on('error', rej);
+  });
+}
+function json(res, code, obj) {
+  res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8' });
+  res.end(JSON.stringify(obj));
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────
 async function boot() {
   let active;
   if      (BACKEND === 'anthropic') active = 'anthropic';
@@ -412,6 +439,9 @@ async function boot() {
       const { topic, forceRegenerate } = body;
       if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
 
+      const topicKey = topic.trim().toLowerCase();
+
+      // Return cache immediately if available and not forcing regen
       if (!forceRegenerate) {
         const cached = findSaved(topic.trim());
         if (cached) {
@@ -423,6 +453,13 @@ async function boot() {
       if (active === 'none')
         return json(res, 503, { error: 'No LLM backend. Set ANTHROPIC_API_KEY or start Ollama, then restart.' });
 
+      // Generation lock — reject duplicate concurrent requests
+      if (generatingTopics.has(topicKey)) {
+        console.log(`  Duplicate request ignored: "${topic}"`);
+        return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
+      }
+      generatingTopics.add(topicKey);
+
       console.log(`  Generating [${active}]: "${topic}"`);
       try {
         const data = await generate(topic.trim(), active);
@@ -432,14 +469,19 @@ async function boot() {
       } catch(e) {
         console.error('  Generation error:', e.message);
         return json(res, 500, { error: e.message });
+      } finally {
+        generatingTopics.delete(topicKey);
       }
     }
 
     res.writeHead(404); res.end('Not found');
 
   }).listen(PORT, '0.0.0.0', () => {
-    const os = require('os'); const lanIp = Object.values(os.networkInterfaces()).flat().find(i => i.family === 'IPv4' && !i.internal)?.address || 'unknown'; console.log(`  Local : http://localhost:${PORT}`); console.log(`  LAN   : http://${lanIp}:${PORT}
-`);
+    const os = require('os');
+    const lanIp = Object.values(os.networkInterfaces()).flat()
+      .find(i => i.family === 'IPv4' && !i.internal)?.address || 'unknown';
+    console.log(`  Local : http://localhost:${PORT}`);
+    console.log(`  LAN   : http://${lanIp}:${PORT}\n`);
   });
 }
 
