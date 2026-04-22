@@ -1,6 +1,436 @@
 {
   "lessons": [
     {
+      "topic": "table tennis",
+      "topicEmoji": "🏓",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Table Tennis Basics",
+          "desc": "Introduction and equipment",
+          "icon": "🏓",
+          "vocab": [
+            {
+              "it": "palla da ping-pong",
+              "en": "ping-pong ball",
+              "pron": "PAH-lah DAH ping-PONG ball"
+            },
+            {
+              "it": "tavolo da ping-pong",
+              "en": "ping-pong table",
+              "pron": "TAH-voh-loh DAH ping-PONG table"
+            },
+            {
+              "it": "pala da ping-pong",
+              "en": "ping-pong paddle",
+              "pron": "PAH-lah DAH ping-PONG paddle"
+            },
+            {
+              "it": "giocatore",
+              "en": "player",
+              "pron": "joh-KAH-tore"
+            },
+            {
+              "it": "giocatrice",
+              "en": "player (female)",
+              "pron": "joh-kah-TAH-tre"
+            },
+            {
+              "it": "gioco",
+              "en": "game",
+              "pron": "JEE-ko"
+            },
+            {
+              "it": "servizio",
+              "en": "serve",
+              "pron": "ser-VEE-zee-oh"
+            },
+            {
+              "it": "rete",
+              "en": "net",
+              "pron": "REH-teh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il giocatore serve la palla da ping-pong.",
+              "en": "The player serves the ping-pong ball.",
+              "words": [
+                "Il",
+                "giocatore",
+                "serve",
+                "la",
+                "palla",
+                "da",
+                "ping-pong",
+                "."
+              ]
+            },
+            {
+              "it": "La giocatrice sta giocando al tavolo da ping-pong.",
+              "en": "The female player is playing at the ping-pong table.",
+              "words": [
+                "La",
+                "giocatrice",
+                "sta",
+                "giocando",
+                "al",
+                "tavolo",
+                "da",
+                "ping-pong",
+                "."
+              ]
+            },
+            {
+              "it": "Il rete separa i due giocatori.",
+              "en": "The net separates the two players.",
+              "words": [
+                "Il",
+                "rete",
+                "separa",
+                "i",
+                "due",
+                "giocatori",
+                "."
+              ]
+            },
+            {
+              "it": "Ogni pala da ping-pong è diversa.",
+              "en": "Each ping-pong paddle is different.",
+              "words": [
+                "Ogni",
+                "pala",
+                "da",
+                "ping-pong",
+                "è",
+                "diversa",
+                "."
+              ]
+            },
+            {
+              "it": "Il gioco inizia con il servizio.",
+              "en": "The game starts with the serve.",
+              "words": [
+                "Il",
+                "gioco",
+                "inizia",
+                "con",
+                "il",
+                "servizio",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Table Tennis Techniques",
+          "desc": "Intermediate strokes and strategies",
+          "icon": "🏓",
+          "vocab": [
+            {
+              "it": "risposta",
+              "en": "answer",
+              "pron": "ri-SPO-ta"
+            },
+            {
+              "it": "punti",
+              "en": "points",
+              "pron": "PUN-ti"
+            },
+            {
+              "it": "giro",
+              "en": "rotation",
+              "pron": "GI-ro"
+            },
+            {
+              "it": "doppio",
+              "en": "double",
+              "pron": "DOP-pio"
+            },
+            {
+              "it": "triplo",
+              "en": "triple",
+              "pron": "TRI-plo"
+            },
+            {
+              "it": "falla",
+              "en": "error",
+              "pron": "FA-la"
+            },
+            {
+              "it": "tavolino",
+              "en": "table",
+              "pron": "ta-VO-li-no"
+            },
+            {
+              "it": "scacco",
+              "en": "check",
+              "pron": "SKA-tso"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il doppio giro fa tre punti.",
+              "en": "The double rotation gives three points.",
+              "words": [
+                "Il",
+                "doppio",
+                "giro",
+                "fa",
+                "tre",
+                "punti",
+                ".",
+                " ",
+                "The",
+                "double",
+                "rotation",
+                "gives",
+                "three",
+                "points",
+                "."
+              ]
+            },
+            {
+              "it": "Una falla è un errore.",
+              "en": "A falla is an error.",
+              "words": [
+                "Una",
+                "falla",
+                "è",
+                "un",
+                "errore",
+                ".",
+                " ",
+                "A",
+                "falla",
+                "is",
+                "an",
+                "error",
+                "."
+              ]
+            },
+            {
+              "it": "Il triplo giro è più difficile del doppio.",
+              "en": "The triple rotation is more difficult than the double.",
+              "words": [
+                "Il",
+                "triplo",
+                "giro",
+                "è",
+                "più",
+                "difficile",
+                "del",
+                "doppio",
+                ".",
+                " ",
+                "The",
+                "triple",
+                "rotation",
+                "is",
+                "more",
+                "difficult",
+                "than",
+                "the",
+                "double",
+                "."
+              ]
+            },
+            {
+              "it": "Durante il giro, rispondi al servizio.",
+              "en": "During the rotation, answer the serve.",
+              "words": [
+                "Durante",
+                "il",
+                "giro",
+                ",",
+                "rispondi",
+                "al",
+                "servizio",
+                ".",
+                " ",
+                "During",
+                "the",
+                "rotation",
+                ",",
+                "answer",
+                "the",
+                "serve",
+                "."
+              ]
+            },
+            {
+              "it": "Un scacco sul tavolino è una risposta veloce.",
+              "en": "A check on the table is a quick answer.",
+              "words": [
+                "Un",
+                "scacco",
+                "sul",
+                "tavolino",
+                "è",
+                "una",
+                "risposta",
+                "veloce",
+                ".",
+                " ",
+                "A",
+                "check",
+                "on",
+                "the",
+                "table",
+                "is",
+                "a",
+                "quick",
+                "answer",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Advanced Table Tennis",
+          "desc": "Final strategies and drills",
+          "icon": "🏓",
+          "vocab": [
+            {
+              "it": "attacco",
+              "en": "attack",
+              "pron": "AT-ta-koh"
+            },
+            {
+              "it": "rimbalzo",
+              "en": "bounce",
+              "pron": "ri-MBAHL-zoh"
+            },
+            {
+              "it": "doppio falla",
+              "en": "double fault",
+              "pron": "DOH-pyo fah-LAH"
+            },
+            {
+              "it": "tiro corto",
+              "en": "short shot",
+              "pron": "TEE-roh KOHR-to"
+            },
+            {
+              "it": "tiro lungo",
+              "en": "long shot",
+              "pron": "TEE-roh LOONG-ho"
+            },
+            {
+              "it": "tavolino da ping-pong",
+              "en": "ping-pong table",
+              "pron": "TAH-voh-lee-noh DAH peeng-pon"
+            },
+            {
+              "it": "restituzione",
+              "en": "return",
+              "pron": "re-stih-tee-DOO-zhun"
+            },
+            {
+              "it": "tiro al volo",
+              "en": "volley",
+              "pron": "TEE-roh ah VOH-lo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'attacco deve essere preciso per evitare il rimbalzo.",
+              "en": "The attack must be precise to avoid the bounce.",
+              "words": [
+                "L'",
+                "attacco",
+                "deve",
+                "essere",
+                "preciso",
+                "per",
+                "evitare",
+                "il",
+                "rimbalzo",
+                "."
+              ]
+            },
+            {
+              "it": "Un tiro corto può diventare un doppio falla se non è ben calcolato.",
+              "en": "A short shot can become a double fault if it's not well calculated.",
+              "words": [
+                "Un",
+                "tiro",
+                "corto",
+                "può",
+                "diventare",
+                "un",
+                "doppio",
+                "falla",
+                "se",
+                "non",
+                "è",
+                "ben",
+                "calcolato",
+                "."
+              ]
+            },
+            {
+              "it": "La rimozione di un tiro al volo richiede una buona restituzione.",
+              "en": "The removal of a volley requires a good return.",
+              "words": [
+                "La",
+                "rimozione",
+                "di",
+                "un",
+                "tiro",
+                "al",
+                "volo",
+                "richiede",
+                "una",
+                "buona",
+                "restituzione",
+                "."
+              ]
+            },
+            {
+              "it": "Un tiro lungo può essere usato per distrarre l'avversario.",
+              "en": "A long shot can be used to distract the opponent.",
+              "words": [
+                "Un",
+                "tiro",
+                "lungo",
+                "può",
+                "essere",
+                "usato",
+                "per",
+                "distrarre",
+                "l'",
+                "avversario",
+                "."
+              ]
+            },
+            {
+              "it": "Il tavolino da ping-pong è il campo di battaglia per ogni attacco.",
+              "en": "The ping-pong table is the battlefield for every attack.",
+              "words": [
+                "Il",
+                "tavolino",
+                "da",
+                "ping-pong",
+                "è",
+                "il",
+                "campo",
+                "di",
+                "battaglia",
+                "per",
+                "ogni",
+                "attacco",
+                "."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-22T12:19:22.743Z"
+    },
+    {
       "topic": "medical & healthcare",
       "topicEmoji": "🩺",
       "lessons": [
