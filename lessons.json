@@ -1,6 +1,464 @@
 {
   "lessons": [
     {
+      "topic": "schafe am rhein",
+      "topicEmoji": "🐑",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Schafe am Rhein",
+          "desc": "Sheep by the Rhine river",
+          "icon": "📐",
+          "vocab": [
+            {
+              "it": "rhein",
+              "en": "Rhine river",
+              "pron": "REIN"
+            },
+            {
+              "it": "schafe",
+              "en": "sheep",
+              "pron": "SCHA-Fe"
+            },
+            {
+              "it": "graziano",
+              "en": "grazing",
+              "pron": "gra-ZIA-no"
+            },
+            {
+              "it": "prato",
+              "en": "meadow",
+              "pron": "PRAT-to"
+            },
+            {
+              "it": "fiume",
+              "en": "river",
+              "pron": "FIOO-me"
+            },
+            {
+              "it": "paese",
+              "en": "village",
+              "pron": "pa-ES-eh"
+            },
+            {
+              "it": "collina",
+              "en": "hill",
+              "pron": "kol-LI-nah"
+            },
+            {
+              "it": "verde",
+              "en": "green",
+              "pron": "VER-de"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Graziano pascola i suoi schafe in un prato verde.",
+              "en": "Graziano grazes his sheep in a green meadow.",
+              "words": [
+                "Graziano",
+                "pascola",
+                "i",
+                "suoi",
+                "schafe",
+                "in",
+                "un",
+                "prato",
+                "verde",
+                ".",
+                "pascola",
+                "grazia",
+                "sheep",
+                "in",
+                "a",
+                "green",
+                "meadow",
+                "."
+              ]
+            },
+            {
+              "it": "Il fiume Rhein scorre accanto a un paese con colline e schafe.",
+              "en": "The Rhine river flows next to a village with hills and sheep.",
+              "words": [
+                "Il",
+                "fiume",
+                "Rhein",
+                "scorre",
+                "accanto",
+                "a",
+                "un",
+                "paese",
+                "con",
+                "colline",
+                "e",
+                "schafe",
+                "."
+              ]
+            },
+            {
+              "it": "Nella valle del Rhein si possono vedere schafe che pascolano in un prato.",
+              "en": "In the Rhine valley, you can see sheep grazing in a meadow.",
+              "words": [
+                "Nella",
+                "valle",
+                "del",
+                "Rhein",
+                "si",
+                "possono",
+                "vedere",
+                "schafe",
+                "che",
+                "pascolano",
+                "in",
+                "un",
+                "prato",
+                "."
+              ]
+            },
+            {
+              "it": "Sui pendii della collina, i schafe pascolano in un prato verde.",
+              "en": "On the hillside, the sheep graze in a green meadow.",
+              "words": [
+                "Sui",
+                "pendii",
+                "della",
+                "collina",
+                ",",
+                "i",
+                "schafe",
+                "pascolano",
+                "in",
+                "un",
+                "prato",
+                "verde",
+                "."
+              ]
+            },
+            {
+              "it": "Il Rhein scorre tra colline e schafe che pascolano in un prato.",
+              "en": "The Rhine flows between hills and sheep that graze in a meadow.",
+              "words": [
+                "Il",
+                "Rhein",
+                "scorre",
+                "tra",
+                "colline",
+                "e",
+                "schafe",
+                "che",
+                "pascolano",
+                "in",
+                "un",
+                "prato",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Schafe am Rhein",
+          "desc": "Intermediate German: Sheep by the Rhine",
+          "icon": "📐",
+          "vocab": [
+            {
+              "it": "raccogliere",
+              "en": "to gather",
+              "pron": "ruh-KOH-lee-YEH-ree"
+            },
+            {
+              "it": "pascolo",
+              "en": "pasture",
+              "pron": "pahs-KOH-lo"
+            },
+            {
+              "it": "alpeggio",
+              "en": "alpine pastures",
+              "pron": "ah-leh-PYEH-joh"
+            },
+            {
+              "it": "capra",
+              "en": "goat",
+              "pron": "KAH-prah"
+            },
+            {
+              "it": "prigioniero",
+              "en": "prisoner",
+              "pron": "pruh-JEE-nyeh-ROE"
+            },
+            {
+              "it": "libertà",
+              "en": "freedom",
+              "pron": "lee-beh-RAH-tah"
+            },
+            {
+              "it": "tranquillo",
+              "en": "calm",
+              "pron": "trahn-KWIL-lo"
+            },
+            {
+              "it": "silenzio",
+              "en": "silence",
+              "pron": "tee-lee-ZEN-zho"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "I capre pascolano tranquille nel silenzio.",
+              "en": "The goats graze calmly in the silence.",
+              "words": [
+                "I",
+                "capre",
+                "pascolano",
+                "tranquille",
+                "nel",
+                "silenzio",
+                ".",
+                "goats",
+                "graze",
+                "calmly",
+                "in",
+                "the",
+                "silence",
+                "."
+              ]
+            },
+            {
+              "it": "I prigionieri delle alpeggi si raccogliono al tramonto.",
+              "en": "The prisoners of the alpine pastures gather at sunset.",
+              "words": [
+                "I",
+                "prigionieri",
+                "delle",
+                "alpeggi",
+                "si",
+                "raccogliono",
+                "al",
+                "tramonto",
+                ".",
+                "The",
+                "prisoners",
+                "of",
+                "the",
+                "alpine",
+                "pastures",
+                "gather",
+                "at",
+                "sunset",
+                "."
+              ]
+            },
+            {
+              "it": "I greggi pascolano sereni sulle rive del Reno.",
+              "en": "The flocks graze serene on the banks of the Rhine.",
+              "words": [
+                "I",
+                "greggi",
+                "pascolano",
+                "sereni",
+                "sulle",
+                "rive",
+                "del",
+                "Reno",
+                ".",
+                "The",
+                "flocks",
+                "graze",
+                "serene",
+                "on",
+                "the",
+                "banks",
+                "of",
+                "the",
+                "Rhine",
+                "."
+              ]
+            },
+            {
+              "it": "Nel pascolo i capre trovano libertà.",
+              "en": "In the pasture, the goats find freedom.",
+              "words": [
+                "Nel",
+                "pascolo",
+                "i",
+                "capre",
+                "trovano",
+                "libertà",
+                ".",
+                "In",
+                "the",
+                "pasture",
+                ",",
+                "the",
+                "goats",
+                "find",
+                "freedom",
+                "."
+              ]
+            },
+            {
+              "it": "I prigionieri delle alpeggi godono del silenzio.",
+              "en": "The prisoners of the alpine pastures enjoy the silence.",
+              "words": [
+                "I",
+                "prigionieri",
+                "delle",
+                "alpeggi",
+                "godono",
+                "del",
+                "silenzio",
+                ".",
+                "The",
+                "prisoners",
+                "of",
+                "the",
+                "alpine",
+                "pastures",
+                "enjoy",
+                "the",
+                "silence",
+                "."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Schafe am Rhein",
+          "desc": "Advanced lesson on sheep by the Rhine",
+          "icon": "🐑",
+          "vocab": [
+            {
+              "it": "prigioniero",
+              "en": "prisoner",
+              "pron": "pruh-JEE-nyeh-roh"
+            },
+            {
+              "it": "libertà",
+              "en": "freedom",
+              "pron": "luh-ber-TAH"
+            },
+            {
+              "it": "tranquillo",
+              "en": "calm",
+              "pron": "trahn-KWIL-lo"
+            },
+            {
+              "it": "silenzio",
+              "en": "silence",
+              "pron": "sil-en-TZHEE-oh"
+            },
+            {
+              "it": "alpeggio",
+              "en": "alpine pastures",
+              "pron": "al-PEH-jeh-yoh"
+            },
+            {
+              "it": "pascolo",
+              "en": "pasture",
+              "pron": "pahs-KOH-lo"
+            },
+            {
+              "it": "graziano",
+              "en": "grazing",
+              "pron": "grah-ZYAH-noh"
+            },
+            {
+              "it": "prato",
+              "en": "meadow",
+              "pron": "PRAH-to"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "I prigionieri cercano la libertà in quel tranquillo alpeggio.",
+              "en": "The prisoners seek freedom in that calm alpine pastures.",
+              "words": [
+                "I",
+                "prigionieri",
+                "cercano",
+                "la",
+                "libertà",
+                "in",
+                "quel",
+                "tranquillo",
+                "alpeggio",
+                "."
+              ]
+            },
+            {
+              "it": "Il pascolo è silenzioso e graziano in quei prati.",
+              "en": "The pasture is silent and grazing in those prairies.",
+              "words": [
+                "Il",
+                "pascolo",
+                "è",
+                "silenzioso",
+                "e",
+                "graziano",
+                "in",
+                "quei",
+                "prati",
+                "."
+              ]
+            },
+            {
+              "it": "I schafe pascolano tranquilli al fianco del Rhein.",
+              "en": "The sheep graze calmly by the side of the Rhine.",
+              "words": [
+                "I",
+                "schafe",
+                "pascolano",
+                "tranquilli",
+                "al",
+                "fianco",
+                "del",
+                "Rhein",
+                "."
+              ]
+            },
+            {
+              "it": "Il silenzio è il migliore amico di chi grazia i prati.",
+              "en": "Silence is the best friend of who grazes the meadows.",
+              "words": [
+                "Il",
+                "silenzio",
+                "è",
+                "il",
+                "migliore",
+                "amico",
+                "di",
+                "chi",
+                "grazia",
+                "i",
+                "prati",
+                "."
+              ]
+            },
+            {
+              "it": "Nel tranquillo alpeggio, i prigionieri trovano un po' di libertà.",
+              "en": "In the calm alpine pastures, the prisoners find a bit of freedom.",
+              "words": [
+                "Nel",
+                "tranquillo",
+                "alpeggio",
+                ",",
+                "i",
+                "prigionieri",
+                "trovano",
+                "un",
+                "po'",
+                "di",
+                "libertà",
+                "."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-23T08:25:37.843Z"
+    },
+    {
       "topic": "im wald spazieren",
       "topicEmoji": "🌳",
       "lessons": [
