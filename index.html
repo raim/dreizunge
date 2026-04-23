@@ -168,6 +168,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .check-btn:not(:disabled):active{transform:translateY(2px);box-shadow:0 2px 0 var(--green-dark)}
 .check-btn.cont{background:var(--blue);box-shadow:0 5px 0 var(--blue-dark)}
 .check-btn.cont:not(:disabled):hover{box-shadow:0 7px 0 var(--blue-dark)}
+.flag-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s,color .1s;white-space:nowrap}
+.flag-btn:hover{border-color:#ff9600;color:#ff9600}
+.flag-btn.flagged{border-color:#ff9600;background:#fff4e0;color:#c26000}
+.btn-row{display:flex;gap:8px;align-items:stretch}
+.btn-row .check-btn{flex:1}
+.feedback.flagged-note{background:#fff4e0;border:2px solid #ff9600;display:block}
+.feedback.flagged-note .fb-head{color:#c26000}
+.feedback.flagged-note .fb-body{color:#a05000}
 
 /* ══ COMPLETE ════════════════════════════════════════════════════════ */
 #complete-screen{padding:24px 20px 40px;max-width:520px;width:100%;text-align:center}
@@ -294,6 +302,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="stat-box"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">Correct</div></div>
     <div class="stat-box"><div class="stat-num" id="s-mistakes" style="color:var(--red)">0</div><div class="stat-lbl">Mistakes</div></div>
     <div class="stat-box"><div class="stat-num" id="s-streak" style="color:var(--yellow)">0🔥</div><div class="stat-lbl">Best streak</div></div>
+    <div class="stat-box"><div class="stat-num" id="s-flagged" style="color:#ff9600">0⚑</div><div class="stat-lbl">Flagged</div></div>
   </div>
   <div class="vocab-box"><div class="vocab-hdr">Words from this lesson</div><div id="comp-vocab"></div></div>
   <button class="cont-btn" id="comp-next" onclick="afterComplete()">Continue</button>
@@ -305,12 +314,27 @@ var APP = {
   info: {backend:'none',canGenerate:false},
   lessonData: null,
   progress: loadProg(),
+  flagged: loadFlagged(),
   cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,xp:0,mistakes:0,streak:0,bestStreak:0,
         answered:false,sel:null,placed:[],usedIdx:[]}
 };
 
 function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'{"xp":0,"completed":{}}'); }catch(e){ return {xp:0,completed:{}}; } }
 function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
+function loadFlagged(){ try{ return JSON.parse(localStorage.getItem('imp3_flagged')||'{}'); }catch(e){ return {}; } }
+function saveFlagged(){ localStorage.setItem('imp3_flagged',JSON.stringify(APP.flagged)); }
+function flagKey(ex){
+  // Stable key from exercise content so flags survive lesson regeneration
+  const base = (ex.it||ex.en||ex.correct||'').slice(0,40).replace(/\s+/g,'_');
+  return (ex.type||'x') + ':' + base;
+}
+function isExFlagged(ex){ return !!APP.flagged[flagKey(ex)]; }
+function toggleFlag(ex){
+  const k=flagKey(ex);
+  if(APP.flagged[k]) delete APP.flagged[k];
+  else APP.flagged[k] = { type:ex.type, it:ex.it||'', en:ex.en||'', correct:ex.correct||'', flaggedAt:new Date().toISOString() };
+  saveFlagged();
+}
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function goLanding(){ loadSavedList(); show('landing'); }
 function goHome(){ buildPath(); show('home'); }
@@ -518,7 +542,13 @@ function renderEx(){
   else if(ex.type==='listen_type') html=tLType(ex);
   else if(ex.type==='order') html=tOrder(ex);
   else if(ex.type==='read_translate') html=tRead(ex);
-  document.getElementById('ex-area').innerHTML=html+'<div id="fb" class="feedback"></div><button class="check-btn" id="cbtn" onclick="check()" disabled>Check</button>';
+  const alreadyFlagged = isExFlagged(ex);
+  document.getElementById('ex-area').innerHTML=html+
+    '<div id="fb" class="feedback"></div>'+
+    '<div class="btn-row">'+
+      '<button class="check-btn" id="cbtn" onclick="check()" disabled>Check</button>'+
+      '<button class="flag-btn'+(alreadyFlagged?' flagged':'')+'" id="flagbtn" onclick="flagCurrent()" title="Flag as faulty">'+(alreadyFlagged?'⚑ Flagged':'⚐ Flag')+'</button>'+
+    '</div>';
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>speak(ex.it),350);
 }
 
@@ -557,6 +587,24 @@ function updateSbox(){
   sb.innerHTML=C.placed.map((p,pos)=>`<span class="placed-tok" onclick="remTok(${pos})">${p.w}</span>`).join('');
 }
 
+function flagCurrent(){
+  const C=APP.cur;
+  if(C.cur>=C.exercises.length) return;
+  const ex=C.exercises[C.cur];
+  toggleFlag(ex);
+  const flagged=isExFlagged(ex);
+  const btn=document.getElementById('flagbtn');
+  if(btn){ btn.textContent=flagged?'⚑ Flagged':'⚐ Flag'; btn.className='flag-btn'+(flagged?' flagged':''); }
+  // If already answered, update feedback bar too
+  if(C.answered){
+    const fb=document.getElementById('fb');
+    if(fb && flagged){
+      fb.className='feedback flagged-note';
+      fb.innerHTML='<div class="fb-head">⚑ Flagged for review</div><div class="fb-body">This question will be skipped from scoring and queued for repair.</div>';
+    }
+  }
+}
+
 function check(){
   const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
   const ex=C.exercises[C.cur]; let ok=false;
@@ -566,6 +614,12 @@ function check(){
   C.answered=true;
   const btn=document.getElementById('cbtn'); btn.textContent='Continue'; btn.className='check-btn cont'; btn.disabled=false;
   const fb=document.getElementById('fb');
+  // If flagged: skip scoring entirely, show neutral feedback
+  if(isExFlagged(ex)){
+    fb.className='feedback flagged-note';
+    fb.innerHTML='<div class="fb-head">⚑ Flagged — not scored</div><div class="fb-body">This question is flagged as faulty and will not affect your score.</div>';
+    return;
+  }
   if(ok){
     C.xp+=10; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">Correct! +10 XP</div><div class="fb-body">${ex.it||ex.correct}</div>`;
@@ -590,9 +644,11 @@ function showComplete(){
   APP.progress.completed[topicKey][lesson.id]=true;
   APP.progress.xp=(APP.progress.xp||0)+C.xp;
   saveProg();
+  const flaggedCount = C.exercises.filter(ex => isExFlagged(ex)).length;
   document.getElementById('comp-xp').textContent='+'+C.xp+' XP';
   document.getElementById('s-correct').textContent=C.exercises.length-C.mistakes;
   document.getElementById('s-mistakes').textContent=C.mistakes;
+  document.getElementById('s-flagged').textContent=flaggedCount+'⚑';
   document.getElementById('s-streak').textContent=C.bestStreak+'🔥';
   const hasNext=C.lessonIdx+1<APP.lessonData.lessons.length;
   document.getElementById('comp-next').textContent=hasNext?'Next lesson →':'Back to home';
