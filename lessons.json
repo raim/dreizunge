@@ -4451,6 +4451,40 @@
         ","
       ],
       "flaggedAt": "2026-04-24T13:44:07.476Z"
+    },
+    "pilze_suchen:order:Le_pilze_sottoterra_sono_difficili_da_tr": {
+      "topic": "pilze suchen",
+      "type": "order",
+      "it": "Le pilze sottoterra sono difficili da trovare.",
+      "en": "The mushrooms underground are hard to find.",
+      "correct": "Le pilze sottoterra sono difficili da trovare .",
+      "choices": [],
+      "words": [
+        "da",
+        "Le",
+        "pilze",
+        ".",
+        "difficili",
+        "trovare",
+        "sottoterra",
+        "sono"
+      ],
+      "flaggedAt": "2026-04-24T14:30:32.396Z"
+    },
+    "pilze_suchen:read_translate:Il_mycologo_studia_i_bozzoli_per_capire_": {
+      "topic": "pilze suchen",
+      "type": "read_translate",
+      "it": "Il mycologo studia i bozzoli per capire quando i champignoni saranno pronti.",
+      "en": "The mycologist studies the bozzoli to understand when the mushrooms will be ready.",
+      "correct": "The mycologist studies the bozzoli to understand when the mushrooms will be ready.",
+      "choices": [
+        "A lizard underground hides in a corner.",
+        "The fungicide was applied to prevent the infection of mushroom spores.",
+        "Do a tour for the trails.",
+        "The mycologist studies the bozzoli to understand when the mushrooms will be ready."
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-24T14:44:13.393Z"
     }
   }
 }
