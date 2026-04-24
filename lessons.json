@@ -1,6 +1,444 @@
 {
   "lessons": [
     {
+      "topic": "sheep on the meadow",
+      "topicEmoji": "🐑",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Sheep Grazing",
+          "desc": "Introducing sheep and meadows",
+          "icon": "🐑",
+          "vocab": [
+            {
+              "it": "prato",
+              "en": "meadow",
+              "pron": "PRAT-oh"
+            },
+            {
+              "it": "pecore",
+              "en": "sheep",
+              "pron": "PEH-koh-re"
+            },
+            {
+              "it": "graziano",
+              "en": "grazing",
+              "pron": "GRAH-zee-AH-no"
+            },
+            {
+              "it": "erba",
+              "en": "grass",
+              "pron": "ER-bah"
+            },
+            {
+              "it": "sole",
+              "en": "sun",
+              "pron": "SOH-le"
+            },
+            {
+              "it": "vento",
+              "en": "wind",
+              "pron": "VEN-to"
+            },
+            {
+              "it": "silenzio",
+              "en": "silence",
+              "pron": "see-LEN-zee-oh"
+            },
+            {
+              "it": "paesaggio",
+              "en": "landscape",
+              "pron": "pa-es-AT-tsee-oh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Graziano le pecore nel prato.",
+              "en": "The sheep are grazing in the meadow.",
+              "words": [
+                "graziano",
+                "le",
+                "pecore",
+                "nel",
+                "prato",
+                ".",
+                "grazing",
+                "the",
+                "sheep",
+                "in",
+                "the",
+                "meadow"
+              ]
+            },
+            {
+              "it": "Il sole illumina l'erba del prato.",
+              "en": "The sun illuminates the grass of the meadow.",
+              "words": [
+                "il",
+                "sole",
+                "illumina",
+                "l'erba",
+                "del",
+                "prato",
+                ".",
+                "the",
+                "sun",
+                "illuminates",
+                "the",
+                "grass",
+                "of",
+                "the",
+                "meadow"
+              ]
+            },
+            {
+              "it": "Il vento sussurra nel silenzio del paesaggio.",
+              "en": "The wind whispers in the silence of the landscape.",
+              "words": [
+                "il",
+                "vento",
+                "sussurra",
+                "nel",
+                "silenzio",
+                "del",
+                "paesaggio",
+                ".",
+                "the",
+                "wind",
+                "whispers",
+                "in",
+                "the",
+                "silence",
+                "of",
+                "the",
+                "landscape"
+              ]
+            },
+            {
+              "it": "Il paesaggio è silenzioso con le pecore.",
+              "en": "The landscape is silent with the sheep.",
+              "words": [
+                "il",
+                "paesaggio",
+                "è",
+                "silenzioso",
+                "con",
+                "le",
+                "pecore",
+                ".",
+                "the",
+                "landscape",
+                "is",
+                "silent",
+                "with",
+                "the",
+                "sheep"
+              ]
+            },
+            {
+              "it": "Le pecore pascolano nel prato sereno.",
+              "en": "The sheep graze in the serene meadow.",
+              "words": [
+                "le",
+                "pecore",
+                "pascolano",
+                "nel",
+                "prato",
+                "sereno",
+                ".",
+                "the",
+                "sheep",
+                "graze",
+                "in",
+                "the",
+                "serene",
+                "meadow"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Sheep Grazing",
+          "desc": "Intermediate lesson on sheep in meadows",
+          "icon": "🐑",
+          "vocab": [
+            {
+              "it": "pratello",
+              "en": "small meadow",
+              "pron": "prat-EL-lo"
+            },
+            {
+              "it": "ovile",
+              "en": "sheepfold",
+              "pron": "o-VEE-le"
+            },
+            {
+              "it": "agnello",
+              "en": "lamb",
+              "pron": "a-GNEL-lo"
+            },
+            {
+              "it": "pastore",
+              "en": "shepherd",
+              "pron": "pas-TO-re"
+            },
+            {
+              "it": "cancello",
+              "en": "gate",
+              "pron": "can-CEL-lo"
+            },
+            {
+              "it": "alpeggio",
+              "en": "summer pasture",
+              "pron": "al-PEJ-jio"
+            },
+            {
+              "it": "capra",
+              "en": "goat",
+              "pron": "ka-PA-ra"
+            },
+            {
+              "it": "tettoia",
+              "en": "shearing shed",
+              "pron": "te-TTO-ia"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Sulle praterie pascolano le pecore.",
+              "en": "On the meadows graze the sheep.",
+              "words": [
+                "Sulle",
+                "praterie",
+                "pascolano",
+                "le",
+                "pecore",
+                ".",
+                "praterie",
+                "small",
+                "meadow",
+                "pascolano",
+                "the",
+                "sheep"
+              ]
+            },
+            {
+              "it": "Nel ovile dormono i giovani agnelli.",
+              "en": "In the sheepfold sleep the young lambs.",
+              "words": [
+                "Nel",
+                "ovile",
+                "dormono",
+                "i",
+                "giovani",
+                "agnelli",
+                ".",
+                "ovile",
+                "sheepfold",
+                "dormono",
+                "young",
+                "lambs"
+              ]
+            },
+            {
+              "it": "Il pastore apre il cancello per i capri.",
+              "en": "The shepherd opens the gate for the goats.",
+              "words": [
+                "Il",
+                "pastore",
+                "apre",
+                "il",
+                "cancelllo",
+                "for",
+                "the",
+                "goats",
+                ".",
+                "pastore",
+                "shepherd",
+                "apre",
+                "the",
+                "gate"
+              ]
+            },
+            {
+              "it": "Durante l'alpeggio i pecore pascolano sui monti.",
+              "en": "During the alpeggio the sheep graze on the mountains.",
+              "words": [
+                "Durante",
+                "l'alpeggio",
+                "i",
+                "pecore",
+                "pascolano",
+                "sui",
+                "monti",
+                ".",
+                "alpeggio",
+                "summer",
+                "pasture",
+                "the",
+                "sheep",
+                "graze",
+                "on",
+                "the",
+                "mountains"
+              ]
+            },
+            {
+              "it": "Nella tettoia si tagliano le pecore.",
+              "en": "In the shearing shed the sheep are shorn.",
+              "words": [
+                "Nella",
+                "tettoia",
+                "si",
+                "tagliano",
+                "le",
+                "pecore",
+                ".",
+                "tettoia",
+                "shearing",
+                "shed",
+                "the",
+                "sheep",
+                "are",
+                "shorn"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Sheep Grazing",
+          "desc": "Advanced grammar in nature settings",
+          "icon": "🐑",
+          "vocab": [
+            {
+              "it": "pratello",
+              "en": "small meadow",
+              "pron": "PRAT-eh-lo"
+            },
+            {
+              "it": "ovile",
+              "en": "sheepfold",
+              "pron": "O-vee-le"
+            },
+            {
+              "it": "agnello",
+              "en": "lamb",
+              "pron": "ah-NAY-eh-lo"
+            },
+            {
+              "it": "pastore",
+              "en": "shepherd",
+              "pron": "pas-TO-re"
+            },
+            {
+              "it": "cancello",
+              "en": "gate",
+              "pron": "can-CHEL-lo"
+            },
+            {
+              "it": "alpeggio",
+              "en": "summer pasture",
+              "pron": "al-PEH-je-yo"
+            },
+            {
+              "it": "capra",
+              "en": "goat",
+              "pron": "KAH-pra"
+            },
+            {
+              "it": "tettoia",
+              "en": "shearing shed",
+              "pron": "teh-TEH-yah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Nel pratello pascolano le pecore e gli agnelli.",
+              "en": "In the small meadow, the sheep and lambs graze.",
+              "words": [
+                "Nel",
+                "pratello",
+                "pascolano",
+                "le",
+                "pecore",
+                "e",
+                "gli",
+                "agnelli",
+                ".",
+                " "
+              ]
+            },
+            {
+              "it": "Il pastore conduce le pecore all'ovile.",
+              "en": "The shepherd leads the sheep to the sheepfold.",
+              "words": [
+                "Il",
+                "pastore",
+                "conduce",
+                "le",
+                "pecore",
+                "all'",
+                "ovile",
+                ".",
+                " "
+              ]
+            },
+            {
+              "it": "L'agnello piccolo sta al cancello.",
+              "en": "The little lamb is at the gate.",
+              "words": [
+                "L'",
+                "agnello",
+                "piccolo",
+                "sta",
+                "al",
+                "cancell",
+                "o",
+                ".",
+                " "
+              ]
+            },
+            {
+              "it": "Durante l'alpeggio, le pecore pascolano sul monte.",
+              "en": "During the alpeggio, the sheep graze on the mountain.",
+              "words": [
+                "Durante",
+                "l'",
+                "alpeggio",
+                ",",
+                "le",
+                "pecore",
+                "pascolano",
+                "sul",
+                "monte",
+                ".",
+                " "
+              ]
+            },
+            {
+              "it": "Nella tettoia, i pastori tagliano le pecore.",
+              "en": "In the shearing shed, the shepherds shear the sheep.",
+              "words": [
+                "Nella",
+                "tettoia",
+                ",",
+                "i",
+                "pastori",
+                "tagliano",
+                "le",
+                "pecore",
+                ".",
+                " "
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-24T11:03:40.100Z"
+    },
+    {
       "topic": "schafe am rhein",
       "topicEmoji": "🐑",
       "lessons": [
@@ -4303,5 +4741,91 @@
       ],
       "generatedAt": "2026-04-21T09:52:31.149Z"
     }
-  ]
+  ],
+  "flags": {
+    "schafe_am_rhein:read_translate:Il_fiume_Rhein_scorre_accanto_a_un_paese": {
+      "topic": "schafe am rhein",
+      "type": "read_translate",
+      "it": "Il fiume Rhein scorre accanto a un paese con colline e schafe.",
+      "en": "The Rhine river flows next to a village with hills and sheep.",
+      "correct": "The Rhine river flows next to a village with hills and sheep.",
+      "choices": [
+        "The Rhine river flows next to a village with hills and sheep.",
+        "The Rhine flows between hills and sheep that graze in a meadow.",
+        "In the Rhine valley, you can see sheep grazing in a meadow.",
+        "Graziano grazes his sheep in a green meadow."
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-24T10:46:27.579Z"
+    },
+    "schafe_am_rhein:listen_mcq:schafe": {
+      "topic": "schafe am rhein",
+      "type": "listen_mcq",
+      "it": "schafe",
+      "en": "",
+      "correct": "sheep",
+      "choices": [
+        "river",
+        "meadow",
+        "sheep",
+        "Rhine river"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-24T10:46:39.182Z"
+    },
+    "schafe_am_rhein:read_translate:Sui_pendii_della_collina,_i_schafe_pasco": {
+      "topic": "schafe am rhein",
+      "type": "read_translate",
+      "it": "Sui pendii della collina, i schafe pascolano in un prato verde.",
+      "en": "On the hillside, the sheep graze in a green meadow.",
+      "correct": "On the hillside, the sheep graze in a green meadow.",
+      "choices": [
+        "Graziano grazes his sheep in a green meadow.",
+        "On the hillside, the sheep graze in a green meadow.",
+        "In the Rhine valley, you can see sheep grazing in a meadow.",
+        "The Rhine flows between hills and sheep that graze in a meadow."
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-24T10:47:08.989Z"
+    },
+    "schafe_am_rhein:read_translate:Nella_valle_del_Rhein_si_possono_vedere_": {
+      "topic": "schafe am rhein",
+      "type": "read_translate",
+      "it": "Nella valle del Rhein si possono vedere schafe che pascolano in un prato.",
+      "en": "In the Rhine valley, you can see sheep grazing in a meadow.",
+      "correct": "In the Rhine valley, you can see sheep grazing in a meadow.",
+      "choices": [
+        "The Rhine river flows next to a village with hills and sheep.",
+        "Graziano grazes his sheep in a green meadow.",
+        "In the Rhine valley, you can see sheep grazing in a meadow.",
+        "On the hillside, the sheep graze in a green meadow."
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-24T10:47:32.733Z"
+    },
+    "schafe_am_rhein:order:Sui_pendii_della_collina,_i_schafe_pasco": {
+      "topic": "schafe am rhein",
+      "type": "order",
+      "it": "Sui pendii della collina, i schafe pascolano in un prato verde.",
+      "en": "On the hillside, the sheep graze in a green meadow.",
+      "correct": "Sui pendii della collina , i schafe pascolano in un prato verde .",
+      "choices": [],
+      "words": [
+        "prato",
+        "collina",
+        "Sui",
+        ".",
+        "un",
+        "pascolano",
+        "pendii",
+        "della",
+        "verde",
+        ",",
+        "i",
+        "in",
+        "schafe"
+      ],
+      "flaggedAt": "2026-04-24T10:48:55.825Z"
+    }
+  }
 }
