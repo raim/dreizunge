@@ -38,6 +38,10 @@ function upsert(data) {
   saveStore(store);
 }
 
+// ── Flag storage helpers ─────────────────────────────────────────────
+function getFlags()  { return store.flags || {}; }
+function setFlags(f) { store.flags = f; saveStore(store); }
+
 // ── Generation lock — prevent concurrent requests for the same topic ──
 const generatingTopics = new Set();
 
@@ -428,6 +432,28 @@ async function boot() {
       if (!t) return json(res, 400, { error: 'Missing topic' });
       store.lessons = store.lessons.filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
       saveStore(store);
+      return json(res, 200, { ok: true });
+    }
+
+    if (M === 'GET' && url.pathname === '/api/flags') {
+      return json(res, 200, getFlags());
+    }
+
+    if (M === 'POST' && url.pathname === '/api/flags') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { key, entry } = body;
+      if (!key) return json(res, 400, { error: 'Missing key' });
+      const flags = getFlags();
+      if (entry === null || entry === undefined) {
+        delete flags[key];
+        console.log(`  Flag removed: ${key}`);
+      } else {
+        flags[key] = entry;
+        console.log(`  Flag saved: ${key}`);
+      }
+      setFlags(flags);
       return json(res, 200, { ok: true });
     }
 

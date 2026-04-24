@@ -323,17 +323,42 @@ function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'
 function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
 function loadFlagged(){ try{ return JSON.parse(localStorage.getItem('imp3_flagged')||'{}'); }catch(e){ return {}; } }
 function saveFlagged(){ localStorage.setItem('imp3_flagged',JSON.stringify(APP.flagged)); }
+async function syncFlagsFromServer(){
+  try{
+    const r=await fetch('/api/flags');
+    if(!r.ok) return;
+    const serverFlags=await r.json();
+    // Merge server flags into local (server wins on conflict)
+    Object.assign(APP.flagged, serverFlags);
+    saveFlagged();
+  }catch(e){ /* offline — use localStorage only */ }
+}
+async function pushFlagToServer(key, entry){
+  try{
+    await fetch('/api/flags',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({key, entry})});
+  }catch(e){ /* offline — flag stored locally only */ }
+}
 function flagKey(ex){
-  // Stable key from exercise content so flags survive lesson regeneration
-  const base = (ex.it||ex.en||ex.correct||'').slice(0,40).replace(/\s+/g,'_');
-  return (ex.type||'x') + ':' + base;
+  const topic = (APP.lessonData?.topic||'unknown').slice(0,30).replace(/\s+/g,'_');
+  const base  = (ex.it||ex.en||ex.correct||'').slice(0,40).replace(/\s+/g,'_');
+  return topic + ':' + (ex.type||'x') + ':' + base;
 }
 function isExFlagged(ex){ return !!APP.flagged[flagKey(ex)]; }
 function toggleFlag(ex){
   const k=flagKey(ex);
-  if(APP.flagged[k]) delete APP.flagged[k];
-  else APP.flagged[k] = { type:ex.type, it:ex.it||'', en:ex.en||'', correct:ex.correct||'', flaggedAt:new Date().toISOString() };
-  saveFlagged();
+  const topic=APP.lessonData?.topic||'unknown';
+  if(APP.flagged[k]){
+    delete APP.flagged[k];
+    saveFlagged();
+    pushFlagToServer(k, null); // null = delete
+  } else {
+    const entry={ topic, type:ex.type, it:ex.it||'', en:ex.en||'', correct:ex.correct||'',
+                  choices:ex.choices||[], words:ex.words||[], flaggedAt:new Date().toISOString() };
+    APP.flagged[k]=entry;
+    saveFlagged();
+    pushFlagToServer(k, entry);
+  }
 }
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function goLanding(){ loadSavedList(); show('landing'); }
@@ -342,6 +367,7 @@ function goHome(){ buildPath(); show('home'); }
 // ── init ──
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
+  await syncFlagsFromServer();
   renderPill();
   loadSavedList();
 }
