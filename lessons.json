@@ -859,8 +859,6 @@
                 "caccia",
                 "funghi",
                 "nel",
-                "bosco",
-                "Caccia",
                 "bosco"
               ]
             },
@@ -894,14 +892,14 @@
               "it": "Porta il tuo zaino con i funghi.",
               "en": "Take your backpack with the mushrooms.",
               "words": [
-                "il",
-                "zaino",
                 "tuo",
+                "zaino",
                 "con",
                 "Porta",
+                "il",
                 "zaino",
-                "fungo",
-                "fungi"
+                "funghi",
+                "funghi"
               ]
             },
             {
@@ -1162,7 +1160,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-24T14:48:05.947Z"
+      "generatedAt": "2026-04-24T14:56:52.372Z"
     },
     {
       "topic": "table tennis",
@@ -4437,6 +4435,31 @@
         ","
       ],
       "flaggedAt": "2026-04-24T13:44:07.476Z"
+    },
+    "pilze_suchen:read_translate:Nella_foresta,_i_bozzoli_nascondono_i_fu": {
+      "topic": "pilze suchen",
+      "type": "read_translate",
+      "it": "Nella foresta, i bozzoli nascondono i futuri champignoni.",
+      "en": "In the forest, the bozzoli hide the future mushrooms.",
+      "correct": "In the forest, the bozzoli hide the future mushrooms.",
+      "choices": [
+        "Don't put the bags in the forest.",
+        "In the forest, the bozzoli hide the future mushrooms.",
+        "The fungicide was applied to prevent the infection of mushroom spores.",
+        "A lizard underground hides in a corner."
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-24T15:02:38.610Z"
+    },
+    "pilze_suchen:order:Il_mycologo_studia_i_bozzoli_per_capire_": {
+      "topic": "pilze suchen",
+      "type": "order",
+      "it": "Il mycologo studia i bozzoli per capire quando i champignoni saranno pronti.",
+      "en": "The mycologist studies the bozzoli to understand when the mushrooms will be ready.",
+      "correct": "",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-04-24T15:05:21.923Z"
     }
   }
 }
