@@ -201,6 +201,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .sec-btn{width:100%;padding:12px;background:none;border:2.5px solid var(--gray-mid);border-radius:var(--radius-lg);font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark)}
 .sec-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
 
+.repair-btn{background:none;border:2px solid #ff9600;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;margin-top:8px;transition:background .1s,color .1s;width:100%}
+.repair-btn:hover{background:#ff9600;color:#fff}
+.repair-btn:disabled{opacity:.4;cursor:not-allowed}
+.repairing-note{font-size:12px;color:#c26000;font-weight:700;margin-top:6px;text-align:center}
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 </style>
@@ -362,6 +366,25 @@ function toggleFlag(ex){
 }
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function goLanding(){ loadSavedList(); show('landing'); }
+async function repairLesson(topic, lessonId){
+  const btnId='repair-btn-'+lessonId;
+  const btn=document.getElementById(btnId);
+  if(btn){ btn.disabled=true; btn.textContent='⏳ Repairing…'; }
+  try{
+    const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic,lessonId})});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.error||'Repair failed');
+    // Sync cleared flags from server
+    await syncFlagsFromServer();
+    alert(`✓ Repaired ${data.repaired} exercise${data.repaired!==1?'s':''} and cleared flags.`);
+    buildPath(); // refresh path to remove repair button
+  }catch(e){
+    alert('Repair failed: '+e.message);
+    if(btn){ btn.disabled=false; btn.textContent='⚑ Retry repair'; }
+  }
+}
+
 function goHome(){ buildPath(); show('home'); }
 
 // ── init ──
@@ -487,8 +510,18 @@ function buildPath(){
     const node=document.createElement('div');
     node.className='lesson-node'+(isDone?' done-node':isLocked?' locked':isActive?' active-node':'');
     if(isActive){ const b=document.createElement('div'); b.className='next-badge'; b.textContent='Next up'; node.appendChild(b); }
+    // Count flags for this lesson
+    const lessonTopicSlug=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
+    const lessonFlagCount=Object.keys(APP.flagged).filter(k=>
+      k.startsWith(lessonTopicSlug+':') || k.toLowerCase().startsWith((d.topic||'').slice(0,15).toLowerCase()+':')
+    ).length;
+    const hasFlags=lessonFlagCount>0&&APP.info.canGenerate;
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
-      <div class="node-lbl"><div class="node-title">Lesson ${L.id}: ${L.title}</div><div class="node-desc">${L.desc}</div></div>
+      <div class="node-lbl">
+        <div class="node-title">Lesson ${L.id}: ${L.title}</div>
+        <div class="node-desc">${L.desc}</div>
+        ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}
+      </div>
       ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);

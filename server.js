@@ -256,12 +256,43 @@ async function generateSentences(active, topic, lessonNum, totalLessons, vocab) 
     catch(_) { arr = salvageArray(raw); }
     if (!Array.isArray(arr) || arr.length < 3)
       throw new Error(`Only ${arr?.length ?? 0} sentences`);
-    // Ensure words[] exists
+
+    // Punctuation-only tokens to strip from word-order exercises
+    const isPunct = t => /^[.,!?;:()\[\]"']+$/.test(t.trim());
+
     arr = arr.slice(0, 5).map(s => {
+      // Ensure words[] exists — fall back to splitting 'it'
       if (!s.words || !Array.isArray(s.words) || s.words.length === 0)
         s.words = s.it.split(' ');
+
+      // Validate: words[] joined must match 'it', not 'en'
+      // Normalize: collapse spaces before punctuation for comparison
+      const norm = str => str.trim().replace(/ ([.,!?;:()\[\]])/g, '$1');
+      const joined = s.words.join(' ');
+      const itNorm = norm(s.it || '');
+      const enNorm = norm(s.en || '');
+      if (norm(joined) === enNorm && norm(joined) !== itNorm) {
+        // Model put English in words[] — rebuild from Italian
+        console.warn(`    words[] was English, rebuilding from 'it': "${itNorm.slice(0,40)}"`);
+        s.words = s.it.split(' ');
+      }
+
+      // Strip punctuation-only tokens so user arranges words not punctuation
+      s.words = s.words.filter(t => !isPunct(t));
+
+      // Sanity: need at least 2 words to make an exercise
+      if (s.words.length < 2)
+        s.words = s.it.split(' ').filter(t => !isPunct(t));
+
       return s;
     });
+
+    // Reject batch if more than 1 sentence still has English in words[]
+    const norm2 = str => str.trim().replace(/ ([.,!?;:()\[\]])/g, '$1');
+    const bad = arr.filter(s => norm2(s.words.join(' ')) === norm2(s.en || ''));
+    if (bad.length > 1)
+      throw new Error(`${bad.length} sentences still have English in words[] — retrying`);
+
     return arr;
   });
 }
@@ -371,6 +402,108 @@ function json(res, code, obj) {
   res.end(JSON.stringify(obj));
 }
 
+
+// ── Repair flagged exercises in a lesson ──────────────────────────────
+const SYS_REPAIR = `You are an Italian language exercise repairer for a Duolingo-style app.
+You will receive a list of faulty exercises and must return corrected versions.
+Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
+
+Each exercise has a type. Return corrected versions preserving the same type and schema:
+- mcq_it_en: {"type":"mcq_it_en","it":"Italian","en":"English","pron":"phonetic","correct":"correct English choice","choices":["4 English choices"]}
+- mcq_en_it: {"type":"mcq_en_it","en":"English","it":"Italian","correct":"correct Italian choice","choices":["4 Italian choices"]}
+- listen_mcq: {"type":"listen_mcq","it":"Italian","pron":"phonetic","correct":"correct English choice","choices":["4 English choices"]}
+- listen_type: {"type":"listen_type","it":"Italian","pron":"phonetic","correct":"Italian word to type"}
+- read_translate: {"type":"read_translate","it":"Italian sentence","en":"English","correct":"correct English choice","choices":["4 English choices"]}
+- order: {"type":"order","it":"Italian sentence","en":"English","words":["Italian","words","no","punctuation"]}
+
+Rules:
+- Fix translation errors, wrong choices, incorrect pronunciations
+- For order type: words[] must contain only the Italian words (no punctuation tokens), shuffled
+- Keep the same topic and difficulty
+- Return exactly as many items as given`;
+
+async function repairLesson(active, topic, lessonId) {
+  const saved = findSaved(topic);
+  if (!saved) throw new Error(`Topic not found: ${topic}`);
+  const lesson = saved.lessons.find(l => l.id === lessonId);
+  if (!lesson) throw new Error(`Lesson ${lessonId} not found in topic: ${topic}`);
+
+  // Collect flagged exercises for this lesson
+  const flags = getFlags();
+  const topicSlug = topic.slice(0, 30).replace(/\s+/g, '_');
+  const flaggedEntries = Object.entries(flags).filter(([k]) =>
+    k.startsWith(topicSlug + ':') || k.toLowerCase().startsWith(topic.slice(0,15).toLowerCase())
+  );
+
+  if (flaggedEntries.length === 0) throw new Error('No flagged exercises found for this lesson');
+
+  const flaggedExercises = flaggedEntries.map(([k, v]) => v);
+  console.log(`  Repairing ${flaggedExercises.length} flagged exercise(s) in "${topic}" lesson ${lessonId}…`);
+
+  const userMsg = `Topic: "${topic}". Fix these ${flaggedExercises.length} faulty Italian exercises:\n${JSON.stringify(flaggedExercises, null, 2)}\nReturn only the corrected JSON array.`;
+
+  return withRetry('Repair', async () => {
+    const raw = await callLLM(active, SYS_REPAIR, userMsg, 2048);
+    let arr;
+    try { arr = extractArray(raw); }
+    catch(_) { arr = salvageArray(raw); }
+    if (!Array.isArray(arr) || arr.length === 0)
+      throw new Error('No repaired exercises returned');
+
+    // Apply punctuation strip to any order exercises
+    const isPunct = t => /^[.,!?;:()\[\]"']+$/.test(t.trim());
+    arr = arr.map(ex => {
+      if (ex.type === 'order' && Array.isArray(ex.words))
+        ex.words = ex.words.filter(t => !isPunct(t));
+      return ex;
+    });
+
+    // Merge repaired exercises back into the lesson's sentences/vocab
+    // Strategy: match by type+it/en, replace in lesson sentences where possible
+    const repairedKeys = new Set();
+    arr.forEach(repaired => {
+      // For sentence-based types: find matching sentence in lesson and update
+      if (['order','read_translate'].includes(repaired.type) && repaired.it) {
+        const idx = lesson.sentences.findIndex(s =>
+          s.it.toLowerCase().slice(0,20) === (repaired.it||'').toLowerCase().slice(0,20)
+        );
+        if (idx >= 0) {
+          lesson.sentences[idx] = {
+            it: repaired.it,
+            en: repaired.en || lesson.sentences[idx].en,
+            words: repaired.words || lesson.sentences[idx].words
+          };
+          repairedKeys.add(idx);
+        }
+      }
+      // For vocab-based types: find matching vocab and update
+      if (['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(repaired.type) && repaired.it) {
+        const idx = lesson.vocab.findIndex(v =>
+          v.it.toLowerCase().slice(0,15) === (repaired.it||'').toLowerCase().slice(0,15)
+        );
+        if (idx >= 0) {
+          lesson.vocab[idx] = {
+            it: repaired.it,
+            en: repaired.en || lesson.vocab[idx].en,
+            pron: repaired.pron || lesson.vocab[idx].pron
+          };
+        }
+      }
+    });
+
+    // Save updated lesson back to store
+    upsert(saved);
+
+    // Clear flags for this topic
+    const updatedFlags = getFlags();
+    for (const [k] of flaggedEntries) delete updatedFlags[k];
+    setFlags(updatedFlags);
+
+    console.log(`  Repair complete: ${arr.length} exercise(s) fixed, flags cleared`);
+    return { repaired: arr.length, lesson };
+  });
+}
+
 // ── Boot ──────────────────────────────────────────────────────────────
 async function boot() {
   let active;
@@ -455,6 +588,29 @@ async function boot() {
       }
       setFlags(flags);
       return json(res, 200, { ok: true });
+    }
+
+    if (M === 'POST' && url.pathname === '/api/repair') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topic, lessonId } = body;
+      if (!topic) return json(res, 400, { error: 'Missing topic' });
+      if (!lessonId) return json(res, 400, { error: 'Missing lessonId' });
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available for repair.' });
+      const topicKey = topic.trim().toLowerCase();
+      if (generatingTopics.has(topicKey))
+        return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
+      generatingTopics.add(topicKey);
+      try {
+        const result = await repairLesson(active, topic.trim(), parseInt(lessonId, 10));
+        return json(res, 200, result);
+      } catch(e) {
+        console.error('  Repair error:', e.message);
+        return json(res, 500, { error: e.message });
+      } finally {
+        generatingTopics.delete(topicKey);
+      }
     }
 
     if (M === 'POST' && url.pathname === '/api/generate') {

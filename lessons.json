@@ -7,8 +7,8 @@
         {
           "id": 1,
           "title": "Sheep Grazing",
-          "desc": "Introducing sheep and meadows",
-          "icon": "🐑",
+          "desc": "Introducing farm animals, colors",
+          "icon": "🐑🌿",
           "vocab": [
             {
               "it": "prato",
@@ -43,7 +43,7 @@
             {
               "it": "silenzio",
               "en": "silence",
-              "pron": "see-LEN-zee-oh"
+              "pron": "see-LEHN-zee-oh"
             },
             {
               "it": "paesaggio",
@@ -61,7 +61,6 @@
                 "pecore",
                 "nel",
                 "prato",
-                ".",
                 "grazing",
                 "the",
                 "sheep",
@@ -80,7 +79,6 @@
                 "l'erba",
                 "del",
                 "prato",
-                ".",
                 "the",
                 "sun",
                 "illuminates",
@@ -102,7 +100,6 @@
                 "silenzio",
                 "del",
                 "paesaggio",
-                ".",
                 "the",
                 "wind",
                 "whispers",
@@ -115,21 +112,20 @@
               ]
             },
             {
-              "it": "Il paesaggio è silenzioso con le pecore.",
-              "en": "The landscape is silent with the sheep.",
+              "it": "Il paesaggio è tranquillo con le pecore.",
+              "en": "The landscape is tranquil with the sheep.",
               "words": [
                 "il",
                 "paesaggio",
                 "è",
-                "silenzioso",
+                "tranquillo",
                 "con",
                 "le",
                 "pecore",
-                ".",
                 "the",
                 "landscape",
                 "is",
-                "silent",
+                "tranquil",
                 "with",
                 "the",
                 "sheep"
@@ -145,7 +141,6 @@
                 "nel",
                 "prato",
                 "sereno",
-                ".",
                 "the",
                 "sheep",
                 "graze",
@@ -196,12 +191,12 @@
             {
               "it": "capra",
               "en": "goat",
-              "pron": "ka-PA-ra"
+              "pron": "ka-PRA"
             },
             {
-              "it": "tettoia",
-              "en": "shearing shed",
-              "pron": "te-TTO-ia"
+              "it": "lana",
+              "en": "wool",
+              "pron": "LA-nah"
             }
           ],
           "sentences": [
@@ -213,95 +208,55 @@
                 "praterie",
                 "pascolano",
                 "le",
-                "pecore",
-                ".",
-                "praterie",
-                "small",
-                "meadow",
-                "pascolano",
-                "the",
-                "sheep"
+                "pecore"
               ]
             },
             {
-              "it": "Nel ovile dormono i giovani agnelli.",
-              "en": "In the sheepfold sleep the young lambs.",
+              "it": "Nel ovile dormono i capretti.",
+              "en": "In the sheepfold the kids sleep.",
               "words": [
                 "Nel",
                 "ovile",
                 "dormono",
                 "i",
-                "giovani",
-                "agnelli",
-                ".",
-                "ovile",
-                "sheepfold",
-                "dormono",
-                "young",
-                "lambs"
+                "capretti"
               ]
             },
             {
-              "it": "Il pastore apre il cancello per i capri.",
-              "en": "The shepherd opens the gate for the goats.",
+              "it": "Il pastore guida le pecore all'alpeggio.",
+              "en": "The shepherd guides the sheep to the alpeggio.",
               "words": [
                 "Il",
                 "pastore",
-                "apre",
-                "il",
-                "cancelllo",
-                "for",
-                "the",
-                "goats",
-                ".",
-                "pastore",
-                "shepherd",
-                "apre",
-                "the",
-                "gate"
-              ]
-            },
-            {
-              "it": "Durante l'alpeggio i pecore pascolano sui monti.",
-              "en": "During the alpeggio the sheep graze on the mountains.",
-              "words": [
-                "Durante",
-                "l'alpeggio",
-                "i",
-                "pecore",
-                "pascolano",
-                "sui",
-                "monti",
-                ".",
-                "alpeggio",
-                "summer",
-                "pasture",
-                "the",
-                "sheep",
-                "graze",
-                "on",
-                "the",
-                "mountains"
-              ]
-            },
-            {
-              "it": "Nella tettoia si tagliano le pecore.",
-              "en": "In the shearing shed the sheep are shorn.",
-              "words": [
-                "Nella",
-                "tettoia",
-                "si",
-                "tagliano",
+                "guida",
                 "le",
                 "pecore",
-                ".",
-                "tettoia",
-                "shearing",
-                "shed",
-                "the",
-                "sheep",
-                "are",
-                "shorn"
+                "all'alpeggio"
+              ]
+            },
+            {
+              "it": "Tra le pecore ci sono anche agnelli.",
+              "en": "Among the sheep there are also lambs.",
+              "words": [
+                "Tra",
+                "le",
+                "pecore",
+                "ci",
+                "sono",
+                "anche",
+                "agnelli"
+              ]
+            },
+            {
+              "it": "Il cancello del pratello è aperto.",
+              "en": "The gate of the small meadow is open.",
+              "words": [
+                "Il",
+                "cancelllo",
+                "del",
+                "pratello",
+                "è",
+                "aperto"
               ]
             }
           ]
@@ -309,592 +264,136 @@
         {
           "id": 3,
           "title": "Sheep Grazing",
-          "desc": "Advanced grammar in nature settings",
+          "desc": "Advanced grammar and vocabulary",
           "icon": "🐑",
           "vocab": [
             {
-              "it": "pratello",
-              "en": "small meadow",
-              "pron": "PRAT-eh-lo"
+              "it": "prorompente",
+              "en": "bursting (with emotion)",
+              "pron": "proh-rom-PEH-nte"
             },
             {
-              "it": "ovile",
-              "en": "sheepfold",
-              "pron": "O-vee-le"
+              "it": "sinfonia",
+              "en": "symphony",
+              "pron": "sin-FOH-nee-ah"
             },
             {
-              "it": "agnello",
-              "en": "lamb",
-              "pron": "ah-NAY-eh-lo"
+              "it": "luminescente",
+              "en": "luminous",
+              "pron": "loo-mih-nes-SEN-tche"
             },
             {
-              "it": "pastore",
-              "en": "shepherd",
-              "pron": "pas-TO-re"
+              "it": "silvestre",
+              "en": "wild",
+              "pron": "sil-VEH-stre"
             },
             {
-              "it": "cancello",
-              "en": "gate",
-              "pron": "can-CHEL-lo"
+              "it": "prorompente",
+              "en": "bursting (with emotion)",
+              "pron": "proh-rom-PEH-nte"
             },
             {
-              "it": "alpeggio",
-              "en": "summer pasture",
-              "pron": "al-PEH-je-yo"
+              "it": "sinfonia",
+              "en": "symphony",
+              "pron": "sin-FOH-nee-ah"
             },
             {
-              "it": "capra",
-              "en": "goat",
-              "pron": "KAH-pra"
+              "it": "luminescente",
+              "en": "luminous",
+              "pron": "loo-mih-nes-SEN-tche"
             },
             {
-              "it": "tettoia",
-              "en": "shearing shed",
-              "pron": "teh-TEH-yah"
+              "it": "silvestre",
+              "en": "wild",
+              "pron": "sil-VEH-stre"
             }
           ],
           "sentences": [
             {
-              "it": "Nel pratello pascolano le pecore e gli agnelli.",
-              "en": "In the small meadow, the sheep and lambs graze.",
+              "it": "Le pecore silvestri prorompenti si muovono come una sinfonia luminescente.",
+              "en": "The wild, bursting sheep move like a luminous symphony.",
               "words": [
-                "Nel",
-                "pratello",
-                "pascolano",
-                "le",
+                "Le",
                 "pecore",
-                "e",
-                "gli",
-                "agnelli",
-                ".",
-                " "
-              ]
-            },
-            {
-              "it": "Il pastore conduce le pecore all'ovile.",
-              "en": "The shepherd leads the sheep to the sheepfold.",
-              "words": [
-                "Il",
-                "pastore",
-                "conduce",
-                "le",
-                "pecore",
-                "all'",
-                "ovile",
-                ".",
-                " "
-              ]
-            },
-            {
-              "it": "L'agnello piccolo sta al cancello.",
-              "en": "The little lamb is at the gate.",
-              "words": [
-                "L'",
-                "agnello",
-                "piccolo",
-                "sta",
-                "al",
-                "cancell",
-                "o",
-                ".",
-                " "
-              ]
-            },
-            {
-              "it": "Durante l'alpeggio, le pecore pascolano sul monte.",
-              "en": "During the alpeggio, the sheep graze on the mountain.",
-              "words": [
-                "Durante",
-                "l'",
-                "alpeggio",
-                ",",
-                "le",
-                "pecore",
-                "pascolano",
-                "sul",
-                "monte",
-                ".",
-                " "
-              ]
-            },
-            {
-              "it": "Nella tettoia, i pastori tagliano le pecore.",
-              "en": "In the shearing shed, the shepherds shear the sheep.",
-              "words": [
-                "Nella",
-                "tettoia",
-                ",",
-                "i",
-                "pastori",
-                "tagliano",
-                "le",
-                "pecore",
-                ".",
-                " "
-              ]
-            }
-          ]
-        }
-      ],
-      "generatedAt": "2026-04-24T11:03:40.100Z"
-    },
-    {
-      "topic": "schafe am rhein",
-      "topicEmoji": "🐑",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Schafe am Rhein",
-          "desc": "Sheep by the Rhine river",
-          "icon": "📐",
-          "vocab": [
-            {
-              "it": "rhein",
-              "en": "Rhine river",
-              "pron": "REIN"
-            },
-            {
-              "it": "schafe",
-              "en": "sheep",
-              "pron": "SCHA-Fe"
-            },
-            {
-              "it": "graziano",
-              "en": "grazing",
-              "pron": "gra-ZIA-no"
-            },
-            {
-              "it": "prato",
-              "en": "meadow",
-              "pron": "PRAT-to"
-            },
-            {
-              "it": "fiume",
-              "en": "river",
-              "pron": "FIOO-me"
-            },
-            {
-              "it": "paese",
-              "en": "village",
-              "pron": "pa-ES-eh"
-            },
-            {
-              "it": "collina",
-              "en": "hill",
-              "pron": "kol-LI-nah"
-            },
-            {
-              "it": "verde",
-              "en": "green",
-              "pron": "VER-de"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Graziano pascola i suoi schafe in un prato verde.",
-              "en": "Graziano grazes his sheep in a green meadow.",
-              "words": [
-                "Graziano",
-                "pascola",
-                "i",
-                "suoi",
-                "schafe",
-                "in",
-                "un",
-                "prato",
-                "verde",
-                ".",
-                "pascola",
-                "grazia",
-                "sheep",
-                "in",
-                "a",
-                "green",
-                "meadow",
-                "."
-              ]
-            },
-            {
-              "it": "Il fiume Rhein scorre accanto a un paese con colline e schafe.",
-              "en": "The Rhine river flows next to a village with hills and sheep.",
-              "words": [
-                "Il",
-                "fiume",
-                "Rhein",
-                "scorre",
-                "accanto",
-                "a",
-                "un",
-                "paese",
-                "con",
-                "colline",
-                "e",
-                "schafe",
-                "."
-              ]
-            },
-            {
-              "it": "Nella valle del Rhein si possono vedere schafe che pascolano in un prato.",
-              "en": "In the Rhine valley, you can see sheep grazing in a meadow.",
-              "words": [
-                "Nella",
-                "valle",
-                "del",
-                "Rhein",
+                "silvestri",
+                "prorompenti",
                 "si",
-                "possono",
-                "vedere",
-                "schafe",
-                "che",
-                "pascolano",
-                "in",
-                "un",
-                "prato",
-                "."
+                "muovono",
+                "come",
+                "una",
+                "sinfonia",
+                "luminescente"
               ]
             },
             {
-              "it": "Sui pendii della collina, i schafe pascolano in un prato verde.",
-              "en": "On the hillside, the sheep graze in a green meadow.",
-              "words": [
-                "Sui",
-                "pendii",
-                "della",
-                "collina",
-                ",",
-                "i",
-                "schafe",
-                "pascolano",
-                "in",
-                "un",
-                "prato",
-                "verde",
-                "."
-              ]
-            },
-            {
-              "it": "Il Rhein scorre tra colline e schafe che pascolano in un prato.",
-              "en": "The Rhine flows between hills and sheep that graze in a meadow.",
+              "it": "Il prorompente canto delle pecore silvestre è una sinfonia naturale.",
+              "en": "The bursting song of the wild sheep is a natural symphony.",
               "words": [
                 "Il",
-                "Rhein",
-                "scorre",
-                "tra",
-                "colline",
-                "e",
-                "schafe",
-                "che",
-                "pascolano",
-                "in",
-                "un",
-                "prato",
-                "."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Schafe am Rhein",
-          "desc": "Intermediate German: Sheep by the Rhine",
-          "icon": "📐",
-          "vocab": [
-            {
-              "it": "raccogliere",
-              "en": "to gather",
-              "pron": "ruh-KOH-lee-YEH-ree"
-            },
-            {
-              "it": "pascolo",
-              "en": "pasture",
-              "pron": "pahs-KOH-lo"
-            },
-            {
-              "it": "alpeggio",
-              "en": "alpine pastures",
-              "pron": "ah-leh-PYEH-joh"
-            },
-            {
-              "it": "capra",
-              "en": "goat",
-              "pron": "KAH-prah"
-            },
-            {
-              "it": "prigioniero",
-              "en": "prisoner",
-              "pron": "pruh-JEE-nyeh-ROE"
-            },
-            {
-              "it": "libertà",
-              "en": "freedom",
-              "pron": "lee-beh-RAH-tah"
-            },
-            {
-              "it": "tranquillo",
-              "en": "calm",
-              "pron": "trahn-KWIL-lo"
-            },
-            {
-              "it": "silenzio",
-              "en": "silence",
-              "pron": "tee-lee-ZEN-zho"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "I capre pascolano tranquille nel silenzio.",
-              "en": "The goats graze calmly in the silence.",
-              "words": [
-                "I",
-                "capre",
-                "pascolano",
-                "tranquille",
-                "nel",
-                "silenzio",
-                ".",
-                "goats",
-                "graze",
-                "calmly",
-                "in",
-                "the",
-                "silence",
-                "."
-              ]
-            },
-            {
-              "it": "I prigionieri delle alpeggi si raccogliono al tramonto.",
-              "en": "The prisoners of the alpine pastures gather at sunset.",
-              "words": [
-                "I",
-                "prigionieri",
+                "prorompente",
+                "canto",
                 "delle",
-                "alpeggi",
-                "si",
-                "raccogliono",
-                "al",
-                "tramonto",
-                ".",
-                "The",
-                "prisoners",
-                "of",
-                "the",
-                "alpine",
-                "pastures",
-                "gather",
-                "at",
-                "sunset",
-                "."
+                "pecore",
+                "silvestre",
+                "è",
+                "una",
+                "sinfonia",
+                "naturale"
               ]
             },
             {
-              "it": "I greggi pascolano sereni sulle rive del Reno.",
-              "en": "The flocks graze serene on the banks of the Rhine.",
+              "it": "Il prorompente sole illumina la sinfonia luminescente delle pecore silvestre.",
+              "en": "The bursting sun illuminates the luminous symphony of the wild sheep.",
               "words": [
-                "I",
-                "greggi",
-                "pascolano",
-                "sereni",
-                "sulle",
-                "rive",
-                "del",
-                "Reno",
-                ".",
-                "The",
-                "flocks",
-                "graze",
-                "serene",
-                "on",
-                "the",
-                "banks",
-                "of",
-                "the",
-                "Rhine",
-                "."
-              ]
-            },
-            {
-              "it": "Nel pascolo i capre trovano libertà.",
-              "en": "In the pasture, the goats find freedom.",
-              "words": [
-                "Nel",
-                "pascolo",
-                "i",
-                "capre",
-                "trovano",
-                "libertà",
-                ".",
-                "In",
-                "the",
-                "pasture",
-                ",",
-                "the",
-                "goats",
-                "find",
-                "freedom",
-                "."
-              ]
-            },
-            {
-              "it": "I prigionieri delle alpeggi godono del silenzio.",
-              "en": "The prisoners of the alpine pastures enjoy the silence.",
-              "words": [
-                "I",
-                "prigionieri",
-                "delle",
-                "alpeggi",
-                "godono",
-                "del",
-                "silenzio",
-                ".",
-                "The",
-                "prisoners",
-                "of",
-                "the",
-                "alpine",
-                "pastures",
-                "enjoy",
-                "the",
-                "silence",
-                "."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Schafe am Rhein",
-          "desc": "Advanced lesson on sheep by the Rhine",
-          "icon": "🐑",
-          "vocab": [
-            {
-              "it": "prigioniero",
-              "en": "prisoner",
-              "pron": "pruh-JEE-nyeh-roh"
-            },
-            {
-              "it": "libertà",
-              "en": "freedom",
-              "pron": "luh-ber-TAH"
-            },
-            {
-              "it": "tranquillo",
-              "en": "calm",
-              "pron": "trahn-KWIL-lo"
-            },
-            {
-              "it": "silenzio",
-              "en": "silence",
-              "pron": "sil-en-TZHEE-oh"
-            },
-            {
-              "it": "alpeggio",
-              "en": "alpine pastures",
-              "pron": "al-PEH-jeh-yoh"
-            },
-            {
-              "it": "pascolo",
-              "en": "pasture",
-              "pron": "pahs-KOH-lo"
-            },
-            {
-              "it": "graziano",
-              "en": "grazing",
-              "pron": "grah-ZYAH-noh"
-            },
-            {
-              "it": "prato",
-              "en": "meadow",
-              "pron": "PRAH-to"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "I prigionieri cercano la libertà in quel tranquillo alpeggio.",
-              "en": "The prisoners seek freedom in that calm alpine pastures.",
-              "words": [
-                "I",
-                "prigionieri",
-                "cercano",
+                "Il",
+                "prorompente",
+                "sole",
+                "illumina",
                 "la",
-                "libertà",
-                "in",
-                "quel",
-                "tranquillo",
-                "alpeggio",
-                "."
+                "sinfonia",
+                "luminescente",
+                "delle",
+                "pecore",
+                "silvestre"
               ]
             },
             {
-              "it": "Il pascolo è silenzioso e graziano in quei prati.",
-              "en": "The pasture is silent and grazing in those prairies.",
+              "it": "La sinfonia prorompente delle pecore silvestre risuona nel mezzo del prato.",
+              "en": "The bursting symphony of the wild sheep resounds in the middle of the meadow.",
               "words": [
-                "Il",
-                "pascolo",
-                "è",
-                "silenzioso",
-                "e",
-                "graziano",
-                "in",
-                "quei",
-                "prati",
-                "."
-              ]
-            },
-            {
-              "it": "I schafe pascolano tranquilli al fianco del Rhein.",
-              "en": "The sheep graze calmly by the side of the Rhine.",
-              "words": [
-                "I",
-                "schafe",
-                "pascolano",
-                "tranquilli",
-                "al",
-                "fianco",
+                "La",
+                "sinfonia",
+                "prorompente",
+                "delle",
+                "pecore",
+                "silvestre",
+                "risuona",
+                "nel",
+                "mezzo",
                 "del",
-                "Rhein",
-                "."
+                "prato"
               ]
             },
             {
-              "it": "Il silenzio è il migliore amico di chi grazia i prati.",
-              "en": "Silence is the best friend of who grazes the meadows.",
+              "it": "La sinfonia luminescente delle pecore silvestre è un spettacolo prorompente.",
+              "en": "The luminous symphony of the wild sheep is a bursting spectacle.",
               "words": [
-                "Il",
-                "silenzio",
+                "La",
+                "sinfonia",
+                "luminescente",
+                "delle",
+                "pecore",
+                "silvestre",
                 "è",
-                "il",
-                "migliore",
-                "amico",
-                "di",
-                "chi",
-                "grazia",
-                "i",
-                "prati",
-                "."
-              ]
-            },
-            {
-              "it": "Nel tranquillo alpeggio, i prigionieri trovano un po' di libertà.",
-              "en": "In the calm alpine pastures, the prisoners find a bit of freedom.",
-              "words": [
-                "Nel",
-                "tranquillo",
-                "alpeggio",
-                ",",
-                "i",
-                "prigionieri",
-                "trovano",
                 "un",
-                "po'",
-                "di",
-                "libertà",
-                "."
+                "spettacolo",
+                "prorompente"
               ]
             }
           ]
         }
       ],
-      "generatedAt": "2026-04-23T08:25:37.843Z"
+      "generatedAt": "2026-04-24T14:04:09.545Z"
     },
     {
       "topic": "im wald spazieren",
@@ -1357,14 +856,11 @@
               "it": "Caccia i funghi nel bosco.",
               "en": "Hunt mushrooms in the forest.",
               "words": [
-                "Caccia",
-                "i",
+                "caccia",
                 "funghi",
                 "nel",
                 "bosco",
-                ".",
-                "caccia",
-                "fungo",
+                "Caccia",
                 "bosco"
               ]
             },
@@ -1372,14 +868,10 @@
               "it": "Non mettere i sacchetti nel bosco.",
               "en": "Don't put the bags in the forest.",
               "words": [
-                "Non",
-                "mettere",
                 "i",
-                "sacchetti",
                 "nel",
-                "bosco",
-                ".",
-                "pattumiera",
+                "sacchetti",
+                "Non",
                 "bosco"
               ]
             },
@@ -1402,31 +894,28 @@
               "it": "Porta il tuo zaino con i funghi.",
               "en": "Take your backpack with the mushrooms.",
               "words": [
-                "Porta",
                 "il",
+                "zaino",
                 "tuo",
-                "zaino",
                 "con",
-                "i",
-                "fungi",
-                ".",
+                "Porta",
                 "zaino",
-                "fungo"
+                "fungo",
+                "fungi"
               ]
             },
             {
               "it": "Non mettere i funghi nella pattumiera.",
               "en": "Don't put the mushrooms in the rubbish bin.",
               "words": [
-                "Non",
-                "mettere",
                 "i",
                 "fungi",
                 "nella",
                 "pattumiera",
-                ".",
+                "Non",
                 "fungo",
-                "pattumiera"
+                "pattumiera",
+                "mettere"
               ]
             }
           ]
@@ -1687,7 +1176,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-22T14:27:37.364Z"
+      "generatedAt": "2026-04-24T14:25:00.441Z"
     },
     {
       "topic": "table tennis",
@@ -4826,6 +4315,142 @@
         "schafe"
       ],
       "flaggedAt": "2026-04-24T10:48:55.825Z"
+    },
+    "sheep_on_the_meadow:order:Il_paesaggio_è_silenzioso_con_le_pecore.": {
+      "topic": "sheep on the meadow",
+      "type": "order",
+      "it": "Il paesaggio è silenzioso con le pecore.",
+      "en": "The landscape is silent with the sheep.",
+      "correct": "il paesaggio è silenzioso con le pecore . the landscape is silent with the sheep",
+      "choices": [],
+      "words": [
+        "è",
+        "silenzioso",
+        "the",
+        "with",
+        "pecore",
+        "con",
+        "le",
+        "landscape",
+        "the",
+        "is",
+        "sheep",
+        "silent",
+        ".",
+        "paesaggio",
+        "il"
+      ],
+      "flaggedAt": "2026-04-24T13:34:45.005Z"
+    },
+    "sheep_on_the_meadow:order:Il_vento_sussurra_nel_silenzio_del_paesa": {
+      "topic": "sheep on the meadow",
+      "type": "order",
+      "it": "Il vento sussurra nel silenzio del paesaggio.",
+      "en": "The wind whispers in the silence of the landscape.",
+      "correct": "il vento sussurra nel silenzio del paesaggio . the wind whispers in the silence of the landscape",
+      "choices": [],
+      "words": [
+        "wind",
+        "il",
+        "landscape",
+        "whispers",
+        "del",
+        "in",
+        "silence",
+        "sussurra",
+        ".",
+        "of",
+        "the",
+        "silenzio",
+        "nel",
+        "vento",
+        "paesaggio",
+        "the",
+        "the"
+      ],
+      "flaggedAt": "2026-04-24T13:35:56.883Z"
+    },
+    "sheep_on_the_meadow:order:Le_pecore_pascolano_nel_prato_sereno.": {
+      "topic": "sheep on the meadow",
+      "type": "order",
+      "it": "Le pecore pascolano nel prato sereno.",
+      "en": "The sheep graze in the serene meadow.",
+      "correct": "le pecore pascolano nel prato sereno . the sheep graze in the serene meadow",
+      "choices": [],
+      "words": [
+        "prato",
+        "meadow",
+        "in",
+        "le",
+        "graze",
+        "pascolano",
+        "nel",
+        "sereno",
+        "the",
+        "serene",
+        "pecore",
+        "the",
+        "sheep",
+        "."
+      ],
+      "flaggedAt": "2026-04-24T13:39:02.202Z"
+    },
+    "sheep_on_the_meadow:order:Nel_ovile_dormono_i_giovani_agnelli.": {
+      "topic": "sheep on the meadow",
+      "type": "order",
+      "it": "Nel ovile dormono i giovani agnelli.",
+      "en": "In the sheepfold sleep the young lambs.",
+      "correct": "Nel ovile dormono i giovani agnelli . ovile sheepfold dormono young lambs",
+      "choices": [],
+      "words": [
+        "agnelli",
+        ".",
+        "giovani",
+        "Nel",
+        "young",
+        "ovile",
+        "dormono",
+        "ovile",
+        "sheepfold",
+        "dormono",
+        "i",
+        "lambs"
+      ],
+      "flaggedAt": "2026-04-24T13:40:40.627Z"
+    },
+    "sheep_on_the_meadow:read_translate:Durante_l'alpeggio_i_pecore_pascolano_su": {
+      "topic": "sheep on the meadow",
+      "type": "read_translate",
+      "it": "Durante l'alpeggio i pecore pascolano sui monti.",
+      "en": "During the alpeggio the sheep graze on the mountains.",
+      "correct": "During the alpeggio the sheep graze on the mountains.",
+      "choices": [
+        "The shepherd opens the gate for the goats.",
+        "During the alpeggio the sheep graze on the mountains.",
+        "The wind whispers in the silence of the landscape.",
+        "The landscape is silent with the sheep."
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-24T13:41:12.583Z"
+    },
+    "im_wald_spazieren:order:Silenzio_assoluto,_solo_gli_animali.": {
+      "topic": "im wald spazieren",
+      "type": "order",
+      "it": "Silenzio assoluto, solo gli animali.",
+      "en": "Absolute silence, only the animals.",
+      "correct": "Silenzio assoluto , solo gli animali . ",
+      "choices": [],
+      "words": [
+        "",
+        ".",
+        "assoluto",
+        "gli",
+        "animali",
+        "Silenzio",
+        "solo",
+        ","
+      ],
+      "flaggedAt": "2026-04-24T13:44:07.476Z"
     }
   }
 }
