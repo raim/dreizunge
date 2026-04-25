@@ -1,6 +1,331 @@
 {
   "lessons": [
     {
+      "topic": "italian_vs_german_beer",
+      "topicEmoji": "🍺",
+      "lang": "it",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Italian vs German Beer",
+          "desc": "Comparing Italian and German brewing traditions",
+          "icon": "🍺",
+          "vocab": [
+            {
+              "it": "birra",
+              "en": "beer",
+              "pron": "BIH-rah"
+            },
+            {
+              "it": "birrificio",
+              "en": "brewery",
+              "pron": "bih-REH-fee-eh-fee-co"
+            },
+            {
+              "it": "IPA",
+              "en": "India Pale Ale",
+              "pron": "eye-PAH-luh"
+            },
+            {
+              "it": "stella",
+              "en": "star",
+              "pron": "STAY-lah"
+            },
+            {
+              "it": "lager",
+              "en": "lager",
+              "pron": "LAH-ger"
+            },
+            {
+              "it": "pilsener",
+              "en": "pilsner",
+              "pron": "pilz-NEH-ner"
+            },
+            {
+              "it": "abbazia",
+              "en": "abbey",
+              "pron": "ah-bah-ZEE-ah"
+            },
+            {
+              "it": "abbaziale",
+              "en": "abbey-style",
+              "pron": "ah-bah-zee-AH-lee"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La birrificio produce IPA stella.",
+              "en": "The brewery produces star IPA",
+              "words": [
+                "La",
+                "birrificio",
+                "produce",
+                "IPA",
+                "stella"
+              ]
+            },
+            {
+              "it": "Il lager e la pilsener abbaziale.",
+              "en": "The lager and abbey-style pilsener",
+              "words": [
+                "Il",
+                "lager",
+                "e",
+                "la",
+                "pilsener",
+                "abbaziale"
+              ]
+            },
+            {
+              "it": "Mentre la birra è lager la stella è IPA.",
+              "en": "While the beer is lager the star is IPA",
+              "words": [
+                "Mentre",
+                "la",
+                "birra",
+                "è",
+                "lager",
+                "la",
+                "stella",
+                "è",
+                "IPA"
+              ]
+            },
+            {
+              "it": "La birra abbaziale è diversa dalla pilsener.",
+              "en": "The abbey beer is different from the pilsener",
+              "words": [
+                "La",
+                "birra",
+                "abbaziale",
+                "è",
+                "diversa",
+                "dalla",
+                "pilsener"
+              ]
+            },
+            {
+              "it": "La stella è un tipo di IPA.",
+              "en": "The star is an IPA type",
+              "words": [
+                "La",
+                "stella",
+                "è",
+                "un",
+                "tipo",
+                "dIPa"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Italian vs German Beer",
+          "desc": "Comparing brewing traditions",
+          "icon": "🍺",
+          "vocab": [
+            {
+              "it": "affogato",
+              "en": "dunked, topped with",
+              "pron": "ah-foh-KAH-toh"
+            },
+            {
+              "it": "fondente",
+              "en": "melty, gooey",
+              "pron": "fohn-DEHN-tay"
+            },
+            {
+              "it": "schiacciatina",
+              "en": "flatbread, pizza-like snack",
+              "pron": "schyah-chyah-tih-NAH-nah"
+            },
+            {
+              "it": "spremuta",
+              "en": "freshly squeezed",
+              "pron": "spruh-MUH-tah"
+            },
+            {
+              "it": "sorbetto",
+              "en": "sorbet, sherbet",
+              "pron": "sohr-BET-toh"
+            },
+            {
+              "it": "sugo",
+              "en": "sauce",
+              "pron": "SOH-goh"
+            },
+            {
+              "it": "schiaccia",
+              "en": "flatten, crush",
+              "pron": "schyah-chyah-AH-ah"
+            },
+            {
+              "it": "schiacciata",
+              "en": "flattened, crushed, flatbread",
+              "pron": "schyah-chyah-KAH-tah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La birra affogata nel sorbetto",
+              "en": "The beer dunked in sorbet",
+              "words": [
+                "birra",
+                "affogata",
+                "sorbetto"
+              ]
+            },
+            {
+              "it": "Il sugo fondente sopra la schiacciatina",
+              "en": "The melty sauce atop the flatbread",
+              "words": [
+                "sugo",
+                "fondente",
+                "schiacciatina"
+              ]
+            },
+            {
+              "it": "La spremuta di limone schiacciata",
+              "en": "The crushed lemon juice",
+              "words": [
+                "spremuta",
+                "limone",
+                "schiacciata"
+              ]
+            },
+            {
+              "it": "La birra affogata nel sugo",
+              "en": "The beer dunked in sauce",
+              "words": [
+                "birra",
+                "affogata",
+                "sugo"
+              ]
+            },
+            {
+              "it": "La schiacciata con sorbetto fondente",
+              "en": "The flatbread with melty sorbet",
+              "words": [
+                "schiacciata",
+                "sorbetto",
+                "fondente"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Italian vs German Beer",
+          "desc": "Comparing brewing techniques and flavors",
+          "icon": "🍺",
+          "vocab": [
+            {
+              "it": "birrificio artigianale",
+              "en": "craft brewery",
+              "pron": "BIRR-rih-fee-YOH-noh"
+            },
+            {
+              "it": "stout",
+              "en": "stout",
+              "pron": "STOWT"
+            },
+            {
+              "it": "maltose",
+              "en": "maltose",
+              "pron": "mal-TOH-se"
+            },
+            {
+              "it": "lambic",
+              "en": "lambic",
+              "pron": "LAM-bik"
+            },
+            {
+              "it": "glera",
+              "en": "glera",
+              "pron": "GLEH-rah"
+            },
+            {
+              "it": "riserva",
+              "en": "reserve",
+              "pron": "ree-ZER-vah"
+            },
+            {
+              "it": "doppio",
+              "en": "double",
+              "pron": "DOH-pyo"
+            },
+            {
+              "it": "triplo",
+              "en": "triple",
+              "pron": "TRI-pyo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La birrificio artigianale produce stouts con alto contenuto di maltose.",
+              "en": "The craft brewery produces stouts with high maltose content",
+              "words": [
+                "birrificio",
+                "artigianale",
+                "produce",
+                "stouts",
+                "alto",
+                "contenuto",
+                "maltose"
+              ]
+            },
+            {
+              "it": "Il lambic glera viene fermentato per anni in riserva.",
+              "en": "The lambic glera is fermented for years in reserve",
+              "words": [
+                "lambic",
+                "glera",
+                "fermentato",
+                "anni",
+                "riserva"
+              ]
+            },
+            {
+              "it": "La birrificio artigianale offre doppi e triplo.",
+              "en": "The craft brewery offers double and triple",
+              "words": [
+                "birrificio",
+                "artigianale",
+                "offre",
+                "doppi",
+                "triplo"
+              ]
+            },
+            {
+              "it": "Stout e glera sono tipiche birre della birrificio artigianale.",
+              "en": "Stout and glera are typical beers of the craft brewery",
+              "words": [
+                "stout",
+                "glera",
+                "tipiche",
+                "birre",
+                "birrificio",
+                "artigianale"
+              ]
+            },
+            {
+              "it": "Il stout con riserva è un'opzione speciale della birrificio artigianale.",
+              "en": "The stout with reserve is a special option of the craft brewery",
+              "words": [
+                "stout",
+                "riserva",
+                "opzione",
+                "speciale",
+                "birrificio",
+                "artigianale"
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-25T17:13:48.023Z"
+    },
+    {
       "topic": "pizza dough",
       "topicEmoji": "🍕",
       "lang": "de",
@@ -5270,6 +5595,154 @@
       ],
       "words": [],
       "flaggedAt": "2026-04-25T15:08:52.133Z"
+    },
+    "pizza_dough:order:Oven_Spring_verstärkt_die_Textur_der_Piz": {
+      "topic": "pizza dough",
+      "type": "order",
+      "it": "Oven Spring verstärkt die Textur der Pizza nach dem Backen.",
+      "en": "Oven Spring enhances the texture of the pizza after baking.",
+      "correct": "Oven Spring verstärkt die Textur der Pizza nach dem Backen",
+      "choices": [],
+      "words": [
+        "die",
+        "verstärkt",
+        "der",
+        "Spring",
+        "Pizza",
+        "Backen",
+        "Oven",
+        "dem",
+        "Textur",
+        "nach"
+      ],
+      "flaggedAt": "2026-04-25T15:13:22.465Z",
+      "comment": "Oven Spring translates to \"Ofentrieb\" in German"
+    },
+    "italian_vs_german_beer:listen_mcq:IPA": {
+      "topic": "italian_vs_german_beer",
+      "type": "listen_mcq",
+      "it": "IPA",
+      "en": "",
+      "correct": "India Pale Ale",
+      "choices": [
+        "brewery",
+        "pilsner",
+        "star",
+        "India Pale Ale"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T17:26:33.065Z",
+      "comment": "not italian, just remove this"
+    },
+    "italian_vs_german_beer:order:La_birra_affogata_nel_sorbetto": {
+      "topic": "italian_vs_german_beer",
+      "type": "order",
+      "it": "La birra affogata nel sorbetto",
+      "en": "The beer dunked in sorbet",
+      "correct": "birra affogata sorbetto",
+      "choices": [],
+      "words": [
+        "sorbetto",
+        "birra",
+        "affogata"
+      ],
+      "flaggedAt": "2026-04-25T17:28:15.103Z",
+      "comment": "La birra affogata nel sorbetto: two words from this solution are missing in the word list"
+    },
+    "italian_vs_german_beer:order:La_schiacciata_con_sorbetto_fondente": {
+      "topic": "italian_vs_german_beer",
+      "type": "order",
+      "it": "La schiacciata con sorbetto fondente",
+      "en": "The flatbread with melty sorbet",
+      "correct": "schiacciata sorbetto fondente",
+      "choices": [],
+      "words": [
+        "fondente",
+        "schiacciata",
+        "sorbetto"
+      ],
+      "flaggedAt": "2026-04-25T17:28:55.468Z",
+      "comment": "three random words?"
+    },
+    "italian_vs_german_beer:order:La_spremuta_di_limone_schiacciata": {
+      "topic": "italian_vs_german_beer",
+      "type": "order",
+      "it": "La spremuta di limone schiacciata",
+      "en": "The crushed lemon juice",
+      "correct": "spremuta limone schiacciata",
+      "choices": [],
+      "words": [
+        "schiacciata",
+        "spremuta",
+        "limone"
+      ],
+      "flaggedAt": "2026-04-25T17:29:23.269Z"
+    },
+    "italian_vs_german_beer:mcq_en_it:fondente": {
+      "topic": "italian_vs_german_beer",
+      "type": "mcq_en_it",
+      "it": "fondente",
+      "en": "melty, gooey",
+      "correct": "fondente",
+      "choices": [
+        "birrificio",
+        "IPA",
+        "affogato",
+        "fondente"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T17:29:54.898Z",
+      "comment": "seems wrong"
+    },
+    "italian_vs_german_beer:listen_mcq:schiaccia": {
+      "topic": "italian_vs_german_beer",
+      "type": "listen_mcq",
+      "it": "schiaccia",
+      "en": "",
+      "correct": "flatten, crush",
+      "choices": [
+        "flatbread, pizza-like snack",
+        "melty, gooey",
+        "flatten, crush",
+        "flattened, crushed, flatbread"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T17:30:16.168Z"
+    },
+    "italian_vs_german_beer:order:Il_stout_con_riserva_è_un'opzione_specia": {
+      "topic": "italian_vs_german_beer",
+      "type": "order",
+      "it": "Il stout con riserva è un'opzione speciale della birrificio artigianale.",
+      "en": "The stout with reserve is a special option of the craft brewery",
+      "correct": "stout riserva opzione speciale birrificio artigianale",
+      "choices": [],
+      "words": [
+        "artigianale",
+        "birrificio",
+        "stout",
+        "riserva",
+        "opzione",
+        "speciale"
+      ],
+      "flaggedAt": "2026-04-25T17:33:30.989Z",
+      "comment": "several words are missing in the answer option, here: il con e, un' and della, from the full sentence: Il stout con riserva è un'opzione speciale della birrificio artigianale."
+    },
+    "italian_vs_german_beer:order:Il_lambic_glera_viene_fermentato_per_ann": {
+      "topic": "italian_vs_german_beer",
+      "type": "order",
+      "it": "Il lambic glera viene fermentato per anni in riserva.",
+      "en": "The lambic glera is fermented for years in reserve",
+      "correct": "lambic glera fermentato anni riserva",
+      "choices": [],
+      "words": [
+        "riserva",
+        "fermentato",
+        "glera",
+        "lambic",
+        "anni"
+      ],
+      "flaggedAt": "2026-04-25T17:34:52.093Z",
+      "comment": "again several words are missing"
     }
   }
 }
