@@ -171,6 +171,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .flag-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s,color .1s;white-space:nowrap}
 .flag-btn:hover{border-color:#ff9600;color:#ff9600}
 .flag-btn.flagged{border-color:#ff9600;background:#fff4e0;color:#c26000}
+.flag-comment-wrap{margin-top:8px;display:none}
+.flag-comment-wrap.visible{display:block}
+.flag-comment{width:100%;padding:8px 10px;font-size:13px;font-weight:600;border:2px solid #ff9600;border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:#fffaf5;outline:none;resize:none}
+.flag-comment::placeholder{color:var(--gray);font-weight:400}
+.in-lesson-repair-btn{width:100%;margin-top:8px;padding:10px;background:none;border:2px solid #ff9600;border-radius:var(--radius);font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;transition:background .1s,color .1s}
+.in-lesson-repair-btn:hover:not(:disabled){background:#ff9600;color:#fff}
+.in-lesson-repair-btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-row{display:flex;gap:8px;align-items:stretch}
 .btn-row .check-btn{flex:1}
 .feedback.flagged-note{background:#fff4e0;border:2px solid #ff9600;display:block}
@@ -201,6 +208,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .sec-btn{width:100%;padding:12px;background:none;border:2.5px solid var(--gray-mid);border-radius:var(--radius-lg);font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark)}
 .sec-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
 
+.lang-selector{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.lang-chip{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:var(--radius);padding:8px 14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s;display:flex;align-items:center;gap:6px}
+.lang-chip:hover{border-color:var(--blue)}
+.lang-chip.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
+.lang-flag{font-size:18px}
+.lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
+.lib-filter-btn:hover{border-color:var(--blue)}
+.lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
+.lesson-lang-flag{font-size:16px;flex-shrink:0}
 .repair-btn{background:none;border:2px solid #ff9600;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;margin-top:8px;transition:background .1s,color .1s;width:100%}
 .repair-btn:hover{background:#ff9600;color:#fff}
 .repair-btn:disabled{opacity:.4;cursor:not-allowed}
@@ -233,7 +250,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   </div>
 
   <div class="topic-form">
-    <label class="form-lbl" for="topic-input">What do you want to learn Italian for?</label>
+    <label class="form-lbl">Target language</label>
+    <div class="lang-selector" id="lang-selector">
+      <button class="lang-chip active" data-lang="it" onclick="selectLang('it')"><span class="lang-flag">🇮🇹</span>Italian</button>
+      <button class="lang-chip" data-lang="fr" onclick="selectLang('fr')"><span class="lang-flag">🇫🇷</span>French</button>
+      <button class="lang-chip" data-lang="de" onclick="selectLang('de')"><span class="lang-flag">🇩🇪</span>German</button>
+      <button class="lang-chip" data-lang="es" onclick="selectLang('es')"><span class="lang-flag">🇪🇸</span>Spanish</button>
+      <button class="lang-chip" data-lang="pt" onclick="selectLang('pt')"><span class="lang-flag">🇵🇹</span>Portuguese</button>
+    </div>
+    <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
     <input class="topic-input" id="topic-input" type="text"
       placeholder="e.g. cooking, architecture, medicine…" maxlength="80"
       onkeydown="if(event.key==='Enter')doGenerate()">
@@ -256,6 +281,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="lib-title">📚 Saved lessons</div>
       <div class="lib-cnt" id="lib-cnt">0 topics</div>
     </div>
+    <div class="lib-filter" id="lib-filter"></div>
     <div id="saved-list">
       <div class="lib-empty">No saved lessons yet — generate one above!</div>
     </div>
@@ -314,9 +340,19 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 </div>
 
 <script>
+var LANGS = {
+  it: {name:'Italian',  flag:'🇮🇹', tts:'it-IT', label:'italian'},
+  fr: {name:'French',   flag:'🇫🇷', tts:'fr-FR', label:'french'},
+  de: {name:'German',   flag:'🇩🇪', tts:'de-DE', label:'german'},
+  es: {name:'Spanish',  flag:'🇪🇸', tts:'es-ES', label:'spanish'},
+  pt: {name:'Portuguese',flag:'🇵🇹',tts:'pt-PT', label:'portuguese'},
+};
+
 var APP = {
   info: {backend:'none',canGenerate:false},
   lessonData: null,
+  lang: loadLang(),
+  libFilter: 'all',
   progress: loadProg(),
   flagged: loadFlagged(),
   cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,xp:0,mistakes:0,streak:0,bestStreak:0,
@@ -325,6 +361,15 @@ var APP = {
 
 function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'{"xp":0,"completed":{}}'); }catch(e){ return {xp:0,completed:{}}; } }
 function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
+function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
+function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
+function selectLang(code){
+  APP.lang=code; saveLang();
+  document.querySelectorAll('.lang-chip').forEach(b=>b.classList.toggle('active',b.dataset.lang===code));
+  const L=LANGS[code]||LANGS.it;
+  document.getElementById('topic-label').textContent='What do you want to learn '+L.name+' for?';
+  document.getElementById('topic-input').placeholder='e.g. cooking, architecture, medicine…';
+}
 function loadFlagged(){ try{ return JSON.parse(localStorage.getItem('imp3_flagged')||'{}'); }catch(e){ return {}; } }
 function saveFlagged(){ localStorage.setItem('imp3_flagged',JSON.stringify(APP.flagged)); }
 async function syncFlagsFromServer(){
@@ -377,11 +422,42 @@ async function repairLesson(topic, lessonId){
     if(!r.ok) throw new Error(data.error||'Repair failed');
     // Sync cleared flags from server
     await syncFlagsFromServer();
+    // Refresh lesson data in case user goes back in
+    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
+    if(lr.ok && APP.lessonData?.topic===topic) APP.lessonData=await lr.json();
     alert(`✓ Repaired ${data.repaired} exercise${data.repaired!==1?'s':''} and cleared flags.`);
     buildPath(); // refresh path to remove repair button
   }catch(e){
     alert('Repair failed: '+e.message);
     if(btn){ btn.disabled=false; btn.textContent='⚑ Retry repair'; }
+  }
+}
+
+async function repairFromLesson(){
+  const C=APP.cur;
+  if(!APP.lessonData) return;
+  const topic=APP.lessonData.topic;
+  const lessonId=APP.lessonData.lessons[C.lessonIdx].id;
+  const repBtn=document.getElementById('in-lesson-repair-btn');
+  if(repBtn){ repBtn.disabled=true; repBtn.textContent='⏳ Repairing…'; }
+  try{
+    const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic,lessonId})});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.error||'Repair failed');
+    // Reload lesson data from server
+    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
+    if(lr.ok) APP.lessonData=await lr.json();
+    // Sync flags
+    await syncFlagsFromServer();
+    // Rebuild exercises and jump to next question
+    C.exercises=buildExercises(C.lessonIdx);
+    // Advance past current (repaired) exercise
+    C.cur=Math.min(C.cur+1, C.exercises.length);
+    renderEx();
+  }catch(e){
+    alert('Repair failed: '+e.message);
+    if(repBtn){ repBtn.disabled=false; repBtn.textContent='⚙ Repair this question now'; }
   }
 }
 
@@ -394,6 +470,327 @@ function goHome(){ buildPath(); show('home'); }
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "cooking",
+    "topicEmoji": "🔥",
+    "lang": "es",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Cooking Basics",
+        "desc": "Introduction to simple recipes",
+        "icon": "🔥",
+        "vocab": [
+          {
+            "it": "cocinar",
+            "en": "to cook",
+            "pron": "ko-KNEAR-es-tseh"
+          },
+          {
+            "it": "sazón",
+            "en": "seasoning",
+            "pron": "sah-ZOHN"
+          },
+          {
+            "it": "hornear",
+            "en": "to bake",
+            "pron": "or-nay-AR-es"
+          },
+          {
+            "it": "ensalada",
+            "en": "salad",
+            "pron": "en-sah-LAH-dah"
+          },
+          {
+            "it": "arroz",
+            "en": "rice",
+            "pron": "ah-ROHZ"
+          },
+          {
+            "it": "pescado",
+            "en": "fish",
+            "pron": "peh-SAH-doh"
+          },
+          {
+            "it": "verduras",
+            "en": "vegetables",
+            "pron": "ver-doo-RAHS"
+          },
+          {
+            "it": "sopa",
+            "en": "soup",
+            "pron": "SO-pah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "cocino arroz con verduras",
+            "en": "I cook rice with vegetables",
+            "words": [
+              "cocino",
+              "arroz",
+              "con",
+              "verduras"
+            ]
+          },
+          {
+            "it": "horno pescado sazón",
+            "en": "bake fish seasoning",
+            "words": [
+              "horno",
+              "pescado",
+              "sazón"
+            ]
+          },
+          {
+            "it": "hago ensalada verduras arroz",
+            "en": "make salad vegetables rice",
+            "words": []
+          },
+          {
+            "it": "cocino sopa con pescado",
+            "en": "cook soup with fish",
+            "words": [
+              "cocino",
+              "sopa",
+              "con",
+              "pescado"
+            ]
+          },
+          {
+            "it": "arroz verduras sazón",
+            "en": "rice vegetables seasoning",
+            "words": [
+              "arroz",
+              "verduras",
+              "sazón"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Intermediate Cooking",
+        "desc": "Sauces and Marinades",
+        "icon": "🧈",
+        "vocab": [
+          {
+            "it": "temperar",
+            "en": "to temper",
+            "pron": "tem-PAR-ar"
+          },
+          {
+            "it": "guisar",
+            "en": "to simmer",
+            "pron": "gwi-SAR"
+          },
+          {
+            "it": "ají",
+            "en": "aji (chili pepper)",
+            "pron": "AH-hee"
+          },
+          {
+            "it": "marinar",
+            "en": "to marinate",
+            "pron": "mar-NAH-rar"
+          },
+          {
+            "it": "al horno",
+            "en": "in the oven",
+            "pron": "al OR-no"
+          },
+          {
+            "it": "al vapor",
+            "en": "steamed",
+            "pron": "al VA-por"
+          },
+          {
+            "it": "arroz a la valenciana",
+            "en": "Valencian rice",
+            "pron": "ar-ROZ ah la val-en-see-AH-nah"
+          },
+          {
+            "it": "emulsificar",
+            "en": "to emulsify",
+            "pron": "em-ool-see-FI-car"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "temperar salsa con leche",
+            "en": "temper sauce with milk",
+            "words": [
+              "temper",
+              "salsa",
+              "with",
+              "milk"
+            ]
+          },
+          {
+            "it": "guisar carne al horno",
+            "en": "simmer meat in the oven",
+            "words": [
+              "guisar",
+              "carne",
+              "in",
+              "the",
+              "oven"
+            ]
+          },
+          {
+            "it": "marinar pescado con ají",
+            "en": "marinate fish with aji",
+            "words": [
+              "marinar",
+              "pescado",
+              "with",
+              "aji"
+            ]
+          },
+          {
+            "it": "arroz a la valenciana al vapor",
+            "en": "Valencian rice steamed",
+            "words": [
+              "arroz",
+              "a",
+              "la",
+              "valenciana",
+              "steamed"
+            ]
+          },
+          {
+            "it": "emulsificar aceite con vinagre",
+            "en": "emulsify oil with vinegar",
+            "words": [
+              "emulsificar",
+              "aceite",
+              "with",
+              "vinegar"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Advanced Cooking",
+        "desc": "Mastering complex recipes",
+        "icon": "🔥",
+        "vocab": [
+          {
+            "it": "alidarse",
+            "en": "to deglaze",
+            "pron": "ah-lee-tha-SEHR"
+          },
+          {
+            "it": "bain-marie",
+            "en": "bain-marie (water bath)",
+            "pron": "BAYN MAH-ree"
+          },
+          {
+            "it": "chispear",
+            "en": "to sprinkle",
+            "pron": "chi-SPAR"
+          },
+          {
+            "it": "emulsificar",
+            "en": "to emulsify (again, but as a reminder)",
+            "pron": "eh-moo-los-fee-KAR"
+          },
+          {
+            "it": "filetear",
+            "en": "to fillet",
+            "pron": "fee-LEH-tar"
+          },
+          {
+            "it": "garnishar",
+            "en": "to garnish",
+            "pron": "gar-NISH-ar"
+          },
+          {
+            "it": "macerar",
+            "en": "to macerate",
+            "pron": "mah-sa-REHR"
+          },
+          {
+            "it": "remojar",
+            "en": "to soak",
+            "pron": "reh-MOH-har"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "filetear el pescado y macerar en jugo de limón",
+            "en": "fillet the fish and macerate in lemon juice",
+            "words": [
+              "filetear",
+              "el",
+              "pescado",
+              "y",
+              "macerar",
+              "en",
+              "jugo",
+              "de",
+              "limón"
+            ]
+          },
+          {
+            "it": "remojar arándanos en azúcar para garnishar postre",
+            "en": "soak raspberries in sugar to garnish dessert",
+            "words": [
+              "remojar",
+              "arándanos",
+              "en",
+              "azúcar",
+              "para",
+              "garnishar",
+              "postre"
+            ]
+          },
+          {
+            "it": "emulsificar aceite y vinagre para alioli",
+            "en": "emulsify oil and vinegar for aioli",
+            "words": [
+              "emulsificar",
+              "aceite",
+              "y",
+              "vinagre",
+              "para",
+              "alioli"
+            ]
+          },
+          {
+            "it": "bain-marie calentar chocolate para chispear sobre helado",
+            "en": "bain-marie heat chocolate to sprinkle over ice cream",
+            "words": [
+              "bain-marie",
+              "calentar",
+              "chocolate",
+              "para",
+              "chispear",
+              "sobre",
+              "helado"
+            ]
+          },
+          {
+            "it": "alidarse vino tinto con jugo de cítricos para salsa",
+            "en": "deglaze red wine with citrus juice for sauce",
+            "words": [
+              "alidarse",
+              "vino",
+              "tinto",
+              "con",
+              "jugo",
+              "de",
+              "cítricos",
+              "para",
+              "salsa"
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-25T14:31:09.485Z"
+  },
   {
     "topic": "sheep on the meadow",
     "topicEmoji": "🐑",
@@ -1253,8 +1650,6 @@ const STATIC_LESSONS = [
               "caccia",
               "funghi",
               "nel",
-              "bosco",
-              "Caccia",
               "bosco"
             ]
           },
@@ -1288,14 +1683,14 @@ const STATIC_LESSONS = [
             "it": "Porta il tuo zaino con i funghi.",
             "en": "Take your backpack with the mushrooms.",
             "words": [
-              "il",
-              "zaino",
               "tuo",
+              "zaino",
               "con",
               "Porta",
+              "il",
               "zaino",
-              "fungo",
-              "fungi"
+              "funghi",
+              "funghi"
             ]
           },
           {
@@ -1556,7 +1951,7 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-24T14:48:05.947Z"
+    "generatedAt": "2026-04-24T15:08:49.914Z"
   },
   {
     "topic": "table tennis",
@@ -1986,7 +2381,7 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-22T12:19:22.743Z"
+    "generatedAt": "2026-04-24T15:19:25.171Z"
   },
   {
     "topic": "medical & healthcare",
@@ -2776,23 +3171,20 @@ const STATIC_LESSONS = [
             "it": "Buongiorno, posso aiutarti?",
             "en": "Good morning, can I help you?",
             "words": [
-              "BUONGIORNO",
-              ",",
-              "POS-so",
-              "AIU-tar-te",
-              "?"
+              "Buongiorno",
+              "posso",
+              "aiutarti"
             ]
           },
           {
             "it": "Grazie per la tua cortesia.",
             "en": "Thank you for your kindness.",
             "words": [
-              "GRATZ-ee-eh",
               "PER",
-              "LA",
-              "TU-ah",
+              "GRATZ-ee-eh",
               "COR-teh-see-ah",
-              "."
+              "LA",
+              "TU-ah"
             ]
           },
           {
@@ -3062,7 +3454,7 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-21T15:47:05.064Z"
+    "generatedAt": "2026-04-25T14:02:18.476Z"
   },
   {
     "topic": "neuroscience",
@@ -4705,7 +5097,8 @@ function buildPath(){
   const d=APP.lessonData, topicKey=d.topic;
   if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
   const done=APP.progress.completed[topicKey];
-  document.getElementById('topic-emoji-big').textContent=d.topicEmoji||'📚';
+  const dLang=d.lang||'it'; const dL=LANGS[dLang]||LANGS.it;
+  document.getElementById('topic-emoji-big').textContent=(dL.flag+' '+(d.topicEmoji||'📚'));
   document.getElementById('topic-name-big').textContent=d.topic;
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
@@ -4809,12 +5202,17 @@ function renderEx(){
   else if(ex.type==='order') html=tOrder(ex);
   else if(ex.type==='read_translate') html=tRead(ex);
   const alreadyFlagged = isExFlagged(ex);
+  const existingComment = alreadyFlagged && APP.flagged[flagKey(ex)]?.comment ? APP.flagged[flagKey(ex)].comment : '';
   document.getElementById('ex-area').innerHTML=html+
     '<div id="fb" class="feedback"></div>'+
     '<div class="btn-row">'+
       '<button class="check-btn" id="cbtn" onclick="check()" disabled>Check</button>'+
       '<button class="flag-btn'+(alreadyFlagged?' flagged':'')+'" id="flagbtn" onclick="flagCurrent()" title="Flag as faulty">'+(alreadyFlagged?'⚑ Flagged':'⚐ Flag')+'</button>'+
-    '</div>';
+    '</div>'+
+    '<div class="flag-comment-wrap'+(alreadyFlagged?' visible':'')+'" id="flag-comment-wrap">'+
+      '<textarea class="flag-comment" id="flag-comment-input" rows="2" placeholder="Optional: describe what is wrong…" onblur="saveComment()">'+existingComment+'</textarea>'+
+    '</div>'+
+    (APP.info.canGenerate?'<button class="in-lesson-repair-btn" id="in-lesson-repair-btn" onclick="repairFromLesson()" style="display:'+(alreadyFlagged?'block':'none')+'">⚙ Repair this question now</button>':'');
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>speak(ex.it),350);
 }
 
@@ -4857,18 +5255,36 @@ function flagCurrent(){
   const C=APP.cur;
   if(C.cur>=C.exercises.length) return;
   const ex=C.exercises[C.cur];
+  const wasFlagged=isExFlagged(ex);
   toggleFlag(ex);
   const flagged=isExFlagged(ex);
   const btn=document.getElementById('flagbtn');
   if(btn){ btn.textContent=flagged?'⚑ Flagged':'⚐ Flag'; btn.className='flag-btn'+(flagged?' flagged':''); }
-  // If already answered, update feedback bar too
+  // Show/hide comment box
+  const cWrap=document.getElementById('flag-comment-wrap');
+  if(cWrap){ cWrap.className='flag-comment-wrap'+(flagged?' visible':''); }
+  // Show/hide in-lesson repair button (only if LLM available)
+  const repBtn=document.getElementById('in-lesson-repair-btn');
+  if(repBtn){ repBtn.style.display=flagged&&APP.info.canGenerate?'block':'none'; }
+  // Update feedback bar if already answered
   if(C.answered){
     const fb=document.getElementById('fb');
     if(fb && flagged){
       fb.className='feedback flagged-note';
-      fb.innerHTML='<div class="fb-head">⚑ Flagged for review</div><div class="fb-body">This question will be skipped from scoring and queued for repair.</div>';
+      fb.innerHTML='<div class="fb-head">⚑ Flagged — not scored</div><div class="fb-body">This question is flagged. Add a comment below, then use Repair to fix it.</div>';
     }
   }
+}
+function saveComment(){
+  const C=APP.cur;
+  if(C.cur>=C.exercises.length) return;
+  const ex=C.exercises[C.cur];
+  const k=flagKey(ex);
+  if(!APP.flagged[k]) return;
+  const comment=document.getElementById('flag-comment-input')?.value?.trim()||'';
+  APP.flagged[k].comment=comment;
+  saveFlagged();
+  pushFlagToServer(k, APP.flagged[k]);
 }
 
 function check(){
@@ -4929,7 +5345,7 @@ function afterComplete(){
 }
 
 // ── tts + misc ──
-function speak(text,rate){ if(!window.speechSynthesis)return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='it-IT'; u.rate=rate||0.9; u.pitch=1; speechSynthesis.speak(u); }
+function speak(text,rate){ if(!window.speechSynthesis)return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const lang=APP.lessonData?.lang||APP.lang||'it'; u.lang=(LANGS[lang]||LANGS.it).tts; u.rate=rate||0.9; u.pitch=1; speechSynthesis.speak(u); }
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
 
 

@@ -1991,14 +1991,14 @@
               "it": "Il farmacista mi ha dato la farmacia.",
               "en": "The pharmacist gave me the pharmacy.",
               "words": [
-                "IL",
-                "FAR-ma-CHI-sta",
                 "MI",
                 "HA",
                 "DAT-to",
-                "LA",
                 "FAR-ma-CHI-ah",
-                "."
+                "IL",
+                "FAR-ma-CHI-sta",
+                "LA",
+                "farmacia"
               ]
             },
             {
@@ -2259,7 +2259,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-22T09:44:29.313Z"
+      "generatedAt": "2026-04-25T14:33:59.222Z"
     },
     {
       "topic": "architecture",
@@ -4753,26 +4753,6 @@
         ","
       ],
       "flaggedAt": "2026-04-24T13:44:07.476Z"
-    },
-    "medical_&_healthcare:order:Il_farmacista_mi_ha_dato_la_farmacia.": {
-      "topic": "medical & healthcare",
-      "type": "order",
-      "it": "Il farmacista mi ha dato la farmacia.",
-      "en": "The pharmacist gave me the pharmacy.",
-      "correct": "IL FAR-ma-CHI-sta MI HA DAT-to LA FAR-ma-CHI-ah .",
-      "choices": [],
-      "words": [
-        "MI",
-        "DAT-to",
-        "FAR-ma-CHI-ah",
-        ".",
-        "IL",
-        "FAR-ma-CHI-sta",
-        "LA",
-        "HA"
-      ],
-      "flaggedAt": "2026-04-25T14:30:57.326Z",
-      "comment": "pronounciation instead of italian terms"
     }
   }
 }
