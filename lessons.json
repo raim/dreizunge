@@ -1,6 +1,337 @@
 {
   "lessons": [
     {
+      "topic": "music journalism",
+      "topicEmoji": "🎵",
+      "lang": "fr",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Music Journalism 1",
+          "desc": "Introduction to music journalism",
+          "icon": "🎵",
+          "vocab": [
+            {
+              "it": "journaliste",
+              "en": "journalist",
+              "pron": "juh-ree-ZEET"
+            },
+            {
+              "it": "concerne",
+              "en": "concerns",
+              "pron": "kuhn-SUR"
+            },
+            {
+              "it": "interview",
+              "en": "interview",
+              "pron": "in-try-VUH"
+            },
+            {
+              "it": "chronique",
+              "en": "chronicle",
+              "pron": "kuh-NAK"
+            },
+            {
+              "it": "album",
+              "en": "album",
+              "pron": "AL-buhm"
+            },
+            {
+              "it": "concert",
+              "en": "concert",
+              "pron": "kuh-NAHR"
+            },
+            {
+              "it": "tournée",
+              "en": "tour",
+              "pron": "TOHR"
+            },
+            {
+              "it": "public",
+              "en": "public",
+              "pron": "PUH-bik"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Le journaliste interviewe l'artiste.",
+              "en": "The journalist interviews the artist",
+              "words": [
+                "Le",
+                "journaliste",
+                "interviewe",
+                "l'artiste."
+              ]
+            },
+            {
+              "it": "L'album concerne plusieurs styles musicaux.",
+              "en": "The album concerns several musical styles",
+              "words": [
+                "album",
+                "concerne",
+                "styles",
+                "musicaux"
+              ]
+            },
+            {
+              "it": "La chronique parle du concert.",
+              "en": "The chronicle talks about the concert",
+              "words": [
+                "La",
+                "chronique",
+                "parle",
+                "du",
+                "concert."
+              ]
+            },
+            {
+              "it": "La tournée comprend de nombreux concerts.",
+              "en": "The tour includes many concerts",
+              "words": [
+                "La",
+                "tournée",
+                "comprend",
+                "de",
+                "nombreux",
+                "concerts."
+              ]
+            },
+            {
+              "it": "Le public adore l'artiste.",
+              "en": "The public loves the artist",
+              "words": [
+                "Le",
+                "public",
+                "adore",
+                "l'artiste."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Music Journalism II",
+          "desc": "Intermediate writing techniques",
+          "icon": "✍️🎵",
+          "vocab": [
+            {
+              "it": "critique",
+              "en": "review",
+              "pron": "KRI-tik"
+            },
+            {
+              "it": "charte",
+              "en": "code of ethics",
+              "pron": "SHAR-te"
+            },
+            {
+              "it": "plongeon",
+              "en": "dive (into a topic)",
+              "pron": "plo-ZHON"
+            },
+            {
+              "it": "sélection",
+              "en": "selection",
+              "pron": "sel-ek-SYON"
+            },
+            {
+              "it": "feedback",
+              "en": "feedback",
+              "pron": "FEED-back"
+            },
+            {
+              "it": "sonorité",
+              "en": "sound quality",
+              "pron": "so-no-RAT-te"
+            },
+            {
+              "it": "orchestre",
+              "en": "orchestra",
+              "pron": "or-chees-TRE"
+            },
+            {
+              "it": "synthèse",
+              "en": "synthesis",
+              "pron": "sin-THE-sis"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La critique plonge dans l'orchestre.",
+              "en": "The review dives into the orchestra.",
+              "words": [
+                "La",
+                "critique",
+                "plonge",
+                "dans",
+                "l'orchestre."
+              ]
+            },
+            {
+              "it": "La charte de l'éthique guide la sélection.",
+              "en": "The code of ethics guides the selection.",
+              "words": [
+                "charte",
+                "éthique",
+                "guide",
+                "sélection"
+              ]
+            },
+            {
+              "it": "Le feedback améliore la sonorité.",
+              "en": "The feedback improves the sound quality.",
+              "words": [
+                "Le",
+                "feedback",
+                "améliore",
+                "la",
+                "sonorité."
+              ]
+            },
+            {
+              "it": "La synthèse résume l'essentiel.",
+              "en": "The synthesis summarizes the essential.",
+              "words": [
+                "La",
+                "synthèse",
+                "résume",
+                "l'essentiel."
+              ]
+            },
+            {
+              "it": "La critique plonge dans le synthèse.",
+              "en": "The review dives into the synthesis.",
+              "words": [
+                "La",
+                "critique",
+                "plonge",
+                "dans",
+                "le",
+                "synthèse."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Music Journalism",
+          "desc": "Advanced Writing Techniques",
+          "icon": "🎵",
+          "vocab": [
+            {
+              "it": "confrère",
+              "en": "colleague",
+              "pron": "kon-FRAH-ray"
+            },
+            {
+              "it": "plébiscite",
+              "en": "plebiscite",
+              "pron": "plee-BISS-see-tay"
+            },
+            {
+              "it": "coupure",
+              "en": "break",
+              "pron": "koo-PURE"
+            },
+            {
+              "it": "répertoire",
+              "en": "repertoire",
+              "pron": "re-pay-TEH-toir"
+            },
+            {
+              "it": "éclaircissement",
+              "en": "clarification",
+              "pron": "ay-klay-keer-see-mahn"
+            },
+            {
+              "it": "synchronisation",
+              "en": "synchronization",
+              "pron": "syn-kroh-ni-see-AY-shun"
+            },
+            {
+              "it": "édition",
+              "en": "edition",
+              "pron": "eh-dee-see-OHN"
+            },
+            {
+              "it": "répétition",
+              "en": "rehearsal",
+              "pron": "re-pay-tee-OHN-shon"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Notre confrère a remporté le plébiscite.",
+              "en": "Our colleague won the plebiscite",
+              "words": [
+                "Notre",
+                "confrère",
+                "a",
+                "remporté",
+                "le",
+                "plébiscite."
+              ]
+            },
+            {
+              "it": "Il y a eu une coupure dans l'édition.",
+              "en": "There was a break in the edition",
+              "words": [
+                "Il",
+                "y",
+                "a",
+                "eu",
+                "une",
+                "coupure",
+                "dans",
+                "l'édition."
+              ]
+            },
+            {
+              "it": "Le répertoire de chansons a été mis à jour.",
+              "en": "The repertoire of songs was updated",
+              "words": [
+                "répertoire",
+                "chansons",
+                "mis",
+                "à",
+                "jour"
+              ]
+            },
+            {
+              "it": "Une répétition est nécessaire pour la synchronisation.",
+              "en": "A rehearsal is necessary for the synchronization",
+              "words": [
+                "Une",
+                "répétition",
+                "est",
+                "nécessaire",
+                "pour",
+                "la",
+                "synchronisation."
+              ]
+            },
+            {
+              "it": "Il a demandé un éclaircissement sur les dates des concerts.",
+              "en": "He asked for a clarification on the concert dates",
+              "words": [
+                "Il",
+                "a",
+                "demandé",
+                "un",
+                "éclaircissement",
+                "sur",
+                "les",
+                "dates",
+                "des",
+                "concerts."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-25T19:09:02.668Z"
+    },
+    {
       "topic": "italian_vs_german_beer",
       "topicEmoji": "🍺",
       "lang": "it",
@@ -323,7 +654,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-25T17:13:48.023Z"
+      "generatedAt": "2026-04-25T18:25:31.619Z"
     },
     {
       "topic": "pizza dough",
@@ -4104,13 +4435,12 @@
               "it": "La performance è un'arte temporale.",
               "en": "Performance is a temporal art.",
               "words": [
-                "La",
-                "performance",
-                "è",
                 "un'",
+                "performance",
+                "La",
                 "arte",
-                "tem-po-ra-le",
-                "."
+                "è",
+                "tem-po-ra-le"
               ]
             }
           ]
@@ -4355,7 +4685,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-21T12:58:30.681Z"
+      "generatedAt": "2026-04-25T18:54:44.859Z"
     },
     {
       "topic": "research grant proposals",
@@ -5617,132 +5947,6 @@
       ],
       "flaggedAt": "2026-04-25T15:13:22.465Z",
       "comment": "Oven Spring translates to \"Ofentrieb\" in German"
-    },
-    "italian_vs_german_beer:listen_mcq:IPA": {
-      "topic": "italian_vs_german_beer",
-      "type": "listen_mcq",
-      "it": "IPA",
-      "en": "",
-      "correct": "India Pale Ale",
-      "choices": [
-        "brewery",
-        "pilsner",
-        "star",
-        "India Pale Ale"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T17:26:33.065Z",
-      "comment": "not italian, just remove this"
-    },
-    "italian_vs_german_beer:order:La_birra_affogata_nel_sorbetto": {
-      "topic": "italian_vs_german_beer",
-      "type": "order",
-      "it": "La birra affogata nel sorbetto",
-      "en": "The beer dunked in sorbet",
-      "correct": "birra affogata sorbetto",
-      "choices": [],
-      "words": [
-        "sorbetto",
-        "birra",
-        "affogata"
-      ],
-      "flaggedAt": "2026-04-25T17:28:15.103Z",
-      "comment": "La birra affogata nel sorbetto: two words from this solution are missing in the word list"
-    },
-    "italian_vs_german_beer:order:La_schiacciata_con_sorbetto_fondente": {
-      "topic": "italian_vs_german_beer",
-      "type": "order",
-      "it": "La schiacciata con sorbetto fondente",
-      "en": "The flatbread with melty sorbet",
-      "correct": "schiacciata sorbetto fondente",
-      "choices": [],
-      "words": [
-        "fondente",
-        "schiacciata",
-        "sorbetto"
-      ],
-      "flaggedAt": "2026-04-25T17:28:55.468Z",
-      "comment": "three random words?"
-    },
-    "italian_vs_german_beer:order:La_spremuta_di_limone_schiacciata": {
-      "topic": "italian_vs_german_beer",
-      "type": "order",
-      "it": "La spremuta di limone schiacciata",
-      "en": "The crushed lemon juice",
-      "correct": "spremuta limone schiacciata",
-      "choices": [],
-      "words": [
-        "schiacciata",
-        "spremuta",
-        "limone"
-      ],
-      "flaggedAt": "2026-04-25T17:29:23.269Z"
-    },
-    "italian_vs_german_beer:mcq_en_it:fondente": {
-      "topic": "italian_vs_german_beer",
-      "type": "mcq_en_it",
-      "it": "fondente",
-      "en": "melty, gooey",
-      "correct": "fondente",
-      "choices": [
-        "birrificio",
-        "IPA",
-        "affogato",
-        "fondente"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T17:29:54.898Z",
-      "comment": "seems wrong"
-    },
-    "italian_vs_german_beer:listen_mcq:schiaccia": {
-      "topic": "italian_vs_german_beer",
-      "type": "listen_mcq",
-      "it": "schiaccia",
-      "en": "",
-      "correct": "flatten, crush",
-      "choices": [
-        "flatbread, pizza-like snack",
-        "melty, gooey",
-        "flatten, crush",
-        "flattened, crushed, flatbread"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T17:30:16.168Z"
-    },
-    "italian_vs_german_beer:order:Il_stout_con_riserva_è_un'opzione_specia": {
-      "topic": "italian_vs_german_beer",
-      "type": "order",
-      "it": "Il stout con riserva è un'opzione speciale della birrificio artigianale.",
-      "en": "The stout with reserve is a special option of the craft brewery",
-      "correct": "stout riserva opzione speciale birrificio artigianale",
-      "choices": [],
-      "words": [
-        "artigianale",
-        "birrificio",
-        "stout",
-        "riserva",
-        "opzione",
-        "speciale"
-      ],
-      "flaggedAt": "2026-04-25T17:33:30.989Z",
-      "comment": "several words are missing in the answer option, here: il con e, un' and della, from the full sentence: Il stout con riserva è un'opzione speciale della birrificio artigianale."
-    },
-    "italian_vs_german_beer:order:Il_lambic_glera_viene_fermentato_per_ann": {
-      "topic": "italian_vs_german_beer",
-      "type": "order",
-      "it": "Il lambic glera viene fermentato per anni in riserva.",
-      "en": "The lambic glera is fermented for years in reserve",
-      "correct": "lambic glera fermentato anni riserva",
-      "choices": [],
-      "words": [
-        "riserva",
-        "fermentato",
-        "glera",
-        "lambic",
-        "anni"
-      ],
-      "flaggedAt": "2026-04-25T17:34:52.093Z",
-      "comment": "again several words are missing"
     }
   }
 }

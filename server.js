@@ -50,9 +50,12 @@ function serverFlagKey(topic, type, itOrEn) {
   return `${topicSlug}:${type}:${contentSlug}`;
 }
 
-// Collect all flags belonging to a topic (exact key-prefix match)
+// Collect all flags belonging to a topic using exact same slug as client flagKey()
+function topicSlug(topic) {
+  return (topic||'').slice(0,30).replace(/\s+/g,'_');
+}
 function flagsForTopic(topic) {
-  const prefix = (topic||'').slice(0,30).replace(/\s+/g,'_') + ':';
+  const prefix = topicSlug(topic) + ':';
   const all = getFlags();
   return Object.entries(all).filter(([k]) => k.startsWith(prefix));
 }
@@ -283,7 +286,7 @@ function validateAndCleanSentences(arr, lang) {
       return counts[lw] <= 2;
     });
 
-    if (s.words.length < 2)
+    if (s.words.length < 4)
       s.words = s.it.split(' ').filter(t => !isPunct(t));
 
     return s;
@@ -328,6 +331,11 @@ async function generateSentences(active, lang, topic, lessonNum, totalLessons, v
     const bad = arr.filter(s => normSpaces(s.words.join(' ')) === normSpaces(s.en || ''));
     if (bad.length > 1)
       throw new Error(`${bad.length} sentences still have English in words[] — retrying`);
+
+    // Reject if too many sentences are too short to make a meaningful exercise
+    const tooShort = arr.filter(s => s.words.length < 4);
+    if (tooShort.length > 1)
+      throw new Error(`${tooShort.length} sentences have fewer than 4 words — retrying`);
 
     return arr;
   });
@@ -390,9 +398,18 @@ async function repairLesson(active, topic, lessonId) {
   const origVocabCount     = lesson.vocab.length;
   const origSentenceCount  = lesson.sentences.length;
 
-  // Collect flags using exact prefix matching
-  const flaggedEntries = flagsForTopic(topic);
-  if (flaggedEntries.length === 0) throw new Error('No flagged exercises found for this topic');
+  // Collect flags for this specific lesson by matching content slugs
+  const allTopicFlags = flagsForTopic(topic);
+  const lessonItSet = new Set([
+    ...(lesson.vocab||[]).map(v => (v.it||'').slice(0,40).replace(/\s+/g,'_')),
+    ...(lesson.sentences||[]).map(s => (s.it||'').slice(0,40).replace(/\s+/g,'_'))
+  ]);
+  const flaggedEntries = allTopicFlags.filter(([k]) => {
+    const parts = k.split(':');
+    const contentSlug = parts.slice(2).join(':'); // topicSlug:type:contentSlug
+    return lessonItSet.has(contentSlug);
+  });
+  if (flaggedEntries.length === 0) throw new Error('No flagged exercises found for this lesson');
 
   const lang = saved.lang || 'it';
   const flaggedExercises = flaggedEntries.map(([, v]) => ({

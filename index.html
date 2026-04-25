@@ -377,8 +377,8 @@ async function syncFlagsFromServer(){
     const r=await fetch('/api/flags');
     if(!r.ok) return;
     const serverFlags=await r.json();
-    // Merge server flags into local (server wins on conflict)
-    Object.assign(APP.flagged, serverFlags);
+    // Replace local flags entirely — server is the source of truth
+    APP.flagged = serverFlags;
     saveFlagged();
   }catch(e){ /* offline — use localStorage only */ }
 }
@@ -420,13 +420,16 @@ async function repairLesson(topic, lessonId){
       body:JSON.stringify({topic,lessonId})});
     const data=await r.json();
     if(!r.ok) throw new Error(data.error||'Repair failed');
-    // Sync cleared flags from server
+    // Server cleared flags — replace local state entirely
     await syncFlagsFromServer();
-    // Refresh lesson data in case user goes back in
+    // Reload lesson data so in-lesson play gets updated content
     const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok && APP.lessonData?.topic===topic) APP.lessonData=await lr.json();
-    alert(`✓ Repaired ${data.repaired} exercise${data.repaired!==1?'s':''} and cleared flags.`);
-    buildPath(); // refresh path to remove repair button
+    if(lr.ok){
+      const fresh=await lr.json();
+      // Update APP.lessonData if user is currently viewing this topic
+      if(APP.lessonData?.topic?.toLowerCase()===topic.toLowerCase()) APP.lessonData=fresh;
+    }
+    buildPath(); // refresh path — repair button disappears if no more flags
   }catch(e){
     alert('Repair failed: '+e.message);
     if(btn){ btn.disabled=false; btn.textContent='⚑ Retry repair'; }
@@ -445,15 +448,18 @@ async function repairFromLesson(){
       body:JSON.stringify({topic,lessonId})});
     const data=await r.json();
     if(!r.ok) throw new Error(data.error||'Repair failed');
-    // Reload lesson data from server
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok) APP.lessonData=await lr.json();
-    // Sync flags
+    // Sync flags first (server cleared them — replace local state)
     await syncFlagsFromServer();
-    // Rebuild exercises and jump to next question
+    // Reload lesson data from server with updated vocab/sentences
+    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
+    if(lr.ok){
+      const fresh=await lr.json();
+      APP.lessonData=fresh;
+    }
+    // Rebuild exercises from fresh lesson data
     C.exercises=buildExercises(C.lessonIdx);
-    // Advance past current (repaired) exercise
-    C.cur=Math.min(C.cur+1, C.exercises.length);
+    // Stay on current index if valid, else go to last
+    C.cur=Math.min(C.cur, Math.max(0, C.exercises.length-1));
     renderEx();
   }catch(e){
     alert('Repair failed: '+e.message);
@@ -498,8 +504,9 @@ async function loadSavedList(){
   list.innerHTML=saved.map(s=>{
     const date=s.generatedAt?new Date(s.generatedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
     const t=encodeURIComponent(s.topic);
+    const sL=LANGS[s.lang||'it']||LANGS.it;
     return `<div class="saved-item" onclick="loadSaved('${t}')">
-      <span class="saved-emoji">${s.topicEmoji||'📚'}</span>
+      <span class="saved-emoji">${sL.flag} ${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
         <div class="saved-topic">${s.topic}</div>
         <div class="saved-meta">${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}</div>
@@ -589,18 +596,25 @@ function buildPath(){
     const node=document.createElement('div');
     node.className='lesson-node'+(isDone?' done-node':isLocked?' locked':isActive?' active-node':'');
     if(isActive){ const b=document.createElement('div'); b.className='next-badge'; b.textContent='Next up'; node.appendChild(b); }
-    // Count flags for this lesson
-    const lessonTopicSlug=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
-    const lessonFlagCount=Object.keys(APP.flagged).filter(k=>
-      k.startsWith(lessonTopicSlug+':') || k.toLowerCase().startsWith((d.topic||'').slice(0,15).toLowerCase()+':')
-    ).length;
+    // Count flags that belong to THIS lesson by matching content slugs
+    const lessonItSet = new Set([
+      ...(L.vocab||[]).map(v=>(v.it||'').slice(0,40).replace(/\s+/g,'_')),
+      ...(L.sentences||[]).map(s=>(s.it||'').slice(0,40).replace(/\s+/g,'_'))
+    ]);
+    const topicSlugForFlag=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
+    const lessonFlagCount=Object.entries(APP.flagged).filter(([k])=>{
+      if(!k.startsWith(topicSlugForFlag+':')) return false;
+      const parts=k.split(':');
+      // key format: topicSlug:type:contentSlug
+      const contentSlug=parts.slice(2).join(':');
+      return lessonItSet.has(contentSlug);
+    }).length;
     const hasFlags=lessonFlagCount>0&&APP.info.canGenerate;
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
         <div class="node-title">Lesson ${L.id}: ${L.title}</div>
         <div class="node-desc">${L.desc}</div>
-        ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}
-      </div>
+        ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}      </div>
       ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
@@ -703,12 +717,13 @@ function lBlock(it,pron){
       <div><div class="listen-lbl">Tap to listen</div><div class="listen-word">${it}</div></div>
     </button>${pron?`<div class="pron">&nbsp;🗣 ${pron}</div>`:''}<button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
-function tMcqIE(ex){ return `<div class="ex-badge">🇮🇹→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${ex.it}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ return `<div class="ex-badge">🇬🇧→🇮🇹 Translate to Italian</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in Italian?</div>${cGrid(ex.choices,false)}</div>`; }
-function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ return `<div class="ex-badge">🎧 Listening — type what you hear</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the Italian word you hear:</div>${lBlock(ex.it,ex.pron)}<input class="type-input" id="type-in" type="text" placeholder="Type in Italian…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
-function tOrder(ex){ return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${ex.words.map((w,i)=>`<span class="tok" id="t${i}" onclick="addTok(${i})">${w}</span>`).join('')}</div></div>`; }
-function tRead(ex){ return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this sentence:</div><div class="it-box"><div class="it-box-text">${ex.it}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
+function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${ex.it}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
+function tLMcq(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — what do you hear?</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
+function tOrder(ex){ const L=lessonLang(); return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${ex.words.map((w,i)=>`<span class="tok" id="t${i}" onclick="addTok(${i})">${w}</span>`).join('')}</div></div>`; }
+function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${ex.it}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
 function onType(){ document.getElementById('cbtn').disabled=document.getElementById('type-in').value.trim().length<1; }
@@ -766,10 +781,15 @@ function saveComment(){
   pushFlagToServer(k, APP.flagged[k]);
 }
 
+function normDiacritics(s){
+  // Normalize diacritics so é=e, ü=u, ñ=n etc. for forgiving answer evaluation
+  return (s||'').replace(/ß/g,'ss').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ø/g,'o')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
 function check(){
   const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
   const ex=C.exercises[C.cur]; let ok=false;
-  if(ex.type==='listen_type'){ ok=document.getElementById('type-in').value.trim().toLowerCase()===ex.correct.toLowerCase(); }
+  if(ex.type==='listen_type'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){ ok=C.placed.map(p=>p.w).join(' ')===ex.correct; }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
