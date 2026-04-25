@@ -1,6 +1,332 @@
 {
   "lessons": [
     {
+      "topic": "pizza dough",
+      "topicEmoji": "🍕",
+      "lang": "de",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Pizza Teig",
+          "desc": "Einführung in das Backen von Teig",
+          "icon": "🍕",
+          "vocab": [
+            {
+              "it": "Teig",
+              "en": "dough",
+              "pron": "TEIGH"
+            },
+            {
+              "it": "Mehl",
+              "en": "flour",
+              "pron": "MEHL"
+            },
+            {
+              "it": "Zucker",
+              "en": "sugar",
+              "pron": "ZU-ker"
+            },
+            {
+              "it": "Salz",
+              "en": "salt",
+              "pron": "SAL茨"
+            },
+            {
+              "it": "Olivenöl",
+              "en": "olive oil",
+              "pron": "O-liv-en-OL-ye"
+            },
+            {
+              "it": "Yeast",
+              "en": "yeast",
+              "pron": "YEE-st"
+            },
+            {
+              "it": "Backpapier",
+              "en": "baking paper",
+              "pron": "BAK-pa-PYER"
+            },
+            {
+              "it": "Pfanne",
+              "en": "pan",
+              "pron": "FAN-neh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Ich mische Mehl Zucker und Salz zusammen.",
+              "en": "I mix flour sugar and salt together",
+              "words": [
+                "mische",
+                "Mehl",
+                "Zucker",
+                "Salz",
+                "zusammen"
+              ]
+            },
+            {
+              "it": "Ich füge Teig und Olivenöl hinzu.",
+              "en": "I add dough and olive oil",
+              "words": [
+                "füge",
+                "Teig",
+                "Olivenöl",
+                "hinzu"
+              ]
+            },
+            {
+              "it": "Ich lasse Yeast aufgehen.",
+              "en": "I let yeast rise",
+              "words": [
+                "lasse",
+                "Yeast",
+                "aufgehen"
+              ]
+            },
+            {
+              "it": "Ich backe Pizza auf Backpapier.",
+              "en": "I bake pizza on baking paper",
+              "words": [
+                "bake",
+                "Pizza",
+                "on",
+                "baking",
+                "paper"
+              ]
+            },
+            {
+              "it": "Ich gehe Teig in Pfanne.",
+              "en": "I put dough in pan",
+              "words": [
+                "gehe",
+                "Teig",
+                "in",
+                "Pfanne"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Pizza Teig",
+          "desc": "Zubereitung und Backen",
+          "icon": "🍕",
+          "vocab": [
+            {
+              "it": "Aufrollen",
+              "en": "To roll out",
+              "pron": "AH-foh-ROH-len"
+            },
+            {
+              "it": "Aufladen",
+              "en": "To knead",
+              "pron": "AH-fohl-ADEN"
+            },
+            {
+              "it": "Teigteig",
+              "en": "Dough for pizza",
+              "pron": "TAYG-teig"
+            },
+            {
+              "it": "Puderzucker",
+              "en": "Confectioners' sugar",
+              "pron": "POO-der-ZUK-er"
+            },
+            {
+              "it": "Puder",
+              "en": "Powder",
+              "pron": "POO-der"
+            },
+            {
+              "it": "Dampf",
+              "en": "Steam",
+              "pron": "DAmpf"
+            },
+            {
+              "it": "Fett",
+              "en": "Fat",
+              "pron": "FEHtt"
+            },
+            {
+              "it": "Rahmen",
+              "en": "Frame",
+              "pron": "RAH-men"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Teigteig Aufladen Fett",
+              "en": "dough knead fat",
+              "words": [
+                "Teigteig",
+                "Aufladen",
+                "Fett"
+              ]
+            },
+            {
+              "it": "Puderzucker Aufrollen Dampf",
+              "en": "confectioners' sugar roll steam",
+              "words": [
+                "Puderzucker",
+                "Aufrollen",
+                "Dampf"
+              ]
+            },
+            {
+              "it": "Rahmen Teigteig Aufladen",
+              "en": "frame dough knead",
+              "words": [
+                "Rahmen",
+                "Teigteig",
+                "Aufladen"
+              ]
+            },
+            {
+              "it": "Aufladen Puderzucker Fett",
+              "en": "knead confectioners' sugar fat",
+              "words": [
+                "Aufladen",
+                "Puderzucker",
+                "Fett"
+              ]
+            },
+            {
+              "it": "Teigteig Aufrollen Puder",
+              "en": "dough roll powder",
+              "words": [
+                "Teigteig",
+                "Aufrollen",
+                "Puder"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Pizza Teig",
+          "desc": "Fortgeschritten: Teig bereiten, backen",
+          "icon": "🍕",
+          "vocab": [
+            {
+              "it": "Fermentation",
+              "en": "Fermentation",
+              "pron": "fuh-rih-muh-NAH-tuhr"
+            },
+            {
+              "it": "Protein",
+              "en": "Protein",
+              "pron": "PROH-tee-in"
+            },
+            {
+              "it": "Hydration",
+              "en": "Hydration",
+              "pron": "hih-druh-AY-shun"
+            },
+            {
+              "it": "Stretching",
+              "en": "Stretching",
+              "pron": "STREH-tuh-sing"
+            },
+            {
+              "it": "Leavening",
+              "en": "Leavening",
+              "pron": "lee-uh-VEYN-ing"
+            },
+            {
+              "it": "Hydrogen Peroxide",
+              "en": "Hydrogen Peroxide",
+              "pron": "HY-druh-jin PEHR-uh-koid"
+            },
+            {
+              "it": "Oven Spring",
+              "en": "Oven Spring",
+              "pron": "OH-ven SPRING"
+            },
+            {
+              "it": "Gluten",
+              "en": "Gluten",
+              "pron": "GLU-ten"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Die Proteinbehalter im Teig weiten sich während der Fermentation aus.",
+              "en": "The protein carriers in the dough expand during fermentation.",
+              "words": [
+                "Proteinbehalter",
+                "im",
+                "Teig",
+                "weiten",
+                "sich",
+                "während",
+                "der",
+                "Fermentation",
+                "aus"
+              ]
+            },
+            {
+              "it": "Hydrogen Peroxide kann die Leaveningprozesse im Teig beschleunigen.",
+              "en": "Hydrogen Peroxide can accelerate the leavening processes in the dough.",
+              "words": [
+                "Hydrogen",
+                "Peroxide",
+                "kann",
+                "die",
+                "Leaveningprozesse",
+                "im",
+                "Teig",
+                "beschleunigen"
+              ]
+            },
+            {
+              "it": "Die Hydration beeinflusst die Glutenstruktur im Teig.",
+              "en": "Hydration influences the gluten structure in the dough.",
+              "words": [
+                "Hydration",
+                "beeinflusst",
+                "die",
+                "Glutenstruktur",
+                "im",
+                "Teig"
+              ]
+            },
+            {
+              "it": "Oven Spring verstärkt die Textur der Pizza nach dem Backen.",
+              "en": "Oven Spring enhances the texture of the pizza after baking.",
+              "words": [
+                "Oven",
+                "Spring",
+                "verstärkt",
+                "die",
+                "Textur",
+                "der",
+                "Pizza",
+                "nach",
+                "dem",
+                "Backen"
+              ]
+            },
+            {
+              "it": "Das Stretching des Teigballs fördert die gleichmäßige Verbreitung von Luftblasen.",
+              "en": "Stretching the dough ball promotes the even distribution of air bubbles.",
+              "words": [
+                "Stretching",
+                "des",
+                "Teigballs",
+                "fördert",
+                "die",
+                "gleichmäßige",
+                "Verbreitung",
+                "von",
+                "Luftblasen"
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-25T15:00:21.527Z"
+    },
+    {
       "topic": "cooking",
       "topicEmoji": "🔥",
       "lang": "es",
@@ -2259,7 +2585,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-25T14:33:59.222Z"
+      "generatedAt": "2026-04-25T14:41:25.120Z"
     },
     {
       "topic": "architecture",
@@ -4753,6 +5079,197 @@
         ","
       ],
       "flaggedAt": "2026-04-24T13:44:07.476Z"
+    },
+    "pizza_dough:order:Ich_mische_Mehl_Zucker_und_Salz_zusammen": {
+      "topic": "pizza dough",
+      "type": "order",
+      "it": "Ich mische Mehl Zucker und Salz zusammen.",
+      "en": "I mix flour sugar and salt together",
+      "correct": "mische Mehl Zucker Salz zusammen",
+      "choices": [],
+      "words": [
+        "Zucker",
+        "Mehl",
+        "zusammen",
+        "Salz",
+        "mische"
+      ],
+      "flaggedAt": "2026-04-25T15:01:30.266Z",
+      "comment": "\"ich\" and \"und\" are missing from the solution"
+    },
+    "pizza_dough:mcq_en_it:Yeast": {
+      "topic": "pizza dough",
+      "type": "mcq_en_it",
+      "it": "Yeast",
+      "en": "yeast",
+      "correct": "Yeast",
+      "choices": [
+        "Pfanne",
+        "Yeast",
+        "Salz",
+        "Teig"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T15:02:22.024Z",
+      "comment": "yeast is \"Hefe\" in German"
+    },
+    "pizza_dough:listen_mcq:Yeast": {
+      "topic": "pizza dough",
+      "type": "listen_mcq",
+      "it": "Yeast",
+      "en": "",
+      "correct": "yeast",
+      "choices": [
+        "baking paper",
+        "olive oil",
+        "salt",
+        "yeast"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T15:02:48.321Z",
+      "comment": "yeast is Hefe in German"
+    },
+    "pizza_dough:order:Ich_backe_Pizza_auf_Backpapier.": {
+      "topic": "pizza dough",
+      "type": "order",
+      "it": "Ich backe Pizza auf Backpapier.",
+      "en": "I bake pizza on baking paper",
+      "correct": "bake Pizza on baking paper",
+      "choices": [],
+      "words": [
+        "Pizza",
+        "baking",
+        "paper",
+        "on",
+        "bake"
+      ],
+      "flaggedAt": "2026-04-25T15:03:23.474Z",
+      "comment": "the word options are english instead of German. the generated vocalization was correct."
+    },
+    "pizza_dough:order:Teigteig_Aufladen_Fett": {
+      "topic": "pizza dough",
+      "type": "order",
+      "it": "Teigteig Aufladen Fett",
+      "en": "dough knead fat",
+      "correct": "Teigteig Aufladen Fett",
+      "choices": [],
+      "words": [
+        "Teigteig",
+        "Fett",
+        "Aufladen"
+      ],
+      "flaggedAt": "2026-04-25T15:04:25.919Z",
+      "comment": "phrase makes no sense and \"Aufladen\" does not translate to \"knead\""
+    },
+    "pizza_dough:read_translate:Puderzucker_Aufrollen_Dampf": {
+      "topic": "pizza dough",
+      "type": "read_translate",
+      "it": "Puderzucker Aufrollen Dampf",
+      "en": "confectioners' sugar roll steam",
+      "correct": "confectioners' sugar roll steam",
+      "choices": [
+        "I mix flour sugar and salt together",
+        "I put dough in pan",
+        "I add dough and olive oil",
+        "confectioners' sugar roll steam"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T15:05:26.519Z",
+      "comment": "phrase makes no sense"
+    },
+    "pizza_dough:mcq_it_en:Yeast": {
+      "topic": "pizza dough",
+      "type": "mcq_it_en",
+      "it": "Yeast",
+      "en": "yeast",
+      "correct": "yeast",
+      "choices": [
+        "Confectioners' sugar",
+        "sugar",
+        "Powder",
+        "yeast"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T15:05:39.103Z",
+      "comment": "yeast is Hefe in German"
+    },
+    "pizza_dough:read_translate:Teigteig_Aufladen_Fett": {
+      "topic": "pizza dough",
+      "type": "read_translate",
+      "it": "Teigteig Aufladen Fett",
+      "en": "dough knead fat",
+      "correct": "dough knead fat",
+      "choices": [
+        "I bake pizza on baking paper",
+        "I add dough and olive oil",
+        "dough knead fat",
+        "dough roll powder"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T15:06:10.596Z",
+      "comment": "Teigteig is wrong, phrase makes no sense."
+    },
+    "pizza_dough:listen_mcq:Teigteig": {
+      "topic": "pizza dough",
+      "type": "listen_mcq",
+      "it": "Teigteig",
+      "en": "",
+      "correct": "Dough for pizza",
+      "choices": [
+        "Dough for pizza",
+        "Fat",
+        "salt",
+        "yeast"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T15:06:46.177Z",
+      "comment": "Teigteig is not  a word."
+    },
+    "pizza_dough:mcq_en_it:Aufladen": {
+      "topic": "pizza dough",
+      "type": "mcq_en_it",
+      "it": "Aufladen",
+      "en": "To knead",
+      "correct": "Aufladen",
+      "choices": [
+        "Teig",
+        "Teigteig",
+        "Aufladen",
+        "Pfanne"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T15:07:12.232Z",
+      "comment": "to knead rather translates to \"kneten\""
+    },
+    "pizza_dough:order:Teigteig_Aufrollen_Puder": {
+      "topic": "pizza dough",
+      "type": "order",
+      "it": "Teigteig Aufrollen Puder",
+      "en": "dough roll powder",
+      "correct": "Teigteig Aufrollen Puder",
+      "choices": [],
+      "words": [
+        "Teigteig",
+        "Puder",
+        "Aufrollen"
+      ],
+      "flaggedAt": "2026-04-25T15:07:43.613Z",
+      "comment": "makes no sense, and teigteig is not a word."
+    },
+    "pizza_dough:read_translate:Rahmen_Teigteig_Aufladen": {
+      "topic": "pizza dough",
+      "type": "read_translate",
+      "it": "Rahmen Teigteig Aufladen",
+      "en": "frame dough knead",
+      "correct": "frame dough knead",
+      "choices": [
+        "frame dough knead",
+        "knead confectioners' sugar fat",
+        "I mix flour sugar and salt together",
+        "dough knead fat"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-25T15:08:52.133Z"
     }
   }
 }
