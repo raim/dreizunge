@@ -105,6 +105,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .node-desc{font-size:12px;color:var(--gray-dark);font-weight:600}
 .next-badge{position:absolute;top:-10px;right:14px;background:var(--yellow);color:#6a5000;font-size:11px;font-weight:900;padding:3px 10px;border-radius:10px}
 .start-strip{display:flex;justify-content:center;margin-top:20px}
+.flag-strip{background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 16px;margin:0 0 14px;display:none;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
+.flag-strip-label{font-size:13px;font-weight:800;color:#c26000;flex:1}
+.repair-all-btn{background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap}
+.repair-all-btn:hover{background:#e08000}
+.repair-all-btn:disabled{opacity:.5;cursor:not-allowed}
 .big-btn{padding:15px 40px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);transition:transform .1s,box-shadow .1s}
 .big-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
 
@@ -322,6 +327,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="xp-val" id="total-xp">0 XP</div>
     </div>
   </div>
+  <div class="flag-strip" id="flag-strip">
+    <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
+    <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
+  </div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
@@ -518,6 +527,40 @@ async function repairFromLesson(){
   }
 }
 
+async function repairAll(){
+  if(!APP.lessonData) return;
+  const btn=document.getElementById('repair-all-btn');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ Repairing…'; }
+  const d=APP.lessonData;
+  let totalRepaired=0, errors=[];
+  for(const L of d.lessons){
+    const topicSlug=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
+    const lessonItSet=new Set([
+      ...(L.vocab||[]).map(v=>(v.it||'').slice(0,40).replace(/\s+/g,'_')),
+      ...(L.sentences||[]).map(s=>(s.it||'').slice(0,40).replace(/\s+/g,'_'))
+    ]);
+    const hasFlags=Object.entries(APP.flagged).some(([k])=>{
+      if(!k.startsWith(topicSlug+':')) return false;
+      return lessonItSet.has(k.split(':').slice(2).join(':'));
+    });
+    if(!hasFlags) continue;
+    try{
+      if(btn) btn.textContent='⏳ Repairing lesson '+L.id+'…';
+      const r=await fetch('/api/repair',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({topic:d.topic,lessonId:L.id})});
+      const data=await r.json();
+      if(!r.ok) throw new Error(data.error||'Repair failed');
+      totalRepaired+=data.repaired||0;
+    }catch(e){ errors.push('Lesson '+L.id+': '+e.message); }
+  }
+  await syncFlagsFromServer();
+  const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
+  if(lr.ok) APP.lessonData=await lr.json();
+  buildPath();
+  if(errors.length) alert('Repair finished with errors:\n'+errors.join('\n'));
+}
+
 function goHome(){ buildPath(); show('home'); }
 
 // ── init ──
@@ -672,8 +715,20 @@ function buildPath(){
   });
   const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
   const btn=document.getElementById('start-btn');
-  if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=()=>{}; }
+  if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=goHome; }
   else{ btn.textContent='Start lesson '+(nextIdx+1); btn.onclick=()=>startLesson(nextIdx); }
+
+  // Update flag summary strip
+  const topicSlugAll=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
+  const totalFlagged=Object.keys(APP.flagged).filter(k=>k.startsWith(topicSlugAll+':')).length;
+  const strip=document.getElementById('flag-strip');
+  const stripLbl=document.getElementById('flag-strip-label');
+  const repAllBtn=document.getElementById('repair-all-btn');
+  if(strip){
+    strip.style.display=totalFlagged>0&&APP.info.canGenerate?'flex':'none';
+    if(stripLbl) stripLbl.textContent='⚑ '+totalFlagged+' flagged question'+(totalFlagged!==1?'s':'')+' across all lessons';
+    if(repAllBtn) repAllBtn.disabled=false;
+  }
 }
 function startNextLesson(){
   if(!APP.lessonData)return;

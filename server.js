@@ -108,8 +108,8 @@ Schema:
 
 Rules:
 - Return exactly 5 sentences
-- "words" must contain ONLY the content words of the ${L} sentence — NO punctuation tokens at all
-- Every word in "words" must appear in "it" — do not add extra words or repeat words unnecessarily
+- "words" must contain ALL words of the ${L} sentence except punctuation marks — include articles, prepositions, conjunctions
+- Every word in "words" must appear in "it" — do not omit any words, do not add extra words
 - Each sentence must use DIFFERENT words — do not repeat the same sentence structure
 - Use the provided vocabulary words naturally
 - Lesson ${lessonNum} of ${totalLessons} difficulty: ${lessonNum === 1 ? 'beginner basics' : lessonNum === 2 ? 'intermediate phrases' : 'advanced/specific vocabulary'}`;
@@ -135,7 +135,7 @@ Each exercise has a type. Return corrected versions preserving the same type and
 Rules:
 - Fix translation errors, wrong choices, incorrect pronunciations
 - Pay close attention to user comments — they describe what is specifically wrong
-- For order type: words[] must contain ONLY content words, NO punctuation tokens, randomly shuffled
+- For order type: words[] must contain ONLY content words, NO punctuation tokens, in the CORRECT sentence order (the client shuffles them for display)
 - Keep the same topic and difficulty level
 - Return exactly as many items as given`;
 
@@ -277,14 +277,6 @@ function validateAndCleanSentences(arr, lang) {
       console.warn(`    words[] was English — rebuilding from target sentence`);
       s.words = s.it.split(' ').filter(t => !isPunct(t));
     }
-
-    // Deduplicate: remove repeated words beyond 2 occurrences
-    const counts = {};
-    s.words = s.words.filter(w => {
-      const lw = w.toLowerCase();
-      counts[lw] = (counts[lw] || 0) + 1;
-      return counts[lw] <= 2;
-    });
 
     if (s.words.length < 4)
       s.words = s.it.split(' ').filter(t => !isPunct(t));

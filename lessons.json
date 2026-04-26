@@ -1039,11 +1039,11 @@
               "it": "Ich mische Mehl Zucker und Salz zusammen.",
               "en": "I mix flour sugar and salt together",
               "words": [
-                "mische",
                 "Mehl",
                 "Zucker",
                 "Salz",
-                "zusammen"
+                "zusammen",
+                "mische"
               ]
             },
             {
@@ -1069,11 +1069,10 @@
               "it": "Ich backe Pizza auf Backpapier.",
               "en": "I bake pizza on baking paper",
               "words": [
-                "bake",
                 "Pizza",
-                "on",
-                "baking",
-                "paper"
+                "Backpapier",
+                "auf",
+                "backe"
               ]
             },
             {
@@ -1146,8 +1145,8 @@
               ]
             },
             {
-              "it": "Puderzucker Aufrollen Dampf",
-              "en": "confectioners' sugar roll steam",
+              "it": "Puderzucker aufrollen",
+              "en": "confectioners' sugar roll",
               "words": [
                 "Puderzucker",
                 "Aufrollen",
@@ -1306,7 +1305,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-25T15:00:21.527Z"
+      "generatedAt": "2026-04-26T08:51:07.503Z"
     },
     {
       "topic": "cooking",
@@ -5991,197 +5990,6 @@
         ","
       ],
       "flaggedAt": "2026-04-24T13:44:07.476Z"
-    },
-    "pizza_dough:order:Ich_mische_Mehl_Zucker_und_Salz_zusammen": {
-      "topic": "pizza dough",
-      "type": "order",
-      "it": "Ich mische Mehl Zucker und Salz zusammen.",
-      "en": "I mix flour sugar and salt together",
-      "correct": "mische Mehl Zucker Salz zusammen",
-      "choices": [],
-      "words": [
-        "Zucker",
-        "Mehl",
-        "zusammen",
-        "Salz",
-        "mische"
-      ],
-      "flaggedAt": "2026-04-25T15:01:30.266Z",
-      "comment": "\"ich\" and \"und\" are missing from the solution"
-    },
-    "pizza_dough:mcq_en_it:Yeast": {
-      "topic": "pizza dough",
-      "type": "mcq_en_it",
-      "it": "Yeast",
-      "en": "yeast",
-      "correct": "Yeast",
-      "choices": [
-        "Pfanne",
-        "Yeast",
-        "Salz",
-        "Teig"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T15:02:22.024Z",
-      "comment": "yeast is \"Hefe\" in German"
-    },
-    "pizza_dough:listen_mcq:Yeast": {
-      "topic": "pizza dough",
-      "type": "listen_mcq",
-      "it": "Yeast",
-      "en": "",
-      "correct": "yeast",
-      "choices": [
-        "baking paper",
-        "olive oil",
-        "salt",
-        "yeast"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T15:02:48.321Z",
-      "comment": "yeast is Hefe in German"
-    },
-    "pizza_dough:order:Ich_backe_Pizza_auf_Backpapier.": {
-      "topic": "pizza dough",
-      "type": "order",
-      "it": "Ich backe Pizza auf Backpapier.",
-      "en": "I bake pizza on baking paper",
-      "correct": "bake Pizza on baking paper",
-      "choices": [],
-      "words": [
-        "Pizza",
-        "baking",
-        "paper",
-        "on",
-        "bake"
-      ],
-      "flaggedAt": "2026-04-25T15:03:23.474Z",
-      "comment": "the word options are english instead of German. the generated vocalization was correct."
-    },
-    "pizza_dough:order:Teigteig_Aufladen_Fett": {
-      "topic": "pizza dough",
-      "type": "order",
-      "it": "Teigteig Aufladen Fett",
-      "en": "dough knead fat",
-      "correct": "Teigteig Aufladen Fett",
-      "choices": [],
-      "words": [
-        "Teigteig",
-        "Fett",
-        "Aufladen"
-      ],
-      "flaggedAt": "2026-04-25T15:04:25.919Z",
-      "comment": "phrase makes no sense and \"Aufladen\" does not translate to \"knead\""
-    },
-    "pizza_dough:read_translate:Puderzucker_Aufrollen_Dampf": {
-      "topic": "pizza dough",
-      "type": "read_translate",
-      "it": "Puderzucker Aufrollen Dampf",
-      "en": "confectioners' sugar roll steam",
-      "correct": "confectioners' sugar roll steam",
-      "choices": [
-        "I mix flour sugar and salt together",
-        "I put dough in pan",
-        "I add dough and olive oil",
-        "confectioners' sugar roll steam"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T15:05:26.519Z",
-      "comment": "phrase makes no sense"
-    },
-    "pizza_dough:mcq_it_en:Yeast": {
-      "topic": "pizza dough",
-      "type": "mcq_it_en",
-      "it": "Yeast",
-      "en": "yeast",
-      "correct": "yeast",
-      "choices": [
-        "Confectioners' sugar",
-        "sugar",
-        "Powder",
-        "yeast"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T15:05:39.103Z",
-      "comment": "yeast is Hefe in German"
-    },
-    "pizza_dough:read_translate:Teigteig_Aufladen_Fett": {
-      "topic": "pizza dough",
-      "type": "read_translate",
-      "it": "Teigteig Aufladen Fett",
-      "en": "dough knead fat",
-      "correct": "dough knead fat",
-      "choices": [
-        "I bake pizza on baking paper",
-        "I add dough and olive oil",
-        "dough knead fat",
-        "dough roll powder"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T15:06:10.596Z",
-      "comment": "Teigteig is wrong, phrase makes no sense."
-    },
-    "pizza_dough:listen_mcq:Teigteig": {
-      "topic": "pizza dough",
-      "type": "listen_mcq",
-      "it": "Teigteig",
-      "en": "",
-      "correct": "Dough for pizza",
-      "choices": [
-        "Dough for pizza",
-        "Fat",
-        "salt",
-        "yeast"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T15:06:46.177Z",
-      "comment": "Teigteig is not  a word."
-    },
-    "pizza_dough:mcq_en_it:Aufladen": {
-      "topic": "pizza dough",
-      "type": "mcq_en_it",
-      "it": "Aufladen",
-      "en": "To knead",
-      "correct": "Aufladen",
-      "choices": [
-        "Teig",
-        "Teigteig",
-        "Aufladen",
-        "Pfanne"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T15:07:12.232Z",
-      "comment": "to knead rather translates to \"kneten\""
-    },
-    "pizza_dough:order:Teigteig_Aufrollen_Puder": {
-      "topic": "pizza dough",
-      "type": "order",
-      "it": "Teigteig Aufrollen Puder",
-      "en": "dough roll powder",
-      "correct": "Teigteig Aufrollen Puder",
-      "choices": [],
-      "words": [
-        "Teigteig",
-        "Puder",
-        "Aufrollen"
-      ],
-      "flaggedAt": "2026-04-25T15:07:43.613Z",
-      "comment": "makes no sense, and teigteig is not a word."
-    },
-    "pizza_dough:read_translate:Rahmen_Teigteig_Aufladen": {
-      "topic": "pizza dough",
-      "type": "read_translate",
-      "it": "Rahmen Teigteig Aufladen",
-      "en": "frame dough knead",
-      "correct": "frame dough knead",
-      "choices": [
-        "frame dough knead",
-        "knead confectioners' sugar fat",
-        "I mix flour sugar and salt together",
-        "dough knead fat"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-25T15:08:52.133Z"
     },
     "pizza_dough:order:Oven_Spring_verstärkt_die_Textur_der_Piz": {
       "topic": "pizza dough",
