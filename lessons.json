@@ -81,23 +81,12 @@
             {
               "it": "L'ossigeno è importante per la scalata a elevata quota.",
               "en": "oxygen is important for climbing high altitude",
-              "words": [
-                "oxygen",
-                "important",
-                "climbing",
-                "high",
-                "altitude"
-              ]
+              "words": []
             },
             {
               "it": "Non lasciare pattumiera in montagna.",
               "en": "leave rubbish bin in mountain",
-              "words": [
-                "leave",
-                "rubbish",
-                "bin",
-                "mountain"
-              ]
+              "words": []
             },
             {
               "it": "L'attrezzo giusto può fare la differenza nella scalata.",
@@ -335,7 +324,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-26T01:20:57.442Z"
+      "generatedAt": "2026-04-26T01:41:39.391Z"
     },
     {
       "topic": "music journalism",
@@ -6215,54 +6204,6 @@
       ],
       "flaggedAt": "2026-04-25T15:13:22.465Z",
       "comment": "Oven Spring translates to \"Ofentrieb\" in German"
-    },
-    "mountain_climbing:order:Non_lasciare_pattumiera_in_montagna.": {
-      "topic": "mountain climbing",
-      "type": "order",
-      "it": "Non lasciare pattumiera in montagna.",
-      "en": "leave rubbish bin in mountain",
-      "correct": "leave rubbish bin mountain",
-      "choices": [],
-      "words": [
-        "mountain",
-        "bin",
-        "rubbish",
-        "leave"
-      ],
-      "flaggedAt": "2026-04-26T01:21:18.981Z",
-      "comment": "answer options are english instead of italian"
-    },
-    "mountain_climbing:read_translate:Non_lasciare_pattumiera_in_montagna.": {
-      "topic": "mountain climbing",
-      "type": "read_translate",
-      "it": "Non lasciare pattumiera in montagna.",
-      "en": "leave rubbish bin in mountain",
-      "correct": "leave rubbish bin in mountain",
-      "choices": [
-        "oxygen is important for climbing high altitude",
-        "alpine climbing requires specific equipment",
-        "leave rubbish bin in mountain",
-        "take coat mountain is cold"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-26T01:22:00.823Z",
-      "comment": "english seems wrong"
-    },
-    "mountain_climbing:read_translate:L'ossigeno_è_importante_per_la_scalata_a": {
-      "topic": "mountain climbing",
-      "type": "read_translate",
-      "it": "L'ossigeno è importante per la scalata a elevata quota.",
-      "en": "oxygen is important for climbing high altitude",
-      "correct": "oxygen is important for climbing high altitude",
-      "choices": [
-        "oxygen is important for climbing high altitude",
-        "take coat mountain is cold",
-        "alpine climbing requires specific equipment",
-        "leave rubbish bin in mountain"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-26T01:23:05.961Z",
-      "comment": "please check italian and translation"
     }
   }
 }
