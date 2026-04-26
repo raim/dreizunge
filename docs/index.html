@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Impara l'Italiano</title>
+<title>Dreizunge</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -208,10 +208,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .sec-btn{width:100%;padding:12px;background:none;border:2.5px solid var(--gray-mid);border-radius:var(--radius-lg);font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark)}
 .sec-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
 
-.lang-selector{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.lang-chip{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:var(--radius);padding:8px 14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s;display:flex;align-items:center;gap:6px}
-.lang-chip:hover{border-color:var(--blue)}
-.lang-chip.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
+.lang-selector{margin-bottom:14px}
+.lang-select-wrap{position:relative;display:inline-block;width:100%}
+.lang-select{width:100%;padding:10px 36px 10px 14px;font-size:15px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
+.lang-select:focus{border-color:var(--blue)}
+.lang-select:disabled{opacity:.5;cursor:not-allowed}
+.lang-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .lang-flag{font-size:18px}
 .lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
@@ -238,9 +240,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 <div id="landing" class="screen active">
 <div class="landing-inner">
   <div class="land-top">
-    <span class="flag">🇮🇹</span>
-    <div class="app-name">Impara l'Italiano</div>
-    <div class="app-tagline">Learn Italian vocabulary for any topic, Duolingo-style</div>
+    <span class="flag" id="app-flag">🇮🇹</span>
+    <div class="app-name">Dreizunge</div>
+    <div class="app-tagline" id="app-tagline">Learn Italian vocabulary for any topic, Duolingo-style</div>
   </div>
 
   <div class="backend-row">
@@ -251,12 +253,27 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
   <div class="topic-form">
     <label class="form-lbl">Target language</label>
-    <div class="lang-selector" id="lang-selector">
-      <button class="lang-chip active" data-lang="it" onclick="selectLang('it')"><span class="lang-flag">🇮🇹</span>Italian</button>
-      <button class="lang-chip" data-lang="fr" onclick="selectLang('fr')"><span class="lang-flag">🇫🇷</span>French</button>
-      <button class="lang-chip" data-lang="de" onclick="selectLang('de')"><span class="lang-flag">🇩🇪</span>German</button>
-      <button class="lang-chip" data-lang="es" onclick="selectLang('es')"><span class="lang-flag">🇪🇸</span>Spanish</button>
-      <button class="lang-chip" data-lang="pt" onclick="selectLang('pt')"><span class="lang-flag">🇵🇹</span>Portuguese</button>
+    <div class="lang-selector">
+      <div class="lang-select-wrap">
+        <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
+          <option value="it">🇮🇹 Italian</option>
+          <option value="fr">🇫🇷 French</option>
+          <option value="de">🇩🇪 German</option>
+          <option value="es">🇪🇸 Spanish</option>
+          <option value="pt">🇵🇹 Portuguese</option>
+          <option value="nl">🇳🇱 Dutch</option>
+          <option value="pl">🇵🇱 Polish</option>
+          <option value="sv">🇸🇪 Swedish</option>
+          <option value="ja">🇯🇵 Japanese</option>
+          <option value="zh">🇨🇳 Mandarin Chinese</option>
+          <option value="ar">🇸🇦 Arabic</option>
+          <option value="ru">🇷🇺 Russian</option>
+          <option value="ko">🇰🇷 Korean</option>
+          <option value="tr">🇹🇷 Turkish</option>
+          <option value="hi">🇮🇳 Hindi</option>
+        </select>
+        <span class="lang-select-arrow">▾</span>
+      </div>
     </div>
     <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
     <input class="topic-input" id="topic-input" type="text"
@@ -269,7 +286,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="examples">
     <span style="font-size:12px;color:var(--gray-dark);font-weight:700;align-self:center">Try:</span>
     <button class="chip" onclick="setTopic('research grant proposals')">🔬 Research grants</button>
-    <button class="chip" onclick="setTopic('Italian cooking & recipes')">🍝 Cooking</button>
+    <button class="chip" onclick="setTopic('cooking & recipes')">🍝 Cooking</button>
     <button class="chip" onclick="setTopic('architecture & design')">🏛 Architecture</button>
     <button class="chip" onclick="setTopic('medical & healthcare')">🏥 Medicine</button>
     <button class="chip" onclick="setTopic('business & negotiations')">💼 Business</button>
@@ -326,7 +343,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 <div id="complete-screen" class="screen">
   <span class="trophy">🏆</span>
   <div class="comp-title">Lesson complete!</div>
-  <div class="comp-sub" id="comp-sub">Ottimo lavoro!</div>
+  <div class="comp-sub" id="comp-sub"></div>
   <div class="xp-pill" id="comp-xp">+0 XP</div>
   <div class="stat-row">
     <div class="stat-box"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">Correct</div></div>
@@ -341,11 +358,21 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
 <script>
 var LANGS = {
-  it: {name:'Italian',  flag:'🇮🇹', tts:'it-IT', label:'italian'},
-  fr: {name:'French',   flag:'🇫🇷', tts:'fr-FR', label:'french'},
-  de: {name:'German',   flag:'🇩🇪', tts:'de-DE', label:'german'},
-  es: {name:'Spanish',  flag:'🇪🇸', tts:'es-ES', label:'spanish'},
-  pt: {name:'Portuguese',flag:'🇵🇹',tts:'pt-PT', label:'portuguese'},
+  it: {name:'Italian',          flag:'🇮🇹', tts:'it-IT'},
+  fr: {name:'French',           flag:'🇫🇷', tts:'fr-FR'},
+  de: {name:'German',           flag:'🇩🇪', tts:'de-DE'},
+  es: {name:'Spanish',          flag:'🇪🇸', tts:'es-ES'},
+  pt: {name:'Portuguese',       flag:'🇵🇹', tts:'pt-PT'},
+  nl: {name:'Dutch',            flag:'🇳🇱', tts:'nl-NL'},
+  pl: {name:'Polish',           flag:'🇵🇱', tts:'pl-PL'},
+  sv: {name:'Swedish',          flag:'🇸🇪', tts:'sv-SE'},
+  ja: {name:'Japanese',         flag:'🇯🇵', tts:'ja-JP'},
+  zh: {name:'Mandarin Chinese', flag:'🇨🇳', tts:'zh-CN'},
+  ar: {name:'Arabic',           flag:'🇸🇦', tts:'ar-SA'},
+  ru: {name:'Russian',          flag:'🇷🇺', tts:'ru-RU'},
+  ko: {name:'Korean',           flag:'🇰🇷', tts:'ko-KR'},
+  tr: {name:'Turkish',          flag:'🇹🇷', tts:'tr-TR'},
+  hi: {name:'Hindi',            flag:'🇮🇳', tts:'hi-IN'},
 };
 
 var APP = {
@@ -365,10 +392,17 @@ function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
 function selectLang(code){
   APP.lang=code; saveLang();
-  document.querySelectorAll('.lang-chip').forEach(b=>b.classList.toggle('active',b.dataset.lang===code));
+  const sel=document.getElementById('lang-select');
+  if(sel && sel.value!==code) sel.value=code;
   const L=LANGS[code]||LANGS.it;
-  document.getElementById('topic-label').textContent='What do you want to learn '+L.name+' for?';
-  document.getElementById('topic-input').placeholder='e.g. cooking, architecture, medicine…';
+  const lbl=document.getElementById('topic-label');
+  if(lbl) lbl.textContent='What do you want to learn '+L.name+' for?';
+  const inp=document.getElementById('topic-input');
+  if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
+  const flag=document.getElementById('app-flag');
+  if(flag) flag.textContent=L.flag;
+  const tagline=document.getElementById('app-tagline');
+  if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic, Duolingo-style';
 }
 function loadFlagged(){ try{ return JSON.parse(localStorage.getItem('imp3_flagged')||'{}'); }catch(e){ return {}; } }
 function saveFlagged(){ localStorage.setItem('imp3_flagged',JSON.stringify(APP.flagged)); }
@@ -377,8 +411,8 @@ async function syncFlagsFromServer(){
     const r=await fetch('/api/flags');
     if(!r.ok) return;
     const serverFlags=await r.json();
-    // Merge server flags into local (server wins on conflict)
-    Object.assign(APP.flagged, serverFlags);
+    // Replace local flags entirely — server is the source of truth
+    APP.flagged = serverFlags;
     saveFlagged();
   }catch(e){ /* offline — use localStorage only */ }
 }
@@ -420,13 +454,16 @@ async function repairLesson(topic, lessonId){
       body:JSON.stringify({topic,lessonId})});
     const data=await r.json();
     if(!r.ok) throw new Error(data.error||'Repair failed');
-    // Sync cleared flags from server
+    // Server cleared flags — replace local state entirely
     await syncFlagsFromServer();
-    // Refresh lesson data in case user goes back in
+    // Reload lesson data so in-lesson play gets updated content
     const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok && APP.lessonData?.topic===topic) APP.lessonData=await lr.json();
-    alert(`✓ Repaired ${data.repaired} exercise${data.repaired!==1?'s':''} and cleared flags.`);
-    buildPath(); // refresh path to remove repair button
+    if(lr.ok){
+      const fresh=await lr.json();
+      // Update APP.lessonData if user is currently viewing this topic
+      if(APP.lessonData?.topic?.toLowerCase()===topic.toLowerCase()) APP.lessonData=fresh;
+    }
+    buildPath(); // refresh path — repair button disappears if no more flags
   }catch(e){
     alert('Repair failed: '+e.message);
     if(btn){ btn.disabled=false; btn.textContent='⚑ Retry repair'; }
@@ -445,15 +482,35 @@ async function repairFromLesson(){
       body:JSON.stringify({topic,lessonId})});
     const data=await r.json();
     if(!r.ok) throw new Error(data.error||'Repair failed');
-    // Reload lesson data from server
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok) APP.lessonData=await lr.json();
-    // Sync flags
+    // Sync flags first (server cleared them — replace local state)
     await syncFlagsFromServer();
-    // Rebuild exercises and jump to next question
-    C.exercises=buildExercises(C.lessonIdx);
-    // Advance past current (repaired) exercise
-    C.cur=Math.min(C.cur+1, C.exercises.length);
+    // Reload lesson data from server with updated vocab/sentences
+    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
+    if(lr.ok){
+      const fresh=await lr.json();
+      APP.lessonData=fresh;
+    }
+    // Patch the current exercise in-place from fresh lesson data
+    // — no reshuffling, user stays exactly where they were
+    const freshLesson=APP.lessonData.lessons[C.lessonIdx];
+    const curEx=C.exercises[C.cur];
+    if(curEx && freshLesson){
+      // Find matching vocab or sentence in fresh lesson by Italian text prefix
+      const itKey=(curEx.it||'').toLowerCase().slice(0,20);
+      if(['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(curEx.type)){
+        const v=freshLesson.vocab.find(v=>v.it.toLowerCase().slice(0,20)===itKey);
+        if(v){ curEx.it=v.it; curEx.en=v.en; curEx.pron=v.pron;
+               // listen_type: user types the target language word; others: pick English meaning
+               curEx.correct=curEx.type==='listen_type' ? v.it : v.en; }
+      } else if(['order','read_translate'].includes(curEx.type)){
+        const s=freshLesson.sentences.find(s=>s.it.toLowerCase().slice(0,20)===itKey);
+        if(s){ curEx.it=s.it; curEx.en=s.en; curEx.words=s.words||curEx.words;
+               // order: assemble target language words; read_translate: pick English meaning
+               curEx.correct=curEx.type==='order' ? (s.words||curEx.words).join(' ') : s.en; }
+      }
+    }
+    // Reset answer state so the repaired exercise renders fresh
+    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
     renderEx();
   }catch(e){
     alert('Repair failed: '+e.message);
@@ -470,6 +527,988 @@ function goHome(){ buildPath(); show('home'); }
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "music journalism",
+    "topicEmoji": "🎵",
+    "lang": "fr",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Music Journalism 1",
+        "desc": "Introduction to music journalism",
+        "icon": "🎵",
+        "vocab": [
+          {
+            "it": "journaliste",
+            "en": "journalist",
+            "pron": "juh-ree-ZEET"
+          },
+          {
+            "it": "concerne",
+            "en": "concerns",
+            "pron": "kuhn-SUR"
+          },
+          {
+            "it": "interview",
+            "en": "interview",
+            "pron": "in-try-VUH"
+          },
+          {
+            "it": "chronique",
+            "en": "chronicle",
+            "pron": "kuh-NAK"
+          },
+          {
+            "it": "album",
+            "en": "album",
+            "pron": "AL-buhm"
+          },
+          {
+            "it": "concert",
+            "en": "concert",
+            "pron": "kuh-NAHR"
+          },
+          {
+            "it": "tournée",
+            "en": "tour",
+            "pron": "TOHR"
+          },
+          {
+            "it": "public",
+            "en": "public",
+            "pron": "PUH-bik"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Le journaliste interviewe l'artiste.",
+            "en": "The journalist interviews the artist",
+            "words": [
+              "Le",
+              "journaliste",
+              "interviewe",
+              "l'artiste."
+            ]
+          },
+          {
+            "it": "L'album concerne plusieurs styles musicaux.",
+            "en": "The album concerns several musical styles",
+            "words": [
+              "album",
+              "concerne",
+              "styles",
+              "musicaux"
+            ]
+          },
+          {
+            "it": "La chronique parle du concert.",
+            "en": "The chronicle talks about the concert",
+            "words": [
+              "La",
+              "chronique",
+              "parle",
+              "du",
+              "concert."
+            ]
+          },
+          {
+            "it": "La tournée comprend de nombreux concerts.",
+            "en": "The tour includes many concerts",
+            "words": [
+              "La",
+              "tournée",
+              "comprend",
+              "de",
+              "nombreux",
+              "concerts."
+            ]
+          },
+          {
+            "it": "Le public adore l'artiste.",
+            "en": "The public loves the artist",
+            "words": [
+              "Le",
+              "public",
+              "adore",
+              "l'artiste."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Music Journalism II",
+        "desc": "Intermediate writing techniques",
+        "icon": "✍️🎵",
+        "vocab": [
+          {
+            "it": "critique",
+            "en": "review",
+            "pron": "KRI-tik"
+          },
+          {
+            "it": "charte",
+            "en": "code of ethics",
+            "pron": "SHAR-te"
+          },
+          {
+            "it": "plongeon",
+            "en": "dive (into a topic)",
+            "pron": "plo-ZHON"
+          },
+          {
+            "it": "sélection",
+            "en": "selection",
+            "pron": "sel-ek-SYON"
+          },
+          {
+            "it": "feedback",
+            "en": "feedback",
+            "pron": "FEED-back"
+          },
+          {
+            "it": "sonorité",
+            "en": "sound quality",
+            "pron": "so-no-RAT-te"
+          },
+          {
+            "it": "orchestre",
+            "en": "orchestra",
+            "pron": "or-chees-TRE"
+          },
+          {
+            "it": "synthèse",
+            "en": "synthesis",
+            "pron": "sin-THE-sis"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La critique plonge dans l'orchestre.",
+            "en": "The review dives into the orchestra.",
+            "words": [
+              "La",
+              "critique",
+              "plonge",
+              "dans",
+              "l'orchestre."
+            ]
+          },
+          {
+            "it": "La charte de l'éthique guide la sélection.",
+            "en": "The code of ethics guides the selection.",
+            "words": [
+              "charte",
+              "éthique",
+              "guide",
+              "sélection"
+            ]
+          },
+          {
+            "it": "Le feedback améliore la sonorité.",
+            "en": "The feedback improves the sound quality.",
+            "words": [
+              "Le",
+              "feedback",
+              "améliore",
+              "la",
+              "sonorité."
+            ]
+          },
+          {
+            "it": "La synthèse résume l'essentiel.",
+            "en": "The synthesis summarizes the essential.",
+            "words": [
+              "La",
+              "synthèse",
+              "résume",
+              "l'essentiel."
+            ]
+          },
+          {
+            "it": "La critique plonge dans le synthèse.",
+            "en": "The review dives into the synthesis.",
+            "words": [
+              "La",
+              "critique",
+              "plonge",
+              "dans",
+              "le",
+              "synthèse."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Music Journalism",
+        "desc": "Advanced Writing Techniques",
+        "icon": "🎵",
+        "vocab": [
+          {
+            "it": "confrère",
+            "en": "colleague",
+            "pron": "kon-FRAH-ray"
+          },
+          {
+            "it": "plébiscite",
+            "en": "plebiscite",
+            "pron": "plee-BISS-see-tay"
+          },
+          {
+            "it": "coupure",
+            "en": "break",
+            "pron": "koo-PURE"
+          },
+          {
+            "it": "répertoire",
+            "en": "repertoire",
+            "pron": "re-pay-TEH-toir"
+          },
+          {
+            "it": "éclaircissement",
+            "en": "clarification",
+            "pron": "ay-klay-keer-see-mahn"
+          },
+          {
+            "it": "synchronisation",
+            "en": "synchronization",
+            "pron": "syn-kroh-ni-see-AY-shun"
+          },
+          {
+            "it": "édition",
+            "en": "edition",
+            "pron": "eh-dee-see-OHN"
+          },
+          {
+            "it": "répétition",
+            "en": "rehearsal",
+            "pron": "re-pay-tee-OHN-shon"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Notre confrère a remporté le plébiscite.",
+            "en": "Our colleague won the plebiscite",
+            "words": [
+              "Notre",
+              "confrère",
+              "a",
+              "remporté",
+              "le",
+              "plébiscite."
+            ]
+          },
+          {
+            "it": "Il y a eu une coupure dans l'édition.",
+            "en": "There was a break in the edition",
+            "words": [
+              "Il",
+              "y",
+              "a",
+              "eu",
+              "une",
+              "coupure",
+              "dans",
+              "l'édition."
+            ]
+          },
+          {
+            "it": "Le répertoire de chansons a été mis à jour.",
+            "en": "The repertoire of songs was updated",
+            "words": [
+              "répertoire",
+              "chansons",
+              "mis",
+              "à",
+              "jour"
+            ]
+          },
+          {
+            "it": "Une répétition est nécessaire pour la synchronisation.",
+            "en": "A rehearsal is necessary for the synchronization",
+            "words": [
+              "Une",
+              "répétition",
+              "est",
+              "nécessaire",
+              "pour",
+              "la",
+              "synchronisation."
+            ]
+          },
+          {
+            "it": "Il a demandé un éclaircissement sur les dates des concerts.",
+            "en": "He asked for a clarification on the concert dates",
+            "words": [
+              "Il",
+              "a",
+              "demandé",
+              "un",
+              "éclaircissement",
+              "sur",
+              "les",
+              "dates",
+              "des",
+              "concerts."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-25T23:16:39.942Z"
+  },
+  {
+    "topic": "italian_vs_german_beer",
+    "topicEmoji": "🍺",
+    "lang": "it",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Italian vs German Beer",
+        "desc": "Comparing Italian and German brewing traditions",
+        "icon": "🍺",
+        "vocab": [
+          {
+            "it": "birra",
+            "en": "beer",
+            "pron": "BIH-rah"
+          },
+          {
+            "it": "birrificio",
+            "en": "brewery",
+            "pron": "bih-REH-fee-eh-fee-co"
+          },
+          {
+            "it": "IPA",
+            "en": "India Pale Ale",
+            "pron": "eye-PAH-luh"
+          },
+          {
+            "it": "stella",
+            "en": "star",
+            "pron": "STAY-lah"
+          },
+          {
+            "it": "lager",
+            "en": "lager",
+            "pron": "LAH-ger"
+          },
+          {
+            "it": "pilsener",
+            "en": "pilsner",
+            "pron": "pilz-NEH-ner"
+          },
+          {
+            "it": "abbazia",
+            "en": "abbey",
+            "pron": "ah-bah-ZEE-ah"
+          },
+          {
+            "it": "abbaziale",
+            "en": "abbey-style",
+            "pron": "ah-bah-zee-AH-lee"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La birrificio produce IPA stella.",
+            "en": "The brewery produces star IPA",
+            "words": [
+              "La",
+              "birrificio",
+              "produce",
+              "IPA",
+              "stella"
+            ]
+          },
+          {
+            "it": "Il lager e la pilsener abbaziale.",
+            "en": "The lager and abbey-style pilsener",
+            "words": [
+              "Il",
+              "lager",
+              "e",
+              "la",
+              "pilsener",
+              "abbaziale"
+            ]
+          },
+          {
+            "it": "Mentre la birra è lager la stella è IPA.",
+            "en": "While the beer is lager the star is IPA",
+            "words": [
+              "Mentre",
+              "la",
+              "birra",
+              "è",
+              "lager",
+              "la",
+              "stella",
+              "è",
+              "IPA"
+            ]
+          },
+          {
+            "it": "La birra abbaziale è diversa dalla pilsener.",
+            "en": "The abbey beer is different from the pilsener",
+            "words": [
+              "La",
+              "birra",
+              "abbaziale",
+              "è",
+              "diversa",
+              "dalla",
+              "pilsener"
+            ]
+          },
+          {
+            "it": "La stella è un tipo di IPA.",
+            "en": "The star is an IPA type",
+            "words": [
+              "La",
+              "stella",
+              "è",
+              "un",
+              "tipo",
+              "dIPa"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Italian vs German Beer",
+        "desc": "Comparing brewing traditions",
+        "icon": "🍺",
+        "vocab": [
+          {
+            "it": "affogato",
+            "en": "dunked, topped with",
+            "pron": "ah-foh-KAH-toh"
+          },
+          {
+            "it": "fondente",
+            "en": "melty, gooey",
+            "pron": "fohn-DEHN-tay"
+          },
+          {
+            "it": "schiacciatina",
+            "en": "flatbread, pizza-like snack",
+            "pron": "schyah-chyah-tih-NAH-nah"
+          },
+          {
+            "it": "spremuta",
+            "en": "freshly squeezed",
+            "pron": "spruh-MUH-tah"
+          },
+          {
+            "it": "sorbetto",
+            "en": "sorbet, sherbet",
+            "pron": "sohr-BET-toh"
+          },
+          {
+            "it": "sugo",
+            "en": "sauce",
+            "pron": "SOH-goh"
+          },
+          {
+            "it": "schiaccia",
+            "en": "flatten, crush",
+            "pron": "schyah-chyah-AH-ah"
+          },
+          {
+            "it": "schiacciata",
+            "en": "flattened, crushed, flatbread",
+            "pron": "schyah-chyah-KAH-tah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La birra affogata nel sorbetto",
+            "en": "The beer dunked in sorbet",
+            "words": [
+              "birra",
+              "affogata",
+              "sorbetto"
+            ]
+          },
+          {
+            "it": "Il sugo fondente sopra la schiacciatina",
+            "en": "The melty sauce atop the flatbread",
+            "words": [
+              "sugo",
+              "fondente",
+              "schiacciatina"
+            ]
+          },
+          {
+            "it": "La spremuta di limone schiacciata",
+            "en": "The crushed lemon juice",
+            "words": [
+              "spremuta",
+              "limone",
+              "schiacciata"
+            ]
+          },
+          {
+            "it": "La birra affogata nel sugo",
+            "en": "The beer dunked in sauce",
+            "words": [
+              "birra",
+              "affogata",
+              "sugo"
+            ]
+          },
+          {
+            "it": "La schiacciata con sorbetto fondente",
+            "en": "The flatbread with melty sorbet",
+            "words": [
+              "schiacciata",
+              "sorbetto",
+              "fondente"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Italian vs German Beer",
+        "desc": "Comparing brewing techniques and flavors",
+        "icon": "🍺",
+        "vocab": [
+          {
+            "it": "birrificio artigianale",
+            "en": "craft brewery",
+            "pron": "BIRR-rih-fee-YOH-noh"
+          },
+          {
+            "it": "stout",
+            "en": "stout",
+            "pron": "STOWT"
+          },
+          {
+            "it": "maltose",
+            "en": "maltose",
+            "pron": "mal-TOH-se"
+          },
+          {
+            "it": "lambic",
+            "en": "lambic",
+            "pron": "LAM-bik"
+          },
+          {
+            "it": "glera",
+            "en": "glera",
+            "pron": "GLEH-rah"
+          },
+          {
+            "it": "riserva",
+            "en": "reserve",
+            "pron": "ree-ZER-vah"
+          },
+          {
+            "it": "doppio",
+            "en": "double",
+            "pron": "DOH-pyo"
+          },
+          {
+            "it": "triplo",
+            "en": "triple",
+            "pron": "TRI-pyo"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La birrificio artigianale produce stouts con alto contenuto di maltose.",
+            "en": "The craft brewery produces stouts with high maltose content",
+            "words": [
+              "birrificio",
+              "artigianale",
+              "produce",
+              "stouts",
+              "alto",
+              "contenuto",
+              "maltose"
+            ]
+          },
+          {
+            "it": "Il lambic glera viene fermentato per anni in riserva.",
+            "en": "The lambic glera is fermented for years in reserve",
+            "words": [
+              "lambic",
+              "glera",
+              "fermentato",
+              "anni",
+              "riserva"
+            ]
+          },
+          {
+            "it": "La birrificio artigianale offre doppi e triplo.",
+            "en": "The craft brewery offers double and triple",
+            "words": [
+              "birrificio",
+              "artigianale",
+              "offre",
+              "doppi",
+              "triplo"
+            ]
+          },
+          {
+            "it": "Stout e glera sono tipiche birre della birrificio artigianale.",
+            "en": "Stout and glera are typical beers of the craft brewery",
+            "words": [
+              "stout",
+              "glera",
+              "tipiche",
+              "birre",
+              "birrificio",
+              "artigianale"
+            ]
+          },
+          {
+            "it": "Il stout con riserva è un'opzione speciale della birrificio artigianale.",
+            "en": "The stout with reserve is a special option of the craft brewery",
+            "words": [
+              "stout",
+              "riserva",
+              "opzione",
+              "speciale",
+              "birrificio",
+              "artigianale"
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-25T18:25:31.619Z"
+  },
+  {
+    "topic": "pizza dough",
+    "topicEmoji": "🍕",
+    "lang": "de",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Pizza Teig",
+        "desc": "Einführung in das Backen von Teig",
+        "icon": "🍕",
+        "vocab": [
+          {
+            "it": "Teig",
+            "en": "dough",
+            "pron": "TEIGH"
+          },
+          {
+            "it": "Mehl",
+            "en": "flour",
+            "pron": "MEHL"
+          },
+          {
+            "it": "Zucker",
+            "en": "sugar",
+            "pron": "ZU-ker"
+          },
+          {
+            "it": "Salz",
+            "en": "salt",
+            "pron": "SAL茨"
+          },
+          {
+            "it": "Olivenöl",
+            "en": "olive oil",
+            "pron": "O-liv-en-OL-ye"
+          },
+          {
+            "it": "Yeast",
+            "en": "yeast",
+            "pron": "YEE-st"
+          },
+          {
+            "it": "Backpapier",
+            "en": "baking paper",
+            "pron": "BAK-pa-PYER"
+          },
+          {
+            "it": "Pfanne",
+            "en": "pan",
+            "pron": "FAN-neh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Ich mische Mehl Zucker und Salz zusammen.",
+            "en": "I mix flour sugar and salt together",
+            "words": [
+              "mische",
+              "Mehl",
+              "Zucker",
+              "Salz",
+              "zusammen"
+            ]
+          },
+          {
+            "it": "Ich füge Teig und Olivenöl hinzu.",
+            "en": "I add dough and olive oil",
+            "words": [
+              "füge",
+              "Teig",
+              "Olivenöl",
+              "hinzu"
+            ]
+          },
+          {
+            "it": "Ich lasse Yeast aufgehen.",
+            "en": "I let yeast rise",
+            "words": [
+              "lasse",
+              "Yeast",
+              "aufgehen"
+            ]
+          },
+          {
+            "it": "Ich backe Pizza auf Backpapier.",
+            "en": "I bake pizza on baking paper",
+            "words": [
+              "bake",
+              "Pizza",
+              "on",
+              "baking",
+              "paper"
+            ]
+          },
+          {
+            "it": "Ich gehe Teig in Pfanne.",
+            "en": "I put dough in pan",
+            "words": [
+              "gehe",
+              "Teig",
+              "in",
+              "Pfanne"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Pizza Teig",
+        "desc": "Zubereitung und Backen",
+        "icon": "🍕",
+        "vocab": [
+          {
+            "it": "Aufrollen",
+            "en": "To roll out",
+            "pron": "AH-foh-ROH-len"
+          },
+          {
+            "it": "Aufladen",
+            "en": "To knead",
+            "pron": "AH-fohl-ADEN"
+          },
+          {
+            "it": "Teigteig",
+            "en": "Dough for pizza",
+            "pron": "TAYG-teig"
+          },
+          {
+            "it": "Puderzucker",
+            "en": "Confectioners' sugar",
+            "pron": "POO-der-ZUK-er"
+          },
+          {
+            "it": "Puder",
+            "en": "Powder",
+            "pron": "POO-der"
+          },
+          {
+            "it": "Dampf",
+            "en": "Steam",
+            "pron": "DAmpf"
+          },
+          {
+            "it": "Fett",
+            "en": "Fat",
+            "pron": "FEHtt"
+          },
+          {
+            "it": "Rahmen",
+            "en": "Frame",
+            "pron": "RAH-men"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Teigteig Aufladen Fett",
+            "en": "dough knead fat",
+            "words": [
+              "Teigteig",
+              "Aufladen",
+              "Fett"
+            ]
+          },
+          {
+            "it": "Puderzucker Aufrollen Dampf",
+            "en": "confectioners' sugar roll steam",
+            "words": [
+              "Puderzucker",
+              "Aufrollen",
+              "Dampf"
+            ]
+          },
+          {
+            "it": "Rahmen Teigteig Aufladen",
+            "en": "frame dough knead",
+            "words": [
+              "Rahmen",
+              "Teigteig",
+              "Aufladen"
+            ]
+          },
+          {
+            "it": "Aufladen Puderzucker Fett",
+            "en": "knead confectioners' sugar fat",
+            "words": [
+              "Aufladen",
+              "Puderzucker",
+              "Fett"
+            ]
+          },
+          {
+            "it": "Teigteig Aufrollen Puder",
+            "en": "dough roll powder",
+            "words": [
+              "Teigteig",
+              "Aufrollen",
+              "Puder"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Pizza Teig",
+        "desc": "Fortgeschritten: Teig bereiten, backen",
+        "icon": "🍕",
+        "vocab": [
+          {
+            "it": "Fermentation",
+            "en": "Fermentation",
+            "pron": "fuh-rih-muh-NAH-tuhr"
+          },
+          {
+            "it": "Protein",
+            "en": "Protein",
+            "pron": "PROH-tee-in"
+          },
+          {
+            "it": "Hydration",
+            "en": "Hydration",
+            "pron": "hih-druh-AY-shun"
+          },
+          {
+            "it": "Stretching",
+            "en": "Stretching",
+            "pron": "STREH-tuh-sing"
+          },
+          {
+            "it": "Leavening",
+            "en": "Leavening",
+            "pron": "lee-uh-VEYN-ing"
+          },
+          {
+            "it": "Hydrogen Peroxide",
+            "en": "Hydrogen Peroxide",
+            "pron": "HY-druh-jin PEHR-uh-koid"
+          },
+          {
+            "it": "Oven Spring",
+            "en": "Oven Spring",
+            "pron": "OH-ven SPRING"
+          },
+          {
+            "it": "Gluten",
+            "en": "Gluten",
+            "pron": "GLU-ten"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Die Proteinbehalter im Teig weiten sich während der Fermentation aus.",
+            "en": "The protein carriers in the dough expand during fermentation.",
+            "words": [
+              "Proteinbehalter",
+              "im",
+              "Teig",
+              "weiten",
+              "sich",
+              "während",
+              "der",
+              "Fermentation",
+              "aus"
+            ]
+          },
+          {
+            "it": "Hydrogen Peroxide kann die Leaveningprozesse im Teig beschleunigen.",
+            "en": "Hydrogen Peroxide can accelerate the leavening processes in the dough.",
+            "words": [
+              "Hydrogen",
+              "Peroxide",
+              "kann",
+              "die",
+              "Leaveningprozesse",
+              "im",
+              "Teig",
+              "beschleunigen"
+            ]
+          },
+          {
+            "it": "Die Hydration beeinflusst die Glutenstruktur im Teig.",
+            "en": "Hydration influences the gluten structure in the dough.",
+            "words": [
+              "Hydration",
+              "beeinflusst",
+              "die",
+              "Glutenstruktur",
+              "im",
+              "Teig"
+            ]
+          },
+          {
+            "it": "Oven Spring verstärkt die Textur der Pizza nach dem Backen.",
+            "en": "Oven Spring enhances the texture of the pizza after baking.",
+            "words": [
+              "Oven",
+              "Spring",
+              "verstärkt",
+              "die",
+              "Textur",
+              "der",
+              "Pizza",
+              "nach",
+              "dem",
+              "Backen"
+            ]
+          },
+          {
+            "it": "Das Stretching des Teigballs fördert die gleichmäßige Verbreitung von Luftblasen.",
+            "en": "Stretching the dough ball promotes the even distribution of air bubbles.",
+            "words": [
+              "Stretching",
+              "des",
+              "Teigballs",
+              "fördert",
+              "die",
+              "gleichmäßige",
+              "Verbreitung",
+              "von",
+              "Luftblasen"
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-25T15:00:21.527Z"
+  },
   {
     "topic": "cooking",
     "topicEmoji": "🔥",
@@ -884,22 +1923,16 @@ const STATIC_LESSONS = [
             "it": "Il vento sussurra nel silenzio del paesaggio.",
             "en": "The wind whispers in the silence of the landscape.",
             "words": [
-              "il",
-              "vento",
               "sussurra",
-              "nel",
               "silenzio",
-              "del",
               "paesaggio",
-              "the",
-              "wind",
+              "vento",
+              "nel",
+              "del",
               "whispers",
-              "in",
-              "the",
               "silence",
-              "of",
-              "the",
-              "landscape"
+              "landscape",
+              "the"
             ]
           },
           {
@@ -926,14 +1959,13 @@ const STATIC_LESSONS = [
             "it": "Le pecore pascolano nel prato sereno.",
             "en": "The sheep graze in the serene meadow.",
             "words": [
-              "le",
               "pecore",
+              "le",
               "pascolano",
               "nel",
               "prato",
               "sereno",
               "the",
-              "sheep",
               "graze",
               "in",
               "the",
@@ -1184,7 +2216,7 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-24T14:04:09.545Z"
+    "generatedAt": "2026-04-26T00:16:29.998Z"
   },
   {
     "topic": "im wald spazieren",
@@ -2461,14 +3493,14 @@ const STATIC_LESSONS = [
             "it": "Il farmacista mi ha dato la farmacia.",
             "en": "The pharmacist gave me the pharmacy.",
             "words": [
-              "IL",
-              "FAR-ma-CHI-sta",
               "MI",
               "HA",
               "DAT-to",
-              "LA",
               "FAR-ma-CHI-ah",
-              "."
+              "IL",
+              "FAR-ma-CHI-sta",
+              "LA",
+              "farmacia"
             ]
           },
           {
@@ -2729,7 +3761,7 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-22T09:44:29.313Z"
+    "generatedAt": "2026-04-25T14:41:25.120Z"
   },
   {
     "topic": "architecture",
@@ -2810,14 +3842,13 @@ const STATIC_LESSONS = [
             "it": "Sotto il ponte c'è un fiume.",
             "en": "Under the bridge there is a river.",
             "words": [
-              "Sotto",
-              "il",
               "ponte",
               "c'",
+              "Sotto",
               "è",
-              "un",
               "fiume",
-              "."
+              "un",
+              "il"
             ]
           },
           {
@@ -2837,13 +3868,11 @@ const STATIC_LESSONS = [
             "it": "Il muro è alto e lungo.",
             "en": "The wall is tall and long.",
             "words": [
-              "Il",
               "muro",
               "è",
               "alto",
               "e",
-              "lungo",
-              "."
+              "lungo"
             ]
           }
         ]
@@ -2921,8 +3950,7 @@ const STATIC_LESSONS = [
               "palazzo",
               "è",
               "un",
-              "tempio",
-              "."
+              "tempio"
             ]
           },
           {
@@ -3089,20 +4117,18 @@ const STATIC_LESSONS = [
             "words": [
               "LA",
               "FONTANA",
-              "E",
+              "È",
               "UN",
-              "ELE-LE-MEN-TO",
-              "DECOR-A-TI-VO",
+              "ELEMENTO",
+              "DECORATIVO",
               "DELLA",
-              "PIAZZA",
-              ".",
-              ""
+              "PIAZZA"
             ]
           }
         ]
       }
     ],
-    "generatedAt": "2026-04-21T16:28:08.468Z"
+    "generatedAt": "2026-04-26T00:53:55.962Z"
   },
   {
     "topic": "yeast metabolic oscillations",
@@ -3923,13 +4949,12 @@ const STATIC_LESSONS = [
             "it": "La performance è un'arte temporale.",
             "en": "Performance is a temporal art.",
             "words": [
-              "La",
-              "performance",
-              "è",
               "un'",
+              "performance",
+              "La",
               "arte",
-              "tem-po-ra-le",
-              "."
+              "è",
+              "tem-po-ra-le"
             ]
           }
         ]
@@ -4174,7 +5199,7 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-21T12:58:30.681Z"
+    "generatedAt": "2026-04-25T18:54:44.859Z"
   },
   {
     "topic": "research grant proposals",
@@ -4234,8 +5259,7 @@ const STATIC_LESSONS = [
             "words": [
               "Scrivi",
               "un",
-              "progetto",
-              "."
+              "progetto."
             ]
           },
           {
@@ -4254,8 +5278,7 @@ const STATIC_LESSONS = [
             "words": [
               "Elabora",
               "la",
-              "metodologia",
-              "."
+              "metodologia."
             ]
           },
           {
@@ -4372,8 +5395,7 @@ const STATIC_LESSONS = [
             "words": [
               "Aumentate",
               "la",
-              "partecipazione",
-              "."
+              "partecipazione."
             ]
           }
         ]
@@ -4478,7 +5500,7 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-21T11:43:08.476Z"
+    "generatedAt": "2026-04-26T00:36:18.079Z"
   },
   {
     "topic": "Italian cooking & recipes",
@@ -5004,16 +6026,14 @@ const STATIC_LESSONS = [
   }
 ];
 
-// localStorage: store progress and the saved-lessons list
+// localStorage
 const LS_SAVED = 'imp_static_saved';
 
 function staticGetSaved() {
   try { return JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); }
   catch(_) { return []; }
 }
-function staticPutSaved(arr) {
-  localStorage.setItem(LS_SAVED, JSON.stringify(arr));
-}
+function staticPutSaved(arr) { localStorage.setItem(LS_SAVED, JSON.stringify(arr)); }
 function staticUpsert(data) {
   const arr = staticGetSaved();
   const k = data.topic.toLowerCase();
@@ -5023,19 +6043,19 @@ function staticUpsert(data) {
   staticPutSaved(arr);
 }
 
-// Seed built-in lessons into localStorage on first visit
+// Seed built-in lessons on first visit
 (function seedBuiltins() {
   const existing = staticGetSaved().map(l => l.topic.toLowerCase());
   for (const l of STATIC_LESSONS) {
-    if (!existing.includes(l.topic.toLowerCase())) {
-      staticUpsert(l);
-    }
+    if (!existing.includes(l.topic.toLowerCase())) staticUpsert(l);
   }
 })();
 
-// ── Routing ───────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
+  // Restore saved language
+  selectLang(APP.lang);
   renderPill();
   loadSavedList();
 }
@@ -5048,25 +6068,44 @@ function renderPill() {
   lbl.textContent = 'Static — built-in lessons only';
   document.getElementById('gen-btn').disabled = true;
   document.getElementById('topic-input').disabled = true;
+  const sel = document.getElementById('lang-select');
+  if (sel) sel.disabled = true;
   const note = document.getElementById('offline-note');
   note.style.display = 'block';
   note.textContent = '📦 Static version — select a topic below to start';
 }
 
+// ── Saved list with language filter ───────────────────────────────────
 async function loadSavedList() {
   const saved = staticGetSaved();
+
+  // Build language filter buttons if multiple languages present
+  const langs = [...new Set(saved.map(s => s.lang || 'it'))].sort();
+  const filterEl = document.getElementById('lib-filter');
+  if (filterEl && langs.length > 1) {
+    filterEl.innerHTML = ['all', ...langs].map(l => {
+      const L = LANGS[l];
+      const lbl = l === 'all' ? '🌐 All' : (L ? L.flag + ' ' + L.name : l.toUpperCase());
+      return `<button class="lib-filter-btn${APP.libFilter===l?' active':''}" onclick="setLibFilter('${l}')">${lbl}</button>`;
+    }).join('');
+  } else if (filterEl) { filterEl.innerHTML = ''; }
+
+  const filtered = APP.libFilter === 'all' ? saved : saved.filter(s => (s.lang||'it') === APP.libFilter);
   document.getElementById('lib-cnt').textContent =
-    saved.length + ' topic' + (saved.length !== 1 ? 's' : '');
+    filtered.length + ' of ' + saved.length + ' topic' + (saved.length !== 1 ? 's' : '');
   const list = document.getElementById('saved-list');
-  if (!saved.length) {
-    list.innerHTML = '<div class="lib-empty">No lessons available.</div>';
+  if (!filtered.length) {
+    list.innerHTML = '<div class="lib-empty">' + (saved.length ? 'No lessons in this language.' : 'No lessons available.') + '</div>';
     return;
   }
-  list.innerHTML = saved.map(s => {
+  list.innerHTML = filtered.map(s => {
+    const lang = s.lang || 'it';
+    const L = LANGS[lang];
+    const flag = L ? L.flag : '🌐';
     const count = s.lessons ? s.lessons.length : 0;
     const t = encodeURIComponent(s.topic);
     return `<div class="saved-item" onclick="loadSaved('${t}')">
-      <span class="saved-emoji">${s.topicEmoji || '📚'}</span>
+      <span class="saved-emoji">${flag} ${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
         <div class="saved-topic">${s.topic}</div>
         <div class="saved-meta">${count} lesson${count !== 1 ? 's' : ''}</div>
@@ -5074,6 +6113,8 @@ async function loadSavedList() {
     </div>`;
   }).join('');
 }
+
+function setLibFilter(lang) { APP.libFilter = lang; loadSavedList(); }
 
 async function loadSaved(topic) {
   const dec = decodeURIComponent(topic);
@@ -5083,14 +6124,7 @@ async function loadSaved(topic) {
   goHome();
 }
 
-// Disabled in static mode
-async function deleteSaved()  {}
-async function regenSaved()   {}
-function  regenCurrent()      {}
-async function doGenerate()   {}
-function  setTopic(t) {
-  document.getElementById('topic-input').value = t;
-}
+function  setTopic(t) { document.getElementById('topic-input').value = t; }
 
 function buildPath(){
   if(!APP.lessonData)return;
@@ -5110,18 +6144,25 @@ function buildPath(){
     const node=document.createElement('div');
     node.className='lesson-node'+(isDone?' done-node':isLocked?' locked':isActive?' active-node':'');
     if(isActive){ const b=document.createElement('div'); b.className='next-badge'; b.textContent='Next up'; node.appendChild(b); }
-    // Count flags for this lesson
-    const lessonTopicSlug=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
-    const lessonFlagCount=Object.keys(APP.flagged).filter(k=>
-      k.startsWith(lessonTopicSlug+':') || k.toLowerCase().startsWith((d.topic||'').slice(0,15).toLowerCase()+':')
-    ).length;
+    // Count flags that belong to THIS lesson by matching content slugs
+    const lessonItSet = new Set([
+      ...(L.vocab||[]).map(v=>(v.it||'').slice(0,40).replace(/\s+/g,'_')),
+      ...(L.sentences||[]).map(s=>(s.it||'').slice(0,40).replace(/\s+/g,'_'))
+    ]);
+    const topicSlugForFlag=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
+    const lessonFlagCount=Object.entries(APP.flagged).filter(([k])=>{
+      if(!k.startsWith(topicSlugForFlag+':')) return false;
+      const parts=k.split(':');
+      // key format: topicSlug:type:contentSlug
+      const contentSlug=parts.slice(2).join(':');
+      return lessonItSet.has(contentSlug);
+    }).length;
     const hasFlags=lessonFlagCount>0&&APP.info.canGenerate;
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
         <div class="node-title">Lesson ${L.id}: ${L.title}</div>
         <div class="node-desc">${L.desc}</div>
-        ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}
-      </div>
+        ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}      </div>
       ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
@@ -5224,12 +6265,13 @@ function lBlock(it,pron){
       <div><div class="listen-lbl">Tap to listen</div><div class="listen-word">${it}</div></div>
     </button>${pron?`<div class="pron">&nbsp;🗣 ${pron}</div>`:''}<button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
-function tMcqIE(ex){ return `<div class="ex-badge">🇮🇹→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${ex.it}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ return `<div class="ex-badge">🇬🇧→🇮🇹 Translate to Italian</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in Italian?</div>${cGrid(ex.choices,false)}</div>`; }
-function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ return `<div class="ex-badge">🎧 Listening — type what you hear</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the Italian word you hear:</div>${lBlock(ex.it,ex.pron)}<input class="type-input" id="type-in" type="text" placeholder="Type in Italian…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
-function tOrder(ex){ return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${ex.words.map((w,i)=>`<span class="tok" id="t${i}" onclick="addTok(${i})">${w}</span>`).join('')}</div></div>`; }
-function tRead(ex){ return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this sentence:</div><div class="it-box"><div class="it-box-text">${ex.it}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
+function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${ex.it}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
+function tLMcq(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — what do you hear?</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
+function tOrder(ex){ const L=lessonLang(); return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${ex.words.map((w,i)=>`<span class="tok" id="t${i}" onclick="addTok(${i})">${w}</span>`).join('')}</div></div>`; }
+function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${ex.it}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
 function onType(){ document.getElementById('cbtn').disabled=document.getElementById('type-in').value.trim().length<1; }
@@ -5287,10 +6329,15 @@ function saveComment(){
   pushFlagToServer(k, APP.flagged[k]);
 }
 
+function normDiacritics(s){
+  // Normalize diacritics so é=e, ü=u, ñ=n etc. for forgiving answer evaluation
+  return (s||'').replace(/ß/g,'ss').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ø/g,'o')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
 function check(){
   const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
   const ex=C.exercises[C.cur]; let ok=false;
-  if(ex.type==='listen_type'){ ok=document.getElementById('type-in').value.trim().toLowerCase()===ex.correct.toLowerCase(); }
+  if(ex.type==='listen_type'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){ ok=C.placed.map(p=>p.w).join(' ')===ex.correct; }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
@@ -5321,12 +6368,28 @@ function check(){
 
 // ── complete ──
 function showComplete(){
+  const CONGRATS = {
+    it:'Ottimo lavoro!', fr:'Excellent travail !', de:'Ausgezeichnet!',
+    es:'¡Excelente trabajo!', pt:'Excelente trabalho!', nl:'Uitstekend werk!',
+    pl:'Doskonała robota!', sv:'Utmärkt jobbat!', ja:'よくできました！',
+    zh:'干得好！', ar:'عمل ممتاز!', ru:'Отличная работа!',
+    ko:'잘 하셨어요!', tr:'Harika iş!', hi:'शानदार काम!'
+  };
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
   if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
   APP.progress.completed[topicKey][lesson.id]=true;
   APP.progress.xp=(APP.progress.xp||0)+C.xp;
   saveProg();
   const flaggedCount = C.exercises.filter(ex => isExFlagged(ex)).length;
+  const cLang=APP.lessonData?.lang||APP.lang||'it';
+  const CONGRATS_MSG = {
+    it:'Ottimo lavoro!', fr:'Excellent travail !', de:'Ausgezeichnet!',
+    es:'¡Excelente trabajo!', pt:'Excelente trabalho!', nl:'Uitstekend werk!',
+    pl:'Doskonała robota!', sv:'Utmärkt jobbat!', ja:'よくできました！',
+    zh:'干得好！', ar:'عمل ممتاز!', ru:'Отличная работа!',
+    ko:'잘 하셨어요!', tr:'Harika iş!', hi:'शानदार काम!'
+  };
+  document.getElementById('comp-sub').textContent=CONGRATS_MSG[cLang]||'Great job!';
   document.getElementById('comp-xp').textContent='+'+C.xp+' XP';
   document.getElementById('s-correct').textContent=C.exercises.length-C.mistakes;
   document.getElementById('s-mistakes').textContent=C.mistakes;
@@ -5345,9 +6408,37 @@ function afterComplete(){
 }
 
 // ── tts + misc ──
-function speak(text,rate){ if(!window.speechSynthesis)return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const lang=APP.lessonData?.lang||APP.lang||'it'; u.lang=(LANGS[lang]||LANGS.it).tts; u.rate=rate||0.9; u.pitch=1; speechSynthesis.speak(u); }
+function speak(text,rate){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  const lang=APP.lessonData?.lang||APP.lang||'it';
+  const ttsCode=(LANGS[lang]||LANGS.it).tts;
+  u.lang=ttsCode; u.rate=rate||0.9; u.pitch=1;
+  // Check voice is available; warn once per language if not
+  const voices=speechSynthesis.getVoices();
+  if(voices.length>0){
+    const match=voices.find(v=>v.lang.startsWith(ttsCode.split('-')[0]));
+    if(!match && !speak._warned?.[ttsCode]){
+      speak._warned=speak._warned||{};
+      speak._warned[ttsCode]=true;
+      console.warn('Dreizunge: no TTS voice found for',ttsCode,
+        '— install a language pack or switch to a supported language');
+    }
+  }
+  speechSynthesis.speak(u);
+}
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
 
+// Disabled in static mode — overrides engine versions
+async function syncFlagsFromServer() {}
+async function pushFlagToServer()   {}
+async function deleteSaved()        {}
+async function regenSaved()         {}
+function  regenCurrent()            {}
+async function doGenerate()         {}
+async function repairLesson()       {}
+async function repairFromLesson()   {}
 
 init();</script>
 </body>

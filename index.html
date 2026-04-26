@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Impara l'Italiano</title>
+<title>Dreizunge</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -208,10 +208,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .sec-btn{width:100%;padding:12px;background:none;border:2.5px solid var(--gray-mid);border-radius:var(--radius-lg);font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark)}
 .sec-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
 
-.lang-selector{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.lang-chip{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:var(--radius);padding:8px 14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s;display:flex;align-items:center;gap:6px}
-.lang-chip:hover{border-color:var(--blue)}
-.lang-chip.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
+.lang-selector{margin-bottom:14px}
+.lang-select-wrap{position:relative;display:inline-block;width:100%}
+.lang-select{width:100%;padding:10px 36px 10px 14px;font-size:15px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
+.lang-select:focus{border-color:var(--blue)}
+.lang-select:disabled{opacity:.5;cursor:not-allowed}
+.lang-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .lang-flag{font-size:18px}
 .lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
@@ -238,9 +240,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 <div id="landing" class="screen active">
 <div class="landing-inner">
   <div class="land-top">
-    <span class="flag">🇮🇹</span>
-    <div class="app-name">Impara l'Italiano</div>
-    <div class="app-tagline">Learn Italian vocabulary for any topic, Duolingo-style</div>
+    <span class="flag" id="app-flag">🇮🇹</span>
+    <div class="app-name">Dreizunge</div>
+    <div class="app-tagline" id="app-tagline">Learn Italian vocabulary for any topic, Duolingo-style</div>
   </div>
 
   <div class="backend-row">
@@ -251,12 +253,27 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
   <div class="topic-form">
     <label class="form-lbl">Target language</label>
-    <div class="lang-selector" id="lang-selector">
-      <button class="lang-chip active" data-lang="it" onclick="selectLang('it')"><span class="lang-flag">🇮🇹</span>Italian</button>
-      <button class="lang-chip" data-lang="fr" onclick="selectLang('fr')"><span class="lang-flag">🇫🇷</span>French</button>
-      <button class="lang-chip" data-lang="de" onclick="selectLang('de')"><span class="lang-flag">🇩🇪</span>German</button>
-      <button class="lang-chip" data-lang="es" onclick="selectLang('es')"><span class="lang-flag">🇪🇸</span>Spanish</button>
-      <button class="lang-chip" data-lang="pt" onclick="selectLang('pt')"><span class="lang-flag">🇵🇹</span>Portuguese</button>
+    <div class="lang-selector">
+      <div class="lang-select-wrap">
+        <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
+          <option value="it">🇮🇹 Italian</option>
+          <option value="fr">🇫🇷 French</option>
+          <option value="de">🇩🇪 German</option>
+          <option value="es">🇪🇸 Spanish</option>
+          <option value="pt">🇵🇹 Portuguese</option>
+          <option value="nl">🇳🇱 Dutch</option>
+          <option value="pl">🇵🇱 Polish</option>
+          <option value="sv">🇸🇪 Swedish</option>
+          <option value="ja">🇯🇵 Japanese</option>
+          <option value="zh">🇨🇳 Mandarin Chinese</option>
+          <option value="ar">🇸🇦 Arabic</option>
+          <option value="ru">🇷🇺 Russian</option>
+          <option value="ko">🇰🇷 Korean</option>
+          <option value="tr">🇹🇷 Turkish</option>
+          <option value="hi">🇮🇳 Hindi</option>
+        </select>
+        <span class="lang-select-arrow">▾</span>
+      </div>
     </div>
     <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
     <input class="topic-input" id="topic-input" type="text"
@@ -269,7 +286,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="examples">
     <span style="font-size:12px;color:var(--gray-dark);font-weight:700;align-self:center">Try:</span>
     <button class="chip" onclick="setTopic('research grant proposals')">🔬 Research grants</button>
-    <button class="chip" onclick="setTopic('Italian cooking & recipes')">🍝 Cooking</button>
+    <button class="chip" onclick="setTopic('cooking & recipes')">🍝 Cooking</button>
     <button class="chip" onclick="setTopic('architecture & design')">🏛 Architecture</button>
     <button class="chip" onclick="setTopic('medical & healthcare')">🏥 Medicine</button>
     <button class="chip" onclick="setTopic('business & negotiations')">💼 Business</button>
@@ -326,7 +343,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 <div id="complete-screen" class="screen">
   <span class="trophy">🏆</span>
   <div class="comp-title">Lesson complete!</div>
-  <div class="comp-sub" id="comp-sub">Ottimo lavoro!</div>
+  <div class="comp-sub" id="comp-sub"></div>
   <div class="xp-pill" id="comp-xp">+0 XP</div>
   <div class="stat-row">
     <div class="stat-box"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">Correct</div></div>
@@ -341,11 +358,21 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
 <script>
 var LANGS = {
-  it: {name:'Italian',  flag:'🇮🇹', tts:'it-IT', label:'italian'},
-  fr: {name:'French',   flag:'🇫🇷', tts:'fr-FR', label:'french'},
-  de: {name:'German',   flag:'🇩🇪', tts:'de-DE', label:'german'},
-  es: {name:'Spanish',  flag:'🇪🇸', tts:'es-ES', label:'spanish'},
-  pt: {name:'Portuguese',flag:'🇵🇹',tts:'pt-PT', label:'portuguese'},
+  it: {name:'Italian',          flag:'🇮🇹', tts:'it-IT'},
+  fr: {name:'French',           flag:'🇫🇷', tts:'fr-FR'},
+  de: {name:'German',           flag:'🇩🇪', tts:'de-DE'},
+  es: {name:'Spanish',          flag:'🇪🇸', tts:'es-ES'},
+  pt: {name:'Portuguese',       flag:'🇵🇹', tts:'pt-PT'},
+  nl: {name:'Dutch',            flag:'🇳🇱', tts:'nl-NL'},
+  pl: {name:'Polish',           flag:'🇵🇱', tts:'pl-PL'},
+  sv: {name:'Swedish',          flag:'🇸🇪', tts:'sv-SE'},
+  ja: {name:'Japanese',         flag:'🇯🇵', tts:'ja-JP'},
+  zh: {name:'Mandarin Chinese', flag:'🇨🇳', tts:'zh-CN'},
+  ar: {name:'Arabic',           flag:'🇸🇦', tts:'ar-SA'},
+  ru: {name:'Russian',          flag:'🇷🇺', tts:'ru-RU'},
+  ko: {name:'Korean',           flag:'🇰🇷', tts:'ko-KR'},
+  tr: {name:'Turkish',          flag:'🇹🇷', tts:'tr-TR'},
+  hi: {name:'Hindi',            flag:'🇮🇳', tts:'hi-IN'},
 };
 
 var APP = {
@@ -365,10 +392,17 @@ function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
 function selectLang(code){
   APP.lang=code; saveLang();
-  document.querySelectorAll('.lang-chip').forEach(b=>b.classList.toggle('active',b.dataset.lang===code));
+  const sel=document.getElementById('lang-select');
+  if(sel && sel.value!==code) sel.value=code;
   const L=LANGS[code]||LANGS.it;
-  document.getElementById('topic-label').textContent='What do you want to learn '+L.name+' for?';
-  document.getElementById('topic-input').placeholder='e.g. cooking, architecture, medicine…';
+  const lbl=document.getElementById('topic-label');
+  if(lbl) lbl.textContent='What do you want to learn '+L.name+' for?';
+  const inp=document.getElementById('topic-input');
+  if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
+  const flag=document.getElementById('app-flag');
+  if(flag) flag.textContent=L.flag;
+  const tagline=document.getElementById('app-tagline');
+  if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic, Duolingo-style';
 }
 function loadFlagged(){ try{ return JSON.parse(localStorage.getItem('imp3_flagged')||'{}'); }catch(e){ return {}; } }
 function saveFlagged(){ localStorage.setItem('imp3_flagged',JSON.stringify(APP.flagged)); }
@@ -456,10 +490,27 @@ async function repairFromLesson(){
       const fresh=await lr.json();
       APP.lessonData=fresh;
     }
-    // Rebuild exercises from fresh lesson data
-    C.exercises=buildExercises(C.lessonIdx);
-    // Stay on current index if valid, else go to last
-    C.cur=Math.min(C.cur, Math.max(0, C.exercises.length-1));
+    // Patch the current exercise in-place from fresh lesson data
+    // — no reshuffling, user stays exactly where they were
+    const freshLesson=APP.lessonData.lessons[C.lessonIdx];
+    const curEx=C.exercises[C.cur];
+    if(curEx && freshLesson){
+      // Find matching vocab or sentence in fresh lesson by Italian text prefix
+      const itKey=(curEx.it||'').toLowerCase().slice(0,20);
+      if(['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(curEx.type)){
+        const v=freshLesson.vocab.find(v=>v.it.toLowerCase().slice(0,20)===itKey);
+        if(v){ curEx.it=v.it; curEx.en=v.en; curEx.pron=v.pron;
+               // listen_type: user types the target language word; others: pick English meaning
+               curEx.correct=curEx.type==='listen_type' ? v.it : v.en; }
+      } else if(['order','read_translate'].includes(curEx.type)){
+        const s=freshLesson.sentences.find(s=>s.it.toLowerCase().slice(0,20)===itKey);
+        if(s){ curEx.it=s.it; curEx.en=s.en; curEx.words=s.words||curEx.words;
+               // order: assemble target language words; read_translate: pick English meaning
+               curEx.correct=curEx.type==='order' ? (s.words||curEx.words).join(' ') : s.en; }
+      }
+    }
+    // Reset answer state so the repaired exercise renders fresh
+    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
     renderEx();
   }catch(e){
     alert('Repair failed: '+e.message);
@@ -820,12 +871,28 @@ function check(){
 
 // ── complete ──
 function showComplete(){
+  const CONGRATS = {
+    it:'Ottimo lavoro!', fr:'Excellent travail !', de:'Ausgezeichnet!',
+    es:'¡Excelente trabajo!', pt:'Excelente trabalho!', nl:'Uitstekend werk!',
+    pl:'Doskonała robota!', sv:'Utmärkt jobbat!', ja:'よくできました！',
+    zh:'干得好！', ar:'عمل ممتاز!', ru:'Отличная работа!',
+    ko:'잘 하셨어요!', tr:'Harika iş!', hi:'शानदार काम!'
+  };
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
   if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
   APP.progress.completed[topicKey][lesson.id]=true;
   APP.progress.xp=(APP.progress.xp||0)+C.xp;
   saveProg();
   const flaggedCount = C.exercises.filter(ex => isExFlagged(ex)).length;
+  const cLang=APP.lessonData?.lang||APP.lang||'it';
+  const CONGRATS_MSG = {
+    it:'Ottimo lavoro!', fr:'Excellent travail !', de:'Ausgezeichnet!',
+    es:'¡Excelente trabajo!', pt:'Excelente trabalho!', nl:'Uitstekend werk!',
+    pl:'Doskonała robota!', sv:'Utmärkt jobbat!', ja:'よくできました！',
+    zh:'干得好！', ar:'عمل ممتاز!', ru:'Отличная работа!',
+    ko:'잘 하셨어요!', tr:'Harika iş!', hi:'शानदार काम!'
+  };
+  document.getElementById('comp-sub').textContent=CONGRATS_MSG[cLang]||'Great job!';
   document.getElementById('comp-xp').textContent='+'+C.xp+' XP';
   document.getElementById('s-correct').textContent=C.exercises.length-C.mistakes;
   document.getElementById('s-mistakes').textContent=C.mistakes;
@@ -844,7 +911,26 @@ function afterComplete(){
 }
 
 // ── tts + misc ──
-function speak(text,rate){ if(!window.speechSynthesis)return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); const lang=APP.lessonData?.lang||APP.lang||'it'; u.lang=(LANGS[lang]||LANGS.it).tts; u.rate=rate||0.9; u.pitch=1; speechSynthesis.speak(u); }
+function speak(text,rate){
+  if(!window.speechSynthesis)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  const lang=APP.lessonData?.lang||APP.lang||'it';
+  const ttsCode=(LANGS[lang]||LANGS.it).tts;
+  u.lang=ttsCode; u.rate=rate||0.9; u.pitch=1;
+  // Check voice is available; warn once per language if not
+  const voices=speechSynthesis.getVoices();
+  if(voices.length>0){
+    const match=voices.find(v=>v.lang.startsWith(ttsCode.split('-')[0]));
+    if(!match && !speak._warned?.[ttsCode]){
+      speak._warned=speak._warned||{};
+      speak._warned[ttsCode]=true;
+      console.warn('Dreizunge: no TTS voice found for',ttsCode,
+        '— install a language pack or switch to a supported language');
+    }
+  }
+  speechSynthesis.speak(u);
+}
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
 
 init();

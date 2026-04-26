@@ -1,6 +1,343 @@
 {
   "lessons": [
     {
+      "topic": "mountain climbing",
+      "topicEmoji": "⛰️",
+      "lang": "it",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Climbing Mountains",
+          "desc": "Introduction to Mountain Climbing",
+          "icon": "🏔",
+          "vocab": [
+            {
+              "it": "montagna",
+              "en": "mountain",
+              "pron": "MON-ta-nah"
+            },
+            {
+              "it": "alpina",
+              "en": "alpine",
+              "pron": "al-PIN-ah"
+            },
+            {
+              "it": "scalata",
+              "en": "climbing",
+              "pron": "skal-AH-tah"
+            },
+            {
+              "it": "attrezzatura",
+              "en": "equipment",
+              "pron": "at-tre-zah-TUHR-rah"
+            },
+            {
+              "it": "ossigeno",
+              "en": "oxygen",
+              "pron": "os-si-JEN-eh-no"
+            },
+            {
+              "it": "cappotto",
+              "en": "coat",
+              "pron": "cap-PO-to"
+            },
+            {
+              "it": "attrezzo",
+              "en": "tool",
+              "pron": "at-TREH-zzo"
+            },
+            {
+              "it": "pattumiera",
+              "en": "rubbish bin",
+              "pron": "pa-tu-MIE-rah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La scalata alpina richiede attrezzatura specifica.",
+              "en": "alpine climbing requires specific equipment",
+              "words": [
+                "La",
+                "scalata",
+                "alpina",
+                "richiede",
+                "attrezzatura",
+                "specifica."
+              ]
+            },
+            {
+              "it": "Porta il cappotto, fa freddo sulla montagna.",
+              "en": "take coat mountain is cold",
+              "words": [
+                "Porta",
+                "il",
+                "cappotto,",
+                "fa",
+                "freddo",
+                "sulla",
+                "montagna."
+              ]
+            },
+            {
+              "it": "L'ossigeno è importante per la scalata a elevata quota.",
+              "en": "oxygen is important for climbing high altitude",
+              "words": [
+                "oxygen",
+                "important",
+                "climbing",
+                "high",
+                "altitude"
+              ]
+            },
+            {
+              "it": "Non lasciare pattumiera in montagna.",
+              "en": "leave rubbish bin in mountain",
+              "words": [
+                "leave",
+                "rubbish",
+                "bin",
+                "mountain"
+              ]
+            },
+            {
+              "it": "L'attrezzo giusto può fare la differenza nella scalata.",
+              "en": "right tool makes difference in climbing",
+              "words": [
+                "right",
+                "tool",
+                "makes",
+                "difference",
+                "climbing"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Climbing Techniques",
+          "desc": "Advanced techniques for mountain climbing",
+          "icon": "⛰",
+          "vocab": [
+            {
+              "it": "alpinismo",
+              "en": "mountain climbing",
+              "pron": "al-PEE-nee-zmo"
+            },
+            {
+              "it": "cramponi",
+              "en": "ice spikes",
+              "pron": "cr-am-POH-ni"
+            },
+            {
+              "it": "ascensore a ghiaccio",
+              "en": "ice ascender",
+              "pron": "as-sen-SOH-re ah ghee-AH-tso"
+            },
+            {
+              "it": "tenda",
+              "en": "tent",
+              "pron": "TEN-da"
+            },
+            {
+              "it": "attrezzatura per ghiaccio",
+              "en": "ice equipment",
+              "pron": "at-trezzat-TRAH-per ghee-AH-tso"
+            },
+            {
+              "it": "cavo di protezione",
+              "en": "protection cable",
+              "pron": "KAH-voh deh pro-teh-ZI-tah"
+            },
+            {
+              "it": "sella di ghiaccio",
+              "en": "ice saddle",
+              "pron": "SELL-ah deh ghee-AH-tso"
+            },
+            {
+              "it": "punta di roccia",
+              "en": "rock point",
+              "pron": "PUN-tah deh roh-TCH-ah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'alpinismo richiede cramponi e attrezzatura per ghiaccio",
+              "en": "Mountain climbing requires ice spikes and ice equipment",
+              "words": [
+                "alpinismo",
+                "richiede",
+                "cramponi",
+                "e",
+                "attrezzatura"
+              ]
+            },
+            {
+              "it": "Usiamo tenda per accampamento in montagna",
+              "en": "We use tent for camping in mountain",
+              "words": [
+                "usiamo",
+                "tenda",
+                "per",
+                "accampamento",
+                "in"
+              ]
+            },
+            {
+              "it": "L'ascensore a ghiaccio è necessario per la sella di ghiaccio",
+              "en": "The ice ascender is necessary for the ice saddle",
+              "words": [
+                "ascensore",
+                "a",
+                "ghiaccio",
+                "è",
+                "necessario",
+                "per",
+                "la",
+                "sella",
+                "di",
+                "ghiaccio"
+              ]
+            },
+            {
+              "it": "La cavo di protezione è importante per la sicurezza",
+              "en": "The protection cable is important for safety",
+              "words": [
+                "cavo",
+                "di",
+                "protezione",
+                "è",
+                "importante",
+                "per",
+                "la",
+                "sicurezza"
+              ]
+            },
+            {
+              "it": "La punta di roccia è un punto critico durante l'alpinismo",
+              "en": "The rock point is a critical point during mountain climbing",
+              "words": [
+                "punta",
+                "di",
+                "roccia",
+                "è",
+                "un",
+                "punto",
+                "critico",
+                "durante",
+                "l'alpinismo"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Mountain Climb",
+          "desc": "Advanced vocabulary and phrases",
+          "icon": "🏔",
+          "vocab": [
+            {
+              "it": "alpinista",
+              "en": "mountain climber",
+              "pron": "al-PEE-nee-ta"
+            },
+            {
+              "it": "rapel",
+              "en": "rapel",
+              "pron": "RA-pel"
+            },
+            {
+              "it": "sbaraglio",
+              "en": "fall",
+              "pron": "s-bar-AY-lio"
+            },
+            {
+              "it": "bivacco",
+              "en": "bivouac",
+              "pron": "bi-VA-kko"
+            },
+            {
+              "it": "gancio",
+              "en": "carabiner",
+              "pron": "GAN-chio"
+            },
+            {
+              "it": "sistema di protezione",
+              "en": "protection system",
+              "pron": "si-STE-ma di pro-te-ZI-o-ne"
+            },
+            {
+              "it": "ascensore a ghiaccio",
+              "en": "ice ascender",
+              "pron": "as-chen-SORE a ghi-AT-to"
+            },
+            {
+              "it": "cordelette",
+              "en": "slings",
+              "pron": "cor-de-LET-te"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'alpinista utilizza il sistema di protezione per il rapel.",
+              "en": "The mountain climber uses the protection system for the rapel.",
+              "words": [
+                "alpinista",
+                "utilizza",
+                "sistema",
+                "protezione",
+                "rapel"
+              ]
+            },
+            {
+              "it": "Durante la notte l'alpinista dorme in un bivacco.",
+              "en": "During the night the mountain climber sleeps in a bivouac.",
+              "words": [
+                "Durante",
+                "la",
+                "notte",
+                "l'alpinista",
+                "dorme",
+                "in",
+                "un",
+                "bivacco."
+              ]
+            },
+            {
+              "it": "Il gancio è un elemento cruciale del sistema di protezione.",
+              "en": "The gancio is a crucial element of the protection system.",
+              "words": [
+                "gancio",
+                "elemento",
+                "protezione",
+                "cruciale"
+              ]
+            },
+            {
+              "it": "L'alpinista scende utilizzando l'ascensore a ghiaccio.",
+              "en": "The mountain climber descends using the ice ascender.",
+              "words": [
+                "alpinista",
+                "scende",
+                "ascensore",
+                "ghiaccio"
+              ]
+            },
+            {
+              "it": "Le cordelette sono necessarie per il bivacco sicuro.",
+              "en": "The slings are necessary for a safe bivouac.",
+              "words": [
+                "cordelette",
+                "necessarie",
+                "bivacco",
+                "sicuro"
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-26T01:20:57.442Z"
+    },
+    {
       "topic": "music journalism",
       "topicEmoji": "🎵",
       "lang": "fr",
@@ -329,7 +666,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-25T19:09:02.668Z"
+      "generatedAt": "2026-04-25T23:16:39.942Z"
     },
     {
       "topic": "italian_vs_german_beer",
@@ -1396,22 +1733,16 @@
               "it": "Il vento sussurra nel silenzio del paesaggio.",
               "en": "The wind whispers in the silence of the landscape.",
               "words": [
-                "il",
-                "vento",
                 "sussurra",
-                "nel",
                 "silenzio",
-                "del",
                 "paesaggio",
-                "the",
-                "wind",
+                "vento",
+                "nel",
+                "del",
                 "whispers",
-                "in",
-                "the",
                 "silence",
-                "of",
-                "the",
-                "landscape"
+                "landscape",
+                "the"
               ]
             },
             {
@@ -1438,14 +1769,13 @@
               "it": "Le pecore pascolano nel prato sereno.",
               "en": "The sheep graze in the serene meadow.",
               "words": [
-                "le",
                 "pecore",
+                "le",
                 "pascolano",
                 "nel",
                 "prato",
                 "sereno",
                 "the",
-                "sheep",
                 "graze",
                 "in",
                 "the",
@@ -1696,7 +2026,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-24T14:04:09.545Z"
+      "generatedAt": "2026-04-26T00:16:29.998Z"
     },
     {
       "topic": "im wald spazieren",
@@ -3322,14 +3652,13 @@
               "it": "Sotto il ponte c'è un fiume.",
               "en": "Under the bridge there is a river.",
               "words": [
-                "Sotto",
-                "il",
                 "ponte",
                 "c'",
+                "Sotto",
                 "è",
-                "un",
                 "fiume",
-                "."
+                "un",
+                "il"
               ]
             },
             {
@@ -3349,13 +3678,11 @@
               "it": "Il muro è alto e lungo.",
               "en": "The wall is tall and long.",
               "words": [
-                "Il",
                 "muro",
                 "è",
                 "alto",
                 "e",
-                "lungo",
-                "."
+                "lungo"
               ]
             }
           ]
@@ -3433,8 +3760,7 @@
                 "palazzo",
                 "è",
                 "un",
-                "tempio",
-                "."
+                "tempio"
               ]
             },
             {
@@ -3601,20 +3927,18 @@
               "words": [
                 "LA",
                 "FONTANA",
-                "E",
+                "È",
                 "UN",
-                "ELE-LE-MEN-TO",
-                "DECOR-A-TI-VO",
+                "ELEMENTO",
+                "DECORATIVO",
                 "DELLA",
-                "PIAZZA",
-                ".",
-                ""
+                "PIAZZA"
               ]
             }
           ]
         }
       ],
-      "generatedAt": "2026-04-21T16:28:08.468Z"
+      "generatedAt": "2026-04-26T00:53:55.962Z"
     },
     {
       "topic": "yeast metabolic oscillations",
@@ -4745,8 +5069,7 @@
               "words": [
                 "Scrivi",
                 "un",
-                "progetto",
-                "."
+                "progetto."
               ]
             },
             {
@@ -4765,8 +5088,7 @@
               "words": [
                 "Elabora",
                 "la",
-                "metodologia",
-                "."
+                "metodologia."
               ]
             },
             {
@@ -4883,8 +5205,7 @@
               "words": [
                 "Aumentate",
                 "la",
-                "partecipazione",
-                "."
+                "partecipazione."
               ]
             }
           ]
@@ -4989,7 +5310,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-21T11:43:08.476Z"
+      "generatedAt": "2026-04-26T00:36:18.079Z"
     },
     {
       "topic": "Italian cooking & recipes",
@@ -5625,59 +5946,6 @@
       ],
       "flaggedAt": "2026-04-24T13:34:45.005Z"
     },
-    "sheep_on_the_meadow:order:Il_vento_sussurra_nel_silenzio_del_paesa": {
-      "topic": "sheep on the meadow",
-      "type": "order",
-      "it": "Il vento sussurra nel silenzio del paesaggio.",
-      "en": "The wind whispers in the silence of the landscape.",
-      "correct": "il vento sussurra nel silenzio del paesaggio . the wind whispers in the silence of the landscape",
-      "choices": [],
-      "words": [
-        "wind",
-        "il",
-        "landscape",
-        "whispers",
-        "del",
-        "in",
-        "silence",
-        "sussurra",
-        ".",
-        "of",
-        "the",
-        "silenzio",
-        "nel",
-        "vento",
-        "paesaggio",
-        "the",
-        "the"
-      ],
-      "flaggedAt": "2026-04-24T13:35:56.883Z"
-    },
-    "sheep_on_the_meadow:order:Le_pecore_pascolano_nel_prato_sereno.": {
-      "topic": "sheep on the meadow",
-      "type": "order",
-      "it": "Le pecore pascolano nel prato sereno.",
-      "en": "The sheep graze in the serene meadow.",
-      "correct": "le pecore pascolano nel prato sereno . the sheep graze in the serene meadow",
-      "choices": [],
-      "words": [
-        "prato",
-        "meadow",
-        "in",
-        "le",
-        "graze",
-        "pascolano",
-        "nel",
-        "sereno",
-        "the",
-        "serene",
-        "pecore",
-        "the",
-        "sheep",
-        "."
-      ],
-      "flaggedAt": "2026-04-24T13:39:02.202Z"
-    },
     "sheep_on_the_meadow:order:Nel_ovile_dormono_i_giovani_agnelli.": {
       "topic": "sheep on the meadow",
       "type": "order",
@@ -5947,6 +6215,54 @@
       ],
       "flaggedAt": "2026-04-25T15:13:22.465Z",
       "comment": "Oven Spring translates to \"Ofentrieb\" in German"
+    },
+    "mountain_climbing:order:Non_lasciare_pattumiera_in_montagna.": {
+      "topic": "mountain climbing",
+      "type": "order",
+      "it": "Non lasciare pattumiera in montagna.",
+      "en": "leave rubbish bin in mountain",
+      "correct": "leave rubbish bin mountain",
+      "choices": [],
+      "words": [
+        "mountain",
+        "bin",
+        "rubbish",
+        "leave"
+      ],
+      "flaggedAt": "2026-04-26T01:21:18.981Z",
+      "comment": "answer options are english instead of italian"
+    },
+    "mountain_climbing:read_translate:Non_lasciare_pattumiera_in_montagna.": {
+      "topic": "mountain climbing",
+      "type": "read_translate",
+      "it": "Non lasciare pattumiera in montagna.",
+      "en": "leave rubbish bin in mountain",
+      "correct": "leave rubbish bin in mountain",
+      "choices": [
+        "oxygen is important for climbing high altitude",
+        "alpine climbing requires specific equipment",
+        "leave rubbish bin in mountain",
+        "take coat mountain is cold"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-26T01:22:00.823Z",
+      "comment": "english seems wrong"
+    },
+    "mountain_climbing:read_translate:L'ossigeno_è_importante_per_la_scalata_a": {
+      "topic": "mountain climbing",
+      "type": "read_translate",
+      "it": "L'ossigeno è importante per la scalata a elevata quota.",
+      "en": "oxygen is important for climbing high altitude",
+      "correct": "oxygen is important for climbing high altitude",
+      "choices": [
+        "oxygen is important for climbing high altitude",
+        "take coat mountain is cold",
+        "alpine climbing requires specific equipment",
+        "leave rubbish bin in mountain"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-26T01:23:05.961Z",
+      "comment": "please check italian and translation"
     }
   }
 }

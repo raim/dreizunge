@@ -417,72 +417,87 @@ async function repairLesson(active, topic, lessonId) {
     _userComment: v.comment || undefined  // include comment if present
   }));
 
-  console.log(`  Repairing ${flaggedExercises.length} flagged exercise(s) in "${topic}" lesson ${lessonId}…`);
+  const BATCH_SIZE = 4;
+  const batches = [];
+  for (let i = 0; i < flaggedExercises.length; i += BATCH_SIZE)
+    batches.push({ exercises: flaggedExercises.slice(i, i + BATCH_SIZE),
+                   entries:   flaggedEntries.slice(i, i + BATCH_SIZE) });
 
-  const commentNote = flaggedExercises.some(e => e._userComment)
-    ? '\nNote: some exercises include user comments explaining the specific error. Pay close attention to these.'
-    : '';
+  console.log(`  Repairing ${flaggedExercises.length} flagged exercise(s) in "${topic}" lesson ${lessonId} (${batches.length} batch${batches.length>1?'es':''})…`);
 
-  const userMsg = `Language: ${langName(lang)}. Topic: "${topic}".${commentNote}\nFix these ${flaggedExercises.length} faulty exercises:\n${JSON.stringify(flaggedExercises, null, 2)}\nReturn only the corrected JSON array.`;
-
-  return withRetry('Repair', async () => {
-    const raw = await callLLM(active, SYS_REPAIR, userMsg, 2048);
-    let arr;
-    try { arr = extractArray(raw); } catch(_) { arr = salvageArray(raw); }
-    if (!Array.isArray(arr) || arr.length === 0)
-      throw new Error('No repaired exercises returned');
-
-    // Clean order exercises
-    arr = arr.map(ex => {
-      if (ex.type === 'order' && Array.isArray(ex.words))
-        ex.words = validateAndCleanSentences([{it:ex.it,en:ex.en,words:ex.words}], lang)[0].words;
-      return ex;
-    });
-
-    // Merge back — update vocab and sentences in place
-    arr.forEach(repaired => {
-      if (['order','read_translate'].includes(repaired.type) && repaired.it) {
-        const idx = lesson.sentences.findIndex(s =>
-          s.it.toLowerCase().slice(0,20) === (repaired.it||'').toLowerCase().slice(0,20)
-        );
-        if (idx >= 0) {
-          lesson.sentences[idx] = {
-            it: repaired.it,
-            en: repaired.en || lesson.sentences[idx].en,
-            words: repaired.words || lesson.sentences[idx].words
-          };
-        }
+  // Helper: merge one repaired exercise back into lesson
+  function mergeRepaired(repaired) {
+    if (['order','read_translate'].includes(repaired.type) && repaired.it) {
+      const idx = lesson.sentences.findIndex(s =>
+        s.it.toLowerCase().slice(0,20) === (repaired.it||'').toLowerCase().slice(0,20)
+      );
+      if (idx >= 0) {
+        lesson.sentences[idx] = {
+          it: repaired.it,
+          en: repaired.en || lesson.sentences[idx].en,
+          words: repaired.words || lesson.sentences[idx].words
+        };
       }
-      if (['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(repaired.type) && repaired.it) {
-        const idx = lesson.vocab.findIndex(v =>
-          v.it.toLowerCase().slice(0,15) === (repaired.it||'').toLowerCase().slice(0,15)
-        );
-        if (idx >= 0) {
-          lesson.vocab[idx] = {
-            it: repaired.it,
-            en: repaired.en || lesson.vocab[idx].en,
-            pron: repaired.pron || lesson.vocab[idx].pron
-          };
-        }
-      }
-    });
-
-    // Safety check: never save if repair deleted content
-    if (lesson.vocab.length < origVocabCount || lesson.sentences.length < origSentenceCount) {
-      throw new Error(`Repair would shrink lesson (vocab: ${origVocabCount}→${lesson.vocab.length}, sentences: ${origSentenceCount}→${lesson.sentences.length}) — rejecting`);
     }
+    if (['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(repaired.type) && repaired.it) {
+      const idx = lesson.vocab.findIndex(v =>
+        v.it.toLowerCase().slice(0,15) === (repaired.it||'').toLowerCase().slice(0,15)
+      );
+      if (idx >= 0) {
+        lesson.vocab[idx] = {
+          it: repaired.it,
+          en: repaired.en || lesson.vocab[idx].en,
+          pron: repaired.pron || lesson.vocab[idx].pron
+        };
+      }
+    }
+  }
 
-    // Save updated lesson
-    upsert(saved);
+  let totalRepaired = 0;
+  const clearedKeys = [];
 
-    // Clear ALL flags for this topic (use same prefix logic)
-    const flags = getFlags();
-    for (const [k] of flaggedEntries) delete flags[k];
-    setFlags(flags);
+  for (let b = 0; b < batches.length; b++) {
+    const batch = batches[b];
+    const commentNote = batch.exercises.some(e => e._userComment)
+      ? '\nNote: some exercises include user comments. Pay close attention to these.'
+      : '';
+    const userMsg = `Language: ${langName(lang)}. Topic: "${topic}".${commentNote}\nFix these ${batch.exercises.length} faulty exercises (batch ${b+1}/${batches.length}):\n${JSON.stringify(batch.exercises, null, 2)}\nReturn only the corrected JSON array.`;
 
-    console.log(`  Repair complete: ${arr.length} exercise(s) fixed, ${flaggedEntries.length} flag(s) cleared`);
-    return { repaired: arr.length, lesson };
-  });
+    console.log(`    Batch ${b+1}/${batches.length}: ${batch.exercises.length} exercise(s)…`);
+
+    const arr = await withRetry(`Repair batch ${b+1}`, async () => {
+      const raw = await callLLM(active, SYS_REPAIR, userMsg, 2048);
+      let a;
+      try { a = extractArray(raw); } catch(_) { a = salvageArray(raw); }
+      if (!Array.isArray(a) || a.length === 0)
+        throw new Error('No repaired exercises returned');
+      return a.map(ex => {
+        if (ex.type === 'order' && Array.isArray(ex.words))
+          ex.words = validateAndCleanSentences([{it:ex.it,en:ex.en,words:ex.words}], lang)[0].words;
+        return ex;
+      });
+    });
+
+    arr.forEach(mergeRepaired);
+    totalRepaired += arr.length;
+    clearedKeys.push(...batch.entries.map(([k]) => k));
+  }
+
+  // Safety check: never save if repair deleted content
+  if (lesson.vocab.length < origVocabCount || lesson.sentences.length < origSentenceCount) {
+    throw new Error(`Repair would shrink lesson (vocab: ${origVocabCount}→${lesson.vocab.length}, sentences: ${origSentenceCount}→${lesson.sentences.length}) — rejecting`);
+  }
+
+  // Save updated lesson
+  upsert(saved);
+
+  // Clear repaired flags
+  const flags = getFlags();
+  for (const k of clearedKeys) delete flags[k];
+  setFlags(flags);
+
+  console.log(`  Repair complete: ${totalRepaired} exercise(s) fixed, ${clearedKeys.length} flag(s) cleared`);
+  return { repaired: totalRepaired, lesson };
 }
 
 // ── Ollama ping & warmup ──────────────────────────────────────────────
