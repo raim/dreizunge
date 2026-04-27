@@ -25,8 +25,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 #landing{background:linear-gradient(160deg,#e8f4ff 0%,#f0ffe8 100%);padding:32px 20px 48px}
 .landing-inner{max-width:540px;width:100%}
 .land-top{text-align:center;margin-bottom:24px}
-.flag{font-size:56px;display:block;animation:float 3s ease-in-out infinite;margin-bottom:8px}
+.flag{font-size:56px;display:block;animation:spin-globe 4s linear infinite;margin-bottom:8px;display:inline-block}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes spin-globe{0%{transform:translateY(0) rotateY(0deg)}25%{transform:translateY(-4px) rotateY(90deg)}50%{transform:translateY(-7px) rotateY(180deg)}75%{transform:translateY(-4px) rotateY(270deg)}100%{transform:translateY(0) rotateY(360deg)}}
 .app-name{font-size:34px;font-weight:900;color:var(--green);letter-spacing:-1px;margin-bottom:4px}
 .app-tagline{font-size:15px;color:var(--gray-dark)}
 
@@ -105,6 +106,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .node-desc{font-size:12px;color:var(--gray-dark);font-weight:600}
 .next-badge{position:absolute;top:-10px;right:14px;background:var(--yellow);color:#6a5000;font-size:11px;font-weight:900;padding:3px 10px;border-radius:10px}
 .start-strip{display:flex;justify-content:center;margin-top:20px}
+.flag-strip{background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 16px;margin:0 0 14px;display:none;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
+.flag-strip-label{font-size:13px;font-weight:800;color:#c26000;flex:1}
+.repair-all-btn{background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap}
+.repair-all-btn:hover{background:#e08000}
+.repair-all-btn:disabled{opacity:.5;cursor:not-allowed}
 .big-btn{padding:15px 40px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);transition:transform .1s,box-shadow .1s}
 .big-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
 
@@ -149,6 +155,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}
 .tok:hover{border-color:var(--blue)}
 .tok.used{opacity:.15;pointer-events:none}
+.tok-distractor{border-color:#ffcc00;background:#fffbe6;color:#7a6200}
+.tok-distractor:hover{border-color:#ff9600}
 .type-input{width:100%;padding:12px 14px;font-size:16px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);outline:none;margin-top:8px}
 .type-input:focus{border-color:var(--blue)}
 .type-input.ok{border-color:var(--green);background:var(--green-light)}
@@ -233,16 +241,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 <div id="gen-overlay" class="gen-overlay" style="display:none">
   <div class="spinner"></div>
   <div class="gen-lbl" id="gen-lbl">Building your lessons…</div>
-  <div class="gen-sub" id="gen-sub">Generating vocabulary &amp; exercises</div>
+  <div class="gen-sub" id="gen-sub">Starting…</div>
+  <div id="gen-progress" style="margin-top:8px;font-size:13px;color:var(--gray-dark);font-weight:700;min-height:20px;text-align:center;max-width:280px"></div>
 </div>
 
 <!-- ══ LANDING ════════════════════════════════════════════════════════ -->
 <div id="landing" class="screen active">
 <div class="landing-inner">
   <div class="land-top">
-    <span class="flag" id="app-flag">🇮🇹</span>
+    <span class="flag">🌍</span>
     <div class="app-name">Dreizunge</div>
-    <div class="app-tagline" id="app-tagline">Learn Italian vocabulary for any topic, Duolingo-style</div>
+    <div class="app-tagline" id="app-tagline">Learn vocabulary for any topic in any language</div>
   </div>
 
   <div class="backend-row">
@@ -322,6 +331,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="xp-val" id="total-xp">0 XP</div>
     </div>
   </div>
+  <div class="flag-strip" id="flag-strip">
+    <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
+    <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
+  </div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
@@ -399,10 +412,23 @@ function selectLang(code){
   if(lbl) lbl.textContent='What do you want to learn '+L.name+' for?';
   const inp=document.getElementById('topic-input');
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
-  const flag=document.getElementById('app-flag');
-  if(flag) flag.textContent=L.flag;
   const tagline=document.getElementById('app-tagline');
-  if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic, Duolingo-style';
+  if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
+}
+async function pollJob(jobId, onStep, intervalMs){
+  intervalMs = intervalMs || 2000;
+  return new Promise((resolve, reject) => {
+    const iv = setInterval(async () => {
+      try {
+        const r = await fetch('/api/job/' + jobId);
+        if (!r.ok){ clearInterval(iv); return reject(new Error('Job poll failed: ' + r.status)); }
+        const j = await r.json();
+        if (onStep && j.step) onStep(j.step);
+        if (j.status === 'done'){  clearInterval(iv); resolve(j.data); }
+        if (j.status === 'error'){ clearInterval(iv); reject(new Error(j.error||'Job failed')); }
+      } catch(e){ clearInterval(iv); reject(e); }
+    }, intervalMs);
+  });
 }
 function loadFlagged(){ try{ return JSON.parse(localStorage.getItem('imp3_flagged')||'{}'); }catch(e){ return {}; } }
 function saveFlagged(){ localStorage.setItem('imp3_flagged',JSON.stringify(APP.flagged)); }
@@ -452,18 +478,21 @@ async function repairLesson(topic, lessonId){
   try{
     const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({topic,lessonId})});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data.error||'Repair failed');
-    // Server cleared flags — replace local state entirely
+    const resp=await r.json();
+    if(!r.ok) throw new Error(resp.error||'Repair failed');
+    // Poll for completion
+    if(btn) btn.textContent='⏳ Repairing…';
+    await pollJob(resp.jobId, step=>{
+      if(btn) btn.textContent='⏳ '+step;
+    });
+    // Sync flags and reload lesson
     await syncFlagsFromServer();
-    // Reload lesson data so in-lesson play gets updated content
     const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
     if(lr.ok){
       const fresh=await lr.json();
-      // Update APP.lessonData if user is currently viewing this topic
       if(APP.lessonData?.topic?.toLowerCase()===topic.toLowerCase()) APP.lessonData=fresh;
     }
-    buildPath(); // refresh path — repair button disappears if no more flags
+    buildPath();
   }catch(e){
     alert('Repair failed: '+e.message);
     if(btn){ btn.disabled=false; btn.textContent='⚑ Retry repair'; }
@@ -480,8 +509,12 @@ async function repairFromLesson(){
   try{
     const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({topic,lessonId})});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data.error||'Repair failed');
+    const resp=await r.json();
+    if(!r.ok) throw new Error(resp.error||'Repair failed');
+    if(repBtn) repBtn.textContent='⏳ Repairing…';
+    await pollJob(resp.jobId, step=>{
+      if(repBtn) repBtn.textContent='⏳ '+step;
+    });
     // Sync flags first (server cleared them — replace local state)
     await syncFlagsFromServer();
     // Reload lesson data from server with updated vocab/sentences
@@ -504,9 +537,10 @@ async function repairFromLesson(){
                curEx.correct=curEx.type==='listen_type' ? v.it : v.en; }
       } else if(['order','read_translate'].includes(curEx.type)){
         const s=freshLesson.sentences.find(s=>s.it.toLowerCase().slice(0,20)===itKey);
-        if(s){ curEx.it=s.it; curEx.en=s.en; curEx.words=s.words||curEx.words;
-               // order: assemble target language words; read_translate: pick English meaning
-               curEx.correct=curEx.type==='order' ? (s.words||curEx.words).join(' ') : s.en; }
+        if(s){ curEx.it=s.it; curEx.en=s.en;
+               // Re-derive words from sentence text (server no longer stores LLM words)
+               curEx.words=s.it.split(' ').filter(w=>!isPunctClient(w));
+               curEx.correct=curEx.type==='order' ? curEx.words.join(' ') : s.en; }
       }
     }
     // Reset answer state so the repaired exercise renders fresh
@@ -518,6 +552,43 @@ async function repairFromLesson(){
   }
 }
 
+async function repairAll(){
+  if(!APP.lessonData) return;
+  const btn=document.getElementById('repair-all-btn');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ Repairing…'; }
+  const d=APP.lessonData;
+  let totalRepaired=0, errors=[];
+  for(const L of d.lessons){
+    const topicSlug=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
+    const lessonItSet=new Set([
+      ...(L.vocab||[]).map(v=>(v.it||'').slice(0,40).replace(/\s+/g,'_')),
+      ...(L.sentences||[]).map(s=>(s.it||'').slice(0,40).replace(/\s+/g,'_'))
+    ]);
+    const hasFlags=Object.entries(APP.flagged).some(([k])=>{
+      if(!k.startsWith(topicSlug+':')) return false;
+      return lessonItSet.has(k.split(':').slice(2).join(':'));
+    });
+    if(!hasFlags) continue;
+    try{
+      if(btn) btn.textContent='⏳ Repairing lesson '+L.id+'…';
+      const r=await fetch('/api/repair',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({topic:d.topic,lessonId:L.id})});
+      const resp=await r.json();
+      if(!r.ok) throw new Error(resp.error||'Repair failed');
+      const result=await pollJob(resp.jobId, step=>{
+        if(btn) btn.textContent='⏳ '+step;
+      });
+      totalRepaired+=(result&&result.repaired)||0;
+    }catch(e){ errors.push('Lesson '+L.id+': '+e.message); }
+  }
+  await syncFlagsFromServer();
+  const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
+  if(lr.ok) APP.lessonData=await lr.json();
+  buildPath();
+  if(errors.length) alert('Repair finished with errors:\n'+errors.join('\n'));
+}
+
 function goHome(){ buildPath(); show('home'); }
 
 // ── init ──
@@ -527,6 +598,1365 @@ function goHome(){ buildPath(); show('home'); }
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "tabletennis in a park",
+    "topicEmoji": "🏓",
+    "lang": "de",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "tabletennis in a park",
+        "desc": "playing table tennis outdoors",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "Tischtennis",
+            "en": "table tennis",
+            "pron": "TISCH-ten-nis"
+          },
+          {
+            "it": "Park",
+            "en": "park",
+            "pron": "PArk"
+          },
+          {
+            "it": "spielen",
+            "en": "play",
+            "pron": "SPIE-len"
+          },
+          {
+            "it": "am",
+            "en": "at",
+            "pron": "AHM"
+          },
+          {
+            "it": "Freizeit",
+            "en": "leisure time",
+            "pron": "FREI-zeit"
+          },
+          {
+            "it": "mit",
+            "en": "with",
+            "pron": "MIT"
+          },
+          {
+            "it": "Freunden",
+            "en": "friends",
+            "pron": "FREU-den"
+          },
+          {
+            "it": "Sonnentag",
+            "en": "sunny day",
+            "pron": "SON-nen-tag"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Wir spielen Tischtennis am Park.",
+            "en": "We play table tennis at the park.",
+            "words": [
+              "Wir",
+              "spielen",
+              "Tischtennis",
+              "am",
+              "Park."
+            ]
+          },
+          {
+            "it": "Meine Freunde und ich gehen in unserer Freizeit in den Park.",
+            "en": "My friends and I go to the park in our leisure time.",
+            "words": [
+              "Meine",
+              "Freunde",
+              "und",
+              "ich",
+              "gehen",
+              "in",
+              "unserer",
+              "Freizeit",
+              "in",
+              "den",
+              "Park."
+            ]
+          },
+          {
+            "it": "Sonnentag ist perfekt für Tischtennis im Park.",
+            "en": "A sunny day is perfect for table tennis in the park.",
+            "words": [
+              "Sonnentag",
+              "ist",
+              "perfekt",
+              "für",
+              "Tischtennis",
+              "im",
+              "Park."
+            ]
+          },
+          {
+            "it": "Ich spiele Tischtennis mit meinen Freunden jeden Sonnentag.",
+            "en": "I play table tennis with my friends every sunny day.",
+            "words": [
+              "Ich",
+              "spiele",
+              "Tischtennis",
+              "mit",
+              "meinen",
+              "Freunden",
+              "jeden",
+              "Sonnentag."
+            ]
+          },
+          {
+            "it": "Am Park spielt man Tischtennis, wenn man keine Freizeit hat.",
+            "en": "At the park, one plays table tennis when one has no leisure time.",
+            "words": [
+              "Am",
+              "Park",
+              "spielt",
+              "man",
+              "Tischtennis,",
+              "wenn",
+              "man",
+              "keine",
+              "Freizeit",
+              "hat."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Table Tennis in a Park",
+        "desc": "Leisure activities, sunny days, friends",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "Pendeln",
+            "en": "commuting",
+            "pron": "PEN-deln"
+          },
+          {
+            "it": "Wiese",
+            "en": "meadow",
+            "pron": "VIE-se"
+          },
+          {
+            "it": "Rasenmäher",
+            "en": "lawn mower",
+            "pron": "RAZ-en-ma-her"
+          },
+          {
+            "it": "Picknick",
+            "en": "picnic",
+            "pron": "pi-CK-nik"
+          },
+          {
+            "it": "Brausehose",
+            "en": "bathing shorts",
+            "pron": "brau-SE-hose"
+          },
+          {
+            "it": "Sonnenbrille",
+            "en": "sunglasses",
+            "pron": "SO-nen-bril-le"
+          },
+          {
+            "it": "Spielzeug",
+            "en": "toy",
+            "pron": "SCHLIE-pzucht"
+          },
+          {
+            "it": "Brausebad",
+            "en": "shower",
+            "pron": "brau-SBE-ad"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Wir pendeln mit unseren Freunden zum Park am Sonnentag.",
+            "en": "We commute with our friends to the park on a sunny day.",
+            "words": [
+              "Wir",
+              "pendeln",
+              "mit",
+              "unseren",
+              "Freunden",
+              "zum",
+              "Park",
+              "am",
+              "Sonnentag."
+            ]
+          },
+          {
+            "it": "Auf der Wiese spielen Kinder mit ihrem Spielzeug.",
+            "en": "Children play with their toys on the meadow.",
+            "words": [
+              "Auf",
+              "der",
+              "Wiese",
+              "spielen",
+              "Kinder",
+              "mit",
+              "ihrem",
+              "Spielzeug."
+            ]
+          },
+          {
+            "it": "Der Rasenmäher läuft laut, während wir Picknick essen.",
+            "en": "The lawn mower runs loudly while we have a picnic.",
+            "words": [
+              "Der",
+              "Rasenmäher",
+              "läuft",
+              "laut,",
+              "während",
+              "wir",
+              "Picknick",
+              "essen."
+            ]
+          },
+          {
+            "it": "Ich trage meine Sonnenbrille, um meine Augen vor dem Sonnenlicht zu schützen.",
+            "en": "I wear my sunglasses to protect my eyes from the sunlight.",
+            "words": [
+              "Ich",
+              "trage",
+              "meine",
+              "Sonnenbrille,",
+              "um",
+              "meine",
+              "Augen",
+              "vor",
+              "dem",
+              "Sonnenlicht",
+              "zu",
+              "schützen."
+            ]
+          },
+          {
+            "it": "Meine Brausehose ist perfekt für einen Picknicktag.",
+            "en": "My bathing shorts are perfect for a picnic day.",
+            "words": [
+              "Meine",
+              "Brausehose",
+              "ist",
+              "perfekt",
+              "für",
+              "einen",
+              "Picknicktag."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "tabletennis in a park",
+        "desc": "advanced park activities",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "Brausehose",
+            "en": "bathing shorts",
+            "pron": "BRAU-see-hose"
+          },
+          {
+            "it": "Sonnenschirm",
+            "en": "sun umbrella",
+            "pron": "SOHN-nesh-CHERM"
+          },
+          {
+            "it": "Fußball",
+            "en": "football",
+            "pron": "FOO-tsball"
+          },
+          {
+            "it": "Brausebad",
+            "en": "shower",
+            "pron": "BRAU-see-bad"
+          },
+          {
+            "it": "Blickfeld",
+            "en": "viewing area",
+            "pron": "BLICK-feld"
+          },
+          {
+            "it": "Spielplatz",
+            "en": "playground",
+            "pron": "SCHPLA-intz"
+          },
+          {
+            "it": "Brausebadete",
+            "en": "shower bathers",
+            "pron": "BRAU-see-bad-eh-te"
+          },
+          {
+            "it": "Sonnenschutz",
+            "en": "sun protection",
+            "pron": "SOHN-nesh-CHUTZ"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Am Sonnentag spielen wir gerne Tischtennis auf der Wiese.",
+            "en": "On a sunny day, we like to play table tennis on the meadow.",
+            "words": [
+              "Am",
+              "Sonnentag",
+              "spielen",
+              "wir",
+              "gerne",
+              "Tischtennis",
+              "auf",
+              "der",
+              "Wiese."
+            ]
+          },
+          {
+            "it": "Mit Freunden besuchen wir den Spielplatz und spielen Fußball.",
+            "en": "With friends, we visit the playground and play football.",
+            "words": [
+              "Mit",
+              "Freunden",
+              "besuchen",
+              "wir",
+              "den",
+              "Spielplatz",
+              "und",
+              "spielen",
+              "Fußball."
+            ]
+          },
+          {
+            "it": "Im Park gibt es oft Pendler, die sich auf der Wiese ausruhen.",
+            "en": "In the park, there are often commuters who rest on the meadow.",
+            "words": [
+              "Im",
+              "Park",
+              "gibt",
+              "es",
+              "oft",
+              "Pendler,",
+              "die",
+              "sich",
+              "auf",
+              "der",
+              "Wiese",
+              "ausruhen."
+            ]
+          },
+          {
+            "it": "Sonnenschirme und Brausehosen sind bei Tischtennis im Park unerlässlich.",
+            "en": "Sun umbrellas and bathing shorts are indispensable for table tennis in the park.",
+            "words": [
+              "Sonnenschirme",
+              "und",
+              "Brausehosen",
+              "sind",
+              "bei",
+              "Tischtennis",
+              "im",
+              "Park",
+              "unerlässlich."
+            ]
+          },
+          {
+            "it": "Viele Menschen nutzen den Blickfeld für Picknicks und Brausebade.",
+            "en": "Many people use the viewing area for picnics and showers.",
+            "words": [
+              "Viele",
+              "Menschen",
+              "nutzen",
+              "den",
+              "Blickfeld",
+              "für",
+              "Picknicks",
+              "und",
+              "Brausebade."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-27T07:52:53.047Z"
+  },
+  {
+    "topic": "pingpong in the park",
+    "topicEmoji": "🏓",
+    "lang": "it",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Pingpong Basics",
+        "desc": "Learn to play pingpong",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "parcheggio",
+            "en": "parking lot",
+            "pron": "pahr-kay-jee-oh"
+          },
+          {
+            "it": "campo",
+            "en": "field",
+            "pron": "CAM-poh"
+          },
+          {
+            "it": "pallone",
+            "en": "ball",
+            "pron": "pah-loh-ne"
+          },
+          {
+            "it": "tavolo",
+            "en": "table",
+            "pron": "tah-voh-lo"
+          },
+          {
+            "it": "pannello",
+            "en": "panel",
+            "pron": "pahn-nel-lo"
+          },
+          {
+            "it": "bicicletta",
+            "en": "bicycle",
+            "pron": "bee-chee-cheh-lah-tah"
+          },
+          {
+            "it": "giocatore",
+            "en": "player",
+            "pron": "joh-chah-tore"
+          },
+          {
+            "it": "retrospettiva",
+            "en": "back view",
+            "pron": "ret-roh-speh-teet-tee-vah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Parcheggio vicino campo",
+            "en": "Parking lot near field",
+            "words": [
+              "parcheggio",
+              "vicino",
+              "campo"
+            ]
+          },
+          {
+            "it": "Giocatore con pallone",
+            "en": "Player with ball",
+            "words": [
+              "giocatore",
+              "con",
+              "pallone"
+            ]
+          },
+          {
+            "it": "Tavolo da pingpong sotto pannello",
+            "en": "Pingpong table under panel",
+            "words": [
+              "Tavolo",
+              "da",
+              "pingpong",
+              "sotto",
+              "pannello"
+            ]
+          },
+          {
+            "it": "Bicicletta accanto giocatore",
+            "en": "Bicycle next to player",
+            "words": [
+              "bicicletta",
+              "accanto",
+              "giocatore"
+            ]
+          },
+          {
+            "it": "Campo vuoto dietro pannello",
+            "en": "Empty field behind panel",
+            "words": [
+              "campo",
+              "vuoto",
+              "dietro",
+              "pannello"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Pingpong in Park",
+        "desc": "Intermediate gameplay strategies",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "pallina",
+            "en": "ping-pong ball",
+            "pron": "PAHL-lee-nah"
+          },
+          {
+            "it": "retro",
+            "en": "back",
+            "pron": "RET-roh"
+          },
+          {
+            "it": "giro",
+            "en": "round",
+            "pron": "JEE-roh"
+          },
+          {
+            "it": "giocatore",
+            "en": "player (in general, not specific to ping-pong)",
+            "pron": "JEE-oh-tah-REH"
+          },
+          {
+            "it": "parcheggio",
+            "en": "parking lot (already introduced, not to be used again)",
+            "pron": "pahr-keh-JEE-oh"
+          },
+          {
+            "it": "campo",
+            "en": "field (already introduced, not to be used again)",
+            "pron": "KAH-mpoh"
+          },
+          {
+            "it": "bicicletta",
+            "en": "bicycle (already introduced, not to be used again)",
+            "pron": "bee-chee-cheh-TAH"
+          },
+          {
+            "it": "tavolo",
+            "en": "table (already introduced, not to be used again)",
+            "pron": "TAH-voh-lo"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La pallina va e vieni",
+            "en": "The ball goes back and forth",
+            "words": [
+              "La",
+              "pallina",
+              "va",
+              "e",
+              "vieni"
+            ]
+          },
+          {
+            "it": "Un giocatore fa un giro",
+            "en": "A player makes a round",
+            "words": [
+              "giocatore",
+              "fa",
+              "un",
+              "giro"
+            ]
+          },
+          {
+            "it": "Nella piazza i bambini giocano",
+            "en": "In the square the children play",
+            "words": [
+              "nella",
+              "piazza",
+              "i",
+              "bambini",
+              "giocano"
+            ]
+          },
+          {
+            "it": "Con la bicicletta vado al parco",
+            "en": "With the bicycle I go to the park",
+            "words": [
+              "con",
+              "la",
+              "bicicletta",
+              "vado",
+              "al",
+              "parco"
+            ]
+          },
+          {
+            "it": "La pallina fa un giro intorno a me",
+            "en": "The ball makes a round around me",
+            "words": [
+              "La",
+              "pallina",
+              "fa",
+              "un",
+              "giro",
+              "intorno",
+              "a",
+              "me"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Pingpong in Park",
+        "desc": "Advanced strategies and tactics",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "punteggio",
+            "en": "score",
+            "pron": "PUN-teh-joh"
+          },
+          {
+            "it": "retrocedere",
+            "en": "to retreat",
+            "pron": "re-troh-CED-eh-re"
+          },
+          {
+            "it": "servizio",
+            "en": "serve",
+            "pron": "ser-VEE-zee-oh"
+          },
+          {
+            "it": "doppio",
+            "en": "double",
+            "pron": "DOH-pyo"
+          },
+          {
+            "it": "dritto",
+            "en": "straight",
+            "pron": "DREET-to"
+          },
+          {
+            "it": "fallimento",
+            "en": "failure",
+            "pron": "fall-lee-MEN-to"
+          },
+          {
+            "it": "rimbalzo",
+            "en": "bounce",
+            "pron": "rim-BAHL-zo"
+          },
+          {
+            "it": "tavolino",
+            "en": "small table",
+            "pron": "tah-vo-LEEN-yo"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il pingpong nel parco è divertente.",
+            "en": "pingpong park is fun",
+            "words": [
+              "Il",
+              "pingpong",
+              "nel",
+              "parco",
+              "è",
+              "divertente."
+            ]
+          },
+          {
+            "it": "Il servizio va dritto al centro.",
+            "en": "servizio centro",
+            "words": [
+              "Il",
+              "servizio",
+              "va",
+              "dritto",
+              "al",
+              "centro."
+            ]
+          },
+          {
+            "it": "Il rimbalzo è stato fallimento.",
+            "en": "rimbalzo fallimento",
+            "words": [
+              "Il",
+              "rimbalzo",
+              "è",
+              "stato",
+              "fallimento."
+            ]
+          },
+          {
+            "it": "Dopo il doppio il punteggio è 2-1.",
+            "en": "doppio punteggio 2 1",
+            "words": [
+              "Dopo",
+              "il",
+              "doppio",
+              "il",
+              "punteggio",
+              "è",
+              "2-1."
+            ]
+          },
+          {
+            "it": "Retrocedere per evitare il colpo forte.",
+            "en": "retrocedere colpo forte",
+            "words": [
+              "Retrocedere",
+              "per",
+              "evitare",
+              "il",
+              "colpo",
+              "forte."
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-27T07:27:49.801Z"
+  },
+  {
+    "topic": "table tennis in the park",
+    "topicEmoji": "🏓",
+    "lang": "it",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Table Tennis Basics",
+        "desc": "Introduction and rules",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "pallone",
+            "en": "ball",
+            "pron": "PAH-loh-ne"
+          },
+          {
+            "it": "tavolo",
+            "en": "table",
+            "pron": "TAH-voh-lo"
+          },
+          {
+            "it": "parcheggio",
+            "en": "parking",
+            "pron": "pahr-keh-JEH-oh"
+          },
+          {
+            "it": "campo",
+            "en": "field",
+            "pron": "KAH-mpoh"
+          },
+          {
+            "it": "pallavolo",
+            "en": "volleyball",
+            "pron": "pah-lah-VOH-lo"
+          },
+          {
+            "it": "giocatore",
+            "en": "player",
+            "pron": "joh-KAH-tore"
+          },
+          {
+            "it": "tennis",
+            "en": "tennis",
+            "pron": "TEH-nee-es"
+          },
+          {
+            "it": "pista",
+            "en": "track",
+            "pron": "PEE-stah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Due giocatori giocano a tennis sul campo.",
+            "en": "Two players play tennis on the field",
+            "words": [
+              "due",
+              "giocatori",
+              "giocano",
+              "tennis",
+              "sul",
+              "campo"
+            ]
+          },
+          {
+            "it": "Un pallone rotto va nel parcheggio.",
+            "en": "A broken ball goes in the parking",
+            "words": [
+              "pallone",
+              "rotto",
+              "va",
+              "parcheggio"
+            ]
+          },
+          {
+            "it": "Non c'è una pista per il pallavolo qui.",
+            "en": "There is no volleyball track here",
+            "words": [
+              "c'è",
+              "una",
+              "pista",
+              "per",
+              "pallavolo",
+              "qui"
+            ]
+          },
+          {
+            "it": "Il tavolo da ping-pong è vicino al campo.",
+            "en": "The table tennis table is near the field",
+            "words": [
+              "tavolo",
+              "ping-pong",
+              "è",
+              "vicino",
+              "al",
+              "campo"
+            ]
+          },
+          {
+            "it": "Un giocatore di tennis si esercita sul campo.",
+            "en": "A tennis player practices on the field",
+            "words": [
+              "giocatore",
+              "tennis",
+              "si",
+              "esercita",
+              "sul",
+              "campo"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Table Tennis Park",
+        "desc": "Intermediate Skills Practice",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "pingue",
+            "en": "ping-pong",
+            "pron": "PING-pong"
+          },
+          {
+            "it": "tavolino",
+            "en": "small table",
+            "pron": "tah-vo-LEEN-yo"
+          },
+          {
+            "it": "parchetto",
+            "en": "little park",
+            "pron": "par-KEH-to"
+          },
+          {
+            "it": "giocatore",
+            "en": "player",
+            "pron": "joh-CAT-tore"
+          },
+          {
+            "it": "pallina",
+            "en": "little ball",
+            "pron": "pah-LEEN-ah"
+          },
+          {
+            "it": "tavolone",
+            "en": "large table",
+            "pron": "tah-vo-LOH-ne"
+          },
+          {
+            "it": "parcheggio",
+            "en": "parking",
+            "pron": "par-keh-JYO"
+          },
+          {
+            "it": "campo",
+            "en": "field",
+            "pron": "CAM-poh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Due giocatori giocano pingue.",
+            "en": "Two players play pingue",
+            "words": [
+              "due",
+              "giocatori",
+              "giocano",
+              "pingue"
+            ]
+          },
+          {
+            "it": "La pallina vola tra i tavolini.",
+            "en": "The pallina volo tra i tavolini",
+            "words": [
+              "pallina",
+              "volo",
+              "tra",
+              "tavolini"
+            ]
+          },
+          {
+            "it": "Un campo di pingue nel parchetto.",
+            "en": "A campo di pingue nel parchetto",
+            "words": [
+              "campo",
+              "pingue",
+              "nel",
+              "parchetto"
+            ]
+          },
+          {
+            "it": "Non c'è spazio per il tavolone.",
+            "en": "Non c'e spazio per il tavolone",
+            "words": [
+              "non",
+              "c'e",
+              "spazio",
+              "per",
+              "il",
+              "tavolone"
+            ]
+          },
+          {
+            "it": "Il parcheggio è vicino al tavolino.",
+            "en": "Il parcheggio e vicino al tavolino",
+            "words": [
+              "parcheggio",
+              "e",
+              "vicino",
+              "al",
+              "tavolino"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Advanced Table Tennis",
+        "desc": "Park play strategies",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "punteggio",
+            "en": "score",
+            "pron": "PUN-te-jjo"
+          },
+          {
+            "it": "racket",
+            "en": "racket",
+            "pron": "RACK-et"
+          },
+          {
+            "it": "nettoio",
+            "en": "net",
+            "pron": "NET-to-yo"
+          },
+          {
+            "it": "padella",
+            "en": "bat",
+            "pron": "pa-DELL-a"
+          },
+          {
+            "it": "doppio",
+            "en": "double",
+            "pron": "DOP-pio"
+          },
+          {
+            "it": "singles",
+            "en": "singles",
+            "pron": "sin-GLIZ"
+          },
+          {
+            "it": "doppista",
+            "en": "doubles",
+            "pron": "DOP-pi-tza"
+          },
+          {
+            "it": "gioco",
+            "en": "game",
+            "pron": "JOO-co"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Stanno giocando a padella in doppio.",
+            "en": "They are playing table tennis in doubles.",
+            "words": [
+              "Stanno",
+              "giocando",
+              "padella",
+              "doppio"
+            ]
+          },
+          {
+            "it": "Il nettoio è vicino al tavolo.",
+            "en": "The net is near the table.",
+            "words": [
+              "Il",
+              "nettoio",
+              "vicino",
+              "tavolo"
+            ]
+          },
+          {
+            "it": "Hanno segnato un punteggio importante.",
+            "en": "They scored an important point.",
+            "words": [
+              "Hanno",
+              "segnato",
+              "punteggio",
+              "importante"
+            ]
+          },
+          {
+            "it": "Stanno usando rachette per il gioco.",
+            "en": "They are using rackets for the game.",
+            "words": [
+              "Stanno",
+              "usando",
+              "rachette",
+              "gioco"
+            ]
+          },
+          {
+            "it": "In singles si gioca con una padella.",
+            "en": "In singles you play with one bat.",
+            "words": [
+              "In",
+              "singles",
+              "gioca",
+              "padella"
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-26T14:12:20.214Z"
+  },
+  {
+    "topic": "mountain climbing",
+    "topicEmoji": "⛰️",
+    "lang": "it",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Climbing Mountains",
+        "desc": "Introduction to Mountain Climbing",
+        "icon": "🏔",
+        "vocab": [
+          {
+            "it": "montagna",
+            "en": "mountain",
+            "pron": "MON-ta-nah"
+          },
+          {
+            "it": "alpina",
+            "en": "alpine",
+            "pron": "al-PIN-ah"
+          },
+          {
+            "it": "scalata",
+            "en": "climbing",
+            "pron": "skal-AH-tah"
+          },
+          {
+            "it": "attrezzatura",
+            "en": "equipment",
+            "pron": "at-tre-zah-TUHR-rah"
+          },
+          {
+            "it": "ossigeno",
+            "en": "oxygen",
+            "pron": "os-si-JEN-eh-no"
+          },
+          {
+            "it": "cappotto",
+            "en": "coat",
+            "pron": "cap-PO-to"
+          },
+          {
+            "it": "attrezzo",
+            "en": "tool",
+            "pron": "at-TREH-zzo"
+          },
+          {
+            "it": "pattumiera",
+            "en": "rubbish bin",
+            "pron": "pa-tu-MIE-rah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La scalata alpina richiede attrezzatura specifica.",
+            "en": "alpine climbing requires specific equipment",
+            "words": [
+              "La",
+              "scalata",
+              "alpina",
+              "richiede",
+              "attrezzatura",
+              "specifica."
+            ]
+          },
+          {
+            "it": "Porta il cappotto, fa freddo sulla montagna.",
+            "en": "take coat mountain is cold",
+            "words": [
+              "Porta",
+              "il",
+              "cappotto,",
+              "fa",
+              "freddo",
+              "sulla",
+              "montagna."
+            ]
+          },
+          {
+            "it": "L'ossigeno è importante per la scalata a elevata quota.",
+            "en": "oxygen is important for climbing high altitude",
+            "words": [
+              "oxygen",
+              "is",
+              "important",
+              "for",
+              "climbing",
+              "high",
+              "altitude",
+              "correct"
+            ]
+          },
+          {
+            "it": "Non lasciare pattumiera in montagna.",
+            "en": "leave rubbish bin in mountain",
+            "words": []
+          },
+          {
+            "it": "L'attrezzo giusto può fare la differenza nella scalata.",
+            "en": "right tool makes difference in climbing",
+            "words": [
+              "right",
+              "tool",
+              "makes",
+              "difference",
+              "climbing"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Climbing Techniques",
+        "desc": "Advanced techniques for mountain climbing",
+        "icon": "⛰",
+        "vocab": [
+          {
+            "it": "alpinismo",
+            "en": "mountain climbing",
+            "pron": "al-PEE-nee-zmo"
+          },
+          {
+            "it": "cramponi",
+            "en": "ice spikes",
+            "pron": "cr-am-POH-ni"
+          },
+          {
+            "it": "ascensore a ghiaccio",
+            "en": "ice ascender",
+            "pron": "as-sen-SOH-re ah ghee-AH-tso"
+          },
+          {
+            "it": "tenda",
+            "en": "tent",
+            "pron": "TEN-da"
+          },
+          {
+            "it": "attrezzatura per ghiaccio",
+            "en": "ice equipment",
+            "pron": "at-trezzat-TRAH-per ghee-AH-tso"
+          },
+          {
+            "it": "cavo di protezione",
+            "en": "protection cable",
+            "pron": "KAH-voh deh pro-teh-ZI-tah"
+          },
+          {
+            "it": "sella di ghiaccio",
+            "en": "ice saddle",
+            "pron": "SELL-ah deh ghee-AH-tso"
+          },
+          {
+            "it": "punta di roccia",
+            "en": "rock point",
+            "pron": "PUN-tah deh roh-TCH-ah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'alpinismo richiede cramponi e attrezzatura per ghiaccio",
+            "en": "Mountain climbing requires ice spikes and ice equipment",
+            "words": [
+              "alpinismo",
+              "richiede",
+              "cramponi",
+              "e",
+              "attrezzatura"
+            ]
+          },
+          {
+            "it": "Usiamo tenda per accampamento in montagna",
+            "en": "We use tent for camping in mountain",
+            "words": [
+              "usiamo",
+              "tenda",
+              "per",
+              "accampamento",
+              "in"
+            ]
+          },
+          {
+            "it": "L'ascensore a ghiaccio è necessario per la sella di ghiaccio",
+            "en": "The ice ascender is necessary for the ice saddle",
+            "words": [
+              "ascensore",
+              "a",
+              "ghiaccio",
+              "è",
+              "necessario",
+              "per",
+              "la",
+              "sella",
+              "di",
+              "ghiaccio"
+            ]
+          },
+          {
+            "it": "La cavo di protezione è importante per la sicurezza",
+            "en": "The protection cable is important for safety",
+            "words": [
+              "cavo",
+              "di",
+              "protezione",
+              "è",
+              "importante",
+              "per",
+              "la",
+              "sicurezza"
+            ]
+          },
+          {
+            "it": "La punta di roccia è un punto critico durante l'alpinismo",
+            "en": "The rock point is a critical point during mountain climbing",
+            "words": [
+              "punta",
+              "di",
+              "roccia",
+              "è",
+              "un",
+              "punto",
+              "critico",
+              "durante",
+              "l'alpinismo"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Mountain Climb",
+        "desc": "Advanced vocabulary and phrases",
+        "icon": "🏔",
+        "vocab": [
+          {
+            "it": "alpinista",
+            "en": "mountain climber",
+            "pron": "al-PEE-nee-ta"
+          },
+          {
+            "it": "rapel",
+            "en": "rapel",
+            "pron": "RA-pel"
+          },
+          {
+            "it": "sbaraglio",
+            "en": "fall",
+            "pron": "s-bar-AY-lio"
+          },
+          {
+            "it": "bivacco",
+            "en": "bivouac",
+            "pron": "bi-VA-kko"
+          },
+          {
+            "it": "gancio",
+            "en": "carabiner",
+            "pron": "GAN-chio"
+          },
+          {
+            "it": "sistema di protezione",
+            "en": "protection system",
+            "pron": "si-STE-ma di pro-te-ZI-o-ne"
+          },
+          {
+            "it": "ascensore a ghiaccio",
+            "en": "ice ascender",
+            "pron": "as-chen-SORE a ghi-AT-to"
+          },
+          {
+            "it": "cordelette",
+            "en": "slings",
+            "pron": "cor-de-LET-te"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'alpinista utilizza il sistema di protezione per il rapel.",
+            "en": "The mountain climber uses the protection system for the rapel.",
+            "words": [
+              "alpinista",
+              "utilizza",
+              "sistema",
+              "protezione",
+              "rapel"
+            ]
+          },
+          {
+            "it": "Durante la notte l'alpinista dorme in un bivacco.",
+            "en": "During the night the mountain climber sleeps in a bivouac.",
+            "words": [
+              "Durante",
+              "la",
+              "notte",
+              "l'alpinista",
+              "dorme",
+              "in",
+              "un",
+              "bivacco."
+            ]
+          },
+          {
+            "it": "Il gancio è un elemento cruciale del sistema di protezione.",
+            "en": "The gancio is a crucial element of the protection system.",
+            "words": [
+              "gancio",
+              "elemento",
+              "protezione",
+              "cruciale"
+            ]
+          },
+          {
+            "it": "L'alpinista scende utilizzando l'ascensore a ghiaccio.",
+            "en": "The mountain climber descends using the ice ascender.",
+            "words": [
+              "alpinista",
+              "scende",
+              "ascensore",
+              "ghiaccio"
+            ]
+          },
+          {
+            "it": "Le cordelette sono necessarie per il bivacco sicuro.",
+            "en": "The slings are necessary for a safe bivouac.",
+            "words": [
+              "cordelette",
+              "necessarie",
+              "bivacco",
+              "sicuro"
+            ]
+          }
+        ]
+      }
+    ],
+    "generatedAt": "2026-04-26T14:29:29.650Z"
+  },
   {
     "topic": "music journalism",
     "topicEmoji": "🎵",
@@ -1240,11 +2670,11 @@ const STATIC_LESSONS = [
             "it": "Ich mische Mehl Zucker und Salz zusammen.",
             "en": "I mix flour sugar and salt together",
             "words": [
-              "mische",
               "Mehl",
               "Zucker",
               "Salz",
-              "zusammen"
+              "zusammen",
+              "mische"
             ]
           },
           {
@@ -1270,11 +2700,10 @@ const STATIC_LESSONS = [
             "it": "Ich backe Pizza auf Backpapier.",
             "en": "I bake pizza on baking paper",
             "words": [
-              "bake",
               "Pizza",
-              "on",
-              "baking",
-              "paper"
+              "Backpapier",
+              "auf",
+              "backe"
             ]
           },
           {
@@ -1347,8 +2776,8 @@ const STATIC_LESSONS = [
             ]
           },
           {
-            "it": "Puderzucker Aufrollen Dampf",
-            "en": "confectioners' sugar roll steam",
+            "it": "Puderzucker aufrollen",
+            "en": "confectioners' sugar roll",
             "words": [
               "Puderzucker",
               "Aufrollen",
@@ -1507,7 +2936,7 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-25T15:00:21.527Z"
+    "generatedAt": "2026-04-26T08:51:07.503Z"
   },
   {
     "topic": "cooking",
@@ -2705,10 +4134,7 @@ const STATIC_LESSONS = [
               "giro",
               "per",
               "le",
-              "piste",
-              ".",
-              "pista",
-              "giro"
+              "piste"
             ]
           },
           {
@@ -2983,7 +4409,7 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-24T15:08:49.914Z"
+    "generatedAt": "2026-04-26T15:05:18.148Z"
   },
   {
     "topic": "table tennis",
@@ -6169,8 +7595,20 @@ function buildPath(){
   });
   const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
   const btn=document.getElementById('start-btn');
-  if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=()=>{}; }
+  if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=goHome; }
   else{ btn.textContent='Start lesson '+(nextIdx+1); btn.onclick=()=>startLesson(nextIdx); }
+
+  // Update flag summary strip
+  const topicSlugAll=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
+  const totalFlagged=Object.keys(APP.flagged).filter(k=>k.startsWith(topicSlugAll+':')).length;
+  const strip=document.getElementById('flag-strip');
+  const stripLbl=document.getElementById('flag-strip-label');
+  const repAllBtn=document.getElementById('repair-all-btn');
+  if(strip){
+    strip.style.display=totalFlagged>0&&APP.info.canGenerate?'flex':'none';
+    if(stripLbl) stripLbl.textContent='⚑ '+totalFlagged+' flagged question'+(totalFlagged!==1?'s':'')+' across all lessons';
+    if(repAllBtn) repAllBtn.disabled=false;
+  }
 }
 function startNextLesson(){
   if(!APP.lessonData)return;
@@ -6183,6 +7621,7 @@ function startNextLesson(){
 function shuffle(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
 function pick(arr,n){ return shuffle(arr).slice(0,n); }
 
+const isPunctClient = t => /^[.,!?;:()\[\]"'«»—–]+$/.test((t||'').trim());
 function buildExercises(lessonIdx){
   const d=APP.lessonData, lesson=d.lessons[lessonIdx];
   const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
@@ -6197,9 +7636,26 @@ function buildExercises(lessonIdx){
   function mkLMcq(v,p){ const w=wV(v,'en',p,3); if(w.length<3)return null; return {type:'listen_mcq',it:v.it,pron:v.pron,correct:v.en,choices:shuffle([v.en,...w])}; }
   function mkLType(v){ return {type:'listen_type',it:v.it,pron:v.pron,correct:v.it}; }
   function mkOrder(s){
-    const words=s.words.slice(); let sh=shuffle(words),tries=0;
-    while(sh.join(' ')===words.join(' ')&&tries++<30) sh=shuffle(words);
-    return {type:'order',en:s.en,it:s.it,words:sh,correct:words.join(' ')};
+    const words=s.words.slice();
+    // Pick 2-3 distractor words from other vocab/sentences, not in this sentence
+    const sentWordSet=new Set(words.map(w=>w.toLowerCase()));
+    const distractorPool=shuffle([
+      ...allV.filter(v=>!sentWordSet.has(v.it.toLowerCase())&&!v.it.includes(' ')).map(v=>v.it),
+      ...allS.filter(x=>x.it!==s.it).flatMap(x=>
+        (x.words||x.it.split(' ')).filter(w=>!isPunctClient(w)&&!sentWordSet.has(w.toLowerCase()))
+      )
+    ]);
+    const numDistractors=Math.min(2+Math.floor(Math.random()*2), distractorPool.length);
+    const distractors=distractorPool.slice(0,numDistractors).map(w=>({w,distractor:true}));
+    // Shuffle correct words + distractors together
+    const allTokens=shuffle([...words.map(w=>({w,distractor:false})),...distractors]);
+    let tries=0;
+    while(allTokens.slice(0,words.length).every((t,i)=>!t.distractor&&t.w===words[i])&&tries++<20)
+      allTokens.sort(()=>Math.random()-.5);
+    return {type:'order',en:s.en,it:s.it,
+      words:allTokens.map(t=>t.w),
+      distractors:allTokens.map(t=>t.distractor),
+      correct:words.join(' ')};
   }
   function mkRead(s,pool){
     const w=wS(s,pool,3); const padded=w.length>=3?w:[...fb.slice(0,3-w.length),...w];
@@ -6270,7 +7726,12 @@ function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.fla
 function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
 function tLMcq(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — what do you hear?</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
 function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
-function tOrder(ex){ const L=lessonLang(); return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${ex.words.map((w,i)=>`<span class="tok" id="t${i}" onclick="addTok(${i})">${w}</span>`).join('')}</div></div>`; }
+function tOrder(ex){ const L=lessonLang();
+  const tokens=ex.words.map((w,i)=>{
+    const isDist=ex.distractors&&ex.distractors[i];
+    return `<span class="tok${isDist?' tok-distractor':''}" id="t${i}" onclick="addTok(${i})" title="${isDist?'This word may not belong':'Tap to add'}">${w}</span>`;
+  }).join('');
+  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div style="font-size:11px;color:var(--gray-dark);margin-bottom:6px">⚠ Some words may not belong in this sentence</div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
 function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${ex.it}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
@@ -6338,7 +7799,11 @@ function check(){
   const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
   const ex=C.exercises[C.cur]; let ok=false;
   if(ex.type==='listen_type'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
-  else if(ex.type==='order'){ ok=C.placed.map(p=>p.w).join(' ')===ex.correct; }
+  else if(ex.type==='order'){
+    // Filter out distractor tokens (identified by their index in ex.distractors[])
+    const nonDistractors=C.placed.filter(p=>!(ex.distractors&&ex.distractors[p.i]));
+    ok=nonDistractors.map(p=>p.w).join(' ')===ex.correct;
+  }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
   const btn=document.getElementById('cbtn'); btn.textContent='Continue'; btn.className='check-btn cont'; btn.disabled=false;
