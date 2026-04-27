@@ -537,9 +537,10 @@ async function repairFromLesson(){
                curEx.correct=curEx.type==='listen_type' ? v.it : v.en; }
       } else if(['order','read_translate'].includes(curEx.type)){
         const s=freshLesson.sentences.find(s=>s.it.toLowerCase().slice(0,20)===itKey);
-        if(s){ curEx.it=s.it; curEx.en=s.en; curEx.words=s.words||curEx.words;
-               // order: assemble target language words; read_translate: pick English meaning
-               curEx.correct=curEx.type==='order' ? (s.words||curEx.words).join(' ') : s.en; }
+        if(s){ curEx.it=s.it; curEx.en=s.en;
+               // Re-derive words from sentence text (server no longer stores LLM words)
+               curEx.words=s.it.split(' ').filter(w=>!isPunctClient(w));
+               curEx.correct=curEx.type==='order' ? curEx.words.join(' ') : s.en; }
       }
     }
     // Reset answer state so the repaired exercise renders fresh

@@ -1,6 +1,387 @@
 {
   "lessons": [
     {
+      "topic": "tabletennis in a park",
+      "topicEmoji": "🏓",
+      "lang": "de",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "tabletennis in a park",
+          "desc": "playing table tennis outdoors",
+          "icon": "🏓",
+          "vocab": [
+            {
+              "it": "Tischtennis",
+              "en": "table tennis",
+              "pron": "TISCH-ten-nis"
+            },
+            {
+              "it": "Park",
+              "en": "park",
+              "pron": "PArk"
+            },
+            {
+              "it": "spielen",
+              "en": "play",
+              "pron": "SPIE-len"
+            },
+            {
+              "it": "am",
+              "en": "at",
+              "pron": "AHM"
+            },
+            {
+              "it": "Freizeit",
+              "en": "leisure time",
+              "pron": "FREI-zeit"
+            },
+            {
+              "it": "mit",
+              "en": "with",
+              "pron": "MIT"
+            },
+            {
+              "it": "Freunden",
+              "en": "friends",
+              "pron": "FREU-den"
+            },
+            {
+              "it": "Sonnentag",
+              "en": "sunny day",
+              "pron": "SON-nen-tag"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Wir spielen Tischtennis am Park.",
+              "en": "We play table tennis at the park.",
+              "words": [
+                "Wir",
+                "spielen",
+                "Tischtennis",
+                "am",
+                "Park."
+              ]
+            },
+            {
+              "it": "Meine Freunde und ich gehen in unserer Freizeit in den Park.",
+              "en": "My friends and I go to the park in our leisure time.",
+              "words": [
+                "Meine",
+                "Freunde",
+                "und",
+                "ich",
+                "gehen",
+                "in",
+                "unserer",
+                "Freizeit",
+                "in",
+                "den",
+                "Park."
+              ]
+            },
+            {
+              "it": "Sonnentag ist perfekt für Tischtennis im Park.",
+              "en": "A sunny day is perfect for table tennis in the park.",
+              "words": [
+                "Sonnentag",
+                "ist",
+                "perfekt",
+                "für",
+                "Tischtennis",
+                "im",
+                "Park."
+              ]
+            },
+            {
+              "it": "Ich spiele Tischtennis mit meinen Freunden jeden Sonnentag.",
+              "en": "I play table tennis with my friends every sunny day.",
+              "words": [
+                "Ich",
+                "spiele",
+                "Tischtennis",
+                "mit",
+                "meinen",
+                "Freunden",
+                "jeden",
+                "Sonnentag."
+              ]
+            },
+            {
+              "it": "Am Park spielt man Tischtennis, wenn man keine Freizeit hat.",
+              "en": "At the park, one plays table tennis when one has no leisure time.",
+              "words": [
+                "Am",
+                "Park",
+                "spielt",
+                "man",
+                "Tischtennis,",
+                "wenn",
+                "man",
+                "keine",
+                "Freizeit",
+                "hat."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Table Tennis in a Park",
+          "desc": "Leisure activities, sunny days, friends",
+          "icon": "🏓",
+          "vocab": [
+            {
+              "it": "Pendeln",
+              "en": "commuting",
+              "pron": "PEN-deln"
+            },
+            {
+              "it": "Wiese",
+              "en": "meadow",
+              "pron": "VIE-se"
+            },
+            {
+              "it": "Rasenmäher",
+              "en": "lawn mower",
+              "pron": "RAZ-en-ma-her"
+            },
+            {
+              "it": "Picknick",
+              "en": "picnic",
+              "pron": "pi-CK-nik"
+            },
+            {
+              "it": "Brausehose",
+              "en": "bathing shorts",
+              "pron": "brau-SE-hose"
+            },
+            {
+              "it": "Sonnenbrille",
+              "en": "sunglasses",
+              "pron": "SO-nen-bril-le"
+            },
+            {
+              "it": "Spielzeug",
+              "en": "toy",
+              "pron": "SCHLIE-pzucht"
+            },
+            {
+              "it": "Brausebad",
+              "en": "shower",
+              "pron": "brau-SBE-ad"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Wir pendeln mit unseren Freunden zum Park am Sonnentag.",
+              "en": "We commute with our friends to the park on a sunny day.",
+              "words": [
+                "Wir",
+                "pendeln",
+                "mit",
+                "unseren",
+                "Freunden",
+                "zum",
+                "Park",
+                "am",
+                "Sonnentag."
+              ]
+            },
+            {
+              "it": "Auf der Wiese spielen Kinder mit ihrem Spielzeug.",
+              "en": "Children play with their toys on the meadow.",
+              "words": [
+                "Auf",
+                "der",
+                "Wiese",
+                "spielen",
+                "Kinder",
+                "mit",
+                "ihrem",
+                "Spielzeug."
+              ]
+            },
+            {
+              "it": "Der Rasenmäher läuft laut, während wir Picknick essen.",
+              "en": "The lawn mower runs loudly while we have a picnic.",
+              "words": [
+                "Der",
+                "Rasenmäher",
+                "läuft",
+                "laut,",
+                "während",
+                "wir",
+                "Picknick",
+                "essen."
+              ]
+            },
+            {
+              "it": "Ich trage meine Sonnenbrille, um meine Augen vor dem Sonnenlicht zu schützen.",
+              "en": "I wear my sunglasses to protect my eyes from the sunlight.",
+              "words": [
+                "Ich",
+                "trage",
+                "meine",
+                "Sonnenbrille,",
+                "um",
+                "meine",
+                "Augen",
+                "vor",
+                "dem",
+                "Sonnenlicht",
+                "zu",
+                "schützen."
+              ]
+            },
+            {
+              "it": "Meine Brausehose ist perfekt für einen Picknicktag.",
+              "en": "My bathing shorts are perfect for a picnic day.",
+              "words": [
+                "Meine",
+                "Brausehose",
+                "ist",
+                "perfekt",
+                "für",
+                "einen",
+                "Picknicktag."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "tabletennis in a park",
+          "desc": "advanced park activities",
+          "icon": "🏓",
+          "vocab": [
+            {
+              "it": "Brausehose",
+              "en": "bathing shorts",
+              "pron": "BRAU-see-hose"
+            },
+            {
+              "it": "Sonnenschirm",
+              "en": "sun umbrella",
+              "pron": "SOHN-nesh-CHERM"
+            },
+            {
+              "it": "Fußball",
+              "en": "football",
+              "pron": "FOO-tsball"
+            },
+            {
+              "it": "Brausebad",
+              "en": "shower",
+              "pron": "BRAU-see-bad"
+            },
+            {
+              "it": "Blickfeld",
+              "en": "viewing area",
+              "pron": "BLICK-feld"
+            },
+            {
+              "it": "Spielplatz",
+              "en": "playground",
+              "pron": "SCHPLA-intz"
+            },
+            {
+              "it": "Brausebadete",
+              "en": "shower bathers",
+              "pron": "BRAU-see-bad-eh-te"
+            },
+            {
+              "it": "Sonnenschutz",
+              "en": "sun protection",
+              "pron": "SOHN-nesh-CHUTZ"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Am Sonnentag spielen wir gerne Tischtennis auf der Wiese.",
+              "en": "On a sunny day, we like to play table tennis on the meadow.",
+              "words": [
+                "Am",
+                "Sonnentag",
+                "spielen",
+                "wir",
+                "gerne",
+                "Tischtennis",
+                "auf",
+                "der",
+                "Wiese."
+              ]
+            },
+            {
+              "it": "Mit Freunden besuchen wir den Spielplatz und spielen Fußball.",
+              "en": "With friends, we visit the playground and play football.",
+              "words": [
+                "Mit",
+                "Freunden",
+                "besuchen",
+                "wir",
+                "den",
+                "Spielplatz",
+                "und",
+                "spielen",
+                "Fußball."
+              ]
+            },
+            {
+              "it": "Im Park gibt es oft Pendler, die sich auf der Wiese ausruhen.",
+              "en": "In the park, there are often commuters who rest on the meadow.",
+              "words": [
+                "Im",
+                "Park",
+                "gibt",
+                "es",
+                "oft",
+                "Pendler,",
+                "die",
+                "sich",
+                "auf",
+                "der",
+                "Wiese",
+                "ausruhen."
+              ]
+            },
+            {
+              "it": "Sonnenschirme und Brausehosen sind bei Tischtennis im Park unerlässlich.",
+              "en": "Sun umbrellas and bathing shorts are indispensable for table tennis in the park.",
+              "words": [
+                "Sonnenschirme",
+                "und",
+                "Brausehosen",
+                "sind",
+                "bei",
+                "Tischtennis",
+                "im",
+                "Park",
+                "unerlässlich."
+              ]
+            },
+            {
+              "it": "Viele Menschen nutzen den Blickfeld für Picknicks und Brausebade.",
+              "en": "Many people use the viewing area for picnics and showers.",
+              "words": [
+                "Viele",
+                "Menschen",
+                "nutzen",
+                "den",
+                "Blickfeld",
+                "für",
+                "Picknicks",
+                "und",
+                "Brausebade."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-27T07:52:53.047Z"
+    },
+    {
       "topic": "pingpong in the park",
       "topicEmoji": "🏓",
       "lang": "it",

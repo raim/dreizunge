@@ -83,49 +83,30 @@ const SYS_META = `You are a lesson plan creator. Return ONLY a valid JSON object
 Schema: {"topic":"cleaned topic string","topicEmoji":"one emoji","lessonThemes":["theme1","theme2","theme3"]}
 Rules: topic is the user's topic, normalized. Choose 3 progressive lesson themes for that topic.`;
 
-function sysVocab(lang, lessonNum, totalLessons) {
+function sysLesson(lang, lessonNum, totalLessons) {
   const L = langName(lang);
-  return `You are a ${L} vocabulary generator for a Duolingo-style app.
-Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
+  const diff = lessonNum === 1 ? 'beginner basics' : lessonNum === 2 ? 'intermediate phrases' : 'advanced/specific vocabulary';
+  return `You are a ${L} language lesson generator for a vocabulary learning app.
+Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
 
 Schema:
-[
-  {"it":"${L} word or short phrase","en":"English meaning","pron":"phonetic for English speakers, CAPS for stressed syllable"}
-]
-
-Rules:
-- Return exactly 8 items, no duplicates
-- Each item must have a different "it" value — never repeat the same ${L} word
-- Topic-relevant vocabulary only
-- Lesson ${lessonNum} of ${totalLessons} difficulty: ${lessonNum === 1 ? 'beginner basics' : lessonNum === 2 ? 'intermediate phrases' : 'advanced/specific vocabulary'}`;
+{
+  "title": "short lesson theme, 3-5 words",
+  "desc": "up to 8 words describing this lesson",
+  "icon": "one relevant emoji",
+  "vocab": [
+    {"it":"${L} word or short phrase","en":"English meaning","pron":"phonetic for English speakers, CAPS for stressed syllable"}
+  ],
+  "sentences": [
+    {"it":"A natural ${L} sentence, 5-9 words","en":"English translation"}
+  ]
 }
 
-function sysSentences(lang, lessonNum, totalLessons) {
-  const L = langName(lang);
-  return `You are a ${L} sentence generator for a Duolingo-style app.
-Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
-
-Schema:
-[
-  {
-    "it": "A natural ${L} sentence, 5-9 words",
-    "en": "English translation",
-    "words": ["each","word","no","punctuation"]
-  }
-]
-
 Rules:
-- Return exactly 5 sentences
-- "words" must contain ALL words of the ${L} sentence except punctuation marks — include articles, prepositions, conjunctions
-- Every word in "words" must appear in "it" — do not omit any words, do not add extra words
-- Each sentence must use DIFFERENT words — do not repeat the same sentence structure
-- Use the provided vocabulary words naturally
-- Lesson ${lessonNum} of ${totalLessons} difficulty: ${lessonNum === 1 ? 'beginner basics' : lessonNum === 2 ? 'intermediate phrases' : 'advanced/specific vocabulary'}`;
-}
-
-function sysLessonMeta(lang) {
-  return `You are a ${langName(lang)} lesson titler. Return ONLY a valid JSON object, no markdown, no explanation.
-Schema: {"title":"short lesson theme (3-5 words)","desc":"up to 8 words describing this lesson","icon":"one relevant emoji"}`;
+- vocab: exactly 8 items, all unique ${L} words, topic-relevant, difficulty: ${diff}
+- sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
+- sentences must be complete natural ${L} sentences — do NOT provide a words[] array
+- difficulty: ${diff}`;
 }
 
 const SYS_REPAIR = `You are a language exercise repairer for a Duolingo-style app.
@@ -138,12 +119,12 @@ Each exercise has a type. Return corrected versions preserving the same type and
 - listen_mcq:     {"type":"listen_mcq","it":"target language","pron":"phonetic","correct":"correct English","choices":["4 English options"]}
 - listen_type:    {"type":"listen_type","it":"target language","pron":"phonetic","correct":"target language word"}
 - read_translate: {"type":"read_translate","it":"target language sentence","en":"English","correct":"correct English","choices":["4 English options"]}
-- order:          {"type":"order","it":"target language sentence","en":"English","words":["content","words","in","CORRECT","order","no","punctuation"]}
+- order:          {"type":"order","it":"target language sentence","en":"English"}
 
 Rules:
 - Fix translation errors, wrong choices, incorrect pronunciations
 - Pay close attention to user comments — they describe what is specifically wrong
-- For order type: words[] must contain ONLY content words, NO punctuation tokens, in the CORRECT sentence order (the client shuffles them for display)
+- For order type: do NOT include words[] — the app derives it automatically from "it"
 - Keep the same topic and difficulty level
 - Return exactly as many items as given`;
 
@@ -269,100 +250,62 @@ async function withRetry(label, fn, retries = 3, delay = 800) {
 const isPunct = t => /^[.,!?;:()\[\]"'«»—–]+$/.test(t.trim());
 const normSpaces = str => str.trim().replace(/ ([.,!?;:()\[\]])/g, '$1');
 
-function validateAndCleanSentences(arr, lang) {
-  return arr.slice(0, 5).map(s => {
-    if (!s.words || !Array.isArray(s.words) || s.words.length === 0)
-      s.words = s.it.split(' ');
-
-    // Strip punctuation tokens
-    s.words = s.words.filter(t => !isPunct(t));
-
-    // Detect English in words[] — rebuild from Italian
-    const joined = normSpaces(s.words.join(' '));
-    const itNorm = normSpaces(s.it || '');
-    const enNorm = normSpaces(s.en || '');
-    if (joined === enNorm && joined !== itNorm) {
-      console.warn(`    words[] was English — rebuilding from target sentence`);
-      s.words = s.it.split(' ').filter(t => !isPunct(t));
-    }
-
-    // Guarantee completeness: every non-punct token in 'it' must appear in words[]
-    const itTokens = s.it.split(' ').filter(t => !isPunct(t));
-    const wordsSet = new Set(s.words.map(w => w.toLowerCase()));
-    const missing = itTokens.filter(t => !wordsSet.has(t.toLowerCase()));
-    if (missing.length > 0) {
-      console.warn(`    words[] missing ${missing.length} token(s): ${missing.join(', ')} — rebuilding`);
-      s.words = itTokens; // guaranteed complete
-    }
-
-    if (s.words.length < 3)
-      s.words = s.it.split(' ').filter(t => !isPunct(t));
-
-    return s;
-  });
+// Derive words[] from sentence — guaranteed complete and correct
+function deriveSentenceWords(s) {
+  s.words = s.it.split(' ').filter(t => !isPunct(t));
+  return s;
 }
 
-// ── Generate vocab ────────────────────────────────────────────────────
-async function generateVocab(active, lang, topic, lessonNum, totalLessons, prevVocab) {
+// ── Generate one lesson (single LLM call) ────────────────────────────
+async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, jobId) {
+  jobStep(jobId, `Lesson ${lessonNum}/${totalLessons}: generating…`);
   const prevHint = prevVocab.length
-    ? `\nAlready introduced (do NOT use any of these, generate 8 completely NEW items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
+    ? `\nVocabulary already covered in earlier lessons (do NOT repeat these, introduce 8 NEW items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
     : '';
-  const userMsg = `Topic: "${topic}". Generate 8 ${langName(lang)} vocabulary items. All 8 must have unique target-language words. Return only the JSON array.${prevHint}`;
-  return withRetry(`Vocab ${lessonNum}`, async () => {
-    const raw = await callLLM(active, sysVocab(lang, lessonNum, totalLessons), userMsg, 1024);
-    let arr;
-    try { arr = extractArray(raw); } catch(_) { arr = salvageArray(raw); }
-    if (!Array.isArray(arr) || arr.length < 4)
-      throw new Error(`Only ${arr?.length ?? 0} vocab items`);
-    const seen = new Set();
-    arr = arr.filter(v => { const k=v.it?.toLowerCase(); if(!k||seen.has(k)) return false; seen.add(k); return true; });
-    if (arr.length < 4) throw new Error(`Only ${arr.length} unique vocab items after dedup`);
-    return arr.slice(0, 8);
-  });
-}
+  const userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${prevHint}\nReturn only the JSON object.`;
 
-// ── Generate sentences ────────────────────────────────────────────────
-async function generateSentences(active, lang, topic, lessonNum, totalLessons, vocab) {
-  const vocabList = vocab.map(v => `${v.it} (${v.en})`).join(', ');
-  const userMsg = `Topic: "${topic}". Use these ${langName(lang)} words naturally: ${vocabList}.\nGenerate 5 ${langName(lang)} sentences with NO punctuation in words[]. Return only the JSON array.`;
-  return withRetry(`Sentences ${lessonNum}`, async () => {
-    const raw = await callLLM(active, sysSentences(lang, lessonNum, totalLessons), userMsg, 1024);
-    let arr;
-    try { arr = extractArray(raw); } catch(_) { arr = salvageArray(raw); }
-    if (!Array.isArray(arr) || arr.length < 3)
-      throw new Error(`Only ${arr?.length ?? 0} sentences`);
-    arr = validateAndCleanSentences(arr, lang);
-    const bad = arr.filter(s => normSpaces(s.words.join(' ')) === normSpaces(s.en || ''));
-    if (bad.length > 1)
-      throw new Error(`${bad.length} sentences still have English in words[] — retrying`);
-    const tooShort = arr.filter(s => s.words.length < 3);
+  return withRetry(`Lesson ${lessonNum}`, async () => {
+    const raw = await callLLM(active, sysLesson(lang, lessonNum, totalLessons), userMsg, 2048);
+    let lesson;
+    try { lesson = extractJSON(raw); }
+    catch(_) {
+      // Try salvaging as array (some models wrap in array)
+      try {
+        const arr = extractArray(raw);
+        if (Array.isArray(arr) && arr[0]?.vocab) lesson = arr[0];
+        else throw new Error('Not a lesson object');
+      } catch(_2) { throw new Error('Could not parse lesson JSON'); }
+    }
+
+    // Validate vocab
+    if (!Array.isArray(lesson.vocab) || lesson.vocab.length < 4)
+      throw new Error(`Only ${lesson.vocab?.length ?? 0} vocab items`);
+    // Dedup vocab
+    const seen = new Set();
+    lesson.vocab = lesson.vocab.filter(v => {
+      const k = v.it?.toLowerCase(); if (!k || seen.has(k)) return false; seen.add(k); return true;
+    }).slice(0, 8);
+    if (lesson.vocab.length < 4) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
+
+    // Validate sentences
+    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < 3)
+      throw new Error(`Only ${lesson.sentences?.length ?? 0} sentences`);
+    // Derive words[] from sentence text — no LLM words array needed
+    lesson.sentences = lesson.sentences.slice(0, 5).map(deriveSentenceWords);
+    // Check sentences aren't too short
+    const tooShort = lesson.sentences.filter(s => s.words.length < 3);
     if (tooShort.length > 2)
       throw new Error(`${tooShort.length} sentences have fewer than 3 words — retrying`);
-    return arr;
+
+    return {
+      id: lessonNum,
+      title: lesson.title || `Lesson ${lessonNum}`,
+      desc:  lesson.desc  || topic,
+      icon:  lesson.icon  || '📖',
+      vocab: lesson.vocab,
+      sentences: lesson.sentences
+    };
   });
-}
-
-// ── Generate lesson meta ──────────────────────────────────────────────
-async function generateLessonMeta(active, lang, topic, lessonNum, totalLessons) {
-  const userMsg = `Topic: "${topic}", lesson ${lessonNum} of ${totalLessons} (${lessonNum===1?'beginner':lessonNum===2?'intermediate':'advanced'}). Return only the JSON object.`;
-  try {
-    const raw = await callLLM(active, sysLessonMeta(lang), userMsg, 256);
-    return extractJSON(raw);
-  } catch(_) {
-    return { title: `Lesson ${lessonNum}`, desc: topic, icon: '📖' };
-  }
-}
-
-// ── Generate one lesson ───────────────────────────────────────────────
-async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, jobId) {
-  jobStep(jobId, `Lesson ${lessonNum}/${totalLessons}: generating vocabulary…`);
-  const [meta, vocab] = await Promise.all([
-    generateLessonMeta(active, lang, topic, lessonNum, totalLessons),
-    generateVocab(active, lang, topic, lessonNum, totalLessons, prevVocab)
-  ]);
-  jobStep(jobId, `Lesson ${lessonNum}/${totalLessons}: generating sentences…`);
-  const sentences = await generateSentences(active, lang, topic, lessonNum, totalLessons, vocab);
-  return { id: lessonNum, title: meta.title, desc: meta.desc, icon: meta.icon, vocab, sentences };
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
@@ -419,9 +362,10 @@ async function repairLesson(active, topic, lessonId, jobId) {
     if (['order','read_translate'].includes(repaired.type) && repaired.it) {
       const idx = lesson.sentences.findIndex(s =>
         s.it.toLowerCase().slice(0,20) === (repaired.it||'').toLowerCase().slice(0,20));
-      if (idx >= 0) lesson.sentences[idx] = {
-        it: repaired.it, en: repaired.en || lesson.sentences[idx].en,
-        words: repaired.words || lesson.sentences[idx].words };
+      if (idx >= 0) {
+        const s = { it: repaired.it, en: repaired.en || lesson.sentences[idx].en };
+        lesson.sentences[idx] = deriveSentenceWords(s);
+      }
     }
     if (['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(repaired.type) && repaired.it) {
       const idx = lesson.vocab.findIndex(v =>
@@ -446,8 +390,8 @@ async function repairLesson(active, topic, lessonId, jobId) {
       try { a = extractArray(raw); } catch(_) { a = salvageArray(raw); }
       if (!Array.isArray(a) || a.length === 0) throw new Error('No repaired exercises returned');
       return a.map(ex => {
-        if (ex.type === 'order' && Array.isArray(ex.words))
-          ex.words = validateAndCleanSentences([{it:ex.it,en:ex.en,words:ex.words}], lang)[0].words;
+        if (ex.type === 'order' && ex.it)
+          ex.words = deriveSentenceWords({it:ex.it}).words;
         return ex;
       });
     });
