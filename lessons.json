@@ -1,6 +1,330 @@
 {
   "lessons": [
     {
+      "topic": "pingpong in the park",
+      "topicEmoji": "🏓",
+      "lang": "it",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Pingpong Basics",
+          "desc": "Learn to play pingpong",
+          "icon": "🏓",
+          "vocab": [
+            {
+              "it": "parcheggio",
+              "en": "parking lot",
+              "pron": "pahr-kay-jee-oh"
+            },
+            {
+              "it": "campo",
+              "en": "field",
+              "pron": "CAM-poh"
+            },
+            {
+              "it": "pallone",
+              "en": "ball",
+              "pron": "pah-loh-ne"
+            },
+            {
+              "it": "tavolo",
+              "en": "table",
+              "pron": "tah-voh-lo"
+            },
+            {
+              "it": "pannello",
+              "en": "panel",
+              "pron": "pahn-nel-lo"
+            },
+            {
+              "it": "bicicletta",
+              "en": "bicycle",
+              "pron": "bee-chee-cheh-lah-tah"
+            },
+            {
+              "it": "giocatore",
+              "en": "player",
+              "pron": "joh-chah-tore"
+            },
+            {
+              "it": "retrospettiva",
+              "en": "back view",
+              "pron": "ret-roh-speh-teet-tee-vah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Parcheggio vicino campo",
+              "en": "Parking lot near field",
+              "words": [
+                "parcheggio",
+                "vicino",
+                "campo"
+              ]
+            },
+            {
+              "it": "Giocatore con pallone",
+              "en": "Player with ball",
+              "words": [
+                "giocatore",
+                "con",
+                "pallone"
+              ]
+            },
+            {
+              "it": "Tavolo da pingpong sotto pannello",
+              "en": "Pingpong table under panel",
+              "words": [
+                "Tavolo",
+                "da",
+                "pingpong",
+                "sotto",
+                "pannello"
+              ]
+            },
+            {
+              "it": "Bicicletta accanto giocatore",
+              "en": "Bicycle next to player",
+              "words": [
+                "bicicletta",
+                "accanto",
+                "giocatore"
+              ]
+            },
+            {
+              "it": "Campo vuoto dietro pannello",
+              "en": "Empty field behind panel",
+              "words": [
+                "campo",
+                "vuoto",
+                "dietro",
+                "pannello"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Pingpong in Park",
+          "desc": "Intermediate gameplay strategies",
+          "icon": "🏓",
+          "vocab": [
+            {
+              "it": "pallina",
+              "en": "ping-pong ball",
+              "pron": "PAHL-lee-nah"
+            },
+            {
+              "it": "retro",
+              "en": "back",
+              "pron": "RET-roh"
+            },
+            {
+              "it": "giro",
+              "en": "round",
+              "pron": "JEE-roh"
+            },
+            {
+              "it": "giocatore",
+              "en": "player (in general, not specific to ping-pong)",
+              "pron": "JEE-oh-tah-REH"
+            },
+            {
+              "it": "parcheggio",
+              "en": "parking lot (already introduced, not to be used again)",
+              "pron": "pahr-keh-JEE-oh"
+            },
+            {
+              "it": "campo",
+              "en": "field (already introduced, not to be used again)",
+              "pron": "KAH-mpoh"
+            },
+            {
+              "it": "bicicletta",
+              "en": "bicycle (already introduced, not to be used again)",
+              "pron": "bee-chee-cheh-TAH"
+            },
+            {
+              "it": "tavolo",
+              "en": "table (already introduced, not to be used again)",
+              "pron": "TAH-voh-lo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La pallina va e vieni",
+              "en": "The ball goes back and forth",
+              "words": [
+                "La",
+                "pallina",
+                "va",
+                "e",
+                "vieni"
+              ]
+            },
+            {
+              "it": "Un giocatore fa un giro",
+              "en": "A player makes a round",
+              "words": [
+                "giocatore",
+                "fa",
+                "un",
+                "giro"
+              ]
+            },
+            {
+              "it": "Nella piazza i bambini giocano",
+              "en": "In the square the children play",
+              "words": [
+                "nella",
+                "piazza",
+                "i",
+                "bambini",
+                "giocano"
+              ]
+            },
+            {
+              "it": "Con la bicicletta vado al parco",
+              "en": "With the bicycle I go to the park",
+              "words": [
+                "con",
+                "la",
+                "bicicletta",
+                "vado",
+                "al",
+                "parco"
+              ]
+            },
+            {
+              "it": "La pallina fa un giro intorno a me",
+              "en": "The ball makes a round around me",
+              "words": [
+                "La",
+                "pallina",
+                "fa",
+                "un",
+                "giro",
+                "intorno",
+                "a",
+                "me"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Pingpong in Park",
+          "desc": "Advanced strategies and tactics",
+          "icon": "🏓",
+          "vocab": [
+            {
+              "it": "punteggio",
+              "en": "score",
+              "pron": "PUN-teh-joh"
+            },
+            {
+              "it": "retrocedere",
+              "en": "to retreat",
+              "pron": "re-troh-CED-eh-re"
+            },
+            {
+              "it": "servizio",
+              "en": "serve",
+              "pron": "ser-VEE-zee-oh"
+            },
+            {
+              "it": "doppio",
+              "en": "double",
+              "pron": "DOH-pyo"
+            },
+            {
+              "it": "dritto",
+              "en": "straight",
+              "pron": "DREET-to"
+            },
+            {
+              "it": "fallimento",
+              "en": "failure",
+              "pron": "fall-lee-MEN-to"
+            },
+            {
+              "it": "rimbalzo",
+              "en": "bounce",
+              "pron": "rim-BAHL-zo"
+            },
+            {
+              "it": "tavolino",
+              "en": "small table",
+              "pron": "tah-vo-LEEN-yo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il pingpong nel parco è divertente.",
+              "en": "pingpong park is fun",
+              "words": [
+                "Il",
+                "pingpong",
+                "nel",
+                "parco",
+                "è",
+                "divertente."
+              ]
+            },
+            {
+              "it": "Il servizio va dritto al centro.",
+              "en": "servizio centro",
+              "words": [
+                "Il",
+                "servizio",
+                "va",
+                "dritto",
+                "al",
+                "centro."
+              ]
+            },
+            {
+              "it": "Il rimbalzo è stato fallimento.",
+              "en": "rimbalzo fallimento",
+              "words": [
+                "Il",
+                "rimbalzo",
+                "è",
+                "stato",
+                "fallimento."
+              ]
+            },
+            {
+              "it": "Dopo il doppio il punteggio è 2-1.",
+              "en": "doppio punteggio 2 1",
+              "words": [
+                "Dopo",
+                "il",
+                "doppio",
+                "il",
+                "punteggio",
+                "è",
+                "2-1."
+              ]
+            },
+            {
+              "it": "Retrocedere per evitare il colpo forte.",
+              "en": "retrocedere colpo forte",
+              "words": [
+                "Retrocedere",
+                "per",
+                "evitare",
+                "il",
+                "colpo",
+                "forte."
+              ]
+            }
+          ]
+        }
+      ],
+      "generatedAt": "2026-04-27T07:27:49.801Z"
+    },
+    {
       "topic": "table tennis in the park",
       "topicEmoji": "🏓",
       "lang": "it",

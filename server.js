@@ -5,6 +5,7 @@ const http  = require('http');
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
+const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
 const STORAGE_FILE = path.join(__dirname, 'lessons.json');
@@ -41,23 +42,29 @@ function upsert(data) {
 // ── Flag storage ──────────────────────────────────────────────────────
 function getFlags()  { return store.flags || {}; }
 function setFlags(f) { store.flags = f; saveStore(store); }
-
-// Flag key must match client-side flagKey() exactly:
-// "<topic_slug>:<type>:<content_slug>"
-function serverFlagKey(topic, type, itOrEn) {
-  const topicSlug   = (topic||'unknown').slice(0,30).replace(/\s+/g,'_');
-  const contentSlug = (itOrEn||'').slice(0,40).replace(/\s+/g,'_');
-  return `${topicSlug}:${type}:${contentSlug}`;
-}
-
-// Collect all flags belonging to a topic using exact same slug as client flagKey()
-function topicSlug(topic) {
-  return (topic||'').slice(0,30).replace(/\s+/g,'_');
-}
+function topicSlug(topic) { return (topic||'').slice(0,30).replace(/\s+/g,'_'); }
 function flagsForTopic(topic) {
   const prefix = topicSlug(topic) + ':';
-  const all = getFlags();
-  return Object.entries(all).filter(([k]) => k.startsWith(prefix));
+  return Object.entries(getFlags()).filter(([k]) => k.startsWith(prefix));
+}
+
+// ── Job store — background tasks with progress ────────────────────────
+const jobs = new Map(); // jobId -> { status, step, data, error, createdAt }
+function newJob() {
+  const id = crypto.randomBytes(8).toString('hex');
+  jobs.set(id, { status: 'running', step: 'Starting…', data: null, error: null, createdAt: Date.now() });
+  // Clean up old jobs after 10 minutes
+  setTimeout(() => jobs.delete(id), 10 * 60 * 1000);
+  return id;
+}
+function jobStep(id, step) {
+  const j = jobs.get(id); if (j) { j.step = step; console.log(' ', step); }
+}
+function jobDone(id, data) {
+  const j = jobs.get(id); if (j) { j.status = 'done'; j.data = data; j.step = 'Complete'; }
+}
+function jobFail(id, err) {
+  const j = jobs.get(id); if (j) { j.status = 'error'; j.error = err; j.step = 'Failed'; }
 }
 
 // ── Generation lock ───────────────────────────────────────────────────
@@ -65,8 +72,9 @@ const generatingTopics = new Set();
 
 // ── Language config ───────────────────────────────────────────────────
 const LANG_NAMES = {
-  it: 'Italian', fr: 'French', de: 'German',
-  es: 'Spanish', pt: 'Portuguese',
+  it:'Italian', fr:'French', de:'German', es:'Spanish', pt:'Portuguese',
+  nl:'Dutch', pl:'Polish', sv:'Swedish', ja:'Japanese', zh:'Mandarin Chinese',
+  ar:'Arabic', ru:'Russian', ko:'Korean', tr:'Turkish', hi:'Hindi',
 };
 function langName(code) { return LANG_NAMES[code] || code || 'Italian'; }
 
@@ -130,7 +138,7 @@ Each exercise has a type. Return corrected versions preserving the same type and
 - listen_mcq:     {"type":"listen_mcq","it":"target language","pron":"phonetic","correct":"correct English","choices":["4 English options"]}
 - listen_type:    {"type":"listen_type","it":"target language","pron":"phonetic","correct":"target language word"}
 - read_translate: {"type":"read_translate","it":"target language sentence","en":"English","correct":"correct English","choices":["4 English options"]}
-- order:          {"type":"order","it":"target language sentence","en":"English","words":["content","words","only","no","punctuation"]}
+- order:          {"type":"order","it":"target language sentence","en":"English","words":["content","words","in","CORRECT","order","no","punctuation"]}
 
 Rules:
 - Fix translation errors, wrong choices, incorrect pronunciations
@@ -266,10 +274,10 @@ function validateAndCleanSentences(arr, lang) {
     if (!s.words || !Array.isArray(s.words) || s.words.length === 0)
       s.words = s.it.split(' ');
 
-    // Remove punctuation tokens
+    // Strip punctuation tokens
     s.words = s.words.filter(t => !isPunct(t));
 
-    // Detect English in words[] and rebuild
+    // Detect English in words[] — rebuild from Italian
     const joined = normSpaces(s.words.join(' '));
     const itNorm = normSpaces(s.it || '');
     const enNorm = normSpaces(s.en || '');
@@ -278,7 +286,16 @@ function validateAndCleanSentences(arr, lang) {
       s.words = s.it.split(' ').filter(t => !isPunct(t));
     }
 
-    if (s.words.length < 4)
+    // Guarantee completeness: every non-punct token in 'it' must appear in words[]
+    const itTokens = s.it.split(' ').filter(t => !isPunct(t));
+    const wordsSet = new Set(s.words.map(w => w.toLowerCase()));
+    const missing = itTokens.filter(t => !wordsSet.has(t.toLowerCase()));
+    if (missing.length > 0) {
+      console.warn(`    words[] missing ${missing.length} token(s): ${missing.join(', ')} — rebuilding`);
+      s.words = itTokens; // guaranteed complete
+    }
+
+    if (s.words.length < 3)
       s.words = s.it.split(' ').filter(t => !isPunct(t));
 
     return s;
@@ -291,14 +308,12 @@ async function generateVocab(active, lang, topic, lessonNum, totalLessons, prevV
     ? `\nAlready introduced (do NOT use any of these, generate 8 completely NEW items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
     : '';
   const userMsg = `Topic: "${topic}". Generate 8 ${langName(lang)} vocabulary items. All 8 must have unique target-language words. Return only the JSON array.${prevHint}`;
-
   return withRetry(`Vocab ${lessonNum}`, async () => {
     const raw = await callLLM(active, sysVocab(lang, lessonNum, totalLessons), userMsg, 1024);
     let arr;
     try { arr = extractArray(raw); } catch(_) { arr = salvageArray(raw); }
     if (!Array.isArray(arr) || arr.length < 4)
       throw new Error(`Only ${arr?.length ?? 0} vocab items`);
-    // Deduplicate by 'it' field
     const seen = new Set();
     arr = arr.filter(v => { const k=v.it?.toLowerCase(); if(!k||seen.has(k)) return false; seen.add(k); return true; });
     if (arr.length < 4) throw new Error(`Only ${arr.length} unique vocab items after dedup`);
@@ -310,25 +325,19 @@ async function generateVocab(active, lang, topic, lessonNum, totalLessons, prevV
 async function generateSentences(active, lang, topic, lessonNum, totalLessons, vocab) {
   const vocabList = vocab.map(v => `${v.it} (${v.en})`).join(', ');
   const userMsg = `Topic: "${topic}". Use these ${langName(lang)} words naturally: ${vocabList}.\nGenerate 5 ${langName(lang)} sentences with NO punctuation in words[]. Return only the JSON array.`;
-
   return withRetry(`Sentences ${lessonNum}`, async () => {
     const raw = await callLLM(active, sysSentences(lang, lessonNum, totalLessons), userMsg, 1024);
     let arr;
     try { arr = extractArray(raw); } catch(_) { arr = salvageArray(raw); }
     if (!Array.isArray(arr) || arr.length < 3)
       throw new Error(`Only ${arr?.length ?? 0} sentences`);
-
     arr = validateAndCleanSentences(arr, lang);
-
     const bad = arr.filter(s => normSpaces(s.words.join(' ')) === normSpaces(s.en || ''));
     if (bad.length > 1)
       throw new Error(`${bad.length} sentences still have English in words[] — retrying`);
-
-    // Reject if too many sentences are too short to make a meaningful exercise
-    const tooShort = arr.filter(s => s.words.length < 4);
-    if (tooShort.length > 1)
-      throw new Error(`${tooShort.length} sentences have fewer than 4 words — retrying`);
-
+    const tooShort = arr.filter(s => s.words.length < 3);
+    if (tooShort.length > 2)
+      throw new Error(`${tooShort.length} sentences have fewer than 3 words — retrying`);
     return arr;
   });
 }
@@ -345,19 +354,20 @@ async function generateLessonMeta(active, lang, topic, lessonNum, totalLessons) 
 }
 
 // ── Generate one lesson ───────────────────────────────────────────────
-async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab) {
-  console.log(`  [${lessonNum+1}/${totalLessons+1}] Generating lesson ${lessonNum}…`);
+async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, jobId) {
+  jobStep(jobId, `Lesson ${lessonNum}/${totalLessons}: generating vocabulary…`);
   const [meta, vocab] = await Promise.all([
     generateLessonMeta(active, lang, topic, lessonNum, totalLessons),
     generateVocab(active, lang, topic, lessonNum, totalLessons, prevVocab)
   ]);
+  jobStep(jobId, `Lesson ${lessonNum}/${totalLessons}: generating sentences…`);
   const sentences = await generateSentences(active, lang, topic, lessonNum, totalLessons, vocab);
   return { id: lessonNum, title: meta.title, desc: meta.desc, icon: meta.icon, vocab, sentences };
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
-async function generate(topic, lang, active) {
-  console.log(`  [1/4] Generating topic meta… (lang: ${lang})`);
+async function generate(topic, lang, active, jobId) {
+  jobStep(jobId, 'Generating topic info…');
   let meta;
   try {
     const raw = await callLLM(active, SYS_META,
@@ -367,12 +377,11 @@ async function generate(topic, lang, active) {
     meta = { topic, topicEmoji: '📚', lessonThemes: ['Basics', 'Phrases', 'Advanced'] };
     console.warn('  Meta failed, using fallback:', e.message);
   }
-
   const TOTAL = 3;
   const lessons = [];
   let prevVocab = [];
   for (let i = 1; i <= TOTAL; i++) {
-    const lesson = await generateOneLesson(active, lang, topic, i, TOTAL, prevVocab);
+    const lesson = await generateOneLesson(active, lang, topic, i, TOTAL, prevVocab, jobId);
     lessons.push(lesson);
     prevVocab = prevVocab.concat(lesson.vocab);
   }
@@ -380,17 +389,13 @@ async function generate(topic, lang, active) {
 }
 
 // ── Repair flagged exercises ──────────────────────────────────────────
-async function repairLesson(active, topic, lessonId) {
+async function repairLesson(active, topic, lessonId, jobId) {
   const saved = findSaved(topic);
   if (!saved) throw new Error(`Topic not found: ${topic}`);
   const lesson = saved.lessons.find(l => l.id === lessonId);
   if (!lesson) throw new Error(`Lesson ${lessonId} not found`);
-
-  // Snapshot original counts for safety check
-  const origVocabCount     = lesson.vocab.length;
-  const origSentenceCount  = lesson.sentences.length;
-
-  // Collect flags for this specific lesson by matching content slugs
+  const origVocabCount    = lesson.vocab.length;
+  const origSentenceCount = lesson.sentences.length;
   const allTopicFlags = flagsForTopic(topic);
   const lessonItSet = new Set([
     ...(lesson.vocab||[]).map(v => (v.it||'').slice(0,40).replace(/\s+/g,'_')),
@@ -398,96 +403,64 @@ async function repairLesson(active, topic, lessonId) {
   ]);
   const flaggedEntries = allTopicFlags.filter(([k]) => {
     const parts = k.split(':');
-    const contentSlug = parts.slice(2).join(':'); // topicSlug:type:contentSlug
+    const contentSlug = parts.slice(2).join(':');
     return lessonItSet.has(contentSlug);
   });
   if (flaggedEntries.length === 0) throw new Error('No flagged exercises found for this lesson');
-
   const lang = saved.lang || 'it';
-  const flaggedExercises = flaggedEntries.map(([, v]) => ({
-    ...v,
-    _userComment: v.comment || undefined  // include comment if present
-  }));
-
+  const flaggedExercises = flaggedEntries.map(([, v]) => ({ ...v, _userComment: v.comment || undefined }));
   const BATCH_SIZE = 4;
   const batches = [];
   for (let i = 0; i < flaggedExercises.length; i += BATCH_SIZE)
     batches.push({ exercises: flaggedExercises.slice(i, i + BATCH_SIZE),
                    entries:   flaggedEntries.slice(i, i + BATCH_SIZE) });
-
-  console.log(`  Repairing ${flaggedExercises.length} flagged exercise(s) in "${topic}" lesson ${lessonId} (${batches.length} batch${batches.length>1?'es':''})…`);
-
-  // Helper: merge one repaired exercise back into lesson
+  console.log(`  Repairing ${flaggedExercises.length} exercise(s) in "${topic}" lesson ${lessonId} (${batches.length} batch${batches.length>1?'es':''})…`);
   function mergeRepaired(repaired) {
     if (['order','read_translate'].includes(repaired.type) && repaired.it) {
       const idx = lesson.sentences.findIndex(s =>
-        s.it.toLowerCase().slice(0,20) === (repaired.it||'').toLowerCase().slice(0,20)
-      );
-      if (idx >= 0) {
-        lesson.sentences[idx] = {
-          it: repaired.it,
-          en: repaired.en || lesson.sentences[idx].en,
-          words: repaired.words || lesson.sentences[idx].words
-        };
-      }
+        s.it.toLowerCase().slice(0,20) === (repaired.it||'').toLowerCase().slice(0,20));
+      if (idx >= 0) lesson.sentences[idx] = {
+        it: repaired.it, en: repaired.en || lesson.sentences[idx].en,
+        words: repaired.words || lesson.sentences[idx].words };
     }
     if (['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(repaired.type) && repaired.it) {
       const idx = lesson.vocab.findIndex(v =>
-        v.it.toLowerCase().slice(0,15) === (repaired.it||'').toLowerCase().slice(0,15)
-      );
-      if (idx >= 0) {
-        lesson.vocab[idx] = {
-          it: repaired.it,
-          en: repaired.en || lesson.vocab[idx].en,
-          pron: repaired.pron || lesson.vocab[idx].pron
-        };
-      }
+        v.it.toLowerCase().slice(0,15) === (repaired.it||'').toLowerCase().slice(0,15));
+      if (idx >= 0) lesson.vocab[idx] = {
+        it: repaired.it, en: repaired.en || lesson.vocab[idx].en,
+        pron: repaired.pron || lesson.vocab[idx].pron };
     }
   }
-
   let totalRepaired = 0;
   const clearedKeys = [];
-
   for (let b = 0; b < batches.length; b++) {
     const batch = batches[b];
+    if (jobId) jobStep(jobId, `Repairing batch ${b+1}/${batches.length}…`);
     const commentNote = batch.exercises.some(e => e._userComment)
-      ? '\nNote: some exercises include user comments. Pay close attention to these.'
-      : '';
+      ? '\nNote: some exercises include user comments. Pay close attention to these.' : '';
     const userMsg = `Language: ${langName(lang)}. Topic: "${topic}".${commentNote}\nFix these ${batch.exercises.length} faulty exercises (batch ${b+1}/${batches.length}):\n${JSON.stringify(batch.exercises, null, 2)}\nReturn only the corrected JSON array.`;
-
     console.log(`    Batch ${b+1}/${batches.length}: ${batch.exercises.length} exercise(s)…`);
-
     const arr = await withRetry(`Repair batch ${b+1}`, async () => {
       const raw = await callLLM(active, SYS_REPAIR, userMsg, 2048);
       let a;
       try { a = extractArray(raw); } catch(_) { a = salvageArray(raw); }
-      if (!Array.isArray(a) || a.length === 0)
-        throw new Error('No repaired exercises returned');
+      if (!Array.isArray(a) || a.length === 0) throw new Error('No repaired exercises returned');
       return a.map(ex => {
         if (ex.type === 'order' && Array.isArray(ex.words))
           ex.words = validateAndCleanSentences([{it:ex.it,en:ex.en,words:ex.words}], lang)[0].words;
         return ex;
       });
     });
-
     arr.forEach(mergeRepaired);
     totalRepaired += arr.length;
     clearedKeys.push(...batch.entries.map(([k]) => k));
   }
-
-  // Safety check: never save if repair deleted content
-  if (lesson.vocab.length < origVocabCount || lesson.sentences.length < origSentenceCount) {
-    throw new Error(`Repair would shrink lesson (vocab: ${origVocabCount}→${lesson.vocab.length}, sentences: ${origSentenceCount}→${lesson.sentences.length}) — rejecting`);
-  }
-
-  // Save updated lesson
+  if (lesson.vocab.length < origVocabCount || lesson.sentences.length < origSentenceCount)
+    throw new Error(`Repair would shrink lesson — rejecting`);
   upsert(saved);
-
-  // Clear repaired flags
   const flags = getFlags();
   for (const k of clearedKeys) delete flags[k];
   setFlags(flags);
-
   console.log(`  Repair complete: ${totalRepaired} exercise(s) fixed, ${clearedKeys.length} flag(s) cleared`);
   return { repaired: totalRepaired, lesson };
 }
@@ -508,7 +481,6 @@ function pingOllama() {
     } catch(_) { resolve(false); }
   });
 }
-
 async function warmupOllama() {
   process.stdout.write('  Warming up model… ');
   return new Promise(resolve => {
@@ -516,8 +488,7 @@ async function warmupOllama() {
     const lib = u.protocol === 'https:' ? https : http;
     const body = JSON.stringify({
       model: OLLAMA_MODEL, stream: false, keep_alive: -1,
-      options: { num_predict: 1 },
-      messages: [{ role: 'user', content: 'hi' }]
+      options: { num_predict: 1 }, messages: [{ role: 'user', content: 'hi' }]
     });
     const req = lib.request({
       hostname: u.hostname,
@@ -554,10 +525,9 @@ async function boot() {
     active = (await pingOllama()) ? 'ollama' : 'none';
     console.log(active === 'ollama' ? 'reachable ✓' : 'not found — offline mode');
   }
-
   if (active === 'ollama') await warmupOllama();
 
-  console.log('\n\u{1F1EE}\u{1F1F9}  Impara l\'Italiano');
+  console.log('\n🌍  Dreizunge');
   console.log('='.repeat(44));
   console.log(`  Port    : ${PORT}`);
   console.log(`  Backend : ${active}`);
@@ -575,21 +545,16 @@ async function boot() {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(fs.readFileSync(path.join(__dirname, 'index.html')));
     }
-
     if (M === 'GET' && url.pathname === '/api/info') {
-      return json(res, 200, {
-        backend: active, ollamaModel: OLLAMA_MODEL, claudeModel: CLAUDE_MODEL,
-        canGenerate: active !== 'none'
-      });
+      return json(res, 200, { backend: active, ollamaModel: OLLAMA_MODEL,
+        claudeModel: CLAUDE_MODEL, canGenerate: active !== 'none' });
     }
-
     if (M === 'GET' && url.pathname === '/api/lessons') {
       return json(res, 200, store.lessons.map(l => ({
         topic: l.topic, topicEmoji: l.topicEmoji, lang: l.lang || 'it',
         generatedAt: l.generatedAt, lessonCount: l.lessons?.length || 0
       })));
     }
-
     if (M === 'GET' && url.pathname === '/api/lessons/load') {
       const t = url.searchParams.get('topic');
       if (!t) return json(res, 400, { error: 'Missing topic' });
@@ -597,7 +562,6 @@ async function boot() {
       if (!s) return json(res, 404, { error: 'Not found' });
       return json(res, 200, s);
     }
-
     if (M === 'DELETE' && url.pathname === '/api/lessons/delete') {
       const t = url.searchParams.get('topic');
       if (!t) return json(res, 400, { error: 'Missing topic' });
@@ -605,11 +569,9 @@ async function boot() {
       saveStore(store);
       return json(res, 200, { ok: true });
     }
-
     if (M === 'GET' && url.pathname === '/api/flags') {
       return json(res, 200, getFlags());
     }
-
     if (M === 'POST' && url.pathname === '/api/flags') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
@@ -618,8 +580,7 @@ async function boot() {
       if (!key) return json(res, 400, { error: 'Missing key' });
       const flags = getFlags();
       if (entry === null || entry === undefined) {
-        delete flags[key];
-        console.log(`  Flag removed: ${key}`);
+        delete flags[key]; console.log(`  Flag removed: ${key}`);
       } else {
         flags[key] = entry;
         console.log(`  Flag saved: ${key}${entry.comment?' (with comment)':''}`);
@@ -628,6 +589,49 @@ async function boot() {
       return json(res, 200, { ok: true });
     }
 
+    // ── Job status polling ────────────────────────────────────────────
+    if (M === 'GET' && url.pathname.startsWith('/api/job/')) {
+      const jobId = url.pathname.split('/')[3];
+      const job = jobs.get(jobId);
+      if (!job) return json(res, 404, { error: 'Job not found' });
+      return json(res, 200, { status: job.status, step: job.step,
+        data: job.data, error: job.error });
+    }
+
+    // ── Generate (now async — returns jobId immediately) ─────────────
+    if (M === 'POST' && url.pathname === '/api/generate') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
+      const { topic, lang, forceRegenerate } = body;
+      if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
+      const topicKey = topic.trim().toLowerCase();
+      if (!forceRegenerate) {
+        const cached = findSaved(topic.trim());
+        if (cached) { console.log(`  Cache hit: "${topic}"`); return json(res, 200, { cached: true, data: { ...cached, fromCache: true } }); }
+      }
+      if (active === 'none')
+        return json(res, 503, { error: 'No LLM backend. Set ANTHROPIC_API_KEY or start Ollama, then restart.' });
+      if (generatingTopics.has(topicKey))
+        return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
+      // Start background job
+      const jobId = newJob();
+      generatingTopics.add(topicKey);
+      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) job=${jobId}`);
+      generate(topic.trim(), lang || 'it', active, jobId).then(data => {
+        upsert(data);
+        console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
+        jobDone(jobId, { ...data, fromCache: false });
+      }).catch(e => {
+        console.error('  Generation error:', e.message);
+        jobFail(jobId, e.message);
+      }).finally(() => {
+        generatingTopics.delete(topicKey);
+      });
+      return json(res, 202, { jobId });
+    }
+
+    // ── Repair (now async — returns jobId immediately) ────────────────
     if (M === 'POST' && url.pathname === '/api/repair') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
@@ -639,48 +643,17 @@ async function boot() {
       const topicKey = topic.trim().toLowerCase();
       if (generatingTopics.has(topicKey))
         return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
+      const jobId = newJob();
       generatingTopics.add(topicKey);
-      try {
-        const result = await repairLesson(active, topic.trim(), parseInt(lessonId, 10));
-        return json(res, 200, result);
-      } catch(e) {
+      repairLesson(active, topic.trim(), parseInt(lessonId, 10), jobId).then(result => {
+        jobDone(jobId, result);
+      }).catch(e => {
         console.error('  Repair error:', e.message);
-        return json(res, 500, { error: e.message });
-      } finally {
+        jobFail(jobId, e.message);
+      }).finally(() => {
         generatingTopics.delete(topicKey);
-      }
-    }
-
-    if (M === 'POST' && url.pathname === '/api/generate') {
-      let body;
-      try { body = JSON.parse(await readBody(req)); }
-      catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { topic, lang, forceRegenerate } = body;
-      if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
-      const topicKey = topic.trim().toLowerCase();
-      if (!forceRegenerate) {
-        const cached = findSaved(topic.trim());
-        if (cached) { console.log(`  Cache hit: "${topic}"`); return json(res, 200, { ...cached, fromCache: true }); }
-      }
-      if (active === 'none')
-        return json(res, 503, { error: 'No LLM backend. Set ANTHROPIC_API_KEY or start Ollama, then restart.' });
-      if (generatingTopics.has(topicKey)) {
-        console.log(`  Duplicate request ignored: "${topic}"`);
-        return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
-      }
-      generatingTopics.add(topicKey);
-      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')})`);
-      try {
-        const data = await generate(topic.trim(), lang || 'it', active);
-        upsert(data);
-        console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
-        return json(res, 200, { ...data, fromCache: false });
-      } catch(e) {
-        console.error('  Generation error:', e.message);
-        return json(res, 500, { error: e.message });
-      } finally {
-        generatingTopics.delete(topicKey);
-      }
+      });
+      return json(res, 202, { jobId });
     }
 
     res.writeHead(404); res.end('Not found');
