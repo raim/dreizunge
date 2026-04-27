@@ -24,17 +24,12 @@
             {
               "it": "parcheggio",
               "en": "parking",
-              "pron": "pahr-keh-JEH-io"
+              "pron": "pahr-keh-JEH-oh"
             },
             {
               "it": "campo",
               "en": "field",
               "pron": "KAH-mpoh"
-            },
-            {
-              "it": "gioco",
-              "en": "game",
-              "pron": "JEE-ko"
             },
             {
               "it": "pallavolo",
@@ -44,66 +39,76 @@
             {
               "it": "giocatore",
               "en": "player",
-              "pron": "JEE-oh-kah-tore"
+              "pron": "joh-KAH-tore"
             },
             {
-              "it": "retroflettore",
-              "en": "reflective marker",
-              "pron": "ret-roh-fluh-TOH-re"
+              "it": "tennis",
+              "en": "tennis",
+              "pron": "TEH-nee-es"
+            },
+            {
+              "it": "pista",
+              "en": "track",
+              "pron": "PEE-stah"
             }
           ],
           "sentences": [
             {
-              "it": "Due giocatori giocano a tavolo nel parcheggio.",
-              "en": "Two players play table in parking.",
+              "it": "Due giocatori giocano a tennis sul campo.",
+              "en": "Two players play tennis on the field",
               "words": [
                 "due",
                 "giocatori",
                 "giocano",
-                "tavolo",
+                "tennis",
+                "sul",
+                "campo"
+              ]
+            },
+            {
+              "it": "Un pallone rotto va nel parcheggio.",
+              "en": "A broken ball goes in the parking",
+              "words": [
+                "pallone",
+                "rotto",
+                "va",
                 "parcheggio"
               ]
             },
             {
-              "it": "Un pallone rotolò dal campo al tavolo.",
-              "en": "A ball rolled from field to table.",
+              "it": "Non c'è una pista per il pallavolo qui.",
+              "en": "There is no volleyball track here",
               "words": [
-                "pallone",
-                "rotolò",
-                "campo",
-                "tavolo"
-              ]
-            },
-            {
-              "it": "I giocatori usano retroflettori per la loro partita.",
-              "en": "The players use retroreflectors for their party.",
-              "words": [
-                "giocatori",
-                "usano",
-                "retroflettori",
-                "partita"
-              ]
-            },
-            {
-              "it": "Non confondere il pallavolo con il gioco di tavolo.",
-              "en": "Do not confuse volleyball with game of table.",
-              "words": [
-                "non",
-                "confondere",
+                "c'è",
+                "una",
+                "pista",
+                "per",
                 "pallavolo",
-                "gioco",
-                "tavolo"
+                "qui"
               ]
             },
             {
-              "it": "Il campo è vicino al parcheggio dove giocano i giocatori.",
-              "en": "The field is near parking where players play.",
+              "it": "Il tavolo da ping-pong è vicino al campo.",
+              "en": "The table tennis table is near the field",
               "words": [
-                "campo",
+                "tavolo",
+                "ping-pong",
+                "è",
                 "vicino",
-                "parcheggio",
-                "giocano",
-                "giocatori"
+                "al",
+                "campo"
+              ]
+            },
+            {
+              "it": "Un giocatore di tennis si esercita sul campo.",
+              "en": "A tennis player practices on the field",
+              "words": [
+                "giocatore",
+                "tennis",
+                "si",
+                "esercita",
+                "sul",
+                "campo"
               ]
             }
           ]
@@ -120,14 +125,14 @@
               "pron": "PING-pong"
             },
             {
-              "it": "parchetto",
-              "en": "small park",
-              "pron": "park-ET-to"
-            },
-            {
               "it": "tavolino",
               "en": "small table",
-              "pron": "tah-vo-LEEN-oh"
+              "pron": "tah-vo-LEEN-yo"
+            },
+            {
+              "it": "parchetto",
+              "en": "little park",
+              "pron": "par-KEH-to"
             },
             {
               "it": "giocatore",
@@ -142,17 +147,17 @@
             {
               "it": "tavolone",
               "en": "large table",
-              "pron": "tah-vo-LOH-nay"
-            },
-            {
-              "it": "pallino",
-              "en": "little ball",
-              "pron": "pah-LEEN-no"
+              "pron": "tah-vo-LOH-ne"
             },
             {
               "it": "parcheggio",
               "en": "parking",
-              "pron": "park-eh-JOH"
+              "pron": "par-keh-JYO"
+            },
+            {
+              "it": "campo",
+              "en": "field",
+              "pron": "CAM-poh"
             }
           ],
           "sentences": [
@@ -167,46 +172,46 @@
               ]
             },
             {
-              "it": "Un tavolino per pingue nel parchetto.",
-              "en": "A tavolino for pingue in the parchetto",
-              "words": [
-                "Un",
-                "tavolino",
-                "per",
-                "pingue",
-                "nel",
-                "parchetto."
-              ]
-            },
-            {
-              "it": "La pallina vola tra i due giocatori.",
-              "en": "The pallina flies between the two players",
+              "it": "La pallina vola tra i tavolini.",
+              "en": "The pallina volo tra i tavolini",
               "words": [
                 "pallina",
-                "vola",
+                "volo",
                 "tra",
-                "due",
-                "giocatori"
+                "tavolini"
               ]
             },
             {
-              "it": "Un tavolone per pingue vicino al parcheggio.",
-              "en": "A tavolone for pingue near the parcheggio",
+              "it": "Un campo di pingue nel parchetto.",
+              "en": "A campo di pingue nel parchetto",
               "words": [
-                "tavolone",
+                "campo",
                 "pingue",
-                "vicino",
-                "parcheggio"
-              ]
-            },
-            {
-              "it": "I giocatori giocano pingue sul parchetto.",
-              "en": "The players play pingue on the parchetto",
-              "words": [
-                "giocatori",
-                "giocano",
-                "pingue",
+                "nel",
                 "parchetto"
+              ]
+            },
+            {
+              "it": "Non c'è spazio per il tavolone.",
+              "en": "Non c'e spazio per il tavolone",
+              "words": [
+                "non",
+                "c'e",
+                "spazio",
+                "per",
+                "il",
+                "tavolone"
+              ]
+            },
+            {
+              "it": "Il parcheggio è vicino al tavolino.",
+              "en": "Il parcheggio e vicino al tavolino",
+              "words": [
+                "parcheggio",
+                "e",
+                "vicino",
+                "al",
+                "tavolino"
               ]
             }
           ]
@@ -218,100 +223,101 @@
           "icon": "🏓",
           "vocab": [
             {
-              "it": "pala",
-              "en": "racquet",
-              "pron": "PA-la"
+              "it": "punteggio",
+              "en": "score",
+              "pron": "PUN-te-jjo"
             },
             {
-              "it": "retrospettiva",
-              "en": "back view",
-              "pron": "re-tro-spec-TI-va"
+              "it": "racket",
+              "en": "racket",
+              "pron": "RACK-et"
             },
             {
-              "it": "gioco da tavolo",
-              "en": "board game",
-              "pron": "jo-ko da TAO-bo-lo"
+              "it": "nettoio",
+              "en": "net",
+              "pron": "NET-to-yo"
             },
             {
-              "it": "parcheggio coperto",
-              "en": "covered parking",
-              "pron": "par-kej-jio co-PRET-to"
+              "it": "padella",
+              "en": "bat",
+              "pron": "pa-DELL-a"
             },
             {
-              "it": "pingue",
-              "en": "ping-pong",
-              "pron": "PIN-gue"
+              "it": "doppio",
+              "en": "double",
+              "pron": "DOP-pio"
             },
             {
-              "it": "tavolino da gioco",
-              "en": "game table",
-              "pron": "TA-vol-i-no da jo-ko"
+              "it": "singles",
+              "en": "singles",
+              "pron": "sin-GLIZ"
             },
             {
-              "it": "pallino",
-              "en": "little ball",
-              "pron": "PA-llino"
+              "it": "doppista",
+              "en": "doubles",
+              "pron": "DOP-pi-tza"
             },
             {
-              "it": "pala da pingue",
-              "en": "ping-pong racquet",
-              "pron": "PA-la da PIN-gue"
+              "it": "gioco",
+              "en": "game",
+              "pron": "JOO-co"
             }
           ],
           "sentences": [
             {
-              "it": "Gioco da tavolo con pala",
-              "en": "Board game with racquet",
+              "it": "Stanno giocando a padella in doppio.",
+              "en": "They are playing table tennis in doubles.",
               "words": [
-                "Gioco",
-                "da",
-                "tavolo",
-                "pala"
+                "Stanno",
+                "giocando",
+                "padella",
+                "doppio"
               ]
             },
             {
-              "it": "Parcheggio coperto vicino",
-              "en": "Covered parking nearby",
+              "it": "Il nettoio è vicino al tavolo.",
+              "en": "The net is near the table.",
               "words": [
-                "Parcheggio",
-                "coperto",
-                "vicino"
+                "Il",
+                "nettoio",
+                "vicino",
+                "tavolo"
               ]
             },
             {
-              "it": "Palla piccola per pingue",
-              "en": "Little ball for ping-pong",
+              "it": "Hanno segnato un punteggio importante.",
+              "en": "They scored an important point.",
               "words": [
-                "Palla",
-                "piccola",
-                "per",
-                "pingue"
+                "Hanno",
+                "segnato",
+                "punteggio",
+                "importante"
               ]
             },
             {
-              "it": "Retrospettiva del gioco",
-              "en": "Back view of the game",
+              "it": "Stanno usando rachette per il gioco.",
+              "en": "They are using rackets for the game.",
               "words": [
-                "Retrospettiva",
-                "del",
+                "Stanno",
+                "usando",
+                "rachette",
                 "gioco"
               ]
             },
             {
-              "it": "Tavolino da gioco per pingue",
-              "en": "Game table for ping-pong",
+              "it": "In singles si gioca con una padella.",
+              "en": "In singles you play with one bat.",
               "words": [
-                "Tavolino",
-                "da",
-                "gioco",
-                "per",
-                "pingue"
+                "In",
+                "singles",
+                "gioca",
+                "padella"
               ]
             }
           ]
         }
       ],
-      "generatedAt": "2026-04-26T10:06:20.506Z"
+      "generatedAt": "2026-04-26T14:12:20.214Z"
     },
     {
       "topic": "mountain climbing",
@@ -394,7 +400,16 @@
             {
               "it": "L'ossigeno è importante per la scalata a elevata quota.",
               "en": "oxygen is important for climbing high altitude",
-              "words": []
+              "words": [
+                "oxygen",
+                "is",
+                "important",
+                "for",
+                "climbing",
+                "high",
+                "altitude",
+                "correct"
+              ]
             },
             {
               "it": "Non lasciare pattumiera in montagna.",
@@ -637,7 +652,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-26T01:41:39.391Z"
+      "generatedAt": "2026-04-26T14:29:29.650Z"
     },
     {
       "topic": "music journalism",
@@ -2816,10 +2831,7 @@
                 "giro",
                 "per",
                 "le",
-                "piste",
-                ".",
-                "pista",
-                "giro"
+                "piste"
               ]
             },
             {
@@ -3094,7 +3106,7 @@
           ]
         }
       ],
-      "generatedAt": "2026-04-24T15:08:49.914Z"
+      "generatedAt": "2026-04-26T15:05:18.148Z"
     },
     {
       "topic": "table tennis",
@@ -6326,22 +6338,21 @@
       "flaggedAt": "2026-04-25T15:13:22.465Z",
       "comment": "Oven Spring translates to \"Ofentrieb\" in German"
     },
-    "table_tennis_in_the_park:order:Non_confondere_il_pallavolo_con_il_gioco": {
+    "table_tennis_in_the_park:order:Gioco_da_tavolo_con_pala": {
       "topic": "table tennis in the park",
       "type": "order",
-      "it": "Non confondere il pallavolo con il gioco di tavolo.",
-      "en": "Do not confuse volleyball with game of table.",
-      "correct": "non confondere pallavolo gioco tavolo",
+      "it": "Gioco da tavolo con pala",
+      "en": "Board game with racquet",
+      "correct": "Gioco da tavolo pala",
       "choices": [],
       "words": [
-        "gioco",
-        "pallavolo",
-        "non",
-        "confondere",
-        "tavolo"
+        "pala",
+        "tavolo",
+        "da",
+        "Gioco"
       ],
-      "flaggedAt": "2026-04-26T13:02:32.289Z",
-      "comment": "words missing in italian"
+      "flaggedAt": "2026-04-26T13:13:25.143Z",
+      "comment": "con missing"
     }
   }
 }
