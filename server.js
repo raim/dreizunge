@@ -181,7 +181,11 @@ function callAnthropicRaw(system, userMsg, maxTokens) {
         try {
           const p = JSON.parse(d);
           if (p.error) return reject(new Error('Anthropic: ' + p.error.message));
-          resolve(p.content[0].text);
+          resolve({
+            text: p.content[0].text,
+            promptTokens:     p.usage?.input_tokens  || 0,
+            completionTokens: p.usage?.output_tokens || 0,
+          });
         } catch(e) { reject(new Error('Anthropic parse: ' + e.message)); }
       });
     });
@@ -212,7 +216,11 @@ function callOllamaRaw(system, userMsg, maxTokens) {
           if (p.error) return reject(new Error('Ollama: ' + p.error));
           const text = p.message?.content || p.response || '';
           if (!text) return reject(new Error('Ollama returned empty response'));
-          resolve(text);
+          resolve({
+            text,
+            promptTokens:     p.prompt_eval_count || 0,
+            completionTokens: p.eval_count        || 0,
+          });
         } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0,200))); }
       });
     });
@@ -225,10 +233,15 @@ function callOllamaRaw(system, userMsg, maxTokens) {
   return Promise.race([call, timeout]);
 }
 
-function callLLM(active, system, userMsg, maxTokens) {
+async function callLLM(active, system, userMsg, maxTokens) {
   if (active === 'anthropic') return callAnthropicRaw(system, userMsg, maxTokens);
   if (active === 'ollama')    return callOllamaRaw(system, userMsg, maxTokens);
   throw new Error('No LLM backend configured.');
+}
+// Convenience: call LLM and return only the text (for callers that don't need token stats)
+async function callLLMText(active, system, userMsg, maxTokens) {
+  const r = await callLLM(active, system, userMsg, maxTokens);
+  return r.text;
 }
 
 // ── Retry helper ──────────────────────────────────────────────────────
@@ -256,16 +269,28 @@ function deriveSentenceWords(s) {
   return s;
 }
 
-// ── Generate one lesson (single LLM call) ────────────────────────────
-async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, jobId) {
+// ── Story prompt ─────────────────────────────────────────────────────
+function sysStory(lang) {
+  const L = langName(lang);
+  return `You are a creative writer helping language learners. Write a short, engaging story in English (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations that would be useful for someone learning ${L}. Write plain prose only — no headings, no bullet points, no markdown.`;
+}
+
+// ── Generate one lesson (single LLM call) — returns {lesson, tokens} ─
+async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, story, jobId) {
   jobStep(jobId, `Lesson ${lessonNum}/${totalLessons}: generating…`);
   const prevHint = prevVocab.length
     ? `\nVocabulary already covered in earlier lessons (do NOT repeat these, introduce 8 NEW items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
     : '';
-  const userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${prevHint}\nReturn only the JSON object.`;
+  const storyHint = story
+    ? `\nContext — use vocabulary and themes from this story where natural:\n${story.slice(0, 800)}`
+    : '';
+  const userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}\nReturn only the JSON object.`;
 
   return withRetry(`Lesson ${lessonNum}`, async () => {
-    const raw = await callLLM(active, sysLesson(lang, lessonNum, totalLessons), userMsg, 2048);
+    const t0 = Date.now();
+    const { text: raw, promptTokens, completionTokens } =
+      await callLLM(active, sysLesson(lang, lessonNum, totalLessons), userMsg, 2048);
+    const ms = Date.now() - t0;
     let lesson;
     try { lesson = extractJSON(raw); }
     catch(_) {
@@ -298,37 +323,88 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
       throw new Error(`${tooShort.length} sentences have fewer than 3 words — retrying`);
 
     return {
-      id: lessonNum,
-      title: lesson.title || `Lesson ${lessonNum}`,
-      desc:  lesson.desc  || topic,
-      icon:  lesson.icon  || '📖',
-      vocab: lesson.vocab,
-      sentences: lesson.sentences
+      lesson: {
+        id: lessonNum,
+        title: lesson.title || `Lesson ${lessonNum}`,
+        desc:  lesson.desc  || topic,
+        icon:  lesson.icon  || '📖',
+        vocab: lesson.vocab,
+        sentences: lesson.sentences
+      },
+      tokens: { lessonNum, ms, promptTokens, completionTokens }
     };
   });
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
 async function generate(topic, lang, active, jobId) {
+  const genStart = Date.now();
+  let totalPromptTokens = 0, totalCompletionTokens = 0;
+  const lessonTokenStats = [];
+
   jobStep(jobId, 'Generating topic info…');
   let meta;
   try {
-    const raw = await callLLM(active, SYS_META,
+    const t0 = Date.now();
+    const { text: raw, promptTokens, completionTokens } = await callLLM(active, SYS_META,
       `Topic: "${topic}". Return the JSON with topicEmoji and 3 lessonThemes.`, 512);
     meta = extractJSON(raw);
+    totalPromptTokens     += promptTokens;
+    totalCompletionTokens += completionTokens;
+    console.log(`    Meta: ${Date.now()-t0}ms, ${promptTokens}+${completionTokens} tokens`);
   } catch(e) {
     meta = { topic, topicEmoji: '📚', lessonThemes: ['Basics', 'Phrases', 'Advanced'] };
     console.warn('  Meta failed, using fallback:', e.message);
   }
+
+  // ── Story ─────────────────────────────────────────────────────────
+  jobStep(jobId, 'Generating story…');
+  let story = null;
+  try {
+    const t0 = Date.now();
+    const { text, promptTokens, completionTokens } = await callLLM(active, sysStory(lang),
+      `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`, 800);
+    story = text.trim();
+    totalPromptTokens     += promptTokens;
+    totalCompletionTokens += completionTokens;
+    console.log(`    Story: ${Date.now()-t0}ms, ${promptTokens}+${completionTokens} tokens, ${story.length} chars`);
+  } catch(e) {
+    console.warn('  Story failed, continuing without it:', e.message);
+  }
+
   const TOTAL = 3;
   const lessons = [];
   let prevVocab = [];
   for (let i = 1; i <= TOTAL; i++) {
-    const lesson = await generateOneLesson(active, lang, topic, i, TOTAL, prevVocab, jobId);
+    const { lesson, tokens } = await generateOneLesson(active, lang, topic, i, TOTAL, prevVocab, story, jobId);
     lessons.push(lesson);
     prevVocab = prevVocab.concat(lesson.vocab);
+    totalPromptTokens     += tokens.promptTokens;
+    totalCompletionTokens += tokens.completionTokens;
+    lessonTokenStats.push(tokens);
+    console.log(`    Lesson ${i}: ${tokens.ms}ms, ${tokens.promptTokens}+${tokens.completionTokens} tokens`);
   }
-  return { topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚', lang, lessons };
+
+  const totalMs = Date.now() - genStart;
+  const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : active === 'ollama' ? OLLAMA_MODEL : active;
+  const generationStats = {
+    totalMs,
+    backend: active,
+    model: modelLabel,
+    totalPromptTokens,
+    totalCompletionTokens,
+    lessons: lessonTokenStats,
+  };
+  console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
+
+  return {
+    topic: meta.topic || topic,
+    topicEmoji: meta.topicEmoji || '📚',
+    lang,
+    story,
+    lessons,
+    generationStats,
+  };
 }
 
 // ── Repair flagged exercises ──────────────────────────────────────────
@@ -385,7 +461,7 @@ async function repairLesson(active, topic, lessonId, jobId) {
     const userMsg = `Language: ${langName(lang)}. Topic: "${topic}".${commentNote}\nFix these ${batch.exercises.length} faulty exercises (batch ${b+1}/${batches.length}):\n${JSON.stringify(batch.exercises, null, 2)}\nReturn only the corrected JSON array.`;
     console.log(`    Batch ${b+1}/${batches.length}: ${batch.exercises.length} exercise(s)…`);
     const arr = await withRetry(`Repair batch ${b+1}`, async () => {
-      const raw = await callLLM(active, SYS_REPAIR, userMsg, 2048);
+      const raw = await callLLMText(active, SYS_REPAIR, userMsg, 2048);
       let a;
       try { a = extractArray(raw); } catch(_) { a = salvageArray(raw); }
       if (!Array.isArray(a) || a.length === 0) throw new Error('No repaired exercises returned');

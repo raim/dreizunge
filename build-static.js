@@ -191,6 +191,14 @@ const staticOverrides = [
   'async function doGenerate()         {}',
   'async function repairLesson()       {}',
   'async function repairFromLesson()   {}',
+  '',
+  '// Story toggle (same logic as live version)',
+  'function toggleStory(){',
+  '  const body=document.getElementById(\'story-body\');',
+  '  const arrow=document.getElementById(\'story-arrow\');',
+  '  const open=body.classList.toggle(\'open\');',
+  '  arrow.classList.toggle(\'open\',open);',
+  '}',
 ].join('\n');
 
 // ── Assemble ──────────────────────────────────────────────────────────

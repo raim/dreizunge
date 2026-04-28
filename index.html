@@ -234,6 +234,26 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .repairing-note{font-size:12px;color:#c26000;font-weight:700;margin-top:6px;text-align:center}
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+
+/* ══ STORY ═══════════════════════════════════════════════════════════ */
+.story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 18px;overflow:hidden;box-shadow:var(--shadow-card)}
+.story-toggle{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none;width:100%;background:none;border:none;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
+.story-toggle:hover{background:var(--gray-light)}
+.story-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
+.story-arrow.open{transform:rotate(180deg)}
+.story-body{padding:0 16px 14px;font-size:14px;line-height:1.7;color:#444;display:none}
+.story-body.open{display:block}
+.story-body p{margin-bottom:10px}
+.story-body p:last-child{margin-bottom:0}
+
+/* ══ GEN STATS ═══════════════════════════════════════════════════════ */
+.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 16px;opacity:.8}
+
+/* ══ LIB FILTER ══════════════════════════════════════════════════════ */
+.lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,color .1s}
+.lib-filter-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
+.lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 </style>
 </head>
 <body>
@@ -335,6 +355,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
     <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
+  <div class="story-section" id="story-section" style="display:none">
+    <button class="story-toggle" onclick="toggleStory()" id="story-toggle-btn">
+      <span>📖 Read the story</span>
+      <span class="story-arrow" id="story-arrow">▼</span>
+    </button>
+    <div class="story-body" id="story-body"></div>
+  </div>
+  <div class="gen-stats" id="gen-stats"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
@@ -591,6 +619,13 @@ async function repairAll(){
 
 function goHome(){ buildPath(); show('home'); }
 
+function toggleStory(){
+  const body=document.getElementById('story-body');
+  const arrow=document.getElementById('story-arrow');
+  const open=body.classList.toggle('open');
+  arrow.classList.toggle('open',open);
+}
+
 // ── init ──
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
@@ -617,13 +652,32 @@ function renderPill(){
 }
 
 // ── library ──
+function setLibFilter(lang){ APP.libFilter=lang; loadSavedList(); }
+
 async function loadSavedList(){
   let saved=[];
   try{ const r=await fetch('/api/lessons'); saved=await r.json(); }catch(e){}
-  document.getElementById('lib-cnt').textContent=saved.length+' topic'+(saved.length!==1?'s':'');
+
+  // Language filter buttons (only when >1 language present)
+  const langs=[...new Set(saved.map(s=>s.lang||'it'))].sort();
+  const filterEl=document.getElementById('lib-filter');
+  if(filterEl && langs.length>1){
+    filterEl.innerHTML=['all',...langs].map(l=>{
+      const L=LANGS[l];
+      const lbl=l==='all'?'🌐 All':(L?L.flag+' '+L.name:l.toUpperCase());
+      return `<button class="lib-filter-btn${APP.libFilter===l?' active':''}" onclick="setLibFilter('${l}')">${lbl}</button>`;
+    }).join('');
+  } else if(filterEl){ filterEl.innerHTML=''; if(APP.libFilter!=='all') APP.libFilter='all'; }
+
+  const filtered=APP.libFilter==='all'?saved:saved.filter(s=>(s.lang||'it')===APP.libFilter);
+  document.getElementById('lib-cnt').textContent=
+    filtered.length+' of '+saved.length+' topic'+(saved.length!==1?'s':'');
   const list=document.getElementById('saved-list');
-  if(!saved.length){ list.innerHTML='<div class="lib-empty">No saved lessons yet — generate one above!</div>'; return; }
-  list.innerHTML=saved.map(s=>{
+  if(!filtered.length){
+    list.innerHTML='<div class="lib-empty">'+(saved.length?'No lessons in this language.'
+      :'No saved lessons yet — generate one above!')+'</div>'; return;
+  }
+  list.innerHTML=filtered.map(s=>{
     const date=s.generatedAt?new Date(s.generatedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
     const t=encodeURIComponent(s.topic);
     const sL=LANGS[s.lang||'it']||LANGS.it;
@@ -722,6 +776,27 @@ function buildPath(){
   document.getElementById('topic-name-big').textContent=d.topic;
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
+
+  // Story section
+  const storySec=document.getElementById('story-section');
+  const storyBody=document.getElementById('story-body');
+  if(d.story && storySec && storyBody){
+    storySec.style.display='';
+    // Collapse on each load; split into paragraphs
+    storyBody.classList.remove('open');
+    const arrow=document.getElementById('story-arrow');
+    if(arrow) arrow.classList.remove('open');
+    storyBody.innerHTML=d.story.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  } else if(storySec){ storySec.style.display='none'; }
+
+  // Generation stats
+  const statEl=document.getElementById('gen-stats');
+  if(statEl && d.generationStats){
+    const gs=d.generationStats;
+    const secs=(gs.totalMs/1000).toFixed(1);
+    const tokens=((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString();
+    statEl.textContent=`Generated in ${secs}s · ${gs.model} · ${tokens} tokens`;
+  } else if(statEl){ statEl.textContent=''; }
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
   d.lessons.forEach((L,i)=>{
