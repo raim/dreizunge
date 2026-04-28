@@ -155,8 +155,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}
 .tok:hover{border-color:var(--blue)}
 .tok.used{opacity:.15;pointer-events:none}
-.tok-distractor{border-color:#ffcc00;background:#fffbe6;color:#7a6200}
-.tok-distractor:hover{border-color:#ff9600}
+.tok-distractor{border-color:var(--gray-mid);background:var(--white);color:var(--text)}
+.tok-distractor:hover{border-color:var(--blue)}
 .type-input{width:100%;padding:12px 14px;font-size:16px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);outline:none;margin-top:8px}
 .type-input:focus{border-color:var(--blue)}
 .type-input.ok{border-color:var(--green);background:var(--green-light)}
@@ -236,23 +236,36 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
-.story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 18px;overflow:hidden;box-shadow:var(--shadow-card)}
-.story-toggle{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none;width:100%;background:none;border:none;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
-.story-toggle:hover{background:var(--gray-light)}
-.story-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
+.story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 16px;overflow:hidden;box-shadow:var(--shadow-card)}
+.story-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
+.story-hdr:hover{background:var(--gray-light)}
+.story-hdr-btns{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.story-icon-btn{background:none;border:2px solid var(--gray-mid);border-radius:8px;padding:3px 8px;font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);line-height:1.4;transition:border-color .1s}
+.story-icon-btn:hover{border-color:var(--blue)}
+.story-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s}
 .story-arrow.open{transform:rotate(180deg)}
-.story-body{padding:0 16px 14px;font-size:14px;line-height:1.7;color:#444;display:none}
+.story-body{padding:0 16px 14px;font-size:14px;line-height:1.75;color:#444;display:none}
 .story-body.open{display:block}
 .story-body p{margin-bottom:10px}
 .story-body p:last-child{margin-bottom:0}
+.story-translation{margin-top:12px;padding-top:12px;border-top:2px solid var(--gray-mid);color:#555;font-style:italic}
+.story-repair-wrap{padding:0 14px 14px;display:none}
+.story-repair-wrap.open{display:block}
+.story-repair-row{display:flex;gap:7px;align-items:flex-start}
+.story-repair-input{flex:1;padding:9px 11px;font-size:13px;font-weight:600;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--gray-light);outline:none;resize:vertical;min-height:38px}
+.story-repair-input:focus{border-color:var(--blue);background:var(--white)}
+.story-repair-input::placeholder{color:var(--gray);font-weight:400}
+.story-repair-btn{background:var(--blue);color:var(--white);border:none;border-radius:var(--radius);padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;flex-shrink:0}
+.story-repair-btn:hover{background:var(--blue-dark)}
+.story-repair-btn:disabled{opacity:.5;cursor:not-allowed}
+.story-repair-status{font-size:12px;color:var(--gray-dark);font-weight:600;margin-top:5px}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
-.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 16px;opacity:.8}
+.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8}
 
 /* ══ LIB FILTER ══════════════════════════════════════════════════════ */
-.lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,color .1s}
-.lib-filter-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
+.lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
+.lib-filter-btn:hover{border-color:var(--blue)}
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 </style>
 </head>
@@ -305,9 +318,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </div>
     </div>
     <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
-    <input class="topic-input" id="topic-input" type="text"
-      placeholder="e.g. cooking, architecture, medicine…" maxlength="80"
-      onkeydown="if(event.key==='Enter')doGenerate()">
+    <textarea class="topic-input" id="topic-input" rows="2"
+      placeholder="e.g. cooking, architecture, medicine… add details for a richer story"
+      maxlength="400" oninput="autoResizeTopic(this)"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
@@ -355,13 +369,29 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
     <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
+
+  <!-- Story section -->
   <div class="story-section" id="story-section" style="display:none">
-    <button class="story-toggle" onclick="toggleStory()" id="story-toggle-btn">
+    <button class="story-hdr" onclick="toggleStory()">
       <span>📖 Read the story</span>
+      <div class="story-hdr-btns" onclick="event.stopPropagation()">
+        <button class="story-icon-btn" id="story-speak-btn" onclick="speakStory()" title="Read aloud">🔊</button>
+        <button class="story-icon-btn" id="story-translate-btn" onclick="toggleStoryTranslation()" title="Show translation">🌐</button>
+        <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
+      </div>
       <span class="story-arrow" id="story-arrow">▼</span>
     </button>
     <div class="story-body" id="story-body"></div>
+    <div class="story-repair-wrap" id="story-repair-wrap">
+      <div class="story-repair-row">
+        <textarea class="story-repair-input" id="story-repair-input" rows="2"
+          placeholder="Describe what to change, e.g. 'make it funnier' or 'set it in Rome'…"></textarea>
+        <button class="story-repair-btn" id="story-repair-btn" onclick="doRepairStory()">Rewrite</button>
+      </div>
+      <div class="story-repair-status" id="story-repair-status"></div>
+    </div>
   </div>
+
   <div class="gen-stats" id="gen-stats"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
@@ -619,11 +649,112 @@ async function repairAll(){
 
 function goHome(){ buildPath(); show('home'); }
 
+function autoResizeTopic(el){
+  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
+}
+
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
   const open=body.classList.toggle('open');
   arrow.classList.toggle('open',open);
+}
+
+function toggleStoryRepair(){
+  const wrap=document.getElementById('story-repair-wrap');
+  if(wrap) wrap.classList.toggle('open');
+}
+
+function renderStoryText(d){
+  const body=document.getElementById('story-body'); if(!body) return;
+  const story=d.story||'';
+  const paras=story.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  let html=`<div id="story-orig">${paras}</div>`;
+  if(d.storyTranslation){
+    const tparas=d.storyTranslation.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    html+=`<div class="story-translation" id="story-trans">${tparas}</div>`;
+  } else {
+    html+=`<div class="story-translation" id="story-trans" style="display:none"></div>`;
+  }
+  body.innerHTML=html;
+}
+
+function speakStory(){
+  const d=APP.lessonData; if(!d||!d.story) return;
+  speak(d.story);
+}
+
+async function toggleStoryTranslation(){
+  const d=APP.lessonData; if(!d||!d.story) return;
+  const transDiv=document.getElementById('story-trans');
+  const btn=document.getElementById('story-translate-btn');
+  // If already translated and showing, just toggle visibility
+  if(d.storyTranslation){
+    if(!transDiv) return;
+    const nowHidden=transDiv.style.display==='none';
+    transDiv.style.display=nowHidden?'':'none';
+    btn.style.opacity=nowHidden?'1':'0.5';
+    return;
+  }
+  // Need to fetch translation
+  btn.textContent='⏳'; btn.disabled=true;
+  // Ensure story body is open
+  const body=document.getElementById('story-body');
+  if(!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
+  try{
+    const r=await fetch('/api/translate-story',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic})});
+    const resp=await r.json();
+    if(!r.ok) throw new Error(resp.error||'Translate failed');
+    // Poll job
+    const result=await pollJob(resp.jobId, step=>{ btn.textContent='⏳'; });
+    d.storyTranslation=result.translation;
+    renderStoryText(d);
+  }catch(e){
+    alert('Translation failed: '+e.message);
+  }finally{
+    btn.textContent='🌐'; btn.disabled=false;
+  }
+}
+
+async function doRepairStory(){
+  const d=APP.lessonData; if(!d) return;
+  const instruction=document.getElementById('story-repair-input')?.value?.trim();
+  if(!instruction){ document.getElementById('story-repair-input').focus(); return; }
+  const btn=document.getElementById('story-repair-btn');
+  const status=document.getElementById('story-repair-status');
+  btn.disabled=true; btn.textContent='⏳';
+  if(status) status.textContent='Rewriting story…';
+  try{
+    const r=await fetch('/api/repair-story',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic,instruction})});
+    const resp=await r.json();
+    if(!r.ok) throw new Error(resp.error||'Repair failed');
+    await pollJob(resp.jobId, step=>{ if(status) status.textContent=step; });
+    // Reload lesson data from server
+    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
+    if(lr.ok){
+      const fresh=await lr.json();
+      APP.lessonData=fresh;
+    }
+    // Open story to show result
+    const body=document.getElementById('story-body');
+    if(body && !body.classList.contains('open')){
+      body.classList.add('open'); document.getElementById('story-arrow').classList.add('open');
+    }
+    renderStoryText(APP.lessonData);
+    document.getElementById('story-repair-input').value='';
+    if(status) status.textContent='Story updated!';
+    setTimeout(()=>{ if(status) status.textContent=''; },3000);
+    // Close repair panel
+    const wrap=document.getElementById('story-repair-wrap');
+    if(wrap) wrap.classList.remove('open');
+  }catch(e){
+    alert('Story repair failed: '+e.message);
+    if(status) status.textContent='';
+  }finally{
+    btn.disabled=false; btn.textContent='Rewrite';
+  }
 }
 
 // ── init ──
@@ -663,8 +794,7 @@ async function loadSavedList(){
   const filterEl=document.getElementById('lib-filter');
   if(filterEl && langs.length>1){
     filterEl.innerHTML=['all',...langs].map(l=>{
-      const L=LANGS[l];
-      const lbl=l==='all'?'🌐 All':(L?L.flag+' '+L.name:l.toUpperCase());
+      const L=LANGS[l]; const lbl=l==='all'?'🌐 All':(L?L.flag+' '+L.name:l.toUpperCase());
       return `<button class="lib-filter-btn${APP.libFilter===l?' active':''}" onclick="setLibFilter('${l}')">${lbl}</button>`;
     }).join('');
   } else if(filterEl){ filterEl.innerHTML=''; if(APP.libFilter!=='all') APP.libFilter='all'; }
@@ -674,8 +804,8 @@ async function loadSavedList(){
     filtered.length+' of '+saved.length+' topic'+(saved.length!==1?'s':'');
   const list=document.getElementById('saved-list');
   if(!filtered.length){
-    list.innerHTML='<div class="lib-empty">'+(saved.length?'No lessons in this language.'
-      :'No saved lessons yet — generate one above!')+'</div>'; return;
+    list.innerHTML='<div class="lib-empty">'+(saved.length?'No lessons in this language.':'No saved lessons yet — generate one above!')+'</div>';
+    return;
   }
   list.innerHTML=filtered.map(s=>{
     const date=s.generatedAt?new Date(s.generatedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
@@ -782,14 +912,18 @@ function buildPath(){
   const storyBody=document.getElementById('story-body');
   if(d.story && storySec && storyBody){
     storySec.style.display='';
-    // Collapse on each load; split into paragraphs
     storyBody.classList.remove('open');
     const arrow=document.getElementById('story-arrow');
     if(arrow) arrow.classList.remove('open');
-    storyBody.innerHTML=d.story.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    renderStoryText(d);
+    // Show/hide repair button based on canGenerate
+    const repToggle=document.getElementById('story-repair-toggle-btn');
+    if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
+    const transBtn=document.getElementById('story-translate-btn');
+    if(transBtn) transBtn.style.display=APP.info.canGenerate?'':'none';
   } else if(storySec){ storySec.style.display='none'; }
 
-  // Generation stats
+  // Gen stats
   const statEl=document.getElementById('gen-stats');
   if(statEl && d.generationStats){
     const gs=d.generationStats;
@@ -797,6 +931,7 @@ function buildPath(){
     const tokens=((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString();
     statEl.textContent=`Generated in ${secs}s · ${gs.model} · ${tokens} tokens`;
   } else if(statEl){ statEl.textContent=''; }
+
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
   d.lessons.forEach((L,i)=>{

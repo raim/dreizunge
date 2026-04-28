@@ -26,8 +26,7 @@ function saveStore(s) {
   try { fs.writeFileSync(STORAGE_FILE, JSON.stringify(s, null, 2), 'utf8'); }
   catch(e) {
     const hint = e.code === 'EACCES'
-      ? ' (permission denied — run: chmod u+w ' + STORAGE_FILE + ')'
-      : '';
+      ? ' — fix with: chmod u+w ' + STORAGE_FILE : '';
     console.error('Could not write lessons.json:', e.message + hint);
   }
 }
@@ -54,34 +53,32 @@ function flagsForTopic(topic) {
 }
 
 // ── Job store — background tasks with progress ────────────────────────
-const jobs = new Map(); // jobId -> { status, step, data, error, createdAt }
+const jobs = new Map(); // jobId -> { status, step, data, error, createdAt, _timer }
 function newJob() {
   const id = crypto.randomBytes(8).toString('hex');
   jobs.set(id, { status: 'running', step: 'Starting…', data: null, error: null,
-                 createdAt: Date.now(), _cleanupTimer: null });
+                 createdAt: Date.now(), _timer: null });
   return id;
 }
-function _scheduleJobCleanup(id, delayMs) {
+function _scheduleCleanup(id, ms) {
   const j = jobs.get(id); if (!j) return;
-  if (j._cleanupTimer) clearTimeout(j._cleanupTimer);
-  j._cleanupTimer = setTimeout(() => jobs.delete(id), delayMs);
+  if (j._timer) clearTimeout(j._timer);
+  j._timer = setTimeout(() => jobs.delete(id), ms);
 }
 function jobStep(id, step) {
   const j = jobs.get(id); if (!j) return;
   j.step = step; console.log(' ', step);
-  // Keep running jobs alive — reset 30-min watchdog on every step update
-  _scheduleJobCleanup(id, 30 * 60 * 1000);
+  _scheduleCleanup(id, 30 * 60 * 1000); // reset 30-min watchdog on each step
 }
 function jobDone(id, data) {
   const j = jobs.get(id); if (!j) return;
   j.status = 'done'; j.data = data; j.step = 'Complete';
-  // Keep result available for 5 minutes after completion so browser can poll it
-  _scheduleJobCleanup(id, 5 * 60 * 1000);
+  _scheduleCleanup(id, 5 * 60 * 1000); // keep result 5 min for browser to collect
 }
 function jobFail(id, err) {
   const j = jobs.get(id); if (!j) return;
   j.status = 'error'; j.error = err; j.step = 'Failed';
-  _scheduleJobCleanup(id, 5 * 60 * 1000);
+  _scheduleCleanup(id, 5 * 60 * 1000);
 }
 
 // ── Generation lock ───────────────────────────────────────────────────
@@ -123,7 +120,8 @@ Rules:
 - vocab: exactly 8 items, all unique ${L} words, topic-relevant, difficulty: ${diff}
 - sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
-- difficulty: ${diff}`;
+- difficulty: ${diff}
+- CRITICAL: every single "it" field MUST be in ${L} ONLY — never English, never any other language`;
 }
 
 const SYS_REPAIR = `You are a language exercise repairer for a Duolingo-style app.
@@ -255,7 +253,6 @@ async function callLLM(active, system, userMsg, maxTokens) {
   if (active === 'ollama')    return callOllamaRaw(system, userMsg, maxTokens);
   throw new Error('No LLM backend configured.');
 }
-// Convenience: call LLM and return only the text (for repair, which doesn't need token stats)
 async function callLLMText(active, system, userMsg, maxTokens) {
   const r = await callLLM(active, system, userMsg, maxTokens);
   return r.text;
@@ -289,7 +286,7 @@ function deriveSentenceWords(s) {
 // ── Story prompt ─────────────────────────────────────────────────────
 function sysStory(lang) {
   const L = langName(lang);
-  return `You are a creative writer helping language learners. Write a short, engaging story in English (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations that would be useful for someone learning ${L}. Write plain prose only — no headings, no bullet points, no markdown.`;
+  return `You are a creative writer helping language learners. Write a short, engaging story in English (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Write plain prose only — no headings, no bullet points, no markdown.`;
 }
 
 // ── Generate one lesson (single LLM call) — returns {lesson, tokens} ─
@@ -366,24 +363,21 @@ async function generate(topic, lang, active, jobId) {
     const { text: raw, promptTokens, completionTokens } = await callLLM(active, SYS_META,
       `Topic: "${topic}". Return the JSON with topicEmoji and 3 lessonThemes.`, 512);
     meta = extractJSON(raw);
-    totalPromptTokens     += promptTokens;
-    totalCompletionTokens += completionTokens;
+    totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
     console.log(`    Meta: ${Date.now()-t0}ms, ${promptTokens}+${completionTokens} tokens`);
   } catch(e) {
     meta = { topic, topicEmoji: '📚', lessonThemes: ['Basics', 'Phrases', 'Advanced'] };
     console.warn('  Meta failed, using fallback:', e.message);
   }
 
-  // ── Story ─────────────────────────────────────────────────────────
   jobStep(jobId, 'Generating story…');
   let story = null;
   try {
     const t0 = Date.now();
     const { text, promptTokens, completionTokens } = await callLLM(active, sysStory(lang),
-      `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`, 800);
+      `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`, 900);
     story = text.trim();
-    totalPromptTokens     += promptTokens;
-    totalCompletionTokens += completionTokens;
+    totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
     console.log(`    Story: ${Date.now()-t0}ms, ${promptTokens}+${completionTokens} tokens, ${story.length} chars`);
   } catch(e) {
     console.warn('  Story failed, continuing without it:', e.message);
@@ -396,32 +390,19 @@ async function generate(topic, lang, active, jobId) {
     const { lesson, tokens } = await generateOneLesson(active, lang, topic, i, TOTAL, prevVocab, story, jobId);
     lessons.push(lesson);
     prevVocab = prevVocab.concat(lesson.vocab);
-    totalPromptTokens     += tokens.promptTokens;
-    totalCompletionTokens += tokens.completionTokens;
+    totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
     lessonTokenStats.push(tokens);
     console.log(`    Lesson ${i}: ${tokens.ms}ms, ${tokens.promptTokens}+${tokens.completionTokens} tokens`);
   }
 
   const totalMs = Date.now() - genStart;
-  const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : active === 'ollama' ? OLLAMA_MODEL : active;
-  const generationStats = {
-    totalMs,
-    backend: active,
-    model: modelLabel,
-    totalPromptTokens,
-    totalCompletionTokens,
-    lessons: lessonTokenStats,
-  };
+  const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : OLLAMA_MODEL;
+  const generationStats = { totalMs, backend: active, model: modelLabel,
+    totalPromptTokens, totalCompletionTokens, lessons: lessonTokenStats };
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
 
-  return {
-    topic: meta.topic || topic,
-    topicEmoji: meta.topicEmoji || '📚',
-    lang,
-    story,
-    lessons,
-    generationStats,
-  };
+  return { topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
+           lang, story, lessons, generationStats };
 }
 
 // ── Repair flagged exercises ──────────────────────────────────────────
@@ -430,6 +411,8 @@ async function repairLesson(active, topic, lessonId, jobId) {
   if (!saved) throw new Error(`Topic not found: ${topic}`);
   const lesson = saved.lessons.find(l => l.id === lessonId);
   if (!lesson) throw new Error(`Lesson ${lessonId} not found`);
+  // Deep-clone lesson so in-memory store is not mutated if we reject
+  lesson = JSON.parse(JSON.stringify(lesson));
   const origVocabCount    = lesson.vocab.length;
   const origSentenceCount = lesson.sentences.length;
   const allTopicFlags = flagsForTopic(topic);
@@ -690,6 +673,74 @@ async function boot() {
       }).finally(() => {
         generatingTopics.delete(topicKey);
       });
+      return json(res, 202, { jobId });
+    }
+
+    // ── Repair / rewrite story ───────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/repair-story') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topic, instruction } = body;
+      if (!topic)       return json(res, 400, { error: 'Missing topic' });
+      if (!instruction) return json(res, 400, { error: 'Missing instruction' });
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
+      const saved = findSaved(topic);
+      if (!saved) return json(res, 404, { error: 'Topic not found' });
+      const jobId = newJob();
+      console.log(`  Rewriting story for "${topic}" job=${jobId}`);
+      (async () => {
+        try {
+          jobStep(jobId, 'Rewriting story…');
+          const lang = saved.lang || 'it';
+          const sys = sysStory(lang);
+          const userMsg = [
+            `Topic: "${topic}".`,
+            saved.story ? `Current story:\n${saved.story}\n\nUser instruction: ${instruction}` : `Write a new story. Instruction: ${instruction}`,
+            'Plain prose, no headings.'
+          ].join('\n');
+          const { text } = await callLLM(active, sys, userMsg, 900);
+          saved.story = text.trim();
+          delete saved.storyTranslation; // invalidate cached translation
+          upsert(saved);
+          jobDone(jobId, { story: saved.story });
+          console.log(`  Story rewritten for "${topic}"`);
+        } catch(e) {
+          console.error('  Story repair error:', e.message);
+          jobFail(jobId, e.message);
+        }
+      })();
+      return json(res, 202, { jobId });
+    }
+
+    // ── Translate story ───────────────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/translate-story') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topic } = body;
+      if (!topic) return json(res, 400, { error: 'Missing topic' });
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
+      const saved = findSaved(topic);
+      if (!saved || !saved.story) return json(res, 404, { error: 'Story not found' });
+      if (saved.storyTranslation) return json(res, 200, { translation: saved.storyTranslation });
+      const jobId = newJob();
+      console.log(`  Translating story for "${topic}" job=${jobId}`);
+      const lang = saved.lang || 'it';
+      (async () => {
+        try {
+          jobStep(jobId, 'Translating story…');
+          const sys = `You are a translator. Translate the following English text to ${langName(lang)}. Keep the same paragraph structure. Return only the translated text, nothing else.`;
+          const { text } = await callLLM(active, sys, saved.story, 1200);
+          saved.storyTranslation = text.trim();
+          upsert(saved);
+          jobDone(jobId, { translation: saved.storyTranslation });
+          console.log(`  Story translated for "${topic}"`);
+        } catch(e) {
+          console.error('  Translate error:', e.message);
+          jobFail(jobId, e.message);
+        }
+      })();
       return json(res, 202, { jobId });
     }
 
