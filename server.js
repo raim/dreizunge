@@ -24,7 +24,12 @@ function loadStore() {
 }
 function saveStore(s) {
   try { fs.writeFileSync(STORAGE_FILE, JSON.stringify(s, null, 2), 'utf8'); }
-  catch(e) { console.warn('Could not write lessons.json:', e.message); }
+  catch(e) {
+    const hint = e.code === 'EACCES'
+      ? ' (permission denied — run: chmod u+w ' + STORAGE_FILE + ')'
+      : '';
+    console.error('Could not write lessons.json:', e.message + hint);
+  }
 }
 let store = loadStore();
 function findSaved(topic) {
@@ -52,19 +57,31 @@ function flagsForTopic(topic) {
 const jobs = new Map(); // jobId -> { status, step, data, error, createdAt }
 function newJob() {
   const id = crypto.randomBytes(8).toString('hex');
-  jobs.set(id, { status: 'running', step: 'Starting…', data: null, error: null, createdAt: Date.now() });
-  // Clean up old jobs after 10 minutes
-  setTimeout(() => jobs.delete(id), 10 * 60 * 1000);
+  jobs.set(id, { status: 'running', step: 'Starting…', data: null, error: null,
+                 createdAt: Date.now(), _cleanupTimer: null });
   return id;
 }
+function _scheduleJobCleanup(id, delayMs) {
+  const j = jobs.get(id); if (!j) return;
+  if (j._cleanupTimer) clearTimeout(j._cleanupTimer);
+  j._cleanupTimer = setTimeout(() => jobs.delete(id), delayMs);
+}
 function jobStep(id, step) {
-  const j = jobs.get(id); if (j) { j.step = step; console.log(' ', step); }
+  const j = jobs.get(id); if (!j) return;
+  j.step = step; console.log(' ', step);
+  // Keep running jobs alive — reset 30-min watchdog on every step update
+  _scheduleJobCleanup(id, 30 * 60 * 1000);
 }
 function jobDone(id, data) {
-  const j = jobs.get(id); if (j) { j.status = 'done'; j.data = data; j.step = 'Complete'; }
+  const j = jobs.get(id); if (!j) return;
+  j.status = 'done'; j.data = data; j.step = 'Complete';
+  // Keep result available for 5 minutes after completion so browser can poll it
+  _scheduleJobCleanup(id, 5 * 60 * 1000);
 }
 function jobFail(id, err) {
-  const j = jobs.get(id); if (j) { j.status = 'error'; j.error = err; j.step = 'Failed'; }
+  const j = jobs.get(id); if (!j) return;
+  j.status = 'error'; j.error = err; j.step = 'Failed';
+  _scheduleJobCleanup(id, 5 * 60 * 1000);
 }
 
 // ── Generation lock ───────────────────────────────────────────────────
@@ -238,7 +255,7 @@ async function callLLM(active, system, userMsg, maxTokens) {
   if (active === 'ollama')    return callOllamaRaw(system, userMsg, maxTokens);
   throw new Error('No LLM backend configured.');
 }
-// Convenience: call LLM and return only the text (for callers that don't need token stats)
+// Convenience: call LLM and return only the text (for repair, which doesn't need token stats)
 async function callLLMText(active, system, userMsg, maxTokens) {
   const r = await callLLM(active, system, userMsg, maxTokens);
   return r.text;
