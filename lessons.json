@@ -1,6 +1,418 @@
 {
   "lessons": [
     {
+      "topic": "meeting women",
+      "topicEmoji": "♀️",
+      "lang": "de",
+      "story": "In the heart of a bustling Berlin café, where the aroma of freshly brewed coffee mingled with the hum of conversations, Clara found herself sitting alone at a small table by the window. The city was alive with the sounds of German spoken in various accents, and Clara, a young woman from a small town, felt a bit out of place. She had come to Berlin to study and to explore, hoping to meet new people and perhaps find someone who shared her love for literature and art.\n\nAs she sipped her coffee, a woman approached her table. She was tall and elegant, with a warm smile that seemed to light up the room. Her name was Anna, and she was a local artist who often frequented this café. Clara felt a flutter in her chest as Anna sat down, her eyes meeting Clara's with a friendly curiosity.\n\n\"Hello there,\" Anna said, her voice smooth and inviting. \"I couldn't help but notice you sitting here all alone. Do you often come to this café?\"\n\nClara nodded, feeling a bit nervous but also intrigued. \"Yes, I do. I love the atmosphere here. It's quiet enough to read, but lively enough to meet people.\"\n\nAnna leaned in slightly, her eyes sparkling. \"Well, I'm glad you found me. I'm Anna. Maybe we can share a table and some stories sometime?\"\n\nClara smiled, feeling a warmth spread through her. \"That would be wonderful. I'm Clara. I study literature, and I'm always looking for new perspectives.\"\n\nAs they chatted, Anna shared stories about her art and the vibrant cultural scene in Berlin. Clara found herself drawn to Anna's passion and the way she spoke about her work. They talked about books, music, and the city, finding common ground in their love for the arts.\n\nBy the time the café began to empty, Clara felt a sense of connection she hadn't expected. As Anna stood to leave, she turned back to Clara with a gentle smile. \"Would you like to join me for a walk around the city? I know some hidden spots that are perfect for a late afternoon stroll.\"\n\nClara hesitated for a moment, then nodded. \"I'd love that. Thank you, Anna.\"\n\nAs they walked, hand in hand, Clara felt a mix of excitement and nervousness. She had met a woman who not only shared her interests but also seemed genuinely interested in getting to know her. Clara realized that sometimes, the most meaningful connections can happen in the most unexpected places.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "park and meet",
+          "desc": "walking, friend, women, flirting, park",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "it": "gehen",
+              "en": "to walk",
+              "pron": "GEH-en"
+            },
+            {
+              "it": "Freund",
+              "en": "friend",
+              "pron": "FROYント"
+            },
+            {
+              "it": "Frauen",
+              "en": "women",
+              "pron": "FROY-en"
+            },
+            {
+              "it": "flirten",
+              "en": "flirt",
+              "pron": "FLYR-ten"
+            },
+            {
+              "it": "Park",
+              "en": "park",
+              "pron": "PAK"
+            },
+            {
+              "it": "treffen",
+              "en": "to meet",
+              "pron": "TRYF-en"
+            },
+            {
+              "it": "nette",
+              "en": "nice",
+              "pron": "NE-ta"
+            },
+            {
+              "it": "Spaziergang",
+              "en": "walk",
+              "pron": "SPAZ-yer-gang"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Ich gehe im Park spazieren.",
+              "en": "I am walking in the park.",
+              "words": [
+                "Ich",
+                "gehe",
+                "im",
+                "Park",
+                "spazieren."
+              ]
+            },
+            {
+              "it": "Meine Freundin flirrt mit zwei netten Frauen.",
+              "en": "My friend is flirting with two nice women.",
+              "words": [
+                "Meine",
+                "Freundin",
+                "flirrt",
+                "mit",
+                "zwei",
+                "netten",
+                "Frauen."
+              ]
+            },
+            {
+              "it": "Wir treffen uns oft im Park.",
+              "en": "We often meet in the park.",
+              "words": [
+                "Wir",
+                "treffen",
+                "uns",
+                "oft",
+                "im",
+                "Park."
+              ]
+            },
+            {
+              "it": "Sie lächelt mich freundlich an.",
+              "en": "She smiles at me friendly.",
+              "words": [
+                "Sie",
+                "lächelt",
+                "mich",
+                "freundlich",
+                "an."
+              ]
+            },
+            {
+              "it": "Er spaziert mit seiner Freundin durch den Park.",
+              "en": "He is walking with his friend in the park.",
+              "words": [
+                "Er",
+                "spaziert",
+                "mit",
+                "seiner",
+                "Freundin",
+                "durch",
+                "den",
+                "Park."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Meeting Women in the Park",
+          "desc": "Walking, meeting, flirting, women, park",
+          "icon": "🚶‍♀️",
+          "vocab": [
+            {
+              "it": "Spazieren",
+              "en": "to take a walk",
+              "pron": "SPAH-zee-ren"
+            },
+            {
+              "it": "Anbahnung",
+              "en": "approach, initiation",
+              "pron": "AN-bah-nuung"
+            },
+            {
+              "it": "Interesse",
+              "en": "interest",
+              "pron": "in-TUR-zee"
+            },
+            {
+              "it": "Kompliment",
+              "en": "compliment",
+              "pron": "kohm-plih-MINT"
+            },
+            {
+              "it": "Augenkontakt",
+              "en": "eye contact",
+              "pron": "AH-guhn-kon-TAKT"
+            },
+            {
+              "it": "Vertrauen",
+              "en": "trust",
+              "pron": "vuh-trah-OOEN"
+            },
+            {
+              "it": "Treffen",
+              "en": "to meet",
+              "pron": "TREH-fen"
+            },
+            {
+              "it": "Netzwerken",
+              "en": "networking",
+              "pron": "NEHZ-tvuh-REH-kun"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Wir gehen Spazieren im Park und treffen zwei nette Frauen.",
+              "en": "We go for a walk in the park and meet two nice women.",
+              "words": [
+                "Wir",
+                "gehen",
+                "Spazieren",
+                "im",
+                "Park",
+                "und",
+                "treffen",
+                "zwei",
+                "nette",
+                "Frauen."
+              ]
+            },
+            {
+              "it": "Sie blickt mir ins Gesicht und macht Augenkontakt, um Vertrauen aufzubauen.",
+              "en": "She looks me in the eye to build trust.",
+              "words": [
+                "Sie",
+                "blickt",
+                "mir",
+                "ins",
+                "Gesicht",
+                "und",
+                "macht",
+                "Augenkontakt,",
+                "um",
+                "Vertrauen",
+                "aufzubauen."
+              ]
+            },
+            {
+              "it": "Er sagt mir ein Kompliment, um mein Interesse zu wecken.",
+              "en": "He gives me a compliment to awaken my interest.",
+              "words": [
+                "Er",
+                "sagt",
+                "mir",
+                "ein",
+                "Kompliment,",
+                "um",
+                "mein",
+                "Interesse",
+                "zu",
+                "wecken."
+              ]
+            },
+            {
+              "it": "Ich gehe auf die Anbahnung ein und spreche mit ihr über Bücher.",
+              "en": "I respond to the approach and talk to her about books.",
+              "words": [
+                "Ich",
+                "gehe",
+                "auf",
+                "die",
+                "Anbahnung",
+                "ein",
+                "und",
+                "spreche",
+                "mit",
+                "ihr",
+                "über",
+                "Bücher."
+              ]
+            },
+            {
+              "it": "Wir netzwerken und tauschen Kontakte aus, während wir Spazieren gehen.",
+              "en": "We network and exchange contacts while we take a walk.",
+              "words": [
+                "Wir",
+                "netzwerken",
+                "und",
+                "tauschen",
+                "Kontakte",
+                "aus,",
+                "während",
+                "wir",
+                "Spazieren",
+                "gehen."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Meeting Women in the Park",
+          "desc": "Advanced vocabulary for social interactions",
+          "icon": "🚶‍♀️",
+          "vocab": [
+            {
+              "it": "Anbahnung",
+              "en": "initiation",
+              "pron": "AN-ba-hnoo-gun"
+            },
+            {
+              "it": "Interesse",
+              "en": "interest",
+              "pron": "in-ter-es"
+            },
+            {
+              "it": "Kompliment",
+              "en": "compliment",
+              "pron": "kom-plim-ent"
+            },
+            {
+              "it": "Augenkontakt",
+              "en": "eye contact",
+              "pron": "oog-en-ko-ntakt"
+            },
+            {
+              "it": "Vertrauen",
+              "en": "trust",
+              "pron": "vuh-trah-oen"
+            },
+            {
+              "it": "Netzwerken",
+              "en": "networking",
+              "pron": "net-zweh-ken"
+            },
+            {
+              "it": "Begegnung",
+              "en": "encounter",
+              "pron": "be-guh-gun"
+            },
+            {
+              "it": "Anziehung",
+              "en": "attraction",
+              "pron": "ahn-zhvee-gun"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Wir beschlossen, einen Spaziergang durch den Park zu machen.",
+              "en": "We decided to take a walk through the park.",
+              "words": [
+                "Wir",
+                "beschlossen,",
+                "einen",
+                "Spaziergang",
+                "durch",
+                "den",
+                "Park",
+                "zu",
+                "machen."
+              ]
+            },
+            {
+              "it": "Sie warf mir ein vertrautes Kompliment zu, das mich überraschte.",
+              "en": "She threw me a familiar compliment that surprised me.",
+              "words": [
+                "Sie",
+                "warf",
+                "mir",
+                "ein",
+                "vertrautes",
+                "Kompliment",
+                "zu,",
+                "das",
+                "mich",
+                "überraschte."
+              ]
+            },
+            {
+              "it": "Die Anbahnung war so subtil, dass ich es erst bemerkte, als sie näher kam.",
+              "en": "The initiation was so subtle that I only noticed it when she came closer.",
+              "words": [
+                "Die",
+                "Anbahnung",
+                "war",
+                "so",
+                "subtil,",
+                "dass",
+                "ich",
+                "es",
+                "erst",
+                "bemerkte,",
+                "als",
+                "sie",
+                "näher",
+                "kam."
+              ]
+            },
+            {
+              "it": "Augenkontakt ist eine wichtige Anziehungskraft in jeder Begegnung.",
+              "en": "Eye contact is an important attraction in every encounter.",
+              "words": [
+                "Augenkontakt",
+                "ist",
+                "eine",
+                "wichtige",
+                "Anziehungskraft",
+                "in",
+                "jeder",
+                "Begegnung."
+              ]
+            },
+            {
+              "it": "Netzwerken ist nicht nur für Geschäftsleute, sondern auch für Freundschaften wichtig.",
+              "en": "Networking is not only important for business, but also for friendships.",
+              "words": [
+                "Netzwerken",
+                "ist",
+                "nicht",
+                "nur",
+                "für",
+                "Geschäftsleute,",
+                "sondern",
+                "auch",
+                "für",
+                "Freundschaften",
+                "wichtig."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 812465,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1698,
+        "totalCompletionTokens": 1687,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 94830,
+            "promptTokens": 435,
+            "completionTokens": 315
+          },
+          {
+            "lessonNum": 2,
+            "ms": 180151,
+            "promptTokens": 495,
+            "completionTokens": 421
+          },
+          {
+            "lessonNum": 3,
+            "ms": 190568,
+            "promptTokens": 554,
+            "completionTokens": 414
+          }
+        ]
+      },
+      "generatedAt": "2026-04-28T13:05:04.657Z"
+    },
+    {
       "topic": "making pasta",
       "topicEmoji": "🍝",
       "lang": "it",
@@ -7901,6 +8313,71 @@
       ],
       "words": [],
       "flaggedAt": "2026-04-28T12:39:47.897Z"
+    },
+    "meeting_women:read_translate:Meine_Freundin_flirrt_mit_zwei_netten_Fr": {
+      "topic": "meeting women",
+      "type": "read_translate",
+      "it": "Meine Freundin flirrt mit zwei netten Frauen.",
+      "en": "My friend is flirting with two nice women.",
+      "correct": "My friend is flirting with two nice women.",
+      "choices": [
+        "She smiles at me friendly.",
+        "My friend is flirting with two nice women.",
+        "I am walking in the park.",
+        "We often meet in the park."
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-28T14:14:32.523Z",
+      "comment": "error in german: flrrt should be flirtet."
+    },
+    "meeting_women:order:Er_sagt_mir_ein_Kompliment,_um_mein_Inte": {
+      "topic": "meeting women",
+      "type": "order",
+      "it": "Er sagt mir ein Kompliment, um mein Interesse zu wecken.",
+      "en": "He gives me a compliment to awaken my interest.",
+      "correct": "Er sagt mir ein Kompliment, um mein Interesse zu wecken.",
+      "choices": [],
+      "words": [
+        "mir",
+        "ein",
+        "mein",
+        "sagt",
+        "aus,",
+        "Er",
+        "zu",
+        "um",
+        "mit",
+        "Kompliment,",
+        "wecken.",
+        "Interesse",
+        "an."
+      ],
+      "flaggedAt": "2026-04-28T14:17:39.488Z",
+      "comment": "in german it would be rather: \"Er macht mir ein Kompliment\""
+    },
+    "meeting_women:order:Wir_gehen_Spazieren_im_Park_und_treffen_": {
+      "topic": "meeting women",
+      "type": "order",
+      "it": "Wir gehen Spazieren im Park und treffen zwei nette Frauen.",
+      "en": "We go for a walk in the park and meet two nice women.",
+      "correct": "Wir gehen Spazieren im Park und treffen zwei nette Frauen.",
+      "choices": [],
+      "words": [
+        "treffen",
+        "und",
+        "Spazieren",
+        "gehen",
+        "zwei",
+        "nette",
+        "Frauen.",
+        "Wir",
+        "im",
+        "gehe",
+        "Park",
+        "Augenkontakt"
+      ],
+      "flaggedAt": "2026-04-28T14:18:33.842Z",
+      "comment": "korrekteres Deutsch waere: \"Wir gehen im Park spazieren\""
     }
   }
 }
