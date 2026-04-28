@@ -234,6 +234,26 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .repairing-note{font-size:12px;color:#c26000;font-weight:700;margin-top:6px;text-align:center}
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+
+/* ══ STORY ═══════════════════════════════════════════════════════════ */
+.story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 18px;overflow:hidden;box-shadow:var(--shadow-card)}
+.story-toggle{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none;width:100%;background:none;border:none;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
+.story-toggle:hover{background:var(--gray-light)}
+.story-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
+.story-arrow.open{transform:rotate(180deg)}
+.story-body{padding:0 16px 14px;font-size:14px;line-height:1.7;color:#444;display:none}
+.story-body.open{display:block}
+.story-body p{margin-bottom:10px}
+.story-body p:last-child{margin-bottom:0}
+
+/* ══ GEN STATS ═══════════════════════════════════════════════════════ */
+.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 16px;opacity:.8}
+
+/* ══ LIB FILTER ══════════════════════════════════════════════════════ */
+.lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,color .1s}
+.lib-filter-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
+.lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 </style>
 </head>
 <body>
@@ -335,6 +355,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
     <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
+  <div class="story-section" id="story-section" style="display:none">
+    <button class="story-toggle" onclick="toggleStory()" id="story-toggle-btn">
+      <span>📖 Read the story</span>
+      <span class="story-arrow" id="story-arrow">▼</span>
+    </button>
+    <div class="story-body" id="story-body"></div>
+  </div>
+  <div class="gen-stats" id="gen-stats"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
@@ -591,6 +619,13 @@ async function repairAll(){
 
 function goHome(){ buildPath(); show('home'); }
 
+function toggleStory(){
+  const body=document.getElementById('story-body');
+  const arrow=document.getElementById('story-arrow');
+  const open=body.classList.toggle('open');
+  arrow.classList.toggle('open',open);
+}
+
 // ── init ──
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -598,6 +633,778 @@ function goHome(){ buildPath(); show('home'); }
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "making pasta",
+    "topicEmoji": "🍝",
+    "lang": "it",
+    "story": "In the heart of a small, bustling Italian town, where the scent of fresh basil and garlic filled the air, lived a young woman named Isabella. She had always been fascinated by the art of making pasta, a skill that her grandmother, Nonna Rosa, had passed down through generations. Every summer, Nonna Rosa would invite Isabella to her cozy kitchen, where the walls were adorned with old family photographs and the air was thick with the aroma of simmering sauces.\n\nOne sunny morning, Nonna Rosa announced that it was time for Isabella to learn the secrets of making pasta. With a smile, she gathered the ingredients: flour, eggs, and a wooden board. \"First, we need to prepare the dough,\" Nonna Rosa said, her hands moving with practiced ease. She cracked three eggs into a large bowl and began to whisk them until the yolks and whites were fully combined.\n\nIsabella watched, her eyes wide with wonder. \"How do you know so much, Nonna?\" she asked, her voice filled with admiration.\n\nNonna Rosa chuckled, her hands never stopping their work. \"Experience, my dear. And a little bit of magic. Now, let's add the flour.\"\n\nTogether, they slowly incorporated the flour, kneading the dough until it was smooth and elastic. Nonna Rosa then rolled out the dough into a thin sheet, explaining each step as she went. \"This is the pasta sheet,\" she said, pointing to the delicate, translucent layer. \"Now, we can cut it into strips or sheets, depending on what you want to make.\"\n\nIsabella carefully cut the pasta into long, thin strips, her fingers moving with precision. As the pasta dried on the racks, Nonna Rosa prepared a simple tomato sauce, the rich, tangy flavor of the tomatoes mingling with the fresh basil and garlic. The aroma filled the kitchen, making Isabella’s mouth water.\n\nFinally, it was time to cook the pasta. Nonna Rosa brought a large pot of salted water to a boil, and together they watched as the pasta swam in the bubbling water. \"Remember, pasta is like a child—be gentle,\" Nonna Rosa said, her eyes twinkling. \"It should be cooked until it’s al dente, firm to the bite.\"\n\nThe pasta was cooked to perfection, and they served it with the homemade sauce. As they ate, Nonna Rosa shared stories of her own childhood, the laughter and warmth filling the room. Through the process of making pasta, Isabella not only learned a valuable skill but also deepened her connection to her family’s history and traditions.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Making Pasta",
+        "desc": "Learn basic Italian words for cooking pasta",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "farina",
+            "en": "flour",
+            "pron": "FA-ri-na"
+          },
+          {
+            "it": "uova",
+            "en": "egg",
+            "pron": "OO-va"
+          },
+          {
+            "it": "impasto",
+            "en": "dough",
+            "pron": "im-PAH-to"
+          },
+          {
+            "it": "tavola",
+            "en": "board",
+            "pron": "TAH-voh-la"
+          },
+          {
+            "it": "mescolare",
+            "en": "to mix",
+            "pron": "mes-KO-lah-re"
+          },
+          {
+            "it": "stendere",
+            "en": "to stretch",
+            "pron": "STEN-deh-re"
+          },
+          {
+            "it": "formare",
+            "en": "to shape",
+            "pron": "FOR-mah-re"
+          },
+          {
+            "it": "tagliare",
+            "en": "to cut",
+            "pron": "TAH-lee-ah-re"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Prepariamo la farina per il nostro impasto.",
+            "en": "Let's prepare the flour for our dough.",
+            "words": [
+              "Prepariamo",
+              "la",
+              "farina",
+              "per",
+              "il",
+              "nostro",
+              "impasto."
+            ]
+          },
+          {
+            "it": "Mescoliamo le uova con la farina.",
+            "en": "Let's mix the eggs with the flour.",
+            "words": [
+              "Mescoliamo",
+              "le",
+              "uova",
+              "con",
+              "la",
+              "farina."
+            ]
+          },
+          {
+            "it": "Stendiamo l'impasto su una tavola.",
+            "en": "We stretch the dough on a board.",
+            "words": [
+              "Stendiamo",
+              "l'impasto",
+              "su",
+              "una",
+              "tavola."
+            ]
+          },
+          {
+            "it": "Formiamo la pasta in forme diverse.",
+            "en": "We shape the pasta in different forms.",
+            "words": [
+              "Formiamo",
+              "la",
+              "pasta",
+              "in",
+              "forme",
+              "diverse."
+            ]
+          },
+          {
+            "it": "Tagliamo la pasta con un coltello.",
+            "en": "We cut the pasta with a knife.",
+            "words": [
+              "Tagliamo",
+              "la",
+              "pasta",
+              "con",
+              "un",
+              "coltello."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Making Pasta",
+        "desc": "Intermediate phrases for pasta making",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "sieve",
+            "en": "sieve",
+            "pron": "SIH-vay"
+          },
+          {
+            "it": "knead",
+            "en": "knead",
+            "pron": "NEYD"
+          },
+          {
+            "it": "rest",
+            "en": "rest",
+            "pron": "REST"
+          },
+          {
+            "it": "rolling pin",
+            "en": "rolling pin",
+            "pron": "ROL-ing PIN"
+          },
+          {
+            "it": "cutting board",
+            "en": "cutting board",
+            "pron": "KUH-ting BOR-德"
+          },
+          {
+            "it": "dough rest",
+            "en": "dough rest",
+            "pron": "DOH-goh REST"
+          },
+          {
+            "it": "hand stretch",
+            "en": "hand stretch",
+            "pron": "HANG-doh STRETCH"
+          },
+          {
+            "it": "knife",
+            "en": "knife",
+            "pron": "NAH-fee"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Sieve the flour onto the board.",
+            "en": "Sieve the flour onto the board.",
+            "words": [
+              "Sieve",
+              "the",
+              "flour",
+              "onto",
+              "the",
+              "board."
+            ]
+          },
+          {
+            "it": "Knead the dough until it's smooth.",
+            "en": "Knead the dough until it's smooth.",
+            "words": [
+              "Knead",
+              "the",
+              "dough",
+              "until",
+              "it's",
+              "smooth."
+            ]
+          },
+          {
+            "it": "Let the dough rest for at least an hour.",
+            "en": "Let the dough rest for at least an hour.",
+            "words": [
+              "Let",
+              "the",
+              "dough",
+              "rest",
+              "for",
+              "at",
+              "least",
+              "an",
+              "hour."
+            ]
+          },
+          {
+            "it": "Roll the dough with a rolling pin.",
+            "en": "Roll the dough with a rolling pin.",
+            "words": [
+              "Roll",
+              "the",
+              "dough",
+              "with",
+              "a",
+              "rolling",
+              "pin."
+            ]
+          },
+          {
+            "it": "Use a knife to cut the pasta into shapes.",
+            "en": "Use a knife to cut the pasta into shapes.",
+            "words": [
+              "Use",
+              "a",
+              "knife",
+              "to",
+              "cut",
+              "the",
+              "pasta",
+              "into",
+              "shapes."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Making Pasta",
+        "desc": "Advanced pasta-making techniques",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "impastare",
+            "en": "to knead",
+            "pron": "im-PAS-ta-re"
+          },
+          {
+            "it": "pasta fresca",
+            "en": "fresh pasta",
+            "pron": "pas-ta FREE-ska"
+          },
+          {
+            "it": "farro",
+            "en": "emmer wheat",
+            "pron": "FA-ro"
+          },
+          {
+            "it": "sottocuocere",
+            "en": "undercook",
+            "pron": "so-toe-koo-CHEH-re"
+          },
+          {
+            "it": "sfoglia",
+            "en": "to flatten",
+            "pron": "sof-LIA"
+          },
+          {
+            "it": "tagliatelle",
+            "en": "tagliatelle",
+            "pron": "tag-lee-a-TEL-le"
+          },
+          {
+            "it": "salinguaccioli",
+            "en": "linguine",
+            "pron": "sal-in-gwach-CHOL-lee"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Impastare la farina con l'acqua calda richiede abilità.",
+            "en": "Kneading the flour with warm water requires skill.",
+            "words": [
+              "Impastare",
+              "la",
+              "farina",
+              "con",
+              "l'acqua",
+              "calda",
+              "richiede",
+              "abilità."
+            ]
+          },
+          {
+            "it": "La pasta fresca di farro è più nutriente e saporita.",
+            "en": "Fresh emmer wheat pasta is more nutritious and flavorful.",
+            "words": [
+              "La",
+              "pasta",
+              "fresca",
+              "di",
+              "farro",
+              "è",
+              "più",
+              "nutriente",
+              "e",
+              "saporita."
+            ]
+          },
+          {
+            "it": "Sottocuocere i tagliatelle per un aspetto più al dente.",
+            "en": "Undercook the tagliatelle for a more al dente appearance.",
+            "words": [
+              "Sottocuocere",
+              "i",
+              "tagliatelle",
+              "per",
+              "un",
+              "aspetto",
+              "più",
+              "al",
+              "dente."
+            ]
+          },
+          {
+            "it": "Sfoglia delicatamente la pasta per ottenere una superficie liscia.",
+            "en": "Gently flatten the pasta to get a smooth surface.",
+            "words": [
+              "Sfoglia",
+              "delicatamente",
+              "la",
+              "pasta",
+              "per",
+              "ottenere",
+              "una",
+              "superficie",
+              "liscia."
+            ]
+          },
+          {
+            "it": "Con un coltello, taglia i salinguaccioli in pezzi di lunghezza uguale.",
+            "en": "With a knife, cut the linguine into pieces of equal length.",
+            "words": [
+              "Con",
+              "un",
+              "coltello,",
+              "taglia",
+              "i",
+              "salinguaccioli",
+              "in",
+              "pezzi",
+              "di",
+              "lunghezza",
+              "uguale."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 758080,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 1629,
+      "totalCompletionTokens": 1723,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 173252,
+          "promptTokens": 418,
+          "completionTokens": 355
+        },
+        {
+          "lessonNum": 2,
+          "ms": 154463,
+          "promptTokens": 484,
+          "completionTokens": 346
+        },
+        {
+          "lessonNum": 3,
+          "ms": 130208,
+          "promptTokens": 530,
+          "completionTokens": 455
+        }
+      ]
+    },
+    "generatedAt": "2026-04-28T12:39:06.467Z"
+  },
+  {
+    "topic": "making a pizza",
+    "topicEmoji": "🍕",
+    "lang": "it",
+    "story": "In the cozy kitchen of the small, bustling pizzeria, Marco was preparing the dough for the day's special. The aroma of fresh basil and the tangy scent of mozzarella filled the air, mingling with the warm, inviting smell of the oven. Marco, a tall man with a warm smile and a gentle touch, was known for his perfect pizza, a tradition passed down from his grandfather.\n\nToday, Marco was teaching his young apprentice, Sofia, how to make a pizza from scratch. Sofia, with her bright eyes and eager hands, was determined to learn the secrets of the craft. Marco began by showing her how to knead the dough, explaining each step with simple, clear Italian words. \"Mischia bene,\" he said, mixing the flour and water until the dough was smooth and elastic. Sofia followed his instructions, her hands moving with increasing confidence.\n\nNext, Marco demonstrated how to stretch the dough into a perfect circle. \"Stendi con delicatezza,\" he instructed, guiding her hands as she gently pulled and stretched the dough. Sofia's face lit up with pride as she saw the dough transform under her touch. Marco then showed her how to add the sauce, cheese, and toppings. \"Sul piatto, la salsa, il formaggio, e le verdure,\" he said, carefully placing each ingredient. Sofia carefully arranged the ingredients, learning the importance of balance and flavor.\n\nAs the pizza baked in the oven, Marco and Sofia sat at the kitchen table, enjoying a slice of the pizza they had made together. \"Ecco la ricetta,\" Marco said, handing Sofia a small notebook. \"Ricorda, la pizza è un'arte, ma anche una scienza.\" Sofia nodded, her eyes shining with determination. She knew that making a perfect pizza was not just about following a recipe, but about understanding the process and the passion behind it. As they finished their meal, Marco smiled, knowing that Sofia was well on her way to mastering the art of pizza-making.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Making a Pizza",
+        "desc": "Basic Italian kitchen vocabulary",
+        "icon": "🍕",
+        "vocab": [
+          {
+            "it": "dough",
+            "en": "dough",
+            "pron": "DOH-oh"
+          },
+          {
+            "it": "bowl",
+            "en": "bowl",
+            "pron": "BOWL"
+          },
+          {
+            "it": "hands",
+            "en": "hands",
+            "pron": "HANZ"
+          },
+          {
+            "it": "mix",
+            "en": "mix",
+            "pron": "MIX"
+          },
+          {
+            "it": "flour",
+            "en": "flour",
+            "pron": "FLOW-er"
+          },
+          {
+            "it": "water",
+            "en": "water",
+            "pron": "WAT-er"
+          },
+          {
+            "it": "knead",
+            "en": "knead",
+            "pron": "NEE-ad"
+          },
+          {
+            "it": "elastic",
+            "en": "elastic",
+            "pron": "e-LAS-tik"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Mischia bene il farine con l'acqua.",
+            "en": "Mix the flour with the water well.",
+            "words": [
+              "Mischia",
+              "bene",
+              "il",
+              "farine",
+              "con",
+              "l'acqua."
+            ]
+          },
+          {
+            "it": "Stendi la pasta con le tue mani.",
+            "en": "Stretch the dough with your hands.",
+            "words": [
+              "Stendi",
+              "la",
+              "pasta",
+              "con",
+              "le",
+              "tue",
+              "mani."
+            ]
+          },
+          {
+            "it": "Lascia riposare la pasta per un po'.",
+            "en": "Let the dough rest for a while.",
+            "words": [
+              "Lascia",
+              "riposare",
+              "la",
+              "pasta",
+              "per",
+              "un",
+              "po'."
+            ]
+          },
+          {
+            "it": "Aggiungi un po' di sale per dare sapore.",
+            "en": "Add some salt to give flavor.",
+            "words": [
+              "Aggiungi",
+              "un",
+              "po'",
+              "di",
+              "sale",
+              "per",
+              "dare",
+              "sapore."
+            ]
+          },
+          {
+            "it": "Forma la pasta in una forma da pizza.",
+            "en": "Shape the dough into a pizza pan.",
+            "words": [
+              "Forma",
+              "la",
+              "pasta",
+              "in",
+              "una",
+              "forma",
+              "da",
+              "pizza."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Making a Pizza",
+        "desc": "Italian kitchen vocabulary and techniques",
+        "icon": "🍕",
+        "vocab": [
+          {
+            "it": "battuto",
+            "en": "chopped",
+            "pron": "BAHT-toh"
+          },
+          {
+            "it": "sapore",
+            "en": "taste",
+            "pron": "SAH-poh-re"
+          },
+          {
+            "it": "spreme",
+            "en": "squeezes",
+            "pron": "SPRE-meh"
+          },
+          {
+            "it": "sottile",
+            "en": "thin",
+            "pron": "sot-TEE-lee"
+          },
+          {
+            "it": "sfrigolare",
+            "en": "fry",
+            "pron": "SFRE-goh-lar-eh"
+          },
+          {
+            "it": "salsiccia",
+            "en": "sausage",
+            "pron": "sal-see-TCH-ah"
+          },
+          {
+            "it": "sprezzatura",
+            "en": "elegance",
+            "pron": "SPREH-tsuh-ZAH-trah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Mischia bene il battuto con il formaggio.",
+            "en": "Mix the chopped vegetables with the cheese.",
+            "words": [
+              "Mischia",
+              "bene",
+              "il",
+              "battuto",
+              "con",
+              "il",
+              "formaggio."
+            ]
+          },
+          {
+            "it": "Spreme il succo di un limone per dare sapore.",
+            "en": "Squeeze the juice of a lemon to add taste.",
+            "words": [
+              "Spreme",
+              "il",
+              "succo",
+              "di",
+              "un",
+              "limone",
+              "per",
+              "dare",
+              "sapore."
+            ]
+          },
+          {
+            "it": "Sfrigola la salsiccia in una padella.",
+            "en": "Fry the sausage in a pan.",
+            "words": [
+              "Sfrigola",
+              "la",
+              "salsiccia",
+              "in",
+              "una",
+              "padella."
+            ]
+          },
+          {
+            "it": "Confeziona la pasta sottile come un foglio di carta.",
+            "en": "Shape the thin dough like a sheet of paper.",
+            "words": [
+              "Confeziona",
+              "la",
+              "pasta",
+              "sottile",
+              "come",
+              "un",
+              "foglio",
+              "di",
+              "carta."
+            ]
+          },
+          {
+            "it": "Sprezza la tua creazione con eleganza.",
+            "en": "Elegantly present your creation.",
+            "words": [
+              "Sprezza",
+              "la",
+              "tua",
+              "creazione",
+              "con",
+              "eleganza."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Making a Pizza",
+        "desc": "Italian kitchen vocabulary, dough preparation",
+        "icon": "🍕",
+        "vocab": [
+          {
+            "it": "battuto",
+            "en": "chopped",
+            "pron": "BAHT-toh"
+          },
+          {
+            "it": "sapore",
+            "en": "taste",
+            "pron": "SAH-poh-re"
+          },
+          {
+            "it": "spreme",
+            "en": "squeezes",
+            "pron": "SPREH-meh"
+          },
+          {
+            "it": "sottile",
+            "en": "thin",
+            "pron": "saw-TEE-lee"
+          },
+          {
+            "it": "sfrigolare",
+            "en": "fry",
+            "pron": "sf-RIG-oh-lar-eh"
+          },
+          {
+            "it": "salsiccia",
+            "en": "sausage",
+            "pron": "sahl-see-TSAH"
+          },
+          {
+            "it": "sprezzatura",
+            "en": "elegance",
+            "pron": "spr-ezz-ah-TUH-ra"
+          },
+          {
+            "it": "schiacciata",
+            "en": "flatbread",
+            "pron": "skah-ya-ttah-AH"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Mischia bene il battuto con il formaggio.",
+            "en": "Mix the chopped vegetables with the cheese.",
+            "words": [
+              "Mischia",
+              "bene",
+              "il",
+              "battuto",
+              "con",
+              "il",
+              "formaggio."
+            ]
+          },
+          {
+            "it": "Sprema il succo di un limone per aggiungere sapore.",
+            "en": "Squeeze the juice of a lemon to add taste.",
+            "words": [
+              "Sprema",
+              "il",
+              "succo",
+              "di",
+              "un",
+              "limone",
+              "per",
+              "aggiungere",
+              "sapore."
+            ]
+          },
+          {
+            "it": "Ripiega il bordo della schiacciata per creare un bordo.",
+            "en": "Fold the edge of the flatbread to create a border.",
+            "words": [
+              "Ripiega",
+              "il",
+              "bordo",
+              "della",
+              "schiacciata",
+              "per",
+              "creare",
+              "un",
+              "bordo."
+            ]
+          },
+          {
+            "it": "Sfrigoli la salsiccia in una padella prima di aggiungerla.",
+            "en": "Fry the sausage in a pan before adding it.",
+            "words": [
+              "Sfrigoli",
+              "la",
+              "salsiccia",
+              "in",
+              "una",
+              "padella",
+              "prima",
+              "di",
+              "aggiungerla."
+            ]
+          },
+          {
+            "it": "Con sprezzatura, distribuisci il formaggio sul bordo della pizza.",
+            "en": "With elegance, spread the cheese around the edge of the pizza.",
+            "words": [
+              "Con",
+              "sprezzatura,",
+              "distribuisci",
+              "il",
+              "formaggio",
+              "sul",
+              "bordo",
+              "della",
+              "pizza."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 685773,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 1613,
+      "totalCompletionTokens": 1586,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 172535,
+          "promptTokens": 420,
+          "completionTokens": 334
+        },
+        {
+          "lessonNum": 2,
+          "ms": 169177,
+          "promptTokens": 474,
+          "completionTokens": 389
+        },
+        {
+          "lessonNum": 3,
+          "ms": 184979,
+          "promptTokens": 520,
+          "completionTokens": 423
+        }
+      ]
+    },
+    "generatedAt": "2026-04-28T12:16:14.372Z"
+  },
   {
     "topic": "tabletennis in a park",
     "topicEmoji": "🏓",
@@ -7562,6 +8369,27 @@ function buildPath(){
   document.getElementById('topic-name-big').textContent=d.topic;
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
+
+  // Story section
+  const storySec=document.getElementById('story-section');
+  const storyBody=document.getElementById('story-body');
+  if(d.story && storySec && storyBody){
+    storySec.style.display='';
+    // Collapse on each load; split into paragraphs
+    storyBody.classList.remove('open');
+    const arrow=document.getElementById('story-arrow');
+    if(arrow) arrow.classList.remove('open');
+    storyBody.innerHTML=d.story.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  } else if(storySec){ storySec.style.display='none'; }
+
+  // Generation stats
+  const statEl=document.getElementById('gen-stats');
+  if(statEl && d.generationStats){
+    const gs=d.generationStats;
+    const secs=(gs.totalMs/1000).toFixed(1);
+    const tokens=((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString();
+    statEl.textContent=`Generated in ${secs}s · ${gs.model} · ${tokens} tokens`;
+  } else if(statEl){ statEl.textContent=''; }
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
   d.lessons.forEach((L,i)=>{
@@ -7904,6 +8732,14 @@ function  regenCurrent()            {}
 async function doGenerate()         {}
 async function repairLesson()       {}
 async function repairFromLesson()   {}
+
+// Story toggle (same logic as live version)
+function toggleStory(){
+  const body=document.getElementById('story-body');
+  const arrow=document.getElementById('story-arrow');
+  const open=body.classList.toggle('open');
+  arrow.classList.toggle('open',open);
+}
 
 init();</script>
 </body>
