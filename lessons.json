@@ -5620,152 +5620,139 @@
     {
       "topic": "sheep on the meadow",
       "topicEmoji": "🐑",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "In the heart of the rolling hills, where the green meadow stretched as far as the eye could see, there lived a flock of sheep. Each morning, the sun would rise, casting a golden glow over the lush grass, and the sheep would awaken from their peaceful slumber. The shepherd, a kind old man named Antonio, would come to the meadow with his trusty dog, Bella. Together, they would lead the sheep to the best spots where the grass was thick and fresh.\n\nAntonio was a master of his craft, and he knew exactly how to handle the flock. He would call out softly, \"Venga, venga,\" and the sheep would follow him, their woolly coats shimmering in the morning light. Bella would run ahead, her tail wagging, and the sheep would follow her, feeling safe and secure. The meadow was their home, and Antonio was their guardian.\n\nOne day, as Antonio and Bella were leading the sheep to a new grazing spot, a sudden storm rolled in. Dark clouds gathered, and the wind began to howl. Antonio quickly found a sheltered area under a large oak tree. He and Bella huddled together, watching as the rain began to fall in heavy sheets. The sheep, sensing the danger, huddled close to Antonio, their wool providing a soft barrier against the cold.\n\nAs the storm raged on, Antonio sang softly to the sheep, his voice a soothing melody that seemed to calm the tempest. Bella lay down beside him, her head resting on his knee. The sheep, feeling the warmth of their shepherd and the safety of their home, closed their eyes and drifted into a peaceful sleep, their woolly heads nestled together.\n\nWhen the storm finally passed, the sun peeked through the clouds, casting a warm light over the meadow. Antonio and Bella emerged from their shelter, and the sheep followed, their wool now damp but their spirits high. They began to graze once more, the meadow a haven of peace and tranquility, a place where the sheep could rest and the shepherd could watch over them.",
       "lessons": [
         {
           "id": 1,
-          "title": "Sheep Grazing",
-          "desc": "Introducing farm animals, colors",
-          "icon": "🐑🌿",
+          "title": "sheep on the meadow",
+          "desc": "green hills, morning sun, peaceful flock",
+          "icon": "🐑",
           "vocab": [
+            {
+              "it": "mucca",
+              "en": "cow",
+              "pron": "MUH-kah"
+            },
             {
               "it": "prato",
               "en": "meadow",
-              "pron": "PRAT-oh"
+              "pron": "PRAH-toh"
             },
             {
-              "it": "pecore",
-              "en": "sheep",
-              "pron": "PEH-koh-re"
+              "it": "alba",
+              "en": "dawn",
+              "pron": "AL-bah"
             },
             {
-              "it": "graziano",
-              "en": "grazing",
-              "pron": "GRAH-zee-AH-no"
+              "it": "pastore",
+              "en": "shepherd",
+              "pron": "pas-TOH-re"
             },
             {
-              "it": "erba",
-              "en": "grass",
-              "pron": "ER-bah"
+              "it": "ovatta",
+              "en": "wool",
+              "pron": "o-vah-TTA"
             },
             {
-              "it": "sole",
-              "en": "sun",
-              "pron": "SOH-le"
+              "it": "canina",
+              "en": "canine",
+              "pron": "ka-NEE-nah"
             },
             {
-              "it": "vento",
-              "en": "wind",
-              "pron": "VEN-to"
+              "it": "lussureggianti",
+              "en": "lush",
+              "pron": "loos-soh-jee-GAHN-tee"
             },
             {
-              "it": "silenzio",
-              "en": "silence",
-              "pron": "see-LEHN-zee-oh"
-            },
-            {
-              "it": "paesaggio",
-              "en": "landscape",
-              "pron": "pa-es-AT-tsee-oh"
+              "it": "fieno",
+              "en": "hay",
+              "pron": "FYEN-oh"
             }
           ],
           "sentences": [
             {
-              "it": "Graziano le pecore nel prato.",
-              "en": "The sheep are grazing in the meadow.",
+              "it": "Il sole alba tingeva di oro il prato.",
+              "en": "The dawn sun colored the meadow with gold.",
               "words": [
-                "graziano",
-                "le",
-                "pecore",
-                "nel",
-                "prato",
-                "grazing",
-                "the",
-                "sheep",
-                "in",
-                "the",
-                "meadow"
-              ]
-            },
-            {
-              "it": "Il sole illumina l'erba del prato.",
-              "en": "The sun illuminates the grass of the meadow.",
-              "words": [
-                "il",
+                "Il",
                 "sole",
-                "illumina",
-                "l'erba",
-                "del",
-                "prato",
-                "the",
-                "sun",
-                "illuminates",
-                "the",
-                "grass",
-                "of",
-                "the",
-                "meadow"
-              ]
-            },
-            {
-              "it": "Il vento sussurra nel silenzio del paesaggio.",
-              "en": "The wind whispers in the silence of the landscape.",
-              "words": [
-                "sussurra",
-                "silenzio",
-                "paesaggio",
-                "vento",
-                "nel",
-                "del",
-                "whispers",
-                "silence",
-                "landscape",
-                "the"
-              ]
-            },
-            {
-              "it": "Il paesaggio è tranquillo con le pecore.",
-              "en": "The landscape is tranquil with the sheep.",
-              "words": [
+                "alba",
+                "tingeva",
+                "di",
+                "oro",
                 "il",
-                "paesaggio",
-                "è",
-                "tranquillo",
-                "con",
-                "le",
-                "pecore",
-                "the",
-                "landscape",
-                "is",
-                "tranquil",
-                "with",
-                "the",
-                "sheep"
+                "prato."
               ]
             },
             {
-              "it": "Le pecore pascolano nel prato sereno.",
-              "en": "The sheep graze in the serene meadow.",
+              "it": "Il pastore Antonio chiamava i suoi mucchi di ovatta.",
+              "en": "The shepherd Antonio called his piles of wool.",
               "words": [
-                "pecore",
-                "le",
-                "pascolano",
-                "nel",
-                "prato",
-                "sereno",
-                "the",
-                "graze",
+                "Il",
+                "pastore",
+                "Antonio",
+                "chiamava",
+                "i",
+                "suoi",
+                "mucchi",
+                "di",
+                "ovatta."
+              ]
+            },
+            {
+              "it": "Bella, la canina, correva avanti con coda in coda.",
+              "en": "Bella, the canine, ran ahead with tail wagging.",
+              "words": [
+                "Bella,",
+                "la",
+                "canina,",
+                "correva",
+                "avanti",
+                "con",
+                "coda",
                 "in",
-                "the",
-                "serene",
-                "meadow"
+                "coda."
+              ]
+            },
+            {
+              "it": "Il prato lussureggianti ospitava i mucchi di fieno.",
+              "en": "The lush meadow hosted piles of hay.",
+              "words": [
+                "Il",
+                "prato",
+                "lussureggianti",
+                "ospitava",
+                "i",
+                "mucchi",
+                "di",
+                "fieno."
+              ]
+            },
+            {
+              "it": "Venga, venga, diceva Antonio, e i mucchi di ovatta lo seguivano.",
+              "en": "Come, come, Antonio said, and the piles of wool followed him.",
+              "words": [
+                "Venga,",
+                "venga,",
+                "diceva",
+                "Antonio,",
+                "e",
+                "i",
+                "mucchi",
+                "di",
+                "ovatta",
+                "lo",
+                "seguivano."
               ]
             }
           ]
         },
         {
           "id": 2,
-          "title": "Sheep Grazing",
-          "desc": "Intermediate lesson on sheep in meadows",
+          "title": "sheep on the meadow",
+          "desc": "pastore, alba, prato, ovatta",
           "icon": "🐑",
           "vocab": [
             {
@@ -5774,236 +5761,241 @@
               "pron": "prat-EL-lo"
             },
             {
-              "it": "ovile",
-              "en": "sheepfold",
-              "pron": "o-VEE-le"
+              "it": "lussureggiante",
+              "en": "lush",
+              "pron": "lus-soo-reh-DZHAH-yente"
             },
             {
-              "it": "agnello",
-              "en": "lamb",
-              "pron": "a-GNEL-lo"
+              "it": "ovetto",
+              "en": "ewe",
+              "pron": "O-ve-to"
             },
             {
-              "it": "pastore",
-              "en": "shepherd",
-              "pron": "pas-TO-re"
+              "it": "prigioniero",
+              "en": "prisoner",
+              "pron": "pruh-GYON-ye-roe"
             },
             {
-              "it": "cancello",
-              "en": "gate",
-              "pron": "can-CEL-lo"
+              "it": "pastorello",
+              "en": "little shepherd",
+              "pron": "pas-to-REH-lo"
             },
             {
-              "it": "alpeggio",
-              "en": "summer pasture",
-              "pron": "al-PEJ-jio"
+              "it": "luna",
+              "en": "moon",
+              "pron": "LOO-na"
             },
             {
-              "it": "capra",
-              "en": "goat",
-              "pron": "ka-PRA"
+              "it": "pasciuta",
+              "en": "fed",
+              "pron": "pas-CHYUT-a"
             },
             {
-              "it": "lana",
-              "en": "wool",
-              "pron": "LA-nah"
+              "it": "labbra",
+              "en": "lips",
+              "pron": "LAH-bra"
             }
           ],
           "sentences": [
             {
-              "it": "Sulle praterie pascolano le pecore.",
-              "en": "On the meadows graze the sheep.",
+              "it": "Il pastorello guidava i suoi ovetti.",
+              "en": "The little shepherd led his own ewes.",
               "words": [
-                "Sulle",
-                "praterie",
-                "pascolano",
-                "le",
-                "pecore"
-              ]
-            },
-            {
-              "it": "Nel ovile dormono i capretti.",
-              "en": "In the sheepfold the kids sleep.",
-              "words": [
-                "Nel",
-                "ovile",
-                "dormono",
+                "Il",
+                "pastorello",
+                "guidava",
                 "i",
-                "capretti"
+                "suoi",
+                "ovetti."
               ]
             },
             {
-              "it": "Il pastore guida le pecore all'alpeggio.",
-              "en": "The shepherd guides the sheep to the alpeggio.",
+              "it": "La luna illuminava il pratello con la sua luce.",
+              "en": "The moon illuminated the small meadow with its light.",
+              "words": [
+                "La",
+                "luna",
+                "illuminava",
+                "il",
+                "pratello",
+                "con",
+                "la",
+                "sua",
+                "luce."
+              ]
+            },
+            {
+              "it": "Bella, la canina, correva avanti.",
+              "en": "Bella, the canine, ran ahead.",
+              "words": [
+                "Bella,",
+                "la",
+                "canina,",
+                "correva",
+                "avanti."
+              ]
+            },
+            {
+              "it": "L'ovatta scintillava al sole.",
+              "en": "The wool shimmered in the sun.",
+              "words": [
+                "L'ovatta",
+                "scintillava",
+                "al",
+                "sole."
+              ]
+            },
+            {
+              "it": "Il pastore pasciuta le labbra con il fieno.",
+              "en": "The shepherd fed the sheep with hay.",
               "words": [
                 "Il",
                 "pastore",
-                "guida",
+                "pasciuta",
                 "le",
-                "pecore",
-                "all'alpeggio"
-              ]
-            },
-            {
-              "it": "Tra le pecore ci sono anche agnelli.",
-              "en": "Among the sheep there are also lambs.",
-              "words": [
-                "Tra",
-                "le",
-                "pecore",
-                "ci",
-                "sono",
-                "anche",
-                "agnelli"
-              ]
-            },
-            {
-              "it": "Il cancello del pratello è aperto.",
-              "en": "The gate of the small meadow is open.",
-              "words": [
-                "Il",
-                "cancelllo",
-                "del",
-                "pratello",
-                "è",
-                "aperto"
+                "labbra",
+                "con",
+                "il",
+                "fieno."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "Sheep Grazing",
-          "desc": "Advanced grammar and vocabulary",
+          "title": "sheep on the meadow",
+          "desc": "pastore, ovetto, prato, lussureggianti, prigioniero, labbra, venga, pasciuta",
           "icon": "🐑",
           "vocab": [
             {
-              "it": "prorompente",
-              "en": "bursting (with emotion)",
-              "pron": "proh-rom-PEH-nte"
+              "it": "ovetto",
+              "en": "ewe",
+              "pron": "OH-eh-to"
             },
             {
-              "it": "sinfonia",
-              "en": "symphony",
-              "pron": "sin-FOH-nee-ah"
+              "it": "prato",
+              "en": "meadow",
+              "pron": "PRAH-to"
             },
             {
-              "it": "luminescente",
-              "en": "luminous",
-              "pron": "loo-mih-nes-SEN-tche"
+              "it": "lussureggianti",
+              "en": "lush",
+              "pron": "LOOS-soo-REG-gyan-tee"
             },
             {
-              "it": "silvestre",
-              "en": "wild",
-              "pron": "sil-VEH-stre"
+              "it": "prigioniero",
+              "en": "prisoner",
+              "pron": "PRIG-oh-NEE-eh-ro"
             },
             {
-              "it": "prorompente",
-              "en": "bursting (with emotion)",
-              "pron": "proh-rom-PEH-nte"
+              "it": "labbra",
+              "en": "lips",
+              "pron": "LAH-brah"
             },
             {
-              "it": "sinfonia",
-              "en": "symphony",
-              "pron": "sin-FOH-nee-ah"
+              "it": "venga",
+              "en": "come on",
+              "pron": "VEN-gah"
             },
             {
-              "it": "luminescente",
-              "en": "luminous",
-              "pron": "loo-mih-nes-SEN-tche"
+              "it": "pastore",
+              "en": "shepherd",
+              "pron": "pas-TOH-re"
             },
             {
-              "it": "silvestre",
-              "en": "wild",
-              "pron": "sil-VEH-stre"
+              "it": "pasciuta",
+              "en": "fed",
+              "pron": "pas-KEE-ah"
             }
           ],
           "sentences": [
             {
-              "it": "Le pecore silvestri prorompenti si muovono come una sinfonia luminescente.",
-              "en": "The wild, bursting sheep move like a luminous symphony.",
+              "it": "Lussureggianti erbe accoglievano ovetto.",
+              "en": "Lush grass welcomed the ewe.",
               "words": [
-                "Le",
-                "pecore",
-                "silvestri",
-                "prorompenti",
+                "Lussureggianti",
+                "erbe",
+                "accoglievano",
+                "ovetto."
+              ]
+            },
+            {
+              "it": "Pastore chiamava: 'Venga, venga.'",
+              "en": "The shepherd called: 'Come on, come on.'",
+              "words": [
+                "Pastore",
+                "chiamava:",
+                "'Venga,",
+                "venga.'"
+              ]
+            },
+            {
+              "it": "Ovetto seguiva pastorello.",
+              "en": "The ewe followed the little shepherd.",
+              "words": [
+                "Ovetto",
+                "seguiva",
+                "pastorello."
+              ]
+            },
+            {
+              "it": "Prigioniero di quel luogo, ovetto era felice.",
+              "en": "The ewe, a prisoner of that place, was happy.",
+              "words": [
+                "Prigioniero",
+                "di",
+                "quel",
+                "luogo,",
+                "ovetto",
+                "era",
+                "felice."
+              ]
+            },
+            {
+              "it": "Labbra di ovetto si muovevano per il fieno.",
+              "en": "The ewe's lips moved for the hay.",
+              "words": [
+                "Labbra",
+                "di",
+                "ovetto",
                 "si",
-                "muovono",
-                "come",
-                "una",
-                "sinfonia",
-                "luminescente"
-              ]
-            },
-            {
-              "it": "Il prorompente canto delle pecore silvestre è una sinfonia naturale.",
-              "en": "The bursting song of the wild sheep is a natural symphony.",
-              "words": [
-                "Il",
-                "prorompente",
-                "canto",
-                "delle",
-                "pecore",
-                "silvestre",
-                "è",
-                "una",
-                "sinfonia",
-                "naturale"
-              ]
-            },
-            {
-              "it": "Il prorompente sole illumina la sinfonia luminescente delle pecore silvestre.",
-              "en": "The bursting sun illuminates the luminous symphony of the wild sheep.",
-              "words": [
-                "Il",
-                "prorompente",
-                "sole",
-                "illumina",
-                "la",
-                "sinfonia",
-                "luminescente",
-                "delle",
-                "pecore",
-                "silvestre"
-              ]
-            },
-            {
-              "it": "La sinfonia prorompente delle pecore silvestre risuona nel mezzo del prato.",
-              "en": "The bursting symphony of the wild sheep resounds in the middle of the meadow.",
-              "words": [
-                "La",
-                "sinfonia",
-                "prorompente",
-                "delle",
-                "pecore",
-                "silvestre",
-                "risuona",
-                "nel",
-                "mezzo",
-                "del",
-                "prato"
-              ]
-            },
-            {
-              "it": "La sinfonia luminescente delle pecore silvestre è un spettacolo prorompente.",
-              "en": "The luminous symphony of the wild sheep is a bursting spectacle.",
-              "words": [
-                "La",
-                "sinfonia",
-                "luminescente",
-                "delle",
-                "pecore",
-                "silvestre",
-                "è",
-                "un",
-                "spettacolo",
-                "prorompente"
+                "muovevano",
+                "per",
+                "il",
+                "fieno."
               ]
             }
           ]
         }
       ],
-      "generatedAt": "2026-04-26T00:16:29.998Z"
+      "generationStats": {
+        "totalMs": 882387,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1813,
+        "totalCompletionTokens": 1641,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 183008,
+            "promptTokens": 473,
+            "completionTokens": 391
+          },
+          {
+            "lessonNum": 2,
+            "ms": 213124,
+            "promptTokens": 541,
+            "completionTokens": 394
+          },
+          {
+            "lessonNum": 3,
+            "ms": 342732,
+            "promptTokens": 597,
+            "completionTokens": 399
+          }
+        ]
+      },
+      "generatedAt": "2026-04-29T15:38:56.865Z"
     },
     {
       "topic": "im wald spazieren",
@@ -6767,7 +6759,13 @@
           }
         ]
       },
-      "generatedAt": "2026-04-29T13:47:07.200Z"
+      "generatedAt": "2026-04-29T16:14:36.266Z",
+      "repairStats": {
+        "repairCount": 2,
+        "totalMs": 327850,
+        "promptTokens": 1049,
+        "completionTokens": 171
+      }
     },
     {
       "topic": "table tennis",
@@ -10028,6 +10026,25 @@
       ],
       "flaggedAt": "2026-04-26T13:13:25.143Z",
       "comment": "con missing"
+    },
+    "pilze_suchen:order:Sacchetto_pieno,_autunno_arricchito.": {
+      "topic": "pilze suchen",
+      "type": "order",
+      "it": "Sacchetto pieno, autunno arricchito.",
+      "en": "Full basket, autumn enriched.",
+      "correct": "Sacchetto pieno, autunno arricchito.",
+      "choices": [],
+      "words": [
+        "di",
+        "autunno.",
+        "autunno",
+        "arricchito.",
+        "Sacchetto",
+        "pieno,",
+        "del"
+      ],
+      "flaggedAt": "2026-04-29T15:27:52.049Z",
+      "comment": ""
     }
   }
 }
