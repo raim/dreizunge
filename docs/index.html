@@ -235,6 +235,23 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 
+/* ══ DIFFICULTY ══════════════════════════════════════════════════════ */
+.diff-wrap{margin-bottom:14px}
+.diff-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.diff-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.08em}
+.diff-val{font-size:13px;font-weight:900;padding:2px 10px;border-radius:12px;transition:background .2s,color .2s}
+.diff-val.d1{background:#d7ffb2;color:#2a6000}
+.diff-val.d2{background:#fff3cc;color:#7a5000}
+.diff-val.d3{background:#ffd4d4;color:#880000}
+.diff-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;outline:none;cursor:pointer;background:var(--gray-mid);margin:0}
+.diff-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--blue);border:3px solid var(--white);box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer;transition:background .15s}
+.diff-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--blue);border:3px solid var(--white);box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer}
+.diff-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--gray-dark);font-weight:700;margin-top:3px;padding:0 2px}
+.diff-badge{display:inline-block;font-size:10px;font-weight:900;padding:1px 7px;border-radius:8px;vertical-align:middle;margin-left:4px;letter-spacing:.04em}
+.diff-badge.d1{background:#d7ffb2;color:#2a6000}
+.diff-badge.d2{background:#fff3cc;color:#7a5000}
+.diff-badge.d3{background:#ffd4d4;color:#880000}
+
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
 .story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 16px;overflow:hidden;box-shadow:var(--shadow-card)}
 .story-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
@@ -261,7 +278,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-repair-status{font-size:12px;color:var(--gray-dark);font-weight:600;margin-top:5px}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
-.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8}
+.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}
 
 /* ══ LIB FILTER ══════════════════════════════════════════════════════ */
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
@@ -322,6 +339,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       placeholder="e.g. cooking, architecture, medicine… add details for a richer story"
       maxlength="400" oninput="autoResizeTopic(this)"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
+    <div class="diff-wrap">
+      <div class="diff-label-row">
+        <span class="diff-lbl">Difficulty</span>
+        <span class="diff-val d2" id="diff-val">Intermediate</span>
+      </div>
+      <input class="diff-slider" id="diff-slider" type="range" min="1" max="3" value="2"
+        oninput="onDiffSlider(this.value)">
+      <div class="diff-ticks"><span>🟢 Beginner</span><span>🟡 Intermediate</span><span>🔴 Advanced</span></div>
+    </div>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
@@ -369,8 +395,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
     <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
-
-  <!-- Story section -->
   <div class="story-section" id="story-section" style="display:none">
     <button class="story-hdr" onclick="toggleStory()">
       <span>📖 Read the story</span>
@@ -391,7 +415,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="story-repair-status" id="story-repair-status"></div>
     </div>
   </div>
-
   <div class="gen-stats" id="gen-stats"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
@@ -450,6 +473,7 @@ var APP = {
   info: {backend:'none',canGenerate:false},
   lessonData: null,
   lang: loadLang(),
+  difficulty: loadDifficulty(),
   libFilter: 'all',
   progress: loadProg(),
   flagged: loadFlagged(),
@@ -461,6 +485,20 @@ function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'
 function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
 function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
+function loadDifficulty(){ return parseInt(localStorage.getItem('imp3_diff')||'2',10); }
+function saveDifficulty(){ localStorage.setItem('imp3_diff',String(APP.difficulty)); }
+
+const DIFF_LABELS = {1:'🟢 Beginner', 2:'🟡 Intermediate', 3:'🔴 Advanced'};
+const DIFF_SHORT  = {1:'Beginner',    2:'Intermediate',    3:'Advanced'};
+function onDiffSlider(v){
+  APP.difficulty = parseInt(v, 10);
+  saveDifficulty();
+  const el = document.getElementById('diff-val');
+  if(el){ el.textContent = DIFF_SHORT[APP.difficulty]; el.className = 'diff-val d'+APP.difficulty; }
+}
+function autoResizeTopic(el){
+  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
+}
 function selectLang(code){
   APP.lang=code; saveLang();
   const sel=document.getElementById('lang-select');
@@ -472,6 +510,11 @@ function selectLang(code){
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
   if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
+}
+function restoreDiffSlider(){
+  const sl=document.getElementById('diff-slider');
+  if(sl) sl.value=APP.difficulty;
+  onDiffSlider(APP.difficulty);
 }
 async function pollJob(jobId, onStep, intervalMs){
   intervalMs = intervalMs || 2000;
@@ -649,74 +692,63 @@ async function repairAll(){
 
 function goHome(){ buildPath(); show('home'); }
 
-function autoResizeTopic(el){
-  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
-}
-
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
+  if(!body) return;
   const open=body.classList.toggle('open');
-  arrow.classList.toggle('open',open);
+  if(arrow) arrow.classList.toggle('open',open);
 }
-
 function toggleStoryRepair(){
   const wrap=document.getElementById('story-repair-wrap');
   if(wrap) wrap.classList.toggle('open');
 }
-
 function renderStoryText(d){
   const body=document.getElementById('story-body'); if(!body) return;
-  const story=d.story||'';
-  const paras=story.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  const paras=(d.story||'').split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
   let html=`<div id="story-orig">${paras}</div>`;
   if(d.storyTranslation){
-    const tparas=d.storyTranslation.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
-    html+=`<div class="story-translation" id="story-trans">${tparas}</div>`;
+    const tp=d.storyTranslation.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    html+=`<div class="story-translation" id="story-trans">${tp}</div>`;
   } else {
-    html+=`<div class="story-translation" id="story-trans" style="display:none"></div>`;
+    html+='<div class="story-translation" id="story-trans" style="display:none"></div>';
   }
   body.innerHTML=html;
 }
-
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
   speak(d.story);
 }
-
 async function toggleStoryTranslation(){
   const d=APP.lessonData; if(!d||!d.story) return;
   const transDiv=document.getElementById('story-trans');
   const btn=document.getElementById('story-translate-btn');
-  // If already translated and showing, just toggle visibility
   if(d.storyTranslation){
     if(!transDiv) return;
     const nowHidden=transDiv.style.display==='none';
     transDiv.style.display=nowHidden?'':'none';
-    btn.style.opacity=nowHidden?'1':'0.5';
+    if(btn) btn.style.opacity=nowHidden?'1':'0.5';
+    // Open story body if closed
+    if(nowHidden){
+      const body=document.getElementById('story-body');
+      if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
+    }
     return;
   }
-  // Need to fetch translation
-  btn.textContent='⏳'; btn.disabled=true;
-  // Ensure story body is open
+  if(btn){ btn.textContent='⏳'; btn.disabled=true; }
   const body=document.getElementById('story-body');
-  if(!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
+  if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
   try{
     const r=await fetch('/api/translate-story',{method:'POST',
       headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic})});
     const resp=await r.json();
     if(!r.ok) throw new Error(resp.error||'Translate failed');
-    // Poll job
-    const result=await pollJob(resp.jobId, step=>{ btn.textContent='⏳'; });
+    const result=await pollJob(resp.jobId);
     d.storyTranslation=result.translation;
     renderStoryText(d);
-  }catch(e){
-    alert('Translation failed: '+e.message);
-  }finally{
-    btn.textContent='🌐'; btn.disabled=false;
-  }
+  }catch(e){ alert('Translation failed: '+e.message); }
+  finally{ if(btn){ btn.textContent='🌐'; btn.disabled=false; } }
 }
-
 async function doRepairStory(){
   const d=APP.lessonData; if(!d) return;
   const instruction=document.getElementById('story-repair-input')?.value?.trim();
@@ -731,30 +763,20 @@ async function doRepairStory(){
     const resp=await r.json();
     if(!r.ok) throw new Error(resp.error||'Repair failed');
     await pollJob(resp.jobId, step=>{ if(status) status.textContent=step; });
-    // Reload lesson data from server
     const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
-    if(lr.ok){
-      const fresh=await lr.json();
-      APP.lessonData=fresh;
-    }
-    // Open story to show result
+    if(lr.ok) APP.lessonData=await lr.json();
     const body=document.getElementById('story-body');
-    if(body && !body.classList.contains('open')){
-      body.classList.add('open'); document.getElementById('story-arrow').classList.add('open');
-    }
+    if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
     renderStoryText(APP.lessonData);
     document.getElementById('story-repair-input').value='';
     if(status) status.textContent='Story updated!';
     setTimeout(()=>{ if(status) status.textContent=''; },3000);
-    // Close repair panel
     const wrap=document.getElementById('story-repair-wrap');
     if(wrap) wrap.classList.remove('open');
   }catch(e){
     alert('Story repair failed: '+e.message);
     if(status) status.textContent='';
-  }finally{
-    btn.disabled=false; btn.textContent='Rewrite';
-  }
+  }finally{ btn.disabled=false; btn.textContent='Rewrite'; }
 }
 
 // ── init ──
@@ -764,6 +786,792 @@ async function doRepairStory(){
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "when in italy",
+    "topicEmoji": "🇮🇹",
+    "lang": "it",
+    "difficulty": 1,
+    "story": "When in Italy, the sun was always shining, and the air was filled with the sweet scent of blooming flowers. Maria, a young woman from a small town in England, had always dreamed of visiting Italy. Finally, her dream came true when she was offered a job teaching English in a charming Italian village.\n\nThe first thing Maria noticed when she stepped off the train was the warm, golden light that seemed to dance through the narrow streets. The cobblestones under her feet were uneven, but they led her to a quaint little apartment where she would be staying. The walls were painted in soft pastel colors, and the furniture was old but cozy. Her hostess, a kind woman named Anna, greeted her with a warm embrace and a plate of fresh, homemade cookies.\n\nThe next morning, Maria decided to explore the village. She walked along the winding streets, passing by colorful shops and cafes. The locals were friendly and curious, often stopping to chat or wave. Maria tried to practice her Italian, but the villagers spoke so quickly that she often had to ask them to repeat themselves. Despite the language barrier, she felt a sense of belonging, as if she had always been there.\n\nOne afternoon, Maria visited a local market where she saw stalls filled with fresh produce, cheeses, and flowers. She was drawn to a stall selling handmade pasta. The vendor, a man named Luigi, invited her to taste his freshly made spaghetti. As she savored the simple yet delicious dish, she realized that the true magic of Italy lay not just in its beautiful landscapes and historical sites, but in the warmth and hospitality of its people.\n\nOn her last day, Maria visited a small church in the village. The interior was dimly lit, with the soft glow of candlelight reflecting off the walls. As she sat in the pews, she felt a deep sense of peace. She had learned so much more than just the Italian language—she had learned about the Italian way of life, the importance of family, and the joy of simple pleasures.\n\nAs she boarded the train back to the city, Maria felt a mix of sadness and excitement. She was leaving behind a place that had become her second home, but she was also eager to share her experiences with her friends and family. When in Italy, she realized, one could find not just a new place to visit, but a new way of living.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "When in Italy",
+        "desc": "Exploring Italian life and culture",
+        "icon": "🇮🇹",
+        "vocab": [
+          {
+            "it": "sogno",
+            "en": "dream",
+            "pron": "SOH-no"
+          },
+          {
+            "it": "offerta",
+            "en": "offer",
+            "pron": "o-FER-ta"
+          },
+          {
+            "it": "tavolo",
+            "en": "table",
+            "pron": "TAH-volo"
+          },
+          {
+            "it": "pastello",
+            "en": "pastel",
+            "pron": "pas-TEH-lo"
+          },
+          {
+            "it": "vecchio",
+            "en": "old",
+            "pron": "VEH-chio"
+          },
+          {
+            "it": "cortese",
+            "en": "courteous",
+            "pron": "kor-TEH-zeh"
+          },
+          {
+            "it": "sconosciuto",
+            "en": "unknown",
+            "pron": "scon-NOH-see-oo-to"
+          },
+          {
+            "it": "luce",
+            "en": "light",
+            "pron": "LOO-che"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La luce era sempre splendente.",
+            "en": "The light was always shining.",
+            "words": [
+              "La",
+              "luce",
+              "era",
+              "sempre",
+              "splendente."
+            ]
+          },
+          {
+            "it": "Le strade erano strette e tortuose.",
+            "en": "The streets were narrow and winding.",
+            "words": [
+              "Le",
+              "strade",
+              "erano",
+              "strette",
+              "e",
+              "tortuose."
+            ]
+          },
+          {
+            "it": "Il tavolo era coperto di dolci.",
+            "en": "The table was covered with sweets.",
+            "words": [
+              "Il",
+              "tavolo",
+              "era",
+              "coperto",
+              "di",
+              "dolci."
+            ]
+          },
+          {
+            "it": "Il suo sogno si avverò.",
+            "en": "Her dream came true.",
+            "words": [
+              "Il",
+              "suo",
+              "sogno",
+              "si",
+              "avverò."
+            ]
+          },
+          {
+            "it": "La sua ospite era molto cortese.",
+            "en": "Her hostess was very courteous.",
+            "words": [
+              "La",
+              "sua",
+              "ospite",
+              "era",
+              "molto",
+              "cortese."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "When in Italy",
+        "desc": "Exploring Italian Village Life",
+        "icon": "🏠☀️",
+        "vocab": [
+          {
+            "it": "luce",
+            "en": "light",
+            "pron": "LOO-che"
+          },
+          {
+            "it": "danza",
+            "en": "dance",
+            "pron": "DAHN-zah"
+          },
+          {
+            "it": "pavimento",
+            "en": "floor",
+            "pron": "pa-VEE-men-to"
+          },
+          {
+            "it": "vecchio",
+            "en": "old",
+            "pron": "VEH-chio"
+          },
+          {
+            "it": "pastello",
+            "en": "pastel",
+            "pron": "pas-TEL-lo"
+          },
+          {
+            "it": "cocaina",
+            "en": "cocaine",
+            "pron": "ko-ko-EEN-a"
+          },
+          {
+            "it": "sconosciuto",
+            "en": "unknown",
+            "pron": "sco-no-KEE-zee-to"
+          },
+          {
+            "it": "cortese",
+            "en": "courteous",
+            "pron": "kor-TEH-zeh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La luce danzava tra le case.",
+            "en": "The light danced between the houses.",
+            "words": [
+              "La",
+              "luce",
+              "danzava",
+              "tra",
+              "le",
+              "case."
+            ]
+          },
+          {
+            "it": "Le scale di pietra portavano al piano superiore.",
+            "en": "The stone stairs led to the upper floor.",
+            "words": [
+              "Le",
+              "scale",
+              "di",
+              "pietra",
+              "portavano",
+              "al",
+              "piano",
+              "superiore."
+            ]
+          },
+          {
+            "it": "Il pavimento era di vecchie assi di legno.",
+            "en": "The floor was of old wooden planks.",
+            "words": [
+              "Il",
+              "pavimento",
+              "era",
+              "di",
+              "vecchie",
+              "assi",
+              "di",
+              "legno."
+            ]
+          },
+          {
+            "it": "Un sconosciuto bussò alla porta.",
+            "en": "An unknown person knocked on the door.",
+            "words": [
+              "Un",
+              "sconosciuto",
+              "bussò",
+              "alla",
+              "porta."
+            ]
+          },
+          {
+            "it": "Anna era molto cortese e gentile.",
+            "en": "Anna was very courteous and kind.",
+            "words": [
+              "Anna",
+              "era",
+              "molto",
+              "cortese",
+              "e",
+              "gentile."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "When in Italy",
+        "desc": "Exploring Italian Village Life",
+        "icon": "🏠☀️",
+        "vocab": [
+          {
+            "it": "luce",
+            "en": "light",
+            "pron": "LOO-che"
+          },
+          {
+            "it": "danza",
+            "en": "dance",
+            "pron": "DAHN-zah"
+          },
+          {
+            "it": "pavimento",
+            "en": "floor",
+            "pron": "pa-VEE-men-to"
+          },
+          {
+            "it": "pastello",
+            "en": "pastel",
+            "pron": "pas-TEH-lo"
+          },
+          {
+            "it": "vecchio",
+            "en": "old",
+            "pron": "VEH-chio"
+          },
+          {
+            "it": "sconosciuto",
+            "en": "unknown",
+            "pron": "scon-oh-NEE-che-to"
+          },
+          {
+            "it": "cocaina",
+            "en": "cocaine",
+            "pron": "ko-ko-EEN-a"
+          },
+          {
+            "it": "cortese",
+            "en": "courteous",
+            "pron": "kor-TEH-seh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La luce entrava attraverso le finestre.",
+            "en": "The light entered through the windows.",
+            "words": [
+              "La",
+              "luce",
+              "entrava",
+              "attraverso",
+              "le",
+              "finestre."
+            ]
+          },
+          {
+            "it": "Il pavimento era coperto di polvere.",
+            "en": "The floor was covered in dust.",
+            "words": [
+              "Il",
+              "pavimento",
+              "era",
+              "coperto",
+              "di",
+              "polvere."
+            ]
+          },
+          {
+            "it": "Un sconosciuto bussò alla porta.",
+            "en": "An unknown person knocked on the door.",
+            "words": [
+              "Un",
+              "sconosciuto",
+              "bussò",
+              "alla",
+              "porta."
+            ]
+          },
+          {
+            "it": "Il pastello era usato per dipingere le pareti.",
+            "en": "The pastel was used to paint the walls.",
+            "words": [
+              "Il",
+              "pastello",
+              "era",
+              "usato",
+              "per",
+              "dipingere",
+              "le",
+              "pareti."
+            ]
+          },
+          {
+            "it": "Era un uomo cortese e gentile.",
+            "en": "He was a courteous and kind man.",
+            "words": [
+              "Era",
+              "un",
+              "uomo",
+              "cortese",
+              "e",
+              "gentile."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 797633,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 1735,
+      "totalCompletionTokens": 1510,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 197143,
+          "promptTokens": 454,
+          "completionTokens": 319
+        },
+        {
+          "lessonNum": 2,
+          "ms": 192308,
+          "promptTokens": 519,
+          "completionTokens": 337
+        },
+        {
+          "lessonNum": 3,
+          "ms": 203010,
+          "promptTokens": 564,
+          "completionTokens": 338
+        }
+      ]
+    },
+    "generatedAt": "2026-04-29T08:58:18.424Z"
+  },
+  {
+    "topic": "traveling to toscana in may with a baby",
+    "topicEmoji": "🌍",
+    "lang": "it",
+    "story": "In the heart of May, under a sky painted with the softest of blues, Maria and her baby, Luca, embarked on a journey to Toscana, a land of rolling hills and golden sunsets. The air was filled with the sweet scent of blooming wildflowers, and the gentle breeze carried the whispers of the past. Maria, a young mother with a heart full of adventure, had always dreamed of exploring the picturesque landscapes of Toscana with her little one.\n\nTheir first stop was the charming town of Siena, where they wandered through the narrow cobblestone streets, hand in hand. Luca, a curious baby with big brown eyes, gazed at the ancient buildings and the bustling market stalls filled with colorful fruits and vegetables. Maria bought a small basket of ripe strawberries, which she shared with Luca, who giggled and clapped his tiny hands in delight.\n\nAs the day turned into evening, they found a cozy piazza where a group of locals were playing music and dancing. Luca, entranced by the lively tunes, began to sway and clap along, his little feet tapping the ground. Maria watched, her heart swelling with joy, as she realized that the simple pleasures of life, like a baby’s first dance, were the true treasures of Toscana.\n\nThe next morning, they set out for the rolling hills of Chianti, where they visited a small vineyard. The owner, a kind old man with a warm smile, showed them how to pick the ripest grapes and even let Luca taste a tiny bit of the sweet juice. Luca, with a look of pure wonder, made a face of delight and reached for more, much to Maria’s amusement.\n\nAs the sun began to set, they made their way to a quaint hilltop village, where they found a charming bed and breakfast. The hostess, a gentle woman named Rosa, welcomed them with a warm embrace and a plate of homemade pasta. Luca, who had been napping in his stroller, woke up with a yawn and a smile, his little hands reaching for the pasta. Maria, feeling a deep sense of contentment, knew that this was a memory they would cherish forever.\n\nAs they lay in their cozy bed that night, the stars twinkling above, Maria felt a sense of peace wash over her. Traveling to Toscana with Luca had not only given them a magical experience but had also strengthened their bond, creating a story that would be told for years to come.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Exploring Toscana",
+        "desc": "Traveling, May, baby, Siena, basket, strawberries",
+        "icon": "🌍",
+        "vocab": [
+          {
+            "it": "giugno",
+            "en": "June",
+            "pron": "JOO-no"
+          },
+          {
+            "it": "paese",
+            "en": "town",
+            "pron": "PAH-zeh"
+          },
+          {
+            "it": "stradine",
+            "en": "narrow streets",
+            "pron": "strah-DEEN-eh"
+          },
+          {
+            "it": "mercato",
+            "en": "market",
+            "pron": "mer-KAH-to"
+          },
+          {
+            "it": "frutta",
+            "en": "fruit",
+            "pron": "FRUH-tah"
+          },
+          {
+            "it": "carricare",
+            "en": "to carry",
+            "pron": "kah-ree-KAH-re"
+          },
+          {
+            "it": "sorridere",
+            "en": "to smile",
+            "pron": "sor-ri-DARE"
+          },
+          {
+            "it": "bambino",
+            "en": "baby",
+            "pron": "bahm-BEE-no"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "In giugno, Maria e Luca si recarono in Toscana.",
+            "en": "In June, Maria and Luca went to Toscana.",
+            "words": [
+              "In",
+              "giugno,",
+              "Maria",
+              "e",
+              "Luca",
+              "si",
+              "recarono",
+              "in",
+              "Toscana."
+            ]
+          },
+          {
+            "it": "Luca strinse la mano di sua madre mentre camminavano.",
+            "en": "Luca held his mother's hand while walking.",
+            "words": [
+              "Luca",
+              "strinse",
+              "la",
+              "mano",
+              "di",
+              "sua",
+              "madre",
+              "mentre",
+              "camminavano."
+            ]
+          },
+          {
+            "it": "Maria acquistò una cesta di fragole per il suo bambino.",
+            "en": "Maria bought a basket of strawberries for her baby.",
+            "words": [
+              "Maria",
+              "acquistò",
+              "una",
+              "cesta",
+              "di",
+              "fragole",
+              "per",
+              "il",
+              "suo",
+              "bambino."
+            ]
+          },
+          {
+            "it": "Luca sorrideva mentre guardava le case antiche.",
+            "en": "Luca smiled while looking at the old houses.",
+            "words": [
+              "Luca",
+              "sorrideva",
+              "mentre",
+              "guardava",
+              "le",
+              "case",
+              "antiche."
+            ]
+          },
+          {
+            "it": "Il mercato era pieno di frutta e verdura colorata.",
+            "en": "The market was full of colorful fruit and vegetables.",
+            "words": [
+              "Il",
+              "mercato",
+              "era",
+              "pieno",
+              "di",
+              "frutta",
+              "e",
+              "verdura",
+              "colorata."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Toscana in maggio",
+        "desc": "Viaggio in Toscana con bambino",
+        "icon": "🌍",
+        "vocab": [
+          {
+            "it": "silenzi",
+            "en": "silences",
+            "pron": "SI-len-zee"
+          },
+          {
+            "it": "panni",
+            "en": "cloths",
+            "pron": "PA-nnee"
+          },
+          {
+            "it": "bagni",
+            "en": "baths",
+            "pron": "BAH-nee"
+          },
+          {
+            "it": "casette",
+            "en": "cottages",
+            "pron": "KA-set-te"
+          },
+          {
+            "it": "sorriso",
+            "en": "smile",
+            "pron": "so-RISS-so"
+          },
+          {
+            "it": "passeggiate",
+            "en": "walks",
+            "pron": "pas-je-GYAT-te"
+          },
+          {
+            "it": "cicciottello",
+            "en": "little chubby one",
+            "pron": "tsee-CHOT-tel-lo"
+          },
+          {
+            "it": "sconosciuti",
+            "en": "strangers",
+            "pron": "skon-NOZ-zi-tee"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "In maggio, i silenzi della campagna toscana sono meravigliosi.",
+            "en": "In May, the silences of the Tuscan countryside are marvelous.",
+            "words": [
+              "In",
+              "maggio,",
+              "i",
+              "silenzi",
+              "della",
+              "campagna",
+              "toscana",
+              "sono",
+              "meravigliosi."
+            ]
+          },
+          {
+            "it": "Luca, il piccolo cicciottello, si divertiva a giocare con i panni vecchi.",
+            "en": "Luca, the little chubby one, enjoyed playing with the old cloths.",
+            "words": [
+              "Luca,",
+              "il",
+              "piccolo",
+              "cicciottello,",
+              "si",
+              "divertiva",
+              "a",
+              "giocare",
+              "con",
+              "i",
+              "panni",
+              "vecchi."
+            ]
+          },
+          {
+            "it": "Maria e Luca si recarono a fare un bagno nella fonte vicina.",
+            "en": "Maria and Luca went to take a bath in the nearby spring.",
+            "words": [
+              "Maria",
+              "e",
+              "Luca",
+              "si",
+              "recarono",
+              "a",
+              "fare",
+              "un",
+              "bagno",
+              "nella",
+              "fonte",
+              "vicina."
+            ]
+          },
+          {
+            "it": "Le casette intorno al paese erano piene di sconosciuti amichevoli.",
+            "en": "The cottages around the town were full of friendly strangers.",
+            "words": [
+              "Le",
+              "casette",
+              "intorno",
+              "al",
+              "paese",
+              "erano",
+              "piene",
+              "di",
+              "sconosciuti",
+              "amichevoli."
+            ]
+          },
+          {
+            "it": "Passeggiate tra le stradine, sorrisi si scambiavano a ogni angolo.",
+            "en": "Walking through the narrow streets, smiles were exchanged at every corner.",
+            "words": [
+              "Passeggiate",
+              "tra",
+              "le",
+              "stradine,",
+              "sorrisi",
+              "si",
+              "scambiavano",
+              "a",
+              "ogni",
+              "angolo."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Toscana in maggio",
+        "desc": "Exploring Toscana with a baby in May",
+        "icon": "🌸",
+        "vocab": [
+          {
+            "it": "giornata",
+            "en": "day",
+            "pron": "dʒornoˈta"
+          },
+          {
+            "it": "panni",
+            "en": "clothes",
+            "pron": "ˈpanni"
+          },
+          {
+            "it": "bagni",
+            "en": "baths",
+            "pron": "ˈbaɲːi"
+          },
+          {
+            "it": "casette",
+            "en": "cottages",
+            "pron": "kaˈsetːe"
+          },
+          {
+            "it": "passeggiate",
+            "en": "walks",
+            "pron": "pasˈdʒeːdʒaːte"
+          },
+          {
+            "it": "cicciottello",
+            "en": "little chubby one",
+            "pron": "tʃikˈkottɛllo"
+          },
+          {
+            "it": "sconosciuti",
+            "en": "strangers",
+            "pron": "skɔnɔˈtʃiːuti"
+          },
+          {
+            "it": "silenzi",
+            "en": "silences",
+            "pron": "silˈɛntʃi"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "In maggio, la Toscana è piena di silenzi e bellezze.",
+            "en": "In May, Toscana is full of silences and beauties.",
+            "words": [
+              "In",
+              "maggio,",
+              "la",
+              "Toscana",
+              "è",
+              "piena",
+              "di",
+              "silenzi",
+              "e",
+              "bellezze."
+            ]
+          },
+          {
+            "it": "Maria e Luca passeggiano lungo le stradine di Siena.",
+            "en": "Maria and Luca stroll along Siena's narrow streets.",
+            "words": [
+              "Maria",
+              "e",
+              "Luca",
+              "passeggiano",
+              "lungo",
+              "le",
+              "stradine",
+              "di",
+              "Siena."
+            ]
+          },
+          {
+            "it": "Il cicciottello sorride, guardando le casette colorate.",
+            "en": "The little chubby one smiles, looking at the colorful cottages.",
+            "words": [
+              "Il",
+              "cicciottello",
+              "sorride,",
+              "guardando",
+              "le",
+              "casette",
+              "colorate."
+            ]
+          },
+          {
+            "it": "La madre compra panni nuovi per il bambino.",
+            "en": "The mother buys new clothes for the baby.",
+            "words": [
+              "La",
+              "madre",
+              "compra",
+              "panni",
+              "nuovi",
+              "per",
+              "il",
+              "bambino."
+            ]
+          },
+          {
+            "it": "Luca si accorge di sconosciuti che lo osservano con curiosità.",
+            "en": "Luca notices strangers who observe him curiously.",
+            "words": [
+              "Luca",
+              "si",
+              "accorge",
+              "di",
+              "sconosciuti",
+              "che",
+              "lo",
+              "osservano",
+              "con",
+              "curiosità."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1026764,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 1755,
+      "totalCompletionTokens": 1790,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 261764,
+          "promptTokens": 451,
+          "completionTokens": 377
+        },
+        {
+          "lessonNum": 2,
+          "ms": 271371,
+          "promptTokens": 516,
+          "completionTokens": 435
+        },
+        {
+          "lessonNum": 3,
+          "ms": 296334,
+          "promptTokens": 573,
+          "completionTokens": 432
+        }
+      ]
+    },
+    "generatedAt": "2026-04-29T00:10:12.959Z"
+  },
   {
     "topic": "a vacation in domburg",
     "topicEmoji": "🏖️",
@@ -9705,8 +10513,8 @@ function staticUpsert(data) {
 // ── Init ──────────────────────────────────────────────────────────────
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
-  // Restore saved language
   selectLang(APP.lang);
+  restoreDiffSlider();
   renderPill();
   loadSavedList();
 }
@@ -9783,6 +10591,7 @@ function buildPath(){
   if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
   const done=APP.progress.completed[topicKey];
   const dLang=d.lang||'it'; const dL=LANGS[dLang]||LANGS.it;
+  const diff=d.difficulty||2;
   document.getElementById('topic-emoji-big').textContent=(dL.flag+' '+(d.topicEmoji||'📚'));
   document.getElementById('topic-name-big').textContent=d.topic;
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
@@ -9797,21 +10606,30 @@ function buildPath(){
     const arrow=document.getElementById('story-arrow');
     if(arrow) arrow.classList.remove('open');
     renderStoryText(d);
-    // Show/hide repair button based on canGenerate
     const repToggle=document.getElementById('story-repair-toggle-btn');
     if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
     const transBtn=document.getElementById('story-translate-btn');
     if(transBtn) transBtn.style.display=APP.info.canGenerate?'':'none';
   } else if(storySec){ storySec.style.display='none'; }
 
-  // Gen stats
+  // Gen stats + repair stats
   const statEl=document.getElementById('gen-stats');
-  if(statEl && d.generationStats){
-    const gs=d.generationStats;
-    const secs=(gs.totalMs/1000).toFixed(1);
-    const tokens=((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString();
-    statEl.textContent=`Generated in ${secs}s · ${gs.model} · ${tokens} tokens`;
-  } else if(statEl){ statEl.textContent=''; }
+  if(statEl){
+    const lines=[];
+    if(d.generationStats){
+      const gs=d.generationStats;
+      const secs=(gs.totalMs/1000).toFixed(1);
+      const tokens=((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString();
+      lines.push(`Generated in ${secs}s · ${gs.model} · ${tokens} tokens`);
+    }
+    if(d.repairStats && d.repairStats.repairCount>0){
+      const rs=d.repairStats;
+      const secs=(rs.totalMs/1000).toFixed(1);
+      const tokens=((rs.promptTokens||0)+(rs.completionTokens||0)).toLocaleString();
+      lines.push(`${rs.repairCount} repair${rs.repairCount!==1?'s':''} · ${secs}s · ${tokens} tokens`);
+    }
+    statEl.innerHTML=lines.join('<br>');
+  }
 
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
@@ -9835,9 +10653,10 @@ function buildPath(){
       return lessonItSet.has(contentSlug);
     }).length;
     const hasFlags=lessonFlagCount>0&&APP.info.canGenerate;
+    const diffBadge=`<span class="diff-badge d${diff}">${DIFF_SHORT[diff]||''}</span>`;
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
-        <div class="node-title">Lesson ${L.id}: ${L.title}</div>
+        <div class="node-title">Lesson ${L.id}: ${L.title} ${i===0?diffBadge:''}</div>
         <div class="node-desc">${L.desc}</div>
         ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}      </div>
       ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
@@ -10156,11 +10975,23 @@ async function doGenerate()         {}
 async function repairLesson()       {}
 async function repairFromLesson()   {}
 
-// Story functions — server calls disabled, local state only
+// UI helpers — work fully in static mode
+function autoResizeTopic(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px'; }
+function onDiffSlider(v){
+  APP.difficulty=parseInt(v,10); saveDifficulty();
+  const el=document.getElementById('diff-val');
+  if(el){ el.textContent=DIFF_SHORT[APP.difficulty]||v; el.className='diff-val d'+APP.difficulty; }
+}
+function restoreDiffSlider(){
+  const sl=document.getElementById('diff-slider'); if(sl) sl.value=APP.difficulty;
+  onDiffSlider(APP.difficulty);
+}
+
+// Story — DOM-only functions work in static mode
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
-  if(!body)return;
+  if(!body) return;
   const open=body.classList.toggle('open');
   if(arrow) arrow.classList.toggle('open',open);
 }
@@ -10180,21 +11011,19 @@ function renderStoryText(d){
   }
   body.innerHTML=html;
 }
-function speakStory(){
-  const d=APP.lessonData; if(!d||!d.story)return;
-  speak(d.story);
-}
-// Translation and repair require server — show notice in static mode
-async function toggleStoryTranslation(){
-  if(APP.lessonData&&APP.lessonData.storyTranslation){
+function speakStory(){ const d=APP.lessonData; if(d&&d.story) speak(d.story); }
+function toggleStoryTranslation(){
+  const d=APP.lessonData; if(!d) return;
+  if(d.storyTranslation){
     const t=document.getElementById('story-trans');
-    if(t){ t.style.display=t.style.display==='none'?'':'none'; }
+    if(t){ t.style.display=t.style.display==='none'?'': 'none'; }
+    const body=document.getElementById('story-body');
+    if(body&&!body.classList.contains('open')){ body.classList.add('open'); const a=document.getElementById('story-arrow'); if(a) a.classList.add('open'); }
     return;
   }
-  alert('Story translation requires the live server version.');
+  alert('Story translation requires the live server.');
 }
-async function doRepairStory(){ alert('Story repair requires the live server version.'); }
-function autoResizeTopic(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px'; }
+function doRepairStory(){ alert('Story repair requires the live server.'); }
 
 init();</script>
 </body>
