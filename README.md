@@ -53,6 +53,13 @@ In offline mode you can only load lessons that were already saved in lessons.jso
 http://localhost:3000
 ```
 
+or in your local network, using the IP of the computer that runs
+the server script (see console output), e.g.,
+
+```
+http://192.168.0.180:3000/
+```
+
 ---
 
 ## Environment variables
