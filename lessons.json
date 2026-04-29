@@ -4539,11 +4539,118 @@
       "topic": "italian_vs_german_beer",
       "topicEmoji": "🍺",
       "lang": "it",
+      "difficulty": 2,
+      "story": "In the heart of a bustling Italian town, where the cobblestone streets were lined with ancient buildings and the scent of fresh pizza filled the air, a friendly competition was brewing. The annual \"Beere di Verità\" festival was in full swing, and this year, the Italian beer was pitted against the German beer in a taste-off that promised to be unforgettable.\n\nMarco, a jovial Italian with a thick mustache and a twinkle in his eye, was the organizer of the festival. He had always been a fan of Italian beer, but he was curious to see how it would fare against its German counterpart. Marco had invited his friend, Luca, a German expatriate who had moved to Italy years ago and had become a connoisseur of both types of beer.\n\nThe day of the competition arrived, and the sun shone brightly over the town square. A large crowd had gathered, eager to taste and judge the beers. Marco and Luca stood side by side, each holding a glass of their respective beers. The Italian beer, a crisp and refreshing lager, was a light golden color, while the German beer, a robust and malty pilsner, was a deep amber.\n\n\"Ready, Luca?\" Marco asked, his voice filled with excitement.\n\n\"Always, Marco,\" Luca replied with a grin, his eyes sparkling with anticipation.\n\nThe first sip was a moment of silence, as both men savored the flavors. Marco closed his eyes, letting the Italian beer dance on his tongue. \"It's like a gentle breeze on a warm day,\" he said, his voice soft and appreciative.\n\nLuca nodded, savoring the German beer. \"There's a depth here, a complexity that's hard to match,\" he said, his eyes narrowing in concentration.\n\nThe crowd watched in awe as the two friends debated the merits of their beers. Marco argued that the Italian beer was lighter and more refreshing, perfect for a warm summer day. Luca countered that the German beer was richer and more robust, offering a full-bodied experience that was hard to resist.\n\nAs the debate continued, the festival-goers began to form their own opinions. Some preferred the Italian beer for its lightness, while others favored the German beer for its depth. The atmosphere was electric, with people discussing and arguing about their choices.\n\nIn the end, the judges, who were a mix of locals and visitors, declared that both beers were winners in their own right. The Italian beer was praised for its refreshing qualities, while the German beer was commended for its robustness. The crowd cheered, and Marco and Luca shook hands, smiling at each other.\n\nAs the day drew to a close, Marco and Luca walked back to their hotel, the Italian beer and the German beer still lingering on their minds. They agreed that the competition had been a success, not just because of the taste-off, but because it had brought people together to appreciate the unique qualities of both Italian and German beer.",
       "lessons": [
         {
           "id": 1,
-          "title": "Italian vs German Beer",
-          "desc": "Comparing Italian and German brewing traditions",
+          "title": "Italian_vs_German_beer",
+          "desc": "Italian and German beer in a taste-off",
+          "icon": "🍺",
+          "vocab": [
+            {
+              "it": "festivale",
+              "en": "festival",
+              "pron": "FEHS-teh-vah-le"
+            },
+            {
+              "it": "taverna",
+              "en": "tavern",
+              "pron": "ta-VEHR-nah"
+            },
+            {
+              "it": "concorso",
+              "en": "contest",
+              "pron": "kon-KOR-so"
+            },
+            {
+              "it": "affascinato",
+              "en": "fascinated",
+              "pron": "ahf-fas-see-NA-to"
+            },
+            {
+              "it": "sapore",
+              "en": "taste",
+              "pron": "SAH-poh-re"
+            },
+            {
+              "it": "pubblico",
+              "en": "public",
+              "pron": "poh-BLEE-koh"
+            },
+            {
+              "it": "scommessa",
+              "en": "bet",
+              "pron": "skom-MES-sa"
+            },
+            {
+              "it": "soddisfazione",
+              "en": "satisfaction",
+              "pron": "sod-di-SFYAH-ta-zah-nee-ah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Marco organizzò il festivale.",
+              "en": "Marco organized the festival.",
+              "words": [
+                "Marco",
+                "organizzò",
+                "il",
+                "festivale."
+              ]
+            },
+            {
+              "it": "Luca era affascinato dai sapori.",
+              "en": "Luca was fascinated by the tastes.",
+              "words": [
+                "Luca",
+                "era",
+                "affascinato",
+                "dai",
+                "sapori."
+              ]
+            },
+            {
+              "it": "Il pubblico scommise sul vincitore.",
+              "en": "The public bet on the winner.",
+              "words": [
+                "Il",
+                "pubblico",
+                "scommise",
+                "sul",
+                "vincitore."
+              ]
+            },
+            {
+              "it": "Il sapore della birra italiana era diverso.",
+              "en": "The taste of the Italian beer was different.",
+              "words": [
+                "Il",
+                "sapore",
+                "della",
+                "birra",
+                "italiana",
+                "era",
+                "diverso."
+              ]
+            },
+            {
+              "it": "Speravano di avere soddisfazione.",
+              "en": "They hoped to be satisfied.",
+              "words": [
+                "Speravano",
+                "di",
+                "avere",
+                "soddisfazione."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Italian_vs_German_beer",
+          "desc": "Italian vs German beer taste-off",
           "icon": "🍺",
           "vocab": [
             {
@@ -4552,638 +4659,642 @@
               "pron": "BIH-rah"
             },
             {
-              "it": "birrificio",
-              "en": "brewery",
-              "pron": "bih-REH-fee-eh-fee-co"
+              "it": "scommettiamo",
+              "en": "let's bet",
+              "pron": "SCOM-eh-teh-mo"
             },
             {
-              "it": "IPA",
-              "en": "India Pale Ale",
-              "pron": "eye-PAH-luh"
+              "it": "pubblico",
+              "en": "public",
+              "pron": "POO-blik-ko"
             },
             {
-              "it": "stella",
-              "en": "star",
-              "pron": "STAY-lah"
+              "it": "soddisfazione",
+              "en": "satisfaction",
+              "pron": "sod-di-sfy-AH-tay-zi-on"
             },
             {
-              "it": "lager",
-              "en": "lager",
-              "pron": "LAH-ger"
+              "it": "affascinato",
+              "en": "fascinated",
+              "pron": "ahf-fas-see-AH-to"
             },
             {
-              "it": "pilsener",
-              "en": "pilsner",
-              "pron": "pilz-NEH-ner"
+              "it": "sapore",
+              "en": "taste",
+              "pron": "SAH-poh-re"
             },
             {
-              "it": "abbazia",
-              "en": "abbey",
-              "pron": "ah-bah-ZEE-ah"
+              "it": "taverna",
+              "en": "tavern",
+              "pron": "tah-VAH-nah"
             },
             {
-              "it": "abbaziale",
-              "en": "abbey-style",
-              "pron": "ah-bah-zee-AH-lee"
+              "it": "concorso",
+              "en": "contest",
+              "pron": "kon-kohr-so"
             }
           ],
           "sentences": [
             {
-              "it": "La birrificio produce IPA stella.",
-              "en": "The brewery produces star IPA",
+              "it": "Scommettiamo che la birra italiana sarà migliore.",
+              "en": "Let's bet that the Italian beer will be better.",
               "words": [
-                "La",
-                "birrificio",
-                "produce",
-                "IPA",
-                "stella"
+                "Scommettiamo",
+                "che",
+                "la",
+                "birra",
+                "italiana",
+                "sarà",
+                "migliore."
               ]
             },
             {
-              "it": "Il lager e la pilsener abbaziale.",
-              "en": "The lager and abbey-style pilsener",
+              "it": "Il pubblico era affascinato dalle sfumature di sapore.",
+              "en": "The public was fascinated by the taste nuances.",
               "words": [
                 "Il",
-                "lager",
-                "e",
-                "la",
-                "pilsener",
-                "abbaziale"
+                "pubblico",
+                "era",
+                "affascinato",
+                "dalle",
+                "sfumature",
+                "di",
+                "sapore."
               ]
             },
             {
-              "it": "Mentre la birra è lager la stella è IPA.",
-              "en": "While the beer is lager the star is IPA",
+              "it": "La taverna era piena di concorrenti per il concorso.",
+              "en": "The tavern was full of competitors for the contest.",
               "words": [
-                "Mentre",
-                "la",
-                "birra",
-                "è",
-                "lager",
-                "la",
-                "stella",
-                "è",
-                "IPA"
+                "La",
+                "taverna",
+                "era",
+                "piena",
+                "di",
+                "concorrenti",
+                "per",
+                "il",
+                "concorso."
               ]
             },
             {
-              "it": "La birra abbaziale è diversa dalla pilsener.",
-              "en": "The abbey beer is different from the pilsener",
+              "it": "La birra tedesca aveva un sapore più forte.",
+              "en": "The German beer had a stronger taste.",
               "words": [
                 "La",
                 "birra",
-                "abbaziale",
-                "è",
-                "diversa",
-                "dalla",
-                "pilsener"
-              ]
-            },
-            {
-              "it": "La stella è un tipo di IPA.",
-              "en": "The star is an IPA type",
-              "words": [
-                "La",
-                "stella",
-                "è",
+                "tedesca",
+                "aveva",
                 "un",
-                "tipo",
-                "dIPa"
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Italian vs German Beer",
-          "desc": "Comparing brewing traditions",
-          "icon": "🍺",
-          "vocab": [
-            {
-              "it": "affogato",
-              "en": "dunked, topped with",
-              "pron": "ah-foh-KAH-toh"
-            },
-            {
-              "it": "fondente",
-              "en": "melty, gooey",
-              "pron": "fohn-DEHN-tay"
-            },
-            {
-              "it": "schiacciatina",
-              "en": "flatbread, pizza-like snack",
-              "pron": "schyah-chyah-tih-NAH-nah"
-            },
-            {
-              "it": "spremuta",
-              "en": "freshly squeezed",
-              "pron": "spruh-MUH-tah"
-            },
-            {
-              "it": "sorbetto",
-              "en": "sorbet, sherbet",
-              "pron": "sohr-BET-toh"
-            },
-            {
-              "it": "sugo",
-              "en": "sauce",
-              "pron": "SOH-goh"
-            },
-            {
-              "it": "schiaccia",
-              "en": "flatten, crush",
-              "pron": "schyah-chyah-AH-ah"
-            },
-            {
-              "it": "schiacciata",
-              "en": "flattened, crushed, flatbread",
-              "pron": "schyah-chyah-KAH-tah"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "La birra affogata nel sorbetto",
-              "en": "The beer dunked in sorbet",
-              "words": [
-                "birra",
-                "affogata",
-                "sorbetto"
+                "sapore",
+                "più",
+                "forte."
               ]
             },
             {
-              "it": "Il sugo fondente sopra la schiacciatina",
-              "en": "The melty sauce atop the flatbread",
+              "it": "Marco era soddisfatto del risultato del concorso.",
+              "en": "Marco was satisfied with the contest result.",
               "words": [
-                "sugo",
-                "fondente",
-                "schiacciatina"
-              ]
-            },
-            {
-              "it": "La spremuta di limone schiacciata",
-              "en": "The crushed lemon juice",
-              "words": [
-                "spremuta",
-                "limone",
-                "schiacciata"
-              ]
-            },
-            {
-              "it": "La birra affogata nel sugo",
-              "en": "The beer dunked in sauce",
-              "words": [
-                "birra",
-                "affogata",
-                "sugo"
-              ]
-            },
-            {
-              "it": "La schiacciata con sorbetto fondente",
-              "en": "The flatbread with melty sorbet",
-              "words": [
-                "schiacciata",
-                "sorbetto",
-                "fondente"
+                "Marco",
+                "era",
+                "soddisfatto",
+                "del",
+                "risultato",
+                "del",
+                "concorso."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "Italian vs German Beer",
-          "desc": "Comparing brewing techniques and flavors",
+          "title": "Italian_vs_German_beer",
+          "desc": "Italian vs German beer tasting",
           "icon": "🍺",
           "vocab": [
             {
-              "it": "birrificio artigianale",
-              "en": "craft brewery",
-              "pron": "BIRR-rih-fee-YOH-noh"
+              "it": "affascinato",
+              "en": "fascinated",
+              "pron": "AH-fas-see-AH-to"
             },
             {
-              "it": "stout",
-              "en": "stout",
-              "pron": "STOWT"
+              "it": "sapore",
+              "en": "taste",
+              "pron": "SAH-poh-re"
             },
             {
-              "it": "maltose",
-              "en": "maltose",
-              "pron": "mal-TOH-se"
+              "it": "pubblico",
+              "en": "public",
+              "pron": "POO-bli-koh"
             },
             {
-              "it": "lambic",
-              "en": "lambic",
-              "pron": "LAM-bik"
+              "it": "scommessa",
+              "en": "bet",
+              "pron": "scom-MES-sah"
             },
             {
-              "it": "glera",
-              "en": "glera",
-              "pron": "GLEH-rah"
+              "it": "soddisfazione",
+              "en": "satisfaction",
+              "pron": "sod-di-sif-za-TAH-nee-ah"
             },
             {
-              "it": "riserva",
-              "en": "reserve",
-              "pron": "ree-ZER-vah"
+              "it": "birra",
+              "en": "beer",
+              "pron": "beer-rah"
             },
             {
-              "it": "doppio",
-              "en": "double",
-              "pron": "DOH-pyo"
+              "it": "scommettiamo",
+              "en": "let's bet",
+              "pron": "scom-met-tee-MAH-toe"
             },
             {
-              "it": "triplo",
-              "en": "triple",
-              "pron": "TRI-pyo"
+              "it": "taverna",
+              "en": "tavern",
+              "pron": "tah-vahrn-ah"
             }
           ],
           "sentences": [
             {
-              "it": "La birrificio artigianale produce stouts con alto contenuto di maltose.",
-              "en": "The craft brewery produces stouts with high maltose content",
+              "it": "Luca era affascinato dal sapore della birra.",
+              "en": "Luca was fascinated by the taste of the beer.",
               "words": [
-                "birrificio",
-                "artigianale",
-                "produce",
-                "stouts",
-                "alto",
-                "contenuto",
-                "maltose"
+                "Luca",
+                "era",
+                "affascinato",
+                "dal",
+                "sapore",
+                "della",
+                "birra."
               ]
             },
             {
-              "it": "Il lambic glera viene fermentato per anni in riserva.",
-              "en": "The lambic glera is fermented for years in reserve",
+              "it": "Il pubblico scommetteva su quale birra fosse meglio.",
+              "en": "The public was betting on which beer was better.",
               "words": [
-                "lambic",
-                "glera",
-                "fermentato",
-                "anni",
-                "riserva"
+                "Il",
+                "pubblico",
+                "scommetteva",
+                "su",
+                "quale",
+                "birra",
+                "fosse",
+                "meglio."
               ]
             },
             {
-              "it": "La birrificio artigianale offre doppi e triplo.",
-              "en": "The craft brewery offers double and triple",
+              "it": "Marco scommettiamo che la birra italiana sarà la vincitrice.",
+              "en": "Marco, let's bet that the Italian beer will be the winner.",
               "words": [
-                "birrificio",
-                "artigianale",
-                "offre",
-                "doppi",
-                "triplo"
+                "Marco",
+                "scommettiamo",
+                "che",
+                "la",
+                "birra",
+                "italiana",
+                "sarà",
+                "la",
+                "vincitrice."
               ]
             },
             {
-              "it": "Stout e glera sono tipiche birre della birrificio artigianale.",
-              "en": "Stout and glera are typical beers of the craft brewery",
+              "it": "La taverna era piena di birra e allegria.",
+              "en": "The tavern was full of beer and joy.",
               "words": [
-                "stout",
-                "glera",
-                "tipiche",
-                "birre",
-                "birrificio",
-                "artigianale"
+                "La",
+                "taverna",
+                "era",
+                "piena",
+                "di",
+                "birra",
+                "e",
+                "allegria."
               ]
             },
             {
-              "it": "Il stout con riserva è un'opzione speciale della birrificio artigianale.",
-              "en": "The stout with reserve is a special option of the craft brewery",
+              "it": "Speravo di soddisfare la soddisfazione del pubblico.",
+              "en": "I hoped to satisfy the public's satisfaction.",
               "words": [
-                "stout",
-                "riserva",
-                "opzione",
-                "speciale",
-                "birrificio",
-                "artigianale"
+                "Speravo",
+                "di",
+                "soddisfare",
+                "la",
+                "soddisfazione",
+                "del",
+                "pubblico."
               ]
             }
           ]
         }
       ],
-      "generatedAt": "2026-04-25T18:25:31.619Z"
+      "generationStats": {
+        "totalMs": 816829,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1791,
+        "totalCompletionTokens": 1818,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 206444,
+            "promptTokens": 466,
+            "completionTokens": 354
+          },
+          {
+            "lessonNum": 2,
+            "ms": 174010,
+            "promptTokens": 534,
+            "completionTokens": 405
+          },
+          {
+            "lessonNum": 3,
+            "ms": 228105,
+            "promptTokens": 585,
+            "completionTokens": 416
+          }
+        ]
+      },
+      "generatedAt": "2026-04-29T10:48:57.990Z"
     },
     {
       "topic": "pizza dough",
       "topicEmoji": "🍕",
-      "lang": "de",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "In the bustling town of Napoli, where the air was thick with the aroma of fresh pizza, there lived a young baker named Marco. Marco had a secret passion for making the perfect pizza dough, a skill he had been honing for years. His grandmother, Nonna Rosa, had taught him the ancient art of kneading dough by hand, a technique that Marco believed was the key to creating the most delicious pizza in the world.\n\nEvery morning, Marco would rise early, before the sun had fully kissed the rooftops of Napoli, and begin his ritual. He would gather the ingredients: flour, water, salt, and a hint of olive oil. With Nonna Rosa’s old wooden bowl and a sturdy wooden spoon, Marco would mix the ingredients until the dough was smooth and elastic. Then, he would let it rest, covered with a damp cloth, in the warm, cozy corner of his bakery.\n\nOne evening, as Marco was shaping the dough into perfect circles, a young woman named Isabella walked into the bakery. She was a tourist, drawn by the promise of authentic Italian pizza. Isabella’s eyes widened as she saw Marco at work, his hands moving with practiced ease. She approached him, her curiosity piqued.\n\n“Ciao, signore,” Isabella said, her voice soft and melodic. “I am Isabella. I am from Rome. I love pizza, but I have never seen it made like this. Can you teach me?”\n\nMarco smiled, his eyes twinkling with the joy of sharing his craft. “Certo, Isabella. I would be honored to teach you. But first, let’s make a pizza together.”\n\nUnder Marco’s guidance, Isabella learned the secrets of the dough. She felt the warmth of the dough in her hands, the way it stretched and yielded to her touch. Together, they shaped the dough, rolled it out, and topped it with fresh mozzarella, basil, and a drizzle of olive oil.\n\nAs the pizza baked in the oven, Marco and Isabella chatted about their lives. Marco shared stories of his grandmother and the history of pizza, while Isabella spoke of her adventures in Rome. The pizza came out golden and fragrant, and they both savored every bite.\n\nThat evening, Marco realized that the true magic of pizza dough was not just in its taste but in the connections it helped forge. As Isabella left, she promised to return and learn more. Marco knew that his passion for pizza dough had not only enriched his own life but had also brought a piece of Napoli to a visitor from Rome.",
       "lessons": [
         {
           "id": 1,
-          "title": "Pizza Teig",
-          "desc": "Einführung in das Backen von Teig",
+          "title": "Pizza Dough",
+          "desc": "Basic ingredients and kneading technique",
           "icon": "🍕",
           "vocab": [
             {
-              "it": "Teig",
-              "en": "dough",
-              "pron": "TEIGH"
-            },
-            {
-              "it": "Mehl",
+              "it": "farina",
               "en": "flour",
-              "pron": "MEHL"
+              "pron": "FA-ri-na"
             },
             {
-              "it": "Zucker",
-              "en": "sugar",
-              "pron": "ZU-ker"
+              "it": "acqua",
+              "en": "water",
+              "pron": "AK-wa"
             },
             {
-              "it": "Salz",
+              "it": "sale",
               "en": "salt",
-              "pron": "SAL茨"
+              "pron": "SA-le"
             },
             {
-              "it": "Olivenöl",
-              "en": "olive oil",
-              "pron": "O-liv-en-OL-ye"
+              "it": "olio",
+              "en": "oil",
+              "pron": "OL-i"
             },
             {
-              "it": "Yeast",
-              "en": "yeast",
-              "pron": "YEE-st"
+              "it": "bacinello",
+              "en": "bowl",
+              "pron": "ba-CHIN-nel-lo"
             },
             {
-              "it": "Backpapier",
-              "en": "baking paper",
-              "pron": "BAK-pa-PYER"
+              "it": "spatola",
+              "en": "spoon",
+              "pron": "spa-TO-la"
             },
             {
-              "it": "Pfanne",
-              "en": "pan",
-              "pron": "FAN-neh"
+              "it": "dolce",
+              "en": "sweet",
+              "pron": "DO-l-tse"
+            },
+            {
+              "it": "stretto",
+              "en": "stretched",
+              "pron": "STRE-t-to"
             }
           ],
           "sentences": [
             {
-              "it": "Ich mische Mehl Zucker und Salz zusammen.",
-              "en": "I mix flour sugar and salt together",
+              "it": "Prendi la farina e versa l'acqua.",
+              "en": "Take the flour and pour the water.",
               "words": [
-                "Mehl",
-                "Zucker",
-                "Salz",
-                "zusammen",
-                "mische"
+                "Prendi",
+                "la",
+                "farina",
+                "e",
+                "versa",
+                "l'acqua."
               ]
             },
             {
-              "it": "Ich füge Teig und Olivenöl hinzu.",
-              "en": "I add dough and olive oil",
+              "it": "Mescola con la spatola.",
+              "en": "Mix with the spoon.",
               "words": [
-                "füge",
-                "Teig",
-                "Olivenöl",
-                "hinzu"
+                "Mescola",
+                "con",
+                "la",
+                "spatola."
               ]
             },
             {
-              "it": "Ich lasse Yeast aufgehen.",
-              "en": "I let yeast rise",
+              "it": "Aggiungi un po' di sale.",
+              "en": "Add a bit of salt.",
               "words": [
-                "lasse",
-                "Yeast",
-                "aufgehen"
+                "Aggiungi",
+                "un",
+                "po'",
+                "di",
+                "sale."
               ]
             },
             {
-              "it": "Ich backe Pizza auf Backpapier.",
-              "en": "I bake pizza on baking paper",
+              "it": "Stendi la pasta con le mani.",
+              "en": "Stretch the dough with your hands.",
               "words": [
-                "Pizza",
-                "Backpapier",
-                "auf",
-                "backe"
+                "Stendi",
+                "la",
+                "pasta",
+                "con",
+                "le",
+                "mani."
               ]
             },
             {
-              "it": "Ich gehe Teig in Pfanne.",
-              "en": "I put dough in pan",
+              "it": "Copri il bacinello con un panno umido.",
+              "en": "Cover the bowl with a damp cloth.",
               "words": [
-                "gehe",
-                "Teig",
-                "in",
-                "Pfanne"
+                "Copri",
+                "il",
+                "bacinello",
+                "con",
+                "un",
+                "panno",
+                "umido."
               ]
             }
           ]
         },
         {
           "id": 2,
-          "title": "Pizza Teig",
-          "desc": "Zubereitung und Backen",
+          "title": "Pizza Dough",
+          "desc": "Baking, kneading, resting, ingredients",
           "icon": "🍕",
           "vocab": [
             {
-              "it": "Aufrollen",
-              "en": "To roll out",
-              "pron": "AH-foh-ROH-len"
+              "it": "pasta",
+              "en": "dough",
+              "pron": "PAH-stah"
             },
             {
-              "it": "Aufladen",
-              "en": "To knead",
-              "pron": "AH-fohl-ADEN"
+              "it": "frigorifero",
+              "en": "refrigerator",
+              "pron": "fruh-GOH-ree-FEH-ro"
             },
             {
-              "it": "Teigteig",
-              "en": "Dough for pizza",
-              "pron": "TAYG-teig"
+              "it": "respirare",
+              "en": "breathe",
+              "pron": "rehs-pee-RAH-re"
             },
             {
-              "it": "Puderzucker",
-              "en": "Confectioners' sugar",
-              "pron": "POO-der-ZUK-er"
+              "it": "stretto",
+              "en": "stretched",
+              "pron": "STRET-to"
             },
             {
-              "it": "Puder",
-              "en": "Powder",
-              "pron": "POO-der"
+              "it": "dolce",
+              "en": "sweet",
+              "pron": "DOHL-che"
             },
             {
-              "it": "Dampf",
-              "en": "Steam",
-              "pron": "DAmpf"
+              "it": "fermentare",
+              "en": "ferment",
+              "pron": "feh-rem-MAH-re"
             },
             {
-              "it": "Fett",
-              "en": "Fat",
-              "pron": "FEHtt"
+              "it": "sottile",
+              "en": "thin",
+              "pron": "soh-TEE-lee"
             },
             {
-              "it": "Rahmen",
-              "en": "Frame",
-              "pron": "RAH-men"
+              "it": "polvere",
+              "en": "powder",
+              "pron": "po-VEL-lay"
             }
           ],
           "sentences": [
             {
-              "it": "Teigteig Aufladen Fett",
-              "en": "dough knead fat",
+              "it": "Pulisce la spatola prima di iniziare.",
+              "en": "Clean the spoon before you start.",
               "words": [
-                "Teigteig",
-                "Aufladen",
-                "Fett"
+                "Pulisce",
+                "la",
+                "spatola",
+                "prima",
+                "di",
+                "iniziare."
               ]
             },
             {
-              "it": "Puderzucker aufrollen",
-              "en": "confectioners' sugar roll",
+              "it": "Lascia il dolce in un angolo della tavola.",
+              "en": "Place the sugar in a corner of the table.",
               "words": [
-                "Puderzucker",
-                "Aufrollen",
-                "Dampf"
+                "Lascia",
+                "il",
+                "dolce",
+                "in",
+                "un",
+                "angolo",
+                "della",
+                "tavola."
               ]
             },
             {
-              "it": "Rahmen Teigteig Aufladen",
-              "en": "frame dough knead",
+              "it": "Rimuovi la polvere dalla superficie.",
+              "en": "Remove the powder from the surface.",
               "words": [
-                "Rahmen",
-                "Teigteig",
-                "Aufladen"
+                "Rimuovi",
+                "la",
+                "polvere",
+                "dalla",
+                "superficie."
               ]
             },
             {
-              "it": "Aufladen Puderzucker Fett",
-              "en": "knead confectioners' sugar fat",
+              "it": "Fermare il processo di fermentazione.",
+              "en": "Stop the fermentation process.",
               "words": [
-                "Aufladen",
-                "Puderzucker",
-                "Fett"
+                "Fermare",
+                "il",
+                "processo",
+                "di",
+                "fermentazione."
               ]
             },
             {
-              "it": "Teigteig Aufrollen Puder",
-              "en": "dough roll powder",
+              "it": "Stendi la pasta sottile sul piano di lavoro.",
+              "en": "Stretch the dough thinly on the work surface.",
               "words": [
-                "Teigteig",
-                "Aufrollen",
-                "Puder"
+                "Stendi",
+                "la",
+                "pasta",
+                "sottile",
+                "sul",
+                "piano",
+                "di",
+                "lavoro."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "Pizza Teig",
-          "desc": "Fortgeschritten: Teig bereiten, backen",
-          "icon": "🍕",
+          "title": "Pizza Dough",
+          "desc": "Kneading and resting the dough",
+          "icon": "👨‍🍳",
           "vocab": [
             {
-              "it": "Fermentation",
-              "en": "Fermentation",
-              "pron": "fuh-rih-muh-NAH-tuhr"
+              "it": "farina",
+              "en": "flour",
+              "pron": "FA-ri-na"
             },
             {
-              "it": "Protein",
-              "en": "Protein",
-              "pron": "PROH-tee-in"
+              "it": "acqua",
+              "en": "water",
+              "pron": "AK-wa"
             },
             {
-              "it": "Hydration",
-              "en": "Hydration",
-              "pron": "hih-druh-AY-shun"
+              "it": "sale",
+              "en": "salt",
+              "pron": "SA-le"
             },
             {
-              "it": "Stretching",
-              "en": "Stretching",
-              "pron": "STREH-tuh-sing"
+              "it": "olio",
+              "en": "oil",
+              "pron": "OL-i"
             },
             {
-              "it": "Leavening",
-              "en": "Leavening",
-              "pron": "lee-uh-VEYN-ing"
+              "it": "bacinello",
+              "en": "bowl",
+              "pron": "BA-ki-ne-lo"
             },
             {
-              "it": "Hydrogen Peroxide",
-              "en": "Hydrogen Peroxide",
-              "pron": "HY-druh-jin PEHR-uh-koid"
+              "it": "spatola",
+              "en": "spoon",
+              "pron": "spa-TO-la"
             },
             {
-              "it": "Oven Spring",
-              "en": "Oven Spring",
-              "pron": "OH-ven SPRING"
+              "it": "dolce",
+              "en": "sweet",
+              "pron": "DOL-che"
             },
             {
-              "it": "Gluten",
-              "en": "Gluten",
-              "pron": "GLU-ten"
+              "it": "stretto",
+              "en": "stretched",
+              "pron": "STRE-tto"
             }
           ],
           "sentences": [
             {
-              "it": "Die Proteinbehalter im Teig weiten sich während der Fermentation aus.",
-              "en": "The protein carriers in the dough expand during fermentation.",
+              "it": "Marco mescolava la farina con l'acqua.",
+              "en": "Marco mixed the flour with water.",
               "words": [
-                "Proteinbehalter",
-                "im",
-                "Teig",
-                "weiten",
-                "sich",
-                "während",
-                "der",
-                "Fermentation",
-                "aus"
+                "Marco",
+                "mescolava",
+                "la",
+                "farina",
+                "con",
+                "l'acqua."
               ]
             },
             {
-              "it": "Hydrogen Peroxide kann die Leaveningprozesse im Teig beschleunigen.",
-              "en": "Hydrogen Peroxide can accelerate the leavening processes in the dough.",
+              "it": "Poi coprì il bacinello con un panno umido.",
+              "en": "Then he covered the bowl with a damp cloth.",
               "words": [
-                "Hydrogen",
-                "Peroxide",
-                "kann",
-                "die",
-                "Leaveningprozesse",
-                "im",
-                "Teig",
-                "beschleunigen"
+                "Poi",
+                "coprì",
+                "il",
+                "bacinello",
+                "con",
+                "un",
+                "panno",
+                "umido."
               ]
             },
             {
-              "it": "Die Hydration beeinflusst die Glutenstruktur im Teig.",
-              "en": "Hydration influences the gluten structure in the dough.",
+              "it": "Lasciò fermentare la pasta per ore.",
+              "en": "He let the dough ferment for hours.",
               "words": [
-                "Hydration",
-                "beeinflusst",
-                "die",
-                "Glutenstruktur",
-                "im",
-                "Teig"
+                "Lasciò",
+                "fermentare",
+                "la",
+                "pasta",
+                "per",
+                "ore."
               ]
             },
             {
-              "it": "Oven Spring verstärkt die Textur der Pizza nach dem Backen.",
-              "en": "Oven Spring enhances the texture of the pizza after baking.",
+              "it": "Con la spatola, stese la pasta sottile.",
+              "en": "With the spoon, he stretched the dough thin.",
               "words": [
-                "Oven",
-                "Spring",
-                "verstärkt",
-                "die",
-                "Textur",
-                "der",
-                "Pizza",
-                "nach",
-                "dem",
-                "Backen"
+                "Con",
+                "la",
+                "spatola,",
+                "stese",
+                "la",
+                "pasta",
+                "sottile."
               ]
             },
             {
-              "it": "Das Stretching des Teigballs fördert die gleichmäßige Verbreitung von Luftblasen.",
-              "en": "Stretching the dough ball promotes the even distribution of air bubbles.",
+              "it": "La sua pizza era dolce come il bacio di Nonna Rosa.",
+              "en": "His pizza was as sweet as Nonna Rosa's kiss.",
               "words": [
-                "Stretching",
-                "des",
-                "Teigballs",
-                "fördert",
-                "die",
-                "gleichmäßige",
-                "Verbreitung",
-                "von",
-                "Luftblasen"
+                "La",
+                "sua",
+                "pizza",
+                "era",
+                "dolce",
+                "come",
+                "il",
+                "bacio",
+                "di",
+                "Nonna",
+                "Rosa."
               ]
             }
           ]
         }
       ],
-      "generatedAt": "2026-04-26T08:51:07.503Z"
+      "generationStats": {
+        "totalMs": 694148,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1737,
+        "totalCompletionTokens": 1619,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 176044,
+            "promptTokens": 459,
+            "completionTokens": 330
+          },
+          {
+            "lessonNum": 2,
+            "ms": 172417,
+            "promptTokens": 520,
+            "completionTokens": 370
+          },
+          {
+            "lessonNum": 3,
+            "ms": 177328,
+            "promptTokens": 564,
+            "completionTokens": 361
+          }
+        ]
+      },
+      "generatedAt": "2026-04-29T14:40:08.166Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 115205,
+        "promptTokens": 573,
+        "completionTokens": 183
+      }
     },
     {
       "topic": "cooking",
@@ -6302,791 +6413,728 @@
     {
       "topic": "pilze suchen",
       "topicEmoji": "🍄",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "In the heart of the Tuscan countryside, where the rolling hills were painted in shades of green and gold, there lived a young woman named Alessia. She had a passion for the wild and a deep connection to nature that was both her strength and her solace. Every autumn, when the leaves began to turn and the air grew crisp, Alessia would venture into the nearby woods to search for mushrooms, a hobby she had inherited from her grandmother.\n\nOne crisp morning, Alessia packed a small basket and a map of the forest, her heart filled with the promise of adventure. She wore sturdy boots and a warm jacket, and carried a small knife for cutting the mushrooms. The sun was just beginning to rise, casting a golden light over the landscape. As she walked deeper into the woods, the air filled with the scent of damp earth and decaying leaves.\n\nAlessia followed the map, her eyes scanning the ground for signs of the elusive porcini mushrooms. She knew that finding them was a matter of patience and a keen eye. After an hour of searching, her patience was rewarded when she spotted a cluster of mushrooms peeking out from beneath a fallen oak. She approached carefully, her knife at the ready. She identified the mushrooms by their shape and color, making sure they were safe to eat. With a satisfied smile, she cut a few and placed them in her basket.\n\nAs the day wore on, Alessia found more mushrooms, each one a small victory in her quest. She learned to recognize the differences between the edible and the poisonous, and the joy of her discovery grew with each new find. By the time the sun began to set, her basket was full, and she felt a deep sense of accomplishment. She knew that her grandmother would be proud of her.\n\nWith the day's bounty secured, Alessia made her way back through the forest, the sun casting long shadows behind her. As she walked, she hummed a tune, her heart full of the beauty and the magic of the wild. She knew that she would return to the woods again, for the mushrooms were not just a hobby, but a part of her connection to the land and the traditions of her family.",
       "lessons": [
         {
           "id": 1,
-          "title": "Pilze Suchen",
-          "desc": "Einführung in Pilze",
-          "icon": "fungi",
+          "title": "Mushroom Hunting",
+          "desc": "Autumn, Tuscan countryside, Alessia, mushrooms",
+          "icon": "🌿",
           "vocab": [
             {
-              "it": "caccia",
-              "en": "hunt",
-              "pron": "KAH-tcha"
+              "it": "autunno",
+              "en": "autumn",
+              "pron": "AU-tu-no"
             },
             {
-              "it": "bosco",
-              "en": "forest",
-              "pron": "BOSS-ko"
+              "it": "casetta",
+              "en": "cabin",
+              "pron": "ka-SET-ta"
             },
             {
-              "it": "fungo",
+              "it": "mushrumpo",
               "en": "mushroom",
-              "pron": "FOO-no"
+              "pron": "mu-SHROOM"
             },
             {
-              "it": "pattumiera",
-              "en": "rubbish bin",
-              "pron": "pah-too-MEER-ah"
+              "it": "forra",
+              "en": "forage",
+              "pron": "FOR-ra"
             },
             {
-              "it": "giro",
-              "en": "round, tour",
-              "pron": "JEE-ro"
-            },
-            {
-              "it": "pista",
-              "en": "path, trail",
-              "pron": "PEE-sta"
+              "it": "mappe",
+              "en": "maps",
+              "pron": "MAP-pe"
             },
             {
               "it": "sacchetto",
-              "en": "small bag",
-              "pron": "sah-khe-TTO"
+              "en": "basket",
+              "pron": "sa-CHET-to"
             },
             {
-              "it": "zaino",
-              "en": "backpack",
-              "pron": "ZAI-no"
+              "it": "odoroso",
+              "en": "fragrant",
+              "pron": "o-do-RA-so"
+            },
+            {
+              "it": "luce",
+              "en": "light",
+              "pron": "LOO-che"
             }
           ],
           "sentences": [
             {
-              "it": "Caccia i funghi nel bosco.",
-              "en": "Hunt mushrooms in the forest.",
+              "it": "Alessia amava autunno.",
+              "en": "Alessia loved autumn.",
               "words": [
-                "caccia",
-                "funghi",
-                "nel",
-                "bosco"
+                "Alessia",
+                "amava",
+                "autunno."
               ]
             },
             {
-              "it": "Non mettere i sacchetti nel bosco.",
-              "en": "Don't put the bags in the forest.",
+              "it": "Portò la mappa e il sacchetto.",
+              "en": "She took the map and the basket.",
               "words": [
-                "i",
-                "nel",
-                "sacchetti",
-                "Non",
-                "bosco"
-              ]
-            },
-            {
-              "it": "Fai un giro per le piste.",
-              "en": "Do a tour for the trails.",
-              "words": [
-                "Fai",
-                "un",
-                "giro",
-                "per",
-                "le",
-                "piste"
-              ]
-            },
-            {
-              "it": "Porta il tuo zaino con i funghi.",
-              "en": "Take your backpack with the mushrooms.",
-              "words": [
-                "tuo",
-                "zaino",
-                "con",
-                "Porta",
+                "Portò",
+                "la",
+                "mappa",
+                "e",
                 "il",
-                "zaino",
-                "funghi",
-                "funghi"
+                "sacchetto."
               ]
             },
             {
-              "it": "Non mettere i funghi nella pattumiera.",
-              "en": "Don't put the mushrooms in the rubbish bin.",
+              "it": "La luce del sole era dorata.",
+              "en": "The sun's light was golden.",
               "words": [
+                "La",
+                "luce",
+                "del",
+                "sole",
+                "era",
+                "dorata."
+              ]
+            },
+            {
+              "it": "Raccolse un mushrumpo odoroso.",
+              "en": "She gathered a fragrant mushroom.",
+              "words": [
+                "Raccolse",
+                "un",
+                "mushrumpo",
+                "odoroso."
+              ]
+            },
+            {
+              "it": "Camminava tra i rami.",
+              "en": "She walked among the branches.",
+              "words": [
+                "Camminava",
+                "tra",
                 "i",
-                "fungi",
-                "nella",
-                "pattumiera",
-                "Non",
-                "fungo",
-                "pattumiera",
-                "mettere"
+                "rami."
               ]
             }
           ]
         },
         {
           "id": 2,
-          "title": "Pilze Suchen",
-          "desc": "Intermediate mushroom hunting",
-          "icon": "fungi",
+          "title": "Mushroom Hunting",
+          "desc": "Autumn, woods, foraging, basket, knife, scent, adventure, light",
+          "icon": "🍁",
           "vocab": [
             {
-              "it": "catacomba",
-              "en": "catacomb",
-              "pron": "ka-TAT-kom-ba"
+              "it": "autunno",
+              "en": "autumn",
+              "pron": "AU-to-no"
             },
             {
-              "it": "esplorare",
-              "en": "explore",
-              "pron": "es-pluh-RAYR-e"
+              "it": "casetta",
+              "en": "cabin",
+              "pron": "ka-SET-ta"
             },
             {
-              "it": "rame",
-              "en": "bramble",
-              "pron": "RAH-meh"
+              "it": "mushrumpo",
+              "en": "mushroom",
+              "pron": "MU-shroom"
             },
             {
-              "it": "sferzate",
-              "en": "whipped",
-              "pron": "sfehr-ZAH-tay"
+              "it": "forra",
+              "en": "forage",
+              "pron": "FOR-ra"
             },
             {
-              "it": " muschiato",
-              "en": "musty",
-              "pron": "mus-KEE-ah-to"
+              "it": "mappe",
+              "en": "maps",
+              "pron": "MA-ppe"
             },
             {
-              "it": "lucertola",
-              "en": "lizard",
-              "pron": "loo-ker-REH-tol-ah"
+              "it": "sacchetto",
+              "en": "basket",
+              "pron": "sa-KE-tto"
             },
             {
-              "it": " muschiato",
-              "en": "musty",
-              "pron": "mus-KEE-ah-to"
+              "it": "odoroso",
+              "en": "fragrant",
+              "pron": "o-dor-O-so"
             },
             {
-              "it": "sottoterra",
-              "en": "underground",
-              "pron": "soh-toh-TOHR-rah"
+              "it": "luce",
+              "en": "light",
+              "pron": "LOO-che"
             }
           ],
           "sentences": [
             {
-              "it": "Esplorare le catacombe può essere pericoloso.",
-              "en": "Exploring the catacombs can be dangerous.",
+              "it": "Casetta di legno, lucente sotto il sole.",
+              "en": "Wooden cabin shining under the sun.",
               "words": [
-                "Esplorare",
-                "le",
-                "catacombe",
-                "può",
-                "essere",
-                "pericoloso",
-                "."
-              ]
-            },
-            {
-              "it": "I rami sferzati dai venti sembrano muschiusi.",
-              "en": "The branches whipped by the wind seem musty.",
-              "words": [
-                "I",
-                "rami",
-                "sferzati",
-                "dai",
-                "venti",
-                "sembrano",
-                "muschiusi",
-                "."
-              ]
-            },
-            {
-              "it": "Una lucertola sottoterra si nasconde in un angolo.",
-              "en": "A lizard underground hides in a corner.",
-              "words": [
-                "Una",
-                "lucertola",
-                "sottoterra",
-                "si",
-                "nasconde",
-                "in",
-                "un",
-                "angolo",
-                "."
-              ]
-            },
-            {
-              "it": "Le pilze sottoterra sono difficili da trovare.",
-              "en": "The mushrooms underground are hard to find.",
-              "words": [
-                "Le",
-                "pilze",
-                "sottoterra",
-                "sono",
-                "difficili",
-                "da",
-                "trovare",
-                "."
-              ]
-            },
-            {
-              "it": "Il sentiero è coperto di muschiato rami.",
-              "en": "The path is covered in musty branches.",
-              "words": [
-                "Il",
-                "sentiero",
-                "è",
-                "coperto",
+                "Casetta",
                 "di",
-                "muschiano",
-                "rami",
-                "."
+                "legno,",
+                "lucente",
+                "sotto",
+                "il",
+                "sole."
+              ]
+            },
+            {
+              "it": "Forra con cura, odoroso il bosco.",
+              "en": "Carefully forage, fragrant the forest is.",
+              "words": [
+                "Forra",
+                "con",
+                "cura,",
+                "odoroso",
+                "il",
+                "bosco."
+              ]
+            },
+            {
+              "it": "Sacchetto pieno, autunno arricchito.",
+              "en": "Full basket, autumn enriched.",
+              "words": [
+                "Sacchetto",
+                "pieno,",
+                "autunno",
+                "arricchito."
+              ]
+            },
+            {
+              "it": "Mushrumpo selvatico, luce che guida.",
+              "en": "Wild mushroom, light that guides.",
+              "words": [
+                "Mushrumpo",
+                "selvatico,",
+                "luce",
+                "che",
+                "guida."
+              ]
+            },
+            {
+              "it": "Luce del mattino, forra con passione.",
+              "en": "Morning light, forage with passion.",
+              "words": [
+                "Luce",
+                "del",
+                "mattino,",
+                "forra",
+                "con",
+                "passione."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "Pilze Suchen",
-          "desc": "高级课程：寻找蘑菇",
-          "icon": "🍄",
+          "title": "Mushroom Hunting",
+          "desc": "Autumn, woods, foraging, basket, knife, scent, adventure, light",
+          "icon": "🍁",
           "vocab": [
             {
-              "it": "mycologo",
-              "en": "mycologist",
-              "pron": "my-si-OL-o-go"
+              "it": "autunno",
+              "en": "autumn",
+              "pron": "AU-toh-no"
             },
             {
-              "it": "fungicida",
-              "en": "fungicide",
-              "pron": "fun-gi-SID-a"
+              "it": "forra",
+              "en": "forage",
+              "pron": "FOR-rah"
             },
             {
-              "it": "bozzolo",
-              "en": "mushroom spore",
-              "pron": "boz-ZO-lo"
+              "it": "sacchetto",
+              "en": "basket",
+              "pron": "sah-kheh-TTO"
             },
             {
-              "it": "champignon",
-              "en": "mushroom (common name, esp. in France)",
-              "pron": "cam-PI-nyon"
+              "it": "coltello",
+              "en": "knife",
+              "pron": "col-LEH-lo"
             },
             {
-              "it": "bracconiere",
-              "en": "poacher",
-              "pron": "bra-kon-YE-re"
+              "it": "profumo",
+              "en": "scent",
+              "pron": "proh-FU-mo"
             },
             {
-              "it": "chiarore",
-              "en": "dim light",
-              "pron": "kya-RO-re"
+              "it": "avventura",
+              "en": "adventure",
+              "pron": "ah-vehn-DEH-roo-ah"
             },
             {
-              "it": "sottobosco",
-              "en": "underbrush",
-              "pron": "so-to-bo-SKO"
+              "it": "luce",
+              "en": "light",
+              "pron": "LOO-che"
             },
             {
-              "it": "taccheggio",
-              "en": "foraging",
-              "pron": "ta-khe-JE-go"
+              "it": "odoroso",
+              "en": "fragrant",
+              "pron": "oh-doh-ROH-so"
             }
           ],
           "sentences": [
             {
-              "it": "Il mycologo esaminò il sottobosco alla ricerca di bozzoli.",
-              "en": "The mycologist examined the underbrush in search of mushroom spores.",
+              "it": "Forra i mushrumpi nel bosco.",
+              "en": "Forage for mushrooms in the forest.",
               "words": [
-                "Il",
-                "mycologo",
-                "esaminò",
-                "il",
-                "sottobosco",
-                "alla",
-                "ricerca",
-                "di",
-                "bozzoli",
-                "."
-              ]
-            },
-            {
-              "it": "Il bracconiere taccheggiò nel chiarore della luna, cercando champignoni.",
-              "en": "The poacher foraged in the dim light of the moon, looking for mushrooms.",
-              "words": [
-                "Il",
-                "bracconiere",
-                "taccheggiò",
+                "Forra",
+                "i",
+                "mushrumpi",
                 "nel",
-                "chiarore",
-                "della",
-                "luna",
-                ",",
-                "cercando",
-                "champignoni",
-                "."
+                "bosco."
               ]
             },
             {
-              "it": "Il fungicida è stato applicato per prevenire l'infezione dei bozzoli.",
-              "en": "The fungicide was applied to prevent the infection of mushroom spores.",
+              "it": "Porta con te un sacchetto per i profumi.",
+              "en": "Take a basket for the scents.",
               "words": [
-                "Il",
-                "fungicida",
-                "è",
-                "stato",
-                "applicato",
+                "Porta",
+                "con",
+                "te",
+                "un",
+                "sacchetto",
                 "per",
-                "prevenire",
-                "l'infezione",
-                "dei",
-                "bozzoli",
-                "."
+                "i",
+                "profumi."
               ]
             },
             {
-              "it": "Nella foresta, i bozzoli nascondono i futuri champignoni.",
-              "en": "In the forest, the bozzoli hide the future mushrooms.",
+              "it": "Con un coltello taglia i mushrumpi.",
+              "en": "With a knife cut the mushrooms.",
               "words": [
-                "Nella",
-                "foresta",
-                ",",
+                "Con",
+                "un",
+                "coltello",
+                "taglia",
                 "i",
-                "bozzoli",
-                "nascondono",
-                "i",
-                "futuri",
-                "champignoni",
-                "."
+                "mushrumpi."
               ]
             },
             {
-              "it": "Il mycologo studia i bozzoli per capire quando i champignoni saranno pronti.",
-              "en": "The mycologist studies the bozzoli to understand when the mushrooms will be ready.",
-              "words": []
+              "it": "La luce del sole illumina i sentieri.",
+              "en": "The sun's light illuminates the paths.",
+              "words": [
+                "La",
+                "luce",
+                "del",
+                "sole",
+                "illumina",
+                "i",
+                "sentieri."
+              ]
+            },
+            {
+              "it": "L'avventura inizia con un passo.",
+              "en": "The adventure begins with a step.",
+              "words": [
+                "L'avventura",
+                "inizia",
+                "con",
+                "un",
+                "passo."
+              ]
             }
           ]
         }
       ],
-      "generatedAt": "2026-04-26T15:05:18.148Z"
+      "generationStats": {
+        "totalMs": 661697,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1739,
+        "totalCompletionTokens": 1501,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 170444,
+            "promptTokens": 453,
+            "completionTokens": 321
+          },
+          {
+            "lessonNum": 2,
+            "ms": 161264,
+            "promptTokens": 520,
+            "completionTokens": 349
+          },
+          {
+            "lessonNum": 3,
+            "ms": 172195,
+            "promptTokens": 568,
+            "completionTokens": 355
+          }
+        ]
+      },
+      "generatedAt": "2026-04-29T13:47:07.200Z"
     },
     {
       "topic": "table tennis",
       "topicEmoji": "🏓",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "In the heart of a bustling Italian city, where the streets were lined with ancient buildings and the air was filled with the scent of freshly baked bread, there was a small, cozy table tennis club. The club was a favorite among the locals, who would gather there after work to play a game or two, or sometimes just to chat and enjoy a cup of espresso.\n\nOne sunny afternoon, a young man named Marco, who had just moved to the city, found himself wandering the streets, feeling lost and a bit lonely. He had been living in Italy for only a few weeks, and while he loved the culture and the food, he missed the friendly faces and the sense of community he had left behind. As he turned a corner, he heard the sound of clapping and laughter, and he followed the noise to the club.\n\nInside, Marco saw a group of people playing table tennis, their laughter and the sound of the ball hitting the table creating a lively atmosphere. He watched for a moment, mesmerized by the skill and the joy the game brought to the players. One of the players, a middle-aged man with a warm smile, noticed Marco and approached him.\n\n\"Vuoi giocare?\" the man asked, extending his hand. Marco, feeling a bit nervous but eager to make friends, took the man's hand and nodded. \"Sono Marco,\" he said, introducing himself.\n\n\"Benvenuto a Roma,\" the man replied, shaking Marco's hand. \"Io sono Luigi. Vieni, ti mostro come si gioca.\"\n\nLuigi led Marco to a table and showed him the basics of the game. \"Tieni la racchetta bassa,\" Luigi instructed, lowering his own racquet to demonstrate. \"E fai attenzione al balzo del pallone.\"\n\nMarco tried his best to follow Luigi's instructions, but he was a beginner and found the game challenging. However, Luigi was patient and encouraging, and soon Marco was laughing and enjoying the game as much as the others.\n\nAs the afternoon wore on, Marco found himself playing more and more, and by the time the sun began to set, he felt a sense of belonging he hadn't felt since he arrived in the city. He realized that the game of table tennis had not only brought him joy but had also introduced him to a community of people who welcomed him with open arms.",
       "lessons": [
         {
           "id": 1,
-          "title": "Table Tennis Basics",
-          "desc": "Introduction and equipment",
+          "title": "Table Tennis",
+          "desc": "Basics of table tennis in Italian",
           "icon": "🏓",
           "vocab": [
             {
-              "it": "palla da ping-pong",
-              "en": "ping-pong ball",
-              "pron": "PAH-lah DAH ping-PONG ball"
+              "it": "tavolo da ping-pong",
+              "en": "table tennis table",
+              "pron": "TAH-voh-loh DAH pihng-PAHNG-oh"
             },
             {
-              "it": "tavolo da ping-pong",
-              "en": "ping-pong table",
-              "pron": "TAH-voh-loh DAH ping-PONG table"
+              "it": "pallone da ping-pong",
+              "en": "table tennis ball",
+              "pron": "pah-LOH-neh DAH pihng-PAHNG-oh"
             },
             {
               "it": "pala da ping-pong",
-              "en": "ping-pong paddle",
-              "pron": "PAH-lah DAH ping-PONG paddle"
-            },
-            {
-              "it": "giocatore",
-              "en": "player",
-              "pron": "joh-KAH-tore"
-            },
-            {
-              "it": "giocatrice",
-              "en": "player (female)",
-              "pron": "joh-kah-TAH-tre"
+              "en": "table tennis racket",
+              "pron": "pah-LAH DAH pihng-PAHNG-oh"
             },
             {
               "it": "gioco",
               "en": "game",
-              "pron": "JEE-ko"
+              "pron": "JEE-oh-koh"
             },
             {
-              "it": "servizio",
-              "en": "serve",
-              "pron": "ser-VEE-zee-oh"
+              "it": "club",
+              "en": "club",
+              "pron": "KLOO-b"
             },
             {
-              "it": "rete",
-              "en": "net",
-              "pron": "REH-teh"
+              "it": "locale",
+              "en": "local",
+              "pron": "LOH-kuhl"
+            },
+            {
+              "it": "chiacchierare",
+              "en": "chat",
+              "pron": "kya-kyah-KHAH-reh"
+            },
+            {
+              "it": "caffè",
+              "en": "coffee",
+              "pron": "kah-FEE"
             }
           ],
           "sentences": [
             {
-              "it": "Il giocatore serve la palla da ping-pong.",
-              "en": "The player serves the ping-pong ball.",
+              "it": "Gioco a ping-pong su un tavolo.",
+              "en": "I play table tennis on a table.",
               "words": [
-                "Il",
-                "giocatore",
-                "serve",
+                "Gioco",
+                "a",
+                "ping-pong",
+                "su",
+                "un",
+                "tavolo."
+              ]
+            },
+            {
+              "it": "Prendi la pala e il pallone.",
+              "en": "Take the racket and the ball.",
+              "words": [
+                "Prendi",
                 "la",
-                "palla",
-                "da",
-                "ping-pong",
-                "."
-              ]
-            },
-            {
-              "it": "La giocatrice sta giocando al tavolo da ping-pong.",
-              "en": "The female player is playing at the ping-pong table.",
-              "words": [
-                "La",
-                "giocatrice",
-                "sta",
-                "giocando",
-                "al",
-                "tavolo",
-                "da",
-                "ping-pong",
-                "."
-              ]
-            },
-            {
-              "it": "Il rete separa i due giocatori.",
-              "en": "The net separates the two players.",
-              "words": [
-                "Il",
-                "rete",
-                "separa",
-                "i",
-                "due",
-                "giocatori",
-                "."
-              ]
-            },
-            {
-              "it": "Ogni pala da ping-pong è diversa.",
-              "en": "Each ping-pong paddle is different.",
-              "words": [
-                "Ogni",
                 "pala",
-                "da",
-                "ping-pong",
-                "è",
-                "diversa",
-                "."
+                "e",
+                "il",
+                "pallone."
               ]
             },
             {
-              "it": "Il gioco inizia con il servizio.",
-              "en": "The game starts with the serve.",
+              "it": "Chiacchieriamo mentre beviamo il caffè.",
+              "en": "Let's chat while we drink the coffee.",
+              "words": [
+                "Chiacchieriamo",
+                "mentre",
+                "beviamo",
+                "il",
+                "caffè."
+              ]
+            },
+            {
+              "it": "Il club è un luogo di incontro tra amici.",
+              "en": "The club is a place of meeting for friends.",
               "words": [
                 "Il",
-                "gioco",
-                "inizia",
-                "con",
+                "club",
+                "è",
+                "un",
+                "luogo",
+                "di",
+                "incontro",
+                "tra",
+                "amici."
+              ]
+            },
+            {
+              "it": "Molti giocatori si riuniscono qui dopo il lavoro.",
+              "en": "Many players gather here after work.",
+              "words": [
+                "Molti",
+                "giocatori",
+                "si",
+                "riuniscono",
+                "qui",
+                "dopo",
                 "il",
-                "servizio",
-                "."
+                "lavoro."
               ]
             }
           ]
         },
         {
           "id": 2,
-          "title": "Table Tennis Techniques",
-          "desc": "Intermediate strokes and strategies",
+          "title": "table tennis",
+          "desc": "playing and chatting at the club",
           "icon": "🏓",
           "vocab": [
             {
-              "it": "risposta",
-              "en": "answer",
-              "pron": "ri-SPO-ta"
+              "it": "giocatore",
+              "en": "player",
+              "pron": "JEE-oh-CAT-tore"
             },
             {
-              "it": "punti",
-              "en": "points",
-              "pron": "PUN-ti"
-            },
-            {
-              "it": "giro",
-              "en": "rotation",
-              "pron": "GI-ro"
-            },
-            {
-              "it": "doppio",
-              "en": "double",
-              "pron": "DOP-pio"
-            },
-            {
-              "it": "triplo",
-              "en": "triple",
-              "pron": "TRI-plo"
-            },
-            {
-              "it": "falla",
-              "en": "error",
-              "pron": "FA-la"
-            },
-            {
-              "it": "tavolino",
+              "it": "tavolo",
               "en": "table",
-              "pron": "ta-VO-li-no"
+              "pron": "TAA-vo-lo"
             },
             {
-              "it": "scacco",
-              "en": "check",
-              "pron": "SKA-tso"
+              "it": "caffè",
+              "en": "coffee",
+              "pron": "KAH-fay"
+            },
+            {
+              "it": "locale",
+              "en": "local",
+              "pron": "LOH-kuh-lee"
+            },
+            {
+              "it": "giornata",
+              "en": "day",
+              "pron": "JEE-or-NAH-tah"
+            },
+            {
+              "it": "amicizia",
+              "en": "friendship",
+              "pron": "ah-mee-see-AH-zah"
+            },
+            {
+              "it": "scherzo",
+              "en": "joke",
+              "pron": "SKEH-rehz-oh"
+            },
+            {
+              "it": "sorridere",
+              "en": "to smile",
+              "pron": "so-ree-DAY-reh"
             }
           ],
           "sentences": [
             {
-              "it": "Il doppio giro fa tre punti.",
-              "en": "The double rotation gives three points.",
-              "words": [
-                "Il",
-                "doppio",
-                "giro",
-                "fa",
-                "tre",
-                "punti",
-                ".",
-                " ",
-                "The",
-                "double",
-                "rotation",
-                "gives",
-                "three",
-                "points",
-                "."
-              ]
-            },
-            {
-              "it": "Una falla è un errore.",
-              "en": "A falla is an error.",
-              "words": [
-                "Una",
-                "falla",
-                "è",
-                "un",
-                "errore",
-                ".",
-                " ",
-                "A",
-                "falla",
-                "is",
-                "an",
-                "error",
-                "."
-              ]
-            },
-            {
-              "it": "Il triplo giro è più difficile del doppio.",
-              "en": "The triple rotation is more difficult than the double.",
-              "words": [
-                "Il",
-                "triplo",
-                "giro",
-                "è",
-                "più",
-                "difficile",
-                "del",
-                "doppio",
-                ".",
-                " ",
-                "The",
-                "triple",
-                "rotation",
-                "is",
-                "more",
-                "difficult",
-                "than",
-                "the",
-                "double",
-                "."
-              ]
-            },
-            {
-              "it": "Durante il giro, rispondi al servizio.",
-              "en": "During the rotation, answer the serve.",
-              "words": [
-                "Durante",
-                "il",
-                "giro",
-                ",",
-                "rispondi",
-                "al",
-                "servizio",
-                ".",
-                " ",
-                "During",
-                "the",
-                "rotation",
-                ",",
-                "answer",
-                "the",
-                "serve",
-                "."
-              ]
-            },
-            {
-              "it": "Un scacco sul tavolino è una risposta veloce.",
-              "en": "A check on the table is a quick answer.",
+              "it": "Un giovane giocatore stava giocando.",
+              "en": "A young player was playing.",
               "words": [
                 "Un",
-                "scacco",
-                "sul",
-                "tavolino",
-                "è",
-                "una",
-                "risposta",
-                "veloce",
-                ".",
-                " ",
-                "A",
-                "check",
-                "on",
-                "the",
-                "table",
-                "is",
-                "a",
-                "quick",
-                "answer",
-                "."
+                "giovane",
+                "giocatore",
+                "stava",
+                "giocando."
+              ]
+            },
+            {
+              "it": "Il tavolo era coperto di polvere.",
+              "en": "The table was covered in dust.",
+              "words": [
+                "Il",
+                "tavolo",
+                "era",
+                "coperto",
+                "di",
+                "polvere."
+              ]
+            },
+            {
+              "it": "Sorse un sorriso tra i giocatori.",
+              "en": "A smile arose among the players.",
+              "words": [
+                "Sorse",
+                "un",
+                "sorriso",
+                "tra",
+                "i",
+                "giocatori."
+              ]
+            },
+            {
+              "it": "La giornata era piacevole e rilassante.",
+              "en": "The day was pleasant and relaxing.",
+              "words": [
+                "La",
+                "giornata",
+                "era",
+                "piacevole",
+                "e",
+                "rilassante."
+              ]
+            },
+            {
+              "it": "La loro amicizia si era formata nel locale.",
+              "en": "Their friendship had formed at the local.",
+              "words": [
+                "La",
+                "loro",
+                "amicizia",
+                "si",
+                "era",
+                "formata",
+                "nel",
+                "locale."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "Advanced Table Tennis",
-          "desc": "Final strategies and drills",
+          "title": "Table Tennis",
+          "desc": "Discover new table tennis terms and phrases",
           "icon": "🏓",
           "vocab": [
             {
-              "it": "attacco",
-              "en": "attack",
-              "pron": "AT-ta-koh"
+              "it": "pallina",
+              "en": "small ball",
+              "pron": "PAH-lee-nah"
             },
             {
-              "it": "rimbalzo",
-              "en": "bounce",
-              "pron": "ri-MBAHL-zoh"
+              "it": "padre",
+              "en": "father",
+              "pron": "PAH-dre"
             },
             {
-              "it": "doppio falla",
-              "en": "double fault",
-              "pron": "DOH-pyo fah-LAH"
+              "it": "scommettere",
+              "en": "bet",
+              "pron": "scom-CHET-tre"
             },
             {
-              "it": "tiro corto",
-              "en": "short shot",
-              "pron": "TEE-roh KOHR-to"
+              "it": "sorprendere",
+              "en": "surprise",
+              "pron": "sor-pre-MDEN-DEH"
             },
             {
-              "it": "tiro lungo",
-              "en": "long shot",
-              "pron": "TEE-roh LOONG-ho"
+              "it": "scherzare",
+              "en": "joke",
+              "pron": "scher-ZAH-re"
             },
             {
-              "it": "tavolino da ping-pong",
-              "en": "ping-pong table",
-              "pron": "TAH-voh-lee-noh DAH peeng-pon"
+              "it": "amichevole",
+              "en": "friendly",
+              "pron": "ah-mi-che-VOH-le"
             },
             {
-              "it": "restituzione",
-              "en": "return",
-              "pron": "re-stih-tee-DOO-zhun"
+              "it": "sconfitta",
+              "en": "defeat",
+              "pron": "scon-FIT-tah"
             },
             {
-              "it": "tiro al volo",
-              "en": "volley",
-              "pron": "TEE-roh ah VOH-lo"
+              "it": "soddisfazione",
+              "en": "satisfaction",
+              "pron": "sod-di-sfi-za-TION-eh"
             }
           ],
           "sentences": [
             {
-              "it": "L'attacco deve essere preciso per evitare il rimbalzo.",
-              "en": "The attack must be precise to avoid the bounce.",
+              "it": "Scommetto che Marco sorrida.",
+              "en": "I bet Marco smiles.",
               "words": [
-                "L'",
-                "attacco",
-                "deve",
-                "essere",
-                "preciso",
-                "per",
-                "evitare",
-                "il",
-                "rimbalzo",
-                "."
+                "Scommetto",
+                "che",
+                "Marco",
+                "sorrida."
               ]
             },
             {
-              "it": "Un tiro corto può diventare un doppio falla se non è ben calcolato.",
-              "en": "A short shot can become a double fault if it's not well calculated.",
-              "words": [
-                "Un",
-                "tiro",
-                "corto",
-                "può",
-                "diventare",
-                "un",
-                "doppio",
-                "falla",
-                "se",
-                "non",
-                "è",
-                "ben",
-                "calcolato",
-                "."
-              ]
-            },
-            {
-              "it": "La rimozione di un tiro al volo richiede una buona restituzione.",
-              "en": "The removal of a volley requires a good return.",
-              "words": [
-                "La",
-                "rimozione",
-                "di",
-                "un",
-                "tiro",
-                "al",
-                "volo",
-                "richiede",
-                "una",
-                "buona",
-                "restituzione",
-                "."
-              ]
-            },
-            {
-              "it": "Un tiro lungo può essere usato per distrarre l'avversario.",
-              "en": "A long shot can be used to distract the opponent.",
-              "words": [
-                "Un",
-                "tiro",
-                "lungo",
-                "può",
-                "essere",
-                "usato",
-                "per",
-                "distrarre",
-                "l'",
-                "avversario",
-                "."
-              ]
-            },
-            {
-              "it": "Il tavolino da ping-pong è il campo di battaglia per ogni attacco.",
-              "en": "The ping-pong table is the battlefield for every attack.",
+              "it": "Il padre scherza con i giocatori.",
+              "en": "The father jokes with the players.",
               "words": [
                 "Il",
-                "tavolino",
-                "da",
-                "ping-pong",
+                "padre",
+                "scherza",
+                "con",
+                "i",
+                "giocatori."
+              ]
+            },
+            {
+              "it": "La giornata è stata amichevole.",
+              "en": "The day was friendly.",
+              "words": [
+                "La",
+                "giornata",
                 "è",
-                "il",
-                "campo",
+                "stata",
+                "amichevole."
+              ]
+            },
+            {
+              "it": "Spero di non sconfiggere Marco.",
+              "en": "I hope not to defeat Marco.",
+              "words": [
+                "Spero",
                 "di",
-                "battaglia",
+                "non",
+                "sconfiggere",
+                "Marco."
+              ]
+            },
+            {
+              "it": "Sono contento per la soddisfazione.",
+              "en": "I'm happy with the satisfaction.",
+              "words": [
+                "Sono",
+                "contento",
                 "per",
-                "ogni",
-                "attacco",
-                "."
+                "la",
+                "soddisfazione."
               ]
             }
           ]
         }
       ],
-      "generatedAt": "2026-04-24T15:19:25.171Z"
+      "generationStats": {
+        "totalMs": 814394,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1778,
+        "totalCompletionTokens": 1625,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 191025,
+            "promptTokens": 458,
+            "completionTokens": 412
+          },
+          {
+            "lessonNum": 2,
+            "ms": 159012,
+            "promptTokens": 540,
+            "completionTokens": 342
+          },
+          {
+            "lessonNum": 3,
+            "ms": 107593,
+            "promptTokens": 586,
+            "completionTokens": 363
+          }
+        ]
+      },
+      "generatedAt": "2026-04-29T14:56:02.050Z"
     },
     {
       "topic": "medical & healthcare",
@@ -8224,7 +8272,13 @@
           }
         ]
       },
-      "generatedAt": "2026-04-29T09:48:44.808Z"
+      "generatedAt": "2026-04-29T10:30:16.428Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 315090,
+        "promptTokens": 938,
+        "completionTokens": 524
+      }
     },
     {
       "topic": "neuroscience",
@@ -9974,65 +10028,6 @@
       ],
       "flaggedAt": "2026-04-26T13:13:25.143Z",
       "comment": "con missing"
-    },
-    "yeast_metabolic_oscillations:mcq_en_it:surprise": {
-      "topic": "yeast metabolic oscillations",
-      "type": "mcq_en_it",
-      "it": "surprise",
-      "en": "surprise",
-      "correct": "surprise",
-      "choices": [
-        "periodo",
-        "fase alta",
-        "dinamica complessa",
-        "surprise"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-29T10:21:27.581Z",
-      "comment": "english question and answer; suprise is sorpresa"
-    },
-    "yeast_metabolic_oscillations:listen_type:surprise": {
-      "topic": "yeast metabolic oscillations",
-      "type": "listen_type",
-      "it": "surprise",
-      "en": "",
-      "correct": "surprise",
-      "choices": [],
-      "words": [],
-      "flaggedAt": "2026-04-29T10:22:25.991Z",
-      "comment": "english q and q: suprise means sorpresa"
-    },
-    "yeast_metabolic_oscillations:mcq_it_en:surprise": {
-      "topic": "yeast metabolic oscillations",
-      "type": "mcq_it_en",
-      "it": "surprise",
-      "en": "surprise",
-      "correct": "surprise",
-      "choices": [
-        "phase",
-        "metabolism",
-        "surprise",
-        "low phase"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-29T10:23:43.317Z",
-      "comment": "english answer and question, suprise is rather sopresso in italian"
-    },
-    "yeast_metabolic_oscillations:listen_mcq:surprise": {
-      "topic": "yeast metabolic oscillations",
-      "type": "listen_mcq",
-      "it": "surprise",
-      "en": "",
-      "correct": "surprise",
-      "choices": [
-        "metabolic oscillations",
-        "surprise",
-        "oscillation",
-        "low phase"
-      ],
-      "words": [],
-      "flaggedAt": "2026-04-29T10:24:11.952Z",
-      "comment": "same as before"
     }
   }
 }
