@@ -155,8 +155,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}
 .tok:hover{border-color:var(--blue)}
 .tok.used{opacity:.15;pointer-events:none}
-.tok-distractor{border-color:#ffcc00;background:#fffbe6;color:#7a6200}
-.tok-distractor:hover{border-color:#ff9600}
+.tok-distractor{border-color:var(--gray-mid);background:var(--white);color:var(--text)}
+.tok-distractor:hover{border-color:var(--blue)}
 .type-input{width:100%;padding:12px 14px;font-size:16px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);outline:none;margin-top:8px}
 .type-input:focus{border-color:var(--blue)}
 .type-input.ok{border-color:var(--green);background:var(--green-light)}
@@ -236,23 +236,36 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
-.story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 18px;overflow:hidden;box-shadow:var(--shadow-card)}
-.story-toggle{display:flex;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;user-select:none;width:100%;background:none;border:none;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
-.story-toggle:hover{background:var(--gray-light)}
-.story-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
+.story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 16px;overflow:hidden;box-shadow:var(--shadow-card)}
+.story-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
+.story-hdr:hover{background:var(--gray-light)}
+.story-hdr-btns{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.story-icon-btn{background:none;border:2px solid var(--gray-mid);border-radius:8px;padding:3px 8px;font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);line-height:1.4;transition:border-color .1s}
+.story-icon-btn:hover{border-color:var(--blue)}
+.story-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s}
 .story-arrow.open{transform:rotate(180deg)}
-.story-body{padding:0 16px 14px;font-size:14px;line-height:1.7;color:#444;display:none}
+.story-body{padding:0 16px 14px;font-size:14px;line-height:1.75;color:#444;display:none}
 .story-body.open{display:block}
 .story-body p{margin-bottom:10px}
 .story-body p:last-child{margin-bottom:0}
+.story-translation{margin-top:12px;padding-top:12px;border-top:2px solid var(--gray-mid);color:#555;font-style:italic}
+.story-repair-wrap{padding:0 14px 14px;display:none}
+.story-repair-wrap.open{display:block}
+.story-repair-row{display:flex;gap:7px;align-items:flex-start}
+.story-repair-input{flex:1;padding:9px 11px;font-size:13px;font-weight:600;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--gray-light);outline:none;resize:vertical;min-height:38px}
+.story-repair-input:focus{border-color:var(--blue);background:var(--white)}
+.story-repair-input::placeholder{color:var(--gray);font-weight:400}
+.story-repair-btn{background:var(--blue);color:var(--white);border:none;border-radius:var(--radius);padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;flex-shrink:0}
+.story-repair-btn:hover{background:var(--blue-dark)}
+.story-repair-btn:disabled{opacity:.5;cursor:not-allowed}
+.story-repair-status{font-size:12px;color:var(--gray-dark);font-weight:600;margin-top:5px}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
-.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 16px;opacity:.8}
+.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8}
 
 /* ══ LIB FILTER ══════════════════════════════════════════════════════ */
-.lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,color .1s}
-.lib-filter-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
+.lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
+.lib-filter-btn:hover{border-color:var(--blue)}
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 </style>
 </head>
@@ -305,9 +318,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </div>
     </div>
     <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
-    <input class="topic-input" id="topic-input" type="text"
-      placeholder="e.g. cooking, architecture, medicine…" maxlength="80"
-      onkeydown="if(event.key==='Enter')doGenerate()">
+    <textarea class="topic-input" id="topic-input" rows="2"
+      placeholder="e.g. cooking, architecture, medicine… add details for a richer story"
+      maxlength="400" oninput="autoResizeTopic(this)"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
@@ -355,13 +369,29 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
     <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
+
+  <!-- Story section -->
   <div class="story-section" id="story-section" style="display:none">
-    <button class="story-toggle" onclick="toggleStory()" id="story-toggle-btn">
+    <button class="story-hdr" onclick="toggleStory()">
       <span>📖 Read the story</span>
+      <div class="story-hdr-btns" onclick="event.stopPropagation()">
+        <button class="story-icon-btn" id="story-speak-btn" onclick="speakStory()" title="Read aloud">🔊</button>
+        <button class="story-icon-btn" id="story-translate-btn" onclick="toggleStoryTranslation()" title="Show translation">🌐</button>
+        <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
+      </div>
       <span class="story-arrow" id="story-arrow">▼</span>
     </button>
     <div class="story-body" id="story-body"></div>
+    <div class="story-repair-wrap" id="story-repair-wrap">
+      <div class="story-repair-row">
+        <textarea class="story-repair-input" id="story-repair-input" rows="2"
+          placeholder="Describe what to change, e.g. 'make it funnier' or 'set it in Rome'…"></textarea>
+        <button class="story-repair-btn" id="story-repair-btn" onclick="doRepairStory()">Rewrite</button>
+      </div>
+      <div class="story-repair-status" id="story-repair-status"></div>
+    </div>
   </div>
+
   <div class="gen-stats" id="gen-stats"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
@@ -619,11 +649,112 @@ async function repairAll(){
 
 function goHome(){ buildPath(); show('home'); }
 
+function autoResizeTopic(el){
+  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
+}
+
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
   const open=body.classList.toggle('open');
   arrow.classList.toggle('open',open);
+}
+
+function toggleStoryRepair(){
+  const wrap=document.getElementById('story-repair-wrap');
+  if(wrap) wrap.classList.toggle('open');
+}
+
+function renderStoryText(d){
+  const body=document.getElementById('story-body'); if(!body) return;
+  const story=d.story||'';
+  const paras=story.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  let html=`<div id="story-orig">${paras}</div>`;
+  if(d.storyTranslation){
+    const tparas=d.storyTranslation.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    html+=`<div class="story-translation" id="story-trans">${tparas}</div>`;
+  } else {
+    html+=`<div class="story-translation" id="story-trans" style="display:none"></div>`;
+  }
+  body.innerHTML=html;
+}
+
+function speakStory(){
+  const d=APP.lessonData; if(!d||!d.story) return;
+  speak(d.story);
+}
+
+async function toggleStoryTranslation(){
+  const d=APP.lessonData; if(!d||!d.story) return;
+  const transDiv=document.getElementById('story-trans');
+  const btn=document.getElementById('story-translate-btn');
+  // If already translated and showing, just toggle visibility
+  if(d.storyTranslation){
+    if(!transDiv) return;
+    const nowHidden=transDiv.style.display==='none';
+    transDiv.style.display=nowHidden?'':'none';
+    btn.style.opacity=nowHidden?'1':'0.5';
+    return;
+  }
+  // Need to fetch translation
+  btn.textContent='⏳'; btn.disabled=true;
+  // Ensure story body is open
+  const body=document.getElementById('story-body');
+  if(!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
+  try{
+    const r=await fetch('/api/translate-story',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic})});
+    const resp=await r.json();
+    if(!r.ok) throw new Error(resp.error||'Translate failed');
+    // Poll job
+    const result=await pollJob(resp.jobId, step=>{ btn.textContent='⏳'; });
+    d.storyTranslation=result.translation;
+    renderStoryText(d);
+  }catch(e){
+    alert('Translation failed: '+e.message);
+  }finally{
+    btn.textContent='🌐'; btn.disabled=false;
+  }
+}
+
+async function doRepairStory(){
+  const d=APP.lessonData; if(!d) return;
+  const instruction=document.getElementById('story-repair-input')?.value?.trim();
+  if(!instruction){ document.getElementById('story-repair-input').focus(); return; }
+  const btn=document.getElementById('story-repair-btn');
+  const status=document.getElementById('story-repair-status');
+  btn.disabled=true; btn.textContent='⏳';
+  if(status) status.textContent='Rewriting story…';
+  try{
+    const r=await fetch('/api/repair-story',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic,instruction})});
+    const resp=await r.json();
+    if(!r.ok) throw new Error(resp.error||'Repair failed');
+    await pollJob(resp.jobId, step=>{ if(status) status.textContent=step; });
+    // Reload lesson data from server
+    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
+    if(lr.ok){
+      const fresh=await lr.json();
+      APP.lessonData=fresh;
+    }
+    // Open story to show result
+    const body=document.getElementById('story-body');
+    if(body && !body.classList.contains('open')){
+      body.classList.add('open'); document.getElementById('story-arrow').classList.add('open');
+    }
+    renderStoryText(APP.lessonData);
+    document.getElementById('story-repair-input').value='';
+    if(status) status.textContent='Story updated!';
+    setTimeout(()=>{ if(status) status.textContent=''; },3000);
+    // Close repair panel
+    const wrap=document.getElementById('story-repair-wrap');
+    if(wrap) wrap.classList.remove('open');
+  }catch(e){
+    alert('Story repair failed: '+e.message);
+    if(status) status.textContent='';
+  }finally{
+    btn.disabled=false; btn.textContent='Rewrite';
+  }
 }
 
 // ── init ──
@@ -633,6 +764,423 @@ function toggleStory(){
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "a vacation in domburg",
+    "topicEmoji": "🏖️",
+    "lang": "nl",
+    "story": "In the heart of summer, when the sun painted the sky in hues of orange and pink, Marleen and her family decided to take a vacation in Domburg, a quaint town on the Dutch coast. The air was filled with the salty tang of the sea and the sweet scent of blooming flowers. Marleen, a young girl with a curious mind, was eager to explore the charming streets and the vast expanse of the beach.\n\nTheir first morning in Domburg, they woke up early to catch the sunrise. Marleen and her little brother, Tim, ran down to the beach, their bare feet sinking into the soft sand. The waves gently lapped at the shore, creating a soothing rhythm. Marleen’s father, a tall man with a kind smile, taught them how to build sandcastles. They worked together, using buckets and shovels to create a grand fortress, complete with a moat and a drawbridge. As the sun rose higher, casting a golden glow over the landscape, they admired their creation, feeling a sense of accomplishment and joy.\n\nAfter a hearty lunch of fresh fish and fries, they decided to visit the Domburgse Duinen, a beautiful dune area that was a short bike ride away. Marleen’s mother, a woman with a gentle voice, packed a picnic basket with sandwiches and fruit. They pedaled through the dunes, the wind whipping through their hair. The dunes were a maze of golden sand, with tall grasses swaying in the breeze. Marleen and Tim laughed as they chased each other, their laughter mingling with the sound of the waves. They found a perfect spot to rest, under a large tree, where they enjoyed their picnic, the sand grains tickling their toes.\n\nIn the evening, they strolled through the town, hand in hand, exploring the narrow, cobbled streets. The houses were painted in bright colors, with flowers spilling out of window boxes. Marleen’s father pointed out the old windmills and the historic buildings, teaching her about the town’s rich history. They stopped at a cozy café, where they sipped on hot chocolate and watched the sunset, the sky turning into a canvas of orange and purple. As they walked back to their accommodation, the cool evening air filled with the sound of seagulls and the distant hum of the sea, Marleen felt a deep sense of contentment, knowing that this was a vacation she would never forget.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Vacation in Domburg",
+        "desc": "Summer, beach, sandcastles, sunrise",
+        "icon": "☀️",
+        "vocab": [
+          {
+            "it": "zomer",
+            "en": "summer",
+            "pron": "ZO-mer"
+          },
+          {
+            "it": "strand",
+            "en": "beach",
+            "pron": "STRAAND"
+          },
+          {
+            "it": "zand",
+            "en": "sand",
+            "pron": "ZAND"
+          },
+          {
+            "it": "strandcastel",
+            "en": "sandcastle",
+            "pron": "STRAAND-KA-stel"
+          },
+          {
+            "it": "ochtend",
+            "en": "morning",
+            "pron": "OT-chen"
+          },
+          {
+            "it": "zonsopgang",
+            "en": "sunrise",
+            "pron": "ZON-so-PAANG"
+          },
+          {
+            "it": "zacht",
+            "en": "soft",
+            "pron": "ZAKT"
+          },
+          {
+            "it": "fort",
+            "en": "fortress",
+            "pron": "FOR-tis"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Het zomerweer was prachtig.",
+            "en": "The summer weather was beautiful.",
+            "words": [
+              "Het",
+              "zomerweer",
+              "was",
+              "prachtig."
+            ]
+          },
+          {
+            "it": "De zee rook naar zout.",
+            "en": "The sea smelled of salt.",
+            "words": [
+              "De",
+              "zee",
+              "rook",
+              "naar",
+              "zout."
+            ]
+          },
+          {
+            "it": "Marleen en Tim bouwden een strandcastel.",
+            "en": "Marleen and Tim built a sandcastle.",
+            "words": [
+              "Marleen",
+              "en",
+              "Tim",
+              "bouwden",
+              "een",
+              "strandcastel."
+            ]
+          },
+          {
+            "it": "De vader legde de kinderen uit hoe ze het strandcastel moesten bouwen.",
+            "en": "The father explained to the children how to build the sandcastle.",
+            "words": [
+              "De",
+              "vader",
+              "legde",
+              "de",
+              "kinderen",
+              "uit",
+              "hoe",
+              "ze",
+              "het",
+              "strandcastel",
+              "moesten",
+              "bouwen."
+            ]
+          },
+          {
+            "it": "De zon ging op en verlichtte het strand.",
+            "en": "The sun rose and illuminated the beach.",
+            "words": [
+              "De",
+              "zon",
+              "ging",
+              "op",
+              "en",
+              "verlichtte",
+              "het",
+              "strand."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Domburg",
+        "desc": "Dutch coast, beach, sand, castle",
+        "icon": "🏖️",
+        "vocab": [
+          {
+            "it": "duin",
+            "en": "dune",
+            "pron": "DOYN"
+          },
+          {
+            "it": "tuintje",
+            "en": "little garden",
+            "pron": "TINTY"
+          },
+          {
+            "it": "zoutlucht",
+            "en": "salt air",
+            "pron": "ZOUT-LYXT"
+          },
+          {
+            "it": "bloemen",
+            "en": "flowers",
+            "pron": "BLOH-MEN"
+          },
+          {
+            "it": "vrienden",
+            "en": "friends",
+            "pron": "VRIEN-DEN"
+          },
+          {
+            "it": "tochtje",
+            "en": "little trip",
+            "pron": "TOCH-TY"
+          },
+          {
+            "it": "zonnebloem",
+            "en": "sunflower",
+            "pron": "ZON-EN-BLOEM"
+          },
+          {
+            "it": "plaatjes",
+            "en": "pictures",
+            "pron": "PLAT-SHES"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Het duin was hoog en zacht.",
+            "en": "The dune was high and soft.",
+            "words": [
+              "Het",
+              "duin",
+              "was",
+              "hoog",
+              "en",
+              "zacht."
+            ]
+          },
+          {
+            "it": "Marleen en Tim speelden in het tuintje van hun hotel.",
+            "en": "Marleen and Tim played in the hotel's little garden.",
+            "words": [
+              "Marleen",
+              "en",
+              "Tim",
+              "speelden",
+              "in",
+              "het",
+              "tuintje",
+              "van",
+              "hun",
+              "hotel."
+            ]
+          },
+          {
+            "it": "De zoutlucht was heerlijk om te ademen.",
+            "en": "The salt air was delightful to breathe.",
+            "words": [
+              "De",
+              "zoutlucht",
+              "was",
+              "heerlijk",
+              "om",
+              "te",
+              "ademen."
+            ]
+          },
+          {
+            "it": "De bloemen roken zoet in de ochtendzon.",
+            "en": "The flowers smelled sweet in the morning sun.",
+            "words": [
+              "De",
+              "bloemen",
+              "roken",
+              "zoet",
+              "in",
+              "de",
+              "ochtendzon."
+            ]
+          },
+          {
+            "it": "Ze gingen op een tochtje met vrienden naar de zee.",
+            "en": "They went on a little trip with friends to the sea.",
+            "words": [
+              "Ze",
+              "gingen",
+              "op",
+              "een",
+              "tochtje",
+              "met",
+              "vrienden",
+              "naar",
+              "de",
+              "zee."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Domburg",
+        "desc": "Dutch coast, beach activities, local culture",
+        "icon": "🏖️",
+        "vocab": [
+          {
+            "it": "duinen",
+            "en": "dunes",
+            "pron": "DOY-neh"
+          },
+          {
+            "it": "tuintjes",
+            "en": "little gardens",
+            "pron": "TINT-yents"
+          },
+          {
+            "it": "zonnepanelen",
+            "en": "solar panels",
+            "pron": "SOHN-nepuh-LEHLN"
+          },
+          {
+            "it": "kraammarkt",
+            "en": "pop-up market",
+            "pron": "KRAH-muhmART"
+          },
+          {
+            "it": "bollenstiel",
+            "en": "stem of a flower",
+            "pron": "BOH-lenshtyl"
+          },
+          {
+            "it": "zonnepark",
+            "en": "solar park",
+            "pron": "SOHN-nepark"
+          },
+          {
+            "it": "zonnegloed",
+            "en": "solar glow",
+            "pron": "SOHN-neh-gloed"
+          },
+          {
+            "it": "zonnepanelenbouw",
+            "en": "solar panel construction",
+            "pron": "SOHN-nepuh-LEHLN-boh-woh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "De duinen omringen de stad, een prachtig uitzicht bieden ze op de zee.",
+            "en": "The dunes surround the city, offering a beautiful view of the sea.",
+            "words": [
+              "De",
+              "duinen",
+              "omringen",
+              "de",
+              "stad,",
+              "een",
+              "prachtig",
+              "uitzicht",
+              "bieden",
+              "ze",
+              "op",
+              "de",
+              "zee."
+            ]
+          },
+          {
+            "it": "In het centrum vind je tuintjes met bloemen en zonnepanelen op de daken.",
+            "en": "In the center, you find little gardens with flowers and solar panels on the roofs.",
+            "words": [
+              "In",
+              "het",
+              "centrum",
+              "vind",
+              "je",
+              "tuintjes",
+              "met",
+              "bloemen",
+              "en",
+              "zonnepanelen",
+              "op",
+              "de",
+              "daken."
+            ]
+          },
+          {
+            "it": "Een kraammarkt is een geweldige manier om lokale producten te verkopen en te ontdekken.",
+            "en": "A pop-up market is a great way to sell local products and discover them.",
+            "words": [
+              "Een",
+              "kraammarkt",
+              "is",
+              "een",
+              "geweldige",
+              "manier",
+              "om",
+              "lokale",
+              "producten",
+              "te",
+              "verkopen",
+              "en",
+              "te",
+              "ontdekken."
+            ]
+          },
+          {
+            "it": "De zonnepanelenbouw is een groeiende sector in Domburg, zorgvuldig geïntegreerd in het landschap.",
+            "en": "Solar panel construction is a growing sector in Domburg, carefully integrated into the landscape.",
+            "words": [
+              "De",
+              "zonnepanelenbouw",
+              "is",
+              "een",
+              "groeiende",
+              "sector",
+              "in",
+              "Domburg,",
+              "zorgvuldig",
+              "geïntegreerd",
+              "in",
+              "het",
+              "landschap."
+            ]
+          },
+          {
+            "it": "De zonnegloed verlichte de avond, een magische sfeer creëerde het in de straten.",
+            "en": "The solar glow lit up the evening, creating a magical atmosphere in the streets.",
+            "words": [
+              "De",
+              "zonnegloed",
+              "verlichte",
+              "de",
+              "avond,",
+              "een",
+              "magische",
+              "sfeer",
+              "creëerde",
+              "het",
+              "in",
+              "de",
+              "straten."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 871509,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 1756,
+      "totalCompletionTokens": 1756,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 217829,
+          "promptTokens": 458,
+          "completionTokens": 360
+        },
+        {
+          "lessonNum": 2,
+          "ms": 183591,
+          "promptTokens": 520,
+          "completionTokens": 360
+        },
+        {
+          "lessonNum": 3,
+          "ms": 256408,
+          "promptTokens": 576,
+          "completionTokens": 502
+        }
+      ]
+    },
+    "generatedAt": "2026-04-28T23:40:14.508Z"
+  },
   {
     "topic": "me and my sister in rome",
     "topicEmoji": "ROME",
@@ -9245,14 +9793,18 @@ function buildPath(){
   const storyBody=document.getElementById('story-body');
   if(d.story && storySec && storyBody){
     storySec.style.display='';
-    // Collapse on each load; split into paragraphs
     storyBody.classList.remove('open');
     const arrow=document.getElementById('story-arrow');
     if(arrow) arrow.classList.remove('open');
-    storyBody.innerHTML=d.story.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    renderStoryText(d);
+    // Show/hide repair button based on canGenerate
+    const repToggle=document.getElementById('story-repair-toggle-btn');
+    if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
+    const transBtn=document.getElementById('story-translate-btn');
+    if(transBtn) transBtn.style.display=APP.info.canGenerate?'':'none';
   } else if(storySec){ storySec.style.display='none'; }
 
-  // Generation stats
+  // Gen stats
   const statEl=document.getElementById('gen-stats');
   if(statEl && d.generationStats){
     const gs=d.generationStats;
@@ -9260,6 +9812,7 @@ function buildPath(){
     const tokens=((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString();
     statEl.textContent=`Generated in ${secs}s · ${gs.model} · ${tokens} tokens`;
   } else if(statEl){ statEl.textContent=''; }
+
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
   d.lessons.forEach((L,i)=>{
@@ -9603,13 +10156,45 @@ async function doGenerate()         {}
 async function repairLesson()       {}
 async function repairFromLesson()   {}
 
-// Story toggle (same logic as live version)
+// Story functions — server calls disabled, local state only
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
+  if(!body)return;
   const open=body.classList.toggle('open');
-  arrow.classList.toggle('open',open);
+  if(arrow) arrow.classList.toggle('open',open);
 }
+function toggleStoryRepair(){
+  const wrap=document.getElementById('story-repair-wrap');
+  if(wrap) wrap.classList.toggle('open');
+}
+function renderStoryText(d){
+  const body=document.getElementById('story-body'); if(!body) return;
+  const paras=(d.story||'').split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  let html=`<div id="story-orig">${paras}</div>`;
+  if(d.storyTranslation){
+    const tp=d.storyTranslation.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    html+=`<div class="story-translation" id="story-trans">${tp}</div>`;
+  } else {
+    html+='<div class="story-translation" id="story-trans" style="display:none"></div>';
+  }
+  body.innerHTML=html;
+}
+function speakStory(){
+  const d=APP.lessonData; if(!d||!d.story)return;
+  speak(d.story);
+}
+// Translation and repair require server — show notice in static mode
+async function toggleStoryTranslation(){
+  if(APP.lessonData&&APP.lessonData.storyTranslation){
+    const t=document.getElementById('story-trans');
+    if(t){ t.style.display=t.style.display==='none'?'':'none'; }
+    return;
+  }
+  alert('Story translation requires the live server version.');
+}
+async function doRepairStory(){ alert('Story repair requires the live server version.'); }
+function autoResizeTopic(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px'; }
 
 init();</script>
 </body>

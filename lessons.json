@@ -1,6 +1,840 @@
 {
   "lessons": [
     {
+      "topic": "traveling to toscana in may with a baby",
+      "topicEmoji": "🌍",
+      "lang": "it",
+      "story": "In the heart of May, under a sky painted with the softest of blues, Maria and her baby, Luca, embarked on a journey to Toscana, a land of rolling hills and golden sunsets. The air was filled with the sweet scent of blooming wildflowers, and the gentle breeze carried the whispers of the past. Maria, a young mother with a heart full of adventure, had always dreamed of exploring the picturesque landscapes of Toscana with her little one.\n\nTheir first stop was the charming town of Siena, where they wandered through the narrow cobblestone streets, hand in hand. Luca, a curious baby with big brown eyes, gazed at the ancient buildings and the bustling market stalls filled with colorful fruits and vegetables. Maria bought a small basket of ripe strawberries, which she shared with Luca, who giggled and clapped his tiny hands in delight.\n\nAs the day turned into evening, they found a cozy piazza where a group of locals were playing music and dancing. Luca, entranced by the lively tunes, began to sway and clap along, his little feet tapping the ground. Maria watched, her heart swelling with joy, as she realized that the simple pleasures of life, like a baby’s first dance, were the true treasures of Toscana.\n\nThe next morning, they set out for the rolling hills of Chianti, where they visited a small vineyard. The owner, a kind old man with a warm smile, showed them how to pick the ripest grapes and even let Luca taste a tiny bit of the sweet juice. Luca, with a look of pure wonder, made a face of delight and reached for more, much to Maria’s amusement.\n\nAs the sun began to set, they made their way to a quaint hilltop village, where they found a charming bed and breakfast. The hostess, a gentle woman named Rosa, welcomed them with a warm embrace and a plate of homemade pasta. Luca, who had been napping in his stroller, woke up with a yawn and a smile, his little hands reaching for the pasta. Maria, feeling a deep sense of contentment, knew that this was a memory they would cherish forever.\n\nAs they lay in their cozy bed that night, the stars twinkling above, Maria felt a sense of peace wash over her. Traveling to Toscana with Luca had not only given them a magical experience but had also strengthened their bond, creating a story that would be told for years to come.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Exploring Toscana",
+          "desc": "Traveling, May, baby, Siena, basket, strawberries",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "it": "giugno",
+              "en": "June",
+              "pron": "JOO-no"
+            },
+            {
+              "it": "paese",
+              "en": "town",
+              "pron": "PAH-zeh"
+            },
+            {
+              "it": "stradine",
+              "en": "narrow streets",
+              "pron": "strah-DEEN-eh"
+            },
+            {
+              "it": "mercato",
+              "en": "market",
+              "pron": "mer-KAH-to"
+            },
+            {
+              "it": "frutta",
+              "en": "fruit",
+              "pron": "FRUH-tah"
+            },
+            {
+              "it": "carricare",
+              "en": "to carry",
+              "pron": "kah-ree-KAH-re"
+            },
+            {
+              "it": "sorridere",
+              "en": "to smile",
+              "pron": "sor-ri-DARE"
+            },
+            {
+              "it": "bambino",
+              "en": "baby",
+              "pron": "bahm-BEE-no"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "In giugno, Maria e Luca si recarono in Toscana.",
+              "en": "In June, Maria and Luca went to Toscana.",
+              "words": [
+                "In",
+                "giugno,",
+                "Maria",
+                "e",
+                "Luca",
+                "si",
+                "recarono",
+                "in",
+                "Toscana."
+              ]
+            },
+            {
+              "it": "Luca strinse la mano di sua madre mentre camminavano.",
+              "en": "Luca held his mother's hand while walking.",
+              "words": [
+                "Luca",
+                "strinse",
+                "la",
+                "mano",
+                "di",
+                "sua",
+                "madre",
+                "mentre",
+                "camminavano."
+              ]
+            },
+            {
+              "it": "Maria acquistò una cesta di fragole per il suo bambino.",
+              "en": "Maria bought a basket of strawberries for her baby.",
+              "words": [
+                "Maria",
+                "acquistò",
+                "una",
+                "cesta",
+                "di",
+                "fragole",
+                "per",
+                "il",
+                "suo",
+                "bambino."
+              ]
+            },
+            {
+              "it": "Luca sorrideva mentre guardava le case antiche.",
+              "en": "Luca smiled while looking at the old houses.",
+              "words": [
+                "Luca",
+                "sorrideva",
+                "mentre",
+                "guardava",
+                "le",
+                "case",
+                "antiche."
+              ]
+            },
+            {
+              "it": "Il mercato era pieno di frutta e verdura colorata.",
+              "en": "The market was full of colorful fruit and vegetables.",
+              "words": [
+                "Il",
+                "mercato",
+                "era",
+                "pieno",
+                "di",
+                "frutta",
+                "e",
+                "verdura",
+                "colorata."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Toscana in maggio",
+          "desc": "Viaggio in Toscana con bambino",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "it": "silenzi",
+              "en": "silences",
+              "pron": "SI-len-zee"
+            },
+            {
+              "it": "panni",
+              "en": "cloths",
+              "pron": "PA-nnee"
+            },
+            {
+              "it": "bagni",
+              "en": "baths",
+              "pron": "BAH-nee"
+            },
+            {
+              "it": "casette",
+              "en": "cottages",
+              "pron": "KA-set-te"
+            },
+            {
+              "it": "sorriso",
+              "en": "smile",
+              "pron": "so-RISS-so"
+            },
+            {
+              "it": "passeggiate",
+              "en": "walks",
+              "pron": "pas-je-GYAT-te"
+            },
+            {
+              "it": "cicciottello",
+              "en": "little chubby one",
+              "pron": "tsee-CHOT-tel-lo"
+            },
+            {
+              "it": "sconosciuti",
+              "en": "strangers",
+              "pron": "skon-NOZ-zi-tee"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "In maggio, i silenzi della campagna toscana sono meravigliosi.",
+              "en": "In May, the silences of the Tuscan countryside are marvelous.",
+              "words": [
+                "In",
+                "maggio,",
+                "i",
+                "silenzi",
+                "della",
+                "campagna",
+                "toscana",
+                "sono",
+                "meravigliosi."
+              ]
+            },
+            {
+              "it": "Luca, il piccolo cicciottello, si divertiva a giocare con i panni vecchi.",
+              "en": "Luca, the little chubby one, enjoyed playing with the old cloths.",
+              "words": [
+                "Luca,",
+                "il",
+                "piccolo",
+                "cicciottello,",
+                "si",
+                "divertiva",
+                "a",
+                "giocare",
+                "con",
+                "i",
+                "panni",
+                "vecchi."
+              ]
+            },
+            {
+              "it": "Maria e Luca si recarono a fare un bagno nella fonte vicina.",
+              "en": "Maria and Luca went to take a bath in the nearby spring.",
+              "words": [
+                "Maria",
+                "e",
+                "Luca",
+                "si",
+                "recarono",
+                "a",
+                "fare",
+                "un",
+                "bagno",
+                "nella",
+                "fonte",
+                "vicina."
+              ]
+            },
+            {
+              "it": "Le casette intorno al paese erano piene di sconosciuti amichevoli.",
+              "en": "The cottages around the town were full of friendly strangers.",
+              "words": [
+                "Le",
+                "casette",
+                "intorno",
+                "al",
+                "paese",
+                "erano",
+                "piene",
+                "di",
+                "sconosciuti",
+                "amichevoli."
+              ]
+            },
+            {
+              "it": "Passeggiate tra le stradine, sorrisi si scambiavano a ogni angolo.",
+              "en": "Walking through the narrow streets, smiles were exchanged at every corner.",
+              "words": [
+                "Passeggiate",
+                "tra",
+                "le",
+                "stradine,",
+                "sorrisi",
+                "si",
+                "scambiavano",
+                "a",
+                "ogni",
+                "angolo."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Toscana in maggio",
+          "desc": "Exploring Toscana with a baby in May",
+          "icon": "🌸",
+          "vocab": [
+            {
+              "it": "giornata",
+              "en": "day",
+              "pron": "dʒornoˈta"
+            },
+            {
+              "it": "panni",
+              "en": "clothes",
+              "pron": "ˈpanni"
+            },
+            {
+              "it": "bagni",
+              "en": "baths",
+              "pron": "ˈbaɲːi"
+            },
+            {
+              "it": "casette",
+              "en": "cottages",
+              "pron": "kaˈsetːe"
+            },
+            {
+              "it": "passeggiate",
+              "en": "walks",
+              "pron": "pasˈdʒeːdʒaːte"
+            },
+            {
+              "it": "cicciottello",
+              "en": "little chubby one",
+              "pron": "tʃikˈkottɛllo"
+            },
+            {
+              "it": "sconosciuti",
+              "en": "strangers",
+              "pron": "skɔnɔˈtʃiːuti"
+            },
+            {
+              "it": "silenzi",
+              "en": "silences",
+              "pron": "silˈɛntʃi"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "In maggio, la Toscana è piena di silenzi e bellezze.",
+              "en": "In May, Toscana is full of silences and beauties.",
+              "words": [
+                "In",
+                "maggio,",
+                "la",
+                "Toscana",
+                "è",
+                "piena",
+                "di",
+                "silenzi",
+                "e",
+                "bellezze."
+              ]
+            },
+            {
+              "it": "Maria e Luca passeggiano lungo le stradine di Siena.",
+              "en": "Maria and Luca stroll along Siena's narrow streets.",
+              "words": [
+                "Maria",
+                "e",
+                "Luca",
+                "passeggiano",
+                "lungo",
+                "le",
+                "stradine",
+                "di",
+                "Siena."
+              ]
+            },
+            {
+              "it": "Il cicciottello sorride, guardando le casette colorate.",
+              "en": "The little chubby one smiles, looking at the colorful cottages.",
+              "words": [
+                "Il",
+                "cicciottello",
+                "sorride,",
+                "guardando",
+                "le",
+                "casette",
+                "colorate."
+              ]
+            },
+            {
+              "it": "La madre compra panni nuovi per il bambino.",
+              "en": "The mother buys new clothes for the baby.",
+              "words": [
+                "La",
+                "madre",
+                "compra",
+                "panni",
+                "nuovi",
+                "per",
+                "il",
+                "bambino."
+              ]
+            },
+            {
+              "it": "Luca si accorge di sconosciuti che lo osservano con curiosità.",
+              "en": "Luca notices strangers who observe him curiously.",
+              "words": [
+                "Luca",
+                "si",
+                "accorge",
+                "di",
+                "sconosciuti",
+                "che",
+                "lo",
+                "osservano",
+                "con",
+                "curiosità."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1026764,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1755,
+        "totalCompletionTokens": 1790,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 261764,
+            "promptTokens": 451,
+            "completionTokens": 377
+          },
+          {
+            "lessonNum": 2,
+            "ms": 271371,
+            "promptTokens": 516,
+            "completionTokens": 435
+          },
+          {
+            "lessonNum": 3,
+            "ms": 296334,
+            "promptTokens": 573,
+            "completionTokens": 432
+          }
+        ]
+      },
+      "generatedAt": "2026-04-29T00:10:12.959Z"
+    },
+    {
+      "topic": "a vacation in domburg",
+      "topicEmoji": "🏖️",
+      "lang": "nl",
+      "story": "In the heart of summer, when the sun painted the sky in hues of orange and pink, Marleen and her family decided to take a vacation in Domburg, a quaint town on the Dutch coast. The air was filled with the salty tang of the sea and the sweet scent of blooming flowers. Marleen, a young girl with a curious mind, was eager to explore the charming streets and the vast expanse of the beach.\n\nTheir first morning in Domburg, they woke up early to catch the sunrise. Marleen and her little brother, Tim, ran down to the beach, their bare feet sinking into the soft sand. The waves gently lapped at the shore, creating a soothing rhythm. Marleen’s father, a tall man with a kind smile, taught them how to build sandcastles. They worked together, using buckets and shovels to create a grand fortress, complete with a moat and a drawbridge. As the sun rose higher, casting a golden glow over the landscape, they admired their creation, feeling a sense of accomplishment and joy.\n\nAfter a hearty lunch of fresh fish and fries, they decided to visit the Domburgse Duinen, a beautiful dune area that was a short bike ride away. Marleen’s mother, a woman with a gentle voice, packed a picnic basket with sandwiches and fruit. They pedaled through the dunes, the wind whipping through their hair. The dunes were a maze of golden sand, with tall grasses swaying in the breeze. Marleen and Tim laughed as they chased each other, their laughter mingling with the sound of the waves. They found a perfect spot to rest, under a large tree, where they enjoyed their picnic, the sand grains tickling their toes.\n\nIn the evening, they strolled through the town, hand in hand, exploring the narrow, cobbled streets. The houses were painted in bright colors, with flowers spilling out of window boxes. Marleen’s father pointed out the old windmills and the historic buildings, teaching her about the town’s rich history. They stopped at a cozy café, where they sipped on hot chocolate and watched the sunset, the sky turning into a canvas of orange and purple. As they walked back to their accommodation, the cool evening air filled with the sound of seagulls and the distant hum of the sea, Marleen felt a deep sense of contentment, knowing that this was a vacation she would never forget.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Vacation in Domburg",
+          "desc": "Summer, beach, sandcastles, sunrise",
+          "icon": "☀️",
+          "vocab": [
+            {
+              "it": "zomer",
+              "en": "summer",
+              "pron": "ZO-mer"
+            },
+            {
+              "it": "strand",
+              "en": "beach",
+              "pron": "STRAAND"
+            },
+            {
+              "it": "zand",
+              "en": "sand",
+              "pron": "ZAND"
+            },
+            {
+              "it": "strandcastel",
+              "en": "sandcastle",
+              "pron": "STRAAND-KA-stel"
+            },
+            {
+              "it": "ochtend",
+              "en": "morning",
+              "pron": "OT-chen"
+            },
+            {
+              "it": "zonsopgang",
+              "en": "sunrise",
+              "pron": "ZON-so-PAANG"
+            },
+            {
+              "it": "zacht",
+              "en": "soft",
+              "pron": "ZAKT"
+            },
+            {
+              "it": "fort",
+              "en": "fortress",
+              "pron": "FOR-tis"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Het zomerweer was prachtig.",
+              "en": "The summer weather was beautiful.",
+              "words": [
+                "Het",
+                "zomerweer",
+                "was",
+                "prachtig."
+              ]
+            },
+            {
+              "it": "De zee rook naar zout.",
+              "en": "The sea smelled of salt.",
+              "words": [
+                "De",
+                "zee",
+                "rook",
+                "naar",
+                "zout."
+              ]
+            },
+            {
+              "it": "Marleen en Tim bouwden een strandcastel.",
+              "en": "Marleen and Tim built a sandcastle.",
+              "words": [
+                "Marleen",
+                "en",
+                "Tim",
+                "bouwden",
+                "een",
+                "strandcastel."
+              ]
+            },
+            {
+              "it": "De vader legde de kinderen uit hoe ze het strandcastel moesten bouwen.",
+              "en": "The father explained to the children how to build the sandcastle.",
+              "words": [
+                "De",
+                "vader",
+                "legde",
+                "de",
+                "kinderen",
+                "uit",
+                "hoe",
+                "ze",
+                "het",
+                "strandcastel",
+                "moesten",
+                "bouwen."
+              ]
+            },
+            {
+              "it": "De zon ging op en verlichtte het strand.",
+              "en": "The sun rose and illuminated the beach.",
+              "words": [
+                "De",
+                "zon",
+                "ging",
+                "op",
+                "en",
+                "verlichtte",
+                "het",
+                "strand."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Domburg",
+          "desc": "Dutch coast, beach, sand, castle",
+          "icon": "🏖️",
+          "vocab": [
+            {
+              "it": "duin",
+              "en": "dune",
+              "pron": "DOYN"
+            },
+            {
+              "it": "tuintje",
+              "en": "little garden",
+              "pron": "TINTY"
+            },
+            {
+              "it": "zoutlucht",
+              "en": "salt air",
+              "pron": "ZOUT-LYXT"
+            },
+            {
+              "it": "bloemen",
+              "en": "flowers",
+              "pron": "BLOH-MEN"
+            },
+            {
+              "it": "vrienden",
+              "en": "friends",
+              "pron": "VRIEN-DEN"
+            },
+            {
+              "it": "tochtje",
+              "en": "little trip",
+              "pron": "TOCH-TY"
+            },
+            {
+              "it": "zonnebloem",
+              "en": "sunflower",
+              "pron": "ZON-EN-BLOEM"
+            },
+            {
+              "it": "plaatjes",
+              "en": "pictures",
+              "pron": "PLAT-SHES"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Het duin was hoog en zacht.",
+              "en": "The dune was high and soft.",
+              "words": [
+                "Het",
+                "duin",
+                "was",
+                "hoog",
+                "en",
+                "zacht."
+              ]
+            },
+            {
+              "it": "Marleen en Tim speelden in het tuintje van hun hotel.",
+              "en": "Marleen and Tim played in the hotel's little garden.",
+              "words": [
+                "Marleen",
+                "en",
+                "Tim",
+                "speelden",
+                "in",
+                "het",
+                "tuintje",
+                "van",
+                "hun",
+                "hotel."
+              ]
+            },
+            {
+              "it": "De zoutlucht was heerlijk om te ademen.",
+              "en": "The salt air was delightful to breathe.",
+              "words": [
+                "De",
+                "zoutlucht",
+                "was",
+                "heerlijk",
+                "om",
+                "te",
+                "ademen."
+              ]
+            },
+            {
+              "it": "De bloemen roken zoet in de ochtendzon.",
+              "en": "The flowers smelled sweet in the morning sun.",
+              "words": [
+                "De",
+                "bloemen",
+                "roken",
+                "zoet",
+                "in",
+                "de",
+                "ochtendzon."
+              ]
+            },
+            {
+              "it": "Ze gingen op een tochtje met vrienden naar de zee.",
+              "en": "They went on a little trip with friends to the sea.",
+              "words": [
+                "Ze",
+                "gingen",
+                "op",
+                "een",
+                "tochtje",
+                "met",
+                "vrienden",
+                "naar",
+                "de",
+                "zee."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Domburg",
+          "desc": "Dutch coast, beach activities, local culture",
+          "icon": "🏖️",
+          "vocab": [
+            {
+              "it": "duinen",
+              "en": "dunes",
+              "pron": "DOY-neh"
+            },
+            {
+              "it": "tuintjes",
+              "en": "little gardens",
+              "pron": "TINT-yents"
+            },
+            {
+              "it": "zonnepanelen",
+              "en": "solar panels",
+              "pron": "SOHN-nepuh-LEHLN"
+            },
+            {
+              "it": "kraammarkt",
+              "en": "pop-up market",
+              "pron": "KRAH-muhmART"
+            },
+            {
+              "it": "bollenstiel",
+              "en": "stem of a flower",
+              "pron": "BOH-lenshtyl"
+            },
+            {
+              "it": "zonnepark",
+              "en": "solar park",
+              "pron": "SOHN-nepark"
+            },
+            {
+              "it": "zonnegloed",
+              "en": "solar glow",
+              "pron": "SOHN-neh-gloed"
+            },
+            {
+              "it": "zonnepanelenbouw",
+              "en": "solar panel construction",
+              "pron": "SOHN-nepuh-LEHLN-boh-woh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "De duinen omringen de stad, een prachtig uitzicht bieden ze op de zee.",
+              "en": "The dunes surround the city, offering a beautiful view of the sea.",
+              "words": [
+                "De",
+                "duinen",
+                "omringen",
+                "de",
+                "stad,",
+                "een",
+                "prachtig",
+                "uitzicht",
+                "bieden",
+                "ze",
+                "op",
+                "de",
+                "zee."
+              ]
+            },
+            {
+              "it": "In het centrum vind je tuintjes met bloemen en zonnepanelen op de daken.",
+              "en": "In the center, you find little gardens with flowers and solar panels on the roofs.",
+              "words": [
+                "In",
+                "het",
+                "centrum",
+                "vind",
+                "je",
+                "tuintjes",
+                "met",
+                "bloemen",
+                "en",
+                "zonnepanelen",
+                "op",
+                "de",
+                "daken."
+              ]
+            },
+            {
+              "it": "Een kraammarkt is een geweldige manier om lokale producten te verkopen en te ontdekken.",
+              "en": "A pop-up market is a great way to sell local products and discover them.",
+              "words": [
+                "Een",
+                "kraammarkt",
+                "is",
+                "een",
+                "geweldige",
+                "manier",
+                "om",
+                "lokale",
+                "producten",
+                "te",
+                "verkopen",
+                "en",
+                "te",
+                "ontdekken."
+              ]
+            },
+            {
+              "it": "De zonnepanelenbouw is een groeiende sector in Domburg, zorgvuldig geïntegreerd in het landschap.",
+              "en": "Solar panel construction is a growing sector in Domburg, carefully integrated into the landscape.",
+              "words": [
+                "De",
+                "zonnepanelenbouw",
+                "is",
+                "een",
+                "groeiende",
+                "sector",
+                "in",
+                "Domburg,",
+                "zorgvuldig",
+                "geïntegreerd",
+                "in",
+                "het",
+                "landschap."
+              ]
+            },
+            {
+              "it": "De zonnegloed verlichte de avond, een magische sfeer creëerde het in de straten.",
+              "en": "The solar glow lit up the evening, creating a magical atmosphere in the streets.",
+              "words": [
+                "De",
+                "zonnegloed",
+                "verlichte",
+                "de",
+                "avond,",
+                "een",
+                "magische",
+                "sfeer",
+                "creëerde",
+                "het",
+                "in",
+                "de",
+                "straten."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 871509,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1756,
+        "totalCompletionTokens": 1756,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 217829,
+            "promptTokens": 458,
+            "completionTokens": 360
+          },
+          {
+            "lessonNum": 2,
+            "ms": 183591,
+            "promptTokens": 520,
+            "completionTokens": 360
+          },
+          {
+            "lessonNum": 3,
+            "ms": 256408,
+            "promptTokens": 576,
+            "completionTokens": 502
+          }
+        ]
+      },
+      "generatedAt": "2026-04-28T23:40:14.508Z"
+    },
+    {
       "topic": "me and my sister in rome",
       "topicEmoji": "ROME",
       "lang": "de",
