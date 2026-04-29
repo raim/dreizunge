@@ -107,8 +107,8 @@ function staticUpsert(data) {
 // ── Init ──────────────────────────────────────────────────────────────
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
-  // Restore saved language
   selectLang(APP.lang);
+  restoreDiffSlider();
   renderPill();
   loadSavedList();
 }
@@ -192,11 +192,23 @@ const staticOverrides = [
   'async function repairLesson()       {}',
   'async function repairFromLesson()   {}',
   '',
-  '// Story functions — server calls disabled, local state only',
+  '// UI helpers — work fully in static mode',
+  'function autoResizeTopic(el){ el.style.height=\'auto\'; el.style.height=Math.min(el.scrollHeight,160)+\'px\'; }',
+  'function onDiffSlider(v){',
+  '  APP.difficulty=parseInt(v,10); saveDifficulty();',
+  '  const el=document.getElementById(\'diff-val\');',
+  '  if(el){ el.textContent=DIFF_SHORT[APP.difficulty]||v; el.className=\'diff-val d\'+APP.difficulty; }',
+  '}',
+  'function restoreDiffSlider(){',
+  '  const sl=document.getElementById(\'diff-slider\'); if(sl) sl.value=APP.difficulty;',
+  '  onDiffSlider(APP.difficulty);',
+  '}',
+  '',
+  '// Story — DOM-only functions work in static mode',
   'function toggleStory(){',
   '  const body=document.getElementById(\'story-body\');',
   '  const arrow=document.getElementById(\'story-arrow\');',
-  '  if(!body)return;',
+  '  if(!body) return;',
   '  const open=body.classList.toggle(\'open\');',
   '  if(arrow) arrow.classList.toggle(\'open\',open);',
   '}',
@@ -216,21 +228,19 @@ const staticOverrides = [
   '  }',
   '  body.innerHTML=html;',
   '}',
-  'function speakStory(){',
-  '  const d=APP.lessonData; if(!d||!d.story)return;',
-  '  speak(d.story);',
-  '}',
-  '// Translation and repair require server — show notice in static mode',
-  'async function toggleStoryTranslation(){',
-  '  if(APP.lessonData&&APP.lessonData.storyTranslation){',
+  'function speakStory(){ const d=APP.lessonData; if(d&&d.story) speak(d.story); }',
+  'function toggleStoryTranslation(){',
+  '  const d=APP.lessonData; if(!d) return;',
+  '  if(d.storyTranslation){',
   '    const t=document.getElementById(\'story-trans\');',
-  '    if(t){ t.style.display=t.style.display===\'none\'?\'\':\'none\'; }',
+  '    if(t){ t.style.display=t.style.display===\'none\'?\'\': \'none\'; }',
+  '    const body=document.getElementById(\'story-body\');',
+  '    if(body&&!body.classList.contains(\'open\')){ body.classList.add(\'open\'); const a=document.getElementById(\'story-arrow\'); if(a) a.classList.add(\'open\'); }',
   '    return;',
   '  }',
-  '  alert(\'Story translation requires the live server version.\');',
+  '  alert(\'Story translation requires the live server.\');',
   '}',
-  'async function doRepairStory(){ alert(\'Story repair requires the live server version.\'); }',
-  'function autoResizeTopic(el){ el.style.height=\'auto\'; el.style.height=Math.min(el.scrollHeight,160)+\'px\'; }',
+  'function doRepairStory(){ alert(\'Story repair requires the live server.\'); }',
 ].join('\n');
 
 // ── Assemble ──────────────────────────────────────────────────────────

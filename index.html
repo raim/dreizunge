@@ -235,6 +235,23 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 
+/* ══ DIFFICULTY ══════════════════════════════════════════════════════ */
+.diff-wrap{margin-bottom:14px}
+.diff-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.diff-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.08em}
+.diff-val{font-size:13px;font-weight:900;padding:2px 10px;border-radius:12px;transition:background .2s,color .2s}
+.diff-val.d1{background:#d7ffb2;color:#2a6000}
+.diff-val.d2{background:#fff3cc;color:#7a5000}
+.diff-val.d3{background:#ffd4d4;color:#880000}
+.diff-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;outline:none;cursor:pointer;background:var(--gray-mid);margin:0}
+.diff-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--blue);border:3px solid var(--white);box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer;transition:background .15s}
+.diff-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--blue);border:3px solid var(--white);box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer}
+.diff-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--gray-dark);font-weight:700;margin-top:3px;padding:0 2px}
+.diff-badge{display:inline-block;font-size:10px;font-weight:900;padding:1px 7px;border-radius:8px;vertical-align:middle;margin-left:4px;letter-spacing:.04em}
+.diff-badge.d1{background:#d7ffb2;color:#2a6000}
+.diff-badge.d2{background:#fff3cc;color:#7a5000}
+.diff-badge.d3{background:#ffd4d4;color:#880000}
+
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
 .story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 16px;overflow:hidden;box-shadow:var(--shadow-card)}
 .story-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
@@ -261,7 +278,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-repair-status{font-size:12px;color:var(--gray-dark);font-weight:600;margin-top:5px}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
-.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8}
+.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}
 
 /* ══ LIB FILTER ══════════════════════════════════════════════════════ */
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
@@ -322,6 +339,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       placeholder="e.g. cooking, architecture, medicine… add details for a richer story"
       maxlength="400" oninput="autoResizeTopic(this)"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
+    <div class="diff-wrap">
+      <div class="diff-label-row">
+        <span class="diff-lbl">Difficulty</span>
+        <span class="diff-val d2" id="diff-val">Intermediate</span>
+      </div>
+      <input class="diff-slider" id="diff-slider" type="range" min="1" max="3" value="2"
+        oninput="onDiffSlider(this.value)">
+      <div class="diff-ticks"><span>🟢 Beginner</span><span>🟡 Intermediate</span><span>🔴 Advanced</span></div>
+    </div>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
@@ -369,8 +395,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
     <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
-
-  <!-- Story section -->
   <div class="story-section" id="story-section" style="display:none">
     <button class="story-hdr" onclick="toggleStory()">
       <span>📖 Read the story</span>
@@ -391,7 +415,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="story-repair-status" id="story-repair-status"></div>
     </div>
   </div>
-
   <div class="gen-stats" id="gen-stats"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
@@ -450,6 +473,7 @@ var APP = {
   info: {backend:'none',canGenerate:false},
   lessonData: null,
   lang: loadLang(),
+  difficulty: loadDifficulty(),
   libFilter: 'all',
   progress: loadProg(),
   flagged: loadFlagged(),
@@ -461,6 +485,20 @@ function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'
 function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
 function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
+function loadDifficulty(){ return parseInt(localStorage.getItem('imp3_diff')||'2',10); }
+function saveDifficulty(){ localStorage.setItem('imp3_diff',String(APP.difficulty)); }
+
+const DIFF_LABELS = {1:'🟢 Beginner', 2:'🟡 Intermediate', 3:'🔴 Advanced'};
+const DIFF_SHORT  = {1:'Beginner',    2:'Intermediate',    3:'Advanced'};
+function onDiffSlider(v){
+  APP.difficulty = parseInt(v, 10);
+  saveDifficulty();
+  const el = document.getElementById('diff-val');
+  if(el){ el.textContent = DIFF_SHORT[APP.difficulty]; el.className = 'diff-val d'+APP.difficulty; }
+}
+function autoResizeTopic(el){
+  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
+}
 function selectLang(code){
   APP.lang=code; saveLang();
   const sel=document.getElementById('lang-select');
@@ -472,6 +510,11 @@ function selectLang(code){
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
   if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
+}
+function restoreDiffSlider(){
+  const sl=document.getElementById('diff-slider');
+  if(sl) sl.value=APP.difficulty;
+  onDiffSlider(APP.difficulty);
 }
 async function pollJob(jobId, onStep, intervalMs){
   intervalMs = intervalMs || 2000;
@@ -649,74 +692,63 @@ async function repairAll(){
 
 function goHome(){ buildPath(); show('home'); }
 
-function autoResizeTopic(el){
-  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
-}
-
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
+  if(!body) return;
   const open=body.classList.toggle('open');
-  arrow.classList.toggle('open',open);
+  if(arrow) arrow.classList.toggle('open',open);
 }
-
 function toggleStoryRepair(){
   const wrap=document.getElementById('story-repair-wrap');
   if(wrap) wrap.classList.toggle('open');
 }
-
 function renderStoryText(d){
   const body=document.getElementById('story-body'); if(!body) return;
-  const story=d.story||'';
-  const paras=story.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  const paras=(d.story||'').split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
   let html=`<div id="story-orig">${paras}</div>`;
   if(d.storyTranslation){
-    const tparas=d.storyTranslation.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
-    html+=`<div class="story-translation" id="story-trans">${tparas}</div>`;
+    const tp=d.storyTranslation.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    html+=`<div class="story-translation" id="story-trans">${tp}</div>`;
   } else {
-    html+=`<div class="story-translation" id="story-trans" style="display:none"></div>`;
+    html+='<div class="story-translation" id="story-trans" style="display:none"></div>';
   }
   body.innerHTML=html;
 }
-
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
   speak(d.story);
 }
-
 async function toggleStoryTranslation(){
   const d=APP.lessonData; if(!d||!d.story) return;
   const transDiv=document.getElementById('story-trans');
   const btn=document.getElementById('story-translate-btn');
-  // If already translated and showing, just toggle visibility
   if(d.storyTranslation){
     if(!transDiv) return;
     const nowHidden=transDiv.style.display==='none';
     transDiv.style.display=nowHidden?'':'none';
-    btn.style.opacity=nowHidden?'1':'0.5';
+    if(btn) btn.style.opacity=nowHidden?'1':'0.5';
+    // Open story body if closed
+    if(nowHidden){
+      const body=document.getElementById('story-body');
+      if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
+    }
     return;
   }
-  // Need to fetch translation
-  btn.textContent='⏳'; btn.disabled=true;
-  // Ensure story body is open
+  if(btn){ btn.textContent='⏳'; btn.disabled=true; }
   const body=document.getElementById('story-body');
-  if(!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
+  if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
   try{
     const r=await fetch('/api/translate-story',{method:'POST',
       headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic})});
     const resp=await r.json();
     if(!r.ok) throw new Error(resp.error||'Translate failed');
-    // Poll job
-    const result=await pollJob(resp.jobId, step=>{ btn.textContent='⏳'; });
+    const result=await pollJob(resp.jobId);
     d.storyTranslation=result.translation;
     renderStoryText(d);
-  }catch(e){
-    alert('Translation failed: '+e.message);
-  }finally{
-    btn.textContent='🌐'; btn.disabled=false;
-  }
+  }catch(e){ alert('Translation failed: '+e.message); }
+  finally{ if(btn){ btn.textContent='🌐'; btn.disabled=false; } }
 }
-
 async function doRepairStory(){
   const d=APP.lessonData; if(!d) return;
   const instruction=document.getElementById('story-repair-input')?.value?.trim();
@@ -731,38 +763,28 @@ async function doRepairStory(){
     const resp=await r.json();
     if(!r.ok) throw new Error(resp.error||'Repair failed');
     await pollJob(resp.jobId, step=>{ if(status) status.textContent=step; });
-    // Reload lesson data from server
     const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
-    if(lr.ok){
-      const fresh=await lr.json();
-      APP.lessonData=fresh;
-    }
-    // Open story to show result
+    if(lr.ok) APP.lessonData=await lr.json();
     const body=document.getElementById('story-body');
-    if(body && !body.classList.contains('open')){
-      body.classList.add('open'); document.getElementById('story-arrow').classList.add('open');
-    }
+    if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
     renderStoryText(APP.lessonData);
     document.getElementById('story-repair-input').value='';
     if(status) status.textContent='Story updated!';
     setTimeout(()=>{ if(status) status.textContent=''; },3000);
-    // Close repair panel
     const wrap=document.getElementById('story-repair-wrap');
     if(wrap) wrap.classList.remove('open');
   }catch(e){
     alert('Story repair failed: '+e.message);
     if(status) status.textContent='';
-  }finally{
-    btn.disabled=false; btn.textContent='Rewrite';
-  }
+  }finally{ btn.disabled=false; btn.textContent='Rewrite'; }
 }
 
 // ── init ──
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
   await syncFlagsFromServer();
-  // Restore saved language selection
   selectLang(APP.lang);
+  restoreDiffSlider();
   renderPill();
   loadSavedList();
 }
@@ -789,7 +811,6 @@ async function loadSavedList(){
   let saved=[];
   try{ const r=await fetch('/api/lessons'); saved=await r.json(); }catch(e){}
 
-  // Language filter buttons (only when >1 language present)
   const langs=[...new Set(saved.map(s=>s.lang||'it'))].sort();
   const filterEl=document.getElementById('lib-filter');
   if(filterEl && langs.length>1){
@@ -811,10 +832,12 @@ async function loadSavedList(){
     const date=s.generatedAt?new Date(s.generatedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
     const t=encodeURIComponent(s.topic);
     const sL=LANGS[s.lang||'it']||LANGS.it;
+    const d=s.difficulty||2;
+    const diffBadge=`<span class="diff-badge d${d}">${DIFF_SHORT[d]||'–'}</span>`;
     return `<div class="saved-item" onclick="loadSaved('${t}')">
       <span class="saved-emoji">${sL.flag} ${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
-        <div class="saved-topic">${s.topic}</div>
+        <div class="saved-topic">${s.topic} ${diffBadge}</div>
         <div class="saved-meta">${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}</div>
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
@@ -868,7 +891,7 @@ async function doGenerate(forceRegen){
   let si=0; const timer=setInterval(()=>{ document.getElementById('gen-sub').textContent=subs[si++%subs.length]; },1500);
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic,lang:APP.lang,forceRegenerate:!!forceRegen})});
+      body:JSON.stringify({topic,lang:APP.lang,difficulty:APP.difficulty,forceRegenerate:!!forceRegen})});
     if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Server error'); }
     const resp=await r.json();
     let data;
@@ -902,6 +925,7 @@ function buildPath(){
   if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
   const done=APP.progress.completed[topicKey];
   const dLang=d.lang||'it'; const dL=LANGS[dLang]||LANGS.it;
+  const diff=d.difficulty||2;
   document.getElementById('topic-emoji-big').textContent=(dL.flag+' '+(d.topicEmoji||'📚'));
   document.getElementById('topic-name-big').textContent=d.topic;
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
@@ -916,21 +940,30 @@ function buildPath(){
     const arrow=document.getElementById('story-arrow');
     if(arrow) arrow.classList.remove('open');
     renderStoryText(d);
-    // Show/hide repair button based on canGenerate
     const repToggle=document.getElementById('story-repair-toggle-btn');
     if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
     const transBtn=document.getElementById('story-translate-btn');
     if(transBtn) transBtn.style.display=APP.info.canGenerate?'':'none';
   } else if(storySec){ storySec.style.display='none'; }
 
-  // Gen stats
+  // Gen stats + repair stats
   const statEl=document.getElementById('gen-stats');
-  if(statEl && d.generationStats){
-    const gs=d.generationStats;
-    const secs=(gs.totalMs/1000).toFixed(1);
-    const tokens=((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString();
-    statEl.textContent=`Generated in ${secs}s · ${gs.model} · ${tokens} tokens`;
-  } else if(statEl){ statEl.textContent=''; }
+  if(statEl){
+    const lines=[];
+    if(d.generationStats){
+      const gs=d.generationStats;
+      const secs=(gs.totalMs/1000).toFixed(1);
+      const tokens=((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString();
+      lines.push(`Generated in ${secs}s · ${gs.model} · ${tokens} tokens`);
+    }
+    if(d.repairStats && d.repairStats.repairCount>0){
+      const rs=d.repairStats;
+      const secs=(rs.totalMs/1000).toFixed(1);
+      const tokens=((rs.promptTokens||0)+(rs.completionTokens||0)).toLocaleString();
+      lines.push(`${rs.repairCount} repair${rs.repairCount!==1?'s':''} · ${secs}s · ${tokens} tokens`);
+    }
+    statEl.innerHTML=lines.join('<br>');
+  }
 
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
@@ -954,9 +987,10 @@ function buildPath(){
       return lessonItSet.has(contentSlug);
     }).length;
     const hasFlags=lessonFlagCount>0&&APP.info.canGenerate;
+    const diffBadge=`<span class="diff-badge d${diff}">${DIFF_SHORT[diff]||''}</span>`;
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
-        <div class="node-title">Lesson ${L.id}: ${L.title}</div>
+        <div class="node-title">Lesson ${L.id}: ${L.title} ${i===0?diffBadge:''}</div>
         <div class="node-desc">${L.desc}</div>
         ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}      </div>
       ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;

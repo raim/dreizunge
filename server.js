@@ -25,8 +25,7 @@ function loadStore() {
 function saveStore(s) {
   try { fs.writeFileSync(STORAGE_FILE, JSON.stringify(s, null, 2), 'utf8'); }
   catch(e) {
-    const hint = e.code === 'EACCES'
-      ? ' — fix with: chmod u+w ' + STORAGE_FILE : '';
+    const hint = e.code === 'EACCES' ? ' — fix with: chmod u+w ' + STORAGE_FILE : '';
     console.error('Could not write lessons.json:', e.message + hint);
   }
 }
@@ -53,7 +52,7 @@ function flagsForTopic(topic) {
 }
 
 // ── Job store — background tasks with progress ────────────────────────
-const jobs = new Map(); // jobId -> { status, step, data, error, createdAt, _timer }
+const jobs = new Map();
 function newJob() {
   const id = crypto.randomBytes(8).toString('hex');
   jobs.set(id, { status: 'running', step: 'Starting…', data: null, error: null,
@@ -68,12 +67,12 @@ function _scheduleCleanup(id, ms) {
 function jobStep(id, step) {
   const j = jobs.get(id); if (!j) return;
   j.step = step; console.log(' ', step);
-  _scheduleCleanup(id, 30 * 60 * 1000); // reset 30-min watchdog on each step
+  _scheduleCleanup(id, 30 * 60 * 1000);
 }
 function jobDone(id, data) {
   const j = jobs.get(id); if (!j) return;
   j.status = 'done'; j.data = data; j.step = 'Complete';
-  _scheduleCleanup(id, 5 * 60 * 1000); // keep result 5 min for browser to collect
+  _scheduleCleanup(id, 5 * 60 * 1000);
 }
 function jobFail(id, err) {
   const j = jobs.get(id); if (!j) return;
@@ -97,9 +96,23 @@ const SYS_META = `You are a lesson plan creator. Return ONLY a valid JSON object
 Schema: {"topic":"cleaned topic string","topicEmoji":"one emoji","lessonThemes":["theme1","theme2","theme3"]}
 Rules: topic is the user's topic, normalized. Choose 3 progressive lesson themes for that topic.`;
 
-function sysLesson(lang, lessonNum, totalLessons) {
-  const L = langName(lang);
-  const diff = lessonNum === 1 ? 'beginner basics' : lessonNum === 2 ? 'intermediate phrases' : 'advanced/specific vocabulary';
+// difficulty: 1=beginner, 2=intermediate, 3=advanced
+function difficultyLabel(d) {
+  return d === 1 ? 'beginner' : d === 2 ? 'intermediate' : 'advanced';
+}
+function sentenceLengthSpec(d) {
+  return d === 1 ? '3–6 words'
+       : d === 2 ? '6–10 words'
+       : '10–16 words (complex grammar, subordinate clauses welcome)';
+}
+
+function sysLesson(lang, lessonNum, totalLessons, difficulty) {
+  const L    = langName(lang);
+  const diff = difficultyLabel(difficulty || 2);
+  const sentLen = sentenceLengthSpec(difficulty || 2);
+  const lessonDiff = lessonNum === 1 ? 'basics'
+                   : lessonNum === 2 ? 'phrases / patterns'
+                   : 'specific / idiomatic vocabulary';
   return `You are a ${L} language lesson generator for a vocabulary learning app.
 Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
 
@@ -112,16 +125,16 @@ Schema:
     {"it":"${L} word or short phrase","en":"English meaning","pron":"phonetic for English speakers, CAPS for stressed syllable"}
   ],
   "sentences": [
-    {"it":"A natural ${L} sentence, 5-9 words","en":"English translation"}
+    {"it":"A natural ${L} sentence","en":"English translation"}
   ]
 }
 
 Rules:
-- vocab: exactly 8 items, all unique ${L} words, topic-relevant, difficulty: ${diff}
+- vocab: exactly 8 items, all unique ${L} words, topic-relevant, overall difficulty: ${diff}, lesson focus: ${lessonDiff}
 - sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
+- sentence length: ${sentLen} — vary lengths naturally, do NOT make all sentences the same length
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
-- difficulty: ${diff}
-- CRITICAL: every single "it" field MUST be in ${L} ONLY — never English, never any other language`;
+- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language`;
 }
 
 const SYS_REPAIR = `You are a language exercise repairer for a Duolingo-style app.
@@ -283,14 +296,8 @@ function deriveSentenceWords(s) {
   return s;
 }
 
-// ── Story prompt ─────────────────────────────────────────────────────
-function sysStory(lang) {
-  const L = langName(lang);
-  return `You are a creative writer helping language learners. Write a short, engaging story in English (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Write plain prose only — no headings, no bullet points, no markdown.`;
-}
-
-// ── Generate one lesson (single LLM call) — returns {lesson, tokens} ─
-async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, story, jobId) {
+// ── Generate one lesson — returns {lesson, tokens} ───────────────────
+async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId) {
   jobStep(jobId, `Lesson ${lessonNum}/${totalLessons}: generating…`);
   const prevHint = prevVocab.length
     ? `\nVocabulary already covered in earlier lessons (do NOT repeat these, introduce 8 NEW items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
@@ -299,16 +306,16 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
     ? `\nContext — use vocabulary and themes from this story where natural:\n${story.slice(0, 800)}`
     : '';
   const userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}\nReturn only the JSON object.`;
+  const minWords = (difficulty || 2) === 1 ? 2 : 3; // beginner allows shorter sentences
 
   return withRetry(`Lesson ${lessonNum}`, async () => {
     const t0 = Date.now();
     const { text: raw, promptTokens, completionTokens } =
-      await callLLM(active, sysLesson(lang, lessonNum, totalLessons), userMsg, 2048);
+      await callLLM(active, sysLesson(lang, lessonNum, totalLessons, difficulty), userMsg, 2048);
     const ms = Date.now() - t0;
     let lesson;
     try { lesson = extractJSON(raw); }
     catch(_) {
-      // Try salvaging as array (some models wrap in array)
       try {
         const arr = extractArray(raw);
         if (Array.isArray(arr) && arr[0]?.vocab) lesson = arr[0];
@@ -316,25 +323,20 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
       } catch(_2) { throw new Error('Could not parse lesson JSON'); }
     }
 
-    // Validate vocab
     if (!Array.isArray(lesson.vocab) || lesson.vocab.length < 4)
       throw new Error(`Only ${lesson.vocab?.length ?? 0} vocab items`);
-    // Dedup vocab
     const seen = new Set();
     lesson.vocab = lesson.vocab.filter(v => {
       const k = v.it?.toLowerCase(); if (!k || seen.has(k)) return false; seen.add(k); return true;
     }).slice(0, 8);
     if (lesson.vocab.length < 4) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
 
-    // Validate sentences
     if (!Array.isArray(lesson.sentences) || lesson.sentences.length < 3)
       throw new Error(`Only ${lesson.sentences?.length ?? 0} sentences`);
-    // Derive words[] from sentence text — no LLM words array needed
     lesson.sentences = lesson.sentences.slice(0, 5).map(deriveSentenceWords);
-    // Check sentences aren't too short
-    const tooShort = lesson.sentences.filter(s => s.words.length < 3);
+    const tooShort = lesson.sentences.filter(s => s.words.length < minWords);
     if (tooShort.length > 2)
-      throw new Error(`${tooShort.length} sentences have fewer than 3 words — retrying`);
+      throw new Error(`${tooShort.length} sentences have fewer than ${minWords} words — retrying`);
 
     return {
       lesson: {
@@ -350,8 +352,14 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
   });
 }
 
+// ── Story prompt ─────────────────────────────────────────────────────
+function sysStory(lang) {
+  const L = langName(lang);
+  return `You are a creative writer helping language learners. Write a short, engaging story in English (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Write plain prose only — no headings, no bullet points, no markdown.`;
+}
+
 // ── Generate all lessons ──────────────────────────────────────────────
-async function generate(topic, lang, active, jobId) {
+async function generate(topic, lang, active, difficulty, jobId) {
   const genStart = Date.now();
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   const lessonTokenStats = [];
@@ -387,7 +395,7 @@ async function generate(topic, lang, active, jobId) {
   const lessons = [];
   let prevVocab = [];
   for (let i = 1; i <= TOTAL; i++) {
-    const { lesson, tokens } = await generateOneLesson(active, lang, topic, i, TOTAL, prevVocab, story, jobId);
+    const { lesson, tokens } = await generateOneLesson(active, lang, topic, i, TOTAL, prevVocab, story, difficulty, jobId);
     lessons.push(lesson);
     prevVocab = prevVocab.concat(lesson.vocab);
     totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
@@ -402,17 +410,17 @@ async function generate(topic, lang, active, jobId) {
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
 
   return { topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
-           lang, story, lessons, generationStats };
+           lang, difficulty: difficulty || 2, story, lessons, generationStats };
 }
 
 // ── Repair flagged exercises ──────────────────────────────────────────
 async function repairLesson(active, topic, lessonId, jobId) {
   const saved = findSaved(topic);
   if (!saved) throw new Error(`Topic not found: ${topic}`);
-  const lesson = saved.lessons.find(l => l.id === lessonId);
-  if (!lesson) throw new Error(`Lesson ${lessonId} not found`);
-  // Deep-clone lesson so in-memory store is not mutated if we reject
-  lesson = JSON.parse(JSON.stringify(lesson));
+  const lessonIdx = saved.lessons.findIndex(l => l.id === lessonId);
+  if (lessonIdx < 0) throw new Error(`Lesson ${lessonId} not found`);
+  // Deep-clone so in-memory store isn't mutated if we later reject
+  const lesson = JSON.parse(JSON.stringify(saved.lessons[lessonIdx]));
   const origVocabCount    = lesson.vocab.length;
   const origSentenceCount = lesson.sentences.length;
   const allTopicFlags = flagsForTopic(topic);
@@ -451,6 +459,8 @@ async function repairLesson(active, topic, lessonId, jobId) {
         pron: repaired.pron || lesson.vocab[idx].pron };
     }
   }
+  const repairStart = Date.now();
+  let repairPromptTokens = 0, repairCompletionTokens = 0;
   let totalRepaired = 0;
   const clearedKeys = [];
   for (let b = 0; b < batches.length; b++) {
@@ -461,7 +471,8 @@ async function repairLesson(active, topic, lessonId, jobId) {
     const userMsg = `Language: ${langName(lang)}. Topic: "${topic}".${commentNote}\nFix these ${batch.exercises.length} faulty exercises (batch ${b+1}/${batches.length}):\n${JSON.stringify(batch.exercises, null, 2)}\nReturn only the corrected JSON array.`;
     console.log(`    Batch ${b+1}/${batches.length}: ${batch.exercises.length} exercise(s)…`);
     const arr = await withRetry(`Repair batch ${b+1}`, async () => {
-      const raw = await callLLMText(active, SYS_REPAIR, userMsg, 2048);
+      const { text: raw, promptTokens: pt, completionTokens: ct } = await callLLM(active, SYS_REPAIR, userMsg, 2048);
+      repairPromptTokens += pt; repairCompletionTokens += ct;
       let a;
       try { a = extractArray(raw); } catch(_) { a = salvageArray(raw); }
       if (!Array.isArray(a) || a.length === 0) throw new Error('No repaired exercises returned');
@@ -477,11 +488,22 @@ async function repairLesson(active, topic, lessonId, jobId) {
   }
   if (lesson.vocab.length < origVocabCount || lesson.sentences.length < origSentenceCount)
     throw new Error(`Repair would shrink lesson — rejecting`);
+  // Write repaired lesson back into saved (replacing the clone with the mutated version)
+  saved.lessons[lessonIdx] = lesson;
+  // Accumulate repair stats
+  const repairMs = Date.now() - repairStart;
+  const prev = saved.repairStats || { repairCount: 0, totalMs: 0, promptTokens: 0, completionTokens: 0 };
+  saved.repairStats = {
+    repairCount:      prev.repairCount      + 1,
+    totalMs:          prev.totalMs          + repairMs,
+    promptTokens:     prev.promptTokens     + repairPromptTokens,
+    completionTokens: prev.completionTokens + repairCompletionTokens,
+  };
   upsert(saved);
   const flags = getFlags();
   for (const k of clearedKeys) delete flags[k];
   setFlags(flags);
-  console.log(`  Repair complete: ${totalRepaired} exercise(s) fixed, ${clearedKeys.length} flag(s) cleared`);
+  console.log(`  Repair complete: ${totalRepaired} exercise(s) fixed, ${clearedKeys.length} flag(s) cleared, ${repairMs}ms, ${repairPromptTokens}+${repairCompletionTokens} tokens`);
   return { repaired: totalRepaired, lesson };
 }
 
@@ -623,8 +645,9 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { topic, lang, forceRegenerate } = body;
+      const { topic, lang, difficulty, forceRegenerate } = body;
       if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
+      const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
       const topicKey = topic.trim().toLowerCase();
       if (!forceRegenerate) {
         const cached = findSaved(topic.trim());
@@ -634,11 +657,10 @@ async function boot() {
         return json(res, 503, { error: 'No LLM backend. Set ANTHROPIC_API_KEY or start Ollama, then restart.' });
       if (generatingTopics.has(topicKey))
         return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
-      // Start background job
       const jobId = newJob();
       generatingTopics.add(topicKey);
-      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) job=${jobId}`);
-      generate(topic.trim(), lang || 'it', active, jobId).then(data => {
+      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) difficulty=${diff} job=${jobId}`);
+      generate(topic.trim(), lang || 'it', active, diff, jobId).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         jobDone(jobId, { ...data, fromCache: false });
@@ -701,7 +723,7 @@ async function boot() {
           ].join('\n');
           const { text } = await callLLM(active, sys, userMsg, 900);
           saved.story = text.trim();
-          delete saved.storyTranslation; // invalidate cached translation
+          delete saved.storyTranslation;
           upsert(saved);
           jobDone(jobId, { story: saved.story });
           console.log(`  Story rewritten for "${topic}"`);
@@ -726,10 +748,10 @@ async function boot() {
       if (saved.storyTranslation) return json(res, 200, { translation: saved.storyTranslation });
       const jobId = newJob();
       console.log(`  Translating story for "${topic}" job=${jobId}`);
-      const lang = saved.lang || 'it';
       (async () => {
         try {
           jobStep(jobId, 'Translating story…');
+          const lang = saved.lang || 'it';
           const sys = `You are a translator. Translate the following English text to ${langName(lang)}. Keep the same paragraph structure. Return only the translated text, nothing else.`;
           const { text } = await callLLM(active, sys, saved.story, 1200);
           saved.storyTranslation = text.trim();

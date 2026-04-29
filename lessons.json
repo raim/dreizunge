@@ -1,6 +1,488 @@
 {
   "lessons": [
     {
+      "topic": "when in italy",
+      "topicEmoji": "🇮🇹",
+      "lang": "it",
+      "difficulty": 3,
+      "story": "When in Italy, one must embrace the warmth of its people and the richness of its culture. Maria, a young American, had always dreamed of visiting Italy. Finally, after months of planning, she stepped off the plane in Rome, her heart pounding with excitement. The first thing she noticed was the vibrant colors of the city—bright reds, yellows, and greens that seemed to dance in the sunlight.\n\nMaria’s first stop was the Colosseum, a massive stone structure that stood as a testament to ancient Rome. As she walked through the narrow, winding streets, she couldn’t help but feel a mix of awe and history. She decided to take a guided tour, and her guide, Luigi, was a lively man with a deep love for his country. Luigi spoke with such passion that Maria felt as if she were part of the stories he told. He pointed out the intricate carvings and explained the history behind each one, making the ancient stones come alive.\n\nAfter the tour, Maria wandered into a small, cozy pizzeria. The smell of fresh dough and tomato sauce filled the air, and she couldn’t resist trying the local pizza. Luigi, noticing her hesitation, said, \"When in Italy, you must try the pizza. It's not just a meal; it's a tradition.\" Maria followed his advice and ordered a Margherita. The pizza was perfect, with a crispy crust and a burst of flavor from the fresh ingredients. As she savored her meal, Luigi joined her, and they chatted about the city and its people. Maria felt a sense of belonging, as if she were part of the community.\n\nThe next day, Maria decided to explore the countryside. She took a train to Tuscany, where the landscape was a breathtaking mix of rolling hills, vineyards, and olive groves. She visited a local vineyard and watched as the workers harvested the grapes. The owner, a kind woman named Anna, offered Maria a taste of the fresh wine. \"When in Italy, you must taste the wine,\" Anna said with a warm smile. Maria sipped the wine, feeling the warmth spread through her body. It was a simple pleasure, but one that connected her to the land and the people who called it home.\n\nAs the sun began to set, Maria found herself walking through a small village, the golden light casting a magical glow over the cobblestone streets. She stopped at a local market, where she bought some fresh fruits and cheeses. As she walked back to her accommodation, she realized that her time in Italy was more than just a vacation; it was an experience that would stay with her forever. When in Italy, she thought, one must not just visit, but truly immerse oneself in the culture and the people.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "When in Italy",
+          "desc": "Italian culture, people, and history",
+          "icon": "ROME",
+          "vocab": [
+            {
+              "it": "dovere",
+              "en": "must",
+              "pron": "DO-ve-re"
+            },
+            {
+              "it": "calore",
+              "en": "warmth",
+              "pron": "ka-LO-re"
+            },
+            {
+              "it": "ricchezza",
+              "en": "richness",
+              "pron": "ri-KE-ttsza"
+            },
+            {
+              "it": "pianificare",
+              "en": "plan",
+              "pron": "pi-a-ni-FI-car-e"
+            },
+            {
+              "it": "strepito",
+              "en": "pounding",
+              "pron": "STRE-pi-to"
+            },
+            {
+              "it": "colori vivaci",
+              "en": "vibrant colors",
+              "pron": "ko-lo-RE-ee vee-VA-ki"
+            },
+            {
+              "it": "testimonianza",
+              "en": "testament",
+              "pron": "tes-to-MI-ya-n-tsza"
+            },
+            {
+              "it": "passione",
+              "en": "passion",
+              "pron": "pas-SI-oo-ne"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Quando in Italia, si deve assaporare la ricchezza della sua cultura.",
+              "en": "When in Italy, one must taste the richness of its culture.",
+              "words": [
+                "Quando",
+                "in",
+                "Italia,",
+                "si",
+                "deve",
+                "assaporare",
+                "la",
+                "ricchezza",
+                "della",
+                "sua",
+                "cultura."
+              ]
+            },
+            {
+              "it": "Maria, dopo mesi di pianificare, finalmente scese dall'aereo a Roma, il suo cuore che batteva di eccitazione.",
+              "en": "Maria, after months of planning, finally stepped off the plane in Rome, her heart pounding with excitement.",
+              "words": [
+                "Maria,",
+                "dopo",
+                "mesi",
+                "di",
+                "pianificare,",
+                "finalmente",
+                "scese",
+                "dall'aereo",
+                "a",
+                "Roma,",
+                "il",
+                "suo",
+                "cuore",
+                "che",
+                "batteva",
+                "di",
+                "eccitazione."
+              ]
+            },
+            {
+              "it": "La prima cosa che notò fu il strepito di colori della città—verdi, gialli e rossi che sembravano ballare al sole.",
+              "en": "The first thing she noticed was the pounding of colors of the city—greens, yellows and reds that seemed to dance in the sunlight.",
+              "words": [
+                "La",
+                "prima",
+                "cosa",
+                "che",
+                "notò",
+                "fu",
+                "il",
+                "strepito",
+                "di",
+                "colori",
+                "della",
+                "città—verdi,",
+                "gialli",
+                "e",
+                "rossi",
+                "che",
+                "sembravano",
+                "ballare",
+                "al",
+                "sole."
+              ]
+            },
+            {
+              "it": "Maria decise di fare un tour guidato, e il suo guida Luigi era un uomo vivace con un profondo amore per il suo paese.",
+              "en": "Maria decided to take a guided tour, and her guide Luigi was a lively man with a deep love for his country.",
+              "words": [
+                "Maria",
+                "decise",
+                "di",
+                "fare",
+                "un",
+                "tour",
+                "guidato,",
+                "e",
+                "il",
+                "suo",
+                "guida",
+                "Luigi",
+                "era",
+                "un",
+                "uomo",
+                "vivace",
+                "con",
+                "un",
+                "profondo",
+                "amore",
+                "per",
+                "il",
+                "suo",
+                "paese."
+              ]
+            },
+            {
+              "it": "Luigi parlava con tanto entusiasmo che Maria si sentiva come se fosse parte delle storie che raccontava.",
+              "en": "Luigi spoke with such enthusiasm that Maria felt as if she were part of the stories he told.",
+              "words": [
+                "Luigi",
+                "parlava",
+                "con",
+                "tanto",
+                "entusiasmo",
+                "che",
+                "Maria",
+                "si",
+                "sentiva",
+                "come",
+                "se",
+                "fosse",
+                "parte",
+                "delle",
+                "storie",
+                "che",
+                "raccontava."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "When in Italy",
+          "desc": "Explore Italian culture and history through advanced phrases",
+          "icon": "ROME",
+          "vocab": [
+            {
+              "it": "stretto",
+              "en": "narrow",
+              "pron": "STRE-tto"
+            },
+            {
+              "it": "testimonianza",
+              "en": "testimony, witness",
+              "pron": "tes-te-MOY-nee-aanza"
+            },
+            {
+              "it": "lively",
+              "en": "energetic, animated",
+              "pron": "LIV-ee"
+            },
+            {
+              "it": "strepito",
+              "en": "pounding, roar",
+              "pron": "STREP-tee-to"
+            },
+            {
+              "it": "passione",
+              "en": "passion",
+              "pron": "pas-SION-ee"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Luigi parlò con passione della sua città, rendendo la visita al Colosseo un'esperienza indimenticabile.",
+              "en": "Luigi spoke with passion about his city, making the Colosseum visit an unforgettable experience.",
+              "words": [
+                "Luigi",
+                "parlò",
+                "con",
+                "passione",
+                "della",
+                "sua",
+                "città,",
+                "rendendo",
+                "la",
+                "visita",
+                "al",
+                "Colosseo",
+                "un'esperienza",
+                "indimenticabile."
+              ]
+            },
+            {
+              "it": "Maria camminò per i stretti vicoli, ammirando i colori vivaci che sembravano danzare nel sole.",
+              "en": "Maria walked through the narrow alleys, admiring the vibrant colors that seemed to dance in the sun.",
+              "words": [
+                "Maria",
+                "camminò",
+                "per",
+                "i",
+                "stretti",
+                "vicoli,",
+                "ammirando",
+                "i",
+                "colori",
+                "vivaci",
+                "che",
+                "sembravano",
+                "danzare",
+                "nel",
+                "sole."
+              ]
+            },
+            {
+              "it": "Dopo mesi di pianificazione, finalmente Maria si trovava a Roma, con il cuore che strepitava d'emozione.",
+              "en": "After months of planning, finally Maria found herself in Rome, with her heart pounding with emotion.",
+              "words": [
+                "Dopo",
+                "mesi",
+                "di",
+                "pianificazione,",
+                "finalmente",
+                "Maria",
+                "si",
+                "trovava",
+                "a",
+                "Roma,",
+                "con",
+                "il",
+                "cuore",
+                "che",
+                "strepitava",
+                "d'emozione."
+              ]
+            },
+            {
+              "it": "La testimonianza di Luigi sul passato romano era così vivida che Maria sentiva di essere parte della storia.",
+              "en": "Luigi's testimony about Roman history was so vivid that Maria felt like she was part of the story.",
+              "words": [
+                "La",
+                "testimonianza",
+                "di",
+                "Luigi",
+                "sul",
+                "passato",
+                "romano",
+                "era",
+                "così",
+                "vivida",
+                "che",
+                "Maria",
+                "sentiva",
+                "di",
+                "essere",
+                "parte",
+                "della",
+                "storia."
+              ]
+            },
+            {
+              "it": "Maria decise di fare un giro guidato, sperando di scoprire nuove testimonianze della ricchezza culturale del luogo.",
+              "en": "Maria decided to take a guided tour, hoping to discover new testimonies of the cultural richness of the place.",
+              "words": [
+                "Maria",
+                "decise",
+                "di",
+                "fare",
+                "un",
+                "giro",
+                "guidato,",
+                "sperando",
+                "di",
+                "scoprire",
+                "nuove",
+                "testimonianze",
+                "della",
+                "ricchezza",
+                "culturale",
+                "del",
+                "luogo."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "When in Italy",
+          "desc": "Explore Italian culture and history through advanced vocabulary",
+          "icon": "🇮🇹",
+          "vocab": [
+            {
+              "it": "diligenza",
+              "en": "diligence",
+              "pron": "di-LEEN-zza"
+            },
+            {
+              "it": "antico",
+              "en": "ancient",
+              "pron": "AN-tee-co"
+            },
+            {
+              "it": "guida",
+              "en": "guide",
+              "pron": "GWEE-dah"
+            },
+            {
+              "it": "animato",
+              "en": "animated",
+              "pron": "ah-NEE-mah-to"
+            },
+            {
+              "it": "testimonianza",
+              "en": "testimony",
+              "pron": "tes-te-MOY-nee-ahnz-ah"
+            },
+            {
+              "it": "stretto",
+              "en": "narrow",
+              "pron": "STREH-tto"
+            },
+            {
+              "it": "affascinare",
+              "en": "to fascinate",
+              "pron": "ah-fas-sa-NEE-ah-re"
+            },
+            {
+              "it": "impressione",
+              "en": "impression",
+              "pron": "im-pruh-SEHN-neh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La sua diligenza nel pianificare il viaggio era evidente.",
+              "en": "Her diligence in planning the trip was evident.",
+              "words": [
+                "La",
+                "sua",
+                "diligenza",
+                "nel",
+                "pianificare",
+                "il",
+                "viaggio",
+                "era",
+                "evidente."
+              ]
+            },
+            {
+              "it": "Luigi, con la sua animata guida, affascinava tutti con la sua conoscenza.",
+              "en": "Luigi, with his animated guide, fascinated everyone with his knowledge.",
+              "words": [
+                "Luigi,",
+                "con",
+                "la",
+                "sua",
+                "animata",
+                "guida,",
+                "affascinava",
+                "tutti",
+                "con",
+                "la",
+                "sua",
+                "conoscenza."
+              ]
+            },
+            {
+              "it": "La strada stretta era una testimonianza vivida dell'antico passato romano.",
+              "en": "The narrow street was a vivid testimony of ancient Roman history.",
+              "words": [
+                "La",
+                "strada",
+                "stretta",
+                "era",
+                "una",
+                "testimonianza",
+                "vivida",
+                "dell'antico",
+                "passato",
+                "romano."
+              ]
+            },
+            {
+              "it": "Maria ricevette un'impressione profonda dell'antico edificio.",
+              "en": "Maria received a deep impression of the ancient building.",
+              "words": [
+                "Maria",
+                "ricevette",
+                "un'impressione",
+                "profonda",
+                "dell'antico",
+                "edificio."
+              ]
+            },
+            {
+              "it": "Il suo strepito di emozione era un segno della sua passione per l'arte romana.",
+              "en": "Her roar of emotion was a sign of her passion for Roman art.",
+              "words": [
+                "Il",
+                "suo",
+                "strepito",
+                "di",
+                "emozione",
+                "era",
+                "un",
+                "segno",
+                "della",
+                "sua",
+                "passione",
+                "per",
+                "l'arte",
+                "romana."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1398662,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1781,
+        "totalCompletionTokens": 2102,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 280311,
+            "promptTokens": 471,
+            "completionTokens": 514
+          },
+          {
+            "lessonNum": 2,
+            "ms": 325026,
+            "promptTokens": 539,
+            "completionTokens": 546
+          },
+          {
+            "lessonNum": 3,
+            "ms": 184714,
+            "promptTokens": 573,
+            "completionTokens": 445
+          }
+        ]
+      },
+      "generatedAt": "2026-04-29T08:22:58.598Z"
+    },
+    {
       "topic": "traveling to toscana in may with a baby",
       "topicEmoji": "🌍",
       "lang": "it",
