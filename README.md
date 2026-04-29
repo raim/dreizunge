@@ -1,6 +1,7 @@
-# 🇮🇹 Impara l'Italiano
+# Dreizunge
 
-Duolingo-style Italian vocabulary app — enter **any topic**, get AI-generated lessons instantly.
+Learn vocabulary for a specific topic in any language: enter **any topic**, get AI-generated lessons instantly.
+
 Works with **Anthropic Claude**, a **local Qwen model via Ollama**, or fully **offline** using saved lessons.
 
 ---
