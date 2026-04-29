@@ -91,16 +91,15 @@ All generated lessons are stored in lessons.json next to server.js.
 
 ## Exercise types
 
-- Listening MCQ    — hear Italian word, pick English meaning
-- Listening + type — hear Italian word, type it back
-- EN → IT          — see English, pick Italian from choices
-- IT → EN          — see Italian, pick English from choices
+- Listening MCQ    — hear target language, pick English meaning
+- Listening + type — hear target language, type it back
+- EN → IT          — see English, pick correct translation from choices
+- IT → EN          — see a word o sentence, pick English from choices
 - Word order       — shuffled tokens, tap to reassemble
-- Read & translate — read Italian sentence, pick English
+- Read & translate — read target language sentence, pick English
 
 ---
 
 ## Requirements
 
 - Node.js >= 14 (no npm install needed, zero dependencies)
-- For TTS: Chrome or Chromium (best Italian voice support on Linux)
