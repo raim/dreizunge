@@ -302,7 +302,7 @@ function deriveSentenceWords(s) {
 // ── Story prompts ─────────────────────────────────────────────────────
 function sysStory(lang) {
   const L = langName(lang);
-  return `You are a creative writer helping language learners. Write a short, engaging story in the target language ${L} (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Write plain prose only — no headings, no bullet points, no markdown.`;
+  return `You are a creative writer helping language learners. Write a short, engaging story in English (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Avoid repetitive structures! Write plain prose only — no headings, no bullet points, no markdown.`;
 }
 function sysStoryNative(lang) {
   const L = langName(lang);
