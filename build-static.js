@@ -258,7 +258,7 @@ const langSummary = langCodes.map(c => LANG_NAMES[c]||c).join(', ');
 const topicLines  = lessonsData.lessons.map(l => {
   const flag = {it:'🇮🇹',fr:'🇫🇷',de:'🇩🇪',es:'🇪🇸',pt:'🇵🇹',
                 nl:'🇳🇱',pl:'🇵🇱',sv:'🇸🇪',ja:'🇯🇵',zh:'🇨🇳',
-                ar:'🇸🇦',ru:'🇷🇺',ko:'🇰🇷',tr:'🇹🇷',hi:'🇮🇳'}[l.lang||'it']||'🌐';
+                ar:'🇸🇦',ru:'🇷🇺',ko:'🇰🇷',tr:'🇹🇷',hi:'🇮🇳',lb:'🇱🇺'}[l.lang||'it']||'🌐';
   return `  • ${flag} ${l.topicEmoji||'📚'} ${l.topic}`;
 }).join('\n');
 

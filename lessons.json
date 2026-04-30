@@ -1,6 +1,1155 @@
 {
   "lessons": [
     {
+      "topic": "going to an alternative music concert in luxembourg",
+      "topicEmoji": "🎵",
+      "lang": "lb",
+      "difficulty": 1,
+      "story": "Energetisch wärmt de Sonne am Sonntagabend de Himmel, wéi e Schläger, der über de Hügel und de Hügel schlägt. Enn Grupp vun Freunden, wéi Léon, Mina, und Pierre, stëtt am Bahnhof vun Esch-sur-Alzette. \"Wéi schéi'n wëlle, Léon?\" frage Mina, wéi sie enn Plakat vum Konzert in de Hand hält. \"Einen Alt-Musik-Konzert in der Alt-Musik-Halle, wéi schéi'n wëlle?\" antwortet Léon. \"Wéi schéi'n wëlle!\" rufen die Freunde ünnstimmig. Sie beschließn, enn Taxi zu nehme, wéi de Weg lang de Autobahn lang enn Stunde dauert.\n\nAm Alt-Musik-Halle an, stëtt de Freunde vunnei, wéi de Hall wéi ein großer, moderner Bau wéi enn großes Fenster vunnei. \"Wéi schéi'n wëlle, Mina?\" frage Pierre, wéi er enn Sicht auf de Bühne hofft. \"Wéi schéi'n wëlle, Pierre!\" antwortet Mina, wéi sie enn T-Shirt mit de Namen vun de Band trägt. Die Freunde füg'n sich enn Sitzplatz an de vorderen Reihe, wéi de Hall voll wéi e großer, glückliche Menge.\n\nDe Lichter am Bühne ändert sich, wéi de Band auftritt, wéi e großer, energischer Grupp vun Musiker. De Musik, wéi wéi e lebendige, elektronische Welle, dröhnt durch de Hall, wéi e großer, pulsierender Beat. Léon, Mina, und Pierre tanzen, wéi de Musik sie anzieht, wéi e großer, freudiger Fluss. Nach enn halben Stunde, wéi de Band enn Hit spielt, stehn de Freunde auf, wéi de Musik sie anreißt, wéi e großer, jubelnder Schwung.",
+      "storyNative": null,
+      "lessons": [
+        {
+          "id": 1,
+          "title": "going to concert",
+          "desc": "alternative music, friends, concert hall",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "Sonnabend",
+              "en": "Saturday",
+              "pron": "SOHN-nah-bend"
+            },
+            {
+              "it": "Himmel",
+              "en": "sky",
+              "pron": "HEE-mel"
+            },
+            {
+              "it": "Schläger",
+              "en": "bat",
+              "pron": "SCHLAE-ger"
+            },
+            {
+              "it": "Bahnhof",
+              "en": "train station",
+              "pron": "BAHN-hof"
+            },
+            {
+              "it": "Plakat",
+              "en": "poster",
+              "pron": "PLA-kat"
+            },
+            {
+              "it": "Alt-Musik-Halle",
+              "en": "alternative music hall",
+              "pron": "ALT-moo-see-kh HAH-leh"
+            },
+            {
+              "it": "Taxi",
+              "en": "taxi",
+              "pron": "TAH-kee"
+            },
+            {
+              "it": "Sicht",
+              "en": "view",
+              "pron": "SHEEkt"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Sonnabend wärmt de Sonne am Bahnhof.",
+              "en": "On Saturday, the sun warms the train station.",
+              "words": [
+                "Sonnabend",
+                "wärmt",
+                "de",
+                "Sonne",
+                "am",
+                "Bahnhof."
+              ]
+            },
+            {
+              "it": "Mina hält e Plakat vum Konzert in de Hand.",
+              "en": "Mina holds a concert poster in her hand.",
+              "words": [
+                "Mina",
+                "hält",
+                "e",
+                "Plakat",
+                "vum",
+                "Konzert",
+                "in",
+                "de",
+                "Hand."
+              ]
+            },
+            {
+              "it": "Léon antwortet, Alt-Musik-Konzert in der Hall wéi schéi'n wëlle.",
+              "en": "Léon answers, an alternative music concert in the hall sounds good.",
+              "words": [
+                "Léon",
+                "antwortet,",
+                "Alt-Musik-Konzert",
+                "in",
+                "der",
+                "Hall",
+                "wéi",
+                "schéi'n",
+                "wëlle."
+              ]
+            },
+            {
+              "it": "Die Freunde beschließn, enn Taxi zu nehme.",
+              "en": "The friends decide to take a taxi.",
+              "words": [
+                "Die",
+                "Freunde",
+                "beschließn,",
+                "enn",
+                "Taxi",
+                "zu",
+                "nehme."
+              ]
+            },
+            {
+              "it": "Pierre hofft enn Sicht auf de Bühne.",
+              "en": "Pierre hopes for a view of the stage.",
+              "words": [
+                "Pierre",
+                "hofft",
+                "enn",
+                "Sicht",
+                "auf",
+                "de",
+                "Bühne."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "alternative music concert",
+          "desc": "going to concert, friends, view, modern, name",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "Sonnabend",
+              "en": "Saturday",
+              "pron": "ZON-nah-bend"
+            },
+            {
+              "it": "Himmel",
+              "en": "sky",
+              "pron": "HIM-uhl"
+            },
+            {
+              "it": "Schläger",
+              "en": "bat",
+              "pron": "SCHLAE-guh"
+            },
+            {
+              "it": "Bahnhof",
+              "en": "train station",
+              "pron": "BAH-nhof"
+            },
+            {
+              "it": "Plakat",
+              "en": "poster",
+              "pron": "PLAH-kat"
+            },
+            {
+              "it": "Alt-Musik-Halle",
+              "en": "alternative music hall",
+              "pron": "ALT-moo-SEEK-hah-luh"
+            },
+            {
+              "it": "Taxi",
+              "en": "taxi",
+              "pron": "TAH-kee"
+            },
+            {
+              "it": "Sicht",
+              "en": "view",
+              "pron": "SHEEcht"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Wéi schéi'n wëlle, Mina?",
+              "en": "What do you want, Mina?",
+              "words": [
+                "Wéi",
+                "schéi'n",
+                "wëlle,",
+                "Mina?"
+              ]
+            },
+            {
+              "it": "Wéi schéi'n wëlle, Pierre!",
+              "en": "What do you want, Pierre!",
+              "words": [
+                "Wéi",
+                "schéi'n",
+                "wëlle,",
+                "Pierre!"
+              ]
+            },
+            {
+              "it": "de Hall wéi ein großer, moderner Bau",
+              "en": "the hall as a big, modern building",
+              "words": [
+                "de",
+                "Hall",
+                "wéi",
+                "ein",
+                "großer,",
+                "moderner",
+                "Bau"
+              ]
+            },
+            {
+              "it": "enn T-Shirt mit de Namen",
+              "en": "a T-shirt with the name",
+              "words": [
+                "enn",
+                "T-Shirt",
+                "mit",
+                "de",
+                "Namen"
+              ]
+            },
+            {
+              "it": "wéi de Bühne hofft",
+              "en": "hopes for the stage",
+              "words": [
+                "wéi",
+                "de",
+                "Bühne",
+                "hofft"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "alternative music concert",
+          "desc": "Lëtzebuergesch words for an alternative music concert",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "Alt-Musik-Halle",
+              "en": "alternative music hall",
+              "pron": "ALT-mu-SIK-ha-LEH"
+            },
+            {
+              "it": "Band",
+              "en": "band",
+              "pron": "BAHN德"
+            },
+            {
+              "it": "T-Shirt",
+              "en": "T-shirt",
+              "pron": "T-SHIRT"
+            },
+            {
+              "it": "Bühne",
+              "en": "stage",
+              "pron": "BOO-NE"
+            },
+            {
+              "it": "Fenster",
+              "en": "window",
+              "pron": "FEH-nst-er"
+            },
+            {
+              "it": "Konzert",
+              "en": "concert",
+              "pron": "kon-ZERT"
+            },
+            {
+              "it": "Plakat",
+              "en": "poster",
+              "pron": "PLA-kat"
+            },
+            {
+              "it": "Bahnhof",
+              "en": "train station",
+              "pron": "BAHN-hof"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Wéi schéi'n wëlle, Mina?",
+              "en": "What do you want, Mina?",
+              "words": [
+                "Wéi",
+                "schéi'n",
+                "wëlle,",
+                "Mina?"
+              ]
+            },
+            {
+              "it": "De Bühne wéi groß wéi e Haus.",
+              "en": "The stage is as big as a house.",
+              "words": [
+                "De",
+                "Bühne",
+                "wéi",
+                "groß",
+                "wéi",
+                "e",
+                "Haus."
+              ]
+            },
+            {
+              "it": "Wéi schéi'n wëlle, Pierre!",
+              "en": "What do you want, Pierre!",
+              "words": [
+                "Wéi",
+                "schéi'n",
+                "wëlle,",
+                "Pierre!"
+              ]
+            },
+            {
+              "it": "De Plakat wéi schön wéi e Bild.",
+              "en": "The poster is as beautiful as a picture.",
+              "words": [
+                "De",
+                "Plakat",
+                "wéi",
+                "schön",
+                "wéi",
+                "e",
+                "Bild."
+              ]
+            },
+            {
+              "it": "De Alt-Musik-Halle wéi modern wéi e Bau.",
+              "en": "The alternative music hall is as modern as a building.",
+              "words": [
+                "De",
+                "Alt-Musik-Halle",
+                "wéi",
+                "modern",
+                "wéi",
+                "e",
+                "Bau."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 892185,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2346,
+        "totalCompletionTokens": 1702,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 257251,
+            "promptTokens": 642,
+            "completionTokens": 388
+          },
+          {
+            "lessonNum": 2,
+            "ms": 214712,
+            "promptTokens": 714,
+            "completionTokens": 367
+          },
+          {
+            "lessonNum": 3,
+            "ms": 220142,
+            "promptTokens": 767,
+            "completionTokens": 373
+          }
+        ]
+      },
+      "generatedAt": "2026-04-30T09:47:44.552Z",
+      "updatedAt": "2026-04-30T09:47:44.552Z"
+    },
+    {
+      "topic": "strolling in luxembourg",
+      "topicEmoji": " Luxembourg ",
+      "lang": "lb",
+      "difficulty": 1,
+      "story": "Energetisch gëtt am Morgen, stërtzert am Sonn und gëtt am Witterung, Léon und Anna gëtt in die Gëstele. Wéi die Bléi wéi gréen, so wéi dës Stad gëtt gréen. Léon, der gëtt am Stadtele wéi sein Liebling, wéi er gëtt am Wëschtle, wéi er gëtt am Bëschtle, wéi er gëtt am Gëstele. Anna, die gëtt am Stadtele wéi ihr Liebling, wéi er gëtt am Wëschtle, wéi er gëtt am Bëschtle, wéi er gëtt am Gëstele. \n\nWéi dës Stad gëtt gréen, so wéi dës Wéschtle wéi gréen. Léon und Anna gëtt am Wéschtle wéi sie gëtt am Witterung, wéi sie gëtt am Wéschtle. Léon, der gëtt am Wéschtle, wéi er gëtt am Bëschtle, wéi er gëtt am Gëstele, wéi er gëtt am Wëschtle. Anna, die gëtt am Wéschtle, wéi er gëtt am Bëschtle, wéi er gëtt am Gëstele, wéi er gëtt am Wëschtle. \n\nWéi dës Stad gëtt gréen, so wéi dës Bëschtle wéi gréen. Léon und Anna gëtt am Bëschtle wéi sie gëtt am Witterung, wéi sie gëtt am Bëschtle. Léon, der gëtt am Bëschtle, wéi er gëtt am Gëstele, wéi er gëtt am Wëschtle, wéi er gëtt am Bëschtle. Anna, die gëtt am Bëschtle, wéi er gëtt am Gëstele, wéi er gëtt am Wëschtle, wéi er gëtt am Bëschtle. \n\nWéi dës Stad gëtt gréen, so wéi dës Gëstele wéi gréen. Léon und Anna gëtt am Gëstele wéi sie gëtt am Witterung, wéi sie gëtt am Gëstele. Léon, der gëtt am Gëstele, wéi er gëtt am Bëschtle, wéi er gëtt am Wëschtle, wéi er gëtt am Gëstele. Anna, die gëtt am Gëstele, wéi er gëtt am Bëschtle, wéi er gëtt am Wëschtle, wéi er gëtt am Gëstele. \n\nWéi dës Stad gëtt gréen, so wéi dës Wëschtle wéi gréen, so wéi dës Bëschtle wéi gréen, so wéi dës Gëstele wéi gréen. Léon und Anna gëtt in dës Stad, wéi sie gëtt am Witterung, wéi sie gëtt am Wëschtle, wéi sie gëtt am Bëschtle, wéi sie gëtt am Gëstele. Wéi dës Stad gëtt gréen, so wéi dës Wëschtle wéi gréen, so wéi dës Bëschtle wéi",
+      "storyNative": null,
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Strolling in Luxembourg",
+          "desc": "Walking in Luxembourg, green city",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "it": "gëtt",
+              "en": "go",
+              "pron": "gét"
+            },
+            {
+              "it": "Stadtele",
+              "en": "city center",
+              "pron": "städtélé"
+            },
+            {
+              "it": "Wëschtle",
+              "en": "weather",
+              "pron": "véschtlé"
+            },
+            {
+              "it": "Bëschtle",
+              "en": "market",
+              "pron": "véschtlé"
+            },
+            {
+              "it": "Gëstele",
+              "en": "garden",
+              "pron": "géstélé"
+            },
+            {
+              "it": "Léon",
+              "en": "Leon",
+              "pron": "léôn"
+            },
+            {
+              "it": "Anna",
+              "en": "Anna",
+              "pron": "án¨n"
+            },
+            {
+              "it": "Witterung",
+              "en": "weather",
+              "pron": "vétérén"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Léon gëtt am Stadtele.",
+              "en": "Leon goes to the city center.",
+              "words": [
+                "Léon",
+                "gëtt",
+                "am",
+                "Stadtele."
+              ]
+            },
+            {
+              "it": "Anna gëtt am Wëschtle.",
+              "en": "Anna goes to the weather.",
+              "words": [
+                "Anna",
+                "gëtt",
+                "am",
+                "Wëschtle."
+              ]
+            },
+            {
+              "it": "Gëstele wéi gréen, Léon gëtt am Bëschtle.",
+              "en": "Gardens are green, Leon goes to the market.",
+              "words": [
+                "Gëstele",
+                "wéi",
+                "gréen,",
+                "Léon",
+                "gëtt",
+                "am",
+                "Bëschtle."
+              ]
+            },
+            {
+              "it": "Wëschtle wéi gréen, Anna gëtt am Gëstele.",
+              "en": "Weather is green, Anna goes to the garden.",
+              "words": [
+                "Wëschtle",
+                "wéi",
+                "gréen,",
+                "Anna",
+                "gëtt",
+                "am",
+                "Gëstele."
+              ]
+            },
+            {
+              "it": "Stadtele wéi gréen, Léon und Anna gëtt am Wëschtle.",
+              "en": "City center is green, Leon and Anna go to the weather.",
+              "words": [
+                "Stadtele",
+                "wéi",
+                "gréen,",
+                "Léon",
+                "und",
+                "Anna",
+                "gëtt",
+                "am",
+                "Wëschtle."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Strolling in Luxembourg",
+          "desc": "City, park, fountain, bench, flower, statue, bridge, view",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "it": "Gëstele",
+              "en": "garden",
+              "pron": "Géstélé"
+            },
+            {
+              "it": "Föntäne",
+              "en": "fountain",
+              "pron": "Föntäné"
+            },
+            {
+              "it": "Bënch",
+              "en": "bench",
+              "pron": "Bénç"
+            },
+            {
+              "it": "Blümm",
+              "en": "flower",
+              "pron": "Blüläm"
+            },
+            {
+              "it": "Shtät",
+              "en": "city",
+              "pron": "Sätät"
+            },
+            {
+              "it": "Shtatäne",
+              "en": "statue",
+              "pron": "Sätäné"
+            },
+            {
+              "it": "Bréig",
+              "en": "bridge",
+              "pron": "Bréigé"
+            },
+            {
+              "it": "Shtëngel",
+              "en": "view",
+              "pron": "Sängäl"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Léon und Anna gëtt am Shtät.",
+              "en": "Leon and Anna go in the city.",
+              "words": [
+                "Léon",
+                "und",
+                "Anna",
+                "gëtt",
+                "am",
+                "Shtät."
+              ]
+            },
+            {
+              "it": "Föntäne wéi schönn, wéi Blümm wéi schönn.",
+              "en": "The fountain is pretty, as are the flowers.",
+              "words": [
+                "Föntäne",
+                "wéi",
+                "schönn,",
+                "wéi",
+                "Blümm",
+                "wéi",
+                "schönn."
+              ]
+            },
+            {
+              "it": "Shtättele gëtt gréen, wéi Bënch wéi gréen.",
+              "en": "The city center is green, as are the benches.",
+              "words": [
+                "Shtättele",
+                "gëtt",
+                "gréen,",
+                "wéi",
+                "Bënch",
+                "wéi",
+                "gréen."
+              ]
+            },
+            {
+              "it": "Anna sitzt am Bréig, wéi Blümm wéi schönn.",
+              "en": "Anna sits on the bridge, as the flowers are pretty.",
+              "words": [
+                "Anna",
+                "sitzt",
+                "am",
+                "Bréig,",
+                "wéi",
+                "Blümm",
+                "wéi",
+                "schönn."
+              ]
+            },
+            {
+              "it": "Léon schaut dës Shtëngel, wéi Bréig wéi schönn.",
+              "en": "Leon looks at the view, as the bridge is pretty.",
+              "words": [
+                "Léon",
+                "schaut",
+                "dës",
+                "Shtëngel,",
+                "wéi",
+                "Bréig",
+                "wéi",
+                "schönn."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Strolling in Luxembourg",
+          "desc": "City views, fountains, and benches",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "it": "Föntäne",
+              "en": "fountain",
+              "pron": "FON-ta-NE"
+            },
+            {
+              "it": "Bënch",
+              "en": "bench",
+              "pron": "BEN-ch"
+            },
+            {
+              "it": "Blümm",
+              "en": "flower",
+              "pron": "BLU-m"
+            },
+            {
+              "it": "Shtät",
+              "en": "city",
+              "pron": "SHTAT"
+            },
+            {
+              "it": "Shtatäne",
+              "en": "statue",
+              "pron": "SHTA-ta-NE"
+            },
+            {
+              "it": "Bréig",
+              "en": "bridge",
+              "pron": "BREY-ig"
+            },
+            {
+              "it": "Shtëngel",
+              "en": "view",
+              "pron": "SHTEN-gel"
+            },
+            {
+              "it": "Gëstele",
+              "en": "garden",
+              "pron": "GES-te-le"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Léon gëtt am Bréig, Anna gëtt am Shtät.",
+              "en": "Leon is at the bridge, Anna is in the city.",
+              "words": [
+                "Léon",
+                "gëtt",
+                "am",
+                "Bréig,",
+                "Anna",
+                "gëtt",
+                "am",
+                "Shtät."
+              ]
+            },
+            {
+              "it": "Föntäne wéi schönn, Anna sitzert am Bënch.",
+              "en": "The fountain is beautiful, Anna is sitting on the bench.",
+              "words": [
+                "Föntäne",
+                "wéi",
+                "schönn,",
+                "Anna",
+                "sitzert",
+                "am",
+                "Bënch."
+              ]
+            },
+            {
+              "it": "Blümm wéi gréen, Shtät gëtt wéi gréen.",
+              "en": "The flowers are green, the city is green.",
+              "words": [
+                "Blümm",
+                "wéi",
+                "gréen,",
+                "Shtät",
+                "gëtt",
+                "wéi",
+                "gréen."
+              ]
+            },
+            {
+              "it": "Gëstele wéi schönn, Léon gëtt am Shtatäne.",
+              "en": "The garden is beautiful, Leon is at the statue.",
+              "words": [
+                "Gëstele",
+                "wéi",
+                "schönn,",
+                "Léon",
+                "gëtt",
+                "am",
+                "Shtatäne."
+              ]
+            },
+            {
+              "it": "Bréig wéi schönn, Anna gëtt am Föntäne.",
+              "en": "The bridge is beautiful, Anna is at the fountain.",
+              "words": [
+                "Bréig",
+                "wéi",
+                "schönn,",
+                "Anna",
+                "gëtt",
+                "am",
+                "Föntäne."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1215621,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2553,
+        "totalCompletionTokens": 2287,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 300867,
+            "promptTokens": 713,
+            "completionTokens": 451
+          },
+          {
+            "lessonNum": 2,
+            "ms": 286401,
+            "promptTokens": 784,
+            "completionTokens": 494
+          },
+          {
+            "lessonNum": 3,
+            "ms": 263129,
+            "promptTokens": 841,
+            "completionTokens": 408
+          }
+        ]
+      },
+      "generatedAt": "2026-04-30T09:17:35.479Z",
+      "updatedAt": "2026-04-30T09:17:35.479Z"
+    },
+    {
+      "topic": "going for an alternative music concert in madrid",
+      "topicEmoji": "🎶",
+      "lang": "es",
+      "difficulty": 1,
+      "story": "In the heart of Madrid, under the vast, starlit sky, a young woman named Ana found herself drawn to the rhythm of an alternative music concert. Ana, a lover of music with a penchant for the unconventional, had heard whispers of a secret show in the city’s lesser-known venues. The night was cool, and the air was filled with the promise of something different.\n\nAna arrived at a small, dimly lit alleyway, where a group of people were already gathering, their faces a mix of curiosity and excitement. She followed a path that led to a hidden courtyard, where a makeshift stage had been set up. The stage was adorned with colorful lights and posters of the band, \"Echoes of the Unseen,\" whose music had been a mystery to most but a revelation to Ana.\n\nAs she found a spot to sit, Ana noticed the diverse crowd around her. There were young adults in casual attire, couples holding hands, and even a few older folks who seemed to know the lyrics by heart. The atmosphere was electric, and Ana felt a sense of belonging she hadn’t experienced at more traditional concerts.\n\nThe band began to play, and the music was a blend of rock and electronic sounds, creating a unique and captivating atmosphere. Ana closed her eyes, letting the music wash over her. The lead singer, with his deep, soulful voice, sang about love, loss, and the search for meaning in a chaotic world. The lyrics, though in English, resonated with Ana, and she found herself mouthing the words along with the crowd.\n\nAs the night wore on, the band played a set that lasted well into the early hours. The music was a journey, taking Ana through a range of emotions and experiences. By the end of the concert, Ana felt a sense of connection to the music and the people around her. She realized that sometimes, the best experiences in life come from seeking out the unexpected and the unconventional.\n\nLeaving the courtyard, Ana felt a mix of emotions—excitement for what the night had offered and a desire to explore more of Madrid’s hidden musical gems. As she walked back to her apartment, the echoes of the music still lingered in her mind, a reminder of the night’s magic and the power of alternative music to bring people together.",
+      "storyNative": null,
+      "lessons": [
+        {
+          "id": 1,
+          "title": "alternative music concert",
+          "desc": "Madrid, night, music, venue",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "concerto",
+              "en": "concert",
+              "pron": "KON-see-to"
+            },
+            {
+              "it": "alleyway",
+              "en": "narrow street",
+              "pron": "AL-ee-way"
+            },
+            {
+              "it": "courtyard",
+              "en": "open space in a building",
+              "pron": "KOUR-ten-yard"
+            },
+            {
+              "it": "posters",
+              "en": "bills, advertisements",
+              "pron": "POST-ers"
+            },
+            {
+              "it": "adorned",
+              "en": "decorated",
+              "pron": "AD-ornd"
+            },
+            {
+              "it": "mystery",
+              "en": "something unknown",
+              "pron": "MY-斯特西"
+            },
+            {
+              "it": "revelation",
+              "en": "discovery, insight",
+              "pron": "瑞-VEE-la-shun"
+            },
+            {
+              "it": "curiosity",
+              "en": "interest, wonder",
+              "pron": "ku-RI-oh-si-tee"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Ana asistió a un concerto nocturno.",
+              "en": "Ana attended a night concert.",
+              "words": [
+                "Ana",
+                "asistió",
+                "a",
+                "un",
+                "concerto",
+                "nocturno."
+              ]
+            },
+            {
+              "it": "En una callejuela oscura se reunían personas.",
+              "en": "People were gathering in a dark alleyway.",
+              "words": [
+                "En",
+                "una",
+                "callejuela",
+                "oscura",
+                "se",
+                "reunían",
+                "personas."
+              ]
+            },
+            {
+              "it": "Un escenario improvisado estaba en un patio oculto.",
+              "en": "A makeshift stage was in a hidden courtyard.",
+              "words": [
+                "Un",
+                "escenario",
+                "improvisado",
+                "estaba",
+                "en",
+                "un",
+                "patio",
+                "oculto."
+              ]
+            },
+            {
+              "it": "Las luces y carteles iluminaban el escenario.",
+              "en": "Lights and posters illuminated the stage.",
+              "words": [
+                "Las",
+                "luces",
+                "y",
+                "carteles",
+                "iluminaban",
+                "el",
+                "escenario."
+              ]
+            },
+            {
+              "it": "Ana sintió curiosidad por la banda desconocida.",
+              "en": "Ana felt curiosity about the unknown band.",
+              "words": [
+                "Ana",
+                "sintió",
+                "curiosidad",
+                "por",
+                "la",
+                "banda",
+                "desconocida."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "hidden concert",
+          "desc": "nights, music, discovery, crowd",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "noche",
+              "en": "night",
+              "pron": "NO-che"
+            },
+            {
+              "it": "música",
+              "en": "music",
+              "pron": "MOO-see-kah"
+            },
+            {
+              "it": "descubrimiento",
+              "en": "discovery",
+              "pron": "des-koo-bri-MEN-to"
+            },
+            {
+              "it": "multitud",
+              "en": "crowd",
+              "pron": "mul-TOO-tood"
+            },
+            {
+              "it": "iluminación",
+              "en": "illumination",
+              "pron": "il-oo-mee-NA-tion"
+            },
+            {
+              "it": "tarima",
+              "en": "stage",
+              "pron": "TA-ri-mah"
+            },
+            {
+              "it": "curiosidad",
+              "en": "curiosity",
+              "pron": "koo-ree-oh-dee-AH-sion"
+            },
+            {
+              "it": "misterio",
+              "en": "mystery",
+              "pron": "mis-teh-REE-oh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La noche era fresca y llena de promesas.",
+              "en": "The night was cool and full of promises.",
+              "words": [
+                "La",
+                "noche",
+                "era",
+                "fresca",
+                "y",
+                "llena",
+                "de",
+                "promesas."
+              ]
+            },
+            {
+              "it": "Ana se unió a la multitud que se aglomeraba.",
+              "en": "Ana joined the crowd that was gathering.",
+              "words": [
+                "Ana",
+                "se",
+                "unió",
+                "a",
+                "la",
+                "multitud",
+                "que",
+                "se",
+                "aglomeraba."
+              ]
+            },
+            {
+              "it": "La tarima estaba iluminada con luces coloridas.",
+              "en": "The stage was illuminated with colorful lights.",
+              "words": [
+                "La",
+                "tarima",
+                "estaba",
+                "iluminada",
+                "con",
+                "luces",
+                "coloridas."
+              ]
+            },
+            {
+              "it": "Ella sintió curiosidad por el misterio que se avecinaba.",
+              "en": "She felt curiosity about the mystery that was coming.",
+              "words": [
+                "Ella",
+                "sintió",
+                "curiosidad",
+                "por",
+                "el",
+                "misterio",
+                "que",
+                "se",
+                "avecinaba."
+              ]
+            },
+            {
+              "it": "Descubrió que la música era una revelación.",
+              "en": "She discovered that the music was a revelation.",
+              "words": [
+                "Descubrió",
+                "que",
+                "la",
+                "música",
+                "era",
+                "una",
+                "revelación."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "alternative music concert",
+          "desc": "hidden venues, colorful lights, curious crowd",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "iluminación",
+              "en": "illumination",
+              "pron": "il-yu-MI-nah-si-on"
+            },
+            {
+              "it": "multitud",
+              "en": "crowd",
+              "pron": "mul-TU-dad"
+            },
+            {
+              "it": "tarima",
+              "en": "stage",
+              "pron": "ta-RI-ma"
+            },
+            {
+              "it": "adornar",
+              "en": "to decorate",
+              "pron": "ad-or-nar"
+            },
+            {
+              "it": "misterio",
+              "en": "mystery",
+              "pron": "mis-te-rio"
+            },
+            {
+              "it": "descubrir",
+              "en": "to discover",
+              "pron": "des-ku-BRIR"
+            },
+            {
+              "it": "bills",
+              "en": "posters",
+              "pron": "POST-er-es"
+            },
+            {
+              "it": "revelación",
+              "en": "revelation",
+              "pron": "re-ve-LA-cion"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La multitud se agrupó alrededor de la tarima.",
+              "en": "The crowd gathered around the stage.",
+              "words": [
+                "La",
+                "multitud",
+                "se",
+                "agrupó",
+                "alrededor",
+                "de",
+                "la",
+                "tarima."
+              ]
+            },
+            {
+              "it": "Las tarimas estaban adornadas con luces coloridas.",
+              "en": "The stages were decorated with colorful lights.",
+              "words": [
+                "Las",
+                "tarimas",
+                "estaban",
+                "adornadas",
+                "con",
+                "luces",
+                "coloridas."
+              ]
+            },
+            {
+              "it": "Ana descubrió que la música era mejor de lo que esperaba.",
+              "en": "Ana discovered that the music was better than she expected.",
+              "words": [
+                "Ana",
+                "descubrió",
+                "que",
+                "la",
+                "música",
+                "era",
+                "mejor",
+                "de",
+                "lo",
+                "que",
+                "esperaba."
+              ]
+            },
+            {
+              "it": "Bajo la iluminación tenue, la multitud parecía misteriosa.",
+              "en": "Under the dim illumination, the crowd seemed mysterious.",
+              "words": [
+                "Bajo",
+                "la",
+                "iluminación",
+                "tenue,",
+                "la",
+                "multitud",
+                "parecía",
+                "misteriosa."
+              ]
+            },
+            {
+              "it": "Los bills anunciaban una banda desconocida para la mayoría.",
+              "en": "The posters announced a band unknown to most people.",
+              "words": [
+                "Los",
+                "bills",
+                "anunciaban",
+                "una",
+                "banda",
+                "desconocida",
+                "para",
+                "la",
+                "mayoría."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1221736,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1750,
+        "totalCompletionTokens": 1608,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 254412,
+            "promptTokens": 455,
+            "completionTokens": 352
+          },
+          {
+            "lessonNum": 2,
+            "ms": 223826,
+            "promptTokens": 522,
+            "completionTokens": 391
+          },
+          {
+            "lessonNum": 3,
+            "ms": 124033,
+            "promptTokens": 567,
+            "completionTokens": 369
+          }
+        ]
+      },
+      "generatedAt": "2026-04-30T08:28:36.790Z",
+      "updatedAt": "2026-04-30T08:28:36.790Z"
+    },
+    {
       "topic": "when in italy",
       "topicEmoji": "🇮🇹",
       "lang": "it",

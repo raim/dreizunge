@@ -235,22 +235,18 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 
-/* ══ DIFFICULTY ══════════════════════════════════════════════════════ */
+/* ══ DIFFICULTY DROPDOWN ════════════════════════════════════════════ */
 .diff-wrap{margin-bottom:14px}
-.diff-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.diff-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.08em}
-.diff-val{font-size:13px;font-weight:900;padding:2px 10px;border-radius:12px;transition:background .2s,color .2s}
-.diff-val.d1{background:#d7ffb2;color:#2a6000}
-.diff-val.d2{background:#fff3cc;color:#7a5000}
-.diff-val.d3{background:#ffd4d4;color:#880000}
-.diff-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;outline:none;cursor:pointer;background:var(--gray-mid);margin:0}
-.diff-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--blue);border:3px solid var(--white);box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer;transition:background .15s}
-.diff-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--blue);border:3px solid var(--white);box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer}
-.diff-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--gray-dark);font-weight:700;margin-top:3px;padding:0 2px}
+.diff-select-wrap{position:relative;display:inline-block;width:100%}
+.diff-select{width:100%;padding:10px 36px 10px 14px;font-size:14px;font-weight:800;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
+.diff-select:focus{border-color:var(--blue)}
+.diff-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .diff-badge{display:inline-block;font-size:10px;font-weight:900;padding:1px 7px;border-radius:8px;vertical-align:middle;margin-left:4px;letter-spacing:.04em}
 .diff-badge.d1{background:#d7ffb2;color:#2a6000}
 .diff-badge.d2{background:#fff3cc;color:#7a5000}
 .diff-badge.d3{background:#ffd4d4;color:#880000}
+.native-check-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;font-weight:700;color:var(--gray-dark)}
+.native-check-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--blue)}
 
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
 .story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 16px;overflow:hidden;box-shadow:var(--shadow-card)}
@@ -259,19 +255,20 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-hdr-btns{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
 .story-icon-btn{background:none;border:2px solid var(--gray-mid);border-radius:8px;padding:3px 8px;font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);line-height:1.4;transition:border-color .1s}
 .story-icon-btn:hover{border-color:var(--blue)}
-.story-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s}
+.story-lang-toggle{display:flex;gap:0;border:2px solid var(--gray-mid);border-radius:8px;overflow:hidden;flex-shrink:0}
+.story-lang-btn{background:none;border:none;padding:3px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:background .1s}
+.story-lang-btn.active{background:var(--blue);color:var(--white)}
+.story-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s;flex-shrink:0}
 .story-arrow.open{transform:rotate(180deg)}
 .story-body{padding:0 16px 14px;font-size:14px;line-height:1.75;color:#444;display:none}
 .story-body.open{display:block}
 .story-body p{margin-bottom:10px}
 .story-body p:last-child{margin-bottom:0}
-.story-translation{margin-top:12px;padding-top:12px;border-top:2px solid var(--gray-mid);color:#555;font-style:italic}
 .story-repair-wrap{padding:0 14px 14px;display:none}
 .story-repair-wrap.open{display:block}
 .story-repair-row{display:flex;gap:7px;align-items:flex-start}
 .story-repair-input{flex:1;padding:9px 11px;font-size:13px;font-weight:600;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--gray-light);outline:none;resize:vertical;min-height:38px}
 .story-repair-input:focus{border-color:var(--blue);background:var(--white)}
-.story-repair-input::placeholder{color:var(--gray);font-weight:400}
 .story-repair-btn{background:var(--blue);color:var(--white);border:none;border-radius:var(--radius);padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;flex-shrink:0}
 .story-repair-btn:hover{background:var(--blue-dark)}
 .story-repair-btn:disabled{opacity:.5;cursor:not-allowed}
@@ -284,6 +281,19 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
 .lib-filter-btn:hover{border-color:var(--blue)}
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
+
+/* ══ RATING ══════════════════════════════════════════════════════════ */
+.rating-panel{background:var(--white);border:2px solid var(--yellow);border-radius:var(--radius-xl);padding:18px 18px 16px;margin:0 0 18px;box-shadow:var(--shadow-card)}
+.rating-title{font-size:15px;font-weight:900;color:var(--text);margin-bottom:14px;text-align:center}
+.rating-row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.rating-axis{font-size:13px;font-weight:800;color:var(--text);width:90px;flex-shrink:0}
+.rating-btns{display:flex;gap:6px}
+.rating-btn{background:none;border:2px solid var(--gray-mid);border-radius:10px;padding:5px 10px;font-size:16px;cursor:pointer;transition:border-color .1s,background .1s;line-height:1.2}
+.rating-btn:hover{border-color:var(--blue)}
+.rating-btn.sel{border-color:var(--blue);background:var(--blue-light)}
+.rating-submit{width:100%;padding:10px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius);font-size:14px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px}
+.rating-done{font-size:13px;font-weight:700;text-align:center;color:var(--green-dark);padding:4px 0}
+.rating-summary{display:flex;gap:10px;font-size:12px;font-weight:700;color:var(--gray-dark);margin-top:6px;flex-wrap:wrap;justify-content:center}
 </style>
 </head>
 <body>
@@ -330,6 +340,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           <option value="ko">🇰🇷 Korean</option>
           <option value="tr">🇹🇷 Turkish</option>
           <option value="hi">🇮🇳 Hindi</option>
+          <option value="lb">🇱🇺 Lëtzebuergesch</option>
         </select>
         <span class="lang-select-arrow">▾</span>
       </div>
@@ -340,14 +351,19 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       maxlength="400" oninput="autoResizeTopic(this)"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
     <div class="diff-wrap">
-      <div class="diff-label-row">
-        <span class="diff-lbl">Difficulty</span>
-        <span class="diff-val d2" id="diff-val">Intermediate</span>
+      <div class="diff-select-wrap">
+        <select class="diff-select" id="diff-select" onchange="onDiffSelect(this.value)">
+          <option value="1">🟢 Beginner — short sentences, basic vocabulary</option>
+          <option value="2" selected>🟡 Intermediate — natural phrases, varied grammar</option>
+          <option value="3">🔴 Advanced — complex sentences, idiomatic language</option>
+        </select>
+        <span class="diff-select-arrow">▾</span>
       </div>
-      <input class="diff-slider" id="diff-slider" type="range" min="1" max="3" value="2"
-        oninput="onDiffSlider(this.value)">
-      <div class="diff-ticks"><span>🟢 Beginner</span><span>🟡 Intermediate</span><span>🔴 Advanced</span></div>
     </div>
+    <label class="native-check-row">
+      <input type="checkbox" id="native-check">
+      Also generate story in target language <span id="native-lang-lbl">(Italian)</span>
+    </label>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
@@ -382,7 +398,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="topic-emoji-big" id="topic-emoji-big">📚</span>
     <span class="topic-name-big" id="topic-name-big">Topic</span>
     <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
-    <button class="hdr-btn" onclick="goLanding()">← Topics</button>
+    <button class="hdr-btn" onclick="goLandingClean()">← Topics</button>
   </div>
   <div class="xp-strip">
     <span style="font-size:20px">⚡</span>
@@ -399,9 +415,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <button class="story-hdr" onclick="toggleStory()">
       <span>📖 Read the story</span>
       <div class="story-hdr-btns" onclick="event.stopPropagation()">
-        <button class="story-icon-btn" id="story-speak-btn" onclick="speakStory()" title="Read aloud">🔊</button>
-        <button class="story-icon-btn" id="story-translate-btn" onclick="toggleStoryTranslation()" title="Show translation">🌐</button>
+        <button class="story-icon-btn" onclick="speakStory()" title="Read aloud">🔊</button>
         <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
+      </div>
+      <div class="story-lang-toggle" id="story-lang-toggle" style="display:none" onclick="event.stopPropagation()">
+        <button class="story-lang-btn active" id="story-en-btn" onclick="showStoryLang('en')">EN</button>
+        <button class="story-lang-btn" id="story-native-btn" onclick="showStoryLang('native')"></button>
       </div>
       <span class="story-arrow" id="story-arrow">▼</span>
     </button>
@@ -416,6 +435,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </div>
   </div>
   <div class="gen-stats" id="gen-stats"></div>
+  <div class="rating-panel" id="rating-panel" style="display:none"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
@@ -467,6 +487,7 @@ var LANGS = {
   ko: {name:'Korean',           flag:'🇰🇷', tts:'ko-KR'},
   tr: {name:'Turkish',          flag:'🇹🇷', tts:'tr-TR'},
   hi: {name:'Hindi',            flag:'🇮🇳', tts:'hi-IN'},
+  lb: {name:'Lëtzebuergesch',   flag:'🇱🇺', tts:'lb-LU'},
 };
 
 var APP = {
@@ -487,14 +508,13 @@ function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
 function loadDifficulty(){ return parseInt(localStorage.getItem('imp3_diff')||'2',10); }
 function saveDifficulty(){ localStorage.setItem('imp3_diff',String(APP.difficulty)); }
-
-const DIFF_LABELS = {1:'🟢 Beginner', 2:'🟡 Intermediate', 3:'🔴 Advanced'};
-const DIFF_SHORT  = {1:'Beginner',    2:'Intermediate',    3:'Advanced'};
-function onDiffSlider(v){
-  APP.difficulty = parseInt(v, 10);
-  saveDifficulty();
-  const el = document.getElementById('diff-val');
-  if(el){ el.textContent = DIFF_SHORT[APP.difficulty]; el.className = 'diff-val d'+APP.difficulty; }
+const DIFF_SHORT={1:'Beginner',2:'Intermediate',3:'Advanced'};
+function onDiffSelect(v){
+  APP.difficulty=parseInt(v,10); saveDifficulty();
+  const sel=document.getElementById('diff-select'); if(sel) sel.value=v;
+}
+function restoreDiffSelect(){
+  const sel=document.getElementById('diff-select'); if(sel) sel.value=APP.difficulty;
 }
 function autoResizeTopic(el){
   el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
@@ -510,11 +530,6 @@ function selectLang(code){
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
   if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
-}
-function restoreDiffSlider(){
-  const sl=document.getElementById('diff-slider');
-  if(sl) sl.value=APP.difficulty;
-  onDiffSlider(APP.difficulty);
 }
 async function pollJob(jobId, onStep, intervalMs){
   intervalMs = intervalMs || 2000;
@@ -572,6 +587,109 @@ function toggleFlag(ex){
 }
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function goLanding(){ loadSavedList(); show('landing'); }
+
+function autoResizeTopic(el){
+  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
+}
+function toggleStory(){
+  const body=document.getElementById('story-body');
+  const arrow=document.getElementById('story-arrow');
+  if(!body) return;
+  const open=body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open',open);
+}
+function toggleStoryRepair(){
+  const wrap=document.getElementById('story-repair-wrap');
+  if(wrap) wrap.classList.toggle('open');
+}
+function renderStoryText(d, lang){
+  const body=document.getElementById('story-body'); if(!body) return;
+  const text=lang==='native'&&d.storyNative ? d.storyNative : (d.story||'');
+  body.innerHTML=text.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+}
+function showStoryLang(lang){
+  const d=APP.lessonData; if(!d) return;
+  renderStoryText(d,lang);
+  document.getElementById('story-en-btn')?.classList.toggle('active',lang==='en');
+  document.getElementById('story-native-btn')?.classList.toggle('active',lang==='native');
+  const body=document.getElementById('story-body');
+  if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow')?.classList.add('open'); }
+}
+function speakStory(){
+  const d=APP.lessonData; if(!d) return;
+  const nativeActive=document.getElementById('story-native-btn')?.classList.contains('active');
+  const text=nativeActive&&d.storyNative ? d.storyNative : d.story;
+  if(text) speak(text);
+}
+async function doRepairStory(){
+  const d=APP.lessonData; if(!d) return;
+  const instruction=document.getElementById('story-repair-input')?.value?.trim();
+  if(!instruction){ document.getElementById('story-repair-input').focus(); return; }
+  const btn=document.getElementById('story-repair-btn');
+  const status=document.getElementById('story-repair-status');
+  btn.disabled=true; btn.textContent='⏳';
+  if(status) status.textContent='Rewriting story…';
+  try{
+    const r=await fetch('/api/repair-story',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic,instruction})});
+    const resp=await r.json();
+    if(!r.ok) throw new Error(resp.error||'Repair failed');
+    await pollJob(resp.jobId,step=>{ if(status) status.textContent=step; });
+    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
+    if(lr.ok) APP.lessonData=await lr.json();
+    const body=document.getElementById('story-body');
+    if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow')?.classList.add('open'); }
+    renderStoryText(APP.lessonData,'en');
+    document.getElementById('story-repair-input').value='';
+    if(status) status.textContent='Story updated!';
+    setTimeout(()=>{ if(status) status.textContent=''; },3000);
+    document.getElementById('story-repair-wrap')?.classList.remove('open');
+    document.getElementById('story-lang-toggle').style.display='none';
+  }catch(e){
+    alert('Story repair failed: '+e.message);
+    if(status) status.textContent='';
+  }finally{ btn.disabled=false; btn.textContent='Rewrite'; }
+}
+
+// ── Rating ────────────────────────────────────────────────────────────
+const RATING_AXES=[
+  {key:'difficulty',label:'Difficulty',opts:['🔵 Easy','🟡 Right','🔴 Hard']},
+  {key:'fun',       label:'Fun',       opts:['😐 Meh','😊 Good','😄 Great']},
+  {key:'coherence', label:'Coherence', opts:['🔗 Low','🔗 OK','🔗 High']},
+];
+const _pr={};
+function renderRatingPanel(d,done){
+  const panel=document.getElementById('rating-panel'); if(!panel) return;
+  if(!d.lessons.every(L=>done[L.id])){ panel.style.display='none'; return; }
+  panel.style.display='';
+  if(d.ratings){
+    panel.innerHTML=`<div class="rating-done">⭐ Rated</div><div class="rating-summary">`+
+      RATING_AXES.map(a=>`<span>${a.label}: ${a.opts[(d.ratings[a.key]||1)-1]}</span>`).join('')+`</div>`;
+    return;
+  }
+  panel.innerHTML=`<div class="rating-title">⭐ How were these lessons?</div>`+
+    RATING_AXES.map(a=>`<div class="rating-row"><span class="rating-axis">${a.label}</span><div class="rating-btns">`+
+      a.opts.map((o,i)=>`<button class="rating-btn" id="rb-${a.key}-${i+1}" onclick="selR('${a.key}',${i+1})">${o}</button>`).join('')+
+    `</div></div>`).join('')+
+    `<button class="rating-submit" onclick="submitRating()">Save rating</button>`;
+}
+function selR(axis,val){
+  _pr[axis]=val;
+  [1,2,3].forEach(v=>{ const b=document.getElementById(`rb-${axis}-${v}`); if(b) b.classList.toggle('sel',v===val); });
+}
+async function submitRating(){
+  const d=APP.lessonData; if(!d) return;
+  for(const a of RATING_AXES){ if(!_pr[a.key]){ alert('Please rate all three axes.'); return; } }
+  const r={difficulty:_pr.difficulty,fun:_pr.fun,coherence:_pr.coherence};
+  try{
+    const res=await fetch('/api/rate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic:d.topic,ratings:r})});
+    if(!res.ok) throw new Error('Server error');
+    d.ratings=r;
+    renderRatingPanel(d,APP.progress.completed[d.topic]||{});
+    loadSavedList();
+  }catch(e){ alert('Rating failed: '+e.message); }
+}
 async function repairLesson(topic, lessonId){
   const btnId='repair-btn-'+lessonId;
   const btn=document.getElementById(btnId);
@@ -690,103 +808,24 @@ async function repairAll(){
   if(errors.length) alert('Repair finished with errors:\n'+errors.join('\n'));
 }
 
-function goHome(){ buildPath(); show('home'); }
-
-function toggleStory(){
-  const body=document.getElementById('story-body');
-  const arrow=document.getElementById('story-arrow');
-  if(!body) return;
-  const open=body.classList.toggle('open');
-  if(arrow) arrow.classList.toggle('open',open);
+function goHome(){
+  try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
+  show('home');
+  if(APP.lessonData) history.replaceState(null,'','#topic='+encodeURIComponent(APP.lessonData.topic));
 }
-function toggleStoryRepair(){
-  const wrap=document.getElementById('story-repair-wrap');
-  if(wrap) wrap.classList.toggle('open');
-}
-function renderStoryText(d){
-  const body=document.getElementById('story-body'); if(!body) return;
-  const paras=(d.story||'').split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
-  let html=`<div id="story-orig">${paras}</div>`;
-  if(d.storyTranslation){
-    const tp=d.storyTranslation.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
-    html+=`<div class="story-translation" id="story-trans">${tp}</div>`;
-  } else {
-    html+='<div class="story-translation" id="story-trans" style="display:none"></div>';
-  }
-  body.innerHTML=html;
-}
-function speakStory(){
-  const d=APP.lessonData; if(!d||!d.story) return;
-  speak(d.story);
-}
-async function toggleStoryTranslation(){
-  const d=APP.lessonData; if(!d||!d.story) return;
-  const transDiv=document.getElementById('story-trans');
-  const btn=document.getElementById('story-translate-btn');
-  if(d.storyTranslation){
-    if(!transDiv) return;
-    const nowHidden=transDiv.style.display==='none';
-    transDiv.style.display=nowHidden?'':'none';
-    if(btn) btn.style.opacity=nowHidden?'1':'0.5';
-    // Open story body if closed
-    if(nowHidden){
-      const body=document.getElementById('story-body');
-      if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
-    }
-    return;
-  }
-  if(btn){ btn.textContent='⏳'; btn.disabled=true; }
-  const body=document.getElementById('story-body');
-  if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
-  try{
-    const r=await fetch('/api/translate-story',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Translate failed');
-    const result=await pollJob(resp.jobId);
-    d.storyTranslation=result.translation;
-    renderStoryText(d);
-  }catch(e){ alert('Translation failed: '+e.message); }
-  finally{ if(btn){ btn.textContent='🌐'; btn.disabled=false; } }
-}
-async function doRepairStory(){
-  const d=APP.lessonData; if(!d) return;
-  const instruction=document.getElementById('story-repair-input')?.value?.trim();
-  if(!instruction){ document.getElementById('story-repair-input').focus(); return; }
-  const btn=document.getElementById('story-repair-btn');
-  const status=document.getElementById('story-repair-status');
-  btn.disabled=true; btn.textContent='⏳';
-  if(status) status.textContent='Rewriting story…';
-  try{
-    const r=await fetch('/api/repair-story',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic,instruction})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Repair failed');
-    await pollJob(resp.jobId, step=>{ if(status) status.textContent=step; });
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
-    if(lr.ok) APP.lessonData=await lr.json();
-    const body=document.getElementById('story-body');
-    if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow').classList.add('open'); }
-    renderStoryText(APP.lessonData);
-    document.getElementById('story-repair-input').value='';
-    if(status) status.textContent='Story updated!';
-    setTimeout(()=>{ if(status) status.textContent=''; },3000);
-    const wrap=document.getElementById('story-repair-wrap');
-    if(wrap) wrap.classList.remove('open');
-  }catch(e){
-    alert('Story repair failed: '+e.message);
-    if(status) status.textContent='';
-  }finally{ btn.disabled=false; btn.textContent='Rewrite'; }
-}
+function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); show('landing'); }
 
 // ── init ──
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
   await syncFlagsFromServer();
   selectLang(APP.lang);
-  restoreDiffSlider();
+  restoreDiffSelect();
   renderPill();
   loadSavedList();
+  // Hash-based routing: load topic from URL on startup
+  const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
+  if(hashTopic) loadSaved(hashTopic);
 }
 
 function renderPill(){
@@ -810,7 +849,7 @@ function setLibFilter(lang){ APP.libFilter=lang; loadSavedList(); }
 async function loadSavedList(){
   let saved=[];
   try{ const r=await fetch('/api/lessons'); saved=await r.json(); }catch(e){}
-
+  // Server already sorts by updatedAt desc; apply lang filter client-side
   const langs=[...new Set(saved.map(s=>s.lang||'it'))].sort();
   const filterEl=document.getElementById('lib-filter');
   if(filterEl && langs.length>1){
@@ -829,16 +868,20 @@ async function loadSavedList(){
     return;
   }
   list.innerHTML=filtered.map(s=>{
-    const date=s.generatedAt?new Date(s.generatedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+    const dateStr=s.updatedAt||s.generatedAt;
+    const date=dateStr?new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
     const t=encodeURIComponent(s.topic);
     const sL=LANGS[s.lang||'it']||LANGS.it;
     const d=s.difficulty||2;
     const diffBadge=`<span class="diff-badge d${d}">${DIFF_SHORT[d]||'–'}</span>`;
+    const ratingStr=s.ratings
+      ? ` · ${['🔵','🟡','🔴'][s.ratings.difficulty-1]||''} ${['😐','😊','😄'][s.ratings.fun-1]||''}`
+      : '';
     return `<div class="saved-item" onclick="loadSaved('${t}')">
       <span class="saved-emoji">${sL.flag} ${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
         <div class="saved-topic">${s.topic} ${diffBadge}</div>
-        <div class="saved-meta">${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}</div>
+        <div class="saved-meta">${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
         ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${t}')">↻</button>`:''}
@@ -891,7 +934,9 @@ async function doGenerate(forceRegen){
   let si=0; const timer=setInterval(()=>{ document.getElementById('gen-sub').textContent=subs[si++%subs.length]; },1500);
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic,lang:APP.lang,difficulty:APP.difficulty,forceRegenerate:!!forceRegen})});
+      body:JSON.stringify({topic,lang:APP.lang,difficulty:APP.difficulty,
+        generateNative:!!document.getElementById('native-check')?.checked,
+        forceRegenerate:!!forceRegen})});
     if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Server error'); }
     const resp=await r.json();
     let data;
@@ -937,13 +982,18 @@ function buildPath(){
   if(d.story && storySec && storyBody){
     storySec.style.display='';
     storyBody.classList.remove('open');
-    const arrow=document.getElementById('story-arrow');
-    if(arrow) arrow.classList.remove('open');
-    renderStoryText(d);
+    const arrow=document.getElementById('story-arrow'); if(arrow) arrow.classList.remove('open');
+    renderStoryText(d,'en');
+    const toggle=document.getElementById('story-lang-toggle');
+    if(toggle){
+      toggle.style.display=d.storyNative?'flex':'none';
+      const nbtn=document.getElementById('story-native-btn');
+      if(nbtn) nbtn.textContent=dL.flag||dLang.toUpperCase();
+      document.getElementById('story-en-btn')?.classList.add('active');
+      document.getElementById('story-native-btn')?.classList.remove('active');
+    }
     const repToggle=document.getElementById('story-repair-toggle-btn');
     if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
-    const transBtn=document.getElementById('story-translate-btn');
-    if(transBtn) transBtn.style.display=APP.info.canGenerate?'':'none';
   } else if(storySec){ storySec.style.display='none'; }
 
   // Gen stats + repair stats
@@ -952,15 +1002,11 @@ function buildPath(){
     const lines=[];
     if(d.generationStats){
       const gs=d.generationStats;
-      const secs=(gs.totalMs/1000).toFixed(1);
-      const tokens=((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString();
-      lines.push(`Generated in ${secs}s · ${gs.model} · ${tokens} tokens`);
+      lines.push(`Generated in ${(gs.totalMs/1000).toFixed(1)}s · ${gs.model} · ${((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString()} tokens`);
     }
-    if(d.repairStats && d.repairStats.repairCount>0){
+    if(d.repairStats&&d.repairStats.repairCount>0){
       const rs=d.repairStats;
-      const secs=(rs.totalMs/1000).toFixed(1);
-      const tokens=((rs.promptTokens||0)+(rs.completionTokens||0)).toLocaleString();
-      lines.push(`${rs.repairCount} repair${rs.repairCount!==1?'s':''} · ${secs}s · ${tokens} tokens`);
+      lines.push(`${rs.repairCount} repair${rs.repairCount!==1?'s':''} · ${(rs.totalMs/1000).toFixed(1)}s · ${((rs.promptTokens||0)+(rs.completionTokens||0)).toLocaleString()} tokens`);
     }
     statEl.innerHTML=lines.join('<br>');
   }
@@ -987,10 +1033,10 @@ function buildPath(){
       return lessonItSet.has(contentSlug);
     }).length;
     const hasFlags=lessonFlagCount>0&&APP.info.canGenerate;
-    const diffBadge=`<span class="diff-badge d${diff}">${DIFF_SHORT[diff]||''}</span>`;
+    const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT[diff]||''}</span>`:'';
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
-        <div class="node-title">Lesson ${L.id}: ${L.title} ${i===0?diffBadge:''}</div>
+        <div class="node-title">Lesson ${L.id}: ${L.title} ${diffBadge}</div>
         <div class="node-desc">${L.desc}</div>
         ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}      </div>
       ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
@@ -999,8 +1045,9 @@ function buildPath(){
   });
   const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
   const btn=document.getElementById('start-btn');
-  if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=goHome; }
+  if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=()=>goLandingClean(); }
   else{ btn.textContent='Start lesson '+(nextIdx+1); btn.onclick=()=>startLesson(nextIdx); }
+  renderRatingPanel(d, done);
 
   // Update flag summary strip
   const topicSlugAll=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
