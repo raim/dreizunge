@@ -3213,7 +3213,13 @@
           }
         ]
       },
-      "generatedAt": "2026-04-28T18:21:56.998Z"
+      "generatedAt": "2026-04-28T18:21:56.998Z",
+      "ratings": {
+        "difficulty": 1,
+        "fun": 2,
+        "coherence": 3
+      },
+      "updatedAt": "2026-04-30T14:13:41.824Z"
     },
     {
       "topic": "meeting women",
@@ -7549,7 +7555,14 @@
           }
         ]
       },
-      "generatedAt": "2026-04-29T15:38:56.865Z"
+      "generatedAt": "2026-04-29T15:38:56.865Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 73566,
+        "promptTokens": 703,
+        "completionTokens": 95
+      },
+      "updatedAt": "2026-04-30T17:04:43.178Z"
     },
     {
       "topic": "im wald spazieren",
@@ -11615,6 +11628,38 @@
       "words": [],
       "flaggedAt": "2026-04-30T12:01:13.595Z",
       "comment": "wrong answer"
+    },
+    "me_and_my_sister_in_rome:listen_mcq:gelateria": {
+      "topic": "me and my sister in rome",
+      "type": "listen_mcq",
+      "it": "gelateria",
+      "en": "",
+      "correct": "ice cream shop",
+      "choices": [
+        "chocolate chip ice cream",
+        "snack",
+        "ice cream shop",
+        "spatially"
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-30T14:11:43.379Z",
+      "comment": "italian in german lesson"
+    },
+    "me_and_my_sister_in_rome:read_translate:Wir_setzten_uns_auf_eine_Bank_und_aßen_u": {
+      "topic": "me and my sister in rome",
+      "type": "read_translate",
+      "it": "Wir setzten uns auf eine Bank und aßen unseren Spuntino.",
+      "en": "We sat on a bench and enjoyed our snack.",
+      "correct": "We sat on a bench and enjoyed our snack.",
+      "choices": [
+        "We sat on a bench and enjoyed our snack.",
+        "Maria chose the classic stracciatella, I went for the more adventurous pistachio.",
+        "We stopped at a small gelateria and ordered two scoops of creamy gelato.",
+        "Maria and I strolled spatially through Via del Corso."
+      ],
+      "words": [],
+      "flaggedAt": "2026-04-30T14:12:18.733Z",
+      "comment": "italian in geman sentence"
     }
   }
 }
