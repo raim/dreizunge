@@ -4,355 +4,422 @@
       "topic": "italian recipes from nonna",
       "topicEmoji": "🇮🇹",
       "lang": "it",
-      "difficulty": 1,
-      "story": "Nella tranquilla piazza del paese, sotto il portico di pietra, si trovava la bottega di Nonna Rosa. Era un luogo di vita, dove l'odore di pane appena sfornato e di zucchero filato si mescolava con quello di erbe aromatiche e spezie. Nonna Rosa era famosa per le sue ricette tradizionali, passate di generazione in generazione. Ogni mattina, quando il sole si alzava, la sua voce melodiosa risuonava per le vie del paese: \"Venite, venite, chi vuole imparare a cucinare come si deve!\"\n\nUn giorno, una giovane madre, Maria, si avvicinò alla bottega. Era incinta e voleva imparare a preparare i piatti che avrebbe voluto cucinare per il suo bambino. Nonna Rosa la accolse con un sorriso e la invitò a entrare. \"Vieni, Maria, entra e siediti. Oggi ti insegnerò a preparare il dolce più amato in casa nostra, il panettone.\"\n\nNonna Rosa prese un grande cesto di frutta secca e lo posizionò sul tavolo. \"Guarda, Maria, queste sono le nostre amiche, le mandorle, le noci, i peperoni secchi. Ognuna ha il suo ruolo, proprio come in una famiglia.\" Mentre parlava, iniziò a mescolare le ingredienti con un cucchiaio di legno, spiegando ogni passo con pazienza. \"Prima prepariamo la panna, poi la farina, e infine le uova. Ogni ingrediente deve essere ben mescolato, altrimenti il panettone non sarà dolce e morbido.\"\n\nMaria seguì attentamente ogni movimento di Nonna Rosa, imparando a preparare la pasta candida e poi a aggiungere le uova. \"Non è difficile, solo un po' di pazienza,\" disse Nonna Rosa, sorridendo. \"E ricorda, la vera magia del panettone è nella sua attesa. Dobbiamo lasciarlo fermentare per giorni, così può acquisire tutta la sua dolcezza.\"\n\nQuando il panettone fu pronto, Nonna Rosa lo mise in forno e lo lasciò cuocere. Mentre aspettavano, raccontò a Maria storie di quando era piccola, di come suo nonno le insegnava a cucinare. \"Le ricette non sono solo ingredienti, Maria, sono ricordi. Ogni volta che prepari il panettone, ricorderai me e il tuo bambino.\"\n\nQuando il dolce fu pronto, Nonna Rosa lo tagliò in fette e le offrì una tazza di caffè. \"Ecco, prova,\" disse, porgendole una fetta calda. \"Questo panettone è fatto con il cuore, come ogni ricetta che mi hai insegnato.\"\n\nMaria assaporò il dolce e sentì un calore inaspettato. \"Nonna Rosa, è meraviglioso. Grazie per avermi insegnato a cucinare come te.\"\n\nNonna Rosa rise, felice. \"Non c'è di che, mia cara. Ora tu sei una cuoca, e questo è il vero regalo.\"",
-      "storyLang": "it",
+      "difficulty": 2,
+      "story": "In the cozy kitchen of Nonna's house, the air was thick with the aroma of simmering sauce and the gentle clatter of pots and pans. The walls were lined with shelves, each one holding a collection of old, worn cookbooks and jars of homemade spices. Nonna, with her silver hair tied back and her hands stained with the colors of tomatoes and basil, was preparing a traditional Italian recipe that had been passed down through generations.\n\n\"Come here, child,\" Nonna called, her voice warm and inviting. \"Let me show you how to make my grandmother's famous ragù alla Bolognese.\"\n\nShe led me to the large wooden table, where a cutting board and a sharp knife awaited. \"First, we need to prepare the onions and carrots. These are the heart of the sauce, so they must be finely chopped.\" She demonstrated, her movements precise and deliberate. \"Remember, the key to a good ragù is patience. The flavors need time to meld together.\"\n\nAs we worked, Nonna began to narrate the history of the recipe. \"This ragù,\" she said, \"is a labor of love. It's slow-cooked for hours, until the meat is tender and the sauce is rich and deep. It's a tradition that my own grandmother taught me, and now I teach you.\"\n\nWe moved on to the meat, a selection of ground beef and pork that Nonna had carefully chosen. She showed me how to brown the meat in a large pot, stirring it gently to ensure it cooked evenly. \"The color is important,\" she explained. \"A good ragù should have a beautiful, rich brown color.\"\n\nNext, we added the onions and carrots, along with a generous splash of red wine. \"This helps to deglaze the pan and extract the flavors from the meat,\" Nonna said. \"It's a crucial step that adds depth to the sauce.\"\n\nAs the sauce simmered, Nonna shared stories of her childhood, of long summer days spent in the countryside, and the warmth of family gatherings around the table. \"Every time we make this ragù, it reminds me of home,\" she said, her eyes twinkling with memories. \"It's not just a recipe; it's a connection to the past.\"\n\nFinally, the ragù was ready to be served over a bed of al dente pasta. Nonna ladled the rich, savory sauce over the pasta, and we sat down to enjoy the meal. The flavors were a symphony of sweet and savory, a perfect blend of tradition and love. As we ate, Nonna smiled, her eyes filled with pride. \"This is what Nonna's recipes are all about,\" she said. \"Passing on the love and the history through every bite.\"",
+      "storyLang": "en",
       "lessons": [
         {
           "id": 1,
-          "title": "Italian Recipes from Nonna",
-          "desc": "Learn basic Italian kitchen vocabulary",
-          "icon": "🍝",
+          "title": "Italian recipes from nonna",
+          "desc": "cooking, traditional dishes, family recipes",
+          "icon": "🔥",
           "vocab": [
             {
-              "it": "panna",
-              "en": "cream",
-              "pron": "PAN-nah"
+              "it": "ragù alla Bolognese",
+              "en": "Bolognese sauce",
+              "pron": "RAH-goo ah-LAH-boh-lee-NAY-say"
             },
             {
-              "it": "zucchero",
-              "en": "sugar",
-              "pron": "ZU-khe-ro"
+              "it": "aroma",
+              "en": "scent",
+              "pron": "AH-rah-moh"
             },
             {
-              "it": "erbe aromatiche",
-              "en": "aromatic herbs",
-              "pron": "air-BEH ah-rag-TOH-rik HEH-keh"
+              "it": "pots and pans",
+              "en": "pots and pans",
+              "pron": "POHTS AHN PAHNS"
             },
             {
-              "it": "spezie",
+              "it": "shelves",
+              "en": "shelves",
+              "pron": "SHEL-feez"
+            },
+            {
+              "it": "spices",
               "en": "spices",
-              "pron": "SPAY-zee-eh"
+              "pron": "SPIH-seez"
             },
             {
-              "it": "pane",
-              "en": "bread",
-              "pron": "PAH-neh"
+              "it": "silver",
+              "en": "silver",
+              "pron": "SIL-ee-ver"
             },
             {
-              "it": "solfetto",
-              "en": "sunrise",
-              "pron": "sol-FET-to"
+              "it": "stained",
+              "en": "stained",
+              "pron": "STAYN-ed"
             },
             {
-              "it": "bottega",
-              "en": "shop",
-              "pron": "boh-TEH-jah"
-            },
-            {
-              "it": "piatti",
-              "en": "dishes",
-              "pron": "pee-AHT-tee"
+              "it": "generations",
+              "en": "generations",
+              "pron": "je-NEH-ra-shuns"
             }
           ],
           "sentences": [
             {
-              "it": "Solfetto si alza.",
-              "en": "Sunrise rises.",
+              "it": "L'aria era densa di aromi di sugo in ebollizione.",
+              "en": "The air was thick with the scent of simmering sauce.",
               "words": [
-                "Solfetto",
-                "si",
-                "alza."
+                "L'aria",
+                "era",
+                "densa",
+                "di",
+                "aromi",
+                "di",
+                "sugo",
+                "in",
+                "ebollizione."
               ]
             },
             {
-              "it": "Nonna Rosa sforna pane.",
-              "en": "Nonna Rosa bakes bread.",
+              "it": "Nonna teneva i suoi ricordi cucinati tra le sue mani.",
+              "en": "Nonna kept her memories cooked in her hands.",
               "words": [
                 "Nonna",
-                "Rosa",
-                "sforna",
-                "pane."
+                "teneva",
+                "i",
+                "suoi",
+                "ricordi",
+                "cucinati",
+                "tra",
+                "le",
+                "sue",
+                "mani."
               ]
             },
             {
-              "it": "Zucchero filato si mescola.",
-              "en": "Candied sugar mixes.",
+              "it": "Con un coltello affilato, tagliò le cipolle e le carote.",
+              "en": "With a sharp knife, she chopped the onions and carrots.",
               "words": [
-                "Zucchero",
-                "filato",
-                "si",
-                "mescola."
-              ]
-            },
-            {
-              "it": "Erbe aromatiche e spezie.",
-              "en": "Aromatic herbs and spices.",
-              "words": [
-                "Erbe",
-                "aromatiche",
+                "Con",
+                "un",
+                "coltello",
+                "affilato,",
+                "tagliò",
+                "le",
+                "cipolle",
                 "e",
-                "spezie."
+                "le",
+                "carote."
               ]
             },
             {
-              "it": "Maria entra e siede.",
-              "en": "Maria enters and sits.",
+              "it": "Questo è il cuore del sugo, quindi devono essere finemente tagliati.",
+              "en": "This is the heart of the sauce, so they must be finely chopped.",
               "words": [
-                "Maria",
-                "entra",
-                "e",
-                "siede."
+                "Questo",
+                "è",
+                "il",
+                "cuore",
+                "del",
+                "sugo,",
+                "quindi",
+                "devono",
+                "essere",
+                "finemente",
+                "tagliati."
+              ]
+            },
+            {
+              "it": "Nonna mi condusse alla grande tavola di legno.",
+              "en": "Nonna led me to the large wooden table.",
+              "words": [
+                "Nonna",
+                "mi",
+                "condusse",
+                "alla",
+                "grande",
+                "tavola",
+                "di",
+                "legno."
               ]
             }
           ]
         },
         {
           "id": 2,
-          "title": "Italian Recipes from Nonna",
-          "desc": "Learn traditional Italian dishes and Nonna Rosa's wisdom",
-          "icon": "🍝",
+          "title": "Italian recipes from nonna",
+          "desc": "cooking, traditional recipes, family",
+          "icon": "🔥",
           "vocab": [
             {
-              "it": "sfoglia",
-              "en": "dough sheet",
-              "pron": "sfo-GHIA"
-            },
-            {
-              "it": "marmellata",
-              "en": "jam",
-              "pron": "mar-ME-la-ta"
-            },
-            {
-              "it": "cucchiaio",
-              "en": "spoon",
-              "pron": "ku-TCHIA-o"
-            },
-            {
-              "it": "schiacciata",
-              "en": "flatbread",
-              "pron": "skia-TCHA-ta"
+              "it": "tagliatelle",
+              "en": "wide egg noodles",
+              "pron": "tag-lee-a-tel-le"
             },
             {
               "it": "sugo",
               "en": "sauce",
-              "pron": "SU-go"
+              "pron": "soo-go"
             },
             {
-              "it": "schiacciarla",
-              "en": "to flatten it",
-              "pron": "skia-TCHA-ra-la"
+              "it": "casseruola",
+              "en": "large pot",
+              "pron": "kas-ser-roo-la"
             },
             {
-              "it": "saporita",
-              "en": "flavorful",
-              "pron": "sap-o-RI-ta"
+              "it": "sugo di pomodoro",
+              "en": "tomato sauce",
+              "pron": "soo-go di po-mo-dor-o"
             },
             {
-              "it": "schiacciatina",
-              "en": "flatbread snack",
-              "pron": "skia-TCHA-ti-na"
+              "it": "tamburello",
+              "en": "rolling pin",
+              "pron": "tan-bu-rell-o"
+            },
+            {
+              "it": "sugo al pomodoro",
+              "en": "tomato sauce",
+              "pron": "soo-go al po-mo-dor-o"
+            },
+            {
+              "it": "sugo di carota",
+              "en": "carrot sauce",
+              "pron": "soo-go di car-o-ta"
+            },
+            {
+              "it": "sugo di zucchine",
+              "en": "zucchini sauce",
+              "pron": "soo-go di zu-cho-nee"
             }
           ],
           "sentences": [
             {
-              "it": "Sfoglia la pasta fina come un velo.",
-              "en": "Roll out the dough thin like a veil.",
+              "it": "Mischia il sugo di pomodoro con il sugo.",
+              "en": "Mix the tomato sauce with the sauce.",
               "words": [
-                "Sfoglia",
-                "la",
-                "pasta",
-                "fina",
-                "come",
-                "un",
-                "velo."
-              ]
-            },
-            {
-              "it": "Metti la marmellata sull'ala del dolce.",
-              "en": "Put the jam on the wing of the dessert.",
-              "words": [
-                "Metti",
-                "la",
-                "marmellata",
-                "sull'ala",
-                "del",
-                "dolce."
-              ]
-            },
-            {
-              "it": "Con il cucchiaio, schiacciati la superficie.",
-              "en": "With the spoon, flatten the surface.",
-              "words": [
-                "Con",
+                "Mischia",
                 "il",
-                "cucchiaio,",
-                "schiacciati",
-                "la",
-                "superficie."
-              ]
-            },
-            {
-              "it": "Il sugo deve essere saporito.",
-              "en": "The sauce must be flavorful.",
-              "words": [
-                "Il",
                 "sugo",
-                "deve",
-                "essere",
-                "saporito."
+                "di",
+                "pomodoro",
+                "con",
+                "il",
+                "sugo."
               ]
             },
             {
-              "it": "Schiacciatina, dolce tradizionale di Nonna Rosa.",
-              "en": "Schiacciatina, Nonna Rosa's traditional sweet snack.",
+              "it": "Taglia la cipolla con il tamburello.",
+              "en": "Chop the onion with the rolling pin.",
               "words": [
-                "Schiacciatina,",
-                "dolce",
-                "tradizionale",
+                "Taglia",
+                "la",
+                "cipolla",
+                "con",
+                "il",
+                "tamburello."
+              ]
+            },
+            {
+              "it": "Versa il sugo di carota nella casseruola.",
+              "en": "Pour the carrot sauce into the large pot.",
+              "words": [
+                "Versa",
+                "il",
+                "sugo",
                 "di",
-                "Nonna",
-                "Rosa."
+                "carota",
+                "nella",
+                "casseruola."
+              ]
+            },
+            {
+              "it": "Aggiungi il sugo di zucchine al sugo.",
+              "en": "Add the zucchini sauce to the sauce.",
+              "words": [
+                "Aggiungi",
+                "il",
+                "sugo",
+                "di",
+                "zucchine",
+                "al",
+                "sugo."
+              ]
+            },
+            {
+              "it": "Sovrappuoi il sugo di pomodoro con il sugo.",
+              "en": "Layer the tomato sauce over the sauce.",
+              "words": [
+                "Sovrappuoi",
+                "il",
+                "sugo",
+                "di",
+                "pomodoro",
+                "con",
+                "il",
+                "sugo."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "Italian Recipes from Nonna",
-          "desc": "Learn traditional Italian desserts and cooking techniques",
-          "icon": "🍰",
+          "title": "Italian recipes from nonna",
+          "desc": "cooking, traditional recipes, family",
+          "icon": "🔥",
           "vocab": [
             {
-              "it": "sfoglia",
-              "en": "dough sheet",
-              "pron": "sfo-GHIA"
+              "it": "tagliatelle",
+              "en": "wide egg noodles",
+              "pron": "TAH-lee-a-tel-le"
             },
             {
-              "it": "marmellata",
-              "en": "jam",
-              "pron": "mar-ME-LA-ta"
-            },
-            {
-              "it": "cucchiaio",
-              "en": "spoon",
-              "pron": "ku-CHIA-o"
-            },
-            {
-              "it": "schiacciata",
-              "en": "flatbread",
-              "pron": "schia-CCHIA-ta"
-            },
-            {
-              "it": "saporita",
-              "en": "flavorful",
-              "pron": "sop-A-ri-ta"
-            },
-            {
-              "it": "schiacciatina",
-              "en": "flatbread snack",
-              "pron": "schia-CCHIA-ti-na"
-            },
-            {
-              "it": "schiacciare",
-              "en": "to flatten",
-              "pron": "schia-CCHIA-re"
+              "it": "casseruola",
+              "en": "large pot",
+              "pron": "ka-sse-ROO-o-la"
             },
             {
               "it": "sugo",
               "en": "sauce",
-              "pron": "SU-go"
+              "pron": "SOO-go"
+            },
+            {
+              "it": "tamburello",
+              "en": "rolling pin",
+              "pron": "tam-bo-REL-lo"
+            },
+            {
+              "it": "sugo di pomodoro",
+              "en": "tomato sauce",
+              "pron": "SOO-go di po-mo-DOR-o"
+            },
+            {
+              "it": "sugo di carota",
+              "en": "carrot sauce",
+              "pron": "SOO-go di car-O-ta"
+            },
+            {
+              "it": "sugo di zucchine",
+              "en": "zucchini sauce",
+              "pron": "SOO-go di zu-CHI-ne"
+            },
+            {
+              "it": "sugo al pomodoro",
+              "en": "tomato sauce",
+              "pron": "SOO-go al po-mo-DOR-o"
             }
           ],
           "sentences": [
             {
-              "it": "Schiacciare la sfoglia.",
-              "en": "To flatten the dough sheet.",
+              "it": "Mischia il sugo di pomodoro con il sugo di carota.",
+              "en": "Mix the tomato sauce with the carrot sauce.",
               "words": [
-                "Schiacciare",
-                "la",
-                "sfoglia."
-              ]
-            },
-            {
-              "it": "Mettete la marmellata sopra il dolce.",
-              "en": "Put the jam on top of the dessert.",
-              "words": [
-                "Mettete",
-                "la",
-                "marmellata",
-                "sopra",
+                "Mischia",
                 "il",
-                "dolce."
+                "sugo",
+                "di",
+                "pomodoro",
+                "con",
+                "il",
+                "sugo",
+                "di",
+                "carota."
               ]
             },
             {
-              "it": "Con un cucchiaio, distribuite il sugo.",
-              "en": "With a spoon, distribute the sauce.",
+              "it": "Nonna aggiunse un po' di sugo di zucchine per dare un sapore fresco.",
+              "en": "Nonna added some zucchini sauce to give a fresh taste.",
+              "words": [
+                "Nonna",
+                "aggiunse",
+                "un",
+                "po'",
+                "di",
+                "sugo",
+                "di",
+                "zucchine",
+                "per",
+                "dare",
+                "un",
+                "sapore",
+                "fresco."
+              ]
+            },
+            {
+              "it": "Con il tamburello, stendi la pasta tagliatelle sottile.",
+              "en": "With the rolling pin, stretch the tagliatelle pasta thin.",
               "words": [
                 "Con",
-                "un",
-                "cucchiaio,",
-                "distribuite",
                 "il",
-                "sugo."
+                "tamburello,",
+                "stendi",
+                "la",
+                "pasta",
+                "tagliatelle",
+                "sottile."
               ]
             },
             {
-              "it": "La sfoglia deve essere saporita.",
-              "en": "The dough sheet should be flavorful.",
+              "it": "Il casseruola era pieno di sugo, pronto per il tagliatelle.",
+              "en": "The large pot was full of sauce, ready for the tagliatelle.",
               "words": [
-                "La",
-                "sfoglia",
-                "deve",
-                "essere",
-                "saporita."
-              ]
-            },
-            {
-              "it": "Preparate una schiacciatina per il pranzo.",
-              "en": "Prepare a flatbread snack for lunch.",
-              "words": [
-                "Preparate",
-                "una",
-                "schiacciatina",
+                "Il",
+                "casseruola",
+                "era",
+                "pieno",
+                "di",
+                "sugo,",
+                "pronto",
                 "per",
                 "il",
-                "pranzo."
+                "tagliatelle."
+              ]
+            },
+            {
+              "it": "Nonna versò il sugo al pomodoro su una teglia per il ragù.",
+              "en": "Nonna poured the tomato sauce into a baking dish for the ragù.",
+              "words": [
+                "Nonna",
+                "versò",
+                "il",
+                "sugo",
+                "al",
+                "pomodoro",
+                "su",
+                "una",
+                "teglia",
+                "per",
+                "il",
+                "ragù."
               ]
             }
           ]
         }
       ],
       "generationStats": {
-        "totalMs": 869440,
+        "totalMs": 1062563,
         "backend": "ollama",
         "model": "qwen2.5:7b",
-        "totalPromptTokens": 1992,
-        "totalCompletionTokens": 1846,
+        "totalPromptTokens": 1780,
+        "totalCompletionTokens": 1900,
         "lessons": [
           {
             "lessonNum": 1,
-            "ms": 196125,
-            "promptTokens": 528,
-            "completionTokens": 315
+            "ms": 139342,
+            "promptTokens": 456,
+            "completionTokens": 415
           },
           {
             "lessonNum": 2,
-            "ms": 202759,
-            "promptTokens": 593,
-            "completionTokens": 378
+            "ms": 214049,
+            "promptTokens": 523,
+            "completionTokens": 402
           },
           {
             "lessonNum": 3,
-            "ms": 203053,
-            "promptTokens": 655,
-            "completionTokens": 360
+            "ms": 261182,
+            "promptTokens": 595,
+            "completionTokens": 478
           }
         ]
       },
       "generatedAt": "2026-05-02T12:52:40.826Z",
-      "updatedAt": "2026-05-02T12:52:40.826Z"
+      "updatedAt": "2026-05-02T15:03:18.930Z",
+      "ratings": {
+        "difficulty": 2,
+        "fun": 2,
+        "coherence": 1
+      }
     },
     {
       "topic": "walking on the mosel",
@@ -11667,39 +11734,85 @@
       "flaggedAt": "2026-05-02T11:39:59.170Z",
       "comment": "IM PARK"
     },
-    "italian_recipes_from_nonna:mcq_en_it:solfetto": {
+    "italian_recipes_from_nonna:listen_mcq:spices": {
       "topic": "italian recipes from nonna",
-      "type": "mcq_en_it",
-      "it": "solfetto",
-      "en": "sunrise",
-      "correct": "solfetto",
+      "type": "listen_mcq",
+      "it": "spices",
+      "en": "",
+      "correct": "spices",
       "choices": [
-        "panna",
-        "pane",
-        "spezie",
-        "solfetto"
+        "spices",
+        "silver",
+        "stained",
+        "shelves"
       ],
       "words": [],
-      "flaggedAt": "2026-05-02T12:55:04.137Z",
-      "comment": "Wrong word"
+      "flaggedAt": "2026-05-02T14:54:58.313Z",
+      "comment": "both a&q in english"
     },
-    "italian_recipes_from_nonna:order:Zucchero_filato_si_mescola.": {
+    "italian_recipes_from_nonna:listen_mcq:shelves": {
       "topic": "italian recipes from nonna",
-      "type": "order",
-      "it": "Zucchero filato si mescola.",
-      "en": "Candied sugar mixes.",
-      "correct": "Zucchero filato si mescola.",
-      "choices": [],
-      "words": [
-        "Zucchero",
-        "mescola.",
-        "si",
-        "filato",
-        "entra",
-        "Erbe"
+      "type": "listen_mcq",
+      "it": "shelves",
+      "en": "",
+      "correct": "shelves",
+      "choices": [
+        "shelves",
+        "pots and pans",
+        "silver",
+        "scent"
       ],
-      "flaggedAt": "2026-05-02T12:57:13.140Z",
-      "comment": "Wrong english, cotton candy"
+      "words": [],
+      "flaggedAt": "2026-05-02T14:57:06.534Z",
+      "comment": "both q&a english"
+    },
+    "italian_recipes_from_nonna:mcq_it_en:stained": {
+      "topic": "italian recipes from nonna",
+      "type": "mcq_it_en",
+      "it": "stained",
+      "en": "stained",
+      "correct": "stained",
+      "choices": [
+        "wide egg noodles",
+        "zucchini sauce",
+        "stained",
+        "tomato sauce"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-02T14:59:22.068Z",
+      "comment": "both q&a english"
+    },
+    "italian_recipes_from_nonna:mcq_it_en:silver": {
+      "topic": "italian recipes from nonna",
+      "type": "mcq_it_en",
+      "it": "silver",
+      "en": "silver",
+      "correct": "silver",
+      "choices": [
+        "sauce",
+        "rolling pin",
+        "silver",
+        "large pot"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-02T14:59:33.805Z",
+      "comment": "both q&a english"
+    },
+    "italian_recipes_from_nonna:mcq_it_en:pots_and_pans": {
+      "topic": "italian recipes from nonna",
+      "type": "mcq_it_en",
+      "it": "pots and pans",
+      "en": "pots and pans",
+      "correct": "pots and pans",
+      "choices": [
+        "carrot sauce",
+        "sauce",
+        "pots and pans",
+        "zucchini sauce"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-02T14:59:57.467Z",
+      "comment": "both q&a english"
     }
   }
 }

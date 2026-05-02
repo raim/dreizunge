@@ -74,54 +74,22 @@ const lessonsSerialized = JSON.stringify(lessonsData.lessons, null, 2);
 
 const staticFunctions = `
 // ═══════════════════════════════════════════════════════════════════════
-//  STATIC MODE — no server, all lessons baked in at build time
+//  STATIC MODE — no server, all lessons baked in at build time.
+//  The lesson catalogue is STATIC_LESSONS only — localStorage is never
+//  used for lessons (only for progress/XP/flags as usual).
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = ${lessonsSerialized};
-
-// localStorage
-const LS_SAVED = 'imp_static_saved';
-
-function staticGetSaved() {
-  try { return JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); }
-  catch(_) { return []; }
-}
-function staticPutSaved(arr) { localStorage.setItem(LS_SAVED, JSON.stringify(arr)); }
-function staticUpsert(data) {
-  const arr = staticGetSaved();
-  const k = data.topic.toLowerCase();
-  const i = arr.findIndex(l => l.topic.toLowerCase() === k);
-  const entry = { ...data, generatedAt: data.generatedAt || new Date().toISOString() };
-  if (i >= 0) arr[i] = entry; else arr.unshift(entry);
-  staticPutSaved(arr);
-}
-
-// Seed built-in lessons on first visit
-(function seedBuiltins() {
-  const arr = staticGetSaved();
-
-  for (const l of STATIC_LESSONS) {
-    const k = l.topic.toLowerCase();
-    const i = arr.findIndex(x => x.topic.toLowerCase() === k);
-
-    if (i >= 0) {
-      // 🔁 overwrite stale entry
-      arr[i] = l;
-    } else {
-      arr.unshift(l);
-    }
-  }
-
-  staticPutSaved(arr);
-})();
 
 // ── Init ──────────────────────────────────────────────────────────────
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
   selectLang(APP.lang);
-  restoreDiffSlider();
+  restoreDiffSelect();
   renderPill();
   loadSavedList();
+  const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
+  if (hashTopic) loadSaved(hashTopic);
 }
 
 function renderPill() {
@@ -139,11 +107,9 @@ function renderPill() {
   note.textContent = '📦 Static version — select a topic below to start';
 }
 
-// ── Saved list with language filter ───────────────────────────────────
+// ── Lesson list — reads directly from baked-in STATIC_LESSONS ─────────
 async function loadSavedList() {
-  const saved = staticGetSaved();
-
-  // Build language filter buttons if multiple languages present
+  const saved = STATIC_LESSONS;
   const langs = [...new Set(saved.map(s => s.lang || 'it'))].sort();
   const filterEl = document.getElementById('lib-filter');
   if (filterEl && langs.length > 1) {
@@ -182,18 +148,18 @@ function setLibFilter(lang) { APP.libFilter = lang; loadSavedList(); }
 
 async function loadSaved(topic) {
   const dec = decodeURIComponent(topic);
-  const found = staticGetSaved().find(l => l.topic.toLowerCase() === dec.toLowerCase());
+  const found = STATIC_LESSONS.find(l => l.topic.toLowerCase() === dec.toLowerCase());
   if (!found) { alert('Lesson not found.'); return; }
   APP.lessonData = found;
   goHome();
 }
 
-function  setTopic(t) { document.getElementById('topic-input').value = t; }
+function setTopic(t) { document.getElementById('topic-input').value = t; }
 `;
 
 // Stubs injected AFTER part2 so they override engine versions
 const staticOverrides = [
-  '// Disabled in static mode — overrides engine versions',
+  '// ── Disabled in static mode ───────────────────────────────────────',
   'async function syncFlagsFromServer() {}',
   'async function pushFlagToServer()   {}',
   'async function deleteSaved()        {}',
@@ -202,20 +168,13 @@ const staticOverrides = [
   'async function doGenerate()         {}',
   'async function repairLesson()       {}',
   'async function repairFromLesson()   {}',
+  'async function repairAll()          {}',
+  'async function submitRating()       {}',
   '',
-  '// UI helpers — work fully in static mode',
+  '// UI helpers',
   'function autoResizeTopic(el){ el.style.height=\'auto\'; el.style.height=Math.min(el.scrollHeight,160)+\'px\'; }',
-  'function onDiffSlider(v){',
-  '  APP.difficulty=parseInt(v,10); saveDifficulty();',
-  '  const el=document.getElementById(\'diff-val\');',
-  '  if(el){ el.textContent=DIFF_SHORT[APP.difficulty]||v; el.className=\'diff-val d\'+APP.difficulty; }',
-  '}',
-  'function restoreDiffSlider(){',
-  '  const sl=document.getElementById(\'diff-slider\'); if(sl) sl.value=APP.difficulty;',
-  '  onDiffSlider(APP.difficulty);',
-  '}',
   '',
-  '// Story — DOM-only functions work in static mode',
+  '// Story — DOM-only, work in static mode',
   'function toggleStory(){',
   '  const body=document.getElementById(\'story-body\');',
   '  const arrow=document.getElementById(\'story-arrow\');',
@@ -223,35 +182,19 @@ const staticOverrides = [
   '  const open=body.classList.toggle(\'open\');',
   '  if(arrow) arrow.classList.toggle(\'open\',open);',
   '}',
-  'function toggleStoryRepair(){',
-  '  const wrap=document.getElementById(\'story-repair-wrap\');',
-  '  if(wrap) wrap.classList.toggle(\'open\');',
-  '}',
+  'function toggleStoryRepair(){}',
+  'function doRepairStory(){ alert(\'Story repair requires the live server.\'); }',
+  'function speakStory(){ const d=APP.lessonData; if(d&&d.story) speak(d.story); }',
   'function renderStoryText(d){',
   '  const body=document.getElementById(\'story-body\'); if(!body) return;',
-  '  const paras=(d.story||\'\').split(/\\n\\n+/).map(p=>\'<p>\'+p.replace(/\\n/g,\'<br>\')+\'</p>\').join(\'\');',
-  '  let html=`<div id="story-orig">${paras}</div>`;',
-  '  if(d.storyTranslation){',
-  '    const tp=d.storyTranslation.split(/\\n\\n+/).map(p=>\'<p>\'+p.replace(/\\n/g,\'<br>\')+\'</p>\').join(\'\');',
-  '    html+=`<div class="story-translation" id="story-trans">${tp}</div>`;',
-  '  } else {',
-  '    html+=\'<div class="story-translation" id="story-trans" style="display:none"></div>\';',
-  '  }',
-  '  body.innerHTML=html;',
+  '  body.innerHTML=(d.story||\'\').split(/\\n\\n+/).map(p=>\'<p>\'+p.replace(/\\n/g,\'<br>\')+\'</p>\').join(\'\');',
   '}',
-  'function speakStory(){ const d=APP.lessonData; if(d&&d.story) speak(d.story); }',
-  'function toggleStoryTranslation(){',
-  '  const d=APP.lessonData; if(!d) return;',
-  '  if(d.storyTranslation){',
-  '    const t=document.getElementById(\'story-trans\');',
-  '    if(t){ t.style.display=t.style.display===\'none\'?\'\': \'none\'; }',
-  '    const body=document.getElementById(\'story-body\');',
-  '    if(body&&!body.classList.contains(\'open\')){ body.classList.add(\'open\'); const a=document.getElementById(\'story-arrow\'); if(a) a.classList.add(\'open\'); }',
-  '    return;',
-  '  }',
-  '  alert(\'Story translation requires the live server.\');',
-  '}',
-  'function doRepairStory(){ alert(\'Story repair requires the live server.\'); }',
+  '',
+  '// Chat console — disabled in static mode',
+  'function toggleChat(){}',
+  'function autoResizeChat(){}',
+  'function clearChat(){}',
+  'async function sendChat(){ alert(\'The model console requires the live server.\'); }',
 ].join('\n');
 
 // ── Assemble ──────────────────────────────────────────────────────────

@@ -198,9 +198,13 @@ function salvageArray(raw) {
 // ── LLM backends ──────────────────────────────────────────────────────
 function callAnthropicRaw(system, userMsg, maxTokens) {
   return new Promise((resolve, reject) => {
+    // userMsg can be a string (single-turn) or [{role,content}] array (multi-turn)
+    const messages = Array.isArray(userMsg)
+      ? userMsg
+      : [{ role: 'user', content: userMsg }];
     const body = JSON.stringify({
       model: CLAUDE_MODEL, max_tokens: maxTokens || 1024, system,
-      messages: [{ role: 'user', content: userMsg }]
+      messages
     });
     const req = https.request({
       hostname: 'api.anthropic.com', path: '/v1/messages', method: 'POST',
@@ -763,6 +767,55 @@ async function boot() {
       saved.ratings = { difficulty: ratings.difficulty, fun: ratings.fun, coherence: ratings.coherence };
       upsert(saved);
       return json(res, 200, { ok: true });
+    }
+
+    // ── Chat / prompt console ─────────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/chat') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { messages, topic } = body;
+      if (!Array.isArray(messages) || messages.length === 0)
+        return json(res, 400, { error: 'Missing messages' });
+      if (active === 'none')
+        return json(res, 503, { error: 'No LLM backend available.' });
+      // System prompt: role + inject current lesson as context
+      const sysParts = [
+        'You are a language lesson designer assistant for Dreizunge, a Duolingo-style vocabulary app.',
+        'The user is talking to you directly to inspect, critique, or tune the lesson content.',
+        'Be concise and specific. When suggesting changes, show concrete examples.',
+      ];
+      if (topic) {
+        const saved = findSaved(topic);
+        if (saved) {
+          sysParts.push('\n--- CURRENT LESSON DATA ---');
+          sysParts.push(`Topic: ${saved.topic} | Language: ${langName(saved.lang||'it')} | Difficulty: ${saved.difficulty||2}`);
+          if (saved.story) sysParts.push(`\nStory (${saved.storyLang||'en'}):\n${saved.story.slice(0,600)}…`);
+          saved.lessons.forEach(L => {
+            sysParts.push(`\nLesson ${L.id} — ${L.title}:`);
+            sysParts.push('Vocab: ' + L.vocab.map(v=>`${v.it} (${v.en})`).join(', '));
+            sysParts.push('Sentences: ' + L.sentences.map(s=>s.it).join(' | '));
+          });
+          sysParts.push('--- END LESSON DATA ---');
+        }
+      }
+      const systemPrompt = sysParts.join('\n');
+      try {
+        let reply;
+        if (active === 'anthropic') {
+          // Anthropic supports multi-turn messages natively
+          const r = await callAnthropicRaw(systemPrompt, messages, 1024);
+          reply = r.text.trim();
+        } else {
+          // Ollama: flatten history into a single prompt string
+          const flat = messages.map(m=>(m.role==='user'?'User':'Assistant')+': '+m.content).join('\n\n');
+          const r = await callOllamaRaw(systemPrompt, flat, 1024);
+          reply = r.text.trim();
+        }
+        return json(res, 200, { reply });
+      } catch(e) {
+        return json(res, 500, { error: e.message });
+      }
     }
 
     res.writeHead(404); res.end('Not found');

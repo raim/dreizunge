@@ -274,6 +274,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-repair-btn:disabled{opacity:.5;cursor:not-allowed}
 .story-repair-status{font-size:12px;color:var(--gray-dark);font-weight:600;margin-top:5px}
 .story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
 .gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}
@@ -299,9 +302,34 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* ══ TOAST ═══════════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ══ CHAT CONSOLE ════════════════════════════════════════════════════ */
+.chat-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:20px 0 0;overflow:hidden;box-shadow:var(--shadow-card)}
+.chat-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
+.chat-hdr:hover{background:var(--gray-light)}
+.chat-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
+.chat-arrow.open{transform:rotate(180deg)}
+.chat-body{display:none;flex-direction:column;padding:0 14px 14px}
+.chat-body.open{display:flex}
+.chat-log{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;margin-bottom:10px;padding-right:2px}
+.chat-log:empty::before{content:'Ask anything about this lesson — vocab choices, difficulty, story, how to improve it…';font-size:13px;color:var(--gray);font-style:italic;padding:8px 0}
+.chat-msg{padding:9px 12px;border-radius:var(--radius);font-size:13px;line-height:1.55;font-weight:600;max-width:100%;white-space:pre-wrap;word-break:break-word}
+.chat-msg.user{background:var(--blue-light);border:1.5px solid var(--blue);color:var(--blue-dark);align-self:flex-end;border-bottom-right-radius:4px}
+.chat-msg.assistant{background:var(--gray-light);border:1.5px solid var(--gray-mid);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.error{background:var(--red-light);border:1.5px solid var(--red);color:#990000}
+.chat-msg.thinking{color:var(--gray);font-style:italic}
+.chat-input-row{display:flex;gap:7px;align-items:flex-end}
+.chat-input{flex:1;padding:9px 11px;font-size:13px;font-weight:600;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--gray-light);outline:none;resize:none;min-height:38px;max-height:120px;line-height:1.4}
+.chat-input:focus{border-color:var(--blue);background:var(--white)}
+.chat-send-btn{background:var(--blue);color:var(--white);border:none;border-radius:var(--radius);padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;flex-shrink:0}
+.chat-send-btn:hover:not(:disabled){background:var(--blue-dark)}
+.chat-send-btn:disabled{opacity:.45;cursor:not-allowed}
+.chat-clear-btn{background:none;border:none;font-size:11px;font-weight:700;color:var(--gray-dark);cursor:pointer;padding:4px 0;margin-top:4px;font-family:'Nunito',sans-serif;text-align:right;opacity:.7;width:100%}
+.chat-clear-btn:hover{opacity:1;color:var(--red)}
 </style>
 </head>
 <body>
+
+<div id="toast" class="toast"></div>
 
 <div id="toast" class="toast"></div>
 
@@ -444,6 +472,23 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
+  </div>
+  <div class="chat-section" id="chat-section" style="display:none">
+    <button class="chat-hdr" onclick="toggleChat()">
+      <span>🤖 Model console</span>
+      <span class="chat-arrow" id="chat-arrow">▼</span>
+    </button>
+    <div class="chat-body" id="chat-body">
+      <div class="chat-log" id="chat-log"></div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chat-input" rows="1"
+          placeholder="Ask about vocab choices, difficulty, story…"
+          oninput="autoResizeChat(this)"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
+        <button class="chat-send-btn" id="chat-send-btn" onclick="sendChat()">Send</button>
+      </div>
+      <button class="chat-clear-btn" onclick="clearChat()">Clear conversation</button>
+    </div>
   </div>
 </div>
 </div>
@@ -1031,6 +1076,14 @@ function buildPath(){
 
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
+
+  // Chat console — show only when LLM available; clear history if topic changed
+  const chatSec=document.getElementById('chat-section');
+  if(chatSec){
+    chatSec.style.display=APP.info.canGenerate?'':'none';
+    if(APP.info.canGenerate && _chat.lastTopic && _chat.lastTopic!==topicKey) clearChat();
+    _chat.lastTopic=topicKey;
+  }
   d.lessons.forEach((L,i)=>{
     const isDone=!!done[L.id], isLocked=i>0&&!done[d.lessons[i-1].id], isActive=!isDone&&!isLocked;
     if(i>0){ const ln=document.createElement('div'); ln.className='path-line'+(done[d.lessons[i-1].id]?' done':''); path.appendChild(ln); }
@@ -1374,6 +1427,78 @@ function speak(text,rate){
   speechSynthesis.speak(u);
 }
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
+
+// ── Chat console ──────────────────────────────────────────────────────
+const _chat = { history: [], busy: false, lastTopic: null };
+
+function toggleChat(){
+  const body=document.getElementById('chat-body');
+  const arrow=document.getElementById('chat-arrow');
+  if(!body) return;
+  const open=body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open',open);
+  if(open) document.getElementById('chat-input')?.focus();
+}
+function autoResizeChat(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,120)+'px';
+}
+function _chatAppend(role,text){
+  const log=document.getElementById('chat-log'); if(!log) return null;
+  const el=document.createElement('div');
+  el.className='chat-msg '+role;
+  el.textContent=text;
+  log.appendChild(el);
+  log.scrollTop=log.scrollHeight;
+  return el;
+}
+function clearChat(){
+  _chat.history=[];
+  const log=document.getElementById('chat-log');
+  if(log) log.innerHTML='';
+}
+async function sendChat(){
+  if(_chat.busy) return;
+  const input=document.getElementById('chat-input');
+  const text=(input?.value||'').trim();
+  if(!text) return;
+  if(!APP.info.canGenerate){ _chatAppend('error','No LLM backend available.'); return; }
+  // Ensure panel is open before we append anything
+  const body=document.getElementById('chat-body');
+  const arrow=document.getElementById('chat-arrow');
+  if(body && !body.classList.contains('open')){
+    body.classList.add('open');
+    if(arrow) arrow.classList.add('open');
+  }
+  input.value='';
+  autoResizeChat(input);
+  _chat.history.push({role:'user',content:text});
+  _chatAppend('user',text);
+  _chat.busy=true;
+  const btn=document.getElementById('chat-send-btn');
+  if(btn) btn.disabled=true;
+  const thinking=_chatAppend('thinking','…');
+  try{
+    console.log('[chat] POST /api/chat topic='+( APP.lessonData?.topic||'none'));
+    const r=await fetch('/api/chat',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:_chat.history, topic:APP.lessonData?.topic||null})});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.error||'Server returned '+r.status);
+    _chat.history.push({role:'assistant',content:data.reply});
+    if(thinking) thinking.remove();
+    _chatAppend('assistant',data.reply);
+  }catch(e){
+    console.error('[chat] error:',e);
+    if(thinking) thinking.remove();
+    _chatAppend('error','Error: '+e.message);
+    _chat.history.pop();
+  }finally{
+    _chat.busy=false;
+    if(btn) btn.disabled=false;
+    input?.focus();
+  }
+}
 
 init();
 </script>
