@@ -1,6 +1,809 @@
 {
   "lessons": [
     {
+      "topic": "discussing contemporary art at the venice biennale",
+      "topicEmoji": "🎨",
+      "lang": "it",
+      "difficulty": 2,
+      "story": "Nella calda giornata di agosto, Sofia e Marco si trovavano nella vasta piazza di fronte alla Palazzo delle Esposizioni, dove si svolgeva la 58ª Biennale di Arte di Venezia. Entrambi erano entusiasti di esplorare l'arte contemporanea, ma avevano approcci diversi. Sofia, una studentessa di arte, era curiosa di imparare tutto ciò che poteva, mentre Marco, un artista emergente, cercava ispirazione per il suo prossimo lavoro.\n\n\"Guarda, Marco, questa installazione di video,\" disse Sofia, indicando un'opera che mostrava una serie di immagini in movimento, ciascuna con un'atmosfera diversa. \"È davvero impressionante come l'artista riesca a trasmettere tante emozioni attraverso le sue scelte visive.\"\n\nMarco annuì, interessato. \"Sì, è molto interessante. Ma penso che l'arte contemporanea debba fare qualcosa di più che soltanto emozionare. Deve provocare riflessioni profonde.\"\n\n\"Capisco,\" replicò Sofia, \"ma non credo che l'arte debba necessariamente avere un messaggio preciso. Può essere anche un'esperienza estetica.\"\n\n\"Ma non è forse l'arte la nostra strada per capirci meglio?\" chiese Marco, con un po' di enfasi nella voce. \"Non è l'arte a aiutarci a comprendere le nostre emozioni e i nostri conflitti?\"\n\nSofia rifletté per un momento, poi replicò: \"Forse hai ragione. Ma non è anche vero che l'arte può essere un modo per esprimere e condividere esperienze personali senza doverli tradurre in messaggi precisi?\"\n\n\"Esatto,\" concordò Marco. \"Ecco perché penso che sia importante continuare a discutere e a esplorare l'arte contemporanea. Ogni opinione è preziosa.\"\n\nMentre camminavano tra le opere, Sofia e Marco continuarono a discutere, scambiando idee e impressioni. Entrambi si resero conto che, nonostante le loro differenze, condividevano un amore per l'arte e la passione di esplorare nuove idee.",
+      "storyLang": "it",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Contemporary Art at Venice Biennale",
+          "desc": "Exploring art and inspiration in Venice",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "it": "installazione",
+              "en": "installation",
+              "pron": "in-sta-la-tsi-on"
+            },
+            {
+              "it": "video",
+              "en": "video",
+              "pron": "vi-de-o"
+            },
+            {
+              "it": "emozioni",
+              "en": "emotions",
+              "pron": "e-mo-zje"
+            },
+            {
+              "it": "trasmettere",
+              "en": "transmit",
+              "pron": "tra-smet-ter"
+            },
+            {
+              "it": "scelte",
+              "en": "choices",
+              "pron": "ske-lte"
+            },
+            {
+              "it": "atmosfera",
+              "en": "atmosphere",
+              "pron": "at-mo-sfe-ra"
+            },
+            {
+              "it": "curiosa",
+              "en": "curious",
+              "pron": "ku-ri-oza"
+            },
+            {
+              "it": "ispirazione",
+              "en": "inspiration",
+              "pron": "is-pi-ra-zje"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Guarda, Marco, questa installazione di video.",
+              "en": "Look, Marco, this video installation.",
+              "words": [
+                "Guarda,",
+                "Marco,",
+                "questa",
+                "installazione",
+                "di",
+                "video."
+              ]
+            },
+            {
+              "it": "È davvero impressionante come l'artista riesca a trasmettere tante emozioni attraverso le sue scelte visive.",
+              "en": "It's really impressive how the artist manages to transmit so many emotions through his visual choices.",
+              "words": [
+                "È",
+                "davvero",
+                "impressionante",
+                "come",
+                "l'artista",
+                "riesca",
+                "a",
+                "trasmettere",
+                "tante",
+                "emozioni",
+                "attraverso",
+                "le",
+                "sue",
+                "scelte",
+                "visive."
+              ]
+            },
+            {
+              "it": "Sì, è molto interessante. Ma penso che l'arte contemporanea debba fare.",
+              "en": "Yes, it's very interesting. But I think contemporary art should do.",
+              "words": [
+                "Sì,",
+                "è",
+                "molto",
+                "interessante.",
+                "Ma",
+                "penso",
+                "che",
+                "l'arte",
+                "contemporanea",
+                "debba",
+                "fare."
+              ]
+            },
+            {
+              "it": "Entrambi erano entusiasti di esplorare l'arte contemporanea.",
+              "en": "Both were enthusiastic about exploring contemporary art.",
+              "words": [
+                "Entrambi",
+                "erano",
+                "entusiasti",
+                "di",
+                "esplorare",
+                "l'arte",
+                "contemporanea."
+              ]
+            },
+            {
+              "it": "Sofia, una studentessa di arte, era curiosa di imparare tutto ciò che poteva.",
+              "en": "Sofia, an art student, was curious to learn everything she could.",
+              "words": [
+                "Sofia,",
+                "una",
+                "studentessa",
+                "di",
+                "arte,",
+                "era",
+                "curiosa",
+                "di",
+                "imparare",
+                "tutto",
+                "ciò",
+                "che",
+                "poteva."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Contemporary Art at the Venice Biennale",
+          "desc": "Exploring modern art and perspectives",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "it": "installazione",
+              "en": "installation",
+              "pron": "in-sta-la-tsi-on"
+            },
+            {
+              "it": "video",
+              "en": "video",
+              "pron": "vi-de-o"
+            },
+            {
+              "it": "emozioni",
+              "en": "emotions",
+              "pron": "e-mo-zhi-ons"
+            },
+            {
+              "it": "trasmettere",
+              "en": "transmit",
+              "pron": "tra-smet-ter"
+            },
+            {
+              "it": "scelte",
+              "en": "choices",
+              "pron": "ske-lte"
+            },
+            {
+              "it": "atmosfera",
+              "en": "atmosphere",
+              "pron": "at-mo-sfe-ra"
+            },
+            {
+              "it": "curiosa",
+              "en": "curious",
+              "pron": "ku-ri-o-sa"
+            },
+            {
+              "it": "ispirazione",
+              "en": "inspiration",
+              "pron": "is-pi-ra-zio-na"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Guarda quella scultura interattiva.",
+              "en": "Look at that interactive sculpture.",
+              "words": [
+                "Guarda",
+                "quella",
+                "scultura",
+                "interattiva."
+              ]
+            },
+            {
+              "it": "Sofia è sempre stata molto ispirata da questo artista.",
+              "en": "Sofia has always been inspired by this artist.",
+              "words": [
+                "Sofia",
+                "è",
+                "sempre",
+                "stata",
+                "molto",
+                "ispirata",
+                "da",
+                "questo",
+                "artista."
+              ]
+            },
+            {
+              "it": "L'artista usa materiale riciclato per creare le sue opere.",
+              "en": "The artist uses recycled materials to create his works.",
+              "words": [
+                "L'artista",
+                "usa",
+                "materiale",
+                "riciclato",
+                "per",
+                "creare",
+                "le",
+                "sue",
+                "opere."
+              ]
+            },
+            {
+              "it": "Questo dipinto esprime molte emozioni contrastanti.",
+              "en": "This painting expresses many conflicting emotions.",
+              "words": [
+                "Questo",
+                "dipinto",
+                "esprime",
+                "molte",
+                "emozioni",
+                "contrastanti."
+              ]
+            },
+            {
+              "it": "Marco ha bisogno di trovare la sua voce artistica.",
+              "en": "Marco needs to find his artistic voice.",
+              "words": [
+                "Marco",
+                "ha",
+                "bisogno",
+                "di",
+                "trovare",
+                "la",
+                "sua",
+                "voce",
+                "artistica."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Contemporary Art",
+          "desc": "Exploring the Venice Biennale",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "it": "installazione",
+              "en": "installation",
+              "pron": "in-sta-la-tsi-on"
+            },
+            {
+              "it": "esplorare",
+              "en": "explore",
+              "pron": "es-plor-are"
+            },
+            {
+              "it": "approcci",
+              "en": "approaches",
+              "pron": "a-proach-i"
+            },
+            {
+              "it": "curiosa",
+              "en": "curious",
+              "pron": "cur-i-o-sa"
+            },
+            {
+              "it": "emergente",
+              "en": "emerging",
+              "pron": "em-er-je-nt-e"
+            },
+            {
+              "it": "trasmettere",
+              "en": "transmit",
+              "pron": "tra-smet-tere"
+            },
+            {
+              "it": "ispirazione",
+              "en": "inspiration",
+              "pron": "is-pi-ra-zio-ne"
+            },
+            {
+              "it": "svolge",
+              "en": "takes place",
+              "pron": "svo-lje"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Guarda quella straordinaria esplorazione dell'arte contemporanea.",
+              "en": "Look at that extraordinary exploration of contemporary art.",
+              "words": [
+                "Guarda",
+                "quella",
+                "straordinaria",
+                "esplorazione",
+                "dell'arte",
+                "contemporanea."
+              ]
+            },
+            {
+              "it": "Sofia ha un approccio molto curioso alla biennale.",
+              "en": "Sofia has a very curious approach to the biennale.",
+              "words": [
+                "Sofia",
+                "ha",
+                "un",
+                "approccio",
+                "molto",
+                "curioso",
+                "alla",
+                "biennale."
+              ]
+            },
+            {
+              "it": "Marco cerca ispirazione per il suo prossimo lavoro.",
+              "en": "Marco is looking for inspiration for his next work.",
+              "words": [
+                "Marco",
+                "cerca",
+                "ispirazione",
+                "per",
+                "il",
+                "suo",
+                "prossimo",
+                "lavoro."
+              ]
+            },
+            {
+              "it": "L'artista trasmette forti emozioni attraverso le sue scelte visive.",
+              "en": "The artist transmits strong emotions through his visual choices.",
+              "words": [
+                "L'artista",
+                "trasmette",
+                "forti",
+                "emozioni",
+                "attraverso",
+                "le",
+                "sue",
+                "scelte",
+                "visive."
+              ]
+            },
+            {
+              "it": "La biennale svolge nella vasta piazza di fronte al Palazzo delle Esposizioni.",
+              "en": "The biennale takes place in the large square in front of the Exhibition Palace.",
+              "words": [
+                "La",
+                "biennale",
+                "svolge",
+                "nella",
+                "vasta",
+                "piazza",
+                "di",
+                "fronte",
+                "al",
+                "Palazzo",
+                "delle",
+                "Esposizioni."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 898415,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1961,
+        "totalCompletionTokens": 1753,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 236261,
+            "promptTokens": 520,
+            "completionTokens": 418
+          },
+          {
+            "lessonNum": 2,
+            "ms": 204744,
+            "promptTokens": 585,
+            "completionTokens": 362
+          },
+          {
+            "lessonNum": 3,
+            "ms": 232058,
+            "promptTokens": 631,
+            "completionTokens": 401
+          }
+        ]
+      },
+      "generatedAt": "2026-05-02T16:42:32.270Z",
+      "updatedAt": "2026-05-02T16:42:32.270Z"
+    },
+    {
+      "topic": "injured and need hospitalization in italy",
+      "topicEmoji": "🏥",
+      "lang": "it",
+      "difficulty": 2,
+      "story": "Era una sera d'inverno, fredda e umida, quando Marco si trovò a dover affrontare una situazione che avrebbe cambiato la sua vita. Stava tornando a casa dopo un lungo turno al ristorante, quando un ciclista, pericolosamente ubriaco, lo investì. Marco sentì un dolore acuto al ginocchio sinistro e si accorse che il sangue gli zampillava dalla ferita. Era in preda al panico, ma cercò di mantenere la calma per non allarmare le poche persone che passavano.\n\n\"Per favore, aiutatemi!\" gridò Marco, ma nessuno si fermò. Si sentiva debole e la sua vista iniziava a offuscarsi. Decise di chiamare il 118, il numero d'urgenza italiano, sperando che qualcuno rispondesse. Dopo alcuni minuti, finalmente un'ambulanza arrivò al suo fianco. I paramedici lo aiutarono a salire a bordo e lo portarono al più vicino ospedale.\n\nArrivati all'ospedale, Marco fu subito accogliuto in un reparto d'urgenza. Un'infermiera lo fece sedere su una sedia e gli misurò la pressione. Poi lo condusse in una sala d'attesa, dove c'era un televisore acceso e un paio di sedie vuote. Marco si sentiva disorientato e inquieto, ma cercò di rilassarsi ascoltando la musica che proveniva dallo stereo.\n\nDopo un po', un dottore entrò nella sala d'attesa e gli disse che lo avrebbe accompagnato in un reparto più adeguato. Marco si alzò con l'aiuto dell'infermiera e seguì il dottore attraverso un lungo corridoio illuminato da luci fredda. Lo condusse in una stanza con un lettino e iniziò a esaminarlo. \"Hai bisogno di essere hospitalizzato,\" disse il dottore, \"perché la ferita al ginocchio è grave e potrebbe richiedere una chirurgia.\"\n\nMarco ascoltò in silenzio, cercando di comprendere la gravità della situazione. La notte passò lentamente, e lui rimase in osservazione per diversi giorni. Gli infermieri lo trattarono con gentilezza, portandogli cibo e facendogli compagnia. Marco iniziò a riprendersi, e la sua ferita iniziò a guarire. Alla fine, fu dimesso dall'ospedale con l'ordine di fare riposo e di tornare per controlli regolari.",
+      "storyLang": "it",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Broke Leg, Hospital",
+          "desc": "Winter night, accident, hospital, 118",
+          "icon": "🚑",
+          "vocab": [
+            {
+              "it": "investì",
+              "en": "hit",
+              "pron": "IN-VET-TI"
+            },
+            {
+              "it": "ginocchio",
+              "en": "knee",
+              "pron": "JIN-O-CCHIO"
+            },
+            {
+              "it": "zampillava",
+              "en": "spurted",
+              "pron": "ZAM-PIL-LAVA"
+            },
+            {
+              "it": "panico",
+              "en": "panic",
+              "pron": "PA-NA-KO"
+            },
+            {
+              "it": "chiamare",
+              "en": "call",
+              "pron": "KA-MA-RRE"
+            },
+            {
+              "it": "ambulanza",
+              "en": "ambulance",
+              "pron": "AM-BU-LAN-ZZA"
+            },
+            {
+              "it": "paramedici",
+              "en": "paramedics",
+              "pron": "PA-RAM-E-DIK-CHI"
+            },
+            {
+              "it": "portarono",
+              "en": "took",
+              "pron": "POR-TRA-RO-NO"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Un ciclista ubriaco investì Marco.",
+              "en": "A drunk cyclist hit Marco.",
+              "words": [
+                "Un",
+                "ciclista",
+                "ubriaco",
+                "investì",
+                "Marco."
+              ]
+            },
+            {
+              "it": "Marco sentì un dolore acuto al ginocchio.",
+              "en": "Marco felt a sharp pain in his knee.",
+              "words": [
+                "Marco",
+                "sentì",
+                "un",
+                "dolore",
+                "acuto",
+                "al",
+                "ginocchio."
+              ]
+            },
+            {
+              "it": "Il sangue zampillava dalla ferita.",
+              "en": "Blood was spurted from the wound.",
+              "words": [
+                "Il",
+                "sangue",
+                "zampillava",
+                "dalla",
+                "ferita."
+              ]
+            },
+            {
+              "it": "Decise di chiamare il 118.",
+              "en": "He decided to call 118.",
+              "words": [
+                "Decise",
+                "di",
+                "chiamare",
+                "il",
+                "118."
+              ]
+            },
+            {
+              "it": "Finalmente un'ambulanza arrivò al suo fianco.",
+              "en": "Finally, an ambulance arrived by his side.",
+              "words": [
+                "Finalmente",
+                "un'ambulanza",
+                "arrivò",
+                "al",
+                "suo",
+                "fianco."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Hospital in Italy",
+          "desc": "Winter accident, hospital, pain, urgency, hospitalization",
+          "icon": "🏥",
+          "vocab": [
+            {
+              "it": "dolore",
+              "en": "pain",
+              "pron": "DOH-loreh"
+            },
+            {
+              "it": "urgente",
+              "en": "urgent",
+              "pron": "oor-JEN-tay"
+            },
+            {
+              "it": "ospedale",
+              "en": "hospital",
+              "pron": "o-spay-DAY-le"
+            },
+            {
+              "it": "ferita",
+              "en": "wound",
+              "pron": "feh-REET-ah"
+            },
+            {
+              "it": "sangue",
+              "en": "blood",
+              "pron": "sahn-GWAY"
+            },
+            {
+              "it": "allarmare",
+              "en": "alarm",
+              "pron": "ahl-lah-MAHR-ray"
+            },
+            {
+              "it": "rispondere",
+              "en": "answer",
+              "pron": "ree-spon-DAH-re"
+            },
+            {
+              "it": "vicino",
+              "en": "near",
+              "pron": "vee-chee-no"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il dolore era intenso e acuto.",
+              "en": "The pain was intense and acute.",
+              "words": [
+                "Il",
+                "dolore",
+                "era",
+                "intenso",
+                "e",
+                "acuto."
+              ]
+            },
+            {
+              "it": "La situazione era urgente e Marco si sentiva in pericolo.",
+              "en": "The situation was urgent and Marco felt in danger.",
+              "words": [
+                "La",
+                "situazione",
+                "era",
+                "urgente",
+                "e",
+                "Marco",
+                "si",
+                "sentiva",
+                "in",
+                "pericolo."
+              ]
+            },
+            {
+              "it": "Chiamai il 118, il numero d'urgenza italiano.",
+              "en": "I called 118, the Italian emergency number.",
+              "words": [
+                "Chiamai",
+                "il",
+                "118,",
+                "il",
+                "numero",
+                "d'urgenza",
+                "italiano."
+              ]
+            },
+            {
+              "it": "Finalmente, un'ambulanza arrivò al suo fianco.",
+              "en": "Finally, an ambulance arrived by his side.",
+              "words": [
+                "Finalmente,",
+                "un'ambulanza",
+                "arrivò",
+                "al",
+                "suo",
+                "fianco."
+              ]
+            },
+            {
+              "it": "I paramedici lo portarono all'ospedale più vicino.",
+              "en": "The paramedics took him to the nearest hospital.",
+              "words": [
+                "I",
+                "paramedici",
+                "lo",
+                "portarono",
+                "all'ospedale",
+                "più",
+                "vicino."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Hospital in Italy",
+          "desc": "Italian hospital vocabulary and phrases",
+          "icon": "🏥",
+          "vocab": [
+            {
+              "it": "ospedale",
+              "en": "hospital",
+              "pron": "o-spe-de-lay"
+            },
+            {
+              "it": "medico",
+              "en": "doctor",
+              "pron": "me-dikko"
+            },
+            {
+              "it": "trattamento",
+              "en": "treatment",
+              "pron": "tra-ta-men-to"
+            },
+            {
+              "it": "rimetterti",
+              "en": "recover",
+              "pron": "ri-me-tter-ky"
+            },
+            {
+              "it": "prescrivere",
+              "en": "prescribe",
+              "pron": "pre-skriv-ree"
+            },
+            {
+              "it": "farmacia",
+              "en": "pharmacy",
+              "pron": "far-ma-kye"
+            },
+            {
+              "it": "ricovero",
+              "en": "admission",
+              "pron": "ri-koe-vro"
+            },
+            {
+              "it": "trascorrere",
+              "en": "spend",
+              "pron": "tra-scor-re"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il medico mi prescrisse dei farmaci per il dolore.",
+              "en": "The doctor prescribed me some painkillers.",
+              "words": [
+                "Il",
+                "medico",
+                "mi",
+                "prescrisse",
+                "dei",
+                "farmaci",
+                "per",
+                "il",
+                "dolore."
+              ]
+            },
+            {
+              "it": "Dopo il trattamento, spero di rimettermi presto.",
+              "en": "After the treatment, I hope to recover soon.",
+              "words": [
+                "Dopo",
+                "il",
+                "trattamento,",
+                "spero",
+                "di",
+                "rimettermi",
+                "presto."
+              ]
+            },
+            {
+              "it": "Il ricovero è stato necessario per il mio trattamento.",
+              "en": "Admission was necessary for my treatment.",
+              "words": [
+                "Il",
+                "ricovero",
+                "è",
+                "stato",
+                "necessario",
+                "per",
+                "il",
+                "mio",
+                "trattamento."
+              ]
+            },
+            {
+              "it": "Trascorrerò qualche giorno in ospedale per il mio recupero.",
+              "en": "I will spend a few days in the hospital for my recovery.",
+              "words": [
+                "Trascorrerò",
+                "qualche",
+                "giorno",
+                "in",
+                "ospedale",
+                "per",
+                "il",
+                "mio",
+                "recupero."
+              ]
+            },
+            {
+              "it": "Il farmacista mi disse che i miei farmaci sono pronti.",
+              "en": "The pharmacist told me that my medications are ready.",
+              "words": [
+                "Il",
+                "farmacista",
+                "mi",
+                "disse",
+                "che",
+                "i",
+                "miei",
+                "farmaci",
+                "sono",
+                "pronti."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 870100,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2009,
+        "totalCompletionTokens": 1771,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 205569,
+            "promptTokens": 533,
+            "completionTokens": 359
+          },
+          {
+            "lessonNum": 2,
+            "ms": 212496,
+            "promptTokens": 604,
+            "completionTokens": 389
+          },
+          {
+            "lessonNum": 3,
+            "ms": 219328,
+            "promptTokens": 648,
+            "completionTokens": 371
+          }
+        ]
+      },
+      "generatedAt": "2026-05-02T16:10:59.489Z",
+      "updatedAt": "2026-05-02T16:24:03.024Z",
+      "ratings": {
+        "difficulty": 2,
+        "fun": 2,
+        "coherence": 3
+      }
+    },
+    {
       "topic": "luxembourgish poetry",
       "topicEmoji": ".lu.",
       "lang": "lb",
@@ -7624,327 +8427,6 @@
       }
     },
     {
-      "topic": "cooking",
-      "topicEmoji": "🔥",
-      "lang": "es",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Cooking Basics",
-          "desc": "Introduction to simple recipes",
-          "icon": "🔥",
-          "vocab": [
-            {
-              "it": "cocinar",
-              "en": "to cook",
-              "pron": "ko-KNEAR-es-tseh"
-            },
-            {
-              "it": "sazón",
-              "en": "seasoning",
-              "pron": "sah-ZOHN"
-            },
-            {
-              "it": "hornear",
-              "en": "to bake",
-              "pron": "or-nay-AR-es"
-            },
-            {
-              "it": "ensalada",
-              "en": "salad",
-              "pron": "en-sah-LAH-dah"
-            },
-            {
-              "it": "arroz",
-              "en": "rice",
-              "pron": "ah-ROHZ"
-            },
-            {
-              "it": "pescado",
-              "en": "fish",
-              "pron": "peh-SAH-doh"
-            },
-            {
-              "it": "verduras",
-              "en": "vegetables",
-              "pron": "ver-doo-RAHS"
-            },
-            {
-              "it": "sopa",
-              "en": "soup",
-              "pron": "SO-pah"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "cocino arroz con verduras",
-              "en": "I cook rice with vegetables",
-              "words": [
-                "cocino",
-                "arroz",
-                "con",
-                "verduras"
-              ]
-            },
-            {
-              "it": "horno pescado sazón",
-              "en": "bake fish seasoning",
-              "words": [
-                "horno",
-                "pescado",
-                "sazón"
-              ]
-            },
-            {
-              "it": "hago ensalada verduras arroz",
-              "en": "make salad vegetables rice",
-              "words": []
-            },
-            {
-              "it": "cocino sopa con pescado",
-              "en": "cook soup with fish",
-              "words": [
-                "cocino",
-                "sopa",
-                "con",
-                "pescado"
-              ]
-            },
-            {
-              "it": "arroz verduras sazón",
-              "en": "rice vegetables seasoning",
-              "words": [
-                "arroz",
-                "verduras",
-                "sazón"
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Intermediate Cooking",
-          "desc": "Sauces and Marinades",
-          "icon": "🧈",
-          "vocab": [
-            {
-              "it": "temperar",
-              "en": "to temper",
-              "pron": "tem-PAR-ar"
-            },
-            {
-              "it": "guisar",
-              "en": "to simmer",
-              "pron": "gwi-SAR"
-            },
-            {
-              "it": "ají",
-              "en": "aji (chili pepper)",
-              "pron": "AH-hee"
-            },
-            {
-              "it": "marinar",
-              "en": "to marinate",
-              "pron": "mar-NAH-rar"
-            },
-            {
-              "it": "al horno",
-              "en": "in the oven",
-              "pron": "al OR-no"
-            },
-            {
-              "it": "al vapor",
-              "en": "steamed",
-              "pron": "al VA-por"
-            },
-            {
-              "it": "arroz a la valenciana",
-              "en": "Valencian rice",
-              "pron": "ar-ROZ ah la val-en-see-AH-nah"
-            },
-            {
-              "it": "emulsificar",
-              "en": "to emulsify",
-              "pron": "em-ool-see-FI-car"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "temperar salsa con leche",
-              "en": "temper sauce with milk",
-              "words": [
-                "temper",
-                "salsa",
-                "with",
-                "milk"
-              ]
-            },
-            {
-              "it": "guisar carne al horno",
-              "en": "simmer meat in the oven",
-              "words": [
-                "guisar",
-                "carne",
-                "in",
-                "the",
-                "oven"
-              ]
-            },
-            {
-              "it": "marinar pescado con ají",
-              "en": "marinate fish with aji",
-              "words": [
-                "marinar",
-                "pescado",
-                "with",
-                "aji"
-              ]
-            },
-            {
-              "it": "arroz a la valenciana al vapor",
-              "en": "Valencian rice steamed",
-              "words": [
-                "arroz",
-                "a",
-                "la",
-                "valenciana",
-                "steamed"
-              ]
-            },
-            {
-              "it": "emulsificar aceite con vinagre",
-              "en": "emulsify oil with vinegar",
-              "words": [
-                "emulsificar",
-                "aceite",
-                "with",
-                "vinegar"
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Advanced Cooking",
-          "desc": "Mastering complex recipes",
-          "icon": "🔥",
-          "vocab": [
-            {
-              "it": "alidarse",
-              "en": "to deglaze",
-              "pron": "ah-lee-tha-SEHR"
-            },
-            {
-              "it": "bain-marie",
-              "en": "bain-marie (water bath)",
-              "pron": "BAYN MAH-ree"
-            },
-            {
-              "it": "chispear",
-              "en": "to sprinkle",
-              "pron": "chi-SPAR"
-            },
-            {
-              "it": "emulsificar",
-              "en": "to emulsify (again, but as a reminder)",
-              "pron": "eh-moo-los-fee-KAR"
-            },
-            {
-              "it": "filetear",
-              "en": "to fillet",
-              "pron": "fee-LEH-tar"
-            },
-            {
-              "it": "garnishar",
-              "en": "to garnish",
-              "pron": "gar-NISH-ar"
-            },
-            {
-              "it": "macerar",
-              "en": "to macerate",
-              "pron": "mah-sa-REHR"
-            },
-            {
-              "it": "remojar",
-              "en": "to soak",
-              "pron": "reh-MOH-har"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "filetear el pescado y macerar en jugo de limón",
-              "en": "fillet the fish and macerate in lemon juice",
-              "words": [
-                "filetear",
-                "el",
-                "pescado",
-                "y",
-                "macerar",
-                "en",
-                "jugo",
-                "de",
-                "limón"
-              ]
-            },
-            {
-              "it": "remojar arándanos en azúcar para garnishar postre",
-              "en": "soak raspberries in sugar to garnish dessert",
-              "words": [
-                "remojar",
-                "arándanos",
-                "en",
-                "azúcar",
-                "para",
-                "garnishar",
-                "postre"
-              ]
-            },
-            {
-              "it": "emulsificar aceite y vinagre para alioli",
-              "en": "emulsify oil and vinegar for aioli",
-              "words": [
-                "emulsificar",
-                "aceite",
-                "y",
-                "vinagre",
-                "para",
-                "alioli"
-              ]
-            },
-            {
-              "it": "bain-marie calentar chocolate para chispear sobre helado",
-              "en": "bain-marie heat chocolate to sprinkle over ice cream",
-              "words": [
-                "bain-marie",
-                "calentar",
-                "chocolate",
-                "para",
-                "chispear",
-                "sobre",
-                "helado"
-              ]
-            },
-            {
-              "it": "alidarse vino tinto con jugo de cítricos para salsa",
-              "en": "deglaze red wine with citrus juice for sauce",
-              "words": [
-                "alidarse",
-                "vino",
-                "tinto",
-                "con",
-                "jugo",
-                "de",
-                "cítricos",
-                "para",
-                "salsa"
-              ]
-            }
-          ]
-        }
-      ],
-      "generatedAt": "2026-04-25T14:31:09.485Z"
-    },
-    {
       "topic": "sheep on the meadow",
       "topicEmoji": "🐑",
       "lang": "it",
@@ -8330,411 +8812,6 @@
         "completionTokens": 95
       },
       "updatedAt": "2026-04-30T17:04:43.178Z"
-    },
-    {
-      "topic": "im wald spazieren",
-      "topicEmoji": "🌳",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Spazieren im Wald",
-          "desc": "Walks and phrases in the forest",
-          "icon": "🌳",
-          "vocab": [
-            {
-              "it": "camminare",
-              "en": "to walk",
-              "pron": "KA-mi-NAH-re"
-            },
-            {
-              "it": "foresta",
-              "en": "forest",
-              "pron": "for-RE-tah"
-            },
-            {
-              "it": "albero",
-              "en": "tree",
-              "pron": "al-BREH-ro"
-            },
-            {
-              "it": "pista",
-              "en": "path",
-              "pron": "PEE-stah"
-            },
-            {
-              "it": "luce",
-              "en": "light",
-              "pron": "LOO-che"
-            },
-            {
-              "it": "silenzio",
-              "en": "silence",
-              "pron": "sil-en-ZEE-yo"
-            },
-            {
-              "it": "frutta",
-              "en": "fruit",
-              "pron": "FRU-tta"
-            },
-            {
-              "it": "animale",
-              "en": "animal",
-              "pron": "ah-nee-MAH-le"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Camminare nella foresta.",
-              "en": "To walk in the forest.",
-              "words": [
-                "Camminare",
-                "nella",
-                "foresta",
-                ".",
-                ""
-              ]
-            },
-            {
-              "it": "La pista è stretta tra gli alberi.",
-              "en": "The path is narrow between the trees.",
-              "words": [
-                "La",
-                "pista",
-                "è",
-                "stretta",
-                "tra",
-                "gli",
-                "alberi",
-                ".",
-                ""
-              ]
-            },
-            {
-              "it": "La luce del sole filtra attraverso i rami.",
-              "en": "The light of the sun filters through the branches.",
-              "words": [
-                "La",
-                "luce",
-                "del",
-                "sole",
-                "filtra",
-                "attraverso",
-                "i",
-                "rami",
-                ".",
-                ""
-              ]
-            },
-            {
-              "it": "Silenzio assoluto, solo gli animali.",
-              "en": "Absolute silence, only the animals.",
-              "words": [
-                "Silenzio",
-                "assoluto",
-                ",",
-                "solo",
-                "gli",
-                "animali",
-                ".",
-                ""
-              ]
-            },
-            {
-              "it": "Frutta selvatica cresce tra gli alberi.",
-              "en": "Wild fruit grows among the trees.",
-              "words": [
-                "Frutta",
-                "selvatica",
-                "cresce",
-                "tra",
-                "gli",
-                "alberi",
-                ".",
-                ""
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Spazieren im Wald",
-          "desc": "Walking in the woods vocabulary",
-          "icon": "🌳",
-          "vocab": [
-            {
-              "it": "sentiero",
-              "en": "path",
-              "pron": "SEN-tea-yo"
-            },
-            {
-              "it": " muschiato",
-              "en": "musty",
-              "pron": "mus-KYAO-to"
-            },
-            {
-              "it": " muschiato",
-              "en": "musty (scent)",
-              "pron": "mus-KYAO-to"
-            },
-            {
-              "it": "bassa",
-              "en": "low",
-              "pron": "BA-sa"
-            },
-            {
-              "it": "alzata",
-              "en": "raised",
-              "pron": "al-ZA-ta"
-            },
-            {
-              "it": "ombrosa",
-              "en": "shady",
-              "pron": "om-BO-ra"
-            },
-            {
-              "it": "tranquillo",
-              "en": "calm",
-              "pron": "tran-KWIL-lo"
-            },
-            {
-              "it": "lucente",
-              "en": "shiny",
-              "pron": "loo-SEN-tche"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Segui il sentiero bassa.",
-              "en": "Follow the low path.",
-              "words": [
-                "Segui",
-                "il",
-                "sentiero",
-                "bassa",
-                ""
-              ]
-            },
-            {
-              "it": "L'aria muschiato e ombrosa.",
-              "en": "The air is musty and shady.",
-              "words": [
-                "L'",
-                "aria",
-                "muschiato",
-                "e",
-                "ombrosa",
-                ""
-              ]
-            },
-            {
-              "it": "Un alzata di foglie lucente.",
-              "en": "A raised shiny leaf.",
-              "words": [
-                "Un",
-                "alzata",
-                "di",
-                "foglie",
-                "lucente",
-                ""
-              ]
-            },
-            {
-              "it": "Il sentiero è tranquillo e serpentea.",
-              "en": "The path is calm and winding.",
-              "words": [
-                "Il",
-                "sentiero",
-                "è",
-                "tranquillo",
-                "e",
-                "serpentea",
-                ""
-              ]
-            },
-            {
-              "it": "La foresta ha un odore muschiato.",
-              "en": "The forest has a musty smell.",
-              "words": [
-                "La",
-                "foresta",
-                "ha",
-                "un",
-                "odore",
-                "muschiato",
-                ""
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Spazieren im Wald",
-          "desc": "Advanced walking in the woods",
-          "icon": "🌳",
-          "vocab": [
-            {
-              "it": " muschiato",
-              "en": "musty (scent)",
-              "pron": "MUS-see-ah-to"
-            },
-            {
-              "it": "ombrosa",
-              "en": "shady",
-              "pron": "om-BRO-sah"
-            },
-            {
-              "it": "tranquillo",
-              "en": "calm",
-              "pron": "tran-KWIL-lo"
-            },
-            {
-              "it": "lucente",
-              "en": "shiny",
-              "pron": "loo-CEN-tche"
-            },
-            {
-              "it": "selva",
-              "en": "jungle",
-              "pron": "SEL-va"
-            },
-            {
-              "it": " muschiato",
-              "en": "musty (scent, repeated, but different context)",
-              "pron": "MUS-see-ah-to"
-            },
-            {
-              "it": " muschiato",
-              "en": "musty (scent, repeated, but different context)",
-              "pron": "MUS-see-ah-to"
-            },
-            {
-              "it": "selvaggio",
-              "en": "wild",
-              "pron": "sel-VAH-jjo"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Camminavo in una selva muschiata e ombrosa.",
-              "en": "I was walking in a musty and shady jungle.",
-              "words": [
-                "Camminavo",
-                "in",
-                "una",
-                "selva",
-                "muschiosa",
-                "e",
-                "ombrosa",
-                ".",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " "
-              ]
-            },
-            {
-              "it": "Il sentiero era tranquillo e lucente sotto i rami.",
-              "en": "The path was calm and shiny under the branches.",
-              "words": [
-                "Il",
-                "sentiero",
-                "era",
-                "tranquillo",
-                "e",
-                "lucente",
-                "sotto",
-                "i",
-                "rami",
-                ".",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " "
-              ]
-            },
-            {
-              "it": "La selvaggina viveva in un ambiente muschiato e selvaggio.",
-              "en": "The wild animals lived in a musty and wild environment.",
-              "words": [
-                "La",
-                "selvaggina",
-                "viveva",
-                "in",
-                "un",
-                "ambiente",
-                "muschioso",
-                "e",
-                "selvaggio",
-                ".",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " "
-              ]
-            },
-            {
-              "it": "L'aria era muschiata per l'odore di foglie umide.",
-              "en": "The air was musty from the smell of damp leaves.",
-              "words": [
-                "L'aria",
-                "era",
-                "muschiosa",
-                "per",
-                "l'odore",
-                "di",
-                "foglie",
-                "umide",
-                ".",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " "
-              ]
-            },
-            {
-              "it": "Il sole illuminava la selva selvaggia in un modo lucente.",
-              "en": "The sun illuminated the wild jungle in a shiny way.",
-              "words": [
-                "Il",
-                "sole",
-                "illuminava",
-                "la",
-                "selvaggina",
-                "in",
-                "un",
-                "modo",
-                "lucente",
-                ".",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " ",
-                " "
-              ]
-            }
-          ]
-        }
-      ],
-      "generatedAt": "2026-04-22T20:04:09.311Z"
     },
     {
       "topic": "pilze suchen",
@@ -9468,354 +9545,6 @@
         ]
       },
       "generatedAt": "2026-04-29T14:56:02.050Z"
-    },
-    {
-      "topic": "medical & healthcare",
-      "topicEmoji": "🩺",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Medical Basics",
-          "desc": "Learn basic medical vocabulary",
-          "icon": "🩺",
-          "vocab": [
-            {
-              "it": "medico",
-              "en": "doctor",
-              "pron": "ME-dee-co"
-            },
-            {
-              "it": "farmacia",
-              "en": "pharmacy",
-              "pron": "far-MAY-kee-ah"
-            },
-            {
-              "it": "malato",
-              "en": "patient",
-              "pron": "ma-LA-to"
-            },
-            {
-              "it": "ospedale",
-              "en": "hospital",
-              "pron": "os-pe-DAL-eh"
-            },
-            {
-              "it": "malattia",
-              "en": "illness",
-              "pron": "ma-la-TCH-ia"
-            },
-            {
-              "it": "medicamento",
-              "en": "medicine",
-              "pron": "me-di-CA-men-to"
-            },
-            {
-              "it": "appuntamento",
-              "en": "appointment",
-              "pron": "a-pun-TAH-men-to"
-            },
-            {
-              "it": "infermiera",
-              "en": "nurse",
-              "pron": "in-fe-RE-mee-ah"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Il medico prescrive il medicamento.",
-              "en": "The doctor prescribes the medicine.",
-              "words": [
-                "IL",
-                "MEDICO",
-                "PRESCRIVE",
-                "IL",
-                "MEDICAMENTO",
-                "."
-              ]
-            },
-            {
-              "it": "Andiamo all'ospedale.",
-              "en": "We go to the hospital.",
-              "words": [
-                "AN-dee-AH-mo",
-                "AL",
-                "OS-pe-DAL-eh",
-                "."
-              ]
-            },
-            {
-              "it": "Il farmacista mi ha dato la farmacia.",
-              "en": "The pharmacist gave me the pharmacy.",
-              "words": [
-                "MI",
-                "HA",
-                "DAT-to",
-                "FAR-ma-CHI-ah",
-                "IL",
-                "FAR-ma-CHI-sta",
-                "LA",
-                "farmacia"
-              ]
-            },
-            {
-              "it": "La malattia è grave.",
-              "en": "The illness is serious.",
-              "words": [
-                "LA",
-                "MALAT-TCH-ia",
-                "E",
-                "GRAVE",
-                "."
-              ]
-            },
-            {
-              "it": "Ho un appuntamento con l'infermiera.",
-              "en": "I have an appointment with the nurse.",
-              "words": [
-                "HO",
-                "UN",
-                "AP-pun-TAH-men-to",
-                "CON",
-                "L'",
-                "IN-fe-RE-mee-ah",
-                "."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Medical & Healthcare",
-          "desc": "Visit the doctor, buy medicine, and more",
-          "icon": "👩‍⚕️",
-          "vocab": [
-            {
-              "it": "farmacista",
-              "en": "pharmacist",
-              "pron": "FARMAH-kah-tee"
-            },
-            {
-              "it": "consulenza",
-              "en": "consultation",
-              "pron": "con-sul-LEN-za"
-            },
-            {
-              "it": "prescrizione",
-              "en": "prescription",
-              "pron": "pre-skriz-EE-ehn-za"
-            },
-            {
-              "it": "sintomi",
-              "en": "symptoms",
-              "pron": "sin-TOH-mee"
-            },
-            {
-              "it": "terapia",
-              "en": "therapy",
-              "pron": "teh-REE-ah-pea"
-            },
-            {
-              "it": "appuntamento medico",
-              "en": "medical appointment",
-              "pron": "ap-poon-TAHN-dohm meh-dee-KOH-ro"
-            },
-            {
-              "it": "trattamento",
-              "en": "treatment",
-              "pron": "trah-tah-RAH-mehnt"
-            },
-            {
-              "it": "ricovero",
-              "en": "admission",
-              "pron": "ree-koh-VEH-roh"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Vado a farmacia per comprare il farmaco.",
-              "en": "I go to the pharmacy to buy the medicine.",
-              "words": [
-                "Vado",
-                "a",
-                "farmacia",
-                "per",
-                "comprare",
-                "il",
-                "farmaco",
-                "."
-              ]
-            },
-            {
-              "it": "Il medico prescrive una terapia.",
-              "en": "The doctor prescribes a therapy.",
-              "words": [
-                "Il",
-                "medico",
-                "prescrive",
-                "una",
-                "terapia",
-                "."
-              ]
-            },
-            {
-              "it": "Ho avuto dei sintomi di malattia.",
-              "en": "I have had symptoms of illness.",
-              "words": [
-                "Ho",
-                "avuto",
-                "dei",
-                "sintomi",
-                "di",
-                "malattia",
-                "."
-              ]
-            },
-            {
-              "it": "L'infermiera mi ha dato un appuntamento.",
-              "en": "The nurse gave me an appointment.",
-              "words": [
-                "L'",
-                "infermiera",
-                "mi",
-                "ha",
-                "dato",
-                "un",
-                "appuntamento",
-                "."
-              ]
-            },
-            {
-              "it": "Ho bisogno di ricovero all'ospedale.",
-              "en": "I need to be admitted to the hospital.",
-              "words": [
-                "Ho",
-                "bisogno",
-                "di",
-                "ricovero",
-                "all'",
-                "ospedale",
-                "."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Medical Procedures",
-          "desc": "Advanced medical terms and phrases",
-          "icon": "🩺",
-          "vocab": [
-            {
-              "it": "tracheotomia",
-              "en": "tracheotomy",
-              "pron": "tra-KHEE-oh-toh-mee"
-            },
-            {
-              "it": "angiografia",
-              "en": "angiography",
-              "pron": "an-jee-oh-GRAH-fee"
-            },
-            {
-              "it": "cateterismo",
-              "en": "angioplasty",
-              "pron": "an-jee-oh-plas-tee"
-            },
-            {
-              "it": "colposcopia",
-              "en": "colposcopy",
-              "pron": "ko-lpo-SKOH-pee"
-            },
-            {
-              "it": "laparoscopia",
-              "en": "laparoscopy",
-              "pron": "lap-ar-oh-SKOH-pee"
-            },
-            {
-              "it": "endoscopia",
-              "en": "endoscopy",
-              "pron": "en-doh-SKOH-pee"
-            },
-            {
-              "it": "biopsia",
-              "en": "biopsy",
-              "pron": "BY-oh-spie"
-            },
-            {
-              "it": "terapia intensiva",
-              "en": "intensive care",
-              "pron": "in-tens-IV-uh"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "L'operazione è stata un successo.",
-              "en": "The operation was a success.",
-              "words": [
-                "L'",
-                "operazione",
-                "è",
-                "stata",
-                "un",
-                "successo",
-                ".",
-                " "
-              ]
-            },
-            {
-              "it": "Il medico prescrisse un farmaco.",
-              "en": "The doctor prescribed a medication.",
-              "words": [
-                "Il",
-                "medico",
-                "prescrisse",
-                "un",
-                "farmaco",
-                ".",
-                " "
-              ]
-            },
-            {
-              "it": "Il paziente ha bisogno di una terapia.",
-              "en": "The patient needs a therapy.",
-              "words": [
-                "Il",
-                "paziente",
-                "ha",
-                "bisogno",
-                "di",
-                "una",
-                "terapia",
-                "."
-              ]
-            },
-            {
-              "it": "La farmacista controllò la prescrizione.",
-              "en": "The pharmacist checked the prescription.",
-              "words": [
-                "La",
-                "farmacista",
-                "controllò",
-                "la",
-                "prescrizione",
-                "."
-              ]
-            },
-            {
-              "it": "L'infermiera prese i sintomi.",
-              "en": "The nurse took the symptoms.",
-              "words": [
-                "L'",
-                "infermiera",
-                "prese",
-                "i",
-                "sintomi",
-                "."
-              ]
-            }
-          ]
-        }
-      ],
-      "generatedAt": "2026-04-25T14:41:25.120Z"
     },
     {
       "topic": "architecture",
@@ -10614,725 +10343,6 @@
       }
     },
     {
-      "topic": "neuroscience",
-      "topicEmoji": "🧠",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Neuroscience Basics",
-          "desc": "Simple words about the brain",
-          "icon": "🧠",
-          "vocab": [
-            {
-              "it": "cervello",
-              "en": "brain",
-              "pron": "CER-vel-lo"
-            },
-            {
-              "it": "neurologia",
-              "en": "neurology",
-              "pron": "ne-ro-lo-GIA"
-            },
-            {
-              "it": "neurone",
-              "en": "neuron",
-              "pron": "NE-ro-ne"
-            },
-            {
-              "it": "sinapsi",
-              "en": "synapse",
-              "pron": "si-NAP-si"
-            },
-            {
-              "it": "stimolare",
-              "en": "stimulate",
-              "pron": "STIM-o-la-re"
-            },
-            {
-              "it": "funzione",
-              "en": "function",
-              "pron": "fun-ZI-o-ne"
-            },
-            {
-              "it": "ricerca",
-              "en": "research",
-              "pron": "ri-KEHR-tsa"
-            },
-            {
-              "it": "neuroscienze",
-              "en": "neuroscience",
-              "pron": "ne-ro-scheyn-ZEES"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Il cervello è importante.",
-              "en": "The brain is important.",
-              "words": [
-                "IL",
-                "cervello",
-                "È",
-                "IMPORTANTE",
-                "."
-              ]
-            },
-            {
-              "it": "La neurologia studia il cervello.",
-              "en": "Neurology studies the brain.",
-              "words": [
-                "LA",
-                "neurologia",
-                "STUDIA",
-                "IL",
-                "cervello",
-                "."
-              ]
-            },
-            {
-              "it": "I neuroni sono piccole cellule.",
-              "en": "Neurons are small cells.",
-              "words": [
-                "I",
-                "neuroni",
-                "SONO",
-                "PICCOLE",
-                "CELLULE",
-                "."
-              ]
-            },
-            {
-              "it": "Le sinapsi connettono i neuroni.",
-              "en": "Synapses connect neurons.",
-              "words": [
-                "LE",
-                "sinapsi",
-                "CONNETTONO",
-                "I",
-                "neuroni",
-                "."
-              ]
-            },
-            {
-              "it": "La ricerca cerca nuove informazioni.",
-              "en": "Research seeks new information.",
-              "words": [
-                "LA",
-                "ricerca",
-                "CERCA",
-                "NUOVE",
-                "INFORMAZIONI",
-                "."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "neuroscience",
-          "desc": "neurons, synapses, brain, research",
-          "icon": "🧠",
-          "vocab": [
-            {
-              "it": "neurona",
-              "en": "neuron",
-              "pron": "NOOR-on-ah"
-            },
-            {
-              "it": "sinapsi",
-              "en": "synapse",
-              "pron": "sin-AP-psee"
-            },
-            {
-              "it": "funzionalità",
-              "en": "functionality",
-              "pron": "fun-ZHI-nah-LAH-chee-ah"
-            },
-            {
-              "it": "stimolazione",
-              "en": "stimulation",
-              "pron": "stim-oh-LAY-zah-tsee"
-            },
-            {
-              "it": "esperimento",
-              "en": "experiment",
-              "pron": "es-PEHR-ment-oh"
-            },
-            {
-              "it": "ricerca",
-              "en": "research",
-              "pron": "ree-CHER-kah"
-            },
-            {
-              "it": "neuroscienziato",
-              "en": "neuroscientist",
-              "pron": "neu-ro-schayn-tsee-AH-toh"
-            },
-            {
-              "it": "comunicazione",
-              "en": "communication",
-              "pron": "ku-mu-nee-KAH-chee-oh"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Neuroni comunicano attraverso sinapsi.",
-              "en": "Neurons communicate through synapses.",
-              "words": [
-                "Neuroni",
-                "comunicano",
-                "attraverso",
-                "sinapsi",
-                "."
-              ]
-            },
-            {
-              "it": "La neurologia studia le funzioni del cervello.",
-              "en": "Neurology studies the functions of the brain.",
-              "words": [
-                "La",
-                "neurologia",
-                "studia",
-                "le",
-                "funzioni",
-                "del",
-                "cervello",
-                "."
-              ]
-            },
-            {
-              "it": "Stimolazione elettrica può migliorare la funzionalità.",
-              "en": "Electrical stimulation can improve functionality.",
-              "words": [
-                "Stimolazione",
-                "elettrica",
-                "può",
-                "migliorare",
-                "la",
-                "funzionalità",
-                "."
-              ]
-            },
-            {
-              "it": "Un neuroscienziato esegue esperimenti per capire meglio.",
-              "en": "A neuroscientist performs experiments to understand better.",
-              "words": [
-                "Un",
-                "neuroscienziato",
-                "esegue",
-                "esperimenti",
-                "per",
-                "capire",
-                "meglio",
-                "."
-              ]
-            },
-            {
-              "it": "La ricerca in neuroscienze è sempre in evoluzione.",
-              "en": "Research in neuroscience is always evolving.",
-              "words": [
-                "La",
-                "ricerca",
-                "in",
-                "neuroscienze",
-                "è",
-                "sempre",
-                "in",
-                "evoluzione",
-                "."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Neuroscience",
-          "desc": "Advanced vocabulary in neuroscience",
-          "icon": "🧠",
-          "vocab": [
-            {
-              "it": "neuroscienziato",
-              "en": "neuroscientist",
-              "pron": "neuro-sci-en-ti-a-to"
-            },
-            {
-              "it": "comunicazione",
-              "en": "communication",
-              "pron": "ku-mu-ni-ca-zio-ne"
-            },
-            {
-              "it": "funzionalità",
-              "en": "functionality",
-              "pron": "fun-zio-na-li-ta"
-            },
-            {
-              "it": "stimolazione",
-              "en": "stimulation",
-              "pron": "sti-mo-la-zio-ne"
-            },
-            {
-              "it": "esperimento",
-              "en": "experiment",
-              "pron": "es-pe-ri-men-to"
-            },
-            {
-              "it": "neurotrasmettore",
-              "en": "neurotransmitter",
-              "pron": "neuro-tras-met-to-re"
-            },
-            {
-              "it": "plasticità",
-              "en": "plasticity",
-              "pron": "pla-sti-ci-ta"
-            },
-            {
-              "it": "connessione",
-              "en": "connection",
-              "pron": "con-ne-zio-ne"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Il neuroscienziato esplora le funzionalità del cervello.",
-              "en": "The neuroscientist explores the functionality of the brain.",
-              "words": [
-                "Il",
-                "neuroscienziato",
-                "esplora",
-                "le",
-                "funzionalità",
-                "del",
-                "cervello",
-                "."
-              ]
-            },
-            {
-              "it": "La stimolazione può migliorare la comunicazione tra neuroni.",
-              "en": "Stimulation can improve communication between neurons.",
-              "words": [
-                "La",
-                "stimolazione",
-                "può",
-                "migliorare",
-                "la",
-                "comunicazione",
-                "tra",
-                "neuroni",
-                "."
-              ]
-            },
-            {
-              "it": "L'esperimento dimostra la plasticità del cervello.",
-              "en": "The experiment demonstrates the plasticity of the brain.",
-              "words": [
-                "L'esperimento",
-                "dimostra",
-                "la",
-                "plasticità",
-                "del",
-                "cervello",
-                "."
-              ]
-            },
-            {
-              "it": "Le sinapsi sono fondamentali per la funzione del cervello.",
-              "en": "Synapses are fundamental for brain function.",
-              "words": [
-                "Le",
-                "sinapsi",
-                "sono",
-                "fondamentali",
-                "per",
-                "la",
-                "funzione",
-                "del",
-                "cervello",
-                "."
-              ]
-            },
-            {
-              "it": "La neurotrasmissione è cruciale per la comunicazione tra neuroni.",
-              "en": "Neurotransmission is crucial for communication between neurons.",
-              "words": [
-                "La",
-                "neurotrasmissione",
-                "è",
-                "cruciale",
-                "per",
-                "la",
-                "comunicazione",
-                "tra",
-                "neuroni",
-                "."
-              ]
-            }
-          ]
-        }
-      ],
-      "generatedAt": "2026-04-21T14:58:59.701Z"
-    },
-    {
-      "topic": "modern art",
-      "topicEmoji": "🎨",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Modern Art",
-          "desc": "Basics of modern art vocabulary",
-          "icon": "🎨",
-          "vocab": [
-            {
-              "it": "arte moderna",
-              "en": "modern art",
-              "pron": "AR-tee mo-RAN-da"
-            },
-            {
-              "it": "pittura",
-              "en": "painting",
-              "pron": "pee-TU-ra"
-            },
-            {
-              "it": "scultura",
-              "en": "sculpture",
-              "pron": "skul-TOO-ra"
-            },
-            {
-              "it": "installazione",
-              "en": "installation",
-              "pron": "in-stal-LA-tsoo-ne"
-            },
-            {
-              "it": "performance",
-              "en": "performance",
-              "pron": "per-FORM-ahns"
-            },
-            {
-              "it": "abstracto",
-              "en": "abstract",
-              "pron": "ab-strak-to"
-            },
-            {
-              "it": "concreto",
-              "en": "concrete",
-              "pron": "kon-kret-to"
-            },
-            {
-              "it": "espressionismo",
-              "en": "expressionism",
-              "pron": "es-pres-soo-RIZ-mo"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "L'arte moderna è molto diversa.",
-              "en": "Modern art is very different.",
-              "words": [
-                "L'",
-                "'arte','modern",
-                "a",
-                "è",
-                "molto",
-                "divers",
-                "a",
-                "."
-              ]
-            },
-            {
-              "it": "La pittura è un'arte visiva.",
-              "en": "Painting is a visual art.",
-              "words": [
-                "La",
-                "pittura",
-                "è",
-                "un'",
-                "arte",
-                "vis",
-                "i",
-                "va",
-                "."
-              ]
-            },
-            {
-              "it": "La scultura può essere astratta.",
-              "en": "Sculpture can be abstract.",
-              "words": [
-                "La",
-                "scultura",
-                "può",
-                "essere",
-                "astratta",
-                "."
-              ]
-            },
-            {
-              "it": "L'installazione è un'arte spaziale.",
-              "en": "Installation is a spatial art.",
-              "words": [
-                "L'",
-                "installazione",
-                "è",
-                "un'",
-                "arte",
-                "spa-ziale",
-                "."
-              ]
-            },
-            {
-              "it": "La performance è un'arte temporale.",
-              "en": "Performance is a temporal art.",
-              "words": [
-                "un'",
-                "performance",
-                "La",
-                "arte",
-                "è",
-                "tem-po-ra-le"
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Modern Art",
-          "desc": "Explore modern art forms and concepts",
-          "icon": "🎨",
-          "vocab": [
-            {
-              "it": "installazione",
-              "en": "installation",
-              "pron": "in-sta-la-zion"
-            },
-            {
-              "it": "performance",
-              "en": "performance",
-              "pron": "per-fur-ma-nce"
-            },
-            {
-              "it": "abstracto",
-              "en": "abstract",
-              "pron": "ab-strak-to"
-            },
-            {
-              "it": "concreto",
-              "en": "concrete",
-              "pron": "kon-kret-to"
-            },
-            {
-              "it": "espressionismo",
-              "en": "expressionism",
-              "pron": "es-pre-zsh-iz-mo"
-            },
-            {
-              "it": "arte contemporanea",
-              "en": "contemporary art",
-              "pron": "ar-te con-ta-mer-ta-ne-a"
-            },
-            {
-              "it": "arte concettuale",
-              "en": "conceptual art",
-              "pron": "ar-te con-cep-tu-al-e"
-            },
-            {
-              "it": "arte astratta",
-              "en": "abstract art",
-              "pron": "ar-te as-trak-to"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "L'arte astratta è molto controversa.",
-              "en": "Abstract art is very controversial.",
-              "words": [
-                "L'",
-                "'",
-                "'arte",
-                "astratta",
-                "è",
-                "molto",
-                "controversa",
-                "."
-              ]
-            },
-            {
-              "it": "La performance è un'arte visiva.",
-              "en": "Performance is a visual art.",
-              "words": [
-                "La",
-                "performance",
-                "è",
-                "un'",
-                "'",
-                "'arte",
-                "visiva",
-                "."
-              ]
-            },
-            {
-              "it": "L'espressionismo è tipico del primo Novecento.",
-              "en": "Expressionism is typical of the early 20th century.",
-              "words": [
-                "L'",
-                "'",
-                "'espressionismo",
-                "è",
-                "tipico",
-                "del",
-                "primo",
-                "Novecento",
-                "."
-              ]
-            },
-            {
-              "it": "L'arte concettuale si concentra sul concetto.",
-              "en": "Conceptual art focuses on the concept.",
-              "words": [
-                "L'",
-                "'",
-                "'arte",
-                "concettuale",
-                "si",
-                "concentra",
-                "sul",
-                "concetto",
-                "."
-              ]
-            },
-            {
-              "it": "L'arte contemporanea include molte forme.",
-              "en": "Contemporary art includes many forms.",
-              "words": [
-                "L'",
-                "'",
-                "'arte",
-                "contemporanea",
-                "include",
-                "molte",
-                "forme",
-                "."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Modern Art",
-          "desc": "Explore contemporary art forms and movements",
-          "icon": "🎨",
-          "vocab": [
-            {
-              "it": "arte contemporanea",
-              "en": "contemporary art",
-              "pron": "AR-te con-temp-or-a-NE-a"
-            },
-            {
-              "it": "arte concettuale",
-              "en": "conceptual art",
-              "pron": "AR-te con-cep-tu-a-LE"
-            },
-            {
-              "it": "arte astratta",
-              "en": "abstract art",
-              "pron": "AR-te as-tra-DA"
-            },
-            {
-              "it": "realismo critico",
-              "en": "critical realism",
-              "pron": "re-a-Li-smo cri-TI-cal"
-            },
-            {
-              "it": "minimalismo",
-              "en": "minimalism",
-              "pron": "mi-ni-MAL-i-smo"
-            },
-            {
-              "it": "pop art",
-              "en": "pop art",
-              "pron": "POP art"
-            },
-            {
-              "it": "street art",
-              "en": "street art",
-              "pron": "STREET art"
-            },
-            {
-              "it": "hyperrealismo",
-              "en": "hyperrealism",
-              "pron": "hi-PER-re-a-LI-smo"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "L'arte astratta è molto popolare.",
-              "en": "Abstract art is very popular.",
-              "words": [
-                "L'",
-                "arte",
-                "astratta",
-                "è",
-                "molto",
-                "popolare",
-                "."
-              ]
-            },
-            {
-              "it": "Il realismo critico critica la società.",
-              "en": "Critical realism criticizes society.",
-              "words": [
-                "Il",
-                "realismo",
-                "critico",
-                "critica",
-                "la",
-                "società",
-                "."
-              ]
-            },
-            {
-              "it": "Il minimalismo usa pochi elementi.",
-              "en": "Minimalism uses few elements.",
-              "words": [
-                "Il",
-                "minimalismo",
-                "usa",
-                "pochi",
-                "elementi",
-                "."
-              ]
-            },
-            {
-              "it": "Il pop art si ispira alla cultura pop.",
-              "en": "Pop art is inspired by pop culture.",
-              "words": [
-                "Il",
-                "pop",
-                "art",
-                "si",
-                "ispira",
-                "alla",
-                "cultura",
-                "pop",
-                "."
-              ]
-            },
-            {
-              "it": "Il street art si trova nelle strade.",
-              "en": "Street art can be found in the streets.",
-              "words": [
-                "Il",
-                "street",
-                "art",
-                "si",
-                "trova",
-                "nelle",
-                "strade",
-                "."
-              ]
-            }
-          ]
-        }
-      ],
-      "generatedAt": "2026-04-25T18:54:44.859Z"
-    },
-    {
       "topic": "research grant proposals",
       "topicEmoji": "🔍",
       "lessons": [
@@ -11632,223 +10642,6 @@
         }
       ],
       "generatedAt": "2026-04-26T00:36:18.079Z"
-    },
-    {
-      "topic": "business & negotiations",
-      "topicEmoji": "🤝",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Basics of Business",
-          "desc": "Introductions and greetings",
-          "icon": "🤝",
-          "vocab": [
-            {
-              "it": "buongiorno",
-              "en": "good morning",
-              "pron": "BOO-ong-je-ro"
-            },
-            {
-              "it": "salve",
-              "en": "hello",
-              "pron": "SAL-vay"
-            },
-            {
-              "it": "signore",
-              "en": "sir",
-              "pron": "see-GOR-ray"
-            },
-            {
-              "it": "donna",
-              "en": "lady",
-              "pron": "DOH-nah"
-            },
-            {
-              "it": "signora",
-              "en": "madam",
-              "pron": "see-GOR-rah"
-            },
-            {
-              "it": "signorina",
-              "en": "miss",
-              "pron": "see-GOR-ree-nah"
-            },
-            {
-              "it": "affari",
-              "en": "business",
-              "pron": "ahf-FAH-ree"
-            },
-            {
-              "it": "negoziare",
-              "en": "to negotiate",
-              "pron": "neh-goh-tsee-AH-re"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Buongiorno, signore.",
-              "en": "Good morning, sir."
-            },
-            {
-              "it": "Salve, signora.",
-              "en": "Hello, madam."
-            },
-            {
-              "it": "Signorina, affari?",
-              "en": "Miss, business?"
-            },
-            {
-              "it": "Negoziare è importante.",
-              "en": "Negotiating is important."
-            },
-            {
-              "it": "Affari sono importanti.",
-              "en": "Business is important."
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Intermediate Phrases",
-          "desc": "Offering and accepting terms",
-          "icon": "🤝",
-          "vocab": [
-            {
-              "it": "accettare",
-              "en": "to accept",
-              "pron": "ah-keh-TAY-re"
-            },
-            {
-              "it": "negoziare con",
-              "en": "to negotiate with",
-              "pron": "neh-goh-tsee-AH-re con"
-            },
-            {
-              "it": "condizioni",
-              "en": "conditions",
-              "pron": "con-dih-TEE-oh-nees"
-            },
-            {
-              "it": "negoziare a mente aperta",
-              "en": "to negotiate with an open mind",
-              "pron": "neh-goh-tsee-AH-re ah MENT-eh ah-PEH-trah"
-            },
-            {
-              "it": "negoziare a cuore aperto",
-              "en": "to negotiate with an open heart",
-              "pron": "neh-goh-tsee-AH-re ah KOHR-eh ah-PEH-trah"
-            },
-            {
-              "it": "negoziare a mente fredda",
-              "en": "to negotiate with a cold mind",
-              "pron": "neh-goh-tsee-AH-re ah MENT-eh FREH-dah"
-            },
-            {
-              "it": "negoziare a cuore freddo",
-              "en": "to negotiate with a cold heart",
-              "pron": "neh-goh-tsee-AH-re ah KOHR-eh FREH-doh"
-            },
-            {
-              "it": "negoziare a mente calma",
-              "en": "to negotiate with a calm mind",
-              "pron": "neh-goh-tsee-AH-re ah MENT-eh CAH-lmah"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Accettiamo le condizioni.",
-              "en": "We accept the conditions."
-            },
-            {
-              "it": "Negoziamo con mente aperta.",
-              "en": "We negotiate with an open mind."
-            },
-            {
-              "it": "Negoziamo a cuore aperto.",
-              "en": "We negotiate with an open heart."
-            },
-            {
-              "it": "Negoziamo a mente fredda.",
-              "en": "We negotiate with a cold mind."
-            },
-            {
-              "it": "Negoziamo a cuore freddo.",
-              "en": "We negotiate with a cold heart."
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Advanced Negotiation Techniques",
-          "desc": "Using specific negotiation strategies",
-          "icon": "🤝",
-          "vocab": [
-            {
-              "it": "negoziare a mente fredda",
-              "en": "to negotiate with a cold mind",
-              "pron": "neh-goh-tsee-AH-re ah MENT-eh FREH-dah"
-            },
-            {
-              "it": "negoziare a cuore freddo",
-              "en": "to negotiate with a cold heart",
-              "pron": "neh-goh-tsee-AH-re ah KOHR-eh FREH-doh"
-            },
-            {
-              "it": "negoziare a mente calma",
-              "en": "to negotiate with a calm mind",
-              "pron": "neh-goh-tsee-AH-re ah MENT-eh CAH-lmah"
-            },
-            {
-              "it": "negoziare con calma",
-              "en": "to negotiate calmly",
-              "pron": "neh-goh-tsee-AH-re con CAH-lmah"
-            },
-            {
-              "it": "negoziare con convinzione",
-              "en": "to negotiate with conviction",
-              "pron": "neh-goh-tsee-AH-re con kuh-vihn-ZEHN-tsee-oh"
-            },
-            {
-              "it": "negoziare con sicurezza",
-              "en": "to negotiate with confidence",
-              "pron": "neh-goh-tsee-AH-re con see-koo-roo-ZEH-ah"
-            },
-            {
-              "it": "negoziare con determinazione",
-              "en": "to negotiate with determination",
-              "pron": "neh-goh-tsee-AH-re con deh-tur-mih-NAH-tee-oh"
-            },
-            {
-              "it": "negoziare con passione",
-              "en": "to negotiate with passion",
-              "pron": "neh-goh-tsee-AH-re con pahs-SION-eh"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Negoziamo a mente calma.",
-              "en": "We negotiate calmly."
-            },
-            {
-              "it": "Negoziamo con convinzione.",
-              "en": "We negotiate with conviction."
-            },
-            {
-              "it": "Negoziamo con sicurezza.",
-              "en": "We negotiate with confidence."
-            },
-            {
-              "it": "Negoziamo con determinazione.",
-              "en": "We negotiate with determination."
-            },
-            {
-              "it": "Negoziamo con passione.",
-              "en": "We negotiate with passion."
-            }
-          ]
-        }
-      ],
-      "generatedAt": "2026-04-21T09:52:31.149Z"
     }
   ],
   "flags": {
