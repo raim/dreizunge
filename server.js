@@ -300,15 +300,12 @@ function deriveSentenceWords(s) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang, inTargetLang, isContinuation) {
+function sysStory(lang, isContinuation) {
   const L = langName(lang);
-  const langInstruction = inTargetLang
-    ? `Write entirely in ${L}. The story should naturally include vocabulary and situations useful for someone learning ${L}.`
-    : `Write in English. The story should naturally include vocabulary and situations useful for someone learning ${L}.`;
   const contInstruction = isContinuation
     ? `IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one provided. Characters should feel familiar, the world should feel connected.`
     : '';
-  return `You are a creative writer helping language learners. Write a short, engaging story (4-6 paragraphs, around 400 words) on the given topic. ${langInstruction} Avoid repetitive structures! Write plain prose only — no headings, no bullet points, no markdown. ${contInstruction}`.trim();
+  return `You are a creative writer and ${L} language teacher. Write a short, engaging story directly in ${L} (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Avoid repetitive structures! Write plain prose only — no headings, no bullet points, no markdown. Write entirely in ${L}. ${contInstruction}`.trim();
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
@@ -373,7 +370,7 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
-async function generate(topic, lang, active, difficulty, storyInTargetLang, continuedFrom, jobId) {
+async function generate(topic, lang, active, difficulty, continuedFrom, jobId) {
   const genStart = Date.now();
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   const lessonTokenStats = [];
@@ -392,25 +389,21 @@ async function generate(topic, lang, active, difficulty, storyInTargetLang, cont
   }
 
   jobStep(jobId, 'Generating story…');
-  let story = null, storyLang = 'en';
-  // Look up previous story for continuation
+  let story = null;
+  const storyLang = lang;
   const prevStory = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
   if (continuedFrom && prevStory)
     console.log(`    Continuing story from: "${continuedFrom}" (${prevStory.length} chars)`);
   try {
     const t0 = Date.now();
-    let storyUserMsg;
-    if (prevStory) {
-      storyUserMsg = `Previous story (continue its characters and world):\n${prevStory}\n\nNew topic: "${meta.topic || topic}". Write the continuation story now. Plain prose, no headings.`;
-    } else {
-      storyUserMsg = `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`;
-    }
+    const storyUserMsg = prevStory
+      ? `Previous story (continue its characters and world):\n${prevStory}\n\nNew topic: "${meta.topic || topic}". Write the continuation story now. Plain prose, no headings.`
+      : `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`;
     const { text, promptTokens, completionTokens } = await callLLM(
-      active, sysStory(lang, storyInTargetLang, !!prevStory), storyUserMsg, 900);
+      active, sysStory(lang, !!prevStory), storyUserMsg, 900);
     story = text.trim();
-    storyLang = storyInTargetLang ? lang : 'en';
     totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
-    console.log(`    Story (${storyLang}): ${Date.now()-t0}ms`);
+    console.log(`    Story (${lang}): ${Date.now()-t0}ms`);
   } catch(e) { console.warn('  Story failed:', e.message); }
 
   const TOTAL = 3;
@@ -680,10 +673,9 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { topic, lang, difficulty, storyInTargetLang, continuedFrom, forceRegenerate } = body;
+      const { topic, lang, difficulty, continuedFrom, forceRegenerate } = body;
       if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      // Validate continuedFrom refers to an existing saved topic
       const contFrom = continuedFrom && findSaved(continuedFrom) ? continuedFrom : null;
       const topicKey = topic.trim().toLowerCase();
       if (!forceRegenerate) {
@@ -697,7 +689,7 @@ async function boot() {
       const jobId = newJob();
       generatingTopics.add(topicKey);
       console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) diff=${diff}${contFrom?' cont='+contFrom:''} job=${jobId}`);
-      generate(topic.trim(), lang || 'it', active, diff, !!storyInTargetLang, contFrom, jobId).then(data => {
+      generate(topic.trim(), lang || 'it', active, diff, contFrom, jobId).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         jobDone(jobId, { ...data, fromCache: false });
@@ -751,15 +743,14 @@ async function boot() {
         try {
           jobStep(jobId, 'Rewriting story…');
           const lang = saved.lang || 'it';
-          const inTargetLang = saved.storyLang && saved.storyLang !== 'en';
           const userMsg = [
             `Topic: "${topic}".`,
             saved.story ? `Current story:\n${saved.story}\n\nUser instruction: ${instruction}` : `Write a new story. Instruction: ${instruction}`,
             'Plain prose, no headings.'
           ].join('\n');
-          const { text } = await callLLM(active, sysStory(lang, inTargetLang), userMsg, 900);
+          const { text } = await callLLM(active, sysStory(lang, false), userMsg, 900);
           saved.story = text.trim();
-          saved.storyLang = inTargetLang ? lang : 'en';
+          saved.storyLang = lang;
           delete saved.storyNative;
           upsert(saved);
           jobDone(jobId, { story: saved.story });

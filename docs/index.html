@@ -252,8 +252,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .diff-badge.d1{background:#d7ffb2;color:#2a6000}
 .diff-badge.d2{background:#fff3cc;color:#7a5000}
 .diff-badge.d3{background:#ffd4d4;color:#880000}
-.native-check-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:13px;font-weight:700;color:var(--gray-dark)}
-.native-check-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--blue)}
+.native-check-row{display:none}
 
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
 .story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 16px;overflow:hidden;box-shadow:var(--shadow-card)}
@@ -383,10 +382,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <span class="continue-select-arrow">▾</span>
       </div>
     </div>
-    <label class="native-check-row">
-      <input type="checkbox" id="story-lang-check">
-      Generate story in <span id="native-lang-lbl">Italian</span> (experimental)
-    </label>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
@@ -551,8 +546,6 @@ function selectLang(code){
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
   if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
-  const nativeLbl=document.getElementById('native-lang-lbl');
-  if(nativeLbl) nativeLbl.textContent=L.name;
 }
 async function pollJob(jobId, onStep, intervalMs){
   intervalMs = intervalMs || 2000;
@@ -652,10 +645,9 @@ async function doRepairStory(){
     const body=document.getElementById('story-body');
     if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow')?.classList.add('open'); }
     renderStoryText(APP.lessonData);
-    // Update story language badge
-    const sl=APP.lessonData.storyLang||'en';
+    // Update story language badge — always the lesson's target language flag
     const storyLangLbl=document.getElementById('story-lang-lbl');
-    if(storyLangLbl) storyLangLbl.textContent=sl==='en'?'EN':(LANGS[sl]?.flag||sl.toUpperCase());
+    if(storyLangLbl) storyLangLbl.textContent=(LANGS[APP.lessonData.lang||'it']||LANGS.it).flag;
     document.getElementById('story-repair-input').value='';
     if(status) status.textContent='Story updated!';
     setTimeout(()=>{ if(status) status.textContent=''; },3000);
@@ -12557,8 +12549,7 @@ function buildPath(){
     // Show story language as a small label in the header
     const storyLangLbl=document.getElementById('story-lang-lbl');
     if(storyLangLbl){
-      const sl=d.storyLang||'en';
-      storyLangLbl.textContent=sl==='en'?'EN':(LANGS[sl]?.flag||sl.toUpperCase());
+      storyLangLbl.textContent=dL.flag;
       storyLangLbl.style.display='';
     }
     const repToggle=document.getElementById('story-repair-toggle-btn');
