@@ -241,6 +241,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .diff-select{width:100%;padding:10px 36px 10px 14px;font-size:14px;font-weight:800;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
 .diff-select:focus{border-color:var(--blue)}
 .diff-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
+.continue-row{margin-bottom:14px}
+.continue-lbl{display:block;font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:5px;letter-spacing:.02em;text-transform:uppercase}
+.continue-select-wrap{position:relative;display:inline-block;width:100%}
+.continue-select{width:100%;padding:9px 36px 9px 12px;font-size:13px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
+.continue-select:focus{border-color:var(--blue)}
+.continue-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px;color:var(--gray-dark)}
+.continued-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#f0f4ff;border:1.5px solid #c0ccff;border-radius:8px;padding:3px 9px;color:#334;margin-top:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .diff-badge{display:inline-block;font-size:10px;font-weight:900;padding:1px 7px;border-radius:8px;vertical-align:middle;margin-left:4px;letter-spacing:.04em}
 .diff-badge.d1{background:#d7ffb2;color:#2a6000}
 .diff-badge.d2{background:#fff3cc;color:#7a5000}
@@ -274,9 +281,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-repair-btn:disabled{opacity:.5;cursor:not-allowed}
 .story-repair-status{font-size:12px;color:var(--gray-dark);font-weight:600;margin-top:5px}
 .story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
 .gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}
@@ -302,34 +306,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* ══ TOAST ═══════════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-/* ══ CHAT CONSOLE ════════════════════════════════════════════════════ */
-.chat-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:20px 0 0;overflow:hidden;box-shadow:var(--shadow-card)}
-.chat-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
-.chat-hdr:hover{background:var(--gray-light)}
-.chat-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
-.chat-arrow.open{transform:rotate(180deg)}
-.chat-body{display:none;flex-direction:column;padding:0 14px 14px}
-.chat-body.open{display:flex}
-.chat-log{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;margin-bottom:10px;padding-right:2px}
-.chat-log:empty::before{content:'Ask anything about this lesson — vocab choices, difficulty, story, how to improve it…';font-size:13px;color:var(--gray);font-style:italic;padding:8px 0}
-.chat-msg{padding:9px 12px;border-radius:var(--radius);font-size:13px;line-height:1.55;font-weight:600;max-width:100%;white-space:pre-wrap;word-break:break-word}
-.chat-msg.user{background:var(--blue-light);border:1.5px solid var(--blue);color:var(--blue-dark);align-self:flex-end;border-bottom-right-radius:4px}
-.chat-msg.assistant{background:var(--gray-light);border:1.5px solid var(--gray-mid);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
-.chat-msg.error{background:var(--red-light);border:1.5px solid var(--red);color:#990000}
-.chat-msg.thinking{color:var(--gray);font-style:italic}
-.chat-input-row{display:flex;gap:7px;align-items:flex-end}
-.chat-input{flex:1;padding:9px 11px;font-size:13px;font-weight:600;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--gray-light);outline:none;resize:none;min-height:38px;max-height:120px;line-height:1.4}
-.chat-input:focus{border-color:var(--blue);background:var(--white)}
-.chat-send-btn{background:var(--blue);color:var(--white);border:none;border-radius:var(--radius);padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;flex-shrink:0}
-.chat-send-btn:hover:not(:disabled){background:var(--blue-dark)}
-.chat-send-btn:disabled{opacity:.45;cursor:not-allowed}
-.chat-clear-btn{background:none;border:none;font-size:11px;font-weight:700;color:var(--gray-dark);cursor:pointer;padding:4px 0;margin-top:4px;font-family:'Nunito',sans-serif;text-align:right;opacity:.7;width:100%}
-.chat-clear-btn:hover{opacity:1;color:var(--red)}
 </style>
 </head>
 <body>
-
-<div id="toast" class="toast"></div>
 
 <div id="toast" class="toast"></div>
 
@@ -393,6 +372,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           <option value="3">🔴 Advanced — complex sentences, idiomatic language</option>
         </select>
         <span class="diff-select-arrow">▾</span>
+      </div>
+    </div>
+    <div class="continue-row" id="continue-row">
+      <span class="continue-lbl">Continue story from</span>
+      <div class="continue-select-wrap">
+        <select class="continue-select" id="continue-select">
+          <option value="">— new story —</option>
+        </select>
+        <span class="continue-select-arrow">▾</span>
       </div>
     </div>
     <label class="native-check-row">
@@ -472,23 +460,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
-  </div>
-  <div class="chat-section" id="chat-section" style="display:none">
-    <button class="chat-hdr" onclick="toggleChat()">
-      <span>🤖 Model console</span>
-      <span class="chat-arrow" id="chat-arrow">▼</span>
-    </button>
-    <div class="chat-body" id="chat-body">
-      <div class="chat-log" id="chat-log"></div>
-      <div class="chat-input-row">
-        <textarea class="chat-input" id="chat-input" rows="1"
-          placeholder="Ask about vocab choices, difficulty, story…"
-          oninput="autoResizeChat(this)"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
-        <button class="chat-send-btn" id="chat-send-btn" onclick="sendChat()">Send</button>
-      </div>
-      <button class="chat-clear-btn" onclick="clearChat()">Clear conversation</button>
-    </div>
   </div>
 </div>
 </div>
@@ -868,6 +839,1264 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "fungus spreads to the brain",
+    "topicEmoji": "fungi",
+    "lang": "it",
+    "difficulty": 2,
+    "story": null,
+    "storyLang": "en",
+    "continuedFrom": "food poisoning in the hospital",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "fungus brain",
+        "desc": "funny scary brain fungus",
+        "icon": "🧟",
+        "vocab": [
+          {
+            "it": "fungo",
+            "en": "fungus",
+            "pron": "FUH-noh"
+          },
+          {
+            "it": "cervello",
+            "en": "brain",
+            "pron": "tseh-VEL-lo"
+          },
+          {
+            "it": "spunta",
+            "en": "sprouts",
+            "pron": "SPUNT-ah"
+          },
+          {
+            "it": "sogno",
+            "en": "dream",
+            "pron": "SOH-no"
+          },
+          {
+            "it": "pazza",
+            "en": "crazy",
+            "pron": "PAH-tsza"
+          },
+          {
+            "it": "sorprendere",
+            "en": "surprise",
+            "pron": "sor-preh-DZEH-re"
+          },
+          {
+            "it": "soggiorno",
+            "en": "stay",
+            "pron": "soh-jee-OHR-no"
+          },
+          {
+            "it": "soggiornatore",
+            "en": "guest",
+            "pron": "soh-jee-or-NAH-tohr"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Un fungo spunta nel mio cervello.",
+            "en": "A fungus sprouts in my brain.",
+            "words": [
+              "Un",
+              "fungo",
+              "spunta",
+              "nel",
+              "mio",
+              "cervello."
+            ]
+          },
+          {
+            "it": "Sogno di essere un sorprendente pazza.",
+            "en": "I dream of being a surprising crazy.",
+            "words": [
+              "Sogno",
+              "di",
+              "essere",
+              "un",
+              "sorprendente",
+              "pazza."
+            ]
+          },
+          {
+            "it": "Il fungo mi fa soggiornare in un mondo pazza.",
+            "en": "The fungus makes me stay in a crazy world.",
+            "words": [
+              "Il",
+              "fungo",
+              "mi",
+              "fa",
+              "soggiornare",
+              "in",
+              "un",
+              "mondo",
+              "pazza."
+            ]
+          },
+          {
+            "it": "Soggiornatore, il fungo ti sorprende nel cervello.",
+            "en": "Guest, the fungus surprises you in the brain.",
+            "words": [
+              "Soggiornatore,",
+              "il",
+              "fungo",
+              "ti",
+              "sorprende",
+              "nel",
+              "cervello."
+            ]
+          },
+          {
+            "it": "Spunta nel mio sogno, il fungo del cervello pazza.",
+            "en": "Sprouts in my dream, the brain fungus goes crazy.",
+            "words": [
+              "Spunta",
+              "nel",
+              "mio",
+              "sogno,",
+              "il",
+              "fungo",
+              "del",
+              "cervello",
+              "pazza."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "fungus in the brain",
+        "desc": "funny but slightly scary story",
+        "icon": "🧟",
+        "vocab": [
+          {
+            "it": "spunta",
+            "en": "sprouts",
+            "pron": "SPUN-ta"
+          },
+          {
+            "it": "sogno",
+            "en": "dream",
+            "pron": "SO-gno"
+          },
+          {
+            "it": "pazza",
+            "en": "crazy",
+            "pron": "PAZ-zza"
+          },
+          {
+            "it": "sorprendere",
+            "en": "surprise",
+            "pron": "sor-PREN-de-re"
+          },
+          {
+            "it": "soggiorno",
+            "en": "stay",
+            "pron": "so-GGI-or-no"
+          },
+          {
+            "it": "soggiornatore",
+            "en": "guest",
+            "pron": "so-GGI-or-na-to-re"
+          },
+          {
+            "it": "infestare",
+            "en": "infest",
+            "pron": "in-FES-ta-re"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il fungo spunta nel cervello del soggiornatore.",
+            "en": "The fungus sprouts in the guest's brain.",
+            "words": [
+              "Il",
+              "fungo",
+              "spunta",
+              "nel",
+              "cervello",
+              "del",
+              "soggiornatore."
+            ]
+          },
+          {
+            "it": "Nel sogno, il soggiornatore sorprende di essere pazza.",
+            "en": "In the dream, the guest is surprised to be crazy.",
+            "words": [
+              "Nel",
+              "sogno,",
+              "il",
+              "soggiornatore",
+              "sorprende",
+              "di",
+              "essere",
+              "pazza."
+            ]
+          },
+          {
+            "it": "L'infestazione spinge il cervello a sogno senza fine.",
+            "en": "The infestation pushes the brain into endless dreams.",
+            "words": [
+              "L'infestazione",
+              "spinge",
+              "il",
+              "cervello",
+              "a",
+              "sogno",
+              "senza",
+              "fine."
+            ]
+          },
+          {
+            "it": "Il soggiornatore si sveglia con un sorriso pazza sul viso.",
+            "en": "The guest wakes up with a crazy smile on his face.",
+            "words": [
+              "Il",
+              "soggiornatore",
+              "si",
+              "sveglia",
+              "con",
+              "un",
+              "sorriso",
+              "pazza",
+              "sul",
+              "viso."
+            ]
+          },
+          {
+            "it": "Il medico sorprende di trovare il cervello infestato di funghi.",
+            "en": "The doctor is surprised to find the brain infested with fungi.",
+            "words": [
+              "Il",
+              "medico",
+              "sorprende",
+              "di",
+              "trovare",
+              "il",
+              "cervello",
+              "infestato",
+              "di",
+              "funghi."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "fungi in the brain",
+        "desc": "funny but slightly scary story",
+        "icon": "🧟",
+        "vocab": [
+          {
+            "it": "infestare",
+            "en": "to infest",
+            "pron": "IN-fes-ta-re"
+          },
+          {
+            "it": "soggiornatore",
+            "en": "guest",
+            "pron": "so-ji-or-na-tore"
+          },
+          {
+            "it": "soggiorno",
+            "en": "stay",
+            "pron": "so-ji-or-no"
+          },
+          {
+            "it": "sognare",
+            "en": "to dream",
+            "pron": "so-nya-re"
+          },
+          {
+            "it": "pazza",
+            "en": "crazy",
+            "pron": "PAZZ-a"
+          },
+          {
+            "it": "sorprendere",
+            "en": "to surprise",
+            "pron": "so-rpren-de-re"
+          },
+          {
+            "it": "sognatore",
+            "en": "dreamer",
+            "pron": "so-nya-tore"
+          },
+          {
+            "it": "spunta",
+            "en": "sprouts",
+            "pron": "SPUN-ta"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il fungo infestò il cervello del soggiornatore.",
+            "en": "The fungus infested the guest's brain.",
+            "words": [
+              "Il",
+              "fungo",
+              "infestò",
+              "il",
+              "cervello",
+              "del",
+              "soggiornatore."
+            ]
+          },
+          {
+            "it": "In ogni suo sogno, lui sognava spunte pazze.",
+            "en": "In every dream, he dreamed of crazy sprouts.",
+            "words": [
+              "In",
+              "ogni",
+              "suo",
+              "sogno,",
+              "lui",
+              "sognava",
+              "spunte",
+              "pazze."
+            ]
+          },
+          {
+            "it": "Sorpreso, il soggiornatore si svegliò di soprassalto.",
+            "en": "Surprised, the guest jumped awake suddenly.",
+            "words": [
+              "Sorpreso,",
+              "il",
+              "soggiornatore",
+              "si",
+              "svegliò",
+              "di",
+              "soprassalto."
+            ]
+          },
+          {
+            "it": "Il soggiornatore era un sognatore pazza, spesso sorprendeva se stesso.",
+            "en": "The guest was a crazy dreamer, often surprising himself.",
+            "words": [
+              "Il",
+              "soggiornatore",
+              "era",
+              "un",
+              "sognatore",
+              "pazza,",
+              "spesso",
+              "sorprendeva",
+              "se",
+              "stesso."
+            ]
+          },
+          {
+            "it": "Spunta spunta, il soggiorno era diventato un incubo.",
+            "en": "Sprout sprout, the stay had become a nightmare.",
+            "words": [
+              "Spunta",
+              "spunta,",
+              "il",
+              "soggiorno",
+              "era",
+              "diventato",
+              "un",
+              "incubo."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1028999,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 1116,
+      "totalCompletionTokens": 1179,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 280651,
+          "promptTokens": 276,
+          "completionTokens": 367
+        },
+        {
+          "lessonNum": 2,
+          "ms": 173288,
+          "promptTokens": 342,
+          "completionTokens": 389
+        },
+        {
+          "lessonNum": 3,
+          "ms": 184119,
+          "promptTokens": 386,
+          "completionTokens": 393
+        }
+      ]
+    },
+    "generatedAt": "2026-05-02T21:20:07.019Z",
+    "updatedAt": "2026-05-02T21:20:07.019Z"
+  },
+  {
+    "topic": "food poisoning in the hospital",
+    "topicEmoji": "🩺",
+    "lang": "it",
+    "difficulty": 2,
+    "story": "Quella sera, Alessia tornò a casa con il cuore pieno di orgoglio e la cesta traboccante di porcini. La sera, dopo aver preparato una deliziosa zuppa di funghi, sentì un leggero mal di testa e un fastidio allo stomaco. Non ci fece caso all'inizio, pensando che fosse solo un piccolo malore dovuto al caldo della cucina. Ma quando il dolore si fece più intenso e la nausea la costrinse a letto, Alessia capì che qualcosa non andava.\n\nSuo marito, Marco, notò il suo stato e preoccupato la portò al pronto soccorso del piccolo ospedale di San Gimignano. Lì, Alessia fu accolta da un medico gentile che la esaminò attentamente. \"Sembra che abbiate avuto un'intossicazione alimentare,\" disse il dottore con un sorriso rassicurante. \"Avete mangiato qualcosa che non era sicuro?\"\n\nAlessia ricordò con un senso di colpa la zuppa di funghi che aveva preparato. \"Sì, avevo trovato alcuni porcini in un luogo isolato e non ne ero sicura se fossero al sicuro,\" ammise con un sospiro. \"Ma sembravano così buoni.\"\n\nIl dottore annuì comprensivo. \"Capisco. I porcini selvatici possono contenere micelii tossici se non sono riconosciuti correttamente. Spero che non siate troppo male.\"\n\nAlessia si sentì in colpa per aver messo a rischio la propria salute. \"Non è la prima volta che vado a caccia di funghi,\" disse, cercando di sembrare più forte di quanto non si sentisse. \"Ma non avrei mai pensato che potessero essere pericolosi.\"\n\nIl dottore le diede alcuni consigli su come riconoscere i funghi al sicuro e le fece un'iniezione per calmare i sintomi. \"Resterete qui per un paio di ore,\" disse, \"ma dovreste sentire migliorare presto.\"\n\nAlessia si sentì sollevata ma anche un po' imbarazzata per aver messo a rischio la propria salute. Marco la tenne per mano, cercando di rassicurarla. \"Non preoccuparti,\" le disse dolcemente. \"Siamo fortunati che il dottore sia stato in grado di aiutarti in tempo.\"\n\nMentre aspettavano, Alessia rifletté sulla lezione imparata. Non solo aveva appreso che la caccia ai funghi era un'attività pericolosa, ma aveva anche realizzato quanto fosse importante la sicurezza nella cucina. Si promesse di essere più cauta in futuro e di chiedere aiuto a Marco o a sua nonna per riconoscere correttamente i funghi.\n\nQuando finalmente fu in grado di andare a casa, Alessia e Marco camminarono insieme sotto il cielo stellato, parlando della loro giornata. \"Sai,\" disse Marco, \"non è la prima volta che ti vedo preoccupata per i funghi. Forse è tempo che chiediamo a tua nonna di aiutarti.\"\n\nAlessia sorrise, sentendo un po' meglio. \"Sì, forse hai ragione,\" disse. \"Ma per ora, la cosa più importante è che sto bene.\"",
+    "storyLang": "it",
+    "continuedFrom": "pilze suchen",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Intossicazione alimentare",
+        "desc": "Parole chiave per la malattia e il cibo",
+        "icon": "🫖",
+        "vocab": [
+          {
+            "it": "porcini",
+            "en": "pork chops",
+            "pron": "POHR-ki-nee"
+          },
+          {
+            "it": "zuppa",
+            "en": "soup",
+            "pron": "ZOO-pa"
+          },
+          {
+            "it": "mal di testa",
+            "en": "headache",
+            "pron": "MAL dee TES-tah"
+          },
+          {
+            "it": "nausea",
+            "en": "nausea",
+            "pron": "no-ZEE-ah"
+          },
+          {
+            "it": "intossicazione alimentare",
+            "en": "food poisoning",
+            "pron": "in-toh-sis-ka-TZAY-shun al-lee-men-TA-re"
+          },
+          {
+            "it": "ospedale",
+            "en": "hospital",
+            "pron": "o-spay-DAY-le"
+          },
+          {
+            "it": "pronto soccorso",
+            "en": "emergency room",
+            "pron": "pront SOCK-cor-so"
+          },
+          {
+            "it": "intenso",
+            "en": "intense",
+            "pron": "in-TEHN-so"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Ho mangiato dei porcini e ora ho un mal di testa.",
+            "en": "I ate some pork chops and now I have a headache.",
+            "words": [
+              "Ho",
+              "mangiato",
+              "dei",
+              "porcini",
+              "e",
+              "ora",
+              "ho",
+              "un",
+              "mal",
+              "di",
+              "testa."
+            ]
+          },
+          {
+            "it": "La zuppa di funghi mi ha dato nausea.",
+            "en": "The mushroom soup gave me nausea.",
+            "words": [
+              "La",
+              "zuppa",
+              "di",
+              "funghi",
+              "mi",
+              "ha",
+              "dato",
+              "nausea."
+            ]
+          },
+          {
+            "it": "Il dottore disse che avevo intossicazione alimentare.",
+            "en": "The doctor said I had food poisoning.",
+            "words": [
+              "Il",
+              "dottore",
+              "disse",
+              "che",
+              "avevo",
+              "intossicazione",
+              "alimentare."
+            ]
+          },
+          {
+            "it": "La nausea mi costrinse a letto.",
+            "en": "The nausea forced me to bed.",
+            "words": [
+              "La",
+              "nausea",
+              "mi",
+              "costrinse",
+              "a",
+              "letto."
+            ]
+          },
+          {
+            "it": "Spero che il mal di testa si attenui presto.",
+            "en": "I hope the headache subsides soon.",
+            "words": [
+              "Spero",
+              "che",
+              "il",
+              "mal",
+              "di",
+              "testa",
+              "si",
+              "attenui",
+              "presto."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Food Poisoning in the Hospital",
+        "desc": "Hospital, symptoms, doctor, treatment, recovery",
+        "icon": "🩺",
+        "vocab": [
+          {
+            "it": "trabocca",
+            "en": "overflow",
+            "pron": "TRA-bo-kka"
+          },
+          {
+            "it": "deliziosa",
+            "en": "delicious",
+            "pron": "de-LI-zio-sa"
+          },
+          {
+            "it": "funghi",
+            "en": "mushrooms",
+            "pron": "FUN-ghi"
+          },
+          {
+            "it": "caldo",
+            "en": "hot",
+            "pron": "CAL-do"
+          },
+          {
+            "it": "cucina",
+            "en": "kitchen",
+            "pron": "ku-KEE-na"
+          },
+          {
+            "it": "piccolo",
+            "en": "small",
+            "pron": "pi-CK-ko"
+          },
+          {
+            "it": "gentile",
+            "en": "kind",
+            "pron": "jen-TILE"
+          },
+          {
+            "it": "rassicurante",
+            "en": "reassuring",
+            "pron": "ra-sa-ki-UR-an-te"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La zuppa di funghi traboccava di sapori.",
+            "en": "The mushroom soup overflowed with flavors.",
+            "words": [
+              "La",
+              "zuppa",
+              "di",
+              "funghi",
+              "traboccava",
+              "di",
+              "sapori."
+            ]
+          },
+          {
+            "it": "Alessia sentì il caldo della cucina che le saliva al viso.",
+            "en": "Alessia felt the heat of the kitchen rising to her face.",
+            "words": [
+              "Alessia",
+              "sentì",
+              "il",
+              "caldo",
+              "della",
+              "cucina",
+              "che",
+              "le",
+              "saliva",
+              "al",
+              "viso."
+            ]
+          },
+          {
+            "it": "Il dottore era gentile e rassicurante con la paziente.",
+            "en": "The doctor was kind and reassuring to the patient.",
+            "words": [
+              "Il",
+              "dottore",
+              "era",
+              "gentile",
+              "e",
+              "rassicurante",
+              "con",
+              "la",
+              "paziente."
+            ]
+          },
+          {
+            "it": "Il medico controllò attentamente la temperatura di Alessia.",
+            "en": "The doctor carefully checked Alessia's temperature.",
+            "words": [
+              "Il",
+              "medico",
+              "controllò",
+              "attentamente",
+              "la",
+              "temperatura",
+              "di",
+              "Alessia."
+            ]
+          },
+          {
+            "it": "Alessia ricordò con un sorriso il pranzo con i porcini.",
+            "en": "Alessia smiled remembering the lunch with pork chops.",
+            "words": [
+              "Alessia",
+              "ricordò",
+              "con",
+              "un",
+              "sorriso",
+              "il",
+              "pranzo",
+              "con",
+              "i",
+              "porcini."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Food Poisoning in the Hospital",
+        "desc": "Hospital, symptoms, doctor, reassurance, recovery",
+        "icon": "🩺",
+        "vocab": [
+          {
+            "it": "intossicazione alimentare",
+            "en": "food poisoning",
+            "pron": "in-toh-si-ka-ti-o-ne al-le-men-ta-ri"
+          },
+          {
+            "it": "accogliere",
+            "en": "to welcome",
+            "pron": "ah-koh-GLI-eh-re"
+          },
+          {
+            "it": "esaminare",
+            "en": "to examine",
+            "pron": "eh-sah-ME-ne-ah-re"
+          },
+          {
+            "it": "sorriso rassicurante",
+            "en": "reassuring smile",
+            "pron": "sor-riz-soh rass-i-ku-RAN-te"
+          },
+          {
+            "it": "medico",
+            "en": "doctor",
+            "pron": "meh-DI-koh"
+          },
+          {
+            "it": "stato",
+            "en": "condition",
+            "pron": "STA-to"
+          },
+          {
+            "it": "piccolo",
+            "en": "small",
+            "pron": "pih-KLOH-lo"
+          },
+          {
+            "it": "gentile",
+            "en": "kind",
+            "pron": "jen-TIL-le"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Alessia si sentiva male e decise di accogliere il consiglio del dottore.",
+            "en": "Alessia felt unwell and decided to follow the doctor's advice.",
+            "words": [
+              "Alessia",
+              "si",
+              "sentiva",
+              "male",
+              "e",
+              "decise",
+              "di",
+              "accogliere",
+              "il",
+              "consiglio",
+              "del",
+              "dottore."
+            ]
+          },
+          {
+            "it": "Il medico esaminò attentamente la paziente, cercando di rassicurarla.",
+            "en": "The doctor carefully examined the patient, trying to reassure her.",
+            "words": [
+              "Il",
+              "medico",
+              "esaminò",
+              "attentamente",
+              "la",
+              "paziente,",
+              "cercando",
+              "di",
+              "rassicurarla."
+            ]
+          },
+          {
+            "it": "Il sorriso rassicurante del medico la calmò un po'.",
+            "en": "The reassuring smile of the doctor calmed her a bit.",
+            "words": [
+              "Il",
+              "sorriso",
+              "rassicurante",
+              "del",
+              "medico",
+              "la",
+              "calmò",
+              "un",
+              "po'."
+            ]
+          },
+          {
+            "it": "Alessia era in un piccolo ospedale, ma il medico era molto gentile.",
+            "en": "Alessia was in a small hospital, but the doctor was very kind.",
+            "words": [
+              "Alessia",
+              "era",
+              "in",
+              "un",
+              "piccolo",
+              "ospedale,",
+              "ma",
+              "il",
+              "medico",
+              "era",
+              "molto",
+              "gentile."
+            ]
+          },
+          {
+            "it": "Il dottore disse che il suo stato era stabile e che sarebbe guarita presto.",
+            "en": "The doctor said that her condition was stable and that she would recover soon.",
+            "words": [
+              "Il",
+              "dottore",
+              "disse",
+              "che",
+              "il",
+              "suo",
+              "stato",
+              "era",
+              "stabile",
+              "e",
+              "che",
+              "sarebbe",
+              "guarita",
+              "presto."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 957542,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 2489,
+      "totalCompletionTokens": 2079,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 199799,
+          "promptTokens": 526,
+          "completionTokens": 390
+        },
+        {
+          "lessonNum": 2,
+          "ms": 195201,
+          "promptTokens": 600,
+          "completionTokens": 404
+        },
+        {
+          "lessonNum": 3,
+          "ms": 217850,
+          "promptTokens": 646,
+          "completionTokens": 458
+        }
+      ]
+    },
+    "generatedAt": "2026-05-02T20:13:41.824Z",
+    "updatedAt": "2026-05-02T20:53:19.722Z",
+    "ratings": {
+      "difficulty": 2,
+      "fun": 2,
+      "coherence": 3
+    }
+  },
+  {
+    "topic": "write a grant proposal for an ai-driven letztebuergesch app",
+    "topicEmoji": "🔍",
+    "lang": "it",
+    "difficulty": 2,
+    "story": "Nel cuore di Berlino, dove l'arte e la tecnologia si intrecciano in un mosaico di innovazione, c'era una piccola startup chiamata \"LetzteBürgesch\". Il loro obiettivo era semplice: creare un'app che aiutasse i residenti di Berlino a comprendere meglio la storia della città attraverso l'uso di un'intelligenza artificiale avanzata. Ma per realizzare questo progetto, avevano bisogno di un finanziamento. Decisero quindi di scrivere una proposta di finanziamento per un'organizzazione di investimento sociale.\n\nIl documento iniziava con un'introduzione vivace, dove si evidenziava l'importanza di preservare e condividere la storia di Berlino. \"Berlino è una città ricca di storia e cultura, ma molte sue storie rimangono nascoste ai visitatori e ai residenti. L'obiettivo di LetzteBürgesch è di rendere accessibile questa storia attraverso un'app che utilizza l'intelligenza artificiale per offrire un'esperienza unica a chiunque si trovi nella città.\"\n\nNel corpo della proposta, si spiegava come l'app avrebbe funzionato. \"L'utente avrebbe potuto scaricare l'app e, attraverso un sistema di riconoscimento visivo, avrebbe potuto scattare una foto di qualsiasi luogo nella città. L'intelligenza artificiale, allenata con un vasto database di immagini e informazioni storiche, avrebbe identificato l'edificio o la strada e fornito dettagli interessanti e informativi.\"\n\nPer convincere i finanziatori, si evidenziavano i benefici sociali e economici dell'app. \"Non solo aiuterà a promuovere la conoscenza e l'amore per la storia locale, ma anche a stimolare il turismo e a creare un legame più forte tra i residenti e la loro città. Inoltre, l'app sarà disponibile in diverse lingue, rendendo Berlino più accessibile a tutti i visitatori internazionali.\"\n\nConcludendo, si sottolineava il potenziale dell'idea e la necessità di supporto finanziario. \"Con il vostro aiuto, potremmo realizzare LetzteBürgesch e trasformare Berlino in una città dove la storia si intreccia con la tecnologia, creando un legato unico tra i suoi abitanti e i visitatori. Siamo convinti che questa app non solo migliorerebbe la qualità della vita dei berlinesi, ma anche avrebbe un impatto positivo sulla città e sul suo futuro.\"\n\nL'ultima pagina della proposta era dedicata a ringraziare i finanziatori per il loro interesse e per la possibilità di contribuire a un progetto che avrebbe beneficiato di tutta Berlino.",
+    "storyLang": "it",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Berlino e storia",
+        "desc": "Parole chiave per scrivere una proposta di finanziamento",
+        "icon": "📍",
+        "vocab": [
+          {
+            "it": "proposta di finanziamento",
+            "en": "grant proposal",
+            "pron": "proh-POT-suh"
+          },
+          {
+            "it": "innovazione",
+            "en": "innovation",
+            "pron": "in-uh-VAY-shun"
+          },
+          {
+            "it": "residenti",
+            "en": "residents",
+            "pron": "ree-ZIDENT-ee"
+          },
+          {
+            "it": "finanziamento",
+            "en": "financing",
+            "pron": "fin-AN-see-muhnt"
+          },
+          {
+            "it": "app",
+            "en": "app",
+            "pron": "AP"
+          },
+          {
+            "it": "storia",
+            "en": "history",
+            "pron": "STOR-ee"
+          },
+          {
+            "it": "visitors",
+            "en": "visitors",
+            "pron": "VIZ-uh-turs"
+          },
+          {
+            "it": "città",
+            "en": "city",
+            "pron": "SIT-uh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Berlino è una città ricca di storia.",
+            "en": "Berlin is a city rich in history.",
+            "words": [
+              "Berlino",
+              "è",
+              "una",
+              "città",
+              "ricca",
+              "di",
+              "storia."
+            ]
+          },
+          {
+            "it": "L'obiettivo di LetzteBürgesch è di rendere la storia di Berlino più accessibile.",
+            "en": "The goal of LetzteBürgesch is to make Berlin's history more accessible.",
+            "words": [
+              "L'obiettivo",
+              "di",
+              "LetzteBürgesch",
+              "è",
+              "di",
+              "rendere",
+              "la",
+              "storia",
+              "di",
+              "Berlino",
+              "più",
+              "accessibile."
+            ]
+          },
+          {
+            "it": "Molte storie rimangono nascoste ai visitatori e ai residenti.",
+            "en": "Many stories remain hidden from visitors and residents.",
+            "words": [
+              "Molte",
+              "storie",
+              "rimangono",
+              "nascoste",
+              "ai",
+              "visitatori",
+              "e",
+              "ai",
+              "residenti."
+            ]
+          },
+          {
+            "it": "Preservare e condividere la storia di Berlino è importante.",
+            "en": "Preserving and sharing Berlin's history is important.",
+            "words": [
+              "Preservare",
+              "e",
+              "condividere",
+              "la",
+              "storia",
+              "di",
+              "Berlino",
+              "è",
+              "importante."
+            ]
+          },
+          {
+            "it": "L'innovazione è al cuore del nostro progetto.",
+            "en": "Innovation is at the heart of our project.",
+            "words": [
+              "L'innovazione",
+              "è",
+              "al",
+              "cuore",
+              "del",
+              "nostro",
+              "progetto."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Grant Proposal",
+        "desc": "Berlinese, tecnologia, innovazione, app, finanziamento",
+        "icon": "💡",
+        "vocab": [
+          {
+            "it": "innovazione",
+            "en": "innovation",
+            "pron": "inNOVAtion"
+          },
+          {
+            "it": "tecnologia",
+            "en": "technology",
+            "pron": "tekNOLOGIA"
+          },
+          {
+            "it": "app",
+            "en": "app",
+            "pron": "AP"
+          },
+          {
+            "it": "finanziamento",
+            "en": "financing",
+            "pron": "finANziMENTO"
+          },
+          {
+            "it": "residenti",
+            "en": "residents",
+            "pron": "reZIENti"
+          },
+          {
+            "it": "visitors",
+            "en": "visitors",
+            "pron": "viZITORi"
+          },
+          {
+            "it": "città",
+            "en": "city",
+            "pron": "CIta"
+          },
+          {
+            "it": "importanza",
+            "en": "importance",
+            "pron": "imPORtanZA"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'importanza di preservare la storia di Berlino non può essere sottostimata.",
+            "en": "The importance of preserving Berlin's history cannot be underestimated.",
+            "words": [
+              "L'importanza",
+              "di",
+              "preservare",
+              "la",
+              "storia",
+              "di",
+              "Berlino",
+              "non",
+              "può",
+              "essere",
+              "sottostimata."
+            ]
+          },
+          {
+            "it": "La nostra app utilizza l'innovazione tecnologica per rendere la storia accessibile.",
+            "en": "Our app uses technological innovation to make history accessible.",
+            "words": [
+              "La",
+              "nostra",
+              "app",
+              "utilizza",
+              "l'innovazione",
+              "tecnologica",
+              "per",
+              "rendere",
+              "la",
+              "storia",
+              "accessibile."
+            ]
+          },
+          {
+            "it": "Il finanziamento è cruciale per realizzare il nostro progetto di app.",
+            "en": "Financing is crucial for realizing our app project.",
+            "words": [
+              "Il",
+              "finanziamento",
+              "è",
+              "cruciale",
+              "per",
+              "realizzare",
+              "il",
+              "nostro",
+              "progetto",
+              "di",
+              "app."
+            ]
+          },
+          {
+            "it": "I residenti e i visitatori di Berlino potranno apprendere di più sulla città attraverso la nostra app.",
+            "en": "Residents and visitors of Berlin will learn more about the city through our app.",
+            "words": [
+              "I",
+              "residenti",
+              "e",
+              "i",
+              "visitatori",
+              "di",
+              "Berlino",
+              "potranno",
+              "apprendere",
+              "di",
+              "più",
+              "sulla",
+              "città",
+              "attraverso",
+              "la",
+              "nostra",
+              "app."
+            ]
+          },
+          {
+            "it": "La tecnologia ci aiuta a condividere la storia di Berlino in modo innovativo.",
+            "en": "Technology helps us share Berlin's history in an innovative way.",
+            "words": [
+              "La",
+              "tecnologia",
+              "ci",
+              "aiuta",
+              "a",
+              "condividere",
+              "la",
+              "storia",
+              "di",
+              "Berlino",
+              "in",
+              "modo",
+              "innovativo."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Grant Proposal",
+        "desc": "innovative app, city history, funding, technology, residents, visitors, preservation, sharing",
+        "icon": "🔍",
+        "vocab": [
+          {
+            "it": "preservare",
+            "en": "preserve",
+            "pron": "PREH-zer-vay"
+          },
+          {
+            "it": "condivisione",
+            "en": "sharing",
+            "pron": "kun-dish-VEE-ayn"
+          },
+          {
+            "it": "innovativa",
+            "en": "innovative",
+            "pron": "in-NOH-vee-tah-va"
+          },
+          {
+            "it": "ricchezza",
+            "en": "richness",
+            "pron": "ri-cheh-TSA"
+          },
+          {
+            "it": "visitatori",
+            "en": "visitors",
+            "pron": "vis-i-TA-ree-oh"
+          },
+          {
+            "it": "culturali",
+            "en": "cultural",
+            "pron": "ku-tu-RAL-ee"
+          },
+          {
+            "it": "interessi",
+            "en": "interests",
+            "pron": "in-TUR-stee"
+          },
+          {
+            "it": "metodologie",
+            "en": "methodologies",
+            "pron": "me-toh-doh-LAH-gee-oh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Preservare la ricchezza culturale di Berlino è fondamentale.",
+            "en": "Preserving the cultural richness of Berlin is fundamental.",
+            "words": [
+              "Preservare",
+              "la",
+              "ricchezza",
+              "culturale",
+              "di",
+              "Berlino",
+              "è",
+              "fondamentale."
+            ]
+          },
+          {
+            "it": "La nostra app innovativa mira a interessare i visitatori.",
+            "en": "Our innovative app aims to engage visitors.",
+            "words": [
+              "La",
+              "nostra",
+              "app",
+              "innovativa",
+              "mira",
+              "a",
+              "interessare",
+              "i",
+              "visitatori."
+            ]
+          },
+          {
+            "it": "Condividere la storia attraverso la tecnologia è la nostra metodologia.",
+            "en": "Sharing history through technology is our methodology.",
+            "words": [
+              "Condividere",
+              "la",
+              "storia",
+              "attraverso",
+              "la",
+              "tecnologia",
+              "è",
+              "la",
+              "nostra",
+              "metodologia."
+            ]
+          },
+          {
+            "it": "I residenti hanno interesse a conoscere la storia della loro città.",
+            "en": "Residents have an interest in knowing the history of their city.",
+            "words": [
+              "I",
+              "residenti",
+              "hanno",
+              "interesse",
+              "a",
+              "conoscere",
+              "la",
+              "storia",
+              "della",
+              "loro",
+              "città."
+            ]
+          },
+          {
+            "it": "Le metodologie di preservazione sono cruciali per la nostra proposta di finanziamento.",
+            "en": "Preservation methodologies are crucial for our funding proposal.",
+            "words": [
+              "Le",
+              "metodologie",
+              "di",
+              "preservazione",
+              "sono",
+              "cruciali",
+              "per",
+              "la",
+              "nostra",
+              "proposta",
+              "di",
+              "finanziamento."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 828625,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 1953,
+      "totalCompletionTokens": 1923,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 205341,
+          "promptTokens": 521,
+          "completionTokens": 393
+        },
+        {
+          "lessonNum": 2,
+          "ms": 191866,
+          "promptTokens": 582,
+          "completionTokens": 402
+        },
+        {
+          "lessonNum": 3,
+          "ms": 208432,
+          "promptTokens": 621,
+          "completionTokens": 430
+        }
+      ]
+    },
+    "generatedAt": "2026-05-02T17:41:52.766Z",
+    "updatedAt": "2026-05-02T17:41:52.766Z"
+  },
   {
     "topic": "discussing contemporary art at the venice biennale",
     "topicEmoji": "🎨",
@@ -11209,307 +12438,6 @@ const STATIC_LESSONS = [
       "promptTokens": 938,
       "completionTokens": 524
     }
-  },
-  {
-    "topic": "research grant proposals",
-    "topicEmoji": "🔍",
-    "lessons": [
-      {
-        "id": 1,
-        "title": "Basics of Grant Proposals",
-        "desc": "Introduzione alle proposte di finanziamento",
-        "icon": "💰",
-        "vocab": [
-          {
-            "it": "ricerca",
-            "en": "research",
-            "pron": "REH-serch"
-          },
-          {
-            "it": "progetto",
-            "en": "project",
-            "pron": "PROH-jeht"
-          },
-          {
-            "it": "obiettivo",
-            "en": "objective",
-            "pron": "oh-BYET-tivo"
-          },
-          {
-            "it": "metodologia",
-            "en": "methodology",
-            "pron": "me-toh-doh-LAH-jo-lee-uh"
-          },
-          {
-            "it": "risorse",
-            "en": "resources",
-            "pron": "ree-SORHZ"
-          },
-          {
-            "it": "previsioni",
-            "en": "projections",
-            "pron": "preh-vee-ZHEE-nee"
-          },
-          {
-            "it": "valutazione",
-            "en": "evaluation",
-            "pron": "val-you-TAH-zhee-oh"
-          },
-          {
-            "it": "finanziamento",
-            "en": "funding",
-            "pron": "fin-AN-zih-muhnt"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Scrivi un progetto.",
-            "en": "Write a project.",
-            "words": [
-              "Scrivi",
-              "un",
-              "progetto."
-            ]
-          },
-          {
-            "it": "Definisci gli obiettivi.",
-            "en": "Define the objectives.",
-            "words": [
-              "Definisci",
-              "gli",
-              "obiettivi",
-              "."
-            ]
-          },
-          {
-            "it": "Elabora la metodologia.",
-            "en": "Develop the methodology.",
-            "words": [
-              "Elabora",
-              "la",
-              "metodologia."
-            ]
-          },
-          {
-            "it": "Descrivi le risorse.",
-            "en": "Describe the resources.",
-            "words": [
-              "Descrivi",
-              "le",
-              "risorse",
-              "."
-            ]
-          },
-          {
-            "it": "Fornisci previsioni.",
-            "en": "Provide projections.",
-            "words": [
-              "Fornisci",
-              "previsioni",
-              "."
-            ]
-          }
-        ]
-      },
-      {
-        "id": 2,
-        "title": "Intermediate Grant Proposal Phrases",
-        "desc": "Frasi avanzate per le proposte di finanziamento",
-        "icon": "📝",
-        "vocab": [
-          {
-            "it": "innovazione",
-            "en": "innovation",
-            "pron": "in-NOH-vay-shun"
-          },
-          {
-            "it": "collaborazione",
-            "en": "collaboration",
-            "pron": "kol-uh-BOR-ay-see-ohn"
-          },
-          {
-            "it": "sostenibilità",
-            "en": "sustainability",
-            "pron": "suh-stuh-NEE-tih-bil-i-tee"
-          },
-          {
-            "it": "cooperazione",
-            "en": "cooperation",
-            "pron": "kuh-uh-PER-ay-see-ohn"
-          },
-          {
-            "it": "partecipazione",
-            "en": "participation",
-            "pron": "pahr-tuh-see-PAY-see-ohn"
-          },
-          {
-            "it": "competitività",
-            "en": "competitiveness",
-            "pron": "kuhm-puh-tee-TIH-vih-tee"
-          },
-          {
-            "it": "efficienza",
-            "en": "efficiency",
-            "pron": "eh-fih-SIH-uhn-see"
-          },
-          {
-            "it": "transparenza",
-            "en": "transparency",
-            "pron": "truh-SPER-uh-nee-uh"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Promuovi l'innovazione.",
-            "en": "Promote innovation.",
-            "words": [
-              "Promuovi",
-              "l'innovazione",
-              "."
-            ]
-          },
-          {
-            "it": "Rafforzate la collaborazione.",
-            "en": "Strengthen the collaboration.",
-            "words": [
-              "Rafforzate",
-              "la",
-              "collaborazione",
-              "."
-            ]
-          },
-          {
-            "it": "Migliorate la sostenibilità.",
-            "en": "Improve sustainability.",
-            "words": [
-              "Migliorate",
-              "la",
-              "sostenibilità",
-              "."
-            ]
-          },
-          {
-            "it": "Favorite la cooperazione.",
-            "en": "Foster cooperation.",
-            "words": [
-              "Favorite",
-              "la",
-              "cooperazione",
-              "."
-            ]
-          },
-          {
-            "it": "Aumentate la partecipazione.",
-            "en": "Increase participation.",
-            "words": [
-              "Aumentate",
-              "la",
-              "partecipazione."
-            ]
-          }
-        ]
-      },
-      {
-        "id": 3,
-        "title": "Advanced Grant Proposal Phrases",
-        "desc": "Frasi specifiche per le proposte di finanziamento",
-        "icon": "🔍",
-        "vocab": [
-          {
-            "it": "validità",
-            "en": "validity",
-            "pron": "vuh-LIH-dee-tee"
-          },
-          {
-            "it": "relevanza",
-            "en": "relevance",
-            "pron": "rih-LEH-vuh-nee"
-          },
-          {
-            "it": "consistenza",
-            "en": "consistency",
-            "pron": "kuhn-see-STEN-shee-uh"
-          },
-          {
-            "it": "coerenza",
-            "en": "coherence",
-            "pron": "kuh-uh-REN-suh"
-          },
-          {
-            "it": "efficacia",
-            "en": "effectiveness",
-            "pron": "ef-uh-KAY-shee-uh"
-          },
-          {
-            "it": "efficienza",
-            "en": "efficiency",
-            "pron": "eh-fih-SIH-uhn-see"
-          },
-          {
-            "it": "valutazione",
-            "en": "evaluation",
-            "pron": "val-you-TAH-zhee-oh"
-          },
-          {
-            "it": "previsione",
-            "en": "projection",
-            "pron": "preh-vee-ZHEE-nee"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Dimostra la validità.",
-            "en": "Demonstrate validity.",
-            "words": [
-              "Dimostra",
-              "la",
-              "validità",
-              "."
-            ]
-          },
-          {
-            "it": "Ricorda la relevanza.",
-            "en": "Remind of relevance.",
-            "words": [
-              "Ricorda",
-              "la",
-              "relevanza",
-              "."
-            ]
-          },
-          {
-            "it": "Assicura la consistenza.",
-            "en": "Ensure consistency.",
-            "words": [
-              "Assicura",
-              "la",
-              "consistenza",
-              "."
-            ]
-          },
-          {
-            "it": "Mantieni la coerenza.",
-            "en": "Maintain coherence.",
-            "words": [
-              "Mantieni",
-              "la",
-              "coerenza",
-              "."
-            ]
-          },
-          {
-            "it": "Valuta l'efficacia.",
-            "en": "Evaluate effectiveness.",
-            "words": [
-              "Valuta",
-              "l'efficacia",
-              "."
-            ]
-          }
-        ]
-      }
-    ],
-    "generatedAt": "2026-04-26T00:36:18.079Z"
   }
 ];
 
@@ -11600,6 +12528,21 @@ function buildPath(){
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
 
+  // Continued-from badge — show below topic name if applicable
+  let contBadge=document.getElementById('continued-badge');
+  if(d.continuedFrom){
+    if(!contBadge){
+      contBadge=document.createElement('div');
+      contBadge.id='continued-badge';
+      contBadge.className='continued-badge';
+      document.getElementById('topic-name-big').insertAdjacentElement('afterend',contBadge);
+    }
+    contBadge.textContent='↩ continued from: '+d.continuedFrom;
+    contBadge.style.display='';
+  } else if(contBadge){
+    contBadge.style.display='none';
+  }
+
   // Story section
   const storySec=document.getElementById('story-section');
   const storyBody=document.getElementById('story-body');
@@ -11639,14 +12582,6 @@ function buildPath(){
 
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
-
-  // Chat console — show only when LLM available; clear history if topic changed
-  const chatSec=document.getElementById('chat-section');
-  if(chatSec){
-    chatSec.style.display=APP.info.canGenerate?'':'none';
-    if(APP.info.canGenerate && _chat.lastTopic && _chat.lastTopic!==topicKey) clearChat();
-    _chat.lastTopic=topicKey;
-  }
   d.lessons.forEach((L,i)=>{
     const isDone=!!done[L.id], isLocked=i>0&&!done[d.lessons[i-1].id], isActive=!isDone&&!isLocked;
     if(i>0){ const ln=document.createElement('div'); ln.className='path-line'+(done[d.lessons[i-1].id]?' done':''); path.appendChild(ln); }
@@ -11990,78 +12925,6 @@ function speak(text,rate){
   speechSynthesis.speak(u);
 }
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
-
-// ── Chat console ──────────────────────────────────────────────────────
-const _chat = { history: [], busy: false, lastTopic: null };
-
-function toggleChat(){
-  const body=document.getElementById('chat-body');
-  const arrow=document.getElementById('chat-arrow');
-  if(!body) return;
-  const open=body.classList.toggle('open');
-  if(arrow) arrow.classList.toggle('open',open);
-  if(open) document.getElementById('chat-input')?.focus();
-}
-function autoResizeChat(el){
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,120)+'px';
-}
-function _chatAppend(role,text){
-  const log=document.getElementById('chat-log'); if(!log) return null;
-  const el=document.createElement('div');
-  el.className='chat-msg '+role;
-  el.textContent=text;
-  log.appendChild(el);
-  log.scrollTop=log.scrollHeight;
-  return el;
-}
-function clearChat(){
-  _chat.history=[];
-  const log=document.getElementById('chat-log');
-  if(log) log.innerHTML='';
-}
-async function sendChat(){
-  if(_chat.busy) return;
-  const input=document.getElementById('chat-input');
-  const text=(input?.value||'').trim();
-  if(!text) return;
-  if(!APP.info.canGenerate){ _chatAppend('error','No LLM backend available.'); return; }
-  // Ensure panel is open before we append anything
-  const body=document.getElementById('chat-body');
-  const arrow=document.getElementById('chat-arrow');
-  if(body && !body.classList.contains('open')){
-    body.classList.add('open');
-    if(arrow) arrow.classList.add('open');
-  }
-  input.value='';
-  autoResizeChat(input);
-  _chat.history.push({role:'user',content:text});
-  _chatAppend('user',text);
-  _chat.busy=true;
-  const btn=document.getElementById('chat-send-btn');
-  if(btn) btn.disabled=true;
-  const thinking=_chatAppend('thinking','…');
-  try{
-    console.log('[chat] POST /api/chat topic='+( APP.lessonData?.topic||'none'));
-    const r=await fetch('/api/chat',{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:_chat.history, topic:APP.lessonData?.topic||null})});
-    const data=await r.json();
-    if(!r.ok) throw new Error(data.error||'Server returned '+r.status);
-    _chat.history.push({role:'assistant',content:data.reply});
-    if(thinking) thinking.remove();
-    _chatAppend('assistant',data.reply);
-  }catch(e){
-    console.error('[chat] error:',e);
-    if(thinking) thinking.remove();
-    _chatAppend('error','Error: '+e.message);
-    _chat.history.pop();
-  }finally{
-    _chat.busy=false;
-    if(btn) btn.disabled=false;
-    input?.focus();
-  }
-}
 
 // ── Disabled in static mode ───────────────────────────────────────
 async function syncFlagsFromServer() {}

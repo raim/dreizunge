@@ -1,6 +1,401 @@
 {
   "lessons": [
     {
+      "topic": "fungus spreads to the brain",
+      "topicEmoji": "fungi",
+      "lang": "it",
+      "difficulty": 2,
+      "story": null,
+      "storyLang": "en",
+      "continuedFrom": "food poisoning in the hospital",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "fungus brain",
+          "desc": "funny scary brain fungus",
+          "icon": "🧟",
+          "vocab": [
+            {
+              "it": "fungo",
+              "en": "fungus",
+              "pron": "FUH-noh"
+            },
+            {
+              "it": "cervello",
+              "en": "brain",
+              "pron": "tseh-VEL-lo"
+            },
+            {
+              "it": "spunta",
+              "en": "sprouts",
+              "pron": "SPUNT-ah"
+            },
+            {
+              "it": "sogno",
+              "en": "dream",
+              "pron": "SOH-no"
+            },
+            {
+              "it": "pazza",
+              "en": "crazy",
+              "pron": "PAH-tsza"
+            },
+            {
+              "it": "sorprendere",
+              "en": "surprise",
+              "pron": "sor-preh-DZEH-re"
+            },
+            {
+              "it": "soggiorno",
+              "en": "stay",
+              "pron": "soh-jee-OHR-no"
+            },
+            {
+              "it": "soggiornatore",
+              "en": "guest",
+              "pron": "soh-jee-or-NAH-tohr"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Un fungo spunta nel mio cervello.",
+              "en": "A fungus sprouts in my brain.",
+              "words": [
+                "Un",
+                "fungo",
+                "spunta",
+                "nel",
+                "mio",
+                "cervello."
+              ]
+            },
+            {
+              "it": "Sogno di essere un sorprendente pazza.",
+              "en": "I dream of being a surprising crazy.",
+              "words": [
+                "Sogno",
+                "di",
+                "essere",
+                "un",
+                "sorprendente",
+                "pazza."
+              ]
+            },
+            {
+              "it": "Il fungo mi fa soggiornare in un mondo pazza.",
+              "en": "The fungus makes me stay in a crazy world.",
+              "words": [
+                "Il",
+                "fungo",
+                "mi",
+                "fa",
+                "soggiornare",
+                "in",
+                "un",
+                "mondo",
+                "pazza."
+              ]
+            },
+            {
+              "it": "Soggiornatore, il fungo ti sorprende nel cervello.",
+              "en": "Guest, the fungus surprises you in the brain.",
+              "words": [
+                "Soggiornatore,",
+                "il",
+                "fungo",
+                "ti",
+                "sorprende",
+                "nel",
+                "cervello."
+              ]
+            },
+            {
+              "it": "Spunta nel mio sogno, il fungo del cervello pazza.",
+              "en": "Sprouts in my dream, the brain fungus goes crazy.",
+              "words": [
+                "Spunta",
+                "nel",
+                "mio",
+                "sogno,",
+                "il",
+                "fungo",
+                "del",
+                "cervello",
+                "pazza."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "fungus in the brain",
+          "desc": "funny but slightly scary story",
+          "icon": "🧟",
+          "vocab": [
+            {
+              "it": "spunta",
+              "en": "sprouts",
+              "pron": "SPUN-ta"
+            },
+            {
+              "it": "sogno",
+              "en": "dream",
+              "pron": "SO-gno"
+            },
+            {
+              "it": "pazza",
+              "en": "crazy",
+              "pron": "PAZ-zza"
+            },
+            {
+              "it": "sorprendere",
+              "en": "surprise",
+              "pron": "sor-PREN-de-re"
+            },
+            {
+              "it": "soggiorno",
+              "en": "stay",
+              "pron": "so-GGI-or-no"
+            },
+            {
+              "it": "soggiornatore",
+              "en": "guest",
+              "pron": "so-GGI-or-na-to-re"
+            },
+            {
+              "it": "infestare",
+              "en": "infest",
+              "pron": "in-FES-ta-re"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il fungo spunta nel cervello del soggiornatore.",
+              "en": "The fungus sprouts in the guest's brain.",
+              "words": [
+                "Il",
+                "fungo",
+                "spunta",
+                "nel",
+                "cervello",
+                "del",
+                "soggiornatore."
+              ]
+            },
+            {
+              "it": "Nel sogno, il soggiornatore sorprende di essere pazza.",
+              "en": "In the dream, the guest is surprised to be crazy.",
+              "words": [
+                "Nel",
+                "sogno,",
+                "il",
+                "soggiornatore",
+                "sorprende",
+                "di",
+                "essere",
+                "pazza."
+              ]
+            },
+            {
+              "it": "L'infestazione spinge il cervello a sogno senza fine.",
+              "en": "The infestation pushes the brain into endless dreams.",
+              "words": [
+                "L'infestazione",
+                "spinge",
+                "il",
+                "cervello",
+                "a",
+                "sogno",
+                "senza",
+                "fine."
+              ]
+            },
+            {
+              "it": "Il soggiornatore si sveglia con un sorriso pazza sul viso.",
+              "en": "The guest wakes up with a crazy smile on his face.",
+              "words": [
+                "Il",
+                "soggiornatore",
+                "si",
+                "sveglia",
+                "con",
+                "un",
+                "sorriso",
+                "pazza",
+                "sul",
+                "viso."
+              ]
+            },
+            {
+              "it": "Il medico sorprende di trovare il cervello infestato di funghi.",
+              "en": "The doctor is surprised to find the brain infested with fungi.",
+              "words": [
+                "Il",
+                "medico",
+                "sorprende",
+                "di",
+                "trovare",
+                "il",
+                "cervello",
+                "infestato",
+                "di",
+                "funghi."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "fungi in the brain",
+          "desc": "funny but slightly scary story",
+          "icon": "🧟",
+          "vocab": [
+            {
+              "it": "infestare",
+              "en": "to infest",
+              "pron": "IN-fes-ta-re"
+            },
+            {
+              "it": "soggiornatore",
+              "en": "guest",
+              "pron": "so-ji-or-na-tore"
+            },
+            {
+              "it": "soggiorno",
+              "en": "stay",
+              "pron": "so-ji-or-no"
+            },
+            {
+              "it": "sognare",
+              "en": "to dream",
+              "pron": "so-nya-re"
+            },
+            {
+              "it": "pazza",
+              "en": "crazy",
+              "pron": "PAZZ-a"
+            },
+            {
+              "it": "sorprendere",
+              "en": "to surprise",
+              "pron": "so-rpren-de-re"
+            },
+            {
+              "it": "sognatore",
+              "en": "dreamer",
+              "pron": "so-nya-tore"
+            },
+            {
+              "it": "spunta",
+              "en": "sprouts",
+              "pron": "SPUN-ta"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il fungo infestò il cervello del soggiornatore.",
+              "en": "The fungus infested the guest's brain.",
+              "words": [
+                "Il",
+                "fungo",
+                "infestò",
+                "il",
+                "cervello",
+                "del",
+                "soggiornatore."
+              ]
+            },
+            {
+              "it": "In ogni suo sogno, lui sognava spunte pazze.",
+              "en": "In every dream, he dreamed of crazy sprouts.",
+              "words": [
+                "In",
+                "ogni",
+                "suo",
+                "sogno,",
+                "lui",
+                "sognava",
+                "spunte",
+                "pazze."
+              ]
+            },
+            {
+              "it": "Sorpreso, il soggiornatore si svegliò di soprassalto.",
+              "en": "Surprised, the guest jumped awake suddenly.",
+              "words": [
+                "Sorpreso,",
+                "il",
+                "soggiornatore",
+                "si",
+                "svegliò",
+                "di",
+                "soprassalto."
+              ]
+            },
+            {
+              "it": "Il soggiornatore era un sognatore pazza, spesso sorprendeva se stesso.",
+              "en": "The guest was a crazy dreamer, often surprising himself.",
+              "words": [
+                "Il",
+                "soggiornatore",
+                "era",
+                "un",
+                "sognatore",
+                "pazza,",
+                "spesso",
+                "sorprendeva",
+                "se",
+                "stesso."
+              ]
+            },
+            {
+              "it": "Spunta spunta, il soggiorno era diventato un incubo.",
+              "en": "Sprout sprout, the stay had become a nightmare.",
+              "words": [
+                "Spunta",
+                "spunta,",
+                "il",
+                "soggiorno",
+                "era",
+                "diventato",
+                "un",
+                "incubo."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1028999,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1116,
+        "totalCompletionTokens": 1179,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 280651,
+            "promptTokens": 276,
+            "completionTokens": 367
+          },
+          {
+            "lessonNum": 2,
+            "ms": 173288,
+            "promptTokens": 342,
+            "completionTokens": 389
+          },
+          {
+            "lessonNum": 3,
+            "ms": 184119,
+            "promptTokens": 386,
+            "completionTokens": 393
+          }
+        ]
+      },
+      "generatedAt": "2026-05-02T21:20:07.019Z",
+      "updatedAt": "2026-05-02T21:20:07.019Z"
+    },
+    {
       "topic": "food poisoning in the hospital",
       "topicEmoji": "🩺",
       "lang": "it",
