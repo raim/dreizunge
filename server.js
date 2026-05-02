@@ -198,13 +198,9 @@ function salvageArray(raw) {
 // ── LLM backends ──────────────────────────────────────────────────────
 function callAnthropicRaw(system, userMsg, maxTokens) {
   return new Promise((resolve, reject) => {
-    // userMsg can be a string (single-turn) or [{role,content}] array (multi-turn)
-    const messages = Array.isArray(userMsg)
-      ? userMsg
-      : [{ role: 'user', content: userMsg }];
     const body = JSON.stringify({
       model: CLAUDE_MODEL, max_tokens: maxTokens || 1024, system,
-      messages
+      messages: [{ role: 'user', content: userMsg }]
     });
     const req = https.request({
       hostname: 'api.anthropic.com', path: '/v1/messages', method: 'POST',
@@ -304,12 +300,15 @@ function deriveSentenceWords(s) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang, inTargetLang) {
+function sysStory(lang, inTargetLang, isContinuation) {
   const L = langName(lang);
-  if (inTargetLang) {
-    return `You are a creative writer and ${L} language teacher. Write a short, engaging story directly in ${L} (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Avoid repetitive structures! Write plain prose only — no headings, no bullet points, no markdown. Write entirely in ${L}.`;
-  }
-  return `You are a creative writer helping language learners. Write a short, engaging story in English (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Avoid repetitive structures! Write plain prose only — no headings, no bullet points, no markdown.`;
+  const langInstruction = inTargetLang
+    ? `Write entirely in ${L}. The story should naturally include vocabulary and situations useful for someone learning ${L}.`
+    : `Write in English. The story should naturally include vocabulary and situations useful for someone learning ${L}.`;
+  const contInstruction = isContinuation
+    ? `IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one provided. Characters should feel familiar, the world should feel connected.`
+    : '';
+  return `You are a creative writer helping language learners. Write a short, engaging story (4-6 paragraphs, around 400 words) on the given topic. ${langInstruction} Avoid repetitive structures! Write plain prose only — no headings, no bullet points, no markdown. ${contInstruction}`.trim();
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
@@ -374,7 +373,7 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
-async function generate(topic, lang, active, difficulty, storyInTargetLang, jobId) {
+async function generate(topic, lang, active, difficulty, storyInTargetLang, continuedFrom, jobId) {
   const genStart = Date.now();
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   const lessonTokenStats = [];
@@ -394,10 +393,20 @@ async function generate(topic, lang, active, difficulty, storyInTargetLang, jobI
 
   jobStep(jobId, 'Generating story…');
   let story = null, storyLang = 'en';
+  // Look up previous story for continuation
+  const prevStory = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
+  if (continuedFrom && prevStory)
+    console.log(`    Continuing story from: "${continuedFrom}" (${prevStory.length} chars)`);
   try {
     const t0 = Date.now();
-    const { text, promptTokens, completionTokens } = await callLLM(active, sysStory(lang, storyInTargetLang),
-      `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`, 900);
+    let storyUserMsg;
+    if (prevStory) {
+      storyUserMsg = `Previous story (continue its characters and world):\n${prevStory}\n\nNew topic: "${meta.topic || topic}". Write the continuation story now. Plain prose, no headings.`;
+    } else {
+      storyUserMsg = `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`;
+    }
+    const { text, promptTokens, completionTokens } = await callLLM(
+      active, sysStory(lang, storyInTargetLang, !!prevStory), storyUserMsg, 900);
     story = text.trim();
     storyLang = storyInTargetLang ? lang : 'en';
     totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
@@ -419,7 +428,9 @@ async function generate(topic, lang, active, difficulty, storyInTargetLang, jobI
   const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : OLLAMA_MODEL;
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
   return { topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
-           lang, difficulty: difficulty || 2, story, storyLang, lessons,
+           lang, difficulty: difficulty || 2, story, storyLang,
+           ...(continuedFrom ? { continuedFrom } : {}),
+           lessons,
            generationStats: { totalMs, backend: active, model: modelLabel,
              totalPromptTokens, totalCompletionTokens, lessons: lessonTokenStats } };
 }
@@ -669,9 +680,11 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { topic, lang, difficulty, storyInTargetLang, forceRegenerate } = body;
+      const { topic, lang, difficulty, storyInTargetLang, continuedFrom, forceRegenerate } = body;
       if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
+      // Validate continuedFrom refers to an existing saved topic
+      const contFrom = continuedFrom && findSaved(continuedFrom) ? continuedFrom : null;
       const topicKey = topic.trim().toLowerCase();
       if (!forceRegenerate) {
         const cached = findSaved(topic.trim());
@@ -683,8 +696,8 @@ async function boot() {
         return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
       const jobId = newJob();
       generatingTopics.add(topicKey);
-      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) diff=${diff} job=${jobId}`);
-      generate(topic.trim(), lang || 'it', active, diff, !!storyInTargetLang, jobId).then(data => {
+      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) diff=${diff}${contFrom?' cont='+contFrom:''} job=${jobId}`);
+      generate(topic.trim(), lang || 'it', active, diff, !!storyInTargetLang, contFrom, jobId).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         jobDone(jobId, { ...data, fromCache: false });
@@ -767,55 +780,6 @@ async function boot() {
       saved.ratings = { difficulty: ratings.difficulty, fun: ratings.fun, coherence: ratings.coherence };
       upsert(saved);
       return json(res, 200, { ok: true });
-    }
-
-    // ── Chat / prompt console ─────────────────────────────────────────
-    if (M === 'POST' && url.pathname === '/api/chat') {
-      let body;
-      try { body = JSON.parse(await readBody(req)); }
-      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { messages, topic } = body;
-      if (!Array.isArray(messages) || messages.length === 0)
-        return json(res, 400, { error: 'Missing messages' });
-      if (active === 'none')
-        return json(res, 503, { error: 'No LLM backend available.' });
-      // System prompt: role + inject current lesson as context
-      const sysParts = [
-        'You are a language lesson designer assistant for Dreizunge, a Duolingo-style vocabulary app.',
-        'The user is talking to you directly to inspect, critique, or tune the lesson content.',
-        'Be concise and specific. When suggesting changes, show concrete examples.',
-      ];
-      if (topic) {
-        const saved = findSaved(topic);
-        if (saved) {
-          sysParts.push('\n--- CURRENT LESSON DATA ---');
-          sysParts.push(`Topic: ${saved.topic} | Language: ${langName(saved.lang||'it')} | Difficulty: ${saved.difficulty||2}`);
-          if (saved.story) sysParts.push(`\nStory (${saved.storyLang||'en'}):\n${saved.story.slice(0,600)}…`);
-          saved.lessons.forEach(L => {
-            sysParts.push(`\nLesson ${L.id} — ${L.title}:`);
-            sysParts.push('Vocab: ' + L.vocab.map(v=>`${v.it} (${v.en})`).join(', '));
-            sysParts.push('Sentences: ' + L.sentences.map(s=>s.it).join(' | '));
-          });
-          sysParts.push('--- END LESSON DATA ---');
-        }
-      }
-      const systemPrompt = sysParts.join('\n');
-      try {
-        let reply;
-        if (active === 'anthropic') {
-          // Anthropic supports multi-turn messages natively
-          const r = await callAnthropicRaw(systemPrompt, messages, 1024);
-          reply = r.text.trim();
-        } else {
-          // Ollama: flatten history into a single prompt string
-          const flat = messages.map(m=>(m.role==='user'?'User':'Assistant')+': '+m.content).join('\n\n');
-          const r = await callOllamaRaw(systemPrompt, flat, 1024);
-          reply = r.text.trim();
-        }
-        return json(res, 200, { reply });
-      } catch(e) {
-        return json(res, 500, { error: e.message });
-      }
     }
 
     res.writeHead(404); res.end('Not found');

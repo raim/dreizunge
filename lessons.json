@@ -1,6 +1,433 @@
 {
   "lessons": [
     {
+      "topic": "food poisoning in the hospital",
+      "topicEmoji": "🩺",
+      "lang": "it",
+      "difficulty": 2,
+      "story": "Quella sera, Alessia tornò a casa con il cuore pieno di orgoglio e la cesta traboccante di porcini. La sera, dopo aver preparato una deliziosa zuppa di funghi, sentì un leggero mal di testa e un fastidio allo stomaco. Non ci fece caso all'inizio, pensando che fosse solo un piccolo malore dovuto al caldo della cucina. Ma quando il dolore si fece più intenso e la nausea la costrinse a letto, Alessia capì che qualcosa non andava.\n\nSuo marito, Marco, notò il suo stato e preoccupato la portò al pronto soccorso del piccolo ospedale di San Gimignano. Lì, Alessia fu accolta da un medico gentile che la esaminò attentamente. \"Sembra che abbiate avuto un'intossicazione alimentare,\" disse il dottore con un sorriso rassicurante. \"Avete mangiato qualcosa che non era sicuro?\"\n\nAlessia ricordò con un senso di colpa la zuppa di funghi che aveva preparato. \"Sì, avevo trovato alcuni porcini in un luogo isolato e non ne ero sicura se fossero al sicuro,\" ammise con un sospiro. \"Ma sembravano così buoni.\"\n\nIl dottore annuì comprensivo. \"Capisco. I porcini selvatici possono contenere micelii tossici se non sono riconosciuti correttamente. Spero che non siate troppo male.\"\n\nAlessia si sentì in colpa per aver messo a rischio la propria salute. \"Non è la prima volta che vado a caccia di funghi,\" disse, cercando di sembrare più forte di quanto non si sentisse. \"Ma non avrei mai pensato che potessero essere pericolosi.\"\n\nIl dottore le diede alcuni consigli su come riconoscere i funghi al sicuro e le fece un'iniezione per calmare i sintomi. \"Resterete qui per un paio di ore,\" disse, \"ma dovreste sentire migliorare presto.\"\n\nAlessia si sentì sollevata ma anche un po' imbarazzata per aver messo a rischio la propria salute. Marco la tenne per mano, cercando di rassicurarla. \"Non preoccuparti,\" le disse dolcemente. \"Siamo fortunati che il dottore sia stato in grado di aiutarti in tempo.\"\n\nMentre aspettavano, Alessia rifletté sulla lezione imparata. Non solo aveva appreso che la caccia ai funghi era un'attività pericolosa, ma aveva anche realizzato quanto fosse importante la sicurezza nella cucina. Si promesse di essere più cauta in futuro e di chiedere aiuto a Marco o a sua nonna per riconoscere correttamente i funghi.\n\nQuando finalmente fu in grado di andare a casa, Alessia e Marco camminarono insieme sotto il cielo stellato, parlando della loro giornata. \"Sai,\" disse Marco, \"non è la prima volta che ti vedo preoccupata per i funghi. Forse è tempo che chiediamo a tua nonna di aiutarti.\"\n\nAlessia sorrise, sentendo un po' meglio. \"Sì, forse hai ragione,\" disse. \"Ma per ora, la cosa più importante è che sto bene.\"",
+      "storyLang": "it",
+      "continuedFrom": "pilze suchen",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Intossicazione alimentare",
+          "desc": "Parole chiave per la malattia e il cibo",
+          "icon": "🫖",
+          "vocab": [
+            {
+              "it": "porcini",
+              "en": "pork chops",
+              "pron": "POHR-ki-nee"
+            },
+            {
+              "it": "zuppa",
+              "en": "soup",
+              "pron": "ZOO-pa"
+            },
+            {
+              "it": "mal di testa",
+              "en": "headache",
+              "pron": "MAL dee TES-tah"
+            },
+            {
+              "it": "nausea",
+              "en": "nausea",
+              "pron": "no-ZEE-ah"
+            },
+            {
+              "it": "intossicazione alimentare",
+              "en": "food poisoning",
+              "pron": "in-toh-sis-ka-TZAY-shun al-lee-men-TA-re"
+            },
+            {
+              "it": "ospedale",
+              "en": "hospital",
+              "pron": "o-spay-DAY-le"
+            },
+            {
+              "it": "pronto soccorso",
+              "en": "emergency room",
+              "pron": "pront SOCK-cor-so"
+            },
+            {
+              "it": "intenso",
+              "en": "intense",
+              "pron": "in-TEHN-so"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Ho mangiato dei porcini e ora ho un mal di testa.",
+              "en": "I ate some pork chops and now I have a headache.",
+              "words": [
+                "Ho",
+                "mangiato",
+                "dei",
+                "porcini",
+                "e",
+                "ora",
+                "ho",
+                "un",
+                "mal",
+                "di",
+                "testa."
+              ]
+            },
+            {
+              "it": "La zuppa di funghi mi ha dato nausea.",
+              "en": "The mushroom soup gave me nausea.",
+              "words": [
+                "La",
+                "zuppa",
+                "di",
+                "funghi",
+                "mi",
+                "ha",
+                "dato",
+                "nausea."
+              ]
+            },
+            {
+              "it": "Il dottore disse che avevo intossicazione alimentare.",
+              "en": "The doctor said I had food poisoning.",
+              "words": [
+                "Il",
+                "dottore",
+                "disse",
+                "che",
+                "avevo",
+                "intossicazione",
+                "alimentare."
+              ]
+            },
+            {
+              "it": "La nausea mi costrinse a letto.",
+              "en": "The nausea forced me to bed.",
+              "words": [
+                "La",
+                "nausea",
+                "mi",
+                "costrinse",
+                "a",
+                "letto."
+              ]
+            },
+            {
+              "it": "Spero che il mal di testa si attenui presto.",
+              "en": "I hope the headache subsides soon.",
+              "words": [
+                "Spero",
+                "che",
+                "il",
+                "mal",
+                "di",
+                "testa",
+                "si",
+                "attenui",
+                "presto."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Food Poisoning in the Hospital",
+          "desc": "Hospital, symptoms, doctor, treatment, recovery",
+          "icon": "🩺",
+          "vocab": [
+            {
+              "it": "trabocca",
+              "en": "overflow",
+              "pron": "TRA-bo-kka"
+            },
+            {
+              "it": "deliziosa",
+              "en": "delicious",
+              "pron": "de-LI-zio-sa"
+            },
+            {
+              "it": "funghi",
+              "en": "mushrooms",
+              "pron": "FUN-ghi"
+            },
+            {
+              "it": "caldo",
+              "en": "hot",
+              "pron": "CAL-do"
+            },
+            {
+              "it": "cucina",
+              "en": "kitchen",
+              "pron": "ku-KEE-na"
+            },
+            {
+              "it": "piccolo",
+              "en": "small",
+              "pron": "pi-CK-ko"
+            },
+            {
+              "it": "gentile",
+              "en": "kind",
+              "pron": "jen-TILE"
+            },
+            {
+              "it": "rassicurante",
+              "en": "reassuring",
+              "pron": "ra-sa-ki-UR-an-te"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La zuppa di funghi traboccava di sapori.",
+              "en": "The mushroom soup overflowed with flavors.",
+              "words": [
+                "La",
+                "zuppa",
+                "di",
+                "funghi",
+                "traboccava",
+                "di",
+                "sapori."
+              ]
+            },
+            {
+              "it": "Alessia sentì il caldo della cucina che le saliva al viso.",
+              "en": "Alessia felt the heat of the kitchen rising to her face.",
+              "words": [
+                "Alessia",
+                "sentì",
+                "il",
+                "caldo",
+                "della",
+                "cucina",
+                "che",
+                "le",
+                "saliva",
+                "al",
+                "viso."
+              ]
+            },
+            {
+              "it": "Il dottore era gentile e rassicurante con la paziente.",
+              "en": "The doctor was kind and reassuring to the patient.",
+              "words": [
+                "Il",
+                "dottore",
+                "era",
+                "gentile",
+                "e",
+                "rassicurante",
+                "con",
+                "la",
+                "paziente."
+              ]
+            },
+            {
+              "it": "Il medico controllò attentamente la temperatura di Alessia.",
+              "en": "The doctor carefully checked Alessia's temperature.",
+              "words": [
+                "Il",
+                "medico",
+                "controllò",
+                "attentamente",
+                "la",
+                "temperatura",
+                "di",
+                "Alessia."
+              ]
+            },
+            {
+              "it": "Alessia ricordò con un sorriso il pranzo con i porcini.",
+              "en": "Alessia smiled remembering the lunch with pork chops.",
+              "words": [
+                "Alessia",
+                "ricordò",
+                "con",
+                "un",
+                "sorriso",
+                "il",
+                "pranzo",
+                "con",
+                "i",
+                "porcini."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Food Poisoning in the Hospital",
+          "desc": "Hospital, symptoms, doctor, reassurance, recovery",
+          "icon": "🩺",
+          "vocab": [
+            {
+              "it": "intossicazione alimentare",
+              "en": "food poisoning",
+              "pron": "in-toh-si-ka-ti-o-ne al-le-men-ta-ri"
+            },
+            {
+              "it": "accogliere",
+              "en": "to welcome",
+              "pron": "ah-koh-GLI-eh-re"
+            },
+            {
+              "it": "esaminare",
+              "en": "to examine",
+              "pron": "eh-sah-ME-ne-ah-re"
+            },
+            {
+              "it": "sorriso rassicurante",
+              "en": "reassuring smile",
+              "pron": "sor-riz-soh rass-i-ku-RAN-te"
+            },
+            {
+              "it": "medico",
+              "en": "doctor",
+              "pron": "meh-DI-koh"
+            },
+            {
+              "it": "stato",
+              "en": "condition",
+              "pron": "STA-to"
+            },
+            {
+              "it": "piccolo",
+              "en": "small",
+              "pron": "pih-KLOH-lo"
+            },
+            {
+              "it": "gentile",
+              "en": "kind",
+              "pron": "jen-TIL-le"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Alessia si sentiva male e decise di accogliere il consiglio del dottore.",
+              "en": "Alessia felt unwell and decided to follow the doctor's advice.",
+              "words": [
+                "Alessia",
+                "si",
+                "sentiva",
+                "male",
+                "e",
+                "decise",
+                "di",
+                "accogliere",
+                "il",
+                "consiglio",
+                "del",
+                "dottore."
+              ]
+            },
+            {
+              "it": "Il medico esaminò attentamente la paziente, cercando di rassicurarla.",
+              "en": "The doctor carefully examined the patient, trying to reassure her.",
+              "words": [
+                "Il",
+                "medico",
+                "esaminò",
+                "attentamente",
+                "la",
+                "paziente,",
+                "cercando",
+                "di",
+                "rassicurarla."
+              ]
+            },
+            {
+              "it": "Il sorriso rassicurante del medico la calmò un po'.",
+              "en": "The reassuring smile of the doctor calmed her a bit.",
+              "words": [
+                "Il",
+                "sorriso",
+                "rassicurante",
+                "del",
+                "medico",
+                "la",
+                "calmò",
+                "un",
+                "po'."
+              ]
+            },
+            {
+              "it": "Alessia era in un piccolo ospedale, ma il medico era molto gentile.",
+              "en": "Alessia was in a small hospital, but the doctor was very kind.",
+              "words": [
+                "Alessia",
+                "era",
+                "in",
+                "un",
+                "piccolo",
+                "ospedale,",
+                "ma",
+                "il",
+                "medico",
+                "era",
+                "molto",
+                "gentile."
+              ]
+            },
+            {
+              "it": "Il dottore disse che il suo stato era stabile e che sarebbe guarita presto.",
+              "en": "The doctor said that her condition was stable and that she would recover soon.",
+              "words": [
+                "Il",
+                "dottore",
+                "disse",
+                "che",
+                "il",
+                "suo",
+                "stato",
+                "era",
+                "stabile",
+                "e",
+                "che",
+                "sarebbe",
+                "guarita",
+                "presto."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 957542,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2489,
+        "totalCompletionTokens": 2079,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 199799,
+            "promptTokens": 526,
+            "completionTokens": 390
+          },
+          {
+            "lessonNum": 2,
+            "ms": 195201,
+            "promptTokens": 600,
+            "completionTokens": 404
+          },
+          {
+            "lessonNum": 3,
+            "ms": 217850,
+            "promptTokens": 646,
+            "completionTokens": 458
+          }
+        ]
+      },
+      "generatedAt": "2026-05-02T20:13:41.824Z",
+      "updatedAt": "2026-05-02T20:53:19.722Z",
+      "ratings": {
+        "difficulty": 2,
+        "fun": 2,
+        "coherence": 3
+      }
+    },
+    {
       "topic": "write a grant proposal for an ai-driven letztebuergesch app",
       "topicEmoji": "🔍",
       "lang": "it",
@@ -11048,6 +11475,51 @@
       "words": [],
       "flaggedAt": "2026-05-02T11:39:59.170Z",
       "comment": "IM PARK"
+    },
+    "in_the_hospital_with_poisoning:mcq_en_it:fungi": {
+      "topic": "in the hospital with poisoning",
+      "type": "mcq_en_it",
+      "it": "fungi",
+      "en": "mushrooms",
+      "correct": "fungi",
+      "choices": [
+        "sintomi",
+        "fungi",
+        "ospedale",
+        "discomfort"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-02T19:49:29.821Z"
+    },
+    "in_the_hospital_with_poisoning:listen_mcq:fungi": {
+      "topic": "in the hospital with poisoning",
+      "type": "listen_mcq",
+      "it": "fungi",
+      "en": "",
+      "correct": "mushrooms",
+      "choices": [
+        "mushrooms",
+        "strange",
+        "temperature",
+        "nausea"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-02T19:50:14.559Z"
+    },
+    "in_the_hospital_with_poisoning:read_translate:Maria,_la_dottoressa_gentile,_prese_la_m": {
+      "topic": "in the hospital with poisoning",
+      "type": "read_translate",
+      "it": "Maria, la dottoressa gentile, prese la mia temperatura.",
+      "en": "Nurse Maria took my temperature.",
+      "correct": "Nurse Maria took my temperature.",
+      "choices": [
+        "Maria asked if I had eaten anything unusual.",
+        "Nurse Maria took my temperature.",
+        "The pine scent in the hospital was unpleasant.",
+        "I had some strange foraging yesterday afternoon."
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-02T19:54:00.824Z"
     }
   }
 }
