@@ -273,6 +273,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-repair-btn:hover{background:var(--blue-dark)}
 .story-repair-btn:disabled{opacity:.5;cursor:not-allowed}
 .story-repair-status{font-size:12px;color:var(--gray-dark);font-weight:600;margin-top:5px}
+.story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
 .gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}
@@ -294,9 +295,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .rating-submit{width:100%;padding:10px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius);font-size:14px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px}
 .rating-done{font-size:13px;font-weight:700;text-align:center;color:var(--green-dark);padding:4px 0}
 .rating-summary{display:flex;gap:10px;font-size:12px;font-weight:700;color:var(--gray-dark);margin-top:6px;flex-wrap:wrap;justify-content:center}
+
+/* ══ TOAST ═══════════════════════════════════════════════════════════ */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
+
+<div id="toast" class="toast"></div>
 
 <div id="gen-overlay" class="gen-overlay" style="display:none">
   <div class="spinner"></div>
@@ -361,8 +368,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </div>
     </div>
     <label class="native-check-row">
-      <input type="checkbox" id="native-check">
-      Also generate story in target language <span id="native-lang-lbl">(Italian)</span>
+      <input type="checkbox" id="story-lang-check">
+      Generate story in <span id="native-lang-lbl">Italian</span> (experimental)
     </label>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
@@ -398,6 +405,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="topic-emoji-big" id="topic-emoji-big">📚</span>
     <span class="topic-name-big" id="topic-name-big">Topic</span>
     <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
+    <button class="hdr-btn" id="share-btn" onclick="shareLesson()" title="Copy shareable link">🔗 Share</button>
     <button class="hdr-btn" onclick="goLandingClean()">← Topics</button>
   </div>
   <div class="xp-strip">
@@ -415,12 +423,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <button class="story-hdr" onclick="toggleStory()">
       <span>📖 Read the story</span>
       <div class="story-hdr-btns" onclick="event.stopPropagation()">
+        <span id="story-lang-lbl" class="story-lang-lbl" style="display:none"></span>
         <button class="story-icon-btn" onclick="speakStory()" title="Read aloud">🔊</button>
         <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
-      </div>
-      <div class="story-lang-toggle" id="story-lang-toggle" style="display:none" onclick="event.stopPropagation()">
-        <button class="story-lang-btn active" id="story-en-btn" onclick="showStoryLang('en')">EN</button>
-        <button class="story-lang-btn" id="story-native-btn" onclick="showStoryLang('native')"></button>
       </div>
       <span class="story-arrow" id="story-arrow">▼</span>
     </button>
@@ -530,6 +535,8 @@ function selectLang(code){
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
   if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
+  const nativeLbl=document.getElementById('native-lang-lbl');
+  if(nativeLbl) nativeLbl.textContent=L.name;
 }
 async function pollJob(jobId, onStep, intervalMs){
   intervalMs = intervalMs || 2000;
@@ -602,24 +609,13 @@ function toggleStoryRepair(){
   const wrap=document.getElementById('story-repair-wrap');
   if(wrap) wrap.classList.toggle('open');
 }
-function renderStoryText(d, lang){
+function renderStoryText(d){
   const body=document.getElementById('story-body'); if(!body) return;
-  const text=lang==='native'&&d.storyNative ? d.storyNative : (d.story||'');
-  body.innerHTML=text.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
-}
-function showStoryLang(lang){
-  const d=APP.lessonData; if(!d) return;
-  renderStoryText(d,lang);
-  document.getElementById('story-en-btn')?.classList.toggle('active',lang==='en');
-  document.getElementById('story-native-btn')?.classList.toggle('active',lang==='native');
-  const body=document.getElementById('story-body');
-  if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow')?.classList.add('open'); }
+  body.innerHTML=(d.story||'').split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
 }
 function speakStory(){
-  const d=APP.lessonData; if(!d) return;
-  const nativeActive=document.getElementById('story-native-btn')?.classList.contains('active');
-  const text=nativeActive&&d.storyNative ? d.storyNative : d.story;
-  if(text) speak(text);
+  const d=APP.lessonData; if(!d||!d.story) return;
+  speak(d.story);
 }
 async function doRepairStory(){
   const d=APP.lessonData; if(!d) return;
@@ -639,12 +635,15 @@ async function doRepairStory(){
     if(lr.ok) APP.lessonData=await lr.json();
     const body=document.getElementById('story-body');
     if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow')?.classList.add('open'); }
-    renderStoryText(APP.lessonData,'en');
+    renderStoryText(APP.lessonData);
+    // Update story language badge
+    const sl=APP.lessonData.storyLang||'en';
+    const storyLangLbl=document.getElementById('story-lang-lbl');
+    if(storyLangLbl) storyLangLbl.textContent=sl==='en'?'EN':(LANGS[sl]?.flag||sl.toUpperCase());
     document.getElementById('story-repair-input').value='';
     if(status) status.textContent='Story updated!';
     setTimeout(()=>{ if(status) status.textContent=''; },3000);
     document.getElementById('story-repair-wrap')?.classList.remove('open');
-    document.getElementById('story-lang-toggle').style.display='none';
   }catch(e){
     alert('Story repair failed: '+e.message);
     if(status) status.textContent='';
@@ -912,6 +911,23 @@ async function regenSaved(topic){
   doGenerate(true);
 }
 
+function showToast(msg){
+  const t=document.getElementById('toast'); if(!t) return;
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function shareLesson(){
+  if(!APP.lessonData) return;
+  const url=location.origin+location.pathname+'#topic='+encodeURIComponent(APP.lessonData.topic);
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>showToast('🔗 Link copied!')).catch(()=>showToast(url));
+  } else {
+    showToast(url);
+  }
+}
+
 function regenCurrent(){
   if(!APP.lessonData||!APP.info.canGenerate) return;
   if(!confirm('Regenerate "'+APP.lessonData.topic+'"? Overwrites saved version.')) return;
@@ -935,7 +951,7 @@ async function doGenerate(forceRegen){
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({topic,lang:APP.lang,difficulty:APP.difficulty,
-        generateNative:!!document.getElementById('native-check')?.checked,
+        storyInTargetLang:!!document.getElementById('story-lang-check')?.checked,
         forceRegenerate:!!forceRegen})});
     if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Server error'); }
     const resp=await r.json();
@@ -983,14 +999,16 @@ function buildPath(){
     storySec.style.display='';
     storyBody.classList.remove('open');
     const arrow=document.getElementById('story-arrow'); if(arrow) arrow.classList.remove('open');
-    renderStoryText(d,'en');
+    renderStoryText(d);
+    // Hide the EN/native toggle — story is now always a single language
     const toggle=document.getElementById('story-lang-toggle');
-    if(toggle){
-      toggle.style.display=d.storyNative?'flex':'none';
-      const nbtn=document.getElementById('story-native-btn');
-      if(nbtn) nbtn.textContent=dL.flag||dLang.toUpperCase();
-      document.getElementById('story-en-btn')?.classList.add('active');
-      document.getElementById('story-native-btn')?.classList.remove('active');
+    if(toggle) toggle.style.display='none';
+    // Show story language as a small label in the header
+    const storyLangLbl=document.getElementById('story-lang-lbl');
+    if(storyLangLbl){
+      const sl=d.storyLang||'en';
+      storyLangLbl.textContent=sl==='en'?'EN':(LANGS[sl]?.flag||sl.toUpperCase());
+      storyLangLbl.style.display='';
     }
     const repToggle=document.getElementById('story-repair-toggle-btn');
     if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
@@ -1087,7 +1105,7 @@ function buildExercises(lessonIdx){
   function mkMcqIE(v,p){ const w=wV(v,'en',p,3); if(w.length<3)return null; return {type:'mcq_it_en',it:v.it,en:v.en,pron:v.pron,correct:v.en,choices:shuffle([v.en,...w])}; }
   function mkMcqEI(v,p){ const w=wV(v,'it',p,3); if(w.length<3)return null; return {type:'mcq_en_it',en:v.en,it:v.it,correct:v.it,choices:shuffle([v.it,...w])}; }
   function mkLMcq(v,p){ const w=wV(v,'en',p,3); if(w.length<3)return null; return {type:'listen_mcq',it:v.it,pron:v.pron,correct:v.en,choices:shuffle([v.en,...w])}; }
-  function mkLType(v){ return {type:'listen_type',it:v.it,pron:v.pron,correct:v.it}; }
+  function mkLType(v){ return {type:'listen_type',it:v.it,en:v.en,pron:v.pron,correct:v.it}; }
   function mkOrder(s){
     const words=s.words.slice();
     // Pick 2-3 distractor words from other vocab/sentences, not in this sentence
@@ -1174,17 +1192,17 @@ function renderEx(){
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" id="c${i}" onclick="pickChoice(${i},this)">${c}</button>`).join('')}</div>`; }
-function lBlock(it,pron){
+function lBlock(it, pron, hideWord) {
   return `<button class="listen-big" onclick="speak('${esc(it)}')">
       <span class="listen-icon">🔊</span>
-      <div><div class="listen-lbl">Tap to listen</div><div class="listen-word">${it}</div></div>
-    </button>${pron?`<div class="pron">&nbsp;🗣 ${pron}</div>`:''}<button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
+      <div><div class="listen-lbl">Tap to listen</div>${hideWord ? '' : `<div class="listen-word">${it}</div>`}</div>
+    </button>${pron ? `<div class="pron">&nbsp;🗣 ${pron}</div>` : ''}<button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
 function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${ex.it}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
 function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
 function tLMcq(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — what do you hear?</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
+function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
 function tOrder(ex){ const L=lessonLang();
   const tokens=ex.words.map((w,i)=>{
     const isDist=ex.distractors&&ex.distractors[i];
@@ -1275,7 +1293,10 @@ function check(){
   }
   if(ok){
     C.xp+=10; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
-    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">Correct! +10 XP</div><div class="fb-body">${ex.it||ex.correct}</div>`;
+    const revealBody = ex.type==='listen_type'
+      ? `${ex.it}${ex.en ? ' — ' + ex.en : ''}`
+      : (ex.it||ex.correct);
+    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">Correct! +10 XP</div><div class="fb-body">${revealBody}</div>`;
     if(ex.it) speak(ex.it);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     if(ex.type==='listen_type') document.getElementById('type-in').classList.add('ok');

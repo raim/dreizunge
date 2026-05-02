@@ -300,13 +300,12 @@ function deriveSentenceWords(s) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang) {
+function sysStory(lang, inTargetLang) {
   const L = langName(lang);
+  if (inTargetLang) {
+    return `You are a creative writer and ${L} language teacher. Write a short, engaging story directly in ${L} (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Avoid repetitive structures! Write plain prose only — no headings, no bullet points, no markdown. Write entirely in ${L}.`;
+  }
   return `You are a creative writer helping language learners. Write a short, engaging story in English (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Avoid repetitive structures! Write plain prose only — no headings, no bullet points, no markdown.`;
-}
-function sysStoryNative(lang) {
-  const L = langName(lang);
-  return `You are a creative writer and ${L} language teacher. Write the same story again, this time directly in ${L}. Keep the same plot, characters and structure as the English version. Write plain prose only — no headings, no bullet points, no markdown. Write entirely in ${L}.`;
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
@@ -371,7 +370,7 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
-async function generate(topic, lang, active, difficulty, generateNative, jobId) {
+async function generate(topic, lang, active, difficulty, storyInTargetLang, jobId) {
   const genStart = Date.now();
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   const lessonTokenStats = [];
@@ -390,24 +389,16 @@ async function generate(topic, lang, active, difficulty, generateNative, jobId) 
   }
 
   jobStep(jobId, 'Generating story…');
-  let story = null, storyNative = null;
+  let story = null, storyLang = 'en';
   try {
     const t0 = Date.now();
-    const { text, promptTokens, completionTokens } = await callLLM(active, sysStory(lang),
+    const { text, promptTokens, completionTokens } = await callLLM(active, sysStory(lang, storyInTargetLang),
       `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`, 900);
     story = text.trim();
+    storyLang = storyInTargetLang ? lang : 'en';
     totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
-    console.log(`    Story (EN): ${Date.now()-t0}ms`);
+    console.log(`    Story (${storyLang}): ${Date.now()-t0}ms`);
   } catch(e) { console.warn('  Story failed:', e.message); }
-
-  if (story && generateNative) {
-    jobStep(jobId, `Generating story in ${langName(lang)}…`);
-    try {
-      const { text, promptTokens, completionTokens } = await callLLM(active, sysStoryNative(lang), story, 1000);
-      storyNative = text.trim();
-      totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
-    } catch(e) { console.warn('  Native story failed:', e.message); }
-  }
 
   const TOTAL = 3;
   const lessons = [];
@@ -424,7 +415,7 @@ async function generate(topic, lang, active, difficulty, generateNative, jobId) 
   const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : OLLAMA_MODEL;
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
   return { topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
-           lang, difficulty: difficulty || 2, story, storyNative, lessons,
+           lang, difficulty: difficulty || 2, story, storyLang, lessons,
            generationStats: { totalMs, backend: active, model: modelLabel,
              totalPromptTokens, totalCompletionTokens, lessons: lessonTokenStats } };
 }
@@ -674,7 +665,7 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { topic, lang, difficulty, generateNative, forceRegenerate } = body;
+      const { topic, lang, difficulty, storyInTargetLang, forceRegenerate } = body;
       if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
       const topicKey = topic.trim().toLowerCase();
@@ -689,7 +680,7 @@ async function boot() {
       const jobId = newJob();
       generatingTopics.add(topicKey);
       console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) diff=${diff} job=${jobId}`);
-      generate(topic.trim(), lang || 'it', active, diff, !!generateNative, jobId).then(data => {
+      generate(topic.trim(), lang || 'it', active, diff, !!storyInTargetLang, jobId).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         jobDone(jobId, { ...data, fromCache: false });
@@ -743,13 +734,15 @@ async function boot() {
         try {
           jobStep(jobId, 'Rewriting story…');
           const lang = saved.lang || 'it';
+          const inTargetLang = saved.storyLang && saved.storyLang !== 'en';
           const userMsg = [
             `Topic: "${topic}".`,
             saved.story ? `Current story:\n${saved.story}\n\nUser instruction: ${instruction}` : `Write a new story. Instruction: ${instruction}`,
             'Plain prose, no headings.'
           ].join('\n');
-          const { text } = await callLLM(active, sysStory(lang), userMsg, 900);
+          const { text } = await callLLM(active, sysStory(lang, inTargetLang), userMsg, 900);
           saved.story = text.trim();
+          saved.storyLang = inTargetLang ? lang : 'en';
           delete saved.storyNative;
           upsert(saved);
           jobDone(jobId, { story: saved.story });

@@ -1,6 +1,450 @@
 {
   "lessons": [
     {
+      "topic": "climbing in the dolomites",
+      "topicEmoji": "⛰️",
+      "lang": "it",
+      "difficulty": 2,
+      "story": "Nella dolce luce del crepuscolo, Marco e Luca iniziarono la loro salita verso la cima del Sella, una delle montagne più ammirate delle Dolomiti. Marco, un appassionato di montagna, era il guida del giorno. Luca, invece, era un novizio, ma nonostante la sua mancanza di esperienza, era entusiasta e pronto a imparare.\n\nIl sentiero era stretto e scosceso, ma Marco camminava con sicurezza, indicando a Luca i punti di salita più sicuri. \"Guarda, Luca, devi mantenere l'equilibrio e non guardare giù,\" disse Marco, mentre si fermavano per riprendere fiato. Luca annuì, cercando di seguire le istruzioni del suo amico.\n\nDopo qualche ora di salita, il panorama si fece più impressionante. Le rocce grigie e i prati verdi si estendevano fino all'orizzonte, mentre le nuvole si avvolgevano intorno alle cime più alte. \"Siamo quasi lì,\" disse Marco, indicando una cresta scintillante al di sopra di loro. Luca, con un sorriso di orgoglio, rispose: \"Sì, ci siamo quasi.\"\n\nFinalmente, dopo aver superato l'ultimo tratto di salita, si trovarono sulla cima del Sella. L'aria era fredda e pungente, ma il panorama era meraviglioso. Le Dolomiti si estendevano in ogni direzione, con i picchi innevati che si stagliavano contro il cielo azzurro. \"Non c'è niente di meglio di una salita in montagna,\" disse Marco, guardando Luca con un sorriso. Luca, con gli occhi spalancati per lo stupore, annuì e si sentì felice di aver superato la sua prima grande salita.",
+      "storyLang": "it",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "climbing in the dolomites",
+          "desc": "dolomiti, salita, guida, panorama, equilibrio",
+          "icon": "⛰️",
+          "vocab": [
+            {
+              "it": "dolomiti",
+              "en": "Dolomites",
+              "pron": "DO-lo-mi-ti"
+            },
+            {
+              "it": "salita",
+              "en": "climb",
+              "pron": "sa-LI-ta"
+            },
+            {
+              "it": "guida",
+              "en": "guide",
+              "pron": "GWI-de-a"
+            },
+            {
+              "it": "panorama",
+              "en": "panorama",
+              "pron": "pa-na-OR-a-ma"
+            },
+            {
+              "it": "equilibrio",
+              "en": "balance",
+              "pron": "e-ku-LI-brio"
+            },
+            {
+              "it": "cima",
+              "en": "summit",
+              "pron": "TZY-ma"
+            },
+            {
+              "it": "sella",
+              "en": "Sella mountain",
+              "pron": "SE-la"
+            },
+            {
+              "it": "novizio",
+              "en": "novice",
+              "pron": "no-VI-zio"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La salita era faticosa, ma il panorama alla cima compensava.",
+              "en": "The climb was tough, but the view from the summit made it worth it.",
+              "words": [
+                "La",
+                "salita",
+                "era",
+                "faticosa,",
+                "ma",
+                "il",
+                "panorama",
+                "alla",
+                "cima",
+                "compensava."
+              ]
+            },
+            {
+              "it": "Il guida indicò i punti di salita più sicuri al novizio.",
+              "en": "The guide pointed out the safest climbing points to the novice.",
+              "words": [
+                "Il",
+                "guida",
+                "indicò",
+                "i",
+                "punti",
+                "di",
+                "salita",
+                "più",
+                "sicuri",
+                "al",
+                "novizio."
+              ]
+            },
+            {
+              "it": "Luca cercò di mantenere l'equilibrio mentre Marco lo aiutava.",
+              "en": "Luca tried to maintain his balance while Marco helped him.",
+              "words": [
+                "Luca",
+                "cercò",
+                "di",
+                "mantenere",
+                "l'equilibrio",
+                "mentre",
+                "Marco",
+                "lo",
+                "aiutava."
+              ]
+            },
+            {
+              "it": "Le rocce grigie e i prati verdi si estendevano fino all'orizzonte.",
+              "en": "The gray rocks and green meadows stretched out to the horizon.",
+              "words": [
+                "Le",
+                "rocce",
+                "grigie",
+                "e",
+                "i",
+                "prati",
+                "verdi",
+                "si",
+                "estendevano",
+                "fino",
+                "all'orizzonte."
+              ]
+            },
+            {
+              "it": "Le nuvole si avvolgevano intorno alle cime delle montagne.",
+              "en": "The clouds wrapped around the mountain peaks.",
+              "words": [
+                "Le",
+                "nuvole",
+                "si",
+                "avvolgevano",
+                "intorno",
+                "alle",
+                "cime",
+                "delle",
+                "montagne."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "climbing in the dolomites",
+          "desc": "mountain views, guidance, altitude",
+          "icon": "⛰️",
+          "vocab": [
+            {
+              "it": "struttura",
+              "en": "structure",
+              "pron": "STRUktuRA"
+            },
+            {
+              "it": "ripida",
+              "en": "steep",
+              "pron": "riPIDA"
+            },
+            {
+              "it": "osservare",
+              "en": "observe",
+              "pron": "osseRVAre"
+            },
+            {
+              "it": "ossigeno",
+              "en": "oxygen",
+              "pron": "osSIGeNe"
+            },
+            {
+              "it": "punti di salita",
+              "en": "climbing points",
+              "pron": "PUNti di saliTA"
+            },
+            {
+              "it": "fermata",
+              "en": "stop",
+              "pron": "ferMAta"
+            },
+            {
+              "it": "impressionante",
+              "en": "impressive",
+              "pron": "impreSSiONante"
+            },
+            {
+              "it": "avvolgere",
+              "en": "envelop",
+              "pron": "avVOLgere"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La struttura delle rocce è impressionante.",
+              "en": "The structure of the rocks is impressive.",
+              "words": [
+                "La",
+                "struttura",
+                "delle",
+                "rocce",
+                "è",
+                "impressionante."
+              ]
+            },
+            {
+              "it": "Il sentiero è molto ripido e richiede attenzione all'osservare i punti di salita.",
+              "en": "The path is very steep and requires attention to observe the climbing points.",
+              "words": [
+                "Il",
+                "sentiero",
+                "è",
+                "molto",
+                "ripido",
+                "e",
+                "richiede",
+                "attenzione",
+                "all'osservare",
+                "i",
+                "punti",
+                "di",
+                "salita."
+              ]
+            },
+            {
+              "it": "Durante la fermata, Marco controllò l'ossigeno del suo amico.",
+              "en": "During the stop, Marco checked his friend's oxygen.",
+              "words": [
+                "Durante",
+                "la",
+                "fermata,",
+                "Marco",
+                "controllò",
+                "l'ossigeno",
+                "del",
+                "suo",
+                "amico."
+              ]
+            },
+            {
+              "it": "Il panorama si è fatto sempre più impressionante man mano che salivamo.",
+              "en": "The panorama became more and more impressive as we climbed.",
+              "words": [
+                "Il",
+                "panorama",
+                "si",
+                "è",
+                "fatto",
+                "sempre",
+                "più",
+                "impressionante",
+                "man",
+                "mano",
+                "che",
+                "salivamo."
+              ]
+            },
+            {
+              "it": "Le nuvole si avvolgevano intorno alle cime, creando un'atmosfera magica.",
+              "en": "The clouds enveloped the peaks, creating a magical atmosphere.",
+              "words": [
+                "Le",
+                "nuvole",
+                "si",
+                "avvolgevano",
+                "intorno",
+                "alle",
+                "cime,",
+                "creando",
+                "un'atmosfera",
+                "magica."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "climbing in the dolomites",
+          "desc": "mountain views, climbing techniques, and novice experiences",
+          "icon": "⛰️",
+          "vocab": [
+            {
+              "it": "strapioggio",
+              "en": "rock fall",
+              "pron": "STRA-pio-joh"
+            },
+            {
+              "it": "ossigenatore",
+              "en": "oxygen tank",
+              "pron": "o-si-GEN-eh-to-re"
+            },
+            {
+              "it": "appoggio",
+              "en": "support",
+              "pron": "ap-PO-joh"
+            },
+            {
+              "it": "sbarco",
+              "en": "rest",
+              "pron": "sbar-koh"
+            },
+            {
+              "it": "avvistamento",
+              "en": "viewing",
+              "pron": "av-vi-stam-EN-to"
+            },
+            {
+              "it": "punti di salita",
+              "en": "climbing points",
+              "pron": "PUN-tee dee sa-LIT-ah"
+            },
+            {
+              "it": "fermata",
+              "en": "stop",
+              "pron": "fer-MA-tah"
+            },
+            {
+              "it": "impressionante",
+              "en": "impressive",
+              "pron": "im-pras-see-OH-nahnt"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il strapioggio era pericoloso, quindi Marco indicò a Luca un appoggio sicuro.",
+              "en": "The rock fall was dangerous, so Marco pointed out a safe support to Luca.",
+              "words": [
+                "Il",
+                "strapioggio",
+                "era",
+                "pericoloso,",
+                "quindi",
+                "Marco",
+                "indicò",
+                "a",
+                "Luca",
+                "un",
+                "appoggio",
+                "sicuro."
+              ]
+            },
+            {
+              "it": "Luca prese un ossigenatore per l'ascesa, ma non ne avrebbe avuto bisogno.",
+              "en": "Luca took an oxygen tank for the climb, but he wouldn't need it.",
+              "words": [
+                "Luca",
+                "prese",
+                "un",
+                "ossigenatore",
+                "per",
+                "l'ascesa,",
+                "ma",
+                "non",
+                "ne",
+                "avrebbe",
+                "avuto",
+                "bisogno."
+              ]
+            },
+            {
+              "it": "Dopo la sbarco, Marco e Luca osservarono il panorama intorno a loro.",
+              "en": "After the rest, Marco and Luca observed the view around them.",
+              "words": [
+                "Dopo",
+                "la",
+                "sbarco,",
+                "Marco",
+                "e",
+                "Luca",
+                "osservarono",
+                "il",
+                "panorama",
+                "intorno",
+                "a",
+                "loro."
+              ]
+            },
+            {
+              "it": "Il guida fece fermata per controllare se Luca stava bene.",
+              "en": "The guide stopped to check if Luca was okay.",
+              "words": [
+                "Il",
+                "guida",
+                "fece",
+                "fermata",
+                "per",
+                "controllare",
+                "se",
+                "Luca",
+                "stava",
+                "bene."
+              ]
+            },
+            {
+              "it": "Il panorama avvistato dalla cima era impressionante, con le nuvole che avvolgevano le cime.",
+              "en": "The view from the summit was impressive, with clouds enveloping the peaks.",
+              "words": [
+                "Il",
+                "panorama",
+                "avvistato",
+                "dalla",
+                "cima",
+                "era",
+                "impressionante,",
+                "con",
+                "le",
+                "nuvole",
+                "che",
+                "avvolgevano",
+                "le",
+                "cime."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1197630,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1979,
+        "totalCompletionTokens": 1811,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 341159,
+            "promptTokens": 526,
+            "completionTokens": 416
+          },
+          {
+            "lessonNum": 2,
+            "ms": 268018,
+            "promptTokens": 593,
+            "completionTokens": 426
+          },
+          {
+            "lessonNum": 3,
+            "ms": 298030,
+            "promptTokens": 643,
+            "completionTokens": 484
+          }
+        ]
+      },
+      "generatedAt": "2026-05-02T08:53:42.265Z",
+      "updatedAt": "2026-05-02T09:06:03.251Z",
+      "ratings": {
+        "difficulty": 3,
+        "fun": 2,
+        "coherence": 3
+      }
+    },
+    {
       "topic": "learning letzebuergesch is hard",
       "topicEmoji": "🇩🇪",
       "lang": "lb",
