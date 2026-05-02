@@ -1,6 +1,381 @@
 {
   "lessons": [
     {
+      "topic": "walking on the mosel",
+      "topicEmoji": "📚",
+      "lang": "lb",
+      "difficulty": 1,
+      "story": "Energetisch gëngt Johann am Moselweg. Mëi, wat schön is dës Weg! Ech hëlt dës Wasserfluss, wat sacht rëst. Iwë, wéi schimmert dës Wasser im Sonnlicht, dës is ech wéi e Schmuck am Weg. Johann stërtt en Mëi, wat wéi e Blümchen is, am Weg. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss, wéi ech wéi e Blümchen is. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss, wéi ech wéi e Blümchen is. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss, wéi ech wéi e Blümchen is. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss, wéi ech wéi e Blümchen is. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss, wéi ech wéi e Blümchen is. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss, wéi ech wéi e Blümchen is. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss, wéi ech wéi e Blümchen is. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss, wéi ech wéi e Blümchen is. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech wéi e Blümchen is. Johann gëngt am Moselweg, wéi ech wéi e Schmuck am Wasserfluss, wéi ech wéi e Blümchen is. Ech hëlt dës Wëi, dës Wëi, dës Wëi, wéi ech w",
+      "storyLang": "lb",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "walking on the mosel",
+          "desc": "basics of walking, mosel, and nature",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "it": "gëngt",
+              "en": "walks",
+              "pron": "GENGt"
+            },
+            {
+              "it": "Moselweg",
+              "en": "Mosel path",
+              "pron": "MOS-EL-VEG"
+            },
+            {
+              "it": "Weg",
+              "en": "way/path",
+              "pron": "VEG"
+            },
+            {
+              "it": "Wasserfluss",
+              "en": "water flow",
+              "pron": "VASS-ER-FLOS"
+            },
+            {
+              "it": "schimmert",
+              "en": "shimmers",
+              "pron": "SHIM-mer"
+            },
+            {
+              "it": "Blümchen",
+              "en": "little flower",
+              "pron": "BLU-姆-ken"
+            },
+            {
+              "it": "Schmuck",
+              "en": "jewelry",
+              "pron": "SCHMUK"
+            },
+            {
+              "it": "Mëi",
+              "en": "May",
+              "pron": "MEI"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Energetisch gëngt Johann am Moselweg.",
+              "en": "Energetically Johann walks on the Mosel path.",
+              "words": [
+                "Energetisch",
+                "gëngt",
+                "Johann",
+                "am",
+                "Moselweg."
+              ]
+            },
+            {
+              "it": "Mëi, wat schön is dës Weg!",
+              "en": "May, what beautiful is this path!",
+              "words": [
+                "Mëi,",
+                "wat",
+                "schön",
+                "is",
+                "dës",
+                "Weg!"
+              ]
+            },
+            {
+              "it": "Ech hëlt dës Wasserfluss, wat sacht rëst.",
+              "en": "I hold this water flow, which softly rests.",
+              "words": [
+                "Ech",
+                "hëlt",
+                "dës",
+                "Wasserfluss,",
+                "wat",
+                "sacht",
+                "rëst."
+              ]
+            },
+            {
+              "it": "Iwë, wéi schimmert dës Wasser im Sonnlicht.",
+              "en": "Indeed, how it shimmers this water in the sunlight.",
+              "words": [
+                "Iwë,",
+                "wéi",
+                "schimmert",
+                "dës",
+                "Wasser",
+                "im",
+                "Sonnlicht."
+              ]
+            },
+            {
+              "it": "Johann stërtt en Mëi, wat wéi e Blümchen is, am Weg.",
+              "en": "Johann stops in May, what like a flower is, on the path.",
+              "words": [
+                "Johann",
+                "stërtt",
+                "en",
+                "Mëi,",
+                "wat",
+                "wéi",
+                "e",
+                "Blümchen",
+                "is,",
+                "am",
+                "Weg."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Moselweg",
+          "desc": "Walking, flowers, shimmering, water, May",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "it": "gëngt",
+              "en": "walks",
+              "pron": "GENGt"
+            },
+            {
+              "it": "Blümchen",
+              "en": "little flower",
+              "pron": "BLUemchen"
+            },
+            {
+              "it": "schimmert",
+              "en": "shimmers",
+              "pron": "SHIMert"
+            },
+            {
+              "it": "Wasser",
+              "en": "water",
+              "pron": "WASser"
+            },
+            {
+              "it": "Mëi",
+              "en": "May",
+              "pron": "MEI"
+            },
+            {
+              "it": "Schtimmt",
+              "en": "shines",
+              "pron": "SHTIMt"
+            },
+            {
+              "it": "Wëi",
+              "en": "thing",
+              "pron": "WI"
+            },
+            {
+              "it": "Schmuck",
+              "en": "jewelry",
+              "pron": "SHMUK"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Johann gëngt am Moselweg.",
+              "en": "Johann walks on the Mosel path.",
+              "words": [
+                "Johann",
+                "gëngt",
+                "am",
+                "Moselweg."
+              ]
+            },
+            {
+              "it": "Blümchen schimmert im Sonnlicht.",
+              "en": "Little flowers shimmer in the sunlight.",
+              "words": [
+                "Blümchen",
+                "schimmert",
+                "im",
+                "Sonnlicht."
+              ]
+            },
+            {
+              "it": "Wasser schtimmert sacht rëst.",
+              "en": "Water flows softly and shimmers.",
+              "words": [
+                "Wasser",
+                "schtimmert",
+                "sacht",
+                "rëst."
+              ]
+            },
+            {
+              "it": "Mëi, wat wéi e Schmuck am Weg.",
+              "en": "May, what jewelry on the path.",
+              "words": [
+                "Mëi,",
+                "wat",
+                "wéi",
+                "e",
+                "Schmuck",
+                "am",
+                "Weg."
+              ]
+            },
+            {
+              "it": "Johann stërtt Blümchen am Weg.",
+              "en": "Johann picks flowers on the path.",
+              "words": [
+                "Johann",
+                "stërtt",
+                "Blümchen",
+                "am",
+                "Weg."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Moselweg",
+          "desc": "Walking by the Moselle river in May",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "it": "Energetisch",
+              "en": "Energetically",
+              "pron": "e-ner-GET-isch"
+            },
+            {
+              "it": "Schimmert",
+              "en": "Shimmers",
+              "pron": "SHIM-mert"
+            },
+            {
+              "it": "Schön",
+              "en": "Beautiful",
+              "pron": "SCHON"
+            },
+            {
+              "it": "Wéi",
+              "en": "Like",
+              "pron": "WE-ee"
+            },
+            {
+              "it": "Wasser",
+              "en": "Water",
+              "pron": "WA-zer"
+            },
+            {
+              "it": "Schtimmt",
+              "en": "Shines",
+              "pron": "SHTIMT"
+            },
+            {
+              "it": "Blümchen",
+              "en": "Little flower",
+              "pron": "BLU-men"
+            },
+            {
+              "it": "Schmuck",
+              "en": "Jewelry",
+              "pron": "SCHMUK"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Energetisch schimmert dës Wasser im Sonnlicht.",
+              "en": "Energetically, the water shimmers in the sunlight.",
+              "words": [
+                "Energetisch",
+                "schimmert",
+                "dës",
+                "Wasser",
+                "im",
+                "Sonnlicht."
+              ]
+            },
+            {
+              "it": "Schön is dës Weg am Moselweg.",
+              "en": "Beautiful is this path on the Moselweg.",
+              "words": [
+                "Schön",
+                "is",
+                "dës",
+                "Weg",
+                "am",
+                "Moselweg."
+              ]
+            },
+            {
+              "it": "Blümchen wéi dës Wëi schimmert im Sonnlicht.",
+              "en": "Little flowers like these shimmer in the sunlight.",
+              "words": [
+                "Blümchen",
+                "wéi",
+                "dës",
+                "Wëi",
+                "schimmert",
+                "im",
+                "Sonnlicht."
+              ]
+            },
+            {
+              "it": "Schmuck is dës Wasser, wéi dës Blümchen is.",
+              "en": "Jewelry is the water, like the little flowers.",
+              "words": [
+                "Schmuck",
+                "is",
+                "dës",
+                "Wasser,",
+                "wéi",
+                "dës",
+                "Blümchen",
+                "is."
+              ]
+            },
+            {
+              "it": "Mëi, wéi dës Schimmert im Sonnlicht, is dës Blümchen.",
+              "en": "May, like this shimmering in the sunlight, is the little flower.",
+              "words": [
+                "Mëi,",
+                "wéi",
+                "dës",
+                "Schimmert",
+                "im",
+                "Sonnlicht,",
+                "is",
+                "dës",
+                "Blümchen."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1127129,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2443,
+        "totalCompletionTokens": 2022,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 274134,
+            "promptTokens": 704,
+            "completionTokens": 397
+          },
+          {
+            "lessonNum": 2,
+            "ms": 232730,
+            "promptTokens": 778,
+            "completionTokens": 334
+          },
+          {
+            "lessonNum": 3,
+            "ms": 269762,
+            "promptTokens": 829,
+            "completionTokens": 391
+          }
+        ]
+      },
+      "generatedAt": "2026-05-02T09:30:32.029Z",
+      "updatedAt": "2026-05-02T09:30:32.029Z"
+    },
+    {
       "topic": "climbing in the dolomites",
       "topicEmoji": "⛰️",
       "lang": "it",
