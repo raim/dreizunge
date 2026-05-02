@@ -1,6 +1,360 @@
 {
   "lessons": [
     {
+      "topic": "italian recipes from nonna",
+      "topicEmoji": "🇮🇹",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "Nella tranquilla piazza del paese, sotto il portico di pietra, si trovava la bottega di Nonna Rosa. Era un luogo di vita, dove l'odore di pane appena sfornato e di zucchero filato si mescolava con quello di erbe aromatiche e spezie. Nonna Rosa era famosa per le sue ricette tradizionali, passate di generazione in generazione. Ogni mattina, quando il sole si alzava, la sua voce melodiosa risuonava per le vie del paese: \"Venite, venite, chi vuole imparare a cucinare come si deve!\"\n\nUn giorno, una giovane madre, Maria, si avvicinò alla bottega. Era incinta e voleva imparare a preparare i piatti che avrebbe voluto cucinare per il suo bambino. Nonna Rosa la accolse con un sorriso e la invitò a entrare. \"Vieni, Maria, entra e siediti. Oggi ti insegnerò a preparare il dolce più amato in casa nostra, il panettone.\"\n\nNonna Rosa prese un grande cesto di frutta secca e lo posizionò sul tavolo. \"Guarda, Maria, queste sono le nostre amiche, le mandorle, le noci, i peperoni secchi. Ognuna ha il suo ruolo, proprio come in una famiglia.\" Mentre parlava, iniziò a mescolare le ingredienti con un cucchiaio di legno, spiegando ogni passo con pazienza. \"Prima prepariamo la panna, poi la farina, e infine le uova. Ogni ingrediente deve essere ben mescolato, altrimenti il panettone non sarà dolce e morbido.\"\n\nMaria seguì attentamente ogni movimento di Nonna Rosa, imparando a preparare la pasta candida e poi a aggiungere le uova. \"Non è difficile, solo un po' di pazienza,\" disse Nonna Rosa, sorridendo. \"E ricorda, la vera magia del panettone è nella sua attesa. Dobbiamo lasciarlo fermentare per giorni, così può acquisire tutta la sua dolcezza.\"\n\nQuando il panettone fu pronto, Nonna Rosa lo mise in forno e lo lasciò cuocere. Mentre aspettavano, raccontò a Maria storie di quando era piccola, di come suo nonno le insegnava a cucinare. \"Le ricette non sono solo ingredienti, Maria, sono ricordi. Ogni volta che prepari il panettone, ricorderai me e il tuo bambino.\"\n\nQuando il dolce fu pronto, Nonna Rosa lo tagliò in fette e le offrì una tazza di caffè. \"Ecco, prova,\" disse, porgendole una fetta calda. \"Questo panettone è fatto con il cuore, come ogni ricetta che mi hai insegnato.\"\n\nMaria assaporò il dolce e sentì un calore inaspettato. \"Nonna Rosa, è meraviglioso. Grazie per avermi insegnato a cucinare come te.\"\n\nNonna Rosa rise, felice. \"Non c'è di che, mia cara. Ora tu sei una cuoca, e questo è il vero regalo.\"",
+      "storyLang": "it",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Italian Recipes from Nonna",
+          "desc": "Learn basic Italian kitchen vocabulary",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "panna",
+              "en": "cream",
+              "pron": "PAN-nah"
+            },
+            {
+              "it": "zucchero",
+              "en": "sugar",
+              "pron": "ZU-khe-ro"
+            },
+            {
+              "it": "erbe aromatiche",
+              "en": "aromatic herbs",
+              "pron": "air-BEH ah-rag-TOH-rik HEH-keh"
+            },
+            {
+              "it": "spezie",
+              "en": "spices",
+              "pron": "SPAY-zee-eh"
+            },
+            {
+              "it": "pane",
+              "en": "bread",
+              "pron": "PAH-neh"
+            },
+            {
+              "it": "solfetto",
+              "en": "sunrise",
+              "pron": "sol-FET-to"
+            },
+            {
+              "it": "bottega",
+              "en": "shop",
+              "pron": "boh-TEH-jah"
+            },
+            {
+              "it": "piatti",
+              "en": "dishes",
+              "pron": "pee-AHT-tee"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Solfetto si alza.",
+              "en": "Sunrise rises.",
+              "words": [
+                "Solfetto",
+                "si",
+                "alza."
+              ]
+            },
+            {
+              "it": "Nonna Rosa sforna pane.",
+              "en": "Nonna Rosa bakes bread.",
+              "words": [
+                "Nonna",
+                "Rosa",
+                "sforna",
+                "pane."
+              ]
+            },
+            {
+              "it": "Zucchero filato si mescola.",
+              "en": "Candied sugar mixes.",
+              "words": [
+                "Zucchero",
+                "filato",
+                "si",
+                "mescola."
+              ]
+            },
+            {
+              "it": "Erbe aromatiche e spezie.",
+              "en": "Aromatic herbs and spices.",
+              "words": [
+                "Erbe",
+                "aromatiche",
+                "e",
+                "spezie."
+              ]
+            },
+            {
+              "it": "Maria entra e siede.",
+              "en": "Maria enters and sits.",
+              "words": [
+                "Maria",
+                "entra",
+                "e",
+                "siede."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Italian Recipes from Nonna",
+          "desc": "Learn traditional Italian dishes and Nonna Rosa's wisdom",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "sfoglia",
+              "en": "dough sheet",
+              "pron": "sfo-GHIA"
+            },
+            {
+              "it": "marmellata",
+              "en": "jam",
+              "pron": "mar-ME-la-ta"
+            },
+            {
+              "it": "cucchiaio",
+              "en": "spoon",
+              "pron": "ku-TCHIA-o"
+            },
+            {
+              "it": "schiacciata",
+              "en": "flatbread",
+              "pron": "skia-TCHA-ta"
+            },
+            {
+              "it": "sugo",
+              "en": "sauce",
+              "pron": "SU-go"
+            },
+            {
+              "it": "schiacciarla",
+              "en": "to flatten it",
+              "pron": "skia-TCHA-ra-la"
+            },
+            {
+              "it": "saporita",
+              "en": "flavorful",
+              "pron": "sap-o-RI-ta"
+            },
+            {
+              "it": "schiacciatina",
+              "en": "flatbread snack",
+              "pron": "skia-TCHA-ti-na"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Sfoglia la pasta fina come un velo.",
+              "en": "Roll out the dough thin like a veil.",
+              "words": [
+                "Sfoglia",
+                "la",
+                "pasta",
+                "fina",
+                "come",
+                "un",
+                "velo."
+              ]
+            },
+            {
+              "it": "Metti la marmellata sull'ala del dolce.",
+              "en": "Put the jam on the wing of the dessert.",
+              "words": [
+                "Metti",
+                "la",
+                "marmellata",
+                "sull'ala",
+                "del",
+                "dolce."
+              ]
+            },
+            {
+              "it": "Con il cucchiaio, schiacciati la superficie.",
+              "en": "With the spoon, flatten the surface.",
+              "words": [
+                "Con",
+                "il",
+                "cucchiaio,",
+                "schiacciati",
+                "la",
+                "superficie."
+              ]
+            },
+            {
+              "it": "Il sugo deve essere saporito.",
+              "en": "The sauce must be flavorful.",
+              "words": [
+                "Il",
+                "sugo",
+                "deve",
+                "essere",
+                "saporito."
+              ]
+            },
+            {
+              "it": "Schiacciatina, dolce tradizionale di Nonna Rosa.",
+              "en": "Schiacciatina, Nonna Rosa's traditional sweet snack.",
+              "words": [
+                "Schiacciatina,",
+                "dolce",
+                "tradizionale",
+                "di",
+                "Nonna",
+                "Rosa."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Italian Recipes from Nonna",
+          "desc": "Learn traditional Italian desserts and cooking techniques",
+          "icon": "🍰",
+          "vocab": [
+            {
+              "it": "sfoglia",
+              "en": "dough sheet",
+              "pron": "sfo-GHIA"
+            },
+            {
+              "it": "marmellata",
+              "en": "jam",
+              "pron": "mar-ME-LA-ta"
+            },
+            {
+              "it": "cucchiaio",
+              "en": "spoon",
+              "pron": "ku-CHIA-o"
+            },
+            {
+              "it": "schiacciata",
+              "en": "flatbread",
+              "pron": "schia-CCHIA-ta"
+            },
+            {
+              "it": "saporita",
+              "en": "flavorful",
+              "pron": "sop-A-ri-ta"
+            },
+            {
+              "it": "schiacciatina",
+              "en": "flatbread snack",
+              "pron": "schia-CCHIA-ti-na"
+            },
+            {
+              "it": "schiacciare",
+              "en": "to flatten",
+              "pron": "schia-CCHIA-re"
+            },
+            {
+              "it": "sugo",
+              "en": "sauce",
+              "pron": "SU-go"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Schiacciare la sfoglia.",
+              "en": "To flatten the dough sheet.",
+              "words": [
+                "Schiacciare",
+                "la",
+                "sfoglia."
+              ]
+            },
+            {
+              "it": "Mettete la marmellata sopra il dolce.",
+              "en": "Put the jam on top of the dessert.",
+              "words": [
+                "Mettete",
+                "la",
+                "marmellata",
+                "sopra",
+                "il",
+                "dolce."
+              ]
+            },
+            {
+              "it": "Con un cucchiaio, distribuite il sugo.",
+              "en": "With a spoon, distribute the sauce.",
+              "words": [
+                "Con",
+                "un",
+                "cucchiaio,",
+                "distribuite",
+                "il",
+                "sugo."
+              ]
+            },
+            {
+              "it": "La sfoglia deve essere saporita.",
+              "en": "The dough sheet should be flavorful.",
+              "words": [
+                "La",
+                "sfoglia",
+                "deve",
+                "essere",
+                "saporita."
+              ]
+            },
+            {
+              "it": "Preparate una schiacciatina per il pranzo.",
+              "en": "Prepare a flatbread snack for lunch.",
+              "words": [
+                "Preparate",
+                "una",
+                "schiacciatina",
+                "per",
+                "il",
+                "pranzo."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 869440,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1992,
+        "totalCompletionTokens": 1846,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 196125,
+            "promptTokens": 528,
+            "completionTokens": 315
+          },
+          {
+            "lessonNum": 2,
+            "ms": 202759,
+            "promptTokens": 593,
+            "completionTokens": 378
+          },
+          {
+            "lessonNum": 3,
+            "ms": 203053,
+            "promptTokens": 655,
+            "completionTokens": 360
+          }
+        ]
+      },
+      "generatedAt": "2026-05-02T12:52:40.826Z",
+      "updatedAt": "2026-05-02T12:52:40.826Z"
+    },
+    {
       "topic": "walking on the mosel",
       "topicEmoji": "📚",
       "lang": "lb",
@@ -4373,7 +4727,7 @@
           "id": 1,
           "title": "Tabletennis in a Park",
           "desc": "Basics of playing and setting up",
-          "icon": "/Tabletennis/",
+          "icon": "🌳🏓",
           "vocab": [
             {
               "it": "Tischtennis",
@@ -4481,7 +4835,7 @@
           "id": 2,
           "title": "tabletennis in a park",
           "desc": "park, game, learn, teach, children, curious, quickly, learn",
-          "icon": "/Tabletennis/",
+          "icon": "🌳🏓",
           "vocab": [
             {
               "it": "Spielzeug",
@@ -10826,311 +11180,6 @@
       "generatedAt": "2026-04-26T00:36:18.079Z"
     },
     {
-      "topic": "Italian cooking & recipes",
-      "topicEmoji": "🍝",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Basics of Italian Cooking",
-          "desc": "Simple ingredients and techniques",
-          "icon": "👩‍🍳",
-          "vocab": [
-            {
-              "it": "farina",
-              "en": "flour",
-              "pron": "FA-ree-nah"
-            },
-            {
-              "it": "sale",
-              "en": "salt",
-              "pron": "SAH-lee"
-            },
-            {
-              "it": "olio",
-              "en": "oil",
-              "pron": "OH-lee-yo"
-            },
-            {
-              "it": "acqua",
-              "en": "water",
-              "pron": "AH-kwah"
-            },
-            {
-              "it": "padella",
-              "en": "pan",
-              "pron": "PAH-deh-lah"
-            },
-            {
-              "it": "forchette",
-              "en": "fork",
-              "pron": "FOR-chet-tah"
-            },
-            {
-              "it": "spatola",
-              "en": "spatula",
-              "pron": "spa-TOH-lah"
-            },
-            {
-              "it": "tavola",
-              "en": "table",
-              "pron": "TAH-voh-lah"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Metti sale nell'acqua.",
-              "en": "Put salt in the water.",
-              "words": [
-                "Metti",
-                "sale",
-                "nell'acqua"
-              ]
-            },
-            {
-              "it": "Friggi l'aglio in olio.",
-              "en": "Fry the garlic in oil.",
-              "words": [
-                "Friggi",
-                "l'aglio",
-                "in",
-                "olio"
-              ]
-            },
-            {
-              "it": "Spezzetta la carne.",
-              "en": "Slice the meat.",
-              "words": [
-                "Spezzetta",
-                "la",
-                "carne"
-              ]
-            },
-            {
-              "it": "Porta il vino al tavolo.",
-              "en": "Bring the wine to the table.",
-              "words": [
-                "Porta",
-                "il",
-                "vino",
-                "al",
-                "tavolo"
-              ]
-            },
-            {
-              "it": "Sovrappuoi la pasta.",
-              "en": "Layer the pasta.",
-              "words": [
-                "Sovrappuoi",
-                "la",
-                "pasta"
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Intermediate Italian Cooking Phrases",
-          "desc": "More complex phrases for cooking",
-          "icon": "🔥",
-          "vocab": [
-            {
-              "it": "sugo",
-              "en": "sauce",
-              "pron": "SOO-joh"
-            },
-            {
-              "it": "riso",
-              "en": "rice",
-              "pron": "REE-so"
-            },
-            {
-              "it": "panna",
-              "en": "cream",
-              "pron": "PAHN-nah"
-            },
-            {
-              "it": "sugo di pomodoro",
-              "en": "tomato sauce",
-              "pron": "SOO-joh dee POH-moh-doh-roh"
-            },
-            {
-              "it": "zucchero",
-              "en": "sugar",
-              "pron": "zoo-CHEH-roh"
-            },
-            {
-              "it": "sale grosso",
-              "en": "coarse salt",
-              "pron": "SAH-lee groh-soh"
-            },
-            {
-              "it": "sugo al pomodoro",
-              "en": "tomato sauce",
-              "pron": "SOO-joh al POH-moh-doh-roh"
-            },
-            {
-              "it": "risotto",
-              "en": "risotto",
-              "pron": "ree-SOH-toh"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Sovrappuoi il sugo.",
-              "en": "Layer the sauce.",
-              "words": [
-                "Sovrappuoi",
-                "il",
-                "sugo"
-              ]
-            },
-            {
-              "it": "Mescola il riso con il sugo.",
-              "en": "Stir the rice with the sauce.",
-              "words": [
-                "Mescola",
-                "il",
-                "riso",
-                "con",
-                "il",
-                "sugo"
-              ]
-            },
-            {
-              "it": "Aggiungi la panna al sugo.",
-              "en": "Add cream to the sauce.",
-              "words": [
-                "Aggiungi",
-                "la",
-                "panna",
-                "al",
-                "sugo"
-              ]
-            },
-            {
-              "it": "Sovrappuoi il risotto.",
-              "en": "Layer the risotto.",
-              "words": [
-                "Sovrappuoi",
-                "il",
-                "risotto"
-              ]
-            },
-            {
-              "it": "Sovrappuoi il risotto con il sugo.",
-              "en": "Layer the risotto with the sauce.",
-              "words": [
-                "Sovrappuoi",
-                "il",
-                "risotto",
-                "con",
-                "il",
-                "sugo"
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Advanced Italian Cooking Techniques",
-          "desc": "Specialized cooking techniques",
-          "icon": "👩‍🍳🔥",
-          "vocab": [
-            {
-              "it": "tagliatelle",
-              "en": "tagliatelle",
-              "pron": "tah-lee-AH-tel-le"
-            },
-            {
-              "it": "burrata",
-              "en": "burrata",
-              "pron": "boor-RAH-tah"
-            },
-            {
-              "it": "parmigiano reggiano",
-              "en": "parmesan cheese",
-              "pron": "par-mee-JEY-noh reh-JAH-noh"
-            },
-            {
-              "it": "risotto al tartufo",
-              "en": "truffle risotto",
-              "pron": "ree-SOH-toh al tar-TOO-foh"
-            },
-            {
-              "it": "besciamella",
-              "en": "béchamel sauce",
-              "pron": "be-shee-ah-MEL-lah"
-            },
-            {
-              "it": "risotto al ragù",
-              "en": "ragù risotto",
-              "pron": "ree-SOH-toh al rah-GOO"
-            },
-            {
-              "it": "tagliere",
-              "en": "cheese board",
-              "pron": "tah-lee-YEH-reh"
-            },
-            {
-              "it": "burrata al tartufo",
-              "en": "truffle burrata",
-              "pron": "boor-RAH-tah al tar-TOO-foh"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Taglia i funghi.",
-              "en": "Slice the mushrooms.",
-              "words": [
-                "Taglia",
-                "i",
-                "funghi"
-              ]
-            },
-            {
-              "it": "Sovrappuoi la besciamella.",
-              "en": "Layer the béchamel sauce.",
-              "words": [
-                "Sovrappuoi",
-                "la",
-                "besciamella"
-              ]
-            },
-            {
-              "it": "Sovrappuoi la burrata.",
-              "en": "Layer the burrata.",
-              "words": [
-                "Sovrappuoi",
-                "la",
-                "burrata"
-              ]
-            },
-            {
-              "it": "Sovrappuoi il tagliere.",
-              "en": "Layer the cheese board.",
-              "words": [
-                "Sovrappuoi",
-                "il",
-                "tagliere"
-              ]
-            },
-            {
-              "it": "Sovrappuoi la burrata al tartufo.",
-              "en": "Layer the truffle burrata.",
-              "words": [
-                "Sovrappuoi",
-                "la",
-                "burrata",
-                "al",
-                "tartufo"
-              ]
-            }
-          ]
-        }
-      ],
-      "generatedAt": "2026-04-21T10:28:55.222Z"
-    },
-    {
       "topic": "business & negotiations",
       "topicEmoji": "🤝",
       "lessons": [
@@ -11617,6 +11666,40 @@
       "words": [],
       "flaggedAt": "2026-05-02T11:39:59.170Z",
       "comment": "IM PARK"
+    },
+    "italian_recipes_from_nonna:mcq_en_it:solfetto": {
+      "topic": "italian recipes from nonna",
+      "type": "mcq_en_it",
+      "it": "solfetto",
+      "en": "sunrise",
+      "correct": "solfetto",
+      "choices": [
+        "panna",
+        "pane",
+        "spezie",
+        "solfetto"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-02T12:55:04.137Z",
+      "comment": "Wrong word"
+    },
+    "italian_recipes_from_nonna:order:Zucchero_filato_si_mescola.": {
+      "topic": "italian recipes from nonna",
+      "type": "order",
+      "it": "Zucchero filato si mescola.",
+      "en": "Candied sugar mixes.",
+      "correct": "Zucchero filato si mescola.",
+      "choices": [],
+      "words": [
+        "Zucchero",
+        "mescola.",
+        "si",
+        "filato",
+        "entra",
+        "Erbe"
+      ],
+      "flaggedAt": "2026-05-02T12:57:13.140Z",
+      "comment": "Wrong english, cotton candy"
     }
   }
 }
