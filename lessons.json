@@ -1,6 +1,442 @@
 {
   "lessons": [
     {
+      "topic": "write a grant proposal for an ai-driven letztebuergesch app",
+      "topicEmoji": "🔍",
+      "lang": "it",
+      "difficulty": 2,
+      "story": "Nel cuore di Berlino, dove l'arte e la tecnologia si intrecciano in un mosaico di innovazione, c'era una piccola startup chiamata \"LetzteBürgesch\". Il loro obiettivo era semplice: creare un'app che aiutasse i residenti di Berlino a comprendere meglio la storia della città attraverso l'uso di un'intelligenza artificiale avanzata. Ma per realizzare questo progetto, avevano bisogno di un finanziamento. Decisero quindi di scrivere una proposta di finanziamento per un'organizzazione di investimento sociale.\n\nIl documento iniziava con un'introduzione vivace, dove si evidenziava l'importanza di preservare e condividere la storia di Berlino. \"Berlino è una città ricca di storia e cultura, ma molte sue storie rimangono nascoste ai visitatori e ai residenti. L'obiettivo di LetzteBürgesch è di rendere accessibile questa storia attraverso un'app che utilizza l'intelligenza artificiale per offrire un'esperienza unica a chiunque si trovi nella città.\"\n\nNel corpo della proposta, si spiegava come l'app avrebbe funzionato. \"L'utente avrebbe potuto scaricare l'app e, attraverso un sistema di riconoscimento visivo, avrebbe potuto scattare una foto di qualsiasi luogo nella città. L'intelligenza artificiale, allenata con un vasto database di immagini e informazioni storiche, avrebbe identificato l'edificio o la strada e fornito dettagli interessanti e informativi.\"\n\nPer convincere i finanziatori, si evidenziavano i benefici sociali e economici dell'app. \"Non solo aiuterà a promuovere la conoscenza e l'amore per la storia locale, ma anche a stimolare il turismo e a creare un legame più forte tra i residenti e la loro città. Inoltre, l'app sarà disponibile in diverse lingue, rendendo Berlino più accessibile a tutti i visitatori internazionali.\"\n\nConcludendo, si sottolineava il potenziale dell'idea e la necessità di supporto finanziario. \"Con il vostro aiuto, potremmo realizzare LetzteBürgesch e trasformare Berlino in una città dove la storia si intreccia con la tecnologia, creando un legato unico tra i suoi abitanti e i visitatori. Siamo convinti che questa app non solo migliorerebbe la qualità della vita dei berlinesi, ma anche avrebbe un impatto positivo sulla città e sul suo futuro.\"\n\nL'ultima pagina della proposta era dedicata a ringraziare i finanziatori per il loro interesse e per la possibilità di contribuire a un progetto che avrebbe beneficiato di tutta Berlino.",
+      "storyLang": "it",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Berlino e storia",
+          "desc": "Parole chiave per scrivere una proposta di finanziamento",
+          "icon": "📍",
+          "vocab": [
+            {
+              "it": "proposta di finanziamento",
+              "en": "grant proposal",
+              "pron": "proh-POT-suh"
+            },
+            {
+              "it": "innovazione",
+              "en": "innovation",
+              "pron": "in-uh-VAY-shun"
+            },
+            {
+              "it": "residenti",
+              "en": "residents",
+              "pron": "ree-ZIDENT-ee"
+            },
+            {
+              "it": "finanziamento",
+              "en": "financing",
+              "pron": "fin-AN-see-muhnt"
+            },
+            {
+              "it": "app",
+              "en": "app",
+              "pron": "AP"
+            },
+            {
+              "it": "storia",
+              "en": "history",
+              "pron": "STOR-ee"
+            },
+            {
+              "it": "visitors",
+              "en": "visitors",
+              "pron": "VIZ-uh-turs"
+            },
+            {
+              "it": "città",
+              "en": "city",
+              "pron": "SIT-uh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Berlino è una città ricca di storia.",
+              "en": "Berlin is a city rich in history.",
+              "words": [
+                "Berlino",
+                "è",
+                "una",
+                "città",
+                "ricca",
+                "di",
+                "storia."
+              ]
+            },
+            {
+              "it": "L'obiettivo di LetzteBürgesch è di rendere la storia di Berlino più accessibile.",
+              "en": "The goal of LetzteBürgesch is to make Berlin's history more accessible.",
+              "words": [
+                "L'obiettivo",
+                "di",
+                "LetzteBürgesch",
+                "è",
+                "di",
+                "rendere",
+                "la",
+                "storia",
+                "di",
+                "Berlino",
+                "più",
+                "accessibile."
+              ]
+            },
+            {
+              "it": "Molte storie rimangono nascoste ai visitatori e ai residenti.",
+              "en": "Many stories remain hidden from visitors and residents.",
+              "words": [
+                "Molte",
+                "storie",
+                "rimangono",
+                "nascoste",
+                "ai",
+                "visitatori",
+                "e",
+                "ai",
+                "residenti."
+              ]
+            },
+            {
+              "it": "Preservare e condividere la storia di Berlino è importante.",
+              "en": "Preserving and sharing Berlin's history is important.",
+              "words": [
+                "Preservare",
+                "e",
+                "condividere",
+                "la",
+                "storia",
+                "di",
+                "Berlino",
+                "è",
+                "importante."
+              ]
+            },
+            {
+              "it": "L'innovazione è al cuore del nostro progetto.",
+              "en": "Innovation is at the heart of our project.",
+              "words": [
+                "L'innovazione",
+                "è",
+                "al",
+                "cuore",
+                "del",
+                "nostro",
+                "progetto."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Grant Proposal",
+          "desc": "Berlinese, tecnologia, innovazione, app, finanziamento",
+          "icon": "💡",
+          "vocab": [
+            {
+              "it": "innovazione",
+              "en": "innovation",
+              "pron": "inNOVAtion"
+            },
+            {
+              "it": "tecnologia",
+              "en": "technology",
+              "pron": "tekNOLOGIA"
+            },
+            {
+              "it": "app",
+              "en": "app",
+              "pron": "AP"
+            },
+            {
+              "it": "finanziamento",
+              "en": "financing",
+              "pron": "finANziMENTO"
+            },
+            {
+              "it": "residenti",
+              "en": "residents",
+              "pron": "reZIENti"
+            },
+            {
+              "it": "visitors",
+              "en": "visitors",
+              "pron": "viZITORi"
+            },
+            {
+              "it": "città",
+              "en": "city",
+              "pron": "CIta"
+            },
+            {
+              "it": "importanza",
+              "en": "importance",
+              "pron": "imPORtanZA"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'importanza di preservare la storia di Berlino non può essere sottostimata.",
+              "en": "The importance of preserving Berlin's history cannot be underestimated.",
+              "words": [
+                "L'importanza",
+                "di",
+                "preservare",
+                "la",
+                "storia",
+                "di",
+                "Berlino",
+                "non",
+                "può",
+                "essere",
+                "sottostimata."
+              ]
+            },
+            {
+              "it": "La nostra app utilizza l'innovazione tecnologica per rendere la storia accessibile.",
+              "en": "Our app uses technological innovation to make history accessible.",
+              "words": [
+                "La",
+                "nostra",
+                "app",
+                "utilizza",
+                "l'innovazione",
+                "tecnologica",
+                "per",
+                "rendere",
+                "la",
+                "storia",
+                "accessibile."
+              ]
+            },
+            {
+              "it": "Il finanziamento è cruciale per realizzare il nostro progetto di app.",
+              "en": "Financing is crucial for realizing our app project.",
+              "words": [
+                "Il",
+                "finanziamento",
+                "è",
+                "cruciale",
+                "per",
+                "realizzare",
+                "il",
+                "nostro",
+                "progetto",
+                "di",
+                "app."
+              ]
+            },
+            {
+              "it": "I residenti e i visitatori di Berlino potranno apprendere di più sulla città attraverso la nostra app.",
+              "en": "Residents and visitors of Berlin will learn more about the city through our app.",
+              "words": [
+                "I",
+                "residenti",
+                "e",
+                "i",
+                "visitatori",
+                "di",
+                "Berlino",
+                "potranno",
+                "apprendere",
+                "di",
+                "più",
+                "sulla",
+                "città",
+                "attraverso",
+                "la",
+                "nostra",
+                "app."
+              ]
+            },
+            {
+              "it": "La tecnologia ci aiuta a condividere la storia di Berlino in modo innovativo.",
+              "en": "Technology helps us share Berlin's history in an innovative way.",
+              "words": [
+                "La",
+                "tecnologia",
+                "ci",
+                "aiuta",
+                "a",
+                "condividere",
+                "la",
+                "storia",
+                "di",
+                "Berlino",
+                "in",
+                "modo",
+                "innovativo."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Grant Proposal",
+          "desc": "innovative app, city history, funding, technology, residents, visitors, preservation, sharing",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "it": "preservare",
+              "en": "preserve",
+              "pron": "PREH-zer-vay"
+            },
+            {
+              "it": "condivisione",
+              "en": "sharing",
+              "pron": "kun-dish-VEE-ayn"
+            },
+            {
+              "it": "innovativa",
+              "en": "innovative",
+              "pron": "in-NOH-vee-tah-va"
+            },
+            {
+              "it": "ricchezza",
+              "en": "richness",
+              "pron": "ri-cheh-TSA"
+            },
+            {
+              "it": "visitatori",
+              "en": "visitors",
+              "pron": "vis-i-TA-ree-oh"
+            },
+            {
+              "it": "culturali",
+              "en": "cultural",
+              "pron": "ku-tu-RAL-ee"
+            },
+            {
+              "it": "interessi",
+              "en": "interests",
+              "pron": "in-TUR-stee"
+            },
+            {
+              "it": "metodologie",
+              "en": "methodologies",
+              "pron": "me-toh-doh-LAH-gee-oh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Preservare la ricchezza culturale di Berlino è fondamentale.",
+              "en": "Preserving the cultural richness of Berlin is fundamental.",
+              "words": [
+                "Preservare",
+                "la",
+                "ricchezza",
+                "culturale",
+                "di",
+                "Berlino",
+                "è",
+                "fondamentale."
+              ]
+            },
+            {
+              "it": "La nostra app innovativa mira a interessare i visitatori.",
+              "en": "Our innovative app aims to engage visitors.",
+              "words": [
+                "La",
+                "nostra",
+                "app",
+                "innovativa",
+                "mira",
+                "a",
+                "interessare",
+                "i",
+                "visitatori."
+              ]
+            },
+            {
+              "it": "Condividere la storia attraverso la tecnologia è la nostra metodologia.",
+              "en": "Sharing history through technology is our methodology.",
+              "words": [
+                "Condividere",
+                "la",
+                "storia",
+                "attraverso",
+                "la",
+                "tecnologia",
+                "è",
+                "la",
+                "nostra",
+                "metodologia."
+              ]
+            },
+            {
+              "it": "I residenti hanno interesse a conoscere la storia della loro città.",
+              "en": "Residents have an interest in knowing the history of their city.",
+              "words": [
+                "I",
+                "residenti",
+                "hanno",
+                "interesse",
+                "a",
+                "conoscere",
+                "la",
+                "storia",
+                "della",
+                "loro",
+                "città."
+              ]
+            },
+            {
+              "it": "Le metodologie di preservazione sono cruciali per la nostra proposta di finanziamento.",
+              "en": "Preservation methodologies are crucial for our funding proposal.",
+              "words": [
+                "Le",
+                "metodologie",
+                "di",
+                "preservazione",
+                "sono",
+                "cruciali",
+                "per",
+                "la",
+                "nostra",
+                "proposta",
+                "di",
+                "finanziamento."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 828625,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1953,
+        "totalCompletionTokens": 1923,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 205341,
+            "promptTokens": 521,
+            "completionTokens": 393
+          },
+          {
+            "lessonNum": 2,
+            "ms": 191866,
+            "promptTokens": 582,
+            "completionTokens": 402
+          },
+          {
+            "lessonNum": 3,
+            "ms": 208432,
+            "promptTokens": 621,
+            "completionTokens": 430
+          }
+        ]
+      },
+      "generatedAt": "2026-05-02T17:41:52.766Z",
+      "updatedAt": "2026-05-02T17:41:52.766Z"
+    },
+    {
       "topic": "discussing contemporary art at the venice biennale",
       "topicEmoji": "🎨",
       "lang": "it",
@@ -10341,307 +10777,6 @@
         "promptTokens": 938,
         "completionTokens": 524
       }
-    },
-    {
-      "topic": "research grant proposals",
-      "topicEmoji": "🔍",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Basics of Grant Proposals",
-          "desc": "Introduzione alle proposte di finanziamento",
-          "icon": "💰",
-          "vocab": [
-            {
-              "it": "ricerca",
-              "en": "research",
-              "pron": "REH-serch"
-            },
-            {
-              "it": "progetto",
-              "en": "project",
-              "pron": "PROH-jeht"
-            },
-            {
-              "it": "obiettivo",
-              "en": "objective",
-              "pron": "oh-BYET-tivo"
-            },
-            {
-              "it": "metodologia",
-              "en": "methodology",
-              "pron": "me-toh-doh-LAH-jo-lee-uh"
-            },
-            {
-              "it": "risorse",
-              "en": "resources",
-              "pron": "ree-SORHZ"
-            },
-            {
-              "it": "previsioni",
-              "en": "projections",
-              "pron": "preh-vee-ZHEE-nee"
-            },
-            {
-              "it": "valutazione",
-              "en": "evaluation",
-              "pron": "val-you-TAH-zhee-oh"
-            },
-            {
-              "it": "finanziamento",
-              "en": "funding",
-              "pron": "fin-AN-zih-muhnt"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Scrivi un progetto.",
-              "en": "Write a project.",
-              "words": [
-                "Scrivi",
-                "un",
-                "progetto."
-              ]
-            },
-            {
-              "it": "Definisci gli obiettivi.",
-              "en": "Define the objectives.",
-              "words": [
-                "Definisci",
-                "gli",
-                "obiettivi",
-                "."
-              ]
-            },
-            {
-              "it": "Elabora la metodologia.",
-              "en": "Develop the methodology.",
-              "words": [
-                "Elabora",
-                "la",
-                "metodologia."
-              ]
-            },
-            {
-              "it": "Descrivi le risorse.",
-              "en": "Describe the resources.",
-              "words": [
-                "Descrivi",
-                "le",
-                "risorse",
-                "."
-              ]
-            },
-            {
-              "it": "Fornisci previsioni.",
-              "en": "Provide projections.",
-              "words": [
-                "Fornisci",
-                "previsioni",
-                "."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Intermediate Grant Proposal Phrases",
-          "desc": "Frasi avanzate per le proposte di finanziamento",
-          "icon": "📝",
-          "vocab": [
-            {
-              "it": "innovazione",
-              "en": "innovation",
-              "pron": "in-NOH-vay-shun"
-            },
-            {
-              "it": "collaborazione",
-              "en": "collaboration",
-              "pron": "kol-uh-BOR-ay-see-ohn"
-            },
-            {
-              "it": "sostenibilità",
-              "en": "sustainability",
-              "pron": "suh-stuh-NEE-tih-bil-i-tee"
-            },
-            {
-              "it": "cooperazione",
-              "en": "cooperation",
-              "pron": "kuh-uh-PER-ay-see-ohn"
-            },
-            {
-              "it": "partecipazione",
-              "en": "participation",
-              "pron": "pahr-tuh-see-PAY-see-ohn"
-            },
-            {
-              "it": "competitività",
-              "en": "competitiveness",
-              "pron": "kuhm-puh-tee-TIH-vih-tee"
-            },
-            {
-              "it": "efficienza",
-              "en": "efficiency",
-              "pron": "eh-fih-SIH-uhn-see"
-            },
-            {
-              "it": "transparenza",
-              "en": "transparency",
-              "pron": "truh-SPER-uh-nee-uh"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Promuovi l'innovazione.",
-              "en": "Promote innovation.",
-              "words": [
-                "Promuovi",
-                "l'innovazione",
-                "."
-              ]
-            },
-            {
-              "it": "Rafforzate la collaborazione.",
-              "en": "Strengthen the collaboration.",
-              "words": [
-                "Rafforzate",
-                "la",
-                "collaborazione",
-                "."
-              ]
-            },
-            {
-              "it": "Migliorate la sostenibilità.",
-              "en": "Improve sustainability.",
-              "words": [
-                "Migliorate",
-                "la",
-                "sostenibilità",
-                "."
-              ]
-            },
-            {
-              "it": "Favorite la cooperazione.",
-              "en": "Foster cooperation.",
-              "words": [
-                "Favorite",
-                "la",
-                "cooperazione",
-                "."
-              ]
-            },
-            {
-              "it": "Aumentate la partecipazione.",
-              "en": "Increase participation.",
-              "words": [
-                "Aumentate",
-                "la",
-                "partecipazione."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Advanced Grant Proposal Phrases",
-          "desc": "Frasi specifiche per le proposte di finanziamento",
-          "icon": "🔍",
-          "vocab": [
-            {
-              "it": "validità",
-              "en": "validity",
-              "pron": "vuh-LIH-dee-tee"
-            },
-            {
-              "it": "relevanza",
-              "en": "relevance",
-              "pron": "rih-LEH-vuh-nee"
-            },
-            {
-              "it": "consistenza",
-              "en": "consistency",
-              "pron": "kuhn-see-STEN-shee-uh"
-            },
-            {
-              "it": "coerenza",
-              "en": "coherence",
-              "pron": "kuh-uh-REN-suh"
-            },
-            {
-              "it": "efficacia",
-              "en": "effectiveness",
-              "pron": "ef-uh-KAY-shee-uh"
-            },
-            {
-              "it": "efficienza",
-              "en": "efficiency",
-              "pron": "eh-fih-SIH-uhn-see"
-            },
-            {
-              "it": "valutazione",
-              "en": "evaluation",
-              "pron": "val-you-TAH-zhee-oh"
-            },
-            {
-              "it": "previsione",
-              "en": "projection",
-              "pron": "preh-vee-ZHEE-nee"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Dimostra la validità.",
-              "en": "Demonstrate validity.",
-              "words": [
-                "Dimostra",
-                "la",
-                "validità",
-                "."
-              ]
-            },
-            {
-              "it": "Ricorda la relevanza.",
-              "en": "Remind of relevance.",
-              "words": [
-                "Ricorda",
-                "la",
-                "relevanza",
-                "."
-              ]
-            },
-            {
-              "it": "Assicura la consistenza.",
-              "en": "Ensure consistency.",
-              "words": [
-                "Assicura",
-                "la",
-                "consistenza",
-                "."
-              ]
-            },
-            {
-              "it": "Mantieni la coerenza.",
-              "en": "Maintain coherence.",
-              "words": [
-                "Mantieni",
-                "la",
-                "coerenza",
-                "."
-              ]
-            },
-            {
-              "it": "Valuta l'efficacia.",
-              "en": "Evaluate effectiveness.",
-              "words": [
-                "Valuta",
-                "l'efficacia",
-                "."
-              ]
-            }
-          ]
-        }
-      ],
-      "generatedAt": "2026-04-26T00:36:18.079Z"
     }
   ],
   "flags": {
