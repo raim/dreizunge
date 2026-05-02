@@ -274,6 +274,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-repair-btn:disabled{opacity:.5;cursor:not-allowed}
 .story-repair-status{font-size:12px;color:var(--gray-dark);font-weight:600;margin-top:5px}
 .story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
 .gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}
@@ -299,9 +302,34 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* ══ TOAST ═══════════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ══ CHAT CONSOLE ════════════════════════════════════════════════════ */
+.chat-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:20px 0 0;overflow:hidden;box-shadow:var(--shadow-card)}
+.chat-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
+.chat-hdr:hover{background:var(--gray-light)}
+.chat-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
+.chat-arrow.open{transform:rotate(180deg)}
+.chat-body{display:none;flex-direction:column;padding:0 14px 14px}
+.chat-body.open{display:flex}
+.chat-log{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;margin-bottom:10px;padding-right:2px}
+.chat-log:empty::before{content:'Ask anything about this lesson — vocab choices, difficulty, story, how to improve it…';font-size:13px;color:var(--gray);font-style:italic;padding:8px 0}
+.chat-msg{padding:9px 12px;border-radius:var(--radius);font-size:13px;line-height:1.55;font-weight:600;max-width:100%;white-space:pre-wrap;word-break:break-word}
+.chat-msg.user{background:var(--blue-light);border:1.5px solid var(--blue);color:var(--blue-dark);align-self:flex-end;border-bottom-right-radius:4px}
+.chat-msg.assistant{background:var(--gray-light);border:1.5px solid var(--gray-mid);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.error{background:var(--red-light);border:1.5px solid var(--red);color:#990000}
+.chat-msg.thinking{color:var(--gray);font-style:italic}
+.chat-input-row{display:flex;gap:7px;align-items:flex-end}
+.chat-input{flex:1;padding:9px 11px;font-size:13px;font-weight:600;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--gray-light);outline:none;resize:none;min-height:38px;max-height:120px;line-height:1.4}
+.chat-input:focus{border-color:var(--blue);background:var(--white)}
+.chat-send-btn{background:var(--blue);color:var(--white);border:none;border-radius:var(--radius);padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;flex-shrink:0}
+.chat-send-btn:hover:not(:disabled){background:var(--blue-dark)}
+.chat-send-btn:disabled{opacity:.45;cursor:not-allowed}
+.chat-clear-btn{background:none;border:none;font-size:11px;font-weight:700;color:var(--gray-dark);cursor:pointer;padding:4px 0;margin-top:4px;font-family:'Nunito',sans-serif;text-align:right;opacity:.7;width:100%}
+.chat-clear-btn:hover{opacity:1;color:var(--red)}
 </style>
 </head>
 <body>
+
+<div id="toast" class="toast"></div>
 
 <div id="toast" class="toast"></div>
 
@@ -444,6 +472,23 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
+  </div>
+  <div class="chat-section" id="chat-section" style="display:none">
+    <button class="chat-hdr" onclick="toggleChat()">
+      <span>🤖 Model console</span>
+      <span class="chat-arrow" id="chat-arrow">▼</span>
+    </button>
+    <div class="chat-body" id="chat-body">
+      <div class="chat-log" id="chat-log"></div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chat-input" rows="1"
+          placeholder="Ask about vocab choices, difficulty, story…"
+          oninput="autoResizeChat(this)"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
+        <button class="chat-send-btn" id="chat-send-btn" onclick="sendChat()">Send</button>
+      </div>
+      <button class="chat-clear-btn" onclick="clearChat()">Clear conversation</button>
+    </div>
   </div>
 </div>
 </div>
@@ -817,10 +862,820 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 // ── init ──
 
 // ═══════════════════════════════════════════════════════════════════════
-//  STATIC MODE — no server, all lessons baked in at build time
+//  STATIC MODE — no server, all lessons baked in at build time.
+//  The lesson catalogue is STATIC_LESSONS only — localStorage is never
+//  used for lessons (only for progress/XP/flags as usual).
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "luxembourgish poetry",
+    "topicEmoji": ".lu.",
+    "lang": "lb",
+    "difficulty": 1,
+    "story": "In the heart of Luxembourg, where the old town of Luxembourg City whispers tales of yore, there lived a young poet named Elisa. She was known for her deep, soulful eyes and her gentle, melodic voice that could charm even the most stubborn of stones. Elisa's poetry was a blend of the old and the new, a harmonious mix of Lëtzebuergesch and modern expressions that resonated with the people of Luxembourg.\n\nOne crisp autumn evening, as the sun dipped behind the towering fortifications of the city, Elisa sat by the banks of the Alzette River. The air was filled with the scent of fallen leaves and the distant sound of a church bell. She had been pondering the essence of Luxembourgish poetry, wondering how to capture the spirit of her homeland in words. Suddenly, a gentle breeze carried the sweet fragrance of a nearby garden, and Elisa felt a surge of inspiration.\n\nShe began to write, her pen moving swiftly across the parchment. The words flowed like a clear stream, weaving through the landscape of her memories and the dreams of her people. She wrote of the green hills that cradled the city, the golden light that bathed the old town in the evening, and the warmth of the Luxembourgish people who welcomed strangers with open arms. Her poem, titled \"Luxemburgs Gemüt,\" spoke of the unique spirit of Luxembourg, a blend of tradition and modernity, a place where the heart finds its home.\n\nThe next morning, Elisa's poem was shared among the townsfolk. It was read aloud in the market square, and people gathered to listen, their faces illuminated by the words that spoke of their shared heritage. The poem was a bridge, connecting the past with the present, and it brought a sense of unity and pride to the community. Elisa's words had not only captured the essence of Luxembourgish poetry but had also woven a tapestry of shared identity and love for the land.\n\nAs the days passed, Elisa's poem became a symbol of the rich cultural heritage of Luxembourg. It was recited in schools, sung in community gatherings, and even translated into other languages to share with the world. Elisa's journey as a poet had not only enriched her own life but had also left a lasting legacy, inspiring others to explore and celebrate the beauty of their own language and culture.",
+    "storyLang": "en",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Luxembourgish Land",
+        "desc": "Luxembourg, old town, poetry, nature, homeland",
+        "icon": "🌍",
+        "vocab": [
+          {
+            "it": "Wéi",
+            "en": "as",
+            "pron": "WEE"
+          },
+          {
+            "it": "Land",
+            "en": "land",
+            "pron": "LANT"
+          },
+          {
+            "it": "Himmel",
+            "en": "sky",
+            "pron": "HIML"
+          },
+          {
+            "it": "Musel",
+            "en": "mushroom",
+            "pron": "MUSL"
+          },
+          {
+            "it": "Héinidden",
+            "en": "hidden",
+            "pron": "HEINIDEN"
+          },
+          {
+            "it": "Diermacht",
+            "en": "power of nature",
+            "pron": "DIERMACHT"
+          },
+          {
+            "it": "Lëtzebuerger",
+            "en": "Luxembourgish",
+            "pron": "LËTZEBUERGER"
+          },
+          {
+            "it": "Joch",
+            "en": "yoke",
+            "pron": "YOK"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Diermacht d'Wéi Land d'Heem durech d'Himmel zéit.",
+            "en": "Nature's power as it passes through our homeland in the sky.",
+            "words": [
+              "Diermacht",
+              "d'Wéi",
+              "Land",
+              "d'Heem",
+              "durech",
+              "d'Himmel",
+              "zéit."
+            ]
+          },
+          {
+            "it": "Musel d'Héinidden diermacht d'Wéi diermacht d'Land durech d'Wisen zéit.",
+            "en": "Mushrooms hidden in nature's power as it passes through the land.",
+            "words": [
+              "Musel",
+              "d'Héinidden",
+              "diermacht",
+              "d'Wéi",
+              "diermacht",
+              "d'Land",
+              "durech",
+              "d'Wisen",
+              "zéit."
+            ]
+          },
+          {
+            "it": "Lëtzebuerger Joch d'Wéi diermacht d'Land durech d'Fielsen d'Sauer brëcht.",
+            "en": "Luxembourgish yoke as nature's power breaks through the fields of sauer.",
+            "words": [
+              "Lëtzebuerger",
+              "Joch",
+              "d'Wéi",
+              "diermacht",
+              "d'Land",
+              "durech",
+              "d'Fielsen",
+              "d'Sauer",
+              "brëcht."
+            ]
+          },
+          {
+            "it": "Diermacht d'Wéi d'Heem durech d'Wisen zéit, d'Wéi d'Fielsen d'Sauer brëcht.",
+            "en": "Nature's power as it passes through the homeland, as it breaks through the fields of sauer.",
+            "words": [
+              "Diermacht",
+              "d'Wéi",
+              "d'Heem",
+              "durech",
+              "d'Wisen",
+              "zéit,",
+              "d'Wéi",
+              "d'Fielsen",
+              "d'Sauer",
+              "brëcht."
+            ]
+          },
+          {
+            "it": "Diermacht d'Wéi d'Heem durech d'Wisen zéit, d'Wéi d'Alzette d'Sauer brëcht.",
+            "en": "Nature's power as it passes through the homeland, as it breaks through the Alzette river's sauer.",
+            "words": [
+              "Diermacht",
+              "d'Wéi",
+              "d'Heem",
+              "durech",
+              "d'Wisen",
+              "zéit,",
+              "d'Wéi",
+              "d'Alzette",
+              "d'Sauer",
+              "brëcht."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Luxembourgish Nature",
+        "desc": "Luxembourg's natural beauty and its power",
+        "icon": "🌳",
+        "vocab": [
+          {
+            "it": "Alzette",
+            "en": "Alzette River",
+            "pron": "AL-zet"
+          },
+          {
+            "it": "Schéi",
+            "en": "sky",
+            "pron": "SHE-ee"
+          },
+          {
+            "it": "Féile",
+            "en": "leaf",
+            "pron": "FEEL"
+          },
+          {
+            "it": "Géit",
+            "en": "goat",
+            "pron": "GEET"
+          },
+          {
+            "it": "Géitweg",
+            "en": "goat path",
+            "pron": "GEET-weg"
+          },
+          {
+            "it": "Béet",
+            "en": "beet",
+            "pron": "BEET"
+          },
+          {
+            "it": "Méi",
+            "en": "meadow",
+            "pron": "MEH"
+          },
+          {
+            "it": "Schéit",
+            "en": "tree",
+            "pron": "SHEET"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "D'Alzette fléit d'Féile bléit.",
+            "en": "The Alzette carries the scent of fallen leaves.",
+            "words": [
+              "D'Alzette",
+              "fléit",
+              "d'Féile",
+              "bléit."
+            ]
+          },
+          {
+            "it": "D'Schéi wéi d'Géitweg d'Géit d'féit.",
+            "en": "The sky like a goat path a goat follows.",
+            "words": [
+              "D'Schéi",
+              "wéi",
+              "d'Géitweg",
+              "d'Géit",
+              "d'féit."
+            ]
+          },
+          {
+            "it": "D'Méi d'Béet d'Schéit d'féit.",
+            "en": "The meadow with beets trees sway.",
+            "words": [
+              "D'Méi",
+              "d'Béet",
+              "d'Schéit",
+              "d'féit."
+            ]
+          },
+          {
+            "it": "D'Géitweg d'Schéi d'féit.",
+            "en": "Goat path in the sky sways.",
+            "words": [
+              "D'Géitweg",
+              "d'Schéi",
+              "d'féit."
+            ]
+          },
+          {
+            "it": "D'Béet d'Méi d'Alzette d'féit.",
+            "en": "Beets in the meadow by the Alzette sway.",
+            "words": [
+              "D'Béet",
+              "d'Méi",
+              "d'Alzette",
+              "d'féit."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Luxembourgish Nature and Poetry",
+        "desc": "Luxembourg's natural beauty and poetic expressions",
+        "icon": "🌳",
+        "vocab": [
+          {
+            "it": "D'Wisen zéit",
+            "en": "whisper of time",
+            "pron": "DOY-VEEN ZAYT"
+          },
+          {
+            "it": "D'Sauer brëcht",
+            "en": "sour flint",
+            "pron": "DO-SAH-UR BRAYKT"
+          },
+          {
+            "it": "D'Fielsen",
+            "en": "fields",
+            "pron": "DO-FYEL-SAN"
+          },
+          {
+            "it": "D'Uelzecht",
+            "en": "old town",
+            "pron": "DO-YEL-ZEKT"
+          },
+          {
+            "it": "D'Natioune",
+            "en": "nation",
+            "pron": "DO-NA-TYOON"
+          },
+          {
+            "it": "Behitt",
+            "en": "embraces",
+            "pron": "BE-HIT"
+          },
+          {
+            "it": "D'Welt",
+            "en": "world",
+            "pron": "DO-VELT"
+          },
+          {
+            "it": "D'Heemechtsland",
+            "en": "homeland",
+            "pron": "DO-YEM-EM-KT-LANT"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "D'Wisen zéit d'Heemechtsland durech d'Wisen zéit.",
+            "en": "The old town whispers of the homeland through the whispers of time.",
+            "words": [
+              "D'Wisen",
+              "zéit",
+              "d'Heemechtsland",
+              "durech",
+              "d'Wisen",
+              "zéit."
+            ]
+          },
+          {
+            "it": "D'Natioune behitt d'Heemechtsland d'Welt d'Natioune behitt.",
+            "en": "The nation embraces the homeland, the nation embraces the world.",
+            "words": [
+              "D'Natioune",
+              "behitt",
+              "d'Heemechtsland",
+              "d'Welt",
+              "d'Natioune",
+              "behitt."
+            ]
+          },
+          {
+            "it": "D'Alzette River féile d'Schéi d'Schéi féile.",
+            "en": "The Alzette River leaves the sky, the sky leaves the river.",
+            "words": [
+              "D'Alzette",
+              "River",
+              "féile",
+              "d'Schéi",
+              "d'Schéi",
+              "féile."
+            ]
+          },
+          {
+            "it": "D'Uelzecht durech d'Wisen zéit d'Uelzecht durech d'Wisen zéit.",
+            "en": "The old town whispers of the homeland through the whispers of time, the old town whispers of the homeland through the whispers of time.",
+            "words": [
+              "D'Uelzecht",
+              "durech",
+              "d'Wisen",
+              "zéit",
+              "d'Uelzecht",
+              "durech",
+              "d'Wisen",
+              "zéit."
+            ]
+          },
+          {
+            "it": "D'Heemechtsland d'Natioune behitt d'Heemechtsland d'Natioune behitt.",
+            "en": "The homeland, the nation embraces the homeland, the nation embraces the homeland.",
+            "words": [
+              "D'Heemechtsland",
+              "d'Natioune",
+              "behitt",
+              "d'Heemechtsland",
+              "d'Natioune",
+              "behitt."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1250495,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 2465,
+      "totalCompletionTokens": 1882,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 188240,
+          "promptTokens": 636,
+          "completionTokens": 500
+        },
+        {
+          "lessonNum": 2,
+          "ms": 246207,
+          "promptTokens": 710,
+          "completionTokens": 376
+        },
+        {
+          "lessonNum": 3,
+          "ms": 311606,
+          "promptTokens": 764,
+          "completionTokens": 493
+        }
+      ]
+    },
+    "generatedAt": "2026-05-02T15:35:34.527Z",
+    "updatedAt": "2026-05-02T15:45:47.219Z",
+    "ratings": {
+      "difficulty": 3,
+      "fun": 2,
+      "coherence": 1
+    }
+  },
+  {
+    "topic": "italian recipes from nonna",
+    "topicEmoji": "🇮🇹",
+    "lang": "it",
+    "difficulty": 2,
+    "story": "In the cozy kitchen of Nonna's house, the air was thick with the aroma of simmering sauce and the gentle clatter of pots and pans. The walls were lined with shelves, each one holding a collection of old, worn cookbooks and jars of homemade spices. Nonna, with her silver hair tied back and her hands stained with the colors of tomatoes and basil, was preparing a traditional Italian recipe that had been passed down through generations.\n\n\"Come here, child,\" Nonna called, her voice warm and inviting. \"Let me show you how to make my grandmother's famous ragù alla Bolognese.\"\n\nShe led me to the large wooden table, where a cutting board and a sharp knife awaited. \"First, we need to prepare the onions and carrots. These are the heart of the sauce, so they must be finely chopped.\" She demonstrated, her movements precise and deliberate. \"Remember, the key to a good ragù is patience. The flavors need time to meld together.\"\n\nAs we worked, Nonna began to narrate the history of the recipe. \"This ragù,\" she said, \"is a labor of love. It's slow-cooked for hours, until the meat is tender and the sauce is rich and deep. It's a tradition that my own grandmother taught me, and now I teach you.\"\n\nWe moved on to the meat, a selection of ground beef and pork that Nonna had carefully chosen. She showed me how to brown the meat in a large pot, stirring it gently to ensure it cooked evenly. \"The color is important,\" she explained. \"A good ragù should have a beautiful, rich brown color.\"\n\nNext, we added the onions and carrots, along with a generous splash of red wine. \"This helps to deglaze the pan and extract the flavors from the meat,\" Nonna said. \"It's a crucial step that adds depth to the sauce.\"\n\nAs the sauce simmered, Nonna shared stories of her childhood, of long summer days spent in the countryside, and the warmth of family gatherings around the table. \"Every time we make this ragù, it reminds me of home,\" she said, her eyes twinkling with memories. \"It's not just a recipe; it's a connection to the past.\"\n\nFinally, the ragù was ready to be served over a bed of al dente pasta. Nonna ladled the rich, savory sauce over the pasta, and we sat down to enjoy the meal. The flavors were a symphony of sweet and savory, a perfect blend of tradition and love. As we ate, Nonna smiled, her eyes filled with pride. \"This is what Nonna's recipes are all about,\" she said. \"Passing on the love and the history through every bite.\"",
+    "storyLang": "en",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Italian recipes from nonna",
+        "desc": "cooking, traditional dishes, family recipes",
+        "icon": "🔥",
+        "vocab": [
+          {
+            "it": "ragù alla Bolognese",
+            "en": "Bolognese sauce",
+            "pron": "RAH-goo ah-LAH-boh-lee-NAY-say"
+          },
+          {
+            "it": "aroma",
+            "en": "scent",
+            "pron": "AH-rah-moh"
+          },
+          {
+            "it": "pots and pans",
+            "en": "pots and pans",
+            "pron": "POHTS AHN PAHNS"
+          },
+          {
+            "it": "shelves",
+            "en": "shelves",
+            "pron": "SHEL-feez"
+          },
+          {
+            "it": "spices",
+            "en": "spices",
+            "pron": "SPIH-seez"
+          },
+          {
+            "it": "silver",
+            "en": "silver",
+            "pron": "SIL-ee-ver"
+          },
+          {
+            "it": "stained",
+            "en": "stained",
+            "pron": "STAYN-ed"
+          },
+          {
+            "it": "generations",
+            "en": "generations",
+            "pron": "je-NEH-ra-shuns"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'aria era densa di aromi di sugo in ebollizione.",
+            "en": "The air was thick with the scent of simmering sauce.",
+            "words": [
+              "L'aria",
+              "era",
+              "densa",
+              "di",
+              "aromi",
+              "di",
+              "sugo",
+              "in",
+              "ebollizione."
+            ]
+          },
+          {
+            "it": "Nonna teneva i suoi ricordi cucinati tra le sue mani.",
+            "en": "Nonna kept her memories cooked in her hands.",
+            "words": [
+              "Nonna",
+              "teneva",
+              "i",
+              "suoi",
+              "ricordi",
+              "cucinati",
+              "tra",
+              "le",
+              "sue",
+              "mani."
+            ]
+          },
+          {
+            "it": "Con un coltello affilato, tagliò le cipolle e le carote.",
+            "en": "With a sharp knife, she chopped the onions and carrots.",
+            "words": [
+              "Con",
+              "un",
+              "coltello",
+              "affilato,",
+              "tagliò",
+              "le",
+              "cipolle",
+              "e",
+              "le",
+              "carote."
+            ]
+          },
+          {
+            "it": "Questo è il cuore del sugo, quindi devono essere finemente tagliati.",
+            "en": "This is the heart of the sauce, so they must be finely chopped.",
+            "words": [
+              "Questo",
+              "è",
+              "il",
+              "cuore",
+              "del",
+              "sugo,",
+              "quindi",
+              "devono",
+              "essere",
+              "finemente",
+              "tagliati."
+            ]
+          },
+          {
+            "it": "Nonna mi condusse alla grande tavola di legno.",
+            "en": "Nonna led me to the large wooden table.",
+            "words": [
+              "Nonna",
+              "mi",
+              "condusse",
+              "alla",
+              "grande",
+              "tavola",
+              "di",
+              "legno."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Italian recipes from nonna",
+        "desc": "cooking, traditional recipes, family",
+        "icon": "🔥",
+        "vocab": [
+          {
+            "it": "tagliatelle",
+            "en": "wide egg noodles",
+            "pron": "tag-lee-a-tel-le"
+          },
+          {
+            "it": "sugo",
+            "en": "sauce",
+            "pron": "soo-go"
+          },
+          {
+            "it": "casseruola",
+            "en": "large pot",
+            "pron": "kas-ser-roo-la"
+          },
+          {
+            "it": "sugo di pomodoro",
+            "en": "tomato sauce",
+            "pron": "soo-go di po-mo-dor-o"
+          },
+          {
+            "it": "tamburello",
+            "en": "rolling pin",
+            "pron": "tan-bu-rell-o"
+          },
+          {
+            "it": "sugo al pomodoro",
+            "en": "tomato sauce",
+            "pron": "soo-go al po-mo-dor-o"
+          },
+          {
+            "it": "sugo di carota",
+            "en": "carrot sauce",
+            "pron": "soo-go di car-o-ta"
+          },
+          {
+            "it": "sugo di zucchine",
+            "en": "zucchini sauce",
+            "pron": "soo-go di zu-cho-nee"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Mischia il sugo di pomodoro con il sugo.",
+            "en": "Mix the tomato sauce with the sauce.",
+            "words": [
+              "Mischia",
+              "il",
+              "sugo",
+              "di",
+              "pomodoro",
+              "con",
+              "il",
+              "sugo."
+            ]
+          },
+          {
+            "it": "Taglia la cipolla con il tamburello.",
+            "en": "Chop the onion with the rolling pin.",
+            "words": [
+              "Taglia",
+              "la",
+              "cipolla",
+              "con",
+              "il",
+              "tamburello."
+            ]
+          },
+          {
+            "it": "Versa il sugo di carota nella casseruola.",
+            "en": "Pour the carrot sauce into the large pot.",
+            "words": [
+              "Versa",
+              "il",
+              "sugo",
+              "di",
+              "carota",
+              "nella",
+              "casseruola."
+            ]
+          },
+          {
+            "it": "Aggiungi il sugo di zucchine al sugo.",
+            "en": "Add the zucchini sauce to the sauce.",
+            "words": [
+              "Aggiungi",
+              "il",
+              "sugo",
+              "di",
+              "zucchine",
+              "al",
+              "sugo."
+            ]
+          },
+          {
+            "it": "Sovrappuoi il sugo di pomodoro con il sugo.",
+            "en": "Layer the tomato sauce over the sauce.",
+            "words": [
+              "Sovrappuoi",
+              "il",
+              "sugo",
+              "di",
+              "pomodoro",
+              "con",
+              "il",
+              "sugo."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Italian recipes from nonna",
+        "desc": "cooking, traditional recipes, family",
+        "icon": "🔥",
+        "vocab": [
+          {
+            "it": "tagliatelle",
+            "en": "wide egg noodles",
+            "pron": "TAH-lee-a-tel-le"
+          },
+          {
+            "it": "casseruola",
+            "en": "large pot",
+            "pron": "ka-sse-ROO-o-la"
+          },
+          {
+            "it": "sugo",
+            "en": "sauce",
+            "pron": "SOO-go"
+          },
+          {
+            "it": "tamburello",
+            "en": "rolling pin",
+            "pron": "tam-bo-REL-lo"
+          },
+          {
+            "it": "sugo di pomodoro",
+            "en": "tomato sauce",
+            "pron": "SOO-go di po-mo-DOR-o"
+          },
+          {
+            "it": "sugo di carota",
+            "en": "carrot sauce",
+            "pron": "SOO-go di car-O-ta"
+          },
+          {
+            "it": "sugo di zucchine",
+            "en": "zucchini sauce",
+            "pron": "SOO-go di zu-CHI-ne"
+          },
+          {
+            "it": "sugo al pomodoro",
+            "en": "tomato sauce",
+            "pron": "SOO-go al po-mo-DOR-o"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Mischia il sugo di pomodoro con il sugo di carota.",
+            "en": "Mix the tomato sauce with the carrot sauce.",
+            "words": [
+              "Mischia",
+              "il",
+              "sugo",
+              "di",
+              "pomodoro",
+              "con",
+              "il",
+              "sugo",
+              "di",
+              "carota."
+            ]
+          },
+          {
+            "it": "Nonna aggiunse un po' di sugo di zucchine per dare un sapore fresco.",
+            "en": "Nonna added some zucchini sauce to give a fresh taste.",
+            "words": [
+              "Nonna",
+              "aggiunse",
+              "un",
+              "po'",
+              "di",
+              "sugo",
+              "di",
+              "zucchine",
+              "per",
+              "dare",
+              "un",
+              "sapore",
+              "fresco."
+            ]
+          },
+          {
+            "it": "Con il tamburello, stendi la pasta tagliatelle sottile.",
+            "en": "With the rolling pin, stretch the tagliatelle pasta thin.",
+            "words": [
+              "Con",
+              "il",
+              "tamburello,",
+              "stendi",
+              "la",
+              "pasta",
+              "tagliatelle",
+              "sottile."
+            ]
+          },
+          {
+            "it": "Il casseruola era pieno di sugo, pronto per il tagliatelle.",
+            "en": "The large pot was full of sauce, ready for the tagliatelle.",
+            "words": [
+              "Il",
+              "casseruola",
+              "era",
+              "pieno",
+              "di",
+              "sugo,",
+              "pronto",
+              "per",
+              "il",
+              "tagliatelle."
+            ]
+          },
+          {
+            "it": "Nonna versò il sugo al pomodoro su una teglia per il ragù.",
+            "en": "Nonna poured the tomato sauce into a baking dish for the ragù.",
+            "words": [
+              "Nonna",
+              "versò",
+              "il",
+              "sugo",
+              "al",
+              "pomodoro",
+              "su",
+              "una",
+              "teglia",
+              "per",
+              "il",
+              "ragù."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1062563,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 1780,
+      "totalCompletionTokens": 1900,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 139342,
+          "promptTokens": 456,
+          "completionTokens": 415
+        },
+        {
+          "lessonNum": 2,
+          "ms": 214049,
+          "promptTokens": 523,
+          "completionTokens": 402
+        },
+        {
+          "lessonNum": 3,
+          "ms": 261182,
+          "promptTokens": 595,
+          "completionTokens": 478
+        }
+      ]
+    },
+    "generatedAt": "2026-05-02T12:52:40.826Z",
+    "updatedAt": "2026-05-02T15:11:01.556Z",
+    "ratings": {
+      "difficulty": 2,
+      "fun": 2,
+      "coherence": 1
+    },
+    "repairStats": {
+      "repairCount": 1,
+      "totalMs": 349815,
+      "promptTokens": 1764,
+      "completionTokens": 344
+    }
+  },
   {
     "topic": "walking on the mosel",
     "topicEmoji": "📚",
@@ -5194,7 +6049,7 @@ const STATIC_LESSONS = [
         "id": 1,
         "title": "Tabletennis in a Park",
         "desc": "Basics of playing and setting up",
-        "icon": "/Tabletennis/",
+        "icon": "🌳🏓",
         "vocab": [
           {
             "it": "Tischtennis",
@@ -5302,7 +6157,7 @@ const STATIC_LESSONS = [
         "id": 2,
         "title": "tabletennis in a park",
         "desc": "park, game, learn, teach, children, curious, quickly, learn",
-        "icon": "/Tabletennis/",
+        "icon": "🌳🏓",
         "vocab": [
           {
             "it": "Spielzeug",
@@ -11647,311 +12502,6 @@ const STATIC_LESSONS = [
     "generatedAt": "2026-04-26T00:36:18.079Z"
   },
   {
-    "topic": "Italian cooking & recipes",
-    "topicEmoji": "🍝",
-    "lessons": [
-      {
-        "id": 1,
-        "title": "Basics of Italian Cooking",
-        "desc": "Simple ingredients and techniques",
-        "icon": "👩‍🍳",
-        "vocab": [
-          {
-            "it": "farina",
-            "en": "flour",
-            "pron": "FA-ree-nah"
-          },
-          {
-            "it": "sale",
-            "en": "salt",
-            "pron": "SAH-lee"
-          },
-          {
-            "it": "olio",
-            "en": "oil",
-            "pron": "OH-lee-yo"
-          },
-          {
-            "it": "acqua",
-            "en": "water",
-            "pron": "AH-kwah"
-          },
-          {
-            "it": "padella",
-            "en": "pan",
-            "pron": "PAH-deh-lah"
-          },
-          {
-            "it": "forchette",
-            "en": "fork",
-            "pron": "FOR-chet-tah"
-          },
-          {
-            "it": "spatola",
-            "en": "spatula",
-            "pron": "spa-TOH-lah"
-          },
-          {
-            "it": "tavola",
-            "en": "table",
-            "pron": "TAH-voh-lah"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Metti sale nell'acqua.",
-            "en": "Put salt in the water.",
-            "words": [
-              "Metti",
-              "sale",
-              "nell'acqua"
-            ]
-          },
-          {
-            "it": "Friggi l'aglio in olio.",
-            "en": "Fry the garlic in oil.",
-            "words": [
-              "Friggi",
-              "l'aglio",
-              "in",
-              "olio"
-            ]
-          },
-          {
-            "it": "Spezzetta la carne.",
-            "en": "Slice the meat.",
-            "words": [
-              "Spezzetta",
-              "la",
-              "carne"
-            ]
-          },
-          {
-            "it": "Porta il vino al tavolo.",
-            "en": "Bring the wine to the table.",
-            "words": [
-              "Porta",
-              "il",
-              "vino",
-              "al",
-              "tavolo"
-            ]
-          },
-          {
-            "it": "Sovrappuoi la pasta.",
-            "en": "Layer the pasta.",
-            "words": [
-              "Sovrappuoi",
-              "la",
-              "pasta"
-            ]
-          }
-        ]
-      },
-      {
-        "id": 2,
-        "title": "Intermediate Italian Cooking Phrases",
-        "desc": "More complex phrases for cooking",
-        "icon": "🔥",
-        "vocab": [
-          {
-            "it": "sugo",
-            "en": "sauce",
-            "pron": "SOO-joh"
-          },
-          {
-            "it": "riso",
-            "en": "rice",
-            "pron": "REE-so"
-          },
-          {
-            "it": "panna",
-            "en": "cream",
-            "pron": "PAHN-nah"
-          },
-          {
-            "it": "sugo di pomodoro",
-            "en": "tomato sauce",
-            "pron": "SOO-joh dee POH-moh-doh-roh"
-          },
-          {
-            "it": "zucchero",
-            "en": "sugar",
-            "pron": "zoo-CHEH-roh"
-          },
-          {
-            "it": "sale grosso",
-            "en": "coarse salt",
-            "pron": "SAH-lee groh-soh"
-          },
-          {
-            "it": "sugo al pomodoro",
-            "en": "tomato sauce",
-            "pron": "SOO-joh al POH-moh-doh-roh"
-          },
-          {
-            "it": "risotto",
-            "en": "risotto",
-            "pron": "ree-SOH-toh"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Sovrappuoi il sugo.",
-            "en": "Layer the sauce.",
-            "words": [
-              "Sovrappuoi",
-              "il",
-              "sugo"
-            ]
-          },
-          {
-            "it": "Mescola il riso con il sugo.",
-            "en": "Stir the rice with the sauce.",
-            "words": [
-              "Mescola",
-              "il",
-              "riso",
-              "con",
-              "il",
-              "sugo"
-            ]
-          },
-          {
-            "it": "Aggiungi la panna al sugo.",
-            "en": "Add cream to the sauce.",
-            "words": [
-              "Aggiungi",
-              "la",
-              "panna",
-              "al",
-              "sugo"
-            ]
-          },
-          {
-            "it": "Sovrappuoi il risotto.",
-            "en": "Layer the risotto.",
-            "words": [
-              "Sovrappuoi",
-              "il",
-              "risotto"
-            ]
-          },
-          {
-            "it": "Sovrappuoi il risotto con il sugo.",
-            "en": "Layer the risotto with the sauce.",
-            "words": [
-              "Sovrappuoi",
-              "il",
-              "risotto",
-              "con",
-              "il",
-              "sugo"
-            ]
-          }
-        ]
-      },
-      {
-        "id": 3,
-        "title": "Advanced Italian Cooking Techniques",
-        "desc": "Specialized cooking techniques",
-        "icon": "👩‍🍳🔥",
-        "vocab": [
-          {
-            "it": "tagliatelle",
-            "en": "tagliatelle",
-            "pron": "tah-lee-AH-tel-le"
-          },
-          {
-            "it": "burrata",
-            "en": "burrata",
-            "pron": "boor-RAH-tah"
-          },
-          {
-            "it": "parmigiano reggiano",
-            "en": "parmesan cheese",
-            "pron": "par-mee-JEY-noh reh-JAH-noh"
-          },
-          {
-            "it": "risotto al tartufo",
-            "en": "truffle risotto",
-            "pron": "ree-SOH-toh al tar-TOO-foh"
-          },
-          {
-            "it": "besciamella",
-            "en": "béchamel sauce",
-            "pron": "be-shee-ah-MEL-lah"
-          },
-          {
-            "it": "risotto al ragù",
-            "en": "ragù risotto",
-            "pron": "ree-SOH-toh al rah-GOO"
-          },
-          {
-            "it": "tagliere",
-            "en": "cheese board",
-            "pron": "tah-lee-YEH-reh"
-          },
-          {
-            "it": "burrata al tartufo",
-            "en": "truffle burrata",
-            "pron": "boor-RAH-tah al tar-TOO-foh"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Taglia i funghi.",
-            "en": "Slice the mushrooms.",
-            "words": [
-              "Taglia",
-              "i",
-              "funghi"
-            ]
-          },
-          {
-            "it": "Sovrappuoi la besciamella.",
-            "en": "Layer the béchamel sauce.",
-            "words": [
-              "Sovrappuoi",
-              "la",
-              "besciamella"
-            ]
-          },
-          {
-            "it": "Sovrappuoi la burrata.",
-            "en": "Layer the burrata.",
-            "words": [
-              "Sovrappuoi",
-              "la",
-              "burrata"
-            ]
-          },
-          {
-            "it": "Sovrappuoi il tagliere.",
-            "en": "Layer the cheese board.",
-            "words": [
-              "Sovrappuoi",
-              "il",
-              "tagliere"
-            ]
-          },
-          {
-            "it": "Sovrappuoi la burrata al tartufo.",
-            "en": "Layer the truffle burrata.",
-            "words": [
-              "Sovrappuoi",
-              "la",
-              "burrata",
-              "al",
-              "tartufo"
-            ]
-          }
-        ]
-      }
-    ],
-    "generatedAt": "2026-04-21T10:28:55.222Z"
-  },
-  {
     "topic": "business & negotiations",
     "topicEmoji": "🤝",
     "lessons": [
@@ -12170,49 +12720,15 @@ const STATIC_LESSONS = [
   }
 ];
 
-// localStorage
-const LS_SAVED = 'imp_static_saved';
-
-function staticGetSaved() {
-  try { return JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); }
-  catch(_) { return []; }
-}
-function staticPutSaved(arr) { localStorage.setItem(LS_SAVED, JSON.stringify(arr)); }
-function staticUpsert(data) {
-  const arr = staticGetSaved();
-  const k = data.topic.toLowerCase();
-  const i = arr.findIndex(l => l.topic.toLowerCase() === k);
-  const entry = { ...data, generatedAt: data.generatedAt || new Date().toISOString() };
-  if (i >= 0) arr[i] = entry; else arr.unshift(entry);
-  staticPutSaved(arr);
-}
-
-// Seed built-in lessons on first visit
-(function seedBuiltins() {
-  const arr = staticGetSaved();
-
-  for (const l of STATIC_LESSONS) {
-    const k = l.topic.toLowerCase();
-    const i = arr.findIndex(x => x.topic.toLowerCase() === k);
-
-    if (i >= 0) {
-      // 🔁 overwrite stale entry
-      arr[i] = l;
-    } else {
-      arr.unshift(l);
-    }
-  }
-
-  staticPutSaved(arr);
-})();
-
 // ── Init ──────────────────────────────────────────────────────────────
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
   selectLang(APP.lang);
-  restoreDiffSlider();
+  restoreDiffSelect();
   renderPill();
   loadSavedList();
+  const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
+  if (hashTopic) loadSaved(hashTopic);
 }
 
 function renderPill() {
@@ -12230,11 +12746,9 @@ function renderPill() {
   note.textContent = '📦 Static version — select a topic below to start';
 }
 
-// ── Saved list with language filter ───────────────────────────────────
+// ── Lesson list — reads directly from baked-in STATIC_LESSONS ─────────
 async function loadSavedList() {
-  const saved = staticGetSaved();
-
-  // Build language filter buttons if multiple languages present
+  const saved = STATIC_LESSONS;
   const langs = [...new Set(saved.map(s => s.lang || 'it'))].sort();
   const filterEl = document.getElementById('lib-filter');
   if (filterEl && langs.length > 1) {
@@ -12273,13 +12787,13 @@ function setLibFilter(lang) { APP.libFilter = lang; loadSavedList(); }
 
 async function loadSaved(topic) {
   const dec = decodeURIComponent(topic);
-  const found = staticGetSaved().find(l => l.topic.toLowerCase() === dec.toLowerCase());
+  const found = STATIC_LESSONS.find(l => l.topic.toLowerCase() === dec.toLowerCase());
   if (!found) { alert('Lesson not found.'); return; }
   APP.lessonData = found;
   goHome();
 }
 
-function  setTopic(t) { document.getElementById('topic-input').value = t; }
+function setTopic(t) { document.getElementById('topic-input').value = t; }
 
 function buildPath(){
   if(!APP.lessonData)return;
@@ -12332,6 +12846,14 @@ function buildPath(){
 
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
+
+  // Chat console — show only when LLM available; clear history if topic changed
+  const chatSec=document.getElementById('chat-section');
+  if(chatSec){
+    chatSec.style.display=APP.info.canGenerate?'':'none';
+    if(APP.info.canGenerate && _chat.lastTopic && _chat.lastTopic!==topicKey) clearChat();
+    _chat.lastTopic=topicKey;
+  }
   d.lessons.forEach((L,i)=>{
     const isDone=!!done[L.id], isLocked=i>0&&!done[d.lessons[i-1].id], isActive=!isDone&&!isLocked;
     if(i>0){ const ln=document.createElement('div'); ln.className='path-line'+(done[d.lessons[i-1].id]?' done':''); path.appendChild(ln); }
@@ -12676,7 +13198,79 @@ function speak(text,rate){
 }
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
 
-// Disabled in static mode — overrides engine versions
+// ── Chat console ──────────────────────────────────────────────────────
+const _chat = { history: [], busy: false, lastTopic: null };
+
+function toggleChat(){
+  const body=document.getElementById('chat-body');
+  const arrow=document.getElementById('chat-arrow');
+  if(!body) return;
+  const open=body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open',open);
+  if(open) document.getElementById('chat-input')?.focus();
+}
+function autoResizeChat(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,120)+'px';
+}
+function _chatAppend(role,text){
+  const log=document.getElementById('chat-log'); if(!log) return null;
+  const el=document.createElement('div');
+  el.className='chat-msg '+role;
+  el.textContent=text;
+  log.appendChild(el);
+  log.scrollTop=log.scrollHeight;
+  return el;
+}
+function clearChat(){
+  _chat.history=[];
+  const log=document.getElementById('chat-log');
+  if(log) log.innerHTML='';
+}
+async function sendChat(){
+  if(_chat.busy) return;
+  const input=document.getElementById('chat-input');
+  const text=(input?.value||'').trim();
+  if(!text) return;
+  if(!APP.info.canGenerate){ _chatAppend('error','No LLM backend available.'); return; }
+  // Ensure panel is open before we append anything
+  const body=document.getElementById('chat-body');
+  const arrow=document.getElementById('chat-arrow');
+  if(body && !body.classList.contains('open')){
+    body.classList.add('open');
+    if(arrow) arrow.classList.add('open');
+  }
+  input.value='';
+  autoResizeChat(input);
+  _chat.history.push({role:'user',content:text});
+  _chatAppend('user',text);
+  _chat.busy=true;
+  const btn=document.getElementById('chat-send-btn');
+  if(btn) btn.disabled=true;
+  const thinking=_chatAppend('thinking','…');
+  try{
+    console.log('[chat] POST /api/chat topic='+( APP.lessonData?.topic||'none'));
+    const r=await fetch('/api/chat',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:_chat.history, topic:APP.lessonData?.topic||null})});
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.error||'Server returned '+r.status);
+    _chat.history.push({role:'assistant',content:data.reply});
+    if(thinking) thinking.remove();
+    _chatAppend('assistant',data.reply);
+  }catch(e){
+    console.error('[chat] error:',e);
+    if(thinking) thinking.remove();
+    _chatAppend('error','Error: '+e.message);
+    _chat.history.pop();
+  }finally{
+    _chat.busy=false;
+    if(btn) btn.disabled=false;
+    input?.focus();
+  }
+}
+
+// ── Disabled in static mode ───────────────────────────────────────
 async function syncFlagsFromServer() {}
 async function pushFlagToServer()   {}
 async function deleteSaved()        {}
@@ -12685,20 +13279,13 @@ function  regenCurrent()            {}
 async function doGenerate()         {}
 async function repairLesson()       {}
 async function repairFromLesson()   {}
+async function repairAll()          {}
+async function submitRating()       {}
 
-// UI helpers — work fully in static mode
+// UI helpers
 function autoResizeTopic(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px'; }
-function onDiffSlider(v){
-  APP.difficulty=parseInt(v,10); saveDifficulty();
-  const el=document.getElementById('diff-val');
-  if(el){ el.textContent=DIFF_SHORT[APP.difficulty]||v; el.className='diff-val d'+APP.difficulty; }
-}
-function restoreDiffSlider(){
-  const sl=document.getElementById('diff-slider'); if(sl) sl.value=APP.difficulty;
-  onDiffSlider(APP.difficulty);
-}
 
-// Story — DOM-only functions work in static mode
+// Story — DOM-only, work in static mode
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
@@ -12706,35 +13293,19 @@ function toggleStory(){
   const open=body.classList.toggle('open');
   if(arrow) arrow.classList.toggle('open',open);
 }
-function toggleStoryRepair(){
-  const wrap=document.getElementById('story-repair-wrap');
-  if(wrap) wrap.classList.toggle('open');
-}
+function toggleStoryRepair(){}
+function doRepairStory(){ alert('Story repair requires the live server.'); }
+function speakStory(){ const d=APP.lessonData; if(d&&d.story) speak(d.story); }
 function renderStoryText(d){
   const body=document.getElementById('story-body'); if(!body) return;
-  const paras=(d.story||'').split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
-  let html=`<div id="story-orig">${paras}</div>`;
-  if(d.storyTranslation){
-    const tp=d.storyTranslation.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
-    html+=`<div class="story-translation" id="story-trans">${tp}</div>`;
-  } else {
-    html+='<div class="story-translation" id="story-trans" style="display:none"></div>';
-  }
-  body.innerHTML=html;
+  body.innerHTML=(d.story||'').split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
 }
-function speakStory(){ const d=APP.lessonData; if(d&&d.story) speak(d.story); }
-function toggleStoryTranslation(){
-  const d=APP.lessonData; if(!d) return;
-  if(d.storyTranslation){
-    const t=document.getElementById('story-trans');
-    if(t){ t.style.display=t.style.display==='none'?'': 'none'; }
-    const body=document.getElementById('story-body');
-    if(body&&!body.classList.contains('open')){ body.classList.add('open'); const a=document.getElementById('story-arrow'); if(a) a.classList.add('open'); }
-    return;
-  }
-  alert('Story translation requires the live server.');
-}
-function doRepairStory(){ alert('Story repair requires the live server.'); }
+
+// Chat console — disabled in static mode
+function toggleChat(){}
+function autoResizeChat(){}
+function clearChat(){}
+async function sendChat(){ alert('The model console requires the live server.'); }
 
 init();</script>
 </body>

@@ -1,6 +1,387 @@
 {
   "lessons": [
     {
+      "topic": "luxembourgish poetry",
+      "topicEmoji": ".lu.",
+      "lang": "lb",
+      "difficulty": 1,
+      "story": "In the heart of Luxembourg, where the old town of Luxembourg City whispers tales of yore, there lived a young poet named Elisa. She was known for her deep, soulful eyes and her gentle, melodic voice that could charm even the most stubborn of stones. Elisa's poetry was a blend of the old and the new, a harmonious mix of Lëtzebuergesch and modern expressions that resonated with the people of Luxembourg.\n\nOne crisp autumn evening, as the sun dipped behind the towering fortifications of the city, Elisa sat by the banks of the Alzette River. The air was filled with the scent of fallen leaves and the distant sound of a church bell. She had been pondering the essence of Luxembourgish poetry, wondering how to capture the spirit of her homeland in words. Suddenly, a gentle breeze carried the sweet fragrance of a nearby garden, and Elisa felt a surge of inspiration.\n\nShe began to write, her pen moving swiftly across the parchment. The words flowed like a clear stream, weaving through the landscape of her memories and the dreams of her people. She wrote of the green hills that cradled the city, the golden light that bathed the old town in the evening, and the warmth of the Luxembourgish people who welcomed strangers with open arms. Her poem, titled \"Luxemburgs Gemüt,\" spoke of the unique spirit of Luxembourg, a blend of tradition and modernity, a place where the heart finds its home.\n\nThe next morning, Elisa's poem was shared among the townsfolk. It was read aloud in the market square, and people gathered to listen, their faces illuminated by the words that spoke of their shared heritage. The poem was a bridge, connecting the past with the present, and it brought a sense of unity and pride to the community. Elisa's words had not only captured the essence of Luxembourgish poetry but had also woven a tapestry of shared identity and love for the land.\n\nAs the days passed, Elisa's poem became a symbol of the rich cultural heritage of Luxembourg. It was recited in schools, sung in community gatherings, and even translated into other languages to share with the world. Elisa's journey as a poet had not only enriched her own life but had also left a lasting legacy, inspiring others to explore and celebrate the beauty of their own language and culture.",
+      "storyLang": "en",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Luxembourgish Land",
+          "desc": "Luxembourg, old town, poetry, nature, homeland",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "it": "Wéi",
+              "en": "as",
+              "pron": "WEE"
+            },
+            {
+              "it": "Land",
+              "en": "land",
+              "pron": "LANT"
+            },
+            {
+              "it": "Himmel",
+              "en": "sky",
+              "pron": "HIML"
+            },
+            {
+              "it": "Musel",
+              "en": "mushroom",
+              "pron": "MUSL"
+            },
+            {
+              "it": "Héinidden",
+              "en": "hidden",
+              "pron": "HEINIDEN"
+            },
+            {
+              "it": "Diermacht",
+              "en": "power of nature",
+              "pron": "DIERMACHT"
+            },
+            {
+              "it": "Lëtzebuerger",
+              "en": "Luxembourgish",
+              "pron": "LËTZEBUERGER"
+            },
+            {
+              "it": "Joch",
+              "en": "yoke",
+              "pron": "YOK"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Diermacht d'Wéi Land d'Heem durech d'Himmel zéit.",
+              "en": "Nature's power as it passes through our homeland in the sky.",
+              "words": [
+                "Diermacht",
+                "d'Wéi",
+                "Land",
+                "d'Heem",
+                "durech",
+                "d'Himmel",
+                "zéit."
+              ]
+            },
+            {
+              "it": "Musel d'Héinidden diermacht d'Wéi diermacht d'Land durech d'Wisen zéit.",
+              "en": "Mushrooms hidden in nature's power as it passes through the land.",
+              "words": [
+                "Musel",
+                "d'Héinidden",
+                "diermacht",
+                "d'Wéi",
+                "diermacht",
+                "d'Land",
+                "durech",
+                "d'Wisen",
+                "zéit."
+              ]
+            },
+            {
+              "it": "Lëtzebuerger Joch d'Wéi diermacht d'Land durech d'Fielsen d'Sauer brëcht.",
+              "en": "Luxembourgish yoke as nature's power breaks through the fields of sauer.",
+              "words": [
+                "Lëtzebuerger",
+                "Joch",
+                "d'Wéi",
+                "diermacht",
+                "d'Land",
+                "durech",
+                "d'Fielsen",
+                "d'Sauer",
+                "brëcht."
+              ]
+            },
+            {
+              "it": "Diermacht d'Wéi d'Heem durech d'Wisen zéit, d'Wéi d'Fielsen d'Sauer brëcht.",
+              "en": "Nature's power as it passes through the homeland, as it breaks through the fields of sauer.",
+              "words": [
+                "Diermacht",
+                "d'Wéi",
+                "d'Heem",
+                "durech",
+                "d'Wisen",
+                "zéit,",
+                "d'Wéi",
+                "d'Fielsen",
+                "d'Sauer",
+                "brëcht."
+              ]
+            },
+            {
+              "it": "Diermacht d'Wéi d'Heem durech d'Wisen zéit, d'Wéi d'Alzette d'Sauer brëcht.",
+              "en": "Nature's power as it passes through the homeland, as it breaks through the Alzette river's sauer.",
+              "words": [
+                "Diermacht",
+                "d'Wéi",
+                "d'Heem",
+                "durech",
+                "d'Wisen",
+                "zéit,",
+                "d'Wéi",
+                "d'Alzette",
+                "d'Sauer",
+                "brëcht."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Luxembourgish Nature",
+          "desc": "Luxembourg's natural beauty and its power",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "it": "Alzette",
+              "en": "Alzette River",
+              "pron": "AL-zet"
+            },
+            {
+              "it": "Schéi",
+              "en": "sky",
+              "pron": "SHE-ee"
+            },
+            {
+              "it": "Féile",
+              "en": "leaf",
+              "pron": "FEEL"
+            },
+            {
+              "it": "Géit",
+              "en": "goat",
+              "pron": "GEET"
+            },
+            {
+              "it": "Géitweg",
+              "en": "goat path",
+              "pron": "GEET-weg"
+            },
+            {
+              "it": "Béet",
+              "en": "beet",
+              "pron": "BEET"
+            },
+            {
+              "it": "Méi",
+              "en": "meadow",
+              "pron": "MEH"
+            },
+            {
+              "it": "Schéit",
+              "en": "tree",
+              "pron": "SHEET"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "D'Alzette fléit d'Féile bléit.",
+              "en": "The Alzette carries the scent of fallen leaves.",
+              "words": [
+                "D'Alzette",
+                "fléit",
+                "d'Féile",
+                "bléit."
+              ]
+            },
+            {
+              "it": "D'Schéi wéi d'Géitweg d'Géit d'féit.",
+              "en": "The sky like a goat path a goat follows.",
+              "words": [
+                "D'Schéi",
+                "wéi",
+                "d'Géitweg",
+                "d'Géit",
+                "d'féit."
+              ]
+            },
+            {
+              "it": "D'Méi d'Béet d'Schéit d'féit.",
+              "en": "The meadow with beets trees sway.",
+              "words": [
+                "D'Méi",
+                "d'Béet",
+                "d'Schéit",
+                "d'féit."
+              ]
+            },
+            {
+              "it": "D'Géitweg d'Schéi d'féit.",
+              "en": "Goat path in the sky sways.",
+              "words": [
+                "D'Géitweg",
+                "d'Schéi",
+                "d'féit."
+              ]
+            },
+            {
+              "it": "D'Béet d'Méi d'Alzette d'féit.",
+              "en": "Beets in the meadow by the Alzette sway.",
+              "words": [
+                "D'Béet",
+                "d'Méi",
+                "d'Alzette",
+                "d'féit."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Luxembourgish Nature and Poetry",
+          "desc": "Luxembourg's natural beauty and poetic expressions",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "it": "D'Wisen zéit",
+              "en": "whisper of time",
+              "pron": "DOY-VEEN ZAYT"
+            },
+            {
+              "it": "D'Sauer brëcht",
+              "en": "sour flint",
+              "pron": "DO-SAH-UR BRAYKT"
+            },
+            {
+              "it": "D'Fielsen",
+              "en": "fields",
+              "pron": "DO-FYEL-SAN"
+            },
+            {
+              "it": "D'Uelzecht",
+              "en": "old town",
+              "pron": "DO-YEL-ZEKT"
+            },
+            {
+              "it": "D'Natioune",
+              "en": "nation",
+              "pron": "DO-NA-TYOON"
+            },
+            {
+              "it": "Behitt",
+              "en": "embraces",
+              "pron": "BE-HIT"
+            },
+            {
+              "it": "D'Welt",
+              "en": "world",
+              "pron": "DO-VELT"
+            },
+            {
+              "it": "D'Heemechtsland",
+              "en": "homeland",
+              "pron": "DO-YEM-EM-KT-LANT"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "D'Wisen zéit d'Heemechtsland durech d'Wisen zéit.",
+              "en": "The old town whispers of the homeland through the whispers of time.",
+              "words": [
+                "D'Wisen",
+                "zéit",
+                "d'Heemechtsland",
+                "durech",
+                "d'Wisen",
+                "zéit."
+              ]
+            },
+            {
+              "it": "D'Natioune behitt d'Heemechtsland d'Welt d'Natioune behitt.",
+              "en": "The nation embraces the homeland, the nation embraces the world.",
+              "words": [
+                "D'Natioune",
+                "behitt",
+                "d'Heemechtsland",
+                "d'Welt",
+                "d'Natioune",
+                "behitt."
+              ]
+            },
+            {
+              "it": "D'Alzette River féile d'Schéi d'Schéi féile.",
+              "en": "The Alzette River leaves the sky, the sky leaves the river.",
+              "words": [
+                "D'Alzette",
+                "River",
+                "féile",
+                "d'Schéi",
+                "d'Schéi",
+                "féile."
+              ]
+            },
+            {
+              "it": "D'Uelzecht durech d'Wisen zéit d'Uelzecht durech d'Wisen zéit.",
+              "en": "The old town whispers of the homeland through the whispers of time, the old town whispers of the homeland through the whispers of time.",
+              "words": [
+                "D'Uelzecht",
+                "durech",
+                "d'Wisen",
+                "zéit",
+                "d'Uelzecht",
+                "durech",
+                "d'Wisen",
+                "zéit."
+              ]
+            },
+            {
+              "it": "D'Heemechtsland d'Natioune behitt d'Heemechtsland d'Natioune behitt.",
+              "en": "The homeland, the nation embraces the homeland, the nation embraces the homeland.",
+              "words": [
+                "D'Heemechtsland",
+                "d'Natioune",
+                "behitt",
+                "d'Heemechtsland",
+                "d'Natioune",
+                "behitt."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1250495,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2465,
+        "totalCompletionTokens": 1882,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 188240,
+            "promptTokens": 636,
+            "completionTokens": 500
+          },
+          {
+            "lessonNum": 2,
+            "ms": 246207,
+            "promptTokens": 710,
+            "completionTokens": 376
+          },
+          {
+            "lessonNum": 3,
+            "ms": 311606,
+            "promptTokens": 764,
+            "completionTokens": 493
+          }
+        ]
+      },
+      "generatedAt": "2026-05-02T15:35:34.527Z",
+      "updatedAt": "2026-05-02T15:45:47.219Z",
+      "ratings": {
+        "difficulty": 3,
+        "fun": 2,
+        "coherence": 1
+      }
+    },
+    {
       "topic": "italian recipes from nonna",
       "topicEmoji": "🇮🇹",
       "lang": "it",
@@ -414,11 +795,17 @@
         ]
       },
       "generatedAt": "2026-05-02T12:52:40.826Z",
-      "updatedAt": "2026-05-02T15:03:18.930Z",
+      "updatedAt": "2026-05-02T15:11:01.556Z",
       "ratings": {
         "difficulty": 2,
         "fun": 2,
         "coherence": 1
+      },
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 349815,
+        "promptTokens": 1764,
+        "completionTokens": 344
       }
     },
     {
@@ -11733,86 +12120,6 @@
       "words": [],
       "flaggedAt": "2026-05-02T11:39:59.170Z",
       "comment": "IM PARK"
-    },
-    "italian_recipes_from_nonna:listen_mcq:spices": {
-      "topic": "italian recipes from nonna",
-      "type": "listen_mcq",
-      "it": "spices",
-      "en": "",
-      "correct": "spices",
-      "choices": [
-        "spices",
-        "silver",
-        "stained",
-        "shelves"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-02T14:54:58.313Z",
-      "comment": "both a&q in english"
-    },
-    "italian_recipes_from_nonna:listen_mcq:shelves": {
-      "topic": "italian recipes from nonna",
-      "type": "listen_mcq",
-      "it": "shelves",
-      "en": "",
-      "correct": "shelves",
-      "choices": [
-        "shelves",
-        "pots and pans",
-        "silver",
-        "scent"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-02T14:57:06.534Z",
-      "comment": "both q&a english"
-    },
-    "italian_recipes_from_nonna:mcq_it_en:stained": {
-      "topic": "italian recipes from nonna",
-      "type": "mcq_it_en",
-      "it": "stained",
-      "en": "stained",
-      "correct": "stained",
-      "choices": [
-        "wide egg noodles",
-        "zucchini sauce",
-        "stained",
-        "tomato sauce"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-02T14:59:22.068Z",
-      "comment": "both q&a english"
-    },
-    "italian_recipes_from_nonna:mcq_it_en:silver": {
-      "topic": "italian recipes from nonna",
-      "type": "mcq_it_en",
-      "it": "silver",
-      "en": "silver",
-      "correct": "silver",
-      "choices": [
-        "sauce",
-        "rolling pin",
-        "silver",
-        "large pot"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-02T14:59:33.805Z",
-      "comment": "both q&a english"
-    },
-    "italian_recipes_from_nonna:mcq_it_en:pots_and_pans": {
-      "topic": "italian recipes from nonna",
-      "type": "mcq_it_en",
-      "it": "pots and pans",
-      "en": "pots and pans",
-      "correct": "pots and pans",
-      "choices": [
-        "carrot sauce",
-        "sauce",
-        "pots and pans",
-        "zucchini sauce"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-02T14:59:57.467Z",
-      "comment": "both q&a english"
     }
   }
 }
