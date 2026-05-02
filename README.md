@@ -60,6 +60,14 @@ the server script (see console output), e.g.,
 http://192.168.0.180:3000/
 ```
 
+You may need to allow the port so it can be accessed locally in your wifi
+from other computers:
+
+``` bash
+sudo ufw allow 3000
+```
+
+
 ---
 
 ## Environment variables
