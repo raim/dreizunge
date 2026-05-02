@@ -1075,8 +1075,10 @@ function pick(arr,n){ return shuffle(arr).slice(0,n); }
 const isPunctClient = t => /^[.,!?;:()\[\]"'«»—–]+$/.test((t||'').trim());
 function buildExercises(lessonIdx){
   const d=APP.lessonData, lesson=d.lessons[lessonIdx];
-  const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
-  const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
+	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
+  const allV = lesson.vocab;
+	// const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
+  const allS = lesson.sentences;
   const tv=lesson.vocab, ts=lesson.sentences;
   const fb=['This is incorrect.','Another wrong answer.','Not the right translation.'];
 
@@ -1117,7 +1119,8 @@ function buildExercises(lessonIdx){
   tv.forEach(v=>{ const e=mkLMcq(v,allV); if(e)exs.push(e); });
   pick(tv,Math.ceil(tv.length/2)).forEach(v=>{ const e=mkMcqEI(v,allV); if(e)exs.push(e); });
   pick(ts,3).forEach(s=>exs.push(mkOrder(s)));
-  pick(ts,3).forEach(s=>exs.push(mkRead(s,allS)));
+  //pick(ts,3).forEach(s=>exs.push(mkRead(s,allS)));
+  pick(ts,3).forEach(s=>exs.push(mkRead(s,ts)));
   pick(tv,2).forEach(v=>exs.push(mkLType(v)));
   const prevV=d.lessons.slice(0,lessonIdx).flatMap(L=>L.vocab);
   if(prevV.length>=4) pick(prevV,3).forEach(v=>{ const e=mkMcqIE(v,allV); if(e)exs.push(e); });
@@ -1126,11 +1129,16 @@ function buildExercises(lessonIdx){
 
 // ── lesson ──
 function startLesson(idx){
-  const C=APP.cur;
-  C.lessonIdx=idx; C.exercises=buildExercises(idx); C.cur=0;
-  C.hearts=3; C.xp=0; C.mistakes=0; C.streak=0; C.bestStreak=0;
-  C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
-  show('lesson-screen'); renderEx();
+	    const C=APP.cur;
+	    C.lessonIdx=idx; C.exercises=buildExercises(idx); C.cur=0;
+	    C.hearts=3; C.xp=0; C.mistakes=0; C.streak=0; C.bestStreak=0;
+	    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
+	    
+	    console.log("LOADED TOPIC:", APP.lessonData.topic);
+	    console.log("LESSON 0 SENTENCES:",
+	    APP.lessonData.lessons[0].sentences.map(s => s.it)
+	    );
+	    show('lesson-screen'); renderEx();
 }
 function renderHearts(){
   document.getElementById('hearts').innerHTML=Array.from({length:3},(_,i)=>`<span class="heart${i>=APP.cur.hearts?' lost':''}">❤️</span>`).join('');

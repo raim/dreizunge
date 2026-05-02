@@ -98,10 +98,21 @@ function staticUpsert(data) {
 
 // Seed built-in lessons on first visit
 (function seedBuiltins() {
-  const existing = staticGetSaved().map(l => l.topic.toLowerCase());
+  const arr = staticGetSaved();
+
   for (const l of STATIC_LESSONS) {
-    if (!existing.includes(l.topic.toLowerCase())) staticUpsert(l);
+    const k = l.topic.toLowerCase();
+    const i = arr.findIndex(x => x.topic.toLowerCase() === k);
+
+    if (i >= 0) {
+      // 🔁 overwrite stale entry
+      arr[i] = l;
+    } else {
+      arr.unshift(l);
+    }
   }
+
+  staticPutSaved(arr);
 })();
 
 // ── Init ──────────────────────────────────────────────────────────────
