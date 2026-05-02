@@ -1,399 +1,481 @@
 {
   "lessons": [
     {
-      "topic": "fungus spreads to the brain",
+      "topic": "the fungus spreads to the brain",
       "topicEmoji": "fungi",
       "lang": "it",
       "difficulty": 2,
-      "story": null,
-      "storyLang": "en",
+      "story": "Quella sera, Alessia e Marco tornarono a casa con il cuore ancora pesante, ma stavano meglio. Alessia si sentiva più sicura di sé, promettendo a se stessa di chiedere aiuto a sua nonna per riconoscere correttamente i funghi. Mentre camminavano sotto il cielo stellato, Marco le prese la mano e le disse: \"Sai, non è la prima volta che ti vedo preoccupata per i funghi. Forse è tempo che chiediamo a tua nonna di aiutarti.\"\n\nAlessia sorrise, sentendo un po' meglio. \"Sì, forse hai ragione,\" disse. \"Ma per ora, la cosa più importante è che sto bene.\" Si sentiva ancora un po' debole, ma il dottore aveva detto che sarebbe stata bene presto.\n\nLa mattina successiva, Alessia si svegliò con un mal di testa acuto. Si alzò dal letto, cercando di non fare troppo movimento, e si guardò intorno nella stanza. Il dolore era diverso, più intenso e pulsante. Si sentì un po' nauseata e si avvicinò al tavolo da cucina per prendere un bicchiere d'acqua. Ma quando sollevò la tazza, vide che il bicchiere era pieno di un liquido scuro e vischioso. Si sentì immediatamente male e vomitò.\n\nMarco, che era ancora a letto, si svegliò e notò il suo stato. \"Alessia, che succede?\" chiese preoccupato. Alessia cercò di parlare, ma le parole le uscirono confuse. \"Non... non sento bene,\" disse, la voce strozzata dal dolore.\n\nMarco la prese per le spalle e la fece sedere. \"Resta ferma,\" le disse dolcemente. \"Ti aiuto io.\" Si alzò e andò in cucina, tornando con un bicchiere d'acqua pulito. \"Bevi questo,\" le disse, facendole bere un po' d'acqua.\n\nAlessia si sentiva debole e confusa, ma riuscì a inghiottire un po' d'acqua. Il dolore era sempre presente, ma non era più così acuto. Marco la tenne per mano, cercando di rassicurarla. \"Non preoccuparti,\" le disse dolcemente. \"Siamo fortunati che il dottore sia stato in grado di aiutarti in tempo.\"\n\nMa quando il dolore si fece più intenso e Alessia sentì un formicolio nelle mani e nei piedi, capì che qualcosa non andava. Marco notò il suo stato e preoccupato la portò nuovamente al pronto soccorso del piccolo ospedale di San Gimignano. Lì, Alessia fu accolta da un medico gentile che la esaminò attentamente. \"Sembra che abbiate avuto un'intossicazione alimentare,\" disse il dottore con un sorriso rassicurante. \"Avete mangiato qualcosa che non era sicuro?\"\n\nAlessia ricordò con un senso di colpa la zuppa di funghi che aveva preparato. \"Sì, avevo trovato alcuni porcini in un luogo isolato e non ne ero sicura se fossero al sicuro,\" ammise con un sospiro. \"Ma sembravano così buoni.\"\n\nIl dottore annuì comprensivo. \"Capisco. I porcini selvatici possono contenere micelii tossici se non sono riconosciuti correttamente. Spero che non siate troppo male.\" Ma quando il dottore esaminò meglio Alessia, notò che il dolore era diverso, più intenso e pulsante. \"Sembra che l'intossicazione sia andata oltre,\" disse con un'espressione preoccupata. \"Abbiamo bisogno",
+      "storyLang": "it",
       "continuedFrom": "food poisoning in the hospital",
       "lessons": [
         {
           "id": 1,
-          "title": "fungus brain",
-          "desc": "funny scary brain fungus",
-          "icon": "🧟",
+          "title": "fungi and fear",
+          "desc": "funny but scary story about fungi",
+          "icon": "🧅",
           "vocab": [
             {
-              "it": "fungo",
-              "en": "fungus",
-              "pron": "FUH-noh"
+              "it": "funghi",
+              "en": "fungi",
+              "pron": "FOON-yee"
             },
             {
-              "it": "cervello",
-              "en": "brain",
-              "pron": "tseh-VEL-lo"
+              "it": "stomaco",
+              "en": "stomach",
+              "pron": "sto-MACK-oh"
             },
             {
-              "it": "spunta",
-              "en": "sprouts",
-              "pron": "SPUNT-ah"
+              "it": "testa",
+              "en": "head",
+              "pron": "TAY-stah"
             },
             {
-              "it": "sogno",
-              "en": "dream",
-              "pron": "SOH-no"
+              "it": "mal di",
+              "en": "headache",
+              "pron": "MAHL DEE"
             },
             {
-              "it": "pazza",
-              "en": "crazy",
-              "pron": "PAH-tsza"
+              "it": "svegliarsi",
+              "en": "wake up",
+              "pron": "sve-GLEE-ye-re"
             },
             {
-              "it": "sorprendere",
-              "en": "surprise",
-              "pron": "sor-preh-DZEH-re"
+              "it": "guardarsi intorno",
+              "en": "look around",
+              "pron": "goh-DAHR-si in-TOHR-no"
             },
             {
-              "it": "soggiorno",
-              "en": "stay",
-              "pron": "soh-jee-OHR-no"
+              "it": "malato",
+              "en": "sick",
+              "pron": "MAH-lah-to"
             },
             {
-              "it": "soggiornatore",
-              "en": "guest",
-              "pron": "soh-jee-or-NAH-tohr"
+              "it": "preoccupata",
+              "en": "worried",
+              "pron": "pre-opp-yuk-KAH-tah"
             }
           ],
           "sentences": [
             {
-              "it": "Un fungo spunta nel mio cervello.",
-              "en": "A fungus sprouts in my brain.",
+              "it": "Quella sera, Alessia e Marco tornarono a casa con il cuore ancora pesante, ma stavano meglio.",
+              "en": "That evening, Alessia and Marco returned home with their hearts still heavy, but they were feeling better.",
               "words": [
-                "Un",
-                "fungo",
-                "spunta",
-                "nel",
-                "mio",
-                "cervello."
-              ]
-            },
-            {
-              "it": "Sogno di essere un sorprendente pazza.",
-              "en": "I dream of being a surprising crazy.",
-              "words": [
-                "Sogno",
-                "di",
-                "essere",
-                "un",
-                "sorprendente",
-                "pazza."
-              ]
-            },
-            {
-              "it": "Il fungo mi fa soggiornare in un mondo pazza.",
-              "en": "The fungus makes me stay in a crazy world.",
-              "words": [
-                "Il",
-                "fungo",
-                "mi",
-                "fa",
-                "soggiornare",
-                "in",
-                "un",
-                "mondo",
-                "pazza."
-              ]
-            },
-            {
-              "it": "Soggiornatore, il fungo ti sorprende nel cervello.",
-              "en": "Guest, the fungus surprises you in the brain.",
-              "words": [
-                "Soggiornatore,",
+                "Quella",
+                "sera,",
+                "Alessia",
+                "e",
+                "Marco",
+                "tornarono",
+                "a",
+                "casa",
+                "con",
                 "il",
-                "fungo",
+                "cuore",
+                "ancora",
+                "pesante,",
+                "ma",
+                "stavano",
+                "meglio."
+              ]
+            },
+            {
+              "it": "Mentre camminavano sotto il cielo stellato, Marco le prese la mano e le disse: 'Sai, non è la prima volta che ti vedo preoccupata per i funghi. Forse è tempo che chiediamo a tua nonna di aiutarti.'",
+              "en": "As they walked under the starry sky, Marco took Alessia's hand and said: 'You know, it's not the first time I've seen you worried about the mushrooms. Maybe it's time we ask your grandmother for help.'",
+              "words": [
+                "Mentre",
+                "camminavano",
+                "sotto",
+                "il",
+                "cielo",
+                "stellato,",
+                "Marco",
+                "le",
+                "prese",
+                "la",
+                "mano",
+                "e",
+                "le",
+                "disse:",
+                "'Sai,",
+                "non",
+                "è",
+                "la",
+                "prima",
+                "volta",
+                "che",
                 "ti",
-                "sorprende",
-                "nel",
-                "cervello."
+                "vedo",
+                "preoccupata",
+                "per",
+                "i",
+                "funghi.",
+                "Forse",
+                "è",
+                "tempo",
+                "che",
+                "chiediamo",
+                "a",
+                "tua",
+                "nonna",
+                "di",
+                "aiutarti.'"
               ]
             },
             {
-              "it": "Spunta nel mio sogno, il fungo del cervello pazza.",
-              "en": "Sprouts in my dream, the brain fungus goes crazy.",
+              "it": "La mattina successiva, Alessia si svegliò con un mal di testa acuto.",
+              "en": "The next morning, Alessia woke up with a severe headache.",
               "words": [
-                "Spunta",
-                "nel",
-                "mio",
-                "sogno,",
-                "il",
-                "fungo",
-                "del",
-                "cervello",
-                "pazza."
+                "La",
+                "mattina",
+                "successiva,",
+                "Alessia",
+                "si",
+                "svegliò",
+                "con",
+                "un",
+                "mal",
+                "di",
+                "testa",
+                "acuto."
+              ]
+            },
+            {
+              "it": "Si alzò dal letto, cercando di non fare troppo movimento, e si guardò intorno nella stanza.",
+              "en": "She got out of bed, trying not to move too much, and looked around the room.",
+              "words": [
+                "Si",
+                "alzò",
+                "dal",
+                "letto,",
+                "cercando",
+                "di",
+                "non",
+                "fare",
+                "troppo",
+                "movimento,",
+                "e",
+                "si",
+                "guardò",
+                "intorno",
+                "nella",
+                "stanza."
+              ]
+            },
+            {
+              "it": "Alessia sorrise, sentendo un po' meglio. 'Sì, forse hai ragione,' disse. 'Ma per ora, la cosa più importante è che sto bene.'",
+              "en": "Alessia smiled, feeling a bit better. 'Yes, you're probably right,' she said. 'But for now, the most important thing is that I'm okay.'",
+              "words": [
+                "Alessia",
+                "sorrise,",
+                "sentendo",
+                "un",
+                "po'",
+                "meglio.",
+                "'Sì,",
+                "forse",
+                "hai",
+                "ragione,'",
+                "disse.",
+                "'Ma",
+                "per",
+                "ora,",
+                "la",
+                "cosa",
+                "più",
+                "importante",
+                "è",
+                "che",
+                "sto",
+                "bene.'"
               ]
             }
           ]
         },
         {
           "id": 2,
-          "title": "fungus in the brain",
-          "desc": "funny but slightly scary story",
-          "icon": "🧟",
+          "title": "fungi, headache, waking up",
+          "desc": "funny scary story, Alessia, headache, waking up, brain, hallucination, dizzy, tremble",
+          "icon": "😀",
           "vocab": [
             {
-              "it": "spunta",
-              "en": "sprouts",
-              "pron": "SPUN-ta"
+              "it": "allucinazione",
+              "en": "hallucination",
+              "pron": "al-LOO-chee-na"
             },
             {
-              "it": "sogno",
-              "en": "dream",
-              "pron": "SO-gno"
+              "it": "dolore",
+              "en": "pain",
+              "pron": "DOH-lre"
             },
             {
-              "it": "pazza",
-              "en": "crazy",
-              "pron": "PAZ-zza"
+              "it": "tremare",
+              "en": "tremble",
+              "pron": "tre-MAH-re"
             },
             {
-              "it": "sorprendere",
-              "en": "surprise",
-              "pron": "sor-PREN-de-re"
+              "it": "testa",
+              "en": "head",
+              "pron": "TEH-sta"
             },
             {
-              "it": "soggiorno",
-              "en": "stay",
-              "pron": "so-GGI-or-no"
+              "it": "malato",
+              "en": "sick",
+              "pron": "MAH-lah-to"
             },
             {
-              "it": "soggiornatore",
-              "en": "guest",
-              "pron": "so-GGI-or-na-to-re"
+              "it": "dolore di",
+              "en": "headache",
+              "pron": "DOH-lre DEE"
             },
             {
-              "it": "infestare",
-              "en": "infest",
-              "pron": "in-FES-ta-re"
+              "it": "svegliarsi",
+              "en": "wake up",
+              "pron": "sveh-LY-jah-re"
+            },
+            {
+              "it": "stordito",
+              "en": "dizzy",
+              "pron": "sto-REH-dit-to"
             }
           ],
           "sentences": [
             {
-              "it": "Il fungo spunta nel cervello del soggiornatore.",
-              "en": "The fungus sprouts in the guest's brain.",
+              "it": "Alessia sentì un dolere di testa acuto.",
+              "en": "Alessia felt a sharp headache.",
               "words": [
-                "Il",
-                "fungo",
-                "spunta",
-                "nel",
-                "cervello",
-                "del",
-                "soggiornatore."
-              ]
-            },
-            {
-              "it": "Nel sogno, il soggiornatore sorprende di essere pazza.",
-              "en": "In the dream, the guest is surprised to be crazy.",
-              "words": [
-                "Nel",
-                "sogno,",
-                "il",
-                "soggiornatore",
-                "sorprende",
-                "di",
-                "essere",
-                "pazza."
-              ]
-            },
-            {
-              "it": "L'infestazione spinge il cervello a sogno senza fine.",
-              "en": "The infestation pushes the brain into endless dreams.",
-              "words": [
-                "L'infestazione",
-                "spinge",
-                "il",
-                "cervello",
-                "a",
-                "sogno",
-                "senza",
-                "fine."
-              ]
-            },
-            {
-              "it": "Il soggiornatore si sveglia con un sorriso pazza sul viso.",
-              "en": "The guest wakes up with a crazy smile on his face.",
-              "words": [
-                "Il",
-                "soggiornatore",
-                "si",
-                "sveglia",
-                "con",
+                "Alessia",
+                "sentì",
                 "un",
-                "sorriso",
-                "pazza",
-                "sul",
-                "viso."
+                "dolere",
+                "di",
+                "testa",
+                "acuto."
               ]
             },
             {
-              "it": "Il medico sorprende di trovare il cervello infestato di funghi.",
-              "en": "The doctor is surprised to find the brain infested with fungi.",
+              "it": "Si svegliò tremando e guardandosi intorno.",
+              "en": "She woke up trembling and looking around.",
+              "words": [
+                "Si",
+                "svegliò",
+                "tremando",
+                "e",
+                "guardandosi",
+                "intorno."
+              ]
+            },
+            {
+              "it": "Il dolore la costrinse a stordirsi per un momento.",
+              "en": "The pain forced her to feel dizzy for a moment.",
               "words": [
                 "Il",
-                "medico",
-                "sorprende",
+                "dolore",
+                "la",
+                "costrinse",
+                "a",
+                "stordirsi",
+                "per",
+                "un",
+                "momento."
+              ]
+            },
+            {
+              "it": "Vide allucinazioni di funghi che si muovevano nella stanza.",
+              "en": "She saw hallucinations of fungi moving in the room.",
+              "words": [
+                "Vide",
+                "allucinazioni",
                 "di",
-                "trovare",
-                "il",
-                "cervello",
-                "infestato",
-                "di",
-                "funghi."
+                "funghi",
+                "che",
+                "si",
+                "muovevano",
+                "nella",
+                "stanza."
+              ]
+            },
+            {
+              "it": "Il cuore le si fermò quando notò un fungo che si avvicinava al suo viso.",
+              "en": "Her heart stopped when she noticed a fungus approaching her face.",
+              "words": [
+                "Il",
+                "cuore",
+                "le",
+                "si",
+                "fermò",
+                "quando",
+                "notò",
+                "un",
+                "fungo",
+                "che",
+                "si",
+                "avvicinava",
+                "al",
+                "suo",
+                "viso."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "fungi in the brain",
-          "desc": "funny but slightly scary story",
-          "icon": "🧟",
+          "title": "fungi, nightmare",
+          "desc": "funny scary story, fungi, brain",
+          "icon": "🍄",
           "vocab": [
             {
-              "it": "infestare",
-              "en": "to infest",
-              "pron": "IN-fes-ta-re"
+              "it": "allucinazioni",
+              "en": "hallucinations",
+              "pron": "al-lu-si-ne-za"
             },
             {
-              "it": "soggiornatore",
-              "en": "guest",
-              "pron": "so-ji-or-na-tore"
+              "it": "stordito",
+              "en": "dizzy",
+              "pron": "st-or-di-to"
             },
             {
-              "it": "soggiorno",
-              "en": "stay",
-              "pron": "so-ji-or-no"
+              "it": "sogno",
+              "en": "dream",
+              "pron": "so-gno"
             },
             {
-              "it": "sognare",
-              "en": "to dream",
-              "pron": "so-nya-re"
+              "it": "paura",
+              "en": "fear",
+              "pron": "pa-u-ra"
             },
             {
-              "it": "pazza",
-              "en": "crazy",
-              "pron": "PAZZ-a"
+              "it": "sussurro",
+              "en": "whisper",
+              "pron": "su-su-rro"
             },
             {
-              "it": "sorprendere",
-              "en": "to surprise",
-              "pron": "so-rpren-de-re"
+              "it": "luna",
+              "en": "moon",
+              "pron": "lu-na"
             },
             {
-              "it": "sognatore",
-              "en": "dreamer",
-              "pron": "so-nya-tore"
+              "it": "ombra",
+              "en": "shadow",
+              "pron": "om-bra"
             },
             {
-              "it": "spunta",
-              "en": "sprouts",
-              "pron": "SPUN-ta"
+              "it": "tremare",
+              "en": "tremble",
+              "pron": "tre-ma-re"
             }
           ],
           "sentences": [
             {
-              "it": "Il fungo infestò il cervello del soggiornatore.",
-              "en": "The fungus infested the guest's brain.",
+              "it": "Mentre Alessia cercava di rilassarsi, sentì un sussurro nella stanza.",
+              "en": "While Alessia tried to relax, she heard a whisper in the room.",
               "words": [
-                "Il",
-                "fungo",
-                "infestò",
-                "il",
-                "cervello",
-                "del",
-                "soggiornatore."
+                "Mentre",
+                "Alessia",
+                "cercava",
+                "di",
+                "rilassarsi,",
+                "sentì",
+                "un",
+                "sussurro",
+                "nella",
+                "stanza."
               ]
             },
             {
-              "it": "In ogni suo sogno, lui sognava spunte pazze.",
-              "en": "In every dream, he dreamed of crazy sprouts.",
+              "it": "La luna illuminava la sua ombra sul muro, creando forme strane.",
+              "en": "The moonlight cast her shadow on the wall, creating strange shapes.",
+              "words": [
+                "La",
+                "luna",
+                "illuminava",
+                "la",
+                "sua",
+                "ombra",
+                "sul",
+                "muro,",
+                "creando",
+                "forme",
+                "strane."
+              ]
+            },
+            {
+              "it": "Alessia si sentì stordita e prese a tremare leggermente.",
+              "en": "Alessia felt dizzy and began to tremble slightly.",
+              "words": [
+                "Alessia",
+                "si",
+                "sentì",
+                "stordita",
+                "e",
+                "prese",
+                "a",
+                "tremare",
+                "leggermente."
+              ]
+            },
+            {
+              "it": "In sogno, vide funghi che si muovevano e parlavano.",
+              "en": "In her dream, she saw fungi moving and talking.",
               "words": [
                 "In",
-                "ogni",
-                "suo",
                 "sogno,",
-                "lui",
-                "sognava",
-                "spunte",
-                "pazze."
-              ]
-            },
-            {
-              "it": "Sorpreso, il soggiornatore si svegliò di soprassalto.",
-              "en": "Surprised, the guest jumped awake suddenly.",
-              "words": [
-                "Sorpreso,",
-                "il",
-                "soggiornatore",
+                "vide",
+                "funghi",
+                "che",
                 "si",
-                "svegliò",
-                "di",
-                "soprassalto."
+                "muovevano",
+                "e",
+                "parlavano."
               ]
             },
             {
-              "it": "Il soggiornatore era un sognatore pazza, spesso sorprendeva se stesso.",
-              "en": "The guest was a crazy dreamer, often surprising himself.",
+              "it": "La paura la colse come un pugno allo stomaco.",
+              "en": "Fear hit her like a punch to the stomach.",
               "words": [
-                "Il",
-                "soggiornatore",
-                "era",
+                "La",
+                "paura",
+                "la",
+                "colse",
+                "come",
                 "un",
-                "sognatore",
-                "pazza,",
-                "spesso",
-                "sorprendeva",
-                "se",
-                "stesso."
-              ]
-            },
-            {
-              "it": "Spunta spunta, il soggiorno era diventato un incubo.",
-              "en": "Sprout sprout, the stay had become a nightmare.",
-              "words": [
-                "Spunta",
-                "spunta,",
-                "il",
-                "soggiorno",
-                "era",
-                "diventato",
-                "un",
-                "incubo."
+                "pugno",
+                "allo",
+                "stomaco."
               ]
             }
           ]
         }
       ],
       "generationStats": {
-        "totalMs": 1028999,
+        "totalMs": 1311333,
         "backend": "ollama",
         "model": "qwen2.5:7b",
-        "totalPromptTokens": 1116,
-        "totalCompletionTokens": 1179,
+        "totalPromptTokens": 2849,
+        "totalCompletionTokens": 2306,
         "lessons": [
           {
             "lessonNum": 1,
-            "ms": 280651,
-            "promptTokens": 276,
-            "completionTokens": 367
+            "ms": 301265,
+            "promptTokens": 531,
+            "completionTokens": 574
           },
           {
             "lessonNum": 2,
-            "ms": 173288,
-            "promptTokens": 342,
-            "completionTokens": 389
+            "ms": 225632,
+            "promptTokens": 598,
+            "completionTokens": 406
           },
           {
             "lessonNum": 3,
-            "ms": 184119,
-            "promptTokens": 386,
-            "completionTokens": 393
+            "ms": 231365,
+            "promptTokens": 646,
+            "completionTokens": 394
           }
         ]
       },
-      "generatedAt": "2026-05-02T21:20:07.019Z",
-      "updatedAt": "2026-05-02T21:20:07.019Z"
+      "generatedAt": "2026-05-02T22:28:57.323Z",
+      "updatedAt": "2026-05-02T22:28:57.323Z"
     },
     {
       "topic": "food poisoning in the hospital",

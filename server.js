@@ -14,7 +14,7 @@ const ANTHROPIC_KEY  = process.env.ANTHROPIC_API_KEY || '';
 const CLAUDE_MODEL   = process.env.CLAUDE_MODEL   || 'claude-sonnet-4-20250514';
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 const OLLAMA_MODEL   = process.env.OLLAMA_MODEL   || 'qwen2.5:7b';
-const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '360000', 10);
+const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
 
 // ── Storage ───────────────────────────────────────────────────────────
 function loadStore() {
