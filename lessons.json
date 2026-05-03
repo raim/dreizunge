@@ -1,6 +1,1155 @@
 {
   "lessons": [
     {
+      "topic": "marco learns from an old witch",
+      "topicEmoji": "🧙",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "Alessia si svegliò lentamente, sentendo Marco accanto a lei. \"Come stai?\" gli chiese, la voce ancora debole. Marco le prese la mano, cercando di rassicurarla. \"Sto bene, ma non voglio che tu soffra,\" rispose. \"Non preoccuparti, ci penserò io.\" Alessia lo guardò, sentendo un formicolio crescente. \"Marco, non voglio diventare un... un... zombi,\" disse, la voce sempre più debole.\n\nMarco la strinse a sé, cercando di calmare la sua paura. \"Non succederà,\" le disse dolcemente. \"Ma non capisco perché senti questo formicolio.\" Alessia si concentrò, cercando di capire cosa stava succedendo. \"Forse... forse c'è qualcuno che vuole aiutarti,\" suggerì Marco, notando il suo sguardo distante.\n\nAlessia si alzò dal letto, sentendo una forza nuova dentro di sé. \"Devo... devo andare,\" disse, la voce decisa. Marco la guardò preoccupato. \"Dove vai?\" chiese, cercando di trattenerla. \"Non lo so,\" rispose Alessia, la voce più forte. \"Ma sento che devo andare.\"\n\nMentre usciva dalla stanza, notò una vecchia porta in fondo al corridoio. Era chiusa a chiave, ma sentiva un formicolio che la spingeva a spingerla. Marco la seguì, preoccupato. \"Non lasciarmi solo,\" disse, la voce piena di paura. Alessia si fermò, voltandosi a guardarlo. \"Non preoccuparti,\" disse, la voce decisa. \"Ci sarò subito.\"\n\nAlessia aprì la porta, trovando una vecchia strega che stava preparando un incantesimo. \"Chi sei tu?\" chiese la strega, guardando Alessia con occhi penetranti. \"Sono Alessia,\" rispose, la voce ferma. \"E Marco è con me.\"\n\nLa vecchia strega sorrise, annuendo. \"Sono stata aspettata,\" disse, la voce calma. \"Vieni, ti aiuterò.\" Alessia entrò nella stanza, sentendo Marco che la seguiva. La strega prese un libro antico e iniziò a leggere un incantesimo. \"Questo incantesimo ti aiuterà a resistere al controllo del fungo,\" disse, la voce dolce. \"Ma devi essere forte.\"\n\nAlessia annuì, sentendo Marco accanto a lei. \"Grazie,\" disse, la voce ferma. \"Grazie per aiutarmi.\" La vecchia strega sorrise, annuendo. \"Sono felice di poterlo fare,\" disse, la voce calma. \"Ma ora devi tornare da Marco e rimanere forte.\"",
+      "storyLang": "it",
+      "continuedFrom": "alessia sees the blood pumping in marcos arteries",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Formicolio e paura",
+          "desc": "Formicolio, paura, aiuto, zombi, forza",
+          "icon": "🫁",
+          "vocab": [
+            {
+              "it": "formicolio",
+              "en": "tingling",
+              "pron": "for-MI-ko-lio"
+            },
+            {
+              "it": "paura",
+              "en": "fear",
+              "pron": "PAU-ra"
+            },
+            {
+              "it": "aiuto",
+              "en": "help",
+              "pron": "AIU-to"
+            },
+            {
+              "it": "zombi",
+              "en": "zombie",
+              "pron": "ZON-bi"
+            },
+            {
+              "it": "forza",
+              "en": "strength",
+              "pron": "FOR-za"
+            },
+            {
+              "it": "crescente",
+              "en": "growing",
+              "pron": "kre-SEN-tche"
+            },
+            {
+              "it": "svegliò",
+              "en": "woke up",
+              "pron": "sve-GHIO"
+            },
+            {
+              "it": "cercando",
+              "en": "looking for",
+              "pron": "ker-TAN-do"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Sentiva formicolio nelle mani.",
+              "en": "She felt tingling in her hands.",
+              "words": [
+                "Sentiva",
+                "formicolio",
+                "nelle",
+                "mani."
+              ]
+            },
+            {
+              "it": "La paura la paralizzava.",
+              "en": "Fear paralyzed her.",
+              "words": [
+                "La",
+                "paura",
+                "la",
+                "paralizzava."
+              ]
+            },
+            {
+              "it": "Cercò di calmare Alessia.",
+              "en": "He tried to calm Alessia.",
+              "words": [
+                "Cercò",
+                "di",
+                "calmare",
+                "Alessia."
+              ]
+            },
+            {
+              "it": "Il formicolio si fece crescente.",
+              "en": "The tingling grew stronger.",
+              "words": [
+                "Il",
+                "formicolio",
+                "si",
+                "fece",
+                "crescente."
+              ]
+            },
+            {
+              "it": "Alessia cercò di aiutare Marco.",
+              "en": "Alessia tried to help Marco.",
+              "words": [
+                "Alessia",
+                "cercò",
+                "di",
+                "aiutare",
+                "Marco."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "fungi and fear",
+          "desc": "fungi, antidote, brain, witch, learn, forever, suffer, strength",
+          "icon": "🍄",
+          "vocab": [
+            {
+              "it": "fungo",
+              "en": "fungus",
+              "pron": "FUH-noh"
+            },
+            {
+              "it": "antidoto",
+              "en": "antidote",
+              "pron": "an-TIH-doh-to"
+            },
+            {
+              "it": "cervello",
+              "en": "brain",
+              "pron": "tseh-VEL-lo"
+            },
+            {
+              "it": "strega",
+              "en": "witch",
+              "pron": "STREH-gah"
+            },
+            {
+              "it": "imparare",
+              "en": "learn",
+              "pron": "im-PAR-ah-lay"
+            },
+            {
+              "it": "per sempre",
+              "en": "forever",
+              "pron": "PEHREH sem-PREH"
+            },
+            {
+              "it": "soffrire",
+              "en": "suffer",
+              "pron": "soh-FRIGH-re"
+            },
+            {
+              "it": "potere",
+              "en": "power",
+              "pron": "poh-TAY-re"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La strega disse che c'è un fungo che produce un antidoto.",
+              "en": "The witch said there is a fungus that produces an antidote.",
+              "words": [
+                "La",
+                "strega",
+                "disse",
+                "che",
+                "c'è",
+                "un",
+                "fungo",
+                "che",
+                "produce",
+                "un",
+                "antidoto."
+              ]
+            },
+            {
+              "it": "Ma il fungo vivrà nel tuo cervello per sempre.",
+              "en": "But the fungus will live in your brain forever.",
+              "words": [
+                "Ma",
+                "il",
+                "fungo",
+                "vivrà",
+                "nel",
+                "tuo",
+                "cervello",
+                "per",
+                "sempre."
+              ]
+            },
+            {
+              "it": "Non preoccuparti, non soffrirai.",
+              "en": "Don't worry, you won't suffer.",
+              "words": [
+                "Non",
+                "preoccuparti,",
+                "non",
+                "soffrirai."
+              ]
+            },
+            {
+              "it": "Alessia sentì un formicolio crescente nel suo corpo.",
+              "en": "Alessia felt a growing tingling in her body.",
+              "words": [
+                "Alessia",
+                "sentì",
+                "un",
+                "formicolio",
+                "crescente",
+                "nel",
+                "suo",
+                "corpo."
+              ]
+            },
+            {
+              "it": "Forse la strega ha il potere di aiutarti.",
+              "en": "Maybe the witch has the power to help you.",
+              "words": [
+                "Forse",
+                "la",
+                "strega",
+                "ha",
+                "il",
+                "potere",
+                "di",
+                "aiutarti."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "fungi and power",
+          "desc": "fungi, antidote, witch, learn, forever, brain, strength, power",
+          "icon": "🍄",
+          "vocab": [
+            {
+              "it": "fungo",
+              "en": "fungus",
+              "pron": "FUH-noo"
+            },
+            {
+              "it": "antidoto",
+              "en": "antidote",
+              "pron": "an-ti-DOH-to"
+            },
+            {
+              "it": "strega",
+              "en": "witch",
+              "pron": "STREH-gah"
+            },
+            {
+              "it": "imparare",
+              "en": "learn",
+              "pron": "im-PAR-ah-re"
+            },
+            {
+              "it": "per sempre",
+              "en": "forever",
+              "pron": "perh-SEM-prah"
+            },
+            {
+              "it": "cervello",
+              "en": "brain",
+              "pron": "tseh-VEL-lo"
+            },
+            {
+              "it": "forza",
+              "en": "strength",
+              "pron": "FOR-tsah"
+            },
+            {
+              "it": "potere",
+              "en": "power",
+              "pron": "po-TEH-re"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La strega disse che c'è un fungo che produce un antidoto.",
+              "en": "The witch said there is a fungus that produces an antidote.",
+              "words": [
+                "La",
+                "strega",
+                "disse",
+                "che",
+                "c'è",
+                "un",
+                "fungo",
+                "che",
+                "produce",
+                "un",
+                "antidoto."
+              ]
+            },
+            {
+              "it": "Per sempre, entrambi i funghi vivranno nel cervello di Alessia.",
+              "en": "Forever, both fungi will live in Alessia's brain.",
+              "words": [
+                "Per",
+                "sempre,",
+                "entrambi",
+                "i",
+                "funghi",
+                "vivranno",
+                "nel",
+                "cervello",
+                "di",
+                "Alessia."
+              ]
+            },
+            {
+              "it": "Marco imparò che bisogna essere forti per affrontare i pericoli.",
+              "en": "Marco learned that you need to be strong to face dangers.",
+              "words": [
+                "Marco",
+                "imparò",
+                "che",
+                "bisogna",
+                "essere",
+                "forti",
+                "per",
+                "affrontare",
+                "i",
+                "pericoli."
+              ]
+            },
+            {
+              "it": "Alessia sentì un formicolio crescente nel suo corpo.",
+              "en": "Alessia felt a growing tingling in her body.",
+              "words": [
+                "Alessia",
+                "sentì",
+                "un",
+                "formicolio",
+                "crescente",
+                "nel",
+                "suo",
+                "corpo."
+              ]
+            },
+            {
+              "it": "Non c'è potere come quello che ha la strega.",
+              "en": "There's no power like that of the witch.",
+              "words": [
+                "Non",
+                "c'è",
+                "potere",
+                "come",
+                "quello",
+                "che",
+                "ha",
+                "la",
+                "strega."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1063619,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2859,
+        "totalCompletionTokens": 1816,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 211641,
+            "promptTokens": 557,
+            "completionTokens": 331
+          },
+          {
+            "lessonNum": 2,
+            "ms": 214149,
+            "promptTokens": 624,
+            "completionTokens": 381
+          },
+          {
+            "lessonNum": 3,
+            "ms": 230733,
+            "promptTokens": 669,
+            "completionTokens": 394
+          }
+        ]
+      },
+      "generatedAt": "2026-05-03T09:44:01.859Z",
+      "updatedAt": "2026-05-03T09:44:01.859Z"
+    },
+    {
+      "topic": "alessia sees the blood pumping in marcos arteries",
+      "topicEmoji": "👀",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "Alessia sentì un formicolio crescente, come se qualcosa la stesse spingendo fuori dal letto. \"Non... non voglio,\" disse, la voce debole. \"Non voglio diventare un... un... zombi.\" Marco la prese per le spalle, cercando di rassicurarla. \"Non preoccuparti,\" le disse dolcemente. \"Siamo fortunati che il dottore sia stato in grado di aiutarti in tempo.\" Ma Alessia sentiva che qualcosa la stava spingendo via, come se fosse sotto il controllo di un potere oscuro.\n\nMentre Marco la tratteneva, Alessia notò con sorpresa che la stanza cominciava a sembrare diversa. Le pareti sembravano pulsare, come se il sangue delle persone che le circondavano scorresse attraverso di esse. Marco, seduto accanto al suo letto, aveva le vene del collo e delle braccia visibili, il sangue che si muoveva lentamente nelle sue arterie. Alessia si concentrò su di lui, cercando di capire cosa stava succedendo.\n\n\"Marco,\" mormorò, la voce strozzata dal dolore. \"Vedi... il sangue... nelle tue vene.\" Marco la guardò, confuso. \"Cosa vedi, Alessia?\" chiese, la voce piena di preoccupazione. \"Vedi... il sangue... nelle tue vene,\" ripeté Alessia, la voce più forte. \"Come un fiume che scorre.\"\n\nMarco si alzò in piedi, guardando le proprie braccia e il collo. \"Non capisco,\" disse, la voce piena di paura. \"Perché mi stai mostrando questo?\" Alessia cercò di spiegare, ma le parole le uscirono confuse. \"Non lo so,\" disse, la voce strozzata. \"Non lo so.\"\n\nIl dottore tornò con un'espressione seria. \"Abbiamo trovato tracce di un fungo che controlla il corpo delle sue vittime,\" disse, la voce grave. \"È una specie di funghetto selvatico che produce un tossico che altera il cervello, trasformando le persone in zombi.\" Marco si avvicinò al dottore, la voce piena di angoscia. \"Ma come possiamo aiutarti?\" chiese. \"Non possiamo permettere che ti trasformi in un... in un... zombi.\"\n\nAlessia sentì un formicolio crescente, come se qualcosa la stesse spingendo fuori dal letto. \"Non... non voglio,\" disse, la voce debole. \"Non voglio diventare un... un... zombi.\" Marco la prese per le spalle, cercando di rassicurarla. \"Non preoccuparti,\" le disse dolcemente. \"Siamo fortunati che il dottore sia stato in grado di aiutarti in tempo.\" Ma Alessia sentiva che qualcosa la stava spingendo via, come se fosse sotto il controllo di un potere oscuro.",
+      "storyLang": "it",
+      "continuedFrom": "alessia turns into a zombie, controlled by the fungus",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Formicolio e pulsazione",
+          "desc": "Formicolio, pulsazione, zombi, sangue, fortuna",
+          "icon": "🫁",
+          "vocab": [
+            {
+              "it": "formicolio",
+              "en": "tingling",
+              "pron": "FOR-mi-ko-lio"
+            },
+            {
+              "it": "pulsazione",
+              "en": "pulsation",
+              "pron": "pul-so-ZA-ti-on"
+            },
+            {
+              "it": "zombie",
+              "en": "zombie",
+              "pron": "ZO-mi-ee"
+            },
+            {
+              "it": "sangue",
+              "en": "blood",
+              "pron": "SAN-gue"
+            },
+            {
+              "it": "fortuna",
+              "en": "luck",
+              "pron": "FOR-tu-na"
+            },
+            {
+              "it": "pulsare",
+              "en": "to pulse",
+              "pron": "PUL-sa-re"
+            },
+            {
+              "it": "vena",
+              "en": "vein",
+              "pron": "VE-na"
+            },
+            {
+              "it": "muoversi",
+              "en": "to move",
+              "pron": "MU-o-ver-si"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Alessia sentì un formicolio crescente.",
+              "en": "Alessia felt an increasing tingling.",
+              "words": [
+                "Alessia",
+                "sentì",
+                "un",
+                "formicolio",
+                "crescente."
+              ]
+            },
+            {
+              "it": "Le pareti sembravano pulsare.",
+              "en": "The walls seemed to pulse.",
+              "words": [
+                "Le",
+                "pareti",
+                "sembravano",
+                "pulsare."
+              ]
+            },
+            {
+              "it": "Marco aveva le vene del collo visibili.",
+              "en": "Marco had his neck veins visible.",
+              "words": [
+                "Marco",
+                "aveva",
+                "le",
+                "vene",
+                "del",
+                "collo",
+                "visibili."
+              ]
+            },
+            {
+              "it": "Il sangue si muoveva lentamente nelle vene.",
+              "en": "The blood moved slowly in the veins.",
+              "words": [
+                "Il",
+                "sangue",
+                "si",
+                "muoveva",
+                "lentamente",
+                "nelle",
+                "vene."
+              ]
+            },
+            {
+              "it": "La stanza cominciava a sembrare diversa.",
+              "en": "The room began to seem different.",
+              "words": [
+                "La",
+                "stanza",
+                "cominciava",
+                "a",
+                "sembrare",
+                "diversa."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Pulsazioni e Vene",
+          "desc": "Sangue che scorre e pulsazioni",
+          "icon": "🩸",
+          "vocab": [
+            {
+              "it": "pulsazione",
+              "en": "pulsation",
+              "pron": "pul-SAH-ta-zhun"
+            },
+            {
+              "it": "vena",
+              "en": "vein",
+              "pron": "VAYN"
+            },
+            {
+              "it": "muoversi",
+              "en": "to move",
+              "pron": "moo-oh-VEHR-see"
+            },
+            {
+              "it": "pulsare",
+              "en": "to pulse",
+              "pron": "pul-SAH-re"
+            },
+            {
+              "it": "arteria",
+              "en": "artery",
+              "pron": "ar-TEH-ree-ah"
+            },
+            {
+              "it": "visibile",
+              "en": "visible",
+              "pron": "vi-see-BIL-eh"
+            },
+            {
+              "it": "lentamente",
+              "en": "slowly",
+              "pron": "len-TEN-eh-meh"
+            },
+            {
+              "it": "controllo",
+              "en": "control",
+              "pron": "kor-TOH-nohl-lo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Le vene del collo pulsavano.",
+              "en": "The veins on her neck were pulsing.",
+              "words": [
+                "Le",
+                "vene",
+                "del",
+                "collo",
+                "pulsavano."
+              ]
+            },
+            {
+              "it": "Il sangue nelle arterie si muoveva lentamente.",
+              "en": "The blood in the arteries moved slowly.",
+              "words": [
+                "Il",
+                "sangue",
+                "nelle",
+                "arterie",
+                "si",
+                "muoveva",
+                "lentamente."
+              ]
+            },
+            {
+              "it": "Marco aveva le vene del collo visibili.",
+              "en": "Marco's neck veins were visible.",
+              "words": [
+                "Marco",
+                "aveva",
+                "le",
+                "vene",
+                "del",
+                "collo",
+                "visibili."
+              ]
+            },
+            {
+              "it": "Alessia notò le pulsazioni delle pareti.",
+              "en": "Alessia noticed the pulsations of the walls.",
+              "words": [
+                "Alessia",
+                "notò",
+                "le",
+                "pulsazioni",
+                "delle",
+                "pareti."
+              ]
+            },
+            {
+              "it": "Qualcosa la stava controllando.",
+              "en": "Something was controlling her.",
+              "words": [
+                "Qualcosa",
+                "la",
+                "stava",
+                "controllando."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Pulsazione Arteriose",
+          "desc": "Voci pulsanti, visibilità, movimenti lenti, controllo oscuro",
+          "icon": "🫁",
+          "vocab": [
+            {
+              "it": "pulsazione",
+              "en": "pulsation",
+              "pron": "pul-SAH-ta-zhun"
+            },
+            {
+              "it": "visibile",
+              "en": "visible",
+              "pron": "vi-SIH-be-le"
+            },
+            {
+              "it": "lentamente",
+              "en": "slowly",
+              "pron": "LUN-teh-MA-ne"
+            },
+            {
+              "it": "controllo",
+              "en": "control",
+              "pron": "ku-NOH-te-lo"
+            },
+            {
+              "it": "arteria",
+              "en": "artery",
+              "pron": "ar-TEH-ree-ah"
+            },
+            {
+              "it": "pulsare",
+              "en": "to pulse",
+              "pron": "pul-SAH-re"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Le vene del collo pulsavano.",
+              "en": "Her neck veins pulsed.",
+              "words": [
+                "Le",
+                "vene",
+                "del",
+                "collo",
+                "pulsavano."
+              ]
+            },
+            {
+              "it": "Il sangue nelle arterie si muoveva lentamente.",
+              "en": "The blood in the arteries moved slowly.",
+              "words": [
+                "Il",
+                "sangue",
+                "nelle",
+                "arterie",
+                "si",
+                "muoveva",
+                "lentamente."
+              ]
+            },
+            {
+              "it": "Alessia notò le vene visibili sul collo di Marco.",
+              "en": "Alessia noticed the visible veins on Marco's neck.",
+              "words": [
+                "Alessia",
+                "notò",
+                "le",
+                "vene",
+                "visibili",
+                "sul",
+                "collo",
+                "di",
+                "Marco."
+              ]
+            },
+            {
+              "it": "Il controllo oscuro la spingeva via.",
+              "en": "The dark control was pushing her away.",
+              "words": [
+                "Il",
+                "controllo",
+                "oscuro",
+                "la",
+                "spingeva",
+                "via."
+              ]
+            },
+            {
+              "it": "La stanza sembrava pulsare con la vita.",
+              "en": "The room seemed to pulse with life.",
+              "words": [
+                "La",
+                "stanza",
+                "sembrava",
+                "pulsare",
+                "con",
+                "la",
+                "vita."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1030747,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2743,
+        "totalCompletionTokens": 1817,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 198636,
+            "promptTokens": 518,
+            "completionTokens": 348
+          },
+          {
+            "lessonNum": 2,
+            "ms": 187599,
+            "promptTokens": 584,
+            "completionTokens": 355
+          },
+          {
+            "lessonNum": 3,
+            "ms": 212382,
+            "promptTokens": 630,
+            "completionTokens": 368
+          }
+        ]
+      },
+      "generatedAt": "2026-05-03T08:56:11.486Z",
+      "updatedAt": "2026-05-03T08:56:11.486Z"
+    },
+    {
+      "topic": "alessia turns into a zombie, controlled by the fungus",
+      "topicEmoji": "🧟",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "Alessia si svegliò con un dolore lancinante alla testa e un formicolio nelle mani e nei piedi. Il medico le sorrise con compassione, ma il suo sguardo era preoccupato. \"Sembra che l'intossicazione sia andata oltre,\" disse con un'espressione preoccupata. \"Abbiamo bisogno di fare alcune prove per capire cosa è successo.\"\n\nAlessia cercò di parlare, ma le parole le uscirono confuse. \"Non... non sento bene,\" disse, la voce strozzata dal dolore. Marco, seduto accanto al suo letto, la prese per le spalle e la fece sedere. \"Resta ferma,\" le disse dolcemente. \"Siamo fortunati che il dottore sia stato in grado di aiutarti in tempo.\"\n\nIl dottore esaminò attentamente Alessia, prendendo delle piccole campiture dal suo corpo. \"Abbiamo bisogno di esaminare questi campioni,\" disse, portando via le campiture. \"Ma temo che tu possa essere affetta da una forma di intossicazione molto grave.\"\n\nMentre il dottore esaminava i campioni, Alessia sentì un cambiamento strano in sé stessa. Il dolore pulsante si trasformò in una sensazione di calore che la percorreva. Un formicolio la invadeva, come se qualcosa la stesse controllando. Marco la guardò preoccupato, notando i cambiamenti. \"Alessia, cosa succede?\" chiese, la voce piena di preoccupazione.\n\nAlessia cercò di parlare, ma le parole le uscirono come un mormorio. \"Non... non lo so,\" disse, la voce strozzata. \"Mi sento... diversa.\"\n\nIl dottore tornò con un'espressione seria. \"Abbiamo trovato tracce di un fungo che controlla il corpo delle sue vittime,\" disse, la voce grave. \"È una specie di funghetto selvatico che produce un tossico che altera il cervello, trasformando le persone in zombi.\"\n\nMarco si alzò in piedi, preoccupato. \"Ma come possiamo aiutarti?\" chiese, la voce piena di angoscia. \"Non possiamo permettere che ti trasformi in un... in un... zombi.\"\n\nIl dottore annuì, comprensivo. \"Abbiamo un antidoto, ma è molto raro e difficile da trovare. Dobbiamo partire subito per Firenze per procurarlo.\"\n\nAlessia sentì un formicolio crescente, come se qualcosa la stesse spingendo fuori dal letto. \"Non... non voglio,\" disse, la voce debole. \"Non voglio diventare un... un... zombi.\"\n\nMarco la prese per le spalle, cercando di rassicurarla. \"Non preoccuparti,\" le disse dolcemente. \"Siamo fortunati che il dottore sia stato in grado di aiutarti in tempo.\" Ma Alessia sentiva che qualcosa la stava spingendo via, come se fosse sotto il controllo di un potere oscuro.",
+      "storyLang": "it",
+      "continuedFrom": "the fungus spreads to the brain",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Intossicazione e Sintomi",
+          "desc": "Sintomi e reazioni",
+          "icon": "🚨",
+          "vocab": [
+            {
+              "it": "intossicazione",
+              "en": "intoxication",
+              "pron": "in-tox-i-ca-zione"
+            },
+            {
+              "it": "svegliò",
+              "en": "woke up",
+              "pron": "sve-gli-o"
+            },
+            {
+              "it": "compassione",
+              "en": "compassion",
+              "pron": "com-pass-i-o-ne"
+            },
+            {
+              "it": "sguardo",
+              "en": "look",
+              "pron": "sgua-ro"
+            },
+            {
+              "it": "prove",
+              "en": "tests",
+              "pron": "pro-ve"
+            },
+            {
+              "it": "parlare",
+              "en": "speak",
+              "pron": "par-la-re"
+            },
+            {
+              "it": "strozzata",
+              "en": "strangled",
+              "pron": "stroz-zata"
+            },
+            {
+              "it": "seduto",
+              "en": "sat",
+              "pron": "se-duto"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Alessia si svegliò con un dolore lancinante alla testa.",
+              "en": "Alessia woke up with a piercing headache.",
+              "words": [
+                "Alessia",
+                "si",
+                "svegliò",
+                "con",
+                "un",
+                "dolore",
+                "lancinante",
+                "alla",
+                "testa."
+              ]
+            },
+            {
+              "it": "Il medico le sorrise con compassione.",
+              "en": "The doctor smiled at her with compassion.",
+              "words": [
+                "Il",
+                "medico",
+                "le",
+                "sorrise",
+                "con",
+                "compassione."
+              ]
+            },
+            {
+              "it": "Marco, seduto accanto al suo letto, la prese per le spalle.",
+              "en": "Marco, sitting next to her bed, took her by the shoulders.",
+              "words": [
+                "Marco,",
+                "seduto",
+                "accanto",
+                "al",
+                "suo",
+                "letto,",
+                "la",
+                "prese",
+                "per",
+                "le",
+                "spalle."
+              ]
+            },
+            {
+              "it": "Non... non sento bene.",
+              "en": "I... I don't feel well.",
+              "words": [
+                "Non...",
+                "non",
+                "sento",
+                "bene."
+              ]
+            },
+            {
+              "it": "Siamo fortunati che il dottore sia stato in grado di aiutarti in tempo.",
+              "en": "We're lucky the doctor was able to help you in time.",
+              "words": [
+                "Siamo",
+                "fortunati",
+                "che",
+                "il",
+                "dottore",
+                "sia",
+                "stato",
+                "in",
+                "grado",
+                "di",
+                "aiutarti",
+                "in",
+                "tempo."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Intossicazione e Fungo",
+          "desc": "Intossicazione, medico, prove, paralisi, funghi, sintomi, tossine, controllo",
+          "icon": "🧟",
+          "vocab": [
+            {
+              "it": "intossicazione",
+              "en": "intoxication",
+              "pron": "in-toh-ssee-ka-tsee-ah"
+            },
+            {
+              "it": "medico",
+              "en": "doctor",
+              "pron": "meh-dee-koh"
+            },
+            {
+              "it": "prove",
+              "en": "tests",
+              "pron": "proh-vay"
+            },
+            {
+              "it": "paralisi",
+              "en": "paralysis",
+              "pron": "par-ah-lee-sye"
+            },
+            {
+              "it": "fungi",
+              "en": "fungi",
+              "pron": "fun-jee"
+            },
+            {
+              "it": "sintomi",
+              "en": "symptoms",
+              "pron": "sin-toe-mee"
+            },
+            {
+              "it": "tossine",
+              "en": "toxins",
+              "pron": "toh-si-ne"
+            },
+            {
+              "it": "controllo",
+              "en": "control",
+              "pron": "con-trol-lo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il medico fece prove per capire cosa era successo.",
+              "en": "The doctor did tests to understand what had happened.",
+              "words": [
+                "Il",
+                "medico",
+                "fece",
+                "prove",
+                "per",
+                "capire",
+                "cosa",
+                "era",
+                "successo."
+              ]
+            },
+            {
+              "it": "Alessia sentiva un formicolio nelle gambe.",
+              "en": "Alessia felt a tingling in her legs.",
+              "words": [
+                "Alessia",
+                "sentiva",
+                "un",
+                "formicolio",
+                "nelle",
+                "gambe."
+              ]
+            },
+            {
+              "it": "Il dottore prese campiture dal suo corpo.",
+              "en": "The doctor took samples from her body.",
+              "words": [
+                "Il",
+                "dottore",
+                "prese",
+                "campiture",
+                "dal",
+                "suo",
+                "corpo."
+              ]
+            },
+            {
+              "it": "Le tossine del fungo stavano paralizzando il suo corpo.",
+              "en": "The toxins from the fungus were paralyzing her body.",
+              "words": [
+                "Le",
+                "tossine",
+                "del",
+                "fungo",
+                "stavano",
+                "paralizzando",
+                "il",
+                "suo",
+                "corpo."
+              ]
+            },
+            {
+              "it": "Marco cercò di controllarla, ma non riusciva a farla muovere.",
+              "en": "Marco tried to control her, but he couldn't make her move.",
+              "words": [
+                "Marco",
+                "cercò",
+                "di",
+                "controllarla,",
+                "ma",
+                "non",
+                "riusciva",
+                "a",
+                "farla",
+                "muovere."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "zombie transformation",
+          "desc": "medical terms and fungal control",
+          "icon": "🧟",
+          "vocab": [
+            {
+              "it": "intossicazione",
+              "en": "intoxication",
+              "pron": "in-toh-ssee-ka-tsee-oh"
+            },
+            {
+              "it": "fungi",
+              "en": "fungi",
+              "pron": "fung-ee"
+            },
+            {
+              "it": "sintomi",
+              "en": "symptoms",
+              "pron": "sin-toh-mee"
+            },
+            {
+              "it": "tossine",
+              "en": "toxins",
+              "pron": "toh-sin-eh"
+            },
+            {
+              "it": "paralisi",
+              "en": "paralysis",
+              "pron": "par-ah-lee-sis"
+            },
+            {
+              "it": "controllo",
+              "en": "control",
+              "pron": "con-troh-lo"
+            },
+            {
+              "it": "campioni",
+              "en": "samples",
+              "pron": "cam-pee-oh-nee"
+            },
+            {
+              "it": "esaminare",
+              "en": "examine",
+              "pron": "es-ah-mah-nee-re"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il medico prese campioni dal suo corpo.",
+              "en": "The doctor took samples from her body.",
+              "words": [
+                "Il",
+                "medico",
+                "prese",
+                "campioni",
+                "dal",
+                "suo",
+                "corpo."
+              ]
+            },
+            {
+              "it": "Sembra che l'intossicazione sia causata da tossine.",
+              "en": "It seems the intoxication is caused by toxins.",
+              "words": [
+                "Sembra",
+                "che",
+                "l'intossicazione",
+                "sia",
+                "causata",
+                "da",
+                "tossine."
+              ]
+            },
+            {
+              "it": "Il dottore esaminò attentamente i sintomi.",
+              "en": "The doctor carefully examined the symptoms.",
+              "words": [
+                "Il",
+                "dottore",
+                "esaminò",
+                "attentamente",
+                "i",
+                "sintomi."
+              ]
+            },
+            {
+              "it": "Abbiamo bisogno di esaminare questi campioni.",
+              "en": "We need to examine these samples.",
+              "words": [
+                "Abbiamo",
+                "bisogno",
+                "di",
+                "esaminare",
+                "questi",
+                "campioni."
+              ]
+            },
+            {
+              "it": "Il medico cercò di controllare i sintomi.",
+              "en": "The doctor tried to control the symptoms.",
+              "words": [
+                "Il",
+                "medico",
+                "cercò",
+                "di",
+                "controllare",
+                "i",
+                "sintomi."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1157608,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2933,
+        "totalCompletionTokens": 1949,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 223398,
+            "promptTokens": 522,
+            "completionTokens": 366
+          },
+          {
+            "lessonNum": 2,
+            "ms": 233466,
+            "promptTokens": 590,
+            "completionTokens": 422
+          },
+          {
+            "lessonNum": 3,
+            "ms": 218235,
+            "promptTokens": 634,
+            "completionTokens": 382
+          }
+        ]
+      },
+      "generatedAt": "2026-05-03T08:25:28.736Z",
+      "updatedAt": "2026-05-03T08:25:28.736Z"
+    },
+    {
       "topic": "the fungus spreads to the brain",
       "topicEmoji": "fungi",
       "lang": "it",
@@ -12044,6 +13193,41 @@
       "words": [],
       "flaggedAt": "2026-05-03T06:22:36.118Z",
       "comment": "incomplete italian, or skip di, so it's just pain"
+    },
+    "alessia_turns_into_a_zombie,_c:mcq_en_it:fungi": {
+      "topic": "alessia turns into a zombie, controlled by the fungus",
+      "type": "mcq_en_it",
+      "it": "fungi",
+      "en": "fungi",
+      "correct": "fungi",
+      "choices": [
+        "fungi",
+        "intossicazione",
+        "tossine",
+        "esaminare"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T08:32:58.870Z",
+      "comment": "funghi"
+    },
+    "alessia_sees_the_blood_pumping:order:Le_vene_del_collo_pulsavano.": {
+      "topic": "alessia sees the blood pumping in marcos arteries",
+      "type": "order",
+      "it": "Le vene del collo pulsavano.",
+      "en": "Her neck veins pulsed.",
+      "correct": "Le vene del collo pulsavano.",
+      "choices": [],
+      "words": [
+        "pulsavano.",
+        "Le",
+        "pulsare",
+        "vene",
+        "collo",
+        "del",
+        "pulsare"
+      ],
+      "flaggedAt": "2026-05-03T09:04:43.720Z",
+      "comment": "\"Her neck ...\": Her is missing in italian"
     }
   }
 }
