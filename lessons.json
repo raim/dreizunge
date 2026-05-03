@@ -11997,6 +11997,53 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-02T19:54:00.824Z"
+    },
+    "the_fungus_spreads_to_the_brai:mcq_en_it:mal_di": {
+      "topic": "the fungus spreads to the brain",
+      "type": "mcq_en_it",
+      "it": "mal di",
+      "en": "headache",
+      "correct": "mal di",
+      "choices": [
+        "svegliarsi",
+        "preoccupata",
+        "mal di",
+        "guardarsi intorno"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T06:18:15.964Z",
+      "comment": "testa missing"
+    },
+    "the_fungus_spreads_to_the_brai:listen_mcq:mal_di": {
+      "topic": "the fungus spreads to the brain",
+      "type": "listen_mcq",
+      "it": "mal di",
+      "en": "",
+      "correct": "headache",
+      "choices": [
+        "fungi",
+        "headache",
+        "stomach",
+        "sick"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T06:18:35.441Z"
+    },
+    "the_fungus_spreads_to_the_brai:listen_mcq:dolore_di": {
+      "topic": "the fungus spreads to the brain",
+      "type": "listen_mcq",
+      "it": "dolore di",
+      "en": "",
+      "correct": "headache",
+      "choices": [
+        "pain",
+        "wake up",
+        "sick",
+        "headache"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T06:22:36.118Z",
+      "comment": "incomplete italian, or skip di, so it's just pain"
     }
   }
 }

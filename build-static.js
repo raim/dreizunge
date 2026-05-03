@@ -74,22 +74,54 @@ const lessonsSerialized = JSON.stringify(lessonsData.lessons, null, 2);
 
 const staticFunctions = `
 // ═══════════════════════════════════════════════════════════════════════
-//  STATIC MODE — no server, all lessons baked in at build time.
-//  The lesson catalogue is STATIC_LESSONS only — localStorage is never
-//  used for lessons (only for progress/XP/flags as usual).
+//  STATIC MODE — no server, all lessons baked in at build time
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = ${lessonsSerialized};
+
+// localStorage
+const LS_SAVED = 'imp_static_saved';
+
+function staticGetSaved() {
+  try { return JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); }
+  catch(_) { return []; }
+}
+function staticPutSaved(arr) { localStorage.setItem(LS_SAVED, JSON.stringify(arr)); }
+function staticUpsert(data) {
+  const arr = staticGetSaved();
+  const k = data.topic.toLowerCase();
+  const i = arr.findIndex(l => l.topic.toLowerCase() === k);
+  const entry = { ...data, generatedAt: data.generatedAt || new Date().toISOString() };
+  if (i >= 0) arr[i] = entry; else arr.unshift(entry);
+  staticPutSaved(arr);
+}
+
+// Seed built-in lessons on first visit
+(function seedBuiltins() {
+  const arr = staticGetSaved();
+
+  for (const l of STATIC_LESSONS) {
+    const k = l.topic.toLowerCase();
+    const i = arr.findIndex(x => x.topic.toLowerCase() === k);
+
+    if (i >= 0) {
+      // 🔁 overwrite stale entry
+      arr[i] = l;
+    } else {
+      arr.unshift(l);
+    }
+  }
+
+  staticPutSaved(arr);
+})();
 
 // ── Init ──────────────────────────────────────────────────────────────
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
   selectLang(APP.lang);
-  restoreDiffSelect();
+  restoreDiffSlider();
   renderPill();
   loadSavedList();
-  const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
-  if (hashTopic) loadSaved(hashTopic);
 }
 
 function renderPill() {
@@ -107,9 +139,11 @@ function renderPill() {
   note.textContent = '📦 Static version — select a topic below to start';
 }
 
-// ── Lesson list — reads directly from baked-in STATIC_LESSONS ─────────
+// ── Saved list with language filter ───────────────────────────────────
 async function loadSavedList() {
-  const saved = STATIC_LESSONS;
+  const saved = staticGetSaved();
+
+  // Build language filter buttons if multiple languages present
   const langs = [...new Set(saved.map(s => s.lang || 'it'))].sort();
   const filterEl = document.getElementById('lib-filter');
   if (filterEl && langs.length > 1) {
@@ -134,11 +168,17 @@ async function loadSavedList() {
     const flag = L ? L.flag : '🌐';
     const count = s.lessons ? s.lessons.length : 0;
     const t = encodeURIComponent(s.topic);
+    const diff = s.difficulty || 2;
+    const diffLabel = {1:'Beginner',2:'Intermediate',3:'Advanced'}[diff] || '';
+    const diffBadge = '<span class="diff-badge d' + diff + '">' + diffLabel + '</span>';
+    const ratingStr = s.ratings
+      ? (' · ' + (['🔵','🟡','🔴'][s.ratings.difficulty-1]||'') + ' ' + (['😐','😊','😄'][s.ratings.fun-1]||'')).trimEnd()
+      : '';
     return \`<div class="saved-item" onclick="loadSaved('\${t}')">
       <span class="saved-emoji">\${flag} \${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
-        <div class="saved-topic">\${s.topic}</div>
-        <div class="saved-meta">\${count} lesson\${count !== 1 ? 's' : ''}</div>
+        <div class="saved-topic">\${s.topic} \${diffBadge}</div>
+        <div class="saved-meta">\${count} lesson\${count !== 1 ? 's' : ''}\${ratingStr}</div>
       </div>
     </div>\`;
   }).join('');
@@ -148,33 +188,38 @@ function setLibFilter(lang) { APP.libFilter = lang; loadSavedList(); }
 
 async function loadSaved(topic) {
   const dec = decodeURIComponent(topic);
-  const found = STATIC_LESSONS.find(l => l.topic.toLowerCase() === dec.toLowerCase());
+  const found = staticGetSaved().find(l => l.topic.toLowerCase() === dec.toLowerCase());
   if (!found) { alert('Lesson not found.'); return; }
   APP.lessonData = found;
   goHome();
 }
 
-function setTopic(t) { document.getElementById('topic-input').value = t; }
+function  setTopic(t) { document.getElementById('topic-input').value = t; }
 `;
 
 // Stubs injected AFTER part2 so they override engine versions
 const staticOverrides = [
-  '// ── Disabled in static mode ───────────────────────────────────────',
+  '// Disabled in static mode — overrides engine versions',
   'async function syncFlagsFromServer() {}',
   'async function pushFlagToServer()   {}',
   'async function deleteSaved()        {}',
   'async function regenSaved()         {}',
   'function  regenCurrent()            {}',
   'async function doGenerate()         {}',
-  'async function repairLesson()       {}',
-  'async function repairFromLesson()   {}',
-  'async function repairAll()          {}',
-  'async function submitRating()       {}',
   '',
-  '// UI helpers',
+  '// UI helpers — work fully in static mode',
   'function autoResizeTopic(el){ el.style.height=\'auto\'; el.style.height=Math.min(el.scrollHeight,160)+\'px\'; }',
+  'function onDiffSlider(v){',
+  '  APP.difficulty=parseInt(v,10); saveDifficulty();',
+  '  const el=document.getElementById(\'diff-val\');',
+  '  if(el){ el.textContent=DIFF_SHORT[APP.difficulty]||v; el.className=\'diff-val d\'+APP.difficulty; }',
+  '}',
+  'function restoreDiffSlider(){',
+  '  const sl=document.getElementById(\'diff-slider\'); if(sl) sl.value=APP.difficulty;',
+  '  onDiffSlider(APP.difficulty);',
+  '}',
   '',
-  '// Story — DOM-only, work in static mode',
+  '// Story — DOM-only functions work in static mode',
   'function toggleStory(){',
   '  const body=document.getElementById(\'story-body\');',
   '  const arrow=document.getElementById(\'story-arrow\');',
@@ -182,8 +227,6 @@ const staticOverrides = [
   '  const open=body.classList.toggle(\'open\');',
   '  if(arrow) arrow.classList.toggle(\'open\',open);',
   '}',
-  'function toggleStoryRepair(){}',
-  'function doRepairStory(){ alert(\'Story repair requires the live server.\'); }',
   'function speakStory(){ const d=APP.lessonData; if(d&&d.story) speak(d.story); }',
   'function renderStoryText(d){',
   '  const body=document.getElementById(\'story-body\'); if(!body) return;',

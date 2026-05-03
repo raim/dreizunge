@@ -134,37 +134,34 @@ dreizunge/
 
 ## Bugs
 
-**B2. In-lesson repair reload path**
-After `repairFromLesson` completes, `APP.cur.exercises` holds stale objects. Current in-place patch by `it.slice(0,20)` match is fragile. Fix: after repair, rebuild exercise list via `buildExercises` for current lesson and find closest matching exercise index to resume at.
+*(none current)*
 
 ---
 
 ## TODO — Minor
 
-**M1. Tighten story↔lesson coherence**
+**M1. Lesson-level repair** *(formerly B2 + repair feature)*
+All LLM-based repair has been removed. Flagging and commenting are kept. Future repair should work at the individual exercise level, with two possible modes:
+- **Manual repair:** Allow the user to directly edit the target-language text, English translation, pronunciation, and choices for any exercise via an edit form on the lesson node or in-lesson screen
+- **LLM-assisted repair:** Re-introduce a targeted per-exercise LLM call that rewrites only the flagged item, using the flag comment as instruction. Keep it simple — no batch processing, no job system — just a single inline fetch per exercise
+In both cases, flag is cleared on save.
+
+**M2. Tighten story↔lesson coherence**
 After generating the story, extract key named entities (characters, locations, objects) and include them as a bullet list in each lesson prompt. Either regex or a small fast LLM call.
 
-**M2. Seed lessons as generation context (user-selected)**
+**M3. Seed lessons as generation context (user-selected)**
 Collapsible multi-select in generation form. Ticked lessons inject vocab/character names into meta/story prompts. No extra LLM call. Server receives optional `seedTopics: string[]`.
 
-**M3. Continuation navigation links**
+**M4. Continuation navigation links**
 In the home screen for a loaded lesson, show:
-- (a) A "↩ based on: [topic]" link — clicking loads that ancestor lesson directly (topic is already stored as `continuedFrom` in lessons.json)
-- (b) A "→ continued by: [topic1], [topic2]…" section listing all lessons that have `continuedFrom === this.topic` — requires scanning all lessons and exposing via `/api/lessons` metadata or a new `/api/continuations?topic=…` endpoint
-Both should be clickable and navigate directly to that lesson's home screen.
+- (a) A "↩ based on: [topic]" link — clicking loads that ancestor lesson directly
+- (b) A "→ continued by: [topic1]…" section listing all lessons with `continuedFrom === this.topic`
 
-**M4. Story lineage DAG visualisation**
-Generate a dependency graph of all lessons connected via `continuedFrom` links. Options:
-- Client-side render using d3 or plain canvas, fetching lesson list from `/api/lessons`
-- Export as Graphviz `.dot` file for external rendering
-- Static SVG rendered server-side via a new `/api/dag` endpoint
-Nodes: topic + emoji + language flag. Edges: `continuedFrom` links, directed. Entry point: a button on the library/landing page.
+**M5. Story lineage DAG visualisation**
+Client-side render using d3 or plain canvas, fetching lesson list from `/api/lessons`. Nodes: topic + emoji + flag. Edges: `continuedFrom` links. Entry point: button on library page. Also: export as Graphviz `.dot`.
 
-**M5. Rename `"it"` field to `"tl"` (target language) throughout**
-The JSON field `"it"` for target-language words/sentences causes LLMs to default to Italian for non-Italian languages. Rename to `"tl"` everywhere — dedicated session, careful search-and-replace throughout server.js, index.html, and lessons.json (migration needed).
-
-**M6. Static build: flag/comment UI → GitHub issue redirect**
-Stub out `pushFlagToServer` in static overrides. Longer term: redirect flag submissions to a GitHub issue URL pre-filled with the exercise content.
+**M6. Rename `"it"` field to `"tl"` (target language) throughout**
+The JSON field `"it"` causes LLMs to default to Italian for non-Italian languages. Rename to `"tl"` everywhere — dedicated session, careful search-and-replace in server.js, index.html, lessons.json.
 
 **M7. Store story prompt in lessons.json + UI to view/edit it**
 Save exact prompt as `storyPrompt` in lessons.json. Add 📝 button in story header opening a modal with the prompt and "Regenerate with this prompt" action.

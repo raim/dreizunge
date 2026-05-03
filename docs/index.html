@@ -108,9 +108,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .start-strip{display:flex;justify-content:center;margin-top:20px}
 .flag-strip{background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 16px;margin:0 0 14px;display:none;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
 .flag-strip-label{font-size:13px;font-weight:800;color:#c26000;flex:1}
-.repair-all-btn{background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap}
-.repair-all-btn:hover{background:#e08000}
-.repair-all-btn:disabled{opacity:.5;cursor:not-allowed}
+.flag-note{font-size:11px;font-weight:800;color:#c26000;margin-top:4px;display:block}
 .big-btn{padding:15px 40px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);transition:transform .1s,box-shadow .1s}
 .big-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
 
@@ -183,9 +181,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .flag-comment-wrap.visible{display:block}
 .flag-comment{width:100%;padding:8px 10px;font-size:13px;font-weight:600;border:2px solid #ff9600;border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:#fffaf5;outline:none;resize:none}
 .flag-comment::placeholder{color:var(--gray);font-weight:400}
-.in-lesson-repair-btn{width:100%;margin-top:8px;padding:10px;background:none;border:2px solid #ff9600;border-radius:var(--radius);font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;transition:background .1s,color .1s}
-.in-lesson-repair-btn:hover:not(:disabled){background:#ff9600;color:#fff}
-.in-lesson-repair-btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-row{display:flex;gap:8px;align-items:stretch}
 .btn-row .check-btn{flex:1}
 .feedback.flagged-note{background:#fff4e0;border:2px solid #ff9600;display:block}
@@ -228,57 +223,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-filter-btn:hover{border-color:var(--blue)}
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 .lesson-lang-flag{font-size:16px;flex-shrink:0}
-.repair-btn{background:none;border:2px solid #ff9600;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;margin-top:8px;transition:background .1s,color .1s;width:100%}
-.repair-btn:hover{background:#ff9600;color:#fff}
-.repair-btn:disabled{opacity:.4;cursor:not-allowed}
-.repairing-note{font-size:12px;color:#c26000;font-weight:700;margin-top:6px;text-align:center}
-.shake{animation:shake .35s}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
-
-/* ══ DIFFICULTY DROPDOWN ════════════════════════════════════════════ */
-.diff-wrap{margin-bottom:14px}
-.diff-select-wrap{position:relative;display:inline-block;width:100%}
-.diff-select{width:100%;padding:10px 36px 10px 14px;font-size:14px;font-weight:800;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
-.diff-select:focus{border-color:var(--blue)}
-.diff-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
-.continue-row{margin-bottom:14px}
-.continue-lbl{display:block;font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:5px;letter-spacing:.02em;text-transform:uppercase}
-.continue-select-wrap{position:relative;display:inline-block;width:100%}
-.continue-select{width:100%;padding:9px 36px 9px 12px;font-size:13px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
-.continue-select:focus{border-color:var(--blue)}
-.continue-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px;color:var(--gray-dark)}
-.continued-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#f0f4ff;border:1.5px solid #c0ccff;border-radius:8px;padding:3px 9px;color:#334;margin-top:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.diff-badge{display:inline-block;font-size:10px;font-weight:900;padding:1px 7px;border-radius:8px;vertical-align:middle;margin-left:4px;letter-spacing:.04em}
-.diff-badge.d1{background:#d7ffb2;color:#2a6000}
-.diff-badge.d2{background:#fff3cc;color:#7a5000}
-.diff-badge.d3{background:#ffd4d4;color:#880000}
-.native-check-row{display:none}
-
-/* ══ STORY ═══════════════════════════════════════════════════════════ */
-.story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 16px;overflow:hidden;box-shadow:var(--shadow-card)}
-.story-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text);text-align:left}
-.story-hdr:hover{background:var(--gray-light)}
-.story-hdr-btns{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
-.story-icon-btn{background:none;border:2px solid var(--gray-mid);border-radius:8px;padding:3px 8px;font-size:13px;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);line-height:1.4;transition:border-color .1s}
-.story-icon-btn:hover{border-color:var(--blue)}
-.story-lang-toggle{display:flex;gap:0;border:2px solid var(--gray-mid);border-radius:8px;overflow:hidden;flex-shrink:0}
-.story-lang-btn{background:none;border:none;padding:3px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:background .1s}
-.story-lang-btn.active{background:var(--blue);color:var(--white)}
-.story-arrow{font-size:11px;color:var(--gray-dark);transition:transform .2s;flex-shrink:0}
-.story-arrow.open{transform:rotate(180deg)}
-.story-body{padding:0 16px 14px;font-size:14px;line-height:1.75;color:#444;display:none}
-.story-body.open{display:block}
-.story-body p{margin-bottom:10px}
-.story-body p:last-child{margin-bottom:0}
-.story-repair-wrap{padding:0 14px 14px;display:none}
-.story-repair-wrap.open{display:block}
-.story-repair-row{display:flex;gap:7px;align-items:flex-start}
-.story-repair-input{flex:1;padding:9px 11px;font-size:13px;font-weight:600;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--gray-light);outline:none;resize:vertical;min-height:38px}
-.story-repair-input:focus{border-color:var(--blue);background:var(--white)}
-.story-repair-btn{background:var(--blue);color:var(--white);border:none;border-radius:var(--radius);padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;flex-shrink:0}
-.story-repair-btn:hover{background:var(--blue-dark)}
-.story-repair-btn:disabled{opacity:.5;cursor:not-allowed}
-.story-repair-status{font-size:12px;color:var(--gray-dark);font-weight:600;margin-top:5px}
 .story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
@@ -373,15 +317,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <span class="diff-select-arrow">▾</span>
       </div>
     </div>
-    <div class="continue-row" id="continue-row">
-      <span class="continue-lbl">Continue story from</span>
-      <div class="continue-select-wrap">
-        <select class="continue-select" id="continue-select">
-          <option value="">— new story —</option>
-        </select>
-        <span class="continue-select-arrow">▾</span>
-      </div>
-    </div>
+    <label class="native-check-row">
+      <input type="checkbox" id="story-lang-check">
+      Generate story in <span id="native-lang-lbl">Italian</span> (experimental)
+    </label>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
@@ -428,7 +367,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   </div>
   <div class="flag-strip" id="flag-strip">
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
-    <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
   <div class="story-section" id="story-section" style="display:none">
     <button class="story-hdr" onclick="toggleStory()">
@@ -436,19 +374,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="story-hdr-btns" onclick="event.stopPropagation()">
         <span id="story-lang-lbl" class="story-lang-lbl" style="display:none"></span>
         <button class="story-icon-btn" onclick="speakStory()" title="Read aloud">🔊</button>
-        <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
       </div>
       <span class="story-arrow" id="story-arrow">▼</span>
     </button>
     <div class="story-body" id="story-body"></div>
-    <div class="story-repair-wrap" id="story-repair-wrap">
-      <div class="story-repair-row">
-        <textarea class="story-repair-input" id="story-repair-input" rows="2"
-          placeholder="Describe what to change, e.g. 'make it funnier' or 'set it in Rome'…"></textarea>
-        <button class="story-repair-btn" id="story-repair-btn" onclick="doRepairStory()">Rewrite</button>
-      </div>
-      <div class="story-repair-status" id="story-repair-status"></div>
-    </div>
   </div>
   <div class="gen-stats" id="gen-stats"></div>
   <div class="rating-panel" id="rating-panel" style="display:none"></div>
@@ -546,6 +475,8 @@ function selectLang(code){
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
   if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
+  const nativeLbl=document.getElementById('native-lang-lbl');
+  if(nativeLbl) nativeLbl.textContent=L.name;
 }
 async function pollJob(jobId, onStep, intervalMs){
   intervalMs = intervalMs || 2000;
@@ -614,10 +545,6 @@ function toggleStory(){
   const open=body.classList.toggle('open');
   if(arrow) arrow.classList.toggle('open',open);
 }
-function toggleStoryRepair(){
-  const wrap=document.getElementById('story-repair-wrap');
-  if(wrap) wrap.classList.toggle('open');
-}
 function renderStoryText(d){
   const body=document.getElementById('story-body'); if(!body) return;
   body.innerHTML=(d.story||'').split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
@@ -625,37 +552,6 @@ function renderStoryText(d){
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
   speak(d.story);
-}
-async function doRepairStory(){
-  const d=APP.lessonData; if(!d) return;
-  const instruction=document.getElementById('story-repair-input')?.value?.trim();
-  if(!instruction){ document.getElementById('story-repair-input').focus(); return; }
-  const btn=document.getElementById('story-repair-btn');
-  const status=document.getElementById('story-repair-status');
-  btn.disabled=true; btn.textContent='⏳';
-  if(status) status.textContent='Rewriting story…';
-  try{
-    const r=await fetch('/api/repair-story',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic,instruction})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Repair failed');
-    await pollJob(resp.jobId,step=>{ if(status) status.textContent=step; });
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
-    if(lr.ok) APP.lessonData=await lr.json();
-    const body=document.getElementById('story-body');
-    if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow')?.classList.add('open'); }
-    renderStoryText(APP.lessonData);
-    // Update story language badge — always the lesson's target language flag
-    const storyLangLbl=document.getElementById('story-lang-lbl');
-    if(storyLangLbl) storyLangLbl.textContent=(LANGS[APP.lessonData.lang||'it']||LANGS.it).flag;
-    document.getElementById('story-repair-input').value='';
-    if(status) status.textContent='Story updated!';
-    setTimeout(()=>{ if(status) status.textContent=''; },3000);
-    document.getElementById('story-repair-wrap')?.classList.remove('open');
-  }catch(e){
-    alert('Story repair failed: '+e.message);
-    if(status) status.textContent='';
-  }finally{ btn.disabled=false; btn.textContent='Rewrite'; }
 }
 
 // ── Rating ────────────────────────────────────────────────────────────
@@ -697,123 +593,6 @@ async function submitRating(){
     loadSavedList();
   }catch(e){ alert('Rating failed: '+e.message); }
 }
-async function repairLesson(topic, lessonId){
-  const btnId='repair-btn-'+lessonId;
-  const btn=document.getElementById(btnId);
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Repairing…'; }
-  try{
-    const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic,lessonId})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Repair failed');
-    // Poll for completion
-    if(btn) btn.textContent='⏳ Repairing…';
-    await pollJob(resp.jobId, step=>{
-      if(btn) btn.textContent='⏳ '+step;
-    });
-    // Sync flags and reload lesson
-    await syncFlagsFromServer();
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok){
-      const fresh=await lr.json();
-      if(APP.lessonData?.topic?.toLowerCase()===topic.toLowerCase()) APP.lessonData=fresh;
-    }
-    buildPath();
-  }catch(e){
-    alert('Repair failed: '+e.message);
-    if(btn){ btn.disabled=false; btn.textContent='⚑ Retry repair'; }
-  }
-}
-
-async function repairFromLesson(){
-  const C=APP.cur;
-  if(!APP.lessonData) return;
-  const topic=APP.lessonData.topic;
-  const lessonId=APP.lessonData.lessons[C.lessonIdx].id;
-  const repBtn=document.getElementById('in-lesson-repair-btn');
-  if(repBtn){ repBtn.disabled=true; repBtn.textContent='⏳ Repairing…'; }
-  try{
-    const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic,lessonId})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Repair failed');
-    if(repBtn) repBtn.textContent='⏳ Repairing…';
-    await pollJob(resp.jobId, step=>{
-      if(repBtn) repBtn.textContent='⏳ '+step;
-    });
-    // Sync flags first (server cleared them — replace local state)
-    await syncFlagsFromServer();
-    // Reload lesson data from server with updated vocab/sentences
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok){
-      const fresh=await lr.json();
-      APP.lessonData=fresh;
-    }
-    // Patch the current exercise in-place from fresh lesson data
-    // — no reshuffling, user stays exactly where they were
-    const freshLesson=APP.lessonData.lessons[C.lessonIdx];
-    const curEx=C.exercises[C.cur];
-    if(curEx && freshLesson){
-      // Find matching vocab or sentence in fresh lesson by Italian text prefix
-      const itKey=(curEx.it||'').toLowerCase().slice(0,20);
-      if(['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(curEx.type)){
-        const v=freshLesson.vocab.find(v=>v.it.toLowerCase().slice(0,20)===itKey);
-        if(v){ curEx.it=v.it; curEx.en=v.en; curEx.pron=v.pron;
-               // listen_type: user types the target language word; others: pick English meaning
-               curEx.correct=curEx.type==='listen_type' ? v.it : v.en; }
-      } else if(['order','read_translate'].includes(curEx.type)){
-        const s=freshLesson.sentences.find(s=>s.it.toLowerCase().slice(0,20)===itKey);
-        if(s){ curEx.it=s.it; curEx.en=s.en;
-               // Re-derive words from sentence text (server no longer stores LLM words)
-               curEx.words=s.it.split(' ').filter(w=>!isPunctClient(w));
-               curEx.correct=curEx.type==='order' ? curEx.words.join(' ') : s.en; }
-      }
-    }
-    // Reset answer state so the repaired exercise renders fresh
-    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
-    renderEx();
-  }catch(e){
-    alert('Repair failed: '+e.message);
-    if(repBtn){ repBtn.disabled=false; repBtn.textContent='⚙ Repair this question now'; }
-  }
-}
-
-async function repairAll(){
-  if(!APP.lessonData) return;
-  const btn=document.getElementById('repair-all-btn');
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Repairing…'; }
-  const d=APP.lessonData;
-  let totalRepaired=0, errors=[];
-  for(const L of d.lessons){
-    const topicSlug=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
-    const lessonItSet=new Set([
-      ...(L.vocab||[]).map(v=>(v.it||'').slice(0,40).replace(/\s+/g,'_')),
-      ...(L.sentences||[]).map(s=>(s.it||'').slice(0,40).replace(/\s+/g,'_'))
-    ]);
-    const hasFlags=Object.entries(APP.flagged).some(([k])=>{
-      if(!k.startsWith(topicSlug+':')) return false;
-      return lessonItSet.has(k.split(':').slice(2).join(':'));
-    });
-    if(!hasFlags) continue;
-    try{
-      if(btn) btn.textContent='⏳ Repairing lesson '+L.id+'…';
-      const r=await fetch('/api/repair',{method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({topic:d.topic,lessonId:L.id})});
-      const resp=await r.json();
-      if(!r.ok) throw new Error(resp.error||'Repair failed');
-      const result=await pollJob(resp.jobId, step=>{
-        if(btn) btn.textContent='⏳ '+step;
-      });
-      totalRepaired+=(result&&result.repaired)||0;
-    }catch(e){ errors.push('Lesson '+L.id+': '+e.message); }
-  }
-  await syncFlagsFromServer();
-  const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
-  if(lr.ok) APP.lessonData=await lr.json();
-  buildPath();
-  if(errors.length) alert('Repair finished with errors:\n'+errors.join('\n'));
-}
 
 function goHome(){
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
@@ -825,9 +604,7 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 // ── init ──
 
 // ═══════════════════════════════════════════════════════════════════════
-//  STATIC MODE — no server, all lessons baked in at build time.
-//  The lesson catalogue is STATIC_LESSONS only — localStorage is never
-//  used for lessons (only for progress/XP/flags as usual).
+//  STATIC MODE — no server, all lessons baked in at build time
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
@@ -12515,15 +12292,49 @@ const STATIC_LESSONS = [
   }
 ];
 
+// localStorage
+const LS_SAVED = 'imp_static_saved';
+
+function staticGetSaved() {
+  try { return JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); }
+  catch(_) { return []; }
+}
+function staticPutSaved(arr) { localStorage.setItem(LS_SAVED, JSON.stringify(arr)); }
+function staticUpsert(data) {
+  const arr = staticGetSaved();
+  const k = data.topic.toLowerCase();
+  const i = arr.findIndex(l => l.topic.toLowerCase() === k);
+  const entry = { ...data, generatedAt: data.generatedAt || new Date().toISOString() };
+  if (i >= 0) arr[i] = entry; else arr.unshift(entry);
+  staticPutSaved(arr);
+}
+
+// Seed built-in lessons on first visit
+(function seedBuiltins() {
+  const arr = staticGetSaved();
+
+  for (const l of STATIC_LESSONS) {
+    const k = l.topic.toLowerCase();
+    const i = arr.findIndex(x => x.topic.toLowerCase() === k);
+
+    if (i >= 0) {
+      // 🔁 overwrite stale entry
+      arr[i] = l;
+    } else {
+      arr.unshift(l);
+    }
+  }
+
+  staticPutSaved(arr);
+})();
+
 // ── Init ──────────────────────────────────────────────────────────────
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
   selectLang(APP.lang);
-  restoreDiffSelect();
+  restoreDiffSlider();
   renderPill();
   loadSavedList();
-  const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
-  if (hashTopic) loadSaved(hashTopic);
 }
 
 function renderPill() {
@@ -12541,9 +12352,11 @@ function renderPill() {
   note.textContent = '📦 Static version — select a topic below to start';
 }
 
-// ── Lesson list — reads directly from baked-in STATIC_LESSONS ─────────
+// ── Saved list with language filter ───────────────────────────────────
 async function loadSavedList() {
-  const saved = STATIC_LESSONS;
+  const saved = staticGetSaved();
+
+  // Build language filter buttons if multiple languages present
   const langs = [...new Set(saved.map(s => s.lang || 'it'))].sort();
   const filterEl = document.getElementById('lib-filter');
   if (filterEl && langs.length > 1) {
@@ -12568,11 +12381,17 @@ async function loadSavedList() {
     const flag = L ? L.flag : '🌐';
     const count = s.lessons ? s.lessons.length : 0;
     const t = encodeURIComponent(s.topic);
+    const diff = s.difficulty || 2;
+    const diffLabel = {1:'Beginner',2:'Intermediate',3:'Advanced'}[diff] || '';
+    const diffBadge = '<span class="diff-badge d' + diff + '">' + diffLabel + '</span>';
+    const ratingStr = s.ratings
+      ? (' · ' + (['🔵','🟡','🔴'][s.ratings.difficulty-1]||'') + ' ' + (['😐','😊','😄'][s.ratings.fun-1]||'')).trimEnd()
+      : '';
     return `<div class="saved-item" onclick="loadSaved('${t}')">
       <span class="saved-emoji">${flag} ${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
-        <div class="saved-topic">${s.topic}</div>
-        <div class="saved-meta">${count} lesson${count !== 1 ? 's' : ''}</div>
+        <div class="saved-topic">${s.topic} ${diffBadge}</div>
+        <div class="saved-meta">${count} lesson${count !== 1 ? 's' : ''}${ratingStr}</div>
       </div>
     </div>`;
   }).join('');
@@ -12582,13 +12401,13 @@ function setLibFilter(lang) { APP.libFilter = lang; loadSavedList(); }
 
 async function loadSaved(topic) {
   const dec = decodeURIComponent(topic);
-  const found = STATIC_LESSONS.find(l => l.topic.toLowerCase() === dec.toLowerCase());
+  const found = staticGetSaved().find(l => l.topic.toLowerCase() === dec.toLowerCase());
   if (!found) { alert('Lesson not found.'); return; }
   APP.lessonData = found;
   goHome();
 }
 
-function setTopic(t) { document.getElementById('topic-input').value = t; }
+function  setTopic(t) { document.getElementById('topic-input').value = t; }
 
 function buildPath(){
   if(!APP.lessonData)return;
@@ -12601,21 +12420,6 @@ function buildPath(){
   document.getElementById('topic-name-big').textContent=d.topic;
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
-
-  // Continued-from badge — show below topic name if applicable
-  let contBadge=document.getElementById('continued-badge');
-  if(d.continuedFrom){
-    if(!contBadge){
-      contBadge=document.createElement('div');
-      contBadge.id='continued-badge';
-      contBadge.className='continued-badge';
-      document.getElementById('topic-name-big').insertAdjacentElement('afterend',contBadge);
-    }
-    contBadge.textContent='↩ continued from: '+d.continuedFrom;
-    contBadge.style.display='';
-  } else if(contBadge){
-    contBadge.style.display='none';
-  }
 
   // Story section
   const storySec=document.getElementById('story-section');
@@ -12631,24 +12435,19 @@ function buildPath(){
     // Show story language as a small label in the header
     const storyLangLbl=document.getElementById('story-lang-lbl');
     if(storyLangLbl){
-      storyLangLbl.textContent=dL.flag;
+      const sl=d.storyLang||'en';
+      storyLangLbl.textContent=sl==='en'?'EN':(LANGS[sl]?.flag||sl.toUpperCase());
       storyLangLbl.style.display='';
     }
-    const repToggle=document.getElementById('story-repair-toggle-btn');
-    if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
   } else if(storySec){ storySec.style.display='none'; }
 
-  // Gen stats + repair stats
+  // Gen stats
   const statEl=document.getElementById('gen-stats');
   if(statEl){
     const lines=[];
     if(d.generationStats){
       const gs=d.generationStats;
       lines.push(`Generated in ${(gs.totalMs/1000).toFixed(1)}s · ${gs.model} · ${((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString()} tokens`);
-    }
-    if(d.repairStats&&d.repairStats.repairCount>0){
-      const rs=d.repairStats;
-      lines.push(`${rs.repairCount} repair${rs.repairCount!==1?'s':''} · ${(rs.totalMs/1000).toFixed(1)}s · ${((rs.promptTokens||0)+(rs.completionTokens||0)).toLocaleString()} tokens`);
     }
     statEl.innerHTML=lines.join('<br>');
   }
@@ -12680,7 +12479,8 @@ function buildPath(){
       <div class="node-lbl">
         <div class="node-title">Lesson ${L.id}: ${L.title} ${diffBadge}</div>
         <div class="node-desc">${L.desc}</div>
-        ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}      </div>
+        ${hasFlags?`<span class="flag-note">⚑ ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</span>`:''}
+      </div>
       ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
@@ -12696,11 +12496,9 @@ function buildPath(){
   const totalFlagged=Object.keys(APP.flagged).filter(k=>k.startsWith(topicSlugAll+':')).length;
   const strip=document.getElementById('flag-strip');
   const stripLbl=document.getElementById('flag-strip-label');
-  const repAllBtn=document.getElementById('repair-all-btn');
   if(strip){
-    strip.style.display=totalFlagged>0&&APP.info.canGenerate?'flex':'none';
+    strip.style.display=totalFlagged>0?'flex':'none';
     if(stripLbl) stripLbl.textContent='⚑ '+totalFlagged+' flagged question'+(totalFlagged!==1?'s':'')+' across all lessons';
-    if(repAllBtn) repAllBtn.disabled=false;
   }
 }
 function startNextLesson(){
@@ -12809,8 +12607,7 @@ function renderEx(){
     '</div>'+
     '<div class="flag-comment-wrap'+(alreadyFlagged?' visible':'')+'" id="flag-comment-wrap">'+
       '<textarea class="flag-comment" id="flag-comment-input" rows="2" placeholder="Optional: describe what is wrong…" onblur="saveComment()">'+existingComment+'</textarea>'+
-    '</div>'+
-    (APP.info.canGenerate?'<button class="in-lesson-repair-btn" id="in-lesson-repair-btn" onclick="repairFromLesson()" style="display:'+(alreadyFlagged?'block':'none')+'">⚙ Repair this question now</button>':'');
+    '</div>';
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>speak(ex.it),350);
 }
 
@@ -12867,15 +12664,12 @@ function flagCurrent(){
   // Show/hide comment box
   const cWrap=document.getElementById('flag-comment-wrap');
   if(cWrap){ cWrap.className='flag-comment-wrap'+(flagged?' visible':''); }
-  // Show/hide in-lesson repair button (only if LLM available)
-  const repBtn=document.getElementById('in-lesson-repair-btn');
-  if(repBtn){ repBtn.style.display=flagged&&APP.info.canGenerate?'block':'none'; }
   // Update feedback bar if already answered
   if(C.answered){
     const fb=document.getElementById('fb');
     if(fb && flagged){
       fb.className='feedback flagged-note';
-      fb.innerHTML='<div class="fb-head">⚑ Flagged — not scored</div><div class="fb-body">This question is flagged. Add a comment below, then use Repair to fix it.</div>';
+      fb.innerHTML='<div class="fb-head">⚑ Flagged — not scored</div><div class="fb-body">This question is flagged. Add a comment to help improve it.</div>';
     }
   }
 }
@@ -12999,22 +12793,27 @@ function speak(text,rate){
 }
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
 
-// ── Disabled in static mode ───────────────────────────────────────
+// Disabled in static mode — overrides engine versions
 async function syncFlagsFromServer() {}
 async function pushFlagToServer()   {}
 async function deleteSaved()        {}
 async function regenSaved()         {}
 function  regenCurrent()            {}
 async function doGenerate()         {}
-async function repairLesson()       {}
-async function repairFromLesson()   {}
-async function repairAll()          {}
-async function submitRating()       {}
 
-// UI helpers
+// UI helpers — work fully in static mode
 function autoResizeTopic(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px'; }
+function onDiffSlider(v){
+  APP.difficulty=parseInt(v,10); saveDifficulty();
+  const el=document.getElementById('diff-val');
+  if(el){ el.textContent=DIFF_SHORT[APP.difficulty]||v; el.className='diff-val d'+APP.difficulty; }
+}
+function restoreDiffSlider(){
+  const sl=document.getElementById('diff-slider'); if(sl) sl.value=APP.difficulty;
+  onDiffSlider(APP.difficulty);
+}
 
-// Story — DOM-only, work in static mode
+// Story — DOM-only functions work in static mode
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
@@ -13022,8 +12821,6 @@ function toggleStory(){
   const open=body.classList.toggle('open');
   if(arrow) arrow.classList.toggle('open',open);
 }
-function toggleStoryRepair(){}
-function doRepairStory(){ alert('Story repair requires the live server.'); }
 function speakStory(){ const d=APP.lessonData; if(d&&d.story) speak(d.story); }
 function renderStoryText(d){
   const body=document.getElementById('story-body'); if(!body) return;
