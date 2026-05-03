@@ -1,6 +1,724 @@
 {
   "lessons": [
     {
+      "topic": "vibecoding",
+      "topicEmoji": "🎵",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "Nel cuore di Vibecode, Marco e Sofia si ritrovarono a \"vibecoding\", un nuovo esercizio che mescolava lezioni di grammatica con movimenti danzanti. Marco, con la sua passione per la lingua, si mosse con grazia, come se ogni parola fosse un passo. Sofia, con i suoi occhi luminosi, si unì al suo ritmo, creando un'armonia che risuonava nell'aria multicolori del luogo.\n\nMentre si muovevano, Marco e Sofia si scambiarono sorrisi e battute, catturando le note di una canzone che sembrava essersi materializzata dal loro dialogo. Ogni frase pronunciata si trasformava in un movimento, ogni movimento in una parola. Marco capì allora che \"vibecoding\" non era solo un'esercitazione, ma un modo di vivere la lingua, di farla diventare parte del loro corpo e della loro anima.\n\nInsieme, Marco e Sofia esplorarono nuovi modi di esprimersi, catturando le sfumature di un linguaggio che si muoveva come un'onda. Ogni volta che si univano a un gruppo per \"vibecoding\", sentivano crescere la loro comprensione, come se ogni parola fosse un passo danzante verso la perfezione. E in quel luogo magico, dove le parole danzavano con il vento, Marco e Sofia si sentivano liberi, come se la lingua fosse diventata un'amica che li accompagnava in un viaggio senza fine.",
+      "storyLang": "it",
+      "continuedFrom": "write a poem about vibecoding a language learning app",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Vibecoding",
+          "desc": "Danza e grammatica",
+          "icon": "💃🏻📖",
+          "vocab": [
+            {
+              "it": "vibecoding",
+              "en": "vibecoding",
+              "pron": "vi-bee-ko-ding"
+            },
+            {
+              "it": "passione",
+              "en": "passion",
+              "pron": "pas-see-on"
+            },
+            {
+              "it": "grazia",
+              "en": "grace",
+              "pron": "gra-zza"
+            },
+            {
+              "it": "armonia",
+              "en": "harmony",
+              "pron": "a-ro-ma-ee-a"
+            },
+            {
+              "it": "note",
+              "en": "notes",
+              "pron": "no-te"
+            },
+            {
+              "it": "dialogo",
+              "en": "dialog",
+              "pron": "di-a-log-oo"
+            },
+            {
+              "it": "esplorare",
+              "en": "explore",
+              "pron": "es-plor-aa-re"
+            },
+            {
+              "it": "parte",
+              "en": "part",
+              "pron": "par-te"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Marco ballava con passione.",
+              "en": "Marco was dancing with passion.",
+              "words": [
+                "Marco",
+                "ballava",
+                "con",
+                "passione."
+              ]
+            },
+            {
+              "it": "Sofia mosse le braccia con grazia.",
+              "en": "Sofia moved her arms with grace.",
+              "words": [
+                "Sofia",
+                "mosse",
+                "le",
+                "braccia",
+                "con",
+                "grazia."
+              ]
+            },
+            {
+              "it": "Cantarono insieme note dolci.",
+              "en": "They sang sweet notes together.",
+              "words": [
+                "Cantarono",
+                "insieme",
+                "note",
+                "dolci."
+              ]
+            },
+            {
+              "it": "Il dialogo creò armonia.",
+              "en": "The dialogue created harmony.",
+              "words": [
+                "Il",
+                "dialogo",
+                "creò",
+                "armonia."
+              ]
+            },
+            {
+              "it": "Vibecoding è parte della vita.",
+              "en": "Vibecoding is part of life.",
+              "words": [
+                "Vibecoding",
+                "è",
+                "parte",
+                "della",
+                "vita."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "vibecoding",
+          "desc": "dance and language",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "luogo",
+              "en": "place",
+              "pron": "LOO-oh"
+            },
+            {
+              "it": "multicolori",
+              "en": "multicolored",
+              "pron": "mul-ti-KOR-lee"
+            },
+            {
+              "it": "risuonava",
+              "en": "resonated",
+              "pron": "ree-SEE-oh-nahd-ah"
+            },
+            {
+              "it": "catturare",
+              "en": "capture",
+              "pron": "kat-tu-RAH-re"
+            },
+            {
+              "it": "note",
+              "en": "notes",
+              "pron": "NOH-te"
+            },
+            {
+              "it": "movimento",
+              "en": "movement",
+              "pron": "mo-vee-MEN-to"
+            },
+            {
+              "it": "parola",
+              "en": "word",
+              "pron": "par-OL-a"
+            },
+            {
+              "it": "parte",
+              "en": "part",
+              "pron": "PART"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Risuonava la musica nel luogo multicolori.",
+              "en": "The music resonated in the multicolored place.",
+              "words": [
+                "Risuonava",
+                "la",
+                "musica",
+                "nel",
+                "luogo",
+                "multicolori."
+              ]
+            },
+            {
+              "it": "Catturare le note con i movimenti.",
+              "en": "Capture the notes with movements.",
+              "words": [
+                "Catturare",
+                "le",
+                "note",
+                "con",
+                "i",
+                "movimenti."
+              ]
+            },
+            {
+              "it": "Ogni parola era un movimento.",
+              "en": "Every word was a movement.",
+              "words": [
+                "Ogni",
+                "parola",
+                "era",
+                "un",
+                "movimento."
+              ]
+            },
+            {
+              "it": "Esplorare la lingua con passione.",
+              "en": "Explore the language with passion.",
+              "words": [
+                "Esplorare",
+                "la",
+                "lingua",
+                "con",
+                "passione."
+              ]
+            },
+            {
+              "it": "La passione di Marco faceva parte di lui.",
+              "en": "Marco's passion was part of him.",
+              "words": [
+                "La",
+                "passione",
+                "di",
+                "Marco",
+                "faceva",
+                "parte",
+                "di",
+                "lui."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Vibecoding",
+          "desc": "Danza e linguaggio",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "rhythmo",
+              "en": "rhythm",
+              "pron": "ri-THEH-mo"
+            },
+            {
+              "it": "espressione",
+              "en": "expression",
+              "pron": "es-pre-SHEE-zhun"
+            },
+            {
+              "it": "intonazione",
+              "en": "intonation",
+              "pron": "in-to-NAH-ta-zhun"
+            },
+            {
+              "it": "esercizio",
+              "en": "exercise",
+              "pron": "es-er-SIH-tsee"
+            },
+            {
+              "it": "sinfonia",
+              "en": "symphony",
+              "pron": "sin-FYOO-nee-ah"
+            },
+            {
+              "it": "melodia",
+              "en": "melody",
+              "pron": "mel-OH-dee-ah"
+            },
+            {
+              "it": "condivisione",
+              "en": "sharing",
+              "pron": "kon-dee-vi-ZHEE-ah"
+            },
+            {
+              "it": "comprensione",
+              "en": "comprehension",
+              "pron": "kom-preh-EN-see-ah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il loro movimento creava un ritmo.",
+              "en": "Their movement created a rhythm.",
+              "words": [
+                "Il",
+                "loro",
+                "movimento",
+                "creava",
+                "un",
+                "ritmo."
+              ]
+            },
+            {
+              "it": "Sinfonia di note e parole.",
+              "en": "Symphony of notes and words.",
+              "words": [
+                "Sinfonia",
+                "di",
+                "note",
+                "e",
+                "parole."
+              ]
+            },
+            {
+              "it": "Condivisione di emozioni attraverso il danzare.",
+              "en": "Sharing emotions through dancing.",
+              "words": [
+                "Condivisione",
+                "di",
+                "emozioni",
+                "attraverso",
+                "il",
+                "danzare."
+              ]
+            },
+            {
+              "it": "Espressione sincera di sé.",
+              "en": "Sincere expression of self.",
+              "words": [
+                "Espressione",
+                "sincera",
+                "di",
+                "sé."
+              ]
+            },
+            {
+              "it": "Comprensione che si manifestava in movimenti.",
+              "en": "Comprehension that manifested in movements.",
+              "words": [
+                "Comprensione",
+                "che",
+                "si",
+                "manifestava",
+                "in",
+                "movimenti."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 794758,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2448,
+        "totalCompletionTokens": 1414,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 191579,
+            "promptTokens": 544,
+            "completionTokens": 321
+          },
+          {
+            "lessonNum": 2,
+            "ms": 178808,
+            "promptTokens": 610,
+            "completionTokens": 331
+          },
+          {
+            "lessonNum": 3,
+            "ms": 192793,
+            "promptTokens": 658,
+            "completionTokens": 349
+          }
+        ]
+      },
+      "generatedAt": "2026-05-03T17:16:08.007Z",
+      "updatedAt": "2026-05-03T17:16:08.007Z"
+    },
+    {
+      "topic": "write a poem about vibecoding a language learning app",
+      "topicEmoji": "🎶",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "Nel cuore di una città affacciata sul mare, dove le parole danzavano con il vento, c'era un'app che si chiamava \"Vibecode\". Era un luogo magico, dove le lingue si mescolavano come note di un concerto vivace. I giovani, avvolti nelle luci multicolori, si muovevano al ritmo delle lezioni, come se la grammatica fosse un ballo.\n\nEra un pomeriggio di sole, quando un giovane apprendista, Marco, si unì al corteo di studenti. Con un sorriso sulle labbra e un libro di grammatica in mano, si immerse nella danza. Ogni parola che pronunciava si trasformava in una nota, creando un'armonia che risuonava nell'aria. Marco si sentiva libero, come se la lingua fosse un'amica che lo accompagnava in un viaggio senza fine.\n\nTra le note di una canzone, Marco incontrò Sofia, una ragazza con gli occhi luminosi. Insieme, si unirono a un gruppo di studenti che si esercitavano in un'esercitazione di conversazione. Le loro voci si mescolavano, formando un tessuto di suoni che vibrava di vita. Marco capì allora che Vibecode non era solo un'app, ma un luogo dove le lingue si scambiavano come baci, dove ogni parola era un passo danzante verso la comprensione.",
+      "storyLang": "it",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Vibecode",
+          "desc": "apprendisti, linguaggi, danza, armonia",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "apprendista",
+              "en": "apprentice",
+              "pron": "a-PREN-dista"
+            },
+            {
+              "it": "linguaggi",
+              "en": "languages",
+              "pron": "lin-GWAJ-ji"
+            },
+            {
+              "it": "danza",
+              "en": "dance",
+              "pron": "DA-nza"
+            },
+            {
+              "it": "armonia",
+              "en": "harmony",
+              "pron": "a-RO-ma-ja"
+            },
+            {
+              "it": "viaggio",
+              "en": "journey",
+              "pron": "vi-A-ggio"
+            },
+            {
+              "it": "corteo",
+              "en": "procession",
+              "pron": "kor-TE-o"
+            },
+            {
+              "it": "note",
+              "en": "notes",
+              "pron": "NO-te"
+            },
+            {
+              "it": "luminosi",
+              "en": "shining",
+              "pron": "lu-MI-no-si"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Le parole danzavano con il vento.",
+              "en": "Words danced with the wind.",
+              "words": [
+                "Le",
+                "parole",
+                "danzavano",
+                "con",
+                "il",
+                "vento."
+              ]
+            },
+            {
+              "it": "I giovani si muovevano al ritmo.",
+              "en": "The young people moved to the rhythm.",
+              "words": [
+                "I",
+                "giovani",
+                "si",
+                "muovevano",
+                "al",
+                "ritmo."
+              ]
+            },
+            {
+              "it": "Ogni parola si trasformava in una nota.",
+              "en": "Every word transformed into a note.",
+              "words": [
+                "Ogni",
+                "parola",
+                "si",
+                "trasformava",
+                "in",
+                "una",
+                "nota."
+              ]
+            },
+            {
+              "it": "Marco si sentiva libero come un uccello.",
+              "en": "Marco felt free like a bird.",
+              "words": [
+                "Marco",
+                "si",
+                "sentiva",
+                "libero",
+                "come",
+                "un",
+                "uccello."
+              ]
+            },
+            {
+              "it": "Sofia aveva gli occhi luminosi.",
+              "en": "Sofia had shining eyes.",
+              "words": [
+                "Sofia",
+                "aveva",
+                "gli",
+                "occhi",
+                "luminosi."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Vibecode",
+          "desc": "Dancing with languages in Vibecode",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "grammatica",
+              "en": "grammar",
+              "pron": "gram-MAT-ti-ca"
+            },
+            {
+              "it": "luci",
+              "en": "lights",
+              "pron": "LOO-che"
+            },
+            {
+              "it": "multicolori",
+              "en": "multicolored",
+              "pron": "mul-ti-KOR-dee"
+            },
+            {
+              "it": "avvolto",
+              "en": "wrapped",
+              "pron": "av-VO-lto"
+            },
+            {
+              "it": "ritmo",
+              "en": "rhythm",
+              "pron": "RI-tmo"
+            },
+            {
+              "it": "lezioni",
+              "en": "lessons",
+              "pron": "le-ZZION-i"
+            },
+            {
+              "it": "amica",
+              "en": "friend",
+              "pron": "a-MI-ca"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Le parole danzavano con il vento.",
+              "en": "The words danced with the wind.",
+              "words": [
+                "Le",
+                "parole",
+                "danzavano",
+                "con",
+                "il",
+                "vento."
+              ]
+            },
+            {
+              "it": "Sofia aveva occhi luminosi.",
+              "en": "Sofia had shining eyes.",
+              "words": [
+                "Sofia",
+                "aveva",
+                "occhi",
+                "luminosi."
+              ]
+            },
+            {
+              "it": "Si muovevano al ritmo delle lezioni.",
+              "en": "They moved to the rhythm of the lessons.",
+              "words": [
+                "Si",
+                "muovevano",
+                "al",
+                "ritmo",
+                "delle",
+                "lezioni."
+              ]
+            },
+            {
+              "it": "La grammatica era un'amica.",
+              "en": "Grammar was a friend.",
+              "words": [
+                "La",
+                "grammatica",
+                "era",
+                "un'amica."
+              ]
+            },
+            {
+              "it": "Era un pomeriggio di sole.",
+              "en": "It was a sunny afternoon.",
+              "words": [
+                "Era",
+                "un",
+                "pomeriggio",
+                "di",
+                "sole."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Vibecode",
+          "desc": "Italian language learning through dance and harmony",
+          "icon": "🎶",
+          "vocab": [
+            {
+              "it": "parole",
+              "en": "words",
+              "pron": "PAHR-loh"
+            },
+            {
+              "it": "vento",
+              "en": "wind",
+              "pron": "VEN-to"
+            },
+            {
+              "it": "concerto",
+              "en": "concert",
+              "pron": "kon-CER-to"
+            },
+            {
+              "it": "multicolori",
+              "en": "multicolored",
+              "pron": "mul-tee-ko-LAH-roo"
+            },
+            {
+              "it": "grammatica",
+              "en": "grammar",
+              "pron": "gram-MAH-ti-kah"
+            },
+            {
+              "it": "libro",
+              "en": "book",
+              "pron": "LIE-broh"
+            },
+            {
+              "it": "risuonava",
+              "en": "resonated",
+              "pron": "ree-SWON-ah-vah"
+            },
+            {
+              "it": "accompagnava",
+              "en": "accompanied",
+              "pron": "ah-komp-ah-GNAH-vah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Le parole danzavano con il vento.",
+              "en": "The words danced with the wind.",
+              "words": [
+                "Le",
+                "parole",
+                "danzavano",
+                "con",
+                "il",
+                "vento."
+              ]
+            },
+            {
+              "it": "Il libro di grammatica era un amico.",
+              "en": "The grammar book was a friend.",
+              "words": [
+                "Il",
+                "libro",
+                "di",
+                "grammatica",
+                "era",
+                "un",
+                "amico."
+              ]
+            },
+            {
+              "it": "Le note creavano armonia.",
+              "en": "The notes created harmony.",
+              "words": [
+                "Le",
+                "note",
+                "creavano",
+                "armonia."
+              ]
+            },
+            {
+              "it": "Sofia aveva occhi luminosi.",
+              "en": "Sofia had shining eyes.",
+              "words": [
+                "Sofia",
+                "aveva",
+                "occhi",
+                "luminosi."
+              ]
+            },
+            {
+              "it": "La danza seguiva il ritmo delle lezioni.",
+              "en": "The dance followed the rhythm of the lessons.",
+              "words": [
+                "La",
+                "danza",
+                "seguiva",
+                "il",
+                "ritmo",
+                "delle",
+                "lezioni."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 763540,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1974,
+        "totalCompletionTokens": 1383,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 207854,
+            "promptTokens": 525,
+            "completionTokens": 337
+          },
+          {
+            "lessonNum": 2,
+            "ms": 209962,
+            "promptTokens": 588,
+            "completionTokens": 323
+          },
+          {
+            "lessonNum": 3,
+            "ms": 199596,
+            "promptTokens": 629,
+            "completionTokens": 338
+          }
+        ]
+      },
+      "generatedAt": "2026-05-03T17:00:14.306Z",
+      "updatedAt": "2026-05-03T17:00:14.306Z"
+    },
+    {
       "topic": "neuroscience and EEG",
       "topicEmoji": "🧠",
       "lang": "it",
@@ -4416,134 +5134,119 @@
       "topic": "italian recipes from nonna",
       "topicEmoji": "🇮🇹",
       "lang": "it",
-      "difficulty": 2,
-      "story": "In the cozy kitchen of Nonna's house, the air was thick with the aroma of simmering sauce and the gentle clatter of pots and pans. The walls were lined with shelves, each one holding a collection of old, worn cookbooks and jars of homemade spices. Nonna, with her silver hair tied back and her hands stained with the colors of tomatoes and basil, was preparing a traditional Italian recipe that had been passed down through generations.\n\n\"Come here, child,\" Nonna called, her voice warm and inviting. \"Let me show you how to make my grandmother's famous ragù alla Bolognese.\"\n\nShe led me to the large wooden table, where a cutting board and a sharp knife awaited. \"First, we need to prepare the onions and carrots. These are the heart of the sauce, so they must be finely chopped.\" She demonstrated, her movements precise and deliberate. \"Remember, the key to a good ragù is patience. The flavors need time to meld together.\"\n\nAs we worked, Nonna began to narrate the history of the recipe. \"This ragù,\" she said, \"is a labor of love. It's slow-cooked for hours, until the meat is tender and the sauce is rich and deep. It's a tradition that my own grandmother taught me, and now I teach you.\"\n\nWe moved on to the meat, a selection of ground beef and pork that Nonna had carefully chosen. She showed me how to brown the meat in a large pot, stirring it gently to ensure it cooked evenly. \"The color is important,\" she explained. \"A good ragù should have a beautiful, rich brown color.\"\n\nNext, we added the onions and carrots, along with a generous splash of red wine. \"This helps to deglaze the pan and extract the flavors from the meat,\" Nonna said. \"It's a crucial step that adds depth to the sauce.\"\n\nAs the sauce simmered, Nonna shared stories of her childhood, of long summer days spent in the countryside, and the warmth of family gatherings around the table. \"Every time we make this ragù, it reminds me of home,\" she said, her eyes twinkling with memories. \"It's not just a recipe; it's a connection to the past.\"\n\nFinally, the ragù was ready to be served over a bed of al dente pasta. Nonna ladled the rich, savory sauce over the pasta, and we sat down to enjoy the meal. The flavors were a symphony of sweet and savory, a perfect blend of tradition and love. As we ate, Nonna smiled, her eyes filled with pride. \"This is what Nonna's recipes are all about,\" she said. \"Passing on the love and the history through every bite.\"",
-      "storyLang": "en",
+      "difficulty": 1,
+      "story": "Nel cuore di quella città affacciata sul mare, dove le parole danzavano con il vento, Sofia e Marco si ritrovarono a condividere non solo le loro lingue, ma anche le loro ricette. Un pomeriggio, Sofia raccontò a Marco di sua nonna, una donna che sapeva preparare i piatti più deliziosi con le mani avvolte in un velo di magia. \"Nonna Sofia,\" le chiamavano i nipoti, con un affetto che si trasmetteva attraverso ogni boccone.\n\nSofia prese un vecchio libro di ricette, coperto di macchie di tè e di baci, e iniziò a sfogliarlo con cura. \"Guarda,\" disse, indicando una pagina con una ricetta per le tagliatelle al ragù. \"Nonna diceva che il ragù deve cuocere per ore, con amore e pazienza.\" Marco, con la curiosità di un apprendista, si avvicinò per leggere le istruzioni. \"Ecco,\" spiegò Sofia, \"devi mescolare il ragù con le tagliatelle, come se stessi danzando con ogni boccone.\"\n\nSeguirono Sofia e Marco in cucina, dove le pentole e le padelle catturavano l'odore del basilico e del pomodoro. Mentre le tagliatelle si stendevano come un velo di seta sulla padella, Marco si sentì come se stesse imparando una nuova lingua, una lingua di sapori e di emozioni. Sofia, con un sorriso, aggiunse un po' di sale, come se stesse aggiungendo un sussurro di mistero alla ricetta.\n\nQuando le tagliatelle furono pronte, Sofia e Marco si sedettero a tavola, con le tagliatelle al ragù davanti a loro. Le note di quella cena erano dolci come il miele, e ogni boccone era un passo danzante verso la comprensione, non solo della lingua, ma anche della famiglia e della tradizione.",
+      "storyLang": "it",
+      "continuedFrom": "write a poem about vibecoding a language learning app",
       "lessons": [
         {
           "id": 1,
           "title": "Italian recipes from nonna",
-          "desc": "cooking, traditional dishes, family recipes",
-          "icon": "🔥",
+          "desc": "basic Italian vocabulary for cooking and family",
+          "icon": "🍝",
           "vocab": [
             {
-              "it": "ragù alla Bolognese",
-              "en": "Bolognese sauce",
-              "pron": "RAH-goo ah-LAH-boh-lee-NAY-say"
+              "it": "tagliatelle",
+              "en": "tagliatelle",
+              "pron": "tag-lia-ta-le"
             },
             {
-              "it": "aroma",
-              "en": "scent",
-              "pron": "AH-rah-moh"
+              "it": "ragù",
+              "en": "ragù",
+              "pron": "ra-gu"
             },
             {
-              "it": "pots and pans",
-              "en": "pots and pans",
-              "pron": "POHTS AHN PAHNS"
+              "it": "cuocere",
+              "en": "to cook",
+              "pron": "ku-ko-re"
             },
             {
-              "it": "shelves",
-              "en": "shelves",
-              "pron": "SHEL-feez"
+              "it": "amore",
+              "en": "love",
+              "pron": "a-mo-re"
             },
             {
-              "it": "spices",
-              "en": "spices",
-              "pron": "SPIH-seez"
+              "it": "pazienza",
+              "en": "patience",
+              "pron": "pa-zi-en-za"
             },
             {
-              "it": "silver",
-              "en": "silver",
-              "pron": "SIL-ee-ver"
+              "it": "boccone",
+              "en": "bite",
+              "pron": "bo-cone"
             },
             {
-              "it": "stained",
-              "en": "stained",
-              "pron": "STAYN-ed"
+              "it": "apprendista",
+              "en": "apprentice",
+              "pron": "ap-pren-dista"
             },
             {
-              "it": "generations",
-              "en": "generations",
-              "pron": "je-NEH-ra-shuns"
+              "it": "curiosità",
+              "en": "curiosity",
+              "pron": "ku-ri-o-zu-ta"
             }
           ],
           "sentences": [
             {
-              "it": "L'aria era densa di aromi di sugo in ebollizione.",
-              "en": "The air was thick with the scent of simmering sauce.",
+              "it": "Tagliatelle al ragù sono un piatto delizioso.",
+              "en": "Tagliatelle al ragù is a delicious dish.",
               "words": [
-                "L'aria",
-                "era",
-                "densa",
-                "di",
-                "aromi",
-                "di",
-                "sugo",
-                "in",
-                "ebollizione."
+                "Tagliatelle",
+                "al",
+                "ragù",
+                "sono",
+                "un",
+                "piatto",
+                "delizioso."
               ]
             },
             {
-              "it": "Nonna teneva i suoi ricordi cucinati tra le sue mani.",
-              "en": "Nonna kept her memories cooked in her hands.",
+              "it": "Cuocere il ragù richiede pazienza.",
+              "en": "Cooking the ragù requires patience.",
+              "words": [
+                "Cuocere",
+                "il",
+                "ragù",
+                "richiede",
+                "pazienza."
+              ]
+            },
+            {
+              "it": "Nonna diceva che il ragù deve cuocere per ore.",
+              "en": "Grandma said that the ragù should cook for hours.",
               "words": [
                 "Nonna",
-                "teneva",
-                "i",
-                "suoi",
-                "ricordi",
-                "cucinati",
-                "tra",
-                "le",
-                "sue",
-                "mani."
+                "diceva",
+                "che",
+                "il",
+                "ragù",
+                "deve",
+                "cuocere",
+                "per",
+                "ore."
               ]
             },
             {
-              "it": "Con un coltello affilato, tagliò le cipolle e le carote.",
-              "en": "With a sharp knife, she chopped the onions and carrots.",
+              "it": "Guarda, ecco le istruzioni.",
+              "en": "Look, here are the instructions.",
+              "words": [
+                "Guarda,",
+                "ecco",
+                "le",
+                "istruzioni."
+              ]
+            },
+            {
+              "it": "Con amore e pazienza, prepara il ragù.",
+              "en": "With love and patience, prepare the ragù.",
               "words": [
                 "Con",
-                "un",
-                "coltello",
-                "affilato,",
-                "tagliò",
-                "le",
-                "cipolle",
+                "amore",
                 "e",
-                "le",
-                "carote."
-              ]
-            },
-            {
-              "it": "Questo è il cuore del sugo, quindi devono essere finemente tagliati.",
-              "en": "This is the heart of the sauce, so they must be finely chopped.",
-              "words": [
-                "Questo",
-                "è",
+                "pazienza,",
+                "prepara",
                 "il",
-                "cuore",
-                "del",
-                "sugo,",
-                "quindi",
-                "devono",
-                "essere",
-                "finemente",
-                "tagliati."
-              ]
-            },
-            {
-              "it": "Nonna mi condusse alla grande tavola di legno.",
-              "en": "Nonna led me to the large wooden table.",
-              "words": [
-                "Nonna",
-                "mi",
-                "condusse",
-                "alla",
-                "grande",
-                "tavola",
-                "di",
-                "legno."
+                "ragù."
               ]
             }
           ]
@@ -4551,293 +5254,250 @@
         {
           "id": 2,
           "title": "Italian recipes from nonna",
-          "desc": "cooking, traditional recipes, family",
-          "icon": "🔥",
+          "desc": "sharing family recipes and cooking traditions",
+          "icon": "🍝",
           "vocab": [
             {
               "it": "tagliatelle",
-              "en": "wide egg noodles",
-              "pron": "tag-lee-a-tel-le"
+              "en": "tagliatelle",
+              "pron": "tag-lia-ta-le"
             },
             {
-              "it": "sugo",
-              "en": "sauce",
-              "pron": "soo-go"
+              "it": "ragù",
+              "en": "ragù",
+              "pron": "ra-gu"
             },
             {
-              "it": "casseruola",
-              "en": "large pot",
-              "pron": "kas-ser-roo-la"
+              "it": "cuocere",
+              "en": "to cook",
+              "pron": "KOO-che-re"
             },
             {
-              "it": "sugo di pomodoro",
-              "en": "tomato sauce",
-              "pron": "soo-go di po-mo-dor-o"
+              "it": "amore",
+              "en": "love",
+              "pron": "a-mo-re"
             },
             {
-              "it": "tamburello",
-              "en": "rolling pin",
-              "pron": "tan-bu-rell-o"
+              "it": "pazienza",
+              "en": "patience",
+              "pron": "pa-zi-en-za"
             },
             {
-              "it": "sugo al pomodoro",
-              "en": "tomato sauce",
-              "pron": "soo-go al po-mo-dor-o"
+              "it": "boccone",
+              "en": "bite",
+              "pron": "bo-kon-neh"
             },
             {
-              "it": "sugo di carota",
-              "en": "carrot sauce",
-              "pron": "soo-go di car-o-ta"
+              "it": "apprendista",
+              "en": "apprentice",
+              "pron": "ap-pren-dista"
             },
             {
-              "it": "sugo di zucchine",
-              "en": "zucchini sauce",
-              "pron": "soo-go di zu-cho-nee"
+              "it": "curiosità",
+              "en": "curiosity",
+              "pron": "ku-ri-o-zi-ta"
             }
           ],
           "sentences": [
             {
-              "it": "Mischia il sugo di pomodoro con il sugo.",
-              "en": "Mix the tomato sauce with the sauce.",
+              "it": "Nonna preparava sempre con amore.",
+              "en": "Nonna always prepared with love.",
               "words": [
-                "Mischia",
-                "il",
-                "sugo",
-                "di",
-                "pomodoro",
+                "Nonna",
+                "preparava",
+                "sempre",
                 "con",
-                "il",
-                "sugo."
+                "amore."
               ]
             },
             {
-              "it": "Taglia la cipolla con il tamburello.",
-              "en": "Chop the onion with the rolling pin.",
+              "it": "Il ragù deve cuocere lentamente.",
+              "en": "The ragù must cook slowly.",
               "words": [
-                "Taglia",
+                "Il",
+                "ragù",
+                "deve",
+                "cuocere",
+                "lentamente."
+              ]
+            },
+            {
+              "it": "Con pazienza si ottengono i migliori risultati.",
+              "en": "With patience, the best results are achieved.",
+              "words": [
+                "Con",
+                "pazienza",
+                "si",
+                "ottengono",
+                "i",
+                "migliori",
+                "risultati."
+              ]
+            },
+            {
+              "it": "Ogni boccone era un sapore di casa.",
+              "en": "Every bite was a taste of home.",
+              "words": [
+                "Ogni",
+                "boccone",
+                "era",
+                "un",
+                "sapore",
+                "di",
+                "casa."
+              ]
+            },
+            {
+              "it": "Marco era curioso di imparare la ricetta.",
+              "en": "Marco was curious to learn the recipe.",
+              "words": [
+                "Marco",
+                "era",
+                "curioso",
+                "di",
+                "imparare",
                 "la",
-                "cipolla",
-                "con",
-                "il",
-                "tamburello."
-              ]
-            },
-            {
-              "it": "Versa il sugo di carota nella casseruola.",
-              "en": "Pour the carrot sauce into the large pot.",
-              "words": [
-                "Versa",
-                "il",
-                "sugo",
-                "di",
-                "carota",
-                "nella",
-                "casseruola."
-              ]
-            },
-            {
-              "it": "Aggiungi il sugo di zucchine al sugo.",
-              "en": "Add the zucchini sauce to the sauce.",
-              "words": [
-                "Aggiungi",
-                "il",
-                "sugo",
-                "di",
-                "zucchine",
-                "al",
-                "sugo."
-              ]
-            },
-            {
-              "it": "Sovrappuoi il sugo di pomodoro con il sugo.",
-              "en": "Layer the tomato sauce over the sauce.",
-              "words": [
-                "Sovrappuoi",
-                "il",
-                "sugo",
-                "di",
-                "pomodoro",
-                "con",
-                "il",
-                "sugo."
+                "ricetta."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "Italian recipes from nonna",
-          "desc": "cooking, traditional recipes, family",
-          "icon": "🔥",
+          "title": "tagliatelle, ragù",
+          "desc": "nonna's recipes, love, patience, bites",
+          "icon": "🍝",
           "vocab": [
             {
               "it": "tagliatelle",
-              "en": "wide egg noodles",
-              "pron": "TAH-lee-a-tel-le"
+              "en": "tagliatelle",
+              "pron": "tag-lia-ta-le"
             },
             {
-              "it": "casseruola",
-              "en": "large pot",
-              "pron": "ka-sse-ROO-o-la"
+              "it": "ragù",
+              "en": "ragù",
+              "pron": "ra-gu"
             },
             {
-              "it": "sugo",
-              "en": "sauce",
-              "pron": "SOO-go"
+              "it": "cuocere",
+              "en": "to cook",
+              "pron": "ku-o-ch-re"
             },
             {
-              "it": "tamburello",
-              "en": "rolling pin",
-              "pron": "tam-bo-REL-lo"
+              "it": "amore",
+              "en": "love",
+              "pron": "a-mo-re"
             },
             {
-              "it": "sugo di pomodoro",
-              "en": "tomato sauce",
-              "pron": "SOO-go di po-mo-DOR-o"
+              "it": "pazienza",
+              "en": "patience",
+              "pron": "pa-zi-en-za"
             },
             {
-              "it": "sugo di carota",
-              "en": "carrot sauce",
-              "pron": "SOO-go di car-O-ta"
+              "it": "boccone",
+              "en": "bite",
+              "pron": "bo-con-e"
             },
             {
-              "it": "sugo di zucchine",
-              "en": "zucchini sauce",
-              "pron": "SOO-go di zu-CHI-ne"
+              "it": "apprendista",
+              "en": "apprentice",
+              "pron": "ap-pren-dista"
             },
             {
-              "it": "sugo al pomodoro",
-              "en": "tomato sauce",
-              "pron": "SOO-go al po-mo-DOR-o"
+              "it": "curiosità",
+              "en": "curiosity",
+              "pron": "ku-ri-o-si-ta"
             }
           ],
           "sentences": [
             {
-              "it": "Mischia il sugo di pomodoro con il sugo di carota.",
-              "en": "Mix the tomato sauce with the carrot sauce.",
-              "words": [
-                "Mischia",
-                "il",
-                "sugo",
-                "di",
-                "pomodoro",
-                "con",
-                "il",
-                "sugo",
-                "di",
-                "carota."
-              ]
-            },
-            {
-              "it": "Nonna aggiunse un po' di sugo di zucchine per dare un sapore fresco.",
-              "en": "Nonna added some zucchini sauce to give a fresh taste.",
+              "it": "Nonna cucinava con amore.",
+              "en": "Grandma cooked with love.",
               "words": [
                 "Nonna",
-                "aggiunse",
-                "un",
-                "po'",
-                "di",
-                "sugo",
-                "di",
-                "zucchine",
-                "per",
-                "dare",
-                "un",
-                "sapore",
-                "fresco."
+                "cucinava",
+                "con",
+                "amore."
               ]
             },
             {
-              "it": "Con il tamburello, stendi la pasta tagliatelle sottile.",
-              "en": "With the rolling pin, stretch the tagliatelle pasta thin.",
-              "words": [
-                "Con",
-                "il",
-                "tamburello,",
-                "stendi",
-                "la",
-                "pasta",
-                "tagliatelle",
-                "sottile."
-              ]
-            },
-            {
-              "it": "Il casseruola era pieno di sugo, pronto per il tagliatelle.",
-              "en": "The large pot was full of sauce, ready for the tagliatelle.",
+              "it": "Il ragù deve cuocere per ore.",
+              "en": "The ragù must cook for hours.",
               "words": [
                 "Il",
-                "casseruola",
-                "era",
-                "pieno",
-                "di",
-                "sugo,",
-                "pronto",
+                "ragù",
+                "deve",
+                "cuocere",
                 "per",
-                "il",
-                "tagliatelle."
+                "ore."
               ]
             },
             {
-              "it": "Nonna versò il sugo al pomodoro su una teglia per il ragù.",
-              "en": "Nonna poured the tomato sauce into a baking dish for the ragù.",
+              "it": "Mangia un boccone di questo.",
+              "en": "Take a bite of this.",
               "words": [
-                "Nonna",
-                "versò",
-                "il",
-                "sugo",
-                "al",
-                "pomodoro",
-                "su",
-                "una",
-                "teglia",
-                "per",
-                "il",
-                "ragù."
+                "Mangia",
+                "un",
+                "boccone",
+                "di",
+                "questo."
+              ]
+            },
+            {
+              "it": "Sono l'apprendista di nonna.",
+              "en": "I am Grandma's apprentice.",
+              "words": [
+                "Sono",
+                "l'apprendista",
+                "di",
+                "nonna."
+              ]
+            },
+            {
+              "it": "La curiosità di Marco la fece sorridere.",
+              "en": "Marco's curiosity made her smile.",
+              "words": [
+                "La",
+                "curiosità",
+                "di",
+                "Marco",
+                "la",
+                "fece",
+                "sorridere."
               ]
             }
           ]
         }
       ],
       "generationStats": {
-        "totalMs": 1062563,
+        "totalMs": 832185,
         "backend": "ollama",
         "model": "qwen2.5:7b",
-        "totalPromptTokens": 1780,
-        "totalCompletionTokens": 1900,
+        "totalPromptTokens": 2417,
+        "totalCompletionTokens": 1567,
         "lessons": [
           {
             "lessonNum": 1,
-            "ms": 139342,
-            "promptTokens": 456,
-            "completionTokens": 415
+            "ms": 203725,
+            "promptTokens": 535,
+            "completionTokens": 360
           },
           {
             "lessonNum": 2,
-            "ms": 214049,
-            "promptTokens": 523,
-            "completionTokens": 402
+            "ms": 181547,
+            "promptTokens": 606,
+            "completionTokens": 341
           },
           {
             "lessonNum": 3,
-            "ms": 261182,
-            "promptTokens": 595,
-            "completionTokens": 478
+            "ms": 189701,
+            "promptTokens": 658,
+            "completionTokens": 336
           }
         ]
       },
       "generatedAt": "2026-05-02T12:52:40.826Z",
-      "updatedAt": "2026-05-02T15:11:01.556Z",
-      "ratings": {
-        "difficulty": 2,
-        "fun": 2,
-        "coherence": 1
-      },
-      "repairStats": {
-        "repairCount": 1,
-        "totalMs": 349815,
-        "promptTokens": 1764,
-        "completionTokens": 344
-      }
+      "updatedAt": "2026-05-03T17:42:44.855Z"
     },
     {
       "topic": "walking on the mosel",
@@ -13967,6 +14627,156 @@
       ],
       "flaggedAt": "2026-05-03T09:04:43.720Z",
       "comment": "\"Her neck ...\": Her is missing in italian"
+    },
+    "pilze_suchen:order:Forra_i_mushrumpi_nel_bosco.": {
+      "topic": "pilze suchen",
+      "type": "order",
+      "it": "Forra i mushrumpi nel bosco.",
+      "en": "Forage for mushrooms in the forest.",
+      "correct": "Forra i mushrumpi nel bosco.",
+      "choices": [],
+      "words": [
+        "bosco.",
+        "Forra",
+        "nel",
+        "luce",
+        "i",
+        "La",
+        "mushrumpi",
+        "luce"
+      ],
+      "flaggedAt": "2026-05-03T16:30:51.967Z",
+      "comment": "mushrumpi -> funghi"
+    },
+    "italian_recipes_from_nonna:listen_mcq:shelves": {
+      "topic": "italian recipes from nonna",
+      "type": "listen_mcq",
+      "it": "shelves",
+      "en": "",
+      "correct": "shelves",
+      "choices": [
+        "generations",
+        "shelves",
+        "spices",
+        "stained"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T17:25:37.381Z"
+    },
+    "italian_recipes_from_nonna:listen_type:silver": {
+      "topic": "italian recipes from nonna",
+      "type": "listen_type",
+      "it": "silver",
+      "en": "silver",
+      "correct": "silver",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-05-03T17:25:52.059Z"
+    },
+    "italian_recipes_from_nonna:listen_mcq:pots_and_pans": {
+      "topic": "italian recipes from nonna",
+      "type": "listen_mcq",
+      "it": "pots and pans",
+      "en": "",
+      "correct": "pots and pans",
+      "choices": [
+        "pots and pans",
+        "shelves",
+        "spices",
+        "scent"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T17:26:02.208Z"
+    },
+    "italian_recipes_from_nonna:listen_mcq:stained": {
+      "topic": "italian recipes from nonna",
+      "type": "listen_mcq",
+      "it": "stained",
+      "en": "",
+      "correct": "stained",
+      "choices": [
+        "stained",
+        "scent",
+        "Bolognese sauce",
+        "silver"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T17:26:06.377Z"
+    },
+    "italian_recipes_from_nonna:listen_mcq:spices": {
+      "topic": "italian recipes from nonna",
+      "type": "listen_mcq",
+      "it": "spices",
+      "en": "",
+      "correct": "spices",
+      "choices": [
+        "silver",
+        "spices",
+        "shelves",
+        "generations"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T17:27:03.190Z"
+    },
+    "italian_recipes_from_nonna:mcq_en_it:generations": {
+      "topic": "italian recipes from nonna",
+      "type": "mcq_en_it",
+      "it": "generations",
+      "en": "generations",
+      "correct": "generations",
+      "choices": [
+        "pots and pans",
+        "spices",
+        "generations",
+        "aroma"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T17:27:12.684Z"
+    },
+    "italian_recipes_from_nonna:mcq_it_en:pots_and_pans": {
+      "topic": "italian recipes from nonna",
+      "type": "mcq_it_en",
+      "it": "pots and pans",
+      "en": "pots and pans",
+      "correct": "pots and pans",
+      "choices": [
+        "pots and pans",
+        "zucchini sauce",
+        "tomato sauce",
+        "sauce"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T17:27:54.437Z"
+    },
+    "italian_recipes_from_nonna:listen_mcq:tagliatelle": {
+      "topic": "italian recipes from nonna",
+      "type": "listen_mcq",
+      "it": "tagliatelle",
+      "en": "",
+      "correct": "wide egg noodles",
+      "choices": [
+        "wide egg noodles",
+        "rolling pin",
+        "large pot",
+        "tomato sauce"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T17:28:04.532Z"
+    },
+    "italian_recipes_from_nonna:mcq_it_en:stained": {
+      "topic": "italian recipes from nonna",
+      "type": "mcq_it_en",
+      "it": "stained",
+      "en": "stained",
+      "correct": "stained",
+      "choices": [
+        "rolling pin",
+        "tomato sauce",
+        "wide egg noodles",
+        "stained"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-03T17:28:10.780Z"
     }
   }
 }
