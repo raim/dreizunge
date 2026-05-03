@@ -1,6 +1,371 @@
 {
   "lessons": [
     {
+      "topic": "anna thinks it is smarter to use cyanobacteria in windows to produce energy",
+      "topicEmoji": "🌱",
+      "lang": "pl",
+      "difficulty": 1,
+      "story": "Anna, Janowi przyjaciółka i współznawczyni w jego laboratorium, sugeruje nową ideę. „Mówiąc szczerze, Janie,” zaczyna, „myślę, że używanie cianobakterii w oknach jest bardziej inteligentne niż twoje drzewo palmowe.” Jan zwraca na nią uwagę, zainteresowany. „Cianobakterie?” pyta. „Tak,” odpowiada Anna. „Są one niezwykle efektywne w fotosyntezie i mogą być rozmieszczone w specjalnie zaprojektowanych oknach, które przetwarzają światło słoneczne na energię elektryczną.”\n\nAnna wyjaśnia dalsze aspekty swojej propozycji. „Cianobakterie są małymi organizmami, które nie wymagają wielu zasobów do rozwoju,” mówi. „Możemy je rozmieszczyć w małych, przystosowanych do tego kompartamentach w oknach, które będą przetwarzały węglowodany na energię elektryczną. To nie tylko efektywne, ale także bardziej ekonomiczne i łatwe w implementacji.” Jan słucha ataktycznie, zastanawiając się nad propozycją swojej przyjaciółki.\n\nAnna doda, że cianobakterie są również łatwe w utrzymaniu i nie wymagają zbyt intensywnego opiekuńczości. „To idealne rozwiązanie,” twierdzi. „Nie tylko generują energię, ale również mogą pomagać w oczyszczeniu powietrza.” Jan zwraca się do swojej przyjaciółki z aprobatą. „Mam nadzieję, że będziemy mogli to zaimplementować,” mówi. „To może być kolejny krok w naszej drodze do bardziej ekologicznej i autonomicznej energii.” Anna uśmiecha się z zadowoleniem, zadowolona, że jej propozycja może przynieść nowe perspektywy na przyszłość ich projektu.",
+      "storyLang": "pl",
+      "continuedFrom": "energy from photosynthetic organisms",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "cianobakterie w oknach",
+          "desc": "sugestia, fotosyntez, efektywność",
+          "icon": "💡",
+          "vocab": [
+            {
+              "it": "sugeruje",
+              "en": "suggests",
+              "pron": "SUH-jeh-guh"
+            },
+            {
+              "it": "ideę",
+              "en": "idea",
+              "pron": "IH-dee-uh"
+            },
+            {
+              "it": "fotosyntezie",
+              "en": "photosynthesis",
+              "pron": "fuh-TOH-sin-THEE-sis"
+            },
+            {
+              "it": "zasobów",
+              "en": "resources",
+              "pron": "RIZ-uh-suhfs"
+            },
+            {
+              "it": "kompartamentach",
+              "en": "compartments",
+              "pron": "kuh-PAR-tuh-muhnt"
+            },
+            {
+              "it": "przetwarzały",
+              "en": "processing",
+              "pron": "PRIT-tuh-wur-zuh"
+            },
+            {
+              "it": "efektywnie",
+              "en": "efficiently",
+              "pron": "eh-FEK-tuh-wuh-lee"
+            },
+            {
+              "it": "eko",
+              "en": "eco",
+              "pron": "EY-koh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Anna sugeruje nową ideę.",
+              "en": "Anna suggests a new idea.",
+              "words": [
+                "Anna",
+                "sugeruje",
+                "nową",
+                "ideę."
+              ]
+            },
+            {
+              "it": "Cianobakterie są niezwykle efektywne.",
+              "en": "Cyanobacteria are incredibly efficient.",
+              "words": [
+                "Cianobakterie",
+                "są",
+                "niezwykle",
+                "efektywne."
+              ]
+            },
+            {
+              "it": "Możemy je rozmieszczyć w oknach.",
+              "en": "We can place them in windows.",
+              "words": [
+                "Możemy",
+                "je",
+                "rozmieszczyć",
+                "w",
+                "oknach."
+              ]
+            },
+            {
+              "it": "To nie tylko efektywne, ale także eko.",
+              "en": "It's not only efficient, but also eco.",
+              "words": [
+                "To",
+                "nie",
+                "tylko",
+                "efektywne,",
+                "ale",
+                "także",
+                "eko."
+              ]
+            },
+            {
+              "it": "Jan zwraca na nią uwagę.",
+              "en": "Jan pays attention to her.",
+              "words": [
+                "Jan",
+                "zwraca",
+                "na",
+                "nią",
+                "uwagę."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "cyanobacteria in windows",
+          "desc": "suggestions, compartments, processing, efficient, energy, sunlight, palm tree, environment",
+          "icon": "💡",
+          "vocab": [
+            {
+              "it": "sugeruje",
+              "en": "suggests",
+              "pron": "SUH-jeh-guh"
+            },
+            {
+              "it": "kompartamentach",
+              "en": "compartments",
+              "pron": "kom-PAR-tah-mahnt"
+            },
+            {
+              "it": "przetwarzały",
+              "en": "processing",
+              "pron": "proh-SES-ing"
+            },
+            {
+              "it": "efektywnie",
+              "en": "efficiently",
+              "pron": "eh-FEK-ti-vuh-lee"
+            },
+            {
+              "it": "energię",
+              "en": "energy",
+              "pron": "EN-juh-ree"
+            },
+            {
+              "it": "słońca",
+              "en": "sunlight",
+              "pron": "suh-LIN-tuh"
+            },
+            {
+              "it": "palma",
+              "en": "palm tree",
+              "pron": "PAL-muh"
+            },
+            {
+              "it": "okna",
+              "en": "windows",
+              "pron": "OK-nuh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Sugeruje, że cianobakterie mogą przetwarzać słońce na energię.",
+              "en": "She suggests that cyanobacteria can process sunlight into energy.",
+              "words": [
+                "Sugeruje,",
+                "że",
+                "cianobakterie",
+                "mogą",
+                "przetwarzać",
+                "słońce",
+                "na",
+                "energię."
+              ]
+            },
+            {
+              "it": "Kompartamentach specjalnie zaprojektowanych są cianobakterie.",
+              "en": "Cyanobacteria are placed in specially designed compartments.",
+              "words": [
+                "Kompartamentach",
+                "specjalnie",
+                "zaprojektowanych",
+                "są",
+                "cianobakterie."
+              ]
+            },
+            {
+              "it": "Efektywnie przetwarzają one węglowodany na energię elektryczną.",
+              "en": "They efficiently process carbohydrates into electrical energy.",
+              "words": [
+                "Efektywnie",
+                "przetwarzają",
+                "one",
+                "węglowodany",
+                "na",
+                "energię",
+                "elektryczną."
+              ]
+            },
+            {
+              "it": "Palmowa drzewa są zastąpione przez cianobakterie w oknach.",
+              "en": "Palm trees are replaced by cyanobacteria in windows.",
+              "words": [
+                "Palmowa",
+                "drzewa",
+                "są",
+                "zastąpione",
+                "przez",
+                "cianobakterie",
+                "w",
+                "oknach."
+              ]
+            },
+            {
+              "it": "To jest bardziej eko od palmowych drzew.",
+              "en": "This is more eco-friendly than palm trees.",
+              "words": [
+                "To",
+                "jest",
+                "bardziej",
+                "eko",
+                "od",
+                "palmowych",
+                "drzew."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Cianobakterie w oknach",
+          "desc": "Sugestie i rozmowa o cianobakteriach",
+          "icon": "🔬",
+          "vocab": [
+            {
+              "it": "sugeruje",
+              "en": "suggests",
+              "pron": "SUG-ruh-jeh"
+            },
+            {
+              "it": "zasoby",
+              "en": "resources",
+              "pron": "ZAS-oh-bes"
+            },
+            {
+              "it": "przetwarzają",
+              "en": "process",
+              "pron": "PRZET-wurzah-tuh"
+            },
+            {
+              "it": "efektywnie",
+              "en": "efficiently",
+              "pron": "ef-ek-TIH-vuh-lee"
+            },
+            {
+              "it": "palmy",
+              "en": "palm trees",
+              "pron": "PAL-mee"
+            },
+            {
+              "it": "laboratorium",
+              "en": "laboratory",
+              "pron": "la-bo-ra-TO-rium"
+            },
+            {
+              "it": "zakłócają",
+              "en": "disturb",
+              "pron": "DAH-stewr"
+            },
+            {
+              "it": "zaprojektowanych",
+              "en": "designed",
+              "pron": "ZAP-ruh-jek-toh-vit"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Cianobakterie są efektywnie przetwarzane.",
+              "en": "Cyanobacteria are efficiently processed.",
+              "words": [
+                "Cianobakterie",
+                "są",
+                "efektywnie",
+                "przetwarzane."
+              ]
+            },
+            {
+              "it": "Zasoby naturalne są zaszczytne.",
+              "en": "Natural resources are honorable.",
+              "words": [
+                "Zasoby",
+                "naturalne",
+                "są",
+                "zaszczytne."
+              ]
+            },
+            {
+              "it": "Palmy zaczęły zakłócać widok.",
+              "en": "Palm trees started to disturb the view.",
+              "words": [
+                "Palmy",
+                "zaczęły",
+                "zakłócać",
+                "widok."
+              ]
+            },
+            {
+              "it": "Laboratorium jest zaprojektowane z myślą o ekonomii.",
+              "en": "The laboratory is designed with economy in mind.",
+              "words": [
+                "Laboratorium",
+                "jest",
+                "zaprojektowane",
+                "z",
+                "myślą",
+                "o",
+                "ekonomii."
+              ]
+            },
+            {
+              "it": "Zasoby są przetwarzane efektywnie w kompartamentach.",
+              "en": "Resources are efficiently processed in compartments.",
+              "words": [
+                "Zasoby",
+                "są",
+                "przetwarzane",
+                "efektywnie",
+                "w",
+                "kompartamentach."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 987149,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2626,
+        "totalCompletionTokens": 1815,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 237181,
+            "promptTokens": 574,
+            "completionTokens": 402
+          },
+          {
+            "lessonNum": 2,
+            "ms": 225283,
+            "promptTokens": 650,
+            "completionTokens": 442
+          },
+          {
+            "lessonNum": 3,
+            "ms": 230248,
+            "promptTokens": 703,
+            "completionTokens": 422
+          }
+        ]
+      },
+      "generatedAt": "2026-05-03T19:04:43.323Z",
+      "updatedAt": "2026-05-03T19:04:43.323Z"
+    },
+    {
       "topic": "energy from photosynthetic organisms",
       "topicEmoji": "🌱",
       "lang": "pl",
