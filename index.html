@@ -65,6 +65,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
 .saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s}
 .saved-item:hover{border-color:var(--blue);background:var(--blue-light)}
+.storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
+.storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid)}
+.storyline-item .saved-item{border:none;border-radius:0;border-top:1.5px solid var(--gray-mid)}
+.storyline-item:first-child .saved-item{border-top:none}
+.storyline-connector{font-size:12px;color:var(--gray);flex-shrink:0;margin-right:-4px}
+.orphans-hdr{font-size:12px;font-weight:800;color:var(--gray-dark);margin:14px 0 6px;padding-left:2px}
 .saved-emoji{font-size:22px;flex-shrink:0}
 .saved-info{flex:1;min-width:0}
 .saved-topic{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -253,6 +259,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .diff-badge.d2{background:#fff3cc;color:#7a5000}
 .diff-badge.d3{background:#ffd4d4;color:#880000}
 .native-check-row{display:none}
+.story-vocab-hl{background:#fff3c0;border-radius:3px;padding:0 2px;font-weight:800;cursor:help}
+.story-flag-row{padding:6px 14px 10px;display:flex;flex-direction:column;gap:6px}
 
 /* ══ STORY ═══════════════════════════════════════════════════════════ */
 .story-section{background:var(--white);border-radius:var(--radius-xl);border:2px solid var(--gray-mid);margin:0 0 16px;overflow:hidden;box-shadow:var(--shadow-card)}
@@ -386,16 +394,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
 
-  <div class="examples">
-    <span style="font-size:12px;color:var(--gray-dark);font-weight:700;align-self:center">Try:</span>
-    <button class="chip" onclick="setTopic('research grant proposals')">🔬 Research grants</button>
-    <button class="chip" onclick="setTopic('cooking & recipes')">🍝 Cooking</button>
-    <button class="chip" onclick="setTopic('architecture & design')">🏛 Architecture</button>
-    <button class="chip" onclick="setTopic('medical & healthcare')">🏥 Medicine</button>
-    <button class="chip" onclick="setTopic('business & negotiations')">💼 Business</button>
-    <button class="chip" onclick="setTopic('art history & museums')">🎨 Art history</button>
-  </div>
-
   <div class="library">
     <div class="lib-hdr">
       <div class="lib-title">📚 Saved lessons</div>
@@ -430,6 +428,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
     <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
+  <div class="gen-stats" id="gen-stats"></div>
+  <div class="rating-panel" id="rating-panel" style="display:none"></div>
+  <div class="path-wrap" id="lesson-path"></div>
+  <div class="start-strip">
+    <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
+  </div>
   <div class="story-section" id="story-section" style="display:none">
     <button class="story-hdr" onclick="toggleStory()">
       <span>📖 Read the story</span>
@@ -449,12 +453,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </div>
       <div class="story-repair-status" id="story-repair-status"></div>
     </div>
-  </div>
-  <div class="gen-stats" id="gen-stats"></div>
-  <div class="rating-panel" id="rating-panel" style="display:none"></div>
-  <div class="path-wrap" id="lesson-path"></div>
-  <div class="start-strip">
-    <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
+    <div class="story-flag-row" id="story-flag-row" style="display:none">
+      <button class="flag-btn" id="story-flag-btn" onclick="toggleStoryFlag()">⚐ Flag story</button>
+      <div class="flag-comment-wrap" id="story-flag-comment-wrap">
+        <textarea class="flag-comment" id="story-flag-comment" rows="2"
+          placeholder="Describe what is wrong with the story…"
+          onblur="saveStoryComment()"></textarea>
+      </div>
+    </div>
   </div>
 </div>
 </div>
@@ -620,7 +626,21 @@ function toggleStoryRepair(){
 }
 function renderStoryText(d){
   const body=document.getElementById('story-body'); if(!body) return;
-  body.innerHTML=(d.story||'').split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  const done=APP.progress.completed?.[d.topic]||{};
+  // Collect vocab from completed lessons only, longest first for greedy match
+  const vocabWords=(d.lessons||[])
+    .filter(L=>done[L.id])
+    .flatMap(L=>L.vocab||[])
+    .map(v=>v.it).filter(Boolean)
+    .sort((a,b)=>b.length-a.length);
+  const escHtml=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let escaped=escHtml(d.story||'');
+  if(vocabWords.length){
+    const pattern=vocabWords.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+    escaped=escaped.replace(new RegExp('('+pattern+')','gi'),
+      '<mark class="story-vocab-hl">$1</mark>');
+  }
+  body.innerHTML=escaped.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
 }
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
@@ -645,9 +665,10 @@ async function doRepairStory(){
     const body=document.getElementById('story-body');
     if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow')?.classList.add('open'); }
     renderStoryText(APP.lessonData);
-    // Update story language badge — always the lesson's target language flag
+    // Update story language badge
+    const sl=APP.lessonData.storyLang||'en';
     const storyLangLbl=document.getElementById('story-lang-lbl');
-    if(storyLangLbl) storyLangLbl.textContent=(LANGS[APP.lessonData.lang||'it']||LANGS.it).flag;
+    if(storyLangLbl) storyLangLbl.textContent=sl==='en'?'EN':(LANGS[sl]?.flag||sl.toUpperCase());
     document.getElementById('story-repair-input').value='';
     if(status) status.textContent='Story updated!';
     setTimeout(()=>{ if(status) status.textContent=''; },3000);
@@ -874,18 +895,46 @@ async function loadSavedList(){
     list.innerHTML='<div class="lib-empty">'+(saved.length?'No lessons in this language.':'No saved lessons yet — generate one above!')+'</div>';
     return;
   }
-  list.innerHTML=filtered.map(s=>{
-    const dateStr=s.updatedAt||s.generatedAt;
-    const date=dateStr?new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
-    const t=encodeURIComponent(s.topic);
-    const sL=LANGS[s.lang||'it']||LANGS.it;
-    const d=s.difficulty||2;
-    const diffBadge=`<span class="diff-badge d${d}">${DIFF_SHORT[d]||'–'}</span>`;
-    const ratingStr=s.ratings
+  // ── Build storyline chains from continuedFrom links ──────────────────
+  function buildChains(lessons) {
+    const byTopic = Object.fromEntries(lessons.map(l => [l.topic, l]));
+    const childMap = {};
+    lessons.forEach(l => {
+      if (l.continuedFrom && byTopic[l.continuedFrom]) {
+        (childMap[l.continuedFrom] = childMap[l.continuedFrom] || []).push(l.topic);
+      }
+    });
+    const hasParent = new Set(
+      lessons.filter(l => l.continuedFrom && byTopic[l.continuedFrom]).map(l => l.topic)
+    );
+    const roots = lessons.filter(l => !hasParent.has(l.topic));
+    const chains = [];
+    function walk(topic, chain) {
+      const extended = [...chain, topic];
+      const kids = childMap[topic] || [];
+      if (kids.length === 0) { chains.push(extended); return; }
+      kids.forEach(k => walk(k, extended));
+    }
+    roots.forEach(r => walk(r.topic, []));
+    const storylines = chains.filter(c => c.length > 1);
+    const inChain = new Set(storylines.flat());
+    const orphans = lessons.filter(l => !inChain.has(l.topic));
+    return { storylines, orphans, byTopic };
+  }
+
+  function savedItemHtml(s, connector) {
+    const dateStr = s.updatedAt || s.generatedAt;
+    const date = dateStr ? new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '';
+    const t = encodeURIComponent(s.topic);
+    const sL = LANGS[s.lang||'it'] || LANGS.it;
+    const d = s.difficulty || 2;
+    const diffBadge = `<span class="diff-badge d${d}">${DIFF_SHORT[d]||'–'}</span>`;
+    const ratingStr = s.ratings
       ? ` · ${['🔵','🟡','🔴'][s.ratings.difficulty-1]||''} ${['😐','😊','😄'][s.ratings.fun-1]||''}`
       : '';
+    const conn = connector ? `<span class="storyline-connector">↩</span>` : '';
     return `<div class="saved-item" onclick="loadSaved('${t}')">
-      <span class="saved-emoji">${sL.flag} ${s.topicEmoji||'📚'}</span>
+      ${conn}<span class="saved-emoji">${sL.flag} ${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
         <div class="saved-topic">${s.topic} ${diffBadge}</div>
         <div class="saved-meta">${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
@@ -895,19 +944,50 @@ async function loadSavedList(){
         <button class="ico-btn" title="Delete" onclick="deleteSaved('${t}')">🗑</button>
       </div>
     </div>`;
-  }).join('');
+  }
+
+  const { storylines, orphans, byTopic } = buildChains(filtered);
+
+  // Sort storylines by newest updatedAt among their members
+  const newestOf = chain => chain.reduce((best, t) => {
+    const dt = byTopic[t]?.updatedAt || byTopic[t]?.generatedAt || '';
+    return dt > best ? dt : best;
+  }, '');
+  storylines.sort((a, b) => newestOf(b).localeCompare(newestOf(a)));
+  // Sort orphans newest first (already sorted by server, but refilter may reorder)
+  orphans.sort((a, b) => (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
+
+  let html = '';
+
+  // Render storyline groups
+  for (const chain of storylines) {
+    html += `<div class="storyline-group">`;
+    html += `<div class="storyline-hdr">📖 Story line · ${chain.length} lesson${chain.length!==1?'s':''}</div>`;
+    chain.forEach((topic, i) => {
+      const s = byTopic[topic]; if (!s) return;
+      html += `<div class="storyline-item">${savedItemHtml(s, i > 0)}</div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Render orphans
+  if (orphans.length) {
+    if (storylines.length) html += `<div class="orphans-hdr">📚 Individual lessons</div>`;
+    html += orphans.map(s => savedItemHtml(s, false)).join('');
+  }
+
+  list.innerHTML = html || '<div class="lib-empty">No lessons in this language.</div>';
 
   // Populate continue-select with all saved lessons
-  const contSel = document.getElementById('continue-select');
-  if (contSel) {
-    const prev = contSel.value;
-    contSel.innerHTML = '<option value="">— new story —</option>' +
-      saved.map(s => {
-        const sL = LANGS[s.lang||'it']||LANGS.it;
+  const contSel=document.getElementById('continue-select');
+  if(contSel){
+    const prev=contSel.value;
+    contSel.innerHTML='<option value="">— new story —</option>'+
+      saved.map(s=>{
+        const sL=LANGS[s.lang||'it']||LANGS.it;
         return `<option value="${s.topic.replace(/"/g,'&quot;')}">${sL.flag} ${s.topic}</option>`;
       }).join('');
-    // Restore previous selection if still available
-    if (prev && [...contSel.options].some(o => o.value === prev)) contSel.value = prev;
+    if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
   }
 }
 
@@ -972,7 +1052,7 @@ async function doGenerate(forceRegen){
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({topic,lang:APP.lang,difficulty:APP.difficulty,
-        continuedFrom: document.getElementById('continue-select')?.value || null,
+        continuedFrom:document.getElementById('continue-select')?.value||null,
         forceRegenerate:!!forceRegen})});
     if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Server error'); }
     const resp=await r.json();
@@ -1013,40 +1093,36 @@ function buildPath(){
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
 
-  // Continued-from badge — show below topic name if applicable
+  // Continued-from badge
   let contBadge=document.getElementById('continued-badge');
   if(d.continuedFrom){
     if(!contBadge){
       contBadge=document.createElement('div');
-      contBadge.id='continued-badge';
-      contBadge.className='continued-badge';
+      contBadge.id='continued-badge'; contBadge.className='continued-badge';
       document.getElementById('topic-name-big').insertAdjacentElement('afterend',contBadge);
     }
     contBadge.textContent='↩ continued from: '+d.continuedFrom;
     contBadge.style.display='';
-  } else if(contBadge){
-    contBadge.style.display='none';
-  }
+  } else if(contBadge){ contBadge.style.display='none'; }
 
-  // Story section
+  // Story section — below start button now; collapse/expand based on completion
   const storySec=document.getElementById('story-section');
   const storyBody=document.getElementById('story-body');
   if(d.story && storySec && storyBody){
     storySec.style.display='';
-    storyBody.classList.remove('open');
-    const arrow=document.getElementById('story-arrow'); if(arrow) arrow.classList.remove('open');
+    const allDone=d.lessons.every(L=>done[L.id]);
+    const arrow=document.getElementById('story-arrow');
+    if(allDone){ storyBody.classList.add('open'); if(arrow) arrow.classList.add('open'); }
+    else { storyBody.classList.remove('open'); if(arrow) arrow.classList.remove('open'); }
     renderStoryText(d);
-    // Hide the EN/native toggle — story is now always a single language
-    const toggle=document.getElementById('story-lang-toggle');
-    if(toggle) toggle.style.display='none';
-    // Show story language as a small label in the header
     const storyLangLbl=document.getElementById('story-lang-lbl');
-    if(storyLangLbl){
-      storyLangLbl.textContent=dL.flag;
-      storyLangLbl.style.display='';
-    }
+    if(storyLangLbl){ storyLangLbl.textContent=dL.flag; storyLangLbl.style.display=''; }
     const repToggle=document.getElementById('story-repair-toggle-btn');
     if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
+    // Story flag row
+    const sfRow=document.getElementById('story-flag-row');
+    if(sfRow) sfRow.style.display='';
+    _updateStoryFlagUI();
   } else if(storySec){ storySec.style.display='none'; }
 
   // Gen stats + repair stats
@@ -1302,6 +1378,41 @@ function saveComment(){
   pushFlagToServer(k, APP.flagged[k]);
 }
 
+// ── Story flagging ────────────────────────────────────────────────────
+function storyFlagKey(topic){
+  return (topic||'').slice(0,30).replace(/\s+/g,'_')+':story';
+}
+function toggleStoryFlag(){
+  const d=APP.lessonData; if(!d) return;
+  const k=storyFlagKey(d.topic);
+  if(APP.flagged[k]){
+    delete APP.flagged[k]; saveFlagged(); pushFlagToServer(k,null);
+  } else {
+    const entry={topic:d.topic,type:'story',flaggedAt:new Date().toISOString()};
+    APP.flagged[k]=entry; saveFlagged(); pushFlagToServer(k,entry);
+  }
+  _updateStoryFlagUI();
+}
+function saveStoryComment(){
+  const d=APP.lessonData; if(!d) return;
+  const k=storyFlagKey(d.topic);
+  if(!APP.flagged[k]) return;
+  const comment=document.getElementById('story-flag-comment')?.value?.trim()||'';
+  APP.flagged[k].comment=comment; saveFlagged(); pushFlagToServer(k,APP.flagged[k]);
+}
+function _updateStoryFlagUI(){
+  const d=APP.lessonData; if(!d) return;
+  const k=storyFlagKey(d.topic);
+  const flagged=!!APP.flagged[k];
+  const btn=document.getElementById('story-flag-btn');
+  if(btn){ btn.textContent=flagged?'⚑ Story flagged':'⚐ Flag story';
+           btn.className='flag-btn'+(flagged?' flagged':''); }
+  const wrap=document.getElementById('story-flag-comment-wrap');
+  if(wrap) wrap.className='flag-comment-wrap'+(flagged?' visible':'');
+  const ta=document.getElementById('story-flag-comment');
+  if(ta) ta.value=APP.flagged[k]?.comment||'';
+}
+
 function normDiacritics(s){
   // Normalize diacritics so é=e, ü=u, ñ=n etc. for forgiving answer evaluation
   return (s||'').replace(/ß/g,'ss').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ø/g,'o')
@@ -1348,44 +1459,14 @@ function check(){
 
 // ── complete ──
 function showComplete(){
-  const CONGRATS = {
-    it:'Ottimo lavoro!', fr:'Excellent travail !', de:'Ausgezeichnet!',
-    es:'¡Excelente trabajo!', pt:'Excelente trabalho!', nl:'Uitstekend werk!',
-    pl:'Doskonała robota!', sv:'Utmärkt jobbat!', ja:'よくできました！',
-    zh:'干得好！', ar:'عمل ممتاز!', ru:'Отличная работа!',
-    ko:'잘 하셨어요!', tr:'Harika iş!', hi:'शानदार काम!'
-  };
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
   if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
   APP.progress.completed[topicKey][lesson.id]=true;
   APP.progress.xp=(APP.progress.xp||0)+C.xp;
   saveProg();
-  const flaggedCount = C.exercises.filter(ex => isExFlagged(ex)).length;
-  const cLang=APP.lessonData?.lang||APP.lang||'it';
-  const CONGRATS_MSG = {
-    it:'Ottimo lavoro!', fr:'Excellent travail !', de:'Ausgezeichnet!',
-    es:'¡Excelente trabajo!', pt:'Excelente trabalho!', nl:'Uitstekend werk!',
-    pl:'Doskonała robota!', sv:'Utmärkt jobbat!', ja:'よくできました！',
-    zh:'干得好！', ar:'عمل ممتاز!', ru:'Отличная работа!',
-    ko:'잘 하셨어요!', tr:'Harika iş!', hi:'शानदार काम!'
-  };
-  document.getElementById('comp-sub').textContent=CONGRATS_MSG[cLang]||'Great job!';
-  document.getElementById('comp-xp').textContent='+'+C.xp+' XP';
-  document.getElementById('s-correct').textContent=C.exercises.length-C.mistakes;
-  document.getElementById('s-mistakes').textContent=C.mistakes;
-  document.getElementById('s-flagged').textContent=flaggedCount+'⚑';
-  document.getElementById('s-streak').textContent=C.bestStreak+'🔥';
-  const hasNext=C.lessonIdx+1<APP.lessonData.lessons.length;
-  document.getElementById('comp-next').textContent=hasNext?'Next lesson →':'Back to home';
-  document.getElementById('comp-vocab').innerHTML=lesson.vocab.map(v=>`<div class="vrow">
-    <div><div class="vit" onclick="speak('${esc(v.it)}')" title="Click to hear">🔊 ${v.it}</div><div class="vpron">${v.pron||''}</div></div>
-    <div class="ven">${v.en}</div></div>`).join('');
-  show('complete-screen');
+  goHome();
 }
-function afterComplete(){
-  const C=APP.cur;
-  if(C.lessonIdx+1<APP.lessonData.lessons.length) startLesson(C.lessonIdx+1); else goHome();
-}
+
 
 // ── tts + misc ──
 function speak(text,rate){

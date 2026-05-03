@@ -74,170 +74,158 @@ const lessonsSerialized = JSON.stringify(lessonsData.lessons, null, 2);
 
 const staticFunctions = `
 // ═══════════════════════════════════════════════════════════════════════
-//  STATIC MODE — no server, all lessons baked in at build time
+//  STATIC MODE — no server, lessons baked in at build time
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = ${lessonsSerialized};
+// Sort newest first
+STATIC_LESSONS.sort((a,b)=>((b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||'')));
 
-// localStorage
-const LS_SAVED = 'imp_static_saved';
-
-function staticGetSaved() {
-  try { return JSON.parse(localStorage.getItem(LS_SAVED) || '[]'); }
-  catch(_) { return []; }
-}
-function staticPutSaved(arr) { localStorage.setItem(LS_SAVED, JSON.stringify(arr)); }
-function staticUpsert(data) {
-  const arr = staticGetSaved();
-  const k = data.topic.toLowerCase();
-  const i = arr.findIndex(l => l.topic.toLowerCase() === k);
-  const entry = { ...data, generatedAt: data.generatedAt || new Date().toISOString() };
-  if (i >= 0) arr[i] = entry; else arr.unshift(entry);
-  staticPutSaved(arr);
-}
-
-// Seed built-in lessons on first visit
-(function seedBuiltins() {
-  const arr = staticGetSaved();
-
-  for (const l of STATIC_LESSONS) {
-    const k = l.topic.toLowerCase();
-    const i = arr.findIndex(x => x.topic.toLowerCase() === k);
-
-    if (i >= 0) {
-      // 🔁 overwrite stale entry
-      arr[i] = l;
-    } else {
-      arr.unshift(l);
-    }
-  }
-
-  staticPutSaved(arr);
-})();
-
-// ── Init ──────────────────────────────────────────────────────────────
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
   selectLang(APP.lang);
-  restoreDiffSlider();
+  restoreDiffSelect();
   renderPill();
   loadSavedList();
+  const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
+  if (hashTopic) loadSaved(hashTopic);
 }
 
 function renderPill() {
-  const pill = document.getElementById('bpill');
-  const lbl  = document.getElementById('blbl');
+  const pill=document.getElementById('bpill'), lbl=document.getElementById('blbl');
   document.getElementById('bmodel').textContent = '';
   pill.className = 'bpill none';
   lbl.textContent = 'Static — built-in lessons only';
   document.getElementById('gen-btn').disabled = true;
   document.getElementById('topic-input').disabled = true;
-  const sel = document.getElementById('lang-select');
-  if (sel) sel.disabled = true;
-  const note = document.getElementById('offline-note');
-  note.style.display = 'block';
-  note.textContent = '📦 Static version — select a topic below to start';
+  const sel=document.getElementById('lang-select'); if(sel) sel.disabled=true;
+  const note=document.getElementById('offline-note');
+  note.style.display='block'; note.textContent='📦 Static version — select a topic below to start';
 }
 
-// ── Saved list with language filter ───────────────────────────────────
 async function loadSavedList() {
-  const saved = staticGetSaved();
-
-  // Build language filter buttons if multiple languages present
-  const langs = [...new Set(saved.map(s => s.lang || 'it'))].sort();
-  const filterEl = document.getElementById('lib-filter');
-  if (filterEl && langs.length > 1) {
-    filterEl.innerHTML = ['all', ...langs].map(l => {
-      const L = LANGS[l];
-      const lbl = l === 'all' ? '🌐 All' : (L ? L.flag + ' ' + L.name : l.toUpperCase());
+  const saved = STATIC_LESSONS;
+  const langs=[...new Set(saved.map(s=>s.lang||'it'))].sort();
+  const filterEl=document.getElementById('lib-filter');
+  if(filterEl && langs.length>1){
+    filterEl.innerHTML=['all',...langs].map(l=>{
+      const L=LANGS[l]; const lbl=l==='all'?'🌐 All':(L?L.flag+' '+L.name:l.toUpperCase());
       return \`<button class="lib-filter-btn\${APP.libFilter===l?' active':''}" onclick="setLibFilter('\${l}')">\${lbl}</button>\`;
     }).join('');
-  } else if (filterEl) { filterEl.innerHTML = ''; }
+  } else if(filterEl){ filterEl.innerHTML=''; }
 
-  const filtered = APP.libFilter === 'all' ? saved : saved.filter(s => (s.lang||'it') === APP.libFilter);
-  document.getElementById('lib-cnt').textContent =
-    filtered.length + ' of ' + saved.length + ' topic' + (saved.length !== 1 ? 's' : '');
-  const list = document.getElementById('saved-list');
-  if (!filtered.length) {
-    list.innerHTML = '<div class="lib-empty">' + (saved.length ? 'No lessons in this language.' : 'No lessons available.') + '</div>';
+  const filtered=APP.libFilter==='all'?saved:saved.filter(s=>(s.lang||'it')===APP.libFilter);
+  document.getElementById('lib-cnt').textContent=
+    filtered.length+' of '+saved.length+' topic'+(saved.length!==1?'s':'');
+  const list=document.getElementById('saved-list');
+  if(!filtered.length){
+    list.innerHTML='<div class="lib-empty">'+(saved.length?'No lessons in this language.':'No lessons available.')+'</div>';
     return;
   }
-  list.innerHTML = filtered.map(s => {
-    const lang = s.lang || 'it';
-    const L = LANGS[lang];
-    const flag = L ? L.flag : '🌐';
-    const count = s.lessons ? s.lessons.length : 0;
-    const t = encodeURIComponent(s.topic);
-    const diff = s.difficulty || 2;
-    const diffLabel = {1:'Beginner',2:'Intermediate',3:'Advanced'}[diff] || '';
-    const diffBadge = '<span class="diff-badge d' + diff + '">' + diffLabel + '</span>';
-    const ratingStr = s.ratings
-      ? (' · ' + (['🔵','🟡','🔴'][s.ratings.difficulty-1]||'') + ' ' + (['😐','😊','😄'][s.ratings.fun-1]||'')).trimEnd()
+
+  // Build storyline chains
+  const byTopic=Object.fromEntries(filtered.map(l=>[l.topic,l]));
+  const childMap={};
+  filtered.forEach(l=>{
+    if(l.continuedFrom && byTopic[l.continuedFrom])
+      (childMap[l.continuedFrom]=childMap[l.continuedFrom]||[]).push(l.topic);
+  });
+  const hasParent=new Set(filtered.filter(l=>l.continuedFrom&&byTopic[l.continuedFrom]).map(l=>l.topic));
+  const chains=[];
+  function walk(topic,chain){
+    const ext=[...chain,topic], kids=childMap[topic]||[];
+    if(!kids.length){chains.push(ext);return;}
+    kids.forEach(k=>walk(k,ext));
+  }
+  filtered.filter(l=>!hasParent.has(l.topic)).forEach(r=>walk(r.topic,[]));
+  const storylines=chains.filter(c=>c.length>1);
+  const inChain=new Set(storylines.flat());
+  const orphans=filtered.filter(l=>!inChain.has(l.topic));
+
+  function itemHtml(s, connector) {
+    const sL=LANGS[s.lang||'it']||LANGS.it;
+    const t=encodeURIComponent(s.topic);
+    const d=s.difficulty||2;
+    const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
+    const diffBadge='<span class="diff-badge d'+d+'">'+diff+'</span>';
+    const ratingStr=s.ratings
+      ? ' · '+(['🔵','🟡','🔴'][s.ratings.difficulty-1]||'')+' '+(['😐','😊','😄'][s.ratings.fun-1]||'')
       : '';
+    const count=s.lessons?s.lessons.length:0;
+    const dateStr=s.updatedAt||s.generatedAt;
+    const date=dateStr?new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+    const conn=connector?'<span class="storyline-connector">↩</span>':'';
     return \`<div class="saved-item" onclick="loadSaved('\${t}')">
-      <span class="saved-emoji">\${flag} \${s.topicEmoji||'📚'}</span>
+      \${conn}<span class="saved-emoji">\${sL.flag} \${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
         <div class="saved-topic">\${s.topic} \${diffBadge}</div>
-        <div class="saved-meta">\${count} lesson\${count !== 1 ? 's' : ''}\${ratingStr}</div>
+        <div class="saved-meta">\${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
       </div>
     </div>\`;
-  }).join('');
+  }
+
+  const newestOf=chain=>chain.reduce((b,t)=>{const d=byTopic[t]?.updatedAt||byTopic[t]?.generatedAt||'';return d>b?d:b;},'');
+  storylines.sort((a,b)=>newestOf(b).localeCompare(newestOf(a)));
+
+  let html='';
+  for(const chain of storylines){
+    html+='<div class="storyline-group"><div class="storyline-hdr">📖 Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+'</div>';
+    chain.forEach((topic,i)=>{
+      const s=byTopic[topic]; if(!s)return;
+      html+='<div class="storyline-item">'+itemHtml(s,i>0)+'</div>';
+    });
+    html+='</div>';
+  }
+  if(orphans.length){
+    if(storylines.length) html+='<div class="orphans-hdr">📚 Individual lessons</div>';
+    html+=orphans.map(s=>itemHtml(s,false)).join('');
+  }
+  list.innerHTML=html||'<div class="lib-empty">No lessons available.</div>';
 }
 
-function setLibFilter(lang) { APP.libFilter = lang; loadSavedList(); }
+function setLibFilter(lang){ APP.libFilter=lang; loadSavedList(); }
 
 async function loadSaved(topic) {
-  const dec = decodeURIComponent(topic);
-  const found = staticGetSaved().find(l => l.topic.toLowerCase() === dec.toLowerCase());
-  if (!found) { alert('Lesson not found.'); return; }
-  APP.lessonData = found;
-  goHome();
+  const dec=decodeURIComponent(topic);
+  const found=STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
+  if(!found){ alert('Lesson not found.'); return; }
+  APP.lessonData=found; goHome();
 }
 
-function  setTopic(t) { document.getElementById('topic-input').value = t; }
+function setTopic(t){ document.getElementById('topic-input').value=t; }
 `;
 
 // Stubs injected AFTER part2 so they override engine versions
 const staticOverrides = [
-  '// Disabled in static mode — overrides engine versions',
-  'async function syncFlagsFromServer() {}',
-  'async function pushFlagToServer()   {}',
-  'async function deleteSaved()        {}',
-  'async function regenSaved()         {}',
-  'function  regenCurrent()            {}',
-  'async function doGenerate()         {}',
-  '',
-  '// UI helpers — work fully in static mode',
-  'function autoResizeTopic(el){ el.style.height=\'auto\'; el.style.height=Math.min(el.scrollHeight,160)+\'px\'; }',
-  'function onDiffSlider(v){',
-  '  APP.difficulty=parseInt(v,10); saveDifficulty();',
-  '  const el=document.getElementById(\'diff-val\');',
-  '  if(el){ el.textContent=DIFF_SHORT[APP.difficulty]||v; el.className=\'diff-val d\'+APP.difficulty; }',
-  '}',
-  'function restoreDiffSlider(){',
-  '  const sl=document.getElementById(\'diff-slider\'); if(sl) sl.value=APP.difficulty;',
-  '  onDiffSlider(APP.difficulty);',
-  '}',
-  '',
-  '// Story — DOM-only functions work in static mode',
-  'function toggleStory(){',
-  '  const body=document.getElementById(\'story-body\');',
-  '  const arrow=document.getElementById(\'story-arrow\');',
-  '  if(!body) return;',
-  '  const open=body.classList.toggle(\'open\');',
-  '  if(arrow) arrow.classList.toggle(\'open\',open);',
-  '}',
-  'function speakStory(){ const d=APP.lessonData; if(d&&d.story) speak(d.story); }',
-  'function renderStoryText(d){',
-  '  const body=document.getElementById(\'story-body\'); if(!body) return;',
-  '  body.innerHTML=(d.story||\'\').split(/\\n\\n+/).map(p=>\'<p>\'+p.replace(/\\n/g,\'<br>\')+\'</p>\').join(\'\');',
-  '}',
-  '',
-  '// Chat console — disabled in static mode',
+  '// ── Disabled in static mode ──────────────────────────────────────',
+  'async function syncFlagsFromServer(){}',
+  'async function pushFlagToServer(){}',
+  'async function deleteSaved(){}',
+  'async function regenSaved(){}',
+  'function regenCurrent(){}',
+  'async function doGenerate(){}',
+  'async function submitRating(){}',
   'function toggleChat(){}',
   'function autoResizeChat(){}',
   'function clearChat(){}',
-  'async function sendChat(){ alert(\'The model console requires the live server.\'); }',
+  'async function sendChat(){ alert("Model console requires the live server."); }',
+  'function toggleStoryFlag(){}',
+  'function saveStoryComment(){}',
+  'function _updateStoryFlagUI(){}',
+  'function autoResizeTopic(el){ el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,160)+"px"; }',
+  'function toggleStory(){',
+  '  const body=document.getElementById("story-body"),arrow=document.getElementById("story-arrow");',
+  '  if(!body)return;',
+  '  const open=body.classList.toggle("open");',
+  '  if(arrow)arrow.classList.toggle("open",open);',
+  '}',
+  'function speakStory(){ const d=APP.lessonData; if(d&&d.story)speak(d.story); }',
+  'function renderStoryText(d){',
+  '  const body=document.getElementById("story-body"); if(!body)return;',
+  '  body.innerHTML=(d.story||"").split(/\\n\\n+/).map(p=>"<p>"+p.replace(/\\n/g,"<br>")+"</p>").join("");',
+  '}',
+  'function toggleStoryRepair(){}',
+  'function doRepairStory(){ alert("Story repair requires the live server."); }',
 ].join('\n');
 
 // ── Assemble ──────────────────────────────────────────────────────────

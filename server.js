@@ -302,10 +302,10 @@ function deriveSentenceWords(s) {
 // ── Story prompts ─────────────────────────────────────────────────────
 function sysStory(lang, isContinuation) {
   const L = langName(lang);
-  const contInstruction = isContinuation
-    ? `IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one provided. Characters should feel familiar, the world should feel connected.`
+  const cont = isContinuation
+    ? ' IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.'
     : '';
-  return `You are a creative writer and ${L} language teacher. Write a short, engaging story directly in ${L} (4-6 paragraphs, around 400 words) on the given topic. The story should naturally include vocabulary and situations useful for someone learning ${L}. Avoid repetitive structures! Write plain prose only — no headings, no bullet points, no markdown. Write entirely in ${L}. ${contInstruction}`.trim();
+  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${cont}`;
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
@@ -397,7 +397,7 @@ async function generate(topic, lang, active, difficulty, continuedFrom, jobId) {
   try {
     const t0 = Date.now();
     const storyUserMsg = prevStory
-      ? `Previous story (continue its characters and world):\n${prevStory}\n\nNew topic: "${meta.topic || topic}". Write the continuation story now. Plain prose, no headings.`
+      ? `Previous story:\n${prevStory}\n\nNew topic: "${meta.topic || topic}". Write the continuation now. Plain prose, no headings.`
       : `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`;
     const { text, promptTokens, completionTokens } = await callLLM(
       active, sysStory(lang, !!prevStory), storyUserMsg, 900);
@@ -617,6 +617,7 @@ async function boot() {
       const list = store.lessons.map(l => ({
         topic: l.topic, topicEmoji: l.topicEmoji, lang: l.lang || 'it',
         difficulty: l.difficulty || 2,
+        continuedFrom: l.continuedFrom || null,
         generatedAt: l.generatedAt,
         updatedAt:   l.updatedAt || l.generatedAt,
         lessonCount: l.lessons?.length || 0,
