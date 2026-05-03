@@ -1,6 +1,367 @@
 {
   "lessons": [
     {
+      "topic": "alessia starts to develop symptoms of bipolar mood disorder, oscillating between the zombi fungus and its counterpart that control her brain chemistry",
+      "topicEmoji": "🧠",
+      "lang": "it",
+      "difficulty": 1,
+      "story": "Alessia si svegliò quella mattina sentendo un formicolio strano nel suo corpo. Marco era accanto a lei, ma non sembrava lo stesso Marco di prima. \"Come stai?\" gli chiese, la voce incerta. Marco la guardò, con un'espressione che non riusciva a decifrare. \"Sto bene,\" rispose, la voce fredda. \"Ma non capisco perché senti questo formicolio.\" Alessia si concentrò, cercando di capire cosa stava succedendo. \"Forse... forse c'è qualcosa che non va,\" suggerì Marco, notando il suo sguardo distante.\n\nAlessia si alzò dal letto, sentendo una forza nuova, ma anche una strana agitazione. \"Devo... devo andare,\" disse, la voce incerta. Marco la guardò preoccupato. \"Dove vai?\" chiese, cercando di trattenerla. \"Non lo so,\" rispose Alessia, la voce più forte. \"Ma sento che devo andare.\"\n\nMentre usciva dalla stanza, notò una vecchia porta in fondo al corridoio. Era chiusa a chiave, ma sentiva un formicolio che la spingeva a spingerla. Marco la seguì, preoccupato. \"Non lasciarmi solo,\" disse, la voce piena di paura. Alessia si fermò, voltandosi a guardarlo. \"Non preoccuparti,\" disse, la voce decisa. \"Ci sarò subito.\"\n\nAlessia aprì la porta, trovando una vecchia strega che stava preparando un incantesimo. \"Chi sei tu?\" chiese la strega, guardando Alessia con occhi penetranti. \"Sono Alessia,\" rispose, la voce ferma. \"E Marco è con me.\"\n\nLa vecchia strega sorrise, annuendo. \"Sono stata aspettata,\" disse, la voce calma. \"Vieni, ti aiuterò.\" Alessia entrò nella stanza, sentendo Marco che la seguiva. La strega prese un libro antico e iniziò a leggere un incantesimo. \"Questo incantesimo ti aiuterà a controllare i tuoi umori,\" disse, la voce dolce. \"Ma devi essere forte.\"\n\nAlessia annuì, sentendo Marco accanto a lei. \"Grazie,\" disse, la voce ferma. \"Grazie per aiutarmi.\" La vecchia strega sorrise, annuendo. \"Sono felice di poterlo fare,\" disse, la voce calma. \"Ma ora devi tornare da Marco e rimanere forte.\"\n\nQuando tornò nella sua stanza, trovò Marco seduto sul letto, con un'espressione preoccupata. \"Come stai?\" gli chiese, la voce incerta. Marco la guardò, con un'espressione che non riusciva a decifrare. \"Sto bene,\" rispose, la voce fredda. \"Ma non capisco perché senti questo formicolio.\" Alessia si concentrò, cercando di capire cosa stava succedendo. \"Forse... forse c'è qualcosa che non va,\" suggerì Marco, notando il suo sguardo distante.",
+      "storyLang": "it",
+      "continuedFrom": "marco learns from an old witch",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Formicolio e Stranezze",
+          "desc": "Sveglie, formicolio, espressione, agitazione, andare",
+          "icon": "💫",
+          "vocab": [
+            {
+              "it": "formicolio",
+              "en": "tingling",
+              "pron": "FOR-mi-ko-lio"
+            },
+            {
+              "it": "espressione",
+              "en": "expression",
+              "pron": "es-pre-SI-zi-e"
+            },
+            {
+              "it": "agitazione",
+              "en": "agitation",
+              "pron": "a-GI-ta-zzi-o-ne"
+            },
+            {
+              "it": "andare",
+              "en": "to go",
+              "pron": "AN-da-re"
+            },
+            {
+              "it": "sveglie",
+              "en": "alarms",
+              "pron": "sve-GLI-eh"
+            },
+            {
+              "it": "stranezze",
+              "en": "strangeness",
+              "pron": "stran-EZZ-eh"
+            },
+            {
+              "it": "cercando",
+              "en": "searching",
+              "pron": "cer-CAN-do"
+            },
+            {
+              "it": "trattenerla",
+              "en": "to hold her back",
+              "pron": "tra-TTE-ne-re-la"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Sentivo un formicolio nel corpo.",
+              "en": "I felt a tingling in my body.",
+              "words": [
+                "Sentivo",
+                "un",
+                "formicolio",
+                "nel",
+                "corpo."
+              ]
+            },
+            {
+              "it": "La sua espressione mi preoccupava.",
+              "en": "Her expression worried me.",
+              "words": [
+                "La",
+                "sua",
+                "espressione",
+                "mi",
+                "preoccupava."
+              ]
+            },
+            {
+              "it": "Cercavo di capire cosa stesse succedendo.",
+              "en": "I was trying to understand what was happening.",
+              "words": [
+                "Cercavo",
+                "di",
+                "capire",
+                "cosa",
+                "stesse",
+                "succedendo."
+              ]
+            },
+            {
+              "it": "Andai via senza sapere dove andare.",
+              "en": "I left without knowing where to go.",
+              "words": [
+                "Andai",
+                "via",
+                "senza",
+                "sapere",
+                "dove",
+                "andare."
+              ]
+            },
+            {
+              "it": "Trattenni le sue mani cercando di fermarla.",
+              "en": "I held her hands trying to stop her.",
+              "words": [
+                "Trattenni",
+                "le",
+                "sue",
+                "mani",
+                "cercando",
+                "di",
+                "fermarla."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Sintomi e Stranezze",
+          "desc": "Sensi e emozioni strane",
+          "icon": "🤔",
+          "vocab": [
+            {
+              "it": "stranezze",
+              "en": "strangeness",
+              "pron": "STRAN-eh-zeh"
+            },
+            {
+              "it": "sensi",
+              "en": "senses",
+              "pron": "SEN-eh"
+            },
+            {
+              "it": "emozioni",
+              "en": "emotions",
+              "pron": "EH-moh-zee-oh-ne"
+            },
+            {
+              "it": "oscillare",
+              "en": "to oscillate",
+              "pron": "os-CEL-lee-ar"
+            },
+            {
+              "it": "fungo",
+              "en": "fungus",
+              "pron": "FUNG-oh"
+            },
+            {
+              "it": "contropartita",
+              "en": "counterpart",
+              "pron": "kon-TRAH-pahrt-ee-tah"
+            },
+            {
+              "it": "chemica",
+              "en": "chemical",
+              "pron": "KEH-mih-kah"
+            },
+            {
+              "it": "stressed",
+              "en": "stressed",
+              "pron": "STRESS-ted"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Oscillava tra i sintomi e le stranezze.",
+              "en": "She oscillated between the symptoms and the strangeness.",
+              "words": [
+                "Oscillava",
+                "tra",
+                "i",
+                "sintomi",
+                "e",
+                "le",
+                "stranezze."
+              ]
+            },
+            {
+              "it": "Le emozioni le stressevano.",
+              "en": "The emotions stressed her out.",
+              "words": [
+                "Le",
+                "emozioni",
+                "le",
+                "stressevano."
+              ]
+            },
+            {
+              "it": "Cercò di capire cosa le oscillava nella testa.",
+              "en": "She tried to understand what was oscillating in her head.",
+              "words": [
+                "Cercò",
+                "di",
+                "capire",
+                "cosa",
+                "le",
+                "oscillava",
+                "nella",
+                "testa."
+              ]
+            },
+            {
+              "it": "Il fungo e la sua contropartita la controllavano.",
+              "en": "The fungus and its counterpart controlled her.",
+              "words": [
+                "Il",
+                "fungo",
+                "e",
+                "la",
+                "sua",
+                "contropartita",
+                "la",
+                "controllavano."
+              ]
+            },
+            {
+              "it": "La chimica del suo corpo era in equilibrio.",
+              "en": "The chemistry of her body was in balance.",
+              "words": [
+                "La",
+                "chimica",
+                "del",
+                "suo",
+                "corpo",
+                "era",
+                "in",
+                "equilibrio."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Symptoms and Strangeness",
+          "desc": "Alessia's unusual feelings and expressions",
+          "icon": "🤔",
+          "vocab": [
+            {
+              "it": "stranezze",
+              "en": "strangeness",
+              "pron": "STRAN-eh-zeh"
+            },
+            {
+              "it": "sensi",
+              "en": "senses",
+              "pron": "SEN-eh"
+            },
+            {
+              "it": "emozioni",
+              "en": "emotions",
+              "pron": "eh-moh-ZHEE-ohn"
+            },
+            {
+              "it": "fungo",
+              "en": "fungus",
+              "pron": "FUN-goh"
+            },
+            {
+              "it": "contropartita",
+              "en": "counterpart",
+              "pron": "kon-troh-pahr-TEE-tah"
+            },
+            {
+              "it": "chemica",
+              "en": "chemical",
+              "pron": "keh-MIH-kah"
+            },
+            {
+              "it": "oscillare",
+              "en": "to oscillate",
+              "pron": "os-see-LAH-krah"
+            },
+            {
+              "it": "stressed",
+              "en": "stressed",
+              "pron": "STRESS-ted"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Oscillare tra emozioni contrastanti.",
+              "en": "To oscillate between conflicting emotions.",
+              "words": [
+                "Oscillare",
+                "tra",
+                "emozioni",
+                "contrastanti."
+              ]
+            },
+            {
+              "it": "Stranezze che non capisco.",
+              "en": "Strangeness I don't understand.",
+              "words": [
+                "Stranezze",
+                "che",
+                "non",
+                "capisco."
+              ]
+            },
+            {
+              "it": "Sensi in allerta.",
+              "en": "Senses on alert.",
+              "words": [
+                "Sensi",
+                "in",
+                "allerta."
+              ]
+            },
+            {
+              "it": "Chemica del fungo.",
+              "en": "Fungus chemical.",
+              "words": [
+                "Chemica",
+                "del",
+                "fungo."
+              ]
+            },
+            {
+              "it": "Contropartita del fungo.",
+              "en": "Counterpart of the fungus.",
+              "words": [
+                "Contropartita",
+                "del",
+                "fungo."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1009903,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2845,
+        "totalCompletionTokens": 1883,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 215718,
+            "promptTokens": 552,
+            "completionTokens": 372
+          },
+          {
+            "lessonNum": 2,
+            "ms": 195311,
+            "promptTokens": 626,
+            "completionTokens": 372
+          },
+          {
+            "lessonNum": 3,
+            "ms": 195351,
+            "promptTokens": 675,
+            "completionTokens": 326
+          }
+        ]
+      },
+      "generatedAt": "2026-05-03T12:16:14.586Z",
+      "updatedAt": "2026-05-03T12:16:14.586Z"
+    },
+    {
       "topic": "marco learns from an old witch",
       "topicEmoji": "🧙",
       "lang": "it",
