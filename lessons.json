@@ -1,6 +1,408 @@
 {
   "lessons": [
     {
+      "topic": "Arno Wins Fairly",
+      "topicEmoji": "🏆",
+      "userTopic": "arno wins again, this time fair and square",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 100,
+      "story": "Arno, vedendo la determinazione di Elio e Sofia, iniziò a giocare con maggiore concentrazione. La partita si fece più intensa, i colpi più precisi. Sofia lanciò la palla in aria, Elio la raccoglieva con un colpo secco. Arno, pur mantenendo la sua superiorità, non riusciva a staccarsi completamente. Sofia prese la palla e la lanciò con forza, Elio la rifiutò con un colpo agile. Arno, sorridendo, raccoglieva la palla e la rimetteva in gioco. Sofia e Elio, pur non vincendo, dimostravano una tenacia inaspettata. Alla fine, Arno riuscì a segnare il punto decisivo, la palla colpì il muro con precisione. Sofia e Elio si guardarono, ammirati per la sua abilità. Arno, con un sorriso sincero, si avvicinò a loro. \"Avete giocato bene,\" disse, \"ma questa volta sono stato fortunato.\" Elio annuì, riconoscendo la sua abilità. \"Hai giocato bene,\" disse, \"ma spero che la prossima volta ci sia giustizia.\" Arno rise, amichevole. \"Ci penserò,\" disse, \"e spero che tu e Sofia ci proverete di nuovo.\"",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nNella sala da pranzo illuminata dal crepuscolo, Elio e Sofia si preparavano per la visita inaspettata dei parenti. Sofia, ancora un po' addormentata, si svegliò lentamente, i suoi occhi azzurri che si spalancarono quando vide Elio che indossava la maglietta del club di ping-pong locale. \"Elio, cosa fai?\" sussurrò, cercando di non svegliare i parenti che stavano arrivando.\n\nElio, con un sorriso misterioso, prese la palla da ping-pong e la passò a Sofia. \"Non preoccuparti,\" le disse, \"non è per giocare. È per dimostrare qualcosa.\" Sofia lo guardò con curiosità, le sue mani strette intorno alla palla come se fosse un tesoro prezioso. \"Cosa vuoi dimostrare?\" chiese, sollevando un sopracciglio.\n\nElio prese la palla e la lanciò in aria, poi la raccogliò con un colpo secco. \"Ho sentito parlare di Arno, il ragazzo che ha vinto il torneo di ping-pong l'anno scorso,\" spiegò Elio, \"ma non credo che sia stato giusto. Credo che ci sia stato qualcosa di strano.\" Sofia lo guardò con occhi sospettosi, ma Elio era determinato. \"Voglio dimostrare che Arno non ha vinto in modo equo,\" disse Elio, \"e che c'è qualcosa che non va.\"\n\nSofia annuì, anche se non era del tutto convinta. \"Come farai?\" chiese, guardando Elio con un misto di curiosità e fiducia. Elio prese la palla e la passò a Sofia, che la prese con entusiasmo. \"Dobbiamo giocare,\" disse Elio, \"e dimostrare che Arno non è il migliore.\" Sofia annuì, ma la sua espressione era preoccupata. Elio la prese per mano e la condusse verso la porta, con la palla tra loro. \"Nonna ci vuole,\" ripeté Elio, \"andiamo a vedere.\"\n\nScesero le scale e si diressero verso il campo di ping-pong, dove Arno stava già allenandosi. Elio e Sofia si avvicinarono silenziosamente, cercando di non farsi notare. Arno, concentrato, lanciava la palla contro il muro e la raccoglieva con precisione. Sofia guardò Elio, che annuì con determinazione. \"Pronti?\" sussurrò Elio, e Sofia annuì, la palla stretta tra le mani.\n\nElio prese la palla e la passò a Sofia, che la prese con entusiasmo. \"Pronti,\" disse Sofia, la sua voce bassa e sicura. Elio prese la palla e la lanciò in aria, poi la raccogliò con un colpo secco. \"Vediamo chi è il vero campione,\" disse Elio, la sua voce decisa. Sofia annuì, e i due iniziarono a giocare, concentrandosi su ogni colpo.\n\nArno, notando la presenza di Elio e Sofia, si voltò verso di loro. \"Che ci fate qui?\" chiese, il suo tono freddo e distaccato. Elio e Sofia si guardarono, poi Elio rispose con calma. \"Vogliamo dimostrare che non sei il migliore,\" disse Elio, la sua voce ferma. Arno rise, un suono sprezzante. \"Non ci credo,\" disse, \"non potete battermi.\"\n\nElio prese la palla e la passò a Sofia, che la prese con entusiasmo. \"Dobbiamo dimostrare che c'è qualcosa che non va,\" disse Elio, \"e che tu non hai vinto in modo equo.\" Arno rise di nuovo, ma Sofia e Elio continuarono a giocare, concentrandosi su ogni colpo. Arno, vedendo la determinazione di Elio e Sofia, iniziò a preoccuparsi. \"Non ci credo,\" disse, \"ma vedremo.\"\n\nSofia prese la palla e la lanciò in aria, poi la raccogliò con un colpo secco. \"Vediamo chi è il vero campione,\" disse Sofia, la sua voce sicura. Elio annuì, e i due iniziarono a giocare, concentrandosi su ogni colpo. Arno, vedendo la determinazione di Elio e Sofia, iniziò a preoccuparsi. \"Non ci credo,\" disse, \"ma vedremo.\"\n\nNew topic: \"Arno Wins Fairly\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Arnos Unfair Win",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Arno wins again",
+          "desc": "partita, concentrazione, precisione, tenacia, fortuna",
+          "icon": "🏆",
+          "vocab": [
+            {
+              "it": "partita",
+              "en": "game",
+              "pron": "PART-IT-AAAA"
+            },
+            {
+              "it": "concentrazione",
+              "en": "concentration",
+              "pron": "kon-SEN-TRA-TOO-REE-ON"
+            },
+            {
+              "it": "precisione",
+              "en": "precision",
+              "pron": "pre-ZIS-CHUN-DEE-ON"
+            },
+            {
+              "it": "tenacia",
+              "en": "tenacity",
+              "pron": "ten-uh-CHISH-UN"
+            },
+            {
+              "it": "fortuna",
+              "en": "luck",
+              "pron": "FOR-tu-NAA"
+            },
+            {
+              "it": "ammirati",
+              "en": "admired",
+              "pron": "am-mi-RA-ti"
+            },
+            {
+              "it": "sincero",
+              "en": "sincere",
+              "pron": "sin-CHER-RO"
+            },
+            {
+              "it": "riconosceva",
+              "en": "recognized",
+              "pron": "ri-ko-NO-sche-VA"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Elio raccoglieva la palla con un colpo secco.",
+              "en": "Elio gathered the ball with a sharp hit.",
+              "words": [
+                "Elio",
+                "raccoglieva",
+                "la",
+                "palla",
+                "con",
+                "un",
+                "colpo",
+                "secco."
+              ]
+            },
+            {
+              "it": "Sofia lanciò la palla in aria, Elio la rifiutò.",
+              "en": "Sofia threw the ball up, Elio rejected it.",
+              "words": [
+                "Sofia",
+                "lanciò",
+                "la",
+                "palla",
+                "in",
+                "aria,",
+                "Elio",
+                "la",
+                "rifiutò."
+              ]
+            },
+            {
+              "it": "Arno, con un sorriso sincero, si avvicinò a loro.",
+              "en": "Arno, with a sincere smile, approached them.",
+              "words": [
+                "Arno,",
+                "con",
+                "un",
+                "sorriso",
+                "sincero,",
+                "si",
+                "avvicinò",
+                "a",
+                "loro."
+              ]
+            },
+            {
+              "it": "La partita si fece più intensa, i colpi più precisi.",
+              "en": "The game became more intense, the hits more precise.",
+              "words": [
+                "La",
+                "partita",
+                "si",
+                "fece",
+                "più",
+                "intensa,",
+                "i",
+                "colpi",
+                "più",
+                "precisi."
+              ]
+            },
+            {
+              "it": "Sofia e Elio dimostravano una tenacia inaspettata.",
+              "en": "Sofia and Elio demonstrated an unexpected tenacity.",
+              "words": [
+                "Sofia",
+                "e",
+                "Elio",
+                "dimostravano",
+                "una",
+                "tenacia",
+                "inaspettata."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Arno wins again",
+          "desc": "concentration, precision, tenacity, luck, admired, sincere, recognized, decisive",
+          "icon": "🏆",
+          "vocab": [
+            {
+              "it": "concentrazione",
+              "en": "concentration",
+              "pron": "kon-SEN-tra-zhe-nee"
+            },
+            {
+              "it": "precisione",
+              "en": "precision",
+              "pron": "pre-zi-ZHE-ne"
+            },
+            {
+              "it": "tenacia",
+              "en": "tenacity",
+              "pron": "te-NA-zi-ah"
+            },
+            {
+              "it": "fortuna",
+              "en": "luck",
+              "pron": "for-TOO-nah"
+            },
+            {
+              "it": "ammirati",
+              "en": "admired",
+              "pron": "ah-mi-RA-ti"
+            },
+            {
+              "it": "sincero",
+              "en": "sincere",
+              "pron": "sin-CHER-oh"
+            },
+            {
+              "it": "riconosceva",
+              "en": "recognized",
+              "pron": "ri-ko-no-SEH-vah"
+            },
+            {
+              "it": "decisivo",
+              "en": "decisive",
+              "pron": "de-chi-SEH-vee-oh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Concentrazione e precisione sono chiave per vincere.",
+              "en": "Concentration and precision are key to winning.",
+              "words": [
+                "Concentrazione",
+                "e",
+                "precisione",
+                "sono",
+                "chiave",
+                "per",
+                "vincere."
+              ]
+            },
+            {
+              "it": "La tenacia di Sofia e Elio li ha resi ammirati.",
+              "en": "Sofia and Elio's tenacity made them admired.",
+              "words": [
+                "La",
+                "tenacia",
+                "di",
+                "Sofia",
+                "e",
+                "Elio",
+                "li",
+                "ha",
+                "resi",
+                "ammirati."
+              ]
+            },
+            {
+              "it": "Arno ha vinto con una fortuna decisiva.",
+              "en": "Arno won with a decisive stroke of luck.",
+              "words": [
+                "Arno",
+                "ha",
+                "vinto",
+                "con",
+                "una",
+                "fortuna",
+                "decisiva."
+              ]
+            },
+            {
+              "it": "Sincero, Arno ha riconosciuto il loro gioco.",
+              "en": "Sincere, Arno recognized their game.",
+              "words": [
+                "Sincero,",
+                "Arno",
+                "ha",
+                "riconosciuto",
+                "il",
+                "loro",
+                "gioco."
+              ]
+            },
+            {
+              "it": "La partita si è conclusa con un colpo decisivo.",
+              "en": "The game ended with a decisive blow.",
+              "words": [
+                "La",
+                "partita",
+                "si",
+                "è",
+                "conclusa",
+                "con",
+                "un",
+                "colpo",
+                "decisivo."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Arno wins again",
+          "desc": "game, concentration, precision, tenacity, luck, admired, sincere, recognized",
+          "icon": "🏆",
+          "vocab": [
+            {
+              "it": "giocatore",
+              "en": "player",
+              "pron": "JAH-kloe-eh-DEH"
+            },
+            {
+              "it": "pallone",
+              "en": "ball",
+              "pron": "PAH-loh-ne"
+            },
+            {
+              "it": "rimessa",
+              "en": "serve",
+              "pron": "ree-MEH-sah"
+            },
+            {
+              "it": "contro",
+              "en": "against",
+              "pron": "KON-toh"
+            },
+            {
+              "it": "sorpreso",
+              "en": "surprised",
+              "pron": "sor-PREH-zo"
+            },
+            {
+              "it": "sconfitta",
+              "en": "defeat",
+              "pron": "scon-FIT-tah"
+            },
+            {
+              "it": "gioco",
+              "en": "game",
+              "pron": "JAH-koh"
+            },
+            {
+              "it": "speranza",
+              "en": "hope",
+              "pron": "speh-RAHN-zah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il giocatore lanciò il pallone con forza.",
+              "en": "The player served the ball with force.",
+              "words": [
+                "Il",
+                "giocatore",
+                "lanciò",
+                "il",
+                "pallone",
+                "con",
+                "forza."
+              ]
+            },
+            {
+              "it": "Arno rimise in gioco dopo la sconfitta.",
+              "en": "Arno served again after the defeat.",
+              "words": [
+                "Arno",
+                "rimise",
+                "in",
+                "gioco",
+                "dopo",
+                "la",
+                "sconfitta."
+              ]
+            },
+            {
+              "it": "Elio rimase sorpreso dalla precisione di Arno.",
+              "en": "Elio was surprised by Arno's precision.",
+              "words": [
+                "Elio",
+                "rimase",
+                "sorpreso",
+                "dalla",
+                "precisione",
+                "di",
+                "Arno."
+              ]
+            },
+            {
+              "it": "Sofia sperava in una nuova partita.",
+              "en": "Sofia hoped for a new game.",
+              "words": [
+                "Sofia",
+                "sperava",
+                "in",
+                "una",
+                "nuova",
+                "partita."
+              ]
+            },
+            {
+              "it": "Con un sorriso sincero, Arno riconobbe il loro impegno.",
+              "en": "With a sincere smile, Arno recognized their effort.",
+              "words": [
+                "Con",
+                "un",
+                "sorriso",
+                "sincero,",
+                "Arno",
+                "riconobbe",
+                "il",
+                "loro",
+                "impegno."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1041540,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 3214,
+        "totalCompletionTokens": 1565,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 233957,
+            "promptTokens": 548,
+            "completionTokens": 422
+          },
+          {
+            "lessonNum": 2,
+            "ms": 225776,
+            "promptTokens": 614,
+            "completionTokens": 417
+          },
+          {
+            "lessonNum": 3,
+            "ms": 216144,
+            "promptTokens": 661,
+            "completionTokens": 372
+          }
+        ]
+      },
+      "generatedAt": "2026-05-04T10:06:38.916Z",
+      "updatedAt": "2026-05-04T10:06:38.916Z"
+    },
+    {
       "topic": "Arnos Unfair Win",
       "topicEmoji": "🏆",
       "userTopic": "arno wins the tournament, but only by foul tricks.",
