@@ -4,6 +4,8 @@ Learn vocabulary for a specific topic in any language: enter **any topic**, get 
 
 Generate custom quirky LLM story lines using a **local Qwen model via Ollama**, or fully **offline** using saved lessons.
 
+**Share your lessons as exported files!**
+
 Everybody can already learn from existing lessons and story lines at:
 https://raim.github.io/dreizunge/
 
@@ -13,7 +15,7 @@ https://raim.github.io/dreizunge/
 ## Quick start
 
 
-### Option A — Local Qwen via Ollama (no API key needed)
+### Option A — Local Qwen via Ollama
 
 ```bash
 # 1. Install Ollama on Xubuntu 24.04
