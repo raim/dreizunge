@@ -1,10 +1,10 @@
 # Dreizunge
 
-Learn vocabulary for a specific topic in any language: enter **any topic**, get AI-generated lessons instantly.
+Learn vocabulary for a specific topic in any language: enter **any topic**, get AI-generated lessons instantly. 
 
-Works a **local Qwen model via Ollama**, or fully **offline** using saved lessons.
+Generate custom quirky LLM story lines using a **local Qwen model via Ollama**, or fully **offline** using saved lessons.
 
-Everybody can already learn existing lessons at:
+Everybody can already learn from existing lessons and story lines at:
 https://raim.github.io/dreizunge/
 
 
