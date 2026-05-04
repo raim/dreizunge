@@ -1,6 +1,397 @@
 {
   "lessons": [
     {
+      "topic": "Problems with Hotel WLAN",
+      "topicEmoji": "WiFi",
+      "userTopic": "problems with the hotel wlan",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "Nella calura estiva, Maria e Marco avevano deciso di trascorrere una settimana a Roma per rilassarsi e godersi la città. Il loro hotel, situato in un quartiere residenziale, sembrava perfetto con la sua prospettiva sul Colosseo. Tuttavia, appena si erano sistemati nella loro suite, si resero conto che il problema principale non era la vista, ma il Wi-Fi.\n\nMaria, una giornalista freelance, aveva bisogno di lavorare online per un progetto urgente. Marco, invece, era un appassionato di fotografia che voleva condividere le sue foto su Instagram. Tuttavia, il Wi-Fi del hotel era instabile e lento, rendendo impossibile per loro eseguire qualsiasi lavoro online. Provarono a contattare il personale dell'hotel, ma ricevettero solo promesse di soluzioni che non si concretizzavano.\n\nUn pomeriggio, mentre sedevano sul balcone della suite, osservando le vie affollate sotto di loro, Marco propose a Maria di andare a cercare un caffè in una delle tante caffetterie vicine. Mentre aspettavano il loro drink, notarono un gruppo di giovani che si sedevano in un angolo della piazza, concentrati sui loro smartphone. Marco propose di unirsi a loro, offrendo loro la loro suite come spazio di lavoro temporaneo. Gli studenti accettarono con entusiasmo, e presto la suite divenne un piccolo centro di lavoro temporaneo, con Maria e Marco che condividevano la loro connessione Wi-Fi.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian.\n\nWrite a story for the topic: \"Problems with Hotel WLAN\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Problemi con il WLAN",
+          "desc": "Wi-Fi instabile, lavoro online, condivisione foto",
+          "icon": "🌐",
+          "vocab": [
+            {
+              "it": "instabile",
+              "en": "unstable",
+              "pron": "in-STAH-blu"
+            },
+            {
+              "it": "condivisione",
+              "en": "sharing",
+              "pron": "kuon-DEE-vee-AH-ne"
+            },
+            {
+              "it": "promessa",
+              "en": "promise",
+              "pron": "pro-MES-sa"
+            },
+            {
+              "it": "concretizzarsi",
+              "en": "be fulfilled",
+              "pron": "kuon-KRET-ti-ZAR-si"
+            },
+            {
+              "it": "giornalista",
+              "en": "journalist",
+              "pron": "juo-REEN-ah-LAH-tsa"
+            },
+            {
+              "it": "progetto",
+              "en": "project",
+              "pron": "pro-GET-to"
+            },
+            {
+              "it": "urgente",
+              "en": "urgent",
+              "pron": "ur-JEN-te"
+            },
+            {
+              "it": "conseguenza",
+              "en": "consequence",
+              "pron": "kuon-SE-ge-NTS-sa"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il Wi-Fi era instabile e lento.",
+              "en": "The Wi-Fi was unstable and slow.",
+              "words": [
+                "Il",
+                "Wi-Fi",
+                "era",
+                "instabile",
+                "e",
+                "lento."
+              ]
+            },
+            {
+              "it": "Maria aveva bisogno di lavorare online.",
+              "en": "Maria needed to work online.",
+              "words": [
+                "Maria",
+                "aveva",
+                "bisogno",
+                "di",
+                "lavorare",
+                "online."
+              ]
+            },
+            {
+              "it": "Provarono a condividere le foto su Instagram.",
+              "en": "They tried to share the photos on Instagram.",
+              "words": [
+                "Provarono",
+                "a",
+                "condividere",
+                "le",
+                "foto",
+                "su",
+                "Instagram."
+              ]
+            },
+            {
+              "it": "Il personale dell'hotel fece promesse senza concretizzarsi.",
+              "en": "The hotel staff made promises that didn't come true.",
+              "words": [
+                "Il",
+                "personale",
+                "dell'hotel",
+                "fece",
+                "promesse",
+                "senza",
+                "concretizzarsi."
+              ]
+            },
+            {
+              "it": "L'instabilità del Wi-Fi portò a conseguenze negative.",
+              "en": "The Wi-Fi instability had negative consequences.",
+              "words": [
+                "L'instabilità",
+                "del",
+                "Wi-Fi",
+                "portò",
+                "a",
+                "conseguenze",
+                "negative."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Problemi con il WLAN",
+          "desc": "Wi-Fi instabile, condivisione, promesse, conseguenze",
+          "icon": "🌐",
+          "vocab": [
+            {
+              "it": "instabile",
+              "en": "unstable",
+              "pron": "in-STAH-be-le"
+            },
+            {
+              "it": "condivisione",
+              "en": "sharing",
+              "pron": "con-dri-VA-ye"
+            },
+            {
+              "it": "promessa",
+              "en": "promise",
+              "pron": "pro-MES-sa"
+            },
+            {
+              "it": "concretizzarsi",
+              "en": "be fulfilled",
+              "pron": "kon-kret-IZ-za-re"
+            },
+            {
+              "it": "giornalista",
+              "en": "journalist",
+              "pron": "jo-RE-nal-ista"
+            },
+            {
+              "it": "progetto",
+              "en": "project",
+              "pron": "pro-GET-to"
+            },
+            {
+              "it": "urgente",
+              "en": "urgent",
+              "pron": "UR-jent"
+            },
+            {
+              "it": "conseguenza",
+              "en": "consequence",
+              "pron": "kon-se-GWEN-za"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il Wi-Fi era instabile, rendeva difficile lavorare.",
+              "en": "The Wi-Fi was unstable, made it hard to work.",
+              "words": [
+                "Il",
+                "Wi-Fi",
+                "era",
+                "instabile,",
+                "rendeva",
+                "difficile",
+                "lavorare."
+              ]
+            },
+            {
+              "it": "Decisero di condividere le foto su Instagram.",
+              "en": "They decided to share the photos on Instagram.",
+              "words": [
+                "Decisero",
+                "di",
+                "condividere",
+                "le",
+                "foto",
+                "su",
+                "Instagram."
+              ]
+            },
+            {
+              "it": "Le promesse non si concretizzarono, rimasero solo parole.",
+              "en": "The promises didn't materialize, they remained just words.",
+              "words": [
+                "Le",
+                "promesse",
+                "non",
+                "si",
+                "concretizzarono,",
+                "rimasero",
+                "solo",
+                "parole."
+              ]
+            },
+            {
+              "it": "Maria aveva un progetto urgente da completare.",
+              "en": "Maria had an urgent project to complete.",
+              "words": [
+                "Maria",
+                "aveva",
+                "un",
+                "progetto",
+                "urgente",
+                "da",
+                "completare."
+              ]
+            },
+            {
+              "it": "La conseguenza fu che non fecero nulla di produttivo.",
+              "en": "The consequence was that they did nothing productive.",
+              "words": [
+                "La",
+                "conseguenza",
+                "fu",
+                "che",
+                "non",
+                "fecero",
+                "nulla",
+                "di",
+                "produttivo."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Problemi con il WLAN",
+          "desc": "Wi-Fi instabile, promesse non mantenute, lavoro online",
+          "icon": "🌐",
+          "vocab": [
+            {
+              "it": "instabile",
+              "en": "unstable",
+              "pron": "in-sta-bi-le"
+            },
+            {
+              "it": "condivisione",
+              "en": "sharing",
+              "pron": "con-di-ve-zi-ne"
+            },
+            {
+              "it": "promessa",
+              "en": "promise",
+              "pron": "pro-mes-sa"
+            },
+            {
+              "it": "concretizzarsi",
+              "en": "be fulfilled",
+              "pron": "kon-cre-ti-zar-si"
+            },
+            {
+              "it": "giornalista",
+              "en": "journalist",
+              "pron": "gi-or-na-lis-ta"
+            },
+            {
+              "it": "progetto",
+              "en": "project",
+              "pron": "pro-ge-to"
+            },
+            {
+              "it": "urgente",
+              "en": "urgent",
+              "pron": "ur-jent"
+            },
+            {
+              "it": "conseguenza",
+              "en": "consequence",
+              "pron": "kon-se-ge-en-za"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il Wi-Fi era instabile e rallentava il lavoro.",
+              "en": "The Wi-Fi was unstable and slowed down their work.",
+              "words": [
+                "Il",
+                "Wi-Fi",
+                "era",
+                "instabile",
+                "e",
+                "rallentava",
+                "il",
+                "lavoro."
+              ]
+            },
+            {
+              "it": "Maria condivise le sue foto su Instagram.",
+              "en": "Maria shared her photos on Instagram.",
+              "words": [
+                "Maria",
+                "condivise",
+                "le",
+                "sue",
+                "foto",
+                "su",
+                "Instagram."
+              ]
+            },
+            {
+              "it": "Le promesse non si concretizzarono mai.",
+              "en": "The promises never came true.",
+              "words": [
+                "Le",
+                "promesse",
+                "non",
+                "si",
+                "concretizzarono",
+                "mai."
+              ]
+            },
+            {
+              "it": "Il progetto urgente di Maria era in pericolo.",
+              "en": "Maria's urgent project was in danger.",
+              "words": [
+                "Il",
+                "progetto",
+                "urgente",
+                "di",
+                "Maria",
+                "era",
+                "in",
+                "pericolo."
+              ]
+            },
+            {
+              "it": "La conseguenza fu che dovettero cercare un altro hotel.",
+              "en": "The consequence was that they had to find another hotel.",
+              "words": [
+                "La",
+                "conseguenza",
+                "fu",
+                "che",
+                "dovettero",
+                "cercare",
+                "un",
+                "altro",
+                "hotel."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 767193,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 1947,
+        "totalCompletionTokens": 1536,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 211572,
+            "promptTokens": 509,
+            "completionTokens": 376
+          },
+          {
+            "lessonNum": 2,
+            "ms": 195427,
+            "promptTokens": 575,
+            "completionTokens": 376
+          },
+          {
+            "lessonNum": 3,
+            "ms": 199184,
+            "promptTokens": 622,
+            "completionTokens": 363
+          }
+        ]
+      },
+      "generatedAt": "2026-05-04T11:56:50.562Z",
+      "updatedAt": "2026-05-04T11:56:50.562Z"
+    },
+    {
       "topic": "Arno Wins Fairly",
       "topicEmoji": "🏆",
       "userTopic": "arno wins again, this time fair and square",
