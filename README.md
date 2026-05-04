@@ -2,7 +2,11 @@
 
 Learn vocabulary for a specific topic in any language: enter **any topic**, get AI-generated lessons instantly.
 
-Works with **Anthropic Claude**, a **local Qwen model via Ollama**, or fully **offline** using saved lessons.
+Works a **local Qwen model via Ollama**, or fully **offline** using saved lessons.
+
+Everybody can already learn existing lessons at:
+https://raim.github.io/dreizunge/
+
 
 ---
 
