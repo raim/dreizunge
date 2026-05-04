@@ -77,6 +77,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .saved-topic{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .saved-meta{font-size:11px;color:var(--gray-dark);font-weight:600;margin-top:1px}
 .saved-actions{display:flex;gap:5px;flex-shrink:0}
+.ico-btn.export{color:var(--blue-dark);border-color:var(--blue)}
 .ico-btn{background:none;border:2px solid var(--gray-mid);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:border-color .1s}
 .ico-btn:hover{border-color:var(--red)}
 .ico-btn.regen:hover{border-color:var(--blue)}
@@ -559,6 +560,21 @@ function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'
 function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
 function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
+
+// ── Toast + share — pure DOM, no server dependency ────────────────────
+function showToast(msg){
+  const t=document.getElementById('toast'); if(!t) return;
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(showToast._timer);
+  showToast._timer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function shareLesson(){
+  if(!APP.lessonData) return;
+  const url=location.origin+location.pathname+'#topic='+encodeURIComponent(APP.lessonData.topic);
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>showToast('🔗 Link copied!')).catch(()=>showToast(url));
+  } else { showToast(url); }
+}
 function loadDifficulty(){ return parseInt(localStorage.getItem('imp3_diff')||'2',10); }
 function saveDifficulty(){ localStorage.setItem('imp3_diff',String(APP.difficulty)); }
 function loadStoryLen(){ return parseInt(localStorage.getItem('imp3_storyLen')||'300',10); }
@@ -913,6 +929,9 @@ async function loadSavedList(){
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
         ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${t}')">↻</button>`:''}
+        <button class="ico-btn export" title="Export lesson with flags"
+          data-topic="${s.topic.replace(/"/g,'&quot;')}"
+          onclick="exportTopics([this.dataset.topic])">⬇</button>
         <button class="ico-btn" title="Delete" onclick="deleteSaved('${t}')">🗑</button>
       </div>
     </div>`;
@@ -933,8 +952,14 @@ async function loadSavedList(){
 
   // Render storyline groups
   for (const chain of storylines) {
+    const chainTopicsJson = JSON.stringify(chain.map(t => byTopic[t]?.topic).filter(Boolean));
     html += `<div class="storyline-group">`;
-    html += `<div class="storyline-hdr">📖 Story line · ${chain.length} lesson${chain.length!==1?'s':''}</div>`;
+    html += `<div class="storyline-hdr">📖 Story line · ${chain.length} lesson${chain.length!==1?'s':''}
+      <button class="ico-btn export" style="margin-left:auto;font-size:11px;padding:2px 8px"
+        title="Export full story line with flags"
+        data-chain="${encodeURIComponent(chainTopicsJson)}"
+        onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇ Export</button>
+    </div>`;
     chain.forEach((topic, i) => {
       const s = byTopic[topic]; if (!s) return;
       html += `<div class="storyline-item">${savedItemHtml(s, i > 0)}</div>`;
@@ -986,23 +1011,6 @@ async function regenSaved(topic){
   if(saved?.lang) selectLang(saved.lang);
   document.getElementById('topic-input').value=saved?.userTopic||dec;
   doGenerate(true);
-}
-
-function showToast(msg){
-  const t=document.getElementById('toast'); if(!t) return;
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(showToast._timer);
-  showToast._timer=setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-function shareLesson(){
-  if(!APP.lessonData) return;
-  const url=location.origin+location.pathname+'#topic='+encodeURIComponent(APP.lessonData.topic);
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(url).then(()=>showToast('🔗 Link copied!')).catch(()=>showToast(url));
-  } else {
-    showToast(url);
-  }
 }
 
 function regenCurrent(){
@@ -1507,6 +1515,41 @@ async function importLessons(input){
     showToast(`✓ Imported: +${result.added} new, ~${result.updated} updated`);
     loadSavedList();
   }catch(e){ showToast('⚠ '+e.message); }
+}
+
+// ── Export lessons with flags ─────────────────────────────────────────
+async function exportTopics(topics) {
+  if (!topics || topics.length === 0) return;
+  showToast('⏳ Preparing export…');
+  try {
+    const lessons = [];
+    for (const topic of topics) {
+      // Fetch full lesson data
+      const r = await fetch('/api/lessons/load?topic=' + encodeURIComponent(topic));
+      if (!r.ok) throw new Error('Could not load: ' + topic);
+      const data = await r.json();
+      // Attach relevant flags (exercises + story)
+      const topicSlug = topic.slice(0, 30).replace(/\s+/g, '_');
+      const flags = {};
+      Object.entries(APP.flagged).forEach(([k, v]) => {
+        if (k.startsWith(topicSlug + ':')) flags[k] = v;
+      });
+      lessons.push({ ...data, exportedFlags: flags, exportedAt: new Date().toISOString() });
+    }
+    const payload = { lessons, exportedAt: new Date().toISOString(), exportedBy: 'dreizunge' };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const filename = topics.length === 1
+      ? 'dreizunge-' + topics[0].replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 40) + '.json'
+      : 'dreizunge-storyline-' + Date.now() + '.json';
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('✓ Exported ' + lessons.length + ' lesson' + (lessons.length !== 1 ? 's' : ''));
+  } catch(e) {
+    showToast('⚠ Export failed: ' + e.message);
+  }
 }
 
 init();

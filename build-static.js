@@ -155,11 +155,17 @@ async function loadSavedList() {
     const dateStr=s.updatedAt||s.generatedAt;
     const date=dateStr?new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
     const conn=connector?'<span class="storyline-connector">↩</span>':'';
+    const escapedTopic=s.topic.replace(/"/g,'&quot;');
     return \`<div class="saved-item" onclick="loadSaved('\${t}')">
       \${conn}<span class="saved-emoji">\${sL.flag} \${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
         <div class="saved-topic">\${s.topic} \${diffBadge}</div>
         <div class="saved-meta">\${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
+      </div>
+      <div class="saved-actions" onclick="event.stopPropagation()">
+        <button class="ico-btn export" title="Export lesson with flags"
+          data-topic="\${escapedTopic}"
+          onclick="exportTopics([this.dataset.topic])">⬇</button>
       </div>
     </div>\`;
   }
@@ -169,7 +175,13 @@ async function loadSavedList() {
 
   let html='';
   for(const chain of storylines){
-    html+='<div class="storyline-group"><div class="storyline-hdr">📖 Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+'</div>';
+    const chainTopicsJson=JSON.stringify(chain.map(t=>byTopic[t]?.topic).filter(Boolean));
+    const chainEncoded=encodeURIComponent(chainTopicsJson);
+    html+='<div class="storyline-group"><div class="storyline-hdr">📖 Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+
+      '<button class="ico-btn export" style="margin-left:auto;font-size:11px;padding:2px 8px" title="Export full story line with flags"'+
+      ' data-chain="'+chainEncoded+'"'+
+      ' onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇ Export</button>'+
+      '</div>';
     chain.forEach((topic,i)=>{
       const s=byTopic[topic]; if(!s)return;
       html+='<div class="storyline-item">'+itemHtml(s,i>0)+'</div>';
@@ -205,6 +217,28 @@ const staticOverrides = [
   'function regenCurrent(){}',
   'async function doGenerate(){}',
   'async function submitRating(){}',
+  'function importLessons(input){',
+  '  const file=input.files[0]; if(!file)return;',
+  '  input.value="";',
+  '  const reader=new FileReader();',
+  '  reader.onload=function(e){',
+  '    let data;',
+  '    try{ data=JSON.parse(e.target.result); }',
+  '    catch(err){ showToast("⚠ Invalid JSON file"); return; }',
+  '    const incoming=Array.isArray(data)?data:(data.lessons||data);',
+  '    if(!Array.isArray(incoming)||!incoming.length){ showToast("⚠ No lessons found in file"); return; }',
+  '    let added=0, updated=0;',
+  '    for(const l of incoming){',
+  '      if(!l.topic||!Array.isArray(l.lessons)) continue;',
+  '      const idx=STATIC_LESSONS.findIndex(x=>x.topic===l.topic);',
+  '      if(idx>=0){ STATIC_LESSONS[idx]=l; updated++; }',
+  '      else{ STATIC_LESSONS.unshift(l); added++; }',
+  '    }',
+  '    loadSavedList();',
+  '    showToast("✓ Session import: +"+added+" new, ~"+updated+" updated (resets on refresh)");',
+  '  };',
+  '  reader.readAsText(file);',
+  '}',
   'function toggleChat(){}',
   'function autoResizeChat(){}',
   'function clearChat(){}',
@@ -226,6 +260,33 @@ const staticOverrides = [
   '}',
   'function toggleStoryRepair(){}',
   'function doRepairStory(){ alert("Story repair requires the live server."); }',
+  '// Export — works fully in static mode using baked-in lesson data',
+  'async function exportTopics(topics){',
+  '  if(!topics||!topics.length)return;',
+  '  showToast("⏳ Preparing export…");',
+  '  try{',
+  '    const lessons=[];',
+  '    for(const topic of topics){',
+  '      const data=STATIC_LESSONS.find(l=>l.topic===topic);',
+  '      if(!data){ showToast("⚠ Not found: "+topic); return; }',
+  '      const topicSlug=topic.slice(0,30).replace(/\\s+/g,"_");',
+  '      const flags={};',
+  '      Object.entries(APP.flagged).forEach(([k,v])=>{ if(k.startsWith(topicSlug+":"))flags[k]=v; });',
+  '      lessons.push({...data,exportedFlags:flags,exportedAt:new Date().toISOString()});',
+  '    }',
+  '    const payload={lessons,exportedAt:new Date().toISOString(),exportedBy:"dreizunge-static"};',
+  '    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});',
+  '    const url=URL.createObjectURL(blob);',
+  '    const a=document.createElement("a");',
+  '    const filename=topics.length===1',
+  '      ?"dreizunge-"+topics[0].replace(/[^a-z0-9]+/gi,"-").toLowerCase().slice(0,40)+".json"',
+  '      :"dreizunge-storyline-"+Date.now()+".json";',
+  '    a.href=url; a.download=filename;',
+  '    document.body.appendChild(a); a.click();',
+  '    document.body.removeChild(a); URL.revokeObjectURL(url);',
+  '    showToast("✓ Exported "+lessons.length+" lesson"+(lessons.length!==1?"s":""));',
+  '  }catch(e){ showToast("⚠ Export failed: "+e.message); }',
+  '}',
 ].join('\n');
 
 // ── Assemble ──────────────────────────────────────────────────────────
