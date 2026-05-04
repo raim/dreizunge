@@ -30,6 +30,12 @@ node server.js
 # Or set the model explicitly:
 OLLAMA_MODEL=qwen2.5:7b node server.js
 ```
+**When finished, don't forget to stop the model and free up your RAM:**
+
+``` bash
+ ollama stop qwen2.5:7b
+```
+
 
 ### Option B — Offline only (no LLM)
 
