@@ -98,8 +98,8 @@ function langName(code) { return LANG_NAMES[code] || code || 'Italian'; }
 
 // ── Prompts ───────────────────────────────────────────────────────────
 const SYS_META = `You are a lesson plan creator. Return ONLY a valid JSON object, no markdown, no explanation.
-Schema: {"topic":"cleaned topic string","topicEmoji":"one emoji","lessonThemes":["theme1","theme2","theme3"]}
-Rules: topic is the user's topic, normalized. Choose 3 progressive lesson themes for that topic.`;
+Schema: {"topic":"display title (max 40 chars, concise)","topicEmoji":"one emoji","lessonThemes":["theme1","theme2","theme3"]}
+Rules: topic is a concise display title for the user's input — shorten if the input is longer than 40 characters. Choose 3 progressive lesson themes for that topic.`;
 
 function difficultyLabel(d) {
   return d === 1 ? 'beginner' : d === 2 ? 'intermediate' : 'advanced';
@@ -300,12 +300,15 @@ function deriveSentenceWords(s) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang, isContinuation) {
+function sysStory(lang, isContinuation, wordCount) {
   const L = langName(lang);
+  const wc = Math.max(100, Math.min(1000, wordCount || 300));
+  const paraLo = Math.max(1, Math.floor(wc / 100));
+  const paraHi = paraLo + 1;
   const cont = isContinuation
     ? ' IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.'
     : '';
-  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${cont}`;
+  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${cont}`;
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
@@ -370,7 +373,8 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
-async function generate(topic, lang, active, difficulty, continuedFrom, jobId) {
+async function generate(topic, lang, active, difficulty, continuedFrom, storyLen, jobId) {
+  const userTopic = topic;  // preserve original user entry
   const genStart = Date.now();
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   const lessonTokenStats = [];
@@ -390,6 +394,7 @@ async function generate(topic, lang, active, difficulty, continuedFrom, jobId) {
 
   jobStep(jobId, 'Generating story…');
   let story = null;
+  let storyPrompt = null;
   const storyLang = lang;
   const prevStory = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
   if (continuedFrom && prevStory)
@@ -399,9 +404,11 @@ async function generate(topic, lang, active, difficulty, continuedFrom, jobId) {
     const storyUserMsg = prevStory
       ? `Previous story:\n${prevStory}\n\nNew topic: "${meta.topic || topic}". Write the continuation now. Plain prose, no headings.`
       : `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`;
+    const storySystem = sysStory(lang, !!prevStory, storyLen);
     const { text, promptTokens, completionTokens } = await callLLM(
-      active, sysStory(lang, !!prevStory), storyUserMsg, 900);
+      active, storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
     story = text.trim();
+    storyPrompt = storySystem + '\n\n' + storyUserMsg;
     totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
     console.log(`    Story (${lang}): ${Date.now()-t0}ms`);
   } catch(e) { console.warn('  Story failed:', e.message); }
@@ -421,7 +428,9 @@ async function generate(topic, lang, active, difficulty, continuedFrom, jobId) {
   const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : OLLAMA_MODEL;
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
   return { topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
-           lang, difficulty: difficulty || 2, story, storyLang,
+           userTopic,
+           lang, difficulty: difficulty || 2, storyLen,
+           story, storyLang, storyPrompt,
            ...(continuedFrom ? { continuedFrom } : {}),
            lessons,
            generationStats: { totalMs, backend: active, model: modelLabel,
@@ -674,9 +683,10 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { topic, lang, difficulty, continuedFrom, forceRegenerate } = body;
+      const { topic, lang, difficulty, storyLen, continuedFrom, forceRegenerate } = body;
       if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
+      const wc = Math.max(100, Math.min(1000, parseInt(storyLen, 10) || 300));
       const contFrom = continuedFrom && findSaved(continuedFrom) ? continuedFrom : null;
       const topicKey = topic.trim().toLowerCase();
       if (!forceRegenerate) {
@@ -689,8 +699,8 @@ async function boot() {
         return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
       const jobId = newJob();
       generatingTopics.add(topicKey);
-      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) diff=${diff}${contFrom?' cont='+contFrom:''} job=${jobId}`);
-      generate(topic.trim(), lang || 'it', active, diff, contFrom, jobId).then(data => {
+      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) diff=${diff} words=${wc}${contFrom?' cont='+contFrom:''} job=${jobId}`);
+      generate(topic.trim(), lang || 'it', active, diff, contFrom, wc, jobId).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         jobDone(jobId, { ...data, fromCache: false });
@@ -749,12 +759,14 @@ async function boot() {
             saved.story ? `Current story:\n${saved.story}\n\nUser instruction: ${instruction}` : `Write a new story. Instruction: ${instruction}`,
             'Plain prose, no headings.'
           ].join('\n');
-          const { text } = await callLLM(active, sysStory(lang, false), userMsg, 900);
+          const rewriteSys = sysStory(lang, false);
+          const { text } = await callLLM(active, rewriteSys, userMsg, 900);
           saved.story = text.trim();
           saved.storyLang = lang;
+          saved.storyPrompt = rewriteSys + '\n\n' + userMsg;
           delete saved.storyNative;
           upsert(saved);
-          jobDone(jobId, { story: saved.story });
+          jobDone(jobId, { story: saved.story, storyPrompt: saved.storyPrompt });
         } catch(e) { jobFail(jobId, e.message); }
       })();
       return json(res, 202, { jobId });
@@ -772,6 +784,30 @@ async function boot() {
       saved.ratings = { difficulty: ratings.difficulty, fun: ratings.fun, coherence: ratings.coherence };
       upsert(saved);
       return json(res, 200, { ok: true });
+    }
+
+    // ── Import lessons.json ───────────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/lessons/import') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      // Accept either {lessons:[...]} or a raw array
+      const incoming = Array.isArray(body) ? body : body.lessons;
+      if (!Array.isArray(incoming) || incoming.length === 0)
+        return json(res, 400, { error: 'Expected {lessons:[...]} or a non-empty array' });
+      // Validate minimally — each entry needs topic + lessons array
+      const invalid = incoming.filter(l => !l.topic || !Array.isArray(l.lessons));
+      if (invalid.length)
+        return json(res, 400, { error: `${invalid.length} entries missing topic or lessons` });
+      // Merge: upsert each imported lesson preserving existing entries not in import
+      let added = 0, updated = 0;
+      for (const l of incoming) {
+        const exists = findSaved(l.topic);
+        upsert(l);
+        if (exists) updated++; else added++;
+      }
+      console.log(`  Import: +${added} new, ~${updated} updated`);
+      return json(res, 200, { ok: true, added, updated, total: store.lessons.length });
     }
 
     res.writeHead(404); res.end('Not found');

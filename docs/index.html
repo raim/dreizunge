@@ -61,6 +61,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .lib-title{font-size:15px;font-weight:900;color:var(--text)}
 .lib-cnt{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:12px;padding:3px 10px}
+.import-btn{font-size:12px;font-weight:700;color:var(--blue-dark);background:var(--blue-light);border:1.5px solid var(--blue);border-radius:12px;padding:3px 10px;cursor:pointer;white-space:nowrap}
 .lib-empty{text-align:center;padding:18px;color:var(--gray);font-size:14px;font-weight:600}
 .saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
 .saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s}
@@ -114,9 +115,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .start-strip{display:flex;justify-content:center;margin-top:20px}
 .flag-strip{background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 16px;margin:0 0 14px;display:none;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
 .flag-strip-label{font-size:13px;font-weight:800;color:#c26000;flex:1}
-.repair-all-btn{background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap}
-.repair-all-btn:hover{background:#e08000}
-.repair-all-btn:disabled{opacity:.5;cursor:not-allowed}
 .big-btn{padding:15px 40px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);transition:transform .1s,box-shadow .1s}
 .big-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
 
@@ -189,9 +187,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .flag-comment-wrap.visible{display:block}
 .flag-comment{width:100%;padding:8px 10px;font-size:13px;font-weight:600;border:2px solid #ff9600;border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:#fffaf5;outline:none;resize:none}
 .flag-comment::placeholder{color:var(--gray);font-weight:400}
-.in-lesson-repair-btn{width:100%;margin-top:8px;padding:10px;background:none;border:2px solid #ff9600;border-radius:var(--radius);font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;transition:background .1s,color .1s}
-.in-lesson-repair-btn:hover:not(:disabled){background:#ff9600;color:#fff}
-.in-lesson-repair-btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-row{display:flex;gap:8px;align-items:stretch}
 .btn-row .check-btn{flex:1}
 .feedback.flagged-note{background:#fff4e0;border:2px solid #ff9600;display:block}
@@ -234,15 +229,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-filter-btn:hover{border-color:var(--blue)}
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 .lesson-lang-flag{font-size:16px;flex-shrink:0}
-.repair-btn{background:none;border:2px solid #ff9600;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;margin-top:8px;transition:background .1s,color .1s;width:100%}
-.repair-btn:hover{background:#ff9600;color:#fff}
-.repair-btn:disabled{opacity:.4;cursor:not-allowed}
 .repairing-note{font-size:12px;color:#c26000;font-weight:700;margin-top:6px;text-align:center}
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 
 /* ══ DIFFICULTY DROPDOWN ════════════════════════════════════════════ */
 .diff-wrap{margin-bottom:14px}
+.story-len-row{margin-bottom:14px}
+.story-len-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.story-len-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.02em}
+.story-len-val{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:10px;padding:2px 8px}
+.story-len-slider{width:100%;accent-color:var(--blue);cursor:pointer}
 .diff-select-wrap{position:relative;display:inline-block;width:100%}
 .diff-select{width:100%;padding:10px 36px 10px 14px;font-size:14px;font-weight:800;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
 .diff-select:focus{border-color:var(--blue)}
@@ -254,6 +251,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .continue-select:focus{border-color:var(--blue)}
 .continue-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px;color:var(--gray-dark)}
 .continued-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#f0f4ff;border:1.5px solid #c0ccff;border-radius:8px;padding:3px 9px;color:#334;margin-top:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.continued-by{font-size:11px;font-weight:700;color:var(--gray-dark);margin-top:5px;display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.continued-by-link{background:#f0fff4;border:1.5px solid #a0ddb0;border-radius:8px;padding:2px 8px;cursor:pointer;font-weight:800;color:#1a5c2a;white-space:nowrap}
+.continued-by-link:hover{background:#d0f0da}
 .diff-badge{display:inline-block;font-size:10px;font-weight:900;padding:1px 7px;border-radius:8px;vertical-align:middle;margin-left:4px;letter-spacing:.04em}
 .diff-badge.d1{background:#d7ffb2;color:#2a6000}
 .diff-badge.d2{background:#fff3cc;color:#7a5000}
@@ -313,6 +313,20 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* ══ TOAST ═══════════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:var(--white);border-radius:var(--radius-xl);box-shadow:0 8px 40px rgba(0,0,0,.25);width:100%;max-width:560px;display:flex;flex-direction:column;max-height:90vh}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:15px;font-weight:900;border-bottom:2px solid var(--gray-mid)}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--gray-dark);padding:2px 6px;border-radius:6px}
+.modal-close:hover{background:var(--gray-light)}
+.modal-textarea{flex:1;margin:14px 18px 0;padding:10px 12px;font-size:13px;font-weight:600;font-family:'Nunito',sans-serif;border:2px solid var(--gray-mid);border-radius:var(--radius);resize:vertical;min-height:180px;color:var(--text);line-height:1.5;outline:none}
+.modal-textarea:focus{border-color:var(--blue)}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:14px 18px}
+.modal-btn{padding:9px 18px;font-size:13px;font-weight:800;border-radius:var(--radius);border:none;cursor:pointer;font-family:'Nunito',sans-serif}
+.modal-btn.primary{background:var(--blue);color:#fff}
+.modal-btn.primary:hover{background:var(--blue-dark)}
+.modal-btn.primary:disabled{opacity:.45;cursor:not-allowed}
+.modal-btn.secondary{background:var(--gray-light);color:var(--text);border:2px solid var(--gray-mid)}
+.modal-btn.secondary:hover{border-color:var(--blue)}
 </style>
 </head>
 <body>
@@ -371,6 +385,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       placeholder="e.g. cooking, architecture, medicine… add details for a richer story"
       maxlength="400" oninput="autoResizeTopic(this)"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
+    <div class="story-len-row">
+      <div class="story-len-hdr">
+        <span class="story-len-lbl">Story length</span>
+        <span class="story-len-val" id="story-len-val">300 words · 3-4 paragraphs</span>
+      </div>
+      <input type="range" class="story-len-slider" id="story-len-slider"
+        min="100" max="1000" step="50" value="300"
+        oninput="onStoryLenSlider(this.value)">
+    </div>
     <div class="diff-wrap">
       <div class="diff-select-wrap">
         <select class="diff-select" id="diff-select" onchange="onDiffSelect(this.value)">
@@ -397,7 +420,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="library">
     <div class="lib-hdr">
       <div class="lib-title">📚 Saved lessons</div>
-      <div class="lib-cnt" id="lib-cnt">0 topics</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="lib-cnt" id="lib-cnt">0 topics</div>
+        <label class="import-btn" title="Import lessons.json">
+          ⬆ Import
+          <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importLessons(this)">
+        </label>
+      </div>
     </div>
     <div class="lib-filter" id="lib-filter"></div>
     <div id="saved-list">
@@ -426,7 +455,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   </div>
   <div class="flag-strip" id="flag-strip">
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
-    <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
   <div class="gen-stats" id="gen-stats"></div>
   <div class="rating-panel" id="rating-panel" style="display:none"></div>
@@ -440,6 +468,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="story-hdr-btns" onclick="event.stopPropagation()">
         <span id="story-lang-lbl" class="story-lang-lbl" style="display:none"></span>
         <button class="story-icon-btn" onclick="speakStory()" title="Read aloud">🔊</button>
+        <button class="story-icon-btn" id="story-prompt-btn" onclick="openStoryPrompt()" title="View/edit story prompt" style="display:none">📝</button>
         <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
       </div>
       <span class="story-arrow" id="story-arrow">▼</span>
@@ -517,7 +546,9 @@ var APP = {
   lessonData: null,
   lang: loadLang(),
   difficulty: loadDifficulty(),
+  storyLen: loadStoryLen(),
   libFilter: 'all',
+  savedList: [],   // cache of last fetched lesson list — used by buildPath for continuedBy
   progress: loadProg(),
   flagged: loadFlagged(),
   cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,xp:0,mistakes:0,streak:0,bestStreak:0,
@@ -530,6 +561,23 @@ function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
 function loadDifficulty(){ return parseInt(localStorage.getItem('imp3_diff')||'2',10); }
 function saveDifficulty(){ localStorage.setItem('imp3_diff',String(APP.difficulty)); }
+function loadStoryLen(){ return parseInt(localStorage.getItem('imp3_storyLen')||'300',10); }
+function saveStoryLen(){ localStorage.setItem('imp3_storyLen',String(APP.storyLen)); }
+function storyLenLabel(words){
+  const lo=Math.max(1,Math.floor(words/100));
+  const hi=lo+1;
+  return words+' words · '+lo+'-'+hi+' paragraphs';
+}
+function onStoryLenSlider(v){
+  APP.storyLen=parseInt(v,10); saveStoryLen();
+  const el=document.getElementById('story-len-val');
+  if(el) el.textContent=storyLenLabel(APP.storyLen);
+}
+function restoreStoryLenSlider(){
+  const sl=document.getElementById('story-len-slider');
+  if(sl) sl.value=APP.storyLen;
+  onStoryLenSlider(APP.storyLen);
+}
 const DIFF_SHORT={1:'Beginner',2:'Intermediate',3:'Advanced'};
 function onDiffSelect(v){
   APP.difficulty=parseInt(v,10); saveDifficulty();
@@ -610,9 +658,6 @@ function toggleFlag(ex){
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function goLanding(){ loadSavedList(); show('landing'); }
 
-function autoResizeTopic(el){
-  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
-}
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
@@ -645,6 +690,48 @@ function renderStoryText(d){
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
   speak(d.story);
+}
+
+// ── Story prompt modal (M6) ───────────────────────────────────────────
+function openStoryPrompt(){
+  const d=APP.lessonData; if(!d) return;
+  const ta=document.getElementById('story-prompt-input');
+  if(ta) ta.value=d.storyPrompt||'(No prompt saved for this lesson)';
+  const regenBtn=document.getElementById('story-prompt-regen-btn');
+  if(regenBtn) regenBtn.disabled=!APP.info.canGenerate;
+  document.getElementById('story-prompt-modal').style.display='flex';
+}
+function closeStoryPrompt(){
+  document.getElementById('story-prompt-modal').style.display='none';
+}
+async function regenWithPrompt(){
+  const d=APP.lessonData; if(!d||!APP.info.canGenerate) return;
+  const ta=document.getElementById('story-prompt-input');
+  const customPrompt=(ta?.value||'').trim();
+  if(!customPrompt) return;
+  const btn=document.getElementById('story-prompt-regen-btn');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ Rewriting…'; }
+  try{
+    const r=await fetch('/api/repair-story',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic:d.topic, instruction:customPrompt})});
+    if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Failed'); }
+    const {jobId}=await r.json();
+    // Poll until done
+    const result=await pollJob(jobId, ()=>{});
+    d.story=result.story;
+    d.storyPrompt=result.storyPrompt||customPrompt;
+    renderStoryText(d);
+    const body=document.getElementById('story-body');
+    const arrow=document.getElementById('story-arrow');
+    if(body&&!body.classList.contains('open')){ body.classList.add('open'); if(arrow) arrow.classList.add('open'); }
+    closeStoryPrompt();
+    showToast('Story rewritten ✓');
+  }catch(e){
+    showToast('Error: '+e.message);
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='↻ Regenerate with this prompt'; }
+  }
 }
 async function doRepairStory(){
   const d=APP.lessonData; if(!d) return;
@@ -718,123 +805,6 @@ async function submitRating(){
     loadSavedList();
   }catch(e){ alert('Rating failed: '+e.message); }
 }
-async function repairLesson(topic, lessonId){
-  const btnId='repair-btn-'+lessonId;
-  const btn=document.getElementById(btnId);
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Repairing…'; }
-  try{
-    const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic,lessonId})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Repair failed');
-    // Poll for completion
-    if(btn) btn.textContent='⏳ Repairing…';
-    await pollJob(resp.jobId, step=>{
-      if(btn) btn.textContent='⏳ '+step;
-    });
-    // Sync flags and reload lesson
-    await syncFlagsFromServer();
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok){
-      const fresh=await lr.json();
-      if(APP.lessonData?.topic?.toLowerCase()===topic.toLowerCase()) APP.lessonData=fresh;
-    }
-    buildPath();
-  }catch(e){
-    alert('Repair failed: '+e.message);
-    if(btn){ btn.disabled=false; btn.textContent='⚑ Retry repair'; }
-  }
-}
-
-async function repairFromLesson(){
-  const C=APP.cur;
-  if(!APP.lessonData) return;
-  const topic=APP.lessonData.topic;
-  const lessonId=APP.lessonData.lessons[C.lessonIdx].id;
-  const repBtn=document.getElementById('in-lesson-repair-btn');
-  if(repBtn){ repBtn.disabled=true; repBtn.textContent='⏳ Repairing…'; }
-  try{
-    const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic,lessonId})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Repair failed');
-    if(repBtn) repBtn.textContent='⏳ Repairing…';
-    await pollJob(resp.jobId, step=>{
-      if(repBtn) repBtn.textContent='⏳ '+step;
-    });
-    // Sync flags first (server cleared them — replace local state)
-    await syncFlagsFromServer();
-    // Reload lesson data from server with updated vocab/sentences
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok){
-      const fresh=await lr.json();
-      APP.lessonData=fresh;
-    }
-    // Patch the current exercise in-place from fresh lesson data
-    // — no reshuffling, user stays exactly where they were
-    const freshLesson=APP.lessonData.lessons[C.lessonIdx];
-    const curEx=C.exercises[C.cur];
-    if(curEx && freshLesson){
-      // Find matching vocab or sentence in fresh lesson by Italian text prefix
-      const itKey=(curEx.it||'').toLowerCase().slice(0,20);
-      if(['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(curEx.type)){
-        const v=freshLesson.vocab.find(v=>v.it.toLowerCase().slice(0,20)===itKey);
-        if(v){ curEx.it=v.it; curEx.en=v.en; curEx.pron=v.pron;
-               // listen_type: user types the target language word; others: pick English meaning
-               curEx.correct=curEx.type==='listen_type' ? v.it : v.en; }
-      } else if(['order','read_translate'].includes(curEx.type)){
-        const s=freshLesson.sentences.find(s=>s.it.toLowerCase().slice(0,20)===itKey);
-        if(s){ curEx.it=s.it; curEx.en=s.en;
-               // Re-derive words from sentence text (server no longer stores LLM words)
-               curEx.words=s.it.split(' ').filter(w=>!isPunctClient(w));
-               curEx.correct=curEx.type==='order' ? curEx.words.join(' ') : s.en; }
-      }
-    }
-    // Reset answer state so the repaired exercise renders fresh
-    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
-    renderEx();
-  }catch(e){
-    alert('Repair failed: '+e.message);
-    if(repBtn){ repBtn.disabled=false; repBtn.textContent='⚙ Repair this question now'; }
-  }
-}
-
-async function repairAll(){
-  if(!APP.lessonData) return;
-  const btn=document.getElementById('repair-all-btn');
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Repairing…'; }
-  const d=APP.lessonData;
-  let totalRepaired=0, errors=[];
-  for(const L of d.lessons){
-    const topicSlug=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
-    const lessonItSet=new Set([
-      ...(L.vocab||[]).map(v=>(v.it||'').slice(0,40).replace(/\s+/g,'_')),
-      ...(L.sentences||[]).map(s=>(s.it||'').slice(0,40).replace(/\s+/g,'_'))
-    ]);
-    const hasFlags=Object.entries(APP.flagged).some(([k])=>{
-      if(!k.startsWith(topicSlug+':')) return false;
-      return lessonItSet.has(k.split(':').slice(2).join(':'));
-    });
-    if(!hasFlags) continue;
-    try{
-      if(btn) btn.textContent='⏳ Repairing lesson '+L.id+'…';
-      const r=await fetch('/api/repair',{method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({topic:d.topic,lessonId:L.id})});
-      const resp=await r.json();
-      if(!r.ok) throw new Error(resp.error||'Repair failed');
-      const result=await pollJob(resp.jobId, step=>{
-        if(btn) btn.textContent='⏳ '+step;
-      });
-      totalRepaired+=(result&&result.repaired)||0;
-    }catch(e){ errors.push('Lesson '+L.id+': '+e.message); }
-  }
-  await syncFlagsFromServer();
-  const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
-  if(lr.ok) APP.lessonData=await lr.json();
-  buildPath();
-  if(errors.length) alert('Repair finished with errors:\n'+errors.join('\n'));
-}
 
 function goHome(){
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
@@ -850,6 +820,1584 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "Arnos Unfair Win",
+    "topicEmoji": "🏆",
+    "userTopic": "arno wins the tournament, but only by foul tricks.",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 1000,
+    "story": "Nella sala da pranzo illuminata dal crepuscolo, Elio e Sofia si preparavano per la visita inaspettata dei parenti. Sofia, ancora un po' addormentata, si svegliò lentamente, i suoi occhi azzurri che si spalancarono quando vide Elio che indossava la maglietta del club di ping-pong locale. \"Elio, cosa fai?\" sussurrò, cercando di non svegliare i parenti che stavano arrivando.\n\nElio, con un sorriso misterioso, prese la palla da ping-pong e la passò a Sofia. \"Non preoccuparti,\" le disse, \"non è per giocare. È per dimostrare qualcosa.\" Sofia lo guardò con curiosità, le sue mani strette intorno alla palla come se fosse un tesoro prezioso. \"Cosa vuoi dimostrare?\" chiese, sollevando un sopracciglio.\n\nElio prese la palla e la lanciò in aria, poi la raccogliò con un colpo secco. \"Ho sentito parlare di Arno, il ragazzo che ha vinto il torneo di ping-pong l'anno scorso,\" spiegò Elio, \"ma non credo che sia stato giusto. Credo che ci sia stato qualcosa di strano.\" Sofia lo guardò con occhi sospettosi, ma Elio era determinato. \"Voglio dimostrare che Arno non ha vinto in modo equo,\" disse Elio, \"e che c'è qualcosa che non va.\"\n\nSofia annuì, anche se non era del tutto convinta. \"Come farai?\" chiese, guardando Elio con un misto di curiosità e fiducia. Elio prese la palla e la passò a Sofia, che la prese con entusiasmo. \"Dobbiamo giocare,\" disse Elio, \"e dimostrare che Arno non è il migliore.\" Sofia annuì, ma la sua espressione era preoccupata. Elio la prese per mano e la condusse verso la porta, con la palla tra loro. \"Nonna ci vuole,\" ripeté Elio, \"andiamo a vedere.\"\n\nScesero le scale e si diressero verso il campo di ping-pong, dove Arno stava già allenandosi. Elio e Sofia si avvicinarono silenziosamente, cercando di non farsi notare. Arno, concentrato, lanciava la palla contro il muro e la raccoglieva con precisione. Sofia guardò Elio, che annuì con determinazione. \"Pronti?\" sussurrò Elio, e Sofia annuì, la palla stretta tra le mani.\n\nElio prese la palla e la passò a Sofia, che la prese con entusiasmo. \"Pronti,\" disse Sofia, la sua voce bassa e sicura. Elio prese la palla e la lanciò in aria, poi la raccogliò con un colpo secco. \"Vediamo chi è il vero campione,\" disse Elio, la sua voce decisa. Sofia annuì, e i due iniziarono a giocare, concentrandosi su ogni colpo.\n\nArno, notando la presenza di Elio e Sofia, si voltò verso di loro. \"Che ci fate qui?\" chiese, il suo tono freddo e distaccato. Elio e Sofia si guardarono, poi Elio rispose con calma. \"Vogliamo dimostrare che non sei il migliore,\" disse Elio, la sua voce ferma. Arno rise, un suono sprezzante. \"Non ci credo,\" disse, \"non potete battermi.\"\n\nElio prese la palla e la passò a Sofia, che la prese con entusiasmo. \"Dobbiamo dimostrare che c'è qualcosa che non va,\" disse Elio, \"e che tu non hai vinto in modo equo.\" Arno rise di nuovo, ma Sofia e Elio continuarono a giocare, concentrandosi su ogni colpo. Arno, vedendo la determinazione di Elio e Sofia, iniziò a preoccuparsi. \"Non ci credo,\" disse, \"ma vedremo.\"\n\nSofia prese la palla e la lanciò in aria, poi la raccogliò con un colpo secco. \"Vediamo chi è il vero campione,\" disse Sofia, la sua voce sicura. Elio annuì, e i due iniziarono a giocare, concentrandosi su ogni colpo. Arno, vedendo la determinazione di Elio e Sofia, iniziò a preoccuparsi. \"Non ci credo,\" disse, \"ma vedremo.\"",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 10-11 paragraphs, under 1000 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nNella sala da pranzo illuminata dalla luce dorata del tramonto, Elio e Sofia furono svegliati dallo squillo di un telefono. Era la nonna di Elio, che annunciava l'arrivo di più parenti per una visita inaspettata. Sofia, ancora addormentata, si svegliò con un sobbalzo e guardò Elio con occhi sgranati. \"Nonna? Nonna ci vuole qui!\" esclamò Elio, alzandosi in piedi. Sofia si rialzò, i capelli biondi che le danzavano intorno al viso.\n\nElio prese la palla e la passò a Sofia, che la prese con entusiasmo. \"Forse non potremo giocare,\" disse Elio, \"ma non preoccuparti, ci saranno altri giochi.\" Sofia annuì, ma la sua espressione era preoccupata. Elio la prese per mano e la condusse verso la porta, con la palla tra loro. \"Nonna ci vuole,\" ripeté Elio, \"andiamo a vedere.\" Sofia lo seguì, ma non senza lanciare un'ultima occhiata al tavolo da ping-pong, dove la palla era ancora pronta per un altro gioco.\n\nNew topic: \"Arno's Unfair Win\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "More People Arrive, Ping Pong Tournament",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Ping-pong and Tricks",
+        "desc": "Basics of ping-pong, strategy, and deception",
+        "icon": "🏓",
+        "vocab": [
+          {
+            "it": "maglietta",
+            "en": "shirt",
+            "pron": "MALL-ee-ta"
+          },
+          {
+            "it": "club",
+            "en": "club",
+            "pron": "KLUB"
+          },
+          {
+            "it": "sala da pranzo",
+            "en": "dining room",
+            "pron": "SAL-ah DA PRAHN-zoh"
+          },
+          {
+            "it": "crepuscolo",
+            "en": "twilight",
+            "pron": "KREP-oo-SLOO"
+          },
+          {
+            "it": "sorriso",
+            "en": "smile",
+            "pron": "SOHR-ree-so"
+          },
+          {
+            "it": "tesoro",
+            "en": "treasure",
+            "pron": "TEH-so-ro"
+          },
+          {
+            "it": "lanciare",
+            "en": "to throw",
+            "pron": "LAN-chee-AH-re"
+          },
+          {
+            "it": "colpo",
+            "en": "hit",
+            "pron": "KOL-po"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Elio indossò la maglietta del club.",
+            "en": "Elio wore the club shirt.",
+            "words": [
+              "Elio",
+              "indossò",
+              "la",
+              "maglietta",
+              "del",
+              "club."
+            ]
+          },
+          {
+            "it": "Sofia guardò la palla con curiosità.",
+            "en": "Sofia looked at the ball with curiosity.",
+            "words": [
+              "Sofia",
+              "guardò",
+              "la",
+              "palla",
+              "con",
+              "curiosità."
+            ]
+          },
+          {
+            "it": "Elio lanciò la palla in aria.",
+            "en": "Elio threw the ball into the air.",
+            "words": [
+              "Elio",
+              "lanciò",
+              "la",
+              "palla",
+              "in",
+              "aria."
+            ]
+          },
+          {
+            "it": "Sofia prese la palla e la raccogliò con un colpo secco.",
+            "en": "Sofia picked up the ball with a sharp hit.",
+            "words": [
+              "Sofia",
+              "prese",
+              "la",
+              "palla",
+              "e",
+              "la",
+              "raccogliò",
+              "con",
+              "un",
+              "colpo",
+              "secco."
+            ]
+          },
+          {
+            "it": "Elio prese la palla e la passò a Sofia.",
+            "en": "Elio took the ball and passed it to Sofia.",
+            "words": [
+              "Elio",
+              "prese",
+              "la",
+              "palla",
+              "e",
+              "la",
+              "passò",
+              "a",
+              "Sofia."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Tennis and Deception",
+        "desc": "Tennis match, victory, unfair means",
+        "icon": "🎾",
+        "vocab": [
+          {
+            "it": "torneo",
+            "en": "tournament",
+            "pron": "TOH-ren-yo"
+          },
+          {
+            "it": "trucco",
+            "en": "trick",
+            "pron": "TRUH-koh"
+          },
+          {
+            "it": "vittoria",
+            "en": "victory",
+            "pron": "vih-tee-OR-ee-ah"
+          },
+          {
+            "it": "giocatore",
+            "en": "player",
+            "pron": "joh-KAH-tore"
+          },
+          {
+            "it": "gioco",
+            "en": "game",
+            "pron": "JEE-ko"
+          },
+          {
+            "it": "giustizia",
+            "en": "justice",
+            "pron": "joo-STIH-zi-ah"
+          },
+          {
+            "it": "sconfitta",
+            "en": "defeat",
+            "pron": "scon-FIT-tah"
+          },
+          {
+            "it": "pubblico",
+            "en": "public",
+            "pron": "poo-BLO-koh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Elio vince il torneo, ma solo con trucchi infami.",
+            "en": "Elio wins the tournament, but only by foul tricks.",
+            "words": [
+              "Elio",
+              "vince",
+              "il",
+              "torneo,",
+              "ma",
+              "solo",
+              "con",
+              "trucchi",
+              "infami."
+            ]
+          },
+          {
+            "it": "Il pubblico applaude la vittoria del giocatore, ma non sa della sua sconfitta ingiusta.",
+            "en": "The public cheers the player's victory, but they don't know of his unjust defeat.",
+            "words": [
+              "Il",
+              "pubblico",
+              "applaude",
+              "la",
+              "vittoria",
+              "del",
+              "giocatore,",
+              "ma",
+              "non",
+              "sa",
+              "della",
+              "sua",
+              "sconfitta",
+              "ingiusta."
+            ]
+          },
+          {
+            "it": "Sofia osserva il gioco, notando il trucco del suo amico.",
+            "en": "Sofia observes the game, noticing her friend's trick.",
+            "words": [
+              "Sofia",
+              "osserva",
+              "il",
+              "gioco,",
+              "notando",
+              "il",
+              "trucco",
+              "del",
+              "suo",
+              "amico."
+            ]
+          },
+          {
+            "it": "La giustizia non è sempre nella mano del vincitore, come dimostra il torneo.",
+            "en": "Justice is not always in the hands of the victor, as the tournament shows.",
+            "words": [
+              "La",
+              "giustizia",
+              "non",
+              "è",
+              "sempre",
+              "nella",
+              "mano",
+              "del",
+              "vincitore,",
+              "come",
+              "dimostra",
+              "il",
+              "torneo."
+            ]
+          },
+          {
+            "it": "Il trucco del giocatore è scoperto, causando sconfitta e vergogna.",
+            "en": "The player's trick is uncovered, causing defeat and shame.",
+            "words": [
+              "Il",
+              "trucco",
+              "del",
+              "giocatore",
+              "è",
+              "scoperto,",
+              "causando",
+              "sconfitta",
+              "e",
+              "vergogna."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Torneo e Trucchi",
+        "desc": "Voci di gioco e trame nascoste",
+        "icon": "🏆",
+        "vocab": [
+          {
+            "it": "torneo",
+            "en": "tournament",
+            "pron": "TOHR-ne-o"
+          },
+          {
+            "it": "trucco",
+            "en": "trick",
+            "pron": "TRU-kho"
+          },
+          {
+            "it": "giustizia",
+            "en": "justice",
+            "pron": "ju-STI-tsee-a"
+          },
+          {
+            "it": "pubblico",
+            "en": "public",
+            "pron": "PUH-blik-koh"
+          },
+          {
+            "it": "sconfitta",
+            "en": "defeat",
+            "pron": "scon-FIT-ta"
+          },
+          {
+            "it": "giocatore",
+            "en": "player",
+            "pron": "joh-KAH-tore"
+          },
+          {
+            "it": "gioco",
+            "en": "game",
+            "pron": "JEE-ko"
+          },
+          {
+            "it": "vittoria",
+            "en": "victory",
+            "pron": "vit-TO-ree-a"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Elio vince il torneo con un trucco.",
+            "en": "Elio wins the tournament with a trick.",
+            "words": [
+              "Elio",
+              "vince",
+              "il",
+              "torneo",
+              "con",
+              "un",
+              "trucco."
+            ]
+          },
+          {
+            "it": "La giustizia non è sempre al centro del gioco.",
+            "en": "Justice is not always at the center of the game.",
+            "words": [
+              "La",
+              "giustizia",
+              "non",
+              "è",
+              "sempre",
+              "al",
+              "centro",
+              "del",
+              "gioco."
+            ]
+          },
+          {
+            "it": "Il pubblico applaude la vittoria del giocatore.",
+            "en": "The public applauds the player's victory.",
+            "words": [
+              "Il",
+              "pubblico",
+              "applaude",
+              "la",
+              "vittoria",
+              "del",
+              "giocatore."
+            ]
+          },
+          {
+            "it": "Sconfitta, Sofia si chiede come sia possibile.",
+            "en": "Defeated, Sofia wonders how it's possible.",
+            "words": [
+              "Sconfitta,",
+              "Sofia",
+              "si",
+              "chiede",
+              "come",
+              "sia",
+              "possibile."
+            ]
+          },
+          {
+            "it": "Il trucco di Elio rimane un segreto tra loro due.",
+            "en": "Elio's trick remains a secret between the two of them.",
+            "words": [
+              "Il",
+              "trucco",
+              "di",
+              "Elio",
+              "rimane",
+              "un",
+              "segreto",
+              "tra",
+              "loro",
+              "due."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1106302,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 2405,
+      "totalCompletionTokens": 2303,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 210893,
+          "promptTokens": 543,
+          "completionTokens": 376
+        },
+        {
+          "lessonNum": 2,
+          "ms": 229251,
+          "promptTokens": 611,
+          "completionTokens": 429
+        },
+        {
+          "lessonNum": 3,
+          "ms": 216065,
+          "promptTokens": 657,
+          "completionTokens": 371
+        }
+      ]
+    },
+    "generatedAt": "2026-05-04T08:51:28.446Z",
+    "updatedAt": "2026-05-04T08:51:28.446Z"
+  },
+  {
+    "topic": "More People Arrive, Ping Pong Tournament",
+    "topicEmoji": "🏓",
+    "userTopic": "more people arrive and we play a ping pong tournament",
+    "lang": "it",
+    "difficulty": 1,
+    "storyLen": 250,
+    "story": "Nella sala da pranzo illuminata dalla luce dorata del tramonto, Elio e Sofia furono svegliati dallo squillo di un telefono. Era la nonna di Elio, che annunciava l'arrivo di più parenti per una visita inaspettata. Sofia, ancora addormentata, si svegliò con un sobbalzo e guardò Elio con occhi sgranati. \"Nonna? Nonna ci vuole qui!\" esclamò Elio, alzandosi in piedi. Sofia si rialzò, i capelli biondi che le danzavano intorno al viso.\n\nElio prese la palla e la passò a Sofia, che la prese con entusiasmo. \"Forse non potremo giocare,\" disse Elio, \"ma non preoccuparti, ci saranno altri giochi.\" Sofia annuì, ma la sua espressione era preoccupata. Elio la prese per mano e la condusse verso la porta, con la palla tra loro. \"Nonna ci vuole,\" ripeté Elio, \"andiamo a vedere.\" Sofia lo seguì, ma non senza lanciare un'ultima occhiata al tavolo da ping-pong, dove la palla era ancora pronta per un altro gioco.",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 2-3 paragraphs, under 250 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nNella piccola sala da pranzo della casa di sua nonna, il sole tramontava attraverso le tende di velluto, proiettando ombre danzanti sul tavolo da ping-pong. Elio, un ragazzino di dodici anni, giocava con la sua cugina Sofia, una bambina di otto anni, la cui esuberanza contrastava con l'attenzione concentrata di Elio. Sofia, con i capelli biondi che le scendevano in onde sull'attaccatura del collo, lanciava la palla con una forza che non si addiceva alla sua età, ma Elio, con i suoi occhi scuri e la mascella decisa, la rincorreva sempre, spostando il peso sulle ginocchia e muovendo rapidamente i polsi per colpire la palla con precisione.\n\nIl gioco proseguì per ore, con le risate di Sofia che si mescolavano al ticchettio della palla sul legno del tavolo. Alla fine, la luce si fece più debole, e Sofia, esausta, si sdraiò sul pavimento di legno, con la palla tra le mani. Elio, con un sorriso stanco, si sedette accanto a lei e prese la palla. \"Forse domani,\" disse, \"potremo giocare di nuovo.\" Sofia annuì, chiudendo gli occhi e cedendo al sonno, mentre Elio, con la palla in mano, osservava il crepuscolo che si riversava attraverso la finestra, immerso nei pensieri del gioco e della promessa di un altro giorno di giochi insieme.\n\nNew topic: \"More People Arrive, Ping Pong Tournament\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "table tennis",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Arrivo parenti e partita a ping-pong",
+        "desc": "Vocabolario di base per parlare di arrivi e giochi",
+        "icon": "➡️",
+        "vocab": [
+          {
+            "it": "arrivo",
+            "en": "arrival",
+            "pron": "AR-ree-vo"
+          },
+          {
+            "it": "parenti",
+            "en": "relatives",
+            "pron": "par-EN-tee"
+          },
+          {
+            "it": "giocare",
+            "en": "play",
+            "pron": "GIO-ca-re"
+          },
+          {
+            "it": "ping-pong",
+            "en": "ping pong",
+            "pron": "PING-PONG"
+          },
+          {
+            "it": "torneo",
+            "en": "tournament",
+            "pron": "to-RE-ne"
+          },
+          {
+            "it": "squillo",
+            "en": "ring",
+            "pron": "SKWIL-lo"
+          },
+          {
+            "it": "annunciare",
+            "en": "announce",
+            "pron": "an-NOO-nee-AH-re"
+          },
+          {
+            "it": "inaspettata",
+            "en": "unexpected",
+            "pron": "in-AS-pe-TAT-a"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Arrivano i parenti.",
+            "en": "The relatives are arriving.",
+            "words": [
+              "Arrivano",
+              "i",
+              "parenti."
+            ]
+          },
+          {
+            "it": "Giociamo a ping-pong.",
+            "en": "We play ping pong.",
+            "words": [
+              "Giociamo",
+              "a",
+              "ping-pong."
+            ]
+          },
+          {
+            "it": "Non preoccuparti.",
+            "en": "Don't worry.",
+            "words": [
+              "Non",
+              "preoccuparti."
+            ]
+          },
+          {
+            "it": "Ci sarà un torneo.",
+            "en": "There will be a tournament.",
+            "words": [
+              "Ci",
+              "sarà",
+              "un",
+              "torneo."
+            ]
+          },
+          {
+            "it": "Hai bisogno di un telefono.",
+            "en": "You need a phone.",
+            "words": [
+              "Hai",
+              "bisogno",
+              "di",
+              "un",
+              "telefono."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Arrivo e gioco",
+        "desc": "Arrivi, parenti, ping-pong, torneo",
+        "icon": "➡️",
+        "vocab": [
+          {
+            "it": "parenti",
+            "en": "relatives",
+            "pron": "pa-re-EN-tee"
+          },
+          {
+            "it": "torneo",
+            "en": "tournament",
+            "pron": "toh-REHN-doh"
+          },
+          {
+            "it": "probabile",
+            "en": "probable",
+            "pron": "pro-BEH-ah-leh"
+          },
+          {
+            "it": "entusiasmo",
+            "en": "enthusiasm",
+            "pron": "en-tu-ye-AS-moh"
+          },
+          {
+            "it": "preoccupato",
+            "en": "worried",
+            "pron": "pre-opp-CHWAH-toh"
+          },
+          {
+            "it": "condurre",
+            "en": "to lead",
+            "pron": "con-DROO-re"
+          },
+          {
+            "it": "seguire",
+            "en": "follow",
+            "pron": "seh-GWEE-re"
+          },
+          {
+            "it": "senza",
+            "en": "without",
+            "pron": "sen-ZAH"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Arrivano parenti inaspettati.",
+            "en": "Unexpected relatives are arriving.",
+            "words": [
+              "Arrivano",
+              "parenti",
+              "inaspettati."
+            ]
+          },
+          {
+            "it": "Forse non sarà un torneo.",
+            "en": "Maybe it won't be a tournament.",
+            "words": [
+              "Forse",
+              "non",
+              "sarà",
+              "un",
+              "torneo."
+            ]
+          },
+          {
+            "it": "Con entusiasmo prenderemo la palla.",
+            "en": "With enthusiasm we will take the ball.",
+            "words": [
+              "Con",
+              "entusiasmo",
+              "prenderemo",
+              "la",
+              "palla."
+            ]
+          },
+          {
+            "it": "Non siamo preoccupati.",
+            "en": "We are not worried.",
+            "words": [
+              "Non",
+              "siamo",
+              "preoccupati."
+            ]
+          },
+          {
+            "it": "Seguimi senza parlare.",
+            "en": "Follow me without talking.",
+            "words": [
+              "Seguimi",
+              "senza",
+              "parlare."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Arrivo e torneo",
+        "desc": "Italiano per principianti: arrivi e giochi",
+        "icon": "➡️",
+        "vocab": [
+          {
+            "it": "inaspettata",
+            "en": "unexpected",
+            "pron": "in-AS-pe-ta-da"
+          },
+          {
+            "it": "probabile",
+            "en": "probable",
+            "pron": "pro-BAB-le"
+          },
+          {
+            "it": "danzare",
+            "en": "dance",
+            "pron": "dan-ZA-re"
+          },
+          {
+            "it": "visita",
+            "en": "visit",
+            "pron": "vi-SI-ta"
+          },
+          {
+            "it": "annunciare",
+            "en": "announce",
+            "pron": "an-NO-nyu-A-re"
+          },
+          {
+            "it": "entusiasmo",
+            "en": "enthusiasm",
+            "pron": "en-tu-ZIA-smo"
+          },
+          {
+            "it": "preoccupato",
+            "en": "worried",
+            "pron": "pre-OC-ci-pa-to"
+          },
+          {
+            "it": "seguire",
+            "en": "follow",
+            "pron": "se-GU-i-re"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Arrivano parenti inaspettati.",
+            "en": "Unexpected relatives are arriving.",
+            "words": [
+              "Arrivano",
+              "parenti",
+              "inaspettati."
+            ]
+          },
+          {
+            "it": "Probabilmente non ci sarà tempo per giocare.",
+            "en": "Probably we won't have time to play.",
+            "words": [
+              "Probabilmente",
+              "non",
+              "ci",
+              "sarà",
+              "tempo",
+              "per",
+              "giocare."
+            ]
+          },
+          {
+            "it": "I capelli di Sofia danzano intorno al suo viso.",
+            "en": "Sofia's blonde hair dances around her face.",
+            "words": [
+              "I",
+              "capelli",
+              "di",
+              "Sofia",
+              "danzano",
+              "intorno",
+              "al",
+              "suo",
+              "viso."
+            ]
+          },
+          {
+            "it": "Nonna ci vuole vedere il torneo.",
+            "en": "Grandma wants to see the tournament.",
+            "words": [
+              "Nonna",
+              "ci",
+              "vuole",
+              "vedere",
+              "il",
+              "torneo."
+            ]
+          },
+          {
+            "it": "Seguimi, ti porto a vedere i parenti.",
+            "en": "Follow me, I'll take you to see the relatives.",
+            "words": [
+              "Seguimi,",
+              "ti",
+              "porto",
+              "a",
+              "vedere",
+              "i",
+              "parenti."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 970346,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 2495,
+      "totalCompletionTokens": 1331,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 189687,
+          "promptTokens": 544,
+          "completionTokens": 314
+        },
+        {
+          "lessonNum": 2,
+          "ms": 106782,
+          "promptTokens": 610,
+          "completionTokens": 335
+        },
+        {
+          "lessonNum": 3,
+          "ms": 114556,
+          "promptTokens": 655,
+          "completionTokens": 359
+        }
+      ]
+    },
+    "generatedAt": "2026-05-04T08:21:49.356Z",
+    "updatedAt": "2026-05-04T08:21:49.356Z"
+  },
+  {
+    "topic": "Grandmas Doughs",
+    "topicEmoji": "👨‍👩‍👧‍👧",
+    "userTopic": "the grandmother explains the difference between pizza dough and pasta dough",
+    "lang": "it",
+    "difficulty": 1,
+    "storyLen": 250,
+    "story": "Nella piazza del paese, mentre Antonio preparava la sua pasta sfoglia, Marco si avvicinò con un sorriso. \"Nonno, hai mai provato a fare i dolci con la pasta sfoglia?\" chiese, gli occhi pieni di curiosità. Antonio, sorpreso ma felice, annuì. \"Certo, ma non è una cosa comune. Perché mi chiedi questo?\"\n\n\"Perché mia nonna diceva che la pasta sfoglia è magica, e che c'è un modo speciale di prepararla per i dolci,\" spiegò Marco. \"Ha detto che con la pasta sfoglia si può fare qualcosa di incredibile.\"\n\nAntonio sorrise, ricordando le storie della sua nonna. \"Forse hai ragione, Marco. Prepariamo insieme un dolce speciale. Potrebbe essere una buona occasione per condividere un po' della nostra tradizione con i giovani.\"insieme, Antonio e Marco iniziarono a preparare una pasta sfoglia dolce, mescolando la farina con zucchero e burro, creando un composto morbido e denso. Con le mani abili, Antonio aiutò Marco a formare piccole sfoglie, che poi decorarono con frutta secca e noci. Il dolce risultò un vero capolavoro, un'armonia di sapore e consistenza che rievocava i ricordi di entrambi.",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 2-3 paragraphs, under 250 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nNella piccola piazza del paese, dove il sole si posava dolcemente sui tetti di tegole, c'era un vecchio forno di pietra che aveva visto passare i secoli. Era lì che Antonio, il vecchio pasticcere, preparava la sua pizza, una tradizione che aveva ereditato dal suo nonno. La sua specialità era la pasta sfoglia per la pizza, una preparazione che richiedeva pazienza e attenzione.\n\nAntonio iniziava la giornata all'alba, quando il sole si faceva appena sentire sopra le colline. Prendeva la farina di grano duro, il sapore della quale era legato alla sua terra natale, e la mescolava con acqua fredda e sale. Con le mani forti e abbronzate, lavorava la pasta con passione, facendo scomparire l'aria per ottenere una consistenza perfetta. Ogni palla di pasta sfoglia, una volta asciugata, veniva piegata e ripiegata per formare un disco sottile e croccante. Questa era la base su cui Antonio costruiva le sue pizze, una tecnica che aveva perfezionato nel corso degli anni.\n\nUn giorno, un giovane, Marco, entrò nel negozio, curioso di imparare il segreto della pasta sfoglia perfetta. Antonio, con un sorriso, iniziò a insegnare, passo dopo passo, la magia di quel dolce e croccante strato che rendeva le sue pizze unico. Marco imparò a rispettare ogni istante, ogni tocco, ogni respiro della pasta, e con il tempo, la sua pizza divenne un omaggio alla tradizione, un legame tra il passato e il futuro.\n\nNew topic: \"Grandma's Doughs\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "pizza dough",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Pasta sfoglia e pasta",
+        "desc": "dolci, tradizione, preparazione",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "sfoglia",
+            "en": "dough sheet",
+            "pron": "SOF-lia"
+          },
+          {
+            "it": "pasta",
+            "en": "pasta",
+            "pron": "PA-sta"
+          },
+          {
+            "it": "dolce",
+            "en": "sweet",
+            "pron": "DO-lche"
+          },
+          {
+            "it": "tradizione",
+            "en": "tradition",
+            "pron": "tra-DIZ-zjo-ne"
+          },
+          {
+            "it": "condividere",
+            "en": "share",
+            "pron": "kon-DI-vee-dare"
+          },
+          {
+            "it": "giovani",
+            "en": "youth",
+            "pron": "jo-VAN-ee"
+          },
+          {
+            "it": "storie",
+            "en": "stories",
+            "pron": "STOR-je"
+          },
+          {
+            "it": "speciale",
+            "en": "special",
+            "pron": "spe-CA-lee"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La sfoglia è diversa dalla pasta.",
+            "en": "The dough sheet is different from pasta.",
+            "words": [
+              "La",
+              "sfoglia",
+              "è",
+              "diversa",
+              "dalla",
+              "pasta."
+            ]
+          },
+          {
+            "it": "La pasta sfoglia si usa per dolci.",
+            "en": "Pasta sfoglia is used for sweets.",
+            "words": [
+              "La",
+              "pasta",
+              "sfoglia",
+              "si",
+              "usa",
+              "per",
+              "dolci."
+            ]
+          },
+          {
+            "it": "Condividere la tradizione è importante.",
+            "en": "Sharing the tradition is important.",
+            "words": [
+              "Condividere",
+              "la",
+              "tradizione",
+              "è",
+              "importante."
+            ]
+          },
+          {
+            "it": "La pasta sfoglia è magica.",
+            "en": "Pasta sfoglia is magical.",
+            "words": [
+              "La",
+              "pasta",
+              "sfoglia",
+              "è",
+              "magica."
+            ]
+          },
+          {
+            "it": "Prepariamo un dolce speciale insieme.",
+            "en": "We prepare a special sweet together.",
+            "words": [
+              "Prepariamo",
+              "un",
+              "dolce",
+              "speciale",
+              "insieme."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "doughs and stories",
+        "desc": "exploring pizza and pasta doughs",
+        "icon": "🍰",
+        "vocab": [
+          {
+            "it": "dough",
+            "en": "dough",
+            "pron": "DOH-k"
+          },
+          {
+            "it": "crust",
+            "en": "crust",
+            "pron": "KRUHST"
+          },
+          {
+            "it": "knead",
+            "en": "knead",
+            "pron": "NEED"
+          },
+          {
+            "it": "ferment",
+            "en": "ferment",
+            "pron": "FER-men"
+          },
+          {
+            "it": "yeast",
+            "en": "yeast",
+            "pron": "YEST"
+          },
+          {
+            "it": "doughy",
+            "en": "doughy",
+            "pron": "DOH-ghee"
+          },
+          {
+            "it": "elastic",
+            "en": "elastic",
+            "pron": "e-LAS-tik"
+          },
+          {
+            "it": "puff",
+            "en": "puff",
+            "pron": "PUF"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La sfoglia è più morbida della pasta.",
+            "en": "The dough is softer than the pasta.",
+            "words": [
+              "La",
+              "sfoglia",
+              "è",
+              "più",
+              "morbida",
+              "della",
+              "pasta."
+            ]
+          },
+          {
+            "it": "Dobbiamo mescolare la farina con l'acqua e il lievito.",
+            "en": "We need to mix the flour with water and yeast.",
+            "words": [
+              "Dobbiamo",
+              "mescolare",
+              "la",
+              "farina",
+              "con",
+              "l'acqua",
+              "e",
+              "il",
+              "lievito."
+            ]
+          },
+          {
+            "it": "La pasta sfoglia si gonfia durante il fermento.",
+            "en": "The dough puffs up during fermentation.",
+            "words": [
+              "La",
+              "pasta",
+              "sfoglia",
+              "si",
+              "gonfia",
+              "durante",
+              "il",
+              "fermento."
+            ]
+          },
+          {
+            "it": "La sfoglia è più elastica della pasta.",
+            "en": "The dough is more elastic than the pasta.",
+            "words": [
+              "La",
+              "sfoglia",
+              "è",
+              "più",
+              "elastica",
+              "della",
+              "pasta."
+            ]
+          },
+          {
+            "it": "La pasta sfoglia si può fare dolce o salata.",
+            "en": "Dough can be sweet or salty.",
+            "words": [
+              "La",
+              "pasta",
+              "sfoglia",
+              "si",
+              "può",
+              "fare",
+              "dolce",
+              "o",
+              "salata."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Dough Varieties",
+        "desc": "Exploring pizza and pasta dough",
+        "icon": "👨‍👩‍👧‍👦",
+        "vocab": [
+          {
+            "it": "pasta sfoglia",
+            "en": "pasta sfoglia",
+            "pron": "PAST-ah SOE-glio"
+          },
+          {
+            "it": "pasta d'avena",
+            "en": "oat pasta",
+            "pron": "PAST-ah DAH-vah-nah"
+          },
+          {
+            "it": "pasta lievitata",
+            "en": "fermented dough",
+            "pron": "PAST-ah lee-vee-TAH-tah"
+          },
+          {
+            "it": "pasta integrale",
+            "en": "whole wheat pasta",
+            "pron": "PAST-ah ee-tan-JAR-ah-le"
+          },
+          {
+            "it": "pasta sfoglia dolce",
+            "en": "sweet pasta sfoglia",
+            "pron": "PAST-ah SOE-glio DOH-tche"
+          },
+          {
+            "it": "pasta sfoglia salata",
+            "en": "salty pasta sfoglia",
+            "pron": "PAST-ah SOE-glio sal-AH-tah"
+          },
+          {
+            "it": "pasta sfoglia croccante",
+            "en": "crispy pasta sfoglia",
+            "pron": "PAST-ah SOE-glio croc-CAN-tah"
+          },
+          {
+            "it": "pasta sfoglia morbida",
+            "en": "soft pasta sfoglia",
+            "pron": "PAST-ah SOE-glio MOHR-bi-dah"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La pasta sfoglia è morbida e estensibile.",
+            "en": "Pasta sfoglia is soft and stretchy.",
+            "words": [
+              "La",
+              "pasta",
+              "sfoglia",
+              "è",
+              "morbida",
+              "e",
+              "estensibile."
+            ]
+          },
+          {
+            "it": "La pasta d'avena ha un sapore unico.",
+            "en": "Oat pasta has a unique taste.",
+            "words": [
+              "La",
+              "pasta",
+              "d'avena",
+              "ha",
+              "un",
+              "sapore",
+              "unico."
+            ]
+          },
+          {
+            "it": "La pasta lievitata si gonfia durante la cottura.",
+            "en": "Fermented dough puffs up during cooking.",
+            "words": [
+              "La",
+              "pasta",
+              "lievitata",
+              "si",
+              "gonfia",
+              "durante",
+              "la",
+              "cottura."
+            ]
+          },
+          {
+            "it": "La pasta integrale è più sana.",
+            "en": "Whole wheat pasta is healthier.",
+            "words": [
+              "La",
+              "pasta",
+              "integrale",
+              "è",
+              "più",
+              "sana."
+            ]
+          },
+          {
+            "it": "La pasta sfoglia croccante è perfetta per le torte.",
+            "en": "Crispy pasta sfoglia is perfect for cakes.",
+            "words": [
+              "La",
+              "pasta",
+              "sfoglia",
+              "croccante",
+              "è",
+              "perfetta",
+              "per",
+              "le",
+              "torte."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1024320,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 2473,
+      "totalCompletionTokens": 1540,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 215295,
+          "promptTokens": 529,
+          "completionTokens": 334
+        },
+        {
+          "lessonNum": 2,
+          "ms": 203292,
+          "promptTokens": 593,
+          "completionTokens": 361
+        },
+        {
+          "lessonNum": 3,
+          "ms": 161053,
+          "promptTokens": 631,
+          "completionTokens": 468
+        }
+      ]
+    },
+    "generatedAt": "2026-05-04T07:58:04.340Z",
+    "updatedAt": "2026-05-04T07:58:04.340Z"
+  },
+  {
+    "topic": "Grandpas Dough Talk",
+    "topicEmoji": "👨‍👩‍👧‍👦",
+    "userTopic": "the grandfather explains the difference between pizza dough and pasta dough",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 550,
+    "story": "Nella piazza del paese, mentre il sole del tardo pomeriggio tingeva di arancione le tegole, Antonio e Marco si sedettero su una vecchia panca di legno. Marco, ora un giovane pasticcere inesperto, ascoltava con attenzione le parole di suo nonno, che gli parlava della pasta sfoglia con un tono di nostalgia.\n\n\"Marco, sai,\" iniziò Antonio, \"la pasta sfoglia è come una storia. Ogni palla di pasta è un capitolo, ogni piega una pagina. Devi imparare a leggere questa storia con le tue mani.\"\n\nMarco annuì, cercando di cogliere ogni parola. \"Nonno, perché la pasta sfoglia è così importante?\"\n\n\"Perché, figliolo, la pasta sfoglia è la nostra connessione con il passato. È il sapore della nostra terra, del nostro popolo. Ogni volta che prepari una pasta sfoglia, stai raccontando una storia, stai onorando i tuoi antenati.\"\n\nAntonio prese una palla di pasta sfoglia asciutta e la piegò delicatamente. \"Guarda qui, Marco. Ogni piega deve essere fatta con passione, con rispetto. Non è solo una tecnica, è un'arte.\"\n\nMarco osservò attentamente, imitando il gesto di suo nonno. \"E cosa succede se non si fa bene?\"\n\n\"Se non si fa bene,\" rispose Antonio, \"la pasta sfoglia si spezza, si rompe. Ma se la fai con amore, diventa qualcosa di magico. È come se la pasta sfoglia avesse vita propria, come se potesse raccontare la storia del nostro paese.\"\n\nCon un sorriso, Antonio prese un altro pezzo di pasta sfoglia e lo piegò con precisione. \"Ora, prova tu. Fai una piega, Marco. Fai come se stessi raccontando una storia.\"\n\nMarco prese la palla di pasta sfoglia e la piegò con le sue mani. Era difficile, ma sentiva la guida di suo nonno nella sua voce e nel suo tocco. \"Non è facile,\" ammise, \"ma mi piace.\"\n\n\"Lo so, figliolo,\" disse Antonio, \"ma con la pratica, la pasta sfoglia diventa un amico. E ogni volta che la prepari, ricorderai la storia del nostro paese, la storia della nostra terra.\"",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 550 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nNella piccola piazza del paese, dove il sole si posava dolcemente sui tetti di tegole, c'era un vecchio forno di pietra che aveva visto passare i secoli. Era lì che Antonio, il vecchio pasticcere, preparava la sua pizza, una tradizione che aveva ereditato dal suo nonno. La sua specialità era la pasta sfoglia per la pizza, una preparazione che richiedeva pazienza e attenzione.\n\nAntonio iniziava la giornata all'alba, quando il sole si faceva appena sentire sopra le colline. Prendeva la farina di grano duro, il sapore della quale era legato alla sua terra natale, e la mescolava con acqua fredda e sale. Con le mani forti e abbronzate, lavorava la pasta con passione, facendo scomparire l'aria per ottenere una consistenza perfetta. Ogni palla di pasta sfoglia, una volta asciugata, veniva piegata e ripiegata per formare un disco sottile e croccante. Questa era la base su cui Antonio costruiva le sue pizze, una tecnica che aveva perfezionato nel corso degli anni.\n\nUn giorno, un giovane, Marco, entrò nel negozio, curioso di imparare il segreto della pasta sfoglia perfetta. Antonio, con un sorriso, iniziò a insegnare, passo dopo passo, la magia di quel dolce e croccante strato che rendeva le sue pizze unico. Marco imparò a rispettare ogni istante, ogni tocco, ogni respiro della pasta, e con il tempo, la sua pizza divenne un omaggio alla tradizione, un legame tra il passato e il futuro.\n\nNew topic: \"Grandpa's Dough Talk\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "pizza dough",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Pasta and Pizza Dough",
+        "desc": "Differences and traditions",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "sfoglia",
+            "en": "puff pastry",
+            "pron": "sof-OH-lia"
+          },
+          {
+            "it": "tegole",
+            "en": "tiles",
+            "pron": "TAY-goh-le"
+          },
+          {
+            "it": "pasticcere",
+            "en": "pastry chef",
+            "pron": "pas-tik-KEHR-ree"
+          },
+          {
+            "it": "piega",
+            "en": "fold",
+            "pron": "PEE-ya"
+          },
+          {
+            "it": "capitolo",
+            "en": "chapter",
+            "pron": "ka-pee-TOH-lo"
+          },
+          {
+            "it": "nostalgia",
+            "en": "nostalgia",
+            "pron": "no-stal-JEE-ah"
+          },
+          {
+            "it": "connessione",
+            "en": "connection",
+            "pron": "kon-nes-see-EN-je"
+          },
+          {
+            "it": "onorare",
+            "en": "honor",
+            "pron": "o-nah-RAH-ree"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La pasta sfoglia è diversa dalla pasta per pizza.",
+            "en": "Puff pastry is different from pizza dough.",
+            "words": [
+              "La",
+              "pasta",
+              "sfoglia",
+              "è",
+              "diversa",
+              "dalla",
+              "pasta",
+              "per",
+              "pizza."
+            ]
+          },
+          {
+            "it": "La sfoglia richiede molte pieghe per diventare sottile.",
+            "en": "Puff pastry requires many folds to become thin.",
+            "words": [
+              "La",
+              "sfoglia",
+              "richiede",
+              "molte",
+              "pieghe",
+              "per",
+              "diventare",
+              "sottile."
+            ]
+          },
+          {
+            "it": "La nostalgia per la pasta sfoglia è un legame con il passato.",
+            "en": "The nostalgia for puff pastry is a link to the past.",
+            "words": [
+              "La",
+              "nostalgia",
+              "per",
+              "la",
+              "pasta",
+              "sfoglia",
+              "è",
+              "un",
+              "legame",
+              "con",
+              "il",
+              "passato."
+            ]
+          },
+          {
+            "it": "Ogni volta che prepari sfoglia, racconti una storia della tua terra.",
+            "en": "Every time you prepare puff pastry, you tell a story of your land.",
+            "words": [
+              "Ogni",
+              "volta",
+              "che",
+              "prepari",
+              "sfoglia,",
+              "racconti",
+              "una",
+              "storia",
+              "della",
+              "tua",
+              "terra."
+            ]
+          },
+          {
+            "it": "Onorare la tradizione significa preparare la pasta sfoglia con cura.",
+            "en": "Honoring tradition means preparing puff pastry with care.",
+            "words": [
+              "Onorare",
+              "la",
+              "tradizione",
+              "significa",
+              "preparare",
+              "la",
+              "pasta",
+              "sfoglia",
+              "con",
+              "cura."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Pasta and Puff Pastry",
+        "desc": "Difference between pasta and sfoglia",
+        "icon": "🥣",
+        "vocab": [
+          {
+            "it": "sfoglia",
+            "en": "puff pastry",
+            "pron": "SOF-lya"
+          },
+          {
+            "it": "pasta",
+            "en": "dough",
+            "pron": "PAS-ta"
+          },
+          {
+            "it": "sfogliatura",
+            "en": "puffing",
+            "pron": "sof-LY-a-tura"
+          },
+          {
+            "it": "farina",
+            "en": "flour",
+            "pron": "FA-ri-na"
+          },
+          {
+            "it": "lievito",
+            "en": "yeast",
+            "pron": "LIE-vee-to"
+          },
+          {
+            "it": "stretto",
+            "en": "kneaded",
+            "pron": "STRE-tto"
+          },
+          {
+            "it": "sottile",
+            "en": "thin",
+            "pron": "sot-TILE"
+          },
+          {
+            "it": "pasticciaccio",
+            "en": "mess",
+            "pron": "pas-tik-CHYA-tso"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La sfoglia si sviluppa durante la struttura.",
+            "en": "The puff pastry develops during the kneading.",
+            "words": [
+              "La",
+              "sfoglia",
+              "si",
+              "sviluppa",
+              "durante",
+              "la",
+              "struttura."
+            ]
+          },
+          {
+            "it": "Mentre la pasta è sottile, la sfoglia è molto sottile.",
+            "en": "While the pasta is thin, the puff pastry is very thin.",
+            "words": [
+              "Mentre",
+              "la",
+              "pasta",
+              "è",
+              "sottile,",
+              "la",
+              "sfoglia",
+              "è",
+              "molto",
+              "sottile."
+            ]
+          },
+          {
+            "it": "Il lievito fa sì che la sfoglia si espandi.",
+            "en": "The yeast makes the puff pastry expand.",
+            "words": [
+              "Il",
+              "lievito",
+              "fa",
+              "sì",
+              "che",
+              "la",
+              "sfoglia",
+              "si",
+              "espandi."
+            ]
+          },
+          {
+            "it": "Stretto la pasta, ma sfoglia la sfoglia.",
+            "en": "Knead the pasta, but puff the puff pastry.",
+            "words": [
+              "Stretto",
+              "la",
+              "pasta,",
+              "ma",
+              "sfoglia",
+              "la",
+              "sfoglia."
+            ]
+          },
+          {
+            "it": "Non ho mai visto un pasticcere fare un pasticcio con la sfoglia.",
+            "en": "I've never seen a pastry chef mess up with the puff pastry.",
+            "words": [
+              "Non",
+              "ho",
+              "mai",
+              "visto",
+              "un",
+              "pasticcere",
+              "fare",
+              "un",
+              "pasticcio",
+              "con",
+              "la",
+              "sfoglia."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Pasta and Puff Pastry",
+        "desc": "Difference between dough types, traditional methods",
+        "icon": "🥣",
+        "vocab": [
+          {
+            "it": "sfogliatura",
+            "en": "puffing",
+            "pron": "sof-lee-AH-tura"
+          },
+          {
+            "it": "lievito",
+            "en": "yeast",
+            "pron": "lee-eh-VEE-to"
+          },
+          {
+            "it": "stretto",
+            "en": "kneaded",
+            "pron": "STRET-to"
+          },
+          {
+            "it": "sottile",
+            "en": "thin",
+            "pron": "so-TTILE"
+          },
+          {
+            "it": "pasticciaccio",
+            "en": "mess",
+            "pron": "pas-tis-CHIA-tso"
+          },
+          {
+            "it": "tegole",
+            "en": "tiles",
+            "pron": "TEH-gole"
+          },
+          {
+            "it": "piazza",
+            "en": "square",
+            "pron": "p-YAH-za"
+          },
+          {
+            "it": "connessione",
+            "en": "connection",
+            "pron": "kon-nes-SEH-zehn"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La sfogliatura della pasta sfoglia richiede pazienza.",
+            "en": "The puffing of puff pastry requires patience.",
+            "words": [
+              "La",
+              "sfogliatura",
+              "della",
+              "pasta",
+              "sfoglia",
+              "richiede",
+              "pazienza."
+            ]
+          },
+          {
+            "it": "Stretto la farina con il lievito per far crescere la pasta.",
+            "en": "Knead the flour with the yeast to make the dough rise.",
+            "words": [
+              "Stretto",
+              "la",
+              "farina",
+              "con",
+              "il",
+              "lievito",
+              "per",
+              "far",
+              "crescere",
+              "la",
+              "pasta."
+            ]
+          },
+          {
+            "it": "La pasta sfoglia è più sottile della pasta normale.",
+            "en": "Puff pastry is thinner than regular dough.",
+            "words": [
+              "La",
+              "pasta",
+              "sfoglia",
+              "è",
+              "più",
+              "sottile",
+              "della",
+              "pasta",
+              "normale."
+            ]
+          },
+          {
+            "it": "Nonno, perché la sfogliatura è importante?",
+            "en": "Grandpa, why is puffing important?",
+            "words": [
+              "Nonno,",
+              "perché",
+              "la",
+              "sfogliatura",
+              "è",
+              "importante?"
+            ]
+          },
+          {
+            "it": "La connessione tra la pasta sfoglia e il passato è profonda.",
+            "en": "The connection between puff pastry and the past is deep.",
+            "words": [
+              "La",
+              "connessione",
+              "tra",
+              "la",
+              "pasta",
+              "sfoglia",
+              "e",
+              "il",
+              "passato",
+              "è",
+              "profonda."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 999996,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 2467,
+      "totalCompletionTokens": 1830,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 235460,
+          "promptTokens": 521,
+          "completionTokens": 399
+        },
+        {
+          "lessonNum": 2,
+          "ms": 215376,
+          "promptTokens": 587,
+          "completionTokens": 414
+        },
+        {
+          "lessonNum": 3,
+          "ms": 222757,
+          "promptTokens": 639,
+          "completionTokens": 409
+        }
+      ]
+    },
+    "generatedAt": "2026-05-04T06:58:28.635Z",
+    "updatedAt": "2026-05-04T07:36:14.346Z"
+  },
   {
     "topic": "anna thinks it is smarter to use cyanobacteria in windows to produce energy",
     "topicEmoji": "🌱",
@@ -13465,95 +15013,227 @@ const STATIC_LESSONS = [
     "topic": "pizza dough",
     "topicEmoji": "🍕",
     "lang": "it",
-    "difficulty": 1,
-    "story": "In the bustling town of Napoli, where the air was thick with the aroma of fresh pizza, there lived a young baker named Marco. Marco had a secret passion for making the perfect pizza dough, a skill he had been honing for years. His grandmother, Nonna Rosa, had taught him the ancient art of kneading dough by hand, a technique that Marco believed was the key to creating the most delicious pizza in the world.\n\nEvery morning, Marco would rise early, before the sun had fully kissed the rooftops of Napoli, and begin his ritual. He would gather the ingredients: flour, water, salt, and a hint of olive oil. With Nonna Rosa’s old wooden bowl and a sturdy wooden spoon, Marco would mix the ingredients until the dough was smooth and elastic. Then, he would let it rest, covered with a damp cloth, in the warm, cozy corner of his bakery.\n\nOne evening, as Marco was shaping the dough into perfect circles, a young woman named Isabella walked into the bakery. She was a tourist, drawn by the promise of authentic Italian pizza. Isabella’s eyes widened as she saw Marco at work, his hands moving with practiced ease. She approached him, her curiosity piqued.\n\n“Ciao, signore,” Isabella said, her voice soft and melodic. “I am Isabella. I am from Rome. I love pizza, but I have never seen it made like this. Can you teach me?”\n\nMarco smiled, his eyes twinkling with the joy of sharing his craft. “Certo, Isabella. I would be honored to teach you. But first, let’s make a pizza together.”\n\nUnder Marco’s guidance, Isabella learned the secrets of the dough. She felt the warmth of the dough in her hands, the way it stretched and yielded to her touch. Together, they shaped the dough, rolled it out, and topped it with fresh mozzarella, basil, and a drizzle of olive oil.\n\nAs the pizza baked in the oven, Marco and Isabella chatted about their lives. Marco shared stories of his grandmother and the history of pizza, while Isabella spoke of her adventures in Rome. The pizza came out golden and fragrant, and they both savored every bite.\n\nThat evening, Marco realized that the true magic of pizza dough was not just in its taste but in the connections it helped forge. As Isabella left, she promised to return and learn more. Marco knew that his passion for pizza dough had not only enriched his own life but had also brought a piece of Napoli to a visitor from Rome.",
+    "difficulty": 3,
+    "story": "Nella piccola piazza del paese, dove il sole si posava dolcemente sui tetti di tegole, c'era un vecchio forno di pietra che aveva visto passare i secoli. Era lì che Antonio, il vecchio pasticcere, preparava la sua pizza, una tradizione che aveva ereditato dal suo nonno. La sua specialità era la pasta sfoglia per la pizza, una preparazione che richiedeva pazienza e attenzione.\n\nAntonio iniziava la giornata all'alba, quando il sole si faceva appena sentire sopra le colline. Prendeva la farina di grano duro, il sapore della quale era legato alla sua terra natale, e la mescolava con acqua fredda e sale. Con le mani forti e abbronzate, lavorava la pasta con passione, facendo scomparire l'aria per ottenere una consistenza perfetta. Ogni palla di pasta sfoglia, una volta asciugata, veniva piegata e ripiegata per formare un disco sottile e croccante. Questa era la base su cui Antonio costruiva le sue pizze, una tecnica che aveva perfezionato nel corso degli anni.\n\nUn giorno, un giovane, Marco, entrò nel negozio, curioso di imparare il segreto della pasta sfoglia perfetta. Antonio, con un sorriso, iniziò a insegnare, passo dopo passo, la magia di quel dolce e croccante strato che rendeva le sue pizze unico. Marco imparò a rispettare ogni istante, ogni tocco, ogni respiro della pasta, e con il tempo, la sua pizza divenne un omaggio alla tradizione, un legame tra il passato e il futuro.",
+    "storyLang": "it",
     "lessons": [
       {
         "id": 1,
-        "title": "Pizza Dough",
-        "desc": "Basic ingredients and kneading technique",
+        "title": "pizza dough",
+        "desc": "dough preparation, traditional process",
         "icon": "🍕",
         "vocab": [
           {
-            "it": "farina",
-            "en": "flour",
-            "pron": "FA-ri-na"
+            "it": "pasta sfoglia",
+            "en": "pastry dough",
+            "pron": "PAST-ah SOF-lya"
           },
           {
-            "it": "acqua",
-            "en": "water",
-            "pron": "AK-wa"
+            "it": "farina di grano duro",
+            "en": "hard wheat flour",
+            "pron": "FAH-ree-nah DEE GRAH-noo DOOR-oh"
           },
           {
-            "it": "sale",
-            "en": "salt",
-            "pron": "SA-le"
+            "it": "sapore",
+            "en": "taste",
+            "pron": "SAH-poh-re"
           },
           {
-            "it": "olio",
-            "en": "oil",
-            "pron": "OL-i"
+            "it": "terra natale",
+            "en": "hometown",
+            "pron": "TAYR-rah NAH-tah-le"
           },
           {
-            "it": "bacinello",
-            "en": "bowl",
-            "pron": "ba-CHIN-nel-lo"
+            "it": "mescolare",
+            "en": "to mix",
+            "pron": "mehs-ko-LAR-eh"
           },
           {
-            "it": "spatola",
-            "en": "spoon",
-            "pron": "spa-TO-la"
+            "it": "lavorare",
+            "en": "to work",
+            "pron": "lah-voh-RAH-re"
           },
           {
-            "it": "dolce",
-            "en": "sweet",
-            "pron": "DO-l-tse"
+            "it": "consistenza",
+            "en": "consistency",
+            "pron": "kohn-sis-TEHN-tza"
           },
           {
-            "it": "stretto",
-            "en": "stretched",
-            "pron": "STRE-t-to"
+            "it": "piegare",
+            "en": "to fold",
+            "pron": "pee-GAH-re"
           }
         ],
         "sentences": [
           {
-            "it": "Prendi la farina e versa l'acqua.",
-            "en": "Take the flour and pour the water.",
+            "it": "Antonio mescolava la farina di grano duro con acqua fredda e sale.",
+            "en": "Antonio mixed the hard wheat flour with cold water and salt.",
             "words": [
-              "Prendi",
+              "Antonio",
+              "mescolava",
               "la",
               "farina",
-              "e",
-              "versa",
-              "l'acqua."
-            ]
-          },
-          {
-            "it": "Mescola con la spatola.",
-            "en": "Mix with the spoon.",
-            "words": [
-              "Mescola",
-              "con",
-              "la",
-              "spatola."
-            ]
-          },
-          {
-            "it": "Aggiungi un po' di sale.",
-            "en": "Add a bit of salt.",
-            "words": [
-              "Aggiungi",
-              "un",
-              "po'",
               "di",
+              "grano",
+              "duro",
+              "con",
+              "acqua",
+              "fredda",
+              "e",
               "sale."
             ]
           },
           {
-            "it": "Stendi la pasta con le mani.",
-            "en": "Stretch the dough with your hands.",
+            "it": "Con le mani forti e abbronzate, lavorava la pasta con passione.",
+            "en": "With his strong and bronzed hands, he worked the dough with passion.",
             "words": [
-              "Stendi",
+              "Con",
+              "le",
+              "mani",
+              "forti",
+              "e",
+              "abbronzate,",
+              "lavorava",
+              "la",
+              "pasta",
+              "con",
+              "passione."
+            ]
+          },
+          {
+            "it": "La pasta sfoglia, una volta asciugata, veniva piegata e piegata ancora.",
+            "en": "The pastry dough, once dried, was folded and folded again.",
+            "words": [
+              "La",
+              "pasta",
+              "sfoglia,",
+              "una",
+              "volta",
+              "asciugata,",
+              "veniva",
+              "piegata",
+              "e",
+              "piegata",
+              "ancora."
+            ]
+          },
+          {
+            "it": "Il sapore della pasta sfoglia era legato alla sua terra natale.",
+            "en": "The taste of the pastry dough was tied to his hometown.",
+            "words": [
+              "Il",
+              "sapore",
+              "della",
+              "pasta",
+              "sfoglia",
+              "era",
+              "legato",
+              "alla",
+              "sua",
+              "terra",
+              "natale."
+            ]
+          },
+          {
+            "it": "Ogni palla di pasta sfoglia, una volta asciugata, era pronta per essere piegata.",
+            "en": "Each ball of dried pastry dough was ready to be folded.",
+            "words": [
+              "Ogni",
+              "palla",
+              "di",
+              "pasta",
+              "sfoglia,",
+              "una",
+              "volta",
+              "asciugata,",
+              "era",
+              "pronta",
+              "per",
+              "essere",
+              "piegata."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "pizza dough",
+        "desc": "advanced vocabulary and phrases for pizza making",
+        "icon": "🍕",
+        "vocab": [
+          {
+            "it": "alleviare",
+            "en": "to alleviate",
+            "pron": "al-LIH-vyuh-eh"
+          },
+          {
+            "it": "temperare",
+            "en": "to temper",
+            "pron": "tem-PYAR-eh"
+          },
+          {
+            "it": "diluire",
+            "en": "to dilute",
+            "pron": "dy-LYOO-eh"
+          },
+          {
+            "it": "sottile",
+            "en": "thin",
+            "pron": "so-TTEE-le"
+          },
+          {
+            "it": "resistenza",
+            "en": "resistance",
+            "pron": "re-zis-TEH-nza"
+          },
+          {
+            "it": "diligenza",
+            "en": "diligence",
+            "pron": "dy-lee-JEN-za"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Alleviava la tensione mescolando la farina con l'acqua fredda.",
+            "en": "He alleviated the tension by mixing the flour with cold water.",
+            "words": [
+              "Alleviava",
+              "la",
+              "tensione",
+              "mescolando",
+              "la",
+              "farina",
+              "con",
+              "l'acqua",
+              "fredda."
+            ]
+          },
+          {
+            "it": "Temperava la pasta sfoglia diluendo il sale con l'acqua.",
+            "en": "He tempered the pastry dough by diluting the salt with water.",
+            "words": [
+              "Temperava",
+              "la",
+              "pasta",
+              "sfoglia",
+              "diluendo",
+              "il",
+              "sale",
+              "con",
+              "l'acqua."
+            ]
+          },
+          {
+            "it": "Doveva avere una resistenza notevole per lavorare la pasta con le mani.",
+            "en": "He needed notable resistance to work the dough with his hands.",
+            "words": [
+              "Doveva",
+              "avere",
+              "una",
+              "resistenza",
+              "notevole",
+              "per",
+              "lavorare",
               "la",
               "pasta",
               "con",
@@ -13562,128 +15242,37 @@ const STATIC_LESSONS = [
             ]
           },
           {
-            "it": "Copri il bacinello con un panno umido.",
-            "en": "Cover the bowl with a damp cloth.",
+            "it": "La consistenza sottile era essenziale per ottenere la pizza perfetta.",
+            "en": "The thin consistency was essential to get the perfect pizza.",
             "words": [
-              "Copri",
-              "il",
-              "bacinello",
-              "con",
-              "un",
-              "panno",
-              "umido."
-            ]
-          }
-        ]
-      },
-      {
-        "id": 2,
-        "title": "Pizza Dough",
-        "desc": "Baking, kneading, resting, ingredients",
-        "icon": "🍕",
-        "vocab": [
-          {
-            "it": "pasta",
-            "en": "dough",
-            "pron": "PAH-stah"
-          },
-          {
-            "it": "frigorifero",
-            "en": "refrigerator",
-            "pron": "fruh-GOH-ree-FEH-ro"
-          },
-          {
-            "it": "respirare",
-            "en": "breathe",
-            "pron": "rehs-pee-RAH-re"
-          },
-          {
-            "it": "stretto",
-            "en": "stretched",
-            "pron": "STRET-to"
-          },
-          {
-            "it": "dolce",
-            "en": "sweet",
-            "pron": "DOHL-che"
-          },
-          {
-            "it": "fermentare",
-            "en": "ferment",
-            "pron": "feh-rem-MAH-re"
-          },
-          {
-            "it": "sottile",
-            "en": "thin",
-            "pron": "soh-TEE-lee"
-          },
-          {
-            "it": "polvere",
-            "en": "powder",
-            "pron": "po-VEL-lay"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Pulisce la spatola prima di iniziare.",
-            "en": "Clean the spoon before you start.",
-            "words": [
-              "Pulisce",
-              "la",
-              "spatola",
-              "prima",
-              "di",
-              "iniziare."
-            ]
-          },
-          {
-            "it": "Lascia il dolce in un angolo della tavola.",
-            "en": "Place the sugar in a corner of the table.",
-            "words": [
-              "Lascia",
-              "il",
-              "dolce",
-              "in",
-              "un",
-              "angolo",
-              "della",
-              "tavola."
-            ]
-          },
-          {
-            "it": "Rimuovi la polvere dalla superficie.",
-            "en": "Remove the powder from the surface.",
-            "words": [
-              "Rimuovi",
-              "la",
-              "polvere",
-              "dalla",
-              "superficie."
-            ]
-          },
-          {
-            "it": "Fermare il processo di fermentazione.",
-            "en": "Stop the fermentation process.",
-            "words": [
-              "Fermare",
-              "il",
-              "processo",
-              "di",
-              "fermentazione."
-            ]
-          },
-          {
-            "it": "Stendi la pasta sottile sul piano di lavoro.",
-            "en": "Stretch the dough thinly on the work surface.",
-            "words": [
-              "Stendi",
-              "la",
-              "pasta",
+              "La",
+              "consistenza",
               "sottile",
-              "sul",
-              "piano",
+              "era",
+              "essenziale",
+              "per",
+              "ottenere",
+              "la",
+              "pizza",
+              "perfetta."
+            ]
+          },
+          {
+            "it": "Con grande diligenza piegava ogni palla di pasta sfoglia per la pizza.",
+            "en": "With great diligence, he folded each ball of pizza pastry dough.",
+            "words": [
+              "Con",
+              "grande",
+              "diligenza",
+              "piegava",
+              "ogni",
+              "palla",
               "di",
-              "lavoro."
+              "pasta",
+              "sfoglia",
+              "per",
+              "la",
+              "pizza."
             ]
           }
         ]
@@ -13691,156 +15280,167 @@ const STATIC_LESSONS = [
       {
         "id": 3,
         "title": "Pizza Dough",
-        "desc": "Kneading and resting the dough",
-        "icon": "👨‍🍳",
+        "desc": "Advanced vocabulary for pizza preparation",
+        "icon": "🍕",
         "vocab": [
           {
-            "it": "farina",
-            "en": "flour",
-            "pron": "FA-ri-na"
+            "it": "alleviare",
+            "en": "to alleviate",
+            "pron": "al-LIH-vy-a-te"
           },
           {
-            "it": "acqua",
-            "en": "water",
-            "pron": "AK-wa"
+            "it": "temperare",
+            "en": "to temper",
+            "pron": "tem-PER-a-te"
           },
           {
-            "it": "sale",
-            "en": "salt",
-            "pron": "SA-le"
+            "it": "diluire",
+            "en": "to dilute",
+            "pron": "di-LYU-are"
           },
           {
-            "it": "olio",
-            "en": "oil",
-            "pron": "OL-i"
+            "it": "sottile",
+            "en": "thin",
+            "pron": "so-TTILE"
           },
           {
-            "it": "bacinello",
-            "en": "bowl",
-            "pron": "BA-ki-ne-lo"
+            "it": "resistenza",
+            "en": "resistance",
+            "pron": "res-i-ZEN-za"
           },
           {
-            "it": "spatola",
-            "en": "spoon",
-            "pron": "spa-TO-la"
+            "it": "diligenza",
+            "en": "diligence",
+            "pron": "di-LIG-en-za"
           },
           {
-            "it": "dolce",
-            "en": "sweet",
-            "pron": "DOL-che"
+            "it": "pallina",
+            "en": "small ball",
+            "pron": "pa-LLEE-na"
           },
           {
             "it": "stretto",
-            "en": "stretched",
-            "pron": "STRE-tto"
+            "en": "tight",
+            "pron": "STRETT-o"
           }
         ],
         "sentences": [
           {
-            "it": "Marco mescolava la farina con l'acqua.",
-            "en": "Marco mixed the flour with water.",
+            "it": "Tempera la farina con acqua fredda per ottenere una consistenza sottile.",
+            "en": "Temper the flour with cold water to achieve a thin consistency.",
             "words": [
-              "Marco",
-              "mescolava",
+              "Tempera",
               "la",
               "farina",
               "con",
-              "l'acqua."
-            ]
-          },
-          {
-            "it": "Poi coprì il bacinello con un panno umido.",
-            "en": "Then he covered the bowl with a damp cloth.",
-            "words": [
-              "Poi",
-              "coprì",
-              "il",
-              "bacinello",
-              "con",
-              "un",
-              "panno",
-              "umido."
-            ]
-          },
-          {
-            "it": "Lasciò fermentare la pasta per ore.",
-            "en": "He let the dough ferment for hours.",
-            "words": [
-              "Lasciò",
-              "fermentare",
-              "la",
-              "pasta",
+              "acqua",
+              "fredda",
               "per",
-              "ore."
-            ]
-          },
-          {
-            "it": "Con la spatola, stese la pasta sottile.",
-            "en": "With the spoon, he stretched the dough thin.",
-            "words": [
-              "Con",
-              "la",
-              "spatola,",
-              "stese",
-              "la",
-              "pasta",
+              "ottenere",
+              "una",
+              "consistenza",
               "sottile."
             ]
           },
           {
-            "it": "La sua pizza era dolce come il bacio di Nonna Rosa.",
-            "en": "His pizza was as sweet as Nonna Rosa's kiss.",
+            "it": "La pasta sfoglia deve essere lavorata con diligenza per alleviare la tensione.",
+            "en": "The pastry dough must be worked with diligence to alleviate the tension.",
             "words": [
               "La",
-              "sua",
-              "pizza",
-              "era",
-              "dolce",
-              "come",
+              "pasta",
+              "sfoglia",
+              "deve",
+              "essere",
+              "lavorata",
+              "con",
+              "diligenza",
+              "per",
+              "alleviare",
+              "la",
+              "tensione."
+            ]
+          },
+          {
+            "it": "Dilui il sale nell'acqua prima di mescolarlo con la farina.",
+            "en": "Dilute the salt in the water before mixing it with the flour.",
+            "words": [
+              "Dilui",
               "il",
-              "bacio",
+              "sale",
+              "nell'acqua",
+              "prima",
               "di",
-              "Nonna",
-              "Rosa."
+              "mescolarlo",
+              "con",
+              "la",
+              "farina."
+            ]
+          },
+          {
+            "it": "Piegare la pasta sfoglia in palline strette per facilitare la cottura.",
+            "en": "Fold the pastry dough into tight little balls to facilitate cooking.",
+            "words": [
+              "Piegare",
+              "la",
+              "pasta",
+              "sfoglia",
+              "in",
+              "palline",
+              "strette",
+              "per",
+              "facilitare",
+              "la",
+              "cottura."
+            ]
+          },
+          {
+            "it": "La resistenza della pasta sfoglia è aumentata grazie alla lavorazione.",
+            "en": "The resistance of the pastry dough has increased thanks to the work.",
+            "words": [
+              "La",
+              "resistenza",
+              "della",
+              "pasta",
+              "sfoglia",
+              "è",
+              "aumentata",
+              "grazie",
+              "alla",
+              "lavorazione."
             ]
           }
         ]
       }
     ],
     "generationStats": {
-      "totalMs": 694148,
+      "totalMs": 801414,
       "backend": "ollama",
       "model": "qwen2.5:7b",
-      "totalPromptTokens": 1737,
-      "totalCompletionTokens": 1619,
+      "totalPromptTokens": 1977,
+      "totalCompletionTokens": 1731,
       "lessons": [
         {
           "lessonNum": 1,
-          "ms": 176044,
-          "promptTokens": 459,
-          "completionTokens": 330
+          "ms": 227911,
+          "promptTokens": 523,
+          "completionTokens": 453
         },
         {
           "lessonNum": 2,
-          "ms": 172417,
-          "promptTokens": 520,
-          "completionTokens": 370
+          "ms": 204220,
+          "promptTokens": 601,
+          "completionTokens": 413
         },
         {
           "lessonNum": 3,
-          "ms": 177328,
-          "promptTokens": 564,
-          "completionTokens": 361
+          "ms": 209129,
+          "promptTokens": 639,
+          "completionTokens": 411
         }
       ]
     },
     "generatedAt": "2026-04-29T14:40:08.166Z",
-    "repairStats": {
-      "repairCount": 1,
-      "totalMs": 115205,
-      "promptTokens": 573,
-      "completionTokens": 183
-    }
+    "updatedAt": "2026-05-03T20:51:37.538Z"
   },
   {
     "topic": "sheep on the meadow",
@@ -14606,367 +16206,363 @@ const STATIC_LESSONS = [
     "topicEmoji": "🏓",
     "lang": "it",
     "difficulty": 1,
-    "story": "In the heart of a bustling Italian city, where the streets were lined with ancient buildings and the air was filled with the scent of freshly baked bread, there was a small, cozy table tennis club. The club was a favorite among the locals, who would gather there after work to play a game or two, or sometimes just to chat and enjoy a cup of espresso.\n\nOne sunny afternoon, a young man named Marco, who had just moved to the city, found himself wandering the streets, feeling lost and a bit lonely. He had been living in Italy for only a few weeks, and while he loved the culture and the food, he missed the friendly faces and the sense of community he had left behind. As he turned a corner, he heard the sound of clapping and laughter, and he followed the noise to the club.\n\nInside, Marco saw a group of people playing table tennis, their laughter and the sound of the ball hitting the table creating a lively atmosphere. He watched for a moment, mesmerized by the skill and the joy the game brought to the players. One of the players, a middle-aged man with a warm smile, noticed Marco and approached him.\n\n\"Vuoi giocare?\" the man asked, extending his hand. Marco, feeling a bit nervous but eager to make friends, took the man's hand and nodded. \"Sono Marco,\" he said, introducing himself.\n\n\"Benvenuto a Roma,\" the man replied, shaking Marco's hand. \"Io sono Luigi. Vieni, ti mostro come si gioca.\"\n\nLuigi led Marco to a table and showed him the basics of the game. \"Tieni la racchetta bassa,\" Luigi instructed, lowering his own racquet to demonstrate. \"E fai attenzione al balzo del pallone.\"\n\nMarco tried his best to follow Luigi's instructions, but he was a beginner and found the game challenging. However, Luigi was patient and encouraging, and soon Marco was laughing and enjoying the game as much as the others.\n\nAs the afternoon wore on, Marco found himself playing more and more, and by the time the sun began to set, he felt a sense of belonging he hadn't felt since he arrived in the city. He realized that the game of table tennis had not only brought him joy but had also introduced him to a community of people who welcomed him with open arms.",
+    "story": "Nella piccola sala da pranzo della casa di sua nonna, il sole tramontava attraverso le tende di velluto, proiettando ombre danzanti sul tavolo da ping-pong. Elio, un ragazzino di dodici anni, giocava con la sua cugina Sofia, una bambina di otto anni, la cui esuberanza contrastava con l'attenzione concentrata di Elio. Sofia, con i capelli biondi che le scendevano in onde sull'attaccatura del collo, lanciava la palla con una forza che non si addiceva alla sua età, ma Elio, con i suoi occhi scuri e la mascella decisa, la rincorreva sempre, spostando il peso sulle ginocchia e muovendo rapidamente i polsi per colpire la palla con precisione.\n\nIl gioco proseguì per ore, con le risate di Sofia che si mescolavano al ticchettio della palla sul legno del tavolo. Alla fine, la luce si fece più debole, e Sofia, esausta, si sdraiò sul pavimento di legno, con la palla tra le mani. Elio, con un sorriso stanco, si sedette accanto a lei e prese la palla. \"Forse domani,\" disse, \"potremo giocare di nuovo.\" Sofia annuì, chiudendo gli occhi e cedendo al sonno, mentre Elio, con la palla in mano, osservava il crepuscolo che si riversava attraverso la finestra, immerso nei pensieri del gioco e della promessa di un altro giorno di giochi insieme.",
+    "storyLang": "it",
     "lessons": [
       {
         "id": 1,
-        "title": "Table Tennis",
-        "desc": "Basics of table tennis in Italian",
+        "title": "ping-pong",
+        "desc": "table tennis, family, children, sunlight",
         "icon": "🏓",
         "vocab": [
           {
+            "it": "sala da pranzo",
+            "en": "dining room",
+            "pron": "SAH-lah dah PRAN-zoh"
+          },
+          {
             "it": "tavolo da ping-pong",
-            "en": "table tennis table",
-            "pron": "TAH-voh-loh DAH pihng-PAHNG-oh"
+            "en": "ping-pong table",
+            "pron": "TAH-voh dah PING-PONG"
           },
           {
-            "it": "pallone da ping-pong",
-            "en": "table tennis ball",
-            "pron": "pah-LOH-neh DAH pihng-PAHNG-oh"
+            "it": "cugina",
+            "en": "cousin",
+            "pron": "COO-jeen-ah"
           },
           {
-            "it": "pala da ping-pong",
-            "en": "table tennis racket",
-            "pron": "pah-LAH DAH pihng-PAHNG-oh"
+            "it": "attenzione",
+            "en": "attention",
+            "pron": "ah-tteh-NEE-zhoh"
           },
           {
-            "it": "gioco",
-            "en": "game",
-            "pron": "JEE-oh-koh"
+            "it": "esuberanza",
+            "en": "exuberance",
+            "pron": "eh-soo-behr-AN-zah"
           },
           {
-            "it": "club",
-            "en": "club",
-            "pron": "KLOO-b"
+            "it": "lanciare",
+            "en": "to throw",
+            "pron": "lahn-chee-AH-re"
           },
           {
-            "it": "locale",
-            "en": "local",
-            "pron": "LOH-kuhl"
+            "it": "precisamente",
+            "en": "precisely",
+            "pron": "preh-see-ZAH-mehnt"
           },
           {
-            "it": "chiacchierare",
-            "en": "chat",
-            "pron": "kya-kyah-KHAH-reh"
-          },
-          {
-            "it": "caffè",
-            "en": "coffee",
-            "pron": "kah-FEE"
+            "it": "risate",
+            "en": "laughter",
+            "pron": "ree-SAH-tay"
           }
         ],
         "sentences": [
           {
-            "it": "Gioco a ping-pong su un tavolo.",
-            "en": "I play table tennis on a table.",
+            "it": "Giocavano al ping-pong.",
+            "en": "They played ping-pong.",
             "words": [
-              "Gioco",
-              "a",
-              "ping-pong",
-              "su",
-              "un",
+              "Giocavano",
+              "al",
+              "ping-pong."
+            ]
+          },
+          {
+            "it": "Sofia lanciò la palla forte.",
+            "en": "Sofia threw the ball hard.",
+            "words": [
+              "Sofia",
+              "lanciò",
+              "la",
+              "palla",
+              "forte."
+            ]
+          },
+          {
+            "it": "Elio si spostò sulle ginocchia.",
+            "en": "Elio shifted his weight onto his knees.",
+            "words": [
+              "Elio",
+              "si",
+              "spostò",
+              "sulle",
+              "ginocchia."
+            ]
+          },
+          {
+            "it": "La palla colpì il tavolo.",
+            "en": "The ball hit the table.",
+            "words": [
+              "La",
+              "palla",
+              "colpì",
+              "il",
               "tavolo."
             ]
           },
           {
-            "it": "Prendi la pala e il pallone.",
-            "en": "Take the racket and the ball.",
+            "it": "Risate e ticchettio si mescolavano.",
+            "en": "Laughter and the tapping sound mixed together.",
             "words": [
-              "Prendi",
-              "la",
-              "pala",
+              "Risate",
               "e",
-              "il",
-              "pallone."
-            ]
-          },
-          {
-            "it": "Chiacchieriamo mentre beviamo il caffè.",
-            "en": "Let's chat while we drink the coffee.",
-            "words": [
-              "Chiacchieriamo",
-              "mentre",
-              "beviamo",
-              "il",
-              "caffè."
-            ]
-          },
-          {
-            "it": "Il club è un luogo di incontro tra amici.",
-            "en": "The club is a place of meeting for friends.",
-            "words": [
-              "Il",
-              "club",
-              "è",
-              "un",
-              "luogo",
-              "di",
-              "incontro",
-              "tra",
-              "amici."
-            ]
-          },
-          {
-            "it": "Molti giocatori si riuniscono qui dopo il lavoro.",
-            "en": "Many players gather here after work.",
-            "words": [
-              "Molti",
-              "giocatori",
+              "ticchettio",
               "si",
-              "riuniscono",
-              "qui",
-              "dopo",
-              "il",
-              "lavoro."
+              "mescolavano."
             ]
           }
         ]
       },
       {
         "id": 2,
-        "title": "table tennis",
-        "desc": "playing and chatting at the club",
+        "title": "ping-pong",
+        "desc": "playing, light, legs, serve, net",
         "icon": "🏓",
         "vocab": [
           {
-            "it": "giocatore",
-            "en": "player",
-            "pron": "JEE-oh-CAT-tore"
+            "it": "gioco",
+            "en": "game",
+            "pron": "JAH-koh"
+          },
+          {
+            "it": "luci",
+            "en": "lights",
+            "pron": "LOO-chee"
+          },
+          {
+            "it": "gambe",
+            "en": "legs",
+            "pron": "GAH-mbeh"
+          },
+          {
+            "it": "servizio",
+            "en": "serve",
+            "pron": "sair-VEE-zee-oh"
+          },
+          {
+            "it": "rete",
+            "en": "net",
+            "pron": "REH-teh"
+          },
+          {
+            "it": "pallina",
+            "en": "ping-pong ball",
+            "pron": "PAH-lee-nah"
           },
           {
             "it": "tavolo",
             "en": "table",
-            "pron": "TAA-vo-lo"
+            "pron": "TAH-voh-lo"
           },
           {
-            "it": "caffè",
-            "en": "coffee",
-            "pron": "KAH-fay"
-          },
-          {
-            "it": "locale",
-            "en": "local",
-            "pron": "LOH-kuh-lee"
-          },
-          {
-            "it": "giornata",
-            "en": "day",
-            "pron": "JEE-or-NAH-tah"
-          },
-          {
-            "it": "amicizia",
-            "en": "friendship",
-            "pron": "ah-mee-see-AH-zah"
-          },
-          {
-            "it": "scherzo",
-            "en": "joke",
-            "pron": "SKEH-rehz-oh"
-          },
-          {
-            "it": "sorridere",
-            "en": "to smile",
-            "pron": "so-ree-DAY-reh"
+            "it": "pallino",
+            "en": "little ball",
+            "pron": "PAH-lee-noh"
           }
         ],
         "sentences": [
           {
-            "it": "Un giovane giocatore stava giocando.",
-            "en": "A young player was playing.",
+            "it": "Elio servì con forza.",
+            "en": "Elio served with force.",
             "words": [
-              "Un",
-              "giovane",
-              "giocatore",
-              "stava",
-              "giocando."
+              "Elio",
+              "servì",
+              "con",
+              "forza."
             ]
           },
           {
-            "it": "Il tavolo era coperto di polvere.",
-            "en": "The table was covered in dust.",
-            "words": [
-              "Il",
-              "tavolo",
-              "era",
-              "coperto",
-              "di",
-              "polvere."
-            ]
-          },
-          {
-            "it": "Sorse un sorriso tra i giocatori.",
-            "en": "A smile arose among the players.",
-            "words": [
-              "Sorse",
-              "un",
-              "sorriso",
-              "tra",
-              "i",
-              "giocatori."
-            ]
-          },
-          {
-            "it": "La giornata era piacevole e rilassante.",
-            "en": "The day was pleasant and relaxing.",
+            "it": "La pallina volò sopra la rete.",
+            "en": "The ball flew over the net.",
             "words": [
               "La",
-              "giornata",
-              "era",
-              "piacevole",
-              "e",
-              "rilassante."
+              "pallina",
+              "volò",
+              "sopra",
+              "la",
+              "rete."
             ]
           },
           {
-            "it": "La loro amicizia si era formata nel locale.",
-            "en": "Their friendship had formed at the local.",
+            "it": "Con le gambe ben piantate.",
+            "en": "With his legs firmly planted.",
             "words": [
-              "La",
-              "loro",
-              "amicizia",
+              "Con",
+              "le",
+              "gambe",
+              "ben",
+              "piantate."
+            ]
+          },
+          {
+            "it": "Sofia rise con la pallina in mano.",
+            "en": "Sofia laughed with the ball in hand.",
+            "words": [
+              "Sofia",
+              "rise",
+              "con",
+              "la",
+              "pallina",
+              "in",
+              "mano."
+            ]
+          },
+          {
+            "it": "Le luci si affievolirono lentamente.",
+            "en": "The lights dimmed slowly.",
+            "words": [
+              "Le",
+              "luci",
               "si",
-              "era",
-              "formata",
-              "nel",
-              "locale."
+              "affievolirono",
+              "lentamente."
             ]
           }
         ]
       },
       {
         "id": 3,
-        "title": "Table Tennis",
-        "desc": "Discover new table tennis terms and phrases",
+        "title": "ping-pong fun",
+        "desc": "playful table tennis in grandma's house",
         "icon": "🏓",
         "vocab": [
           {
-            "it": "pallina",
-            "en": "small ball",
-            "pron": "PAH-lee-nah"
+            "it": "danzanti",
+            "en": "dancing",
+            "pron": "DAN-zan-tee"
           },
           {
-            "it": "padre",
-            "en": "father",
-            "pron": "PAH-dre"
+            "it": "contrastava",
+            "en": "contrasted",
+            "pron": "kon-TAR-sta"
           },
           {
-            "it": "scommettere",
-            "en": "bet",
-            "pron": "scom-CHET-tre"
+            "it": "ondine",
+            "en": "waves",
+            "pron": "ON-deen"
           },
           {
-            "it": "sorprendere",
-            "en": "surprise",
-            "pron": "sor-pre-MDEN-DEH"
+            "it": "spostando",
+            "en": "shifting",
+            "pron": "SPOSH-ta-ding"
           },
           {
-            "it": "scherzare",
-            "en": "joke",
-            "pron": "scher-ZAH-re"
+            "it": "decisa",
+            "en": "determined",
+            "pron": "deh-KEE-zza"
           },
           {
-            "it": "amichevole",
-            "en": "friendly",
-            "pron": "ah-mi-che-VOH-le"
+            "it": "mescolavano",
+            "en": "mingled",
+            "pron": "mes-kol-VAH-no"
           },
           {
-            "it": "sconfitta",
-            "en": "defeat",
-            "pron": "scon-FIT-tah"
+            "it": "tacchettio",
+            "en": "tapping",
+            "pron": "tak-CHET-tee"
           },
           {
-            "it": "soddisfazione",
-            "en": "satisfaction",
-            "pron": "sod-di-sfi-za-TION-eh"
+            "it": "tavolino",
+            "en": "little table",
+            "pron": "tah-voh-LEEN-oh"
           }
         ],
         "sentences": [
           {
-            "it": "Scommetto che Marco sorrida.",
-            "en": "I bet Marco smiles.",
+            "it": "Le onde dei capelli di Sofia danzavano.",
+            "en": "Sofia's hair waves danced.",
             "words": [
-              "Scommetto",
-              "che",
-              "Marco",
-              "sorrida."
+              "Le",
+              "onde",
+              "dei",
+              "capelli",
+              "di",
+              "Sofia",
+              "danzavano."
             ]
           },
           {
-            "it": "Il padre scherza con i giocatori.",
-            "en": "The father jokes with the players.",
+            "it": "Elio spostava il peso sulle ginocchia.",
+            "en": "Elio shifted his weight on his knees.",
             "words": [
-              "Il",
-              "padre",
-              "scherza",
-              "con",
-              "i",
-              "giocatori."
+              "Elio",
+              "spostava",
+              "il",
+              "peso",
+              "sulle",
+              "ginocchia."
             ]
           },
           {
-            "it": "La giornata è stata amichevole.",
-            "en": "The day was friendly.",
+            "it": "La rete del tavolo da ping-pong era alta.",
+            "en": "The ping-pong table net was high.",
             "words": [
               "La",
-              "giornata",
-              "è",
-              "stata",
-              "amichevole."
+              "rete",
+              "del",
+              "tavolo",
+              "da",
+              "ping-pong",
+              "era",
+              "alta."
             ]
           },
           {
-            "it": "Spero di non sconfiggere Marco.",
-            "en": "I hope not to defeat Marco.",
+            "it": "Sofia lanciò la pallina con forza.",
+            "en": "Sofia threw the little ball with force.",
             "words": [
-              "Spero",
-              "di",
-              "non",
-              "sconfiggere",
-              "Marco."
-            ]
-          },
-          {
-            "it": "Sono contento per la soddisfazione.",
-            "en": "I'm happy with the satisfaction.",
-            "words": [
-              "Sono",
-              "contento",
-              "per",
+              "Sofia",
+              "lanciò",
               "la",
-              "soddisfazione."
+              "pallina",
+              "con",
+              "forza."
+            ]
+          },
+          {
+            "it": "Il ticchettio della palla mescolava le risate.",
+            "en": "The tapping of the ball mingled with the laughter.",
+            "words": [
+              "Il",
+              "ticchettio",
+              "della",
+              "palla",
+              "mescolava",
+              "le",
+              "risate."
             ]
           }
         ]
       }
     ],
     "generationStats": {
-      "totalMs": 814394,
+      "totalMs": 852252,
       "backend": "ollama",
       "model": "qwen2.5:7b",
-      "totalPromptTokens": 1778,
-      "totalCompletionTokens": 1625,
+      "totalPromptTokens": 1984,
+      "totalCompletionTokens": 1504,
       "lessons": [
         {
           "lessonNum": 1,
-          "ms": 191025,
-          "promptTokens": 458,
-          "completionTokens": 412
+          "ms": 115474,
+          "promptTokens": 522,
+          "completionTokens": 375
         },
         {
           "lessonNum": 2,
-          "ms": 159012,
-          "promptTokens": 540,
-          "completionTokens": 342
+          "ms": 177384,
+          "promptTokens": 601,
+          "completionTokens": 326
         },
         {
           "lessonNum": 3,
-          "ms": 107593,
-          "promptTokens": 586,
-          "completionTokens": 363
+          "ms": 207690,
+          "promptTokens": 647,
+          "completionTokens": 393
         }
       ]
     },
-    "generatedAt": "2026-04-29T14:56:02.050Z"
+    "generatedAt": "2026-04-29T14:56:02.050Z",
+    "updatedAt": "2026-05-03T19:48:04.236Z"
   },
   {
     "topic": "architecture",
@@ -15901,9 +17497,29 @@ function buildPath(){
       contBadge.id='continued-badge'; contBadge.className='continued-badge';
       document.getElementById('topic-name-big').insertAdjacentElement('afterend',contBadge);
     }
-    contBadge.textContent='↩ continued from: '+d.continuedFrom;
+    contBadge.innerHTML='↩ continued from: <span style="text-decoration:underline;cursor:pointer" onclick="loadSaved(\''+encodeURIComponent(d.continuedFrom)+'\')">'+d.continuedFrom+'</span>';
     contBadge.style.display='';
   } else if(contBadge){ contBadge.style.display='none'; }
+
+  // "→ Continued by" links — lessons that have continuedFrom === this topic
+  let contByEl=document.getElementById('continued-by');
+  const continuedBy=(APP.savedList||[]).filter(s=>s.continuedFrom===d.topic);
+  if(continuedBy.length){
+    if(!contByEl){
+      contByEl=document.createElement('div');
+      contByEl.id='continued-by';
+      // Insert after continued-badge if present, else after topic-name-big
+      const anchor=document.getElementById('continued-badge')||document.getElementById('topic-name-big');
+      anchor.insertAdjacentElement('afterend',contByEl);
+    }
+    contByEl.className='continued-by';
+    contByEl.innerHTML='→ continued by: '+continuedBy.map(s=>{
+      const t=encodeURIComponent(s.topic);
+      const sL=LANGS[s.lang||'it']||LANGS.it;
+      return `<span class="continued-by-link" onclick="loadSaved('${t}')">${sL.flag} ${s.topic}</span>`;
+    }).join('');
+    contByEl.style.display='';
+  } else if(contByEl){ contByEl.style.display='none'; }
 
   // Story section — below start button now; collapse/expand based on completion
   const storySec=document.getElementById('story-section');
@@ -15919,6 +17535,8 @@ function buildPath(){
     if(storyLangLbl){ storyLangLbl.textContent=dL.flag; storyLangLbl.style.display=''; }
     const repToggle=document.getElementById('story-repair-toggle-btn');
     if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
+    const promptBtn=document.getElementById('story-prompt-btn');
+    if(promptBtn) promptBtn.style.display=APP.info.canGenerate?'':'none';
     // Story flag row
     const sfRow=document.getElementById('story-flag-row');
     if(sfRow) sfRow.style.display='';
@@ -15967,7 +17585,7 @@ function buildPath(){
       <div class="node-lbl">
         <div class="node-title">Lesson ${L.id}: ${L.title} ${diffBadge}</div>
         <div class="node-desc">${L.desc}</div>
-        ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}      </div>
+        ${hasFlags?`<span class="flag-note">⚑ ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</span>`:''}      </div>
       ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
@@ -15983,11 +17601,9 @@ function buildPath(){
   const totalFlagged=Object.keys(APP.flagged).filter(k=>k.startsWith(topicSlugAll+':')).length;
   const strip=document.getElementById('flag-strip');
   const stripLbl=document.getElementById('flag-strip-label');
-  const repAllBtn=document.getElementById('repair-all-btn');
   if(strip){
-    strip.style.display=totalFlagged>0&&APP.info.canGenerate?'flex':'none';
+    strip.style.display=totalFlagged>0?'flex':'none';
     if(stripLbl) stripLbl.textContent='⚑ '+totalFlagged+' flagged question'+(totalFlagged!==1?'s':'')+' across all lessons';
-    if(repAllBtn) repAllBtn.disabled=false;
   }
 }
 function startNextLesson(){
@@ -16096,8 +17712,7 @@ function renderEx(){
     '</div>'+
     '<div class="flag-comment-wrap'+(alreadyFlagged?' visible':'')+'" id="flag-comment-wrap">'+
       '<textarea class="flag-comment" id="flag-comment-input" rows="2" placeholder="Optional: describe what is wrong…" onblur="saveComment()">'+existingComment+'</textarea>'+
-    '</div>'+
-    (APP.info.canGenerate?'<button class="in-lesson-repair-btn" id="in-lesson-repair-btn" onclick="repairFromLesson()" style="display:'+(alreadyFlagged?'block':'none')+'">⚙ Repair this question now</button>':'');
+    '</div>';
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>speak(ex.it),350);
 }
 
@@ -16155,8 +17770,6 @@ function flagCurrent(){
   const cWrap=document.getElementById('flag-comment-wrap');
   if(cWrap){ cWrap.className='flag-comment-wrap'+(flagged?' visible':''); }
   // Show/hide in-lesson repair button (only if LLM available)
-  const repBtn=document.getElementById('in-lesson-repair-btn');
-  if(repBtn){ repBtn.style.display=flagged&&APP.info.canGenerate?'block':'none'; }
   // Update feedback bar if already answered
   if(C.answered){
     const fb=document.getElementById('fb');
@@ -16291,6 +17904,28 @@ function speak(text,rate){
 }
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
 
+// ── Import lessons.json ───────────────────────────────────────────────
+async function importLessons(input){
+  const file=input.files[0]; if(!file) return;
+  input.value=''; // reset so same file can be re-imported
+  let data;
+  try{
+    const text=await file.text();
+    data=JSON.parse(text);
+  }catch(e){ showToast('⚠ Invalid JSON file'); return; }
+  const payload=Array.isArray(data)?data:(data.lessons||data);
+  if(!Array.isArray(payload)||payload.length===0){ showToast('⚠ No lessons found in file'); return; }
+  try{
+    const r=await fetch('/api/lessons/import',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({lessons:payload})});
+    const result=await r.json();
+    if(!r.ok) throw new Error(result.error||'Import failed');
+    showToast(`✓ Imported: +${result.added} new, ~${result.updated} updated`);
+    loadSavedList();
+  }catch(e){ showToast('⚠ '+e.message); }
+}
+
 // ── Disabled in static mode ──────────────────────────────────────
 async function syncFlagsFromServer(){}
 async function pushFlagToServer(){}
@@ -16322,5 +17957,21 @@ function toggleStoryRepair(){}
 function doRepairStory(){ alert("Story repair requires the live server."); }
 
 init();</script>
+<div id="story-prompt-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeStoryPrompt()">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span>📝 Story prompt</span>
+      <button class="modal-close" onclick="closeStoryPrompt()">✕</button>
+    </div>
+    <textarea class="modal-textarea" id="story-prompt-input" rows="12"
+      placeholder="No story prompt saved for this lesson."></textarea>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeStoryPrompt()">Cancel</button>
+      <button class="modal-btn primary" id="story-prompt-regen-btn"
+        onclick="regenWithPrompt()">↻ Regenerate with this prompt</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

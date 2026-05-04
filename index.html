@@ -61,6 +61,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .lib-title{font-size:15px;font-weight:900;color:var(--text)}
 .lib-cnt{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:12px;padding:3px 10px}
+.import-btn{font-size:12px;font-weight:700;color:var(--blue-dark);background:var(--blue-light);border:1.5px solid var(--blue);border-radius:12px;padding:3px 10px;cursor:pointer;white-space:nowrap}
 .lib-empty{text-align:center;padding:18px;color:var(--gray);font-size:14px;font-weight:600}
 .saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
 .saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s}
@@ -114,9 +115,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .start-strip{display:flex;justify-content:center;margin-top:20px}
 .flag-strip{background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 16px;margin:0 0 14px;display:none;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
 .flag-strip-label{font-size:13px;font-weight:800;color:#c26000;flex:1}
-.repair-all-btn{background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap}
-.repair-all-btn:hover{background:#e08000}
-.repair-all-btn:disabled{opacity:.5;cursor:not-allowed}
 .big-btn{padding:15px 40px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);transition:transform .1s,box-shadow .1s}
 .big-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
 
@@ -189,9 +187,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .flag-comment-wrap.visible{display:block}
 .flag-comment{width:100%;padding:8px 10px;font-size:13px;font-weight:600;border:2px solid #ff9600;border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:#fffaf5;outline:none;resize:none}
 .flag-comment::placeholder{color:var(--gray);font-weight:400}
-.in-lesson-repair-btn{width:100%;margin-top:8px;padding:10px;background:none;border:2px solid #ff9600;border-radius:var(--radius);font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;transition:background .1s,color .1s}
-.in-lesson-repair-btn:hover:not(:disabled){background:#ff9600;color:#fff}
-.in-lesson-repair-btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-row{display:flex;gap:8px;align-items:stretch}
 .btn-row .check-btn{flex:1}
 .feedback.flagged-note{background:#fff4e0;border:2px solid #ff9600;display:block}
@@ -234,15 +229,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-filter-btn:hover{border-color:var(--blue)}
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 .lesson-lang-flag{font-size:16px;flex-shrink:0}
-.repair-btn{background:none;border:2px solid #ff9600;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;margin-top:8px;transition:background .1s,color .1s;width:100%}
-.repair-btn:hover{background:#ff9600;color:#fff}
-.repair-btn:disabled{opacity:.4;cursor:not-allowed}
 .repairing-note{font-size:12px;color:#c26000;font-weight:700;margin-top:6px;text-align:center}
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 
 /* ══ DIFFICULTY DROPDOWN ════════════════════════════════════════════ */
 .diff-wrap{margin-bottom:14px}
+.story-len-row{margin-bottom:14px}
+.story-len-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.story-len-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.02em}
+.story-len-val{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:10px;padding:2px 8px}
+.story-len-slider{width:100%;accent-color:var(--blue);cursor:pointer}
 .diff-select-wrap{position:relative;display:inline-block;width:100%}
 .diff-select{width:100%;padding:10px 36px 10px 14px;font-size:14px;font-weight:800;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
 .diff-select:focus{border-color:var(--blue)}
@@ -254,6 +251,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .continue-select:focus{border-color:var(--blue)}
 .continue-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px;color:var(--gray-dark)}
 .continued-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#f0f4ff;border:1.5px solid #c0ccff;border-radius:8px;padding:3px 9px;color:#334;margin-top:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.continued-by{font-size:11px;font-weight:700;color:var(--gray-dark);margin-top:5px;display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.continued-by-link{background:#f0fff4;border:1.5px solid #a0ddb0;border-radius:8px;padding:2px 8px;cursor:pointer;font-weight:800;color:#1a5c2a;white-space:nowrap}
+.continued-by-link:hover{background:#d0f0da}
 .diff-badge{display:inline-block;font-size:10px;font-weight:900;padding:1px 7px;border-radius:8px;vertical-align:middle;margin-left:4px;letter-spacing:.04em}
 .diff-badge.d1{background:#d7ffb2;color:#2a6000}
 .diff-badge.d2{background:#fff3cc;color:#7a5000}
@@ -313,6 +313,20 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* ══ TOAST ═══════════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:var(--white);border-radius:var(--radius-xl);box-shadow:0 8px 40px rgba(0,0,0,.25);width:100%;max-width:560px;display:flex;flex-direction:column;max-height:90vh}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:15px;font-weight:900;border-bottom:2px solid var(--gray-mid)}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--gray-dark);padding:2px 6px;border-radius:6px}
+.modal-close:hover{background:var(--gray-light)}
+.modal-textarea{flex:1;margin:14px 18px 0;padding:10px 12px;font-size:13px;font-weight:600;font-family:'Nunito',sans-serif;border:2px solid var(--gray-mid);border-radius:var(--radius);resize:vertical;min-height:180px;color:var(--text);line-height:1.5;outline:none}
+.modal-textarea:focus{border-color:var(--blue)}
+.modal-footer{display:flex;justify-content:flex-end;gap:8px;padding:14px 18px}
+.modal-btn{padding:9px 18px;font-size:13px;font-weight:800;border-radius:var(--radius);border:none;cursor:pointer;font-family:'Nunito',sans-serif}
+.modal-btn.primary{background:var(--blue);color:#fff}
+.modal-btn.primary:hover{background:var(--blue-dark)}
+.modal-btn.primary:disabled{opacity:.45;cursor:not-allowed}
+.modal-btn.secondary{background:var(--gray-light);color:var(--text);border:2px solid var(--gray-mid)}
+.modal-btn.secondary:hover{border-color:var(--blue)}
 </style>
 </head>
 <body>
@@ -371,6 +385,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       placeholder="e.g. cooking, architecture, medicine… add details for a richer story"
       maxlength="400" oninput="autoResizeTopic(this)"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
+    <div class="story-len-row">
+      <div class="story-len-hdr">
+        <span class="story-len-lbl">Story length</span>
+        <span class="story-len-val" id="story-len-val">300 words · 3-4 paragraphs</span>
+      </div>
+      <input type="range" class="story-len-slider" id="story-len-slider"
+        min="100" max="1000" step="50" value="300"
+        oninput="onStoryLenSlider(this.value)">
+    </div>
     <div class="diff-wrap">
       <div class="diff-select-wrap">
         <select class="diff-select" id="diff-select" onchange="onDiffSelect(this.value)">
@@ -397,7 +420,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="library">
     <div class="lib-hdr">
       <div class="lib-title">📚 Saved lessons</div>
-      <div class="lib-cnt" id="lib-cnt">0 topics</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="lib-cnt" id="lib-cnt">0 topics</div>
+        <label class="import-btn" title="Import lessons.json">
+          ⬆ Import
+          <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importLessons(this)">
+        </label>
+      </div>
     </div>
     <div class="lib-filter" id="lib-filter"></div>
     <div id="saved-list">
@@ -426,7 +455,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   </div>
   <div class="flag-strip" id="flag-strip">
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
-    <button class="repair-all-btn" id="repair-all-btn" onclick="repairAll()">Repair all</button>
   </div>
   <div class="gen-stats" id="gen-stats"></div>
   <div class="rating-panel" id="rating-panel" style="display:none"></div>
@@ -440,6 +468,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="story-hdr-btns" onclick="event.stopPropagation()">
         <span id="story-lang-lbl" class="story-lang-lbl" style="display:none"></span>
         <button class="story-icon-btn" onclick="speakStory()" title="Read aloud">🔊</button>
+        <button class="story-icon-btn" id="story-prompt-btn" onclick="openStoryPrompt()" title="View/edit story prompt" style="display:none">📝</button>
         <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
       </div>
       <span class="story-arrow" id="story-arrow">▼</span>
@@ -517,7 +546,9 @@ var APP = {
   lessonData: null,
   lang: loadLang(),
   difficulty: loadDifficulty(),
+  storyLen: loadStoryLen(),
   libFilter: 'all',
+  savedList: [],   // cache of last fetched lesson list — used by buildPath for continuedBy
   progress: loadProg(),
   flagged: loadFlagged(),
   cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,xp:0,mistakes:0,streak:0,bestStreak:0,
@@ -530,6 +561,23 @@ function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
 function loadDifficulty(){ return parseInt(localStorage.getItem('imp3_diff')||'2',10); }
 function saveDifficulty(){ localStorage.setItem('imp3_diff',String(APP.difficulty)); }
+function loadStoryLen(){ return parseInt(localStorage.getItem('imp3_storyLen')||'300',10); }
+function saveStoryLen(){ localStorage.setItem('imp3_storyLen',String(APP.storyLen)); }
+function storyLenLabel(words){
+  const lo=Math.max(1,Math.floor(words/100));
+  const hi=lo+1;
+  return words+' words · '+lo+'-'+hi+' paragraphs';
+}
+function onStoryLenSlider(v){
+  APP.storyLen=parseInt(v,10); saveStoryLen();
+  const el=document.getElementById('story-len-val');
+  if(el) el.textContent=storyLenLabel(APP.storyLen);
+}
+function restoreStoryLenSlider(){
+  const sl=document.getElementById('story-len-slider');
+  if(sl) sl.value=APP.storyLen;
+  onStoryLenSlider(APP.storyLen);
+}
 const DIFF_SHORT={1:'Beginner',2:'Intermediate',3:'Advanced'};
 function onDiffSelect(v){
   APP.difficulty=parseInt(v,10); saveDifficulty();
@@ -610,9 +658,6 @@ function toggleFlag(ex){
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function goLanding(){ loadSavedList(); show('landing'); }
 
-function autoResizeTopic(el){
-  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
-}
 function toggleStory(){
   const body=document.getElementById('story-body');
   const arrow=document.getElementById('story-arrow');
@@ -645,6 +690,48 @@ function renderStoryText(d){
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
   speak(d.story);
+}
+
+// ── Story prompt modal (M6) ───────────────────────────────────────────
+function openStoryPrompt(){
+  const d=APP.lessonData; if(!d) return;
+  const ta=document.getElementById('story-prompt-input');
+  if(ta) ta.value=d.storyPrompt||'(No prompt saved for this lesson)';
+  const regenBtn=document.getElementById('story-prompt-regen-btn');
+  if(regenBtn) regenBtn.disabled=!APP.info.canGenerate;
+  document.getElementById('story-prompt-modal').style.display='flex';
+}
+function closeStoryPrompt(){
+  document.getElementById('story-prompt-modal').style.display='none';
+}
+async function regenWithPrompt(){
+  const d=APP.lessonData; if(!d||!APP.info.canGenerate) return;
+  const ta=document.getElementById('story-prompt-input');
+  const customPrompt=(ta?.value||'').trim();
+  if(!customPrompt) return;
+  const btn=document.getElementById('story-prompt-regen-btn');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ Rewriting…'; }
+  try{
+    const r=await fetch('/api/repair-story',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic:d.topic, instruction:customPrompt})});
+    if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Failed'); }
+    const {jobId}=await r.json();
+    // Poll until done
+    const result=await pollJob(jobId, ()=>{});
+    d.story=result.story;
+    d.storyPrompt=result.storyPrompt||customPrompt;
+    renderStoryText(d);
+    const body=document.getElementById('story-body');
+    const arrow=document.getElementById('story-arrow');
+    if(body&&!body.classList.contains('open')){ body.classList.add('open'); if(arrow) arrow.classList.add('open'); }
+    closeStoryPrompt();
+    showToast('Story rewritten ✓');
+  }catch(e){
+    showToast('Error: '+e.message);
+  }finally{
+    if(btn){ btn.disabled=false; btn.textContent='↻ Regenerate with this prompt'; }
+  }
 }
 async function doRepairStory(){
   const d=APP.lessonData; if(!d) return;
@@ -718,123 +805,6 @@ async function submitRating(){
     loadSavedList();
   }catch(e){ alert('Rating failed: '+e.message); }
 }
-async function repairLesson(topic, lessonId){
-  const btnId='repair-btn-'+lessonId;
-  const btn=document.getElementById(btnId);
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Repairing…'; }
-  try{
-    const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic,lessonId})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Repair failed');
-    // Poll for completion
-    if(btn) btn.textContent='⏳ Repairing…';
-    await pollJob(resp.jobId, step=>{
-      if(btn) btn.textContent='⏳ '+step;
-    });
-    // Sync flags and reload lesson
-    await syncFlagsFromServer();
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok){
-      const fresh=await lr.json();
-      if(APP.lessonData?.topic?.toLowerCase()===topic.toLowerCase()) APP.lessonData=fresh;
-    }
-    buildPath();
-  }catch(e){
-    alert('Repair failed: '+e.message);
-    if(btn){ btn.disabled=false; btn.textContent='⚑ Retry repair'; }
-  }
-}
-
-async function repairFromLesson(){
-  const C=APP.cur;
-  if(!APP.lessonData) return;
-  const topic=APP.lessonData.topic;
-  const lessonId=APP.lessonData.lessons[C.lessonIdx].id;
-  const repBtn=document.getElementById('in-lesson-repair-btn');
-  if(repBtn){ repBtn.disabled=true; repBtn.textContent='⏳ Repairing…'; }
-  try{
-    const r=await fetch('/api/repair',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic,lessonId})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Repair failed');
-    if(repBtn) repBtn.textContent='⏳ Repairing…';
-    await pollJob(resp.jobId, step=>{
-      if(repBtn) repBtn.textContent='⏳ '+step;
-    });
-    // Sync flags first (server cleared them — replace local state)
-    await syncFlagsFromServer();
-    // Reload lesson data from server with updated vocab/sentences
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(topic));
-    if(lr.ok){
-      const fresh=await lr.json();
-      APP.lessonData=fresh;
-    }
-    // Patch the current exercise in-place from fresh lesson data
-    // — no reshuffling, user stays exactly where they were
-    const freshLesson=APP.lessonData.lessons[C.lessonIdx];
-    const curEx=C.exercises[C.cur];
-    if(curEx && freshLesson){
-      // Find matching vocab or sentence in fresh lesson by Italian text prefix
-      const itKey=(curEx.it||'').toLowerCase().slice(0,20);
-      if(['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(curEx.type)){
-        const v=freshLesson.vocab.find(v=>v.it.toLowerCase().slice(0,20)===itKey);
-        if(v){ curEx.it=v.it; curEx.en=v.en; curEx.pron=v.pron;
-               // listen_type: user types the target language word; others: pick English meaning
-               curEx.correct=curEx.type==='listen_type' ? v.it : v.en; }
-      } else if(['order','read_translate'].includes(curEx.type)){
-        const s=freshLesson.sentences.find(s=>s.it.toLowerCase().slice(0,20)===itKey);
-        if(s){ curEx.it=s.it; curEx.en=s.en;
-               // Re-derive words from sentence text (server no longer stores LLM words)
-               curEx.words=s.it.split(' ').filter(w=>!isPunctClient(w));
-               curEx.correct=curEx.type==='order' ? curEx.words.join(' ') : s.en; }
-      }
-    }
-    // Reset answer state so the repaired exercise renders fresh
-    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
-    renderEx();
-  }catch(e){
-    alert('Repair failed: '+e.message);
-    if(repBtn){ repBtn.disabled=false; repBtn.textContent='⚙ Repair this question now'; }
-  }
-}
-
-async function repairAll(){
-  if(!APP.lessonData) return;
-  const btn=document.getElementById('repair-all-btn');
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Repairing…'; }
-  const d=APP.lessonData;
-  let totalRepaired=0, errors=[];
-  for(const L of d.lessons){
-    const topicSlug=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
-    const lessonItSet=new Set([
-      ...(L.vocab||[]).map(v=>(v.it||'').slice(0,40).replace(/\s+/g,'_')),
-      ...(L.sentences||[]).map(s=>(s.it||'').slice(0,40).replace(/\s+/g,'_'))
-    ]);
-    const hasFlags=Object.entries(APP.flagged).some(([k])=>{
-      if(!k.startsWith(topicSlug+':')) return false;
-      return lessonItSet.has(k.split(':').slice(2).join(':'));
-    });
-    if(!hasFlags) continue;
-    try{
-      if(btn) btn.textContent='⏳ Repairing lesson '+L.id+'…';
-      const r=await fetch('/api/repair',{method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({topic:d.topic,lessonId:L.id})});
-      const resp=await r.json();
-      if(!r.ok) throw new Error(resp.error||'Repair failed');
-      const result=await pollJob(resp.jobId, step=>{
-        if(btn) btn.textContent='⏳ '+step;
-      });
-      totalRepaired+=(result&&result.repaired)||0;
-    }catch(e){ errors.push('Lesson '+L.id+': '+e.message); }
-  }
-  await syncFlagsFromServer();
-  const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
-  if(lr.ok) APP.lessonData=await lr.json();
-  buildPath();
-  if(errors.length) alert('Repair finished with errors:\n'+errors.join('\n'));
-}
 
 function goHome(){
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
@@ -849,6 +819,7 @@ async function init(){
   await syncFlagsFromServer();
   selectLang(APP.lang);
   restoreDiffSelect();
+  restoreStoryLenSlider();
   renderPill();
   loadSavedList();
   // Hash-based routing: load topic from URL on startup
@@ -877,6 +848,7 @@ function setLibFilter(lang){ APP.libFilter=lang; loadSavedList(); }
 async function loadSavedList(){
   let saved=[];
   try{ const r=await fetch('/api/lessons'); saved=await r.json(); }catch(e){}
+  APP.savedList=saved;  // cache for use by buildPath (continuedBy links)
   // Server already sorts by updatedAt desc; apply lang filter client-side
   const langs=[...new Set(saved.map(s=>s.lang||'it'))].sort();
   const filterEl=document.getElementById('lib-filter');
@@ -1007,8 +979,12 @@ async function deleteSaved(topic){
 }
 
 async function regenSaved(topic){
-  if(!confirm('Regenerate "'+decodeURIComponent(topic)+'"? Overwrites saved version.')) return;
-  document.getElementById('topic-input').value=decodeURIComponent(topic);
+  const dec=decodeURIComponent(topic);
+  if(!confirm('Regenerate "'+dec+'"? Overwrites saved version.')) return;
+  // Use the lesson's own language and original user topic if stored
+  const saved=(APP.savedList||[]).find(s=>s.topic===dec);
+  if(saved?.lang) selectLang(saved.lang);
+  document.getElementById('topic-input').value=saved?.userTopic||dec;
   doGenerate(true);
 }
 
@@ -1032,7 +1008,9 @@ function shareLesson(){
 function regenCurrent(){
   if(!APP.lessonData||!APP.info.canGenerate) return;
   if(!confirm('Regenerate "'+APP.lessonData.topic+'"? Overwrites saved version.')) return;
-  document.getElementById('topic-input').value=APP.lessonData.topic;
+  // Use the lesson's own language and original user topic if stored
+  if(APP.lessonData.lang) selectLang(APP.lessonData.lang);
+  document.getElementById('topic-input').value=APP.lessonData.userTopic||APP.lessonData.topic;
   goLanding();
   setTimeout(()=>doGenerate(true),100);
 }
@@ -1052,6 +1030,7 @@ async function doGenerate(forceRegen){
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({topic,lang:APP.lang,difficulty:APP.difficulty,
+        storyLen:APP.storyLen||300,
         continuedFrom:document.getElementById('continue-select')?.value||null,
         forceRegenerate:!!forceRegen})});
     if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Server error'); }
@@ -1101,9 +1080,29 @@ function buildPath(){
       contBadge.id='continued-badge'; contBadge.className='continued-badge';
       document.getElementById('topic-name-big').insertAdjacentElement('afterend',contBadge);
     }
-    contBadge.textContent='↩ continued from: '+d.continuedFrom;
+    contBadge.innerHTML='↩ continued from: <span style="text-decoration:underline;cursor:pointer" onclick="loadSaved(\''+encodeURIComponent(d.continuedFrom)+'\')">'+d.continuedFrom+'</span>';
     contBadge.style.display='';
   } else if(contBadge){ contBadge.style.display='none'; }
+
+  // "→ Continued by" links — lessons that have continuedFrom === this topic
+  let contByEl=document.getElementById('continued-by');
+  const continuedBy=(APP.savedList||[]).filter(s=>s.continuedFrom===d.topic);
+  if(continuedBy.length){
+    if(!contByEl){
+      contByEl=document.createElement('div');
+      contByEl.id='continued-by';
+      // Insert after continued-badge if present, else after topic-name-big
+      const anchor=document.getElementById('continued-badge')||document.getElementById('topic-name-big');
+      anchor.insertAdjacentElement('afterend',contByEl);
+    }
+    contByEl.className='continued-by';
+    contByEl.innerHTML='→ continued by: '+continuedBy.map(s=>{
+      const t=encodeURIComponent(s.topic);
+      const sL=LANGS[s.lang||'it']||LANGS.it;
+      return `<span class="continued-by-link" onclick="loadSaved('${t}')">${sL.flag} ${s.topic}</span>`;
+    }).join('');
+    contByEl.style.display='';
+  } else if(contByEl){ contByEl.style.display='none'; }
 
   // Story section — below start button now; collapse/expand based on completion
   const storySec=document.getElementById('story-section');
@@ -1119,6 +1118,8 @@ function buildPath(){
     if(storyLangLbl){ storyLangLbl.textContent=dL.flag; storyLangLbl.style.display=''; }
     const repToggle=document.getElementById('story-repair-toggle-btn');
     if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
+    const promptBtn=document.getElementById('story-prompt-btn');
+    if(promptBtn) promptBtn.style.display=APP.info.canGenerate?'':'none';
     // Story flag row
     const sfRow=document.getElementById('story-flag-row');
     if(sfRow) sfRow.style.display='';
@@ -1167,7 +1168,7 @@ function buildPath(){
       <div class="node-lbl">
         <div class="node-title">Lesson ${L.id}: ${L.title} ${diffBadge}</div>
         <div class="node-desc">${L.desc}</div>
-        ${hasFlags?`<button class="repair-btn" id="repair-btn-${L.id}" onclick="event.stopPropagation();repairLesson('${d.topic}',${L.id})">⚑ Repair ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</button>`:''}      </div>
+        ${hasFlags?`<span class="flag-note">⚑ ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</span>`:''}      </div>
       ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
@@ -1183,11 +1184,9 @@ function buildPath(){
   const totalFlagged=Object.keys(APP.flagged).filter(k=>k.startsWith(topicSlugAll+':')).length;
   const strip=document.getElementById('flag-strip');
   const stripLbl=document.getElementById('flag-strip-label');
-  const repAllBtn=document.getElementById('repair-all-btn');
   if(strip){
-    strip.style.display=totalFlagged>0&&APP.info.canGenerate?'flex':'none';
+    strip.style.display=totalFlagged>0?'flex':'none';
     if(stripLbl) stripLbl.textContent='⚑ '+totalFlagged+' flagged question'+(totalFlagged!==1?'s':'')+' across all lessons';
-    if(repAllBtn) repAllBtn.disabled=false;
   }
 }
 function startNextLesson(){
@@ -1296,8 +1295,7 @@ function renderEx(){
     '</div>'+
     '<div class="flag-comment-wrap'+(alreadyFlagged?' visible':'')+'" id="flag-comment-wrap">'+
       '<textarea class="flag-comment" id="flag-comment-input" rows="2" placeholder="Optional: describe what is wrong…" onblur="saveComment()">'+existingComment+'</textarea>'+
-    '</div>'+
-    (APP.info.canGenerate?'<button class="in-lesson-repair-btn" id="in-lesson-repair-btn" onclick="repairFromLesson()" style="display:'+(alreadyFlagged?'block':'none')+'">⚙ Repair this question now</button>':'');
+    '</div>';
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>speak(ex.it),350);
 }
 
@@ -1355,8 +1353,6 @@ function flagCurrent(){
   const cWrap=document.getElementById('flag-comment-wrap');
   if(cWrap){ cWrap.className='flag-comment-wrap'+(flagged?' visible':''); }
   // Show/hide in-lesson repair button (only if LLM available)
-  const repBtn=document.getElementById('in-lesson-repair-btn');
-  if(repBtn){ repBtn.style.display=flagged&&APP.info.canGenerate?'block':'none'; }
   // Update feedback bar if already answered
   if(C.answered){
     const fb=document.getElementById('fb');
@@ -1491,7 +1487,45 @@ function speak(text,rate){
 }
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
 
+// ── Import lessons.json ───────────────────────────────────────────────
+async function importLessons(input){
+  const file=input.files[0]; if(!file) return;
+  input.value=''; // reset so same file can be re-imported
+  let data;
+  try{
+    const text=await file.text();
+    data=JSON.parse(text);
+  }catch(e){ showToast('⚠ Invalid JSON file'); return; }
+  const payload=Array.isArray(data)?data:(data.lessons||data);
+  if(!Array.isArray(payload)||payload.length===0){ showToast('⚠ No lessons found in file'); return; }
+  try{
+    const r=await fetch('/api/lessons/import',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({lessons:payload})});
+    const result=await r.json();
+    if(!r.ok) throw new Error(result.error||'Import failed');
+    showToast(`✓ Imported: +${result.added} new, ~${result.updated} updated`);
+    loadSavedList();
+  }catch(e){ showToast('⚠ '+e.message); }
+}
+
 init();
 </script>
+<div id="story-prompt-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeStoryPrompt()">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span>📝 Story prompt</span>
+      <button class="modal-close" onclick="closeStoryPrompt()">✕</button>
+    </div>
+    <textarea class="modal-textarea" id="story-prompt-input" rows="12"
+      placeholder="No story prompt saved for this lesson."></textarea>
+    <div class="modal-footer">
+      <button class="modal-btn secondary" onclick="closeStoryPrompt()">Cancel</button>
+      <button class="modal-btn primary" id="story-prompt-regen-btn"
+        onclick="regenWithPrompt()">↻ Regenerate with this prompt</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
