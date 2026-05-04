@@ -17692,6 +17692,81 @@
       "words": [],
       "flaggedAt": "2026-05-04T08:00:00.780Z",
       "comment": "\"terra natale\" is \"home land\" in english"
+    },
+    "Grandmas_Doughs:listen_mcq:doughy": {
+      "topic": "Grandmas Doughs",
+      "type": "listen_mcq",
+      "it": "doughy",
+      "en": "",
+      "correct": "doughy",
+      "choices": [
+        "knead",
+        "elastic",
+        "ferment",
+        "doughy"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-04T10:46:23.345Z"
+    },
+    "Grandmas_Doughs:mcq_en_it:knead": {
+      "topic": "Grandmas Doughs",
+      "type": "mcq_en_it",
+      "it": "knead",
+      "en": "knead",
+      "correct": "knead",
+      "choices": [
+        "knead",
+        "puff",
+        "doughy",
+        "ferment"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-04T10:46:27.777Z"
+    },
+    "Grandmas_Doughs:mcq_en_it:puff": {
+      "topic": "Grandmas Doughs",
+      "type": "mcq_en_it",
+      "it": "puff",
+      "en": "puff",
+      "correct": "puff",
+      "choices": [
+        "crust",
+        "yeast",
+        "puff",
+        "doughy"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-04T10:46:52.856Z"
+    },
+    "Grandmas_Doughs:mcq_en_it:doughy": {
+      "topic": "Grandmas Doughs",
+      "type": "mcq_en_it",
+      "it": "doughy",
+      "en": "doughy",
+      "correct": "doughy",
+      "choices": [
+        "elastic",
+        "puff",
+        "doughy",
+        "knead"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-04T10:47:05.135Z"
+    },
+    "Grandmas_Doughs:listen_mcq:elastic": {
+      "topic": "Grandmas Doughs",
+      "type": "listen_mcq",
+      "it": "elastic",
+      "en": "",
+      "correct": "elastic",
+      "choices": [
+        "elastic",
+        "dough",
+        "puff",
+        "knead"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-04T10:47:15.897Z"
     }
   }
 }
