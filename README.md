@@ -17,12 +17,14 @@ https://raim.github.io/dreizunge/
 
 ### Option A — Local Qwen via Ollama
 
+The slim models qwen2.5:7b and translategemma both work well.
+
 ```bash
 # 1. Install Ollama on Xubuntu 24.04
 curl -fsSL https://ollama.com/install.sh | sh
 
-# 2. Pull a model (choose one)
-ollama pull qwen2.5:7b          # good quality, ~4 GB
+# 2. Pull a model: the slim language-oriented LLMs seem to work best:
+ollama pull qwen2.5:7b
 
 # 3. Start the app — Ollama is auto-detected
 node server.js

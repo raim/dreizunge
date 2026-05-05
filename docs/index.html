@@ -860,6 +860,783 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 
 const STATIC_LESSONS = [
   {
+    "topic": "Brewery Owner Explains Wine vs. Beer",
+    "topicEmoji": "🍺",
+    "userTopic": "the brewery owner explains the differences between wine and beer making. Both ferment sugar with yeasts, living organisms, but the process and outcome are very different.",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 500,
+    "story": "Lucia sorrise, pensierosa. \"Ma dimmi, Marco, come fai a distinguere la tua birra dal vino locale?\"\n\nMarco si schiarì la gola, prendendo un sorso dalla sua birra. \"È una domanda complessa, Lucia. In fondo, entrambi sono frutto del lavoro del contadino e del mestiere dell'artigiano. Ma ci sono differenze fondamentali. Il vino, soprattutto quello toscano, è frutto di un'uva matura, coltivata con cura e vinificata secondo antiche tradizioni. Il risultato è un'esperienza sensoriale intensa, complessa, che richiede spesso un lungo invecchiamento. La nostra birra, invece, è più immediata. Usiamo cereali, luppoli e lieviti per creare un'ebbrezza più leggera, più conviviale. Non cerchiamo la complessità, ma la freschezza, la semplicità.\"\n\nLucia annuì, assaporando la sua birra. \"Capisco. Quindi, il vino è come un'opera d'arte, mentre la tua birra è come una bella conversazione con gli amici.\"\n\nMarco rise, un suono caldo e rassicurante. \"Esattamente! Il vino è un viaggio, una riflessione. La nostra birra è un momento di condivisione, di gioia semplice. Entrambe, però, hanno bisogno di essere apprezzate con attenzione e rispetto. Un buon vino richiede una cena elegante, mentre una buona birra si abbina perfettamente a un pranzo informale o a una serata tra amici.\"\n\nLucia sorrise, sentendo una profonda connessione con Marco e con il suo modo di vedere il mondo. \"Grazie, Marco. Mi hai aperto gli occhi. Ora capisco perché la tua birra è così amata qui. È la birra della semplicità, della felicità, della vita toscana.\"",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nEra pomeriggio inoltrato quando Lucia decise di tornare alla sua locanda. Mentre camminava, notò un'ampia strada che conduceva a un'antica locanda, ora trasformata in un bellissimo hotel-birreria. Le sue mura di pietra grigia e le finestre con le tende colorate la invitavano a entrare. Lucia si avvicinò e vide un cartello che diceva: \"Benvenuti alla Birreria del Vigneto\". Entrò con passo deciso, sentendo il profumo di birra fresca e pane croccante che si mescolava con l'aria.\n\nIl locale era accogliente, con tavoli di legno intagliato e sedie di cuoio. Lucia si sedette vicino al bancone, dove un uomo con un berretto da birra in testa stava preparando birre artigianali. \"Buona giornata,\" disse lui con un sorriso. \"Sono Lucia,\" rispose lei, \"e stavo pensando di provare una birra locale.\"\n\nL'uomo, chiamato Marco, prese un bicchiere e lo riempì con una birra chiara e schiumosa. \"Questo è il nostro 'Vigneto di Settembre',\" spiegò. \"È una birra leggera, come il sole di questo mese di settembre.\"\n\nLucia sorseggiò la birra, notando il suo sapore delicato e la schiuma che si formava sulla superficie. \"È davvero buona,\" disse, sorridendo. \"Come mai avete scelto questo nome?\"\n\n\"Perché,\" rispose Marco, \"la birra è come la vita: deve essere appagante, come un giorno di sole in Toscana. E questo mese, settembre, è il mese della maturità, del raccolto, come la nostra birra.\"\n\nLucia annuì, sentendo un senso di pace e appagamento. \"Siete davvero fortunati a vivere qui,\" disse. \"E a fare birra.\"\n\n\"Lo siamo,\" confermò Marco, \"ma non saremmo qui se non fosse per te e per le tue passeggiate. Le tue storie ci aiutano a ricordare perché amiamo questo posto.\"\n\nLucia rise, sentendo il calore del pomeriggio e la serenità del luogo. \"Forse dovresti scrivere un libro,\" propose, \"con le tue birre e le tue storie.\"\n\nMarco rise, scuotendo la testa. \"Forse un giorno,\" disse, \"ma per ora, preferisco lasciare che le storie si raccontino da sole, come la birra che preparo.\"\n\nNew topic: \"Brewery Owner Explains Wine vs. Beer\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "Beautiful Hotel Brewery",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Brewery vs. Wine: Key Differences",
+        "desc": "Owner explains fermentation, ingredients, and resulting taste profiles.",
+        "icon": "🍺",
+        "vocab": [
+          {
+            "it": "uva",
+            "en": "grape",
+            "pron": "OO-vah"
+          },
+          {
+            "it": "lieviti",
+            "en": "yeast",
+            "pron": "lyeh-VEE-tee"
+          },
+          {
+            "it": "cereali",
+            "en": "grains",
+            "pron": "cher-EH-lee"
+          },
+          {
+            "it": "luppoli",
+            "en": "hops",
+            "pron": "LOOP-pol-ee"
+          },
+          {
+            "it": "esperienza sensoriale",
+            "en": "sensory experience",
+            "pron": "ehs-per-EEN-tza sen-SOR-ee-ah-leh"
+          },
+          {
+            "it": "invecchiamento",
+            "en": "aging",
+            "pron": "in-veh-chee-AH-men-toh"
+          },
+          {
+            "it": "ebbrezza",
+            "en": "intoxication",
+            "pron": "eb-BREH-tza"
+          },
+          {
+            "it": "artigiano",
+            "en": "craftsman",
+            "pron": "ar-TEE-nyah-noh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Marco spiega che entrambi i prodotti derivano da ingredienti agricoli.",
+            "en": "Marco explains that both products originate from agricultural ingredients.",
+            "words": [
+              "Marco",
+              "spiega",
+              "che",
+              "entrambi",
+              "i",
+              "prodotti",
+              "derivano",
+              "da",
+              "ingredienti",
+              "agricoli."
+            ]
+          },
+          {
+            "it": "La birra è più semplice, ideale per un momento conviviale.",
+            "en": "The beer is simpler, ideal for a convivial moment.",
+            "words": [
+              "La",
+              "birra",
+              "è",
+              "più",
+              "semplice,",
+              "ideale",
+              "per",
+              "un",
+              "momento",
+              "conviviale."
+            ]
+          },
+          {
+            "it": "Il vino richiede un lungo periodo di invecchiamento per sviluppare il suo sapore.",
+            "en": "Wine requires a long aging period to develop its flavor.",
+            "words": [
+              "Il",
+              "vino",
+              "richiede",
+              "un",
+              "lungo",
+              "periodo",
+              "di",
+              "invecchiamento",
+              "per",
+              "sviluppare",
+              "il",
+              "suo",
+              "sapore."
+            ]
+          },
+          {
+            "it": "Lucia apprezza la freschezza e la semplicità della birra di Marco.",
+            "en": "Lucia appreciates the freshness and simplicity of Marco's beer.",
+            "words": [
+              "Lucia",
+              "apprezza",
+              "la",
+              "freschezza",
+              "e",
+              "la",
+              "semplicità",
+              "della",
+              "birra",
+              "di",
+              "Marco."
+            ]
+          },
+          {
+            "it": "La scelta tra vino e birra dipende dalle preferenze personali.",
+            "en": "The choice between wine and beer depends on personal preferences.",
+            "words": [
+              "La",
+              "scelta",
+              "tra",
+              "vino",
+              "e",
+              "birra",
+              "dipende",
+              "dalle",
+              "preferenze",
+              "personali."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Brewery vs. Wine: Key Differences",
+        "desc": "Marco explains fermentation, ingredients, and the resulting taste.",
+        "icon": "🍺",
+        "vocab": [
+          {
+            "it": "mosto",
+            "en": "must",
+            "pron": "MOST-toh"
+          },
+          {
+            "it": "fermentazione",
+            "en": "fermentation",
+            "pron": "fer-men-TAH-toh-neh"
+          },
+          {
+            "it": "gusto",
+            "en": "taste",
+            "pron": "GOOS-toh"
+          },
+          {
+            "it": "aroma",
+            "en": "aroma",
+            "pron": "AH-roh-mah"
+          },
+          {
+            "it": "lievito selvatico",
+            "en": "wild yeast",
+            "pron": "lee-VEE-toh seh-VEH-dee-toh"
+          },
+          {
+            "it": "malto",
+            "en": "malt",
+            "pron": "MAL-toh"
+          },
+          {
+            "it": "bouquet",
+            "en": "bouquet (of wine)",
+            "pron": "boo-KWAY"
+          },
+          {
+            "it": "sapore",
+            "en": "flavor",
+            "pron": "SAH-POH-reh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La scelta del lievito selvatico influisce notevolmente sul gusto finale.",
+            "words": [
+              "La",
+              "scelta",
+              "del",
+              "lievito",
+              "selvatico",
+              "influisce",
+              "notevolmente",
+              "sul",
+              "gusto",
+              "finale."
+            ]
+          },
+          {
+            "it": "Marco preferisce il malto per la sua semplicità e freschezza.",
+            "words": [
+              "Marco",
+              "preferisce",
+              "il",
+              "malto",
+              "per",
+              "la",
+              "sua",
+              "semplicità",
+              "e",
+              "freschezza."
+            ]
+          },
+          {
+            "it": "Il sapore della birra artigianale è più immediato e vivace.",
+            "words": [
+              "Il",
+              "sapore",
+              "della",
+              "birra",
+              "artigianale",
+              "è",
+              "più",
+              "immediato",
+              "e",
+              "vivace."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Brewery vs. Wine: Key Differences",
+        "desc": "Marco explains fermentation, ingredients, and the final product.",
+        "icon": "🍺",
+        "vocab": [
+          {
+            "it": "mosto",
+            "en": "must",
+            "pron": "MOST-toh"
+          },
+          {
+            "it": "malto",
+            "en": "malt",
+            "pron": "MAL-toh"
+          },
+          {
+            "it": "bouquet",
+            "en": "bouquet",
+            "pron": "BOW-kay"
+          },
+          {
+            "it": "sapore",
+            "en": "flavor",
+            "pron": "SAH-POH-reh"
+          },
+          {
+            "it": "aroma",
+            "en": "aroma",
+            "pron": "AH-ROH-mah"
+          },
+          {
+            "it": "lievito selvatico",
+            "en": "wild yeast",
+            "pron": "LEE-vee-toh SEL-vah-tee-koh"
+          },
+          {
+            "it": "gusto",
+            "en": "taste",
+            "pron": "GOOS-toh"
+          },
+          {
+            "it": "fermentazione",
+            "en": "fermentation",
+            "pron": "Fer-men-TAH-zee-oh-neh"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il mosto, dopo la fermentazione, diventa vino o birra.",
+            "en": "The must, after fermentation, becomes wine or beer.",
+            "words": [
+              "Il",
+              "mosto,",
+              "dopo",
+              "la",
+              "fermentazione,",
+              "diventa",
+              "vino",
+              "o",
+              "birra."
+            ]
+          },
+          {
+            "it": "Marco spiega che il malto conferisce alla birra un sapore unico.",
+            "en": "Marco explains that malt gives beer a unique flavor.",
+            "words": [
+              "Marco",
+              "spiega",
+              "che",
+              "il",
+              "malto",
+              "conferisce",
+              "alla",
+              "birra",
+              "un",
+              "sapore",
+              "unico."
+            ]
+          },
+          {
+            "it": "Il bouquet del vino toscano è inconfondibile.",
+            "en": "The bouquet of Tuscan wine is unmistakable.",
+            "words": [
+              "Il",
+              "bouquet",
+              "del",
+              "vino",
+              "toscano",
+              "è",
+              "inconfondibile."
+            ]
+          },
+          {
+            "it": "La fermentazione controllata è essenziale per entrambi i prodotti.",
+            "en": "Controlled fermentation is essential for both products.",
+            "words": [
+              "La",
+              "fermentazione",
+              "controllata",
+              "è",
+              "essenziale",
+              "per",
+              "entrambi",
+              "i",
+              "prodotti."
+            ]
+          },
+          {
+            "it": "Il gusto della birra artigianale è molto apprezzato dai consumatori.",
+            "en": "The taste of craft beer is highly appreciated by consumers.",
+            "words": [
+              "Il",
+              "gusto",
+              "della",
+              "birra",
+              "artigianale",
+              "è",
+              "molto",
+              "apprezzato",
+              "dai",
+              "consumatori."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 662670,
+      "backend": "ollama",
+      "model": "translategemma",
+      "totalPromptTokens": 2665,
+      "totalCompletionTokens": 1826,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 158627,
+          "promptTokens": 537,
+          "completionTokens": 490
+        },
+        {
+          "lessonNum": 2,
+          "ms": 149165,
+          "promptTokens": 605,
+          "completionTokens": 397
+        },
+        {
+          "lessonNum": 3,
+          "ms": 157002,
+          "promptTokens": 651,
+          "completionTokens": 455
+        }
+      ]
+    },
+    "generatedAt": "2026-05-05T11:03:30.701Z",
+    "updatedAt": "2026-05-05T11:03:30.701Z"
+  },
+  {
+    "topic": "meeting men",
+    "topicEmoji": "🤝",
+    "userTopic": "meeting men",
+    "lang": "de",
+    "difficulty": 1,
+    "storyLen": 500,
+    "story": "Am Ende ihrer Wanderung durch die belebten Straßen von Berlin, fühlte Clara sich leicht und glücklich. Anna hatte ihr so viele neue Eindrücke gegeben, dass sie sich fast wie zu Hause fühlte. Als sie sich auf den Weg zurück zum Café machten, fiel Clara ein, dass sie noch nie in Berlin einen Mann getroffen hatte, der sie so tief beeindruckt hatte wie Anna.\n\n\"Anna, ich muss dir etwas sagen,\" begann Clara, als sie sich wieder in der ruhigeren Atmosphäre des Cafés befanden. \"Ich denke, ich habe mich in dich verliebt.\"\n\nAnna blieb stehen, ihre Augen weiteten sich vor Überraschung. \"Clara, das ist... das ist eine große Erklärung,\" sagte sie leise.\n\nClara atmete tief durch und fuhr fort: \"Ich weiß, es ist plötzlich, aber ich kann nicht anders. Du bist so... so einzigartig. Deine Art zu sehen die Welt, deine Leidenschaft für die Kunst, sie inspirieren mich.\"\n\nAnna lächelte zaghaft. \"Clara, ich... ich bin auch beeindruckt von dir. Du bist so klug und voller Leidenschaft. Aber ich glaube, wir sollten vorsichtig sein. Ich bin eine Single-Mutter, und ich möchte nicht, dass du dich in eine Situation begeben musst, in der du dich unwohl fühlst.\"\n\nClara nickte verständnisvoll. \"Ich verstehe. Aber ich glaube, wir können trotzdem Freunde bleiben. Wir können uns einfach weiterhin treffen, um über Bücher und Kunst zu sprechen.\"\n\nAnna lächelte und legte ihre Hand auf Claras Arm. \"Das ist eine tolle Idee. Ich würde dich gern weiterhin hier im Café sehen. Vielleicht können wir uns auch mal gemeinsam ein Museum ansehen?\"\n\nClara fühlte sich erleichtert und dankbar. \"Das würde ich sehr gerne. Ich denke, wir können uns gegenseitig inspirieren, auch wenn wir nicht zusammen sein können.\"\n\nAls sie sich wieder setzten, fühlte Clara, wie Anna ihre Hand nahm. \"Ich werde immer für dich da sein, Clara. Lass uns weiterhin diese Freundschaft aufbauen.\"\n\nClara nickte, ihre Herzschläge beruhigten sich langsam. Sie hatte gefunden, was sie suchte: eine Freundschaft, die tief und authentisch war, und sie war dankbar dafür.",
+    "storyLang": "de",
+    "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nIn the heart of a bustling Berlin café, where the aroma of freshly brewed coffee mingled with the hum of conversations, Clara found herself sitting alone at a small table by the window. The city was alive with the sounds of German spoken in various accents, and Clara, a young woman from a small town, felt a bit out of place. She had come to Berlin to study and to explore, hoping to meet new people and perhaps find someone who shared her love for literature and art.\n\nAs she sipped her coffee, a woman approached her table. She was tall and elegant, with a warm smile that seemed to light up the room. Her name was Anna, and she was a local artist who often frequented this café. Clara felt a flutter in her chest as Anna sat down, her eyes meeting Clara's with a friendly curiosity.\n\n\"Hello there,\" Anna said, her voice smooth and inviting. \"I couldn't help but notice you sitting here all alone. Do you often come to this café?\"\n\nClara nodded, feeling a bit nervous but also intrigued. \"Yes, I do. I love the atmosphere here. It's quiet enough to read, but lively enough to meet people.\"\n\nAnna leaned in slightly, her eyes sparkling. \"Well, I'm glad you found me. I'm Anna. Maybe we can share a table and some stories sometime?\"\n\nClara smiled, feeling a warmth spread through her. \"That would be wonderful. I'm Clara. I study literature, and I'm always looking for new perspectives.\"\n\nAs they chatted, Anna shared stories about her art and the vibrant cultural scene in Berlin. Clara found herself drawn to Anna's passion and the way she spoke about her work. They talked about books, music, and the city, finding common ground in their love for the arts.\n\nBy the time the café began to empty, Clara felt a sense of connection she hadn't expected. As Anna stood to leave, she turned back to Clara with a gentle smile. \"Would you like to join me for a walk around the city? I know some hidden spots that are perfect for a late afternoon stroll.\"\n\nClara hesitated for a moment, then nodded. \"I'd love that. Thank you, Anna.\"\n\nAs they walked, hand in hand, Clara felt a mix of excitement and nervousness. She had met a woman who not only shared her interests but also seemed genuinely interested in getting to know her. Clara realized that sometimes, the most meaningful connections can happen in the most unexpected places.\n\nNew topic: \"meeting men\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "meeting women",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Meeting Men",
+        "desc": "Beginner German vocabulary and sentences",
+        "icon": "❤️",
+        "vocab": [
+          {
+            "it": "Wanderung",
+            "en": "wandering",
+            "pron": "WAN-der-un-g"
+          },
+          {
+            "it": "belebt",
+            "en": "lively",
+            "pron": "be-LYPT"
+          },
+          {
+            "it": "Eindrücke",
+            "en": "impressions",
+            "pron": "IN-dri-KE"
+          },
+          {
+            "it": "beeindruckt",
+            "en": "impressed",
+            "pron": "bee-in-DRIK-t"
+          },
+          {
+            "it": "Café",
+            "en": "café",
+            "pron": "KAH-feh"
+          },
+          {
+            "it": "Atmosphäre",
+            "en": "atmosphere",
+            "pron": "at-mo-SFA-ree"
+          },
+          {
+            "it": "plötzlich",
+            "en": "suddenly",
+            "pron": "PLUtz-lik"
+          },
+          {
+            "it": "einzigartig",
+            "en": "unique",
+            "pron": "YIN-zig-art-ig"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Ich wandere durch die Straßen.",
+            "en": "I am wandering through the streets.",
+            "words": [
+              "Ich",
+              "wandere",
+              "durch",
+              "die",
+              "Straßen."
+            ]
+          },
+          {
+            "it": "Die belebten Straßen sind schön.",
+            "en": "The lively streets are beautiful.",
+            "words": [
+              "Die",
+              "belebten",
+              "Straßen",
+              "sind",
+              "schön."
+            ]
+          },
+          {
+            "it": "Ich habe viele Eindrücke gesammelt.",
+            "en": "I have collected many impressions.",
+            "words": [
+              "Ich",
+              "habe",
+              "viele",
+              "Eindrücke",
+              "gesammelt."
+            ]
+          },
+          {
+            "it": "Anna ist so beeindruckt von dir.",
+            "en": "Anna is so impressed by you.",
+            "words": [
+              "Anna",
+              "ist",
+              "so",
+              "beeindruckt",
+              "von",
+              "dir."
+            ]
+          },
+          {
+            "it": "Du bist einzigartig, das ist wahr.",
+            "en": "You are unique, that is true.",
+            "words": [
+              "Du",
+              "bist",
+              "einzigartig,",
+              "das",
+              "ist",
+              "wahr."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "meeting men",
+        "desc": "love, café, atmosphere, impression",
+        "icon": "❤️",
+        "vocab": [
+          {
+            "it": "getroffen",
+            "en": "met",
+            "pron": "GET-ruff-en"
+          },
+          {
+            "it": "beeindruckt",
+            "en": "impressed",
+            "pron": "BEE-in-drukht"
+          },
+          {
+            "it": "Café",
+            "en": "café",
+            "pron": "KAH-feh"
+          },
+          {
+            "it": "Atmosphäre",
+            "en": "atmosphere",
+            "pron": "AT-muh-sfra"
+          },
+          {
+            "it": "plötzlich",
+            "en": "suddenly",
+            "pron": "PLUtz-litch"
+          },
+          {
+            "it": "einzigartig",
+            "en": "unique",
+            "pron": "YIN-zig-ar-tig"
+          },
+          {
+            "it": "Wanderung",
+            "en": "wandering",
+            "pron": "VAN-derr-ung"
+          },
+          {
+            "it": "belebt",
+            "en": "lively",
+            "pron": "BAY-litt"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Ich bin in Berlin oft spazieren gegangen.",
+            "en": "I often went for walks in Berlin.",
+            "words": [
+              "Ich",
+              "bin",
+              "in",
+              "Berlin",
+              "oft",
+              "spazieren",
+              "gegangen."
+            ]
+          },
+          {
+            "it": "Die belebten Straßen von Berlin beeindrucken mich.",
+            "en": "The lively streets of Berlin impress me.",
+            "words": [
+              "Die",
+              "belebten",
+              "Straßen",
+              "von",
+              "Berlin",
+              "beeindrucken",
+              "mich."
+            ]
+          },
+          {
+            "it": "Im Café fühlte ich mich wie zu Hause.",
+            "en": "In the café, I felt at home.",
+            "words": [
+              "Im",
+              "Café",
+              "fühlte",
+              "ich",
+              "mich",
+              "wie",
+              "zu",
+              "Hause."
+            ]
+          },
+          {
+            "it": "Die Atmosphäre im Café war sehr gemütlich.",
+            "en": "The atmosphere in the café was very cozy.",
+            "words": [
+              "Die",
+              "Atmosphäre",
+              "im",
+              "Café",
+              "war",
+              "sehr",
+              "gemütlich."
+            ]
+          },
+          {
+            "it": "Plötzlich fiel mir etwas ein.",
+            "en": "Suddenly, something occurred to me.",
+            "words": [
+              "Plötzlich",
+              "fiel",
+              "mir",
+              "etwas",
+              "ein."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "meeting men",
+        "desc": "love, impressions, café, atmosphere",
+        "icon": "❤️",
+        "vocab": [
+          {
+            "it": "verliebt",
+            "en": "in love",
+            "pron": "ver-LYEBT"
+          },
+          {
+            "it": "Erklärung",
+            "en": "explanation",
+            "pron": "ehr-KLAA-RUNG"
+          },
+          {
+            "it": "tief",
+            "en": "deep",
+            "pron": "TCEF"
+          },
+          {
+            "it": "Atem",
+            "en": "breath",
+            "pron": "AH-THEM"
+          },
+          {
+            "it": "sichtbar",
+            "en": "visible",
+            "pron": "ZICH-TA-BAR"
+          },
+          {
+            "it": "Weltanschauung",
+            "en": "worldview",
+            "pron": "VOR-LE-TAHN-SHAUUNG"
+          },
+          {
+            "it": "Anziehung",
+            "en": "attraction",
+            "pron": "ahn-ZHVEE-GUNG"
+          },
+          {
+            "it": "Zufall",
+            "en": "chance",
+            "pron": "TSU-FAL"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Die Anziehung zwischen ihnen war unverkennbar.",
+            "en": "The attraction between them was unmistakable.",
+            "words": [
+              "Die",
+              "Anziehung",
+              "zwischen",
+              "ihnen",
+              "war",
+              "unverkennbar."
+            ]
+          },
+          {
+            "it": "Ihre Weltanschauung passt perfekt zu meiner.",
+            "en": "Her worldview fits me perfectly.",
+            "words": [
+              "Ihre",
+              "Weltanschauung",
+              "passt",
+              "perfekt",
+              "zu",
+              "meiner."
+            ]
+          },
+          {
+            "it": "Tief atmete sie ein, bevor sie weitersprach.",
+            "en": "She took a deep breath before speaking further.",
+            "words": [
+              "Tief",
+              "atmete",
+              "sie",
+              "ein,",
+              "bevor",
+              "sie",
+              "weitersprach."
+            ]
+          },
+          {
+            "it": "Es war ein Zufall, dass sie sich hier trafen.",
+            "en": "It was a chance meeting that they found each other here.",
+            "words": [
+              "Es",
+              "war",
+              "ein",
+              "Zufall,",
+              "dass",
+              "sie",
+              "sich",
+              "hier",
+              "trafen."
+            ]
+          },
+          {
+            "it": "Ihre Erklärung war sichtbar in ihren Augen.",
+            "en": "Her explanation was visible in her eyes.",
+            "words": [
+              "Ihre",
+              "Erklärung",
+              "war",
+              "sichtbar",
+              "in",
+              "ihren",
+              "Augen."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 965571,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 2488,
+      "totalCompletionTokens": 1628,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 205391,
+          "promptTokens": 501,
+          "completionTokens": 336
+        },
+        {
+          "lessonNum": 2,
+          "ms": 196627,
+          "promptTokens": 571,
+          "completionTokens": 348
+        },
+        {
+          "lessonNum": 3,
+          "ms": 220148,
+          "promptTokens": 620,
+          "completionTokens": 364
+        }
+      ]
+    },
+    "generatedAt": "2026-05-05T10:16:10.361Z",
+    "updatedAt": "2026-05-05T10:16:10.361Z"
+  },
+  {
     "topic": "Yeast vs Human Cells",
     "topicEmoji": "🧬",
     "userTopic": "yeast cells share many properties with human cells, so maybe human cells also show oscillations of the same kind?",
@@ -1242,395 +2019,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-04T18:19:18.289Z",
-    "updatedAt": "2026-05-04T18:19:18.289Z"
-  },
-  {
-    "topic": "Meet Nenni and Raim",
-    "topicEmoji": "🤝",
-    "userTopic": "nenni and raim will meet us and take care of teo, so we may have a free day next week, should we go shopping in Pienza!",
-    "lang": "it",
-    "difficulty": 1,
-    "storyLen": 600,
-    "story": "Era una serata d'agosto, quando Nenni e Raim si incamminarono verso la Birreria del Vigneto. Nenni, con i suoi lunghi capelli neri e gli occhi scuri, camminava con passo deciso, mentre Raim, più giovane e agile, la seguiva con un sorriso. Entrambi indossavano abiti casual, ma con un tocco di eleganza tipico della loro città.\n\n\"Non vedo l'ora di provarne una,\" disse Raim, indicando l'ampia strada che conduceva all'hotel-birreria. \"Hai sentito cosa ha detto Lucia? La birra del settembre è davvero speciale.\"\n\nNenni annuì, sorridendo. \"Sì, e non solo per il sapore, ma anche per la storia dietro di essa. È come se ogni bicchiere raccontasse una storia.\"\n\nEntrarono nel locale, trovando Marco al bancone. \"Buonasera, Nenni, Raim,\" disse Marco, alzando la testa dal suo lavoro. \"Che piacere rivedervi.\"\n\n\"Buonasera, Marco,\" rispose Nenni, sedendosi vicino al bancone. \"Hai preparato la birra del settembre?\"\n\n\"Certamente,\" rispose Marco, versando due bicchieri. \"Ecco il 'Vigneto di Settembre'.\"\n\nNenni e Raim sorseggiarono la birra, notando il suo sapore leggero e la schiuma che si formava sulla superficie. \"È davvero buona,\" disse Raim, sorridendo a Nenni. \"Come sempre.\"\n\n\"Non è solo la birra,\" disse Nenni, \"è la compagnia e la storia dietro di essa.\"\n\n\"Proprio così,\" confermò Marco, \"e non è solo la birra, ma anche la città che ci circonda. Ogni bicchiere è un invito a scoprire nuove storie.\"\n\nRaim rise, guardando Nenni. \"Forse dovresti scrivere un libro,\" propose, \"con le tue storie e le tue birre.\"\n\nNenni rise, scuotendo la testa. \"Forse un giorno,\" disse, \"ma per ora, preferisco lasciare che le storie si raccontino da sole, come la birra che prepari.\"\n\nMarco rise, annuendo. \"Forse hai ragione,\" disse, \"ma per ora, godiamoci questo momento.\"",
-    "storyLang": "it",
-    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 6-7 paragraphs, under 600 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nEra pomeriggio inoltrato quando Lucia decise di tornare alla sua locanda. Mentre camminava, notò un'ampia strada che conduceva a un'antica locanda, ora trasformata in un bellissimo hotel-birreria. Le sue mura di pietra grigia e le finestre con le tende colorate la invitavano a entrare. Lucia si avvicinò e vide un cartello che diceva: \"Benvenuti alla Birreria del Vigneto\". Entrò con passo deciso, sentendo il profumo di birra fresca e pane croccante che si mescolava con l'aria.\n\nIl locale era accogliente, con tavoli di legno intagliato e sedie di cuoio. Lucia si sedette vicino al bancone, dove un uomo con un berretto da birra in testa stava preparando birre artigianali. \"Buona giornata,\" disse lui con un sorriso. \"Sono Lucia,\" rispose lei, \"e stavo pensando di provare una birra locale.\"\n\nL'uomo, chiamato Marco, prese un bicchiere e lo riempì con una birra chiara e schiumosa. \"Questo è il nostro 'Vigneto di Settembre',\" spiegò. \"È una birra leggera, come il sole di questo mese di settembre.\"\n\nLucia sorseggiò la birra, notando il suo sapore delicato e la schiuma che si formava sulla superficie. \"È davvero buona,\" disse, sorridendo. \"Come mai avete scelto questo nome?\"\n\n\"Perché,\" rispose Marco, \"la birra è come la vita: deve essere appagante, come un giorno di sole in Toscana. E questo mese, settembre, è il mese della maturità, del raccolto, come la nostra birra.\"\n\nLucia annuì, sentendo un senso di pace e appagamento. \"Siete davvero fortunati a vivere qui,\" disse. \"E a fare birra.\"\n\n\"Lo siamo,\" confermò Marco, \"ma non saremmo qui se non fosse per te e per le tue passeggiate. Le tue storie ci aiutano a ricordare perché amiamo questo posto.\"\n\nLucia rise, sentendo il calore del pomeriggio e la serenità del luogo. \"Forse dovresti scrivere un libro,\" propose, \"con le tue birre e le tue storie.\"\n\nMarco rise, scuotendo la testa. \"Forse un giorno,\" disse, \"ma per ora, preferisco lasciare che le storie si raccontino da sole, come la birra che preparo.\"\n\nNew topic: \"Meet Nenni and Raim\". Write the continuation now. Plain prose, no headings.",
-    "continuedFrom": "Beautiful Hotel Brewery",
-    "lessons": [
-      {
-        "id": 1,
-        "title": "Meet Nenni and Raim",
-        "desc": "Meet new friends and plan a day out",
-        "icon": "👋",
-        "vocab": [
-          {
-            "it": "incamminarsi",
-            "en": "to set off",
-            "pron": "in-kam-men-tsee"
-          },
-          {
-            "it": "sorridere",
-            "en": "to smile",
-            "pron": "so-rid-de-re"
-          },
-          {
-            "it": "bancone",
-            "en": "counter",
-            "pron": "ban-con-e"
-          },
-          {
-            "it": "buonasera",
-            "en": "good evening",
-            "pron": "boo-o-na-ze-ra"
-          },
-          {
-            "it": "piacere",
-            "en": "pleasure",
-            "pron": "pia-ch-re"
-          },
-          {
-            "it": "sorpresa",
-            "en": "surprise",
-            "pron": "so-r-pre-sa"
-          },
-          {
-            "it": "eleganza",
-            "en": "elegance",
-            "pron": "e-le-gan-za"
-          },
-          {
-            "it": "sapore",
-            "en": "taste",
-            "pron": "sap-or-e"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Entreremo in un negozio di abiti.",
-            "en": "We will enter a clothing store.",
-            "words": [
-              "Entreremo",
-              "in",
-              "un",
-              "negozio",
-              "di",
-              "abiti."
-            ]
-          },
-          {
-            "it": "Raim sorride a Nenni.",
-            "en": "Raim smiles at Nenni.",
-            "words": [
-              "Raim",
-              "sorride",
-              "a",
-              "Nenni."
-            ]
-          },
-          {
-            "it": "Il bancone è pieno di bottiglie.",
-            "en": "The counter is full of bottles.",
-            "words": [
-              "Il",
-              "bancone",
-              "è",
-              "pieno",
-              "di",
-              "bottiglie."
-            ]
-          },
-          {
-            "it": "Hai visto la sorpresa in suo occhio?",
-            "en": "Have you seen the surprise in his eye?",
-            "words": [
-              "Hai",
-              "visto",
-              "la",
-              "sorpresa",
-              "in",
-              "suo",
-              "occhio?"
-            ]
-          },
-          {
-            "it": "Eleganza è importante per Nenni.",
-            "en": "Elegance is important for Nenni.",
-            "words": [
-              "Eleganza",
-              "è",
-              "importante",
-              "per",
-              "Nenni."
-            ]
-          }
-        ]
-      },
-      {
-        "id": 2,
-        "title": "Meet and Shop",
-        "desc": "Nenni, Raim, free day, Pienza, shopping",
-        "icon": "🎉",
-        "vocab": [
-          {
-            "it": "incarico",
-            "en": "task",
-            "pron": "in-kar-ri-ko"
-          },
-          {
-            "it": "liberare",
-            "en": "free",
-            "pron": "li-be-ra-re"
-          },
-          {
-            "it": "giornata",
-            "en": "day",
-            "pron": "gi-or-na-ta"
-          },
-          {
-            "it": "Pienza",
-            "en": "Pienza",
-            "pron": "pien-chia"
-          },
-          {
-            "it": "acquisto",
-            "en": "purchase",
-            "pron": "ak-kwis-to"
-          },
-          {
-            "it": "negozi",
-            "en": "shops",
-            "pron": "ne-go-tzi"
-          },
-          {
-            "it": "sorpresa",
-            "en": "surprise",
-            "pron": "so-rpre-sa"
-          },
-          {
-            "it": "elegante",
-            "en": "elegant",
-            "pron": "e-le-gante"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Liberiamo un giorno per fare acquisti.",
-            "en": "Let's free a day for shopping.",
-            "words": [
-              "Liberiamo",
-              "un",
-              "giorno",
-              "per",
-              "fare",
-              "acquisti."
-            ]
-          },
-          {
-            "it": "Pienza è un paese pieno di negozi eleganti.",
-            "en": "Pienza is a town full of elegant shops.",
-            "words": [
-              "Pienza",
-              "è",
-              "un",
-              "paese",
-              "pieno",
-              "di",
-              "negozi",
-              "eleganti."
-            ]
-          },
-          {
-            "it": "Dovremmo sorprendere Teo con un regalo.",
-            "en": "We should surprise Teo with a gift.",
-            "words": [
-              "Dovremmo",
-              "sorprendere",
-              "Teo",
-              "con",
-              "un",
-              "regalo."
-            ]
-          },
-          {
-            "it": "Hai l'incarico di scegliere il regalo.",
-            "en": "You have the task of choosing the gift.",
-            "words": [
-              "Hai",
-              "l'incarico",
-              "di",
-              "scegliere",
-              "il",
-              "regalo."
-            ]
-          },
-          {
-            "it": "Siamo liberati per un giorno intero.",
-            "en": "We are free for a whole day.",
-            "words": [
-              "Siamo",
-              "liberati",
-              "per",
-              "un",
-              "giorno",
-              "intero."
-            ]
-          }
-        ]
-      },
-      {
-        "id": 3,
-        "title": "shopping and free time",
-        "desc": "meet friends, free day, shopping plans",
-        "icon": "🎉",
-        "vocab": [
-          {
-            "it": "liberare",
-            "en": "free",
-            "pron": "LIB-er-a-te"
-          },
-          {
-            "it": "giornata",
-            "en": "day",
-            "pron": "giorn-ATA"
-          },
-          {
-            "it": "Pienza",
-            "en": "Pienza",
-            "pron": "pien-CHA"
-          },
-          {
-            "it": "acquisto",
-            "en": "purchase",
-            "pron": "ac-QUIS-to"
-          },
-          {
-            "it": "negozi",
-            "en": "shops",
-            "pron": "ne-GOZ-zi"
-          },
-          {
-            "it": "sorpresa",
-            "en": "surprise",
-            "pron": "sor-PRES-a"
-          },
-          {
-            "it": "elegante",
-            "en": "elegant",
-            "pron": "e-le-GAN-te"
-          },
-          {
-            "it": "incarico",
-            "en": "task",
-            "pron": "in-car-CHI-oo"
-          }
-        ],
-        "sentences": [
-          {
-            "it": "Lasciamo che Nenni e Raim ci liberino da tutti i nostri impegni.",
-            "en": "Let Nenni and Raim free us from all our commitments.",
-            "words": [
-              "Lasciamo",
-              "che",
-              "Nenni",
-              "e",
-              "Raim",
-              "ci",
-              "liberino",
-              "da",
-              "tutti",
-              "i",
-              "nostri",
-              "impegni."
-            ]
-          },
-          {
-            "it": "Hai mai provato a fare un acquisto in Pienza?",
-            "en": "Have you ever tried to make a purchase in Pienza?",
-            "words": [
-              "Hai",
-              "mai",
-              "provato",
-              "a",
-              "fare",
-              "un",
-              "acquisto",
-              "in",
-              "Pienza?"
-            ]
-          },
-          {
-            "it": "Negli ultimi negozi di Pienza ci sono stati dei sorprendenti cambiamenti.",
-            "en": "In the last shops in Pienza there have been surprising changes.",
-            "words": [
-              "Negli",
-              "ultimi",
-              "negozi",
-              "di",
-              "Pienza",
-              "ci",
-              "sono",
-              "stati",
-              "dei",
-              "sorprendenti",
-              "cambiamenti."
-            ]
-          },
-          {
-            "it": "Siamo eleganti oggi, vero?",
-            "en": "We are elegant today, right?",
-            "words": [
-              "Siamo",
-              "eleganti",
-              "oggi,",
-              "vero?"
-            ]
-          },
-          {
-            "it": "Nenni ha un incarico speciale per te, un sorpresa.",
-            "en": "Nenni has a special task for you, a surprise.",
-            "words": [
-              "Nenni",
-              "ha",
-              "un",
-              "incarico",
-              "speciale",
-              "per",
-              "te,",
-              "un",
-              "sorpresa."
-            ]
-          }
-        ]
-      }
-    ],
-    "generationStats": {
-      "totalMs": 897303,
-      "backend": "ollama",
-      "model": "qwen2.5:7b",
-      "totalPromptTokens": 2833,
-      "totalCompletionTokens": 1688,
-      "lessons": [
-        {
-          "lessonNum": 1,
-          "ms": 192819,
-          "promptTokens": 565,
-          "completionTokens": 348
-        },
-        {
-          "lessonNum": 2,
-          "ms": 180537,
-          "promptTokens": 636,
-          "completionTokens": 353
-        },
-        {
-          "lessonNum": 3,
-          "ms": 197781,
-          "promptTokens": 682,
-          "completionTokens": 387
-        }
-      ]
-    },
-    "generatedAt": "2026-05-04T13:12:54.398Z",
-    "updatedAt": "2026-05-04T13:12:54.398Z"
+    "updatedAt": "2026-05-05T09:53:54.188Z"
   },
   {
     "topic": "Beautiful Hotel Brewery",
@@ -2005,7 +2394,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-04T12:48:38.251Z",
-    "updatedAt": "2026-05-04T12:48:38.251Z"
+    "updatedAt": "2026-05-05T09:53:54.202Z"
   },
   {
     "topic": "traveling to Tuscany",
@@ -2392,7 +2781,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-04T12:17:38.693Z",
-    "updatedAt": "2026-05-04T12:17:38.693Z"
+    "updatedAt": "2026-05-05T09:53:54.206Z"
   },
   {
     "topic": "Problems with Hotel WLAN",
@@ -2783,7 +3172,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-04T11:56:50.562Z",
-    "updatedAt": "2026-05-04T11:56:50.562Z"
+    "updatedAt": "2026-05-05T09:53:54.210Z"
   },
   {
     "topic": "Arno Wins Fairly",
@@ -3185,7 +3574,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-04T10:06:38.916Z",
-    "updatedAt": "2026-05-04T10:06:38.916Z"
+    "updatedAt": "2026-05-05T09:53:54.215Z"
   },
   {
     "topic": "Arnos Unfair Win",
@@ -3602,7 +3991,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-04T08:51:28.446Z",
-    "updatedAt": "2026-05-04T08:51:28.446Z"
+    "updatedAt": "2026-05-05T09:53:54.219Z"
   },
   {
     "topic": "More People Arrive, Ping Pong Tournament",
@@ -3953,7 +4342,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-04T08:21:49.356Z",
-    "updatedAt": "2026-05-04T08:21:49.356Z"
+    "updatedAt": "2026-05-05T09:53:54.222Z"
   },
   {
     "topic": "Grandmas Doughs",
@@ -4321,7 +4710,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-04T07:58:04.340Z",
-    "updatedAt": "2026-05-04T07:58:04.340Z"
+    "updatedAt": "2026-05-05T09:53:54.226Z"
   },
   {
     "topic": "Grandpas Dough Talk",
@@ -4743,7 +5132,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-04T06:58:28.635Z",
-    "updatedAt": "2026-05-04T07:36:14.346Z"
+    "updatedAt": "2026-05-05T09:53:54.230Z"
   },
   {
     "topic": "anna thinks it is smarter to use cyanobacteria in windows to produce energy",
@@ -5108,7 +5497,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-03T19:04:43.323Z",
-    "updatedAt": "2026-05-04T13:32:37.867Z",
+    "updatedAt": "2026-05-05T09:53:54.234Z",
     "exportedFlags": {},
     "exportedAt": "2026-05-04T11:28:42.042Z"
   },
@@ -5449,7 +5838,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-03T18:43:12.455Z",
-    "updatedAt": "2026-05-03T18:43:12.455Z"
+    "updatedAt": "2026-05-05T09:53:54.238Z"
   },
   {
     "topic": "vibecoding",
@@ -5809,7 +6198,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-03T17:16:08.007Z",
-    "updatedAt": "2026-05-03T17:16:08.007Z"
+    "updatedAt": "2026-05-05T09:53:54.241Z"
   },
   {
     "topic": "write a poem about vibecoding a language learning app",
@@ -6167,7 +6556,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-03T17:00:14.306Z",
-    "updatedAt": "2026-05-03T17:00:14.306Z"
+    "updatedAt": "2026-05-05T09:53:54.245Z"
   },
   {
     "topic": "neuroscience and EEG",
@@ -6545,7 +6934,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-03T12:43:35.826Z",
-    "updatedAt": "2026-05-03T12:43:35.826Z"
+    "updatedAt": "2026-05-05T09:53:54.249Z"
   },
   {
     "topic": "alessia starts to develop symptoms of bipolar mood disorder, oscillating between the zombi fungus and its counterpart that control her brain chemistry",
@@ -6906,7 +7295,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-03T12:16:14.586Z",
-    "updatedAt": "2026-05-03T12:16:14.586Z"
+    "updatedAt": "2026-05-05T09:53:54.252Z"
   },
   {
     "topic": "marco learns from an old witch",
@@ -7296,7 +7685,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-03T09:44:01.859Z",
-    "updatedAt": "2026-05-03T09:44:01.859Z"
+    "updatedAt": "2026-05-05T09:53:54.256Z"
   },
   {
     "topic": "alessia sees the blood pumping in marcos arteries",
@@ -7636,7 +8025,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-03T08:56:11.486Z",
-    "updatedAt": "2026-05-03T08:56:11.486Z"
+    "updatedAt": "2026-05-05T09:53:54.260Z"
   },
   {
     "topic": "alessia turns into a zombie, controlled by the fungus",
@@ -8023,7 +8412,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-03T08:25:28.736Z",
-    "updatedAt": "2026-05-03T08:25:28.736Z"
+    "updatedAt": "2026-05-05T09:53:54.264Z"
   },
   {
     "topic": "the fungus spreads to the brain",
@@ -8490,7 +8879,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-02T22:28:57.323Z",
-    "updatedAt": "2026-05-02T22:28:57.323Z"
+    "updatedAt": "2026-05-05T09:53:54.268Z"
   },
   {
     "topic": "food poisoning in the hospital",
@@ -8912,7 +9301,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-02T20:13:41.824Z",
-    "updatedAt": "2026-05-02T20:53:19.722Z",
+    "updatedAt": "2026-05-05T09:53:54.272Z",
     "ratings": {
       "difficulty": 2,
       "fun": 2,
@@ -9353,7 +9742,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-02T17:41:52.766Z",
-    "updatedAt": "2026-05-02T17:41:52.766Z"
+    "updatedAt": "2026-05-05T09:53:54.279Z"
   },
   {
     "topic": "discussing contemporary art at the venice biennale",
@@ -9764,7 +10153,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-02T16:42:32.270Z",
-    "updatedAt": "2026-05-02T16:42:32.270Z"
+    "updatedAt": "2026-05-05T09:53:54.285Z"
   },
   {
     "topic": "injured and need hospitalization in italy",
@@ -10151,7 +10540,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-02T16:10:59.489Z",
-    "updatedAt": "2026-05-02T16:24:03.024Z",
+    "updatedAt": "2026-05-05T09:53:54.288Z",
     "ratings": {
       "difficulty": 2,
       "fun": 2,
@@ -10532,7 +10921,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-02T15:35:34.527Z",
-    "updatedAt": "2026-05-02T15:45:47.219Z",
+    "updatedAt": "2026-05-05T09:53:54.292Z",
     "ratings": {
       "difficulty": 3,
       "fun": 2,
@@ -10891,7 +11280,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-02T12:52:40.826Z",
-    "updatedAt": "2026-05-03T17:42:44.855Z"
+    "updatedAt": "2026-05-05T09:53:54.296Z"
   },
   {
     "topic": "walking on the mosel",
@@ -11266,7 +11655,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-02T09:30:32.029Z",
-    "updatedAt": "2026-05-02T09:30:32.029Z"
+    "updatedAt": "2026-05-05T09:53:54.300Z"
   },
   {
     "topic": "climbing in the dolomites",
@@ -11705,7 +12094,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-05-02T08:53:42.265Z",
-    "updatedAt": "2026-05-02T09:06:03.251Z",
+    "updatedAt": "2026-05-05T09:53:54.303Z",
     "ratings": {
       "difficulty": 3,
       "fun": 2,
@@ -12087,7 +12476,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-04-30T12:47:49.886Z",
-    "updatedAt": "2026-04-30T13:24:44.020Z",
+    "updatedAt": "2026-05-05T09:53:54.307Z",
     "ratings": {
       "difficulty": 2,
       "fun": 2,
@@ -12468,7 +12857,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-04-30T09:47:44.552Z",
-    "updatedAt": "2026-04-30T09:47:44.552Z"
+    "updatedAt": "2026-05-05T09:53:54.310Z"
   },
   {
     "topic": "going for an alternative music concert in madrid",
@@ -12865,7 +13254,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-04-30T08:28:36.790Z",
-    "updatedAt": "2026-04-30T08:28:36.790Z"
+    "updatedAt": "2026-05-05T09:53:54.319Z"
   },
   {
     "topic": "when in italy",
@@ -13234,7 +13623,8 @@ const STATIC_LESSONS = [
         }
       ]
     },
-    "generatedAt": "2026-04-29T08:58:18.424Z"
+    "generatedAt": "2026-04-29T08:58:18.424Z",
+    "updatedAt": "2026-05-05T09:53:54.323Z"
   },
   {
     "topic": "traveling to toscana in may with a baby",
@@ -13651,7 +14041,8 @@ const STATIC_LESSONS = [
         }
       ]
     },
-    "generatedAt": "2026-04-29T00:10:12.959Z"
+    "generatedAt": "2026-04-29T00:10:12.959Z",
+    "updatedAt": "2026-05-05T09:53:54.327Z"
   },
   {
     "topic": "a vacation in domburg",
@@ -14068,7 +14459,8 @@ const STATIC_LESSONS = [
         }
       ]
     },
-    "generatedAt": "2026-04-28T23:40:14.508Z"
+    "generatedAt": "2026-04-28T23:40:14.508Z",
+    "updatedAt": "2026-05-05T09:53:54.330Z"
   },
   {
     "topic": "meeting women",
@@ -14480,7 +14872,8 @@ const STATIC_LESSONS = [
         }
       ]
     },
-    "generatedAt": "2026-04-28T14:33:27.119Z"
+    "generatedAt": "2026-04-28T14:33:27.119Z",
+    "updatedAt": "2026-05-05T09:53:54.333Z"
   },
   {
     "topic": "making pasta",
@@ -14865,7 +15258,8 @@ const STATIC_LESSONS = [
         }
       ]
     },
-    "generatedAt": "2026-04-28T18:42:19.504Z"
+    "generatedAt": "2026-04-28T18:42:19.504Z",
+    "updatedAt": "2026-05-05T09:53:54.337Z"
   },
   {
     "topic": "making a pizza",
@@ -15252,7 +15646,8 @@ const STATIC_LESSONS = [
         }
       ]
     },
-    "generatedAt": "2026-04-28T19:07:53.832Z"
+    "generatedAt": "2026-04-28T19:07:53.832Z",
+    "updatedAt": "2026-05-05T09:53:54.340Z"
   },
   {
     "topic": "tabletennis in a park",
@@ -15581,7 +15976,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-04-27T07:52:53.047Z",
-    "updatedAt": "2026-05-03T18:05:21.925Z"
+    "updatedAt": "2026-05-05T09:53:54.344Z"
   },
   {
     "topic": "pingpong in the park",
@@ -15905,7 +16300,8 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-27T07:27:49.801Z"
+    "generatedAt": "2026-04-27T07:27:49.801Z",
+    "updatedAt": "2026-05-05T09:53:54.347Z"
   },
   {
     "topic": "table tennis in the park",
@@ -16224,7 +16620,8 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-26T14:12:20.214Z"
+    "generatedAt": "2026-04-26T14:12:20.214Z",
+    "updatedAt": "2026-05-05T09:53:54.351Z"
   },
   {
     "topic": "mountain climbing",
@@ -16559,7 +16956,8 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-26T14:29:29.650Z"
+    "generatedAt": "2026-04-26T14:29:29.650Z",
+    "updatedAt": "2026-05-05T09:53:54.354Z"
   },
   {
     "topic": "music journalism",
@@ -16890,7 +17288,8 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-25T23:16:39.942Z"
+    "generatedAt": "2026-04-25T23:16:39.942Z",
+    "updatedAt": "2026-05-05T09:53:54.358Z"
   },
   {
     "topic": "italian_vs_german_beer",
@@ -17270,7 +17669,8 @@ const STATIC_LESSONS = [
         }
       ]
     },
-    "generatedAt": "2026-04-29T10:48:57.990Z"
+    "generatedAt": "2026-04-29T10:48:57.990Z",
+    "updatedAt": "2026-05-05T09:53:54.362Z"
   },
   {
     "topic": "pizza dough",
@@ -17679,7 +18079,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-04-29T14:40:08.166Z",
-    "updatedAt": "2026-05-03T20:51:37.538Z"
+    "updatedAt": "2026-05-05T09:53:54.365Z"
   },
   {
     "topic": "sheep on the meadow",
@@ -18072,7 +18472,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-04-29T15:38:56.865Z",
-    "updatedAt": "2026-05-03T18:28:05.385Z"
+    "updatedAt": "2026-05-05T09:53:54.369Z"
   },
   {
     "topic": "pilze suchen",
@@ -18427,7 +18827,7 @@ const STATIC_LESSONS = [
       "promptTokens": 1709,
       "completionTokens": 271
     },
-    "updatedAt": "2026-05-02T11:14:42.760Z"
+    "updatedAt": "2026-05-05T09:53:54.372Z"
   },
   {
     "topic": "table tennis",
@@ -18790,7 +19190,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-04-29T14:56:02.050Z",
-    "updatedAt": "2026-05-03T19:48:04.236Z"
+    "updatedAt": "2026-05-05T09:53:54.376Z"
   },
   {
     "topic": "architecture",
@@ -19157,7 +19557,8 @@ const STATIC_LESSONS = [
         ]
       }
     ],
-    "generatedAt": "2026-04-26T00:53:55.962Z"
+    "generatedAt": "2026-04-26T00:53:55.962Z",
+    "updatedAt": "2026-05-05T09:53:54.379Z"
   },
   {
     "topic": "yeast metabolic oscillations",
@@ -19586,7 +19987,8 @@ const STATIC_LESSONS = [
       "totalMs": 315090,
       "promptTokens": 938,
       "completionTokens": 524
-    }
+    },
+    "updatedAt": "2026-05-05T09:53:54.383Z"
   }
 ];
 // Sort newest first
