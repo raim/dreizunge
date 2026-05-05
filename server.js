@@ -322,7 +322,7 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
     ? `\nContext — use vocabulary and themes from this story where natural:\n${story.slice(0, 800)}`
     : '';
   const userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}\nReturn only the JSON object.`;
-  const minWords = (difficulty || 2) === 1 ? 2 : 3;
+  const minWords = 1; //(difficulty || 2) === 1 ? 2 : 3;
 
   return withRetry(`Lesson ${lessonNum}`, async () => {
     const t0 = Date.now();
@@ -351,7 +351,7 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
     if (lesson.vocab.length < 4) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
 
     // Validate sentences
-    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < 3)
+    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < 1)
       throw new Error(`Only ${lesson.sentences?.length ?? 0} sentences`);
     // Derive words[] from sentence text — no LLM words array needed
     lesson.sentences = lesson.sentences.slice(0, 5).map(deriveSentenceWords);
