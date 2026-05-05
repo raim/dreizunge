@@ -1,6 +1,430 @@
 {
   "lessons": [
     {
+      "topic": "Cremant vs. Prosecco",
+      "topicEmoji": "🥂",
+      "userTopic": "the brewer explains the difference between cremant and prosecco.",
+      "lang": "lb",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "De Jean war e Mann, deen d'gutt Läie wäertschätzt. Hien hat e kléine, awer feine Wënner a senger Kéier, an hien war ëmmer op der Siche fir nei Geschmäcker ze entdecken. Eppes hat hien awer nach net probéiert: Cremant versus Prosecco. Seng Fra, d'Marie, war e grousse Fan vum Prosecco, während de Jean e bëssen méi konservativ war.\n\nE Samstäg, nodeem si e schéint Iessen genoss haten, sot de Jean: \"Marie, ech wollt gär eemol e Cremant probéieren. Dir sidd sou begeeschtert vum Prosecco, awer ech wëll och wéi et geschéint.\" Si lächelt a sot: \"Okay, gär! Mir kënnen e gläiche Moie probéieren a verglachen.\"\n\nSi hunn e Fläsch Cremant aus der Moselregioun a seng Fläsch Prosecco aus dem Veneto. De Cremant war e bëssen méi delikat am Aroma, mat Noten vu griegem Frou an enger Touch vu Brutt. De Prosecco war méi fruuchtlech, mat Noten vu Peer an enger liicht bléieger Not. De Jean war iwwerrascht vun der Differenz.\n\n\"Ech muss soen,\" sot de Jean, \"de Cremant ass richteg gutt. Et ass e bëssen méi subtil wéi de Prosecco, awer et huet eise eegenen Charme.\" De Marie probéierte souguer béid, an war agreéiert. \"Ech hunn nach ni sou vill Geschécker an engem alkoholesche Getränk entdeckt.\"\n\nSi genosse béid, de Cremant an de Prosecco, an diskutéiert iwwer d'Geschéchter a d'Texturen. De Jean war gléichzäiteg erstaunt an zefridden. Hien hat net nëmmen e neie Läie entdeckt, mee och e besseren Verständnis fir d'Vielfalt vun alkoholesche Getränker. An d'Marie war gléichzäiteg zefridden, well si de Jean an d'Welt vun de feinen Läie virgestallt hat.",
+      "storyLang": "lb",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch.\n\nWrite a story for the topic: \"Cremant vs. Prosecco\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Cremant vs. Prosecco: Basics",
+          "desc": "Exploring the differences between these sparkling wines.",
+          "icon": "🥂",
+          "vocab": [
+            {
+              "it": "e Cremant",
+              "en": "a Cremant",
+              "pron": "KREH-mahnt"
+            },
+            {
+              "it": "e Prosecco",
+              "en": "a Prosecco",
+              "pron": "pro-SEH-koh"
+            },
+            {
+              "it": "déi delikat",
+              "en": "the delicate",
+              "pron": "deh-LEE-kaht"
+            },
+            {
+              "it": "e Geschéicht",
+              "en": "a story/tale",
+              "pron": "geh-SHEHT"
+            },
+            {
+              "it": "d'Aroma",
+              "en": "the aroma",
+              "pron": "ah-ROH-mah"
+            },
+            {
+              "it": "e Mann",
+              "en": "a man",
+              "pron": "mahn"
+            },
+            {
+              "it": "geschéieren",
+              "en": "to happen/occur",
+              "pron": "geh-SHEE-ren"
+            },
+            {
+              "it": "konservativ",
+              "en": "conservative",
+              "pron": "kon-ser-vah-TEEF"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "De Jean wollt gär e Cremant probéieren, well d'Marie sou begeeschtert vum Prosecco war.",
+              "words": [
+                "De",
+                "Jean",
+                "wollt",
+                "gär",
+                "e",
+                "Cremant",
+                "probéieren,",
+                "well",
+                "d'Marie",
+                "sou",
+                "begeeschtert",
+                "vum",
+                "Prosecco",
+                "war."
+              ]
+            },
+            {
+              "it": "E Cremant aus der Moselregioun hat e delikat Aroma.",
+              "words": [
+                "E",
+                "Cremant",
+                "aus",
+                "der",
+                "Moselregioun",
+                "hat",
+                "e",
+                "delikat",
+                "Aroma."
+              ]
+            },
+            {
+              "it": "De Prosecco ass oft méi fruuchtlech wéi e Cremant.",
+              "words": [
+                "De",
+                "Prosecco",
+                "ass",
+                "oft",
+                "méi",
+                "fruuchtlech",
+                "wéi",
+                "e",
+                "Cremant."
+              ]
+            },
+            {
+              "it": "Hien huet d'Geschicht vum Cremant an dem Prosecco verglach.",
+              "words": [
+                "Hien",
+                "huet",
+                "d'Geschicht",
+                "vum",
+                "Cremant",
+                "an",
+                "dem",
+                "Prosecco",
+                "verglach."
+              ]
+            },
+            {
+              "it": "De Mann war konservativ, awer och opmierksam op nei Geschmäcker.",
+              "words": [
+                "De",
+                "Mann",
+                "war",
+                "konservativ,",
+                "awer",
+                "och",
+                "opmierksam",
+                "op",
+                "nei",
+                "Geschmäcker."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Cremant vs. Prosecco: Differences",
+          "desc": "Exploring the nuances of these sparkling wines.",
+          "icon": "🥂",
+          "vocab": [
+            {
+              "it": "e Bouquet",
+              "en": "a bouquet",
+              "pron": "boo-kay"
+            },
+            {
+              "it": "déi sprëtzeg",
+              "en": "the bubbly/sparkling",
+              "pron": "day sprets-ek"
+            },
+            {
+              "it": "e Prosecco",
+              "en": "a Prosecco",
+              "pron": "pro-sek-ko"
+            },
+            {
+              "it": "e Cremant",
+              "en": "a Cremant",
+              "pron": "kray-mont"
+            },
+            {
+              "it": "déi Regioun",
+              "en": "the region",
+              "pron": "ray-gyoon"
+            },
+            {
+              "it": "déi Noten",
+              "en": "the notes",
+              "pron": "no-ten"
+            },
+            {
+              "it": "e Verglach",
+              "en": "a comparison",
+              "pron": "fair-glach"
+            },
+            {
+              "it": "déi Textur",
+              "en": "the texture",
+              "pron": "tek-stuur"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "De Cremant huet e feine Bouquet vu fruuchtige Noten.",
+              "en": "The Cremant has a fine bouquet of fruity notes.",
+              "words": [
+                "De",
+                "Cremant",
+                "huet",
+                "e",
+                "feine",
+                "Bouquet",
+                "vu",
+                "fruuchtige",
+                "Noten."
+              ]
+            },
+            {
+              "it": "Ech léieren ëmmer méi iwwer déi verschidde Proseccoen.",
+              "en": "I am learning more and more about the different Proseccos.",
+              "words": [
+                "Ech",
+                "léieren",
+                "ëmmer",
+                "méi",
+                "iwwer",
+                "déi",
+                "verschidde",
+                "Proseccoen."
+              ]
+            },
+            {
+              "it": "Mir wëllen e Cremant aus enger anerer Regioun probéieren.",
+              "en": "We want to try a Cremant from another region.",
+              "words": [
+                "Mir",
+                "wëllen",
+                "e",
+                "Cremant",
+                "aus",
+                "enger",
+                "anerer",
+                "Regioun",
+                "probéieren."
+              ]
+            },
+            {
+              "it": "De Verglach tëscht deenen zwéie wäert interessant sinn.",
+              "en": "The comparison between the two will be interesting.",
+              "words": [
+                "De",
+                "Verglach",
+                "tëscht",
+                "deenen",
+                "zwéie",
+                "wäert",
+                "interessant",
+                "sinn."
+              ]
+            },
+            {
+              "it": "E gudde Prosecco ass och sprëtzeg a fruuchtlech.",
+              "en": "A good Prosecco is also bubbly and fruity.",
+              "words": [
+                "E",
+                "gudde",
+                "Prosecco",
+                "ass",
+                "och",
+                "sprëtzeg",
+                "a",
+                "fruuchtlech."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Cremant vs. Prosecco: Details",
+          "desc": "Exploring nuances, flavors, and regional differences.",
+          "icon": "🥂",
+          "vocab": [
+            {
+              "it": "déi subtil",
+              "en": "the subtle",
+              "pron": "DEE soo-TEEL"
+            },
+            {
+              "it": "e Kéin",
+              "en": "a type/kind",
+              "pron": "uh KANE"
+            },
+            {
+              "it": "déi traditionell",
+              "en": "the traditional",
+              "pron": "dee tra-dee-SYOHN-ell"
+            },
+            {
+              "it": "e Prozess",
+              "en": "a process",
+              "pron": "uh PROH-sess"
+            },
+            {
+              "it": "déi Methode",
+              "en": "the method",
+              "pron": "dee meh-TOHD"
+            },
+            {
+              "it": "e Produzent",
+              "en": "a producer",
+              "pron": "uh pro-DOO-zent"
+            },
+            {
+              "it": "déi Qualitéit",
+              "en": "the quality",
+              "pron": "dee kva-lee-TAYT"
+            },
+            {
+              "it": "e Gaum",
+              "en": "a taste/flavor",
+              "pron": "uh GOWM"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "De Cremant huet oft e subtile Gaum, deen net jiddere gefällt.",
+              "en": "Cremant often has a subtle taste that not everyone likes.",
+              "words": [
+                "De",
+                "Cremant",
+                "huet",
+                "oft",
+                "e",
+                "subtile",
+                "Gaum,",
+                "deen",
+                "net",
+                "jiddere",
+                "gefällt."
+              ]
+            },
+            {
+              "it": "All Prosecco ass net dee selwechte Kéin, et gëtt grouss Ënnerscheeder.",
+              "en": "Not all Prosecco is the same type; there are big differences.",
+              "words": [
+                "All",
+                "Prosecco",
+                "ass",
+                "net",
+                "dee",
+                "selwechte",
+                "Kéin,",
+                "et",
+                "gëtt",
+                "grouss",
+                "Ënnerscheeder."
+              ]
+            },
+            {
+              "it": "D'traditionell Methode fir Cremant ze produzéieren ass méi zäitwierk.",
+              "en": "The traditional method for producing Cremant is more time-consuming.",
+              "words": [
+                "D'traditionell",
+                "Methode",
+                "fir",
+                "Cremant",
+                "ze",
+                "produzéieren",
+                "ass",
+                "méi",
+                "zäitwierk."
+              ]
+            },
+            {
+              "it": "E gudde Produzent läit Wäert op déi Qualitéit vu senger Wierker.",
+              "en": "A good producer focuses on the quality of their products.",
+              "words": [
+                "E",
+                "gudde",
+                "Produzent",
+                "läit",
+                "Wäert",
+                "op",
+                "déi",
+                "Qualitéit",
+                "vu",
+                "senger",
+                "Wierker."
+              ]
+            },
+            {
+              "it": "De Prozess fir e Cremant ze maachen kann laang an delikát sinn.",
+              "en": "The process of making a Cremant can be long and delicate.",
+              "words": [
+                "De",
+                "Prozess",
+                "fir",
+                "e",
+                "Cremant",
+                "ze",
+                "maachen",
+                "kann",
+                "laang",
+                "an",
+                "delikát",
+                "sinn."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 2259480,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "totalPromptTokens": 2355,
+        "totalCompletionTokens": 1994,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 523982,
+            "promptTokens": 619,
+            "completionTokens": 419
+          },
+          {
+            "lessonNum": 2,
+            "ms": 584103,
+            "promptTokens": 700,
+            "completionTokens": 477
+          },
+          {
+            "lessonNum": 3,
+            "ms": 709589,
+            "promptTokens": 766,
+            "completionTokens": 521
+          }
+        ]
+      },
+      "generatedAt": "2026-05-05T15:06:50.285Z",
+      "updatedAt": "2026-05-05T15:06:50.285Z"
+    },
+    {
       "topic": "Cremant vs. Champagne: Yeast & Brewing",
       "topicEmoji": "🥂",
       "userTopic": "the brewer explains the difference between cremant and champagne. is wild or cultured yeast used?",
@@ -413,7 +837,7 @@
       "updatedAt": "2026-05-05T14:21:12.152Z"
     },
     {
-      "topic": "Cremant vs. Champagne: A Brewers Explanation",
+      "topic": "Cremant vs. Champagne: A Brewer's Explanation",
       "topicEmoji": "🥂",
       "userTopic": "the brewer explains the difference between cremant and champagne. is wild yeast used? how long is it fermented in the bottle?",
       "lang": "lb",
@@ -21045,6 +21469,34 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-05T13:39:06.400Z"
+    },
+    "Cremant_vs._Prosecco:order:De_Jean_wollt_gär_e_Cremant_probéieren,_": {
+      "topic": "Cremant vs. Prosecco",
+      "type": "order",
+      "it": "De Jean wollt gär e Cremant probéieren, well d'Marie sou begeeschtert vum Prosecco war.",
+      "en": "",
+      "correct": "De Jean wollt gär e Cremant probéieren, well d'Marie sou begeeschtert vum Prosecco war.",
+      "choices": [],
+      "words": [
+        "begeeschtert",
+        "well",
+        "sou",
+        "Cremant.",
+        "wollt",
+        "e",
+        "och",
+        "probéieren,",
+        "der",
+        "d'Marie",
+        "Jean",
+        "Prosecco",
+        "war.",
+        "gär",
+        "vum",
+        "Cremant",
+        "De"
+      ],
+      "flaggedAt": "2026-05-05T15:14:11.517Z"
     }
   }
 }
