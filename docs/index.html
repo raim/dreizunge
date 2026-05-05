@@ -938,6 +938,404 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 
 const STATIC_LESSONS = [
   {
+    "topic": "East Tyrol Dialects",
+    "topicEmoji": "🗣️",
+    "userTopic": "in east-tyrol people speak a dialect that is mostly of bavarian origin with a heavy slavic accent",
+    "lang": "de",
+    "difficulty": 2,
+    "storyLen": 500,
+    "story": "In den Bergen von Osttirol, wo die Alpen sanft in den Himmel hinaufsteigen, lebt eine Sprache, die den Herzen der Menschen direkt anspricht. Es ist die Dialekt, die in den Hütten der Alpenbewohner klingt, die in den Wäldern ihre Hütten aufgeschlagen haben. Man hört sie in den Läden, wo die Teller klappern, und in den Kirchen, wo die Glocken läuten.\n\nIn der kleinen Gemeinde von Sölden, wo die Berge sich wie Wächter aufbieten, spricht Maria mit ihrem Mann, Peter, in ihrem Haus. „Hast du schon den Käse für den Abend gekauft?“ fragt sie, während sie die Teller abräumt. Peter, der in der Wäscherei arbeitet, antwortet: „Ja, hab schon den Käse und die Würste. Und du? Hast du den Kaffee für morgen früh gekocht?“ Maria lacht und nickt, während sie die Teller in den Spülbecken stellt.\n\nAm Sonntagmorgen, als die Glocken der Kirche von Sölden läuten, verlassen Maria und Peter ihre Hütte. Sie gehen durch den schneebedeckten Dorfplatz, wo die Kinder in ihren Schneeanzügen herumlaufen. „Guten Morgen, Maria!“ rufen sie, und sie lächelt zurück. „Guten Morgen, ihr Kleinen!“ Sie gehen zur Kirche, wo sie mit den anderen Gemeindemitgliedern die Messe besuchen. Die Worte der Priester klingen in der Dialekt, die sie verstehen und lieben.\n\nNach der Messe gehen sie in den Dorfplatz, wo die Frauen sich unterhalten. „Hast du schon gehört, dass der neue Lehrer aus Innsbruck kommt?“ fragt eine Frau. „Ja, ich habe es gehört. Er soll gut sein, aber ich hoffe, er spricht auch den richtigen Dialekt“, antwortet Maria. Die Frauen lachen und plaudern weiter, während sie ihre Tücher wechseln.\n\nAm Abend, als die Sonne untergeht und die Berge in ein sanftes Rosa tauchen, sitzen Maria und Peter in ihrer Hütte. Sie trinken Kaffee und plaudern über den Tag. „Was hältst du von dem neuen Lehrer?“ fragt Peter. „Ich denke, er wird gut sein, wenn er den richtigen Dialekt spricht. Aber wir müssen ihm Zeit lassen, sich anzupassen.“ Maria lächelt, während sie den Kaffee trinkt. Sie sind glücklich in ihrer Gemeinde, wo die Sprache der Herzen so wunderbar klingt.",
+    "storyLang": "de",
+    "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German.\n\nWrite a story for the topic: \"East Tyrol Dialects\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Dialekt in Osttirol",
+        "desc": "Bavarian origin with Slavic accent",
+        "icon": "奥地",
+        "vocab": [
+          {
+            "it": "Hütte",
+            "en": "hut",
+            "pron": "HUT"
+          },
+          {
+            "it": "Alpenbewohner",
+            "en": "Alpine dwellers",
+            "pron": "AL-PEHN-BOW-HEN-ER"
+          },
+          {
+            "it": "Wälder",
+            "en": "forests",
+            "pron": "VAY-LDER"
+          },
+          {
+            "it": "Teller",
+            "en": "plates",
+            "pron": "TELL-ER"
+          },
+          {
+            "it": "Glocken",
+            "en": "bells",
+            "pron": "GLOK-LEN"
+          },
+          {
+            "it": "Wäscherei",
+            "en": "laundromat",
+            "pron": "VAY-SHAY-RYE"
+          },
+          {
+            "it": "Käse",
+            "en": "cheese",
+            "pron": "KAH-SH"
+          },
+          {
+            "it": "Kaffee",
+            "en": "coffee",
+            "pron": "KAH-FEE"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "In den Wäldern von Osttirol klingt der Dialekt der Alpenbewohner.",
+            "en": "In the forests of East Tyrol, the dialect of the Alpine dwellers can be heard.",
+            "words": [
+              "In",
+              "den",
+              "Wäldern",
+              "von",
+              "Osttirol",
+              "klingt",
+              "der",
+              "Dialekt",
+              "der",
+              "Alpenbewohner."
+            ]
+          },
+          {
+            "it": "Maria und Peter sprechen in ihrer Hütte auf Osttirol.",
+            "en": "Maria and Peter speak in their hut in East Tyrol.",
+            "words": [
+              "Maria",
+              "und",
+              "Peter",
+              "sprechen",
+              "in",
+              "ihrer",
+              "Hütte",
+              "auf",
+              "Osttirol."
+            ]
+          },
+          {
+            "it": "Hast du schon den Käse für den Abend gekauft?",
+            "en": "Have you already bought the cheese for tonight?",
+            "words": [
+              "Hast",
+              "du",
+              "schon",
+              "den",
+              "Käse",
+              "für",
+              "den",
+              "Abend",
+              "gekauft?"
+            ]
+          },
+          {
+            "it": "Ja, hab schon den Käse und die Würste.",
+            "en": "Yes, I already have the cheese and sausages.",
+            "words": [
+              "Ja,",
+              "hab",
+              "schon",
+              "den",
+              "Käse",
+              "und",
+              "die",
+              "Würste."
+            ]
+          },
+          {
+            "it": "Und du? Hast du den Kaffee für morgen früh gekocht?",
+            "en": "And you? Have you made the coffee for tomorrow morning?",
+            "words": [
+              "Und",
+              "du?",
+              "Hast",
+              "du",
+              "den",
+              "Kaffee",
+              "für",
+              "morgen",
+              "früh",
+              "gekocht?"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "East Tyrolean Dialect",
+        "desc": "Bavarian origin with Slavic influence",
+        "icon": "-mountains:",
+        "vocab": [
+          {
+            "it": "Bauern",
+            "en": "farmers",
+            "pron": "BAUern"
+          },
+          {
+            "it": "Säcke",
+            "en": "sacks",
+            "pron": "SAcke"
+          },
+          {
+            "it": "Wäldersch",
+            "en": "forest dialect",
+            "pron": "VAUldersch"
+          },
+          {
+            "it": "Käsespitz",
+            "en": "cheese peak",
+            "pron": "KASeSpitz"
+          },
+          {
+            "it": "Würstl",
+            "en": "sausages",
+            "pron": "VUrstl"
+          },
+          {
+            "it": "Kaffeebohne",
+            "en": "coffee bean",
+            "pron": "KAFeBohne"
+          },
+          {
+            "it": "Brotlaib",
+            "en": "bread loaf",
+            "pron": "BROTLAib"
+          },
+          {
+            "it": "Söldner",
+            "en": "soldiers",
+            "pron": "SOlndner"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Bauern tragen Säcke auf den Säcken.",
+            "en": "Farmers carry sacks on the sacks.",
+            "words": [
+              "Bauern",
+              "tragen",
+              "Säcke",
+              "auf",
+              "den",
+              "Säcken."
+            ]
+          },
+          {
+            "it": "Wäldersch klingt anders als der Standarddialekt.",
+            "en": "Forest dialect sounds different than the standard dialect.",
+            "words": [
+              "Wäldersch",
+              "klingt",
+              "anders",
+              "als",
+              "der",
+              "Standarddialekt."
+            ]
+          },
+          {
+            "it": "Käsespitz ist ein beliebtes Gericht hier in Osttirol.",
+            "en": "Cheese peak is a popular dish here in East Tyrol.",
+            "words": [
+              "Käsespitz",
+              "ist",
+              "ein",
+              "beliebtes",
+              "Gericht",
+              "hier",
+              "in",
+              "Osttirol."
+            ]
+          },
+          {
+            "it": "Würstl und Kaffeebohne sind immer bei uns in der Hütte.",
+            "en": "Sausages and coffee beans are always in our hut.",
+            "words": [
+              "Würstl",
+              "und",
+              "Kaffeebohne",
+              "sind",
+              "immer",
+              "bei",
+              "uns",
+              "in",
+              "der",
+              "Hütte."
+            ]
+          },
+          {
+            "it": "Söldner haben oft Hunger und brauchen Brotlaib.",
+            "en": "Soldiers often get hungry and need bread loaf.",
+            "words": [
+              "Söldner",
+              "haben",
+              "oft",
+              "Hunger",
+              "und",
+              "brauchen",
+              "Brotlaib."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "East Tyrolean Dialect",
+        "desc": "Bavarian origin with Slavic accent",
+        "icon": "奥地",
+        "vocab": [
+          {
+            "it": "Bauernsprech",
+            "en": "farmer's speech",
+            "pron": "BOH-erns-SPEICH"
+          },
+          {
+            "it": "Sackfutter",
+            "en": "sack filler",
+            "pron": "SAK-fu-TET"
+          },
+          {
+            "it": "Würstelbude",
+            "en": "sausage shop",
+            "pron": "VOO-stel-BOOD"
+          },
+          {
+            "it": "Käsespitzl",
+            "en": "small cheese peak",
+            "pron": "KAH-ze-spit-LEH"
+          },
+          {
+            "it": "Brotlaib",
+            "en": "bread loaf",
+            "pron": "BROHT-lahyb"
+          },
+          {
+            "it": "Söldnerkaffee",
+            "en": "soldier's coffee",
+            "pron": "SOHL-nern-KAH-fee"
+          },
+          {
+            "it": "Wäldersch",
+            "en": "forest dialect",
+            "pron": "VOL-derskh"
+          },
+          {
+            "it": "Sackkarree",
+            "en": "sack carré",
+            "pron": "SAK-kah-REH"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Im Wäldersch spricht man anders als in der Stadt.",
+            "en": "In the forest dialect one speaks differently than in the city.",
+            "words": [
+              "Im",
+              "Wäldersch",
+              "spricht",
+              "man",
+              "anders",
+              "als",
+              "in",
+              "der",
+              "Stadt."
+            ]
+          },
+          {
+            "it": "Mein Sackfutter ist voller Käsespitzl.",
+            "en": "My sack filler is full of small cheese peaks.",
+            "words": [
+              "Mein",
+              "Sackfutter",
+              "ist",
+              "voller",
+              "Käsespitzl."
+            ]
+          },
+          {
+            "it": "Ich kaufe Würstelbude fürs Abendessen.",
+            "en": "I buy sausage shop for dinner.",
+            "words": [
+              "Ich",
+              "kaufe",
+              "Würstelbude",
+              "fürs",
+              "Abendessen."
+            ]
+          },
+          {
+            "it": "Sackkarree ist gut zum Mitnehmen.",
+            "en": "Sack carré is good to take away.",
+            "words": [
+              "Sackkarree",
+              "ist",
+              "gut",
+              "zum",
+              "Mitnehmen."
+            ]
+          },
+          {
+            "it": "Peter hat schon den Brotlaib für den Söldnerkaffee gekauft.",
+            "en": "Peter has already bought the bread loaf for the soldier's coffee.",
+            "words": [
+              "Peter",
+              "hat",
+              "schon",
+              "den",
+              "Brotlaib",
+              "für",
+              "den",
+              "Söldnerkaffee",
+              "gekauft."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1273620,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "totalPromptTokens": 2751,
+      "totalCompletionTokens": 1903,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 292466,
+          "promptTokens": 758,
+          "completionTokens": 411
+        },
+        {
+          "lessonNum": 2,
+          "ms": 284148,
+          "promptTokens": 834,
+          "completionTokens": 412
+        },
+        {
+          "lessonNum": 3,
+          "ms": 147515,
+          "promptTokens": 899,
+          "completionTokens": 422
+        }
+      ]
+    },
+    "generatedAt": "2026-05-05T22:57:20.763Z",
+    "updatedAt": "2026-05-05T22:57:20.763Z"
+  },
+  {
     "topic": "Plane Crash in the Andes",
     "topicEmoji": "✈️",
     "userTopic": "a plane crash in the andes",
