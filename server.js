@@ -137,7 +137,8 @@ Rules:
 - sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
 - sentence length: ${sentLen} — vary lengths naturally
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
-- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language`;
+- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language
+- CRITICAL: every "en" field MUST be in English, never any other language`;
 }
 
 const SYS_REPAIR = `You are a language exercise repairer for a Duolingo-style app.

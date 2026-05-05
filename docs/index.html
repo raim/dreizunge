@@ -860,6 +860,873 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 
 const STATIC_LESSONS = [
   {
+    "topic": "Cremant vs. Champagne: Yeast & Brewing",
+    "topicEmoji": "🥂",
+    "userTopic": "the brewer explains the difference between cremant and champagne. is wild or cultured yeast used?",
+    "lang": "lb",
+    "difficulty": 2,
+    "storyLen": 500,
+    "story": "Am Markt sinn zwee Getränker, déi d'Aart vun Champagne ännere: Cremant a Champagne. Dës zwee Getränker ginn aus dräi wesentleche Ingrediente geprëft: Äppel, Zucker a Säure. All dräi Getränker ginn aus Äppel geprëft, déi am Prozess vun der Fermentatioun verwandelt ginn.\n\nChampagne ass eng Spezialitéit déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel geprëft gëtt, déi am Depart aus Äppel gep",
+    "storyLang": "lb",
+    "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch.\n\nWrite a story for the topic: \"Cremant vs. Champagne: Yeast & Brewing\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Cremant vs. Champagne: Yeast types",
+        "desc": "Brewer explains the difference, wild or cultured yeast?",
+        "icon": "🧪",
+        "vocab": [
+          {
+            "it": "Cremant",
+            "en": "Sparkling wine",
+            "pron": "KREH-mant"
+          },
+          {
+            "it": "Champagne",
+            "en": "Sparkling wine",
+            "pron": "SHAHM-pah"
+          },
+          {
+            "it": "Äppel",
+            "en": "Apples",
+            "pron": "AP-pel"
+          },
+          {
+            "it": "Zucker",
+            "en": "Sugar",
+            "pron": "TSU-ker"
+          },
+          {
+            "it": "Säure",
+            "en": "Acid",
+            "pron": "SY-r"
+          },
+          {
+            "it": "Fermentatioun",
+            "en": "Fermentation",
+            "pron": "fuh-rem-tah-TAY-shun"
+          },
+          {
+            "it": "wilden Hef",
+            "en": "Wild yeast",
+            "pron": "VIL-den Hef"
+          },
+          {
+            "it": "kulturierten Hef",
+            "en": "Cultured yeast",
+            "pron": "kul-TOO-ree-ten Hef"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Beim Cremant gëtt de Brëwer deen natierlecht Hef benotzen.",
+            "en": "The Cremant uses naturally occurring yeast.",
+            "words": [
+              "Beim",
+              "Cremant",
+              "gëtt",
+              "de",
+              "Brëwer",
+              "deen",
+              "natierlecht",
+              "Hef",
+              "benotzen."
+            ]
+          },
+          {
+            "it": "Fir Champagne, gëtt de Zucker a Säure mat de Hef kombinéiert.",
+            "en": "For Champagne, sugar and acid are combined with the yeast.",
+            "words": [
+              "Fir",
+              "Champagne,",
+              "gëtt",
+              "de",
+              "Zucker",
+              "a",
+              "Säure",
+              "mat",
+              "de",
+              "Hef",
+              "kombinéiert."
+            ]
+          },
+          {
+            "it": "De Brëwer erklärt, dass d'Äppel d'Basis fir all dräi Getränker sinn.",
+            "en": "The brewer explains that apples are the basis for all three drinks.",
+            "words": [
+              "De",
+              "Brëwer",
+              "erklärt,",
+              "dass",
+              "d'Äppel",
+              "d'Basis",
+              "fir",
+              "all",
+              "dräi",
+              "Getränker",
+              "sinn."
+            ]
+          },
+          {
+            "it": "Wëllt de Konsument Hef, dann ass Cremant e gënschtech Alternativ.",
+            "en": "If the consumer wants yeast, then Cremant is a more affordable option.",
+            "words": [
+              "Wëllt",
+              "de",
+              "Konsument",
+              "Hef,",
+              "dann",
+              "ass",
+              "Cremant",
+              "e",
+              "gënschtech",
+              "Alternativ."
+            ]
+          },
+          {
+            "it": "De Prozess vun der Fermentatioun ass essentiell fir d'Qualitéit vum Champagne.",
+            "en": "The fermentation process is essential for the quality of Champagne.",
+            "words": [
+              "De",
+              "Prozess",
+              "vun",
+              "der",
+              "Fermentatioun",
+              "ass",
+              "essentiell",
+              "fir",
+              "d'Qualitéit",
+              "vum",
+              "Champagne."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Cremant vs. Champagne: Hef",
+        "desc": "Hef: wild oder kulturiert? Der Brëwer erklärt.",
+        "icon": "🧪",
+        "vocab": [
+          {
+            "it": "Hef",
+            "en": "Yeast"
+          },
+          {
+            "it": "Klimatischer Stil",
+            "en": "Climate"
+          },
+          {
+            "it": "Pressung",
+            "en": "Pressing"
+          },
+          {
+            "it": "Dosage",
+            "en": "Dosage"
+          },
+          {
+            "it": "Jahrgang",
+            "en": "Vintage"
+          },
+          {
+            "it": "Sauerstoff",
+            "en": "Oxygen"
+          },
+          {
+            "it": "Reifung",
+            "en": "Aging"
+          },
+          {
+            "it": "Klarheit",
+            "en": "Clarity"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Beim Cremant wäert d'Fermentatioun mat wilden Hef geschéien.",
+            "en": "In Cremant, the fermentation will happen with wild yeast.",
+            "words": [
+              "Beim",
+              "Cremant",
+              "wäert",
+              "d'Fermentatioun",
+              "mat",
+              "wilden",
+              "Hef",
+              "geschéien."
+            ]
+          },
+          {
+            "it": "Fir Champagne wird normalt kulturiert Hef benotzt.",
+            "en": "For Champagne, cultured yeast is usually used.",
+            "words": [
+              "Fir",
+              "Champagne",
+              "wird",
+              "normalt",
+              "kulturiert",
+              "Hef",
+              "benotzt."
+            ]
+          },
+          {
+            "it": "De Klimatischer Stil beeinflusst d'Geschmack, awer net d'Hef.",
+            "en": "The climate influences the taste, but not the yeast.",
+            "words": [
+              "De",
+              "Klimatischer",
+              "Stil",
+              "beeinflusst",
+              "d'Geschmack,",
+              "awer",
+              "net",
+              "d'Hef."
+            ]
+          },
+          {
+            "it": "D'Pressung muss präzis sinn, fir eng gutt Sauerstoffkontrolle ze garantéieren.",
+            "en": "The pressing must be precise to ensure good oxygen control.",
+            "words": [
+              "D'Pressung",
+              "muss",
+              "präzis",
+              "sinn,",
+              "fir",
+              "eng",
+              "gutt",
+              "Sauerstoffkontrolle",
+              "ze",
+              "garantéieren."
+            ]
+          },
+          {
+            "it": "De Dosage, d'Hef, ass eng wichteg Faktor am Champagne.",
+            "en": "The dosage, the yeast, is an important factor in Champagne.",
+            "words": [
+              "De",
+              "Dosage,",
+              "d'Hef,",
+              "ass",
+              "eng",
+              "wichteg",
+              "Faktor",
+              "am",
+              "Champagne."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Cremant vs. Champagne: Hef",
+        "desc": "Heftyp, Fermentatioun, wild oder kulturiert",
+        "icon": "🧪",
+        "vocab": [
+          {
+            "it": "Hef",
+            "en": "Yeast"
+          },
+          {
+            "it": "Dosage",
+            "en": "Dosage"
+          },
+          {
+            "it": "Pressung",
+            "en": "Pressing"
+          },
+          {
+            "it": "Jahrgang",
+            "en": "Vintage"
+          },
+          {
+            "it": "Klimatischer Stil",
+            "en": "Climate"
+          },
+          {
+            "it": "Reifung",
+            "en": "Aging"
+          },
+          {
+            "it": "Klarheit",
+            "en": "Clarity"
+          },
+          {
+            "it": "Sauerstoff",
+            "en": "Oxygen"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Den Braumeister erkläre, fir Cremant, ob d'Hef wild oder kulturiert ass.",
+            "en": "The brewer explains whether the yeast is wild or cultured for Cremant.",
+            "words": [
+              "Den",
+              "Braumeister",
+              "erkläre,",
+              "fir",
+              "Cremant,",
+              "ob",
+              "d'Hef",
+              "wild",
+              "oder",
+              "kulturiert",
+              "ass."
+            ]
+          },
+          {
+            "it": "Fir eng optimale Fermentatioun, sinn kulturiert Hef am Champagne essentiell.",
+            "en": "Cultured yeast are essential for optimal fermentation in Champagne.",
+            "words": [
+              "Fir",
+              "eng",
+              "optimale",
+              "Fermentatioun,",
+              "sinn",
+              "kulturiert",
+              "Hef",
+              "am",
+              "Champagne",
+              "essentiell."
+            ]
+          },
+          {
+            "it": "De Klimatischer Stil beeinflusst d'Hef, déi am Prozess der Fermentatioun sinn.",
+            "en": "The climate influences the yeast during the fermentation process.",
+            "words": [
+              "De",
+              "Klimatischer",
+              "Stil",
+              "beeinflusst",
+              "d'Hef,",
+              "déi",
+              "am",
+              "Prozess",
+              "der",
+              "Fermentatioun",
+              "sinn."
+            ]
+          },
+          {
+            "it": "D'Dosage, déi am Champagne benotzt gëtt, kann d'Hefaktivitéit veränner.",
+            "en": "The dosage used in Champagne can alter yeast activity.",
+            "words": [
+              "D'Dosage,",
+              "déi",
+              "am",
+              "Champagne",
+              "benotzt",
+              "gëtt,",
+              "kann",
+              "d'Hefaktivitéit",
+              "veränner."
+            ]
+          },
+          {
+            "it": "Fir eng gutt Klarheit, mussen d'Hef effektiv d'Fermentatioun am Champagne vollmaachen.",
+            "en": "For good clarity, the yeast must fully ferment the Champagne.",
+            "words": [
+              "Fir",
+              "eng",
+              "gutt",
+              "Klarheit,",
+              "mussen",
+              "d'Hef",
+              "effektiv",
+              "d'Fermentatioun",
+              "am",
+              "Champagne",
+              "vollmaachen."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1044464,
+      "backend": "ollama",
+      "model": "translategemma",
+      "totalPromptTokens": 2364,
+      "totalCompletionTokens": 2342,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 192886,
+          "promptTokens": 633,
+          "completionTokens": 502
+        },
+        {
+          "lessonNum": 2,
+          "ms": 176966,
+          "promptTokens": 704,
+          "completionTokens": 398
+        },
+        {
+          "lessonNum": 3,
+          "ms": 178620,
+          "promptTokens": 748,
+          "completionTokens": 423
+        }
+      ]
+    },
+    "generatedAt": "2026-05-05T14:21:12.152Z",
+    "updatedAt": "2026-05-05T14:21:12.152Z"
+  },
+  {
+    "topic": "Cremant vs. Champagne: A Brewer's Explanation",
+    "topicEmoji": "🥂",
+    "userTopic": "the brewer explains the difference between cremant and champagne. is wild yeast used? how long is it fermented in the bottle?",
+    "lang": "lb",
+    "difficulty": 2,
+    "storyLen": 500,
+    "story": "De Pierre, engem professionellen Champagneproduzent, stoung am Zentrum vum Marktplatz, eng Flasche Cremant de Bourgogne deift an hiren Hänn. \"Kuckt hier,\" säit hie mat engem läschten Grinne, \"Cremant ass net einfach Champagne. D'Champagne muss aus der Champagne-Region kkommen, mat engem spezifeschem Druid, eng engleches Methode, an eng engleches Alterung. Cremant ass... flexibler.\"\n\nHie opengt d'Flasche. \"D'Druid kënnen aus allem fransesche Gebiet kkommen, awer si mussen eng engleches Qualitéit hunn. D'Methode ass dergleiche: Méisse, Zweije, Dräi, an eng engleches Alterung. Aber d'Gréisst vun der Flasche... dat ass d'groossste Differenz. Cremant ass typesch am 75cl Fläsch, awer d'Champagne ass oft am 75cl, 15cl, oder sogar 37.5cl. Dat ass fir d'Verdeelung, fir d'Käschten, fir d'Konsumenten.\"\n\nHie gëtt eng Flasche Cremant un eng Frä, Léa. \"Si ass dräi Joer alt, aus Chardonnay, Pinot Noir, an Pinot Meunier. Si ass perfekt fir eng frochnen Abend, fir eng froen engleche Mahl. D'Geschmack ass fräsch, fruchtlech, mat engem subtilem Säure. D'Champagne ass oft vill kräftevoller, vill komplexer. Si ass fir eng fest engleche Mahl, fir eng engleche Feier.\"\n\nLéa probt d'Cremant. \"Si ass fantastesch! Si ass elegant, aber net iwwer. Si ass perfekt fir d'heite.\"\n\nPierre lächle. \"Si, Léa. Cremant ass eng exzellent Alternativ zu Champagne. Si ass drëpp, flexibel, an engleche. A mat der richteger Mahl ass si einfach perfekt.\" Hie gëtt eng Flasche Champagne un engmann vun de Beschiddegen. \"Wëll Iech eng Flasche Champagne probéieren?\"",
+    "storyLang": "lb",
+    "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch.\n\nWrite a story for the topic: \"Cremant vs. Champagne: A Brewer's Explanation\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Cremant vs. Champagne: Pierre explains",
+        "desc": "Key differences: region, method, bottle size, wild yeast?",
+        "icon": "🍷",
+        "vocab": [
+          {
+            "it": "Cremant",
+            "en": "Champagne",
+            "pron": "kʁɛmɑ̃"
+          },
+          {
+            "it": "Champagne",
+            "en": "Champagne",
+            "pron": "ʃɑ̃pɛɲ"
+          },
+          {
+            "it": "Druid",
+            "en": "Grape",
+            "pron": "dʁwi"
+          },
+          {
+            "it": "Methode",
+            "en": "Method",
+            "pron": "mɛtɔd"
+          },
+          {
+            "it": "Alterung",
+            "en": "Aging",
+            "pron": "al.tɛʁ.ʁʊŋ"
+          },
+          {
+            "it": "75cl Fläsch",
+            "en": "75cl bottle",
+            "pron": "ˌɛs.t.əʊ.ˌkl ˈflɛʃ"
+          },
+          {
+            "it": "Verdeelung",
+            "en": "Distribution",
+            "pron": "vɛʁ.dɪ.luŋ"
+          },
+          {
+            "it": "Qualitéit",
+            "en": "Quality",
+            "pron": "kwa.lɪ.te"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "De Pierre erklärt, dass Cremant aus verschiedenen Regionen stammen kann, aber die Qualität muss stimmen.",
+            "en": "Pierre explains that Cremant can come from different regions, but the quality must be good.",
+            "words": [
+              "De",
+              "Pierre",
+              "erklärt,",
+              "dass",
+              "Cremant",
+              "aus",
+              "verschiedenen",
+              "Regionen",
+              "stammen",
+              "kann,",
+              "aber",
+              "die",
+              "Qualität",
+              "muss",
+              "stimmen."
+            ]
+          },
+          {
+            "it": "Die Methode muss die gleiche sein, wie bei der Champagne, mit drei Gärstufen.",
+            "en": "The method must be the same as with Champagne, with three fermentation stages.",
+            "words": [
+              "Die",
+              "Methode",
+              "muss",
+              "die",
+              "gleiche",
+              "sein,",
+              "wie",
+              "bei",
+              "der",
+              "Champagne,",
+              "mit",
+              "drei",
+              "Gärstufen."
+            ]
+          },
+          {
+            "it": "Die Größe der Flasche ist ein weiterer wichtiger Unterschied zwischen Cremant und Champagne.",
+            "en": "The size of the bottle is another important difference between Cremant and Champagne.",
+            "words": [
+              "Die",
+              "Größe",
+              "der",
+              "Flasche",
+              "ist",
+              "ein",
+              "weiterer",
+              "wichtiger",
+              "Unterschied",
+              "zwischen",
+              "Cremant",
+              "und",
+              "Champagne."
+            ]
+          },
+          {
+            "it": "Viele Cremant werden mit wilden Hefen hergestellt, aber das ist nicht immer der Fall.",
+            "en": "Many Cremants are made with wild yeasts, but that is not always the case.",
+            "words": [
+              "Viele",
+              "Cremant",
+              "werden",
+              "mit",
+              "wilden",
+              "Hefen",
+              "hergestellt,",
+              "aber",
+              "das",
+              "ist",
+              "nicht",
+              "immer",
+              "der",
+              "Fall."
+            ]
+          },
+          {
+            "it": "Die lange Gärung im Fläsch ist ein Kennzeichen der Champagne, aber nicht immer bei Cremant.",
+            "en": "The long fermentation in the bottle is a characteristic of Champagne, but not always with Cremant.",
+            "words": [
+              "Die",
+              "lange",
+              "Gärung",
+              "im",
+              "Fläsch",
+              "ist",
+              "ein",
+              "Kennzeichen",
+              "der",
+              "Champagne,",
+              "aber",
+              "nicht",
+              "immer",
+              "bei",
+              "Cremant."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Cremant vs. Champagne: Pierre erklärt",
+        "desc": "Der Braumeister erklärt die Unterschiede, Wildhefe, Alterung",
+        "icon": "🍷",
+        "vocab": [
+          {
+            "it": "Fermentation",
+            "en": "Fermentation"
+          },
+          {
+            "it": "Réserve",
+            "en": "Reserve"
+          },
+          {
+            "it": "Pressung",
+            "en": "Pressing"
+          },
+          {
+            "it": "Dosage",
+            "en": "Dosage"
+          },
+          {
+            "it": "Effervescence",
+            "en": "Effervescence"
+          },
+          {
+            "it": "Vinification",
+            "en": "Vinification"
+          },
+          {
+            "it": "Assemblage",
+            "en": "Assemblage"
+          },
+          {
+            "it": "Cuvee",
+            "en": "Cuvee"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "De Pierre erklärt, dass die Fermentation oft mit Wildhefe stattfindet.",
+            "en": "Pierre explains that the fermentation often takes place with wild yeast.",
+            "words": [
+              "De",
+              "Pierre",
+              "erklärt,",
+              "dass",
+              "die",
+              "Fermentation",
+              "oft",
+              "mit",
+              "Wildhefe",
+              "stattfindet."
+            ]
+          },
+          {
+            "it": "Die Réserve, die für die Herstellung von Cremant verwendet wird, ist sehr wichtig.",
+            "en": "The reserve used for the production of Cremant is very important.",
+            "words": [
+              "Die",
+              "Réserve,",
+              "die",
+              "für",
+              "die",
+              "Herstellung",
+              "von",
+              "Cremant",
+              "verwendet",
+              "wird,",
+              "ist",
+              "sehr",
+              "wichtig."
+            ]
+          },
+          {
+            "it": "Die Pressung der Trauben bestimmt die Qualität des Weines.",
+            "en": "The pressing of the grapes determines the quality of the wine.",
+            "words": [
+              "Die",
+              "Pressung",
+              "der",
+              "Trauben",
+              "bestimmt",
+              "die",
+              "Qualität",
+              "des",
+              "Weines."
+            ]
+          },
+          {
+            "it": "Der Dosage, der nach der zweiten Fermentation hinzugefügt wird, beeinflusst die Süße.",
+            "en": "The dosage added after the second fermentation influences the sweetness.",
+            "words": [
+              "Der",
+              "Dosage,",
+              "der",
+              "nach",
+              "der",
+              "zweiten",
+              "Fermentation",
+              "hinzugefügt",
+              "wird,",
+              "beeinflusst",
+              "die",
+              "Süße."
+            ]
+          },
+          {
+            "it": "Die Effervescence, die durch die zweite Fermentation entsteht, ist ein charakteristisches Merkmal von Cremant.",
+            "en": "The effervescence created by the second fermentation is a characteristic feature of Cremant.",
+            "words": [
+              "Die",
+              "Effervescence,",
+              "die",
+              "durch",
+              "die",
+              "zweite",
+              "Fermentation",
+              "entsteht,",
+              "ist",
+              "ein",
+              "charakteristisches",
+              "Merkmal",
+              "von",
+              "Cremant."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Cremant vs. Champagne: Pierre explains",
+        "desc": "Brewer explains differences, wild yeast, bottle fermentation time",
+        "icon": "🍷",
+        "vocab": [
+          {
+            "it": "Gär",
+            "en": "Yeast"
+          },
+          {
+            "it": "Jahrgang",
+            "en": "Vintage"
+          },
+          {
+            "it": "Dosage",
+            "en": "Dosage"
+          },
+          {
+            "it": "Abfüllung",
+            "en": "Bottling"
+          },
+          {
+            "it": "Kapsel",
+            "en": "Cork"
+          },
+          {
+            "it": "Reifung",
+            "en": "Maturation"
+          },
+          {
+            "it": "Sauerstoff",
+            "en": "Oxygen"
+          },
+          {
+            "it": "Schaum",
+            "en": "Fizz"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "De Pierre erklärt, dass die Gärung oft mit wilden Hefen stattfindet.",
+            "en": "Pierre explains that the fermentation often takes place with wild yeasts.",
+            "words": [
+              "De",
+              "Pierre",
+              "erklärt,",
+              "dass",
+              "die",
+              "Gärung",
+              "oft",
+              "mit",
+              "wilden",
+              "Hefen",
+              "stattfindet."
+            ]
+          },
+          {
+            "it": "Die Qualität des Jahrgangs ist entscheidend für beide, aber besonders für Champagne.",
+            "en": "The quality of the vintage is crucial for both, but especially for Champagne.",
+            "words": [
+              "Die",
+              "Qualität",
+              "des",
+              "Jahrgangs",
+              "ist",
+              "entscheidend",
+              "für",
+              "beide,",
+              "aber",
+              "besonders",
+              "für",
+              "Champagne."
+            ]
+          },
+          {
+            "it": "Die Dosage, die Menge an Zucker, die nach der Fermentation hinzugefügt wird, beeinflusst den Geschmack.",
+            "en": "The dosage, the amount of sugar added after fermentation, influences the taste.",
+            "words": [
+              "Die",
+              "Dosage,",
+              "die",
+              "Menge",
+              "an",
+              "Zucker,",
+              "die",
+              "nach",
+              "der",
+              "Fermentation",
+              "hinzugefügt",
+              "wird,",
+              "beeinflusst",
+              "den",
+              "Geschmack."
+            ]
+          },
+          {
+            "it": "Die Abfüllung erfolgt oft nach der zweiten oder dritten Fermentation im Fläschchen.",
+            "en": "The bottling often takes place after the second or third fermentation in the bottle.",
+            "words": [
+              "Die",
+              "Abfüllung",
+              "erfolgt",
+              "oft",
+              "nach",
+              "der",
+              "zweiten",
+              "oder",
+              "dritten",
+              "Fermentation",
+              "im",
+              "Fläschchen."
+            ]
+          },
+          {
+            "it": "Die Reifung im Fläschchen kann mehrere Jahre dauern, besonders bei Cremant.",
+            "en": "The maturation in the bottle can last for several years, especially for Cremant.",
+            "words": [
+              "Die",
+              "Reifung",
+              "im",
+              "Fläschchen",
+              "kann",
+              "mehrere",
+              "Jahre",
+              "dauern,",
+              "besonders",
+              "bei",
+              "Cremant."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 821816,
+      "backend": "ollama",
+      "model": "translategemma",
+      "totalPromptTokens": 2307,
+      "totalCompletionTokens": 1982,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 220276,
+          "promptTokens": 610,
+          "completionTokens": 572
+        },
+        {
+          "lessonNum": 2,
+          "ms": 182436,
+          "promptTokens": 680,
+          "completionTokens": 409
+        },
+        {
+          "lessonNum": 3,
+          "ms": 196362,
+          "promptTokens": 729,
+          "completionTokens": 418
+        }
+      ]
+    },
+    "generatedAt": "2026-05-05T13:59:15.581Z",
+    "updatedAt": "2026-05-05T13:59:15.581Z"
+  },
+  {
     "topic": "Cremant vs. Champagne",
     "topicEmoji": "🥂",
     "userTopic": "how is cremant made? what is the difference to champagne?",
@@ -877,11 +1744,6 @@ const STATIC_LESSONS = [
         "desc": "Grundlagen: Herstellung, Unterschiede, einfache Fragen",
         "icon": "🥂",
         "vocab": [
-          {
-            "it": "Cremant",
-            "en": "Champagner",
-            "pron": "kʁɛmɑ̃"
-          },
           {
             "it": "Méthode",
             "en": "Methode",
