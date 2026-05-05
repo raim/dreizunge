@@ -11,10 +11,9 @@ Swedish, Japanese, Mandarin, Arabic, Russian, Korean, Turkish, Hindi, Lëtzebuer
 
 ---
 
-## Uploaded file state: v11 (fully patched — start coding directly)
+## Uploaded file state: v14 (fully patched — start coding directly)
 
-All patches have been applied and syntax-checked. The uploaded files ARE the current
-working state. Read each file before touching it; syntax-check after every edit group.
+Read every file before touching it. Syntax-check after every edit group:
 
 ```bash
 sed -n '/<script>/,/<\/script>/p' index.html | sed '1d;$d' > /tmp/chk.js && node --check /tmp/chk.js
@@ -23,214 +22,234 @@ node build-static.js lessons.json /tmp/test && \
   sed -n '/<script>/,/<\/script>/p' /tmp/test/index.html | sed '1d;$d' | node --check /dev/stdin
 ```
 
----
-
-## What is working in v11
-
-### Generation & server
-- **Backends:** Anthropic Claude (`claude-sonnet-4-20250514`), Ollama (any model), offline
-- **Ollama timeout:** 720 000 ms (12 min) — doubled to handle continuation stories
-- **Story always in target language** — `sysStory(lang, isContinuation)` — no EN option
-- **Story prompt:** 3-4 paragraphs, under 300 words, no padding/repeating, quality over length
-- **Continuation:** `generate(..., continuedFrom, jobId)` — looks up prior story via
-  `findSaved(continuedFrom)`, injects as context with continuation instruction
-- **`continuedFrom`** stored in `lessons.json` and exposed by `/api/lessons`
-- **`callAnthropicRaw`** accepts string or `[{role,content}]` array (multi-turn)
-
-### Frontend — landing page
-- Language selector + difficulty dropdown (1/2/3), both persisted in localStorage
-- **"Continue story from"** dropdown directly below difficulty — populated from saved
-  lessons list; sends `continuedFrom` in POST body; preserves selection across refreshes
-- **No "Try:" chips** — removed
-- **No story-language checkbox** — removed
-
-### Frontend — home screen (lesson overview)
-- Topic name + emoji + language flag, **"↩ continued from: X"** badge when applicable
-- **Story below Start button** (moved from above)
-- **Story collapsed by default** — auto-opens when all three lessons are completed
-- **Vocab highlighting** in story: words from completed lessons wrapped in
-  `<mark class="story-vocab-hl">` (yellow highlight), longest-first greedy match
-- 🔊 Speak button in story header
-- Story repair panel (✏️) still present but gated on `canGenerate`
-- **Story flag row** below story body: `⚐ Flag story` button + comment textarea
-  (`toggleStoryFlag`, `saveStoryComment`, `_updateStoryFlagUI`)
-- **Model console** (`🤖`) — collapsible, only shown when `canGenerate`; full
-  conversation history sent; Anthropic multi-turn, Ollama flattened
-- **Share button** (🔗) — copies `#topic=…` URL to clipboard with toast
-
-### Frontend — lesson flow
-- **Lesson complete screen skipped** — `showComplete()` records XP + completion then
-  calls `goHome()` directly
-- Flag + comment on individual exercises (unchanged)
-- Rating panel after all lessons complete (unchanged)
-
-### Frontend — library (saved lessons list)
-- **Storyline grouping:** DFS chain builder (`buildChains`) reconstructs chains from
-  `continuedFrom` links; chains of 2+ shown as grouped `📖 Story line · N lessons`
-  cards with `↩` connectors; orphan (non-chained) lessons shown below under
-  `📚 Individual lessons`
-- **Temporal sort:** chains sorted by newest `updatedAt` among members; orphans
-  sorted newest-first
-- Difficulty badge + ratings emoji in each lesson card
-- Language filter buttons (when multiple languages present)
-
-### Static build (`build-static.js`)
-- **No localStorage** for lesson catalogue — reads directly from `STATIC_LESSONS`
-- Lessons sorted newest-first (`updatedAt` desc) before any processing
-- Storyline grouping (same algorithm as live version, embedded in staticFunctions)
-- Difficulty badge + ratings in lesson cards
-- Hash deep-linking (`#topic=…`) in static `init()`
-- Clean `staticOverrides`: stubs for all server-dependent functions
-  (`doGenerate`, `submitRating`, `sendChat`, `toggleChat`, `clearChat`,
-  `toggleStoryFlag`, `saveStoryComment`, `_updateStoryFlagUI`, `deleteSaved`,
-  `regenSaved`, `regenCurrent`, `syncFlagsFromServer`, `pushFlagToServer`)
+Final deliverable of next session: `dreizunge_v15.zip`.
 
 ---
 
-## Known minor issues in v11 (not worth fixing immediately)
+## What is working in v14
 
-- **Dead repair functions:** `repairLesson`, `repairFromLesson`, `repairAll` remain in
-  `index.html` (from v10 upload) with no UI entry points — harmless, but should be
-  cleaned up in a future session
-- **`autoResizeTopic` defined twice** in `index.html` (lines ~541 and ~613) — second
-  definition wins; harmless but untidy
-
----
-
-## Architecture reference
+### Server (`server.js`)
+- **Backends:** Anthropic Claude (`claude-sonnet-4-20250514`), Ollama, offline
+- **Ollama timeout:** 720 000 ms (12 min)
+- **Story always in target language** — `sysStory(lang, isContinuation, wordCount)`
+- **Story prompt:** parameterised length (`wordCount`, 100–1000), no padding/repeating;
+  paragraph count derived as `floor(wordCount/100)` to `floor(wordCount/100)+1`
+- **`max_tokens` for story** scales with wordCount: `min(2048, ceil(wordCount*1.5)+200)`
+- **Continuation:** `generate(..., continuedFrom, storyLen, jobId)` — injects prior story
+- **`userTopic`** stored alongside `topic` (original user entry before meta may shorten it)
+- **`SYS_META`** instructs LLM to shorten topic display title to ≤40 chars
+- **`storyLen`** stored in lesson JSON
+- **`continuedFrom`** stored and exposed by `/api/lessons`
+- **`storyPrompt`** stored on generation and repair
+- **`callAnthropicRaw`** accepts string or `[{role,content}]` array
 
 ### Server endpoints
 | Endpoint | Method | Purpose |
 |---|---|---|
-| `/api/info` | GET | Backend status, model name, canGenerate |
+| `/api/info` | GET | Backend status, canGenerate |
 | `/api/generate` | POST | Start generation job → `{jobId}` |
 | `/api/job/:id` | GET | Poll job status/result |
 | `/api/lessons` | GET | List all topics (with `continuedFrom`) sorted by `updatedAt` desc |
-| `/api/lessons/load` | GET | Load full lesson data for a topic |
+| `/api/lessons/load` | GET | Full lesson data for a topic |
 | `/api/lessons/delete` | DELETE | Remove a topic |
-| `/api/flags` | GET/POST | Get/set exercise + story flags |
+| `/api/lessons/import` | POST | Merge-import a lessons JSON file (upsert by topic) |
+| `/api/flags` | GET/POST | Get/set exercise and story flags |
 | `/api/rate` | POST | Store user ratings |
-| `/api/repair` | POST | LLM repair of flagged exercises (endpoint exists, UI removed) |
-| `/api/repair-story` | POST | LLM rewrite of story |
+| `/api/repair` | POST | LLM repair endpoint (exists, no UI) |
+| `/api/repair-story` | POST | LLM rewrite of story (with optional `instruction`) |
 | `/api/chat` | POST | Model console — proxies to active LLM with lesson context |
 
-### Generation flow
-1. `POST /api/generate {topic, lang, difficulty, continuedFrom}` → `{jobId}`
-2. Background: meta → story (target lang, optionally continues prior story) → lesson 1 → lesson 2 → lesson 3
-3. Browser polls `/api/job/:id` every 2s
+### Frontend — landing page
+- Language selector, difficulty dropdown (1/2/3), story length slider (100–1000 words)
+  — all persisted in localStorage; all three sent on generate
+- **"Continue story from"** dropdown below difficulty — populated from saved list,
+  sends `continuedFrom` in POST body
+- **No "Try:" chips** — removed
+- **No story-language checkbox** — story always in target language
+- **⬆ Import** button in library header — reads a `.json` file, POSTs to
+  `/api/lessons/import`, shows toast with count; session-only in static mode
 
-### `lessons.json` shape per topic
+### Frontend — home screen
+- **"↩ continued from: X"** badge — clickable, navigates to ancestor lesson
+- **"→ continued by: [topic]"** green badge row — lists all lessons branching from here,
+  clickable; populated from `APP.savedList` cache (updated after each library fetch)
+- **Story below Start button** (moved from above)
+- **Story collapsed by default** — auto-opens when all three lessons complete
+- **Vocab highlighting** in story: `<mark class="story-vocab-hl">` on words from
+  completed lessons; greedy longest-first match; `renderStoryText(d)` handles it
+- **Story flag row** below story body: `⚐ Flag story` + comment textarea
+- **Story prompt modal** (📝 button, visible when canGenerate): shows/edits
+  `storyPrompt`; "↻ Regenerate" uses `/api/repair-story` + job polling
+- **Model console** (🤖): collapsible, only when canGenerate; Anthropic multi-turn,
+  Ollama flattened; history cleared on topic change
+- **Share button** (🔗): copies `#topic=…` URL; hidden in static (clipboard unreliable)
+
+### Frontend — lesson flow
+- **Lesson complete screen skipped** — `showComplete()` records XP + completion
+  then calls `goHome()` directly
+- Flag + comment on individual exercises
+- Rating panel after all lessons complete
+
+### Frontend — library
+- **Storyline grouping:** DFS `buildChains()` from `continuedFrom` links;
+  chains ≥2 shown as `📖 Story line · N lessons` with `↩` connectors;
+  orphans below under `📚 Individual lessons`; newest-first sort
+- **⬇ export button** on every lesson card AND on every storyline header
+- Difficulty badge + ratings emoji on each card
+- Language filter buttons (multi-language collections)
+
+### Export / Import
+- **`exportTopics(topics)`** — fetches full lesson data, merges `APP.flagged`
+  into `exportedFlags`, downloads as JSON
+- Export works in **static mode** too (uses `STATIC_LESSONS` directly)
+- Exported file is directly re-importable via `⬆ Import`
+- Format: `{ lessons: [...], exportedAt, exportedBy }` — each lesson has
+  `exportedFlags: { flagKey: flagEntry }` merged in
+
+### `showToast` / `shareLesson` placement
+- Both functions are defined at line ~565, **before** `async function init()`,
+  so they land in `part1` and are available in both live and static builds.
+  **Do not move them back below `init()`** — the static build drops everything
+  between `init()` and `buildPath()`.
+
+### Static build (`build-static.js`)
+- **No localStorage** for lesson catalogue — `STATIC_LESSONS` baked in directly
+- **Flagged exercises stripped at build time** — exercises whose flag key appears
+  in `lessonsData.flags` are removed from `STATIC_LESSONS` before serialisation;
+  build report shows count: `Flagged: N exercises stripped`
+- **Story length slider + difficulty dropdown grayed out** in static (`renderPill`
+  sets `opacity: 0.4` and `disabled`; tooltip explains they have no effect)
+- **Share button hidden** in static (`renderPill` sets `display:none`)
+- **Import works** in static — merges into `STATIC_LESSONS` in memory (session-only)
+- **Export works** in static — uses `STATIC_LESSONS` + `APP.flagged`
+- Storyline grouping + difficulty/ratings display matches live version
+- Temporal sort (newest-first), hash deep-linking (`#topic=…`)
+- Clean `staticOverrides`: stubs for all server-dependent functions
+
+---
+
+## `lessons.json` shape per topic
+
 ```json
 {
-  "topic": "cooking",
+  "topic": "cooking",           // display title (≤40 chars, may differ from userTopic)
+  "userTopic": "cooking & recipes in italy",  // original user entry
   "topicEmoji": "🍳",
   "lang": "it",
   "difficulty": 2,
-  "continuedFrom": "restaurant dining",
+  "storyLen": 300,
+  "continuedFrom": "restaurant dining",   // optional
   "story": "target-language prose…",
   "storyLang": "it",
-  "generatedAt": "2026-05-03T…",
-  "updatedAt": "2026-05-03T…",
-  "generationStats": {
-    "totalMs": 47200, "backend": "ollama", "model": "qwen2.5:7b",
-    "totalPromptTokens": 2100, "totalCompletionTokens": 1505,
-    "lessons": []
-  },
+  "storyPrompt": "system + user message used to generate story",
+  "generatedAt": "…", "updatedAt": "…",
+  "generationStats": { "totalMs": 0, "backend": "ollama", "model": "…",
+    "totalPromptTokens": 0, "totalCompletionTokens": 0 },
   "ratings": { "difficulty": 2, "fun": 3, "coherence": 2 },
-  "lessons": [
-    {
-      "id": 1, "title": "…", "desc": "…", "icon": "…",
-      "vocab": [{ "it": "…", "en": "…", "pron": "…" }],
-      "sentences": [{ "it": "…", "en": "…", "words": ["…"] }]
-    }
-  ]
+  "lessons": [ { "id": 1, "title": "…", "desc": "…", "icon": "…",
+    "vocab": [{ "it": "…", "en": "…", "pron": "…" }],
+    "sentences": [{ "it": "…", "en": "…", "words": ["…"] }] } ]
 }
 ```
 
-Flags are stored separately in `store.flags` (same `lessons.json` top level):
+Top-level `lessons.json` also has a `"flags"` key (separate from lessons array):
 ```json
 {
   "lessons": [...],
   "flags": {
-    "cooking:1:parola_it": { "topic": "cooking", "type": "mcq_it_en", "comment": "…" },
-    "cooking:story":       { "topic": "cooking", "type": "story",     "comment": "…" }
+    "topicSlug:exerciseType:contentSlug": { "topic": "…", "type": "…", "comment": "…" },
+    "topicSlug:story": { "topic": "…", "type": "story", "comment": "…" }
   }
 }
 ```
 
-### File structure
+---
+
+## File structure
+
 ```
 dreizunge/
-├── server.js              — v11
-├── index.html             — v11
-├── build-static.js        — v11
-├── lessons.json           — auto-created / bundled into static build
+├── server.js              — v14
+├── index.html             — v14
+├── build-static.js        — v14
+├── lessons.json           — auto-created by server; bundled by build-static.js
 ├── current_status_claude.md — this file
-└── docs/index.html        — generated by: node build-static.js
+└── docs/index.html        — run: node build-static.js
 ```
 
 ---
 
-## TODO (future sessions)
+## Known minor issues
 
-### Minor
+- **`APP.savedList`** is populated after `loadSavedList()` completes. If the user
+  navigates directly to a lesson via URL hash before the library loads, `continuedBy`
+  links may be empty on first render. Refreshing the home screen fixes it.
+- **Dead `/api/repair` endpoint** still exists in server.js — functional but no UI.
+  Keep for now; useful if repair UI is ever re-added (see M1 below).
+
+---
+
+## TODO
+
+### Immediate / easy
 
 **M1. Lesson-level repair**
 All LLM repair removed from UI. Two future modes:
-- **Manual:** Edit form per exercise — target text, translation, pronunciation, choices;
-  clear flag on save; no LLM call
-- **LLM-assisted:** Per-exercise inline fetch using flag comment as instruction;
-  single call, no job system; clear flag on save
+- **Manual:** Edit form per exercise — target text, translation, pronunciation, choices
+- **LLM-assisted:** Per-exercise fetch using flag comment as instruction; clear flag on save
 
-**M2. Tighten story↔lesson coherence**
-After generating story, extract key named entities (characters, locations) via regex
-or small LLM call; inject as bullet list into each lesson prompt.
+**M2. Use story-length slider + difficulty as library filters (static + live)**
+Currently these controls are grayed out in static mode. Future: use them to filter
+the displayed lesson list by difficulty level, or to show estimated reading time
+based on `storyLen`. Relatively straightforward — add filter state to `APP`,
+wire to `loadSavedList()`.
 
-**M3. Continuation navigation links**
-On home screen for loaded lesson:
-- (a) "↩ based on: [topic]" clickable badge — loads ancestor lesson (topic already
-  in `d.continuedFrom`)
-- (b) "→ continued by: [topic1]…" — requires scanning all lessons; expose via
-  `/api/lessons` metadata or new `/api/continuations?topic=…` endpoint
+**M3. Tighten story↔lesson coherence**
+After generating story, extract named entities (characters, locations) and inject
+as bullet list into each lesson prompt. Regex or small LLM call.
 
-**M4. Story lineage DAG visualisation**
-Client-side d3/canvas render. Nodes: topic + emoji + flag. Edges: `continuedFrom`.
-Entry: button on library page. Export as Graphviz `.dot`. Possibly `/api/dag` endpoint.
+**M4. Continuation navigation — "continued by" needs server scan**
+Currently scans `APP.savedList` (summary only) for `continuedFrom` matches.
+Works for items already in the cached list. Could expose a dedicated
+`/api/continuations?topic=…` endpoint for more reliable lookup.
 
-**M5. Rename `"it"` field to `"tl"` (target language)**
+**M5. Story lineage DAG visualisation**
+Client-side d3/canvas. Nodes: topic + emoji + flag. Edges: `continuedFrom`.
+Button on library page. Export as Graphviz `.dot`.
+
+**M6. Rename `"it"` field to `"tl"` (target language)**
 The field `"it"` in vocab/sentences causes LLMs to default to Italian.
-Full rename across server.js, index.html, lessons.json (needs migration script).
-Dedicated session — careful search-and-replace.
+Full rename across server.js, index.html, lessons.json (migration script needed).
+Dedicated session.
 
-**M6. Store story prompt + UI to view/edit**
-Save exact prompt as `storyPrompt` in lessons.json on generation and repair.
-📝 button in story header opens modal: view prompt, edit, "Regenerate with this prompt".
+**M7. Cancel button during generation**
+`AbortController` on the fetch in `doGenerate`; server detects abandoned job and
+stops polling/generating. Doable but needs care — Ollama supports abort, Anthropic
+requires closing the connection.
 
-**M7. Extended language list**
+**M8. Generate lessons from pasted text**
+Paste target-language text → LLM extracts vocab + generates exercises from it.
+No story needed. New tab/panel in the generate form.
+
+**M9. Extended language list**
 Welsh (cy), Catalan (ca), Basque (eu), Croatian (hr), Czech (cs), Romanian (ro),
 Greek (el), Vietnamese (vi), Thai (th), Bengali (bn), Swahili (sw), Esperanto (eo).
 
-**M8. TTS improvements**
-- Split at sentence boundaries in `speak()`
-- Voice selection UI + warning if no matching voice found
-- Optional Piper TTS via `/api/tts` (offline, neural quality)
-- sproochmaschinn.lu for Lëtzebuergesch
+**M10. TTS improvements**
+- Split utterances at sentence boundaries in `speak()`
+- Voice selection UI + warning if no matching voice
+- Optional Piper TTS via `/api/tts` (offline neural quality)
 
-**M9. User-supplied API keys**
+**M11. User-supplied API keys**
 Settings modal: Anthropic, OpenAI, Groq. Keys in localStorage, forwarded in POST body.
 
 ### Major
 
-**M10. Community features**
-- Phase 1: curated static library on GitHub Pages
-- Phase 2: anonymous submissions via Cloudflare Worker + D1
-- Phase 3: GitHub OAuth, upvoting, ranked feed by language/difficulty
+**M12. Community features**
+Phase 1: curated static library on GitHub Pages.
+Phase 2: anonymous submissions (Cloudflare Worker + D1).
+Phase 3: GitHub OAuth, upvoting, ranked feed.
 
-**M11. Cross-topic vocabulary reuse**
-Scan existing lessons for recurring vocab and named characters before generating.
+**M13. Cross-topic vocabulary reuse**
+Scan existing lessons for recurring vocab + named characters before generating.
 Distil into ~200-char "shared world" summary injected into meta + story prompts.
-
-**M12. Clean up dead repair code**
-Remove `repairLesson`, `repairFromLesson`, `repairAll` functions from `index.html`
-(they have no UI entry points since v10 but were carried over). Also deduplicate
-the double `autoResizeTopic` definition.

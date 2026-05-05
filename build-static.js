@@ -70,7 +70,42 @@ const part1 = lines.slice(0, serverFuncsStart).join('\n');
 const part2 = lines.slice(engineStart, initCallLine).join('\n');
 
 // ── Static replacement functions ──────────────────────────────────────
-const lessonsSerialized = JSON.stringify(lessonsData.lessons, null, 2);
+// ── Strip flagged exercises from baked-in lessons ─────────────────────
+const flags = lessonsData.flags || {};
+const flagKeys = new Set(Object.keys(flags));
+
+function topicSlug(topic) {
+  return (topic || '').slice(0, 30).replace(/\s+/g, '_');
+}
+function contentSlug(str) {
+  return (str || '').slice(0, 40).replace(/\s+/g, '_');
+}
+
+const cleanedLessons = lessonsData.lessons.map(topic => {
+  const slug = topicSlug(topic.topic);
+  // A flag key for an exercise looks like: slug:type:contentSlug
+  // We mark vocab and sentences whose content slug appears in any flag key for this topic
+  const topicFlagKeys = [...flagKeys].filter(k => k.startsWith(slug + ':'));
+  if (topicFlagKeys.length === 0) return topic;  // no flags for this topic
+
+  // Build set of flagged content slugs
+  const flaggedContent = new Set(topicFlagKeys.map(k => k.split(':').slice(2).join(':')));
+
+  const cleanTopic = { ...topic, lessons: topic.lessons.map(lesson => ({
+    ...lesson,
+    vocab: (lesson.vocab || []).filter(v => !flaggedContent.has(contentSlug(v.it))),
+    sentences: (lesson.sentences || []).filter(s => !flaggedContent.has(contentSlug(s.it))),
+  }))};
+  return cleanTopic;
+});
+
+const removedCount = lessonsData.lessons.reduce((total, topic, i) => {
+  const orig = topic.lessons.reduce((n, l) => n + l.vocab.length + l.sentences.length, 0);
+  const clean = cleanedLessons[i].lessons.reduce((n, l) => n + l.vocab.length + l.sentences.length, 0);
+  return total + (orig - clean);
+}, 0);
+
+const lessonsSerialized = JSON.stringify(cleanedLessons, null, 2);
 
 const staticFunctions = `
 // ═══════════════════════════════════════════════════════════════════════
@@ -101,6 +136,18 @@ function renderPill() {
   const sel=document.getElementById('lang-select'); if(sel) sel.disabled=true;
   const note=document.getElementById('offline-note');
   note.style.display='block'; note.textContent='📦 Static version — select a topic below to start';
+  // Gray out controls that have no effect in static mode
+  const diffSel=document.getElementById('diff-select');
+  if(diffSel){ diffSel.disabled=true; diffSel.title='Difficulty selection has no effect in static mode'; }
+  const diffWrap=document.getElementById('diff-wrap')||diffSel?.closest('.diff-wrap');
+  if(diffWrap) diffWrap.style.opacity='0.4';
+  const lenSlider=document.getElementById('story-len-slider');
+  if(lenSlider){ lenSlider.disabled=true; lenSlider.title='Story length has no effect in static mode'; }
+  const lenRow=lenSlider?.closest('.story-len-row');
+  if(lenRow) lenRow.style.opacity='0.4';
+  // Hide share button — clipboard doesn't work without a served URL
+  const shareBtn=document.getElementById('share-btn');
+  if(shareBtn) shareBtn.style.display='none';
 }
 
 async function loadSavedList() {
@@ -215,6 +262,7 @@ const staticOverrides = [
   'async function deleteSaved(){}',
   'async function regenSaved(){}',
   'function regenCurrent(){}',
+  'function shareLesson(){}',
   'async function doGenerate(){}',
   'async function submitRating(){}',
   'function importLessons(input){',
@@ -312,7 +360,7 @@ console.log('');
 console.log('✅  Static build complete');
 console.log(`    Source    : ${sourceHtml}`);
 console.log(`    Lessons   : ${lessonsFile} (${topicCount} topic${topicCount!==1?'s':''})`);
-console.log(`    Languages : ${langSummary}`);
+console.log(`    Flagged   : ${removedCount} exercise${removedCount!==1?'s':''} stripped from baked-in lessons`);
 console.log(`    Output    : ${outputFile}`);
 console.log(`    Size      : ${(fs.statSync(outputFile).size/1024).toFixed(1)} KB`);
 console.log('');
