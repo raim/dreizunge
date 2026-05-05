@@ -134,7 +134,22 @@ function renderPill() {
   document.getElementById('gen-btn').disabled = true;
   document.getElementById('topic-input').disabled = true;
   const note=document.getElementById('offline-note');
-  note.style.display='block'; note.textContent='📦 Static version — select a topic below to start';
+  note.style.display='block';
+  note.innerHTML='📦 Static version — select a topic below to start<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>';
+  // Limit lang dropdown to languages that have lessons in this build
+  const presentLangs=new Set(STATIC_LESSONS.map(s=>s.lang||'it'));
+  const sel=document.getElementById('lang-select');
+  if(sel){
+    Array.from(sel.options).forEach(opt=>{ opt.style.display=presentLangs.has(opt.value)?'':'none'; });
+    // If current selection has no lessons, switch to first available
+    if(!presentLangs.has(sel.value)){
+      const first=[...presentLangs][0];
+      if(first){ sel.value=first; APP.lang=first; saveLang(); }
+    }
+  }
+  // Disable user-story checkboxes — generation not available in static mode
+  const useStoryCb=document.getElementById('use-story-cb');
+  if(useStoryCb){ useStoryCb.disabled=true; useStoryCb.closest('.user-story-check-row').style.opacity='0.4'; useStoryCb.closest('.user-story-check-row').title='Story input requires the live server'; }
   // Gray out controls that have no effect in static mode
   const diffSel=document.getElementById('diff-select');
   if(diffSel){ diffSel.disabled=true; diffSel.title='Difficulty selection has no effect in static mode'; }
@@ -194,7 +209,7 @@ async function loadSavedList() {
 
   function itemHtml(s, connector) {
     const sL=LANGS[s.lang||'it']||LANGS.it;
-    const t=encodeURIComponent(s.topic);
+    const t=encTopic(s.topic);
     const d=s.difficulty||2;
     const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
     const diffBadge='<span class="diff-badge d'+d+'">'+diff+'</span>';

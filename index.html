@@ -83,6 +83,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .ico-btn.regen:hover{border-color:var(--blue)}
 
 .gen-overlay{position:fixed;inset:0;background:rgba(240,244,248,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:14px}
+#gen-status{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:200;
+  display:none;align-items:center;gap:9px;
+  background:var(--white);border:2px solid var(--gray-mid);border-radius:20px;
+  padding:9px 16px;box-shadow:0 4px 18px rgba(0,0,0,.13);
+  font-size:13px;font-weight:800;color:var(--text);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;cursor:default}
+#gen-status.running{border-color:#a0c4ff;background:#f0f6ff}
+#gen-status.done{border-color:var(--green);background:#f0fff4;cursor:pointer}
+#gen-status.error{border-color:#ffaaaa;background:#fff4f4;cursor:pointer}
+#gen-status-spinner{animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
 .spinner{width:52px;height:52px;border:5px solid var(--gray-mid);border-top-color:var(--green);border-radius:50%;animation:spin .75s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .gen-lbl{font-size:18px;font-weight:900;color:var(--text)}
@@ -238,6 +248,18 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* ══ DIFFICULTY DROPDOWN ════════════════════════════════════════════ */
 .diff-wrap{margin-bottom:14px}
 .story-len-row{margin-bottom:14px}
+.user-story-checks{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.user-story-check-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--gray-dark);cursor:pointer;user-select:none}
+.user-story-check-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--green)}
+.user-story-panel{display:none;flex-direction:column;gap:10px;margin-bottom:12px;padding:12px;background:#f8fdf4;border:1.5px solid #b8e0a0;border-radius:10px}
+.user-story-panel.open{display:flex}
+.user-story-textarea{width:100%;min-height:120px;max-height:400px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px 12px;font-size:13px;font-family:'Nunito',sans-serif;line-height:1.6;resize:vertical;box-sizing:border-box;color:#222}
+.user-story-textarea:focus{outline:none;border-color:var(--green)}
+.user-translation-panel{display:none;flex-direction:column;gap:8px}
+.user-translation-panel.open{display:flex}
+.user-dialect-row{display:flex;flex-direction:column;gap:4px}
+.user-dialect-input{border:1.5px solid var(--gray-mid);border-radius:8px;padding:7px 12px;font-size:13px;font-family:'Nunito',sans-serif;width:100%;box-sizing:border-box;color:#222}
+.user-dialect-input:focus{outline:none;border-color:var(--green)}
 .story-len-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .story-len-lbl{font-size:12px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.02em}
 .story-len-val{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:10px;padding:2px 8px}
@@ -352,6 +374,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 <body>
 
 <div id="toast" class="toast"></div>
+<div id="gen-status" onclick="onGenStatusClick()">
+  <span id="gen-status-spinner">⏳</span>
+  <span id="gen-status-text">Generating…</span>
+  <span id="gen-status-x" style="display:none;margin-left:4px;opacity:.5">✕</span>
+</div>
 
 <div id="gen-overlay" class="gen-overlay" style="display:none">
   <div class="spinner"></div>
@@ -406,7 +433,36 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       placeholder="e.g. cooking, architecture, medicine… add details for a richer story"
       maxlength="400" oninput="autoResizeTopic(this)"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
-    <div class="story-len-row">
+    <div class="user-story-checks" id="user-story-checks">
+      <label class="user-story-check-row">
+        <input type="checkbox" id="use-story-cb" onchange="onUseStoryCb()">
+        📖 I have a story to use directly
+      </label>
+      <label class="user-story-check-row" id="use-translation-cb-row" style="display:none;padding-left:24px">
+        <input type="checkbox" id="use-translation-cb" onchange="onUseTranslationCb()">
+        🔤 I also have an English translation
+      </label>
+    </div>
+
+    <div class="user-story-panel" id="user-story-panel">
+      <label class="form-lbl" style="margin-bottom:0">Story (in target language)</label>
+      <textarea class="user-story-textarea" id="user-story-input"
+        placeholder="Paste your story here…"
+        oninput="autoResizeTextarea(this)"></textarea>
+      <div class="user-translation-panel" id="user-translation-panel">
+        <label class="form-lbl" style="margin-bottom:0">English translation</label>
+        <textarea class="user-story-textarea" id="user-translation-input"
+          placeholder="Paste the English translation here. One sentence per paragraph is ideal, but plain prose works too."
+          oninput="autoResizeTextarea(this)"></textarea>
+        <div class="user-dialect-row">
+          <label class="form-lbl" style="margin-bottom:0">Dialect or variety <span style="font-weight:400;text-transform:none">(optional)</span></label>
+          <input class="user-dialect-input" id="user-dialect-input"
+            placeholder="e.g. Sicilian, Lëtzebuergesch, Brazilian Portuguese…">
+        </div>
+      </div>
+    </div>
+
+    <div class="story-len-row" id="story-len-row">
       <div class="story-len-hdr">
         <span class="story-len-lbl">Story length</span>
         <span class="story-len-val" id="story-len-val">300 words · 3-4 paragraphs</span>
@@ -415,7 +471,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         min="100" max="1000" step="50" value="300"
         oninput="onStoryLenSlider(this.value)">
     </div>
-    <div class="diff-wrap">
+    <div class="diff-wrap" id="diff-wrap">
       <div class="diff-select-wrap">
         <select class="diff-select" id="diff-select" onchange="onDiffSelect(this.value)">
           <option value="1">🟢 Beginner — short sentences, basic vocabulary</option>
@@ -569,9 +625,10 @@ var APP = {
   difficulty: loadDifficulty(),
   storyLen: loadStoryLen(),
   libFilter: 'all',
-  savedList: [],   // cache of last fetched lesson list — used by buildPath for continuedBy
+  savedList: [],
   progress: loadProg(),
   flagged: loadFlagged(),
+  activeJob: null,   // {jobId, topic} while generation is in flight
   cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,xp:0,mistakes:0,streak:0,bestStreak:0,
         answered:false,sel:null,placed:[],usedIdx:[]}
 };
@@ -624,6 +681,27 @@ function restoreDiffSelect(){
 }
 function autoResizeTopic(el){
   el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
+}
+function autoResizeTextarea(el){
+  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,400)+'px';
+}
+function onUseStoryCb(){
+  const on=document.getElementById('use-story-cb').checked;
+  document.getElementById('user-story-panel').classList.toggle('open',on);
+  document.getElementById('use-translation-cb-row').style.display=on?'':'none';
+  document.getElementById('story-len-row').style.display=on?'none':'';
+  document.getElementById('continue-row').style.display=on?'none':'';
+  // If unchecking, also uncheck translation
+  if(!on){
+    document.getElementById('use-translation-cb').checked=false;
+    document.getElementById('user-translation-panel').classList.remove('open');
+  }
+  const lbl=document.getElementById('topic-label');
+  if(lbl) lbl.textContent=on?'Topic / lesson title':('What do you want to learn '+(LANGS[APP.lang]||LANGS.it).name+' for?');
+}
+function onUseTranslationCb(){
+  const on=document.getElementById('use-translation-cb').checked;
+  document.getElementById('user-translation-panel').classList.toggle('open',on);
 }
 function selectLang(code){
   APP.lang=code; saveLang();
@@ -861,6 +939,7 @@ async function init(){
   restoreStoryLenSlider();
   renderPill();
   loadSavedList();
+  await resumeBackgroundJob();
   // Hash-based routing: load topic from URL on startup
   const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
   if(hashTopic) loadSaved(hashTopic);
@@ -957,7 +1036,7 @@ async function loadSavedList(){
   function savedItemHtml(s, connector) {
     const dateStr = s.updatedAt || s.generatedAt;
     const date = dateStr ? new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '';
-    const t = encodeURIComponent(s.topic);
+    const t = encTopic(s.topic);
     const sL = LANGS[s.lang||'it'] || LANGS.it;
     const d = s.difficulty || 2;
     const diffBadge = `<span class="diff-badge d${d}">${DIFF_SHORT[d]||'–'}</span>`;
@@ -1056,6 +1135,7 @@ async function deleteSaved(topic){
 async function regenSaved(topic){
   const dec=decodeURIComponent(topic);
   if(!confirm('Regenerate "'+dec+'"? Overwrites saved version.')) return;
+  if(APP.activeJob){ showToast('⏳ Already generating "'+APP.activeJob.topic+'" — please wait'); return; }
   // Use the lesson's own language and original user topic if stored
   const saved=(APP.savedList||[]).find(s=>s.topic===dec);
   if(saved?.lang) selectLang(saved.lang);
@@ -1075,45 +1155,152 @@ function regenCurrent(){
 
 function setTopic(t){ document.getElementById('topic-input').value=t; document.getElementById('topic-input').focus(); }
 
+// ── Background generation ─────────────────────────────────────────────
+function saveActiveJob(job){ localStorage.setItem('imp3_activejob', job ? JSON.stringify(job) : ''); }
+function loadActiveJob(){ try{ const s=localStorage.getItem('imp3_activejob'); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
+
+function setGenStatus(state, text){
+  // state: 'running' | 'done' | 'error' | 'hidden'
+  const el=document.getElementById('gen-status');
+  const spinner=document.getElementById('gen-status-spinner');
+  const textEl=document.getElementById('gen-status-text');
+  const xEl=document.getElementById('gen-status-x');
+  if(!el) return;
+  if(state==='hidden'){ el.style.display='none'; return; }
+  el.style.display='flex';
+  el.className=state;
+  textEl.textContent=text;
+  spinner.style.display= state==='running' ? '' : 'none';
+  spinner.textContent='⏳';
+  xEl.style.display= state==='running' ? 'none' : '';
+  if(state==='done')   el.innerHTML=`✅ <span>${text}</span> <span style="opacity:.5;margin-left:4px">✕</span>`;
+  if(state==='error')  el.innerHTML=`⚠️ <span>${text}</span> <span style="opacity:.5;margin-left:4px">✕</span>`;
+  if(state==='running') el.innerHTML=`<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> <span>${text}</span>`;
+}
+
+function onGenStatusClick(){
+  const el=document.getElementById('gen-status');
+  if(!el) return;
+  if(el.classList.contains('done') && APP.activeJob?.topic){
+    // Navigate to the newly generated lesson
+    const t=APP.activeJob.topic;
+    APP.activeJob=null; saveActiveJob(null); setGenStatus('hidden','');
+    loadSaved(encodeURIComponent(t));
+  } else if(el.classList.contains('error')||el.classList.contains('done')){
+    APP.activeJob=null; saveActiveJob(null); setGenStatus('hidden','');
+  }
+}
+
+function startBackgroundJob(jobId, topic){
+  APP.activeJob={jobId, topic};
+  saveActiveJob(APP.activeJob);
+  document.getElementById('gen-btn').disabled=true;
+  setGenStatus('running', 'Generating "'+topic+'"…');
+  // Poll in background — user can navigate freely
+  let lastStep='';
+  const iv=setInterval(async ()=>{
+    try{
+      const r=await fetch('/api/job/'+jobId);
+      if(!r.ok) throw new Error('Poll failed: '+r.status);
+      const j=await r.json();
+      if(j.step && j.step!==lastStep){ lastStep=j.step; setGenStatus('running', j.step); }
+      if(j.status==='done'){
+        clearInterval(iv);
+        APP.activeJob={jobId, topic: j.data.topic}; // use server-confirmed topic (may differ)
+        saveActiveJob(APP.activeJob);
+        if(!APP.progress.completed[j.data.topic]) APP.progress.completed[j.data.topic]={};
+        saveProg();
+        await loadSavedList();
+        document.getElementById('gen-btn').disabled=false;
+        setGenStatus('done', '"'+j.data.topic+'" ready — tap to open');
+        showToast('✅ "'+j.data.topic+'" generated!');
+      }
+      if(j.status==='error'){
+        clearInterval(iv);
+        APP.activeJob=null; saveActiveJob(null);
+        document.getElementById('gen-btn').disabled=false;
+        setGenStatus('error', 'Generation failed: '+j.error);
+      }
+    }catch(e){
+      clearInterval(iv);
+      APP.activeJob=null; saveActiveJob(null);
+      document.getElementById('gen-btn').disabled=false;
+      setGenStatus('error', 'Connection lost: '+e.message);
+    }
+  }, 2000);
+}
+
+async function resumeBackgroundJob(){
+  const saved=loadActiveJob();
+  if(!saved||!saved.jobId) return;
+  // Check if job is still alive
+  try{
+    const r=await fetch('/api/job/'+saved.jobId);
+    if(!r.ok){ saveActiveJob(null); return; }
+    const j=await r.json();
+    if(j.status==='done'){
+      // Completed while page was closed — just refresh the list
+      if(!APP.progress.completed[j.data.topic]) APP.progress.completed[j.data.topic]={};
+      saveProg();
+      await loadSavedList();
+      saveActiveJob(null);
+      setGenStatus('done', '"'+j.data.topic+'" ready — tap to open');
+      APP.activeJob={jobId:saved.jobId, topic:j.data.topic};
+    } else if(j.status==='error'){
+      saveActiveJob(null);
+      setGenStatus('error', 'Generation failed: '+j.error);
+    } else {
+      // Still running — re-attach
+      APP.activeJob=saved;
+      startBackgroundJob(saved.jobId, saved.topic);
+    }
+  }catch(e){ saveActiveJob(null); }
+}
+
 async function doGenerate(forceRegen){
   const topic=document.getElementById('topic-input').value.trim();
   if(!topic||topic.length<2){ document.getElementById('topic-input').focus(); return; }
   if(!APP.info.canGenerate) return;
-  document.getElementById('gen-btn').disabled=true;
-  document.getElementById('gen-overlay').style.display='flex';
-  document.getElementById('gen-lbl').textContent='Building lessons for "'+topic+'"…';
-  const subs=['Generating vocabulary…','Crafting sentences…','Building exercises…','Almost ready…'];
-  let si=0; const timer=setInterval(()=>{ document.getElementById('gen-sub').textContent=subs[si++%subs.length]; },1500);
+  if(APP.activeJob){ showToast('⏳ Already generating "'+APP.activeJob.topic+'" — please wait'); return; }
+
+  // Collect user-story fields
+  const useStory=document.getElementById('use-story-cb')?.checked;
+  const useTranslation=document.getElementById('use-translation-cb')?.checked;
+  const userStory=useStory?(document.getElementById('user-story-input')?.value.trim()||null):null;
+  const userTranslation=(useStory&&useTranslation)?(document.getElementById('user-translation-input')?.value.trim()||null):null;
+  const userDialect=(useStory&&useTranslation)?(document.getElementById('user-dialect-input')?.value.trim()||null):null;
+
+  if(useStory&&(!userStory||userStory.length<20)){
+    alert('Please paste your story (at least 20 characters) before generating.');
+    document.getElementById('user-story-input').focus(); return;
+  }
+
   try{
+    const body={topic,lang:APP.lang,difficulty:APP.difficulty,
+      storyLen:APP.storyLen||300,
+      continuedFrom:useStory?null:(document.getElementById('continue-select')?.value||null),
+      forceRegenerate:!!forceRegen};
+    if(userStory)       body.userStory=userStory;
+    if(userTranslation) body.userTranslation=userTranslation;
+    if(userDialect)     body.userDialect=userDialect;
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic,lang:APP.lang,difficulty:APP.difficulty,
-        storyLen:APP.storyLen||300,
-        continuedFrom:document.getElementById('continue-select')?.value||null,
-        forceRegenerate:!!forceRegen})});
+      body:JSON.stringify(body)});
     if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Server error'); }
     const resp=await r.json();
-    let data;
     if(resp.cached){
-      // Cache hit — data returned immediately
-      data=resp.data;
+      // Cache hit — immediate, no background job needed
+      APP.lessonData=resp.data;
+      if(!APP.progress.completed[resp.data.topic]) APP.progress.completed[resp.data.topic]={};
+      saveProg();
+      await loadSavedList();
+      goHome();
     } else {
-      // Background job — poll for completion
-      clearInterval(timer);
-      data=await pollJob(resp.jobId, step=>{
-        document.getElementById('gen-sub').textContent=step;
-      });
+      // Fire and forget — user can browse while this runs
+      startBackgroundJob(resp.jobId, topic);
+      showToast('⏳ Generating "'+topic+'" in the background…');
+      goLanding();
     }
-    APP.lessonData=data;
-    if(!APP.progress.completed[APP.lessonData.topic]) APP.progress.completed[APP.lessonData.topic]={};
-    saveProg();
-    await loadSavedList();
-    goHome();
-  }catch(e){ alert('Error:\n'+e.message); }
-  finally{
-    clearInterval(timer);
-    document.getElementById('gen-overlay').style.display='none';
-    document.getElementById('gen-btn').disabled=!APP.info.canGenerate;
-  }
+  }catch(e){ showToast('⚠ '+e.message); }
 }
 
 // ── home path ──
@@ -1142,11 +1329,11 @@ function buildPath(){
   const fromLinks=[];
   const byLinks=[];
   if(d.continuedFrom){
-    fromLinks.push(`<span class="cont-link cont-from" onclick="loadSaved('${encodeURIComponent(d.continuedFrom)}')">← ${d.continuedFrom}</span>`);
+    fromLinks.push(`<span class="cont-link cont-from" onclick="loadSaved('${encTopic(d.continuedFrom)}')">← ${d.continuedFrom}</span>`);
   }
   if(continuedBy.length){
     continuedBy.forEach(s=>{
-      const t=encodeURIComponent(s.topic);
+      const t=encTopic(s.topic);
       byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${t}')">${s.topic} →</span>`);
     });
   }
@@ -1250,6 +1437,10 @@ function startNextLesson(){
   const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
   if(nextIdx>=0) startLesson(nextIdx);
 }
+
+// encodeURIComponent doesn't encode ' (apostrophe), which breaks onclick="loadSaved('…')"
+// encTopic adds that fix so topics with apostrophes are safe inside single-quoted HTML attributes.
+function encTopic(t){ return encodeURIComponent(t).replace(/'/g,'%27'); }
 
 // ── Storyline combined story panel ───────────────────────────────────
 async function toggleChainStory(chainId) {

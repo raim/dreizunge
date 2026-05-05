@@ -109,13 +109,15 @@ function sentenceLengthSpec(d) {
        : d === 2 ? '6–10 words'
        : '10–16 words (complex grammar, subordinate clauses welcome)';
 }
-function sysLesson(lang, lessonNum, totalLessons, difficulty) {
+function sysLesson(lang, lessonNum, totalLessons, difficulty, styleHint, dialect) {
   const L    = langName(lang);
   const diff = difficultyLabel(difficulty || 2);
   const sentLen = sentenceLengthSpec(difficulty || 2);
   const lessonDiff = lessonNum === 1 ? 'basics'
                    : lessonNum === 2 ? 'phrases / patterns'
                    : 'specific / idiomatic vocabulary';
+  const dialectNote = dialect ? `\n- The target language variety is: ${dialect}. Use vocabulary and spelling appropriate to this dialect/variety.` : '';
+  const styleNote = styleHint ? `\n- Match this story's style and mood when writing vocab and sentences: ${styleHint}` : '';
   return `You are a ${L} language lesson generator for a vocabulary learning app.
 Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
 
@@ -137,8 +139,43 @@ Rules:
 - sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
 - sentence length: ${sentLen} — vary lengths naturally
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
-- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language
-- CRITICAL: every "en" field MUST be in English, never any other language`;
+- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language${dialectNote}${styleNote}`;
+}
+
+// Lesson prompt for user-provided story + parallel translation
+// The LLM extracts vocab/sentences strictly from the aligned text, invents nothing.
+function sysLessonFromText(lang, lessonNum, totalLessons, difficulty, dialect) {
+  const L    = langName(lang);
+  const diff = difficultyLabel(difficulty || 2);
+  const sentLen = sentenceLengthSpec(difficulty || 2);
+  const lessonDiff = lessonNum === 1 ? 'basic vocabulary'
+                   : lessonNum === 2 ? 'phrases and patterns'
+                   : 'specific and idiomatic expressions';
+  const dialectNote = dialect ? ` The target language variety is: ${dialect}.` : '';
+  return `You are a ${L} language lesson extractor for a vocabulary learning app.
+You will be given a ${L} story and its English translation. Your job is to extract vocabulary and sentences STRICTLY from the provided texts — do NOT invent anything.
+Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
+
+Schema:
+{
+  "title": "short lesson theme, 3-5 words",
+  "desc": "up to 8 words describing this lesson",
+  "icon": "one relevant emoji",
+  "vocab": [
+    {"it":"${L} word or short phrase","en":"English meaning from the translation","pron":"phonetic for English speakers, CAPS for stressed syllable"}
+  ],
+  "sentences": [
+    {"it":"A sentence from the ${L} story","en":"Corresponding English translation"}
+  ]
+}
+
+Rules:
+- vocab: exactly 8 items for lesson ${lessonNum} of ${totalLessons} (focus: ${lessonDiff}), all extracted from the story text, difficulty: ${diff}
+- sentences: exactly 5 items, each a complete sentence taken verbatim from the ${L} story, with its matching English translation from the provided translation
+- sentence pairs must be aligned: the English must be the actual translation of that ${L} sentence, not a paraphrase
+- sentence length: prefer sentences of ${sentLen}
+- sentences must NOT be duplicated across lessons — focus on different parts of the text for each lesson
+- CRITICAL: every "it" field MUST be from the ${L} story — never invented, never English${dialectNote}`;
 }
 
 const SYS_REPAIR = `You are a language exercise repairer for a Duolingo-style app.
@@ -313,26 +350,42 @@ function sysStory(lang, isContinuation, wordCount) {
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
-async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId) {
+async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
+  opts = opts || {};
+  const { userTranslation, userDialect, styleHint } = opts;
   jobStep(jobId, `Lesson ${lessonNum}/${totalLessons}: generating…`);
-  const prevHint = prevVocab.length
-    ? `\nVocabulary already covered in earlier lessons (do NOT repeat these, introduce 8 NEW items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
-    : '';
-  const storyHint = story
-    ? `\nContext — use vocabulary and themes from this story where natural:\n${story.slice(0, 800)}`
-    : '';
-  const userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}\nReturn only the JSON object.`;
-  const minWords = 1; //(difficulty || 2) === 1 ? 2 : 3;
+
+  let sysPrompt, userMsg;
+
+  if (userTranslation) {
+    // Extraction mode: derive everything strictly from story + translation
+    sysPrompt = sysLessonFromText(lang, lessonNum, totalLessons, difficulty, userDialect);
+    const prevHint = prevVocab.length
+      ? `\nVocabulary already used in earlier lessons (avoid repeating these, choose different words/sentences):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
+      : '';
+    userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.\n\nSTORY (${langName(lang)}):\n${story}\n\nENGLISH TRANSLATION:\n${userTranslation}${prevHint}\n\nReturn only the JSON object.`;
+  } else {
+    // Normal generative mode
+    sysPrompt = sysLesson(lang, lessonNum, totalLessons, difficulty, styleHint, userDialect);
+    const prevHint = prevVocab.length
+      ? `\nVocabulary already covered in earlier lessons (do NOT repeat these, introduce 8 NEW items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
+      : '';
+    const storyHint = story
+      ? `\nContext — use vocabulary and themes from this story where natural:\n${story.slice(0, 800)}`
+      : '';
+    userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}\nReturn only the JSON object.`;
+  }
+
+  const minWords = (difficulty || 2) === 1 ? 2 : 3;
 
   return withRetry(`Lesson ${lessonNum}`, async () => {
     const t0 = Date.now();
     const { text: raw, promptTokens, completionTokens } =
-      await callLLM(active, sysLesson(lang, lessonNum, totalLessons, difficulty), userMsg, 2048);
+      await callLLM(active, sysPrompt, userMsg, 2048);
     const ms = Date.now() - t0;
     let lesson;
     try { lesson = extractJSON(raw); }
     catch(_) {
-      // Try salvaging as array (some models wrap in array)
       try {
         const arr = extractArray(raw);
         if (Array.isArray(arr) && arr[0]?.vocab) lesson = arr[0];
@@ -343,7 +396,6 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
     // Validate vocab
     if (!Array.isArray(lesson.vocab) || lesson.vocab.length < 4)
       throw new Error(`Only ${lesson.vocab?.length ?? 0} vocab items`);
-    // Dedup vocab
     const seen = new Set();
     lesson.vocab = lesson.vocab.filter(v => {
       const k = v.it?.toLowerCase(); if (!k || seen.has(k)) return false; seen.add(k); return true;
@@ -351,9 +403,8 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
     if (lesson.vocab.length < 4) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
 
     // Validate sentences
-    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < 1)
+    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < 3)
       throw new Error(`Only ${lesson.sentences?.length ?? 0} sentences`);
-    // Derive words[] from sentence text — no LLM words array needed
     lesson.sentences = lesson.sentences.slice(0, 5).map(deriveSentenceWords);
     const tooShort = lesson.sentences.filter(s => s.words.length < minWords);
     if (tooShort.length > 2)
@@ -374,8 +425,10 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
-async function generate(topic, lang, active, difficulty, continuedFrom, storyLen, jobId) {
-  const userTopic = topic;  // preserve original user entry
+async function generate(topic, lang, active, difficulty, continuedFrom, storyLen, jobId, userOpts) {
+  userOpts = userOpts || {};
+  const { userStory, userTranslation, userDialect } = userOpts;
+  const userTopic = topic;
   const genStart = Date.now();
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   const lessonTokenStats = [];
@@ -393,49 +446,84 @@ async function generate(topic, lang, active, difficulty, continuedFrom, storyLen
     console.warn('  Meta failed, using fallback:', e.message);
   }
 
-  jobStep(jobId, 'Generating story…');
+  // ── Story: use user-supplied or generate ─────────────────────────────
   let story = null;
   let storyPrompt = null;
   const storyLang = lang;
-  const prevStory = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
-  if (continuedFrom && prevStory)
-    console.log(`    Continuing story from: "${continuedFrom}" (${prevStory.length} chars)`);
-  try {
-    const t0 = Date.now();
-    const storyUserMsg = prevStory
-      ? `Previous story:\n${prevStory}\n\nNew topic: "${meta.topic || topic}". Write the continuation now. Plain prose, no headings.`
-      : `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`;
-    const storySystem = sysStory(lang, !!prevStory, storyLen);
-    const { text, promptTokens, completionTokens } = await callLLM(
-      active, storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
-    story = text.trim();
-    storyPrompt = storySystem + '\n\n' + storyUserMsg;
-    totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
-    console.log(`    Story (${lang}): ${Date.now()-t0}ms`);
-  } catch(e) { console.warn('  Story failed:', e.message); }
+
+  if (userStory) {
+    // User supplied the story — skip generation entirely
+    story = userStory.trim();
+    storyPrompt = userTranslation
+      ? 'User-provided story + translation'
+      : 'User-provided story';
+    console.log(`    Using user-provided story (${story.length} chars)${userTranslation ? ' + translation' : ''}${userDialect ? ', dialect: '+userDialect : ''}`);
+  } else {
+    jobStep(jobId, 'Generating story…');
+    const prevStory = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
+    if (continuedFrom && prevStory)
+      console.log(`    Continuing story from: "${continuedFrom}" (${prevStory.length} chars)`);
+    try {
+      const t0 = Date.now();
+      const storyUserMsg = prevStory
+        ? `Previous story:\n${prevStory}\n\nNew topic: "${meta.topic || topic}". Write the continuation now. Plain prose, no headings.`
+        : `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`;
+      const storySystem = sysStory(lang, !!prevStory, storyLen);
+      const { text, promptTokens, completionTokens } = await callLLM(
+        active, storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
+      story = text.trim();
+      storyPrompt = storySystem + '\n\n' + storyUserMsg;
+      totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
+      console.log(`    Story (${lang}): ${Date.now()-t0}ms`);
+    } catch(e) { console.warn('  Story failed:', e.message); }
+  }
+
+  // ── Extract style hint from story for generative mode ─────────────────
+  // (short prefix injected into lesson prompts; no extra LLM call needed)
+  const styleHint = (!userTranslation && story)
+    ? story.slice(0, 600)
+    : null;
 
   const TOTAL = 3;
   const lessons = [];
   let prevVocab = [];
+  const lessonOpts = { userTranslation: userTranslation || null, userDialect: userDialect || null, styleHint };
   for (let i = 1; i <= TOTAL; i++) {
-    const { lesson, tokens } = await generateOneLesson(active, lang, topic, i, TOTAL, prevVocab, story, difficulty, jobId);
-    lessons.push(lesson);
-    prevVocab = prevVocab.concat(lesson.vocab);
-    totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
-    lessonTokenStats.push(tokens);
+    try {
+      const { lesson, tokens } = await generateOneLesson(
+        active, lang, topic, i, TOTAL, prevVocab, story, difficulty, jobId, lessonOpts);
+      lessons.push(lesson);
+      prevVocab = prevVocab.concat(lesson.vocab);
+      totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
+      lessonTokenStats.push(tokens);
+    } catch(e) {
+      console.warn(`  Lesson ${i} failed, skipping: ${e.message}`);
+      jobStep(jobId, `⚠ Lesson ${i} failed — continuing with remaining lessons…`);
+    }
   }
+
+  if (lessons.length === 0)
+    throw new Error('All lessons failed to generate — nothing to save.');
+
+  if (lessons.length < TOTAL)
+    console.warn(`  Partial result: ${lessons.length}/${TOTAL} lessons generated.`);
 
   const totalMs = Date.now() - genStart;
   const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : OLLAMA_MODEL;
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
-  return { topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
-           userTopic,
-           lang, difficulty: difficulty || 2, storyLen,
-           story, storyLang, storyPrompt,
-           ...(continuedFrom ? { continuedFrom } : {}),
-           lessons,
-           generationStats: { totalMs, backend: active, model: modelLabel,
-             totalPromptTokens, totalCompletionTokens, lessons: lessonTokenStats } };
+  return {
+    topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
+    userTopic,
+    lang, difficulty: difficulty || 2, storyLen,
+    story, storyLang, storyPrompt,
+    ...(userStory      ? { userStory }                    : {}),
+    ...(userTranslation? { userTranslation }               : {}),
+    ...(userDialect    ? { userDialect }                   : {}),
+    ...(continuedFrom  ? { continuedFrom }                 : {}),
+    lessons,
+    generationStats: { totalMs, backend: active, model: modelLabel,
+      totalPromptTokens, totalCompletionTokens, lessons: lessonTokenStats }
+  };
 }
 
 // ── Repair flagged exercises ──────────────────────────────────────────
@@ -684,11 +772,12 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { topic, lang, difficulty, storyLen, continuedFrom, forceRegenerate } = body;
+      const { topic, lang, difficulty, storyLen, continuedFrom, forceRegenerate,
+              userStory, userTranslation, userDialect } = body;
       if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
       const wc = Math.max(100, Math.min(1000, parseInt(storyLen, 10) || 300));
-      const contFrom = continuedFrom && findSaved(continuedFrom) ? continuedFrom : null;
+      const contFrom = (!userStory && continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       const topicKey = topic.trim().toLowerCase();
       if (!forceRegenerate) {
         const cached = findSaved(topic.trim());
@@ -700,8 +789,13 @@ async function boot() {
         return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
       const jobId = newJob();
       generatingTopics.add(topicKey);
-      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) diff=${diff} words=${wc}${contFrom?' cont='+contFrom:''} job=${jobId}`);
-      generate(topic.trim(), lang || 'it', active, diff, contFrom, wc, jobId).then(data => {
+      const userOpts = {
+        userStory:       userStory       ? String(userStory).trim()       : null,
+        userTranslation: userTranslation ? String(userTranslation).trim() : null,
+        userDialect:     userDialect     ? String(userDialect).trim()     : null,
+      };
+      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) diff=${diff}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' userTranslation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
+      generate(topic.trim(), lang || 'it', active, diff, contFrom, wc, jobId, userOpts).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         jobDone(jobId, { ...data, fromCache: false });

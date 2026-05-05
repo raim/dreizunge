@@ -1,6 +1,856 @@
 {
   "lessons": [
     {
+      "topic": "Plane Crash in the Andes",
+      "topicEmoji": "✈️",
+      "userTopic": "a plane crash in the andes",
+      "lang": "lb",
+      "difficulty": 1,
+      "storyLen": 500,
+      "story": "De Fliger, dës eis Fräiheet, fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken. Dës Welt ass méi kleng ginn, mä dës Distanz tëscht de Leit ass heiansdo méi grouss wéi jee virdrun. Mir fléien iwwer Grenzen ewech, mä dës Maueren an eise Käpp bleiwen dacks bestoen.\n\nEen Tag, wéi dës Fliger op dës Anden fléiet, gëf dës Welt eis Schok. Ei Flugzeug, dës eis Mäntel vun Metall an Glas, fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken. Dës Fliger, dës eis Fräiheet, fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken.\n\nDës Flugzeug, dës eis Mäntel vun Metall an Glas, fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken. Ei Schok, dës eis Schok, gëf dës Welt eis Schok, wéi eis Schok, dës eis Schok, gëf dës Welt eis Schok, wéi eis Schok.\n\nDës Fliger, dës eis Fräiheet, fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken. Ei Flugzeug, dës eis Mäntel vun Metall an Glas, fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken. Dës Fliger, dës eis Fräiheet, fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken.",
+      "storyLang": "lb",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nDe Fliger ass d’Symbol fir eis Fräiheet. Heiansdo sëtzen ech am Gaart a kucken hinnen no, wéi se hir wäiss Sträifen um bloen Himmel hannerloossen.\n\nEt ass eng Zort modernen Altor, op deem mir eis Dreem opferen, fir an d’Welt eraus ze fléien. Mä wat bleift vun deene Wolleken, wa mir erëm landen?\n\nD’Welt ass méi kleng ginn, mä d’Distanz tëscht de Leit ass heiansdo méi grouss wéi jee virdrun. Mir fléien iwwer Grenzen ewech, mä d’Maueren an eise Käpp bleiwen dacks bestoen.\n\nNew topic: \"Plane Crash in the Andes\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "freedom above clouds",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Plane Crash in the Andes",
+          "desc": "Basics of Lëtzebuergesch, plane, andes, crash",
+          "icon": "✈️",
+          "vocab": [
+            {
+              "it": "Flugzeug",
+              "en": "plane",
+              "pron": "FLU-GYU-ZHOG"
+            },
+            {
+              "it": "Anden",
+              "en": "Andes",
+              "pron": "AN-DEN"
+            },
+            {
+              "it": "Schok",
+              "en": "shock",
+              "pron": "SHOK"
+            },
+            {
+              "it": "Gëf",
+              "en": "gave",
+              "pron": "GEF"
+            },
+            {
+              "it": "Gëf gëf",
+              "en": "gave, gave",
+              "pron": "GEF GEF"
+            },
+            {
+              "it": "Gëf gëf gëf",
+              "en": "gave, gave, gave",
+              "pron": "GEF GEF GEF"
+            },
+            {
+              "it": "Gëf gëf gëf gëf",
+              "en": "gave, gave, gave, gave",
+              "pron": "GEF GEF GEF GEF"
+            },
+            {
+              "it": "Gëf gëf gëf gëf gëf",
+              "en": "gave, gave, gave, gave, gave",
+              "pron": "GEF GEF GEF GEF GEF"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Ei Flugzeug fléiet op dës Anden.",
+              "en": "A plane flies over the Andes.",
+              "words": [
+                "Ei",
+                "Flugzeug",
+                "fléiet",
+                "op",
+                "dës",
+                "Anden."
+              ]
+            },
+            {
+              "it": "Dës Flugzeug gëf dës Welt eis Schok.",
+              "en": "This plane gave the world a shock.",
+              "words": [
+                "Dës",
+                "Flugzeug",
+                "gëf",
+                "dës",
+                "Welt",
+                "eis",
+                "Schok."
+              ]
+            },
+            {
+              "it": "Gëf gëf gëf gëf gëf dës Welt eis Schok.",
+              "en": "Gave, gave, gave, gave, gave the world a shock.",
+              "words": [
+                "Gëf",
+                "gëf",
+                "gëf",
+                "gëf",
+                "gëf",
+                "dës",
+                "Welt",
+                "eis",
+                "Schok."
+              ]
+            },
+            {
+              "it": "Dës Anden ass méi kleng ginn, mä dës Distanz tëscht de Leit ass heiansdo méi grouss wéi jee virdrun.",
+              "en": "The Andes are smaller now, but the distance tests the heart more than it used to.",
+              "words": [
+                "Dës",
+                "Anden",
+                "ass",
+                "méi",
+                "kleng",
+                "ginn,",
+                "mä",
+                "dës",
+                "Distanz",
+                "tëscht",
+                "de",
+                "Leit",
+                "ass",
+                "heiansdo",
+                "méi",
+                "grouss",
+                "wéi",
+                "jee",
+                "virdrun."
+              ]
+            },
+            {
+              "it": "Dës Flugzeug fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken.",
+              "en": "The plane flies on the sky, like a mantle of clouds.",
+              "words": [
+                "Dës",
+                "Flugzeug",
+                "fléiet",
+                "op",
+                "dës",
+                "Himmelsweide,",
+                "wéi",
+                "eis",
+                "Mäntel",
+                "vun",
+                "Wolken."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Plane Crash in the Andes",
+          "desc": "Lëtzebuergesch words for a plane crash in the Andes",
+          "icon": "✈️",
+          "vocab": [
+            {
+              "it": "Gëf gëf gëf gëf gëf",
+              "en": "gave, gave, gave, gave, gave",
+              "pron": "gæf gæf gæf gæf gæf"
+            },
+            {
+              "it": "Gëf gëf gëf gëf",
+              "en": "gave, gave, gave, gave",
+              "pron": "gæf gæf gæf gæf"
+            },
+            {
+              "it": "Gëf gëf gëf",
+              "en": "gave, gave, gave",
+              "pron": "gæf gæf gæf"
+            },
+            {
+              "it": "Gëf gëf",
+              "en": "gave, gave",
+              "pron": "gæf gæf"
+            },
+            {
+              "it": "Gëf",
+              "en": "gave",
+              "pron": "gæf"
+            },
+            {
+              "it": "Anden",
+              "en": "Andes",
+              "pron": "ændən"
+            },
+            {
+              "it": "Schok",
+              "en": "shock",
+              "pron": "ʃɔk"
+            },
+            {
+              "it": "Flugzeug",
+              "en": "plane",
+              "pron": "fluˈɡʏçəʊç"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Dës Flugzeug fléiet op dës Anden, gëf dës Welt eis Schok.",
+              "en": "The plane flew over the Andes, gave the world a shock.",
+              "words": [
+                "Dës",
+                "Flugzeug",
+                "fléiet",
+                "op",
+                "dës",
+                "Anden,",
+                "gëf",
+                "dës",
+                "Welt",
+                "eis",
+                "Schok."
+              ]
+            },
+            {
+              "it": "Dës Anden, gëf dës Welt eis Schok, wéi eis Schok.",
+              "en": "The Andes, gave the world a shock, as a shock.",
+              "words": [
+                "Dës",
+                "Anden,",
+                "gëf",
+                "dës",
+                "Welt",
+                "eis",
+                "Schok,",
+                "wéi",
+                "eis",
+                "Schok."
+              ]
+            },
+            {
+              "it": "Gëf gëf gëf gëf gëf dës Flugzeug, dës eis Mäntel vun Metall an Glas, fléiet op dës Himmelsweide.",
+              "en": "Gave, gave, gave, gave, gave the plane, with its coat of metal and glass, flew over the sky field.",
+              "words": [
+                "Gëf",
+                "gëf",
+                "gëf",
+                "gëf",
+                "gëf",
+                "dës",
+                "Flugzeug,",
+                "dës",
+                "eis",
+                "Mäntel",
+                "vun",
+                "Metall",
+                "an",
+                "Glas,",
+                "fléiet",
+                "op",
+                "dës",
+                "Himmelsweide."
+              ]
+            },
+            {
+              "it": "Dës Schok, gëf dës Welt eis Schok, wéi eis Schok, dës eis Schok, gëf dës Welt eis Schok.",
+              "en": "The shock, gave the world a shock, as a shock, gave the world a shock.",
+              "words": [
+                "Dës",
+                "Schok,",
+                "gëf",
+                "dës",
+                "Welt",
+                "eis",
+                "Schok,",
+                "wéi",
+                "eis",
+                "Schok,",
+                "dës",
+                "eis",
+                "Schok,",
+                "gëf",
+                "dës",
+                "Welt",
+                "eis",
+                "Schok."
+              ]
+            },
+            {
+              "it": "Gëf gëf dës Flugzeug, dës eis Mäntel vun Metall an Glas, fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken.",
+              "en": "Gave, gave the plane, with its coat of metal and glass, flew over the sky field, as a coat of clouds.",
+              "words": [
+                "Gëf",
+                "gëf",
+                "dës",
+                "Flugzeug,",
+                "dës",
+                "eis",
+                "Mäntel",
+                "vun",
+                "Metall",
+                "an",
+                "Glas,",
+                "fléiet",
+                "op",
+                "dës",
+                "Himmelsweide,",
+                "wéi",
+                "eis",
+                "Mäntel",
+                "vun",
+                "Wolken."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Plane Crash in the Andes",
+          "desc": "Lëtzebuergesch words for a plane crash in the Andes",
+          "icon": "✈️",
+          "vocab": [
+            {
+              "it": "Gëf gëf gëf gëf gëf",
+              "en": "gave, gave, gave, gave, gave",
+              "pron": "gæf gæf gæf gæf gæf"
+            },
+            {
+              "it": "Gëf gëf gëf gëf",
+              "en": "gave, gave, gave, gave",
+              "pron": "gæf gæf gæf gæf"
+            },
+            {
+              "it": "Gëf gëf gëf",
+              "en": "gave, gave, gave",
+              "pron": "gæf gæf gæf"
+            },
+            {
+              "it": "Gëf gëf",
+              "en": "gave, gave",
+              "pron": "gæf gæf"
+            },
+            {
+              "it": "Gëf",
+              "en": "gave",
+              "pron": "gæf"
+            },
+            {
+              "it": "Anden",
+              "en": "Andes",
+              "pron": "ændən"
+            },
+            {
+              "it": "Schok",
+              "en": "shock",
+              "pron": "ʃɔk"
+            },
+            {
+              "it": "Flugzeug",
+              "en": "plane",
+              "pron": "fluˈɡuːzɪç"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Ei Flugzeug fléiet op dës Anden, gëf gëf gëf gëf gëf dës Welt eis Schok.",
+              "en": "A plane flew over the Andes, gave, gave, gave, gave, gave a shock to the world.",
+              "words": [
+                "Ei",
+                "Flugzeug",
+                "fléiet",
+                "op",
+                "dës",
+                "Anden,",
+                "gëf",
+                "gëf",
+                "gëf",
+                "gëf",
+                "gëf",
+                "dës",
+                "Welt",
+                "eis",
+                "Schok."
+              ]
+            },
+            {
+              "it": "Dës Flugzeug, dës eis Mäntel vun Metall an Glas, fléiet op dës Himmelsweide.",
+              "en": "This plane, this coat of metal and glass, flew over the sky plain.",
+              "words": [
+                "Dës",
+                "Flugzeug,",
+                "dës",
+                "eis",
+                "Mäntel",
+                "vun",
+                "Metall",
+                "an",
+                "Glas,",
+                "fléiet",
+                "op",
+                "dës",
+                "Himmelsweide."
+              ]
+            },
+            {
+              "it": "Ei Schok, dës eis Schok, gëf dës Welt eis Schok, wéi eis Schok.",
+              "en": "A shock, this shock, gave the world a shock, as a shock.",
+              "words": [
+                "Ei",
+                "Schok,",
+                "dës",
+                "eis",
+                "Schok,",
+                "gëf",
+                "dës",
+                "Welt",
+                "eis",
+                "Schok,",
+                "wéi",
+                "eis",
+                "Schok."
+              ]
+            },
+            {
+              "it": "Gëf gëf gëf gëf gëf dës Welt eis Schok, wéi eis Schok, dës eis Schok.",
+              "en": "Gave, gave, gave, gave, gave the world a shock, as a shock, this shock.",
+              "words": [
+                "Gëf",
+                "gëf",
+                "gëf",
+                "gëf",
+                "gëf",
+                "dës",
+                "Welt",
+                "eis",
+                "Schok,",
+                "wéi",
+                "eis",
+                "Schok,",
+                "dës",
+                "eis",
+                "Schok."
+              ]
+            },
+            {
+              "it": "Dës Flugzeug, dës eis Mäntel vun Metall an Glas, fléiet op dës Himmelsweide, wéi eis Mäntel vun Wolken.",
+              "en": "This plane, this coat of metal and glass, flew over the sky plain, as a coat of clouds.",
+              "words": [
+                "Dës",
+                "Flugzeug,",
+                "dës",
+                "eis",
+                "Mäntel",
+                "vun",
+                "Metall",
+                "an",
+                "Glas,",
+                "fléiet",
+                "op",
+                "dës",
+                "Himmelsweide,",
+                "wéi",
+                "eis",
+                "Mäntel",
+                "vun",
+                "Wolken."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1708204,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 3811,
+        "totalCompletionTokens": 2287,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 449061,
+            "promptTokens": 992,
+            "completionTokens": 507
+          },
+          {
+            "lessonNum": 2,
+            "ms": 470773,
+            "promptTokens": 1110,
+            "completionTokens": 635
+          },
+          {
+            "lessonNum": 3,
+            "ms": 501183,
+            "promptTokens": 1209,
+            "completionTokens": 624
+          }
+        ]
+      },
+      "generatedAt": "2026-05-05T22:01:25.525Z",
+      "updatedAt": "2026-05-05T22:01:25.525Z"
+    },
+    {
+      "topic": "freedom above clouds",
+      "topicEmoji": "✈️",
+      "userTopic": "freedom above the clouds",
+      "lang": "lb",
+      "difficulty": 1,
+      "storyLen": 500,
+      "story": "De Fliger ass d’Symbol fir eis Fräiheet. Heiansdo sëtzen ech am Gaart a kucken hinnen no, wéi se hir wäiss Sträifen um bloen Himmel hannerloossen.\n\nEt ass eng Zort modernen Altor, op deem mir eis Dreem opferen, fir an d’Welt eraus ze fléien. Mä wat bleift vun deene Wolleken, wa mir erëm landen?\n\nD’Welt ass méi kleng ginn, mä d’Distanz tëscht de Leit ass heiansdo méi grouss wéi jee virdrun. Mir fléien iwwer Grenzen ewech, mä d’Maueren an eise Käpp bleiwen dacks bestoen.",
+      "storyLang": "lb",
+      "storyPrompt": "User-provided story + translation",
+      "userStory": "De Fliger ass d’Symbol fir eis Fräiheet. Heiansdo sëtzen ech am Gaart a kucken hinnen no, wéi se hir wäiss Sträifen um bloen Himmel hannerloossen.\n\nEt ass eng Zort modernen Altor, op deem mir eis Dreem opferen, fir an d’Welt eraus ze fléien. Mä wat bleift vun deene Wolleken, wa mir erëm landen?\n\nD’Welt ass méi kleng ginn, mä d’Distanz tëscht de Leit ass heiansdo méi grouss wéi jee virdrun. Mir fléien iwwer Grenzen ewech, mä d’Maueren an eise Käpp bleiwen dacks bestoen.",
+      "userTranslation": "The airplane is the symbol of our freedom. Sometimes I sit in the garden and watch them, how they leave their white stripes on the blue sky.\n\nIt is a kind of modern altar on which we sacrifice our dreams to fly out into the world. But what remains of those clouds when we land again?\n\nThe world has become smaller, but the distance between people is sometimes greater than ever before. We fly across borders, but the walls in our heads often remain.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "airplane, freedom, garden, clouds, world",
+          "desc": "basic vocabulary and sentences about freedom and flying",
+          "icon": "✈️",
+          "vocab": [
+            {
+              "it": "Fliger",
+              "en": "airplane",
+              "pron": "FLIH-ger"
+            },
+            {
+              "it": "Fräiheet",
+              "en": "freedom",
+              "pron": "FREH-ih-het"
+            },
+            {
+              "it": "Gaart",
+              "en": "garden",
+              "pron": "GAART"
+            },
+            {
+              "it": "Wolleken",
+              "en": "clouds",
+              "pron": "WOL-leh-ken"
+            },
+            {
+              "it": "Welt",
+              "en": "world",
+              "pron": "VELT"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "De Fliger ass d’Symbol fir eis Fräiheet.",
+              "en": "The airplane is the symbol of our freedom.",
+              "words": [
+                "De",
+                "Fliger",
+                "ass",
+                "d’Symbol",
+                "fir",
+                "eis",
+                "Fräiheet."
+              ]
+            },
+            {
+              "it": "Heiansdo sëtzen ech am Gaart a kucken hinnen no.",
+              "en": "Sometimes I sit in the garden and watch them.",
+              "words": [
+                "Heiansdo",
+                "sëtzen",
+                "ech",
+                "am",
+                "Gaart",
+                "a",
+                "kucken",
+                "hinnen",
+                "no."
+              ]
+            },
+            {
+              "it": "Mä wat bleift vun deene Wolleken, wa mir erëm landen?",
+              "en": "But what remains of those clouds when we land again?",
+              "words": [
+                "Mä",
+                "wat",
+                "bleift",
+                "vun",
+                "deene",
+                "Wolleken,",
+                "wa",
+                "mir",
+                "erëm",
+                "landen?"
+              ]
+            },
+            {
+              "it": "Mir fléien iwwer Grenzen ewech.",
+              "en": "We fly across borders.",
+              "words": [
+                "Mir",
+                "fléien",
+                "iwwer",
+                "Grenzen",
+                "ewech."
+              ]
+            },
+            {
+              "it": "D’Maueren an eise Käpp bleiwen dacks bestoen.",
+              "en": "The walls in our heads often remain.",
+              "words": [
+                "D’Maueren",
+                "an",
+                "eise",
+                "Käpp",
+                "bleiwen",
+                "dacks",
+                "bestoen."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "freedom above the clouds",
+          "desc": "symbols, dreams, world, distance, borders",
+          "icon": "✈️",
+          "vocab": [
+            {
+              "it": "Symbol",
+              "en": "symbol",
+              "pron": "SAL-uh-buh"
+            },
+            {
+              "it": "Altor",
+              "en": "altar",
+              "pron": "AL-tuhr"
+            },
+            {
+              "it": "Dreem",
+              "en": "dream",
+              "pron": "DREEM"
+            },
+            {
+              "it": "Grenzen",
+              "en": "borders",
+              "pron": "GRENZ-uhns"
+            },
+            {
+              "it": "Maueren",
+              "en": "walls",
+              "pron": "MOH-uh-ern"
+            },
+            {
+              "it": "Käpp",
+              "en": "heads",
+              "pron": "KAP"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "De Fliger ass d’Symbol fir eis Fräiheet.",
+              "en": "The airplane is the symbol of our freedom.",
+              "words": [
+                "De",
+                "Fliger",
+                "ass",
+                "d’Symbol",
+                "fir",
+                "eis",
+                "Fräiheet."
+              ]
+            },
+            {
+              "it": "Et ass eng Zort modernen Altor.",
+              "en": "It is a kind of modern altar.",
+              "words": [
+                "Et",
+                "ass",
+                "eng",
+                "Zort",
+                "modernen",
+                "Altor."
+              ]
+            },
+            {
+              "it": "Mä wat bleift vun deene Wolleken, wa mir erëm landen?",
+              "en": "But what remains of those clouds when we land again?",
+              "words": [
+                "Mä",
+                "wat",
+                "bleift",
+                "vun",
+                "deene",
+                "Wolleken,",
+                "wa",
+                "mir",
+                "erëm",
+                "landen?"
+              ]
+            },
+            {
+              "it": "D’Welt ass méi kleng ginn.",
+              "en": "The world has become smaller.",
+              "words": [
+                "D’Welt",
+                "ass",
+                "méi",
+                "kleng",
+                "ginn."
+              ]
+            },
+            {
+              "it": "Mä d’Distanz tëscht de Leit ass heiansdo méi grouss wéi jee virdrun.",
+              "en": "But the distance between people is sometimes greater than ever before.",
+              "words": [
+                "Mä",
+                "d’Distanz",
+                "tëscht",
+                "de",
+                "Leit",
+                "ass",
+                "heiansdo",
+                "méi",
+                "grouss",
+                "wéi",
+                "jee",
+                "virdrun."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "freedom above the clouds",
+          "desc": "fly, remain, smaller, distance, heads",
+          "icon": "✈️",
+          "vocab": [
+            {
+              "it": "Fléien",
+              "en": "fly",
+              "pron": "FLAY-ee"
+            },
+            {
+              "it": "bleiwen",
+              "en": "remain",
+              "pron": "BLEE-ven"
+            },
+            {
+              "it": "kleng",
+              "en": "smaller",
+              "pron": "KLENG"
+            },
+            {
+              "it": "distanz",
+              "en": "distance",
+              "pron": "DISS-tanz"
+            },
+            {
+              "it": "Käpp",
+              "en": "heads",
+              "pron": "KAP"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Mir fléien iwwer Grenzen ewech",
+              "en": "We fly across borders every",
+              "words": [
+                "Mir",
+                "fléien",
+                "iwwer",
+                "Grenzen",
+                "ewech"
+              ]
+            },
+            {
+              "it": "Mä d’Maueren an eise Käpp bleiwen dacks bestoen",
+              "en": "But the walls in our heads often remain",
+              "words": [
+                "Mä",
+                "d’Maueren",
+                "an",
+                "eise",
+                "Käpp",
+                "bleiwen",
+                "dacks",
+                "bestoen"
+              ]
+            },
+            {
+              "it": "D’Welt ass méi kleng ginn",
+              "en": "The world has become smaller",
+              "words": [
+                "D’Welt",
+                "ass",
+                "méi",
+                "kleng",
+                "ginn"
+              ]
+            },
+            {
+              "it": "Mä d’Distanz tëscht de Leit ass heiansdo méi grouss wéi jee virdrun",
+              "en": "But the distance between people is sometimes greater than ever before",
+              "words": [
+                "Mä",
+                "d’Distanz",
+                "tëscht",
+                "de",
+                "Leit",
+                "ass",
+                "heiansdo",
+                "méi",
+                "grouss",
+                "wéi",
+                "jee",
+                "virdrun"
+              ]
+            },
+            {
+              "it": "Mä wat bleift vun deene Wolleken, wa mir erëm landen?",
+              "en": "But what remains of those clouds when we land again?",
+              "words": [
+                "Mä",
+                "wat",
+                "bleift",
+                "vun",
+                "deene",
+                "Wolleken,",
+                "wa",
+                "mir",
+                "erëm",
+                "landen?"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1130646,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 2303,
+        "totalCompletionTokens": 996,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 331714,
+            "promptTokens": 684,
+            "completionTokens": 316
+          },
+          {
+            "lessonNum": 2,
+            "ms": 285274,
+            "promptTokens": 731,
+            "completionTokens": 334
+          },
+          {
+            "lessonNum": 3,
+            "ms": 147945,
+            "promptTokens": 764,
+            "completionTokens": 315
+          }
+        ]
+      },
+      "generatedAt": "2026-05-05T21:31:29.996Z",
+      "updatedAt": "2026-05-05T21:31:29.996Z",
+      "exportedFlags": {},
+      "exportedAt": "2026-05-05T21:22:50.497Z"
+    },
+    {
       "topic": "lets eat duck ramen in tsuruoka",
       "topicEmoji": "🍜",
       "userTopic": "let's eat a duck ramen in tsuruoka",
