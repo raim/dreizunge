@@ -133,7 +133,6 @@ function renderPill() {
   lbl.textContent = 'Static — built-in lessons only';
   document.getElementById('gen-btn').disabled = true;
   document.getElementById('topic-input').disabled = true;
-  const sel=document.getElementById('lang-select'); if(sel) sel.disabled=true;
   const note=document.getElementById('offline-note');
   note.style.display='block'; note.textContent='📦 Static version — select a topic below to start';
   // Gray out controls that have no effect in static mode
@@ -145,21 +144,25 @@ function renderPill() {
   if(lenSlider){ lenSlider.disabled=true; lenSlider.title='Story length has no effect in static mode'; }
   const lenRow=lenSlider?.closest('.story-len-row');
   if(lenRow) lenRow.style.opacity='0.4';
-  // Hide share button — clipboard doesn't work without a served URL
-  const shareBtn=document.getElementById('share-btn');
-  if(shareBtn) shareBtn.style.display='none';
 }
 
 async function loadSavedList() {
   const saved = STATIC_LESSONS;
-  const langs=[...new Set(saved.map(s=>s.lang||'it'))].sort();
+  APP.savedList = saved;  // needed by buildPath for cont-nav "continued in" links
+  const hasMultiLang=[...new Set(saved.map(s=>s.lang||'it'))].length>1;
   const filterEl=document.getElementById('lib-filter');
-  if(filterEl && langs.length>1){
-    filterEl.innerHTML=['all',...langs].map(l=>{
-      const L=LANGS[l]; const lbl=l==='all'?'🌐 All':(L?L.flag+' '+L.name:l.toUpperCase());
-      return \`<button class="lib-filter-btn\${APP.libFilter===l?' active':''}" onclick="setLibFilter('\${l}')">\${lbl}</button>\`;
-    }).join('');
-  } else if(filterEl){ filterEl.innerHTML=''; }
+  if(filterEl){
+    if(hasMultiLang){
+      const activeL=LANGS[APP.libFilter]||null;
+      filterEl.innerHTML=(APP.libFilter==='all'
+        ? \`<button class="lib-filter-btn active">🌐 All languages</button>\`
+        : \`<button class="lib-filter-btn active">\${activeL?activeL.flag+' '+activeL.name:APP.libFilter.toUpperCase()}</button>\`+
+          \`<button class="lib-filter-btn" onclick="setLibFilter('all')">🌐 All</button>\`
+      );
+    } else {
+      filterEl.innerHTML='';
+    }
+  }
 
   const filtered=APP.libFilter==='all'?saved:saved.filter(s=>(s.lang||'it')===APP.libFilter);
   document.getElementById('lib-cnt').textContent=
@@ -224,6 +227,7 @@ async function loadSavedList() {
   for(const chain of storylines){
     const chainTopicsJson=JSON.stringify(chain.map(t=>byTopic[t]?.topic).filter(Boolean));
     const chainEncoded=encodeURIComponent(chainTopicsJson);
+    const chainId='c'+Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
     html+='<div class="storyline-group"><div class="storyline-hdr">📖 Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+
       '<button class="ico-btn export" style="margin-left:auto;font-size:11px;padding:2px 8px" title="Export full story line with flags"'+
       ' data-chain="'+chainEncoded+'"'+
@@ -233,6 +237,7 @@ async function loadSavedList() {
       const s=byTopic[topic]; if(!s)return;
       html+='<div class="storyline-item">'+itemHtml(s,i>0)+'</div>';
     });
+    html+=\`<div class="storyline-story"><button class="storyline-story-hdr" onclick="toggleChainStory('\${chainId}')">📖 Read full story<span class="storyline-story-arrow" id="csarrow-\${chainId}">▼</span></button><div class="storyline-story-body" id="csbody-\${chainId}" data-chain="\${chainEncoded}"></div></div>\`;
     html+='</div>';
   }
   if(orphans.length){
@@ -242,7 +247,20 @@ async function loadSavedList() {
   list.innerHTML=html||'<div class="lib-empty">No lessons available.</div>';
 }
 
-function setLibFilter(lang){ APP.libFilter=lang; loadSavedList(); }
+function setLibFilter(lang){
+  APP.libFilter=lang;
+  if(lang!=='all' && LANGS[lang]){
+    APP.lang=lang; saveLang();
+    const sel=document.getElementById('lang-select');
+    if(sel) sel.value=lang;
+    const L=LANGS[lang];
+    const lbl=document.getElementById('topic-label');
+    if(lbl) lbl.textContent='What do you want to learn '+L.name+' for?';
+    const tagline=document.getElementById('app-tagline');
+    if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
+  }
+  loadSavedList();
+}
 
 async function loadSaved(topic) {
   const dec=decodeURIComponent(topic);
@@ -294,6 +312,19 @@ const staticOverrides = [
   'function toggleStoryFlag(){}',
   'function saveStoryComment(){}',
   'function _updateStoryFlagUI(){}',
+  'async function toggleChainStory(chainId){',
+  '  const body=document.getElementById("csbody-"+chainId);',
+  '  const arrow=document.getElementById("csarrow-"+chainId);',
+  '  if(!body)return;',
+  '  const opening=!body.classList.contains("open");',
+  '  body.classList.toggle("open",opening);',
+  '  if(arrow)arrow.classList.toggle("open",opening);',
+  '  if(!opening||body.dataset.loaded)return;',
+  '  body.dataset.loaded="1";',
+  '  const topics=JSON.parse(decodeURIComponent(body.dataset.chain));',
+  '  const chapters=topics.map(t=>STATIC_LESSONS.find(l=>l.topic===t)).filter(Boolean);',
+  '  _renderChainStory(body,chapters);',
+  '}',
   'function autoResizeTopic(el){ el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,160)+"px"; }',
   'function toggleStory(){',
   '  const body=document.getElementById("story-body"),arrow=document.getElementById("story-arrow");',
@@ -302,9 +333,17 @@ const staticOverrides = [
   '  if(arrow)arrow.classList.toggle("open",open);',
   '}',
   'function speakStory(){ const d=APP.lessonData; if(d&&d.story)speak(d.story); }',
-  'function renderStoryText(d){',
-  '  const body=document.getElementById("story-body"); if(!body)return;',
-  '  body.innerHTML=(d.story||"").split(/\\n\\n+/).map(p=>"<p>"+p.replace(/\\n/g,"<br>")+"</p>").join("");',
+  'function renderStoryText(d,targetEl){',
+  '  const body=targetEl||document.getElementById("story-body"); if(!body)return;',
+  '  // Highlight all vocab words (static: no completion gating)',
+  '  const vocabWords=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.it).filter(Boolean).sort((a,b)=>b.length-a.length);',
+  '  const escHtml=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");',
+  '  let escaped=escHtml(d.story||"");',
+  '  if(vocabWords.length){',
+  '    const pattern=vocabWords.map(w=>w.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\$&")).join("|");',
+  '    escaped=escaped.replace(new RegExp("("+pattern+")","gi"),\'<mark class="story-vocab-hl">$1</mark>\');',
+  '  }',
+  '  body.innerHTML=escaped.split(/\\n\\n+/).map(p=>"<p>"+p.replace(/\\n/g,"<br>")+"</p>").join("");',
   '}',
   'function toggleStoryRepair(){}',
   'function doRepairStory(){ alert("Story repair requires the live server."); }',

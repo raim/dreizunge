@@ -218,6 +218,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .sec-btn{width:100%;padding:12px;background:none;border:2.5px solid var(--gray-mid);border-radius:var(--radius-lg);font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark)}
 .sec-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
 
+.lang-box{background:var(--white);border-radius:var(--radius-xl);padding:16px 22px;box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:10px}
 .lang-selector{margin-bottom:14px}
 .lang-select-wrap{position:relative;display:inline-block;width:100%}
 .lang-select{width:100%;padding:10px 36px 10px 14px;font-size:15px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
@@ -251,15 +252,33 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .continue-select{width:100%;padding:9px 36px 9px 12px;font-size:13px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
 .continue-select:focus{border-color:var(--blue)}
 .continue-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px;color:var(--gray-dark)}
-.continued-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#f0f4ff;border:1.5px solid #c0ccff;border-radius:8px;padding:3px 9px;color:#334;margin-top:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.continued-by{font-size:11px;font-weight:700;color:var(--gray-dark);margin-top:5px;display:flex;flex-wrap:wrap;align-items:center;gap:5px}
-.continued-by-link{background:#f0fff4;border:1.5px solid #a0ddb0;border-radius:8px;padding:2px 8px;cursor:pointer;font-weight:800;color:#1a5c2a;white-space:nowrap}
-.continued-by-link:hover{background:#d0f0da}
+.cont-nav{display:flex;flex-direction:row;gap:8px;margin:0 0 10px;padding:0 2px;align-items:flex-start}
+.cont-col{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.cont-col-from{align-items:flex-start}
+.cont-col-by{align-items:flex-end}
+.cont-link{display:inline-block;font-size:12px;font-weight:800;cursor:pointer;border-radius:8px;padding:3px 10px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .1s}
+.cont-from{background:#f0f4ff;border:1.5px solid #c0ccff;color:#334}
+.cont-from:hover{background:#e0e8ff}
+.cont-by{background:#f0fff4;border:1.5px solid #a0ddb0;color:#1a5c2a}
+.cont-by:hover{background:#d0f0da}
 .diff-badge{display:inline-block;font-size:10px;font-weight:900;padding:1px 7px;border-radius:8px;vertical-align:middle;margin-left:4px;letter-spacing:.04em}
 .diff-badge.d1{background:#d7ffb2;color:#2a6000}
 .diff-badge.d2{background:#fff3cc;color:#7a5000}
 .diff-badge.d3{background:#ffd4d4;color:#880000}
 .native-check-row{display:none}
+.storyline-story{border-top:1.5px solid var(--gray-mid);background:var(--white)}
+.storyline-story-hdr{display:flex;align-items:center;gap:7px;padding:8px 13px;cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;text-align:left}
+.storyline-story-hdr:hover{background:var(--gray-light)}
+.storyline-story-arrow{font-size:10px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
+.storyline-story-arrow.open{transform:rotate(180deg)}
+.storyline-story-body{display:none;padding:0 16px 14px}
+.storyline-story-body.open{display:block}
+.storyline-chapter{margin-bottom:20px}
+.storyline-chapter-hdr{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--gray-dark);background:var(--gray-light);border-radius:6px;padding:4px 10px;margin-bottom:8px;display:inline-block}
+.storyline-chapter-body{font-size:14px;line-height:1.75;color:#444}
+.storyline-chapter-body p{margin-bottom:10px}
+.storyline-chapter-body p:last-child{margin-bottom:0}
+.storyline-story-loading{font-size:13px;color:var(--gray-dark);font-style:italic;padding:8px 0}
 .story-vocab-hl{background:#fff3c0;border-radius:3px;padding:0 2px;font-weight:800;cursor:help}
 .story-flag-row{padding:6px 14px 10px;display:flex;flex-direction:column;gap:6px}
 
@@ -356,31 +375,32 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span id="bmodel" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
   </div>
 
-  <div class="topic-form">
-    <label class="form-lbl">Target language</label>
-    <div class="lang-selector">
-      <div class="lang-select-wrap">
-        <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
-          <option value="it">🇮🇹 Italian</option>
-          <option value="fr">🇫🇷 French</option>
-          <option value="de">🇩🇪 German</option>
-          <option value="es">🇪🇸 Spanish</option>
-          <option value="pt">🇵🇹 Portuguese</option>
-          <option value="nl">🇳🇱 Dutch</option>
-          <option value="pl">🇵🇱 Polish</option>
-          <option value="sv">🇸🇪 Swedish</option>
-          <option value="ja">🇯🇵 Japanese</option>
-          <option value="zh">🇨🇳 Mandarin Chinese</option>
-          <option value="ar">🇸🇦 Arabic</option>
-          <option value="ru">🇷🇺 Russian</option>
-          <option value="ko">🇰🇷 Korean</option>
-          <option value="tr">🇹🇷 Turkish</option>
-          <option value="hi">🇮🇳 Hindi</option>
-          <option value="lb">🇱🇺 Lëtzebuergesch</option>
-        </select>
-        <span class="lang-select-arrow">▾</span>
-      </div>
+  <div class="lang-box">
+    <label class="form-lbl">🌍 Language</label>
+    <div class="lang-select-wrap">
+      <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
+        <option value="it">🇮🇹 Italian</option>
+        <option value="fr">🇫🇷 French</option>
+        <option value="de">🇩🇪 German</option>
+        <option value="es">🇪🇸 Spanish</option>
+        <option value="pt">🇵🇹 Portuguese</option>
+        <option value="nl">🇳🇱 Dutch</option>
+        <option value="pl">🇵🇱 Polish</option>
+        <option value="sv">🇸🇪 Swedish</option>
+        <option value="ja">🇯🇵 Japanese</option>
+        <option value="zh">🇨🇳 Mandarin Chinese</option>
+        <option value="ar">🇸🇦 Arabic</option>
+        <option value="ru">🇷🇺 Russian</option>
+        <option value="ko">🇰🇷 Korean</option>
+        <option value="tr">🇹🇷 Turkish</option>
+        <option value="hi">🇮🇳 Hindi</option>
+        <option value="lb">🇱🇺 Lëtzebuergesch</option>
+      </select>
+      <span class="lang-select-arrow">▾</span>
     </div>
+  </div>
+
+  <div class="topic-form">
     <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
     <textarea class="topic-input" id="topic-input" rows="2"
       placeholder="e.g. cooking, architecture, medicine… add details for a richer story"
@@ -616,6 +636,9 @@ function selectLang(code){
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
   if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
+  // Also filter the library to match the selected language
+  APP.libFilter=code;
+  if(document.getElementById('saved-list')) loadSavedList();
 }
 async function pollJob(jobId, onStep, intervalMs){
   intervalMs = intervalMs || 2000;
@@ -685,12 +708,12 @@ function toggleStoryRepair(){
   const wrap=document.getElementById('story-repair-wrap');
   if(wrap) wrap.classList.toggle('open');
 }
-function renderStoryText(d){
-  const body=document.getElementById('story-body'); if(!body) return;
+function renderStoryText(d, targetEl){
+  const body=targetEl||document.getElementById('story-body'); if(!body) return;
   const done=APP.progress.completed?.[d.topic]||{};
-  // Collect vocab from completed lessons only, longest first for greedy match
+  // In library context (targetEl provided) highlight all vocab; on home screen highlight completed only
   const vocabWords=(d.lessons||[])
-    .filter(L=>done[L.id])
+    .filter(L=>targetEl||done[L.id])
     .flatMap(L=>L.vocab||[])
     .map(v=>v.it).filter(Boolean)
     .sort((a,b)=>b.length-a.length);
@@ -859,21 +882,42 @@ function renderPill(){
 }
 
 // ── library ──
-function setLibFilter(lang){ APP.libFilter=lang; loadSavedList(); }
+function setLibFilter(lang){
+  APP.libFilter=lang;
+  // If switching to a specific language, also update the lang selector and APP.lang
+  if(lang!=='all' && LANGS[lang]){
+    APP.lang=lang; saveLang();
+    const sel=document.getElementById('lang-select');
+    if(sel) sel.value=lang;
+    const L=LANGS[lang];
+    const lbl=document.getElementById('topic-label');
+    if(lbl) lbl.textContent='What do you want to learn '+L.name+' for?';
+    const tagline=document.getElementById('app-tagline');
+    if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
+  }
+  loadSavedList();
+}
 
 async function loadSavedList(){
   let saved=[];
   try{ const r=await fetch('/api/lessons'); saved=await r.json(); }catch(e){}
   APP.savedList=saved;  // cache for use by buildPath (continuedBy links)
-  // Server already sorts by updatedAt desc; apply lang filter client-side
-  const langs=[...new Set(saved.map(s=>s.lang||'it'))].sort();
+  // Build language filter UI — a single "🌐 All" toggle when libFilter is 'all',
+  // otherwise show the active language name + an "All" escape
   const filterEl=document.getElementById('lib-filter');
-  if(filterEl && langs.length>1){
-    filterEl.innerHTML=['all',...langs].map(l=>{
-      const L=LANGS[l]; const lbl=l==='all'?'🌐 All':(L?L.flag+' '+L.name:l.toUpperCase());
-      return `<button class="lib-filter-btn${APP.libFilter===l?' active':''}" onclick="setLibFilter('${l}')">${lbl}</button>`;
-    }).join('');
-  } else if(filterEl){ filterEl.innerHTML=''; if(APP.libFilter!=='all') APP.libFilter='all'; }
+  const hasMultiLang=[...new Set(saved.map(s=>s.lang||'it'))].length>1;
+  if(filterEl){
+    if(hasMultiLang){
+      const activeL=LANGS[APP.libFilter]||null;
+      filterEl.innerHTML=(APP.libFilter==='all'
+        ? `<button class="lib-filter-btn active">🌐 All languages</button>`
+        : `<button class="lib-filter-btn active">${activeL?activeL.flag+' '+activeL.name:APP.libFilter.toUpperCase()}</button>`+
+          `<button class="lib-filter-btn" onclick="setLibFilter('all')">🌐 All</button>`
+      );
+    } else {
+      filterEl.innerHTML='';
+    }
+  }
 
   const filtered=APP.libFilter==='all'?saved:saved.filter(s=>(s.lang||'it')===APP.libFilter);
   document.getElementById('lib-cnt').textContent=
@@ -953,6 +997,7 @@ async function loadSavedList(){
   // Render storyline groups
   for (const chain of storylines) {
     const chainTopicsJson = JSON.stringify(chain.map(t => byTopic[t]?.topic).filter(Boolean));
+    const chainId = 'c' + Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
     html += `<div class="storyline-group">`;
     html += `<div class="storyline-hdr">📖 Story line · ${chain.length} lesson${chain.length!==1?'s':''}
       <button class="ico-btn export" style="margin-left:auto;font-size:11px;padding:2px 8px"
@@ -964,6 +1009,11 @@ async function loadSavedList(){
       const s = byTopic[topic]; if (!s) return;
       html += `<div class="storyline-item">${savedItemHtml(s, i > 0)}</div>`;
     });
+    html += `<div class="storyline-story">` +
+      `<button class="storyline-story-hdr" onclick="toggleChainStory('${chainId}')">` +
+      `📖 Read full story<span class="storyline-story-arrow" id="csarrow-${chainId}">▼</span></button>` +
+      `<div class="storyline-story-body" id="csbody-${chainId}" data-chain="${encodeURIComponent(chainTopicsJson)}"></div>` +
+      `</div>`;
     html += `</div>`;
   }
 
@@ -1023,7 +1073,6 @@ function regenCurrent(){
   setTimeout(()=>doGenerate(true),100);
 }
 
-// ── generate ──
 function setTopic(t){ document.getElementById('topic-input').value=t; document.getElementById('topic-input').focus(); }
 
 async function doGenerate(forceRegen){
@@ -1080,37 +1129,35 @@ function buildPath(){
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
 
-  // Continued-from badge
-  let contBadge=document.getElementById('continued-badge');
-  if(d.continuedFrom){
-    if(!contBadge){
-      contBadge=document.createElement('div');
-      contBadge.id='continued-badge'; contBadge.className='continued-badge';
-      document.getElementById('topic-name-big').insertAdjacentElement('afterend',contBadge);
-    }
-    contBadge.innerHTML='↩ continued from: <span style="text-decoration:underline;cursor:pointer" onclick="loadSaved(\''+encodeURIComponent(d.continuedFrom)+'\')">'+d.continuedFrom+'</span>';
-    contBadge.style.display='';
-  } else if(contBadge){ contBadge.style.display='none'; }
-
-  // "→ Continued by" links — lessons that have continuedFrom === this topic
-  let contByEl=document.getElementById('continued-by');
+  // Continued-from / continued-by links — rendered in a shared row below the header
+  let contNav=document.getElementById('cont-nav');
+  if(!contNav){
+    contNav=document.createElement('div');
+    contNav.id='cont-nav';
+    contNav.className='cont-nav';
+    // Insert after home-hdr
+    document.querySelector('.home-hdr').insertAdjacentElement('afterend',contNav);
+  }
   const continuedBy=(APP.savedList||[]).filter(s=>s.continuedFrom===d.topic);
+  const fromLinks=[];
+  const byLinks=[];
+  if(d.continuedFrom){
+    fromLinks.push(`<span class="cont-link cont-from" onclick="loadSaved('${encodeURIComponent(d.continuedFrom)}')">← ${d.continuedFrom}</span>`);
+  }
   if(continuedBy.length){
-    if(!contByEl){
-      contByEl=document.createElement('div');
-      contByEl.id='continued-by';
-      // Insert after continued-badge if present, else after topic-name-big
-      const anchor=document.getElementById('continued-badge')||document.getElementById('topic-name-big');
-      anchor.insertAdjacentElement('afterend',contByEl);
-    }
-    contByEl.className='continued-by';
-    contByEl.innerHTML='→ continued by: '+continuedBy.map(s=>{
+    continuedBy.forEach(s=>{
       const t=encodeURIComponent(s.topic);
-      const sL=LANGS[s.lang||'it']||LANGS.it;
-      return `<span class="continued-by-link" onclick="loadSaved('${t}')">${sL.flag} ${s.topic}</span>`;
-    }).join('');
-    contByEl.style.display='';
-  } else if(contByEl){ contByEl.style.display='none'; }
+      byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${t}')">${s.topic} →</span>`);
+    });
+  }
+  if(fromLinks.length||byLinks.length){
+    contNav.innerHTML=
+      `<div class="cont-col cont-col-from">${fromLinks.join('')}</div>`+
+      `<div class="cont-col cont-col-by">${byLinks.join('')}</div>`;
+    contNav.style.display='';
+  } else {
+    contNav.style.display='none';
+  }
 
   // Story section — below start button now; collapse/expand based on completion
   const storySec=document.getElementById('story-section');
@@ -1202,6 +1249,58 @@ function startNextLesson(){
   const d=APP.lessonData, done=APP.progress.completed[d.topic]||{};
   const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
   if(nextIdx>=0) startLesson(nextIdx);
+}
+
+// ── Storyline combined story panel ───────────────────────────────────
+async function toggleChainStory(chainId) {
+  const body  = document.getElementById('csbody-'  + chainId);
+  const arrow = document.getElementById('csarrow-' + chainId);
+  if (!body) return;
+  const opening = !body.classList.contains('open');
+  body.classList.toggle('open', opening);
+  if (arrow) arrow.classList.toggle('open', opening);
+  if (!opening) return;
+  if (body.dataset.loaded) return;
+  body.dataset.loaded = '1';
+  body.innerHTML = '<div class="storyline-story-loading">Loading stories…</div>';
+  try {
+    const topics = JSON.parse(decodeURIComponent(body.dataset.chain));
+    const chapters = [];
+    for (const topic of topics) {
+      let d;
+      const cached = (APP.savedList || []).find(s => s.story && s.topic === topic);
+      if (cached && cached.lessons && cached.story) {
+        d = cached;
+      } else {
+        const r = await fetch('/api/lessons/load?topic=' + encodeURIComponent(topic));
+        if (!r.ok) throw new Error('Could not load: ' + topic);
+        d = await r.json();
+      }
+      chapters.push(d);
+    }
+    _renderChainStory(body, chapters);
+  } catch(e) {
+    body.innerHTML = '<div class="storyline-story-loading">⚠ Could not load: ' + e.message + '</div>';
+  }
+}
+
+function _renderChainStory(body, chapters) {
+  const allVocab = chapters.flatMap(d => (d.lessons||[]).flatMap(L => L.vocab||[])).map(v => v.it).filter(Boolean).sort((a,b) => b.length - a.length);
+  const escHtml = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function highlight(text) {
+    let t = escHtml(text);
+    if (allVocab.length) {
+      const pat = allVocab.map(w => w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+      t = t.replace(new RegExp('(' + pat + ')','gi'), '<mark class="story-vocab-hl">$1</mark>');
+    }
+    return t.split(/\n\n+/).map(p => '<p>' + p.replace(/\n/g,'<br>') + '</p>').join('');
+  }
+  body.innerHTML = chapters.map((d, i) =>
+    `<div class="storyline-chapter">` +
+    `<div class="storyline-chapter-hdr">Chapter ${i+1} · ${escHtml(d.topic)}</div>` +
+    `<div class="storyline-chapter-body">${highlight(d.story || '(no story)')}</div>` +
+    `</div>`
+  ).join('');
 }
 
 // ── exercises ──
