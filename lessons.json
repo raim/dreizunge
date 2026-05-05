@@ -1,6 +1,375 @@
 {
   "lessons": [
     {
+      "topic": "Cremant vs. Champagne",
+      "topicEmoji": "🥂",
+      "userTopic": "how is cremant made? what is the difference to champagne?",
+      "lang": "lb",
+      "difficulty": 1,
+      "storyLen": 300,
+      "story": "Elisa stoung un der Uewer, hire Ännele war eng Flëssegkeet, déi de Floss reflekterte. Si huet eng Flasche am Uewe, eng Cremant, an hiren Hänn. \"Cremant, oder Champagne?\", huet si segge, hire Stem war schwach, aber fest. Si huet d'Flasche opgesucht, d'Kork opgedrémt. D'Flëssegkeet war klir, mit goldene Nuancen.\n\n\"Champagne ass d'Original\", huet si segge, \"aber Cremant ass einfach besser. Et ass méi leichter, méi fräsch, an et huet eng aner Aart vun der Säure. Et ass wéi e fräschen Start am Dag, während Champagne méi festlech ass.\" Si huet eng Klëpp am Floss ginn. \"Champagne ass perfekt fir festlech Moomenter, awer Cremant ass perfekt fir all Mooment. Et ass einfach, einfach, an einfach gutt.\"\n\nSi huet d'Flasche opgott. \"Wéi wéi sinn se?\", huet si segge, \"Mir wëllen eng gutt Flëssegkeet fir d'Fest, awer ech wëll och eng, déi ech de ganze Dag kënnen iessen.\" Si huet dës Fro op d'Floss gëtt. \"De Floss huet eng Antwort\", huet si segge. \"De Floss ass eng Symbol fir d'Liewen, fir d'Verännerung, fir d'Zukunft. Et ass eng Flëssegkeet, déi all Moomenten enthält.\"\n\nElisa huet d'Flasche opgott. \"Also, Cremant\", huet si segge, \"Et ass eng gutt Flëssegkeet, déi ech fir festlech Moomenter, awer och fir all Moomenten iessen kënnen. Et ass einfach, einfach, an einfach gutt.\" Si huet d'Flasche opgott. \"Et ass eng Flëssegkeet, déi d'Liewen, d'Verännerung, an d'Zukunft enthält. Et ass eng Flëssegkeet, déi ech fir all Moomenten iessen kënnen.\"",
+      "storyLang": "lb",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch.\n\nTopic: \"Cremant vs. Champagne\".\nCurrent story:\nElisa huet d'Stad verlocht, fir d'Alzette ze verfollegen. D'Floss, déi duerfir leeft, huet eng ganz aner Aart vun der Energie. Et war d'Floss, deen d'Stad am Liewen, am Liewen vun de Leit, am Liewen vun der Natur, am Liewen vun der Geschicht, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun der Zukunft, am Liewen vun\n\nUser instruction: You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nElisa huet d'Stad verlocht, fir d'Alzette ze verfollegen. D'Floss, déi duerfir leeft, huet eng ganz aner Aart vun der Energie. Et war d'Floss, deen d'Stad am Liewen, am Liewen vun de Leit, am Liewen vun der Natur, am Liewen vun der Geschicht, am Liewen vun der Zukunft.\n\nNew topic: \"Cremant vs. Champagne\". Write the continuation now. Plain prose, no headings.\nPlain prose, no headings.",
+      "continuedFrom": "Luxembourgish Poetry",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Cremant vs. Champagne: Einfach erklärt",
+          "desc": "Grundlagen: Herstellung, Unterschiede, einfache Fragen",
+          "icon": "🥂",
+          "vocab": [
+            {
+              "it": "Cremant",
+              "en": "Champagner",
+              "pron": "kʁɛmɑ̃"
+            },
+            {
+              "it": "Méthode",
+              "en": "Methode",
+              "pron": "mɛtɔd"
+            },
+            {
+              "it": "Jahrgang",
+              "en": "Jahrgang",
+              "pron": "ʒaʁɡɑŋ"
+            },
+            {
+              "it": "Wein",
+              "en": "Wein",
+              "pron": "vɛɛ̯n"
+            },
+            {
+              "it": "Kapsel",
+              "en": "Kapsel",
+              "pron": "kɑpsɛl"
+            },
+            {
+              "it": "Schaum",
+              "en": "Schaum",
+              "pron": "ʃaʊ̯m"
+            },
+            {
+              "it": "Reifung",
+              "en": "Reifung",
+              "pron": "ʁəfʊŋ"
+            },
+            {
+              "it": "Abfüllung",
+              "en": "Abfüllung",
+              "pron": "abfʊlʊŋ"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "De Cremant ass e Champagner, mee net de selwechte.",
+              "en": "Der Cremant ist ein Champagner, aber nicht der gleiche.",
+              "words": [
+                "De",
+                "Cremant",
+                "ass",
+                "e",
+                "Champagner,",
+                "mee",
+                "net",
+                "de",
+                "selwechte."
+              ]
+            },
+            {
+              "it": "De Méthode ass wichteg fir beid.",
+              "en": "Die Methode ist wichtig für beide.",
+              "words": [
+                "De",
+                "Méthode",
+                "ass",
+                "wichteg",
+                "fir",
+                "beid."
+              ]
+            },
+            {
+              "it": "De Jahrgang geet op d'Qualitéit.",
+              "en": "Der Jahrgang geht auf die Qualität.",
+              "words": [
+                "De",
+                "Jahrgang",
+                "geet",
+                "op",
+                "d'Qualitéit."
+              ]
+            },
+            {
+              "it": "D'Wein muss fir Cremant korrekt reifen.",
+              "en": "Der Wein muss für Cremant korrekt reifen.",
+              "words": [
+                "D'Wein",
+                "muss",
+                "fir",
+                "Cremant",
+                "korrekt",
+                "reifen."
+              ]
+            },
+            {
+              "it": "D'Abfüllung muss sorgfalt vollziege.",
+              "en": "Die Abfüllung muss sorgfältig vollzogen werden.",
+              "words": [
+                "D'Abfüllung",
+                "muss",
+                "sorgfalt",
+                "vollziege."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Cremant vs. Champagne: Herstellung",
+          "desc": "Unterschiede erklären, Herstellungsprozess, neue Wörter",
+          "icon": "🍾",
+          "vocab": [
+            {
+              "it": "Méthode Traditionnelle",
+              "en": "Traditional Method"
+            },
+            {
+              "it": "Dosage",
+              "en": "Dosage"
+            },
+            {
+              "it": "Tertiary Aromen",
+              "en": "Tertiary Aromas"
+            },
+            {
+              "it": "Jahrgang",
+              "en": "Vintage"
+            },
+            {
+              "it": "Kapselung",
+              "en": "Capping"
+            },
+            {
+              "it": "Fermentierung",
+              "en": "Fermentation"
+            },
+            {
+              "it": "Schaumwirkung",
+              "en": "Foaminess"
+            },
+            {
+              "it": "Reifeprozess",
+              "en": "Aging Process"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "D'Cremant gätt duerf mat der Méthode Traditionnelle produzéiert ginn.",
+              "en": "Cremant must be produced using the Traditional Method.",
+              "words": [
+                "D'Cremant",
+                "gätt",
+                "duerf",
+                "mat",
+                "der",
+                "Méthode",
+                "Traditionnelle",
+                "produzéiert",
+                "ginn."
+              ]
+            },
+            {
+              "it": "De Dosage bestëmmet de Schaum.",
+              "en": "The dosage determines the foam.",
+              "words": [
+                "De",
+                "Dosage",
+                "bestëmmet",
+                "de",
+                "Schaum."
+              ]
+            },
+            {
+              "it": "Tertiary Aromen sinn wichtig fir d'Qualitéit.",
+              "en": "Tertiary aromas are important for quality.",
+              "words": [
+                "Tertiary",
+                "Aromen",
+                "sinn",
+                "wichtig",
+                "fir",
+                "d'Qualitéit."
+              ]
+            },
+            {
+              "it": "De Jahrgang beeinflusst den Geschmack.",
+              "en": "The vintage influences the taste.",
+              "words": [
+                "De",
+                "Jahrgang",
+                "beeinflusst",
+                "den",
+                "Geschmack."
+              ]
+            },
+            {
+              "it": "D'Kapselung schützt d'Flësseg.",
+              "en": "The capping protects the liquid.",
+              "words": [
+                "D'Kapselung",
+                "schützt",
+                "d'Flësseg."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Cremant vs. Champagne: Unterschiede",
+          "desc": "Wie gëtt Cremant geprëft? Was sinn déi wichteg Differenzen?",
+          "icon": "🥂",
+          "vocab": [
+            {
+              "it": "Pressen",
+              "en": "Pressing"
+            },
+            {
+              "it": "Dosage",
+              "en": "Dosage"
+            },
+            {
+              "it": "Jahrgang",
+              "en": "Vintage"
+            },
+            {
+              "it": "Kapselung",
+              "en": "Capping"
+            },
+            {
+              "it": "Schaum",
+              "en": "Foaminess"
+            },
+            {
+              "it": "Reifung",
+              "en": "Aging"
+            },
+            {
+              "it": "Kapsel",
+              "en": "Casing"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "D'Cremant ass eng méi einfach Form, mat klenner Fermentierung.",
+              "en": "The Cremant is a simpler form, with less fermentation.",
+              "words": [
+                "D'Cremant",
+                "ass",
+                "eng",
+                "méi",
+                "einfach",
+                "Form,",
+                "mat",
+                "klenner",
+                "Fermentierung."
+              ]
+            },
+            {
+              "it": "De Champagne huet vill Tertiary Aromen, während Cremant einfachere Aromen huet.",
+              "en": "Champagne has more Tertiary Aromas, while Cremant has simpler Aromas.",
+              "words": [
+                "De",
+                "Champagne",
+                "huet",
+                "vill",
+                "Tertiary",
+                "Aromen,",
+                "während",
+                "Cremant",
+                "einfachere",
+                "Aromen",
+                "huet."
+              ]
+            },
+            {
+              "it": "D'Dosage beim Cremant ass normalerweis manner bitter.",
+              "en": "The Dosage in Cremant is usually less bitter.",
+              "words": [
+                "D'Dosage",
+                "beim",
+                "Cremant",
+                "ass",
+                "normalerweis",
+                "manner",
+                "bitter."
+              ]
+            },
+            {
+              "it": "De Schaum ass beim Champagne oft vill, beim Cremant weniger.",
+              "en": "The Foaminess in Champagne is often more, in Cremant less.",
+              "words": [
+                "De",
+                "Schaum",
+                "ass",
+                "beim",
+                "Champagne",
+                "oft",
+                "vill,",
+                "beim",
+                "Cremant",
+                "weniger."
+              ]
+            },
+            {
+              "it": "D'Kapsel ass beim Champagne oft aus Metall, beim Cremant aus Papier.",
+              "en": "The Casing in Champagne is often made of metal, in Cremant from paper.",
+              "words": [
+                "D'Kapsel",
+                "ass",
+                "beim",
+                "Champagne",
+                "oft",
+                "aus",
+                "Metall,",
+                "beim",
+                "Cremant",
+                "aus",
+                "Papier."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 696841,
+        "backend": "ollama",
+        "model": "translategemma",
+        "totalPromptTokens": 2623,
+        "totalCompletionTokens": 1942,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 162871,
+            "promptTokens": 581,
+            "completionTokens": 447
+          },
+          {
+            "lessonNum": 2,
+            "ms": 165290,
+            "promptTokens": 655,
+            "completionTokens": 365
+          },
+          {
+            "lessonNum": 3,
+            "ms": 152892,
+            "promptTokens": 713,
+            "completionTokens": 409
+          }
+        ]
+      },
+      "generatedAt": "2026-05-05T13:21:35.364Z",
+      "updatedAt": "2026-05-05T13:27:26.072Z"
+    },
+    {
       "topic": "Luxembourgish Poetry",
       "topicEmoji": "🇱🇺",
       "userTopic": "luxembourgish poetry",
