@@ -1,6 +1,492 @@
 {
   "lessons": [
     {
+      "topic": "Driving License Conversion",
+      "topicEmoji": "🚗",
+      "userTopic": "converting a foreign Drivers licence into a Japanese one\n\nto the LLM converting this to a story and text: please provide furigana annotation of the kanji",
+      "lang": "ja",
+      "difficulty": 2,
+      "storyLen": 450,
+      "story": "東京の中心部に位置する小さな自動車学校で、田中さんは新しい運転免許証の申請手続きを始める。彼は最近、日本に移住し、日本の運転免許証を取得するために必要な手続きを学んでいた。申請書類を手に取り、窓口の受付係に話しかける。\n\n「こんにちは、私は田中です。外国の運転免許証を日本語のものに変更したいです。」と、田中さんは丁寧に言葉を選びながら話した。受付係の女性は優しく微笑み、申請書類を渡した。「こちらの書類を全て埋めてください。その後、必要な証明書類を揃えてください。」\n\n田中さんは申請書類を丁寧に埋めて、必要な書類を揃えた。彼は以前の運転免許証、パスポート、そして翻訳された証明書類を用意した。これらの書類を手に、再び窓口に足を運んだ。\n\n「こちらの書類を確認させていただきます。」と、受付係の女性は慎重に各書類を確認した。彼女は特に翻訳された証明書類に注目し、確認のための質問をした。「この翻訳は正確ですか？」\n\n「はい、正確です。」田中さんは自信を持って答えた。「翻訳会社に確認しました。」\n\n女性は満足げな表情を浮かべ、「全ての手続きが整いましたね。次は写真撮影です。」と告げた。田中さんは写真撮影室で新しい運転免許証の写真を撮影し、最後の手順を終え、新しい日本語の運転免許証を受け取った。\n\n「ありがとうございます。」田中さんは心から感謝の言葉を述べ、新しい運転免許証を手に満足げな笑顔で帰路についた。",
+      "storyLang": "ja",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 4-5 paragraphs, under 450 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese.\n\nWrite a story for the topic: \"converting a foreign Drivers licence into a Japanese one\n\nto the LLM converting this to a story and text: please provide furigana annotation of the kanji\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "運転免許証の手続き",
+          "desc": "日本の運転免許証取得の手続き",
+          "icon": "🚗",
+          "vocab": [
+            {
+              "it": "申請手続き",
+              "en": "application procedures",
+              "pron": "a-plee-kee-shun pro-ked-yuhs"
+            },
+            {
+              "it": "申請書類",
+              "en": "application documents",
+              "pron": "a-plee-kei-doo-muhnts"
+            },
+            {
+              "it": "証明書類",
+              "en": "proof documents",
+              "pron": "prohf doo-muhnts"
+            },
+            {
+              "it": "受付係",
+              "en": "receptionist",
+              "pron": "rih-pee-vee-est"
+            },
+            {
+              "it": "翻訳",
+              "en": "translation",
+              "pron": "trahn-ley-shun"
+            },
+            {
+              "it": "確認",
+              "en": "confirmation",
+              "pron": "kuh-nfr-mey-shun"
+            },
+            {
+              "it": "写真撮影",
+              "en": "photographing",
+              "pron": "fuh-toh-fee-ning"
+            },
+            {
+              "it": "運転免許証",
+              "en": "driver's license",
+              "pron": "druh-veers lih-nes-suh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "田中さんは新しい運転免許証の申請手続きを始める。",
+              "en": "Tanaka-san starts the application procedures for a new driver's license.",
+              "words": [
+                "田中",
+                "さん",
+                "は新",
+                "しい",
+                "運転",
+                "免許",
+                "証の",
+                "申請",
+                "手続",
+                "きを",
+                "始め",
+                "る。"
+              ]
+            },
+            {
+              "it": "受付係の女性は優しく微笑み、申請書類を渡した。",
+              "en": "The receptionist woman smiled kindly and handed over the application documents.",
+              "words": [
+                "受付",
+                "係の",
+                "女性",
+                "は優",
+                "しく",
+                "微笑",
+                "み、",
+                "申請",
+                "書類",
+                "を渡",
+                "した",
+                "。"
+              ]
+            },
+            {
+              "it": "田中さんは以前の運転免許証、パスポート、そして翻訳された証明書類を用意した。",
+              "en": "Tanaka-san prepared his previous driver's license, passport, and translated proof documents.",
+              "words": [
+                "田中",
+                "さん",
+                "は以",
+                "前の",
+                "運転",
+                "免許",
+                "証、",
+                "パス",
+                "ポー",
+                "ト、",
+                "そし",
+                "て翻",
+                "訳さ",
+                "れた",
+                "証明",
+                "書類",
+                "を用",
+                "意し",
+                "た。"
+              ]
+            },
+            {
+              "it": "受付係の女性は慎重に各書類を確認した。",
+              "en": "The receptionist woman carefully checked each document.",
+              "words": [
+                "受付",
+                "係の",
+                "女性",
+                "は慎",
+                "重に",
+                "各書",
+                "類を",
+                "確認",
+                "した",
+                "。"
+              ]
+            },
+            {
+              "it": "田中さんは心から感謝の言葉を述べ、新しい運転免許証を受け取った。",
+              "en": "Tanaka-san expressed heartfelt thanks and received his new driver's license.",
+              "words": [
+                "田中",
+                "さん",
+                "は心",
+                "から",
+                "感謝",
+                "の言",
+                "葉を",
+                "述べ",
+                "、新",
+                "しい",
+                "運転",
+                "免許",
+                "証を",
+                "受け",
+                "取っ",
+                "た。"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "申請手続き",
+          "desc": "運転免許証の手続き",
+          "icon": "🚗",
+          "vocab": [
+            {
+              "it": "申請手続き",
+              "en": "application procedures",
+              "pron": "AH-plih-keet proh-KREET-see"
+            },
+            {
+              "it": "受付係",
+              "en": "receptionist",
+              "pron": "SOO-foo-see"
+            },
+            {
+              "it": "証明書類",
+              "en": "proof documents",
+              "pron": "SOO-mehng DOH-kyuh-mehnts"
+            },
+            {
+              "it": "翻訳",
+              "en": "translation",
+              "pron": "FLEE-nay"
+            },
+            {
+              "it": "確認",
+              "en": "confirmation",
+              "pron": "kuh-NOH-mih-see"
+            },
+            {
+              "it": "写真撮影",
+              "en": "photographing",
+              "pron": "SOH-fee-nee-ying"
+            },
+            {
+              "it": "運転免許証",
+              "en": "driver's license",
+              "pron": "oo-REN-tahn MAHN-kyoo-SHET"
+            },
+            {
+              "it": "翻訳会社",
+              "en": "translation company",
+              "pron": "FLEE-nay HEE-ah-see"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "私は田中です。外国の運転免許証を日本語のものに変更したいです。",
+              "en": "I am Tanaka. I want to change my foreign driver's license to a Japanese one.",
+              "words": [
+                "私は",
+                "田中",
+                "です",
+                "。外",
+                "国の",
+                "運転",
+                "免許",
+                "証を",
+                "日本",
+                "語の",
+                "もの",
+                "に変",
+                "更し",
+                "たい",
+                "です",
+                "。"
+              ]
+            },
+            {
+              "it": "受付係の女性は優しく微笑み、申請書類を渡した。",
+              "en": "The female receptionist smiled kindly and handed over the application documents.",
+              "words": [
+                "受付",
+                "係の",
+                "女性",
+                "は優",
+                "しく",
+                "微笑",
+                "み、",
+                "申請",
+                "書類",
+                "を渡",
+                "した",
+                "。"
+              ]
+            },
+            {
+              "it": "私は以前の運転免許証、パスポート、そして翻訳された証明書類を用意した。",
+              "en": "I prepared my previous driver's license, passport, and translated proof documents.",
+              "words": [
+                "私は",
+                "以前",
+                "の運",
+                "転免",
+                "許証",
+                "、パ",
+                "スポ",
+                "ート",
+                "、そ",
+                "して",
+                "翻訳",
+                "され",
+                "た証",
+                "明書",
+                "類を",
+                "用意",
+                "した",
+                "。"
+              ]
+            },
+            {
+              "it": "女性は特に翻訳された証明書類に注目し、確認のための質問をした。「この翻訳は正確ですか？",
+              "en": "The woman particularly focused on the translated proof documents and asked for confirmation, 'Is this translation accurate?'",
+              "words": [
+                "女性",
+                "は特",
+                "に翻",
+                "訳さ",
+                "れた",
+                "証明",
+                "書類",
+                "に注",
+                "目し",
+                "、確",
+                "認の",
+                "ため",
+                "の質",
+                "問を",
+                "した",
+                "。「",
+                "この",
+                "翻訳",
+                "は正",
+                "確で",
+                "すか",
+                "？"
+              ]
+            },
+            {
+              "it": "田中さんは心から感謝の言葉を述べ、新しい運転免許証を手に満足げな笑顔で帰路についた。",
+              "en": "Tanaka sincerely expressed his gratitude and left with a satisfied smile holding his new driver's license.",
+              "words": [
+                "田中",
+                "さん",
+                "は心",
+                "から",
+                "感謝",
+                "の言",
+                "葉を",
+                "述べ",
+                "、新",
+                "しい",
+                "運転",
+                "免許",
+                "証を",
+                "手に",
+                "満足",
+                "げな",
+                "笑顔",
+                "で帰",
+                "路に",
+                "つい",
+                "た。"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "運転免許証の手続き",
+          "desc": "申請手続き、証明書類、翻訳",
+          "icon": "🚗",
+          "vocab": [
+            {
+              "it": "申請書類",
+              "en": "application documents",
+              "pron": "AH-plih-key DOH-kyoo-mehnts"
+            },
+            {
+              "it": "証明書類",
+              "en": "proof documents",
+              "pron": "ZOH-mehng DOH-kyoo-mehnts"
+            },
+            {
+              "it": "翻訳会社",
+              "en": "translation company",
+              "pron": "FLEE-nay TOH-nee-shun KAH-mee-PAN-see"
+            },
+            {
+              "it": "確認",
+              "en": "confirmation",
+              "pron": "kuh-NOH-mee-ey-shun"
+            },
+            {
+              "it": "受付係",
+              "en": "receptionist",
+              "pron": "ROH-pee-fee KEE"
+            },
+            {
+              "it": "翻訳",
+              "en": "translation",
+              "pron": "FLEE-nay"
+            },
+            {
+              "it": "書類",
+              "en": "documents",
+              "pron": "DOH-kyoo-mehnts"
+            },
+            {
+              "it": "手続き",
+              "en": "procedures",
+              "pron": "proh-KREE-dees"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "新しい申請書類を手に取りました。",
+              "en": "I took the new application documents.",
+              "pron": "NEW-eh-see AH-plih-key DOH-kyoo-mehnts wuh-TOH-mah.",
+              "words": [
+                "新し",
+                "い申",
+                "請書",
+                "類を",
+                "手に",
+                "取り",
+                "まし",
+                "た。"
+              ]
+            },
+            {
+              "it": "証明書類を翻訳会社に確認しました。",
+              "en": "I confirmed the translation of the proof documents with a translation company.",
+              "pron": "ZOH-mehng DOH-kyoo-mehnts wuh-FLAY-nay TOH-nee-shun KAH-mee-PAN-see NOH-kuh-NOH-mee-ey-shun.",
+              "words": [
+                "証明",
+                "書類",
+                "を翻",
+                "訳会",
+                "社に",
+                "確認",
+                "しま",
+                "した",
+                "。"
+              ]
+            },
+            {
+              "it": "受付係の女性は優しく微笑みました。",
+              "en": "The receptionist woman smiled kindly.",
+              "pron": "ROH-pee-fee KEE-noh FEE-mah-noh SWAH-mee-mah.",
+              "words": [
+                "受付",
+                "係の",
+                "女性",
+                "は優",
+                "しく",
+                "微笑",
+                "みま",
+                "した",
+                "。"
+              ]
+            },
+            {
+              "it": "必要な証明書類を揃えました。",
+              "en": "I gathered the necessary proof documents.",
+              "pron": "nah-see-NAH-lee ZOH-mehng DOH-kyoo-mehnts wuh-GAH-reh.",
+              "words": [
+                "必要",
+                "な証",
+                "明書",
+                "類を",
+                "揃え",
+                "まし",
+                "た。"
+              ]
+            },
+            {
+              "it": "翻訳は正確です。",
+              "en": "The translation is accurate.",
+              "pron": "FLEE-nay HAH kuh-TAH-kew-suh",
+              "words": [
+                "翻",
+                "訳",
+                "は",
+                "正",
+                "確",
+                "で",
+                "す",
+                "。"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1406437,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 4224,
+        "totalCompletionTokens": 2024,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 393200,
+            "promptTokens": 1223,
+            "completionTokens": 477
+          },
+          {
+            "lessonNum": 2,
+            "ms": 392534,
+            "promptTokens": 1314,
+            "completionTokens": 524
+          },
+          {
+            "lessonNum": 3,
+            "ms": 419411,
+            "promptTokens": 1390,
+            "completionTokens": 543
+          }
+        ]
+      },
+      "generatedAt": "2026-05-06T16:43:38.249Z",
+      "updatedAt": "2026-05-06T16:43:38.249Z"
+    },
+    {
       "topic": "History of Luxembourg",
       "topicEmoji": "🇱🇺",
       "userTopic": "history of luxembourg",
