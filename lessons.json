@@ -1,6 +1,844 @@
 {
   "lessons": [
     {
+      "topic": "Sulfur Water Spa Smell",
+      "topicEmoji": "🧼",
+      "userTopic": "our car stinks of foul eggs after visiting the sulfur water spa Saturnia",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Lucia e Marco si sedettero sul divano della loro piccola casa, sorseggiando la birra fresca che Marco aveva appena preparato. L'odore di uova marce era insopportabile, ma entrambi cercarono di ignorarlo, concentrati sulle loro conversazioni.\n\n\"Non riesco a capire come possa esserci tanto odore,\" disse Lucia, frugando nella borsa in cerca di un fazzoletto. \"Abbiamo usato il bagno turco, ma non mi aspettavo che fosse così... intenso.\"\n\nMarco rise, scuotendo la testa. \"Forse è per via del clima, Lucia. Il vapore e l'acqua sotterranea contengono certi minerali che possono alterare l'odore. Ma non preoccuparti, non dura a lungo.\"\n\n\"Non è tanto l'odore che mi preoccupa,\" replicò Lucia, \"ma il fatto che non possiamo uscire di casa senza che tutti notino il nostro passaggio.\"\n\nMarco rise di nuovo, un suono rilassante che riempì la stanza. \"Non preoccuparti, Lucia. La nostra birra ci aiuterà a sopportare questo piccolo inconveniente. E poi, forse potremo usare questa situazione come pretesto per una serata tranquilla a casa.\"\n\n\"Una serata tranquilla?\" chiese Lucia, sorridendo. \"Non so se mi piacerebbe. Preferirei uscire e godermi la serata, anche se mi sento un po' come se fossi appena uscita da un incubo.\"\n\nMarco le prese la mano, stringendola gentilmente. \"Non preoccuparti, ci penserò io. Preparerò una cena leggera e ci divertiremo con un film. E poi, domani, potremo andare a fare una passeggiata in paese e dimenticare tutto.\"\n\nLucia sorrise, sentendo il peso della giornata iniziare a sciogliersi. \"Sembra una buona idea. E forse, domani, potremmo anche fare una passeggiata nella zona del bagno turco e vedere se l'odore si è attenuato.\"\n\nMarco annuì, sollevando la sua birra in un brindisi silenzioso. \"Ci proveremo, e se non funziona, ci inventeremo un'altra scusa. Dopotutto, la vita toscana è fatta di piccole avventure e buone birre.\"",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\nLucia sorrise, pensierosa. \"Ma dimmi, Marco, come fai a distinguere la tua birra dal vino locale?\"\n\nMarco si schiarì la gola, prendendo un sorso dalla sua birra. \"È una domanda complessa, Lucia. In fondo, entrambi sono frutto del lavoro del contadino e del mestiere dell'artigiano. Ma ci sono differenze fondamentali. Il vino, soprattutto quello toscano, è frutto di un'uva matura, coltivata con cura e vinificata secondo antiche tradizioni. Il risultato è un'esperienza sensoriale intensa, complessa, che richiede spesso un lungo invecchiamento. La nostra birra, invece, è più immediata. Usiamo cereali, luppoli e lieviti per creare un'ebbrezza più leggera, più conviviale. Non cerchiamo la complessità, ma la freschezza, la semplicità.\"\n\nLucia annuì, assaporando la sua birra. \"Capisco. Quindi, il vino è come un'opera d'arte, mentre la tua birra è come una bella conversazione con gli amici.\"\n\nMarco rise, un suono caldo e rassicurante. \"Esattamente! Il vino è un viaggio, una riflessione. La nostra birra è un momento di condivisione, di gioia semplice. Entrambe, però, hanno bisogno di essere apprezzate con attenzione e rispetto. Un buon vino richiede una cena elegante, mentre una buona birra si abbina perfettamente a un pranzo informale o a una serata tra amici.\"\n\nLucia sorrise, sentendo una profonda connessione con Marco e con il suo modo di vedere il mondo. \"Grazie, Marco. Mi hai aperto gli occhi. Ora capisco perché la tua birra è così amata qui. È la birra della semplicità, della felicità, della vita toscana.\"\n\nNew topic: \"our car stinks of foul eggs after visiting the sulfur water spa Saturnia\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Brewery Owner Explains Wine vs. Beer",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "sapore di uova marce",
+          "desc": "odore sgradevole, bagno turco, minerali, vapore",
+          "icon": "🚽",
+          "vocab": [
+            {
+              "it": "sapore",
+              "en": "taste",
+              "pron": "SAP-or"
+            },
+            {
+              "it": "uova marce",
+              "en": "rotten eggs",
+              "pron": "OH-vah MAHR-chey"
+            },
+            {
+              "it": "bagno turco",
+              "en": "Turkish bath",
+              "pron": "BAH-noh TOOR-koh"
+            },
+            {
+              "it": "minerali",
+              "en": "minerals",
+              "pron": "meh-nuh-RAH-lee"
+            },
+            {
+              "it": "vapore",
+              "en": "steam",
+              "pron": "VAH-por"
+            },
+            {
+              "it": "insopportabile",
+              "en": "unbearable",
+              "pron": "in-so-POR-ta-blay"
+            },
+            {
+              "it": "concentrati",
+              "en": "concentrate",
+              "pron": "kon-SEN-trah-te"
+            },
+            {
+              "it": "preoccupato",
+              "en": "worried",
+              "pron": "pruh-oh-KUP-pa-tow"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il bagno turco ha un odore insopportabile.",
+              "en": "The Turkish bath has an unbearable smell.",
+              "words": [
+                "Il",
+                "bagno",
+                "turco",
+                "ha",
+                "un",
+                "odore",
+                "insopportabile."
+              ]
+            },
+            {
+              "it": "Le minerali nel vapore possono alterare l'odore.",
+              "en": "The minerals in the steam can alter the smell.",
+              "words": [
+                "Le",
+                "minerali",
+                "nel",
+                "vapore",
+                "possono",
+                "alterare",
+                "l'odore."
+              ]
+            },
+            {
+              "it": "Non riesco a concentrarmi con questo sapore.",
+              "en": "I can't concentrate with this taste.",
+              "words": [
+                "Non",
+                "riesco",
+                "a",
+                "concentrarmi",
+                "con",
+                "questo",
+                "sapore."
+              ]
+            },
+            {
+              "it": "Non preoccuparti, l'odore non dura a lungo.",
+              "en": "Don't worry, the smell doesn't last long.",
+              "words": [
+                "Non",
+                "preoccuparti,",
+                "l'odore",
+                "non",
+                "dura",
+                "a",
+                "lungo."
+              ]
+            },
+            {
+              "it": "Tutti noteranno il nostro passaggio per via dell'odore.",
+              "en": "Everyone will notice our passage because of the smell.",
+              "words": [
+                "Tutti",
+                "noteranno",
+                "il",
+                "nostro",
+                "passaggio",
+                "per",
+                "via",
+                "dell'odore."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "sapore di uova marce",
+          "desc": "odore intenso, bagno turco, minerali, vapore, insopportabile, concentrati, preoccupato",
+          "icon": "%!]",
+          "vocab": [
+            {
+              "it": "acqua sotterranea",
+              "en": "groundwater",
+              "pron": "AH-kwah suh-TUR-bree-uh"
+            },
+            {
+              "it": "alterare",
+              "en": "alter",
+              "pron": "AL-tuhr"
+            },
+            {
+              "it": "intenso",
+              "en": "intense",
+              "pron": "IN-tuhn-suh"
+            },
+            {
+              "it": "notare",
+              "en": "notice",
+              "pron": "NOT-uhr"
+            },
+            {
+              "it": "passaggio",
+              "en": "passage",
+              "pron": "PAS-ij-oh"
+            },
+            {
+              "it": "notizie",
+              "en": "news",
+              "pron": "NOH-ti-zee"
+            },
+            {
+              "it": "sistema",
+              "en": "system",
+              "pron": "SIH-stuh-muh"
+            },
+            {
+              "it": "soggiorno",
+              "en": "stay",
+              "pron": "SOJ-ee-joh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'acqua sotterranea altera l'odore.",
+              "en": "The groundwater alters the smell.",
+              "words": [
+                "L'acqua",
+                "sotterranea",
+                "altera",
+                "l'odore."
+              ]
+            },
+            {
+              "it": "Non noteranno il nostro passaggio.",
+              "en": "They won't notice our passage.",
+              "words": [
+                "Non",
+                "noteranno",
+                "il",
+                "nostro",
+                "passaggio."
+              ]
+            },
+            {
+              "it": "La notizia che il sistema è rotto ci preoccupa.",
+              "en": "The news that the system is broken worries us.",
+              "words": [
+                "La",
+                "notizia",
+                "che",
+                "il",
+                "sistema",
+                "è",
+                "rotto",
+                "ci",
+                "preoccupa."
+              ]
+            },
+            {
+              "it": "Il vapore intenso esce dal bagno turco.",
+              "en": "The intense steam comes from the Turkish bath.",
+              "words": [
+                "Il",
+                "vapore",
+                "intenso",
+                "esce",
+                "dal",
+                "bagno",
+                "turco."
+              ]
+            },
+            {
+              "it": "Siamo in soggiorno, ma non possiamo uscire.",
+              "en": "We are staying, but we can't go out.",
+              "words": [
+                "Siamo",
+                "in",
+                "soggiorno,",
+                "ma",
+                "non",
+                "possiamo",
+                "uscire."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Sapore di uova marce",
+          "desc": "Odore intenso e minerali sotterranei",
+          "icon": "🚰",
+          "vocab": [
+            {
+              "it": "sapore",
+              "en": "taste",
+              "pron": "SA-pore"
+            },
+            {
+              "it": "notizie",
+              "en": "news",
+              "pron": "no-TIZ-ee"
+            },
+            {
+              "it": "sistema",
+              "en": "system",
+              "pron": "si-STEM-a"
+            },
+            {
+              "it": "soggiorno",
+              "en": "stay",
+              "pron": "so-GYOR-no"
+            },
+            {
+              "it": "acqua sotterranea",
+              "en": "groundwater",
+              "pron": "at-ka so-tel-RAN-ee-a"
+            },
+            {
+              "it": "alterare",
+              "en": "alter",
+              "pron": "al-TARE"
+            },
+            {
+              "it": "intenso",
+              "en": "intense",
+              "pron": "in-TEHN-so"
+            },
+            {
+              "it": "passaggio",
+              "en": "passage",
+              "pron": "pas-AG-gio"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'acqua sotterranea altera il sapore della birra.",
+              "en": "The groundwater alters the taste of the beer.",
+              "words": [
+                "L'acqua",
+                "sotterranea",
+                "altera",
+                "il",
+                "sapore",
+                "della",
+                "birra."
+              ]
+            },
+            {
+              "it": "Non preoccuparti, le notizie di oggi non sono intese per te.",
+              "en": "Don't worry, today's news are not intended for you.",
+              "words": [
+                "Non",
+                "preoccuparti,",
+                "le",
+                "notizie",
+                "di",
+                "oggi",
+                "non",
+                "sono",
+                "intese",
+                "per",
+                "te."
+              ]
+            },
+            {
+              "it": "Il sistema di ventilazione del bagno turco è in panne.",
+              "en": "The Turkish bath's ventilation system is broken.",
+              "words": [
+                "Il",
+                "sistema",
+                "di",
+                "ventilazione",
+                "del",
+                "bagno",
+                "turco",
+                "è",
+                "in",
+                "panne."
+              ]
+            },
+            {
+              "it": "Non c'è bisogno di notizie, il passaggio è chiaro.",
+              "en": "No need for news, the passage is clear.",
+              "words": [
+                "Non",
+                "c'è",
+                "bisogno",
+                "di",
+                "notizie,",
+                "il",
+                "passaggio",
+                "è",
+                "chiaro."
+              ]
+            },
+            {
+              "it": "L'odore intenso di uova marce è dovuto ai minerali sotterranei.",
+              "en": "The intense smell of rotten eggs is due to the underground minerals.",
+              "words": [
+                "L'odore",
+                "intenso",
+                "di",
+                "uova",
+                "marce",
+                "è",
+                "dovuto",
+                "ai",
+                "minerali",
+                "sotterranei."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1454430,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 3147,
+        "totalCompletionTokens": 1779,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 341912,
+            "promptTokens": 726,
+            "completionTokens": 395
+          },
+          {
+            "lessonNum": 2,
+            "ms": 326101,
+            "promptTokens": 795,
+            "completionTokens": 380
+          },
+          {
+            "lessonNum": 3,
+            "ms": 335483,
+            "promptTokens": 843,
+            "completionTokens": 399
+          }
+        ]
+      },
+      "generatedAt": "2026-05-06T09:42:58.993Z",
+      "updatedAt": "2026-05-06T09:42:58.993Z"
+    },
+    {
+      "topic": "Winter Snow in Tsuruoka",
+      "topicEmoji": "❄️",
+      "userTopic": "in winter there are meters of snow in tsuruoka (near yamagata)",
+      "lang": "ja",
+      "difficulty": 1,
+      "storyLen": 500,
+      "story": "東京から遠く離れた秋田県の津軽半島。冬の夜が訪れ、町は白銀の世界に包まれていた。二人の友人は、この雪の国で初めての夜を過ごすことに決めた。雪は深く積もり、歩行者道は雪で覆われ、足元は滑りやすい。二人は手を繋ぎ、慎重に歩いた。\n\n「今日は雪見ラーメンを食べようか」と一人が言った。もう一人は頷き、笑顔で返事した。「うん、雪見ラーメンは絶対に美味しいよ。」\n\n注文を受けて、店主が元気な声で声をかけた。「今日は雪見ラーメンを食べに来たのか？　雪見ラーメンは今が正解だよ。」\n\n二人は待つこと数分、温かいスープと麺が運ばれてきた。白いスープは透明感があり、上に雪の山のように積もった具材が美しく盛られていた。具材は新鮮な野菜と豚肉、そして雪の白さを象徴する白い豆腐が豊富に盛られていた。\n\n「本当に美味しいな」と一人が言葉を発した。「雪見ラーメンは、この店の看板メニューだ。冬の夜に、このラーメンを食べるのは最高だよ。」\n\n二人はゆっくりと食事を続け、店の暖かさの中で冬の夜を過ごした。食事の後、二人は満足した表情で店を出て、雪の中を歩き出した。雪の音が静かな夜を彩り、二人は雪の中を深く歩き続けた。",
+      "storyLang": "ja",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\n東京の秋の夜に、二人の友人が会いに来た。青い空がまだ少し残る時間に、二人は小さなラーメン屋の前で立ち止まった。店の看板には「秋の味噌ラーメン」が大きく掲げられていた。二人は店内に入り、暖かい灯りの中で座った。\n\n「今日は秋の味噌ラーメンを食べようか」と一人が言った。もう一人は頷き、笑顔で返事した。「うん、秋の味噌ラーメンは絶対に美味しいよ。」\n\n注文を受けて、店主が元気な声で声をかけた。「今日は秋の味噌ラーメンを食べに来たのか？　秋の味噌ラーメンは今が正解だよ。」\n\n二人は待つこと数分、温かいスープと麺が運ばれてきた。深みのある味噌の香りが鼻をくすぐり、二人はすぐに箸を取った。味噌の甘さと塩加減が絶妙に調和し、麺は滑らかでコシがあり、具材は新鮮な野菜と豚肉が豊富に盛られていた。\n\n「本当に美味しいな」と一人が言葉を発した。「秋の味噌ラーメンは、この店の看板メニューだ。秋の夜に、このラーメンを食べるのは最高だよ。」\n\n二人はゆっくりと食事を続け、店の暖かさの中で秋の夜を過ごした。食事の後、二人は満足した表情で店を出て、夜の街に歩き出した。\n\nNew topic: \"in winter there are meters of snow in tsuruoka (near yamagata)\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "lets eat duck ramen in tsuruoka",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "冬の雪",
+          "desc": "雪の国、津軽半島での冬の夜",
+          "icon": "❄️",
+          "vocab": [
+            {
+              "it": "冬",
+              "en": "winter",
+              "pron": "DOH-nu"
+            },
+            {
+              "it": "雪",
+              "en": "snow",
+              "pron": "SUKE"
+            },
+            {
+              "it": "積もる",
+              "en": "to pile up",
+              "pron": "AKU-mo-ru"
+            },
+            {
+              "it": "歩行者道",
+              "en": "pedestrian path",
+              "pron": "HO-KEI-za-do"
+            },
+            {
+              "it": "慎重に",
+              "en": "cautiously",
+              "pron": "SAI-ken-nya"
+            },
+            {
+              "it": "初めて",
+              "en": "first time",
+              "pron": "HI-shi-ji-ma"
+            },
+            {
+              "it": "ラーメン",
+              "en": "ramen",
+              "pron": "RA-ye-me-n"
+            },
+            {
+              "it": "看板",
+              "en": "signboard",
+              "pron": "KA-pan"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "雪は深く積もる",
+              "en": "Snow piles up deeply",
+              "pron": "SUKE-wa-DO-ku-AKU-mo-ru",
+              "words": [
+                "雪",
+                "は",
+                "深",
+                "く",
+                "積",
+                "も",
+                "る"
+              ]
+            },
+            {
+              "it": "歩行者道は雪で覆われている",
+              "en": "The pedestrian path is covered with snow",
+              "pron": "HO-KEI-za-do-wa-SUKE-de-KO-ware-te-iru",
+              "words": [
+                "歩行",
+                "者道",
+                "は雪",
+                "で覆",
+                "われ",
+                "てい",
+                "る"
+              ]
+            },
+            {
+              "it": "二人は慎重に歩いた",
+              "en": "The two walked cautiously",
+              "pron": "FUTA-hito-wa-SAI-ken-ni-HAKU-ta",
+              "words": [
+                "二",
+                "人",
+                "は",
+                "慎",
+                "重",
+                "に",
+                "歩",
+                "い",
+                "た"
+              ]
+            },
+            {
+              "it": "雪見ラーメンは絶対に美味しい",
+              "en": "Snow-view ramen is definitely delicious",
+              "pron": "SUKE-ken-RA-ye-me-n-wa-DO-ku-te-NAI-mi-RA-shi-tsu",
+              "words": [
+                "雪見",
+                "ラー",
+                "メン",
+                "は絶",
+                "対に",
+                "美味",
+                "しい"
+              ]
+            },
+            {
+              "it": "冬の夜にラーメンを食べる",
+              "en": "To eat ramen on a winter night",
+              "pron": "DOH-nu-ya-tchi-RA-ye-me-n-o-DO-ru-te-ru",
+              "words": [
+                "冬",
+                "の",
+                "夜",
+                "に",
+                "ラ",
+                "ー",
+                "メ",
+                "ン",
+                "を",
+                "食",
+                "べ",
+                "る"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "冬の雪",
+          "desc": "冬の雪と歩行者道",
+          "icon": "❄️",
+          "vocab": [
+            {
+              "it": "積雪",
+              "en": "snow accumulation",
+              "pron": "SYOO-suh-keh"
+            },
+            {
+              "it": "滑りやすい",
+              "en": "slippery",
+              "pron": "HAH-lee-eh-NAH-sigh"
+            },
+            {
+              "it": "手を繋ぐ",
+              "en": "hold hands",
+              "pron": "TOH-oh KOH-shee-goo"
+            },
+            {
+              "it": "慎重に",
+              "en": "cautiously",
+              "pron": "SEN-kyoh-nee"
+            },
+            {
+              "it": "初めての夜",
+              "en": "first night",
+              "pron": "HYOH-suh-keh-noh-NAH"
+            },
+            {
+              "it": "雪見ラーメン",
+              "en": "snow viewing ramen",
+              "pron": "SYOH-knee-rah-mehn"
+            },
+            {
+              "it": "店主",
+              "en": "shop owner",
+              "pron": "SHOO-ehn"
+            },
+            {
+              "it": "具材",
+              "en": "ingredients",
+              "pron": "KYOO-sigh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "積雪は深く積もっている。",
+              "en": "The snow accumulation is deep.",
+              "words": [
+                "積",
+                "雪",
+                "は",
+                "深",
+                "く",
+                "積",
+                "も",
+                "っ",
+                "て",
+                "い",
+                "る",
+                "。"
+              ]
+            },
+            {
+              "it": "歩行者道は滑りやすいので注意が必要だ。",
+              "en": "The pedestrian path is slippery, so caution is needed.",
+              "words": [
+                "歩行",
+                "者道",
+                "は滑",
+                "りや",
+                "すい",
+                "ので",
+                "注意",
+                "が必",
+                "要だ",
+                "。"
+              ]
+            },
+            {
+              "it": "二人は手を繋いで慎重に歩いた。",
+              "en": "The two held hands and walked cautiously.",
+              "words": [
+                "二人",
+                "は手",
+                "を繋",
+                "いで",
+                "慎重",
+                "に歩",
+                "いた",
+                "。"
+              ]
+            },
+            {
+              "it": "雪見ラーメンは冬の夜にぴったりだ。",
+              "en": "Snow viewing ramen is perfect for winter nights.",
+              "words": [
+                "雪見",
+                "ラー",
+                "メン",
+                "は冬",
+                "の夜",
+                "にぴ",
+                "った",
+                "りだ",
+                "。"
+              ]
+            },
+            {
+              "it": "店主が具材を雪のように積み上げた。",
+              "en": "The shop owner piled up the ingredients like a snow mountain.",
+              "words": [
+                "店主",
+                "が具",
+                "材を",
+                "雪の",
+                "よう",
+                "に積",
+                "み上",
+                "げた",
+                "。"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "雪の津軽半島",
+          "desc": "冬の雪の積もり方と冬の夜の過ごし方",
+          "icon": "❄️",
+          "vocab": [
+            {
+              "it": "積雪",
+              "en": "snow accumulation",
+              "pron": "AKI-SE-KU"
+            },
+            {
+              "it": "寒い",
+              "en": "cold",
+              "pron": "KA-NE-I"
+            },
+            {
+              "it": "灯り",
+              "en": "light",
+              "pron": "TE-RI"
+            },
+            {
+              "it": "暖かい",
+              "en": "warm",
+              "pron": "NA-MAI-KAI"
+            },
+            {
+              "it": "静か",
+              "en": "quiet",
+              "pron": "SHI-NA-KA"
+            },
+            {
+              "it": "満足",
+              "en": "satisfied",
+              "pron": "MA-NZU-TO"
+            },
+            {
+              "it": "眺め",
+              "en": "view",
+              "pron": "SHI-OME"
+            },
+            {
+              "it": "静かな夜",
+              "en": "quiet night",
+              "pron": "SHI-NA-KA-YA"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "積雪は数メートルになる",
+              "en": "Snow accumulation reaches several meters",
+              "pron": "AKI-SE-KU WA SO-U ME-TSU-RO-U NI NARU",
+              "words": [
+                "積",
+                "雪",
+                "は",
+                "数",
+                "メ",
+                "ー",
+                "ト",
+                "ル",
+                "に",
+                "な",
+                "る"
+              ]
+            },
+            {
+              "it": "寒い夜に暖かい灯りが灯る",
+              "en": "Warm light shines on a cold night",
+              "pron": "KA-NE-I YA-NA-RI NI NA-MAI TE-RI GA TE-RU",
+              "words": [
+                "寒",
+                "い",
+                "夜",
+                "に",
+                "暖",
+                "か",
+                "い",
+                "灯",
+                "り",
+                "が",
+                "灯",
+                "る"
+              ]
+            },
+            {
+              "it": "静かな夜を満足して過ごす",
+              "en": "Spend a quiet night feeling satisfied",
+              "pron": "SHI-NA-KA-YA-NA-RI WA MA-NZU-TO SHI TE SU-GO-RU-SU",
+              "words": [
+                "静",
+                "か",
+                "な",
+                "夜",
+                "を",
+                "満",
+                "足",
+                "し",
+                "て",
+                "過",
+                "ご",
+                "す"
+              ]
+            },
+            {
+              "it": "眺めながら雪を見つめる",
+              "en": "Gaze at the snow while looking out",
+              "pron": "SHI-OME-NARU-GA AKI-NO MI-ZU-ME-RA-NU",
+              "words": [
+                "眺",
+                "め",
+                "な",
+                "が",
+                "ら",
+                "雪",
+                "を",
+                "見",
+                "つ",
+                "め",
+                "る"
+              ]
+            },
+            {
+              "it": "静かな夜は雪の音が彩る",
+              "en": "A quiet night is colored by the sound of snow",
+              "pron": "SHI-NA-KA-YA-NA-RI WA AKI-NO O-NI GA SA-RE-RU",
+              "words": [
+                "静",
+                "か",
+                "な",
+                "夜",
+                "は",
+                "雪",
+                "の",
+                "音",
+                "が",
+                "彩",
+                "る"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1611042,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 4169,
+        "totalCompletionTokens": 1736,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 426231,
+            "promptTokens": 1080,
+            "completionTokens": 454
+          },
+          {
+            "lessonNum": 2,
+            "ms": 410153,
+            "promptTokens": 1162,
+            "completionTokens": 389
+          },
+          {
+            "lessonNum": 3,
+            "ms": 476527,
+            "promptTokens": 1234,
+            "completionTokens": 475
+          }
+        ]
+      },
+      "generatedAt": "2026-05-06T09:13:45.325Z",
+      "updatedAt": "2026-05-06T09:13:45.325Z"
+    },
+    {
       "topic": "Italian Guest: Prosecco?",
       "topicEmoji": "🇮🇹",
       "userTopic": "a guest from Italy asks about the difference to Prosecco",
