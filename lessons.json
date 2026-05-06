@@ -1,6 +1,436 @@
 {
   "lessons": [
     {
+      "topic": "License Conversion",
+      "topicEmoji": "🚗",
+      "userTopic": "douglas wants to convert his british to a japanese driver's license",
+      "lang": "ja",
+      "difficulty": 1,
+      "storyLen": 750,
+      "story": "東京の喧騒から離れた秋田県の小さな町。ドouglasは津軽半島の寒さに身を包み、新しい挑戦に備えていた。彼は手を繋いだ友人に微笑み、「今日は免許証を交換に来ることにしたんだ。」と告げた。\n\n「うん、ドouglas、頑張ってね。」友人は応援の言葉を返した。二人は手を繋ぎ、慎重に歩いた。町は静かで、雪が積もった道は滑りやすく、足元には気をつける必要があった。\n\n「今日は日本語で話そうよ。」ドouglasが言葉を発した。「免許証の手続きは難しいかもしれないから、日本語を勉強しておいた方がいいかもしれないな。」\n\n二人は町の中心部へ向かい、運転免許センターに到着した。建物は古びた外観を持ちながらも、中は整然と整理されており、受付の女性が元気な声で声をかけた。「こんにちは、免許証の手続きですか？ こちらへどうぞ。」\n\nドouglasは慎重に手続きを進めていった。書類の確認、写真の撮影、そして最後に実技試験。彼は緊張しながらも、友人の励ましを思い出し、試験に挑んだ。\n\n「本当に大変だったな。」試験が終わってから、友人が言った。「でも、ドouglas、君は頑張ったよ。」\n\n二人は満足した表情で、新しい日本語の免許証を受け取った。その証は、彼らの友情と挑戦の証明だった。雪の音が静かな夜を彩り、二人は満足した表情で町を歩き出した。",
+      "storyLang": "ja",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 7-8 paragraphs, under 750 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\n東京から遠く離れた秋田県の津軽半島。冬の夜が訪れ、町は白銀の世界に包まれていた。二人の友人は、この雪の国で初めての夜を過ごすことに決めた。雪は深く積もり、歩行者道は雪で覆われ、足元は滑りやすい。二人は手を繋ぎ、慎重に歩いた。\n\n「今日は雪見ラーメンを食べようか」と一人が言った。もう一人は頷き、笑顔で返事した。「うん、雪見ラーメンは絶対に美味しいよ。」\n\n注文を受けて、店主が元気な声で声をかけた。「今日は雪見ラーメンを食べに来たのか？　雪見ラーメンは今が正解だよ。」\n\n二人は待つこと数分、温かいスープと麺が運ばれてきた。白いスープは透明感があり、上に雪の山のように積もった具材が美しく盛られていた。具材は新鮮な野菜と豚肉、そして雪の白さを象徴する白い豆腐が豊富に盛られていた。\n\n「本当に美味しいな」と一人が言葉を発した。「雪見ラーメンは、この店の看板メニューだ。冬の夜に、このラーメンを食べるのは最高だよ。」\n\n二人はゆっくりと食事を続け、店の暖かさの中で冬の夜を過ごした。食事の後、二人は満足した表情で店を出て、雪の中を歩き出した。雪の音が静かな夜を彩り、二人は雪の中を深く歩き続けた。\n\nNew topic: \"douglas wants to convert his british to a japanese driver's license\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Winter Snow in Tsuruoka",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "免許証交換",
+          "desc": "ドouglasが日本の運転免許証を取得する",
+          "icon": "🚗",
+          "vocab": [
+            {
+              "it": "免許証",
+              "en": "license",
+              "pron": "li-SEN-s"
+            },
+            {
+              "it": "手続き",
+              "en": "procedure",
+              "pron": "pro-KU-DEE-ON"
+            },
+            {
+              "it": "写真",
+              "en": "photo",
+              "pron": "FOH-toh"
+            },
+            {
+              "it": "実技試験",
+              "en": "practical test",
+              "pron": "PRAH-ti-kul tes"
+            },
+            {
+              "it": "緊張",
+              "en": "nervous",
+              "pron": "NER-vus"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "今日は免許証を交換に来ることにしたんだ。",
+              "en": "I came to exchange my license today.",
+              "words": [
+                "今日",
+                "は免",
+                "許証",
+                "を交",
+                "換に",
+                "来る",
+                "こと",
+                "にし",
+                "たん",
+                "だ。"
+              ]
+            },
+            {
+              "it": "免許証の手続きは難しいかもしれないから、日本語を勉強しておいた方がいいかもしれないな。",
+              "en": "The license procedure might be difficult, so maybe it's better to study Japanese beforehand.",
+              "words": [
+                "免許",
+                "証の",
+                "手続",
+                "きは",
+                "難し",
+                "いか",
+                "もし",
+                "れな",
+                "いか",
+                "ら、",
+                "日本",
+                "語を",
+                "勉強",
+                "して",
+                "おい",
+                "た方",
+                "がい",
+                "いか",
+                "もし",
+                "れな",
+                "いな",
+                "。"
+              ]
+            },
+            {
+              "it": "書類の確認、写真の撮影、そして最後に実技試験。",
+              "en": "Confirmation of documents, taking photos, and finally the practical test.",
+              "words": [
+                "書類",
+                "の確",
+                "認、",
+                "写真",
+                "の撮",
+                "影、",
+                "そし",
+                "て最",
+                "後に",
+                "実技",
+                "試験",
+                "。"
+              ]
+            },
+            {
+              "it": "ドouglasは緊張しながらも、友人の励ましを思い出し、試験に挑んだ。",
+              "en": "Douglas, though nervous, took the test, thinking of his friend's encouragement.",
+              "words": [
+                "ドo",
+                "ug",
+                "la",
+                "sは",
+                "緊張",
+                "しな",
+                "がら",
+                "も、",
+                "友人",
+                "の励",
+                "まし",
+                "を思",
+                "い出",
+                "し、",
+                "試験",
+                "に挑",
+                "んだ",
+                "。"
+              ]
+            },
+            {
+              "it": "本当に大変だったな。",
+              "en": "It was really tough, wasn't it?",
+              "words": [
+                "本",
+                "当",
+                "に",
+                "大",
+                "変",
+                "だ",
+                "っ",
+                "た",
+                "な",
+                "。"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "免許証交換",
+          "desc": "ドouglasが日本の運転免許証を取得する",
+          "icon": "🚗",
+          "vocab": [
+            {
+              "it": "手続き",
+              "en": "procedure",
+              "pron": "pro-KUH-duh"
+            },
+            {
+              "it": "写真",
+              "en": "photo",
+              "pron": "FOH-toh"
+            },
+            {
+              "it": "実技試験",
+              "en": "practical test",
+              "pron": "PRAH-ti-kul tes"
+            },
+            {
+              "it": "緊張",
+              "en": "nervous",
+              "pron": "NER-vuhs"
+            },
+            {
+              "it": "中心部",
+              "en": "center",
+              "pron": "SEN-ter"
+            },
+            {
+              "it": "受付",
+              "en": "reception",
+              "pron": "ree-PYOO-uh"
+            },
+            {
+              "it": "確認",
+              "en": "confirmation",
+              "pron": "kuh-NAH-mi-rahn"
+            },
+            {
+              "it": "女性",
+              "en": "woman",
+              "pron": "WOM-uhn"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "今日は手続きに来ました。",
+              "en": "I came for the procedure today.",
+              "words": [
+                "今",
+                "日",
+                "は",
+                "手",
+                "続",
+                "き",
+                "に",
+                "来",
+                "ま",
+                "し",
+                "た",
+                "。"
+              ]
+            },
+            {
+              "it": "写真を撮らなければなりません。",
+              "en": "I have to take a photo.",
+              "words": [
+                "写真",
+                "を撮",
+                "らな",
+                "けれ",
+                "ばな",
+                "りま",
+                "せん",
+                "。"
+              ]
+            },
+            {
+              "it": "実技試験は緊張しますね。",
+              "en": "The practical test is nerve-wracking, isn't it?",
+              "words": [
+                "実",
+                "技",
+                "試",
+                "験",
+                "は",
+                "緊",
+                "張",
+                "し",
+                "ま",
+                "す",
+                "ね",
+                "。"
+              ]
+            },
+            {
+              "it": "中心部へ向かって歩きました。",
+              "en": "I walked towards the center of town.",
+              "words": [
+                "中心",
+                "部へ",
+                "向か",
+                "って",
+                "歩き",
+                "まし",
+                "た。"
+              ]
+            },
+            {
+              "it": "受付の女性に挨拶しました。",
+              "en": "I greeted the receptionist woman.",
+              "words": [
+                "受付",
+                "の女",
+                "性に",
+                "挨拶",
+                "しま",
+                "した",
+                "。"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "免許証交換",
+          "desc": "ドouglasが日本語で免許証を交換する",
+          "icon": "🚗",
+          "vocab": [
+            {
+              "it": "手続き",
+              "en": "procedure",
+              "pron": "SHU-DO-KI"
+            },
+            {
+              "it": "中心部",
+              "en": "center",
+              "pron": "SEN-CHU-BU"
+            },
+            {
+              "it": "受付",
+              "en": "reception",
+              "pron": "SO-BU-KI"
+            },
+            {
+              "it": "確認",
+              "en": "confirmation",
+              "pron": "KA-NO-KU"
+            },
+            {
+              "it": "女性",
+              "en": "woman",
+              "pron": "JO-HO-NA"
+            },
+            {
+              "it": "励ます",
+              "en": "encourage",
+              "pron": "RAI-MASU"
+            },
+            {
+              "it": "挑戦",
+              "en": "challenge",
+              "pron": "TOU-ZEN"
+            },
+            {
+              "it": "実技試験",
+              "en": "practical test",
+              "pron": "SHI-KI-SHI-KEN"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "今日は中心部へ行こう。",
+              "en": "Let's go to the center today.",
+              "words": [
+                "今",
+                "日",
+                "は",
+                "中",
+                "心",
+                "部",
+                "へ",
+                "行",
+                "こ",
+                "う",
+                "。"
+              ]
+            },
+            {
+              "it": "受付で確認してもらう。",
+              "en": "Let them confirm at the reception.",
+              "words": [
+                "受",
+                "付",
+                "で",
+                "確",
+                "認",
+                "し",
+                "て",
+                "も",
+                "ら",
+                "う",
+                "。"
+              ]
+            },
+            {
+              "it": "励ましを貰う。",
+              "en": "Receive encouragement.",
+              "words": [
+                "励",
+                "ま",
+                "し",
+                "を",
+                "貰",
+                "う",
+                "。"
+              ]
+            },
+            {
+              "it": "挑戦を始める。",
+              "en": "Start the challenge.",
+              "words": [
+                "挑",
+                "戦",
+                "を",
+                "始",
+                "め",
+                "る",
+                "。"
+              ]
+            },
+            {
+              "it": "実技試験に挑む。",
+              "en": "Face the practical test.",
+              "words": [
+                "実",
+                "技",
+                "試",
+                "験",
+                "に",
+                "挑",
+                "む",
+                "。"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1299352,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 4298,
+        "totalCompletionTokens": 1502,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 344975,
+            "promptTokens": 1143,
+            "completionTokens": 353
+          },
+          {
+            "lessonNum": 2,
+            "ms": 326514,
+            "promptTokens": 1200,
+            "completionTokens": 363
+          },
+          {
+            "lessonNum": 3,
+            "ms": 349836,
+            "promptTokens": 1257,
+            "completionTokens": 341
+          }
+        ]
+      },
+      "generatedAt": "2026-05-06T17:29:57.748Z",
+      "updatedAt": "2026-05-06T17:29:57.748Z"
+    },
+    {
       "topic": "Driving License Conversion",
       "topicEmoji": "🚗",
       "userTopic": "converting a foreign Drivers licence into a Japanese one\n\nto the LLM converting this to a story and text: please provide furigana annotation of the kanji",
