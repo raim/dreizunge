@@ -1,6 +1,482 @@
 {
   "lessons": [
     {
+      "topic": "History of Luxembourg",
+      "topicEmoji": "🇱🇺",
+      "userTopic": "history of luxembourg",
+      "lang": "lb",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Fräiherrn vun der Neiierburg, déi stolt a staark, hunn d'Land fir laang Zäiten beschützt. Si waren net ëmmer gerecht, awer si waren d'éischt, déi d'Basis fir dat Lëtzebuerg gebaut hunn, dat mir haut kennen. D'Kricher waren oft, an d'Gefier war ëmmer präsent, awer d'Lëtzebuerger, mat hirem Stäerke a Resilienz, hunn ëmmer ewechgekämpft.\n\nD'Festunge vu Lëtzebuerg, déi imposant Strukturen, waren méi wéi just Stee a Maueren. Si waren Symboler vum Wëllen, vum Trotz, vum Verkaf. Si hunn d'Land virum Verdréngung an der Zerstéierung bewierkt, a si sinn haut nach ëmmer e Beweis fir d'Geschicht, déi an eisen Aderen leeft. D'Gefängnis, déi d'Festunge ëmkränken, erzielen Geschichten vu Kämpf, vun Ofschaffungen, vun der Hoffnung, déi ni stierft.\n\nD'Zäit vum Groussherzogschafte war eng Ära vum Wuelstand a vum Fortschritt. Lëtzebuerg huet sech zu engem Finanzzentrum entwéckelt, an d'Leit hunn eng nei Freed an der Sécherheet entdeckt. Awer och an deenen deeler, war d'Gefier präsent. D'zwee Weltkricher hunn d'Land déif markéiert, an d'Erënnerung un d'Leed, dat d'Lëtzebuerger duerchliewt hunn, leeft nach ëmmer.\n\nNo de Kricher, mat der Hëllef vun de Vereenten Natiounen, huet Lëtzebuerg sech nei opgebaut. Et war eng Zäit vum Wiederopbaue, vun der Hoffnung, vun der Zukunft. D'Land huet sech als neutral erkläert, a sot, et wëllt net an de Konflikter vun Europa involvéiert sinn. Dës Neutralitéit huet Lëtzebuerg geholle, awer se huet och d'Land vulnérabel gemaach.\n\nHaut ass Lëtzebuerg e modernt a prosperéiert Land. Et ass e Plaz, wou d'Geschicht a modern Technologie zesumme sinn. D'Festunge steet nach ëmmer, d'Erënnerung leeft nach ëmmer, an d'Lëtzebuerger, mat hirem Stäerke a Resilienz, si prett fir d'Zukunft unzegoen. Si wisse, datt d'Geschicht eise Wëssen, eis Identitéit a eis Verantwortung definéiert.",
+      "storyLang": "lb",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch.\n\nWrite a story for the topic: \"history of luxembourg\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "History of Luxembourg",
+          "desc": "Basics of Luxembourg's history and resilience",
+          "icon": "📜",
+          "vocab": [
+            {
+              "it": "Fräiherrn vun der Neiierburg",
+              "en": "Barons of Neiierburg",
+              "pron": "FRAY-hern VUN der NEY-eh-burg"
+            },
+            {
+              "it": "Gefier",
+              "en": "Fortresses",
+              "pron": "GEF-eer"
+            },
+            {
+              "it": "Stäerke",
+              "en": "Strength",
+              "pron": "STA-er-ke"
+            },
+            {
+              "it": "Resilienz",
+              "en": "Resilience",
+              "pron": "REZ-ee-lyenz"
+            },
+            {
+              "it": "Festunge",
+              "en": "Fortresses",
+              "pron": "FEH-stun-ge"
+            },
+            {
+              "it": "Gefängnis",
+              "en": "Prison",
+              "pron": "GEF-ang-nis"
+            },
+            {
+              "it": "Groussherzogschafte",
+              "en": "Grand Duchy",
+              "pron": "GROO-shehr-zohg-shaf-te"
+            },
+            {
+              "it": "Wuelstand",
+              "en": "Prosperity",
+              "pron": "WUEL-stahnd"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Fräiherrn vun der Neiierburg, déi stolt a staark, hunn d'Land fir laang Zäiten beschützt.",
+              "en": "The Barons of Neiierburg, proud and strong, have protected the land for long times.",
+              "words": [
+                "Fräiherrn",
+                "vun",
+                "der",
+                "Neiierburg,",
+                "déi",
+                "stolt",
+                "a",
+                "staark,",
+                "hunn",
+                "d'Land",
+                "fir",
+                "laang",
+                "Zäiten",
+                "beschützt."
+              ]
+            },
+            {
+              "it": "Festunge vu Lëtzebuerg, déi imposant Strukturen, waren méi wéi just Stee a Maueren.",
+              "en": "The fortresses of Luxembourg, imposing structures, were more than just stones and walls.",
+              "words": [
+                "Festunge",
+                "vu",
+                "Lëtzebuerg,",
+                "déi",
+                "imposant",
+                "Strukturen,",
+                "waren",
+                "méi",
+                "wéi",
+                "just",
+                "Stee",
+                "a",
+                "Maueren."
+              ]
+            },
+            {
+              "it": "Gefier waren oft, an d'Gefier war ëmmer präsent, awer d'Lëtzebuerger, mat hirem Stäerke a Resilienz, hunn ëmmer ewechgekämpft.",
+              "en": "Fortresses were often present, but the Luxembourgers, with their strength and resilience, have always fought back.",
+              "words": [
+                "Gefier",
+                "waren",
+                "oft,",
+                "an",
+                "d'Gefier",
+                "war",
+                "ëmmer",
+                "präsent,",
+                "awer",
+                "d'Lëtzebuerger,",
+                "mat",
+                "hirem",
+                "Stäerke",
+                "a",
+                "Resilienz,",
+                "hunn",
+                "ëmmer",
+                "ewechgekämpft."
+              ]
+            },
+            {
+              "it": "D'Festunge vu Lëtzebuerg, déi imposant Strukturen, waren méi wéi just Stee a Maueren.",
+              "en": "The fortresses of Luxembourg, imposing structures, were more than just stones and walls.",
+              "words": [
+                "D'Festunge",
+                "vu",
+                "Lëtzebuerg,",
+                "déi",
+                "imposant",
+                "Strukturen,",
+                "waren",
+                "méi",
+                "wéi",
+                "just",
+                "Stee",
+                "a",
+                "Maueren."
+              ]
+            },
+            {
+              "it": "D'Zäit vum Groussherzogschafte war eng Ära vum Wuelstand.",
+              "en": "The time of the Grand Duchy was an era of prosperity.",
+              "words": [
+                "D'Zäit",
+                "vum",
+                "Groussherzogschafte",
+                "war",
+                "eng",
+                "Ära",
+                "vum",
+                "Wuelstand."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Luxembourg's History",
+          "desc": "Barons, castles, prosperity, and resilience",
+          "icon": "🏰",
+          "vocab": [
+            {
+              "it": "Barons",
+              "en": "Barons",
+              "pron": "BAR-onz"
+            },
+            {
+              "it": "Castles",
+              "en": "Castles",
+              "pron": "KAS-tlz"
+            },
+            {
+              "it": "Prosperity",
+              "en": "Prosperity",
+              "pron": "prä-PUR-si-tee"
+            },
+            {
+              "it": "Resilience",
+              "en": "Resilience",
+              "pron": "ri-ZIL-ee-enz"
+            },
+            {
+              "it": "Dynasty",
+              "en": "Dynasty",
+              "pron": "DAH-nas-tee"
+            },
+            {
+              "it": "Reign",
+              "en": "Reign",
+              "pron": "REYN"
+            },
+            {
+              "it": "Economic",
+              "en": "Economic",
+              "pron": "i-KO-nom-ik"
+            },
+            {
+              "it": "Flourished",
+              "en": "Flourished",
+              "pron": "flaw-RESH-ed"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Dës Dynastie, déi d'Groussherzogschafte reignen, hunn d'Land vir ewige Zeiten beschützt.",
+              "en": "This dynasty, which ruled the Grand Duchy, has protected the land for ages.",
+              "words": [
+                "Dës",
+                "Dynastie,",
+                "déi",
+                "d'Groussherzogschafte",
+                "reignen,",
+                "hunn",
+                "d'Land",
+                "vir",
+                "ewige",
+                "Zeiten",
+                "beschützt."
+              ]
+            },
+            {
+              "it": "Dës Barons, déi stolt a staark, hunn d'Economic Flöwerishen fir laang Zäiten.",
+              "en": "These strong barons have flourished the economic prosperity for long times.",
+              "words": [
+                "Dës",
+                "Barons,",
+                "déi",
+                "stolt",
+                "a",
+                "staark,",
+                "hunn",
+                "d'Economic",
+                "Flöwerishen",
+                "fir",
+                "laang",
+                "Zäiten."
+              ]
+            },
+            {
+              "it": "Dës Castles, déi imposant Strukturen, sinn méi wéi just Stee a Maueren, vum Wëllen, vum Trotz, vum Verkaf.",
+              "en": "These castles, imposing structures, are more than just stones, walls, of will, of defiance, of perseverance.",
+              "words": [
+                "Dës",
+                "Castles,",
+                "déi",
+                "imposant",
+                "Strukturen,",
+                "sinn",
+                "méi",
+                "wéi",
+                "just",
+                "Stee",
+                "a",
+                "Maueren,",
+                "vum",
+                "Wëllen,",
+                "vum",
+                "Trotz,",
+                "vum",
+                "Verkaf."
+              ]
+            },
+            {
+              "it": "Dës Gefängnis, déi d'Festunge ëmkränken, erzielen Geschichten vu Kämpf, vun Ofschaffungen, vun der Hoffnung, déi ni stierft.",
+              "en": "This prison, which surrounds the fortresses, tells stories of struggle, of reforms, of hope that never dies.",
+              "words": [
+                "Dës",
+                "Gefängnis,",
+                "déi",
+                "d'Festunge",
+                "ëmkränken,",
+                "erzielen",
+                "Geschichten",
+                "vu",
+                "Kämpf,",
+                "vun",
+                "Ofschaffungen,",
+                "vun",
+                "der",
+                "Hoffnung,",
+                "déi",
+                "ni",
+                "stierft."
+              ]
+            },
+            {
+              "it": "Dës Zäit vum Groussherzogschafte war eng Ära vum Wuelstand, déi Lëtzebuerg fir laang Zäiten beschützt hunn.",
+              "en": "The time of the Grand Duchy was an era of prosperity that has protected Luxembourg for long times.",
+              "words": [
+                "Dës",
+                "Zäit",
+                "vum",
+                "Groussherzogschafte",
+                "war",
+                "eng",
+                "Ära",
+                "vum",
+                "Wuelstand,",
+                "déi",
+                "Lëtzebuerg",
+                "fir",
+                "laang",
+                "Zäiten",
+                "beschützt",
+                "hunn."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "history of luxembourg",
+          "desc": "Lëtzebuergesch history, barons, castles, economic",
+          "icon": "🏰",
+          "vocab": [
+            {
+              "it": "Dynastie",
+              "en": "Dynasty",
+              "pron": "Dih-NAH-tee"
+            },
+            {
+              "it": "Regierungszeit",
+              "en": "Reign",
+              "pron": "Reh-GEER-ung-ZIT"
+            },
+            {
+              "it": "Wirtschaftliche",
+              "en": "Economic",
+              "pron": "WEE-ter-ship-LIH-che"
+            },
+            {
+              "it": "Blütezeit",
+              "en": "Flourished",
+              "pron": "BLUE-te-ZIT"
+            },
+            {
+              "it": "Schlosser",
+              "en": "Castles",
+              "pron": "SCHLOH-suh"
+            },
+            {
+              "it": "Herrscher",
+              "en": "Ruler",
+              "pron": "HERS-shehr"
+            },
+            {
+              "it": "Wohlstand",
+              "en": "Prosperity",
+              "pron": "VOHL-stahnd"
+            },
+            {
+              "it": "Geschichtsbewusstsein",
+              "en": "Historical awareness",
+              "pron": "GHESS-tih-tsch-buh-VUSS-tseyn"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "D'Dynastie vun d'Groussherzogschafte hën d'Land fir lang Zeiten regiert.",
+              "en": "The dynasty of the Grand Duchy ruled the country for many years.",
+              "words": [
+                "D'Dynastie",
+                "vun",
+                "d'Groussherzogschafte",
+                "hën",
+                "d'Land",
+                "fir",
+                "lang",
+                "Zeiten",
+                "regiert."
+              ]
+            },
+            {
+              "it": "D'Schlosser vun Lëtzebuerg hën d'Economie vun d'Land wéi wëi sie heut wärt, blüten.",
+              "en": "The castles of Luxembourg have shaped the economy of the country as it is today, flourishing.",
+              "words": [
+                "D'Schlosser",
+                "vun",
+                "Lëtzebuerg",
+                "hën",
+                "d'Economie",
+                "vun",
+                "d'Land",
+                "wéi",
+                "wëi",
+                "sie",
+                "heut",
+                "wärt,",
+                "blüten."
+              ]
+            },
+            {
+              "it": "D'Wohlstand vun d'Land hërt in d'Geschichtsbewusstsein vun d'Barons vun der Neiierburg.",
+              "en": "The prosperity of the land is rooted in the historical awareness of the Barons of Neiierburg.",
+              "words": [
+                "D'Wohlstand",
+                "vun",
+                "d'Land",
+                "hërt",
+                "in",
+                "d'Geschichtsbewusstsein",
+                "vun",
+                "d'Barons",
+                "vun",
+                "der",
+                "Neiierburg."
+              ]
+            },
+            {
+              "it": "D'Gefängnis vun d'Festunge hën Geschichten vun d'Regierungszeit vun d'Herrscher erzählt.",
+              "en": "The prison of the fort has told stories of the reign of the rulers.",
+              "words": [
+                "D'Gefängnis",
+                "vun",
+                "d'Festunge",
+                "hën",
+                "Geschichten",
+                "vun",
+                "d'Regierungszeit",
+                "vun",
+                "d'Herrscher",
+                "erzählt."
+              ]
+            },
+            {
+              "it": "D'Wirtschaftliche Blütezeit vun d'Groussherzogschafte hën d'Land fir laang Zeiten wohlstehend gemacht.",
+              "en": "The economic flourishing of the Grand Duchy has kept the country prosperous for long periods.",
+              "words": [
+                "D'Wirtschaftliche",
+                "Blütezeit",
+                "vun",
+                "d'Groussherzogschafte",
+                "hën",
+                "d'Land",
+                "fir",
+                "laang",
+                "Zeiten",
+                "wohlstehend",
+                "gemacht."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 2292045,
+        "backend": "ollama",
+        "model": "translategemma:12b / qwen2.5:7b",
+        "totalPromptTokens": 3206,
+        "totalCompletionTokens": 2414,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 428164,
+            "promptTokens": 902,
+            "completionTokens": 572
+          },
+          {
+            "lessonNum": 2,
+            "ms": 220337,
+            "promptTokens": 999,
+            "completionTokens": 564
+          },
+          {
+            "lessonNum": 3,
+            "ms": 382069,
+            "promptTokens": 1045,
+            "completionTokens": 557
+          }
+        ]
+      },
+      "generatedAt": "2026-05-06T10:36:46.162Z",
+      "updatedAt": "2026-05-06T10:36:46.162Z"
+    },
+    {
       "topic": "Sulfur Water Spa Smell",
       "topicEmoji": "🧼",
       "userTopic": "our car stinks of foul eggs after visiting the sulfur water spa Saturnia",
@@ -17935,6 +18411,21 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-06T06:19:08.815Z"
+    },
+    "write_a_grant_proposal_for_an_:mcq_en_it:visitors": {
+      "topic": "write a grant proposal for an ai-driven letztebuergesch app",
+      "type": "mcq_en_it",
+      "it": "visitors",
+      "en": "visitors",
+      "correct": "visitors",
+      "choices": [
+        "residenti",
+        "visitors",
+        "storia",
+        "città"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-06T10:18:24.604Z"
     }
   }
 }
