@@ -301,6 +301,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .storyline-chapter-body p{margin-bottom:10px}
 .storyline-chapter-body p:last-child{margin-bottom:0}
 .storyline-story-loading{font-size:13px;color:var(--gray-dark);font-style:italic;padding:8px 0}
+.tts-row{display:flex;align-items:center;gap:8px;padding:7px 14px 6px;font-size:12px;font-weight:700;color:var(--gray-dark);border-top:1px solid var(--gray-mid);flex-wrap:wrap}
+.tts-select{font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px;background:var(--white);color:var(--text);cursor:pointer}
+.tts-select:focus{outline:none;border-color:var(--blue)}
+.tts-approx{font-size:11px;font-weight:700;color:#b06000;background:#fff8e0;border:1px solid #f0c060;border-radius:6px;padding:2px 7px;white-space:nowrap}
 .story-vocab-hl{background:#fff3c0;border-radius:3px;padding:0 2px;font-weight:800;cursor:help}
 .story-flag-row{padding:6px 14px 10px;display:flex;flex-direction:column;gap:6px}
 
@@ -572,6 +576,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         title="Continue this story in a new lesson set">↪ Continue story</button>
     </div>
   </div>
+  <div class="tts-row" id="tts-row" style="display:none">
+    🔊 Voice:
+    <select class="tts-select" id="tts-select" onchange="onTtsSelect(this.value)"></select>
+    <span class="tts-approx" id="tts-approx" style="display:none">⚠ approximate pronunciation</span>
+  </div>
 </div>
 </div>
 
@@ -619,7 +628,7 @@ var LANGS = {
   ko: {name:'Korean',           flag:'🇰🇷', tts:'ko-KR'},
   tr: {name:'Turkish',          flag:'🇹🇷', tts:'tr-TR'},
   hi: {name:'Hindi',            flag:'🇮🇳', tts:'hi-IN'},
-  lb: {name:'Lëtzebuergesch',   flag:'🇱🇺', tts:'lb-LU'},
+  lb: {name:'Lëtzebuergesch',   flag:'🇱🇺', tts:'lb-LU', ttsFallback:'de-DE'},
 };
 
 var APP = {
@@ -632,7 +641,8 @@ var APP = {
   savedList: [],
   progress: loadProg(),
   flagged: loadFlagged(),
-  activeJob: null,   // {jobId, topic} while generation is in flight
+  activeJob: null,
+  ttsLang: null,   // overridable TTS language code; null = use lesson lang default
   cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,xp:0,mistakes:0,streak:0,bestStreak:0,
         answered:false,sel:null,placed:[],usedIdx:[]}
 };
@@ -18440,6 +18450,9 @@ function buildPath(){
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
   const contStoryBtn=document.getElementById('cont-story-btn');
   if(contStoryBtn) contStoryBtn.style.display=APP.info.canGenerate?'':'none';
+  // Reset TTS override when loading a new lesson, then build selector
+  APP.ttsLang=null;
+  buildTtsSelector();
 
   // Continued-from / continued-by links — rendered in a shared row below the header
   let contNav=document.getElementById('cont-nav');
@@ -18735,8 +18748,9 @@ function lBlock(it, pron, hideWord) {
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
 function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${ex.it}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
 function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
-function tLMcq(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — what do you hear?</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
+function ttsApproxBadge(){ return ttsIsApproximate()?'<span class="tts-approx" style="margin-left:6px">⚠ approximate pronunciation</span>':''; }
+function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
 function tOrder(ex){ const L=lessonLang();
   const tokens=ex.words.map((w,i)=>{
     const isDist=ex.distractors&&ex.distractors[i];
@@ -18890,14 +18904,29 @@ function showComplete(){
 
 
 // ── tts + misc ──
+function activeTtsCode(){
+  // Returns the TTS lang code to use: explicit override > lesson default > fallback
+  if(APP.ttsLang) return APP.ttsLang;
+  const lang=APP.lessonData?.lang||APP.lang||'it';
+  const L=LANGS[lang]||LANGS.it;
+  // Use ttsFallback if set (e.g. lb→de-DE) and no explicit override
+  return L.ttsFallback || L.tts;
+}
+
+function ttsIsApproximate(){
+  const lang=APP.lessonData?.lang||APP.lang||'it';
+  const L=LANGS[lang]||LANGS.it;
+  const code=activeTtsCode();
+  // Approximate if we're using a fallback OR an explicit override that differs from native
+  return code !== L.tts;
+}
+
 function speak(text,rate){
   if(!window.speechSynthesis)return;
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text);
-  const lang=APP.lessonData?.lang||APP.lang||'it';
-  const ttsCode=(LANGS[lang]||LANGS.it).tts;
+  const ttsCode=activeTtsCode();
   u.lang=ttsCode; u.rate=rate||0.9; u.pitch=1;
-  // Check voice is available; warn once per language if not
   const voices=speechSynthesis.getVoices();
   if(voices.length>0){
     const match=voices.find(v=>v.lang.startsWith(ttsCode.split('-')[0]));
@@ -18909,6 +18938,48 @@ function speak(text,rate){
     }
   }
   speechSynthesis.speak(u);
+}
+
+function buildTtsSelector(){
+  const lang=APP.lessonData?.lang||APP.lang||'it';
+  const L=LANGS[lang]||LANGS.it;
+  const sel=document.getElementById('tts-select');
+  const row=document.getElementById('tts-row');
+  const approx=document.getElementById('tts-approx');
+  if(!sel||!row) return;
+  // Build options: native language first, then all others
+  const opts=[];
+  // Native
+  opts.push({code:L.tts, label:`${L.flag} ${L.name} (native)`});
+  // Fallback if present and different
+  if(L.ttsFallback && L.ttsFallback!==L.tts){
+    const fb=Object.values(LANGS).find(x=>x.tts===L.ttsFallback);
+    opts.push({code:L.ttsFallback, label:`${fb?fb.flag:'🔊'} ${fb?fb.name:L.ttsFallback} (fallback)`});
+  }
+  // All other languages
+  Object.entries(LANGS).forEach(([code,lo])=>{
+    if(lo.tts!==L.tts && lo.tts!==(L.ttsFallback||''))
+      opts.push({code:lo.tts, label:`${lo.flag} ${lo.name}`});
+  });
+  sel.innerHTML=opts.map(o=>`<option value="${o.code}">${o.label}</option>`).join('');
+  // Set current value: override > fallback > native
+  const current=APP.ttsLang || L.ttsFallback || L.tts;
+  sel.value=current;
+  row.style.display='';
+  updateTtsApprox();
+}
+
+function updateTtsApprox(){
+  const approx=document.getElementById('tts-approx');
+  if(approx) approx.style.display=ttsIsApproximate()?'':'none';
+}
+
+function onTtsSelect(code){
+  const lang=APP.lessonData?.lang||APP.lang||'it';
+  const L=LANGS[lang]||LANGS.it;
+  // If selecting the native code, clear the override
+  APP.ttsLang=(code===L.tts)?null:code;
+  updateTtsApprox();
 }
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
 
