@@ -519,6 +519,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="home-hdr">
     <span class="topic-emoji-big" id="topic-emoji-big">📚</span>
     <span class="topic-name-big" id="topic-name-big">Topic</span>
+    <button class="hdr-btn" id="cont-story-btn" onclick="continueFromCurrent()" style="display:none" title="Continue this story">↪ Continue</button>
     <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
     <button class="hdr-btn" id="share-btn" onclick="shareLesson()" title="Copy shareable link">🔗 Share</button>
     <button class="hdr-btn" onclick="goLandingClean()">← Topics</button>
@@ -566,6 +567,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           placeholder="Describe what is wrong with the story…"
           onblur="saveStoryComment()"></textarea>
       </div>
+      <button class="flag-btn" id="story-cont-btn" onclick="continueFromCurrent()"
+        style="display:none;background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a"
+        title="Continue this story in a new lesson set">↪ Continue story</button>
     </div>
   </div>
 </div>
@@ -952,7 +956,11 @@ function renderPill(){
   const b=APP.info.backend;
   pill.className='bpill '+b;
   lbl.textContent=b==='anthropic'?'Anthropic Claude':b==='ollama'?'Ollama (local)':'Offline — no LLM';
-  mdl.textContent=b==='anthropic'?(APP.info.claudeModel||''):b==='ollama'?(APP.info.ollamaModel||''):'';
+  const storyMdl = b==='anthropic' ? (APP.info.claudeModel||'') : b==='ollama' ? (APP.info.ollamaModel||'') : '';
+  const transMdl = b==='ollama' ? (APP.info.ollamaTranslationModel||'') : storyMdl;
+  const lessonMdl = b==='ollama' ? (APP.info.ollamaLessonModel||'') : storyMdl;
+  const allModels = [...new Set([storyMdl, transMdl, lessonMdl].filter(Boolean))];
+  mdl.textContent = allModels.join(' / ');
   if(!APP.info.canGenerate){
     document.getElementById('gen-btn').disabled=true;
     document.getElementById('topic-input').disabled=true;
@@ -1051,6 +1059,7 @@ async function loadSavedList(){
         <div class="saved-meta">${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
+        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
         ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${t}')">↻</button>`:''}
         <button class="ico-btn export" title="Export lesson with flags"
           data-topic="${s.topic.replace(/"/g,'&quot;')}"
@@ -1151,6 +1160,39 @@ function regenCurrent(){
   document.getElementById('topic-input').value=APP.lessonData.userTopic||APP.lessonData.topic;
   goLanding();
   setTimeout(()=>doGenerate(true),100);
+}
+
+// Prefill the generation form to continue from a given topic
+function continueFromLesson(topic, difficulty, storyLen){
+  if(!APP.info.canGenerate) return;
+  // Set difficulty and story length to match the source lesson
+  if(difficulty){ onDiffSelect(difficulty); }
+  if(storyLen){ onStoryLenSlider(storyLen); restoreStoryLenSlider(); }
+  // Switch language to match the source lesson if known
+  const src=(APP.savedList||[]).find(s=>s.topic===topic);
+  if(src?.lang) selectLang(src.lang);
+  // Clear topic input so user types a new topic
+  document.getElementById('topic-input').value='';
+  // Make sure continue-row is visible and select the right option
+  const useStoryCb=document.getElementById('use-story-cb');
+  if(useStoryCb?.checked){ useStoryCb.checked=false; onUseStoryCb(); }
+  const contSel=document.getElementById('continue-select');
+  if(contSel){
+    // Ensure the option exists (list may not be populated yet)
+    const match=[...contSel.options].find(o=>o.value===topic);
+    if(match){ contSel.value=topic; }
+  }
+  goLanding();
+  // Scroll form into view and focus topic input
+  setTimeout(()=>{
+    const inp=document.getElementById('topic-input');
+    if(inp){ inp.scrollIntoView({behavior:'smooth',block:'center'}); inp.focus(); }
+  }, 80);
+}
+
+function continueFromCurrent(){
+  if(!APP.lessonData||!APP.info.canGenerate) return;
+  continueFromLesson(APP.lessonData.topic, APP.lessonData.difficulty, APP.lessonData.storyLen);
 }
 
 function setTopic(t){ document.getElementById('topic-input').value=t; document.getElementById('topic-input').focus(); }
@@ -1315,6 +1357,8 @@ function buildPath(){
   document.getElementById('topic-name-big').textContent=d.topic;
   document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
+  const contStoryBtn=document.getElementById('cont-story-btn');
+  if(contStoryBtn) contStoryBtn.style.display=APP.info.canGenerate?'':'none';
 
   // Continued-from / continued-by links — rendered in a shared row below the header
   let contNav=document.getElementById('cont-nav');
@@ -1365,6 +1409,8 @@ function buildPath(){
     // Story flag row
     const sfRow=document.getElementById('story-flag-row');
     if(sfRow) sfRow.style.display='';
+    const storyContBtn=document.getElementById('story-cont-btn');
+    if(storyContBtn) storyContBtn.style.display=APP.info.canGenerate?'':'none';
     _updateStoryFlagUI();
   } else if(storySec){ storySec.style.display='none'; }
 

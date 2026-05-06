@@ -13,7 +13,16 @@ const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const ANTHROPIC_KEY  = process.env.ANTHROPIC_API_KEY || '';
 const CLAUDE_MODEL   = process.env.CLAUDE_MODEL   || 'claude-sonnet-4-20250514';
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
-const OLLAMA_MODEL   = process.env.OLLAMA_MODEL   || 'qwen2.5:7b';
+const OLLAMA_MODEL        = process.env.OLLAMA_MODEL        || 'qwen2.5:7b';
+// Separate model for story→English translation (defaults to OLLAMA_MODEL if not set).
+// When set, auto-translation runs even without a user-supplied translation,
+// and the result is used for lesson extraction (same path as user-supplied translation).
+const OLLAMA_TRANSLATION_MODEL = process.env.OLLAMA_TRANSLATION_MODEL || OLLAMA_MODEL;
+// Separate model for lesson/JSON generation — defaults to OLLAMA_MODEL if not set.
+// Useful when a translation-focused model (e.g. translategemma) handles stories well
+// but struggles with strict JSON schemas required for lessons.
+// Usage: OLLAMA_MODEL=translategemma:12b OLLAMA_LESSON_MODEL=qwen2.5:7b node server.js
+const OLLAMA_LESSON_MODEL = process.env.OLLAMA_LESSON_MODEL || OLLAMA_MODEL;
 const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
 
 // ── Storage ───────────────────────────────────────────────────────────
@@ -294,6 +303,7 @@ function callOllamaRaw(system, userMsg, maxTokens) {
       });
     });
     req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
+    req.setTimeout(OLLAMA_TIMEOUT, () => { req.destroy(); reject(new Error('Ollama timeout')); });
     req.write(body); req.end();
   });
   const timeout = new Promise((_,reject) =>
@@ -305,6 +315,60 @@ function callOllamaRaw(system, userMsg, maxTokens) {
 async function callLLM(active, system, userMsg, maxTokens) {
   if (active === 'anthropic') return callAnthropicRaw(system, userMsg, maxTokens);
   if (active === 'ollama')    return callOllamaRaw(system, userMsg, maxTokens);
+  throw new Error('No LLM backend configured.');
+}
+
+// Lesson calls use OLLAMA_LESSON_MODEL (may differ from story model).
+// For Anthropic there is only one model so this is identical to callLLM.
+function callOllamaModel(model, system, userMsg, maxTokens) {
+  const call = new Promise((resolve, reject) => {
+    const u = new URL('/api/chat', OLLAMA_HOST);
+    const lib = u.protocol === 'https:' ? https : http;
+    const body = JSON.stringify({
+      model, stream: false, keep_alive: -1,
+      options: { temperature: 0.15, num_predict: maxTokens || 1024 },
+      messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
+    });
+    const req = lib.request({
+      hostname: u.hostname,
+      port: u.port || (u.protocol === 'https:' ? 443 : 80),
+      path: u.pathname, method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    }, res => {
+      let d = ''; res.on('data', c => d += c);
+      res.on('end', () => {
+        try {
+          const p = JSON.parse(d);
+          if (p.error) return reject(new Error('Ollama: ' + p.error));
+          const text = p.message?.content || p.response || '';
+          if (!text) return reject(new Error('Ollama returned empty response'));
+          resolve({
+            text,
+            promptTokens:     p.prompt_eval_count || 0,
+            completionTokens: p.eval_count        || 0,
+          });
+        } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0,200))); }
+      });
+    });
+    req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
+    req.setTimeout(OLLAMA_TIMEOUT, () => { req.destroy(); reject(new Error('Ollama timeout')); });
+    req.write(body); req.end();
+  });
+  const timeout = new Promise((_,reject) =>
+    setTimeout(() => reject(new Error('Ollama timeout')), OLLAMA_TIMEOUT)
+  );
+  return Promise.race([call, timeout]);
+}
+
+async function callLLMLesson(active, system, userMsg, maxTokens) {
+  if (active === 'anthropic') return callAnthropicRaw(system, userMsg, maxTokens);
+  if (active === 'ollama')    return callOllamaModel(OLLAMA_LESSON_MODEL, system, userMsg, maxTokens);
+  throw new Error('No LLM backend configured.');
+}
+
+async function callLLMTranslation(active, system, userMsg, maxTokens) {
+  if (active === 'anthropic') return callAnthropicRaw(system, userMsg, maxTokens);
+  if (active === 'ollama')    return callOllamaModel(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
   throw new Error('No LLM backend configured.');
 }
 async function callLLMText(active, system, userMsg, maxTokens) {
@@ -331,10 +395,31 @@ async function withRetry(label, fn, retries = 3, delay = 800) {
 const isPunct = t => /^[.,!?;:()\[\]"'«»—–]+$/.test(t.trim());
 const normSpaces = str => str.trim().replace(/ ([.,!?;:()\[\]])/g, '$1');
 
-// Derive words[] from sentence — guaranteed complete and correct
-function deriveSentenceWords(s) {
-  s.words = s.it.split(' ').filter(t => !isPunct(t));
+// Languages where words are not space-separated — split by character/syllable instead
+const CJK_LANGS = new Set(['ja','zh','ko']);
+
+// Derive words[] from sentence — space-split for European, char-split for CJK
+function deriveSentenceWords(s, lang) {
+  if (lang && CJK_LANGS.has(lang)) {
+    // Split CJK sentences into individual characters (each is a meaningful unit for drag-ordering)
+    s.words = [...s.it].filter(c => /\S/.test(c) && !isPunct(c));
+    // If too granular (>12 chars), group into 2-char chunks for usability
+    if (s.words.length > 12) {
+      const chars = s.words;
+      s.words = [];
+      for (let i = 0; i < chars.length; i += 2)
+        s.words.push(chars.slice(i, i+2).join(''));
+    }
+  } else {
+    s.words = s.it.split(' ').filter(t => !isPunct(t));
+  }
   return s;
+}
+
+// Translation prompt — used to auto-translate a target-language story to English
+function sysTranslation(lang) {
+  const L = langName(lang);
+  return `You are a professional translator. Translate the following ${L} text into natural, fluent English. Translate sentence by sentence in the same order. Output only the English translation — no explanations, no original text, no markdown.`;
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
@@ -376,12 +461,14 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
     userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}\nReturn only the JSON object.`;
   }
 
-  const minWords = (difficulty || 2) === 1 ? 2 : 3;
+  const isCJK = CJK_LANGS.has(lang);
+  const minWords = isCJK ? 1 : (difficulty || 2) === 1 ? 2 : 3;
+  const minSentences = isCJK ? 1 : 3;
 
   return withRetry(`Lesson ${lessonNum}`, async () => {
     const t0 = Date.now();
     const { text: raw, promptTokens, completionTokens } =
-      await callLLM(active, sysPrompt, userMsg, 2048);
+      await callLLMLesson(active, sysPrompt, userMsg, 2048);
     const ms = Date.now() - t0;
     let lesson;
     try { lesson = extractJSON(raw); }
@@ -403,9 +490,9 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
     if (lesson.vocab.length < 4) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
 
     // Validate sentences
-    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < 3)
+    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < minSentences)
       throw new Error(`Only ${lesson.sentences?.length ?? 0} sentences`);
-    lesson.sentences = lesson.sentences.slice(0, 5).map(deriveSentenceWords);
+    lesson.sentences = lesson.sentences.slice(0, 5).map(s => deriveSentenceWords(s, lang));
     const tooShort = lesson.sentences.filter(s => s.words.length < minWords);
     if (tooShort.length > 2)
       throw new Error(`${tooShort.length} sentences have fewer than ${minWords} words — retrying`);
@@ -466,8 +553,8 @@ async function generate(topic, lang, active, difficulty, continuedFrom, storyLen
     try {
       const t0 = Date.now();
       const storyUserMsg = prevStory
-        ? `Previous story:\n${prevStory}\n\nNew topic: "${meta.topic || topic}". Write the continuation now. Plain prose, no headings.`
-        : `Write a story for the topic: "${meta.topic || topic}". Plain prose, no headings.`;
+        ? `Previous story:\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
+        : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
       const storySystem = sysStory(lang, !!prevStory, storyLen);
       const { text, promptTokens, completionTokens } = await callLLM(
         active, storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
@@ -475,19 +562,46 @@ async function generate(topic, lang, active, difficulty, continuedFrom, storyLen
       storyPrompt = storySystem + '\n\n' + storyUserMsg;
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
       console.log(`    Story (${lang}): ${Date.now()-t0}ms`);
-    } catch(e) { console.warn('  Story failed:', e.message); }
+    } catch(e) {
+      // Story failure is fatal — without it lessons have no context or alignment target.
+      // Surface a clear error so the user can retry rather than getting context-free lessons.
+      throw new Error(`Story generation failed: ${e.message}`);
+    }
+  }
+
+  // ── Translation: user-supplied, auto-generated, or none ──────────────
+  // storyTranslation is the English version used for lesson extraction.
+  // Priority: user-supplied > auto-translated > none (LLM invents glosses).
+  // Auto-translation runs when:
+  //   - Anthropic backend (always capable), OR
+  //   - OLLAMA_TRANSLATION_MODEL is explicitly set in env (opt-in for Ollama)
+  // This means single-model Ollama setups are unaffected by default.
+  let storyTranslation = userTranslation || null;
+  const shouldAutoTranslate = story && !storyTranslation &&
+    (active === 'anthropic' || OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL);
+
+  if (shouldAutoTranslate) {
+    jobStep(jobId, 'Translating story to English…');
+    try {
+      const t0 = Date.now();
+      const { text, promptTokens, completionTokens } = await callLLMTranslation(
+        active, sysTranslation(lang), story, Math.min(2048, Math.ceil(story.length * 1.2)));
+      storyTranslation = text.trim();
+      totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
+      console.log(`    Translation (${lang}→en): ${Date.now()-t0}ms, ${storyTranslation.length} chars`);
+    } catch(e) {
+      console.warn('  Translation failed, falling back to context-only mode:', e.message);
+      storyTranslation = null;
+    }
   }
 
   // ── Extract style hint from story for generative mode ─────────────────
-  // (short prefix injected into lesson prompts; no extra LLM call needed)
-  const styleHint = (!userTranslation && story)
-    ? story.slice(0, 600)
-    : null;
+  const styleHint = (!storyTranslation && story) ? story.slice(0, 600) : null;
 
   const TOTAL = 3;
   const lessons = [];
   let prevVocab = [];
-  const lessonOpts = { userTranslation: userTranslation || null, userDialect: userDialect || null, styleHint };
+  const lessonOpts = { userTranslation: storyTranslation || null, userDialect: userDialect || null, styleHint };
   for (let i = 1; i <= TOTAL; i++) {
     try {
       const { lesson, tokens } = await generateOneLesson(
@@ -509,17 +623,20 @@ async function generate(topic, lang, active, difficulty, continuedFrom, storyLen
     console.warn(`  Partial result: ${lessons.length}/${TOTAL} lessons generated.`);
 
   const totalMs = Date.now() - genStart;
-  const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : OLLAMA_MODEL;
+  const uniqueModels = active === 'anthropic' ? [CLAUDE_MODEL]
+    : [...new Set([OLLAMA_MODEL, OLLAMA_TRANSLATION_MODEL, OLLAMA_LESSON_MODEL])];
+  const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : uniqueModels.join(' / ');
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
   return {
     topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
     userTopic,
     lang, difficulty: difficulty || 2, storyLen,
     story, storyLang, storyPrompt,
-    ...(userStory      ? { userStory }                    : {}),
-    ...(userTranslation? { userTranslation }               : {}),
-    ...(userDialect    ? { userDialect }                   : {}),
-    ...(continuedFrom  ? { continuedFrom }                 : {}),
+    ...(storyTranslation ? { storyTranslation }              : {}),
+    ...(userStory        ? { userStory }                     : {}),
+    ...(userTranslation  ? { userTranslation }               : {}),
+    ...(userDialect      ? { userDialect }                   : {}),
+    ...(continuedFrom    ? { continuedFrom }                 : {}),
     lessons,
     generationStats: { totalMs, backend: active, model: modelLabel,
       totalPromptTokens, totalCompletionTokens, lessons: lessonTokenStats }
@@ -560,7 +677,7 @@ async function repairLesson(active, topic, lessonId, jobId) {
         s.it.toLowerCase().slice(0,20) === (repaired.it||'').toLowerCase().slice(0,20));
       if (idx >= 0) {
         const s = { it: repaired.it, en: repaired.en || lesson.sentences[idx].en };
-        lesson.sentences[idx] = deriveSentenceWords(s);
+        lesson.sentences[idx] = deriveSentenceWords(s, saved.lang);
       }
     }
     if (['mcq_it_en','mcq_en_it','listen_mcq','listen_type'].includes(repaired.type) && repaired.it) {
@@ -593,14 +710,14 @@ ${JSON.stringify(batch.exercises, null, 2)}
 Return only the corrected JSON array.`;
     console.log(`    Batch ${b+1}/${batches.length}: ${batch.exercises.length} exercise(s)…`);
     const arr = await withRetry(`Repair batch ${b+1}`, async () => {
-      const { text: raw, promptTokens: pt, completionTokens: ct } = await callLLM(active, SYS_REPAIR, userMsg, 2048);
+      const { text: raw, promptTokens: pt, completionTokens: ct } = await callLLMLesson(active, SYS_REPAIR, userMsg, 2048);
       repairPromptTokens += pt; repairCompletionTokens += ct;
       let a;
       try { a = extractArray(raw); } catch(_) { a = salvageArray(raw); }
       if (!Array.isArray(a) || a.length === 0) throw new Error('No repaired exercises returned');
       return a.map(ex => {
         if (ex.type === 'order' && ex.it)
-          ex.words = deriveSentenceWords({it:ex.it}).words;
+          ex.words = deriveSentenceWords({it:ex.it}, saved.lang).words;
         return ex;
       });
     });
@@ -644,12 +761,16 @@ function pingOllama() {
   });
 }
 async function warmupOllama() {
-  process.stdout.write('  Warming up model… ');
-  return new Promise(resolve => {
+  // Only warm up the story model — the lesson/translation models load on first use.
+  // Warming up all models simultaneously can evict each other on GPUs with limited VRAM,
+  // causing the first real generation call to time out while the model reloads.
+  const model = OLLAMA_MODEL;
+  process.stdout.write(`  Warming up ${model}… `);
+  await new Promise(resolve => {
     const u = new URL('/api/chat', OLLAMA_HOST);
     const lib = u.protocol === 'https:' ? https : http;
     const body = JSON.stringify({
-      model: OLLAMA_MODEL, stream: false, keep_alive: -1,
+      model, stream: false, keep_alive: -1,
       options: { num_predict: 1 }, messages: [{ role: 'user', content: 'hi' }]
     });
     const req = lib.request({
@@ -694,7 +815,13 @@ async function boot() {
   console.log(`  Port    : ${PORT}`);
   console.log(`  Backend : ${active}`);
   if (active === 'anthropic') console.log(`  Model   : ${CLAUDE_MODEL}`);
-  if (active === 'ollama')    console.log(`  Ollama  : ${OLLAMA_HOST}  (${OLLAMA_MODEL})`);
+  if (active === 'ollama') {
+    console.log(`  Ollama  : ${OLLAMA_HOST}  (${OLLAMA_MODEL})`);
+    if (OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL)
+      console.log(`  Translate: ${OLLAMA_TRANSLATION_MODEL}`);
+    if (OLLAMA_LESSON_MODEL !== OLLAMA_MODEL)
+      console.log(`  Lessons : ${OLLAMA_LESSON_MODEL}`);
+  }
   if (active === 'none')      console.log('  Offline — only saved lessons available');
   console.log(`  Storage : ${STORAGE_FILE}`);
   console.log('='.repeat(44) + '\n');
@@ -709,12 +836,15 @@ async function boot() {
     }
     if (M === 'GET' && url.pathname === '/api/info') {
       return json(res, 200, { backend: active, ollamaModel: OLLAMA_MODEL,
+        ollamaTranslationModel: OLLAMA_TRANSLATION_MODEL,
+        ollamaLessonModel: OLLAMA_LESSON_MODEL,
         claudeModel: CLAUDE_MODEL, canGenerate: active !== 'none' });
     }
     if (M === 'GET' && url.pathname === '/api/lessons') {
       const list = store.lessons.map(l => ({
         topic: l.topic, topicEmoji: l.topicEmoji, lang: l.lang || 'it',
         difficulty: l.difficulty || 2,
+        storyLen: l.storyLen || 300,
         continuedFrom: l.continuedFrom || null,
         generatedAt: l.generatedAt,
         updatedAt:   l.updatedAt || l.generatedAt,
