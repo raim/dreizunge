@@ -1,6 +1,365 @@
 {
   "lessons": [
     {
+      "topic": "Helping Injured Hikers",
+      "topicEmoji": "❤️",
+      "userTopic": "we help someone that broke their ankle in the middle of the dolomites",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 750,
+      "story": "Il sole tramontava lentamente, tingendo le cime delle Dolomiti in un rosso acceso. Luca e Marco, esausti ma soddisfatti, si sedettero su un masso per riprendere fiato. Dopo aver goduto del panorama, Marco si girò verso Luca e disse: \"Sai, nonostante la fatica, non mi pentirei di aver fatto questa salita. È stato un vero trionfo.\"\n\nLuca annuì, ancora inebetito dalla bellezza circostante. Ma un pensiero lo prese alla gola. \"Marco, hai visto quella persona laggiù?\" chiese, indicando una figura che si muoveva lentamente verso di loro. \"Sembra che abbia bisogno di aiuto.\"\n\nMarco seguì il suo sguardo e vide una donna che camminava con difficoltà, il suo braccio sinistro appoggiato a un bastone. \"Sì, sembra ferita,\" rispose Marco, alzandosi in piedi. \"Dobbiamo aiutarla.\"\n\nLuca si alzò in piedi accanto a lui, e insieme si avviarono verso la donna. \"Signora, ci sente?\" chiese Marco, avvicinandosi con cautela. \"Siamo qui per aiutarla.\"\n\nLa donna, con un'espressione di dolore e stanchezza, annuì. \"Sono caduta,\" disse con voce debole. \"Ho rotto l'ankle.\"\n\nMarco e Luca si guardarono, poi si misero in azione. \"Non preoccuparti, signora,\" disse Luca, prendendo il suo braccio per supportarla. \"Siamo qui per aiutarti.\"\n\nMarco, con un'espressione determinata, si mise a cercare un luogo sicuro dove sistemare la donna. Trovò un piccolo spiazzo tra due rocce e la fece sedere delicatamente. \"Resti qui un momento,\" disse, tornando a Luca. \"Porto a prenderle un sacchetto con dell'acqua e un po' di pane.\"\n\nLuca annuì e si avviò verso il rifugio più vicino, mentre Marco tornava con un sacchetto di velluto contenente un bicchiere d'acqua e un pezzo di pane. Lo consegnò a Luca, che lo offrì alla donna. \"Mangia un po', signora,\" disse Luca, con un sorriso rassicurante. \"E bevi un po' d'acqua.\"\n\nLa donna annuì, masticando lentamente il pane e bevendo l'acqua. Marco e Luca la sorvegliarono, pronti a intervenire se fosse necessario. Dopo qualche minuto, la donna sembrò un po' meglio. \"Grazie,\" disse, con un'espressione di gratitudine. \"Non sapevo cosa fare.\"\n\nMarco e Luca scambiarono un sorriso. \"Siamo contenti di esserti stati d'aiuto,\" disse Marco. \"Ma dobbiamo chiamare un soccorso.\"\n\nLuca annuì e si avviò verso il cellulare che aveva lasciato in un sacchetto nascosto. Dopo alcuni minuti, sentirono arrivare i soccorsi. Mentre aspettavano, Marco e Luca rimasero accanto alla donna, parlando con calma e rassicurandola.\n\nQuando i soccorritori arrivarono, Marco e Luca aiutarono a trasportare la donna verso l'ambulanza. \"Siamo stati noi a chiamare,\" disse Luca, con un sorriso. \"Siamo contenti di aver potuto aiutarti.\"\n\nLa donna li ringraziò di nuovo, con un'espressione di gratitudine. \"Siete stati molto gentili,\" disse. \"Grazie.\"\n\nMarco e Luca scesero dalla montagna, esausti ma soddisfatti. \"Nonostante la fatica, non mi pentirei di aver aiutato quella donna,\" disse Marco, guardando Luca con un sorriso. \"Era la cosa giusta da fare.\"\n\nLuca annuì, con un sorriso. \"Sì, lo era,\" disse. \"E nonostante la fatica, sento che ho superato una vera prova.\"",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 7-8 paragraphs, under 750 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nil panorama si fece più impressionante. Le rocce grigie e i prati verdi si estendevano fino all'orizzonte, mentre le nuvole si avvolgevano intorno alle cime più alte. \"Siamo quasi lì,\" disse Marco, indicando una cresta scintillante al di sopra di loro. Luca, con un sorriso di orgoglio, rispose: \"Sì, ci siamo quasi.\"\n\nFinalmente, dopo aver superato l'ultimo tratto di salita, si trovarono sulla cima del Sella. L'aria era fredda e pungente, ma il panorama era meraviglioso. Le Dolomiti si estendevano in ogni direzione, con i picchi innevati che si stagliavano contro il cielo azzurro. \"Non c'è niente di meglio di una salita in montagna,\" disse Marco, guardando Luca con un sorriso. Luca, con gli occhi spalancati per lo stupore, annuì e si sentì felice di aver superato la sua prima grande salita.\n\nNew topic: \"we help someone that broke their ankle in the middle of the dolomites\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "climbing in the dolomites",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Aiuto in montagna",
+          "desc": "Parole per aiutare qualcuno in montagna",
+          "icon": "🚀",
+          "vocab": [
+            {
+              "it": "salita",
+              "en": "ascent"
+            },
+            {
+              "it": "ferita",
+              "en": "injured"
+            },
+            {
+              "it": "bastone",
+              "en": "cane"
+            },
+            {
+              "it": "difficoltà",
+              "en": "difficulty"
+            },
+            {
+              "it": "panorama",
+              "en": "view"
+            },
+            {
+              "it": "esaurito",
+              "en": "exhausted"
+            },
+            {
+              "it": "persona",
+              "en": "person"
+            },
+            {
+              "it": "bisogno",
+              "en": "need"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Hai visto quella persona laggiù?",
+              "en": "Did you see that person over there?",
+              "words": [
+                "Hai",
+                "visto",
+                "quella",
+                "persona",
+                "laggiù?"
+              ]
+            },
+            {
+              "it": "Sembra che abbia bisogno di aiuto.",
+              "en": "It seems she needs help.",
+              "words": [
+                "Sembra",
+                "che",
+                "abbia",
+                "bisogno",
+                "di",
+                "aiuto."
+              ]
+            },
+            {
+              "it": "Dobbiamo aiutarla.",
+              "en": "We need to help her.",
+              "words": [
+                "Dobbiamo",
+                "aiutarla."
+              ]
+            },
+            {
+              "it": "Salita faticosa, nonostante la fatica.",
+              "en": "Tough ascent, despite the fatigue.",
+              "words": [
+                "Salita",
+                "faticosa,",
+                "nonostante",
+                "la",
+                "fatica."
+              ]
+            },
+            {
+              "it": "Persona ferita, bisogno di assistenza.",
+              "en": "Injured person, need assistance.",
+              "words": [
+                "Persona",
+                "ferita,",
+                "bisogno",
+                "di",
+                "assistenza."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Aiuto in montagna",
+          "desc": "Parole per aiutare qualcuno in montagna",
+          "icon": "⛰️",
+          "vocab": [
+            {
+              "it": "ferito",
+              "en": "injured"
+            },
+            {
+              "it": "asciugamano",
+              "en": "towel"
+            },
+            {
+              "it": "acqua",
+              "en": "water"
+            },
+            {
+              "it": "ferirsi",
+              "en": "to get injured"
+            },
+            {
+              "it": "portare",
+              "en": "to carry"
+            },
+            {
+              "it": "sangue",
+              "en": "blood"
+            },
+            {
+              "it": "ferita profonda",
+              "en": "deep wound"
+            },
+            {
+              "it": "ferito al piede",
+              "en": "injured foot"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Hai bisogno di aiuto?",
+              "en": "Do you need help?",
+              "words": [
+                "Hai",
+                "bisogno",
+                "di",
+                "aiuto?"
+              ]
+            },
+            {
+              "it": "Porto l'asciugamano per pulire la ferita.",
+              "en": "I'll bring the towel to clean the wound.",
+              "words": [
+                "Porto",
+                "l'asciugamano",
+                "per",
+                "pulire",
+                "la",
+                "ferita."
+              ]
+            },
+            {
+              "it": "Ha bisogno di acqua per bere?",
+              "en": "Does he need water to drink?",
+              "words": [
+                "Ha",
+                "bisogno",
+                "di",
+                "acqua",
+                "per",
+                "bere?"
+              ]
+            },
+            {
+              "it": "Ha ferito il suo piede.",
+              "en": "He injured his foot.",
+              "words": [
+                "Ha",
+                "ferito",
+                "il",
+                "suo",
+                "piede."
+              ]
+            },
+            {
+              "it": "Devo portarlo giù per le scogliere?",
+              "en": "Do I have to carry him down the cliffs?",
+              "words": [
+                "Devo",
+                "portarlo",
+                "giù",
+                "per",
+                "le",
+                "scogliere?"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Aiutare qualcuno",
+          "desc": "Aiutare una persona ferita nelle Dolomiti",
+          "icon": "🚀",
+          "vocab": [
+            {
+              "it": "ferita",
+              "en": "injured"
+            },
+            {
+              "it": "cane",
+              "en": "cane"
+            },
+            {
+              "it": "asciugamano",
+              "en": "towel"
+            },
+            {
+              "it": "sangue",
+              "en": "blood"
+            },
+            {
+              "it": "profondo",
+              "en": "deep"
+            },
+            {
+              "it": "piede",
+              "en": "foot"
+            },
+            {
+              "it": "portare",
+              "en": "to carry"
+            },
+            {
+              "it": "panorama",
+              "en": "view"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Marco vide una persona che camminava con difficoltà.",
+              "en": "Marco saw a person walking with difficulty.",
+              "words": [
+                "Marco",
+                "vide",
+                "una",
+                "persona",
+                "che",
+                "camminava",
+                "con",
+                "difficoltà."
+              ]
+            },
+            {
+              "it": "La donna teneva il braccio sinistro appoggiato a un bastone.",
+              "en": "The woman was holding her left arm with a cane.",
+              "words": [
+                "La",
+                "donna",
+                "teneva",
+                "il",
+                "braccio",
+                "sinistro",
+                "appoggiato",
+                "a",
+                "un",
+                "bastone."
+              ]
+            },
+            {
+              "it": "Luca prese un asciugamano dalla borsa per tamponare il sangue.",
+              "en": "Luca took a towel from the bag to wipe the blood.",
+              "words": [
+                "Luca",
+                "prese",
+                "un",
+                "asciugamano",
+                "dalla",
+                "borsa",
+                "per",
+                "tamponare",
+                "il",
+                "sangue."
+              ]
+            },
+            {
+              "it": "Marco decise di portare la donna al rifugio più vicino.",
+              "en": "Marco decided to carry the woman to the nearest shelter.",
+              "words": [
+                "Marco",
+                "decise",
+                "di",
+                "portare",
+                "la",
+                "donna",
+                "al",
+                "rifugio",
+                "più",
+                "vicino."
+              ]
+            },
+            {
+              "it": "Nonostante la fatica, non mi pentirei di aver aiutato quella persona.",
+              "en": "Despite the effort, I wouldn't regret helping that person.",
+              "words": [
+                "Nonostante",
+                "la",
+                "fatica,",
+                "non",
+                "mi",
+                "pentirei",
+                "di",
+                "aver",
+                "aiutato",
+                "quella",
+                "persona."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1229731,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2868,
+        "totalCompletionTokens": 1904,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 250700,
+            "promptTokens": 713,
+            "completionTokens": 271
+          },
+          {
+            "lessonNum": 2,
+            "ms": 257573,
+            "promptTokens": 767,
+            "completionTokens": 300
+          },
+          {
+            "lessonNum": 3,
+            "ms": 262210,
+            "promptTokens": 823,
+            "completionTokens": 339
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T15:16:29.402Z",
+      "updatedAt": "2026-05-07T15:16:29.402Z"
+    },
+    {
       "topic": "Paris Music Meetup",
       "topicEmoji": " MUSIC ",
       "userTopic": "in paris we meet our favorite musician, but the interview (in a cafe) goes wrong",
@@ -21809,6 +22168,18 @@
     "c1690800713": {
       "title": "Echoes of Montmartre",
       "icon": "🎶"
+    },
+    "c1335606207": {
+      "title": "Alpine Echoes",
+      "icon": "-mountai"
+    },
+    "c894388902": {
+      "title": "Berlin Encounters",
+      "icon": "📍"
+    },
+    "c330041805": {
+      "title": "Dolomites Ascent",
+      "icon": "🏔️"
     }
   }
 }
