@@ -662,7 +662,7 @@ var APP = {
   flagged: loadFlagged(),
   activeJob: null,
   ttsLang: null,   // overridable TTS language code; null = use lesson lang default
-  cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,mistakes:0,streak:0,bestStreak:0,
+  cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,mistakes:0,correct:0,total:0,streak:0,bestStreak:0,
         answered:false,sel:null,placed:[],usedIdx:[]}
 };
 
@@ -1453,9 +1453,13 @@ function buildPath(){
   document.getElementById('topic-emoji-big').textContent=(dL.flag+' '+(d.topicEmoji||'📚'));
   document.getElementById('topic-name-big').textContent=d.topic;
   const _allL=(APP.lessonData?.lessons||[]).length;
-  const _doneL=Object.keys(APP.progress.completed?.[APP.lessonData?.topic]||{}).length;
-  const _pct=_allL>0?Math.round(100*_doneL/_allL):0;
-  document.getElementById('total-xp').textContent=_doneL+' / '+_allL+' lessons ('+_pct+'%)';
+  const _doneMap=APP.progress.completed?.[APP.lessonData?.topic]||{};
+  const _doneL=Object.keys(_doneMap).length;
+  const _scores=Object.values(_doneMap).filter(v=>typeof v==='object'&&v.total>0);
+  const _totC=_scores.reduce((s,v)=>s+v.correct,0);
+  const _totT=_scores.reduce((s,v)=>s+v.total,0);
+  const _pctStr=_totT>0?(Math.round(100*_totC/_totT)+'% correct'):(_doneL+'/'+_allL+' done');
+  document.getElementById('total-xp').textContent=_doneL+' / '+_allL+' lessons · '+_pctStr;
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
   const contStoryBtn=document.getElementById('cont-story-btn');
   if(contStoryBtn) contStoryBtn.style.display=APP.info.canGenerate?'':'none';
@@ -1535,7 +1539,9 @@ function buildPath(){
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
   d.lessons.forEach((L,i)=>{
-    const isDone=!!done[L.id], isLocked=i>0&&!done[d.lessons[i-1].id], isActive=!isDone&&!isLocked;
+    const isDone=!!(done[L.id]), isLocked=i>0&&!done[d.lessons[i-1].id], isActive=!isDone&&!isLocked;
+    const lessonScore=typeof done[L.id]==='object'?done[L.id]:null;
+    const lessonPct=lessonScore&&lessonScore.total>0?Math.round(100*lessonScore.correct/lessonScore.total):null;
     if(i>0){ const ln=document.createElement('div'); ln.className='path-line'+(done[d.lessons[i-1].id]?' done':''); path.appendChild(ln); }
     const node=document.createElement('div');
     node.className='lesson-node'+(isDone?' done-node':isLocked?' locked':isActive?' active-node':'');
@@ -1560,7 +1566,7 @@ function buildPath(){
         <div class="node-title">Lesson ${L.id}: ${L.title} ${diffBadge}</div>
         <div class="node-desc">${L.desc}</div>
         ${hasFlags?`<span class="flag-note">⚑ ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</span>`:''}      </div>
-      ${isDone?'<span class="node-pct done">100%</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
+      ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
   });
@@ -1645,7 +1651,7 @@ async function saveStorylineTitle(chainId, rootTopic) {
       body: JSON.stringify({ chainKey: rootTopic, title, icon }) });
   } catch(e) { console.error('saveStorylineTitle:', e); }
   closeStorylineEdit(chainId);
-  loadSavedList();
+  await loadSavedList();
 }
 
 async function clearStorylineTitle(chainId, rootTopic) {
@@ -1674,11 +1680,14 @@ async function genStorylineTitle(chainId, rootTopic, encodedChain) {
       headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topics }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'Generation failed');
-    // Pre-fill edit form with generated values
+    // Auto-save directly — pre-fill edit form so user can still tweak
+    await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chainKey: rootTopic, title: data.title, icon: data.icon }) });
     const inp  = document.getElementById('sledit-input-' + chainId);
     const icon = document.getElementById('sledit-icon-' + chainId);
     if (inp)  inp.value = data.title || '';
     if (icon) icon.textContent = data.icon || '📖';
+    await loadSavedList();
     openStorylineEdit(chainId, rootTopic);
   } catch(e) {
     alert('Could not generate title: ' + e.message);
@@ -1801,7 +1810,7 @@ function buildExercises(lessonIdx){
 function startLesson(idx){
 	    const C=APP.cur;
 	    C.lessonIdx=idx; C.exercises=buildExercises(idx); C.cur=0;
-	    C.hearts=3; C.mistakes=0; C.streak=0; C.bestStreak=0;
+	    C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
 	    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
 	    
 	    console.log("LOADED TOPIC:", APP.lessonData.topic);
@@ -1985,7 +1994,7 @@ function check(){
     return;
   }
   if(ok){
-    C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
+    C.correct++; C.total++; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
     const revealBody = ex.type==='listen_type'
       ? `${ex.it}${ex.en ? ' — ' + ex.en : ''}`
       : (ex.it||ex.correct);
@@ -1994,7 +2003,7 @@ function check(){
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     if(ex.type==='listen_type') document.getElementById('type-in').classList.add('ok');
   } else {
-    C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.streak=0;
+    C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">Not quite!</div><div class="fb-body">Correct answer: <strong>${ex.correct}</strong></div>`;
     if(ex.it) speak(ex.it,0.75);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===ex.correct)b.classList.add('ok'); });
@@ -2008,7 +2017,13 @@ function check(){
 function showComplete(){
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
   if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
-  APP.progress.completed[topicKey][lesson.id]=true;
+  const prev = APP.progress.completed[topicKey][lesson.id]||{};
+  const prevCorrect = typeof prev === 'object' ? (prev.correct||0) : 0;
+  const prevTotal   = typeof prev === 'object' ? (prev.total||0)   : 0;
+  APP.progress.completed[topicKey][lesson.id] = {
+    correct: prevCorrect + (C.correct||0),
+    total:   prevTotal   + (C.total||0)
+  };
   saveProg();
   goHome();
 }

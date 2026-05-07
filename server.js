@@ -458,6 +458,9 @@ function sysStory(lang, isContinuation, wordCount) {
 
 // ── Storyline title prompt ─────────────────────────────────────────────
 async function generateStorylineTitle(topics, stories) {
+  console.log(`\n── Storyline title generation ──────────────────────`);
+  console.log(`  Chapters : ${topics.length} (${topics.map(t=>'"'+t+'"').join(', ')})`);
+  console.log(`  Model    : ${OLLAMA_MODEL}`);
   const topicList = topics.map((t,i) => `Chapter ${i+1}: "${t}"`).join('\n');
   const storyExcerpts = stories.map((s,i) =>
     `Chapter ${i+1} excerpt: ${(s||'').slice(0,300).replace(/\n/g,' ')}…`
@@ -466,8 +469,18 @@ async function generateStorylineTitle(topics, stories) {
   const user = `Chapter topics:\n${topicList}\n\nStory excerpts:\n${storyExcerpts}`;
   const result = await callOllamaRaw(OLLAMA_MODEL, sys, user, 80);
   const raw = result.text.replace(/```json|```/g, '').trim();
-  const parsed = JSON.parse(raw);
+  console.log(`  Raw response: ${raw.slice(0,120)}`);
+  let parsed;
+  try { parsed = JSON.parse(raw); }
+  catch(e) {
+    // Try extracting JSON object from response if model added surrounding text
+    const m = raw.match(/\{[^}]+\}/);
+    if (m) { parsed = JSON.parse(m[0]); console.log('  (extracted JSON from response)'); }
+    else throw new Error('Could not parse JSON from model response: ' + raw.slice(0,80));
+  }
   if (!parsed.title || !parsed.icon) throw new Error('Missing title or icon in response');
+  console.log(`  Result   : ${parsed.icon} "${parsed.title}"`);
+  console.log('────────────────────────────────────────────────────\n');
   return { title: parsed.title.slice(0, 80), icon: parsed.icon.slice(0, 8) };
 }
 

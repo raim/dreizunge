@@ -1,6 +1,1153 @@
 {
   "lessons": [
     {
+      "topic": "Family Home Visit",
+      "topicEmoji": "🏠",
+      "userTopic": "we get invited to the family home of the person we helped",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "La sera del giorno successivo, ricevettero un invito inaspettato. La donna, la cui vita avevano salvato, li aveva contattati per una cena a casa sua. \"Siete stati così gentili con me,\" disse, \"e volevo ringraziarvi in persona.\"\n\nMarco e Luca si guardarono, sorpresi ma felici. \"Siamo onorati,\" rispose Marco. \"Speriamo che la cena sia a gradimento.\"\n\nIl giorno della visita, la casa era accogliente e piena di vita. La famiglia era pronta a riceverli, con sorrisi e accoglienze calde. La donna li condusse in cucina, dove preparò un pasto delizioso. \"Spero che vi piaccia,\" disse, con un sorriso.\n\nMentre mangiavano, la conversazione fluì facilmente. La donna parlò di come la loro azione aveva cambiato la sua vita. \"Non avrei mai immaginato di avere amici così bravi,\" disse, con un sorriso. \"Siete stati una vera luce nel mio buio.\"\n\nMarco e Luca risero, sentendo il calore della gratitudine. \"Siamo solo due persone che hanno fatto la cosa giusta,\" disse Luca. \"Ma è bello sapere che la nostra azione ha fatto una differenza.\"\n\nLa serata trascorse in un flusso di risate e conversazioni. La donna li ringraziò ancora, questa volta con un abbraccio caloroso. \"Siete stati un vero aiuto,\" disse. \"Grazie per avermi fatto sentire meno sola.\"\n\nMarco e Luca uscirono dalla casa, esausti ma con un senso di soddisfazione. \"Nonostante la fatica, è stato un bel giorno,\" disse Marco, guardando Luca. \"Era la cosa giusta da fare.\"\n\nLuca annuì, con un sorriso. \"Sì, lo era,\" disse. \"E sento che ho superato una vera prova, ma in un modo positivo.\"",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nchetto nascosto. Dopo alcuni minuti, sentirono arrivare i soccorsi. Mentre aspettavano, Marco e Luca rimasero accanto alla donna, parlando con calma e rassicurandola.\n\nQuando i soccorritori arrivarono, Marco e Luca aiutarono a trasportare la donna verso l'ambulanza. \"Siamo stati noi a chiamare,\" disse Luca, con un sorriso. \"Siamo contenti di aver potuto aiutarti.\"\n\nLa donna li ringraziò di nuovo, con un'espressione di gratitudine. \"Siete stati molto gentili,\" disse. \"Grazie.\"\n\nMarco e Luca scesero dalla montagna, esausti ma soddisfatti. \"Nonostante la fatica, non mi pentirei di aver aiutato quella donna,\" disse Marco, guardando Luca con un sorriso. \"Era la cosa giusta da fare.\"\n\nLuca annuì, con un sorriso. \"Sì, lo era,\" disse. \"E nonostante la fatica, sento che ho superato una vera prova.\"\n\nNew topic: \"we get invited to the family home of the person we helped\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Helping Injured Hikers",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Invito a casa",
+          "desc": "Invito, cena, conversazione, ringraziamento",
+          "icon": "🏠",
+          "vocab": [
+            {
+              "it": "invito",
+              "en": "invitation"
+            },
+            {
+              "it": "casa",
+              "en": "house"
+            },
+            {
+              "it": "cena",
+              "en": "dinner"
+            },
+            {
+              "it": "ringraziamento",
+              "en": "thank you"
+            },
+            {
+              "it": "amici",
+              "en": "friends"
+            },
+            {
+              "it": "cambiato",
+              "en": "changed"
+            },
+            {
+              "it": "fluì",
+              "en": "flowed"
+            },
+            {
+              "it": "conversazione",
+              "en": "conversation"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Hanno ricevuto un invito inaspettato.",
+              "en": "They received an unexpected invitation.",
+              "words": [
+                "Hanno",
+                "ricevuto",
+                "un",
+                "invito",
+                "inaspettato."
+              ]
+            },
+            {
+              "it": "Speravano che la cena fosse gradita.",
+              "en": "They hoped the dinner would be appreciated.",
+              "words": [
+                "Speravano",
+                "che",
+                "la",
+                "cena",
+                "fosse",
+                "gradita."
+              ]
+            },
+            {
+              "it": "La conversazione fluì facilmente tra loro.",
+              "en": "The conversation flowed easily between them.",
+              "words": [
+                "La",
+                "conversazione",
+                "fluì",
+                "facilmente",
+                "tra",
+                "loro."
+              ]
+            },
+            {
+              "it": "Non avrebbe mai immaginato di avere amici così bravi.",
+              "en": "He never would have imagined having such good friends.",
+              "words": [
+                "Non",
+                "avrebbe",
+                "mai",
+                "immaginato",
+                "di",
+                "avere",
+                "amici",
+                "così",
+                "bravi."
+              ]
+            },
+            {
+              "it": "La donna li aveva ringraziati in persona.",
+              "en": "The woman had thanked them in person.",
+              "words": [
+                "La",
+                "donna",
+                "li",
+                "aveva",
+                "ringraziati",
+                "in",
+                "persona."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Invito alla cena",
+          "desc": "Cenare in casa di chi hai aiutato, ringraziamenti, conversazione",
+          "icon": "🏠🍽️",
+          "vocab": [
+            {
+              "it": "accogliente",
+              "en": "welcoming"
+            },
+            {
+              "it": "gradimento",
+              "en": "enjoyment"
+            },
+            {
+              "it": "pianificare",
+              "en": "plan"
+            },
+            {
+              "it": "sorprendere",
+              "en": "surprise"
+            },
+            {
+              "it": "pronto",
+              "en": "ready"
+            },
+            {
+              "it": "caldo",
+              "en": "warm"
+            },
+            {
+              "it": "delizioso",
+              "en": "delicious"
+            },
+            {
+              "it": "sorridere",
+              "en": "smile"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Erano pronti per la cena.",
+              "en": "They were ready for the dinner.",
+              "words": [
+                "Erano",
+                "pronti",
+                "per",
+                "la",
+                "cena."
+              ]
+            },
+            {
+              "it": "La casa era accogliente e piena di vita.",
+              "en": "The house was welcoming and full of life.",
+              "words": [
+                "La",
+                "casa",
+                "era",
+                "accogliente",
+                "e",
+                "piena",
+                "di",
+                "vita."
+              ]
+            },
+            {
+              "it": "La conversazione fluì facilmente.",
+              "en": "The conversation flowed easily.",
+              "words": [
+                "La",
+                "conversazione",
+                "fluì",
+                "facilmente."
+              ]
+            },
+            {
+              "it": "Speravano che la cena fosse a gradimento.",
+              "en": "They hoped the dinner would be to their liking.",
+              "words": [
+                "Speravano",
+                "che",
+                "la",
+                "cena",
+                "fosse",
+                "a",
+                "gradimento."
+              ]
+            },
+            {
+              "it": "La donna sorrideva mentre preparava il pasto.",
+              "en": "The woman smiled while preparing the meal.",
+              "words": [
+                "La",
+                "donna",
+                "sorrideva",
+                "mentre",
+                "preparava",
+                "il",
+                "pasto."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Invito alla casa",
+          "desc": "Inviti, accoglienza, conversazione",
+          "icon": "🏠",
+          "vocab": [
+            {
+              "it": "ricevettero",
+              "en": "received"
+            },
+            {
+              "it": "contattati",
+              "en": "contacted"
+            },
+            {
+              "it": "speriamo",
+              "en": "we hope"
+            },
+            {
+              "it": "onorati",
+              "en": "honored"
+            },
+            {
+              "it": "gradimento",
+              "en": "enjoyment"
+            },
+            {
+              "it": "accogliente",
+              "en": "welcoming"
+            },
+            {
+              "it": "pianificare",
+              "en": "plan"
+            },
+            {
+              "it": "sorprendere",
+              "en": "surprise"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Hanno ricevuto un invito inaspettato.",
+              "en": "They received an unexpected invitation.",
+              "words": [
+                "Hanno",
+                "ricevuto",
+                "un",
+                "invito",
+                "inaspettato."
+              ]
+            },
+            {
+              "it": "Hanno pianificato la visita con sorprendere.",
+              "en": "They planned the visit with surprise.",
+              "words": [
+                "Hanno",
+                "pianificato",
+                "la",
+                "visita",
+                "con",
+                "sorprendere."
+              ]
+            },
+            {
+              "it": "La casa era accogliente e piena di vita.",
+              "en": "The house was welcoming and full of life.",
+              "words": [
+                "La",
+                "casa",
+                "era",
+                "accogliente",
+                "e",
+                "piena",
+                "di",
+                "vita."
+              ]
+            },
+            {
+              "it": "Speriamo che la cena sia gradita.",
+              "en": "We hope the dinner will be enjoyed.",
+              "words": [
+                "Speriamo",
+                "che",
+                "la",
+                "cena",
+                "sia",
+                "gradita."
+              ]
+            },
+            {
+              "it": "La conversazione fluì facilmente tra loro.",
+              "en": "The conversation flowed easily between them.",
+              "words": [
+                "La",
+                "conversazione",
+                "fluì",
+                "facilmente",
+                "tra",
+                "loro."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 977202,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2877,
+        "totalCompletionTokens": 1359,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 254397,
+            "promptTokens": 719,
+            "completionTokens": 282
+          },
+          {
+            "lessonNum": 2,
+            "ms": 224479,
+            "promptTokens": 775,
+            "completionTokens": 303
+          },
+          {
+            "lessonNum": 3,
+            "ms": 219082,
+            "promptTokens": 822,
+            "completionTokens": 282
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T17:41:38.565Z",
+      "updatedAt": "2026-05-07T17:41:38.565Z"
+    },
+    {
+      "topic": "Lang. Lesson App Presentation",
+      "topicEmoji": "📚",
+      "userTopic": "i have  a presentation of a language lesson learning app, please include fancy buzzwords that will convince the potential investors",
+      "lang": "de",
+      "difficulty": 2,
+      "storyLen": 1000,
+      "story": "In einer Welt, in der KI und Big Data die Bildung revolutionieren, steht das \"Sprachlyrik\" im Mittelpunkt. Dieses innovative Sprachlern-App-Unternehmen bietet eine umfassende Lösung, die nicht nur die Grundlagen des Deutsch als Fremdsprache vermittelt, sondern auch die Zukunft des Sprachlernens verändert. Sprachlyrik nutzt die neuesten Trends in KI und maschinellem Lernen, um eine benutzerfreundliche und effektive Lernumgebung zu schaffen.\n\nUnsere App basiert auf dem Prinzip des Personalized Learning, was bedeutet, dass der Lernprozess sich an die individuellen Bedürfnisse und Fähigkeiten des Nutzers anpasst. Durch die Integration von Natural Language Processing (NLP) und Deep Learning-Technologien, können wir die Lernziele und -fortschritte des Benutzers präzise und kontinuierlich überwachen. Dies ermöglicht es uns, dynamische Lernpfade zu erstellen, die sich an den individuellen Lernschritten des Nutzers anpassen.\n\nSprachlyrik bietet nicht nur eine Vielzahl von Lernmaterialien, sondern integriert auch interaktive und spielerische Elemente, um den Lernprozess zu vertiefen. Unsere App nutzt Gamification-Techniken, um den Lerninteresse zu fördern und den Lernfortschritt zu motivieren. Durch die Integration von Augmented Reality (AR) und Virtual Reality (VR) können wir komplexe Sprachkonzepte in einem visuell ansprechenden und interaktiven Kontext vermitteln. Dies ermöglicht es den Nutzern, die Sprache in einem authentischen Kontext zu praktizieren und ihre Fähigkeiten effektiv zu verbessern.\n\nEin weiterer Punkt, der uns von anderen Sprachlern-Apps abhebt, ist unsere umfassende Datenanalyse. Wir verwenden Big Data-Technologien, um die Leistung und die Effektivität unserer App zu messen und zu optimieren. Durch die Analyse von Nutzerinteraktionen und -verhalten können wir kontinuierlich Verbesserungen vornehmen und sicherstellen, dass die App stets den neuesten Trends in der Sprachbildung folgt.\n\nSprachlyrik ist nicht nur eine App, sondern ein vollständiges Sprachlern-Ökosystem. Unsere Plattform bietet nicht nur die Möglichkeit, die Sprache zu lernen, sondern auch die Möglichkeit, mit anderen Lernenden und Sprachlehrern zu interagieren. Unsere Social Learning-Funktionen ermöglichen es den Nutzern, gemeinsam zu lernen, zu diskutieren und ihre Fähigkeiten zu verbessern. Dies fördert nicht nur die Sprachkompetenz, sondern auch die soziale Kompetenz und das Teamwork.\n\nZusätzlich zu den technologischen Innovationen bietet Sprachlyrik auch eine umfassende Sprachkultur. Unsere App vermittelt nicht nur die Sprache, sondern auch die Kultur und die Geschichte des Deutschen. Durch die Integration von Kulturmodulen und -aktivitäten können wir den Nutzern ein tiefgründiges Verständnis der deutschen Kultur vermitteln und ihre Sprachkompetenz in einem authentischen Kontext zu vertiefen.\n\nSprachlyrik ist nicht nur ein Sprachlern-Tool, sondern eine revolutionäre Lösung, die die Zukunft des Sprachlernens verändert. Unsere App nutzt die neuesten Technologien, um den Lernprozess zu personalisieren, interaktiv zu gestalten und effektiv zu optimieren. Durch die Integration von KI, Big Data und Social Learning-Funktionen können wir sicherstellen, dass unsere App stets den neuesten Trends in der Sprachbildung folgt und den Nutzern eine unvergleichliche Lernerfahrung bietet.\n\nMit Sprachlyrik können wir nicht nur die Sprachkompetenz der Nutzer verbessern, sondern auch ihre soziale Kompetenz und ihre Fähigkeit, in einem globalisierten Weltmarkt erfolgreich zu agieren. Unsere App ist nicht nur ein Sprachlern-Tool, sondern ein vollständiges Sprachlern-Ökosystem, das die Zukunft des Sprachlernens verändert.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 10-11 paragraphs, under 1000 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German.\n\nWrite a story for the topic: \"i have  a presentation of a language lesson learning app, please include fancy buzzwords that will convince the potential investors\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Sprachlyrik",
+          "desc": "KI, Big Data, Personalisierung, Lernumgebung",
+          "icon": "🤖📚",
+          "vocab": [
+            {
+              "it": "Personalisierung",
+              "en": "Personalization"
+            },
+            {
+              "it": "Fremdsprache",
+              "en": "Foreign language"
+            },
+            {
+              "it": "Künstliche Intelligenz",
+              "en": "Artificial intelligence"
+            },
+            {
+              "it": "Big Data",
+              "en": "Big data"
+            },
+            {
+              "it": "Lernumgebung",
+              "en": "Learning environment"
+            },
+            {
+              "it": "Naturerkannte Sprachverarbeitung",
+              "en": "Natural language processing"
+            },
+            {
+              "it": "Tiefenlernen",
+              "en": "Deep learning"
+            },
+            {
+              "it": "Lernfortschritt",
+              "en": "Learning progress"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Unsere App basiert auf dem Prinzip des Personalisierung.",
+              "en": "Our app is based on the principle of personalization.",
+              "words": [
+                "Unsere",
+                "App",
+                "basiert",
+                "auf",
+                "dem",
+                "Prinzip",
+                "des",
+                "Personalisierung."
+              ]
+            },
+            {
+              "it": "Durch die Integration von NLP und Deep Learning-Technologien, können wir den Lernfortschritt präzise überwachen.",
+              "en": "By integrating NLP and deep learning technologies, we can precisely monitor the learning progress.",
+              "words": [
+                "Durch",
+                "die",
+                "Integration",
+                "von",
+                "NLP",
+                "und",
+                "Deep",
+                "Learning-Technologien,",
+                "können",
+                "wir",
+                "den",
+                "Lernfortschritt",
+                "präzise",
+                "überwachen."
+              ]
+            },
+            {
+              "it": "Die KI adaptiert sich an die individuellen Bedürfnisse und Fähigkeiten des Nutzers.",
+              "en": "The AI adapts to the individual needs and abilities of the user.",
+              "words": [
+                "Die",
+                "KI",
+                "adaptiert",
+                "sich",
+                "an",
+                "die",
+                "individuellen",
+                "Bedürfnisse",
+                "und",
+                "Fähigkeiten",
+                "des",
+                "Nutzers."
+              ]
+            },
+            {
+              "it": "Unsere umfassende Lösung verändert die Zukunft des Sprachlernens.",
+              "en": "Our comprehensive solution is transforming the future of language learning.",
+              "words": [
+                "Unsere",
+                "umfassende",
+                "Lösung",
+                "verändert",
+                "die",
+                "Zukunft",
+                "des",
+                "Sprachlernens."
+              ]
+            },
+            {
+              "it": "Big Data unterstützt uns dabei, Trends und Muster im Lernverhalten zu erkennen.",
+              "en": "Big data helps us recognize trends and patterns in learning behavior.",
+              "words": [
+                "Big",
+                "Data",
+                "unterstützt",
+                "uns",
+                "dabei,",
+                "Trends",
+                "und",
+                "Muster",
+                "im",
+                "Lernverhalten",
+                "zu",
+                "erkennen."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Sprachlyrik",
+          "desc": "innovative Sprachlern-App, Personalisierung, Deep Learning",
+          "icon": "📚🤖",
+          "vocab": [
+            {
+              "it": "Sprachlyrik",
+              "en": "Language lyricism"
+            },
+            {
+              "it": "Fremdsprachenkompetenz",
+              "en": "Foreign language competence"
+            },
+            {
+              "it": "KünstlicheIntelligenz",
+              "en": "Artificial intelligence"
+            },
+            {
+              "it": "Lernzyklus",
+              "en": "Learning cycle"
+            },
+            {
+              "it": "Lernstrategie",
+              "en": "Learning strategy"
+            },
+            {
+              "it": "Sprachmodellierung",
+              "en": "Language modeling"
+            },
+            {
+              "it": "Lernanalyse",
+              "en": "Learning analysis"
+            },
+            {
+              "it": "KontextbasiertesLernen",
+              "en": "Context-based learning"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Unsere App nutzt KI, um den Lernzyklus kontinuierlich zu optimieren.",
+              "en": "Our app uses AI to continuously optimize the learning cycle.",
+              "words": [
+                "Unsere",
+                "App",
+                "nutzt",
+                "KI,",
+                "um",
+                "den",
+                "Lernzyklus",
+                "kontinuierlich",
+                "zu",
+                "optimieren."
+              ]
+            },
+            {
+              "it": "Durch kontextbasiertes Lernen verbessern wir die Fremdsprachenkompetenz des Nutzers.",
+              "en": "Through context-based learning, we enhance the user's foreign language competence.",
+              "words": [
+                "Durch",
+                "kontextbasiertes",
+                "Lernen",
+                "verbessern",
+                "wir",
+                "die",
+                "Fremdsprachenkompetenz",
+                "des",
+                "Nutzers."
+              ]
+            },
+            {
+              "it": "Lernstrategien werden individuell angepasst, um den Lernfortschritt zu maximieren.",
+              "en": "Learning strategies are individually adjusted to maximize learning progress.",
+              "words": [
+                "Lernstrategien",
+                "werden",
+                "individuell",
+                "angepasst,",
+                "um",
+                "den",
+                "Lernfortschritt",
+                "zu",
+                "maximieren."
+              ]
+            },
+            {
+              "it": "Sprachmodellierung ermöglicht eine präzise Analyse des Lernverhaltens.",
+              "en": "Language modeling enables a precise analysis of learning behavior.",
+              "words": [
+                "Sprachmodellierung",
+                "ermöglicht",
+                "eine",
+                "präzise",
+                "Analyse",
+                "des",
+                "Lernverhaltens."
+              ]
+            },
+            {
+              "it": "Die Integration von Deep Learning-Technologien verbessert die Personalisierung der Lernumgebung.",
+              "en": "The integration of deep learning technologies enhances the personalization of the learning environment.",
+              "words": [
+                "Die",
+                "Integration",
+                "von",
+                "Deep",
+                "Learning-Technologien",
+                "verbessert",
+                "die",
+                "Personalisierung",
+                "der",
+                "Lernumgebung."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Sprachlyrik und KI",
+          "desc": "Innovative Sprachlernstrategien mit KI",
+          "icon": "🤖📚",
+          "vocab": [
+            {
+              "it": "Sprachmodellierung",
+              "en": "Language modeling"
+            },
+            {
+              "it": "Lernanalyse",
+              "en": "Learning analysis"
+            },
+            {
+              "it": "KontextbasiertesLernen",
+              "en": "Context-based learning"
+            },
+            {
+              "it": "Lernzyklus",
+              "en": "Learning cycle"
+            },
+            {
+              "it": "Lernstrategie",
+              "en": "Learning strategy"
+            },
+            {
+              "it": "Fremdsprachenkompetenz",
+              "en": "Foreign language competence"
+            },
+            {
+              "it": "Sprachlyrik",
+              "en": "Language lyricism"
+            },
+            {
+              "it": "Personalisierung",
+              "en": "Personalization"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Sprachlyrik nutzt Personalisierung, um Fremdsprachenkompetenz zu fördern.",
+              "en": "Language lyricism leverages personalization to foster foreign language competence.",
+              "words": [
+                "Sprachlyrik",
+                "nutzt",
+                "Personalisierung,",
+                "um",
+                "Fremdsprachenkompetenz",
+                "zu",
+                "fördern."
+              ]
+            },
+            {
+              "it": "Durch kontinuierliche Lernanalyse verbessert Sprachmodellierung den Lernzyklus.",
+              "en": "Through continuous learning analysis, language modeling enhances the learning cycle.",
+              "words": [
+                "Durch",
+                "kontinuierliche",
+                "Lernanalyse",
+                "verbessert",
+                "Sprachmodellierung",
+                "den",
+                "Lernzyklus."
+              ]
+            },
+            {
+              "it": "KontextbasiertesLernen ist eine Kernstrategie unserer App, um Sprachlyrik zu optimieren.",
+              "en": "Context-based learning is a core strategy of our app to optimize language lyricism.",
+              "words": [
+                "KontextbasiertesLernen",
+                "ist",
+                "eine",
+                "Kernstrategie",
+                "unserer",
+                "App,",
+                "um",
+                "Sprachlyrik",
+                "zu",
+                "optimieren."
+              ]
+            },
+            {
+              "it": "Lernzyklus und Lernstrategie sind unverzichtbare Bestandteile unserer Sprachlyrik-App.",
+              "en": "The learning cycle and learning strategy are indispensable components of our language lyricism app.",
+              "words": [
+                "Lernzyklus",
+                "und",
+                "Lernstrategie",
+                "sind",
+                "unverzichtbare",
+                "Bestandteile",
+                "unserer",
+                "Sprachlyrik-App."
+              ]
+            },
+            {
+              "it": "Sprachlyrik und KI vereint um effizienter zu lernen und Fremdsprachenkompetenz zu gewinnen.",
+              "en": "Language lyricism and AI unite to learn more efficiently and gain foreign language competence.",
+              "words": [
+                "Sprachlyrik",
+                "und",
+                "KI",
+                "vereint",
+                "um",
+                "effizienter",
+                "zu",
+                "lernen",
+                "und",
+                "Fremdsprachenkompetenz",
+                "zu",
+                "gewinnen."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1344684,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2589,
+        "totalCompletionTokens": 2194,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 281528,
+            "promptTokens": 685,
+            "completionTokens": 383
+          },
+          {
+            "lessonNum": 2,
+            "ms": 332676,
+            "promptTokens": 771,
+            "completionTokens": 395
+          },
+          {
+            "lessonNum": 3,
+            "ms": 353981,
+            "promptTokens": 853,
+            "completionTokens": 421
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T16:42:49.393Z",
+      "updatedAt": "2026-05-07T16:42:49.393Z"
+    },
+    {
+      "topic": "Hotel Wifi Issues",
+      "topicEmoji": "🌐",
+      "userTopic": "still having problems with the hotel wifi, we're trying to find an internet cafe, but those don't exist anymore",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 600,
+      "story": "L'aria era pesante di tensione mentre Marco e Maria camminavano per le vie del centro, cercando disperatamente un internet café. Ma non c'era traccia di qualsiasi luogo simile. Le piazze, una volta affollate di giovani studenti, ora erano deserte, le caffetterie chiuse o trasformate in locali per eventi. Marco si fermò, guardando il suo smartphone, che non riusciva a trovare nemmeno un segnale Wi-Fi stabile.\n\n\"Non c'è speranza,\" disse Maria, scoraggiata. \"Non c'è più un posto dove poter lavorare.\"\n\nMarco la strinse a sé, cercando di rincuorarla. \"Non preoccuparti, ci penseremo. Forse ci sono ancora bar o ristoranti che offrono connessione gratuita.\"\n\nPercorsero altre strade, ma non trovarono nulla. Marco propose di tornare all'hotel, ma Maria scosse la testa. \"Non voglio più andare lì. Sembra che non ci sia più soluzione.\"\n\nMentre camminavano, notarono un piccolo caffè in un angolo della piazza. Era chiuso, ma la porta era aperta e si vedevano i tavoli all'interno. Marco bussò e, dopo un po', un anziano proprietario aprì la porta, sorpreso.\n\n\"Che cosa volete?\" chiese, con un accento locale marcato.\n\n\"Stiamo cercando un luogo dove poter lavorare,\" spiegò Marco. \"Hai forse un internet café?\"\n\nL'uomo si strinse nelle spalle. \"Non qui, amico. Ma forse potete entrare e usare la mia connessione. È un po' veloce, ma potrebbe bastare.\"\n\nMaria e Marco entrarono, ringraziando l'anziano. Il caffè era deserto, con solo pochi tavoli occupati da anziani che leggevano quotidiani. Marco e Maria si sedettero in un angolo, con la connessione Wi-Fi che si stabilizzava lentamente.\n\n\"Non è perfetto,\" disse Marco, \"ma almeno possiamo lavorare.\"\n\nMaria annuì, sorridendo. \"Grazie, Marco. Non sapevo cosa fare senza il lavoro.\"\n\nIn quel momento, l'anziano proprietario si avvicinò, sorridendo. \"Non preoccupatevi, giovanotti. Presto ci sarà un internet café qui. Sono solo un po' indietro nel tempo.\"\n\nMarco e Maria si guardarono, speranzosi. Forse, in quel mondo instabile, c'era ancora speranza.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 6-7 paragraphs, under 600 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nl era instabile e lento, rendendo impossibile per loro eseguire qualsiasi lavoro online. Provarono a contattare il personale dell'hotel, ma ricevettero solo promesse di soluzioni che non si concretizzavano.\n\nUn pomeriggio, mentre sedevano sul balcone della suite, osservando le vie affollate sotto di loro, Marco propose a Maria di andare a cercare un caffè in una delle tante caffetterie vicine. Mentre aspettavano il loro drink, notarono un gruppo di giovani che si sedevano in un angolo della piazza, concentrati sui loro smartphone. Marco propose di unirsi a loro, offrendo loro la loro suite come spazio di lavoro temporaneo. Gli studenti accettarono con entusiasmo, e presto la suite divenne un piccolo centro di lavoro temporaneo, con Maria e Marco che condividevano la loro connessione Wi-Fi.\n\nNew topic: \"still having problems with the hotel wifi, we're trying to find an internet cafe, but those don't exist anymore\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Problems with Hotel WLAN",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Internet Café Mystery",
+          "desc": "Search for internet, hotel issues, hope",
+          "icon": "🌐",
+          "vocab": [
+            {
+              "it": "aria pesante",
+              "en": "heavy air"
+            },
+            {
+              "it": "tensione",
+              "en": "tension"
+            },
+            {
+              "it": "internet café",
+              "en": "internet cafe"
+            },
+            {
+              "it": "traccia",
+              "en": "trace"
+            },
+            {
+              "it": "piazze",
+              "en": "plazas"
+            },
+            {
+              "it": "affollate",
+              "en": "crowded"
+            },
+            {
+              "it": "deserte",
+              "en": "deserted"
+            },
+            {
+              "it": "segnale Wi-Fi",
+              "en": "Wi-Fi signal"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Non c'è più traccia di internet café.",
+              "en": "There's no trace of internet cafes anymore.",
+              "words": [
+                "Non",
+                "c'è",
+                "più",
+                "traccia",
+                "di",
+                "internet",
+                "café."
+              ]
+            },
+            {
+              "it": "L'aria era pesante di tensione.",
+              "en": "The air was heavy with tension.",
+              "words": [
+                "L'aria",
+                "era",
+                "pesante",
+                "di",
+                "tensione."
+              ]
+            },
+            {
+              "it": "Non c'è speranza per il segnale Wi-Fi.",
+              "en": "There's no hope for the Wi-Fi signal.",
+              "words": [
+                "Non",
+                "c'è",
+                "speranza",
+                "per",
+                "il",
+                "segnale",
+                "Wi-Fi."
+              ]
+            },
+            {
+              "it": "Maria scosse la testa, non volendo tornare all'hotel.",
+              "en": "Maria shook her head, not wanting to go back to the hotel.",
+              "words": [
+                "Maria",
+                "scosse",
+                "la",
+                "testa,",
+                "non",
+                "volendo",
+                "tornare",
+                "all'hotel."
+              ]
+            },
+            {
+              "it": "Percorsero altre strade, ma non trovarono nulla.",
+              "en": "They walked other streets, but found nothing.",
+              "words": [
+                "Percorsero",
+                "altre",
+                "strade,",
+                "ma",
+                "non",
+                "trovarono",
+                "nulla."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Hotel WiFi Troubles",
+          "desc": "Still having issues, searching for internet cafes, no luck",
+          "icon": "🌐",
+          "vocab": [
+            {
+              "it": "hotel",
+              "en": "hotel"
+            },
+            {
+              "it": "chiamata",
+              "en": "call"
+            },
+            {
+              "it": "ristorante",
+              "en": "restaurant"
+            },
+            {
+              "it": "connessione",
+              "en": "connection"
+            },
+            {
+              "it": "gratuita",
+              "en": "free"
+            },
+            {
+              "it": "tentativo",
+              "en": "attempt"
+            },
+            {
+              "it": "disperato",
+              "en": "desperate"
+            },
+            {
+              "it": "eventi",
+              "en": "events"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Hai provato a chiamare l'hotel?",
+              "en": "Have you tried calling the hotel?",
+              "words": [
+                "Hai",
+                "provato",
+                "a",
+                "chiamare",
+                "l'hotel?"
+              ]
+            },
+            {
+              "it": "Forse il ristorante vicino offre connessione gratuita.",
+              "en": "Maybe the nearby restaurant offers free connection.",
+              "words": [
+                "Forse",
+                "il",
+                "ristorante",
+                "vicino",
+                "offre",
+                "connessione",
+                "gratuita."
+              ]
+            },
+            {
+              "it": "Stiamo facendo un altro tentativo disperato.",
+              "en": "We are making another desperate attempt.",
+              "words": [
+                "Stiamo",
+                "facendo",
+                "un",
+                "altro",
+                "tentativo",
+                "disperato."
+              ]
+            },
+            {
+              "it": "Non c'è più traccia di internet cafe in città.",
+              "en": "There's no trace of internet cafes in the city anymore.",
+              "words": [
+                "Non",
+                "c'è",
+                "più",
+                "traccia",
+                "di",
+                "internet",
+                "cafe",
+                "in",
+                "città."
+              ]
+            },
+            {
+              "it": "Non vogliamo tornare all'hotel, è troppo stressante.",
+              "en": "We don't want to go back to the hotel, it's too stressful.",
+              "words": [
+                "Non",
+                "vogliamo",
+                "tornare",
+                "all'hotel,",
+                "è",
+                "troppo",
+                "stressante."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Internet Cafe Mystery",
+          "desc": "Finding connection in a digital desert",
+          "icon": "🌐",
+          "vocab": [
+            {
+              "it": "nessuna",
+              "en": "no"
+            },
+            {
+              "it": "luogo",
+              "en": "place"
+            },
+            {
+              "it": "ancora",
+              "en": "still"
+            },
+            {
+              "it": "offrire",
+              "en": "offer"
+            },
+            {
+              "it": "tentativo",
+              "en": "attempt"
+            },
+            {
+              "it": "disperato",
+              "en": "desperate"
+            },
+            {
+              "it": "eventi",
+              "en": "events"
+            },
+            {
+              "it": "ristorante",
+              "en": "restaurant"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Non c'è nessun luogo ancora che offra connessione gratuita.",
+              "en": "There is no place still offering free connection.",
+              "words": [
+                "Non",
+                "c'è",
+                "nessun",
+                "luogo",
+                "ancora",
+                "che",
+                "offra",
+                "connessione",
+                "gratuita."
+              ]
+            },
+            {
+              "it": "Hanno chiuso anche il bar, non c'è più nessun tentativo disperato di mantenere il Wi-Fi.",
+              "en": "They've even closed the bar, there's no more desperate attempt to keep the Wi-Fi.",
+              "words": [
+                "Hanno",
+                "chiuso",
+                "anche",
+                "il",
+                "bar,",
+                "non",
+                "c'è",
+                "più",
+                "nessun",
+                "tentativo",
+                "disperato",
+                "di",
+                "mantenere",
+                "il",
+                "Wi-Fi."
+              ]
+            },
+            {
+              "it": "Non c'è più nessun ristorante dove poter fare una chiamata.",
+              "en": "There's no restaurant anymore where we can make a call.",
+              "words": [
+                "Non",
+                "c'è",
+                "più",
+                "nessun",
+                "ristorante",
+                "dove",
+                "poter",
+                "fare",
+                "una",
+                "chiamata."
+              ]
+            },
+            {
+              "it": "Hanno trasformato tutte le piazze in luoghi per eventi, non c'è più nessuna traccia di un internet café.",
+              "en": "They've transformed all the plazas into event venues, there's no trace of an internet cafe anymore.",
+              "words": [
+                "Hanno",
+                "trasformato",
+                "tutte",
+                "le",
+                "piazze",
+                "in",
+                "luoghi",
+                "per",
+                "eventi,",
+                "non",
+                "c'è",
+                "più",
+                "nessuna",
+                "traccia",
+                "di",
+                "un",
+                "internet",
+                "café."
+              ]
+            },
+            {
+              "it": "Non c'è speranza, non c'è luogo ancora dove trovare connessione.",
+              "en": "There's no hope, there's no place still where we can find connection.",
+              "words": [
+                "Non",
+                "c'è",
+                "speranza,",
+                "non",
+                "c'è",
+                "luogo",
+                "ancora",
+                "dove",
+                "trovare",
+                "connessione."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1223958,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2904,
+        "totalCompletionTokens": 1636,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 265610,
+            "promptTokens": 723,
+            "completionTokens": 316
+          },
+          {
+            "lessonNum": 2,
+            "ms": 244243,
+            "promptTokens": 791,
+            "completionTokens": 309
+          },
+          {
+            "lessonNum": 3,
+            "ms": 373304,
+            "promptTokens": 835,
+            "completionTokens": 376
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T15:44:53.732Z",
+      "updatedAt": "2026-05-07T15:44:53.732Z"
+    },
+    {
       "topic": "Helping Injured Hikers",
       "topicEmoji": "❤️",
       "userTopic": "we help someone that broke their ankle in the middle of the dolomites",
@@ -22177,9 +23324,17 @@
       "title": "Berlin Encounters",
       "icon": "📍"
     },
+    "c1833997377": {
+      "title": "Wandering Wi-Fi",
+      "icon": "🌐"
+    },
     "c330041805": {
       "title": "Dolomites Ascent",
       "icon": "🏔️"
+    },
+    "c600674689": {
+      "title": "Dolomites Dawn",
+      "icon": "☀️"
     }
   }
 }
