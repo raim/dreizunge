@@ -1,6 +1,367 @@
 {
   "lessons": [
     {
+      "topic": "Foes Meet Again",
+      "topicEmoji": "🤝",
+      "userTopic": "the foes meet again in another park where the competition is strong",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 600,
+      "story": "Il giorno dopo, Sofia e Elio si ritrovarono in un altro parco, un luogo più ampio e con un campo da calcio più grande. Arno era già lì, in attesa, con un sorriso che non riusciva a nascondere la sua eccitazione. Sofia e Elio si avvicinarono, scambiando un'occhiata di sfida. Arno si alzò in piedi, offrendo loro una mano per salutare. Sofia la prese, stringendola con forza. \"Pronta per un altro incontro?\" chiese Arno. Elio annuì, il suo sguardo determinato. \"Sempre,\" rispose, \"ma stavolta non lasceremo che tu vinci così facilmente.\"\n\nArno rise, mostrando i denti. \"Siamo in un altro parco, un altro campo,\" disse, \"ma le regole sono le stesse.\" Sofia prese la palla, la lanciò con precisione e Arno la rifiutò con un calcio agile. Elio, con un balzo, riuscì a recuperare la palla e la rimise in gioco. Arno, sorridendo, la raccoglieva e la rimetteva in movimento. La partita era più feroce di prima, con entrambe le squadre più concentrate. Sofia e Elio, pur non vincendo, dimostravano una tenacia inaspettata. Arno, pur mantenendo la sua superiorità, non riusciva a staccarsi completamente.\n\nAlla fine, Arno riuscì a segnare il punto decisivo, la palla colpì il muro con precisione. Sofia e Elio si guardarono, ammirati per la sua abilità. Arno, con un sorriso sincero, si avvicinò a loro. \"Avete giocato bene,\" disse, \"ma questa volta sono stato fortunato.\" Elio annuì, riconoscendo la sua abilità. \"Hai giocato bene,\" disse, \"ma spero che la prossima volta ci sia giustizia.\" Arno rise, amichevole. \"Ci penserò,\" disse, \"e spero che tu e Sofia ci proverete di nuovo.\" Sofia e Elio si scambiarono un'occhiata, poi annuirono. \"Ci proveremo,\" disse Sofia, \"anche se non lo ammetterai mai.\" Arno rise di nuovo, ammirato dalla loro determinazione. \"Ci vediamo domani,\" disse, \"e spero che questa volta ci sia giustizia.\"",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 6-7 paragraphs, under 600 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\noglieva con un colpo secco. Arno, pur mantenendo la sua superiorità, non riusciva a staccarsi completamente. Sofia prese la palla e la lanciò con forza, Elio la rifiutò con un colpo agile. Arno, sorridendo, raccoglieva la palla e la rimetteva in gioco. Sofia e Elio, pur non vincendo, dimostravano una tenacia inaspettata. Alla fine, Arno riuscì a segnare il punto decisivo, la palla colpì il muro con precisione. Sofia e Elio si guardarono, ammirati per la sua abilità. Arno, con un sorriso sincero, si avvicinò a loro. \"Avete giocato bene,\" disse, \"ma questa volta sono stato fortunato.\" Elio annuì, riconoscendo la sua abilità. \"Hai giocato bene,\" disse, \"ma spero che la prossima volta ci sia giustizia.\" Arno rise, amichevole. \"Ci penserò,\" disse, \"e spero che tu e Sofia ci proverete di nuovo.\"\n\nNew topic: \"the foes meet again in another park where the competition is strong\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Arno Wins Fairly",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "il parco e la partita",
+          "desc": "luogo, competizione, saluto, sfida, palla",
+          "icon": "⚽️",
+          "vocab": [
+            {
+              "it": "parco",
+              "en": "park"
+            },
+            {
+              "it": "competizione",
+              "en": "competition"
+            },
+            {
+              "it": "saluto",
+              "en": "greeting"
+            },
+            {
+              "it": "sfida",
+              "en": "challenge"
+            },
+            {
+              "it": "palla",
+              "en": "ball"
+            },
+            {
+              "it": "campo",
+              "en": "field"
+            },
+            {
+              "it": "recuperare",
+              "en": "recover"
+            },
+            {
+              "it": "rimettere in gioco",
+              "en": "put back into play"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Siamo in un altro parco, un altro campo.",
+              "en": "We are in another park, another field.",
+              "words": [
+                "Siamo",
+                "in",
+                "un",
+                "altro",
+                "parco,",
+                "un",
+                "altro",
+                "campo."
+              ]
+            },
+            {
+              "it": "Arno rise, mostrando i denti.",
+              "en": "Arno smiled, showing his teeth.",
+              "words": [
+                "Arno",
+                "rise,",
+                "mostrando",
+                "i",
+                "denti."
+              ]
+            },
+            {
+              "it": "Sofia prese la palla, la lanciò con precisione.",
+              "en": "Sofia took the ball and threw it with precision.",
+              "words": [
+                "Sofia",
+                "prese",
+                "la",
+                "palla,",
+                "la",
+                "lanciò",
+                "con",
+                "precisione."
+              ]
+            },
+            {
+              "it": "Elio, con un balzo, riuscì a recuperare la palla.",
+              "en": "Elio, with a jump, managed to recover the ball.",
+              "words": [
+                "Elio,",
+                "con",
+                "un",
+                "balzo,",
+                "riuscì",
+                "a",
+                "recuperare",
+                "la",
+                "palla."
+              ]
+            },
+            {
+              "it": "Arno la rifiutò con un calcio agile.",
+              "en": "Arno kicked it away with a quick kick.",
+              "words": [
+                "Arno",
+                "la",
+                "rifiutò",
+                "con",
+                "un",
+                "calcio",
+                "agile."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "The Foes Meet Again",
+          "desc": "competition, park, greeting, challenge, ball",
+          "icon": "⚽️",
+          "vocab": [
+            {
+              "it": "incontro",
+              "en": "encounter"
+            },
+            {
+              "it": "determinazione",
+              "en": "determination"
+            },
+            {
+              "it": "rifiutare",
+              "en": "to reject"
+            },
+            {
+              "it": "balzo",
+              "en": "leap"
+            },
+            {
+              "it": "agile",
+              "en": "agile"
+            },
+            {
+              "it": "precisamente",
+              "en": "precisely"
+            },
+            {
+              "it": "stavolta",
+              "en": "this time"
+            },
+            {
+              "it": "nascere",
+              "en": "to be born"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Siamo pronti per un altro incontro.",
+              "en": "We are ready for another encounter.",
+              "words": [
+                "Siamo",
+                "pronti",
+                "per",
+                "un",
+                "altro",
+                "incontro."
+              ]
+            },
+            {
+              "it": "Con determinazione, Elio prese la palla.",
+              "en": "With determination, Elio took the ball.",
+              "words": [
+                "Con",
+                "determinazione,",
+                "Elio",
+                "prese",
+                "la",
+                "palla."
+              ]
+            },
+            {
+              "it": "Arno rifiutò la palla con un calcio agile.",
+              "en": "Arno rejected the ball with an agile kick.",
+              "words": [
+                "Arno",
+                "rifiutò",
+                "la",
+                "palla",
+                "con",
+                "un",
+                "calcio",
+                "agile."
+              ]
+            },
+            {
+              "it": "Sofia balzò in piedi, recuperando la palla.",
+              "en": "Sofia leaped to recover the ball.",
+              "words": [
+                "Sofia",
+                "balzò",
+                "in",
+                "piedi,",
+                "recuperando",
+                "la",
+                "palla."
+              ]
+            },
+            {
+              "it": "Non nascerà facilmente questa volta.",
+              "en": "This time it won't be easy to be born.",
+              "words": [
+                "Non",
+                "nascerà",
+                "facilmente",
+                "questa",
+                "volta."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "The Foes Meet Again",
+          "desc": "Intermediate vocabulary in a competitive setting",
+          "icon": "⚽️",
+          "vocab": [
+            {
+              "it": "rivali",
+              "en": "foes"
+            },
+            {
+              "it": "competizione forte",
+              "en": "strong competition"
+            },
+            {
+              "it": "giocatore",
+              "en": "player"
+            },
+            {
+              "it": "tiro esatto",
+              "en": "accurate shot"
+            },
+            {
+              "it": "posizione",
+              "en": "position"
+            },
+            {
+              "it": "difesa",
+              "en": "defense"
+            },
+            {
+              "it": "attacco",
+              "en": "attack"
+            },
+            {
+              "it": "vantaggio",
+              "en": "advantage"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "I nostri rivali sono arrivati in tempo.",
+              "en": "Our rivals arrived on time.",
+              "words": [
+                "I",
+                "nostri",
+                "rivali",
+                "sono",
+                "arrivati",
+                "in",
+                "tempo."
+              ]
+            },
+            {
+              "it": "Hanno preso posizione in campo avversario.",
+              "en": "They took position in the opponent's field.",
+              "words": [
+                "Hanno",
+                "preso",
+                "posizione",
+                "in",
+                "campo",
+                "avversario."
+              ]
+            },
+            {
+              "it": "Hanno cercato di creare una situazione di vantaggio.",
+              "en": "They tried to create an advantageous situation.",
+              "words": [
+                "Hanno",
+                "cercato",
+                "di",
+                "creare",
+                "una",
+                "situazione",
+                "di",
+                "vantaggio."
+              ]
+            },
+            {
+              "it": "La difesa ha resistito al tiro esatto.",
+              "en": "Defense resisted the accurate shot.",
+              "words": [
+                "La",
+                "difesa",
+                "ha",
+                "resistito",
+                "al",
+                "tiro",
+                "esatto."
+              ]
+            },
+            {
+              "it": "Hanno attaccato con determinazione.",
+              "en": "They attacked with determination.",
+              "words": [
+                "Hanno",
+                "attaccato",
+                "con",
+                "determinazione."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1473235,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2963,
+        "totalCompletionTokens": 1504,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 385907,
+            "promptTokens": 739,
+            "completionTokens": 309
+          },
+          {
+            "lessonNum": 2,
+            "ms": 341637,
+            "promptTokens": 800,
+            "completionTokens": 309
+          },
+          {
+            "lessonNum": 3,
+            "ms": 321484,
+            "promptTokens": 847,
+            "completionTokens": 270
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T12:29:56.286Z",
+      "updatedAt": "2026-05-07T12:29:56.286Z"
+    },
+    {
       "topic": "a poem",
       "topicEmoji": "📖",
       "userTopic": "a poem",
@@ -20913,6 +21274,70 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-07T10:43:30.733Z"
+    },
+    "Brewery_Owner_Explains_Wine_vs:read_translate:Marco_preferisce_il_malto_per_la_sua_sem": {
+      "topic": "Brewery Owner Explains Wine vs. Beer",
+      "type": "read_translate",
+      "it": "Marco preferisce il malto per la sua semplicità e freschezza.",
+      "en": "",
+      "correct": "",
+      "choices": [
+        "Another wrong answer.",
+        "This is incorrect.",
+        "Not the right translation.",
+        null
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-07T11:25:32.732Z"
+    },
+    "Brewery_Owner_Explains_Wine_vs:order:Marco_preferisce_il_malto_per_la_sua_sem": {
+      "topic": "Brewery Owner Explains Wine vs. Beer",
+      "type": "order",
+      "it": "Marco preferisce il malto per la sua semplicità e freschezza.",
+      "en": "",
+      "correct": "Marco preferisce il malto per la sua semplicità e freschezza.",
+      "choices": [],
+      "words": [
+        "il",
+        "sua",
+        "complesso.",
+        "malto",
+        "semplicità",
+        "Marco",
+        "gusto",
+        "e",
+        "la",
+        "freschezza.",
+        "preferisce",
+        "per"
+      ],
+      "flaggedAt": "2026-05-07T11:26:02.078Z"
+    }
+  },
+  "storylines": {
+    "c1313954244": {
+      "title": "Dough of the Ancients",
+      "icon": "🧈🔥"
+    },
+    "c2104191334": {
+      "title": "Dough Tales",
+      "icon": "👨‍🍳"
+    },
+    "c984083087": {
+      "title": "Fungal Frenzy",
+      "icon": "fungus"
+    },
+    "c2070713965": {
+      "title": "Yeast Dances",
+      "icon": "🧬"
+    },
+    "c566857785": {
+      "title": "Ping Pong Shadows",
+      "icon": "🏓"
+    },
+    "c1700104945": {
+      "title": "Toscany Tastes",
+      "icon": "🍷🍺🧶"
     }
   }
 }

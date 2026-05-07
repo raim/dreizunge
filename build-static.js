@@ -135,6 +135,37 @@ STATIC_LESSONS.sort((a,b)=>((b.updatedAt||b.generatedAt||'').localeCompare(a.upd
 
 const STATIC_FLAGGED_PAYLOAD = ${flaggedPayloadSerialized};
 
+// ── Static storyline title stubs (no server — use localStorage) ──────
+function _slSave() {
+  try { localStorage.setItem('dz_storylines', JSON.stringify(APP.storylines||{})); } catch(e) {}
+}
+async function saveStorylineTitle(chainId, rootTopic) {
+  const title = document.getElementById('sledit-input-' + chainId).value.trim();
+  const icon  = document.getElementById('sledit-icon-' + chainId).textContent.trim();
+  if (!title) return;
+  APP.storylines = APP.storylines || {};
+  APP.storylines[rootTopic] = { title, icon };  // rootTopic is chainId here
+  _slSave();
+  closeStorylineEdit(chainId);
+  loadSavedList();
+}
+async function clearStorylineTitle(chainId, rootTopic) {
+  APP.storylines = APP.storylines || {};
+  delete APP.storylines[rootTopic];  // rootTopic is chainId here
+  _slSave();
+  closeStorylineEdit(chainId);
+  loadSavedList();
+}
+async function genStorylineTitle(chainId, rootTopic) {
+  alert('Title generation requires the live server. Enter a title manually using ✏️.');
+}
+// Override loadSavedList to inject storylines from localStorage before render
+const _origLoadSavedList = loadSavedList;
+function loadSavedList() {
+  try { APP.storylines = JSON.parse(localStorage.getItem('dz_storylines') || '{}'); } catch(e) { APP.storylines = {}; }
+  return _origLoadSavedList();
+}
+
 function downloadFlaggedLessons() {
   if (!STATIC_FLAGGED_PAYLOAD) return;
   const blob = new Blob([JSON.stringify(STATIC_FLAGGED_PAYLOAD, null, 2)], {type: 'application/json'});
@@ -330,16 +361,24 @@ function setTopic(t){ document.getElementById('topic-input').value=t; }
 `;
 
 // Stubs injected AFTER part2 so they override engine versions
+// In build-static.js, replace the staticOverrides section (around line 100) with:
+
 const staticOverrides = [
   '// ── Disabled in static mode ──────────────────────────────────────',
-  'async function syncFlagsFromServer(){}',
-  'async function pushFlagToServer(){}',
-  'async function deleteSaved(){}',
-  'async function regenSaved(){}',
-  'function regenCurrent(){}',
-  'function shareLesson(){}',
-  'async function doGenerate(){}',
-  'async function submitRating(){}',
+  'function repopulateContinueSelect(){ return; }',
+  'async function syncFlagsFromServer(){ APP.flagged = loadFlagged(); }',
+  'async function pushFlagToServer(key, entry){ /* static mode: no server */ }',
+  'async function deleteSaved(){ alert("Delete requires the live server. Use the live version to delete lessons."); }',
+  'async function regenSaved(topic){ alert("Regenerate requires the live server."); }',
+  'function regenCurrent(){ alert("Regenerate requires the live server."); }',
+  'function shareLesson(){',
+  '  if(!APP.lessonData) return;',
+  '  const url=location.origin+location.pathname+"#topic="+encodeURIComponent(APP.lessonData.topic);',
+  '  if(navigator.clipboard) navigator.clipboard.writeText(url).then(()=>showToast("🔗 Link copied!")).catch(()=>showToast(url));',
+  '  else showToast(url);',
+  '}',
+  'async function doGenerate(){ alert("Generation requires the live server. Use the live version to generate new lessons."); }',
+  'async function submitRating(){ alert("Rating requires the live server."); }',
   'function importLessons(input){',
   '  const file=input.files[0]; if(!file)return;',
   '  input.value="";',
@@ -394,7 +433,7 @@ const staticOverrides = [
   '  const escHtml=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");',
   '  let escaped=escHtml(d.story||"");',
   '  if(vocabWords.length){',
-  '    const pattern=vocabWords.map(w=>w.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\$&")).join("|");',
+  '    const pattern=vocabWords.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,"\\\\$&")).join("|");',
   '    escaped=escaped.replace(new RegExp("("+pattern+")","gi"),\'<mark class="story-vocab-hl">$1</mark>\');',
   '  }',
   '  body.innerHTML=escaped.split(/\\n\\n+/).map(p=>"<p>"+p.replace(/\\n/g,"<br>")+"</p>").join("");',
@@ -428,6 +467,25 @@ const staticOverrides = [
   '    showToast("✓ Exported "+lessons.length+" lesson"+(lessons.length!==1?"s":""));',
   '  }catch(e){ showToast("⚠ Export failed: "+e.message); }',
   '}',
+  'async function loadSavedList() {',
+  '  const saved = STATIC_LESSONS;',
+  '  APP.savedList = saved;',
+  '  const hasMultiLang=[...new Set(saved.map(s=>s.lang||\'it\'))].length>1;',
+  '  const filterEl=document.getElementById(\'lib-filter\');',
+  '  if(filterEl){',
+  '    if(hasMultiLang){',
+  '      const activeL=LANGS[APP.libFilter]||null;',
+  '      filterEl.innerHTML=(APP.libFilter===\'all\'',
+  '        ? `<button class="lib-filter-btn active">🌐 All languages</button>`',
+  '        : `<button class="lib-filter-btn active">${activeL?activeL.flag+\' \'+activeL.name:APP.libFilter.toUpperCase()}</button>`+',
+  '          `<button class="lib-filter-btn" onclick="setLibFilter(\'all\')">🌐 All</button>`',
+  '      );',
+  '    } else {',
+  '      filterEl.innerHTML=\'\';',
+  '    }',
+  '  }',
+  '  _origLoadSavedList();',
+  '}'
 ].join('\n');
 
 // ── Assemble ──────────────────────────────────────────────────────────

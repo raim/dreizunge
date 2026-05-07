@@ -24,8 +24,15 @@ const OLLAMA_MAX_PREV_STORY = parseInt(process.env.OLLAMA_MAX_PREV_STORY || '800
 
 // ── Storage ───────────────────────────────────────────────────────────
 function loadStore() {
-  try { if (fs.existsSync(STORAGE_FILE)) return JSON.parse(fs.readFileSync(STORAGE_FILE, 'utf8')); }
-  catch(e) { console.warn('Could not read lessons.json:', e.message); }
+  try {
+    if (fs.existsSync(STORAGE_FILE)) {
+      const data = JSON.parse(fs.readFileSync(STORAGE_FILE, 'utf8'));
+      // Support both {lessons:[]} and legacy bare-array formats
+      if (Array.isArray(data)) return { lessons: data };
+      if (data && Array.isArray(data.lessons)) return data;
+      console.warn('lessons.json has unexpected shape — starting empty');
+    }
+  } catch(e) { console.warn('Could not read lessons.json:', e.message); }
   return { lessons: [] };
 }
 function saveStore(s) {
@@ -55,6 +62,8 @@ function upsert(data) {
 // ── Flag storage ──────────────────────────────────────────────────────
 function getFlags()  { return store.flags || {}; }
 function setFlags(f) { store.flags = f; saveStore(store); }
+function getStorylines()  { return store.storylines || {}; }
+function setStorylines(s) { store.storylines = s; saveStore(store); }
 function topicSlug(topic) { return (topic||'').slice(0,30).replace(/\s+/g,'_'); }
 function flagsForTopic(topic) {
   const prefix = topicSlug(topic) + ':';
@@ -134,7 +143,7 @@ Schema:
   "desc": "up to 8 words describing this lesson",
   "icon": "one relevant emoji",
   "vocab": [
-    {"it":"${L} word or short phrase","en":"English meaning","pron":"phonetic for English speakers, CAPS for stressed syllable"}
+    {"it":"${L} word or short phrase","en":"English meaning"}
   ],
   "sentences": [
     {"it":"A natural ${L} sentence","en":"English translation"}
@@ -146,7 +155,7 @@ Rules:
 - sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
 - sentence length: ${sentLen} — vary lengths naturally
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
-- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language${dialectNote}${styleNote}${lang==='ja'?'\n- JAPANESE: "pron" field must be hiragana (e.g. たべる), NOT romaji. In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language${dialectNote}${styleNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
 // Lesson prompt for user-provided story + parallel translation
@@ -169,7 +178,7 @@ Schema:
   "desc": "up to 8 words describing this lesson",
   "icon": "one relevant emoji",
   "vocab": [
-    {"it":"${L} word or short phrase","en":"English meaning from the translation","pron":"phonetic for English speakers, CAPS for stressed syllable"}
+    {"it":"${L} word or short phrase","en":"English meaning from the translation"}
   ],
   "sentences": [
     {"it":"A sentence from the ${L} story","en":"Corresponding English translation"}
@@ -182,7 +191,7 @@ Rules:
 - sentence pairs must be aligned: the English must be the actual translation of that ${L} sentence, not a paraphrase
 - sentence length: prefer sentences of ${sentLen}
 - sentences must NOT be duplicated across lessons — focus on different parts of the text for each lesson
-- CRITICAL: every "it" field MUST be from the ${L} story — never invented, never English${dialectNote}${lang==='ja'?'\n- JAPANESE: "pron" field must be hiragana (e.g. たべる), NOT romaji. In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+- CRITICAL: every "it" field MUST be from the ${L} story — never invented, never English${dialectNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
 // Lesson prompt for table format — used when OLLAMA_LESSON_FORMAT=table.
@@ -195,13 +204,13 @@ function sysLessonTable(lang, lessonNum, totalLessons, difficulty, dialect) {
                    : 'specific and idiomatic expressions';
   const dialectNote = dialect ? ` Use the ${dialect} dialect/variety.` : '';
   return `You are a ${L} language lesson creator.${dialectNote}
-Create lesson ${lessonNum} of ${totalLessons} focused on ${lessonDiff} at ${diff} level. Please select non-trival words and sentences that refer to the story you generated.
+Create lesson ${lessonNum} of ${totalLessons} focused on ${lessonDiff} at ${diff} level.
 Output TWO markdown tables and nothing else.
 
 Table 1 — Vocabulary (exactly 8 rows):
 | ${L} word | English meaning | Pronunciation for English speakers |
 |---|---|---|
-| word | meaning | pron |
+| word | meaning |
 
 Table 2 — Sentences (exactly 5 rows):
 | ${L} sentence | English translation |
@@ -211,7 +220,7 @@ Table 2 — Sentences (exactly 5 rows):
 Rules:
 - All ${L} content must be genuine ${L} — never English or another language
 - Pronunciation: write phonetically, CAPS for stressed syllable (e.g. BOO-oh-JOR-no)
-- No extra text, no headings outside the tables, no JSON${lang==='ja'?'\n- JAPANESE: Pronunciation column must be hiragana (e.g. たべる), NOT romaji. In the sentence column, annotate each kanji with its hiragana reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+- No extra text, no headings outside the tables, no JSON${lang==='ja'?'\n- JAPANESE: In the sentence column, annotate each kanji with its hiragana reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
 // Parse two markdown tables from table-format lesson output
@@ -238,7 +247,7 @@ function parseTableLesson(raw, lessonNum, topic) {
   const sentRows = parseTable(t2start);
 
   const vocab = vocabRows.slice(0, 8).map(r => ({
-    it: r[0] || '', en: r[1] || '', pron: r[2] || ''
+    it: r[0] || '', en: r[1] || ''
   })).filter(v => v.it && v.en);
 
   const sentences = sentRows.slice(0, 5).map(r => ({
@@ -262,10 +271,10 @@ You will receive a list of faulty exercises with optional user comments explaini
 Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
 
 Each exercise has a type. Return corrected versions preserving the same type and schema:
-- mcq_it_en:      {"type":"mcq_it_en","it":"target language","en":"English","pron":"phonetic","correct":"correct English","choices":["4 English options"]}
+- mcq_it_en:      {"type":"mcq_it_en","it":"target language","en":"English","correct":"correct English","choices":["4 English options"]}
 - mcq_en_it:      {"type":"mcq_en_it","en":"English","it":"target language","correct":"correct target language","choices":["4 target language options"]}
-- listen_mcq:     {"type":"listen_mcq","it":"target language","pron":"phonetic","correct":"correct English","choices":["4 English options"]}
-- listen_type:    {"type":"listen_type","it":"target language","pron":"phonetic","correct":"target language word"}
+- listen_mcq:     {"type":"listen_mcq","it":"target language","correct":"correct English","choices":["4 English options"]}
+- listen_type:    {"type":"listen_type","it":"target language","correct":"target language word"}
 - read_translate: {"type":"read_translate","it":"target language sentence","en":"English","correct":"correct English","choices":["4 English options"]}
 - order:          {"type":"order","it":"target language sentence","en":"English"}
 
@@ -445,6 +454,21 @@ function sysStory(lang, isContinuation, wordCount) {
     : '';
   const furiganaNote = lang==='ja' ? ' Annotate every kanji with furigana using HTML ruby tags, e.g. <ruby>日本語<rt>にほんご</rt></ruby>.' : '';
   return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${furiganaNote}${cont}`;
+}
+
+// ── Storyline title prompt ─────────────────────────────────────────────
+async function generateStorylineTitle(topics, stories) {
+  const topicList = topics.map((t,i) => `Chapter ${i+1}: "${t}"`).join('\n');
+  const storyExcerpts = stories.map((s,i) =>
+    `Chapter ${i+1} excerpt: ${(s||'').slice(0,300).replace(/\n/g,' ')}…`
+  ).join('\n\n');
+  const sys = 'You are a creative writing assistant. Given a multi-chapter story, produce a single JSON object with exactly two fields: "title" (a short evocative series title, 2–5 words) and "icon" (one emoji that fits the story). Return ONLY the JSON object, no markdown, no explanation.';
+  const user = `Chapter topics:\n${topicList}\n\nStory excerpts:\n${storyExcerpts}`;
+  const result = await callOllamaRaw(OLLAMA_MODEL, sys, user, 80);
+  const raw = result.text.replace(/```json|```/g, '').trim();
+  const parsed = JSON.parse(raw);
+  if (!parsed.title || !parsed.icon) throw new Error('Missing title or icon in response');
+  return { title: parsed.title.slice(0, 80), icon: parsed.icon.slice(0, 8) };
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
@@ -716,7 +740,7 @@ async function repairLesson(topic, lessonId, jobId) {
         v.it.toLowerCase().slice(0,15) === (repaired.it||'').toLowerCase().slice(0,15));
       if (idx >= 0) lesson.vocab[idx] = {
         it: repaired.it, en: repaired.en || lesson.vocab[idx].en,
-        pron: repaired.pron || lesson.vocab[idx].pron };
+        };
     }
   }
   const repairStart = Date.now();
@@ -853,7 +877,7 @@ async function boot() {
   } else {
     console.log('  Backend : offline — only saved lessons available');
   }
-  console.log(`  Storage : ${STORAGE_FILE}`);
+  console.log(`  Storage : ${STORAGE_FILE} (${store.lessons.length} lessons)`);
   console.log('='.repeat(44) + '\n');
 
   http.createServer(async (req, res) => {
@@ -917,6 +941,41 @@ async function boot() {
       }
       setFlags(flags);
       return json(res, 200, { ok: true });
+    }
+
+    // ── Storyline titles ─────────────────────────────────────────────
+    if (M === 'GET' && url.pathname === '/api/storylines') {
+      return json(res, 200, getStorylines());
+    }
+    if (M === 'POST' && url.pathname === '/api/storylines') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { chainKey, title, icon } = body;
+      if (!chainKey) return json(res, 400, { error: 'Missing chainKey' });
+      const sl = getStorylines();
+      if (title === null) {
+        delete sl[chainKey];
+      } else {
+        sl[chainKey] = { title: (title||'').slice(0,80), icon: (icon||'📖').slice(0,8) };
+      }
+      setStorylines(sl);
+      return json(res, 200, { ok: true });
+    }
+    if (M === 'POST' && url.pathname === '/api/storyline-title') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topics } = body;
+      if (!Array.isArray(topics) || !topics.length) return json(res, 400, { error: 'Missing topics array' });
+      const stories = topics.map(t => (findSaved(t)||{}).story || '');
+      try {
+        const result = await generateStorylineTitle(topics, stories);
+        return json(res, 200, result);
+      } catch(e) {
+        return json(res, 500, { error: e.message });
+      }
     }
 
     // ── Job status polling ────────────────────────────────────────────

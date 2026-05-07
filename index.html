@@ -67,7 +67,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s}
 .saved-item:hover{border-color:var(--blue);background:var(--blue-light)}
 .storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
-.storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid)}
+.storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid);display:flex;align-items:center;gap:6px}.storyline-title{flex:1;display:flex;align-items:center;gap:6px;min-width:0}.storyline-title-text{font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.storyline-title-sub{font-size:11px;font-weight:700;color:var(--gray-dark);white-space:nowrap}.storyline-edit-form{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.storyline-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:2px 7px;min-width:0;outline:none}.storyline-edit-icon{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:24px;text-align:center}.storyline-hdr-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:5px;font-family:"Nunito",sans-serif;font-weight:800;color:var(--gray-dark);line-height:1;flex-shrink:0}.storyline-hdr-btn:hover{background:var(--gray-mid)}.storyline-hdr-btn.gen{color:var(--accent)}.storyline-hdr-btn.danger{color:var(--red)}.storyline-cards{}.storyline-cards.collapsed{display:none}.storyline-collapse-btn{font-size:11px;color:var(--gray-dark);transition:transform .2s;display:inline-block}.storyline-collapse-btn.open{transform:rotate(180deg)}
 .storyline-item .saved-item{border:none;border-radius:0;border-top:1.5px solid var(--gray-mid)}.storyline-item .saved-item-story{display:none}
 .storyline-item:first-child .saved-item{border-top:none}
 .storyline-connector{font-size:12px;color:var(--gray);flex-shrink:0;margin-right:-4px}
@@ -105,7 +105,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .topic-emoji-big{font-size:28px}
 .topic-name-big{font-size:19px;font-weight:900;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hdr-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:7px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);white-space:nowrap}
-.hdr-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
+.hdr-btn:hover{border-color:var(--blue);color:var(--blue-dark)}.hdr-btn.muted{border-color:var(--red);color:var(--red);background:#fff0f0}
 .prog-strip{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:10px 16px;margin:10px 0 20px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
 .prog-val{font-size:17px;font-weight:900;color:var(--green-dark)}
 .path-wrap{display:flex;flex-direction:column;align-items:center}
@@ -117,7 +117,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lesson-node.locked{opacity:.55;cursor:not-allowed}
 .lesson-node.active-node{border-color:var(--blue);box-shadow:0 0 0 4px rgba(28,176,246,.18),var(--shadow-card)}
 .node-circle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:3px solid var(--gray-mid)}
-.done-node .node-circle{border-color:var(--green);background:var(--green-light)}
+.node-pct{font-size:13px;font-weight:900;padding:3px 8px;border-radius:12px;white-space:nowrap}.node-pct.done{background:#e6f9ec;color:var(--green-dark)}.done-node .node-circle{border-color:var(--green);background:var(--green-light)}
 .active-node .node-circle{border-color:var(--blue);background:var(--blue-light)}
 .node-lbl{flex:1}
 .node-title{font-size:15px;font-weight:900;color:var(--text);margin-bottom:2px}
@@ -501,6 +501,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         </select>
         <span class="continue-select-arrow">▾</span>
       </div>
+      <label style="font-size:11px;font-weight:700;color:var(--gray-dark);display:flex;align-items:center;gap:4px;margin-top:4px;cursor:pointer">
+        <input type="checkbox" id="cont-all-langs" onchange="repopulateContinueSelect()"> show other languages
+      </label>
     </div>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
@@ -538,6 +541,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="topic-name-big" id="topic-name-big">Topic</span>
     <button class="hdr-btn" id="cont-story-btn" onclick="continueFromCurrent()" style="display:none" title="Continue this story">↪ Continue</button>
     <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
+    <button class="hdr-btn" id="mute-btn" onclick="toggleMute()" title="Mute/unmute reading aloud">🔊</button>
     <button class="hdr-btn" id="share-btn" onclick="shareLesson()" title="Copy shareable link">🔗 Share</button>
     <button class="hdr-btn" onclick="goLandingClean()">← Topics</button>
   </div>
@@ -556,6 +560,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
+  </div>
+  <div class="tts-row" id="tts-row" style="display:none">
+    🔊 Voice:
+    <select class="tts-select" id="tts-select" onchange="onTtsSelect(this.value)"></select>
+    <span class="tts-approx" id="tts-approx" style="display:none">⚠ approximate pronunciation</span>
   </div>
   <div class="story-section" id="story-section" style="display:none">
     <button class="story-hdr" onclick="toggleStory()">
@@ -588,11 +597,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         style="display:none;background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a"
         title="Continue this story in a new lesson set">↪ Continue story</button>
     </div>
-  </div>
-  <div class="tts-row" id="tts-row" style="display:none">
-    🔊 Voice:
-    <select class="tts-select" id="tts-select" onchange="onTtsSelect(this.value)"></select>
-    <span class="tts-approx" id="tts-approx" style="display:none">⚠ approximate pronunciation</span>
   </div>
 </div>
 </div>
@@ -654,6 +658,7 @@ var APP = {
   libFilter: 'all',
   savedList: [],
   progress: loadProg(),
+  muted: false,
   flagged: loadFlagged(),
   activeJob: null,
   ttsLang: null,   // overridable TTS language code; null = use lesson lang default
@@ -732,7 +737,7 @@ function onUseTranslationCb(){
   document.getElementById('user-translation-panel').classList.toggle('open',on);
 }
 function selectLang(code){
-  APP.lang=code; saveLang();
+  APP.lang=code; saveLang(); repopulateContinueSelect();
   const sel=document.getElementById('lang-select');
   if(sel && sel.value!==code) sel.value=code;
   const L=LANGS[code]||LANGS.it;
@@ -1020,6 +1025,7 @@ async function loadSavedList(){
   let saved=[];
   try{ const r=await fetch('/api/lessons'); saved=await r.json(); }catch(e){}
   APP.savedList=saved;  // cache for use by buildPath (continuedBy links)
+  try{ const r=await fetch('/api/storylines'); APP.storylines=await r.json(); }catch(e){ APP.storylines={}; }
   // Build language filter UI — a single "🌐 All" toggle when libFilter is 'all',
   // otherwise show the active language name + an "All" escape
   const filterEl=document.getElementById('lib-filter');
@@ -1123,24 +1129,65 @@ async function loadSavedList(){
   let html = '';
 
   // Render storyline groups
+  const slTitles = APP.storylines || {};
   for (const chain of storylines) {
-    const chainTopicsJson = JSON.stringify(chain.map(t => byTopic[t]?.topic).filter(Boolean));
+    const chainTopics = chain.map(t => byTopic[t]?.topic).filter(Boolean);
+    const chainTopicsJson = JSON.stringify(chainTopics);
     const chainId = 'c' + Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-    html += `<div class="storyline-group">`;
-    html += `<div class="storyline-hdr">📖 Story line · ${chain.length} lesson${chain.length!==1?'s':''}
-      <button class="ico-btn export" style="margin-left:auto;font-size:11px;padding:2px 8px"
+    const rootTopic = chainTopics[0] || '';  // kept for reference only
+    const slMeta = slTitles[chainId] || null;
+    const hasTitle = !!(slMeta && slMeta.title);
+    const titleIcon = slMeta?.icon || '📖';
+    const titleText = slMeta?.title || '';
+    const escapedRoot = chainId;  // use chainId as storage key — unique per branch
+    const escapedChain = encodeURIComponent(chainTopicsJson);
+    // Header: title view or default label
+    const hdrTitle = hasTitle
+      ? `<span class="storyline-title">
+          <span style="font-size:18px">${titleIcon}</span>
+          <span class="storyline-title-text">${escHtml(titleText)}</span>
+          <span class="storyline-title-sub">· ${chain.length} chapter${chain.length!==1?'s':''}</span>
+         </span>`
+      : `<span class="storyline-title">
+          <span>📖</span>
+          <span class="storyline-title-sub">Story line · ${chain.length} lesson${chain.length!==1?'s':''}</span>
+         </span>`;
+    const genBtn = APP.info.canGenerate
+      ? `<button class="storyline-hdr-btn gen" title="Generate title with AI" onclick="event.stopPropagation();genStorylineTitle('${chainId}','${escapedRoot}','${escapedChain}')">✨</button>`
+      : '';
+    const collapseBtn = hasTitle
+      ? `<button class="storyline-hdr-btn" title="Toggle chapters" onclick="event.stopPropagation();toggleStorylineCards('${chainId}')" id="slcollapse-${chainId}"><span class="storyline-collapse-btn" id="slcarrow-${chainId}">▲</span></button>`
+      : '';
+    html += `<div class="storyline-group" id="slgroup-${chainId}">`;
+    html += `<div class="storyline-hdr" id="slhdr-${chainId}">
+      ${hdrTitle}
+      <button class="storyline-hdr-btn" title="Edit title" onclick="event.stopPropagation();openStorylineEdit('${chainId}','${escapedRoot}')">✏️</button>
+      ${genBtn}
+      <button class="ico-btn export" style="font-size:11px;padding:2px 8px"
         title="Export full story line with flags"
-        data-chain="${encodeURIComponent(chainTopicsJson)}"
-        onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇ Export</button>
+        data-chain="${escapedChain}"
+        onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>
+      ${collapseBtn}
     </div>`;
+    // Edit form (hidden by default)
+    html += `<div class="storyline-hdr" id="sledit-${chainId}" style="display:none;background:var(--white);border-bottom:1.5px solid var(--accent)">
+      <span class="storyline-edit-icon" id="sledit-icon-${chainId}" onclick="cycleStorylineIcon('${chainId}')">${titleIcon}</span>
+      <input class="storyline-edit-input" id="sledit-input-${chainId}" placeholder="Story line title…" value="${escHtml(titleText)}" onkeydown="if(event.key==='Enter')saveStorylineTitle('${chainId}','${escapedRoot}');if(event.key==='Escape')closeStorylineEdit('${chainId}')">
+      <button class="storyline-hdr-btn" onclick="saveStorylineTitle('${chainId}','${escapedRoot}')">Save</button>
+      <button class="storyline-hdr-btn danger" onclick="clearStorylineTitle('${chainId}','${escapedRoot}')">Clear</button>
+      <button class="storyline-hdr-btn" onclick="closeStorylineEdit('${chainId}')">✕</button>
+    </div>`;
+    // Cards — collapsed when titled (user can toggle)
+    html += `<div class="storyline-cards${hasTitle?' collapsed':''}" id="slcards-${chainId}">`;
     chain.forEach((topic, i) => {
       const s = byTopic[topic]; if (!s) return;
       html += `<div class="storyline-item">${savedItemHtml(s, i > 0)}</div>`;
     });
+    html += `</div>`;
     html += `<div class="storyline-story">` +
       `<button class="storyline-story-hdr" onclick="toggleChainStory('${chainId}')">` +
       `📖 Read full story<span class="storyline-story-arrow" id="csarrow-${chainId}">▼</span></button>` +
-      `<div class="storyline-story-body" id="csbody-${chainId}" data-chain="${encodeURIComponent(chainTopicsJson)}"></div>` +
+      `<div class="storyline-story-body" id="csbody-${chainId}" data-chain="${escapedChain}"></div>` +
       `</div>`;
     html += `</div>`;
   }
@@ -1153,18 +1200,26 @@ async function loadSavedList(){
 
   list.innerHTML = html || '<div class="lib-empty">No lessons in this language.</div>';
 
-  // Populate continue-select with all saved lessons
-  const contSel=document.getElementById('continue-select');
-  if(contSel){
-    const prev=contSel.value;
-    contSel.innerHTML='<option value="">— new story —</option>'+
-      saved.map(s=>{
-        const sL=LANGS[s.lang||'it']||LANGS.it;
-        return `<option value="${s.topic.replace(/"/g,'&quot;')}">${sL.flag} ${s.topic}</option>`;
-      }).join('');
-    if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
-  }
+  repopulateContinueSelect();
 }
+
+function repopulateContinueSelect(){
+  const contSel=document.getElementById('continue-select');
+  if(!contSel) return;
+  const showAll=document.getElementById('cont-all-langs')?.checked;
+  const curLang=APP.lang||'it';
+  const saved=APP.savedList||[];
+  const filtered=showAll ? saved : saved.filter(s=>(s.lang||'it')===curLang);
+  const prev=contSel.value;
+  contSel.innerHTML='<option value="">\u2014 new story \u2014</option>'+
+    filtered.map(s=>{
+      const sL=LANGS[s.lang||'it']||LANGS.it;
+      const langTag=showAll&&(s.lang||'it')!==curLang?' ['+sL.name+']':'';
+      return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+sL.flag+' '+s.topic+langTag+'</option>';
+    }).join('');
+  if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
+}
+
 
 async function loadSaved(topic){
   try{
@@ -1293,6 +1348,8 @@ function startBackgroundJob(jobId, topic){
         if(!APP.progress.completed[j.data.topic]) APP.progress.completed[j.data.topic]={};
         saveProg();
         await loadSavedList();
+        // If user is on the home screen viewing a lesson, refresh the path
+        if(document.getElementById('home')?.classList.contains('active')) try{ buildPath(); }catch(e){}
         document.getElementById('gen-btn').disabled=false;
         setGenStatus('done', '"'+j.data.topic+'" ready — tap to open');
         showToast('✅ "'+j.data.topic+'" generated!');
@@ -1503,7 +1560,7 @@ function buildPath(){
         <div class="node-title">Lesson ${L.id}: ${L.title} ${diffBadge}</div>
         <div class="node-desc">${L.desc}</div>
         ${hasFlags?`<span class="flag-note">⚑ ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</span>`:''}      </div>
-      ${isDone?'<span style="font-size:22px">✅</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
+      ${isDone?'<span class="node-pct done">100%</span>':isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
   });
@@ -1562,6 +1619,74 @@ async function toggleSavedStory(id, topic) {
 }
 
 // ── Storyline combined story panel ───────────────────────────────────
+// ── Storyline title management ────────────────────────────────────────
+const STORYLINE_ICONS = ['📖','🌟','🔥','🌊','🏔','🌙','⚔️','🧪','🎭','🚀','🌿','💀','🦋','🎪','🧠'];
+const _slIconIdx = {};
+
+function openStorylineEdit(chainId, rootTopic) {
+  document.getElementById('sledit-' + chainId).style.display = 'flex';
+  const inp = document.getElementById('sledit-input-' + chainId);
+  inp.focus(); inp.select();
+}
+function closeStorylineEdit(chainId) {
+  document.getElementById('sledit-' + chainId).style.display = 'none';
+}
+function cycleStorylineIcon(chainId) {
+  _slIconIdx[chainId] = ((_slIconIdx[chainId] || 0) + 1) % STORYLINE_ICONS.length;
+  document.getElementById('sledit-icon-' + chainId).textContent = STORYLINE_ICONS[_slIconIdx[chainId]];
+}
+
+async function saveStorylineTitle(chainId, rootTopic) {
+  const title = document.getElementById('sledit-input-' + chainId).value.trim();
+  const icon  = document.getElementById('sledit-icon-' + chainId).textContent.trim();
+  if (!title) return;
+  try {
+    await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chainKey: rootTopic, title, icon }) });
+  } catch(e) { console.error('saveStorylineTitle:', e); }
+  closeStorylineEdit(chainId);
+  loadSavedList();
+}
+
+async function clearStorylineTitle(chainId, rootTopic) {
+  try {
+    await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chainKey: rootTopic, title: null }) });
+  } catch(e) { console.error('clearStorylineTitle:', e); }
+  closeStorylineEdit(chainId);
+  loadSavedList();
+}
+
+function toggleStorylineCards(chainId) {
+  const cards = document.getElementById('slcards-' + chainId);
+  const arrow = document.getElementById('slcarrow-' + chainId);
+  if (!cards) return;
+  const collapsed = cards.classList.toggle('collapsed');
+  if (arrow) arrow.classList.toggle('open', !collapsed);
+}
+
+async function genStorylineTitle(chainId, rootTopic, encodedChain) {
+  const btn = document.querySelector(`#slhdr-${chainId} .gen`);
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  try {
+    const topics = JSON.parse(decodeURIComponent(encodedChain));
+    const r = await fetch('/api/storyline-title', { method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topics }) });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Generation failed');
+    // Pre-fill edit form with generated values
+    const inp  = document.getElementById('sledit-input-' + chainId);
+    const icon = document.getElementById('sledit-icon-' + chainId);
+    if (inp)  inp.value = data.title || '';
+    if (icon) icon.textContent = data.icon || '📖';
+    openStorylineEdit(chainId, rootTopic);
+  } catch(e) {
+    alert('Could not generate title: ' + e.message);
+  } finally {
+    if (btn) { btn.textContent = '✨'; btn.disabled = false; }
+  }
+}
+
 async function toggleChainStory(chainId) {
   const body  = document.getElementById('csbody-'  + chainId);
   const arrow = document.getElementById('csarrow-' + chainId);
@@ -1719,6 +1844,8 @@ function renderEx(){
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" id="c${i}" onclick="pickChoice(${i},this)">${c}</button>`).join('')}</div>`; }
 // Convert kanji[よみ] bracket notation → <ruby> HTML (Japanese sentences)
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
 function applyFurigana(text) {
   return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g,
     '<ruby>$1<rt>$2</rt></ruby>');
@@ -1728,7 +1855,7 @@ function lBlock(it, pron, hideWord) {
   return `<button class="listen-big" onclick="speak('${esc(it)}')">
       <span class="listen-icon">🔊</span>
       <div><div class="listen-lbl">Tap to listen</div>${hideWord ? '' : `<div class="listen-word">${it}</div>`}</div>
-    </button>${pron ? `<div class="pron">&nbsp;🗣 ${pron}</div>` : ''}<button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
+    </button><button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
 function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${applyFurigana(ex.it)}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
@@ -1906,7 +2033,7 @@ function ttsIsApproximate(){
 }
 
 function speak(text,rate){
-  if(!window.speechSynthesis)return;
+  if(!window.speechSynthesis||APP.muted)return;
   speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text);
   const ttsCode=activeTtsCode();
@@ -1922,6 +2049,13 @@ function speak(text,rate){
     }
   }
   speechSynthesis.speak(u);
+}
+
+function toggleMute(){
+  APP.muted=!APP.muted;
+  if(APP.muted) speechSynthesis.cancel();
+  const btn=document.getElementById('mute-btn');
+  if(btn){ btn.textContent=APP.muted?'🔇':'🔊'; btn.classList.toggle('muted',APP.muted); btn.title=APP.muted?'Unmute reading aloud':'Mute reading aloud'; }
 }
 
 function buildTtsSelector(){
