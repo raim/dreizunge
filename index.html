@@ -51,7 +51,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
 .gen-btn:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 var(--green-dark)}
 .gen-btn:disabled{background:var(--gray-mid);color:var(--gray);box-shadow:0 4px 0 #ccc;cursor:not-allowed}
-.offline-note{font-size:12px;color:#990000;font-weight:700;text-align:center;margin-top:8px;display:none}
+.offline-note{font-size:12px;color:#990000;font-weight:700;text-align:center;margin-top:8px;display:none}.static-flag-banner{display:none;align-items:center;gap:10px;background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 14px;margin-top:10px;font-size:12px;font-weight:700;color:#c26000}.static-flag-banner button{flex-shrink:0;background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer}.static-flag-banner button:hover{background:#e08800}
 
 .examples{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px}
 .chip{background:var(--white);border:2px solid var(--gray-mid);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--gray-dark);font-family:'Nunito',sans-serif;transition:border-color .1s,color .1s}
@@ -68,7 +68,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .saved-item:hover{border-color:var(--blue);background:var(--blue-light)}
 .storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
 .storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid)}
-.storyline-item .saved-item{border:none;border-radius:0;border-top:1.5px solid var(--gray-mid)}
+.storyline-item .saved-item{border:none;border-radius:0;border-top:1.5px solid var(--gray-mid)}.storyline-item .saved-item-story{display:none}
 .storyline-item:first-child .saved-item{border-top:none}
 .storyline-connector{font-size:12px;color:var(--gray);flex-shrink:0;margin-right:-4px}
 .orphans-hdr{font-size:12px;font-weight:800;color:var(--gray-dark);margin:14px 0 6px;padding-left:2px}
@@ -106,8 +106,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .topic-name-big{font-size:19px;font-weight:900;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hdr-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:7px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);white-space:nowrap}
 .hdr-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
-.xp-strip{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:10px 16px;margin:10px 0 20px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
-.xp-val{font-size:17px;font-weight:900;color:var(--yellow)}
+.prog-strip{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:10px 16px;margin:10px 0 20px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
+.prog-val{font-size:17px;font-weight:900;color:var(--green-dark)}
 .path-wrap{display:flex;flex-direction:column;align-items:center}
 .path-line{width:4px;height:26px;background:var(--gray-mid);margin:0 auto}
 .path-line.done{background:var(--green)}
@@ -147,7 +147,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .it-box{background:var(--blue-light);border:2px solid var(--blue);border-radius:var(--radius);padding:12px 15px;margin:10px 0 4px;display:flex;align-items:center;gap:8px}
 .it-box-text{font-size:18px;font-weight:800;color:var(--blue-dark);flex:1}
 .spk-ico{background:none;border:none;cursor:pointer;font-size:20px;padding:2px}
-.pron{font-size:11px;color:var(--gray-dark);font-style:italic;margin-top:3px}
+.pron{font-size:11px;color:var(--gray-dark);font-style:italic;margin-top:3px}ruby{ruby-align:center}rt{font-size:0.55em;color:var(--gray-dark);font-style:normal}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
 .choices.one-col{grid-template-columns:1fr}
 .choice{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:var(--radius);padding:12px 14px;font-size:14px;font-weight:700;cursor:pointer;color:var(--text);text-align:left;font-family:'Nunito',sans-serif;box-shadow:0 3px 0 var(--gray-mid);transition:border-color .1s,transform .05s}
@@ -210,7 +210,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 @keyframes popIn{0%{transform:scale(0) rotate(-10deg)}70%{transform:scale(1.1) rotate(2deg)}100%{transform:scale(1) rotate(0)}}
 .comp-title{font-size:28px;font-weight:900;color:var(--text);margin-bottom:4px}
 .comp-sub{font-size:14px;color:var(--gray-dark);margin-bottom:16px}
-.xp-pill{display:inline-block;background:var(--yellow);color:#6a5000;border-radius:24px;padding:10px 28px;font-weight:900;font-size:20px;margin-bottom:18px;box-shadow:0 4px 0 #d4a800}
+.prog-pill{display:inline-block;background:var(--green);color:#fff;border-radius:24px;padding:10px 28px;font-weight:900;font-size:20px;margin-bottom:18px;box-shadow:0 4px 0 #1a7a30}
 .stat-row{display:flex;gap:10px;margin-bottom:20px}
 .stat-box{flex:1;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:12px 8px;box-shadow:var(--shadow-card)}
 .stat-num{font-size:24px;font-weight:900;margin-bottom:2px}
@@ -301,6 +301,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .storyline-chapter-body p{margin-bottom:10px}
 .storyline-chapter-body p:last-child{margin-bottom:0}
 .storyline-story-loading{font-size:13px;color:var(--gray-dark);font-style:italic;padding:8px 0}
+.saved-item-story{border-top:1px solid var(--gray-mid);background:var(--white)}
+.saved-item-story-hdr{display:flex;align-items:center;gap:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);user-select:none;width:100%;background:none;border:none;font-family:'Nunito',sans-serif;text-align:left}
+.saved-item-story-hdr:hover{background:var(--gray-light)}
+.saved-item-story-body{display:none;padding:0 14px 12px;font-size:13px;line-height:1.7;color:#444}
+.saved-item-story-body.open{display:block}
+.saved-item-story-body p{margin-bottom:8px}
+.saved-item-story-body p:last-child{margin-bottom:0}
 .tts-row{display:flex;align-items:center;gap:8px;padding:7px 14px 6px;font-size:12px;font-weight:700;color:var(--gray-dark);border-top:1px solid var(--gray-mid);flex-wrap:wrap}
 .tts-select{font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px;background:var(--white);color:var(--text);cursor:pointer}
 .tts-select:focus{outline:none;border-color:var(--blue)}
@@ -425,6 +432,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <option value="ko">🇰🇷 Korean</option>
         <option value="tr">🇹🇷 Turkish</option>
         <option value="hi">🇮🇳 Hindi</option>
+        <option value="sw">🇰🇪 Swahili</option>
         <option value="lb">🇱🇺 Lëtzebuergesch</option>
       </select>
       <span class="lang-select-arrow">▾</span>
@@ -496,6 +504,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </div>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
+    <div class="static-flag-banner" id="static-flag-banner">
+      <span style="font-size:16px">⚑</span>
+      <span style="flex:1">This build contains flagged lessons — download them to fix with the live server.</span>
+      <button onclick="downloadFlaggedLessons()">⬇ Download flagged</button>
+    </div>
   </div>
 
   <div class="library">
@@ -528,11 +541,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <button class="hdr-btn" id="share-btn" onclick="shareLesson()" title="Copy shareable link">🔗 Share</button>
     <button class="hdr-btn" onclick="goLandingClean()">← Topics</button>
   </div>
-  <div class="xp-strip">
-    <span style="font-size:20px">⚡</span>
+  <div class="prog-strip">
+    <span style="font-size:20px">📊</span>
     <div style="flex:1">
-      <div style="font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.07em">Total XP</div>
-      <div class="xp-val" id="total-xp">0 XP</div>
+      <div style="font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.07em">Progress</div>
+      <div class="prog-val" id="total-xp">—</div>
     </div>
   </div>
   <div class="flag-strip" id="flag-strip">
@@ -599,7 +612,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <span class="trophy">🏆</span>
   <div class="comp-title">Lesson complete!</div>
   <div class="comp-sub" id="comp-sub"></div>
-  <div class="xp-pill" id="comp-xp">+0 XP</div>
+  <div class="prog-pill" id="comp-xp">0%</div>
   <div class="stat-row">
     <div class="stat-box"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">Correct</div></div>
     <div class="stat-box"><div class="stat-num" id="s-mistakes" style="color:var(--red)">0</div><div class="stat-lbl">Mistakes</div></div>
@@ -628,6 +641,7 @@ var LANGS = {
   ko: {name:'Korean',           flag:'🇰🇷', tts:'ko-KR'},
   tr: {name:'Turkish',          flag:'🇹🇷', tts:'tr-TR'},
   hi: {name:'Hindi',            flag:'🇮🇳', tts:'hi-IN'},
+  sw: {name:'Swahili',          flag:'🇰🇪', tts:'sw-KE', ttsFallback:'en-US'},
   lb: {name:'Lëtzebuergesch',   flag:'🇱🇺', tts:'lb-LU', ttsFallback:'de-DE'},
 };
 
@@ -643,11 +657,11 @@ var APP = {
   flagged: loadFlagged(),
   activeJob: null,
   ttsLang: null,   // overridable TTS language code; null = use lesson lang default
-  cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,xp:0,mistakes:0,streak:0,bestStreak:0,
+  cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,mistakes:0,streak:0,bestStreak:0,
         answered:false,sel:null,placed:[],usedIdx:[]}
 };
 
-function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'{"xp":0,"completed":{}}'); }catch(e){ return {xp:0,completed:{}}; } }
+function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'{"completed":{}}'); }catch(e){ return {completed:{}}; } }
 function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
 function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
@@ -963,14 +977,21 @@ function renderPill(){
   const pill=document.getElementById('bpill');
   const lbl=document.getElementById('blbl');
   const mdl=document.getElementById('bmodel');
-  const b=APP.info.backend;
-  pill.className='bpill '+b;
-  lbl.textContent=b==='anthropic'?'Anthropic Claude':b==='ollama'?'Ollama (local)':'Offline — no LLM';
-  const storyMdl = b==='anthropic' ? (APP.info.claudeModel||'') : b==='ollama' ? (APP.info.ollamaModel||'') : '';
-  const transMdl = b==='ollama' ? (APP.info.ollamaTranslationModel||'') : storyMdl;
-  const lessonMdl = b==='ollama' ? (APP.info.ollamaLessonModel||'') : storyMdl;
-  const allModels = [...new Set([storyMdl, transMdl, lessonMdl].filter(Boolean))];
-  mdl.textContent = allModels.join(' / ');
+  const b=APP.info.backend||'none';
+  pill.className='bpill '+(b==='ollama'?'ollama':'none');
+  if(b==='ollama'){
+    lbl.textContent='Ollama · '+(APP.info.ollamaModel||'');
+    const storyM=APP.info.ollamaModel||'';
+    const transM=APP.info.ollamaTranslationModel||storyM;
+    const lessonM=APP.info.ollamaLessonModel||storyM;
+    const parts=['Story: '+storyM];
+    if(transM!==storyM) parts.push('Transl.: '+transM);
+    parts.push('Lessons: '+lessonM+(APP.info.ollamaLessonFormat==='table'?' [table]':''));
+    mdl.textContent=parts.join(' · ');
+  } else {
+    lbl.textContent='Offline — saved lessons only';
+    mdl.textContent='';
+  }
   if(!APP.info.canGenerate){
     document.getElementById('gen-btn').disabled=true;
     document.getElementById('topic-input').disabled=true;
@@ -1062,19 +1083,28 @@ async function loadSavedList(){
       ? ` · ${['🔵','🟡','🔴'][s.ratings.difficulty-1]||''} ${['😐','😊','😄'][s.ratings.fun-1]||''}`
       : '';
     const conn = connector ? `<span class="storyline-connector">↩</span>` : '';
-    return `<div class="saved-item" onclick="loadSaved('${t}')">
-      ${conn}<span class="saved-emoji">${sL.flag} ${s.topicEmoji||'📚'}</span>
-      <div class="saved-info">
-        <div class="saved-topic">${s.topic} ${diffBadge}</div>
-        <div class="saved-meta">${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
+    const sid = 'si-' + t.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+    return `<div class="saved-item-wrap">
+      <div class="saved-item" onclick="loadSaved('${t}')">
+        ${conn}<span class="saved-emoji">${sL.flag} ${s.topicEmoji||'📚'}</span>
+        <div class="saved-info">
+          <div class="saved-topic">${s.topic} ${diffBadge}</div>
+          <div class="saved-meta">${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
+        </div>
+        <div class="saved-actions" onclick="event.stopPropagation()">
+          ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
+          ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${t}')">↻</button>`:''}
+          <button class="ico-btn export" title="Export lesson with flags"
+            data-topic="${s.topic.replace(/"/g,'&quot;')}"
+            onclick="exportTopics([this.dataset.topic])">⬇</button>
+          <button class="ico-btn" title="Delete" onclick="deleteSaved('${t}')">🗑</button>
+        </div>
       </div>
-      <div class="saved-actions" onclick="event.stopPropagation()">
-        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
-        ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${t}')">↻</button>`:''}
-        <button class="ico-btn export" title="Export lesson with flags"
-          data-topic="${s.topic.replace(/"/g,'&quot;')}"
-          onclick="exportTopics([this.dataset.topic])">⬇</button>
-        <button class="ico-btn" title="Delete" onclick="deleteSaved('${t}')">🗑</button>
+      <div class="saved-item-story">
+        <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('${sid}','${s.topic.replace(/'/g,"\\'")}')">
+          📖 Read story <span id="sis-arrow-${sid}" style="margin-left:auto;font-size:10px">▼</span>
+        </button>
+        <div class="saved-item-story-body" id="sis-body-${sid}"></div>
       </div>
     </div>`;
   }
@@ -1365,7 +1395,10 @@ function buildPath(){
   const diff=d.difficulty||2;
   document.getElementById('topic-emoji-big').textContent=(dL.flag+' '+(d.topicEmoji||'📚'));
   document.getElementById('topic-name-big').textContent=d.topic;
-  document.getElementById('total-xp').textContent=(APP.progress.xp||0)+' XP';
+  const _allL=(APP.lessonData?.lessons||[]).length;
+  const _doneL=Object.keys(APP.progress.completed?.[APP.lessonData?.topic]||{}).length;
+  const _pct=_allL>0?Math.round(100*_doneL/_allL):0;
+  document.getElementById('total-xp').textContent=_doneL+' / '+_allL+' lessons ('+_pct+'%)';
   document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
   const contStoryBtn=document.getElementById('cont-story-btn');
   if(contStoryBtn) contStoryBtn.style.display=APP.info.canGenerate?'':'none';
@@ -1501,6 +1534,33 @@ function startNextLesson(){
 // encTopic adds that fix so topics with apostrophes are safe inside single-quoted HTML attributes.
 function encTopic(t){ return encodeURIComponent(t).replace(/'/g,'%27'); }
 
+// Toggle story panel on an individual saved lesson card
+async function toggleSavedStory(id, topic) {
+  const body=document.getElementById('sis-body-'+id);
+  const arrow=document.getElementById('sis-arrow-'+id);
+  if(!body) return;
+  const opening=!body.classList.contains('open');
+  body.classList.toggle('open',opening);
+  if(arrow) arrow.textContent=opening?'▲':'▼';
+  if(!opening||body.dataset.loaded) return;
+  body.dataset.loaded='1';
+  body.innerHTML='<em style="color:var(--gray-dark)">Loading…</em>';
+  try{
+    // Try STATIC_LESSONS first (works in static build)
+    const cached=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).find(l=>l.topic===topic);
+    const d=cached||(await fetch('/api/lessons/load?topic='+encodeURIComponent(topic)).then(r=>r.json()));
+    if(!d.story){ body.innerHTML='<em style="color:var(--gray-dark)">(no story)</em>'; return; }
+    const allVocab=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.it).filter(Boolean).sort((a,b)=>b.length-a.length);
+    const escHtml=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    let t=escHtml(d.story);
+    if(allVocab.length){
+      const pat=allVocab.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+      t=t.replace(new RegExp('('+pat+')','gi'),'<mark class="story-vocab-hl">$1</mark>');
+    }
+    body.innerHTML=t.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  }catch(e){ body.innerHTML='<em style="color:var(--gray-dark)">⚠ Could not load story</em>'; }
+}
+
 // ── Storyline combined story panel ───────────────────────────────────
 async function toggleChainStory(chainId) {
   const body  = document.getElementById('csbody-'  + chainId);
@@ -1616,7 +1676,7 @@ function buildExercises(lessonIdx){
 function startLesson(idx){
 	    const C=APP.cur;
 	    C.lessonIdx=idx; C.exercises=buildExercises(idx); C.cur=0;
-	    C.hearts=3; C.xp=0; C.mistakes=0; C.streak=0; C.bestStreak=0;
+	    C.hearts=3; C.mistakes=0; C.streak=0; C.bestStreak=0;
 	    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
 	    
 	    console.log("LOADED TOPIC:", APP.lessonData.topic);
@@ -1658,6 +1718,12 @@ function renderEx(){
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" id="c${i}" onclick="pickChoice(${i},this)">${c}</button>`).join('')}</div>`; }
+// Convert kanji[よみ] bracket notation → <ruby> HTML (Japanese sentences)
+function applyFurigana(text) {
+  return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g,
+    '<ruby>$1<rt>$2</rt></ruby>');
+}
+
 function lBlock(it, pron, hideWord) {
   return `<button class="listen-big" onclick="speak('${esc(it)}')">
       <span class="listen-icon">🔊</span>
@@ -1665,7 +1731,7 @@ function lBlock(it, pron, hideWord) {
     </button>${pron ? `<div class="pron">&nbsp;🗣 ${pron}</div>` : ''}<button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
-function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${ex.it}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${applyFurigana(ex.it)}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
 function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){ return ttsIsApproximate()?'<span class="tts-approx" style="margin-left:6px">⚠ approximate pronunciation</span>':''; }
 function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
@@ -1676,7 +1742,7 @@ function tOrder(ex){ const L=lessonLang();
     return `<span class="tok${isDist?' tok-distractor':''}" id="t${i}" onclick="addTok(${i})" title="${isDist?'This word may not belong':'Tap to add'}">${w}</span>`;
   }).join('');
   return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div style="font-size:11px;color:var(--gray-dark);margin-bottom:6px">⚠ Some words may not belong in this sentence</div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
-function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${ex.it}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${applyFurigana(ex.it)}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
 function onType(){ document.getElementById('cbtn').disabled=document.getElementById('type-in').value.trim().length<1; }
@@ -1792,11 +1858,11 @@ function check(){
     return;
   }
   if(ok){
-    C.xp+=10; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
+    C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
     const revealBody = ex.type==='listen_type'
       ? `${ex.it}${ex.en ? ' — ' + ex.en : ''}`
       : (ex.it||ex.correct);
-    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">Correct! +10 XP</div><div class="fb-body">${revealBody}</div>`;
+    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">Correct! ✓</div><div class="fb-body">${revealBody}</div>`;
     if(ex.it) speak(ex.it);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     if(ex.type==='listen_type') document.getElementById('type-in').classList.add('ok');
@@ -1816,7 +1882,6 @@ function showComplete(){
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
   if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
   APP.progress.completed[topicKey][lesson.id]=true;
-  APP.progress.xp=(APP.progress.xp||0)+C.xp;
   saveProg();
   goHome();
 }

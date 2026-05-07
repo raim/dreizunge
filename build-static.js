@@ -107,6 +107,23 @@ const removedCount = lessonsData.lessons.reduce((total, topic, i) => {
 
 const lessonsSerialized = JSON.stringify(cleanedLessons, null, 2);
 
+// Build flagged-lessons export payload (original lessons that had flags, with flags map)
+const flaggedTopicSlugs = new Set([...flagKeys].map(k => k.split(':')[0]));
+const flaggedLessons = lessonsData.lessons.filter(t => flaggedTopicSlugs.has(topicSlug(t.topic)));
+const flaggedPayload = removedCount > 0 ? {
+  lessons: flaggedLessons.map(t => ({
+    ...t,
+    exportedFlags: Object.fromEntries(
+      Object.entries(flags).filter(([k]) => k.startsWith(topicSlug(t.topic) + ':'))
+    ),
+    exportedAt: new Date().toISOString(),
+  })),
+  flagCount: removedCount,
+  exportedAt: new Date().toISOString(),
+  exportedBy: 'dreizunge-static',
+} : null;
+const flaggedPayloadSerialized = flaggedPayload ? JSON.stringify(flaggedPayload) : 'null';
+
 const staticFunctions = `
 // ═══════════════════════════════════════════════════════════════════════
 //  STATIC MODE — no server, lessons baked in at build time
@@ -115,6 +132,18 @@ const staticFunctions = `
 const STATIC_LESSONS = ${lessonsSerialized};
 // Sort newest first
 STATIC_LESSONS.sort((a,b)=>((b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||'')));
+
+const STATIC_FLAGGED_PAYLOAD = ${flaggedPayloadSerialized};
+
+function downloadFlaggedLessons() {
+  if (!STATIC_FLAGGED_PAYLOAD) return;
+  const blob = new Blob([JSON.stringify(STATIC_FLAGGED_PAYLOAD, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'dreizunge-flagged-' + Date.now() + '.json';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
 
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
@@ -136,7 +165,10 @@ function renderPill() {
   const note=document.getElementById('offline-note');
   note.style.display='block';
   note.innerHTML='📦 Static version — select a topic below to start<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>';
-  // Limit lang dropdown to languages that have lessons in this build
+
+  // Show flagged-lessons reminder if this build stripped flagged exercises
+  const flagBanner = document.getElementById('static-flag-banner');
+  if (flagBanner) flagBanner.style.display = STATIC_FLAGGED_PAYLOAD ? 'flex' : 'none';  // Limit lang dropdown to languages that have lessons in this build
   const presentLangs=new Set(STATIC_LESSONS.map(s=>s.lang||'it'));
   const sel=document.getElementById('lang-select');
   if(sel){
@@ -221,16 +253,26 @@ async function loadSavedList() {
     const date=dateStr?new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
     const conn=connector?'<span class="storyline-connector">↩</span>':'';
     const escapedTopic=s.topic.replace(/"/g,'&quot;');
-    return \`<div class="saved-item" onclick="loadSaved('\${t}')">
-      \${conn}<span class="saved-emoji">\${sL.flag} \${s.topicEmoji||'📚'}</span>
-      <div class="saved-info">
-        <div class="saved-topic">\${s.topic} \${diffBadge}</div>
-        <div class="saved-meta">\${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
+    const escapedTopicSq=s.topic.replace(/'/g,"\\'");
+    const sid='si-'+t.replace(/[^a-z0-9]/gi,'').slice(0,20)+Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+    return \`<div class="saved-item-wrap">
+      <div class="saved-item" onclick="loadSaved('\${t}')">
+        \${conn}<span class="saved-emoji">\${sL.flag} \${s.topicEmoji||'📚'}</span>
+        <div class="saved-info">
+          <div class="saved-topic">\${s.topic} \${diffBadge}</div>
+          <div class="saved-meta">\${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
+        </div>
+        <div class="saved-actions" onclick="event.stopPropagation()">
+          <button class="ico-btn export" title="Export lesson with flags"
+            data-topic="\${escapedTopic}"
+            onclick="exportTopics([this.dataset.topic])">⬇</button>
+        </div>
       </div>
-      <div class="saved-actions" onclick="event.stopPropagation()">
-        <button class="ico-btn export" title="Export lesson with flags"
-          data-topic="\${escapedTopic}"
-          onclick="exportTopics([this.dataset.topic])">⬇</button>
+      <div class="saved-item-story">
+        <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('\${sid}','\${escapedTopicSq}')">
+          📖 Read story <span id="sis-arrow-\${sid}" style="margin-left:auto;font-size:10px">▼</span>
+        </button>
+        <div class="saved-item-story-body" id="sis-body-\${sid}"></div>
       </div>
     </div>\`;
   }

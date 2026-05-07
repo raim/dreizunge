@@ -10,20 +10,17 @@ const crypto = require('crypto');
 const PORT         = parseInt(process.env.PORT || '3000', 10);
 const STORAGE_FILE = path.join(__dirname, 'lessons.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
-const ANTHROPIC_KEY  = process.env.ANTHROPIC_API_KEY || '';
-const CLAUDE_MODEL   = process.env.CLAUDE_MODEL   || 'claude-sonnet-4-20250514';
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 const OLLAMA_MODEL        = process.env.OLLAMA_MODEL        || 'qwen2.5:7b';
-// Separate model for story→English translation (defaults to OLLAMA_MODEL if not set).
-// When set, auto-translation runs even without a user-supplied translation,
-// and the result is used for lesson extraction (same path as user-supplied translation).
 const OLLAMA_TRANSLATION_MODEL = process.env.OLLAMA_TRANSLATION_MODEL || OLLAMA_MODEL;
-// Separate model for lesson/JSON generation — defaults to OLLAMA_MODEL if not set.
-// Useful when a translation-focused model (e.g. translategemma) handles stories well
-// but struggles with strict JSON schemas required for lessons.
-// Usage: OLLAMA_MODEL=translategemma:12b OLLAMA_LESSON_MODEL=qwen2.5:7b node server.js
 const OLLAMA_LESSON_MODEL = process.env.OLLAMA_LESSON_MODEL || OLLAMA_MODEL;
 const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
+// Lesson output format: 'json' (default) or 'table' (markdown table, better for
+// translation-focused models that struggle with strict JSON schemas).
+// Auto-enabled when OLLAMA_LESSON_MODEL contains 'translategemma', overridable via env.
+const OLLAMA_LESSON_FORMAT = process.env.OLLAMA_LESSON_FORMAT ||
+  (OLLAMA_LESSON_MODEL.toLowerCase().includes('translategemma') ? 'table' : 'json');
+const OLLAMA_MAX_PREV_STORY = parseInt(process.env.OLLAMA_MAX_PREV_STORY || '800', 10);
 
 // ── Storage ───────────────────────────────────────────────────────────
 function loadStore() {
@@ -101,6 +98,7 @@ const LANG_NAMES = {
   it:'Italian', fr:'French', de:'German', es:'Spanish', pt:'Portuguese',
   nl:'Dutch', pl:'Polish', sv:'Swedish', ja:'Japanese', zh:'Mandarin Chinese',
   ar:'Arabic', ru:'Russian', ko:'Korean', tr:'Turkish', hi:'Hindi',
+  sw:'Swahili',
     lb: 'Lëtzebuergesch',
 };
 function langName(code) { return LANG_NAMES[code] || code || 'Italian'; }
@@ -148,7 +146,7 @@ Rules:
 - sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
 - sentence length: ${sentLen} — vary lengths naturally
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
-- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language${dialectNote}${styleNote}`;
+- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language${dialectNote}${styleNote}${lang==='ja'?'\n- JAPANESE: "pron" field must be hiragana (e.g. たべる), NOT romaji. In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
 // Lesson prompt for user-provided story + parallel translation
@@ -184,7 +182,79 @@ Rules:
 - sentence pairs must be aligned: the English must be the actual translation of that ${L} sentence, not a paraphrase
 - sentence length: prefer sentences of ${sentLen}
 - sentences must NOT be duplicated across lessons — focus on different parts of the text for each lesson
-- CRITICAL: every "it" field MUST be from the ${L} story — never invented, never English${dialectNote}`;
+- CRITICAL: every "it" field MUST be from the ${L} story — never invented, never English${dialectNote}${lang==='ja'?'\n- JAPANESE: "pron" field must be hiragana (e.g. たべる), NOT romaji. In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+}
+
+// Lesson prompt for table format — used when OLLAMA_LESSON_FORMAT=table.
+// More reliable for translation-focused models that struggle with strict JSON.
+function sysLessonTable(lang, lessonNum, totalLessons, difficulty, dialect) {
+  const L    = langName(lang);
+  const diff = difficultyLabel(difficulty || 2);
+  const lessonDiff = lessonNum === 1 ? 'basic vocabulary'
+                   : lessonNum === 2 ? 'phrases and patterns'
+                   : 'specific and idiomatic expressions';
+  const dialectNote = dialect ? ` Use the ${dialect} dialect/variety.` : '';
+  return `You are a ${L} language lesson creator.${dialectNote}
+Create lesson ${lessonNum} of ${totalLessons} focused on ${lessonDiff} at ${diff} level. Please select non-trival words and sentences that refer to the story you generated.
+Output TWO markdown tables and nothing else.
+
+Table 1 — Vocabulary (exactly 8 rows):
+| ${L} word | English meaning | Pronunciation for English speakers |
+|---|---|---|
+| word | meaning | pron |
+
+Table 2 — Sentences (exactly 5 rows):
+| ${L} sentence | English translation |
+|---|---|
+| sentence | translation |
+
+Rules:
+- All ${L} content must be genuine ${L} — never English or another language
+- Pronunciation: write phonetically, CAPS for stressed syllable (e.g. BOO-oh-JOR-no)
+- No extra text, no headings outside the tables, no JSON${lang==='ja'?'\n- JAPANESE: Pronunciation column must be hiragana (e.g. たべる), NOT romaji. In the sentence column, annotate each kanji with its hiragana reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+}
+
+// Parse two markdown tables from table-format lesson output
+function parseTableLesson(raw, lessonNum, topic) {
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const parseTable = (startIdx) => {
+    const rows = [];
+    for (let i = startIdx; i < lines.length; i++) {
+      const l = lines[i];
+      if (!l.startsWith('|')) break;
+      if (l.replace(/[\s|:-]/g,'').length === 0) continue; // separator row
+      const cells = l.split('|').map(c => c.trim()).filter((_,i,a) => i>0 && i<a.length-1);
+      if (cells.length >= 2 && !cells[0].toLowerCase().match(/^(word|phrase|sentence|^\w+ word)/))
+        rows.push(cells);
+    }
+    return rows;
+  };
+  // Find first table
+  const t1start = lines.findIndex(l => l.startsWith('|'));
+  const vocabRows = parseTable(t1start);
+  // Find second table (after first table ends)
+  let t2start = t1start + vocabRows.length + 2; // skip header + separator
+  while (t2start < lines.length && !lines[t2start].startsWith('|')) t2start++;
+  const sentRows = parseTable(t2start);
+
+  const vocab = vocabRows.slice(0, 8).map(r => ({
+    it: r[0] || '', en: r[1] || '', pron: r[2] || ''
+  })).filter(v => v.it && v.en);
+
+  const sentences = sentRows.slice(0, 5).map(r => ({
+    it: r[0] || '', en: r[1] || ''
+  })).filter(s => s.it && s.en);
+
+  if (vocab.length < 2) throw new Error(`Table parse: only ${vocab.length} vocab rows`);
+  if (sentences.length < 1) throw new Error(`Table parse: only ${sentences.length} sentence rows`);
+
+  return {
+    title: `Lesson ${lessonNum}`,
+    desc: topic,
+    icon: '📖',
+    vocab,
+    sentences
+  };
 }
 
 const SYS_REPAIR = `You are a language exercise repairer for a Duolingo-style app.
@@ -243,84 +313,10 @@ function salvageArray(raw) {
 }
 
 // ── LLM backends ──────────────────────────────────────────────────────
-function callAnthropicRaw(system, userMsg, maxTokens) {
-  return new Promise((resolve, reject) => {
-    const body = JSON.stringify({
-      model: CLAUDE_MODEL, max_tokens: maxTokens || 1024, system,
-      messages: [{ role: 'user', content: userMsg }]
-    });
-    const req = https.request({
-      hostname: 'api.anthropic.com', path: '/v1/messages', method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01', 'Content-Length': Buffer.byteLength(body) }
-    }, res => {
-      let d = ''; res.on('data', c => d += c);
-      res.on('end', () => {
-        try {
-          const p = JSON.parse(d);
-          if (p.error) return reject(new Error('Anthropic: ' + p.error.message));
-          resolve({
-            text: p.content[0].text,
-            promptTokens:     p.usage?.input_tokens  || 0,
-            completionTokens: p.usage?.output_tokens || 0,
-          });
-        } catch(e) { reject(new Error('Anthropic parse: ' + e.message)); }
-      });
-    });
-    req.on('error', e => reject(new Error('Anthropic network: ' + e.message)));
-    req.write(body); req.end();
-  });
-}
+// TODO: add support for external API services (Anthropic, OpenAI, Groq etc.)
+// by implementing callExternalAPI() and routing through callLLM/callLLMLesson.
 
-function callOllamaRaw(system, userMsg, maxTokens) {
-  const call = new Promise((resolve, reject) => {
-    const u = new URL('/api/chat', OLLAMA_HOST);
-    const lib = u.protocol === 'https:' ? https : http;
-    const body = JSON.stringify({
-      model: OLLAMA_MODEL, stream: false, keep_alive: -1,
-      options: { temperature: 0.15, num_predict: maxTokens || 1024 },
-      messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
-    });
-    const req = lib.request({
-      hostname: u.hostname,
-      port: u.port || (u.protocol === 'https:' ? 443 : 80),
-      path: u.pathname, method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
-    }, res => {
-      let d = ''; res.on('data', c => d += c);
-      res.on('end', () => {
-        try {
-          const p = JSON.parse(d);
-          if (p.error) return reject(new Error('Ollama: ' + p.error));
-          const text = p.message?.content || p.response || '';
-          if (!text) return reject(new Error('Ollama returned empty response'));
-          resolve({
-            text,
-            promptTokens:     p.prompt_eval_count || 0,
-            completionTokens: p.eval_count        || 0,
-          });
-        } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0,200))); }
-      });
-    });
-    req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
-    req.setTimeout(OLLAMA_TIMEOUT, () => { req.destroy(); reject(new Error('Ollama timeout')); });
-    req.write(body); req.end();
-  });
-  const timeout = new Promise((_,reject) =>
-    setTimeout(() => reject(new Error('Ollama timeout')), OLLAMA_TIMEOUT)
-  );
-  return Promise.race([call, timeout]);
-}
-
-async function callLLM(active, system, userMsg, maxTokens) {
-  if (active === 'anthropic') return callAnthropicRaw(system, userMsg, maxTokens);
-  if (active === 'ollama')    return callOllamaRaw(system, userMsg, maxTokens);
-  throw new Error('No LLM backend configured.');
-}
-
-// Lesson calls use OLLAMA_LESSON_MODEL (may differ from story model).
-// For Anthropic there is only one model so this is identical to callLLM.
-function callOllamaModel(model, system, userMsg, maxTokens) {
+function callOllamaRaw(model, system, userMsg, maxTokens) {
   const call = new Promise((resolve, reject) => {
     const u = new URL('/api/chat', OLLAMA_HOST);
     const lib = u.protocol === 'https:' ? https : http;
@@ -360,20 +356,36 @@ function callOllamaModel(model, system, userMsg, maxTokens) {
   return Promise.race([call, timeout]);
 }
 
-async function callLLMLesson(active, system, userMsg, maxTokens) {
-  if (active === 'anthropic') return callAnthropicRaw(system, userMsg, maxTokens);
-  if (active === 'ollama')    return callOllamaModel(OLLAMA_LESSON_MODEL, system, userMsg, maxTokens);
-  throw new Error('No LLM backend configured.');
+// Release a model from VRAM so the next model can load cleanly.
+// Called between story/translation and lesson steps when models differ.
+function releaseOllamaModel(model) {
+  return new Promise(resolve => {
+    const u = new URL('/api/chat', OLLAMA_HOST);
+    const lib = u.protocol === 'https:' ? https : http;
+    const body = JSON.stringify({
+      model, stream: false, keep_alive: 0,
+      options: { num_predict: 1 }, messages: [{ role: 'user', content: '' }]
+    });
+    const req = lib.request({
+      hostname: u.hostname,
+      port: u.port || (u.protocol === 'https:' ? 443 : 80),
+      path: u.pathname, method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    }, res => { res.resume(); res.on('end', resolve); });
+    req.setTimeout(10000, () => { req.destroy(); resolve(); });
+    req.on('error', resolve);
+    req.write(body); req.end();
+  });
 }
 
-async function callLLMTranslation(active, system, userMsg, maxTokens) {
-  if (active === 'anthropic') return callAnthropicRaw(system, userMsg, maxTokens);
-  if (active === 'ollama')    return callOllamaModel(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
-  throw new Error('No LLM backend configured.');
+function callLLM(system, userMsg, maxTokens) {
+  return callOllamaRaw(OLLAMA_MODEL, system, userMsg, maxTokens);
 }
-async function callLLMText(active, system, userMsg, maxTokens) {
-  const r = await callLLM(active, system, userMsg, maxTokens);
-  return r.text;
+function callLLMLesson(system, userMsg, maxTokens) {
+  return callOllamaRaw(OLLAMA_LESSON_MODEL, system, userMsg, maxTokens);
+}
+function callLLMTranslation(system, userMsg, maxTokens) {
+  return callOllamaRaw(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
 }
 
 // ── Retry helper ──────────────────────────────────────────────────────
@@ -431,29 +443,45 @@ function sysStory(lang, isContinuation, wordCount) {
   const cont = isContinuation
     ? ' IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.'
     : '';
-  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${cont}`;
+  const furiganaNote = lang==='ja' ? ' Annotate every kanji with furigana using HTML ruby tags, e.g. <ruby>日本語<rt>にほんご</rt></ruby>.' : '';
+  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${furiganaNote}${cont}`;
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
-async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
+async function generateOneLesson(lang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
   opts = opts || {};
   const { userTranslation, userDialect, styleHint } = opts;
-  jobStep(jobId, `Lesson ${lessonNum}/${totalLessons}: generating…`);
+  const useTable = OLLAMA_LESSON_FORMAT === 'table';
+  jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Lesson ${lessonNum}/${totalLessons}…`);
 
   let sysPrompt, userMsg;
 
   if (userTranslation) {
-    // Extraction mode: derive everything strictly from story + translation
-    sysPrompt = sysLessonFromText(lang, lessonNum, totalLessons, difficulty, userDialect);
+    if (useTable) {
+      // Table extraction mode with translation
+      sysPrompt = sysLessonTable(lang, lessonNum, totalLessons, difficulty, userDialect);
+      const prevHint = prevVocab.length
+        ? `\nAvoid repeating these already-covered words: ${prevVocab.map(v=>v.it).join(', ')}`
+        : '';
+      userMsg = `Topic: "${topic}". Extract vocabulary and sentences from this story and its translation.\n\nSTORY:\n${story}\n\nENGLISH TRANSLATION:\n${userTranslation}${prevHint}`;
+    } else {
+      sysPrompt = sysLessonFromText(lang, lessonNum, totalLessons, difficulty, userDialect);
+      const prevHint = prevVocab.length
+        ? `\nVocabulary already used in earlier lessons (avoid repeating these):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
+        : '';
+      userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.\n\nSTORY (${langName(lang)}):\n${story}\n\nENGLISH TRANSLATION:\n${userTranslation}${prevHint}\n\nReturn only the JSON object.`;
+    }
+  } else if (useTable) {
+    sysPrompt = sysLessonTable(lang, lessonNum, totalLessons, difficulty, userDialect);
     const prevHint = prevVocab.length
-      ? `\nVocabulary already used in earlier lessons (avoid repeating these, choose different words/sentences):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
+      ? `\nAvoid repeating these already-covered words: ${prevVocab.map(v=>v.it).join(', ')}`
       : '';
-    userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.\n\nSTORY (${langName(lang)}):\n${story}\n\nENGLISH TRANSLATION:\n${userTranslation}${prevHint}\n\nReturn only the JSON object.`;
+    const storyHint = story ? `\n\nContext story:\n${story.slice(0, 600)}` : '';
+    userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}`;
   } else {
-    // Normal generative mode
     sysPrompt = sysLesson(lang, lessonNum, totalLessons, difficulty, styleHint, userDialect);
     const prevHint = prevVocab.length
-      ? `\nVocabulary already covered in earlier lessons (do NOT repeat these, introduce 8 NEW items):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
+      ? `\nVocabulary already covered in earlier lessons (do NOT repeat these):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
       : '';
     const storyHint = story
       ? `\nContext — use vocabulary and themes from this story where natural:\n${story.slice(0, 800)}`
@@ -467,35 +495,41 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
 
   return withRetry(`Lesson ${lessonNum}`, async () => {
     const t0 = Date.now();
-    const { text: raw, promptTokens, completionTokens } =
-      await callLLMLesson(active, sysPrompt, userMsg, 2048);
+    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sysPrompt, userMsg, 2048);
     const ms = Date.now() - t0;
+
     let lesson;
-    try { lesson = extractJSON(raw); }
-    catch(_) {
-      try {
-        const arr = extractArray(raw);
-        if (Array.isArray(arr) && arr[0]?.vocab) lesson = arr[0];
-        else throw new Error('Not a lesson object');
-      } catch(_2) { throw new Error('Could not parse lesson JSON'); }
+    if (useTable) {
+      lesson = parseTableLesson(raw, lessonNum, topic);
+    } else {
+      try { lesson = extractJSON(raw); }
+      catch(_) {
+        try {
+          const arr = extractArray(raw);
+          if (Array.isArray(arr) && arr[0]?.vocab) lesson = arr[0];
+          else throw new Error('Not a lesson object');
+        } catch(_2) { throw new Error('Could not parse lesson JSON'); }
+      }
     }
 
     // Validate vocab
-    if (!Array.isArray(lesson.vocab) || lesson.vocab.length < 4)
+    if (!Array.isArray(lesson.vocab) || lesson.vocab.length < (useTable ? 2 : 4))
       throw new Error(`Only ${lesson.vocab?.length ?? 0} vocab items`);
     const seen = new Set();
     lesson.vocab = lesson.vocab.filter(v => {
       const k = v.it?.toLowerCase(); if (!k || seen.has(k)) return false; seen.add(k); return true;
     }).slice(0, 8);
-    if (lesson.vocab.length < 4) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
+    if (lesson.vocab.length < (useTable ? 2 : 4)) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
 
     // Validate sentences
-    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < minSentences)
+    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < (useTable ? 1 : minSentences))
       throw new Error(`Only ${lesson.sentences?.length ?? 0} sentences`);
     lesson.sentences = lesson.sentences.slice(0, 5).map(s => deriveSentenceWords(s, lang));
-    const tooShort = lesson.sentences.filter(s => s.words.length < minWords);
-    if (tooShort.length > 2)
-      throw new Error(`${tooShort.length} sentences have fewer than ${minWords} words — retrying`);
+    if (!useTable) {
+      const tooShort = lesson.sentences.filter(s => s.words.length < minWords);
+      if (tooShort.length > 2)
+        throw new Error(`${tooShort.length} sentences have fewer than ${minWords} words — retrying`);
+    }
 
     return {
       lesson: {
@@ -512,7 +546,7 @@ async function generateOneLesson(active, lang, topic, lessonNum, totalLessons, p
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
-async function generate(topic, lang, active, difficulty, continuedFrom, storyLen, jobId, userOpts) {
+async function generate(topic, lang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
   const { userStory, userTranslation, userDialect } = userOpts;
   const userTopic = topic;
@@ -520,11 +554,10 @@ async function generate(topic, lang, active, difficulty, continuedFrom, storyLen
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   const lessonTokenStats = [];
 
-  jobStep(jobId, 'Generating topic info…');
+  jobStep(jobId, `[${OLLAMA_MODEL}] Generating topic info…`);
   let meta;
   try {
-    const t0 = Date.now();
-    const { text: raw, promptTokens, completionTokens } = await callLLM(active, SYS_META,
+    const { text: raw, promptTokens, completionTokens } = await callLLM(SYS_META,
       `Topic: "${topic}". Return the JSON with topicEmoji and 3 lessonThemes.`, 512);
     meta = extractJSON(raw);
     totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
@@ -539,65 +572,65 @@ async function generate(topic, lang, active, difficulty, continuedFrom, storyLen
   const storyLang = lang;
 
   if (userStory) {
-    // User supplied the story — skip generation entirely
     story = userStory.trim();
-    storyPrompt = userTranslation
-      ? 'User-provided story + translation'
-      : 'User-provided story';
-    console.log(`    Using user-provided story (${story.length} chars)${userTranslation ? ' + translation' : ''}${userDialect ? ', dialect: '+userDialect : ''}`);
+    storyPrompt = userTranslation ? 'User-provided story + translation' : 'User-provided story';
+    console.log(`    Using user-provided story (${story.length} chars)${userTranslation?' + translation':''}${userDialect?', dialect: '+userDialect:''}`);
   } else {
-    jobStep(jobId, 'Generating story…');
-    const prevStory = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
+    const prevStoryFull = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
+    // Use only the tail of the previous story to keep prompt size manageable
+    const prevStory = prevStoryFull
+      ? prevStoryFull.slice(-OLLAMA_MAX_PREV_STORY)
+      : null;
     if (continuedFrom && prevStory)
-      console.log(`    Continuing story from: "${continuedFrom}" (${prevStory.length} chars)`);
+      console.log(`    Continuing from: "${continuedFrom}" (using last ${prevStory.length}/${prevStoryFull.length} chars)`);
+    jobStep(jobId, `[${OLLAMA_MODEL}] Generating story (~${storyLen} words)…`);
     try {
       const t0 = Date.now();
       const storyUserMsg = prevStory
-        ? `Previous story:\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
+        ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
         : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
       const storySystem = sysStory(lang, !!prevStory, storyLen);
       const { text, promptTokens, completionTokens } = await callLLM(
-        active, storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
+        storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
       story = text.trim();
       storyPrompt = storySystem + '\n\n' + storyUserMsg;
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
-      console.log(`    Story (${lang}): ${Date.now()-t0}ms`);
+      console.log(`    [${OLLAMA_MODEL}] Story (${lang}, ~${storyLen}w): ${Date.now()-t0}ms, ${story.length} chars`);
     } catch(e) {
-      // Story failure is fatal — without it lessons have no context or alignment target.
-      // Surface a clear error so the user can retry rather than getting context-free lessons.
       throw new Error(`Story generation failed: ${e.message}`);
     }
   }
 
-  // ── Translation: user-supplied, auto-generated, or none ──────────────
-  // storyTranslation is the English version used for lesson extraction.
-  // Priority: user-supplied > auto-translated > none (LLM invents glosses).
-  // Auto-translation runs when:
-  //   - Anthropic backend (always capable), OR
-  //   - OLLAMA_TRANSLATION_MODEL is explicitly set in env (opt-in for Ollama)
-  // This means single-model Ollama setups are unaffected by default.
+  // ── Translation ───────────────────────────────────────────────────────
   let storyTranslation = userTranslation || null;
   const shouldAutoTranslate = story && !storyTranslation &&
-    (active === 'anthropic' || OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL);
+    OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL;
 
   if (shouldAutoTranslate) {
-    jobStep(jobId, 'Translating story to English…');
+    jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Translating story to English…`);
     try {
       const t0 = Date.now();
       const { text, promptTokens, completionTokens } = await callLLMTranslation(
-        active, sysTranslation(lang), story, Math.min(2048, Math.ceil(story.length * 1.2)));
+        sysTranslation(lang), story, Math.min(2048, Math.ceil(story.length * 1.2)));
       storyTranslation = text.trim();
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
-      console.log(`    Translation (${lang}→en): ${Date.now()-t0}ms, ${storyTranslation.length} chars`);
+      console.log(`    [${OLLAMA_TRANSLATION_MODEL}] Translation (${lang}→en): ${Date.now()-t0}ms, ${storyTranslation.length} chars`);
     } catch(e) {
       console.warn('  Translation failed, falling back to context-only mode:', e.message);
       storyTranslation = null;
     }
   }
 
-  // ── Extract style hint from story for generative mode ─────────────────
-  const styleHint = (!storyTranslation && story) ? story.slice(0, 600) : null;
+  // Release story/translation model from VRAM before loading lesson model
+  if (OLLAMA_LESSON_MODEL !== OLLAMA_MODEL) {
+    console.log(`    Releasing [${OLLAMA_MODEL}] from VRAM…`);
+    await releaseOllamaModel(OLLAMA_MODEL);
+    if (OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL && OLLAMA_TRANSLATION_MODEL !== OLLAMA_LESSON_MODEL)
+      await releaseOllamaModel(OLLAMA_TRANSLATION_MODEL);
+  }
 
+  // ── Lessons ───────────────────────────────────────────────────────────
+  const styleHint = (!storyTranslation && story) ? story.slice(0, 600) : null;
   const TOTAL = 3;
   const lessons = [];
   let prevVocab = [];
@@ -605,46 +638,44 @@ async function generate(topic, lang, active, difficulty, continuedFrom, storyLen
   for (let i = 1; i <= TOTAL; i++) {
     try {
       const { lesson, tokens } = await generateOneLesson(
-        active, lang, topic, i, TOTAL, prevVocab, story, difficulty, jobId, lessonOpts);
+        lang, topic, i, TOTAL, prevVocab, story, difficulty, jobId, lessonOpts);
       lessons.push(lesson);
       prevVocab = prevVocab.concat(lesson.vocab);
       totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
       lessonTokenStats.push(tokens);
     } catch(e) {
       console.warn(`  Lesson ${i} failed, skipping: ${e.message}`);
-      jobStep(jobId, `⚠ Lesson ${i} failed — continuing with remaining lessons…`);
+      jobStep(jobId, `⚠ Lesson ${i} failed — continuing…`);
     }
   }
 
   if (lessons.length === 0)
     throw new Error('All lessons failed to generate — nothing to save.');
-
   if (lessons.length < TOTAL)
     console.warn(`  Partial result: ${lessons.length}/${TOTAL} lessons generated.`);
 
   const totalMs = Date.now() - genStart;
-  const uniqueModels = active === 'anthropic' ? [CLAUDE_MODEL]
-    : [...new Set([OLLAMA_MODEL, OLLAMA_TRANSLATION_MODEL, OLLAMA_LESSON_MODEL])];
-  const modelLabel = active === 'anthropic' ? CLAUDE_MODEL : uniqueModels.join(' / ');
+  const uniqueModels = [...new Set([OLLAMA_MODEL, OLLAMA_TRANSLATION_MODEL, OLLAMA_LESSON_MODEL])];
+  const modelLabel = uniqueModels.join(' / ');
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
   return {
     topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
-    userTopic,
-    lang, difficulty: difficulty || 2, storyLen,
+    userTopic, lang, difficulty: difficulty || 2, storyLen,
     story, storyLang, storyPrompt,
-    ...(storyTranslation ? { storyTranslation }              : {}),
-    ...(userStory        ? { userStory }                     : {}),
-    ...(userTranslation  ? { userTranslation }               : {}),
-    ...(userDialect      ? { userDialect }                   : {}),
-    ...(continuedFrom    ? { continuedFrom }                 : {}),
+    ...(storyTranslation ? { storyTranslation } : {}),
+    ...(userStory        ? { userStory }         : {}),
+    ...(userTranslation  ? { userTranslation }   : {}),
+    ...(userDialect      ? { userDialect }       : {}),
+    ...(continuedFrom    ? { continuedFrom }     : {}),
     lessons,
-    generationStats: { totalMs, backend: active, model: modelLabel,
+    generationStats: { totalMs, backend: 'ollama', model: modelLabel,
+      lessonFormat: OLLAMA_LESSON_FORMAT,
       totalPromptTokens, totalCompletionTokens, lessons: lessonTokenStats }
   };
 }
 
 // ── Repair flagged exercises ──────────────────────────────────────────
-async function repairLesson(active, topic, lessonId, jobId) {
+async function repairLesson(topic, lessonId, jobId) {
   const saved = findSaved(topic);
   if (!saved) throw new Error(`Topic not found: ${topic}`);
   const lessonIdx = saved.lessons.findIndex(l => l.id === lessonId);
@@ -710,7 +741,7 @@ ${JSON.stringify(batch.exercises, null, 2)}
 Return only the corrected JSON array.`;
     console.log(`    Batch ${b+1}/${batches.length}: ${batch.exercises.length} exercise(s)…`);
     const arr = await withRetry(`Repair batch ${b+1}`, async () => {
-      const { text: raw, promptTokens: pt, completionTokens: ct } = await callLLMLesson(active, SYS_REPAIR, userMsg, 2048);
+      const { text: raw, promptTokens: pt, completionTokens: ct } = await callLLMLesson(SYS_REPAIR, userMsg, 2048);
       repairPromptTokens += pt; repairCompletionTokens += ct;
       let a;
       try { a = extractArray(raw); } catch(_) { a = salvageArray(raw); }
@@ -799,11 +830,9 @@ function json(res, code, obj) {
 // ── Boot ──────────────────────────────────────────────────────────────
 async function boot() {
   let active;
-  if      (BACKEND === 'anthropic') active = 'anthropic';
-  else if (BACKEND === 'ollama')    active = 'ollama';
-  else if (BACKEND === 'none')      active = 'none';
-  else if (ANTHROPIC_KEY)           active = 'anthropic';
-  else {
+  if (BACKEND === 'none') {
+    active = 'none';
+  } else {
     process.stdout.write('  Checking Ollama… ');
     active = (await pingOllama()) ? 'ollama' : 'none';
     console.log(active === 'ollama' ? 'reachable ✓' : 'not found — offline mode');
@@ -813,16 +842,17 @@ async function boot() {
   console.log('\n🌍  Dreizunge');
   console.log('='.repeat(44));
   console.log(`  Port    : ${PORT}`);
-  console.log(`  Backend : ${active}`);
-  if (active === 'anthropic') console.log(`  Model   : ${CLAUDE_MODEL}`);
   if (active === 'ollama') {
-    console.log(`  Ollama  : ${OLLAMA_HOST}  (${OLLAMA_MODEL})`);
+    console.log(`  Ollama  : ${OLLAMA_HOST}`);
+    console.log(`  Story   : ${OLLAMA_MODEL}`);
     if (OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL)
-      console.log(`  Translate: ${OLLAMA_TRANSLATION_MODEL}`);
-    if (OLLAMA_LESSON_MODEL !== OLLAMA_MODEL)
-      console.log(`  Lessons : ${OLLAMA_LESSON_MODEL}`);
+      console.log(`  Transl. : ${OLLAMA_TRANSLATION_MODEL}`);
+    else
+      console.log(`  Transl. : ${OLLAMA_MODEL} (same)`);
+    console.log(`  Lessons : ${OLLAMA_LESSON_MODEL}${OLLAMA_LESSON_FORMAT==='table'?' [table format]':''}`);
+  } else {
+    console.log('  Backend : offline — only saved lessons available');
   }
-  if (active === 'none')      console.log('  Offline — only saved lessons available');
   console.log(`  Storage : ${STORAGE_FILE}`);
   console.log('='.repeat(44) + '\n');
 
@@ -838,7 +868,8 @@ async function boot() {
       return json(res, 200, { backend: active, ollamaModel: OLLAMA_MODEL,
         ollamaTranslationModel: OLLAMA_TRANSLATION_MODEL,
         ollamaLessonModel: OLLAMA_LESSON_MODEL,
-        claudeModel: CLAUDE_MODEL, canGenerate: active !== 'none' });
+        ollamaLessonFormat: OLLAMA_LESSON_FORMAT,
+        canGenerate: active !== 'none' });
     }
     if (M === 'GET' && url.pathname === '/api/lessons') {
       const list = store.lessons.map(l => ({
@@ -914,7 +945,7 @@ async function boot() {
         if (cached) { console.log(`  Cache hit: "${topic}"`); return json(res, 200, { cached: true, data: { ...cached, fromCache: true } }); }
       }
       if (active === 'none')
-        return json(res, 503, { error: 'No LLM backend. Set ANTHROPIC_API_KEY or start Ollama, then restart.' });
+        return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
       if (generatingTopics.has(topicKey))
         return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
       const jobId = newJob();
@@ -924,8 +955,8 @@ async function boot() {
         userTranslation: userTranslation ? String(userTranslation).trim() : null,
         userDialect:     userDialect     ? String(userDialect).trim()     : null,
       };
-      console.log(`  Generating [${active}]: "${topic}" (${langName(lang||'it')}) diff=${diff}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' userTranslation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
-      generate(topic.trim(), lang || 'it', active, diff, contFrom, wc, jobId, userOpts).then(data => {
+      console.log(`  Generating: "${topic}" (${langName(lang||'it')}) diff=${diff} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
+      generate(topic.trim(), lang || 'it', diff, contFrom, wc, jobId, userOpts).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         jobDone(jobId, { ...data, fromCache: false });
@@ -952,7 +983,7 @@ async function boot() {
         return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
       const jobId = newJob();
       generatingTopics.add(topicKey);
-      repairLesson(active, topic.trim(), parseInt(lessonId, 10), jobId).then(result => {
+      repairLesson(topic.trim(), parseInt(lessonId, 10), jobId).then(result => {
         jobDone(jobId, result);
       }).catch(e => {
         console.error('  Repair error:', e.message);
@@ -985,7 +1016,7 @@ async function boot() {
             'Plain prose, no headings.'
           ].join('\n');
           const rewriteSys = sysStory(lang, false);
-          const { text } = await callLLM(active, rewriteSys, userMsg, 900);
+          const { text } = await callLLM(rewriteSys, userMsg, 900);
           saved.story = text.trim();
           saved.storyLang = lang;
           saved.storyPrompt = rewriteSys + '\n\n' + userMsg;

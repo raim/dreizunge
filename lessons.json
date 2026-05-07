@@ -1,399 +1,1488 @@
 {
   "lessons": [
     {
-      "topic": "Communication Issues",
-      "topicEmoji": "💬",
-      "userTopic": "douglas has problems communicating with the administrator",
-      "lang": "ja",
-      "difficulty": 1,
-      "storyLen": 750,
-      "story": "ドouglasは新しい免許証を持って、町の中心部にある小さな会社へと向かった。ドouglasは緊張しながら、ドアをノックし、内側から声が聞こえた。「はい、誰ですか？」ドouglasは深呼吸して、扉を開いた。\n\n「あ、ドouglasさんですね。何か用ですか？」会社の管理者、田中さんと呼ばれる男性は、ドouglasの新しい免許証を見て驚いた表情を浮かべた。「これは素晴らしいですね。」\n\n「ありがとうございます。でも、田中さん、ちょっと困っています。」ドouglasは慎重に言葉を選んで続けた。「実は、この免許証の情報が少し間違っているんです。」\n\n「ええ、それは大変ですね。」田中さんは真剣な表情で言った。「でも、すぐに修正します。まずは、どの情報が間違っているのか詳しく説明していただけますか？」\n\n「はい、その通りです。」ドouglasは深呼吸して、間違った情報を説明した。「私の住所が間違っています。正確な住所を教えていただけますか？」\n\n「もちろんです。」田中さんはパソコンを開き、ドouglasの情報を修正した。「これで、正しい情報が反映されました。」\n\n「ありがとうございます。」ドouglasは安堵の表情を浮かべた。「でも、田中さん、もう一つお願いがあります。」\n\n「何でもおっしゃってください。」田中さんは親切な笑顔で言った。\n\n「実は、私の日本語がまだ足りないんです。田中さん、一緒に日本語を勉強していただけませんか？」ドouglasは懇願した。\n\n「もちろんです。ドouglasさん、一緒に勉強しましょう。」田中さんは喜んで答えた。「では、今から始めましょうか。」\n\n二人は座り、田中さんが教える日本語の単語や文法を学び始めた。ドouglasは新しい免許証の問題を解決し、同時に新しい友人との交流を楽しみながら、日本語の学習を深めていった。",
-      "storyLang": "ja",
-      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 7-8 paragraphs, under 750 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\n東京の喧騒から離れた秋田県の小さな町。ドouglasは津軽半島の寒さに身を包み、新しい挑戦に備えていた。彼は手を繋いだ友人に微笑み、「今日は免許証を交換に来ることにしたんだ。」と告げた。\n\n「うん、ドouglas、頑張ってね。」友人は応援の言葉を返した。二人は手を繋ぎ、慎重に歩いた。町は静かで、雪が積もった道は滑りやすく、足元には気をつける必要があった。\n\n「今日は日本語で話そうよ。」ドouglasが言葉を発した。「免許証の手続きは難しいかもしれないから、日本語を勉強しておいた方がいいかもしれないな。」\n\n二人は町の中心部へ向かい、運転免許センターに到着した。建物は古びた外観を持ちながらも、中は整然と整理されており、受付の女性が元気な声で声をかけた。「こんにちは、免許証の手続きですか？ こちらへどうぞ。」\n\nドouglasは慎重に手続きを進めていった。書類の確認、写真の撮影、そして最後に実技試験。彼は緊張しながらも、友人の励ましを思い出し、試験に挑んだ。\n\n「本当に大変だったな。」試験が終わってから、友人が言った。「でも、ドouglas、君は頑張ったよ。」\n\n二人は満足した表情で、新しい日本語の免許証を受け取った。その証は、彼らの友情と挑戦の証明だった。雪の音が静かな夜を彩り、二人は満足した表情で町を歩き出した。\n\nNew topic: \"douglas has problems communicating with the administrator\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "License Conversion",
+      "topic": "a poem",
+      "topicEmoji": "📖",
+      "userTopic": "a poem",
+      "lang": "lb",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Wou d'Uelzecht duurch d'Wisen zéit, duurch d'Fielsen d'Sauer brëcht,\nWou d'Rief laanscht d'Musel dofteg bléit, den Himmel Wein eis mécht:\nDat ass onst Land, fir dat mir géif hei nidden alles won,\nOnst Heemechtsland, dat mir so déif an eisen Hierzer dron.\nO Du do uewen, deem seng Hand duurch d'Welt d'Natioune leet,\nBehitt du d'Lëtzebuerger Land vum frieme Joch a Leed!\nDu hues on als Kand geperrelt, looss eis als Männer fräi,\nAn looss d'Sonn vun der Fräiheet liichten, fir d'éiweg an d'allerlee!",
+      "storyLang": "lb",
+      "storyPrompt": "User-provided story + translation",
+      "storyTranslation": "Where the Alzette flows through the meadows, the Sauer breaks through the rocks,\nWhere the vine fragrant blows along the Moselle, the sky makes wine for us:\nThat is our land, for which we would risk everything here below,\nOur homeland, which we carry so deep in our hearts.\nO Thou above, whose hand leads the nations through the world,\nProtect the Luxembourgish land from foreign yoke and suffering!\nYou cherished us as children, let us be free as men,\nAnd let the sun of freedom shine, for ever and always!",
+      "userStory": "Wou d'Uelzecht duurch d'Wisen zéit, duurch d'Fielsen d'Sauer brëcht,\nWou d'Rief laanscht d'Musel dofteg bléit, den Himmel Wein eis mécht:\nDat ass onst Land, fir dat mir géif hei nidden alles won,\nOnst Heemechtsland, dat mir so déif an eisen Hierzer dron.\nO Du do uewen, deem seng Hand duurch d'Welt d'Natioune leet,\nBehitt du d'Lëtzebuerger Land vum frieme Joch a Leed!\nDu hues on als Kand geperrelt, looss eis als Männer fräi,\nAn looss d'Sonn vun der Fräiheet liichten, fir d'éiweg an d'allerlee!",
+      "userTranslation": "Where the Alzette flows through the meadows, the Sauer breaks through the rocks,\nWhere the vine fragrant blows along the Moselle, the sky makes wine for us:\nThat is our land, for which we would risk everything here below,\nOur homeland, which we carry so deep in our hearts.\nO Thou above, whose hand leads the nations through the world,\nProtect the Luxembourgish land from foreign yoke and suffering!\nYou cherished us as children, let us be free as men,\nAnd let the sun of freedom shine, for ever and always!",
       "lessons": [
         {
           "id": 1,
-          "title": "日本語の会話",
-          "desc": "免許証の誤り、日本語の学習",
-          "icon": "📚",
+          "title": "Luxembourg's Land",
+          "desc": "Alzette, Sauer, Moselle, freedom",
+          "icon": "🌍",
           "vocab": [
             {
-              "it": "間違っている",
-              "en": "wrong",
-              "pron": "WRONG"
+              "it": "Alzette",
+              "en": "Alzette river",
+              "pron": "AL-zet"
             },
             {
-              "it": "住所",
-              "en": "address",
-              "pron": "ADRESS"
+              "it": "Sauer",
+              "en": "Sauer river",
+              "pron": "SWAR"
             },
             {
-              "it": "情報",
-              "en": "information",
-              "pron": "INFORMEYSHUN"
+              "it": "Moselle",
+              "en": "Moselle river",
+              "pron": "MOZ-uh-leh"
             },
             {
-              "it": "修正",
-              "en": "correction",
-              "pron": "KORRISHUN"
-            },
-            {
-              "it": "深呼吸",
-              "en": "deep breath",
-              "pron": "DEEP BREETH"
-            },
-            {
-              "it": "安堵",
-              "en": "relief",
-              "pron": "RILEF"
-            },
-            {
-              "it": "懇願",
-              "en": "beg",
-              "pron": "BEG"
-            },
-            {
-              "it": "勉強",
-              "en": "study",
-              "pron": "STUDEE"
+              "it": "freedom",
+              "en": "freedom",
+              "pron": "FREH-dee-em"
             }
           ],
           "sentences": [
             {
-              "it": "情報が間違っています",
-              "en": "The information is wrong",
-              "pron": "THE INFORMEYSHUN IS WRONG",
+              "it": "Wou d'Uelzecht duurch d'Wisen zéit, duurch d'Fielsen d'Sauer brëcht.",
+              "en": "Where the Alzette flows through the meadows, the Sauer breaks through the rocks.",
               "words": [
-                "情",
-                "報",
-                "が",
-                "間",
-                "違",
-                "っ",
-                "て",
-                "い",
-                "ま",
-                "す"
+                "Wou",
+                "d'Uelzecht",
+                "duurch",
+                "d'Wisen",
+                "zéit,",
+                "duurch",
+                "d'Fielsen",
+                "d'Sauer",
+                "brëcht."
               ]
             },
             {
-              "it": "正しい住所を教えてください",
-              "en": "Please tell me the correct address",
-              "pron": "PLEASE TELL ME THE KORRECT ADRESS",
+              "it": "Wou d'Rief laanscht d'Musel dofteg bléit, den Himmel Wein eis mécht.",
+              "en": "Where the vine fragrant blows along the Moselle, the sky makes wine for us.",
               "words": [
-                "正し",
-                "い住",
-                "所を",
-                "教え",
-                "てく",
-                "ださ",
-                "い"
+                "Wou",
+                "d'Rief",
+                "laanscht",
+                "d'Musel",
+                "dofteg",
+                "bléit,",
+                "den",
+                "Himmel",
+                "Wein",
+                "eis",
+                "mécht."
               ]
             },
             {
-              "it": "深呼吸してから話す",
-              "en": "Take a deep breath before speaking",
-              "pron": "TAKE A DEEP BREETH BEFORE SPEAKING",
+              "it": "Dat ass onst Land, fir dat mir géif hei nidden alles won.",
+              "en": "That is our land, for which we would risk everything here below.",
               "words": [
-                "深",
-                "呼",
-                "吸",
-                "し",
-                "て",
-                "か",
-                "ら",
-                "話",
-                "す"
+                "Dat",
+                "ass",
+                "onst",
+                "Land,",
+                "fir",
+                "dat",
+                "mir",
+                "géif",
+                "hei",
+                "nidden",
+                "alles",
+                "won."
               ]
             },
             {
-              "it": "安堵の表情を浮かべた",
-              "en": "He showed an expression of relief",
-              "pron": "HE SHOWED AN EXPRESHUN OF RILEF",
+              "it": "Behitt du d'Lëtzebuerger Land vum frieme Joch a Leed!",
+              "en": "Protect the Luxembourgish land from foreign yoke and suffering!",
               "words": [
-                "安",
-                "堵",
-                "の",
-                "表",
-                "情",
-                "を",
-                "浮",
-                "か",
-                "べ",
-                "た"
+                "Behitt",
+                "du",
+                "d'Lëtzebuerger",
+                "Land",
+                "vum",
+                "frieme",
+                "Joch",
+                "a",
+                "Leed!"
               ]
             },
             {
-              "it": "一緒に日本語を勉強しましょう",
-              "en": "Let's study Japanese together",
-              "pron": "LETZ STUDEE JAPANESE TAH-GER-NEE",
+              "it": "An looss d'Sonn vun der Fräiheet liichten, fir d'éiweg an d'allerlee!",
+              "en": "And let the sun of freedom shine, for ever and always!",
               "words": [
-                "一緒",
-                "に日",
-                "本語",
-                "を勉",
-                "強し",
-                "まし",
-                "ょう"
+                "An",
+                "looss",
+                "d'Sonn",
+                "vun",
+                "der",
+                "Fräiheet",
+                "liichten,",
+                "fir",
+                "d'éiweg",
+                "an",
+                "d'allerlee!"
               ]
             }
           ]
         },
         {
           "id": 2,
-          "title": "日本語の勉強",
-          "desc": "ドouglasが田中さんと日本語を学び始める",
-          "icon": "📖",
+          "title": "Luxembourg's Land",
+          "desc": "Land, freedom, rivers, sky, homeland",
+          "icon": "🌍",
           "vocab": [
             {
-              "it": "懇願",
-              "en": "beg",
-              "pron": "KEN-goon"
+              "it": "Land",
+              "en": "land",
+              "pron": "LAND"
             },
             {
-              "it": "一緒に",
-              "en": "together",
-              "pron": "SO-ji-kka"
+              "it": "freedom",
+              "en": "freedom",
+              "pron": "FREEDOM"
             },
             {
-              "it": "教える",
-              "en": "to teach",
-              "pron": "KA-oo-ru"
+              "it": "Moselle",
+              "en": "Moselle river",
+              "pron": "MOZEL"
             },
             {
-              "it": "単語",
-              "en": "word",
-              "pron": "DO-oo-goo"
+              "it": "sky",
+              "en": "sky",
+              "pron": "SKY"
             },
             {
-              "it": "文法",
-              "en": "grammar",
-              "pron": "BUN-foo-ma"
-            },
-            {
-              "it": "座り",
-              "en": "to sit",
-              "pron": "ZA-ri"
-            },
-            {
-              "it": "交流",
-              "en": "exchange",
-              "pron": "JO-ru-kyoo"
-            },
-            {
-              "it": "深めていく",
-              "en": "to deepen",
-              "pron": "SO-nyoo-ma-te-i-koo"
+              "it": "homeland",
+              "en": "homeland",
+              "pron": "HOME-LAND"
             }
           ],
           "sentences": [
             {
-              "it": "田中さんは深めていくよ。",
-              "en": "田中 will deepen it.",
+              "it": "Wou d'Rief laanscht d'Musel dofteg bléit, den Himmel Wein eis mécht",
+              "en": "Where the vine fragrant blows along the Moselle, the sky makes wine for us",
               "words": [
-                "田",
-                "中",
-                "さ",
-                "ん",
-                "は",
-                "深",
-                "め",
-                "て",
-                "い",
-                "く",
-                "よ",
-                "。"
+                "Wou",
+                "d'Rief",
+                "laanscht",
+                "d'Musel",
+                "dofteg",
+                "bléit,",
+                "den",
+                "Himmel",
+                "Wein",
+                "eis",
+                "mécht"
               ]
             },
             {
-              "it": "一緒に勉強しましょう。",
-              "en": "Let's study together.",
+              "it": "Behitt du d'Lëtzebuerger Land vum frieme Joch a Leed!",
+              "en": "Protect the Luxembourgish land from foreign yoke and suffering!",
               "words": [
-                "一",
-                "緒",
-                "に",
-                "勉",
-                "強",
-                "し",
-                "ま",
-                "し",
-                "ょ",
-                "う",
-                "。"
+                "Behitt",
+                "du",
+                "d'Lëtzebuerger",
+                "Land",
+                "vum",
+                "frieme",
+                "Joch",
+                "a",
+                "Leed!"
               ]
             },
             {
-              "it": "新しい単語を教えるよ。",
-              "en": "I'll teach you a new word.",
+              "it": "Du hues on als Kand geperrelt, looss eis als Männer fräi",
+              "en": "You cherished us as children, let us be free as men",
               "words": [
-                "新",
-                "し",
-                "い",
-                "単",
-                "語",
-                "を",
-                "教",
-                "え",
-                "る",
-                "よ",
-                "。"
+                "Du",
+                "hues",
+                "on",
+                "als",
+                "Kand",
+                "geperrelt,",
+                "looss",
+                "eis",
+                "als",
+                "Männer",
+                "fräi"
               ]
             },
             {
-              "it": "文法を深めていくよ。",
-              "en": "I'll deepen the grammar.",
+              "it": "An looss d'Sonn vun der Fräiheet liichten, fir d'éiweg an d'allerlee!",
+              "en": "And let the sun of freedom shine, for ever and always!",
               "words": [
-                "文",
-                "法",
-                "を",
-                "深",
-                "め",
-                "て",
-                "い",
-                "く",
-                "よ",
-                "。"
+                "An",
+                "looss",
+                "d'Sonn",
+                "vun",
+                "der",
+                "Fräiheet",
+                "liichten,",
+                "fir",
+                "d'éiweg",
+                "an",
+                "d'allerlee!"
               ]
             },
             {
-              "it": "交流を深めていくよ。",
-              "en": "I'll deepen the exchange.",
+              "it": "Dat ass onst Land, fir dat mir géif hei nidden alles won",
+              "en": "That is our land, for which we would risk everything here below",
               "words": [
-                "交",
-                "流",
-                "を",
-                "深",
-                "め",
-                "て",
-                "い",
-                "く",
-                "よ",
-                "。"
+                "Dat",
+                "ass",
+                "onst",
+                "Land,",
+                "fir",
+                "dat",
+                "mir",
+                "géif",
+                "hei",
+                "nidden",
+                "alles",
+                "won"
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "日本語の勉強",
-          "desc": "日本語を一緒に学びましょう",
-          "icon": "📖",
+          "title": "Luxembourgish Land",
+          "desc": "Luxembourg, rivers, freedom, homeland",
+          "icon": "🌍",
           "vocab": [
             {
-              "it": "懇願",
-              "en": "beg",
-              "pron": "KON-eh-pon"
+              "it": "d'Uelzecht",
+              "en": "the Alzette river",
+              "pron": "d'UH-luh-zet"
             },
             {
-              "it": "教える",
-              "en": "to teach",
-              "pron": "KAH-eh-eh-ru"
+              "it": "d'Wisen",
+              "en": "meadows",
+              "pron": "d'VEE-zun"
             },
             {
-              "it": "単語",
-              "en": "word",
-              "pron": "DAH-noon-goh"
+              "it": "d'Fielsen",
+              "en": "fields",
+              "pron": "d'FEEL-zun"
             },
             {
-              "it": "文法",
-              "en": "grammar",
-              "pron": "BEE-NAH-mah"
+              "it": "d'Sauer",
+              "en": "the Sauer river",
+              "pron": "d'SOW-er"
             },
             {
-              "it": "座り",
-              "en": "to sit",
-              "pron": "ZAH-ree"
-            },
-            {
-              "it": "交流",
-              "en": "exchange",
-              "pron": "JEE-oh-syah"
-            },
-            {
-              "it": "深めていく",
-              "en": "to deepen",
-              "pron": "DEN-suh-meh-tsee-koo"
-            },
-            {
-              "it": "勉強",
-              "en": "study",
-              "pron": "MEE-nyoo-doh"
+              "it": "d'Rief",
+              "en": "vine",
+              "pron": "d'REEF"
             }
           ],
           "sentences": [
             {
-              "it": "田中さんは深めていくことを希望しています。",
-              "en": "Tanaka-san hopes to deepen it.",
+              "it": "Wou d'Uelzecht duurch d'Wisen zéit, duurch d'Fielsen d'Sauer brëcht",
+              "en": "Where the Alzette flows through the meadows, the Sauer breaks through the rocks",
               "words": [
-                "田中",
-                "さん",
-                "は深",
-                "めて",
-                "いく",
-                "こと",
-                "を希",
-                "望し",
-                "てい",
+                "Wou",
+                "d'Uelzecht",
+                "duurch",
+                "d'Wisen",
+                "zéit,",
+                "duurch",
+                "d'Fielsen",
+                "d'Sauer",
+                "brëcht"
+              ]
+            },
+            {
+              "it": "Wou d'Rief laanscht d'Musel dofteg bléit, den Himmel Wein eis mécht",
+              "en": "Where the vine fragrant blows along the Moselle, the sky makes wine for us",
+              "words": [
+                "Wou",
+                "d'Rief",
+                "laanscht",
+                "d'Musel",
+                "dofteg",
+                "bléit,",
+                "den",
+                "Himmel",
+                "Wein",
+                "eis",
+                "mécht"
+              ]
+            },
+            {
+              "it": "Behitt du d'Lëtzebuerger Land vum frieme Joch a Leed!",
+              "en": "Protect the Luxembourgish land from foreign yoke and suffering!",
+              "words": [
+                "Behitt",
+                "du",
+                "d'Lëtzebuerger",
+                "Land",
+                "vum",
+                "frieme",
+                "Joch",
+                "a",
+                "Leed!"
+              ]
+            },
+            {
+              "it": "Du hues on als Kand geperrelt, looss eis als Männer fräi",
+              "en": "You cherished us as children, let us be free as men",
+              "words": [
+                "Du",
+                "hues",
+                "on",
+                "als",
+                "Kand",
+                "geperrelt,",
+                "looss",
+                "eis",
+                "als",
+                "Männer",
+                "fräi"
+              ]
+            },
+            {
+              "it": "An looss d'Sonn vun der Fräiheet liichten, fir d'éiweg an d'allerlee!",
+              "en": "And let the sun of freedom shine, for ever and always!",
+              "words": [
+                "An",
+                "looss",
+                "d'Sonn",
+                "vun",
+                "der",
+                "Fräiheet",
+                "liichten,",
+                "fir",
+                "d'éiweg",
+                "an",
+                "d'allerlee!"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1038945,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2350,
+        "totalCompletionTokens": 1158,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 326367,
+            "promptTokens": 708,
+            "completionTokens": 369
+          },
+          {
+            "lessonNum": 2,
+            "ms": 301637,
+            "promptTokens": 748,
+            "completionTokens": 354
+          },
+          {
+            "lessonNum": 3,
+            "ms": 370549,
+            "promptTokens": 773,
+            "completionTokens": 403
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T10:39:22.420Z",
+      "updatedAt": "2026-05-07T10:39:22.420Z"
+    },
+    {
+      "topic": "National Dishes of Kenya",
+      "topicEmoji": "🇰🇪",
+      "userTopic": "national dishes of Kenia",
+      "lang": "sw",
+      "difficulty": 1,
+      "storyLen": 500,
+      "story": "Mimi, Aisha, nilikuwa na hamu kubwa. Hamu ya kujaribu vyakula vya Kenya, vyakula ambavyo vinawasilisha utaalam wa nchi yangu. Mama yangu, ambaye alijua sana kuhusu vyakula, aliniambia kuhusu vyakula vyenye umaarufu sana. \"Mchele wa wali,\" alisema, \"ni chakula cha kila siku, na mara nyingi kinatumiwa na familia nzima.\"\n\nNgozi ya wali, yenye harufu tamu, ilikuwa kitu ambacho nilitamani sana. Niliona mwananchi mmoja, Mama Njeri, akitumia wali kwa njia iliyo tofauti. Alikuwa amechoma wali na kumwaga maji, na kisha alikuwa amepikia kwenye sufuria. \"Hii ni 'wali wa Njeri',\" aliniambia, \"na ni chakula cha kupendeza sana.\"\n\nBaada ya kula wali wa Njeri, niligundua kuwa Mama Njeri alikuwa sahi. Wali ilikuwa laini na tamu, na ilikuwa na harufu nzuri. Niligundua kuwa wali ni chakula muhimu sana katika utamaduni wa Kenya.\n\nSiku nyingine, nilipokuwa kwenye soko, nilikutana na Mama Zawadi. Alikuwa anauza \"Ugali na Nyama Choma\". Ugali, chakula cha mchele, ilikuwa laini na tamu, na ilikuwa imepikwa vizuri. Nyama choma, nyama iliyochomwa kwenye moto, ilikuwa tamu na harajiko.\n\n\"Ugali na Nyama Choma ni vyakula vyenye umaarufu sana,\" aliniambia Mama Zawadi. \"Ni vyakula ambavyo vinawasilisha utaalam wa Kenya.\"\n\nNilikuwa na furaha sana. Nilikuwa nimejifunza kuhusu vyakula vya Kenya, na nilikuwa na furaha sana. Nilikuwa nimejifunza kuhusu utamaduni wa Kenya, na nilikuwa na furaha sana. Nilikuwa nimejifunza kuhusu watu wa Kenya, na nilikuwa na furaha sana.",
+      "storyLang": "sw",
+      "storyPrompt": "You are a creative writer and Swahili language teacher. Write a short story directly in Swahili on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Swahili.\n\nWrite a story for the topic: \"national dishes of Kenia\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "national dishes of Kenia",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "Mchele",
+              "en": "Rice",
+              "pron": "CHEH-leh"
+            },
+            {
+              "it": "Wali",
+              "en": "Duck",
+              "pron": "WAHL-ee"
+            },
+            {
+              "it": "Familia",
+              "en": "Family",
+              "pron": "FAH-mee-lah"
+            },
+            {
+              "it": "Kula",
+              "en": "To eat",
+              "pron": "KOO-lah"
+            },
+            {
+              "it": "Mama",
+              "en": "Mother",
+              "pron": "MA-mah"
+            },
+            {
+              "it": "Mwananchi",
+              "en": "Citizen",
+              "pron": "MWAH-nah-chee"
+            },
+            {
+              "it": "Njeri",
+              "en": "A name",
+              "pron": "N-JEH-ree"
+            },
+            {
+              "it": "Choma",
+              "en": "To roast",
+              "pron": "CHO-mah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Swahili sentence",
+              "en": "English translation",
+              "words": [
+                "Swahili",
+                "sentence"
+              ]
+            },
+            {
+              "it": "Mchele wa wali ni chakula maarufu",
+              "en": "Duck rice is a popular dish",
+              "words": [
+                "Mchele",
+                "wa",
+                "wali",
+                "ni",
+                "chakula",
+                "maarufu"
+              ]
+            },
+            {
+              "it": "Familia nzima hutumia mchele",
+              "en": "The whole family eats rice",
+              "words": [
+                "Familia",
+                "nzima",
+                "hutumia",
+                "mchele"
+              ]
+            },
+            {
+              "it": "Mama Njeri anatumia wali kwa njia tofauti",
+              "en": "Mama Njeri uses duck in a different way",
+              "words": [
+                "Mama",
+                "Njeri",
+                "anatumia",
+                "wali",
+                "kwa",
+                "njia",
+                "tofauti"
+              ]
+            },
+            {
+              "it": "Wali wa Njeri ni kitamu",
+              "en": "Njeri's duck is delicious",
+              "words": [
+                "Wali",
+                "wa",
+                "Njeri",
+                "ni",
+                "kitamu"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Lesson 2",
+          "desc": "national dishes of Kenia",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "wali",
+              "en": "beef",
+              "pron": "WA-lee"
+            },
+            {
+              "it": "sufuria",
+              "en": "pot",
+              "pron": "Soo-foo-REE-ah"
+            },
+            {
+              "it": "utaalam",
+              "en": "cuisine",
+              "pron": "oo-TAH-lahm"
+            },
+            {
+              "it": "chakula",
+              "en": "food",
+              "pron": "cha-KOO-lah"
+            },
+            {
+              "it": "harufu",
+              "en": "smell",
+              "pron": "ha-RU-fu"
+            },
+            {
+              "it": "kila siku",
+              "en": "every day",
+              "pron": "KEE-lah SEE-koo"
+            },
+            {
+              "it": "mwanzo",
+              "en": "beginning",
+              "pron": "mwan-ZO"
+            },
+            {
+              "it": "kupika",
+              "en": "to cook",
+              "pron": "ko-PEE-kah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Swahili sentence",
+              "en": "English translation",
+              "words": [
+                "Swahili",
+                "sentence"
+              ]
+            },
+            {
+              "it": "\"Wali wa Njeri\" ni upishi maarufu",
+              "en": "\"Njeri's beef\" is a famous dish",
+              "words": [
+                "\"Wali",
+                "wa",
+                "Njeri\"",
+                "ni",
+                "upishi",
+                "maarufu"
+              ]
+            },
+            {
+              "it": "Mimi nimeamua kupika \"wali\"",
+              "en": "I have decided to cook \"beef\"",
+              "words": [
+                "Mimi",
+                "nimeamua",
+                "kupika",
+                "\"wali\""
+              ]
+            },
+            {
+              "it": "\"Sufuria\" ni chombo muhimu",
+              "en": "\"Pot\" is an important tool",
+              "words": [
+                "\"Sufuria\"",
+                "ni",
+                "chombo",
+                "muhimu"
+              ]
+            },
+            {
+              "it": "\"Harufu\" ya wali ni tamu",
+              "en": "The smell of beef is sweet",
+              "words": [
+                "\"Harufu\"",
+                "ya",
+                "wali",
+                "ni",
+                "tamu"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Lesson 3",
+          "desc": "national dishes of Kenia",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "Mchele",
+              "en": "Rice",
+              "pron": "CHEH-leh"
+            },
+            {
+              "it": "Ngozi",
+              "en": "Skin",
+              "pron": "NGAH-zhee"
+            },
+            {
+              "it": "Kichwa",
+              "en": "Head",
+              "pron": "KEE-chwah"
+            },
+            {
+              "it": "Kufanya",
+              "en": "To do",
+              "pron": "KOO-fah-nah"
+            },
+            {
+              "it": "Kufurahia",
+              "en": "To enjoy",
+              "pron": "KOO-foo-RAH-ee-ah"
+            },
+            {
+              "it": "Mzuri",
+              "en": "Good",
+              "pron": "M-ZOO-ree"
+            },
+            {
+              "it": "Kujua",
+              "en": "To know",
+              "pron": "KOO-YOO-ah"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Swahili sentence",
+              "en": "English translation",
+              "words": [
+                "Swahili",
+                "sentence"
+              ]
+            },
+            {
+              "it": "Ngozi ya wali ni Mzuri",
+              "en": "The skin of the rice is good",
+              "words": [
+                "Ngozi",
+                "ya",
+                "wali",
+                "ni",
+                "Mzuri"
+              ]
+            },
+            {
+              "it": "Mimi nafurahia wali wa Njeri",
+              "en": "I enjoy Njeri's rice",
+              "words": [
+                "Mimi",
+                "nafurahia",
+                "wali",
+                "wa",
+                "Njeri"
+              ]
+            },
+            {
+              "it": "Kufanya wali ni kazi",
+              "en": "Making rice is work",
+              "words": [
+                "Kufanya",
+                "wali",
+                "ni",
+                "kazi"
+              ]
+            },
+            {
+              "it": "Kujua wali ni muhimu",
+              "en": "Knowing rice is important",
+              "words": [
+                "Kujua",
+                "wali",
+                "ni",
+                "muhimu"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 573295,
+        "backend": "ollama",
+        "model": "translategemma",
+        "lessonFormat": "table",
+        "totalPromptTokens": 1574,
+        "totalCompletionTokens": 1434,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 122120,
+            "promptTokens": 411,
+            "completionTokens": 264
+          },
+          {
+            "lessonNum": 2,
+            "ms": 128556,
+            "promptTokens": 443,
+            "completionTokens": 279
+          },
+          {
+            "lessonNum": 3,
+            "ms": 151977,
+            "promptTokens": 470,
+            "completionTokens": 363
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T09:07:54.586Z",
+      "updatedAt": "2026-05-07T09:07:54.586Z"
+    },
+    {
+      "topic": "Luxembourg Cuisine Exploration",
+      "topicEmoji": "🍽️",
+      "userTopic": "we go for dinner in luxembourg looking for local cuisine",
+      "lang": "lb",
+      "difficulty": 1,
+      "storyLen": 500,
+      "story": "D'Abend sinn ech an der Stad, entschëllegt fir e richtegt luxembueresche Meele. D'Strooss ass voll, an ech fënnef esch, fir e freindlech Restaurant. Nach eppes fir d'Sicht, ech wielt e Restaurant, dat fir seng authentesch Këche bekannt ass.\n\nAm Restaurant, ech gëtt vun engem freundlechem Wär. D'Atmosphäre ass heescht, mat engem subtilem, aber elegantem Design. Nach eppes fir d'Sicht, ech wielt e Table am Heck, wou ech de Kierf besser gesinn konnt.\n\nD'Menü ass voll, mat engem Ulass vu lokale Spezialitäten. Ech entscheed, fir de \"Juddmat\" mat engem Glas Rotwein ze probéieren. D'Juddmat ass perfekt zuberejtet, mat engem zartem, aber trotzdem kräftegem Geschmack.\n\nWährend ech de Meele, ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal. Si sinn all super, an ech fënnef de Kierf an de Servierpersonal",
+      "storyLang": "lb",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch.\n\nWrite a story for the topic: \"we go for dinner in luxembourg looking for local cuisine\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "we go for dinner in luxembourg looking for local cuisine",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "Lëtzebuergesch word",
+              "en": "English meaning",
+              "pron": "Pronunciation for English speakers"
+            },
+            {
+              "it": "Wann",
+              "en": "When",
+              "pron": "wan"
+            },
+            {
+              "it": "Stad",
+              "en": "City",
+              "pron": "STADT"
+            },
+            {
+              "it": "Meele",
+              "en": "Meal",
+              "pron": "MEEL"
+            },
+            {
+              "it": "Strooss",
+              "en": "Street",
+              "pron": "STROOS"
+            },
+            {
+              "it": "Restaurant",
+              "en": "Restaurant",
+              "pron": "RESTAURANT"
+            },
+            {
+              "it": "Këche",
+              "en": "Kitchen",
+              "pron": "KEH"
+            },
+            {
+              "it": "Menü",
+              "en": "Menu",
+              "pron": "MEH-nyoo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Lëtzebuergesch sentence",
+              "en": "English translation",
+              "words": [
+                "Lëtzebuergesch",
+                "sentence"
+              ]
+            },
+            {
+              "it": "Wann ech an der Stad",
+              "en": "When I am in the city",
+              "words": [
+                "Wann",
+                "ech",
+                "an",
+                "der",
+                "Stad"
+              ]
+            },
+            {
+              "it": "Ech fënnef esch",
+              "en": "I am looking for",
+              "words": [
+                "Ech",
+                "fënnef",
+                "esch"
+              ]
+            },
+            {
+              "it": "Ech wielt e Restaurant",
+              "en": "I choose a restaurant",
+              "words": [
+                "Ech",
+                "wielt",
+                "e",
+                "Restaurant"
+              ]
+            },
+            {
+              "it": "D'Menü ass voll",
+              "en": "The menu is full",
+              "words": [
+                "D'Menü",
+                "ass",
+                "voll"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Lesson 2",
+          "desc": "we go for dinner in luxembourg looking for local cuisine",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "Lëtzebuergesch word",
+              "en": "English meaning",
+              "pron": "Pronunciation for English speakers"
+            },
+            {
+              "it": "Juddmat",
+              "en": "dish",
+              "pron": "YUUD-maht"
+            },
+            {
+              "it": "Rotwein",
+              "en": "red wine",
+              "pron": "ROT-vin"
+            },
+            {
+              "it": "Wär",
+              "en": "waiter",
+              "pron": "VAYR"
+            },
+            {
+              "it": "Kierf",
+              "en": "view",
+              "pron": "KAIRF"
+            },
+            {
+              "it": "Atmosphäär",
+              "en": "atmosphere",
+              "pron": "ATM-os-feer"
+            },
+            {
+              "it": "Ulass",
+              "en": "menu",
+              "pron": "U-lass"
+            },
+            {
+              "it": "authentesch",
+              "en": "authentic",
+              "pron": "au-then-TISH"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Lëtzebuergesch sentence",
+              "en": "English translation",
+              "words": [
+                "Lëtzebuergesch",
+                "sentence"
+              ]
+            },
+            {
+              "it": "Ech entscheed, fir de \"Juddmat\" mat engem Glas Rotwein ze probéieren.",
+              "en": "I decided to try the \"Juddmat\" with a glass of red wine.",
+              "words": [
+                "Ech",
+                "entscheed,",
+                "fir",
+                "de",
+                "\"Juddmat\"",
+                "mat",
+                "engem",
+                "Glas",
+                "Rotwein",
+                "ze",
+                "probéieren."
+              ]
+            },
+            {
+              "it": "D'Juddmat ass perfekt.",
+              "en": "The \"Juddmat\" is perfect.",
+              "words": [
+                "D'Juddmat",
+                "ass",
+                "perfekt."
+              ]
+            },
+            {
+              "it": "D'Atmosphäär ass heescht, mat engem subtilem, aber elegantem Design.",
+              "en": "The atmosphere is cozy, with a subtle, but elegant design.",
+              "words": [
+                "D'Atmosphäär",
+                "ass",
+                "heescht,",
+                "mat",
+                "engem",
+                "subtilem,",
+                "aber",
+                "elegantem",
+                "Design."
+              ]
+            },
+            {
+              "it": "Ech wielt e Table am Heck, wou ech de Kierf besser gesinn konnt.",
+              "en": "I chose a table in the back, where I could see the view better.",
+              "words": [
+                "Ech",
+                "wielt",
+                "e",
+                "Table",
+                "am",
+                "Heck,",
+                "wou",
+                "ech",
+                "de",
+                "Kierf",
+                "besser",
+                "gesinn",
+                "konnt."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Lesson 3",
+          "desc": "we go for dinner in luxembourg looking for local cuisine",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "Lëtzebuergesch word",
+              "en": "English meaning",
+              "pron": "Pronunciation for English speakers"
+            },
+            {
+              "it": "Juddmat",
+              "en": "Turnip dish",
+              "pron": "YUUD-maht"
+            },
+            {
+              "it": "Rotwein",
+              "en": "Red wine",
+              "pron": "ROT-vin"
+            },
+            {
+              "it": "Wär",
+              "en": "Waiter",
+              "pron": "VAYR"
+            },
+            {
+              "it": "Kierf",
+              "en": "Table",
+              "pron": "KYERF"
+            },
+            {
+              "it": "Ulass",
+              "en": "Menu",
+              "pron": "O-lass"
+            },
+            {
+              "it": "Design",
+              "en": "Design",
+              "pron": "DEZ-ign"
+            },
+            {
+              "it": "Elegant",
+              "en": "Elegant",
+              "pron": "E-LE-gant"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Lëtzebuergesch sentence",
+              "en": "English translation",
+              "words": [
+                "Lëtzebuergesch",
+                "sentence"
+              ]
+            },
+            {
+              "it": "Ech wielt de Juddmat",
+              "en": "I choose the turnip dish",
+              "words": [
+                "Ech",
+                "wielt",
+                "de",
+                "Juddmat"
+              ]
+            },
+            {
+              "it": "D'Atmosphäär ass heescht",
+              "en": "The atmosphere is cozy",
+              "words": [
+                "D'Atmosphäär",
+                "ass",
+                "heescht"
+              ]
+            },
+            {
+              "it": "Ech wielt e Kierf am Heck",
+              "en": "I choose a table in the back",
+              "words": [
+                "Ech",
+                "wielt",
+                "e",
+                "Kierf",
+                "am",
+                "Heck"
+              ]
+            },
+            {
+              "it": "D'Menü ass voll",
+              "en": "The menu is full",
+              "words": [
+                "D'Menü",
+                "ass",
+                "voll"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 695907,
+        "backend": "ollama",
+        "model": "translategemma",
+        "lessonFormat": "table",
+        "totalPromptTokens": 1629,
+        "totalCompletionTokens": 1945,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 120294,
+            "promptTokens": 417,
+            "completionTokens": 276
+          },
+          {
+            "lessonNum": 2,
+            "ms": 138090,
+            "promptTokens": 453,
+            "completionTokens": 346
+          },
+          {
+            "lessonNum": 3,
+            "ms": 128705,
+            "promptTokens": 485,
+            "completionTokens": 306
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T08:25:40.826Z",
+      "updatedAt": "2026-05-07T08:25:40.826Z"
+    },
+    {
+      "topic": "Communication Issues",
+      "topicEmoji": "💬",
+      "userTopic": "douglas has problems communicating with the administrator",
+      "lang": "ja",
+      "difficulty": 1,
+      "storyLen": 750,
+      "story": "秋田県の小さな町。ドouglasは新しい生活に慣れるために、町の行政事務所に足を運んだ。彼は新しい免許証を手に入れたばかりで、これからは日本語でより多くのことを通じてコミュニケーションを取らなければならないと感じていた。\n\n「こんにちは、ドouglasさん。何かお手伝いできることがありますか？」と、事務所の受付の女性が微笑んで言った。\n\n「はい、ちょっと質問があります。」ドouglasは慎重に言葉を選んだ。「私の住所変更手続きをしたいんですが、どうすればいいですか？」\n\n受付の女性は少し困った表情になり、「ドouglasさん、ちょっと待ってください。住所変更はちょっと複雑な手続きです。」と説明した。「まず、こちらの書類が必要です。」\n\nドouglasは手探りで書類を探し、必要なものを提出した。しかし、彼は手続きの流れを理解するのが難しかった。「すみません、もう少し詳しく説明していただけますか？」と彼は頼み込んだ。\n\n「もちろんです。」受付の女性は丁寧に説明を始めた。「まず、こちらの申請書を完成させなければなりません。その後、新しい住所の証明書が必要です。」\n\nドouglasは頭を抱えた。「でも、私はまだ新しい住所の証明書を持っていません。」彼は困った表情を浮かべた。\n\n「それは大丈夫です。」受付の女性は優しく言った。「私たちはここに住所変更の手続きを済ませてから、必要な書類を取得する手助けをします。」\n\nドouglasは安堵の表情を見せ、「ありがとうございます。」と答えた。彼は受付の女性の助けを受けて、手続きを進めていった。その過程で、彼は日本語のコミュニケーション能力を磨き、新たな生活に適応していく道筋を見つけていった。",
+      "storyLang": "ja",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 7-8 paragraphs, under 750 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate every kanji with furigana using HTML ruby tags, e.g. <ruby>日本語<rt>にほんご</rt></ruby>. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n東京の喧騒から離れた秋田県の小さな町。ドouglasは津軽半島の寒さに身を包み、新しい挑戦に備えていた。彼は手を繋いだ友人に微笑み、「今日は免許証を交換に来ることにしたんだ。」と告げた。\n\n「うん、ドouglas、頑張ってね。」友人は応援の言葉を返した。二人は手を繋ぎ、慎重に歩いた。町は静かで、雪が積もった道は滑りやすく、足元には気をつける必要があった。\n\n「今日は日本語で話そうよ。」ドouglasが言葉を発した。「免許証の手続きは難しいかもしれないから、日本語を勉強しておいた方がいいかもしれないな。」\n\n二人は町の中心部へ向かい、運転免許センターに到着した。建物は古びた外観を持ちながらも、中は整然と整理されており、受付の女性が元気な声で声をかけた。「こんにちは、免許証の手続きですか？ こちらへどうぞ。」\n\nドouglasは慎重に手続きを進めていった。書類の確認、写真の撮影、そして最後に実技試験。彼は緊張しながらも、友人の励ましを思い出し、試験に挑んだ。\n\n「本当に大変だったな。」試験が終わってから、友人が言った。「でも、ドouglas、君は頑張ったよ。」\n\n二人は満足した表情で、新しい日本語の免許証を受け取った。その証は、彼らの友情と挑戦の証明だった。雪の音が静かな夜を彩り、二人は満足した表情で町を歩き出した。\n\nNew topic: \"douglas has problems communicating with the administrator\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "License Conversion",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "手続きの会話",
+          "desc": "新しい住所手続きとコミュニケーション",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "it": "手続き",
+              "en": "procedure",
+              "pron": "けんちく"
+            },
+            {
+              "it": "申請書",
+              "en": "application form",
+              "pron": "しんせいしょ"
+            },
+            {
+              "it": "証明書",
+              "en": "certificate",
+              "pron": "しょうめいしょ"
+            },
+            {
+              "it": "住所",
+              "en": "address",
+              "pron": "じゅうしょ"
+            },
+            {
+              "it": "困る",
+              "en": "to be troubled",
+              "pron": "こまる"
+            },
+            {
+              "it": "説明",
+              "en": "explanation",
+              "pron": "せつめい"
+            },
+            {
+              "it": "丁寧",
+              "en": "polite",
+              "pron": "ていねい"
+            },
+            {
+              "it": "手助け",
+              "en": "help",
+              "pron": "てすけ"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "手続き[けんちく]をしたいです。",
+              "en": "I want to do the procedure.",
+              "words": [
+                "手続",
+                "きけ",
+                "んち",
+                "くを",
+                "した",
+                "いで",
+                "す。"
+              ]
+            },
+            {
+              "it": "申請書[しんせいしょ]を完成させます。",
+              "en": "I will complete the application form.",
+              "words": [
+                "申請",
+                "書し",
+                "んせ",
+                "いし",
+                "ょを",
+                "完成",
+                "させ",
                 "ます",
                 "。"
               ]
             },
             {
-              "it": "ドouglasは新しい単語を覚えました。",
-              "en": "Douglas learned a new word.",
+              "it": "証明書[しょうめいしょ]を手に入れます。",
+              "en": "I will get the certificate.",
               "words": [
-                "ドo",
-                "ug",
-                "la",
-                "sは",
-                "新し",
-                "い単",
-                "語を",
-                "覚え",
-                "まし",
-                "た。"
+                "証明",
+                "書し",
+                "ょう",
+                "めい",
+                "しょ",
+                "を手",
+                "に入",
+                "れま",
+                "す。"
               ]
             },
             {
-              "it": "文法を教えることにしました。",
-              "en": "We decided to teach grammar.",
+              "it": "困る[こまる]ことがあります。",
+              "en": "I am troubled by something.",
               "words": [
-                "文法",
-                "を教",
-                "える",
-                "こと",
-                "にし",
-                "まし",
-                "た。"
-              ]
-            },
-            {
-              "it": "一緒に座りましょう。",
-              "en": "Let's sit together.",
-              "words": [
-                "一",
-                "緒",
-                "に",
-                "座",
-                "り",
-                "ま",
-                "し",
-                "ょ",
-                "う",
+                "困る",
+                "こま",
+                "るこ",
+                "とが",
+                "あり",
+                "ます",
                 "。"
               ]
             },
             {
-              "it": "交流を深めていきましょう。",
-              "en": "Let's deepen our exchange.",
+              "it": "説明[せつめい]を丁寧[ていねい]に聞きます。",
+              "en": "I listen to the explanation politely.",
               "words": [
-                "交流",
-                "を深",
-                "めて",
-                "いき",
+                "説明",
+                "せつ",
+                "めい",
+                "を丁",
+                "寧て",
+                "いね",
+                "いに",
+                "聞き",
+                "ます",
+                "。"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "手続きの質問",
+          "desc": "ドouglasが手続きについて質問する",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "it": "手続き[しゅけい]",
+              "en": "procedure",
+              "pron": "しゅけい"
+            },
+            {
+              "it": "説明[せつめい]",
+              "en": "explanation",
+              "pron": "せつめい"
+            },
+            {
+              "it": "丁寧[ていねい]",
+              "en": "polite",
+              "pron": "ていねい"
+            },
+            {
+              "it": "手助け[てすけ]",
+              "en": "help",
+              "pron": "てすけ"
+            },
+            {
+              "it": "困る[こまる]",
+              "en": "to be troubled",
+              "pron": "こまる"
+            },
+            {
+              "it": "証明書[しょうめいしょ]",
+              "en": "certificate",
+              "pron": "しょうめいしょ"
+            },
+            {
+              "it": "申請書[しんせいしょ]",
+              "en": "application form",
+              "pron": "しんせいしょ"
+            },
+            {
+              "it": "住所[じゅうしょ]",
+              "en": "address",
+              "pron": "じゅうしょ"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "手続き[しゅけい]をしたいんですが、どうすればいいですか？",
+              "en": "May I ask how to proceed?",
+              "words": [
+                "手続",
+                "きし",
+                "ゅけ",
+                "いを",
+                "した",
+                "いん",
+                "です",
+                "が、",
+                "どう",
+                "すれ",
+                "ばい",
+                "いで",
+                "すか",
+                "？"
+              ]
+            },
+            {
+              "it": "説明[せつめい]していただけますか？",
+              "en": "Could you explain?",
+              "words": [
+                "説明",
+                "せつ",
+                "めい",
+                "して",
+                "いた",
+                "だけ",
+                "ます",
+                "か？"
+              ]
+            },
+            {
+              "it": "丁寧[ていねい]に説明[せつめい]していただけますか？",
+              "en": "Could you explain politely?",
+              "words": [
+                "丁寧",
+                "てい",
+                "ねい",
+                "に説",
+                "明せ",
+                "つめ",
+                "いし",
+                "てい",
+                "ただ",
+                "けま",
+                "すか",
+                "？"
+              ]
+            },
+            {
+              "it": "困る[こまる]ので、もう少し詳しく説明[せつめい]していただけますか？",
+              "en": "I'm troubled, so could you explain more detailedly?",
+              "words": [
+                "困る",
+                "こま",
+                "るの",
+                "で、",
+                "もう",
+                "少し",
+                "詳し",
+                "く説",
+                "明せ",
+                "つめ",
+                "いし",
+                "てい",
+                "ただ",
+                "けま",
+                "すか",
+                "？"
+              ]
+            },
+            {
+              "it": "手助け[てすけ]していただけますか？",
+              "en": "Could you give me a hand?",
+              "words": [
+                "手助",
+                "けて",
+                "すけ",
+                "して",
+                "いた",
+                "だけ",
+                "ます",
+                "か？"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "手続きの問題",
+          "desc": "ドouglasが手続きで困る",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "it": "手続き",
+              "en": "procedure",
+              "pron": "しゅけい"
+            },
+            {
+              "it": "説明",
+              "en": "explanation",
+              "pron": "せつめい"
+            },
+            {
+              "it": "丁寧",
+              "en": "polite",
+              "pron": "ていねい"
+            },
+            {
+              "it": "手助け",
+              "en": "help",
+              "pron": "てすけ"
+            },
+            {
+              "it": "困る",
+              "en": "to be troubled",
+              "pron": "こまる"
+            },
+            {
+              "it": "証明書",
+              "en": "certificate",
+              "pron": "しょうめいしょ"
+            },
+            {
+              "it": "申請書",
+              "en": "application form",
+              "pron": "しんせいしょ"
+            },
+            {
+              "it": "住所",
+              "en": "address",
+              "pron": "じゅうしょ"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "手続き[しゅけい]が難しいです。",
+              "en": "It's difficult to do the procedure.",
+              "words": [
+                "手続",
+                "きし",
+                "ゅけ",
+                "いが",
+                "難し",
+                "いで",
+                "す。"
+              ]
+            },
+            {
+              "it": "説明[せつめい]を丁寧[ていねい]に聞きました。",
+              "en": "I listened to the explanation politely.",
+              "words": [
+                "説明",
+                "せつ",
+                "めい",
+                "を丁",
+                "寧て",
+                "いね",
+                "いに",
+                "聞き",
                 "まし",
+                "た。"
+              ]
+            },
+            {
+              "it": "手助け[てすけ]を頼みました。",
+              "en": "I asked for help.",
+              "words": [
+                "手助",
+                "けて",
+                "すけ",
+                "を頼",
+                "みま",
+                "した",
+                "。"
+              ]
+            },
+            {
+              "it": "困る[こまる]ことがあります。",
+              "en": "I'm having trouble.",
+              "words": [
+                "困る",
+                "こま",
+                "るこ",
+                "とが",
+                "あり",
+                "ます",
+                "。"
+              ]
+            },
+            {
+              "it": "住所[じゅうしょ]の証明書[しょうめいしょ]がありません。",
+              "en": "I don't have the certificate for my address.",
+              "words": [
+                "住所",
+                "じゅ",
+                "うし",
+                "ょの",
+                "証明",
+                "書し",
                 "ょう",
+                "めい",
+                "しょ",
+                "があ",
+                "りま",
+                "せん",
                 "。"
               ]
             }
@@ -401,34 +1490,35 @@
         }
       ],
       "generationStats": {
-        "totalMs": 1625471,
+        "totalMs": 1646619,
         "backend": "ollama",
         "model": "qwen2.5:7b",
-        "totalPromptTokens": 4257,
-        "totalCompletionTokens": 1513,
+        "lessonFormat": "json",
+        "totalPromptTokens": 4412,
+        "totalCompletionTokens": 1605,
         "lessons": [
           {
             "lessonNum": 1,
-            "ms": 413482,
-            "promptTokens": 1113,
-            "completionTokens": 369
+            "ms": 394545,
+            "promptTokens": 1140,
+            "completionTokens": 358
           },
           {
             "lessonNum": 2,
-            "ms": 431389,
-            "promptTokens": 1185,
-            "completionTokens": 325
+            "ms": 438731,
+            "promptTokens": 1206,
+            "completionTokens": 431
           },
           {
             "lessonNum": 3,
-            "ms": 435110,
-            "promptTokens": 1238,
-            "completionTokens": 331
+            "ms": 447267,
+            "promptTokens": 1308,
+            "completionTokens": 365
           }
         ]
       },
-      "generatedAt": "2026-05-07T07:11:17.192Z",
-      "updatedAt": "2026-05-07T07:11:17.192Z"
+      "generatedAt": "2026-05-07T07:41:48.767Z",
+      "updatedAt": "2026-05-07T07:41:48.767Z"
     },
     {
       "topic": "License Conversion",
@@ -19777,6 +20867,52 @@
       "topic": "Sulfur Water Spa Smell",
       "type": "story",
       "flaggedAt": "2026-05-06T10:55:04.595Z"
+    },
+    "Luxembourg_Cuisine_Exploration:order:Lëtzebuergesch_sentence": {
+      "topic": "Luxembourg Cuisine Exploration",
+      "type": "order",
+      "it": "Lëtzebuergesch sentence",
+      "en": "English translation",
+      "correct": "Lëtzebuergesch sentence",
+      "choices": [],
+      "words": [
+        "Ech",
+        "Restaurant",
+        "sentence",
+        "Wann",
+        "Lëtzebuergesch"
+      ],
+      "flaggedAt": "2026-05-07T08:28:06.453Z"
+    },
+    "a_poem:mcq_en_it:freedom": {
+      "topic": "a poem",
+      "type": "mcq_en_it",
+      "it": "freedom",
+      "en": "freedom",
+      "correct": "freedom",
+      "choices": [
+        "Alzette",
+        "freedom",
+        "Moselle",
+        "Sauer"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-07T10:42:06.387Z"
+    },
+    "a_poem:listen_mcq:freedom": {
+      "topic": "a poem",
+      "type": "listen_mcq",
+      "it": "freedom",
+      "en": "",
+      "correct": "freedom",
+      "choices": [
+        "Moselle river",
+        "Alzette river",
+        "freedom",
+        "Sauer river"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-07T10:43:30.733Z"
     }
   }
 }
