@@ -1,6 +1,436 @@
 {
   "lessons": [
     {
+      "topic": "Communication Issues",
+      "topicEmoji": "💬",
+      "userTopic": "douglas has problems communicating with the administrator",
+      "lang": "ja",
+      "difficulty": 1,
+      "storyLen": 750,
+      "story": "ドouglasは新しい免許証を持って、町の中心部にある小さな会社へと向かった。ドouglasは緊張しながら、ドアをノックし、内側から声が聞こえた。「はい、誰ですか？」ドouglasは深呼吸して、扉を開いた。\n\n「あ、ドouglasさんですね。何か用ですか？」会社の管理者、田中さんと呼ばれる男性は、ドouglasの新しい免許証を見て驚いた表情を浮かべた。「これは素晴らしいですね。」\n\n「ありがとうございます。でも、田中さん、ちょっと困っています。」ドouglasは慎重に言葉を選んで続けた。「実は、この免許証の情報が少し間違っているんです。」\n\n「ええ、それは大変ですね。」田中さんは真剣な表情で言った。「でも、すぐに修正します。まずは、どの情報が間違っているのか詳しく説明していただけますか？」\n\n「はい、その通りです。」ドouglasは深呼吸して、間違った情報を説明した。「私の住所が間違っています。正確な住所を教えていただけますか？」\n\n「もちろんです。」田中さんはパソコンを開き、ドouglasの情報を修正した。「これで、正しい情報が反映されました。」\n\n「ありがとうございます。」ドouglasは安堵の表情を浮かべた。「でも、田中さん、もう一つお願いがあります。」\n\n「何でもおっしゃってください。」田中さんは親切な笑顔で言った。\n\n「実は、私の日本語がまだ足りないんです。田中さん、一緒に日本語を勉強していただけませんか？」ドouglasは懇願した。\n\n「もちろんです。ドouglasさん、一緒に勉強しましょう。」田中さんは喜んで答えた。「では、今から始めましょうか。」\n\n二人は座り、田中さんが教える日本語の単語や文法を学び始めた。ドouglasは新しい免許証の問題を解決し、同時に新しい友人との交流を楽しみながら、日本語の学習を深めていった。",
+      "storyLang": "ja",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 7-8 paragraphs, under 750 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\n東京の喧騒から離れた秋田県の小さな町。ドouglasは津軽半島の寒さに身を包み、新しい挑戦に備えていた。彼は手を繋いだ友人に微笑み、「今日は免許証を交換に来ることにしたんだ。」と告げた。\n\n「うん、ドouglas、頑張ってね。」友人は応援の言葉を返した。二人は手を繋ぎ、慎重に歩いた。町は静かで、雪が積もった道は滑りやすく、足元には気をつける必要があった。\n\n「今日は日本語で話そうよ。」ドouglasが言葉を発した。「免許証の手続きは難しいかもしれないから、日本語を勉強しておいた方がいいかもしれないな。」\n\n二人は町の中心部へ向かい、運転免許センターに到着した。建物は古びた外観を持ちながらも、中は整然と整理されており、受付の女性が元気な声で声をかけた。「こんにちは、免許証の手続きですか？ こちらへどうぞ。」\n\nドouglasは慎重に手続きを進めていった。書類の確認、写真の撮影、そして最後に実技試験。彼は緊張しながらも、友人の励ましを思い出し、試験に挑んだ。\n\n「本当に大変だったな。」試験が終わってから、友人が言った。「でも、ドouglas、君は頑張ったよ。」\n\n二人は満足した表情で、新しい日本語の免許証を受け取った。その証は、彼らの友情と挑戦の証明だった。雪の音が静かな夜を彩り、二人は満足した表情で町を歩き出した。\n\nNew topic: \"douglas has problems communicating with the administrator\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "License Conversion",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "日本語の会話",
+          "desc": "免許証の誤り、日本語の学習",
+          "icon": "📚",
+          "vocab": [
+            {
+              "it": "間違っている",
+              "en": "wrong",
+              "pron": "WRONG"
+            },
+            {
+              "it": "住所",
+              "en": "address",
+              "pron": "ADRESS"
+            },
+            {
+              "it": "情報",
+              "en": "information",
+              "pron": "INFORMEYSHUN"
+            },
+            {
+              "it": "修正",
+              "en": "correction",
+              "pron": "KORRISHUN"
+            },
+            {
+              "it": "深呼吸",
+              "en": "deep breath",
+              "pron": "DEEP BREETH"
+            },
+            {
+              "it": "安堵",
+              "en": "relief",
+              "pron": "RILEF"
+            },
+            {
+              "it": "懇願",
+              "en": "beg",
+              "pron": "BEG"
+            },
+            {
+              "it": "勉強",
+              "en": "study",
+              "pron": "STUDEE"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "情報が間違っています",
+              "en": "The information is wrong",
+              "pron": "THE INFORMEYSHUN IS WRONG",
+              "words": [
+                "情",
+                "報",
+                "が",
+                "間",
+                "違",
+                "っ",
+                "て",
+                "い",
+                "ま",
+                "す"
+              ]
+            },
+            {
+              "it": "正しい住所を教えてください",
+              "en": "Please tell me the correct address",
+              "pron": "PLEASE TELL ME THE KORRECT ADRESS",
+              "words": [
+                "正し",
+                "い住",
+                "所を",
+                "教え",
+                "てく",
+                "ださ",
+                "い"
+              ]
+            },
+            {
+              "it": "深呼吸してから話す",
+              "en": "Take a deep breath before speaking",
+              "pron": "TAKE A DEEP BREETH BEFORE SPEAKING",
+              "words": [
+                "深",
+                "呼",
+                "吸",
+                "し",
+                "て",
+                "か",
+                "ら",
+                "話",
+                "す"
+              ]
+            },
+            {
+              "it": "安堵の表情を浮かべた",
+              "en": "He showed an expression of relief",
+              "pron": "HE SHOWED AN EXPRESHUN OF RILEF",
+              "words": [
+                "安",
+                "堵",
+                "の",
+                "表",
+                "情",
+                "を",
+                "浮",
+                "か",
+                "べ",
+                "た"
+              ]
+            },
+            {
+              "it": "一緒に日本語を勉強しましょう",
+              "en": "Let's study Japanese together",
+              "pron": "LETZ STUDEE JAPANESE TAH-GER-NEE",
+              "words": [
+                "一緒",
+                "に日",
+                "本語",
+                "を勉",
+                "強し",
+                "まし",
+                "ょう"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "日本語の勉強",
+          "desc": "ドouglasが田中さんと日本語を学び始める",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "懇願",
+              "en": "beg",
+              "pron": "KEN-goon"
+            },
+            {
+              "it": "一緒に",
+              "en": "together",
+              "pron": "SO-ji-kka"
+            },
+            {
+              "it": "教える",
+              "en": "to teach",
+              "pron": "KA-oo-ru"
+            },
+            {
+              "it": "単語",
+              "en": "word",
+              "pron": "DO-oo-goo"
+            },
+            {
+              "it": "文法",
+              "en": "grammar",
+              "pron": "BUN-foo-ma"
+            },
+            {
+              "it": "座り",
+              "en": "to sit",
+              "pron": "ZA-ri"
+            },
+            {
+              "it": "交流",
+              "en": "exchange",
+              "pron": "JO-ru-kyoo"
+            },
+            {
+              "it": "深めていく",
+              "en": "to deepen",
+              "pron": "SO-nyoo-ma-te-i-koo"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "田中さんは深めていくよ。",
+              "en": "田中 will deepen it.",
+              "words": [
+                "田",
+                "中",
+                "さ",
+                "ん",
+                "は",
+                "深",
+                "め",
+                "て",
+                "い",
+                "く",
+                "よ",
+                "。"
+              ]
+            },
+            {
+              "it": "一緒に勉強しましょう。",
+              "en": "Let's study together.",
+              "words": [
+                "一",
+                "緒",
+                "に",
+                "勉",
+                "強",
+                "し",
+                "ま",
+                "し",
+                "ょ",
+                "う",
+                "。"
+              ]
+            },
+            {
+              "it": "新しい単語を教えるよ。",
+              "en": "I'll teach you a new word.",
+              "words": [
+                "新",
+                "し",
+                "い",
+                "単",
+                "語",
+                "を",
+                "教",
+                "え",
+                "る",
+                "よ",
+                "。"
+              ]
+            },
+            {
+              "it": "文法を深めていくよ。",
+              "en": "I'll deepen the grammar.",
+              "words": [
+                "文",
+                "法",
+                "を",
+                "深",
+                "め",
+                "て",
+                "い",
+                "く",
+                "よ",
+                "。"
+              ]
+            },
+            {
+              "it": "交流を深めていくよ。",
+              "en": "I'll deepen the exchange.",
+              "words": [
+                "交",
+                "流",
+                "を",
+                "深",
+                "め",
+                "て",
+                "い",
+                "く",
+                "よ",
+                "。"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "日本語の勉強",
+          "desc": "日本語を一緒に学びましょう",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "懇願",
+              "en": "beg",
+              "pron": "KON-eh-pon"
+            },
+            {
+              "it": "教える",
+              "en": "to teach",
+              "pron": "KAH-eh-eh-ru"
+            },
+            {
+              "it": "単語",
+              "en": "word",
+              "pron": "DAH-noon-goh"
+            },
+            {
+              "it": "文法",
+              "en": "grammar",
+              "pron": "BEE-NAH-mah"
+            },
+            {
+              "it": "座り",
+              "en": "to sit",
+              "pron": "ZAH-ree"
+            },
+            {
+              "it": "交流",
+              "en": "exchange",
+              "pron": "JEE-oh-syah"
+            },
+            {
+              "it": "深めていく",
+              "en": "to deepen",
+              "pron": "DEN-suh-meh-tsee-koo"
+            },
+            {
+              "it": "勉強",
+              "en": "study",
+              "pron": "MEE-nyoo-doh"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "田中さんは深めていくことを希望しています。",
+              "en": "Tanaka-san hopes to deepen it.",
+              "words": [
+                "田中",
+                "さん",
+                "は深",
+                "めて",
+                "いく",
+                "こと",
+                "を希",
+                "望し",
+                "てい",
+                "ます",
+                "。"
+              ]
+            },
+            {
+              "it": "ドouglasは新しい単語を覚えました。",
+              "en": "Douglas learned a new word.",
+              "words": [
+                "ドo",
+                "ug",
+                "la",
+                "sは",
+                "新し",
+                "い単",
+                "語を",
+                "覚え",
+                "まし",
+                "た。"
+              ]
+            },
+            {
+              "it": "文法を教えることにしました。",
+              "en": "We decided to teach grammar.",
+              "words": [
+                "文法",
+                "を教",
+                "える",
+                "こと",
+                "にし",
+                "まし",
+                "た。"
+              ]
+            },
+            {
+              "it": "一緒に座りましょう。",
+              "en": "Let's sit together.",
+              "words": [
+                "一",
+                "緒",
+                "に",
+                "座",
+                "り",
+                "ま",
+                "し",
+                "ょ",
+                "う",
+                "。"
+              ]
+            },
+            {
+              "it": "交流を深めていきましょう。",
+              "en": "Let's deepen our exchange.",
+              "words": [
+                "交流",
+                "を深",
+                "めて",
+                "いき",
+                "まし",
+                "ょう",
+                "。"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1625471,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "totalPromptTokens": 4257,
+        "totalCompletionTokens": 1513,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 413482,
+            "promptTokens": 1113,
+            "completionTokens": 369
+          },
+          {
+            "lessonNum": 2,
+            "ms": 431389,
+            "promptTokens": 1185,
+            "completionTokens": 325
+          },
+          {
+            "lessonNum": 3,
+            "ms": 435110,
+            "promptTokens": 1238,
+            "completionTokens": 331
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T07:11:17.192Z",
+      "updatedAt": "2026-05-07T07:11:17.192Z"
+    },
+    {
       "topic": "License Conversion",
       "topicEmoji": "🚗",
       "userTopic": "douglas wants to convert his british to a japanese driver's license",
