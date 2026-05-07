@@ -1,6 +1,408 @@
 {
   "lessons": [
     {
+      "topic": "Paris Music Meetup",
+      "topicEmoji": " MUSIC ",
+      "userTopic": "in paris we meet our favorite musician, but the interview (in a cafe) goes wrong",
+      "lang": "fr",
+      "difficulty": 2,
+      "storyLen": 600,
+      "story": "À Paris, Élise et Émile se retrouvèrent dans un café bondé, un endroit qu’ils affectionnaient pour sa douce ambiance et ses conversations intenses. Élise, toujours vêtue de son manteau en cuir noir, arborait un sourire timide, tandis que Émile, toujours aussi passionné, prenait des notes avec enthousiasme. Leurs amis les avaient invités à un événement musical, et ils avaient accepté avec joie.\n\nLe café était rempli de musiciens et de fans, créant une ambiance festive. Élise, qui avait toujours aimé chanter dans les rues de Montmartre, se sentait à l’aise dans ce nouvel environnement. Émile, quant à lui, était absorbé par son travail, cherchant des détails qui pourraient enrichir son article.\n\nSoudain, un homme se dirigea vers leur table, un sourire éclatant sur son visage. C’était un journaliste connu pour ses interviews brûlantes et ses questions piquantes. Élise et Émile sursautèrent, un peu gênés par l’intrusion.\n\n\"Mademoiselle Élise, Monsieur Émile, je suis ravi de vous rencontrer,\" commença le journaliste, son ton plein d’excitation. \"Je suis venu pour vous interviewer sur votre parcours et votre musique.\"\n\nÉlise, mal à l’aise, acquiesça poliment. Émile, quant à lui, se raidit, sentant l’atmosphère se charger d’une tension qu’il n’appréciait guère.\n\n\"Alors, Élise, racontez-moi, comment est-ce que vous avez commencé à chanter dans les rues de Montmartre?\" demanda le journaliste, son stylo en main, prêt à noter chaque mot.\n\nÉlise, surprise par la question, hésita un instant. \"C’était il y a des années, lorsque j’étais encore une étudiante. J’aimais chanter, et j’ai commencé à le faire dans les rues pour partager ma passion.\"\n\nLe journaliste, visiblement satisfait, nota rapidement. Puis, sans prévenir, il changea de sujet. \"Et Émile, que pensez-vous de votre rôle dans la promotion de la musique d’Élise?\"\n\nÉmile, qui avait préparé des réponses soigneusement, se sentit pris au dépourvu. \"Je... je pense que c’est une question un peu personnelle,\" répondit-il, cherchant ses mots.\n\nLe journaliste, voyant que la conversation prenait une tournure qu’il ne souhaitait pas, changea de tactique. \"Alors, Élise, avez-vous des projets pour l’avenir? Des nouveaux albums, des tournées?\"\n\nÉlise, soulagée, répondit avec enthousiasme. \"Oui, j’ai plusieurs idées en tête. J’aimerais explorer de nouveaux styles et collaborer avec d’autres artistes.\"\n\nLe journaliste, voyant que la conversation prenait une direction plus positive, sourit. \"C’est excellent! Je suis sûr que vos fans seront ravis d’entendre ces nouvelles chansons.\"\n\nÉlise et Émile soupirèrent de soulagement, reconnaissant que la conversation avait pris une tournure plus positive. Ils continuèrent à discuter de musique et de leurs projets futurs, la tension de l’interview oubliée dans l’ambiance chaleureuse du café.",
+      "storyLang": "fr",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 6-7 paragraphs, under 600 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n d’Élise.\n\nLe succès ne tarda pas à suivre. Des radios locales commencèrent à diffuser ses chansons, et bientôt, des agents de musique vinrent la rencontrer. Élise, avec l’aide d’Émile, commença à gagner en popularité. Émile, qui avait toujours rêvé d’être un critique musical, se retrouva à écrire des articles pour des magazines plus importants, couvrant des concerts et des festivals.\n\nMais malgré son succès, Élise restait humble et dévouée à sa musique. Elle continuait à chanter dans les rues de Montmartre, mêlant sa voix à la vie de la ville. Émile, quant à lui, continuait à la soutenir, écrivant des articles qui mettaient en valeur sa créativité et sa sincérité. Ensemble, ils formaient un duo unique, un mélange de journalisme et d’art qui captivait les cœurs de ceux qui les entouraient.\n\nNew topic: \"in paris we meet our favorite musician, but the interview (in a cafe) goes wrong\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "music journalism",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "in paris we meet our favorite musician",
+          "desc": "café, musician, interview, fans, notes",
+          "icon": "☕",
+          "vocab": [
+            {
+              "it": "café",
+              "en": "café"
+            },
+            {
+              "it": "musicien",
+              "en": "musician"
+            },
+            {
+              "it": "entrevue",
+              "en": "interview"
+            },
+            {
+              "it": "fans",
+              "en": "fans"
+            },
+            {
+              "it": "notes",
+              "en": "notes"
+            },
+            {
+              "it": "absorbé",
+              "en": "absorbed"
+            },
+            {
+              "it": "soudain",
+              "en": "suddenly"
+            },
+            {
+              "it": "visage",
+              "en": "face"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Nous étions au café préféré d'Élise.",
+              "en": "We were at Élise's favorite café.",
+              "words": [
+                "Nous",
+                "étions",
+                "au",
+                "café",
+                "préféré",
+                "d'Élise."
+              ]
+            },
+            {
+              "it": "Le musicien nous demanda une interview.",
+              "en": "The musician asked us for an interview.",
+              "words": [
+                "Le",
+                "musicien",
+                "nous",
+                "demanda",
+                "une",
+                "interview."
+              ]
+            },
+            {
+              "it": "Les fans criaient joyeusement.",
+              "en": "The fans were joyfully shouting.",
+              "words": [
+                "Les",
+                "fans",
+                "criaient",
+                "joyeusement."
+              ]
+            },
+            {
+              "it": "Émile prit des notes avec passion.",
+              "en": "Émile took notes with passion.",
+              "words": [
+                "Émile",
+                "prit",
+                "des",
+                "notes",
+                "avec",
+                "passion."
+              ]
+            },
+            {
+              "it": "Un homme s'approcha de notre table soudainement.",
+              "en": "A man suddenly approached our table.",
+              "words": [
+                "Un",
+                "homme",
+                "s'approcha",
+                "de",
+                "notre",
+                "table",
+                "soudainement."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "in paris we meet our favorite musician",
+          "desc": "Paris, café, interview, musician, fans, notes",
+          "icon": "🇫🇷",
+          "vocab": [
+            {
+              "it": "affectionner",
+              "en": "to love"
+            },
+            {
+              "it": "ambiance",
+              "en": "atmosphere"
+            },
+            {
+              "it": "timide",
+              "en": "shy"
+            },
+            {
+              "it": "enthousiasme",
+              "en": "enthusiasm"
+            },
+            {
+              "it": "joie",
+              "en": "joy"
+            },
+            {
+              "it": "rues",
+              "en": "streets"
+            },
+            {
+              "it": "Montmartre",
+              "en": "Montmartre"
+            },
+            {
+              "it": "sensibles",
+              "en": "sensitive"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Le café était rempli de musiciens et de fans, créant une ambiance festive.",
+              "en": "The café was filled with musicians and fans, creating a festive atmosphere.",
+              "words": [
+                "Le",
+                "café",
+                "était",
+                "rempli",
+                "de",
+                "musiciens",
+                "et",
+                "de",
+                "fans,",
+                "créant",
+                "une",
+                "ambiance",
+                "festive."
+              ]
+            },
+            {
+              "it": "Élise, toujours vêtue de son manteau en cuir noir, arborait un sourire timide.",
+              "en": "Élise, always dressed in her black leather coat, wore a shy smile.",
+              "words": [
+                "Élise,",
+                "toujours",
+                "vêtue",
+                "de",
+                "son",
+                "manteau",
+                "en",
+                "cuir",
+                "noir,",
+                "arborait",
+                "un",
+                "sourire",
+                "timide."
+              ]
+            },
+            {
+              "it": "Émile, absorbé par son travail, cherchait des détails qui pourraient enrichir son article.",
+              "en": "Émile, absorbed in his work, was looking for details that could enrich his article.",
+              "words": [
+                "Émile,",
+                "absorbé",
+                "par",
+                "son",
+                "travail,",
+                "cherchait",
+                "des",
+                "détails",
+                "qui",
+                "pourraient",
+                "enrichir",
+                "son",
+                "article."
+              ]
+            },
+            {
+              "it": "Soudain, un homme se dirigea vers leur table, un sourire éclatant sur son visage.",
+              "en": "Suddenly, a man approached their table, a dazzling smile on his face.",
+              "words": [
+                "Soudain,",
+                "un",
+                "homme",
+                "se",
+                "dirigea",
+                "vers",
+                "leur",
+                "table,",
+                "un",
+                "sourire",
+                "éclatant",
+                "sur",
+                "son",
+                "visage."
+              ]
+            },
+            {
+              "it": "C’était un journaliste qui souhaitait interviewer Élise sur son amour pour la musique.",
+              "en": "It was a journalist who wanted to interview Élise about her love for music.",
+              "words": [
+                "C’était",
+                "un",
+                "journaliste",
+                "qui",
+                "souhaitait",
+                "interviewer",
+                "Élise",
+                "sur",
+                "son",
+                "amour",
+                "pour",
+                "la",
+                "musique."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "in paris we meet our favorite musician",
+          "desc": "Paris, café, interview, musician, wrong",
+          "icon": "🇫🇷",
+          "vocab": [
+            {
+              "it": "interviewer",
+              "en": "interviewer"
+            },
+            {
+              "it": "gaffe",
+              "en": "blunder"
+            },
+            {
+              "it": "sensible",
+              "en": "sensitive"
+            },
+            {
+              "it": "répondre",
+              "en": "answer"
+            },
+            {
+              "it": "inattendu",
+              "en": "unexpected"
+            },
+            {
+              "it": "déstabiliser",
+              "en": "disorient"
+            },
+            {
+              "it": "connaissance",
+              "en": "knowledge"
+            },
+            {
+              "it": "souligner",
+              "en": "highlight"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "L'interviewer commença par une gaffe inattendue.",
+              "en": "The interviewer started with an unexpected gaffe.",
+              "words": [
+                "L'interviewer",
+                "commença",
+                "par",
+                "une",
+                "gaffe",
+                "inattendue."
+              ]
+            },
+            {
+              "it": "Élise répondit de manière sensible à la question mal posée.",
+              "en": "Élise answered the poorly worded question in a sensitive manner.",
+              "words": [
+                "Élise",
+                "répondit",
+                "de",
+                "manière",
+                "sensible",
+                "à",
+                "la",
+                "question",
+                "mal",
+                "posée."
+              ]
+            },
+            {
+              "it": "Leur conversation fut déstabilisée par l'inattendu de l'interviewer.",
+              "en": "Their conversation was disoriented by the interviewer's unexpectedness.",
+              "words": [
+                "Leur",
+                "conversation",
+                "fut",
+                "déstabilisée",
+                "par",
+                "l'inattendu",
+                "de",
+                "l'interviewer."
+              ]
+            },
+            {
+              "it": "Émile, qui avait une grande connaissance du sujet, souligna les points importants.",
+              "en": "Émile, who had great knowledge of the subject, highlighted the important points.",
+              "words": [
+                "Émile,",
+                "qui",
+                "avait",
+                "une",
+                "grande",
+                "connaissance",
+                "du",
+                "sujet,",
+                "souligna",
+                "les",
+                "points",
+                "importants."
+              ]
+            },
+            {
+              "it": "La situation devint gênante lorsque l'interviewer posa une question trop personnelle.",
+              "en": "The situation became awkward when the interviewer asked a too-personal question.",
+              "words": [
+                "La",
+                "situation",
+                "devint",
+                "gênante",
+                "lorsque",
+                "l'interviewer",
+                "posa",
+                "une",
+                "question",
+                "trop",
+                "personnelle."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1265425,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2766,
+        "totalCompletionTokens": 1820,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 258784,
+            "promptTokens": 687,
+            "completionTokens": 275
+          },
+          {
+            "lessonNum": 2,
+            "ms": 295336,
+            "promptTokens": 742,
+            "completionTokens": 388
+          },
+          {
+            "lessonNum": 3,
+            "ms": 287165,
+            "promptTokens": 789,
+            "completionTokens": 337
+          }
+        ]
+      },
+      "generatedAt": "2026-05-07T14:29:26.707Z",
+      "updatedAt": "2026-05-07T14:29:26.707Z"
+    },
+    {
       "topic": "Foes Meet Again",
       "topicEmoji": "🤝",
       "userTopic": "the foes meet again in another park where the competition is strong",
@@ -17960,334 +18362,383 @@
     {
       "topic": "music journalism",
       "topicEmoji": "🎵",
+      "userTopic": "music journalism",
       "lang": "fr",
+      "difficulty": 2,
+      "storyLen": 600,
+      "story": "Dans la petite ville de Montmartre, un journaliste musical nommé Émile se réveillait chaque matin avec un sentiment de nostalgie. Il aimait la vie simple de la ville, mais il avait toujours un rêve : devenir un critique musical reconnu. Un jour, alors qu’il se promenait dans les rues pavées, il tomba sur un jeune chanteur, Élise, qui chantait une ballade mélancolique. Émile fut immédiatement captivé par sa voix et sa poésie. Il décida de l’approcher et de lui proposer de l’écrire sur elle.\n\nÉlise, une jeune femme aux cheveux noirs et aux yeux d’un bleu profond, était une artiste en devenir. Elle avait une voix douce et une présence éthérée qui fascinait Émile. Il la suivit dans son petit appartement, rempli de livres et de disques, où elle lui parla de ses rêves et de ses inspirations. Élise lui raconta comment elle avait grandi dans un petit village, entourée de montagnes et de champs de lavande, et comment la musique était devenue sa seule compagnie.\n\nÉmile, impressionné par sa détermination et sa sincérité, commença à écrire sur elle. Il décrit sa voix comme une caresse, son style comme une mélancolie romantique, et son art comme une expression de la beauté du désespoir. Il publia son premier article dans le journal local, et à sa grande surprise, il fut publié. Les lecteurs furent touchés par la sincérité de son écriture et la beauté de la musique d’Élise.\n\nLe succès ne tarda pas à suivre. Des radios locales commencèrent à diffuser ses chansons, et bientôt, des agents de musique vinrent la rencontrer. Élise, avec l’aide d’Émile, commença à gagner en popularité. Émile, qui avait toujours rêvé d’être un critique musical, se retrouva à écrire des articles pour des magazines plus importants, couvrant des concerts et des festivals.\n\nMais malgré son succès, Élise restait humble et dévouée à sa musique. Elle continuait à chanter dans les rues de Montmartre, mêlant sa voix à la vie de la ville. Émile, quant à lui, continuait à la soutenir, écrivant des articles qui mettaient en valeur sa créativité et sa sincérité. Ensemble, ils formaient un duo unique, un mélange de journalisme et d’art qui captivait les cœurs de ceux qui les entouraient.",
+      "storyLang": "fr",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 6-7 paragraphs, under 600 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French.\n\nWrite a story for the topic: \"music journalism\". Plain prose, no headings.",
       "lessons": [
         {
           "id": 1,
-          "title": "Music Journalism 1",
-          "desc": "Introduction to music journalism",
-          "icon": "🎵",
+          "title": "music journalism",
+          "desc": "journalisme musical, critique, chanteur",
+          "icon": "🎵✍️",
           "vocab": [
             {
-              "it": "journaliste",
-              "en": "journalist",
-              "pron": "juh-ree-ZEET"
+              "it": "journaliste musical",
+              "en": "music journalist"
             },
             {
-              "it": "concerne",
-              "en": "concerns",
-              "pron": "kuhn-SUR"
+              "it": "critique musical",
+              "en": "music critic"
             },
             {
-              "it": "interview",
-              "en": "interview",
-              "pron": "in-try-VUH"
+              "it": "chanteur",
+              "en": "singer"
             },
             {
-              "it": "chronique",
-              "en": "chronicle",
-              "pron": "kuh-NAK"
+              "it": "ballade",
+              "en": "ballad"
             },
             {
-              "it": "album",
-              "en": "album",
-              "pron": "AL-buhm"
+              "it": "rêve",
+              "en": "dream"
             },
             {
-              "it": "concert",
-              "en": "concert",
-              "pron": "kuh-NAHR"
+              "it": "rêver",
+              "en": "to dream"
             },
             {
-              "it": "tournée",
-              "en": "tour",
-              "pron": "TOHR"
+              "it": "inspiration",
+              "en": "inspiration"
             },
             {
-              "it": "public",
-              "en": "public",
-              "pron": "PUH-bik"
+              "it": "appartement",
+              "en": "apartment"
             }
           ],
           "sentences": [
             {
-              "it": "Le journaliste interviewe l'artiste.",
-              "en": "The journalist interviews the artist",
+              "it": "Émile était un journaliste musical de talent.",
+              "en": "Émile was a talented music journalist.",
               "words": [
-                "Le",
+                "Émile",
+                "était",
+                "un",
                 "journaliste",
-                "interviewe",
-                "l'artiste."
-              ]
-            },
-            {
-              "it": "L'album concerne plusieurs styles musicaux.",
-              "en": "The album concerns several musical styles",
-              "words": [
-                "album",
-                "concerne",
-                "styles",
-                "musicaux"
-              ]
-            },
-            {
-              "it": "La chronique parle du concert.",
-              "en": "The chronicle talks about the concert",
-              "words": [
-                "La",
-                "chronique",
-                "parle",
-                "du",
-                "concert."
-              ]
-            },
-            {
-              "it": "La tournée comprend de nombreux concerts.",
-              "en": "The tour includes many concerts",
-              "words": [
-                "La",
-                "tournée",
-                "comprend",
+                "musical",
                 "de",
-                "nombreux",
-                "concerts."
+                "talent."
               ]
             },
             {
-              "it": "Le public adore l'artiste.",
-              "en": "The public loves the artist",
+              "it": "Il aimait écrire des critiques musicales passionnées.",
+              "en": "He loved writing passionate music reviews.",
               "words": [
-                "Le",
-                "public",
-                "adore",
-                "l'artiste."
+                "Il",
+                "aimait",
+                "écrire",
+                "des",
+                "critiques",
+                "musicales",
+                "passionnées."
+              ]
+            },
+            {
+              "it": "Un jour, il tomba sur un chanteur émergent.",
+              "en": "One day, he stumbled upon an emerging singer.",
+              "words": [
+                "Un",
+                "jour,",
+                "il",
+                "tomba",
+                "sur",
+                "un",
+                "chanteur",
+                "émergent."
+              ]
+            },
+            {
+              "it": "Elle lui parla de ses rêves et de ses inspirations.",
+              "en": "She told him about her dreams and inspirations.",
+              "words": [
+                "Elle",
+                "lui",
+                "parla",
+                "de",
+                "ses",
+                "rêves",
+                "et",
+                "de",
+                "ses",
+                "inspirations."
+              ]
+            },
+            {
+              "it": "Son appartement était rempli de livres et de disques.",
+              "en": "Her apartment was filled with books and records.",
+              "words": [
+                "Son",
+                "appartement",
+                "était",
+                "rempli",
+                "de",
+                "livres",
+                "et",
+                "de",
+                "disques."
               ]
             }
           ]
         },
         {
           "id": 2,
-          "title": "Music Journalism II",
-          "desc": "Intermediate writing techniques",
-          "icon": "✍️🎵",
+          "title": "music journalism",
+          "desc": "journalisme musical, critique, chanson, inspiration",
+          "icon": "🎵✍️",
           "vocab": [
             {
               "it": "critique",
-              "en": "review",
-              "pron": "KRI-tik"
+              "en": "music critic"
             },
             {
-              "it": "charte",
-              "en": "code of ethics",
-              "pron": "SHAR-te"
+              "it": "chanson",
+              "en": "song"
             },
             {
-              "it": "plongeon",
-              "en": "dive (into a topic)",
-              "pron": "plo-ZHON"
+              "it": "inspiration",
+              "en": "inspiration"
             },
             {
-              "it": "sélection",
-              "en": "selection",
-              "pron": "sel-ek-SYON"
+              "it": "résonner",
+              "en": "to resonate"
             },
             {
-              "it": "feedback",
-              "en": "feedback",
-              "pron": "FEED-back"
+              "it": "écrivain",
+              "en": "writer"
             },
             {
-              "it": "sonorité",
-              "en": "sound quality",
-              "pron": "so-no-RAT-te"
+              "it": "publier",
+              "en": "to publish"
             },
             {
-              "it": "orchestre",
-              "en": "orchestra",
-              "pron": "or-chees-TRE"
+              "it": "réputation",
+              "en": "reputation"
             },
             {
-              "it": "synthèse",
-              "en": "synthesis",
-              "pron": "sin-THE-sis"
+              "it": "interviewer",
+              "en": "to interview"
             }
           ],
           "sentences": [
             {
-              "it": "La critique plonge dans l'orchestre.",
-              "en": "The review dives into the orchestra.",
-              "words": [
-                "La",
-                "critique",
-                "plonge",
-                "dans",
-                "l'orchestre."
-              ]
-            },
-            {
-              "it": "La charte de l'éthique guide la sélection.",
-              "en": "The code of ethics guides the selection.",
-              "words": [
-                "charte",
-                "éthique",
-                "guide",
-                "sélection"
-              ]
-            },
-            {
-              "it": "Le feedback améliore la sonorité.",
-              "en": "The feedback improves the sound quality.",
+              "it": "Le critique musical a écrit un article élogieux sur son disque.",
+              "en": "The music critic wrote a flattering article about her album.",
               "words": [
                 "Le",
-                "feedback",
-                "améliore",
-                "la",
-                "sonorité."
-              ]
-            },
-            {
-              "it": "La synthèse résume l'essentiel.",
-              "en": "The synthesis summarizes the essential.",
-              "words": [
-                "La",
-                "synthèse",
-                "résume",
-                "l'essentiel."
-              ]
-            },
-            {
-              "it": "La critique plonge dans le synthèse.",
-              "en": "The review dives into the synthesis.",
-              "words": [
-                "La",
                 "critique",
-                "plonge",
-                "dans",
-                "le",
-                "synthèse."
+                "musical",
+                "a",
+                "écrit",
+                "un",
+                "article",
+                "élogieux",
+                "sur",
+                "son",
+                "disque."
+              ]
+            },
+            {
+              "it": "Sa chanson résonne profondément avec les gens de Montmartre.",
+              "en": "Her song resonates deeply with the people of Montmartre.",
+              "words": [
+                "Sa",
+                "chanson",
+                "résonne",
+                "profondément",
+                "avec",
+                "les",
+                "gens",
+                "de",
+                "Montmartre."
+              ]
+            },
+            {
+              "it": "Elle est une écrivaine talentueuse qui publie régulièrement des chroniques musicales.",
+              "en": "She is a talented writer who regularly publishes musical chronicles.",
+              "words": [
+                "Elle",
+                "est",
+                "une",
+                "écrivaine",
+                "talentueuse",
+                "qui",
+                "publie",
+                "régulièrement",
+                "des",
+                "chroniques",
+                "musicales."
+              ]
+            },
+            {
+              "it": "Son réputation grandit grâce à ses critiques percutantes.",
+              "en": "Her reputation grows thanks to her incisive reviews.",
+              "words": [
+                "Son",
+                "réputation",
+                "grandit",
+                "grâce",
+                "à",
+                "ses",
+                "critiques",
+                "percutantes."
+              ]
+            },
+            {
+              "it": "Émile l'interviewa pour mieux comprendre son inspiration artistique.",
+              "en": "Émile interviewed her to better understand her artistic inspiration.",
+              "words": [
+                "Émile",
+                "l'interviewa",
+                "pour",
+                "mieux",
+                "comprendre",
+                "son",
+                "inspiration",
+                "artistique."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "Music Journalism",
-          "desc": "Advanced Writing Techniques",
-          "icon": "🎵",
+          "title": "music journalism",
+          "desc": "journalisme musical, critique, chanson, inspiration, rédiger",
+          "icon": "🎵✍️",
           "vocab": [
             {
-              "it": "confrère",
-              "en": "colleague",
-              "pron": "kon-FRAH-ray"
+              "it": "rédiger",
+              "en": "to write"
             },
             {
-              "it": "plébiscite",
-              "en": "plebiscite",
-              "pron": "plee-BISS-see-tay"
+              "it": "résonner",
+              "en": "to resonate"
             },
             {
-              "it": "coupure",
-              "en": "break",
-              "pron": "koo-PURE"
+              "it": "réputation",
+              "en": "reputation"
             },
             {
-              "it": "répertoire",
-              "en": "repertoire",
-              "pron": "re-pay-TEH-toir"
+              "it": "interviewer",
+              "en": "to interview"
             },
             {
-              "it": "éclaircissement",
-              "en": "clarification",
-              "pron": "ay-klay-keer-see-mahn"
+              "it": "inspiration",
+              "en": "inspiration"
             },
             {
-              "it": "synchronisation",
-              "en": "synchronization",
-              "pron": "syn-kroh-ni-see-AY-shun"
-            },
-            {
-              "it": "édition",
-              "en": "edition",
-              "pron": "eh-dee-see-OHN"
-            },
-            {
-              "it": "répétition",
-              "en": "rehearsal",
-              "pron": "re-pay-tee-OHN-shon"
+              "it": "chanson",
+              "en": "song"
             }
           ],
           "sentences": [
             {
-              "it": "Notre confrère a remporté le plébiscite.",
-              "en": "Our colleague won the plebiscite",
+              "it": "Émile décida de rédiger un article sur Élise.",
+              "en": "Émile decided to write an article about Élise.",
               "words": [
-                "Notre",
-                "confrère",
-                "a",
-                "remporté",
-                "le",
-                "plébiscite."
-              ]
-            },
-            {
-              "it": "Il y a eu une coupure dans l'édition.",
-              "en": "There was a break in the edition",
-              "words": [
-                "Il",
-                "y",
-                "a",
-                "eu",
-                "une",
-                "coupure",
-                "dans",
-                "l'édition."
-              ]
-            },
-            {
-              "it": "Le répertoire de chansons a été mis à jour.",
-              "en": "The repertoire of songs was updated",
-              "words": [
-                "répertoire",
-                "chansons",
-                "mis",
-                "à",
-                "jour"
-              ]
-            },
-            {
-              "it": "Une répétition est nécessaire pour la synchronisation.",
-              "en": "A rehearsal is necessary for the synchronization",
-              "words": [
-                "Une",
-                "répétition",
-                "est",
-                "nécessaire",
-                "pour",
-                "la",
-                "synchronisation."
-              ]
-            },
-            {
-              "it": "Il a demandé un éclaircissement sur les dates des concerts.",
-              "en": "He asked for a clarification on the concert dates",
-              "words": [
-                "Il",
-                "a",
-                "demandé",
+                "Émile",
+                "décida",
+                "de",
+                "rédiger",
                 "un",
-                "éclaircissement",
+                "article",
                 "sur",
-                "les",
-                "dates",
-                "des",
-                "concerts."
+                "Élise."
+              ]
+            },
+            {
+              "it": "La chanson de Élise résonnait profondément dans son cœur.",
+              "en": "Élise's song resonated deeply in his heart.",
+              "words": [
+                "La",
+                "chanson",
+                "de",
+                "Élise",
+                "résonnait",
+                "profondément",
+                "dans",
+                "son",
+                "cœur."
+              ]
+            },
+            {
+              "it": "Il espérait que sa réputation grandisse grâce à cette interview.",
+              "en": "He hoped that his reputation would grow thanks to this interview.",
+              "words": [
+                "Il",
+                "espérait",
+                "que",
+                "sa",
+                "réputation",
+                "grandisse",
+                "grâce",
+                "à",
+                "cette",
+                "interview."
+              ]
+            },
+            {
+              "it": "Élise lui raconta son inspiration pour chaque chanson.",
+              "en": "Élise told him about her inspiration for each song.",
+              "words": [
+                "Élise",
+                "lui",
+                "raconta",
+                "son",
+                "inspiration",
+                "pour",
+                "chaque",
+                "chanson."
+              ]
+            },
+            {
+              "it": "Leur conversation résonnait comme une chanson douce.",
+              "en": "Their conversation resonated like a soft song.",
+              "words": [
+                "Leur",
+                "conversation",
+                "résonnait",
+                "comme",
+                "une",
+                "chanson",
+                "douce."
               ]
             }
           ]
         }
       ],
+      "generationStats": {
+        "totalMs": 1034446,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2451,
+        "totalCompletionTokens": 1565,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 256031,
+            "promptTokens": 684,
+            "completionTokens": 293
+          },
+          {
+            "lessonNum": 2,
+            "ms": 240895,
+            "promptTokens": 743,
+            "completionTokens": 321
+          },
+          {
+            "lessonNum": 3,
+            "ms": 261146,
+            "promptTokens": 789,
+            "completionTokens": 318
+          }
+        ]
+      },
       "generatedAt": "2026-04-25T23:16:39.942Z",
-      "updatedAt": "2026-05-05T09:53:54.358Z"
+      "updatedAt": "2026-05-07T13:55:35.330Z"
     },
     {
       "topic": "pizza dough",
@@ -21338,6 +21789,26 @@
     "c1700104945": {
       "title": "Toscany Tastes",
       "icon": "🍷🍺🧶"
+    },
+    "c803309217": {
+      "title": "Ping Pong Shadows",
+      "icon": "🏓"
+    },
+    "c885189927": {
+      "title": "Tsuruoka Tales",
+      "icon": "🍜❄️🚗"
+    },
+    "c953060316": {
+      "title": "Solar Windows",
+      "icon": "💡"
+    },
+    "c1099530610": {
+      "title": "Crémant Controversies",
+      "icon": "🍷"
+    },
+    "c1690800713": {
+      "title": "Echoes of Montmartre",
+      "icon": "🎶"
     }
   }
 }
