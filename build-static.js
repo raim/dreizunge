@@ -310,16 +310,13 @@ async function loadSavedList() {
     const hdrTitle=hasTitle
       ? '<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)"><span style="font-size:18px">'+titleIcon+'</span><span class="storyline-title-text">'+esc(titleText)+'</span><span class="storyline-title-sub">· '+chain.length+' chapter'+(chain.length!==1?'s':'')+'</span></span>'
       : '<span class="storyline-title"><span>'+(LANGS[byTopic[chain[0]]?.lang||'it']||LANGS.it).flag+'</span><span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+'</span></span>';
-    const collapseBtn=hasTitle
-      ? '<button class="storyline-hdr-btn" title="Toggle chapters" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)" id="slcollapse-'+chainId+'"><span class="storyline-collapse-btn" id="slcarrow-'+chainId+'">▲</span></button>'
-      : '';
     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
     html+='<div class="storyline-hdr" id="slhdr-'+chainId+'">'+hdrTitle
       +'<button class="storyline-hdr-btn" title="Edit title" onclick="event.stopPropagation();openStorylineEdit(&apos;'+chainId+'&apos;,&apos;'+chainId+'&apos;)">✏️</button>'
       +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px" title="Export full story line with flags"'
       +' data-chain="'+chainEncoded+'"'
       +' onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>'
-      +collapseBtn+'</div>';
+      +'</div>';
     html+='<div class="storyline-hdr" id="sledit-'+chainId+'" style="display:none;background:var(--white);border-bottom:1.5px solid var(--accent)">'
       +'<span class="storyline-edit-icon" id="sledit-icon-'+chainId+'" onclick="cycleStorylineIcon(&apos;'+chainId+'&apos;)">'+(titleIcon||'📖')+'</span>'
       +'<input class="storyline-edit-input" id="sledit-input-'+chainId+'" placeholder="Story line title…" value="'+esc(titleText)+'"'
