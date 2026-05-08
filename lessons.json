@@ -1,6 +1,853 @@
 {
   "lessons": [
     {
+      "topic": "Bavarian Dialects",
+      "topicEmoji": "🇩🇪",
+      "userTopic": "a bavarian comes in and complains that he can't  understand the local dialect well even though it is related.",
+      "lang": "de",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "En, es war ein sonniger Morgen im Mai, und die Luft war voll von dem Duft von frisch gebackenem Brot und frischem Gras. Johanns Vater, ein alter Historiker mit grauen Haaren, saß am Feuer und erzählte Geschichten von alten Zeiten. Plötzlich hörten sie ein Geräusch, das von der Straße her kam. Ein Mann, der offensichtlich aus einer anderen Gegend kam, stieg aus einem alten, schäbigen Wagen und trat auf das Feuer zu.\n\n\"Entschuldigung, Herrn,\" sagte der Fremde mit einem verlegenen Lächeln, \"ich bin aus München und ich muss gestehen, dass ich die Dialekt hier nicht verstehe. Es ist, als würde ich in einer anderen Sprache sprechen.\"\n\nJohanns Vater, der immer noch am Feuer saß, blickte den Mann an. \"Ah, du kommst aus der großen Stadt, nehm ich an,\" sagte er freundlich. \"Hier spricht man anders. Es ist ein bisschen wie bei den alten Römern und Kelten, die hier gelebt haben.\"\n\nDer Fremde nickte, ein wenig verunsichert. \"Ja, ich verstehe. Aber es ist so... so... kompliziert. Ich kann einfach nicht folgen.\"\n\nSeine Mutter, die neben Johanns Vater saß, lächelte und reichte dem Fremden ein Stück Brot. \"Komm, setz dich her zu uns,\" sagte sie. \"Wir werden dir zeigen, wie man den Dialekt richtig spricht.\"\n\nDer Fremde setzte sich und nahm das Brot dankbar entgegen. \"Vielen Dank,\" sagte er. \"Ich hoffe, ich kann es lernen.\"\n\nJohanns Vater begann, ihm die Grundlagen des bayerischen Dialekts zu erklären. \"Es ist nicht so schwer, wenn du dich daran gewöhnst,\" sagte er. \"Und du wirst sehen, dass es eine Schönheit ist, wenn du es richtig sprichst.\"\n\nDer Fremde nickte, immer noch ein wenig verwirrt, aber bereit, es zu versuchen. \"Ich werde es versuchen,\" sagte er. \"Vielleicht kann ich sogar ein paar Wörter lernen, die von den alten Kulturen stammen.\"\n\nDie Familie lachte und half dem Fremden, den Dialekt besser zu verstehen. Sie sprachen über die Macht der Sprache und die Geschichte, die in jedem Wort verflochten war. Der Fremde, der aus München gekommen war, fühlte sich allmählich zu Hause und begann, den warmen, gemütlichen Klang des bayerischen Dialekts zu lieben.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Write in the bavarian dialect/variety. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nen, welche Wörter oder Namen in ihrer Sprache möglicherweise von diesen alten Kulturen stammten. „Vielleicht ist das Wort für ‘Berghaus’ von den Kelten stammen,“ mutmaßte Johanns Vater. „Und ‘Wald’ könnte von den Römern kommen,“ fügte seine Mutter hinzu. Sie lachten und diskutierten, während der Historiker ihnen weiterhalf, ihre Sprache und ihre Geschichte in einem neuen Licht zu sehen.\n\nAls die Nacht hereinbrach, sammelten sich die Familien wieder um das Feuer. Die Kinder hörten mit offenen Mündern zu, während die Erwachsenen über die Macht der Sprache und der Geschichte sprachen. Die Sprache, die sie benutzten, war nicht nur eine Mischung aus bayerischem Dialekt und slawischen Wörtern, sondern auch eine Spur von Kelten und Römern, die in einem warmen, gemütlichen Klang verflochten waren.\n\nNew topic: \"a bavarian comes in and complains that he can't  understand the local dialect well even though it is related.\". Write the continuation now. Plain prose, no headings.",
+      "userDialect": "bavarian",
+      "continuedFrom": "Migration & Language",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Münchner kommt ein",
+          "desc": "Bavarian dialect, understanding local speech",
+          "icon": "👋",
+          "vocab": [
+            {
+              "it": "Münchner",
+              "en": "Munich resident"
+            },
+            {
+              "it": "Dialekt",
+              "en": "dialect"
+            },
+            {
+              "it": "Spricht",
+              "en": "speaks"
+            },
+            {
+              "it": "Verstehe",
+              "en": "understand"
+            },
+            {
+              "it": "Stadt",
+              "en": "city"
+            },
+            {
+              "it": "Feuer",
+              "en": "fire"
+            },
+            {
+              "it": "Geschichten",
+              "en": "stories"
+            },
+            {
+              "it": "Verlegen",
+              "en": "embarrassed"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Der Münchner sah sich um und suchte nach einer Antwort.",
+              "en": "The Munich resident looked around and searched for an answer.",
+              "words": [
+                "Der",
+                "Münchner",
+                "sah",
+                "sich",
+                "um",
+                "und",
+                "suchte",
+                "nach",
+                "einer",
+                "Antwort."
+              ]
+            },
+            {
+              "it": "Ich muss gestehen, dass ich hier nicht verstehe.",
+              "en": "I have to admit that I don't understand here.",
+              "words": [
+                "Ich",
+                "muss",
+                "gestehen,",
+                "dass",
+                "ich",
+                "hier",
+                "nicht",
+                "verstehe."
+              ]
+            },
+            {
+              "it": "Hier spricht man anders, das weißt du doch.",
+              "en": "Here they speak differently, you know that.",
+              "words": [
+                "Hier",
+                "spricht",
+                "man",
+                "anders,",
+                "das",
+                "weißt",
+                "du",
+                "doch."
+              ]
+            },
+            {
+              "it": "Der Verlegenheit bemächtigte sich des Mannes.",
+              "en": "Embarrassment seized the man.",
+              "words": [
+                "Der",
+                "Verlegenheit",
+                "bemächtigte",
+                "sich",
+                "des",
+                "Mannes."
+              ]
+            },
+            {
+              "it": "Geschichten erzählst du, ja? Feuer am Morgen.",
+              "en": "You tell stories, yes? Fire in the morning.",
+              "words": [
+                "Geschichten",
+                "erzählst",
+                "du,",
+                "ja?",
+                "Feuer",
+                "am",
+                "Morgen."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Bavarian dialect",
+          "desc": "Münchner struggles to understand local dialect",
+          "icon": "🗣️",
+          "vocab": [
+            {
+              "it": "Dialekt",
+              "en": "dialect"
+            },
+            {
+              "it": "Verstehe nicht",
+              "en": "do not understand"
+            },
+            {
+              "it": "äh",
+              "en": "uh"
+            },
+            {
+              "it": "ähm",
+              "en": "erm"
+            },
+            {
+              "it": "ähnlich",
+              "en": "similar"
+            },
+            {
+              "it": "ähnlich wie",
+              "en": "similar to"
+            },
+            {
+              "it": "ähnlich als",
+              "en": "similar as"
+            },
+            {
+              "it": "ähnlich dem",
+              "en": "similar to the"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Ach, ähm, ich verstehe nicht, äh, was du da sagst.",
+              "en": "Oh, uh, I do not understand what you are saying there.",
+              "words": [
+                "Ach,",
+                "ähm,",
+                "ich",
+                "verstehe",
+                "nicht,",
+                "äh,",
+                "was",
+                "du",
+                "da",
+                "sagst."
+              ]
+            },
+            {
+              "it": "Der Dialekt hier ist äh, äh, ähnlich dem in München, aber nicht ganz gleich.",
+              "en": "The dialect here is uh, uh, similar to that in Munich, but not exactly the same.",
+              "words": [
+                "Der",
+                "Dialekt",
+                "hier",
+                "ist",
+                "äh,",
+                "äh,",
+                "ähnlich",
+                "dem",
+                "in",
+                "München,",
+                "aber",
+                "nicht",
+                "ganz",
+                "gleich."
+              ]
+            },
+            {
+              "it": "Ach, ähm, ich verstehe nicht, äh, was das soll mit dem Feuer.",
+              "en": "Oh, uh, I do not understand what the deal is with the fire.",
+              "words": [
+                "Ach,",
+                "ähm,",
+                "ich",
+                "verstehe",
+                "nicht,",
+                "äh,",
+                "was",
+                "das",
+                "soll",
+                "mit",
+                "dem",
+                "Feuer."
+              ]
+            },
+            {
+              "it": "Ach, ähm, ich komme aus der Stadt, aber hier spricht man anders, äh, ähnlich als in München.",
+              "en": "Oh, uh, I come from the city, but they speak differently here, uh, similar to Munich.",
+              "words": [
+                "Ach,",
+                "ähm,",
+                "ich",
+                "komme",
+                "aus",
+                "der",
+                "Stadt,",
+                "aber",
+                "hier",
+                "spricht",
+                "man",
+                "anders,",
+                "äh,",
+                "ähnlich",
+                "als",
+                "in",
+                "München."
+              ]
+            },
+            {
+              "it": "Ach, ähm, ich verstehe nicht, äh, was das hier soll.",
+              "en": "Oh, uh, I do not understand what this is all about here.",
+              "words": [
+                "Ach,",
+                "ähm,",
+                "ich",
+                "verstehe",
+                "nicht,",
+                "äh,",
+                "was",
+                "das",
+                "hier",
+                "soll."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Bavarian Dialect",
+          "desc": "Bavarian dialect, Münchner, Verstehe nicht",
+          "icon": "🗣️",
+          "vocab": [
+            {
+              "it": "Dialekt",
+              "en": "dialect"
+            },
+            {
+              "it": "ähm",
+              "en": "uh"
+            },
+            {
+              "it": "äh",
+              "en": "uhm"
+            },
+            {
+              "it": "ähnlich",
+              "en": "similar"
+            },
+            {
+              "it": "ähnlich wie",
+              "en": "similar to"
+            },
+            {
+              "it": "ähnlich dem",
+              "en": "similar to the"
+            },
+            {
+              "it": "ähnlich als",
+              "en": "similar as"
+            },
+            {
+              "it": "Münchner",
+              "en": "Munich resident"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Der Dialekt hier ist ähm, äh, ähnlich dem in München, aber nicht ganz ähnlich.",
+              "en": "The dialect here is uh, uh, similar to that in Munich, but not exactly the same.",
+              "words": [
+                "Der",
+                "Dialekt",
+                "hier",
+                "ist",
+                "ähm,",
+                "äh,",
+                "ähnlich",
+                "dem",
+                "in",
+                "München,",
+                "aber",
+                "nicht",
+                "ganz",
+                "ähnlich."
+              ]
+            },
+            {
+              "it": "Ich komme aus der Stadt, aber ich verstehe nicht, was ihr da draußen sagt.",
+              "en": "I come from the city, but I don't understand what you're saying out there.",
+              "words": [
+                "Ich",
+                "komme",
+                "aus",
+                "der",
+                "Stadt,",
+                "aber",
+                "ich",
+                "verstehe",
+                "nicht,",
+                "was",
+                "ihr",
+                "da",
+                "draußen",
+                "sagt."
+              ]
+            },
+            {
+              "it": "Ehm, das ist, ähm, ähnlich als wenn man in einer anderen Sprache spricht.",
+              "en": "Uh, that's kind of like speaking in another language.",
+              "words": [
+                "Ehm,",
+                "das",
+                "ist,",
+                "ähm,",
+                "ähnlich",
+                "als",
+                "wenn",
+                "man",
+                "in",
+                "einer",
+                "anderen",
+                "Sprache",
+                "spricht."
+              ]
+            },
+            {
+              "it": "Der Dialekt hier ist ähm, äh, ähnlich wie in München, aber nicht ganz ähnlich dem in Nürnberg.",
+              "en": "The dialect here is uh, uh, similar to that in Munich, but not exactly like that in Nuremberg.",
+              "words": [
+                "Der",
+                "Dialekt",
+                "hier",
+                "ist",
+                "ähm,",
+                "äh,",
+                "ähnlich",
+                "wie",
+                "in",
+                "München,",
+                "aber",
+                "nicht",
+                "ganz",
+                "ähnlich",
+                "dem",
+                "in",
+                "Nürnberg."
+              ]
+            },
+            {
+              "it": "Ich bin Münchner, aber ich verstehe nicht, was ihr da drüben redet.",
+              "en": "I'm a Munich resident, but I don't understand what you're talking about over there.",
+              "words": [
+                "Ich",
+                "bin",
+                "Münchner,",
+                "aber",
+                "ich",
+                "verstehe",
+                "nicht,",
+                "was",
+                "ihr",
+                "da",
+                "drüben",
+                "redet."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1175871,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2942,
+        "totalCompletionTokens": 1749,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 266675,
+            "promptTokens": 737,
+            "completionTokens": 298
+          },
+          {
+            "lessonNum": 2,
+            "ms": 280871,
+            "promptTokens": 795,
+            "completionTokens": 403
+          },
+          {
+            "lessonNum": 3,
+            "ms": 296315,
+            "promptTokens": 845,
+            "completionTokens": 405
+          }
+        ]
+      },
+      "generatedAt": "2026-05-08T09:17:31.464Z",
+      "updatedAt": "2026-05-08T09:17:31.464Z"
+    },
+    {
+      "topic": "Migration & Language",
+      "topicEmoji": "🌍",
+      "userTopic": "a historian arrives and explains that when slavic and bavarian peoples arrived, they mixed with celtic and roman people and these languages are also still present in the dialect and in names",
+      "lang": "de",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Und als die Sonne unterging, trafen sie auf einen Fremden, der sich als Historiker vorstellte. „Ich habe gehört, dass hier eine beeindruckende Mischung von Kulturen lebt,“ sagte er mit einem Lächeln. „Es ist wahr,“ antwortete Johann, „aber wir wissen nicht viel darüber, wie es wirklich war, bevor wir kamen.“\n\nDer Historiker setzte sich zu ihnen und begann, Geschichten zu erzählen, die sie noch nie gehört hatten. „Die Slawen und die Bayern,“ erklärte er, „waren nicht die ersten Menschen, die hier lebten. Vor ihnen kamen die Kelten und die Römer, die ihre Sprache und ihre Kultur mitbrachten und mit den Einheimischen vermischt haben.“\n\nDie Erwachsene hörten aufmerksam zu, während die Kinder neugierig um sie herumstanden. „Das bedeutet,“ sagte Johanns Mutter, „dass unsere Sprache nicht nur aus Slawen und Bayern besteht, sondern auch aus Kelten und Römern?“ Der Historiker nickte. „Genau,“ antwortete er, „und das ist auch der Grund, warum wir in unseren Namen und unseren Wörtern so viele verschiedene Wurzeln finden können.“\n\nDie Familien tauschten überraschte Blicke aus, als sie überlegten, welche Wörter oder Namen in ihrer Sprache möglicherweise von diesen alten Kulturen stammten. „Vielleicht ist das Wort für ‘Berghaus’ von den Kelten stammen,“ mutmaßte Johanns Vater. „Und ‘Wald’ könnte von den Römern kommen,“ fügte seine Mutter hinzu. Sie lachten und diskutierten, während der Historiker ihnen weiterhalf, ihre Sprache und ihre Geschichte in einem neuen Licht zu sehen.\n\nAls die Nacht hereinbrach, sammelten sich die Familien wieder um das Feuer. Die Kinder hörten mit offenen Mündern zu, während die Erwachsenen über die Macht der Sprache und der Geschichte sprachen. Die Sprache, die sie benutzten, war nicht nur eine Mischung aus bayerischem Dialekt und slawischen Wörtern, sondern auch eine Spur von Kelten und Römern, die in einem warmen, gemütlichen Klang verflochten waren.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n und Plänen für den Tag. „Hast du schon gehört, dass die Slawen hier lebten, bevor wir kamen?“ fragte Johann. „Ja, das ist wahr,“ antwortete sein Freund, „aber sie haben ihre Sprache mit uns geteilt, und jetzt ist es Teil von uns.“ Sie lachten und tranken, während sie über die Geschichte und Zukunft ihrer Gemeinschaft sprachen.\n\nAm Abend, als die Sonne unterging und die Berge in ein sanftes Rosa getaucht wurden, sammelten sich die Familien in den Hütten. Die Kinder, die den Dialekt ihrer Eltern erlernten, spielten zusammen und lachten. Die Erwachsenen setzten sich um das Feuer und erzählten Geschichten, die von ihren Vorfahren stammten. Die Sprache, die sie benutzten, war eine Mischung aus bayerischem Dialekt und slawischen Wörtern, die in einem warmen, gemütlichen Klang verflochten waren.\n\nNew topic: \"a historian arrives and explains that when slavic and bavarian peoples arrived, they mixed with celtic and roman people and these languages are also still present in the dialect and in names\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "East Tyrol Dialect",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Historian's Arrival",
+          "desc": "Kulturen, Mischung, Historiker, Sprache, Kultur, Erwachsene, Kinder, Sprache",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "Historiker",
+              "en": "historian"
+            },
+            {
+              "it": "Kultur",
+              "en": "culture"
+            },
+            {
+              "it": "Mischung",
+              "en": "mixture"
+            },
+            {
+              "it": "Erwachsene",
+              "en": "adults"
+            },
+            {
+              "it": "Kinder",
+              "en": "children"
+            },
+            {
+              "it": "Sprache",
+              "en": "language"
+            },
+            {
+              "it": "Vermischt",
+              "en": "mixed"
+            },
+            {
+              "it": "Einheimische",
+              "en": "indigenous people"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Der Historiker setzte sich zu ihnen und begann, Geschichten zu erzählen.",
+              "en": "The historian sat down with them and began to tell stories.",
+              "words": [
+                "Der",
+                "Historiker",
+                "setzte",
+                "sich",
+                "zu",
+                "ihnen",
+                "und",
+                "begann,",
+                "Geschichten",
+                "zu",
+                "erzählen."
+              ]
+            },
+            {
+              "it": "Die Slawen und die Bayern waren nicht die ersten Menschen, die hier lebten.",
+              "en": "The Slavs and the Bavarians were not the first people to live here.",
+              "words": [
+                "Die",
+                "Slawen",
+                "und",
+                "die",
+                "Bayern",
+                "waren",
+                "nicht",
+                "die",
+                "ersten",
+                "Menschen,",
+                "die",
+                "hier",
+                "lebten."
+              ]
+            },
+            {
+              "it": "Vor ihnen kamen die Kelten und die Römer, die ihre Sprache und ihre Kultur mitbrachten.",
+              "en": "Before them, the Celts and the Romans came, bringing their language and culture.",
+              "words": [
+                "Vor",
+                "ihnen",
+                "kamen",
+                "die",
+                "Kelten",
+                "und",
+                "die",
+                "Römer,",
+                "die",
+                "ihre",
+                "Sprache",
+                "und",
+                "ihre",
+                "Kultur",
+                "mitbrachten."
+              ]
+            },
+            {
+              "it": "Die Erwachsene hörten aufmerksam zu, während die Kinder neugierig um sie herumstanden.",
+              "en": "The adults listened attentively while the children stood curiously around them.",
+              "words": [
+                "Die",
+                "Erwachsene",
+                "hörten",
+                "aufmerksam",
+                "zu,",
+                "während",
+                "die",
+                "Kinder",
+                "neugierig",
+                "um",
+                "sie",
+                "herumstanden."
+              ]
+            },
+            {
+              "it": "Das bedeutet, dass unsere Sprache nicht nur aus einer Kultur besteht.",
+              "en": "This means that our language is not made up of just one culture.",
+              "words": [
+                "Das",
+                "bedeutet,",
+                "dass",
+                "unsere",
+                "Sprache",
+                "nicht",
+                "nur",
+                "aus",
+                "einer",
+                "Kultur",
+                "besteht."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Historian's Arrival",
+          "desc": "Kulturen, Sprachen, Mischung",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "Slawen",
+              "en": "Slavs"
+            },
+            {
+              "it": "Bayern",
+              "en": "Bavarians"
+            },
+            {
+              "it": "Keltische",
+              "en": "Celtic"
+            },
+            {
+              "it": "Römer",
+              "en": "Romans"
+            },
+            {
+              "it": "Dialekt",
+              "en": "dialect"
+            },
+            {
+              "it": "Namen",
+              "en": "names"
+            },
+            {
+              "it": "Erzählte",
+              "en": "told"
+            },
+            {
+              "it": "Vermischt haben",
+              "en": "were mixed"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Die Slawen und die Bayern vermischten sich mit den Einheimischen.",
+              "en": "The Slavs and the Bavarians mixed with the indigenous people.",
+              "words": [
+                "Die",
+                "Slawen",
+                "und",
+                "die",
+                "Bayern",
+                "vermischten",
+                "sich",
+                "mit",
+                "den",
+                "Einheimischen."
+              ]
+            },
+            {
+              "it": "Unsere Sprache ist ein Mischung aus vielen Kulturen.",
+              "en": "Our language is a mixture of many cultures.",
+              "words": [
+                "Unsere",
+                "Sprache",
+                "ist",
+                "ein",
+                "Mischung",
+                "aus",
+                "vielen",
+                "Kulturen."
+              ]
+            },
+            {
+              "it": "In den Namen der Orte erkennen wir noch immer die Römer.",
+              "en": "In the names of the places we still recognize the Romans.",
+              "words": [
+                "In",
+                "den",
+                "Namen",
+                "der",
+                "Orte",
+                "erkennen",
+                "wir",
+                "noch",
+                "immer",
+                "die",
+                "Römer."
+              ]
+            },
+            {
+              "it": "Der Historiker erzählte von den Keltischen Vorfahren.",
+              "en": "The historian told about the Celtic ancestors.",
+              "words": [
+                "Der",
+                "Historiker",
+                "erzählte",
+                "von",
+                "den",
+                "Keltischen",
+                "Vorfahren."
+              ]
+            },
+            {
+              "it": "Die Dialekte der Slawen sind noch immer in Gebrauch.",
+              "en": "The Slavic dialects are still in use.",
+              "words": [
+                "Die",
+                "Dialekte",
+                "der",
+                "Slawen",
+                "sind",
+                "noch",
+                "immer",
+                "in",
+                "Gebrauch."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Historian's Arrival",
+          "desc": "Kulturen, Mischung, Sprache, Dialekt, Namen",
+          "icon": "📖",
+          "vocab": [
+            {
+              "it": "Vermischt",
+              "en": "mixed"
+            },
+            {
+              "it": "Dialekt",
+              "en": "dialect"
+            },
+            {
+              "it": "Namen",
+              "en": "names"
+            },
+            {
+              "it": "Keltische",
+              "en": "Celtic"
+            },
+            {
+              "it": "Römer",
+              "en": "Romans"
+            },
+            {
+              "it": "Sprache",
+              "en": "language"
+            },
+            {
+              "it": "Erzählte",
+              "en": "told"
+            },
+            {
+              "it": "Vermischt haben",
+              "en": "were mixed"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Die Keltische Sprache vermischte sich mit der römischen.",
+              "en": "The Celtic language mixed with the Roman.",
+              "words": [
+                "Die",
+                "Keltische",
+                "Sprache",
+                "vermischte",
+                "sich",
+                "mit",
+                "der",
+                "römischen."
+              ]
+            },
+            {
+              "it": "Unser Dialekt enthält viele Namen, die von den Slawen stammen.",
+              "en": "Our dialect contains many names that come from the Slavs.",
+              "words": [
+                "Unser",
+                "Dialekt",
+                "enthält",
+                "viele",
+                "Namen,",
+                "die",
+                "von",
+                "den",
+                "Slawen",
+                "stammen."
+              ]
+            },
+            {
+              "it": "Die Römer brachten ihre Sprache und ihre Kultur mit.",
+              "en": "The Romans brought their language and their culture.",
+              "words": [
+                "Die",
+                "Römer",
+                "brachten",
+                "ihre",
+                "Sprache",
+                "und",
+                "ihre",
+                "Kultur",
+                "mit."
+              ]
+            },
+            {
+              "it": "Vermischt haben die Kelten und die Römer ihre Kultur mit den Einheimischen.",
+              "en": "The Celts and the Romans mixed their culture with the indigenous people.",
+              "words": [
+                "Vermischt",
+                "haben",
+                "die",
+                "Kelten",
+                "und",
+                "die",
+                "Römer",
+                "ihre",
+                "Kultur",
+                "mit",
+                "den",
+                "Einheimischen."
+              ]
+            },
+            {
+              "it": "Unsere Sprache ist ein Vermischt von vielen Kulturen.",
+              "en": "Our language is a mix of many cultures.",
+              "words": [
+                "Unsere",
+                "Sprache",
+                "ist",
+                "ein",
+                "Vermischt",
+                "von",
+                "vielen",
+                "Kulturen."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1090071,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2879,
+        "totalCompletionTokens": 1583,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 274733,
+            "promptTokens": 706,
+            "completionTokens": 375
+          },
+          {
+            "lessonNum": 2,
+            "ms": 249366,
+            "promptTokens": 766,
+            "completionTokens": 319
+          },
+          {
+            "lessonNum": 3,
+            "ms": 257797,
+            "promptTokens": 816,
+            "completionTokens": 331
+          }
+        ]
+      },
+      "generatedAt": "2026-05-08T08:48:26.122Z",
+      "updatedAt": "2026-05-08T08:48:26.122Z"
+    },
+    {
       "topic": "Family Home Visit",
       "topicEmoji": "🏠",
       "userTopic": "we get invited to the family home of the person we helped",
@@ -7685,404 +8532,6 @@
       },
       "generatedAt": "2026-05-06T05:21:18.226Z",
       "updatedAt": "2026-05-08T08:02:11.978Z"
-    },
-    {
-      "topic": "East Tyrol Dialects",
-      "topicEmoji": "🗣️",
-      "userTopic": "in east-tyrol people speak a dialect that is mostly of bavarian origin with a heavy slavic accent",
-      "lang": "de",
-      "difficulty": 2,
-      "storyLen": 500,
-      "story": "In den Bergen von Osttirol, wo die Alpen sanft in den Himmel hinaufsteigen, lebt eine Sprache, die den Herzen der Menschen direkt anspricht. Es ist die Dialekt, die in den Hütten der Alpenbewohner klingt, die in den Wäldern ihre Hütten aufgeschlagen haben. Man hört sie in den Läden, wo die Teller klappern, und in den Kirchen, wo die Glocken läuten.\n\nIn der kleinen Gemeinde von Sölden, wo die Berge sich wie Wächter aufbieten, spricht Maria mit ihrem Mann, Peter, in ihrem Haus. „Hast du schon den Käse für den Abend gekauft?“ fragt sie, während sie die Teller abräumt. Peter, der in der Wäscherei arbeitet, antwortet: „Ja, hab schon den Käse und die Würste. Und du? Hast du den Kaffee für morgen früh gekocht?“ Maria lacht und nickt, während sie die Teller in den Spülbecken stellt.\n\nAm Sonntagmorgen, als die Glocken der Kirche von Sölden läuten, verlassen Maria und Peter ihre Hütte. Sie gehen durch den schneebedeckten Dorfplatz, wo die Kinder in ihren Schneeanzügen herumlaufen. „Guten Morgen, Maria!“ rufen sie, und sie lächelt zurück. „Guten Morgen, ihr Kleinen!“ Sie gehen zur Kirche, wo sie mit den anderen Gemeindemitgliedern die Messe besuchen. Die Worte der Priester klingen in der Dialekt, die sie verstehen und lieben.\n\nNach der Messe gehen sie in den Dorfplatz, wo die Frauen sich unterhalten. „Hast du schon gehört, dass der neue Lehrer aus Innsbruck kommt?“ fragt eine Frau. „Ja, ich habe es gehört. Er soll gut sein, aber ich hoffe, er spricht auch den richtigen Dialekt“, antwortet Maria. Die Frauen lachen und plaudern weiter, während sie ihre Tücher wechseln.\n\nAm Abend, als die Sonne untergeht und die Berge in ein sanftes Rosa tauchen, sitzen Maria und Peter in ihrer Hütte. Sie trinken Kaffee und plaudern über den Tag. „Was hältst du von dem neuen Lehrer?“ fragt Peter. „Ich denke, er wird gut sein, wenn er den richtigen Dialekt spricht. Aber wir müssen ihm Zeit lassen, sich anzupassen.“ Maria lächelt, während sie den Kaffee trinkt. Sie sind glücklich in ihrer Gemeinde, wo die Sprache der Herzen so wunderbar klingt.",
-      "storyLang": "de",
-      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German.\n\nWrite a story for the topic: \"East Tyrol Dialects\". Plain prose, no headings.",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Dialekt in Osttirol",
-          "desc": "Bavarian origin with Slavic accent",
-          "icon": "奥地",
-          "vocab": [
-            {
-              "it": "Hütte",
-              "en": "hut",
-              "pron": "HUT"
-            },
-            {
-              "it": "Alpenbewohner",
-              "en": "Alpine dwellers",
-              "pron": "AL-PEHN-BOW-HEN-ER"
-            },
-            {
-              "it": "Wälder",
-              "en": "forests",
-              "pron": "VAY-LDER"
-            },
-            {
-              "it": "Teller",
-              "en": "plates",
-              "pron": "TELL-ER"
-            },
-            {
-              "it": "Glocken",
-              "en": "bells",
-              "pron": "GLOK-LEN"
-            },
-            {
-              "it": "Wäscherei",
-              "en": "laundromat",
-              "pron": "VAY-SHAY-RYE"
-            },
-            {
-              "it": "Käse",
-              "en": "cheese",
-              "pron": "KAH-SH"
-            },
-            {
-              "it": "Kaffee",
-              "en": "coffee",
-              "pron": "KAH-FEE"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "In den Wäldern von Osttirol klingt der Dialekt der Alpenbewohner.",
-              "en": "In the forests of East Tyrol, the dialect of the Alpine dwellers can be heard.",
-              "words": [
-                "In",
-                "den",
-                "Wäldern",
-                "von",
-                "Osttirol",
-                "klingt",
-                "der",
-                "Dialekt",
-                "der",
-                "Alpenbewohner."
-              ]
-            },
-            {
-              "it": "Maria und Peter sprechen in ihrer Hütte auf Osttirol.",
-              "en": "Maria and Peter speak in their hut in East Tyrol.",
-              "words": [
-                "Maria",
-                "und",
-                "Peter",
-                "sprechen",
-                "in",
-                "ihrer",
-                "Hütte",
-                "auf",
-                "Osttirol."
-              ]
-            },
-            {
-              "it": "Hast du schon den Käse für den Abend gekauft?",
-              "en": "Have you already bought the cheese for tonight?",
-              "words": [
-                "Hast",
-                "du",
-                "schon",
-                "den",
-                "Käse",
-                "für",
-                "den",
-                "Abend",
-                "gekauft?"
-              ]
-            },
-            {
-              "it": "Ja, hab schon den Käse und die Würste.",
-              "en": "Yes, I already have the cheese and sausages.",
-              "words": [
-                "Ja,",
-                "hab",
-                "schon",
-                "den",
-                "Käse",
-                "und",
-                "die",
-                "Würste."
-              ]
-            },
-            {
-              "it": "Und du? Hast du den Kaffee für morgen früh gekocht?",
-              "en": "And you? Have you made the coffee for tomorrow morning?",
-              "words": [
-                "Und",
-                "du?",
-                "Hast",
-                "du",
-                "den",
-                "Kaffee",
-                "für",
-                "morgen",
-                "früh",
-                "gekocht?"
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "East Tyrolean Dialect",
-          "desc": "Bavarian origin with Slavic influence",
-          "icon": "-mountains:",
-          "vocab": [
-            {
-              "it": "Bauern",
-              "en": "farmers",
-              "pron": "BAUern"
-            },
-            {
-              "it": "Säcke",
-              "en": "sacks",
-              "pron": "SAcke"
-            },
-            {
-              "it": "Wäldersch",
-              "en": "forest dialect",
-              "pron": "VAUldersch"
-            },
-            {
-              "it": "Käsespitz",
-              "en": "cheese peak",
-              "pron": "KASeSpitz"
-            },
-            {
-              "it": "Würstl",
-              "en": "sausages",
-              "pron": "VUrstl"
-            },
-            {
-              "it": "Kaffeebohne",
-              "en": "coffee bean",
-              "pron": "KAFeBohne"
-            },
-            {
-              "it": "Brotlaib",
-              "en": "bread loaf",
-              "pron": "BROTLAib"
-            },
-            {
-              "it": "Söldner",
-              "en": "soldiers",
-              "pron": "SOlndner"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Bauern tragen Säcke auf den Säcken.",
-              "en": "Farmers carry sacks on the sacks.",
-              "words": [
-                "Bauern",
-                "tragen",
-                "Säcke",
-                "auf",
-                "den",
-                "Säcken."
-              ]
-            },
-            {
-              "it": "Wäldersch klingt anders als der Standarddialekt.",
-              "en": "Forest dialect sounds different than the standard dialect.",
-              "words": [
-                "Wäldersch",
-                "klingt",
-                "anders",
-                "als",
-                "der",
-                "Standarddialekt."
-              ]
-            },
-            {
-              "it": "Käsespitz ist ein beliebtes Gericht hier in Osttirol.",
-              "en": "Cheese peak is a popular dish here in East Tyrol.",
-              "words": [
-                "Käsespitz",
-                "ist",
-                "ein",
-                "beliebtes",
-                "Gericht",
-                "hier",
-                "in",
-                "Osttirol."
-              ]
-            },
-            {
-              "it": "Würstl und Kaffeebohne sind immer bei uns in der Hütte.",
-              "en": "Sausages and coffee beans are always in our hut.",
-              "words": [
-                "Würstl",
-                "und",
-                "Kaffeebohne",
-                "sind",
-                "immer",
-                "bei",
-                "uns",
-                "in",
-                "der",
-                "Hütte."
-              ]
-            },
-            {
-              "it": "Söldner haben oft Hunger und brauchen Brotlaib.",
-              "en": "Soldiers often get hungry and need bread loaf.",
-              "words": [
-                "Söldner",
-                "haben",
-                "oft",
-                "Hunger",
-                "und",
-                "brauchen",
-                "Brotlaib."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "East Tyrolean Dialect",
-          "desc": "Bavarian origin with Slavic accent",
-          "icon": "奥地",
-          "vocab": [
-            {
-              "it": "Bauernsprech",
-              "en": "farmer's speech",
-              "pron": "BOH-erns-SPEICH"
-            },
-            {
-              "it": "Sackfutter",
-              "en": "sack filler",
-              "pron": "SAK-fu-TET"
-            },
-            {
-              "it": "Würstelbude",
-              "en": "sausage shop",
-              "pron": "VOO-stel-BOOD"
-            },
-            {
-              "it": "Käsespitzl",
-              "en": "small cheese peak",
-              "pron": "KAH-ze-spit-LEH"
-            },
-            {
-              "it": "Brotlaib",
-              "en": "bread loaf",
-              "pron": "BROHT-lahyb"
-            },
-            {
-              "it": "Söldnerkaffee",
-              "en": "soldier's coffee",
-              "pron": "SOHL-nern-KAH-fee"
-            },
-            {
-              "it": "Wäldersch",
-              "en": "forest dialect",
-              "pron": "VOL-derskh"
-            },
-            {
-              "it": "Sackkarree",
-              "en": "sack carré",
-              "pron": "SAK-kah-REH"
-            }
-          ],
-          "sentences": [
-            {
-              "it": "Im Wäldersch spricht man anders als in der Stadt.",
-              "en": "In the forest dialect one speaks differently than in the city.",
-              "words": [
-                "Im",
-                "Wäldersch",
-                "spricht",
-                "man",
-                "anders",
-                "als",
-                "in",
-                "der",
-                "Stadt."
-              ]
-            },
-            {
-              "it": "Mein Sackfutter ist voller Käsespitzl.",
-              "en": "My sack filler is full of small cheese peaks.",
-              "words": [
-                "Mein",
-                "Sackfutter",
-                "ist",
-                "voller",
-                "Käsespitzl."
-              ]
-            },
-            {
-              "it": "Ich kaufe Würstelbude fürs Abendessen.",
-              "en": "I buy sausage shop for dinner.",
-              "words": [
-                "Ich",
-                "kaufe",
-                "Würstelbude",
-                "fürs",
-                "Abendessen."
-              ]
-            },
-            {
-              "it": "Sackkarree ist gut zum Mitnehmen.",
-              "en": "Sack carré is good to take away.",
-              "words": [
-                "Sackkarree",
-                "ist",
-                "gut",
-                "zum",
-                "Mitnehmen."
-              ]
-            },
-            {
-              "it": "Peter hat schon den Brotlaib für den Söldnerkaffee gekauft.",
-              "en": "Peter has already bought the bread loaf for the soldier's coffee.",
-              "words": [
-                "Peter",
-                "hat",
-                "schon",
-                "den",
-                "Brotlaib",
-                "für",
-                "den",
-                "Söldnerkaffee",
-                "gekauft."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1273620,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "totalPromptTokens": 2751,
-        "totalCompletionTokens": 1903,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 292466,
-            "promptTokens": 758,
-            "completionTokens": 411
-          },
-          {
-            "lessonNum": 2,
-            "ms": 284148,
-            "promptTokens": 834,
-            "completionTokens": 412
-          },
-          {
-            "lessonNum": 3,
-            "ms": 147515,
-            "promptTokens": 899,
-            "completionTokens": 422
-          }
-        ]
-      },
-      "generatedAt": "2026-05-05T22:57:20.763Z",
-      "updatedAt": "2026-05-05T22:57:20.763Z"
     },
     {
       "topic": "freedom above clouds",
@@ -23232,6 +23681,22 @@
         "per"
       ],
       "flaggedAt": "2026-05-07T11:26:02.078Z"
+    },
+    "East_Tyrol_Dialect:read_translate:Ich_bin_heute_gut,_danke!": {
+      "topic": "East Tyrol Dialect",
+      "type": "read_translate",
+      "it": "Ich bin heute gut, danke!",
+      "en": "I am well today, thank you!",
+      "correct": "I am well today, thank you!",
+      "choices": [
+        "In East Tyrol, people speak a dialect that is mostly Bavarian with a heavy Slavic accent.",
+        "I am well today, thank you!",
+        "My neighbor Peter is cleaning his hut in the morning.",
+        "Good morning, my friend!"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-08T08:35:02.188Z",
+      "comment": "correct German would be: Mir geht's heute gut, danke!"
     }
   },
   "storylines": {
@@ -23256,7 +23721,7 @@
       "icon": "🏓"
     },
     "c1700104945": {
-      "title": "Toscany Tastes",
+      "title": "Tuscany Tastes",
       "icon": "🍷🍺🧶"
     },
     "c803309217": {
@@ -23298,6 +23763,14 @@
     "c600674689": {
       "title": "Dolomites Dawn",
       "icon": "☀️"
+    },
+    "c1965970787": {
+      "title": "Alpine Echoes",
+      "icon": "🌍🗣️"
+    },
+    "c1109195178": {
+      "title": "Dialects of the Alps",
+      "icon": "🌍"
     }
   }
 }
