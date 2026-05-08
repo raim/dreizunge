@@ -101,10 +101,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* ══ HOME ════════════════════════════════════════════════════════════ */
 #home{padding:0 16px 40px}
 .home-inner{max-width:520px;width:100%}
-.home-hdr{display:flex;align-items:center;gap:10px;padding:18px 0 8px}
+.home-hdr{display:flex;flex-direction:column;gap:0;padding:14px 0 4px}.home-hdr-title{display:flex;align-items:center;gap:10px;padding-bottom:6px}.home-hdr-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-bottom:4px}.home-hdr-storyline{display:none;align-items:center;gap:8px;padding:5px 0 3px;border-top:1px solid var(--gray-mid);font-size:13px;font-weight:800;color:var(--text);flex-wrap:wrap}.home-hdr-storyline.visible{display:flex}
 .topic-emoji-big{font-size:28px}
 .topic-name-big{font-size:19px;font-weight:900;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hdr-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:7px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);white-space:nowrap}
+.hdr-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:5px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);white-space:nowrap}
 .hdr-btn:hover{border-color:var(--blue);color:var(--blue-dark)}.hdr-btn.muted{border-color:var(--red);color:var(--red);background:#fff0f0}
 .prog-strip{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:10px 16px;margin:10px 0 20px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
 .prog-val{font-size:17px;font-weight:900;color:var(--green-dark)}
@@ -274,7 +274,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .continue-select{width:100%;padding:9px 36px 9px 12px;font-size:13px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
 .continue-select:focus{border-color:var(--blue)}
 .continue-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px;color:var(--gray-dark)}
-.cont-nav{display:flex;flex-direction:row;gap:8px;margin:0 0 10px;padding:0 2px;align-items:flex-start}
+.cont-nav{display:flex;flex-direction:row;gap:8px;margin:0;padding:4px 0 4px;align-items:flex-start;border-top:1px solid var(--gray-mid)}
 .cont-col{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
 .cont-col-from{align-items:flex-start}
 .cont-col-by{align-items:flex-end}
@@ -438,6 +438,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <span class="lang-select-arrow">▾</span>
     </div>
   </div>
+  <div class="user-dialect-row" style="margin-bottom:14px">
+    <label class="form-lbl" style="margin-bottom:4px">Dialect or variety <span style="font-weight:400;text-transform:none">(optional)</span></label>
+    <input class="user-dialect-input" id="user-dialect-input"
+      placeholder="e.g. Sicilian, Lëtzebuergesch, Brazilian Portuguese…">
+  </div>
 
   <div class="topic-form">
     <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
@@ -466,11 +471,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <textarea class="user-story-textarea" id="user-translation-input"
           placeholder="Paste the English translation here. One sentence per paragraph is ideal, but plain prose works too."
           oninput="autoResizeTextarea(this)"></textarea>
-        <div class="user-dialect-row">
-          <label class="form-lbl" style="margin-bottom:0">Dialect or variety <span style="font-weight:400;text-transform:none">(optional)</span></label>
-          <input class="user-dialect-input" id="user-dialect-input"
-            placeholder="e.g. Sicilian, Lëtzebuergesch, Brazilian Portuguese…">
-        </div>
       </div>
     </div>
 
@@ -537,13 +537,18 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 <div id="home" class="screen">
 <div class="home-inner">
   <div class="home-hdr">
-    <span class="topic-emoji-big" id="topic-emoji-big">📚</span>
-    <span class="topic-name-big" id="topic-name-big">Topic</span>
-    <button class="hdr-btn" id="cont-story-btn" onclick="continueFromCurrent()" style="display:none" title="Continue this story">↪ Continue</button>
-    <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
-    <button class="hdr-btn" id="mute-btn" onclick="toggleMute()" title="Mute/unmute reading aloud">🔊</button>
-    <button class="hdr-btn" id="share-btn" onclick="shareLesson()" title="Copy shareable link">🔗 Share</button>
-    <button class="hdr-btn" onclick="goLandingClean()">← Topics</button>
+    <div class="home-hdr-title">
+      <span class="topic-emoji-big" id="topic-emoji-big">📚</span>
+      <span class="topic-name-big" id="topic-name-big">Topic</span>
+    </div>
+    <div class="home-hdr-actions">
+      <button class="hdr-btn" onclick="goLandingClean()">← Topics</button>
+      <button class="hdr-btn" id="share-btn" onclick="shareLesson()" title="Copy shareable link">🔗 Share</button>
+      <button class="hdr-btn" id="mute-btn" onclick="toggleMute()" title="Mute/unmute reading aloud">🔊</button>
+      <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
+      <button class="hdr-btn" id="cont-story-btn" onclick="continueFromCurrent()" style="display:none" title="Continue this story">↪ Continue</button>
+    </div>
+    <div class="home-hdr-storyline" id="home-hdr-storyline"></div>
   </div>
   <div class="prog-strip">
     <span style="font-size:20px">📊</span>
@@ -1123,14 +1128,35 @@ async function loadSavedList(){
     return dt > best ? dt : best;
   }, '');
   storylines.sort((a, b) => newestOf(b).localeCompare(newestOf(a)));
-  // Sort orphans newest first (already sorted by server, but refilter may reorder)
+  // Sort orphans newest first
   orphans.sort((a, b) => (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
+
+  // When showing all languages, group by language with flag headers
+  const showAllLangs = APP.libFilter === 'all';
+  // Collect language order from filtered list (preserves newest-first within each lang)
+  const langOrder = [...new Set(filtered.map(l => l.lang || 'it'))];
 
   let html = '';
 
   // Render storyline groups
   const slTitles = APP.storylines || {};
-  for (const chain of storylines) {
+  if (showAllLangs) {
+    // Group storylines by language
+    let lastLang = null;
+    for (const chain of storylines) {
+      const chainLang = byTopic[chain[0]]?.lang || 'it';
+      if (chainLang !== lastLang) {
+        const L = LANGS[chainLang] || LANGS.it;
+        html += `<div class="orphans-hdr">${L.flag} ${L.name}</div>`;
+        lastLang = chainLang;
+      }
+      storylines_renderChain(chain);
+    }
+  } else {
+    for (const chain of storylines) storylines_renderChain(chain);
+  }
+
+  function storylines_renderChain(chain) {
     const chainTopics = chain.map(t => byTopic[t]?.topic).filter(Boolean);
     const chainTopicsJson = JSON.stringify(chainTopics);
     const chainId = 'c' + Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
@@ -1143,13 +1169,13 @@ async function loadSavedList(){
     const escapedChain = encodeURIComponent(chainTopicsJson);
     // Header: title view or default label
     const hdrTitle = hasTitle
-      ? `<span class="storyline-title">
+      ? `<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards('${chainId}')">
           <span style="font-size:18px">${titleIcon}</span>
           <span class="storyline-title-text">${escHtml(titleText)}</span>
           <span class="storyline-title-sub">· ${chain.length} chapter${chain.length!==1?'s':''}</span>
          </span>`
       : `<span class="storyline-title">
-          <span>📖</span>
+          <span>${(LANGS[byTopic[chain[0]]?.lang||'it']||LANGS.it).flag}</span>
           <span class="storyline-title-sub">Story line · ${chain.length} lesson${chain.length!==1?'s':''}</span>
          </span>`;
     const genBtn = APP.info.canGenerate
@@ -1190,12 +1216,26 @@ async function loadSavedList(){
       `<div class="storyline-story-body" id="csbody-${chainId}" data-chain="${escapedChain}"></div>` +
       `</div>`;
     html += `</div>`;
-  }
+  } // end storylines_renderChain
 
   // Render orphans
   if (orphans.length) {
-    if (storylines.length) html += `<div class="orphans-hdr">📚 Individual lessons</div>`;
-    html += orphans.map(s => savedItemHtml(s, false)).join('');
+    if (showAllLangs) {
+      // Group orphans by language with flag headers
+      let lastLang = null;
+      for (const s of orphans) {
+        const sLang = s.lang || 'it';
+        if (sLang !== lastLang) {
+          const L = LANGS[sLang] || LANGS.it;
+          html += `<div class="orphans-hdr">${L.flag} ${L.name}</div>`;
+          lastLang = sLang;
+        }
+        html += savedItemHtml(s, false);
+      }
+    } else {
+      if (storylines.length) html += `<div class="orphans-hdr">📚 Individual lessons</div>`;
+      html += orphans.map(s => savedItemHtml(s, false)).join('');
+    }
   }
 
   list.innerHTML = html || '<div class="lib-empty">No lessons in this language.</div>';
@@ -1407,7 +1447,7 @@ async function doGenerate(forceRegen){
   const useTranslation=document.getElementById('use-translation-cb')?.checked;
   const userStory=useStory?(document.getElementById('user-story-input')?.value.trim()||null):null;
   const userTranslation=(useStory&&useTranslation)?(document.getElementById('user-translation-input')?.value.trim()||null):null;
-  const userDialect=(useStory&&useTranslation)?(document.getElementById('user-dialect-input')?.value.trim()||null):null;
+  const userDialect=document.getElementById('user-dialect-input')?.value.trim()||null;
 
   if(useStory&&(!userStory||userStory.length<20)){
     alert('Please paste your story (at least 20 characters) before generating.');
@@ -1467,13 +1507,12 @@ function buildPath(){
   APP.ttsLang=null;
   buildTtsSelector();
 
-  // Continued-from / continued-by links — rendered in a shared row below the header
+  // Continued-from / continued-by links — rendered below the header
   let contNav=document.getElementById('cont-nav');
   if(!contNav){
     contNav=document.createElement('div');
     contNav.id='cont-nav';
     contNav.className='cont-nav';
-    // Insert after home-hdr
     document.querySelector('.home-hdr').insertAdjacentElement('afterend',contNav);
   }
   const continuedBy=(APP.savedList||[]).filter(s=>s.continuedFrom===d.topic);
@@ -1495,6 +1534,37 @@ function buildPath(){
     contNav.style.display='';
   } else {
     contNav.style.display='none';
+  }
+
+  // Storyline title row — find which chains this topic belongs to
+  const slRow=document.getElementById('home-hdr-storyline');
+  if(slRow){
+    const saved=APP.savedList||[];
+    const byTopicMap=Object.fromEntries(saved.map(l=>[l.topic,l]));
+    const slTitles=APP.storylines||{};
+    // Build chains that contain this topic
+    const matchedTitles=[];
+    const childMap={};
+    saved.forEach(l=>{ if(l.continuedFrom&&byTopicMap[l.continuedFrom])(childMap[l.continuedFrom]=childMap[l.continuedFrom]||[]).push(l.topic); });
+    const hasParent=new Set(saved.filter(l=>l.continuedFrom&&byTopicMap[l.continuedFrom]).map(l=>l.topic));
+    const roots=saved.filter(l=>!hasParent.has(l.topic));
+    function walkForTitle(topic,chain){
+      const ext=[...chain,topic];
+      const kids=childMap[topic]||[];
+      if(!kids.length){ if(ext.includes(d.topic)&&ext.length>1) matchedTitles.push(ext); return; }
+      kids.forEach(k=>walkForTitle(k,ext));
+    }
+    roots.forEach(r=>walkForTitle(r.topic,[]));
+    const slHtml=matchedTitles.map(chain=>{
+      const j=JSON.stringify(chain);
+      const h=j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0);
+      const cid='c'+Math.abs(h);
+      const meta=slTitles[cid];
+      if(!meta||!meta.title) return '';
+      return `<span style="cursor:pointer;background:var(--gray-light);border-radius:10px;padding:2px 10px;font-size:12px" onclick="loadSaved('${encTopic(chain[0])}')">${meta.icon||'📖'} ${escHtml(meta.title)}</span>`;
+    }).filter(Boolean).join('');
+    if(slHtml){ slRow.innerHTML=slHtml; slRow.classList.add('visible'); }
+    else { slRow.innerHTML=''; slRow.classList.remove('visible'); }
   }
 
   // Story section — below start button now; collapse/expand based on completion

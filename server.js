@@ -444,7 +444,7 @@ function sysTranslation(lang) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang, isContinuation, wordCount) {
+function sysStory(lang, isContinuation, wordCount, dialect) {
   const L = langName(lang);
   const wc = Math.max(100, Math.min(1000, wordCount || 300));
   const paraLo = Math.max(1, Math.floor(wc / 100));
@@ -453,7 +453,8 @@ function sysStory(lang, isContinuation, wordCount) {
     ? ' IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.'
     : '';
   const furiganaNote = lang==='ja' ? ' Annotate every kanji with furigana using HTML ruby tags, e.g. <ruby>日本語<rt>にほんご</rt></ruby>.' : '';
-  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${furiganaNote}${cont}`;
+  const dialectNote = dialect ? ` Write in the ${dialect} dialect/variety.` : '';
+  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${dialectNote}${furiganaNote}${cont}`;
 }
 
 // ── Storyline title prompt ─────────────────────────────────────────────
@@ -626,7 +627,7 @@ async function generate(topic, lang, difficulty, continuedFrom, storyLen, jobId,
       const storyUserMsg = prevStory
         ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
         : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
-      const storySystem = sysStory(lang, !!prevStory, storyLen);
+      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect);
       const { text, promptTokens, completionTokens } = await callLLM(
         storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
       story = text.trim();

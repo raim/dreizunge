@@ -110,19 +110,6 @@ const lessonsSerialized = JSON.stringify(cleanedLessons, null, 2);
 // Build flagged-lessons export payload (original lessons that had flags, with flags map)
 const flaggedTopicSlugs = new Set([...flagKeys].map(k => k.split(':')[0]));
 const flaggedLessons = lessonsData.lessons.filter(t => flaggedTopicSlugs.has(topicSlug(t.topic)));
-const flaggedPayload = removedCount > 0 ? {
-  lessons: flaggedLessons.map(t => ({
-    ...t,
-    exportedFlags: Object.fromEntries(
-      Object.entries(flags).filter(([k]) => k.startsWith(topicSlug(t.topic) + ':'))
-    ),
-    exportedAt: new Date().toISOString(),
-  })),
-  flagCount: removedCount,
-  exportedAt: new Date().toISOString(),
-  exportedBy: 'dreizunge-static',
-} : null;
-const flaggedPayloadSerialized = flaggedPayload ? JSON.stringify(flaggedPayload) : 'null';
 const storylinesSerialized = JSON.stringify(lessonsData.storylines || {});
 
 const staticFunctions = `
@@ -134,7 +121,6 @@ const STATIC_LESSONS = ${lessonsSerialized};
 // Sort newest first
 STATIC_LESSONS.sort((a,b)=>((b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||'')));
 
-const STATIC_FLAGGED_PAYLOAD = ${flaggedPayloadSerialized};
 const STATIC_STORYLINES = ${storylinesSerialized};
 
 // ── repopulateContinueSelect — filters continue-dropdown by language ──
@@ -155,15 +141,6 @@ function repopulateContinueSelect(){
   if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
 }
 
-function downloadFlaggedLessons() {
-  if (!STATIC_FLAGGED_PAYLOAD) return;
-  const blob = new Blob([JSON.stringify(STATIC_FLAGGED_PAYLOAD, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'dreizunge-flagged-' + Date.now() + '.json';
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a); URL.revokeObjectURL(url);
-}
 
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
@@ -187,8 +164,6 @@ function renderPill() {
   note.innerHTML='📦 Static version — select a topic below to start<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>';
 
   // Show flagged-lessons reminder if this build stripped flagged exercises
-  const flagBanner = document.getElementById('static-flag-banner');
-  if (flagBanner) flagBanner.style.display = STATIC_FLAGGED_PAYLOAD ? 'flex' : 'none';
   // Limit lang dropdown to languages that have lessons in this build
   const presentLangs=new Set(STATIC_LESSONS.map(s=>s.lang||'it'));
   const sel=document.getElementById('lang-select');
@@ -304,10 +279,24 @@ async function loadSavedList() {
 
   const newestOf=chain=>chain.reduce((b,t)=>{const d=byTopic[t]?.updatedAt||byTopic[t]?.generatedAt||'';return d>b?d:b;},'');
   storylines.sort((a,b)=>newestOf(b).localeCompare(newestOf(a)));
+  const showAllLangs = APP.libFilter==='all';
+  // When showing all languages, group storylines by language
+  if(showAllLangs) storylines.sort((a,b)=>{
+    const la=byTopic[a[0]]?.lang||'it', lb=byTopic[b[0]]?.lang||'it';
+    return la.localeCompare(lb) || newestOf(b).localeCompare(newestOf(a));
+  });
 
   const slTitles = (typeof APP !== 'undefined' && APP.storylines) || STATIC_STORYLINES || {};
-  let html='';
+  let html='', _lastLang=null;
   for(const chain of storylines){
+    if(showAllLangs){
+      const cl=byTopic[chain[0]]?.lang||'it';
+      if(cl!==_lastLang){
+        const L=LANGS[cl]||LANGS.it;
+        html+='<div class="orphans-hdr">'+L.flag+' '+L.name+'</div>';
+        _lastLang=cl;
+      }
+    }
     const chainTopics=chain.map(t=>byTopic[t]?.topic).filter(Boolean);
     const chainTopicsJson=JSON.stringify(chainTopics);
     const chainEncoded=encodeURIComponent(chainTopicsJson);
@@ -319,8 +308,8 @@ async function loadSavedList() {
     const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const escapedRoot=chainId;
     const hdrTitle=hasTitle
-      ? '<span class="storyline-title"><span style="font-size:18px">'+titleIcon+'</span><span class="storyline-title-text">'+esc(titleText)+'</span><span class="storyline-title-sub">· '+chain.length+' chapter'+(chain.length!==1?'s':'')+'</span></span>'
-      : '<span class="storyline-title"><span>📖</span><span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+'</span></span>';
+      ? '<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)"><span style="font-size:18px">'+titleIcon+'</span><span class="storyline-title-text">'+esc(titleText)+'</span><span class="storyline-title-sub">· '+chain.length+' chapter'+(chain.length!==1?'s':'')+'</span></span>'
+      : '<span class="storyline-title"><span>'+(LANGS[byTopic[chain[0]]?.lang||'it']||LANGS.it).flag+'</span><span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+'</span></span>';
     const collapseBtn=hasTitle
       ? '<button class="storyline-hdr-btn" title="Toggle chapters" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)" id="slcollapse-'+chainId+'"><span class="storyline-collapse-btn" id="slcarrow-'+chainId+'">▲</span></button>'
       : '';
@@ -348,8 +337,18 @@ async function loadSavedList() {
     html+='</div>';
   }
   if(orphans.length){
-    if(storylines.length) html+='<div class="orphans-hdr">📚 Individual lessons</div>';
-    html+=orphans.map(s=>itemHtml(s,false)).join('');
+    if(showAllLangs){
+      let _oLang=null;
+      orphans.sort((a,b)=>(a.lang||'it').localeCompare(b.lang||'it')||(b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
+      orphans.forEach(s=>{
+        const sl=s.lang||'it';
+        if(sl!==_oLang){const L=LANGS[sl]||LANGS.it;html+='<div class="orphans-hdr">'+L.flag+' '+L.name+'</div>';_oLang=sl;}
+        html+=itemHtml(s,false);
+      });
+    } else {
+      if(storylines.length) html+='<div class="orphans-hdr">📚 Individual lessons</div>';
+      html+=orphans.map(s=>itemHtml(s,false)).join('');
+    }
   }
   list.innerHTML=html||'<div class="lib-empty">No lessons available.</div>';
 }
@@ -452,6 +451,10 @@ const staticOverrides = [
   '}',
   'function toggleStoryRepair(){}',
   'function doRepairStory(){ alert("Story repair requires the live server."); }',
+  // Flagged-lesson banner — never show in static build (no server flags baked in)
+  'function downloadFlaggedLessons(){}',
+  '(function(){ var b=document.getElementById(\'static-flag-banner\'); if(b) b.style.display=\'none\'; })()',
+
   // Storyline title stubs — must be AFTER part2 to override live server versions
   'function _slSave(){ try{ localStorage.setItem(\'dz_storylines\',JSON.stringify(APP.storylines||{})); }catch(e){} }',
   'async function saveStorylineTitle(chainId,rootTopic){',
