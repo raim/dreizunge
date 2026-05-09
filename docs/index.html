@@ -24770,62 +24770,82 @@ function speakBodyText(bodyId){
   if(text)speak(text);
 }
 
-function speak(text, rate){
-  if(!window.speechSynthesis || APP.muted) return;
+function speak_old(text,rate){
+  if(!window.speechSynthesis||APP.muted)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  const ttsCode=activeTtsCode();
+  u.lang=ttsCode; u.rate=rate||0.9; u.pitch=1;
+  const voices=speechSynthesis.getVoices();
+  if(voices.length>0){
+    const match=voices.find(v=>v.lang.startsWith(ttsCode.split('-')[0]));
+    if(!match && !speak._warned?.[ttsCode]){
+      speak._warned=speak._warned||{};
+      speak._warned[ttsCode]=true;
+      console.warn('Dreizunge: no TTS voice found for',ttsCode,
+        '— install a language pack or switch to a supported language');
+    }
+  }
+  speechSynthesis.speak(u);
+}
+
+function speak(text,rate){
+  if(!window.speechSynthesis||APP.muted)return;
 
   speechSynthesis.cancel();
 
-  const u = new SpeechSynthesisUtterance(text);
+  const u=new SpeechSynthesisUtterance(text);
 
-  const ttsCode = activeTtsCode();
+  const ttsCode=activeTtsCode();
 
-  u.lang  = ttsCode;
-  u.rate  = rate || 0.9;
-  u.pitch = 1;
+  u.lang=ttsCode;
+  u.rate=rate||0.9;
+  u.pitch=1;
 
-  const voices = speechSynthesis.getVoices();
+  const voices=speechSynthesis.getVoices();
 
-  if(voices.length > 0){
+  if(voices.length>0){
 
     // Prefer exact locale match first
-    let match = voices.find(v =>
-      v.lang.toLowerCase() === ttsCode.toLowerCase()
+    let match=voices.find(v =>
+      v.lang.toLowerCase()===ttsCode.toLowerCase()
     );
 
-    // Then fallback to language-only match
+    // Fallback to language-only match
     if(!match){
-      const short = ttsCode.split('-')[0].toLowerCase();
+      const short=ttsCode.split('-')[0].toLowerCase();
 
-      match = voices.find(v =>
+      match=voices.find(v =>
         v.lang.toLowerCase().startsWith(short)
       );
     }
 
+    // IMPORTANT: actually assign the voice
     if(match){
-      u.voice = match;
+
+      u.voice=match;
 
       console.log(
-        'Using TTS voice:',
+        'Dreizunge TTS:',
         match.name,
         match.lang
       );
-    } else {
 
-      if(!speak._warned?.[ttsCode]){
-        speak._warned = speak._warned || {};
-        speak._warned[ttsCode] = true;
+    } else if(!speak._warned?.[ttsCode]){
 
-        console.warn(
-          'No TTS voice found for',
-          ttsCode
-        );
-      }
+      speak._warned=speak._warned||{};
+      speak._warned[ttsCode]=true;
+
+      console.warn(
+        'Dreizunge: no TTS voice found for',
+        ttsCode,
+        '— install a language pack or switch to a supported language'
+      );
     }
   }
 
   speechSynthesis.speak(u);
-  }
-
+}
 
 function muteBadgeBtn(){
   return `<button style="background:none;border:none;cursor:pointer;font-size:12px;padding:0 0 0 6px;opacity:.7;line-height:1" onclick="event.stopPropagation();toggleMute()" title="Mute/unmute">${APP.muted?'🔇':'🔊'}</button>`;
