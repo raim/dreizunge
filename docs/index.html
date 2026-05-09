@@ -24960,6 +24960,18 @@ async function exportTopics(topics) {
   }
 }
 
+// Ensure browser voice list loads properly
+if(window.speechSynthesis){
+
+  speechSynthesis.getVoices();
+
+  speechSynthesis.onvoiceschanged=()=>{
+    console.log(
+      'Voices loaded:',
+      speechSynthesis.getVoices().length
+    );
+  };
+}
 // ── Disabled in static mode ──────────────────────────────────────
 async function syncFlagsFromServer(){}
 async function pushFlagToServer(){}

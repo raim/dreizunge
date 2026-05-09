@@ -2415,6 +2415,18 @@ async function exportTopics(topics) {
   }
 }
 
+// Ensure browser voice list loads properly
+if(window.speechSynthesis){
+
+  speechSynthesis.getVoices();
+
+  speechSynthesis.onvoiceschanged=()=>{
+    console.log(
+      'Voices loaded:',
+      speechSynthesis.getVoices().length
+    );
+  };
+}
 init();
 </script>
 <div id="story-prompt-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeStoryPrompt()">
