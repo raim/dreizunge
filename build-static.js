@@ -170,15 +170,20 @@ function renderPill() {
   lbl.textContent = 'Static — built-in lessons only';
   document.getElementById('gen-btn').disabled = true;
   document.getElementById('topic-input').disabled = true;
-  // C5: inject static overlay on generation form
+  // C5: replace generation form with static info message
   const _tf = document.querySelector('.topic-form');
   if (_tf && !document.getElementById('static-gen-overlay')) {
-    _tf.style.position = 'relative';
     const _ov = document.createElement('div');
     _ov.id = 'static-gen-overlay';
-    _ov.style.cssText = 'position:absolute;inset:0;background:rgba(245,245,245,.93);border-radius:inherit;display:flex;align-items:center;padding:20px;z-index:10;box-sizing:border-box';
-    _ov.innerHTML = '<p style="font-size:13px;font-weight:700;color:#444;line-height:1.6;margin:0"><strong>Dreizunge</strong> is an open-source language lesson generator. This is the <strong>static version</strong> — you can play the existing lessons, but not generate new ones.<br><br>Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to run your own server or contribute.<br><br><span style="color:#c00;font-weight:900">⚠ AI generated content.</span> Use a real language learning app or a human teacher if you are new to a language.</p>';
-    _tf.appendChild(_ov);
+    _ov.style.cssText = 'background:var(--white);border-radius:var(--radius-xl);padding:22px;'+ 
+      'box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:14px;'+ 
+      'font-size:13px;font-weight:600;color:#444;line-height:1.7';
+    _ov.innerHTML = '<strong style="font-size:15px">Dreizunge</strong> is an open-source language lesson generator: learn vocabulary for any topic. '+ 
+      'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to contribute.<br><br>'+ 
+      'This is the <strong>static version</strong> — you can play the existing lessons, but not generate new ones.<br><br>'+ 
+      '<span style="color:#c00;font-weight:800">⚠ AI generated content.</span> '+ 
+      'Use a real language learning app or a human teacher if you are new to a language.';
+    _tf.parentNode.replaceChild(_ov, _tf);
   }
   const note=document.getElementById('offline-note');
   note.style.display='block';
@@ -403,6 +408,7 @@ const staticOverrides = [
   'async function deleteSaved(){}',
   'async function regenSaved(){}',
   'function regenCurrent(){}',
+  'function shareLesson(){}',
   'async function doGenerate(){}',
   'async function submitRating(){}',
   'function importLessons(input){',
@@ -468,7 +474,6 @@ const staticOverrides = [
   'function doRepairStory(){ alert("Story repair requires the live server."); }',
   // Flagged-lesson banner — never show in static build (no server flags baked in)
   'function downloadFlaggedLessons(){}',
-  '(function(){ var b=document.getElementById(\'static-flag-banner\'); if(b) b.style.display=\'none\'; })()',
 
   // C4: disable storyline title editing in static
   'function openStorylineEdit(){}',

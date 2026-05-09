@@ -105,7 +105,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .topic-emoji-big{font-size:28px}
 .topic-name-big{font-size:19px;font-weight:900;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hdr-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:5px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);white-space:nowrap}
-.hdr-btn:hover{border-color:var(--blue);color:var(--blue-dark)}.hdr-btn.muted{border-color:var(--red);color:var(--red);background:#fff0f0}
+.hdr-btn:hover{border-color:var(--blue);color:var(--blue-dark)}
 .prog-strip{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:10px 16px;margin:10px 0 20px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-card)}.chain-prog-strip{font-size:12px;font-weight:700;color:var(--gray-dark);padding:6px 0 2px;display:flex;align-items:center;gap:8px}.chain-prog-bar-wrap{flex:1;background:var(--gray-mid);border-radius:4px;height:5px;overflow:hidden}.chain-prog-bar{height:100%;background:var(--blue);border-radius:4px;transition:width .3s}
 .prog-val{font-size:17px;font-weight:900;color:var(--green-dark)}
 .path-wrap{display:flex;flex-direction:column;align-items:center}
@@ -353,17 +353,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 
 /* ══ RATING ══════════════════════════════════════════════════════════ */
-
-
-
-
-
-
-
-
-
-
-
+.rating-panel{background:var(--white);border:2px solid var(--yellow);border-radius:var(--radius-xl);padding:18px 18px 16px;margin:0 0 18px;box-shadow:var(--shadow-card)}
+.rating-title{font-size:15px;font-weight:900;color:var(--text);margin-bottom:14px;text-align:center}
+.rating-row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.rating-axis{font-size:13px;font-weight:800;color:var(--text);width:90px;flex-shrink:0}
+.rating-btns{display:flex;gap:6px}
+.rating-btn{background:none;border:2px solid var(--gray-mid);border-radius:10px;padding:5px 10px;font-size:16px;cursor:pointer;transition:border-color .1s,background .1s;line-height:1.2}
+.rating-btn:hover{border-color:var(--blue)}
+.rating-btn.sel{border-color:var(--blue);background:var(--blue-light)}
+.rating-submit{width:100%;padding:10px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius);font-size:14px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px}
+.rating-done{font-size:13px;font-weight:700;text-align:center;color:var(--green-dark);padding:4px 0}
+.rating-summary{display:flex;gap:10px;font-size:12px;font-weight:700;color:var(--gray-dark);margin-top:6px;flex-wrap:wrap;justify-content:center}
 
 /* ══ TOAST ═══════════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
@@ -504,11 +504,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </div>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
-    <div class="static-flag-banner" id="static-flag-banner">
-      <span style="font-size:16px">⚑</span>
-      <span style="flex:1" id="static-flag-banner-text">You have flagged exercises — download them to review.</span>
-      <button onclick="downloadUserFlaggedLessons()">⬇ Download flagged</button>
-    </div>
+  </div>
+
+  <div class="static-flag-banner" id="static-flag-banner">
+    <span style="font-size:16px">⚑</span>
+    <span style="flex:1" id="static-flag-banner-text">You have flagged exercises — download them to review.</span>
+    <button onclick="downloadUserFlaggedLessons()">⬇ Download flagged</button>
   </div>
 
   <div class="library">
@@ -547,7 +548,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </div>
     <div class="home-hdr-storyline" id="home-hdr-storyline"></div>
   </div>
-  <div class="prog-strip" id="prog-strip">
+  <div class="prog-strip">
     <span style="font-size:20px">📊</span>
     <div style="flex:1">
       <div style="font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.07em">Progress</div>
@@ -558,11 +559,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
   </div>
   <div class="gen-stats" id="gen-stats"></div>
+  <div class="rating-panel" id="rating-panel" style="display:none"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
     <div class="tts-row" id="tts-row" style="display:none">
-      <button class="hdr-btn" id="mute-btn" onclick="toggleMute()" title="Mute/unmute reading aloud" style="padding:3px 8px">🔊</button>
       <select class="tts-select" id="tts-select" onchange="onTtsSelect(this.value)"></select>
       <span class="tts-approx" id="tts-approx" style="display:none">⚠ approximate pronunciation</span>
     </div>
@@ -646,8 +647,8 @@ var LANGS = {
   ko: {name:'Korean',           flag:'🇰🇷', tts:'ko-KR'},
   tr: {name:'Turkish',          flag:'🇹🇷', tts:'tr-TR'},
   hi: {name:'Hindi',            flag:'🇮🇳', tts:'hi-IN'},
-  sw: {name:'Swahili',          flag:'🇰🇪', tts:'sw-KE', ttsFallback:'en-US'},
-  lb: {name:'Lëtzebuergesch',   flag:'🇱🇺', tts:'lb-LU', ttsFallback:'de-DE'},
+  sw: {name:'Swahili',          flag:'🇰🇪', tts:'sw-KE'},
+  lb: {name:'Lëtzebuergesch',   flag:'🇱🇺', tts:'lb-LU'},
 };
 
 var APP = {
@@ -660,7 +661,6 @@ var APP = {
   prevLangFilter: null,
   savedList: [],
   progress: loadProg(),
-  muted: false,
   flagged: loadFlagged(),
   activeJob: null,
   ttsLang: null,   // overridable TTS language code; null = use lesson lang default
@@ -957,6 +957,44 @@ async function doRepairStory(){
 }
 
 // ── Rating ────────────────────────────────────────────────────────────
+const RATING_AXES=[
+  {key:'difficulty',label:'Difficulty',opts:['🔵 Easy','🟡 Right','🔴 Hard']},
+  {key:'fun',       label:'Fun',       opts:['😐 Meh','😊 Good','😄 Great']},
+  {key:'coherence', label:'Coherence', opts:['🔗 Low','🔗 OK','🔗 High']},
+];
+const _pr={};
+function renderRatingPanel(d,done){
+  const panel=document.getElementById('rating-panel'); if(!panel) return;
+  if(!d.lessons.every(L=>done[L.id])){ panel.style.display='none'; return; }
+  panel.style.display='';
+  if(d.ratings){
+    panel.innerHTML=`<div class="rating-done">⭐ Rated</div><div class="rating-summary">`+
+      RATING_AXES.map(a=>`<span>${a.label}: ${a.opts[(d.ratings[a.key]||1)-1]}</span>`).join('')+`</div>`;
+    return;
+  }
+  panel.innerHTML=`<div class="rating-title">⭐ How were these lessons?</div>`+
+    RATING_AXES.map(a=>`<div class="rating-row"><span class="rating-axis">${a.label}</span><div class="rating-btns">`+
+      a.opts.map((o,i)=>`<button class="rating-btn" id="rb-${a.key}-${i+1}" onclick="selR('${a.key}',${i+1})">${o}</button>`).join('')+
+    `</div></div>`).join('')+
+    `<button class="rating-submit" onclick="submitRating()">Save rating</button>`;
+}
+function selR(axis,val){
+  _pr[axis]=val;
+  [1,2,3].forEach(v=>{ const b=document.getElementById(`rb-${axis}-${v}`); if(b) b.classList.toggle('sel',v===val); });
+}
+async function submitRating(){
+  const d=APP.lessonData; if(!d) return;
+  for(const a of RATING_AXES){ if(!_pr[a.key]){ alert('Please rate all three axes.'); return; } }
+  const r={difficulty:_pr.difficulty,fun:_pr.fun,coherence:_pr.coherence};
+  try{
+    const res=await fetch('/api/rate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({topic:d.topic,ratings:r})});
+    if(!res.ok) throw new Error('Server error');
+    d.ratings=r;
+    renderRatingPanel(d,APP.progress.completed[d.topic]||{});
+    loadSavedList();
+  }catch(e){ alert('Rating failed: '+e.message); }
+}
 
 function goHome(){
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
@@ -1051,9 +1089,9 @@ async function loadSavedList(){
   }
 
   const filtered=APP.libFilter==='all'?saved:saved.filter(s=>(s.lang||'it')===APP.libFilter);
-  const showAllLangs = APP.libFilter === 'all';
   document.getElementById('lib-cnt').textContent=
     filtered.length+' of '+saved.length+' topic'+(saved.length!==1?'s':'');
+  const showAllLangs = APP.libFilter === 'all';
   // M2: language progress strip
   const progStrip=document.getElementById('lang-progress-strip');
   if(progStrip){
@@ -1168,7 +1206,6 @@ async function loadSavedList(){
   orphans.sort((a, b) => (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
 
   // When showing all languages, group by language with flag headers
-  // (showAllLangs already defined above)
   // Collect language order from filtered list (preserves newest-first within each lang)
   const langOrder = [...new Set(filtered.map(l => l.lang || 'it'))];
 
@@ -1572,25 +1609,23 @@ function buildPath(){
     contNav.style.display='none';
   }
 
-  // Build chain membership — used by storyline title row AND chapter progress strip
+  // Storyline title row — find which chains this topic belongs to
+  // (hoisted out of if(slRow) so matchedTitles is available for M1 below)
   const _slSaved=APP.savedList||[];
-  const _slByTopic=Object.fromEntries(_slSaved.map(l=>[l.topic,l]));
+  const _slByTopicMap=Object.fromEntries(_slSaved.map(l=>[l.topic,l]));
   const slTitles=APP.storylines||{};
   const matchedTitles=[];
-  {
-    const _childMap={};
-    _slSaved.forEach(l=>{ if(l.continuedFrom&&_slByTopic[l.continuedFrom])(_childMap[l.continuedFrom]=_childMap[l.continuedFrom]||[]).push(l.topic); });
-    const _hasParent=new Set(_slSaved.filter(l=>l.continuedFrom&&_slByTopic[l.continuedFrom]).map(l=>l.topic));
-    const _roots=_slSaved.filter(l=>!_hasParent.has(l.topic));
-    function walkForTitle(topic,chain){
-      const ext=[...chain,topic];
-      const kids=_childMap[topic]||[];
-      if(!kids.length){ if(ext.includes(d.topic)&&ext.length>1) matchedTitles.push(ext); return; }
-      kids.forEach(k=>walkForTitle(k,ext));
-    }
-    _roots.forEach(r=>walkForTitle(r.topic,[]));
+  const _slChildMap={};
+  _slSaved.forEach(l=>{ if(l.continuedFrom&&_slByTopicMap[l.continuedFrom])(_slChildMap[l.continuedFrom]=_slChildMap[l.continuedFrom]||[]).push(l.topic); });
+  const _slHasParent=new Set(_slSaved.filter(l=>l.continuedFrom&&_slByTopicMap[l.continuedFrom]).map(l=>l.topic));
+  const _slRoots=_slSaved.filter(l=>!_slHasParent.has(l.topic));
+  function walkForTitle(topic,chain){
+    const ext=[...chain,topic];
+    const kids=_slChildMap[topic]||[];
+    if(!kids.length){ if(ext.includes(d.topic)&&ext.length>1) matchedTitles.push(ext); return; }
+    kids.forEach(k=>walkForTitle(k,ext));
   }
-  // Storyline title row
+  _slRoots.forEach(r=>walkForTitle(r.topic,[]));
   const slRow=document.getElementById('home-hdr-storyline');
   if(slRow){
     const slHtml=matchedTitles.map(chain=>{
@@ -1625,8 +1660,7 @@ function buildPath(){
     cpChain.forEach(t=>{
       const tData=(APP.savedList||[]).find(l=>l.topic===t);
       if(!tData) return;
-      // savedList has lessonCount (number), not full lessons array
-      cpLessons+=(tData.lessonCount||tData.lessons?.length||0);
+      cpLessons+=(tData.lessons||[]).length;
       cpDone+=Object.keys(APP.progress.completed?.[t]||{}).length;
     });
     const cpPct=cpLessons>0?Math.round(100*cpDone/cpLessons):0;
@@ -1715,6 +1749,7 @@ function buildPath(){
   const btn=document.getElementById('start-btn');
   if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=()=>goLandingClean(); }
   else{ btn.textContent='Start lesson '+(nextIdx+1); btn.onclick=()=>startLesson(nextIdx); }
+  renderRatingPanel(d, done);
 
   // Update flag summary strip
   const topicSlugAll=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
@@ -2010,7 +2045,7 @@ function renderEx(){
     '<div class="flag-comment-wrap'+(alreadyFlagged?' visible':'')+'" id="flag-comment-wrap">'+
       '<textarea class="flag-comment" id="flag-comment-input" rows="2" placeholder="Optional: describe what is wrong…" onblur="saveComment()">'+existingComment+'</textarea>'+
     '</div>';
-  if(ex.type==='listen_mcq'||ex.type==='listen_type') speak(ex.it);
+  if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>speak(ex.it),350);
 }
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
@@ -2030,18 +2065,18 @@ function lBlock(it, pron, hideWord) {
     </button><button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
-function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?${muteBadgeBtn()}</div><div class="card"><div class="qtext">What does <span class="it-word">${applyFurigana(ex.it)}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}${muteBadgeBtn()}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${applyFurigana(ex.it)}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){ return ttsIsApproximate()?'<span class="tts-approx" style="margin-left:6px">⚠ approximate pronunciation</span>':''; }
-function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}${muteBadgeBtn()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}${muteBadgeBtn()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
+function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
 function tOrder(ex){ const L=lessonLang();
   const tokens=ex.words.map((w,i)=>{
     const isDist=ex.distractors&&ex.distractors[i];
     return `<span class="tok${isDist?' tok-distractor':''}" id="t${i}" onclick="addTok(${i})" title="${isDist?'This word may not belong':'Tap to add'}">${w}</span>`;
   }).join('');
-  return `<div class="ex-badge">✏️ Put the words in order${muteBadgeBtn()}</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div style="font-size:11px;color:var(--gray-dark);margin-bottom:6px">⚠ Some words may not belong in this sentence</div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
-function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence${muteBadgeBtn()}</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${applyFurigana(ex.it)}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div style="font-size:11px;color:var(--gray-dark);margin-bottom:6px">⚠ Some words may not belong in this sentence</div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
+function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${applyFurigana(ex.it)}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
 function onType(){ document.getElementById('cbtn').disabled=document.getElementById('type-in').value.trim().length<1; }
@@ -2142,16 +2177,9 @@ function check(){
   const ex=C.exercises[C.cur]; let ok=false;
   if(ex.type==='listen_type'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){
-    // Filter out distractor tokens
+    // Filter out distractor tokens (identified by their index in ex.distractors[])
     const nonDistractors=C.placed.filter(p=>!(ex.distractors&&ex.distractors[p.i]));
-    // Build the correct word sequence
-    const correctWords=ex.correct.split(' ');
-    // Filter placed tokens to only those that are part of the correct answer
-    // (extra placed tokens that are also correct words are ignored)
-    const placedWords=nonDistractors.map(p=>p.w);
-    // Ignore extra placed words not in the correct answer; verify the rest matches in order
-    const filtered=placedWords.filter(w=>correctWords.some(c=>normDiacritics(c)===normDiacritics(w)));
-    ok=normDiacritics(filtered.join(' '))===normDiacritics(ex.correct);
+    ok=nonDistractors.map(p=>p.w).join(' ')===ex.correct;
   }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
@@ -2201,20 +2229,15 @@ function showComplete(){
 
 // ── tts + misc ──
 function activeTtsCode(){
-  // Returns the TTS lang code to use: explicit override > lesson default > fallback
   if(APP.ttsLang) return APP.ttsLang;
   const lang=APP.lessonData?.lang||APP.lang||'it';
-  const L=LANGS[lang]||LANGS.it;
-  // Use ttsFallback if set (e.g. lb→de-DE) and no explicit override
-  return L.ttsFallback || L.tts;
+  return (LANGS[lang]||LANGS.it).tts;
 }
 
 function ttsIsApproximate(){
+  if(!APP.ttsLang) return false;  // no override = native = exact
   const lang=APP.lessonData?.lang||APP.lang||'it';
-  const L=LANGS[lang]||LANGS.it;
-  const code=activeTtsCode();
-  // Approximate if we're using a fallback OR an explicit override that differs from native
-  return code !== L.tts;
+  return APP.ttsLang !== (LANGS[lang]||LANGS.it).tts;
 }
 
 function speakBodyText(bodyId){
@@ -2225,104 +2248,38 @@ function speakBodyText(bodyId){
   if(text)speak(text);
 }
 
-function speak_old(text,rate){
-  if(!window.speechSynthesis||APP.muted)return;
-  if(speechSynthesis.speaking){
-  speechSynthesis.cancel();
-  }
+function _doSpeak(text,rate){
   const u=new SpeechSynthesisUtterance(text);
   const ttsCode=activeTtsCode();
   u.lang=ttsCode; u.rate=rate||0.9; u.pitch=1;
   const voices=speechSynthesis.getVoices();
+  const norm=c=>(c||'').replace('_','-').toLowerCase();
+  const ttsNorm=norm(ttsCode);
   if(voices.length>0){
-    const match=voices.find(v=>v.lang.startsWith(ttsCode.split('-')[0]));
-    if(!match && !speak._warned?.[ttsCode]){
-      speak._warned=speak._warned||{};
-      speak._warned[ttsCode]=true;
-      console.warn('Dreizunge: no TTS voice found for',ttsCode,
-        '— install a language pack or switch to a supported language');
-    }
+    const exact=voices.find(v=>norm(v.lang)===ttsNorm);
+    const prefix=voices.find(v=>norm(v.lang).startsWith(ttsNorm.split('-')[0]));
+    const match=exact||prefix;
+    if(match){ u.voice=match; u.lang=match.lang; }
+    else showToast('⚠ No '+ttsCode+' voice — using approximation');
   }
-  speechSynthesis.speak(u);
+  // Small delay after cancel() fixes Firefox silently dropping speak()
+  speechSynthesis.cancel();
+  setTimeout(()=>speechSynthesis.speak(u), 50);
 }
 
 function speak(text,rate){
-  if(!window.speechSynthesis||APP.muted)return;
-
-  if(speechSynthesis.speaking){
-  speechSynthesis.cancel();
-  }
-  const u=new SpeechSynthesisUtterance(text);
-
-  const ttsCode=activeTtsCode();
-
-  u.lang=ttsCode;
-  u.rate=rate||0.9;
-  u.pitch=1;
-
+  if(!window.speechSynthesis) return;
   const voices=speechSynthesis.getVoices();
-
   if(voices.length>0){
-
-    // Prefer exact locale match first
-    let match=voices.find(v =>
-      v.lang.toLowerCase()===ttsCode.toLowerCase()
-    );
-
-    // Fallback to language-only match
-    if(!match){
-      const short=ttsCode.split('-')[0].toLowerCase();
-
-      match=voices.find(v =>
-        v.lang.toLowerCase().startsWith(short)
-      );
-    }
-
-    // IMPORTANT: actually assign the voice
-    if(match){
-
-      u.voice=match;
-
-      console.log(
-        'Dreizunge TTS:',
-        match.name,
-        match.lang
-      );
-
-    } else if(!speak._warned?.[ttsCode]){
-
-      speak._warned=speak._warned||{};
-      speak._warned[ttsCode]=true;
-
-      console.warn(
-        'Dreizunge: no TTS voice found for',
-        ttsCode,
-        '— install a language pack or switch to a supported language'
-      );
-    }
+    _doSpeak(text,rate);
+  } else {
+    speechSynthesis.addEventListener('voiceschanged',function h(){
+      speechSynthesis.removeEventListener('voiceschanged',h);
+      _doSpeak(text,rate);
+    },{once:true});
   }
-u.onstart = () => console.log('TTS start', text);
-u.onend   = () => console.log('TTS end');
-u.onerror = e => console.log('TTS error', e);
-  speechSynthesis.speak(u);
 }
 
-function muteBadgeBtn(){
-  return `<button style="background:none;border:none;cursor:pointer;font-size:12px;padding:0 0 0 6px;opacity:.7;line-height:1" onclick="event.stopPropagation();toggleMute()" title="Mute/unmute">${APP.muted?'🔇':'🔊'}</button>`;
-}
-
-function toggleMute(){
-  APP.muted=!APP.muted;
-  if(APP.muted) {
-  if(speechSynthesis.speaking){
-  speechSynthesis.cancel();
-  }
-  }
-  const btn=document.getElementById('mute-btn');
-  if(btn){ btn.textContent=APP.muted?'🔇':'🔊'; btn.classList.toggle('muted',APP.muted); btn.title=APP.muted?'Unmute reading aloud':'Mute reading aloud'; }
-  // Update any visible exercise badge mute buttons
-  document.querySelectorAll('.ex-mute-btn').forEach(b=>b.textContent=APP.muted?'🔇':'🔊');
-}
 
 function buildTtsSelector(){
   const lang=APP.lessonData?.lang||APP.lang||'it';
@@ -2333,22 +2290,13 @@ function buildTtsSelector(){
   if(!sel||!row) return;
   // Build options: native language first, then all others
   const opts=[];
-  // Native
-  opts.push({code:L.tts, label:`${L.flag} ${L.name} (native)`});
-  // Fallback if present and different
-  if(L.ttsFallback && L.ttsFallback!==L.tts){
-    const fb=Object.values(LANGS).find(x=>x.tts===L.ttsFallback);
-    opts.push({code:L.ttsFallback, label:`${fb?fb.flag:'🔊'} ${fb?fb.name:L.ttsFallback} (fallback)`});
-  }
-  // All other languages
+  opts.push({code:L.tts, label:`${L.flag} ${L.name}`});
   Object.entries(LANGS).forEach(([code,lo])=>{
-    if(lo.tts!==L.tts && lo.tts!==(L.ttsFallback||''))
+    if(lo.tts!==L.tts)
       opts.push({code:lo.tts, label:`${lo.flag} ${lo.name}`});
   });
   sel.innerHTML=opts.map(o=>`<option value="${o.code}">${o.label}</option>`).join('');
-  // Set current value: override > fallback > native
-  const current=APP.ttsLang || L.ttsFallback || L.tts;
-  sel.value=current;
+  sel.value=APP.ttsLang||L.tts;
   row.style.display='';
   updateTtsApprox();
 }
@@ -2360,9 +2308,8 @@ function updateTtsApprox(){
 
 function onTtsSelect(code){
   const lang=APP.lessonData?.lang||APP.lang||'it';
-  const L=LANGS[lang]||LANGS.it;
-  // If selecting the native code, clear the override
-  APP.ttsLang=(code===L.tts)?null:code;
+  const nativeCode=(LANGS[lang]||LANGS.it).tts;
+  APP.ttsLang=(code===nativeCode)?null:code;
   updateTtsApprox();
 }
 function confirmQuit(){ if(confirm('Quit this lesson? Progress will be lost.')) goHome(); }
@@ -2424,18 +2371,6 @@ async function exportTopics(topics) {
   }
 }
 
-// Ensure browser voice list loads properly
-if(window.speechSynthesis){
-
-  speechSynthesis.getVoices();
-
-  speechSynthesis.onvoiceschanged=()=>{
-    console.log(
-      'Voices loaded:',
-      speechSynthesis.getVoices().length
-    );
-  };
-}
 init();
 </script>
 <div id="story-prompt-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeStoryPrompt()">
