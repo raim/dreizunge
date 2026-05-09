@@ -1,3 +1,6 @@
+
+WARNING: this is not CURRENT
+
 # Dreizunge — Project Status
 
 ## Uploaded file state: v18a (clean — start coding directly)
