@@ -1011,6 +1011,786 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 
 const STATIC_LESSONS = [
   {
+    "topic": "Buying tobacco products",
+    "topicEmoji": " cigaret",
+    "userTopic": "Buying rolling tobacco, papers and filter in a tobbacco shop",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 500,
+    "story": "Maria si diresse verso il centro della piccola città, ricordando le indicazioni dell'addetto alla macchina. Mentre camminava, notò un negozio di tabacco con un'insegna accogliente che invitava i clienti a entrare. Decise di entrare per acquistare il tabacco da fumare per la sua gita.\n\nL'interno del negozio era caldo e accogliente, con scaffali pieni di varie marche di tabacco e pacchetti di sigarette. Un anziano signore con un sorriso amichevole la accolse. \"Benvenuta, signora. Cosa desidera comprare oggi?\"\n\nMaria esitò per un momento, poi disse: \"Sono qui per acquistare del tabacco da fumare, delle carte da sigaretta e dei filtri. Potrebbe mostrarmi le opzioni?\"\n\nL'anziano signore annuì e si avvicinò a un banco dove erano esposti diversi tipi di tabacco. \"Certamente, signora. Abbiamo una grande selezione. Questo è il tabacco Toscano, molto apprezzato per la sua qualità. Ecco, questo è il tabacco mentolato, piuttosto fresco.\"\n\nMaria esaminò attentamente le varie scatole e pacchetti. \"Sembra tutto delizioso. Posso provare un po'?\"\n\nIl signore prese una piccola porzione di tabacco Toscano e la mise in una piccola scatola di vetro. \"Certamente, signora. Provi questo.\"\n\nMaria inalò il profumo del tabacco, apprezzando l'aroma. \"Sembra davvero buono. Posso prenderlo?\"\n\nIl signore annuì e prese un catalogo. \"Ecco le nostre carte da sigaretta e filtri. Abbiamo diverse opzioni, tra cui queste di carta sottile e filtri di cotone. Questo modello dovrebbe andare bene per la sua preferenza.\"\n\nMaria esaminò le diverse opzioni e decise. \"Sì, questo modello sembra perfetto. E i filtri?\"\n\nIl signore prese un pacchetto di filtri di cotone e glielo mostrò. \"Questi sono di ottima qualità. Sono molto popolari tra i fumatori che preferiscono un filtro naturale.\"\n\nMaria firmò il contratto con cura, poi prese le sue nuove acquisitions e uscì dal negozio. \"Grazie mille,\" disse, \"spero che la mia gita sia piacevole con questi nuovi accessori.\"\n\nMentre usciva, Maria si guardò intorno, ammirando la bellezza della città in lontananza. Sapeva che avrebbe trascorso giorni pieni di avventure, con il tabacco, le carte da sigaretta e i filtri che la avrebbero accompagnata in ogni pausa fumosa durante la sua gita in Toscana.",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\naddetto annuì e prese un catalogo. \"Certamente, signora. Vediamo cosa abbiamo. Abbiamo diverse opzioni, tra cui un'auto spaziosa per i passeggeri. Ecco, questo modello dovrebbe andare bene per la sua famiglia.\"\n\nMaria esaminò le foto e le caratteristiche dell'auto. \"Sembra perfetta. Posso prenderla ora?\"\n\nL'addetto prese un contratto e lo passò a Maria. \"Certo, signora. Ecco i termini e le condizioni. Firmi qui, per favore.\"\n\nMaria firmò con cura, poi prese le chiavi e l'assegno di deposito. \"Grazie mille,\" disse, \"spero che la nostra gita sia fantastica.\"\n\nMentre usciva dall'ufficio, Maria si guardò intorno, ammirando la bellezza della città in lontananza. Sapeva che avrebbe trascorso giorni pieni di avventure, con l'auto che la avrebbe portata a scoprire i luoghi più belli della Toscana.\n\nNew topic: \"Buying rolling tobacco, papers and filter in a tobbacco shop\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "renting a car at florence airport",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Buying rolling tobacco, papers and filter in a tobacco shop",
+        "desc": "Intermediate vocabulary and sentences about buying tobacco products",
+        "icon": " cigaretta",
+        "vocab": [
+          {
+            "it": "tabacco da fumare",
+            "en": "rolling tobacco"
+          },
+          {
+            "it": "carte da sigaretta",
+            "en": "cigarette papers"
+          },
+          {
+            "it": "filtri",
+            "en": "filters"
+          },
+          {
+            "it": "scaffali",
+            "en": "shelves"
+          },
+          {
+            "it": "anziano",
+            "en": "elderly"
+          },
+          {
+            "it": "benvenuta",
+            "en": "welcome"
+          },
+          {
+            "it": "accolse",
+            "en": "welcomed"
+          },
+          {
+            "it": "esposti",
+            "en": "displayed"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Maria si diresse verso il negozio.",
+            "en": "Maria headed towards the shop.",
+            "words": [
+              "Maria",
+              "si",
+              "diresse",
+              "verso",
+              "il",
+              "negozio."
+            ]
+          },
+          {
+            "it": "Un anziano signore la accolse con un sorriso.",
+            "en": "An elderly gentleman welcomed her with a smile.",
+            "words": [
+              "Un",
+              "anziano",
+              "signore",
+              "la",
+              "accolse",
+              "con",
+              "un",
+              "sorriso."
+            ]
+          },
+          {
+            "it": "Certo, signora, guardi questi tipi di tabacco.",
+            "en": "Of course, ma'am, look at these types of tobacco.",
+            "words": [
+              "Certo,",
+              "signora,",
+              "guardi",
+              "questi",
+              "tipi",
+              "di",
+              "tabacco."
+            ]
+          },
+          {
+            "it": "Hai bisogno di carta da sigaretta per le tue sigarette a foglia.",
+            "en": "Do you need cigarette paper for your leaf cigarettes?",
+            "words": [
+              "Hai",
+              "bisogno",
+              "di",
+              "carta",
+              "da",
+              "sigaretta",
+              "per",
+              "le",
+              "tue",
+              "sigarette",
+              "a",
+              "foglia."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Buying rolling tobacco, papers and filter in a tobacco shop",
+        "desc": "Intermediate vocabulary and phrases for a tobacco shop",
+        "icon": " cigarettrix",
+        "vocab": [
+          {
+            "it": "scaffali",
+            "en": "shelves"
+          },
+          {
+            "it": "insegna",
+            "en": "sign"
+          },
+          {
+            "it": "accolse",
+            "en": "welcomed"
+          },
+          {
+            "it": "benvenuta",
+            "en": "welcome"
+          },
+          {
+            "it": "esposti",
+            "en": "displayed"
+          },
+          {
+            "it": "certamente",
+            "en": "certainly"
+          },
+          {
+            "it": "varie",
+            "en": "various"
+          },
+          {
+            "it": "marche",
+            "en": "brands"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Mentre camminava, notò un negozio di tabacco con un'insegna accogliente.",
+            "en": "While walking, she noticed a tobacco shop with an inviting sign.",
+            "words": [
+              "Mentre",
+              "camminava,",
+              "notò",
+              "un",
+              "negozio",
+              "di",
+              "tabacco",
+              "con",
+              "un'insegna",
+              "accogliente."
+            ]
+          },
+          {
+            "it": "Un anziano signore con un sorriso amichevole la accolse.",
+            "en": "An elderly man with a friendly smile welcomed her.",
+            "words": [
+              "Un",
+              "anziano",
+              "signore",
+              "con",
+              "un",
+              "sorriso",
+              "amichevole",
+              "la",
+              "accolse."
+            ]
+          },
+          {
+            "it": "Certamente, signora. Abbiamo una grande selezione di marche di tabacco.",
+            "en": "Certainly, madam. We have a wide selection of tobacco brands.",
+            "words": [
+              "Certamente,",
+              "signora.",
+              "Abbiamo",
+              "una",
+              "grande",
+              "selezione",
+              "di",
+              "marche",
+              "di",
+              "tabacco."
+            ]
+          },
+          {
+            "it": "Sono qui per acquistare del tabacco da fumare, delle carte da sigaretta e dei filtri.",
+            "en": "I'm here to buy rolling tobacco, cigarette papers and filters.",
+            "words": [
+              "Sono",
+              "qui",
+              "per",
+              "acquistare",
+              "del",
+              "tabacco",
+              "da",
+              "fumare,",
+              "delle",
+              "carte",
+              "da",
+              "sigaretta",
+              "e",
+              "dei",
+              "filtri."
+            ]
+          },
+          {
+            "it": "L'interno del negozio era caldo e accogliente, con scaffali pieni di varie marche di tabacco.",
+            "en": "The interior of the shop was warm and welcoming, with shelves full of various tobacco brands.",
+            "words": [
+              "L'interno",
+              "del",
+              "negozio",
+              "era",
+              "caldo",
+              "e",
+              "accogliente,",
+              "con",
+              "scaffali",
+              "pieni",
+              "di",
+              "varie",
+              "marche",
+              "di",
+              "tabacco."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Buying rolling tobacco, papers and filter",
+        "desc": "Intermediate vocabulary for tobacco shop",
+        "icon": "🚬",
+        "vocab": [
+          {
+            "it": "filtri",
+            "en": "filters"
+          },
+          {
+            "it": "esaminare",
+            "en": "examine"
+          },
+          {
+            "it": "prezzo",
+            "en": "price"
+          },
+          {
+            "it": "consigliare",
+            "en": "recommend"
+          },
+          {
+            "it": "misto",
+            "en": "mixture"
+          },
+          {
+            "it": "pacchetto",
+            "en": "package"
+          },
+          {
+            "it": "prova",
+            "en": "try"
+          },
+          {
+            "it": "confezione",
+            "en": "box"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "L'anziano signore esaminò attentamente i filtri.",
+            "en": "The elderly gentleman carefully examined the filters.",
+            "words": [
+              "L'anziano",
+              "signore",
+              "esaminò",
+              "attentamente",
+              "i",
+              "filtri."
+            ]
+          },
+          {
+            "it": "Il prezzo del pacchetto di tabacco mi sembra un po' elevato.",
+            "en": "The price of the tobacco package seems a bit high to me.",
+            "words": [
+              "Il",
+              "prezzo",
+              "del",
+              "pacchetto",
+              "di",
+              "tabacco",
+              "mi",
+              "sembra",
+              "un",
+              "po'",
+              "elevato."
+            ]
+          },
+          {
+            "it": "Potresti consigliarmi un misto buono per iniziare?",
+            "en": "Could you recommend a good mixture for a beginner?",
+            "words": [
+              "Potresti",
+              "consigliarmi",
+              "un",
+              "misto",
+              "buono",
+              "per",
+              "iniziare?"
+            ]
+          },
+          {
+            "it": "Ho provato il confezionamento di questi filtri, sono comodi.",
+            "en": "I tried the packaging of these filters, they are comfortable.",
+            "words": [
+              "Ho",
+              "provato",
+              "il",
+              "confezionamento",
+              "di",
+              "questi",
+              "filtri,",
+              "sono",
+              "comodi."
+            ]
+          },
+          {
+            "it": "Mi piacerebbe provare diversi pacchetti prima di decidere.",
+            "en": "I would like to try different packages before deciding.",
+            "words": [
+              "Mi",
+              "piacerebbe",
+              "provare",
+              "diversi",
+              "pacchetti",
+              "prima",
+              "di",
+              "decidere."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1090562,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 2880,
+      "totalCompletionTokens": 1696,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 239204,
+          "promptTokens": 714,
+          "completionTokens": 289
+        },
+        {
+          "lessonNum": 2,
+          "ms": 254518,
+          "promptTokens": 780,
+          "completionTokens": 388
+        },
+        {
+          "lessonNum": 3,
+          "ms": 249973,
+          "promptTokens": 825,
+          "completionTokens": 314
+        }
+      ]
+    },
+    "generatedAt": "2026-05-09T20:25:49.048Z",
+    "updatedAt": "2026-05-09T20:25:49.048Z"
+  },
+  {
+    "topic": "renting a car at florence airport",
+    "topicEmoji": "🚗",
+    "userTopic": "renting a car at firenze airport",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 500,
+    "story": "Nel cuore della Toscana, all'ingresso del Firenze Airport, si affaccia un piccolo ufficio di noleggio automobili. Il sole di ottobre tingeva di oro le vetrate, proiettando riflessi dorati sulle facce dei passeggeri in attesa. Maria, una turista italiana in vacanza con la famiglia, si avvicinò al bancone con un sorriso timido. \"Buongiorno,\" disse, \"vorrei noleggiare un'auto.\"\n\nL'addetto, un uomo di mezza età con un sorriso accogliente, la salutò con un cenno della mano. \"Buongiorno, signora. Come posso aiutarla oggi?\" Maria esitò un istante, poi spiegò il suo piano. \"Siamo in quattro e vogliamo esplorare Firenze e i dintorni. Avete un'auto con sedili posteriori ampi?\"\n\nL'addetto annuì e prese un catalogo. \"Certamente, signora. Vediamo cosa abbiamo. Abbiamo diverse opzioni, tra cui un'auto spaziosa per i passeggeri. Ecco, questo modello dovrebbe andare bene per la sua famiglia.\"\n\nMaria esaminò le foto e le caratteristiche dell'auto. \"Sembra perfetta. Posso prenderla ora?\"\n\nL'addetto prese un contratto e lo passò a Maria. \"Certo, signora. Ecco i termini e le condizioni. Firmi qui, per favore.\"\n\nMaria firmò con cura, poi prese le chiavi e l'assegno di deposito. \"Grazie mille,\" disse, \"spero che la nostra gita sia fantastica.\"\n\nMentre usciva dall'ufficio, Maria si guardò intorno, ammirando la bellezza della città in lontananza. Sapeva che avrebbe trascorso giorni pieni di avventure, con l'auto che la avrebbe portata a scoprire i luoghi più belli della Toscana.",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian.\n\nWrite a story for the topic: \"renting a car at firenze airport\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Noleggio auto",
+        "desc": "Vocabolario e frasi per noleggiare un'auto all'aeroporto di Firenze",
+        "icon": "🚗",
+        "vocab": [
+          {
+            "it": "noleggio",
+            "en": "rental"
+          },
+          {
+            "it": "ufficio",
+            "en": "office"
+          },
+          {
+            "it": "bancone",
+            "en": "counter"
+          },
+          {
+            "it": "passeggeri",
+            "en": "passengers"
+          },
+          {
+            "it": "sorriso",
+            "en": "smile"
+          },
+          {
+            "it": "sedili",
+            "en": "seats"
+          },
+          {
+            "it": "dintorni",
+            "en": "surroundings"
+          },
+          {
+            "it": "opzioni",
+            "en": "options"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "All'ingresso dell'aeroporto di Firenze si trova un piccolo ufficio di noleggio.",
+            "en": "There is a small rental office at the entrance of Florence Airport.",
+            "words": [
+              "All'ingresso",
+              "dell'aeroporto",
+              "di",
+              "Firenze",
+              "si",
+              "trova",
+              "un",
+              "piccolo",
+              "ufficio",
+              "di",
+              "noleggio."
+            ]
+          },
+          {
+            "it": "Il noleggiatore mi chiese come poteva aiutarmi.",
+            "en": "The rental agent asked how he could help me.",
+            "words": [
+              "Il",
+              "noleggiatore",
+              "mi",
+              "chiese",
+              "come",
+              "poteva",
+              "aiutarmi."
+            ]
+          },
+          {
+            "it": "Vorremmo noleggiare un'auto con spazio per le valigie.",
+            "en": "We would like to rent a car with space for our luggage.",
+            "words": [
+              "Vorremmo",
+              "noleggiare",
+              "un'auto",
+              "con",
+              "spazio",
+              "per",
+              "le",
+              "valigie."
+            ]
+          },
+          {
+            "it": "Hanno diverse opzioni tra cui un'auto economica.",
+            "en": "They have several options, including a compact car.",
+            "words": [
+              "Hanno",
+              "diverse",
+              "opzioni",
+              "tra",
+              "cui",
+              "un'auto",
+              "economica."
+            ]
+          },
+          {
+            "it": "Spero che possiamo trovare un'auto adatta per esplorare la Toscana.",
+            "en": "I hope we can find a car suitable for exploring Tuscany.",
+            "words": [
+              "Spero",
+              "che",
+              "possiamo",
+              "trovare",
+              "un'auto",
+              "adatta",
+              "per",
+              "esplorare",
+              "la",
+              "Toscana."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Renting a Car at Florence Airport",
+        "desc": "Exploring Florence and its surroundings",
+        "icon": "🚗",
+        "vocab": [
+          {
+            "it": "autista",
+            "en": "driver"
+          },
+          {
+            "it": "biglietto",
+            "en": "ticket"
+          },
+          {
+            "it": "assicurazione",
+            "en": "insurance"
+          },
+          {
+            "it": "parcheggio",
+            "en": "parking"
+          },
+          {
+            "it": "guida",
+            "en": "drive"
+          },
+          {
+            "it": "carburante",
+            "en": "fuel"
+          },
+          {
+            "it": "guida turistica",
+            "en": "tour guide"
+          },
+          {
+            "it": "parcheggio a pagamento",
+            "en": "paid parking"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il biglietto di noleggio include l'assicurazione base.",
+            "en": "The rental ticket includes basic insurance.",
+            "words": [
+              "Il",
+              "biglietto",
+              "di",
+              "noleggio",
+              "include",
+              "l'assicurazione",
+              "base."
+            ]
+          },
+          {
+            "it": "Domanda all'autista se puoi usare il parcheggio a pagamento.",
+            "en": "Ask the driver if you can use the paid parking.",
+            "words": [
+              "Domanda",
+              "all'autista",
+              "se",
+              "puoi",
+              "usare",
+              "il",
+              "parcheggio",
+              "a",
+              "pagamento."
+            ]
+          },
+          {
+            "it": "Hai bisogno di un biglietto di noleggio per guidare in città.",
+            "en": "You need a rental ticket to drive in the city.",
+            "words": [
+              "Hai",
+              "bisogno",
+              "di",
+              "un",
+              "biglietto",
+              "di",
+              "noleggio",
+              "per",
+              "guidare",
+              "in",
+              "città."
+            ]
+          },
+          {
+            "it": "Il carburante è incluso nel prezzo dell'auto, ma puoi aggiungere un servizio di riempimento.",
+            "en": "The fuel is included in the car price, but you can add a refueling service.",
+            "words": [
+              "Il",
+              "carburante",
+              "è",
+              "incluso",
+              "nel",
+              "prezzo",
+              "dell'auto,",
+              "ma",
+              "puoi",
+              "aggiungere",
+              "un",
+              "servizio",
+              "di",
+              "riempimento."
+            ]
+          },
+          {
+            "it": "Il parcheggio a pagamento è vicino all'ufficio di noleggio automobili.",
+            "en": "The paid parking is near the car rental office.",
+            "words": [
+              "Il",
+              "parcheggio",
+              "a",
+              "pagamento",
+              "è",
+              "vicino",
+              "all'ufficio",
+              "di",
+              "noleggio",
+              "automobili."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "renting a car at firenze airport",
+        "desc": "exploring florence and its surroundings",
+        "icon": "🚗",
+        "vocab": [
+          {
+            "it": "noleggio",
+            "en": "rental"
+          },
+          {
+            "it": "dintorni",
+            "en": "surroundings"
+          },
+          {
+            "it": "sedili",
+            "en": "seats"
+          },
+          {
+            "it": "assicurazione",
+            "en": "insurance"
+          },
+          {
+            "it": "carburante",
+            "en": "fuel"
+          },
+          {
+            "it": "biglietto",
+            "en": "ticket"
+          },
+          {
+            "it": "autista",
+            "en": "driver"
+          },
+          {
+            "it": "parcheggio",
+            "en": "parking"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Vorremmo noleggiare un'auto con sedili posteriori ampi.",
+            "en": "We would like to rent a car with ample rear seats.",
+            "words": [
+              "Vorremmo",
+              "noleggiare",
+              "un'auto",
+              "con",
+              "sedili",
+              "posteriori",
+              "ampi."
+            ]
+          },
+          {
+            "it": "Hai delle opzioni con assicurazione inclusa?",
+            "en": "Do you have any options with insurance included?",
+            "words": [
+              "Hai",
+              "delle",
+              "opzioni",
+              "con",
+              "assicurazione",
+              "inclusa?"
+            ]
+          },
+          {
+            "it": "Il carburante viene aggiunto al prezzo?",
+            "en": "Is the fuel included in the price?",
+            "words": [
+              "Il",
+              "carburante",
+              "viene",
+              "aggiunto",
+              "al",
+              "prezzo?"
+            ]
+          },
+          {
+            "it": "Possiamo prenotare un biglietto per il parcheggio a pagamento?",
+            "en": "Can we book a ticket for the paid parking?",
+            "words": [
+              "Possiamo",
+              "prenotare",
+              "un",
+              "biglietto",
+              "per",
+              "il",
+              "parcheggio",
+              "a",
+              "pagamento?"
+            ]
+          },
+          {
+            "it": "L'autista può accompagnare fino al centro città?",
+            "en": "Can the driver take us to the city center?",
+            "words": [
+              "L'autista",
+              "può",
+              "accompagnare",
+              "fino",
+              "al",
+              "centro",
+              "città?"
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 871099,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 2636,
+      "totalCompletionTokens": 1529,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 242498,
+          "promptTokens": 737,
+          "completionTokens": 367
+        },
+        {
+          "lessonNum": 2,
+          "ms": 225341,
+          "promptTokens": 799,
+          "completionTokens": 340
+        },
+        {
+          "lessonNum": 3,
+          "ms": 217258,
+          "promptTokens": 853,
+          "completionTokens": 321
+        }
+      ]
+    },
+    "generatedAt": "2026-05-09T19:34:31.533Z",
+    "updatedAt": "2026-05-09T20:06:39.399Z",
+    "ratings": {
+      "difficulty": 2,
+      "fun": 2,
+      "coherence": 3
+    }
+  },
+  {
     "topic": "Luxembourgish Cuisine",
     "topicEmoji": "🇱🇺",
     "userTopic": "after the aperitive (it was a delicious cremant), we tried to find a restaurant that serves local luxembourgish cuisine.",
