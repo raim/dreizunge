@@ -2010,7 +2010,7 @@ function renderEx(){
     '<div class="flag-comment-wrap'+(alreadyFlagged?' visible':'')+'" id="flag-comment-wrap">'+
       '<textarea class="flag-comment" id="flag-comment-input" rows="2" placeholder="Optional: describe what is wrong…" onblur="saveComment()">'+existingComment+'</textarea>'+
     '</div>';
-  if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>speak(ex.it),350);
+  if(ex.type==='listen_mcq'||ex.type==='listen_type') speak(ex.it);
 }
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
@@ -2227,7 +2227,9 @@ function speakBodyText(bodyId){
 
 function speak_old(text,rate){
   if(!window.speechSynthesis||APP.muted)return;
+  if(speechSynthesis.speaking){
   speechSynthesis.cancel();
+  }
   const u=new SpeechSynthesisUtterance(text);
   const ttsCode=activeTtsCode();
   u.lang=ttsCode; u.rate=rate||0.9; u.pitch=1;
@@ -2247,8 +2249,9 @@ function speak_old(text,rate){
 function speak(text,rate){
   if(!window.speechSynthesis||APP.muted)return;
 
+  if(speechSynthesis.speaking){
   speechSynthesis.cancel();
-
+  }
   const u=new SpeechSynthesisUtterance(text);
 
   const ttsCode=activeTtsCode();
@@ -2298,7 +2301,9 @@ function speak(text,rate){
       );
     }
   }
-
+u.onstart = () => console.log('TTS start', text);
+u.onend   = () => console.log('TTS end');
+u.onerror = e => console.log('TTS error', e);
   speechSynthesis.speak(u);
 }
 
@@ -2308,7 +2313,11 @@ function muteBadgeBtn(){
 
 function toggleMute(){
   APP.muted=!APP.muted;
-  if(APP.muted) speechSynthesis.cancel();
+  if(APP.muted) {
+  if(speechSynthesis.speaking){
+  speechSynthesis.cancel();
+  }
+  }
   const btn=document.getElementById('mute-btn');
   if(btn){ btn.textContent=APP.muted?'🔇':'🔊'; btn.classList.toggle('muted',APP.muted); btn.title=APP.muted?'Unmute reading aloud':'Mute reading aloud'; }
   // Update any visible exercise badge mute buttons
