@@ -403,7 +403,6 @@ const staticOverrides = [
   'async function deleteSaved(){}',
   'async function regenSaved(){}',
   'function regenCurrent(){}',
-  'function shareLesson(){}',
   'async function doGenerate(){}',
   'async function submitRating(){}',
   'function importLessons(input){',
