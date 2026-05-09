@@ -110,7 +110,18 @@ const lessonsSerialized = JSON.stringify(cleanedLessons, null, 2);
 // Build flagged-lessons export payload (original lessons that had flags, with flags map)
 const flaggedTopicSlugs = new Set([...flagKeys].map(k => k.split(':')[0]));
 const flaggedLessons = lessonsData.lessons.filter(t => flaggedTopicSlugs.has(topicSlug(t.topic)));
-const storylinesSerialized = JSON.stringify(lessonsData.storylines || {});
+// Expand storylines with root aliases so new chapters find the title
+const rawStorylines = lessonsData.storylines || {};
+const expandedStorylines = Object.assign({}, rawStorylines);
+// For each chainId key, also add 'root:firstTopic' alias if not already present
+Object.entries(rawStorylines).forEach(([k,v]) => {
+  if (!k.startsWith('root:')) {
+    // Try to find root topic by matching chainId against all possible single-topic chains
+    // We can't reverse the hash, so we store aliases when saving — nothing to do here
+    // But we can copy existing 'root:' entries from the store
+  }
+});
+const storylinesSerialized = JSON.stringify(expandedStorylines);
 
 const staticFunctions = `
 // ═══════════════════════════════════════════════════════════════════════
@@ -159,6 +170,16 @@ function renderPill() {
   lbl.textContent = 'Static — built-in lessons only';
   document.getElementById('gen-btn').disabled = true;
   document.getElementById('topic-input').disabled = true;
+  // C5: inject static overlay on generation form
+  const _tf = document.querySelector('.topic-form');
+  if (_tf && !document.getElementById('static-gen-overlay')) {
+    _tf.style.position = 'relative';
+    const _ov = document.createElement('div');
+    _ov.id = 'static-gen-overlay';
+    _ov.style.cssText = 'position:absolute;inset:0;background:rgba(245,245,245,.93);border-radius:inherit;display:flex;align-items:center;padding:20px;z-index:10;box-sizing:border-box';
+    _ov.innerHTML = '<p style="font-size:13px;font-weight:700;color:#444;line-height:1.6;margin:0"><strong>Dreizunge</strong> is an open-source language lesson generator. This is the <strong>static version</strong> — you can play the existing lessons, but not generate new ones.<br><br>Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to run your own server or contribute.<br><br><span style="color:#c00;font-weight:900">⚠ AI generated content.</span> Use a real language learning app or a human teacher if you are new to a language.</p>';
+    _tf.appendChild(_ov);
+  }
   const note=document.getElementById('offline-note');
   note.style.display='block';
   note.innerHTML='📦 Static version — select a topic below to start<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>';
@@ -201,8 +222,10 @@ async function loadSavedList() {
   if(filterEl){
     if(hasMultiLang){
       const activeL=LANGS[APP.libFilter]||null;
+      const prevL=LANGS[APP.prevLangFilter]||null;
       filterEl.innerHTML=(APP.libFilter==='all'
-        ? \`<button class="lib-filter-btn active">🌐 All languages</button>\`
+        ? \`<button class="lib-filter-btn active">🌐 All languages</button>\`+
+          (prevL ? \`<button class="lib-filter-btn" onclick="setLibFilter('\${APP.prevLangFilter}')" title="Back to \${prevL.name}">↩ \${prevL.flag} \${prevL.name}</button>\` : '')
         : \`<button class="lib-filter-btn active">\${activeL?activeL.flag+' '+activeL.name:APP.libFilter.toUpperCase()}</button>\`+
           \`<button class="lib-filter-btn" onclick="setLibFilter('all')">🌐 All</button>\`
       );
@@ -244,7 +267,7 @@ async function loadSavedList() {
     const t=encTopic(s.topic);
     const d=s.difficulty||2;
     const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
-    const diffBadge='<span class="diff-badge d'+d+'">'+diff+'</span>';
+    const diffBadge='<span class="diff-dot d'+d+'" title="'+diff+'"></span>';
     const ratingStr=s.ratings
       ? ' · '+(['🔵','🟡','🔴'][s.ratings.difficulty-1]||'')+' '+(['😐','😊','😄'][s.ratings.fun-1]||'')
       : '';
@@ -301,29 +324,23 @@ async function loadSavedList() {
     const chainTopicsJson=JSON.stringify(chainTopics);
     const chainEncoded=encodeURIComponent(chainTopicsJson);
     const chainId='c'+Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-    const slMeta=slTitles[chainId]||null;
+    const slMeta=slTitles[chainId]||slTitles['root:'+chainTopics[0]]||null;
     const hasTitle=!!(slMeta&&slMeta.title);
     const titleIcon=slMeta?.icon||'📖';
     const titleText=slMeta?.title||'';
     const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const escapedRoot=chainId;
+    const chainNewest=newestOf(chain);
+    const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
     const hdrTitle=hasTitle
-      ? '<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)"><span style="font-size:18px">'+titleIcon+'</span><span class="storyline-title-text">'+esc(titleText)+'</span><span class="storyline-title-sub">· '+chain.length+' chapter'+(chain.length!==1?'s':'')+'</span></span>'
-      : '<span class="storyline-title"><span>'+(LANGS[byTopic[chain[0]]?.lang||'it']||LANGS.it).flag+'</span><span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+'</span></span>';
+      ? '<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
+      : '<span class="storyline-title"><span>'+(LANGS[byTopic[chain[0]]?.lang||'it']||LANGS.it).flag+'</span><span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
     html+='<div class="storyline-hdr" id="slhdr-'+chainId+'">'+hdrTitle
-      +'<button class="storyline-hdr-btn" title="Edit title" onclick="event.stopPropagation();openStorylineEdit(&apos;'+chainId+'&apos;,&apos;'+chainId+'&apos;)">✏️</button>'
-      +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px" title="Export full story line with flags"'
+      +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px;margin-left:auto" title="Export full story line with flags"'
       +' data-chain="'+chainEncoded+'"'
       +' onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>'
       +'</div>';
-    html+='<div class="storyline-hdr" id="sledit-'+chainId+'" style="display:none;background:var(--white);border-bottom:1.5px solid var(--accent)">'
-      +'<span class="storyline-edit-icon" id="sledit-icon-'+chainId+'" onclick="cycleStorylineIcon(&apos;'+chainId+'&apos;)">'+(titleIcon||'📖')+'</span>'
-      +'<input class="storyline-edit-input" id="sledit-input-'+chainId+'" placeholder="Story line title…" value="'+esc(titleText)+'"'
-      +' onkeydown="if(event.key===&apos;Enter&apos;)saveStorylineTitle(&apos;'+chainId+'&apos;,&apos;'+chainId+'&apos;);if(event.key===&apos;Escape&apos;)closeStorylineEdit(&apos;'+chainId+'&apos;)">'
-      +'<button class="storyline-hdr-btn" onclick="saveStorylineTitle(&apos;'+chainId+'&apos;,&apos;'+chainId+'&apos;)">Save</button>'
-      +'<button class="storyline-hdr-btn danger" onclick="clearStorylineTitle(&apos;'+chainId+'&apos;,&apos;'+chainId+'&apos;)">Clear</button>'
-      +'<button class="storyline-hdr-btn" onclick="closeStorylineEdit(&apos;'+chainId+'&apos;)">✕</button></div>';
     html+='<div class="storyline-cards'+(hasTitle?' collapsed':'')+'" id="slcards-'+chainId+'">';
     chain.forEach((topic,i)=>{
       const s=byTopic[topic]; if(!s)return;
@@ -352,6 +369,8 @@ async function loadSavedList() {
   repopulateContinueSelect();
 
 function setLibFilter(lang){
+  if(lang==='all'&&APP.libFilter!=='all') APP.prevLangFilter=APP.libFilter;
+  if(lang!=='all') APP.prevLangFilter=null;
   APP.libFilter=lang;
   if(lang!=='all' && LANGS[lang]){
     APP.lang=lang; saveLang();
@@ -452,6 +471,9 @@ const staticOverrides = [
   'function downloadFlaggedLessons(){}',
   '(function(){ var b=document.getElementById(\'static-flag-banner\'); if(b) b.style.display=\'none\'; })()',
 
+  // C4: disable storyline title editing in static
+  'function openStorylineEdit(){}',
+
   // Storyline title stubs — must be AFTER part2 to override live server versions
   'function _slSave(){ try{ localStorage.setItem(\'dz_storylines\',JSON.stringify(APP.storylines||{})); }catch(e){} }',
   'async function saveStorylineTitle(chainId,rootTopic){',
@@ -460,6 +482,9 @@ const staticOverrides = [
   '  if(!title)return;',
   '  APP.storylines=APP.storylines||{};',
   '  APP.storylines[rootTopic]={title,icon};',
+  '  // Also store under root alias so title survives new chapters',
+  '  const _rt=(APP.savedList||[]).find(l=>l.topic&&\'c\'+Math.abs(JSON.stringify([l.topic]).split(\'\').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0))===chainId)?.topic;',
+  '  if(_rt) APP.storylines[\'root:\'+_rt]={title,icon};',
   '  _slSave(); closeStorylineEdit(chainId); await loadSavedList();',
   '}',
   'async function clearStorylineTitle(chainId,rootTopic){',

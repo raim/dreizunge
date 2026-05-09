@@ -106,7 +106,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .topic-name-big{font-size:19px;font-weight:900;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hdr-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:5px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);white-space:nowrap}
 .hdr-btn:hover{border-color:var(--blue);color:var(--blue-dark)}.hdr-btn.muted{border-color:var(--red);color:var(--red);background:#fff0f0}
-.prog-strip{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:10px 16px;margin:10px 0 20px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-card)}
+.prog-strip{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:10px 16px;margin:10px 0 20px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-card)}.chain-prog-strip{font-size:12px;font-weight:700;color:var(--gray-dark);padding:6px 0 2px;display:flex;align-items:center;gap:8px}.chain-prog-bar-wrap{flex:1;background:var(--gray-mid);border-radius:4px;height:5px;overflow:hidden}.chain-prog-bar{height:100%;background:var(--blue);border-radius:4px;transition:width .3s}
 .prog-val{font-size:17px;font-weight:900;color:var(--green-dark)}
 .path-wrap{display:flex;flex-direction:column;align-items:center}
 .path-line{width:4px;height:26px;background:var(--gray-mid);margin:0 auto}
@@ -236,7 +236,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lang-select:disabled{opacity:.5;cursor:not-allowed}
 .lang-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .lang-flag{font-size:18px}
-.lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.lang-prog-row{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--gray-dark);padding:5px 10px;background:var(--gray-light);border-radius:var(--radius-lg);margin-bottom:4px}.lang-prog-bar-wrap{flex:1;background:var(--gray-mid);border-radius:4px;height:6px;overflow:hidden;min-width:40px}.lang-prog-bar{height:100%;background:var(--green);border-radius:4px;transition:width .3s}
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
 .lib-filter-btn:hover{border-color:var(--blue)}
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
@@ -287,6 +287,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .diff-badge.d1{background:#d7ffb2;color:#2a6000}
 .diff-badge.d2{background:#fff3cc;color:#7a5000}
 .diff-badge.d3{background:#ffd4d4;color:#880000}
+.diff-dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:middle;margin-left:5px;flex-shrink:0}
+.diff-dot.d1{background:#4caf50}.diff-dot.d2{background:#f5a623}.diff-dot.d3{background:#e53935}
 .native-check-row{display:none}
 .storyline-story{border-top:1.5px solid var(--gray-mid);background:var(--white)}
 .storyline-story-hdr{display:flex;align-items:center;gap:7px;padding:8px 13px;cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;text-align:left}
@@ -351,17 +353,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 
 /* ══ RATING ══════════════════════════════════════════════════════════ */
-.rating-panel{background:var(--white);border:2px solid var(--yellow);border-radius:var(--radius-xl);padding:18px 18px 16px;margin:0 0 18px;box-shadow:var(--shadow-card)}
-.rating-title{font-size:15px;font-weight:900;color:var(--text);margin-bottom:14px;text-align:center}
-.rating-row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
-.rating-axis{font-size:13px;font-weight:800;color:var(--text);width:90px;flex-shrink:0}
-.rating-btns{display:flex;gap:6px}
-.rating-btn{background:none;border:2px solid var(--gray-mid);border-radius:10px;padding:5px 10px;font-size:16px;cursor:pointer;transition:border-color .1s,background .1s;line-height:1.2}
-.rating-btn:hover{border-color:var(--blue)}
-.rating-btn.sel{border-color:var(--blue);background:var(--blue-light)}
-.rating-submit{width:100%;padding:10px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius);font-size:14px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px}
-.rating-done{font-size:13px;font-weight:700;text-align:center;color:var(--green-dark);padding:4px 0}
-.rating-summary{display:flex;gap:10px;font-size:12px;font-weight:700;color:var(--gray-dark);margin-top:6px;flex-wrap:wrap;justify-content:center}
+
+
+
+
+
+
+
+
+
+
+
 
 /* ══ TOAST ═══════════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
@@ -504,8 +506,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
     <div class="static-flag-banner" id="static-flag-banner">
       <span style="font-size:16px">⚑</span>
-      <span style="flex:1">This build contains flagged lessons — download them to fix with the live server.</span>
-      <button onclick="downloadFlaggedLessons()">⬇ Download flagged</button>
+      <span style="flex:1" id="static-flag-banner-text">You have flagged exercises — download them to review.</span>
+      <button onclick="downloadUserFlaggedLessons()">⬇ Download flagged</button>
     </div>
   </div>
 
@@ -521,6 +523,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </div>
     </div>
     <div class="lib-filter" id="lib-filter"></div>
+    <div id="lang-progress-strip" style="margin-bottom:10px"></div>
     <div id="saved-list">
       <div class="lib-empty">No saved lessons yet — generate one above!</div>
     </div>
@@ -544,7 +547,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </div>
     <div class="home-hdr-storyline" id="home-hdr-storyline"></div>
   </div>
-  <div class="prog-strip">
+  <div class="prog-strip" id="prog-strip">
     <span style="font-size:20px">📊</span>
     <div style="flex:1">
       <div style="font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.07em">Progress</div>
@@ -555,7 +558,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
   </div>
   <div class="gen-stats" id="gen-stats"></div>
-  <div class="rating-panel" id="rating-panel" style="display:none"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="start-strip">
     <button class="big-btn" id="start-btn" onclick="startNextLesson()">Start lesson</button>
@@ -655,6 +657,7 @@ var APP = {
   difficulty: loadDifficulty(),
   storyLen: loadStoryLen(),
   libFilter: 'all',
+  prevLangFilter: null,
   savedList: [],
   progress: loadProg(),
   muted: false,
@@ -773,8 +776,38 @@ async function pollJob(jobId, onStep, intervalMs){
     }, intervalMs);
   });
 }
+function updateStaticFlagBanner(){
+  const banner=document.getElementById('static-flag-banner');
+  if(!banner) return;
+  const count=Object.keys(APP.flagged||{}).length;
+  if(count===0){ banner.style.display='none'; return; }
+  const txt=document.getElementById('static-flag-banner-text');
+  if(txt) txt.textContent=`You have ${count} flagged exercise${count!==1?'s':''} — download to review or export.`;
+  banner.style.display='flex';
+}
+
+function downloadUserFlaggedLessons(){
+  const flags=APP.flagged||{};
+  if(!Object.keys(flags).length) return;
+  // Collect unique topics from flagged keys
+  const topics=new Set(Object.values(flags).map(f=>f.topic).filter(Boolean));
+  // Find matching lessons from STATIC_LESSONS (if available) or savedList
+  const src=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:APP.savedList)||[];
+  const lessons=src.filter(l=>topics.has(l.topic));
+  const payload={flags, lessons, exportedAt:new Date().toISOString(), exportedBy:'dreizunge-static-user'};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='dreizunge-flagged-'+Date.now()+'.json';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
 function loadFlagged(){ try{ return JSON.parse(localStorage.getItem('imp3_flagged')||'{}'); }catch(e){ return {}; } }
-function saveFlagged(){ localStorage.setItem('imp3_flagged',JSON.stringify(APP.flagged)); }
+function saveFlagged(){
+  localStorage.setItem('imp3_flagged',JSON.stringify(APP.flagged));
+  updateStaticFlagBanner();
+}
 async function syncFlagsFromServer(){
   try{
     const r=await fetch('/api/flags');
@@ -924,44 +957,6 @@ async function doRepairStory(){
 }
 
 // ── Rating ────────────────────────────────────────────────────────────
-const RATING_AXES=[
-  {key:'difficulty',label:'Difficulty',opts:['🔵 Easy','🟡 Right','🔴 Hard']},
-  {key:'fun',       label:'Fun',       opts:['😐 Meh','😊 Good','😄 Great']},
-  {key:'coherence', label:'Coherence', opts:['🔗 Low','🔗 OK','🔗 High']},
-];
-const _pr={};
-function renderRatingPanel(d,done){
-  const panel=document.getElementById('rating-panel'); if(!panel) return;
-  if(!d.lessons.every(L=>done[L.id])){ panel.style.display='none'; return; }
-  panel.style.display='';
-  if(d.ratings){
-    panel.innerHTML=`<div class="rating-done">⭐ Rated</div><div class="rating-summary">`+
-      RATING_AXES.map(a=>`<span>${a.label}: ${a.opts[(d.ratings[a.key]||1)-1]}</span>`).join('')+`</div>`;
-    return;
-  }
-  panel.innerHTML=`<div class="rating-title">⭐ How were these lessons?</div>`+
-    RATING_AXES.map(a=>`<div class="rating-row"><span class="rating-axis">${a.label}</span><div class="rating-btns">`+
-      a.opts.map((o,i)=>`<button class="rating-btn" id="rb-${a.key}-${i+1}" onclick="selR('${a.key}',${i+1})">${o}</button>`).join('')+
-    `</div></div>`).join('')+
-    `<button class="rating-submit" onclick="submitRating()">Save rating</button>`;
-}
-function selR(axis,val){
-  _pr[axis]=val;
-  [1,2,3].forEach(v=>{ const b=document.getElementById(`rb-${axis}-${v}`); if(b) b.classList.toggle('sel',v===val); });
-}
-async function submitRating(){
-  const d=APP.lessonData; if(!d) return;
-  for(const a of RATING_AXES){ if(!_pr[a.key]){ alert('Please rate all three axes.'); return; } }
-  const r={difficulty:_pr.difficulty,fun:_pr.fun,coherence:_pr.coherence};
-  try{
-    const res=await fetch('/api/rate',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic:d.topic,ratings:r})});
-    if(!res.ok) throw new Error('Server error');
-    d.ratings=r;
-    renderRatingPanel(d,APP.progress.completed[d.topic]||{});
-    loadSavedList();
-  }catch(e){ alert('Rating failed: '+e.message); }
-}
 
 function goHome(){
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
@@ -23845,6 +23840,16 @@ function renderPill() {
   lbl.textContent = 'Static — built-in lessons only';
   document.getElementById('gen-btn').disabled = true;
   document.getElementById('topic-input').disabled = true;
+  // C5: inject static overlay on generation form
+  const _tf = document.querySelector('.topic-form');
+  if (_tf && !document.getElementById('static-gen-overlay')) {
+    _tf.style.position = 'relative';
+    const _ov = document.createElement('div');
+    _ov.id = 'static-gen-overlay';
+    _ov.style.cssText = 'position:absolute;inset:0;background:rgba(245,245,245,.93);border-radius:inherit;display:flex;align-items:center;padding:20px;z-index:10;box-sizing:border-box';
+    _ov.innerHTML = '<p style="font-size:13px;font-weight:700;color:#444;line-height:1.6;margin:0"><strong>Dreizunge</strong> is an open-source language lesson generator. This is the <strong>static version</strong> — you can play the existing lessons, but not generate new ones.<br><br>Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to run your own server or contribute.<br><br><span style="color:#c00;font-weight:900">⚠ AI generated content.</span> Use a real language learning app or a human teacher if you are new to a language.</p>';
+    _tf.appendChild(_ov);
+  }
   const note=document.getElementById('offline-note');
   note.style.display='block';
   note.innerHTML='📦 Static version — select a topic below to start<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>';
@@ -23887,8 +23892,10 @@ async function loadSavedList() {
   if(filterEl){
     if(hasMultiLang){
       const activeL=LANGS[APP.libFilter]||null;
+      const prevL=LANGS[APP.prevLangFilter]||null;
       filterEl.innerHTML=(APP.libFilter==='all'
-        ? `<button class="lib-filter-btn active">🌐 All languages</button>`
+        ? `<button class="lib-filter-btn active">🌐 All languages</button>`+
+          (prevL ? `<button class="lib-filter-btn" onclick="setLibFilter('${APP.prevLangFilter}')" title="Back to ${prevL.name}">↩ ${prevL.flag} ${prevL.name}</button>` : '')
         : `<button class="lib-filter-btn active">${activeL?activeL.flag+' '+activeL.name:APP.libFilter.toUpperCase()}</button>`+
           `<button class="lib-filter-btn" onclick="setLibFilter('all')">🌐 All</button>`
       );
@@ -23930,7 +23937,7 @@ async function loadSavedList() {
     const t=encTopic(s.topic);
     const d=s.difficulty||2;
     const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
-    const diffBadge='<span class="diff-badge d'+d+'">'+diff+'</span>';
+    const diffBadge='<span class="diff-dot d'+d+'" title="'+diff+'"></span>';
     const ratingStr=s.ratings
       ? ' · '+(['🔵','🟡','🔴'][s.ratings.difficulty-1]||'')+' '+(['😐','😊','😄'][s.ratings.fun-1]||'')
       : '';
@@ -23987,29 +23994,23 @@ async function loadSavedList() {
     const chainTopicsJson=JSON.stringify(chainTopics);
     const chainEncoded=encodeURIComponent(chainTopicsJson);
     const chainId='c'+Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-    const slMeta=slTitles[chainId]||null;
+    const slMeta=slTitles[chainId]||slTitles['root:'+chainTopics[0]]||null;
     const hasTitle=!!(slMeta&&slMeta.title);
     const titleIcon=slMeta?.icon||'📖';
     const titleText=slMeta?.title||'';
     const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const escapedRoot=chainId;
+    const chainNewest=newestOf(chain);
+    const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
     const hdrTitle=hasTitle
-      ? '<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)"><span style="font-size:18px">'+titleIcon+'</span><span class="storyline-title-text">'+esc(titleText)+'</span><span class="storyline-title-sub">· '+chain.length+' chapter'+(chain.length!==1?'s':'')+'</span></span>'
-      : '<span class="storyline-title"><span>'+(LANGS[byTopic[chain[0]]?.lang||'it']||LANGS.it).flag+'</span><span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+'</span></span>';
+      ? '<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
+      : '<span class="storyline-title"><span>'+(LANGS[byTopic[chain[0]]?.lang||'it']||LANGS.it).flag+'</span><span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
     html+='<div class="storyline-hdr" id="slhdr-'+chainId+'">'+hdrTitle
-      +'<button class="storyline-hdr-btn" title="Edit title" onclick="event.stopPropagation();openStorylineEdit(&apos;'+chainId+'&apos;,&apos;'+chainId+'&apos;)">✏️</button>'
-      +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px" title="Export full story line with flags"'
+      +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px;margin-left:auto" title="Export full story line with flags"'
       +' data-chain="'+chainEncoded+'"'
       +' onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>'
       +'</div>';
-    html+='<div class="storyline-hdr" id="sledit-'+chainId+'" style="display:none;background:var(--white);border-bottom:1.5px solid var(--accent)">'
-      +'<span class="storyline-edit-icon" id="sledit-icon-'+chainId+'" onclick="cycleStorylineIcon(&apos;'+chainId+'&apos;)">'+(titleIcon||'📖')+'</span>'
-      +'<input class="storyline-edit-input" id="sledit-input-'+chainId+'" placeholder="Story line title…" value="'+esc(titleText)+'"'
-      +' onkeydown="if(event.key===&apos;Enter&apos;)saveStorylineTitle(&apos;'+chainId+'&apos;,&apos;'+chainId+'&apos;);if(event.key===&apos;Escape&apos;)closeStorylineEdit(&apos;'+chainId+'&apos;)">'
-      +'<button class="storyline-hdr-btn" onclick="saveStorylineTitle(&apos;'+chainId+'&apos;,&apos;'+chainId+'&apos;)">Save</button>'
-      +'<button class="storyline-hdr-btn danger" onclick="clearStorylineTitle(&apos;'+chainId+'&apos;,&apos;'+chainId+'&apos;)">Clear</button>'
-      +'<button class="storyline-hdr-btn" onclick="closeStorylineEdit(&apos;'+chainId+'&apos;)">✕</button></div>';
     html+='<div class="storyline-cards'+(hasTitle?' collapsed':'')+'" id="slcards-'+chainId+'">';
     chain.forEach((topic,i)=>{
       const s=byTopic[topic]; if(!s)return;
@@ -24038,6 +24039,8 @@ async function loadSavedList() {
   repopulateContinueSelect();
 
 function setLibFilter(lang){
+  if(lang==='all'&&APP.libFilter!=='all') APP.prevLangFilter=APP.libFilter;
+  if(lang!=='all') APP.prevLangFilter=null;
   APP.libFilter=lang;
   if(lang!=='all' && LANGS[lang]){
     APP.lang=lang; saveLang();
@@ -24114,35 +24117,70 @@ function buildPath(){
     contNav.style.display='none';
   }
 
-  // Storyline title row — find which chains this topic belongs to
-  const slRow=document.getElementById('home-hdr-storyline');
-  if(slRow){
-    const saved=APP.savedList||[];
-    const byTopicMap=Object.fromEntries(saved.map(l=>[l.topic,l]));
-    const slTitles=APP.storylines||{};
-    // Build chains that contain this topic
-    const matchedTitles=[];
-    const childMap={};
-    saved.forEach(l=>{ if(l.continuedFrom&&byTopicMap[l.continuedFrom])(childMap[l.continuedFrom]=childMap[l.continuedFrom]||[]).push(l.topic); });
-    const hasParent=new Set(saved.filter(l=>l.continuedFrom&&byTopicMap[l.continuedFrom]).map(l=>l.topic));
-    const roots=saved.filter(l=>!hasParent.has(l.topic));
+  // Build chain membership — used by storyline title row AND chapter progress strip
+  const _slSaved=APP.savedList||[];
+  const _slByTopic=Object.fromEntries(_slSaved.map(l=>[l.topic,l]));
+  const slTitles=APP.storylines||{};
+  const matchedTitles=[];
+  {
+    const _childMap={};
+    _slSaved.forEach(l=>{ if(l.continuedFrom&&_slByTopic[l.continuedFrom])(_childMap[l.continuedFrom]=_childMap[l.continuedFrom]||[]).push(l.topic); });
+    const _hasParent=new Set(_slSaved.filter(l=>l.continuedFrom&&_slByTopic[l.continuedFrom]).map(l=>l.topic));
+    const _roots=_slSaved.filter(l=>!_hasParent.has(l.topic));
     function walkForTitle(topic,chain){
       const ext=[...chain,topic];
-      const kids=childMap[topic]||[];
+      const kids=_childMap[topic]||[];
       if(!kids.length){ if(ext.includes(d.topic)&&ext.length>1) matchedTitles.push(ext); return; }
       kids.forEach(k=>walkForTitle(k,ext));
     }
-    roots.forEach(r=>walkForTitle(r.topic,[]));
+    _roots.forEach(r=>walkForTitle(r.topic,[]));
+  }
+  // Storyline title row
+  const slRow=document.getElementById('home-hdr-storyline');
+  if(slRow){
     const slHtml=matchedTitles.map(chain=>{
       const j=JSON.stringify(chain);
       const h=j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0);
       const cid='c'+Math.abs(h);
-      const meta=slTitles[cid];
+      const meta=slTitles[cid]||slTitles['root:'+chain[0]];
       if(!meta||!meta.title) return '';
       return `<span style="cursor:pointer;background:var(--gray-light);border-radius:10px;padding:2px 10px;font-size:12px" onclick="loadSaved('${encTopic(chain[0])}')">${meta.icon||'📖'} ${escHtml(meta.title)}</span>`;
     }).filter(Boolean).join('');
     if(slHtml){ slRow.innerHTML=slHtml; slRow.classList.add('visible'); }
     else { slRow.innerHTML=''; slRow.classList.remove('visible'); }
+  }
+
+  // M1: Chapter progress strip
+  let cpStrip=document.getElementById('chain-prog-strip');
+  if(!cpStrip){
+    cpStrip=document.createElement('div');
+    cpStrip.id='chain-prog-strip';
+    cpStrip.className='chain-prog-strip';
+    // Insert before prog-strip
+    const progStrip=document.getElementById('prog-strip');
+    if(progStrip) progStrip.parentNode.insertBefore(cpStrip,progStrip);
+  }
+  if(matchedTitles.length>0){
+    // Use the first matched chain for progress
+    const cpChain=matchedTitles[0];
+    const cpPos=cpChain.indexOf(d.topic)+1;
+    const cpTotal=cpChain.length;
+    // Count done lessons across all chain members
+    let cpDone=0, cpLessons=0;
+    cpChain.forEach(t=>{
+      const tData=(APP.savedList||[]).find(l=>l.topic===t);
+      if(!tData) return;
+      // savedList has lessonCount (number), not full lessons array
+      cpLessons+=(tData.lessonCount||tData.lessons?.length||0);
+      cpDone+=Object.keys(APP.progress.completed?.[t]||{}).length;
+    });
+    const cpPct=cpLessons>0?Math.round(100*cpDone/cpLessons):0;
+    const cpMeta=slTitles['c'+Math.abs(JSON.stringify(cpChain).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0))]||slTitles['root:'+cpChain[0]];
+    const cpTitle=cpMeta?.title?`${cpMeta.icon||''} ${cpMeta.title}`:'Story line';
+    cpStrip.innerHTML=`<span>${cpTitle}</span><span style="white-space:nowrap">Ch ${cpPos}/${cpTotal} · ${cpDone}/${cpLessons} done</span><div class="chain-prog-bar-wrap"><div class="chain-prog-bar" style="width:${cpPct}%"></div></div>`;
+    cpStrip.style.display='flex';
+  } else {
+    cpStrip.style.display='none';
   }
 
   // Story section — below start button now; collapse/expand based on completion
@@ -24222,7 +24260,6 @@ function buildPath(){
   const btn=document.getElementById('start-btn');
   if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=()=>goLandingClean(); }
   else{ btn.textContent='Start lesson '+(nextIdx+1); btn.onclick=()=>startLesson(nextIdx); }
-  renderRatingPanel(d, done);
 
   // Update flag summary strip
   const topicSlugAll=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
@@ -24295,8 +24332,13 @@ async function saveStorylineTitle(chainId, rootTopic) {
   const icon  = document.getElementById('sledit-icon-' + chainId).textContent.trim();
   if (!title) return;
   try {
+    // Store under chainId (exact chain) AND root alias (survives new chapters)
     await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ chainKey: rootTopic, title, icon }) });
+    // Decode rootTopic back to actual root topic string for the alias key
+    const rootAlias = 'root:' + (APP.savedList||[]).find(l=>l.topic&&'c'+Math.abs(JSON.stringify([l.topic]).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0))===chainId)?.topic;
+    if(rootAlias && rootAlias!=='root:undefined') await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chainKey: rootAlias, title, icon }) });
   } catch(e) { console.error('saveStorylineTitle:', e); }
   closeStorylineEdit(chainId);
   await loadSavedList();
@@ -24343,6 +24385,10 @@ async function genStorylineTitle(chainId, rootTopic, encodedChain) {
     // Auto-save directly — pre-fill edit form so user can still tweak
     await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ chainKey: rootTopic, title: data.title, icon: data.icon }) });
+    // Also save under root alias so title survives new chapters being added
+    const _rootTopic = JSON.parse(decodeURIComponent(encodedChain))[0];
+    if(_rootTopic) await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chainKey: 'root:'+_rootTopic, title: data.title, icon: data.icon }) }).catch(()=>{});
     const inp  = document.getElementById('sledit-input-' + chainId);
     const icon = document.getElementById('sledit-icon-' + chainId);
     if (inp)  inp.value = data.title || '';
@@ -24529,18 +24575,18 @@ function lBlock(it, pron, hideWord) {
     </button><button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
-function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${applyFurigana(ex.it)}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?${muteBadgeBtn()}</div><div class="card"><div class="qtext">What does <span class="it-word">${applyFurigana(ex.it)}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}${muteBadgeBtn()}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){ return ttsIsApproximate()?'<span class="tts-approx" style="margin-left:6px">⚠ approximate pronunciation</span>':''; }
-function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
+function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}${muteBadgeBtn()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}${muteBadgeBtn()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
 function tOrder(ex){ const L=lessonLang();
   const tokens=ex.words.map((w,i)=>{
     const isDist=ex.distractors&&ex.distractors[i];
     return `<span class="tok${isDist?' tok-distractor':''}" id="t${i}" onclick="addTok(${i})" title="${isDist?'This word may not belong':'Tap to add'}">${w}</span>`;
   }).join('');
-  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div style="font-size:11px;color:var(--gray-dark);margin-bottom:6px">⚠ Some words may not belong in this sentence</div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
-function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${applyFurigana(ex.it)}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+  return `<div class="ex-badge">✏️ Put the words in order${muteBadgeBtn()}</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div style="font-size:11px;color:var(--gray-dark);margin-bottom:6px">⚠ Some words may not belong in this sentence</div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
+function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence${muteBadgeBtn()}</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${applyFurigana(ex.it)}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
 function onType(){ document.getElementById('cbtn').disabled=document.getElementById('type-in').value.trim().length<1; }
@@ -24641,9 +24687,16 @@ function check(){
   const ex=C.exercises[C.cur]; let ok=false;
   if(ex.type==='listen_type'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){
-    // Filter out distractor tokens (identified by their index in ex.distractors[])
+    // Filter out distractor tokens
     const nonDistractors=C.placed.filter(p=>!(ex.distractors&&ex.distractors[p.i]));
-    ok=nonDistractors.map(p=>p.w).join(' ')===ex.correct;
+    // Build the correct word sequence
+    const correctWords=ex.correct.split(' ');
+    // Filter placed tokens to only those that are part of the correct answer
+    // (extra placed tokens that are also correct words are ignored)
+    const placedWords=nonDistractors.map(p=>p.w);
+    // Ignore extra placed words not in the correct answer; verify the rest matches in order
+    const filtered=placedWords.filter(w=>correctWords.some(c=>normDiacritics(c)===normDiacritics(w)));
+    ok=normDiacritics(filtered.join(' '))===normDiacritics(ex.correct);
   }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
@@ -24736,11 +24789,17 @@ function speak(text,rate){
   speechSynthesis.speak(u);
 }
 
+function muteBadgeBtn(){
+  return `<button style="background:none;border:none;cursor:pointer;font-size:12px;padding:0 0 0 6px;opacity:.7;line-height:1" onclick="event.stopPropagation();toggleMute()" title="Mute/unmute">${APP.muted?'🔇':'🔊'}</button>`;
+}
+
 function toggleMute(){
   APP.muted=!APP.muted;
   if(APP.muted) speechSynthesis.cancel();
   const btn=document.getElementById('mute-btn');
   if(btn){ btn.textContent=APP.muted?'🔇':'🔊'; btn.classList.toggle('muted',APP.muted); btn.title=APP.muted?'Unmute reading aloud':'Mute reading aloud'; }
+  // Update any visible exercise badge mute buttons
+  document.querySelectorAll('.ex-mute-btn').forEach(b=>b.textContent=APP.muted?'🔇':'🔊');
 }
 
 function buildTtsSelector(){
@@ -24915,6 +24974,7 @@ function toggleStoryRepair(){}
 function doRepairStory(){ alert("Story repair requires the live server."); }
 function downloadFlaggedLessons(){}
 (function(){ var b=document.getElementById('static-flag-banner'); if(b) b.style.display='none'; })()
+function openStorylineEdit(){}
 function _slSave(){ try{ localStorage.setItem('dz_storylines',JSON.stringify(APP.storylines||{})); }catch(e){} }
 async function saveStorylineTitle(chainId,rootTopic){
   const title=document.getElementById('sledit-input-'+chainId).value.trim();
@@ -24922,6 +24982,9 @@ async function saveStorylineTitle(chainId,rootTopic){
   if(!title)return;
   APP.storylines=APP.storylines||{};
   APP.storylines[rootTopic]={title,icon};
+  // Also store under root alias so title survives new chapters
+  const _rt=(APP.savedList||[]).find(l=>l.topic&&'c'+Math.abs(JSON.stringify([l.topic]).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0))===chainId)?.topic;
+  if(_rt) APP.storylines['root:'+_rt]={title,icon};
   _slSave(); closeStorylineEdit(chainId); await loadSavedList();
 }
 async function clearStorylineTitle(chainId,rootTopic){

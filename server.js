@@ -1102,19 +1102,6 @@ async function boot() {
     }
 
     // ── Rate a topic ──────────────────────────────────────────────────
-    if (M === 'POST' && url.pathname === '/api/rate') {
-      let body;
-      try { body = JSON.parse(await readBody(req)); }
-      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, ratings } = body;
-      if (!topic || !ratings) return json(res, 400, { error: 'Missing topic or ratings' });
-      const saved = findSaved(topic);
-      if (!saved) return json(res, 404, { error: 'Topic not found' });
-      saved.ratings = { difficulty: ratings.difficulty, fun: ratings.fun, coherence: ratings.coherence };
-      upsert(saved);
-      return json(res, 200, { ok: true });
-    }
-
     // ── Import lessons.json ───────────────────────────────────────────
     if (M === 'POST' && url.pathname === '/api/lessons/import') {
       let body;
