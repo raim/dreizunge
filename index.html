@@ -167,11 +167,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .placed-tok:hover{opacity:.75}
 .sbox-ph{font-size:13px;color:var(--gray);font-style:italic}
 .wbank{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
-.tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}
+.tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}.eh-tok{display:inline;cursor:pointer;border-radius:3px;padding:1px 2px;transition:background .1s}.eh-tok.suspect{background:#ffe066;outline:2px solid #f5a623}.eh-tok.correct-mark{background:#c8f7c5;outline:2px solid #4caf50}.eh-tok.missed-mark{text-decoration:underline wavy #f5a623}.eh-tok.wrong-mark{background:#ffd0d0;outline:2px solid #e53935}.eh-wrap{line-height:2.2;font-size:15px;margin:10px 0;padding:12px;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid)}.eh-score{font-size:24px;font-weight:900;text-align:center;margin:14px 0}
 .tok:hover{border-color:var(--blue)}
 .tok.used{opacity:.15;pointer-events:none}
-.tok-distractor{border-color:var(--gray-mid);background:var(--white);color:var(--text)}
-.tok-distractor:hover{border-color:var(--blue)}
 .type-input{width:100%;padding:12px 14px;font-size:16px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);outline:none;margin-top:8px}
 .type-input:focus{border-color:var(--blue)}
 .type-input.ok{border-color:var(--green);background:var(--green-light)}
@@ -486,6 +484,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           <option value="1">🟢 Beginner — short sentences, basic vocabulary</option>
           <option value="2" selected>🟡 Intermediate — natural phrases, varied grammar</option>
           <option value="3">🔴 Advanced — complex sentences, idiomatic language</option>
+          <option value="4">🔍 Error Hunt — find mistakes in the story</option>
         </select>
         <span class="diff-select-arrow">▾</span>
       </div>
@@ -714,9 +713,9 @@ function restoreStoryLenSlider(){
   if(sl) sl.value=APP.storyLen;
   onStoryLenSlider(APP.storyLen);
 }
-const DIFF_SHORT={1:'Beginner',2:'Intermediate',3:'Advanced'};
+const DIFF_SHORT={1:'Beginner',2:'Intermediate',3:'Advanced',4:'Error Hunt'};
 function onDiffSelect(v){
-  APP.difficulty=parseInt(v,10); saveDifficulty();
+  APP.difficulty=Math.max(1,Math.min(4,parseInt(v,10)||2)); saveDifficulty();
   const sel=document.getElementById('diff-select'); if(sel) sel.value=v;
 }
 function restoreDiffSelect(){
@@ -1511,7 +1510,9 @@ async function resumeBackgroundJob(){
 
 async function doGenerate(forceRegen){
   const topic=document.getElementById('topic-input').value.trim();
-  if(!topic||topic.length<2){ document.getElementById('topic-input').focus(); return; }
+  const contVal=document.getElementById('continue-select')?.value||'';
+  if(APP.difficulty!==4&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
+  if(APP.difficulty===4&&!topic&&!contVal){ showToast('⚠ Select a story or enter a topic for Text Understanding'); return; }
   if(!APP.info.canGenerate) return;
   if(APP.activeJob){ showToast('⏳ Already generating "'+APP.activeJob.topic+'" — please wait'); return; }
 
@@ -1952,6 +1953,7 @@ function pick(arr,n){ return shuffle(arr).slice(0,n); }
 const isPunctClient = t => /^[.,!?;:()\[\]"'«»—–]+$/.test((t||'').trim());
 function buildExercises(lessonIdx){
   const d=APP.lessonData, lesson=d.lessons[lessonIdx];
+  if(lesson.type==='error_hunt') return [];
 	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
   const allV = lesson.vocab;
 	// const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
@@ -1966,26 +1968,10 @@ function buildExercises(lessonIdx){
   function mkLMcq(v,p){ const w=wV(v,'en',p,3); if(w.length<3)return null; return {type:'listen_mcq',it:v.it,pron:v.pron,correct:v.en,choices:shuffle([v.en,...w])}; }
   function mkLType(v){ return {type:'listen_type',it:v.it,en:v.en,pron:v.pron,correct:v.it}; }
   function mkOrder(s){
-    const words=s.words.slice();
-    // Pick 2-3 distractor words from other vocab/sentences, not in this sentence
-    const sentWordSet=new Set(words.map(w=>w.toLowerCase()));
-    const distractorPool=shuffle([
-      ...allV.filter(v=>!sentWordSet.has(v.it.toLowerCase())&&!v.it.includes(' ')).map(v=>v.it),
-      ...allS.filter(x=>x.it!==s.it).flatMap(x=>
-        (x.words||x.it.split(' ')).filter(w=>!isPunctClient(w)&&!sentWordSet.has(w.toLowerCase()))
-      )
-    ]);
-    const numDistractors=Math.min(2+Math.floor(Math.random()*2), distractorPool.length);
-    const distractors=distractorPool.slice(0,numDistractors).map(w=>({w,distractor:true}));
-    // Shuffle correct words + distractors together
-    const allTokens=shuffle([...words.map(w=>({w,distractor:false})),...distractors]);
+    const words=shuffle(s.words.slice());
     let tries=0;
-    while(allTokens.slice(0,words.length).every((t,i)=>!t.distractor&&t.w===words[i])&&tries++<20)
-      allTokens.sort(()=>Math.random()-.5);
-    return {type:'order',en:s.en,it:s.it,
-      words:allTokens.map(t=>t.w),
-      distractors:allTokens.map(t=>t.distractor),
-      correct:words.join(' ')};
+    while(words.join(' ')===s.words.join(' ')&&tries++<20) words.sort(()=>Math.random()-.5);
+    return {type:'order',en:s.en,it:s.it,words,correct:s.words.join(' ')};
   }
   function mkRead(s,pool){
     const w=wS(s,pool,3); const padded=w.length>=3?w:[...fb.slice(0,3-w.length),...w];
@@ -2006,17 +1992,120 @@ function buildExercises(lessonIdx){
 
 // ── lesson ──
 function startLesson(idx){
-	    const C=APP.cur;
-	    C.lessonIdx=idx; C.exercises=buildExercises(idx); C.cur=0;
-	    C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
-	    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
-	    
-	    console.log("LOADED TOPIC:", APP.lessonData.topic);
-	    console.log("LESSON 0 SENTENCES:",
-	    APP.lessonData.lessons[0].sentences.map(s => s.it)
-	    );
-	    show('lesson-screen'); renderEx();
+  const C=APP.cur;
+  const lesson=APP.lessonData.lessons[idx];
+  C.lessonIdx=idx;
+  C.isErrorHunt=(lesson.type==='error_hunt');
+  C.ehSuspect=new Set(); C.ehChecked=false;
+  C.exercises=buildExercises(idx); C.cur=0;
+  C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
+  C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
+  show('lesson-screen');
+  if(C.isErrorHunt) renderErrorHunt();
+  else renderEx();
 }
+// ── Error-hunt renderer ─────────────────────────────────────────────
+function renderErrorHunt(){
+  const C=APP.cur;
+  const lesson=APP.lessonData.lessons[C.lessonIdx];
+  document.getElementById('hearts').innerHTML='';
+  // Tokenise corruptedStory — split on whitespace, keep punctuation attached
+  const rawTokens=lesson.corruptedStory.split(/( +|\n+)/);
+  // Map each token to a span; only word tokens get eh-tok class + index
+  let ti=0;
+  const spans=rawTokens.map(tok=>{
+    if(/^\s+$/.test(tok)) return tok.replace(/\n/g,'<br>');
+    const i=ti++;
+    return `<span class="eh-tok" data-i="${i}" onclick="ehToggle(${i})">${escHtml(tok)}</span>`;
+  });
+  C.ehTokens=rawTokens.filter(t=>!/^\s+$/.test(t));  // word tokens only
+  // Build token-to-edit map: which token indices overlap which edit
+  C.ehEditMap=buildEhEditMap(lesson);
+  const el=document.getElementById('ex-area');
+  el.innerHTML=
+    '<div class="ex-badge">🔍 Text Understanding — tap words that contain errors</div>'+
+    '<div class="card">'+
+    '<div style="font-size:12px;font-weight:700;color:var(--gray-dark);margin-bottom:6px">'+ 
+    'Tap any word that looks wrong. Spelling, grammar, or logic mistakes.'+'</div>'+
+    `<div class="eh-wrap" id="eh-wrap">${spans.join('')}</div>`+
+    '<div style="margin-top:10px;text-align:center">'+
+    '<button class="big-btn" onclick="ehCheck()">Check answers</button>'+
+    '</div></div>';
+}
+
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function buildEhEditMap(lesson){
+  // For each edit, find which token indices it spans in the corrupted story
+  const story=lesson.corruptedStory;
+  const tokens=lesson.corruptedStory.split(/( +|\n+)/).filter(t=>!/^\s+$/.test(t));
+  const map=new Map(); // tokenIdx → editIdx
+  lesson.edits.forEach((edit,ei)=>{
+    const pos=story.indexOf(edit.replace);
+    if(pos<0) return;
+    // Find which tokens overlap [pos, pos+replace.length)
+    let charPos=0, ti=0;
+    for(const raw of lesson.corruptedStory.split(/( +|\n+)/)){
+      if(!/^\s+$/.test(raw)){
+        if(charPos>=pos&&charPos<pos+edit.replace.length) map.set(ti,ei);
+        ti++;
+      }
+      charPos+=raw.length;
+    }
+  });
+  return map;
+}
+
+function ehToggle(i){
+  const C=APP.cur;
+  if(C.ehChecked) return;
+  if(C.ehSuspect.has(i)) C.ehSuspect.delete(i);
+  else C.ehSuspect.add(i);
+  const el=document.querySelector(`.eh-tok[data-i="${i}"]`);
+  if(el) el.classList.toggle('suspect', C.ehSuspect.has(i));
+}
+
+function ehCheck(){
+  const C=APP.cur;
+  if(C.ehChecked) return;
+  C.ehChecked=true;
+  const lesson=APP.lessonData.lessons[C.lessonIdx];
+  const editTokens=new Set([...C.ehEditMap.keys()]);
+  let correct=0, wrong=0, missed=0;
+  // Score each marked token
+  C.ehSuspect.forEach(i=>{
+    const el=document.querySelector(`.eh-tok[data-i="${i}"]`);
+    if(editTokens.has(i)){ correct++; if(el){el.classList.remove('suspect');el.classList.add('correct-mark');} }
+    else { wrong++; if(el){el.classList.remove('suspect');el.classList.add('wrong-mark');} }
+  });
+  // Highlight missed errors
+  editTokens.forEach(i=>{
+    if(!C.ehSuspect.has(i)){
+      missed++;
+      const el=document.querySelector(`.eh-tok[data-i="${i}"]`);
+      if(el) el.classList.add('missed-mark');
+    }
+  });
+  const score=correct*10 - wrong*3 - missed*5;
+  // Reveal results
+  const wrap=document.getElementById('eh-wrap');
+  const resultDiv=document.createElement('div');
+  resultDiv.style='margin-top:14px';
+  resultDiv.innerHTML=
+    `<div class="eh-score">${score>0?score:0} pts</div>`+
+    `<div style="font-size:13px;font-weight:700;color:var(--gray-dark);margin-bottom:8px">`+
+    `✅ ${correct} found &nbsp; ❌ ${wrong} false &nbsp; ⚠️ ${missed} missed</div>`+
+    lesson.edits.map((e,ei)=>{
+            const icon={spelling:'🔵',grammar:'🟠'}[e.type]||'⚡';
+      return `<div style="font-size:12px;margin:3px 0">${icon} <strong>${e.type}</strong>: `+
+        `“${escHtml(e.find)}” → “${escHtml(e.replace)}” &nbsp;<span style="color:var(--gray-dark)">${escHtml(e.reason)}</span></div>`;
+    }).join('');
+  wrap.after(resultDiv);
+  // Persist progress
+  C.correct=correct; C.total=editTokens.size+wrong;
+  showComplete();
+}
+
 function renderHearts(){
   document.getElementById('hearts').innerHTML=Array.from({length:3},(_,i)=>`<span class="heart${i>=APP.cur.hearts?' lost':''}">❤️</span>`).join('');
 }
@@ -2071,11 +2160,10 @@ function ttsApproxBadge(){ return ttsIsApproximate()?'<span class="tts-approx" s
 function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
 function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
 function tOrder(ex){ const L=lessonLang();
-  const tokens=ex.words.map((w,i)=>{
-    const isDist=ex.distractors&&ex.distractors[i];
-    return `<span class="tok${isDist?' tok-distractor':''}" id="t${i}" onclick="addTok(${i})" title="${isDist?'This word may not belong':'Tap to add'}">${w}</span>`;
-  }).join('');
-  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div style="font-size:11px;color:var(--gray-dark);margin-bottom:6px">⚠ Some words may not belong in this sentence</div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
+  const tokens=ex.words.map((w,i)=>
+    `<span class="tok" id="t${i}" onclick="addTok(${i})">\${w}</span>`
+  ).join('');
+  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">\"${ex.en}\"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
 function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${applyFurigana(ex.it)}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
@@ -2177,9 +2265,7 @@ function check(){
   const ex=C.exercises[C.cur]; let ok=false;
   if(ex.type==='listen_type'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){
-    // Filter out distractor tokens (identified by their index in ex.distractors[])
-    const nonDistractors=C.placed.filter(p=>!(ex.distractors&&ex.distractors[p.i]));
-    ok=nonDistractors.map(p=>p.w).join(' ')===ex.correct;
+    ok=C.placed.map(p=>p.w).join(' ')===ex.correct;
   }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;

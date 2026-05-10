@@ -100,8 +100,8 @@ const cleanedLessons = lessonsData.lessons.map(topic => {
 });
 
 const removedCount = lessonsData.lessons.reduce((total, topic, i) => {
-  const orig = topic.lessons.reduce((n, l) => n + l.vocab.length + l.sentences.length, 0);
-  const clean = cleanedLessons[i].lessons.reduce((n, l) => n + l.vocab.length + l.sentences.length, 0);
+  const orig = topic.lessons.reduce((n, l) => n + (l.vocab||[]).length + (l.sentences||[]).length, 0);
+  const clean = cleanedLessons[i].lessons.reduce((n, l) => n + (l.vocab||[]).length + (l.sentences||[]).length, 0);
   return total + (orig - clean);
 }, 0);
 
@@ -178,11 +178,7 @@ function renderPill() {
     _ov.style.cssText = 'background:var(--white);border-radius:var(--radius-xl);padding:22px;'+ 
       'box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:14px;'+ 
       'font-size:13px;font-weight:600;color:#444;line-height:1.7';
-    _ov.innerHTML = '<strong style="font-size:15px">Dreizunge</strong> is an open-source language lesson generator: learn vocabulary for <strong>any topic</strong>. '+ 
-      'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to <strong>generate new stories</strong>.<br><br>'+ 
-      'This is the <strong>static version</strong> — you can play the existing lessons below and lessons <strong>shared with you</strong> (json files), but not generate new ones.<br><br>'+ 
-      '<span style="color:#c00;font-weight:800">⚠ AI generated content.</span> '+ 
-      'Use a real language learning app or a human teacher if you are new to a language.';
+    _ov.innerHTML = '<strong style="font-size:15px">Dreizunge</strong> is an open-source language lesson generator: learn vocabulary for <strong>any topic</strong>. '+'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to <strong>generate new stories</strong>.<br><br>'+'This is the <strong>static version</strong> — you can play the existing lessons below and lessons <strong>shared with you</strong> (json files), but not generate new ones.<br><br>'+'<span style="color:#c00;font-weight:800">⚠ AI generated content.</span> '+'Use a real language learning app or a human teacher if you are new to a language.';
     _tf.parentNode.replaceChild(_ov, _tf);
   }
   const note=document.getElementById('offline-note');
@@ -408,7 +404,6 @@ const staticOverrides = [
   'async function deleteSaved(){}',
   'async function regenSaved(){}',
   'function regenCurrent(){}',
-  //'function shareLesson(){}',
   'async function doGenerate(){}',
   'async function submitRating(){}',
   'function importLessons(input){',

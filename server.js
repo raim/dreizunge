@@ -457,6 +457,38 @@ function sysStory(lang, isContinuation, wordCount, dialect) {
   return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${dialectNote}${furiganaNote}${cont}`;
 }
 
+// ── Error-hunt lesson prompt ─────────────────────────────────────────
+function sysErrorHunt(lang, difficulty) {
+  const L = langName(lang);
+  const nSpell   = difficulty >= 3 ? 4 : 3;
+  const nGrammar = difficulty >= 2 ? 3 : 2;
+  return `You are a language exercise generator for ${L} learners.
+Given a ${L} story, introduce exactly ${nSpell} spelling errors and ${nGrammar} grammar errors that a language novice might make.
+
+Spelling error types (use varied examples):
+- swap a correct letter for a similar-looking/sounding one (e.g. "b"/"d", "ei"/"ie", "c"/"g")
+- omit or double an interior letter (e.g. "manger" → "mnager")
+- wrong vowel that sounds plausible (e.g. "o" → "u", "e" → "i")
+- missing or wrong accent/diacritic where relevant
+NEVER add/remove punctuation. NEVER change capitalisation at sentence start.
+
+Grammar error types (use varied examples):
+- wrong gender on article or adjective (e.g. "il" → "la" for masculine noun)
+- wrong verb ending for the subject (e.g. "mangiano" → "mangia" for plural subject)
+- wrong tense (e.g. present instead of past)
+- wrong or missing preposition
+- wrong plural/singular form
+
+Rules:
+- Modify ONLY a single word (or at most two adjacent words) per edit
+- The "find" string MUST appear verbatim and EXACTLY ONCE in the story
+- Do NOT touch punctuation, numbers, or proper nouns
+- Errors must be plausible novice mistakes, not random gibberish
+
+Return ONLY a JSON object, no markdown, no extra text:
+{ "edits": [ { "type": "spelling"|"grammar", "find": "exact original word(s)", "replace": "corrupted version", "reason": "one-line explanation" } ] }`;
+}
+
 // ── Storyline title prompt ─────────────────────────────────────────────
 async function generateStorylineTitle(topics, stories) {
   console.log(`\n── Storyline title generation ──────────────────────`);
@@ -475,7 +507,7 @@ async function generateStorylineTitle(topics, stories) {
   try { parsed = JSON.parse(raw); }
   catch(e) {
     // Try extracting JSON object from response if model added surrounding text
-    const m = raw.match(/\{[^}]+\}/);
+    const m = raw.match(/\{[\s\S]*\}/);
     if (m) { parsed = JSON.parse(m[0]); console.log('  (extracted JSON from response)'); }
     else throw new Error('Could not parse JSON from model response: ' + raw.slice(0,80));
   }
@@ -483,6 +515,44 @@ async function generateStorylineTitle(topics, stories) {
   console.log(`  Result   : ${parsed.icon} "${parsed.title}"`);
   console.log('────────────────────────────────────────────────────\n');
   return { title: parsed.title.slice(0, 80), icon: parsed.icon.slice(0, 8) };
+}
+
+// ── Generate error-hunt lesson ───────────────────────────────────────
+async function generateErrorHunt(story, lang, difficulty, jobId) {
+  jobStep(jobId, `[${OLLAMA_MODEL}] Generating error-hunt lesson…`);
+  const sys = sysErrorHunt(lang, difficulty);
+  const userMsg = `Here is the ${langName(lang)} story:\n\n${story}\n\nIntroduce the errors now. Return only JSON.`;
+  const { text: raw, promptTokens, completionTokens } = await callOllamaRaw(OLLAMA_MODEL, sys, userMsg, 1200);
+  const cleaned = raw.replace(/```json|```/g, '').trim();
+  let parsed;
+  try { parsed = JSON.parse(cleaned); }
+  catch(e) {
+    const m = cleaned.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('Error-hunt: could not parse JSON from model: ' + cleaned.slice(0, 80));
+    parsed = JSON.parse(m[0]);
+  }
+  const edits = (parsed.edits || []).filter(e => e.find && e.replace && ['spelling','grammar'].includes(e.type) && story.includes(e.find));
+  if (edits.length === 0) throw new Error('Error-hunt: no valid edits produced');
+  // Apply edits to produce corruptedStory — replace each find with replace (first occurrence)
+  let corruptedStory = story;
+  const appliedEdits = [];
+  for (const e of edits) {
+    if (!corruptedStory.includes(e.find)) continue; // skip if already replaced by earlier edit
+    corruptedStory = corruptedStory.replace(e.find, e.replace);
+    appliedEdits.push({ type: e.type, find: e.find, replace: e.replace, reason: e.reason || '' });
+  }
+  console.log(`    Error-hunt: ${appliedEdits.length} edits applied (${appliedEdits.map(e=>e.type).join(', ')})`);
+  return {
+    lesson: {
+      id: 4, type: 'error_hunt',
+      title: 'Text Understanding',
+      desc: 'Find the mistakes in the story',
+      icon: '🔍',
+      corruptedStory,
+      edits: appliedEdits,
+    },
+    tokens: { promptTokens, completionTokens },
+  };
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
@@ -669,28 +739,41 @@ async function generate(topic, lang, difficulty, continuedFrom, storyLen, jobId,
 
   // ── Lessons ───────────────────────────────────────────────────────────
   const styleHint = (!storyTranslation && story) ? story.slice(0, 600) : null;
-  const TOTAL = 3;
   const lessons = [];
-  let prevVocab = [];
-  const lessonOpts = { userTranslation: storyTranslation || null, userDialect: userDialect || null, styleHint };
-  for (let i = 1; i <= TOTAL; i++) {
+
+  if (difficulty === 4) {
+    // Error-hunt lesson — single lesson of type error_hunt
     try {
-      const { lesson, tokens } = await generateOneLesson(
-        lang, topic, i, TOTAL, prevVocab, story, difficulty, jobId, lessonOpts);
+      const { lesson, tokens } = await generateErrorHunt(story, lang, 3, jobId);
       lessons.push(lesson);
-      prevVocab = prevVocab.concat(lesson.vocab);
       totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
       lessonTokenStats.push(tokens);
     } catch(e) {
-      console.warn(`  Lesson ${i} failed, skipping: ${e.message}`);
-      jobStep(jobId, `⚠ Lesson ${i} failed — continuing…`);
+      console.error('  Error-hunt generation failed:', e.message);
+      throw new Error('Error-hunt lesson failed: ' + e.message);
     }
+  } else {
+    const TOTAL = 3;
+    let prevVocab = [];
+    const lessonOpts = { userTranslation: storyTranslation || null, userDialect: userDialect || null, styleHint };
+    for (let i = 1; i <= TOTAL; i++) {
+      try {
+        const { lesson, tokens } = await generateOneLesson(
+          lang, topic, i, TOTAL, prevVocab, story, difficulty, jobId, lessonOpts);
+        lessons.push(lesson);
+        prevVocab = prevVocab.concat(lesson.vocab);
+        totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
+        lessonTokenStats.push(tokens);
+      } catch(e) {
+        console.warn(`  Lesson ${i} failed, skipping: ${e.message}`);
+        jobStep(jobId, `⚠ Lesson ${i} failed — continuing…`);
+      }
+    }
+    if (lessons.length === 0)
+      throw new Error('All lessons failed to generate — nothing to save.');
+    if (lessons.length < TOTAL)
+      console.warn(`  Partial result: ${lessons.length}/${TOTAL} lessons generated.`);
   }
-
-  if (lessons.length === 0)
-    throw new Error('All lessons failed to generate — nothing to save.');
-  if (lessons.length < TOTAL)
-    console.warn(`  Partial result: ${lessons.length}/${TOTAL} lessons generated.`);
 
   const totalMs = Date.now() - genStart;
   const uniqueModels = [...new Set([OLLAMA_MODEL, OLLAMA_TRANSLATION_MODEL, OLLAMA_LESSON_MODEL])];
@@ -1008,8 +1091,12 @@ async function boot() {
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { topic, lang, difficulty, storyLen, continuedFrom, forceRegenerate,
               userStory, userTranslation, userDialect } = body;
-      if (!topic || topic.trim().length < 2) return json(res, 400, { error: 'Topic too short' });
-      const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
+      // For error-hunt (diff=4) with continuedFrom, topic can be omitted — use the source topic
+      const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
+        : (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
+      if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
+      if (topic !== resolvedTopic) body.topic = resolvedTopic;
+      const diff = Math.max(1, Math.min(4, parseInt(difficulty, 10) || 2));
       const wc = Math.max(100, Math.min(1000, parseInt(storyLen, 10) || 300));
       const contFrom = (!userStory && continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       const topicKey = topic.trim().toLowerCase();

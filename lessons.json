@@ -1,6 +1,70 @@
 {
   "lessons": [
     {
+      "topic": "Tuscan Lunch",
+      "topicEmoji": "🇮🇹",
+      "userTopic": "tuscan lunch next day",
+      "lang": "it",
+      "difficulty": 4,
+      "storyLen": 100,
+      "story": "Il mattino dopo, Lucia e Marco si sedettero al piccolo ristorante accanto al bagno turco. Il sole primaverile illuminava i tavoli all'aperto, e l'aria era permeata dal profumo di fiori di zucca cotti lentamente. Lucia sorseggiava la sua birra, mentre Marco le serviva la bistecca cruda al centro, croccante intorno e tenera al centro.\n\n\"Questo è davvero delizioso,\" disse Lucia, masticando con piacere. \"E la polenta, come la prepari?\"\n\n\"È semplice,\" rispose Marco, sorridendo. \"Latte, burro, polenta, zucca e spezie. Un tocco di passione e pazienza, e la magia si manifesta.\"",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nta a fuoco lento e servita cruda al centro. È un piatto che richiede attenzione e passione.\"\n\n\"Non mi dispiacerebbe provarla,\" disse Lucia, guardando con interesse la bistecca. \"Ma dimmi, come si prepara la polenta e zucca?\"\n\n\"È semplice,\" rispose Marco. \"La polenta viene preparata con latte e burro, poi aggiungo zucca e spezie. È una versione toscana del risotto, ma con un sapore unico.\"\n\n\"Sembrano tutti deliziosi,\" disse Lucia, apprezzando la ricchezza della cucina toscana. \"E forse, domani, potremmo anche fare una passeggiata nella zona del bagno turco e vedere se l'odore si è attenuato.\"\n\nMarco annuì, sollevando il bicchiere in un brindisi silenzioso. \"Ci proveremo, e se non funziona, ci inventeremo un'altra scusa. Dopotutto, la vita toscana è fatta di piccole avventure e buone birre.\"\n\nNew topic: \"tuscan lunch next day\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Tuscan Cuisine",
+      "lessons": [
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Il mattino dopo, Lucia e Marco si sedettero al piccola ristorante accanto al bagno turco. Il sole primaverile illuminava i tavoli all'aperto, e l'aria era permeata dal profumo di fiori di zucca cotto lentamente. Lucia sorseggiavano la sua birra, mentre Marco le serviva la bistecca cruda al centro, croccante intorno e tenera al centro.\n\n\"Questo è davvero delizioso,\" disse Lucia, masticando con piacere. \"E la pomodoro, come la prepari?\"\n\n\"È semplice,\" rispose Marco, sorridendo. \"Latte, burro, polenta, zucca e spezie. Un tocco di passione e pazienza, e la magia si manifesta.\"",
+          "edits": [
+            {
+              "type": "spelling",
+              "find": "piccolo",
+              "replace": "piccola",
+              "reason": "gender error on feminine noun"
+            },
+            {
+              "type": "spelling",
+              "find": "cotti",
+              "replace": "cotto",
+              "reason": "plural error on adjective"
+            },
+            {
+              "type": "grammar",
+              "find": "sorseggiava",
+              "replace": "sorseggiavano",
+              "reason": "wrong verb form for plural subject"
+            },
+            {
+              "type": "grammar",
+              "find": "polenta",
+              "replace": "pomodoro",
+              "reason": "wrong noun used"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 509025,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1106,
+        "totalCompletionTokens": 392,
+        "lessons": [
+          {
+            "promptTokens": 557,
+            "completionTokens": 185
+          }
+        ]
+      },
+      "generatedAt": "2026-05-10T18:24:20.247Z",
+      "updatedAt": "2026-05-10T18:24:20.247Z"
+    },
+    {
       "topic": "Tuscan Cuisine",
       "topicEmoji": "🇮🇹",
       "userTopic": "explain tuscan culinary specialties, incl. vegetarian options",
