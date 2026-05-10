@@ -495,3 +495,36 @@ far more reliably than:
 * huge structured lesson JSONs.
 
 So this may become your most scalable lesson type.
+
+
+Q to claude: ... sent Q and chatGPT response as markdown, and got v20a:
+
+A:
+
+Good question. Here's what I actually built vs what you're describing:
+
+**What I built:**
+`difficulty=4` is a completely separate generation mode — it generates a new story AND one error-hunt lesson. It's entirely parallel to the existing 3-lesson system, not integrated with it.
+
+**What you're describing — three different models:**
+
+**Model A — Error-hunt as lesson 4 on any existing story**
+Each 3-lesson topic gets an optional 4th lesson of type `error_hunt`, generated from its own `story`. The "Text Understanding" difficulty option would trigger adding this 4th lesson to an existing topic (selected via "Continue story from"), or alongside a new generation. The lesson path shows nodes 1→2→3→4🔍.
+
+**Model B — Standalone error-hunt topics**
+A new topic that has *only* one error-hunt lesson and no vocab/sentence lessons. Good for advanced users who just want the proofreading challenge on a fresh story.
+
+**Model C — Error-hunt as capstone for a whole story line**
+After completing all chapters of a story line (e.g. 3 topics × 3 lessons = 9 lessons), the 🔍 lesson tests comprehension of the *entire concatenated story*. This is the most pedagogically interesting but most complex to build.
+
+---
+
+**My recommendation:**
+
+Start with **Model A** — it fits the existing data model cleanly. Each topic entry in `lessons.json` can have `lessons[3]` be the error-hunt. You generate it by selecting an existing topic in "Continue story from" with difficulty=4. The current code already stores `story` on every topic, so no new data is needed — just pass the existing story to `generateErrorHunt()` and append the result to `topic.lessons[]`.
+
+**Model B** is trivially supported as-is — just don't select a continuation.
+
+**Model C** is a separate feature that needs its own endpoint and data structure — worth doing later.
+
+Want me to refactor the current implementation to Model A?

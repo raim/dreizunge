@@ -1,6 +1,414 @@
 {
   "lessons": [
     {
+      "topic": "Tuscan Cuisine",
+      "topicEmoji": "🇮🇹",
+      "userTopic": "explain tuscan culinary specialties, incl. vegetarian options",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 600,
+      "story": "Lucia e Marco si sedettero a tavola, circondati dall'aroma di una cena che prometteva di essere deliziosa. \"Sai,\" disse Lucia, \"non ho mai provato la toscana in modo così intimo. Questa sera mi sento come se stessimo condividendo una vera tradizione.\"\n\nMarco sorrise, versando un po' di vino rosso in due bicchieri. \"Ecco, prova questo. È un Chianti Classico, uno dei migliori della Toscana. È perfetto per accompagnare la nostra cena.\"\n\n\"Sempre così attento,\" rispose Lucia, accettando il bicchiere. \"Ma dimmi, cosa ci aspetta di buono?\"\n\n\"Cominceremo con un antipasto di salumi toscani,\" spiegò Marco, indicando una ciotola con varie spezie di prosciutto e salame. \"Poi, un piatto di fagioli neri, un vero capolavoro della cucina toscana.\"\n\n\"Non mi aspettavo fagioli neri,\" commentò Lucia, curiosa. \"Ma sembrano deliziosi.\"\n\n\"Per la principale, ho preparato un bistecca alla fiorentina,\" continuò Marco, indicando un bel pezzo di carne. \"Ma non preoccuparti, ho anche un'opzione vegetariana per te.\"\n\n\"Ah, sì? E quale sarebbe?\" chiese Lucia, interessata.\n\n\"Preparo un piatto di polenta e zucca,\" rispose Marco. \"È una versione toscana del risotto, ma con zucca e spezie. È una delizia.\"\n\n\"Sembrano entrambi deliziosi,\" disse Lucia, guardando con ammirazione la cena che si stava preparando. \"Ma dimmi, cosa ci sono dietro questi piatti?\"\n\n\"La toscana è famosa per i suoi salumi,\" spiegò Marco. \"Il prosciutto di Jambon, il salame di Lucques, e il finocchiona, un salame di zucca. Sono tutti preparati con cura e tradizione.\"\n\n\"Interessante,\" commentò Lucia, gustando il prosciutto. \"E i fagioli neri?\"\n\n\"Si chiamano fagioli neri di Castelfiorentino,\" spiegò Marco. \"Sono molto antichi e hanno un sapore unico. Sono preparati con spezie e vino rosso, creando un sapore intenso e profumato.\"\n\n\"Non mi stupirei se mi piacesse,\" disse Lucia, sorridendo. \"E la bistecca?\"\n\n\"È una vera specialità toscana,\" spiegò Marco. \"Preparata a fuoco lento e servita cruda al centro. È un piatto che richiede attenzione e passione.\"\n\n\"Non mi dispiacerebbe provarla,\" disse Lucia, guardando con interesse la bistecca. \"Ma dimmi, come si prepara la polenta e zucca?\"\n\n\"È semplice,\" rispose Marco. \"La polenta viene preparata con latte e burro, poi aggiungo zucca e spezie. È una versione toscana del risotto, ma con un sapore unico.\"\n\n\"Sembrano tutti deliziosi,\" disse Lucia, apprezzando la ricchezza della cucina toscana. \"E forse, domani, potremmo anche fare una passeggiata nella zona del bagno turco e vedere se l'odore si è attenuato.\"\n\nMarco annuì, sollevando il bicchiere in un brindisi silenzioso. \"Ci proveremo, e se non funziona, ci inventeremo un'altra scusa. Dopotutto, la vita toscana è fatta di piccole avventure e buone birre.\"",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 6-7 paragraphs, under 600 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n chiese Lucia, sorridendo. \"Non so se mi piacerebbe. Preferirei uscire e godermi la serata, anche se mi sento un po' come se fossi appena uscita da un incubo.\"\n\nMarco le prese la mano, stringendola gentilmente. \"Non preoccuparti, ci penserò io. Preparerò una cena leggera e ci divertiremo con un film. E poi, domani, potremo andare a fare una passeggiata in paese e dimenticare tutto.\"\n\nLucia sorrise, sentendo il peso della giornata iniziare a sciogliersi. \"Sembra una buona idea. E forse, domani, potremmo anche fare una passeggiata nella zona del bagno turco e vedere se l'odore si è attenuato.\"\n\nMarco annuì, sollevando la sua birra in un brindisi silenzioso. \"Ci proveremo, e se non funziona, ci inventeremo un'altra scusa. Dopotutto, la vita toscana è fatta di piccole avventure e buone birre.\"\n\nNew topic: \"explain tuscan culinary specialties, incl. vegetarian options\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Sulfur Water Spa Smell",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Cucina Toscana",
+          "desc": "Tuscan specialties and vegetarian options",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "antipasto",
+              "en": "appetizer"
+            },
+            {
+              "it": "salumi",
+              "en": "meat products"
+            },
+            {
+              "it": "prosciutto",
+              "en": "ham"
+            },
+            {
+              "it": "salame",
+              "en": "sausage"
+            },
+            {
+              "it": "fagioli",
+              "en": "beans"
+            },
+            {
+              "it": "capolavoro",
+              "en": "masterpiece"
+            },
+            {
+              "it": "vegetariano",
+              "en": "vegetarian"
+            },
+            {
+              "it": "ciabatta",
+              "en": "Italian bread"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Cominceremo con un antipasto di salumi toscani.",
+              "en": "We will start with a Tuscan antipasto of salumi.",
+              "words": [
+                "Cominceremo",
+                "con",
+                "un",
+                "antipasto",
+                "di",
+                "salumi",
+                "toscani."
+              ]
+            },
+            {
+              "it": "Poi, un piatto di fagioli neri, un vero capolavoro della cucina toscana.",
+              "en": "Then, a dish of black beans, a true masterpiece of Tuscan cuisine.",
+              "words": [
+                "Poi,",
+                "un",
+                "piatto",
+                "di",
+                "fagioli",
+                "neri,",
+                "un",
+                "vero",
+                "capolavoro",
+                "della",
+                "cucina",
+                "toscana."
+              ]
+            },
+            {
+              "it": "Non mi aspettavo fagioli neri.",
+              "en": "I didn't expect black beans.",
+              "words": [
+                "Non",
+                "mi",
+                "aspettavo",
+                "fagioli",
+                "neri."
+              ]
+            },
+            {
+              "it": "Ma dimmi, cosa ci aspetta di buono?",
+              "en": "But tell me, what else do we have to look forward to?",
+              "words": [
+                "Ma",
+                "dimmi,",
+                "cosa",
+                "ci",
+                "aspetta",
+                "di",
+                "buono?"
+              ]
+            },
+            {
+              "it": "Mangiamo anche pane toscano, come la ciabatta.",
+              "en": "We also eat Tuscan bread, like ciabatta.",
+              "words": [
+                "Mangiamo",
+                "anche",
+                "pane",
+                "toscano,",
+                "come",
+                "la",
+                "ciabatta."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Cucina toscana",
+          "desc": "spezie di salumi, fagioli neri, ciabatta, piatto tradizionale",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "ciabatta",
+              "en": "ciabatta"
+            },
+            {
+              "it": "spezie",
+              "en": "spices"
+            },
+            {
+              "it": "fagioli neri",
+              "en": "black beans"
+            },
+            {
+              "it": "piatto tradizionale",
+              "en": "traditional dish"
+            },
+            {
+              "it": "ortaggi",
+              "en": "vegetables"
+            },
+            {
+              "it": "parmigiano reggiano",
+              "en": "parmesan cheese"
+            },
+            {
+              "it": "panna",
+              "en": "cream"
+            },
+            {
+              "it": "insalata di fagioli",
+              "en": "bean salad"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Cominceremo con un antipasto di spezie di salumi.",
+              "en": "We will start with an antipasto of meat products spices.",
+              "words": [
+                "Cominceremo",
+                "con",
+                "un",
+                "antipasto",
+                "di",
+                "spezie",
+                "di",
+                "salumi."
+              ]
+            },
+            {
+              "it": "Poi, un piatto di fagioli neri con ortaggi e parmigiano reggiano.",
+              "en": "Then, a dish of black beans with vegetables and parmesan cheese.",
+              "words": [
+                "Poi,",
+                "un",
+                "piatto",
+                "di",
+                "fagioli",
+                "neri",
+                "con",
+                "ortaggi",
+                "e",
+                "parmigiano",
+                "reggiano."
+              ]
+            },
+            {
+              "it": "La ciabatta è perfetta per assaporare i fagioli neri.",
+              "en": "The ciabatta is perfect for tasting the black beans.",
+              "words": [
+                "La",
+                "ciabatta",
+                "è",
+                "perfetta",
+                "per",
+                "assaporare",
+                "i",
+                "fagioli",
+                "neri."
+              ]
+            },
+            {
+              "it": "Insalata di fagioli è un piatto tradizionale in cucina toscana.",
+              "en": "Bean salad is a traditional dish in Tuscan cuisine.",
+              "words": [
+                "Insalata",
+                "di",
+                "fagioli",
+                "è",
+                "un",
+                "piatto",
+                "tradizionale",
+                "in",
+                "cucina",
+                "toscana."
+              ]
+            },
+            {
+              "it": "La panna si mescola bene con i fagioli neri per un sapore unico.",
+              "en": "Cream mixes well with the black beans for a unique taste.",
+              "words": [
+                "La",
+                "panna",
+                "si",
+                "mescola",
+                "bene",
+                "con",
+                "i",
+                "fagioli",
+                "neri",
+                "per",
+                "un",
+                "sapore",
+                "unico."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Cucina toscana",
+          "desc": "spezie, antipasti, piatti tradizionali",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "cioccolata",
+              "en": "chocolate"
+            },
+            {
+              "it": "panzanella",
+              "en": "bread salad"
+            },
+            {
+              "it": "lampredotto",
+              "en": "stomach dish"
+            },
+            {
+              "it": "zuppa di fagioli",
+              "en": "bean soup"
+            },
+            {
+              "it": "ortaggi",
+              "en": "vegetables"
+            },
+            {
+              "it": "parmigiano reggiano",
+              "en": "parmesan cheese"
+            },
+            {
+              "it": "panna",
+              "en": "cream"
+            },
+            {
+              "it": "insalata di fagioli",
+              "en": "bean salad"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "In Toscana, la cioccolata si usa anche come ingrediento in antipasti.",
+              "en": "In Tuscany, chocolate is also used as an ingredient in appetizers.",
+              "words": [
+                "In",
+                "Toscana,",
+                "la",
+                "cioccolata",
+                "si",
+                "usa",
+                "anche",
+                "come",
+                "ingrediento",
+                "in",
+                "antipasti."
+              ]
+            },
+            {
+              "it": "Il lampredotto è un piatto tradizionale, ma non è per tutti.",
+              "en": "The lampredotto is a traditional dish, but it's not for everyone.",
+              "words": [
+                "Il",
+                "lampredotto",
+                "è",
+                "un",
+                "piatto",
+                "tradizionale,",
+                "ma",
+                "non",
+                "è",
+                "per",
+                "tutti."
+              ]
+            },
+            {
+              "it": "La panzanella è un piatto vegetariano che usa pane vecchio.",
+              "en": "Panzanella is a vegetarian dish that uses old bread.",
+              "words": [
+                "La",
+                "panzanella",
+                "è",
+                "un",
+                "piatto",
+                "vegetariano",
+                "che",
+                "usa",
+                "pane",
+                "vecchio."
+              ]
+            },
+            {
+              "it": "La zuppa di fagioli è un piatto caldo e nutriente.",
+              "en": "Bean soup is a warm and nutritious dish.",
+              "words": [
+                "La",
+                "zuppa",
+                "di",
+                "fagioli",
+                "è",
+                "un",
+                "piatto",
+                "caldo",
+                "e",
+                "nutriente."
+              ]
+            },
+            {
+              "it": "L'insalata di fagioli è un piatto fresco e leggero, perfetto per l'estate.",
+              "en": "Bean salad is a fresh and light dish, perfect for summer.",
+              "words": [
+                "L'insalata",
+                "di",
+                "fagioli",
+                "è",
+                "un",
+                "piatto",
+                "fresco",
+                "e",
+                "leggero,",
+                "perfetto",
+                "per",
+                "l'estate."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1697078,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2898,
+        "totalCompletionTokens": 1990,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 350165,
+            "promptTokens": 714,
+            "completionTokens": 342
+          },
+          {
+            "lessonNum": 2,
+            "ms": 345234,
+            "promptTokens": 778,
+            "completionTokens": 370
+          },
+          {
+            "lessonNum": 3,
+            "ms": 387786,
+            "promptTokens": 844,
+            "completionTokens": 385
+          }
+        ]
+      },
+      "generatedAt": "2026-05-10T14:14:00.250Z",
+      "updatedAt": "2026-05-10T14:44:43.682Z",
+      "ratings": {
+        "difficulty": 2,
+        "fun": 3,
+        "coherence": 3
+      }
+    },
+    {
       "topic": "Luxembourgish Cuisine",
       "topicEmoji": "🇱🇺",
       "userTopic": "after the aperitive (it was a delicious cremant), we tried to find a restaurant that serves local luxembourgish cuisine.",
@@ -24105,6 +24513,21 @@
       "words": [],
       "flaggedAt": "2026-05-08T08:35:02.188Z",
       "comment": "correct German would be: Mir geht's heute gut, danke!"
+    },
+    "Tuscan_Cuisine:read_translate:Cominceremo_con_un_antipasto_di_spezie_d": {
+      "topic": "Tuscan Cuisine",
+      "type": "read_translate",
+      "it": "Cominceremo con un antipasto di spezie di salumi.",
+      "en": "We will start with an antipasto of meat products spices.",
+      "correct": "We will start with an antipasto of meat products spices.",
+      "choices": [
+        "The ciabatta is perfect for tasting the black beans.",
+        "Cream mixes well with the black beans for a unique taste.",
+        "Then, a dish of black beans with vegetables and parmesan cheese.",
+        "We will start with an antipasto of meat products spices."
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-10T14:41:28.768Z"
     }
   },
   "storylines": {
