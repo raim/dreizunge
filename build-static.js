@@ -179,8 +179,8 @@ function renderPill() {
       'box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:14px;'+ 
       'font-size:13px;font-weight:600;color:#444;line-height:1.7';
     _ov.innerHTML = '<strong style="font-size:15px">Dreizunge</strong> is an open-source language lesson generator: learn vocabulary for any topic. '+ 
-      'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to contribute.<br><br>'+ 
-      'This is the <strong>static version</strong> — you can play the existing lessons, but not generate new ones.<br><br>'+ 
+      'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to contribute lessons or even code.<br><br>'+ 
+      'This is the <strong>static version</strong> — you can play the existing lessons below and lessons shared with you (json files), but not generate new ones.<br><br>'+ 
       '<span style="color:#c00;font-weight:800">⚠ AI generated content.</span> '+ 
       'Use a real language learning app or a human teacher if you are new to a language.';
     _tf.parentNode.replaceChild(_ov, _tf);
