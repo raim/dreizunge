@@ -1,6 +1,1531 @@
 {
   "lessons": [
     {
+      "topic": "Ordering at the Supermarket",
+      "topicEmoji": "🛒",
+      "userTopic": "Ordering at the supermarket",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 900,
+      "story": "I want 100 gram of the salami and 250 gram of the pecorino. Please, give me a bit more of the salami bit a bit less of the cheese.",
+      "storyLang": "it",
+      "storyPrompt": "User-provided story",
+      "userStory": "I want 100 gram of the salami and 250 gram of the pecorino. Please, give me a bit more of the salami bit a bit less of the cheese.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Ordering at the supermarket",
+          "desc": "basic shopping vocabulary and phrases",
+          "icon": "🛒",
+          "vocab": [
+            {
+              "it": "salame",
+              "en": "salami"
+            },
+            {
+              "it": "formaggio",
+              "en": "cheese"
+            },
+            {
+              "it": "grammi",
+              "en": "grams"
+            },
+            {
+              "it": "chissà",
+              "en": "who knows"
+            },
+            {
+              "it": "un po'",
+              "en": "a bit"
+            },
+            {
+              "it": "più",
+              "en": "more"
+            },
+            {
+              "it": "meno",
+              "en": "less"
+            },
+            {
+              "it": "per favore",
+              "en": "please"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Voglio 100 grammi di salame.",
+              "en": "I want 100 grams of salami.",
+              "words": [
+                "Voglio",
+                "100",
+                "grammi",
+                "di",
+                "salame."
+              ]
+            },
+            {
+              "it": "Chissà, forse 250 grammi di formaggio.",
+              "en": "Who knows, maybe 250 grams of cheese.",
+              "words": [
+                "Chissà,",
+                "forse",
+                "250",
+                "grammi",
+                "di",
+                "formaggio."
+              ]
+            },
+            {
+              "it": "Per favore, un po' più di salame.",
+              "en": "Please, a bit more salami.",
+              "words": [
+                "Per",
+                "favore,",
+                "un",
+                "po'",
+                "più",
+                "di",
+                "salame."
+              ]
+            },
+            {
+              "it": "Ma un po' meno di formaggio.",
+              "en": "But a bit less cheese.",
+              "words": [
+                "Ma",
+                "un",
+                "po'",
+                "meno",
+                "di",
+                "formaggio."
+              ]
+            },
+            {
+              "it": "Quanto pesa il salame?",
+              "en": "How much does the salami weigh?",
+              "words": [
+                "Quanto",
+                "pesa",
+                "il",
+                "salame?"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Ordering at the supermarket",
+          "desc": "Intermediate phrases for grocery shopping",
+          "icon": "🛒",
+          "vocab": [
+            {
+              "it": "chissà",
+              "en": "who knows"
+            },
+            {
+              "it": "un po'",
+              "en": "a bit"
+            },
+            {
+              "it": "più",
+              "en": "more"
+            },
+            {
+              "it": "meno",
+              "en": "less"
+            },
+            {
+              "it": "per favore",
+              "en": "please"
+            },
+            {
+              "it": "pacchetto",
+              "en": "package"
+            },
+            {
+              "it": "libro",
+              "en": "book"
+            },
+            {
+              "it": "cassetta",
+              "en": "box"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Chissà, forse ci sono ancora 50 grammi di formaggio.",
+              "en": "Who knows, maybe there are still 50 grams of cheese left.",
+              "words": [
+                "Chissà,",
+                "forse",
+                "ci",
+                "sono",
+                "ancora",
+                "50",
+                "grammi",
+                "di",
+                "formaggio."
+              ]
+            },
+            {
+              "it": "Per favore, prendi un po' di pacchetti di salame.",
+              "en": "Please, take a bit of salami packages.",
+              "words": [
+                "Per",
+                "favore,",
+                "prendi",
+                "un",
+                "po'",
+                "di",
+                "pacchetti",
+                "di",
+                "salame."
+              ]
+            },
+            {
+              "it": "Meno libro, più cassetta, per favore.",
+              "en": "Less books, more boxes, please.",
+              "words": [
+                "Meno",
+                "libro,",
+                "più",
+                "cassetta,",
+                "per",
+                "favore."
+              ]
+            },
+            {
+              "it": "Chissà, forse ci sono anche 200 grammi di formaggio.",
+              "en": "Who knows, maybe there are also 200 grams of cheese.",
+              "words": [
+                "Chissà,",
+                "forse",
+                "ci",
+                "sono",
+                "anche",
+                "200",
+                "grammi",
+                "di",
+                "formaggio."
+              ]
+            },
+            {
+              "it": "Un po' di pacchetti, per favore.",
+              "en": "A bit of packages, please.",
+              "words": [
+                "Un",
+                "po'",
+                "di",
+                "pacchetti,",
+                "per",
+                "favore."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Ordering at the supermarket",
+          "desc": "grammi, salame, formaggio, più, meno, pacchetto, libro, cassetta",
+          "icon": "🛒",
+          "vocab": [
+            {
+              "it": "grammi",
+              "en": "grams"
+            },
+            {
+              "it": "salame",
+              "en": "salami"
+            },
+            {
+              "it": "formaggio",
+              "en": "cheese"
+            },
+            {
+              "it": "più",
+              "en": "more"
+            },
+            {
+              "it": "meno",
+              "en": "less"
+            },
+            {
+              "it": "pacchetto",
+              "en": "package"
+            },
+            {
+              "it": "libro",
+              "en": "book"
+            },
+            {
+              "it": "cassetta",
+              "en": "box"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Prendimi un po' di salame e due pacchetti di formaggio.",
+              "en": "Give me a bit of salami and two packages of cheese.",
+              "words": [
+                "Prendimi",
+                "un",
+                "po'",
+                "di",
+                "salame",
+                "e",
+                "due",
+                "pacchetti",
+                "di",
+                "formaggio."
+              ]
+            },
+            {
+              "it": "Chissà, magari prendo anche un libro di ricette.",
+              "en": "Who knows, maybe I'll also get a cookbook.",
+              "words": [
+                "Chissà,",
+                "magari",
+                "prendo",
+                "anche",
+                "un",
+                "libro",
+                "di",
+                "ricette."
+              ]
+            },
+            {
+              "it": "Vorrei un po' di salame e meno cassetta di formaggio.",
+              "en": "I want a bit of salami and less of the cheese box.",
+              "words": [
+                "Vorrei",
+                "un",
+                "po'",
+                "di",
+                "salame",
+                "e",
+                "meno",
+                "cassetta",
+                "di",
+                "formaggio."
+              ]
+            },
+            {
+              "it": "Per favore, metti più salame e meno formaggio nel mio sacchetto.",
+              "en": "Please, put more salami and less cheese in my bag.",
+              "words": [
+                "Per",
+                "favore,",
+                "metti",
+                "più",
+                "salame",
+                "e",
+                "meno",
+                "formaggio",
+                "nel",
+                "mio",
+                "sacchetto."
+              ]
+            },
+            {
+              "it": "Prendi un po' di salame e un pacchetto di formaggio, per favore.",
+              "en": "Take a bit of salami and a package of cheese, please.",
+              "words": [
+                "Prendi",
+                "un",
+                "po'",
+                "di",
+                "salame",
+                "e",
+                "un",
+                "pacchetto",
+                "di",
+                "formaggio,",
+                "per",
+                "favore."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 533785,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1377,
+        "totalCompletionTokens": 953,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 161419,
+            "promptTokens": 363,
+            "completionTokens": 276
+          },
+          {
+            "lessonNum": 2,
+            "ms": 160355,
+            "promptTokens": 422,
+            "completionTokens": 306
+          },
+          {
+            "lessonNum": 3,
+            "ms": 183065,
+            "promptTokens": 468,
+            "completionTokens": 343
+          }
+        ]
+      },
+      "generatedAt": "2026-05-12T10:20:48.682Z",
+      "updatedAt": "2026-05-12T10:20:48.682Z"
+    },
+    {
+      "topic": "Dog commands",
+      "topicEmoji": "🐶",
+      "userTopic": "Dog commands",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 200,
+      "story": "Nella piccola città di Monteverde, c'era un vecchio cane chiamato Bruno. Bruno era un cane di razza labrador, con un pelo scuro e un carattere gentile. Viveva con una famiglia di giovani studenti che lo adoravano. La famiglia era composta da Anna, Marco, e il loro amico di viaggio, Luca. Bruno era il loro fedele compagno, e i suoi comandi erano la chiave per la loro vita quotidiana.\n\nUn giorno, Anna decise di insegnare a Bruno alcuni nuovi comandi. Iniziò con \"sedere\", poi \"stare\", e infine \"tornare\". Bruno, con la sua intelligenza e la sua dedizione, imparò rapidamente. Ogni mattina, Anna faceva lezione con Bruno, e presto il cane era in grado di eseguire i comandi con precisione. La famiglia era felice, e Bruno si sentiva orgoglioso delle sue nuove capacità.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian.\n\nWrite a story for the topic: \"Dog commands\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Dog commands",
+          "desc": "basic commands for your furry friend",
+          "icon": "🐶",
+          "vocab": [
+            {
+              "it": "sedere",
+              "en": "sit"
+            },
+            {
+              "it": "stare",
+              "en": "stay"
+            },
+            {
+              "it": "tornare",
+              "en": "come back"
+            },
+            {
+              "it": "comando",
+              "en": "command"
+            },
+            {
+              "it": "precisione",
+              "en": "precision"
+            },
+            {
+              "it": "eseguire",
+              "en": "execute"
+            },
+            {
+              "it": "capace",
+              "en": "able"
+            },
+            {
+              "it": "orgoglioso",
+              "en": "proud"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Anna fece lezione a Bruno sedendo accanto a lui.",
+              "en": "Anna taught Bruno by sitting next to him.",
+              "words": [
+                "Anna",
+                "fece",
+                "lezione",
+                "a",
+                "Bruno",
+                "sedendo",
+                "accanto",
+                "a",
+                "lui."
+              ]
+            },
+            {
+              "it": "Stare è un comando importante per Bruno.",
+              "en": "Stay is an important command for Bruno.",
+              "words": [
+                "Stare",
+                "è",
+                "un",
+                "comando",
+                "importante",
+                "per",
+                "Bruno."
+              ]
+            },
+            {
+              "it": "Con precisione, Bruno eseguì il comando tornare.",
+              "en": "With precision, Bruno executed the come back command.",
+              "words": [
+                "Con",
+                "precisione,",
+                "Bruno",
+                "eseguì",
+                "il",
+                "comando",
+                "tornare."
+              ]
+            },
+            {
+              "it": "Anna era felice di vedere Bruno capace.",
+              "en": "Anna was happy to see Bruno able.",
+              "words": [
+                "Anna",
+                "era",
+                "felice",
+                "di",
+                "vedere",
+                "Bruno",
+                "capace."
+              ]
+            },
+            {
+              "it": "Bruno si sentiva orgoglioso di sé stesso.",
+              "en": "Bruno felt proud of himself.",
+              "words": [
+                "Bruno",
+                "si",
+                "sentiva",
+                "orgoglioso",
+                "di",
+                "sé",
+                "stesso."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "New dog commands",
+          "desc": "advanced commands for Bruno",
+          "icon": "🐶",
+          "vocab": [
+            {
+              "it": "alzarsi",
+              "en": "stand up"
+            },
+            {
+              "it": "venire",
+              "en": "come here"
+            },
+            {
+              "it": "fermarsi",
+              "en": "stop"
+            },
+            {
+              "it": "seguire",
+              "en": "follow"
+            },
+            {
+              "it": "indicare",
+              "en": "point to"
+            },
+            {
+              "it": "raccogliere",
+              "en": "pick up"
+            },
+            {
+              "it": "portare",
+              "en": "bring"
+            },
+            {
+              "it": "segnalare",
+              "en": "signal"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Anna insegnò a Bruno a segnalare gli oggetti importanti.",
+              "en": "Anna taught Bruno to signal important objects.",
+              "words": [
+                "Anna",
+                "insegnò",
+                "a",
+                "Bruno",
+                "a",
+                "segnalare",
+                "gli",
+                "oggetti",
+                "importanti."
+              ]
+            },
+            {
+              "it": "Ogni giorno, Bruno alzava la testa per seguire Anna.",
+              "en": "Every day, Bruno raised his head to follow Anna.",
+              "words": [
+                "Ogni",
+                "giorno,",
+                "Bruno",
+                "alzava",
+                "la",
+                "testa",
+                "per",
+                "seguire",
+                "Anna."
+              ]
+            },
+            {
+              "it": "Anna fece Bruno fermarsi quando vide un pericolo.",
+              "en": "Anna made Bruno stop when she saw a danger.",
+              "words": [
+                "Anna",
+                "fece",
+                "Bruno",
+                "fermarsi",
+                "quando",
+                "vide",
+                "un",
+                "pericolo."
+              ]
+            },
+            {
+              "it": "Bruno raccoglieva la palla con facilità e la portava a Marco.",
+              "en": "Bruno easily picked up the ball and brought it to Marco.",
+              "words": [
+                "Bruno",
+                "raccoglieva",
+                "la",
+                "palla",
+                "con",
+                "facilità",
+                "e",
+                "la",
+                "portava",
+                "a",
+                "Marco."
+              ]
+            },
+            {
+              "it": "La famiglia era felice di vedere Bruno capace di eseguire tante azioni.",
+              "en": "The family was happy to see Bruno able to perform so many actions.",
+              "words": [
+                "La",
+                "famiglia",
+                "era",
+                "felice",
+                "di",
+                "vedere",
+                "Bruno",
+                "capace",
+                "di",
+                "eseguire",
+                "tante",
+                "azioni."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Dog commands",
+          "desc": "advanced commands for Bruno",
+          "icon": "🐶",
+          "vocab": [
+            {
+              "it": "alzarsi",
+              "en": "stand up"
+            },
+            {
+              "it": "venire",
+              "en": "come here"
+            },
+            {
+              "it": "fermarsi",
+              "en": "stop"
+            },
+            {
+              "it": "seguire",
+              "en": "follow"
+            },
+            {
+              "it": "indicare",
+              "en": "point to"
+            },
+            {
+              "it": "raccogliere",
+              "en": "pick up"
+            },
+            {
+              "it": "portare",
+              "en": "bring"
+            },
+            {
+              "it": "segnalare",
+              "en": "signal"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Anna indicò il cestino e Bruno raccogliò il giornale.",
+              "en": "Anna pointed to the basket and Bruno picked up the newspaper.",
+              "words": [
+                "Anna",
+                "indicò",
+                "il",
+                "cestino",
+                "e",
+                "Bruno",
+                "raccogliò",
+                "il",
+                "giornale."
+              ]
+            },
+            {
+              "it": "Il padrone segnalò al cane di fermarsi e Bruno obbedì immediatamente.",
+              "en": "The owner signaled the dog to stop and Bruno obeyed immediately.",
+              "words": [
+                "Il",
+                "padrone",
+                "segnalò",
+                "al",
+                "cane",
+                "di",
+                "fermarsi",
+                "e",
+                "Bruno",
+                "obbedì",
+                "immediatamente."
+              ]
+            },
+            {
+              "it": "Bruno seguì Marco attraverso il cortile senza esitare.",
+              "en": "Bruno followed Marco through the courtyard without hesitation.",
+              "words": [
+                "Bruno",
+                "seguì",
+                "Marco",
+                "attraverso",
+                "il",
+                "cortile",
+                "senza",
+                "esitare."
+              ]
+            },
+            {
+              "it": "Anna portò Bruno al parco e il cane eseguì con precisione.",
+              "en": "Anna brought Bruno to the park and the dog executed with precision.",
+              "words": [
+                "Anna",
+                "portò",
+                "Bruno",
+                "al",
+                "parco",
+                "e",
+                "il",
+                "cane",
+                "eseguì",
+                "con",
+                "precisione."
+              ]
+            },
+            {
+              "it": "Luca venne chiamato e Bruno corse al suo fianco.",
+              "en": "Luca was called and Bruno ran to his side.",
+              "words": [
+                "Luca",
+                "venne",
+                "chiamato",
+                "e",
+                "Bruno",
+                "corse",
+                "al",
+                "suo",
+                "fianco."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 784320,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2437,
+        "totalCompletionTokens": 1158,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 214789,
+            "promptTokens": 679,
+            "completionTokens": 272
+          },
+          {
+            "lessonNum": 2,
+            "ms": 219403,
+            "promptTokens": 736,
+            "completionTokens": 316
+          },
+          {
+            "lessonNum": 3,
+            "ms": 235785,
+            "promptTokens": 787,
+            "completionTokens": 320
+          }
+        ]
+      },
+      "generatedAt": "2026-05-12T10:00:02.374Z",
+      "updatedAt": "2026-05-12T10:00:02.374Z"
+    },
+    {
+      "topic": "Local Pienza Specialties",
+      "topicEmoji": "PDO",
+      "userTopic": "a local frpm pienza explains local specialties",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 1000,
+      "story": "Maria si diresse verso casa, il suo passo deciso portandola verso il cuore di Firenze. Mentre attraversava le vie strette e affollate, notò un piccolo ristorante con un cartello che diceva \"Trattoria del Buon Gusto\". Decise di entrare, curiosa di scoprire cosa avesse da offrire.\n\nLa trattoria era piccola, con un'atmosfera accogliente e un odore di basilico e pomodoro che la accolse. Un anziano signore con un grembiule rosso la salutò con un sorriso caloroso. \"Benvenuta, signora. Siediti pure.\"\n\nMaria si accomodò a un tavolo vicino al camino, dove un fuoco scoppiettante creava un calore rassicurante. Il signore si avvicinò con un taccuino e una penna. \"Posso aiutarti a scegliere, signora?\"\n\n\"Certamente,\" rispose Maria, \"vorrei sapere di più sulle specialità locali.\"\n\n\"Ah, eccellente scelta,\" disse il signore, scrivendo qualche nota. \"In Firenze, come sai, le specialità culinarie sono un'arte. Iniziamo con il bistecca alla fiorentina. È un pezzo di filetto di manzo molto grasso, arrostito a fuoco lento per un'ora. La croccantezza della pelle e la morbidezza del carne sono un'esperienza unica.\"\n\nMaria annuì, interessata. \"E poi?\"\n\n\"Per il pappa al pomodoro, un classico. È una minestrina fatta con pomodori, cipolla, olio d'oliva, basilico e un po' di farina. È cremosa e saziante, perfetta per un inverno freddo.\"\n\nIl signore continuò a spiegare, descrivendo con passione ogni piatto. \"E il lampredotto, un piatto un po' più insolito, ma delizioso. È una specie di pancetta di bue, arrostito con cipolla e peperoncino. È una specialità molto apprezzata dai locali.\"\n\nMaria ascoltava, rapita. \"E c'è anche il baccalà mantecato. È un piatto di pesce, ma preparato in modo particolare. Si tratta di baccalà tritato finissimo, mescolato con burro, uova e un po' di olio d'oliva. È una delizia.\"\n\nIl signore rise, scuotendo la testa. \"E poi c'è il fegato di vitello, un piatto molto tradizionale. È cotto con uvetta e vino, e ha un sapore unico.\"\n\nMaria sorrise, immaginando il sapore di quei piatti. \"Sembra che Firenze sia davvero una città ricca di tradizioni culinarie.\"\n\n\"Proprio così, signora,\" disse il signore, sorridendo. \"E c'è anche il cioccolato fiorentino, un vero e proprio capolavoro. È fatto con il miglior cacao e zucchero, e ha un sapore incredibile.\"\n\nMaria si sentì avvolta da un senso di nostalgia e apprezzamento. \"Sono così felice di aver conosciuto queste specialità. Sarò felice di provarle a casa.\"\n\nIl signore annuì, felice di aver potuto condividere la sua passione. \"Sono sicuro che saranno deliziosi. Buona cena, signora.\"\n\nMaria uscì dalla trattoria, il cuore pieno di emozioni. Si immaginò di nuovo i piatti che aveva appena conosciuto, e non poteva aspettare di prepararli a casa. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 10-11 paragraphs, under 1000 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nepe, e un po' di olio d'oliva. Tagliamo il filetto in spesse fette e lo saliamo e pepiamo. Lo facciamo rosolare in una padella con un po' di olio d'oliva finché non è ben cotto.\"\n\nLa commessa mise in una busta i prodotti necessari per ciascun piatto, e Maria li prese con gratitudine. \"Grazie mille,\" disse, \"sarò felice di prepararli a casa.\"\n\nLa commessa sorrise, felice di aver potuto aiutare. \"Sono sicura che saranno deliziosi. Buona cucina, signora.\"\n\nMaria uscì dal supermercato con i suoi acquisti, il cuore pieno di nostalgia e la mente già immersa nei preparativi della cena. Si immaginò il bistecca croccante, il pappa al pomodoro cremoso, e il lampredotto caldo e sazio. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.\n\nNew topic: \"a local frpm pienza explains local specialties\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "order Tuscan specialties",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "local specialties",
+          "desc": "exploring local cuisine in Florence",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "specialità locali",
+              "en": "local specialties"
+            },
+            {
+              "it": "trattoria",
+              "en": "restaurant"
+            },
+            {
+              "it": "benvenuta",
+              "en": "welcome"
+            },
+            {
+              "it": "siediti pure",
+              "en": "please sit down"
+            },
+            {
+              "it": "fuoco scoppiettante",
+              "en": "crackling fire"
+            },
+            {
+              "it": "calore rassicurante",
+              "en": "reassuring warmth"
+            },
+            {
+              "it": "scegliere",
+              "en": "choose"
+            },
+            {
+              "it": "eccellente",
+              "en": "excellent"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La trattoria è famosa per le sue specialità locali.",
+              "en": "The restaurant is famous for its local specialties.",
+              "words": [
+                "La",
+                "trattoria",
+                "è",
+                "famosa",
+                "per",
+                "le",
+                "sue",
+                "specialità",
+                "locali."
+              ]
+            },
+            {
+              "it": "Domandai all'anziano signore delle sue specialità.",
+              "en": "I asked the elderly gentleman about his specialties.",
+              "words": [
+                "Domandai",
+                "all'anziano",
+                "signore",
+                "delle",
+                "sue",
+                "specialità."
+              ]
+            },
+            {
+              "it": "Il fuoco scoppiettante creava un calore rassicurante.",
+              "en": "The crackling fire created a reassuring warmth.",
+              "words": [
+                "Il",
+                "fuoco",
+                "scoppiettante",
+                "creava",
+                "un",
+                "calore",
+                "rassicurante."
+              ]
+            },
+            {
+              "it": "Egli mi spiegò che il bistecca alla fiorentina è un piatto importante.",
+              "en": "He explained to me that the bistecca alla fiorentina is an important dish.",
+              "words": [
+                "Egli",
+                "mi",
+                "spiegò",
+                "che",
+                "il",
+                "bistecca",
+                "alla",
+                "fiorentina",
+                "è",
+                "un",
+                "piatto",
+                "importante."
+              ]
+            },
+            {
+              "it": "Scegli la specialità locale, è deliziosa.",
+              "en": "Choose the local specialty, it's delicious.",
+              "words": [
+                "Scegli",
+                "la",
+                "specialità",
+                "locale,",
+                "è",
+                "deliziosa."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "local specialties",
+          "desc": "exploring local cuisine in a trattoria",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "pasta",
+              "en": "pasta"
+            },
+            {
+              "it": "sugo",
+              "en": "sauce"
+            },
+            {
+              "it": "tagliatelle",
+              "en": "tagliatelle"
+            },
+            {
+              "it": "risotto",
+              "en": "risotto"
+            },
+            {
+              "it": "zucca",
+              "en": "squash"
+            },
+            {
+              "it": "ortaggi",
+              "en": "vegetables"
+            },
+            {
+              "it": "minestra",
+              "en": "soup"
+            },
+            {
+              "it": "pranzo",
+              "en": "lunch"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Il signore indicò un piatto di tagliatelle al sugo.",
+              "en": "The gentleman pointed to a plate of tagliatelle al sugo.",
+              "words": [
+                "Il",
+                "signore",
+                "indicò",
+                "un",
+                "piatto",
+                "di",
+                "tagliatelle",
+                "al",
+                "sugo."
+              ]
+            },
+            {
+              "it": "Mentre mangiavo, notai che il risotto era fatto con zucca.",
+              "en": "While eating, I noticed that the risotto was made with squash.",
+              "words": [
+                "Mentre",
+                "mangiavo,",
+                "notai",
+                "che",
+                "il",
+                "risotto",
+                "era",
+                "fatto",
+                "con",
+                "zucca."
+              ]
+            },
+            {
+              "it": "La minestra di ortaggi era un piatto semplice ma sapido.",
+              "en": "The vegetable soup was a simple but flavorful dish.",
+              "words": [
+                "La",
+                "minestra",
+                "di",
+                "ortaggi",
+                "era",
+                "un",
+                "piatto",
+                "semplice",
+                "ma",
+                "sapido."
+              ]
+            },
+            {
+              "it": "Il pranzo in quella trattoria era un'esperienza unica.",
+              "en": "Lunch at that trattoria was a unique experience.",
+              "words": [
+                "Il",
+                "pranzo",
+                "in",
+                "quella",
+                "trattoria",
+                "era",
+                "un'esperienza",
+                "unica."
+              ]
+            },
+            {
+              "it": "Il signore mi raccontò della tradizione locale di preparare il risotto.",
+              "en": "The gentleman told me about the local tradition of preparing risotto.",
+              "words": [
+                "Il",
+                "signore",
+                "mi",
+                "raccontò",
+                "della",
+                "tradizione",
+                "locale",
+                "di",
+                "preparare",
+                "il",
+                "risotto."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "local specialties",
+          "desc": "exploring local cuisine in a trattoria",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "tagliatelle",
+              "en": "tagliatelle"
+            },
+            {
+              "it": "risotto",
+              "en": "risotto"
+            },
+            {
+              "it": "zucca",
+              "en": "squash"
+            },
+            {
+              "it": "ortaggi",
+              "en": "vegetables"
+            },
+            {
+              "it": "minestra",
+              "en": "soup"
+            },
+            {
+              "it": "pranzo",
+              "en": "lunch"
+            },
+            {
+              "it": "sugo",
+              "en": "sauce"
+            },
+            {
+              "it": "pasta",
+              "en": "pasta"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Tagliatelle al sugo di zucca sono una specialità.",
+              "en": "Tagliatelle with squash sauce are a specialty.",
+              "words": [
+                "Tagliatelle",
+                "al",
+                "sugo",
+                "di",
+                "zucca",
+                "sono",
+                "una",
+                "specialità."
+              ]
+            },
+            {
+              "it": "Il risotto con ortaggi è molto popolare qui.",
+              "en": "The vegetable risotto is very popular here.",
+              "words": [
+                "Il",
+                "risotto",
+                "con",
+                "ortaggi",
+                "è",
+                "molto",
+                "popolare",
+                "qui."
+              ]
+            },
+            {
+              "it": "Per pranzo, consiglio la minestra di zucca.",
+              "en": "For lunch, I recommend the squash soup.",
+              "words": [
+                "Per",
+                "pranzo,",
+                "consiglio",
+                "la",
+                "minestra",
+                "di",
+                "zucca."
+              ]
+            },
+            {
+              "it": "La pasta è preparata con molte varietà di sugo.",
+              "en": "Pasta is prepared with many varieties of sauce.",
+              "words": [
+                "La",
+                "pasta",
+                "è",
+                "preparata",
+                "con",
+                "molte",
+                "varietà",
+                "di",
+                "sugo."
+              ]
+            },
+            {
+              "it": "In questa trattoria, il pranzo include sempre minestra.",
+              "en": "In this trattoria, lunch always includes soup.",
+              "words": [
+                "In",
+                "questa",
+                "trattoria,",
+                "il",
+                "pranzo",
+                "include",
+                "sempre",
+                "minestra."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1122203,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2909,
+        "totalCompletionTokens": 1928,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 234343,
+            "promptTokens": 713,
+            "completionTokens": 337
+          },
+          {
+            "lessonNum": 2,
+            "ms": 227642,
+            "promptTokens": 789,
+            "completionTokens": 337
+          },
+          {
+            "lessonNum": 3,
+            "ms": 225195,
+            "promptTokens": 838,
+            "completionTokens": 302
+          }
+        ]
+      },
+      "generatedAt": "2026-05-12T09:00:49.267Z",
+      "updatedAt": "2026-05-12T09:00:49.267Z"
+    },
+    {
+      "topic": "order Tuscan specialties",
+      "topicEmoji": "🇮🇹",
+      "userTopic": "order Tuscan specialties at the supermarket counter",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 1000,
+      "story": "Nella tranquilla atmosfera del supermercato locale, Maria si aggirava tra gli scaffali, la mente già immersa nei ricordi di una recente visita a Firenze. Era lì, in quel negozio, che aveva scoperto le delizie della cucina toscana, e ora voleva riportare a casa quei sapori che aveva amato. Con una lista accuratamente studiata, si avvicinò al banco dei prodotti freschi, dove una commessa gentile la accolse con un sorriso.\n\n\"Buongiorno, signora,\" disse la commessa, \"che posso aiutarla oggi?\"\n\nMaria esitò per un momento, cercando di ricordare con precisione i piatti che aveva sperimentato durante il suo viaggio. \"Sì, vorrei ordinarli,\" rispose, \"i piatti tradizionali toscani.\"\n\nLa commessa annuì comprensiva. \"Capisco. Posso consigliarle alcune specialità?\"\n\n\"Certamente,\" rispose Maria, entusiasta. \"Vorrei il bistecca alla fiorentina, il pappa al pomodoro, e il lampredotto.\"\n\nLa commessa sorrise, notando l'interesse di Maria per i piatti più tradizionali. \"Sono davvero deliziosi. Per la bistecca, avrà bisogno di un bel pezzo di filetto di manzo, di solito con una crosta ben cotta. Per il pappa al pomodoro, avrà bisogno di pomodori, pane e un po' di olio d'oliva. E il lampredotto, un piatto più pesante, richiede una buona preparazione.\"\n\nMaria annuì, prendendo appunti mentalmente. \"Sì, per il lampredotto, vorrei che mi aiutasse a prepararlo.\"\n\nLa commessa prese un foglio e iniziò a scrivere. \"Per il lampredotto, avrà bisogno di lampredotto, un po' di olio d'oliva, sale, pepe, e un po' di cipolla. Dobbiamo iniziare con un buon taglio del lampredotto, poi lo cuociamo a fuoco lento con le altre spezie.\"\n\nMaria ascoltò attentamente, notando come la commessa si impegnasse per spiegarle ogni passo. \"E per il pappa al pomodoro?\"\n\n\"Per il pappa al pomodoro, avrà bisogno di pomodori maturi, pane toscano, olio d'oliva, sale, pepe, e un po' di basilico. Tagliamo il pane in cubetti e lo mettiamo in una casseruola con il pomodoro, l'olio, il sale e il pepe. Lasciamo cuocere a fuoco lento per un paio d'ore, finché il pane non si scioglie e si forma una salsa cremosa.\"\n\nMaria annuì, sorridendo. \"E la bistecca?\"\n\n\"Per la bistecca alla fiorentina, avrà bisogno di filetto di manzo, sale, pepe, e un po' di olio d'oliva. Tagliamo il filetto in spesse fette e lo saliamo e pepiamo. Lo facciamo rosolare in una padella con un po' di olio d'oliva finché non è ben cotto.\"\n\nLa commessa mise in una busta i prodotti necessari per ciascun piatto, e Maria li prese con gratitudine. \"Grazie mille,\" disse, \"sarò felice di prepararli a casa.\"\n\nLa commessa sorrise, felice di aver potuto aiutare. \"Sono sicura che saranno deliziosi. Buona cucina, signora.\"\n\nMaria uscì dal supermercato con i suoi acquisti, il cuore pieno di nostalgia e la mente già immersa nei preparativi della cena. Si immaginò il bistecca croccante, il pappa al pomodoro cremoso, e il lampredotto caldo e sazio. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 10-11 paragraphs, under 1000 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian.\n\nWrite a story for the topic: \"order Tuscan specialties at the supermarket counter\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Ordine specialità toscane",
+          "desc": "Ordini piatti tradizionali in un supermercato",
+          "icon": "🛒",
+          "vocab": [
+            {
+              "it": "scaffali",
+              "en": "shelves"
+            },
+            {
+              "it": "ricordi",
+              "en": "memories"
+            },
+            {
+              "it": "recente",
+              "en": "recent"
+            },
+            {
+              "it": "negozio",
+              "en": "store"
+            },
+            {
+              "it": "piatti",
+              "en": "dishes"
+            },
+            {
+              "it": "scaffale",
+              "en": "shelf"
+            },
+            {
+              "it": "gentile",
+              "en": "kind"
+            },
+            {
+              "it": "accolse",
+              "en": "welcomed"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Cerca il banco dei prodotti freschi.",
+              "en": "Find the fresh products counter.",
+              "words": [
+                "Cerca",
+                "il",
+                "banco",
+                "dei",
+                "prodotti",
+                "freschi."
+              ]
+            },
+            {
+              "it": "La commessa la accolse con un sorriso.",
+              "en": "The salesperson welcomed her with a smile.",
+              "words": [
+                "La",
+                "commessa",
+                "la",
+                "accolse",
+                "con",
+                "un",
+                "sorriso."
+              ]
+            },
+            {
+              "it": "Che posso aiutarla oggi?",
+              "en": "How can I assist you today?",
+              "words": [
+                "Che",
+                "posso",
+                "aiutarla",
+                "oggi?"
+              ]
+            },
+            {
+              "it": "Vorrei ordinarli, i piatti tradizionali toscani.",
+              "en": "I would like to order the traditional Tuscan dishes.",
+              "words": [
+                "Vorrei",
+                "ordinarli,",
+                "i",
+                "piatti",
+                "tradizionali",
+                "toscani."
+              ]
+            },
+            {
+              "it": "Certamente, posso consigliarle alcune specialità.",
+              "en": "Certainly, I can recommend some specialties to you.",
+              "words": [
+                "Certamente,",
+                "posso",
+                "consigliarle",
+                "alcune",
+                "specialità."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "order Tuscan specialties",
+          "desc": "traditional dishes at the supermarket",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "specialità",
+              "en": "specialties"
+            },
+            {
+              "it": "tradizionali",
+              "en": "traditional"
+            },
+            {
+              "it": "consigliare",
+              "en": "to advise"
+            },
+            {
+              "it": "certamente",
+              "en": "certainly"
+            },
+            {
+              "it": "entusiasta",
+              "en": "enthusiastic"
+            },
+            {
+              "it": "sperimentato",
+              "en": "experienced"
+            },
+            {
+              "it": "più",
+              "en": "more"
+            },
+            {
+              "it": "ricordi",
+              "en": "memories"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Posso consigliarle alcune specialità?",
+              "en": "Can I advise you on some specialties?",
+              "words": [
+                "Posso",
+                "consigliarle",
+                "alcune",
+                "specialità?"
+              ]
+            },
+            {
+              "it": "Sì, vorrei ordinarli, i piatti tradizionali toscani.",
+              "en": "Yes, I would like to order them, the traditional Tuscan dishes.",
+              "words": [
+                "Sì,",
+                "vorrei",
+                "ordinarli,",
+                "i",
+                "piatti",
+                "tradizionali",
+                "toscani."
+              ]
+            },
+            {
+              "it": "Certamente, sono entusiasta di rivederli.",
+              "en": "Certainly, I am enthusiastic to see them again.",
+              "words": [
+                "Certamente,",
+                "sono",
+                "entusiasta",
+                "di",
+                "rivederli."
+              ]
+            },
+            {
+              "it": "Sì, vorrei più di uno, per poterli provare insieme.",
+              "en": "Yes, I would like more than one, to try them together.",
+              "words": [
+                "Sì,",
+                "vorrei",
+                "più",
+                "di",
+                "uno,",
+                "per",
+                "poterli",
+                "provare",
+                "insieme."
+              ]
+            },
+            {
+              "it": "Ricordi, la commessa mi aveva consigliato questi piatti tradizionali.",
+              "en": "Remember, the saleswoman had advised me these traditional dishes.",
+              "words": [
+                "Ricordi,",
+                "la",
+                "commessa",
+                "mi",
+                "aveva",
+                "consigliato",
+                "questi",
+                "piatti",
+                "tradizionali."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Ordine specialità toscane",
+          "desc": "Vocabs and sentences about ordering traditional Tuscan dishes at the supermarket",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "it": "saporito",
+              "en": "savory"
+            },
+            {
+              "it": "zucchine",
+              "en": "zucchini"
+            },
+            {
+              "it": "panzanella",
+              "en": "bread salad"
+            },
+            {
+              "it": "agnello",
+              "en": "lamb"
+            },
+            {
+              "it": "pici",
+              "en": "pici pasta"
+            },
+            {
+              "it": "all'uccelletto",
+              "en": "with little bird style"
+            },
+            {
+              "it": "sugo",
+              "en": "sauce"
+            },
+            {
+              "it": "pannocchia",
+              "en": "ear of corn"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La panzanella è un saporito piatto di estate.",
+              "en": "Panzanella is a savory summer dish.",
+              "words": [
+                "La",
+                "panzanella",
+                "è",
+                "un",
+                "saporito",
+                "piatto",
+                "di",
+                "estate."
+              ]
+            },
+            {
+              "it": "Ho scelto il pici all'uccelletto per la mia cena.",
+              "en": "I chose pici with little bird style for my dinner.",
+              "words": [
+                "Ho",
+                "scelto",
+                "il",
+                "pici",
+                "all'uccelletto",
+                "per",
+                "la",
+                "mia",
+                "cena."
+              ]
+            },
+            {
+              "it": "La commessa mi consigliò il sugo di agnello.",
+              "en": "The saleswoman recommended me the lamb sauce.",
+              "words": [
+                "La",
+                "commessa",
+                "mi",
+                "consigliò",
+                "il",
+                "sugo",
+                "di",
+                "agnello."
+              ]
+            },
+            {
+              "it": "Le zucchine e la pannocchia sono le mie verdure preferite.",
+              "en": "Zucchini and corn are my favorite vegetables.",
+              "words": [
+                "Le",
+                "zucchine",
+                "e",
+                "la",
+                "pannocchia",
+                "sono",
+                "le",
+                "mie",
+                "verdure",
+                "preferite."
+              ]
+            },
+            {
+              "it": "Vorrei una porzione di panzanella e un piatto di agnello.",
+              "en": "I would like a portion of panzanella and a plate of lamb.",
+              "words": [
+                "Vorrei",
+                "una",
+                "porzione",
+                "di",
+                "panzanella",
+                "e",
+                "un",
+                "piatto",
+                "di",
+                "agnello."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1253433,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2520,
+        "totalCompletionTokens": 2005,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 260462,
+            "promptTokens": 702,
+            "completionTokens": 304
+          },
+          {
+            "lessonNum": 2,
+            "ms": 261687,
+            "promptTokens": 760,
+            "completionTokens": 337
+          },
+          {
+            "lessonNum": 3,
+            "ms": 248678,
+            "promptTokens": 808,
+            "completionTokens": 350
+          }
+        ]
+      },
+      "generatedAt": "2026-05-12T08:30:35.770Z",
+      "updatedAt": "2026-05-12T08:30:35.770Z"
+    },
+    {
       "topic": "Tuscan Lunch",
       "topicEmoji": "🇮🇹",
       "userTopic": "tuscan lunch next day",
@@ -24674,6 +26199,14 @@
     "c299247871": {
       "title": "Tuscany Tastes",
       "icon": "🌿"
+    },
+    "c1932561050": {
+      "title": "Toscana in Taste",
+      "icon": "🍝"
+    },
+    "root:order Tuscan specialties": {
+      "title": "Toscana in Taste",
+      "icon": "🍝"
     }
   }
 }
