@@ -1,6 +1,490 @@
 {
   "lessons": [
     {
+      "topic": "Agriturismo in Tuscany",
+      "topicEmoji": "👨‍👩‍👧‍👦👨‍🌾",
+      "userTopic": "at an agriturismo on a hill above florence, we finally taste pappa al pomodoro and peposo stew",
+      "lang": "it",
+      "difficulty": 4,
+      "storyLen": 300,
+      "story": "Maria si svegliò presto, il sole le illuminava la finestra dell'agriturismo. Decise di scendere in cucina per preparare il caffè, ma si imbatté in un odore squisito che la fece fermare. Era il profumo di pappa al pomodoro e peposo stew, due specialità che aveva sognato di assaporare.\n\n\"Buongiorno, signora,\" disse la padrona di casa, sorridendo. \"Ho preparato questi piatti per la colazione. Spero che gradiscano.\"\n\nMaria si avvicinò al tavolo, il cuore in gola. \"Sono così felice di averli qui con me,\" disse, guardando i piatti davanti a sé. \"Il pappa al pomodoro è come una versione più ricca e cremosa della tradizionale pasta con i pomodori, mentre il peposo stew ha un sapore profondo e speziato.\"\n\nLa padrona di casa annuì, orgogliosa. \"Sono felice che gradiscano. Questi piatti sono una parte importante della nostra cultura, e spero che li apprezzi come la cioccolata fiorentina.\"\n\nMaria prese un cucchiaio di pappa al pomodoro, il sapore le riportò alla mente i giorni passati in città, ma anche a casa sua. Mentre mangiava, si sentì avvolta da un senso di pace e appagamento. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\no una città ricca di tradizioni culinarie.\"\n\n\"Proprio così, signora,\" disse il signore, sorridendo. \"E c'è anche il cioccolato fiorentino, un vero e proprio capolavoro. È fatto con il miglior cacao e zucchero, e ha un sapore incredibile.\"\n\nMaria si sentì avvolta da un senso di nostalgia e apprezzamento. \"Sono così felice di aver conosciuto queste specialità. Sarò felice di provarle a casa.\"\n\nIl signore annuì, felice di aver potuto condividere la sua passione. \"Sono sicuro che saranno deliziosi. Buona cena, signora.\"\n\nMaria uscì dalla trattoria, il cuore pieno di emozioni. Si immaginò di nuovo i piatti che aveva appena conosciuto, e non poteva aspettare di prepararli a casa. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.\n\nNew topic: \"at an agriturismo on a hill above florence, we finally taste pappa al pomodoro and peposo stew\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Local Pienza Specialties",
+      "lessons": [
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Maria si sveglia presto, la sole le illuminava la finestra dell'agriturismo. Decise di scendere in cucina per preparare il caffè, ma si imbatté in un odore squisito che la fece fermare. Era il profumo di pappa al pomodoro e peposo stew, due specialità che aveva sognato di assaporare.\n\n\"Buongiorno, signora,\" disse la padrona di casa, sorridendo. \"Ho preparato questi piatti per la colazione. Spero che gradiscano.\"\n\nMaria si avvicinò al tavolo, il cuore in gola. \"Sono così felice di averli qui con me,\" disse, guardando i piatti davanti a sé. \"Il pappa al pomodoro è come una versione più ricca e cremosa della tradizionale panna con i pomodori, mentre il peposo stew ha un sapore profondo e speziato.\"\n\nLa padrona di casa annuì, orgogliosa. \"Sono felice che gradiscano. Questi piatti sono una parte importante della nostra cultura, e spero che li apprezzi come la cioccolata fiorentina.\"\n\nMaria prese un cucchiaio di pappa al pomodoro, il sapore le riportò alla mente i giorni passati in città, ma anche a casa sua. Mentre mangiava, si sentì avvolta da un senso di pace e appagamento. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.",
+          "edits": [
+            {
+              "type": "spelling",
+              "find": "svegliò",
+              "replace": "sveglia",
+              "reason": "novice might confuse similar verbs"
+            },
+            {
+              "type": "grammar",
+              "find": "il",
+              "replace": "la",
+              "reason": "noun 'finestra' is feminine"
+            },
+            {
+              "type": "grammar",
+              "find": "pasta",
+              "replace": "panna",
+              "reason": "novice might confuse similar words"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 452063,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1379,
+        "totalCompletionTokens": 649,
+        "lessons": [
+          {
+            "promptTokens": 791,
+            "completionTokens": 229
+          }
+        ]
+      },
+      "generatedAt": "2026-05-19T12:14:06.032Z",
+      "updatedAt": "2026-05-19T13:09:29.232Z"
+    },
+    {
+      "topic": "Tuscany Resort Quiet",
+      "topicEmoji": "🏠",
+      "userTopic": "at our resort in tuscany we want two playful dogs to stay silent because the baby sleeps",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Nella tranquilla città di Monteverde, la famiglia di studenti aveva deciso di passare le vacanze in un piccolo resort nella Toscana. Il luogo era circondato da vigneti e colline verdi, con una vista mozzafiato sul mare. Anna, Marco, e Luca erano entusiasti all'idea di unirsi a Bruno in questo nuovo ambiente.\n\nIl resort era un piccolo rifugio rustico, con stanze semplici ma accoglienti. Tuttavia, c'era un problema: un bambino piccolo dormiva nella stessa area. La famiglia aveva bisogno di due cani silenziosi per garantire un sonno tranquillo al piccolo.\n\nAnna e Marco iniziarono a cercare due cani adatti. Dopo una ricerca accurata, decisero di addestrare due cuccioli di pastore tedesco, chiamati Luna e Vittorio. I due erano giovani e vivaci, ma con un grande potenziale di addestramento.\n\nAnna iniziò a lavorare con i cuccioli, iniziando con i comandi di base come \"sedere\" e \"stare.\" Vittorio, con la sua energia, era un po' più difficile da gestire, ma Luna era più calma e rapida nell'apprendere. Anna e Marco si addestrarono insieme, imparando a controllare l'energia e la curiosità dei cuccioli.\n\nUn pomeriggio, mentre i cuccioli giocavano in giardino, Anna fece un esperimento. Urlò forte per attirare la loro attenzione, ma i cuccioli rimasero immobili, guardando la sua mano che indicava la loro cesta. Anna sorrise, felice di vedere quanto avevano imparato.\n\nLa sera, quando il bambino si addormentò, Anna e Marco fecero un giro con i cuccioli intorno al resort. Luna e Vittorio camminavano silenziosamente, con la testa bassa e gli occhi fissi sul terreno. La famiglia si sentiva rilassata, sapendo che i cuccioli erano in grado di mantenere il silenzio necessario per il sonno del bambino.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nNella piccola città di Monteverde, c'era un vecchio cane chiamato Bruno. Bruno era un cane di razza labrador, con un pelo scuro e un carattere gentile. Viveva con una famiglia di giovani studenti che lo adoravano. La famiglia era composta da Anna, Marco, e il loro amico di viaggio, Luca. Bruno era il loro fedele compagno, e i suoi comandi erano la chiave per la loro vita quotidiana.\n\nUn giorno, Anna decise di insegnare a Bruno alcuni nuovi comandi. Iniziò con \"sedere\", poi \"stare\", e infine \"tornare\". Bruno, con la sua intelligenza e la sua dedizione, imparò rapidamente. Ogni mattina, Anna faceva lezione con Bruno, e presto il cane era in grado di eseguire i comandi con precisione. La famiglia era felice, e Bruno si sentiva orgoglioso delle sue nuove capacità.\n\nNew topic: \"at our resort in tuscany we want two playful dogs to stay silent because the baby sleeps\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Dog commands",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "at our resort in tuscany",
+          "desc": "dogs, silent, baby, vacation, pastoral",
+          "icon": "🏠🐶",
+          "vocab": [
+            {
+              "it": "resort",
+              "en": "resort"
+            },
+            {
+              "it": "Toscana",
+              "en": "Tuscany"
+            },
+            {
+              "it": "silenziosi",
+              "en": "quiet"
+            },
+            {
+              "it": "bambino",
+              "en": "baby"
+            },
+            {
+              "it": "vacanze",
+              "en": "vacation"
+            },
+            {
+              "it": "pastore tedesco",
+              "en": "German shepherd"
+            },
+            {
+              "it": "cuccioli",
+              "en": "puppies"
+            },
+            {
+              "it": "addestrare",
+              "en": "train"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Vorremmo due cani giocosi al nostro resort in Toscana.",
+              "en": "We want two playful dogs at our resort in Tuscany.",
+              "words": [
+                "Vorremmo",
+                "due",
+                "cani",
+                "giocosi",
+                "al",
+                "nostro",
+                "resort",
+                "in",
+                "Toscana."
+              ]
+            },
+            {
+              "it": "Per favore, mantenete i cani silenziosi vicino al bambino che dorme.",
+              "en": "Please keep the dogs quiet near the sleeping baby.",
+              "words": [
+                "Per",
+                "favore,",
+                "mantenete",
+                "i",
+                "cani",
+                "silenziosi",
+                "vicino",
+                "al",
+                "bambino",
+                "che",
+                "dorme."
+              ]
+            },
+            {
+              "it": "Durante le vacanze, i pastori tedeschi sono adatti come compagni di viaggio.",
+              "en": "During vacations, German shepherds are suitable travel companions.",
+              "words": [
+                "Durante",
+                "le",
+                "vacanze,",
+                "i",
+                "pastori",
+                "tedeschi",
+                "sono",
+                "adatti",
+                "come",
+                "compagni",
+                "di",
+                "viaggio."
+              ]
+            },
+            {
+              "it": "Luna e Vittorio sono cuccioli di pastore tedesco addestrati per rimanere silenziosi.",
+              "en": "Luna and Vittorio are German shepherd puppies trained to remain quiet.",
+              "words": [
+                "Luna",
+                "e",
+                "Vittorio",
+                "sono",
+                "cuccioli",
+                "di",
+                "pastore",
+                "tedesco",
+                "addestrati",
+                "per",
+                "rimanere",
+                "silenziosi."
+              ]
+            },
+            {
+              "it": "La tranquillità è importante per il piccolo che dorme nel resort.",
+              "en": "Quiet is important for the baby sleeping at the resort.",
+              "words": [
+                "La",
+                "tranquillità",
+                "è",
+                "importante",
+                "per",
+                "il",
+                "piccolo",
+                "che",
+                "dorme",
+                "nel",
+                "resort."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "dogs at our resort",
+          "desc": "dogs, resort, Tuscany, quiet, baby, vacation, puppies, train",
+          "icon": "🏠🐶",
+          "vocab": [
+            {
+              "it": "nostro",
+              "en": "our"
+            },
+            {
+              "it": "adatti",
+              "en": "suitable"
+            },
+            {
+              "it": "giovani",
+              "en": "young"
+            },
+            {
+              "it": "vivaci",
+              "en": "energetic"
+            },
+            {
+              "it": "potenziale",
+              "en": "potential"
+            },
+            {
+              "it": "addestramento",
+              "en": "training"
+            },
+            {
+              "it": "cuccioli",
+              "en": "puppies"
+            },
+            {
+              "it": "pastore tedesco",
+              "en": "German shepherd"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Nel nostro resort in Toscana, desideriamo due cani giocosi.",
+              "en": "In our resort in Tuscany, we want two playful dogs.",
+              "words": [
+                "Nel",
+                "nostro",
+                "resort",
+                "in",
+                "Toscana,",
+                "desideriamo",
+                "due",
+                "cani",
+                "giocosi."
+              ]
+            },
+            {
+              "it": "Per garantire un sonno tranquillo al bambino, dobbiamo avere cani silenziosi.",
+              "en": "To ensure a peaceful sleep for the baby, we need quiet dogs.",
+              "words": [
+                "Per",
+                "garantire",
+                "un",
+                "sonno",
+                "tranquillo",
+                "al",
+                "bambino,",
+                "dobbiamo",
+                "avere",
+                "cani",
+                "silenziosi."
+              ]
+            },
+            {
+              "it": "Anna e Marco cercarono cuccioli adatti per addestrare.",
+              "en": "Anna and Marco looked for suitable puppies to train.",
+              "words": [
+                "Anna",
+                "e",
+                "Marco",
+                "cercarono",
+                "cuccioli",
+                "adatti",
+                "per",
+                "addestrare."
+              ]
+            },
+            {
+              "it": "I cuccioli giovani e vivaci avevano grande potenziale.",
+              "en": "The young and energetic puppies had great potential.",
+              "words": [
+                "I",
+                "cuccioli",
+                "giovani",
+                "e",
+                "vivaci",
+                "avevano",
+                "grande",
+                "potenziale."
+              ]
+            },
+            {
+              "it": "Luna e Vittorio, due pastore tedeschi, sono i nostri cani preferiti.",
+              "en": "Luna and Vittorio, two German shepherds, are our favorite dogs.",
+              "words": [
+                "Luna",
+                "e",
+                "Vittorio,",
+                "due",
+                "pastore",
+                "tedeschi,",
+                "sono",
+                "i",
+                "nostri",
+                "cani",
+                "preferiti."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Our Resort in Tuscany",
+          "desc": "dogs, quiet, puppies, training, vacation",
+          "icon": "🏠",
+          "vocab": [
+            {
+              "it": "nostro",
+              "en": "our"
+            },
+            {
+              "it": "adatti",
+              "en": "suitable"
+            },
+            {
+              "it": "giovani",
+              "en": "young"
+            },
+            {
+              "it": "vivaci",
+              "en": "energetic"
+            },
+            {
+              "it": "potenziale",
+              "en": "potential"
+            },
+            {
+              "it": "addestramento",
+              "en": "training"
+            },
+            {
+              "it": "cuccioli",
+              "en": "puppies"
+            },
+            {
+              "it": "pastore tedesco",
+              "en": "German shepherd"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Vorremmo due cani giocosi per il nostro resort in Toscana.",
+              "en": "We want two playful dogs for our resort in Tuscany.",
+              "words": [
+                "Vorremmo",
+                "due",
+                "cani",
+                "giocosi",
+                "per",
+                "il",
+                "nostro",
+                "resort",
+                "in",
+                "Toscana."
+              ]
+            },
+            {
+              "it": "I cuccioli devono essere silenziosi per non disturbare il bambino che dorme nella stessa area.",
+              "en": "The puppies must be quiet so as not to disturb the baby who sleeps in the same area.",
+              "words": [
+                "I",
+                "cuccioli",
+                "devono",
+                "essere",
+                "silenziosi",
+                "per",
+                "non",
+                "disturbare",
+                "il",
+                "bambino",
+                "che",
+                "dorme",
+                "nella",
+                "stessa",
+                "area."
+              ]
+            },
+            {
+              "it": "Luna e Vittorio sono giovani e vivaci, ma hanno un grande potenziale di addestramento.",
+              "en": "Luna and Vittorio are young and energetic, but they have a great training potential.",
+              "words": [
+                "Luna",
+                "e",
+                "Vittorio",
+                "sono",
+                "giovani",
+                "e",
+                "vivaci,",
+                "ma",
+                "hanno",
+                "un",
+                "grande",
+                "potenziale",
+                "di",
+                "addestramento."
+              ]
+            },
+            {
+              "it": "Per garantire un sonno tranquillo al piccolo, abbiamo bisogno di due cani adatti.",
+              "en": "To ensure a peaceful sleep for the baby, we need two suitable dogs.",
+              "words": [
+                "Per",
+                "garantire",
+                "un",
+                "sonno",
+                "tranquillo",
+                "al",
+                "piccolo,",
+                "abbiamo",
+                "bisogno",
+                "di",
+                "due",
+                "cani",
+                "adatti."
+              ]
+            },
+            {
+              "it": "Il nostro resort nella Toscana è perfetto per i pastore tedesco addestrati.",
+              "en": "Our resort in Tuscany is perfect for trained German shepherds.",
+              "words": [
+                "Il",
+                "nostro",
+                "resort",
+                "nella",
+                "Toscana",
+                "è",
+                "perfetto",
+                "per",
+                "i",
+                "pastore",
+                "tedesco",
+                "addestrati."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1068679,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2839,
+        "totalCompletionTokens": 1628,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 255431,
+            "promptTokens": 703,
+            "completionTokens": 356
+          },
+          {
+            "lessonNum": 2,
+            "ms": 252421,
+            "promptTokens": 770,
+            "completionTokens": 353
+          },
+          {
+            "lessonNum": 3,
+            "ms": 272814,
+            "promptTokens": 818,
+            "completionTokens": 378
+          }
+        ]
+      },
+      "generatedAt": "2026-05-12T11:11:33.050Z",
+      "updatedAt": "2026-05-12T11:11:33.050Z"
+    },
+    {
       "topic": "Ordering at the Supermarket",
       "topicEmoji": "🛒",
       "userTopic": "Ordering at the supermarket",
@@ -26205,7 +26689,19 @@
       "icon": "🍝"
     },
     "root:order Tuscan specialties": {
-      "title": "Toscana in Taste",
+      "title": "Tuscan Delights",
+      "icon": "🍝"
+    },
+    "c1881043351": {
+      "title": "Toscana Tastes",
+      "icon": "🍷🍺🌸"
+    },
+    "root:traveling to Tuscany": {
+      "title": "Toscana Tastes",
+      "icon": "🍷🍺🌸"
+    },
+    "c163136980": {
+      "title": "Tuscan Delights",
       "icon": "🍝"
     }
   }

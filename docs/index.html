@@ -167,11 +167,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .placed-tok:hover{opacity:.75}
 .sbox-ph{font-size:13px;color:var(--gray);font-style:italic}
 .wbank{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
-.tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}
+.tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}.eh-tok{display:inline;cursor:pointer;border-radius:3px;padding:1px 2px;transition:background .1s}.eh-tok.suspect{background:#ffe066;outline:2px solid #f5a623}.eh-tok.correct-mark{background:#c8f7c5;outline:2px solid #4caf50}.eh-tok.missed-mark{text-decoration:underline wavy #f5a623}.eh-tok.wrong-mark{background:#ffd0d0;outline:2px solid #e53935}.eh-wrap{line-height:2.2;font-size:15px;margin:10px 0;padding:12px;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid)}.eh-score{font-size:24px;font-weight:900;text-align:center;margin:14px 0}
 .tok:hover{border-color:var(--blue)}
 .tok.used{opacity:.15;pointer-events:none}
-.tok-distractor{border-color:var(--gray-mid);background:var(--white);color:var(--text)}
-.tok-distractor:hover{border-color:var(--blue)}
 .type-input{width:100%;padding:12px 14px;font-size:16px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);outline:none;margin-top:8px}
 .type-input:focus{border-color:var(--blue)}
 .type-input.ok{border-color:var(--green);background:var(--green-light)}
@@ -486,6 +484,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           <option value="1">🟢 Beginner — short sentences, basic vocabulary</option>
           <option value="2" selected>🟡 Intermediate — natural phrases, varied grammar</option>
           <option value="3">🔴 Advanced — complex sentences, idiomatic language</option>
+          <option value="4">🔍 Error Hunt — find mistakes in the story</option>
         </select>
         <span class="diff-select-arrow">▾</span>
       </div>
@@ -714,9 +713,9 @@ function restoreStoryLenSlider(){
   if(sl) sl.value=APP.storyLen;
   onStoryLenSlider(APP.storyLen);
 }
-const DIFF_SHORT={1:'Beginner',2:'Intermediate',3:'Advanced'};
+const DIFF_SHORT={1:'Beginner',2:'Intermediate',3:'Advanced',4:'Error Hunt'};
 function onDiffSelect(v){
-  APP.difficulty=parseInt(v,10); saveDifficulty();
+  APP.difficulty=Math.max(1,Math.min(4,parseInt(v,10)||2)); saveDifficulty();
   const sel=document.getElementById('diff-select'); if(sel) sel.value=v;
 }
 function restoreDiffSelect(){
@@ -1010,6 +1009,2079 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "Agriturismo in Tuscany",
+    "topicEmoji": "👨‍👩‍👧‍👦👨‍🌾",
+    "userTopic": "at an agriturismo on a hill above florence, we finally taste pappa al pomodoro and peposo stew",
+    "lang": "it",
+    "difficulty": 4,
+    "storyLen": 300,
+    "story": "Maria si svegliò presto, il sole le illuminava la finestra dell'agriturismo. Decise di scendere in cucina per preparare il caffè, ma si imbatté in un odore squisito che la fece fermare. Era il profumo di pappa al pomodoro e peposo stew, due specialità che aveva sognato di assaporare.\n\n\"Buongiorno, signora,\" disse la padrona di casa, sorridendo. \"Ho preparato questi piatti per la colazione. Spero che gradiscano.\"\n\nMaria si avvicinò al tavolo, il cuore in gola. \"Sono così felice di averli qui con me,\" disse, guardando i piatti davanti a sé. \"Il pappa al pomodoro è come una versione più ricca e cremosa della tradizionale pasta con i pomodori, mentre il peposo stew ha un sapore profondo e speziato.\"\n\nLa padrona di casa annuì, orgogliosa. \"Sono felice che gradiscano. Questi piatti sono una parte importante della nostra cultura, e spero che li apprezzi come la cioccolata fiorentina.\"\n\nMaria prese un cucchiaio di pappa al pomodoro, il sapore le riportò alla mente i giorni passati in città, ma anche a casa sua. Mentre mangiava, si sentì avvolta da un senso di pace e appagamento. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\no una città ricca di tradizioni culinarie.\"\n\n\"Proprio così, signora,\" disse il signore, sorridendo. \"E c'è anche il cioccolato fiorentino, un vero e proprio capolavoro. È fatto con il miglior cacao e zucchero, e ha un sapore incredibile.\"\n\nMaria si sentì avvolta da un senso di nostalgia e apprezzamento. \"Sono così felice di aver conosciuto queste specialità. Sarò felice di provarle a casa.\"\n\nIl signore annuì, felice di aver potuto condividere la sua passione. \"Sono sicuro che saranno deliziosi. Buona cena, signora.\"\n\nMaria uscì dalla trattoria, il cuore pieno di emozioni. Si immaginò di nuovo i piatti che aveva appena conosciuto, e non poteva aspettare di prepararli a casa. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.\n\nNew topic: \"at an agriturismo on a hill above florence, we finally taste pappa al pomodoro and peposo stew\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "Local Pienza Specialties",
+    "lessons": [
+      {
+        "id": 4,
+        "type": "error_hunt",
+        "title": "Text Understanding",
+        "desc": "Find the mistakes in the story",
+        "icon": "🔍",
+        "corruptedStory": "Maria si sveglia presto, la sole le illuminava la finestra dell'agriturismo. Decise di scendere in cucina per preparare il caffè, ma si imbatté in un odore squisito che la fece fermare. Era il profumo di pappa al pomodoro e peposo stew, due specialità che aveva sognato di assaporare.\n\n\"Buongiorno, signora,\" disse la padrona di casa, sorridendo. \"Ho preparato questi piatti per la colazione. Spero che gradiscano.\"\n\nMaria si avvicinò al tavolo, il cuore in gola. \"Sono così felice di averli qui con me,\" disse, guardando i piatti davanti a sé. \"Il pappa al pomodoro è come una versione più ricca e cremosa della tradizionale panna con i pomodori, mentre il peposo stew ha un sapore profondo e speziato.\"\n\nLa padrona di casa annuì, orgogliosa. \"Sono felice che gradiscano. Questi piatti sono una parte importante della nostra cultura, e spero che li apprezzi come la cioccolata fiorentina.\"\n\nMaria prese un cucchiaio di pappa al pomodoro, il sapore le riportò alla mente i giorni passati in città, ma anche a casa sua. Mentre mangiava, si sentì avvolta da un senso di pace e appagamento. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.",
+        "edits": [
+          {
+            "type": "spelling",
+            "find": "svegliò",
+            "replace": "sveglia",
+            "reason": "novice might confuse similar verbs"
+          },
+          {
+            "type": "grammar",
+            "find": "il",
+            "replace": "la",
+            "reason": "noun 'finestra' is feminine"
+          },
+          {
+            "type": "grammar",
+            "find": "pasta",
+            "replace": "panna",
+            "reason": "novice might confuse similar words"
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 452063,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 1379,
+      "totalCompletionTokens": 649,
+      "lessons": [
+        {
+          "promptTokens": 791,
+          "completionTokens": 229
+        }
+      ]
+    },
+    "generatedAt": "2026-05-19T12:14:06.032Z",
+    "updatedAt": "2026-05-19T13:09:29.232Z"
+  },
+  {
+    "topic": "Tuscany Resort Quiet",
+    "topicEmoji": "🏠",
+    "userTopic": "at our resort in tuscany we want two playful dogs to stay silent because the baby sleeps",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 500,
+    "story": "Nella tranquilla città di Monteverde, la famiglia di studenti aveva deciso di passare le vacanze in un piccolo resort nella Toscana. Il luogo era circondato da vigneti e colline verdi, con una vista mozzafiato sul mare. Anna, Marco, e Luca erano entusiasti all'idea di unirsi a Bruno in questo nuovo ambiente.\n\nIl resort era un piccolo rifugio rustico, con stanze semplici ma accoglienti. Tuttavia, c'era un problema: un bambino piccolo dormiva nella stessa area. La famiglia aveva bisogno di due cani silenziosi per garantire un sonno tranquillo al piccolo.\n\nAnna e Marco iniziarono a cercare due cani adatti. Dopo una ricerca accurata, decisero di addestrare due cuccioli di pastore tedesco, chiamati Luna e Vittorio. I due erano giovani e vivaci, ma con un grande potenziale di addestramento.\n\nAnna iniziò a lavorare con i cuccioli, iniziando con i comandi di base come \"sedere\" e \"stare.\" Vittorio, con la sua energia, era un po' più difficile da gestire, ma Luna era più calma e rapida nell'apprendere. Anna e Marco si addestrarono insieme, imparando a controllare l'energia e la curiosità dei cuccioli.\n\nUn pomeriggio, mentre i cuccioli giocavano in giardino, Anna fece un esperimento. Urlò forte per attirare la loro attenzione, ma i cuccioli rimasero immobili, guardando la sua mano che indicava la loro cesta. Anna sorrise, felice di vedere quanto avevano imparato.\n\nLa sera, quando il bambino si addormentò, Anna e Marco fecero un giro con i cuccioli intorno al resort. Luna e Vittorio camminavano silenziosamente, con la testa bassa e gli occhi fissi sul terreno. La famiglia si sentiva rilassata, sapendo che i cuccioli erano in grado di mantenere il silenzio necessario per il sonno del bambino.",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nNella piccola città di Monteverde, c'era un vecchio cane chiamato Bruno. Bruno era un cane di razza labrador, con un pelo scuro e un carattere gentile. Viveva con una famiglia di giovani studenti che lo adoravano. La famiglia era composta da Anna, Marco, e il loro amico di viaggio, Luca. Bruno era il loro fedele compagno, e i suoi comandi erano la chiave per la loro vita quotidiana.\n\nUn giorno, Anna decise di insegnare a Bruno alcuni nuovi comandi. Iniziò con \"sedere\", poi \"stare\", e infine \"tornare\". Bruno, con la sua intelligenza e la sua dedizione, imparò rapidamente. Ogni mattina, Anna faceva lezione con Bruno, e presto il cane era in grado di eseguire i comandi con precisione. La famiglia era felice, e Bruno si sentiva orgoglioso delle sue nuove capacità.\n\nNew topic: \"at our resort in tuscany we want two playful dogs to stay silent because the baby sleeps\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "Dog commands",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "at our resort in tuscany",
+        "desc": "dogs, silent, baby, vacation, pastoral",
+        "icon": "🏠🐶",
+        "vocab": [
+          {
+            "it": "resort",
+            "en": "resort"
+          },
+          {
+            "it": "Toscana",
+            "en": "Tuscany"
+          },
+          {
+            "it": "silenziosi",
+            "en": "quiet"
+          },
+          {
+            "it": "bambino",
+            "en": "baby"
+          },
+          {
+            "it": "vacanze",
+            "en": "vacation"
+          },
+          {
+            "it": "pastore tedesco",
+            "en": "German shepherd"
+          },
+          {
+            "it": "cuccioli",
+            "en": "puppies"
+          },
+          {
+            "it": "addestrare",
+            "en": "train"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Vorremmo due cani giocosi al nostro resort in Toscana.",
+            "en": "We want two playful dogs at our resort in Tuscany.",
+            "words": [
+              "Vorremmo",
+              "due",
+              "cani",
+              "giocosi",
+              "al",
+              "nostro",
+              "resort",
+              "in",
+              "Toscana."
+            ]
+          },
+          {
+            "it": "Per favore, mantenete i cani silenziosi vicino al bambino che dorme.",
+            "en": "Please keep the dogs quiet near the sleeping baby.",
+            "words": [
+              "Per",
+              "favore,",
+              "mantenete",
+              "i",
+              "cani",
+              "silenziosi",
+              "vicino",
+              "al",
+              "bambino",
+              "che",
+              "dorme."
+            ]
+          },
+          {
+            "it": "Durante le vacanze, i pastori tedeschi sono adatti come compagni di viaggio.",
+            "en": "During vacations, German shepherds are suitable travel companions.",
+            "words": [
+              "Durante",
+              "le",
+              "vacanze,",
+              "i",
+              "pastori",
+              "tedeschi",
+              "sono",
+              "adatti",
+              "come",
+              "compagni",
+              "di",
+              "viaggio."
+            ]
+          },
+          {
+            "it": "Luna e Vittorio sono cuccioli di pastore tedesco addestrati per rimanere silenziosi.",
+            "en": "Luna and Vittorio are German shepherd puppies trained to remain quiet.",
+            "words": [
+              "Luna",
+              "e",
+              "Vittorio",
+              "sono",
+              "cuccioli",
+              "di",
+              "pastore",
+              "tedesco",
+              "addestrati",
+              "per",
+              "rimanere",
+              "silenziosi."
+            ]
+          },
+          {
+            "it": "La tranquillità è importante per il piccolo che dorme nel resort.",
+            "en": "Quiet is important for the baby sleeping at the resort.",
+            "words": [
+              "La",
+              "tranquillità",
+              "è",
+              "importante",
+              "per",
+              "il",
+              "piccolo",
+              "che",
+              "dorme",
+              "nel",
+              "resort."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "dogs at our resort",
+        "desc": "dogs, resort, Tuscany, quiet, baby, vacation, puppies, train",
+        "icon": "🏠🐶",
+        "vocab": [
+          {
+            "it": "nostro",
+            "en": "our"
+          },
+          {
+            "it": "adatti",
+            "en": "suitable"
+          },
+          {
+            "it": "giovani",
+            "en": "young"
+          },
+          {
+            "it": "vivaci",
+            "en": "energetic"
+          },
+          {
+            "it": "potenziale",
+            "en": "potential"
+          },
+          {
+            "it": "addestramento",
+            "en": "training"
+          },
+          {
+            "it": "cuccioli",
+            "en": "puppies"
+          },
+          {
+            "it": "pastore tedesco",
+            "en": "German shepherd"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Nel nostro resort in Toscana, desideriamo due cani giocosi.",
+            "en": "In our resort in Tuscany, we want two playful dogs.",
+            "words": [
+              "Nel",
+              "nostro",
+              "resort",
+              "in",
+              "Toscana,",
+              "desideriamo",
+              "due",
+              "cani",
+              "giocosi."
+            ]
+          },
+          {
+            "it": "Per garantire un sonno tranquillo al bambino, dobbiamo avere cani silenziosi.",
+            "en": "To ensure a peaceful sleep for the baby, we need quiet dogs.",
+            "words": [
+              "Per",
+              "garantire",
+              "un",
+              "sonno",
+              "tranquillo",
+              "al",
+              "bambino,",
+              "dobbiamo",
+              "avere",
+              "cani",
+              "silenziosi."
+            ]
+          },
+          {
+            "it": "Anna e Marco cercarono cuccioli adatti per addestrare.",
+            "en": "Anna and Marco looked for suitable puppies to train.",
+            "words": [
+              "Anna",
+              "e",
+              "Marco",
+              "cercarono",
+              "cuccioli",
+              "adatti",
+              "per",
+              "addestrare."
+            ]
+          },
+          {
+            "it": "I cuccioli giovani e vivaci avevano grande potenziale.",
+            "en": "The young and energetic puppies had great potential.",
+            "words": [
+              "I",
+              "cuccioli",
+              "giovani",
+              "e",
+              "vivaci",
+              "avevano",
+              "grande",
+              "potenziale."
+            ]
+          },
+          {
+            "it": "Luna e Vittorio, due pastore tedeschi, sono i nostri cani preferiti.",
+            "en": "Luna and Vittorio, two German shepherds, are our favorite dogs.",
+            "words": [
+              "Luna",
+              "e",
+              "Vittorio,",
+              "due",
+              "pastore",
+              "tedeschi,",
+              "sono",
+              "i",
+              "nostri",
+              "cani",
+              "preferiti."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Our Resort in Tuscany",
+        "desc": "dogs, quiet, puppies, training, vacation",
+        "icon": "🏠",
+        "vocab": [
+          {
+            "it": "nostro",
+            "en": "our"
+          },
+          {
+            "it": "adatti",
+            "en": "suitable"
+          },
+          {
+            "it": "giovani",
+            "en": "young"
+          },
+          {
+            "it": "vivaci",
+            "en": "energetic"
+          },
+          {
+            "it": "potenziale",
+            "en": "potential"
+          },
+          {
+            "it": "addestramento",
+            "en": "training"
+          },
+          {
+            "it": "cuccioli",
+            "en": "puppies"
+          },
+          {
+            "it": "pastore tedesco",
+            "en": "German shepherd"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Vorremmo due cani giocosi per il nostro resort in Toscana.",
+            "en": "We want two playful dogs for our resort in Tuscany.",
+            "words": [
+              "Vorremmo",
+              "due",
+              "cani",
+              "giocosi",
+              "per",
+              "il",
+              "nostro",
+              "resort",
+              "in",
+              "Toscana."
+            ]
+          },
+          {
+            "it": "I cuccioli devono essere silenziosi per non disturbare il bambino che dorme nella stessa area.",
+            "en": "The puppies must be quiet so as not to disturb the baby who sleeps in the same area.",
+            "words": [
+              "I",
+              "cuccioli",
+              "devono",
+              "essere",
+              "silenziosi",
+              "per",
+              "non",
+              "disturbare",
+              "il",
+              "bambino",
+              "che",
+              "dorme",
+              "nella",
+              "stessa",
+              "area."
+            ]
+          },
+          {
+            "it": "Luna e Vittorio sono giovani e vivaci, ma hanno un grande potenziale di addestramento.",
+            "en": "Luna and Vittorio are young and energetic, but they have a great training potential.",
+            "words": [
+              "Luna",
+              "e",
+              "Vittorio",
+              "sono",
+              "giovani",
+              "e",
+              "vivaci,",
+              "ma",
+              "hanno",
+              "un",
+              "grande",
+              "potenziale",
+              "di",
+              "addestramento."
+            ]
+          },
+          {
+            "it": "Per garantire un sonno tranquillo al piccolo, abbiamo bisogno di due cani adatti.",
+            "en": "To ensure a peaceful sleep for the baby, we need two suitable dogs.",
+            "words": [
+              "Per",
+              "garantire",
+              "un",
+              "sonno",
+              "tranquillo",
+              "al",
+              "piccolo,",
+              "abbiamo",
+              "bisogno",
+              "di",
+              "due",
+              "cani",
+              "adatti."
+            ]
+          },
+          {
+            "it": "Il nostro resort nella Toscana è perfetto per i pastore tedesco addestrati.",
+            "en": "Our resort in Tuscany is perfect for trained German shepherds.",
+            "words": [
+              "Il",
+              "nostro",
+              "resort",
+              "nella",
+              "Toscana",
+              "è",
+              "perfetto",
+              "per",
+              "i",
+              "pastore",
+              "tedesco",
+              "addestrati."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1068679,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 2839,
+      "totalCompletionTokens": 1628,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 255431,
+          "promptTokens": 703,
+          "completionTokens": 356
+        },
+        {
+          "lessonNum": 2,
+          "ms": 252421,
+          "promptTokens": 770,
+          "completionTokens": 353
+        },
+        {
+          "lessonNum": 3,
+          "ms": 272814,
+          "promptTokens": 818,
+          "completionTokens": 378
+        }
+      ]
+    },
+    "generatedAt": "2026-05-12T11:11:33.050Z",
+    "updatedAt": "2026-05-12T11:11:33.050Z"
+  },
+  {
+    "topic": "Ordering at the Supermarket",
+    "topicEmoji": "🛒",
+    "userTopic": "Ordering at the supermarket",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 900,
+    "story": "I want 100 gram of the salami and 250 gram of the pecorino. Please, give me a bit more of the salami bit a bit less of the cheese.",
+    "storyLang": "it",
+    "storyPrompt": "User-provided story",
+    "userStory": "I want 100 gram of the salami and 250 gram of the pecorino. Please, give me a bit more of the salami bit a bit less of the cheese.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Ordering at the supermarket",
+        "desc": "basic shopping vocabulary and phrases",
+        "icon": "🛒",
+        "vocab": [
+          {
+            "it": "salame",
+            "en": "salami"
+          },
+          {
+            "it": "formaggio",
+            "en": "cheese"
+          },
+          {
+            "it": "grammi",
+            "en": "grams"
+          },
+          {
+            "it": "chissà",
+            "en": "who knows"
+          },
+          {
+            "it": "un po'",
+            "en": "a bit"
+          },
+          {
+            "it": "più",
+            "en": "more"
+          },
+          {
+            "it": "meno",
+            "en": "less"
+          },
+          {
+            "it": "per favore",
+            "en": "please"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Voglio 100 grammi di salame.",
+            "en": "I want 100 grams of salami.",
+            "words": [
+              "Voglio",
+              "100",
+              "grammi",
+              "di",
+              "salame."
+            ]
+          },
+          {
+            "it": "Chissà, forse 250 grammi di formaggio.",
+            "en": "Who knows, maybe 250 grams of cheese.",
+            "words": [
+              "Chissà,",
+              "forse",
+              "250",
+              "grammi",
+              "di",
+              "formaggio."
+            ]
+          },
+          {
+            "it": "Per favore, un po' più di salame.",
+            "en": "Please, a bit more salami.",
+            "words": [
+              "Per",
+              "favore,",
+              "un",
+              "po'",
+              "più",
+              "di",
+              "salame."
+            ]
+          },
+          {
+            "it": "Ma un po' meno di formaggio.",
+            "en": "But a bit less cheese.",
+            "words": [
+              "Ma",
+              "un",
+              "po'",
+              "meno",
+              "di",
+              "formaggio."
+            ]
+          },
+          {
+            "it": "Quanto pesa il salame?",
+            "en": "How much does the salami weigh?",
+            "words": [
+              "Quanto",
+              "pesa",
+              "il",
+              "salame?"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Ordering at the supermarket",
+        "desc": "Intermediate phrases for grocery shopping",
+        "icon": "🛒",
+        "vocab": [
+          {
+            "it": "chissà",
+            "en": "who knows"
+          },
+          {
+            "it": "un po'",
+            "en": "a bit"
+          },
+          {
+            "it": "più",
+            "en": "more"
+          },
+          {
+            "it": "meno",
+            "en": "less"
+          },
+          {
+            "it": "per favore",
+            "en": "please"
+          },
+          {
+            "it": "pacchetto",
+            "en": "package"
+          },
+          {
+            "it": "libro",
+            "en": "book"
+          },
+          {
+            "it": "cassetta",
+            "en": "box"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Chissà, forse ci sono ancora 50 grammi di formaggio.",
+            "en": "Who knows, maybe there are still 50 grams of cheese left.",
+            "words": [
+              "Chissà,",
+              "forse",
+              "ci",
+              "sono",
+              "ancora",
+              "50",
+              "grammi",
+              "di",
+              "formaggio."
+            ]
+          },
+          {
+            "it": "Per favore, prendi un po' di pacchetti di salame.",
+            "en": "Please, take a bit of salami packages.",
+            "words": [
+              "Per",
+              "favore,",
+              "prendi",
+              "un",
+              "po'",
+              "di",
+              "pacchetti",
+              "di",
+              "salame."
+            ]
+          },
+          {
+            "it": "Meno libro, più cassetta, per favore.",
+            "en": "Less books, more boxes, please.",
+            "words": [
+              "Meno",
+              "libro,",
+              "più",
+              "cassetta,",
+              "per",
+              "favore."
+            ]
+          },
+          {
+            "it": "Chissà, forse ci sono anche 200 grammi di formaggio.",
+            "en": "Who knows, maybe there are also 200 grams of cheese.",
+            "words": [
+              "Chissà,",
+              "forse",
+              "ci",
+              "sono",
+              "anche",
+              "200",
+              "grammi",
+              "di",
+              "formaggio."
+            ]
+          },
+          {
+            "it": "Un po' di pacchetti, per favore.",
+            "en": "A bit of packages, please.",
+            "words": [
+              "Un",
+              "po'",
+              "di",
+              "pacchetti,",
+              "per",
+              "favore."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Ordering at the supermarket",
+        "desc": "grammi, salame, formaggio, più, meno, pacchetto, libro, cassetta",
+        "icon": "🛒",
+        "vocab": [
+          {
+            "it": "grammi",
+            "en": "grams"
+          },
+          {
+            "it": "salame",
+            "en": "salami"
+          },
+          {
+            "it": "formaggio",
+            "en": "cheese"
+          },
+          {
+            "it": "più",
+            "en": "more"
+          },
+          {
+            "it": "meno",
+            "en": "less"
+          },
+          {
+            "it": "pacchetto",
+            "en": "package"
+          },
+          {
+            "it": "libro",
+            "en": "book"
+          },
+          {
+            "it": "cassetta",
+            "en": "box"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Prendimi un po' di salame e due pacchetti di formaggio.",
+            "en": "Give me a bit of salami and two packages of cheese.",
+            "words": [
+              "Prendimi",
+              "un",
+              "po'",
+              "di",
+              "salame",
+              "e",
+              "due",
+              "pacchetti",
+              "di",
+              "formaggio."
+            ]
+          },
+          {
+            "it": "Chissà, magari prendo anche un libro di ricette.",
+            "en": "Who knows, maybe I'll also get a cookbook.",
+            "words": [
+              "Chissà,",
+              "magari",
+              "prendo",
+              "anche",
+              "un",
+              "libro",
+              "di",
+              "ricette."
+            ]
+          },
+          {
+            "it": "Vorrei un po' di salame e meno cassetta di formaggio.",
+            "en": "I want a bit of salami and less of the cheese box.",
+            "words": [
+              "Vorrei",
+              "un",
+              "po'",
+              "di",
+              "salame",
+              "e",
+              "meno",
+              "cassetta",
+              "di",
+              "formaggio."
+            ]
+          },
+          {
+            "it": "Per favore, metti più salame e meno formaggio nel mio sacchetto.",
+            "en": "Please, put more salami and less cheese in my bag.",
+            "words": [
+              "Per",
+              "favore,",
+              "metti",
+              "più",
+              "salame",
+              "e",
+              "meno",
+              "formaggio",
+              "nel",
+              "mio",
+              "sacchetto."
+            ]
+          },
+          {
+            "it": "Prendi un po' di salame e un pacchetto di formaggio, per favore.",
+            "en": "Take a bit of salami and a package of cheese, please.",
+            "words": [
+              "Prendi",
+              "un",
+              "po'",
+              "di",
+              "salame",
+              "e",
+              "un",
+              "pacchetto",
+              "di",
+              "formaggio,",
+              "per",
+              "favore."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 533785,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 1377,
+      "totalCompletionTokens": 953,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 161419,
+          "promptTokens": 363,
+          "completionTokens": 276
+        },
+        {
+          "lessonNum": 2,
+          "ms": 160355,
+          "promptTokens": 422,
+          "completionTokens": 306
+        },
+        {
+          "lessonNum": 3,
+          "ms": 183065,
+          "promptTokens": 468,
+          "completionTokens": 343
+        }
+      ]
+    },
+    "generatedAt": "2026-05-12T10:20:48.682Z",
+    "updatedAt": "2026-05-12T10:20:48.682Z"
+  },
+  {
+    "topic": "Dog commands",
+    "topicEmoji": "🐶",
+    "userTopic": "Dog commands",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 200,
+    "story": "Nella piccola città di Monteverde, c'era un vecchio cane chiamato Bruno. Bruno era un cane di razza labrador, con un pelo scuro e un carattere gentile. Viveva con una famiglia di giovani studenti che lo adoravano. La famiglia era composta da Anna, Marco, e il loro amico di viaggio, Luca. Bruno era il loro fedele compagno, e i suoi comandi erano la chiave per la loro vita quotidiana.\n\nUn giorno, Anna decise di insegnare a Bruno alcuni nuovi comandi. Iniziò con \"sedere\", poi \"stare\", e infine \"tornare\". Bruno, con la sua intelligenza e la sua dedizione, imparò rapidamente. Ogni mattina, Anna faceva lezione con Bruno, e presto il cane era in grado di eseguire i comandi con precisione. La famiglia era felice, e Bruno si sentiva orgoglioso delle sue nuove capacità.",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian.\n\nWrite a story for the topic: \"Dog commands\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Dog commands",
+        "desc": "basic commands for your furry friend",
+        "icon": "🐶",
+        "vocab": [
+          {
+            "it": "sedere",
+            "en": "sit"
+          },
+          {
+            "it": "stare",
+            "en": "stay"
+          },
+          {
+            "it": "tornare",
+            "en": "come back"
+          },
+          {
+            "it": "comando",
+            "en": "command"
+          },
+          {
+            "it": "precisione",
+            "en": "precision"
+          },
+          {
+            "it": "eseguire",
+            "en": "execute"
+          },
+          {
+            "it": "capace",
+            "en": "able"
+          },
+          {
+            "it": "orgoglioso",
+            "en": "proud"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Anna fece lezione a Bruno sedendo accanto a lui.",
+            "en": "Anna taught Bruno by sitting next to him.",
+            "words": [
+              "Anna",
+              "fece",
+              "lezione",
+              "a",
+              "Bruno",
+              "sedendo",
+              "accanto",
+              "a",
+              "lui."
+            ]
+          },
+          {
+            "it": "Stare è un comando importante per Bruno.",
+            "en": "Stay is an important command for Bruno.",
+            "words": [
+              "Stare",
+              "è",
+              "un",
+              "comando",
+              "importante",
+              "per",
+              "Bruno."
+            ]
+          },
+          {
+            "it": "Con precisione, Bruno eseguì il comando tornare.",
+            "en": "With precision, Bruno executed the come back command.",
+            "words": [
+              "Con",
+              "precisione,",
+              "Bruno",
+              "eseguì",
+              "il",
+              "comando",
+              "tornare."
+            ]
+          },
+          {
+            "it": "Anna era felice di vedere Bruno capace.",
+            "en": "Anna was happy to see Bruno able.",
+            "words": [
+              "Anna",
+              "era",
+              "felice",
+              "di",
+              "vedere",
+              "Bruno",
+              "capace."
+            ]
+          },
+          {
+            "it": "Bruno si sentiva orgoglioso di sé stesso.",
+            "en": "Bruno felt proud of himself.",
+            "words": [
+              "Bruno",
+              "si",
+              "sentiva",
+              "orgoglioso",
+              "di",
+              "sé",
+              "stesso."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "New dog commands",
+        "desc": "advanced commands for Bruno",
+        "icon": "🐶",
+        "vocab": [
+          {
+            "it": "alzarsi",
+            "en": "stand up"
+          },
+          {
+            "it": "venire",
+            "en": "come here"
+          },
+          {
+            "it": "fermarsi",
+            "en": "stop"
+          },
+          {
+            "it": "seguire",
+            "en": "follow"
+          },
+          {
+            "it": "indicare",
+            "en": "point to"
+          },
+          {
+            "it": "raccogliere",
+            "en": "pick up"
+          },
+          {
+            "it": "portare",
+            "en": "bring"
+          },
+          {
+            "it": "segnalare",
+            "en": "signal"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Anna insegnò a Bruno a segnalare gli oggetti importanti.",
+            "en": "Anna taught Bruno to signal important objects.",
+            "words": [
+              "Anna",
+              "insegnò",
+              "a",
+              "Bruno",
+              "a",
+              "segnalare",
+              "gli",
+              "oggetti",
+              "importanti."
+            ]
+          },
+          {
+            "it": "Ogni giorno, Bruno alzava la testa per seguire Anna.",
+            "en": "Every day, Bruno raised his head to follow Anna.",
+            "words": [
+              "Ogni",
+              "giorno,",
+              "Bruno",
+              "alzava",
+              "la",
+              "testa",
+              "per",
+              "seguire",
+              "Anna."
+            ]
+          },
+          {
+            "it": "Anna fece Bruno fermarsi quando vide un pericolo.",
+            "en": "Anna made Bruno stop when she saw a danger.",
+            "words": [
+              "Anna",
+              "fece",
+              "Bruno",
+              "fermarsi",
+              "quando",
+              "vide",
+              "un",
+              "pericolo."
+            ]
+          },
+          {
+            "it": "Bruno raccoglieva la palla con facilità e la portava a Marco.",
+            "en": "Bruno easily picked up the ball and brought it to Marco.",
+            "words": [
+              "Bruno",
+              "raccoglieva",
+              "la",
+              "palla",
+              "con",
+              "facilità",
+              "e",
+              "la",
+              "portava",
+              "a",
+              "Marco."
+            ]
+          },
+          {
+            "it": "La famiglia era felice di vedere Bruno capace di eseguire tante azioni.",
+            "en": "The family was happy to see Bruno able to perform so many actions.",
+            "words": [
+              "La",
+              "famiglia",
+              "era",
+              "felice",
+              "di",
+              "vedere",
+              "Bruno",
+              "capace",
+              "di",
+              "eseguire",
+              "tante",
+              "azioni."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Dog commands",
+        "desc": "advanced commands for Bruno",
+        "icon": "🐶",
+        "vocab": [
+          {
+            "it": "alzarsi",
+            "en": "stand up"
+          },
+          {
+            "it": "venire",
+            "en": "come here"
+          },
+          {
+            "it": "fermarsi",
+            "en": "stop"
+          },
+          {
+            "it": "seguire",
+            "en": "follow"
+          },
+          {
+            "it": "indicare",
+            "en": "point to"
+          },
+          {
+            "it": "raccogliere",
+            "en": "pick up"
+          },
+          {
+            "it": "portare",
+            "en": "bring"
+          },
+          {
+            "it": "segnalare",
+            "en": "signal"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Anna indicò il cestino e Bruno raccogliò il giornale.",
+            "en": "Anna pointed to the basket and Bruno picked up the newspaper.",
+            "words": [
+              "Anna",
+              "indicò",
+              "il",
+              "cestino",
+              "e",
+              "Bruno",
+              "raccogliò",
+              "il",
+              "giornale."
+            ]
+          },
+          {
+            "it": "Il padrone segnalò al cane di fermarsi e Bruno obbedì immediatamente.",
+            "en": "The owner signaled the dog to stop and Bruno obeyed immediately.",
+            "words": [
+              "Il",
+              "padrone",
+              "segnalò",
+              "al",
+              "cane",
+              "di",
+              "fermarsi",
+              "e",
+              "Bruno",
+              "obbedì",
+              "immediatamente."
+            ]
+          },
+          {
+            "it": "Bruno seguì Marco attraverso il cortile senza esitare.",
+            "en": "Bruno followed Marco through the courtyard without hesitation.",
+            "words": [
+              "Bruno",
+              "seguì",
+              "Marco",
+              "attraverso",
+              "il",
+              "cortile",
+              "senza",
+              "esitare."
+            ]
+          },
+          {
+            "it": "Anna portò Bruno al parco e il cane eseguì con precisione.",
+            "en": "Anna brought Bruno to the park and the dog executed with precision.",
+            "words": [
+              "Anna",
+              "portò",
+              "Bruno",
+              "al",
+              "parco",
+              "e",
+              "il",
+              "cane",
+              "eseguì",
+              "con",
+              "precisione."
+            ]
+          },
+          {
+            "it": "Luca venne chiamato e Bruno corse al suo fianco.",
+            "en": "Luca was called and Bruno ran to his side.",
+            "words": [
+              "Luca",
+              "venne",
+              "chiamato",
+              "e",
+              "Bruno",
+              "corse",
+              "al",
+              "suo",
+              "fianco."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 784320,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 2437,
+      "totalCompletionTokens": 1158,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 214789,
+          "promptTokens": 679,
+          "completionTokens": 272
+        },
+        {
+          "lessonNum": 2,
+          "ms": 219403,
+          "promptTokens": 736,
+          "completionTokens": 316
+        },
+        {
+          "lessonNum": 3,
+          "ms": 235785,
+          "promptTokens": 787,
+          "completionTokens": 320
+        }
+      ]
+    },
+    "generatedAt": "2026-05-12T10:00:02.374Z",
+    "updatedAt": "2026-05-12T10:00:02.374Z"
+  },
+  {
+    "topic": "Local Pienza Specialties",
+    "topicEmoji": "PDO",
+    "userTopic": "a local frpm pienza explains local specialties",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 1000,
+    "story": "Maria si diresse verso casa, il suo passo deciso portandola verso il cuore di Firenze. Mentre attraversava le vie strette e affollate, notò un piccolo ristorante con un cartello che diceva \"Trattoria del Buon Gusto\". Decise di entrare, curiosa di scoprire cosa avesse da offrire.\n\nLa trattoria era piccola, con un'atmosfera accogliente e un odore di basilico e pomodoro che la accolse. Un anziano signore con un grembiule rosso la salutò con un sorriso caloroso. \"Benvenuta, signora. Siediti pure.\"\n\nMaria si accomodò a un tavolo vicino al camino, dove un fuoco scoppiettante creava un calore rassicurante. Il signore si avvicinò con un taccuino e una penna. \"Posso aiutarti a scegliere, signora?\"\n\n\"Certamente,\" rispose Maria, \"vorrei sapere di più sulle specialità locali.\"\n\n\"Ah, eccellente scelta,\" disse il signore, scrivendo qualche nota. \"In Firenze, come sai, le specialità culinarie sono un'arte. Iniziamo con il bistecca alla fiorentina. È un pezzo di filetto di manzo molto grasso, arrostito a fuoco lento per un'ora. La croccantezza della pelle e la morbidezza del carne sono un'esperienza unica.\"\n\nMaria annuì, interessata. \"E poi?\"\n\n\"Per il pappa al pomodoro, un classico. È una minestrina fatta con pomodori, cipolla, olio d'oliva, basilico e un po' di farina. È cremosa e saziante, perfetta per un inverno freddo.\"\n\nIl signore continuò a spiegare, descrivendo con passione ogni piatto. \"E il lampredotto, un piatto un po' più insolito, ma delizioso. È una specie di pancetta di bue, arrostito con cipolla e peperoncino. È una specialità molto apprezzata dai locali.\"\n\nMaria ascoltava, rapita. \"E c'è anche il baccalà mantecato. È un piatto di pesce, ma preparato in modo particolare. Si tratta di baccalà tritato finissimo, mescolato con burro, uova e un po' di olio d'oliva. È una delizia.\"\n\nIl signore rise, scuotendo la testa. \"E poi c'è il fegato di vitello, un piatto molto tradizionale. È cotto con uvetta e vino, e ha un sapore unico.\"\n\nMaria sorrise, immaginando il sapore di quei piatti. \"Sembra che Firenze sia davvero una città ricca di tradizioni culinarie.\"\n\n\"Proprio così, signora,\" disse il signore, sorridendo. \"E c'è anche il cioccolato fiorentino, un vero e proprio capolavoro. È fatto con il miglior cacao e zucchero, e ha un sapore incredibile.\"\n\nMaria si sentì avvolta da un senso di nostalgia e apprezzamento. \"Sono così felice di aver conosciuto queste specialità. Sarò felice di provarle a casa.\"\n\nIl signore annuì, felice di aver potuto condividere la sua passione. \"Sono sicuro che saranno deliziosi. Buona cena, signora.\"\n\nMaria uscì dalla trattoria, il cuore pieno di emozioni. Si immaginò di nuovo i piatti che aveva appena conosciuto, e non poteva aspettare di prepararli a casa. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 10-11 paragraphs, under 1000 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nepe, e un po' di olio d'oliva. Tagliamo il filetto in spesse fette e lo saliamo e pepiamo. Lo facciamo rosolare in una padella con un po' di olio d'oliva finché non è ben cotto.\"\n\nLa commessa mise in una busta i prodotti necessari per ciascun piatto, e Maria li prese con gratitudine. \"Grazie mille,\" disse, \"sarò felice di prepararli a casa.\"\n\nLa commessa sorrise, felice di aver potuto aiutare. \"Sono sicura che saranno deliziosi. Buona cucina, signora.\"\n\nMaria uscì dal supermercato con i suoi acquisti, il cuore pieno di nostalgia e la mente già immersa nei preparativi della cena. Si immaginò il bistecca croccante, il pappa al pomodoro cremoso, e il lampredotto caldo e sazio. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.\n\nNew topic: \"a local frpm pienza explains local specialties\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "order Tuscan specialties",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "local specialties",
+        "desc": "exploring local cuisine in Florence",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "specialità locali",
+            "en": "local specialties"
+          },
+          {
+            "it": "trattoria",
+            "en": "restaurant"
+          },
+          {
+            "it": "benvenuta",
+            "en": "welcome"
+          },
+          {
+            "it": "siediti pure",
+            "en": "please sit down"
+          },
+          {
+            "it": "fuoco scoppiettante",
+            "en": "crackling fire"
+          },
+          {
+            "it": "calore rassicurante",
+            "en": "reassuring warmth"
+          },
+          {
+            "it": "scegliere",
+            "en": "choose"
+          },
+          {
+            "it": "eccellente",
+            "en": "excellent"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La trattoria è famosa per le sue specialità locali.",
+            "en": "The restaurant is famous for its local specialties.",
+            "words": [
+              "La",
+              "trattoria",
+              "è",
+              "famosa",
+              "per",
+              "le",
+              "sue",
+              "specialità",
+              "locali."
+            ]
+          },
+          {
+            "it": "Domandai all'anziano signore delle sue specialità.",
+            "en": "I asked the elderly gentleman about his specialties.",
+            "words": [
+              "Domandai",
+              "all'anziano",
+              "signore",
+              "delle",
+              "sue",
+              "specialità."
+            ]
+          },
+          {
+            "it": "Il fuoco scoppiettante creava un calore rassicurante.",
+            "en": "The crackling fire created a reassuring warmth.",
+            "words": [
+              "Il",
+              "fuoco",
+              "scoppiettante",
+              "creava",
+              "un",
+              "calore",
+              "rassicurante."
+            ]
+          },
+          {
+            "it": "Egli mi spiegò che il bistecca alla fiorentina è un piatto importante.",
+            "en": "He explained to me that the bistecca alla fiorentina is an important dish.",
+            "words": [
+              "Egli",
+              "mi",
+              "spiegò",
+              "che",
+              "il",
+              "bistecca",
+              "alla",
+              "fiorentina",
+              "è",
+              "un",
+              "piatto",
+              "importante."
+            ]
+          },
+          {
+            "it": "Scegli la specialità locale, è deliziosa.",
+            "en": "Choose the local specialty, it's delicious.",
+            "words": [
+              "Scegli",
+              "la",
+              "specialità",
+              "locale,",
+              "è",
+              "deliziosa."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "local specialties",
+        "desc": "exploring local cuisine in a trattoria",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "pasta",
+            "en": "pasta"
+          },
+          {
+            "it": "sugo",
+            "en": "sauce"
+          },
+          {
+            "it": "tagliatelle",
+            "en": "tagliatelle"
+          },
+          {
+            "it": "risotto",
+            "en": "risotto"
+          },
+          {
+            "it": "zucca",
+            "en": "squash"
+          },
+          {
+            "it": "ortaggi",
+            "en": "vegetables"
+          },
+          {
+            "it": "minestra",
+            "en": "soup"
+          },
+          {
+            "it": "pranzo",
+            "en": "lunch"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Il signore indicò un piatto di tagliatelle al sugo.",
+            "en": "The gentleman pointed to a plate of tagliatelle al sugo.",
+            "words": [
+              "Il",
+              "signore",
+              "indicò",
+              "un",
+              "piatto",
+              "di",
+              "tagliatelle",
+              "al",
+              "sugo."
+            ]
+          },
+          {
+            "it": "Mentre mangiavo, notai che il risotto era fatto con zucca.",
+            "en": "While eating, I noticed that the risotto was made with squash.",
+            "words": [
+              "Mentre",
+              "mangiavo,",
+              "notai",
+              "che",
+              "il",
+              "risotto",
+              "era",
+              "fatto",
+              "con",
+              "zucca."
+            ]
+          },
+          {
+            "it": "La minestra di ortaggi era un piatto semplice ma sapido.",
+            "en": "The vegetable soup was a simple but flavorful dish.",
+            "words": [
+              "La",
+              "minestra",
+              "di",
+              "ortaggi",
+              "era",
+              "un",
+              "piatto",
+              "semplice",
+              "ma",
+              "sapido."
+            ]
+          },
+          {
+            "it": "Il pranzo in quella trattoria era un'esperienza unica.",
+            "en": "Lunch at that trattoria was a unique experience.",
+            "words": [
+              "Il",
+              "pranzo",
+              "in",
+              "quella",
+              "trattoria",
+              "era",
+              "un'esperienza",
+              "unica."
+            ]
+          },
+          {
+            "it": "Il signore mi raccontò della tradizione locale di preparare il risotto.",
+            "en": "The gentleman told me about the local tradition of preparing risotto.",
+            "words": [
+              "Il",
+              "signore",
+              "mi",
+              "raccontò",
+              "della",
+              "tradizione",
+              "locale",
+              "di",
+              "preparare",
+              "il",
+              "risotto."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "local specialties",
+        "desc": "exploring local cuisine in a trattoria",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "tagliatelle",
+            "en": "tagliatelle"
+          },
+          {
+            "it": "risotto",
+            "en": "risotto"
+          },
+          {
+            "it": "zucca",
+            "en": "squash"
+          },
+          {
+            "it": "ortaggi",
+            "en": "vegetables"
+          },
+          {
+            "it": "minestra",
+            "en": "soup"
+          },
+          {
+            "it": "pranzo",
+            "en": "lunch"
+          },
+          {
+            "it": "sugo",
+            "en": "sauce"
+          },
+          {
+            "it": "pasta",
+            "en": "pasta"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Tagliatelle al sugo di zucca sono una specialità.",
+            "en": "Tagliatelle with squash sauce are a specialty.",
+            "words": [
+              "Tagliatelle",
+              "al",
+              "sugo",
+              "di",
+              "zucca",
+              "sono",
+              "una",
+              "specialità."
+            ]
+          },
+          {
+            "it": "Il risotto con ortaggi è molto popolare qui.",
+            "en": "The vegetable risotto is very popular here.",
+            "words": [
+              "Il",
+              "risotto",
+              "con",
+              "ortaggi",
+              "è",
+              "molto",
+              "popolare",
+              "qui."
+            ]
+          },
+          {
+            "it": "Per pranzo, consiglio la minestra di zucca.",
+            "en": "For lunch, I recommend the squash soup.",
+            "words": [
+              "Per",
+              "pranzo,",
+              "consiglio",
+              "la",
+              "minestra",
+              "di",
+              "zucca."
+            ]
+          },
+          {
+            "it": "La pasta è preparata con molte varietà di sugo.",
+            "en": "Pasta is prepared with many varieties of sauce.",
+            "words": [
+              "La",
+              "pasta",
+              "è",
+              "preparata",
+              "con",
+              "molte",
+              "varietà",
+              "di",
+              "sugo."
+            ]
+          },
+          {
+            "it": "In questa trattoria, il pranzo include sempre minestra.",
+            "en": "In this trattoria, lunch always includes soup.",
+            "words": [
+              "In",
+              "questa",
+              "trattoria,",
+              "il",
+              "pranzo",
+              "include",
+              "sempre",
+              "minestra."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1122203,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 2909,
+      "totalCompletionTokens": 1928,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 234343,
+          "promptTokens": 713,
+          "completionTokens": 337
+        },
+        {
+          "lessonNum": 2,
+          "ms": 227642,
+          "promptTokens": 789,
+          "completionTokens": 337
+        },
+        {
+          "lessonNum": 3,
+          "ms": 225195,
+          "promptTokens": 838,
+          "completionTokens": 302
+        }
+      ]
+    },
+    "generatedAt": "2026-05-12T09:00:49.267Z",
+    "updatedAt": "2026-05-12T09:00:49.267Z"
+  },
+  {
+    "topic": "order Tuscan specialties",
+    "topicEmoji": "🇮🇹",
+    "userTopic": "order Tuscan specialties at the supermarket counter",
+    "lang": "it",
+    "difficulty": 2,
+    "storyLen": 1000,
+    "story": "Nella tranquilla atmosfera del supermercato locale, Maria si aggirava tra gli scaffali, la mente già immersa nei ricordi di una recente visita a Firenze. Era lì, in quel negozio, che aveva scoperto le delizie della cucina toscana, e ora voleva riportare a casa quei sapori che aveva amato. Con una lista accuratamente studiata, si avvicinò al banco dei prodotti freschi, dove una commessa gentile la accolse con un sorriso.\n\n\"Buongiorno, signora,\" disse la commessa, \"che posso aiutarla oggi?\"\n\nMaria esitò per un momento, cercando di ricordare con precisione i piatti che aveva sperimentato durante il suo viaggio. \"Sì, vorrei ordinarli,\" rispose, \"i piatti tradizionali toscani.\"\n\nLa commessa annuì comprensiva. \"Capisco. Posso consigliarle alcune specialità?\"\n\n\"Certamente,\" rispose Maria, entusiasta. \"Vorrei il bistecca alla fiorentina, il pappa al pomodoro, e il lampredotto.\"\n\nLa commessa sorrise, notando l'interesse di Maria per i piatti più tradizionali. \"Sono davvero deliziosi. Per la bistecca, avrà bisogno di un bel pezzo di filetto di manzo, di solito con una crosta ben cotta. Per il pappa al pomodoro, avrà bisogno di pomodori, pane e un po' di olio d'oliva. E il lampredotto, un piatto più pesante, richiede una buona preparazione.\"\n\nMaria annuì, prendendo appunti mentalmente. \"Sì, per il lampredotto, vorrei che mi aiutasse a prepararlo.\"\n\nLa commessa prese un foglio e iniziò a scrivere. \"Per il lampredotto, avrà bisogno di lampredotto, un po' di olio d'oliva, sale, pepe, e un po' di cipolla. Dobbiamo iniziare con un buon taglio del lampredotto, poi lo cuociamo a fuoco lento con le altre spezie.\"\n\nMaria ascoltò attentamente, notando come la commessa si impegnasse per spiegarle ogni passo. \"E per il pappa al pomodoro?\"\n\n\"Per il pappa al pomodoro, avrà bisogno di pomodori maturi, pane toscano, olio d'oliva, sale, pepe, e un po' di basilico. Tagliamo il pane in cubetti e lo mettiamo in una casseruola con il pomodoro, l'olio, il sale e il pepe. Lasciamo cuocere a fuoco lento per un paio d'ore, finché il pane non si scioglie e si forma una salsa cremosa.\"\n\nMaria annuì, sorridendo. \"E la bistecca?\"\n\n\"Per la bistecca alla fiorentina, avrà bisogno di filetto di manzo, sale, pepe, e un po' di olio d'oliva. Tagliamo il filetto in spesse fette e lo saliamo e pepiamo. Lo facciamo rosolare in una padella con un po' di olio d'oliva finché non è ben cotto.\"\n\nLa commessa mise in una busta i prodotti necessari per ciascun piatto, e Maria li prese con gratitudine. \"Grazie mille,\" disse, \"sarò felice di prepararli a casa.\"\n\nLa commessa sorrise, felice di aver potuto aiutare. \"Sono sicura che saranno deliziosi. Buona cucina, signora.\"\n\nMaria uscì dal supermercato con i suoi acquisti, il cuore pieno di nostalgia e la mente già immersa nei preparativi della cena. Si immaginò il bistecca croccante, il pappa al pomodoro cremoso, e il lampredotto caldo e sazio. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 10-11 paragraphs, under 1000 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian.\n\nWrite a story for the topic: \"order Tuscan specialties at the supermarket counter\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Ordine specialità toscane",
+        "desc": "Ordini piatti tradizionali in un supermercato",
+        "icon": "🛒",
+        "vocab": [
+          {
+            "it": "scaffali",
+            "en": "shelves"
+          },
+          {
+            "it": "ricordi",
+            "en": "memories"
+          },
+          {
+            "it": "recente",
+            "en": "recent"
+          },
+          {
+            "it": "negozio",
+            "en": "store"
+          },
+          {
+            "it": "piatti",
+            "en": "dishes"
+          },
+          {
+            "it": "scaffale",
+            "en": "shelf"
+          },
+          {
+            "it": "gentile",
+            "en": "kind"
+          },
+          {
+            "it": "accolse",
+            "en": "welcomed"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Cerca il banco dei prodotti freschi.",
+            "en": "Find the fresh products counter.",
+            "words": [
+              "Cerca",
+              "il",
+              "banco",
+              "dei",
+              "prodotti",
+              "freschi."
+            ]
+          },
+          {
+            "it": "La commessa la accolse con un sorriso.",
+            "en": "The salesperson welcomed her with a smile.",
+            "words": [
+              "La",
+              "commessa",
+              "la",
+              "accolse",
+              "con",
+              "un",
+              "sorriso."
+            ]
+          },
+          {
+            "it": "Che posso aiutarla oggi?",
+            "en": "How can I assist you today?",
+            "words": [
+              "Che",
+              "posso",
+              "aiutarla",
+              "oggi?"
+            ]
+          },
+          {
+            "it": "Vorrei ordinarli, i piatti tradizionali toscani.",
+            "en": "I would like to order the traditional Tuscan dishes.",
+            "words": [
+              "Vorrei",
+              "ordinarli,",
+              "i",
+              "piatti",
+              "tradizionali",
+              "toscani."
+            ]
+          },
+          {
+            "it": "Certamente, posso consigliarle alcune specialità.",
+            "en": "Certainly, I can recommend some specialties to you.",
+            "words": [
+              "Certamente,",
+              "posso",
+              "consigliarle",
+              "alcune",
+              "specialità."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "order Tuscan specialties",
+        "desc": "traditional dishes at the supermarket",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "specialità",
+            "en": "specialties"
+          },
+          {
+            "it": "tradizionali",
+            "en": "traditional"
+          },
+          {
+            "it": "consigliare",
+            "en": "to advise"
+          },
+          {
+            "it": "certamente",
+            "en": "certainly"
+          },
+          {
+            "it": "entusiasta",
+            "en": "enthusiastic"
+          },
+          {
+            "it": "sperimentato",
+            "en": "experienced"
+          },
+          {
+            "it": "più",
+            "en": "more"
+          },
+          {
+            "it": "ricordi",
+            "en": "memories"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Posso consigliarle alcune specialità?",
+            "en": "Can I advise you on some specialties?",
+            "words": [
+              "Posso",
+              "consigliarle",
+              "alcune",
+              "specialità?"
+            ]
+          },
+          {
+            "it": "Sì, vorrei ordinarli, i piatti tradizionali toscani.",
+            "en": "Yes, I would like to order them, the traditional Tuscan dishes.",
+            "words": [
+              "Sì,",
+              "vorrei",
+              "ordinarli,",
+              "i",
+              "piatti",
+              "tradizionali",
+              "toscani."
+            ]
+          },
+          {
+            "it": "Certamente, sono entusiasta di rivederli.",
+            "en": "Certainly, I am enthusiastic to see them again.",
+            "words": [
+              "Certamente,",
+              "sono",
+              "entusiasta",
+              "di",
+              "rivederli."
+            ]
+          },
+          {
+            "it": "Sì, vorrei più di uno, per poterli provare insieme.",
+            "en": "Yes, I would like more than one, to try them together.",
+            "words": [
+              "Sì,",
+              "vorrei",
+              "più",
+              "di",
+              "uno,",
+              "per",
+              "poterli",
+              "provare",
+              "insieme."
+            ]
+          },
+          {
+            "it": "Ricordi, la commessa mi aveva consigliato questi piatti tradizionali.",
+            "en": "Remember, the saleswoman had advised me these traditional dishes.",
+            "words": [
+              "Ricordi,",
+              "la",
+              "commessa",
+              "mi",
+              "aveva",
+              "consigliato",
+              "questi",
+              "piatti",
+              "tradizionali."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Ordine specialità toscane",
+        "desc": "Vocabs and sentences about ordering traditional Tuscan dishes at the supermarket",
+        "icon": "🍝",
+        "vocab": [
+          {
+            "it": "saporito",
+            "en": "savory"
+          },
+          {
+            "it": "zucchine",
+            "en": "zucchini"
+          },
+          {
+            "it": "panzanella",
+            "en": "bread salad"
+          },
+          {
+            "it": "agnello",
+            "en": "lamb"
+          },
+          {
+            "it": "pici",
+            "en": "pici pasta"
+          },
+          {
+            "it": "all'uccelletto",
+            "en": "with little bird style"
+          },
+          {
+            "it": "sugo",
+            "en": "sauce"
+          },
+          {
+            "it": "pannocchia",
+            "en": "ear of corn"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "La panzanella è un saporito piatto di estate.",
+            "en": "Panzanella is a savory summer dish.",
+            "words": [
+              "La",
+              "panzanella",
+              "è",
+              "un",
+              "saporito",
+              "piatto",
+              "di",
+              "estate."
+            ]
+          },
+          {
+            "it": "Ho scelto il pici all'uccelletto per la mia cena.",
+            "en": "I chose pici with little bird style for my dinner.",
+            "words": [
+              "Ho",
+              "scelto",
+              "il",
+              "pici",
+              "all'uccelletto",
+              "per",
+              "la",
+              "mia",
+              "cena."
+            ]
+          },
+          {
+            "it": "La commessa mi consigliò il sugo di agnello.",
+            "en": "The saleswoman recommended me the lamb sauce.",
+            "words": [
+              "La",
+              "commessa",
+              "mi",
+              "consigliò",
+              "il",
+              "sugo",
+              "di",
+              "agnello."
+            ]
+          },
+          {
+            "it": "Le zucchine e la pannocchia sono le mie verdure preferite.",
+            "en": "Zucchini and corn are my favorite vegetables.",
+            "words": [
+              "Le",
+              "zucchine",
+              "e",
+              "la",
+              "pannocchia",
+              "sono",
+              "le",
+              "mie",
+              "verdure",
+              "preferite."
+            ]
+          },
+          {
+            "it": "Vorrei una porzione di panzanella e un piatto di agnello.",
+            "en": "I would like a portion of panzanella and a plate of lamb.",
+            "words": [
+              "Vorrei",
+              "una",
+              "porzione",
+              "di",
+              "panzanella",
+              "e",
+              "un",
+              "piatto",
+              "di",
+              "agnello."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1253433,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 2520,
+      "totalCompletionTokens": 2005,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 260462,
+          "promptTokens": 702,
+          "completionTokens": 304
+        },
+        {
+          "lessonNum": 2,
+          "ms": 261687,
+          "promptTokens": 760,
+          "completionTokens": 337
+        },
+        {
+          "lessonNum": 3,
+          "ms": 248678,
+          "promptTokens": 808,
+          "completionTokens": 350
+        }
+      ]
+    },
+    "generatedAt": "2026-05-12T08:30:35.770Z",
+    "updatedAt": "2026-05-12T08:30:35.770Z"
+  },
+  {
+    "topic": "Tuscan Lunch",
+    "topicEmoji": "🇮🇹",
+    "userTopic": "tuscan lunch next day",
+    "lang": "it",
+    "difficulty": 4,
+    "storyLen": 100,
+    "story": "Il mattino dopo, Lucia e Marco si sedettero al piccolo ristorante accanto al bagno turco. Il sole primaverile illuminava i tavoli all'aperto, e l'aria era permeata dal profumo di fiori di zucca cotti lentamente. Lucia sorseggiava la sua birra, mentre Marco le serviva la bistecca cruda al centro, croccante intorno e tenera al centro.\n\n\"Questo è davvero delizioso,\" disse Lucia, masticando con piacere. \"E la polenta, come la prepari?\"\n\n\"È semplice,\" rispose Marco, sorridendo. \"Latte, burro, polenta, zucca e spezie. Un tocco di passione e pazienza, e la magia si manifesta.\"",
+    "storyLang": "it",
+    "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nta a fuoco lento e servita cruda al centro. È un piatto che richiede attenzione e passione.\"\n\n\"Non mi dispiacerebbe provarla,\" disse Lucia, guardando con interesse la bistecca. \"Ma dimmi, come si prepara la polenta e zucca?\"\n\n\"È semplice,\" rispose Marco. \"La polenta viene preparata con latte e burro, poi aggiungo zucca e spezie. È una versione toscana del risotto, ma con un sapore unico.\"\n\n\"Sembrano tutti deliziosi,\" disse Lucia, apprezzando la ricchezza della cucina toscana. \"E forse, domani, potremmo anche fare una passeggiata nella zona del bagno turco e vedere se l'odore si è attenuato.\"\n\nMarco annuì, sollevando il bicchiere in un brindisi silenzioso. \"Ci proveremo, e se non funziona, ci inventeremo un'altra scusa. Dopotutto, la vita toscana è fatta di piccole avventure e buone birre.\"\n\nNew topic: \"tuscan lunch next day\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "Tuscan Cuisine",
+    "lessons": [
+      {
+        "id": 4,
+        "type": "error_hunt",
+        "title": "Text Understanding",
+        "desc": "Find the mistakes in the story",
+        "icon": "🔍",
+        "corruptedStory": "Il mattino dopo, Lucia e Marco si sedettero al piccola ristorante accanto al bagno turco. Il sole primaverile illuminava i tavoli all'aperto, e l'aria era permeata dal profumo di fiori di zucca cotto lentamente. Lucia sorseggiavano la sua birra, mentre Marco le serviva la bistecca cruda al centro, croccante intorno e tenera al centro.\n\n\"Questo è davvero delizioso,\" disse Lucia, masticando con piacere. \"E la pomodoro, come la prepari?\"\n\n\"È semplice,\" rispose Marco, sorridendo. \"Latte, burro, polenta, zucca e spezie. Un tocco di passione e pazienza, e la magia si manifesta.\"",
+        "edits": [
+          {
+            "type": "spelling",
+            "find": "piccolo",
+            "replace": "piccola",
+            "reason": "gender error on feminine noun"
+          },
+          {
+            "type": "spelling",
+            "find": "cotti",
+            "replace": "cotto",
+            "reason": "plural error on adjective"
+          },
+          {
+            "type": "grammar",
+            "find": "sorseggiava",
+            "replace": "sorseggiavano",
+            "reason": "wrong verb form for plural subject"
+          },
+          {
+            "type": "grammar",
+            "find": "polenta",
+            "replace": "pomodoro",
+            "reason": "wrong noun used"
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 509025,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 1106,
+      "totalCompletionTokens": 392,
+      "lessons": [
+        {
+          "promptTokens": 557,
+          "completionTokens": 185
+        }
+      ]
+    },
+    "generatedAt": "2026-05-10T18:24:20.247Z",
+    "updatedAt": "2026-05-10T18:24:20.247Z"
+  },
   {
     "topic": "Tuscan Cuisine",
     "topicEmoji": "🇮🇹",
@@ -24234,7 +26306,7 @@ const STATIC_LESSONS = [
 // Sort newest first
 STATIC_LESSONS.sort((a,b)=>((b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||'')));
 
-const STATIC_STORYLINES = {"c1313954244":{"title":"Dough of the Ancients","icon":"🧈🔥"},"c2104191334":{"title":"Dough Tales","icon":"👨‍🍳"},"c984083087":{"title":"Fungal Frenzy","icon":"fungus"},"c2070713965":{"title":"Yeast Dances","icon":"🧬"},"c566857785":{"title":"Ping Pong Shadows","icon":"🏓"},"c1700104945":{"title":"Tuscany Tastes","icon":"🍷🍺🧶"},"c803309217":{"title":"Ping Pong Shadows","icon":"🏓"},"c885189927":{"title":"Tsuruoka Tales","icon":"🍜❄️🚗"},"c953060316":{"title":"Solar Windows","icon":"💡"},"c1099530610":{"title":"Crémant Controversies","icon":"🍷"},"c1690800713":{"title":"Echoes of Montmartre","icon":"🎶"},"c1335606207":{"title":"Alpine Echoes","icon":"-mountai"},"c894388902":{"title":"Berlin Encounters","icon":"📍"},"c1833997377":{"title":"Wandering Wi-Fi","icon":"🌐"},"c330041805":{"title":"Dolomites Ascent","icon":"🏔️"},"c600674689":{"title":"Dolomites Dawn","icon":"☀️"},"c1965970787":{"title":"Alpine Echoes","icon":"🌍🗣️"},"c1109195178":{"title":"Dialects of the Alps","icon":"🌍"},"c642003634":{"title":"Crémant Controversies","icon":"🥂"},"c299247871":{"title":"Tuscany Tastes","icon":"🌿"}};
+const STATIC_STORYLINES = {"c1313954244":{"title":"Dough of the Ancients","icon":"🧈🔥"},"c2104191334":{"title":"Dough Tales","icon":"👨‍🍳"},"c984083087":{"title":"Fungal Frenzy","icon":"fungus"},"c2070713965":{"title":"Yeast Dances","icon":"🧬"},"c566857785":{"title":"Ping Pong Shadows","icon":"🏓"},"c1700104945":{"title":"Tuscany Tastes","icon":"🍷🍺🧶"},"c803309217":{"title":"Ping Pong Shadows","icon":"🏓"},"c885189927":{"title":"Tsuruoka Tales","icon":"🍜❄️🚗"},"c953060316":{"title":"Solar Windows","icon":"💡"},"c1099530610":{"title":"Crémant Controversies","icon":"🍷"},"c1690800713":{"title":"Echoes of Montmartre","icon":"🎶"},"c1335606207":{"title":"Alpine Echoes","icon":"-mountai"},"c894388902":{"title":"Berlin Encounters","icon":"📍"},"c1833997377":{"title":"Wandering Wi-Fi","icon":"🌐"},"c330041805":{"title":"Dolomites Ascent","icon":"🏔️"},"c600674689":{"title":"Dolomites Dawn","icon":"☀️"},"c1965970787":{"title":"Alpine Echoes","icon":"🌍🗣️"},"c1109195178":{"title":"Dialects of the Alps","icon":"🌍"},"c642003634":{"title":"Crémant Controversies","icon":"🥂"},"c299247871":{"title":"Tuscany Tastes","icon":"🌿"},"c1932561050":{"title":"Toscana in Taste","icon":"🍝"},"root:order Tuscan specialties":{"title":"Tuscan Delights","icon":"🍝"},"c1881043351":{"title":"Toscana Tastes","icon":"🍷🍺🌸"},"root:traveling to Tuscany":{"title":"Toscana Tastes","icon":"🍷🍺🌸"},"c163136980":{"title":"Tuscan Delights","icon":"🍝"}};
 
 // ── repopulateContinueSelect — filters continue-dropdown by language ──
 function repopulateContinueSelect(){
@@ -24280,11 +26352,7 @@ function renderPill() {
     _ov.style.cssText = 'background:var(--white);border-radius:var(--radius-xl);padding:22px;'+ 
       'box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:14px;'+ 
       'font-size:13px;font-weight:600;color:#444;line-height:1.7';
-    _ov.innerHTML = '<strong style="font-size:15px">Dreizunge</strong> is an open-source language lesson generator: learn vocabulary for <strong>any topic</strong>. '+ 
-      'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to <strong>generate new stories</strong>.<br><br>'+ 
-      'This is the <strong>static version</strong> — you can play the existing lessons below and lessons <strong>shared with you</strong> (json files), but not generate new ones.<br><br>'+ 
-      '<span style="color:#c00;font-weight:800">⚠ AI generated content.</span> '+ 
-      'Use a real language learning app or a human teacher if you are new to a language.';
+    _ov.innerHTML = '<strong style="font-size:15px">Dreizunge</strong> is an open-source language lesson generator: learn vocabulary for <strong>any topic</strong>. '+'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to <strong>generate new stories</strong>.<br><br>'+'This is the <strong>static version</strong> — you can play the existing lessons below and lessons <strong>shared with you</strong> (json files), but not generate new ones.<br><br>'+'<span style="color:#c00;font-weight:800">⚠ AI generated content.</span> '+'Use a real language learning app or a human teacher if you are new to a language.';
     _tf.parentNode.replaceChild(_ov, _tf);
   }
   const note=document.getElementById('offline-note');
@@ -24897,6 +26965,7 @@ function pick(arr,n){ return shuffle(arr).slice(0,n); }
 const isPunctClient = t => /^[.,!?;:()\[\]"'«»—–]+$/.test((t||'').trim());
 function buildExercises(lessonIdx){
   const d=APP.lessonData, lesson=d.lessons[lessonIdx];
+  if(lesson.type==='error_hunt') return [];
 	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
   const allV = lesson.vocab;
 	// const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
@@ -24911,26 +26980,10 @@ function buildExercises(lessonIdx){
   function mkLMcq(v,p){ const w=wV(v,'en',p,3); if(w.length<3)return null; return {type:'listen_mcq',it:v.it,pron:v.pron,correct:v.en,choices:shuffle([v.en,...w])}; }
   function mkLType(v){ return {type:'listen_type',it:v.it,en:v.en,pron:v.pron,correct:v.it}; }
   function mkOrder(s){
-    const words=s.words.slice();
-    // Pick 2-3 distractor words from other vocab/sentences, not in this sentence
-    const sentWordSet=new Set(words.map(w=>w.toLowerCase()));
-    const distractorPool=shuffle([
-      ...allV.filter(v=>!sentWordSet.has(v.it.toLowerCase())&&!v.it.includes(' ')).map(v=>v.it),
-      ...allS.filter(x=>x.it!==s.it).flatMap(x=>
-        (x.words||x.it.split(' ')).filter(w=>!isPunctClient(w)&&!sentWordSet.has(w.toLowerCase()))
-      )
-    ]);
-    const numDistractors=Math.min(2+Math.floor(Math.random()*2), distractorPool.length);
-    const distractors=distractorPool.slice(0,numDistractors).map(w=>({w,distractor:true}));
-    // Shuffle correct words + distractors together
-    const allTokens=shuffle([...words.map(w=>({w,distractor:false})),...distractors]);
+    const words=shuffle(s.words.slice());
     let tries=0;
-    while(allTokens.slice(0,words.length).every((t,i)=>!t.distractor&&t.w===words[i])&&tries++<20)
-      allTokens.sort(()=>Math.random()-.5);
-    return {type:'order',en:s.en,it:s.it,
-      words:allTokens.map(t=>t.w),
-      distractors:allTokens.map(t=>t.distractor),
-      correct:words.join(' ')};
+    while(words.join(' ')===s.words.join(' ')&&tries++<20) words.sort(()=>Math.random()-.5);
+    return {type:'order',en:s.en,it:s.it,words,correct:s.words.join(' ')};
   }
   function mkRead(s,pool){
     const w=wS(s,pool,3); const padded=w.length>=3?w:[...fb.slice(0,3-w.length),...w];
@@ -24951,17 +27004,152 @@ function buildExercises(lessonIdx){
 
 // ── lesson ──
 function startLesson(idx){
-	    const C=APP.cur;
-	    C.lessonIdx=idx; C.exercises=buildExercises(idx); C.cur=0;
-	    C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
-	    C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
-	    
-	    console.log("LOADED TOPIC:", APP.lessonData.topic);
-	    console.log("LESSON 0 SENTENCES:",
-	    APP.lessonData.lessons[0].sentences.map(s => s.it)
-	    );
-	    show('lesson-screen'); renderEx();
+  const C=APP.cur;
+  const lesson=APP.lessonData.lessons[idx];
+  C.lessonIdx=idx;
+  C.isErrorHunt=(lesson.type==='error_hunt');
+  C.ehSuspect=new Set(); C.ehChecked=false;
+  C.exercises=buildExercises(idx); C.cur=0;
+  C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
+  C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
+  show('lesson-screen');
+  if(C.isErrorHunt) renderErrorHunt();
+  else renderEx();
 }
+// ── Error-hunt renderer ─────────────────────────────────────────────
+function renderErrorHunt(){
+  const C=APP.cur;
+  const lesson=APP.lessonData.lessons[C.lessonIdx];
+  document.getElementById('hearts').innerHTML='';
+  // Check if already completed — restore saved result
+  const savedResult=APP.progress.completed?.[APP.lessonData.topic]?.[lesson.id];
+  if(savedResult&&typeof savedResult==='object'&&savedResult.suspect){
+    C.ehSuspect=new Set(savedResult.suspect);
+    C.ehChecked=false; // let renderErrorHunt build the tokens first
+  }
+  // Tokenise corruptedStory — split on whitespace, keep punctuation attached
+  const rawTokens=lesson.corruptedStory.split(/( +|\n+)/);
+  // Map each token to a span; only word tokens get eh-tok class + index
+  let ti=0;
+  const spans=rawTokens.map(tok=>{
+    if(/^\s+$/.test(tok)) return tok.replace(/\n/g,'<br>');
+    const i=ti++;
+    return `<span class="eh-tok" data-i="${i}" onclick="ehToggle(${i})">${escHtml(tok)}</span>`;
+  });
+  C.ehTokens=rawTokens.filter(t=>!/^\s+$/.test(t));  // word tokens only
+  // Build token-to-edit map: which token indices overlap which edit
+  C.ehEditMap=buildEhEditMap(lesson);
+  const el=document.getElementById('ex-area');
+  const _autoCheck=!!(savedResult&&typeof savedResult==='object'&&savedResult.suspect);
+  el.innerHTML=
+    '<div class="ex-badge">🔍 Error Hunt — tap words that contain errors</div>'+
+    '<div class="card">'+
+    '<div style="font-size:12px;font-weight:700;color:var(--gray-dark);margin-bottom:6px">'+ 
+    'Tap words that look wrong — spelling or grammar mistakes.'+'</div>'+
+    `<div class="eh-wrap" id="eh-wrap">${spans.join('')}</div>`+
+    '<div id="eh-btn-row" style="margin-top:10px;text-align:center">'+
+    '<button class="big-btn" onclick="ehCheck()">Check answers</button>'+
+    '</div></div>';
+  if(_autoCheck){
+    // Restore suspect highlights before auto-checking
+    C.ehSuspect.forEach(i=>{
+      const el2=document.querySelector(`.eh-tok[data-i="${i}"]`);
+      if(el2) el2.classList.add('suspect');
+    });
+    ehCheck();
+    // Hide the check button since already checked
+    const btnRow=document.getElementById('eh-btn-row');
+    if(btnRow) btnRow.style.display='none';
+  }
+}
+
+function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function buildEhEditMap(lesson){
+  // For each edit, find which token indices it spans in the corrupted story
+  const story=lesson.corruptedStory;
+  const tokens=lesson.corruptedStory.split(/( +|\n+)/).filter(t=>!/^\s+$/.test(t));
+  const map=new Map(); // tokenIdx → editIdx
+  lesson.edits.forEach((edit,ei)=>{
+    const pos=story.indexOf(edit.replace);
+    if(pos<0) return;
+    // Find which tokens overlap [pos, pos+replace.length)
+    let charPos=0, ti=0;
+    for(const raw of lesson.corruptedStory.split(/( +|\n+)/)){
+      if(!/^\s+$/.test(raw)){
+        if(charPos>=pos&&charPos<pos+edit.replace.length) map.set(ti,ei);
+        ti++;
+      }
+      charPos+=raw.length;
+    }
+  });
+  return map;
+}
+
+function ehToggle(i){
+  const C=APP.cur;
+  if(C.ehChecked) return;
+  if(C.ehSuspect.has(i)) C.ehSuspect.delete(i);
+  else C.ehSuspect.add(i);
+  const el=document.querySelector(`.eh-tok[data-i="${i}"]`);
+  if(el) el.classList.toggle('suspect', C.ehSuspect.has(i));
+}
+
+function ehCheck(){
+  const C=APP.cur;
+  if(C.ehChecked) return;
+  C.ehChecked=true;
+  const lesson=APP.lessonData.lessons[C.lessonIdx];
+  const editTokens=new Set([...C.ehEditMap.keys()]);
+  let correct=0, wrong=0, missed=0;
+  // Score each marked token
+  C.ehSuspect.forEach(i=>{
+    const el=document.querySelector(`.eh-tok[data-i="${i}"]`);
+    if(editTokens.has(i)){ correct++; if(el){el.classList.remove('suspect');el.classList.add('correct-mark');} }
+    else { wrong++; if(el){el.classList.remove('suspect');el.classList.add('wrong-mark');} }
+  });
+  // Highlight missed errors
+  editTokens.forEach(i=>{
+    if(!C.ehSuspect.has(i)){
+      missed++;
+      const el=document.querySelector(`.eh-tok[data-i="${i}"]`);
+      if(el) el.classList.add('missed-mark');
+    }
+  });
+  const score=correct*10 - wrong*3 - missed*5;
+  // Reveal results
+  const wrap=document.getElementById('eh-wrap');
+  const resultDiv=document.createElement('div');
+  resultDiv.style='margin-top:14px';
+  resultDiv.innerHTML=
+    `<div class="eh-score">${score>0?score:0} pts</div>`+
+    `<div style="font-size:13px;font-weight:700;color:var(--gray-dark);margin-bottom:8px">`+
+    `✅ ${correct} found &nbsp; ❌ ${wrong} false &nbsp; ⚠️ ${missed} missed</div>`+
+    lesson.edits.map((e,ei)=>{
+            const icon={spelling:'🔵',grammar:'🟠'}[e.type]||'⚡';
+      return `<div style="font-size:12px;margin:3px 0">${icon} <strong>${e.type}</strong>: `+
+        `“${escHtml(e.find)}” → “${escHtml(e.replace)}” &nbsp;<span style="color:var(--gray-dark)">${escHtml(e.reason)}</span></div>`;
+    }).join('');
+  // Back button
+  const backBtn=document.createElement('button');
+  backBtn.className='sec-btn'; backBtn.style='margin-top:12px;width:100%';
+  backBtn.textContent='← Back to lessons';
+  backBtn.onclick=()=>{ showComplete(); };
+  resultDiv.appendChild(backBtn);
+  wrap.after(resultDiv);
+  // Persist progress including suspect set for replay
+  C.correct=correct; C.total=editTokens.size+wrong;
+  const topicKey=APP.lessonData.topic;
+  const lesson2=APP.lessonData.lessons[C.lessonIdx];
+  if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
+  APP.progress.completed[topicKey][lesson2.id]={
+    correct, wrong, missed, score: Math.max(0,score),
+    suspect:[...C.ehSuspect],
+    total: editTokens.size+wrong
+  };
+  saveProg();
+}
+
 function renderHearts(){
   document.getElementById('hearts').innerHTML=Array.from({length:3},(_,i)=>`<span class="heart${i>=APP.cur.hearts?' lost':''}">❤️</span>`).join('');
 }
@@ -25016,11 +27204,10 @@ function ttsApproxBadge(){ return ttsIsApproximate()?'<span class="tts-approx" s
 function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
 function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
 function tOrder(ex){ const L=lessonLang();
-  const tokens=ex.words.map((w,i)=>{
-    const isDist=ex.distractors&&ex.distractors[i];
-    return `<span class="tok${isDist?' tok-distractor':''}" id="t${i}" onclick="addTok(${i})" title="${isDist?'This word may not belong':'Tap to add'}">${w}</span>`;
-  }).join('');
-  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">"${ex.en}"</em></div><div style="font-size:11px;color:var(--gray-dark);margin-bottom:6px">⚠ Some words may not belong in this sentence</div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
+  const tokens=ex.words.map((w,i)=>
+    `<span class="tok" id="t${i}" onclick="addTok(${i})">${w}</span>`
+  ).join('');
+  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">\"${ex.en}\"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
 function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${applyFurigana(ex.it)}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
@@ -25122,9 +27309,7 @@ function check(){
   const ex=C.exercises[C.cur]; let ok=false;
   if(ex.type==='listen_type'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){
-    // Filter out distractor tokens (identified by their index in ex.distractors[])
-    const nonDistractors=C.placed.filter(p=>!(ex.distractors&&ex.distractors[p.i]));
-    ok=nonDistractors.map(p=>p.w).join(' ')===ex.correct;
+    ok=C.placed.map(p=>p.w).join(' ')===ex.correct;
   }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
@@ -25159,15 +27344,18 @@ function check(){
 // ── complete ──
 function showComplete(){
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
-  if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
-  const prev = APP.progress.completed[topicKey][lesson.id]||{};
-  const prevCorrect = typeof prev === 'object' ? (prev.correct||0) : 0;
-  const prevTotal   = typeof prev === 'object' ? (prev.total||0)   : 0;
-  APP.progress.completed[topicKey][lesson.id] = {
-    correct: prevCorrect + (C.correct||0),
-    total:   prevTotal   + (C.total||0)
-  };
-  saveProg();
+  if(!C.isErrorHunt){
+    // Standard lessons: accumulate correct/total
+    if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
+    const prev = APP.progress.completed[topicKey][lesson.id]||{};
+    const prevCorrect = typeof prev === 'object' ? (prev.correct||0) : 0;
+    const prevTotal   = typeof prev === 'object' ? (prev.total||0)   : 0;
+    APP.progress.completed[topicKey][lesson.id] = {
+      correct: prevCorrect + (C.correct||0),
+      total:   prevTotal   + (C.total||0)
+    };
+    saveProg();
+  }
   goHome();
 }
 
