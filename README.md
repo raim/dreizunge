@@ -2,7 +2,7 @@
 
 Learn vocabulary for a specific topic in any language: enter **any topic**, get AI-generated lessons instantly. 
 
-Generate custom quirky LLM story lines using a **local Qwen model via Ollama**, or fully **offline** using saved lessons.
+Generate custom quirky story lines using **local LLM via ollama**.
 
 **Share your lessons as exported files!**
 
