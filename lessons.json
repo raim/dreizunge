@@ -1,6 +1,521 @@
 {
   "lessons": [
     {
+      "topic": "Helicopter Rescue",
+      "topicEmoji": "🚁",
+      "userTopic": "the clouds are too thick for the helicopter, but eventually a it clears up shortly; all need to be rescued, but the helicopter can't land and a cable winch is required.",
+      "lang": "it",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Le nuvole erano troppo dense per l'elicottero, ma dopo alcuni minuti si iniziarono a sciolgere. Marco e Luca si guardarono, speranzosi. \"Forse adesso,\" sussurrò Luca, con un filo di voce. \"Forse adesso possono arrivare.\"\n\nLa donna, che era rimasta in silenzio fino a quel momento, si avvicinò a loro. \"Sono grata per il vostro aiuto,\" disse, con un sorriso debole. \"Ma temo che l'elicottero non possa atterrare qui.\"\n\nMarco e Luca si scambiarono un'occhiata, poi si rivolsero alla donna. \"Non preoccupatevi,\" disse Marco, cercando di sembrare più sicuro di quanto si sentisse. \"Ci penseremo noi.\"\n\nLa situazione era critica. Le persone erano ancora bloccate, e il tempo passava. Luca prese il telefono e compose un nuovo numero. \"Sì, Bergrettung,\" disse, \"abbiamo bisogno di un dispositivo di salvataggio a catena. Non possiamo aspettare che le nuvole si schiariscano.\"\n\nDopo alcuni minuti di attesa tesa, un uomo in uniforme arrivò con un dispositivo di salvataggio a catena. \"Siamo pronti,\" disse, con un'espressione professionale. \"Ma ci servono due persone per manovrarlo.\"\n\nMarco e Luca si guardarono di nuovo, poi si avviarono verso l'elicottero. \"Andiamo,\" disse Luca, determinato. \"Hai visto come stanno le persone. Non possiamo permetterci di fallire.\"\n\nCon l'aiuto dell'uomo in uniforme, Marco e Luca si misero al lavoro. La catena si mosse lentamente, sollevando la prima persona dall'ambulanza. Era un uomo anziano, con un'espressione di sollievo sul volto. \"Grazie,\" disse, con voce tremante.\n\nLa donna, che era rimasta vicino a loro, si avvicinò. \"Siete davvero dei eroi,\" disse, con un sorriso. \"Non so come ringraziarvi.\"\n\nMarco e Luca scossero la testa, sorridendo. \"Siamo solo due giovani volontari,\" disse Marco. \"Ma sappiate che faremo tutto il possibile per aiutare.\"",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nl temporale si intensificò. Un altro lampo illuminò la scena, e Marco e Luca videro con orrore che l'ambulanza era completamente bloccata. \"Non possiamo lasciarla qui,\" ripeté Luca, con un'espressione determinata.\n\nLa donna, vedendo la determinazione negli occhi dei due giovani, si calmò leggermente. \"Siete voi,\" disse, con un filo di voce. \"Siete qui.\"\n\nDopo alcuni minuti, il telefono di Luca squillò. \"Sì, Bergrettung,\" disse, ascoltando attentamente. \"Sì, abbiamo bisogno di un elicottero. Ci sono persone bloccate qui.\" Luca fece un respiro profondo, poi riattaccò. \"Hanno detto che ci proveranno,\" disse, guardando Marco. \"Ma non possiamo aspettare.\"\n\nCon un'ultima occhiata alla donna, Marco e Luca si avviarono verso il punto in cui si trovava l'elicottero, sperando che arrivasse in tempo.\n\nNew topic: \"the clouds are too thick for the helicopter, but eventually a it clears up shortly; all need to be rescued, but the helicopter can't land and a cable winch is required.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Disaster Rescue",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "clouds clear, rescue needed",
+          "desc": "clouds, helicopter, rescue, cable winch, critical situation",
+          "icon": "☁️🚁",
+          "vocab": [
+            {
+              "it": "nuvole",
+              "en": "clouds"
+            },
+            {
+              "it": "elicottero",
+              "en": "helicopter"
+            },
+            {
+              "it": "salvataggio",
+              "en": "rescue"
+            },
+            {
+              "it": "cavo",
+              "en": "cable"
+            },
+            {
+              "it": "critica",
+              "en": "critical"
+            },
+            {
+              "it": "bloccate",
+              "en": "trapped"
+            },
+            {
+              "it": "tempo",
+              "en": "time"
+            },
+            {
+              "it": "comporre",
+              "en": "dial"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Le nuvole erano troppo dense.",
+              "en": "The clouds were too dense.",
+              "words": [
+                "Le",
+                "nuvole",
+                "erano",
+                "troppo",
+                "dense."
+              ]
+            },
+            {
+              "it": "Ma dopo alcuni minuti si iniziarono a sciolgere.",
+              "en": "But after a few minutes they began to clear up.",
+              "words": [
+                "Ma",
+                "dopo",
+                "alcuni",
+                "minuti",
+                "si",
+                "iniziarono",
+                "a",
+                "sciolgere."
+              ]
+            },
+            {
+              "it": "Non preoccupatevi, ci penseremo noi.",
+              "en": "Don't worry, we'll take care of it.",
+              "words": [
+                "Non",
+                "preoccupatevi,",
+                "ci",
+                "penseremo",
+                "noi."
+              ]
+            },
+            {
+              "it": "Abbiamo bisogno di un dispositivo di salvataggio.",
+              "en": "We need a rescue device.",
+              "words": [
+                "Abbiamo",
+                "bisogno",
+                "di",
+                "un",
+                "dispositivo",
+                "di",
+                "salvataggio."
+              ]
+            },
+            {
+              "it": "La situazione era critica, le persone erano ancora bloccate.",
+              "en": "The situation was critical, people were still trapped.",
+              "words": [
+                "La",
+                "situazione",
+                "era",
+                "critica,",
+                "le",
+                "persone",
+                "erano",
+                "ancora",
+                "bloccate."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Rescue Operation",
+          "desc": "clouds, helicopter, rescue, cable, critical",
+          "icon": "🚁",
+          "vocab": [
+            {
+              "it": "situazione",
+              "en": "situation"
+            },
+            {
+              "it": "bloccati",
+              "en": "blocked"
+            },
+            {
+              "it": "dispositivo",
+              "en": "device"
+            },
+            {
+              "it": "raggiungere",
+              "en": "reach"
+            },
+            {
+              "it": "dichiarazione",
+              "en": "statement"
+            },
+            {
+              "it": "rischiare",
+              "en": "risk"
+            },
+            {
+              "it": "soccorso",
+              "en": "rescue"
+            },
+            {
+              "it": "attrezzature",
+              "en": "equipment"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "La situazione era critica, le persone erano ancora bloccate.",
+              "en": "The situation was critical, people were still blocked.",
+              "words": [
+                "La",
+                "situazione",
+                "era",
+                "critica,",
+                "le",
+                "persone",
+                "erano",
+                "ancora",
+                "bloccate."
+              ]
+            },
+            {
+              "it": "Dichiarai: 'Non preoccupatevi, ci penseremo noi.'",
+              "en": "I said: 'Don't worry, we'll take care of it.'",
+              "words": [
+                "Dichiarai:",
+                "'Non",
+                "preoccupatevi,",
+                "ci",
+                "penseremo",
+                "noi.'"
+              ]
+            },
+            {
+              "it": "Luca compose un nuovo numero, poi dichiarò: 'Sì, Bergrettung, abbiamo bisogno di un dispositivo di salvataggio.'",
+              "en": "Luca dialed a new number and said: 'Yes, Bergrettung, we need a rescue device.'",
+              "words": [
+                "Luca",
+                "compose",
+                "un",
+                "nuovo",
+                "numero,",
+                "poi",
+                "dichiarò:",
+                "'Sì,",
+                "Bergrettung,",
+                "abbiamo",
+                "bisogno",
+                "di",
+                "un",
+                "dispositivo",
+                "di",
+                "salvataggio.'"
+              ]
+            },
+            {
+              "it": "La donna rispose: 'Sono grata per il vostro aiuto, ma temo che l'elicottero non possa atterrare qui.'",
+              "en": "The woman replied: 'I'm grateful for your help, but I fear the helicopter can't land here.'",
+              "words": [
+                "La",
+                "donna",
+                "rispose:",
+                "'Sono",
+                "grata",
+                "per",
+                "il",
+                "vostro",
+                "aiuto,",
+                "ma",
+                "temo",
+                "che",
+                "l'elicottero",
+                "non",
+                "possa",
+                "atterrare",
+                "qui.'"
+              ]
+            },
+            {
+              "it": "Rischiando di rompere il silenzio, Luca propose: 'Forse possiamo usare un cavo per raggiungere le persone.'",
+              "en": "Risking breaking the silence, Luca suggested: 'Maybe we can use a cable to reach the people.'",
+              "words": [
+                "Rischiando",
+                "di",
+                "rompere",
+                "il",
+                "silenzio,",
+                "Luca",
+                "propose:",
+                "'Forse",
+                "possiamo",
+                "usare",
+                "un",
+                "cavo",
+                "per",
+                "raggiungere",
+                "le",
+                "persone.'"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Rescue Operation",
+          "desc": "Helicopter, clouds, rescue, cable, situation",
+          "icon": "🚁",
+          "vocab": [
+            {
+              "it": "elicottero",
+              "en": "helicopter"
+            },
+            {
+              "it": "nuvole",
+              "en": "clouds"
+            },
+            {
+              "it": "cavo",
+              "en": "cable"
+            },
+            {
+              "it": "situazione",
+              "en": "situation"
+            },
+            {
+              "it": "raggiungere",
+              "en": "reach"
+            },
+            {
+              "it": "dispositivo",
+              "en": "device"
+            },
+            {
+              "it": "soccorso",
+              "en": "rescue"
+            },
+            {
+              "it": "attrezzature",
+              "en": "equipment"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Le nuvole erano troppo dense per l'elicottero.",
+              "en": "The clouds were too thick for the helicopter.",
+              "words": [
+                "Le",
+                "nuvole",
+                "erano",
+                "troppo",
+                "dense",
+                "per",
+                "l'elicottero."
+              ]
+            },
+            {
+              "it": "Ma dopo alcuni minuti si iniziarono a sciolgere.",
+              "en": "But after a few minutes they began to clear up.",
+              "words": [
+                "Ma",
+                "dopo",
+                "alcuni",
+                "minuti",
+                "si",
+                "iniziarono",
+                "a",
+                "sciolgere."
+              ]
+            },
+            {
+              "it": "Non preoccupatevi, ci penseremo noi.",
+              "en": "Don't worry, we'll take care of it.",
+              "words": [
+                "Non",
+                "preoccupatevi,",
+                "ci",
+                "penseremo",
+                "noi."
+              ]
+            },
+            {
+              "it": "Abbiamo bisogno di un dispositivo di salvataggio.",
+              "en": "We need a rescue device.",
+              "words": [
+                "Abbiamo",
+                "bisogno",
+                "di",
+                "un",
+                "dispositivo",
+                "di",
+                "salvataggio."
+              ]
+            },
+            {
+              "it": "La situazione è critica, le persone sono ancora bloccate.",
+              "en": "The situation is critical, people are still trapped.",
+              "words": [
+                "La",
+                "situazione",
+                "è",
+                "critica,",
+                "le",
+                "persone",
+                "sono",
+                "ancora",
+                "bloccate."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1016562,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 3012,
+        "totalCompletionTokens": 1588,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 228966,
+            "promptTokens": 749,
+            "completionTokens": 299
+          },
+          {
+            "lessonNum": 2,
+            "ms": 265003,
+            "promptTokens": 807,
+            "completionTokens": 416
+          },
+          {
+            "lessonNum": 3,
+            "ms": 255910,
+            "promptTokens": 856,
+            "completionTokens": 302
+          }
+        ]
+      },
+      "generatedAt": "2026-05-20T11:56:01.440Z",
+      "updatedAt": "2026-05-20T11:56:01.440Z"
+    },
+    {
+      "topic": "Disaster Rescue",
+      "topicEmoji": "🚨",
+      "userTopic": "as a storm came up with thunders and deadly lightning, a mudslide blocked the ambulance; the \"Bergrettung\" is called, and they hope to send a helicopter for rescue",
+      "lang": "it",
+      "difficulty": 4,
+      "storyLen": 500,
+      "story": "Il cielo si oscurò rapidamente, e un tuono rimbombò nel valle. Marco e Luca, ancora esausti ma determinati, si resero conto che la situazione stava peggiorando. Un violento temporale si avvicinava, con tuoni e lampi che illuminavano la scena. Un lampo esplose in un fulmine così potente che il terreno tremò sotto di loro.\n\nUn attimo dopo, un rumore sordo li fece voltare. Un enorme masso di terra era scivolato giù dalla montagna, bloccando l'ambulanza. \"Oh no,\" sussurrò Luca, guardando con orrore la scena. \"Non possiamo lasciarla qui.\"\n\nLa donna, pur pallida, era ancora in preda al panico. \"Che facciamo?\" chiese, con voce tremante.\n\nMarco prese la mano della donna e la strinse con forza. \"Non preoccuparti,\" disse con calma. \"Ci penseremo noi.\"\n\nUn altro tuono rimbombò, seguito da un lampo che illuminò il cielo. Marco e Luca si guardarono, poi si avviarono verso il punto in cui si trovava l'ambulanza. \"Bergrettung,\" disse Luca, chiamando il servizio di soccorso montano. \"Hanno un elicottero, speriamo che possano arrivare in tempo.\"\n\nMentre aspettavano, il temporale si intensificò. Un altro lampo illuminò la scena, e Marco e Luca videro con orrore che l'ambulanza era completamente bloccata. \"Non possiamo lasciarla qui,\" ripeté Luca, con un'espressione determinata.\n\nLa donna, vedendo la determinazione negli occhi dei due giovani, si calmò leggermente. \"Siete voi,\" disse, con un filo di voce. \"Siete qui.\"\n\nDopo alcuni minuti, il telefono di Luca squillò. \"Sì, Bergrettung,\" disse, ascoltando attentamente. \"Sì, abbiamo bisogno di un elicottero. Ci sono persone bloccate qui.\" Luca fece un respiro profondo, poi riattaccò. \"Hanno detto che ci proveranno,\" disse, guardando Marco. \"Ma non possiamo aspettare.\"\n\nCon un'ultima occhiata alla donna, Marco e Luca si avviarono verso il punto in cui si trovava l'elicottero, sperando che arrivasse in tempo.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nchetto nascosto. Dopo alcuni minuti, sentirono arrivare i soccorsi. Mentre aspettavano, Marco e Luca rimasero accanto alla donna, parlando con calma e rassicurandola.\n\nQuando i soccorritori arrivarono, Marco e Luca aiutarono a trasportare la donna verso l'ambulanza. \"Siamo stati noi a chiamare,\" disse Luca, con un sorriso. \"Siamo contenti di aver potuto aiutarti.\"\n\nLa donna li ringraziò di nuovo, con un'espressione di gratitudine. \"Siete stati molto gentili,\" disse. \"Grazie.\"\n\nMarco e Luca scesero dalla montagna, esausti ma soddisfatti. \"Nonostante la fatica, non mi pentirei di aver aiutato quella donna,\" disse Marco, guardando Luca con un sorriso. \"Era la cosa giusta da fare.\"\n\nLuca annuì, con un sorriso. \"Sì, lo era,\" disse. \"E nonostante la fatica, sento che ho superato una vera prova.\"\n\nNew topic: \"as a storm came up with thunders and deadly lightning, a mudslide blocked the ambulance; the \"Bergrettung\" is called, and they hope to send a helicopter for rescue\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Helping Injured Hikers",
+      "lessons": [
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Il cielo si oscurò rapidamente, e un tuono rimbombò nel valle. Marco e Luca, ancora esausti ma determinati, si resero che la situazione stava peggiorando. Un violento temporale si avvicinava, con tuoni e lampi che illuminavano la scena. Un lampo esplose in un fulmine così potente che il terreno tremò sotto di loro.\n\nUn attimo dopo, un rumore sordo li fece voltare. Un enorme masso di terra era scivolato giù dalla montagna, bloccando l'ambulanza. \"Oh no,\" sussurrò Luca, guardando con orrore la scena. \"Non possiamo lasciarla qui.\"\n\nLa donna, pur pallida, era ancora in preda al panico. \"Che facciamo?\" chiese, con voce tremante.\n\nMarco prese la mano della donna e la strinse con forza. \"Non preoccuparti,\" disse con calma. \"Ci penseremo noi.\"\n\nUn altro tuono rimbombò, seguito da un lampo che illuminò il cielo. Marco e Luca si guardarono, poi si avviarono verso il punto in cui trovava l'ambulanza. \"Bergrettung,\" disse Luca, chiamando il servizio di soccorso montano. \"Hanno un elicottero, speriamo che possano arrivare in tempo.\"\n\nMentre aspettavano, il temporale si intensificò. Un altro lampo illuminò la scena, e Marco e Luca videro con orrore che l'ambulanza era completamente bloccata. \"Non possiamo lasciarla qui,\" ripeté Luca, con un'espressione determinata.\n\nLa donna, vedendo la determinazione negli occhi dei due giovani, si calmò leggermente. \"Siete voi,\" disse, con un filo di voce. \"Siete qui.\"\n\nDopo alcuni minuti, il telefono di Luca squillò. \"Sì, Bergrettung,\" disse, ascoltando attentamente. \"Sì, abbiamo bisogno di un elicottero. Ci sono persone bloccate qui.\" Luca fece un respiro profondo, poi riattaccò. \"Hanno detto che ci proveranno,\" disse, guardando Marco. \"Ma non possiamo aspettare.\"\n\nCon un'ultima occhiata alla donna, Marco e Luca si avviarono verso il punto in cui si trovava l'elicottero, sperando che arrivasse in tempo.",
+          "edits": [
+            {
+              "type": "grammar",
+              "find": "Marco e Luca, ancora esausti ma determinati, si resero conto",
+              "replace": "Marco e Luca, ancora esausti ma determinati, si resero",
+              "reason": "missing verb"
+            },
+            {
+              "type": "grammar",
+              "find": "Marco e Luca si guardarono, poi si avviarono verso il punto in cui si trovava l'ambulanza",
+              "replace": "Marco e Luca si guardarono, poi si avviarono verso il punto in cui trovava l'ambulanza",
+              "reason": "wrong verb form"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 592555,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1602,
+        "totalCompletionTokens": 918,
+        "lessons": [
+          {
+            "promptTokens": 989,
+            "completionTokens": 318
+          }
+        ]
+      },
+      "generatedAt": "2026-05-20T10:58:24.106Z",
+      "updatedAt": "2026-05-20T10:58:24.106Z"
+    },
+    {
+      "topic": "Alto Adige Cafe History",
+      "topicEmoji": "☕️",
+      "userTopic": "learning about the history of alto adige/suedtirol in a cafe in bozen",
+      "lang": "it",
+      "difficulty": 4,
+      "storyLen": 600,
+      "story": "Entrarono nel caffè di Bozen, il calore della stanza contrastava con l'aria fredda fuori. Marco e Luca si sedettero al tavolo più vicino alla vetrina, dove potevano osservare la gente passare. Il barista, un uomo con un accento forte, si avvicinò con un sorriso. \"Caffè, signori?\" chiese.\n\n\"Per favore,\" rispose Luca, guardando intorno. \"Questo luogo ha una storia così ricca, non vedo l'ora di apprendere di più.\"\n\n\"È vero,\" disse Marco, annuendo. \"Hai sentito parlare dell'Alto Adige/Südtirol?\"\n\n\"Un po' sì,\" rispose il barista, posando due tazze di caffè davanti a loro. \"È una regione con una storia complessa, con radici tedesche e italiane.\"\n\n\"Interessante,\" commentò Luca, sorseggiando il suo caffè. \"Non sapevo molto di questa storia. Come ha iniziato?\"\n\n\"È una storia lunga,\" spiegò il barista, sedendosi accanto a loro. \"Prima della prima guerra mondiale, l'Alto Adige era parte del Regno d'Italia, ma la maggior parte della popolazione era tedesca. Dopo la guerra, con l'Alta Italia, la regione divenne parte dell'Italia.\"\n\n\"Ma non tutti erano d'accordo,\" aggiunse Marco, sorridendo. \"Ci sono stati molti conflitti per la questione linguistica e culturale.\"\n\n\"Esatto,\" confermò il barista. \"E poi, durante la seconda guerra mondiale, l'Alto Adige divenne parte del Terzo Reich, ma dopo la guerra, la regione tornò a essere italiana.\"\n\n\"È una storia molto complessa,\" osservò Luca, riflettendo. \"E ancora oggi ci sono tensioni culturali?\"\n\n\"Certamente,\" rispose il barista. \"Ma oggi, l'Alto Adige/Südtirol è una regione dove tedesco e italiano convivono pacificamente. E il caffè, come vedete, è un ottimo modo per conoscerne la storia.\"\n\nMarco e Luca si guardarono, sorridendo. \"Sì, è vero,\" disse Luca. \"E forse potremo provarne un po' più tardi.\"\n\n\"Certamente,\" concordò Marco. \"E forse potremo scoprire ancora di più della storia di questa regione.\"\n\nIl barista annuì, sorridendo. \"Sono sicuro che lo farete. E se avete altre domande, non esitate a chiedere.\"\n\n\"Lo faremo,\" promise Luca, guardando Marco. \"E grazie per la conversazione.\"\n\n\"Di nulla,\" rispose il barista, alzandosi. \"E godetevi il caffè.\"",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 6-7 paragraphs, under 600 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\no di avere amici così bravi,\" disse, con un sorriso. \"Siete stati una vera luce nel mio buio.\"\n\nMarco e Luca risero, sentendo il calore della gratitudine. \"Siamo solo due persone che hanno fatto la cosa giusta,\" disse Luca. \"Ma è bello sapere che la nostra azione ha fatto una differenza.\"\n\nLa serata trascorse in un flusso di risate e conversazioni. La donna li ringraziò ancora, questa volta con un abbraccio caloroso. \"Siete stati un vero aiuto,\" disse. \"Grazie per avermi fatto sentire meno sola.\"\n\nMarco e Luca uscirono dalla casa, esausti ma con un senso di soddisfazione. \"Nonostante la fatica, è stato un bel giorno,\" disse Marco, guardando Luca. \"Era la cosa giusta da fare.\"\n\nLuca annuì, con un sorriso. \"Sì, lo era,\" disse. \"E sento che ho superato una vera prova, ma in un modo positivo.\"\n\nNew topic: \"learning about the history of alto adige/suedtirol in a cafe in bozen\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Family Home Visit",
+      "lessons": [
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Entrarono nel caffé di Bozen, il calore della stanza contrastava con l'aria fredda fuori. Marco e Luka si sedettero al tavolo più vicino alla vetrina, dove potevano osservare la gente passare. Il barista, un uomo con un accento forte, si avvicinò con un sorriso. \"Caffè, signori?\" chiese.\n\n\"Per favore,\" rispose Luca, guardando intorno. \"Questo luogo ha una storia così ricca, non vedo l'ora di apprendere di più.\"\n\n\"È vero,\" disse Marco, annuendo. \"Hai sentito parlare dell'Alto Adige/Südtirol?\"\n\n\"Un po' sì,\" rispose il barista, posando due tazze di caffè davanti a loro. \"È una regione con una storia complessa, con radici tedesche e italiane.\"\n\n\"Interessante,\" commentò Luca, sorseggiando il suo caffè. \"Non sapevo molto di questa storia. Come ha iniziato?\"\n\n\"È una storia lunga,\" spiegò il barista, sedendosi accanto a loro. \"Prima della prima guerra mondiale, l'Alto Adige era parte del Regno d'Italia, ma la maggior parte della popolazione era tedesca. Dopo la guerra, con l'Alta Itália, la regione divenne parte dell'Italia.\"\n\n\"Ma non tutti erano d'accordo,\" aggiunse Marco, sorridendo. \"Ci sono stati molti conflitti per la questione linguistica e culturale.\"\n\n\"Esatto,\" confermò il barista. \"E poi, durante la seconda guerra mondiale, l'Alto Adige divenne parte del Terzo Reich, ma dopo la guerra, la regione tornò a essere italiana.\"\n\n\"È una storia molto complessa,\" osservò Luca, riflettendo. \"E ancora oggi ci sono tensioni culturali?\"\n\n\"Certamente,\" rispose il barista. \"Ma oggi, l'Alto Adige/Südtirol è una regione dove tedesco e italiano convivono pacificamente. E il caffè, come vedete, è un ottimo modo per conoscerne la storia.\"\n\nMarco e Luca, si guardarono, sorridendo. \"Sì, è vero,\" disse Luca. \"E forse potremo provarne un po' più tardi.\"\n\n\"Certamente,\" concordò Marco. \"E forse potremo scoprire ancora di più della storia di questa regione.\"\n\nIl barista annuì, sorridendo. \"Sono sicuro che lo farete. E se avete altre domande, non esitate a chiedere.\"\n\n\"Lo faremo,\" promise Luca, guardando Marco. \"E grazie per la conversazione.\"\n\n\"Di nulla,\" rispose il barista, alzandosi. \"E godetevi il caffè.\"",
+          "edits": [
+            {
+              "type": "spelling",
+              "find": "caffè",
+              "replace": "caffé",
+              "reason": "missing accent"
+            },
+            {
+              "type": "spelling",
+              "find": "Luca",
+              "replace": "Luka",
+              "reason": "wrong letter substitution"
+            },
+            {
+              "type": "grammar",
+              "find": "Marco e Luca",
+              "replace": "Marco e Luca,",
+              "reason": "missing comma"
+            },
+            {
+              "type": "spelling",
+              "find": "Alta Italia",
+              "replace": "Alta Itália",
+              "reason": "wrong accent"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 606187,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1639,
+        "totalCompletionTokens": 906,
+        "lessons": [
+          {
+            "promptTokens": 1080,
+            "completionTokens": 211
+          }
+        ]
+      },
+      "generatedAt": "2026-05-20T09:51:21.347Z",
+      "updatedAt": "2026-05-20T10:00:34.095Z",
+      "ratings": {
+        "difficulty": 3,
+        "fun": 2,
+        "coherence": 1
+      }
+    },
+    {
       "topic": "Agriturismo in Tuscany",
       "topicEmoji": "👨‍👩‍👧‍👦👨‍🌾",
       "userTopic": "at an agriturismo on a hill above florence, we finally taste pappa al pomodoro and peposo stew",
@@ -25847,7 +26362,7 @@
     },
     "c600674689": {
       "title": "Dolomites Dawn",
-      "icon": "☀️"
+      "icon": "🏔"
     },
     "c1965970787": {
       "title": "Alpine Echoes",
@@ -25884,6 +26399,22 @@
     "c163136980": {
       "title": "Tuscan Delights",
       "icon": "🍝"
+    },
+    "c1857483856": {
+      "title": "Dolomites Dawn",
+      "icon": "🏔"
+    },
+    "root:climbing in the dolomites": {
+      "title": "Dolomites Dawn",
+      "icon": "☀️ Alps"
+    },
+    "c1837575859": {
+      "title": "Dolomite Disaster",
+      "icon": "💀"
+    },
+    "c541517617": {
+      "title": "Dolomites Disaster",
+      "icon": "💀"
     }
   }
 }
