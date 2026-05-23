@@ -1,6 +1,337 @@
 {
   "lessons": [
     {
+      "topic": "味噌納豆微生物",
+      "topicEmoji": "🧆",
+      "userTopic": "味噌や納豆も微生物によって作られます",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 500,
+      "story": "The conversation drifted to the kitchen, where the aroma of fermented foods wafted through the air. \"Yeast isn't the only microbe with a culinary flair,\" Mr. MacLeod said, his eyes twinkling with the excitement of a teacher eager to share a new lesson. \"Miso and natto, too, are crafted by the magic of microbes.\"\n\nSarah, who had been quietly sipping her tea, raised her hand. \"So, what makes miso and natto so special? How do they differ from yeast?\"\n\n\"Great question, Sarah,\" Mr. MacLeod replied, his voice warm and encouraging. \"Miso and natto are both fermented soy products, but they have distinct characteristics. Miso is made by fermenting soybeans with koji, a type of fungus, and salt. The process can take anywhere from a few days to several months, depending on the type of miso. It's rich in umami and has a complex, savory flavor.\"\n\nHe paused, gesturing to the jar of miso on the counter. \"And natto, my dear, is a bit of a character. It's made by fermenting soybeans with a strain of bacteria called Bacillus subtilis. The process is much faster, taking only a few days. Natto is known for its sticky, gooey texture and pungent smell, but it's also packed with nutrients.\"\n\nAs he spoke, the light outside began to fade, casting long shadows across the room. The students leaned in, their curiosity piqued. \"But why do we need these microbes?\" asked Tom, his brow furrowed in thought.\n\n\"Ah, that's a fantastic question, Tom,\" Mr. MacLeod said, his eyes gleaming. \"These microbes are like tiny chefs, breaking down the complex molecules in soybeans into simpler, more digestible forms. They also produce vitamins and other beneficial compounds. It's a symbiotic relationship, where the microbes get a place to live and the soybeans get transformed into something delicious and nutritious.\"\n\nThe conversation continued late into the evening, the students engrossed in the mysteries of fermentation and the microbial world. As the last rays of sunlight disappeared, the room filled with the soft hum of discussion and the gentle clinking of tea cups. The tapestry of life, woven with threads of science and tradition, continued to grow, binding them together in a shared wonder and understanding.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nant motion, exchanging energy and information with its surroundings.\"\n\nWe sat in a circle, the light from the window casting shadows on our faces. Mr. MacLeod continued, his words weaving a tapestry of life and science. \"It's not just about the physical processes. It's about the spiritual connection we have with everything around us. Just like the stories of Halloween and the traditions of Scotland, the science of yeast and life itself is a celebration of the interconnectedness of all things.\"\n\nAs the afternoon wore on, the conversation shifted from the tangible world of yeast to the intangible realm of connection and community. Mr. MacLeod's stories and insights left us with a deeper understanding of the world around us, and a renewed appreciation for the vibrant, living tapestry of life.\n\nNew topic: \"味噌や納豆も微生物によって作られます\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "次に彼は、かつて酵母について行っていた研究について説明し、生き物においてはあらゆるものが振動していると語った。",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "fermented foods",
+          "desc": "microbes, soy, fermentation",
+          "icon": "🧆",
+          "vocab": [
+            {
+              "it": "fermented",
+              "en": "発酵"
+            },
+            {
+              "it": "soy",
+              "en": "大豆"
+            },
+            {
+              "it": "microbe",
+              "en": "微生物"
+            },
+            {
+              "it": "process",
+              "en": "過程"
+            },
+            {
+              "it": "salt",
+              "en": "塩"
+            },
+            {
+              "it": "type",
+              "en": "種類"
+            },
+            {
+              "it": "characteristics",
+              "en": "特性"
+            },
+            {
+              "it": "rich",
+              "en": "豊富な"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Fermented foods are special.",
+              "en": "発酵食品は特別です。",
+              "words": [
+                "Fermented",
+                "foods",
+                "are",
+                "special."
+              ]
+            },
+            {
+              "it": "Soy is used in miso.",
+              "en": "大豆は味噌に使われます。",
+              "words": [
+                "Soy",
+                "is",
+                "used",
+                "in",
+                "miso."
+              ]
+            },
+            {
+              "it": "Microbes make natto.",
+              "en": "微生物が納豆を作ります。",
+              "words": [
+                "Microbes",
+                "make",
+                "natto."
+              ]
+            },
+            {
+              "it": "The process takes days.",
+              "en": "過程は数日かかります。",
+              "words": [
+                "The",
+                "process",
+                "takes",
+                "days."
+              ]
+            },
+            {
+              "it": "Miso is rich in flavor.",
+              "en": "味噌は味が豊富です。",
+              "words": [
+                "Miso",
+                "is",
+                "rich",
+                "in",
+                "flavor."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "fermented foods",
+          "desc": "miso, natto, koji, fermentation, process",
+          "icon": "🧆",
+          "vocab": [
+            {
+              "it": "fermentation",
+              "en": "発酵"
+            },
+            {
+              "it": "koji",
+              "en": "麹"
+            },
+            {
+              "it": "process",
+              "en": "過程"
+            },
+            {
+              "it": "type",
+              "en": "種類"
+            },
+            {
+              "it": "characteristics",
+              "en": "特性"
+            },
+            {
+              "it": "rich",
+              "en": "豊富な"
+            },
+            {
+              "it": "soybeans",
+              "en": "大豆"
+            },
+            {
+              "it": "salt",
+              "en": "塩"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Miso is fermented with koji.",
+              "en": "味噌は麹で発酵されます。",
+              "words": [
+                "Miso",
+                "is",
+                "fermented",
+                "with",
+                "koji."
+              ]
+            },
+            {
+              "it": "The process takes days.",
+              "en": "その過程は数日かかります。",
+              "words": [
+                "The",
+                "process",
+                "takes",
+                "days."
+              ]
+            },
+            {
+              "it": "Natto has a distinct taste.",
+              "en": "納豆は特有の味があります。",
+              "words": [
+                "Natto",
+                "has",
+                "a",
+                "distinct",
+                "taste."
+              ]
+            },
+            {
+              "it": "It's made from soybeans.",
+              "en": "それは大豆から作られています。",
+              "words": [
+                "It's",
+                "made",
+                "from",
+                "soybeans."
+              ]
+            },
+            {
+              "it": "Salt is added for flavor.",
+              "en": "塩は味付けのために加えられます。",
+              "words": [
+                "Salt",
+                "is",
+                "added",
+                "for",
+                "flavor."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "fermented foods",
+          "desc": "miso and natto, their making",
+          "icon": "🧆",
+          "vocab": [
+            {
+              "it": "fermented",
+              "en": "発酵"
+            },
+            {
+              "it": "soybean",
+              "en": "大豆"
+            },
+            {
+              "it": "microbe",
+              "en": "微生物"
+            },
+            {
+              "it": "process",
+              "en": "過程"
+            },
+            {
+              "it": "salt",
+              "en": "塩"
+            },
+            {
+              "it": "type",
+              "en": "種類"
+            },
+            {
+              "it": "characteristics",
+              "en": "特性"
+            },
+            {
+              "it": "rich",
+              "en": "豊富な"
+            }
+          ],
+          "sentences": [
+            {
+              "it": "Miso is made from fermented soybeans.",
+              "en": "味噌は発酵した大豆から作られます。",
+              "words": [
+                "Miso",
+                "is",
+                "made",
+                "from",
+                "fermented",
+                "soybeans."
+              ]
+            },
+            {
+              "it": "Natto has a distinct taste.",
+              "en": "納豆は特有の味がします。",
+              "words": [
+                "Natto",
+                "has",
+                "a",
+                "distinct",
+                "taste."
+              ]
+            },
+            {
+              "it": "The process takes several days.",
+              "en": "その過程は数日かかります。",
+              "words": [
+                "The",
+                "process",
+                "takes",
+                "several",
+                "days."
+              ]
+            },
+            {
+              "it": "Salt is added to preserve it.",
+              "en": "塩を加えて保存します。",
+              "words": [
+                "Salt",
+                "is",
+                "added",
+                "to",
+                "preserve",
+                "it."
+              ]
+            },
+            {
+              "it": "It's rich in nutrients.",
+              "en": "その中には栄養素が豊富です。",
+              "words": [
+                "It's",
+                "rich",
+                "in",
+                "nutrients."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 906586,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2506,
+        "totalCompletionTokens": 1289,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 221275,
+            "promptTokens": 617,
+            "completionTokens": 247
+          },
+          {
+            "lessonNum": 2,
+            "ms": 205449,
+            "promptTokens": 686,
+            "completionTokens": 254
+          },
+          {
+            "lessonNum": 3,
+            "ms": 221060,
+            "promptTokens": 741,
+            "completionTokens": 262
+          }
+        ]
+      },
+      "generatedAt": "2026-05-23T20:03:28.088Z",
+      "updatedAt": "2026-05-23T20:03:28.088Z"
+    },
+    {
       "topic": "次に彼は、かつて酵母について行っていた研究について説明し、生き物においてはあらゆるものが振動していると語った。",
       "topicEmoji": "📚",
       "userTopic": "次に彼は、かつて酵母について行っていた研究について説明し、生き物においてはあらゆるものが振動していると語った。",
@@ -28602,11 +28933,15 @@
     },
     "root:日本語と英語の会話": {
       "title": "Crossroads of Culture",
-      "icon": "🌍🤝"
+      "icon": "🌍💡"
     },
     "c1120789177": {
       "title": "Crossroads of Culture",
       "icon": "🌍🤝"
+    },
+    "c187856885": {
+      "title": "Crossroads of Culture",
+      "icon": "🌊"
     }
   }
 }
