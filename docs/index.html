@@ -76,6 +76,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .saved-info{flex:1;min-width:0}
 .saved-topic{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .saved-meta{font-size:11px;color:var(--gray-dark);font-weight:600;margin-top:1px}
+.lang-pair-badge{display:inline-flex;align-items:center;gap:1px;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:0px 5px;font-size:11px;font-weight:800;letter-spacing:.01em;vertical-align:middle;white-space:nowrap}
 .saved-actions{display:flex;gap:5px;flex-shrink:0}
 .ico-btn.export{color:var(--blue-dark);border-color:var(--blue)}
 .ico-btn{background:none;border:2px solid var(--gray-mid);border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:border-color .1s}
@@ -228,6 +229,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
 .lang-box{background:var(--white);border-radius:var(--radius-xl);padding:16px 22px;box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:10px}
 .lang-selector{margin-bottom:14px}
+.lang-pair-row{display:flex;align-items:flex-end;gap:8px}
+.lang-pair-col{flex:1;min-width:0}
+.lang-pair-arrow{font-size:18px;font-weight:900;color:var(--gray-dark);padding-bottom:10px;flex-shrink:0}
 .lang-select-wrap{position:relative;display:inline-block;width:100%}
 .lang-select{width:100%;padding:10px 36px 10px 14px;font-size:15px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
 .lang-select:focus{border-color:var(--blue)}
@@ -414,28 +418,60 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   </div>
 
   <div class="lang-box">
-    <label class="form-lbl">🌍 Language</label>
-    <div class="lang-select-wrap">
-      <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
-        <option value="it">🇮🇹 Italian</option>
-        <option value="fr">🇫🇷 French</option>
-        <option value="de">🇩🇪 German</option>
-        <option value="es">🇪🇸 Spanish</option>
-        <option value="pt">🇵🇹 Portuguese</option>
-        <option value="nl">🇳🇱 Dutch</option>
-        <option value="pl">🇵🇱 Polish</option>
-        <option value="sv">🇸🇪 Swedish</option>
-        <option value="ja">🇯🇵 Japanese</option>
-        <option value="zh">🇨🇳 Mandarin Chinese</option>
-        <option value="ar">🇸🇦 Arabic</option>
-        <option value="ru">🇷🇺 Russian</option>
-        <option value="ko">🇰🇷 Korean</option>
-        <option value="tr">🇹🇷 Turkish</option>
-        <option value="hi">🇮🇳 Hindi</option>
-        <option value="sw">🇰🇪 Swahili</option>
-        <option value="lb">🇱🇺 Lëtzebuergesch</option>
-      </select>
-      <span class="lang-select-arrow">▾</span>
+    <div class="lang-pair-row">
+      <div class="lang-pair-col">
+        <label class="form-lbl">🗣 I speak</label>
+        <div class="lang-select-wrap">
+          <select class="lang-select" id="src-lang-select" onchange="selectSrcLang(this.value)">
+            <option value="en">🇬🇧 English</option>
+            <option value="it">🇮🇹 Italian</option>
+            <option value="fr">🇫🇷 French</option>
+            <option value="de">🇩🇪 German</option>
+            <option value="es">🇪🇸 Spanish</option>
+            <option value="pt">🇵🇹 Portuguese</option>
+            <option value="nl">🇳🇱 Dutch</option>
+            <option value="pl">🇵🇱 Polish</option>
+            <option value="sv">🇸🇪 Swedish</option>
+            <option value="ja">🇯🇵 Japanese</option>
+            <option value="zh">🇨🇳 Mandarin Chinese</option>
+            <option value="ar">🇸🇦 Arabic</option>
+            <option value="ru">🇷🇺 Russian</option>
+            <option value="ko">🇰🇷 Korean</option>
+            <option value="tr">🇹🇷 Turkish</option>
+            <option value="hi">🇮🇳 Hindi</option>
+            <option value="sw">🇰🇪 Swahili</option>
+            <option value="lb">🇱🇺 Lëtzebuergesch</option>
+          </select>
+          <span class="lang-select-arrow">▾</span>
+        </div>
+      </div>
+      <div class="lang-pair-arrow">→</div>
+      <div class="lang-pair-col">
+        <label class="form-lbl">📖 I learn</label>
+        <div class="lang-select-wrap">
+          <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
+            <option value="it">🇮🇹 Italian</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="fr">🇫🇷 French</option>
+            <option value="de">🇩🇪 German</option>
+            <option value="es">🇪🇸 Spanish</option>
+            <option value="pt">🇵🇹 Portuguese</option>
+            <option value="nl">🇳🇱 Dutch</option>
+            <option value="pl">🇵🇱 Polish</option>
+            <option value="sv">🇸🇪 Swedish</option>
+            <option value="ja">🇯🇵 Japanese</option>
+            <option value="zh">🇨🇳 Mandarin Chinese</option>
+            <option value="ar">🇸🇦 Arabic</option>
+            <option value="ru">🇷🇺 Russian</option>
+            <option value="ko">🇰🇷 Korean</option>
+            <option value="tr">🇹🇷 Turkish</option>
+            <option value="hi">🇮🇳 Hindi</option>
+            <option value="sw">🇰🇪 Swahili</option>
+            <option value="lb">🇱🇺 Lëtzebuergesch</option>
+          </select>
+          <span class="lang-select-arrow">▾</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -452,7 +488,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </label>
       <label class="user-story-check-row" id="use-translation-cb-row" style="display:none;padding-left:24px">
         <input type="checkbox" id="use-translation-cb" onchange="onUseTranslationCb()">
-        🔤 I also have an English translation
+        🔤 I also have a translation <span id="translation-lang-hint">(in English)</span>
       </label>
     </div>
 
@@ -462,9 +498,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         placeholder="Paste your story here…"
         oninput="autoResizeTextarea(this)"></textarea>
       <div class="user-translation-panel" id="user-translation-panel">
-        <label class="form-lbl" style="margin-bottom:0">English translation</label>
+        <label class="form-lbl" style="margin-bottom:0" id="user-translation-lbl">Translation (in English)</label>
         <textarea class="user-story-textarea" id="user-translation-input"
-          placeholder="Paste the English translation here. One sentence per paragraph is ideal, but plain prose works too."
+          placeholder="Paste the translation here. One sentence per paragraph is ideal, but plain prose works too."
           oninput="autoResizeTextarea(this)"></textarea>
       </div>
     </div>
@@ -566,6 +602,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <select class="tts-select" id="tts-select" onchange="onTtsSelect(this.value)"></select>
       <span class="tts-approx" id="tts-approx" style="display:none">⚠ approximate pronunciation</span>
     </div>
+    <div class="tts-row" id="furigana-row" style="display:none">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none">
+        <input type="checkbox" id="furigana-cb" onchange="onFuriganaCb(this.checked)" style="width:15px;height:15px;accent-color:var(--green)">
+        <span>ふ Show furigana</span>
+      </label>
+    </div>
   </div>
   <div class="story-section" id="story-section" style="display:none">
     <button class="story-hdr" onclick="toggleStory()">
@@ -631,6 +673,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
 <script>
 var LANGS = {
+  en: {name:'English',          flag:'🇬🇧', tts:'en-GB'},
   it: {name:'Italian',          flag:'🇮🇹', tts:'it-IT'},
   fr: {name:'French',           flag:'🇫🇷', tts:'fr-FR'},
   de: {name:'German',           flag:'🇩🇪', tts:'de-DE'},
@@ -654,6 +697,7 @@ var APP = {
   info: {backend:'none',canGenerate:false},
   lessonData: null,
   lang: loadLang(),
+  srcLang: loadSrcLang(),
   difficulty: loadDifficulty(),
   storyLen: loadStoryLen(),
   libFilter: 'all',
@@ -662,7 +706,8 @@ var APP = {
   progress: loadProg(),
   flagged: loadFlagged(),
   activeJob: null,
-  ttsLang: null,   // overridable TTS language code; null = use lesson lang default
+  ttsLang: null,
+  showFurigana: (localStorage.getItem('imp3_furigana')||'1')==='1',
   cur: {lessonIdx:0,exercises:[],cur:0,hearts:3,mistakes:0,correct:0,total:0,streak:0,bestStreak:0,
         answered:false,sel:null,placed:[],usedIdx:[]}
 };
@@ -671,6 +716,8 @@ function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'
 function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
 function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
 function saveLang(){ localStorage.setItem('imp3_lang',APP.lang); }
+function loadSrcLang(){ return localStorage.getItem('imp3_srclang')||'en'; }
+function saveSrcLang(){ localStorage.setItem('imp3_srclang',APP.srcLang); }
 
 // ── Toast + share — pure DOM, no server dependency ────────────────────
 function showToast(msg){
@@ -739,26 +786,64 @@ function onUseStoryCb(){
     document.getElementById('user-translation-panel').classList.remove('open');
   }
   const lbl=document.getElementById('topic-label');
-  if(lbl) lbl.textContent=on?'Topic / lesson title':('What do you want to learn '+(LANGS[APP.lang]||LANGS.it).name+' for?');
+  if(lbl) lbl.textContent=on?'Topic / lesson title':topicLabelText();
+}
+function topicLabelText(){
+  const srcL=LANGS[APP.srcLang]||LANGS.en||{name:'English'};
+  const tgtL=LANGS[APP.lang]||LANGS.it;
+  if(APP.srcLang==='en') return 'What do you want to learn '+tgtL.name+' for?';
+  return 'What do you want to learn '+tgtL.name+' for? ('+srcL.name+')';
+}
+function updateTranslationLangHint(){
+  const srcL=LANGS[APP.srcLang]||LANGS.en||{name:'English'};
+  const hint=document.getElementById('translation-lang-hint');
+  if(hint) hint.textContent='(in '+srcL.name+')';
+  const lbl=document.getElementById('user-translation-lbl');
+  if(lbl) lbl.textContent='Translation (in '+srcL.name+')';
+  const ta=document.getElementById('user-translation-input');
+  if(ta) ta.placeholder='Paste the '+srcL.name+' translation here. One sentence per paragraph is ideal, but plain prose works too.';
+}
+function selectSrcLang(code){
+  APP.srcLang=code; saveSrcLang();
+  const sel=document.getElementById('src-lang-select');
+  if(sel && sel.value!==code) sel.value=code;
+  updateTranslationLangHint();
+  const lbl=document.getElementById('topic-label');
+  if(lbl && !document.getElementById('use-story-cb')?.checked) lbl.textContent=topicLabelText();
+  // If src==target, nudge target to something different (silent: don't re-filter library)
+  if(APP.srcLang===APP.lang){
+    const fallback=Object.keys(LANGS).find(k=>k!==code)||'it';
+    selectLang(fallback, true);
+  }
 }
 function onUseTranslationCb(){
   const on=document.getElementById('use-translation-cb').checked;
   document.getElementById('user-translation-panel').classList.toggle('open',on);
 }
-function selectLang(code){
+function selectLang(code, silent){
   APP.lang=code; saveLang(); repopulateContinueSelect();
   const sel=document.getElementById('lang-select');
   if(sel && sel.value!==code) sel.value=code;
   const L=LANGS[code]||LANGS.it;
   const lbl=document.getElementById('topic-label');
-  if(lbl) lbl.textContent='What do you want to learn '+L.name+' for?';
+  if(lbl) lbl.textContent=topicLabelText();
   const inp=document.getElementById('topic-input');
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
   if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
-  // Also filter the library to match the selected language
-  APP.libFilter=code;
-  if(document.getElementById('saved-list')) loadSavedList();
+  // Update library filter to match target language (unless called silently from selectSrcLang)
+  if(!silent){
+    APP.libFilter=code;
+    if(document.getElementById('saved-list')) loadSavedList();
+  }
+  // If target==source, nudge source away (silent: don't re-filter the library)
+  if(APP.srcLang===APP.lang){
+    const fallbackSrc=Object.keys(LANGS).find(k=>k!==code && (LANGS[k]||null))||'en';
+    APP.srcLang=fallbackSrc; saveSrcLang();
+    const ssel=document.getElementById('src-lang-select');
+    if(ssel) ssel.value=fallbackSrc;
+    updateTranslationLangHint();
+  }
 }
 async function pollJob(jobId, onStep, intervalMs){
   intervalMs = intervalMs || 2000;
@@ -942,9 +1027,9 @@ async function doRepairStory(){
     if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow')?.classList.add('open'); }
     renderStoryText(APP.lessonData);
     // Update story language badge
-    const sl=APP.lessonData.storyLang||'en';
+    const sl=APP.lessonData.storyLang||APP.lessonData.lang||'it';
     const storyLangLbl=document.getElementById('story-lang-lbl');
-    if(storyLangLbl) storyLangLbl.textContent=sl==='en'?'EN':(LANGS[sl]?.flag||sl.toUpperCase());
+    if(storyLangLbl) storyLangLbl.textContent=(LANGS[sl]?.flag||sl.toUpperCase());
     document.getElementById('story-repair-input').value='';
     if(status) status.textContent='Story updated!';
     setTimeout(()=>{ if(status) status.textContent=''; },3000);
@@ -1009,6 +1094,1771 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "スコットランドの伝統",
+    "topicEmoji": "🏴‍☠️",
+    "userTopic": "先生は、キルトやハギスといったスコットランドの伝統についても教えてくれます",
+    "lang": "en",
+    "srcLang": "ja",
+    "difficulty": 4,
+    "storyLen": 500,
+    "story": "The next day, Mr. MacLeod greeted me with a warm smile, his eyes twinkling with excitement. \"Today, we'll explore more of Scotland's rich cultural heritage,\" he said, pulling out a stack of books and a few colorful fabrics. \"We'll start with something practical—quilting.\"\n\nI watched as he demonstrated the intricate patterns and techniques, his fingers moving with a grace that seemed almost magical. \"Quilting is more than just sewing,\" he explained. \"It's a way to preserve family stories and traditions. Each stitch tells a story.\"\n\nI was fascinated, and as we worked together, I began to understand the depth of Scottish culture. Mr. MacLeod shared stories of his own family, weaving them into the fabric of our lesson. \"My grandmother used to make these,\" he said, pointing to a piece of fabric with a delicate pattern. \"She would tell us tales while she sewed.\"\n\nAs we progressed, he introduced me to haggis, the traditional Scottish dish. \"It's not just about the food,\" he said, leading me to a small kitchen where he prepared a haggis. \"It's about the community and the celebration of life.\"\n\nWe sat down to a hearty meal, the aroma of the haggis filling the air. Mr. MacLeod shared stories of Scottish festivals and traditions, his voice warm and engaging. \"Halloween, for example, has its roots in Scottish history,\" he said. \"It's a time for storytelling and celebrating the dead.\"\n\nAfter the meal, we returned to the quilting, each stitch a reminder of the rich tapestry of Scottish culture. As the sun set, casting a golden glow through the window, I felt a deep connection to the land and its people. Mr. MacLeod's kindness and dedication were evident in every moment, and I left his apartment that evening with a newfound appreciation for Scotland's traditions and a heart full of stories.",
+    "storyLang": "en",
+    "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nmaking the lesson both fun and educational.\n\nAs we progress, he introduces me to the concept of \"the Scottish accent,\" which, despite its reputation, is not as difficult to understand as one might think. He explains that the key is in the pronunciation and the rhythm of the words. With his patient guidance, I find myself starting to pick up on the nuances, and I can almost hear the Scottish brogue in my own voice as I practice.\n\nAfter our lesson, I feel a sense of accomplishment. Mr. MacLeod's kindness and dedication are evident in every interaction. He takes the time to ensure that I understand each concept, and his patience is a testament to his commitment to teaching. As I leave his apartment, I am filled with a renewed sense of confidence, ready to face the challenges of the day ahead.\n\nNew topic: \"先生は、キルトやハギスといったスコットランドの伝統についても教えてくれます\". Write the continuation now. Plain prose, no headings.",
+    "continuedFrom": "日本語と英語の会話",
+    "lessons": [
+      {
+        "id": 4,
+        "type": "error_hunt",
+        "title": "Text Understanding",
+        "desc": "Find the mistakes in the story",
+        "icon": "🔍",
+        "corruptedStory": "The next day, Mr. MacLeod greeted me with a warm smile, his eyes twinkling with excitement. \"Today, we'll explorate more of Scotland's rich cultural heritage,\" he said, pulling out a stack of books and a few colorful fabrics. \"We'll start with something practical—quilts.\"\n\nI watched as he demonstrated the intricate patterns and techniques, his fingers moving with a grace that seemed almost magical. \"Quilting is more than just sewing,\" he explained. \"It's a way to preserve family stories and tradition. Each stitch tells a story.\"\n\nI was fascinated, and as we worked together, I began to understand the depth of Scottish culture. Mr. MacLeod shared stories of his own family, weaving them into the fabric of our lesson. \"My grandmother used to make these,\" he said, pointing to a piece of fabric with a delicate pattern. \"She would tell us tales while she sewed.\"\n\nAs we progressed, he introduced me to hagis, the traditional Scottish dish. \"It's not just about the food,\" he said, leading me to a small kitchen where he prepared a haggis. \"It's about the community and the celebration of life.\"\n\nWe sat down to a hearty meal, the aroma of the haggis filling the air. Mr. MacLeod shared stories of Scottish festivals and traditions, his voice warm and engaging. \"Halloween, for example, has its roots in Scottish history,\" he said. \"It's a time for storytelling and celebrating the dead.\"\n\nAfter the meal, we returned to the quiltinge, each stitch a reminder of the rich tapestry of Scottish culture. As the sun set, cast a golden glow through the window, I felt a deep connection to the land and its people. Mr. MacLeod's kindness and dedication were evident in every moment, and I left his apartment that evening with a newfound appreciation for Scotland's traditions and a heart full of stories.",
+        "edits": [
+          {
+            "type": "spelling",
+            "find": "explor",
+            "replace": "explorat",
+            "reason": "Adding an extra 'a' is a common novice mistake"
+          },
+          {
+            "type": "grammar",
+            "find": "quilting",
+            "replace": "quilts",
+            "reason": "Singular noun used for plural action"
+          },
+          {
+            "type": "spelling",
+            "find": "haggis",
+            "replace": "hagis",
+            "reason": "Omitting the 'g' is a plausible mistake"
+          },
+          {
+            "type": "grammar",
+            "find": "traditions",
+            "replace": "tradition",
+            "reason": "Singular verb with plural noun"
+          },
+          {
+            "type": "spelling",
+            "find": "quilting",
+            "replace": "quiltinge",
+            "reason": "Adding an extra 'e' at the end is a common mistake"
+          },
+          {
+            "type": "grammar",
+            "find": "casting",
+            "replace": "cast",
+            "reason": "Missing 's' in the past tense"
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 601263,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 1308,
+      "totalCompletionTokens": 668,
+      "lessons": [
+        {
+          "promptTokens": 812,
+          "completionTokens": 240
+        }
+      ]
+    },
+    "generatedAt": "2026-05-23T18:23:08.953Z",
+    "updatedAt": "2026-05-23T18:23:08.953Z"
+  },
+  {
+    "topic": "日本語と英語の会話",
+    "topicEmoji": "🗣️",
+    "userTopic": "私は東京に住む日本人です。スコットランド出身の英語の先生は、毎回のレッスンで私のレベルに合わせて教えてくれます。とても親切です。",
+    "lang": "en",
+    "srcLang": "ja",
+    "difficulty": 2,
+    "storyLen": 500,
+    "story": "I live in Tokyo, a city that never sleeps, where the neon lights and bustling streets seem to whisper the secrets of the past and the future. Every morning, I wake up to the sound of the city, the honking of cars and the chatter of people, and I head to my small apartment, where I prepare for the day. Today, as I sit down to review my lesson plan, I am reminded of the kind English teacher who has been helping me improve my language skills.\n\nScottish by birth, yet with a warmth that could melt even the coldest of hearts, Mr. MacLeod has been my guide through the intricate maze of the English language. His lessons are tailored to my level, ensuring that I am neither overwhelmed nor bored. Today, we are focusing on idiomatic expressions, a topic that has always been a challenge for me. Mr. MacLeod starts by explaining the meaning of \"to kick the bucket,\" a phrase that, in its literal sense, would be quite alarming. He then gives me a series of examples, making the lesson both fun and educational.\n\nAs we progress, he introduces me to the concept of \"the Scottish accent,\" which, despite its reputation, is not as difficult to understand as one might think. He explains that the key is in the pronunciation and the rhythm of the words. With his patient guidance, I find myself starting to pick up on the nuances, and I can almost hear the Scottish brogue in my own voice as I practice.\n\nAfter our lesson, I feel a sense of accomplishment. Mr. MacLeod's kindness and dedication are evident in every interaction. He takes the time to ensure that I understand each concept, and his patience is a testament to his commitment to teaching. As I leave his apartment, I am filled with a renewed sense of confidence, ready to face the challenges of the day ahead.",
+    "storyLang": "en",
+    "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English.\n\nWrite a story for the topic: \"私は東京に住む日本人です。スコットランド出身の英語の先生は、毎回のレッスンで私のレベルに合わせて教えてくれます。とても親切です。\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Tokyo and English Lessons",
+        "desc": "Tokyo life, English lessons, idioms",
+        "icon": "🏠🌟",
+        "vocab": [
+          {
+            "it": "apartment",
+            "en": "アパート"
+          },
+          {
+            "it": "lesson",
+            "en": "レッスン"
+          },
+          {
+            "it": "level",
+            "en": "レベル"
+          },
+          {
+            "it": "tailored",
+            "en": "カスタマイズされた"
+          },
+          {
+            "it": "overwhelmed",
+            "en": "圧倒される"
+          },
+          {
+            "it": "bored",
+            "en": "退屈"
+          },
+          {
+            "it": "challenge",
+            "en": "チャレンジ"
+          },
+          {
+            "it": "expressions",
+            "en": "表現"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "I live in a small apartment near the station.",
+            "en": "私は駅の近くに小さなアパートに住んでいます。",
+            "words": [
+              "I",
+              "live",
+              "in",
+              "a",
+              "small",
+              "apartment",
+              "near",
+              "the",
+              "station."
+            ]
+          },
+          {
+            "it": "My English lessons are tailored to my level.",
+            "en": "私の英語のレッスンは私のレベルに合わせてカスタマイズされています。",
+            "words": [
+              "My",
+              "English",
+              "lessons",
+              "are",
+              "tailored",
+              "to",
+              "my",
+              "level."
+            ]
+          },
+          {
+            "it": "I am not overwhelmed or bored in his classes.",
+            "en": "彼のクラスでは私は圧倒されたり退屈したりしないです。",
+            "words": [
+              "I",
+              "am",
+              "not",
+              "overwhelmed",
+              "or",
+              "bored",
+              "in",
+              "his",
+              "classes."
+            ]
+          },
+          {
+            "it": "Today we are focusing on idiomatic expressions.",
+            "en": "今日は慣用表現について学習しています。",
+            "words": [
+              "Today",
+              "we",
+              "are",
+              "focusing",
+              "on",
+              "idiomatic",
+              "expressions."
+            ]
+          },
+          {
+            "it": "Idioms are a challenge for me, but he helps me.",
+            "en": "慣用表現は私にとってチャレンジですが、彼は私を助けてくれます。",
+            "words": [
+              "Idioms",
+              "are",
+              "a",
+              "challenge",
+              "for",
+              "me,",
+              "but",
+              "he",
+              "helps",
+              "me."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Tokyo and Scottish Teacher",
+        "desc": "Tokyo life, Scottish teacher, idiomatic expressions",
+        "icon": "🏠🌟",
+        "vocab": [
+          {
+            "it": "review",
+            "en": "確認"
+          },
+          {
+            "it": "reminder",
+            "en": "思い出"
+          },
+          {
+            "it": "intricate",
+            "en": "複雑な"
+          },
+          {
+            "it": "guide",
+            "en": "案内"
+          },
+          {
+            "it": "tailored",
+            "en": "カスタマイズされた"
+          },
+          {
+            "it": "overwhelmed",
+            "en": "圧倒される"
+          },
+          {
+            "it": "bored",
+            "en": "退屈"
+          },
+          {
+            "it": "challenge",
+            "en": "チャレンジ"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "I review my lesson plan every morning.",
+            "en": "私は毎朝レッスン計画を確認する。",
+            "words": [
+              "I",
+              "review",
+              "my",
+              "lesson",
+              "plan",
+              "every",
+              "morning."
+            ]
+          },
+          {
+            "it": "His lessons are tailored to my level.",
+            "en": "彼のレッスンは私のレベルに合わせてカスタマイズされています。",
+            "words": [
+              "His",
+              "lessons",
+              "are",
+              "tailored",
+              "to",
+              "my",
+              "level."
+            ]
+          },
+          {
+            "it": "Today, we focus on idiomatic expressions.",
+            "en": "今日は慣用表現について学びます。",
+            "words": [
+              "Today,",
+              "we",
+              "focus",
+              "on",
+              "idiomatic",
+              "expressions."
+            ]
+          },
+          {
+            "it": "Idiomatic expressions are always a challenge.",
+            "en": "慣用表現はいつもチャレンジです。",
+            "words": [
+              "Idiomatic",
+              "expressions",
+              "are",
+              "always",
+              "a",
+              "challenge."
+            ]
+          },
+          {
+            "it": "Mr. MacLeod is a guide through the English language.",
+            "en": "マクレオド先生は英語の言葉の迷路を案内します。",
+            "words": [
+              "Mr.",
+              "MacLeod",
+              "is",
+              "a",
+              "guide",
+              "through",
+              "the",
+              "English",
+              "language."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Tokyo and Scottish Teacher",
+        "desc": "Tokyo life, Scottish teacher, idiomatic expressions",
+        "icon": "🏠🌟",
+        "vocab": [
+          {
+            "it": "neon lights",
+            "en": "ネオンの光"
+          },
+          {
+            "it": "bustling",
+            "en": "賑やか"
+          },
+          {
+            "it": "whisper",
+            "en": "ささやく"
+          },
+          {
+            "it": "intricate",
+            "en": "複雑な"
+          },
+          {
+            "it": "challenge",
+            "en": "チャレンジ"
+          },
+          {
+            "it": "tailored",
+            "en": "カスタマイズされた"
+          },
+          {
+            "it": "reminded",
+            "en": "思い出された"
+          },
+          {
+            "it": "kind",
+            "en": "優しい"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "The neon lights whisper secrets to the night sky.",
+            "en": "ネオンの光は夜空に秘密をささやきます。",
+            "words": [
+              "The",
+              "neon",
+              "lights",
+              "whisper",
+              "secrets",
+              "to",
+              "the",
+              "night",
+              "sky."
+            ]
+          },
+          {
+            "it": "Every morning, the bustling streets remind me of Tokyo's energy.",
+            "en": "毎朝、賑やかな通りは東京のエネルギーを思い出させてくれます。",
+            "words": [
+              "Every",
+              "morning,",
+              "the",
+              "bustling",
+              "streets",
+              "remind",
+              "me",
+              "of",
+              "Tokyo's",
+              "energy."
+            ]
+          },
+          {
+            "it": "Mr. MacLeod's lessons are tailored to my level, making them challenging but not overwhelming.",
+            "en": "Mr. MacLeodのレッスンは私のレベルに合わせてカスタマイズされており、チャレンジングですが圧倒されるほどではありません。",
+            "words": [
+              "Mr.",
+              "MacLeod's",
+              "lessons",
+              "are",
+              "tailored",
+              "to",
+              "my",
+              "level,",
+              "making",
+              "them",
+              "challenging",
+              "but",
+              "not",
+              "overwhelming."
+            ]
+          },
+          {
+            "it": "Today, we are focusing on idiomatic expressions, a challenge for me.",
+            "en": "今日は慣用表現に焦点を当てています、これは私にとってチャレンジです。",
+            "words": [
+              "Today,",
+              "we",
+              "are",
+              "focusing",
+              "on",
+              "idiomatic",
+              "expressions,",
+              "a",
+              "challenge",
+              "for",
+              "me."
+            ]
+          },
+          {
+            "it": "His warmth can melt even the coldest of hearts, making him a kind guide.",
+            "en": "彼の暖かさは最も冷たい心でも溶かすことができ、優しい案内人です。",
+            "words": [
+              "His",
+              "warmth",
+              "can",
+              "melt",
+              "even",
+              "the",
+              "coldest",
+              "of",
+              "hearts,",
+              "making",
+              "him",
+              "a",
+              "kind",
+              "guide."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1201932,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 2410,
+      "totalCompletionTokens": 1413,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 318698,
+          "promptTokens": 629,
+          "completionTokens": 317
+        },
+        {
+          "lessonNum": 2,
+          "ms": 307217,
+          "promptTokens": 700,
+          "completionTokens": 304
+        },
+        {
+          "lessonNum": 3,
+          "ms": 348889,
+          "promptTokens": 762,
+          "completionTokens": 380
+        }
+      ]
+    },
+    "generatedAt": "2026-05-23T18:07:55.088Z",
+    "updatedAt": "2026-05-23T18:07:55.088Z"
+  },
+  {
+    "topic": "Japanese Culture & Language",
+    "topicEmoji": "🇯🇵",
+    "userTopic": "my english teacher from scotland doesn't speak japanese very well, please explain our japanese culture and language to him.",
+    "lang": "ja",
+    "srcLang": "en",
+    "difficulty": 2,
+    "storyLen": 300,
+    "story": "私たちは日本の公立高校に通う生徒たちで、英語教師のアンドリューさんから教わっています。アンドリューさんはスコットランド出身で、とても優しくて知識豊富な先生です。しかし、彼は日本語をあまり得意でないため、日本の文化や言語について詳しく説明するのが難しいのです。\n\nある日、授業の後で彼と話していると、彼は日本の言葉の特徴について質問をしました。「なぜ日本語は長い言葉を短い言葉で表現できるのですか？」と尋ねられ、私はその質問に答えようと努力しました。私は、日本語は文法的に簡潔で、文節を組み合わせて長い意味を表現できるため、長い言葉を短くまとめられるという特徴があることを説明しました。また、日本語の敬語システムについても詳しく説明し、その重要性と使い方をアンドリューさんに伝えることに努めました。彼は興味深そうに聞いてくれ、日本の文化や言語についてもっと知りたいと話していました。",
+    "storyLang": "ja",
+    "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate every kanji with furigana using HTML ruby tags, e.g. <ruby>日本語<rt>にほんご</rt></ruby>.\n\nWrite a story for the topic: \"my english teacher from scotland doesn't speak japanese very well, please explain our japanese culture and language to him.\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "日本の文化と言語",
+        "desc": "日本語の特徴と敬語について",
+        "icon": "🇯🇵",
+        "vocab": [
+          {
+            "it": "公立高校[こうりつこうこう]",
+            "en": "public high school"
+          },
+          {
+            "it": "言葉[ことば]",
+            "en": "word(s)"
+          },
+          {
+            "it": "特徴[とちちかた]",
+            "en": "feature(s)"
+          },
+          {
+            "it": "文法[ぶんぽう]",
+            "en": "grammar"
+          },
+          {
+            "it": "文節[ぶんせつ]",
+            "en": "clause"
+          },
+          {
+            "it": "敬語[けいご]",
+            "en": "honorific language"
+          },
+          {
+            "it": "重要性[じゅうようせい]",
+            "en": "importance"
+          },
+          {
+            "it": "使い方[つかいかた]",
+            "en": "usage"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "私は公立高校[こうりつこうこう]に通っています。",
+            "en": "I go to a public high school.",
+            "words": [
+              "私は",
+              "公立",
+              "高校",
+              "こう",
+              "りつ",
+              "こう",
+              "こう",
+              "に通",
+              "って",
+              "いま",
+              "す。"
+            ]
+          },
+          {
+            "it": "なぜ日本語[にほんご]は長い言葉[ことば]を短い言葉[ことば]で表現できるのですか？",
+            "en": "Why can Japanese express long words with short words?",
+            "words": [
+              "なぜ",
+              "日本",
+              "語に",
+              "ほん",
+              "ごは",
+              "長い",
+              "言葉",
+              "こと",
+              "ばを",
+              "短い",
+              "言葉",
+              "こと",
+              "ばで",
+              "表現",
+              "でき",
+              "るの",
+              "です",
+              "か？"
+            ]
+          },
+          {
+            "it": "日本語[にほんご]は文法[ぶんぽう]的に簡潔[かんけつ]で、文節[ぶんせつ]を組み合わせて長い意味[いみ]を表現できるからです。",
+            "en": "Japanese is concise in grammar and can express long meanings by combining clauses.",
+            "words": [
+              "日本",
+              "語に",
+              "ほん",
+              "ごは",
+              "文法",
+              "ぶん",
+              "ぽう",
+              "的に",
+              "簡潔",
+              "かん",
+              "けつ",
+              "で、",
+              "文節",
+              "ぶん",
+              "せつ",
+              "を組",
+              "み合",
+              "わせ",
+              "て長",
+              "い意",
+              "味い",
+              "みを",
+              "表現",
+              "でき",
+              "るか",
+              "らで",
+              "す。"
+            ]
+          },
+          {
+            "it": "日本語[にほんご]の敬語[けいご]システムはとても重要[じゅうよう]です。",
+            "en": "The honorific system in Japanese is very important.",
+            "words": [
+              "日本",
+              "語に",
+              "ほん",
+              "ごの",
+              "敬語",
+              "けい",
+              "ごシ",
+              "ステ",
+              "ムは",
+              "とて",
+              "も重",
+              "要じ",
+              "ゅう",
+              "よう",
+              "です",
+              "。"
+            ]
+          },
+          {
+            "it": "敬語[けいご]の使い方[つかいかた]を詳しく説明[せつめい]しました。",
+            "en": "I explained the usage of honorifics in detail.",
+            "words": [
+              "敬語",
+              "けい",
+              "ごの",
+              "使い",
+              "方つ",
+              "かい",
+              "かた",
+              "を詳",
+              "しく",
+              "説明",
+              "せつ",
+              "めい",
+              "しま",
+              "した",
+              "。"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "日本の言葉と文化",
+        "desc": "日本語の特徴と敬語について",
+        "icon": "🇯🇵",
+        "vocab": [
+          {
+            "it": "長い言葉を短くまとめられる",
+            "en": "can summarize long meanings with short words"
+          },
+          {
+            "it": "簡潔で文法的に",
+            "en": "concise and grammatically"
+          },
+          {
+            "it": "組み合わせて長い意味を表現できる",
+            "en": "can express long meanings by combining clauses"
+          },
+          {
+            "it": "興味深そうに聞いてくれる",
+            "en": "listens with interest"
+          },
+          {
+            "it": "文化や言語についてもっと知りたいと話す",
+            "en": "talks about wanting to know more about culture and language"
+          },
+          {
+            "it": "知識豊富な先生",
+            "en": "knowledgeable teacher"
+          },
+          {
+            "it": "日本の公立高校に通う生徒たち",
+            "en": "students attending public high school in Japan"
+          },
+          {
+            "it": "スコットランド出身で",
+            "en": "from Scotland"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "なぜ日本語は[にほんごは]長い言葉を短く[みじかく]まとめられる[まとめる]のですか？",
+            "en": "Why can Japanese summarize long words with short ones?",
+            "words": [
+              "なぜ",
+              "日本",
+              "語は",
+              "にほ",
+              "んご",
+              "は長",
+              "い言",
+              "葉を",
+              "短く",
+              "みじ",
+              "かく",
+              "まと",
+              "めら",
+              "れる",
+              "まと",
+              "める",
+              "ので",
+              "すか",
+              "？"
+            ]
+          },
+          {
+            "it": "日本語は[にほんごは]簡潔で[かんけつで]文法的に[ぶんぽうで]組み合わせて[くみあわせて]長い意味を表現できる[ひょうげんできる]からです",
+            "en": "Because Japanese is concise and grammatically can express long meanings by combining clauses",
+            "words": [
+              "日本",
+              "語は",
+              "にほ",
+              "んご",
+              "は簡",
+              "潔で",
+              "かん",
+              "けつ",
+              "で文",
+              "法的",
+              "にぶ",
+              "んぽ",
+              "うで",
+              "組み",
+              "合わ",
+              "せて",
+              "くみ",
+              "あわ",
+              "せて",
+              "長い",
+              "意味",
+              "を表",
+              "現で",
+              "きる",
+              "ひょ",
+              "うげ",
+              "んで",
+              "きる",
+              "から",
+              "です"
+            ]
+          },
+          {
+            "it": "敬語[けいご]は[は]日本の文化[ぶんか]の一部[いちぶ]です",
+            "en": "Honorific language is part of Japanese culture",
+            "words": [
+              "敬語",
+              "けい",
+              "ごは",
+              "は日",
+              "本の",
+              "文化",
+              "ぶん",
+              "かの",
+              "一部",
+              "いち",
+              "ぶで",
+              "す"
+            ]
+          },
+          {
+            "it": "先生[せんせい]は[は]知識豊富[しそうぶつゆう]な[な]先生です",
+            "en": "The teacher is a knowledgeable teacher",
+            "words": [
+              "先生",
+              "せん",
+              "せい",
+              "はは",
+              "知識",
+              "豊富",
+              "しそ",
+              "うぶ",
+              "つゆ",
+              "うな",
+              "な先",
+              "生で",
+              "す"
+            ]
+          },
+          {
+            "it": "彼[かれ]は[は]興味深そう[きょうみぶっそう]に[に]聞いてくれる[きいてくれる]からです",
+            "en": "Because he listens with interest",
+            "words": [
+              "彼か",
+              "れは",
+              "は興",
+              "味深",
+              "そう",
+              "きょ",
+              "うみ",
+              "ぶっ",
+              "そう",
+              "にに",
+              "聞い",
+              "てく",
+              "れる",
+              "きい",
+              "てく",
+              "れる",
+              "から",
+              "です"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "日本の言葉の特徴",
+        "desc": "日本語の特徴と敬語について",
+        "icon": "🇯🇵",
+        "vocab": [
+          {
+            "it": "簡潔で文法的に簡潔で文法的に[ぶんぽう]簡潔で文法的に",
+            "en": "concise and grammatically"
+          },
+          {
+            "it": "組み合わせて長い意味を表現できる",
+            "en": "can express long meanings by combining clauses"
+          },
+          {
+            "it": "敬語システム",
+            "en": "honorific system"
+          },
+          {
+            "it": "重要性",
+            "en": "importance"
+          },
+          {
+            "it": "使い方",
+            "en": "usage"
+          },
+          {
+            "it": "長い言葉を短くまとめられる",
+            "en": "can summarize long meanings with short words"
+          },
+          {
+            "it": "興味深そうに聞いてくれる",
+            "en": "listens with interest"
+          },
+          {
+            "it": "もっと知りたいと話す",
+            "en": "talks about wanting to know more"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "なぜ日本語は[にほんご]なぜ日本語は[にほんご]長い言葉を短くまとめられる[まとめる]のですか？",
+            "en": "Why can Japanese summarize long meanings with short words?",
+            "words": [
+              "なぜ",
+              "日本",
+              "語は",
+              "にほ",
+              "んご",
+              "なぜ",
+              "日本",
+              "語は",
+              "にほ",
+              "んご",
+              "長い",
+              "言葉",
+              "を短",
+              "くま",
+              "とめ",
+              "られ",
+              "るま",
+              "とめ",
+              "るの",
+              "です",
+              "か？"
+            ]
+          },
+          {
+            "it": "日本語の敬語システムは[けいご]日本語の敬語システムは[けいご]重要性と使い方を説明しましょう",
+            "en": "Let's explain the importance and usage of Japanese honorific system",
+            "words": [
+              "日本",
+              "語の",
+              "敬語",
+              "シス",
+              "テム",
+              "はけ",
+              "いご",
+              "日本",
+              "語の",
+              "敬語",
+              "シス",
+              "テム",
+              "はけ",
+              "いご",
+              "重要",
+              "性と",
+              "使い",
+              "方を",
+              "説明",
+              "しま",
+              "しょ",
+              "う"
+            ]
+          },
+          {
+            "it": "文法的に簡潔で[ぶんぽう]文法的に簡潔で[ぶんぽう]組み合わせて長い意味を表現できる[表す]ため",
+            "en": "Because Japanese is concise and grammatically can express long meanings by combining clauses",
+            "words": [
+              "文法",
+              "的に",
+              "簡潔",
+              "でぶ",
+              "んぽ",
+              "う文",
+              "法的",
+              "に簡",
+              "潔で",
+              "ぶん",
+              "ぽう",
+              "組み",
+              "合わ",
+              "せて",
+              "長い",
+              "意味",
+              "を表",
+              "現で",
+              "きる",
+              "表す",
+              "ため"
+            ]
+          },
+          {
+            "it": "長い言葉を短くまとめられる[まとめる]ため[ため]それは便利です",
+            "en": "It's convenient because it can summarize long meanings with short words",
+            "words": [
+              "長い",
+              "言葉",
+              "を短",
+              "くま",
+              "とめ",
+              "られ",
+              "るま",
+              "とめ",
+              "るた",
+              "めた",
+              "めそ",
+              "れは",
+              "便利",
+              "です"
+            ]
+          },
+          {
+            "it": "興味深そうに聞いてくれる[きんちょう]興味深そうに聞いてくれる[きんちょう]もっと知りたいと話す[はなす]彼は",
+            "en": "He listens with interest and talks about wanting to know more",
+            "words": [
+              "興味",
+              "深そ",
+              "うに",
+              "聞い",
+              "てく",
+              "れる",
+              "きん",
+              "ちょ",
+              "う興",
+              "味深",
+              "そう",
+              "に聞",
+              "いて",
+              "くれ",
+              "るき",
+              "んち",
+              "ょう",
+              "もっ",
+              "と知",
+              "りた",
+              "いと",
+              "話す",
+              "はな",
+              "す彼",
+              "は"
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 1148545,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 3147,
+      "totalCompletionTokens": 1701,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 312988,
+          "promptTokens": 823,
+          "completionTokens": 442
+        },
+        {
+          "lessonNum": 2,
+          "ms": 325656,
+          "promptTokens": 938,
+          "completionTokens": 487
+        },
+        {
+          "lessonNum": 3,
+          "ms": 367662,
+          "promptTokens": 1076,
+          "completionTokens": 497
+        }
+      ]
+    },
+    "generatedAt": "2026-05-23T17:43:24.611Z",
+    "updatedAt": "2026-05-23T17:43:24.611Z"
+  },
+  {
+    "topic": "Personalized Lessons",
+    "topicEmoji": "📚",
+    "userTopic": "my english teacher from scotland is carefully generating lessons targeted for my personal skills.",
+    "lang": "en",
+    "srcLang": "ja",
+    "difficulty": 2,
+    "storyLen": 300,
+    "story": "In the quiet town of Millbrook, nestled between rolling hills and a whispering river, lived a young woman named Eliza. She had always been fascinated by the world beyond her small community, and her dream was to one day travel to distant lands. Her English teacher, Mr. MacLeod, was a man of many talents, but it was his Scottish accent and his ability to tailor lessons to her unique needs that made him a beacon of inspiration.\n\nMr. MacLeod, with his neatly trimmed beard and gentle demeanor, was a master of his craft. He had noticed early on that Eliza struggled with certain grammatical structures and often found herself lost in the nuances of idiomatic expressions. Rather than following a rigid curriculum, he crafted lessons that were as personalized as a tailored suit. For instance, he would start with the basics, ensuring that Eliza had a solid foundation, but then he would weave in complex sentences and literary references, challenging her to think critically and express herself more eloquently.\n\nOne crisp autumn morning, as the leaves painted the ground in hues of orange and gold, Mr. MacLeod presented Eliza with a lesson on Shakespeare. He began with the simple, explaining the structure of a sonnet, and then gradually introduced more complex concepts, such as the use of iambic pentameter and the significance of metaphors. Eliza found herself captivated, her mind racing with the possibilities of language. By the end of the session, she felt a newfound confidence, as if she had unlocked a secret door to a world of endless literary treasures.",
+    "storyLang": "en",
+    "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English.\n\nWrite a story for the topic: \"my english teacher from scotland is carefully generating lessons targeted for my personal skills.\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "Scottish teacher",
+        "desc": "personalized lessons, grammar, idioms",
+        "icon": "🇬🇧",
+        "vocab": [
+          {
+            "it": "tailored",
+            "en": "カスタマイズした"
+          },
+          {
+            "it": "curriculum",
+            "en": "カリキュラム"
+          },
+          {
+            "it": "nuances",
+            "en": "ニュアンス"
+          },
+          {
+            "it": "idiomatic",
+            "en": "慣用句"
+          },
+          {
+            "it": "personalized",
+            "en": "個人向けの"
+          },
+          {
+            "it": "master",
+            "en": "マスター"
+          },
+          {
+            "it": "noticed",
+            "en": "気づいた"
+          },
+          {
+            "it": "rigid",
+            "en": "堅固な"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "He tailored the lessons to her needs.",
+            "en": "彼は彼女のニーズに合わせてレッスンを作りました。",
+            "words": [
+              "He",
+              "tailored",
+              "the",
+              "lessons",
+              "to",
+              "her",
+              "needs."
+            ]
+          },
+          {
+            "it": "Eliza struggled with certain grammatical structures.",
+            "en": "エリザは特定の文法構造に苦労していました。",
+            "words": [
+              "Eliza",
+              "struggled",
+              "with",
+              "certain",
+              "grammatical",
+              "structures."
+            ]
+          },
+          {
+            "it": "He crafted lessons that were as personalized as a tailored suit.",
+            "en": "彼は、裁縫のように個人向けのレッスンを作りました。",
+            "words": [
+              "He",
+              "crafted",
+              "lessons",
+              "that",
+              "were",
+              "as",
+              "personalized",
+              "as",
+              "a",
+              "tailored",
+              "suit."
+            ]
+          },
+          {
+            "it": "Mr. MacLeod noticed early on that Eliza struggled.",
+            "en": "マクレオド先生は、エリザが苦労することをすぐに気づきました。",
+            "words": [
+              "Mr.",
+              "MacLeod",
+              "noticed",
+              "early",
+              "on",
+              "that",
+              "Eliza",
+              "struggled."
+            ]
+          },
+          {
+            "it": "He avoided rigid curriculum in favor of flexibility.",
+            "en": "彼は堅固なカリキュラムよりも柔軟性を好みました。",
+            "words": [
+              "He",
+              "avoided",
+              "rigid",
+              "curriculum",
+              "in",
+              "favor",
+              "of",
+              "flexibility."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "tailored lessons",
+        "desc": "personalized teaching, unique needs",
+        "icon": "📚",
+        "vocab": [
+          {
+            "it": "tailored",
+            "en": "カスタマイズした"
+          },
+          {
+            "it": "curriculum",
+            "en": "カリキュラム"
+          },
+          {
+            "it": "nuances",
+            "en": "ニュアンス"
+          },
+          {
+            "it": "idiomatic",
+            "en": "慣用句"
+          },
+          {
+            "it": "personalized",
+            "en": "個人向けの"
+          },
+          {
+            "it": "master",
+            "en": "マスター"
+          },
+          {
+            "it": "noticed",
+            "en": "気づいた"
+          },
+          {
+            "it": "rigid",
+            "en": "堅固な"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "He crafted lessons that were as personalized as a tailored suit.",
+            "en": "彼は、着心地の良いスーツのように個人向けのレッスンを作りました。",
+            "words": [
+              "He",
+              "crafted",
+              "lessons",
+              "that",
+              "were",
+              "as",
+              "personalized",
+              "as",
+              "a",
+              "tailored",
+              "suit."
+            ]
+          },
+          {
+            "it": "Mr. MacLeod tailored each lesson to Eliza's specific challenges.",
+            "en": "マクレオッド先生は、エリザの特定の課題に合わせて各レッスンをカスタマイズしました。",
+            "words": [
+              "Mr.",
+              "MacLeod",
+              "tailored",
+              "each",
+              "lesson",
+              "to",
+              "Eliza's",
+              "specific",
+              "challenges."
+            ]
+          },
+          {
+            "it": "With his gentle demeanor, he made learning enjoyable.",
+            "en": "彼の優しい態度で、学習を楽しみにしました。",
+            "words": [
+              "With",
+              "his",
+              "gentle",
+              "demeanor,",
+              "he",
+              "made",
+              "learning",
+              "enjoyable."
+            ]
+          },
+          {
+            "it": "Eliza appreciated the flexibility in his teaching approach.",
+            "en": "エリザは、彼の教育アプローチの柔軟性に感謝しました。",
+            "words": [
+              "Eliza",
+              "appreciated",
+              "the",
+              "flexibility",
+              "in",
+              "his",
+              "teaching",
+              "approach."
+            ]
+          },
+          {
+            "it": "He noticed early on that Eliza needed extra practice with verb tenses.",
+            "en": "彼は、エリザが動詞の時制で追加の練習が必要であることに早く気付きました。",
+            "words": [
+              "He",
+              "noticed",
+              "early",
+              "on",
+              "that",
+              "Eliza",
+              "needed",
+              "extra",
+              "practice",
+              "with",
+              "verb",
+              "tenses."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "tailored lessons",
+        "desc": "personalized teaching, Scottish accent",
+        "icon": "📚",
+        "vocab": [
+          {
+            "it": "tailored",
+            "en": "カスタマイズした"
+          },
+          {
+            "it": "nuances",
+            "en": "ニュアンス"
+          },
+          {
+            "it": "idiomatic",
+            "en": "慣用句"
+          },
+          {
+            "it": "personalized",
+            "en": "個人向けの"
+          },
+          {
+            "it": "master",
+            "en": "マスター"
+          },
+          {
+            "it": "noticed",
+            "en": "気づいた"
+          },
+          {
+            "it": "rigid",
+            "en": "堅固な"
+          },
+          {
+            "it": "curriculum",
+            "en": "カリキュラム"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "He tailored each lesson to her needs.",
+            "en": "彼は彼女のニーズに合わせて各レッスンを作成しました。",
+            "words": [
+              "He",
+              "tailored",
+              "each",
+              "lesson",
+              "to",
+              "her",
+              "needs."
+            ]
+          },
+          {
+            "it": "Eliza appreciated the nuanced approach.",
+            "en": "エリザはニュアンスのあるアプローチを感謝していました。",
+            "words": [
+              "Eliza",
+              "appreciated",
+              "the",
+              "nuanced",
+              "approach."
+            ]
+          },
+          {
+            "it": "Idiomatic expressions were his specialty.",
+            "en": "慣用句は彼の専門分野でした。",
+            "words": [
+              "Idiomatic",
+              "expressions",
+              "were",
+              "his",
+              "specialty."
+            ]
+          },
+          {
+            "it": "Mr. MacLeod's lessons were never rigid.",
+            "en": "マクレド先生のレッスンは決して堅固ではありませんでした。",
+            "words": [
+              "Mr.",
+              "MacLeod's",
+              "lessons",
+              "were",
+              "never",
+              "rigid."
+            ]
+          },
+          {
+            "it": "A personalized approach suited her perfectly.",
+            "en": "個人向けのアプローチは彼女にぴったりでした。",
+            "words": [
+              "A",
+              "personalized",
+              "approach",
+              "suited",
+              "her",
+              "perfectly."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 813339,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 2236,
+      "totalCompletionTokens": 1330,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 213325,
+          "promptTokens": 581,
+          "completionTokens": 324
+        },
+        {
+          "lessonNum": 2,
+          "ms": 219739,
+          "promptTokens": 663,
+          "completionTokens": 357
+        },
+        {
+          "lessonNum": 3,
+          "ms": 213770,
+          "promptTokens": 731,
+          "completionTokens": 304
+        }
+      ]
+    },
+    "generatedAt": "2026-05-23T17:16:25.344Z",
+    "updatedAt": "2026-05-23T17:16:25.344Z"
+  },
+  {
+    "topic": "In Paris at the Louvre",
+    "topicEmoji": "🎨",
+    "userTopic": "in paris im louvre ein kunstexpertin treffen",
+    "lang": "fr",
+    "srcLang": "de",
+    "difficulty": 2,
+    "storyLen": 500,
+    "story": "À Paris, sous un ciel d’automne limpide, Élise, une jeune experte en peinture, se dirigeait vers le Louvre. Elle avait une mission précise : examiner un tableau récemment découvert dans les archives du musée. Le tableau, un portrait d’une femme mystérieuse, semblait daté du XVIe siècle. Élise, avec son manteau de laine et son sac à dos rempli d’outils d’expertise, se sentait à la fois excitée et nerveuse.\n\nArrivée devant la grande pyramide en verre, elle s’arrêta un instant pour admirer le Louvre, symbole de l’art et de l’histoire. Elle pénétra dans le musée, ses pas résonnant sur le marbre froid. Elle se dirigea vers la salle des États, où le tableau était exposé. Le cadre doré et luisant l’attendait, et Élise s’approcha avec précaution.\n\nLe portrait était impressionnant. La femme, vêtue d’une robe sombre, regardait droit devant elle avec une expression de tristesse et de résolution. Élise nota les détails : la peau lisse, les cheveux noirs, les lèvres fines. Elle sortit son appareil photo et prit des photos sous différents angles, notant chaque détail dans son carnet.\n\nAprès une heure d’examen minutieux, Élise se pencha sur le tableau, ses doigts effleurant le bois du cadre. Elle se rappela une conversation avec son mentor, un ancien conservateur du Louvre, qui lui avait parlé d’une peintre féminine du XVIe siècle, Isabelle de Saint-André, dont on savait peu de choses. Le portrait ressemblait étrangement à une description de la peintre. Élise sentit un frisson la parcourir. Elle avait peut-être trouvé une pièce maîtresse de l’histoire de l’art.\n\nElle prit une profonde inspiration et composa le numéro de son mentor sur son téléphone. Sa voix tremblait légèrement lorsqu’elle lui annonça sa découverte. Ensemble, ils décideraient de la meilleure façon de poursuivre l’investigation. Élise quitta le Louvre, le cœur battant, avec un sentiment de satisfaction et d’excitation. La journée promettait d’être longue, mais elle savait qu’elle avait trouvé quelque chose de vraiment spécial.",
+    "storyLang": "fr",
+    "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French.\n\nWrite a story for the topic: \"in paris im louvre ein kunstexpertin treffen\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "in paris im louvre",
+        "desc": "exploring parisian art and expertise",
+        "icon": "🎨",
+        "vocab": [
+          {
+            "it": "expertise",
+            "en": "kenntnisse"
+          },
+          {
+            "it": "portrait",
+            "en": "Porträt"
+          },
+          {
+            "it": "manteau",
+            "en": "Mantel"
+          },
+          {
+            "it": "salle",
+            "en": "Raum"
+          },
+          {
+            "it": "précaution",
+            "en": "Vorsicht"
+          },
+          {
+            "it": "impressionnant",
+            "en": "beeindruckend"
+          },
+          {
+            "it": "vêtue",
+            "en": "gekleidet"
+          },
+          {
+            "it": "exposé",
+            "en": "ausgestellt"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Elle avait une mission précise.",
+            "en": "Sie hatte eine präzise Aufgabe.",
+            "words": [
+              "Elle",
+              "avait",
+              "une",
+              "mission",
+              "précise."
+            ]
+          },
+          {
+            "it": "Le tableau, un portrait d’une femme mystérieuse.",
+            "en": "Das Bild war ein Porträt einer mysteriösen Frau.",
+            "words": [
+              "Le",
+              "tableau,",
+              "un",
+              "portrait",
+              "d’une",
+              "femme",
+              "mystérieuse."
+            ]
+          },
+          {
+            "it": "Elle se sentait à la fois excitée et nerveuse.",
+            "en": "Sie fühlte sich gleichzeitig aufgeregt und nervös.",
+            "words": [
+              "Elle",
+              "se",
+              "sentait",
+              "à",
+              "la",
+              "fois",
+              "excitée",
+              "et",
+              "nerveuse."
+            ]
+          },
+          {
+            "it": "Elle pénétra dans le musée.",
+            "en": "Sie trat ins Museum ein.",
+            "words": [
+              "Elle",
+              "pénétra",
+              "dans",
+              "le",
+              "musée."
+            ]
+          },
+          {
+            "it": "Le cadre doré et luisant l’attendait.",
+            "en": "Der goldene und glänzende Rahmen wartete auf sie.",
+            "words": [
+              "Le",
+              "cadre",
+              "doré",
+              "et",
+              "luisant",
+              "l’attendait."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "in paris im louvre",
+        "desc": "exploring parisian art and expertise",
+        "icon": "🎨",
+        "vocab": [
+          {
+            "it": "archives",
+            "en": "archiven"
+          },
+          {
+            "it": "mission",
+            "en": "Auftrag"
+          },
+          {
+            "en": "precise",
+            "it": "genau"
+          },
+          {
+            "it": "daté",
+            "en": "datiert"
+          },
+          {
+            "it": "excitée",
+            "en": "begeistert"
+          },
+          {
+            "it": "nervée",
+            "en": "nervös"
+          },
+          {
+            "it": "pyramide",
+            "en": "Pyramide"
+          },
+          {
+            "it": "marbre",
+            "en": "Marmor"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Elle avait une mission précise.",
+            "en": "Sie hatte einen genau definierten Auftrag.",
+            "words": [
+              "Elle",
+              "avait",
+              "une",
+              "mission",
+              "précise."
+            ]
+          },
+          {
+            "it": "Le tableau, un portrait d’une femme mystérieuse, semblait daté du XVIe siècle.",
+            "en": "Das Bild, ein Porträt einer mysteriösen Frau, schien aus dem 16. Jahrhundert zu stammen.",
+            "words": [
+              "Le",
+              "tableau,",
+              "un",
+              "portrait",
+              "d’une",
+              "femme",
+              "mystérieuse,",
+              "semblait",
+              "daté",
+              "du",
+              "XVIe",
+              "siècle."
+            ]
+          },
+          {
+            "it": "Arrivée devant la grande pyramide en verre, elle s’arrêta un instant pour admirer le Louvre.",
+            "en": "Vor der großen Glaspyramide hielt sie kurz inne, um den Louvre zu bewundern.",
+            "words": [
+              "Arrivée",
+              "devant",
+              "la",
+              "grande",
+              "pyramide",
+              "en",
+              "verre,",
+              "elle",
+              "s’arrêta",
+              "un",
+              "instant",
+              "pour",
+              "admirer",
+              "le",
+              "Louvre."
+            ]
+          },
+          {
+            "it": "Le cadre doré et luisant l’attendait.",
+            "en": "Der goldene und glänzende Rahmen wartete auf sie.",
+            "words": [
+              "Le",
+              "cadre",
+              "doré",
+              "et",
+              "luisant",
+              "l’attendait."
+            ]
+          },
+          {
+            "it": "Elle se dirigea vers la salle des États.",
+            "en": "Sie bewegte sich in den Saal der Staaten.",
+            "words": [
+              "Elle",
+              "se",
+              "dirigea",
+              "vers",
+              "la",
+              "salle",
+              "des",
+              "États."
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "in paris im louvre",
+        "desc": "expertise, museum, portrait, careful, history",
+        "icon": "🎨",
+        "vocab": [
+          {
+            "it": "examiner",
+            "en": "prüfen"
+          },
+          {
+            "it": "precisely",
+            "en": "genau"
+          },
+          {
+            "it": "doré",
+            "en": "golosi"
+          },
+          {
+            "it": "luisant",
+            "en": "leuchtend"
+          },
+          {
+            "it": "approached",
+            "en": "näherte"
+          },
+          {
+            "it": "carefully",
+            "en": "vorsichtig"
+          },
+          {
+            "it": "impressive",
+            "en": "beeindruckend"
+          },
+          {
+            "it": "woman",
+            "en": "Frau"
+          }
+        ],
+        "sentences": [
+          {
+            "it": "Elle examinait le tableau avec précision.",
+            "en": "Sie prüfte das Gemälde genau.",
+            "words": [
+              "Elle",
+              "examinait",
+              "le",
+              "tableau",
+              "avec",
+              "précision."
+            ]
+          },
+          {
+            "it": "Le cadre doré luisait sous la lumière.",
+            "en": "Der goldene Rahmen leuchtete bei der Beleuchtung.",
+            "words": [
+              "Le",
+              "cadre",
+              "doré",
+              "luisait",
+              "sous",
+              "la",
+              "lumière."
+            ]
+          },
+          {
+            "it": "Elle s'approcha de l'œuvre avec précaution.",
+            "en": "Sie näherte sich dem Kunstwerk vorsichtig.",
+            "words": [
+              "Elle",
+              "s'approcha",
+              "de",
+              "l'œuvre",
+              "avec",
+              "précaution."
+            ]
+          },
+          {
+            "it": "La femme était impressionnante dans sa robe.",
+            "en": "Die Frau war beeindruckend in ihrem Kleid.",
+            "words": [
+              "La",
+              "femme",
+              "était",
+              "impressionnante",
+              "dans",
+              "sa",
+              "robe."
+            ]
+          },
+          {
+            "it": "Le tableau était exposé dans la salle des États.",
+            "en": "Das Gemälde war im Raum der Staaten ausgestellt.",
+            "words": [
+              "Le",
+              "tableau",
+              "était",
+              "exposé",
+              "dans",
+              "la",
+              "salle",
+              "des",
+              "États."
+            ]
+          }
+        ]
+      }
+    ],
+    "generationStats": {
+      "totalMs": 932028,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 2546,
+      "totalCompletionTokens": 1561,
+      "lessons": [
+        {
+          "lessonNum": 1,
+          "ms": 241076,
+          "promptTokens": 700,
+          "completionTokens": 305
+        },
+        {
+          "lessonNum": 2,
+          "ms": 244385,
+          "promptTokens": 772,
+          "completionTokens": 357
+        },
+        {
+          "lessonNum": 3,
+          "ms": 223844,
+          "promptTokens": 821,
+          "completionTokens": 309
+        }
+      ]
+    },
+    "generatedAt": "2026-05-23T17:00:40.689Z",
+    "updatedAt": "2026-05-23T17:00:40.689Z"
+  },
   {
     "topic": "Cellular Oscillation & Transcript Localization",
     "topicEmoji": "🔬",
@@ -26509,6 +28359,9 @@ function renderPill() {
       if(first){ sel.value=first; APP.lang=first; saveLang(); }
     }
   }
+  // Gray out src-lang-select — no generation in static mode, so it doesn't matter
+  const srcSel=document.getElementById('src-lang-select');
+  if(srcSel){ srcSel.disabled=true; srcSel.title='Source language has no effect in static mode (no generation)'; }
   // Disable user-story checkboxes — generation not available in static mode
   const useStoryCb=document.getElementById('use-story-cb');
   if(useStoryCb){ useStoryCb.disabled=true; useStoryCb.closest('.user-story-check-row').style.opacity='0.4'; useStoryCb.closest('.user-story-check-row').title='Story input requires the live server'; }
@@ -26730,6 +28583,7 @@ function buildPath(){
   // Reset TTS override when loading a new lesson, then build selector
   APP.ttsLang=null;
   buildTtsSelector();
+  updateFuriganaRow();
 
   // Continued-from / continued-by links — rendered below the header
   let contNav=document.getElementById('cont-nav');
@@ -27118,10 +28972,12 @@ function buildExercises(lessonIdx){
   function mkLMcq(v,p){ const w=wV(v,'en',p,3); if(w.length<3)return null; return {type:'listen_mcq',it:v.it,pron:v.pron,correct:v.en,choices:shuffle([v.en,...w])}; }
   function mkLType(v){ return {type:'listen_type',it:v.it,en:v.en,pron:v.pron,correct:v.it}; }
   function mkOrder(s){
+    const isJa=(APP.lessonData?.lang||APP.lang)==='ja';
+    const sep=isJa?'':' ';
     const words=shuffle(s.words.slice());
     let tries=0;
-    while(words.join(' ')===s.words.join(' ')&&tries++<20) words.sort(()=>Math.random()-.5);
-    return {type:'order',en:s.en,it:s.it,words,correct:s.words.join(' ')};
+    while(words.join(sep)===s.words.join(sep)&&tries++<20) words.sort(()=>Math.random()-.5);
+    return {type:'order',en:s.en,it:s.it,words,correct:s.words.join(sep)};
   }
   function mkRead(s,pool){
     const w=wS(s,pool,3); const padded=w.length>=3?w:[...fb.slice(0,3-w.length),...w];
@@ -27321,12 +29177,29 @@ function renderEx(){
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" id="c${i}" onclick="pickChoice(${i},this)">${c}</button>`).join('')}</div>`; }
-// Convert kanji[よみ] bracket notation → <ruby> HTML (Japanese sentences)
+// Convert kanji[よみ] bracket notation → <ruby> HTML, or strip it when furigana is off
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function applyFurigana(text) {
-  return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g,
-    '<ruby>$1<rt>$2</rt></ruby>');
+  if(!text) return text;
+  if(APP.showFurigana){
+    return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g,
+      '<ruby>$1<rt>$2</rt></ruby>');
+  } else {
+    return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g, '$1');
+  }
+}
+function onFuriganaCb(checked){
+  APP.showFurigana=checked;
+  localStorage.setItem('imp3_furigana', checked?'1':'0');
+}
+function updateFuriganaRow(){
+  const lang=APP.lessonData?.lang||APP.lang||'it';
+  const row=document.getElementById('furigana-row');
+  if(!row) return;
+  const isJa=(lang==='ja'||lang==='zh');
+  row.style.display=isJa?'':'none';
+  if(isJa){ const cb=document.getElementById('furigana-cb'); if(cb) cb.checked=APP.showFurigana; }
 }
 
 function lBlock(it, pron, hideWord) {
@@ -27336,16 +29209,23 @@ function lBlock(it, pron, hideWord) {
     </button><button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
-function tMcqIE(ex){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→🇬🇧 What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${applyFurigana(ex.it)}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ const L=lessonLang(); return `<div class="ex-badge">🇬🇧→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
+function lessonSrcLang(){ const s=APP.lessonData?.srcLang||APP.srcLang||'en'; return LANGS[s]||LANGS.en||{name:'English',flag:'🇬🇧',tts:'en-GB'}; }
+function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} What does this mean?</div><div class="card"><div class="qtext">What does <span class="it-word">${applyFurigana(ex.it)}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.it,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${S.flag}→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.en}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){ return ttsIsApproximate()?'<span class="tts-approx" style="margin-left:6px">⚠ approximate pronunciation</span>':''; }
-function tLMcq(ex){ return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()"></div>`; }
-function tOrder(ex){ const L=lessonLang();
+function tLMcq(ex){ const S=lessonSrcLang(); return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the ${S.name} meaning:</div>${lBlock(ex.it,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.it,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
+function tOrder(ex){
   const tokens=ex.words.map((w,i)=>
-    `<span class="tok" id="t${i}" onclick="addTok(${i})">${w}</span>`
-  ).join('');
-  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">\"${ex.en}\"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`; }
+    `<span class="tok" id="t${i}" onclick="addTok(${i})">${applyFurigana(escHtml(w))}</span>`
+  ).join("");
+  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">\"${ex.en}\"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`;
+}
+
+
+
+
+
 function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="it-box"><div class="it-box-text">${applyFurigana(ex.it)}</div><button class="spk-ico" onclick="speak('${esc(ex.it)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
@@ -27365,7 +29245,7 @@ function updateSbox(){
   const C=APP.cur, sb=document.getElementById('sbox'); if(!sb)return;
   if(!C.placed.length){ sb.innerHTML='<span class="sbox-ph">Tap words to build the sentence</span>'; sb.classList.remove('filled'); return; }
   sb.classList.add('filled');
-  sb.innerHTML=C.placed.map((p,pos)=>`<span class="placed-tok" onclick="remTok(${pos})">${p.w}</span>`).join('');
+  sb.innerHTML=C.placed.map((p,pos)=>`<span class="placed-tok" onclick="remTok(${pos})">${applyFurigana(escHtml(p.w))}</span>`).join('');
 }
 
 function flagCurrent(){
@@ -27447,7 +29327,8 @@ function check(){
   const ex=C.exercises[C.cur]; let ok=false;
   if(ex.type==='listen_type'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){
-    ok=C.placed.map(p=>p.w).join(' ')===ex.correct;
+    const isJaOrd=(APP.lessonData?.lang||APP.lang)==='ja';
+    ok=C.placed.map(p=>p.w).join(isJaOrd?'':' ')===ex.correct;
   }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;

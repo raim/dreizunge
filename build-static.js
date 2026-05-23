@@ -197,6 +197,9 @@ function renderPill() {
       if(first){ sel.value=first; APP.lang=first; saveLang(); }
     }
   }
+  // Gray out src-lang-select — no generation in static mode, so it doesn't matter
+  const srcSel=document.getElementById('src-lang-select');
+  if(srcSel){ srcSel.disabled=true; srcSel.title='Source language has no effect in static mode (no generation)'; }
   // Disable user-story checkboxes — generation not available in static mode
   const useStoryCb=document.getElementById('use-story-cb');
   if(useStoryCb){ useStoryCb.disabled=true; useStoryCb.closest('.user-story-check-row').style.opacity='0.4'; useStoryCb.closest('.user-story-check-row').title='Story input requires the live server'; }

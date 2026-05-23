@@ -104,6 +104,7 @@ const generatingTopics = new Set();
 
 // ── Language config ───────────────────────────────────────────────────
 const LANG_NAMES = {
+  en:'English',
   it:'Italian', fr:'French', de:'German', es:'Spanish', pt:'Portuguese',
   nl:'Dutch', pl:'Polish', sv:'Swedish', ja:'Japanese', zh:'Mandarin Chinese',
   ar:'Arabic', ru:'Russian', ko:'Korean', tr:'Turkish', hi:'Hindi',
@@ -125,8 +126,9 @@ function sentenceLengthSpec(d) {
        : d === 2 ? '6–10 words'
        : '10–16 words (complex grammar, subordinate clauses welcome)';
 }
-function sysLesson(lang, lessonNum, totalLessons, difficulty, styleHint, dialect) {
+function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, dialect) {
   const L    = langName(lang);
+  const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const sentLen = sentenceLengthSpec(difficulty || 2);
   const lessonDiff = lessonNum === 1 ? 'basics'
@@ -143,10 +145,10 @@ Schema:
   "desc": "up to 8 words describing this lesson",
   "icon": "one relevant emoji",
   "vocab": [
-    {"it":"${L} word or short phrase","en":"English meaning"}
+    {"it":"${L} word or short phrase","en":"${S} meaning"}
   ],
   "sentences": [
-    {"it":"A natural ${L} sentence","en":"English translation"}
+    {"it":"A natural ${L} sentence","en":"${S} translation"}
   ]
 }
 
@@ -155,13 +157,13 @@ Rules:
 - sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
 - sentence length: ${sentLen} — vary lengths naturally
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
-- CRITICAL: every "it" field MUST be in ${L} ONLY — never English, never any other language${dialectNote}${styleNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+- CRITICAL: every "it" field MUST be in ${L} ONLY — never ${S}, never any other language${dialectNote}${styleNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
 // Lesson prompt for user-provided story + parallel translation
-// The LLM extracts vocab/sentences strictly from the aligned text, invents nothing.
-function sysLessonFromText(lang, lessonNum, totalLessons, difficulty, dialect) {
+function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, dialect) {
   const L    = langName(lang);
+  const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const sentLen = sentenceLengthSpec(difficulty || 2);
   const lessonDiff = lessonNum === 1 ? 'basic vocabulary'
@@ -169,7 +171,7 @@ function sysLessonFromText(lang, lessonNum, totalLessons, difficulty, dialect) {
                    : 'specific and idiomatic expressions';
   const dialectNote = dialect ? ` The target language variety is: ${dialect}.` : '';
   return `You are a ${L} language lesson extractor for a vocabulary learning app.
-You will be given a ${L} story and its English translation. Your job is to extract vocabulary and sentences STRICTLY from the provided texts — do NOT invent anything.
+You will be given a ${L} story and its ${S} translation. Your job is to extract vocabulary and sentences STRICTLY from the provided texts — do NOT invent anything.
 Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
 
 Schema:
@@ -178,26 +180,26 @@ Schema:
   "desc": "up to 8 words describing this lesson",
   "icon": "one relevant emoji",
   "vocab": [
-    {"it":"${L} word or short phrase","en":"English meaning from the translation"}
+    {"it":"${L} word or short phrase","en":"${S} meaning from the translation"}
   ],
   "sentences": [
-    {"it":"A sentence from the ${L} story","en":"Corresponding English translation"}
+    {"it":"A sentence from the ${L} story","en":"Corresponding ${S} translation"}
   ]
 }
 
 Rules:
 - vocab: exactly 8 items for lesson ${lessonNum} of ${totalLessons} (focus: ${lessonDiff}), all extracted from the story text, difficulty: ${diff}
-- sentences: exactly 5 items, each a complete sentence taken verbatim from the ${L} story, with its matching English translation from the provided translation
-- sentence pairs must be aligned: the English must be the actual translation of that ${L} sentence, not a paraphrase
+- sentences: exactly 5 items, each a complete sentence taken verbatim from the ${L} story, with its matching ${S} translation from the provided translation
+- sentence pairs must be aligned: the ${S} must be the actual translation of that ${L} sentence, not a paraphrase
 - sentence length: prefer sentences of ${sentLen}
 - sentences must NOT be duplicated across lessons — focus on different parts of the text for each lesson
-- CRITICAL: every "it" field MUST be from the ${L} story — never invented, never English${dialectNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+- CRITICAL: every "it" field MUST be from the ${L} story — never invented, never ${S}${dialectNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
-// Lesson prompt for table format — used when OLLAMA_LESSON_FORMAT=table.
-// More reliable for translation-focused models that struggle with strict JSON.
-function sysLessonTable(lang, lessonNum, totalLessons, difficulty, dialect) {
+// Lesson prompt for table format
+function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dialect) {
   const L    = langName(lang);
+  const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const lessonDiff = lessonNum === 1 ? 'basic vocabulary'
                    : lessonNum === 2 ? 'phrases and patterns'
@@ -208,17 +210,17 @@ Create lesson ${lessonNum} of ${totalLessons} focused on ${lessonDiff} at ${diff
 Output TWO markdown tables and nothing else.
 
 Table 1 — Vocabulary (exactly 8 rows):
-| ${L} word | English meaning | Pronunciation for English speakers |
+| ${L} word | ${S} meaning | Pronunciation for ${S} speakers |
 |---|---|---|
 | word | meaning |
 
 Table 2 — Sentences (exactly 5 rows):
-| ${L} sentence | English translation |
+| ${L} sentence | ${S} translation |
 |---|---|
 | sentence | translation |
 
 Rules:
-- All ${L} content must be genuine ${L} — never English or another language
+- All ${L} content must be genuine ${L} — never ${S} or another language
 - Pronunciation: write phonetically, CAPS for stressed syllable (e.g. BOO-oh-JOR-no)
 - No extra text, no headings outside the tables, no JSON${lang==='ja'?'\n- JAPANESE: In the sentence column, annotate each kanji with its hiragana reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
@@ -266,17 +268,19 @@ function parseTableLesson(raw, lessonNum, topic) {
   };
 }
 
-const SYS_REPAIR = `You are a language exercise repairer for a Duolingo-style app.
+function sysSrcRepair(srcLang) {
+  const S = langName(srcLang || 'en');
+  return `You are a language exercise repairer for a Duolingo-style app.
 You will receive a list of faulty exercises with optional user comments explaining the error.
 Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
 
 Each exercise has a type. Return corrected versions preserving the same type and schema:
-- mcq_it_en:      {"type":"mcq_it_en","it":"target language","en":"English","correct":"correct English","choices":["4 English options"]}
-- mcq_en_it:      {"type":"mcq_en_it","en":"English","it":"target language","correct":"correct target language","choices":["4 target language options"]}
-- listen_mcq:     {"type":"listen_mcq","it":"target language","correct":"correct English","choices":["4 English options"]}
+- mcq_it_en:      {"type":"mcq_it_en","it":"target language","en":"${S}","correct":"correct ${S}","choices":["4 ${S} options"]}
+- mcq_en_it:      {"type":"mcq_en_it","en":"${S}","it":"target language","correct":"correct target language","choices":["4 target language options"]}
+- listen_mcq:     {"type":"listen_mcq","it":"target language","correct":"correct ${S}","choices":["4 ${S} options"]}
 - listen_type:    {"type":"listen_type","it":"target language","correct":"target language word"}
-- read_translate: {"type":"read_translate","it":"target language sentence","en":"English","correct":"correct English","choices":["4 English options"]}
-- order:          {"type":"order","it":"target language sentence","en":"English"}
+- read_translate: {"type":"read_translate","it":"target language sentence","en":"${S}","correct":"correct ${S}","choices":["4 ${S} options"]}
+- order:          {"type":"order","it":"target language sentence","en":"${S}"}
 
 Rules:
 - Fix translation errors, wrong choices, incorrect pronunciations
@@ -284,6 +288,7 @@ Rules:
 - For order type: do NOT include words[] — the app derives it automatically from "it"
 - Keep the same topic and difficulty level
 - Return exactly as many items as given`;
+}
 
 // ── JSON helpers ──────────────────────────────────────────────────────
 function stripRaw(raw) {
@@ -322,9 +327,6 @@ function salvageArray(raw) {
 }
 
 // ── LLM backends ──────────────────────────────────────────────────────
-// TODO: add support for external API services (Anthropic, OpenAI, Groq etc.)
-// by implementing callExternalAPI() and routing through callLLM/callLLMLesson.
-
 function callOllamaRaw(model, system, userMsg, maxTokens) {
   const call = new Promise((resolve, reject) => {
     const u = new URL('/api/chat', OLLAMA_HOST);
@@ -366,7 +368,6 @@ function callOllamaRaw(model, system, userMsg, maxTokens) {
 }
 
 // Release a model from VRAM so the next model can load cleanly.
-// Called between story/translation and lesson steps when models differ.
 function releaseOllamaModel(model) {
   return new Promise(resolve => {
     const u = new URL('/api/chat', OLLAMA_HOST);
@@ -416,20 +417,44 @@ async function withRetry(label, fn, retries = 3, delay = 800) {
 const isPunct = t => /^[.,!?;:()\[\]"'«»—–]+$/.test(t.trim());
 const normSpaces = str => str.trim().replace(/ ([.,!?;:()\[\]])/g, '$1');
 
-// Languages where words are not space-separated — split by character/syllable instead
+// Languages where words are not space-separated
 const CJK_LANGS = new Set(['ja','zh','ko']);
 
-// Derive words[] from sentence — space-split for European, char-split for CJK
+// Tokenise a Japanese/Chinese sentence into meaningful word-sized chunks.
+// Handles the kanji[よみ] annotation format used in lessons.
+// Each kanji+reading group → one token; runs of kana/latin between them → split on 2-char chunks.
 function deriveSentenceWords(s, lang) {
   if (lang && CJK_LANGS.has(lang)) {
-    // Split CJK sentences into individual characters (each is a meaningful unit for drag-ordering)
-    s.words = [...s.it].filter(c => /\S/.test(c) && !isPunct(c));
-    // If too granular (>12 chars), group into 2-char chunks for usability
-    if (s.words.length > 12) {
-      const chars = s.words;
-      s.words = [];
-      for (let i = 0; i < chars.length; i += 2)
-        s.words.push(chars.slice(i, i+2).join(''));
+    if (lang === 'ja') {
+      // Split on furigana-annotated groups: kanji[reading] and bare kana runs
+      // Pattern: either a kanji+bracket group, or a run of non-kanji non-bracket characters
+      const raw = s.it;
+      const tokens = [];
+      // Regex: match kanji[reading] groups OR runs of other non-whitespace chars
+      const re = /[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+\[[^\]]+\]|[\u3040-\u30ff\uff00-\uffef\u0021-\u007ea-zA-Z0-9]+|[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+/g;
+      let m;
+      while ((m = re.exec(raw)) !== null) {
+        const tok = m[0];
+        if (tok.length > 0) tokens.push(tok);
+      }
+      // If too many tokens, merge adjacent non-kanji kana runs pairwise
+      if (tokens.length > 14) {
+        const merged = [];
+        for (let i = 0; i < tokens.length; i += 2)
+          merged.push(tokens[i] + (tokens[i+1] || ''));
+        s.words = merged;
+      } else {
+        s.words = tokens;
+      }
+    } else {
+      // Chinese/Korean: split by character pairs
+      s.words = [...s.it].filter(c => /\S/.test(c) && !isPunct(c));
+      if (s.words.length > 12) {
+        const chars = s.words;
+        s.words = [];
+        for (let i = 0; i < chars.length; i += 2)
+          s.words.push(chars.slice(i, i+2).join(''));
+      }
     }
   } else {
     s.words = s.it.split(' ').filter(t => !isPunct(t));
@@ -437,10 +462,11 @@ function deriveSentenceWords(s, lang) {
   return s;
 }
 
-// Translation prompt — used to auto-translate a target-language story to English
-function sysTranslation(lang) {
+// Translation prompt — translate a story to the source language
+function sysTranslation(lang, srcLang) {
   const L = langName(lang);
-  return `You are a professional translator. Translate the following ${L} text into natural, fluent English. Translate sentence by sentence in the same order. Output only the English translation — no explanations, no original text, no markdown.`;
+  const S = langName(srcLang || 'en');
+  return `You are a professional translator. Translate the following ${L} text into natural, fluent ${S}. Translate sentence by sentence in the same order. Output only the ${S} translation — no explanations, no original text, no markdown.`;
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
@@ -508,7 +534,6 @@ async function generateStorylineTitle(topics, stories) {
   let parsed;
   try { parsed = JSON.parse(raw); }
   catch(e) {
-    // Try extracting JSON object from response if model added surrounding text
     const m = raw.match(/\{[\s\S]*\}/);
     if (m) { parsed = JSON.parse(m[0]); console.log('  (extracted JSON from response)'); }
     else throw new Error('Could not parse JSON from model response: ' + raw.slice(0,80));
@@ -535,25 +560,24 @@ async function generateErrorHunt(story, lang, difficulty, jobId) {
   }
   const edits = (parsed.edits || []).filter(e =>
     e.find && e.replace &&
-    e.find !== e.replace &&                          // must actually change something
-    e.find.trim() !== e.replace.trim() &&            // not just whitespace difference
+    e.find !== e.replace &&
+    e.find.trim() !== e.replace.trim() &&
     ['spelling','grammar'].includes(e.type) &&
     story.includes(e.find)
   );
   if (edits.length === 0) throw new Error('Error-hunt: no valid edits produced (all find===replace or not found in story)');
-  // Apply edits to produce corruptedStory — replace each find with replace (first occurrence)
   let corruptedStory = story;
   const appliedEdits = [];
   for (const e of edits) {
-    if (!corruptedStory.includes(e.find)) continue; // skip if already replaced by earlier edit
-    if (e.find === e.replace) continue;              // extra guard: skip no-ops
+    if (!corruptedStory.includes(e.find)) continue;
+    if (e.find === e.replace) continue;
     corruptedStory = corruptedStory.replace(e.find, e.replace);
     appliedEdits.push({ type: e.type, find: e.find, replace: e.replace, reason: e.reason || '' });
   }
   if (appliedEdits.length === 0) throw new Error('Error-hunt: all edits were no-ops after applying');
   console.log(`    Error-hunt: ${appliedEdits.length} edits applied (${appliedEdits.map(e=>e.type).join(', ')})`);
   const noOps = (parsed.edits||[]).filter(e=>e.find&&e.find===e.replace);
-  if (noOps.length) console.warn(`    Error-hunt: ${noOps.length} no-op edits discarded (find===replace): ${noOps.map(e=>e.find).join(', ')}`);
+  if (noOps.length) console.warn(`    Error-hunt: ${noOps.length} no-op edits discarded: ${noOps.map(e=>e.find).join(', ')}`);
   return {
     lesson: {
       id: 4, type: 'error_hunt',
@@ -568,7 +592,7 @@ async function generateErrorHunt(story, lang, difficulty, jobId) {
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
-async function generateOneLesson(lang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
+async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
   opts = opts || {};
   const { userTranslation, userDialect, styleHint } = opts;
   const useTable = OLLAMA_LESSON_FORMAT === 'table';
@@ -578,28 +602,27 @@ async function generateOneLesson(lang, topic, lessonNum, totalLessons, prevVocab
 
   if (userTranslation) {
     if (useTable) {
-      // Table extraction mode with translation
-      sysPrompt = sysLessonTable(lang, lessonNum, totalLessons, difficulty, userDialect);
+      sysPrompt = sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, userDialect);
       const prevHint = prevVocab.length
         ? `\nAvoid repeating these already-covered words: ${prevVocab.map(v=>v.it).join(', ')}`
         : '';
-      userMsg = `Topic: "${topic}". Extract vocabulary and sentences from this story and its translation.\n\nSTORY:\n${story}\n\nENGLISH TRANSLATION:\n${userTranslation}${prevHint}`;
+      userMsg = `Topic: "${topic}". Extract vocabulary and sentences from this story and its translation.\n\nSTORY:\n${story}\n\n${langName(srcLang||'en').toUpperCase()} TRANSLATION:\n${userTranslation}${prevHint}`;
     } else {
-      sysPrompt = sysLessonFromText(lang, lessonNum, totalLessons, difficulty, userDialect);
+      sysPrompt = sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, userDialect);
       const prevHint = prevVocab.length
         ? `\nVocabulary already used in earlier lessons (avoid repeating these):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
         : '';
-      userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.\n\nSTORY (${langName(lang)}):\n${story}\n\nENGLISH TRANSLATION:\n${userTranslation}${prevHint}\n\nReturn only the JSON object.`;
+      userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.\n\nSTORY (${langName(lang)}):\n${story}\n\n${langName(srcLang||'en').toUpperCase()} TRANSLATION:\n${userTranslation}${prevHint}\n\nReturn only the JSON object.`;
     }
   } else if (useTable) {
-    sysPrompt = sysLessonTable(lang, lessonNum, totalLessons, difficulty, userDialect);
+    sysPrompt = sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, userDialect);
     const prevHint = prevVocab.length
       ? `\nAvoid repeating these already-covered words: ${prevVocab.map(v=>v.it).join(', ')}`
       : '';
     const storyHint = story ? `\n\nContext story:\n${story.slice(0, 600)}` : '';
     userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}`;
   } else {
-    sysPrompt = sysLesson(lang, lessonNum, totalLessons, difficulty, styleHint, userDialect);
+    sysPrompt = sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, userDialect);
     const prevHint = prevVocab.length
       ? `\nVocabulary already covered in earlier lessons (do NOT repeat these):\n${prevVocab.map(v => v.it + ' = ' + v.en).join(', ')}`
       : '';
@@ -666,9 +689,10 @@ async function generateOneLesson(lang, topic, lessonNum, totalLessons, prevVocab
 }
 
 // ── Generate all lessons ──────────────────────────────────────────────
-async function generate(topic, lang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
+async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
   const { userStory, userTranslation, userDialect } = userOpts;
+  srcLang = srcLang || 'en';
   const userTopic = topic;
   const genStart = Date.now();
   let totalPromptTokens = 0, totalCompletionTokens = 0;
@@ -697,7 +721,6 @@ async function generate(topic, lang, difficulty, continuedFrom, storyLen, jobId,
     console.log(`    Using user-provided story (${story.length} chars)${userTranslation?' + translation':''}${userDialect?', dialect: '+userDialect:''}`);
   } else {
     const prevStoryFull = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
-    // Use only the tail of the previous story to keep prompt size manageable
     const prevStory = prevStoryFull
       ? prevStoryFull.slice(-OLLAMA_MAX_PREV_STORY)
       : null;
@@ -727,14 +750,14 @@ async function generate(topic, lang, difficulty, continuedFrom, storyLen, jobId,
     OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL;
 
   if (shouldAutoTranslate) {
-    jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Translating story to English…`);
+    jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Translating story to ${langName(srcLang)}…`);
     try {
       const t0 = Date.now();
       const { text, promptTokens, completionTokens } = await callLLMTranslation(
-        sysTranslation(lang), story, Math.min(2048, Math.ceil(story.length * 1.2)));
+        sysTranslation(lang, srcLang), story, Math.min(2048, Math.ceil(story.length * 1.2)));
       storyTranslation = text.trim();
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
-      console.log(`    [${OLLAMA_TRANSLATION_MODEL}] Translation (${lang}→en): ${Date.now()-t0}ms, ${storyTranslation.length} chars`);
+      console.log(`    [${OLLAMA_TRANSLATION_MODEL}] Translation (${lang}→${srcLang}): ${Date.now()-t0}ms, ${storyTranslation.length} chars`);
     } catch(e) {
       console.warn('  Translation failed, falling back to context-only mode:', e.message);
       storyTranslation = null;
@@ -754,7 +777,6 @@ async function generate(topic, lang, difficulty, continuedFrom, storyLen, jobId,
   const lessons = [];
 
   if (difficulty === 4) {
-    // Error-hunt lesson — single lesson of type error_hunt
     try {
       const { lesson, tokens } = await generateErrorHunt(story, lang, 3, jobId);
       lessons.push(lesson);
@@ -771,7 +793,7 @@ async function generate(topic, lang, difficulty, continuedFrom, storyLen, jobId,
     for (let i = 1; i <= TOTAL; i++) {
       try {
         const { lesson, tokens } = await generateOneLesson(
-          lang, topic, i, TOTAL, prevVocab, story, difficulty, jobId, lessonOpts);
+          lang, srcLang, topic, i, TOTAL, prevVocab, story, difficulty, jobId, lessonOpts);
         lessons.push(lesson);
         prevVocab = prevVocab.concat(lesson.vocab);
         totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
@@ -793,7 +815,7 @@ async function generate(topic, lang, difficulty, continuedFrom, storyLen, jobId,
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
   return {
     topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
-    userTopic, lang, difficulty: difficulty || 2, storyLen,
+    userTopic, lang, srcLang, difficulty: difficulty || 2, storyLen,
     story, storyLang, storyPrompt,
     ...(storyTranslation ? { storyTranslation } : {}),
     ...(userStory        ? { userStory }         : {}),
@@ -828,13 +850,14 @@ async function repairLesson(topic, lessonId, jobId) {
   });
   if (flaggedEntries.length === 0) throw new Error('No flagged exercises found for this lesson');
   const lang = saved.lang || 'it';
+  const srcLang = saved.srcLang || 'en';
   const flaggedExercises = flaggedEntries.map(([, v]) => ({ ...v, _userComment: v.comment || undefined }));
   const BATCH_SIZE = 4;
   const batches = [];
   for (let i = 0; i < flaggedExercises.length; i += BATCH_SIZE)
     batches.push({ exercises: flaggedExercises.slice(i, i + BATCH_SIZE),
                    entries:   flaggedEntries.slice(i, i + BATCH_SIZE) });
-  console.log(`  Repairing ${flaggedExercises.length} exercise(s) in "${topic}" lesson ${lessonId} (${batches.length} batch${batches.length>1?'es':''})…`);
+  console.log(`  Repairing ${flaggedExercises.length} exercise(s) in "${topic}" lesson ${lessonId} (${batches.length} batch${batches.length>1?'es':''})`);
   function mergeRepaired(repaired) {
     if (['order','read_translate'].includes(repaired.type) && repaired.it) {
       const idx = lesson.sentences.findIndex(s =>
@@ -856,6 +879,7 @@ async function repairLesson(topic, lessonId, jobId) {
   let repairPromptTokens = 0, repairCompletionTokens = 0;
   let totalRepaired = 0;
   const clearedKeys = [];
+  const SYS_REPAIR = sysSrcRepair(srcLang);
   for (let b = 0; b < batches.length; b++) {
     const batch = batches[b];
     if (jobId) jobStep(jobId, `Repairing batch ${b+1}/${batches.length}…`);
@@ -863,7 +887,7 @@ async function repairLesson(topic, lessonId, jobId) {
       ? '\nNote: some exercises include user comments. Pay close attention to these.' : '';
     const vocabRef = lesson.vocab.map(v=>`${v.it} = ${v.en}`).join(', ');
     const sentRef  = lesson.sentences.map(s=>s.it).join(' | ');
-    const userMsg = `Language: ${langName(lang)}. Topic: "${topic}".
+    const userMsg = `Language: ${langName(lang)}. Source language: ${langName(srcLang)}. Topic: "${topic}".
 Reference vocabulary for this lesson (use ONLY these ${langName(lang)} words/phrases as the basis for corrections):
 ${vocabRef}
 Reference sentences:
@@ -925,9 +949,6 @@ function pingOllama() {
   });
 }
 async function warmupOllama() {
-  // Only warm up the story model — the lesson/translation models load on first use.
-  // Warming up all models simultaneously can evict each other on GPUs with limited VRAM,
-  // causing the first real generation call to time out while the model reloads.
   const model = OLLAMA_MODEL;
   process.stdout.write(`  Warming up ${model}… `);
   await new Promise(resolve => {
@@ -1007,6 +1028,7 @@ async function boot() {
     if (M === 'GET' && url.pathname === '/api/lessons') {
       const list = store.lessons.map(l => ({
         topic: l.topic, topicEmoji: l.topicEmoji, lang: l.lang || 'it',
+        srcLang: l.srcLang || 'en',
         difficulty: l.difficulty || 2,
         storyLen: l.storyLen || 300,
         continuedFrom: l.continuedFrom || null,
@@ -1096,14 +1118,13 @@ async function boot() {
         data: job.data, error: job.error });
     }
 
-    // ── Generate (now async — returns jobId immediately) ─────────────
+    // ── Generate (async — returns jobId immediately) ─────────────
     if (M === 'POST' && url.pathname === '/api/generate') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { topic, lang, difficulty, storyLen, continuedFrom, forceRegenerate,
+      const { topic, lang, srcLang, difficulty, storyLen, continuedFrom, forceRegenerate,
               userStory, userTranslation, userDialect } = body;
-      // For error-hunt (diff=4) with continuedFrom, topic can be omitted — use the source topic
       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
         : (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
@@ -1122,13 +1143,14 @@ async function boot() {
         return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
       const jobId = newJob();
       generatingTopics.add(topicKey);
+      const resolvedSrcLang = srcLang || 'en';
       const userOpts = {
         userStory:       userStory       ? String(userStory).trim()       : null,
         userTranslation: userTranslation ? String(userTranslation).trim() : null,
         userDialect:     userDialect     ? String(userDialect).trim()     : null,
       };
-      console.log(`  Generating: "${topic}" (${langName(lang||'it')}) diff=${diff} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
-      generate(topic.trim(), lang || 'it', diff, contFrom, wc, jobId, userOpts).then(data => {
+      console.log(`  Generating: "${topic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
+      generate(topic.trim(), lang || 'it', resolvedSrcLang, diff, contFrom, wc, jobId, userOpts).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         jobDone(jobId, { ...data, fromCache: false });
@@ -1141,7 +1163,7 @@ async function boot() {
       return json(res, 202, { jobId });
     }
 
-    // ── Repair (now async — returns jobId immediately) ────────────────
+    // ── Repair (async — returns jobId immediately) ────────────────
     if (M === 'POST' && url.pathname === '/api/repair') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
@@ -1219,15 +1241,12 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      // Accept either {lessons:[...]} or a raw array
       const incoming = Array.isArray(body) ? body : body.lessons;
       if (!Array.isArray(incoming) || incoming.length === 0)
         return json(res, 400, { error: 'Expected {lessons:[...]} or a non-empty array' });
-      // Validate minimally — each entry needs topic + lessons array
       const invalid = incoming.filter(l => !l.topic || !Array.isArray(l.lessons));
       if (invalid.length)
         return json(res, 400, { error: `${invalid.length} entries missing topic or lessons` });
-      // Merge: upsert each imported lesson preserving existing entries not in import
       let added = 0, updated = 0;
       for (const l of incoming) {
         const exists = findSaved(l.topic);
