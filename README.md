@@ -19,6 +19,10 @@ https://raim.github.io/dreizunge/
 
 The slim models qwen2.5:7b and translategemma both work well.
 
+NOTE: use translategemma for rarer languages, but use qwen for
+Asian languages.
+
+
 ```bash
 # 1. Install Ollama on Xubuntu 24.04
 curl -fsSL https://ollama.com/install.sh | sh

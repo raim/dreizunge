@@ -93,8 +93,8 @@ const cleanedLessons = lessonsData.lessons.map(topic => {
 
   const cleanTopic = { ...topic, lessons: topic.lessons.map(lesson => ({
     ...lesson,
-    vocab: (lesson.vocab || []).filter(v => !flaggedContent.has(contentSlug(v.it))),
-    sentences: (lesson.sentences || []).filter(s => !flaggedContent.has(contentSlug(s.it))),
+    vocab: (lesson.vocab || []).filter(v => !flaggedContent.has(contentSlug(v.target))),
+    sentences: (lesson.sentences || []).filter(s => !flaggedContent.has(contentSlug(s.target))),
   }))};
   return cleanTopic;
 });
@@ -145,9 +145,8 @@ function repopulateContinueSelect(){
   const prev=contSel.value;
   contSel.innerHTML='<option value="">\u2014 new story \u2014</option>'+
     filtered.map(s=>{
-      const sL=LANGS[s.lang||'it']||LANGS.it;
-      const langTag=showAll&&(s.lang||'it')!==curLang?' ['+sL.name+']':'';
-      return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+sL.flag+' '+s.topic+langTag+'</option>';
+      const langTag=showAll&&(s.lang||'it')!==curLang?' ['+tL.name+']':'';
+      return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+tL.flag+' '+s.topic+langTag+'</option>';
     }).join('');
   if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
 }
@@ -155,7 +154,8 @@ function repopulateContinueSelect(){
 
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
-  selectLang(APP.lang);
+  APP.libFilter='all'; APP.libSrcFilter='all';
+  selectLang(APP.lang, true);
   restoreDiffSelect();
   renderPill();
   loadSavedList();
@@ -165,11 +165,12 @@ async function init() {
 
 function renderPill() {
   const pill=document.getElementById('bpill'), lbl=document.getElementById('blbl');
-  document.getElementById('bmodel').textContent = '';
-  pill.className = 'bpill none';
-  lbl.textContent = 'Static — built-in lessons only';
-  document.getElementById('gen-btn').disabled = true;
-  document.getElementById('topic-input').disabled = true;
+  const bmodel=document.getElementById('bmodel');
+  if(bmodel) bmodel.textContent = '';
+  if(pill) pill.className = 'bpill none';
+  if(lbl) lbl.textContent = 'Static — built-in lessons only';
+  const genBtn=document.getElementById('gen-btn'); if(genBtn) genBtn.disabled = true;
+  const topicInp=document.getElementById('topic-input'); if(topicInp) topicInp.disabled = true;
   // C5: replace generation form with static info message
   const _tf = document.querySelector('.topic-form');
   if (_tf && !document.getElementById('static-gen-overlay')) {
@@ -182,8 +183,8 @@ function renderPill() {
     _tf.parentNode.replaceChild(_ov, _tf);
   }
   const note=document.getElementById('offline-note');
-  note.style.display='block';
-  note.innerHTML='📦 Static version — select a topic below to start<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>';
+  if(note){ note.style.display='block';
+  note.innerHTML='📦 Static version — select a topic below to start<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>'; }
 
   // Show flagged-lessons reminder if this build stripped flagged exercises
   // Limit lang dropdown to languages that have lessons in this build
@@ -197,12 +198,17 @@ function renderPill() {
       if(first){ sel.value=first; APP.lang=first; saveLang(); }
     }
   }
-  // Gray out src-lang-select — no generation in static mode, so it doesn't matter
-  const srcSel=document.getElementById('src-lang-select');
-  if(srcSel){ srcSel.disabled=true; srcSel.title='Source language has no effect in static mode (no generation)'; }
+  // In static mode the From/To selectors act as library filters, not generation controls.
+  // Relabel them to reflect browse-only purpose.
+  const langPairRow=document.querySelector('.lang-pair-row');
+  if(langPairRow){
+    const cols=langPairRow.querySelectorAll('.lang-pair-col');
+    if(cols[0]){ const lbl=cols[0].querySelector('.form-lbl'); if(lbl) lbl.textContent='🗣️ From'; }
+    if(cols[1]){ const lbl=cols[1].querySelector('.form-lbl'); if(lbl) lbl.textContent='📖 To'; }
+  }
   // Disable user-story checkboxes — generation not available in static mode
   const useStoryCb=document.getElementById('use-story-cb');
-  if(useStoryCb){ useStoryCb.disabled=true; useStoryCb.closest('.user-story-check-row').style.opacity='0.4'; useStoryCb.closest('.user-story-check-row').title='Story input requires the live server'; }
+  if(useStoryCb){ useStoryCb.disabled=true; const _ucr=useStoryCb.closest('.user-story-check-row'); if(_ucr){ _ucr.style.opacity='0.4'; _ucr.title='Story input requires the live server'; } }
   // Gray out controls that have no effect in static mode
   const diffSel=document.getElementById('diff-select');
   if(diffSel){ diffSel.disabled=true; diffSel.title='Difficulty selection has no effect in static mode'; }
@@ -225,20 +231,28 @@ async function loadSavedList() {
   const filterEl=document.getElementById('lib-filter');
   if(filterEl){
     if(hasMultiLang){
-      const activeL=LANGS[APP.libFilter]||null;
-      const prevL=LANGS[APP.prevLangFilter]||null;
-      filterEl.innerHTML=(APP.libFilter==='all'
-        ? \`<button class="lib-filter-btn active">🌐 All languages</button>\`+
-          (prevL ? \`<button class="lib-filter-btn" onclick="setLibFilter('\${APP.prevLangFilter}')" title="Back to \${prevL.name}">↩ \${prevL.flag} \${prevL.name}</button>\` : '')
-        : \`<button class="lib-filter-btn active">\${activeL?activeL.flag+' '+activeL.name:APP.libFilter.toUpperCase()}</button>\`+
-          \`<button class="lib-filter-btn" onclick="setLibFilter('all')">🌐 All</button>\`
+      // Show which filter is active (target lang, source lang, or all)
+      const activeTgt=APP.libFilter!=='all'?LANGS[APP.libFilter]:null;
+      const activeSrc=APP.libSrcFilter!=='all'?LANGS[APP.libSrcFilter]:null;
+      const activeAny=activeTgt||activeSrc;
+      const activeLabel=activeTgt
+        ? (activeTgt.flag+' '+activeTgt.name+' (to)')
+        : activeSrc ? (activeSrc.flag+' '+activeSrc.name+' (from)') : '';
+      filterEl.innerHTML=(!activeAny
+        ? \`<button class="lib-filter-btn active">🌐 All languages</button>\`
+        : \`<button class="lib-filter-btn active">\${activeLabel}</button>\`+
+          \`<button class="lib-filter-btn" onclick="APP.libFilter='all';APP.libSrcFilter='all';loadSavedList()">🌐 All</button>\`
       );
     } else {
       filterEl.innerHTML='';
     }
   }
 
-  const filtered=APP.libFilter==='all'?saved:saved.filter(s=>(s.lang||'it')===APP.libFilter);
+  const filtered=saved.filter(s=>{
+    if(APP.libFilter!=='all' && (s.lang||'it')!==APP.libFilter) return false;
+    if(APP.libSrcFilter!=='all' && (s.srcLang||'en')!==APP.libSrcFilter) return false;
+    return true;
+  });
   document.getElementById('lib-cnt').textContent=
     filtered.length+' of '+saved.length+' topic'+(saved.length!==1?'s':'');
   const list=document.getElementById('saved-list');
@@ -267,7 +281,6 @@ async function loadSavedList() {
   const orphans=filtered.filter(l=>!inChain.has(l.topic));
 
   function itemHtml(s, connector) {
-    const sL=LANGS[s.lang||'it']||LANGS.it;
     const t=encTopic(s.topic);
     const d=s.difficulty||2;
     const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
@@ -282,12 +295,14 @@ async function loadSavedList() {
     const escapedTopic=s.topic.replace(/"/g,'&quot;');
     const escapedTopicSq=s.topic.replace(/'/g,"\\'");
     const sid='si-'+t.replace(/[^a-z0-9]/gi,'').slice(0,20)+Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+    const tL=LANGS[s.lang||'it']||LANGS.it;
+    const srcL=LANGS[s.srcLang||'en']||{flag:'🇬🇧',name:'English'};
     return \`<div class="saved-item-wrap">
       <div class="saved-item" onclick="loadSaved('\${t}')">
-        \${conn}<span class="saved-emoji">\${sL.flag} \${s.topicEmoji||'📚'}</span>
+        \${conn}<span class="saved-emoji">\${tL.flag} \${s.topicEmoji||'📚'}</span>
         <div class="saved-info">
           <div class="saved-topic">\${s.topic} \${diffBadge}</div>
-          <div class="saved-meta">\${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
+          <div class="saved-meta"><span class=\"lang-pair-badge\" title=\"\${srcL.name} → \${tL.name}\">\${srcL.flag}→\${tL.flag}</span> \${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
         </div>
         <div class="saved-actions" onclick="event.stopPropagation()">
           <button class="ico-btn export" title="Export lesson with flags"
@@ -337,8 +352,8 @@ async function loadSavedList() {
     const chainNewest=newestOf(chain);
     const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
     const hdrTitle=hasTitle
-      ? '<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
-      : '<span class="storyline-title"><span>'+(LANGS[byTopic[chain[0]]?.lang||'it']||LANGS.it).flag+'</span><span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
+      ? '<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
+      : '<span class="storyline-title">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
     html+='<div class="storyline-hdr" id="slhdr-'+chainId+'">'+hdrTitle
       +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px;margin-left:auto" title="Export full story line with flags"'
@@ -409,6 +424,25 @@ const staticOverrides = [
   'function regenCurrent(){}',
   'async function doGenerate(){}',
   'async function submitRating(){}',
+  '// In static mode selectors filter the library; only one filter active at a time.',
+  '// Selecting a source lang clears the target filter and vice versa.',
+  'function selectSrcLang(code){',
+  '  APP.srcLang=code; saveSrcLang();',
+  '  const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code;',
+  '  APP.libSrcFilter=code; APP.libFilter="all";',  // only src filter active
+  '  const tsel=document.getElementById("lang-select"); if(tsel) tsel.value=APP.lang;', // reset visual
+  '  loadSavedList();',
+  '}',
+  'function selectLang(code, silent){',
+  '  APP.lang=code; saveLang();',
+  '  const sel=document.getElementById("lang-select"); if(sel&&sel.value!==code) sel.value=code;',
+  '  if(!silent){ APP.libFilter=code; APP.libSrcFilter="all"; loadSavedList(); }',  // only tgt filter active
+  '}',
+  'function setLibFilter(lang){',
+  '  APP.libFilter=lang; APP.libSrcFilter="all";',
+  '  if(lang!=="all"){ APP.lang=lang; saveLang(); const sel=document.getElementById("lang-select"); if(sel) sel.value=lang; }',
+  '  loadSavedList();',
+  '}',
   'function importLessons(input){',
   '  const file=input.files[0]; if(!file)return;',
   '  input.value="";',
@@ -459,7 +493,7 @@ const staticOverrides = [
   'function renderStoryText(d,targetEl){',
   '  const body=targetEl||document.getElementById("story-body"); if(!body)return;',
   '  // Highlight all vocab words (static: no completion gating)',
-  '  const vocabWords=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.it).filter(Boolean).sort((a,b)=>b.length-a.length);',
+  '  const vocabWords=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.target).filter(Boolean).sort((a,b)=>b.length-a.length);',
   '  const escHtml=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");',
   '  let escaped=escHtml(d.story||"");',
   '  if(vocabWords.length){',
@@ -531,13 +565,13 @@ fs.writeFileSync(outputFile, output, 'utf8');
 
 // ── Report ─────────────────────────────────────────────────────────────
 const LANG_NAMES = {
-  it:'Italian',fr:'French',de:'German',es:'Spanish',pt:'Portuguese',
+  target:'Italian',fr:'French',de:'German',es:'Spanish',pt:'Portuguese',
   nl:'Dutch',pl:'Polish',sv:'Swedish',ja:'Japanese',zh:'Mandarin',
   ar:'Arabic',ru:'Russian',ko:'Korean',tr:'Turkish',hi:'Hindi',
 };
 const langSummary = langCodes.map(c => LANG_NAMES[c]||c).join(', ');
 const topicLines  = lessonsData.lessons.map(l => {
-  const flag = {it:'🇮🇹',fr:'🇫🇷',de:'🇩🇪',es:'🇪🇸',pt:'🇵🇹',
+  const flag = {target:'🇮🇹',fr:'🇫🇷',de:'🇩🇪',es:'🇪🇸',pt:'🇵🇹',
                 nl:'🇳🇱',pl:'🇵🇱',sv:'🇸🇪',ja:'🇯🇵',zh:'🇨🇳',
                 ar:'🇸🇦',ru:'🇷🇺',ko:'🇰🇷',tr:'🇹🇷',hi:'🇮🇳',lb:'🇱🇺'}[l.lang||'it']||'🌐';
   return `  • ${flag} ${l.topicEmoji||'📚'} ${l.topic}`;
