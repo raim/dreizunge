@@ -35,6 +35,12 @@ node server.js
 
 # Or set the model explicitly:
 OLLAMA_MODEL=qwen2.5:7b node server.js
+
+# For languages that qwen doesn't speak, translategemma
+# works better: set explicitly
+OLLAMA_TRANSLATION_MODEL=translategemma OLLAMA_MODEL=qwen2.5:7b node server.js
+
+
 ```
 **When finished, don't forget to stop the model and free up your RAM:**
 
