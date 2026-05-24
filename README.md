@@ -37,7 +37,7 @@ node server.js
 OLLAMA_MODEL=qwen2.5:7b node server.js
 
 # For languages that qwen doesn't speak, translategemma
-# works better: set explicitly
+# works better, e.g. Letzebuergesch or Swahili: set explicitly
 OLLAMA_TRANSLATION_MODEL=translategemma OLLAMA_MODEL=qwen2.5:7b node server.js
 
 
