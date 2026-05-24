@@ -701,9 +701,9 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
       s.target && s.source && s.target.trim().toLowerCase() === s.source.trim().toLowerCase()
     ).length;
     if (vocabSameCount > 2)
-      throw new Error(`${vocabSameCount} vocab items have identical it/en fields — model ignored source language, retrying`);
+      throw new Error(`${vocabSameCount} vocab items have identical source/target fields — model ignored source language, retrying`);
     if (sentSameCount > 1)
-      throw new Error(`${sentSameCount} sentences have identical it/en fields — model ignored source language, retrying`);
+      throw new Error(`${sentSameCount} sentences have identical source/target fields — model ignored source language, retrying`);
 
     return {
       lesson: {
