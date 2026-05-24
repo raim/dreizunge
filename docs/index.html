@@ -218,9 +218,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .vocab-hdr{font-size:11px;font-weight:900;color:var(--gray);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}
 .vrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1.5px solid var(--gray-mid)}
 .vrow:last-child{border:none}
-.vit{font-size:14px;font-weight:800;color:var(--blue);cursor:pointer}
-.vit:hover{text-decoration:underline}
-.ven{font-size:13px;color:var(--gray-dark);font-weight:600}
+.vtarget{font-size:14px;font-weight:800;color:var(--blue);cursor:pointer}
+.vtarget:hover{text-decoration:underline}
+.vsource{font-size:13px;color:var(--gray-dark);font-weight:600}
 .vpron{font-size:10px;color:var(--gray);font-style:italic}
 .cont-btn{width:100%;padding:15px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius-lg);font-size:16px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 5px 0 var(--green-dark);margin-bottom:10px;transition:transform .1s,box-shadow .1s}
 .cont-btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
@@ -30343,7 +30343,13 @@ function renderEx(){
     '<div class="flag-comment-wrap'+(alreadyFlagged?' visible':'')+'" id="flag-comment-wrap">'+
       '<textarea class="flag-comment" id="flag-comment-input" rows="2" placeholder="Optional: describe what is wrong…" onblur="saveComment()">'+existingComment+'</textarea>'+
     '</div>';
-  if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>speak(ex.target),350);
+  if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>{
+    if(_ttsUnlocked){ speak(ex.target); }
+    else {
+      // iOS: audio not unlocked yet — pending speak will fire on first tap (which will also hit the listen button)
+      _ttsPendingAfterUnlock={text:ex.target,rate:undefined};
+    }
+  },350);
 }
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
@@ -30590,16 +30596,49 @@ function _doSpeak(text,rate){
   setTimeout(()=>speechSynthesis.speak(u), 50);
 }
 
-function speak(text,rate){
+// iOS and some Android browsers require speechSynthesis to be triggered from a user gesture.
+// We track whether the audio context has been unlocked by a tap.
+let _ttsUnlocked = false;
+let _ttsPendingAfterUnlock = null;
+
+function _unlockTts() {
+  if (_ttsUnlocked) return;
+  _ttsUnlocked = true;
+  // Fire a silent utterance to unlock the audio pipeline on iOS
+  const u = new SpeechSynthesisUtterance('');
+  u.volume = 0;
+  speechSynthesis.speak(u);
+  if (_ttsPendingAfterUnlock) {
+    const {text, rate} = _ttsPendingAfterUnlock;
+    _ttsPendingAfterUnlock = null;
+    setTimeout(() => _doSpeak(text, rate), 150);
+  }
+}
+// Unlock on first tap anywhere
+document.addEventListener('touchend', _unlockTts, {once: true, passive: true});
+document.addEventListener('click',    _unlockTts, {once: true, passive: true});
+
+function speak(text, rate){
   if(!window.speechSynthesis) return;
-  const voices=speechSynthesis.getVoices();
-  if(voices.length>0){
-    _doSpeak(text,rate);
+  const voices = speechSynthesis.getVoices();
+  const proceed = () => {
+    // On iOS, auto-speak (not from a direct tap) will be silently blocked if not unlocked yet.
+    // Store it as pending and let the next user tap fire it.
+    if(!_ttsUnlocked){
+      _ttsPendingAfterUnlock = {text, rate};
+      return;
+    }
+    _doSpeak(text, rate);
+  };
+  if(voices.length > 0){
+    proceed();
   } else {
-    speechSynthesis.addEventListener('voiceschanged',function h(){
-      speechSynthesis.removeEventListener('voiceschanged',h);
-      _doSpeak(text,rate);
-    },{once:true});
+    speechSynthesis.addEventListener('voiceschanged', function h(){
+      speechSynthesis.removeEventListener('voiceschanged', h);
+      proceed();
+    }, {once: true});
+    // iOS sometimes never fires voiceschanged — fall back after 1s
+    setTimeout(() => { if(!_ttsUnlocked) proceed(); }, 1000);
   }
 }
 
