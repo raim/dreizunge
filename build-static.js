@@ -16,6 +16,7 @@
 
 const fs   = require('fs');
 const path = require('path');
+const UI_FILE = path.join(__dirname, 'ui.json');
 
 const lessonsFile = process.argv[2] || path.join(__dirname, 'lessons.json');
 const outputDir   = process.argv[3] || path.join(__dirname, 'docs');
@@ -68,6 +69,13 @@ const initCallLine     = findLine('init();', engineStart);
 
 const part1 = lines.slice(0, serverFuncsStart).join('\n');
 const part2 = lines.slice(engineStart, initCallLine).join('\n');
+
+// Build UI strings injection — runs in Node.js, bakes all languages into page
+let _uiStringsAll = {};
+try { _uiStringsAll = JSON.parse(fs.readFileSync(UI_FILE, 'utf8')); }
+catch(e) { console.warn('Could not read ui.json:', e.message); }
+const uiScript = 'window.UI_STRINGS_ALL=' + JSON.stringify(_uiStringsAll) +
+  ';\nwindow._UI_EN=' + JSON.stringify(_uiStringsAll['en']||{}) + ';\n';
 
 // ── Static replacement functions ──────────────────────────────────────
 // ── Strip flagged exercises from baked-in lessons ─────────────────────
@@ -156,6 +164,7 @@ async function init() {
   APP.info = { backend: 'none', canGenerate: false };
   APP.libFilter='all'; APP.libSrcFilter='all';
   selectLang(APP.lang, true);
+  await loadUIStrings(APP.srcLang);
   restoreDiffSelect();
   renderPill();
   loadSavedList();
@@ -184,7 +193,7 @@ function renderPill() {
   }
   const note=document.getElementById('offline-note');
   if(note){ note.style.display='block';
-  note.innerHTML='📦 Static version — select a topic below to start<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>'; }
+  note.innerHTML=t('static.info')+'<br><small style="font-weight:600;opacity:.7"><a href="https://github.com/raim/dreizunge" target="_blank" style="color:inherit">github.com/raim/dreizunge</a></small>'; }
 
   // Show flagged-lessons reminder if this build stripped flagged exercises
   // Limit lang dropdown to languages that have lessons in this build
@@ -429,9 +438,9 @@ const staticOverrides = [
   'function selectSrcLang(code){',
   '  APP.srcLang=code; saveSrcLang();',
   '  const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code;',
-  '  APP.libSrcFilter=code; APP.libFilter="all";',  // only src filter active
-  '  const tsel=document.getElementById("lang-select"); if(tsel) tsel.value=APP.lang;', // reset visual
-  '  loadSavedList();',
+  '  APP.libSrcFilter=code; APP.libFilter="all";',
+  '  const tsel=document.getElementById("lang-select"); if(tsel) tsel.value=APP.lang;',
+  '  loadUIStrings(code).then(()=>loadSavedList());',
   '}',
   'function selectLang(code, silent){',
   '  APP.lang=code; saveLang();',
@@ -559,7 +568,7 @@ const staticOverrides = [
 ].join('\n');
 
 // ── Assemble ──────────────────────────────────────────────────────────
-const newScript = [part1, staticFunctions, part2, staticOverrides, '\ninit();'].join('\n');
+const newScript = [uiScript, part1, staticFunctions, part2, staticOverrides, '\ninit();'].join('\n');
 const output    = [htmlBefore, newScript, htmlAfter].join('');
 fs.writeFileSync(outputFile, output, 'utf8');
 

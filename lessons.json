@@ -1,6 +1,1372 @@
 {
   "lessons": [
     {
+      "topic": "Londra: arte, musica e club",
+      "topicEmoji": "🇬🇧",
+      "userTopic": "Andremo a Londra e vogliamo scoprire l'arte contemporanea, la musica pop e la cultura dei club underground",
+      "lang": "en",
+      "srcLang": "it",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "Andremo a Londra e vogliamo scoprire l'arte contemporanea, la musica pop e la cultura dei club underground. The city, a canvas of contrasts, beckoned us with its vibrant pulse. We arrived at the Tate Modern, its massive structure looming over the Thames, a stark reminder of the modern and contemporary art that awaited us. Inside, the galleries buzzed with a mix of young professionals and curious tourists. We wandered through the exhibits, the works of Banksy and other street artists catching our eyes. The lines were long, but the thrill of seeing the art in person was worth the wait. \n\nIn the evening, we made our way to Shoreditch, where the club scene was alive and pulsating. The streets were lined with neon signs and the hum of electronic music. We found ourselves at a small, dimly lit venue, where the DJ spun tracks that blended into a seamless mix of pop and underground sounds. The crowd was diverse, a mix of locals and visitors, all moving to the rhythm. As the night deepened, the energy grew, and we felt the city's heartbeat, a blend of creativity and rebellion, echoing through the clubs and galleries.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English.\n\nWrite a story for the topic: \"Andremo a Londra e vogliamo scoprire l'arte contemporanea, la musica pop e la cultura dei club underground\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Londra e l'arte",
+          "desc": "Gallerie, artisti, e cultura",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "target": "contemporary",
+              "source": "contemporanea"
+            },
+            {
+              "target": "gallery",
+              "source": "galleria"
+            },
+            {
+              "target": "artist",
+              "source": "artista"
+            },
+            {
+              "target": "street art",
+              "source": "arte di strada"
+            },
+            {
+              "target": "crowd",
+              "source": "folla"
+            },
+            {
+              "target": "line",
+              "source": "coda"
+            },
+            {
+              "target": "thrill",
+              "source": "eccitazione"
+            },
+            {
+              "target": "scene",
+              "source": "scena"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "We visited the Tate Modern gallery.",
+              "source": "Andammo alla galleria Tate Modern.",
+              "words": [
+                "We",
+                "visited",
+                "the",
+                "Tate",
+                "Modern",
+                "gallery."
+              ]
+            },
+            {
+              "target": "The artist's work caught our attention.",
+              "source": "L'opera dell'artista ci ha catturato l'attenzione.",
+              "words": [
+                "The",
+                "artist's",
+                "work",
+                "caught",
+                "our",
+                "attention."
+              ]
+            },
+            {
+              "target": "The crowd was large but the art was amazing.",
+              "source": "La folla era grande ma l'arte era stupenda.",
+              "words": [
+                "The",
+                "crowd",
+                "was",
+                "large",
+                "but",
+                "the",
+                "art",
+                "was",
+                "amazing."
+              ]
+            },
+            {
+              "target": "We waited in line for the famous Banksy exhibit.",
+              "source": "Aspettammo in coda per vedere l'esposizione famosa di Banksy.",
+              "words": [
+                "We",
+                "waited",
+                "in",
+                "line",
+                "for",
+                "the",
+                "famous",
+                "Banksy",
+                "exhibit."
+              ]
+            },
+            {
+              "target": "The club scene in Shoreditch was lively and exciting.",
+              "source": "La scena dei club a Shoreditch era vivace e eccitante.",
+              "words": [
+                "The",
+                "club",
+                "scene",
+                "in",
+                "Shoreditch",
+                "was",
+                "lively",
+                "and",
+                "exciting."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Londra e l'arte",
+          "desc": "Esploriamo l'arte contemporanea e i club underground a Londra",
+          "icon": "🎨✨",
+          "vocab": [
+            {
+              "target": "gig",
+              "source": "spettacolo"
+            },
+            {
+              "target": "venue",
+              "source": "luogo"
+            },
+            {
+              "target": "performance",
+              "source": "performance"
+            },
+            {
+              "target": "crowd",
+              "source": "folla"
+            },
+            {
+              "target": "DJ",
+              "source": "DJ"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "We attended a gig at a small venue.",
+              "source": "Andammo a un spettacolo in un piccolo luogo.",
+              "words": [
+                "We",
+                "attended",
+                "a",
+                "gig",
+                "at",
+                "a",
+                "small",
+                "venue."
+              ]
+            },
+            {
+              "target": "The DJ played electronic music.",
+              "source": "Il DJ ha suonato musica elettronica.",
+              "words": [
+                "The",
+                "DJ",
+                "played",
+                "electronic",
+                "music."
+              ]
+            },
+            {
+              "target": "The crowd was excited and danced.",
+              "source": "La folla era eccitata e ballava.",
+              "words": [
+                "The",
+                "crowd",
+                "was",
+                "excited",
+                "and",
+                "danced."
+              ]
+            },
+            {
+              "target": "We visited several venues in Shoreditch.",
+              "source": "Visitammo diversi luoghi a Shoreditch.",
+              "words": [
+                "We",
+                "visited",
+                "several",
+                "venues",
+                "in",
+                "Shoreditch."
+              ]
+            },
+            {
+              "target": "Each venue had its own unique performance.",
+              "source": "Ogni luogo aveva la propria performance unica.",
+              "words": [
+                "Each",
+                "venue",
+                "had",
+                "its",
+                "own",
+                "unique",
+                "performance."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 3484998,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1863,
+        "totalCompletionTokens": 900,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 575504,
+            "promptTokens": 691,
+            "completionTokens": 307
+          },
+          {
+            "lessonNum": 2,
+            "ms": 253347,
+            "promptTokens": 753,
+            "completionTokens": 285
+          }
+        ]
+      },
+      "generatedAt": "2026-05-26T07:38:10.490Z",
+      "updatedAt": "2026-05-26T07:38:10.490Z"
+    },
+    {
+      "topic": "Spargelcremesuppe",
+      "topicEmoji": "🧄",
+      "userTopic": "wir sind zurueck aus der toscana und essen spargelcremesuppe. in italien isst man ja eher gruenen spargel, bei uns in deutschland eher weissen spargel.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "Tornavamo in casa nostra a Berlino dopo una breve vacanza in Toscana, dove avevamo trascorso giorni di sole e di piatti gustosi. La prima cosa che feci, appena entrati, fu accendere il forno e preparare la spargelcremesuppe. In Italia, infatti, si mangia molto spargel verde, ma a casa nostra in Germania, preferiamo il spargel bianco. Mentre l'odore di spezie e di verdura si diffondeva per la casa, mi resi conto del contrasto tra i due paesi. La creme della suppa era densa e cremosa, con un sapore delicato di spargel, e la sua consistenza ricordava a me e alla mia famiglia la ricca cucina toscana. Mentre mangiavamo, ci chiedevamo come sarebbe stato vivere in un luogo dove il verde spargel era una parte tanto naturale della vita quotidiana, confrontando i nostri gusti e i nostri modi di vivere con quelli degli italiani.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian.\n\nWrite a story for the topic: \"wir sind zurueck aus der toscana und essen spargelcremesuppe. in italien isst man ja eher gruenen spargel, bei uns in deutschland eher weissen spargel.\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "wir sind zurueck aus der toscana",
+          "desc": "spargel, suppe, toscana, berlin, spezi",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "target": "tornavamo",
+              "source": "wir sind zurück"
+            },
+            {
+              "target": "toscana",
+              "source": "Toskana"
+            },
+            {
+              "target": "spargel",
+              "source": "Spargel"
+            },
+            {
+              "target": "cremesuppe",
+              "source": "Spargelcremesuppe"
+            },
+            {
+              "target": "preferiamo",
+              "source": "wir bevorzugen"
+            },
+            {
+              "target": "spezi",
+              "source": "Spezereien"
+            },
+            {
+              "target": "ricorda",
+              "source": "erinnert"
+            },
+            {
+              "target": "cucina",
+              "source": "Küche"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Tornavamo in casa nostra a Berlino.",
+              "source": "Wir sind zurück in unsere Wohnung nach Berlin.",
+              "words": [
+                "Tornavamo",
+                "in",
+                "casa",
+                "nostra",
+                "a",
+                "Berlino."
+              ]
+            },
+            {
+              "target": "Accendere il forno e preparare la spargelcremesuppe.",
+              "source": "Ich habe den Herd angezündet und die Spargelcremesuppe zubereitet.",
+              "words": [
+                "Accendere",
+                "il",
+                "forno",
+                "e",
+                "preparare",
+                "la",
+                "spargelcremesuppe."
+              ]
+            },
+            {
+              "target": "Mentre l'odore di spezie si diffondeva per la casa.",
+              "source": "Während der Geruch von Gewürzen durchs Haus zog.",
+              "words": [
+                "Mentre",
+                "l'odore",
+                "di",
+                "spezie",
+                "si",
+                "diffondeva",
+                "per",
+                "la",
+                "casa."
+              ]
+            },
+            {
+              "target": "La sua consistenza ricordava a me e alla mia famiglia la ricca cucina tosca.",
+              "source": "Ihre Konsistenz erinnerte mich und meine Familie an die reiche Toskanenküche.",
+              "words": [
+                "La",
+                "sua",
+                "consistenza",
+                "ricordava",
+                "a",
+                "me",
+                "e",
+                "alla",
+                "mia",
+                "famiglia",
+                "la",
+                "ricca",
+                "cucina",
+                "tosca."
+              ]
+            },
+            {
+              "target": "Mentre mangiavamo, ci chiedevamo come sarebbe stato vivere in un luogo dove il verde spargel era una parte naturale della vita quotidiana.",
+              "source": "Während wir aßen, fragten wir uns, wie es wäre, in einem Ort zu leben, wo grüner Spargel eine natürliche Bestandteile des täglichen Lebens wäre.",
+              "words": [
+                "Mentre",
+                "mangiavamo,",
+                "ci",
+                "chiedevamo",
+                "come",
+                "sarebbe",
+                "stato",
+                "vivere",
+                "in",
+                "un",
+                "luogo",
+                "dove",
+                "il",
+                "verde",
+                "spargel",
+                "era",
+                "una",
+                "parte",
+                "naturale",
+                "della",
+                "vita",
+                "quotidiana."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "wir sind zurueck aus der toscana",
+          "desc": "spargel, suppe, contrast, preferenz, verde",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "target": "tornavamo",
+              "source": "wir sind zurück"
+            },
+            {
+              "target": "piatti",
+              "source": "Gerichte"
+            },
+            {
+              "target": "gustosi",
+              "source": "schmackhaft"
+            },
+            {
+              "target": "entrati",
+              "source": "hereingetreten"
+            },
+            {
+              "target": "cremesuppe",
+              "source": "cremesuppe"
+            },
+            {
+              "target": "preferiamo",
+              "source": "vorziehen"
+            },
+            {
+              "target": "densa",
+              "source": "dicht"
+            },
+            {
+              "target": "ricordava",
+              "source": "erinnerte"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Accendiamo il forno e prepariamo la spargelcremesuppe.",
+              "source": "Wir schalten den Ofen an und bereiten die Spargelcremesuppe zurecht.",
+              "words": [
+                "Accendiamo",
+                "il",
+                "forno",
+                "e",
+                "prepariamo",
+                "la",
+                "spargelcremesuppe."
+              ]
+            },
+            {
+              "target": "La suppa era densa e cremosa.",
+              "source": "Die Suppe war dicht und cremig.",
+              "words": [
+                "La",
+                "suppa",
+                "era",
+                "densa",
+                "e",
+                "cremosa."
+              ]
+            },
+            {
+              "target": "Con un sapore delicato di spargel.",
+              "source": "Mit einem Geschmack von feinem Spargel.",
+              "words": [
+                "Con",
+                "un",
+                "sapore",
+                "delicato",
+                "di",
+                "spargel."
+              ]
+            },
+            {
+              "target": "La sua consistenza ricordava a me e alla mia famiglia la ricca cucina tosca.",
+              "source": "Ihre Konsistenz erinnerte mich und meine Familie an die reiche Toskanische Küche.",
+              "words": [
+                "La",
+                "sua",
+                "consistenza",
+                "ricordava",
+                "a",
+                "me",
+                "e",
+                "alla",
+                "mia",
+                "famiglia",
+                "la",
+                "ricca",
+                "cucina",
+                "tosca."
+              ]
+            },
+            {
+              "target": "Mentre mangiavamo, ci chiedevamo come sarebbe stato vivere in un luogo.",
+              "source": "Während wir aßen, fragten wir uns, wie es wäre, in einem Ort zu leben.",
+              "words": [
+                "Mentre",
+                "mangiavamo,",
+                "ci",
+                "chiedevamo",
+                "come",
+                "sarebbe",
+                "stato",
+                "vivere",
+                "in",
+                "un",
+                "luogo."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "wir sind zurueck aus der toscana und essen spargelcremesuppe",
+          "desc": "tage in italien, spargel und suppe",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "target": "tornavamo",
+              "source": "wir sind zurück"
+            },
+            {
+              "target": "gustosi",
+              "source": "schmackhaft"
+            },
+            {
+              "target": "entrati",
+              "source": "hereingetreten"
+            },
+            {
+              "target": "cremesuppe",
+              "source": "cremesuppe"
+            },
+            {
+              "target": "preferiamo",
+              "source": "vorziehen"
+            },
+            {
+              "target": "densa",
+              "source": "dicht"
+            },
+            {
+              "target": "ricordava",
+              "source": "erinnerte"
+            },
+            {
+              "target": "cucina",
+              "source": "Küche"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "In Italia si mangia molto spargel.",
+              "source": "In Italien wird viel Spargel gegessen.",
+              "words": [
+                "In",
+                "Italia",
+                "si",
+                "mangia",
+                "molto",
+                "spargel."
+              ]
+            },
+            {
+              "target": "La suppa era densa e cremosa.",
+              "source": "Die Suppe war dicht und cremig.",
+              "words": [
+                "La",
+                "suppa",
+                "era",
+                "densa",
+                "e",
+                "cremosa."
+              ]
+            },
+            {
+              "target": "Ricordava la ricca cucina tosca.",
+              "source": "Erinnerte an die reiche Toskanische Küche.",
+              "words": [
+                "Ricordava",
+                "la",
+                "ricca",
+                "cucina",
+                "tosca."
+              ]
+            },
+            {
+              "target": "Mentre l'odore di spezie si diffondeva per la casa.",
+              "source": "Während der Geruch von Gewürzen durchs Haus zog.",
+              "words": [
+                "Mentre",
+                "l'odore",
+                "di",
+                "spezie",
+                "si",
+                "diffondeva",
+                "per",
+                "la",
+                "casa."
+              ]
+            },
+            {
+              "target": "Avevamo trascorso giorni di sole e di piatti gustosi.",
+              "source": "Wir hatten Tage voller Sonne und schmackhafter Gerichte verbracht.",
+              "words": [
+                "Avevamo",
+                "trascorso",
+                "giorni",
+                "di",
+                "sole",
+                "e",
+                "di",
+                "piatti",
+                "gustosi."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 974797,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 3136,
+        "totalCompletionTokens": 1494,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 310538,
+            "promptTokens": 822,
+            "completionTokens": 435
+          },
+          {
+            "lessonNum": 2,
+            "ms": 258664,
+            "promptTokens": 901,
+            "completionTokens": 391
+          },
+          {
+            "lessonNum": 3,
+            "ms": 258929,
+            "promptTokens": 962,
+            "completionTokens": 363
+          }
+        ]
+      },
+      "generatedAt": "2026-05-25T11:48:18.641Z",
+      "updatedAt": "2026-05-25T11:48:18.641Z"
+    },
+    {
+      "topic": "Funktioniert es mit gemischten Modellen?",
+      "topicEmoji": "❓",
+      "userTopic": "funktioniert es mit gemischten modellen?",
+      "lang": "lb",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "Mir hoff, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben. Mir probiert mir Sätze, wat gemischt wënn wëll, Luxemburgerisch und Deutsch, schrieb. \"Mir wëlde, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben, bi mir hëlle Freiheit, wéi mir wëlde, Deutsch zu schrieben.\" Mir blickt auf dës Ergebnis, und mir wëlde, dës Werkzeug mir helft, bi mir hëlle Freiheit, wéi mir wëlde, gemischt zu schreiben, Luxemburgerisch und Deutsch. Mir wëlde, dës Translategemma mir helft, bi mir hëlle Freiheit, wéi mir wëlde, gemischt zu schreiben, Luxemburgerisch und Deutsch.",
+      "storyLang": "lb",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\niheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\n\nMir probiert mir Sätze, wat mir am Herzen gëngt: \"Mir wëlde, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\" Mir schrieb mir Sätze, wat mir am Herzen gëngt, und blickt auf dës Ergebnis. Mir wëlde, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\n\nMir hoff, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben. Mir wëlde, dës Werkzeug mir helft, mir Wörter und Sätze zu übersetzen, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben. Mir wëlde, dës Translategemma mir helft, mir Wörter und Sätze zu übersetzen, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\n\nNew topic: \"funktioniert es mit gemischten modellen?\". Write the continuation now. Plain prose, no headings.",
+      "storyTranslation": "Ich hoffe, dieses Übersetzungstool funktioniert, damit wir frei schreiben können, wie wir möchten, auf Luxemburgisch. Wir werden versuchen, Sätze zu formulieren, die sowohl Luxemburgisch als auch Deutsch kombinieren. \"Ich hoffe, dieses Übersetzungstool funktioniert, damit wir frei schreiben können, auf Luxemburgisch, damit wir frei schreiben können, auf Deutsch.\" Wir werden die Ergebnisse prüfen und hoffen, dass dieses Werkzeug uns dabei hilft, frei auf Luxemburgisch und Deutsch zu schreiben. Ich hoffe, dieses Übersetzungstool hilft uns, frei auf Luxemburgisch und Deutsch zu schreiben.",
+      "continuedFrom": "Translategemma für Luxemburgerisch",
+      "lessons": [
+        {
+          "id": 2,
+          "title": "Übersetzungstool",
+          "desc": "Luxemburgisch und Deutsch kombinieren",
+          "icon": "🇩🇪",
+          "vocab": [
+            {
+              "target": "dës Translategemma",
+              "source": "dieses Übersetzungstool"
+            },
+            {
+              "target": "funktioniert",
+              "source": "funktioniert"
+            },
+            {
+              "target": "gemischt wëll",
+              "source": "kombinieren"
+            },
+            {
+              "target": "Luxemburgerisch zu schrieben",
+              "source": "auf Luxemburgisch zu schreiben"
+            },
+            {
+              "target": "hëlle Freiheit",
+              "source": "freie"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Mir hoff, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.",
+              "source": "Ich hoffe, dieses Übersetzungstool funktioniert, damit wir frei schreiben können, auf Luxemburgisch.",
+              "words": [
+                "Mir",
+                "hoff,",
+                "dës",
+                "Translategemma",
+                "funktioniert,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schrieben."
+              ]
+            },
+            {
+              "target": "Mir probiert mir Sätze, wat gemischt wënn wëll, Luxemburgerisch und Deutsch, schrieb.",
+              "source": "Wir werden versuchen, Sätze zu formulieren, die sowohl Luxemburgisch als auch Deutsch kombinieren.",
+              "words": [
+                "Mir",
+                "probiert",
+                "mir",
+                "Sätze,",
+                "wat",
+                "gemischt",
+                "wënn",
+                "wëll,",
+                "Luxemburgerisch",
+                "und",
+                "Deutsch,",
+                "schrieb."
+              ]
+            },
+            {
+              "target": "Mir blickt auf dës Ergebnis, und mir wëlde, dës Werkzeug mir helft, bi mir hëlle Freiheit, wéi mir wëlde, gemischt zu schreiben, Luxemburgerisch und Deutsch.",
+              "source": "Wir werden die Ergebnisse prüfen und hoffen, dass dieses Werkzeug uns dabei hilft, frei auf Luxemburgisch und Deutsch zu schreiben.",
+              "words": [
+                "Mir",
+                "blickt",
+                "auf",
+                "dës",
+                "Ergebnis,",
+                "und",
+                "mir",
+                "wëlde,",
+                "dës",
+                "Werkzeug",
+                "mir",
+                "helft,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "gemischt",
+                "zu",
+                "schreiben,",
+                "Luxemburgerisch",
+                "und",
+                "Deutsch."
+              ]
+            },
+            {
+              "target": "Mir wëlde, dës Translategemma mir helft, bi mir hëlle Freiheit, wéi mir wëlde, gemischt zu schreiben, Luxemburgerisch und Deutsch.",
+              "source": "Ich hoffe, dieses Übersetzungstool hilft uns, frei auf Luxemburgisch und Deutsch zu schreiben.",
+              "words": [
+                "Mir",
+                "wëlde,",
+                "dës",
+                "Translategemma",
+                "mir",
+                "helft,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "gemischt",
+                "zu",
+                "schreiben,",
+                "Luxemburgerisch",
+                "und",
+                "Deutsch."
+              ]
+            },
+            {
+              "target": "Mir wëlde, dës Werkzeug mir helft, bi mir hëlle Freiheit, wéi mir wëlde, gemischt zu schreiben, Luxemburgerisch und Deutsch.",
+              "source": "Ich hoffe, dieses Übersetzungstool hilft uns, frei auf Luxemburgisch und Deutsch zu schreiben.",
+              "words": [
+                "Mir",
+                "wëlde,",
+                "dës",
+                "Werkzeug",
+                "mir",
+                "helft,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "gemischt",
+                "zu",
+                "schreiben,",
+                "Luxemburgerisch",
+                "und",
+                "Deutsch."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "funktioniert es mit gemischten modellen?",
+          "desc": "Luxemburgerisch und Deutsch kombinieren",
+          "icon": "🇩🇪",
+          "vocab": [
+            {
+              "target": "dës Translategemma",
+              "source": "dieses Übersetzungstool"
+            },
+            {
+              "target": "gemischt wëll",
+              "source": "kombinieren"
+            },
+            {
+              "target": "Luxemburgerisch zu schrieben",
+              "source": "auf Luxemburgisch zu schreiben"
+            },
+            {
+              "target": "hëlle Freiheit",
+              "source": "freie"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Mir blickt auf dës Ergebnis, und mir wëlde, dës Werkzeug mir helft.",
+              "source": "Wir werden die Ergebnisse prüfen und hoffen, dass dieses Werkzeug uns dabei hilft.",
+              "words": [
+                "Mir",
+                "blickt",
+                "auf",
+                "dës",
+                "Ergebnis,",
+                "und",
+                "mir",
+                "wëlde,",
+                "dës",
+                "Werkzeug",
+                "mir",
+                "helft."
+              ]
+            },
+            {
+              "target": "wéi mir wëlde, Luxemburgerisch zu schrieben, bi mir hëlle Freiheit",
+              "source": "damit wir frei schreiben können, auf Luxemburgisch, damit wir frei schreiben können",
+              "words": [
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schrieben,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit"
+              ]
+            },
+            {
+              "target": "wéi mir wëlde, Deutsch zu schrieben",
+              "source": "auf Deutsch",
+              "words": [
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Deutsch",
+                "zu",
+                "schrieben"
+              ]
+            },
+            {
+              "target": "Mir wëlde, dës Translategemma mir helft, bi mir hëlle Freiheit",
+              "source": "dass dieses Übersetzungstool uns dabei hilft, freie",
+              "words": [
+                "Mir",
+                "wëlde,",
+                "dës",
+                "Translategemma",
+                "mir",
+                "helft,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit"
+              ]
+            },
+            {
+              "target": "wéi mir wëlde, gemischt zu schreiben, Luxemburgerisch und Deutsch",
+              "source": "freie auf Luxemburgisch und Deutsch zu schreiben",
+              "words": [
+                "wéi",
+                "mir",
+                "wëlde,",
+                "gemischt",
+                "zu",
+                "schreiben,",
+                "Luxemburgerisch",
+                "und",
+                "Deutsch"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1735270,
+        "backend": "ollama",
+        "model": "qwen2.5:7b / translategemma",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2849,
+        "totalCompletionTokens": 1339,
+        "lessons": [
+          {
+            "lessonNum": 2,
+            "ms": 323612,
+            "promptTokens": 885,
+            "completionTokens": 540
+          },
+          {
+            "lessonNum": 3,
+            "ms": 281045,
+            "promptTokens": 959,
+            "completionTokens": 383
+          }
+        ]
+      },
+      "generatedAt": "2026-05-25T08:43:23.096Z",
+      "updatedAt": "2026-05-25T08:43:23.096Z"
+    },
+    {
+      "topic": "Translategemma für Luxemburgerisch",
+      "topicEmoji": "🌍",
+      "userTopic": "funktioniert denn die verwendung von translategemma fuer luxemburgerisch?",
+      "lang": "lb",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Energi gëtt am Mëttelvëier, wëi die Sonn am Hëssë schimmert. Iwann dës Wëi, sëtzt mir am Fenster und bëschëftig mir mit dës Neuen, dës Translategemma, watLuxemburgerisch übersetzen soll. Mir hoff, dës Werkzeug funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\n\nMir hëff dës Translategemma, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben. Mir probiert mir erstes Satz, wat mir am Kopf gëngt: \"Mir hëff dës Translategemma, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\" Mir schrieb mir Satz, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben, und blickt auf dës Ergebnis. Mir wëlde, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\n\nMir probiert mir Wörter, wat mir am Herzen gëngt: \"Lëtzebuergesch\", \"Luxemburgerisch\", \"Translategemma\". Mir schrieb mir Wörter, wat mir am Herzen gëngt, und blickt auf dës Ergebnis. Mir wëlde, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\n\nMir probiert mir Sätze, wat mir am Herzen gëngt: \"Mir wëlde, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\" Mir schrieb mir Sätze, wat mir am Herzen gëngt, und blickt auf dës Ergebnis. Mir wëlde, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.\n\nMir hoff, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben. Mir wëlde, dës Werkzeug mir helft, mir Wörter und Sätze zu übersetzen, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben. Mir wëlde, dës Translategemma mir helft, mir Wörter und Sätze zu übersetzen, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schrieben.",
+      "storyLang": "lb",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch.\n\nWrite a story for the topic: \"funktioniert denn die verwendung von translategemma fuer luxemburgerisch?\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Fërstes Versuch",
+          "desc": "Lëtzebuergesch Wörter übersetzen",
+          "icon": "📝",
+          "vocab": [
+            {
+              "target": "funktioniert",
+              "source": "arbeitet"
+            },
+            {
+              "target": "verwendung",
+              "source": "Anwendung"
+            },
+            {
+              "target": "translategemma",
+              "source": "Übersetzungshilfe"
+            },
+            {
+              "target": "fördert",
+              "source": "fördernt"
+            },
+            {
+              "target": "Freiheit",
+              "source": "Freiheit"
+            },
+            {
+              "target": "schrieben",
+              "source": "geschrieben"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Fërstes Versuch, dës Translategemma zu verwendern.",
+              "source": "Erster Versuch, die Übersetzungshilfe anzuwenden.",
+              "words": [
+                "Fërstes",
+                "Versuch,",
+                "dës",
+                "Translategemma",
+                "zu",
+                "verwendern."
+              ]
+            },
+            {
+              "target": "Mir hoff, dës fërdert mir am Schrieben.",
+              "source": "Ich hoffe, dass dies meine Schreibfähigkeit fördert.",
+              "words": [
+                "Mir",
+                "hoff,",
+                "dës",
+                "fërdert",
+                "mir",
+                "am",
+                "Schrieben."
+              ]
+            },
+            {
+              "target": "Wéi mir wëlde, sëtzt mir am Tisch und probiert dës.",
+              "source": "Wie ich wolle, setze ich am Tisch und probiere es aus.",
+              "words": [
+                "Wéi",
+                "mir",
+                "wëlde,",
+                "sëtzt",
+                "mir",
+                "am",
+                "Tisch",
+                "und",
+                "probiert",
+                "dës."
+              ]
+            },
+            {
+              "target": "Dës Translategemma fördert mir am Luxemburgerisch zu schrieben.",
+              "source": "Die Übersetzungshilfe fördert meine Fähigkeit, Luxemburgerisch zu schreiben.",
+              "words": [
+                "Dës",
+                "Translategemma",
+                "fördert",
+                "mir",
+                "am",
+                "Luxemburgerisch",
+                "zu",
+                "schrieben."
+              ]
+            },
+            {
+              "target": "Mir hoff, dës funktioniert bi mir hëlle Freiheit.",
+              "source": "Ich hoffe, dass dies in voller Freiheit funktioniert.",
+              "words": [
+                "Mir",
+                "hoff,",
+                "dës",
+                "funktioniert",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Fërst Wörter",
+          "desc": "Lëtzebuergesch Wörter übersetzen",
+          "icon": "📝",
+          "vocab": [
+            {
+              "target": "arbeite",
+              "source": "arbeitet"
+            },
+            {
+              "target": "fördert",
+              "source": "fördernt"
+            },
+            {
+              "target": "schreibe",
+              "source": "geschrieben"
+            },
+            {
+              "target": "Anwendung",
+              "source": "Verwendung"
+            },
+            {
+              "target": "Übersetzungshilfe",
+              "source": "Translategemma"
+            },
+            {
+              "target": "Ergebnis",
+              "source": "Resultat"
+            },
+            {
+              "target": "Versuch",
+              "source": "Versuch"
+            },
+            {
+              "target": "Wörter",
+              "source": "Wörter"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Mir arbeite dës Übersetzungshilfe, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schreiben.",
+              "source": "Ich teste die Übersetzungshilfe, wie ich will, Luxemburgerisch zu schreiben.",
+              "words": [
+                "Mir",
+                "arbeite",
+                "dës",
+                "Übersetzungshilfe,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schreiben."
+              ]
+            },
+            {
+              "target": "Dës Versuch, wéi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schreiben, gëtt mir hëlle Freiheit.",
+              "source": "Dieser Versuch, wie ich will, Luxemburgerisch zu schreiben, gibt mir Freiheit.",
+              "words": [
+                "Dës",
+                "Versuch,",
+                "wéi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schreiben,",
+                "gëtt",
+                "mir",
+                "hëlle",
+                "Freiheit."
+              ]
+            },
+            {
+              "target": "Mir schreibe dës Wörter, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schreiben, und blickt auf dës Ergebnis.",
+              "source": "Ich schreibe diese Wörter, wie ich will, Luxemburgerisch zu schreiben, und blicke auf das Ergebnis.",
+              "words": [
+                "Mir",
+                "schreibe",
+                "dës",
+                "Wörter,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schreiben,",
+                "und",
+                "blickt",
+                "auf",
+                "dës",
+                "Ergebnis."
+              ]
+            },
+            {
+              "target": "Dës Anwendung fördert mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schreiben.",
+              "source": "Die Verwendung fördert mir Freiheit, wie ich will, Luxemburgerisch zu schreiben.",
+              "words": [
+                "Dës",
+                "Anwendung",
+                "fördert",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schreiben."
+              ]
+            },
+            {
+              "target": "Mir hoff, dës Translategemma funktioniert, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schreiben.",
+              "source": "Ich hoffe, das Translategemma funktioniert, wie ich will, Luxemburgerisch zu schreiben.",
+              "words": [
+                "Mir",
+                "hoff,",
+                "dës",
+                "Translategemma",
+                "funktioniert,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schreiben."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Funktioniert dës Translategemma?",
+          "desc": "Übersetzungshilfe fü dës Neuen",
+          "icon": "📝",
+          "vocab": [
+            {
+              "target": "arbeite",
+              "source": "arbeitet"
+            },
+            {
+              "target": "Versuch",
+              "source": "Versuch"
+            },
+            {
+              "target": "Resultat",
+              "source": "Ergebnis"
+            },
+            {
+              "target": "Wörter",
+              "source": "Wörter"
+            },
+            {
+              "target": "fördert",
+              "source": "fördernt"
+            },
+            {
+              "target": "Anwendung",
+              "source": "Verwendung"
+            },
+            {
+              "target": "Übersetzungshilfe",
+              "source": "Translategemma"
+            },
+            {
+              "target": "schreibe",
+              "source": "geschrieben"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Mir probiert mir Versuch, dës Translategemma fü dës Wörter.",
+              "source": "Ich probiere meinen Versuch, das Translategemma für die Wörter.",
+              "words": [
+                "Mir",
+                "probiert",
+                "mir",
+                "Versuch,",
+                "dës",
+                "Translategemma",
+                "fü",
+                "dës",
+                "Wörter."
+              ]
+            },
+            {
+              "target": "Dës Resultat gëtt gut, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schreiben.",
+              "source": "Das Ergebnis ist gut, bei mir helle Freiheit, wie mir wolle, Luxemburgerisch zu schreiben.",
+              "words": [
+                "Dës",
+                "Resultat",
+                "gëtt",
+                "gut,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schreiben."
+              ]
+            },
+            {
+              "target": "Mir schreibe mir Wörter, wéi mir wëlde, bi mir hëlle Freiheit.",
+              "source": "Ich schreibe mir Wörter, wie mir wolle, bei mir helle Freiheit.",
+              "words": [
+                "Mir",
+                "schreibe",
+                "mir",
+                "Wörter,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit."
+              ]
+            },
+            {
+              "target": "Dës Translategemma fördert mir Anwendung, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schreiben.",
+              "source": "Das Translategemma fördert meine Anwendung, bei mir helle Freiheit, wie mir wolle, Luxemburgerisch zu schreiben.",
+              "words": [
+                "Dës",
+                "Translategemma",
+                "fördert",
+                "mir",
+                "Anwendung,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schreiben."
+              ]
+            },
+            {
+              "target": "Mir probiert mir Versuch, dës Translategemma fü dës Wörter, bi mir hëlle Freiheit, wéi mir wëlde, Luxemburgerisch zu schreiben.",
+              "source": "Ich probiere meinen Versuch, das Translategemma für die Wörter, bei mir helle Freiheit, wie mir wolle, Luxemburgerisch zu schreiben.",
+              "words": [
+                "Mir",
+                "probiert",
+                "mir",
+                "Versuch,",
+                "dës",
+                "Translategemma",
+                "fü",
+                "dës",
+                "Wörter,",
+                "bi",
+                "mir",
+                "hëlle",
+                "Freiheit,",
+                "wéi",
+                "mir",
+                "wëlde,",
+                "Luxemburgerisch",
+                "zu",
+                "schreiben."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 2063291,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 3506,
+        "totalCompletionTokens": 2227,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 388905,
+            "promptTokens": 964,
+            "completionTokens": 375
+          },
+          {
+            "lessonNum": 2,
+            "ms": 436293,
+            "promptTokens": 1029,
+            "completionTokens": 537
+          },
+          {
+            "lessonNum": 3,
+            "ms": 239541,
+            "promptTokens": 1092,
+            "completionTokens": 527
+          }
+        ]
+      },
+      "generatedAt": "2026-05-24T11:07:38.544Z",
+      "updatedAt": "2026-05-24T11:07:38.544Z"
+    },
+    {
       "topic": "Duesseldorf Weekend",
       "topicEmoji": "✈️",
       "userTopic": "a weekend in duesseldorf and the ruhrpott",
@@ -29829,6 +31195,81 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-24T08:23:24.610Z"
+    },
+    "Spargelcremesuppe:read_translate:Mentre_mangiavamo,_ci_chiedevamo_come_sa": {
+      "topic": "Spargelcremesuppe",
+      "type": "read_translate",
+      "target": "Mentre mangiavamo, ci chiedevamo come sarebbe stato vivere in un luogo dove il verde spargel era una parte naturale della vita quotidiana.",
+      "source": "Während wir aßen, fragten wir uns, wie es wäre, in einem Ort zu leben, wo grüner Spargel eine natürliche Bestandteile des täglichen Lebens wäre.",
+      "correct": "Während wir aßen, fragten wir uns, wie es wäre, in einem Ort zu leben, wo grüner Spargel eine natürliche Bestandteile des täglichen Lebens wäre.",
+      "choices": [
+        "Während wir aßen, fragten wir uns, wie es wäre, in einem Ort zu leben, wo grüner Spargel eine natürliche Bestandteile des täglichen Lebens wäre.",
+        "Während der Geruch von Gewürzen durchs Haus zog.",
+        "Ich habe den Herd angezündet und die Spargelcremesuppe zubereitet.",
+        "Wir sind zurück in unsere Wohnung nach Berlin."
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-25T11:52:05.320Z"
+    },
+    "Spargelcremesuppe:listen_mcq:spargel": {
+      "topic": "Spargelcremesuppe",
+      "type": "listen_mcq",
+      "target": "spargel",
+      "source": "",
+      "correct": "Spargel",
+      "choices": [
+        "Spargel",
+        "wir sind zurück",
+        "Spargelcremesuppe",
+        "Spezereien"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-25T11:52:11.221Z"
+    },
+    "Spargelcremesuppe:mcq_source_target:cremesuppe": {
+      "topic": "Spargelcremesuppe",
+      "type": "mcq_source_target",
+      "target": "cremesuppe",
+      "source": "cremesuppe",
+      "correct": "cremesuppe",
+      "choices": [
+        "preferiamo",
+        "cremesuppe",
+        "ricordava",
+        "gustosi"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-25T11:53:42.849Z"
+    },
+    "Spargelcremesuppe:listen_mcq:cremesuppe": {
+      "topic": "Spargelcremesuppe",
+      "type": "listen_mcq",
+      "target": "cremesuppe",
+      "source": "",
+      "correct": "cremesuppe",
+      "choices": [
+        "dicht",
+        "schmackhaft",
+        "cremesuppe",
+        "hereingetreten"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-25T11:53:56.344Z"
+    },
+    "Spargelcremesuppe:mcq_target_source:cremesuppe": {
+      "topic": "Spargelcremesuppe",
+      "type": "mcq_target_source",
+      "target": "cremesuppe",
+      "source": "Spargelcremesuppe",
+      "correct": "Spargelcremesuppe",
+      "choices": [
+        "Spargelcremesuppe",
+        "schmackhaft",
+        "dicht",
+        "wir sind zurück"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-25T11:54:00.106Z"
     }
   },
   "storylines": {

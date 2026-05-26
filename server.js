@@ -9,6 +9,7 @@ const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
 const STORAGE_FILE = path.join(__dirname, 'lessons.json');
+const UI_FILE     = path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 const OLLAMA_MODEL        = process.env.OLLAMA_MODEL        || 'qwen2.5:7b';
@@ -42,6 +43,62 @@ function saveStore(s) {
     console.error('Could not write lessons.json:', e.message + hint);
   }
 }
+// ── UI strings (localisation) ─────────────────────────────────────
+function loadUI() {
+  try {
+    if (fs.existsSync(UI_FILE)) return JSON.parse(fs.readFileSync(UI_FILE, 'utf8'));
+  } catch(e) { console.warn('Could not read ui.json:', e.message); }
+  return { en: {} };
+}
+function saveUI(ui) {
+  try { fs.writeFileSync(UI_FILE, JSON.stringify(ui, null, 2), 'utf8'); }
+  catch(e) { console.warn('Could not write ui.json:', e.message); }
+}
+let uiStrings = loadUI();
+
+async function translateUIToLang(lang) {
+  const S = langName(lang);
+  const base = uiStrings['en'] || {};
+  const existing = uiStrings[lang] || {};
+  const missing = Object.entries(base).filter(([k]) => !existing[k]);
+  if (missing.length === 0) {
+    console.log(`  UI [${lang}]: already complete (${Object.keys(existing).length} keys)`);
+    return existing;
+  }
+  console.log(`  UI [${lang}]: translating ${missing.length} missing keys to ${S}…`);
+  const BATCH = 40;
+  let translated = { ...existing };
+  for (let i = 0; i < missing.length; i += BATCH) {
+    const batch = Object.fromEntries(missing.slice(i, i + BATCH));
+    const sys = `You are a UI translator. Translate the values of this JSON object into ${S}. ` +
+      `Preserve ALL {placeholder} tokens exactly as-is. Keep translations short and natural for a mobile app. ` +
+      `Return ONLY a valid JSON object with the same keys, no markdown, no explanation.`;
+    const userMsg = JSON.stringify(batch, null, 2);
+    try {
+      const { text } = await callLLM(sys, userMsg, 2048);
+      const parsed = extractJSON(text);
+      Object.assign(translated, parsed);
+      console.log(`    batch ${Math.floor(i/BATCH)+1}: ${Object.keys(parsed).length} keys translated`);
+    } catch(e) {
+      console.warn(`    batch ${Math.floor(i/BATCH)+1} failed:`, e.message);
+    }
+  }
+  uiStrings[lang] = translated;
+  saveUI(uiStrings);
+  return translated;
+}
+
+async function ensureUIForLang(lang) {
+  if (!lang || lang === 'en') return uiStrings['en'] || {};
+  if (!uiStrings[lang]) uiStrings[lang] = {};
+  const base = uiStrings['en'] || {};
+  const existing = uiStrings[lang];
+  const missingCount = Object.keys(base).filter(k => !existing[k]).length;
+  if (missingCount === 0) return existing;
+  return translateUIToLang(lang);
+}
+
+
 let store = loadStore();
 function findSaved(topic) {
   const k = topic.trim().toLowerCase();
@@ -1194,6 +1251,9 @@ async function boot() {
       const jobId = newJob();
       generatingTopics.add(topicKey);
       const resolvedSrcLang = srcLang || 'en';
+      // Eagerly ensure UI strings exist for this source language (non-blocking)
+      if (resolvedSrcLang !== 'en') ensureUIForLang(resolvedSrcLang).catch(e =>
+        console.warn('  UI pre-translation failed:', e.message));
       const userOpts = {
         userStory:       userStory       ? String(userStory).trim()       : null,
         userTranslation: userTranslation ? String(userTranslation).trim() : null,
@@ -1307,7 +1367,35 @@ async function boot() {
       return json(res, 200, { ok: true, added, updated, total: store.lessons.length });
     }
 
-    res.writeHead(404); res.end('Not found');
+    // ── UI strings ────────────────────────────────────────────────────
+    if (M === 'GET' && url.pathname === '/api/ui') {
+      // Return all UI strings for all languages
+      return json(res, 200, uiStrings);
+    }
+    if (M === 'GET' && url.pathname === '/api/ui/lang') {
+      const lang = url.searchParams.get('lang') || 'en';
+      if (lang === 'en') return json(res, 200, uiStrings['en'] || {});
+      // Return only the requested language — empty object signals "not yet translated"
+      // so the client can trigger /api/ui-translate
+      const strings = uiStrings[lang] || {};
+      return json(res, 200, strings);
+    }
+    if (M === 'POST' && url.pathname === '/api/ui-translate') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { lang } = body;
+      if (!lang) return json(res, 400, { error: 'Missing lang' });
+      try {
+        const result = await translateUIToLang(lang);
+        return json(res, 200, { ok: true, lang, count: Object.keys(result).length });
+      } catch(e) {
+        return json(res, 500, { error: e.message });
+      }
+    }
+
+        res.writeHead(404); res.end('Not found');
 
   }).listen(PORT, '0.0.0.0', () => {
     const os = require('os');

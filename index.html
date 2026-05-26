@@ -231,7 +231,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lang-selector{margin-bottom:14px}
 .lang-pair-row{display:flex;align-items:flex-end;gap:8px}
 .lang-pair-col{flex:1;min-width:0}
-.lang-pair-arrow{font-size:18px;font-weight:900;color:var(--gray-dark);padding-bottom:10px;flex-shrink:0}
+#ui-translate-pill{display:none;align-items:center;gap:6px;margin-top:8px;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:800;border:2px solid;width:fit-content}
+#ui-translate-pill.running{border-color:#a0c4ff;background:#f0f6ff;color:#2a4acc}
+#ui-translate-pill.done{border-color:var(--green);background:#f0fff4;color:var(--green-dark)}
 .lang-select-wrap{position:relative;display:inline-block;width:100%}
 .lang-select{width:100%;padding:10px 36px 10px 14px;font-size:15px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
 .lang-select:focus{border-color:var(--blue)}
@@ -420,7 +422,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="lang-box">
     <div class="lang-pair-row">
       <div class="lang-pair-col">
-        <label class="form-lbl">🗣 I speak</label>
+        <label class="form-lbl" data-i18n="form.i_speak">🗣 I speak</label>
         <div class="lang-select-wrap">
           <select class="lang-select" id="src-lang-select" onchange="selectSrcLang(this.value)">
             <option value="en">🇬🇧 English</option>
@@ -447,7 +449,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </div>
       <div class="lang-pair-arrow">→</div>
       <div class="lang-pair-col">
-        <label class="form-lbl">📖 I learn</label>
+        <label class="form-lbl" data-i18n="form.i_learn">📖 I learn</label>
         <div class="lang-select-wrap">
           <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
             <option value="it">🇮🇹 Italian</option>
@@ -473,34 +475,33 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         </div>
       </div>
     </div>
+    <div id="ui-translate-pill"></div>
   </div>
-
-  <div class="topic-form">
     <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
     <textarea class="topic-input" id="topic-input" rows="2"
-      placeholder="e.g. cooking, architecture, medicine… add details for a richer story"
+      placeholder="e.g. cooking, architecture, medicine…"
       maxlength="400" oninput="autoResizeTopic(this)"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
     <div class="user-story-checks" id="user-story-checks">
       <label class="user-story-check-row">
         <input type="checkbox" id="use-story-cb" onchange="onUseStoryCb()">
-        📖 I have my own story!
+        <span id="use-story-lbl">📖 I have my own story!</span>
       </label>
       <label class="user-story-check-row" id="use-translation-cb-row" style="display:none;padding-left:24px">
         <input type="checkbox" id="use-translation-cb" onchange="onUseTranslationCb()">
-        🔤 I also have a translation <span id="translation-lang-hint">(in English)</span>
+        <span id="use-translation-lbl">🔤 I also have a translation</span> <span id="translation-lang-hint">(in English)</span>
       </label>
     </div>
 
     <div class="user-story-panel" id="user-story-panel">
-      <label class="form-lbl" style="margin-bottom:0">Story (in target language)</label>
+      <label class="form-lbl" style="margin-bottom:0" id="story-panel-lbl">Story (in target language)</label>
       <textarea class="user-story-textarea" id="user-story-input"
-        placeholder="Paste your story here…"
+        id="user-story-input-ph" placeholder="Paste your story here…"
         oninput="autoResizeTextarea(this)"></textarea>
       <div class="user-translation-panel" id="user-translation-panel">
         <label class="form-lbl" style="margin-bottom:0" id="user-translation-lbl">Translation (in English)</label>
         <textarea class="user-story-textarea" id="user-translation-input"
-          placeholder="Paste the translation here. One sentence per paragraph is ideal, but plain prose works too."
+          id="user-translation-ph" placeholder="Paste the translation here."
           oninput="autoResizeTextarea(this)"></textarea>
       </div>
     </div>
@@ -577,7 +578,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </div>
     <div class="home-hdr-actions">
       <button class="hdr-btn" onclick="goLandingClean()">← Topics</button>
-      <button class="hdr-btn" id="share-btn" onclick="shareLesson()" title="Copy shareable link">🔗 Share</button>
+      <button class="hdr-btn" id="share-btn" onclick="shareLesson()" id="share-btn-title" title="Copy shareable link">🔗 Share</button>
       <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
       <button class="hdr-btn" id="cont-story-btn" onclick="continueFromCurrent()" style="display:none" title="Continue this story">↪ Continue</button>
     </div>
@@ -614,9 +615,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <span>📖 Read the story</span>
       <div class="story-hdr-btns" onclick="event.stopPropagation()">
         <span id="story-lang-lbl" class="story-lang-lbl" style="display:none"></span>
-        <button class="story-icon-btn" onclick="speakStory()" title="Read aloud">🔊</button>
+        <button class="story-icon-btn" onclick="speakStory()" id="speakstory-btn" title="Read aloud">🔊</button>
         <button class="story-icon-btn" id="story-prompt-btn" onclick="openStoryPrompt()" title="View/edit story prompt" style="display:none">📝</button>
-        <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
+        <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" id="edit-story-btn" title="Edit story">✏️</button>
       </div>
       <span class="story-arrow" id="story-arrow">▼</span>
     </button>
@@ -624,7 +625,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="story-repair-wrap" id="story-repair-wrap">
       <div class="story-repair-row">
         <textarea class="story-repair-input" id="story-repair-input" rows="2"
-          placeholder="Describe what to change, e.g. 'make it funnier' or 'set it in Rome'…"></textarea>
+          id="story-rewrite-ph" placeholder="Describe what to change…"></textarea>
         <button class="story-repair-btn" id="story-repair-btn" onclick="doRepairStory()">Rewrite</button>
       </div>
       <div class="story-repair-status" id="story-repair-status"></div>
@@ -633,12 +634,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <button class="flag-btn" id="story-flag-btn" onclick="toggleStoryFlag()">⚐ Flag story</button>
       <div class="flag-comment-wrap" id="story-flag-comment-wrap">
         <textarea class="flag-comment" id="story-flag-comment" rows="2"
-          placeholder="Describe what is wrong with the story…"
+          id="story-flag-ph" placeholder="Describe what is wrong with the story…"
           onblur="saveStoryComment()"></textarea>
       </div>
       <button class="flag-btn" id="story-cont-btn" onclick="continueFromCurrent()"
         style="display:none;background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a"
-        title="Continue this story in a new lesson set">↪ Continue story</button>
+        id="continue-story-btn-title" title="Continue this story in a new lesson set">↪ Continue story</button>
     </div>
   </div>
 </div>
@@ -657,7 +658,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 <!-- ══ COMPLETE ════════════════════════════════════════════════════════ -->
 <div id="complete-screen" class="screen">
   <span class="trophy">🏆</span>
-  <div class="comp-title">Lesson complete!</div>
+  <div class="comp-title" id="comp-title">Lesson complete!</div>
   <div class="comp-sub" id="comp-sub"></div>
   <div class="prog-pill" id="comp-xp">0%</div>
   <div class="stat-row">
@@ -666,9 +667,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="stat-box"><div class="stat-num" id="s-streak" style="color:var(--yellow)">0🔥</div><div class="stat-lbl">Best streak</div></div>
     <div class="stat-box"><div class="stat-num" id="s-flagged" style="color:#ff9600">0⚑</div><div class="stat-lbl">Flagged</div></div>
   </div>
-  <div class="vocab-box"><div class="vocab-hdr">Words from this lesson</div><div id="comp-vocab"></div></div>
+  <div class="vocab-box"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab"></div></div>
   <button class="cont-btn" id="comp-next" onclick="afterComplete()">Continue</button>
-  <button class="sec-btn" onclick="goHome()">Back to lessons</button>
+  <button class="sec-btn" id="comp-back-btn" onclick="goHome()">Back to lessons</button>
 </div>
 
 <script>
@@ -693,6 +694,46 @@ var LANGS = {
   lb: {name:'Lëtzebuergesch',   flag:'🇱🇺', tts:'lb-LU'},
 };
 
+// ── Language names in each UI language ───────────────────────────────────────
+// Used to render e.g. "Wofür möchtest du Italienisch lernen?" instead of
+// "Wofür möchtest du Italian lernen?"
+const LANG_NAMES_LOCALIZED = {
+  en: {it:'Italian',fr:'French',de:'German',es:'Spanish',pt:'Portuguese',nl:'Dutch',
+       pl:'Polish',sv:'Swedish',ja:'Japanese',zh:'Mandarin Chinese',ar:'Arabic',
+       ru:'Russian',ko:'Korean',tr:'Turkish',hi:'Hindi',sw:'Swahili',lb:'Lëtzebuergesch',en:'English'},
+  de: {it:'Italienisch',fr:'Französisch',de:'Deutsch',es:'Spanisch',pt:'Portugiesisch',
+       nl:'Niederländisch',pl:'Polnisch',sv:'Schwedisch',ja:'Japanisch',zh:'Mandarin-Chinesisch',
+       ar:'Arabisch',ru:'Russisch',ko:'Koreanisch',tr:'Türkisch',hi:'Hindi',sw:'Suaheli',
+       lb:'Luxemburgisch',en:'Englisch'},
+  fr: {it:'Italien',fr:'Français',de:'Allemand',es:'Espagnol',pt:'Portugais',nl:'Néerlandais',
+       pl:'Polonais',sv:'Suédois',ja:'Japonais',zh:'Mandarin',ar:'Arabe',ru:'Russe',
+       ko:'Coréen',tr:'Turc',hi:'Hindi',sw:'Swahili',lb:'Luxembourgeois',en:'Anglais'},
+  es: {it:'Italiano',fr:'Francés',de:'Alemán',es:'Español',pt:'Portugués',nl:'Neerlandés',
+       pl:'Polaco',sv:'Sueco',ja:'Japonés',zh:'Chino Mandarín',ar:'Árabe',ru:'Ruso',
+       ko:'Coreano',tr:'Turco',hi:'Hindi',sw:'Suajili',lb:'Luxemburgués',en:'Inglés'},
+  ja: {it:'イタリア語',fr:'フランス語',de:'ドイツ語',es:'スペイン語',pt:'ポルトガル語',
+       nl:'オランダ語',pl:'ポーランド語',sv:'スウェーデン語',ja:'日本語',zh:'中国語（普通話）',
+       ar:'アラビア語',ru:'ロシア語',ko:'韓国語',tr:'トルコ語',hi:'ヒンディー語',
+       sw:'スワヒリ語',lb:'ルクセンブルク語',en:'英語'},
+  zh: {it:'意大利语',fr:'法语',de:'德语',es:'西班牙语',pt:'葡萄牙语',nl:'荷兰语',
+       pl:'波兰语',sv:'瑞典语',ja:'日语',zh:'普通话',ar:'阿拉伯语',ru:'俄语',
+       ko:'韩语',tr:'土耳其语',hi:'印地语',sw:'斯瓦希里语',lb:'卢森堡语',en:'英语'},
+  ru: {it:'Итальянский',fr:'Французский',de:'Немецкий',es:'Испанский',pt:'Португальский',
+       nl:'Нидерландский',pl:'Польский',sv:'Шведский',ja:'Японский',zh:'Китайский',
+       ar:'Арабский',ru:'Русский',ko:'Корейский',tr:'Турецкий',hi:'Хинди',
+       sw:'Суахили',lb:'Люксембургский',en:'Английский'},
+  ko: {it:'이탈리아어',fr:'프랑스어',de:'독일어',es:'스페인어',pt:'포르투갈어',nl:'네덜란드어',
+       pl:'폴란드어',sv:'스웨덴어',ja:'일본어',zh:'중국어',ar:'아랍어',ru:'러시아어',
+       ko:'한국어',tr:'터키어',hi:'힌디어',sw:'스와힐리어',lb:'룩셈부르크어',en:'영어'},
+};
+
+// Return the name of language `targetCode` in the UI language `uiLang`
+function localizedLangName(targetCode, uiLang) {
+  const table = LANG_NAMES_LOCALIZED[uiLang] || LANG_NAMES_LOCALIZED['en'];
+  return table[targetCode] || (LANGS[targetCode]||{}).name || targetCode;
+}
+
+
 var APP = {
   info: {backend:'none',canGenerate:false},
   lessonData: null,
@@ -713,6 +754,151 @@ var APP = {
         answered:false,sel:null,placed:[],usedIdx:[]}
 };
 
+// ── UI localisation ───────────────────────────────────────────────────────────
+var UI_STRINGS = {}; // populated by loadUIStrings()
+
+function t(key, vars) {
+  const str = UI_STRINGS[key] || (window._UI_EN && window._UI_EN[key]) || key;
+  if (!vars) return str;
+  return str.replace(/\{(\w+)\}/g, (_, k) => vars[k] !== undefined ? vars[k] : '{'+k+'}');
+}
+
+async function loadUIStrings(srcLang) {
+  srcLang = srcLang || 'en';
+  // Static build: strings baked in, use directly, no fetch ever
+  if (window.UI_STRINGS_ALL) {
+    UI_STRINGS = window.UI_STRINGS_ALL[srcLang] || window.UI_STRINGS_ALL['en'] || {};
+    applyUIStrings();
+    return;
+  }
+  // Live server
+  try {
+    const r = await fetch('/api/ui/lang?lang=' + srcLang);
+    if (r.ok) {
+      const strings = await r.json();
+      const enCount = Object.keys((window._UI_EN)||{}).length || 80;
+      const gotCount = Object.keys(strings).length;
+      if (srcLang !== 'en' && gotCount < enCount * 0.5) {
+        // Not yet translated — apply English immediately as fallback
+        UI_STRINGS = window._UI_EN || strings;
+        applyUIStrings();
+        // Trigger server-side translation in background, reload when done
+        const langName = LANGS[srcLang]?.name || srcLang;
+        setUITranslateStatus('running', 'Translating UI to ' + langName + '…');
+        fetch('/api/ui-translate', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({lang: srcLang})
+        }).then(r2 => r2.ok && r2.json()).then(result => {
+          if (result?.ok) {
+            loadUIStrings(srcLang);
+            setUITranslateStatus('done', '✓ UI translated to ' + langName);
+          } else {
+            setUITranslateStatus('hidden', '');
+          }
+        }).catch(() => setUITranslateStatus('hidden', ''));
+      } else {
+        UI_STRINGS = gotCount > 0 ? strings : (window._UI_EN || {});
+        applyUIStrings();
+      }
+      return;
+    }
+  } catch(_) {}
+  UI_STRINGS = (window._UI_EN) || {};
+  applyUIStrings();
+}
+
+function applyUIStrings() {
+  const L = LANGS[APP.lang] || LANGS.it;
+  const S = LANGS[APP.srcLang] || LANGS.en || {name:'English'};
+  // Use localized language name (e.g. 'Italienisch' not 'Italian' in German UI)
+  const tgtLangName = localizedLangName(APP.lang, APP.srcLang);
+  const srcLangName = localizedLangName(APP.srcLang, APP.srcLang);
+  // Static elements
+  _setText('app-tagline',   t('app.tagline',   {lang: tgtLangName}));
+  _setText('topic-label',   document.getElementById('use-story-cb')?.checked
+    ? t('form.topic_label_story')
+    : t('form.topic_label', {lang: tgtLangName}));
+  _setVal ('topic-input',   null, t('form.topic_placeholder'));
+  _setText('gen-btn',       t('form.generate'));
+  _setText('start-btn',     t('lesson.start'));
+  _setText('offline-note',  t('form.offline'));
+  _setText('comp-next',     t('complete.continue'));
+  _setText('comp-title',    t('complete.title'));
+  _setStatLbl('s-correct',  t('complete.correct'));
+  _setStatLbl('s-mistakes', t('complete.mistakes'));
+  _setStatLbl('s-streak',   t('complete.streak'));
+  _setStatLbl('s-flagged',  t('complete.flagged'));
+  _setText('words-from-lbl', t('lesson.words_from'));
+  _setText('comp-back-btn', t('complete.back'));
+  // Labels
+  const spkLbl = document.querySelector('.form-lbl[for-i-speak]');
+  // Form labels via class iteration
+  document.querySelectorAll('.form-lbl[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    el.textContent = t(key, {lang: L.name, slang: S.name});
+  });
+  // Furigana row
+  const furiSpan = document.querySelector('#furigana-row span');
+  if (furiSpan) furiSpan.textContent = t('furigana.show');
+  // Story checkbox and related labels
+  const useStoryLbl = document.getElementById('use-story-lbl');
+  if (useStoryLbl) useStoryLbl.textContent = t('form.use_story');
+  const useTransLbl = document.getElementById('use-translation-lbl');
+  if (useTransLbl) useTransLbl.textContent = t('form.translation_cb');
+  const storyPanelLbl = document.getElementById('story-panel-lbl');
+  if (storyPanelLbl) storyPanelLbl.textContent = t('form.story_label');
+  // Translation hint
+  updateTranslationLangHint();
+  // Placeholders
+  _setVal('user-story-input', null, t('form.story_placeholder'));
+  _setVal('user-translation-input', null, t('form.translation_placeholder_short'));
+  _setVal('story-repair-input', null, t('form.story_rewrite_placeholder'));
+  _setVal('story-flag-input', null, t('form.story_flag_placeholder'));
+  // Static flag banner
+  _setText('static-flag-banner-text', t('lesson.flagged_count_plural', {n: ''}));
+  // Tooltips
+  _setAttr('share-btn', 'title', t('lesson.share_title'));
+  _setAttr('speakstory-btn', 'title', t('lesson.read_aloud'));
+  _setAttr('edit-story-btn', 'title', t('lesson.edit_story'));
+  _setAttr('continue-story-btn-title', 'title', t('lesson.continue_title'));
+}
+
+function setUITranslateStatus(state, text) {
+  const pill = document.getElementById('ui-translate-pill');
+  if (!pill) return;
+  if (state === 'hidden') { pill.style.display = 'none'; return; }
+  pill.style.display = 'flex';
+  pill.className = state;
+  const spinner = state === 'running' ? '<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> ' : '';
+  pill.innerHTML = spinner + text;
+  if (state === 'done') setTimeout(() => setUITranslateStatus('hidden', ''), 3000);
+}
+
+function _setText(id, text) {
+  const el = document.getElementById(id);
+  if (el && text) el.textContent = text;
+}
+function _setAttr(id, attr, val) {
+  const el = document.getElementById(id);
+  if (el && val) el.setAttribute(attr, val);
+}
+function _setVal(id, val, placeholder) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (val !== null && val !== undefined) el.value = val;
+  if (placeholder) el.placeholder = placeholder;
+}
+function _setStatLbl(numId, text) {
+  // stat-lbl is a sibling of the num element inside .stat-box
+  const num = document.getElementById(numId);
+  if (!num) return;
+  const lbl = num.parentElement?.querySelector('.stat-lbl');
+  if (lbl) lbl.textContent = text;
+}
+
+
+
 function loadProg(){ try{ return JSON.parse(localStorage.getItem('imp3_prog')||'{"completed":{}}'); }catch(e){ return {completed:{}}; } }
 function saveProg(){ localStorage.setItem('imp3_prog',JSON.stringify(APP.progress)); }
 function loadLang(){ return localStorage.getItem('imp3_lang')||'it'; }
@@ -722,23 +908,23 @@ function saveSrcLang(){ localStorage.setItem('imp3_srclang',APP.srcLang); }
 
 // ── Toast + share — pure DOM, no server dependency ────────────────────
 function showToast(msg){
-  const t=document.getElementById('toast'); if(!t) return;
-  t.textContent=msg; t.classList.add('show');
+  const toastEl=document.getElementById('toast'); if(!t) return;
+  toastEl.textContent=msg; toastEl.classList.add('show');
   clearTimeout(showToast._timer);
-  showToast._timer=setTimeout(()=>t.classList.remove('show'),2200);
+  showToast._timer=setTimeout(()=>toastEl.classList.remove('show'),2200);
 }
 function shareLesson(){
   if(!APP.lessonData) return;
   const url=location.origin+location.pathname+'#topic='+encodeURIComponent(APP.lessonData.topic);
   if(navigator.clipboard&&location.protocol!=='file:'){
-    navigator.clipboard.writeText(url).then(()=>showToast('🔗 Link copied!')).catch(()=>_copyFallback(url));
+    navigator.clipboard.writeText(url).then(()=>showToast(t('toast.link_copied'))).catch(()=>_copyFallback(url));
   } else { _copyFallback(url); }
 }
 function _copyFallback(text){
   const ta=document.createElement('textarea');
   ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
   document.body.appendChild(ta); ta.select();
-  try{ document.execCommand('copy'); showToast('🔗 Link copied!'); }
+  try{ document.execCommand('copy'); showToast(t('toast.link_copied')); }
   catch(e){ showToast(text); }
   document.body.removeChild(ta);
 }
@@ -787,28 +973,29 @@ function onUseStoryCb(){
     document.getElementById('user-translation-panel').classList.remove('open');
   }
   const lbl=document.getElementById('topic-label');
-  if(lbl) lbl.textContent=on?'Topic / lesson title':topicLabelText();
+  if(lbl) lbl.textContent=on?t('form.topic_label_story'):topicLabelText();
 }
 function topicLabelText(){
-  const srcL=LANGS[APP.srcLang]||LANGS.en||{name:'English'};
   const tgtL=LANGS[APP.lang]||LANGS.it;
-  if(APP.srcLang==='en') return 'What do you want to learn '+tgtL.name+' for?';
-  return 'What do you want to learn '+tgtL.name+' for? ('+srcL.name+')';
+  return t('form.topic_label',{lang:localizedLangName(APP.lang,APP.srcLang)});
 }
 function updateTranslationLangHint(){
-  const srcL=LANGS[APP.srcLang]||LANGS.en||{name:'English'};
+  const srcLangName = localizedLangName(APP.srcLang, APP.srcLang);
   const hint=document.getElementById('translation-lang-hint');
-  if(hint) hint.textContent='(in '+srcL.name+')';
+  if(hint) hint.textContent=t('form.translation_hint',{lang:srcLangName});
   const lbl=document.getElementById('user-translation-lbl');
-  if(lbl) lbl.textContent='Translation (in '+srcL.name+')';
+  if(lbl) lbl.textContent=t('form.translation_label',{lang:srcLangName});
   const ta=document.getElementById('user-translation-input');
-  if(ta) ta.placeholder='Paste the '+srcL.name+' translation here. One sentence per paragraph is ideal, but plain prose works too.';
+  if(ta) ta.placeholder=t('form.translation_placeholder',{lang:srcLangName});
 }
 function selectSrcLang(code){
   APP.srcLang=code; saveSrcLang();
   const sel=document.getElementById('src-lang-select');
   if(sel && sel.value!==code) sel.value=code;
   updateTranslationLangHint();
+  // Load UI strings for this language — fetches from server if not yet translated,
+  // or reads from baked-in strings in static mode. Either way updates the UI immediately.
+  loadUIStrings(code);
   const lbl=document.getElementById('topic-label');
   if(lbl && !document.getElementById('use-story-cb')?.checked) lbl.textContent=topicLabelText();
   // Filter library by source language
@@ -834,7 +1021,7 @@ function selectLang(code, silent){
   const inp=document.getElementById('topic-input');
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
-  if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
+  if(tagline) tagline.textContent=t('app.tagline',{lang:localizedLangName(APP.lang,APP.srcLang)});
   // Update library filter to match target language (unless called silently from selectSrcLang)
   if(!silent){
     APP.libFilter=code;
@@ -870,7 +1057,7 @@ function updateStaticFlagBanner(){
   const count=Object.keys(APP.flagged||{}).length;
   if(count===0){ banner.style.display='none'; return; }
   const txt=document.getElementById('static-flag-banner-text');
-  if(txt) txt.textContent=`You have ${count} flagged exercise${count!==1?'s':''} — download to review or export.`;
+  if(txt) txt.textContent=count===1?t('lesson.flagged_count',{n:count}):t('lesson.flagged_count_plural',{n:count});
   banner.style.display='flex';
 }
 
@@ -1004,11 +1191,11 @@ async function regenWithPrompt(){
     const arrow=document.getElementById('story-arrow');
     if(body&&!body.classList.contains('open')){ body.classList.add('open'); if(arrow) arrow.classList.add('open'); }
     closeStoryPrompt();
-    showToast('Story rewritten ✓');
+    showToast(t('toast.story_rewritten'));
   }catch(e){
     showToast('Error: '+e.message);
   }finally{
-    if(btn){ btn.disabled=false; btn.textContent='↻ Regenerate with this prompt'; }
+    if(btn){ btn.disabled=false; btn.textContent=t('lesson.regen_prompt'); }
   }
 }
 async function doRepairStory(){
@@ -1023,7 +1210,7 @@ async function doRepairStory(){
     const r=await fetch('/api/repair-story',{method:'POST',
       headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic,instruction})});
     const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||'Repair failed');
+    if(!r.ok) throw new Error(resp.error||t('status.repair_failed'));
     await pollJob(resp.jobId,step=>{ if(status) status.textContent=step; });
     const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
     if(lr.ok) APP.lessonData=await lr.json();
@@ -1035,7 +1222,7 @@ async function doRepairStory(){
     const storyLangLbl=document.getElementById('story-lang-lbl');
     if(storyLangLbl) storyLangLbl.textContent=(LANGS[sl]?.flag||sl.toUpperCase());
     document.getElementById('story-repair-input').value='';
-    if(status) status.textContent='Story updated!';
+    if(status) status.textContent=t('status.story_updated');
     setTimeout(()=>{ if(status) status.textContent=''; },3000);
     document.getElementById('story-repair-wrap')?.classList.remove('open');
   }catch(e){
@@ -1045,26 +1232,27 @@ async function doRepairStory(){
 }
 
 // ── Rating ────────────────────────────────────────────────────────────
-const RATING_AXES=[
-  {key:'difficulty',label:'Difficulty',opts:['🔵 Easy','🟡 Right','🔴 Hard']},
-  {key:'fun',       label:'Fun',       opts:['😐 Meh','😊 Good','😄 Great']},
-  {key:'coherence', label:'Coherence', opts:['🔗 Low','🔗 OK','🔗 High']},
-];
+function getRatingAxes() { return [
+  {key:'difficulty', label:t('rating.q_difficulty'), opts:[t('rating.too_easy'), t('rating.just_right'), t('rating.too_hard')]},
+  {key:'fun',        label:t('rating.q_fun'),        opts:[t('rating.boring'),   t('rating.fun'),        t('rating.very_fun')]},
+  {key:'coherence',  label:t('rating.q_coherence'),  opts:[t('rating.incoherent'),t('rating.coherent'),  t('rating.very_coherent')]},
+];}
 const _pr={};
 function renderRatingPanel(d,done){
   const panel=document.getElementById('rating-panel'); if(!panel) return;
   if(!d.lessons.every(L=>done[L.id])){ panel.style.display='none'; return; }
   panel.style.display='';
+  const axes=getRatingAxes();
   if(d.ratings){
-    panel.innerHTML=`<div class="rating-done">⭐ Rated</div><div class="rating-summary">`+
-      RATING_AXES.map(a=>`<span>${a.label}: ${a.opts[(d.ratings[a.key]||1)-1]}</span>`).join('')+`</div>`;
+    panel.innerHTML=`<div class="rating-done">⭐ ${t('rating.title')}</div><div class="rating-summary">`+
+      axes.map(a=>`<span>${a.label}: ${a.opts[(d.ratings[a.key]||1)-1]}</span>`).join('')+`</div>`;
     return;
   }
-  panel.innerHTML=`<div class="rating-title">⭐ How were these lessons?</div>`+
-    RATING_AXES.map(a=>`<div class="rating-row"><span class="rating-axis">${a.label}</span><div class="rating-btns">`+
+  panel.innerHTML=`<div class="rating-title">⭐ ${t('rating.title')}</div>`+
+    axes.map(a=>`<div class="rating-row"><span class="rating-axis">${a.label}</span><div class="rating-btns">`+
       a.opts.map((o,i)=>`<button class="rating-btn" id="rb-${a.key}-${i+1}" onclick="selR('${a.key}',${i+1})">${o}</button>`).join('')+
     `</div></div>`).join('')+
-    `<button class="rating-submit" onclick="submitRating()">Save rating</button>`;
+    `<button class="rating-submit" onclick="submitRating()">${t('rating.submit')}</button>`;
 }
 function selR(axis,val){
   _pr[axis]=val;
@@ -1072,12 +1260,12 @@ function selR(axis,val){
 }
 async function submitRating(){
   const d=APP.lessonData; if(!d) return;
-  for(const a of RATING_AXES){ if(!_pr[a.key]){ alert('Please rate all three axes.'); return; } }
+  for(const a of getRatingAxes()){ if(!_pr[a.key]){ alert(t('rating.title')); return; } }
   const r={difficulty:_pr.difficulty,fun:_pr.fun,coherence:_pr.coherence};
   try{
     const res=await fetch('/api/rate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({topic:d.topic,ratings:r})});
-    if(!res.ok) throw new Error('Server error');
+    if(!res.ok) throw new Error(t('status.server_error'));
     d.ratings=r;
     renderRatingPanel(d,APP.progress.completed[d.topic]||{});
     loadSavedList();
@@ -1096,6 +1284,7 @@ async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
   await syncFlagsFromServer();
   updateStaticFlagBanner();
+  await loadUIStrings(APP.srcLang);
   // Restore source lang selector first so selectLang can read APP.srcLang
   const ssel=document.getElementById('src-lang-select');
   if(ssel) ssel.value=APP.srcLang;
@@ -1129,7 +1318,7 @@ function renderPill(){
     parts.push('Lessons: '+lessonM+(APP.info.ollamaLessonFormat==='table'?' [table]':''));
     mdl.textContent=parts.join(' · ');
   } else {
-    lbl.textContent='Offline — saved lessons only';
+    lbl.textContent=t('status.offline');
     mdl.textContent='';
   }
   if(!APP.info.canGenerate){
@@ -1223,7 +1412,7 @@ async function loadSavedList(){
   }
   const list=document.getElementById('saved-list');
   if(!filtered.length){
-    list.innerHTML='<div class="lib-empty">'+(saved.length?'No lessons in this language.':'No saved lessons yet — generate one above!')+'</div>';
+    list.innerHTML='<div class="lib-empty">'+(saved.length?t('lib.empty_lang'):t('lib.empty'))+'</div>';
     return;
   }
   // ── Build storyline chains from continuedFrom links ──────────────────
@@ -1256,7 +1445,7 @@ async function loadSavedList(){
   function savedItemHtml(s, connector) {
     const dateStr = s.updatedAt || s.generatedAt;
     const date = dateStr ? new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '';
-    const t = encTopic(s.topic);
+    const enc = encTopic(s.topic);
     const tL = LANGS[s.lang||'it'] || LANGS.it;
     const srcL = LANGS[s.srcLang||'en'] || LANGS.en || {flag:'🇬🇧',name:'English'};
     const d = s.difficulty || 2;
@@ -1265,9 +1454,9 @@ async function loadSavedList(){
       ? ` · ${['🔵','🟡','🔴'][s.ratings.difficulty-1]||''} ${['😐','😊','😄'][s.ratings.fun-1]||''}`
       : '';
     const conn = connector ? `<span class="storyline-connector">↩</span>` : '';
-    const sid = 'si-' + t.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+    const sid = 'si-' + enc.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
     return `<div class="saved-item-wrap">
-      <div class="saved-item" onclick="loadSaved('${t}')">
+      <div class="saved-item" onclick="loadSaved('${enc}')">
         ${conn}<span class="saved-emoji">${tL.flag} ${s.topicEmoji||'📚'}</span>
         <div class="saved-info">
           <div class="saved-topic">${s.topic} ${diffBadge}</div>
@@ -1275,17 +1464,17 @@ async function loadSavedList(){
         </div>
         <div class="saved-actions" onclick="event.stopPropagation()">
           ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
-          ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${t}')">↻</button>`:''}
-          <button class="ico-btn export" title="Export lesson with flags"
+          ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${enc}')">↻</button>`:''}
+          <button class="ico-btn export" title="${t('lesson.export_title')}"
             data-topic="${s.topic.replace(/"/g,'&quot;')}"
             onclick="exportTopics([this.dataset.topic])">⬇</button>
-          <button class="ico-btn" title="Delete" onclick="deleteSaved('${t}')">🗑</button>
+          <button class="ico-btn" title="Delete" onclick="deleteSaved('${enc}')">🗑</button>
         </div>
       </div>
       <div class="saved-item-story">
         <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('${sid}','${s.topic.replace(/'/g,"\\'")}')">
           📖 Read story
-          <button class="story-icon-btn" style="margin-left:auto" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="Read aloud">🔊</button>
+          <button class="story-icon-btn" style="margin-left:auto" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">🔊</button>
           <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
         </button>
         <div class="saved-item-story-body" id="sis-body-${sid}"></div>
@@ -1296,8 +1485,8 @@ async function loadSavedList(){
   const { storylines, orphans, byTopic } = buildChains(filtered);
 
   // Sort storylines by newest updatedAt among their members
-  const newestOf = chain => chain.reduce((best, t) => {
-    const dt = byTopic[t]?.updatedAt || byTopic[t]?.generatedAt || '';
+  const newestOf = chain => chain.reduce((best, enc) => {
+    const dt = byTopic[enc]?.updatedAt || byTopic[enc]?.generatedAt || '';
     return dt > best ? dt : best;
   }, '');
   storylines.sort((a, b) => newestOf(b).localeCompare(newestOf(a)));
@@ -1355,7 +1544,7 @@ async function loadSavedList(){
           <span class="storyline-title-sub">Story line · ${chain.length} lesson${chain.length!==1?'s':''}${chainDate?' · '+chainDate:''}</span>
          </span>`;
     const genBtn = APP.info.canGenerate
-      ? `<button class="storyline-hdr-btn gen" title="Generate title with AI" onclick="event.stopPropagation();genStorylineTitle('${chainId}','${escapedRoot}','${escapedChain}')">✨</button>`
+      ? `<button class="storyline-hdr-btn gen" title="${t('lesson.gen_title')}" onclick="event.stopPropagation();genStorylineTitle('${chainId}','${escapedRoot}','${escapedChain}')">✨</button>`
       : '';
     html += `<div class="storyline-group" id="slgroup-${chainId}">`;
     html += `<div class="storyline-hdr" id="slhdr-${chainId}">
@@ -1363,14 +1552,14 @@ async function loadSavedList(){
       <button class="storyline-hdr-btn" title="Edit title" onclick="event.stopPropagation();openStorylineEdit('${chainId}','${escapedRoot}')">✏️</button>
       ${genBtn}
       <button class="ico-btn export" style="font-size:11px;padding:2px 8px"
-        title="Export full story line with flags"
+        title="${t('lesson.export_storyline_title')}"
         data-chain="${escapedChain}"
         onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>
     </div>`;
     // Edit form (hidden by default)
     html += `<div class="storyline-hdr" id="sledit-${chainId}" style="display:none;background:var(--white);border-bottom:1.5px solid var(--accent)">
       <span class="storyline-edit-icon" id="sledit-icon-${chainId}" onclick="cycleStorylineIcon('${chainId}')">${titleIcon}</span>
-      <input class="storyline-edit-input" id="sledit-input-${chainId}" placeholder="Story line title…" value="${escHtml(titleText)}" onkeydown="if(event.key==='Enter')saveStorylineTitle('${chainId}','${escapedRoot}');if(event.key==='Escape')closeStorylineEdit('${chainId}')">
+      <input class="storyline-edit-input" id="sledit-input-${chainId}" placeholder="${t('storyline.placeholder')}" value="${escHtml(titleText)}" onkeydown="if(event.key==='Enter')saveStorylineTitle('${chainId}','${escapedRoot}');if(event.key==='Escape')closeStorylineEdit('${chainId}')">
       <button class="storyline-hdr-btn" onclick="saveStorylineTitle('${chainId}','${escapedRoot}')">Save</button>
       <button class="storyline-hdr-btn danger" onclick="clearStorylineTitle('${chainId}','${escapedRoot}')">Clear</button>
       <button class="storyline-hdr-btn" onclick="closeStorylineEdit('${chainId}')">✕</button>
@@ -1451,7 +1640,7 @@ async function deleteSaved(topic){
 async function regenSaved(topic){
   const dec=decodeURIComponent(topic);
   if(!confirm('Regenerate "'+dec+'"? Overwrites saved version.')) return;
-  if(APP.activeJob){ showToast('⏳ Already generating "'+APP.activeJob.topic+'" — please wait'); return; }
+  if(APP.activeJob){ showToast(t('toast.already_generating',{topic:APP.activeJob.topic})); return; }
   const saved=(APP.savedList||[]).find(s=>s.topic===dec);
   if(saved?.lang) selectLang(saved.lang);
   if(saved?.srcLang){ APP.srcLang=saved.srcLang; saveSrcLang(); const ss=document.getElementById('src-lang-select'); if(ss) ss.value=saved.srcLang; updateTranslationLangHint(); }
@@ -1506,20 +1695,13 @@ function loadActiveJob(){ try{ const s=localStorage.getItem('imp3_activejob'); r
 function setGenStatus(state, text){
   // state: 'running' | 'done' | 'error' | 'hidden'
   const el=document.getElementById('gen-status');
-  const spinner=document.getElementById('gen-status-spinner');
-  const textEl=document.getElementById('gen-status-text');
-  const xEl=document.getElementById('gen-status-x');
   if(!el) return;
   if(state==='hidden'){ el.style.display='none'; return; }
   el.style.display='flex';
   el.className=state;
-  textEl.textContent=text;
-  spinner.style.display= state==='running' ? '' : 'none';
-  spinner.textContent='⏳';
-  xEl.style.display= state==='running' ? 'none' : '';
-  if(state==='done')   el.innerHTML=`✅ <span>${text}</span> <span style="opacity:.5;margin-left:4px">✕</span>`;
-  if(state==='error')  el.innerHTML=`⚠️ <span>${text}</span> <span style="opacity:.5;margin-left:4px">✕</span>`;
-  if(state==='running') el.innerHTML=`<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> <span>${text}</span>`;
+  if(state==='done')    el.innerHTML=`✅ <span>${text}</span> <span style="opacity:.5;margin-left:4px">✕</span>`;
+  else if(state==='error')  el.innerHTML=`⚠️ <span>${text}</span> <span style="opacity:.5;margin-left:4px">✕</span>`;
+  else if(state==='running') el.innerHTML=`<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> <span>${text}</span>`;
 }
 
 function onGenStatusClick(){
@@ -1527,9 +1709,9 @@ function onGenStatusClick(){
   if(!el) return;
   if(el.classList.contains('done') && APP.activeJob?.topic){
     // Navigate to the newly generated lesson
-    const t=APP.activeJob.topic;
+    const topic=APP.activeJob.topic;
     APP.activeJob=null; saveActiveJob(null); setGenStatus('hidden','');
-    loadSaved(encodeURIComponent(t));
+    loadSaved(encodeURIComponent(topic));
   } else if(el.classList.contains('error')||el.classList.contains('done')){
     APP.activeJob=null; saveActiveJob(null); setGenStatus('hidden','');
   }
@@ -1559,7 +1741,7 @@ function startBackgroundJob(jobId, topic){
         if(document.getElementById('home')?.classList.contains('active')) try{ buildPath(); }catch(e){}
         document.getElementById('gen-btn').disabled=false;
         setGenStatus('done', '"'+j.data.topic+'" ready — tap to open');
-        showToast('✅ "'+j.data.topic+'" generated!');
+        showToast(t('toast.generated',{topic:j.data.topic}));
       }
       if(j.status==='error'){
         clearInterval(iv);
@@ -1607,9 +1789,9 @@ async function doGenerate(forceRegen){
   const topic=document.getElementById('topic-input').value.trim();
   const contVal=document.getElementById('continue-select')?.value||'';
   if(APP.difficulty!==4&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
-  if(APP.difficulty===4&&!topic&&!contVal){ showToast('⚠ Select a story or enter a topic for Text Understanding'); return; }
+  if(APP.difficulty===4&&!topic&&!contVal){ showToast(t('toast.select_story')); return; }
   if(!APP.info.canGenerate) return;
-  if(APP.activeJob){ showToast('⏳ Already generating "'+APP.activeJob.topic+'" — please wait'); return; }
+  if(APP.activeJob){ showToast(t('toast.already_generating',{topic:APP.activeJob.topic})); return; }
 
   // Collect user-story fields
   const useStory=document.getElementById('use-story-cb')?.checked;
@@ -1645,7 +1827,7 @@ async function doGenerate(forceRegen){
     } else {
       // Fire and forget — user can browse while this runs
       startBackgroundJob(resp.jobId, topic);
-      showToast('⏳ Generating "'+topic+'" in the background…');
+      showToast(t('toast.generating',{topic}));
       goLanding();
     }
   }catch(e){ showToast('⚠ '+e.message); }
@@ -1693,8 +1875,8 @@ function buildPath(){
   }
   if(continuedBy.length){
     continuedBy.forEach(s=>{
-      const t=encTopic(s.topic);
-      byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${t}')">${s.topic} →</span>`);
+      const enc=encTopic(s.topic);
+      byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${enc}')">${s.topic} →</span>`);
     });
   }
   if(fromLinks.length||byLinks.length){
@@ -1837,15 +2019,15 @@ function buildPath(){
       <div class="node-lbl">
         <div class="node-title">Lesson ${L.id}: ${L.title} ${diffBadge}</div>
         <div class="node-desc">${L.desc}</div>
-        ${hasFlags?`<span class="flag-note">⚑ ${lessonFlagCount} flagged question${lessonFlagCount!==1?'s':''}</span>`:''}      </div>
+        ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}      </div>
       ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
   });
   const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
   const btn=document.getElementById('start-btn');
-  if(nextIdx<0){ btn.textContent='All done! 🎉'; btn.onclick=()=>goLandingClean(); }
-  else{ btn.textContent='Start lesson '+(nextIdx+1); btn.onclick=()=>startLesson(nextIdx); }
+  if(nextIdx<0){ btn.textContent=t('lesson.all_done'); btn.onclick=()=>goLandingClean(); }
+  else{ btn.textContent=t('lesson.start_n',{n:nextIdx+1}); btn.onclick=()=>startLesson(nextIdx); }
   renderRatingPanel(d, done);
 
   // Update flag summary strip
@@ -1855,7 +2037,7 @@ function buildPath(){
   const stripLbl=document.getElementById('flag-strip-label');
   if(strip){
     strip.style.display=totalFlagged>0?'flex':'none';
-    if(stripLbl) stripLbl.textContent='⚑ '+totalFlagged+' flagged question'+(totalFlagged!==1?'s':'')+' across all lessons';
+    if(stripLbl) stripLbl.textContent=totalFlagged===1?t('lesson.flagged_across',{n:totalFlagged}):t('lesson.flagged_across_plural',{n:totalFlagged});
   }
 }
 function startNextLesson(){
@@ -1962,13 +2144,13 @@ function setTitleGenStatus(state,text){
 async function genStorylineTitle(chainId, rootTopic, encodedChain) {
   const btn = document.querySelector(`#slhdr-${chainId} .gen`);
   if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
-  setTitleGenStatus('running','Generating story title…');
+  setTitleGenStatus('running',t('lesson.generating_title'));
   try {
     const topics = JSON.parse(decodeURIComponent(encodedChain));
     const r = await fetch('/api/storyline-title', { method:'POST',
       headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topics }) });
     const data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'Generation failed');
+    if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
     // Auto-save directly — pre-fill edit form so user can still tweak
     await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ chainKey: rootTopic, title: data.title, icon: data.icon }) });
@@ -1981,7 +2163,7 @@ async function genStorylineTitle(chainId, rootTopic, encodedChain) {
     if (inp)  inp.value = data.title || '';
     if (icon) icon.textContent = data.icon || '📖';
     await loadSavedList();
-    setTitleGenStatus('done','Title saved');
+    setTitleGenStatus('done',t('lesson.title_saved'));
     openStorylineEdit(chainId, rootTopic);
   } catch(e) {
     setTitleGenStatus('error',e.message.slice(0,40));
@@ -2036,8 +2218,8 @@ function _renderChainStory(body, chapters) {
   }
   body.innerHTML = chapters.map((d, i) =>
     `<div class="storyline-chapter">` +
-    `<div class="storyline-chapter-hdr">Chapter ${i+1} · ${escHtml(d.topic)}</div>` +
-    `<div class="storyline-chapter-body">${highlight(d.story || '(no story)')}</div>` +
+    `<div class="storyline-chapter-hdr">${t('storyline.chapter_hdr',{n:i+1,topic:escHtml(d.topic)})}</div>` +
+    `<div class="storyline-chapter-body">${highlight(d.story || t('chapter.no_story'))}</div>` +
     `</div>`
   ).join('');
 }
@@ -2128,10 +2310,10 @@ function renderErrorHunt(){
   const el=document.getElementById('ex-area');
   const _autoCheck=!!(savedResult&&typeof savedResult==='object'&&savedResult.suspect);
   el.innerHTML=
-    '<div class="ex-badge">🔍 Error Hunt — tap words that contain errors</div>'+
+    `<div class="ex-badge">${t('ex.badge.error_hunt')}</div>`+
     '<div class="card">'+
     '<div style="font-size:12px;font-weight:700;color:var(--gray-dark);margin-bottom:6px">'+ 
-    'Tap words that look wrong — spelling or grammar mistakes.'+'</div>'+
+    t('ex.error_hunt.instruction')+'</div>'+
     `<div class="eh-wrap" id="eh-wrap">${spans.join('')}</div>`+
     '<div id="eh-btn-row" style="margin-top:10px;text-align:center">'+
     '<button class="big-btn" onclick="ehCheck()">Check answers</button>'+
@@ -2219,7 +2401,7 @@ function ehCheck(){
   // Back button
   const backBtn=document.createElement('button');
   backBtn.className='sec-btn'; backBtn.style='margin-top:12px;width:100%';
-  backBtn.textContent='← Back to lessons';
+  backBtn.textContent=t('check.back');
   backBtn.onclick=()=>{ showComplete(); };
   resultDiv.appendChild(backBtn);
   wrap.after(resultDiv);
@@ -2308,23 +2490,23 @@ function lBlock(it, pron, hideWord) {
 }
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
 function lessonSrcLang(){ const s=APP.lessonData?.srcLang||APP.srcLang||'en'; return LANGS[s]||LANGS.en||{name:'English',flag:'🇬🇧',tts:'en-GB'}; }
-function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} What does this mean?</div><div class="card"><div class="qtext">What does <span class="target-word">${applyFurigana(ex.target)}</span> mean?</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${S.flag}→${L.flag} Translate to ${L.name}</div><div class="card"><div class="qtext">How do you say <strong>"${ex.source}"</strong> in ${L.name}?</div>${cGrid(ex.choices,false)}</div>`; }
-function ttsApproxBadge(){ return ttsIsApproximate()?'<span class="tts-approx" style="margin-left:6px">⚠ approximate pronunciation</span>':''; }
-function tLMcq(ex){ const S=lessonSrcLang(); return `<div class="ex-badge">🎧 Listening — what do you hear?${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Listen and choose the ${S.name} meaning:</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">🎧 Listening — type what you hear${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">Type the ${L.name} word you hear:</div>${lBlock(ex.target,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="Type in ${L.name}…" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
+function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:L.name})}</div><div class="card"><div class="qtext">${t("ex.mcq_source_target.q",{word:ex.source,lang:L.name})}</div>${cGrid(ex.choices,false)}</div>`; }
+function ttsApproxBadge(){ return ttsIsApproximate()?`<span class="tts-approx" style="margin-left:6px">${t('tts.approx')}</span>`:''; }
+function tLMcq(ex){ const S=lessonSrcLang(); return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:S.name})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">${t("ex.badge.listen_type")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_type.q",{lang:L.name})}</div>${lBlock(ex.target,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:L.name})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
 function tOrder(ex){
   const tokens=ex.words.map((w,i)=>
     `<span class="tok" id="t${i}" onclick="addTok(${i})">${applyFurigana(escHtml(w))}</span>`
   ).join("");
-  return `<div class="ex-badge">✏️ Put the words in order</div><div class="card"><div class="qtext">Translate: <em style="color:var(--gray-dark)">\"${ex.source}\"</em></div><div class="sbox" id="sbox"><span class="sbox-ph">Tap words to build the sentence</span></div><div class="wbank">${tokens}</div></div>`;
+  return `<div class="ex-badge">${t("ex.badge.order")}</div><div class="card"><div class="qtext">${t("ex.order.q",{sentence:ex.source})}</div><div class="sbox" id="sbox"><span class="sbox-ph">${t("ex.order.placeholder")}</span></div><div class="wbank">${tokens}</div></div>`;
 }
 
 
 
 
 
-function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">📖 Reading — translate the sentence</div><div class="card"><div class="qtext">Translate this ${L.name} sentence:</div><div class="target-box"><div class="target-box-text">${applyFurigana(ex.target)}</div><button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext">${t("ex.read_translate.q",{lang:L.name})}</div><div class="target-box"><div class="target-box-text">${applyFurigana(ex.target)}</div><button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
 function onType(){ document.getElementById('cbtn').disabled=document.getElementById('type-in').value.trim().length<1; }
@@ -2364,7 +2546,7 @@ function flagCurrent(){
     const fb=document.getElementById('fb');
     if(fb && flagged){
       fb.className='feedback flagged-note';
-      fb.innerHTML='<div class="fb-head">⚑ Flagged — not scored</div><div class="fb-body">This question is flagged. Add a comment below, then use Repair to fix it.</div>';
+      fb.innerHTML=`<div class="fb-head">${t('check.flagged_head')}</div><div class="fb-body">${t('check.flagged_comment')}</div>`;
     }
   }
 }
@@ -2407,7 +2589,7 @@ function _updateStoryFlagUI(){
   const k=storyFlagKey(d.topic);
   const flagged=!!APP.flagged[k];
   const btn=document.getElementById('story-flag-btn');
-  if(btn){ btn.textContent=flagged?'⚑ Story flagged':'⚐ Flag story';
+  if(btn){ btn.textContent=flagged?t('lesson.story_flagged'):t('lesson.flag_story');
            btn.className='flag-btn'+(flagged?' flagged':''); }
   const wrap=document.getElementById('story-flag-comment-wrap');
   if(wrap) wrap.className='flag-comment-wrap'+(flagged?' visible':'');
@@ -2430,12 +2612,12 @@ function check(){
   }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
-  const btn=document.getElementById('cbtn'); btn.textContent='Continue'; btn.className='check-btn cont'; btn.disabled=false;
+  const btn=document.getElementById('cbtn'); btn.textContent=t('check.continue'); btn.className='check-btn cont'; btn.disabled=false;
   const fb=document.getElementById('fb');
   // If flagged: skip scoring entirely, show neutral feedback
   if(isExFlagged(ex)){
     fb.className='feedback flagged-note';
-    fb.innerHTML='<div class="fb-head">⚑ Flagged — not scored</div><div class="fb-body">This question is flagged as faulty and will not affect your score.</div>';
+    fb.innerHTML=`<div class="fb-head">${t('check.flagged_head')}</div><div class="fb-body">${t('check.flagged_body')}</div>`;
     return;
   }
   if(ok){
@@ -2443,13 +2625,13 @@ function check(){
     const revealBody = ex.type==='listen_type'
       ? `${ex.target}${ex.source ? ' — ' + ex.source : ''}`
       : (ex.target||ex.correct);
-    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">Correct! ✓</div><div class="fb-body">${revealBody}</div>`;
+    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">${t('check.correct')}</div><div class="fb-body">${revealBody}</div>`;
     if(ex.target) speak(ex.target);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     if(ex.type==='listen_type') document.getElementById('type-in').classList.add('ok');
   } else {
     C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
-    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">Not quite!</div><div class="fb-body">Correct answer: <strong>${ex.correct}</strong></div>`;
+    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${ex.correct}</strong></div>`;
     if(ex.target) speak(ex.target,0.75);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===ex.correct)b.classList.add('ok'); });
     if(ex.type==='listen_type') document.getElementById('type-in').classList.add('bad');
@@ -2510,7 +2692,7 @@ function _doSpeak(text,rate){
     const prefix=voices.find(v=>norm(v.lang).startsWith(ttsNorm.split('-')[0]));
     const match=exact||prefix;
     if(match){ u.voice=match; u.lang=match.lang; }
-    else showToast('⚠ No '+ttsCode+' voice — using approximation');
+    else showToast(t('toast.no_voice',{lang:ttsCode}));
   }
   // Small delay after cancel() fixes Firefox silently dropping speak()
   speechSynthesis.cancel();
@@ -2605,16 +2787,16 @@ async function importLessons(input){
   try{
     const text=await file.text();
     data=JSON.parse(text);
-  }catch(e){ showToast('⚠ Invalid JSON file'); return; }
+  }catch(e){ showToast(t('toast.invalid_json')); return; }
   const payload=Array.isArray(data)?data:(data.lessons||data);
-  if(!Array.isArray(payload)||payload.length===0){ showToast('⚠ No lessons found in file'); return; }
+  if(!Array.isArray(payload)||payload.length===0){ showToast(t('toast.no_lessons')); return; }
   try{
     const r=await fetch('/api/lessons/import',{method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({lessons:payload})});
     const result=await r.json();
-    if(!r.ok) throw new Error(result.error||'Import failed');
-    showToast(`✓ Imported: +${result.added} new, ~${result.updated} updated`);
+    if(!r.ok) throw new Error(result.error||t('status.import_failed'));
+    showToast(t('toast.import_ok',{added:result.added,updated:result.updated}));
     loadSavedList();
   }catch(e){ showToast('⚠ '+e.message); }
 }
@@ -2648,9 +2830,9 @@ async function exportTopics(topics) {
     a.href = url; a.download = filename;
     document.body.appendChild(a); a.click();
     document.body.removeChild(a); URL.revokeObjectURL(url);
-    showToast('✓ Exported ' + lessons.length + ' lesson' + (lessons.length !== 1 ? 's' : ''));
+    showToast(lessons.length===1?t('toast.export_ok',{n:1}):t('toast.export_ok_plural',{n:lessons.length}));
   } catch(e) {
-    showToast('⚠ Export failed: ' + e.message);
+    showToast(t('toast.export_fail',{msg:e.message}));
   }
 }
 
@@ -2663,7 +2845,7 @@ init();
       <button class="modal-close" onclick="closeStoryPrompt()">✕</button>
     </div>
     <textarea class="modal-textarea" id="story-prompt-input" rows="12"
-      placeholder="No story prompt saved for this lesson."></textarea>
+      id="story-prompt-ph" placeholder="No story prompt saved for this lesson."></textarea>
     <div class="modal-footer">
       <button class="modal-btn secondary" onclick="closeStoryPrompt()">Cancel</button>
       <button class="modal-btn primary" id="story-prompt-regen-btn"
