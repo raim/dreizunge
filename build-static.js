@@ -16,7 +16,8 @@
 
 const fs   = require('fs');
 const path = require('path');
-const UI_FILE = path.join(__dirname, 'ui.json');
+const UI_FILE   = path.join(__dirname, 'ui.json');
+const LANG_FILE = path.join(__dirname, 'languages.json');
 
 const lessonsFile = process.argv[2] || path.join(__dirname, 'lessons.json');
 const outputDir   = process.argv[3] || path.join(__dirname, 'docs');
@@ -74,8 +75,14 @@ const part2 = lines.slice(engineStart, initCallLine).join('\n');
 let _uiStringsAll = {};
 try { _uiStringsAll = JSON.parse(fs.readFileSync(UI_FILE, 'utf8')); }
 catch(e) { console.warn('Could not read ui.json:', e.message); }
+
+let _langsData = {};
+try { _langsData = JSON.parse(fs.readFileSync(LANG_FILE, 'utf8')); }
+catch(e) { console.warn('Could not read languages.json:', e.message); }
+
 const uiScript = 'window.UI_STRINGS_ALL=' + JSON.stringify(_uiStringsAll) +
-  ';\nwindow._UI_EN=' + JSON.stringify(_uiStringsAll['en']||{}) + ';\n';
+  ';\nwindow._UI_EN=' + JSON.stringify(_uiStringsAll['en']||{}) +
+  ';\nwindow.LANGUAGES_DATA=' + JSON.stringify(_langsData) + ';\n';
 
 // ── Static replacement functions ──────────────────────────────────────
 // ── Strip flagged exercises from baked-in lessons ─────────────────────
@@ -163,6 +170,7 @@ function repopulateContinueSelect(){
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
   APP.libFilter='all'; APP.libSrcFilter='all';
+  await loadLanguages();
   selectLang(APP.lang, true);
   await loadUIStrings(APP.srcLang);
   restoreDiffSelect();

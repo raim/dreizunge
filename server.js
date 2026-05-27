@@ -159,17 +159,12 @@ function jobFail(id, err) {
 // ── Generation lock ───────────────────────────────────────────────────
 const generatingTopics = new Set();
 
-// ── Language config ───────────────────────────────────────────────────
-const LANG_NAMES = {
-  en:'English',
-  it:'Italian', fr:'French', de:'German', es:'Spanish', pt:'Portuguese',
-  nl:'Dutch', pl:'Polish', sv:'Swedish', ja:'Japanese', zh:'Mandarin Chinese',
-  ar:'Arabic', ru:'Russian', ko:'Korean', tr:'Turkish', hi:'Hindi',
-  sw:'Swahili', lb:'Lëtzebuergesch',
-  vi:'Vietnamese', id:'Indonesian', cs:'Czech', ro:'Romanian', uk:'Ukrainian',
-  th:'Thai', el:'Greek', he:'Hebrew', fi:'Finnish', hu:'Hungarian',
-  da:'Danish', ca:'Catalan',
-};
+// ── Language config (from languages.json) ────────────────────────────
+let _langsData = {};
+try {
+  _langsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'languages.json'), 'utf8'));
+} catch(e) { console.warn('Could not load languages.json:', e.message); }
+const LANG_NAMES = Object.fromEntries(Object.entries(_langsData).map(([k,v]) => [k, v.name]));
 function langName(code) { return LANG_NAMES[code] || code || 'Italian'; }
 
 // ── Prompts ───────────────────────────────────────────────────────────
@@ -1369,6 +1364,9 @@ async function boot() {
       return json(res, 200, { ok: true, added, updated, total: store.lessons.length });
     }
 
+    if (M === 'GET' && url.pathname === '/api/languages') {
+      return json(res, 200, _langsData);
+    }
     // ── UI strings ────────────────────────────────────────────────────
     if (M === 'GET' && url.pathname === '/api/ui') {
       // Return all UI strings for all languages

@@ -700,90 +700,40 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 </div>
 
 <script>
-var LANGS = {
-  en: {name:'English',          flag:'🇬🇧', tts:'en-GB'},
-  it: {name:'Italian',          flag:'🇮🇹', tts:'it-IT'},
-  fr: {name:'French',           flag:'🇫🇷', tts:'fr-FR'},
-  de: {name:'German',           flag:'🇩🇪', tts:'de-DE'},
-  es: {name:'Spanish',          flag:'🇪🇸', tts:'es-ES'},
-  pt: {name:'Portuguese',       flag:'🇵🇹', tts:'pt-PT'},
-  nl: {name:'Dutch',            flag:'🇳🇱', tts:'nl-NL'},
-  pl: {name:'Polish',           flag:'🇵🇱', tts:'pl-PL'},
-  sv: {name:'Swedish',          flag:'🇸🇪', tts:'sv-SE'},
-  ja: {name:'Japanese',         flag:'🇯🇵', tts:'ja-JP'},
-  zh: {name:'Mandarin Chinese', flag:'🇨🇳', tts:'zh-CN'},
-  ar: {name:'Arabic',           flag:'🇸🇦', tts:'ar-SA'},
-  ru: {name:'Russian',          flag:'🇷🇺', tts:'ru-RU'},
-  ko: {name:'Korean',           flag:'🇰🇷', tts:'ko-KR'},
-  tr: {name:'Turkish',          flag:'🇹🇷', tts:'tr-TR'},
-  hi: {name:'Hindi',            flag:'🇮🇳', tts:'hi-IN'},
-  sw: {name:'Swahili',          flag:'🇰🇪', tts:'sw-KE'},
-  lb: {name:'Lëtzebuergesch',   flag:'🇱🇺', tts:'lb-LU'},
-  vi: {name:'Vietnamese',        flag:'🇻🇳', tts:'vi-VN'},
-  id: {name:'Indonesian',        flag:'🇮🇩', tts:'id-ID'},
-  cs: {name:'Czech',             flag:'🇨🇿', tts:'cs-CZ'},
-  ro: {name:'Romanian',          flag:'🇷🇴', tts:'ro-RO'},
-  uk: {name:'Ukrainian',         flag:'🇺🇦', tts:'uk-UA'},
-  th: {name:'Thai',              flag:'🇹🇭', tts:'th-TH'},
-  el: {name:'Greek',             flag:'🇬🇷', tts:'el-GR'},
-  he: {name:'Hebrew',            flag:'🇮🇱', tts:'he-IL'},
-  fi: {name:'Finnish',           flag:'🇫🇮', tts:'fi-FI'},
-  hu: {name:'Hungarian',         flag:'🇭🇺', tts:'hu-HU'},
-  da: {name:'Danish',            flag:'🇩🇰', tts:'da-DK'},
-  ca: {name:'Catalan',           flag:'🏴', tts:'ca-ES'},
-};
+// LANGS and LANG_NAMES_LOCALIZED are populated by loadLanguages() at startup
+// from languages.json (baked in static build, or fetched from /api/languages)
+var LANGS = {};
+var LANG_NAMES_LOCALIZED = {};
+
+function _buildLangsFromData(data) {
+  LANGS = {};
+  LANG_NAMES_LOCALIZED = {};
+  for (const [code, entry] of Object.entries(data)) {
+    LANGS[code] = {name: entry.name, flag: entry.flag, tts: entry.tts};
+    // Build localized name table: for each UI language, map code→name
+    for (const [uiLang, localName] of Object.entries(entry.names || {})) {
+      if (!LANG_NAMES_LOCALIZED[uiLang]) LANG_NAMES_LOCALIZED[uiLang] = {};
+      LANG_NAMES_LOCALIZED[uiLang][code] = localName;
+    }
+  }
+}
+
+async function loadLanguages() {
+  // Static build: data baked in
+  if (window.LANGUAGES_DATA) { _buildLangsFromData(window.LANGUAGES_DATA); return; }
+  // Live server: fetch
+  try {
+    const r = await fetch('/api/languages');
+    if (r.ok) { _buildLangsFromData(await r.json()); return; }
+  } catch(_) {}
+  // Fallback: keep empty LANGS (app will degrade gracefully)
+  console.warn('Could not load languages.json');
+}
 
 // ── Language names in each UI language ───────────────────────────────────────
 // Used to render e.g. "Wofür möchtest du Italienisch lernen?" instead of
 // "Wofür möchtest du Italian lernen?"
-const LANG_NAMES_LOCALIZED = {
-  en: {it:'Italian',fr:'French',de:'German',es:'Spanish',pt:'Portuguese',nl:'Dutch',
-       pl:'Polish',sv:'Swedish',ja:'Japanese',zh:'Mandarin Chinese',ar:'Arabic',
-       ru:'Russian',ko:'Korean',tr:'Turkish',hi:'Hindi',sw:'Swahili',lb:'Lëtzebuergesch',vi:'Vietnamese',id:'Indonesian',cs:'Czech',ro:'Romanian',uk:'Ukrainian',th:'Thai',el:'Greek',he:'Hebrew',fi:'Finnish',hu:'Hungarian',da:'Danish',ca:'Catalan',en:'English'},
-  de: {it:'Italienisch',fr:'Französisch',de:'Deutsch',es:'Spanisch',pt:'Portugiesisch',
-       nl:'Niederländisch',pl:'Polnisch',sv:'Schwedisch',ja:'Japanisch',zh:'Mandarin-Chinesisch',
-       ar:'Arabisch',ru:'Russisch',ko:'Koreanisch',tr:'Türkisch',hi:'Hindi',sw:'Suaheli',
-       lb:'Luxemburgisch',vi:'Vietnamesisch',id:'Indonesisch',cs:'Tschechisch',ro:'Rumänisch',uk:'Ukrainisch',th:'Thailändisch',el:'Griechisch',he:'Hebräisch',fi:'Finnisch',hu:'Ungarisch',da:'Dänisch',ca:'Katalanisch',en:'Englisch'},
-  fr: {it:'Italien',fr:'Français',de:'Allemand',es:'Espagnol',pt:'Portugais',nl:'Néerlandais',
-       pl:'Polonais',sv:'Suédois',ja:'Japonais',zh:'Mandarin',ar:'Arabe',ru:'Russe',
-       ko:'Coréen',tr:'Turc',hi:'Hindi',sw:'Swahili',lb:'Luxembourgeois',vi:'Vietnamien',id:'Indonésien',cs:'Tchèque',ro:'Roumain',uk:'Ukrainien',th:'Thaï',el:'Grec',he:'Hébreu',fi:'Finnois',hu:'Hongrois',da:'Danois',ca:'Catalan',en:'Anglais'},
-  es: {it:'Italiano',fr:'Francés',de:'Alemán',es:'Español',pt:'Portugués',nl:'Neerlandés',
-       pl:'Polaco',sv:'Sueco',ja:'Japonés',zh:'Chino Mandarín',ar:'Árabe',ru:'Ruso',
-       ko:'Coreano',tr:'Turco',hi:'Hindi',sw:'Suajili',lb:'Luxemburgués',vi:'Vietnamita',id:'Indonesio',cs:'Checo',ro:'Rumano',uk:'Ucraniano',th:'Tailandés',el:'Griego',he:'Hebreo',fi:'Finlandés',hu:'Húngaro',da:'Danés',ca:'Catalán',en:'Inglés'},
-  ja: {it:'イタリア語',fr:'フランス語',de:'ドイツ語',es:'スペイン語',pt:'ポルトガル語',
-       nl:'オランダ語',pl:'ポーランド語',sv:'スウェーデン語',ja:'日本語',zh:'中国語（普通話）',
-       ar:'アラビア語',ru:'ロシア語',ko:'韓国語',tr:'トルコ語',hi:'ヒンディー語',
-       sw:'スワヒリ語',lb:'ルクセンブルク語',vi:'ベトナム語',id:'インドネシア語',cs:'チェコ語',ro:'ルーマニア語',uk:'ウクライナ語',th:'タイ語',el:'ギリシャ語',he:'ヘブライ語',fi:'フィンランド語',hu:'ハンガリー語',da:'デンマーク語',ca:'カタルーニャ語',en:'英語'},
-  zh: {it:'意大利语',fr:'法语',de:'德语',es:'西班牙语',pt:'葡萄牙语',nl:'荷兰语',
-       pl:'波兰语',sv:'瑞典语',ja:'日语',zh:'普通话',ar:'阿拉伯语',ru:'俄语',
-       ko:'韩语',tr:'土耳其语',hi:'印地语',sw:'斯瓦希里语',lb:'卢森堡语',vi:'越南语',id:'印度尼西亚语',cs:'捷克语',ro:'罗马尼亚语',uk:'乌克兰语',th:'泰语',el:'希腊语',he:'希伯来语',fi:'芬兰语',hu:'匈牙利语',da:'丹麦语',ca:'加泰罗尼亚语',en:'英语'},
-  ru: {it:'Итальянский',fr:'Французский',de:'Немецкий',es:'Испанский',pt:'Португальский',
-       nl:'Нидерландский',pl:'Польский',sv:'Шведский',ja:'Японский',zh:'Китайский',
-       ar:'Арабский',ru:'Русский',ko:'Корейский',tr:'Турецкий',hi:'Хинди',
-       sw:'Суахили',lb:'Люксембургский',vi:'Вьетнамский',id:'Индонезийский',cs:'Чешский',ro:'Румынский',uk:'Украинский',th:'Тайский',el:'Греческий',he:'Иврит',fi:'Финский',hu:'Венгерский',da:'Датский',ca:'Каталанский',en:'Английский'},
-  tr: {it:'İtalyanca',fr:'Fransızca',de:'Almanca',es:'İspanyolca',pt:'Portekizce',
-       nl:'Felemenkçe',pl:'Lehçe',sv:'İsveççe',ja:'Japonca',zh:'Mandarin Çincesi',
-       ar:'Arapça',ru:'Rusça',ko:'Korece',tr:'Türkçe',hi:'Hintçe',sw:'Swahili',
-       lb:'Lüksemburgca',vi:'Vietnamca',id:'Endonezce',cs:'Çekçe',ro:'Rumence',uk:'Ukraynaca',th:'Tayca',el:'Yunanca',he:'İbranice',fi:'Fince',hu:'Macarca',da:'Danca',ca:'Katalanca',en:'İngilizce'},
-  it: {it:'Italiano',fr:'Francese',de:'Tedesco',es:'Spagnolo',pt:'Portoghese',
-       nl:'Olandese',pl:'Polacco',sv:'Svedese',ja:'Giapponese',zh:'Cinese Mandarino',
-       ar:'Arabo',ru:'Russo',ko:'Coreano',tr:'Turco',hi:'Hindi',sw:'Swahili',
-       lb:'Lussemburghese',vi:'Vietnamita',id:'Indonesiano',cs:'Ceco',ro:'Rumeno',uk:'Ucraino',th:'Tailandese',el:'Greco',he:'Ebraico',fi:'Finlandese',hu:'Ungherese',da:'Danese',ca:'Catalano',en:'Inglese'},
-  pl: {it:'Włoski',fr:'Francuski',de:'Niemiecki',es:'Hiszpański',pt:'Portugalski',
-       nl:'Niderlandzki',pl:'Polski',sv:'Szwedzki',ja:'Japoński',zh:'Chiński Mandaryński',
-       ar:'Arabski',ru:'Rosyjski',ko:'Koreański',tr:'Turecki',hi:'Hindi',sw:'Suahili',
-       lb:'Luksemburski',vi:'Wietnamski',id:'Indonezyjski',cs:'Czeski',ro:'Rumuński',uk:'Ukraiński',th:'Tajski',el:'Grecki',he:'Hebrajski',fi:'Fiński',hu:'Węgierski',da:'Duński',ca:'Kataloński',en:'Angielski'},
-  nl: {it:'Italiaans',fr:'Frans',de:'Duits',es:'Spaans',pt:'Portugees',
-       nl:'Nederlands',pl:'Pools',sv:'Zweeds',ja:'Japans',zh:'Mandarijn Chinees',
-       ar:'Arabisch',ru:'Russisch',ko:'Koreaans',tr:'Turks',hi:'Hindi',sw:'Swahili',
-       lb:'Luxemburgs',vi:'Vietnamees',id:'Indonesisch',cs:'Tsjechisch',ro:'Roemeens',uk:'Oekraïens',th:'Thais',el:'Grieks',he:'Hebreeuws',fi:'Fins',hu:'Hongaars',da:'Deens',ca:'Catalaans',en:'Engels'},
-  pt: {it:'Italiano',fr:'Francês',de:'Alemão',es:'Espanhol',pt:'Português',nl:'Holandês',pl:'Polonês',sv:'Sueco',ja:'Japonês',zh:'Chinês Mandarim',ar:'Árabe',ru:'Russo',ko:'Coreano',tr:'Turco',hi:'Hindi',sw:'Suaíli',lb:'Luxemburguês',en:'Inglês',vi:'Vietnamita',id:'Indonésio',cs:'Tcheco',ro:'Romeno',uk:'Ucraniano',th:'Tailandês',el:'Grego',he:'Hebraico',fi:'Finlandês',hu:'Húngaro',da:'Dinamarquês',ca:'Catalão'},
-  sv: {it:'Italienska',fr:'Franska',de:'Tyska',es:'Spanska',pt:'Portugisiska',nl:'Nederländska',pl:'Polska',sv:'Svenska',ja:'Japanska',zh:'Mandarin kinesiska',ar:'Arabiska',ru:'Ryska',ko:'Koreanska',tr:'Turkiska',hi:'Hindi',sw:'Swahili',lb:'Luxemburgiska',en:'Engelska',vi:'Vietnamesiska',id:'Indonesiska',cs:'Tjeckiska',ro:'Rumänska',uk:'Ukrainska',th:'Thailändska',el:'Grekiska',he:'Hebreiska',fi:'Finska',hu:'Ungerska',da:'Danska',ca:'Katalanska'},
-  ar: {it:'إيطالية',fr:'فرنسية',de:'ألمانية',es:'إسبانية',pt:'برتغالية',nl:'هولندية',pl:'بولندية',sv:'سويدية',ja:'يابانية',zh:'صينية ماندرين',ar:'عربية',ru:'روسية',ko:'كورية',tr:'تركية',hi:'هندية',sw:'سواحيلية',lb:'لوكسمبورغية',en:'إنجليزية',vi:'الفيتنامية',id:'الإندونيسية',cs:'التشيكية',ro:'الرومانية',uk:'الأوكرانية',th:'التايلاندية',el:'اليونانية',he:'العبرية',fi:'الفنلندية',hu:'الهنغارية',da:'الدانماركية',ca:'الكاتالونية'},
-  ko: {it:'이탈리아어',fr:'프랑스어',de:'독일어',es:'스페인어',pt:'포르투갈어',nl:'네덜란드어',
-       pl:'폴란드어',sv:'스웨덴어',ja:'일본어',zh:'중국어',ar:'아랍어',ru:'러시아어',
-       ko:'한국어',tr:'터키어',hi:'힌디어',sw:'스와힐리어',lb:'룩셈부르크어',vi:'베트남어',id:'인도네시아어',cs:'체코어',ro:'루마니아어',uk:'우크라이나어',th:'태국어',el:'그리스어',he:'히브리어',fi:'핀란드어',hu:'헝가리어',da:'덴마크어',ca:'카탈루냐어',en:'영어'},
-};
+
 
 // Return the name of language `targetCode` in the UI language `uiLang`
 function localizedLangName(targetCode, uiLang) {
@@ -872,7 +822,7 @@ function applyUIStrings() {
   const tgtLangName = localizedLangName(APP.lang, APP.srcLang);
   const srcLangName = localizedLangName(APP.srcLang, APP.srcLang);
   // Static elements
-  _setText('app-tagline',   t('app.tagline',   {lang: tgtLangName}));
+  _setText('app-tagline',   t('app.tagline'));
   _setText('topic-label',   document.getElementById('use-story-cb')?.checked
     ? t('form.topic_label_story')
     : t('form.topic_label', {lang: tgtLangName}));
@@ -1154,7 +1104,7 @@ function selectLang(code, silent){
   const inp=document.getElementById('topic-input');
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   const tagline=document.getElementById('app-tagline');
-  if(tagline) tagline.textContent=t('app.tagline',{lang:localizedLangName(APP.lang,APP.srcLang)});
+  if(tagline) tagline.textContent=t('app.tagline');
   // Update target language filter and reload library
   if(!silent){
     APP.libFilter=code; APP.libSrcFilter='all';
@@ -1407,6 +1357,7 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 // ── init ──
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
+  await loadLanguages();
   await syncFlagsFromServer();
   updateStaticFlagBanner();
   await loadUIStrings(APP.srcLang);
@@ -1467,7 +1418,7 @@ function setLibFilter(lang){
     const lbl=document.getElementById('topic-label');
     if(lbl) lbl.textContent=topicLabelText();
     const tagline=document.getElementById('app-tagline');
-    if(tagline) tagline.textContent='Learn '+(LANGS[lang]).name+' vocabulary for any topic';
+    if(tagline) tagline.textContent=t('app.tagline');
   }
   loadSavedList();
 }
