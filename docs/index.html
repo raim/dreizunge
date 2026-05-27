@@ -63,8 +63,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-cnt{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:12px;padding:3px 10px}
 .import-btn{font-size:12px;font-weight:700;color:var(--blue-dark);background:var(--blue-light);border:1.5px solid var(--blue);border-radius:12px;padding:3px 10px;cursor:pointer;white-space:nowrap}
 .lib-empty{text-align:center;padding:18px;color:var(--gray);font-size:14px;font-weight:600}
-.saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;width:100%}
-.saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s;min-width:0;width:100%;box-sizing:border-box}
+.saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;width:100%;max-width:520px}
+.saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s;min-width:0;overflow:hidden}
 .saved-item:hover{border-color:var(--blue);background:var(--blue-light)}
 .storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
 .storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid);display:flex;align-items:center;gap:6px}.storyline-title{flex:1;display:flex;align-items:center;gap:6px;min-width:0}.storyline-title-text{font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.storyline-title-sub{font-size:11px;font-weight:700;color:var(--gray-dark);white-space:nowrap}.storyline-edit-form{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.storyline-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:2px 7px;min-width:0;outline:none}.storyline-edit-icon{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:24px;text-align:center}.storyline-hdr-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:5px;font-family:"Nunito",sans-serif;font-weight:800;color:var(--gray-dark);line-height:1;flex-shrink:0}.storyline-hdr-btn:hover{background:var(--gray-mid)}.storyline-hdr-btn.gen{color:var(--accent)}.storyline-hdr-btn.danger{color:var(--red)}.storyline-cards{}.storyline-cards.collapsed{display:none}.storyline-collapse-btn{font-size:11px;color:var(--gray-dark);transition:transform .2s;display:inline-block}.storyline-collapse-btn.open{transform:rotate(180deg)}
@@ -915,17 +915,18 @@ function applyUIStrings() {
   _setVal('user-translation-input', null, t('form.translation_placeholder_short'));
   _setVal('story-repair-input', null, t('form.story_rewrite_placeholder'));
   _setVal('story-flag-input', null, t('form.story_flag_placeholder'));
-  // Translate <option> text in both language selectors
-  ['src-lang-select', 'lang-select'].forEach(selId => {
-    const sel = document.getElementById(selId);
-    if (!sel) return;
-    Array.from(sel.options).forEach(opt => {
-      const code = opt.value;
-      const L = LANGS[code];
-      if (!L) return;
-      const localName = localizedLangName(code, APP.srcLang);
-      opt.text = L.flag + ' ' + localName;
-    });
+  // Translate target selector options into UI language;
+  // source selector shows each language in its own language (self-labelled)
+  const tgtSel = document.getElementById('lang-select');
+  if (tgtSel) Array.from(tgtSel.options).forEach(opt => {
+    const L = LANGS[opt.value]; if (!L) return;
+    opt.text = L.flag + ' ' + localizedLangName(opt.value, APP.srcLang);
+  });
+  const srcSel = document.getElementById('src-lang-select');
+  if (srcSel) Array.from(srcSel.options).forEach(opt => {
+    const L = LANGS[opt.value]; if (!L) return;
+    // Each language names itself in its own language
+    opt.text = L.flag + ' ' + (localizedLangName(opt.value, opt.value) || L.name);
   });
   // Static flag banner
   _setText('static-flag-banner-text', t('lesson.flagged_count_plural', {n: ''}));
