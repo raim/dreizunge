@@ -408,7 +408,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="land-top">
     <span class="flag">🌍</span>
     <div class="app-name">Dreizunge</div>
-    <!--div class="app-tagline" id="app-tagline">Learn vocabulary for any topic in any language</div-->
+    <div class="app-tagline" id="app-tagline">Learn vocabulary for any topic in any language</div>
   </div>
 
   <div class="backend-row">
@@ -30049,7 +30049,7 @@ function setLibFilter(lang){
     const lbl=document.getElementById('topic-label');
     if(lbl) lbl.textContent='What do you want to learn '+L.name+' for?';
     const tagline=document.getElementById('app-tagline');
-    <!--if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';-->
+    if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
   }
   loadSavedList();
 }
