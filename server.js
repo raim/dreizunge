@@ -165,8 +165,10 @@ const LANG_NAMES = {
   it:'Italian', fr:'French', de:'German', es:'Spanish', pt:'Portuguese',
   nl:'Dutch', pl:'Polish', sv:'Swedish', ja:'Japanese', zh:'Mandarin Chinese',
   ar:'Arabic', ru:'Russian', ko:'Korean', tr:'Turkish', hi:'Hindi',
-  sw:'Swahili',
-    lb: 'Lëtzebuergesch',
+  sw:'Swahili', lb:'Lëtzebuergesch',
+  vi:'Vietnamese', id:'Indonesian', cs:'Czech', ro:'Romanian', uk:'Ukrainian',
+  th:'Thai', el:'Greek', he:'Hebrew', fi:'Finnish', hu:'Hungarian',
+  da:'Danish', ca:'Catalan',
 };
 function langName(code) { return LANG_NAMES[code] || code || 'Italian'; }
 

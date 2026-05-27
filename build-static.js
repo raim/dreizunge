@@ -258,8 +258,9 @@ async function loadSavedList() {
   }
 
   const filtered=saved.filter(s=>{
-    if(APP.libFilter!=='all' && (s.lang||'it')!==APP.libFilter) return false;
-    if(APP.libSrcFilter!=='all' && (s.srcLang||'en')!==APP.libSrcFilter) return false;
+    if(APP.libFilter==='all' && APP.libSrcFilter==='all') return true;
+    if(APP.libFilter!=='all') return (s.lang||'it')===APP.libFilter;
+    if(APP.libSrcFilter!=='all') return (s.srcLang||'en')===APP.libSrcFilter;
     return true;
   });
   document.getElementById('lib-cnt').textContent=
@@ -435,13 +436,11 @@ const staticOverrides = [
   'async function submitRating(){}',
   '// In static mode, UI strings are baked in — no translation needed',
   'function triggerUITranslation(){}',
-  'function updateUITranslateRow(){}',
   '// Selecting a source lang clears the target filter and vice versa.',
   'function selectSrcLang(code){',
   '  APP.srcLang=code; saveSrcLang();',
   '  const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code;',
   '  APP.libSrcFilter=code; APP.libFilter="all";',
-  '  const tsel=document.getElementById("lang-select"); if(tsel) tsel.value=APP.lang;',
   '  loadUIStrings(code).then(()=>loadSavedList());',
   '}',
   'function selectLang(code, silent){',
