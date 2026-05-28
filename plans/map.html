@@ -3,458 +3,978 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>3D Language Families: World Map (XY) + Phylogenetic DAG (Z)</title>
+    <title>Language Lesson Generator | Complete World Map + Tree</title>
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', 'Roboto', sans-serif; }
-        #info {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            overflow: hidden;
+            background: #0a1620;
+        }
+
+        /* Compact UI Panel - Two Rows */
+        .ui-panel {
             position: absolute;
+            z-index: 200;
+            background: rgba(10, 20, 30, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 8px 16px;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 180px;
+        }
+
+        #selection-panel {
             top: 20px;
             left: 20px;
-            z-index: 100;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            pointer-events: none;
-            backdrop-filter: blur(5px);
-            font-size: 14px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-            border-left: 4px solid #ffaa44;
         }
-        #controls-note {
+
+        .selection-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .badge-icon {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .badge-icon span:first-child {
+            font-size: 14px;
+        }
+
+        .badge-icon span:last-child {
+            color: #ffaa66;
+            font-weight: bold;
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 6px;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 30px;
+        }
+
+        .toggle-icon {
+            font-size: 16px;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .toggle-icon.active {
+            opacity: 1;
+            text-shadow: 0 0 4px #ffaa44;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #3a5a6e;
+            transition: 0.3s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ffaa44;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .reset-btn-icon {
+            background: rgba(58, 90, 110, 0.8);
+            border: none;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .reset-btn-icon:hover {
+            background: #4a6a7e;
+            transform: scale(1.02);
+        }
+
+        #lesson-panel {
+            bottom: 20px;
+            right: 20px;
+            max-width: 360px;
+            transform: translateY(120%);
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border-left: 4px solid #ff3333;
+            border-radius: 16px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+            padding: 16px;
+        }
+
+        #lesson-panel.visible {
+            transform: translateY(0);
+        }
+
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lesson-header h4 {
+            font-size: 14px;
+            color: #ffaa66;
+        }
+
+        #close-lesson {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+            opacity: 0.7;
+        }
+
+        #close-lesson:hover {
+            opacity: 1;
+        }
+
+        .lesson-content {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        #instruction {
             position: absolute;
             bottom: 20px;
             left: 20px;
-            z-index: 100;
             background: rgba(0,0,0,0.5);
-            color: #ccc;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #aaa;
             pointer-events: none;
             font-family: monospace;
+            z-index: 200;
+            backdrop-filter: blur(4px);
         }
-        @media (max-width: 600px) {
-            #info { font-size: 10px; top: 10px; left: 10px; }
-            #controls-note { font-size: 9px; }
+
+        .canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #map-canvas {
+            z-index: 10;
+            opacity: 1;
+            transition: opacity 0.4s ease;
+        }
+
+        #tree-canvas {
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .flying-dot {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            z-index: 100;
+            pointer-events: none;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(0,0,0,0.3);
+            transition: left 1s cubic-bezier(0.33, 1, 0.68, 1), top 1s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+
+        .flying-dot::after {
+            content: attr(data-name);
+            position: absolute;
+            left: 28px;
+            top: 4px;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .map-dot, .tree-dot {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: all 0.2s ease;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(0,0,0,0.3);
+            z-index: 20;
+        }
+
+        .map-dot:hover, .tree-dot:hover {
+            transform: translate(-50%, -50%) scale(1.3);
+            box-shadow: 0 0 0 3px white, 0 0 0 6px rgba(0,0,0,0.4);
+        }
+
+        .map-dot.selected, .tree-dot.selected {
+            box-shadow: 0 0 0 3px #ffaa44, 0 0 0 8px rgba(255, 170, 68, 0.4);
+            transform: translate(-50%, -50%) scale(1.25);
+        }
+
+        .map-label {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            font-weight: 500;
+            transform: translate(12px, -4px);
+            z-index: 21;
+            font-family: monospace;
+        }
+
+        @media (max-width: 700px) {
+            .ui-panel { padding: 6px 12px; }
+            .badge-icon { padding: 4px 8px; font-size: 11px; }
+            .map-dot, .tree-dot { width: 16px; height: 16px; }
+            .map-label { font-size: 8px; transform: translate(10px, -3px); }
         }
     </style>
 </head>
 <body>
-    <div id="info">
-        🌍 <strong>Language Families on World Map (XY)</strong> | 🌳 <strong>Temporal Phylogenetic DAG (Z-axis)</strong><br>
-        Colors match families: Indo-European (gold), Sino-Tibetan (crimson), Afroasiatic (teal), Niger-Congo (forest), etc.
-    </div>
-    <div id="controls-note">
-        🖱️ Drag to rotate | Right-click + drag to pan | Scroll to zoom
-    </div>
-
-    <!-- Import Three.js core and add-ons -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
-            }
-        }
-    </script>
-
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
-
-        // --- setup scene, camera, renderers ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x050b1a); // deep space / dark blue-black
-        scene.fog = new THREE.FogExp2(0x050b1a, 0.003); // subtle fog for depth
-
-        // Perspective camera: looking at origin from an angle
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
-        camera.position.set(18, 12, 22);
-        camera.lookAt(0, 5, 0);
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true; // subtle shadows for branches
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.body.appendChild(renderer.domElement);
-
-        // CSS2 renderer for text labels
-        const labelRenderer = new CSS2DRenderer();
-        labelRenderer.setSize(window.innerWidth, window.innerHeight);
-        labelRenderer.domElement.style.position = 'absolute';
-        labelRenderer.domElement.style.top = '0px';
-        labelRenderer.domElement.style.left = '0px';
-        labelRenderer.domElement.style.pointerEvents = 'none';
-        document.body.appendChild(labelRenderer.domElement);
-
-        // --- controls ---
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.rotateSpeed = 1.0;
-        controls.zoomSpeed = 1.2;
-        controls.panSpeed = 0.8;
-        controls.enableZoom = true;
-        controls.enablePan = true;
-        controls.target.set(0, 5, 0);
-
-        // --- lighting (to enhance 3D branches and map surface) ---
-        // ambient
-        const ambientLight = new THREE.AmbientLight(0x404060);
-        scene.add(ambientLight);
-        // directional light
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-        dirLight.position.set(5, 15, 8);
-        dirLight.castShadow = true;
-        dirLight.receiveShadow = false;
-        dirLight.shadow.mapSize.width = 1024;
-        dirLight.shadow.mapSize.height = 1024;
-        scene.add(dirLight);
-        // fill light from below
-        const fillLight = new THREE.PointLight(0x5577aa, 0.4);
-        fillLight.position.set(0, -3, 0);
-        scene.add(fillLight);
-        // back rim light
-        const rimLight = new THREE.PointLight(0xffaa66, 0.5);
-        rimLight.position.set(-5, 8, -8);
-        scene.add(rimLight);
+    <div id="selection-panel" class="ui-panel">
+        <div class="selection-row">
+            <div class="badge-icon" id="source-badge">
+                <span>📖</span>
+                <span id="source-name">—</span>
+            </div>
+            <div class="badge-icon" id="target-badge">
+                <span>🎯</span>
+                <span id="target-name">—</span>
+            </div>
+        </div>
         
-        // optional helper grid on floor (z=0 plane, subtle)
-        const gridHelper = new THREE.GridHelper(32, 20, 0x88aaff, 0x335588);
-        gridHelper.position.y = -0.2;
-        gridHelper.material.transparent = true;
-        gridHelper.material.opacity = 0.25;
-        scene.add(gridHelper);
+        <div class="controls-row">
+            <div class="toggle-container">
+                <span class="toggle-icon" id="map-icon">🗺️</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="view-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-icon" id="tree-icon">🌳</span>
+            </div>
+            <button id="reset-btn" class="reset-btn-icon">
+                <span>↺</span> Reset
+            </button>
+        </div>
+    </div>
 
-        // --- 1. WORLD MAP (XY plane) colored by language families ---
-        // We'll create a custom textured plane: canvas-based map with family regions
-        // Using a high-res like world map outline + colored polygons would be heavy; instead,
-        // we create a nice looking base map with color zones overlaying country shapes.
-        // For performance & style: generate a canvas texture with colored regions that mimic major families.
+    <div id="lesson-panel" class="ui-panel">
+        <div class="lesson-header">
+            <h4>📘 Lesson Plan</h4>
+            <button id="close-lesson">✕</button>
+        </div>
+        <div id="lesson-body" class="lesson-content">Select source & target languages</div>
+    </div>
+    <div id="instruction">🖱️ Click dots to select | 🔄 Toggle Map/Tree</div>
+
+    <div id="map-canvas" class="canvas-container"></div>
+    <div id="tree-canvas" class="canvas-container"></div>
+
+    <script>
+        // Language data with geographic coordinates (map) and tree positions
+        const languages = [
+            // Ancestors (tree only)
+            { id: "proto-human", name: "Proto-Human", treeX: 0.50, treeY: 0.05, color: "#888888", parent: null, isAncestor: true },
+            { id: "proto-indo-european", name: "Indo-European", treeX: 0.25, treeY: 0.14, color: "#e5b73b", parent: "proto-human", isAncestor: true },
+            { id: "proto-uralic", name: "Uralic", treeX: 0.40, treeY: 0.14, color: "#55aa88", parent: "proto-human", isAncestor: true },
+            { id: "proto-turkic", name: "Turkic", treeX: 0.52, treeY: 0.14, color: "#e8953b", parent: "proto-human", isAncestor: true },
+            { id: "proto-sinitic", name: "Sinitic", treeX: 0.64, treeY: 0.14, color: "#b31b3b", parent: "proto-human", isAncestor: true },
+            { id: "proto-japonic", name: "Japonic", treeX: 0.75, treeY: 0.14, color: "#dd6699", parent: "proto-human", isAncestor: true },
+            { id: "proto-koreanic", name: "Koreanic", treeX: 0.84, treeY: 0.14, color: "#cc55aa", parent: "proto-human", isAncestor: true },
+            { id: "proto-afroasiatic", name: "Afroasiatic", treeX: 0.92, treeY: 0.14, color: "#2c7f6e", parent: "proto-human", isAncestor: true },
+            { id: "proto-austronesian", name: "Austronesian", treeX: 0.97, treeY: 0.14, color: "#e2856e", parent: "proto-human", isAncestor: true },
+            { id: "proto-bantu", name: "Bantu", treeX: 0.99, treeY: 0.14, color: "#3c9b4c", parent: "proto-human", isAncestor: true },
+            { id: "proto-tai", name: "Tai-Kadai", treeX: 0.68, treeY: 0.14, color: "#66aacc", parent: "proto-human", isAncestor: true },
+            { id: "proto-germanic", name: "Germanic", treeX: 0.10, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
+            { id: "latin", name: "Italic", treeX: 0.23, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
+            { id: "proto-slavic", name: "Slavic", treeX: 0.36, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
+            { id: "proto-greek", name: "Hellenic", treeX: 0.48, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
+            { id: "proto-indo-iranian", name: "Indo-Iranian", treeX: 0.60, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
+            { id: "proto-semitic", name: "Semitic", treeX: 0.92, treeY: 0.25, color: "#2c7f6e", parent: "proto-afroasiatic", isAncestor: true },
+            
+            // EUROPE
+            { id: "english", name: "English", mapX: 0.14, mapY: 0.48, treeX: 0.02, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
+            { id: "german", name: "German", mapX: 0.25, mapY: 0.48, treeX: 0.07, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
+            { id: "dutch", name: "Dutch", mapX: 0.22, mapY: 0.49, treeX: 0.12, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
+            { id: "swedish", name: "Swedish", mapX: 0.38, mapY: 0.42, treeX: 0.17, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
+            { id: "danish", name: "Danish", mapX: 0.35, mapY: 0.44, treeX: 0.22, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
+            { id: "luxembourgish", name: "Lëtzebuergesch", mapX: 0.24, mapY: 0.50, treeX: 0.27, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
+            { id: "french", name: "French", mapX: 0.28, mapY: 0.52, treeX: 0.23, treeY: 0.42, color: "#e5b73b", parent: "latin" },
+            { id: "italian", name: "Italian", mapX: 0.36, mapY: 0.54, treeX: 0.18, treeY: 0.42, color: "#e5b73b", parent: "latin" },
+            { id: "spanish", name: "Spanish", mapX: 0.15, mapY: 0.58, treeX: 0.28, treeY: 0.42, color: "#e5b73b", parent: "latin" },
+            { id: "portuguese", name: "Portuguese", mapX: 0.09, mapY: 0.57, treeX: 0.33, treeY: 0.42, color: "#e5b73b", parent: "latin" },
+            { id: "romanian", name: "Romanian", mapX: 0.46, mapY: 0.54, treeX: 0.38, treeY: 0.42, color: "#e5b73b", parent: "latin" },
+            { id: "catalan", name: "Catalan", mapX: 0.27, mapY: 0.56, treeX: 0.43, treeY: 0.42, color: "#e5b73b", parent: "latin" },
+            { id: "polish", name: "Polish", mapX: 0.42, mapY: 0.49, treeX: 0.38, treeY: 0.42, color: "#e5b73b", parent: "proto-slavic" },
+            { id: "czech", name: "Czech", mapX: 0.39, mapY: 0.50, treeX: 0.43, treeY: 0.42, color: "#e5b73b", parent: "proto-slavic" },
+            { id: "ukrainian", name: "Ukrainian", mapX: 0.52, mapY: 0.48, treeX: 0.48, treeY: 0.42, color: "#e5b73b", parent: "proto-slavic" },
+            { id: "russian", name: "Russian", mapX: 0.58, mapY: 0.45, treeX: 0.33, treeY: 0.42, color: "#e5b73b", parent: "proto-slavic" },
+            { id: "greek", name: "Greek", mapX: 0.44, mapY: 0.60, treeX: 0.48, treeY: 0.42, color: "#e5b73b", parent: "proto-greek" },
+            { id: "hungarian", name: "Hungarian", mapX: 0.40, mapY: 0.51, treeX: 0.43, treeY: 0.42, color: "#55aa88", parent: "proto-uralic" },
+            { id: "finnish", name: "Finnish", mapX: 0.43, mapY: 0.40, treeX: 0.38, treeY: 0.42, color: "#55aa88", parent: "proto-uralic" },
+            
+            // ASIA
+            { id: "turkish", name: "Turkish", mapX: 0.50, mapY: 0.59, treeX: 0.52, treeY: 0.42, color: "#e8953b", parent: "proto-turkic" },
+            { id: "hindi", name: "Hindi", mapX: 0.68, mapY: 0.65, treeX: 0.60, treeY: 0.42, color: "#e5b73b", parent: "proto-indo-iranian" },
+            { id: "mandarin", name: "Mandarin Chinese", mapX: 0.80, mapY: 0.55, treeX: 0.64, treeY: 0.42, color: "#b31b3b", parent: "proto-sinitic" },
+            { id: "thai", name: "Thai", mapX: 0.78, mapY: 0.68, treeX: 0.68, treeY: 0.42, color: "#66aacc", parent: "proto-tai" },
+            { id: "indonesian", name: "Indonesian", mapX: 0.82, mapY: 0.76, treeX: 0.97, treeY: 0.42, color: "#e2856e", parent: "proto-austronesian" },
+            { id: "japanese", name: "Japanese", mapX: 0.88, mapY: 0.53, treeX: 0.75, treeY: 0.42, color: "#dd6699", parent: "proto-japonic" },
+            { id: "korean", name: "Korean", mapX: 0.86, mapY: 0.57, treeX: 0.84, treeY: 0.42, color: "#cc55aa", parent: "proto-koreanic" },
+            
+            // MIDDLE EAST / AFRICA
+            { id: "arabic", name: "Arabic", mapX: 0.48, mapY: 0.68, treeX: 0.90, treeY: 0.42, color: "#2c7f6e", parent: "proto-semitic" },
+            { id: "hebrew", name: "Hebrew", mapX: 0.44, mapY: 0.65, treeX: 0.95, treeY: 0.42, color: "#2c7f6e", parent: "proto-semitic" },
+            { id: "swahili", name: "Swahili", mapX: 0.56, mapY: 0.74, treeX: 0.92, treeY: 0.42, color: "#3c9b4c", parent: "proto-bantu" },
+            
+            // NORTH AMERICA (English, Spanish, French replicated)
+            { id: "english-na", name: "English", mapX: 0.22, mapY: 0.35, treeX: 0.02, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic", isReplica: true },
+            { id: "spanish-na", name: "Spanish", mapX: 0.12, mapY: 0.42, treeX: 0.28, treeY: 0.42, color: "#e5b73b", parent: "latin", isReplica: true },
+            { id: "french-na", name: "French", mapX: 0.18, mapY: 0.38, treeX: 0.23, treeY: 0.42, color: "#e5b73b", parent: "latin", isReplica: true },
+            
+            // SOUTH AMERICA (Spanish, Portuguese replicated)
+            { id: "spanish-sa", name: "Spanish", mapX: 0.16, mapY: 0.72, treeX: 0.28, treeY: 0.42, color: "#e5b73b", parent: "latin", isReplica: true },
+            { id: "portuguese-sa", name: "Portuguese", mapX: 0.22, mapY: 0.74, treeX: 0.33, treeY: 0.42, color: "#e5b73b", parent: "latin", isReplica: true }
+        ];
+
+        // Clickable languages (all with mapX/mapY - including replicas)
+        const clickableLanguages = languages.filter(l => l.mapX !== undefined);
         
-        const createLanguageFamilyMapTexture = () => {
-            const width = 2048;
-            const height = 1024;
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            
-            // Background ocean
-            ctx.fillStyle = '#1a2c3e';
-            ctx.fillRect(0, 0, width, height);
-            
-            // Helper to draw a rough region using paths (simplified based on known family distributions)
-            // For visual impact, we'll use distinct colors for major families, with soft borders.
-            // Indo-European (golden): Europe, North India, Iran, Russia, Americas (in part)
-            ctx.beginPath();
-            // Eurasia approximate shape
-            ctx.moveTo(0.7*width, 0.3*height); // Scandinavia
-            ctx.lineTo(0.85*width, 0.35*height); // Russia
-            ctx.lineTo(0.82*width, 0.45*height); // Central Asia
-            ctx.lineTo(0.75*width, 0.55*height); // India
-            ctx.lineTo(0.65*width, 0.55*height); // Pakistan
-            ctx.lineTo(0.55*width, 0.5*height); // Iran
-            ctx.lineTo(0.45*width, 0.45*height); // Turkey/Europe
-            ctx.lineTo(0.35*width, 0.4*height); // Western Europe
-            ctx.lineTo(0.4*width, 0.3*height); // UK
-            ctx.lineTo(0.55*width, 0.28*height); // Central Europe
-            ctx.closePath();
-            ctx.fillStyle = '#e5b73b'; // Indo-European gold
-            ctx.fill();
-            
-            // Sino-Tibetan (deep red): China, Tibet, Myanmar, Nepal
-            ctx.beginPath();
-            ctx.ellipse(0.78*width, 0.48*height, 0.12*width, 0.08*height, 0, 0, Math.PI*2);
-            ctx.fillStyle = '#b31b3b';
-            ctx.fill();
-            
-            // Afroasiatic (teal): North Africa, Horn of Africa, Middle East
-            ctx.beginPath();
-            ctx.ellipse(0.45*width, 0.62*height, 0.12*width, 0.07*height, -0.2, 0, Math.PI*2);
-            ctx.fillStyle = '#2c7f6e';
-            ctx.fill();
-            
-            // Niger-Congo (forest green): Sub-Saharan Africa
-            ctx.beginPath();
-            ctx.ellipse(0.48*width, 0.75*height, 0.15*width, 0.12*height, 0.1, 0, Math.PI*2);
-            ctx.fillStyle = '#3c9b4c';
-            ctx.fill();
-            
-            // Austronesian (coral): Southeast Asia islands, Madagascar, Pacific
-            ctx.beginPath();
-            ctx.ellipse(0.88*width, 0.65*height, 0.1*width, 0.08*height, 0.3, 0, Math.PI*2);
-            ctx.fillStyle = '#e2856e';
-            ctx.fill();
-            
-            // Turkic (orange): Central Asia
-            ctx.beginPath();
-            ctx.ellipse(0.72*width, 0.44*height, 0.08*width, 0.06*height, -0.1, 0, Math.PI*2);
-            ctx.fillStyle = '#e8953b';
-            ctx.fill();
-            
-            // Dravidian (purple): South India
-            ctx.beginPath();
-            ctx.ellipse(0.71*width, 0.62*height, 0.05*width, 0.04*height, 0, 0, Math.PI*2);
-            ctx.fillStyle = '#9b6b9e';
-            ctx.fill();
-            
-            // Japanese/Koreanic (pink): Japan, Korea
-            ctx.beginPath();
-            ctx.ellipse(0.86*width, 0.4*height, 0.04*width, 0.03*height, 0, 0, Math.PI*2);
-            ctx.fillStyle = '#dd88aa';
-            ctx.fill();
-            
-            // Uto-Aztecan (light brown): Mexico, SW USA
-            ctx.beginPath();
-            ctx.ellipse(0.28*width, 0.55*height, 0.08*width, 0.06*height, -0.2, 0, Math.PI*2);
-            ctx.fillStyle = '#c4a27a';
-            ctx.fill();
-            
-            // Add country borders or glow lines (white outlines)
-            ctx.strokeStyle = '#ffffff60';
-            ctx.lineWidth = 1.5;
-            // just some random decorative paths to give map feel
-            for (let i = 0; i < 200; i++) {
-                ctx.beginPath();
-                const x = Math.random() * width;
-                const y = Math.random() * height;
-                if (ctx.isPointInPath(x, y)) continue; // not accurate, just skip oceans
-                ctx.arc(x, y, 1.2, 0, Math.PI*2);
-                ctx.stroke();
-            }
-            
-            // Add latitude/longitude grid lines
-            ctx.beginPath();
-            ctx.strokeStyle = '#5f7f9f';
-            ctx.lineWidth = 0.8;
-            for (let lat = 0; lat <= 180; lat += 30) {
-                const y = (lat / 180) * height;
-                ctx.moveTo(0, y);
-                ctx.lineTo(width, y);
-                ctx.stroke();
-            }
-            for (let lon = 0; lon <= 360; lon += 30) {
-                const x = (lon / 360) * width;
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, height);
-                ctx.stroke();
-            }
-            
-            return new THREE.CanvasTexture(canvas);
+        // Build parent map for pathfinding (map replicas to original for path)
+        const originalMap = {
+            "english-na": "english", "spanish-na": "spanish", "french-na": "french", "spanish-sa": "spanish", "portuguese-sa": "portuguese"
         };
         
-        const mapTexture = createLanguageFamilyMapTexture();
-        mapTexture.wrapS = THREE.RepeatWrapping;
-        mapTexture.wrapT = THREE.ClampToEdgeWrapping;
+        const parentMap = new Map();
+        languages.forEach(lang => { if (lang.parent) parentMap.set(lang.id, lang.parent); });
         
-        const mapPlaneGeo = new THREE.PlaneGeometry(18, 9);
-        const mapMaterial = new THREE.MeshStandardMaterial({ map: mapTexture, roughness: 0.6, metalness: 0.1, side: THREE.DoubleSide });
-        const worldMap = new THREE.Mesh(mapPlaneGeo, mapMaterial);
-        worldMap.rotation.x = -Math.PI / 2;
-        worldMap.position.y = -0.1;
-        worldMap.receiveShadow = true;
-        scene.add(worldMap);
-        
-        // Add a subtle glowing ring around the map edges
-        const edgeGlowGeo = new THREE.RingGeometry(9.1, 9.5, 32);
-        const edgeMat = new THREE.MeshStandardMaterial({ color: 0x88aaff, emissive: 0x224466, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
-        const edgeRing = new THREE.Mesh(edgeGlowGeo, edgeMat);
-        edgeRing.rotation.x = -Math.PI / 2;
-        edgeRing.position.y = -0.08;
-        scene.add(edgeRing);
-        
-        // --- 2. PHYLOGENETIC DAG (temporal tree growing along Z axis) ---
-        // Z=0 (present) -> Z= -8 (deep past). Branches split and rise.
-        // We'll create nodes for major families and subgroup connections.
-        
-        // Define tree structure: each node has {name, z, x, y, color, children}
-        // x & y coordinates relative to map (approx geographic origin)
-        const nodes = [];
-        
-        // Helper to add a node and edge to scene
-        const nodeObjects = new Map(); // store 3D spheres + CSS2D label
-        
-        const root = { name: "Proto-Human (hypothetical)", z: -7.2, x: 0, y: 0, color: 0xccccaa, children: [] };
-        
-        const families = [
-            { name: "Indo-European", z: -5.2, x: 1.2, y: 1.1, color: 0xe5b73b, children: ["Germanic", "Romance", "Indo-Iranian", "Slavic"] },
-            { name: "Sino-Tibetan", z: -5.0, x: 5.0, y: -0.2, color: 0xb31b3b, children: ["Sinitic", "Tibeto-Burman"] },
-            { name: "Afroasiatic", z: -4.8, x: -1.5, y: -2.5, color: 0x2c7f6e, children: ["Semitic", "Berber", "Cushitic"] },
-            { name: "Niger-Congo", z: -4.5, x: -1.2, y: -4.2, color: 0x3c9b4c, children: ["Bantu", "Mande", "Gur"] },
-            { name: "Austronesian", z: -4.2, x: 7.0, y: -1.8, color: 0xe2856e, children: ["Malayo-Polynesian", "Formosan"] },
-            { name: "Turkic", z: -4.0, x: 3.2, y: 0.0, color: 0xe8953b, children: ["Oghuz", "Kipchak"] },
-            { name: "Dravidian", z: -3.8, x: 2.5, y: -1.5, color: 0x9b6b9e, children: ["Southern", "Central"] },
-            { name: "Uto-Aztecan", z: -3.5, x: -7.2, y: -0.5, color: 0xc4a27a, children: ["Numic", "Tepiman"] },
-        ];
-        
-        // Add sub-families
-        const subfamilies = [
-            { name: "Germanic", z: -2.5, x: 0.5, y: 1.5, color: 0xe5b73b, parent: "Indo-European" },
-            { name: "Romance", z: -2.3, x: -0.2, y: 1.2, color: 0xe5b73b, parent: "Indo-European" },
-            { name: "Indo-Iranian", z: -2.7, x: 2.0, y: 0.8, color: 0xe5b73b, parent: "Indo-European" },
-            { name: "Slavic", z: -2.4, x: 1.3, y: 2.0, color: 0xe5b73b, parent: "Indo-European" },
-            { name: "Sinitic", z: -2.9, x: 5.8, y: -0.5, color: 0xb31b3b, parent: "Sino-Tibetan" },
-            { name: "Tibeto-Burman", z: -2.6, x: 4.5, y: 0.4, color: 0xb31b3b, parent: "Sino-Tibetan" },
-            { name: "Semitic", z: -2.2, x: -2.0, y: -2.0, color: 0x2c7f6e, parent: "Afroasiatic" },
-            { name: "Bantu", z: -1.8, x: -1.8, y: -4.5, color: 0x3c9b4c, parent: "Niger-Congo" },
-            { name: "Malayo-Polynesian", z: -2.0, x: 7.5, y: -2.2, color: 0xe2856e, parent: "Austronesian" },
-        ];
-        
-        // combine all nodes into array for easy reference
-        const allLangNodes = [...families, ...subfamilies];
-        
-        // Function to create sphere + label
-        function addNode(nodeDef) {
-            const geometry = new THREE.SphereGeometry(0.22, 24, 24);
-            const material = new THREE.MeshStandardMaterial({ color: nodeDef.color, emissive: 0x222222, roughness: 0.3, metalness: 0.1 });
-            const sphere = new THREE.Mesh(geometry, material);
-            sphere.position.set(nodeDef.x, nodeDef.z, nodeDef.y); // note: Y becomes Z for vertical axis, X remains X, Z becomes Y? Actually: ground XY => X=x, Y=z_vertical, Z=y? Wait: we want vertical = Z axis (height). So position: (x, z_height, y_on_map)
-            // Re-map: Map is XZ plane usually, but we want map XY (X horizontal, Z depth). Let's do: X = x, Y = height (z value of tree), Z = y coordinate on map.
-            sphere.position.set(nodeDef.x, nodeDef.z, nodeDef.y);
-            sphere.castShadow = true;
-            scene.add(sphere);
-            
-            // CSS2D text label
-            const div = document.createElement('div');
-            div.textContent = nodeDef.name;
-            div.style.color = '#f8f8f8';
-            div.style.fontSize = '14px';
-            div.style.fontWeight = 'bold';
-            div.style.textShadow = '1px 1px 0px black';
-            div.style.backgroundColor = `rgba(0,0,0,0.65)`;
-            div.style.padding = '2px 8px';
-            div.style.borderRadius = '20px';
-            div.style.borderLeft = `3px solid ${new THREE.Color(nodeDef.color).getStyle()}`;
-            div.style.fontFamily = 'sans-serif';
-            div.style.backdropFilter = 'blur(4px)';
-            div.style.whiteSpace = 'nowrap';
-            
-            const label = new CSS2DObject(div);
-            label.position.copy(sphere.position);
-            label.position.y += 0.28;
-            scene.add(label);
-            
-            return { sphere, label };
-        }
-        
-        // Add root
-        const rootObj = addNode({ name: root.name, x: root.x, z: root.z, y: root.y, color: root.color });
-        // Add families and subfamilies
-        const nodeMap = new Map();
-        allLangNodes.forEach(n => {
-            const obj = addNode(n);
-            nodeMap.set(n.name, { ...obj, def: n });
+        // Add replica mappings
+        Object.entries(originalMap).forEach(([replica, original]) => {
+            const originalParent = parentMap.get(original);
+            if (originalParent) parentMap.set(replica, originalParent);
         });
-        
-        // Draw edges (cylinders or lines) between parent and child
-        // Parent relationships:
-        // Root connects to each family
-        families.forEach(fam => {
-            addConnection({ x: root.x, y: root.y, z: root.z }, { x: fam.x, y: fam.y, z: fam.z }, root.color, fam.color);
-        });
-        // Connect families to subfamilies
-        subfamilies.forEach(sub => {
-            const parent = families.find(f => f.name === sub.parent);
-            if (parent) {
-                addConnection({ x: parent.x, y: parent.y, z: parent.z }, { x: sub.x, y: sub.y, z: sub.z }, parent.color, sub.color);
+
+        function findEvolutionaryPath(sourceId, targetId) {
+            // Map replicas to originals for pathfinding
+            const srcId = originalMap[sourceId] || sourceId;
+            const tgtId = originalMap[targetId] || targetId;
+            
+            function getAncestors(id) {
+                const chain = [id];
+                let current = id;
+                while (parentMap.has(current)) {
+                    current = parentMap.get(current);
+                    chain.push(current);
+                }
+                return chain;
             }
-        });
-        
-        function addConnection(p1, p2, color1, color2) {
-            // p1 = {x, y, z} where y is horizontal? Wait careful: our positions: x = x_map, y = z_vertical? Actually in scene: sphere position is (x, z_vertical, y_map)
-            // So point A (x1, z_tree1, y1), B (x2, z_tree2, y2)
-            const start = new THREE.Vector3(p1.x, p1.z, p1.y);
-            const end = new THREE.Vector3(p2.x, p2.z, p2.y);
-            const direction = new THREE.Vector3().subVectors(end, start);
-            const length = direction.length();
             
-            const cylinderGeo = new THREE.CylinderGeometry(0.05, 0.05, length, 6);
-            const materialLine = new THREE.MeshStandardMaterial({ color: 0xc0aa80, emissive: 0x332200 });
-            const cylinder = new THREE.Mesh(cylinderGeo, materialLine);
-            // position at midpoint
-            const center = start.clone().add(end).multiplyScalar(0.5);
-            cylinder.position.copy(center);
-            cylinder.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), direction.clone().normalize());
-            scene.add(cylinder);
+            const sourceAncestors = getAncestors(srcId);
+            const targetAncestors = getAncestors(tgtId);
             
-            // Add small glowing particles along edges
-            const particleCount = Math.max(4, Math.floor(length * 3));
-            for (let i = 0; i <= particleCount; i++) {
-                const t = i / particleCount;
-                const pt = start.clone().lerp(end, t);
-                const particleGeo = new THREE.SphereGeometry(0.03, 6, 6);
-                const partMat = new THREE.MeshStandardMaterial({ color: 0xffaa77, emissive: 0x442200 });
-                const particle = new THREE.Mesh(particleGeo, partMat);
-                particle.position.copy(pt);
-                scene.add(particle);
+            let lca = null;
+            for (let s of sourceAncestors) {
+                if (targetAncestors.includes(s)) {
+                    lca = s;
+                    break;
+                }
             }
-        }
-        
-        // Add some extra floating particles for atmosphere
-        const particleField = new THREE.BufferGeometry();
-        const particleCountField = 800;
-        const particlePositions = new Float32Array(particleCountField * 3);
-        for (let i = 0; i < particleCountField; i++) {
-            particlePositions[i*3] = (Math.random() - 0.5) * 40;
-            particlePositions[i*3+1] = (Math.random() - 0.5) * 14 + 3;
-            particlePositions[i*3+2] = (Math.random() - 0.5) * 30;
-        }
-        particleField.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-        const particleMatField = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.05, transparent: true, opacity: 0.4 });
-        const particles = new THREE.Points(particleField, particleMatField);
-        scene.add(particles);
-        
-        // --- animation loop & subtle floating animation for nodes ---
-        let time = 0;
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            time += 0.008;
             
-            // Gentle floating motion for nodes and labels
-            nodeMap.forEach((obj, name) => {
-                if (obj.sphere) {
-                    const offsetY = Math.sin(time * 1.5 + name.length) * 0.02;
-                    obj.sphere.position.y += (offsetY - (obj.sphere.userData?.offsetY || 0)) * 0.1;
-                    obj.sphere.userData = { offsetY: offsetY };
-                    if (obj.label) {
-                        obj.label.position.y = obj.sphere.position.y + 0.28;
+            if (!lca) return [sourceId, targetId];
+            
+            const sourceToLca = [];
+            for (let s of sourceAncestors) {
+                sourceToLca.push(s);
+                if (s === lca) break;
+            }
+            
+            const lcaToTarget = [];
+            for (let t of targetAncestors) {
+                if (t === lca) continue;
+                lcaToTarget.unshift(t);
+            }
+            
+            // Map back to original IDs for display
+            const reverseMap = Object.fromEntries(Object.entries(originalMap).map(([k,v]) => [v, k]));
+            const result = [...sourceToLca, ...lcaToTarget].map(id => reverseMap[id] || id);
+            return result;
+        }
+
+        let sourceLang = null;
+        let targetLang = null;
+        let mapWidth, mapHeight;
+        let currentView = 'map';
+        let pathHighlightActive = false;
+
+        const mapContainer = document.getElementById('map-canvas');
+        const treeContainer = document.getElementById('tree-canvas');
+        let mapCtx, treeCtx;
+
+        function initCanvases() {
+            const resize = () => {
+                mapWidth = window.innerWidth;
+                mapHeight = window.innerHeight;
+                
+                mapContainer.innerHTML = '';
+                treeContainer.innerHTML = '';
+                
+                const mapCanvas = document.createElement('canvas');
+                mapCanvas.width = mapWidth;
+                mapCanvas.height = mapHeight;
+                mapContainer.appendChild(mapCanvas);
+                mapCtx = mapCanvas.getContext('2d');
+                
+                const treeCanvas = document.createElement('canvas');
+                treeCanvas.width = mapWidth;
+                treeCanvas.height = mapHeight;
+                treeContainer.appendChild(treeCanvas);
+                treeCtx = treeCanvas.getContext('2d');
+                
+                drawMap();
+                drawFullTree();
+                createClickableElements();
+            };
+            
+            window.addEventListener('resize', resize);
+            resize();
+        }
+
+        function drawMap() {
+            if (!mapCtx) return;
+            
+            // Ocean
+            mapCtx.fillStyle = '#1a3a5a';
+            mapCtx.fillRect(0, 0, mapWidth, mapHeight);
+            
+            // North America
+            mapCtx.fillStyle = '#2a5a5a';
+            mapCtx.beginPath();
+            mapCtx.moveTo(mapWidth * 0.05, mapHeight * 0.30);
+            mapCtx.lineTo(mapWidth * 0.22, mapHeight * 0.28);
+            mapCtx.lineTo(mapWidth * 0.25, mapHeight * 0.45);
+            mapCtx.lineTo(mapWidth * 0.15, mapHeight * 0.52);
+            mapCtx.lineTo(mapWidth * 0.05, mapHeight * 0.48);
+            mapCtx.fill();
+            
+            // South America
+            mapCtx.fillStyle = '#3a6a5a';
+            mapCtx.beginPath();
+            mapCtx.moveTo(mapWidth * 0.15, mapHeight * 0.55);
+            mapCtx.lineTo(mapWidth * 0.25, mapHeight * 0.52);
+            mapCtx.lineTo(mapWidth * 0.28, mapHeight * 0.80);
+            mapCtx.lineTo(mapWidth * 0.18, mapHeight * 0.82);
+            mapCtx.fill();
+            
+            // Europe
+            mapCtx.fillStyle = '#2a4a5a';
+            mapCtx.beginPath();
+            mapCtx.moveTo(mapWidth * 0.28, mapHeight * 0.32);
+            mapCtx.lineTo(mapWidth * 0.52, mapHeight * 0.30);
+            mapCtx.lineTo(mapWidth * 0.48, mapHeight * 0.55);
+            mapCtx.lineTo(mapWidth * 0.30, mapHeight * 0.58);
+            mapCtx.fill();
+            
+            // Asia
+            mapCtx.fillStyle = '#3a5a6a';
+            mapCtx.beginPath();
+            mapCtx.moveTo(mapWidth * 0.50, mapHeight * 0.28);
+            mapCtx.lineTo(mapWidth * 0.92, mapHeight * 0.26);
+            mapCtx.lineTo(mapWidth * 0.95, mapHeight * 0.62);
+            mapCtx.lineTo(mapWidth * 0.65, mapHeight * 0.68);
+            mapCtx.lineTo(mapWidth * 0.48, mapHeight * 0.55);
+            mapCtx.fill();
+            
+            // Africa
+            mapCtx.fillStyle = '#2a5a4a';
+            mapCtx.beginPath();
+            mapCtx.moveTo(mapWidth * 0.42, mapHeight * 0.58);
+            mapCtx.lineTo(mapWidth * 0.58, mapHeight * 0.56);
+            mapCtx.lineTo(mapWidth * 0.55, mapHeight * 0.82);
+            mapCtx.lineTo(mapWidth * 0.40, mapHeight * 0.80);
+            mapCtx.fill();
+            
+            // Draw dots with labels
+            clickableLanguages.forEach(lang => {
+                const x = lang.mapX * mapWidth;
+                const y = lang.mapY * mapHeight;
+                const radius = 10;
+                
+                // Dot
+                mapCtx.beginPath();
+                mapCtx.arc(x, y, radius, 0, Math.PI * 2);
+                mapCtx.fillStyle = lang.color;
+                mapCtx.fill();
+                mapCtx.beginPath();
+                mapCtx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
+                mapCtx.fillStyle = 'white';
+                mapCtx.fill();
+                
+                // Label background
+                mapCtx.fillStyle = 'rgba(0,0,0,0.7)';
+                mapCtx.font = `bold ${Math.floor(mapWidth * 0.01)}px Arial`;
+                const metrics = mapCtx.measureText(lang.name);
+                mapCtx.fillRect(x + 12, y - 10, metrics.width + 8, 16);
+                
+                // Label text
+                mapCtx.fillStyle = lang.color;
+                mapCtx.fillText(lang.name, x + 16, y - 2);
+            });
+            
+            // Continent labels
+            mapCtx.fillStyle = 'rgba(255,255,255,0.35)';
+            mapCtx.font = `italic ${Math.floor(mapWidth * 0.02)}px Arial`;
+            mapCtx.fillText("NORTH AMERICA", mapWidth * 0.08, mapHeight * 0.28);
+            mapCtx.fillText("SOUTH AMERICA", mapWidth * 0.12, mapHeight * 0.68);
+            mapCtx.fillText("EUROPE", mapWidth * 0.32, mapHeight * 0.28);
+            mapCtx.fillText("ASIA", mapWidth * 0.68, mapHeight * 0.25);
+            mapCtx.fillText("AFRICA", mapWidth * 0.45, mapHeight * 0.55);
+        }
+
+        function drawFullTree() {
+            if (!treeCtx) return;
+            
+            treeCtx.clearRect(0, 0, mapWidth, mapHeight);
+            treeCtx.fillStyle = '#0a1620';
+            treeCtx.fillRect(0, 0, mapWidth, mapHeight);
+            
+            languages.forEach(lang => {
+                if (lang.parent && !lang.isReplica) {
+                    const parent = languages.find(l => l.id === lang.parent);
+                    if (parent && parent.treeX !== undefined) {
+                        const fromX = parent.treeX * mapWidth;
+                        const fromY = parent.treeY * mapHeight;
+                        const toX = lang.treeX * mapWidth;
+                        const toY = lang.treeY * mapHeight;
+                        
+                        treeCtx.beginPath();
+                        treeCtx.moveTo(fromX, fromY);
+                        const cp1x = fromX;
+                        const cp1y = (fromY + toY) / 2;
+                        const cp2x = toX;
+                        const cp2y = (fromY + toY) / 2;
+                        treeCtx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+                        treeCtx.strokeStyle = '#ffffff40';
+                        treeCtx.lineWidth = 2;
+                        treeCtx.stroke();
                     }
                 }
             });
-            if (rootObj.sphere) {
-                const offY = Math.sin(time * 1.2) * 0.02;
-                rootObj.sphere.position.y += (offY - (rootObj.sphere.userData?.offsetY || 0)) * 0.1;
-                rootObj.sphere.userData = { offsetY: offY };
-                rootObj.label.position.y = rootObj.sphere.position.y + 0.28;
+            
+            // Draw unique nodes (no replicas in tree)
+            languages.filter(l => !l.isReplica && l.treeX !== undefined).forEach(lang => {
+                const x = lang.treeX * mapWidth;
+                const y = lang.treeY * mapHeight;
+                const radius = lang.isAncestor ? 5 : 7;
+                
+                treeCtx.beginPath();
+                treeCtx.arc(x, y, radius, 0, Math.PI * 2);
+                treeCtx.fillStyle = lang.color;
+                treeCtx.fill();
+                treeCtx.beginPath();
+                treeCtx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
+                treeCtx.fillStyle = 'white';
+                treeCtx.fill();
+                
+                if (lang.isAncestor) {
+                    treeCtx.fillStyle = '#888888';
+                    treeCtx.font = `${Math.floor(mapWidth * 0.008)}px Arial`;
+                    treeCtx.fillText(lang.name, x + radius + 4, y - 3);
+                }
+            });
+        }
+
+        function highlightTreePath(pathIds) {
+            if (!treeCtx) return;
+            
+            const pathSet = new Set(pathIds);
+            
+            treeCtx.clearRect(0, 0, mapWidth, mapHeight);
+            treeCtx.fillStyle = '#0a1620';
+            treeCtx.fillRect(0, 0, mapWidth, mapHeight);
+            
+            languages.forEach(lang => {
+                if (lang.parent && !lang.isReplica) {
+                    const parent = languages.find(l => l.id === lang.parent);
+                    if (parent && parent.treeX !== undefined) {
+                        const fromX = parent.treeX * mapWidth;
+                        const fromY = parent.treeY * mapHeight;
+                        const toX = lang.treeX * mapWidth;
+                        const toY = lang.treeY * mapHeight;
+                        const isPathEdge = pathSet.has(lang.id) && pathSet.has(parent.id);
+                        
+                        treeCtx.beginPath();
+                        treeCtx.moveTo(fromX, fromY);
+                        const cp1x = fromX;
+                        const cp1y = (fromY + toY) / 2;
+                        const cp2x = toX;
+                        const cp2y = (fromY + toY) / 2;
+                        treeCtx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+                        
+                        if (isPathEdge) {
+                            treeCtx.strokeStyle = '#ff3333';
+                            treeCtx.lineWidth = 4;
+                        } else {
+                            treeCtx.strokeStyle = '#ffffff15';
+                            treeCtx.lineWidth = 2;
+                        }
+                        treeCtx.stroke();
+                    }
+                }
+            });
+            
+            languages.filter(l => !l.isReplica && l.treeX !== undefined).forEach(lang => {
+                const x = lang.treeX * mapWidth;
+                const y = lang.treeY * mapHeight;
+                const isPathNode = pathSet.has(lang.id);
+                const isSource = sourceLang?.id === lang.id;
+                const isTarget = targetLang?.id === lang.id;
+                const baseRadius = lang.isAncestor ? 5 : 7;
+                
+                if (isPathNode || isSource || isTarget) {
+                    treeCtx.beginPath();
+                    treeCtx.arc(x, y, baseRadius + 4, 0, Math.PI * 2);
+                    if (isSource || isTarget) {
+                        treeCtx.fillStyle = '#ff3300';
+                    } else {
+                        treeCtx.fillStyle = '#ffaa44';
+                    }
+                    treeCtx.fill();
+                    treeCtx.beginPath();
+                    treeCtx.arc(x, y, baseRadius, 0, Math.PI * 2);
+                    treeCtx.fillStyle = lang.color;
+                    treeCtx.fill();
+                    treeCtx.beginPath();
+                    treeCtx.arc(x, y, baseRadius * 0.4, 0, Math.PI * 2);
+                    treeCtx.fillStyle = 'white';
+                    treeCtx.fill();
+                    
+                    treeCtx.fillStyle = 'white';
+                    treeCtx.font = `bold ${Math.floor(mapWidth * 0.01)}px Arial`;
+                    treeCtx.fillText(lang.name, x + baseRadius + 6, y - 4);
+                } else {
+                    treeCtx.beginPath();
+                    treeCtx.arc(x, y, baseRadius, 0, Math.PI * 2);
+                    treeCtx.fillStyle = lang.color + '40';
+                    treeCtx.fill();
+                    treeCtx.beginPath();
+                    treeCtx.arc(x, y, baseRadius * 0.4, 0, Math.PI * 2);
+                    treeCtx.fillStyle = lang.color + '80';
+                    treeCtx.fill();
+                    
+                    if (lang.isAncestor) {
+                        treeCtx.fillStyle = '#444444';
+                        treeCtx.font = `${Math.floor(mapWidth * 0.008)}px Arial`;
+                        treeCtx.fillText(lang.name, x + baseRadius + 4, y - 3);
+                    }
+                }
+            });
+        }
+
+        function createClickableElements() {
+            const mapOverlay = document.createElement('div');
+            mapOverlay.style.position = 'absolute';
+            mapOverlay.style.top = '0';
+            mapOverlay.style.left = '0';
+            mapOverlay.style.width = '100%';
+            mapOverlay.style.height = '100%';
+            mapOverlay.style.zIndex = '15';
+            mapOverlay.style.pointerEvents = 'auto';
+            mapOverlay.id = 'map-click-overlay';
+            
+            const treeOverlay = document.createElement('div');
+            treeOverlay.style.position = 'absolute';
+            treeOverlay.style.top = '0';
+            treeOverlay.style.left = '0';
+            treeOverlay.style.width = '100%';
+            treeOverlay.style.height = '100%';
+            treeOverlay.style.zIndex = '15';
+            treeOverlay.style.pointerEvents = 'auto';
+            treeOverlay.id = 'tree-click-overlay';
+            treeOverlay.style.display = 'none';
+            
+            clickableLanguages.forEach(lang => {
+                const x = lang.mapX * mapWidth;
+                const y = lang.mapY * mapHeight;
+                
+                const dot = document.createElement('div');
+                dot.className = 'map-dot';
+                dot.style.backgroundColor = lang.color;
+                dot.style.left = x + 'px';
+                dot.style.top = y + 'px';
+                dot.title = lang.name;
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    handleLanguageClick(lang);
+                };
+                mapOverlay.appendChild(dot);
+            });
+            
+            // Tree dots (unique languages only, no replicas)
+            languages.filter(l => !l.isReplica && l.treeX !== undefined && !l.isAncestor).forEach(lang => {
+                const x = lang.treeX * mapWidth;
+                const y = lang.treeY * mapHeight;
+                
+                const dot = document.createElement('div');
+                dot.className = 'tree-dot';
+                dot.style.backgroundColor = lang.color;
+                dot.style.left = x + 'px';
+                dot.style.top = y + 'px';
+                dot.title = lang.name;
+                dot.onclick = (e) => {
+                    e.stopPropagation();
+                    // Map to original language if needed
+                    const originalId = Object.keys(originalMap).find(k => originalMap[k] === lang.id) || lang.id;
+                    const targetLang = languages.find(l => l.id === originalId) || lang;
+                    handleLanguageClick(targetLang);
+                };
+                treeOverlay.appendChild(dot);
+            });
+            
+            const existingMapOverlay = document.querySelector('#map-click-overlay');
+            if (existingMapOverlay) existingMapOverlay.remove();
+            const existingTreeOverlay = document.querySelector('#tree-click-overlay');
+            if (existingTreeOverlay) existingTreeOverlay.remove();
+            
+            document.body.appendChild(mapOverlay);
+            document.body.appendChild(treeOverlay);
+        }
+
+        function updateView() {
+            const mapOverlay = document.querySelector('#map-click-overlay');
+            const treeOverlay = document.querySelector('#tree-click-overlay');
+            const mapIcon = document.getElementById('map-icon');
+            const treeIcon = document.getElementById('tree-icon');
+            
+            if (currentView === 'map') {
+                document.getElementById('map-canvas').style.opacity = '1';
+                document.getElementById('tree-canvas').style.opacity = '0';
+                if (mapOverlay) mapOverlay.style.display = 'block';
+                if (treeOverlay) treeOverlay.style.display = 'none';
+                mapIcon.classList.add('active');
+                treeIcon.classList.remove('active');
+            } else {
+                document.getElementById('map-canvas').style.opacity = '0';
+                document.getElementById('tree-canvas').style.opacity = '1';
+                if (mapOverlay) mapOverlay.style.display = 'none';
+                if (treeOverlay) treeOverlay.style.display = 'block';
+                mapIcon.classList.remove('active');
+                treeIcon.classList.add('active');
+            }
+        }
+
+        function updateDotSelection() {
+            const mapDots = document.querySelectorAll('.map-dot');
+            const treeDots = document.querySelectorAll('.tree-dot');
+            
+            mapDots.forEach(dot => dot.classList.remove('selected'));
+            treeDots.forEach(dot => dot.classList.remove('selected'));
+            
+            if (sourceLang) {
+                const sourceMapDot = Array.from(mapDots).find(d => d.title === sourceLang.name);
+                if (sourceMapDot) sourceMapDot.classList.add('selected');
+                
+                // Find corresponding tree dot
+                const originalId = originalMap[sourceLang.id] || sourceLang.id;
+                const treeDot = Array.from(treeDots).find(d => d.title === sourceLang.name || 
+                    (languages.find(l => l.id === originalId)?.name === d.title));
+                if (treeDot) treeDot.classList.add('selected');
+                
+                document.getElementById('source-name').innerText = sourceLang.name;
+                document.getElementById('source-badge').classList.remove('empty');
+            } else {
+                document.getElementById('source-name').innerText = '—';
+                document.getElementById('source-badge').classList.add('empty');
             }
             
-            // rotate particle field slowly
-            particles.rotation.y = time * 0.05;
-            particles.rotation.x = Math.sin(time * 0.1) * 0.1;
+            if (targetLang) {
+                const targetMapDot = Array.from(mapDots).find(d => d.title === targetLang.name);
+                if (targetMapDot) targetMapDot.classList.add('selected');
+                document.getElementById('target-name').innerText = targetLang.name;
+                document.getElementById('target-badge').classList.remove('empty');
+            } else {
+                document.getElementById('target-name').innerText = '—';
+                document.getElementById('target-badge').classList.add('empty');
+            }
+        }
+
+        async function updatePathHighlight() {
+            if (sourceLang && targetLang) {
+                const pathIds = findEvolutionaryPath(sourceLang.id, targetLang.id);
+                pathHighlightActive = true;
+                highlightTreePath(pathIds);
+                
+                const commonAncestorId = pathIds.length > 1 ? pathIds[1] : null;
+                const commonAncestor = commonAncestorId ? languages.find(l => l.id === commonAncestorId)?.name : 'common ancestor';
+                
+                const panel = document.getElementById('lesson-panel');
+                const bodyDiv = document.getElementById('lesson-body');
+                bodyDiv.innerHTML = '<div class="loading">✨ Generating lesson...</div>';
+                panel.classList.add('visible');
+                
+                await new Promise(r => setTimeout(r, 600));
+                bodyDiv.innerHTML = `
+                    <strong>${sourceLang.name} → ${targetLang.name}</strong><br>
+                    <span style="font-size:11px; opacity:0.8;">🔴 Path via ${commonAncestor} (${pathIds.length - 1} steps)</span><br><br>
+                    • Cognate recognition<br>
+                    • Grammar comparison<br>
+                    • Practice dialogue<br>
+                    <i style="font-size:10px;">(Replace with LLM API)</i>
+                `;
+            } else if (pathHighlightActive) {
+                pathHighlightActive = false;
+                drawFullTree();
+                updateDotSelection();
+            }
+        }
+
+        function handleLanguageClick(lang) {
+            if (!sourceLang) {
+                sourceLang = lang;
+                updateDotSelection();
+                if (targetLang) updatePathHighlight();
+            } else if (sourceLang && !targetLang && sourceLang.id !== lang.id) {
+                targetLang = lang;
+                updateDotSelection();
+                updatePathHighlight();
+                if (currentView === 'map') {
+                    toggleCheckbox.checked = true;
+                    currentView = 'tree';
+                    updateView();
+                }
+            } else if (sourceLang && targetLang) {
+                resetSelection();
+                sourceLang = lang;
+                updateDotSelection();
+            } else if (sourceLang && sourceLang.id === lang.id) {
+                resetSelection();
+            }
+        }
+
+        function resetSelection() {
+            sourceLang = null;
+            targetLang = null;
+            updateDotSelection();
             
-            // Update controls and render
-            controls.update(); // only needed if damping or autoRotate; but we keep for smoothness
-            renderer.render(scene, camera);
-            labelRenderer.render(scene, camera);
+            if (pathHighlightActive) {
+                pathHighlightActive = false;
+                if (currentView === 'tree') {
+                    drawFullTree();
+                }
+            }
+            
+            document.getElementById('lesson-panel').classList.remove('visible');
         }
+
+        const toggleCheckbox = document.getElementById('view-toggle');
+        toggleCheckbox.addEventListener('change', (e) => {
+            currentView = e.target.checked ? 'tree' : 'map';
+            updateView();
+        });
+
+        initCanvases();
         
-        animate();
-        
-        // handle window resize
-        window.addEventListener('resize', onWindowResize, false);
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            labelRenderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        // small console note
-        console.log('3D language phylogeny + map ready | DAG along Z axis');
+        document.getElementById('reset-btn').addEventListener('click', resetSelection);
+        document.getElementById('close-lesson').addEventListener('click', () => {
+            document.getElementById('lesson-panel').classList.remove('visible');
+        });
     </script>
 </body>
 </html>
