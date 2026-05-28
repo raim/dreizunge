@@ -1,6 +1,5 @@
 {
   "nl": {
-    "app.tagline": "Leer {lang} woorden voor elke onderwerp",
     "app.backend": "Backend:",
     "app.checking": "Controleer…",
     "form.i_speak": "🗣 Ik spreek",
@@ -159,7 +158,6 @@
     "storyline.title": "Verhaallijn"
   },
   "pt": {
-    "app.tagline": "Aprenda vocabulário em {lang} para qualquer tema",
     "app.backend": "Backend:",
     "app.checking": "Verificando…",
     "form.i_speak": "🗣 Eu falo",
@@ -318,7 +316,6 @@
     "lib.filter_all_short": "🌐 Todos"
   },
   "fr": {
-    "app.tagline": "Apprenez le vocabulaire {lang} pour tout sujet",
     "app.backend": "Backend:",
     "app.checking": "Vérification…",
     "form.i_speak": "🗣 Je parle",
@@ -557,7 +554,6 @@
     "lib.import": "⬆ İçe aktar",
     "lib.filter_all": "🌐 Tüm diller",
     "lib.filter_all_short": "🌐 Tümü",
-    "app.tagline": "Her konu için {lang} sözlüğü öğrenin",
     "app.backend": "Backend:",
     "app.checking": " kontrol ediliyor…",
     "form.topic_label": "{lang} konusu nedir?",
@@ -636,7 +632,6 @@
     "status.offline": "Çevrimdışı — sadece kaydedilen dersler"
   },
   "hi": {
-    "app.tagline": "किसी भी विषय के {lang} शब्द सीखें",
     "app.backend": "बैकेन्ड:",
     "app.checking": "परीक्षण…",
     "form.i_speak": "🗣 मैं ... बोलता हूँ",
@@ -795,7 +790,6 @@
     "story.prompt_placeholder": "No story prompt saved for this lesson."
   },
   "de": {
-    "app.tagline": "{lang} Vokabular für jedes Thema lernen",
     "app.backend": "Backend:",
     "app.checking": "Prüfe…",
     "form.i_speak": "🗣 Ich spreche",
@@ -954,7 +948,6 @@
     "lib.filter_all_short": "🌐 Alle"
   },
   "ar": {
-    "app.tagline": "تعلم مفردات {lang} في أي موضوع",
     "app.backend": "الخلفية:",
     "app.checking": "التحقق...",
     "form.i_speak": "🗣 أتحدث",
@@ -1113,7 +1106,6 @@
     "lib.filter_all_short": "🌐 الكل"
   },
   "en": {
-    "app.tagline": "Learn {lang} vocabulary for any topic",
     "app.backend": "Backend:",
     "app.checking": "Checking…",
     "form.i_speak": "🗣 I speak",
@@ -1272,7 +1264,6 @@
     "lib.filter_all_short": "🌐 All"
   },
   "sv": {
-    "app.tagline": "Lär dig {lang} ord för vilken ämne som helst",
     "app.backend": "Baksidan:",
     "app.checking": "Kontrollerar…",
     "form.i_speak": "🗣 Jag talar",
@@ -1431,7 +1422,6 @@
     "lib.filter_all_short": "🌐 Alla"
   },
   "ru": {
-    "app.tagline": "Учите словарный запас на {lang} по любому тематике",
     "app.backend": "Бэкенд:",
     "app.checking": "Проверка…",
     "form.i_speak": "🗣 Я говорю",
@@ -1590,7 +1580,6 @@
     "lib.filter_all_short": "🌐 Все"
   },
   "zh": {
-    "app.tagline": "学习{lang}词汇，任何主题",
     "app.backend": "后端:",
     "app.checking": "正在检查…",
     "form.i_speak": "🗣 我会说",
@@ -1749,7 +1738,6 @@
     "lib.filter_all_short": "🌐 全部"
   },
   "ko": {
-    "app.tagline": "어떤 주제든 {lang} 단어를 배우세요",
     "app.backend": "백엔드:",
     "app.checking": "확인 중…",
     "form.i_speak": "🗣 나는 ... 를 말할 수 있어",
@@ -1908,7 +1896,6 @@
     "lib.filter_all_short": "🌐 전체"
   },
   "it": {
-    "app.tagline": "Impara il vocabolario {lang} su qualsiasi argomento",
     "app.backend": "Backend:",
     "app.checking": "Controllo…",
     "form.i_speak": "🗣 Parlo",
@@ -2067,7 +2054,6 @@
     "lib.filter_all_short": "🌐 Tutte"
   },
   "pl": {
-    "app.tagline": "Nauka słówek {lang} na dowolny temat",
     "app.backend": "Backend:",
     "app.checking": "Sprawdzanie…",
     "form.i_speak": "🗣 Mówię",
@@ -2226,7 +2212,6 @@
     "lib.filter_all_short": "🌐 Wszystkie"
   },
   "es": {
-    "app.tagline": "Aprende el vocabulario {lang} para cualquier tema",
     "app.backend": "Backend:",
     "app.checking": "Revisando…",
     "form.i_speak": "🗣 Hablo",
@@ -2385,7 +2370,6 @@
     "lib.filter_all_short": "🌐 Todos"
   },
   "ja": {
-    "app.tagline": "どんなトピックでも{lang}の語彙を学ぼう",
     "app.backend": "バックエンド:",
     "app.checking": "確認中…",
     "form.i_speak": "🗣 話す言語",
@@ -2702,7 +2686,6 @@
     "status.offline": "לא רשת — רק למדונים נשמרים"
   },
   "uk": {
-    "app.tagline": "Навчайтесь слів {lang} для будь-якої теми",
     "app.backend": "Бек-енд:",
     "app.checking": "Перевірка…",
     "form.i_speak": "🗣 Я мовлю",
@@ -2861,7 +2844,6 @@
     "lib.filter_all_short": "🌐 Усі"
   },
   "cs": {
-    "app.tagline": "Nauč se slovník {lang} pro jakýkoli téměř",
     "app.backend": "Backend:",
     "app.checking": "Zjišťuji…",
     "form.i_speak": "🗣 Mluvím",
@@ -3020,7 +3002,6 @@
     "lib.filter_all_short": "🌐 Všechny"
   },
   "vi": {
-    "app.tagline": "Học từ vựng {lang} cho mọi chủ đề",
     "app.backend": "Backend:",
     "app.checking": "Kiểm tra…",
     "form.i_speak": "🗣 Tôi nói",
@@ -3179,7 +3160,6 @@
     "lib.filter_all_short": "🌐 Tất cả"
   },
   "id": {
-    "app.tagline": "Pelajari vokabular {lang} untuk topik apapun",
     "app.backend": "Backend:",
     "app.checking": "Mengecek…",
     "form.i_speak": "🗣 Saya bicara",
@@ -3338,7 +3318,6 @@
     "lib.filter_all_short": "🌐 Semua"
   },
   "ro": {
-    "app.tagline": "Aprendeți vocabilul {lang} pentru orice subiect",
     "app.backend": "Backend:",
     "app.checking": "Se verifică…",
     "form.i_speak": "🗣 Sunt vorbitor de",
@@ -3497,7 +3476,6 @@
     "lib.filter_all_short": "🌐 Toate"
   },
   "th": {
-    "app.tagline": "เรียนศัพท์ {lang} สำหรับหัวข้อใดก็ได้",
     "app.backend": "Backend:",
     "app.checking": "กำลังตรวจสอบ…",
     "form.i_speak": "🗣 ฉันพูด",
@@ -3733,7 +3711,6 @@
     "lib.import": "⬆ Εισαγωγή",
     "lib.filter_all": "🌐 Όλες οι γλώσσες",
     "lib.filter_all_short": "🌐 Όλες",
-    "app.tagline": "Μάθε {lang} λεξικό για κάθε θέμα",
     "app.backend": "Backend:",
     "app.checking": "Ελέγχω…",
     "form.i_speak": "🗣 Μιλάω",
@@ -3815,7 +3792,6 @@
     "status.offline": "Αποσύνδεση — αποθηκευμένα μάθημα μόνο"
   },
   "fi": {
-    "app.tagline": "Oppi {lang} sanastoa kaikille aiheille",
     "app.backend": "Tietojärjestelmä:",
     "app.checking": "Tarkistetaan…",
     "form.i_speak": "🗣 Puhun",
@@ -3974,7 +3950,6 @@
     "lib.filter_all_short": "🌐 Kaikki"
   },
   "hu": {
-    "app.tagline": "Megtanulj {lang} szókincst a bármely témához",
     "app.backend": "Háttér:",
     "app.checking": "Ellenőrzés…",
     "form.i_speak": "🗣 Mondom",
@@ -4133,7 +4108,6 @@
     "lib.filter_all_short": "🌐 Minden"
   },
   "da": {
-    "app.tagline": "Lær {lang} vokabular til enhver emne",
     "app.backend": "Backend:",
     "app.checking": "Kontrollerer…",
     "form.i_speak": "🗣 Jeg taler",
@@ -4292,7 +4266,6 @@
     "status.offline": "Offline — kun gemte lektioner"
   },
   "ca": {
-    "app.tagline": "Aprendeix vocabulari en {lang} per a qualsevol tema",
     "app.backend": "Backend:",
     "app.checking": "S'està comprova…",
     "form.i_speak": "🗣 Parlo",
