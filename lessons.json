@@ -1,6 +1,456 @@
 {
   "lessons": [
     {
+      "topic": "הומור יהודי",
+      "topicEmoji": "jest",
+      "userTopic": "ההומור היהודי מפורסם, החל ממועדוני הקומדיה הווינאים של שנות ה-20 ועד לניו יורק והוליווד. מישהו מספר לנו בדיחה, גרסה מודרנית ומטא-הומוריסטית לקלאסיקה: כומר, רב ואימאם נכנסים לבר. הברמן שואל: \"זו בדיחה?\"",
+      "lang": "en",
+      "srcLang": "he",
+      "difficulty": 4,
+      "storyLen": 300,
+      "story": "Martin paused, his mind wandering to the vibrant world of Jewish humor, a thread that wove through the fabric of history. “Tell us a modern, meta-humorous take on a classic joke,” he suggested, his eyes twinkling with curiosity. “A rabbi, a priest, and an imam walk into a bar. The bartender asks, ‘Is this a joke?’”\n\nThe rain had slowed to a gentle patter, and the café around them seemed to come alive with the warmth of their shared laughter. “Sure,” Martin continued, “let’s give it a try. The rabbi says, ‘Of course it’s a joke. We’re in a bar, after all. But I’ll tell you what, let’s make it a good one. I’ll start: I’m here to discuss the eternal question of faith and reason. What do you think, priest and imam?’”\n\nThe priest leaned forward, his eyes narrowing in mock seriousness. “Well, rabbi, I’ve always believed that faith is a matter of the heart, not the head. But I suppose we can play along. What’s your take, imam?”\n\nThe imam nodded, his voice steady. “Indeed, faith is a journey of the soul. But let’s see where this goes. So, rabbi, what’s your point?”\n\nMartin chuckled, enjoying the playful banter. “Alright, let’s make it a bit meta. The rabbi replies, ‘Well, I’m here to discuss the eternal question of faith and reason, but I’m also here to remind you that sometimes, the best way to find answers is to laugh at the questions. So, what do you think, priest and imam? Is this a joke, or are we really here to talk about something profound?’”\n\nThe bartender, who had been listening intently, finally chimed in with a smile. “You know, I’ve been thinking about this. Maybe it’s both. Sometimes, the most profound questions are best answered with a good laugh. And sometimes, the best laughs come from the most profound questions.”",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nerving and teaching about the Holocaust.”\n\nMartin nodded, his eyes reflecting the weight of the conversation. “And Britain,” he added, “has a long and intertwined history with both Germany and Israel. The British Mandate in Palestine, the Kindertransport, and the role of the British military in post-war Germany—these are all part of a complex narrative. Britain’s relationship with Israel is often seen through the lens of historical support, but it’s also marked by periods of tension and misunderstanding.”\n\nAs the rain continued to fall, their conversation flowed, weaving through the intricate layers of history and the delicate balance of present-day relations. The café around them seemed to fade, leaving only the two friends, their voices blending into the tapestry of their shared history.\n\nNew topic: \"ההומור היהודי מפורסם, החל ממועדוני הקומדיה הווינאים של שנות ה-20 ועד לניו יורק והוליווד. מישהו מספר לנו בדיחה, גרסה מודרנית ומטא-הומוריסטית לקלאסיקה: כומר, רב ואימאם נכנסים לבר. הברמן שואל: \"זו בדיחה?\"\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "방방방",
+      "lessons": [
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Martin paused, his mind wandered to the vibrant world of Jewish humor, a thred that wove through the fabric of history. “Tell us a modern, meta-humorous take on a classic joke,” he suggested, his eyes twinklingly with curiosity. “A rabbi, a priest, and an imah walk into a bar. The bartender asks, ‘Is this a joke?’”\n\nThe rain had slowed to a gentle patter, and the café around them seemed to come alive with the warmth of their shared laughter. “Sure,” Martin continued, “let’s give it a try. The rabbi says, ‘Of course it’s a joke. We’re in a bar, after all. But I’ll tell you what, let’s make it a good one. I’ll start: I’m here to discuss the eternal question of faith and reason. What do you think, priest and imam?’”\n\nThe priest leaned forward, his eyes narrowing in mock-seriousness. “Well, rabbi, I’ve always believed that faith is a matter of the heart, not the head. But I suppose we can play along. What’s your take, imam?”\n\nThe imam nodded, his voice steady. “Indeed, faith is a journey of the soul. But let’s see where this goes. So, rabbi, what’s your point?”\n\nMartin chuckled, enjoying the playful banter. “Alright, let’s make it a bit meta. The rabbi replies, ‘Well, I’m here to discuss the eternal question of faith and reason, but I’m also here to remind you that sometimes, the best way to find answers is to laugh at the questions. So, what do you think, priest and imam? Is this a joke, or are we really here to talk about something profound?’”\n\nThe bartender, who had been listening intently, finally chimed in with a smile. “You know, I’ve been thinking about this. Maybe it’s both. Sometimes, the most profound questions are best answered with a good laugh. And sometimes, the best laughs come from the most profound questions.”",
+          "edits": [
+            {
+              "type": "spelling",
+              "find": "wandering",
+              "replace": "wandered",
+              "reason": "past tense needed for 'wander'"
+            },
+            {
+              "type": "spelling",
+              "find": "thread",
+              "replace": "thred",
+              "reason": "common misspelling of 'thread'"
+            },
+            {
+              "type": "grammar",
+              "find": "twinkling",
+              "replace": "twinklingly",
+              "reason": "needs to be an adverb"
+            },
+            {
+              "type": "grammar",
+              "find": "mock seriousness",
+              "replace": "mock-seriousness",
+              "reason": "should be a singular noun"
+            },
+            {
+              "type": "spelling",
+              "find": "imam",
+              "replace": "imah",
+              "reason": "common misspelling of 'imam'"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 639656,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1598,
+        "totalCompletionTokens": 741,
+        "lessons": [
+          {
+            "promptTokens": 846,
+            "completionTokens": 229
+          }
+        ]
+      },
+      "generatedAt": "2026-05-28T14:24:20.788Z",
+      "updatedAt": "2026-05-28T14:24:20.788Z"
+    },
+    {
+      "topic": "방방방",
+      "topicEmoji": " Judaica ",
+      "userTopic": "בביקור באדינבורו אנו משוחחים על היחסים המורכבים בין ישראל לגרמניה ולבריטניה, ועל ההיסטוריה היהודית הארוכה באירופה.",
+      "lang": "en",
+      "srcLang": "he",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "In the quiet of a rainy afternoon in Edinburgh, Sarah and her German friend, Martin, found themselves sitting in a cozy café, sipping tea and discussing the complex web of relationships between Israel, Germany, and Britain. The rain outside seemed to mirror the somber yet hopeful atmosphere of their conversation. Sarah, a historian, had recently visited Berlin and was fascinated by the city’s transformation from a symbol of division to a place of reconciliation and understanding. She shared her insights with Martin, who had grown up in a family deeply affected by the Holocaust.\n\n“Germany,” Sarah began, “has undergone a remarkable journey. From the horrors of the past, they’ve moved towards a future of remembrance and redemption. The German government and society have made significant efforts to acknowledge their history and ensure it’s not repeated. The Yad Vashem museum in Jerusalem is a testament to this commitment, and it’s fascinating to see how Germany collaborates with Israel in preserving and teaching about the Holocaust.”\n\nMartin nodded, his eyes reflecting the weight of the conversation. “And Britain,” he added, “has a long and intertwined history with both Germany and Israel. The British Mandate in Palestine, the Kindertransport, and the role of the British military in post-war Germany—these are all part of a complex narrative. Britain’s relationship with Israel is often seen through the lens of historical support, but it’s also marked by periods of tension and misunderstanding.”\n\nAs the rain continued to fall, their conversation flowed, weaving through the intricate layers of history and the delicate balance of present-day relations. The café around them seemed to fade, leaving only the two friends, their voices blending into the tapestry of their shared history.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English.\n\nWrite a story for the topic: \"בביקור באדינבורו אנו משוחחים על היחסים המורכבים בין ישראל לגרמניה ולבריטניה, ועל ההיסטוריה היהודית הארוכה באירופה.\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "בביקור באדינבורו",
+          "desc": "היחסים המורכבים בין ישראל לגרמניה ולבריטניה, וההיסטוריה היהודית באירופה",
+          "icon": "☕️",
+          "vocab": [
+            {
+              "target": "remarkable",
+              "source": "מרתק"
+            },
+            {
+              "target": "journey",
+              "source": "מסע"
+            },
+            {
+              "target": "horrors",
+              "source": "הוראות"
+            },
+            {
+              "target": "future",
+              "source": "עתיד"
+            },
+            {
+              "target": "remembrance",
+              "source": "זכרון"
+            },
+            {
+              "target": "redemption",
+              "source": "חנוכת"
+            },
+            {
+              "target": "government",
+              "source": "ממשלה"
+            },
+            {
+              "target": "society",
+              "source": " общество"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "הגרמנים עברו מסע ממרתק מה עברו את העבר.",
+              "source": "The Germans underwent a remarkable journey from the horrors of the past.",
+              "words": [
+                "הגרמנים",
+                "עברו",
+                "מסע",
+                "ממרתק",
+                "מה",
+                "עברו",
+                "את",
+                "העבר."
+              ]
+            },
+            {
+              "target": "הממשלה וה общество גרמו לשינויים משמעותיים.",
+              "source": "The government and society have made significant changes.",
+              "words": [
+                "הממשלה",
+                "וה",
+                "общество",
+                "גרמו",
+                "לשינויים",
+                "משמעותיים."
+              ]
+            },
+            {
+              "target": "היהודים היו חלק מההיסטוריה האירופית הארוכה.",
+              "source": "The Jews were part of the long European history.",
+              "words": [
+                "היהודים",
+                "היו",
+                "חלק",
+                "מההיסטוריה",
+                "האירופית",
+                "הארוכה."
+              ]
+            },
+            {
+              "target": "היה זה יום חם ורAINY, בשעה שלש בערב.",
+              "source": "It was a rainy afternoon at three o'clock in the afternoon.",
+              "words": [
+                "היה",
+                "זה",
+                "יום",
+                "חם",
+                "ורAINY,",
+                "בשעה",
+                "שלש",
+                "בערב."
+              ]
+            },
+            {
+              "target": "היא שיחקה עם הרAIN, כמו אם היא בת קטנה.",
+              "source": "She played with the rain, as if she were a little girl.",
+              "words": [
+                "היא",
+                "שיחקה",
+                "עם",
+                "הרAIN,",
+                "כמו",
+                "אם",
+                "היא",
+                "בת",
+                "קטנה."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "היחסים המורכבים",
+          "desc": "ה kompleksivim hatarhim beeretz yisra'el",
+          "icon": "🤝",
+          "vocab": [
+            {
+              "target": "transformation",
+              "source": "ההשתנות"
+            },
+            {
+              "target": "symbol",
+              "source": "סמל"
+            },
+            {
+              "target": "division",
+              "source": "פרישה"
+            },
+            {
+              "target": "reconciliation",
+              "source": "שלום"
+            },
+            {
+              "target": "understanding",
+              "source": "הבנה"
+            },
+            {
+              "target": "insights",
+              "source": "הבטים"
+            },
+            {
+              "target": "fascinated",
+              "source": "נרגז"
+            },
+            {
+              "target": "recently",
+              "source": "בקרוב"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Sarah was fascinated by the city’s transformation.",
+              "source": "סarah נרגזה מההשתנות של העיר.",
+              "words": [
+                "Sarah",
+                "was",
+                "fascinated",
+                "by",
+                "the",
+                "city’s",
+                "transformation."
+              ]
+            },
+            {
+              "target": "From the symbol of division, it became a place of reconciliation.",
+              "source": "ממקום של סמל של פרישה, היא הפכה למקום של שלום.",
+              "words": [
+                "From",
+                "the",
+                "symbol",
+                "of",
+                "division,",
+                "it",
+                "became",
+                "a",
+                "place",
+                "of",
+                "reconciliation."
+              ]
+            },
+            {
+              "target": "The German government has made significant efforts.",
+              "source": "הממשלה הגרמנית עשתה מאמצים משמעותיים.",
+              "words": [
+                "The",
+                "German",
+                "government",
+                "has",
+                "made",
+                "significant",
+                "efforts."
+              ]
+            },
+            {
+              "target": "Martin's family was deeply affected by the Holocaust.",
+              "source": "המשפחה של מרטין נETAה באופן עמוק על ידי השואה.",
+              "words": [
+                "Martin's",
+                "family",
+                "was",
+                "deeply",
+                "affected",
+                "by",
+                "the",
+                "Holocaust."
+              ]
+            },
+            {
+              "target": "The rain outside mirrored the somber yet hopeful atmosphere.",
+              "source": "הגשם החוץ התאימו ל_Atmosphere של סבלנות אך מקווה.",
+              "words": [
+                "The",
+                "rain",
+                "outside",
+                "mirrored",
+                "the",
+                "somber",
+                "yet",
+                "hopeful",
+                "atmosphere."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "היחסים המורכבים",
+          "desc": "ה kompleksivim hareluyim beEdinburgh",
+          "icon": "☕️",
+          "vocab": [
+            {
+              "target": "complex",
+              "source": " kompleks"
+            },
+            {
+              "target": "web",
+              "source": " רשת"
+            },
+            {
+              "target": "conversation",
+              "source": " שיחה"
+            },
+            {
+              "target": "somber",
+              "source": " צפוף"
+            },
+            {
+              "target": "hopeful",
+              "source": " מקסום"
+            },
+            {
+              "target": "insights",
+              "source": " הבטים"
+            },
+            {
+              "target": "fascinated",
+              "source": " נרגז"
+            },
+            {
+              "target": "recently",
+              "source": " בקרוב"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The complex web of relationships is fascinating.",
+              "source": "רשת היחסים המורכבים היא נרגזת.",
+              "words": [
+                "The",
+                "complex",
+                "web",
+                "of",
+                "relationships",
+                "is",
+                "fascinating."
+              ]
+            },
+            {
+              "target": "Their conversation was filled with somber yet hopeful insights.",
+              "source": "שיחתם מלאה בהבטים צפוף אך מקסומים.",
+              "words": [
+                "Their",
+                "conversation",
+                "was",
+                "filled",
+                "with",
+                "somber",
+                "yet",
+                "hopeful",
+                "insights."
+              ]
+            },
+            {
+              "target": "Sarah shared her recent insights about Berlin.",
+              "source": "סarah חלקה את הבטים שלה על ברלין בקרוב.",
+              "words": [
+                "Sarah",
+                "shared",
+                "her",
+                "recent",
+                "insights",
+                "about",
+                "Berlin."
+              ]
+            },
+            {
+              "target": "The somber atmosphere mirrored the complex history.",
+              "source": "הצפוף של האטמוספירה סימן את ההיסטוריה המורכבת.",
+              "words": [
+                "The",
+                "somber",
+                "atmosphere",
+                "mirrored",
+                "the",
+                "complex",
+                "history."
+              ]
+            },
+            {
+              "target": "From division to reconciliation, Berlin has undergone a remarkable transformation.",
+              "source": "מפרישה לשלום, ברלין עברה בהשתנות מרתקת.",
+              "words": [
+                "From",
+                "division",
+                "to",
+                "reconciliation,",
+                "Berlin",
+                "has",
+                "undergone",
+                "a",
+                "remarkable",
+                "transformation."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1450768,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2624,
+        "totalCompletionTokens": 1531,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 142247,
+            "promptTokens": 664,
+            "completionTokens": 373
+          },
+          {
+            "lessonNum": 2,
+            "ms": 237636,
+            "promptTokens": 727,
+            "completionTokens": 361
+          },
+          {
+            "lessonNum": 3,
+            "ms": 241282,
+            "promptTokens": 772,
+            "completionTokens": 356
+          }
+        ]
+      },
+      "generatedAt": "2026-05-28T13:56:57.079Z",
+      "updatedAt": "2026-05-28T13:56:57.079Z"
+    },
+    {
       "topic": "دinner in Logan Square",
       "topicEmoji": "🍽️",
       "userTopic": "after that we will have dinner in a hip restaurant in the Logan Square area",
@@ -31027,6 +31477,14 @@
     "root:زيارة المتاحف وال conciertos في شيكاغو": {
       "title": "تجول في شيكاغو",
       "icon": "🏙️"
+    },
+    "c2105487947": {
+      "title": ")))),",
+      "icon": "🌿"
+    },
+    "root:방방방": {
+      "title": ")))),",
+      "icon": "😂"
     }
   }
 }
