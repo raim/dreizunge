@@ -30077,6 +30077,36 @@
       ],
       "flaggedAt": "2026-05-26T09:08:11.696Z",
       "comment": "scharfe is wrong in the german sentence and not present in the italian"
+    },
+    "yeast_metabolic_oscillations:listen_mcq:rhythmo": {
+      "topic": "yeast metabolic oscillations",
+      "type": "listen_mcq",
+      "target": "rhythmo",
+      "source": "",
+      "correct": "rhythm",
+      "choices": [
+        "microscope",
+        "activity",
+        "rhythm",
+        "pulsation"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-28T07:55:56.918Z"
+    },
+    "yeast_metabolic_oscillations:listen_mcq:surprise": {
+      "topic": "yeast metabolic oscillations",
+      "type": "listen_mcq",
+      "target": "surprise",
+      "source": "",
+      "correct": "surprise",
+      "choices": [
+        "surprise",
+        "metabolism",
+        "phase",
+        "oscillation"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-28T08:29:58.387Z"
     }
   },
   "storylines": {

@@ -29,7 +29,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes spin-globe{0%{transform:translateY(0) rotateY(0deg)}25%{transform:translateY(-4px) rotateY(90deg)}50%{transform:translateY(-7px) rotateY(180deg)}75%{transform:translateY(-4px) rotateY(270deg)}100%{transform:translateY(0) rotateY(360deg)}}
 .app-name{font-size:34px;font-weight:900;color:var(--green);letter-spacing:-1px;margin-bottom:4px}
-.app-tagline{font-size:15px;color:var(--gray-dark)}
+
 
 .backend-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
 .bpill{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;border:2px solid}
@@ -57,13 +57,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .chip{background:var(--white);border:2px solid var(--gray-mid);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--gray-dark);font-family:'Nunito',sans-serif;transition:border-color .1s,color .1s}
 .chip:hover{border-color:var(--blue);color:var(--blue-dark)}
 
-.library{background:var(--white);border-radius:var(--radius-xl);padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.06);border:2px solid var(--gray-mid)}
+.library{background:var(--white);border-radius:var(--radius-xl);padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.06);border:2px solid var(--gray-mid);max-width:540px;width:100%;box-sizing:border-box}
 .lib-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .lib-title{font-size:15px;font-weight:900;color:var(--text)}
 .lib-cnt{font-size:12px;font-weight:700;color:var(--gray-dark);background:var(--gray-light);border-radius:12px;padding:3px 10px}
 .import-btn{font-size:12px;font-weight:700;color:var(--blue-dark);background:var(--blue-light);border:1.5px solid var(--blue);border-radius:12px;padding:3px 10px;cursor:pointer;white-space:nowrap}
 .lib-empty{text-align:center;padding:18px;color:var(--gray);font-size:14px;font-weight:600}
-.saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;width:100%;max-width:520px}
+.saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
 .saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s;min-width:0;overflow:hidden}
 .saved-item:hover{border-color:var(--blue);background:var(--blue-light)}
 .storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
@@ -384,6 +384,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .modal-btn.primary:disabled{opacity:.45;cursor:not-allowed}
 .modal-btn.secondary{background:var(--gray-light);color:var(--text);border:2px solid var(--gray-mid)}
 .modal-btn.secondary:hover{border-color:var(--blue)}
+/* RTL language support — Arabic, Hebrew */
+[dir="rtl"] .saved-topic,[dir="rtl"] .saved-meta,[dir="rtl"] .fb-head,[dir="rtl"] .fb-body,
+[dir="rtl"] .qtext,[dir="rtl"] .target-box-text,[dir="rtl"] .it-word,
+[dir="rtl"] .tok,[dir="rtl"] .placed-tok,[dir="rtl"] .sbox-ph{direction:rtl;text-align:right}
 </style>
 </head>
 <body>
@@ -721,6 +725,12 @@ function _buildLangsFromData(data) {
   }
 }
 
+const RTL_LANGS = new Set(['ar','he','fa','ur']);
+function updateDocDir() {
+  // RTL when the *target* language is RTL (the content language)
+  document.documentElement.dir = RTL_LANGS.has(APP.lang) ? 'rtl' : 'ltr';
+}
+
 async function loadLanguages() {
   // Static build: data baked in
   if (window.LANGUAGES_DATA) { _buildLangsFromData(window.LANGUAGES_DATA); return; }
@@ -782,7 +792,8 @@ async function loadUIStrings(srcLang) {
     const enStrings = window.UI_STRINGS_ALL['en'] || {};
     UI_STRINGS = srcLang === 'en' ? enStrings : Object.assign({}, enStrings, strings);
     applyUIStrings();
-    updateUITranslateRow(srcLang, Object.keys(strings).length, Object.keys(enStrings).length);
+    const missingKeys = srcLang === 'en' ? [] : Object.keys(enStrings).filter(k => !strings[k]);
+    updateUITranslateRow(srcLang, missingKeys);
     return;
   }
   // Live server: ensure we have English strings as a base first
@@ -797,35 +808,35 @@ async function loadUIStrings(srcLang) {
   if (srcLang === 'en') {
     UI_STRINGS = enStrings;
     applyUIStrings();
-    updateUITranslateRow('en', Object.keys(enStrings).length, Object.keys(enStrings).length);
+      updateUITranslateRow('en', []);
     return;
   }
   try {
     const r = await fetch('/api/ui/lang?lang=' + srcLang);
     if (r.ok) {
       const strings = await r.json();
-      const enCount = Object.keys(enStrings).length || 80;
-      const gotCount = Object.keys(strings).length;
       // Merge: English as base, target language overrides
-      UI_STRINGS = Object.assign({}, enStrings, strings);
+      UI_STRINGS = srcLang === 'en' ? strings : Object.assign({}, enStrings, strings);
       applyUIStrings();
-      updateUITranslateRow(srcLang, gotCount, enCount);
+      const missingKeys = srcLang === 'en' ? [] : Object.keys(enStrings).filter(k => !strings[k]);
+      updateUITranslateRow(srcLang, missingKeys);
       return;
     }
   } catch(_) {}
   UI_STRINGS = enStrings;
   applyUIStrings();
-  updateUITranslateRow(srcLang, 0, Object.keys(enStrings).length || 80);
+  const missingKeys3 = Object.keys(window._UI_EN || {});
+  updateUITranslateRow(srcLang, missingKeys3);
 }
 
 function applyUIStrings() {
+  updateDocDir();
   const L = LANGS[APP.lang] || LANGS.it;
   const S = LANGS[APP.srcLang] || LANGS.en || {name:'English'};
   // Use localized language name (e.g. 'Italienisch' not 'Italian' in German UI)
   const tgtLangName = localizedLangName(APP.lang, APP.srcLang);
   const srcLangName = localizedLangName(APP.srcLang, APP.srcLang);
   // Static elements
-  _setText('app-tagline',   t('app.tagline'));
   _setText('topic-label',   document.getElementById('use-story-cb')?.checked
     ? t('form.topic_label_story')
     : t('form.topic_label', {lang: tgtLangName}));
@@ -936,33 +947,35 @@ async function triggerUITranslation() {
   }
 }
 
-function updateUITranslateRow(srcLang, gotCount, enCount) {
-  // Don't show for English
+function updateUITranslateRow(srcLang, missingKeys) {
   if (!srcLang || srcLang === 'en') { _uiTranslateRow('hidden'); return; }
-  const langName = LANGS[srcLang]?.name || srcLang;
+  const langName = (LANGS[srcLang]||{}).name || srcLang;
+  missingKeys = missingKeys || [];
+  const n = missingKeys.length;
+
   if (window.UI_STRINGS_ALL) {
-    // Static mode: check if language is baked in
+    // Static mode: can't generate — just inform
     const hasLang = window.UI_STRINGS_ALL[srcLang] &&
       Object.keys(window.UI_STRINGS_ALL[srcLang]).length > 0;
     if (!hasLang) {
       _uiTranslateRow('offer',
-        `No ${langName} UI translation in this static build.`,
-        null,  // no button — can't translate without server
+        `No ${langName} UI translation in this static build.`, null,
         '(Use the live server to generate one)');
+    } else if (n > 0) {
+      _uiTranslateRow('offer',
+        `${n} UI string${n!==1?'s':''} missing in ${langName}: ${missingKeys.slice(0,3).join(', ')}${n>3?'…':''}`,
+        null, '(Rebuild static with live server to fill gaps)');
     } else {
       _uiTranslateRow('hidden');
     }
     return;
   }
+
   // Live server
-  if (gotCount === 0) {
-    _uiTranslateRow('offer', `No ${langName} UI translation yet.`, `🌐 Translate UI to ${langName}`, '');
-  } else if (gotCount < enCount * 0.9) {
-    const missing = enCount - gotCount;
-    _uiTranslateRow('offer', `${missing} UI string${missing!==1?'s':''} missing in ${langName}.`, `🔄 Complete translation`, '');
-  } else {
-    _uiTranslateRow('hidden');
-  }
+  if (n === 0) { _uiTranslateRow('hidden'); return; }
+  const preview = missingKeys.slice(0, 3).join(', ') + (n > 3 ? `… (+${n-3} more)` : '');
+  const btnLabel = n === 1 ? `🔄 Translate 1 missing string` : `🔄 Translate ${n} missing strings`;
+  _uiTranslateRow('offer', `Missing in ${langName}: ${preview}`, btnLabel, '');
 }
 
 function _setText(id, text) {
@@ -1099,6 +1112,7 @@ function onUseTranslationCb(){
 }
 function selectLang(code, silent){
   APP.lang=code; saveLang(); repopulateContinueSelect();
+  updateDocDir();
   const sel=document.getElementById('lang-select');
   if(sel && sel.value!==code) sel.value=code;
   const L=LANGS[code]||LANGS.it;
@@ -1106,8 +1120,6 @@ function selectLang(code, silent){
   if(lbl) lbl.textContent=topicLabelText();
   const inp=document.getElementById('topic-input');
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
-  const tagline=document.getElementById('app-tagline');
-  if(tagline) tagline.textContent=t('app.tagline');
   // Update target language filter and reload library
   if(!silent){
     APP.libFilter=code; APP.libSrcFilter='all';
@@ -29391,11 +29403,6 @@ const STATIC_LESSONS = [
             "target": "osservazione",
             "source": "observation",
             "pron": "oh-ssee-vah-va-TZEE-oh"
-          },
-          {
-            "target": "rhythmo",
-            "source": "rhythm",
-            "pron": "ree-THMOH"
           }
         ],
         "sentences": [
@@ -29508,11 +29515,6 @@ const STATIC_LESSONS = [
             "target": "dinamica complessa",
             "source": "complex dynamics",
             "pron": "di-na-mi-ka kom-ple-sa"
-          },
-          {
-            "target": "surprise",
-            "source": "surprise",
-            "pron": "sur-priz"
           },
           {
             "target": "pulsazione cardiaca",
@@ -29632,11 +29634,6 @@ const STATIC_LESSONS = [
             "target": "fase",
             "source": "phase",
             "pron": "FAH-ze"
-          },
-          {
-            "target": "surprise",
-            "source": "surprise",
-            "pron": "SUHR-prize"
           },
           {
             "target": "dinamica",
