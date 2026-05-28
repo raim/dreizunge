@@ -1,6 +1,384 @@
 {
   "lessons": [
     {
+      "topic": "زيارة المتاحف وال conciertos في شيكاغو",
+      "topicEmoji": "🎨",
+      "userTopic": "visiting galleries and concerts in Chicago",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "In the heart of Chicago, under the vast expanse of the city's skyline, Sarah and her friend, Mark, found themselves wandering through the bustling streets, their footsteps echoing softly on the pavement. The air was crisp, carrying the scent of autumn leaves and the distant hum of the city. They had planned a day of cultural exploration, starting with a visit to the Art Institute of Chicago.\n\nThe museum was a grand affair, its towering facade and intricate details greeting them like an old friend. Inside, the galleries were a kaleidoscope of colors and emotions. Sarah and Mark moved slowly, their eyes darting from one masterpiece to another. They lingered in front of Van Gogh's \"Starry Night,\" the swirling blues and greens drawing them in, and then moved on to the Impressionist paintings, the light and shadows dancing across the canvases. As they walked, they discussed their favorite pieces, sharing stories and insights, their voices soft and reverent.\n\nAfter a leisurely lunch at a nearby café, they made their way to the Symphony Center. The building was a modern marvel, its glass and steel structure reflecting the changing light of the afternoon. Inside, the concert hall was a hushed sanctuary, the seats filling up as the audience prepared for the evening's performance. Sarah and Mark found their seats, settling in with a sense of anticipation. The lights dimmed, and the first notes of the symphony filled the air, a symphony of strings and woodwinds that seemed to speak directly to their souls. As the music swelled and faded, Sarah turned to Mark, her eyes shining with a mix of awe and joy. \"This is why we came,\" she whispered, her voice barely audible. \"To experience the magic of art and music in a city that never stops surprising us.\"",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English.\n\nWrite a story for the topic: \"visiting galleries and concerts in Chicago\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "زيارة المتاحف وال conciertos في شيكاغو",
+          "desc": "مقدمة في الثقافة والفن في شيكاغو",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "target": "galleries",
+              "source": "الгалeries"
+            },
+            {
+              "target": "masterpiece",
+              "source": "العمل الفنانون"
+            },
+            {
+              "target": "masterpieces",
+              "source": "الفنانون"
+            },
+            {
+              "target": "Impressionist",
+              "source": "الإمپريزست"
+            },
+            {
+              "target": "Van Gogh",
+              "source": "واغو"
+            },
+            {
+              "target": "starry",
+              "source": "نجومية"
+            },
+            {
+              "target": "starry night",
+              "source": "ليلة نجومية"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The galleries were a kaleidoscope of colors and emotions.",
+              "source": "الгалeries كانت كلويدوسكوبيا من الألوان والأحاسيس.",
+              "words": [
+                "The",
+                "galleries",
+                "were",
+                "a",
+                "kaleidoscope",
+                "of",
+                "colors",
+                "and",
+                "emotions."
+              ]
+            },
+            {
+              "target": "They lingered in front of Van Gogh's 'Starry Night'.",
+              "source": "lingerوا أمام 'ليلة نجومية' لاغو.",
+              "words": [
+                "They",
+                "lingered",
+                "in",
+                "front",
+                "of",
+                "Van",
+                "Gogh's",
+                "'Starry",
+                "Night'."
+              ]
+            },
+            {
+              "target": "The air was crisp, carrying the scent of autumn leaves.",
+              "source": "الهواء كان حادًا، يحمل رائحة أوراق الخريف.",
+              "words": [
+                "The",
+                "air",
+                "was",
+                "crisp,",
+                "carrying",
+                "the",
+                "scent",
+                "of",
+                "autumn",
+                "leaves."
+              ]
+            },
+            {
+              "target": "Their footsteps echoed softly on the pavement.",
+              "source": "صرخات أقدامهم صداها خفيفًا على الرصيف.",
+              "words": [
+                "Their",
+                "footsteps",
+                "echoed",
+                "softly",
+                "on",
+                "the",
+                "pavement."
+              ]
+            },
+            {
+              "target": "Inside, the galleries were a kaleidoscope of colors and emotions.",
+              "source": "داخلها، كانت الجالeries كلويدوسكوبيا من الألوان والأحاسيس.",
+              "words": [
+                "Inside,",
+                "the",
+                "galleries",
+                "were",
+                "a",
+                "kaleidoscope",
+                "of",
+                "colors",
+                "and",
+                "emotions."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "زيارة المتاحف والコンcerts في شيكاغو",
+          "desc": "استكشاف المتاحف والコンcerts في شيكاغو",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "target": "exhibition",
+              "source": "عرض"
+            },
+            {
+              "target": "curator",
+              "source": "مشرف"
+            },
+            {
+              "target": "collection",
+              "source": "جمعية"
+            },
+            {
+              "target": "audience",
+              "source": "الجمهور"
+            },
+            {
+              "target": "concert",
+              "source": "コンcert"
+            },
+            {
+              "target": "orchestra",
+              "source": "الفرقة الموسيقية"
+            },
+            {
+              "target": "program",
+              "source": "جدول"
+            },
+            {
+              "target": "performance",
+              "source": "العرض"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The exhibition was a hit with the audience.",
+              "source": "كان العرض شعبية مع الجمهور.",
+              "words": [
+                "The",
+                "exhibition",
+                "was",
+                "a",
+                "hit",
+                "with",
+                "the",
+                "audience."
+              ]
+            },
+            {
+              "target": "The curator carefully selected the collection.",
+              "source": "اختار المشرف بعناية مجموعة الأعمال.",
+              "words": [
+                "The",
+                "curator",
+                "carefully",
+                "selected",
+                "the",
+                "collection."
+              ]
+            },
+            {
+              "target": "The concert featured a full orchestra.",
+              "source": "شاركت الفرقة الموسيقية الكاملة في конcert.",
+              "words": [
+                "The",
+                "concert",
+                "featured",
+                "a",
+                "full",
+                "orchestra."
+              ]
+            },
+            {
+              "target": "The program included a variety of performances.",
+              "source": "شمل الجدول مجموعة متنوعة من العروض.",
+              "words": [
+                "The",
+                "program",
+                "included",
+                "a",
+                "variety",
+                "of",
+                "performances."
+              ]
+            },
+            {
+              "target": "They enjoyed the performance of the local band.",
+              "source": "استمتعوا بالعرض لفرقة المنطقة المحلية.",
+              "words": [
+                "They",
+                "enjoyed",
+                "the",
+                "performance",
+                "of",
+                "the",
+                "local",
+                "band."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "زيارة المعارض والコンcerts في شيكاغو",
+          "desc": "استكشاف المعارض الفنية والコンcerts في شيكاغو",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "target": "auditorium",
+              "source": "القاعة"
+            },
+            {
+              "target": "orchestra pit",
+              "source": "حفرة الفرقة الموسيقية"
+            },
+            {
+              "target": "intermission",
+              "source": "وقفة"
+            },
+            {
+              "target": "premiere",
+              "source": "العرض الأول"
+            },
+            {
+              "target": "critic",
+              "source": "نقّاش"
+            },
+            {
+              "target": "review",
+              "source": "استعراض"
+            },
+            {
+              "target": "symphony",
+              "source": "السinfونية"
+            },
+            {
+              "target": "conductor",
+              "source": "المدير الموسيقي"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The auditorium was filled with an eager audience.",
+              "source": "كانت القاعة ممتلئة بجمهور متحمس.",
+              "words": [
+                "The",
+                "auditorium",
+                "was",
+                "filled",
+                "with",
+                "an",
+                "eager",
+                "audience."
+              ]
+            },
+            {
+              "target": "During the intermission, the critic wrote a review.",
+              "source": "خلال وقفة الاستراحة، كتب النقّاش استعراضه.",
+              "words": [
+                "During",
+                "the",
+                "intermission,",
+                "the",
+                "critic",
+                "wrote",
+                "a",
+                "review."
+              ]
+            },
+            {
+              "target": "The premiere of the new symphony was highly anticipated.",
+              "source": "العرض الأول للسinfونية الجديدة كان متوقعا بشدة.",
+              "words": [
+                "The",
+                "premiere",
+                "of",
+                "the",
+                "new",
+                "symphony",
+                "was",
+                "highly",
+                "anticipated."
+              ]
+            },
+            {
+              "target": "The conductor led the orchestra with great skill.",
+              "source": "قاد المدير الموسيقي الفرقة الموسيقية بمهارة كبيرة.",
+              "words": [
+                "The",
+                "conductor",
+                "led",
+                "the",
+                "orchestra",
+                "with",
+                "great",
+                "skill."
+              ]
+            },
+            {
+              "target": "After the performance, the audience gave a standing ovation.",
+              "source": "بعد العرض، قدم الجمهور تأييداً قائماً على قدميه.",
+              "words": [
+                "After",
+                "the",
+                "performance,",
+                "the",
+                "audience",
+                "gave",
+                "a",
+                "standing",
+                "ovation."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1085529,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2537,
+        "totalCompletionTokens": 1600,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 295565,
+            "promptTokens": 649,
+            "completionTokens": 407
+          },
+          {
+            "lessonNum": 2,
+            "ms": 216454,
+            "promptTokens": 722,
+            "completionTokens": 333
+          },
+          {
+            "lessonNum": 3,
+            "ms": 305059,
+            "promptTokens": 770,
+            "completionTokens": 392
+          }
+        ]
+      },
+      "generatedAt": "2026-05-28T09:08:23.626Z",
+      "updatedAt": "2026-05-28T09:08:23.626Z"
+    },
+    {
       "topic": "Londra: arte, musica e club",
       "topicEmoji": "🇬🇧",
       "userTopic": "Andremo a Londra e vogliamo scoprire l'arte contemporanea, la musica pop e la cultura dei club underground",
