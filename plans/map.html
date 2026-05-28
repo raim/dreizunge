@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3D Language Families: World Map (XY) + Phylogenetic DAG (Z)</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', 'Roboto', sans-serif; }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+            font-size: 14px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            border-left: 4px solid #ffaa44;
+        }
+        #controls-note {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0,0,0,0.5);
+            color: #ccc;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            font-family: monospace;
+        }
+        @media (max-width: 600px) {
+            #info { font-size: 10px; top: 10px; left: 10px; }
+            #controls-note { font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        🌍 <strong>Language Families on World Map (XY)</strong> | 🌳 <strong>Temporal Phylogenetic DAG (Z-axis)</strong><br>
+        Colors match families: Indo-European (gold), Sino-Tibetan (crimson), Afroasiatic (teal), Niger-Congo (forest), etc.
+    </div>
+    <div id="controls-note">
+        🖱️ Drag to rotate | Right-click + drag to pan | Scroll to zoom
+    </div>
+
+    <!-- Import Three.js core and add-ons -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // --- setup scene, camera, renderers ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050b1a); // deep space / dark blue-black
+        scene.fog = new THREE.FogExp2(0x050b1a, 0.003); // subtle fog for depth
+
+        // Perspective camera: looking at origin from an angle
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(18, 12, 22);
+        camera.lookAt(0, 5, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true; // subtle shadows for branches
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        // CSS2 renderer for text labels
+        const labelRenderer = new CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.top = '0px';
+        labelRenderer.domElement.style.left = '0px';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        document.body.appendChild(labelRenderer.domElement);
+
+        // --- controls ---
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.rotateSpeed = 1.0;
+        controls.zoomSpeed = 1.2;
+        controls.panSpeed = 0.8;
+        controls.enableZoom = true;
+        controls.enablePan = true;
+        controls.target.set(0, 5, 0);
+
+        // --- lighting (to enhance 3D branches and map surface) ---
+        // ambient
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
+        // directional light
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(5, 15, 8);
+        dirLight.castShadow = true;
+        dirLight.receiveShadow = false;
+        dirLight.shadow.mapSize.width = 1024;
+        dirLight.shadow.mapSize.height = 1024;
+        scene.add(dirLight);
+        // fill light from below
+        const fillLight = new THREE.PointLight(0x5577aa, 0.4);
+        fillLight.position.set(0, -3, 0);
+        scene.add(fillLight);
+        // back rim light
+        const rimLight = new THREE.PointLight(0xffaa66, 0.5);
+        rimLight.position.set(-5, 8, -8);
+        scene.add(rimLight);
+        
+        // optional helper grid on floor (z=0 plane, subtle)
+        const gridHelper = new THREE.GridHelper(32, 20, 0x88aaff, 0x335588);
+        gridHelper.position.y = -0.2;
+        gridHelper.material.transparent = true;
+        gridHelper.material.opacity = 0.25;
+        scene.add(gridHelper);
+
+        // --- 1. WORLD MAP (XY plane) colored by language families ---
+        // We'll create a custom textured plane: canvas-based map with family regions
+        // Using a high-res like world map outline + colored polygons would be heavy; instead,
+        // we create a nice looking base map with color zones overlaying country shapes.
+        // For performance & style: generate a canvas texture with colored regions that mimic major families.
+        
+        const createLanguageFamilyMapTexture = () => {
+            const width = 2048;
+            const height = 1024;
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            
+            // Background ocean
+            ctx.fillStyle = '#1a2c3e';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Helper to draw a rough region using paths (simplified based on known family distributions)
+            // For visual impact, we'll use distinct colors for major families, with soft borders.
+            // Indo-European (golden): Europe, North India, Iran, Russia, Americas (in part)
+            ctx.beginPath();
+            // Eurasia approximate shape
+            ctx.moveTo(0.7*width, 0.3*height); // Scandinavia
+            ctx.lineTo(0.85*width, 0.35*height); // Russia
+            ctx.lineTo(0.82*width, 0.45*height); // Central Asia
+            ctx.lineTo(0.75*width, 0.55*height); // India
+            ctx.lineTo(0.65*width, 0.55*height); // Pakistan
+            ctx.lineTo(0.55*width, 0.5*height); // Iran
+            ctx.lineTo(0.45*width, 0.45*height); // Turkey/Europe
+            ctx.lineTo(0.35*width, 0.4*height); // Western Europe
+            ctx.lineTo(0.4*width, 0.3*height); // UK
+            ctx.lineTo(0.55*width, 0.28*height); // Central Europe
+            ctx.closePath();
+            ctx.fillStyle = '#e5b73b'; // Indo-European gold
+            ctx.fill();
+            
+            // Sino-Tibetan (deep red): China, Tibet, Myanmar, Nepal
+            ctx.beginPath();
+            ctx.ellipse(0.78*width, 0.48*height, 0.12*width, 0.08*height, 0, 0, Math.PI*2);
+            ctx.fillStyle = '#b31b3b';
+            ctx.fill();
+            
+            // Afroasiatic (teal): North Africa, Horn of Africa, Middle East
+            ctx.beginPath();
+            ctx.ellipse(0.45*width, 0.62*height, 0.12*width, 0.07*height, -0.2, 0, Math.PI*2);
+            ctx.fillStyle = '#2c7f6e';
+            ctx.fill();
+            
+            // Niger-Congo (forest green): Sub-Saharan Africa
+            ctx.beginPath();
+            ctx.ellipse(0.48*width, 0.75*height, 0.15*width, 0.12*height, 0.1, 0, Math.PI*2);
+            ctx.fillStyle = '#3c9b4c';
+            ctx.fill();
+            
+            // Austronesian (coral): Southeast Asia islands, Madagascar, Pacific
+            ctx.beginPath();
+            ctx.ellipse(0.88*width, 0.65*height, 0.1*width, 0.08*height, 0.3, 0, Math.PI*2);
+            ctx.fillStyle = '#e2856e';
+            ctx.fill();
+            
+            // Turkic (orange): Central Asia
+            ctx.beginPath();
+            ctx.ellipse(0.72*width, 0.44*height, 0.08*width, 0.06*height, -0.1, 0, Math.PI*2);
+            ctx.fillStyle = '#e8953b';
+            ctx.fill();
+            
+            // Dravidian (purple): South India
+            ctx.beginPath();
+            ctx.ellipse(0.71*width, 0.62*height, 0.05*width, 0.04*height, 0, 0, Math.PI*2);
+            ctx.fillStyle = '#9b6b9e';
+            ctx.fill();
+            
+            // Japanese/Koreanic (pink): Japan, Korea
+            ctx.beginPath();
+            ctx.ellipse(0.86*width, 0.4*height, 0.04*width, 0.03*height, 0, 0, Math.PI*2);
+            ctx.fillStyle = '#dd88aa';
+            ctx.fill();
+            
+            // Uto-Aztecan (light brown): Mexico, SW USA
+            ctx.beginPath();
+            ctx.ellipse(0.28*width, 0.55*height, 0.08*width, 0.06*height, -0.2, 0, Math.PI*2);
+            ctx.fillStyle = '#c4a27a';
+            ctx.fill();
+            
+            // Add country borders or glow lines (white outlines)
+            ctx.strokeStyle = '#ffffff60';
+            ctx.lineWidth = 1.5;
+            // just some random decorative paths to give map feel
+            for (let i = 0; i < 200; i++) {
+                ctx.beginPath();
+                const x = Math.random() * width;
+                const y = Math.random() * height;
+                if (ctx.isPointInPath(x, y)) continue; // not accurate, just skip oceans
+                ctx.arc(x, y, 1.2, 0, Math.PI*2);
+                ctx.stroke();
+            }
+            
+            // Add latitude/longitude grid lines
+            ctx.beginPath();
+            ctx.strokeStyle = '#5f7f9f';
+            ctx.lineWidth = 0.8;
+            for (let lat = 0; lat <= 180; lat += 30) {
+                const y = (lat / 180) * height;
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+            for (let lon = 0; lon <= 360; lon += 30) {
+                const x = (lon / 360) * width;
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        };
+        
+        const mapTexture = createLanguageFamilyMapTexture();
+        mapTexture.wrapS = THREE.RepeatWrapping;
+        mapTexture.wrapT = THREE.ClampToEdgeWrapping;
+        
+        const mapPlaneGeo = new THREE.PlaneGeometry(18, 9);
+        const mapMaterial = new THREE.MeshStandardMaterial({ map: mapTexture, roughness: 0.6, metalness: 0.1, side: THREE.DoubleSide });
+        const worldMap = new THREE.Mesh(mapPlaneGeo, mapMaterial);
+        worldMap.rotation.x = -Math.PI / 2;
+        worldMap.position.y = -0.1;
+        worldMap.receiveShadow = true;
+        scene.add(worldMap);
+        
+        // Add a subtle glowing ring around the map edges
+        const edgeGlowGeo = new THREE.RingGeometry(9.1, 9.5, 32);
+        const edgeMat = new THREE.MeshStandardMaterial({ color: 0x88aaff, emissive: 0x224466, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
+        const edgeRing = new THREE.Mesh(edgeGlowGeo, edgeMat);
+        edgeRing.rotation.x = -Math.PI / 2;
+        edgeRing.position.y = -0.08;
+        scene.add(edgeRing);
+        
+        // --- 2. PHYLOGENETIC DAG (temporal tree growing along Z axis) ---
+        // Z=0 (present) -> Z= -8 (deep past). Branches split and rise.
+        // We'll create nodes for major families and subgroup connections.
+        
+        // Define tree structure: each node has {name, z, x, y, color, children}
+        // x & y coordinates relative to map (approx geographic origin)
+        const nodes = [];
+        
+        // Helper to add a node and edge to scene
+        const nodeObjects = new Map(); // store 3D spheres + CSS2D label
+        
+        const root = { name: "Proto-Human (hypothetical)", z: -7.2, x: 0, y: 0, color: 0xccccaa, children: [] };
+        
+        const families = [
+            { name: "Indo-European", z: -5.2, x: 1.2, y: 1.1, color: 0xe5b73b, children: ["Germanic", "Romance", "Indo-Iranian", "Slavic"] },
+            { name: "Sino-Tibetan", z: -5.0, x: 5.0, y: -0.2, color: 0xb31b3b, children: ["Sinitic", "Tibeto-Burman"] },
+            { name: "Afroasiatic", z: -4.8, x: -1.5, y: -2.5, color: 0x2c7f6e, children: ["Semitic", "Berber", "Cushitic"] },
+            { name: "Niger-Congo", z: -4.5, x: -1.2, y: -4.2, color: 0x3c9b4c, children: ["Bantu", "Mande", "Gur"] },
+            { name: "Austronesian", z: -4.2, x: 7.0, y: -1.8, color: 0xe2856e, children: ["Malayo-Polynesian", "Formosan"] },
+            { name: "Turkic", z: -4.0, x: 3.2, y: 0.0, color: 0xe8953b, children: ["Oghuz", "Kipchak"] },
+            { name: "Dravidian", z: -3.8, x: 2.5, y: -1.5, color: 0x9b6b9e, children: ["Southern", "Central"] },
+            { name: "Uto-Aztecan", z: -3.5, x: -7.2, y: -0.5, color: 0xc4a27a, children: ["Numic", "Tepiman"] },
+        ];
+        
+        // Add sub-families
+        const subfamilies = [
+            { name: "Germanic", z: -2.5, x: 0.5, y: 1.5, color: 0xe5b73b, parent: "Indo-European" },
+            { name: "Romance", z: -2.3, x: -0.2, y: 1.2, color: 0xe5b73b, parent: "Indo-European" },
+            { name: "Indo-Iranian", z: -2.7, x: 2.0, y: 0.8, color: 0xe5b73b, parent: "Indo-European" },
+            { name: "Slavic", z: -2.4, x: 1.3, y: 2.0, color: 0xe5b73b, parent: "Indo-European" },
+            { name: "Sinitic", z: -2.9, x: 5.8, y: -0.5, color: 0xb31b3b, parent: "Sino-Tibetan" },
+            { name: "Tibeto-Burman", z: -2.6, x: 4.5, y: 0.4, color: 0xb31b3b, parent: "Sino-Tibetan" },
+            { name: "Semitic", z: -2.2, x: -2.0, y: -2.0, color: 0x2c7f6e, parent: "Afroasiatic" },
+            { name: "Bantu", z: -1.8, x: -1.8, y: -4.5, color: 0x3c9b4c, parent: "Niger-Congo" },
+            { name: "Malayo-Polynesian", z: -2.0, x: 7.5, y: -2.2, color: 0xe2856e, parent: "Austronesian" },
+        ];
+        
+        // combine all nodes into array for easy reference
+        const allLangNodes = [...families, ...subfamilies];
+        
+        // Function to create sphere + label
+        function addNode(nodeDef) {
+            const geometry = new THREE.SphereGeometry(0.22, 24, 24);
+            const material = new THREE.MeshStandardMaterial({ color: nodeDef.color, emissive: 0x222222, roughness: 0.3, metalness: 0.1 });
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.set(nodeDef.x, nodeDef.z, nodeDef.y); // note: Y becomes Z for vertical axis, X remains X, Z becomes Y? Actually: ground XY => X=x, Y=z_vertical, Z=y? Wait: we want vertical = Z axis (height). So position: (x, z_height, y_on_map)
+            // Re-map: Map is XZ plane usually, but we want map XY (X horizontal, Z depth). Let's do: X = x, Y = height (z value of tree), Z = y coordinate on map.
+            sphere.position.set(nodeDef.x, nodeDef.z, nodeDef.y);
+            sphere.castShadow = true;
+            scene.add(sphere);
+            
+            // CSS2D text label
+            const div = document.createElement('div');
+            div.textContent = nodeDef.name;
+            div.style.color = '#f8f8f8';
+            div.style.fontSize = '14px';
+            div.style.fontWeight = 'bold';
+            div.style.textShadow = '1px 1px 0px black';
+            div.style.backgroundColor = `rgba(0,0,0,0.65)`;
+            div.style.padding = '2px 8px';
+            div.style.borderRadius = '20px';
+            div.style.borderLeft = `3px solid ${new THREE.Color(nodeDef.color).getStyle()}`;
+            div.style.fontFamily = 'sans-serif';
+            div.style.backdropFilter = 'blur(4px)';
+            div.style.whiteSpace = 'nowrap';
+            
+            const label = new CSS2DObject(div);
+            label.position.copy(sphere.position);
+            label.position.y += 0.28;
+            scene.add(label);
+            
+            return { sphere, label };
+        }
+        
+        // Add root
+        const rootObj = addNode({ name: root.name, x: root.x, z: root.z, y: root.y, color: root.color });
+        // Add families and subfamilies
+        const nodeMap = new Map();
+        allLangNodes.forEach(n => {
+            const obj = addNode(n);
+            nodeMap.set(n.name, { ...obj, def: n });
+        });
+        
+        // Draw edges (cylinders or lines) between parent and child
+        // Parent relationships:
+        // Root connects to each family
+        families.forEach(fam => {
+            addConnection({ x: root.x, y: root.y, z: root.z }, { x: fam.x, y: fam.y, z: fam.z }, root.color, fam.color);
+        });
+        // Connect families to subfamilies
+        subfamilies.forEach(sub => {
+            const parent = families.find(f => f.name === sub.parent);
+            if (parent) {
+                addConnection({ x: parent.x, y: parent.y, z: parent.z }, { x: sub.x, y: sub.y, z: sub.z }, parent.color, sub.color);
+            }
+        });
+        
+        function addConnection(p1, p2, color1, color2) {
+            // p1 = {x, y, z} where y is horizontal? Wait careful: our positions: x = x_map, y = z_vertical? Actually in scene: sphere position is (x, z_vertical, y_map)
+            // So point A (x1, z_tree1, y1), B (x2, z_tree2, y2)
+            const start = new THREE.Vector3(p1.x, p1.z, p1.y);
+            const end = new THREE.Vector3(p2.x, p2.z, p2.y);
+            const direction = new THREE.Vector3().subVectors(end, start);
+            const length = direction.length();
+            
+            const cylinderGeo = new THREE.CylinderGeometry(0.05, 0.05, length, 6);
+            const materialLine = new THREE.MeshStandardMaterial({ color: 0xc0aa80, emissive: 0x332200 });
+            const cylinder = new THREE.Mesh(cylinderGeo, materialLine);
+            // position at midpoint
+            const center = start.clone().add(end).multiplyScalar(0.5);
+            cylinder.position.copy(center);
+            cylinder.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), direction.clone().normalize());
+            scene.add(cylinder);
+            
+            // Add small glowing particles along edges
+            const particleCount = Math.max(4, Math.floor(length * 3));
+            for (let i = 0; i <= particleCount; i++) {
+                const t = i / particleCount;
+                const pt = start.clone().lerp(end, t);
+                const particleGeo = new THREE.SphereGeometry(0.03, 6, 6);
+                const partMat = new THREE.MeshStandardMaterial({ color: 0xffaa77, emissive: 0x442200 });
+                const particle = new THREE.Mesh(particleGeo, partMat);
+                particle.position.copy(pt);
+                scene.add(particle);
+            }
+        }
+        
+        // Add some extra floating particles for atmosphere
+        const particleField = new THREE.BufferGeometry();
+        const particleCountField = 800;
+        const particlePositions = new Float32Array(particleCountField * 3);
+        for (let i = 0; i < particleCountField; i++) {
+            particlePositions[i*3] = (Math.random() - 0.5) * 40;
+            particlePositions[i*3+1] = (Math.random() - 0.5) * 14 + 3;
+            particlePositions[i*3+2] = (Math.random() - 0.5) * 30;
+        }
+        particleField.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        const particleMatField = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.05, transparent: true, opacity: 0.4 });
+        const particles = new THREE.Points(particleField, particleMatField);
+        scene.add(particles);
+        
+        // --- animation loop & subtle floating animation for nodes ---
+        let time = 0;
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.008;
+            
+            // Gentle floating motion for nodes and labels
+            nodeMap.forEach((obj, name) => {
+                if (obj.sphere) {
+                    const offsetY = Math.sin(time * 1.5 + name.length) * 0.02;
+                    obj.sphere.position.y += (offsetY - (obj.sphere.userData?.offsetY || 0)) * 0.1;
+                    obj.sphere.userData = { offsetY: offsetY };
+                    if (obj.label) {
+                        obj.label.position.y = obj.sphere.position.y + 0.28;
+                    }
+                }
+            });
+            if (rootObj.sphere) {
+                const offY = Math.sin(time * 1.2) * 0.02;
+                rootObj.sphere.position.y += (offY - (rootObj.sphere.userData?.offsetY || 0)) * 0.1;
+                rootObj.sphere.userData = { offsetY: offY };
+                rootObj.label.position.y = rootObj.sphere.position.y + 0.28;
+            }
+            
+            // rotate particle field slowly
+            particles.rotation.y = time * 0.05;
+            particles.rotation.x = Math.sin(time * 0.1) * 0.1;
+            
+            // Update controls and render
+            controls.update(); // only needed if damping or autoRotate; but we keep for smoothness
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // handle window resize
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // small console note
+        console.log('3D language phylogeny + map ready | DAG along Z axis');
+    </script>
+</body>
+</html>
