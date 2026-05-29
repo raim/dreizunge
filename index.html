@@ -605,10 +605,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="home-hdr-title">
       <span class="topic-emoji-big" id="topic-emoji-big">📚</span>
       <span class="topic-name-big" id="topic-name-big">Topic</span>
+      <button class="hdr-btn" id="gen-topic-title-btn" onclick="genLessonTitle()"
+        style="display:none;font-size:12px;padding:3px 8px;flex-shrink:0"
+        title="Generate lesson title with AI">✨</button>
     </div>
     <div class="home-hdr-actions">
-      <button class="hdr-btn" onclick="goLandingClean()">← Topics</button>
-      <button class="hdr-btn" id="share-btn" onclick="shareLesson()" id="share-btn-title" title="Copy shareable link">🔗 Share</button>
+      <button class="hdr-btn" onclick="goLandingClean()"id="btn-topics">← Topics</button>
+      <button class="hdr-btn" id="share-btn" onclick="shareLesson()" title="Copy shareable link">🔗 Share</button>
       <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
       <button class="hdr-btn" id="cont-story-btn" onclick="continueFromCurrent()" style="display:none" title="Continue this story">↪ Continue</button>
     </div>
@@ -692,10 +695,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="comp-sub" id="comp-sub"></div>
   <div class="prog-pill" id="comp-xp">0%</div>
   <div class="stat-row">
-    <div class="stat-box"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">Correct</div></div>
-    <div class="stat-box"><div class="stat-num" id="s-mistakes" style="color:var(--red)">0</div><div class="stat-lbl">Mistakes</div></div>
-    <div class="stat-box"><div class="stat-num" id="s-streak" style="color:var(--yellow)">0🔥</div><div class="stat-lbl">Best streak</div></div>
-    <div class="stat-box"><div class="stat-num" id="s-flagged" style="color:#ff9600">0⚑</div><div class="stat-lbl">Flagged</div></div>
+    <div class="stat-box" title="Correct"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">✓</div></div>
+    <div class="stat-box" title="Mistakes"><div class="stat-num" id="s-mistakes" style="color:var(--red)">0</div><div class="stat-lbl">✗</div></div>
+    <div class="stat-box" title="Best streak"><div class="stat-num" id="s-streak" style="color:var(--yellow)">0🔥</div><div class="stat-lbl">🔥</div></div>
+    <div class="stat-box" title="Flagged"><div class="stat-num" id="s-flagged" style="color:#ff9600">0⚑</div><div class="stat-lbl">⚑</div></div>
   </div>
   <div class="vocab-box"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab"></div></div>
   <button class="cont-btn" id="comp-next" onclick="afterComplete()">Continue</button>
@@ -842,10 +845,6 @@ function applyUIStrings() {
   _setText('offline-note',  t('form.offline'));
   _setText('comp-next',     t('complete.continue'));
   _setText('comp-title',    t('complete.title'));
-  _setStatLbl('s-correct',  t('complete.correct'));
-  _setStatLbl('s-mistakes', t('complete.mistakes'));
-  _setStatLbl('s-streak',   t('complete.streak'));
-  _setStatLbl('s-flagged',  t('complete.flagged'));
   _setText('words-from-lbl', t('lesson.words_from'));
   _setText('comp-back-btn', t('complete.back'));
   // Labels
@@ -899,6 +898,8 @@ function applyUIStrings() {
   _updateStoryLenLabel();
   // Tooltips
   _setAttr('share-btn', 'title', t('lesson.share_title'));
+  _setText('btn-topics', t('lesson.btn_topics'));
+  _setText('share-btn', t('lesson.btn_share'));
   _setAttr('speakstory-btn', 'title', t('lesson.read_aloud'));
   _setAttr('edit-story-btn', 'title', t('lesson.edit_story'));
   _setAttr('continue-story-btn-title', 'title', t('lesson.continue_title'));
@@ -1319,9 +1320,9 @@ async function doRepairStory(){
 
 // ── Rating ────────────────────────────────────────────────────────────
 function getRatingAxes() { return [
-  {key:'difficulty', label:t('rating.q_difficulty'), opts:[t('rating.too_easy'), t('rating.just_right'), t('rating.too_hard')]},
-  {key:'fun',        label:t('rating.q_fun'),        opts:[t('rating.boring'),   t('rating.fun'),        t('rating.very_fun')]},
-  {key:'coherence',  label:t('rating.q_coherence'),  opts:[t('rating.incoherent'),t('rating.coherent'),  t('rating.very_coherent')]},
+  {key:'difficulty', label:t('rating.q_difficulty'), opts:['🟢','🟡','🔴'], titles:[t('rating.too_easy'),t('rating.just_right'),t('rating.too_hard')]},
+  {key:'fun',        label:t('rating.q_fun'),        opts:['😐','😊','😄'], titles:[t('rating.boring'),t('rating.fun'),t('rating.very_fun')]},
+  {key:'coherence',  label:t('rating.q_coherence'),  opts:['🔗','🔗🔗','🔗🔗🔗'], titles:[t('rating.incoherent'),t('rating.coherent'),t('rating.very_coherent')]},
 ];}
 const _pr={};
 function renderRatingPanel(d,done){
@@ -1336,7 +1337,7 @@ function renderRatingPanel(d,done){
   }
   panel.innerHTML=`<div class="rating-title">⭐ ${t('rating.title')}</div>`+
     axes.map(a=>`<div class="rating-row"><span class="rating-axis">${a.label}</span><div class="rating-btns">`+
-      a.opts.map((o,i)=>`<button class="rating-btn" id="rb-${a.key}-${i+1}" onclick="selR('${a.key}',${i+1})">${o}</button>`).join('')+
+      a.opts.map((o,i)=>`<button class="rating-btn" id="rb-${a.key}-${i+1}" onclick="selR('${a.key}',${i+1})" title="${a.titles?a.titles[i]:o}" style="font-size:20px;padding:8px 12px">${o}</button>`).join('')+
     `</div></div>`).join('')+
     `<button class="rating-submit" onclick="submitRating()">${t('rating.submit')}</button>`;
 }
@@ -1444,12 +1445,14 @@ async function loadSavedList(){
   if(filterEl){
     if(hasMultiLang){
       const activeL=LANGS[APP.libFilter]||null;
-      const prevL = LANGS[APP.prevLangFilter]||null;
-      filterEl.innerHTML=(APP.libFilter==='all'
-        ? `<button class="lib-filter-btn active">${t('lib.filter_all')}</button>`+
-          (prevL ? `<button class="lib-filter-btn" onclick="setLibFilter('${APP.prevLangFilter}')" title="Back to ${prevL.name}">↩ ${prevL.flag} ${prevL.name}</button>` : '')
-        : `<button class="lib-filter-btn active">${activeL?activeL.flag+' '+activeL.name:APP.libFilter.toUpperCase()}</button>`+
-          `<button class="lib-filter-btn" onclick="setLibFilter('all')">${t('lib.filter_all_short')}</button>`
+      const activeSrcL=LANGS[APP.libSrcFilter]||null;
+      const anyActive = APP.libFilter!=='all' || APP.libSrcFilter!=='all';
+      const activeLabel = activeL ? (activeL.flag+' '+activeL.name+' (→)')
+        : activeSrcL ? (activeSrcL.flag+' '+activeSrcL.name+' (←)') : '';
+      filterEl.innerHTML=(!anyActive
+        ? `<button class="lib-filter-btn active">${t('lib.filter_all')}</button>`
+        : `<button class="lib-filter-btn active">${activeLabel}</button>`+
+          `<button class="lib-filter-btn" onclick="APP.libFilter='all';APP.libSrcFilter='all';loadSavedList()">${t('lib.filter_all_short')}</button>`
       );
     } else {
       filterEl.innerHTML='';
@@ -1938,10 +1941,12 @@ function buildPath(){
   const _totC=_scores.reduce((s,v)=>s+v.correct,0);
   const _totT=_scores.reduce((s,v)=>s+v.total,0);
   const _pctStr=_totT>0?(Math.round(100*_totC/_totT)+'% correct'):(_doneL+'/'+_allL+' done');
-  document.getElementById('total-xp').textContent=_doneL+' / '+_allL+' lessons · '+_pctStr;
-  document.getElementById('regen-btn').style.display=APP.info.canGenerate?'':'none';
+  document.getElementById('total-xp').textContent=_doneL+' / '+_allL+' · '+_pctStr;
+  const _rb=document.getElementById('regen-btn'); if(_rb){ _rb.style.display=APP.info.canGenerate?'':'none'; _rb.textContent=t('lesson.btn_regen'); }
+  const genTitleBtn=document.getElementById('gen-topic-title-btn');
+  if(genTitleBtn){ genTitleBtn.style.display=APP.info.canGenerate?'':'none'; genTitleBtn.title=t('lesson.gen_topic_title_title'); genTitleBtn.textContent='✨'; }
   const contStoryBtn=document.getElementById('cont-story-btn');
-  if(contStoryBtn) contStoryBtn.style.display=APP.info.canGenerate?'':'none';
+  if(contStoryBtn){ contStoryBtn.style.display=APP.info.canGenerate?'':'none'; contStoryBtn.textContent=t('lesson.btn_continue'); }
   // Reset TTS override when loading a new lesson, then build selector
   APP.ttsLang=null;
   buildTtsSelector();
@@ -2256,6 +2261,48 @@ async function genStorylineTitle(chainId, rootTopic, encodedChain) {
   } catch(e) {
     setTitleGenStatus('error',e.message.slice(0,40));
     alert('Could not generate title: ' + e.message);
+  } finally {
+    if (btn) { btn.textContent = '✨'; btn.disabled = false; }
+  }
+}
+
+// Generate a title for a single lesson set using the storyline-title endpoint.
+// Shows result inline in the topic-name-big span; user can undo by regenerating.
+async function genLessonTitle() {
+  if (!APP.lessonData || !APP.info.canGenerate) return;
+  const btn = document.getElementById('gen-topic-title-btn');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  const oldTopic = APP.lessonData.topic;
+  const oldEmoji = APP.lessonData.topicEmoji || '📚';
+  try {
+    const r = await fetch('/api/storyline-title', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ topics: [APP.lessonData.userTopic || oldTopic] })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
+    // Save new topic/emoji to server
+    const patch = { ...APP.lessonData, topic: data.title, topicEmoji: data.icon };
+    const saveR = await fetch('/api/lessons/save-meta', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ oldTopic, newTopic: data.title, topicEmoji: data.icon })
+    });
+    if (saveR.ok) {
+      APP.lessonData.topic = data.title;
+      APP.lessonData.topicEmoji = data.icon;
+      document.getElementById('topic-name-big').textContent = data.title;
+      const emojiEl = document.getElementById('topic-emoji-big');
+      const langFlag = (LANGS[APP.lessonData.lang]||LANGS.it).flag;
+      if (emojiEl) emojiEl.textContent = langFlag + ' ' + data.icon;
+      await loadSavedList();
+      showToast(t('lesson.title_saved'));
+    } else {
+      throw new Error('Could not save new title');
+    }
+  } catch(e) {
+    showToast('⚠ ' + e.message.slice(0, 60));
   } finally {
     if (btn) { btn.textContent = '✨'; btn.disabled = false; }
   }

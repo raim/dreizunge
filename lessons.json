@@ -1,6 +1,950 @@
 {
   "lessons": [
     {
+      "topic": "Cuisine italienne vs française",
+      "topicEmoji": "🍽️",
+      "userTopic": "Compare la cuisine italienne à la cuisine française",
+      "lang": "it",
+      "srcLang": "fr",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "Nella piccola città di Positano, sulle rive del mare azurro, le amiche Maria e Lucia si ritrovarono a confrontarsi sulla cucina italiana e francese. \"La nostra cucina è dolce e salata, con un tocco di aglio e olio d'oliva,\" ripeté Maria, con il suo accento siciliano. \"Ma la cucina francese è più sofisticata, con un equilibrio perfetto tra i sapori,\" replicò Lucia, che proveniva dal Sud Est. \"Hai ragione,\" ammise Maria, \"ma i nostri piatti sono più semplici, con ingredienti freschi e di qualità.\" Lucia annuì, sorridendo. \"Eppure, la cucina francese ha un tocco di eleganza, con i suoi risotti e i suoi soufflés.\" \"Ma i nostri minestrone e i nostri involtini di verdura sono un vero piacere per il palato,\" insisté Maria. Entrambe si guardarono, sorridendo, consapevoli che entrambe le cucine avevano qualcosa di speciale da offrire.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nNella piccola città di Positano, sulle rive del mare azurro, due amiche, Maria e Lucia, si trovavano a discutere della cucina mediterranea. Maria, con il suo accento siciliano, parlava con entusiasmo della ricotta salata e dei frolli di ricotta, specialità della sua terra. \"La nostra cucina è dolce e salata, con un tocco di aglio e olio d'oliva,\" diceva, sorridendo. Lucia, invece, proveniente dal Sud Est, preferiva le verdure marinate e i piatti di pesce fresco. \"La nostra cucina è più acidulata, con le pomodori e le olive,\" rispondeva, con un sorriso amichevole. Entrambe avevano ragione, ma ciascuna rappresentava un angolo diverso del vasto mosaico mediterraneo.\n\nNew topic: \"Compare la cuisine italienne à la cuisine française\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Comparar cocinas mediterráneas",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Compare la cuisine italienne à la cuisine française",
+          "desc": "Cucina italiana e francese: dolce e salata",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "target": "dolce e salata",
+              "source": "doux et salé"
+            },
+            {
+              "target": "aglio",
+              "source": "ail"
+            },
+            {
+              "target": "olio d'oliva",
+              "source": "huile d'olive"
+            },
+            {
+              "target": "saporito",
+              "source": "saisonnée"
+            },
+            {
+              "target": "semplice",
+              "source": "simple"
+            },
+            {
+              "target": "frutta fresca",
+              "source": "fruit frais"
+            },
+            {
+              "target": "eleganza",
+              "source": "élégance"
+            },
+            {
+              "target": "soufflé",
+              "source": "soufflé"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La nostra cucina è dolce e salata, con un tocco di aglio e olio d'oliva.",
+              "source": "Notre cuisine est douce et salée, avec un petit goût d'ail et d'huile d'olive.",
+              "words": [
+                "La",
+                "nostra",
+                "cucina",
+                "è",
+                "dolce",
+                "e",
+                "salata,",
+                "con",
+                "un",
+                "tocco",
+                "di",
+                "aglio",
+                "e",
+                "olio",
+                "d'oliva."
+              ]
+            },
+            {
+              "target": "Ma la cucina francese è più sofisticata, con un equilibrio perfetto tra i sapori.",
+              "source": "Mais la cuisine française est plus sophistiquée, avec un équilibre parfait entre les saveurs.",
+              "words": [
+                "Ma",
+                "la",
+                "cucina",
+                "francese",
+                "è",
+                "più",
+                "sofisticata,",
+                "con",
+                "un",
+                "equilibrio",
+                "perfetto",
+                "tra",
+                "i",
+                "sapori."
+              ]
+            },
+            {
+              "target": "I nostri piatti sono più semplici, con ingredienti freschi e di qualità.",
+              "source": "Nos plats sont plus simples, avec des ingrédients frais et de qualité.",
+              "words": [
+                "I",
+                "nostri",
+                "piatti",
+                "sono",
+                "più",
+                "semplici,",
+                "con",
+                "ingredienti",
+                "freschi",
+                "e",
+                "di",
+                "qualità."
+              ]
+            },
+            {
+              "target": "La cucina francese ha un tocco di eleganza, con i suoi risotti e i suoi soufflés.",
+              "source": "La cuisine française a un petit air d'élegance, avec ses risottos et ses soufflés.",
+              "words": [
+                "La",
+                "cucina",
+                "francese",
+                "ha",
+                "un",
+                "tocco",
+                "di",
+                "eleganza,",
+                "con",
+                "i",
+                "suoi",
+                "risotti",
+                "e",
+                "i",
+                "suoi",
+                "soufflés."
+              ]
+            },
+            {
+              "target": "I nostri minestrone e i nostri involtini di verdura sono un vero piacere per il palato.",
+              "source": "Nos minestrone et nos involtini de légumes sont un vrai plaisir pour le palais.",
+              "words": [
+                "I",
+                "nostri",
+                "minestrone",
+                "e",
+                "i",
+                "nostri",
+                "involtini",
+                "di",
+                "verdura",
+                "sono",
+                "un",
+                "vero",
+                "piacere",
+                "per",
+                "il",
+                "palato."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Compare la cuisine italienne à la cuisine française",
+          "desc": "Cucina italiana e francese: dolce e salata vs sofisticata",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "target": "minestrone",
+              "source": "minestrone"
+            },
+            {
+              "target": "involtini",
+              "source": "involtini di verdura"
+            },
+            {
+              "target": "piacere per il palato",
+              "source": "piacere pour le palais"
+            },
+            {
+              "target": "verdura",
+              "source": "légumes"
+            },
+            {
+              "target": "consapevoli",
+              "source": "conscients"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Il minestrone è un piatto semplice, ma molto nutriente.",
+              "source": "Le minestrone est un plat simple, mais très nutritif.",
+              "words": [
+                "Il",
+                "minestrone",
+                "è",
+                "un",
+                "piatto",
+                "semplice,",
+                "ma",
+                "molto",
+                "nutriente."
+              ]
+            },
+            {
+              "target": "Gli involtini di verdura sono preparati con frutta fresca.",
+              "source": "Les involtini de légumes sont préparés avec des fruits frais.",
+              "words": [
+                "Gli",
+                "involtini",
+                "di",
+                "verdura",
+                "sono",
+                "preparati",
+                "con",
+                "frutta",
+                "fresca."
+              ]
+            },
+            {
+              "target": "Entrambe le cucine hanno un tocco di eleganza.",
+              "source": "Les deux cuisines ont un petit quelque chose d'élégance.",
+              "words": [
+                "Entrambe",
+                "le",
+                "cucine",
+                "hanno",
+                "un",
+                "tocco",
+                "di",
+                "eleganza."
+              ]
+            },
+            {
+              "target": "Il piacere per il palato è importante in entrambe le cucine.",
+              "source": "Le plaisir pour le palais est important dans les deux cuisines.",
+              "words": [
+                "Il",
+                "piacere",
+                "per",
+                "il",
+                "palato",
+                "è",
+                "importante",
+                "in",
+                "entrambe",
+                "le",
+                "cucine."
+              ]
+            },
+            {
+              "target": "Siamo consapevoli che entrambe le cucine hanno qualcosa di speciale.",
+              "source": "Nous sommes conscients que les deux cuisines ont quelque chose de spécial.",
+              "words": [
+                "Siamo",
+                "consapevoli",
+                "che",
+                "entrambe",
+                "le",
+                "cucine",
+                "hanno",
+                "qualcosa",
+                "di",
+                "speciale."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1497312,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2332,
+        "totalCompletionTokens": 1113,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 315188,
+            "promptTokens": 798,
+            "completionTokens": 446
+          },
+          {
+            "lessonNum": 3,
+            "ms": 128333,
+            "promptTokens": 882,
+            "completionTokens": 339
+          }
+        ]
+      },
+      "generatedAt": "2026-05-29T12:24:56.704Z",
+      "updatedAt": "2026-05-29T12:24:56.704Z"
+    },
+    {
+      "topic": "Cocina comparada",
+      "topicEmoji": "🍽️",
+      "userTopic": "Confronta la cucina spagnola e quella francese",
+      "lang": "fr",
+      "srcLang": "es",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "Sur les rives de la mer Méditerranée, Maria et Lucia se retrouvaient à nouveau, cette fois-ci dans la charmante ville de Gérone, au cœur de la Catalogne. Maria, avec son accent siciliano, parlait avec passion des tapas et des paellas de sa région. \"La cuisine espagnole est une danse de saveurs, avec des tapas colorées et des paellas savoureuses,\" disait-elle, les yeux pétillants. Lucia, de son côté, préférait les plats français, notamment les coquilles Saint-Jacques et les salades Niçoises. \"La cuisine française est élégante, avec des sauces fines et des légumes rafraîchissants,\" répondait-elle, un sourire plein de nostalgie.\n\nLes deux amies se promenaient le long des rues pavées, admirant les vieilles maisons de pierre et les jardins fleuris. Maria s'arrêta devant une petite taberna, la porte ouverte sur une odeur de piment et de poivrons grillés. \"Viens, je vais te montrer comment préparer un paella ici,\" proposa-t-elle, entraînant Lucia à l'intérieur. Lucia, quant à elle, entra dans une petite boulangerie, où l'odeur de pain frais et de beurre réchauffé la transporta dans ses souvenirs d'enfance. \"Et si nous partagions un café et discutons de nos cuisines préférées?\" suggéra-t-elle, les yeux brille de curiosité.",
+      "storyLang": "fr",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nNella piccola città di Positano, sulle rive del mare azurro, due amiche, Maria e Lucia, si trovavano a discutere della cucina mediterranea. Maria, con il suo accento siciliano, parlava con entusiasmo della ricotta salata e dei frolli di ricotta, specialità della sua terra. \"La nostra cucina è dolce e salata, con un tocco di aglio e olio d'oliva,\" diceva, sorridendo. Lucia, invece, proveniente dal Sud Est, preferiva le verdure marinate e i piatti di pesce fresco. \"La nostra cucina è più acidulata, con le pomodori e le olive,\" rispondeva, con un sorriso amichevole. Entrambe avevano ragione, ma ciascuna rappresentava un angolo diverso del vasto mosaico mediterraneo.\n\nNew topic: \"Confronta la cucina spagnola e quella francese\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Comparar cocinas mediterráneas",
+      "lessons": [
+        {
+          "id": 2,
+          "title": "Confronta la cucina spagnola e quella francese",
+          "desc": "cenas y platos, comparaciones, amigas",
+          "icon": "🇫🇷🇪🇸",
+          "vocab": [
+            {
+              "target": "tapas",
+              "source": "platos pequeños"
+            },
+            {
+              "target": "paella",
+              "source": "arroz con mariscos y verduras"
+            },
+            {
+              "target": "coquilles Saint-Jacques",
+              "source": "conchitas Saint-Jacques"
+            },
+            {
+              "target": "salade Niçoise",
+              "source": "ensalada de pimientos y tomates"
+            },
+            {
+              "target": "cuisine élégante",
+              "source": "cocina refinada"
+            },
+            {
+              "target": "sauce fine",
+              "source": "salsa ligera"
+            },
+            {
+              "target": "légumes rafraîchissants",
+              "source": "verduras frescas"
+            },
+            {
+              "target": "pavées",
+              "source": "piedras de calles"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Las tapas son una maravilla de la cocina española.",
+              "source": "Los platos pequeños son una maravilla de la cocina española.",
+              "words": [
+                "Las",
+                "tapas",
+                "son",
+                "una",
+                "maravilla",
+                "de",
+                "la",
+                "cocina",
+                "española."
+              ]
+            },
+            {
+              "target": "Las paellas son platos muy especiados.",
+              "source": "Los arroz con mariscos y verduras son platos muy especiados.",
+              "words": [
+                "Las",
+                "paellas",
+                "son",
+                "platos",
+                "muy",
+                "especiados."
+              ]
+            },
+            {
+              "target": "Las coquilles Saint-Jacques son muy suculentas.",
+              "source": "Las conchitas Saint-Jacques son muy suculentas.",
+              "words": [
+                "Las",
+                "coquilles",
+                "Saint-Jacques",
+                "son",
+                "muy",
+                "suculentas."
+              ]
+            },
+            {
+              "target": "La salade Niçoise es una ensalada fresca y colorida.",
+              "source": "La ensalada de pimientos y tomates es una ensalada fresca y colorida.",
+              "words": [
+                "La",
+                "salade",
+                "Niçoise",
+                "es",
+                "una",
+                "ensalada",
+                "fresca",
+                "y",
+                "colorida."
+              ]
+            },
+            {
+              "target": "La cuisine élégante tiene muchas sauces finas.",
+              "source": "La cocina refinada tiene muchas salsas ligeras.",
+              "words": [
+                "La",
+                "cuisine",
+                "élégante",
+                "tiene",
+                "muchas",
+                "sauces",
+                "finas."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Confronta la cucina spagnola e quella francese",
+          "desc": "platos pequeños, arroz con mariscos y verduras, conchitas Saint-Jacques, ensalada de pimientos y tomates, cocina refinada, salsa ligera, verduras frescas, piedras de calles",
+          "icon": "🇪🇸🇫🇷",
+          "vocab": [
+            {
+              "target": "tapas",
+              "source": "platos pequeños"
+            },
+            {
+              "target": "paella",
+              "source": "arroz con mariscos y verduras"
+            },
+            {
+              "target": "coquilles Saint-Jacques",
+              "source": "conchitas Saint-Jacques"
+            },
+            {
+              "target": "salade Niçoise",
+              "source": "ensalada de pimientos y tomates"
+            },
+            {
+              "target": "cuisine élégante",
+              "source": "cocina refinada"
+            },
+            {
+              "target": "sauce fine",
+              "source": "salsa ligera"
+            },
+            {
+              "target": "légumes rafraîchissants",
+              "source": "verduras frescas"
+            },
+            {
+              "target": "pavées",
+              "source": "piedras de calles"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Las tapas son una joya de la cocina española.",
+              "source": "Platos pequeños son una joya de la cocina española.",
+              "words": [
+                "Las",
+                "tapas",
+                "son",
+                "una",
+                "joya",
+                "de",
+                "la",
+                "cocina",
+                "española."
+              ]
+            },
+            {
+              "target": "Las coquilles Saint-Jacques son un plato francés delicioso.",
+              "source": "Conchitas Saint-Jacques son un plato francés delicioso.",
+              "words": [
+                "Las",
+                "coquilles",
+                "Saint-Jacques",
+                "son",
+                "un",
+                "plato",
+                "francés",
+                "delicioso."
+              ]
+            },
+            {
+              "target": "La paella es un arroz con mariscos y verduras exquisito.",
+              "source": "Arroz con mariscos y verduras es un plato exquisito.",
+              "words": [
+                "La",
+                "paella",
+                "es",
+                "un",
+                "arroz",
+                "con",
+                "mariscos",
+                "y",
+                "verduras",
+                "exquisito."
+              ]
+            },
+            {
+              "target": "La salade Niçoise es una ensalada de pimientos y tomates frescos.",
+              "source": "Ensalada de pimientos y tomates es una ensalada fresca.",
+              "words": [
+                "La",
+                "salade",
+                "Niçoise",
+                "es",
+                "una",
+                "ensalada",
+                "de",
+                "pimientos",
+                "y",
+                "tomates",
+                "frescos."
+              ]
+            },
+            {
+              "target": "La cuisine française es elegante, con su salsa ligera y verduras frescas.",
+              "source": "La cocina refinada tiene su salsa ligera y verduras frescas.",
+              "words": [
+                "La",
+                "cuisine",
+                "française",
+                "es",
+                "elegante,",
+                "con",
+                "su",
+                "salsa",
+                "ligera",
+                "y",
+                "verduras",
+                "frescas."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1846080,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2297,
+        "totalCompletionTokens": 1273,
+        "lessons": [
+          {
+            "lessonNum": 2,
+            "ms": 157651,
+            "promptTokens": 766,
+            "completionTokens": 395
+          },
+          {
+            "lessonNum": 3,
+            "ms": 344636,
+            "promptTokens": 874,
+            "completionTokens": 451
+          }
+        ]
+      },
+      "generatedAt": "2026-05-29T11:50:11.046Z",
+      "updatedAt": "2026-05-29T11:50:11.046Z"
+    },
+    {
+      "topic": "Comparar cocinas mediterráneas",
+      "topicEmoji": "🥗",
+      "userTopic": "Comparar las cocinas mediterráneas",
+      "lang": "it",
+      "srcLang": "es",
+      "difficulty": 2,
+      "storyLen": 200,
+      "story": "Nella piccola città di Positano, sulle rive del mare azurro, due amiche, Maria e Lucia, si trovavano a discutere della cucina mediterranea. Maria, con il suo accento siciliano, parlava con entusiasmo della ricotta salata e dei frolli di ricotta, specialità della sua terra. \"La nostra cucina è dolce e salata, con un tocco di aglio e olio d'oliva,\" diceva, sorridendo. Lucia, invece, proveniente dal Sud Est, preferiva le verdure marinate e i piatti di pesce fresco. \"La nostra cucina è più acidulata, con le pomodori e le olive,\" rispondeva, con un sorriso amichevole. Entrambe avevano ragione, ma ciascuna rappresentava un angolo diverso del vasto mosaico mediterraneo.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian.\n\nWrite a story for the topic: \"Comparar las cocinas mediterráneas\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Comparar las cocinas mediterráneas",
+          "desc": "discutir sobre la cocina siciliana y la cocina del Sud Est",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "target": "ricotta salata",
+              "source": "queso salado"
+            },
+            {
+              "target": "frolli",
+              "source": "bollos de queso"
+            },
+            {
+              "target": "dolce e salata",
+              "source": "dulce y salado"
+            },
+            {
+              "target": "aglio e olio",
+              "source": "ajo y aceite"
+            },
+            {
+              "target": "verdure marinate",
+              "source": "verduras marinadas"
+            },
+            {
+              "target": "piatti di pesce fresco",
+              "source": "platos de pescado fresco"
+            },
+            {
+              "target": "acidulata",
+              "source": "ácida"
+            },
+            {
+              "target": "pomodori",
+              "source": "tomates"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La ricotta salata è dolce e salata.",
+              "source": "La ricotta salata es dulce y salada.",
+              "words": [
+                "La",
+                "ricotta",
+                "salata",
+                "è",
+                "dolce",
+                "e",
+                "salata."
+              ]
+            },
+            {
+              "target": "Le verdure marinate hanno un sapore acidulato.",
+              "source": "Las verduras marinadas tienen un sabor ácido.",
+              "words": [
+                "Le",
+                "verdure",
+                "marinate",
+                "hanno",
+                "un",
+                "sapore",
+                "acidulato."
+              ]
+            },
+            {
+              "target": "I frolli di ricotta sono specialità della Sicilia.",
+              "source": "Los bollos de queso son especialidades de Sicilia.",
+              "words": [
+                "I",
+                "frolli",
+                "di",
+                "ricotta",
+                "sono",
+                "specialità",
+                "della",
+                "Sicilia."
+              ]
+            },
+            {
+              "target": "La nostra cucina è dolce e salata, con un tocco di aglio e olio.",
+              "source": "Nuestra cocina es dulce y salada, con un toque de ajo y aceite.",
+              "words": [
+                "La",
+                "nostra",
+                "cucina",
+                "è",
+                "dolce",
+                "e",
+                "salata,",
+                "con",
+                "un",
+                "tocco",
+                "di",
+                "aglio",
+                "e",
+                "olio."
+              ]
+            },
+            {
+              "target": "Le pomodori e le olive sono ingredienti fondamentali nella cucina del Sud Est.",
+              "source": "Los tomates y las aceitunas son ingredientes fundamentales en la cocina del Sud Est.",
+              "words": [
+                "Le",
+                "pomodori",
+                "e",
+                "le",
+                "olive",
+                "sono",
+                "ingredienti",
+                "fondamentali",
+                "nella",
+                "cucina",
+                "del",
+                "Sud",
+                "Est."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Comparar las cocinas mediterráneas",
+          "desc": "discutir sobre la cocina siciliana y la cocina del Sud Est",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "target": "specialità",
+              "source": "especialidades"
+            },
+            {
+              "target": "terre",
+              "source": "tierras"
+            },
+            {
+              "target": "sapor",
+              "source": "sabor"
+            },
+            {
+              "target": "saporito",
+              "source": "sabroso"
+            },
+            {
+              "target": "saporita",
+              "source": "sabrosa"
+            },
+            {
+              "target": "saporoso",
+              "source": "sabroso"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La ricotta salata è una specialità della Sicilia.",
+              "source": "La ricotta salata es una especialidad de Sicilia.",
+              "words": [
+                "La",
+                "ricotta",
+                "salata",
+                "è",
+                "una",
+                "specialità",
+                "della",
+                "Sicilia."
+              ]
+            },
+            {
+              "target": "Il sapore della ricotta salata è dolce e salato.",
+              "source": "El sabor de la ricotta salata es dulce y salado.",
+              "words": [
+                "Il",
+                "sapore",
+                "della",
+                "ricotta",
+                "salata",
+                "è",
+                "dolce",
+                "e",
+                "salato."
+              ]
+            },
+            {
+              "target": "Le verdure marinate hanno un sapore acidulato.",
+              "source": "Las verduras marinadas tienen un sabor ácido.",
+              "words": [
+                "Le",
+                "verdure",
+                "marinate",
+                "hanno",
+                "un",
+                "sapore",
+                "acidulato."
+              ]
+            },
+            {
+              "target": "I frolli di ricotta sono saporiti e croccanti.",
+              "source": "Los bollos de queso son sabrosos y crujientes.",
+              "words": [
+                "I",
+                "frolli",
+                "di",
+                "ricotta",
+                "sono",
+                "saporiti",
+                "e",
+                "croccanti."
+              ]
+            },
+            {
+              "target": "La nostra cucina ha un sapore unico, con un tocco di aglio e olio.",
+              "source": "Nuestra cocina tiene un sabor único, con un toque de ajo y aceite.",
+              "words": [
+                "La",
+                "nostra",
+                "cucina",
+                "ha",
+                "un",
+                "sapore",
+                "unico,",
+                "con",
+                "un",
+                "tocco",
+                "di",
+                "aglio",
+                "e",
+                "olio."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Comparar las cocinas mediterráneas",
+          "desc": "discutir sobre la cocina siciliana y la cocina del Sud Est",
+          "icon": "🍝",
+          "vocab": [
+            {
+              "target": "sapor",
+              "source": "sabor"
+            },
+            {
+              "target": "saporito",
+              "source": "sabroso"
+            },
+            {
+              "target": "saporita",
+              "source": "sabrosa"
+            },
+            {
+              "target": "saporoso",
+              "source": "sabroso"
+            },
+            {
+              "target": "terre",
+              "source": "tierras"
+            },
+            {
+              "target": "specialità",
+              "source": "especialidades"
+            },
+            {
+              "target": "piatti",
+              "source": "platos"
+            },
+            {
+              "target": "sapor di mare",
+              "source": "sabor del mar"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La ricotta salata ha un sapor salato.",
+              "source": "La ricotta salata tiene un sabor salado.",
+              "words": [
+                "La",
+                "ricotta",
+                "salata",
+                "ha",
+                "un",
+                "sapor",
+                "salato."
+              ]
+            },
+            {
+              "target": "I frolli di ricotta sono saporiti.",
+              "source": "Los bollos de queso están sabrosos.",
+              "words": [
+                "I",
+                "frolli",
+                "di",
+                "ricotta",
+                "sono",
+                "saporiti."
+              ]
+            },
+            {
+              "target": "La cucina siciliana è saporita di mare.",
+              "source": "La cocina siciliana tiene un sabor del mar.",
+              "words": [
+                "La",
+                "cucina",
+                "siciliana",
+                "è",
+                "saporita",
+                "di",
+                "mare."
+              ]
+            },
+            {
+              "target": "Le verdure marinate hanno un sapor acidulato.",
+              "source": "Las verduras marinadas tienen un sabor ácido.",
+              "words": [
+                "Le",
+                "verdure",
+                "marinate",
+                "hanno",
+                "un",
+                "sapor",
+                "acidulato."
+              ]
+            },
+            {
+              "target": "I piatti di pesce fresco sono saporiti di pomodoro.",
+              "source": "Los platos de pescado fresco tienen un sabor de tomate.",
+              "words": [
+                "I",
+                "piatti",
+                "di",
+                "pesce",
+                "fresco",
+                "sono",
+                "saporiti",
+                "di",
+                "pomodoro."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1028949,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2927,
+        "totalCompletionTokens": 1369,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 314326,
+            "promptTokens": 766,
+            "completionTokens": 388
+          },
+          {
+            "lessonNum": 2,
+            "ms": 281440,
+            "promptTokens": 867,
+            "completionTokens": 367
+          },
+          {
+            "lessonNum": 3,
+            "ms": 258713,
+            "promptTokens": 910,
+            "completionTokens": 333
+          }
+        ]
+      },
+      "generatedAt": "2026-05-29T11:06:57.276Z",
+      "updatedAt": "2026-05-29T11:06:57.276Z"
+    },
+    {
       "topic": "הומור יהודי",
       "topicEmoji": "jest",
       "userTopic": "ההומור היהודי מפורסם, החל ממועדוני הקומדיה הווינאים של שנות ה-20 ועד לניו יורק והוליווד. מישהו מספר לנו בדיחה, גרסה מודרנית ומטא-הומוריסטית לקלאסיקה: כומר, רב ואימאם נכנסים לבר. הברמן שואל: \"זו בדיחה?\"",
@@ -31319,6 +32263,59 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-28T08:29:58.387Z"
+    },
+    "wir_fahren_nach_london:mcq_source_target:tumultuous": {
+      "topic": "wir fahren nach london",
+      "type": "mcq_source_target",
+      "target": "tumultuous",
+      "source": "tumultuous",
+      "correct": "tumultuous",
+      "choices": [
+        "crisp",
+        "familiar",
+        "fascinated",
+        "tumultuous"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-29T06:15:08.596Z"
+    },
+    "Cocina_comparada:order:La_cuisine_élégante_tiene_muchas_sauces_": {
+      "topic": "Cocina comparada",
+      "type": "order",
+      "target": "La cuisine élégante tiene muchas sauces finas.",
+      "source": "La cocina refinada tiene muchas salsas ligeras.",
+      "correct": "La cuisine élégante tiene muchas sauces finas.",
+      "choices": [],
+      "words": [
+        "muchas",
+        "élégante",
+        "La",
+        "sauces",
+        "cuisine",
+        "tiene",
+        "finas."
+      ],
+      "flaggedAt": "2026-05-29T11:53:00.765Z"
+    },
+    "Cocina_comparada:order:La_salade_Niçoise_es_una_ensalada_fresca": {
+      "topic": "Cocina comparada",
+      "type": "order",
+      "target": "La salade Niçoise es una ensalada fresca y colorida.",
+      "source": "La ensalada de pimientos y tomates es una ensalada fresca y colorida.",
+      "correct": "La salade Niçoise es una ensalada fresca y colorida.",
+      "choices": [],
+      "words": [
+        "una",
+        "salade",
+        "La",
+        "y",
+        "colorida.",
+        "ensalada",
+        "Niçoise",
+        "es",
+        "fresca"
+      ],
+      "flaggedAt": "2026-05-29T11:53:26.760Z"
     }
   },
   "storylines": {
@@ -31485,6 +32482,18 @@
     "root:방방방": {
       "title": ")))),",
       "icon": "jest"
+    },
+    "c459732852": {
+      "title": "Comparación de cocinas",
+      "icon": "🥣"
+    },
+    "root:Comparar cocinas mediterráneas": {
+      "title": "Cocinas en Positano",
+      "icon": "☀️"
+    },
+    "c1581305729": {
+      "title": "Cocinas en Positano",
+      "icon": "☀️"
     }
   }
 }

@@ -1,5 +1,6 @@
 {
   "nl": {
+    "app.tagline": "Leer woordenschat voor elk onderwerp in elke taal",
     "app.backend": "Backend:",
     "app.checking": "Controleer…",
     "form.i_speak": "🗣 Ik spreek",
@@ -155,9 +156,17 @@
     "lib.count_plural": "{n} van {total} onderwerpen",
     "lib.lessons": "{n} les",
     "lib.lessons_plural": "{n} lessen",
-    "storyline.title": "Verhaallijn"
+    "storyline.title": "Verhaallijn",
+    "lesson.gen_topic_title": "✨ Titel genereren",
+    "lesson.gen_topic_title_title": "Lestitel genereren met AI",
+    "lesson.btn_topics": "← Onderwerpen",
+    "lesson.btn_share": "🔗 Delen",
+    "lesson.btn_regen": "↻ Hergen.",
+    "lesson.btn_continue": "↪ Doorgaan",
+    "lesson.btn_continue_story": "↪ Verhaal vervolgen"
   },
   "pt": {
+    "app.tagline": "Aprenda vocabulário de qualquer tópico em qualquer idioma",
     "app.backend": "Backend:",
     "app.checking": "Verificando…",
     "form.i_speak": "🗣 Eu falo",
@@ -313,9 +322,17 @@
     "lesson.read_full_story": "📖 Ler história completa",
     "lib.import": "⬆ Importar",
     "lib.filter_all": "🌐 Todos os idiomas",
-    "lib.filter_all_short": "🌐 Todos"
+    "lib.filter_all_short": "🌐 Todos",
+    "lesson.gen_topic_title": "✨ Gerar título",
+    "lesson.gen_topic_title_title": "Gerar título da lição com IA",
+    "lesson.btn_topics": "← Tópicos",
+    "lesson.btn_share": "🔗 Compartilhar",
+    "lesson.btn_regen": "↻ Regerar",
+    "lesson.btn_continue": "↪ Continuar",
+    "lesson.btn_continue_story": "↪ Continuar história"
   },
   "fr": {
+    "app.tagline": "Apprendre du vocabulaire sur n'importe quel sujet",
     "app.backend": "Backend:",
     "app.checking": "Vérification…",
     "form.i_speak": "🗣 Je parle",
@@ -471,7 +488,14 @@
     "lesson.read_full_story": "📖 Lire l'histoire complète",
     "lib.import": "⬆ Importer",
     "lib.filter_all": "🌐 Toutes les langues",
-    "lib.filter_all_short": "🌐 Toutes"
+    "lib.filter_all_short": "🌐 Toutes",
+    "lesson.gen_topic_title": "✨ Générer titre",
+    "lesson.gen_topic_title_title": "Générer le titre de la leçon avec IA",
+    "lesson.btn_topics": "← Sujets",
+    "lesson.btn_share": "🔗 Partager",
+    "lesson.btn_regen": "↻ Régén.",
+    "lesson.btn_continue": "↪ Continuer",
+    "lesson.btn_continue_story": "↪ Continuer l'histoire"
   },
   "tr": {
     "furigana.show": "ふ Show furigana",
@@ -554,6 +578,7 @@
     "lib.import": "⬆ İçe aktar",
     "lib.filter_all": "🌐 Tüm diller",
     "lib.filter_all_short": "🌐 Tümü",
+    "app.tagline": "Her konuda her dilde kelime öğren",
     "app.backend": "Backend:",
     "app.checking": " kontrol ediliyor…",
     "form.topic_label": "{lang} konusu nedir?",
@@ -629,9 +654,17 @@
     "story.prompt_placeholder": "Bu ders için kaydedilen bir hikaye talimatı yok.",
     "lib.empty_lang": "{lang} dilindeki ders yok.",
     "lib.empty": "Henüz kaydedilen ders yok — yukarıda biri oluşturun!",
-    "status.offline": "Çevrimdışı — sadece kaydedilen dersler"
+    "status.offline": "Çevrimdışı — sadece kaydedilen dersler",
+    "lesson.gen_topic_title": "✨ Başlık oluştur",
+    "lesson.gen_topic_title_title": "AI ile ders başlığı oluştur",
+    "lesson.btn_topics": "← Konular",
+    "lesson.btn_share": "🔗 Paylaş",
+    "lesson.btn_regen": "↻ Yenile",
+    "lesson.btn_continue": "↪ Devam",
+    "lesson.btn_continue_story": "↪ Hikayeyi sürdür"
   },
   "hi": {
+    "app.tagline": "किसी भी विषय में किसी भी भाषा में शब्दावली सीखें",
     "app.backend": "बैकेन्ड:",
     "app.checking": "परीक्षण…",
     "form.i_speak": "🗣 मैं ... बोलता हूँ",
@@ -787,9 +820,17 @@
     "lesson.generating_title": "Generating story title…",
     "lesson.title_saved": "Title saved",
     "ex.error_hunt.instruction": "Tap words that look wrong — spelling or grammar mistakes.",
-    "story.prompt_placeholder": "No story prompt saved for this lesson."
+    "story.prompt_placeholder": "No story prompt saved for this lesson.",
+    "lesson.gen_topic_title": "✨ शीर्षक बनाएं",
+    "lesson.gen_topic_title_title": "AI से पाठ शीर्षक बनाएं",
+    "lesson.btn_topics": "← विषय",
+    "lesson.btn_share": "🔗 साझा करें",
+    "lesson.btn_regen": "↻ पुनः जनरेट",
+    "lesson.btn_continue": "↪ जारी रखें",
+    "lesson.btn_continue_story": "↪ कहानी जारी रखें"
   },
   "de": {
+    "app.tagline": "Vokabular für jedes Thema in jeder Sprache lernen",
     "app.backend": "Backend:",
     "app.checking": "Prüfe…",
     "form.i_speak": "🗣 Ich spreche",
@@ -945,9 +986,17 @@
     "lesson.read_full_story": "📖 Ganze Geschichte lesen",
     "lib.import": "⬆ Importieren",
     "lib.filter_all": "🌐 Alle Sprachen",
-    "lib.filter_all_short": "🌐 Alle"
+    "lib.filter_all_short": "🌐 Alle",
+    "lesson.gen_topic_title": "✨ Titel generieren",
+    "lesson.gen_topic_title_title": "Lektionstitel mit KI generieren",
+    "lesson.btn_topics": "← Themen",
+    "lesson.btn_share": "🔗 Teilen",
+    "lesson.btn_regen": "↻ Neu",
+    "lesson.btn_continue": "↪ Weiter",
+    "lesson.btn_continue_story": "↪ Geschichte fortsetzen"
   },
   "ar": {
+    "app.tagline": "تعلم المفردات لأي موضوع بأي لغة",
     "app.backend": "الخلفية:",
     "app.checking": "التحقق...",
     "form.i_speak": "🗣 أتحدث",
@@ -1103,9 +1152,17 @@
     "lesson.read_full_story": "📖 اقرأ القصة كاملة",
     "lib.import": "⬆ استيراد",
     "lib.filter_all": "🌐 كل اللغات",
-    "lib.filter_all_short": "🌐 الكل"
+    "lib.filter_all_short": "🌐 الكل",
+    "lesson.gen_topic_title": "✨ توليد عنوان",
+    "lesson.gen_topic_title_title": "توليد عنوان الدرس بالذكاء الاصطناعي",
+    "lesson.btn_topics": "← المواضيع",
+    "lesson.btn_share": "🔗 مشاركة",
+    "lesson.btn_regen": "↻ إعادة",
+    "lesson.btn_continue": "↪ متابعة",
+    "lesson.btn_continue_story": "↪ متابعة القصة"
   },
   "en": {
+    "app.tagline": "Learn vocabulary for any topic in any language",
     "app.backend": "Backend:",
     "app.checking": "Checking…",
     "form.i_speak": "🗣 I speak",
@@ -1261,9 +1318,17 @@
     "lesson.read_full_story": "📖 Read full story",
     "lib.import": "⬆ Import",
     "lib.filter_all": "🌐 All languages",
-    "lib.filter_all_short": "🌐 All"
+    "lib.filter_all_short": "🌐 All",
+    "lesson.gen_topic_title": "✨ Generate title",
+    "lesson.gen_topic_title_title": "Generate lesson title with AI",
+    "lesson.btn_topics": "← Topics",
+    "lesson.btn_share": "🔗 Share",
+    "lesson.btn_regen": "↻ Regen",
+    "lesson.btn_continue": "↪ Continue",
+    "lesson.btn_continue_story": "↪ Continue story"
   },
   "sv": {
+    "app.tagline": "Lär dig vokabulär för valfritt ämne",
     "app.backend": "Baksidan:",
     "app.checking": "Kontrollerar…",
     "form.i_speak": "🗣 Jag talar",
@@ -1419,9 +1484,17 @@
     "lesson.read_full_story": "📖 Läs hela berättelsen",
     "lib.import": "⬆ Importera",
     "lib.filter_all": "🌐 Alla språk",
-    "lib.filter_all_short": "🌐 Alla"
+    "lib.filter_all_short": "🌐 Alla",
+    "lesson.gen_topic_title": "✨ Generera titel",
+    "lesson.gen_topic_title_title": "Generera lektionstitel med AI",
+    "lesson.btn_topics": "← Ämnen",
+    "lesson.btn_share": "🔗 Dela",
+    "lesson.btn_regen": "↻ Regenerera",
+    "lesson.btn_continue": "↪ Fortsätt",
+    "lesson.btn_continue_story": "↪ Fortsätt berättelsen"
   },
   "ru": {
+    "app.tagline": "Учите словарный запас по любой теме на любом языке",
     "app.backend": "Бэкенд:",
     "app.checking": "Проверка…",
     "form.i_speak": "🗣 Я говорю",
@@ -1577,9 +1650,17 @@
     "lesson.read_full_story": "📖 Читать полный рассказ",
     "lib.import": "⬆ Импортировать",
     "lib.filter_all": "🌐 Все языки",
-    "lib.filter_all_short": "🌐 Все"
+    "lib.filter_all_short": "🌐 Все",
+    "lesson.gen_topic_title": "✨ Создать заголовок",
+    "lesson.gen_topic_title_title": "Создать заголовок урока с ИИ",
+    "lesson.btn_topics": "← Темы",
+    "lesson.btn_share": "🔗 Поделиться",
+    "lesson.btn_regen": "↻ Заново",
+    "lesson.btn_continue": "↪ Далее",
+    "lesson.btn_continue_story": "↪ Продолжить рассказ"
   },
   "zh": {
+    "app.tagline": "用任何语言学习任何主题的词汇",
     "app.backend": "后端:",
     "app.checking": "正在检查…",
     "form.i_speak": "🗣 我会说",
@@ -1735,9 +1816,17 @@
     "lesson.read_full_story": "📖 阅读完整故事",
     "lib.import": "⬆ 导入",
     "lib.filter_all": "🌐 所有语言",
-    "lib.filter_all_short": "🌐 全部"
+    "lib.filter_all_short": "🌐 全部",
+    "lesson.gen_topic_title": "✨ 生成标题",
+    "lesson.gen_topic_title_title": "用AI生成课程标题",
+    "lesson.btn_topics": "← 主题",
+    "lesson.btn_share": "🔗 分享",
+    "lesson.btn_regen": "↻ 重新生成",
+    "lesson.btn_continue": "↪ 继续",
+    "lesson.btn_continue_story": "↪ 继续故事"
   },
   "ko": {
+    "app.tagline": "모든 주제의 어휘를 어떤 언어로든 배우세요",
     "app.backend": "백엔드:",
     "app.checking": "확인 중…",
     "form.i_speak": "🗣 나는 ... 를 말할 수 있어",
@@ -1893,9 +1982,17 @@
     "lesson.read_full_story": "📖 전체 이야기 읽기",
     "lib.import": "⬆ 가져오기",
     "lib.filter_all": "🌐 모든 언어",
-    "lib.filter_all_short": "🌐 전체"
+    "lib.filter_all_short": "🌐 전체",
+    "lesson.gen_topic_title": "✨ 제목 생성",
+    "lesson.gen_topic_title_title": "AI로 레슨 제목 생성",
+    "lesson.btn_topics": "← 주제",
+    "lesson.btn_share": "🔗 공유",
+    "lesson.btn_regen": "↻ 재생성",
+    "lesson.btn_continue": "↪ 계속",
+    "lesson.btn_continue_story": "↪ 이야기 계속"
   },
   "it": {
+    "app.tagline": "Impara il vocabolario per qualsiasi argomento",
     "app.backend": "Backend:",
     "app.checking": "Controllo…",
     "form.i_speak": "🗣 Parlo",
@@ -2051,9 +2148,17 @@
     "lesson.read_full_story": "📖 Leggi storia completa",
     "lib.import": "⬆ Importa",
     "lib.filter_all": "🌐 Tutte le lingue",
-    "lib.filter_all_short": "🌐 Tutte"
+    "lib.filter_all_short": "🌐 Tutte",
+    "lesson.gen_topic_title": "✨ Genera titolo",
+    "lesson.gen_topic_title_title": "Genera titolo lezione con IA",
+    "lesson.btn_topics": "← Argomenti",
+    "lesson.btn_share": "🔗 Condividi",
+    "lesson.btn_regen": "↻ Rigenera",
+    "lesson.btn_continue": "↪ Continua",
+    "lesson.btn_continue_story": "↪ Continua storia"
   },
   "pl": {
+    "app.tagline": "Ucz się słownictwa z każdego tematu w każdym języku",
     "app.backend": "Backend:",
     "app.checking": "Sprawdzanie…",
     "form.i_speak": "🗣 Mówię",
@@ -2209,9 +2314,17 @@
     "lesson.read_full_story": "📖 Przeczytaj całą historię",
     "lib.import": "⬆ Importuj",
     "lib.filter_all": "🌐 Wszystkie języki",
-    "lib.filter_all_short": "🌐 Wszystkie"
+    "lib.filter_all_short": "🌐 Wszystkie",
+    "lesson.gen_topic_title": "✨ Generuj tytuł",
+    "lesson.gen_topic_title_title": "Generuj tytuł lekcji z AI",
+    "lesson.btn_topics": "← Tematy",
+    "lesson.btn_share": "🔗 Udostępnij",
+    "lesson.btn_regen": "↻ Regeneruj",
+    "lesson.btn_continue": "↪ Dalej",
+    "lesson.btn_continue_story": "↪ Kontynuuj historię"
   },
   "es": {
+    "app.tagline": "Aprender vocabulario de cualquier tema en cualquier idioma",
     "app.backend": "Backend:",
     "app.checking": "Revisando…",
     "form.i_speak": "🗣 Hablo",
@@ -2367,9 +2480,17 @@
     "lesson.read_full_story": "📖 Leer historia completa",
     "lib.import": "⬆ Importar",
     "lib.filter_all": "🌐 Todos los idiomas",
-    "lib.filter_all_short": "🌐 Todos"
+    "lib.filter_all_short": "🌐 Todos",
+    "lesson.gen_topic_title": "✨ Generar título",
+    "lesson.gen_topic_title_title": "Generar título de lección con IA",
+    "lesson.btn_topics": "← Temas",
+    "lesson.btn_share": "🔗 Compartir",
+    "lesson.btn_regen": "↻ Regen.",
+    "lesson.btn_continue": "↪ Continuar",
+    "lesson.btn_continue_story": "↪ Continuar historia"
   },
   "ja": {
+    "app.tagline": "あらゆるトピックの語彙をどんな言語でも学ぼう",
     "app.backend": "バックエンド:",
     "app.checking": "確認中…",
     "form.i_speak": "🗣 話す言語",
@@ -2525,7 +2646,14 @@
     "lesson.read_full_story": "📖 全文を読む",
     "lib.import": "⬆ インポート",
     "lib.filter_all": "🌐 すべての言語",
-    "lib.filter_all_short": "🌐 全て"
+    "lib.filter_all_short": "🌐 全て",
+    "lesson.gen_topic_title": "✨ タイトル生成",
+    "lesson.gen_topic_title_title": "AIでレッスンタイトルを生成",
+    "lesson.btn_topics": "← トピック",
+    "lesson.btn_share": "🔗 共有",
+    "lesson.btn_regen": "↻ 再生成",
+    "lesson.btn_continue": "↪ 続ける",
+    "lesson.btn_continue_story": "↪ ストーリーを続ける"
   },
   "he": {
     "app.backend": "백엔드:",
@@ -2683,7 +2811,15 @@
     "story.prompt_placeholder": "לא נמצאה הוראה לסיפור עבור זה הלמדון.",
     "lib.empty_lang": "אין למדונים ב언语。",
     "lib.empty": "אין למדונים נשמרים עדיין — יוצר אחד מעל!",
-    "status.offline": "לא רשת — רק למדונים נשמרים"
+    "status.offline": "לא רשת — רק למדונים נשמרים",
+    "app.tagline": "לearn תרגול למושגים לכל נושא בשפה כלשהי",
+    "lesson.gen_topic_title": "✨ יוצר כותרת",
+    "lesson.gen_topic_title_title": "YCerate כותרת הרצאה עם AI",
+    "lesson.btn_topics": "← נושאים",
+    "lesson.btn_share": "🔗 לשתף",
+    "lesson.btn_regen": "↻ יוצר מחדש",
+    "lesson.btn_continue": "↪ להמשיך",
+    "lesson.btn_continue_story": "↪ להמשיך סיפור"
   },
   "uk": {
     "app.backend": "Бек-енд:",
@@ -2841,7 +2977,15 @@
     "lesson.read_full_story": "📖 Прочитати повну історію",
     "lib.import": "⬆ Імпортувати",
     "lib.filter_all": "🌐 Усі мови",
-    "lib.filter_all_short": "🌐 Усі"
+    "lib.filter_all_short": "🌐 Усі",
+    "app.tagline": "Навчайтесь нових слів для будь-якого теми на будь-якому мові",
+    "lesson.gen_topic_title": "✨ Створити заголовок",
+    "lesson.gen_topic_title_title": "Створіть назву уроку з допомогою AI",
+    "lesson.btn_topics": "← Теми",
+    "lesson.btn_share": "🔗 Поділитися",
+    "lesson.btn_regen": "↻ Створити заново",
+    "lesson.btn_continue": "↪ Продовжити",
+    "lesson.btn_continue_story": "↪ Продовжити історію"
   },
   "cs": {
     "app.backend": "Backend:",
@@ -2999,7 +3143,15 @@
     "lesson.read_full_story": "📖 Přečíst celou povídku",
     "lib.import": "⬆ Importovat",
     "lib.filter_all": "🌐 Všechny jazyky",
-    "lib.filter_all_short": "🌐 Všechny"
+    "lib.filter_all_short": "🌐 Všechny",
+    "app.tagline": "Nauč se slovníky pro libové téma v libové jazyce",
+    "lesson.gen_topic_title": "✨ Vytvoř název",
+    "lesson.gen_topic_title_title": "Vytvoř název lekce pomocí AI",
+    "lesson.btn_topics": "← Témata",
+    "lesson.btn_share": "🔗 Sdílej",
+    "lesson.btn_regen": "↻ Regeneruj",
+    "lesson.btn_continue": "↪ Pokračuj",
+    "lesson.btn_continue_story": "↪ Pokračuj v příběhu"
   },
   "vi": {
     "app.backend": "Backend:",
@@ -3157,7 +3309,15 @@
     "lesson.read_full_story": "📖 Đọc toàn bộ câu chuyện",
     "lib.import": "⬆ Nhập",
     "lib.filter_all": "🌐 Tất cả ngôn ngữ",
-    "lib.filter_all_short": "🌐 Tất cả"
+    "lib.filter_all_short": "🌐 Tất cả",
+    "app.tagline": "Học từ vựng về bất kỳ chủ đề nào bằng bất kỳ ngôn ngữ nào",
+    "lesson.gen_topic_title": "✨ Tạo tiêu đề",
+    "lesson.gen_topic_title_title": "Tạo tiêu đề bài học với AI",
+    "lesson.btn_topics": "← Chủ đề",
+    "lesson.btn_share": "🔗 Chia sẻ",
+    "lesson.btn_regen": "↻ Tạo lại",
+    "lesson.btn_continue": "↪ Tiếp tục",
+    "lesson.btn_continue_story": "↪ Tiếp tục câu chuyện"
   },
   "id": {
     "app.backend": "Backend:",
@@ -3315,7 +3475,15 @@
     "lesson.read_full_story": "📖 Baca cerita lengkap",
     "lib.import": "⬆ Impor",
     "lib.filter_all": "🌐 Semua bahasa",
-    "lib.filter_all_short": "🌐 Semua"
+    "lib.filter_all_short": "🌐 Semua",
+    "app.tagline": "Pelajari vokabular untuk setiap topik dalam setiap bahasa",
+    "lesson.gen_topic_title": "✨ Buat judul",
+    "lesson.gen_topic_title_title": "Buat judul pelajaran dengan AI",
+    "lesson.btn_topics": "← Topik",
+    "lesson.btn_share": "🔗 Bagikan",
+    "lesson.btn_regen": "↻ Regen",
+    "lesson.btn_continue": "↪ Lanjutkan",
+    "lesson.btn_continue_story": "↪ Lanjutkan cerita"
   },
   "ro": {
     "app.backend": "Backend:",
@@ -3473,7 +3641,15 @@
     "lesson.read_full_story": "📖 Citeste storie completă",
     "lib.import": "⬆ Import",
     "lib.filter_all": "🌐 Toate limbele",
-    "lib.filter_all_short": "🌐 Toate"
+    "lib.filter_all_short": "🌐 Toate",
+    "app.tagline": "Aprendeți vocabilariat pentru orice subiect în orice limbă",
+    "lesson.gen_topic_title": "✨ Generează titlu",
+    "lesson.gen_topic_title_title": "Generează titlu de lecție cu AI",
+    "lesson.btn_topics": "← Subiecte",
+    "lesson.btn_share": "🔗 Partește",
+    "lesson.btn_regen": "↻ Regenerează",
+    "lesson.btn_continue": "↪ Continuă",
+    "lesson.btn_continue_story": "↪ Continuă poveste"
   },
   "th": {
     "app.backend": "Backend:",
@@ -3631,7 +3807,15 @@
     "lesson.read_full_story": "📖 อ่านเรื่องเต็ม",
     "lib.import": "⬆ นำเข้า",
     "lib.filter_all": "🌐 ทุกภาษา",
-    "lib.filter_all_short": "🌐 ทุก"
+    "lib.filter_all_short": "🌐 ทุก",
+    "app.tagline": "เรียนศัพท์สำหรับหัวข้อใดก็ได้ในภาษาใดก็ได้",
+    "lesson.gen_topic_title": "✨ เกnerate หัวข้อ",
+    "lesson.gen_topic_title_title": "生成课程标题",
+    "lesson.btn_topics": "← หัวข้อ",
+    "lesson.btn_share": "🔗 แชร์",
+    "lesson.btn_regen": "↻ เริ่มใหม่",
+    "lesson.btn_continue": "↪ ดำเนินการต่อ",
+    "lesson.btn_continue_story": "↪ ดำเนินเรื่องต่อ"
   },
   "el": {
     "furigana.show": "νομίστε την furigana",
@@ -3789,7 +3973,15 @@
     "story.prompt_placeholder": "Δεν υπάρχει πρόταση ευημερία για αυτό το μάθημα.",
     "lib.empty_lang": "Δεν υπάρχουν μάθημα σε αυτή τη γλώσσα.",
     "lib.empty": "Δεν υπάρχουν αποθηκευμένα μάθημα ακόμη — ξεκινήστε πάνω!",
-    "status.offline": "Αποσύνδεση — αποθηκευμένα μάθημα μόνο"
+    "status.offline": "Αποσύνδεση — αποθηκευμένα μάθημα μόνο",
+    "app.tagline": "Μάθε μονογραφίες για κάθε θέμα σε κάθε γλώσσα",
+    "lesson.gen_topic_title": "✨ Αποκτήστε τίτλο",
+    "lesson.gen_topic_title_title": "Δημιουργήστε τίτλο μαθήματος με την ΑI",
+    "lesson.btn_topics": "← Θέματα",
+    "lesson.btn_share": "🔗 Είστε ο πρώτος",
+    "lesson.btn_regen": "↻ Αναγενερώστε",
+    "lesson.btn_continue": "↪ Συνεχίστε",
+    "lesson.btn_continue_story": "↪ Συνεχίστε την παραδοση"
   },
   "fi": {
     "app.backend": "Tietojärjestelmä:",
@@ -3947,7 +4139,15 @@
     "lesson.read_full_story": "📖 Lue koko tarina",
     "lib.import": "⬆ Tuo tiedosto",
     "lib.filter_all": "🌐 Kaikki kielet",
-    "lib.filter_all_short": "🌐 Kaikki"
+    "lib.filter_all_short": "🌐 Kaikki",
+    "app.tagline": "Oppiä kieliä minkä tahansa aiheen kielellä",
+    "lesson.gen_topic_title": "✨ Luoda uusi otsikko",
+    "lesson.gen_topic_title_title": "Luo kurssin otsikko intelliqenssin avulla",
+    "lesson.btn_topics": "← Aiheet",
+    "lesson.btn_share": "🔗 Jaa",
+    "lesson.btn_regen": "↻ Uudelleenluo",
+    "lesson.btn_continue": "↪ Jatka",
+    "lesson.btn_continue_story": "↪ Jatka tarinaa"
   },
   "hu": {
     "app.backend": "Háttér:",
@@ -4105,7 +4305,15 @@
     "lesson.read_full_story": "📖 Összefoglaló történet olvasása",
     "lib.import": "⬆ Importálás",
     "lib.filter_all": "🌐 Minden nyelv",
-    "lib.filter_all_short": "🌐 Minden"
+    "lib.filter_all_short": "🌐 Minden",
+    "app.tagline": " Bájt szavakat bármely témához és nyelvhez",
+    "lesson.gen_topic_title": "✨ Témát generál",
+    "lesson.gen_topic_title_title": "AI segítségével generálj témakör címét",
+    "lesson.btn_topics": "← Témák",
+    "lesson.btn_share": "🔗 Megosztás",
+    "lesson.btn_regen": "↻ Újra",
+    "lesson.btn_continue": "↪ Folytassa",
+    "lesson.btn_continue_story": "↪ Történet folytata"
   },
   "da": {
     "app.backend": "Backend:",
@@ -4263,7 +4471,15 @@
     "story.prompt_placeholder": "Ingen fortællingsprompt gemt for denne lektion.",
     "lib.empty_lang": "Ingen lektioner i denne sprog.",
     "lib.empty": "Ingen gemte lektioner endnu — generer en ovenfor!",
-    "status.offline": "Offline — kun gemte lektioner"
+    "status.offline": "Offline — kun gemte lektioner",
+    "app.tagline": "Lær vokabular til enhver emne i enhver sprog",
+    "lesson.gen_topic_title": "✨ Generer titel",
+    "lesson.gen_topic_title_title": "Generer lektionstitel med AI",
+    "lesson.btn_topics": "← Emner",
+    "lesson.btn_share": "🔗 Del",
+    "lesson.btn_regen": "↻ Gen",
+    "lesson.btn_continue": "↪ Fortsæt",
+    "lesson.btn_continue_story": "↪ Fortsæt historie"
   },
   "ca": {
     "app.backend": "Backend:",
