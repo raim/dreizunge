@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Language Lesson Generator | Complete World Map + Tree</title>
+    <title>Language Lesson Generator | DAG Tree + Depth-Ordered Leaves</title>
     <style>
         * {
             margin: 0;
@@ -247,13 +247,13 @@
         #map-canvas {
             z-index: 10;
             opacity: 1;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
         }
 
         #tree-canvas {
             z-index: 5;
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
         }
 
         .flying-dot {
@@ -264,7 +264,7 @@
             z-index: 100;
             pointer-events: none;
             box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(0,0,0,0.3);
-            transition: left 1s cubic-bezier(0.33, 1, 0.68, 1), top 1s cubic-bezier(0.33, 1, 0.68, 1);
+            transition: left 0.8s cubic-bezier(0.33, 1, 0.68, 1), top 0.8s cubic-bezier(0.33, 1, 0.68, 1);
         }
 
         .flying-dot::after {
@@ -284,8 +284,8 @@
 
         .map-dot, .tree-dot {
             position: absolute;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             cursor: pointer;
             transform: translate(-50%, -50%);
@@ -304,26 +304,11 @@
             transform: translate(-50%, -50%) scale(1.25);
         }
 
-        .map-label {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.75);
-            color: white;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 12px;
-            white-space: nowrap;
-            pointer-events: none;
-            font-weight: 500;
-            transform: translate(12px, -4px);
-            z-index: 21;
-            font-family: monospace;
-        }
-
         @media (max-width: 700px) {
             .ui-panel { padding: 6px 12px; }
             .badge-icon { padding: 4px 8px; font-size: 11px; }
             .map-dot, .tree-dot { width: 16px; height: 16px; }
-            .map-label { font-size: 8px; transform: translate(10px, -3px); }
+            .flying-dot { width: 20px; height: 20px; }
         }
     </style>
 </head>
@@ -362,157 +347,191 @@
         </div>
         <div id="lesson-body" class="lesson-content">Select source & target languages</div>
     </div>
-    <div id="instruction">🖱️ Click dots to select | 🔄 Toggle Map/Tree</div>
+    <div id="instruction">🖱️ Click dots to select | 🔄 Toggle Map/Tree with animation</div>
 
     <div id="map-canvas" class="canvas-container"></div>
     <div id="tree-canvas" class="canvas-container"></div>
 
     <script>
-        // Unique languages (appear in tree)
-        const uniqueLanguages = [
-            // Ancestors
-            { id: "proto-human", name: "Proto-Human", treeX: 0.50, treeY: 0.05, color: "#888888", parent: null, isAncestor: true },
-            { id: "proto-indo-european", name: "Indo-European", treeX: 0.25, treeY: 0.14, color: "#e5b73b", parent: "proto-human", isAncestor: true },
-            { id: "proto-uralic", name: "Uralic", treeX: 0.40, treeY: 0.14, color: "#55aa88", parent: "proto-human", isAncestor: true },
-            { id: "proto-turkic", name: "Turkic", treeX: 0.52, treeY: 0.14, color: "#e8953b", parent: "proto-human", isAncestor: true },
-            { id: "proto-sinitic", name: "Sinitic", treeX: 0.64, treeY: 0.14, color: "#b31b3b", parent: "proto-human", isAncestor: true },
-            { id: "proto-japonic", name: "Japonic", treeX: 0.75, treeY: 0.14, color: "#dd6699", parent: "proto-human", isAncestor: true },
-            { id: "proto-koreanic", name: "Koreanic", treeX: 0.84, treeY: 0.14, color: "#cc55aa", parent: "proto-human", isAncestor: true },
-            { id: "proto-afroasiatic", name: "Afroasiatic", treeX: 0.92, treeY: 0.14, color: "#2c7f6e", parent: "proto-human", isAncestor: true },
-            { id: "proto-austronesian", name: "Austronesian", treeX: 0.97, treeY: 0.14, color: "#e2856e", parent: "proto-human", isAncestor: true },
-            { id: "proto-bantu", name: "Bantu", treeX: 0.99, treeY: 0.14, color: "#3c9b4c", parent: "proto-human", isAncestor: true },
-            { id: "proto-tai", name: "Tai-Kadai", treeX: 0.68, treeY: 0.14, color: "#66aacc", parent: "proto-human", isAncestor: true },
-            { id: "proto-germanic", name: "Germanic", treeX: 0.10, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
-            { id: "latin", name: "Italic", treeX: 0.23, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
-            { id: "proto-slavic", name: "Slavic", treeX: 0.36, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
-            { id: "proto-greek", name: "Hellenic", treeX: 0.48, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
-            { id: "proto-indo-iranian", name: "Indo-Iranian", treeX: 0.60, treeY: 0.25, color: "#c99b2a", parent: "proto-indo-european", isAncestor: true },
-            { id: "proto-semitic", name: "Semitic", treeX: 0.92, treeY: 0.25, color: "#2c7f6e", parent: "proto-afroasiatic", isAncestor: true },
+        // DAG Language data with multiple parents where applicable
+        // Russian has both Slavic (primary) and Italic (influence) parents
+        const languagesData = [
+            // Germanic branch (depth 3: Proto-Human → Indo-European → Germanic)
+            { id: "english", name: "English", mapX: 0.14, mapY: 0.48, treeX: 0.08, treeY: 0.38, color: "#e5b73b", parents: ["proto-germanic"], depth: 3 },
+            { id: "german", name: "German", mapX: 0.25, mapY: 0.48, treeX: 0.12, treeY: 0.38, color: "#e5b73b", parents: ["proto-germanic"], depth: 3 },
+            { id: "dutch", name: "Dutch", mapX: 0.22, mapY: 0.49, treeX: 0.16, treeY: 0.38, color: "#e5b73b", parents: ["proto-germanic"], depth: 3 },
+            { id: "luxembourgish", name: "Lëtzebuergesch", mapX: 0.24, mapY: 0.50, treeX: 0.20, treeY: 0.38, color: "#e5b73b", parents: ["proto-germanic"], depth: 3 },
+            { id: "swedish", name: "Swedish", mapX: 0.38, mapY: 0.42, treeX: 0.24, treeY: 0.38, color: "#e5b73b", parents: ["proto-germanic"], depth: 3 },
+            { id: "danish", name: "Danish", mapX: 0.35, mapY: 0.44, treeX: 0.28, treeY: 0.38, color: "#e5b73b", parents: ["proto-germanic"], depth: 3 },
             
-            // EUROPE - Tree leaves (unique)
-            { id: "english", name: "English", treeX: 0.02, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
-            { id: "german", name: "German", treeX: 0.07, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
-            { id: "dutch", name: "Dutch", treeX: 0.12, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
-            { id: "swedish", name: "Swedish", treeX: 0.17, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
-            { id: "danish", name: "Danish", treeX: 0.22, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
-            { id: "luxembourgish", name: "Lëtzebuergesch", treeX: 0.27, treeY: 0.42, color: "#e5b73b", parent: "proto-germanic" },
-            { id: "french", name: "French", treeX: 0.23, treeY: 0.42, color: "#e5b73b", parent: "latin" },
-            { id: "italian", name: "Italian", treeX: 0.18, treeY: 0.42, color: "#e5b73b", parent: "latin" },
-            { id: "spanish", name: "Spanish", treeX: 0.28, treeY: 0.42, color: "#e5b73b", parent: "latin" },
-            { id: "portuguese", name: "Portuguese", treeX: 0.33, treeY: 0.42, color: "#e5b73b", parent: "latin" },
-            { id: "romanian", name: "Romanian", treeX: 0.38, treeY: 0.42, color: "#e5b73b", parent: "latin" },
-            { id: "catalan", name: "Catalan", treeX: 0.43, treeY: 0.42, color: "#e5b73b", parent: "latin" },
-            { id: "polish", name: "Polish", treeX: 0.38, treeY: 0.42, color: "#e5b73b", parent: "proto-slavic" },
-            { id: "czech", name: "Czech", treeX: 0.43, treeY: 0.42, color: "#e5b73b", parent: "proto-slavic" },
-            { id: "ukrainian", name: "Ukrainian", treeX: 0.48, treeY: 0.42, color: "#e5b73b", parent: "proto-slavic" },
-            { id: "russian", name: "Russian", treeX: 0.33, treeY: 0.42, color: "#e5b73b", parent: "proto-slavic" },
-            { id: "greek", name: "Greek", treeX: 0.48, treeY: 0.42, color: "#e5b73b", parent: "proto-greek" },
-            { id: "hungarian", name: "Hungarian", treeX: 0.43, treeY: 0.42, color: "#55aa88", parent: "proto-uralic" },
-            { id: "finnish", name: "Finnish", treeX: 0.38, treeY: 0.42, color: "#55aa88", parent: "proto-uralic" },
+            // Italic/Romance branch (depth 3: Proto-Human → Indo-European → Italic)
+            { id: "portuguese", name: "Portuguese", mapX: 0.09, mapY: 0.57, treeX: 0.34, treeY: 0.38, color: "#e5b73b", parents: ["latin"], depth: 3 },
+            { id: "spanish", name: "Spanish", mapX: 0.15, mapY: 0.58, treeX: 0.38, treeY: 0.38, color: "#e5b73b", parents: ["latin"], depth: 3 },
+            { id: "catalan", name: "Catalan", mapX: 0.27, mapY: 0.56, treeX: 0.42, treeY: 0.38, color: "#e5b73b", parents: ["latin"], depth: 3 },
+            { id: "french", name: "French", mapX: 0.28, mapY: 0.52, treeX: 0.46, treeY: 0.38, color: "#e5b73b", parents: ["latin"], depth: 3 },
+            { id: "italian", name: "Italian", mapX: 0.36, mapY: 0.54, treeX: 0.50, treeY: 0.38, color: "#e5b73b", parents: ["latin"], depth: 3 },
+            { id: "romanian", name: "Romanian", mapX: 0.46, mapY: 0.54, treeX: 0.54, treeY: 0.38, color: "#e5b73b", parents: ["latin"], depth: 3 },
             
-            // ASIA - Tree leaves
-            { id: "turkish", name: "Turkish", treeX: 0.52, treeY: 0.42, color: "#e8953b", parent: "proto-turkic" },
-            { id: "hindi", name: "Hindi", treeX: 0.60, treeY: 0.42, color: "#e5b73b", parent: "proto-indo-iranian" },
-            { id: "mandarin", name: "Mandarin Chinese", treeX: 0.64, treeY: 0.42, color: "#b31b3b", parent: "proto-sinitic" },
-            { id: "thai", name: "Thai", treeX: 0.68, treeY: 0.42, color: "#66aacc", parent: "proto-tai" },
-            { id: "indonesian", name: "Indonesian", treeX: 0.97, treeY: 0.42, color: "#e2856e", parent: "proto-austronesian" },
-            { id: "japanese", name: "Japanese", treeX: 0.75, treeY: 0.42, color: "#dd6699", parent: "proto-japonic" },
-            { id: "korean", name: "Korean", treeX: 0.84, treeY: 0.42, color: "#cc55aa", parent: "proto-koreanic" },
+            // Slavic branch (depth 3)
+            { id: "polish", name: "Polish", mapX: 0.42, mapY: 0.49, treeX: 0.60, treeY: 0.38, color: "#e5b73b", parents: ["proto-slavic"], depth: 3 },
+            { id: "czech", name: "Czech", mapX: 0.39, mapY: 0.50, treeX: 0.64, treeY: 0.38, color: "#e5b73b", parents: ["proto-slavic"], depth: 3 },
+            { id: "ukrainian", name: "Ukrainian", mapX: 0.52, mapY: 0.48, treeX: 0.68, treeY: 0.38, color: "#e5b73b", parents: ["proto-slavic"], depth: 3 },
             
-            // MIDDLE EAST / AFRICA
-            { id: "arabic", name: "Arabic", treeX: 0.90, treeY: 0.42, color: "#2c7f6e", parent: "proto-semitic" },
-            { id: "hebrew", name: "Hebrew", treeX: 0.95, treeY: 0.42, color: "#2c7f6e", parent: "proto-semitic" },
-            { id: "swahili", name: "Swahili", treeX: 0.92, treeY: 0.42, color: "#3c9b4c", parent: "proto-bantu" }
+            // Russian has DAG: both Slavic and Italic influence
+            { id: "russian", name: "Russian", mapX: 0.58, mapY: 0.45, treeX: 0.72, treeY: 0.38, color: "#e5b73b", parents: ["proto-slavic", "latin"], depth: 3 },
+            
+            // Semitic branch (depth 3: Proto-Human → Afroasiatic → Semitic)
+            { id: "hebrew", name: "Hebrew", mapX: 0.46, mapY: 0.63, treeX: 0.78, treeY: 0.38, color: "#2c7f6e", parents: ["proto-semitic"], depth: 3 },
+            { id: "arabic", name: "Arabic", mapX: 0.52, mapY: 0.66, treeX: 0.82, treeY: 0.38, color: "#2c7f6e", parents: ["proto-semitic"], depth: 3 },
+            
+            // Uralic branch (depth 2: Proto-Human → Uralic)
+            { id: "finnish", name: "Finnish", mapX: 0.43, mapY: 0.40, treeX: 0.86, treeY: 0.38, color: "#55aa88", parents: ["proto-uralic"], depth: 2 },
+            { id: "hungarian", name: "Hungarian", mapX: 0.40, mapY: 0.51, treeX: 0.90, treeY: 0.38, color: "#55aa88", parents: ["proto-uralic"], depth: 2 },
+            
+            // Turkic (depth 2)
+            { id: "turkish", name: "Turkish", mapX: 0.50, mapY: 0.59, treeX: 0.03, treeY: 0.38, color: "#e8953b", parents: ["proto-turkic"], depth: 2 },
+            
+            // Sinitic (depth 2)
+            { id: "mandarin", name: "Mandarin Chinese", mapX: 0.80, mapY: 0.55, treeX: 0.07, treeY: 0.38, color: "#b31b3b", parents: ["proto-sinitic"], depth: 2 },
+            
+            // Japonic (depth 2)
+            { id: "japanese", name: "Japanese", mapX: 0.88, mapY: 0.53, treeX: 0.11, treeY: 0.38, color: "#dd6699", parents: ["proto-japonic"], depth: 2 },
+            
+            // Koreanic (depth 2)
+            { id: "korean", name: "Korean", mapX: 0.86, mapY: 0.57, treeX: 0.15, treeY: 0.38, color: "#cc55aa", parents: ["proto-koreanic"], depth: 2 },
+            
+            // Austronesian (depth 2)
+            { id: "indonesian", name: "Indonesian", mapX: 0.82, mapY: 0.76, treeX: 0.19, treeY: 0.38, color: "#e2856e", parents: ["proto-austronesian"], depth: 2 },
+            
+            // Bantu (depth 2)
+            { id: "swahili", name: "Swahili", mapX: 0.56, mapY: 0.74, treeX: 0.23, treeY: 0.38, color: "#3c9b4c", parents: ["proto-bantu"], depth: 2 },
+            
+            // Tai (depth 2)
+            { id: "thai", name: "Thai", mapX: 0.78, mapY: 0.68, treeX: 0.27, treeY: 0.38, color: "#66aacc", parents: ["proto-tai"], depth: 2 },
+            
+            // Hellenic (depth 3)
+            { id: "greek", name: "Greek", mapX: 0.44, mapY: 0.60, treeX: 0.31, treeY: 0.38, color: "#e5b73b", parents: ["proto-greek"], depth: 3 },
+            
+            // Indo-Iranian (depth 3)
+            { id: "hindi", name: "Hindi", mapX: 0.68, mapY: 0.65, treeX: 0.35, treeY: 0.38, color: "#e5b73b", parents: ["proto-indo-iranian"], depth: 3 }
         ];
 
-        // Map dots (including replicas for Americas)
-        const mapDotsData = [
-            // EUROPE
-            { name: "English", mapX: 0.14, mapY: 0.48, color: "#e5b73b", languageId: "english" },
-            { name: "German", mapX: 0.25, mapY: 0.48, color: "#e5b73b", languageId: "german" },
-            { name: "Dutch", mapX: 0.22, mapY: 0.49, color: "#e5b73b", languageId: "dutch" },
-            { name: "Swedish", mapX: 0.38, mapY: 0.42, color: "#e5b73b", languageId: "swedish" },
-            { name: "Danish", mapX: 0.35, mapY: 0.44, color: "#e5b73b", languageId: "danish" },
-            { name: "Luxembourgish", mapX: 0.24, mapY: 0.50, color: "#e5b73b", languageId: "luxembourgish" },
-            { name: "French", mapX: 0.28, mapY: 0.52, color: "#e5b73b", languageId: "french" },
-            { name: "Italian", mapX: 0.36, mapY: 0.54, color: "#e5b73b", languageId: "italian" },
-            { name: "Spanish", mapX: 0.15, mapY: 0.58, color: "#e5b73b", languageId: "spanish" },
-            { name: "Portuguese", mapX: 0.09, mapY: 0.57, color: "#e5b73b", languageId: "portuguese" },
-            { name: "Romanian", mapX: 0.46, mapY: 0.54, color: "#e5b73b", languageId: "romanian" },
-            { name: "Catalan", mapX: 0.27, mapY: 0.56, color: "#e5b73b", languageId: "catalan" },
-            { name: "Polish", mapX: 0.42, mapY: 0.49, color: "#e5b73b", languageId: "polish" },
-            { name: "Czech", mapX: 0.39, mapY: 0.50, color: "#e5b73b", languageId: "czech" },
-            { name: "Ukrainian", mapX: 0.52, mapY: 0.48, color: "#e5b73b", languageId: "ukrainian" },
-            { name: "Russian", mapX: 0.58, mapY: 0.45, color: "#e5b73b", languageId: "russian" },
-            { name: "Greek", mapX: 0.44, mapY: 0.60, color: "#e5b73b", languageId: "greek" },
-            { name: "Hungarian", mapX: 0.40, mapY: 0.51, color: "#55aa88", languageId: "hungarian" },
-            { name: "Finnish", mapX: 0.43, mapY: 0.40, color: "#55aa88", languageId: "finnish" },
-            
-            // ASIA
-            { name: "Turkish", mapX: 0.50, mapY: 0.59, color: "#e8953b", languageId: "turkish" },
-            { name: "Hindi", mapX: 0.68, mapY: 0.65, color: "#e5b73b", languageId: "hindi" },
-            { name: "Mandarin Chinese", mapX: 0.80, mapY: 0.55, color: "#b31b3b", languageId: "mandarin" },
-            { name: "Thai", mapX: 0.78, mapY: 0.68, color: "#66aacc", languageId: "thai" },
-            { name: "Indonesian", mapX: 0.82, mapY: 0.76, color: "#e2856e", languageId: "indonesian" },
-            { name: "Japanese", mapX: 0.88, mapY: 0.53, color: "#dd6699", languageId: "japanese" },
-            { name: "Korean", mapX: 0.86, mapY: 0.57, color: "#cc55aa", languageId: "korean" },
-            
-            // MIDDLE EAST / AFRICA
-            { name: "Arabic", mapX: 0.48, mapY: 0.68, color: "#2c7f6e", languageId: "arabic" },
-            { name: "Hebrew", mapX: 0.44, mapY: 0.65, color: "#2c7f6e", languageId: "hebrew" },
-            { name: "Swahili", mapX: 0.56, mapY: 0.74, color: "#3c9b4c", languageId: "swahili" },
-            
-            // NORTH AMERICA (replicas - map to European languages)
-            { name: "English", mapX: 0.22, mapY: 0.35, color: "#e5b73b", languageId: "english", isReplica: true },
-            { name: "Spanish", mapX: 0.12, mapY: 0.42, color: "#e5b73b", languageId: "spanish", isReplica: true },
-            { name: "French", mapX: 0.18, mapY: 0.38, color: "#e5b73b", languageId: "french", isReplica: true },
-            
-            // SOUTH AMERICA (replicas)
-            { name: "Spanish", mapX: 0.16, mapY: 0.72, color: "#e5b73b", languageId: "spanish", isReplica: true },
-            { name: "Portuguese", mapX: 0.22, mapY: 0.74, color: "#e5b73b", languageId: "portuguese", isReplica: true }
+        // Sort leaves by depth (deeper languages to the right)
+        // Depth 2 languages (shallower) go left, Depth 3 languages (deeper) go right
+        languagesData.sort((a, b) => {
+            // First by depth (shallower first)
+            if (a.depth !== b.depth) return a.depth - b.depth;
+            // Then alphabetically within same depth
+            return a.name.localeCompare(b.name);
+        });
+        
+        // Reassign X positions based on sorted order
+        const leafCount = languagesData.length;
+        languagesData.forEach((lang, idx) => {
+            // Spread from 0.03 to 0.97 with even spacing
+            lang.treeX = 0.03 + (idx / (leafCount - 1)) * 0.94;
+        });
+
+        // Ancestors for tree display with DAG structure
+        const ancestors = [
+            { id: "proto-human", name: "Proto-Human", treeX: 0.50, treeY: 0.05, color: "#888888", parents: [] },
+            { id: "proto-indo-european", name: "Indo-European", treeX: 0.50, treeY: 0.12, color: "#e5b73b", parents: ["proto-human"] },
+            { id: "proto-germanic", name: "Germanic", treeX: 0.18, treeY: 0.19, color: "#c99b2a", parents: ["proto-indo-european"] },
+            { id: "latin", name: "Italic", treeX: 0.46, treeY: 0.19, color: "#c99b2a", parents: ["proto-indo-european"] },
+            { id: "proto-slavic", name: "Slavic", treeX: 0.66, treeY: 0.19, color: "#c99b2a", parents: ["proto-indo-european"] },
+            { id: "proto-greek", name: "Hellenic", treeX: 0.31, treeY: 0.19, color: "#c99b2a", parents: ["proto-indo-european"] },
+            { id: "proto-indo-iranian", name: "Indo-Iranian", treeX: 0.35, treeY: 0.19, color: "#c99b2a", parents: ["proto-indo-european"] },
+            { id: "proto-uralic", name: "Uralic", treeX: 0.88, treeY: 0.12, color: "#55aa88", parents: ["proto-human"] },
+            { id: "proto-turkic", name: "Turkic", treeX: 0.03, treeY: 0.12, color: "#e8953b", parents: ["proto-human"] },
+            { id: "proto-sinitic", name: "Sinitic", treeX: 0.07, treeY: 0.12, color: "#b31b3b", parents: ["proto-human"] },
+            { id: "proto-japonic", name: "Japonic", treeX: 0.11, treeY: 0.12, color: "#dd6699", parents: ["proto-human"] },
+            { id: "proto-koreanic", name: "Koreanic", treeX: 0.15, treeY: 0.12, color: "#cc55aa", parents: ["proto-human"] },
+            { id: "proto-afroasiatic", name: "Afroasiatic", treeX: 0.80, treeY: 0.12, color: "#2c7f6e", parents: ["proto-human"] },
+            { id: "proto-semitic", name: "Semitic", treeX: 0.80, treeY: 0.19, color: "#2c7f6e", parents: ["proto-afroasiatic"] },
+            { id: "proto-austronesian", name: "Austronesian", treeX: 0.19, treeY: 0.12, color: "#e2856e", parents: ["proto-human"] },
+            { id: "proto-bantu", name: "Bantu", treeX: 0.23, treeY: 0.12, color: "#3c9b4c", parents: ["proto-human"] },
+            { id: "proto-tai", name: "Tai-Kadai", treeX: 0.27, treeY: 0.12, color: "#66aacc", parents: ["proto-human"] }
         ];
 
-        // Build parent map for pathfinding
+        // Build parent map for pathfinding (DAG - multiple parents)
         const parentMap = new Map();
-        uniqueLanguages.forEach(lang => { if (lang.parent) parentMap.set(lang.id, lang.parent); });
+        const childrenMap = new Map();
+        
+        languagesData.forEach(lang => {
+            lang.parents.forEach(parentId => {
+                if (!parentMap.has(lang.id)) parentMap.set(lang.id, []);
+                parentMap.get(lang.id).push(parentId);
+                
+                if (!childrenMap.has(parentId)) childrenMap.set(parentId, []);
+                childrenMap.get(parentId).push(lang.id);
+            });
+        });
+        
+        ancestors.forEach(anc => {
+            anc.parents.forEach(parentId => {
+                if (!parentMap.has(anc.id)) parentMap.set(anc.id, []);
+                parentMap.get(anc.id).push(parentId);
+                
+                if (!childrenMap.has(parentId)) childrenMap.set(parentId, []);
+                childrenMap.get(parentId).push(anc.id);
+            });
+        });
 
         function findEvolutionaryPath(sourceId, targetId) {
-            function getAncestors(id) {
-                const chain = [id];
-                let current = id;
-                while (parentMap.has(current)) {
-                    current = parentMap.get(current);
-                    chain.push(current);
+            // BFS to find all paths, then return the shortest
+            function getAllPaths(start, end) {
+                const paths = [];
+                const queue = [[start]];
+                
+                while (queue.length > 0) {
+                    const path = queue.shift();
+                    const last = path[path.length - 1];
+                    
+                    if (last === end) {
+                        paths.push(path);
+                        continue;
+                    }
+                    
+                    const parents = parentMap.get(last) || [];
+                    for (const parent of parents) {
+                        if (!path.includes(parent)) {
+                            queue.push([...path, parent]);
+                        }
+                    }
                 }
-                return chain;
+                
+                return paths;
             }
             
-            const sourceAncestors = getAncestors(sourceId);
-            const targetAncestors = getAncestors(targetId);
+            // Get paths from source to root and target to root
+            const sourcePaths = getAllPaths(sourceId, "proto-human");
+            const targetPaths = getAllPaths(targetId, "proto-human");
             
-            let lca = null;
-            for (let s of sourceAncestors) {
-                if (targetAncestors.includes(s)) {
-                    lca = s;
-                    break;
+            if (sourcePaths.length === 0 || targetPaths.length === 0) return [sourceId, targetId];
+            
+            // Find common ancestor and build combined path
+            let bestPath = null;
+            let minLength = Infinity;
+            
+            for (const sourcePath of sourcePaths) {
+                for (const targetPath of targetPaths) {
+                    // Find common node
+                    for (let i = 0; i < sourcePath.length; i++) {
+                        const common = sourcePath[i];
+                        const targetIndex = targetPath.indexOf(common);
+                        if (targetIndex !== -1) {
+                            const combined = [...sourcePath.slice(0, i + 1), ...targetPath.slice(0, targetIndex).reverse()];
+                            if (combined.length < minLength) {
+                                minLength = combined.length;
+                                bestPath = combined;
+                            }
+                            break;
+                        }
+                    }
                 }
             }
             
-            if (!lca) return [sourceId, targetId];
-            
-            const sourceToLca = [];
-            for (let s of sourceAncestors) {
-                sourceToLca.push(s);
-                if (s === lca) break;
-            }
-            
-            const lcaToTarget = [];
-            for (let t of targetAncestors) {
-                if (t === lca) continue;
-                lcaToTarget.unshift(t);
-            }
-            
-            return [...sourceToLca, ...lcaToTarget];
+            return bestPath || [sourceId, targetId];
         }
 
         let sourceLang = null;
@@ -520,6 +539,7 @@
         let mapWidth, mapHeight;
         let currentView = 'map';
         let pathHighlightActive = false;
+        let isAnimating = false;
 
         const mapContainer = document.getElementById('map-canvas');
         const treeContainer = document.getElementById('tree-canvas');
@@ -557,92 +577,79 @@
         function drawMap() {
             if (!mapCtx) return;
             
-            // Ocean
             mapCtx.fillStyle = '#1a3a5a';
             mapCtx.fillRect(0, 0, mapWidth, mapHeight);
             
-            // North America
-            mapCtx.fillStyle = '#2a5a5a';
-            mapCtx.beginPath();
-            mapCtx.moveTo(mapWidth * 0.05, mapHeight * 0.30);
-            mapCtx.lineTo(mapWidth * 0.22, mapHeight * 0.28);
-            mapCtx.lineTo(mapWidth * 0.25, mapHeight * 0.45);
-            mapCtx.lineTo(mapWidth * 0.15, mapHeight * 0.52);
-            mapCtx.lineTo(mapWidth * 0.05, mapHeight * 0.48);
-            mapCtx.fill();
-            
-            // South America
-            mapCtx.fillStyle = '#3a6a5a';
-            mapCtx.beginPath();
-            mapCtx.moveTo(mapWidth * 0.15, mapHeight * 0.55);
-            mapCtx.lineTo(mapWidth * 0.25, mapHeight * 0.52);
-            mapCtx.lineTo(mapWidth * 0.28, mapHeight * 0.80);
-            mapCtx.lineTo(mapWidth * 0.18, mapHeight * 0.82);
-            mapCtx.fill();
-            
             // Europe
-            mapCtx.fillStyle = '#2a4a5a';
+            mapCtx.fillStyle = 'rgba(42, 74, 90, 0.6)';
             mapCtx.beginPath();
-            mapCtx.moveTo(mapWidth * 0.28, mapHeight * 0.32);
-            mapCtx.lineTo(mapWidth * 0.52, mapHeight * 0.30);
-            mapCtx.lineTo(mapWidth * 0.48, mapHeight * 0.55);
-            mapCtx.lineTo(mapWidth * 0.30, mapHeight * 0.58);
+            mapCtx.moveTo(mapWidth * 0.06, mapHeight * 0.38);
+            mapCtx.lineTo(mapWidth * 0.55, mapHeight * 0.32);
+            mapCtx.lineTo(mapWidth * 0.54, mapHeight * 0.58);
+            mapCtx.lineTo(mapWidth * 0.30, mapHeight * 0.60);
+            mapCtx.lineTo(mapWidth * 0.18, mapHeight * 0.62);
+            mapCtx.lineTo(mapWidth * 0.08, mapHeight * 0.55);
             mapCtx.fill();
             
             // Asia
-            mapCtx.fillStyle = '#3a5a6a';
+            mapCtx.fillStyle = 'rgba(58, 90, 106, 0.6)';
             mapCtx.beginPath();
-            mapCtx.moveTo(mapWidth * 0.50, mapHeight * 0.28);
+            mapCtx.moveTo(mapWidth * 0.53, mapHeight * 0.30);
             mapCtx.lineTo(mapWidth * 0.92, mapHeight * 0.26);
             mapCtx.lineTo(mapWidth * 0.95, mapHeight * 0.62);
-            mapCtx.lineTo(mapWidth * 0.65, mapHeight * 0.68);
-            mapCtx.lineTo(mapWidth * 0.48, mapHeight * 0.55);
+            mapCtx.lineTo(mapWidth * 0.65, mapHeight * 0.70);
+            mapCtx.lineTo(mapWidth * 0.51, mapHeight * 0.68);
+            mapCtx.lineTo(mapWidth * 0.50, mapHeight * 0.60);
             mapCtx.fill();
             
             // Africa
-            mapCtx.fillStyle = '#2a5a4a';
+            mapCtx.fillStyle = 'rgba(42, 90, 74, 0.6)';
             mapCtx.beginPath();
-            mapCtx.moveTo(mapWidth * 0.42, mapHeight * 0.58);
-            mapCtx.lineTo(mapWidth * 0.58, mapHeight * 0.56);
+            mapCtx.moveTo(mapWidth * 0.40, mapHeight * 0.60);
+            mapCtx.lineTo(mapWidth * 0.58, mapHeight * 0.58);
             mapCtx.lineTo(mapWidth * 0.55, mapHeight * 0.82);
-            mapCtx.lineTo(mapWidth * 0.40, mapHeight * 0.80);
+            mapCtx.lineTo(mapWidth * 0.38, mapHeight * 0.80);
             mapCtx.fill();
             
-            // Draw dots with labels
-            mapDotsData.forEach(dot => {
-                const x = dot.mapX * mapWidth;
-                const y = dot.mapY * mapHeight;
-                const radius = 10;
+            // Border
+            mapCtx.beginPath();
+            mapCtx.moveTo(mapWidth * 0.54, mapHeight * 0.32);
+            mapCtx.lineTo(mapWidth * 0.52, mapHeight * 0.58);
+            mapCtx.strokeStyle = 'rgba(255,255,255,0.4)';
+            mapCtx.setLineDash([8, 8]);
+            mapCtx.lineWidth = 1.5;
+            mapCtx.stroke();
+            mapCtx.setLineDash([]);
+            
+            // Draw map dots with labels
+            languagesData.forEach(lang => {
+                const x = lang.mapX * mapWidth;
+                const y = lang.mapY * mapHeight;
+                const radius = 9;
                 
-                // Dot
                 mapCtx.beginPath();
                 mapCtx.arc(x, y, radius, 0, Math.PI * 2);
-                mapCtx.fillStyle = dot.color;
+                mapCtx.fillStyle = lang.color;
                 mapCtx.fill();
                 mapCtx.beginPath();
-                mapCtx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
+                mapCtx.arc(x, y, radius * 0.35, 0, Math.PI * 2);
                 mapCtx.fillStyle = 'white';
                 mapCtx.fill();
                 
-                // Label background
                 mapCtx.fillStyle = 'rgba(0,0,0,0.7)';
-                mapCtx.font = `bold ${Math.floor(mapWidth * 0.01)}px Arial`;
-                const metrics = mapCtx.measureText(dot.name);
-                mapCtx.fillRect(x + 12, y - 10, metrics.width + 8, 16);
+                mapCtx.font = `bold ${Math.floor(mapWidth * 0.009)}px Arial`;
+                const metrics = mapCtx.measureText(lang.name);
+                mapCtx.fillRect(x + 11, y - 9, metrics.width + 7, 14);
                 
-                // Label text
-                mapCtx.fillStyle = dot.color;
-                mapCtx.fillText(dot.name, x + 16, y - 2);
+                mapCtx.fillStyle = lang.color;
+                mapCtx.fillText(lang.name, x + 14, y - 2);
             });
             
-            // Continent labels
-            mapCtx.fillStyle = 'rgba(255,255,255,0.35)';
-            mapCtx.font = `italic ${Math.floor(mapWidth * 0.02)}px Arial`;
-            mapCtx.fillText("NORTH AMERICA", mapWidth * 0.06, mapHeight * 0.32);
-            mapCtx.fillText("SOUTH AMERICA", mapWidth * 0.12, mapHeight * 0.68);
-            mapCtx.fillText("EUROPE", mapWidth * 0.32, mapHeight * 0.35);
+            mapCtx.fillStyle = 'rgba(255,255,255,0.5)';
+            mapCtx.font = `italic ${Math.floor(mapWidth * 0.018)}px Arial`;
+            mapCtx.fillText("EUROPE", mapWidth * 0.20, mapHeight * 0.38);
             mapCtx.fillText("ASIA", mapWidth * 0.68, mapHeight * 0.45);
-            mapCtx.fillText("AFRICA", mapWidth * 0.45, mapHeight * 0.75);
+            mapCtx.fillText("AFRICA", mapWidth * 0.42, mapHeight * 0.75);
         }
 
         function drawFullTree() {
@@ -652,15 +659,17 @@
             treeCtx.fillStyle = '#0a1620';
             treeCtx.fillRect(0, 0, mapWidth, mapHeight);
             
-            // Draw edges
-            uniqueLanguages.forEach(lang => {
-                if (lang.parent) {
-                    const parent = uniqueLanguages.find(l => l.id === lang.parent);
+            // Draw all edges (DAG - multiple parents)
+            const allNodes = [...ancestors, ...languagesData];
+            allNodes.forEach(node => {
+                const parents = parentMap.get(node.id) || [];
+                parents.forEach(parentId => {
+                    const parent = allNodes.find(n => n.id === parentId);
                     if (parent && parent.treeX !== undefined) {
                         const fromX = parent.treeX * mapWidth;
                         const fromY = parent.treeY * mapHeight;
-                        const toX = lang.treeX * mapWidth;
-                        const toY = lang.treeY * mapHeight;
+                        const toX = node.treeX * mapWidth;
+                        const toY = node.treeY * mapHeight;
                         
                         treeCtx.beginPath();
                         treeCtx.moveTo(fromX, fromY);
@@ -673,15 +682,34 @@
                         treeCtx.lineWidth = 2;
                         treeCtx.stroke();
                     }
-                }
+                });
             });
             
-            // Draw nodes
-            uniqueLanguages.forEach(lang => {
-                if (lang.treeX === undefined) return;
+            // Draw ancestor nodes
+            ancestors.forEach(node => {
+                const x = node.treeX * mapWidth;
+                const y = node.treeY * mapHeight;
+                const radius = 5;
+                
+                treeCtx.beginPath();
+                treeCtx.arc(x, y, radius, 0, Math.PI * 2);
+                treeCtx.fillStyle = node.color;
+                treeCtx.fill();
+                treeCtx.beginPath();
+                treeCtx.arc(x, y, radius * 0.4, 0, Math.PI * 2);
+                treeCtx.fillStyle = 'white';
+                treeCtx.fill();
+                
+                treeCtx.fillStyle = '#888888';
+                treeCtx.font = `${Math.floor(mapWidth * 0.007)}px Arial`;
+                treeCtx.fillText(node.name, x + radius + 4, y - 3);
+            });
+            
+            // Draw leaf nodes with labels
+            languagesData.forEach(lang => {
                 const x = lang.treeX * mapWidth;
                 const y = lang.treeY * mapHeight;
-                const radius = lang.isAncestor ? 5 : 7;
+                const radius = 6;
                 
                 treeCtx.beginPath();
                 treeCtx.arc(x, y, radius, 0, Math.PI * 2);
@@ -692,11 +720,9 @@
                 treeCtx.fillStyle = 'white';
                 treeCtx.fill();
                 
-                if (lang.isAncestor) {
-                    treeCtx.fillStyle = '#888888';
-                    treeCtx.font = `${Math.floor(mapWidth * 0.008)}px Arial`;
-                    treeCtx.fillText(lang.name, x + radius + 4, y - 3);
-                }
+                treeCtx.fillStyle = '#cccccc';
+                treeCtx.font = `${Math.floor(mapWidth * 0.008)}px Arial`;
+                treeCtx.fillText(lang.name, x + radius + 6, y - 4);
             });
         }
 
@@ -704,20 +730,23 @@
             if (!treeCtx) return;
             
             const pathSet = new Set(pathIds);
+            const allNodes = [...ancestors, ...languagesData];
             
             treeCtx.clearRect(0, 0, mapWidth, mapHeight);
             treeCtx.fillStyle = '#0a1620';
             treeCtx.fillRect(0, 0, mapWidth, mapHeight);
             
-            uniqueLanguages.forEach(lang => {
-                if (lang.parent) {
-                    const parent = uniqueLanguages.find(l => l.id === lang.parent);
+            // Draw edges with highlighting
+            allNodes.forEach(node => {
+                const parents = parentMap.get(node.id) || [];
+                parents.forEach(parentId => {
+                    const parent = allNodes.find(n => n.id === parentId);
                     if (parent && parent.treeX !== undefined) {
                         const fromX = parent.treeX * mapWidth;
                         const fromY = parent.treeY * mapHeight;
-                        const toX = lang.treeX * mapWidth;
-                        const toY = lang.treeY * mapHeight;
-                        const isPathEdge = pathSet.has(lang.id) && pathSet.has(parent.id);
+                        const toX = node.treeX * mapWidth;
+                        const toY = node.treeY * mapHeight;
+                        const isPathEdge = pathSet.has(node.id) && pathSet.has(parent.id);
                         
                         treeCtx.beginPath();
                         treeCtx.moveTo(fromX, fromY);
@@ -736,17 +765,19 @@
                         }
                         treeCtx.stroke();
                     }
-                }
+                });
             });
             
-            uniqueLanguages.forEach(lang => {
-                if (lang.treeX === undefined) return;
-                const x = lang.treeX * mapWidth;
-                const y = lang.treeY * mapHeight;
-                const isPathNode = pathSet.has(lang.id);
-                const isSource = sourceLang?.id === lang.id;
-                const isTarget = targetLang?.id === lang.id;
-                const baseRadius = lang.isAncestor ? 5 : 7;
+            // Draw nodes with highlighting
+            allNodes.forEach(node => {
+                if (node.treeX === undefined) return;
+                const x = node.treeX * mapWidth;
+                const y = node.treeY * mapHeight;
+                const isPathNode = pathSet.has(node.id);
+                const isSource = sourceLang?.id === node.id;
+                const isTarget = targetLang?.id === node.id;
+                const isAncestor = ancestors.some(a => a.id === node.id);
+                const baseRadius = isAncestor ? 5 : 6;
                 
                 if (isPathNode || isSource || isTarget) {
                     treeCtx.beginPath();
@@ -759,7 +790,7 @@
                     treeCtx.fill();
                     treeCtx.beginPath();
                     treeCtx.arc(x, y, baseRadius, 0, Math.PI * 2);
-                    treeCtx.fillStyle = lang.color;
+                    treeCtx.fillStyle = node.color;
                     treeCtx.fill();
                     treeCtx.beginPath();
                     treeCtx.arc(x, y, baseRadius * 0.4, 0, Math.PI * 2);
@@ -767,25 +798,95 @@
                     treeCtx.fill();
                     
                     treeCtx.fillStyle = 'white';
-                    treeCtx.font = `bold ${Math.floor(mapWidth * 0.01)}px Arial`;
-                    treeCtx.fillText(lang.name, x + baseRadius + 6, y - 4);
+                    treeCtx.font = `bold ${Math.floor(mapWidth * 0.009)}px Arial`;
+                    treeCtx.fillText(node.name, x + baseRadius + 6, y - 4);
                 } else {
                     treeCtx.beginPath();
                     treeCtx.arc(x, y, baseRadius, 0, Math.PI * 2);
-                    treeCtx.fillStyle = lang.color + '40';
+                    treeCtx.fillStyle = node.color + '40';
                     treeCtx.fill();
                     treeCtx.beginPath();
                     treeCtx.arc(x, y, baseRadius * 0.4, 0, Math.PI * 2);
-                    treeCtx.fillStyle = lang.color + '80';
+                    treeCtx.fillStyle = node.color + '80';
                     treeCtx.fill();
                     
-                    if (lang.isAncestor) {
+                    if (isAncestor) {
                         treeCtx.fillStyle = '#444444';
+                        treeCtx.font = `${Math.floor(mapWidth * 0.007)}px Arial`;
+                        treeCtx.fillText(node.name, x + baseRadius + 4, y - 3);
+                    } else {
+                        treeCtx.fillStyle = '#555555';
                         treeCtx.font = `${Math.floor(mapWidth * 0.008)}px Arial`;
-                        treeCtx.fillText(lang.name, x + baseRadius + 4, y - 3);
+                        treeCtx.fillText(node.name, x + baseRadius + 6, y - 4);
                     }
                 }
             });
+        }
+
+        async function animateTransition(toView) {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            const flyingDots = [];
+            languagesData.forEach(lang => {
+                const startX = currentView === 'map' ? lang.mapX * mapWidth : lang.treeX * mapWidth;
+                const startY = currentView === 'map' ? lang.mapY * mapHeight : lang.treeY * mapHeight;
+                const endX = toView === 'map' ? lang.mapX * mapWidth : lang.treeX * mapWidth;
+                const endY = toView === 'map' ? lang.mapY * mapHeight : lang.treeY * mapHeight;
+                
+                const dot = document.createElement('div');
+                dot.className = 'flying-dot';
+                dot.style.backgroundColor = lang.color;
+                dot.style.left = startX + 'px';
+                dot.style.top = startY + 'px';
+                dot.setAttribute('data-name', lang.name);
+                document.body.appendChild(dot);
+                
+                flyingDots.push({ dot, endX, endY });
+            });
+            
+            const mapOverlay = document.querySelector('#map-click-overlay');
+            const treeOverlay = document.querySelector('#tree-click-overlay');
+            if (mapOverlay) mapOverlay.style.display = 'none';
+            if (treeOverlay) treeOverlay.style.display = 'none';
+            
+            const mapCanvas = document.getElementById('map-canvas');
+            const treeCanvas = document.getElementById('tree-canvas');
+            mapCanvas.style.opacity = '0.3';
+            treeCanvas.style.opacity = '0.3';
+            
+            await new Promise(r => setTimeout(r, 50));
+            
+            flyingDots.forEach(({ dot, endX, endY }) => {
+                dot.style.left = endX + 'px';
+                dot.style.top = endY + 'px';
+            });
+            
+            await new Promise(r => setTimeout(r, 800));
+            
+            flyingDots.forEach(({ dot }) => dot.remove());
+            
+            currentView = toView;
+            
+            if (currentView === 'map') {
+                if (mapOverlay) mapOverlay.style.display = 'block';
+                if (treeOverlay) treeOverlay.style.display = 'none';
+                mapCanvas.style.opacity = '1';
+                treeCanvas.style.opacity = '0';
+            } else {
+                if (mapOverlay) mapOverlay.style.display = 'none';
+                if (treeOverlay) treeOverlay.style.display = 'block';
+                mapCanvas.style.opacity = '0';
+                treeCanvas.style.opacity = '1';
+                
+                if (sourceLang && targetLang) {
+                    const pathIds = findEvolutionaryPath(sourceLang.id, targetLang.id);
+                    highlightTreePath(pathIds);
+                    pathHighlightActive = true;
+                }
+            }
+            
+            isAnimating = false;
         }
 
         function createClickableElements() {
@@ -810,28 +911,24 @@
             treeOverlay.id = 'tree-click-overlay';
             treeOverlay.style.display = 'none';
             
-            // Map dots (all, including replicas)
-            mapDotsData.forEach(dot => {
-                const x = dot.mapX * mapWidth;
-                const y = dot.mapY * mapHeight;
+            languagesData.forEach(lang => {
+                const x = lang.mapX * mapWidth;
+                const y = lang.mapY * mapHeight;
                 
                 const el = document.createElement('div');
                 el.className = 'map-dot';
-                el.style.backgroundColor = dot.color;
+                el.style.backgroundColor = lang.color;
                 el.style.left = x + 'px';
                 el.style.top = y + 'px';
-                el.title = dot.name;
+                el.title = lang.name;
                 el.onclick = (e) => {
                     e.stopPropagation();
-                    // Find the unique language by ID
-                    const lang = uniqueLanguages.find(l => l.id === dot.languageId);
-                    if (lang) handleLanguageClick(lang);
+                    handleLanguageClick(lang);
                 };
                 mapOverlay.appendChild(el);
             });
             
-            // Tree dots (only unique languages, no replicas)
-            uniqueLanguages.filter(l => !l.isAncestor && l.treeX !== undefined).forEach(lang => {
+            languagesData.forEach(lang => {
                 const x = lang.treeX * mapWidth;
                 const y = lang.treeY * mapHeight;
                 
@@ -857,29 +954,6 @@
             document.body.appendChild(treeOverlay);
         }
 
-        function updateView() {
-            const mapOverlay = document.querySelector('#map-click-overlay');
-            const treeOverlay = document.querySelector('#tree-click-overlay');
-            const mapIcon = document.getElementById('map-icon');
-            const treeIcon = document.getElementById('tree-icon');
-            
-            if (currentView === 'map') {
-                document.getElementById('map-canvas').style.opacity = '1';
-                document.getElementById('tree-canvas').style.opacity = '0';
-                if (mapOverlay) mapOverlay.style.display = 'block';
-                if (treeOverlay) treeOverlay.style.display = 'none';
-                mapIcon.classList.add('active');
-                treeIcon.classList.remove('active');
-            } else {
-                document.getElementById('map-canvas').style.opacity = '0';
-                document.getElementById('tree-canvas').style.opacity = '1';
-                if (mapOverlay) mapOverlay.style.display = 'none';
-                if (treeOverlay) treeOverlay.style.display = 'block';
-                mapIcon.classList.remove('active');
-                treeIcon.classList.add('active');
-            }
-        }
-
         function updateDotSelection() {
             const mapDots = document.querySelectorAll('.map-dot');
             const treeDots = document.querySelectorAll('.tree-dot');
@@ -888,41 +962,38 @@
             treeDots.forEach(dot => dot.classList.remove('selected'));
             
             if (sourceLang) {
-                // Find all map dots with matching name
                 const sourceMapDots = Array.from(mapDots).filter(d => d.title === sourceLang.name);
                 sourceMapDots.forEach(dot => dot.classList.add('selected'));
                 
-                // Find tree dot
-                const treeDot = Array.from(treeDots).find(d => d.title === sourceLang.name);
-                if (treeDot) treeDot.classList.add('selected');
+                const sourceTreeDots = Array.from(treeDots).filter(d => d.title === sourceLang.name);
+                sourceTreeDots.forEach(dot => dot.classList.add('selected'));
                 
                 document.getElementById('source-name').innerText = sourceLang.name;
-                document.getElementById('source-badge').classList.remove('empty');
             } else {
                 document.getElementById('source-name').innerText = '—';
-                document.getElementById('source-badge').classList.add('empty');
             }
             
             if (targetLang) {
                 const targetMapDots = Array.from(mapDots).filter(d => d.title === targetLang.name);
                 targetMapDots.forEach(dot => dot.classList.add('selected'));
                 
+                const targetTreeDots = Array.from(treeDots).filter(d => d.title === targetLang.name);
+                targetTreeDots.forEach(dot => dot.classList.add('selected'));
+                
                 document.getElementById('target-name').innerText = targetLang.name;
-                document.getElementById('target-badge').classList.remove('empty');
             } else {
                 document.getElementById('target-name').innerText = '—';
-                document.getElementById('target-badge').classList.add('empty');
             }
         }
 
         async function updatePathHighlight() {
-            if (sourceLang && targetLang) {
+            if (sourceLang && targetLang && currentView === 'tree') {
                 const pathIds = findEvolutionaryPath(sourceLang.id, targetLang.id);
                 pathHighlightActive = true;
                 highlightTreePath(pathIds);
                 
                 const commonAncestorId = pathIds.length > 1 ? pathIds[1] : null;
-                const commonAncestor = commonAncestorId ? uniqueLanguages.find(l => l.id === commonAncestorId)?.name : 'common ancestor';
+                const commonAncestor = commonAncestorId ? [...ancestors, ...languagesData].find(n => n.id === commonAncestorId)?.name : 'common ancestor';
                 
                 const panel = document.getElementById('lesson-panel');
                 const bodyDiv = document.getElementById('lesson-body');
@@ -938,10 +1009,6 @@
                     • Practice dialogue<br>
                     <i style="font-size:10px;">(Replace with LLM API)</i>
                 `;
-            } else if (pathHighlightActive) {
-                pathHighlightActive = false;
-                drawFullTree();
-                updateDotSelection();
             }
         }
 
@@ -949,15 +1016,15 @@
             if (!sourceLang) {
                 sourceLang = lang;
                 updateDotSelection();
-                if (targetLang) updatePathHighlight();
+                if (targetLang && currentView === 'tree') updatePathHighlight();
             } else if (sourceLang && !targetLang && sourceLang.id !== lang.id) {
                 targetLang = lang;
                 updateDotSelection();
-                updatePathHighlight();
-                if (currentView === 'map') {
+                if (currentView === 'tree') {
+                    updatePathHighlight();
+                } else {
                     toggleCheckbox.checked = true;
-                    currentView = 'tree';
-                    updateView();
+                    animateTransition('tree');
                 }
             } else if (sourceLang && targetLang) {
                 resetSelection();
@@ -973,11 +1040,9 @@
             targetLang = null;
             updateDotSelection();
             
-            if (pathHighlightActive) {
+            if (pathHighlightActive && currentView === 'tree') {
                 pathHighlightActive = false;
-                if (currentView === 'tree') {
-                    drawFullTree();
-                }
+                drawFullTree();
             }
             
             document.getElementById('lesson-panel').classList.remove('visible');
@@ -985,8 +1050,10 @@
 
         const toggleCheckbox = document.getElementById('view-toggle');
         toggleCheckbox.addEventListener('change', (e) => {
-            currentView = e.target.checked ? 'tree' : 'map';
-            updateView();
+            const newView = e.target.checked ? 'tree' : 'map';
+            if (newView !== currentView) {
+                animateTransition(newView);
+            }
         });
 
         initCanvases();
