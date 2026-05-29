@@ -299,7 +299,7 @@ async function loadSavedList() {
   const orphans=filtered.filter(l=>!inChain.has(l.topic));
 
   function itemHtml(s, connector) {
-    const t=encTopic(s.topic);
+    const enc=encTopic(s.topic);
     const d=s.difficulty||2;
     const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
     const diffBadge='<span class="diff-dot d'+d+'" title="'+diff+'"></span>';
@@ -312,11 +312,11 @@ async function loadSavedList() {
     const conn=connector?'<span class="storyline-connector">↩</span>':'';
     const escapedTopic=s.topic.replace(/"/g,'&quot;');
     const escapedTopicSq=s.topic.replace(/'/g,"\\'");
-    const sid='si-'+t.replace(/[^a-z0-9]/gi,'').slice(0,20)+Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+    const sid='si-'+enc.replace(/[^a-z0-9]/gi,'').slice(0,20)+Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
     const tL=LANGS[s.lang||'it']||LANGS.it;
     const srcL=LANGS[s.srcLang||'en']||{flag:'🇬🇧',name:'English'};
     return \`<div class="saved-item-wrap">
-      <div class="saved-item" onclick="loadSaved('\${t}')">
+      <div class="saved-item" onclick="loadSaved('\${enc}')">
         \${conn}<span class="saved-emoji">\${tL.flag} \${s.topicEmoji||'📚'}</span>
         <div class="saved-info">
           <div class="saved-topic">\${s.topic} \${diffBadge}</div>
@@ -330,7 +330,7 @@ async function loadSavedList() {
       </div>
       <div class="saved-item-story">
         <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('\${sid}','\${escapedTopicSq}')">
-          📖 Read story <span id="sis-arrow-\${sid}" style="margin-left:auto;font-size:10px">▼</span>
+          \${t('lesson.read_story_short')} <span id="sis-arrow-\${sid}" style="margin-left:auto;font-size:10px">▼</span>
         </button>
         <div class="saved-item-story-body" id="sis-body-\${sid}"></div>
       </div>
