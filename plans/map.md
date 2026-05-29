@@ -108,4 +108,7 @@ A: You're right — the overlapping edges make the tree hard to read. Let me imp
 
 ... back and forth ...
 
+... rm americas again, since we have no unique language there
+
 -> map.html
+
