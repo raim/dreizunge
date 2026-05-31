@@ -1,6 +1,129 @@
 {
   "lessons": [
     {
+      "topic": "Essen an Luxembourg",
+      "topicEmoji": "🍽️",
+      "userTopic": "we go for dinner in luxembourg looking for local cuisine",
+      "lang": "lb",
+      "srcLang": "lb",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "D'Abend sinn ech an der Stad, entschlossen, déi authentesch lëtzebuergesch Këche ze probéieren. Ee guddem Këll ass ideal, fir d'Stad ze erkennen. Ech fënnef, an ech geet fir d'Sträite un, op der Suche no engem Restaurant, dat net op Touristen ausgeruecht ass.\n\nNach eppes, wat ech am Restaurant fannen, ass eng kleine, un der Strooss, mat engem Menu op Lëtzebuergesch. Ech siddt an engem Tësch, an ech bestelle eng \"Judd mat Grënn\", déi klassesch lëtzebueresch Spezialitéit. D'Servierm ass schnell, an ech kann schonn d'ersten Bissen probéieren.\n\nDe Judd ass perfekt gaart, mat engem leichten Knall, an de Grënn sinn fräsch an aromatesch. Ech ka ech gär dës Këche probéieren, an ech sinn froh, dass ech dës kleine, authentesch Restaurant fannen.\n\nNach engem, ech fange an engem Gesprach mat deem lokalen Mëttelalter, déi och dës Këche probéieren. Si erzielen, dass dës Këche eng lëtzebueresch Tradition ass, déi fir hireen Geschmack bekannt ass. Ech fange, dass ech dës Këche gär probéieren, an ech sinn froh, dass ech dës Restaurant fannen.",
+      "storyLang": "lb",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch.\n\nWrite a story for the topic: \"we go for dinner in luxembourg looking for local cuisine\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "we go for dinner in luxembourg looking for local cuisine",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Lëtzebuergesch word",
+              "source": "Lëtzebuergesch meaning"
+            },
+            {
+              "target": "d'Abend",
+              "source": "de Abend"
+            },
+            {
+              "target": "der Stad",
+              "source": "die Stadt"
+            },
+            {
+              "target": "déi authentesch",
+              "source": "das authentische"
+            },
+            {
+              "target": "Këche",
+              "source": "Küche"
+            },
+            {
+              "target": "engem guddem Këll",
+              "source": "ein schönes Restaurant"
+            },
+            {
+              "target": "fir d'Stad ze erkennen",
+              "source": "um Stadt zu erkennen"
+            },
+            {
+              "target": "engem Menu",
+              "source": "ein Menü"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Lëtzebuergesch sentence",
+              "source": "Lëtzebuergesch translation",
+              "words": [
+                "Lëtzebuergesch",
+                "sentence"
+              ]
+            },
+            {
+              "target": "Ech fënnef",
+              "source": "Ich bin fünf",
+              "words": [
+                "Ech",
+                "fënnef"
+              ]
+            },
+            {
+              "target": "op der Suche no",
+              "source": "auf der Suche nach",
+              "words": [
+                "op",
+                "der",
+                "Suche",
+                "no"
+              ]
+            },
+            {
+              "target": "engem Restaurant, dat net op Touristen ausgeruecht ass",
+              "source": "ein Restaurant, das nicht auf Touristen ausgerichtet ist",
+              "words": [
+                "engem",
+                "Restaurant,",
+                "dat",
+                "net",
+                "op",
+                "Touristen",
+                "ausgeruecht",
+                "ass"
+              ]
+            },
+            {
+              "target": "\"Judd mat Grënn\"",
+              "source": "\"Koch mit Grün\"",
+              "words": [
+                "\"Judd",
+                "mat",
+                "Grënn\""
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1113495,
+        "backend": "ollama",
+        "model": "translategemma",
+        "lessonFormat": "table",
+        "totalPromptTokens": 973,
+        "totalCompletionTokens": 794,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 120684,
+            "promptTokens": 533,
+            "completionTokens": 355
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T09:36:34.175Z",
+      "updatedAt": "2026-05-31T09:36:34.175Z"
+    },
+    {
       "topic": "Esibizione al circo",
       "topicEmoji": " Clown ",
       "userTopic": "La troupe del circo è rimasta colpita dalla sua esibizione ed Elena l'ha accompagnata nella città vicina",
@@ -32867,6 +32990,22 @@
         "esch"
       ],
       "flaggedAt": "2026-05-31T09:16:15.979Z"
+    },
+    "Essen_an_Luxembourg:listen_mcq:Lëtzebuergesch_word": {
+      "topic": "Essen an Luxembourg",
+      "type": "listen_mcq",
+      "target": "Lëtzebuergesch word",
+      "source": "",
+      "correct": "Lëtzebuergesch meaning",
+      "choices": [
+        "de Abend",
+        "um Stadt zu erkennen",
+        "Lëtzebuergesch meaning",
+        "das authentische"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T09:38:16.647Z",
+      "comment": ""
     }
   },
   "storylines": {
