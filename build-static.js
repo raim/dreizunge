@@ -210,7 +210,7 @@ function renderPill() {
   const presentLangs=new Set(STATIC_LESSONS.map(s=>s.lang||'it'));
   const sel=document.getElementById('lang-select');
   if(sel){
-    Array.from(sel.options).forEach(opt=>{ opt.style.display=presentLangs.has(opt.value)?'':'none'; });
+    Array.from(sel.options).forEach(opt=>{ opt.style.display=(opt.value==='all'||presentLangs.has(opt.value))?'':'none'; });
     // If current selection has no lessons, switch to first available
     if(!presentLangs.has(sel.value)){
       const first=[...presentLangs][0];
@@ -237,6 +237,10 @@ function renderPill() {
   if(lenSlider){ lenSlider.disabled=true; lenSlider.title='Story length has no effect in static mode'; }
   const lenRow=lenSlider?.closest('.story-len-row');
   if(lenRow) lenRow.style.opacity='0.4';
+  const styleSel=document.getElementById('style-select');
+  if(styleSel){ styleSel.disabled=true; styleSel.title='Writing style has no effect in static mode'; }
+  const styleWrap=document.getElementById('style-wrap');
+  if(styleWrap) styleWrap.style.opacity='0.4';
 }
 
 async function loadSavedList() {

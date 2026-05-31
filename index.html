@@ -251,6 +251,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
 /* ══ DIFFICULTY DROPDOWN ════════════════════════════════════════════ */
 .diff-wrap{margin-bottom:14px}
+.style-wrap{margin-bottom:14px}
+.style-select-wrap{position:relative;display:inline-block;width:100%}
+.style-select{width:100%;padding:10px 36px 10px 14px;font-size:14px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
+.style-select:focus{border-color:var(--blue)}
+.style-select:disabled{opacity:.5;cursor:not-allowed}
+.style-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .story-len-row{margin-bottom:14px}
 .user-story-checks{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
 .user-story-check-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--gray-dark);cursor:pointer;user-select:none}
@@ -560,6 +566,25 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <span class="diff-select-arrow">▾</span>
       </div>
     </div>
+    <div class="style-wrap" id="style-wrap">
+      <div class="style-select-wrap">
+        <select class="style-select" id="style-select" onchange="onStyleSelect(this.value)">
+          <option value="creative">🎭 Creative</option>
+          <option value="neutral">📰 Neutral</option>
+          <option value="scientific">🔬 Scientific</option>
+          <option value="journalism">📡 Journalism</option>
+          <option value="essay">✍️ Essay</option>
+          <option value="children">🧸 Children's</option>
+          <option value="funny">😂 Funny</option>
+          <option value="romantic">💕 Romantic</option>
+          <option value="sensual">🌹 Sensual</option>
+          <option value="horror">🕷️ Horror</option>
+          <option value="action">⚡ Action</option>
+          <option value="philosophical">🧠 Philosophical</option>
+        </select>
+        <span class="style-select-arrow">▾</span>
+      </div>
+    </div>
     <div class="continue-row" id="continue-row">
       <span class="continue-lbl" id="continue-lbl">Continue story from</span>
       <div class="continue-select-wrap">
@@ -765,6 +790,7 @@ var APP = {
   srcLang: loadSrcLang(),
   difficulty: loadDifficulty(),
   storyLen: loadStoryLen(),
+  storyStyle: loadStoryStyle(),
   libFilter: 'all',
   libSrcFilter: 'all',
   prevLangFilter: null,
@@ -907,6 +933,8 @@ function applyUIStrings() {
   _setAttr('speakstory-btn', 'title', t('lesson.read_aloud'));
   _setAttr('edit-story-btn', 'title', t('lesson.edit_story'));
   _setAttr('continue-story-btn-title', 'title', t('lesson.continue_title'));
+  _setAttr('cont-story-btn', 'title', t('lesson.continue_title'));
+  _setText('story-cont-btn', t('lesson.btn_continue_story'));
 }
 
 // ── UI translation row ────────────────────────────────────────────────────────
@@ -1036,6 +1064,8 @@ function loadDifficulty(){ return parseInt(localStorage.getItem('imp3_diff')||'2
 function saveDifficulty(){ localStorage.setItem('imp3_diff',String(APP.difficulty)); }
 function loadStoryLen(){ return parseInt(localStorage.getItem('imp3_storyLen')||'300',10); }
 function saveStoryLen(){ localStorage.setItem('imp3_storyLen',String(APP.storyLen)); }
+function loadStoryStyle(){ return localStorage.getItem('imp3_storyStyle')||'creative'; }
+function saveStoryStyle(){ localStorage.setItem('imp3_storyStyle',APP.storyStyle); }
 function storyLenLabel(words){
   const lo=Math.max(1,Math.floor(words/100));
   const hi=lo+1;
@@ -1059,6 +1089,14 @@ function onDiffSelect(v){
 }
 function restoreDiffSelect(){
   const sel=document.getElementById('diff-select'); if(sel) sel.value=APP.difficulty;
+}
+const VALID_STYLES=new Set(['creative','neutral','scientific','journalism','essay','children','funny','romantic','sensual','horror','action','philosophical']);
+function onStyleSelect(v){
+  APP.storyStyle=VALID_STYLES.has(v)?v:'creative'; saveStoryStyle();
+  const sel=document.getElementById('style-select'); if(sel) sel.value=APP.storyStyle;
+}
+function restoreStyleSelect(){
+  const sel=document.getElementById('style-select'); if(sel) sel.value=APP.storyStyle;
 }
 function autoResizeTopic(el){
   el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
@@ -1387,6 +1425,7 @@ async function init(){
   // selectLang is silent on init; both selectors start at globe (no filter)
   updateTranslationLangHint();
   restoreDiffSelect();
+  restoreStyleSelect();
   restoreStoryLenSlider();
   renderPill();
   loadSavedList();
@@ -1914,6 +1953,7 @@ async function doGenerate(forceRegen){
     if(userStory)       body.userStory=userStory;
     if(userTranslation) body.userTranslation=userTranslation;
     if(userDialect)     body.userDialect=userDialect;
+    if(APP.storyStyle && APP.storyStyle!=='creative') body.storyStyle=APP.storyStyle;
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(body)});
     if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Server error'); }

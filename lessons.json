@@ -1,6 +1,452 @@
 {
   "lessons": [
     {
+      "topic": "Ladro nel paese vicino",
+      "topicEmoji": "🚨",
+      "userTopic": "nel paese vicino un ladro ha cercato di rubare dell'attrezzatura",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "Elisa und Elena tranken noch einen Drink, als plötzlich ein lauter Schrei durch die Bar hallte. Alle Köpfe drehten sich in Richtung der Tür. Ein junger Mann in einem schäbigen Mantel stürmte herein, schien sich zu orientieren und blieb abrupt stehen, als er Elisa und Elena sah. Er stotterte: \"Entschuldigung, ich... ich bin nur... hier bin ich nur... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nt von deiner Leistung. Sie haben mich gebeten, dich zu einem Drink einzuladen.\"\n\nElisa zögerte kurz, dann stand sie auf und folgte Elena. Sie verließen das Zelt und gingen durch den dunklen, aber lebhaften Zeltlagerplatz. Die Zuschauer, die noch auf den Zelten herumwerkten, nickten ihnen zu und applaudierten. Elisa fühlte sich geschmeichelt, als sie die Anerkennung der Tänzerin sah.\n\nAls sie in die Stadt gingen, fühlte Elisa sich wie eine berühmte Figur. Elena führte sie zu einer kleinen, aber gemütlichen Bar, wo sie von der Tänzerin und ihrem Team erwartet wurden. Sie plauderten und lachten, und Elisa fühlte sich zum ersten Mal seit langer Zeit wirklich entspannt. Sie wusste, dass sie noch viel zu tun hatte, aber in diesem Moment genoss sie die Anerkennung und Freundschaft, die sie umgab.\n\nNew topic: \"nel paese vicino un ladro ha cercato di rubare dell'attrezzatura\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Esibizione al circo",
+      "storyStyle": "funny",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "nel paese vicino un ladro ha cercato di rubare dell'attrezzatura",
+          "desc": "un bar, un ladro, un drink, una confusione",
+          "icon": "🍺",
+          "vocab": [
+            {
+              "target": "Bar",
+              "source": "un bar"
+            },
+            {
+              "target": "Ladro",
+              "source": "un ladro"
+            },
+            {
+              "target": "Attrezzatura",
+              "source": "dell'attrezzatura"
+            },
+            {
+              "target": "Cercare",
+              "source": "di cercare"
+            },
+            {
+              "target": "Rubare",
+              "source": "di rubare"
+            },
+            {
+              "target": "Confusione",
+              "source": "una confusione"
+            },
+            {
+              "target": "Polvere",
+              "source": "della polvere"
+            },
+            {
+              "target": "Schizzo",
+              "source": "un schizzo"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Der Ladro suchte die Polizei, aber sie lachten nur über sein Schizzo.",
+              "source": "Il ladro cercava la polizia, ma quest'ultima rideva del suo schizzo.",
+              "words": [
+                "Der",
+                "Ladro",
+                "suchte",
+                "die",
+                "Polizei,",
+                "aber",
+                "sie",
+                "lachten",
+                "nur",
+                "über",
+                "sein",
+                "Schizzo."
+              ]
+            },
+            {
+              "target": "Die Barkeeper schüttelten den Kopf über das Attrezzatura des Ladro.",
+              "source": "I barkeeper scuotevano la testa davanti all'attrezzatura del ladro.",
+              "words": [
+                "Die",
+                "Barkeeper",
+                "schüttelten",
+                "den",
+                "Kopf",
+                "über",
+                "das",
+                "Attrezzatura",
+                "des",
+                "Ladro."
+              ]
+            },
+            {
+              "target": "Er erzählte eine lange Geschichte, aber niemand glaubte ihm, weil er so viel Polvere hatte.",
+              "source": "Lui raccontava una lunga storia, ma nessuno gli credeva, perché aveva tanto polvere.",
+              "words": [
+                "Er",
+                "erzählte",
+                "eine",
+                "lange",
+                "Geschichte,",
+                "aber",
+                "niemand",
+                "glaubte",
+                "ihm,",
+                "weil",
+                "er",
+                "so",
+                "viel",
+                "Polvere",
+                "hatte."
+              ]
+            },
+            {
+              "target": "Die Gäste lachten über die Confusione des Ladro, als er versuchte, die Bar zu verlassen.",
+              "source": "I clienti ridevano della confusione del ladro, mentre cercava di uscire dalla bar.",
+              "words": [
+                "Die",
+                "Gäste",
+                "lachten",
+                "über",
+                "die",
+                "Confusione",
+                "des",
+                "Ladro,",
+                "als",
+                "er",
+                "versuchte,",
+                "die",
+                "Bar",
+                "zu",
+                "verlassen."
+              ]
+            },
+            {
+              "target": "Elisa und Elena tranken noch einen Drink, als plötzlich ein lauter Schrei durch die Bar hallte.",
+              "source": "Elisa e Elena bevevano un drink, quando all'improvviso un grido echeggiò nella bar.",
+              "words": [
+                "Elisa",
+                "und",
+                "Elena",
+                "tranken",
+                "noch",
+                "einen",
+                "Drink,",
+                "als",
+                "plötzlich",
+                "ein",
+                "lauter",
+                "Schrei",
+                "durch",
+                "die",
+                "Bar",
+                "hallte."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "nel paese vicino un ladro ha cercato di rubare dell'attrezzatura",
+          "desc": "la confusione in un bar",
+          "icon": "-confused_face-",
+          "vocab": [
+            {
+              "target": "Barista",
+              "source": "il barista"
+            },
+            {
+              "target": "Tavolo",
+              "source": "il tavolo"
+            },
+            {
+              "target": "Sedia",
+              "source": "la sedia"
+            },
+            {
+              "target": "Portafoglio",
+              "source": "il portafoglio"
+            },
+            {
+              "target": "Borsa",
+              "source": "la borsa"
+            },
+            {
+              "target": "Telefonino",
+              "source": "il telefonino"
+            },
+            {
+              "target": "Caffè",
+              "source": "il caffè"
+            },
+            {
+              "target": "Birra",
+              "source": "la birra"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Der Barista stellte den Caffè vor Elisa und Elena.",
+              "source": "Il barista mise il caffè davanti a Elisa e Elena.",
+              "words": [
+                "Der",
+                "Barista",
+                "stellte",
+                "den",
+                "Caffè",
+                "vor",
+                "Elisa",
+                "und",
+                "Elena."
+              ]
+            },
+            {
+              "target": "Elena sah den Ladro im Schatten des Tisches sitzen.",
+              "source": "Elena vide il ladro seduto nell'ombra sotto il tavolo.",
+              "words": [
+                "Elena",
+                "sah",
+                "den",
+                "Ladro",
+                "im",
+                "Schatten",
+                "des",
+                "Tisches",
+                "sitzen."
+              ]
+            },
+            {
+              "target": "Elisa griff nach ihrem Portafoglio, aber es war leer.",
+              "source": "Elisa prese il suo portafoglio, ma era vuoto.",
+              "words": [
+                "Elisa",
+                "griff",
+                "nach",
+                "ihrem",
+                "Portafoglio,",
+                "aber",
+                "es",
+                "war",
+                "leer."
+              ]
+            },
+            {
+              "target": "Der Ladro zog schnell seine Borsa aus der Tasche.",
+              "source": "Il ladro estrasse rapidamente la borsa dalla tasca.",
+              "words": [
+                "Der",
+                "Ladro",
+                "zog",
+                "schnell",
+                "seine",
+                "Borsa",
+                "aus",
+                "der",
+                "Tasche."
+              ]
+            },
+            {
+              "target": "Elena lachte und sagte: 'Hai trovato la mia borsa, eh?'",
+              "source": "Elena rise e disse: 'Hai trovato la mia borsa, vero?'",
+              "words": [
+                "Elena",
+                "lachte",
+                "und",
+                "sagte:",
+                "'Hai",
+                "trovato",
+                "la",
+                "mia",
+                "borsa,",
+                "eh?'"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "nel paese vicino un ladro ha cercato di rubare dell'attrezzatura",
+          "desc": "un bar, un ladro, dell'attrezzatura, una confusione, una polvere, un schizzo",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "Attrezzatura",
+              "source": "l'attrezzatura"
+            },
+            {
+              "target": "Confusione",
+              "source": "la confusione"
+            },
+            {
+              "target": "Polvere",
+              "source": "la polvere"
+            },
+            {
+              "target": "Schizzo",
+              "source": "il schizzo"
+            },
+            {
+              "target": "Barista",
+              "source": "il barista"
+            },
+            {
+              "target": "Tavolo",
+              "source": "il tavolo"
+            },
+            {
+              "target": "Sedia",
+              "source": "la sedia"
+            },
+            {
+              "target": "Portafoglio",
+              "source": "il portafoglio"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Der Barista räumte hastig den Tisch ab, als plötzlich ein Schatten durch die Bar tanzte.",
+              "source": "Il barista raccoglieva rapidamente il tavolo, quando all'improvviso un'ombra danzava attraverso il bar.",
+              "words": [
+                "Der",
+                "Barista",
+                "räumte",
+                "hastig",
+                "den",
+                "Tisch",
+                "ab,",
+                "als",
+                "plötzlich",
+                "ein",
+                "Schatten",
+                "durch",
+                "die",
+                "Bar",
+                "tanzte."
+              ]
+            },
+            {
+              "target": "Eine laute Stimme rief: 'Wo ist der Portafoglio? Ich brauche ihn für den Schizzo!'",
+              "source": "Una voce alta chiese: 'Dove è il portafoglio? Lo voglio per il schizzo!'",
+              "words": [
+                "Eine",
+                "laute",
+                "Stimme",
+                "rief:",
+                "'Wo",
+                "ist",
+                "der",
+                "Portafoglio?",
+                "Ich",
+                "brauche",
+                "ihn",
+                "für",
+                "den",
+                "Schizzo!'"
+              ]
+            },
+            {
+              "target": "Die Sedia knarrte, als der Ladro sie hastig verließ, um die Attrezzatura zu stehlen.",
+              "source": "La sedia stridette quando il ladro se ne andò in fretta per rubare l'attrezzatura.",
+              "words": [
+                "Die",
+                "Sedia",
+                "knarrte,",
+                "als",
+                "der",
+                "Ladro",
+                "sie",
+                "hastig",
+                "verließ,",
+                "um",
+                "die",
+                "Attrezzatura",
+                "zu",
+                "stehlen."
+              ]
+            },
+            {
+              "target": "Eine Confusione breitete sich aus, als alle Barista und Baristen über die Polvere stritten.",
+              "source": "Una confusione si diffuse quando tutti i baristi e bariste discussero sulla polvere.",
+              "words": [
+                "Eine",
+                "Confusione",
+                "breitete",
+                "sich",
+                "aus,",
+                "als",
+                "alle",
+                "Barista",
+                "und",
+                "Baristen",
+                "über",
+                "die",
+                "Polvere",
+                "stritten."
+              ]
+            },
+            {
+              "target": "Ein Schatten huschte über den Tisch, als der Barista einen neuen Kaffee schmiss.",
+              "source": "Un'ombra si mosse sul tavolo quando il barista versò un nuovo caffè.",
+              "words": [
+                "Ein",
+                "Schatten",
+                "huschte",
+                "über",
+                "den",
+                "Tisch,",
+                "als",
+                "der",
+                "Barista",
+                "einen",
+                "neuen",
+                "Kaffee",
+                "schmiss."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 2511106,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 3432,
+        "totalCompletionTokens": 2193,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 161286,
+            "promptTokens": 834,
+            "completionTokens": 454
+          },
+          {
+            "lessonNum": 2,
+            "ms": 122050,
+            "promptTokens": 911,
+            "completionTokens": 384
+          },
+          {
+            "lessonNum": 3,
+            "ms": 193335,
+            "promptTokens": 978,
+            "completionTokens": 493
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T13:56:01.166Z",
+      "updatedAt": "2026-05-31T13:56:01.166Z"
+    },
+    {
       "topic": "Essen an Luxembourg",
       "topicEmoji": "🍽️",
       "userTopic": "we go for dinner in luxembourg looking for local cuisine",
@@ -33006,6 +33452,92 @@
       "words": [],
       "flaggedAt": "2026-05-31T09:38:16.647Z",
       "comment": ""
+    },
+    "Esibizione_al_circo:mcq_source_target:Zeltstuhl": {
+      "topic": "Esibizione al circo",
+      "type": "mcq_source_target",
+      "target": "Zeltstuhl",
+      "source": "stulho",
+      "correct": "Zeltstuhl",
+      "choices": [
+        "arbeiten",
+        "dachte",
+        "abgebaut",
+        "Zeltstuhl"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T12:56:33.992Z"
+    },
+    "Esibizione_al_circo:mcq_target_source:Zuschauer": {
+      "topic": "Esibizione al circo",
+      "type": "mcq_target_source",
+      "target": "Zuschauer",
+      "source": "zuschauer",
+      "correct": "zuschauer",
+      "choices": [
+        "sempre",
+        "zuschauer",
+        "soddisfatta",
+        "rimossa"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T12:57:08.125Z",
+      "comment": "same word as german in answers"
+    },
+    "Esibizione_al_circo:listen_type:Zeltkorb": {
+      "topic": "Esibizione al circo",
+      "type": "listen_type",
+      "target": "Zeltkorb",
+      "source": "zelto",
+      "correct": "Zeltkorb",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-05-31T12:57:46.645Z"
+    },
+    "Esibizione_al_circo:read_translate:Nach_dem_Auftritt,_als_die_Zelte_abgebau": {
+      "topic": "Esibizione al circo",
+      "type": "read_translate",
+      "target": "Nach dem Auftritt, als die Zelte abgebaut wurden, kehrte Elisa in ihr Zelt zurück.",
+      "source": "Dopo l'esibizione, quando i zelti furono rimossi, Elisa tornò nel suo zelto.",
+      "correct": "Dopo l'esibizione, quando i zelti furono rimossi, Elisa tornò nel suo zelto.",
+      "choices": [
+        "Dopo l'esibizione, quando i zelti furono rimossi, Elisa tornò nel suo zelto.",
+        "Sapeva che doveva sempre sforzarsi di migliorare.",
+        "Si sedette sullo zelto di legno duro e rifletté sul giorno.",
+        "Quando la ballerina finalmente ebbe la sua pausa, sentì dei passi fuori."
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T12:57:58.585Z"
+    },
+    "Esibizione_al_circo:listen_mcq:Zeltbar": {
+      "topic": "Esibizione al circo",
+      "type": "listen_mcq",
+      "target": "Zeltbar",
+      "source": "",
+      "correct": "bar",
+      "choices": [
+        "bar",
+        "festa",
+        "accompagnare",
+        "città"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T12:58:27.933Z"
+    },
+    "Esibizione_al_circo:listen_mcq:Zeltstadt": {
+      "topic": "Esibizione al circo",
+      "type": "listen_mcq",
+      "target": "Zeltstadt",
+      "source": "",
+      "correct": "città",
+      "choices": [
+        "truppa",
+        "accompagnare",
+        "città",
+        "bar"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T12:59:47.065Z"
     }
   },
   "storylines": {

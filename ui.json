@@ -1316,7 +1316,20 @@
     "lesson.btn_share": "🔗 Share",
     "lesson.btn_regen": "↻ Regen",
     "lesson.btn_continue": "↪ Continue",
-    "lesson.btn_continue_story": "↪ Continue story"
+    "lesson.btn_continue_story": "↪ Continue story",
+    "form.style_lbl": "Writing style",
+    "form.style.creative": "🎭 Creative",
+    "form.style.neutral": "📰 Neutral",
+    "form.style.scientific": "🔬 Scientific",
+    "form.style.journalism": "📡 Journalism",
+    "form.style.essay": "✍️ Essay",
+    "form.style.children": "🧸 Children's",
+    "form.style.funny": "😂 Funny",
+    "form.style.romantic": "💕 Romantic",
+    "form.style.sensual": "🌹 Sensual",
+    "form.style.horror": "🕷️ Horror",
+    "form.style.action": "⚡ Action",
+    "form.style.philosophical": "🧠 Philosophical"
   },
   "sv": {
     "app.tagline": "Lär dig vokabulär för valfritt ämne",
@@ -2146,7 +2159,20 @@
     "lesson.btn_continue_story": "↪ Continua storia",
     "rating.q_difficulty": "difficoltà",
     "rating.q_fun": "divertente",
-    "rating.q_coherence": "coerenza"
+    "rating.q_coherence": "coerenza",
+    "form.style_lbl": "Stile di scrittura",
+    "form.style.creative": "🎭 Creativo",
+    "form.style.neutral": "📰 Neutrale",
+    "form.style.scientific": "🔬 Scientifico",
+    "form.style.journalism": "📡 Giornalistico",
+    "form.style.essay": "✍️ Saggio",
+    "form.style.children": "🧸 Per bambini",
+    "form.style.funny": "😂 Divertente",
+    "form.style.romantic": "💕 Romantico",
+    "form.style.sensual": "🌹 Sensuale",
+    "form.style.horror": "🕷️ Orribile",
+    "form.style.action": "⚡ Azione",
+    "form.style.philosophical": "🧠 Filosofico"
   },
   "pl": {
     "app.tagline": "Ucz się słownictwa z każdego tematu w każdym języku",

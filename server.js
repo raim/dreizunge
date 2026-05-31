@@ -184,7 +184,22 @@ function sentenceLengthSpec(d) {
        : d === 2 ? '6–10 words'
        : '10–16 words (complex grammar, subordinate clauses welcome)';
 }
-function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, dialect) {
+const STORY_STYLES = {
+  creative:      null,  // default — no extra instruction
+  neutral:       'Clear, factual, neutral tone — no narrative flourish.',
+  scientific:    'Academic register, precise terminology, formal structure.',
+  journalism:    'Reportage style: direct, punchy, who/what/where/when.',
+  essay:         'Discursive, argumentative, first-person reflective.',
+  children:      'Simple vocabulary, playful tone, short sentences.',
+  funny:         'Comedic tone, wordplay, absurdist situations, punchlines.',
+  romantic:      'Warm, emotionally rich, evocative imagery.',
+  sensual:       'Rich in texture and atmosphere, suggestive but not explicit.',
+  horror:        'Suspenseful, eerie atmosphere, foreboding.',
+  action:        'Fast-paced, kinetic, short punchy sentences.',
+  philosophical: 'Contemplative, questioning, abstract ideas.',
+};
+
+function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, dialect, writingStyle) {
   const L    = langName(lang);
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
@@ -194,6 +209,7 @@ function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint
                    : 'specific / idiomatic vocabulary';
   const dialectNote = dialect ? `\n- The target language variety is: ${dialect}. Use vocabulary and spelling appropriate to this dialect/variety.` : '';
   const styleNote = styleHint ? `\n- Match this story's style and mood when writing vocab and sentences: ${styleHint}` : '';
+  const writingStyleNote = STORY_STYLES[writingStyle] ? `\n- Writing style: ${STORY_STYLES[writingStyle]}` : '';
   return `You are a ${L} language lesson generator for a vocabulary learning app.
 Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
 
@@ -220,7 +236,7 @@ Rules:
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
 - CRITICAL "it" fields: MUST contain ONLY ${L} — absolutely never ${S} or any other language
 - CRITICAL "en" fields: MUST contain ONLY ${S} — absolutely never ${L} or English (unless ${S} is English)
-- "title" and "desc": MUST be written in ${S}${dialectNote}${styleNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+- "title" and "desc": MUST be written in ${S}${dialectNote}${styleNote}${writingStyleNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
 // Lesson prompt for user-provided story + parallel translation
@@ -540,7 +556,7 @@ function sysTranslation(lang, srcLang) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang, isContinuation, wordCount, dialect) {
+function sysStory(lang, isContinuation, wordCount, dialect, writingStyle) {
   const L = langName(lang);
   const wc = Math.max(100, Math.min(1000, wordCount || 300));
   const paraLo = Math.max(1, Math.floor(wc / 100));
@@ -550,7 +566,8 @@ function sysStory(lang, isContinuation, wordCount, dialect) {
     : '';
   const furiganaNote = lang==='ja' ? ' Annotate every kanji with furigana using HTML ruby tags, e.g. <ruby>日本語<rt>にほんご</rt></ruby>.' : '';
   const dialectNote = dialect ? ` Write in the ${dialect} dialect/variety.` : '';
-  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${dialectNote}${furiganaNote}${cont}`;
+  const writingStyleNote = STORY_STYLES[writingStyle] ? ` Writing style: ${STORY_STYLES[writingStyle]}` : '';
+  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${dialectNote}${furiganaNote}${writingStyleNote}${cont}`;
 }
 
 // ── Error-hunt lesson prompt ─────────────────────────────────────────
@@ -667,7 +684,7 @@ async function generateErrorHunt(story, lang, difficulty, jobId) {
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
 async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
   opts = opts || {};
-  const { userTranslation, userDialect, styleHint } = opts;
+  const { userTranslation, userDialect, styleHint, writingStyle } = opts;
   const useTable = OLLAMA_LESSON_FORMAT === 'table';
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Lesson ${lessonNum}/${totalLessons}…`);
 
@@ -695,7 +712,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     const storyHint = story ? `\n\nContext story:\n${story.slice(0, 600)}` : '';
     userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}`;
   } else {
-    sysPrompt = sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, userDialect);
+    sysPrompt = sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, userDialect, writingStyle);
     const prevHint = prevVocab.length
       ? `\nVocabulary already covered in earlier lessons (do NOT repeat these):\n${prevVocab.map(v => v.target + ' = ' + v.source).join(', ')}`
       : '';
@@ -776,7 +793,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 // ── Generate all lessons ──────────────────────────────────────────────
 async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
-  const { userStory, userTranslation, userDialect } = userOpts;
+  const { userStory, userTranslation, userDialect, storyStyle } = userOpts;
   srcLang = srcLang || 'en';
   const userTopic = topic;
   const genStart = Date.now();
@@ -835,7 +852,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       const storyUserMsg = prevStory
         ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
         : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
-      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect);
+      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle);
       const { text, promptTokens, completionTokens } = await callLLM(
         storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
       story = text.trim();
@@ -892,7 +909,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   } else {
     const TOTAL = 3;
     let prevVocab = [];
-    const lessonOpts = { userTranslation: storyTranslation || null, userDialect: userDialect || null, styleHint };
+    const lessonOpts = { userTranslation: storyTranslation || null, userDialect: userDialect || null, styleHint, writingStyle: storyStyle || null };
     for (let i = 1; i <= TOTAL; i++) {
       try {
         const { lesson, tokens } = await generateOneLesson(
@@ -925,6 +942,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     ...(userTranslation  ? { userTranslation }   : {}),
     ...(userDialect      ? { userDialect }       : {}),
     ...(continuedFrom    ? { continuedFrom }     : {}),
+    ...(storyStyle       ? { storyStyle }        : {}),
     lessons,
     generationStats: { totalMs, backend: 'ollama', model: modelLabel,
       lessonFormat: OLLAMA_LESSON_FORMAT,
@@ -1245,7 +1263,7 @@ async function boot() {
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { topic, lang, srcLang, difficulty, storyLen, continuedFrom, forceRegenerate,
-              userStory, userTranslation, userDialect } = body;
+              userStory, userTranslation, userDialect, storyStyle } = body;
       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
         : (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
@@ -1272,8 +1290,9 @@ async function boot() {
         userStory:       userStory       ? String(userStory).trim()       : null,
         userTranslation: userTranslation ? String(userTranslation).trim() : null,
         userDialect:     userDialect     ? String(userDialect).trim()     : null,
+        storyStyle:      (storyStyle && STORY_STYLES.hasOwnProperty(storyStyle)) ? storyStyle : null,
       };
-      console.log(`  Generating: "${topic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
+      console.log(`  Generating: "${topic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
       generate(topic.trim(), lang || 'it', resolvedSrcLang, diff, contFrom, wc, jobId, userOpts).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
