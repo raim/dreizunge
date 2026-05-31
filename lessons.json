@@ -1,6 +1,52 @@
 {
   "lessons": [
     {
+      "topic": "per lavorare al circo",
+      "topicEmoji": " Clown",
+      "userTopic": "per lavorare al circo",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 4,
+      "storyLen": 500,
+      "story": "In der kleinen, von Laternen erleuchteten Zeltpassage des Circo del Sole stand Elisa vor dem Zelt, das sie seit Jahren als Tänzerin bewohnte. Ihr Herz pochte, als sie die schweren Türen öffnete. Innerhalb des Zelts war es bereits hell, obwohl draußen noch die Dämmerung lag. Die Künstler und Künstlerinnen, die sie kannte, waren bereits am Werk. Einige tanzten, andere balancierten auf schmalen Bändern, während ein junger Clown mit einem Lächeln auf dem Gesicht seine Puppen umhertrug.\n\nElisa schritt durch die Zelte, bis sie den Bereich fand, wo die Tänzer ihre Übungen durchführten. Hier, unter den hohen, bunt bemalten Zeltpolen, fühlte sie sich am wohlsten. Sie nahm ihren Platz an der Stange und begann, ihre Übungen zu wiederholen. Ihre Bewegungen waren flüssig und präzise, jeder Tritt und jeder Schwung perfekt. Sie war hier, um zu arbeiten, um zu perfektionieren, was sie schon lange verfeinert hatte.\n\nAls die Sonne vollends aufging, trafen die ersten Zuschauer ein. Elisa sah, wie sie sich durch die Zeltpassage bewegten, ihre Augen auf den Ring gerichtet. Sie atmete tief ein und begann, mit der anderen Tänzerin, die sie seit Jahren kannte, eine Choreografie zu tanzen. Ihre Bewegungen flossen ineinander, als seien sie eine einzige Kreatur. Die Zuschauer applaudierten, als sie den Ring verließen, und Elisa lächelte, obwohl sie wusste, dass sie noch viel zu tun hatte.\n\nNach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German.\n\nWrite a story for the topic: \"per lavorare al circo\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "In der kleinen, von Laternen erleuchteten Zeltpassage des Circo del Sole stand Elisa vor dem Zelt, das sie seit Jahren als Tänzerinin bewohnte. Ihr Herz pochte, als sie die schweren Türen öffnete. Innerhalb des Zelts war es bereits hell, obwohl draußen noch die Dämmerung lag. Die Künstler und Künstlerinnen, die sie kannte, waren bereits am Werk. Einige tanzten, andere balancierten auf schmalen Bändern, während ein junger Clown mit einem Lächeln auf dem Gesicht seine Puppen umhertrug.\n\nElisa schritt durch die Zelte, bis sie den Bereich fand, wo die Tänzer ihre Übungen durchführten. Hier, unter den hohen, bunt bemalten Zeltpolen, fühlte sie sich am wohlsten. Sie nahm ihren Platz an der Stange und begann, ihre Übungen zu wiederholen. Ihre Bewegungen waren flüssig und präzise, jeder Tritt und jeder Schwung perfekt. Sie war hier, um zu arbeiten, um zu perfektionieren, was sie schon lange verfeinert hatte.\n\nAls die Sonne vollends aufging, trafen die ersten Zuschauer ein. Elisa sah, wie sie sich durch die Zeltpassage bewegten, ihre Augen auf den Ring gerichtet. Sie atmete tief ein und begann, mit der anderen Tänzerin, die sie seit Jahren kannte, eine Choreografie zu tanzen. Ihre Bewegungen flossen ineinander, als seien sie eine einzige Kreatur. Die Zuschauer applaudierten, als sie den Ring verließen, und Elisa lächelte, obwohl sie wusste, dass sie noch viel zu tun hatte.\n\nNach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.",
+          "edits": [
+            {
+              "type": "grammar",
+              "find": "Tänzer",
+              "replace": "Tänzerin",
+              "reason": "wrong gender on noun"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 441884,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1322,
+        "totalCompletionTokens": 766,
+        "lessons": [
+          {
+            "promptTokens": 950,
+            "completionTokens": 177
+          }
+        ]
+      },
+      "generatedAt": "2026-05-30T22:29:15.594Z",
+      "updatedAt": "2026-05-31T07:56:31.772Z"
+    },
+    {
       "topic": "Cuisine italienne vs française",
       "topicEmoji": "🍽️",
       "userTopic": "Compare la cuisine italienne à la cuisine française",
@@ -32316,6 +32362,21 @@
         "fresca"
       ],
       "flaggedAt": "2026-05-29T11:53:26.760Z"
+    },
+    "per_lavorare_al_circo:read_translate:Er_vertrauen_darauf,_dass_alles_gut_läuf": {
+      "topic": "per lavorare al circo",
+      "type": "read_translate",
+      "target": "Er vertrauen darauf, dass alles gut läuft.",
+      "source": "Si fida che tutto vada bene.",
+      "correct": "Si fida che tutto vada bene.",
+      "choices": [
+        "Arredare la tenda con tutto l'equipaggiamento necessario.",
+        "Si fida che tutto vada bene.",
+        "La difesa degli animali è importante nella preparazione dello spettacolo.",
+        "Marco ha l'intenzione di occuparsi degli animali."
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-30T22:35:14.065Z"
     }
   },
   "storylines": {

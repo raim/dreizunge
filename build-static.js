@@ -171,6 +171,8 @@ async function init() {
   APP.info = { backend: 'none', canGenerate: false };
   APP.libFilter='all'; APP.libSrcFilter='all';
   await loadLanguages();
+  const _ss=document.getElementById('src-lang-select'); if(_ss) _ss.value='all';
+  const _ts=document.getElementById('lang-select'); if(_ts) _ts.value='all';
   selectLang(APP.lang, true);
   await loadUIStrings(APP.srcLang);
   restoreDiffSelect();
@@ -244,31 +246,15 @@ async function loadSavedList() {
   APP.storylines = Object.assign({}, STATIC_STORYLINES, _lsOverrides);
   const saved = STATIC_LESSONS;
   APP.savedList = saved;  // needed by buildPath for cont-nav "continued in" links
-  const hasMultiLang=[...new Set(saved.map(s=>s.lang||'it'))].length>1;
-  const filterEl=document.getElementById('lib-filter');
-  if(filterEl){
-    if(hasMultiLang){
-      // Show which filter is active (target lang, source lang, or all)
-      const activeTgt=APP.libFilter!=='all'?LANGS[APP.libFilter]:null;
-      const activeSrc=APP.libSrcFilter!=='all'?LANGS[APP.libSrcFilter]:null;
-      const activeAny=activeTgt||activeSrc;
-      const activeLabel=activeTgt
-        ? (activeTgt.flag+' '+activeTgt.name+' (to)')
-        : activeSrc ? (activeSrc.flag+' '+activeSrc.name+' (from)') : '';
-      filterEl.innerHTML=(!activeAny
-        ? \`<button class="lib-filter-btn active">🌐 All languages</button>\`
-        : \`<button class="lib-filter-btn active">\${activeLabel}</button>\`+
-          \`<button class="lib-filter-btn" onclick="APP.libFilter='all';APP.libSrcFilter='all';loadSavedList()">🌐 All</button>\`
-      );
-    } else {
-      filterEl.innerHTML='';
-    }
-  }
+  // Sync main selectors to current filter state
+  const _srcSel=document.getElementById('src-lang-select');
+  const _tgtSel=document.getElementById('lang-select');
+  if(_srcSel) _srcSel.value=APP.libSrcFilter||'all';
+  if(_tgtSel) _tgtSel.value=APP.libFilter||'all';
 
   const filtered=saved.filter(s=>{
-    if(APP.libFilter==='all' && APP.libSrcFilter==='all') return true;
-    if(APP.libFilter!=='all') return (s.lang||'it')===APP.libFilter;
-    if(APP.libSrcFilter!=='all') return (s.srcLang||'en')===APP.libSrcFilter;
+    if(APP.libFilter!=='all' && (s.lang||'it')!==APP.libFilter) return false;
+    if(APP.libSrcFilter!=='all' && (s.srcLang||'en')!==APP.libSrcFilter) return false;
     return true;
   });
   document.getElementById('lib-cnt').textContent=
@@ -406,19 +392,8 @@ async function loadSavedList() {
   repopulateContinueSelect();
 
 function setLibFilter(lang){
-  if(lang==='all'&&APP.libFilter!=='all') APP.prevLangFilter=APP.libFilter;
-  if(lang!=='all') APP.prevLangFilter=null;
-  APP.libFilter=lang;
-  if(lang!=='all' && LANGS[lang]){
-    APP.lang=lang; saveLang();
-    const sel=document.getElementById('lang-select');
-    if(sel) sel.value=lang;
-    const L=LANGS[lang];
-    const lbl=document.getElementById('topic-label');
-    if(lbl) lbl.textContent='What do you want to learn '+L.name+' for?';
-    const tagline=document.getElementById('app-tagline');
-    if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
-  }
+  if(lang==='all'){ APP.libFilter='all'; APP.libSrcFilter='all'; }
+  else { APP.libFilter=lang; }
   loadSavedList();
 }
 
@@ -444,21 +419,22 @@ const staticOverrides = [
   'async function submitRating(){}',
   '// In static mode, UI strings are baked in — no translation needed',
   'function triggerUITranslation(){}',
-  '// Selecting a source lang clears the target filter and vice versa.',
+  '// Static: globe resets filter; any other value sets filter + lang',
   'function selectSrcLang(code){',
-  '  APP.srcLang=code; saveSrcLang();',
+  '  if(code==="all"){ APP.libSrcFilter="all"; const sel=document.getElementById("src-lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
+  '  APP.srcLang=code; saveSrcLang(); APP.libSrcFilter=code;',
   '  const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code;',
-  '  APP.libSrcFilter=code; APP.libFilter="all";',
   '  loadUIStrings(code).then(()=>loadSavedList());',
   '}',
   'function selectLang(code, silent){',
-  '  APP.lang=code; saveLang();',
+  '  if(code==="all"){ APP.libFilter="all"; const sel=document.getElementById("lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
+  '  APP.lang=code; APP.libFilter=code; saveLang();',
   '  const sel=document.getElementById("lang-select"); if(sel&&sel.value!==code) sel.value=code;',
-  '  if(!silent){ APP.libFilter=code; APP.libSrcFilter="all"; loadSavedList(); }',  // only tgt filter active
+  '  if(!silent) loadSavedList();',
   '}',
   'function setLibFilter(lang){',
-  '  APP.libFilter=lang; APP.libSrcFilter="all";',
-  '  if(lang!=="all"){ APP.lang=lang; saveLang(); const sel=document.getElementById("lang-select"); if(sel) sel.value=lang; }',
+  '  if(lang==="all"){ APP.libFilter="all"; APP.libSrcFilter="all"; }',
+  '  else { APP.libFilter=lang; }',
   '  loadSavedList();',
   '}',
   'function importLessons(input){',

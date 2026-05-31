@@ -1150,6 +1150,23 @@ async function boot() {
       if (!s) return json(res, 404, { error: 'Not found' });
       return json(res, 200, s);
     }
+    if (M === 'POST' && url.pathname === '/api/lessons/save-meta') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { oldTopic, newTopic, topicEmoji } = body;
+      if (!oldTopic || !newTopic) return json(res, 400, { error: 'Missing oldTopic or newTopic' });
+      const saved = findSaved(oldTopic);
+      if (!saved) return json(res, 404, { error: 'Topic not found' });
+      saved.topic = newTopic.trim().slice(0, 80);
+      if (topicEmoji) saved.topicEmoji = topicEmoji;
+      // Remove old entry and insert updated one
+      store.lessons = store.lessons.filter(l => l.topic.toLowerCase() !== oldTopic.trim().toLowerCase());
+      store.lessons.unshift(saved);
+      saveStore(store);
+      console.log(`  Renamed: "${oldTopic}" → "${saved.topic}"`);
+      return json(res, 200, { ok: true, topic: saved.topic, topicEmoji: saved.topicEmoji });
+    }
     if (M === 'DELETE' && url.pathname === '/api/lessons/delete') {
       const t = url.searchParams.get('topic');
       if (!t) return json(res, 400, { error: 'Missing topic' });

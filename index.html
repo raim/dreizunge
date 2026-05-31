@@ -239,6 +239,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lang-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .lang-flag{font-size:18px}
 .lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.lang-prog-row{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--gray-dark);padding:5px 10px;background:var(--gray-light);border-radius:var(--radius-lg);margin-bottom:4px}.lang-prog-bar-wrap{flex:1;background:var(--gray-mid);border-radius:4px;height:6px;overflow:hidden;min-width:40px}.lang-prog-bar{height:100%;background:var(--green);border-radius:4px;transition:width .3s}
+.lib-lang-sel{font-size:11px;font-weight:700;border:2px solid var(--gray-mid);border-radius:12px;padding:3px 6px;background:var(--white);color:var(--text);font-family:'Nunito',sans-serif;cursor:pointer;max-width:120px}
+.lib-lang-sel.active{border-color:var(--blue);background:var(--blue-light)}
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
 .lib-filter-btn:hover{border-color:var(--blue)}
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
@@ -426,6 +428,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <label class="form-lbl" data-i18n="form.i_speak">🗣 I speak</label>
         <div class="lang-select-wrap">
           <select class="lang-select" id="src-lang-select" onchange="selectSrcLang(this.value)">
+            <option value="all">🌐</option>
             <option value="en">🇬🇧 English</option>
             <option value="it">🇮🇹 Italian</option>
             <option value="fr">🇫🇷 French</option>
@@ -465,6 +468,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <label class="form-lbl" data-i18n="form.i_learn">📖 I learn</label>
         <div class="lang-select-wrap">
           <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
+            <option value="all">🌐</option>
             <option value="it">🇮🇹 Italian</option>
             <option value="en">🇬🇧 English</option>
             <option value="fr">🇫🇷 French</option>
@@ -579,8 +583,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   </div>
 
   <div class="library">
-    <div class="lib-hdr">
+    <div class="lib-hdr" style="flex-wrap:wrap;gap:8px">
       <div class="lib-title" id="lib-title-lbl">📚 Saved lessons</div>
+
       <div id="title-gen-status" style="display:none;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#e8f0ff;color:#2a4acc;border-radius:12px;padding:3px 10px"></div>
       <div style="display:flex;align-items:center;gap:8px;margin-left:auto">        <div class="lib-cnt" id="lib-cnt">0 topics</div>
         <label class="import-btn" title="Import lessons.json">
@@ -589,7 +594,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         </label>
       </div>
     </div>
-    <div class="lib-filter" id="lib-filter"></div>
     <div id="lang-progress-strip" style="margin-bottom:10px"></div>
     <div id="saved-list">
       <div class="lib-empty">No saved lessons yet — generate one above!</div>
@@ -1090,17 +1094,16 @@ function updateTranslationLangHint(){
   if(ta) ta.placeholder=t('form.translation_placeholder',{lang:srcLangName});
 }
 function selectSrcLang(code){
+  // Globe = reset source filter, keep APP.srcLang unchanged
+  if(code==='all'){ APP.libSrcFilter='all'; const sel=document.getElementById('src-lang-select'); if(sel) sel.value='all'; loadSavedList(); return; }
   APP.srcLang=code; saveSrcLang();
+  APP.libSrcFilter=code;
   const sel=document.getElementById('src-lang-select');
   if(sel && sel.value!==code) sel.value=code;
   updateTranslationLangHint();
-  // Load UI strings for this language — fetches from server if not yet translated,
-  // or reads from baked-in strings in static mode. Either way updates the UI immediately.
   loadUIStrings(code);
   const lbl=document.getElementById('topic-label');
   if(lbl && !document.getElementById('use-story-cb')?.checked) lbl.textContent=topicLabelText();
-  // Filter library by source language, clear target filter
-  APP.libSrcFilter=code; APP.libFilter='all';
   if(document.getElementById('saved-list')) loadSavedList();
 }
 function onUseTranslationCb(){
@@ -1108,7 +1111,9 @@ function onUseTranslationCb(){
   document.getElementById('user-translation-panel').classList.toggle('open',on);
 }
 function selectLang(code, silent){
-  APP.lang=code; saveLang(); repopulateContinueSelect();
+  // Globe = reset target filter, keep APP.lang unchanged
+  if(code==='all'){ APP.libFilter='all'; const sel=document.getElementById('lang-select'); if(sel) sel.value='all'; loadSavedList(); return; }
+  APP.lang=code; APP.libFilter=code; saveLang(); repopulateContinueSelect();
   updateDocDir();
   const sel=document.getElementById('lang-select');
   if(sel && sel.value!==code) sel.value=code;
@@ -1117,9 +1122,8 @@ function selectLang(code, silent){
   if(lbl) lbl.textContent=topicLabelText();
   const inp=document.getElementById('topic-input');
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
-  // Update target language filter and reload library
+  // Update UI labels only — library filter is independent
   if(!silent){
-    APP.libFilter=code; APP.libSrcFilter='all';
     if(document.getElementById('saved-list')) loadSavedList();
   }
 }
@@ -1375,10 +1379,12 @@ async function init(){
   await loadUIStrings(APP.srcLang);
   // Restore source lang selector first so selectLang can read APP.srcLang
   const ssel=document.getElementById('src-lang-select');
-  if(ssel) ssel.value=APP.srcLang;
+  if(ssel) ssel.value='all'; // start at globe (no filter)
+  const tlsel=document.getElementById('lang-select'); if(tlsel) tlsel.value='all';
   APP.libSrcFilter='all';
   APP.libFilter='all';
-  selectLang(APP.lang, true); // silent: don't override libFilter on startup
+  selectLang(APP.lang, true);
+  // selectLang is silent on init; both selectors start at globe (no filter)
   updateTranslationLangHint();
   restoreDiffSelect();
   restoreStoryLenSlider();
@@ -1417,19 +1423,29 @@ function renderPill(){
 }
 
 // ── library ──
+function _populateLibSelects(saved){
+  // Update main lang selects to mark active filter state
+  const srcSel=document.getElementById('src-lang-select');
+  const tgtSel=document.getElementById('lang-select');
+  // Sync select values to current filter state
+  if(srcSel) srcSel.value=APP.libSrcFilter||'all';
+  if(tgtSel) tgtSel.value=APP.libFilter||'all';
+  // Update option labels (localised) — refresh all options
+  if(srcSel) Array.from(srcSel.options).forEach(opt=>{
+    if(opt.value==='all'){ opt.text='🌐'; return; }
+    const L=LANGS[opt.value]; if(!L) return;
+    opt.text=L.flag+' '+(localizedLangName(opt.value,opt.value)||L.name);
+  });
+  if(tgtSel) Array.from(tgtSel.options).forEach(opt=>{
+    if(opt.value==='all'){ opt.text='🌐'; return; }
+    const L=LANGS[opt.value]; if(!L) return;
+    opt.text=L.flag+' '+(localizedLangName(opt.value,APP.srcLang)||L.name);
+  });
+}
 function setLibFilter(lang){
-  if(lang==='all' && APP.libFilter!=='all') APP.prevLangFilter=APP.libFilter;
-  if(lang!=='all') APP.prevLangFilter=null;
-  APP.libFilter=lang;
-  if(lang==='all') APP.libSrcFilter='all';
-  // If switching to a specific language, also update the target lang selector and APP.lang
-  if(lang!=='all' && LANGS[lang]){
-    APP.lang=lang; saveLang();
-    const sel=document.getElementById('lang-select');
-    if(sel) sel.value=lang;
-    const lbl=document.getElementById('topic-label');
-    if(lbl) lbl.textContent=topicLabelText();
-  }
+  // Legacy shim — routes to new select-based filters
+  if(lang==='all'){ APP.libFilter='all'; APP.libSrcFilter='all'; }
+  else { APP.libFilter=lang; }
   loadSavedList();
 }
 
@@ -1444,16 +1460,9 @@ async function loadSavedList(){
   const hasMultiLang=[...new Set(saved.map(s=>s.lang||'it'))].length>1;
   if(filterEl){
     if(hasMultiLang){
-      const activeL=LANGS[APP.libFilter]||null;
-      const activeSrcL=LANGS[APP.libSrcFilter]||null;
-      const anyActive = APP.libFilter!=='all' || APP.libSrcFilter!=='all';
-      const activeLabel = activeL ? (activeL.flag+' '+activeL.name+' (→)')
-        : activeSrcL ? (activeSrcL.flag+' '+activeSrcL.name+' (←)') : '';
-      filterEl.innerHTML=(!anyActive
-        ? `<button class="lib-filter-btn active">${t('lib.filter_all')}</button>`
-        : `<button class="lib-filter-btn active">${activeLabel}</button>`+
-          `<button class="lib-filter-btn" onclick="APP.libFilter='all';APP.libSrcFilter='all';loadSavedList()">${t('lib.filter_all_short')}</button>`
-      );
+      // Populate filter selects with all languages (live) or present langs (static)
+      _populateLibSelects(saved);
+      if(filterEl) filterEl.innerHTML=''; // selects moved to header
     } else {
       filterEl.innerHTML='';
     }
@@ -1461,10 +1470,8 @@ async function loadSavedList(){
 
   const filtered=saved.filter(s=>{
     // Show all when both are 'all'
-    if(APP.libFilter==='all' && APP.libSrcFilter==='all') return true;
-    // Show if lesson matches whichever filter is active
-    if(APP.libFilter!=='all') return (s.lang||'it')===APP.libFilter;
-    if(APP.libSrcFilter!=='all') return (s.srcLang||'en')===APP.libSrcFilter;
+    if(APP.libFilter!=='all' && (s.lang||'it')!==APP.libFilter) return false;
+    if(APP.libSrcFilter!=='all' && (s.srcLang||'en')!==APP.libSrcFilter) return false;
     return true;
   });
   document.getElementById('lib-cnt').textContent=
@@ -1503,7 +1510,10 @@ async function loadSavedList(){
   }
   const list=document.getElementById('saved-list');
   if(!filtered.length){
-    list.innerHTML='<div class="lib-empty">'+(saved.length?t('lib.empty_lang'):t('lib.empty'))+'</div>';
+    const emptyMsg = !saved.length ? t('lib.empty')
+      : (APP.libFilter!=='all'||APP.libSrcFilter!=='all') ? t('lib.empty_lang')
+      : t('lib.empty');
+    list.innerHTML='<div class="lib-empty">'+emptyMsg+'</div>';
     return;
   }
   // ── Build storyline chains from continuedFrom links ──────────────────

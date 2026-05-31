@@ -239,6 +239,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lang-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .lang-flag{font-size:18px}
 .lib-filter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.lang-prog-row{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--gray-dark);padding:5px 10px;background:var(--gray-light);border-radius:var(--radius-lg);margin-bottom:4px}.lang-prog-bar-wrap{flex:1;background:var(--gray-mid);border-radius:4px;height:6px;overflow:hidden;min-width:40px}.lang-prog-bar{height:100%;background:var(--green);border-radius:4px;transition:width .3s}
+.lib-lang-sel{font-size:11px;font-weight:700;border:2px solid var(--gray-mid);border-radius:12px;padding:3px 6px;background:var(--white);color:var(--text);font-family:'Nunito',sans-serif;cursor:pointer;max-width:120px}
+.lib-lang-sel.active{border-color:var(--blue);background:var(--blue-light)}
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
 .lib-filter-btn:hover{border-color:var(--blue)}
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
@@ -426,6 +428,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <label class="form-lbl" data-i18n="form.i_speak">🗣 I speak</label>
         <div class="lang-select-wrap">
           <select class="lang-select" id="src-lang-select" onchange="selectSrcLang(this.value)">
+            <option value="all">🌐</option>
             <option value="en">🇬🇧 English</option>
             <option value="it">🇮🇹 Italian</option>
             <option value="fr">🇫🇷 French</option>
@@ -465,6 +468,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <label class="form-lbl" data-i18n="form.i_learn">📖 I learn</label>
         <div class="lang-select-wrap">
           <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
+            <option value="all">🌐</option>
             <option value="it">🇮🇹 Italian</option>
             <option value="en">🇬🇧 English</option>
             <option value="fr">🇫🇷 French</option>
@@ -579,8 +583,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   </div>
 
   <div class="library">
-    <div class="lib-hdr">
+    <div class="lib-hdr" style="flex-wrap:wrap;gap:8px">
       <div class="lib-title" id="lib-title-lbl">📚 Saved lessons</div>
+
       <div id="title-gen-status" style="display:none;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#e8f0ff;color:#2a4acc;border-radius:12px;padding:3px 10px"></div>
       <div style="display:flex;align-items:center;gap:8px;margin-left:auto">        <div class="lib-cnt" id="lib-cnt">0 topics</div>
         <label class="import-btn" title="Import lessons.json">
@@ -589,7 +594,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         </label>
       </div>
     </div>
-    <div class="lib-filter" id="lib-filter"></div>
     <div id="lang-progress-strip" style="margin-bottom:10px"></div>
     <div id="saved-list">
       <div class="lib-empty">No saved lessons yet — generate one above!</div>
@@ -1094,17 +1098,16 @@ function updateTranslationLangHint(){
   if(ta) ta.placeholder=t('form.translation_placeholder',{lang:srcLangName});
 }
 function selectSrcLang(code){
+  // Globe = reset source filter, keep APP.srcLang unchanged
+  if(code==='all'){ APP.libSrcFilter='all'; const sel=document.getElementById('src-lang-select'); if(sel) sel.value='all'; loadSavedList(); return; }
   APP.srcLang=code; saveSrcLang();
+  APP.libSrcFilter=code;
   const sel=document.getElementById('src-lang-select');
   if(sel && sel.value!==code) sel.value=code;
   updateTranslationLangHint();
-  // Load UI strings for this language — fetches from server if not yet translated,
-  // or reads from baked-in strings in static mode. Either way updates the UI immediately.
   loadUIStrings(code);
   const lbl=document.getElementById('topic-label');
   if(lbl && !document.getElementById('use-story-cb')?.checked) lbl.textContent=topicLabelText();
-  // Filter library by source language, clear target filter
-  APP.libSrcFilter=code; APP.libFilter='all';
   if(document.getElementById('saved-list')) loadSavedList();
 }
 function onUseTranslationCb(){
@@ -1112,7 +1115,9 @@ function onUseTranslationCb(){
   document.getElementById('user-translation-panel').classList.toggle('open',on);
 }
 function selectLang(code, silent){
-  APP.lang=code; saveLang(); repopulateContinueSelect();
+  // Globe = reset target filter, keep APP.lang unchanged
+  if(code==='all'){ APP.libFilter='all'; const sel=document.getElementById('lang-select'); if(sel) sel.value='all'; loadSavedList(); return; }
+  APP.lang=code; APP.libFilter=code; saveLang(); repopulateContinueSelect();
   updateDocDir();
   const sel=document.getElementById('lang-select');
   if(sel && sel.value!==code) sel.value=code;
@@ -1121,9 +1126,8 @@ function selectLang(code, silent){
   if(lbl) lbl.textContent=topicLabelText();
   const inp=document.getElementById('topic-input');
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
-  // Update target language filter and reload library
+  // Update UI labels only — library filter is independent
   if(!silent){
-    APP.libFilter=code; APP.libSrcFilter='all';
     if(document.getElementById('saved-list')) loadSavedList();
   }
 }
@@ -1377,6 +1381,54 @@ function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); s
 // ═══════════════════════════════════════════════════════════════════════
 
 const STATIC_LESSONS = [
+  {
+    "topic": "per lavorare al circo",
+    "topicEmoji": " Clown",
+    "userTopic": "per lavorare al circo",
+    "lang": "de",
+    "srcLang": "it",
+    "difficulty": 4,
+    "storyLen": 500,
+    "story": "In der kleinen, von Laternen erleuchteten Zeltpassage des Circo del Sole stand Elisa vor dem Zelt, das sie seit Jahren als Tänzerin bewohnte. Ihr Herz pochte, als sie die schweren Türen öffnete. Innerhalb des Zelts war es bereits hell, obwohl draußen noch die Dämmerung lag. Die Künstler und Künstlerinnen, die sie kannte, waren bereits am Werk. Einige tanzten, andere balancierten auf schmalen Bändern, während ein junger Clown mit einem Lächeln auf dem Gesicht seine Puppen umhertrug.\n\nElisa schritt durch die Zelte, bis sie den Bereich fand, wo die Tänzer ihre Übungen durchführten. Hier, unter den hohen, bunt bemalten Zeltpolen, fühlte sie sich am wohlsten. Sie nahm ihren Platz an der Stange und begann, ihre Übungen zu wiederholen. Ihre Bewegungen waren flüssig und präzise, jeder Tritt und jeder Schwung perfekt. Sie war hier, um zu arbeiten, um zu perfektionieren, was sie schon lange verfeinert hatte.\n\nAls die Sonne vollends aufging, trafen die ersten Zuschauer ein. Elisa sah, wie sie sich durch die Zeltpassage bewegten, ihre Augen auf den Ring gerichtet. Sie atmete tief ein und begann, mit der anderen Tänzerin, die sie seit Jahren kannte, eine Choreografie zu tanzen. Ihre Bewegungen flossen ineinander, als seien sie eine einzige Kreatur. Die Zuschauer applaudierten, als sie den Ring verließen, und Elisa lächelte, obwohl sie wusste, dass sie noch viel zu tun hatte.\n\nNach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.",
+    "storyLang": "de",
+    "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German.\n\nWrite a story for the topic: \"per lavorare al circo\". Plain prose, no headings.",
+    "lessons": [
+      {
+        "id": 4,
+        "type": "error_hunt",
+        "title": "Text Understanding",
+        "desc": "Find the mistakes in the story",
+        "icon": "🔍",
+        "corruptedStory": "In der kleinen, von Laternen erleuchteten Zeltpassage des Circo del Sole stand Elisa vor dem Zelt, das sie seit Jahren als Tänzerinin bewohnte. Ihr Herz pochte, als sie die schweren Türen öffnete. Innerhalb des Zelts war es bereits hell, obwohl draußen noch die Dämmerung lag. Die Künstler und Künstlerinnen, die sie kannte, waren bereits am Werk. Einige tanzten, andere balancierten auf schmalen Bändern, während ein junger Clown mit einem Lächeln auf dem Gesicht seine Puppen umhertrug.\n\nElisa schritt durch die Zelte, bis sie den Bereich fand, wo die Tänzer ihre Übungen durchführten. Hier, unter den hohen, bunt bemalten Zeltpolen, fühlte sie sich am wohlsten. Sie nahm ihren Platz an der Stange und begann, ihre Übungen zu wiederholen. Ihre Bewegungen waren flüssig und präzise, jeder Tritt und jeder Schwung perfekt. Sie war hier, um zu arbeiten, um zu perfektionieren, was sie schon lange verfeinert hatte.\n\nAls die Sonne vollends aufging, trafen die ersten Zuschauer ein. Elisa sah, wie sie sich durch die Zeltpassage bewegten, ihre Augen auf den Ring gerichtet. Sie atmete tief ein und begann, mit der anderen Tänzerin, die sie seit Jahren kannte, eine Choreografie zu tanzen. Ihre Bewegungen flossen ineinander, als seien sie eine einzige Kreatur. Die Zuschauer applaudierten, als sie den Ring verließen, und Elisa lächelte, obwohl sie wusste, dass sie noch viel zu tun hatte.\n\nNach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.",
+        "edits": [
+          {
+            "type": "grammar",
+            "find": "Tänzer",
+            "replace": "Tänzerin",
+            "reason": "wrong gender on noun"
+          }
+        ],
+        "vocab": [],
+        "sentences": []
+      }
+    ],
+    "generationStats": {
+      "totalMs": 441884,
+      "backend": "ollama",
+      "model": "qwen2.5:7b",
+      "lessonFormat": "json",
+      "totalPromptTokens": 1322,
+      "totalCompletionTokens": 766,
+      "lessons": [
+        {
+          "promptTokens": 950,
+          "completionTokens": 177
+        }
+      ]
+    },
+    "generatedAt": "2026-05-30T22:29:15.594Z",
+    "updatedAt": "2026-05-31T07:56:31.772Z"
+  },
   {
     "topic": "Cuisine italienne vs française",
     "topicEmoji": "🍽️",
@@ -31924,6 +31976,8 @@ async function init() {
   APP.info = { backend: 'none', canGenerate: false };
   APP.libFilter='all'; APP.libSrcFilter='all';
   await loadLanguages();
+  const _ss=document.getElementById('src-lang-select'); if(_ss) _ss.value='all';
+  const _ts=document.getElementById('lang-select'); if(_ts) _ts.value='all';
   selectLang(APP.lang, true);
   await loadUIStrings(APP.srcLang);
   restoreDiffSelect();
@@ -31997,31 +32051,15 @@ async function loadSavedList() {
   APP.storylines = Object.assign({}, STATIC_STORYLINES, _lsOverrides);
   const saved = STATIC_LESSONS;
   APP.savedList = saved;  // needed by buildPath for cont-nav "continued in" links
-  const hasMultiLang=[...new Set(saved.map(s=>s.lang||'it'))].length>1;
-  const filterEl=document.getElementById('lib-filter');
-  if(filterEl){
-    if(hasMultiLang){
-      // Show which filter is active (target lang, source lang, or all)
-      const activeTgt=APP.libFilter!=='all'?LANGS[APP.libFilter]:null;
-      const activeSrc=APP.libSrcFilter!=='all'?LANGS[APP.libSrcFilter]:null;
-      const activeAny=activeTgt||activeSrc;
-      const activeLabel=activeTgt
-        ? (activeTgt.flag+' '+activeTgt.name+' (to)')
-        : activeSrc ? (activeSrc.flag+' '+activeSrc.name+' (from)') : '';
-      filterEl.innerHTML=(!activeAny
-        ? `<button class="lib-filter-btn active">🌐 All languages</button>`
-        : `<button class="lib-filter-btn active">${activeLabel}</button>`+
-          `<button class="lib-filter-btn" onclick="APP.libFilter='all';APP.libSrcFilter='all';loadSavedList()">🌐 All</button>`
-      );
-    } else {
-      filterEl.innerHTML='';
-    }
-  }
+  // Sync main selectors to current filter state
+  const _srcSel=document.getElementById('src-lang-select');
+  const _tgtSel=document.getElementById('lang-select');
+  if(_srcSel) _srcSel.value=APP.libSrcFilter||'all';
+  if(_tgtSel) _tgtSel.value=APP.libFilter||'all';
 
   const filtered=saved.filter(s=>{
-    if(APP.libFilter==='all' && APP.libSrcFilter==='all') return true;
-    if(APP.libFilter!=='all') return (s.lang||'it')===APP.libFilter;
-    if(APP.libSrcFilter!=='all') return (s.srcLang||'en')===APP.libSrcFilter;
+    if(APP.libFilter!=='all' && (s.lang||'it')!==APP.libFilter) return false;
+    if(APP.libSrcFilter!=='all' && (s.srcLang||'en')!==APP.libSrcFilter) return false;
     return true;
   });
   document.getElementById('lib-cnt').textContent=
@@ -32159,19 +32197,8 @@ async function loadSavedList() {
   repopulateContinueSelect();
 
 function setLibFilter(lang){
-  if(lang==='all'&&APP.libFilter!=='all') APP.prevLangFilter=APP.libFilter;
-  if(lang!=='all') APP.prevLangFilter=null;
-  APP.libFilter=lang;
-  if(lang!=='all' && LANGS[lang]){
-    APP.lang=lang; saveLang();
-    const sel=document.getElementById('lang-select');
-    if(sel) sel.value=lang;
-    const L=LANGS[lang];
-    const lbl=document.getElementById('topic-label');
-    if(lbl) lbl.textContent='What do you want to learn '+L.name+' for?';
-    const tagline=document.getElementById('app-tagline');
-    if(tagline) tagline.textContent='Learn '+L.name+' vocabulary for any topic';
-  }
+  if(lang==='all'){ APP.libFilter='all'; APP.libSrcFilter='all'; }
+  else { APP.libFilter=lang; }
   loadSavedList();
 }
 
@@ -33240,21 +33267,22 @@ async function doGenerate(){}
 async function submitRating(){}
 // In static mode, UI strings are baked in — no translation needed
 function triggerUITranslation(){}
-// Selecting a source lang clears the target filter and vice versa.
+// Static: globe resets filter; any other value sets filter + lang
 function selectSrcLang(code){
-  APP.srcLang=code; saveSrcLang();
+  if(code==="all"){ APP.libSrcFilter="all"; const sel=document.getElementById("src-lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }
+  APP.srcLang=code; saveSrcLang(); APP.libSrcFilter=code;
   const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code;
-  APP.libSrcFilter=code; APP.libFilter="all";
   loadUIStrings(code).then(()=>loadSavedList());
 }
 function selectLang(code, silent){
-  APP.lang=code; saveLang();
+  if(code==="all"){ APP.libFilter="all"; const sel=document.getElementById("lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }
+  APP.lang=code; APP.libFilter=code; saveLang();
   const sel=document.getElementById("lang-select"); if(sel&&sel.value!==code) sel.value=code;
-  if(!silent){ APP.libFilter=code; APP.libSrcFilter="all"; loadSavedList(); }
+  if(!silent) loadSavedList();
 }
 function setLibFilter(lang){
-  APP.libFilter=lang; APP.libSrcFilter="all";
-  if(lang!=="all"){ APP.lang=lang; saveLang(); const sel=document.getElementById("lang-select"); if(sel) sel.value=lang; }
+  if(lang==="all"){ APP.libFilter="all"; APP.libSrcFilter="all"; }
+  else { APP.libFilter=lang; }
   loadSavedList();
 }
 function importLessons(input){
