@@ -246,6 +246,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 .lesson-lang-flag{font-size:16px;flex-shrink:0}
 .repairing-note{font-size:12px;color:#c26000;font-weight:700;margin-top:6px;text-align:center}
+.fix-btn{background:none;border:2px solid #f0a000;border-radius:var(--radius);padding:4px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#c26000;transition:border-color .1s,background .1s;white-space:nowrap}
+.fix-btn:hover{background:#fff4e0;border-color:#c26000}
+.fix-btn:disabled{opacity:.5;cursor:not-allowed}
+.fix-status{font-size:11px;color:#c26000;font-weight:700;margin-top:4px;text-align:center;min-height:14px}
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
 
@@ -313,7 +317,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .storyline-chapter-body p{margin-bottom:10px}
 .storyline-chapter-body p:last-child{margin-bottom:0}
 .storyline-story-loading{font-size:13px;color:var(--gray-dark);font-style:italic;padding:8px 0}
-.saved-item-story{border-top:1px solid var(--gray-mid);background:var(--white)}
+.saved-item-story{border-top:1px solid var(--gray-mid);background:var(--white)}.saved-item-edit{display:none;align-items:center;gap:4px;padding:6px 10px;border-top:1.5px solid var(--accent);background:var(--white)}.saved-item-edit.open{display:flex}.saved-item-edit-emoji{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:26px;text-align:center;flex-shrink:0}.saved-item-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:3px 8px;min-width:0;outline:none}.saved-item-edit-btn{background:none;border:none;cursor:pointer;font-size:12px;font-weight:800;font-family:"Nunito",sans-serif;color:var(--gray-dark);padding:2px 6px;border-radius:5px;white-space:nowrap}.saved-item-edit-btn:hover{background:var(--gray-mid)}.saved-item-edit-btn.danger{color:var(--red)}
 .saved-item-story-hdr{display:flex;align-items:center;gap:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);user-select:none;width:100%;background:none;border:none;font-family:'Nunito',sans-serif;text-align:left}
 .saved-item-story-hdr:hover{background:var(--gray-light)}.story-icon-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;line-height:1;opacity:.7;flex-shrink:0}.story-icon-btn:hover{opacity:1}
 .saved-item-story-body{display:none;padding:0 14px 12px;font-size:13px;line-height:1.7;color:#444}
@@ -1605,6 +1609,8 @@ async function loadSavedList(){
         <div class="saved-actions" onclick="event.stopPropagation()">
           ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
           ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${enc}')">↻</button>`:''}
+          ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
+          ${APP.info.canGenerate?`<button class="ico-btn" title="Fix all lessons (deep clean)" onclick="event.stopPropagation();fixAllLessons('${enc}','${sid}')">🔧</button>`:''}
           <button class="ico-btn export" title="${t('lesson.export_title')}"
             data-topic="${s.topic.replace(/"/g,'&quot;')}"
             onclick="exportTopics([this.dataset.topic])">⬇</button>
@@ -1618,6 +1624,15 @@ async function loadSavedList(){
           <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
         </button>
         <div class="saved-item-story-body" id="sis-body-${sid}"></div>
+      </div>
+      <div class="saved-item-edit" id="siedit-${sid}">
+        <span class="saved-item-edit-emoji" id="siedit-emoji-${sid}" title="Cycle emoji" onclick="cycleSavedItemEmoji('${sid}')">${s.topicEmoji||'📚'}</span>
+        <input class="saved-item-edit-input" id="siedit-input-${sid}" value="${s.topic.replace(/"/g,'&quot;')}" placeholder="Topic name…"
+          onkeydown="if(event.key==='Enter')saveSavedItemTitle('${sid}','${enc}');if(event.key==='Escape')closeSavedItemEdit('${sid}')">
+        <button class="saved-item-edit-btn" onclick="saveSavedItemTitle('${sid}','${enc}')">Save</button>
+        <button class="saved-item-edit-btn gen" title="Generate title with AI" onclick="genSavedItemTitle('${sid}','${enc}')">✨</button>
+        <button class="saved-item-edit-btn danger" onclick="clearSavedItemTitle('${sid}','${enc}')">Clear</button>
+        <button class="saved-item-edit-btn" onclick="closeSavedItemEdit('${sid}')">✕</button>
       </div>
     </div>`;
   }
@@ -2162,7 +2177,13 @@ function buildPath(){
       <div class="node-lbl">
         <div class="node-title">Lesson ${L.id}: ${L.title} ${diffBadge}</div>
         <div class="node-desc">${L.desc}</div>
-        ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}      </div>
+        ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
+        ${APP.info.canGenerate?`<div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+          ${hasFlags?`<button class="fix-btn" onclick="event.stopPropagation();fixLesson('${encTopic(d.topic)}',${L.id},false,this)" title="Repair flagged exercises only">🔧 Fix flagged</button>`:''}
+          <button class="fix-btn" onclick="event.stopPropagation();fixLesson('${encTopic(d.topic)}',${L.id},true,this)" title="Deep-clean: verify and fix all vocab and sentences">🔧 Fix all</button>
+        </div>`:''}
+        <div class="fix-status" id="fix-status-${L.id}"></div>
+      </div>
       ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:22px">🔒</span>':''}`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
@@ -2356,6 +2377,157 @@ async function genLessonTitle() {
   } finally {
     if (btn) { btn.textContent = '✨'; btn.disabled = false; }
   }
+}
+
+
+
+// ── Lesson fix / deep-clean ───────────────────────────────────────────────────
+
+async function fixLesson(enc, lessonId, deepClean, btn) {
+  const topic = decodeURIComponent(enc);
+  const endpoint = deepClean ? '/api/repair-all' : '/api/repair';
+  const statusEl = document.getElementById('fix-status-' + lessonId);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+  if (statusEl) statusEl.textContent = deepClean ? 'Cleaning…' : 'Repairing…';
+  try {
+    const r = await fetch(endpoint, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, lessonId })
+    });
+    const resp = await r.json();
+    if (!r.ok) throw new Error(resp.error || t('status.repair_failed'));
+    const result = await pollJob(resp.jobId, step => {
+      if (statusEl) statusEl.textContent = step;
+    });
+    const n = result?.repaired ?? '?';
+    if (statusEl) statusEl.textContent = deepClean
+      ? `✓ ${n} item${n!==1?'s':''} cleaned`
+      : `✓ ${n} exercise${n!==1?'s':''} repaired`;
+    // Reload lesson data if it's the currently loaded topic
+    if (APP.lessonData && APP.lessonData.topic === topic) {
+      await loadSaved(encodeURIComponent(topic));
+    }
+    showToast(deepClean ? '🔧 Lesson cleaned' : '🔧 Exercises repaired');
+  } catch(e) {
+    if (statusEl) statusEl.textContent = '⚠ ' + e.message.slice(0, 60);
+    showToast('⚠ ' + e.message.slice(0, 60));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = deepClean ? '🔧 Fix all' : '🔧 Fix flagged'; }
+  }
+}
+
+async function fixAllLessons(enc, sid) {
+  // Fix all lessons in a topic from the saved-list card
+  const topic = decodeURIComponent(enc);
+  const saved = (APP.savedList || []).find(l => l.topic === topic);
+  if (!saved || !saved.lessonCount) { showToast('No lessons found'); return; }
+  const btn = document.querySelector(`#siedit-${sid} ~ * .ico-btn[title*="Fix"]`)
+           || document.querySelector(`.saved-item-wrap [title="Fix all lessons (deep clean)"]`);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+  showToast('🔧 Cleaning lessons…');
+  // Load full lesson data to get lesson IDs
+  try {
+    const r = await fetch('/api/lessons?topic=' + enc);
+    if (!r.ok) throw new Error('Could not load lessons');
+    const data = await r.json();
+    for (let i = 0; i < data.lessons.length; i++) {
+      const lesson = data.lessons[i];
+      const statusR = await fetch('/api/repair-all', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, lessonId: lesson.id })
+      });
+      const resp = await statusR.json();
+      if (!statusR.ok) throw new Error(resp.error || t('status.repair_failed'));
+      await pollJob(resp.jobId, () => {});
+    }
+    showToast('✓ All lessons cleaned');
+    await loadSavedList();
+  } catch(e) {
+    showToast('⚠ ' + e.message.slice(0, 60));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🔧'; }
+  }
+}
+
+// ── Saved-item inline title edit (✏️ in saved-list) ──────────────────────────
+
+const _siEmojiIdx = {};
+
+function openSavedItemEdit(sid, enc) {
+  const row = document.getElementById('siedit-' + sid);
+  if (!row) return;
+  row.classList.add('open');
+  const inp = document.getElementById('siedit-input-' + sid);
+  if (inp) { inp.focus(); inp.select(); }
+}
+
+function closeSavedItemEdit(sid) {
+  const row = document.getElementById('siedit-' + sid);
+  if (row) row.classList.remove('open');
+}
+
+function cycleSavedItemEmoji(sid) {
+  _siEmojiIdx[sid] = ((_siEmojiIdx[sid] || 0) + 1) % STORYLINE_ICONS.length;
+  const el = document.getElementById('siedit-emoji-' + sid);
+  if (el) el.textContent = STORYLINE_ICONS[_siEmojiIdx[sid]];
+}
+
+async function saveSavedItemTitle(sid, enc) {
+  const newTopic = document.getElementById('siedit-input-' + sid)?.value.trim();
+  const newEmoji = document.getElementById('siedit-emoji-' + sid)?.textContent.trim();
+  if (!newTopic) return;
+  const oldTopic = decodeURIComponent(enc);
+  try {
+    const r = await fetch('/api/lessons/save-meta', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ oldTopic, newTopic, topicEmoji: newEmoji })
+    });
+    if (!r.ok) throw new Error('Save failed');
+    closeSavedItemEdit(sid);
+    await loadSavedList();
+    showToast(t('lesson.title_saved'));
+  } catch(e) { showToast('⚠ ' + e.message.slice(0, 60)); }
+}
+
+async function clearSavedItemTitle(sid, enc) {
+  const oldTopic = decodeURIComponent(enc);
+  const found = (APP.savedList || []).find(l => l.topic === oldTopic);
+  if (!found) return;
+  // Revert to userTopic (original user input) if available, else keep current
+  const original = found.userTopic || oldTopic;
+  if (original === oldTopic) { closeSavedItemEdit(sid); return; }
+  try {
+    const r = await fetch('/api/lessons/save-meta', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ oldTopic, newTopic: original, topicEmoji: found.topicEmoji })
+    });
+    if (!r.ok) throw new Error('Clear failed');
+    closeSavedItemEdit(sid);
+    await loadSavedList();
+    showToast(t('lesson.title_saved'));
+  } catch(e) { showToast('⚠ ' + e.message.slice(0, 60)); }
+}
+
+async function genSavedItemTitle(sid, enc) {
+  const genBtn = document.querySelector('#siedit-' + sid + ' .gen');
+  if (genBtn) { genBtn.textContent = '⏳'; genBtn.disabled = true; }
+  const oldTopic = decodeURIComponent(enc);
+  const found = (APP.savedList || []).find(l => l.topic === oldTopic);
+  try {
+    const r = await fetch('/api/storyline-title', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ topics: [found?.userTopic || oldTopic] })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
+    // Pre-fill edit form — user still confirms with Save
+    const inp   = document.getElementById('siedit-input-' + sid);
+    const emoji = document.getElementById('siedit-emoji-' + sid);
+    if (inp)   inp.value = data.title || '';
+    if (emoji) emoji.textContent = data.icon || '📚';
+    openSavedItemEdit(sid, enc);
+  } catch(e) { showToast('⚠ ' + e.message.slice(0, 60)); }
+  finally { if (genBtn) { genBtn.textContent = '✨'; genBtn.disabled = false; } }
 }
 
 async function toggleChainStory(chainId) {

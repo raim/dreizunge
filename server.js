@@ -214,7 +214,7 @@ function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint
 Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
 
 The learner speaks ${S} and is learning ${L}.
-Field names in the schema are fixed ("it" and "en") but their CONTENT must be in the languages specified below.
+Field names in the schema are fixed ("target" and "source") but their CONTENT must be in the languages specified below.
 
 Schema:
 {
@@ -234,9 +234,9 @@ Rules:
 - sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
 - sentence length: ${sentLen} — vary lengths naturally
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
-- CRITICAL "it" fields: MUST contain ONLY ${L} — absolutely never ${S} or any other language
-- CRITICAL "en" fields: MUST contain ONLY ${S} — absolutely never ${L} or English (unless ${S} is English)
-- "title" and "desc": MUST be written in ${S}${dialectNote}${styleNote}${writingStyleNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+- CRITICAL "target" fields: MUST contain ONLY ${L} — absolutely never ${S} or any other language
+- CRITICAL "source" fields: MUST contain ONLY ${S} — absolutely never ${L} or English (unless ${S} is English)
+- "title" and "desc": MUST be written in ${S}${dialectNote}${styleNote}${writingStyleNote}${lang==='ja'?'\n- JAPANESE: In sentence "target" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
 // Lesson prompt for user-provided story + parallel translation
@@ -254,7 +254,7 @@ You will be given a ${L} story and its ${S} translation. Your job is to extract 
 Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
 
 The learner speaks ${S} and is learning ${L}.
-Field names in the schema are fixed ("it" and "en") but their CONTENT must be in the languages specified below.
+Field names in the schema are fixed ("target" and "source") but their CONTENT must be in the languages specified below.
 
 Schema:
 {
@@ -275,9 +275,9 @@ Rules:
 - sentence pairs must be aligned: the ${S} must be the actual translation of that ${L} sentence, not a paraphrase
 - sentence length: prefer sentences of ${sentLen}
 - sentences must NOT be duplicated across lessons — focus on different parts of the text for each lesson
-- CRITICAL "it" fields: MUST contain ONLY ${L} — never invented, never ${S} or any other language
-- CRITICAL "en" fields: MUST contain ONLY ${S} — never ${L}, never English (unless ${S} is English)
-- "title" and "desc": MUST be written in ${S}${dialectNote}${lang==='ja'?'\n- JAPANESE: In sentence "it" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+- CRITICAL "target" fields: MUST contain ONLY ${L} — never invented, never ${S} or any other language
+- CRITICAL "source" fields: MUST contain ONLY ${S} — never ${L}, never English (unless ${S} is English)
+- "title" and "desc": MUST be written in ${S}${dialectNote}${writingStyleNote}${lang==='ja'?'\n- JAPANESE: In sentence "target" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
 // Lesson prompt for table format
@@ -354,24 +354,33 @@ function parseTableLesson(raw, lessonNum, topic) {
   };
 }
 
-function sysSrcRepair(srcLang) {
+function sysSrcRepair(lang, srcLang, deepClean) {
+  const L = langName(lang || 'it');
   const S = langName(srcLang || 'en');
+  const mode = deepClean
+    ? `You will receive all vocab and sentences from a lesson. Verify and correct every item — fix wrong words, bad translations, non-${L} words in the target field, non-${S} words in the source field, and generate fresh distractors for all choices.`
+    : `You will receive a list of faulty exercises with optional user comments explaining the error. Fix only what is wrong.`;
   return `You are a language exercise repairer for a Duolingo-style app.
-You will receive a list of faulty exercises with optional user comments explaining the error.
+${mode}
 Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
 
+Field names are fixed. Content rules:
+- "target" fields: MUST contain ONLY ${L} — never ${S} or any other language
+- "source" fields: MUST contain ONLY ${S} — never ${L}
+
 Each exercise has a type. Return corrected versions preserving the same type and schema:
-- mcq_target_source:      {"type":"mcq_target_source","target":"target language","source":"${S}","correct":"correct ${S}","choices":["4 ${S} options"]}
-- mcq_source_target:      {"type":"mcq_source_target","source":"${S}","target":"target language","correct":"correct target language","choices":["4 target language options"]}
-- listen_mcq:     {"type":"listen_mcq","target":"target language","correct":"correct ${S}","choices":["4 ${S} options"]}
-- listen_type:    {"type":"listen_type","target":"target language","correct":"target language word"}
-- read_translate: {"type":"read_translate","target":"target language sentence","source":"${S}","correct":"correct ${S}","choices":["4 ${S} options"]}
-- order:          {"type":"order","target":"target language sentence","source":"${S}"}
+- mcq_target_source:      {"type":"mcq_target_source","target":"${L} word","source":"${S} translation","correct":"correct ${S}","choices":["4 distinct ${S} options"]}
+- mcq_source_target:      {"type":"mcq_source_target","source":"${S} word","target":"${L} translation","correct":"correct ${L}","choices":["4 distinct ${L} options"]}
+- listen_mcq:             {"type":"listen_mcq","target":"${L} word","correct":"correct ${S}","choices":["4 distinct ${S} options"]}
+- listen_type:            {"type":"listen_type","target":"${L} word","correct":"${L} word"}
+- read_translate:         {"type":"read_translate","target":"${L} sentence","source":"${S} translation","correct":"correct ${S}","choices":["4 distinct ${S} options"]}
+- order:                  {"type":"order","target":"${L} sentence","source":"${S} translation"}
 
 Rules:
-- Fix translation errors, wrong choices, incorrect pronunciations
-- Pay close attention to user comments — they describe what is specifically wrong
-- For order type: do NOT include words[] — the app derives it automatically from "it"
+- Fix translation errors, wrong word forms, incorrect language in fields, bad distractors
+- Distractors in choices must be plausible but clearly wrong — not random noise
+- Pay close attention to user comments where present
+- For order type: do NOT include words[] — the app derives it automatically from "target"
 - Keep the same topic and difficulty level
 - Return exactly as many items as given`;
 }
@@ -951,7 +960,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
 }
 
 // ── Repair flagged exercises ──────────────────────────────────────────
-async function repairLesson(topic, lessonId, jobId) {
+async function repairLesson(topic, lessonId, jobId, deepClean) {
   const saved = findSaved(topic);
   if (!saved) throw new Error(`Topic not found: ${topic}`);
   const lessonIdx = saved.lessons.findIndex(l => l.id === lessonId);
@@ -959,6 +968,8 @@ async function repairLesson(topic, lessonId, jobId) {
   const lesson = JSON.parse(JSON.stringify(saved.lessons[lessonIdx]));
   const origVocabCount    = lesson.vocab.length;
   const origSentenceCount = lesson.sentences.length;
+  const lang = saved.lang || 'it';
+  const srcLang = saved.srcLang || 'en';
   const allTopicFlags = flagsForTopic(topic);
   const lessonItSet = new Set([
     ...(lesson.vocab||[]).map(v => (v.target||'').slice(0,40).replace(/\s+/g,'_')),
@@ -969,53 +980,112 @@ async function repairLesson(topic, lessonId, jobId) {
     const contentSlug = parts.slice(2).join(':');
     return lessonItSet.has(contentSlug);
   });
-  if (flaggedEntries.length === 0) throw new Error('No flagged exercises found for this lesson');
-  const lang = saved.lang || 'it';
-  const srcLang = saved.srcLang || 'en';
-  const flaggedExercises = flaggedEntries.map(([, v]) => ({ ...v, _userComment: v.comment || undefined }));
+
+  // Build exercise list: deepClean = all vocab+sentences; flags-only = flagged only
+  let exercisesToFix, entriesForClearing;
+  if (deepClean) {
+    // Build exercise objects from all vocab and sentences.
+    // Attach _originalTarget so mergeRepaired can match on the SENT target, not the returned one.
+    // Attach flag comment where available.
+    exercisesToFix = [
+      ...(lesson.vocab||[]).map(v => {
+        const flag = flaggedEntries.find(([,fv]) => fv.target === v.target);
+        return { type:'mcq_target_source', target:v.target, source:v.source,
+                 correct:v.source, choices:[v.source],
+                 _originalTarget: v.target,
+                 ...(flag?.[1]?.comment ? { _userComment: flag[1].comment } : {}) };
+      }),
+      ...(lesson.sentences||[]).map(s => {
+        const flag = flaggedEntries.find(([,fv]) => fv.target === s.target);
+        return { type:'read_translate', target:s.target, source:s.source,
+                 correct:s.source, choices:[s.source],
+                 _originalTarget: s.target,
+                 ...(flag?.[1]?.comment ? { _userComment: flag[1].comment } : {}) };
+      }),
+    ];
+    entriesForClearing = flaggedEntries;
+    console.log(`  Deep-clean ${exercisesToFix.length} item(s) in "${topic}" lesson ${lessonId}`);
+  } else {
+    if (flaggedEntries.length === 0) throw new Error('No flagged exercises found for this lesson');
+    // Flags carry full exercise data (type, target, source, correct, choices).
+    // Cross-reference with lesson to get _originalTarget for reliable mergeRepaired matching.
+    exercisesToFix = flaggedEntries.map(([, v]) => {
+      const orig = (lesson.vocab||[]).find(lv => lv.target === v.target)
+                || (lesson.sentences||[]).find(ls => ls.target === v.target);
+      return { ...v, _originalTarget: orig?.target || v.target,
+               _userComment: v.comment || undefined };
+    });
+    entriesForClearing = flaggedEntries;
+    console.log(`  Repairing ${exercisesToFix.length} exercise(s) in "${topic}" lesson ${lessonId} (flagged-only)`);
+  }
+
   const BATCH_SIZE = 4;
   const batches = [];
-  for (let i = 0; i < flaggedExercises.length; i += BATCH_SIZE)
-    batches.push({ exercises: flaggedExercises.slice(i, i + BATCH_SIZE),
-                   entries:   flaggedEntries.slice(i, i + BATCH_SIZE) });
-  console.log(`  Repairing ${flaggedExercises.length} exercise(s) in "${topic}" lesson ${lessonId} (${batches.length} batch${batches.length>1?'es':''})`);
-  function mergeRepaired(repaired) {
+  for (let i = 0; i < exercisesToFix.length; i += BATCH_SIZE)
+    batches.push({ exercises: exercisesToFix.slice(i, i + BATCH_SIZE),
+                   entries:   entriesForClearing.slice(i, i + BATCH_SIZE) });
+  console.log(`  Batches: ${batches.length}`);
+  // Build a lookup from _originalTarget → index for fast matching
+  const vocabByOrig    = new Map((lesson.vocab||[]).map((v,i) => [v.target, i]));
+  const sentenceByOrig = new Map((lesson.sentences||[]).map((s,i) => [s.target, i]));
+  // Also keep a set of the _originalTarget values from exercisesToFix for reference
+  const origTargets = new Map(exercisesToFix.map(e => [e._originalTarget, e]));
+
+  function mergeRepaired(repaired, sentIdx) {
+    // Determine the original target: prefer the _originalTarget we sent, fall back to target prefix match
+    const origTarget = repaired._originalTarget
+      || [...origTargets.keys()].find(k => k.toLowerCase().slice(0,20) === (repaired.target||'').toLowerCase().slice(0,20))
+      || repaired.target;
+
     if (['order','read_translate'].includes(repaired.type) && repaired.target) {
-      const idx = lesson.sentences.findIndex(s =>
-        s.target.toLowerCase().slice(0,20) === (repaired.target||'').toLowerCase().slice(0,20));
+      const idx = sentenceByOrig.has(origTarget) ? sentenceByOrig.get(origTarget)
+        : lesson.sentences.findIndex(s =>
+            s.target.toLowerCase().slice(0,20) === origTarget.toLowerCase().slice(0,20));
       if (idx >= 0) {
         const s = { target: repaired.target, source: repaired.source || lesson.sentences[idx].source };
         lesson.sentences[idx] = deriveSentenceWords(s, saved.lang);
+        sentenceByOrig.set(repaired.target, idx); // update map for subsequent batches
+      } else {
+        console.log(`    mergeRepaired: no sentence match for "${origTarget.slice(0,30)}"`);
       }
     }
     if (['mcq_target_source','mcq_source_target','listen_mcq','listen_type'].includes(repaired.type) && repaired.target) {
-      const idx = lesson.vocab.findIndex(v =>
-        v.target.toLowerCase().slice(0,15) === (repaired.target||'').toLowerCase().slice(0,15));
-      if (idx >= 0) lesson.vocab[idx] = {
-        target: repaired.target, source: repaired.source || lesson.vocab[idx].source,
-        };
+      const idx = vocabByOrig.has(origTarget) ? vocabByOrig.get(origTarget)
+        : lesson.vocab.findIndex(v =>
+            v.target.toLowerCase().slice(0,15) === origTarget.toLowerCase().slice(0,15));
+      if (idx >= 0) {
+        lesson.vocab[idx] = { target: repaired.target, source: repaired.source || lesson.vocab[idx].source };
+        vocabByOrig.set(repaired.target, idx); // update map for subsequent batches
+      } else {
+        console.log(`    mergeRepaired: no vocab match for "${origTarget.slice(0,30)}"`);
+      }
     }
   }
   const repairStart = Date.now();
   let repairPromptTokens = 0, repairCompletionTokens = 0;
   let totalRepaired = 0;
   const clearedKeys = [];
-  const SYS_REPAIR = sysSrcRepair(srcLang);
+  const SYS_REPAIR = sysSrcRepair(lang, srcLang, deepClean);
   for (let b = 0; b < batches.length; b++) {
     const batch = batches[b];
-    if (jobId) jobStep(jobId, `Repairing batch ${b+1}/${batches.length}…`);
+    if (jobId) jobStep(jobId, `${deepClean?'Cleaning':'Repairing'} batch ${b+1}/${batches.length}…`);
     const commentNote = batch.exercises.some(e => e._userComment)
       ? '\nNote: some exercises include user comments. Pay close attention to these.' : '';
-    const vocabRef = lesson.vocab.map(v=>`${v.target} = ${v.source}`).join(', ');
-    const sentRef  = lesson.sentences.map(s=>s.target).join(' | ');
+    // In deep-clean mode the vocab/sentences ARE the broken items — don't use them as reference.
+    // In flags-only mode, the rest of the lesson vocab is reliable context.
+    const refSection = deepClean ? '' : (() => {
+      const vocabRef = lesson.vocab.map(v=>`${v.target} = ${v.source}`).join(', ');
+      const sentRef  = lesson.sentences.map(s=>s.target).join(' | ');
+      return `Reference vocabulary (use as context for correct register and topic):\n${vocabRef}\nReference sentences:\n${sentRef}\n`;
+    })();
+    // Strip internal _originalTarget/_userComment from what we send to the LLM
+    const exForLLM = batch.exercises.map(({ _originalTarget, _userComment, ...rest }) => ({
+      ...rest, ...(_userComment ? { _userComment } : {})
+    }));
     const userMsg = `Language: ${langName(lang)}. Source language: ${langName(srcLang)}. Topic: "${topic}".
-Reference vocabulary for this lesson (use ONLY these ${langName(lang)} words/phrases as the basis for corrections):
-${vocabRef}
-Reference sentences:
-${sentRef}
-${commentNote}
-Fix these ${batch.exercises.length} faulty exercises (batch ${b+1}/${batches.length}):
-${JSON.stringify(batch.exercises, null, 2)}
+${refSection}${commentNote}
+Fix these ${batch.exercises.length} exercise(s) (batch ${b+1}/${batches.length}):
+${JSON.stringify(exForLLM, null, 2)}
 Return only the corrected JSON array.`;
     console.log(`    Batch ${b+1}/${batches.length}: ${batch.exercises.length} exercise(s)…`);
     const arr = await withRetry(`Repair batch ${b+1}`, async () => {
@@ -1032,7 +1102,7 @@ Return only the corrected JSON array.`;
     });
     arr.forEach(mergeRepaired);
     totalRepaired += arr.length;
-    clearedKeys.push(...batch.entries.map(([k]) => k));
+    clearedKeys.push(...(batch.entries||[]).map(([k]) => k));
   }
   if (lesson.vocab.length < origVocabCount || lesson.sentences.length < origSentenceCount)
     throw new Error(`Repair would shrink lesson — rejecting`);
@@ -1181,6 +1251,12 @@ async function boot() {
       // Remove old entry and insert updated one
       store.lessons = store.lessons.filter(l => l.topic.toLowerCase() !== oldTopic.trim().toLowerCase());
       store.lessons.unshift(saved);
+      // Cascade rename into continuedFrom pointers on other lessons
+      const oldLower = oldTopic.trim().toLowerCase();
+      store.lessons.forEach(l => {
+        if (l.continuedFrom && l.continuedFrom.toLowerCase() === oldLower)
+          l.continuedFrom = saved.topic;
+      });
       saveStore(store);
       console.log(`  Renamed: "${oldTopic}" → "${saved.topic}"`);
       return json(res, 200, { ok: true, topic: saved.topic, topicEmoji: saved.topicEmoji });
@@ -1324,6 +1400,31 @@ async function boot() {
         jobDone(jobId, result);
       }).catch(e => {
         console.error('  Repair error:', e.message);
+        jobFail(jobId, e.message);
+      }).finally(() => {
+        generatingTopics.delete(topicKey);
+      });
+      return json(res, 202, { jobId });
+    }
+
+    // ── Deep-clean lesson (fix all vocab+sentences) ──────────────────
+    if (M === 'POST' && url.pathname === '/api/repair-all') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topic, lessonId } = body;
+      if (!topic)    return json(res, 400, { error: 'Missing topic' });
+      if (!lessonId) return json(res, 400, { error: 'Missing lessonId' });
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      const topicKey = topic.trim().toLowerCase();
+      if (generatingTopics.has(topicKey))
+        return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
+      const jobId = newJob();
+      generatingTopics.add(topicKey);
+      repairLesson(topic.trim(), parseInt(lessonId, 10), jobId, true).then(result => {
+        jobDone(jobId, result);
+      }).catch(e => {
+        console.error('  Deep-clean error:', e.message);
         jobFail(jobId, e.message);
       }).finally(() => {
         generatingTopics.delete(topicKey);

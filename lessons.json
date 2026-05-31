@@ -1,450 +1,1638 @@
 {
   "lessons": [
     {
-      "topic": "Ladro nel paese vicino",
+      "topic": "Amore e danza",
+      "topicEmoji": "❤️",
+      "userTopic": "Una volta ripresosi, Marco si era innamorato di Giulia, ma lei lo considerava la sua anima gemella nella danza. Amava Clara.",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 4,
+      "storyLen": 500,
+      "story": "Una volta ripresosi, Marco sah Giulia mit einem neuen, tiefen Respekt an. Ihre Hände, die immer noch seine umklammerten, berührten ihn in einer Weise, die er noch nie zuvor empfunden hatte. Er wusste, dass er in sie verliebt war, aber er wusste auch, dass sie ihm mehr als nur eine Liebe bedeutete. Sie war seine Partnerin, seine Verbündete, seine Seele im Tanz.\n\nGiulia bemerkte den veränderten Blick in seinen Augen und lächelte sanft. Sie wusste, dass sie Marco nicht verlieren durfte, nicht jetzt, nicht nach allem, was sie durchgemacht hatten. Sie strich ihm sanft über die Wange. \"Ich liebe dich,\" flüsterte sie. \"Aber ich liebe auch Clara. Sie ist meine Seele im Tanz.\"\n\nMarco nickte, verstand und fühlte sich erleichtert. Er wusste, dass Giulia stets doppelt war – seine Partnerin und ihre Seele im Tanz. Er würde sie nicht verdrängen, sondern sie verehren, wie sie es verdiente. Er drückte ihre Hand und versprach: \"Ich werde dich immer respektieren, Giulia. Und ich werde dich immer lieben.\"\n\nDie Tage vergingen, und Marco schritt langsam, aber sicher auf dem Pfad der Genesung. Giulia blieb bei ihm, ihre Hand hielt seine, während sie gemeinsam durch die schwierigen Momente gingen. Sie wussten, dass sie noch viele Herausforderungen vor sich hatten, aber sie waren bereit, sie gemeinsam zu meistern. Sie waren Partner, Verbündete, und sie waren einander unentbehrlich.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Warm, emotionally rich, evocative imagery. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nem Zirkusarzt, der schnell herbeieilte und begann, Marco zu versorgen. Giulia blieb bei ihm, ihre Hand hielt seine. \n\nDie Zuschauer starrten entsetzt auf den Vorfall, aber Giulia ignorierte sie. Sie konzentrierte sich nur auf Marco. \"Du musst stark sein,\" flüsterte sie. \"Du musst.\" Sie wusste, dass sie ihn nicht verlieren durfte. Er war ihr Partner, ihr Verbündeter, ihr Traum. Sie würde alles tun, um ihn zu retten. \n\nDie Arztbehandlung war schnell, aber gründlich. Marco wurde in eine Notaufnahme gebracht, wo er unter ständiger Beobachtung lag. Giulia blieb bei ihm, ihre Hand hielt seine, während sie wartete und betete, dass er wieder aufwachte. Sie wusste, dass sie jetzt alle Hände voll zu tun hatte, aber sie würde nicht aufgeben. Sie würde Marco durchstehen, wie sie es immer getan hatten.\n\nNew topic: \"Una volta ripresosi, Marco si era innamorato di Giulia, ma lei lo considerava la sua anima gemella nella danza. Amava Clara.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Esibizione problematica",
+      "storyStyle": "romantic",
+      "lessons": [
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Una volta ripresosi, Marko sah Giulia mit einem neuen, tiefen Respekt an. Ihre Hände, die immer noch seine umklammerten, berührten ihn in einer Weise, die er noch nie zuvor empfunden hatte. Er wusste, dass er in sie verliebt war, aber er wusste auch, dass sie ihm mehr als nur eine Liebe bedeutete. Sie war seine Partnerin, seine Verbündete, seine Seele im Tans.\n\nGiulia bemerkt den veränderten Blick in seinen Augen und lächelte sanft. Sie wusste, dass sie Marco nicht verlieren durfte, nicht jetzt, nicht nach allem, was sie durchgemacht hatten. Sie strich ihm sanft über die Wange. \"Ich liebe dich,\" flüsterte sie. \"Aber ich liebe auch Clara. Sie ist meine Seele im Tanz.\"\n\nMarco nickte, verstand und fühlte sich erleichtert.. Er wusste, dass Giulia stets doppelt war – seine Partnerin und ihre Seele im Tanz. Er würde sie nicht verdrängen, sondern sie verehren, wie sie es verdiente. Er drückte ihre Hand und versprach: \"Ich werde dich immer respektieren, Giulia. Und ich werde dich immer lieben.\"\n\nDie Tage vergingen, und Marco schritt langsam, aber sicher auf dem Pfad der Genesun. Giulia blieb bei ihm, ihre Hand hielt seine, während sie gemeinsam durch die schwierigen Momente gingen.. Sie wussten, dass sie noch viele Herausforderungen vor sich hatten, aber sie waren bereit, sie gemeinsam zu meistern. Sie waren Partner, Verbündete, und sie waren einander unentbehrlich.",
+          "edits": [
+            {
+              "type": "spelling",
+              "find": "Marco",
+              "replace": "Marko",
+              "reason": "common misspelling of 'Marco'"
+            },
+            {
+              "type": "grammar",
+              "find": "Giulia bemerkte",
+              "replace": "Giulia bemerkt",
+              "reason": "wrong verb tense, present instead of past"
+            },
+            {
+              "type": "spelling",
+              "find": "Seele im Tanz",
+              "replace": "Seele im Tans",
+              "reason": "omitted 'z'"
+            },
+            {
+              "type": "grammar",
+              "find": "Marco nickte, verstand und fühlte sich erleichtert",
+              "replace": "Marco nickte, verstand und fühlte sich erleichtert.",
+              "reason": "missing period at the end of the sentence"
+            },
+            {
+              "type": "spelling",
+              "find": "Genesung",
+              "replace": "Genesun",
+              "reason": "omitted 'g'"
+            },
+            {
+              "type": "grammar",
+              "find": "sie gemeinsam durch die schwierigen Momente gingen",
+              "replace": "sie gemeinsam durch die schwierigen Momente gingen.",
+              "reason": "missing period at the end of the sentence"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 574595,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1537,
+        "totalCompletionTokens": 722,
+        "lessons": [
+          {
+            "promptTokens": 803,
+            "completionTokens": 269
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T17:13:05.902Z",
+      "updatedAt": "2026-05-31T17:13:05.902Z"
+    },
+    {
+      "topic": "Esibizione problematica",
       "topicEmoji": "🚨",
-      "userTopic": "nel paese vicino un ladro ha cercato di rubare dell'attrezzatura",
+      "userTopic": "Durante la successiva esibizione sono andate storte molte cose: Marco è caduto e si è fatto male.",
       "lang": "de",
       "srcLang": "it",
       "difficulty": 2,
-      "storyLen": 400,
-      "story": "Elisa und Elena tranken noch einen Drink, als plötzlich ein lauter Schrei durch die Bar hallte. Alle Köpfe drehten sich in Richtung der Tür. Ein junger Mann in einem schäbigen Mantel stürmte herein, schien sich zu orientieren und blieb abrupt stehen, als er Elisa und Elena sah. Er stotterte: \"Entschuldigung, ich... ich bin nur... hier bin ich nur... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um... um",
+      "storyLen": 500,
+      "story": "Durante la successiva esibizione sono andate storte molte cose: Marco è caduto e si è fatto male. Giulia sah es mit Entsetzen, wie er unter dem Gewicht des riesigen Elefanten rutschte und mit einem Schrei auf den Boden prallte. Ein Schwall Staub stieg empor, als er hart aufschlug. Giulia sprang sofort zu ihm, ihre Hände tasteten nach seinem Puls. \"Marco, bleib bei mir!\" flüsterte sie, während sie ihn vorsichtig aufrollte. Sein Arm war verkrümmt, Blut sickerte aus einer offenen Wunde an der Schulter. \n\nMarco atmete schwer, seine Augen waren geschlossen, aber sie konnte spüren, wie sein Herz noch schlug. \"Ich bin hier, Marco,\" sagte sie leise. \"Ich bin hier.\" Sie rief nach dem Zirkusarzt, der schnell herbeieilte und begann, Marco zu versorgen. Giulia blieb bei ihm, ihre Hand hielt seine. \n\nDie Zuschauer starrten entsetzt auf den Vorfall, aber Giulia ignorierte sie. Sie konzentrierte sich nur auf Marco. \"Du musst stark sein,\" flüsterte sie. \"Du musst.\" Sie wusste, dass sie ihn nicht verlieren durfte. Er war ihr Partner, ihr Verbündeter, ihr Traum. Sie würde alles tun, um ihn zu retten. \n\nDie Arztbehandlung war schnell, aber gründlich. Marco wurde in eine Notaufnahme gebracht, wo er unter ständiger Beobachtung lag. Giulia blieb bei ihm, ihre Hand hielt seine, während sie wartete und betete, dass er wieder aufwachte. Sie wusste, dass sie jetzt alle Hände voll zu tun hatte, aber sie würde nicht aufgeben. Sie würde Marco durchstehen, wie sie es immer getan hatten.",
       "storyLang": "de",
-      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nt von deiner Leistung. Sie haben mich gebeten, dich zu einem Drink einzuladen.\"\n\nElisa zögerte kurz, dann stand sie auf und folgte Elena. Sie verließen das Zelt und gingen durch den dunklen, aber lebhaften Zeltlagerplatz. Die Zuschauer, die noch auf den Zelten herumwerkten, nickten ihnen zu und applaudierten. Elisa fühlte sich geschmeichelt, als sie die Anerkennung der Tänzerin sah.\n\nAls sie in die Stadt gingen, fühlte Elisa sich wie eine berühmte Figur. Elena führte sie zu einer kleinen, aber gemütlichen Bar, wo sie von der Tänzerin und ihrem Team erwartet wurden. Sie plauderten und lachten, und Elisa fühlte sich zum ersten Mal seit langer Zeit wirklich entspannt. Sie wusste, dass sie noch viel zu tun hatte, aber in diesem Moment genoss sie die Anerkennung und Freundschaft, die sie umgab.\n\nNew topic: \"nel paese vicino un ladro ha cercato di rubare dell'attrezzatura\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "Esibizione al circo",
-      "storyStyle": "funny",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Fast-paced, kinetic, short punchy sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nirektor des Zirkus zu kommunizieren,\" sagte sie. \"Es hat mir ermöglicht, mich in der Compagnie zu integrieren.\"\n\nMarco dachte an die Zeiten zurück, als sie noch in der Schule gewesen waren, und wie sie sich gegenseitig Deutsch beigebracht hatten. \"Es ist schön, dass du es noch kannst,\" sagte er. Giulia nickte und legte ihm eine Hand auf die Wange. \"Es ist schön, dass du es immer noch kannst,\" sagte sie.\n\nIn den folgenden Tagen arbeitete Marco noch härter. Er fühlte sich, als ob er endlich begann, wirklich zu verstehen. Die Bewegungen, die Giulia ihm zeigte, wurden immer klarer, und er spürte, wie sie in ihm aufgingen. Er wusste, dass er noch viel zu lernen hatte, aber er war bereit, hart zu arbeiten und sein Traum zu verwirklichen. Und jetzt hatte er auch Giulia, die ihn stolz auf ihn sah.\n\nNew topic: \"Durante la successiva esibizione sono andate storte molte cose: Marco è caduto e si è fatto male.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Giulia e il circo",
+      "storyStyle": "action",
       "lessons": [
         {
           "id": 1,
-          "title": "nel paese vicino un ladro ha cercato di rubare dell'attrezzatura",
-          "desc": "un bar, un ladro, un drink, una confusione",
-          "icon": "🍺",
+          "title": "Durante la successiva esibizione sono andate storte molte cose",
+          "desc": "Cose che sono andate storte, caduta, ferito, Zirkusarzt",
+          "icon": "😢",
           "vocab": [
             {
-              "target": "Bar",
-              "source": "un bar"
+              "target": "storto",
+              "source": "andato storto"
             },
             {
-              "target": "Ladro",
-              "source": "un ladro"
+              "target": "versorgen",
+              "source": "curare"
             },
             {
-              "target": "Attrezzatura",
-              "source": "dell'attrezzatura"
+              "target": "verschwinden",
+              "source": "verschwinden"
             },
             {
-              "target": "Cercare",
-              "source": "di cercare"
-            },
-            {
-              "target": "Rubare",
-              "source": "di rubare"
-            },
-            {
-              "target": "Confusione",
-              "source": "una confusione"
-            },
-            {
-              "target": "Polvere",
-              "source": "della polvere"
-            },
-            {
-              "target": "Schizzo",
-              "source": "un schizzo"
+              "target": "verschlimmern",
+              "source": "peggiorare"
             }
           ],
           "sentences": [
             {
-              "target": "Der Ladro suchte die Polizei, aber sie lachten nur über sein Schizzo.",
-              "source": "Il ladro cercava la polizia, ma quest'ultima rideva del suo schizzo.",
-              "words": [
-                "Der",
-                "Ladro",
-                "suchte",
-                "die",
-                "Polizei,",
-                "aber",
-                "sie",
-                "lachten",
-                "nur",
-                "über",
-                "sein",
-                "Schizzo."
-              ]
-            },
-            {
-              "target": "Die Barkeeper schüttelten den Kopf über das Attrezzatura des Ladro.",
-              "source": "I barkeeper scuotevano la testa davanti all'attrezzatura del ladro.",
-              "words": [
-                "Die",
-                "Barkeeper",
-                "schüttelten",
-                "den",
-                "Kopf",
-                "über",
-                "das",
-                "Attrezzatura",
-                "des",
-                "Ladro."
-              ]
-            },
-            {
-              "target": "Er erzählte eine lange Geschichte, aber niemand glaubte ihm, weil er so viel Polvere hatte.",
-              "source": "Lui raccontava una lunga storia, ma nessuno gli credeva, perché aveva tanto polvere.",
+              "target": "Er hat sich verletzt und muss versorgt werden.",
+              "source": "Lui si è ferito e deve essere curato.",
               "words": [
                 "Er",
-                "erzählte",
-                "eine",
-                "lange",
-                "Geschichte,",
-                "aber",
-                "niemand",
-                "glaubte",
-                "ihm,",
-                "weil",
-                "er",
-                "so",
-                "viel",
-                "Polvere",
-                "hatte."
+                "hat",
+                "sich",
+                "verletzt",
+                "und",
+                "muss",
+                "versorgt",
+                "werden."
               ]
             },
             {
-              "target": "Die Gäste lachten über die Confusione des Ladro, als er versuchte, die Bar zu verlassen.",
-              "source": "I clienti ridevano della confusione del ladro, mentre cercava di uscire dalla bar.",
+              "target": "Die Situation verschlimmert sich, wir müssen handeln.",
+              "source": "La situazione peggiora, dobbiamo agire.",
               "words": [
                 "Die",
-                "Gäste",
-                "lachten",
-                "über",
-                "die",
-                "Confusione",
-                "des",
-                "Ladro,",
-                "als",
-                "er",
-                "versuchte,",
-                "die",
-                "Bar",
-                "zu",
-                "verlassen."
+                "Situation",
+                "verschlimmert",
+                "sich,",
+                "wir",
+                "müssen",
+                "handeln."
               ]
             },
             {
-              "target": "Elisa und Elena tranken noch einen Drink, als plötzlich ein lauter Schrei durch die Bar hallte.",
-              "source": "Elisa e Elena bevevano un drink, quando all'improvviso un grido echeggiò nella bar.",
+              "target": "Der Arzt verschwindet, um Hilfe zu holen.",
+              "source": "Il dottore si allontana per chiamare aiuto.",
               "words": [
-                "Elisa",
-                "und",
-                "Elena",
-                "tranken",
-                "noch",
-                "einen",
-                "Drink,",
+                "Der",
+                "Arzt",
+                "verschwindet,",
+                "um",
+                "Hilfe",
+                "zu",
+                "holen."
+              ]
+            },
+            {
+              "target": "Ich bleibe bei ihm, bis der Arzt kommt.",
+              "source": "Io resto con lui fino a quando il dottore non arriva.",
+              "words": [
+                "Ich",
+                "bleibe",
+                "bei",
+                "ihm,",
+                "bis",
+                "der",
+                "Arzt",
+                "kommt."
+              ]
+            },
+            {
+              "target": "Sein Zustand verschwindet, als er sich beruhigt.",
+              "source": "Il suo stato peggiora quando si calma.",
+              "words": [
+                "Sein",
+                "Zustand",
+                "verschwindet,",
                 "als",
-                "plötzlich",
-                "ein",
-                "lauter",
-                "Schrei",
-                "durch",
-                "die",
-                "Bar",
-                "hallte."
+                "er",
+                "sich",
+                "beruhigt."
               ]
             }
           ]
         },
         {
           "id": 2,
-          "title": "nel paese vicino un ladro ha cercato di rubare dell'attrezzatura",
-          "desc": "la confusione in un bar",
-          "icon": "-confused_face-",
+          "title": "Durante la successiva esibizione sono andate storte molte cose",
+          "desc": "Cose andate storte, Marco ferito, Giulia aiuta",
+          "icon": "🚑",
           "vocab": [
             {
-              "target": "Barista",
-              "source": "il barista"
+              "target": "verschwinden",
+              "source": "vershwinden"
             },
             {
-              "target": "Tavolo",
-              "source": "il tavolo"
+              "target": "verschlimmern",
+              "source": "peggiorare"
             },
             {
-              "target": "Sedia",
-              "source": "la sedia"
+              "target": "versorgen",
+              "source": "curare"
             },
             {
-              "target": "Portafoglio",
-              "source": "il portafoglio"
+              "target": "prallte",
+              "source": "prallte"
             },
             {
-              "target": "Borsa",
-              "source": "la borsa"
-            },
-            {
-              "target": "Telefonino",
-              "source": "il telefonino"
-            },
-            {
-              "target": "Caffè",
-              "source": "il caffè"
-            },
-            {
-              "target": "Birra",
-              "source": "la birra"
+              "target": "Entsetzen",
+              "source": "Entsetzen"
             }
           ],
           "sentences": [
             {
-              "target": "Der Barista stellte den Caffè vor Elisa und Elena.",
-              "source": "Il barista mise il caffè davanti a Elisa e Elena.",
+              "target": "Er prallte hart auf den Boden.",
+              "source": "Prallte hart auf den Boden.",
               "words": [
-                "Der",
-                "Barista",
-                "stellte",
+                "Er",
+                "prallte",
+                "hart",
+                "auf",
                 "den",
-                "Caffè",
-                "vor",
-                "Elisa",
-                "und",
-                "Elena."
+                "Boden."
               ]
             },
             {
-              "target": "Elena sah den Ladro im Schatten des Tisches sitzen.",
-              "source": "Elena vide il ladro seduto nell'ombra sotto il tavolo.",
+              "target": "Marco atmete schwer, seine Augen waren geschlossen.",
+              "source": "Atmete schwer, Augen waren geschlossen.",
               "words": [
-                "Elena",
-                "sah",
-                "den",
-                "Ladro",
-                "im",
-                "Schatten",
-                "des",
-                "Tisches",
-                "sitzen."
-              ]
-            },
-            {
-              "target": "Elisa griff nach ihrem Portafoglio, aber es war leer.",
-              "source": "Elisa prese il suo portafoglio, ma era vuoto.",
-              "words": [
-                "Elisa",
-                "griff",
-                "nach",
-                "ihrem",
-                "Portafoglio,",
-                "aber",
-                "es",
-                "war",
-                "leer."
-              ]
-            },
-            {
-              "target": "Der Ladro zog schnell seine Borsa aus der Tasche.",
-              "source": "Il ladro estrasse rapidamente la borsa dalla tasca.",
-              "words": [
-                "Der",
-                "Ladro",
-                "zog",
-                "schnell",
+                "Marco",
+                "atmete",
+                "schwer,",
                 "seine",
-                "Borsa",
-                "aus",
-                "der",
-                "Tasche."
+                "Augen",
+                "waren",
+                "geschlossen."
               ]
             },
             {
-              "target": "Elena lachte und sagte: 'Hai trovato la mia borsa, eh?'",
-              "source": "Elena rise e disse: 'Hai trovato la mia borsa, vero?'",
+              "target": "Sie rief nach dem Zirkusarzt, der schnell herbeieilte.",
+              "source": "Rief nach Zirkusarzt, der schnell herbeieilte.",
               "words": [
-                "Elena",
-                "lachte",
-                "und",
-                "sagte:",
-                "'Hai",
-                "trovato",
-                "la",
-                "mia",
-                "borsa,",
-                "eh?'"
+                "Sie",
+                "rief",
+                "nach",
+                "dem",
+                "Zirkusarzt,",
+                "der",
+                "schnell",
+                "herbeieilte."
+              ]
+            },
+            {
+              "target": "Ihre Hand hielt seine, sie blieb bei ihm.",
+              "source": "Hand hielt seine, blieb bei ihm.",
+              "words": [
+                "Ihre",
+                "Hand",
+                "hielt",
+                "seine,",
+                "sie",
+                "blieb",
+                "bei",
+                "ihm."
+              ]
+            },
+            {
+              "target": "Er rutschte unter dem Elefanten weg.",
+              "source": "Rutschte unter Elefanten weg.",
+              "words": [
+                "Er",
+                "rutschte",
+                "unter",
+                "dem",
+                "Elefanten",
+                "weg."
               ]
             }
           ]
         },
         {
           "id": 3,
-          "title": "nel paese vicino un ladro ha cercato di rubare dell'attrezzatura",
-          "desc": "un bar, un ladro, dell'attrezzatura, una confusione, una polvere, un schizzo",
-          "icon": "🔍",
+          "title": "Durante la successiva esibizione sono andate storte molte cose",
+          "desc": "Cose andate storte, ferite, Zirkusarzt",
+          "icon": "🚑",
           "vocab": [
             {
-              "target": "Attrezzatura",
-              "source": "l'attrezzatura"
+              "target": "verkrümmt",
+              "source": "vergocciolante"
             },
             {
-              "target": "Confusione",
-              "source": "la confusione"
+              "target": "sich umsehen",
+              "source": "guardarsi intorno"
             },
             {
-              "target": "Polvere",
-              "source": "la polvere"
+              "target": "verletzt",
+              "source": "ferito"
             },
             {
-              "target": "Schizzo",
-              "source": "il schizzo"
+              "target": "sich umhören",
+              "source": "ascoltare"
             },
             {
-              "target": "Barista",
-              "source": "il barista"
+              "target": "verletzen",
+              "source": "ferire"
             },
             {
-              "target": "Tavolo",
-              "source": "il tavolo"
+              "target": "sich umsorgen",
+              "source": "curare"
             },
             {
-              "target": "Sedia",
-              "source": "la sedia"
-            },
-            {
-              "target": "Portafoglio",
-              "source": "il portafoglio"
+              "target": "sich umhüllen",
+              "source": "avvolgere"
             }
           ],
           "sentences": [
             {
-              "target": "Der Barista räumte hastig den Tisch ab, als plötzlich ein Schatten durch die Bar tanzte.",
-              "source": "Il barista raccoglieva rapidamente il tavolo, quando all'improvviso un'ombra danzava attraverso il bar.",
+              "target": "Marco verkrümmte sich vor Schmerz.",
+              "source": "Marco si curvò in avanti per il dolore.",
+              "words": [
+                "Marco",
+                "verkrümmte",
+                "sich",
+                "vor",
+                "Schmerz."
+              ]
+            },
+            {
+              "target": "Giulia sah sich um, suchte nach Hilfe.",
+              "source": "Giulia si guardò intorno, cercò aiuto.",
+              "words": [
+                "Giulia",
+                "sah",
+                "sich",
+                "um,",
+                "suchte",
+                "nach",
+                "Hilfe."
+              ]
+            },
+            {
+              "target": "Der Zirkusarzt versorgte Marco sorgendo.",
+              "source": "Il medico del circo curò Marco curandolo.",
               "words": [
                 "Der",
-                "Barista",
-                "räumte",
-                "hastig",
-                "den",
-                "Tisch",
-                "ab,",
-                "als",
-                "plötzlich",
-                "ein",
-                "Schatten",
-                "durch",
-                "die",
-                "Bar",
-                "tanzte."
+                "Zirkusarzt",
+                "versorgte",
+                "Marco",
+                "sorgendo."
               ]
             },
             {
-              "target": "Eine laute Stimme rief: 'Wo ist der Portafoglio? Ich brauche ihn für den Schizzo!'",
-              "source": "Una voce alta chiese: 'Dove è il portafoglio? Lo voglio per il schizzo!'",
+              "target": "Blut sickerte aus der Wunde.",
+              "source": "Sang gocciolò dalla ferita.",
               "words": [
-                "Eine",
-                "laute",
-                "Stimme",
-                "rief:",
-                "'Wo",
-                "ist",
+                "Blut",
+                "sickerte",
+                "aus",
                 "der",
-                "Portafoglio?",
-                "Ich",
-                "brauche",
-                "ihn",
-                "für",
-                "den",
-                "Schizzo!'"
+                "Wunde."
               ]
             },
             {
-              "target": "Die Sedia knarrte, als der Ladro sie hastig verließ, um die Attrezzatura zu stehlen.",
-              "source": "La sedia stridette quando il ladro se ne andò in fretta per rubare l'attrezzatura.",
+              "target": "Giulia umhüllte seinen Arm mit einer Tüte.",
+              "source": "Giulia avvolse il braccio con una benda.",
               "words": [
-                "Die",
-                "Sedia",
-                "knarrte,",
-                "als",
-                "der",
-                "Ladro",
-                "sie",
-                "hastig",
-                "verließ,",
-                "um",
-                "die",
-                "Attrezzatura",
-                "zu",
-                "stehlen."
-              ]
-            },
-            {
-              "target": "Eine Confusione breitete sich aus, als alle Barista und Baristen über die Polvere stritten.",
-              "source": "Una confusione si diffuse quando tutti i baristi e bariste discussero sulla polvere.",
-              "words": [
-                "Eine",
-                "Confusione",
-                "breitete",
-                "sich",
-                "aus,",
-                "als",
-                "alle",
-                "Barista",
-                "und",
-                "Baristen",
-                "über",
-                "die",
-                "Polvere",
-                "stritten."
-              ]
-            },
-            {
-              "target": "Ein Schatten huschte über den Tisch, als der Barista einen neuen Kaffee schmiss.",
-              "source": "Un'ombra si mosse sul tavolo quando il barista versò un nuovo caffè.",
-              "words": [
-                "Ein",
-                "Schatten",
-                "huschte",
-                "über",
-                "den",
-                "Tisch,",
-                "als",
-                "der",
-                "Barista",
-                "einen",
-                "neuen",
-                "Kaffee",
-                "schmiss."
+                "Giulia",
+                "umhüllte",
+                "seinen",
+                "Arm",
+                "mit",
+                "einer",
+                "Tüte."
               ]
             }
           ]
         }
       ],
       "generationStats": {
-        "totalMs": 2511106,
+        "totalMs": 1478939,
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 3432,
-        "totalCompletionTokens": 2193,
+        "totalPromptTokens": 3217,
+        "totalCompletionTokens": 1560,
         "lessons": [
           {
             "lessonNum": 1,
-            "ms": 161286,
-            "promptTokens": 834,
-            "completionTokens": 454
+            "ms": 121786,
+            "promptTokens": 789,
+            "completionTokens": 364
           },
           {
             "lessonNum": 2,
-            "ms": 122050,
-            "promptTokens": 911,
-            "completionTokens": 384
+            "ms": 274235,
+            "promptTokens": 838,
+            "completionTokens": 346
           },
           {
             "lessonNum": 3,
-            "ms": 193335,
-            "promptTokens": 978,
-            "completionTokens": 493
+            "ms": 118416,
+            "promptTokens": 881,
+            "completionTokens": 353
           }
         ]
       },
-      "generatedAt": "2026-05-31T13:56:01.166Z",
-      "updatedAt": "2026-05-31T13:56:01.166Z"
+      "generatedAt": "2026-05-31T16:53:07.935Z",
+      "updatedAt": "2026-05-31T16:53:07.935Z"
+    },
+    {
+      "topic": "Giulia e il circo",
+      "topicEmoji": " Clown",
+      "userTopic": "Nella città vicina, Giulia era improvvisamente entrata a far parte della compagnia. Ballava a livello professionale e dava lezioni a Marco. Inoltre parlava tedesco e riusciva a trattare con il direttore del circo",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 2,
+      "storyLen": 1000,
+      "story": "In der nahegelegenen Stadt war Giulia plötzlich in die Compagnie eingetreten. Sie bewegte sich mit einer Professionellität, die Marco beeindruckte. Ihr Tanz war wie ein Fluss, der sich durch die Bewegungen der anderen Tänzer schuf. Marco sah zu, wie sie die anderen leitete, ihre Fähigkeiten mit einer Klarheit und Präzision vermittelte, die ihn neidisch machten.\n\n\"Du musst dich mehr bewegen,\" sagte sie eines Tages, während sie ihm vormirrte, \"du musst die Bewegungen spüren, nicht nur sehen.\" Marco nickte, seine Hände zitterten leicht, als er versuchte, die Bewegungen zu kopieren. \"Ich versuche es,\" sagte er, \"aber es ist so kompliziert.\"\n\nGiulia lächelte und legte ihm eine Hand auf die Schulter. \"Es ist nicht kompliziert,\" sagte sie, \"es ist einfach. Du musst nur lernen, es zu spüren.\" Sie führte ihn durch die Bewegungen, ihre Finger berührten seine, und plötzlich fühlte er es – die Bewegung, die Energie, die durch ihn hindurchströmte.\n\n\"Du musst den Tanz in deinem Körper spüren,\" sagte sie, \"nicht nur in deinen Augen oder deinen Händen.\" Marco nickte, seine Nervosität war wie weggeblasen. Er fühlte sich, als ob er endlich begann, wirklich zu verstehen.\n\nIn den folgenden Wochen arbeitete er hart. Giulia gab ihm private Unterrichtszeiten, in denen sie ihn mit einer Intensität lehrte, die ihn erschöpfte, aber auch faszinierte. Sie sprach mit einem Akzent, der ihn an die alten Zeiten erinnerte, an die Zeit, als sie noch in der Schule gewesen waren.\n\n\"Warum sprichst du so gut Deutsch?\" fragte er eines Tages, während sie ihm half, die Bewegungen zu perfektionieren. Giulia lächelte und zuckte mit den Schultern. \"Ich habe es gelernt, um mit dem Direktor des Zirkus zu kommunizieren,\" sagte sie. \"Es hat mir ermöglicht, mich in der Compagnie zu integrieren.\"\n\nMarco dachte an die Zeiten zurück, als sie noch in der Schule gewesen waren, und wie sie sich gegenseitig Deutsch beigebracht hatten. \"Es ist schön, dass du es noch kannst,\" sagte er. Giulia nickte und legte ihm eine Hand auf die Wange. \"Es ist schön, dass du es immer noch kannst,\" sagte sie.\n\nIn den folgenden Tagen arbeitete Marco noch härter. Er fühlte sich, als ob er endlich begann, wirklich zu verstehen. Die Bewegungen, die Giulia ihm zeigte, wurden immer klarer, und er spürte, wie sie in ihm aufgingen. Er wusste, dass er noch viel zu lernen hatte, aber er war bereit, hart zu arbeiten und sein Traum zu verwirklichen. Und jetzt hatte er auch Giulia, die ihn stolz auf ihn sah.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 10-11 paragraphs, under 1000 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Contemplative, questioning, abstract ideas. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nnsch, als er sich bewegte. Die anderen Tänzer und Artisten applaudierten ihm, und Marco wusste, dass er es geschafft hatte.\n\nNach der Vorstellung stand Marco im Hintergrund und sah zu, wie Giulia und die anderen Ex-Klassenkameraden aus dem Zelt traten. Giulia lächelte ihn an und trat zu ihm. \"Du warst fantastisch!\" sagte sie. Marco lächelte zurück, seine Nervosität war wie weggeblasen. \"Danke,\" sagte er, \"ich habe mich so sehr gefreut, dass du gekommen bist.\"\n\nGiulia legte ihm eine Hand auf die Schulter. \"Ich bin stolz auf dich,\" sagte sie. Marco fühlte sich wie ein neuer Mensch, als er sah, wie Giulia ihm zulächelte. Er wusste, dass er noch viel zu lernen hatte, aber er war bereit, hart zu arbeiten und sein Traum zu verwirklichen. Und jetzt hatte er auch Giulia, die ihn stolz auf ihn sah.\n\nNew topic: \"Nella città vicina, Giulia era improvvisamente entrata a far parte della compagnia. Ballava a livello professionale e dava lezioni a Marco. Inoltre parlava tedesco e riusciva a trattare con il direttore del circo\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Esibizione scolastica",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Nella compagnia",
+          "desc": "Parole e frasi sul ballare e insegnare",
+          "icon": "💃🏻",
+          "vocab": [
+            {
+              "target": "Compagnie",
+              "source": "compagnia"
+            },
+            {
+              "target": "Professionellität",
+              "source": "professionale"
+            },
+            {
+              "target": "Bewegungen spüren",
+              "source": "spostarsi con naturalezza"
+            },
+            {
+              "target": "Fähigkeiten vermitteln",
+              "source": "insegnare le tecniche"
+            },
+            {
+              "target": "Bewegen",
+              "source": "muoversi"
+            },
+            {
+              "target": "Klarheit und Präzision",
+              "source": "precisione"
+            },
+            {
+              "target": "Leitete",
+              "source": "guidava"
+            },
+            {
+              "target": "Niedlich machen",
+              "source": "invidia"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Du musst dich mehr bewegen.",
+              "source": "Devi muoverti di più.",
+              "words": [
+                "Du",
+                "musst",
+                "dich",
+                "mehr",
+                "bewegen."
+              ]
+            },
+            {
+              "target": "Ich versuche es.",
+              "source": "Provo a farlo.",
+              "words": [
+                "Ich",
+                "versuche",
+                "es."
+              ]
+            },
+            {
+              "target": "Es ist einfach.",
+              "source": "È semplice.",
+              "words": [
+                "Es",
+                "ist",
+                "einfach."
+              ]
+            },
+            {
+              "target": "Du musst nur lernen, es zu spüren.",
+              "source": "Devi imparare a sentire.",
+              "words": [
+                "Du",
+                "musst",
+                "nur",
+                "lernen,",
+                "es",
+                "zu",
+                "spüren."
+              ]
+            },
+            {
+              "target": "Sie legte ihm eine Hand auf die Schulter.",
+              "source": "Le mise una mano sulla spalla.",
+              "words": [
+                "Sie",
+                "legte",
+                "ihm",
+                "eine",
+                "Hand",
+                "auf",
+                "die",
+                "Schulter."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Nella compagnia",
+          "desc": "Parole e frasi su ballerine e insegnamento",
+          "icon": "💃🏻",
+          "vocab": [
+            {
+              "target": "Tänzerin",
+              "source": "ballettore"
+            },
+            {
+              "target": "Leitung geben",
+              "source": "guidare"
+            },
+            {
+              "target": "Fähigkeiten vermitteln",
+              "source": "insegnare le tecniche"
+            },
+            {
+              "target": "Bewegungen spüren",
+              "source": "spostarsi con naturalezza"
+            },
+            {
+              "target": "Professionellität",
+              "source": "professionalità"
+            },
+            {
+              "target": "Klarheit und Präzision",
+              "source": "precisione"
+            },
+            {
+              "target": "Invidia",
+              "source": "invidia"
+            },
+            {
+              "target": "Ballettstunden geben",
+              "source": "insegnare il ballo"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Giulia leitete die Tänzerinnen mit großer Professionellität.",
+              "source": "Giulia guidava le ballerine con grande professionalità.",
+              "words": [
+                "Giulia",
+                "leitete",
+                "die",
+                "Tänzerinnen",
+                "mit",
+                "großer",
+                "Professionellität."
+              ]
+            },
+            {
+              "target": "Marco versuchte, die Bewegungen zu spüren, aber es war schwierig.",
+              "source": "Marco cercava di spostarsi con naturalezza, ma era difficile.",
+              "words": [
+                "Marco",
+                "versuchte,",
+                "die",
+                "Bewegungen",
+                "zu",
+                "spüren,",
+                "aber",
+                "es",
+                "war",
+                "schwierig."
+              ]
+            },
+            {
+              "target": "Sie legte ihm eine Hand auf die Schulter und sagte: 'Es ist einfach, du musst es spüren.'",
+              "source": "Levò una mano sulla sua spalla e dissi: 'È semplice, devi sentire.'",
+              "words": [
+                "Sie",
+                "legte",
+                "ihm",
+                "eine",
+                "Hand",
+                "auf",
+                "die",
+                "Schulter",
+                "und",
+                "sagte:",
+                "'Es",
+                "ist",
+                "einfach,",
+                "du",
+                "musst",
+                "es",
+                "spüren.'"
+              ]
+            },
+            {
+              "target": "Marco sah zu, wie sie die anderen leitete, ihre Fähigkeiten mit Klarheit und Präzision vermittelte.",
+              "source": "Marco osservava come lei guidava gli altri, trasmettendo le loro abilità con precisione e chiarezza.",
+              "words": [
+                "Marco",
+                "sah",
+                "zu,",
+                "wie",
+                "sie",
+                "die",
+                "anderen",
+                "leitete,",
+                "ihre",
+                "Fähigkeiten",
+                "mit",
+                "Klarheit",
+                "und",
+                "Präzision",
+                "vermittelte."
+              ]
+            },
+            {
+              "target": "Er versuchte, es zu spüren, aber es war so kompliziert.",
+              "source": "Lui cercava di sentire, ma era così complicato.",
+              "words": [
+                "Er",
+                "versuchte,",
+                "es",
+                "zu",
+                "spüren,",
+                "aber",
+                "es",
+                "war",
+                "so",
+                "kompliziert."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Nella compagnia",
+          "desc": "Lezioni di ballo e professionale",
+          "icon": "💃",
+          "vocab": [
+            {
+              "target": "Compagnie",
+              "source": "compagnia"
+            },
+            {
+              "target": "Ballettstunden geben",
+              "source": "insegnare il ballo"
+            },
+            {
+              "target": "Tänzerin",
+              "source": "ballettore"
+            },
+            {
+              "target": "Invidia",
+              "source": "invidia"
+            },
+            {
+              "target": "Niedlich machen",
+              "source": "invidia"
+            },
+            {
+              "target": "Professionellität",
+              "source": "professionalità"
+            },
+            {
+              "target": "Fähigkeiten vermitteln",
+              "source": "insegnare le tecniche"
+            },
+            {
+              "target": "Bewegungen spüren",
+              "source": "spostarsi con naturalezza"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Giulia leitete die anderen mit einer professionellen Präzision.",
+              "source": "Giulia guidava gli altri con una professionalità e una precisione impressionanti.",
+              "words": [
+                "Giulia",
+                "leitete",
+                "die",
+                "anderen",
+                "mit",
+                "einer",
+                "professionellen",
+                "Präzision."
+              ]
+            },
+            {
+              "target": "Marco versuchte, die Bewegungen zu kopieren, aber es war schwierig.",
+              "source": "Marco cercava di copiare le mosse, ma era difficile.",
+              "words": [
+                "Marco",
+                "versuchte,",
+                "die",
+                "Bewegungen",
+                "zu",
+                "kopieren,",
+                "aber",
+                "es",
+                "war",
+                "schwierig."
+              ]
+            },
+            {
+              "target": "Sie legte ihm eine Hand auf die Schulter und sagte: 'Es ist einfach, du musst es nur spüren.'",
+              "source": "Le mise una mano sulla spalla e disse: 'È semplice, devi solo sentirlo.'",
+              "words": [
+                "Sie",
+                "legte",
+                "ihm",
+                "eine",
+                "Hand",
+                "auf",
+                "die",
+                "Schulter",
+                "und",
+                "sagte:",
+                "'Es",
+                "ist",
+                "einfach,",
+                "du",
+                "musst",
+                "es",
+                "nur",
+                "spüren.'"
+              ]
+            },
+            {
+              "target": "Marco nickte, seine Hände zitterten leicht, als er versuchte, die Bewegungen zu spüren.",
+              "source": "Marco annuì, le sue mani tremavano leggermente mentre cercava di spostarsi con naturalezza.",
+              "words": [
+                "Marco",
+                "nickte,",
+                "seine",
+                "Hände",
+                "zitterten",
+                "leicht,",
+                "als",
+                "er",
+                "versuchte,",
+                "die",
+                "Bewegungen",
+                "zu",
+                "spüren."
+              ]
+            },
+            {
+              "target": "Giulia lächelte und sagte: 'Es ist nicht kompliziert, es ist einfach. Du musst es nur spüren.'",
+              "source": "Giulia sorrise e disse: 'Non è complicato, è semplice. Devi solo sentirlo.'",
+              "words": [
+                "Giulia",
+                "lächelte",
+                "und",
+                "sagte:",
+                "'Es",
+                "ist",
+                "nicht",
+                "kompliziert,",
+                "es",
+                "ist",
+                "einfach.",
+                "Du",
+                "musst",
+                "es",
+                "nur",
+                "spüren.'"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1732421,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 3541,
+        "totalCompletionTokens": 1955,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 284850,
+            "promptTokens": 827,
+            "completionTokens": 297
+          },
+          {
+            "lessonNum": 2,
+            "ms": 165437,
+            "promptTokens": 920,
+            "completionTokens": 433
+          },
+          {
+            "lessonNum": 3,
+            "ms": 332323,
+            "promptTokens": 1005,
+            "completionTokens": 440
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T16:06:39.972Z",
+      "updatedAt": "2026-05-31T16:06:39.972Z"
+    },
+    {
+      "topic": "Esibizione scolastica",
+      "topicEmoji": "✍️",
+      "userTopic": "Alla sua prima esibizione erano presenti i suoi ex compagni di classe, tra cui anche Giulia, che gli piaceva molto.",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "Am nächsten Tag stand Marco früh auf, um sich für seine erste Vorstellung zu bereiten. Er zog sich das alte, aber geliebte Tänzerkleidungsstück an und stellte sich vor den Spiegel. Die ersten Schritte kamen schwer, aber Marco fühlte sich wie ein neuer Mensch, als er sich bewegte. Er wusste, dass Giulia und die anderen Ex-Klassenkameraden im Publikum saßen, und das machte ihn nervös.\n\nAls die Vorstellung begann, spürte Marco, wie seine Hände feucht wurden. Er trat vor das Podium und sah in die Runde. Giulia saß im ersten Reihenplatz, ihr Lächeln strahlte ihn an. Marco atmete tief durch und begann zu tanzen. Die Choreografie floss wie von selbst über ihn, und er fühlte sich beinahe wie ein neuer Mensch, als er sich bewegte. Die anderen Tänzer und Artisten applaudierten ihm, und Marco wusste, dass er es geschafft hatte.\n\nNach der Vorstellung stand Marco im Hintergrund und sah zu, wie Giulia und die anderen Ex-Klassenkameraden aus dem Zelt traten. Giulia lächelte ihn an und trat zu ihm. \"Du warst fantastisch!\" sagte sie. Marco lächelte zurück, seine Nervosität war wie weggeblasen. \"Danke,\" sagte er, \"ich habe mich so sehr gefreut, dass du gekommen bist.\"\n\nGiulia legte ihm eine Hand auf die Schulter. \"Ich bin stolz auf dich,\" sagte sie. Marco fühlte sich wie ein neuer Mensch, als er sah, wie Giulia ihm zulächelte. Er wusste, dass er noch viel zu lernen hatte, aber er war bereit, hart zu arbeiten und sein Traum zu verwirklichen. Und jetzt hatte er auch Giulia, die ihn stolz auf ihn sah.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nr am nächsten Morgen im Hauptzelt einfinden. Marco ging nach Hause, wo er sich in sein altes, aber geliebtes Tänzerkleidungsteil kleidete. Er stand vor dem Spiegel und übte die Schritte, die er lernen würde. Die ersten waren schwierig, aber Marco fühlte sich lebendig, als er sich bewegte.\n\nAm nächsten Morgen war Marco früh auf und bereitete sich vor. Er fühlte sich beinahe wie ein neuer Mensch, als er das Zelt betrat. Die anderen Tänzer und Artisten begrüßten ihn freundlich, und er fühlte sich willkommen. Der Direktor zeigte ihm die Stelle, an der er tanzen würde, und erklärte ihm die Choreografie. Marco war begeistert, als er sah, wie die anderen ihre Tänze perfektionierten. Er wusste, dass er noch viel zu lernen hatte, aber er war bereit, hart zu arbeiten und sein Traum zu verwirklichen.\n\nNew topic: \"Alla sua prima esibizione erano presenti i suoi ex compagni di classe, tra cui anche Giulia, che gli piaceva molto.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "per lavorare al circo",
+      "storyStyle": "funny",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Alla sua prima esibizione",
+          "desc": "esibizione, ex compagni, nervoso, applausi, nuovo",
+          "icon": "🎭",
+          "vocab": [
+            {
+              "target": "Vorstellung",
+              "source": "esibizione"
+            },
+            {
+              "target": "Klassenkameraden",
+              "source": "compagni di classe"
+            },
+            {
+              "target": "Nervös",
+              "source": "nervoso"
+            },
+            {
+              "target": "Applauden",
+              "source": "applaudire"
+            },
+            {
+              "target": "Choreografie",
+              "source": "choreografia"
+            },
+            {
+              "target": "Fühlte sich wie ein neuer Mensch",
+              "source": "si sentiva come un nuovo essere"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Marco trug das alte, aber geliebte Tänzerkleidungsstück.",
+              "source": "Marco indossò l'abito da ballerina vecchio, ma amato.",
+              "words": [
+                "Marco",
+                "trug",
+                "das",
+                "alte,",
+                "aber",
+                "geliebte",
+                "Tänzerkleidungsstück."
+              ]
+            },
+            {
+              "target": "Er wusste, dass Giulia und die anderen im Publikum saßen.",
+              "source": "Sapeva che Giulia e gli altri erano nel pubblico.",
+              "words": [
+                "Er",
+                "wusste,",
+                "dass",
+                "Giulia",
+                "und",
+                "die",
+                "anderen",
+                "im",
+                "Publikum",
+                "saßen."
+              ]
+            },
+            {
+              "target": "Marco atmete tief durch und begann zu tanzen.",
+              "source": "Marco prese un profondo respiro e iniziò a ballare.",
+              "words": [
+                "Marco",
+                "atmete",
+                "tief",
+                "durch",
+                "und",
+                "begann",
+                "zu",
+                "tanzen."
+              ]
+            },
+            {
+              "target": "Die anderen applaudierten ihm, und Marco lächelte.",
+              "source": "Gli altri lo applaudirono e Marco sorrise.",
+              "words": [
+                "Die",
+                "anderen",
+                "applaudierten",
+                "ihm,",
+                "und",
+                "Marco",
+                "lächelte."
+              ]
+            },
+            {
+              "target": "Er wusste, dass Giulia ihn beobachtete.",
+              "source": "Sapeva che Giulia lo osservava.",
+              "words": [
+                "Er",
+                "wusste,",
+                "dass",
+                "Giulia",
+                "ihn",
+                "beobachtete."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Alla sua prima esibizione",
+          "desc": "esibizione, compagni di classe, Giulia, nervoso, applaudire, choreografia",
+          "icon": "🎭",
+          "vocab": [
+            {
+              "target": "Vorstellung",
+              "source": "esibizione"
+            },
+            {
+              "target": "Klassenkameraden",
+              "source": "compagni di classe"
+            },
+            {
+              "target": "Nervös",
+              "source": "nervoso"
+            },
+            {
+              "target": "Applauden",
+              "source": "applaudire"
+            },
+            {
+              "target": "Choreografie",
+              "source": "choreografia"
+            },
+            {
+              "target": "Fühlte sich wie ein neuer Mensch",
+              "source": "si sentiva come un nuovo essere"
+            },
+            {
+              "target": "Publikum",
+              "source": "pubblico"
+            },
+            {
+              "target": "Begann",
+              "source": "iniziò"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Giulia saß im ersten Reihenplatz und lächelte ihn an.",
+              "source": "Giulia sedeva nella prima fila e lo guardava con un sorriso.",
+              "words": [
+                "Giulia",
+                "saß",
+                "im",
+                "ersten",
+                "Reihenplatz",
+                "und",
+                "lächelte",
+                "ihn",
+                "an."
+              ]
+            },
+            {
+              "target": "Marco wusste, dass Giulia und andere Ex-Klassenkameraden im Publikum saßen.",
+              "source": "Marco sapeva che Giulia e altri ex compagni di classe erano nel pubblico.",
+              "words": [
+                "Marco",
+                "wusste,",
+                "dass",
+                "Giulia",
+                "und",
+                "andere",
+                "Ex-Klassenkameraden",
+                "im",
+                "Publikum",
+                "saßen."
+              ]
+            },
+            {
+              "target": "Die anderen Tänzer applaudierten ihm, und Marco fühlte sich geschmeichelt.",
+              "source": "Gli altri ballerini lo applaudirono e Marco si sentì onorato.",
+              "words": [
+                "Die",
+                "anderen",
+                "Tänzer",
+                "applaudierten",
+                "ihm,",
+                "und",
+                "Marco",
+                "fühlte",
+                "sich",
+                "geschmeichelt."
+              ]
+            },
+            {
+              "target": "Er trat vor das Podium und sah in die Runde.",
+              "source": "Si avvicinò al palco e guardò la platea.",
+              "words": [
+                "Er",
+                "trat",
+                "vor",
+                "das",
+                "Podium",
+                "und",
+                "sah",
+                "in",
+                "die",
+                "Runde."
+              ]
+            },
+            {
+              "target": "Die Choreografie floss wie von selbst über ihn.",
+              "source": "La coreografia scorreva da sé su di lui.",
+              "words": [
+                "Die",
+                "Choreografie",
+                "floss",
+                "wie",
+                "von",
+                "selbst",
+                "über",
+                "ihn."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Alla sua prima esibizione",
+          "desc": "esibizione, compagni di classe, Giulia, nervoso, pubblico, iniziò",
+          "icon": "🎭",
+          "vocab": [
+            {
+              "target": "Vorstellung",
+              "source": "esibizione"
+            },
+            {
+              "target": "Publikum",
+              "source": "pubblico"
+            },
+            {
+              "target": "Begann",
+              "source": "iniziò"
+            },
+            {
+              "target": "Tanz",
+              "source": "ballo"
+            },
+            {
+              "target": "Begleitmusik",
+              "source": "musica di accompagnamento"
+            },
+            {
+              "target": "Atem",
+              "source": "respiro"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Marco trat vor das Publikum und atmete tief durch.",
+              "source": "Marco si avvicinò al pubblico e prese un profondo respiro.",
+              "words": [
+                "Marco",
+                "trat",
+                "vor",
+                "das",
+                "Publikum",
+                "und",
+                "atmete",
+                "tief",
+                "durch."
+              ]
+            },
+            {
+              "target": "Giulia saß im ersten Reihenplatz und lächelte Marco an.",
+              "source": "Giulia sedeva in prima fila e sorrideva a Marco.",
+              "words": [
+                "Giulia",
+                "saß",
+                "im",
+                "ersten",
+                "Reihenplatz",
+                "und",
+                "lächelte",
+                "Marco",
+                "an."
+              ]
+            },
+            {
+              "target": "Die Choreografie floss wie von selbst über ihn.",
+              "source": "La choreografia scorreva come per magia sul suo corpo.",
+              "words": [
+                "Die",
+                "Choreografie",
+                "floss",
+                "wie",
+                "von",
+                "selbst",
+                "über",
+                "ihn."
+              ]
+            },
+            {
+              "target": "Die anderen Tänzer applaudierten ihm begeistert.",
+              "source": "Gli altri ballerini lo applaudirono entusiasti.",
+              "words": [
+                "Die",
+                "anderen",
+                "Tänzer",
+                "applaudierten",
+                "ihm",
+                "begeistert."
+              ]
+            },
+            {
+              "target": "Er fühlte sich wie ein neuer Mensch, als er sich bewegte.",
+              "source": "Si sentiva come un nuovo essere, mentre si muoveva",
+              "words": [
+                "Er",
+                "fühlte",
+                "sich",
+                "wie",
+                "ein",
+                "neuer",
+                "Mensch,",
+                "als",
+                "er",
+                "sich",
+                "bewegte."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1884064,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 3328,
+        "totalCompletionTokens": 1581,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 529875,
+            "promptTokens": 792,
+            "completionTokens": 346
+          },
+          {
+            "lessonNum": 2,
+            "ms": 510930,
+            "promptTokens": 866,
+            "completionTokens": 399
+          },
+          {
+            "lessonNum": 3,
+            "ms": 506223,
+            "promptTokens": 940,
+            "completionTokens": 333
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T15:27:04.350Z",
+      "updatedAt": "2026-05-31T15:27:04.350Z"
+    },
+    {
+      "topic": "per lavorare al circo",
+      "topicEmoji": "🎪",
+      "userTopic": "per lavorare al circo",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "In der kleinen Stadt, wo die Sonne nur selten schien, lebte ein junger Mann namens Marco. Er war nicht groß, aber stark und hatte Augen, die von einem tiefen, unergründlichen Blau waren. Marco hatte immer davon geträumt, im großen, bunten Circo Luna zu arbeiten. Seine Mutter, eine ehemalige Clownin, hatte ihm Geschichten von den wunderbaren Auftritten und den magischen Kulissen erzählt, die sie selbst erlebt hatte.\n\nEines Tages, als er gerade in der Bibliothek saß und sich die alten Fotos von der Circo Luna ansah, klingelte das Telefon. Es war ein freundlicher Mann, der sich als Direktor des Circo Luna vorstellte. Er erzählte Marco von einer Stelle als Tänzer, die gerade frei geworden war. Marco war begeistert, aber auch nervös. Er hatte noch nie in einem Circo gewirkt, und die Vorstellung, vor so vielen Menschen zu tanzen, war beängstigend.\n\nMit zittrigen Händen nahm er den Zettel mit den Anweisungen entgegen, die ihm die Stelle beschrieben. Er musste sich um 8 Uhr am nächsten Morgen im Hauptzelt einfinden. Marco ging nach Hause, wo er sich in sein altes, aber geliebtes Tänzerkleidungsteil kleidete. Er stand vor dem Spiegel und übte die Schritte, die er lernen würde. Die ersten waren schwierig, aber Marco fühlte sich lebendig, als er sich bewegte.\n\nAm nächsten Morgen war Marco früh auf und bereitete sich vor. Er fühlte sich beinahe wie ein neuer Mensch, als er das Zelt betrat. Die anderen Tänzer und Artisten begrüßten ihn freundlich, und er fühlte sich willkommen. Der Direktor zeigte ihm die Stelle, an der er tanzen würde, und erklärte ihm die Choreografie. Marco war begeistert, als er sah, wie die anderen ihre Tänze perfektionierten. Er wusste, dass er noch viel zu lernen hatte, aber er war bereit, hart zu arbeiten und sein Traum zu verwirklichen.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German.\n\nWrite a story for the topic: \"per lavorare al circo\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "per lavorare al circo",
+          "desc": "lavoro, sogni, biblioteca",
+          "icon": "🎭",
+          "vocab": [
+            {
+              "target": "arbeiten",
+              "source": "lavorare"
+            },
+            {
+              "target": "Tänzer",
+              "source": "ballerino"
+            },
+            {
+              "target": "Stelle",
+              "source": "posto"
+            },
+            {
+              "target": "freie",
+              "source": "libero"
+            },
+            {
+              "target": "begeistert",
+              "source": "eccitato"
+            },
+            {
+              "target": "nervös",
+              "source": "preoccupato"
+            },
+            {
+              "target": "Circo",
+              "source": "circo"
+            },
+            {
+              "target": "Auftritten",
+              "source": "spettacoli"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Marco arbeitete in der Bibliothek und sah alte Fotos von der Circo Luna.",
+              "source": "Marco lavorava nella biblioteca e guardava vecchie foto del Circo Luna.",
+              "words": [
+                "Marco",
+                "arbeitete",
+                "in",
+                "der",
+                "Bibliothek",
+                "und",
+                "sah",
+                "alte",
+                "Fotos",
+                "von",
+                "der",
+                "Circo",
+                "Luna."
+              ]
+            },
+            {
+              "target": "Er war nervös, aber begeistert von der Stelle als Tänzer.",
+              "source": "Era preoccupato, ma eccitato dalla posizione di ballerino.",
+              "words": [
+                "Er",
+                "war",
+                "nervös,",
+                "aber",
+                "begeistert",
+                "von",
+                "der",
+                "Stelle",
+                "als",
+                "Tänzer."
+              ]
+            },
+            {
+              "target": "Der Direktor des Circo Luna bot Marco eine Stelle an.",
+              "source": "Il direttore del Circo Luna offrì a Marco un posto.",
+              "words": [
+                "Der",
+                "Direktor",
+                "des",
+                "Circo",
+                "Luna",
+                "bot",
+                "Marco",
+                "eine",
+                "Stelle",
+                "an."
+              ]
+            },
+            {
+              "target": "Marco hatte noch nie in einem Zirkus gewirkt.",
+              "source": "Marco non aveva mai lavorato in un circo.",
+              "words": [
+                "Marco",
+                "hatte",
+                "noch",
+                "nie",
+                "in",
+                "einem",
+                "Zirkus",
+                "gewirkt."
+              ]
+            },
+            {
+              "target": "Seine Mutter erzählte ihm Geschichten von den wunderbaren Auftritten.",
+              "source": "La madre gli raccontava storie dei meravigliosi spettacoli.",
+              "words": [
+                "Seine",
+                "Mutter",
+                "erzählte",
+                "ihm",
+                "Geschichten",
+                "von",
+                "den",
+                "wunderbaren",
+                "Auftritten."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "per lavorare al circo",
+          "desc": "storie e frasi sul circo",
+          "icon": " Clown",
+          "vocab": [
+            {
+              "target": "Kulisse",
+              "source": "scena"
+            },
+            {
+              "target": "Clown",
+              "source": "burlone"
+            },
+            {
+              "target": "Auftritt",
+              "source": "spettacolo"
+            },
+            {
+              "target": "Mutter",
+              "source": "madre"
+            },
+            {
+              "target": "Geschichte",
+              "source": "racconto"
+            },
+            {
+              "target": "Träume",
+              "source": "sogni"
+            },
+            {
+              "target": "Bibliothek",
+              "source": "biblioteca"
+            },
+            {
+              "target": "Fotos",
+              "source": "fotografie"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Er hatte immer davon geträumt, im großen, bunten Circo Luna zu arbeiten.",
+              "source": "Era sempre stato suo sogno lavorare nel grande, colorato circo Luna.",
+              "words": [
+                "Er",
+                "hatte",
+                "immer",
+                "davon",
+                "geträumt,",
+                "im",
+                "großen,",
+                "bunten",
+                "Circo",
+                "Luna",
+                "zu",
+                "arbeiten."
+              ]
+            },
+            {
+              "target": "Seine Mutter, eine ehemalige Clownin, hatte ihm Geschichten von den wunderbaren Auftritten und den magischen Kulissen erzählt.",
+              "source": "La sua madre, una ex burlone, gli aveva raccontato storie dei meravigliosi spettacoli e delle magiche scene che aveva vissuto.",
+              "words": [
+                "Seine",
+                "Mutter,",
+                "eine",
+                "ehemalige",
+                "Clownin,",
+                "hatte",
+                "ihm",
+                "Geschichten",
+                "von",
+                "den",
+                "wunderbaren",
+                "Auftritten",
+                "und",
+                "den",
+                "magischen",
+                "Kulissen",
+                "erzählt."
+              ]
+            },
+            {
+              "target": "Eines Tages, als er gerade in der Bibliothek saß und sich die alten Fotos von der Circo Luna ansah, klingelte das Telefon.",
+              "source": "Un giorno, mentre sedeva nella biblioteca e guardava le vecchie fotografie del circo Luna, squillò il telefono.",
+              "words": [
+                "Eines",
+                "Tages,",
+                "als",
+                "er",
+                "gerade",
+                "in",
+                "der",
+                "Bibliothek",
+                "saß",
+                "und",
+                "sich",
+                "die",
+                "alten",
+                "Fotos",
+                "von",
+                "der",
+                "Circo",
+                "Luna",
+                "ansah,",
+                "klingelte",
+                "das",
+                "Telefon."
+              ]
+            },
+            {
+              "target": "Es war ein freundlicher Mann, der sich als Direktor des Circo Luna vorstellte.",
+              "source": "Era un uomo gentile che si presentò come direttore del circo Luna.",
+              "words": [
+                "Es",
+                "war",
+                "ein",
+                "freundlicher",
+                "Mann,",
+                "der",
+                "sich",
+                "als",
+                "Direktor",
+                "des",
+                "Circo",
+                "Luna",
+                "vorstellte."
+              ]
+            },
+            {
+              "target": "Er erzählte Marco von einer Stelle als Tänzer, die gerade frei geworden war.",
+              "source": "Gli parlò di un posto da ballerino che era appena diventato disponibile.",
+              "words": [
+                "Er",
+                "erzählte",
+                "Marco",
+                "von",
+                "einer",
+                "Stelle",
+                "als",
+                "Tänzer,",
+                "die",
+                "gerade",
+                "frei",
+                "geworden",
+                "war."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "per lavorare al circo",
+          "desc": "sogni e realtà nel mondo del circo",
+          "icon": " Clown 🎭",
+          "vocab": [
+            {
+              "target": "Kuppel",
+              "source": "cupola"
+            },
+            {
+              "target": "Kunststück",
+              "source": "trucco"
+            },
+            {
+              "target": "Künstlerin",
+              "source": "attrice"
+            },
+            {
+              "target": "Konzertsaal",
+              "source": "aula"
+            },
+            {
+              "target": "Kostüm",
+              "source": "costume"
+            },
+            {
+              "target": "Kreisel",
+              "source": "giroscopio"
+            },
+            {
+              "target": "Klavier",
+              "source": "pianoforte"
+            },
+            {
+              "target": "Koffer",
+              "source": "valigia"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Er packte seine Koffer und ging zum Circo Luna.",
+              "source": "Lui prese la sua valigia e andò al Circo Luna.",
+              "words": [
+                "Er",
+                "packte",
+                "seine",
+                "Koffer",
+                "und",
+                "ging",
+                "zum",
+                "Circo",
+                "Luna."
+              ]
+            },
+            {
+              "target": "Die Künstlerin übte ihr Kunststück im Konzertsaal.",
+              "source": "L'attrice eseguiva il suo trucco nell'aula.",
+              "words": [
+                "Die",
+                "Künstlerin",
+                "übte",
+                "ihr",
+                "Kunststück",
+                "im",
+                "Konzertsaal."
+              ]
+            },
+            {
+              "target": "Marco sah die Kuppel des Circo Luna von weitem.",
+              "source": "Marco vedeva la cupola del circo da lontano.",
+              "words": [
+                "Marco",
+                "sah",
+                "die",
+                "Kuppel",
+                "des",
+                "Circo",
+                "Luna",
+                "von",
+                "weitem."
+              ]
+            },
+            {
+              "target": "Sie trug ein Kostüm, das sie von ihrer Mutter geerbt hatte.",
+              "source": "Indossava un costume che aveva ereditato dalla madre.",
+              "words": [
+                "Sie",
+                "trug",
+                "ein",
+                "Kostüm,",
+                "das",
+                "sie",
+                "von",
+                "ihrer",
+                "Mutter",
+                "geerbt",
+                "hatte."
+              ]
+            },
+            {
+              "target": "Er stellte sich vor, wie er auf der Klappe tanzt.",
+              "source": "Si immaginava di ballare sulle scale del circo.",
+              "words": [
+                "Er",
+                "stellte",
+                "sich",
+                "vor,",
+                "wie",
+                "er",
+                "auf",
+                "der",
+                "Klappe",
+                "tanzt."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1166104,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2821,
+        "totalCompletionTokens": 1762,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 289043,
+            "promptTokens": 752,
+            "completionTokens": 361
+          },
+          {
+            "lessonNum": 2,
+            "ms": 324272,
+            "promptTokens": 821,
+            "completionTokens": 467
+          },
+          {
+            "lessonNum": 3,
+            "ms": 291529,
+            "promptTokens": 874,
+            "completionTokens": 361
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T14:50:11.429Z",
+      "updatedAt": "2026-05-31T19:11:08.514Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 859981,
+        "promptTokens": 2800,
+        "completionTokens": 1367
+      }
     },
     {
       "topic": "Essen an Luxembourg",
@@ -568,452 +1756,6 @@
       },
       "generatedAt": "2026-05-31T09:36:34.175Z",
       "updatedAt": "2026-05-31T09:36:34.175Z"
-    },
-    {
-      "topic": "Esibizione al circo",
-      "topicEmoji": " Clown ",
-      "userTopic": "La troupe del circo è rimasta colpita dalla sua esibizione ed Elena l'ha accompagnata nella città vicina",
-      "lang": "de",
-      "srcLang": "it",
-      "difficulty": 2,
-      "storyLen": 400,
-      "story": "Nach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.\n\nAls die Tänzerin endlich ihre Ruhe hatte, hörte sie Schritte draußen. Kurz darauf trat Elena ein, die Tänzerin, mit der sie seit Jahren befreundet war. Elena trug ein breites Lächeln auf ihrem Gesicht, das Elisa sofort verstand.\n\n\"Elisa, du musst kommen!\" rief Elena begeistert. \"Die Leute im Zelt sind begeistert von deiner Leistung. Sie haben mich gebeten, dich zu einem Drink einzuladen.\"\n\nElisa zögerte kurz, dann stand sie auf und folgte Elena. Sie verließen das Zelt und gingen durch den dunklen, aber lebhaften Zeltlagerplatz. Die Zuschauer, die noch auf den Zelten herumwerkten, nickten ihnen zu und applaudierten. Elisa fühlte sich geschmeichelt, als sie die Anerkennung der Tänzerin sah.\n\nAls sie in die Stadt gingen, fühlte Elisa sich wie eine berühmte Figur. Elena führte sie zu einer kleinen, aber gemütlichen Bar, wo sie von der Tänzerin und ihrem Team erwartet wurden. Sie plauderten und lachten, und Elisa fühlte sich zum ersten Mal seit langer Zeit wirklich entspannt. Sie wusste, dass sie noch viel zu tun hatte, aber in diesem Moment genoss sie die Anerkennung und Freundschaft, die sie umgab.",
-      "storyLang": "de",
-      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nh durch die Zeltpassage bewegten, ihre Augen auf den Ring gerichtet. Sie atmete tief ein und begann, mit der anderen Tänzerin, die sie seit Jahren kannte, eine Choreografie zu tanzen. Ihre Bewegungen flossen ineinander, als seien sie eine einzige Kreatur. Die Zuschauer applaudierten, als sie den Ring verließen, und Elisa lächelte, obwohl sie wusste, dass sie noch viel zu tun hatte.\n\nNach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.\n\nNew topic: \"La troupe del circo è rimasta colpita dalla sua esibizione ed Elena l'ha accompagnata nella città vicina\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "per lavorare al circo",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "La troupe del circo è rimasta colpita dalla sua esibizione ed Elena l'ha accompagnata nella città vicina",
-          "desc": "Esibizione, Zelte, Zuschauer, Zelt, Freundschaft",
-          "icon": "🎭",
-          "vocab": [
-            {
-              "target": "Auftritt",
-              "source": "esibizione"
-            },
-            {
-              "target": "Zelt",
-              "source": "zelto"
-            },
-            {
-              "target": "Zuschauer",
-              "source": "zuschauer"
-            },
-            {
-              "target": "bemüht",
-              "source": "occupato"
-            },
-            {
-              "target": "bietet",
-              "source": "offre"
-            },
-            {
-              "target": "Freundschaft",
-              "source": "amicizia"
-            },
-            {
-              "target": "begeistert",
-              "source": "entusiasta"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Nach dem Auftritt, kehrte Elisa in ihr Zelt zurück.",
-              "source": "Dopo l'esibizione, Elisa tornò nel suo zelto.",
-              "words": [
-                "Nach",
-                "dem",
-                "Auftritt,",
-                "kehrte",
-                "Elisa",
-                "in",
-                "ihr",
-                "Zelt",
-                "zurück."
-              ]
-            },
-            {
-              "target": "Sie wusste, dass sie stets darum bemüht sein musste.",
-              "source": "Sapeva che doveva sempre essere impegnata.",
-              "words": [
-                "Sie",
-                "wusste,",
-                "dass",
-                "sie",
-                "stets",
-                "darum",
-                "bemüht",
-                "sein",
-                "musste."
-              ]
-            },
-            {
-              "target": "Als die Tänzerin endlich ihre Ruhe hatte, hörte sie Schritte draußen.",
-              "source": "Quando la ballerina finalmente ebbe un po' di quiete, sentì dei passi fuori.",
-              "words": [
-                "Als",
-                "die",
-                "Tänzerin",
-                "endlich",
-                "ihre",
-                "Ruhe",
-                "hatte,",
-                "hörte",
-                "sie",
-                "Schritte",
-                "draußen."
-              ]
-            },
-            {
-              "target": "Elena trug ein breites Lächeln auf ihrem Gesicht.",
-              "source": "Elena aveva un sorriso ampio sul volto.",
-              "words": [
-                "Elena",
-                "trug",
-                "ein",
-                "breites",
-                "Lächeln",
-                "auf",
-                "ihrem",
-                "Gesicht."
-              ]
-            },
-            {
-              "target": "Die Leute im Zelt sind begeistert von deiner Leistung.",
-              "source": "Le persone nel zelto sono entusiaste della tua prestazione.",
-              "words": [
-                "Die",
-                "Leute",
-                "im",
-                "Zelt",
-                "sind",
-                "begeistert",
-                "von",
-                "deiner",
-                "Leistung."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "Il riconoscimento",
-          "desc": "Elisa e Elena festeggiano insieme",
-          "icon": "🎉",
-          "vocab": [
-            {
-              "target": "abgebaut",
-              "source": "rimossa"
-            },
-            {
-              "target": "harten",
-              "source": "duri"
-            },
-            {
-              "target": "dachte",
-              "source": "pensava"
-            },
-            {
-              "target": "immer wieder",
-              "source": "sempre"
-            },
-            {
-              "target": "zufrieden",
-              "source": "soddisfatta"
-            },
-            {
-              "target": "arbeiten",
-              "source": "lavorare"
-            },
-            {
-              "target": "Zeltstuhl",
-              "source": "stulho"
-            },
-            {
-              "target": "Zeltkorb",
-              "source": "zelto"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Nach dem Auftritt, als die Zelte abgebaut wurden, kehrte Elisa in ihr Zelt zurück.",
-              "source": "Dopo l'esibizione, quando i zelti furono rimossi, Elisa tornò nel suo zelto.",
-              "words": [
-                "Nach",
-                "dem",
-                "Auftritt,",
-                "als",
-                "die",
-                "Zelte",
-                "abgebaut",
-                "wurden,",
-                "kehrte",
-                "Elisa",
-                "in",
-                "ihr",
-                "Zelt",
-                "zurück."
-              ]
-            },
-            {
-              "target": "Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach.",
-              "source": "Si sedette sullo zelto di legno duro e rifletté sul giorno.",
-              "words": [
-                "Sie",
-                "setzte",
-                "sich",
-                "auf",
-                "den",
-                "harten",
-                "Holzstuhl",
-                "und",
-                "dachte",
-                "über",
-                "den",
-                "Tag",
-                "nach."
-              ]
-            },
-            {
-              "target": "Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden.",
-              "source": "Sapeva che doveva sempre sforzarsi di migliorare.",
-              "words": [
-                "Sie",
-                "wusste,",
-                "dass",
-                "sie",
-                "stets",
-                "darum",
-                "bemüht",
-                "sein",
-                "musste,",
-                "besser",
-                "zu",
-                "werden."
-              ]
-            },
-            {
-              "target": "Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden.",
-              "source": "Ma in quel momento, nel mezzo del zelto, si sentì soddisfatta.",
-              "words": [
-                "Aber",
-                "in",
-                "diesem",
-                "Moment,",
-                "inmitten",
-                "des",
-                "Zelts,",
-                "fühlte",
-                "sie",
-                "sich",
-                "zufrieden."
-              ]
-            },
-            {
-              "target": "Als die Tänzerin endlich ihre Ruhe hatte, hörte sie Schritte draußen.",
-              "source": "Quando la ballerina finalmente ebbe la sua pausa, sentì dei passi fuori.",
-              "words": [
-                "Als",
-                "die",
-                "Tänzerin",
-                "endlich",
-                "ihre",
-                "Ruhe",
-                "hatte,",
-                "hörte",
-                "sie",
-                "Schritte",
-                "draußen."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "Il riconoscimento",
-          "desc": "Elisa e Elena, amiche di lunga data, festeggiano insieme",
-          "icon": "🎉",
-          "vocab": [
-            {
-              "target": "Zeltkorb",
-              "source": "cesto"
-            },
-            {
-              "target": "Truppe",
-              "source": "truppa"
-            },
-            {
-              "target": "Begeistert",
-              "source": "entusiasta"
-            },
-            {
-              "target": "Begleiten",
-              "source": "accompagnare"
-            },
-            {
-              "target": "Zeltstadt",
-              "source": "città"
-            },
-            {
-              "target": "Zeltlager",
-              "source": "accampamento"
-            },
-            {
-              "target": "Zeltbar",
-              "source": "bar"
-            },
-            {
-              "target": "Zeltfeste",
-              "source": "festa"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Die Truppe hat Elisa sehr beeindruckt.",
-              "source": "La truppa ha Elisa molto entusiasta.",
-              "words": [
-                "Die",
-                "Truppe",
-                "hat",
-                "Elisa",
-                "sehr",
-                "beeindruckt."
-              ]
-            },
-            {
-              "target": "Wir sollten uns in der Zeltstadt treffen.",
-              "source": "Dovremmo incontrarci nella città del circo.",
-              "words": [
-                "Wir",
-                "sollten",
-                "uns",
-                "in",
-                "der",
-                "Zeltstadt",
-                "treffen."
-              ]
-            },
-            {
-              "target": "Elena begleitet Elisa zur Zeltbar.",
-              "source": "Elena accompagna Elisa al bar dell'accampamento.",
-              "words": [
-                "Elena",
-                "begleitet",
-                "Elisa",
-                "zur",
-                "Zeltbar."
-              ]
-            },
-            {
-              "target": "Die Zelte sind noch nicht abgebaut, wir können hier bleiben.",
-              "source": "Izzi ancora rimossi, possiamo rimanere qui.",
-              "words": [
-                "Die",
-                "Zelte",
-                "sind",
-                "noch",
-                "nicht",
-                "abgebaut,",
-                "wir",
-                "können",
-                "hier",
-                "bleiben."
-              ]
-            },
-            {
-              "target": "In der Zeltstadt gibt es immer eine Zeltfeste.",
-              "source": "Nella città del circo ci sono sempre feste.",
-              "words": [
-                "In",
-                "der",
-                "Zeltstadt",
-                "gibt",
-                "es",
-                "immer",
-                "eine",
-                "Zeltfeste."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1085072,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 3311,
-        "totalCompletionTokens": 1665,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 284449,
-            "promptTokens": 802,
-            "completionTokens": 391
-          },
-          {
-            "lessonNum": 2,
-            "ms": 266406,
-            "promptTokens": 867,
-            "completionTokens": 417
-          },
-          {
-            "lessonNum": 3,
-            "ms": 253349,
-            "promptTokens": 927,
-            "completionTokens": 335
-          }
-        ]
-      },
-      "generatedAt": "2026-05-31T08:29:14.075Z",
-      "updatedAt": "2026-05-31T08:29:14.075Z"
-    },
-    {
-      "topic": "per lavorare al circo",
-      "topicEmoji": " Clown",
-      "userTopic": "per lavorare al circo",
-      "lang": "de",
-      "srcLang": "it",
-      "difficulty": 4,
-      "storyLen": 500,
-      "story": "In der kleinen, von Laternen erleuchteten Zeltpassage des Circo del Sole stand Elisa vor dem Zelt, das sie seit Jahren als Tänzerin bewohnte. Ihr Herz pochte, als sie die schweren Türen öffnete. Innerhalb des Zelts war es bereits hell, obwohl draußen noch die Dämmerung lag. Die Künstler und Künstlerinnen, die sie kannte, waren bereits am Werk. Einige tanzten, andere balancierten auf schmalen Bändern, während ein junger Clown mit einem Lächeln auf dem Gesicht seine Puppen umhertrug.\n\nElisa schritt durch die Zelte, bis sie den Bereich fand, wo die Tänzer ihre Übungen durchführten. Hier, unter den hohen, bunt bemalten Zeltpolen, fühlte sie sich am wohlsten. Sie nahm ihren Platz an der Stange und begann, ihre Übungen zu wiederholen. Ihre Bewegungen waren flüssig und präzise, jeder Tritt und jeder Schwung perfekt. Sie war hier, um zu arbeiten, um zu perfektionieren, was sie schon lange verfeinert hatte.\n\nAls die Sonne vollends aufging, trafen die ersten Zuschauer ein. Elisa sah, wie sie sich durch die Zeltpassage bewegten, ihre Augen auf den Ring gerichtet. Sie atmete tief ein und begann, mit der anderen Tänzerin, die sie seit Jahren kannte, eine Choreografie zu tanzen. Ihre Bewegungen flossen ineinander, als seien sie eine einzige Kreatur. Die Zuschauer applaudierten, als sie den Ring verließen, und Elisa lächelte, obwohl sie wusste, dass sie noch viel zu tun hatte.\n\nNach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.",
-      "storyLang": "de",
-      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German.\n\nWrite a story for the topic: \"per lavorare al circo\". Plain prose, no headings.",
-      "lessons": [
-        {
-          "id": 4,
-          "type": "error_hunt",
-          "title": "Text Understanding",
-          "desc": "Find the mistakes in the story",
-          "icon": "🔍",
-          "corruptedStory": "In der kleinen, von Laternen erleuchteten Zeltpassage des Circo del Sole stand Elisa vor dem Zelt, das sie seit Jahren als Tänzerinin bewohnte. Ihr Herz pochte, als sie die schweren Türen öffnete. Innerhalb des Zelts war es bereits hell, obwohl draußen noch die Dämmerung lag. Die Künstler und Künstlerinnen, die sie kannte, waren bereits am Werk. Einige tanzten, andere balancierten auf schmalen Bändern, während ein junger Clown mit einem Lächeln auf dem Gesicht seine Puppen umhertrug.\n\nElisa schritt durch die Zelte, bis sie den Bereich fand, wo die Tänzer ihre Übungen durchführten. Hier, unter den hohen, bunt bemalten Zeltpolen, fühlte sie sich am wohlsten. Sie nahm ihren Platz an der Stange und begann, ihre Übungen zu wiederholen. Ihre Bewegungen waren flüssig und präzise, jeder Tritt und jeder Schwung perfekt. Sie war hier, um zu arbeiten, um zu perfektionieren, was sie schon lange verfeinert hatte.\n\nAls die Sonne vollends aufging, trafen die ersten Zuschauer ein. Elisa sah, wie sie sich durch die Zeltpassage bewegten, ihre Augen auf den Ring gerichtet. Sie atmete tief ein und begann, mit der anderen Tänzerin, die sie seit Jahren kannte, eine Choreografie zu tanzen. Ihre Bewegungen flossen ineinander, als seien sie eine einzige Kreatur. Die Zuschauer applaudierten, als sie den Ring verließen, und Elisa lächelte, obwohl sie wusste, dass sie noch viel zu tun hatte.\n\nNach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.",
-          "edits": [
-            {
-              "type": "grammar",
-              "find": "Tänzer",
-              "replace": "Tänzerin",
-              "reason": "wrong gender on noun"
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 441884,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 1322,
-        "totalCompletionTokens": 766,
-        "lessons": [
-          {
-            "promptTokens": 950,
-            "completionTokens": 177
-          }
-        ]
-      },
-      "generatedAt": "2026-05-30T22:29:15.594Z",
-      "updatedAt": "2026-05-31T07:56:31.772Z"
     },
     {
       "topic": "Cuisine italienne vs française",
@@ -4588,373 +5330,6 @@
       },
       "generatedAt": "2026-05-24T08:44:40.741Z",
       "updatedAt": "2026-05-24T08:44:40.741Z"
-    },
-    {
-      "topic": "emergenza in montagna",
-      "topicEmoji": "-mount",
-      "userTopic": "emergenza in montagna",
-      "lang": "de",
-      "srcLang": "it",
-      "difficulty": 2,
-      "storyLen": 300,
-      "story": "Es war ein kalter, klarer Winterabend, als plötzlich die Warnanlage in den Bergen ertönte. Ein Unwetter näherte sich mit unheimlicher Geschwindigkeit, und die Bergbewohner wussten, dass sie sich beeilen mussten. Maria, eine erfahrene Bergsteigerin, saß mit ihrem Mann und ihren beiden Kindern in der kleinen Hütte, als die ersten Schneeflocken fielen. Sie hörten die Sirenen der Bergrettungskräfte in der Ferne, die sich auf den Weg machten, um die gefährdeten Touristen zu retten.\n\nDie Familie versuchte, sich zu beruhigen, während sie die Situation im Radio verfolgten. Die Nachrichten berichteten von starken Windstößen und scharfen Temperaturen, die die Bergwelt in eine gefährliche Emergenz verwandelten. Maria erinnerte ihre Kinder daran, dass sie sich an die Regeln halten mussten: immer zusammenbleiben, keine unerlaubten Wanderungen unternehmen und die Anweisungen der Bergführer befolgen. Die Kinder nickten, obwohl sie den Ernst der Lage nicht vollständig verstanden. Maria selbst fühlte sich trotz ihrer Erfahrung besorgt, aber sie wusste, dass sie ihre Familie beschützen musste.",
-      "storyLang": "de",
-      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German.\n\nWrite a story for the topic: \"emergenza in montagna\". Plain prose, no headings.",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "emergenza in montagna",
-          "desc": "avvisi, temperature, sbarre",
-          "icon": "-mountains:",
-          "vocab": [
-            {
-              "target": "Warnanlage",
-              "source": "avviso"
-            },
-            {
-              "target": "Unwetter",
-              "source": "temporale"
-            },
-            {
-              "target": "Bergbewohner",
-              "source": "abitanti"
-            },
-            {
-              "target": "Bergsteigerin",
-              "source": "scalatrice"
-            },
-            {
-              "target": "Sirenen",
-              "source": "suoni"
-            },
-            {
-              "target": "Bergrettungskräfte",
-              "source": "salvataggi"
-            },
-            {
-              "target": "Beruhigen",
-              "source": "calmare"
-            },
-            {
-              "target": "Nachrichten",
-              "source": "notizie"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Die Warnanlage ertönte, als das Unwetter näherte sich.",
-              "source": "L'annuncio d'urgenza si fece sentire quando l'uragano si avvicinava.",
-              "words": [
-                "Die",
-                "Warnanlage",
-                "ertönte,",
-                "als",
-                "das",
-                "Unwetter",
-                "näherte",
-                "sich."
-              ]
-            },
-            {
-              "target": "Die Bergbewohner wussten, dass sie sich beeilen mussten.",
-              "source": "Gli abitanti delle montagne sapevano che dovevano agire in fretta.",
-              "words": [
-                "Die",
-                "Bergbewohner",
-                "wussten,",
-                "dass",
-                "sie",
-                "sich",
-                "beeilen",
-                "mussten."
-              ]
-            },
-            {
-              "target": "Maria, eine erfahrene Bergsteigerin, saß mit ihren Kindern in der Hütte.",
-              "source": "Maria, una scalatrice esperta, si trovava con i suoi figli nella capanna.",
-              "words": [
-                "Maria,",
-                "eine",
-                "erfahrene",
-                "Bergsteigerin,",
-                "saß",
-                "mit",
-                "ihren",
-                "Kindern",
-                "in",
-                "der",
-                "Hütte."
-              ]
-            },
-            {
-              "target": "Sie hörten die Sirenen der Bergrettungskräfte in der Ferne.",
-              "source": "Sentivano i suoni dei salvataggi provenire da lontano.",
-              "words": [
-                "Sie",
-                "hörten",
-                "die",
-                "Sirenen",
-                "der",
-                "Bergrettungskräfte",
-                "in",
-                "der",
-                "Ferne."
-              ]
-            },
-            {
-              "target": "Die Familie versuchte, sich zu beruhigen.",
-              "source": "La famiglia cercava di calmarsi.",
-              "words": [
-                "Die",
-                "Familie",
-                "versuchte,",
-                "sich",
-                "zu",
-                "beruhigen."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "emergenza in montagna",
-          "desc": "avviso, temporale, abitanti, scalatrice, suoni, salvataggi, calmare, notizie",
-          "icon": "-mountains:",
-          "vocab": [
-            {
-              "target": "Stürme",
-              "source": "tempeste"
-            },
-            {
-              "target": "Temperaturen",
-              "source": "temperatura"
-            },
-            {
-              "target": "Regeln",
-              "source": "regole"
-            },
-            {
-              "target": "Familie",
-              "source": "famiglia"
-            },
-            {
-              "target": "Beruhigen",
-              "source": "calmare"
-            },
-            {
-              "target": "Nachrichten",
-              "source": "notizie"
-            },
-            {
-              "target": "Gefahr",
-              "source": "pericolo"
-            },
-            {
-              "target": "Hütte",
-              "source": "capanna"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Die Stürme fegten über die Berge.",
-              "source": "I tempi fuggivano sui monti.",
-              "words": [
-                "Die",
-                "Stürme",
-                "fegten",
-                "über",
-                "die",
-                "Berge."
-              ]
-            },
-            {
-              "target": "Die Temperaturen sanken schnell.",
-              "source": "Le temperature calarono rapidamente.",
-              "words": [
-                "Die",
-                "Temperaturen",
-                "sanken",
-                "schnell."
-              ]
-            },
-            {
-              "target": "Die Familie hielt an den Regeln fest.",
-              "source": "La famiglia si aggrappò alle regole.",
-              "words": [
-                "Die",
-                "Familie",
-                "hielt",
-                "an",
-                "den",
-                "Regeln",
-                "fest."
-              ]
-            },
-            {
-              "target": "Sie hörten die Nachrichten im Radio.",
-              "source": "Sentivano le notizie al radio.",
-              "words": [
-                "Sie",
-                "hörten",
-                "die",
-                "Nachrichten",
-                "im",
-                "Radio."
-              ]
-            },
-            {
-              "target": "Gefahr drohte den Bergbewohnern.",
-              "source": "Pericolo minacciava gli abitanti dei monti.",
-              "words": [
-                "Gefahr",
-                "drohte",
-                "den",
-                "Bergbewohnern."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "emergenza in montagna",
-          "desc": "avviso, temperature, pericolo, salvataggi, capanna",
-          "icon": "-mountains:",
-          "vocab": [
-            {
-              "target": "Emergenz",
-              "source": "emergenza"
-            },
-            {
-              "target": "Windstöße",
-              "source": "venti"
-            },
-            {
-              "target": "Gefahr",
-              "source": "pericolo"
-            },
-            {
-              "target": "Regeln",
-              "source": "regole"
-            },
-            {
-              "target": "Sicherheit",
-              "source": "sicurezza"
-            },
-            {
-              "target": "Hütte",
-              "source": "capanna"
-            },
-            {
-              "target": "Bergwelt",
-              "source": "mondo"
-            },
-            {
-              "target": "Gefährdet",
-              "source": "minacciato"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Die Bergwelt stand in Gefahr von starken Windstößen.",
-              "source": "La montagna era minacciata dai forti venti.",
-              "words": [
-                "Die",
-                "Bergwelt",
-                "stand",
-                "in",
-                "Gefahr",
-                "von",
-                "starken",
-                "Windstößen."
-              ]
-            },
-            {
-              "target": "Maria erinnerte ihre Kinder an die Regeln der Sicherheit.",
-              "source": "Maria fece ripetere ai suoi figli le regole di sicurezza.",
-              "words": [
-                "Maria",
-                "erinnerte",
-                "ihre",
-                "Kinder",
-                "an",
-                "die",
-                "Regeln",
-                "der",
-                "Sicherheit."
-              ]
-            },
-            {
-              "target": "Die Nachrichten berichteten von gefährdeten Touristen.",
-              "source": "Le notizie parlavano di turisti minacciati.",
-              "words": [
-                "Die",
-                "Nachrichten",
-                "berichteten",
-                "von",
-                "gefährdeten",
-                "Touristen."
-              ]
-            },
-            {
-              "target": "Gefährdet durch scharfe Temperaturen, suchten die Bergbewohner Schutz.",
-              "source": "Pericolati dalle temperature, gli abitanti cercavano rifugio.",
-              "words": [
-                "Gefährdet",
-                "durch",
-                "scharfe",
-                "Temperaturen,",
-                "suchten",
-                "die",
-                "Bergbewohner",
-                "Schutz."
-              ]
-            },
-            {
-              "target": "Die Bergrettungskräfte suchten die gefährdeten Hütten auf.",
-              "source": "I salvataggi cercavano le capanne minacciate.",
-              "words": [
-                "Die",
-                "Bergrettungskräfte",
-                "suchten",
-                "die",
-                "gefährdeten",
-                "Hütten",
-                "auf."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1280962,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 2866,
-        "totalCompletionTokens": 1446,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 237413,
-            "promptTokens": 759,
-            "completionTokens": 397
-          },
-          {
-            "lessonNum": 2,
-            "ms": 215113,
-            "promptTokens": 837,
-            "completionTokens": 317
-          },
-          {
-            "lessonNum": 3,
-            "ms": 239882,
-            "promptTokens": 891,
-            "completionTokens": 363
-          }
-        ]
-      },
-      "generatedAt": "2026-05-24T08:19:48.517Z",
-      "updatedAt": "2026-05-26T09:04:07.292Z"
     },
     {
       "topic": "wir fahren nach london",
@@ -33538,6 +33913,226 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-31T12:59:47.065Z"
+    },
+    "Esibizione_scolastica:listen_mcq:Applauden": {
+      "topic": "Esibizione scolastica",
+      "type": "listen_mcq",
+      "target": "Applauden",
+      "source": "",
+      "correct": "applaudire",
+      "choices": [
+        "si sentiva come un nuovo essere",
+        "esibizione",
+        "applaudire",
+        "compagni di classe"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T15:30:18.218Z",
+      "comment": "german: applaudieren"
+    },
+    "Esibizione_scolastica:mcq_target_source:Applauden": {
+      "topic": "Esibizione scolastica",
+      "type": "mcq_target_source",
+      "target": "Applauden",
+      "source": "applaudire",
+      "correct": "applaudire",
+      "choices": [
+        "applaudire",
+        "compagni di classe",
+        "pubblico",
+        "si sentiva come un nuovo essere"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T15:32:22.869Z",
+      "comment": "German: applaudieren"
+    },
+    "Giulia_e_il_circo:listen_mcq:Professionellität": {
+      "topic": "Giulia e il circo",
+      "type": "listen_mcq",
+      "target": "Professionellität",
+      "source": "",
+      "correct": "professionale",
+      "choices": [
+        "professionale",
+        "spostarsi con naturalezza",
+        "precisione",
+        "compagnia"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:14:40.183Z",
+      "comment": "German: professionalitaet"
+    },
+    "Giulia_e_il_circo:listen_mcq:Niedlich_machen": {
+      "topic": "Giulia e il circo",
+      "type": "listen_mcq",
+      "target": "Niedlich machen",
+      "source": "",
+      "correct": "invidia",
+      "choices": [
+        "insegnare le tecniche",
+        "invidia",
+        "spostarsi con naturalezza",
+        "precisione"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:16:07.070Z",
+      "comment": "german: Neid"
+    },
+    "Giulia_e_il_circo:listen_mcq:Klarheit_und_Präzision": {
+      "topic": "Giulia e il circo",
+      "type": "listen_mcq",
+      "target": "Klarheit und Präzision",
+      "source": "",
+      "correct": "precisione",
+      "choices": [
+        "guidava",
+        "invidia",
+        "precisione",
+        "compagnia"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:16:20.825Z",
+      "comment": "Klarheit missing in italian option, use just praezision in german"
+    },
+    "Giulia_e_il_circo:mcq_source_target:Klarheit_und_Präzision": {
+      "topic": "Giulia e il circo",
+      "type": "mcq_source_target",
+      "target": "Klarheit und Präzision",
+      "source": "precisione",
+      "correct": "Klarheit und Präzision",
+      "choices": [
+        "Klarheit und Präzision",
+        "Professionellität",
+        "Compagnie",
+        "Fähigkeiten vermitteln"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:17:08.615Z",
+      "comment": "correct German answer is only Praezision"
+    },
+    "Giulia_e_il_circo:mcq_target_source:Professionellität": {
+      "topic": "Giulia e il circo",
+      "type": "mcq_target_source",
+      "target": "Professionellität",
+      "source": "professionale",
+      "correct": "professionale",
+      "choices": [
+        "precisione",
+        "professionale",
+        "guidare",
+        "spostarsi con naturalezza"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:20:36.900Z",
+      "comment": "german: professionell"
+    },
+    "Giulia_e_il_circo:mcq_source_target:Professionellität": {
+      "topic": "Giulia e il circo",
+      "type": "mcq_source_target",
+      "target": "Professionellität",
+      "source": "professionalità",
+      "correct": "Professionellität",
+      "choices": [
+        "Professionellität",
+        "Leitung geben",
+        "Fähigkeiten vermitteln",
+        "Ballettstunden geben"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:21:07.139Z",
+      "comment": "German: Professionalität"
+    },
+    "Giulia_e_il_circo:listen_mcq:Bewegungen_spüren": {
+      "topic": "Giulia e il circo",
+      "type": "listen_mcq",
+      "target": "Bewegungen spüren",
+      "source": "",
+      "correct": "spostarsi con naturalezza",
+      "choices": [
+        "spostarsi con naturalezza",
+        "precisione",
+        "invidia",
+        "insegnare il ballo"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:22:37.470Z",
+      "comment": "German: sich ganz natürlich bewegen"
+    },
+    "Giulia_e_il_circo:listen_mcq:Invidia": {
+      "topic": "Giulia e il circo",
+      "type": "listen_mcq",
+      "target": "Invidia",
+      "source": "",
+      "correct": "invidia",
+      "choices": [
+        "insegnare le tecniche",
+        "compagnia",
+        "invidia",
+        "invidia"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:23:22.538Z",
+      "comment": "German Neid"
+    },
+    "Esibizione_problematica:listen_mcq:storto": {
+      "topic": "Esibizione problematica",
+      "type": "listen_mcq",
+      "target": "storto",
+      "source": "",
+      "correct": "andato storto",
+      "choices": [
+        "verschwinden",
+        "curare",
+        "andato storto",
+        "peggiorare"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:58:56.823Z"
+    },
+    "Esibizione_problematica:listen_mcq:verschwinden": {
+      "topic": "Esibizione problematica",
+      "type": "listen_mcq",
+      "target": "verschwinden",
+      "source": "",
+      "correct": "verschwinden",
+      "choices": [
+        "verschwinden",
+        "andato storto",
+        "peggiorare",
+        "curare"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T16:59:21.325Z"
+    },
+    "per_lavorare_al_circo:read_translate:Marco_arbeitete_in_der_Bibliothek_und_sa": {
+      "topic": "per lavorare al circo",
+      "type": "read_translate",
+      "target": "Marco arbeitete in der Bibliothek und sah alte Fotos von der Circo Luna.",
+      "source": "Marco lavorava nella biblioteca e guardava vecchie foto del Circo Luna.",
+      "correct": "Marco lavorava nella biblioteca e guardava vecchie foto del Circo Luna.",
+      "choices": [
+        "Marco lavorava nella biblioteca e guardava vecchie foto del Circo Luna.",
+        "Il direttore del Circo Luna offrì a Marco un posto.",
+        "Marco non aveva mai lavorato in un circo.",
+        "La madre gli raccontava storie dei meravigliosi spettacoli."
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T19:14:41.283Z"
+    },
+    "per_lavorare_al_circo:mcq_target_source:Circo": {
+      "topic": "per lavorare al circo",
+      "type": "mcq_target_source",
+      "target": "Circo",
+      "source": "circo",
+      "correct": "circo",
+      "choices": [
+        "racconto",
+        "fotografie",
+        "circo",
+        "burlone"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T19:18:06.357Z"
     }
   },
   "storylines": {
@@ -33722,7 +34317,11 @@
       "icon": "🎪"
     },
     "root:per lavorare al circo": {
-      "title": "Il Circo del Sole",
+      "title": "Il circo di Marco",
+      "icon": "🪟"
+    },
+    "c473465721": {
+      "title": "Il circo del Sole",
       "icon": "🎪"
     }
   }
