@@ -85,9 +85,6 @@
     "status.generation_failed": "Generatie mislukt",
     "status.server_error": "Serverfout",
     "status.import_failed": "Import mislukt",
-    "rating.q_difficulty": "Hoe moeilijk was dit les?",
-    "rating.q_fun": "Hoe leuk was het?",
-    "rating.q_coherence": "Hoe coherente was het verhaal?",
     "rating.too_easy": "Te makkelijk",
     "rating.just_right": "Net goed",
     "rating.too_hard": "Te moeilijk",
@@ -163,7 +160,10 @@
     "lesson.btn_share": "🔗 Delen",
     "lesson.btn_regen": "↻ Hergen.",
     "lesson.btn_continue": "↪ Doorgaan",
-    "lesson.btn_continue_story": "↪ Verhaal vervolgen"
+    "lesson.btn_continue_story": "↪ Verhaal vervolgen",
+    "rating.q_difficulty": "moeilijkheid",
+    "rating.q_fun": "leuk",
+    "rating.q_coherence": "coherentie"
   },
   "pt": {
     "app.tagline": "Aprenda vocabulário de qualquer tópico em qualquer idioma",
@@ -291,9 +291,6 @@
     "status.generation_failed": "Geração falhou",
     "status.server_error": "Erro no servidor",
     "status.import_failed": "Importação falhou",
-    "rating.q_difficulty": "Quanto foi difícil essa lição?",
-    "rating.q_fun": "Quanto foi divertido?",
-    "rating.q_coherence": "Como foi a coesão da história?",
     "rating.too_easy": "Muito fácil",
     "rating.just_right": "Ajustado",
     "rating.too_hard": "Muito difícil",
@@ -329,7 +326,10 @@
     "lesson.btn_share": "🔗 Compartilhar",
     "lesson.btn_regen": "↻ Regerar",
     "lesson.btn_continue": "↪ Continuar",
-    "lesson.btn_continue_story": "↪ Continuar história"
+    "lesson.btn_continue_story": "↪ Continuar história",
+    "rating.q_difficulty": "dificuldade",
+    "rating.q_fun": "diversão",
+    "rating.q_coherence": "coerência"
   },
   "fr": {
     "app.tagline": "Apprendre du vocabulaire sur n'importe quel sujet",
@@ -457,9 +457,6 @@
     "status.generation_failed": "Génération échouée",
     "status.server_error": "Erreur du serveur",
     "status.import_failed": "Importation échouée",
-    "rating.q_difficulty": "Quelle a été la difficulté de cette leçon ?",
-    "rating.q_fun": "Quelle a été la diversité de cette leçon ?",
-    "rating.q_coherence": "L’histoire était-elle cohérente ?",
     "rating.too_easy": "Trop facile",
     "rating.just_right": "Juste bon",
     "rating.too_hard": "Trop difficile",
@@ -495,7 +492,10 @@
     "lesson.btn_share": "🔗 Partager",
     "lesson.btn_regen": "↻ Régén.",
     "lesson.btn_continue": "↪ Continuer",
-    "lesson.btn_continue_story": "↪ Continuer l'histoire"
+    "lesson.btn_continue_story": "↪ Continuer l'histoire",
+    "rating.q_difficulty": "difficulté",
+    "rating.q_fun": "amusant",
+    "rating.q_coherence": "cohérence"
   },
   "tr": {
     "furigana.show": "ふ Show furigana",
@@ -543,9 +543,6 @@
     "status.generation_failed": "Generasyon başarısız",
     "status.server_error": "Sunucu hata",
     "status.import_failed": "İmport başarısız",
-    "rating.q_difficulty": "Bu ders ne kadar zor?",
-    "rating.q_fun": "Ne kadar eğlenceli?",
-    "rating.q_coherence": "Hikaye ne kadar akıcı?",
     "rating.too_easy": "Çok kolay",
     "rating.just_right": "Yeterince zor",
     "rating.too_hard": "Çok zor",
@@ -661,7 +658,10 @@
     "lesson.btn_share": "🔗 Paylaş",
     "lesson.btn_regen": "↻ Yenile",
     "lesson.btn_continue": "↪ Devam",
-    "lesson.btn_continue_story": "↪ Hikayeyi sürdür"
+    "lesson.btn_continue_story": "↪ Hikayeyi sürdür",
+    "rating.q_difficulty": "zorluk",
+    "rating.q_fun": "eğlenceli",
+    "rating.q_coherence": "anlaşılırlık"
   },
   "hi": {
     "app.tagline": "किसी भी विषय में किसी भी भाषा में शब्दावली सीखें",
@@ -749,9 +749,6 @@
     "status.generation_failed": "निर्माण विफल",
     "status.server_error": "सर्वर त्रुटि",
     "status.import_failed": "आयात विफल",
-    "rating.q_difficulty": "यह पाठ कितना कठिन था?",
-    "rating.q_fun": "यह कितना मजेदार था?",
-    "rating.q_coherence": "कहानी कितनी सुसंगत थी?",
     "rating.too_easy": "बहुत आसान",
     "rating.just_right": "बिल्कुल सही",
     "rating.too_hard": "बहुत कठिन",
@@ -827,7 +824,10 @@
     "lesson.btn_share": "🔗 साझा करें",
     "lesson.btn_regen": "↻ पुनः जनरेट",
     "lesson.btn_continue": "↪ जारी रखें",
-    "lesson.btn_continue_story": "↪ कहानी जारी रखें"
+    "lesson.btn_continue_story": "↪ कहानी जारी रखें",
+    "rating.q_difficulty": "कठिनाई",
+    "rating.q_fun": "मजेदार",
+    "rating.q_coherence": "समझदारी"
   },
   "de": {
     "app.tagline": "Vokabular für jedes Thema in jeder Sprache lernen",
@@ -955,9 +955,6 @@
     "status.generation_failed": "Generierung fehlgeschlagen",
     "status.server_error": "Serverfehler",
     "status.import_failed": "Import fehlgeschlagen",
-    "rating.q_difficulty": "Wie schwierig war diese Lektion?",
-    "rating.q_fun": "Wie viel Spaß hat es gemacht?",
-    "rating.q_coherence": "Wie kohärent war die Geschichte?",
     "rating.too_easy": "Zu einfach",
     "rating.just_right": "Genau richtig",
     "rating.too_hard": "Zu schwer",
@@ -993,7 +990,10 @@
     "lesson.btn_share": "🔗 Teilen",
     "lesson.btn_regen": "↻ Neu",
     "lesson.btn_continue": "↪ Weiter",
-    "lesson.btn_continue_story": "↪ Geschichte fortsetzen"
+    "lesson.btn_continue_story": "↪ Geschichte fortsetzen",
+    "rating.q_difficulty": "Schwierigkeit",
+    "rating.q_fun": "Spaß",
+    "rating.q_coherence": "Kohärenz"
   },
   "ar": {
     "app.tagline": "تعلم المفردات لأي موضوع بأي لغة",
@@ -1121,9 +1121,6 @@
     "status.generation_failed": "الإنشاء فشل",
     "status.server_error": "خطأ في الخادم",
     "status.import_failed": "الاستيراد فشل",
-    "rating.q_difficulty": "ما هو مستوى صعوبة هذا الدرس؟",
-    "rating.q_fun": "كم كانت ممتعة؟",
-    "rating.q_coherence": "كيف كانت القصة منسجمة؟",
     "rating.too_easy": "مفرطة في السهولة",
     "rating.just_right": "مثالية",
     "rating.too_hard": "مفرطة في الصعوبة",
@@ -1159,7 +1156,10 @@
     "lesson.btn_share": "🔗 مشاركة",
     "lesson.btn_regen": "↻ إعادة",
     "lesson.btn_continue": "↪ متابعة",
-    "lesson.btn_continue_story": "↪ متابعة القصة"
+    "lesson.btn_continue_story": "↪ متابعة القصة",
+    "rating.q_difficulty": "صعوبة",
+    "rating.q_fun": "ممتع",
+    "rating.q_coherence": "تماسك"
   },
   "en": {
     "app.tagline": "Learn vocabulary for any topic in any language",
@@ -1287,18 +1287,9 @@
     "status.generation_failed": "Generation failed",
     "status.server_error": "Server error",
     "status.import_failed": "Import failed",
-    "rating.q_difficulty": "How difficult was this lesson?",
-    "rating.q_fun": "How fun was it?",
-    "rating.q_coherence": "How coherent was the story?",
-    "rating.too_easy": "Too easy",
-    "rating.just_right": "Just right",
-    "rating.too_hard": "Too hard",
-    "rating.boring": "Boring",
-    "rating.fun": "Fun",
-    "rating.very_fun": "Very fun",
-    "rating.incoherent": "Incoherent",
-    "rating.coherent": "Coherent",
-    "rating.very_coherent": "Very coherent",
+    "rating.q_difficulty": "difficulty",
+    "rating.q_fun": "fun",
+    "rating.q_coherence": "coherence",
     "rating.submit": "Submit rating",
     "rating.skip": "Skip",
     "rating.title": "Rate this lesson",
@@ -1453,9 +1444,6 @@
     "status.generation_failed": "Generering misslyckad",
     "status.server_error": "Serverfel",
     "status.import_failed": "Import misslyckad",
-    "rating.q_difficulty": "Hur svår var detta försök?",
-    "rating.q_fun": "Hur roligt var det?",
-    "rating.q_coherence": "Hur kohärt var berättelsen?",
     "rating.too_easy": "Till och med för enkelt",
     "rating.just_right": "Justerat rätt",
     "rating.too_hard": "Till och med för svårt",
@@ -1491,7 +1479,10 @@
     "lesson.btn_share": "🔗 Dela",
     "lesson.btn_regen": "↻ Regenerera",
     "lesson.btn_continue": "↪ Fortsätt",
-    "lesson.btn_continue_story": "↪ Fortsätt berättelsen"
+    "lesson.btn_continue_story": "↪ Fortsätt berättelsen",
+    "rating.q_difficulty": "svårighetsgrad",
+    "rating.q_fun": "roligt",
+    "rating.q_coherence": "sammanhang"
   },
   "ru": {
     "app.tagline": "Учите словарный запас по любой теме на любом языке",
@@ -1619,9 +1610,6 @@
     "status.generation_failed": "Генерация не удалась",
     "status.server_error": "Ошибка сервера",
     "status.import_failed": "Импорт не удался",
-    "rating.q_difficulty": "Какова была сложность урока?",
-    "rating.q_fun": "Как было весело?",
-    "rating.q_coherence": "Как была связана история?",
     "rating.too_easy": "Слишком просто",
     "rating.just_right": "Точно так",
     "rating.too_hard": "Слишком сложно",
@@ -1657,7 +1645,10 @@
     "lesson.btn_share": "🔗 Поделиться",
     "lesson.btn_regen": "↻ Заново",
     "lesson.btn_continue": "↪ Далее",
-    "lesson.btn_continue_story": "↪ Продолжить рассказ"
+    "lesson.btn_continue_story": "↪ Продолжить рассказ",
+    "rating.q_difficulty": "сложность",
+    "rating.q_fun": "интересно",
+    "rating.q_coherence": "связность"
   },
   "zh": {
     "app.tagline": "用任何语言学习任何主题的词汇",
@@ -1785,9 +1776,6 @@
     "status.generation_failed": "生成失败",
     "status.server_error": "服务器错误",
     "status.import_failed": "导入失败",
-    "rating.q_difficulty": "这节课难度如何？",
-    "rating.q_fun": "有趣吗？",
-    "rating.q_coherence": "故事连贯吗？",
     "rating.too_easy": "太简单",
     "rating.just_right": "刚刚好",
     "rating.too_hard": "太难",
@@ -1823,7 +1811,10 @@
     "lesson.btn_share": "🔗 分享",
     "lesson.btn_regen": "↻ 重新生成",
     "lesson.btn_continue": "↪ 继续",
-    "lesson.btn_continue_story": "↪ 继续故事"
+    "lesson.btn_continue_story": "↪ 继续故事",
+    "rating.q_difficulty": "难度",
+    "rating.q_fun": "有趣",
+    "rating.q_coherence": "连贯性"
   },
   "ko": {
     "app.tagline": "모든 주제의 어휘를 어떤 언어로든 배우세요",
@@ -1951,9 +1942,6 @@
     "status.generation_failed": "생성 실패",
     "status.server_error": "서버 오류",
     "status.import_failed": "임포트 실패",
-    "rating.q_difficulty": "이 수업은 얼마나 어려웠나요?",
-    "rating.q_fun": "이 수업은 얼마나 재미있었나요?",
-    "rating.q_coherence": "스토리는 얼마나 일관적이었나요?",
     "rating.too_easy": "너무 쉬웠어요",
     "rating.just_right": "적당했어요",
     "rating.too_hard": "너무 어려웠어요",
@@ -1989,7 +1977,10 @@
     "lesson.btn_share": "🔗 공유",
     "lesson.btn_regen": "↻ 재생성",
     "lesson.btn_continue": "↪ 계속",
-    "lesson.btn_continue_story": "↪ 이야기 계속"
+    "lesson.btn_continue_story": "↪ 이야기 계속",
+    "rating.q_difficulty": "어려움",
+    "rating.q_fun": "재미",
+    "rating.q_coherence": "일관성"
   },
   "it": {
     "app.tagline": "Impara il vocabolario per qualsiasi argomento",
@@ -2077,9 +2068,6 @@
     "status.generation_failed": "Generazione fallita",
     "status.server_error": "Errore del server",
     "status.import_failed": "Importazione fallita",
-    "rating.q_difficulty": "Quanto era difficile questa lezione?",
-    "rating.q_fun": "Quanto era divertente?",
-    "rating.q_coherence": "Quanto era coerente la storia?",
     "rating.too_easy": "Troppo facile",
     "rating.just_right": "Appena giusto",
     "rating.too_hard": "Troppo difficile",
@@ -2155,7 +2143,10 @@
     "lesson.btn_share": "🔗 Condividi",
     "lesson.btn_regen": "↻ Rigenera",
     "lesson.btn_continue": "↪ Continua",
-    "lesson.btn_continue_story": "↪ Continua storia"
+    "lesson.btn_continue_story": "↪ Continua storia",
+    "rating.q_difficulty": "difficoltà",
+    "rating.q_fun": "divertente",
+    "rating.q_coherence": "coerenza"
   },
   "pl": {
     "app.tagline": "Ucz się słownictwa z każdego tematu w każdym języku",
@@ -2283,9 +2274,6 @@
     "status.generation_failed": "Generowanie nie powiodło się",
     "status.server_error": "Błąd serwera",
     "status.import_failed": "Import nie powiódł się",
-    "rating.q_difficulty": "Jak trudna była ta lekcja?",
-    "rating.q_fun": "Jak zabawna była?",
-    "rating.q_coherence": "Jak spójna była opowieść?",
     "rating.too_easy": "Zbyt proste",
     "rating.just_right": "Idealnie",
     "rating.too_hard": "Zbyt trudne",
@@ -2321,7 +2309,10 @@
     "lesson.btn_share": "🔗 Udostępnij",
     "lesson.btn_regen": "↻ Regeneruj",
     "lesson.btn_continue": "↪ Dalej",
-    "lesson.btn_continue_story": "↪ Kontynuuj historię"
+    "lesson.btn_continue_story": "↪ Kontynuuj historię",
+    "rating.q_difficulty": "trudność",
+    "rating.q_fun": "zabawa",
+    "rating.q_coherence": "spójność"
   },
   "es": {
     "app.tagline": "Aprender vocabulario de cualquier tema en cualquier idioma",
@@ -2449,9 +2440,6 @@
     "status.generation_failed": "Generación fallida",
     "status.server_error": "Error del servidor",
     "status.import_failed": "Importación fallida",
-    "rating.q_difficulty": "¿Cuán difícil fue esta lección?",
-    "rating.q_fun": "¿Qué tan divertida fue?",
-    "rating.q_coherence": "¿Qué tan coherente fue la historia?",
     "rating.too_easy": "Demasiado fácil",
     "rating.just_right": "Justo lo suficiente",
     "rating.too_hard": "Demasiado difícil",
@@ -2487,7 +2475,10 @@
     "lesson.btn_share": "🔗 Compartir",
     "lesson.btn_regen": "↻ Regen.",
     "lesson.btn_continue": "↪ Continuar",
-    "lesson.btn_continue_story": "↪ Continuar historia"
+    "lesson.btn_continue_story": "↪ Continuar historia",
+    "rating.q_difficulty": "dificultad",
+    "rating.q_fun": "diversión",
+    "rating.q_coherence": "coherencia"
   },
   "ja": {
     "app.tagline": "あらゆるトピックの語彙をどんな言語でも学ぼう",
@@ -2615,9 +2606,6 @@
     "status.generation_failed": "生成に失敗しました",
     "status.server_error": "サーバーエラー",
     "status.import_failed": "インポートに失敗しました",
-    "rating.q_difficulty": "このレッスンはどのくらい難しかったですか？",
-    "rating.q_fun": "どのくらい楽しかったですか？",
-    "rating.q_coherence": "ストーリーはどのくらい一貫していましたか？",
     "rating.too_easy": "簡単すぎる",
     "rating.just_right": "ちょうどいい",
     "rating.too_hard": "難しすぎる",
@@ -2653,7 +2641,10 @@
     "lesson.btn_share": "🔗 共有",
     "lesson.btn_regen": "↻ 再生成",
     "lesson.btn_continue": "↪ 続ける",
-    "lesson.btn_continue_story": "↪ ストーリーを続ける"
+    "lesson.btn_continue_story": "↪ ストーリーを続ける",
+    "rating.q_difficulty": "難易度",
+    "rating.q_fun": "楽しさ",
+    "rating.q_coherence": "一貫性"
   },
   "he": {
     "app.backend": "백엔드:",
@@ -2740,9 +2731,6 @@
     "status.generation_failed": "היצירה נכשלה",
     "status.server_error": "שגיאה בשרת",
     "status.import_failed": "הטמעה נכשלה",
-    "rating.q_difficulty": "האם התרגיל היה קשה מדי?",
-    "rating.q_fun": "האם זה היה משעשע?",
-    "rating.q_coherence": "האם הסיפור היה מושלם?",
     "rating.too_easy": " Çok קל",
     "rating.just_right": "剛好",
     "rating.too_hard": " Çok קשה",
@@ -2819,7 +2807,10 @@
     "lesson.btn_share": "🔗 לשתף",
     "lesson.btn_regen": "↻ יוצר מחדש",
     "lesson.btn_continue": "↪ להמשיך",
-    "lesson.btn_continue_story": "↪ להמשיך סיפור"
+    "lesson.btn_continue_story": "↪ להמשיך סיפור",
+    "rating.q_difficulty": "קושי",
+    "rating.q_fun": "כיף",
+    "rating.q_coherence": "עקביות"
   },
   "uk": {
     "app.backend": "Бек-енд:",
@@ -2946,9 +2937,6 @@
     "status.generation_failed": "Генерація не вдалася",
     "status.server_error": "Помилка сервера",
     "status.import_failed": "Імпорт не вдалося",
-    "rating.q_difficulty": "На скільки це заняття складне?",
-    "rating.q_fun": "На скільки це цікаво?",
-    "rating.q_coherence": "На скільки історія зрозуміла?",
     "rating.too_easy": "Замішане",
     "rating.just_right": "Так",
     "rating.too_hard": "Замішане",
@@ -2985,7 +2973,10 @@
     "lesson.btn_share": "🔗 Поділитися",
     "lesson.btn_regen": "↻ Створити заново",
     "lesson.btn_continue": "↪ Продовжити",
-    "lesson.btn_continue_story": "↪ Продовжити історію"
+    "lesson.btn_continue_story": "↪ Продовжити історію",
+    "rating.q_difficulty": "важкість",
+    "rating.q_fun": "весело",
+    "rating.q_coherence": "зв'язність"
   },
   "cs": {
     "app.backend": "Backend:",
@@ -3112,9 +3103,6 @@
     "status.generation_failed": "Generování selhalo",
     "status.server_error": "Chyba serveru",
     "status.import_failed": "Import selhal",
-    "rating.q_difficulty": "Jak tě obtížná byla tato lekce?",
-    "rating.q_fun": "Jak se ti líbila?",
-    "rating.q_coherence": "Jak srozumitelná byla povídku?",
     "rating.too_easy": "Zaškaredněle jednoduché",
     "rating.just_right": "Přesně to, co potřebuji",
     "rating.too_hard": "Zaškaredněle obtížné",
@@ -3151,7 +3139,10 @@
     "lesson.btn_share": "🔗 Sdílej",
     "lesson.btn_regen": "↻ Regeneruj",
     "lesson.btn_continue": "↪ Pokračuj",
-    "lesson.btn_continue_story": "↪ Pokračuj v příběhu"
+    "lesson.btn_continue_story": "↪ Pokračuj v příběhu",
+    "rating.q_difficulty": "obtížnost",
+    "rating.q_fun": "zábavnost",
+    "rating.q_coherence": "srozumitelnost"
   },
   "vi": {
     "app.backend": "Backend:",
@@ -3278,9 +3269,6 @@
     "status.generation_failed": "Tạo nội dung thất bại",
     "status.server_error": "Lỗi máy chủ",
     "status.import_failed": "Nhập thất bại",
-    "rating.q_difficulty": "Luyện tập này khó như thế nào?",
-    "rating.q_fun": "Luyện tập này vui như thế nào?",
-    "rating.q_coherence": "Câu chuyện này mạch lạc như thế nào?",
     "rating.too_easy": "Quá dễ",
     "rating.just_right": "Đúng mức",
     "rating.too_hard": "Quá khó",
@@ -3317,7 +3305,10 @@
     "lesson.btn_share": "🔗 Chia sẻ",
     "lesson.btn_regen": "↻ Tạo lại",
     "lesson.btn_continue": "↪ Tiếp tục",
-    "lesson.btn_continue_story": "↪ Tiếp tục câu chuyện"
+    "lesson.btn_continue_story": "↪ Tiếp tục câu chuyện",
+    "rating.q_difficulty": "độ khó",
+    "rating.q_fun": "sự thú vị",
+    "rating.q_coherence": "sự mạch lạc"
   },
   "id": {
     "app.backend": "Backend:",
@@ -3444,9 +3435,6 @@
     "status.generation_failed": "Penghasilan gagal",
     "status.server_error": "Kesalahan server",
     "status.import_failed": "Impor gagal",
-    "rating.q_difficulty": "Berapa sulitnya pelajaran ini?",
-    "rating.q_fun": "Berapa menariknya?",
-    "rating.q_coherence": "Berapa kohesifnya ceritanya?",
     "rating.too_easy": "Terlalu mudah",
     "rating.just_right": "Pas",
     "rating.too_hard": "Terlalu sulit",
@@ -3483,7 +3471,10 @@
     "lesson.btn_share": "🔗 Bagikan",
     "lesson.btn_regen": "↻ Regen",
     "lesson.btn_continue": "↪ Lanjutkan",
-    "lesson.btn_continue_story": "↪ Lanjutkan cerita"
+    "lesson.btn_continue_story": "↪ Lanjutkan cerita",
+    "rating.q_difficulty": "kesulitan",
+    "rating.q_fun": "menyenangkan",
+    "rating.q_coherence": "keterpaduan"
   },
   "ro": {
     "app.backend": "Backend:",
@@ -3610,9 +3601,6 @@
     "status.generation_failed": "Generarea a eșuat",
     "status.server_error": "Eroare de server",
     "status.import_failed": "Importarea a eșuat",
-    "rating.q_difficulty": "Cum a fost dificilă această lecție?",
-    "rating.q_fun": "Cum a fost distractivă?",
-    "rating.q_coherence": "Cum a fost corespunzătoare storie?",
     "rating.too_easy": "Prea ușoară",
     "rating.just_right": "Doar adevărat",
     "rating.too_hard": "Prea dificilă",
@@ -3649,7 +3637,10 @@
     "lesson.btn_share": "🔗 Partește",
     "lesson.btn_regen": "↻ Regenerează",
     "lesson.btn_continue": "↪ Continuă",
-    "lesson.btn_continue_story": "↪ Continuă poveste"
+    "lesson.btn_continue_story": "↪ Continuă poveste",
+    "rating.q_difficulty": "dificultate",
+    "rating.q_fun": "distractiv",
+    "rating.q_coherence": "coerență"
   },
   "th": {
     "app.backend": "Backend:",
@@ -3776,9 +3767,6 @@
     "status.generation_failed": "การสร้างล้มเหลว",
     "status.server_error": "ข้อผิดพลาดของเซิร์ฟเวอร์",
     "status.import_failed": "การนำเข้าล้มเหลว",
-    "rating.q_difficulty": "เรื่องนี้ยากขนาดไหน?",
-    "rating.q_fun": "สนุกขนาดไหน?",
-    "rating.q_coherence": "เรื่องนี้มีความสอดคล้องมากแค่ไหน?",
     "rating.too_easy": "ง่ายเกินไป",
     "rating.just_right": "พอดี",
     "rating.too_hard": "ยากเกินไป",
@@ -3815,7 +3803,10 @@
     "lesson.btn_share": "🔗 แชร์",
     "lesson.btn_regen": "↻ เริ่มใหม่",
     "lesson.btn_continue": "↪ ดำเนินการต่อ",
-    "lesson.btn_continue_story": "↪ ดำเนินเรื่องต่อ"
+    "lesson.btn_continue_story": "↪ ดำเนินเรื่องต่อ",
+    "rating.q_difficulty": "ความยาก",
+    "rating.q_fun": "สนุก",
+    "rating.q_coherence": "ความสอดคล้อง"
   },
   "el": {
     "furigana.show": "νομίστε την furigana",
@@ -3863,9 +3854,6 @@
     "status.generation_failed": "Η παραγωγή απέτυχε",
     "status.server_error": "Σφάλμα σερβερ",
     "status.import_failed": "Η εισαγωγή απέτυχε",
-    "rating.q_difficulty": "Πόσο δυσκολός ήταν αυτός ο καθορισμός;",
-    "rating.q_fun": "Πόσο άσχημα ήταν;",
-    "rating.q_coherence": "Πόσο συνεκτική ήταν η περίπτωση;",
     "rating.too_easy": "Σοβαρά εύκολο",
     "rating.just_right": "Ακριβώς αυτό που ήταν ανάγκη",
     "rating.too_hard": "Σοβαρά δυσκολός",
@@ -3981,7 +3969,10 @@
     "lesson.btn_share": "🔗 Είστε ο πρώτος",
     "lesson.btn_regen": "↻ Αναγενερώστε",
     "lesson.btn_continue": "↪ Συνεχίστε",
-    "lesson.btn_continue_story": "↪ Συνεχίστε την παραδοση"
+    "lesson.btn_continue_story": "↪ Συνεχίστε την παραδοση",
+    "rating.q_difficulty": "δυσκολία",
+    "rating.q_fun": "διασκέδαση",
+    "rating.q_coherence": "συνάφεια"
   },
   "fi": {
     "app.backend": "Tietojärjestelmä:",
@@ -4108,9 +4099,6 @@
     "status.generation_failed": "Luoitseminen epäonnistui",
     "status.server_error": "Palvelimellinen virhe",
     "status.import_failed": "Tiedoston tuonti epäonnistui",
-    "rating.q_difficulty": "Miten vaikea oli tämä opetus?",
-    "rating.q_fun": "Miten hauskaa oli?",
-    "rating.q_coherence": "Miten yhtenäistä oli tarinat?",
     "rating.too_easy": "Liian helppo",
     "rating.just_right": "Oikein vaikeuksissa",
     "rating.too_hard": "Liian vaikea",
@@ -4147,7 +4135,10 @@
     "lesson.btn_share": "🔗 Jaa",
     "lesson.btn_regen": "↻ Uudelleenluo",
     "lesson.btn_continue": "↪ Jatka",
-    "lesson.btn_continue_story": "↪ Jatka tarinaa"
+    "lesson.btn_continue_story": "↪ Jatka tarinaa",
+    "rating.q_difficulty": "vaikeus",
+    "rating.q_fun": "hauska",
+    "rating.q_coherence": "yhtenäisyys"
   },
   "hu": {
     "app.backend": "Háttér:",
@@ -4274,9 +4265,6 @@
     "status.generation_failed": "Generálási hiba",
     "status.server_error": "Szerverhiba",
     "status.import_failed": "Import sikertelen",
-    "rating.q_difficulty": "Mennyire nehéz volt ez a tananyag?",
-    "rating.q_fun": "Mennyire játssza?",
-    "rating.q_coherence": "Mennyire összetett a történet?",
     "rating.too_easy": "Túl egyszerű",
     "rating.just_right": "Csak úgy",
     "rating.too_hard": "Túl nehéz",
@@ -4313,7 +4301,10 @@
     "lesson.btn_share": "🔗 Megosztás",
     "lesson.btn_regen": "↻ Újra",
     "lesson.btn_continue": "↪ Folytassa",
-    "lesson.btn_continue_story": "↪ Történet folytata"
+    "lesson.btn_continue_story": "↪ Történet folytata",
+    "rating.q_difficulty": "nehezsége",
+    "rating.q_fun": "szórakoztató",
+    "rating.q_coherence": "egyszerűsége"
   },
   "da": {
     "app.backend": "Backend:",
@@ -4400,9 +4391,6 @@
     "status.generation_failed": "Generering mislykket",
     "status.server_error": "Serverfejl",
     "status.import_failed": "Import mislykket",
-    "rating.q_difficulty": "Hvor svært var dette lektion?",
-    "rating.q_fun": "Hvor spændende var det?",
-    "rating.q_coherence": "Hvor kohærent var fortællingen?",
     "rating.too_easy": "For nem",
     "rating.just_right": "Præcis rigtigt",
     "rating.too_hard": "For svært",
@@ -4479,7 +4467,10 @@
     "lesson.btn_share": "🔗 Del",
     "lesson.btn_regen": "↻ Gen",
     "lesson.btn_continue": "↪ Fortsæt",
-    "lesson.btn_continue_story": "↪ Fortsæt historie"
+    "lesson.btn_continue_story": "↪ Fortsæt historie",
+    "rating.q_difficulty": "sværhedsgrad",
+    "rating.q_fun": "sjov",
+    "rating.q_coherence": "sammenhæng"
   },
   "ca": {
     "app.backend": "Backend:",
@@ -4606,9 +4597,6 @@
     "status.generation_failed": "Generació fallida",
     "status.server_error": "Error del servidor",
     "status.import_failed": "Importació fallida",
-    "rating.q_difficulty": "Quan difícil va ser aquesta lecció?",
-    "rating.q_fun": "Quan divertida va ser?",
-    "rating.q_coherence": "Quan coherente va ser la història?",
     "rating.too_easy": "Demasiat fàcil",
     "rating.just_right": "Només aquest nivell",
     "rating.too_hard": "Demasiat difícil",
@@ -4637,6 +4625,17 @@
     "lesson.read_full_story": "📖 Llegir la història completa",
     "lib.import": "⬆ Importar",
     "lib.filter_all": "🌐 Tots els idiomes",
-    "lib.filter_all_short": "🌐 Tots"
+    "lib.filter_all_short": "🌐 Tots",
+    "app.tagline": "Aprende vocabulari per a qualsevol tema en qualsevol idioma",
+    "rating.q_difficulty": "dificultat",
+    "rating.q_fun": "divertiment",
+    "rating.q_coherence": "coherència",
+    "lesson.gen_topic_title": "✨ Generar títol",
+    "lesson.gen_topic_title_title": "Generar títol de lliçó amb IA",
+    "lesson.btn_topics": "← Temes",
+    "lesson.btn_share": "🔗 Comparteix",
+    "lesson.btn_regen": "↻ Reiniciar",
+    "lesson.btn_continue": "↪ Continua",
+    "lesson.btn_continue_story": "↪ Continua la història"
   }
 }

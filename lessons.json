@@ -1,6 +1,406 @@
 {
   "lessons": [
     {
+      "topic": "Esibizione al circo",
+      "topicEmoji": " Clown ",
+      "userTopic": "La troupe del circo è rimasta colpita dalla sua esibizione ed Elena l'ha accompagnata nella città vicina",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "Nach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.\n\nAls die Tänzerin endlich ihre Ruhe hatte, hörte sie Schritte draußen. Kurz darauf trat Elena ein, die Tänzerin, mit der sie seit Jahren befreundet war. Elena trug ein breites Lächeln auf ihrem Gesicht, das Elisa sofort verstand.\n\n\"Elisa, du musst kommen!\" rief Elena begeistert. \"Die Leute im Zelt sind begeistert von deiner Leistung. Sie haben mich gebeten, dich zu einem Drink einzuladen.\"\n\nElisa zögerte kurz, dann stand sie auf und folgte Elena. Sie verließen das Zelt und gingen durch den dunklen, aber lebhaften Zeltlagerplatz. Die Zuschauer, die noch auf den Zelten herumwerkten, nickten ihnen zu und applaudierten. Elisa fühlte sich geschmeichelt, als sie die Anerkennung der Tänzerin sah.\n\nAls sie in die Stadt gingen, fühlte Elisa sich wie eine berühmte Figur. Elena führte sie zu einer kleinen, aber gemütlichen Bar, wo sie von der Tänzerin und ihrem Team erwartet wurden. Sie plauderten und lachten, und Elisa fühlte sich zum ersten Mal seit langer Zeit wirklich entspannt. Sie wusste, dass sie noch viel zu tun hatte, aber in diesem Moment genoss sie die Anerkennung und Freundschaft, die sie umgab.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nh durch die Zeltpassage bewegten, ihre Augen auf den Ring gerichtet. Sie atmete tief ein und begann, mit der anderen Tänzerin, die sie seit Jahren kannte, eine Choreografie zu tanzen. Ihre Bewegungen flossen ineinander, als seien sie eine einzige Kreatur. Die Zuschauer applaudierten, als sie den Ring verließen, und Elisa lächelte, obwohl sie wusste, dass sie noch viel zu tun hatte.\n\nNach dem Auftritt, als die Zelte langsam abgebaut wurden, kehrte Elisa in ihr Zelt zurück. Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach. Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden, um den Zuschauern immer wieder zu bieten, was sie erwarteten. Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden. Sie hatte gearbeitet, und das war das Wichtigste.\n\nNew topic: \"La troupe del circo è rimasta colpita dalla sua esibizione ed Elena l'ha accompagnata nella città vicina\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "per lavorare al circo",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "La troupe del circo è rimasta colpita dalla sua esibizione ed Elena l'ha accompagnata nella città vicina",
+          "desc": "Esibizione, Zelte, Zuschauer, Zelt, Freundschaft",
+          "icon": "🎭",
+          "vocab": [
+            {
+              "target": "Auftritt",
+              "source": "esibizione"
+            },
+            {
+              "target": "Zelt",
+              "source": "zelto"
+            },
+            {
+              "target": "Zuschauer",
+              "source": "zuschauer"
+            },
+            {
+              "target": "bemüht",
+              "source": "occupato"
+            },
+            {
+              "target": "bietet",
+              "source": "offre"
+            },
+            {
+              "target": "Freundschaft",
+              "source": "amicizia"
+            },
+            {
+              "target": "begeistert",
+              "source": "entusiasta"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Nach dem Auftritt, kehrte Elisa in ihr Zelt zurück.",
+              "source": "Dopo l'esibizione, Elisa tornò nel suo zelto.",
+              "words": [
+                "Nach",
+                "dem",
+                "Auftritt,",
+                "kehrte",
+                "Elisa",
+                "in",
+                "ihr",
+                "Zelt",
+                "zurück."
+              ]
+            },
+            {
+              "target": "Sie wusste, dass sie stets darum bemüht sein musste.",
+              "source": "Sapeva che doveva sempre essere impegnata.",
+              "words": [
+                "Sie",
+                "wusste,",
+                "dass",
+                "sie",
+                "stets",
+                "darum",
+                "bemüht",
+                "sein",
+                "musste."
+              ]
+            },
+            {
+              "target": "Als die Tänzerin endlich ihre Ruhe hatte, hörte sie Schritte draußen.",
+              "source": "Quando la ballerina finalmente ebbe un po' di quiete, sentì dei passi fuori.",
+              "words": [
+                "Als",
+                "die",
+                "Tänzerin",
+                "endlich",
+                "ihre",
+                "Ruhe",
+                "hatte,",
+                "hörte",
+                "sie",
+                "Schritte",
+                "draußen."
+              ]
+            },
+            {
+              "target": "Elena trug ein breites Lächeln auf ihrem Gesicht.",
+              "source": "Elena aveva un sorriso ampio sul volto.",
+              "words": [
+                "Elena",
+                "trug",
+                "ein",
+                "breites",
+                "Lächeln",
+                "auf",
+                "ihrem",
+                "Gesicht."
+              ]
+            },
+            {
+              "target": "Die Leute im Zelt sind begeistert von deiner Leistung.",
+              "source": "Le persone nel zelto sono entusiaste della tua prestazione.",
+              "words": [
+                "Die",
+                "Leute",
+                "im",
+                "Zelt",
+                "sind",
+                "begeistert",
+                "von",
+                "deiner",
+                "Leistung."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "Il riconoscimento",
+          "desc": "Elisa e Elena festeggiano insieme",
+          "icon": "🎉",
+          "vocab": [
+            {
+              "target": "abgebaut",
+              "source": "rimossa"
+            },
+            {
+              "target": "harten",
+              "source": "duri"
+            },
+            {
+              "target": "dachte",
+              "source": "pensava"
+            },
+            {
+              "target": "immer wieder",
+              "source": "sempre"
+            },
+            {
+              "target": "zufrieden",
+              "source": "soddisfatta"
+            },
+            {
+              "target": "arbeiten",
+              "source": "lavorare"
+            },
+            {
+              "target": "Zeltstuhl",
+              "source": "stulho"
+            },
+            {
+              "target": "Zeltkorb",
+              "source": "zelto"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Nach dem Auftritt, als die Zelte abgebaut wurden, kehrte Elisa in ihr Zelt zurück.",
+              "source": "Dopo l'esibizione, quando i zelti furono rimossi, Elisa tornò nel suo zelto.",
+              "words": [
+                "Nach",
+                "dem",
+                "Auftritt,",
+                "als",
+                "die",
+                "Zelte",
+                "abgebaut",
+                "wurden,",
+                "kehrte",
+                "Elisa",
+                "in",
+                "ihr",
+                "Zelt",
+                "zurück."
+              ]
+            },
+            {
+              "target": "Sie setzte sich auf den harten Holzstuhl und dachte über den Tag nach.",
+              "source": "Si sedette sullo zelto di legno duro e rifletté sul giorno.",
+              "words": [
+                "Sie",
+                "setzte",
+                "sich",
+                "auf",
+                "den",
+                "harten",
+                "Holzstuhl",
+                "und",
+                "dachte",
+                "über",
+                "den",
+                "Tag",
+                "nach."
+              ]
+            },
+            {
+              "target": "Sie wusste, dass sie stets darum bemüht sein musste, besser zu werden.",
+              "source": "Sapeva che doveva sempre sforzarsi di migliorare.",
+              "words": [
+                "Sie",
+                "wusste,",
+                "dass",
+                "sie",
+                "stets",
+                "darum",
+                "bemüht",
+                "sein",
+                "musste,",
+                "besser",
+                "zu",
+                "werden."
+              ]
+            },
+            {
+              "target": "Aber in diesem Moment, inmitten des Zelts, fühlte sie sich zufrieden.",
+              "source": "Ma in quel momento, nel mezzo del zelto, si sentì soddisfatta.",
+              "words": [
+                "Aber",
+                "in",
+                "diesem",
+                "Moment,",
+                "inmitten",
+                "des",
+                "Zelts,",
+                "fühlte",
+                "sie",
+                "sich",
+                "zufrieden."
+              ]
+            },
+            {
+              "target": "Als die Tänzerin endlich ihre Ruhe hatte, hörte sie Schritte draußen.",
+              "source": "Quando la ballerina finalmente ebbe la sua pausa, sentì dei passi fuori.",
+              "words": [
+                "Als",
+                "die",
+                "Tänzerin",
+                "endlich",
+                "ihre",
+                "Ruhe",
+                "hatte,",
+                "hörte",
+                "sie",
+                "Schritte",
+                "draußen."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Il riconoscimento",
+          "desc": "Elisa e Elena, amiche di lunga data, festeggiano insieme",
+          "icon": "🎉",
+          "vocab": [
+            {
+              "target": "Zeltkorb",
+              "source": "cesto"
+            },
+            {
+              "target": "Truppe",
+              "source": "truppa"
+            },
+            {
+              "target": "Begeistert",
+              "source": "entusiasta"
+            },
+            {
+              "target": "Begleiten",
+              "source": "accompagnare"
+            },
+            {
+              "target": "Zeltstadt",
+              "source": "città"
+            },
+            {
+              "target": "Zeltlager",
+              "source": "accampamento"
+            },
+            {
+              "target": "Zeltbar",
+              "source": "bar"
+            },
+            {
+              "target": "Zeltfeste",
+              "source": "festa"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Die Truppe hat Elisa sehr beeindruckt.",
+              "source": "La truppa ha Elisa molto entusiasta.",
+              "words": [
+                "Die",
+                "Truppe",
+                "hat",
+                "Elisa",
+                "sehr",
+                "beeindruckt."
+              ]
+            },
+            {
+              "target": "Wir sollten uns in der Zeltstadt treffen.",
+              "source": "Dovremmo incontrarci nella città del circo.",
+              "words": [
+                "Wir",
+                "sollten",
+                "uns",
+                "in",
+                "der",
+                "Zeltstadt",
+                "treffen."
+              ]
+            },
+            {
+              "target": "Elena begleitet Elisa zur Zeltbar.",
+              "source": "Elena accompagna Elisa al bar dell'accampamento.",
+              "words": [
+                "Elena",
+                "begleitet",
+                "Elisa",
+                "zur",
+                "Zeltbar."
+              ]
+            },
+            {
+              "target": "Die Zelte sind noch nicht abgebaut, wir können hier bleiben.",
+              "source": "Izzi ancora rimossi, possiamo rimanere qui.",
+              "words": [
+                "Die",
+                "Zelte",
+                "sind",
+                "noch",
+                "nicht",
+                "abgebaut,",
+                "wir",
+                "können",
+                "hier",
+                "bleiben."
+              ]
+            },
+            {
+              "target": "In der Zeltstadt gibt es immer eine Zeltfeste.",
+              "source": "Nella città del circo ci sono sempre feste.",
+              "words": [
+                "In",
+                "der",
+                "Zeltstadt",
+                "gibt",
+                "es",
+                "immer",
+                "eine",
+                "Zeltfeste."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1085072,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 3311,
+        "totalCompletionTokens": 1665,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 284449,
+            "promptTokens": 802,
+            "completionTokens": 391
+          },
+          {
+            "lessonNum": 2,
+            "ms": 266406,
+            "promptTokens": 867,
+            "completionTokens": 417
+          },
+          {
+            "lessonNum": 3,
+            "ms": 253349,
+            "promptTokens": 927,
+            "completionTokens": 335
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T08:29:14.075Z",
+      "updatedAt": "2026-05-31T08:29:14.075Z"
+    },
+    {
       "topic": "per lavorare al circo",
       "topicEmoji": " Clown",
       "userTopic": "per lavorare al circo",
@@ -32377,6 +32777,51 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-30T22:35:14.065Z"
+    },
+    "Esibizione_al_circo:listen_mcq:Zelt": {
+      "topic": "Esibizione al circo",
+      "type": "listen_mcq",
+      "target": "Zelt",
+      "source": "",
+      "correct": "zelto",
+      "choices": [
+        "amicizia",
+        "zelto",
+        "esibizione",
+        "offre"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T08:32:13.693Z"
+    },
+    "Esibizione_al_circo:listen_mcq:bemüht": {
+      "topic": "Esibizione al circo",
+      "type": "listen_mcq",
+      "target": "bemüht",
+      "source": "",
+      "correct": "occupato",
+      "choices": [
+        "zelto",
+        "occupato",
+        "esibizione",
+        "offre"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T08:33:46.063Z"
+    },
+    "Esibizione_al_circo:listen_mcq:Zuschauer": {
+      "topic": "Esibizione al circo",
+      "type": "listen_mcq",
+      "target": "Zuschauer",
+      "source": "",
+      "correct": "zuschauer",
+      "choices": [
+        "zuschauer",
+        "esibizione",
+        "occupato",
+        "offre"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T08:33:52.669Z"
     }
   },
   "storylines": {
@@ -32555,6 +33000,14 @@
     "c1581305729": {
       "title": "Cocinas en Positano",
       "icon": "☀️"
+    },
+    "c1398422778": {
+      "title": "Il Circo del Sole",
+      "icon": "🎪"
+    },
+    "root:per lavorare al circo": {
+      "title": "Il Circo del Sole",
+      "icon": "🎪"
     }
   }
 }
