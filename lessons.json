@@ -32822,6 +32822,51 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-31T08:33:52.669Z"
+    },
+    "Luxembourg_Cuisine_Exploration:read_translate:Ech_fënnef_esch": {
+      "topic": "Luxembourg Cuisine Exploration",
+      "type": "read_translate",
+      "target": "Ech fënnef esch",
+      "source": "I am looking for",
+      "correct": "I am looking for",
+      "choices": [
+        "English translation",
+        "When I am in the city",
+        "I choose a restaurant",
+        "I am looking for"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T09:14:27.266Z",
+      "comment": "Ech sichen no"
+    },
+    "Luxembourg_Cuisine_Exploration:listen_mcq:Meele": {
+      "topic": "Luxembourg Cuisine Exploration",
+      "type": "listen_mcq",
+      "target": "Meele",
+      "source": "",
+      "correct": "Meal",
+      "choices": [
+        "City",
+        "Meal",
+        "When",
+        "Menu"
+      ],
+      "words": [],
+      "flaggedAt": "2026-05-31T09:16:04.751Z"
+    },
+    "Luxembourg_Cuisine_Exploration:order:Ech_fënnef_esch": {
+      "topic": "Luxembourg Cuisine Exploration",
+      "type": "order",
+      "target": "Ech fënnef esch",
+      "source": "I am looking for",
+      "correct": "Ech fënnef esch",
+      "choices": [],
+      "words": [
+        "fënnef",
+        "Ech",
+        "esch"
+      ],
+      "flaggedAt": "2026-05-31T09:16:15.979Z"
     }
   },
   "storylines": {
