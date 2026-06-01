@@ -1,6 +1,1324 @@
 {
   "lessons": [
     {
+      "topic": "Winnie rencontre un jouet",
+      "topicEmoji": "🧩",
+      "userTopic": "Winnie trifft ein Stofftier, das \"kleine ich bin ich\".",
+      "lang": "de",
+      "srcLang": "fr",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "Winnie schlenderte durch den Wald, als er plötzlich eine seltsame Erscheinung bemerkte. Es war ein kleines Stofftier, das winzig und flauschig war. Es saß auf einem Ast und sah Winnie mit großen Augen an. \"Ich bin ich,\" sagte das Stofftier leise. Winnie lachte und streichelte es. \"Wer bist du denn?\" fragte er. Das Stofftier zuckte mit den Ohren. \"Ich bin dein kleiner Freund,\" antwortete es. Winnie war überrascht. \"Komm mit,\" sagte er und führte das Stofftier zu Bär. Bär sah überrascht aus, als er das kleine Stofftier sah. \"Wer ist das?\" fragte er. \"Das ist mein neuer kleiner Freund,\" sagte Winnie. Bär lächelte. \"Na, dann lass uns spielen,\" sagte er. Sie fingen an, im Wald zu laufen und zu springen. Winnie fühlte sich glücklich und beschützt. Es war ein wunderbarer Tag gewesen.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n wachte früh auf. Die Sonne schien hell und warm. Winnie sprang aus seinem Bett und zog sich schnell an. Er hatte einen großen Hunger. Sein erster Gedanke gingen zum Honig. Winnie lief durch den Wald, blinzelte im Morgenlicht. Er roch den Duft von Blüten. Da war es! Ein Bienenstock, tief in einem Baum. Winnie kletterte vorsichtig hinauf. Er sah die Bienen, die um den Honig herumschwirrten. Sie waren so klein und flink. Winnie hielt den Atem an. Er wollte den Honig nicht verschrecken. Plötzlich hörte er ein Geräusch. Es war Bär! Bär war Winnies großer Freund. Er kam mit einem großen Beutel voller Honig. Bär lachte und sagte: \"Winnie, du bist ein kluger Bär!\" Sie füllten den Beutel mit Honig und gingen heim. Winnie lachte und lutschte an einem Honigbonbon. Es war ein wunderbarer Tag gewesen.\n\nNew topic: \"Winnie trifft ein Stofftier, das \"kleine ich bin ich\".\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Winnie l'ourson",
+      "storyStyle": "children",
+      "lessonFormat": "grammar",
+      "lessons": [
+        {
+          "id": 5,
+          "type": "grammar",
+          "title": "Stofftiere",
+          "desc": "Spielzeugtiere in der Küche",
+          "icon": "🧸",
+          "grammar": [
+            {
+              "target": "Kuschelwolle",
+              "source": "peluche",
+              "gender": "f",
+              "article": "die",
+              "plural": "Kuschelwollê"
+            },
+            {
+              "target": "Pferd",
+              "source": "cheval",
+              "gender": "n",
+              "article": "das",
+              "plural": "Pferde"
+            },
+            {
+              "target": "Tigress",
+              "source": "tigresse",
+              "gender": "f",
+              "article": "die",
+              "plural": "Tigress"
+            },
+            {
+              "target": "Känguru",
+              "source": "kanguru",
+              "gender": "n",
+              "article": "das",
+              "plural": "Kängurus"
+            },
+            {
+              "target": "Elefant",
+              "source": "éléphant",
+              "gender": "m",
+              "article": "der",
+              "plural": "Elefanten"
+            },
+            {
+              "target": "Koala",
+              "source": "koala",
+              "gender": "n",
+              "article": "das",
+              "plural": "Koalas"
+            },
+            {
+              "target": "Panda",
+              "source": "panda",
+              "gender": "n",
+              "article": "der",
+              "plural": "Panda"
+            },
+            {
+              "target": "Känguru",
+              "source": "kanguru",
+              "gender": "n",
+              "article": "das",
+              "plural": "Kängurus"
+            },
+            {
+              "target": "Pferd",
+              "source": "cheval",
+              "gender": "n",
+              "article": "das",
+              "plural": "Pferde"
+            },
+            {
+              "target": "Tigress",
+              "source": "tigresse",
+              "gender": "f",
+              "article": "die",
+              "plural": "Tigress"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 848963,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1084,
+        "totalCompletionTokens": 796,
+        "lessons": [
+          {
+            "promptTokens": 375,
+            "completionTokens": 489
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T13:03:02.852Z",
+      "updatedAt": "2026-06-01T13:03:02.852Z"
+    },
+    {
+      "topic": "Winnie l'ourson",
+      "topicEmoji": "🐻",
+      "userTopic": "Winnie l'ourson cherche du miel",
+      "lang": "de",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 400,
+      "story": "Winnie l'ourson wachte früh auf. Die Sonne schien hell und warm. Winnie sprang aus seinem Bett und zog sich schnell an. Er hatte einen großen Hunger. Sein erster Gedanke gingen zum Honig. Winnie lief durch den Wald, blinzelte im Morgenlicht. Er roch den Duft von Blüten. Da war es! Ein Bienenstock, tief in einem Baum. Winnie kletterte vorsichtig hinauf. Er sah die Bienen, die um den Honig herumschwirrten. Sie waren so klein und flink. Winnie hielt den Atem an. Er wollte den Honig nicht verschrecken. Plötzlich hörte er ein Geräusch. Es war Bär! Bär war Winnies großer Freund. Er kam mit einem großen Beutel voller Honig. Bär lachte und sagte: \"Winnie, du bist ein kluger Bär!\" Sie füllten den Beutel mit Honig und gingen heim. Winnie lachte und lutschte an einem Honigbonbon. Es war ein wunderbarer Tag gewesen.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Simple vocabulary, playful tone, short sentences.\n\nWrite a story for the topic: \"Winnie l'ourson cherche du miel\". Plain prose, no headings.",
+      "storyStyle": "children",
+      "lessonFormat": "grammar",
+      "lessons": [
+        {
+          "id": 5,
+          "type": "grammar",
+          "title": "Winnie l'ourson",
+          "desc": "Noun gender and plural in German",
+          "icon": "🐻",
+          "grammar": [
+            {
+              "target": "Bienen",
+              "source": "Bienen",
+              "gender": "n",
+              "article": "die",
+              "plural": "Bienen"
+            },
+            {
+              "target": "Honig",
+              "source": "Honig",
+              "gender": "n",
+              "article": "der",
+              "plural": "Honig"
+            },
+            {
+              "target": "Bäume",
+              "source": "Bäume",
+              "gender": "n",
+              "article": "die",
+              "plural": "Bäume"
+            },
+            {
+              "target": "Blumen",
+              "source": "Blumen",
+              "gender": "f",
+              "article": "die",
+              "plural": "Blumen"
+            },
+            {
+              "target": "Wald",
+              "source": "Forêt",
+              "gender": "m",
+              "article": "der",
+              "plural": "Wälder"
+            },
+            {
+              "target": "Himmel",
+              "source": "Ciel",
+              "gender": "m",
+              "article": "der",
+              "plural": "Himmel"
+            },
+            {
+              "target": "Bienen",
+              "source": "Abeilles",
+              "gender": "n",
+              "article": "die",
+              "plural": "Bienen"
+            },
+            {
+              "target": "Honig",
+              "source": "Miel",
+              "gender": "n",
+              "article": "der",
+              "plural": "Honig"
+            },
+            {
+              "target": "Bäume",
+              "source": "Bäume",
+              "gender": "n",
+              "article": "die",
+              "plural": "Bäume"
+            },
+            {
+              "target": "Blumen",
+              "source": "Blumen",
+              "gender": "f",
+              "article": "die",
+              "plural": "Blumen"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 409301,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 757,
+        "totalCompletionTokens": 775,
+        "lessons": [
+          {
+            "promptTokens": 368,
+            "completionTokens": 469
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T12:30:00.873Z",
+      "updatedAt": "2026-06-01T12:54:59.458Z",
+      "repairStats": {
+        "repairCount": 2,
+        "totalMs": 1302015,
+        "promptTokens": 5082,
+        "completionTokens": 1960
+      }
+    },
+    {
+      "topic": "Neuer Tag",
+      "topicEmoji": "☀️",
+      "userTopic": "der sturm ebbte ab, die sonne ging auf, ein neuer tag begann. im wald herrschte reges treiben.",
+      "lang": "fr",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "Le soleil se levait, ses rayons dorés perçant les rideaux de brume qui flottaient encore dans l’air. Constance arrêta sa chanson, son regard serein se perdant dans l’horizon qui s’assombrissait lentement. \"Et maintenant, chante pour la lumière, Constance,\" murmura l’esprit de la forêt, \"pour la nouvelle journée qui commence.\"\n\nConstance inspira à nouveau, cette fois plus profondément, et son chant s’éleva dans le ciel émergent. Sa voix, douce comme une caresse, se mêlait aux premiers rayons du soleil. Les oiseaux s’éveillèrent, leurs chants joyeux se mêlant à la mélodie de Constance. Les arbres, qui semblaient écouter, ondulèrent sous la brise matinale.\n\nLe vent, qui avait été si violent la veille, avait laissé place à une douce caresse. Les feuilles des arbres dansaient sous ses caresses, créant un murmure apaisant. Constance continua à chanter, sa voix se mêlant à la symphonie de la nature qui s’éveillait. Chaque note, chaque syllabe, semblait résonner dans le cœur de la forêt, réveillant les esprits endormis.\n\nLe silence qui avait suivi la tempête céda la place à une vie nouvelle. Les ombres de la nuit s’évanouirent, laissant place à la clarté du jour. Constance finit sa chanson, son chant se mêlant à l’air frais du matin. Les arbres, les oiseaux, et même le vent, semblaient reconnaissants, comme si la chanson avait réparé les blessures de la nuit précédente.",
+      "storyLang": "fr",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French. Writing style: a poem. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n’amour, c’est comme ce vent, parfois doux, parfois violent. Mais il nous guide toujours, même dans les moments les plus sombres.\"\n\nConstance ouvrit les yeux, son regard serein se posant sur l’arbre. \"Oui, l’amour est une force qui nous unit, même dans les tempêtes. Il nous rappelle que malgré la violence du monde, il y a toujours un abri, une sécurité.\"\n\nLe vent s’apaisa lentement, laissant place à un silence pesant. L’esprit de la forêt murmura à nouveau : \"Et maintenant, chante pour la résilience, Constance. Chante pour la force qui nous unit, même dans les moments les plus difficiles.\"\n\nConstance prit une grande inspiration et commença à chanter, sa voix douce et puissante résonnant dans la forêt. Les arbres semblaient écouter, leurs branches s’agitant doucement au rythme de sa mélodie.\n\nNew topic: \"der sturm ebbte ab, die sonne ging auf, ein neuer tag begann. im wald herrschte reges treiben.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Nacht und Sturm",
+      "storyStyle": "poem",
+      "lessonFormat": "conjugation",
+      "lessons": [
+        {
+          "id": 6,
+          "type": "conjugation",
+          "title": "le temps",
+          "desc": "le temps passait, la lumière revenait, un nouveau jour commençait. dans la forêt, l'activité s'intensifiait.",
+          "icon": "☀️",
+          "conjugations": [
+            {
+              "infinitive": "passer",
+              "source": "vergehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "je passe"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "tu passes"
+                },
+                {
+                  "pronoun": "il",
+                  "form": "il passe"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "nous passons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "vous passez"
+                },
+                {
+                  "pronoun": "ils",
+                  "form": "ils passent"
+                }
+              ]
+            },
+            {
+              "infinitive": "revenir",
+              "source": "zurückkehren",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "je reviens"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "tu reviens"
+                },
+                {
+                  "pronoun": "il",
+                  "form": "il revient"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "nous revenons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "vous revenez"
+                },
+                {
+                  "pronoun": "ils",
+                  "form": "ils reviennent"
+                }
+              ]
+            },
+            {
+              "infinitive": "commencer",
+              "source": "beginnen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "je commence"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "tu commences"
+                },
+                {
+                  "pronoun": "il",
+                  "form": "il commence"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "nous commençons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "vous commencez"
+                },
+                {
+                  "pronoun": "ils",
+                  "form": "ils commencent"
+                }
+              ]
+            },
+            {
+              "infinitive": "intensifier",
+              "source": "verstärken",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "je intensifie"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "tu intensifies"
+                },
+                {
+                  "pronoun": "il",
+                  "form": "il intensifie"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "nous intensifions"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "vous intensifiez"
+                },
+                {
+                  "pronoun": "ils",
+                  "form": "ils intensifient"
+                }
+              ]
+            },
+            {
+              "infinitive": "herrschen",
+              "source": "regieren",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "je",
+                  "form": "je règne"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "tu règnes"
+                },
+                {
+                  "pronoun": "il",
+                  "form": "il règne"
+                },
+                {
+                  "pronoun": "nous",
+                  "form": "nous régnons"
+                },
+                {
+                  "pronoun": "vous",
+                  "form": "vous régnez"
+                },
+                {
+                  "pronoun": "ils",
+                  "form": "ils règnent"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 796969,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1056,
+        "totalCompletionTokens": 1282,
+        "lessons": [
+          {
+            "promptTokens": 351,
+            "completionTokens": 812
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T12:01:22.542Z",
+      "updatedAt": "2026-06-01T12:01:22.542Z"
+    },
+    {
+      "topic": "Nacht und Sturm",
+      "topicEmoji": "🌙",
+      "userTopic": "in der nacht kam ein sturm auf und sie suchten schutz",
+      "lang": "fr",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "La nuit était tombée, noire et dense, lorsque le vent commença à souffler avec une violence inattendue. Constance et l’esprit de la forêt se réfugièrent sous l’immense arbre centenaire, ses branches noueuses formant un toit protecteur. Les racines s’enfonçaient profondément dans la terre, comme pour les attirer vers elles, offrant un abri contre le tourment qui s’abattait sur la forêt.\n\nConstance ferma les yeux, sentant le vent rugir autour d’elle. Elle entendit l’esprit murmurer : \"L’amour, c’est comme ce vent, parfois doux, parfois violent. Mais il nous guide toujours, même dans les moments les plus sombres.\"\n\nConstance ouvrit les yeux, son regard serein se posant sur l’arbre. \"Oui, l’amour est une force qui nous unit, même dans les tempêtes. Il nous rappelle que malgré la violence du monde, il y a toujours un abri, une sécurité.\"\n\nLe vent s’apaisa lentement, laissant place à un silence pesant. L’esprit de la forêt murmura à nouveau : \"Et maintenant, chante pour la résilience, Constance. Chante pour la force qui nous unit, même dans les moments les plus difficiles.\"\n\nConstance prit une grande inspiration et commença à chanter, sa voix douce et puissante résonnant dans la forêt. Les arbres semblaient écouter, leurs branches s’agitant doucement au rythme de sa mélodie.",
+      "storyLang": "fr",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French. Writing style: Suspenseful, eerie atmosphere, foreboding. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\ne si complexe, si difficile à comprendre. Mais dans ta voix, je perçois sa pureté.\"\n\nConstance hocha la tête, un sourire éclairant son visage. \"L'amour, c'est comme la forêt, il grandit, il se développe, il change. Il peut être doux comme une brise, ou violent comme un ouragan.\"\n\n\"Et comment l'amour naît-il?\" questionna l'esprit, ses yeux pétillant d'intérêt.\n\n\"Par la connexion, par la compréhension mutuelle,\" répondit Constance. \"Comme les arbres qui se soutiennent mutuellement, les racines s'enfonçant profondément dans la terre, les branches s'entrelaçant dans le ciel.\"\n\nL'esprit de la forêt sourit, un sourire qui éclaira la nuit. \"Alors, chante pour l'amour, Constance. Chante pour la connexion, pour la compréhension, pour la beauté de l'amour qui grandit dans la forêt et dans le monde.\"\n\nNew topic: \"in der nacht kam ein sturm auf und sie suchten schutz\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Constance und der Waldgeist",
+      "storyStyle": "horror",
+      "lessonFormat": "grammar",
+      "lessons": [
+        {
+          "id": 5,
+          "type": "grammar",
+          "title": "Nacht, Sturm, Schutz",
+          "desc": "Nacht, Sturm, Schutz in der Dunkelheit",
+          "icon": "🌙",
+          "grammar": [
+            {
+              "target": "nuit",
+              "source": "nacht",
+              "gender": "f",
+              "article": "la",
+              "plural": "les nuits"
+            },
+            {
+              "target": "tempête",
+              "source": "sturm",
+              "gender": "f",
+              "article": "la",
+              "plural": "les tempêtes"
+            },
+            {
+              "target": "abri",
+              "source": "schutz",
+              "gender": "m",
+              "article": "l'",
+              "plural": "les abris"
+            },
+            {
+              "target": "vent",
+              "source": "wind",
+              "gender": "m",
+              "article": "le",
+              "plural": "les vents"
+            },
+            {
+              "target": "ombre",
+              "source": "schatten",
+              "gender": "f",
+              "article": "l'",
+              "plural": "les ombres"
+            },
+            {
+              "target": "silence",
+              "source": "stille",
+              "gender": "m",
+              "article": "le",
+              "plural": "les silences"
+            },
+            {
+              "target": "lumière",
+              "source": "licht",
+              "gender": "f",
+              "article": "la",
+              "plural": "les lumières"
+            },
+            {
+              "target": "voix",
+              "source": "stimme",
+              "gender": "f",
+              "article": "la",
+              "plural": "les voix"
+            },
+            {
+              "target": "souffle",
+              "source": "atmosphäre",
+              "gender": "m",
+              "article": "le",
+              "plural": "les souffles"
+            },
+            {
+              "target": "silence",
+              "source": "stille",
+              "gender": "m",
+              "article": "le",
+              "plural": "les silences"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 569172,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1079,
+        "totalCompletionTokens": 917,
+        "lessons": [
+          {
+            "promptTokens": 375,
+            "completionTokens": 483
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T11:39:52.863Z",
+      "updatedAt": "2026-06-01T11:39:52.863Z"
+    },
+    {
+      "topic": "Amici che discutono",
+      "topicEmoji": "💬",
+      "userTopic": "Marco, Giulia e Clara discutevano del senso della vita e dell'amore. Da quel momento in poi erano in tre.",
+      "lang": "de",
+      "srcLang": "it",
+      "difficulty": 3,
+      "storyLen": 500,
+      "story": "Marco, Giulia und Clara saßen im Garten, umgeben von Blüten und Schatten. Die Sonne schien sanft, als würden sie von einem stillen, abendlichen Himmel beobachtet. Marco brach das Schweigen: \"Was ist das wahre Ziel des Lebens, wenn wir es in drei Teile teilen können?\" Seine Stimme war leise, fast ein Flüstern, das durch die Blätter hallte.\n\nGiulia antwortete nachdenklich: \"Vielleicht liegt das Ziel darin, die anderen zu verstehen und zu lieben, auch wenn sie uns nicht vollständig sind.\" Sie sah Clara an, deren Augen in der Sonne glänzten, als würden sie ein Geheimnis tragen.\n\nClara nickte, ihre Lippen formten ein Lächeln, das nicht ganz überzeugend war. \"Ich glaube, es liegt darin, dass wir uns gegenseitig vervollständigen. Jeder von uns trägt ein Stück des Ganzen, das wir zusammen bilden.\"\n\nMarco dachte an die letzten Wochen, an die Schwierigkeiten und die Freuden, die sie gemeinsam durchgemacht hatten. \"Aber was ist, wenn wir uns nicht verstehen können? Wenn wir uns gegenseitig nicht vervollständigen?\" Seine Stimme klang beinahe verzweifelt.\n\nGiulia legte ihre Hand auf seine, eine sanfte Berührung, die Trost spendete. \"Dann ist es vielleicht an der Zeit, dass wir uns trennen. Vielleicht ist es besser, wenn wir uns gegenseitig nicht vervollständigen, wenn es uns nur verwirrt.\"\n\nClara zuckte mit den Schultern, ihre Hände spielten mit einem Blatt, das sie langsam in die Finger presste. \"Vielleicht ist es auch an der Zeit, dass wir uns neu finden. Vielleicht ist es an der Zeit, dass wir uns neu lieben.\"\n\nDie drei saßen schweigend da, während die Zeit stillstand. Sie dachten über ihre Worte nach, über ihre Gefühle, über das, was sie fühlten und was sie nicht fühlten. Sie waren in drei, aber sie waren auch eins, vereint in ihrer Suche nach dem Sinn des Lebens und des Amors.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Contemplative, questioning, abstract ideas. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nange. \"Ich liebe dich,\" flüsterte sie. \"Aber ich liebe auch Clara. Sie ist meine Seele im Tanz.\"\n\nMarco nickte, verstand und fühlte sich erleichtert. Er wusste, dass Giulia stets doppelt war – seine Partnerin und ihre Seele im Tanz. Er würde sie nicht verdrängen, sondern sie verehren, wie sie es verdiente. Er drückte ihre Hand und versprach: \"Ich werde dich immer respektieren, Giulia. Und ich werde dich immer lieben.\"\n\nDie Tage vergingen, und Marco schritt langsam, aber sicher auf dem Pfad der Genesung. Giulia blieb bei ihm, ihre Hand hielt seine, während sie gemeinsam durch die schwierigen Momente gingen. Sie wussten, dass sie noch viele Herausforderungen vor sich hatten, aber sie waren bereit, sie gemeinsam zu meistern. Sie waren Partner, Verbündete, und sie waren einander unentbehrlich.\n\nNew topic: \"Marco, Giulia e Clara discutevano del senso della vita e dell'amore. Da quel momento in poi erano in tre.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Amore e danza",
+      "storyStyle": "philosophical",
+      "lessonFormat": "grammar",
+      "lessons": [
+        {
+          "id": 5,
+          "type": "grammar",
+          "title": "Sinn und Liebe",
+          "desc": "Nomen der Abstrakten",
+          "icon": "💭",
+          "grammar": [
+            {
+              "target": "Sinn",
+              "source": "senso",
+              "gender": "m",
+              "article": "der",
+              "plural": "die Sinne"
+            },
+            {
+              "target": "Welt",
+              "source": "mondo",
+              "gender": "f",
+              "article": "die",
+              "plural": "die Welten"
+            },
+            {
+              "target": "Leid",
+              "source": "sofferenza",
+              "gender": "n",
+              "article": "das",
+              "plural": "die Leiden"
+            },
+            {
+              "target": "Freude",
+              "source": "gioia",
+              "gender": "f",
+              "article": "die",
+              "plural": "die Freuden"
+            },
+            {
+              "target": "Tod",
+              "source": "morte",
+              "gender": "m",
+              "article": "der",
+              "plural": "die Tode"
+            },
+            {
+              "target": "Ewigkeit",
+              "source": "eternità",
+              "gender": "f",
+              "article": "die",
+              "plural": "die Ewigkeiten"
+            },
+            {
+              "target": "Wahrheit",
+              "source": "verità",
+              "gender": "f",
+              "article": "die",
+              "plural": "die Wahrheiten"
+            },
+            {
+              "target": "Liebe",
+              "source": "amore",
+              "gender": "f",
+              "article": "die",
+              "plural": "die Lieben"
+            },
+            {
+              "target": "Wahrheit",
+              "source": "verità",
+              "gender": "f",
+              "article": "die",
+              "plural": "die Wahrheiten"
+            },
+            {
+              "target": "Ewigkeit",
+              "source": "eternità",
+              "gender": "f",
+              "article": "die",
+              "plural": "die Ewigkeiten"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1069572,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1099,
+        "totalCompletionTokens": 1050,
+        "lessons": [
+          {
+            "promptTokens": 387,
+            "completionTokens": 481
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T09:35:03.702Z",
+      "updatedAt": "2026-06-01T09:35:03.702Z"
+    },
+    {
+      "topic": "Bar Encounter",
+      "topicEmoji": "🍺",
+      "userTopic": "Ein Rabbiner, ein Imam und ein Priester kommen in eine Bar. Der Barkeeper fragt: „Ist das ein Witz?“",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 450,
+      "story": "Ein Rabbiner, ein Imam und ein Priester kamen in eine Bar. Der Barkeeper, ein alter Herr mit einem Bart, der bis zu den Knien reichte, blickte von seinen Flaschenregalen auf und fragte: „Ist das ein Witz?“\n\nDer Rabbiner zog eine Grimasse, als ob er gerade einen bitteren Tropfen geschluckt hätte. „Nein, nein, das ist kein Witz. Wir sind hier, um ein wenig zu trinken und vielleicht ein wenig zu reden. Oder vielleicht nicht zu reden, sondern nur zu trinken. Oder vielleicht zu reden über das Trinken. Was meinst du, Imam?“\n\nDer Imam, ein junger Mann mit einem eleganten Turban, lächelte verlegen. „Ich denke, wir sollten darüber reden, wie wir unsere Gemeinden beruhigen können. Vielleicht können wir uns sogar gegenseitig ein paar Worte der Weisheit zulegen. Oder vielleicht trinken wir einfach. Oder vielleicht reden wir über das Trinken und die Weisheit. Was meinst du, Priester?“\n\nDer Priester, ein altes Eichhörnchen mit einem weisen Gesicht, nickte langsam. „Ich denke, wir sollten darüber reden, wie wir unsere Gemeinden zusammenbringen können. Vielleicht können wir uns gegenseitig ein paar Worte der Hoffnung zulegen. Oder vielleicht trinken wir einfach. Oder vielleicht reden wir über das Trinken und die Hoffnung. Oder vielleicht trinken wir einfach, reden über das Trinken und legen ein paar Worte der Weisheit und Hoffnung zulegen. Was meinst du, Barkeeper?“\n\nDer Barkeeper, der sich immer noch fragte, ob das ein Witz war, nickte schließlich. „Ich denke, wir sollten einfach trinken. Oder vielleicht reden. Oder vielleicht reden wir über das Trinken. Oder vielleicht trinken wir einfach, reden über das Trinken und legen ein paar Worte der Weisheit und Hoffnung zulegen. Was meinst du, Rabbiner?“\n\nUnd so tranken sie, sprachen und lachten, während der Barkeeper ihnen immer wieder frische Getränke servierte. Es war ein seltsamer Abend, aber ein wunderbarer, und sie verließen die Bar mit breiten Lächeln und einander ein wenig näher als zu Beginn.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 450 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Comedic tone, wordplay, absurdist situations, punchlines.\n\nWrite a story for the topic: \"Ein Rabbiner, ein Imam und ein Priester kommen in eine Bar. Der Barkeeper fragt: „Ist das ein Witz?“\". Plain prose, no headings.",
+      "storyStyle": "funny",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "In the Bar with Clergy",
+          "desc": "Bar, clergy, humor, drinks, conversation",
+          "icon": "🍺✍️",
+          "vocab": [
+            {
+              "target": "Rabbiner",
+              "source": "rabbi"
+            },
+            {
+              "target": "Imam",
+              "source": "Muslim leader"
+            },
+            {
+              "target": "Priester",
+              "source": "priest"
+            },
+            {
+              "target": "Barkeeper",
+              "source": "bartender"
+            },
+            {
+              "target": "Grimasse ziehen",
+              "source": "make a grimace"
+            },
+            {
+              "target": "Tropfen",
+              "source": "drop"
+            },
+            {
+              "target": "Gemeinde",
+              "source": "community"
+            },
+            {
+              "target": "Worte der Weisheit",
+              "source": "words of wisdom"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Der Rabbiner zog eine Grimasse, als ob er einen bitteren Tropfen geschluckt hätte.",
+              "source": "The rabbi made a grimace as if he had swallowed a bitter drop.",
+              "words": [
+                "Der",
+                "Rabbiner",
+                "zog",
+                "eine",
+                "Grimasse,",
+                "als",
+                "ob",
+                "er",
+                "einen",
+                "bitteren",
+                "Tropfen",
+                "geschluckt",
+                "hätte."
+              ]
+            },
+            {
+              "target": "Wir sind hier, um ein wenig zu trinken und vielleicht ein wenig zu reden.",
+              "source": "We are here to have a drink and perhaps talk a little.",
+              "words": [
+                "Wir",
+                "sind",
+                "hier,",
+                "um",
+                "ein",
+                "wenig",
+                "zu",
+                "trinken",
+                "und",
+                "vielleicht",
+                "ein",
+                "wenig",
+                "zu",
+                "reden."
+              ]
+            },
+            {
+              "target": "Vielleicht können wir uns gegenseitig ein paar Worte der Weisheit zulegen.",
+              "source": "Perhaps we can exchange a few words of wisdom with each other.",
+              "words": [
+                "Vielleicht",
+                "können",
+                "wir",
+                "uns",
+                "gegenseitig",
+                "ein",
+                "paar",
+                "Worte",
+                "der",
+                "Weisheit",
+                "zulegen."
+              ]
+            },
+            {
+              "target": "Oder vielleicht trinken wir einfach.",
+              "source": "Or perhaps we just drink.",
+              "words": [
+                "Oder",
+                "vielleicht",
+                "trinken",
+                "wir",
+                "einfach."
+              ]
+            },
+            {
+              "target": "Der Barkeeper blickte von seinen Flaschenregalen auf und fragte: „Ist das ein Witz?“",
+              "source": "The bartender looked up from his bottle shelves and asked: 'Is this a joke?'",
+              "words": [
+                "Der",
+                "Barkeeper",
+                "blickte",
+                "von",
+                "seinen",
+                "Flaschenregalen",
+                "auf",
+                "und",
+                "fragte:",
+                "„Ist",
+                "das",
+                "ein",
+                "Witz?“"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "In the Bar with Clergy",
+          "desc": "Bar, clergy, conversation, drinks",
+          "icon": "🍺✍️",
+          "vocab": [
+            {
+              "target": "Gespräch",
+              "source": "conversation"
+            },
+            {
+              "target": "Getränke",
+              "source": "drinks"
+            },
+            {
+              "target": "Beruhigen",
+              "source": "calm down"
+            },
+            {
+              "target": "Weisheit",
+              "source": "wisdom"
+            },
+            {
+              "target": "Gemeinsam",
+              "source": "together"
+            },
+            {
+              "target": "Tisch",
+              "source": "table"
+            },
+            {
+              "target": "Zuflucht",
+              "source": "refuge"
+            },
+            {
+              "target": "Lachen",
+              "source": "to laugh"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Der Barkeeper lachte und schenkte ihnen ein.",
+              "source": "The bartender laughed and served them.",
+              "words": [
+                "Der",
+                "Barkeeper",
+                "lachte",
+                "und",
+                "schenkte",
+                "ihnen",
+                "ein."
+              ]
+            },
+            {
+              "target": "Wir sollten uns hier gemeinsam beruhigen, schlug der Imam vor.",
+              "source": "The Imam suggested that they should calm down together here.",
+              "words": [
+                "Wir",
+                "sollten",
+                "uns",
+                "hier",
+                "gemeinsam",
+                "beruhigen,",
+                "schlug",
+                "der",
+                "Imam",
+                "vor."
+              ]
+            },
+            {
+              "target": "Der Rabbiner bestellte Getränke und setzte sich zu ihnen an den Tisch.",
+              "source": "The rabbi ordered drinks and sat down at the table with them.",
+              "words": [
+                "Der",
+                "Rabbiner",
+                "bestellte",
+                "Getränke",
+                "und",
+                "setzte",
+                "sich",
+                "zu",
+                "ihnen",
+                "an",
+                "den",
+                "Tisch."
+              ]
+            },
+            {
+              "target": "Lachen ist eine gute Methode, um die Seele zu beruhigen.",
+              "source": "Laughing is a good way to calm the soul.",
+              "words": [
+                "Lachen",
+                "ist",
+                "eine",
+                "gute",
+                "Methode,",
+                "um",
+                "die",
+                "Seele",
+                "zu",
+                "beruhigen."
+              ]
+            },
+            {
+              "target": "Vielleicht finden wir hier eine gemeinsame Zuflucht, sagte der Priester.",
+              "source": "Perhaps we can find a common refuge here, said the priest.",
+              "words": [
+                "Vielleicht",
+                "finden",
+                "wir",
+                "hier",
+                "eine",
+                "gemeinsame",
+                "Zuflucht,",
+                "sagte",
+                "der",
+                "Priester."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "In the Bar",
+          "desc": "Bar, drinks, conversation, wisdom, community",
+          "icon": "🍺",
+          "vocab": [
+            {
+              "target": "Getränke",
+              "source": "drinks"
+            },
+            {
+              "target": "Gemeinsam",
+              "source": "together"
+            },
+            {
+              "target": "Zuflucht",
+              "source": "refuge"
+            },
+            {
+              "target": "Lachen",
+              "source": "to laugh"
+            },
+            {
+              "target": "Worte der Weisheit",
+              "source": "words of wisdom"
+            },
+            {
+              "target": "Gemeinde",
+              "source": "community"
+            },
+            {
+              "target": "Gespräch",
+              "source": "conversation"
+            },
+            {
+              "target": "Beruhigen",
+              "source": "calm down"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Der Barkeeper lachte und schüttelte den Kopf.",
+              "source": "The bartender laughed and shook his head.",
+              "words": [
+                "Der",
+                "Barkeeper",
+                "lachte",
+                "und",
+                "schüttelte",
+                "den",
+                "Kopf."
+              ]
+            },
+            {
+              "target": "Wir sind hier, um zu lachen und zu trinken, sagte der Priester.",
+              "source": "We are here to laugh and drink, said the priest.",
+              "words": [
+                "Wir",
+                "sind",
+                "hier,",
+                "um",
+                "zu",
+                "lachen",
+                "und",
+                "zu",
+                "trinken,",
+                "sagte",
+                "der",
+                "Priester."
+              ]
+            },
+            {
+              "target": "Vielleicht können wir uns gegenseitig ein paar Worte der Weisheit zulegen, schlug der Imam vor.",
+              "source": "Maybe we can exchange a few words of wisdom, suggested the Imam.",
+              "words": [
+                "Vielleicht",
+                "können",
+                "wir",
+                "uns",
+                "gegenseitig",
+                "ein",
+                "paar",
+                "Worte",
+                "der",
+                "Weisheit",
+                "zulegen,",
+                "schlug",
+                "der",
+                "Imam",
+                "vor."
+              ]
+            },
+            {
+              "target": "Getränke und Worte der Weisheit, das ist eine gute Kombination, fand der Rabbiner.",
+              "source": "Drinks and words of wisdom, that's a good combination, thought the rabbi.",
+              "words": [
+                "Getränke",
+                "und",
+                "Worte",
+                "der",
+                "Weisheit,",
+                "das",
+                "ist",
+                "eine",
+                "gute",
+                "Kombination,",
+                "fand",
+                "der",
+                "Rabbiner."
+              ]
+            },
+            {
+              "target": "Lachen und Trinken, das ist unser gemeinsamer Zufluchtsort, stimmte der Priester zu.",
+              "source": "Laughing and drinking, that's our common refuge, agreed the priest.",
+              "words": [
+                "Lachen",
+                "und",
+                "Trinken,",
+                "das",
+                "ist",
+                "unser",
+                "gemeinsamer",
+                "Zufluchtsort,",
+                "stimmte",
+                "der",
+                "Priester",
+                "zu."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "grammar",
+          "title": "Bar Encounter",
+          "desc": "Nouns you might hear at a bar",
+          "icon": "🍺",
+          "grammar": [
+            {
+              "target": "Bier",
+              "source": "beer",
+              "gender": "n",
+              "article": "das",
+              "plural": "Biere"
+            },
+            {
+              "target": "Tisch",
+              "source": "table",
+              "gender": "m",
+              "article": "der",
+              "plural": "Tische"
+            },
+            {
+              "target": "Stuhl",
+              "source": "chair",
+              "gender": "m",
+              "article": "der",
+              "plural": "Stühle"
+            },
+            {
+              "target": "Glas",
+              "source": "glass",
+              "gender": "n",
+              "article": "das",
+              "plural": "Gläser"
+            },
+            {
+              "target": "Kunde",
+              "source": "customer",
+              "gender": "m",
+              "article": "der",
+              "plural": "Kunden"
+            },
+            {
+              "target": "Bart",
+              "source": "beard",
+              "gender": "m",
+              "article": "der",
+              "plural": "Bärte"
+            },
+            {
+              "target": "Bierkranz",
+              "source": "beer ring",
+              "gender": "m",
+              "article": "der",
+              "plural": "Bierkränze"
+            },
+            {
+              "target": "Bierdeckel",
+              "source": "beer lid",
+              "gender": "m",
+              "article": "der",
+              "plural": "Bierdeckel"
+            },
+            {
+              "target": "Bierkäsel",
+              "source": "beer cheese",
+              "gender": "m",
+              "article": "der",
+              "plural": "Bierkäse"
+            },
+            {
+              "target": "Bierkäsel",
+              "source": "beer cheese",
+              "gender": null,
+              "article": null,
+              "plural": "Bierkäse"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "conjugation",
+          "title": "Bar Encounter",
+          "desc": "Verbs in action at the bar",
+          "icon": "🍺",
+          "conjugations": [
+            {
+              "infinitive": "trinken",
+              "source": "to drink",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "trinke"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "trinkst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "trinkt"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "trinken"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "trinkt"
+                },
+                {
+                  "pronoun": "sie/loro",
+                  "form": "trinken"
+                }
+              ]
+            },
+            {
+              "infinitive": "tanz",
+              "source": "to dance",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "tanze"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "tanzt"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "tanzt"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "tanzen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "tanzt"
+                },
+                {
+                  "pronoun": "sie/loro",
+                  "form": "tanzen"
+                }
+              ]
+            },
+            {
+              "infinitive": "spielen",
+              "source": "to play",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": " spiele"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "spielt"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "spielt"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "spielen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "spielt"
+                },
+                {
+                  "pronoun": "sie/loro",
+                  "form": "spielen"
+                }
+              ]
+            },
+            {
+              "infinitive": "tanzen",
+              "source": "to dance",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "tanze"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "tanzt"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "tanzt"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "tanzen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "tanzt"
+                },
+                {
+                  "pronoun": "sie/loro",
+                  "form": "tanzen"
+                }
+              ]
+            },
+            {
+              "infinitive": "lachen",
+              "source": "to laugh",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "lache"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "lachst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "lacht"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "lachen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "lacht"
+                },
+                {
+                  "pronoun": "sie/loro",
+                  "form": "lachen"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1239662,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2974,
+        "totalCompletionTokens": 1628,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 346848,
+            "promptTokens": 810,
+            "completionTokens": 359
+          },
+          {
+            "lessonNum": 2,
+            "ms": 298321,
+            "promptTokens": 880,
+            "completionTokens": 326
+          },
+          {
+            "lessonNum": 3,
+            "ms": 361440,
+            "promptTokens": 928,
+            "completionTokens": 369
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T08:31:53.762Z",
+      "updatedAt": "2026-06-01T08:52:41.915Z"
+    },
+    {
       "topic": "Constance und der Waldgeist",
       "topicEmoji": "🌳",
       "userTopic": "constanze trifft einen waldgeist, und sie philosophieren ueber die natur der liebe.",
@@ -258,7 +1576,7 @@
         ]
       },
       "generatedAt": "2026-05-31T22:06:26.466Z",
-      "updatedAt": "2026-05-31T22:06:26.466Z"
+      "updatedAt": "2026-06-01T11:21:20.290Z"
     },
     {
       "topic": "Ein Gedicht für Constanze",
@@ -35173,6 +36491,226 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-31T19:18:06.357Z"
+    },
+    "Bar_Encounter:type_plural:Bierkäsel": {
+      "topic": "Bar Encounter",
+      "type": "type_plural",
+      "target": "Bierkäsel",
+      "source": "beer cheese",
+      "correct": "Bierkäse",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-06-01T08:58:51.128Z",
+      "comment": "bierkaesel is not a word, and the word bierkaese does not really have a plural"
+    },
+    "Bar_Encounter:mcq_article:Bierkäsel": {
+      "topic": "Bar Encounter",
+      "type": "mcq_article",
+      "target": "Bierkäsel",
+      "source": "beer cheese",
+      "correct": "der",
+      "choices": [
+        "der",
+        "das",
+        "die"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T08:59:33.783Z",
+      "comment": "Bierkäsel is not a German word. you mean Bierkäse"
+    },
+    "Bar_Encounter:mcq_plural:Bierkäsel": {
+      "topic": "Bar Encounter",
+      "type": "mcq_plural",
+      "target": "Bierkäsel",
+      "source": "beer cheese",
+      "correct": "Bierkäse",
+      "choices": [
+        "Bierkäse",
+        "Bierdeckel",
+        "Gläser",
+        "Biere"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T09:00:02.341Z",
+      "comment": "Bierkäse is not the plural of Bierkäsel. The word is Bierkäse and doesn't have a plural"
+    },
+    "Constance_und_der_Waldgeist:type_plural:Eiche": {
+      "topic": "Constance und der Waldgeist",
+      "type": "type_plural",
+      "target": "Eiche",
+      "source": "Eiche",
+      "correct": "les",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-06-01T11:24:54.502Z"
+    },
+    "Constance_und_der_Waldgeist:mcq_article:Wasser": {
+      "topic": "Constance und der Waldgeist",
+      "type": "mcq_article",
+      "target": "Wasser",
+      "source": "Wasser",
+      "correct": "l'",
+      "choices": [
+        "le",
+        "l'",
+        "la",
+        "les"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T11:25:03.389Z"
+    },
+    "Constance_und_der_Waldgeist:mcq_plural:Nacht": {
+      "topic": "Constance und der Waldgeist",
+      "type": "mcq_plural",
+      "target": "Nacht",
+      "source": "Nacht",
+      "correct": "les",
+      "choices": [
+        "les",
+        "les",
+        "les",
+        "les"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T11:25:33.570Z"
+    },
+    "Winnie_l'ourson:type_plural:Bäume": {
+      "topic": "Winnie l'ourson",
+      "type": "type_plural",
+      "target": "Bäume",
+      "source": "Bäume",
+      "correct": "Bäume",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:00:39.231Z"
+    },
+    "Winnie_l'ourson:type_plural:Bienen": {
+      "topic": "Winnie l'ourson",
+      "type": "type_plural",
+      "target": "Bienen",
+      "source": "Bienen",
+      "correct": "Bienen",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:00:47.255Z"
+    },
+    "Winnie_l'ourson:mcq_plural:Honig": {
+      "topic": "Winnie l'ourson",
+      "type": "mcq_plural",
+      "target": "Honig",
+      "source": "Honig",
+      "correct": "Honig",
+      "choices": [
+        "Honig",
+        "Bienen",
+        "Himmel",
+        "Bäume"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:00:56.112Z"
+    },
+    "Winnie_l'ourson:mcq_plural:Bienen": {
+      "topic": "Winnie l'ourson",
+      "type": "mcq_plural",
+      "target": "Bienen",
+      "source": "Bienen",
+      "correct": "Bienen",
+      "choices": [
+        "Bienen",
+        "Blumen",
+        "Bäume",
+        "Honig"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:01:21.329Z"
+    },
+    "Winnie_l'ourson:mcq_article:Bäume": {
+      "topic": "Winnie l'ourson",
+      "type": "mcq_article",
+      "target": "Bäume",
+      "source": "Bäume",
+      "correct": "die",
+      "choices": [
+        "der",
+        "die",
+        "das"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:01:42.306Z"
+    },
+    "Winnie_rencontre_un_jouet:mcq_article:Tigress": {
+      "topic": "Winnie rencontre un jouet",
+      "type": "mcq_article",
+      "target": "Tigress",
+      "source": "tigresse",
+      "correct": "die",
+      "choices": [
+        "der",
+        "die",
+        "das"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:05:24.276Z"
+    },
+    "Winnie_rencontre_un_jouet:mcq_plural:Tigress": {
+      "topic": "Winnie rencontre un jouet",
+      "type": "mcq_plural",
+      "target": "Tigress",
+      "source": "tigresse",
+      "correct": "Tigress",
+      "choices": [
+        "Tigress",
+        "Kängurus",
+        "Elefanten",
+        "Kängurus"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:05:30.614Z"
+    },
+    "Winnie_rencontre_un_jouet:type_plural:Kuschelwolle": {
+      "topic": "Winnie rencontre un jouet",
+      "type": "type_plural",
+      "target": "Kuschelwolle",
+      "source": "peluche",
+      "correct": "Kuschelwollê",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:05:50.849Z"
+    },
+    "Winnie_rencontre_un_jouet:type_plural:Tigress": {
+      "topic": "Winnie rencontre un jouet",
+      "type": "type_plural",
+      "target": "Tigress",
+      "source": "tigresse",
+      "correct": "Tigress",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:05:59.887Z"
+    },
+    "Winnie_rencontre_un_jouet:type_plural:Panda": {
+      "topic": "Winnie rencontre un jouet",
+      "type": "type_plural",
+      "target": "Panda",
+      "source": "panda",
+      "correct": "Panda",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:06:43.469Z"
+    },
+    "Winnie_rencontre_un_jouet:mcq_plural:Panda": {
+      "topic": "Winnie rencontre un jouet",
+      "type": "mcq_plural",
+      "target": "Panda",
+      "source": "panda",
+      "correct": "Panda",
+      "choices": [
+        "Panda",
+        "Kuschelwollê",
+        "Kängurus",
+        "Pferde"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T13:06:47.392Z"
     }
   },
   "storylines": {
@@ -35371,6 +36909,10 @@
     "root:Ein Gedicht für Constanze": {
       "title": "Constance und der Waldgeist",
       "icon": "🌳"
+    },
+    "c420882432": {
+      "title": "Il circo di Marco",
+      "icon": "🎪"
     }
   }
 }

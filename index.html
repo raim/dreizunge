@@ -255,6 +255,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
 /* ══ DIFFICULTY DROPDOWN ════════════════════════════════════════════ */
 .diff-wrap{margin-bottom:14px}
+.format-wrap{margin-bottom:14px}
+.lesson-type-hdr{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-dark);margin:18px 0 8px;padding-top:14px;border-top:1.5px solid var(--gray-mid)}
+.format-select-wrap{position:relative;display:inline-block;width:100%}
+.format-select{width:100%;padding:10px 36px 10px 14px;font-size:14px;font-weight:800;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
+.format-select:focus{border-color:var(--blue)}
+.format-select:disabled{opacity:.5;cursor:not-allowed}
+.format-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .style-wrap{margin-bottom:14px}
 .style-select-wrap{position:relative;display:inline-block;width:100%}
 .style-select{width:100%;padding:10px 36px 10px 14px;font-size:14px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
@@ -317,7 +324,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .storyline-chapter-body p{margin-bottom:10px}
 .storyline-chapter-body p:last-child{margin-bottom:0}
 .storyline-story-loading{font-size:13px;color:var(--gray-dark);font-style:italic;padding:8px 0}
-.saved-item-story{border-top:1px solid var(--gray-mid);background:var(--white)}.saved-item-edit{display:none;align-items:center;gap:4px;padding:6px 10px;border-top:1.5px solid var(--accent);background:var(--white)}.saved-item-edit.open{display:flex}.saved-item-edit-emoji{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:26px;text-align:center;flex-shrink:0}.saved-item-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:3px 8px;min-width:0;outline:none}.saved-item-edit-btn{background:none;border:none;cursor:pointer;font-size:12px;font-weight:800;font-family:"Nunito",sans-serif;color:var(--gray-dark);padding:2px 6px;border-radius:5px;white-space:nowrap}.saved-item-edit-btn:hover{background:var(--gray-mid)}.saved-item-edit-btn.danger{color:var(--red)}
+.saved-item-story{border-top:1px solid var(--gray-mid);background:var(--white)}.saved-item-addlesson{display:none;align-items:center;gap:6px;padding:6px 10px;border-top:1.5px solid var(--blue);background:#f0f6ff;flex-wrap:wrap}
+.saved-item-addlesson.open{display:flex}
+.addlesson-select{font-size:12px;font-weight:700;font-family:'Nunito',sans-serif;border:1.5px solid var(--blue);border-radius:6px;padding:3px 8px;background:var(--white);color:var(--text);outline:none;cursor:pointer}
+.addlesson-btn{background:var(--blue);color:var(--white);border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;white-space:nowrap}
+.addlesson-btn:hover{background:var(--blue-dark)}
+.addlesson-btn:disabled{opacity:.5;cursor:not-allowed}
+.addlesson-cancel{background:none;border:none;cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);padding:2px 6px;border-radius:5px;font-family:'Nunito',sans-serif}
+.addlesson-cancel:hover{background:var(--gray-mid)}
+.addlesson-status{font-size:11px;color:var(--blue);font-weight:700;width:100%;margin-top:2px;min-height:13px}
+.saved-item-edit{display:none;align-items:center;gap:4px;padding:6px 10px;border-top:1.5px solid var(--accent);background:var(--white)}.saved-item-edit.open{display:flex}.saved-item-edit-emoji{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:26px;text-align:center;flex-shrink:0}.saved-item-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:3px 8px;min-width:0;outline:none}.saved-item-edit-btn{background:none;border:none;cursor:pointer;font-size:12px;font-weight:800;font-family:"Nunito",sans-serif;color:var(--gray-dark);padding:2px 6px;border-radius:5px;white-space:nowrap}.saved-item-edit-btn:hover{background:var(--gray-mid)}.saved-item-edit-btn.danger{color:var(--red)}
 .saved-item-story-hdr{display:flex;align-items:center;gap:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);user-select:none;width:100%;background:none;border:none;font-family:'Nunito',sans-serif;text-align:left}
 .saved-item-story-hdr:hover{background:var(--gray-light)}.story-icon-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;line-height:1;opacity:.7;flex-shrink:0}.story-icon-btn:hover{opacity:1}
 .saved-item-story-body{display:none;padding:0 14px 12px;font-size:13px;line-height:1.7;color:#444}
@@ -559,17 +575,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         min="100" max="1000" step="50" value="300"
         oninput="onStoryLenSlider(this.value)">
     </div>
-    <div class="diff-wrap" id="diff-wrap">
-      <div class="diff-select-wrap">
-        <select class="diff-select" id="diff-select" onchange="onDiffSelect(this.value)">
-          <option value="1">🟢 Beginner — short sentences, basic vocabulary</option>
-          <option value="2" selected>🟡 Intermediate — natural phrases, varied grammar</option>
-          <option value="3">🔴 Advanced — complex sentences, idiomatic language</option>
-          <option value="4">🔍 Error Hunt — find mistakes in the story</option>
-        </select>
-        <span class="diff-select-arrow">▾</span>
-      </div>
-    </div>
     <div class="style-wrap" id="style-wrap">
       <div class="style-select-wrap">
         <select class="style-select" id="style-select" onchange="onStyleSelect(this.value)">
@@ -602,6 +607,30 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <label style="font-size:11px;font-weight:700;color:var(--gray-dark);display:flex;align-items:center;gap:4px;margin-top:4px;cursor:pointer">
         <input type="checkbox" id="cont-all-langs" onchange="repopulateContinueSelect()"> <span id="show-other-langs-lbl">show other languages</span>
       </label>
+    </div>
+    <div class="lesson-type-hdr" id="lesson-type-hdr">
+      <span id="lesson-type-hdr-lbl">Lesson type</span>
+    </div>
+    <div class="diff-wrap" id="diff-wrap">
+      <div class="diff-select-wrap">
+        <select class="diff-select" id="diff-select" onchange="onDiffSelect(this.value)">
+          <option value="1">🟢 Beginner — short sentences, basic vocabulary</option>
+          <option value="2" selected>🟡 Intermediate — natural phrases, varied grammar</option>
+          <option value="3">🔴 Advanced — complex sentences, idiomatic language</option>
+        </select>
+        <span class="diff-select-arrow">▾</span>
+      </div>
+    </div>
+    <div class="format-wrap" id="format-wrap">
+      <div class="format-select-wrap">
+        <select class="format-select" id="format-select" onchange="onFormatSelect(this.value)">
+          <option value="standard" selected>📚 Standard — 3 progressive lessons</option>
+          <option value="grammar">🏷️ Grammar — gender, articles &amp; plurals</option>
+          <option value="conjugation">🔤 Conjugation — verb forms by person</option>
+          <option value="error_hunt">🔍 Error Hunt — find mistakes in the story</option>
+        </select>
+        <span class="format-select-arrow">▾</span>
+      </div>
     </div>
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
@@ -797,6 +826,7 @@ var APP = {
   difficulty: loadDifficulty(),
   storyLen: loadStoryLen(),
   storyStyle: loadStoryStyle(),
+  lessonFormat: loadLessonFormat(),
   libFilter: 'all',
   libSrcFilter: 'all',
   prevLangFilter: null,
@@ -923,9 +953,17 @@ function applyUIStrings() {
   // Update diff-select option labels
   const diffSel = document.getElementById('diff-select');
   if (diffSel) {
-    const diffKeys = { '1': 'diff.beginner', '2': 'diff.intermediate', '3': 'diff.advanced', '4': 'diff.error_hunt' };
+    const diffKeys = { '1': 'diff.beginner', '2': 'diff.intermediate', '3': 'diff.advanced' };
     Array.from(diffSel.options).forEach(opt => {
       if (diffKeys[opt.value]) opt.text = t(diffKeys[opt.value]);
+    });
+  }
+  // Update format-select option labels
+  const formatSel = document.getElementById('format-select');
+  if (formatSel) {
+    const formatKeys = { 'standard': 'form.format.standard', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation' };
+    Array.from(formatSel.options).forEach(opt => {
+      if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
     });
   }
   // Update style-select option labels
@@ -941,6 +979,7 @@ function applyUIStrings() {
   _setText('static-flag-banner-text', t('lesson.flagged_count_plural', {n: ''}));
   // Form labels (static HTML)
   _setText('story-len-lbl', t('form.story_len_lbl'));
+  _setText('lesson-type-hdr-lbl', t('form.lesson_type_hdr'));
   _setText('continue-lbl', t('form.continue_from_lbl'));
   _setText('show-other-langs-lbl', t('form.show_other_langs'));
   _setText('lib-title-lbl', t('lib.title'));
@@ -1089,6 +1128,8 @@ function loadStoryLen(){ return parseInt(localStorage.getItem('imp3_storyLen')||
 function saveStoryLen(){ localStorage.setItem('imp3_storyLen',String(APP.storyLen)); }
 function loadStoryStyle(){ return localStorage.getItem('imp3_storyStyle')||'creative'; }
 function saveStoryStyle(){ localStorage.setItem('imp3_storyStyle',APP.storyStyle); }
+function loadLessonFormat(){ return localStorage.getItem('imp3_lessonFormat')||'standard'; }
+function saveLessonFormat(){ localStorage.setItem('imp3_lessonFormat',APP.lessonFormat); }
 function storyLenLabel(words){
   const lo=Math.max(1,Math.floor(words/100));
   const hi=lo+1;
@@ -1107,8 +1148,8 @@ function restoreStoryLenSlider(){
 }
 const DIFF_SHORT={1:'Beginner',2:'Intermediate',3:'Advanced',4:'Error Hunt'};
 function onDiffSelect(v){
-  APP.difficulty=Math.max(1,Math.min(4,parseInt(v,10)||2)); saveDifficulty();
-  const sel=document.getElementById('diff-select'); if(sel) sel.value=v;
+  APP.difficulty=Math.max(1,Math.min(3,parseInt(v,10)||2)); saveDifficulty();
+  const sel=document.getElementById('diff-select'); if(sel) sel.value=APP.difficulty;
 }
 function restoreDiffSelect(){
   const sel=document.getElementById('diff-select'); if(sel) sel.value=APP.difficulty;
@@ -1120,6 +1161,14 @@ function onStyleSelect(v){
 }
 function restoreStyleSelect(){
   const sel=document.getElementById('style-select'); if(sel) sel.value=APP.storyStyle;
+}
+const VALID_FORMATS=new Set(['standard','error_hunt','grammar','conjugation']);
+function onFormatSelect(v){
+  APP.lessonFormat=VALID_FORMATS.has(v)?v:'standard'; saveLessonFormat();
+  const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
+}
+function restoreFormatSelect(){
+  const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
 }
 function autoResizeTopic(el){
   el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,160)+'px';
@@ -1449,6 +1498,7 @@ async function init(){
   updateTranslationLangHint();
   restoreDiffSelect();
   restoreStyleSelect();
+  restoreFormatSelect();
   restoreStoryLenSlider();
   renderPill();
   loadSavedList();
@@ -1620,7 +1670,7 @@ async function loadSavedList(){
     const sid = 'si-' + enc.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
     return `<div class="saved-item-wrap">
       <div class="saved-item" onclick="loadSaved('${enc}')">
-        ${conn}<span class="saved-emoji">${tL.flag} ${s.topicEmoji||'📚'}</span>
+        ${conn}<span class="saved-emoji">${s.topicEmoji||'📚'}</span>
         <div class="saved-info">
           <div class="saved-topic">${s.topic} ${diffBadge}</div>
           <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
@@ -1630,6 +1680,7 @@ async function loadSavedList(){
           ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${enc}')">↻</button>`:''}
           ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
           ${APP.info.canGenerate?`<button class="ico-btn" title="Fix all lessons (deep clean)" onclick="event.stopPropagation();fixAllLessons('${enc}','${sid}')">🔧</button>`:''}
+          ${APP.info.canGenerate?`<button class="ico-btn" title="Add lesson" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
           <button class="ico-btn export" title="${t('lesson.export_title')}"
             data-topic="${s.topic.replace(/"/g,'&quot;')}"
             onclick="exportTopics([this.dataset.topic])">⬇</button>
@@ -1652,6 +1703,17 @@ async function loadSavedList(){
         <button class="saved-item-edit-btn gen" title="Generate title with AI" onclick="genSavedItemTitle('${sid}','${enc}')">✨</button>
         <button class="saved-item-edit-btn danger" onclick="clearSavedItemTitle('${sid}','${enc}')">Clear</button>
         <button class="saved-item-edit-btn" onclick="closeSavedItemEdit('${sid}')">✕</button>
+      </div>
+      <div class="saved-item-addlesson" id="sial-${sid}">
+        <span style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
+        <select class="addlesson-select" id="sial-fmt-${sid}">
+          <option value="error_hunt">🔍 Error Hunt</option>
+          <option value="grammar">🏷️ Grammar</option>
+          <option value="conjugation">🔤 Conjugation</option>
+        </select>
+        <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}')">Generate</button>
+        <button class="addlesson-cancel" onclick="closeAddLesson('${sid}')">✕</button>
+        <div class="addlesson-status" id="sial-status-${sid}"></div>
       </div>
     </div>`;
   }
@@ -1962,8 +2024,8 @@ async function resumeBackgroundJob(){
 async function doGenerate(forceRegen){
   const topic=document.getElementById('topic-input').value.trim();
   const contVal=document.getElementById('continue-select')?.value||'';
-  if(APP.difficulty!==4&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
-  if(APP.difficulty===4&&!topic&&!contVal){ showToast(t('toast.select_story')); return; }
+  if(APP.lessonFormat!=='error_hunt'&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
+  if(APP.lessonFormat==='error_hunt'&&!topic&&!contVal){ showToast(t('toast.select_story')); return; }
   if(!APP.info.canGenerate) return;
   if(APP.activeJob){ showToast(t('toast.already_generating',{topic:APP.activeJob.topic})); return; }
 
@@ -1981,6 +2043,7 @@ async function doGenerate(forceRegen){
 
   try{
     const body={topic,lang:APP.lang,srcLang:APP.srcLang,difficulty:APP.difficulty,
+      lessonFormat:APP.lessonFormat||'standard',
       storyLen:APP.storyLen||300,
       continuedFrom:useStory?null:(document.getElementById('continue-select')?.value||null),
       forceRegenerate:!!forceRegen};
@@ -2400,6 +2463,59 @@ async function genLessonTitle() {
 
 
 
+
+// ── Add lesson to existing card (➕ button in saved-list) ─────────────────────
+
+function openAddLesson(sid, enc) {
+  // Close other panels on this card first
+  closeSavedItemEdit(sid);
+  const panel = document.getElementById('sial-' + sid);
+  if (panel) panel.classList.add('open');
+}
+
+function closeAddLesson(sid) {
+  const panel = document.getElementById('sial-' + sid);
+  if (panel) panel.classList.remove('open');
+  const status = document.getElementById('sial-status-' + sid);
+  if (status) status.textContent = '';
+}
+
+async function doAddLesson(sid, enc) {
+  const topic  = decodeURIComponent(enc);
+  const fmtSel = document.getElementById('sial-fmt-' + sid);
+  const btn    = document.getElementById('sial-btn-' + sid);
+  const status = document.getElementById('sial-status-' + sid);
+  const fmt    = fmtSel?.value || 'grammar';
+
+  if (btn)    { btn.disabled = true; btn.textContent = '⏳'; }
+  if (status) status.textContent = 'Generating…';
+
+  try {
+    const r = await fetch('/api/lessons/add-lesson', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, lessonFormat: fmt })
+    });
+    const resp = await r.json();
+    if (!r.ok) throw new Error(resp.error || 'Failed to start');
+    const result = await pollJob(resp.jobId, step => {
+      if (status) status.textContent = step;
+    });
+    if (status) status.textContent = `✓ ${result?.lesson?.title || 'Lesson'} added`;
+    // Reload the card data so lesson count updates
+    await loadSavedList();
+    // If this topic is currently open in the lesson view, reload it
+    if (APP.lessonData && APP.lessonData.topic === topic) {
+      await loadSaved(enc);
+    }
+    showToast('➕ Lesson added');
+  } catch(e) {
+    if (status) status.textContent = '⚠ ' + e.message.slice(0, 60);
+    showToast('⚠ ' + e.message.slice(0, 60));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Generate'; }
+  }
+}
+
 // ── Lesson fix / deep-clean ───────────────────────────────────────────────────
 
 async function fixLesson(enc, lessonId, deepClean, btn) {
@@ -2438,19 +2554,22 @@ async function fixLesson(enc, lessonId, deepClean, btn) {
 async function fixAllLessons(enc, sid) {
   // Fix all lessons in a topic from the saved-list card
   const topic = decodeURIComponent(enc);
-  const saved = (APP.savedList || []).find(l => l.topic === topic);
-  if (!saved || !saved.lessonCount) { showToast('No lessons found'); return; }
-  const btn = document.querySelector(`#siedit-${sid} ~ * .ico-btn[title*="Fix"]`)
-           || document.querySelector(`.saved-item-wrap [title="Fix all lessons (deep clean)"]`);
-  if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+  const btn = document.getElementById('sial-btn-' + sid)
+           || document.querySelector(`[data-fix-sid="${sid}"]`);
+  const fixBtn = document.querySelector(`.saved-item-wrap [title="Fix all lessons (deep clean)"]`);
+  if (fixBtn) { fixBtn.disabled = true; fixBtn.textContent = '⏳'; }
   showToast('🔧 Cleaning lessons…');
-  // Load full lesson data to get lesson IDs
   try {
-    const r = await fetch('/api/lessons?topic=' + enc);
+    // Load full lesson data using the correct endpoint
+    const r = await fetch('/api/lessons/load?topic=' + enc);
     if (!r.ok) throw new Error('Could not load lessons');
     const data = await r.json();
-    for (let i = 0; i < data.lessons.length; i++) {
-      const lesson = data.lessons[i];
+    const lessons = data.lessons || [];
+    if (!lessons.length) { showToast('No lessons found'); return; }
+    let cleaned = 0;
+    for (let i = 0; i < lessons.length; i++) {
+      const lesson = lessons[i];
+      showToast(`🔧 Cleaning lesson ${i+1}/${lessons.length}…`);
       const statusR = await fetch('/api/repair-all', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ topic, lessonId: lesson.id })
@@ -2458,13 +2577,18 @@ async function fixAllLessons(enc, sid) {
       const resp = await statusR.json();
       if (!statusR.ok) throw new Error(resp.error || t('status.repair_failed'));
       await pollJob(resp.jobId, () => {});
+      cleaned++;
     }
-    showToast('✓ All lessons cleaned');
+    showToast(`✓ ${cleaned} lesson${cleaned!==1?'s':''} cleaned`);
     await loadSavedList();
+    // Reload lesson view if this topic is currently open
+    if (APP.lessonData && APP.lessonData.topic === topic) {
+      await loadSaved(enc);
+    }
   } catch(e) {
     showToast('⚠ ' + e.message.slice(0, 60));
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '🔧'; }
+    if (fixBtn) { fixBtn.disabled = false; fixBtn.textContent = '🔧'; }
   }
 }
 
@@ -2608,6 +2732,8 @@ const isPunctClient = t => /^[.,!?;:()\[\]"'«»—–]+$/.test((t||'').trim());
 function buildExercises(lessonIdx){
   const d=APP.lessonData, lesson=d.lessons[lessonIdx];
   if(lesson.type==='error_hunt') return [];
+  if(lesson.type==='grammar')     return buildGrammarExercises(lesson);
+  if(lesson.type==='conjugation') return buildConjugationExercises(lesson);
 	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
   const allV = lesson.vocab;
 	// const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
@@ -2646,12 +2772,152 @@ function buildExercises(lessonIdx){
   return shuffle(exs).slice(0,12);
 }
 
+
+// ══ Grammar exercises (gender/article/plural) ════════════════════════════════
+
+// Article choices per language (definite articles)
+const ARTICLE_CHOICES = {
+  de: ['der','die','das'],
+  fr: ['le','la','les',"l'"],
+  it: ['il','la','lo','i','le','gli',"l'"],
+  es: ['el','la','los','las'],
+  pt: ['o','a','os','as'],
+  nl: ['de','het'],
+  ru: ['м','ж','с'],   // gender labels when no articles
+};
+
+function buildGrammarExercises(lesson) {
+  const items = lesson.grammar || [];
+  if (!items.length) return [];
+  const lang = APP.lessonData?.lang || APP.lang;
+  const exs = [];
+
+  items.forEach((g, i) => {
+    // 1. MCQ — pick the correct article (skip if no articles for this language)
+    if (g.article) {
+      const langArticles = ARTICLE_CHOICES[lang] || [...new Set(items.map(x=>x.article).filter(Boolean))];
+      const wrong = shuffle(langArticles.filter(a => a !== g.article)).slice(0, 3);
+      if (wrong.length >= 1) {
+        const choices = shuffle([g.article, ...wrong]).slice(0, 4);
+        exs.push({ type:'mcq_article', target:g.target, source:g.source,
+                   article:g.article, gender:g.gender, correct:g.article, choices });
+      }
+    }
+    // 2. MCQ — pick the correct plural
+    if (g.plural) {
+      const wrongPl = shuffle(items.filter(x=>x.target!==g.target&&x.plural).map(x=>x.plural)).slice(0,3);
+      const padded  = wrongPl.length < 3
+        ? [...wrongPl, ...items.filter(x=>x.target!==g.target&&x.plural).map(x=>x.plural+'e').slice(0,3-wrongPl.length)]
+        : wrongPl;
+      if (padded.length >= 1) {
+        const choices = shuffle([g.plural, ...padded]).slice(0, 4);
+        exs.push({ type:'mcq_plural', target:g.target, source:g.source,
+                   plural:g.plural, correct:g.plural, choices });
+      }
+    }
+    // 3. Type-in the plural (every other item to avoid fatigue)
+    if (g.plural && i % 2 === 0) {
+      exs.push({ type:'type_plural', target:g.target, source:g.source,
+                 plural:g.plural, correct:g.plural });
+    }
+  });
+  return shuffle(exs).slice(0, 14);
+}
+
+function tMcqArticle(ex) {
+  const L = lessonLang();
+  return `<div class="ex-badge">🏷️ ${t('ex.badge.mcq_article')}</div>
+<div class="card">
+  <div class="qtext">${t('ex.mcq_article.q', {word: ex.target})}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.source}</div>
+  ${cGrid(ex.choices, false)}
+</div>`;
+}
+
+function tMcqPlural(ex) {
+  return `<div class="ex-badge">🔢 ${t('ex.badge.mcq_plural')}</div>
+<div class="card">
+  <div class="qtext">${t('ex.mcq_plural.q', {word: ex.target})}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.source}</div>
+  ${cGrid(ex.choices, false)}
+</div>`;
+}
+
+function tTypePlural(ex) {
+  return `<div class="ex-badge">✏️ ${t('ex.badge.type_plural')}</div>
+<div class="card">
+  <div class="qtext">${t('ex.type_plural.q', {word: ex.target})}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.source}</div>
+  <input id="type-in" class="type-in" autocomplete="off" autocorrect="off" spellcheck="false"
+    placeholder="${t('ex.type_in_placeholder')}"
+    oninput="document.getElementById('cbtn').disabled=!this.value.trim()"
+    onkeydown="if(event.key==='Enter'&&this.value.trim())check()">
+</div>`;
+}
+
+// ══ Conjugation exercises ═════════════════════════════════════════════════════
+
+function buildConjugationExercises(lesson) {
+  const verbs = lesson.conjugations || [];
+  if (!verbs.length) return [];
+  const exs = [];
+
+  verbs.forEach(verb => {
+    const forms = verb.forms || [];
+    forms.forEach((f, fi) => {
+      // Pool of wrong answers = other forms of this verb + forms of other verbs
+      const wrongSameVerb = forms.filter(x=>x.form!==f.form).map(x=>x.form);
+      const wrongOther    = verbs.filter(v=>v.infinitive!==verb.infinitive)
+                                 .flatMap(v=>v.forms.map(x=>x.form));
+      const wrongPool     = shuffle([...new Set([...wrongSameVerb, ...wrongOther])]).slice(0, 3);
+
+      // MCQ for all forms
+      if (wrongPool.length >= 1) {
+        const choices = shuffle([f.form, ...wrongPool]).slice(0, 4);
+        exs.push({ type:'mcq_conjugation',
+                   infinitive:verb.infinitive, source:verb.source,
+                   pronoun:f.pronoun, correct:f.form, choices });
+      }
+      // Type-in for every 3rd form to keep it varied
+      if (fi % 3 === 0) {
+        exs.push({ type:'type_conjugation',
+                   infinitive:verb.infinitive, source:verb.source,
+                   pronoun:f.pronoun, correct:f.form });
+      }
+    });
+  });
+  return shuffle(exs).slice(0, 14);
+}
+
+function tMcqConjugation(ex) {
+  return `<div class="ex-badge">🔤 ${t('ex.badge.mcq_conjugation')}</div>
+<div class="card">
+  <div class="qtext">${t('ex.mcq_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${ex.source}</div>
+  ${cGrid(ex.choices, false)}
+</div>`;
+}
+
+function tTypeConjugation(ex) {
+  return `<div class="ex-badge">✏️ ${t('ex.badge.type_conjugation')}</div>
+<div class="card">
+  <div class="qtext">${t('ex.type_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${ex.source}</div>
+  <input id="type-in" class="type-in" autocomplete="off" autocorrect="off" spellcheck="false"
+    placeholder="${t('ex.type_in_placeholder')}"
+    oninput="document.getElementById('cbtn').disabled=!this.value.trim()"
+    onkeydown="if(event.key==='Enter'&&this.value.trim())check()">
+</div>`;
+}
+
 // ── lesson ──
 function startLesson(idx){
   const C=APP.cur;
   const lesson=APP.lessonData.lessons[idx];
   C.lessonIdx=idx;
   C.isErrorHunt=(lesson.type==='error_hunt');
+  C.isGrammar=(lesson.type==='grammar');
+  C.isConjugation=(lesson.type==='conjugation');
   C.ehSuspect=new Set(); C.ehChecked=false;
   C.exercises=buildExercises(idx); C.cur=0;
   C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
@@ -2811,6 +3077,11 @@ function renderEx(){
   else if(ex.type==='listen_type') html=tLType(ex);
   else if(ex.type==='order') html=tOrder(ex);
   else if(ex.type==='read_translate') html=tRead(ex);
+  else if(ex.type==='mcq_article') html=tMcqArticle(ex);
+  else if(ex.type==='mcq_plural') html=tMcqPlural(ex);
+  else if(ex.type==='type_plural') html=tTypePlural(ex);
+  else if(ex.type==='mcq_conjugation') html=tMcqConjugation(ex);
+  else if(ex.type==='type_conjugation') html=tTypeConjugation(ex);
   const alreadyFlagged = isExFlagged(ex);
   const existingComment = alreadyFlagged && APP.flagged[flagKey(ex)]?.comment ? APP.flagged[flagKey(ex)].comment : '';
   document.getElementById('ex-area').innerHTML=html+
@@ -2981,7 +3252,7 @@ function normDiacritics(s){
 function check(){
   const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
   const ex=C.exercises[C.cur]; let ok=false;
-  if(ex.type==='listen_type'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
+  if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){
     const isJaOrd=(APP.lessonData?.lang||APP.lang)==='ja';
     ok=C.placed.map(p=>p.w).join(isJaOrd?'':' ')===ex.correct;
@@ -2998,8 +3269,8 @@ function check(){
   }
   if(ok){
     C.correct++; C.total++; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
-    const revealBody = ex.type==='listen_type'
-      ? `${ex.target}${ex.source ? ' — ' + ex.source : ''}`
+    const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
+      ? `${ex.correct}${ex.source ? ' — ' + ex.source : ''}`
       : (ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">${t('check.correct')}</div><div class="fb-body">${revealBody}</div>`;
     if(ex.target) speak(ex.target);

@@ -110,7 +110,7 @@ async function translateLang(lang, missingKeys) {
   if (!ui[lang]) ui[lang] = {};
 
   const sys = `You are a UI translator. Translate the values of the given JSON object into ${langName}. \
-Rules: preserve ALL {placeholder} tokens exactly as-is (e.g. {lang}, {n}, {topic}). \
+Rules: preserve ALL {placeholder} tokens exactly as-is (e.g. {lang}, {n}, {topic}, {word}, {pronoun}, {verb}). Preserve icons.\
 Keep translations short and natural for a mobile language-learning app. \
 Return ONLY a valid JSON object with the same keys, no markdown, no explanation.`;
 

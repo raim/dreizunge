@@ -237,6 +237,10 @@ function renderPill() {
   if(lenSlider){ lenSlider.disabled=true; lenSlider.title='Story length has no effect in static mode'; }
   const lenRow=lenSlider?.closest('.story-len-row');
   if(lenRow) lenRow.style.opacity='0.4';
+  const formatSel=document.getElementById('format-select');
+  if(formatSel){ formatSel.disabled=true; formatSel.title='Lesson format has no effect in static mode'; }
+  const formatWrap=document.getElementById('format-wrap');
+  if(formatWrap) formatWrap.style.opacity='0.4';
   const styleSel=document.getElementById('style-select');
   if(styleSel){ styleSel.disabled=true; styleSel.title='Writing style has no effect in static mode'; }
   const styleWrap=document.getElementById('style-wrap');
@@ -307,7 +311,7 @@ async function loadSavedList() {
     const srcL=LANGS[s.srcLang||'en']||{flag:'🇬🇧',name:'English'};
     return \`<div class="saved-item-wrap">
       <div class="saved-item" onclick="loadSaved('\${enc}')">
-        \${conn}<span class="saved-emoji">\${tL.flag} \${s.topicEmoji||'📚'}</span>
+        \${conn}<span class="saved-emoji"> \${s.topicEmoji||'📚'}</span>
         <div class="saved-info">
           <div class="saved-topic">\${s.topic} \${diffBadge}</div>
           <div class="saved-meta"><span class=\"lang-pair-badge\" title=\"\${srcL.name} → \${tL.name}\">\${srcL.flag}→\${tL.flag}</span> \${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>

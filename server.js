@@ -71,7 +71,7 @@ async function translateUIToLang(lang) {
   for (let i = 0; i < missing.length; i += BATCH) {
     const batch = Object.fromEntries(missing.slice(i, i + BATCH));
     const sys = `You are a UI translator. Translate the values of this JSON object into ${S}. ` +
-      `Preserve ALL {placeholder} tokens exactly as-is. Keep translations short and natural for a mobile app. ` +
+	  `IMPORTANT: Preserve ALL {placeholder} tokens exactly as-is (e.g. {lang}, {n}, {topic}, {word}, {pronoun}, {verb}). Preserve icons. Keep translations short and natural for a mobile app. ` +
       `Return ONLY a valid JSON object with the same keys, no markdown, no explanation.`;
     const userMsg = JSON.stringify(batch, null, 2);
     try {
@@ -197,8 +197,8 @@ const STORY_STYLES = {
   horror:        'Suspenseful, eerie atmosphere, foreboding.',
   action:        'Fast-paced, kinetic, short punchy sentences.',
   philosophical: 'Contemplative, questioning, abstract ideas.',
-  poem:          'a poem.',
-  dialogue:      'a dialogue.',
+    poem:          'Write a poem, with rhyming words and rhythm.',
+    dialogue:      'Write a dialogue between two or more persons of the story, or alternatively one person soliloquy.',
 };
 
 function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, dialect, writingStyle) {
@@ -356,7 +356,7 @@ function parseTableLesson(raw, lessonNum, topic) {
   };
 }
 
-function sysSrcRepair(lang, srcLang, deepClean) {
+function sysSrcRepair(lang, srcLang, deepClean, lessonType) {
   const L = langName(lang || 'it');
   const S = langName(srcLang || 'en');
   const mode = deepClean
@@ -377,6 +377,8 @@ Each exercise has a type. Return corrected versions preserving the same type and
 - listen_type:            {"type":"listen_type","target":"${L} word","correct":"${L} word"}
 - read_translate:         {"type":"read_translate","target":"${L} sentence","source":"${S} translation","correct":"correct ${S}","choices":["4 distinct ${S} options"]}
 - order:                  {"type":"order","target":"${L} sentence","source":"${S} translation"}
+- grammar item:           {"type":"mcq_target_source","_grammarItem":true,"target":"${L} noun","source":"${S} translation","article":"correct ${L} article","plural":"correct ${L} plural","gender":"m|f|n|c","correct":"${S}","choices":["${S} options"]}
+- mcq_conjugation:        {"type":"mcq_conjugation","infinitive":"${L} infinitive","source":"${S} translation","pronoun":"${L} pronoun","correct":"correct conjugated form","choices":["4 distinct ${L} forms"]}
 
 Rules:
 - Fix translation errors, wrong word forms, incorrect language in fields, bad distractors
@@ -645,6 +647,83 @@ async function generateStorylineTitle(topics, stories, srcLang) {
   return { title: parsed.title.slice(0, 80), icon: parsed.icon.slice(0, 8) };
 }
 
+
+// ── Grammar lesson: gender, articles, plurals ───────────────────────────────
+function sysGrammar(lang, srcLang, difficulty, dialect, writingStyle) {
+  const L    = langName(lang);
+  const S    = langName(srcLang || 'en');
+  const diff = difficultyLabel(difficulty || 2);
+  const dialectNote = dialect ? `\n- Use the ${dialect} dialect/variety.` : '';
+  const writingStyleNote = STORY_STYLES[writingStyle] ? `\n- Topic style: ${STORY_STYLES[writingStyle]}` : '';
+  return `You are a ${L} grammar lesson generator for a vocabulary learning app.
+The learner speaks ${S} and is learning ${L}.
+Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
+
+Generate a grammar lesson focused on noun gender, articles, and plural forms.
+Schema:
+{
+  "title": "short lesson theme in ${S} (3-5 words)",
+  "desc": "up to 8 words in ${S}",
+  "icon": "one relevant emoji",
+  "grammar": [
+    {
+      "target": "${L} noun (singular, no article)",
+      "source": "${S} translation",
+      "gender": "m | f | n | c (common) — use only what applies to ${L}",
+      "article": "definite article in ${L} for this noun (e.g. der/die/das, le/la/l', il/la/lo)",
+      "plural": "plural form of the noun in ${L}"
+    }
+  ]
+}
+
+Rules:
+- grammar: exactly 10 nouns, varied difficulty: ${diff}, all topic-relevant
+- Include nouns with interesting/irregular plurals and mixed genders
+- "target" MUST be the ${L} noun only — no article, no translation
+- "source" MUST be the ${S} translation only
+- "article" MUST be the correct ${L} definite article for this noun
+- "plural" MUST be the correct ${L} plural form
+- If ${L} has no grammatical gender (e.g. English), set gender and article to null${dialectNote}${writingStyleNote}`;
+}
+
+// ── Conjugation lesson: verb forms by person ─────────────────────────────────
+function sysConjugation(lang, srcLang, difficulty, dialect, writingStyle) {
+  const L    = langName(lang);
+  const S    = langName(srcLang || 'en');
+  const diff = difficultyLabel(difficulty || 2);
+  const dialectNote = dialect ? `\n- Use the ${dialect} dialect/variety.` : '';
+  const writingStyleNote = STORY_STYLES[writingStyle] ? `\n- Topic style: ${STORY_STYLES[writingStyle]}` : '';
+  return `You are a ${L} grammar lesson generator for a vocabulary learning app.
+The learner speaks ${S} and is learning ${L}.
+Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
+
+Generate a conjugation lesson focused on verb forms in the present tense.
+Schema:
+{
+  "title": "short lesson theme in ${S} (3-5 words)",
+  "desc": "up to 8 words in ${S}",
+  "icon": "one relevant emoji",
+  "conjugations": [
+    {
+      "infinitive": "verb infinitive in ${L}",
+      "source": "${S} translation (to ...)",
+      "tense": "present",
+      "forms": [
+        { "pronoun": "subject pronoun in ${L}", "form": "conjugated verb form" }
+      ]
+    }
+  ]
+}
+
+Rules:
+- conjugations: exactly 5 verbs at ${diff} level, topic-relevant, varied regularity
+- forms: include ALL person forms for each verb (typically 6 for most European languages)
+- Use the standard subject pronouns for ${L} (e.g. io/tu/lui/noi/voi/loro for Italian)
+- "infinitive" MUST be in ${L}
+- "source" MUST be in ${S}
+- "form" MUST be the correct ${L} conjugated form for that pronoun${dialectNote}${writingStyleNote}`;
+}
+
 // ── Generate error-hunt lesson ───────────────────────────────────────
 async function generateErrorHunt(story, lang, difficulty, jobId) {
   jobStep(jobId, `[${OLLAMA_MODEL}] Generating error-hunt lesson…`);
@@ -693,6 +772,69 @@ async function generateErrorHunt(story, lang, difficulty, jobId) {
 }
 
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
+
+// ── Generate grammar lesson (gender, articles, plurals) ──────────────────────
+async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
+  opts = opts || {};
+  const { userDialect, storyStyle } = opts;
+  jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Generating grammar lesson…`);
+  const sys = sysGrammar(lang, srcLang, difficulty, userDialect, storyStyle);
+  const userMsg = `Topic: "${topic}". Generate 10 nouns with gender, article, and plural forms. Return only the JSON object.`;
+  const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1200);
+  const cleaned = raw.replace(/\`\`\`json|\`\`\`/g, '').trim();
+  let parsed;
+  try { parsed = JSON.parse(cleaned); }
+  catch(e) {
+    const m = cleaned.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('Grammar: could not parse JSON: ' + cleaned.slice(0, 80));
+    parsed = JSON.parse(m[0]);
+  }
+  if (!Array.isArray(parsed.grammar) || parsed.grammar.length === 0)
+    throw new Error('Grammar: no grammar items in response');
+  console.log(`    Grammar: ${parsed.grammar.length} nouns generated`);
+  return {
+    lesson: {
+      id: 5, type: 'grammar',
+      title: parsed.title || 'Gender & Plurals',
+      desc:  parsed.desc  || 'Noun gender, articles and plural forms',
+      icon:  parsed.icon  || '🏷️',
+      grammar: parsed.grammar,
+    },
+    tokens: { promptTokens, completionTokens },
+  };
+}
+
+// ── Generate conjugation lesson ───────────────────────────────────────────────
+async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts) {
+  opts = opts || {};
+  const { userDialect, storyStyle } = opts;
+  jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Generating conjugation lesson…`);
+  const sys = sysConjugation(lang, srcLang, difficulty, userDialect, storyStyle);
+  const userMsg = `Topic: "${topic}". Generate 5 verbs with all present-tense conjugation forms. Return only the JSON object.`;
+  const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1400);
+  const cleaned = raw.replace(/\`\`\`json|\`\`\`/g, '').trim();
+  let parsed;
+  try { parsed = JSON.parse(cleaned); }
+  catch(e) {
+    const m = cleaned.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('Conjugation: could not parse JSON: ' + cleaned.slice(0, 80));
+    parsed = JSON.parse(m[0]);
+  }
+  if (!Array.isArray(parsed.conjugations) || parsed.conjugations.length === 0)
+    throw new Error('Conjugation: no conjugations in response');
+  console.log(`    Conjugation: ${parsed.conjugations.length} verbs generated`);
+  return {
+    lesson: {
+      id: 6, type: 'conjugation',
+      title: parsed.title || 'Verb Conjugation',
+      desc:  parsed.desc  || 'Present tense verb forms',
+      icon:  parsed.icon  || '🔤',
+      conjugations: parsed.conjugations,
+    },
+    tokens: { promptTokens, completionTokens },
+  };
+}
+
 async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
   opts = opts || {};
   const { userTranslation, userDialect, styleHint, writingStyle } = opts;
@@ -804,7 +946,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 // ── Generate all lessons ──────────────────────────────────────────────
 async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
-  const { userStory, userTranslation, userDialect, storyStyle } = userOpts;
+  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat } = userOpts;
   srcLang = srcLang || 'en';
   const userTopic = topic;
   const genStart = Date.now();
@@ -907,15 +1049,21 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   const styleHint = (!storyTranslation && story) ? story.slice(0, 600) : null;
   const lessons = [];
 
-  if (difficulty === 4) {
+  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation') {
+    const genFn   = lessonFormat === 'error_hunt'  ? () => generateErrorHunt(story, lang, difficulty, jobId)
+                  : lessonFormat === 'grammar'      ? () => generateGrammar(topic, lang, srcLang, difficulty, jobId, { userDialect, storyStyle })
+                  :                                   () => generateConjugation(topic, lang, srcLang, difficulty, jobId, { userDialect, storyStyle });
+    const label   = lessonFormat === 'error_hunt'  ? 'Error-hunt'
+                  : lessonFormat === 'grammar'      ? 'Grammar'
+                  :                                   'Conjugation';
     try {
-      const { lesson, tokens } = await generateErrorHunt(story, lang, 3, jobId);
+      const { lesson, tokens } = await genFn();
       lessons.push(lesson);
       totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
       lessonTokenStats.push(tokens);
     } catch(e) {
-      console.error('  Error-hunt generation failed:', e.message);
-      throw new Error('Error-hunt lesson failed: ' + e.message);
+      console.error(`  ${label} generation failed:`, e.message);
+      throw new Error(`${label} lesson failed: ` + e.message);
     }
   } else {
     const TOTAL = 3;
@@ -954,6 +1102,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     ...(userDialect      ? { userDialect }       : {}),
     ...(continuedFrom    ? { continuedFrom }     : {}),
     ...(storyStyle       ? { storyStyle }        : {}),
+    ...(lessonFormat && lessonFormat!=='standard' ? { lessonFormat } : {}),
     lessons,
     generationStats: { totalMs, backend: 'ollama', model: modelLabel,
       lessonFormat: OLLAMA_LESSON_FORMAT,
@@ -968,15 +1117,19 @@ async function repairLesson(topic, lessonId, jobId, deepClean) {
   const lessonIdx = saved.lessons.findIndex(l => l.id === lessonId);
   if (lessonIdx < 0) throw new Error(`Lesson ${lessonId} not found`);
   const lesson = JSON.parse(JSON.stringify(saved.lessons[lessonIdx]));
-  const origVocabCount    = lesson.vocab.length;
-  const origSentenceCount = lesson.sentences.length;
+  const origVocabCount    = (lesson.vocab||[]).length;
+  const origSentenceCount = (lesson.sentences||[]).length;
   const lang = saved.lang || 'it';
   const srcLang = saved.srcLang || 'en';
   const allTopicFlags = flagsForTopic(topic);
-  const lessonItSet = new Set([
-    ...(lesson.vocab||[]).map(v => (v.target||'').slice(0,40).replace(/\s+/g,'_')),
-    ...(lesson.sentences||[]).map(s => (s.target||'').slice(0,40).replace(/\s+/g,'_'))
-  ]);
+  // Build content slug set — covers vocab/sentences for standard, grammar items, conjugation verbs
+  const contentItems = [
+    ...(lesson.vocab||[]).map(v => v.target||''),
+    ...(lesson.sentences||[]).map(s => s.target||''),
+    ...(lesson.grammar||[]).map(g => g.target||''),
+    ...(lesson.conjugations||[]).flatMap(c => c.forms||[]).map(f => f.form||''),
+  ];
+  const lessonItSet = new Set(contentItems.map(t => t.slice(0,40).replace(/\s+/g,'_')));
   const flaggedEntries = allTopicFlags.filter(([k]) => {
     const parts = k.split(':');
     const contentSlug = parts.slice(2).join(':');
@@ -1004,7 +1157,26 @@ async function repairLesson(topic, lessonId, jobId, deepClean) {
                  _originalTarget: s.target,
                  ...(flag?.[1]?.comment ? { _userComment: flag[1].comment } : {}) };
       }),
-    ];
+      // Grammar lesson items
+      ...(lesson.grammar||[]).map(g => {
+        const flag = flaggedEntries.find(([,fv]) => fv.target === g.target);
+        return { type:'mcq_target_source', target:g.target, source:g.source,
+                 correct:g.source, choices:[g.source],
+                 _grammarItem: true, article:g.article, plural:g.plural, gender:g.gender,
+                 _originalTarget: g.target,
+                 ...(flag?.[1]?.comment ? { _userComment: flag[1].comment } : {}) };
+      }),
+      // Conjugation lesson items
+      ...(lesson.conjugations||[]).flatMap(c =>
+        (c.forms||[]).map(f => {
+          const flag = flaggedEntries.find(([,fv]) => fv.target === f.form);
+          return { type:'mcq_conjugation', infinitive:c.infinitive, source:c.source,
+                   pronoun:f.pronoun, correct:f.form, choices:[f.form],
+                   target:f.form, _originalTarget: f.form,
+                   ...(flag?.[1]?.comment ? { _userComment: flag[1].comment } : {}) };
+        })
+      ),
+    ].filter(e => e.target); // skip any empty items
     entriesForClearing = flaggedEntries;
     console.log(`  Deep-clean ${exercisesToFix.length} item(s) in "${topic}" lesson ${lessonId}`);
   } else {
@@ -1033,41 +1205,73 @@ async function repairLesson(topic, lessonId, jobId, deepClean) {
   // Also keep a set of the _originalTarget values from exercisesToFix for reference
   const origTargets = new Map(exercisesToFix.map(e => [e._originalTarget, e]));
 
-  function mergeRepaired(repaired, sentIdx) {
-    // Determine the original target: prefer the _originalTarget we sent, fall back to target prefix match
+  // Extra lookup maps for grammar and conjugation
+  const grammarByOrig = new Map((lesson.grammar||[]).map((g,i) => [g.target, i]));
+  const conjByOrig    = new Map((lesson.conjugations||[]).flatMap((c,ci) =>
+    (c.forms||[]).map((f,fi) => [f.form, { ci, fi }])
+  ));
+
+  function mergeRepaired(repaired) {
+    // Determine the original target: prefer the _originalTarget we sent
     const origTarget = repaired._originalTarget
       || [...origTargets.keys()].find(k => k.toLowerCase().slice(0,20) === (repaired.target||'').toLowerCase().slice(0,20))
       || repaired.target;
 
+    // Grammar item — match by origTarget against lesson.grammar[] first,
+    // regardless of _grammarItem flag (LLM strips internal fields)
+    if ((lesson.grammar||[]).length > 0) {
+      const idx = grammarByOrig.has(origTarget) ? grammarByOrig.get(origTarget)
+        : (lesson.grammar||[]).findIndex(g => g.target.toLowerCase().slice(0,15) === origTarget.toLowerCase().slice(0,15));
+      if (idx >= 0) {
+        const g = lesson.grammar[idx];
+        lesson.grammar[idx] = { ...g,
+          target:  repaired.target  || g.target,
+          source:  repaired.source  || g.source,
+          article: repaired.article !== undefined ? repaired.article : g.article,
+          plural:  repaired.plural  !== undefined ? repaired.plural  : g.plural,
+          gender:  repaired.gender  !== undefined ? repaired.gender  : g.gender,
+        };
+        grammarByOrig.set(repaired.target, idx);
+        return;
+      }
+    }
+
+    // Conjugation item
+    if (repaired.type === 'mcq_conjugation' && repaired.correct) {
+      const loc = conjByOrig.get(origTarget);
+      if (loc) {
+        lesson.conjugations[loc.ci].forms[loc.fi].form = repaired.correct;
+        conjByOrig.set(repaired.correct, loc);
+      } else { console.log(`    mergeRepaired: no conjugation match for "${origTarget.slice(0,30)}"`); }
+      return;
+    }
+
     if (['order','read_translate'].includes(repaired.type) && repaired.target) {
       const idx = sentenceByOrig.has(origTarget) ? sentenceByOrig.get(origTarget)
-        : lesson.sentences.findIndex(s =>
+        : (lesson.sentences||[]).findIndex(s =>
             s.target.toLowerCase().slice(0,20) === origTarget.toLowerCase().slice(0,20));
       if (idx >= 0) {
         const s = { target: repaired.target, source: repaired.source || lesson.sentences[idx].source };
         lesson.sentences[idx] = deriveSentenceWords(s, saved.lang);
-        sentenceByOrig.set(repaired.target, idx); // update map for subsequent batches
-      } else {
-        console.log(`    mergeRepaired: no sentence match for "${origTarget.slice(0,30)}"`);
-      }
+        sentenceByOrig.set(repaired.target, idx);
+      } else { console.log(`    mergeRepaired: no sentence match for "${origTarget.slice(0,30)}"`); }
     }
     if (['mcq_target_source','mcq_source_target','listen_mcq','listen_type'].includes(repaired.type) && repaired.target) {
       const idx = vocabByOrig.has(origTarget) ? vocabByOrig.get(origTarget)
-        : lesson.vocab.findIndex(v =>
+        : (lesson.vocab||[]).findIndex(v =>
             v.target.toLowerCase().slice(0,15) === origTarget.toLowerCase().slice(0,15));
       if (idx >= 0) {
         lesson.vocab[idx] = { target: repaired.target, source: repaired.source || lesson.vocab[idx].source };
-        vocabByOrig.set(repaired.target, idx); // update map for subsequent batches
-      } else {
-        console.log(`    mergeRepaired: no vocab match for "${origTarget.slice(0,30)}"`);
-      }
+        vocabByOrig.set(repaired.target, idx);
+      } else { console.log(`    mergeRepaired: no vocab match for "${origTarget.slice(0,30)}"`); }
     }
   }
   const repairStart = Date.now();
   let repairPromptTokens = 0, repairCompletionTokens = 0;
   let totalRepaired = 0;
   const clearedKeys = [];
-  const SYS_REPAIR = sysSrcRepair(lang, srcLang, deepClean);
+  const lessonType = lesson.type || 'standard';
+  const SYS_REPAIR = sysSrcRepair(lang, srcLang, deepClean, lessonType);
   for (let b = 0; b < batches.length; b++) {
     const batch = batches[b];
     if (jobId) jobStep(jobId, `${deepClean?'Cleaning':'Repairing'} batch ${b+1}/${batches.length}…`);
@@ -1106,7 +1310,11 @@ Return only the corrected JSON array.`;
     totalRepaired += arr.length;
     clearedKeys.push(...(batch.entries||[]).map(([k]) => k));
   }
-  if (lesson.vocab.length < origVocabCount || lesson.sentences.length < origSentenceCount)
+  // Validate item counts haven't shrunk (guard for all lesson types)
+  const postVocabCount    = (lesson.vocab||[]).length;
+  const postSentenceCount = (lesson.sentences||[]).length;
+  const postGrammarCount  = (lesson.grammar||[]).length;
+  if (postVocabCount < origVocabCount || postSentenceCount < origSentenceCount)
     throw new Error(`Repair would shrink lesson — rejecting`);
   saved.lessons[lessonIdx] = lesson;
   const repairMs = Date.now() - repairStart;
@@ -1340,13 +1548,14 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { topic, lang, srcLang, difficulty, storyLen, continuedFrom, forceRegenerate,
+      const { topic, lang, srcLang, difficulty, lessonFormat, storyLen, continuedFrom, forceRegenerate,
               userStory, userTranslation, userDialect, storyStyle } = body;
       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
         : (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
-      const diff = Math.max(1, Math.min(4, parseInt(difficulty, 10) || 2));
+      const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
+      const fmt  = ['error_hunt','grammar','conjugation'].includes(lessonFormat) ? lessonFormat : 'standard';
       const wc = Math.max(100, Math.min(1000, parseInt(storyLen, 10) || 300));
       const contFrom = (!userStory && continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       const topicKey = topic.trim().toLowerCase();
@@ -1361,16 +1570,14 @@ async function boot() {
       const jobId = newJob();
       generatingTopics.add(topicKey);
       const resolvedSrcLang = srcLang || 'en';
-      // Eagerly ensure UI strings exist for this source language (non-blocking)
-      if (resolvedSrcLang !== 'en') ensureUIForLang(resolvedSrcLang).catch(e =>
-        console.warn('  UI pre-translation failed:', e.message));
       const userOpts = {
         userStory:       userStory       ? String(userStory).trim()       : null,
         userTranslation: userTranslation ? String(userTranslation).trim() : null,
         userDialect:     userDialect     ? String(userDialect).trim()     : null,
         storyStyle:      (storyStyle && STORY_STYLES.hasOwnProperty(storyStyle)) ? storyStyle : null,
+        lessonFormat:    fmt,
       };
-      console.log(`  Generating: "${topic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
+      console.log(`  Generating: "${topic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} fmt=${fmt} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
       generate(topic.trim(), lang || 'it', resolvedSrcLang, diff, contFrom, wc, jobId, userOpts).then(data => {
         upsert(data);
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
@@ -1427,6 +1634,71 @@ async function boot() {
         jobDone(jobId, result);
       }).catch(e => {
         console.error('  Deep-clean error:', e.message);
+        jobFail(jobId, e.message);
+      }).finally(() => {
+        generatingTopics.delete(topicKey);
+      });
+      return json(res, 202, { jobId });
+    }
+
+
+    // ── Add lesson to existing topic ──────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/lessons/add-lesson') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topic, lessonFormat: fmt, difficulty: rawDiff } = body;
+      if (!topic)  return json(res, 400, { error: 'Missing topic' });
+      if (!fmt)    return json(res, 400, { error: 'Missing lessonFormat' });
+      const saved = findSaved(topic.trim());
+      if (!saved)  return json(res, 404, { error: `Topic not found: ${topic}` });
+      if (!saved.story) return json(res, 400, { error: 'Topic has no story to base lessons on' });
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      const topicKey = topic.trim().toLowerCase();
+      if (generatingTopics.has(topicKey))
+        return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
+      const diff  = Math.max(1, Math.min(3, parseInt(rawDiff, 10) || saved.difficulty || 2));
+      const lang     = saved.lang    || 'it';
+      const srcLang  = saved.srcLang || 'en';
+      const dialect  = saved.userDialect || null;
+      const style    = saved.storyStyle  || null;
+      const story    = saved.story;
+      const jobId = newJob();
+      generatingTopics.add(topicKey);
+      console.log(`  Add lesson: "${topic}" fmt=${fmt} diff=${diff}`);
+
+      const doGenLesson = async () => {
+        let result;
+        if (fmt === 'error_hunt') {
+          result = await generateErrorHunt(story, lang, diff, jobId);
+        } else if (fmt === 'grammar') {
+          result = await generateGrammar(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style });
+        } else if (fmt === 'conjugation') {
+          result = await generateConjugation(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style });
+        } else {
+          throw new Error(`Unsupported lessonFormat: ${fmt}`);
+        }
+        // Compute next available ID (avoid clashing with existing)
+        const maxId = Math.max(0, ...(saved.lessons||[]).map(l => l.id||0));
+        const newLesson = { ...result.lesson, id: maxId + 1 };
+        // Replace existing lesson of same type, or append
+        const existingIdx = (saved.lessons||[]).findIndex(l => l.type === newLesson.type);
+        if (existingIdx >= 0) {
+          saved.lessons[existingIdx] = newLesson;
+          console.log(`    Replaced existing ${fmt} lesson (id ${newLesson.id})`);
+        } else {
+          saved.lessons.push(newLesson);
+          console.log(`    Appended ${fmt} lesson (id ${newLesson.id}), total: ${saved.lessons.length}`);
+        }
+        saved.updatedAt = new Date().toISOString();
+        saveStore(store);
+        return { lesson: newLesson, topic: saved.topic, lessonCount: saved.lessons.length };
+      };
+
+      doGenLesson().then(data => {
+        jobDone(jobId, data);
+      }).catch(e => {
+        console.error(`  Add-lesson error:`, e.message);
         jobFail(jobId, e.message);
       }).finally(() => {
         generatingTopics.delete(topicKey);
