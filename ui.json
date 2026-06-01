@@ -5150,7 +5150,17 @@
     "form.style.horror": "🕷️ Kauhueloku",
     "form.style.action": "⚡ Toiminnallinen",
     "form.style.philosophical": "🧠 Filosofinen",
-    "diff.error_hunt": "🔍 Virheiden metsästys — löydä virheet tarinassa"
+    "diff.error_hunt": "🔍 Virheiden metsästys — löydä virheet tarinassa",
+    "lesson.fix_flagged": "🔧 Korjaa merkitty",
+    "lesson.fix_all": "🔧 Korjaa kaikki",
+    "lesson.fix_cleaning": "Korjauksia…",
+    "lesson.fix_done": "✓ {n} kohde{n} korjattu",
+    "lesson.fix_repaired": "✓ {n} harjoitus{n} korjattu",
+    "lib.fix_all_lessons": "Korjaa kaikki opiskelut (thorppi)",
+    "form.style.poem": "📜 Kanssi",
+    "form.style.dialogue": "💬 Keskustelu",
+    "form.format_lbl": "Opastuksen formaatti",
+    "form.format.standard": "📚 Standardi — 3 edistävää opiskelua"
   },
   "hu": {
     "app.backend": "Háttér:",
