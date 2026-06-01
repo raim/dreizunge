@@ -1,120 +1,8 @@
 {
   "lessons": [
     {
-      "topic": "Winnie rencontre un jouet",
-      "topicEmoji": "🧩",
-      "userTopic": "Winnie trifft ein Stofftier, das \"kleine ich bin ich\".",
-      "lang": "de",
-      "srcLang": "fr",
-      "difficulty": 2,
-      "storyLen": 400,
-      "story": "Winnie schlenderte durch den Wald, als er plötzlich eine seltsame Erscheinung bemerkte. Es war ein kleines Stofftier, das winzig und flauschig war. Es saß auf einem Ast und sah Winnie mit großen Augen an. \"Ich bin ich,\" sagte das Stofftier leise. Winnie lachte und streichelte es. \"Wer bist du denn?\" fragte er. Das Stofftier zuckte mit den Ohren. \"Ich bin dein kleiner Freund,\" antwortete es. Winnie war überrascht. \"Komm mit,\" sagte er und führte das Stofftier zu Bär. Bär sah überrascht aus, als er das kleine Stofftier sah. \"Wer ist das?\" fragte er. \"Das ist mein neuer kleiner Freund,\" sagte Winnie. Bär lächelte. \"Na, dann lass uns spielen,\" sagte er. Sie fingen an, im Wald zu laufen und zu springen. Winnie fühlte sich glücklich und beschützt. Es war ein wunderbarer Tag gewesen.",
-      "storyLang": "de",
-      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n wachte früh auf. Die Sonne schien hell und warm. Winnie sprang aus seinem Bett und zog sich schnell an. Er hatte einen großen Hunger. Sein erster Gedanke gingen zum Honig. Winnie lief durch den Wald, blinzelte im Morgenlicht. Er roch den Duft von Blüten. Da war es! Ein Bienenstock, tief in einem Baum. Winnie kletterte vorsichtig hinauf. Er sah die Bienen, die um den Honig herumschwirrten. Sie waren so klein und flink. Winnie hielt den Atem an. Er wollte den Honig nicht verschrecken. Plötzlich hörte er ein Geräusch. Es war Bär! Bär war Winnies großer Freund. Er kam mit einem großen Beutel voller Honig. Bär lachte und sagte: \"Winnie, du bist ein kluger Bär!\" Sie füllten den Beutel mit Honig und gingen heim. Winnie lachte und lutschte an einem Honigbonbon. Es war ein wunderbarer Tag gewesen.\n\nNew topic: \"Winnie trifft ein Stofftier, das \"kleine ich bin ich\".\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "Winnie l'ourson",
-      "storyStyle": "children",
-      "lessonFormat": "grammar",
-      "lessons": [
-        {
-          "id": 5,
-          "type": "grammar",
-          "title": "Stofftiere",
-          "desc": "Spielzeugtiere in der Küche",
-          "icon": "🧸",
-          "grammar": [
-            {
-              "target": "Kuschelwolle",
-              "source": "peluche",
-              "gender": "f",
-              "article": "die",
-              "plural": "Kuschelwollê"
-            },
-            {
-              "target": "Pferd",
-              "source": "cheval",
-              "gender": "n",
-              "article": "das",
-              "plural": "Pferde"
-            },
-            {
-              "target": "Tigress",
-              "source": "tigresse",
-              "gender": "f",
-              "article": "die",
-              "plural": "Tigress"
-            },
-            {
-              "target": "Känguru",
-              "source": "kanguru",
-              "gender": "n",
-              "article": "das",
-              "plural": "Kängurus"
-            },
-            {
-              "target": "Elefant",
-              "source": "éléphant",
-              "gender": "m",
-              "article": "der",
-              "plural": "Elefanten"
-            },
-            {
-              "target": "Koala",
-              "source": "koala",
-              "gender": "n",
-              "article": "das",
-              "plural": "Koalas"
-            },
-            {
-              "target": "Panda",
-              "source": "panda",
-              "gender": "n",
-              "article": "der",
-              "plural": "Panda"
-            },
-            {
-              "target": "Känguru",
-              "source": "kanguru",
-              "gender": "n",
-              "article": "das",
-              "plural": "Kängurus"
-            },
-            {
-              "target": "Pferd",
-              "source": "cheval",
-              "gender": "n",
-              "article": "das",
-              "plural": "Pferde"
-            },
-            {
-              "target": "Tigress",
-              "source": "tigresse",
-              "gender": "f",
-              "article": "die",
-              "plural": "Tigress"
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 848963,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 1084,
-        "totalCompletionTokens": 796,
-        "lessons": [
-          {
-            "promptTokens": 375,
-            "completionTokens": 489
-          }
-        ]
-      },
-      "generatedAt": "2026-06-01T13:03:02.852Z",
-      "updatedAt": "2026-06-01T13:03:02.852Z"
-    },
-    {
-      "topic": "Winnie l'ourson",
-      "topicEmoji": "🐻",
+      "topic": "Winnie  adore le miel",
+      "topicEmoji": "🍯",
       "userTopic": "Winnie l'ourson cherche du miel",
       "lang": "de",
       "srcLang": "fr",
@@ -134,29 +22,15 @@
           "icon": "🐻",
           "grammar": [
             {
-              "target": "Bienen",
-              "source": "Bienen",
-              "gender": "n",
-              "article": "die",
-              "plural": "Bienen"
-            },
-            {
-              "target": "Honig",
-              "source": "Honig",
-              "gender": "n",
+              "target": "Baum",
+              "source": "arbre",
+              "gender": "m",
               "article": "der",
-              "plural": "Honig"
-            },
-            {
-              "target": "Bäume",
-              "source": "Bäume",
-              "gender": "n",
-              "article": "die",
               "plural": "Bäume"
             },
             {
-              "target": "Blumen",
-              "source": "Blumen",
+              "target": "Blume",
+              "source": "Fleur",
               "gender": "f",
               "article": "die",
               "plural": "Blumen"
@@ -176,32 +50,18 @@
               "plural": "Himmel"
             },
             {
-              "target": "Bienen",
+              "target": "Biene",
               "source": "Abeilles",
-              "gender": "n",
+              "gender": "f",
               "article": "die",
               "plural": "Bienen"
             },
             {
               "target": "Honig",
               "source": "Miel",
-              "gender": "n",
+              "gender": "m",
               "article": "der",
               "plural": "Honig"
-            },
-            {
-              "target": "Bäume",
-              "source": "Bäume",
-              "gender": "n",
-              "article": "die",
-              "plural": "Bäume"
-            },
-            {
-              "target": "Blumen",
-              "source": "Blumen",
-              "gender": "f",
-              "article": "die",
-              "plural": "Blumen"
             }
           ]
         }
@@ -227,6 +87,103 @@
         "totalMs": 1302015,
         "promptTokens": 5082,
         "completionTokens": 1960
+      }
+    },
+    {
+      "topic": "Winnie rencontre un jouet",
+      "topicEmoji": "🧩",
+      "userTopic": "Winnie trifft ein Stofftier, das \"kleine ich bin ich\".",
+      "lang": "de",
+      "srcLang": "fr",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "Winnie schlenderte durch den Wald, als er plötzlich eine seltsame Erscheinung bemerkte. Es war ein kleines Stofftier, das winzig und flauschig war. Es saß auf einem Ast und sah Winnie mit großen Augen an. \"Ich bin ich,\" sagte das Stofftier leise. Winnie lachte und streichelte es. \"Wer bist du denn?\" fragte er. Das Stofftier zuckte mit den Ohren. \"Ich bin dein kleiner Freund,\" antwortete es. Winnie war überrascht. \"Komm mit,\" sagte er und führte das Stofftier zu Bär. Bär sah überrascht aus, als er das kleine Stofftier sah. \"Wer ist das?\" fragte er. \"Das ist mein neuer kleiner Freund,\" sagte Winnie. Bär lächelte. \"Na, dann lass uns spielen,\" sagte er. Sie fingen an, im Wald zu laufen und zu springen. Winnie fühlte sich glücklich und beschützt. Es war ein wunderbarer Tag gewesen.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n wachte früh auf. Die Sonne schien hell und warm. Winnie sprang aus seinem Bett und zog sich schnell an. Er hatte einen großen Hunger. Sein erster Gedanke gingen zum Honig. Winnie lief durch den Wald, blinzelte im Morgenlicht. Er roch den Duft von Blüten. Da war es! Ein Bienenstock, tief in einem Baum. Winnie kletterte vorsichtig hinauf. Er sah die Bienen, die um den Honig herumschwirrten. Sie waren so klein und flink. Winnie hielt den Atem an. Er wollte den Honig nicht verschrecken. Plötzlich hörte er ein Geräusch. Es war Bär! Bär war Winnies großer Freund. Er kam mit einem großen Beutel voller Honig. Bär lachte und sagte: \"Winnie, du bist ein kluger Bär!\" Sie füllten den Beutel mit Honig und gingen heim. Winnie lachte und lutschte an einem Honigbonbon. Es war ein wunderbarer Tag gewesen.\n\nNew topic: \"Winnie trifft ein Stofftier, das \"kleine ich bin ich\".\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Winnie  adore le miel",
+      "storyStyle": "children",
+      "lessonFormat": "grammar",
+      "lessons": [
+        {
+          "id": 5,
+          "type": "grammar",
+          "title": "Stofftiere",
+          "desc": "Spielzeugtiere in der Küche",
+          "icon": "🧸",
+          "grammar": [
+            {
+              "target": "Kuschelwolle",
+              "source": "peluche",
+              "gender": "f",
+              "article": "die",
+              "plural": "Kuschelwolle"
+            },
+            {
+              "target": "Pferd",
+              "source": "cheval",
+              "gender": "n",
+              "article": "das",
+              "plural": "Pferde"
+            },
+            {
+              "target": "Tigerin",
+              "source": "tigresse",
+              "gender": "f",
+              "article": "die",
+              "plural": "Tigerinnen"
+            },
+            {
+              "target": "Känguru",
+              "source": "kanguru",
+              "gender": "n",
+              "article": "das",
+              "plural": "Kängurus"
+            },
+            {
+              "target": "Elefant",
+              "source": "éléphant",
+              "gender": "m",
+              "article": "der",
+              "plural": "Elefanten"
+            },
+            {
+              "target": "Koala",
+              "source": "koala",
+              "gender": "m",
+              "article": "der",
+              "plural": "Koalas"
+            },
+            {
+              "target": "Panda",
+              "source": "panda",
+              "gender": "m",
+              "article": "der",
+              "plural": "Pandas"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 848963,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1084,
+        "totalCompletionTokens": 796,
+        "lessons": [
+          {
+            "promptTokens": 375,
+            "completionTokens": 489
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T13:03:02.852Z",
+      "updatedAt": "2026-06-01T13:17:48.646Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 641772,
+        "promptTokens": 2523,
+        "completionTokens": 1017
       }
     },
     {
@@ -36637,80 +36594,6 @@
       ],
       "words": [],
       "flaggedAt": "2026-06-01T13:01:42.306Z"
-    },
-    "Winnie_rencontre_un_jouet:mcq_article:Tigress": {
-      "topic": "Winnie rencontre un jouet",
-      "type": "mcq_article",
-      "target": "Tigress",
-      "source": "tigresse",
-      "correct": "die",
-      "choices": [
-        "der",
-        "die",
-        "das"
-      ],
-      "words": [],
-      "flaggedAt": "2026-06-01T13:05:24.276Z"
-    },
-    "Winnie_rencontre_un_jouet:mcq_plural:Tigress": {
-      "topic": "Winnie rencontre un jouet",
-      "type": "mcq_plural",
-      "target": "Tigress",
-      "source": "tigresse",
-      "correct": "Tigress",
-      "choices": [
-        "Tigress",
-        "Kängurus",
-        "Elefanten",
-        "Kängurus"
-      ],
-      "words": [],
-      "flaggedAt": "2026-06-01T13:05:30.614Z"
-    },
-    "Winnie_rencontre_un_jouet:type_plural:Kuschelwolle": {
-      "topic": "Winnie rencontre un jouet",
-      "type": "type_plural",
-      "target": "Kuschelwolle",
-      "source": "peluche",
-      "correct": "Kuschelwollê",
-      "choices": [],
-      "words": [],
-      "flaggedAt": "2026-06-01T13:05:50.849Z"
-    },
-    "Winnie_rencontre_un_jouet:type_plural:Tigress": {
-      "topic": "Winnie rencontre un jouet",
-      "type": "type_plural",
-      "target": "Tigress",
-      "source": "tigresse",
-      "correct": "Tigress",
-      "choices": [],
-      "words": [],
-      "flaggedAt": "2026-06-01T13:05:59.887Z"
-    },
-    "Winnie_rencontre_un_jouet:type_plural:Panda": {
-      "topic": "Winnie rencontre un jouet",
-      "type": "type_plural",
-      "target": "Panda",
-      "source": "panda",
-      "correct": "Panda",
-      "choices": [],
-      "words": [],
-      "flaggedAt": "2026-06-01T13:06:43.469Z"
-    },
-    "Winnie_rencontre_un_jouet:mcq_plural:Panda": {
-      "topic": "Winnie rencontre un jouet",
-      "type": "mcq_plural",
-      "target": "Panda",
-      "source": "panda",
-      "correct": "Panda",
-      "choices": [
-        "Panda",
-        "Kuschelwollê",
-        "Kängurus",
-        "Pferde"
-      ],
-      "words": [],
-      "flaggedAt": "2026-06-01T13:06:47.392Z"
     }
   },
   "storylines": {
@@ -36913,6 +36796,14 @@
     "c420882432": {
       "title": "Il circo di Marco",
       "icon": "🎪"
+    },
+    "c1702243713": {
+      "title": "L'ami de Winnie",
+      "icon": "🐻"
+    },
+    "root:Winnie  adore le miel": {
+      "title": "L'ami de Winnie",
+      "icon": "🤗"
     }
   }
 }

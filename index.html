@@ -2436,8 +2436,8 @@ async function genLessonTitle() {
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
     // Save new topic/emoji to server
-    const patch = { ...APP.lessonData, topic: data.title, topicEmoji: data.icon };
-    const saveR = await fetch('/api/lessons/save-meta', {
+   const patch = { ...APP.lessonData, topic: data.title, topicEmoji: data.icon };
+   const saveR = await fetch('/api/lessons/save-meta', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ oldTopic, newTopic: data.title, topicEmoji: data.icon })
