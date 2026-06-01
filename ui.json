@@ -5993,6 +5993,14 @@
     "ex.badge.mcq_conjugation": "Wähl die Verbstämmform",
     "ex.badge.type_conjugation": "Schreibe die Verbstämmform",
     "ex.mcq_article.q": "Welcher Artikel passt zu \"{word}\"?",
-    "ex.mcq_plural.q": "Welcher Plural gehört zu \"{word}\"?"
+    "ex.mcq_plural.q": "Welcher Plural gehört zu \"{word}\"?",
+    "ex.type_plural.q": "Typ dës Plural vun \"{word}\"",
+    "ex.mcq_conjugation.q": "\"{pronoun}\" + {verb} = ?",
+    "ex.type_conjugation.q": "Typ dës Form vun \"{pronoun}\" + {verb}",
+    "lib.add_lesson": "Lësung hinnéé",
+    "lib.add_lesson_title": "Lësung hinnéé fan dës Thema",
+    "lib.add_lesson_done": "✓ Lësung hinnéé",
+    "ex.type_in_placeholder": "Typ dës Antwérrung…",
+    "form.lesson_type_hdr": "Lësungstyp"
   }
 }
