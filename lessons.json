@@ -1,6 +1,1056 @@
 {
   "lessons": [
     {
+      "topic": "Constance und der Waldgeist",
+      "topicEmoji": "🌳",
+      "userTopic": "constanze trifft einen waldgeist, und sie philosophieren ueber die natur der liebe.",
+      "lang": "fr",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 250,
+      "story": "Constance s'arrêta soudain, son chant s'évanouissant dans l'air nocturne. Un murmure léger, presque inaudible, lui parvint. Elle se tourna vers la gauche, où une lumière étrange semblait se dégager des arbres. Un être éthéré, aux cheveux de feuilles et aux yeux d'étoiles, se tenait devant elle. Il était le Waldgeist, l'esprit de la forêt.\n\n\"Qui es-tu, ombre lumineuse?\" demanda Constance, son cœur battant.\n\n\"Je suis l'esprit de cette forêt, l'âme des arbres et des feuilles,\" répondit l'esprit d'une voix douce. \"Et toi, qui es-tu, princesse de la lune?\"\n\n\"Je suis Constance, une chanteuse de la nuit,\" dit-elle, son regard s'adoucissant. \"Je chante pour la forêt, pour les étoiles, pour l'amour.\"\n\n\"Interessant,\" murmura l'esprit. \"L'amour, une chose si complexe, si difficile à comprendre. Mais dans ta voix, je perçois sa pureté.\"\n\nConstance hocha la tête, un sourire éclairant son visage. \"L'amour, c'est comme la forêt, il grandit, il se développe, il change. Il peut être doux comme une brise, ou violent comme un ouragan.\"\n\n\"Et comment l'amour naît-il?\" questionna l'esprit, ses yeux pétillant d'intérêt.\n\n\"Par la connexion, par la compréhension mutuelle,\" répondit Constance. \"Comme les arbres qui se soutiennent mutuellement, les racines s'enfonçant profondément dans la terre, les branches s'entrelaçant dans le ciel.\"\n\nL'esprit de la forêt sourit, un sourire qui éclaira la nuit. \"Alors, chante pour l'amour, Constance. Chante pour la connexion, pour la compréhension, pour la beauté de l'amour qui grandit dans la forêt et dans le monde.\"",
+      "storyLang": "fr",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 2-3 paragraphs, under 250 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French. Writing style: a dialogue. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nDans la forêt sombre et dense, Constance marchait seule, les yeux levés vers les étoiles. Chaque pas résonnait comme un soupir dans la nuit. Les feuilles frôlaient ses pieds nus, une douce caresse de la terre. Elle chantait, sa voix douce comme une brise printanière, résonnant dans l'air froid. Les arbres, comme des gardiens silencieux, l'observaient, leurs branches ondulant au rythme de sa chanson. Constance, dans sa robe de soie blanche, semblait une princesse de lune, errant dans un royaume de murmures et de lumières.\n\nNew topic: \"constanze trifft einen waldgeist, und sie philosophieren ueber die natur der liebe.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Ein Gedicht für Constanze",
+      "storyStyle": "dialogue",
+      "lessons": [
+        {
+          "id": 2,
+          "title": "Constance trifft einen Waldgeist",
+          "desc": "Philosophieren über die Natur der Liebe",
+          "icon": "🌲❤️",
+          "vocab": [
+            {
+              "target": "éthéré",
+              "source": "ethärisch"
+            },
+            {
+              "target": "murmure",
+              "source": "flüstern"
+            },
+            {
+              "target": "princesse",
+              "source": "Prinzessin"
+            },
+            {
+              "target": "chanteuse",
+              "source": "Sängerin"
+            },
+            {
+              "target": "comprendre",
+              "source": "verstehen"
+            },
+            {
+              "target": "complexité",
+              "source": "Komplexität"
+            },
+            {
+              "target": "étoiles",
+              "source": "Sterne"
+            },
+            {
+              "target": "nuit",
+              "source": "Nacht"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Qui es-tu, ombre lumineuse?",
+              "source": "Wer bist du, leuchtende Schatten?",
+              "words": [
+                "Qui",
+                "es-tu,",
+                "ombre",
+                "lumineuse?"
+              ]
+            },
+            {
+              "target": "L'amour, une chose si complexe, si difficile à comprendre.",
+              "source": "Die Liebe, eine so komplexe Sache, so schwer zu verstehen.",
+              "words": [
+                "L'amour,",
+                "une",
+                "chose",
+                "si",
+                "complexe,",
+                "si",
+                "difficile",
+                "à",
+                "comprendre."
+              ]
+            },
+            {
+              "target": "Mais l'amour, n'est-il pas la plus belle des choses?",
+              "source": "Aber die Liebe, ist sie nicht die schönste aller Dinge?",
+              "words": [
+                "Mais",
+                "l'amour,",
+                "n'est-il",
+                "pas",
+                "la",
+                "plus",
+                "belle",
+                "des",
+                "choses?"
+              ]
+            },
+            {
+              "target": "Je chante pour la forêt, pour les étoiles, pour l'amour.",
+              "source": "Ich singe für den Wald, für die Sterne, für die Liebe.",
+              "words": [
+                "Je",
+                "chante",
+                "pour",
+                "la",
+                "forêt,",
+                "pour",
+                "les",
+                "étoiles,",
+                "pour",
+                "l'amour."
+              ]
+            },
+            {
+              "target": "Interessant, murmura l'esprit.",
+              "source": "Interessant, flüsterte der Geist.",
+              "words": [
+                "Interessant,",
+                "murmura",
+                "l'esprit."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Constance und der Waldgeist",
+          "desc": "Philosophieren über Liebe in der Natur",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "target": "soudain",
+              "source": "plötzlich"
+            },
+            {
+              "target": "évanouissant",
+              "source": "verschwindend"
+            },
+            {
+              "target": "lumière",
+              "source": "Licht"
+            },
+            {
+              "target": "légère",
+              "source": "leicht"
+            },
+            {
+              "target": "tenait",
+              "source": "hielt"
+            },
+            {
+              "target": "battant",
+              "source": "schlagend"
+            },
+            {
+              "target": "adoucissant",
+              "source": "sanftmacher"
+            },
+            {
+              "target": "chanteuse",
+              "source": "Sängerin"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Constance soudain, son cœur battant.",
+              "source": "Constance plötzlich, ihr Herz schlagend.",
+              "words": [
+                "Constance",
+                "soudain,",
+                "son",
+                "cœur",
+                "battant."
+              ]
+            },
+            {
+              "target": "Un murmure léger, presque inaudible, lui parvint.",
+              "source": "Ein leises Flüstern, fast unhörbar, drang an ihr Ohr.",
+              "words": [
+                "Un",
+                "murmure",
+                "léger,",
+                "presque",
+                "inaudible,",
+                "lui",
+                "parvint."
+              ]
+            },
+            {
+              "target": "Elle se tourna vers la gauche.",
+              "source": "Sie wandte sich nach links.",
+              "words": [
+                "Elle",
+                "se",
+                "tourna",
+                "vers",
+                "la",
+                "gauche."
+              ]
+            },
+            {
+              "target": "Un être éthéré, aux cheveux de feuilles et aux yeux d'étoiles, se tenait devant elle.",
+              "source": "Ein ethäres Wesen, mit Haaren aus Blättern und Augen aus Sternen, stand vor ihr.",
+              "words": [
+                "Un",
+                "être",
+                "éthéré,",
+                "aux",
+                "cheveux",
+                "de",
+                "feuilles",
+                "et",
+                "aux",
+                "yeux",
+                "d'étoiles,",
+                "se",
+                "tenait",
+                "devant",
+                "elle."
+              ]
+            },
+            {
+              "target": "Il était le Waldgeist, l'esprit de la forêt.",
+              "source": "Er war der Waldgeist, der Geist der Wälder.",
+              "words": [
+                "Il",
+                "était",
+                "le",
+                "Waldgeist,",
+                "l'esprit",
+                "de",
+                "la",
+                "forêt."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1452030,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2370,
+        "totalCompletionTokens": 1231,
+        "lessons": [
+          {
+            "lessonNum": 2,
+            "ms": 242164,
+            "promptTokens": 841,
+            "completionTokens": 341
+          },
+          {
+            "lessonNum": 3,
+            "ms": 264506,
+            "promptTokens": 912,
+            "completionTokens": 352
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T22:06:26.466Z",
+      "updatedAt": "2026-05-31T22:06:26.466Z"
+    },
+    {
+      "topic": "Ein Gedicht für Constanze",
+      "topicEmoji": "❤️",
+      "userTopic": "ein gedicht fuer constanze",
+      "lang": "fr",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 250,
+      "story": "Dans la forêt sombre et dense, Constance marchait seule, les yeux levés vers les étoiles. Chaque pas résonnait comme un soupir dans la nuit. Les feuilles frôlaient ses pieds nus, une douce caresse de la terre. Elle chantait, sa voix douce comme une brise printanière, résonnant dans l'air froid. Les arbres, comme des gardiens silencieux, l'observaient, leurs branches ondulant au rythme de sa chanson. Constance, dans sa robe de soie blanche, semblait une princesse de lune, errant dans un royaume de murmures et de lumières.",
+      "storyLang": "fr",
+      "storyPrompt": "You are a creative writer and French language teacher. Write a short story directly in French on the given topic — aim for 2-3 paragraphs, under 250 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in French. Writing style: a poem.\n\nWrite a story for the topic: \"ein gedicht fuer constanze\". Plain prose, no headings.",
+      "storyStyle": "poem",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "ein gedicht fuer constanze",
+          "desc": "eine nächtliche wanderschaft durch die forst",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "soupir",
+              "source": "Seufzer"
+            },
+            {
+              "target": "feuille",
+              "source": "Blatt"
+            },
+            {
+              "target": "chant",
+              "source": "Lied"
+            },
+            {
+              "target": "arbre",
+              "source": "Baum"
+            },
+            {
+              "target": "gardien",
+              "source": "Wächter"
+            },
+            {
+              "target": "robe",
+              "source": "Tunik"
+            },
+            {
+              "target": "princesse",
+              "source": "Prinzessin"
+            },
+            {
+              "target": "murmures",
+              "source": "Flüstern"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Chaque pas résonnait comme un soupir dans la nuit.",
+              "source": "Jeder Schritt war wie ein Seufzer in der Nacht.",
+              "words": [
+                "Chaque",
+                "pas",
+                "résonnait",
+                "comme",
+                "un",
+                "soupir",
+                "dans",
+                "la",
+                "nuit."
+              ]
+            },
+            {
+              "target": "Les feuilles frôlaient ses pieds nus, une douce caresse de la terre.",
+              "source": "Die Blätter streiften ihre nackten Füße, eine sanfte Berührung der Erde.",
+              "words": [
+                "Les",
+                "feuilles",
+                "frôlaient",
+                "ses",
+                "pieds",
+                "nus,",
+                "une",
+                "douce",
+                "caresse",
+                "de",
+                "la",
+                "terre."
+              ]
+            },
+            {
+              "target": "Elle chantait, sa voix douce comme une brise printanière.",
+              "source": "Sie sang, ihre Stimme weich wie ein Frühlingshauch.",
+              "words": [
+                "Elle",
+                "chantait,",
+                "sa",
+                "voix",
+                "douce",
+                "comme",
+                "une",
+                "brise",
+                "printanière."
+              ]
+            },
+            {
+              "target": "Les arbres, comme des gardiens silencieux, l'observaient.",
+              "source": "Die Bäume, wie stumme Wächter, beobachteten sie.",
+              "words": [
+                "Les",
+                "arbres,",
+                "comme",
+                "des",
+                "gardiens",
+                "silencieux,",
+                "l'observaient."
+              ]
+            },
+            {
+              "target": "Constance, dans sa robe de soie blanche, semblait une princesse de lune.",
+              "source": "Constance, in ihrer weißen Seidentunika, schien eine Mondprinzessin.",
+              "words": [
+                "Constance,",
+                "dans",
+                "sa",
+                "robe",
+                "de",
+                "soie",
+                "blanche,",
+                "semblait",
+                "une",
+                "princesse",
+                "de",
+                "lune."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "ein gedicht fuer constanze",
+          "desc": "stille nacht, leise wege, leuchtende sterne",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "nuit",
+              "source": "Nacht"
+            },
+            {
+              "target": "pieds nus",
+              "source": "bare Füße"
+            },
+            {
+              "target": "caresse",
+              "source": "Berührung"
+            },
+            {
+              "target": "voix",
+              "source": "Stimme"
+            },
+            {
+              "target": "brise printanière",
+              "source": "linder Brise"
+            },
+            {
+              "target": "air froid",
+              "source": "kühler Luft"
+            },
+            {
+              "target": "ondulant",
+              "source": "schwingend"
+            },
+            {
+              "target": "lumières",
+              "source": "Lichter"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Dans la nuit, Constance marchait, pieds nus sur le sol.",
+              "source": "In der Nacht ging Constance, bare Füße auf dem Boden.",
+              "words": [
+                "Dans",
+                "la",
+                "nuit,",
+                "Constance",
+                "marchait,",
+                "pieds",
+                "nus",
+                "sur",
+                "le",
+                "sol."
+              ]
+            },
+            {
+              "target": "Sa voix, douce comme une brise printanière, résonnait dans l'air froid.",
+              "source": "Ihre Stimme, sanft wie eine linder Brise, hallte in der kühlen Luft.",
+              "words": [
+                "Sa",
+                "voix,",
+                "douce",
+                "comme",
+                "une",
+                "brise",
+                "printanière,",
+                "résonnait",
+                "dans",
+                "l'air",
+                "froid."
+              ]
+            },
+            {
+              "target": "Les feuilles, une caresse de la terre, frôlaient ses pieds nus.",
+              "source": "Die Blätter, eine Berührung der Erde, streiften ihre bare Füße.",
+              "words": [
+                "Les",
+                "feuilles,",
+                "une",
+                "caresse",
+                "de",
+                "la",
+                "terre,",
+                "frôlaient",
+                "ses",
+                "pieds",
+                "nus."
+              ]
+            },
+            {
+              "target": "Les arbres, comme des gardiens silencieux, l'observaient.",
+              "source": "Die Bäume, wie leise Wächter, beobachteten sie.",
+              "words": [
+                "Les",
+                "arbres,",
+                "comme",
+                "des",
+                "gardiens",
+                "silencieux,",
+                "l'observaient."
+              ]
+            },
+            {
+              "target": "Constance, dans sa robe de soie blanche, semblait une princesse de lune, errant dans un royaume de murmures et de lumières.",
+              "source": "Constance, in ihrer weißen Seetunik, schien eine Prinzessin der Nacht, in einem Reich von Flüstern und Lichtern schwebend.",
+              "words": [
+                "Constance,",
+                "dans",
+                "sa",
+                "robe",
+                "de",
+                "soie",
+                "blanche,",
+                "semblait",
+                "une",
+                "princesse",
+                "de",
+                "lune,",
+                "errant",
+                "dans",
+                "un",
+                "royaume",
+                "de",
+                "murmures",
+                "et",
+                "de",
+                "lumières."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "ein gedicht fuer constanze",
+          "desc": "stille nächtliche wanderschaft, leise flüstern, silberne strahlen, dunkle wald, sanfte berührung",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "silencieux souffle",
+              "source": "leise flüstern"
+            },
+            {
+              "target": "rayons argentés",
+              "source": "silberne strahlen"
+            },
+            {
+              "target": "forêt noire",
+              "source": "dunkler Wald"
+            },
+            {
+              "target": "toucher doux",
+              "source": "sanfte Berührung"
+            },
+            {
+              "target": "chemin secret",
+              "source": "stille Wanderung"
+            },
+            {
+              "target": "lumière argentée",
+              "source": "silbernes Licht"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Les rayons argentés caressaient sa peau.",
+              "source": "Die silbernen Strahlen berührten ihre Haut.",
+              "words": [
+                "Les",
+                "rayons",
+                "argentés",
+                "caressaient",
+                "sa",
+                "peau."
+              ]
+            },
+            {
+              "target": "Le chemin secret résonnait sous ses pas.",
+              "source": "Der stille Weg hallte unter ihren Schritten.",
+              "words": [
+                "Le",
+                "chemin",
+                "secret",
+                "résonnait",
+                "sous",
+                "ses",
+                "pas."
+              ]
+            },
+            {
+              "target": "La toucher doux des feuilles lui apportait du réconfort.",
+              "source": "Die sanfte Berührung der Blätter brachte ihr Trost.",
+              "words": [
+                "La",
+                "toucher",
+                "doux",
+                "des",
+                "feuilles",
+                "lui",
+                "apportait",
+                "du",
+                "réconfort."
+              ]
+            },
+            {
+              "target": "Le souffle silencieux apaisait son âme.",
+              "source": "Der leise Atemzug beruhigte ihr Gemüt.",
+              "words": [
+                "Le",
+                "souffle",
+                "silencieux",
+                "apaisait",
+                "son",
+                "âme."
+              ]
+            },
+            {
+              "target": "Les lumières argentées dansaient dans l'air froid.",
+              "source": "Die silbernen Lichter tanzten in der kühlen Luft.",
+              "words": [
+                "Les",
+                "lumières",
+                "argentées",
+                "dansaient",
+                "dans",
+                "l'air",
+                "froid."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1602466,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2643,
+        "totalCompletionTokens": 1392,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 406872,
+            "promptTokens": 687,
+            "completionTokens": 378
+          },
+          {
+            "lessonNum": 2,
+            "ms": 227561,
+            "promptTokens": 753,
+            "completionTokens": 440
+          },
+          {
+            "lessonNum": 3,
+            "ms": 361069,
+            "promptTokens": 816,
+            "completionTokens": 343
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T21:33:26.869Z",
+      "updatedAt": "2026-05-31T21:33:26.869Z"
+    },
+    {
+      "topic": "Complex Phenomenon",
+      "topicEmoji": "🔍",
+      "userTopic": "they tried to write a paper about this, but failed. the complexity of the phenomenon defied a linear description by language",
+      "lang": "it",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Le due amiche si ritrovarono davanti alla schermata del computer, dove il documento di Word era rimasto inattivo per ore. Ogni volta che Marco cercava di mettere in parole la complessità del fenomeno, le parole sembravano scomparire nel vuoto, come se la natura stessa delle cellule sfuggisse alla loro descrizione.\n\n\"Come possiamo esprimere qualcosa che non si può vedere?\" mormorò Marco, frustrato. \"Come possiamo raccontare una storia che non ha un inizio, un mezzo e un fine?\"\n\nElena lo guardò con comprensione. \"Forse,\" suggerì, \"non è una questione di descrivere, ma di esprimere. Non si tratta di raccontare una storia, ma di creare un ritratto.\"\n\n\"Un ritratto?\" ripeté Marco, incerto.\n\n\"Un ritratto,\" confermò Elena. \"Come se stessimo dipingendo un quadro, non con pennelli, ma con parole. Ogni oscillazione, ogni trascrizione, ogni piccola reazione è un colore, un tratto, una sfumatura.\"\n\nLei prese il mouse e iniziò a scrivere, le dita che danzavano sulla tastiera con una precisione quasi elettrica. \"Le cellule,\" iniziò, \"non sono solo piccole macchine, ma artisti in miniatura, che dipingono un quadro di vita in continuo movimento.\"\n\nMarco si avvicinò, leggendo le parole che Elena aveva scritto. \"E se non fosse solo una questione di descrizione, ma di creare un'esperienza?\" chiese, guardando le parole che si materializzavano sullo schermo. \"Se non fosse che stiamo cercando di raccontare una storia, ma di costruire un universo?\"\n\nElena annuì, sorridendo. \"Forse,\" disse, \"non c'è bisogno di decifrarlo completamente. Forse basta apprezzarlo, come un'opera d'arte, per capirne la bellezza.\"\n\nLe due amiche continuarono a lavorare, le parole che fluivano come un fiume in piena, descrivendo un mondo microscopico che, nonostante la sua complessità, era pur sempre un'opera d'arte.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Contemplative, questioning, abstract ideas. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nolismo cellulare e della formazione di pattern subcellulare. Potremmo finalmente decifrare come le cellule gestiscono le loro risorse in modi che non avremmo mai immaginato.\"\n\n\"Ma come funziona?\" chiese Marco, curioso. \"Come le cellule riescono a prevedere i loro bisogni futuri?\"\n\n\"Potrebbe essere una forma di anticipazione,\" rispose Elena, con un sorriso. \"Come se le cellule stessero preparando un piano di risorse, prevedendo i futuri bisogni in base a come reagiscono ai cambiamenti ambientali attuali.\"\n\nLe due continuavano a lavorare, immersi nel mistero delle cellule e del loro complesso linguaggio. Ogni oscillazione, ogni trascrizione, era un passo avanti verso la comprensione di un mondo microscopico che, nonostante la sua piccolezza, conteneva segreti fondamentali per la vita stessa.\n\nNew topic: \"they tried to write a paper about this, but failed. the complexity of the phenomenon defied a linear description by language\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Cellular Oscillation & Transcript Localization",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "They tried to write a paper",
+          "desc": "complexity defied description",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "complessità",
+              "source": "complexity"
+            },
+            {
+              "target": "defied",
+              "source": "resisted"
+            },
+            {
+              "target": "esprimere",
+              "source": "express"
+            },
+            {
+              "target": "ritratto",
+              "source": "portrait"
+            },
+            {
+              "target": "raccontare",
+              "source": "tell"
+            },
+            {
+              "target": "inizio",
+              "source": "beginning"
+            },
+            {
+              "target": "fine",
+              "source": "end"
+            },
+            {
+              "target": "comprensione",
+              "source": "understanding"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La complessità del fenomeno resistette alle parole.",
+              "source": "The complexity of the phenomenon resisted the words.",
+              "words": [
+                "La",
+                "complessità",
+                "del",
+                "fenomeno",
+                "resistette",
+                "alle",
+                "parole."
+              ]
+            },
+            {
+              "target": "Come possiamo dipingere un quadro senza pennelli?",
+              "source": "How can we paint a picture without brushes?",
+              "words": [
+                "Come",
+                "possiamo",
+                "dipingere",
+                "un",
+                "quadro",
+                "senza",
+                "pennelli?"
+              ]
+            },
+            {
+              "target": "Non si tratta di raccontare una storia, ma di creare un ritratto.",
+              "source": "It's not about telling a story, but about creating a portrait.",
+              "words": [
+                "Non",
+                "si",
+                "tratta",
+                "di",
+                "raccontare",
+                "una",
+                "storia,",
+                "ma",
+                "di",
+                "creare",
+                "un",
+                "ritratto."
+              ]
+            },
+            {
+              "target": "Le parole sembravano scomparire nel vuoto.",
+              "source": "The words seemed to disappear into the void.",
+              "words": [
+                "Le",
+                "parole",
+                "sembravano",
+                "scomparire",
+                "nel",
+                "vuoto."
+              ]
+            },
+            {
+              "target": "Elena lo guardò con comprensione.",
+              "source": "Elena looked at him with understanding.",
+              "words": [
+                "Elena",
+                "lo",
+                "guardò",
+                "con",
+                "comprensione."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "They tried to write a paper",
+          "desc": "complexity, expression, portrait, painting, words",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "target": "ritratto",
+              "source": "portrait"
+            },
+            {
+              "target": "pennelli",
+              "source": "brushes"
+            },
+            {
+              "target": "quadro",
+              "source": "painting"
+            },
+            {
+              "target": "creare",
+              "source": "create"
+            },
+            {
+              "target": "dipingere",
+              "source": "paint"
+            },
+            {
+              "target": "parole",
+              "source": "words"
+            },
+            {
+              "target": "raccontare",
+              "source": "tell"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Non si tratta di raccontare una storia, ma di creare un ritratto.",
+              "source": "It's not about telling a story, but about creating a portrait.",
+              "words": [
+                "Non",
+                "si",
+                "tratta",
+                "di",
+                "raccontare",
+                "una",
+                "storia,",
+                "ma",
+                "di",
+                "creare",
+                "un",
+                "ritratto."
+              ]
+            },
+            {
+              "target": "Come se stessimo dipingendo un quadro, non con pennelli, ma con parole.",
+              "source": "As if we were painting a picture, not with brushes, but with words.",
+              "words": [
+                "Come",
+                "se",
+                "stessimo",
+                "dipingendo",
+                "un",
+                "quadro,",
+                "non",
+                "con",
+                "pennelli,",
+                "ma",
+                "con",
+                "parole."
+              ]
+            },
+            {
+              "target": "Le parole sembravano scomparire nel vuoto, come se la natura stessa delle cellule sfuggisse alla loro descrizione.",
+              "source": "The words seemed to vanish into the void, as if the nature of the cells eluded their description.",
+              "words": [
+                "Le",
+                "parole",
+                "sembravano",
+                "scomparire",
+                "nel",
+                "vuoto,",
+                "come",
+                "se",
+                "la",
+                "natura",
+                "stessa",
+                "delle",
+                "cellule",
+                "sfuggisse",
+                "alla",
+                "loro",
+                "descrizione."
+              ]
+            },
+            {
+              "target": "Come possiamo esprimere qualcosa che non si può vedere?",
+              "source": "How can we express something that cannot be seen?",
+              "words": [
+                "Come",
+                "possiamo",
+                "esprimere",
+                "qualcosa",
+                "che",
+                "non",
+                "si",
+                "può",
+                "vedere?"
+              ]
+            },
+            {
+              "target": "Elena lo guardò con comprensione.",
+              "source": "Elena looked at him with understanding.",
+              "words": [
+                "Elena",
+                "lo",
+                "guardò",
+                "con",
+                "comprensione."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "Abstract Concepts in Writing",
+          "desc": "complex ideas, abstract expressions, creative writing",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "target": "espressione",
+              "source": "expression"
+            },
+            {
+              "target": "ritratto",
+              "source": "portrait"
+            },
+            {
+              "target": "raccontare",
+              "source": "tell"
+            },
+            {
+              "target": "inizio",
+              "source": "beginning"
+            },
+            {
+              "target": "fine",
+              "source": "end"
+            },
+            {
+              "target": "comprensione",
+              "source": "understanding"
+            },
+            {
+              "target": "creare",
+              "source": "create"
+            },
+            {
+              "target": "dipingere",
+              "source": "paint"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Non si tratta di raccontare, ma di esprimere.",
+              "source": "It's not about telling, but about expressing.",
+              "words": [
+                "Non",
+                "si",
+                "tratta",
+                "di",
+                "raccontare,",
+                "ma",
+                "di",
+                "esprimere."
+              ]
+            },
+            {
+              "target": "Come possiamo creare un ritratto senza inizio, mezzo e fine?",
+              "source": "How can we create a portrait without a beginning, middle, and end?",
+              "words": [
+                "Come",
+                "possiamo",
+                "creare",
+                "un",
+                "ritratto",
+                "senza",
+                "inizio,",
+                "mezzo",
+                "e",
+                "fine?"
+              ]
+            },
+            {
+              "target": "Le parole sembrano sfuggire alla complessità.",
+              "source": "The words seem to escape the complexity.",
+              "words": [
+                "Le",
+                "parole",
+                "sembrano",
+                "sfuggire",
+                "alla",
+                "complessità."
+              ]
+            },
+            {
+              "target": "Forse dipingiamo con parole invece di pennelli.",
+              "source": "Maybe we paint with words instead of brushes.",
+              "words": [
+                "Forse",
+                "dipingiamo",
+                "con",
+                "parole",
+                "invece",
+                "di",
+                "pennelli."
+              ]
+            },
+            {
+              "target": "Un ritratto non è solo un quadro, ma una storia senza fine.",
+              "source": "A portrait is not just a painting, but a story without an end.",
+              "words": [
+                "Un",
+                "ritratto",
+                "non",
+                "è",
+                "solo",
+                "un",
+                "quadro,",
+                "ma",
+                "una",
+                "storia",
+                "senza",
+                "fine."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1312785,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 3174,
+        "totalCompletionTokens": 1522,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 319680,
+            "promptTokens": 800,
+            "completionTokens": 296
+          },
+          {
+            "lessonNum": 2,
+            "ms": 287035,
+            "promptTokens": 859,
+            "completionTokens": 348
+          },
+          {
+            "lessonNum": 3,
+            "ms": 323398,
+            "promptTokens": 898,
+            "completionTokens": 310
+          }
+        ]
+      },
+      "generatedAt": "2026-05-31T20:30:09.646Z",
+      "updatedAt": "2026-05-31T20:30:09.646Z"
+    },
+    {
       "topic": "Amore e danza",
       "topicEmoji": "❤️",
       "userTopic": "Una volta ripresosi, Marco si era innamorato di Giulia, ma lei lo considerava la sua anima gemella nella danza. Amava Clara.",
@@ -19179,7 +20229,7 @@
             },
             {
               "target": "In Osttirol sprechen die Menschen ein Dialekt, der bairisch ist und stark slawisch klingt.",
-              "source": "In East Tyrol, people speak a dialect that is mostly Bavarian with a heavy Slavic accent.",
+              "source": "In East Tyrol, people speak a dialect that is mostly Bavarian with a strong Slavic influence.",
               "words": [
                 "In",
                 "Osttirol",
@@ -19464,7 +20514,13 @@
         ]
       },
       "generatedAt": "2026-05-06T05:21:18.226Z",
-      "updatedAt": "2026-05-08T08:02:11.978Z"
+      "updatedAt": "2026-05-31T20:03:17.762Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 894217,
+        "promptTokens": 2656,
+        "completionTokens": 1130
+      }
     },
     {
       "topic": "freedom above clouds",
@@ -33371,22 +34427,6 @@
       ],
       "flaggedAt": "2026-05-07T11:26:02.078Z"
     },
-    "East_Tyrol_Dialect:read_translate:Ich_bin_heute_gut,_danke!": {
-      "topic": "East Tyrol Dialect",
-      "type": "read_translate",
-      "target": "Ich bin heute gut, danke!",
-      "source": "I am well today, thank you!",
-      "correct": "I am well today, thank you!",
-      "choices": [
-        "In East Tyrol, people speak a dialect that is mostly Bavarian with a heavy Slavic accent.",
-        "I am well today, thank you!",
-        "My neighbor Peter is cleaning his hut in the morning.",
-        "Good morning, my friend!"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-08T08:35:02.188Z",
-      "comment": "correct German would be: Mir geht's heute gut, danke!"
-    },
     "Tuscan_Cuisine:read_translate:Cominceremo_con_un_antipasto_di_spezie_d": {
       "topic": "Tuscan Cuisine",
       "type": "read_translate",
@@ -34323,6 +35363,14 @@
     "c473465721": {
       "title": "Il Circo del Sole",
       "icon": "🎪"
+    },
+    "c1552183265": {
+      "title": "Constance und der Waldgeist",
+      "icon": "🌳"
+    },
+    "root:Ein Gedicht für Constanze": {
+      "title": "Constance und der Waldgeist",
+      "icon": "🌳"
     }
   }
 }

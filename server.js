@@ -197,6 +197,8 @@ const STORY_STYLES = {
   horror:        'Suspenseful, eerie atmosphere, foreboding.',
   action:        'Fast-paced, kinetic, short punchy sentences.',
   philosophical: 'Contemplative, questioning, abstract ideas.',
+  poem:          'a poem.',
+  dialogue:      'a dialogue.',
 };
 
 function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, dialect, writingStyle) {

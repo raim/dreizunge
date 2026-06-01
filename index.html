@@ -585,6 +585,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           <option value="horror">🕷️ Horror</option>
           <option value="action">⚡ Action</option>
           <option value="philosophical">🧠 Philosophical</option>
+          <option value="poem">📜 Poem</option>
+          <option value="dialogue">💬 Dialogue</option>
         </select>
         <span class="style-select-arrow">▾</span>
       </div>
@@ -918,6 +920,23 @@ function applyUIStrings() {
     // Each language names itself in its own language
     opt.text = L.flag + ' ' + (localizedLangName(opt.value, opt.value) || L.name);
   });
+  // Update diff-select option labels
+  const diffSel = document.getElementById('diff-select');
+  if (diffSel) {
+    const diffKeys = { '1': 'diff.beginner', '2': 'diff.intermediate', '3': 'diff.advanced', '4': 'diff.error_hunt' };
+    Array.from(diffSel.options).forEach(opt => {
+      if (diffKeys[opt.value]) opt.text = t(diffKeys[opt.value]);
+    });
+  }
+  // Update style-select option labels
+  const styleSel = document.getElementById('style-select');
+  if (styleSel) {
+    Array.from(styleSel.options).forEach(opt => {
+      const key = 'form.style.' + opt.value;
+      const label = t(key);
+      if (label && label !== key) opt.text = label;
+    });
+  }
   // Static flag banner
   _setText('static-flag-banner-text', t('lesson.flagged_count_plural', {n: ''}));
   // Form labels (static HTML)
@@ -1094,7 +1113,7 @@ function onDiffSelect(v){
 function restoreDiffSelect(){
   const sel=document.getElementById('diff-select'); if(sel) sel.value=APP.difficulty;
 }
-const VALID_STYLES=new Set(['creative','neutral','scientific','journalism','essay','children','funny','romantic','sensual','horror','action','philosophical']);
+const VALID_STYLES=new Set(['creative','neutral','scientific','journalism','essay','children','funny','romantic','sensual','horror','action','philosophical','poem','dialogue']);
 function onStyleSelect(v){
   APP.storyStyle=VALID_STYLES.has(v)?v:'creative'; saveStoryStyle();
   const sel=document.getElementById('style-select'); if(sel) sel.value=APP.storyStyle;

@@ -176,7 +176,8 @@
     "form.style.sensual": "Sensueel",
     "form.style.horror": "Horror",
     "form.style.action": "Actie",
-    "form.style.philosophical": "Filosofisch"
+    "form.style.philosophical": "Filosofisch",
+    "diff.error_hunt": "🔍 Opsporen van fouten — vind fouten in het verhaal"
   },
   "pt": {
     "app.tagline": "Aprenda vocabulário de qualquer tópico em qualquer idioma",
@@ -355,7 +356,8 @@
     "form.style.sensual": "Sensual",
     "form.style.horror": "Terror",
     "form.style.action": "Ação",
-    "form.style.philosophical": "Filosófico"
+    "form.style.philosophical": "Filosófico",
+    "diff.error_hunt": "🔍 Caça a erros — encontre os erros na história"
   },
   "fr": {
     "app.tagline": "Apprendre du vocabulaire sur n'importe quel sujet",
@@ -534,7 +536,8 @@
     "form.style.sensual": "🌹 Sensuel",
     "form.style.horror": "🕷️ Horreur",
     "form.style.action": "⚡ Action",
-    "form.style.philosophical": "🧠 Philosophique"
+    "form.style.philosophical": "🧠 Philosophique",
+    "diff.error_hunt": "🔍 Chasse aux erreurs — trouver les erreurs dans l'histoire"
   },
   "tr": {
     "furigana.show": "ふ Show furigana",
@@ -713,7 +716,8 @@
     "form.style.sensual": "Cins",
     "form.style.horror": "Korku",
     "form.style.action": "Eylem",
-    "form.style.philosophical": "Felsefi"
+    "form.style.philosophical": "Felsefi",
+    "diff.error_hunt": "🔎 Hata Avı — hikayedeki hataları bulun"
   },
   "hi": {
     "app.tagline": "किसी भी विषय में किसी भी भाषा में शब्दावली सीखें",
@@ -892,7 +896,8 @@
     "form.style.sensual": "🌹 कामुक",
     "form.style.horror": "🕷️ डरावनी",
     "form.style.action": "⚡ एक्शन",
-    "form.style.philosophical": "🧠 दार्शनिक"
+    "form.style.philosophical": "🧠 दार्शनिक",
+    "diff.error_hunt": "🔍 त्रुटि खोज - कहानी में गलतियाँ खोजें"
   },
   "de": {
     "app.tagline": "Vokabular für jedes Thema in jeder Sprache lernen",
@@ -1071,7 +1076,8 @@
     "form.style.sensual": "🌹 Sinnlich",
     "form.style.horror": "🕷️ Horror",
     "form.style.action": "⚡ Action",
-    "form.style.philosophical": "🧠 Philosophisch"
+    "form.style.philosophical": "🧠 Philosophisch",
+    "diff.error_hunt": "🔍 Fehler finden — finde Fehler in der Geschichte"
   },
   "ar": {
     "app.tagline": "تعلم المفردات لأي موضوع بأي لغة",
@@ -1250,7 +1256,8 @@
     "form.style.sensual": "🌹 جنسي",
     "form.style.horror": "🕷️ رعب",
     "form.style.action": "⚡ حركة",
-    "form.style.philosophical": "🧠 فلسفي"
+    "form.style.philosophical": "🧠 فلسفي",
+    "diff.error_hunt": "🔍 مطاردة الأخطاء — ابحث عن الأخطاء في القصة"
   },
   "en": {
     "app.tagline": "Learn vocabulary for any topic in any language",
@@ -1277,6 +1284,7 @@
     "diff.beginner": "🟢 Beginner — short sentences, basic vocabulary",
     "diff.intermediate": "🟡 Intermediate — natural phrases, varied grammar",
     "diff.advanced": "🔴 Advanced — complex sentences, idiomatic language",
+    "diff.error_hunt": "🔍 Error Hunt — find mistakes in the story",
     "lesson.start": "Start lesson",
     "lesson.start_n": "Start lesson {n}",
     "lesson.all_done": "All done! 🎉",
@@ -1599,7 +1607,8 @@
     "form.style.sensual": "🌹 Sensuell",
     "form.style.horror": "🕷️ Skräck",
     "form.style.action": "⚡ Action",
-    "form.style.philosophical": "🧠 Filosofisk"
+    "form.style.philosophical": "🧠 Filosofisk",
+    "diff.error_hunt": "🔍 Hitta fel — hitta misstag i berättelsen"
   },
   "ru": {
     "app.tagline": "Учите словарный запас по любой теме на любом языке",
@@ -1778,7 +1787,8 @@
     "form.style.sensual": "Сензуальный",
     "form.style.horror": "Ужасы",
     "form.style.action": "Действие",
-    "form.style.philosophical": "Философский"
+    "form.style.philosophical": "Философский",
+    "diff.error_hunt": "🔍 Охота за ошибками — найдите ошибки в рассказе"
   },
   "zh": {
     "app.tagline": "用任何语言学习任何主题的词汇",
@@ -1957,7 +1967,8 @@
     "form.style.sensual": "🌹 浪漫",
     "form.style.horror": "🕷️ 恐怖",
     "form.style.action": "⚡ 动作",
-    "form.style.philosophical": "🧠 哲学"
+    "form.style.philosophical": "🧠 哲学",
+    "diff.error_hunt": "🔍 错误猎人 — 找出故事中的错误"
   },
   "ko": {
     "app.tagline": "모든 주제의 어휘를 어떤 언어로든 배우세요",
@@ -2136,7 +2147,8 @@
     "form.style.sensual": "성적",
     "form.style.horror": "공포",
     "form.style.action": "액션",
-    "form.style.philosophical": "철학적"
+    "form.style.philosophical": "철학적",
+    "diff.error_hunt": "🔍 오류 찾기 — 이야기 속 오류 찾기"
   },
   "it": {
     "app.tagline": "Impara il vocabolario per qualsiasi argomento",
@@ -2315,7 +2327,8 @@
     "form.style.sensual": "🌹 Sensuale",
     "form.style.horror": "🕷️ Orribile",
     "form.style.action": "⚡ Azione",
-    "form.style.philosophical": "🧠 Filosofico"
+    "form.style.philosophical": "🧠 Filosofico",
+    "diff.error_hunt": "🔍 Caccia agli errori — trova gli errori nella storia"
   },
   "pl": {
     "app.tagline": "Ucz się słownictwa z każdego tematu w każdym języku",
@@ -2494,7 +2507,8 @@
     "form.style.sensual": "🌹 Zmysłowy",
     "form.style.horror": "🕷️ Horror",
     "form.style.action": "⚡ Akcja",
-    "form.style.philosophical": "🧠 Filozoficzny"
+    "form.style.philosophical": "🧠 Filozoficzny",
+    "diff.error_hunt": "🔍 Poluj na błędy — znajdź błędy w opowieści"
   },
   "es": {
     "app.tagline": "Aprender vocabulario de cualquier tema en cualquier idioma",
@@ -2673,7 +2687,8 @@
     "form.style.sensual": "Sensual",
     "form.style.horror": "Terror",
     "form.style.action": "Acción",
-    "form.style.philosophical": "Filosófico"
+    "form.style.philosophical": "Filosófico",
+    "diff.error_hunt": "🔍 Búsqueda de errores — encuentra los errores en la historia"
   },
   "ja": {
     "app.tagline": "あらゆるトピックの語彙をどんな言語でも学ぼう",
@@ -2852,7 +2867,8 @@
     "form.style.sensual": "🌹 官能的",
     "form.style.horror": "🕷️ ホラー",
     "form.style.action": "⚡ アクション",
-    "form.style.philosophical": "🧠 哲学"
+    "form.style.philosophical": "🧠 哲学",
+    "diff.error_hunt": "🔍 エラー探し - 物語の誤りを探す"
   },
   "he": {
     "app.backend": "백엔드:",
@@ -3031,7 +3047,8 @@
     "form.style.sensual": "🌹 סנסואלי",
     "form.style.horror": "🕷️ אימה",
     "form.style.action": "⚡ פעולה",
-    "form.style.philosophical": "🧠 פילוסופי"
+    "form.style.philosophical": "🧠 פילוסופי",
+    "diff.error_hunt": "🔍 חיפוש שגיאות — מצא שגיאות בסיפור"
   },
   "uk": {
     "app.backend": "Бек-енд:",
@@ -3210,7 +3227,8 @@
     "form.style.sensual": "🌹 Сенсуальний",
     "form.style.horror": "🕷️ Жах",
     "form.style.action": "⚡ Дія",
-    "form.style.philosophical": "🧠 Філософський"
+    "form.style.philosophical": "🧠 Філософський",
+    "diff.error_hunt": "🔍 Пошук помилок — знайти помилки в історії"
   },
   "cs": {
     "app.backend": "Backend:",
@@ -3389,7 +3407,8 @@
     "form.style.sensual": "🌹 Smyslný",
     "form.style.horror": "🕷️ Horor",
     "form.style.action": "⚡ Akční",
-    "form.style.philosophical": "🧠 Filozofický"
+    "form.style.philosophical": "🧠 Filozofický",
+    "diff.error_hunt": "🔍 Lov chyb — najděte chyby v příběhu"
   },
   "vi": {
     "app.backend": "Backend:",
@@ -3568,7 +3587,8 @@
     "form.style.sensual": "Dựa trên cảm giác",
     "form.style.horror": "Kinh dị",
     "form.style.action": "Hành động",
-    "form.style.philosophical": "Triết học"
+    "form.style.philosophical": "Triết học",
+    "diff.error_hunt": "🔍 Tìm lỗi — tìm lỗi trong câu chuyện"
   },
   "id": {
     "app.backend": "Backend:",
@@ -3747,7 +3767,8 @@
     "form.style.sensual": "Sensual",
     "form.style.horror": "Horor",
     "form.style.action": "Aksi",
-    "form.style.philosophical": "Filosofis"
+    "form.style.philosophical": "Filosofis",
+    "diff.error_hunt": "🔍 Cari Kesalahan — temukan kesalahan dalam cerita"
   },
   "ro": {
     "app.backend": "Backend:",
@@ -3926,7 +3947,8 @@
     "form.style.sensual": "🌹 Sensual",
     "form.style.horror": "🕷️ Horror",
     "form.style.action": "⚡ Acțiune",
-    "form.style.philosophical": "🧠 Filosofic"
+    "form.style.philosophical": "🧠 Filosofic",
+    "diff.error_hunt": "🔍 Căută erori — găsește greșelile în poveste"
   },
   "th": {
     "app.backend": "Backend:",
@@ -4105,7 +4127,8 @@
     "form.style.sensual": "เซ็กซี่",
     "form.style.horror": "สยอง",
     "form.style.action": "แอ็กชัน",
-    "form.style.philosophical": "ปรัชญา"
+    "form.style.philosophical": "ปรัชญา",
+    "diff.error_hunt": "🔎 ค้นหาข้อผิดพลาดในเรื่อง"
   },
   "el": {
     "furigana.show": "νομίστε την furigana",
@@ -4284,7 +4307,8 @@
     "form.style.sensual": "🌹 Σεξουαλικό",
     "form.style.horror": "🕷️ Φόβος",
     "form.style.action": "⚡ Δράση",
-    "form.style.philosophical": "🧠 Φιλοσοφικό"
+    "form.style.philosophical": "🧠 Φιλοσοφικό",
+    "diff.error_hunt": "🔍 Αναζήτηση σφαλμάτων — βρείτε λάθη στην ιστορία"
   },
   "fi": {
     "app.backend": "Tietojärjestelmä:",
@@ -4463,7 +4487,8 @@
     "form.style.sensual": "🌹 Sensuaalinen",
     "form.style.horror": "🕷️ Kauhueloku",
     "form.style.action": "⚡ Toiminnallinen",
-    "form.style.philosophical": "🧠 Filosofinen"
+    "form.style.philosophical": "🧠 Filosofinen",
+    "diff.error_hunt": "🔍 Virheiden metsästys — löydä virheet tarinassa"
   },
   "hu": {
     "app.backend": "Háttér:",
@@ -4642,7 +4667,8 @@
     "form.style.sensual": "Szenzorikus",
     "form.style.horror": "Horror",
     "form.style.action": "Akció",
-    "form.style.philosophical": "Filozófiai"
+    "form.style.philosophical": "Filozófiai",
+    "diff.error_hunt": "🔍 Hibakeresés – Keress a történetben"
   },
   "da": {
     "app.backend": "Backend:",
@@ -4821,7 +4847,8 @@
     "form.style.sensual": "🌹 Sensuel",
     "form.style.horror": "🕷️ Horror",
     "form.style.action": "⚡ Action",
-    "form.style.philosophical": "🧠 Filosofisk"
+    "form.style.philosophical": "🧠 Filosofisk",
+    "diff.error_hunt": "🔍 Fejljagt — Find fejl i historien"
   },
   "ca": {
     "app.backend": "Backend:",
@@ -5000,7 +5027,8 @@
     "form.style.sensual": "🌹 Sensual",
     "form.style.horror": "🕷️ Terror",
     "form.style.action": "⚡ Acció",
-    "form.style.philosophical": "🧠 Filosòfic"
+    "form.style.philosophical": "🧠 Filosòfic",
+    "diff.error_hunt": "🔍 Cerca errors — troba errors a la història"
   },
   "lb": {
     "app.tagline": "Leren vun de Wiert fir all Thema an all Sprooch",
@@ -5170,6 +5198,7 @@
     "form.style.sensual": "🌹 Sensuell",
     "form.style.horror": "🕷️ Horror",
     "form.style.action": "⚡ Action",
-    "form.style.philosophical": "🧠 Philosophesch"
+    "form.style.philosophical": "🧠 Philosophesch",
+    "diff.error_hunt": "🔍 Fehler suergen — fonnt Fehler am Text"
   }
 }
