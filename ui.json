@@ -4970,7 +4970,17 @@
     "lib.add_lesson_title": "Πρόσθεση μαθήματος σε αυτό το θέμα",
     "lib.add_lesson_done": "✓ Μάθημα προστεθέντηκε",
     "ex.type_in_placeholder": "Εισάγετε την απάντησή σας…",
-    "form.lesson_type_hdr": "Τύπος μαθήματος"
+    "form.lesson_type_hdr": "Τύπος μαθήματος",
+    "form.format.error_hunt": "🔍 Ποιότητα Έρευνα — ανακάλυψε σφάλματα στην παρασκευή",
+    "form.format.grammar": "🏷️ Γραμματικός — άρετος, πληροφορίες & πληθυσμοί",
+    "form.format.conjugation": "🔤 Συνταγματικός — μορφοποίηση λέξεων ανά άτομο",
+    "ex.badge.mcq_article": "Επιλογή του πληροφορίου",
+    "ex.badge.mcq_plural": "Επιλογή του πληθυσμού",
+    "ex.badge.type_plural": "Εισαγωγή του πληθυσμού",
+    "ex.badge.mcq_conjugation": "Επιλογή της μορφοποίησης του λεξικού",
+    "ex.badge.type_conjugation": "Εισαγωγή της μορφοποίησης του λεξικού",
+    "ex.mcq_article.q": "Ποιο είναι το πληροφορίο που πρέπει να προστεθεί στη \"{word}\"?",
+    "ex.mcq_plural.q": "Ποιος είναι ο πληθυσμός της \"{word}\"?"
   },
   "fi": {
     "app.backend": "Tietojärjestelmä:",
