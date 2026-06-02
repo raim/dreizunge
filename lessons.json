@@ -1,6 +1,777 @@
 {
   "lessons": [
     {
+      "topic": "Prozessskalierung in Bioreaktoren",
+      "topicEmoji": "🔬",
+      "userTopic": "es wurde schwierig als man den prozess skalieren wollte. in grossen kommerziellen reaktoren war die ausbeute nur gering. bioreaktoren muessen noch optimiert werden bezueglich der richtigen lichtzufuhr und begasung. ein hoher pH war notwendig fuer effizientes wachstum, aber schlecht fuer das produkt.",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 550,
+      "story": "Dr. Carter's reflection was interrupted by a series of emails from her colleagues in Germany. The messages detailed the challenges they faced when scaling up the process in commercial reactors. The yield was disappointingly low, and the bioreactors struggled to maintain the optimal conditions for both cyanobacterial growth and product synthesis. The emails highlighted the need for further optimization, particularly in terms of light exposure and aeration. They also noted that while a high pH was essential for efficient growth, it was detrimental to the production of 3-HP.\n\nDetermined to address these issues, Dr. Carter convened a virtual meeting with her German counterparts. The discussion was intense, with each team sharing their findings and proposing potential solutions. Dr. Carter suggested a series of experiments to fine-tune the light and gas supply, aiming to find a balance that would support both growth and product synthesis. She also proposed conducting pH trials to identify the optimal range for 3-HP production without compromising bacterial growth.\n\nThe team decided to collaborate on a pilot project, combining resources and expertise to develop a more efficient bioreactor system. Dr. Carter and her team in the United States would focus on optimizing the growth conditions, while the German team would handle the downstream processing and product analysis. They agreed to share regular updates and results, ensuring that the project remained on track and that any breakthroughs could be quickly integrated into the ongoing research.\n\nAs the teams worked together, the bioreactors continued to operate, their blue contents a symbol of the ongoing effort to harness nature's power for sustainable innovation. The challenges were significant, but the potential rewards—reduced reliance on petroleum, a more sustainable future—provided the motivation needed to push through the difficulties. The collaboration between the two teams represented a crucial step in the journey towards a more environmentally conscious industrial landscape.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 550 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Academic register, precise terminology, formal structure. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nr, 3-hydroxypropionic acid (3-HP). This compound could be further processed into a variety of biodegradable plastics, reducing reliance on petroleum-based products. The bioreactors, now humming with activity, produced 3-HP at a rate that exceeded initial expectations. The team conducted rigorous tests, confirming the quality and purity of the product, which was then sent for further processing.\n\nAs the project neared its conclusion, Dr. Carter reflected on the potential impact of her work. The ability to harness cyanobacteria for energy production and chemical synthesis represented a significant step towards a more sustainable future. The bioreactors, now a testament to human ingenuity and environmental stewardship, continued to operate, their blue contents a symbol of hope and innovation.\n\nNew topic: \"es wurde schwierig als man den prozess skalieren wollte. in grossen kommerziellen reaktoren war die ausbeute nur gering. bioreaktoren muessen noch optimiert werden bezueglich der richtigen lichtzufuhr und begasung. ein hoher pH war notwendig fuer effizientes wachstum, aber schlecht fuer das produkt.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Cyanobakterien für Energiegewinnung",
+      "storyStyle": "scientific",
+      "lessonFormat": "all_types",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Prozessskalierung",
+          "desc": "Schwierigkeiten bei der Skalierung, Optimierung, pH-Wert, Bioreaktoren",
+          "icon": "🔬",
+          "vocab": [
+            {
+              "target": "yield",
+              "source": "Ausbeute"
+            },
+            {
+              "target": "optimization",
+              "source": "Optimierung"
+            },
+            {
+              "target": "bioreactor",
+              "source": "Bioreaktor"
+            },
+            {
+              "target": "light exposure",
+              "source": "Lichtzufuhr"
+            },
+            {
+              "target": "aeration",
+              "source": "Begasung"
+            },
+            {
+              "target": "pH",
+              "source": "pH-Wert"
+            },
+            {
+              "target": "synthesis",
+              "source": "Synthese"
+            },
+            {
+              "target": "convene",
+              "source": "Veranstalten"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The yield was disappointingly low.",
+              "source": "Die Ausbeute war enttäuschend gering.",
+              "words": [
+                "The",
+                "yield",
+                "was",
+                "disappointingly",
+                "low."
+              ]
+            },
+            {
+              "target": "Bioreactors struggled to maintain optimal conditions.",
+              "source": "Bioreaktoren hatten Schwierigkeiten, die optimale Bedingungen aufrechtzuerhalten.",
+              "words": [
+                "Bioreactors",
+                "struggled",
+                "to",
+                "maintain",
+                "optimal",
+                "conditions."
+              ]
+            },
+            {
+              "target": "Optimization is needed, particularly in terms of light exposure.",
+              "source": "Optimierung ist notwendig, insbesondere hinsichtlich der Lichtzufuhr.",
+              "words": [
+                "Optimization",
+                "is",
+                "needed,",
+                "particularly",
+                "in",
+                "terms",
+                "of",
+                "light",
+                "exposure."
+              ]
+            },
+            {
+              "target": "A high pH is essential for efficient growth.",
+              "source": "Ein hoher pH-Wert ist für ein effizientes Wachstum notwendig.",
+              "words": [
+                "A",
+                "high",
+                "pH",
+                "is",
+                "essential",
+                "for",
+                "efficient",
+                "growth."
+              ]
+            },
+            {
+              "target": "Convene a virtual meeting with colleagues.",
+              "source": "Veranstalte eine virtuelle Besprechung mit Kollegen.",
+              "words": [
+                "Convene",
+                "a",
+                "virtual",
+                "meeting",
+                "with",
+                "colleagues."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "type": "conjugation",
+          "title": "became, had to, must be optimized, requires, was needed",
+          "desc": "es wurde schwierig, man musste den prozess skalieren, bioreaktoren muessen optimiert werden, die richtige lichtzufuhr und begasung erfordern, ein hoher pH war notwendig",
+          "icon": "🔬",
+          "conjugations": [
+            {
+              "infinitive": "became",
+              "source": "wurde",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "I became"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you became"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "he/she/it became"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "we became"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you became"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "they became"
+                }
+              ]
+            },
+            {
+              "infinitive": "had to",
+              "source": "musste",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "I had to"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you had to"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "he/she/it had to"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "we had to"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you had to"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "they had to"
+                }
+              ]
+            },
+            {
+              "infinitive": "must be optimized",
+              "source": "muessen optimiert werden",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "I must be optimized"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you must be optimized"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "he/she/it must be optimized"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "we must be optimized"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you must be optimized"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "they must be optimized"
+                }
+              ]
+            },
+            {
+              "infinitive": "requires",
+              "source": "erfordern",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "I require"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you require"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "he/she/it requires"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "we require"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you require"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "they require"
+                }
+              ]
+            },
+            {
+              "infinitive": "was needed",
+              "source": "war notwendig",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "I was needed"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you were needed"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "he/she/it was needed"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "we were needed"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "you were needed"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "they were needed"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Dr. Carter's reflection was interrupted by a series of emails from her colleagues in Germany. The messages detailed the challenges they faced when scaling up the process in comercial reactors. The yield was disappointingly low. and the biorectors struggled to maintain the optimal conditions for both cyanobacterial growth and product synthesis. The emails highlighted the need for further optimization, particularly in terms of light exposure and aeration. They also noted that while a high pH was essential for efficient growth, it was detrimental to the production of 3-HP.\n\nDetermined to address these issues, Dr. Carter convened a virtual meeting with her German counterparts. The discussion was intense, with each team sharing their findings and proposing potential solution. Dr. Carter suggested a series of experiments to fine-tune the light and gas supply, aiming to find a balance that would support both growth and product synthesis. She also proposed conducting pH trials to identify the optimal range for 3-HP production without compromising bacterial growth.\n\nThe team decided to collaborate on a pilot project, combining resources and expertise to develop a more efficient bioreactor system. Dr. Carter and her team in the United States would focus on optimizing the growth conditions, while the German team would handle the downstream processing and product analysis. They agreed to share regular updates and results, ensuring that the project remained on track and that any breakthroughs could be quickly integrated into the ongoing research.\n\nAs the teams worked together, the bioreactors continued to operate, their blue contents a symbol of the ongoing effort to harness nature's power for sustainable innovation. The challenges were significant, but the potential rewards—reduced reliance on petroleum, a more sustainable future—provided the motivation needed to push through the difficulties. The collaboration between the two teams represented a crucial step in the journey towards a more environmentally conscious industrial landscape.",
+          "edits": [
+            {
+              "type": "spelling",
+              "find": "commercial",
+              "replace": "comercial",
+              "reason": "Common misspelling of 'commercial'"
+            },
+            {
+              "type": "grammar",
+              "find": "The yield was disappointingly low,",
+              "replace": "The yield was disappointingly low.",
+              "reason": "Incorrect verb form for singular subject 'yield'"
+            },
+            {
+              "type": "spelling",
+              "find": "bioreactors",
+              "replace": "biorectors",
+              "reason": "Typical misspelling of 'bioreactors'"
+            },
+            {
+              "type": "grammar",
+              "find": "The discussion was intense, with each team sharing their findings and proposing potential solutions.",
+              "replace": "The discussion was intense, with each team sharing their findings and proposing potential solution.",
+              "reason": "Singular noun 'solution' should match singular verb 'proposing'"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1624203,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2599,
+        "totalCompletionTokens": 1908,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 242096,
+            "promptTokens": 712,
+            "completionTokens": 341
+          },
+          {
+            "promptTokens": 409,
+            "completionTokens": 852
+          },
+          {
+            "promptTokens": 783,
+            "completionTokens": 312
+          }
+        ]
+      },
+      "generatedAt": "2026-06-02T14:26:16.238Z",
+      "updatedAt": "2026-06-02T14:26:16.238Z"
+    },
+    {
+      "topic": "Cyanobakterien für Energiegewinnung",
+      "topicEmoji": "🌱",
+      "userTopic": "wie kann man cyanobakterien dazu verwenden energie zu gewinnen, oder deren energie zu nutzen um biotechnologisch enzyme oder bestimmte chemikalien herzustellen?",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 550,
+      "story": "In the heart of a bustling biotechnology research facility, Dr. Eliza Carter stood before a vast array of glass tanks, each containing a vibrant blue liquid. These tanks housed a unique and promising microorganism: cyanobacteria, known for their ability to harness sunlight and convert it into energy through photosynthesis. Dr. Carter's research aimed to harness this natural process to generate renewable energy, a critical step in the transition towards sustainable practices.\n\nCyanobacteria, with their ancient lineage and remarkable adaptability, offered a promising solution. They could be engineered to produce hydrogen, a clean and efficient fuel, through a process called photobiological hydrogen production. Dr. Carter's team had already optimized the conditions for these bacteria, ensuring they thrived under controlled light and nutrient-rich environments. The tanks, each a square meter in size, were arranged in a meticulously planned configuration, maximizing the surface area for sunlight exposure.\n\nOne morning, as the first rays of sunlight pierced through the skylights, Dr. Carter initiated the process. The cyanobacteria, already primed with the necessary genetic modifications, began to photosynthesize, their blue pigments shimmering under the light. As the day progressed, the tanks bubbled gently, releasing hydrogen gas into a collection system. This process, while simple in its basic principle, required precise control over environmental factors such as light intensity, temperature, and nutrient supply.\n\nThe success of this project did not end with energy production. Cyanobacteria also held the potential to produce enzymes and specific chemicals through metabolic engineering. Dr. Carter's team had identified certain cyanobacterial strains capable of synthesizing biofuels and pharmaceuticals. By introducing specific genes, they could tailor the bacteria to produce these compounds in large quantities. The bioreactors, now equipped with advanced monitoring systems, tracked the metabolic activity in real-time, allowing for adjustments to optimize yield.\n\nOne of the most promising applications was the production of a biofuel precursor, 3-hydroxypropionic acid (3-HP). This compound could be further processed into a variety of biodegradable plastics, reducing reliance on petroleum-based products. The bioreactors, now humming with activity, produced 3-HP at a rate that exceeded initial expectations. The team conducted rigorous tests, confirming the quality and purity of the product, which was then sent for further processing.\n\nAs the project neared its conclusion, Dr. Carter reflected on the potential impact of her work. The ability to harness cyanobacteria for energy production and chemical synthesis represented a significant step towards a more sustainable future. The bioreactors, now a testament to human ingenuity and environmental stewardship, continued to operate, their blue contents a symbol of hope and innovation.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 550 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Academic register, precise terminology, formal structure.\n\nWrite a story for the topic: \"wie kann man cyanobakterien dazu verwenden energie zu gewinnen, oder deren energie zu nutzen um biotechnologisch enzyme oder bestimmte chemikalien herzustellen?\". Plain prose, no headings.",
+      "storyStyle": "scientific",
+      "lessonFormat": "all_types",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Cyanobakterien und ihre Anwendung",
+          "desc": "Energiegewinnung und Biotechnologie",
+          "icon": "🔬",
+          "vocab": [
+            {
+              "target": "harness",
+              "source": "ausnutzen"
+            },
+            {
+              "target": "photosynthesis",
+              "source": "Photosynthese"
+            },
+            {
+              "target": "enzyme",
+              "source": "Enzym"
+            },
+            {
+              "target": "optimization",
+              "source": "Optimierung"
+            },
+            {
+              "target": "hydrogen",
+              "source": "Wasserstoff"
+            },
+            {
+              "target": "photobiological",
+              "source": "photobiologisch"
+            },
+            {
+              "target": "production",
+              "source": "Produktion"
+            },
+            {
+              "target": "bacteria",
+              "source": "Bakterien"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Cyanobacteria can be used to produce hydrogen.",
+              "source": "Cyanobakterien können Wasserstoff produzieren.",
+              "words": [
+                "Cyanobacteria",
+                "can",
+                "be",
+                "used",
+                "to",
+                "produce",
+                "hydrogen."
+              ]
+            },
+            {
+              "target": "The process is called photobiological hydrogen production.",
+              "source": "Der Prozess wird photobiologische Wasserstoffproduktion genannt.",
+              "words": [
+                "The",
+                "process",
+                "is",
+                "called",
+                "photobiological",
+                "hydrogen",
+                "production."
+              ]
+            },
+            {
+              "target": "Dr. Carter optimized the conditions for these bacteria.",
+              "source": "Dr. Carter optimierte die Bedingungen für diese Bakterien.",
+              "words": [
+                "Dr.",
+                "Carter",
+                "optimized",
+                "the",
+                "conditions",
+                "for",
+                "these",
+                "bacteria."
+              ]
+            },
+            {
+              "target": "Photosynthesis is a natural process that converts sunlight into energy.",
+              "source": "Die Photosynthese ist ein natürlicher Prozess, der Sonnenlicht in Energie umwandelt.",
+              "words": [
+                "Photosynthesis",
+                "is",
+                "a",
+                "natural",
+                "process",
+                "that",
+                "converts",
+                "sunlight",
+                "into",
+                "energy."
+              ]
+            },
+            {
+              "target": "Enzymes play a crucial role in the production of certain chemicals.",
+              "source": "Enzyme spielen eine wichtige Rolle bei der Herstellung bestimmter Chemikalien.",
+              "words": [
+                "Enzymes",
+                "play",
+                "a",
+                "crucial",
+                "role",
+                "in",
+                "the",
+                "production",
+                "of",
+                "certain",
+                "chemicals."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "grammar",
+          "title": "Cyanobacteria and Energy",
+          "desc": "Nouns related to cyanobacteria and energy usage",
+          "icon": "🔬",
+          "grammar": [
+            {
+              "target": "enzyme",
+              "source": "Enzym",
+              "gender": "n",
+              "article": "the",
+              "plural": "enzymes"
+            },
+            {
+              "target": "chemical",
+              "source": "Chemikalie",
+              "gender": "f",
+              "article": "the",
+              "plural": "chemicals"
+            },
+            {
+              "target": "energy",
+              "source": "Energie",
+              "gender": "f",
+              "article": "the",
+              "plural": "energies"
+            },
+            {
+              "target": "process",
+              "source": "Prozess",
+              "gender": "m",
+              "article": "the",
+              "plural": "processes"
+            },
+            {
+              "target": "technology",
+              "source": "Technologie",
+              "gender": "f",
+              "article": "the",
+              "plural": "technologies"
+            },
+            {
+              "target": "production",
+              "source": "Produktion",
+              "gender": "f",
+              "article": "the",
+              "plural": "productions"
+            },
+            {
+              "target": "application",
+              "source": "Anwendung",
+              "gender": "f",
+              "article": "the",
+              "plural": "applications"
+            },
+            {
+              "target": "method",
+              "source": "Methode",
+              "gender": "f",
+              "article": "the",
+              "plural": "methods"
+            }
+          ]
+        },
+        {
+          "id": 6,
+          "type": "conjugation",
+          "title": "use cyanobacteria",
+          "desc": "how to use or utilize cyanobacteria",
+          "icon": "🔬",
+          "conjugations": [
+            {
+              "infinitive": "use",
+              "source": "verwenden",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "use"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "use"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "uses"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "use"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "use"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "use"
+                }
+              ]
+            },
+            {
+              "infinitive": "utilize",
+              "source": "nutzen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "utilize"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "utilize"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "utilizes"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "utilize"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "utilize"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "utilize"
+                }
+              ]
+            },
+            {
+              "infinitive": "convert",
+              "source": "umwandeln",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "convert"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "convert"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "converts"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "convert"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "convert"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "convert"
+                }
+              ]
+            },
+            {
+              "infinitive": "produce",
+              "source": "herstellen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "produce"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "produce"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "produces"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "produce"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "produce"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "produce"
+                }
+              ]
+            },
+            {
+              "infinitive": "extract",
+              "source": "extrahieren",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "extract"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "extract"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "extracts"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "extract"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "extract"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "extract"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "In the heart of a bustling biotecnology research facility, Dr. Eliza Carter stood before a vast array of glass tanks, each containing a vibrant blue liquid. This tanks housed a unique and promising microorganism: cyanobacteria, known for their ability to harness sunlight and convert it into energy through photosynthesis. Dr. Carter's research aimed to harness this natural process to generate renewable energy, a critical step in the transition towards sustainable practices.\n\nCyanobacteria, with their ancient lineage and remarkable adaptability, offered a promising solution. They could be engineered to produce hydrogen, a clean and efficient fuel, through the process called photobiological hydrogen production. Dr. Carter's team had already optimized the conditions for these bacteria, ensuring they thrived under controlled light and nutrient-rich environments. The tanks, each a square meter in size, were arranged in a meticulously planned configuration, maximizing the surface area for sunlight exposure.\n\nOne morning, as the first rays of sunlight pierced through the skylights, Dr. Carter initiated the process. The cyanobacteria, already primed with the necessary genetic modifications, began to photosynthesize, their blue pigments shimmering under the light. As the day progressed, the tanks bubbled gently, releasing hydrogen gas into a collection system. This process, while simple in its basic principle, required precise control over environmental factors such as light intensity, temperature, and nutrient supply.\n\nThe success of this project did not end with energy production. Cyanobacteria also held the potential to produce enzymes and specific chemicals through metabolic engineering. Dr. Carter's team had identified certain cyanobacterial strains capable of synthesizing biofuels and pharmaceuticals. By introducing specific genes, they could tailor the bacteria to produce these compounds in large quantities. The bioreactor, now equipped with advanced monitoring systems, tracked the metabolic activity in real-time, allowing for adjustments to optimize yield.\n\nOne of the most promising applications was the production of a biofuel precursor, 3-hydroxypropionic acid (3-HP). This compound could be further processed into a variety of biodegradable plastics, reducing reliance on petroleum-based products. The bioreactors, now humming with activity, produced 3-HP at a rate that exceeded initial expectations. The team conducted rigorous tests, confirming the quality and purity of the product, which was then sent for further processing.\n\nAs the project neared its conclusion, Dr. Carter reflected on the potential impact of her work. The ability to harness cyanobacteria for energy production and chemical synthesis represented a significant step towards a more sustainable future. The bioreactors, now a testament to human ingenuity and environmental stewardship, continued to operate, their blue contents a symbol of hope and innovation.",
+          "edits": [
+            {
+              "type": "grammar",
+              "find": "These tanks",
+              "replace": "This tanks",
+              "reason": "Subject-verb agreement: 'These tanks' should be 'These tanks are'"
+            },
+            {
+              "type": "spelling",
+              "find": "biotechnology",
+              "replace": "biotecnology",
+              "reason": "Typo: 'biotechnology' should be 'biotechnology'"
+            },
+            {
+              "type": "grammar",
+              "find": "through a process",
+              "replace": "through the process",
+              "reason": "Article missing: 'through the process'"
+            },
+            {
+              "type": "spelling",
+              "find": "bioreactors",
+              "replace": "bioreactor",
+              "reason": "Plural error: 'bioreactors' should be 'bioreactors'"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1253722,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2907,
+        "totalCompletionTokens": 2405,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 235237,
+            "promptTokens": 670,
+            "completionTokens": 370
+          },
+          {
+            "promptTokens": 511,
+            "completionTokens": 456
+          },
+          {
+            "promptTokens": 364,
+            "completionTokens": 731
+          },
+          {
+            "promptTokens": 968,
+            "completionTokens": 260
+          }
+        ]
+      },
+      "generatedAt": "2026-06-02T13:22:22.910Z",
+      "updatedAt": "2026-06-02T13:22:22.910Z"
+    },
+    {
       "topic": "Interview Drinks",
       "topicEmoji": "🌙",
       "userTopic": "we understood each other well, and i think i landed a job; after the interview we went for some drinks in a bar. i don't drink alcohol but Claude got quite drunk.",
@@ -37596,6 +38367,16 @@
       ],
       "words": [],
       "flaggedAt": "2026-06-01T13:01:42.306Z"
+    },
+    "Prozessskalierung_in_Bioreakto:type_conjugation:muessen_optimiert_werden": {
+      "topic": "Prozessskalierung in Bioreaktoren",
+      "type": "type_conjugation",
+      "target": "",
+      "source": "muessen optimiert werden",
+      "correct": "we must be optimized",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-06-02T14:38:16.280Z"
     }
   },
   "storylines": {
@@ -37817,6 +38598,14 @@
     },
     "c2032356003": {
       "title": "Mathematician Meets AI",
+      "icon": "💡"
+    },
+    "c69534313": {
+      "title": "Energie aus Licht",
+      "icon": "🌿"
+    },
+    "root:Cyanobakterien für Energiegewinnung": {
+      "title": "Energie aus Blau",
       "icon": "💡"
     }
   }
