@@ -30550,7 +30550,7 @@
           "sentences": [
             {
               "target": "Le vene del collo pulsavano.",
-              "source": "The veins on her neck were pulsing.",
+              "source": "Her neck veins pulsed.",
               "words": [
                 "Le",
                 "vene",
@@ -30742,7 +30742,13 @@
         ]
       },
       "generatedAt": "2026-05-03T08:56:11.486Z",
-      "updatedAt": "2026-05-05T09:53:54.260Z"
+      "updatedAt": "2026-06-02T18:29:03.282Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 97738,
+        "promptTokens": 848,
+        "completionTokens": 157
+      }
     },
     {
       "topic": "alessia turns into a zombie, controlled by the fungus",
@@ -30904,8 +30910,7 @@
             },
             {
               "target": "fungi",
-              "source": "fungi",
-              "pron": "fun-jee"
+              "source": "fungi"
             },
             {
               "target": "sintomi",
@@ -31139,7 +31144,13 @@
         ]
       },
       "generatedAt": "2026-05-03T08:25:28.736Z",
-      "updatedAt": "2026-05-05T09:53:54.264Z"
+      "updatedAt": "2026-06-02T18:25:37.585Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 88399,
+        "promptTokens": 834,
+        "completionTokens": 118
+      }
     },
     {
       "topic": "the fungus spreads to the brain",
@@ -31173,8 +31184,7 @@
             },
             {
               "target": "mal di",
-              "source": "headache",
-              "pron": "MAHL DEE"
+              "source": "headache"
             },
             {
               "target": "svegliarsi",
@@ -31366,8 +31376,7 @@
             },
             {
               "target": "dolore di",
-              "source": "headache",
-              "pron": "DOH-lre DEE"
+              "source": "headache"
             },
             {
               "target": "svegliarsi",
@@ -31616,7 +31625,13 @@
         ]
       },
       "generatedAt": "2026-05-02T22:28:57.323Z",
-      "updatedAt": "2026-05-05T09:53:54.268Z"
+      "updatedAt": "2026-06-02T18:22:02.707Z",
+      "repairStats": {
+        "repairCount": 2,
+        "totalMs": 248338,
+        "promptTokens": 1891,
+        "completionTokens": 364
+      }
     },
     {
       "topic": "food poisoning in the hospital",
@@ -35636,12 +35651,12 @@
       },
       "generatedAt": "2026-04-29T16:14:36.266Z",
       "repairStats": {
-        "repairCount": 3,
-        "totalMs": 475824,
-        "promptTokens": 1709,
-        "completionTokens": 271
+        "repairCount": 4,
+        "totalMs": 617819,
+        "promptTokens": 2561,
+        "completionTokens": 331
       },
-      "updatedAt": "2026-05-05T09:53:54.372Z"
+      "updatedAt": "2026-06-02T18:16:20.835Z"
     },
     {
       "topic": "table tennis",
@@ -36749,108 +36764,6 @@
       ],
       "words": [],
       "flaggedAt": "2026-05-02T19:54:00.824Z"
-    },
-    "the_fungus_spreads_to_the_brai:mcq_en_it:mal_di": {
-      "topic": "the fungus spreads to the brain",
-      "type": "mcq_source_target",
-      "target": "mal di",
-      "source": "headache",
-      "correct": "mal di",
-      "choices": [
-        "svegliarsi",
-        "preoccupata",
-        "mal di",
-        "guardarsi intorno"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-03T06:18:15.964Z",
-      "comment": "testa missing"
-    },
-    "the_fungus_spreads_to_the_brai:listen_mcq:mal_di": {
-      "topic": "the fungus spreads to the brain",
-      "type": "listen_mcq",
-      "target": "mal di",
-      "source": "",
-      "correct": "headache",
-      "choices": [
-        "fungi",
-        "headache",
-        "stomach",
-        "sick"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-03T06:18:35.441Z"
-    },
-    "the_fungus_spreads_to_the_brai:listen_mcq:dolore_di": {
-      "topic": "the fungus spreads to the brain",
-      "type": "listen_mcq",
-      "target": "dolore di",
-      "source": "",
-      "correct": "headache",
-      "choices": [
-        "pain",
-        "wake up",
-        "sick",
-        "headache"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-03T06:22:36.118Z",
-      "comment": "incomplete italian, or skip di, so it's just pain"
-    },
-    "alessia_turns_into_a_zombie,_c:mcq_en_it:fungi": {
-      "topic": "alessia turns into a zombie, controlled by the fungus",
-      "type": "mcq_source_target",
-      "target": "fungi",
-      "source": "fungi",
-      "correct": "fungi",
-      "choices": [
-        "fungi",
-        "intossicazione",
-        "tossine",
-        "esaminare"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-03T08:32:58.870Z",
-      "comment": "funghi"
-    },
-    "alessia_sees_the_blood_pumping:order:Le_vene_del_collo_pulsavano.": {
-      "topic": "alessia sees the blood pumping in marcos arteries",
-      "type": "order",
-      "target": "Le vene del collo pulsavano.",
-      "source": "Her neck veins pulsed.",
-      "correct": "Le vene del collo pulsavano.",
-      "choices": [],
-      "words": [
-        "pulsavano.",
-        "Le",
-        "pulsare",
-        "vene",
-        "collo",
-        "del",
-        "pulsare"
-      ],
-      "flaggedAt": "2026-05-03T09:04:43.720Z",
-      "comment": "\"Her neck ...\": Her is missing in italian"
-    },
-    "pilze_suchen:order:Forra_i_mushrumpi_nel_bosco.": {
-      "topic": "pilze suchen",
-      "type": "order",
-      "target": "Forra i mushrumpi nel bosco.",
-      "source": "Forage for mushrooms in the forest.",
-      "correct": "Forra i mushrumpi nel bosco.",
-      "choices": [],
-      "words": [
-        "bosco.",
-        "Forra",
-        "nel",
-        "luce",
-        "i",
-        "La",
-        "mushrumpi",
-        "luce"
-      ],
-      "flaggedAt": "2026-05-03T16:30:51.967Z",
-      "comment": "mushrumpi -> funghi"
     },
     "italian_recipes_from_nonna:listen_mcq:shelves": {
       "topic": "italian recipes from nonna",
