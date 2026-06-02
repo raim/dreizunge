@@ -1,6 +1,1218 @@
 {
   "lessons": [
     {
+      "topic": "הומור יהודי",
+      "topicEmoji": "🎭",
+      "userTopic": "ההומור היהודי מפורסם, החל ממועדוני הקומדיה הווינאים של שנות ה-20 ועד לניו יורק והוליווד. מישהו מספר לנו בדיחה, גרסה מודרנית ומטא-הומוריסטית לקלאסיקה: כומר, רב ואימאם נכנסים לבר. הברמן שואל: \"זו בדיחה?\"",
+      "lang": "en",
+      "srcLang": "he",
+      "difficulty": 4,
+      "storyLen": 300,
+      "story": "Martin paused, his mind wandering to the vibrant world of Jewish humor, a thread that wove through the fabric of history. “Tell us a modern, meta-humorous take on a classic joke,” he suggested, his eyes twinkling with curiosity. “A rabbi, a priest, and an imam walk into a bar. The bartender asks, ‘Is this a joke?’”\n\nThe rain had slowed to a gentle patter, and the café around them seemed to come alive with the warmth of their shared laughter. “Sure,” Martin continued, “let’s give it a try. The rabbi says, ‘Of course it’s a joke. We’re in a bar, after all. But I’ll tell you what, let’s make it a good one. I’ll start: I’m here to discuss the eternal question of faith and reason. What do you think, priest and imam?’”\n\nThe priest leaned forward, his eyes narrowing in mock seriousness. “Well, rabbi, I’ve always believed that faith is a matter of the heart, not the head. But I suppose we can play along. What’s your take, imam?”\n\nThe imam nodded, his voice steady. “Indeed, faith is a journey of the soul. But let’s see where this goes. So, rabbi, what’s your point?”\n\nMartin chuckled, enjoying the playful banter. “Alright, let’s make it a bit meta. The rabbi replies, ‘Well, I’m here to discuss the eternal question of faith and reason, but I’m also here to remind you that sometimes, the best way to find answers is to laugh at the questions. So, what do you think, priest and imam? Is this a joke, or are we really here to talk about something profound?’”\n\nThe bartender, who had been listening intently, finally chimed in with a smile. “You know, I’ve been thinking about this. Maybe it’s both. Sometimes, the most profound questions are best answered with a good laugh. And sometimes, the best laughs come from the most profound questions.”",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nerving and teaching about the Holocaust.”\n\nMartin nodded, his eyes reflecting the weight of the conversation. “And Britain,” he added, “has a long and intertwined history with both Germany and Israel. The British Mandate in Palestine, the Kindertransport, and the role of the British military in post-war Germany—these are all part of a complex narrative. Britain’s relationship with Israel is often seen through the lens of historical support, but it’s also marked by periods of tension and misunderstanding.”\n\nAs the rain continued to fall, their conversation flowed, weaving through the intricate layers of history and the delicate balance of present-day relations. The café around them seemed to fade, leaving only the two friends, their voices blending into the tapestry of their shared history.\n\nNew topic: \"ההומור היהודי מפורסם, החל ממועדוני הקומדיה הווינאים של שנות ה-20 ועד לניו יורק והוליווד. מישהו מספר לנו בדיחה, גרסה מודרנית ומטא-הומוריסטית לקלאסיקה: כומר, רב ואימאם נכנסים לבר. הברמן שואל: \"זו בדיחה?\"\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "בבלוב",
+      "lessons": [
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Martin paused, his mind wandered to the vibrant world of Jewish humor, a thred that wove through the fabric of history. “Tell us a modern, meta-humorous take on a classic joke,” he suggested, his eyes twinklingly with curiosity. “A rabbi, a priest, and an imah walk into a bar. The bartender asks, ‘Is this a joke?’”\n\nThe rain had slowed to a gentle patter, and the café around them seemed to come alive with the warmth of their shared laughter. “Sure,” Martin continued, “let’s give it a try. The rabbi says, ‘Of course it’s a joke. We’re in a bar, after all. But I’ll tell you what, let’s make it a good one. I’ll start: I’m here to discuss the eternal question of faith and reason. What do you think, priest and imam?’”\n\nThe priest leaned forward, his eyes narrowing in mock-seriousness. “Well, rabbi, I’ve always believed that faith is a matter of the heart, not the head. But I suppose we can play along. What’s your take, imam?”\n\nThe imam nodded, his voice steady. “Indeed, faith is a journey of the soul. But let’s see where this goes. So, rabbi, what’s your point?”\n\nMartin chuckled, enjoying the playful banter. “Alright, let’s make it a bit meta. The rabbi replies, ‘Well, I’m here to discuss the eternal question of faith and reason, but I’m also here to remind you that sometimes, the best way to find answers is to laugh at the questions. So, what do you think, priest and imam? Is this a joke, or are we really here to talk about something profound?’”\n\nThe bartender, who had been listening intently, finally chimed in with a smile. “You know, I’ve been thinking about this. Maybe it’s both. Sometimes, the most profound questions are best answered with a good laugh. And sometimes, the best laughs come from the most profound questions.”",
+          "edits": [
+            {
+              "type": "spelling",
+              "find": "wandering",
+              "replace": "wandered",
+              "reason": "past tense needed for 'wander'"
+            },
+            {
+              "type": "spelling",
+              "find": "thread",
+              "replace": "thred",
+              "reason": "common misspelling of 'thread'"
+            },
+            {
+              "type": "grammar",
+              "find": "twinkling",
+              "replace": "twinklingly",
+              "reason": "needs to be an adverb"
+            },
+            {
+              "type": "grammar",
+              "find": "mock seriousness",
+              "replace": "mock-seriousness",
+              "reason": "should be a singular noun"
+            },
+            {
+              "type": "spelling",
+              "find": "imam",
+              "replace": "imah",
+              "reason": "common misspelling of 'imam'"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 639656,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1598,
+        "totalCompletionTokens": 741,
+        "lessons": [
+          {
+            "promptTokens": 846,
+            "completionTokens": 229
+          }
+        ]
+      },
+      "generatedAt": "2026-05-28T14:24:20.788Z",
+      "updatedAt": "2026-05-28T14:24:20.788Z"
+    },
+    {
+      "topic": "בבלוב",
+      "topicEmoji": "📖",
+      "userTopic": "בביקור באדינבורו אנו משוחחים על היחסים המורכבים בין ישראל לגרמניה ולבריטניה, ועל ההיסטוריה היהודית הארוכה באירופה.",
+      "lang": "en",
+      "srcLang": "he",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "In the quiet of a rainy afternoon in Edinburgh, Sarah and her German friend, Martin, found themselves sitting in a cozy café, sipping tea and discussing the complex web of relationships between Israel, Germany, and Britain. The rain outside seemed to mirror the somber yet hopeful atmosphere of their conversation. Sarah, a historian, had recently visited Berlin and was fascinated by the city’s transformation from a symbol of division to a place of reconciliation and understanding. She shared her insights with Martin, who had grown up in a family deeply affected by the Holocaust.\n\n“Germany,” Sarah began, “has undergone a remarkable journey. From the horrors of the past, they’ve moved towards a future of remembrance and redemption. The German government and society have made significant efforts to acknowledge their history and ensure it’s not repeated. The Yad Vashem museum in Jerusalem is a testament to this commitment, and it’s fascinating to see how Germany collaborates with Israel in preserving and teaching about the Holocaust.”\n\nMartin nodded, his eyes reflecting the weight of the conversation. “And Britain,” he added, “has a long and intertwined history with both Germany and Israel. The British Mandate in Palestine, the Kindertransport, and the role of the British military in post-war Germany—these are all part of a complex narrative. Britain’s relationship with Israel is often seen through the lens of historical support, but it’s also marked by periods of tension and misunderstanding.”\n\nAs the rain continued to fall, their conversation flowed, weaving through the intricate layers of history and the delicate balance of present-day relations. The café around them seemed to fade, leaving only the two friends, their voices blending into the tapestry of their shared history.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English.\n\nWrite a story for the topic: \"בביקור באדינבורו אנו משוחחים על היחסים המורכבים בין ישראל לגרמניה ולבריטניה, ועל ההיסטוריה היהודית הארוכה באירופה.\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "בביקור באדינבורו",
+          "desc": "היחסים המורכבים בין ישראל לגרמניה ולבריטניה, וההיסטוריה היהודית באירופה",
+          "icon": "☕️",
+          "vocab": [
+            {
+              "target": "remarkable",
+              "source": "מרתק"
+            },
+            {
+              "target": "journey",
+              "source": "מסע"
+            },
+            {
+              "target": "horrors",
+              "source": "הוראות"
+            },
+            {
+              "target": "future",
+              "source": "עתיד"
+            },
+            {
+              "target": "remembrance",
+              "source": "זכרון"
+            },
+            {
+              "target": "redemption",
+              "source": "חנוכת"
+            },
+            {
+              "target": "government",
+              "source": "ממשלה"
+            },
+            {
+              "target": "society",
+              "source": " общество"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "הגרמנים עברו מסע ממרתק מה עברו את העבר.",
+              "source": "The Germans underwent a remarkable journey from the horrors of the past.",
+              "words": [
+                "הגרמנים",
+                "עברו",
+                "מסע",
+                "ממרתק",
+                "מה",
+                "עברו",
+                "את",
+                "העבר."
+              ]
+            },
+            {
+              "target": "הממשלה וה общество גרמו לשינויים משמעותיים.",
+              "source": "The government and society have made significant changes.",
+              "words": [
+                "הממשלה",
+                "וה",
+                "общество",
+                "גרמו",
+                "לשינויים",
+                "משמעותיים."
+              ]
+            },
+            {
+              "target": "היהודים היו חלק מההיסטוריה האירופית הארוכה.",
+              "source": "The Jews were part of the long European history.",
+              "words": [
+                "היהודים",
+                "היו",
+                "חלק",
+                "מההיסטוריה",
+                "האירופית",
+                "הארוכה."
+              ]
+            },
+            {
+              "target": "היה זה יום חם ורAINY, בשעה שלש בערב.",
+              "source": "It was a rainy afternoon at three o'clock in the afternoon.",
+              "words": [
+                "היה",
+                "זה",
+                "יום",
+                "חם",
+                "ורAINY,",
+                "בשעה",
+                "שלש",
+                "בערב."
+              ]
+            },
+            {
+              "target": "היא שיחקה עם הרAIN, כמו אם היא בת קטנה.",
+              "source": "She played with the rain, as if she were a little girl.",
+              "words": [
+                "היא",
+                "שיחקה",
+                "עם",
+                "הרAIN,",
+                "כמו",
+                "אם",
+                "היא",
+                "בת",
+                "קטנה."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "היחסים המורכבים",
+          "desc": "ה kompleksivim hatarhim beeretz yisra'el",
+          "icon": "🤝",
+          "vocab": [
+            {
+              "target": "transformation",
+              "source": "ההשתנות"
+            },
+            {
+              "target": "symbol",
+              "source": "סמל"
+            },
+            {
+              "target": "division",
+              "source": "פרישה"
+            },
+            {
+              "target": "reconciliation",
+              "source": "שלום"
+            },
+            {
+              "target": "understanding",
+              "source": "הבנה"
+            },
+            {
+              "target": "insights",
+              "source": "הבטים"
+            },
+            {
+              "target": "fascinated",
+              "source": "נרגז"
+            },
+            {
+              "target": "recently",
+              "source": "בקרוב"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Sarah was fascinated by the city’s transformation.",
+              "source": "סarah נרגזה מההשתנות של העיר.",
+              "words": [
+                "Sarah",
+                "was",
+                "fascinated",
+                "by",
+                "the",
+                "city’s",
+                "transformation."
+              ]
+            },
+            {
+              "target": "From the symbol of division, it became a place of reconciliation.",
+              "source": "ממקום של סמל של פרישה, היא הפכה למקום של שלום.",
+              "words": [
+                "From",
+                "the",
+                "symbol",
+                "of",
+                "division,",
+                "it",
+                "became",
+                "a",
+                "place",
+                "of",
+                "reconciliation."
+              ]
+            },
+            {
+              "target": "The German government has made significant efforts.",
+              "source": "הממשלה הגרמנית עשתה מאמצים משמעותיים.",
+              "words": [
+                "The",
+                "German",
+                "government",
+                "has",
+                "made",
+                "significant",
+                "efforts."
+              ]
+            },
+            {
+              "target": "Martin's family was deeply affected by the Holocaust.",
+              "source": "המשפחה של מרטין נETAה באופן עמוק על ידי השואה.",
+              "words": [
+                "Martin's",
+                "family",
+                "was",
+                "deeply",
+                "affected",
+                "by",
+                "the",
+                "Holocaust."
+              ]
+            },
+            {
+              "target": "The rain outside mirrored the somber yet hopeful atmosphere.",
+              "source": "הגשם החוץ התאימו ל_Atmosphere של סבלנות אך מקווה.",
+              "words": [
+                "The",
+                "rain",
+                "outside",
+                "mirrored",
+                "the",
+                "somber",
+                "yet",
+                "hopeful",
+                "atmosphere."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "היחסים המורכבים",
+          "desc": "ה kompleksivim hareluyim beEdinburgh",
+          "icon": "☕️",
+          "vocab": [
+            {
+              "target": "complex",
+              "source": " kompleks"
+            },
+            {
+              "target": "web",
+              "source": " רשת"
+            },
+            {
+              "target": "conversation",
+              "source": " שיחה"
+            },
+            {
+              "target": "somber",
+              "source": " צפוף"
+            },
+            {
+              "target": "hopeful",
+              "source": " מקסום"
+            },
+            {
+              "target": "insights",
+              "source": " הבטים"
+            },
+            {
+              "target": "fascinated",
+              "source": " נרגז"
+            },
+            {
+              "target": "recently",
+              "source": " בקרוב"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The complex web of relationships is fascinating.",
+              "source": "רשת היחסים המורכבים היא נרגזת.",
+              "words": [
+                "The",
+                "complex",
+                "web",
+                "of",
+                "relationships",
+                "is",
+                "fascinating."
+              ]
+            },
+            {
+              "target": "Their conversation was filled with somber yet hopeful insights.",
+              "source": "שיחתם מלאה בהבטים צפוף אך מקסומים.",
+              "words": [
+                "Their",
+                "conversation",
+                "was",
+                "filled",
+                "with",
+                "somber",
+                "yet",
+                "hopeful",
+                "insights."
+              ]
+            },
+            {
+              "target": "Sarah shared her recent insights about Berlin.",
+              "source": "סarah חלקה את הבטים שלה על ברלין בקרוב.",
+              "words": [
+                "Sarah",
+                "shared",
+                "her",
+                "recent",
+                "insights",
+                "about",
+                "Berlin."
+              ]
+            },
+            {
+              "target": "The somber atmosphere mirrored the complex history.",
+              "source": "הצפוף של האטמוספירה סימן את ההיסטוריה המורכבת.",
+              "words": [
+                "The",
+                "somber",
+                "atmosphere",
+                "mirrored",
+                "the",
+                "complex",
+                "history."
+              ]
+            },
+            {
+              "target": "From division to reconciliation, Berlin has undergone a remarkable transformation.",
+              "source": "מפרישה לשלום, ברלין עברה בהשתנות מרתקת.",
+              "words": [
+                "From",
+                "division",
+                "to",
+                "reconciliation,",
+                "Berlin",
+                "has",
+                "undergone",
+                "a",
+                "remarkable",
+                "transformation."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1450768,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2624,
+        "totalCompletionTokens": 1531,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 142247,
+            "promptTokens": 664,
+            "completionTokens": 373
+          },
+          {
+            "lessonNum": 2,
+            "ms": 237636,
+            "promptTokens": 727,
+            "completionTokens": 361
+          },
+          {
+            "lessonNum": 3,
+            "ms": 241282,
+            "promptTokens": 772,
+            "completionTokens": 356
+          }
+        ]
+      },
+      "generatedAt": "2026-05-28T13:56:57.079Z",
+      "updatedAt": "2026-05-28T13:56:57.079Z"
+    },
+    {
+      "topic": "تجول في شيكاغو",
+      "topicEmoji": "🏙️",
+      "userTopic": "visiting galleries and concerts in Chicago",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "In the heart of Chicago, under the vast expanse of the city's skyline, Sarah and her friend, Mark, found themselves wandering through the bustling streets, their footsteps echoing softly on the pavement. The air was crisp, carrying the scent of autumn leaves and the distant hum of the city. They had planned a day of cultural exploration, starting with a visit to the Art Institute of Chicago.\n\nThe museum was a grand affair, its towering facade and intricate details greeting them like an old friend. Inside, the galleries were a kaleidoscope of colors and emotions. Sarah and Mark moved slowly, their eyes darting from one masterpiece to another. They lingered in front of Van Gogh's \"Starry Night,\" the swirling blues and greens drawing them in, and then moved on to the Impressionist paintings, the light and shadows dancing across the canvases. As they walked, they discussed their favorite pieces, sharing stories and insights, their voices soft and reverent.\n\nAfter a leisurely lunch at a nearby café, they made their way to the Symphony Center. The building was a modern marvel, its glass and steel structure reflecting the changing light of the afternoon. Inside, the concert hall was a hushed sanctuary, the seats filling up as the audience prepared for the evening's performance. Sarah and Mark found their seats, settling in with a sense of anticipation. The lights dimmed, and the first notes of the symphony filled the air, a symphony of strings and woodwinds that seemed to speak directly to their souls. As the music swelled and faded, Sarah turned to Mark, her eyes shining with a mix of awe and joy. \"This is why we came,\" she whispered, her voice barely audible. \"To experience the magic of art and music in a city that never stops surprising us.\"",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English.\n\nWrite a story for the topic: \"visiting galleries and concerts in Chicago\". Plain prose, no headings.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "زيارة المتاحف وال conciertos في شيكاغو",
+          "desc": "مقدمة في الثقافة والفن في شيكاغو",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "target": "galleries",
+              "source": "الгалeries"
+            },
+            {
+              "target": "masterpiece",
+              "source": "العمل الفنانون"
+            },
+            {
+              "target": "masterpieces",
+              "source": "الفنانون"
+            },
+            {
+              "target": "Impressionist",
+              "source": "الإمپريزست"
+            },
+            {
+              "target": "Van Gogh",
+              "source": "واغو"
+            },
+            {
+              "target": "starry",
+              "source": "نجومية"
+            },
+            {
+              "target": "starry night",
+              "source": "ليلة نجومية"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The galleries were a kaleidoscope of colors and emotions.",
+              "source": "الгалeries كانت كلويدوسكوبيا من الألوان والأحاسيس.",
+              "words": [
+                "The",
+                "galleries",
+                "were",
+                "a",
+                "kaleidoscope",
+                "of",
+                "colors",
+                "and",
+                "emotions."
+              ]
+            },
+            {
+              "target": "They lingered in front of Van Gogh's 'Starry Night'.",
+              "source": "lingerوا أمام 'ليلة نجومية' لاغو.",
+              "words": [
+                "They",
+                "lingered",
+                "in",
+                "front",
+                "of",
+                "Van",
+                "Gogh's",
+                "'Starry",
+                "Night'."
+              ]
+            },
+            {
+              "target": "The air was crisp, carrying the scent of autumn leaves.",
+              "source": "الهواء كان حادًا، يحمل رائحة أوراق الخريف.",
+              "words": [
+                "The",
+                "air",
+                "was",
+                "crisp,",
+                "carrying",
+                "the",
+                "scent",
+                "of",
+                "autumn",
+                "leaves."
+              ]
+            },
+            {
+              "target": "Their footsteps echoed softly on the pavement.",
+              "source": "صرخات أقدامهم صداها خفيفًا على الرصيف.",
+              "words": [
+                "Their",
+                "footsteps",
+                "echoed",
+                "softly",
+                "on",
+                "the",
+                "pavement."
+              ]
+            },
+            {
+              "target": "Inside, the galleries were a kaleidoscope of colors and emotions.",
+              "source": "داخلها، كانت الجالeries كلويدوسكوبيا من الألوان والأحاسيس.",
+              "words": [
+                "Inside,",
+                "the",
+                "galleries",
+                "were",
+                "a",
+                "kaleidoscope",
+                "of",
+                "colors",
+                "and",
+                "emotions."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "زيارة المتاحف والコンcerts في شيكاغو",
+          "desc": "استكشاف المتاحف والコンcerts في شيكاغو",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "target": "exhibition",
+              "source": "عرض"
+            },
+            {
+              "target": "curator",
+              "source": "مشرف"
+            },
+            {
+              "target": "collection",
+              "source": "جمعية"
+            },
+            {
+              "target": "audience",
+              "source": "الجمهور"
+            },
+            {
+              "target": "concert",
+              "source": "コンcert"
+            },
+            {
+              "target": "orchestra",
+              "source": "الفرقة الموسيقية"
+            },
+            {
+              "target": "program",
+              "source": "جدول"
+            },
+            {
+              "target": "performance",
+              "source": "العرض"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The exhibition was a hit with the audience.",
+              "source": "كان العرض شعبية مع الجمهور.",
+              "words": [
+                "The",
+                "exhibition",
+                "was",
+                "a",
+                "hit",
+                "with",
+                "the",
+                "audience."
+              ]
+            },
+            {
+              "target": "The curator carefully selected the collection.",
+              "source": "اختار المشرف بعناية مجموعة الأعمال.",
+              "words": [
+                "The",
+                "curator",
+                "carefully",
+                "selected",
+                "the",
+                "collection."
+              ]
+            },
+            {
+              "target": "The concert featured a full orchestra.",
+              "source": "شاركت الفرقة الموسيقية الكاملة في конcert.",
+              "words": [
+                "The",
+                "concert",
+                "featured",
+                "a",
+                "full",
+                "orchestra."
+              ]
+            },
+            {
+              "target": "The program included a variety of performances.",
+              "source": "شمل الجدول مجموعة متنوعة من العروض.",
+              "words": [
+                "The",
+                "program",
+                "included",
+                "a",
+                "variety",
+                "of",
+                "performances."
+              ]
+            },
+            {
+              "target": "They enjoyed the performance of the local band.",
+              "source": "استمتعوا بالعرض لفرقة المنطقة المحلية.",
+              "words": [
+                "They",
+                "enjoyed",
+                "the",
+                "performance",
+                "of",
+                "the",
+                "local",
+                "band."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "زيارة المعارض والコンcerts في شيكاغو",
+          "desc": "استكشاف المعارض الفنية والコンcerts في شيكاغو",
+          "icon": "🎨",
+          "vocab": [
+            {
+              "target": "auditorium",
+              "source": "القاعة"
+            },
+            {
+              "target": "orchestra pit",
+              "source": "حفرة الفرقة الموسيقية"
+            },
+            {
+              "target": "intermission",
+              "source": "وقفة"
+            },
+            {
+              "target": "premiere",
+              "source": "العرض الأول"
+            },
+            {
+              "target": "critic",
+              "source": "نقّاش"
+            },
+            {
+              "target": "review",
+              "source": "استعراض"
+            },
+            {
+              "target": "symphony",
+              "source": "السinfونية"
+            },
+            {
+              "target": "conductor",
+              "source": "المدير الموسيقي"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The auditorium was filled with an eager audience.",
+              "source": "كانت القاعة ممتلئة بجمهور متحمس.",
+              "words": [
+                "The",
+                "auditorium",
+                "was",
+                "filled",
+                "with",
+                "an",
+                "eager",
+                "audience."
+              ]
+            },
+            {
+              "target": "During the intermission, the critic wrote a review.",
+              "source": "خلال وقفة الاستراحة، كتب النقّاش استعراضه.",
+              "words": [
+                "During",
+                "the",
+                "intermission,",
+                "the",
+                "critic",
+                "wrote",
+                "a",
+                "review."
+              ]
+            },
+            {
+              "target": "The premiere of the new symphony was highly anticipated.",
+              "source": "العرض الأول للسinfونية الجديدة كان متوقعا بشدة.",
+              "words": [
+                "The",
+                "premiere",
+                "of",
+                "the",
+                "new",
+                "symphony",
+                "was",
+                "highly",
+                "anticipated."
+              ]
+            },
+            {
+              "target": "The conductor led the orchestra with great skill.",
+              "source": "قاد المدير الموسيقي الفرقة الموسيقية بمهارة كبيرة.",
+              "words": [
+                "The",
+                "conductor",
+                "led",
+                "the",
+                "orchestra",
+                "with",
+                "great",
+                "skill."
+              ]
+            },
+            {
+              "target": "After the performance, the audience gave a standing ovation.",
+              "source": "بعد العرض، قدم الجمهور تأييداً قائماً على قدميه.",
+              "words": [
+                "After",
+                "the",
+                "performance,",
+                "the",
+                "audience",
+                "gave",
+                "a",
+                "standing",
+                "ovation."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1085529,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2537,
+        "totalCompletionTokens": 1600,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 295565,
+            "promptTokens": 649,
+            "completionTokens": 407
+          },
+          {
+            "lessonNum": 2,
+            "ms": 216454,
+            "promptTokens": 722,
+            "completionTokens": 333
+          },
+          {
+            "lessonNum": 3,
+            "ms": 305059,
+            "promptTokens": 770,
+            "completionTokens": 392
+          }
+        ]
+      },
+      "generatedAt": "2026-05-28T09:08:23.626Z",
+      "updatedAt": "2026-05-28T09:08:23.626Z"
+    },
+    {
+      "topic": "ساعة اللوجان",
+      "topicEmoji": "🌟",
+      "userTopic": "after that we will have dinner in a hip restaurant in the Logan Square area",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "After the symphony, they emerged into the cool evening air, the city lights twinkling like stars on the horizon. Sarah and Mark walked hand in hand, the soft hum of the city providing a soothing backdrop to their conversation. They decided to head to Logan Square, a neighborhood known for its vibrant street art and eclectic mix of eateries. As they approached the restaurant, the aroma of grilled meats and fresh herbs wafted through the air, mingling with the scent of blooming flowers from the nearby park. The restaurant, a cozy bistro with a rustic charm, was already bustling with patrons enjoying the early evening. They found a table by the window, where they could watch the world go by while savoring their dinner.\n\nThe waiter, a young man with a friendly smile, greeted them and offered them a selection of appetizers. They chose a platter of artisanal cheeses and a plate of marinated olives, which arrived promptly. As they savored the flavors, Sarah leaned in closer to Mark, her eyes sparkling with a mix of contentment and curiosity. \"This is exactly what I needed after the concert,\" she said, her voice low and warm. \"A little bit of this neighborhood magic to cap off the perfect day.\" Mark nodded, his hand tightening around hers. \"And there's more to come,\" he replied, his eyes twinkling with a promise of the evening to come.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n\nAfter a leisurely lunch at a nearby café, they made their way to the Symphony Center. The building was a modern marvel, its glass and steel structure reflecting the changing light of the afternoon. Inside, the concert hall was a hushed sanctuary, the seats filling up as the audience prepared for the evening's performance. Sarah and Mark found their seats, settling in with a sense of anticipation. The lights dimmed, and the first notes of the symphony filled the air, a symphony of strings and woodwinds that seemed to speak directly to their souls. As the music swelled and faded, Sarah turned to Mark, her eyes shining with a mix of awe and joy. \"This is why we came,\" she whispered, her voice barely audible. \"To experience the magic of art and music in a city that never stops surprising us.\"\n\nNew topic: \"after that we will have dinner in a hip restaurant in the Logan Square area\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "تجول في شيكاغو",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "بعد ذلك سنأكل في مطعم حي في منطقة لوجان سكوير",
+          "desc": "موجز عن المفاهيم الأساسية للمطاعم الحديثة",
+          "icon": ".Restaurant",
+          "vocab": [
+            {
+              "target": "restaurant",
+              "source": "مطعم"
+            },
+            {
+              "target": "bistro",
+              "source": "بيستو"
+            },
+            {
+              "target": "bustling",
+              "source": "زاهق"
+            },
+            {
+              "target": "patrons",
+              "source": "زبائن"
+            },
+            {
+              "target": "savor",
+              "source": "يذوق"
+            },
+            {
+              "target": "window",
+              "source": " widow"
+            },
+            {
+              "target": "wafted",
+              "source": "انبعث"
+            },
+            {
+              "target": "grilled",
+              "source": "مشوية"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The restaurant was already bustling with patrons.",
+              "source": "المطعم كان زاهقاً بالزبائن.",
+              "words": [
+                "The",
+                "restaurant",
+                "was",
+                "already",
+                "bustling",
+                "with",
+                "patrons."
+              ]
+            },
+            {
+              "target": "They found a table by the window.",
+              "source": "وجدوا طاولة بالقرب من widow.",
+              "words": [
+                "They",
+                "found",
+                "a",
+                "table",
+                "by",
+                "the",
+                "window."
+              ]
+            },
+            {
+              "target": "The aroma of grilled meats wafted through the air.",
+              "source": "انبعث رائحة اللحوم المشوية في الهواء.",
+              "words": [
+                "The",
+                "aroma",
+                "of",
+                "grilled",
+                "meats",
+                "wafted",
+                "through",
+                "the",
+                "air."
+              ]
+            },
+            {
+              "target": "They could watch the world go by.",
+              "source": "يمكنهم مشاهدة العالم يمر أمامهم.",
+              "words": [
+                "They",
+                "could",
+                "watch",
+                "the",
+                "world",
+                "go",
+                "by."
+              ]
+            },
+            {
+              "target": "The waiter greeted them with a friendly smile.",
+              "source": "صافحهم الخادم بابتسامة صديقة.",
+              "words": [
+                "The",
+                "waiter",
+                "greeted",
+                "them",
+                "with",
+                "a",
+                "friendly",
+                "smile."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "منطقة لوجان سكوير",
+          "desc": "مطاعم هابية وفن الشارع",
+          "icon": "📍",
+          "vocab": [
+            {
+              "target": "vibrant",
+              "source": "حيوي"
+            },
+            {
+              "target": "eclectic",
+              "source": "مختلط"
+            },
+            {
+              "target": "neighbourhood",
+              "source": "حي"
+            },
+            {
+              "target": "aroma",
+              "source": "رائحة"
+            },
+            {
+              "target": "mingling",
+              "source": "خلط"
+            },
+            {
+              "target": "bistro",
+              "source": "بيستو"
+            },
+            {
+              "target": "charming",
+              "source": "مغرِّر"
+            },
+            {
+              "target": "bustling",
+              "source": "زاهق"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The neighborhood is known for its vibrant street art.",
+              "source": "الحي معروف بفن الشارع الحيوي.",
+              "words": [
+                "The",
+                "neighborhood",
+                "is",
+                "known",
+                "for",
+                "its",
+                "vibrant",
+                "street",
+                "art."
+              ]
+            },
+            {
+              "target": "They enjoyed the early evening at the bistro.",
+              "source": "استمتعوا بالمساء المبكر في البيستو.",
+              "words": [
+                "They",
+                "enjoyed",
+                "the",
+                "early",
+                "evening",
+                "at",
+                "the",
+                "bistro."
+              ]
+            },
+            {
+              "target": "The aroma of grilled meats filled the air.",
+              "source": "انبعثت رائحة اللحوم المشوية في الهواء.",
+              "words": [
+                "The",
+                "aroma",
+                "of",
+                "grilled",
+                "meats",
+                "filled",
+                "the",
+                "air."
+              ]
+            },
+            {
+              "target": "The restaurant was bustling with happy patrons.",
+              "source": "كانت المطعم زاهقاً بالزبائن السعداء.",
+              "words": [
+                "The",
+                "restaurant",
+                "was",
+                "bustling",
+                "with",
+                "happy",
+                "patrons."
+              ]
+            },
+            {
+              "target": "They found a charming table by the window.",
+              "source": "وجدوا طاولة مغرِّرة بجانب النافذة.",
+              "words": [
+                "They",
+                "found",
+                "a",
+                "charming",
+                "table",
+                "by",
+                "the",
+                "window."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "بعد ذلك سنتناول العشاء في مطعم هابي في حي لوجان سكوير",
+          "desc": "مزيج من الأكلات المشوية والروائح العطرية في مطعم هابي",
+          "icon": "🍽️",
+          "vocab": [
+            {
+              "target": "waft",
+              "source": "انبعث"
+            },
+            {
+              "target": "herbs",
+              "source": "عطرات"
+            },
+            {
+              "target": "floral",
+              "source": "روحي"
+            },
+            {
+              "target": "bistro",
+              "source": "بيستو"
+            },
+            {
+              "target": "charming",
+              "source": "مغرِّر"
+            },
+            {
+              "target": "neighbourhood",
+              "source": "حي"
+            },
+            {
+              "target": "grilled",
+              "source": "مشوية"
+            },
+            {
+              "target": "vibrant",
+              "source": "حيوي"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The aroma of grilled meats wafted through the air.",
+              "source": "انبعثت رائحة الأكل المشوية في الهواء.",
+              "words": [
+                "The",
+                "aroma",
+                "of",
+                "grilled",
+                "meats",
+                "wafted",
+                "through",
+                "the",
+                "air."
+              ]
+            },
+            {
+              "target": "The neighborhood is known for its vibrant street art.",
+              "source": "الحي معروف بفن الشارع الحيوي.",
+              "words": [
+                "The",
+                "neighborhood",
+                "is",
+                "known",
+                "for",
+                "its",
+                "vibrant",
+                "street",
+                "art."
+              ]
+            },
+            {
+              "target": "The bistro had a charming rustic charm.",
+              "source": "للمطعم كانت مغريتة بالطابع الرustic.",
+              "words": [
+                "The",
+                "bistro",
+                "had",
+                "a",
+                "charming",
+                "rustic",
+                "charm."
+              ]
+            },
+            {
+              "target": "They could watch the world go by from the window.",
+              "source": "يمكنهم رؤية العالم يمر من خلال النافذة.",
+              "words": [
+                "They",
+                "could",
+                "watch",
+                "the",
+                "world",
+                "go",
+                "by",
+                "from",
+                "the",
+                "window."
+              ]
+            },
+            {
+              "target": "The floral scent mingled with the aroma of fresh herbs.",
+              "source": "خلط رائحة العطر مع رائحة العطرات الطازجة.",
+              "words": [
+                "The",
+                "floral",
+                "scent",
+                "mingled",
+                "with",
+                "the",
+                "aroma",
+                "of",
+                "fresh",
+                "herbs."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1081671,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2779,
+        "totalCompletionTokens": 1441,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 265799,
+            "promptTokens": 660,
+            "completionTokens": 347
+          },
+          {
+            "lessonNum": 2,
+            "ms": 241270,
+            "promptTokens": 723,
+            "completionTokens": 354
+          },
+          {
+            "lessonNum": 3,
+            "ms": 287086,
+            "promptTokens": 775,
+            "completionTokens": 383
+          }
+        ]
+      },
+      "generatedAt": "2026-05-28T12:04:13.732Z",
+      "updatedAt": "2026-05-28T12:04:13.732Z"
+    },
+    {
       "topic": "Prozessskalierung in Bioreaktoren",
       "topicEmoji": "🔬",
       "userTopic": "es wurde schwierig als man den prozess skalieren wollte. in grossen kommerziellen reaktoren war die ausbeute nur gering. bioreaktoren muessen noch optimiert werden bezueglich der richtigen lichtzufuhr und begasung. ein hoher pH war notwendig fuer effizientes wachstum, aber schlecht fuer das produkt.",
@@ -6798,1218 +8010,6 @@
       },
       "generatedAt": "2026-05-29T11:06:57.276Z",
       "updatedAt": "2026-05-29T11:06:57.276Z"
-    },
-    {
-      "topic": "הומור יהודי",
-      "topicEmoji": "jest",
-      "userTopic": "ההומור היהודי מפורסם, החל ממועדוני הקומדיה הווינאים של שנות ה-20 ועד לניו יורק והוליווד. מישהו מספר לנו בדיחה, גרסה מודרנית ומטא-הומוריסטית לקלאסיקה: כומר, רב ואימאם נכנסים לבר. הברמן שואל: \"זו בדיחה?\"",
-      "lang": "en",
-      "srcLang": "he",
-      "difficulty": 4,
-      "storyLen": 300,
-      "story": "Martin paused, his mind wandering to the vibrant world of Jewish humor, a thread that wove through the fabric of history. “Tell us a modern, meta-humorous take on a classic joke,” he suggested, his eyes twinkling with curiosity. “A rabbi, a priest, and an imam walk into a bar. The bartender asks, ‘Is this a joke?’”\n\nThe rain had slowed to a gentle patter, and the café around them seemed to come alive with the warmth of their shared laughter. “Sure,” Martin continued, “let’s give it a try. The rabbi says, ‘Of course it’s a joke. We’re in a bar, after all. But I’ll tell you what, let’s make it a good one. I’ll start: I’m here to discuss the eternal question of faith and reason. What do you think, priest and imam?’”\n\nThe priest leaned forward, his eyes narrowing in mock seriousness. “Well, rabbi, I’ve always believed that faith is a matter of the heart, not the head. But I suppose we can play along. What’s your take, imam?”\n\nThe imam nodded, his voice steady. “Indeed, faith is a journey of the soul. But let’s see where this goes. So, rabbi, what’s your point?”\n\nMartin chuckled, enjoying the playful banter. “Alright, let’s make it a bit meta. The rabbi replies, ‘Well, I’m here to discuss the eternal question of faith and reason, but I’m also here to remind you that sometimes, the best way to find answers is to laugh at the questions. So, what do you think, priest and imam? Is this a joke, or are we really here to talk about something profound?’”\n\nThe bartender, who had been listening intently, finally chimed in with a smile. “You know, I’ve been thinking about this. Maybe it’s both. Sometimes, the most profound questions are best answered with a good laugh. And sometimes, the best laughs come from the most profound questions.”",
-      "storyLang": "en",
-      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nerving and teaching about the Holocaust.”\n\nMartin nodded, his eyes reflecting the weight of the conversation. “And Britain,” he added, “has a long and intertwined history with both Germany and Israel. The British Mandate in Palestine, the Kindertransport, and the role of the British military in post-war Germany—these are all part of a complex narrative. Britain’s relationship with Israel is often seen through the lens of historical support, but it’s also marked by periods of tension and misunderstanding.”\n\nAs the rain continued to fall, their conversation flowed, weaving through the intricate layers of history and the delicate balance of present-day relations. The café around them seemed to fade, leaving only the two friends, their voices blending into the tapestry of their shared history.\n\nNew topic: \"ההומור היהודי מפורסם, החל ממועדוני הקומדיה הווינאים של שנות ה-20 ועד לניו יורק והוליווד. מישהו מספר לנו בדיחה, גרסה מודרנית ומטא-הומוריסטית לקלאסיקה: כומר, רב ואימאם נכנסים לבר. הברמן שואל: \"זו בדיחה?\"\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "방방방",
-      "lessons": [
-        {
-          "id": 4,
-          "type": "error_hunt",
-          "title": "Text Understanding",
-          "desc": "Find the mistakes in the story",
-          "icon": "🔍",
-          "corruptedStory": "Martin paused, his mind wandered to the vibrant world of Jewish humor, a thred that wove through the fabric of history. “Tell us a modern, meta-humorous take on a classic joke,” he suggested, his eyes twinklingly with curiosity. “A rabbi, a priest, and an imah walk into a bar. The bartender asks, ‘Is this a joke?’”\n\nThe rain had slowed to a gentle patter, and the café around them seemed to come alive with the warmth of their shared laughter. “Sure,” Martin continued, “let’s give it a try. The rabbi says, ‘Of course it’s a joke. We’re in a bar, after all. But I’ll tell you what, let’s make it a good one. I’ll start: I’m here to discuss the eternal question of faith and reason. What do you think, priest and imam?’”\n\nThe priest leaned forward, his eyes narrowing in mock-seriousness. “Well, rabbi, I’ve always believed that faith is a matter of the heart, not the head. But I suppose we can play along. What’s your take, imam?”\n\nThe imam nodded, his voice steady. “Indeed, faith is a journey of the soul. But let’s see where this goes. So, rabbi, what’s your point?”\n\nMartin chuckled, enjoying the playful banter. “Alright, let’s make it a bit meta. The rabbi replies, ‘Well, I’m here to discuss the eternal question of faith and reason, but I’m also here to remind you that sometimes, the best way to find answers is to laugh at the questions. So, what do you think, priest and imam? Is this a joke, or are we really here to talk about something profound?’”\n\nThe bartender, who had been listening intently, finally chimed in with a smile. “You know, I’ve been thinking about this. Maybe it’s both. Sometimes, the most profound questions are best answered with a good laugh. And sometimes, the best laughs come from the most profound questions.”",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "wandering",
-              "replace": "wandered",
-              "reason": "past tense needed for 'wander'"
-            },
-            {
-              "type": "spelling",
-              "find": "thread",
-              "replace": "thred",
-              "reason": "common misspelling of 'thread'"
-            },
-            {
-              "type": "grammar",
-              "find": "twinkling",
-              "replace": "twinklingly",
-              "reason": "needs to be an adverb"
-            },
-            {
-              "type": "grammar",
-              "find": "mock seriousness",
-              "replace": "mock-seriousness",
-              "reason": "should be a singular noun"
-            },
-            {
-              "type": "spelling",
-              "find": "imam",
-              "replace": "imah",
-              "reason": "common misspelling of 'imam'"
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 639656,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 1598,
-        "totalCompletionTokens": 741,
-        "lessons": [
-          {
-            "promptTokens": 846,
-            "completionTokens": 229
-          }
-        ]
-      },
-      "generatedAt": "2026-05-28T14:24:20.788Z",
-      "updatedAt": "2026-05-28T14:24:20.788Z"
-    },
-    {
-      "topic": "방방방",
-      "topicEmoji": " Judaica ",
-      "userTopic": "בביקור באדינבורו אנו משוחחים על היחסים המורכבים בין ישראל לגרמניה ולבריטניה, ועל ההיסטוריה היהודית הארוכה באירופה.",
-      "lang": "en",
-      "srcLang": "he",
-      "difficulty": 2,
-      "storyLen": 300,
-      "story": "In the quiet of a rainy afternoon in Edinburgh, Sarah and her German friend, Martin, found themselves sitting in a cozy café, sipping tea and discussing the complex web of relationships between Israel, Germany, and Britain. The rain outside seemed to mirror the somber yet hopeful atmosphere of their conversation. Sarah, a historian, had recently visited Berlin and was fascinated by the city’s transformation from a symbol of division to a place of reconciliation and understanding. She shared her insights with Martin, who had grown up in a family deeply affected by the Holocaust.\n\n“Germany,” Sarah began, “has undergone a remarkable journey. From the horrors of the past, they’ve moved towards a future of remembrance and redemption. The German government and society have made significant efforts to acknowledge their history and ensure it’s not repeated. The Yad Vashem museum in Jerusalem is a testament to this commitment, and it’s fascinating to see how Germany collaborates with Israel in preserving and teaching about the Holocaust.”\n\nMartin nodded, his eyes reflecting the weight of the conversation. “And Britain,” he added, “has a long and intertwined history with both Germany and Israel. The British Mandate in Palestine, the Kindertransport, and the role of the British military in post-war Germany—these are all part of a complex narrative. Britain’s relationship with Israel is often seen through the lens of historical support, but it’s also marked by periods of tension and misunderstanding.”\n\nAs the rain continued to fall, their conversation flowed, weaving through the intricate layers of history and the delicate balance of present-day relations. The café around them seemed to fade, leaving only the two friends, their voices blending into the tapestry of their shared history.",
-      "storyLang": "en",
-      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English.\n\nWrite a story for the topic: \"בביקור באדינבורו אנו משוחחים על היחסים המורכבים בין ישראל לגרמניה ולבריטניה, ועל ההיסטוריה היהודית הארוכה באירופה.\". Plain prose, no headings.",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "בביקור באדינבורו",
-          "desc": "היחסים המורכבים בין ישראל לגרמניה ולבריטניה, וההיסטוריה היהודית באירופה",
-          "icon": "☕️",
-          "vocab": [
-            {
-              "target": "remarkable",
-              "source": "מרתק"
-            },
-            {
-              "target": "journey",
-              "source": "מסע"
-            },
-            {
-              "target": "horrors",
-              "source": "הוראות"
-            },
-            {
-              "target": "future",
-              "source": "עתיד"
-            },
-            {
-              "target": "remembrance",
-              "source": "זכרון"
-            },
-            {
-              "target": "redemption",
-              "source": "חנוכת"
-            },
-            {
-              "target": "government",
-              "source": "ממשלה"
-            },
-            {
-              "target": "society",
-              "source": " общество"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "הגרמנים עברו מסע ממרתק מה עברו את העבר.",
-              "source": "The Germans underwent a remarkable journey from the horrors of the past.",
-              "words": [
-                "הגרמנים",
-                "עברו",
-                "מסע",
-                "ממרתק",
-                "מה",
-                "עברו",
-                "את",
-                "העבר."
-              ]
-            },
-            {
-              "target": "הממשלה וה общество גרמו לשינויים משמעותיים.",
-              "source": "The government and society have made significant changes.",
-              "words": [
-                "הממשלה",
-                "וה",
-                "общество",
-                "גרמו",
-                "לשינויים",
-                "משמעותיים."
-              ]
-            },
-            {
-              "target": "היהודים היו חלק מההיסטוריה האירופית הארוכה.",
-              "source": "The Jews were part of the long European history.",
-              "words": [
-                "היהודים",
-                "היו",
-                "חלק",
-                "מההיסטוריה",
-                "האירופית",
-                "הארוכה."
-              ]
-            },
-            {
-              "target": "היה זה יום חם ורAINY, בשעה שלש בערב.",
-              "source": "It was a rainy afternoon at three o'clock in the afternoon.",
-              "words": [
-                "היה",
-                "זה",
-                "יום",
-                "חם",
-                "ורAINY,",
-                "בשעה",
-                "שלש",
-                "בערב."
-              ]
-            },
-            {
-              "target": "היא שיחקה עם הרAIN, כמו אם היא בת קטנה.",
-              "source": "She played with the rain, as if she were a little girl.",
-              "words": [
-                "היא",
-                "שיחקה",
-                "עם",
-                "הרAIN,",
-                "כמו",
-                "אם",
-                "היא",
-                "בת",
-                "קטנה."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "היחסים המורכבים",
-          "desc": "ה kompleksivim hatarhim beeretz yisra'el",
-          "icon": "🤝",
-          "vocab": [
-            {
-              "target": "transformation",
-              "source": "ההשתנות"
-            },
-            {
-              "target": "symbol",
-              "source": "סמל"
-            },
-            {
-              "target": "division",
-              "source": "פרישה"
-            },
-            {
-              "target": "reconciliation",
-              "source": "שלום"
-            },
-            {
-              "target": "understanding",
-              "source": "הבנה"
-            },
-            {
-              "target": "insights",
-              "source": "הבטים"
-            },
-            {
-              "target": "fascinated",
-              "source": "נרגז"
-            },
-            {
-              "target": "recently",
-              "source": "בקרוב"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Sarah was fascinated by the city’s transformation.",
-              "source": "סarah נרגזה מההשתנות של העיר.",
-              "words": [
-                "Sarah",
-                "was",
-                "fascinated",
-                "by",
-                "the",
-                "city’s",
-                "transformation."
-              ]
-            },
-            {
-              "target": "From the symbol of division, it became a place of reconciliation.",
-              "source": "ממקום של סמל של פרישה, היא הפכה למקום של שלום.",
-              "words": [
-                "From",
-                "the",
-                "symbol",
-                "of",
-                "division,",
-                "it",
-                "became",
-                "a",
-                "place",
-                "of",
-                "reconciliation."
-              ]
-            },
-            {
-              "target": "The German government has made significant efforts.",
-              "source": "הממשלה הגרמנית עשתה מאמצים משמעותיים.",
-              "words": [
-                "The",
-                "German",
-                "government",
-                "has",
-                "made",
-                "significant",
-                "efforts."
-              ]
-            },
-            {
-              "target": "Martin's family was deeply affected by the Holocaust.",
-              "source": "המשפחה של מרטין נETAה באופן עמוק על ידי השואה.",
-              "words": [
-                "Martin's",
-                "family",
-                "was",
-                "deeply",
-                "affected",
-                "by",
-                "the",
-                "Holocaust."
-              ]
-            },
-            {
-              "target": "The rain outside mirrored the somber yet hopeful atmosphere.",
-              "source": "הגשם החוץ התאימו ל_Atmosphere של סבלנות אך מקווה.",
-              "words": [
-                "The",
-                "rain",
-                "outside",
-                "mirrored",
-                "the",
-                "somber",
-                "yet",
-                "hopeful",
-                "atmosphere."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "היחסים המורכבים",
-          "desc": "ה kompleksivim hareluyim beEdinburgh",
-          "icon": "☕️",
-          "vocab": [
-            {
-              "target": "complex",
-              "source": " kompleks"
-            },
-            {
-              "target": "web",
-              "source": " רשת"
-            },
-            {
-              "target": "conversation",
-              "source": " שיחה"
-            },
-            {
-              "target": "somber",
-              "source": " צפוף"
-            },
-            {
-              "target": "hopeful",
-              "source": " מקסום"
-            },
-            {
-              "target": "insights",
-              "source": " הבטים"
-            },
-            {
-              "target": "fascinated",
-              "source": " נרגז"
-            },
-            {
-              "target": "recently",
-              "source": " בקרוב"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The complex web of relationships is fascinating.",
-              "source": "רשת היחסים המורכבים היא נרגזת.",
-              "words": [
-                "The",
-                "complex",
-                "web",
-                "of",
-                "relationships",
-                "is",
-                "fascinating."
-              ]
-            },
-            {
-              "target": "Their conversation was filled with somber yet hopeful insights.",
-              "source": "שיחתם מלאה בהבטים צפוף אך מקסומים.",
-              "words": [
-                "Their",
-                "conversation",
-                "was",
-                "filled",
-                "with",
-                "somber",
-                "yet",
-                "hopeful",
-                "insights."
-              ]
-            },
-            {
-              "target": "Sarah shared her recent insights about Berlin.",
-              "source": "סarah חלקה את הבטים שלה על ברלין בקרוב.",
-              "words": [
-                "Sarah",
-                "shared",
-                "her",
-                "recent",
-                "insights",
-                "about",
-                "Berlin."
-              ]
-            },
-            {
-              "target": "The somber atmosphere mirrored the complex history.",
-              "source": "הצפוף של האטמוספירה סימן את ההיסטוריה המורכבת.",
-              "words": [
-                "The",
-                "somber",
-                "atmosphere",
-                "mirrored",
-                "the",
-                "complex",
-                "history."
-              ]
-            },
-            {
-              "target": "From division to reconciliation, Berlin has undergone a remarkable transformation.",
-              "source": "מפרישה לשלום, ברלין עברה בהשתנות מרתקת.",
-              "words": [
-                "From",
-                "division",
-                "to",
-                "reconciliation,",
-                "Berlin",
-                "has",
-                "undergone",
-                "a",
-                "remarkable",
-                "transformation."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1450768,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 2624,
-        "totalCompletionTokens": 1531,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 142247,
-            "promptTokens": 664,
-            "completionTokens": 373
-          },
-          {
-            "lessonNum": 2,
-            "ms": 237636,
-            "promptTokens": 727,
-            "completionTokens": 361
-          },
-          {
-            "lessonNum": 3,
-            "ms": 241282,
-            "promptTokens": 772,
-            "completionTokens": 356
-          }
-        ]
-      },
-      "generatedAt": "2026-05-28T13:56:57.079Z",
-      "updatedAt": "2026-05-28T13:56:57.079Z"
-    },
-    {
-      "topic": "دinner in Logan Square",
-      "topicEmoji": "🍽️",
-      "userTopic": "after that we will have dinner in a hip restaurant in the Logan Square area",
-      "lang": "en",
-      "srcLang": "ar",
-      "difficulty": 2,
-      "storyLen": 300,
-      "story": "After the symphony, they emerged into the cool evening air, the city lights twinkling like stars on the horizon. Sarah and Mark walked hand in hand, the soft hum of the city providing a soothing backdrop to their conversation. They decided to head to Logan Square, a neighborhood known for its vibrant street art and eclectic mix of eateries. As they approached the restaurant, the aroma of grilled meats and fresh herbs wafted through the air, mingling with the scent of blooming flowers from the nearby park. The restaurant, a cozy bistro with a rustic charm, was already bustling with patrons enjoying the early evening. They found a table by the window, where they could watch the world go by while savoring their dinner.\n\nThe waiter, a young man with a friendly smile, greeted them and offered them a selection of appetizers. They chose a platter of artisanal cheeses and a plate of marinated olives, which arrived promptly. As they savored the flavors, Sarah leaned in closer to Mark, her eyes sparkling with a mix of contentment and curiosity. \"This is exactly what I needed after the concert,\" she said, her voice low and warm. \"A little bit of this neighborhood magic to cap off the perfect day.\" Mark nodded, his hand tightening around hers. \"And there's more to come,\" he replied, his eyes twinkling with a promise of the evening to come.",
-      "storyLang": "en",
-      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n\nAfter a leisurely lunch at a nearby café, they made their way to the Symphony Center. The building was a modern marvel, its glass and steel structure reflecting the changing light of the afternoon. Inside, the concert hall was a hushed sanctuary, the seats filling up as the audience prepared for the evening's performance. Sarah and Mark found their seats, settling in with a sense of anticipation. The lights dimmed, and the first notes of the symphony filled the air, a symphony of strings and woodwinds that seemed to speak directly to their souls. As the music swelled and faded, Sarah turned to Mark, her eyes shining with a mix of awe and joy. \"This is why we came,\" she whispered, her voice barely audible. \"To experience the magic of art and music in a city that never stops surprising us.\"\n\nNew topic: \"after that we will have dinner in a hip restaurant in the Logan Square area\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "زيارة المتاحف وال conciertos في شيكاغو",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "بعد ذلك سنأكل في مطعم حي في منطقة لوجان سكوير",
-          "desc": "موجز عن المفاهيم الأساسية للمطاعم الحديثة",
-          "icon": ".Restaurant",
-          "vocab": [
-            {
-              "target": "restaurant",
-              "source": "مطعم"
-            },
-            {
-              "target": "bistro",
-              "source": "بيستو"
-            },
-            {
-              "target": "bustling",
-              "source": "زاهق"
-            },
-            {
-              "target": "patrons",
-              "source": "زبائن"
-            },
-            {
-              "target": "savor",
-              "source": "يذوق"
-            },
-            {
-              "target": "window",
-              "source": " widow"
-            },
-            {
-              "target": "wafted",
-              "source": "انبعث"
-            },
-            {
-              "target": "grilled",
-              "source": "مشوية"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The restaurant was already bustling with patrons.",
-              "source": "المطعم كان زاهقاً بالزبائن.",
-              "words": [
-                "The",
-                "restaurant",
-                "was",
-                "already",
-                "bustling",
-                "with",
-                "patrons."
-              ]
-            },
-            {
-              "target": "They found a table by the window.",
-              "source": "وجدوا طاولة بالقرب من widow.",
-              "words": [
-                "They",
-                "found",
-                "a",
-                "table",
-                "by",
-                "the",
-                "window."
-              ]
-            },
-            {
-              "target": "The aroma of grilled meats wafted through the air.",
-              "source": "انبعث رائحة اللحوم المشوية في الهواء.",
-              "words": [
-                "The",
-                "aroma",
-                "of",
-                "grilled",
-                "meats",
-                "wafted",
-                "through",
-                "the",
-                "air."
-              ]
-            },
-            {
-              "target": "They could watch the world go by.",
-              "source": "يمكنهم مشاهدة العالم يمر أمامهم.",
-              "words": [
-                "They",
-                "could",
-                "watch",
-                "the",
-                "world",
-                "go",
-                "by."
-              ]
-            },
-            {
-              "target": "The waiter greeted them with a friendly smile.",
-              "source": "صافحهم الخادم بابتسامة صديقة.",
-              "words": [
-                "The",
-                "waiter",
-                "greeted",
-                "them",
-                "with",
-                "a",
-                "friendly",
-                "smile."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "منطقة لوجان سكوير",
-          "desc": "مطاعم هابية وفن الشارع",
-          "icon": "📍",
-          "vocab": [
-            {
-              "target": "vibrant",
-              "source": "حيوي"
-            },
-            {
-              "target": "eclectic",
-              "source": "مختلط"
-            },
-            {
-              "target": "neighbourhood",
-              "source": "حي"
-            },
-            {
-              "target": "aroma",
-              "source": "رائحة"
-            },
-            {
-              "target": "mingling",
-              "source": "خلط"
-            },
-            {
-              "target": "bistro",
-              "source": "بيستو"
-            },
-            {
-              "target": "charming",
-              "source": "مغرِّر"
-            },
-            {
-              "target": "bustling",
-              "source": "زاهق"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The neighborhood is known for its vibrant street art.",
-              "source": "الحي معروف بفن الشارع الحيوي.",
-              "words": [
-                "The",
-                "neighborhood",
-                "is",
-                "known",
-                "for",
-                "its",
-                "vibrant",
-                "street",
-                "art."
-              ]
-            },
-            {
-              "target": "They enjoyed the early evening at the bistro.",
-              "source": "استمتعوا بالمساء المبكر في البيستو.",
-              "words": [
-                "They",
-                "enjoyed",
-                "the",
-                "early",
-                "evening",
-                "at",
-                "the",
-                "bistro."
-              ]
-            },
-            {
-              "target": "The aroma of grilled meats filled the air.",
-              "source": "انبعثت رائحة اللحوم المشوية في الهواء.",
-              "words": [
-                "The",
-                "aroma",
-                "of",
-                "grilled",
-                "meats",
-                "filled",
-                "the",
-                "air."
-              ]
-            },
-            {
-              "target": "The restaurant was bustling with happy patrons.",
-              "source": "كانت المطعم زاهقاً بالزبائن السعداء.",
-              "words": [
-                "The",
-                "restaurant",
-                "was",
-                "bustling",
-                "with",
-                "happy",
-                "patrons."
-              ]
-            },
-            {
-              "target": "They found a charming table by the window.",
-              "source": "وجدوا طاولة مغرِّرة بجانب النافذة.",
-              "words": [
-                "They",
-                "found",
-                "a",
-                "charming",
-                "table",
-                "by",
-                "the",
-                "window."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "بعد ذلك سنتناول العشاء في مطعم هابي في حي لوجان سكوير",
-          "desc": "مزيج من الأكلات المشوية والروائح العطرية في مطعم هابي",
-          "icon": "🍽️",
-          "vocab": [
-            {
-              "target": "waft",
-              "source": "انبعث"
-            },
-            {
-              "target": "herbs",
-              "source": "عطرات"
-            },
-            {
-              "target": "floral",
-              "source": "روحي"
-            },
-            {
-              "target": "bistro",
-              "source": "بيستو"
-            },
-            {
-              "target": "charming",
-              "source": "مغرِّر"
-            },
-            {
-              "target": "neighbourhood",
-              "source": "حي"
-            },
-            {
-              "target": "grilled",
-              "source": "مشوية"
-            },
-            {
-              "target": "vibrant",
-              "source": "حيوي"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The aroma of grilled meats wafted through the air.",
-              "source": "انبعثت رائحة الأكل المشوية في الهواء.",
-              "words": [
-                "The",
-                "aroma",
-                "of",
-                "grilled",
-                "meats",
-                "wafted",
-                "through",
-                "the",
-                "air."
-              ]
-            },
-            {
-              "target": "The neighborhood is known for its vibrant street art.",
-              "source": "الحي معروف بفن الشارع الحيوي.",
-              "words": [
-                "The",
-                "neighborhood",
-                "is",
-                "known",
-                "for",
-                "its",
-                "vibrant",
-                "street",
-                "art."
-              ]
-            },
-            {
-              "target": "The bistro had a charming rustic charm.",
-              "source": "للمطعم كانت مغريتة بالطابع الرustic.",
-              "words": [
-                "The",
-                "bistro",
-                "had",
-                "a",
-                "charming",
-                "rustic",
-                "charm."
-              ]
-            },
-            {
-              "target": "They could watch the world go by from the window.",
-              "source": "يمكنهم رؤية العالم يمر من خلال النافذة.",
-              "words": [
-                "They",
-                "could",
-                "watch",
-                "the",
-                "world",
-                "go",
-                "by",
-                "from",
-                "the",
-                "window."
-              ]
-            },
-            {
-              "target": "The floral scent mingled with the aroma of fresh herbs.",
-              "source": "خلط رائحة العطر مع رائحة العطرات الطازجة.",
-              "words": [
-                "The",
-                "floral",
-                "scent",
-                "mingled",
-                "with",
-                "the",
-                "aroma",
-                "of",
-                "fresh",
-                "herbs."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1081671,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 2779,
-        "totalCompletionTokens": 1441,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 265799,
-            "promptTokens": 660,
-            "completionTokens": 347
-          },
-          {
-            "lessonNum": 2,
-            "ms": 241270,
-            "promptTokens": 723,
-            "completionTokens": 354
-          },
-          {
-            "lessonNum": 3,
-            "ms": 287086,
-            "promptTokens": 775,
-            "completionTokens": 383
-          }
-        ]
-      },
-      "generatedAt": "2026-05-28T12:04:13.732Z",
-      "updatedAt": "2026-05-28T12:04:13.732Z"
-    },
-    {
-      "topic": "زيارة المتاحف وال conciertos في شيكاغو",
-      "topicEmoji": "🎨",
-      "userTopic": "visiting galleries and concerts in Chicago",
-      "lang": "en",
-      "srcLang": "ar",
-      "difficulty": 2,
-      "storyLen": 300,
-      "story": "In the heart of Chicago, under the vast expanse of the city's skyline, Sarah and her friend, Mark, found themselves wandering through the bustling streets, their footsteps echoing softly on the pavement. The air was crisp, carrying the scent of autumn leaves and the distant hum of the city. They had planned a day of cultural exploration, starting with a visit to the Art Institute of Chicago.\n\nThe museum was a grand affair, its towering facade and intricate details greeting them like an old friend. Inside, the galleries were a kaleidoscope of colors and emotions. Sarah and Mark moved slowly, their eyes darting from one masterpiece to another. They lingered in front of Van Gogh's \"Starry Night,\" the swirling blues and greens drawing them in, and then moved on to the Impressionist paintings, the light and shadows dancing across the canvases. As they walked, they discussed their favorite pieces, sharing stories and insights, their voices soft and reverent.\n\nAfter a leisurely lunch at a nearby café, they made their way to the Symphony Center. The building was a modern marvel, its glass and steel structure reflecting the changing light of the afternoon. Inside, the concert hall was a hushed sanctuary, the seats filling up as the audience prepared for the evening's performance. Sarah and Mark found their seats, settling in with a sense of anticipation. The lights dimmed, and the first notes of the symphony filled the air, a symphony of strings and woodwinds that seemed to speak directly to their souls. As the music swelled and faded, Sarah turned to Mark, her eyes shining with a mix of awe and joy. \"This is why we came,\" she whispered, her voice barely audible. \"To experience the magic of art and music in a city that never stops surprising us.\"",
-      "storyLang": "en",
-      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English.\n\nWrite a story for the topic: \"visiting galleries and concerts in Chicago\". Plain prose, no headings.",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "زيارة المتاحف وال conciertos في شيكاغو",
-          "desc": "مقدمة في الثقافة والفن في شيكاغو",
-          "icon": "🎨",
-          "vocab": [
-            {
-              "target": "galleries",
-              "source": "الгалeries"
-            },
-            {
-              "target": "masterpiece",
-              "source": "العمل الفنانون"
-            },
-            {
-              "target": "masterpieces",
-              "source": "الفنانون"
-            },
-            {
-              "target": "Impressionist",
-              "source": "الإمپريزست"
-            },
-            {
-              "target": "Van Gogh",
-              "source": "واغو"
-            },
-            {
-              "target": "starry",
-              "source": "نجومية"
-            },
-            {
-              "target": "starry night",
-              "source": "ليلة نجومية"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The galleries were a kaleidoscope of colors and emotions.",
-              "source": "الгалeries كانت كلويدوسكوبيا من الألوان والأحاسيس.",
-              "words": [
-                "The",
-                "galleries",
-                "were",
-                "a",
-                "kaleidoscope",
-                "of",
-                "colors",
-                "and",
-                "emotions."
-              ]
-            },
-            {
-              "target": "They lingered in front of Van Gogh's 'Starry Night'.",
-              "source": "lingerوا أمام 'ليلة نجومية' لاغو.",
-              "words": [
-                "They",
-                "lingered",
-                "in",
-                "front",
-                "of",
-                "Van",
-                "Gogh's",
-                "'Starry",
-                "Night'."
-              ]
-            },
-            {
-              "target": "The air was crisp, carrying the scent of autumn leaves.",
-              "source": "الهواء كان حادًا، يحمل رائحة أوراق الخريف.",
-              "words": [
-                "The",
-                "air",
-                "was",
-                "crisp,",
-                "carrying",
-                "the",
-                "scent",
-                "of",
-                "autumn",
-                "leaves."
-              ]
-            },
-            {
-              "target": "Their footsteps echoed softly on the pavement.",
-              "source": "صرخات أقدامهم صداها خفيفًا على الرصيف.",
-              "words": [
-                "Their",
-                "footsteps",
-                "echoed",
-                "softly",
-                "on",
-                "the",
-                "pavement."
-              ]
-            },
-            {
-              "target": "Inside, the galleries were a kaleidoscope of colors and emotions.",
-              "source": "داخلها، كانت الجالeries كلويدوسكوبيا من الألوان والأحاسيس.",
-              "words": [
-                "Inside,",
-                "the",
-                "galleries",
-                "were",
-                "a",
-                "kaleidoscope",
-                "of",
-                "colors",
-                "and",
-                "emotions."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "title": "زيارة المتاحف والコンcerts في شيكاغو",
-          "desc": "استكشاف المتاحف والコンcerts في شيكاغو",
-          "icon": "🎨",
-          "vocab": [
-            {
-              "target": "exhibition",
-              "source": "عرض"
-            },
-            {
-              "target": "curator",
-              "source": "مشرف"
-            },
-            {
-              "target": "collection",
-              "source": "جمعية"
-            },
-            {
-              "target": "audience",
-              "source": "الجمهور"
-            },
-            {
-              "target": "concert",
-              "source": "コンcert"
-            },
-            {
-              "target": "orchestra",
-              "source": "الفرقة الموسيقية"
-            },
-            {
-              "target": "program",
-              "source": "جدول"
-            },
-            {
-              "target": "performance",
-              "source": "العرض"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The exhibition was a hit with the audience.",
-              "source": "كان العرض شعبية مع الجمهور.",
-              "words": [
-                "The",
-                "exhibition",
-                "was",
-                "a",
-                "hit",
-                "with",
-                "the",
-                "audience."
-              ]
-            },
-            {
-              "target": "The curator carefully selected the collection.",
-              "source": "اختار المشرف بعناية مجموعة الأعمال.",
-              "words": [
-                "The",
-                "curator",
-                "carefully",
-                "selected",
-                "the",
-                "collection."
-              ]
-            },
-            {
-              "target": "The concert featured a full orchestra.",
-              "source": "شاركت الفرقة الموسيقية الكاملة في конcert.",
-              "words": [
-                "The",
-                "concert",
-                "featured",
-                "a",
-                "full",
-                "orchestra."
-              ]
-            },
-            {
-              "target": "The program included a variety of performances.",
-              "source": "شمل الجدول مجموعة متنوعة من العروض.",
-              "words": [
-                "The",
-                "program",
-                "included",
-                "a",
-                "variety",
-                "of",
-                "performances."
-              ]
-            },
-            {
-              "target": "They enjoyed the performance of the local band.",
-              "source": "استمتعوا بالعرض لفرقة المنطقة المحلية.",
-              "words": [
-                "They",
-                "enjoyed",
-                "the",
-                "performance",
-                "of",
-                "the",
-                "local",
-                "band."
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "title": "زيارة المعارض والコンcerts في شيكاغو",
-          "desc": "استكشاف المعارض الفنية والコンcerts في شيكاغو",
-          "icon": "🎨",
-          "vocab": [
-            {
-              "target": "auditorium",
-              "source": "القاعة"
-            },
-            {
-              "target": "orchestra pit",
-              "source": "حفرة الفرقة الموسيقية"
-            },
-            {
-              "target": "intermission",
-              "source": "وقفة"
-            },
-            {
-              "target": "premiere",
-              "source": "العرض الأول"
-            },
-            {
-              "target": "critic",
-              "source": "نقّاش"
-            },
-            {
-              "target": "review",
-              "source": "استعراض"
-            },
-            {
-              "target": "symphony",
-              "source": "السinfونية"
-            },
-            {
-              "target": "conductor",
-              "source": "المدير الموسيقي"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The auditorium was filled with an eager audience.",
-              "source": "كانت القاعة ممتلئة بجمهور متحمس.",
-              "words": [
-                "The",
-                "auditorium",
-                "was",
-                "filled",
-                "with",
-                "an",
-                "eager",
-                "audience."
-              ]
-            },
-            {
-              "target": "During the intermission, the critic wrote a review.",
-              "source": "خلال وقفة الاستراحة، كتب النقّاش استعراضه.",
-              "words": [
-                "During",
-                "the",
-                "intermission,",
-                "the",
-                "critic",
-                "wrote",
-                "a",
-                "review."
-              ]
-            },
-            {
-              "target": "The premiere of the new symphony was highly anticipated.",
-              "source": "العرض الأول للسinfونية الجديدة كان متوقعا بشدة.",
-              "words": [
-                "The",
-                "premiere",
-                "of",
-                "the",
-                "new",
-                "symphony",
-                "was",
-                "highly",
-                "anticipated."
-              ]
-            },
-            {
-              "target": "The conductor led the orchestra with great skill.",
-              "source": "قاد المدير الموسيقي الفرقة الموسيقية بمهارة كبيرة.",
-              "words": [
-                "The",
-                "conductor",
-                "led",
-                "the",
-                "orchestra",
-                "with",
-                "great",
-                "skill."
-              ]
-            },
-            {
-              "target": "After the performance, the audience gave a standing ovation.",
-              "source": "بعد العرض، قدم الجمهور تأييداً قائماً على قدميه.",
-              "words": [
-                "After",
-                "the",
-                "performance,",
-                "the",
-                "audience",
-                "gave",
-                "a",
-                "standing",
-                "ovation."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1085529,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 2537,
-        "totalCompletionTokens": 1600,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 295565,
-            "promptTokens": 649,
-            "completionTokens": 407
-          },
-          {
-            "lessonNum": 2,
-            "ms": 216454,
-            "promptTokens": 722,
-            "completionTokens": 333
-          },
-          {
-            "lessonNum": 3,
-            "ms": 305059,
-            "promptTokens": 770,
-            "completionTokens": 392
-          }
-        ]
-      },
-      "generatedAt": "2026-05-28T09:08:23.626Z",
-      "updatedAt": "2026-05-28T09:08:23.626Z"
     },
     {
       "topic": "Londra: arte, musica e club",
@@ -38335,6 +38335,16 @@
       ],
       "words": [],
       "flaggedAt": "2026-06-01T13:01:42.306Z"
+    },
+    "Prozessskalierung_in_Bioreakto:type_conjugation:muessen_optimiert_werden": {
+      "topic": "Prozessskalierung in Bioreaktoren",
+      "type": "type_conjugation",
+      "target": "",
+      "source": "muessen optimiert werden",
+      "correct": "we must be optimized",
+      "choices": [],
+      "words": [],
+      "flaggedAt": "2026-06-02T14:38:16.280Z"
     }
   },
   "storylines": {
@@ -38565,6 +38575,22 @@
     "root:Cyanobakterien für Energiegewinnung": {
       "title": "Energie aus Blau",
       "icon": "💡"
+    },
+    "c2042331619": {
+      "title": "تجول في شيكاغو",
+      "icon": "🏙️"
+    },
+    "root:تجول في شيكاغو": {
+      "title": "تجول في شيكاغو",
+      "icon": "🏙️"
+    },
+    "c1500202436": {
+      "title": "בבלוב והומור היהודי",
+      "icon": "📚"
+    },
+    "root:בבלוב": {
+      "title": "בבלוב והומור היהודי",
+      "icon": "📚"
     }
   }
 }
