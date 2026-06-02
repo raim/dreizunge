@@ -171,9 +171,9 @@ function langName(code) { return LANG_NAMES[code] || code || 'Italian'; }
 function sysMeta(srcLang) {
   const S = langName(srcLang || 'en');
   return `You are a lesson plan creator. Return ONLY a valid JSON object, no markdown, no explanation.
-Schema: {"topic":"display title (max 40 chars, concise)","topicEmoji":"one emoji","lessonThemes":["theme1","theme2","theme3"]}
-CRITICAL: The "topic" display title and ALL THREE "lessonThemes" strings MUST be written in ${S}. Do not use any other language for these fields.
-Rules: topic is a concise display title for the user's input — shorten if the input is longer than 40 characters. Choose 3 progressive lesson themes for that topic.`;
+Schema: {"topic":"display title (max 40 chars, concise)","topicEmoji":"one emoji"}
+CRITICAL: The "topic" display title MUST be written in ${S}. Do not use any other language.
+Rules: topic is a concise display title for the user's input — shorten if the input is longer than 40 characters.`;
 }
 
 function difficultyLabel(d) {
@@ -187,6 +187,7 @@ function sentenceLengthSpec(d) {
 const STORY_STYLES = {
   creative:      null,  // default — no extra instruction
   neutral:       'Clear, factual, neutral tone — no narrative flourish.',
+  interview:   'Words useful in a job application interview. Clear, factual, neutral tone — no narrative flourish.',
   scientific:    'Academic register, precise terminology, formal structure.',
   journalism:    'Reportage style: direct, punchy, who/what/where/when.',
   essay:         'Discursive, argumentative, first-person reflective.',
@@ -667,22 +668,30 @@ Schema:
   "icon": "one relevant emoji",
   "grammar": [
     {
-      "target": "${L} noun (singular, no article)",
-      "source": "${S} translation",
-      "gender": "m | f | n | c (common) — use only what applies to ${L}",
-      "article": "definite article in ${L} for this noun (e.g. der/die/das, le/la/l', il/la/lo)",
+      "target": "${L} noun in singular form (no article)",
+      "source": "${S} translation of that noun",
+      "gender": "m | f | n | c (common) — grammatical gender in ${L}",
+      "article": "definite article in ${L} for this noun",
       "plural": "plural form of the noun in ${L}"
     }
   ]
 }
 
-Rules:
+Example (German ← French):
+{"target":"Baum","source":"arbre","gender":"m","article":"der","plural":"Bäume"}
+
+CRITICAL field language rules — violations will cause the lesson to be discarded:
+- CRITICAL: "target" MUST contain ONLY a ${L} word — never ${S}, never the translation
+- CRITICAL: "source" MUST contain ONLY the ${S} translation — never ${L}
+- CRITICAL: "target" and "source" MUST be different words (never the same string)
+- CRITICAL: "target" MUST be the SINGULAR form — never already a plural
+- CRITICAL: "plural" MUST differ from "target" (if they are the same, choose a different noun)
+- CRITICAL: "article" MUST be the correct ${L} definite article for the SINGULAR noun
+- "target" must have no article prepended — singular noun only
+
+Additional rules:
 - grammar: exactly 10 nouns, varied difficulty: ${diff}, all topic-relevant
 - Include nouns with interesting/irregular plurals and mixed genders
-- "target" MUST be the ${L} noun only — no article, no translation
-- "source" MUST be the ${S} translation only
-- "article" MUST be the correct ${L} definite article for this noun
-- "plural" MUST be the correct ${L} plural form
 - If ${L} has no grammatical gender (e.g. English), set gender and article to null${dialectNote}${writingStyleNote}`;
 }
 
@@ -774,34 +783,79 @@ async function generateErrorHunt(story, lang, difficulty, jobId) {
 // ── Generate one lesson — returns {lesson, tokens} ────────────────────
 
 // ── Generate grammar lesson (gender, articles, plurals) ──────────────────────
+function validateGrammarItems(items, lang, srcLang) {
+  // Returns { valid, rejected, reasons }
+  const valid = [], rejected = [];
+  for (const g of items) {
+    const reasons = [];
+    const t = (g.target || '').trim();
+    const s = (g.source || '').trim();
+    const p = (g.plural  || '').trim();
+    if (!t) { reasons.push('missing target'); }
+    if (!s) { reasons.push('missing source'); }
+    if (!p) { reasons.push('missing plural'); }
+    // target and source must differ (catches same-language errors)
+    if (t && s && t.toLowerCase() === s.toLowerCase())
+      reasons.push(`target===source ("${t}")`);
+    // target must not equal plural (singular=plural is suspicious; warn only for common langs)
+    if (t && p && t.toLowerCase() === p.toLowerCase())
+      reasons.push(`target===plural ("${t}") — likely already a plural`);
+    // source must not equal target (language confusion check, case-insensitive)
+    if (reasons.length === 0) {
+      valid.push({ ...g, target: t, source: s, plural: p });
+    } else {
+      rejected.push({ item: g, reasons });
+    }
+  }
+  return { valid, rejected };
+}
+
 async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
   opts = opts || {};
   const { userDialect, storyStyle } = opts;
-  jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Generating grammar lesson…`);
   const sys = sysGrammar(lang, srcLang, difficulty, userDialect, storyStyle);
   const userMsg = `Topic: "${topic}". Generate 10 nouns with gender, article, and plural forms. Return only the JSON object.`;
-  const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1200);
-  const cleaned = raw.replace(/\`\`\`json|\`\`\`/g, '').trim();
-  let parsed;
-  try { parsed = JSON.parse(cleaned); }
-  catch(e) {
-    const m = cleaned.match(/\{[\s\S]*\}/);
-    if (!m) throw new Error('Grammar: could not parse JSON: ' + cleaned.slice(0, 80));
-    parsed = JSON.parse(m[0]);
+  const MAX_ATTEMPTS = 3;
+  let totalPromptTokens = 0, totalCompletionTokens = 0;
+  let lastError = '';
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Grammar lesson attempt ${attempt}/${MAX_ATTEMPTS}…`);
+    console.log(`    Grammar attempt ${attempt}…`);
+    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1400);
+    totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
+    const cleaned = raw.replace(/\`\`\`json|\`\`\`/g, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(cleaned); }
+    catch(e) {
+      const m = cleaned.match(/\{[\s\S]*\}/);
+      if (!m) { lastError = 'Could not parse JSON: ' + cleaned.slice(0, 60); continue; }
+      try { parsed = JSON.parse(m[0]); } catch(e2) { lastError = 'JSON extract failed'; continue; }
+    }
+    if (!Array.isArray(parsed.grammar) || parsed.grammar.length === 0) {
+      lastError = 'No grammar items in response'; continue;
+    }
+    const { valid, rejected } = validateGrammarItems(parsed.grammar, lang, srcLang);
+    if (rejected.length > 0) {
+      console.warn(`    Grammar: ${rejected.length} item(s) rejected:`);
+      rejected.forEach(r => console.warn(`      "${r.item.target}" / "${r.item.source}": ${r.reasons.join(', ')}`));
+    }
+    if (valid.length < 5) {
+      lastError = `Only ${valid.length} valid items after filtering (${rejected.length} rejected)`; continue;
+    }
+    console.log(`    Grammar: ${valid.length} valid nouns (${rejected.length} rejected)`);
+    return {
+      lesson: {
+        id: 5, type: 'grammar',
+        title: parsed.title || 'Gender & Plurals',
+        desc:  parsed.desc  || 'Noun gender, articles and plural forms',
+        icon:  parsed.icon  || '🏷️',
+        grammar: valid,
+      },
+      tokens: { promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens },
+    };
   }
-  if (!Array.isArray(parsed.grammar) || parsed.grammar.length === 0)
-    throw new Error('Grammar: no grammar items in response');
-  console.log(`    Grammar: ${parsed.grammar.length} nouns generated`);
-  return {
-    lesson: {
-      id: 5, type: 'grammar',
-      title: parsed.title || 'Gender & Plurals',
-      desc:  parsed.desc  || 'Noun gender, articles and plural forms',
-      icon:  parsed.icon  || '🏷️',
-      grammar: parsed.grammar,
-    },
-    tokens: { promptTokens, completionTokens },
-  };
+  throw new Error(`Grammar generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
 }
 
 // ── Generate conjugation lesson ───────────────────────────────────────────────
@@ -957,11 +1011,11 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   let meta;
   try {
     const { text: raw, promptTokens, completionTokens } = await callLLM(sysMeta(srcLang),
-      `Topic: "${topic}". Source language for output: ${langName(srcLang)}. Return the JSON with topicEmoji and 3 lessonThemes, all text in ${langName(srcLang)}.`, 512);
+      `Topic: "${topic}". Source language for output: ${langName(srcLang)}. Return the JSON with topic and topicEmoji, all text in ${langName(srcLang)}.`, 256);
     meta = extractJSON(raw);
     totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
   } catch(e) {
-    meta = { topic, topicEmoji: '📚', lessonThemes: ['1', '2', '3'] };
+    meta = { topic, topicEmoji: '📚' };
     console.warn('  Meta failed, using fallback:', e.message);
   }
 
@@ -970,12 +1024,11 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   if (srcLang && srcLang !== 'en') {
     try {
       const S = langName(srcLang);
-      const toTranslate = JSON.stringify({ topic: meta.topic || topic, themes: meta.lessonThemes || [] });
-      const sysTransMeta = `Translate the given JSON values into ${S}. Return ONLY a valid JSON object with the same keys: {"topic":"...","themes":["...","...","..."]}. No explanation, no markdown. All output text must be in ${S}.`;
-      const { text: rawT, promptTokens: pt, completionTokens: ct } = await callLLM(sysTransMeta, toTranslate, 256);
+      const toTranslate = JSON.stringify({ topic: meta.topic || topic });
+      const sysTransMeta = `Translate the given JSON values into ${S}. Return ONLY a valid JSON object with the same keys: {"topic":"..."}. No explanation, no markdown. All output text must be in ${S}.`;
+      const { text: rawT, promptTokens: pt, completionTokens: ct } = await callLLM(sysTransMeta, toTranslate, 128);
       const translated = extractJSON(rawT);
       if (translated.topic) meta.topic = translated.topic;
-      if (Array.isArray(translated.themes) && translated.themes.length) meta.lessonThemes = translated.themes;
       totalPromptTokens += pt; totalCompletionTokens += ct;
       console.log(`    Meta translated to ${S}: "${meta.topic}"`);
     } catch(e) {
@@ -1066,26 +1119,38 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       throw new Error(`${label} lesson failed: ` + e.message);
     }
   } else {
-    const TOTAL = 3;
-    let prevVocab = [];
+    // Standard format: one lesson (no progression)
+    // all_types: standard lesson + grammar + conjugation + error_hunt
+    const isAllTypes = lessonFormat === 'all_types';
     const lessonOpts = { userTranslation: storyTranslation || null, userDialect: userDialect || null, styleHint, writingStyle: storyStyle || null };
-    for (let i = 1; i <= TOTAL; i++) {
-      try {
-        const { lesson, tokens } = await generateOneLesson(
-          lang, srcLang, topic, i, TOTAL, prevVocab, story, difficulty, jobId, lessonOpts);
-        lessons.push(lesson);
-        prevVocab = prevVocab.concat(lesson.vocab);
-        totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
-        lessonTokenStats.push(tokens);
-      } catch(e) {
-        console.warn(`  Lesson ${i} failed, skipping: ${e.message}`);
-        jobStep(jobId, `⚠ Lesson ${i} failed — continuing…`);
+    try {
+      const { lesson, tokens } = await generateOneLesson(
+        lang, srcLang, topic, 1, 1, [], story, difficulty, jobId, lessonOpts);
+      lessons.push(lesson);
+      totalPromptTokens += tokens.promptTokens; totalCompletionTokens += tokens.completionTokens;
+      lessonTokenStats.push(tokens);
+    } catch(e) {
+      throw new Error(`Lesson generation failed: ${e.message}`);
+    }
+    if (isAllTypes) {
+      // Generate grammar, conjugation, and error_hunt as additional lessons
+      const extraFmts = [
+        { fmt: 'grammar',     label: 'Grammar',     fn: () => generateGrammar(topic, lang, srcLang, difficulty, jobId, { userDialect, storyStyle }) },
+        { fmt: 'conjugation', label: 'Conjugation', fn: () => generateConjugation(topic, lang, srcLang, difficulty, jobId, { userDialect, storyStyle }) },
+        { fmt: 'error_hunt',  label: 'Error Hunt',  fn: () => generateErrorHunt(story, lang, difficulty, jobId) },
+      ];
+      for (const { fmt: eFmt, label, fn } of extraFmts) {
+        try {
+          const { lesson: eLesson, tokens: eTokens } = await fn();
+          lessons.push(eLesson);
+          totalPromptTokens += eTokens.promptTokens; totalCompletionTokens += eTokens.completionTokens;
+          lessonTokenStats.push(eTokens);
+        } catch(e) {
+          console.warn(`  ${label} lesson failed, skipping: ${e.message}`);
+          jobStep(jobId, `⚠ ${label} failed — continuing…`);
+        }
       }
     }
-    if (lessons.length === 0)
-      throw new Error('All lessons failed to generate — nothing to save.');
-    if (lessons.length < TOTAL)
-      console.warn(`  Partial result: ${lessons.length}/${TOTAL} lessons generated.`);
   }
 
   const totalMs = Date.now() - genStart;
@@ -1102,7 +1167,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     ...(userDialect      ? { userDialect }       : {}),
     ...(continuedFrom    ? { continuedFrom }     : {}),
     ...(storyStyle       ? { storyStyle }        : {}),
-    ...(lessonFormat && lessonFormat!=='standard' ? { lessonFormat } : {}),
+    ...(lessonFormat && !['standard'].includes(lessonFormat) ? { lessonFormat } : {}),
     lessons,
     generationStats: { totalMs, backend: 'ollama', model: modelLabel,
       lessonFormat: OLLAMA_LESSON_FORMAT,
@@ -1459,7 +1524,11 @@ async function boot() {
       saved.topic = newTopic.trim().slice(0, 80);
       if (topicEmoji) saved.topicEmoji = topicEmoji;
       // Remove old entry and insert updated one
-      store.lessons = store.lessons.filter(l => l.topic.toLowerCase() !== oldTopic.trim().toLowerCase());
+      const newLower = newTopic.trim().toLowerCase();
+      store.lessons = store.lessons.filter(l =>
+        l.topic.toLowerCase() !== oldTopic.trim().toLowerCase() &&
+        l.topic.toLowerCase() !== newLower
+      );
       store.lessons.unshift(saved);
       // Cascade rename into continuedFrom pointers on other lessons
       const oldLower = oldTopic.trim().toLowerCase();
@@ -1555,7 +1624,7 @@ async function boot() {
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation'].includes(lessonFormat) ? lessonFormat : 'standard';
+      const fmt  = ['error_hunt','grammar','conjugation','all_types'].includes(lessonFormat) ? lessonFormat : 'standard';
       const wc = Math.max(100, Math.min(1000, parseInt(storyLen, 10) || 300));
       const contFrom = (!userStory && continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       const topicKey = topic.trim().toLowerCase();
@@ -1669,7 +1738,12 @@ async function boot() {
 
       const doGenLesson = async () => {
         let result;
-        if (fmt === 'error_hunt') {
+        if (fmt === 'standard') {
+          const storyTranslation = saved.storyTranslation || null;
+          const styleHint = (!storyTranslation && story) ? story.slice(0, 600) : null;
+          const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, styleHint, writingStyle: style };
+          result = await generateOneLesson(lang, srcLang, topic.trim(), 1, 1, [], story, diff, jobId, lessonOpts);
+        } else if (fmt === 'error_hunt') {
           result = await generateErrorHunt(story, lang, diff, jobId);
         } else if (fmt === 'grammar') {
           result = await generateGrammar(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style });
@@ -1681,15 +1755,9 @@ async function boot() {
         // Compute next available ID (avoid clashing with existing)
         const maxId = Math.max(0, ...(saved.lessons||[]).map(l => l.id||0));
         const newLesson = { ...result.lesson, id: maxId + 1 };
-        // Replace existing lesson of same type, or append
-        const existingIdx = (saved.lessons||[]).findIndex(l => l.type === newLesson.type);
-        if (existingIdx >= 0) {
-          saved.lessons[existingIdx] = newLesson;
-          console.log(`    Replaced existing ${fmt} lesson (id ${newLesson.id})`);
-        } else {
-          saved.lessons.push(newLesson);
-          console.log(`    Appended ${fmt} lesson (id ${newLesson.id}), total: ${saved.lessons.length}`);
-        }
+        // Always append — ➕ button adds a new lesson set, never replaces
+        saved.lessons.push(newLesson);
+        console.log(`    Appended ${fmt} lesson (id ${newLesson.id}), total: ${saved.lessons.length}`);
         saved.updatedAt = new Date().toISOString();
         saveStore(store);
         return { lesson: newLesson, topic: saved.topic, lessonCount: saved.lessons.length };

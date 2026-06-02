@@ -197,7 +197,6 @@
     "form.style.poem": "📜 Poem",
     "form.style.dialogue": "💬 Dialoog",
     "form.format_lbl": "Les formaat",
-    "form.format.standard": "📚 Standaard — 3 opvolgende lessen",
     "form.format.error_hunt": "🔍 Foutenzoeken — fouten in de verhaal vinden",
     "form.format.grammar": "🏷️ Grammatica — gender, artikelen & meervoud",
     "form.format.conjugation": "🔤 Conjugatie — werkwoordsvormen per persoon",
@@ -205,7 +204,10 @@
     "ex.badge.mcq_plural": "Kies het meervoud",
     "ex.badge.type_plural": "Typ het meervoud",
     "ex.badge.mcq_conjugation": "Kies de werkwoordsvorm",
-    "ex.badge.type_conjugation": "Typ de werkwoordsvorm"
+    "ex.badge.type_conjugation": "Typ de werkwoordsvorm",
+    "form.style.interview": "💼 Jobbe interview",
+    "form.format.standard": "📚 Standaard — woordenlijst & zinnen",
+    "form.format.all_types": "🎯 Alle typen — standaard + grammatica + verbuiging + foutenzoeken"
   },
   "pt": {
     "app.tagline": "Aprenda vocabulário de qualquer tópico em qualquer idioma",
@@ -405,7 +407,6 @@
     "form.style.poem": "📜 Poema",
     "form.style.dialogue": "💬 Diálogo",
     "form.format_lbl": "Formato da lição",
-    "form.format.standard": "📚 Padrão — 3 lições progressivas",
     "form.format.error_hunt": "🔍 Caça ao erro — encontre os erros na história",
     "form.format.grammar": "🏷️ Gramática — gênero, artigos e plurais",
     "form.format.conjugation": "🔤 Conjugação — formas do verbo por pessoa",
@@ -413,7 +414,10 @@
     "ex.badge.mcq_plural": "Escolha o plural",
     "ex.badge.type_plural": "Digite o plural",
     "ex.badge.mcq_conjugation": "Escolha a forma do verbo",
-    "ex.badge.type_conjugation": "Digite a forma do verbo"
+    "ex.badge.type_conjugation": "Digite a forma do verbo",
+    "form.style.interview": "💼 Entrevista de Emprego",
+    "form.format.standard": "📚 Padrão — vocabulário & frases",
+    "form.format.all_types": "🎯 Todos os tipos — padrão + gramática + conjugação + busca de erros"
   },
   "fr": {
     "app.tagline": "Apprendre du vocabulaire sur n'importe quel sujet",
@@ -603,7 +607,6 @@
     "form.style.poem": "📜 Poème",
     "form.style.dialogue": "💬 Dialogue",
     "form.format_lbl": "Format de la leçon",
-    "form.format.standard": "📚 Standard — 3 leçons progressives",
     "form.format.error_hunt": "🔍 Chasse aux erreurs — trouvez les fautes dans l'histoire",
     "form.format.grammar": "🏷️ Grammaire — genre, articles et pluriels",
     "form.format.conjugation": "🔤 Conjonction — formes du verbe par personne",
@@ -621,7 +624,10 @@
     "lib.add_lesson_title": "Ajouter une leçon à ce sujet",
     "lib.add_lesson_done": "✓ Leçon ajoutée",
     "ex.type_in_placeholder": "Écrivez votre réponse…",
-    "form.lesson_type_hdr": "Type de leçon"
+    "form.lesson_type_hdr": "Type de leçon",
+    "form.style.interview": "💼 Entretien de travail",
+    "form.format.standard": "📚 Standard — vocabulaire & phrases",
+    "form.format.all_types": "🎯 Tous les types — standard + grammaire + conjugaison + recherche d'erreurs"
   },
   "tr": {
     "furigana.show": "ふ Show furigana",
@@ -821,7 +827,6 @@
     "form.style.poem": "📜 Öykü",
     "form.style.dialogue": "💬 Söylediğimiz",
     "form.format_lbl": "Ders formatı",
-    "form.format.standard": "📚 Standart — 3 ileri seviye ders",
     "form.format.error_hunt": "🔍 Hata Arama — hikayede yanlışları bul",
     "form.format.grammar": "🏷️ Gramer — cins, eylem kelimesi & çoğul",
     "form.format.conjugation": "🔤 Konjonkasyon — kişiye göre fiil formları",
@@ -829,7 +834,10 @@
     "ex.badge.mcq_plural": "Çoğulu seç",
     "ex.badge.type_plural": "Çoğulu yaz",
     "ex.badge.mcq_conjugation": "Fiil formını seç",
-    "ex.badge.type_conjugation": "Fiil formunu yaz"
+    "ex.badge.type_conjugation": "Fiil formunu yaz",
+    "form.style.interview": "💼 İş Mülakatı",
+    "form.format.standard": "📚 Standart — kelimeler ve cümleler",
+    "form.format.all_types": "🎯 Tüm türler — standart + gramer + kavrama + hata arama"
   },
   "hi": {
     "app.tagline": "किसी भी विषय में किसी भी भाषा में शब्दावली सीखें",
@@ -1019,7 +1027,6 @@
     "form.style.poem": "📜 श्लेष्म",
     "form.style.dialogue": "💬 चरित्र",
     "form.format_lbl": "लेक्सन फॉर्मेट",
-    "form.format.standard": "📚 मानक — 3 चरम लेक्सन",
     "form.format.error_hunt": "🔍 गलतियों की खोज — कहानी में गलतियाँ पाएं",
     "form.format.grammar": "🏷️ व्याकरण — पुरुष, अव्यय और संगत",
     "form.format.conjugation": "🔤 वर्तमान कारक — वर्तमान कारक द्वारा व्यक्ति",
@@ -1037,7 +1044,10 @@
     "lib.add_lesson_title": "यह विषय के साथ लेक्सियन जोड़ें",
     "lib.add_lesson_done": "✓ लेक्सियन जोड़ा",
     "ex.type_in_placeholder": "अपना जवाब लिखिए…",
-    "form.lesson_type_hdr": "लेक्सियन का प्रकार"
+    "form.lesson_type_hdr": "लेक्सियन का प्रकार",
+    "form.style.interview": "💼 नौकरी की साक्षात्कार",
+    "form.format.standard": "📚 मानक — शब्दावली & वाक्य",
+    "form.format.all_types": "🎯 सभी प्रकार — मानक + व्याकरण + वर्तनी + त्रुटि खोज"
   },
   "de": {
     "app.tagline": "Vokabular für jedes Thema in jeder Sprache lernen",
@@ -1227,7 +1237,6 @@
     "form.style.poem": "📜 Gedicht",
     "form.style.dialogue": "💬 Dialog",
     "form.format_lbl": "Lernformat",
-    "form.format.standard": "📚 Standard — 3 fortschreitende Lektionen",
     "form.format.error_hunt": "🔍 Fehlerjagen — Fehler im Text finden",
     "form.format.grammar": "🏷️ Grammatik — Geschlecht, Artikel & Plural",
     "form.format.conjugation": "🔤 Konjugation — Verbstämme nach Person",
@@ -1245,7 +1254,10 @@
     "ex.type_plural.q": "Trage das Pluralform von \"{word}\" ein",
     "ex.mcq_conjugation.q": "\"{pronoun}\" + {verb} = ?",
     "ex.type_conjugation.q": "Trage die Form ein für \"{pronoun}\" + {verb}",
-    "ex.mcq_article.q": "Welches Artikelwort passt zu \"{word}\"?"
+    "ex.mcq_article.q": "Welches Artikelwort passt zu \"{word}\"?",
+    "form.style.interview": "💼 Jobgespräch",
+    "form.format.standard": "📚 Standard — Wörter und Sätze",
+    "form.format.all_types": "🎯 Alle Arten — Standard + Grammatik + Konjugation + Fehlerjagd"
   },
   "ar": {
     "app.tagline": "تعلم المفردات لأي موضوع بأي لغة",
@@ -1435,7 +1447,6 @@
     "form.style.poem": "📜 شعر",
     "form.style.dialogue": "💬 حوار",
     "form.format_lbl": "ORMAT الدروس",
-    "form.format.standard": "📚 معياري — 3 دروس متسلسلة",
     "form.format.error_hunt": "🔍 رحلة البحث عن الأخطاء — اكتشف الأخطاء في القصة",
     "form.format.grammar": "🏷️ نحو — جنس الكلمة، الألفاظ والنوع множدي",
     "form.format.conjugation": "🔤 ت conjugation — أشكال الفعل حسب الشخص",
@@ -1453,7 +1464,10 @@
     "lib.add_lesson_title": "إضافة درس لهذا الموضوع",
     "lib.add_lesson_done": "✓ تم إضافة الدرس",
     "ex.type_in_placeholder": "اكتب إجابتك...",
-    "form.lesson_type_hdr": "نوع الدرس"
+    "form.lesson_type_hdr": "نوع الدرس",
+    "form.style.interview": "💼 مقابلة عمل",
+    "form.format.standard": "📚 معياري — المصطلحات والجمل",
+    "form.format.all_types": "🎯 جميع الأنواع — المعياري + гرامática + تقوية الفعل + البحث عن الأخطاء"
   },
   "en": {
     "app.tagline": "Learn vocabulary for any topic in any language",
@@ -1615,6 +1629,7 @@
     "form.style_lbl": "Writing style",
     "form.style.creative": "🎭 Creative",
     "form.style.neutral": "📰 Neutral",
+    "form.style.interview": "💼 Job Interview",
     "form.style.scientific": "🔬 Scientific",
     "form.style.journalism": "📡 Journalism",
     "form.style.essay": "✍️ Essay",
@@ -1634,10 +1649,11 @@
     "form.style.poem": "📜 Poem",
     "form.style.dialogue": "💬 Dialogue",
     "form.format_lbl": "Lesson format",
-    "form.format.standard": "📚 Standard — 3 progressive lessons",
+    "form.format.standard": "📚 Standard — vocabulary & sentences",
     "form.format.error_hunt": "🔍 Error Hunt — find mistakes in the story",
     "form.format.grammar": "🏷️ Grammar — gender, articles & plurals",
     "form.format.conjugation": "🔤 Conjugation — verb forms by person",
+    "form.format.all_types": "🎯 All types — standard + grammar + conjugation + error hunt",
     "ex.badge.mcq_article": "Pick the article",
     "ex.badge.mcq_plural": "Pick the plural",
     "ex.badge.type_plural": "Type the plural",
@@ -1842,7 +1858,6 @@
     "form.style.poem": "📜 Poem",
     "form.style.dialogue": "💬 Dialog",
     "form.format_lbl": "Lektionsformat",
-    "form.format.standard": "📚 Standard — 3 progressiva lektioner",
     "form.format.error_hunt": "🔍 Feljaktigjakt — hitta fel i historien",
     "form.format.grammar": "🏷️ Grammatik — genre, artiklar & flersinglar",
     "form.format.conjugation": "🔤 Konjugering — verbdjurk efter person",
@@ -1860,7 +1875,10 @@
     "lib.add_lesson_title": "Lägg till lära till denna ämne",
     "lib.add_lesson_done": "✓ Lära lagt till",
     "ex.type_in_placeholder": "Typa ditt svar…",
-    "form.lesson_type_hdr": "Läraart"
+    "form.lesson_type_hdr": "Läraart",
+    "form.style.interview": "💼 Jobbintervju",
+    "form.format.standard": "📚 Standard — ord och meningar",
+    "form.format.all_types": "🎯 Alla typer — standard + grammatik + konjugering + felutmaning"
   },
   "ru": {
     "app.tagline": "Учите словарный запас по любой теме на любом языке",
@@ -2050,7 +2068,6 @@
     "form.style.poem": "📜 Поэма",
     "form.style.dialogue": "💬 Диалог",
     "form.format_lbl": "Формат урока",
-    "form.format.standard": "📚 Стандартный — 3 прогрессивные урока",
     "form.format.error_hunt": "🔍 Поиск ошибок — найдите ошибки в истории",
     "form.format.grammar": "🏷️ Грамматика — род, определённые и неопределённые артикли, множественное число",
     "form.format.conjugation": "🔤 Конjugация — формы глагола по лицам",
@@ -2068,7 +2085,10 @@
     "lib.add_lesson_title": "Добавить урок к этой теме",
     "lib.add_lesson_done": "✓ Урок добавлен",
     "ex.type_in_placeholder": "Введите свой ответ…",
-    "form.lesson_type_hdr": "Тип урока"
+    "form.lesson_type_hdr": "Тип урока",
+    "form.style.interview": "💼 Интервью на работу",
+    "form.format.standard": "📚 Стандарт —lexical units & sentences",
+    "form.format.all_types": "🎯 Все типы — стандарт + грамматика + склонение + поиск ошибок"
   },
   "zh": {
     "app.tagline": "用任何语言学习任何主题的词汇",
@@ -2258,7 +2278,6 @@
     "form.style.poem": "📜 诗歌",
     "form.style.dialogue": "💬 对话",
     "form.format_lbl": "课程格式",
-    "form.format.standard": "📚 标准 — 3 级进课程",
     "form.format.error_hunt": "🔍 错误猎手 — 在故事中找出错误",
     "form.format.grammar": "🏷️ 语法 — 性别、冠词与复数",
     "form.format.conjugation": "🔤 词形变化 — 人称动词形式",
@@ -2276,7 +2295,10 @@
     "lib.add_lesson_title": "为该主题添加课程",
     "lib.add_lesson_done": "✓ 课程已添加",
     "ex.type_in_placeholder": "输入您的答案…",
-    "form.lesson_type_hdr": "课程类型"
+    "form.lesson_type_hdr": "课程类型",
+    "form.style.interview": "💼 职业面试",
+    "form.format.standard": "📚 标准 — 单词与句子",
+    "form.format.all_types": "🎯 所有类型 — 标准 + 语法 + 变位 + 错误查找"
   },
   "ko": {
     "app.tagline": "모든 주제의 어휘를 어떤 언어로든 배우세요",
@@ -2466,7 +2488,6 @@
     "form.style.poem": "📜 시적",
     "form.style.dialogue": "💬 대화형",
     "form.format_lbl": "수업 형식",
-    "form.format.standard": "📚 표준 — 3단계 진행 수업",
     "form.format.error_hunt": "🔍 오류 탐색 — 스토리에서 실수 찾기",
     "form.format.grammar": "🏷️ 문법 — 성별, 수사 & 복수",
     "form.format.conjugation": "🔤 접속법 — 동사 형태에 따른 인칭",
@@ -2484,7 +2505,10 @@
     "lib.add_lesson_title": "이 주제에 수업 추가",
     "lib.add_lesson_done": "✓ 수업 추가 완료",
     "ex.type_in_placeholder": "답변을 입력하세요…",
-    "form.lesson_type_hdr": "수업 유형"
+    "form.lesson_type_hdr": "수업 유형",
+    "form.style.interview": "💼 직면접",
+    "form.format.standard": "📚 표준 — 단어와 문장",
+    "form.format.all_types": "🎯 모든 유형 — 표준 + 문법 + 변형 + 오류 탐색"
   },
   "it": {
     "app.tagline": "Impara il vocabolario per qualsiasi argomento",
@@ -2674,7 +2698,6 @@
     "form.style.poem": "📜 Poema",
     "form.style.dialogue": "💬 Dialogo",
     "form.format_lbl": "Formato lezione",
-    "form.format.standard": "📚 Standard — 3 lezioni progressive",
     "form.format.error_hunt": "🔍 Ricerca errori — trova gli errori nella storia",
     "form.format.grammar": "🏷️ Grammatica — genere, articolazione & plurale",
     "form.format.conjugation": "🔤 Coniugazione — forme del verbo per persona",
@@ -2692,7 +2715,10 @@
     "lib.add_lesson_title": "Aggiungi lezione a questo tema",
     "lib.add_lesson_done": "✓ Lezione aggiunta",
     "ex.type_in_placeholder": "Digita la tua risposta…",
-    "form.lesson_type_hdr": "Tipo di lezione"
+    "form.lesson_type_hdr": "Tipo di lezione",
+    "form.style.interview": "💼 Intervista di Lavoro",
+    "form.format.standard": "📚 Standard — vocabolario & frasi",
+    "form.format.all_types": "🎯 Tutti i tipi — standard + grammatica + congiunzione + caccia agli errori"
   },
   "pl": {
     "app.tagline": "Ucz się słownictwa z każdego tematu w każdym języku",
@@ -2882,7 +2908,6 @@
     "form.style.poem": "📜 Poezja",
     "form.style.dialogue": "💬 Dialog",
     "form.format_lbl": "Format lekcji",
-    "form.format.standard": "📚 Standard — 3 postępujące lekcje",
     "form.format.error_hunt": "🔍 Wyszukiwanie błędów — znajdź błędy w historii",
     "form.format.grammar": "🏷️ Gramatyka — rodzaj, artuki i mnoga",
     "form.format.conjugation": "🔤 Konjugacja — formy czasownika według osoby",
@@ -2900,7 +2925,10 @@
     "lib.add_lesson_title": "Dodaj lekcję do tego tematu",
     "lib.add_lesson_done": "✓ Lekcja dodana",
     "ex.type_in_placeholder": "Wpisz swoje odpowiedzi…",
-    "form.lesson_type_hdr": "Typ lekcji"
+    "form.lesson_type_hdr": "Typ lekcji",
+    "form.style.interview": "💼 Rozmowa Pracowa",
+    "form.format.standard": "📚 Standard — słownictwo & zdania",
+    "form.format.all_types": "🎯 Wszystkie typy — standard + gramatyka + konjugacja + poszukiwanie błędu"
   },
   "es": {
     "app.tagline": "Aprender vocabulario de cualquier tema en cualquier idioma",
@@ -3090,7 +3118,6 @@
     "form.style.poem": "📜 Poema",
     "form.style.dialogue": "💬 Diálogo",
     "form.format_lbl": "Formato de la lección",
-    "form.format.standard": "📚 Estándar — 3 lecciones progresivas",
     "form.format.error_hunt": "🔍 Explorando errores — busca errores en la historia",
     "form.format.grammar": "🏷️ Gramática — género, artículos y plurales",
     "form.format.conjugation": "🔤 Conjugación — formas del verbo por persona",
@@ -3108,7 +3135,10 @@
     "lib.add_lesson_title": "Añadir lección a este tema",
     "lib.add_lesson_done": "✓ Lección añadida",
     "ex.type_in_placeholder": "Escribe tu respuesta…",
-    "form.lesson_type_hdr": "Tipo de lección"
+    "form.lesson_type_hdr": "Tipo de lección",
+    "form.style.interview": "💼 Entrevista de Trabajo",
+    "form.format.standard": "📚 Estándar — vocabulario y oraciones",
+    "form.format.all_types": "🎯 Todos los tipos — estándar + gramática + conjugación + búsqueda de errores"
   },
   "ja": {
     "app.tagline": "あらゆるトピックの語彙をどんな言語でも学ぼう",
@@ -3298,7 +3328,6 @@
     "form.style.poem": "📜 诗",
     "form.style.dialogue": "💬 对话",
     "form.format_lbl": "课程格式",
-    "form.format.standard": "📚 标准 — 3 级进课程",
     "form.format.error_hunt": "🔍 文章のミスを見つけてみよう",
     "form.format.grammar": "🏷️ 文法 — 性、冠詞、複数形",
     "form.format.conjugation": "🔤 動詞の形 — 人によって変化する",
@@ -3316,7 +3345,10 @@
     "lib.add_lesson_title": "このトピックにレッスンを追加",
     "lib.add_lesson_done": "✓ レッスン追加",
     "ex.type_in_placeholder": "回答をタイプしてください…",
-    "form.lesson_type_hdr": "レッスンタイプ"
+    "form.lesson_type_hdr": "レッスンタイプ",
+    "form.style.interview": "💼 ジョブ面接",
+    "form.format.standard": "📚 標準 — 語彙と文",
+    "form.format.all_types": "🎯 全種類 — 標準+文法+活用+誤り探しなど"
   },
   "he": {
     "app.backend": "백엔드:",
@@ -3506,7 +3538,6 @@
     "form.style.poem": "📜 Poem",
     "form.style.dialogue": "💬 Dialogue",
     "form.format_lbl": "Lesson format",
-    "form.format.standard": "📚 Standard — 3 progressive lessons",
     "form.format.error_hunt": "🔍 חיפוש שגיאות — מצא טעויות בסיפור",
     "form.format.grammar": "🏷️ דקדוק — מגוון מילים, תרגילים ופלורלים",
     "form.format.conjugation": "🔤 הת)(((ת — צורות תרגילים לפי אדם",
@@ -3524,7 +3555,10 @@
     "lib.add_lesson_title": "הוסף למדון לתיקון זה",
     "lib.add_lesson_done": "✓ למדון הוסף",
     "ex.type_in_placeholder": "כתוב את התשובה...",
-    "form.lesson_type_hdr": "סוג הלמדון"
+    "form.lesson_type_hdr": "סוג הלמדון",
+    "form.style.interview": "💼 ראיון עבודה",
+    "form.format.standard": "📚 סטנדרטי — מונחים ומשפטים",
+    "form.format.all_types": "🎯 כל_TYPES — סטנדרטי + דקדוק + הרכבה + חיפוש שגיאות"
   },
   "uk": {
     "app.backend": "Бек-енд:",
@@ -3714,7 +3748,6 @@
     "form.style.poem": "📜 Пісня",
     "form.style.dialogue": "💬 Діалог",
     "form.format_lbl": "Формат уроку",
-    "form.format.standard": "📚 Стандартний — 3 прогресивних уроки",
     "form.format.error_hunt": "🔍 Пошук помилок — знайди помилки у історії",
     "form.format.grammar": "🏷️ Граматика — род, відмінки та множини",
     "form.format.conjugation": "🔤 Конjugація — форми глагола за особою",
@@ -3732,7 +3765,10 @@
     "lib.add_lesson_title": "Додати урок до цієї теми",
     "lib.add_lesson_done": "✓ Урок доданий",
     "ex.type_in_placeholder": "Введіть свій відповідь…",
-    "form.lesson_type_hdr": "Тип уроку"
+    "form.lesson_type_hdr": "Тип уроку",
+    "form.style.interview": "💼 Розмова на роботу",
+    "form.format.standard": "📚 Standard — література та речення",
+    "form.format.all_types": "🎯 Всі типи — стандарт + граматика + коефіцієнта + пошук помилок"
   },
   "cs": {
     "app.backend": "Backend:",
@@ -3922,7 +3958,6 @@
     "form.style.poem": "📜 Píseň",
     "form.style.dialogue": "💬 Rozhovor",
     "form.format_lbl": "Formát lekce",
-    "form.format.standard": "📚 Standard — 3 postupné lekce",
     "form.format.error_hunt": "🔍 Hledání chyb — najděte chyby v příběhu",
     "form.format.grammar": "🏷️ Gramatika — rodu, členského jména a množných čísel",
     "form.format.conjugation": "🔤 Konjugace — formy čísla podle osoby",
@@ -3940,7 +3975,10 @@
     "lib.add_lesson_title": "Přidej lekci do tématu",
     "lib.add_lesson_done": "✓ Lekce přidána",
     "ex.type_in_placeholder": "Zapiš svůj odvětvi…",
-    "form.lesson_type_hdr": "Typ lekce"
+    "form.lesson_type_hdr": "Typ lekce",
+    "form.style.interview": "💼 Rozhovor o zaměstnání",
+    "form.format.standard": "📚 Standard — slovník a věty",
+    "form.format.all_types": "🎯 Všechny typy — standard + gramatika + konjugace + hledání chyb"
   },
   "vi": {
     "app.backend": "Backend:",
@@ -4130,7 +4168,6 @@
     "form.style.poem": "📜 Tục ngữ",
     "form.style.dialogue": "💬 Đối thoại",
     "form.format_lbl": "Định dạng bài học",
-    "form.format.standard": "📚 Tiêu chuẩn — 3 bài học tiến bộ",
     "form.format.error_hunt": "🔍 Tìm lỗi — tìm lỗi trong câu chuyện",
     "form.format.grammar": "🏷️ Ngữ pháp — giới tính, từ số và số nhiều",
     "form.format.conjugation": "🔤 Động từ — hình thức động từ theo người",
@@ -4148,7 +4185,10 @@
     "lib.add_lesson_title": "Thêm bài học vào chủ đề này",
     "lib.add_lesson_done": "✓ Bài học đã thêm",
     "ex.type_in_placeholder": "Viết câu trả lời…",
-    "form.lesson_type_hdr": "Loại bài học"
+    "form.lesson_type_hdr": "Loại bài học",
+    "form.style.interview": "💼 Phỏng Vấn Công Việc",
+    "form.format.standard": "📚 Tiêu chuẩn — từ vựng & câu văn",
+    "form.format.all_types": "🎯 Tất cả loại — tiêu chuẩn + ngữ pháp + động từ + tìm lỗi"
   },
   "id": {
     "app.backend": "Backend:",
@@ -4338,7 +4378,6 @@
     "form.style.poem": "📜 Poem",
     "form.style.dialogue": "💬 Dialogue",
     "form.format_lbl": "Format pelajaran",
-    "form.format.standard": "📚 Standar — 3 pelajaran bertingkat",
     "form.format.error_hunt": "🔍 Cari Kesalahan — temukan kesalahan dalam cerita",
     "form.format.grammar": "🏷️ Grammar — gender, artikel & plural",
     "form.format.conjugation": "🔤 Konjugasi — bentuk kata kerja berdasarkan orang",
@@ -4356,7 +4395,10 @@
     "lib.add_lesson_title": "Tambahkan pelajaran ke topik ini",
     "lib.add_lesson_done": "✓ Pelajaran ditambahkan",
     "ex.type_in_placeholder": "Tulis jawapanmu…",
-    "form.lesson_type_hdr": "Jenis pelajaran"
+    "form.lesson_type_hdr": "Jenis pelajaran",
+    "form.style.interview": "💼 Wawancara Kerja",
+    "form.format.standard": "📚 Standar — vokabular & kalimat",
+    "form.format.all_types": "🎯 Semua jenis — standar + gramatika + konjugasi + pencarian kesalahan"
   },
   "ro": {
     "app.backend": "Backend:",
@@ -4546,7 +4588,6 @@
     "form.style.poem": "📜 Poem",
     "form.style.dialogue": "💬 Dialog",
     "form.format_lbl": "Formatul lecției",
-    "form.format.standard": "📚 Standard — 3 lecții progresive",
     "form.format.error_hunt": "🔍 Căutare Eroare — găsește greșelile în poveste",
     "form.format.grammar": "🏷️ Gramatică — gen, artiști și pluri",
     "form.format.conjugation": "🔤 Conjugare — forme verbului după persoane",
@@ -4564,7 +4605,8 @@
     "lib.add_lesson_title": "Adaugă lecție în acest subiect",
     "lib.add_lesson_done": "✓ Lecție adăugată",
     "ex.type_in_placeholder": "Tipărește răspunsul...",
-    "form.lesson_type_hdr": "Tipul lecției"
+    "form.lesson_type_hdr": "Tipul lecției",
+    "form.style.interview": "💼 Entrevista de muncă"
   },
   "th": {
     "app.backend": "Backend:",
@@ -4754,7 +4796,6 @@
     "form.style.poem": "📜 บทกวี",
     "form.style.dialogue": "💬 บทสนทนา",
     "form.format_lbl": "รูปแบบบทเรียน",
-    "form.format.standard": "📚 มาตรฐาน — บทเรียน 3 ขั้นตอน",
     "form.format.error_hunt": "🔍 ค้นหาข้อผิดพลาด — ค้นหาข้อผิดพลาดในเรื่อง",
     "form.format.grammar": "🏷️ ไวยากรณ์ — เพศ, คำนำหน้า & คำพหูพจน์",
     "form.format.conjugation": "🔤 การตัดคำ — รูปแบบของกริยาตามผู้กระทำ",
@@ -4772,7 +4813,8 @@
     "lib.add_lesson_title": "เพิ่มบทเรียนในหัวข้อนี้",
     "lib.add_lesson_done": "✓ บทเรียนเพิ่มแล้ว",
     "ex.type_in_placeholder": "พิมพ์คำตอบ...",
-    "form.lesson_type_hdr": "ประเภทบทเรียน"
+    "form.lesson_type_hdr": "ประเภทบทเรียน",
+    "form.style.interview": "💼 การสัมภาษณ์งาน"
   },
   "el": {
     "furigana.show": "νομίστε την furigana",
@@ -4962,7 +5004,6 @@
     "form.style.poem": "📜 Μέσα",
     "form.style.dialogue": "💬 Διαλόγος",
     "form.format_lbl": "Φόρμα μαθήματος",
-    "form.format.standard": "📚 Πρότυπο — 3 προγραμματισμένα μαθήματα",
     "ex.type_plural.q": "Γράψτε το πληθυντικό του \"{word}\"",
     "ex.mcq_conjugation.q": "\"{pronoun}\" + {verb} = ?",
     "ex.type_conjugation.q": "Γράψτε τη μορφή για \"{pronoun}\" + {verb}",
@@ -4980,7 +5021,8 @@
     "ex.badge.mcq_conjugation": "Επιλογή της μορφοποίησης του λεξικού",
     "ex.badge.type_conjugation": "Εισαγωγή της μορφοποίησης του λεξικού",
     "ex.mcq_article.q": "Ποιο είναι το πληροφορίο που πρέπει να προστεθεί στη \"{word}\"?",
-    "ex.mcq_plural.q": "Ποιος είναι ο πληθυσμός της \"{word}\"?"
+    "ex.mcq_plural.q": "Ποιος είναι ο πληθυσμός της \"{word}\"?",
+    "form.style.interview": "💼 Ερωτηματολογία Εργασίας"
   },
   "fi": {
     "app.backend": "Tietojärjestelmä:",
@@ -5170,7 +5212,6 @@
     "form.style.poem": "📜 Kanssi",
     "form.style.dialogue": "💬 Keskustelu",
     "form.format_lbl": "Opastuksen formaatti",
-    "form.format.standard": "📚 Standardi — 3 edistävää opiskelua",
     "form.format.error_hunt": "🔍 Virheliikkeen löytäminen — etsi virheitä tarinassa",
     "form.format.grammar": "🏷️ Grammaaria — sukupuoli, artikkelit & pluraleja",
     "form.format.conjugation": "🔤 Konjugointi — sanajäsenet henkilökohtaisesti",
@@ -5188,7 +5229,8 @@
     "lib.add_lesson_title": "Lisää liukas tämän aiheen kohdalle",
     "lib.add_lesson_done": "✓ Liukas lisätty",
     "ex.type_in_placeholder": "Kirjoita vastauksesi…",
-    "form.lesson_type_hdr": "Liukas-tyyppi"
+    "form.lesson_type_hdr": "Liukas-tyyppi",
+    "form.style.interview": "💼 Työilmoitus"
   },
   "hu": {
     "app.backend": "Háttér:",
@@ -5378,7 +5420,6 @@
     "form.style.poem": "📜 Szöveg",
     "form.style.dialogue": "💬 Személyes párbeszéd",
     "form.format_lbl": "Tananyag formátuma",
-    "form.format.standard": "📚 Standard — 3 soros tananyag",
     "form.format.error_hunt": "🔍 Hiba keresése — találd ki az összevont szövegben a hibákat",
     "form.format.grammar": "🏷️ Grammatika — kifejezés, szavazatok és többségi",
     "form.format.conjugation": "🔤 Verbusz alakok — verbusz alakai személy szerint",
@@ -5396,7 +5437,8 @@
     "lib.add_lesson_title": "Témához hozzáadott tananyag",
     "lib.add_lesson_done": "✓ Tananyag hozzáadva",
     "ex.type_in_placeholder": "Írja be a válaszot…",
-    "form.lesson_type_hdr": "Tananyag típusa"
+    "form.lesson_type_hdr": "Tananyag típusa",
+    "form.style.interview": "💼 Munkaszóft"
   },
   "da": {
     "app.backend": "Backend:",
@@ -5586,7 +5628,6 @@
     "form.style.poem": "📜 Digte",
     "form.style.dialogue": "💬 Dialogue",
     "form.format_lbl": "Lektionsformat",
-    "form.format.standard": "📚 Standard — 3 progressive lektioner",
     "form.format.error_hunt": "🔍 Fejljagt — find mistakes in the story",
     "form.format.grammar": "🏷️ Grammatik — gender, articles & plurals",
     "form.format.conjugation": "🔤 Konjugation — verb forms by person",
@@ -5604,7 +5645,8 @@
     "lib.add_lesson_title": "Tilføj lektion til dette emne",
     "lib.add_lesson_done": "✓ Lektion tilføjet",
     "ex.type_in_placeholder": "Skriv din svar…",
-    "form.lesson_type_hdr": "Lektions type"
+    "form.lesson_type_hdr": "Lektions type",
+    "form.style.interview": "💼 Jobberview"
   },
   "ca": {
     "app.backend": "Backend:",
@@ -5794,7 +5836,6 @@
     "form.style.poem": "📜 Poema",
     "form.style.dialogue": "💬 Diàleg",
     "form.format_lbl": "Format de la leçon",
-    "form.format.standard": "📚 Estàndard — 3 leçons progressives",
     "form.format.error_hunt": "🔍 Error Hunt — troba errors a la història",
     "form.format.grammar": "🏷️ Gramàtica — gènere, articles i plurals",
     "form.format.conjugation": "🔤 Conjugació — formes del verbo per a persones",
@@ -5812,7 +5853,8 @@
     "lib.add_lesson_title": "Afegir lliure a aquest tema",
     "lib.add_lesson_done": "✓ Lliure afegit",
     "ex.type_in_placeholder": "Tipa la teva resposta…",
-    "form.lesson_type_hdr": "Tipus de lliure"
+    "form.lesson_type_hdr": "Tipus de lliure",
+    "form.style.interview": "💼 Entrevista de treball"
   },
   "lb": {
     "app.tagline": "Leren vun de Wiert fir all Thema an all Sprooch",
@@ -5993,7 +6035,6 @@
     "form.style.poem": "📜 Poëme",
     "form.style.dialogue": "💬 Dialog",
     "form.format_lbl": "Lësungsformat",
-    "form.format.standard": "📚 Standard — 3 progresse Lësungen",
     "form.format.error_hunt": "🔍 Fehler Jagd — finde Fehler in der Geschichte",
     "form.format.grammar": "🏷️ Grammatik — Geschlecht, Artikel & Plural",
     "form.format.conjugation": "🔤 Konjugation — Verbstämme nach Person",
@@ -6011,6 +6052,7 @@
     "lib.add_lesson_title": "Lësung hinnéé fan dës Thema",
     "lib.add_lesson_done": "✓ Lësung hinnéé",
     "ex.type_in_placeholder": "Typ dës Antwérrung…",
-    "form.lesson_type_hdr": "Lësungstyp"
+    "form.lesson_type_hdr": "Lësungstyp",
+    "form.style.interview": "💼 Job-Interview"
   }
 }

@@ -96,35 +96,22 @@ function contentSlug(str) {
   return (str || '').slice(0, 40).replace(/\s+/g, '_');
 }
 
-const cleanedLessons = lessonsData.lessons.map(topic => {
+// Exclude topics that have any flagged exercises entirely from the static build
+const flaggedTopicSlugsSet = new Set([...flagKeys].map(k => k.split(':')[0]));
+const cleanedLessons = lessonsData.lessons.filter(topic => {
   const slug = topicSlug(topic.topic);
-  // A flag key for an exercise looks like: slug:type:contentSlug
-  // We mark vocab and sentences whose content slug appears in any flag key for this topic
-  const topicFlagKeys = [...flagKeys].filter(k => k.startsWith(slug + ':'));
-  if (topicFlagKeys.length === 0) return topic;  // no flags for this topic
-
-  // Build set of flagged content slugs
-  const flaggedContent = new Set(topicFlagKeys.map(k => k.split(':').slice(2).join(':')));
-
-  const cleanTopic = { ...topic, lessons: topic.lessons.map(lesson => ({
-    ...lesson,
-    vocab: (lesson.vocab || []).filter(v => !flaggedContent.has(contentSlug(v.target))),
-    sentences: (lesson.sentences || []).filter(s => !flaggedContent.has(contentSlug(s.target))),
-  }))};
-  return cleanTopic;
+  if (flaggedTopicSlugsSet.has(slug)) {
+    console.log(`  Excluding flagged topic from static build: "${topic.topic}"`);
+    return false;
+  }
+  return true;
 });
-
-const removedCount = lessonsData.lessons.reduce((total, topic, i) => {
-  const orig = topic.lessons.reduce((n, l) => n + (l.vocab||[]).length + (l.sentences||[]).length, 0);
-  const clean = cleanedLessons[i].lessons.reduce((n, l) => n + (l.vocab||[]).length + (l.sentences||[]).length, 0);
-  return total + (orig - clean);
-}, 0);
+const removedCount = lessonsData.lessons.length - cleanedLessons.length;
 
 const lessonsSerialized = JSON.stringify(cleanedLessons, null, 2);
 
 // Build flagged-lessons export payload (original lessons that had flags, with flags map)
-const flaggedTopicSlugs = new Set([...flagKeys].map(k => k.split(':')[0]));
-const flaggedLessons = lessonsData.lessons.filter(t => flaggedTopicSlugs.has(topicSlug(t.topic)));
+const flaggedLessons = lessonsData.lessons.filter(t => flaggedTopicSlugsSet.has(topicSlug(t.topic)));
 // Expand storylines with root aliases so new chapters find the title
 const rawStorylines = lessonsData.storylines || {};
 const expandedStorylines = Object.assign({}, rawStorylines);
@@ -583,7 +570,7 @@ console.log('');
 console.log('✅  Static build complete');
 console.log(`    Source    : ${sourceHtml}`);
 console.log(`    Lessons   : ${lessonsFile} (${topicCount} topic${topicCount!==1?'s':''})`);
-console.log(`    Flagged   : ${removedCount} exercise${removedCount!==1?'s':''} stripped from baked-in lessons`);
+console.log(`    Flagged   : ${removedCount} topic${removedCount!==1?'s':''} with flags excluded from static build`);
 console.log(`    Output    : ${outputFile}`);
 console.log(`    Size      : ${(fs.statSync(outputFile).size/1024).toFixed(1)} KB`);
 console.log('');

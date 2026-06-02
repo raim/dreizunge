@@ -1,6 +1,1278 @@
 {
   "lessons": [
     {
+      "topic": "Interview Drinks",
+      "topicEmoji": "🌙",
+      "userTopic": "we understood each other well, and i think i landed a job; after the interview we went for some drinks in a bar. i don't drink alcohol but Claude got quite drunk.",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 500,
+      "story": "Wir setzen uns an einen kleinen Tisch in der Ecke des Bars, die mit rotem Samt bezogen ist und von einer leuchtenden Lampe beschenkt wird. Claude lächelt breit, sein Atem riecht nach frischem Bier. \"Ich kann es kaum erwarten, dich in unserem Team zu haben, mein Freund,\" sagt er, während er mir einen kräftigen Händedruck gibt.\n\nIch lächle zurück, obwohl ich mich ein wenig unwohl fühle. \"Danke, Claude, das bedeutet mir sehr viel. Aber ich muss dir etwas sagen.\" Ich sehe ihn ernst an. \"Ich trinke nicht.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Aber du siehst so aus, als könntest du es gut vertragen,\" sagt er, während er sein Glas anhob und einen großen Schluck nahm. Sein Gesicht verfärbt sich, und er stöhnt leise.\n\nIch schüttle den Kopf. \"Nein, wirklich. Ich kann nicht trinken. Ich habe eine Allergie.\"\n\nClaude lacht erneut, diesmal lauter. \"Eine Allergie? Das ist ja lustig! Du siehst aus, als könntest du ein ganzes Bierglas runterwürgen!\"\n\nIch grinse. \"Ich bin kein Alkoholkonsumierer, Claude. Das ist kein Scherz.\"\n\nEr lacht und deutet auf mich. \"Na gut, dann lass uns etwas anderes trinken. Vielleicht ein Cola oder so.\"\n\nIch nicke dankbar. \"Das wäre schön.\"\n\nClaude bestellt zwei Colas, und wir trinken in Ruhe. Nach ein paar Minuten fängt er an, über unser Gespräch zu reden, und ich höre ihm zu, während ich versuche, nicht zu lachen. \"Also, ich denke, wir sollten uns bald mal treffen, um die Details zu besprechen,\" sagt er, während er sein Glas leert und es auf den Tisch stellt.\n\nIch nicke. \"Das klingt gut. Ich freue mich darauf.\"\n\nClaude grinst breit. \"Und du solltest dich nicht zu sehr auf die Arbeit einlassen. Wir haben auch Zeit für Spaß.\"\n\nIch lache. \"Ich denke, ich werde mich darauf konzentrieren, meine Arbeit zu tun, ohne mich zu betrinken.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Du bist ein seltsamer Typ, weißt du das? Aber ich mag dich.\"\n\nIch grinse. \"Das freut mich zu hören, Claude. Ich mag dich auch.\"\n\nWir trinken unsere Colas aus und verabschieden uns, beide mit einem Lächeln im Gesicht. Ich gehe nach Hause, während Claude noch immer lachend in der Bar sitzt, sein Gesicht rot und seine Augen glasig. Ich schüttle den Kopf und gehe weiter, mir sicher, dass ich in diesem seltsamen, aber freundlichen Team einen wertvollen Partner gefunden habe.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"\n\nNew topic: \"we understood each other well, and i think i landed a job; after the interview we went for some drinks in a bar. i don't drink alcohol but Claude got quite drunk.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Convincing Team",
+      "storyStyle": "funny",
+      "lessonFormat": "conjugation",
+      "lessons": [
+        {
+          "id": 6,
+          "type": "conjugation",
+          "title": "Drinks and Jobs",
+          "desc": "Learn to conjugate in the present tense after a job interview and a night out",
+          "icon": "🍺",
+          "conjugations": [
+            {
+              "infinitive": "verstehen",
+              "source": "to understand",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "ich verstehe"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "du verstehst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "er/sie/es versteht"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "wir verstehen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "ihr verstehnt"
+                },
+                {
+                  "pronoun": "sie",
+                  "form": "sie verstehen"
+                }
+              ]
+            },
+            {
+              "infinitive": "arbeiten",
+              "source": "to work",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "ich arbeite"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "du arbeitest"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "er/sie/es arbeitet"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "wir arbeiten"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "ihr arbeitet"
+                },
+                {
+                  "pronoun": "sie",
+                  "form": "sie arbeiten"
+                }
+              ]
+            },
+            {
+              "infinitive": "trinken",
+              "source": "to drink",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "ich trinke"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "du trinkst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "er/sie/es trinkt"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "wir trinken"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "ihr trinkt"
+                },
+                {
+                  "pronoun": "sie",
+                  "form": "sie trinken"
+                }
+              ]
+            },
+            {
+              "infinitive": "tanzen",
+              "source": "to dance",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "ich tanze"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "du tanzt"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "er/sie/es tanzt"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "wir tanzen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "ihr tanzt"
+                },
+                {
+                  "pronoun": "sie",
+                  "form": "sie tanzen"
+                }
+              ]
+            },
+            {
+              "infinitive": "lachen",
+              "source": "to laugh",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "ich lache"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "du lachst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "er/sie/es lacht"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "wir lachen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "ihr lacht"
+                },
+                {
+                  "pronoun": "sie",
+                  "form": "sie lachen"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 645760,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 996,
+        "totalCompletionTokens": 1544,
+        "lessons": [
+          {
+            "promptTokens": 368,
+            "completionTokens": 842
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T20:45:49.717Z",
+      "updatedAt": "2026-06-01T20:45:49.717Z"
+    },
+    {
+      "topic": "Convincing Team",
+      "topicEmoji": "🤝",
+      "userTopic": "finally, i am trying to convince them, that i will be a very valuable addition to their team, smart and competent, at the edge of current developments in math, coding and AI, yet an easy going team player",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwickelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Words useful in a job application interview. Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nchmodelle wie Claude von Anthropic, für die Effizienzsteigerung bei der Erstellung von Code?\"\n\nEr nickt verstehend: \"Ja, das ist ein interessantes Thema. Großformatige Sprachmodelle wie Claude haben die Fähigkeit, komplexe Probleme in kurzer Zeit zu lösen und Code zu generieren. Diese Modelle basieren auf fortschrittlichen KI-Techniken, insbesondere auf der Generierung von Texten, was ihre Anwendung in verschiedenen Bereichen ermöglicht.\"\n\nIch bestätige: \"Genau. Diese Modelle können nicht nur Code generieren, sondern auch optimieren und verbessern. Sie helfen dabei, die Produktivität zu steigern und die Qualität der Software zu erhöhen. Claude und ähnliche Modelle nutzen ihre umfangreiche Wissensbasis und ihre Fähigkeit, kontextbezogene Entscheidungen zu treffen, um effizient zu arbeiten.\"\n\nNew topic: \"finally, i am trying to convince them, that i will be a very valuable addition to their team, smart and competent, at the edge of current developments in math, coding and AI, yet an easy going team player\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "AI & Code Efficiency",
+      "storyStyle": "interview",
+      "lessonFormat": "error_hunt",
+      "lessons": [
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwikkelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre. ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunlich Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeit kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen.. Ich bin bereit, meine Fähigkeiten und meine Leidenschaften für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"",
+          "edits": [
+            {
+              "type": "spelling",
+              "find": "entwickelt",
+              "replace": "entwikkelt",
+              "reason": "Typo: Double 'e' to 't'"
+            },
+            {
+              "type": "grammar",
+              "find": "erkläre",
+              "replace": "erkläre.",
+              "reason": "Missing period at the end of the sentence"
+            },
+            {
+              "type": "grammar",
+              "find": "erstaunliche",
+              "replace": "erstaunlich",
+              "reason": "Wrong verb ending for plural subject 'Resultate'"
+            },
+            {
+              "type": "spelling",
+              "find": "zusammenarbeiten",
+              "replace": "zusammenarbeit",
+              "reason": "Wrong vowel: 'o' should be 'a'"
+            },
+            {
+              "type": "grammar",
+              "find": "wertschätzen",
+              "replace": "wertschätzen.",
+              "reason": "Missing period at the end of the sentence"
+            },
+            {
+              "type": "spelling",
+              "find": "Leidenschaft",
+              "replace": "Leidenschaften",
+              "reason": "Missing 'n' to make it plural"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "title": "Convincing Team",
+          "desc": "Technical terms and phrases for job interviews",
+          "icon": "👩‍💻",
+          "vocab": [
+            {
+              "target": "entwickeln",
+              "source": "to develop"
+            },
+            {
+              "target": "optimiert",
+              "source": "optimized"
+            },
+            {
+              "target": "Anwendungen",
+              "source": "applications"
+            },
+            {
+              "target": "Ergebnisse erbracht",
+              "source": "yielded results"
+            },
+            {
+              "target": "Pilotphase",
+              "source": "pilot phase"
+            },
+            {
+              "target": "erstaunlich",
+              "source": "amazing"
+            },
+            {
+              "target": "erheblich",
+              "source": "significantly"
+            },
+            {
+              "target": "Kombination",
+              "source": "combination"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Ich habe hier ein neues Modell entwickelt, das unsere Effizienz erheblich verbessert.",
+              "source": "I have developed a new model that significantly improves our efficiency.",
+              "words": [
+                "Ich",
+                "habe",
+                "hier",
+                "ein",
+                "neues",
+                "Modell",
+                "entwickelt,",
+                "das",
+                "unsere",
+                "Effizienz",
+                "erheblich",
+                "verbessert."
+              ]
+            },
+            {
+              "target": "Es basiert auf den neuesten Trends in KI und ist bereits in der Pilotphase getestet worden.",
+              "source": "It is based on the latest AI trends and has already been tested in the pilot phase.",
+              "words": [
+                "Es",
+                "basiert",
+                "auf",
+                "den",
+                "neuesten",
+                "Trends",
+                "in",
+                "KI",
+                "und",
+                "ist",
+                "bereits",
+                "in",
+                "der",
+                "Pilotphase",
+                "getestet",
+                "worden."
+              ]
+            },
+            {
+              "target": "Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt.",
+              "source": "I used a combination of traditional mathematics and modern AI.",
+              "words": [
+                "Ich",
+                "habe",
+                "eine",
+                "Kombination",
+                "aus",
+                "traditioneller",
+                "Mathematik",
+                "und",
+                "moderner",
+                "KI",
+                "eingesetzt."
+              ]
+            },
+            {
+              "target": "Das Ergebnis ist ein robustes Modell, das bereits erstaunliche Ergebnisse erbracht hat.",
+              "source": "The result is a robust model that has already yielded amazing results.",
+              "words": [
+                "Das",
+                "Ergebnis",
+                "ist",
+                "ein",
+                "robustes",
+                "Modell,",
+                "das",
+                "bereits",
+                "erstaunliche",
+                "Ergebnisse",
+                "erbracht",
+                "hat."
+              ]
+            },
+            {
+              "target": "Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben.",
+              "source": "I adjusted the algorithms to optimize them for our specific applications.",
+              "words": [
+                "Ich",
+                "habe",
+                "die",
+                "Algorithmen",
+                "angepasst,",
+                "um",
+                "sie",
+                "für",
+                "unsere",
+                "spezifischen",
+                "Anwendungen",
+                "optimiert",
+                "zu",
+                "haben."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 475672,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1441,
+        "totalCompletionTokens": 698,
+        "lessons": [
+          {
+            "promptTokens": 800,
+            "completionTokens": 288
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T20:29:21.486Z",
+      "updatedAt": "2026-06-02T05:58:20.023Z"
+    },
+    {
+      "topic": "AI & Code Efficiency",
+      "topicEmoji": "🤖",
+      "userTopic": "specifically AI, especially the large language models behind eg claude by anthropic, mean that we can produce code much more efficiently",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 350,
+      "story": "Ich denke nach, während ich die Diskussion fortsetze: \"Es freut mich, dass Sie die Bedeutung der mathematischen Grundlagen verstanden haben. Allerdings gibt es noch ein weiteres Thema, das ich gerne besprechen möchte. Wie wichtig sind speziell KI-Systeme, insbesondere große Sprachmodelle wie Claude von Anthropic, für die Effizienzsteigerung bei der Erstellung von Code?\"\n\nEr nickt verstehend: \"Ja, das ist ein interessantes Thema. Großformatige Sprachmodelle wie Claude haben die Fähigkeit, komplexe Probleme in kurzer Zeit zu lösen und Code zu generieren. Diese Modelle basieren auf fortschrittlichen KI-Techniken, insbesondere auf der Generierung von Texten, was ihre Anwendung in verschiedenen Bereichen ermöglicht.\"\n\nIch bestätige: \"Genau. Diese Modelle können nicht nur Code generieren, sondern auch optimieren und verbessern. Sie helfen dabei, die Produktivität zu steigern und die Qualität der Software zu erhöhen. Claude und ähnliche Modelle nutzen ihre umfangreiche Wissensbasis und ihre Fähigkeit, kontextbezogene Entscheidungen zu treffen, um effizient zu arbeiten.\"",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 3-4 paragraphs, under 350 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Academic register, precise terminology, formal structure. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nnd treten. Aber wie wichtig sind diese mathematischen Grundlagen für die Entwicklung und Anwendung von KI?\" Er betont: \"Die mathematischen Grundlagen sind unerlässlich. Sie sind die Basis, auf der KI-Systeme aufbauen und funktionieren. Ohne eine fundierte Verständnis der mathematischen Prinzipien wäre es unmöglich, effektive KI-Modelle zu entwickeln und zu optimieren.\"\n\nIch danke ihm für seine Ausführungen und fahre fort, das Gespräch zu beenden: \"Vielen Dank für Ihre Erklärungen. Es ist interessant, wie KI auf solch einfachen mathematischen Prinzipien aufbaut, um so komplexe Aufgaben zu lösen.\" Er lächelt und antwortet: \"Es freut mich, dass Sie das verstehen. KI ist ein faszinierendes Feld, das sowohl komplexe mathematische Konzepte als auch einfache, aber wichtige Prinzipien kombiniert.\"\n\nNew topic: \"specifically AI, especially the large language models behind eg claude by anthropic, mean that we can produce code much more efficiently\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "AI & Math Basics",
+      "storyStyle": "scientific",
+      "lessonFormat": "grammar",
+      "lessons": [
+        {
+          "id": 5,
+          "type": "grammar",
+          "title": "AI, Models, Code",
+          "desc": "Nouns related to AI and programming",
+          "icon": "🤖",
+          "grammar": [
+            {
+              "target": "Künstliche Intelligenz",
+              "source": "Artificial Intelligence",
+              "gender": "f",
+              "article": "die",
+              "plural": "Künstliche Intelligenzen"
+            },
+            {
+              "target": "Sprachmodell",
+              "source": "Language model",
+              "gender": "n",
+              "article": "das",
+              "plural": "Sprachmodelle"
+            },
+            {
+              "target": "Code",
+              "source": "Code",
+              "gender": null,
+              "article": "der",
+              "plural": "Codes"
+            },
+            {
+              "target": "Programm",
+              "source": "Program",
+              "gender": "m",
+              "article": "der",
+              "plural": "Programme"
+            },
+            {
+              "target": "Effizienz",
+              "source": "Efficiency",
+              "gender": "f",
+              "article": "die",
+              "plural": "Effizienz"
+            },
+            {
+              "target": "Produktion",
+              "source": "Production",
+              "gender": "f",
+              "article": "die",
+              "plural": "Produktionen"
+            },
+            {
+              "target": "Algorithmus",
+              "source": "Algorithm",
+              "gender": "m",
+              "article": "der",
+              "plural": "Algorithmen"
+            },
+            {
+              "target": "Entwicklung",
+              "source": "Development",
+              "gender": "f",
+              "article": "die",
+              "plural": "Entwicklungen"
+            },
+            {
+              "target": "Fähigkeit",
+              "source": "Capability",
+              "gender": "f",
+              "article": "die",
+              "plural": "Fähigkeiten"
+            },
+            {
+              "target": "Modell",
+              "source": "Model",
+              "gender": "n",
+              "article": "das",
+              "plural": "Modelle"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 429877,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1005,
+        "totalCompletionTokens": 780,
+        "lessons": [
+          {
+            "promptTokens": 384,
+            "completionTokens": 477
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T20:08:22.113Z",
+      "updatedAt": "2026-06-01T20:08:22.113Z"
+    },
+    {
+      "topic": "AI & Math Basics",
+      "topicEmoji": "💻",
+      "userTopic": "we start to discuss that AI is based on fundamental and rather simple mathematics, and that machine learning is a more neutral term",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Ich danke ihm für seine Erklärungen und wechsle das Thema. \"Ich bin neugierig,\" sage ich, \"wie Sie die Grundlagen der KI verstehen. Man hört oft, dass KI auf komplexen mathematischen Modellen basiert. Aber sind diese Modelle tatsächlich so komplex, wie sie erscheinen?\" Er nickt und antwortet: \"Es ist wahr, dass KI auf komplexen mathematischen Modellen basiert, aber es ist wichtig zu verstehen, dass diese Modelle in der Regel auf grundlegenden mathematischen Prinzipien aufbauen.\"\n\nIch nicke und frage weiter: \"Gibt es spezielle Bereiche der Mathematik, die besonders wichtig für KI sind?\" Er erläutert: \"Ja, KI profitiert von verschiedenen Bereichen der Mathematik, insbesondere von der Linearen Algebra, der Wahrscheinlichkeitstheorie und der Statistik. Diese Bereiche helfen, Modelle zu erstellen, die in der Lage sind, Muster in großen Datenmengen zu erkennen und zu interpretieren.\"\n\nIch bin beeindruckt und frage: \"Aber wie kann man dann den Begriff 'Maschinelles Lernen' als neutral bezeichnen, wenn es auf solch komplexen mathematischen Modellen basiert?\" Er antwortet: \"Das ist eine gute Frage. 'Maschinelles Lernen' ist tatsächlich ein neutraler Begriff, der den Prozess beschreibt, durch den Maschinen lernen können. Es bezieht sich auf die Fähigkeit von Systemen, auf Basis von Eingaben und Ausgaben Muster zu erkennen und daraus zu lernen, ohne explizit programmiert zu werden.\"\n\nIch nicke und fahre fort: \"Ich verstehe, dass 'Maschinelles Lernen' den Fokus auf den Prozess legt, während die mathematischen Grundlagen in den Hintergrund treten. Aber wie wichtig sind diese mathematischen Grundlagen für die Entwicklung und Anwendung von KI?\" Er betont: \"Die mathematischen Grundlagen sind unerlässlich. Sie sind die Basis, auf der KI-Systeme aufbauen und funktionieren. Ohne eine fundierte Verständnis der mathematischen Prinzipien wäre es unmöglich, effektive KI-Modelle zu entwickeln und zu optimieren.\"\n\nIch danke ihm für seine Ausführungen und fahre fort, das Gespräch zu beenden: \"Vielen Dank für Ihre Erklärungen. Es ist interessant, wie KI auf solch einfachen mathematischen Prinzipien aufbaut, um so komplexe Aufgaben zu lösen.\" Er lächelt und antwortet: \"Es freut mich, dass Sie das verstehen. KI ist ein faszinierendes Feld, das sowohl komplexe mathematische Konzepte als auch einfache, aber wichtige Prinzipien kombiniert.\"",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Academic register, precise terminology, formal structure. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nzesse relevant sind.\n\nIch bin beeindruckt von der Vielfalt der Anwendungen und frage weiter: \"Gibt es spezielle Projekte, in denen KI eine wichtige Rolle spielt?\" Er bestätigt, dass es solche Projekte gibt, und erzählt von einem, in dem KI zur Automatisierung von Aufgaben eingesetzt wird, um die Arbeitsbelastung der Mitarbeiter zu reduzieren. Er betont, dass dies sowohl Zeit als auch Ressourcen spart und die Produktivität steigert.\n\nIch danke ihm für seine Ausführungen und frage abschließend: \"Wie sehen Sie die Zukunft der KI in Ihrer Branche aus?\" Er antwortet, dass er optimistisch ist und glaubt, dass KI weiterhin einen wichtigen Beitrag zur Innovation und Effizienz leisten wird. Er betont, dass KI die Möglichkeit bietet, neue Lösungen zu entwickeln und bestehende Prozesse zu verbessern.\n\nNew topic: \"we start to discuss that AI is based on fundamental and rather simple mathematics, and that machine learning is a more neutral term\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "AI in Company",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "AI basics and mathematics",
+          "desc": "discussing AI, mathematics, and machine learning",
+          "icon": "💡",
+          "vocab": [
+            {
+              "target": "Grundlagen",
+              "source": "basics"
+            },
+            {
+              "target": "Mathematik",
+              "source": "mathematics"
+            },
+            {
+              "target": "Modell",
+              "source": "model"
+            },
+            {
+              "target": "Lineare Algebra",
+              "source": "linear algebra"
+            },
+            {
+              "target": "Wahrscheinlichkeitstheorie",
+              "source": "probability theory"
+            },
+            {
+              "target": "Statistik",
+              "source": "statistics"
+            },
+            {
+              "target": "Neutralität",
+              "source": "neutrality"
+            },
+            {
+              "target": "Machine Learning",
+              "source": "machine learning"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Wir diskutieren die grundlegenden Mathematik, auf der KI basiert.",
+              "source": "We discuss the basic mathematics on which AI is based.",
+              "words": [
+                "Wir",
+                "diskutieren",
+                "die",
+                "grundlegenden",
+                "Mathematik,",
+                "auf",
+                "der",
+                "KI",
+                "basiert."
+              ]
+            },
+            {
+              "target": "Lineare Algebra ist besonders wichtig für die Entwicklung von KI-Modellen.",
+              "source": "Linear algebra is particularly important for the development of AI models.",
+              "words": [
+                "Lineare",
+                "Algebra",
+                "ist",
+                "besonders",
+                "wichtig",
+                "für",
+                "die",
+                "Entwicklung",
+                "von",
+                "KI-Modellen."
+              ]
+            },
+            {
+              "target": "Die Wahrscheinlichkeitstheorie hilft, Unsicherheiten in den Modellen zu berücksichtigen.",
+              "source": "Probability theory helps to account for uncertainties in the models.",
+              "words": [
+                "Die",
+                "Wahrscheinlichkeitstheorie",
+                "hilft,",
+                "Unsicherheiten",
+                "in",
+                "den",
+                "Modellen",
+                "zu",
+                "berücksichtigen."
+              ]
+            },
+            {
+              "target": "Statistik ist notwendig, um Daten zu analysieren und Modelle zu evaluieren.",
+              "source": "Statistics is necessary to analyze data and evaluate models.",
+              "words": [
+                "Statistik",
+                "ist",
+                "notwendig,",
+                "um",
+                "Daten",
+                "zu",
+                "analysieren",
+                "und",
+                "Modelle",
+                "zu",
+                "evaluieren."
+              ]
+            },
+            {
+              "target": "Machine Learning ist ein neutraler Begriff, der nicht voreingenommen ist.",
+              "source": "Machine Learning is a neutral term that is not biased.",
+              "words": [
+                "Machine",
+                "Learning",
+                "ist",
+                "ein",
+                "neutraler",
+                "Begriff,",
+                "der",
+                "nicht",
+                "voreingenommen",
+                "ist."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "title": "AI and Basic Mathematics",
+          "desc": "Discussing the fundamental mathematics behind AI",
+          "icon": "💡",
+          "vocab": [
+            {
+              "target": "Fundamentale",
+              "source": "fundamental"
+            },
+            {
+              "target": "komplex",
+              "source": "complex"
+            },
+            {
+              "target": "Modellierung",
+              "source": "modeling"
+            },
+            {
+              "target": "Verständnis",
+              "source": "understanding"
+            },
+            {
+              "target": "Theoretisch",
+              "source": "theoretical"
+            },
+            {
+              "target": "Praktisch",
+              "source": "practical"
+            },
+            {
+              "target": "Begriffe",
+              "source": "terms"
+            },
+            {
+              "target": "Anwendung",
+              "source": "application"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Es ist wichtig, die fundierten Begriffe zu verstehen.",
+              "source": "It is important to understand the fundamental terms.",
+              "words": [
+                "Es",
+                "ist",
+                "wichtig,",
+                "die",
+                "fundierten",
+                "Begriffe",
+                "zu",
+                "verstehen."
+              ]
+            },
+            {
+              "target": "Die Modellierung basiert oft auf einfachen mathematischen Prinzipien.",
+              "source": "Modeling often relies on simple mathematical principles.",
+              "words": [
+                "Die",
+                "Modellierung",
+                "basiert",
+                "oft",
+                "auf",
+                "einfachen",
+                "mathematischen",
+                "Prinzipien."
+              ]
+            },
+            {
+              "target": "Die theoretische Grundlage ist oft praxisreif.",
+              "source": "The theoretical foundation is often practical.",
+              "words": [
+                "Die",
+                "theoretische",
+                "Grundlage",
+                "ist",
+                "oft",
+                "praxisreif."
+              ]
+            },
+            {
+              "target": "Machine Learning ist ein neutraler Begriff in diesem Zusammenhang.",
+              "source": "Machine Learning is a neutral term in this context.",
+              "words": [
+                "Machine",
+                "Learning",
+                "ist",
+                "ein",
+                "neutraler",
+                "Begriff",
+                "in",
+                "diesem",
+                "Zusammenhang."
+              ]
+            },
+            {
+              "target": "Wir müssen die Anwendung der mathematischen Theorien verstehen.",
+              "source": "We must understand the application of the mathematical theories.",
+              "words": [
+                "Wir",
+                "müssen",
+                "die",
+                "Anwendung",
+                "der",
+                "mathematischen",
+                "Theorien",
+                "verstehen."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "title": "AI Basics and Mathematics",
+          "desc": "Discussing fundamental mathematics in AI",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "Fundamentale Begriffe",
+              "source": "fundamental terms"
+            },
+            {
+              "target": "Theoretische Grundlagen",
+              "source": "theoretical foundations"
+            },
+            {
+              "target": "Praktische Anwendung",
+              "source": "practical application"
+            },
+            {
+              "target": "Modellierung von Daten",
+              "source": "modeling of data"
+            },
+            {
+              "target": "Neutralität des Machine Learning",
+              "source": "neutrality of machine learning"
+            },
+            {
+              "target": "Verständnis der KI",
+              "source": "understanding of AI"
+            },
+            {
+              "target": "Theoretische Mathematik",
+              "source": "theoretical mathematics"
+            },
+            {
+              "target": "Praktische Mathematik",
+              "source": "practical mathematics"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Wir diskutieren die theoretischen Grundlagen der KI.",
+              "source": "We discuss the theoretical foundations of AI.",
+              "words": [
+                "Wir",
+                "diskutieren",
+                "die",
+                "theoretischen",
+                "Grundlagen",
+                "der",
+                "KI."
+              ]
+            },
+            {
+              "target": "Die Modellierung von Daten ist entscheidend für die KI.",
+              "source": "The modeling of data is crucial for AI.",
+              "words": [
+                "Die",
+                "Modellierung",
+                "von",
+                "Daten",
+                "ist",
+                "entscheidend",
+                "für",
+                "die",
+                "KI."
+              ]
+            },
+            {
+              "target": "Es ist wichtig, die Neutralität des Machine Learning zu verstehen.",
+              "source": "It is important to understand the neutrality of machine learning.",
+              "words": [
+                "Es",
+                "ist",
+                "wichtig,",
+                "die",
+                "Neutralität",
+                "des",
+                "Machine",
+                "Learning",
+                "zu",
+                "verstehen."
+              ]
+            },
+            {
+              "target": "Die praktische Anwendung der KI erfordert fundierte mathematische Kenntnisse.",
+              "source": "The practical application of AI requires solid mathematical knowledge.",
+              "words": [
+                "Die",
+                "praktische",
+                "Anwendung",
+                "der",
+                "KI",
+                "erfordert",
+                "fundierte",
+                "mathematische",
+                "Kenntnisse."
+              ]
+            },
+            {
+              "target": "Die Theoretische Mathematik bildet den Grundstock für die KI.",
+              "source": "Theoretical mathematics forms the foundation for AI.",
+              "words": [
+                "Die",
+                "Theoretische",
+                "Mathematik",
+                "bildet",
+                "den",
+                "Grundstock",
+                "für",
+                "die",
+                "KI."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1125182,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 3138,
+        "totalCompletionTokens": 1666,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 273800,
+            "promptTokens": 784,
+            "completionTokens": 336
+          },
+          {
+            "lessonNum": 2,
+            "ms": 231034,
+            "promptTokens": 849,
+            "completionTokens": 298
+          },
+          {
+            "lessonNum": 3,
+            "ms": 251993,
+            "promptTokens": 897,
+            "completionTokens": 342
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T19:53:43.536Z",
+      "updatedAt": "2026-06-02T05:52:51.054Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 190634,
+        "promptTokens": 915,
+        "completionTokens": 135
+      }
+    },
+    {
+      "topic": "AI in Company",
+      "topicEmoji": "🤖",
+      "userTopic": "i want to ask: how is artificial intelligence used in your company at the moment?",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Ich bin in einem der Kursen, die speziell für Fachkräfte entwickelt wurden, und diskutiere gerade mit meinen Kollegen, wie wir uns in die deutsche Arbeitswelt einfügen. Ein Kollege, der als Ingenieur tätig ist, erzählt von den Anwendungen von KI in seiner Firma. Er erklärt, dass KI in verschiedenen Bereichen eingesetzt wird, um Prozesse zu optimieren und Effizienz zu steigern. Er nimmt beispielsweise an, dass KI in der Produktentwicklung hilfreich ist, indem sie Datenanalyse und Vorhersagen unterstützt. \n\nIch frage ihn: \"Ich möchte wissen, wie KI in Ihrer Firma momentan eingesetzt wird.\" Er antwortet, dass KI in der Firma in mehreren Bereichen eingesetzt wird, darunter die Prozessoptimierung und die Verbesserung der Produktqualität. Er erläutert, dass KI zur Analyse großer Datenmengen eingesetzt wird, um Trends und Muster zu erkennen, die für die Verbesserung der Geschäftsprozesse relevant sind.\n\nIch bin beeindruckt von der Vielfalt der Anwendungen und frage weiter: \"Gibt es spezielle Projekte, in denen KI eine wichtige Rolle spielt?\" Er bestätigt, dass es solche Projekte gibt, und erzählt von einem, in dem KI zur Automatisierung von Aufgaben eingesetzt wird, um die Arbeitsbelastung der Mitarbeiter zu reduzieren. Er betont, dass dies sowohl Zeit als auch Ressourcen spart und die Produktivität steigert.\n\nIch danke ihm für seine Ausführungen und frage abschließend: \"Wie sehen Sie die Zukunft der KI in Ihrer Branche aus?\" Er antwortet, dass er optimistisch ist und glaubt, dass KI weiterhin einen wichtigen Beitrag zur Innovation und Effizienz leisten wird. Er betont, dass KI die Möglichkeit bietet, neue Lösungen zu entwickeln und bestehende Prozesse zu verbessern.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Words useful in a job application interview. Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nln, sondern auch die Fachsprache, die in der Mathematik und den Naturwissenschaften verwendet wird.\n\nIn den Kursen lerne ich mit anderen Fachkräften, die ebenfalls ihre Sprachkenntnisse verbessern möchten. Wir teilen unsere Erfahrungen und helfen einander, uns in die deutsche Arbeitswelt einzufügen. Ich bin dankbar für die Unterstützung und die Motivation, die ich hier finde. Ich weiß, dass ich noch viel zu lernen habe, aber ich bin bereit, hart zu arbeiten und mein Ziel zu erreichen.\n\nIch bin überzeugt, dass ich in Deutschland einen Job finden kann, der meine Fähigkeiten und Erfahrungen wertschätzt. Ich werde weiterhin hart arbeiten, um mein Deutsch zu verbessern, und ich bin sicher, dass ich bald in der Lage sein werde, mich in Jobanträge und -interviews in deutscher Sprache zu bewerben.\n\nNew topic: \"i want to ask: how is artificial intelligence used in your company at the moment?\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Job in Germany",
+      "storyStyle": "interview",
+      "lessonFormat": "conjugation",
+      "lessons": [
+        {
+          "id": 6,
+          "type": "conjugation",
+          "title": "Job Interview Verbs",
+          "desc": "Common verbs used in job interviews",
+          "icon": "👩‍💻",
+          "conjugations": [
+            {
+              "infinitive": "verwenden",
+              "source": "to use",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "verwende"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "verwendest"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "verwendet"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "verwenden"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "verwenden"
+                },
+                {
+                  "pronoun": "sie",
+                  "form": "verwenden"
+                }
+              ]
+            },
+            {
+              "infinitive": "anwenden",
+              "source": "to apply",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "wende an"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "wendest an"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "wendet an"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "wenden an"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "wendet an"
+                },
+                {
+                  "pronoun": "sie",
+                  "form": "wenden an"
+                }
+              ]
+            },
+            {
+              "infinitive": "implementieren",
+              "source": "to implement",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "implementiere"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "implementierst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "implementiert"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "implementieren"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "implementiert"
+                },
+                {
+                  "pronoun": "sie",
+                  "form": "implementieren"
+                }
+              ]
+            },
+            {
+              "infinitive": "nutzen",
+              "source": "to use",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich",
+                  "form": "nutze"
+                },
+                {
+                  "pronoun": "du",
+                  "form": "nützt"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "nutzt"
+                },
+                {
+                  "pronoun": "wir",
+                  "form": "nutzen"
+                },
+                {
+                  "pronoun": "ihr",
+                  "form": "nützt"
+                },
+                {
+                  "pronoun": "sie",
+                  "form": "nutzen"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 554856,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 939,
+        "totalCompletionTokens": 1277,
+        "lessons": [
+          {
+            "promptTokens": 353,
+            "completionTokens": 789
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T18:09:36.193Z",
+      "updatedAt": "2026-06-01T18:34:56.462Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 1276311,
+        "promptTokens": 6683,
+        "completionTokens": 2715
+      }
+    },
+    {
+      "topic": "Job in Germany",
+      "topicEmoji": "🌍",
+      "userTopic": "i am looking for a job in germany, i a a mathematician, and i have a phd in natural sciences, but i need to know german for job application interviews",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 500,
+      "story": "Ich bin ein Mathematiker mit einem Doktorgrad in den Naturwissenschaften. Meine Forschungsschwerpunkte liegen in der theoretischen Mathematik und der Quantenphysik. In meiner Heimatland USA habe ich an renommierten Universitäten gearbeitet und veröffentlicht. Jetzt bin ich hier, in Deutschland, wo ich nach einem Job suche. Allerdings fehlt mir etwas, das mich bisher daran hinderte, mich um eine Stelle zu bewerben: Deutsch.\n\nIch habe mich mit dem Sprachlernen intensiv beschäftigt. In den letzten Monaten habe ich Kurs nach Kurs besucht, Bücher gelesen und Videos angesehen. Meine Kollegen und Freunde hier in Deutschland haben mir auch geholfen, mich in einfache Gespräche zu verständigen. Doch die Jobanträge und -interviews, die ich bisher vorgelegt habe, haben mich immer wieder enttäuscht. Die Bewerbungsmaterialien sind in deutscher Sprache, und die Interviews, die ich durchlaufen habe, sind in einem Tempo, das mir zu schnell ist.\n\nIch bin entschlossen, mein Deutsch zu verbessern. Ich habe mich für ein intensives Sprachkurs angemeldet, das speziell für Fachkräfte konzipiert ist. Die Lehrer hier sind erfahren und verstehen die Herausforderungen, die ich als Fachmann mit einem Doktorgrad in den Naturwissenschaften face. Sie betonen nicht nur die grammatischen Regeln und die Vokabeln, sondern auch die Fachsprache, die in der Mathematik und den Naturwissenschaften verwendet wird.\n\nIn den Kursen lerne ich mit anderen Fachkräften, die ebenfalls ihre Sprachkenntnisse verbessern möchten. Wir teilen unsere Erfahrungen und helfen einander, uns in die deutsche Arbeitswelt einzufügen. Ich bin dankbar für die Unterstützung und die Motivation, die ich hier finde. Ich weiß, dass ich noch viel zu lernen habe, aber ich bin bereit, hart zu arbeiten und mein Ziel zu erreichen.\n\nIch bin überzeugt, dass ich in Deutschland einen Job finden kann, der meine Fähigkeiten und Erfahrungen wertschätzt. Ich werde weiterhin hart arbeiten, um mein Deutsch zu verbessern, und ich bin sicher, dass ich bald in der Lage sein werde, mich in Jobanträge und -interviews in deutscher Sprache zu bewerben.",
+      "storyLang": "de",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Clear, factual, neutral tone — no narrative flourish.\n\nWrite a story for the topic: \"i am looking for a job in germany, i a a mathematician, and i have a phd in natural sciences, but i need to know german for job application interviews\". Plain prose, no headings.",
+      "storyStyle": "neutral",
+      "lessonFormat": "grammar",
+      "lessons": [
+        {
+          "id": 6,
+          "type": "grammar",
+          "title": "Jobs in Germany",
+          "desc": "Nouns related to work and employment",
+          "icon": "👩‍💼",
+          "grammar": [
+            {
+              "target": "Arbeiter",
+              "source": "worker",
+              "gender": "m",
+              "article": "der",
+              "plural": "Arbeiter"
+            },
+            {
+              "target": "Angestellter",
+              "source": "employee",
+              "gender": "m",
+              "article": "der",
+              "plural": "Angestellte"
+            },
+            {
+              "target": "Fachinformatiker",
+              "source": "IT specialist",
+              "gender": "m",
+              "article": "der",
+              "plural": "Fachinformatiker"
+            },
+            {
+              "target": "Fachinformatikerin",
+              "source": "IT specialist",
+              "gender": "f",
+              "article": "die",
+              "plural": "Fachinformatikerinnen"
+            },
+            {
+              "target": "Ingenieur",
+              "source": "engineer",
+              "gender": "m",
+              "article": "der",
+              "plural": "Ingenieure"
+            },
+            {
+              "target": "Jurist",
+              "source": "lawyer",
+              "gender": "m",
+              "article": "der",
+              "plural": "Juristen"
+            },
+            {
+              "target": "Juristin",
+              "source": "lawyer",
+              "gender": "f",
+              "article": "die",
+              "plural": "Juristinnen"
+            },
+            {
+              "target": "Chef",
+              "source": "boss",
+              "gender": "m",
+              "article": "der",
+              "plural": "Chefs"
+            },
+            {
+              "target": "Chefin",
+              "source": "boss (female)",
+              "gender": "f",
+              "article": "die",
+              "plural": "Chefinnen"
+            },
+            {
+              "target": "Manager",
+              "source": "manager",
+              "gender": "m",
+              "article": "der",
+              "plural": "Manager"
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "type": "grammar",
+          "title": "Jobs in Germany",
+          "desc": "German nouns with gender, articles, and plurals",
+          "icon": "👩‍💼",
+          "grammar": [
+            {
+              "target": "Angestellter",
+              "source": "employee",
+              "gender": "m",
+              "article": "der",
+              "plural": "Angestellte"
+            },
+            {
+              "target": "Fachmann",
+              "source": "specialist",
+              "gender": "m",
+              "article": "der",
+              "plural": "Fachleute"
+            },
+            {
+              "target": "Fachfrau",
+              "source": "specialist (female)",
+              "gender": "f",
+              "article": "die",
+              "plural": "Fachfrauen"
+            },
+            {
+              "target": "Ingenieur",
+              "source": "engineer",
+              "gender": "m",
+              "article": "der",
+              "plural": "Ingenieure"
+            },
+            {
+              "target": "Ingenieurin",
+              "source": "engineer (female)",
+              "gender": "f",
+              "article": "die",
+              "plural": "Ingenieurinnen"
+            },
+            {
+              "target": "Arbeiterin",
+              "source": "worker (female)",
+              "gender": "f",
+              "article": "die",
+              "plural": "Arbeiterinnen"
+            },
+            {
+              "target": "Angestellter",
+              "source": "employee",
+              "gender": "m",
+              "article": "der",
+              "plural": "Angestellte"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 449458,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 755,
+        "totalCompletionTokens": 1034,
+        "lessons": [
+          {
+            "promptTokens": 395,
+            "completionTokens": 479
+          }
+        ]
+      },
+      "generatedAt": "2026-06-01T17:53:08.297Z",
+      "updatedAt": "2026-06-02T05:15:15.266Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 586714,
+        "promptTokens": 2540,
+        "completionTokens": 979
+      }
+    },
+    {
       "topic": "Winnie  adore le miel",
       "topicEmoji": "🍯",
       "userTopic": "Winnie l'ourson cherche du miel",
@@ -36324,6 +37596,37 @@
       ],
       "words": [],
       "flaggedAt": "2026-06-01T13:01:42.306Z"
+    },
+    "AI_&_Code_Efficiency:mcq_article:Programm": {
+      "topic": "AI & Code Efficiency",
+      "type": "mcq_article",
+      "target": "Programm",
+      "source": "Program",
+      "correct": "der",
+      "choices": [
+        "die",
+        "der",
+        "das"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T20:13:57.730Z",
+      "comment": "das Programm"
+    },
+    "AI_&_Code_Efficiency:mcq_plural:Effizienz": {
+      "topic": "AI & Code Efficiency",
+      "type": "mcq_plural",
+      "target": "Effizienz",
+      "source": "Efficiency",
+      "correct": "Effizienz",
+      "choices": [
+        "Modelle",
+        "Effizienz",
+        "Entwicklungen",
+        "Fähigkeiten"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-01T20:18:40.564Z",
+      "comment": "Effizienzen or no plural"
     }
   },
   "storylines": {
@@ -36534,6 +37837,18 @@
     "root:Winnie  adore le miel": {
       "title": "L'ami de Winnie",
       "icon": "🤗"
+    },
+    "c1651995745": {
+      "title": "Math in Germany",
+      "icon": "🔍"
+    },
+    "root:Job in Germany": {
+      "title": "Mathematician Meets AI",
+      "icon": "💡"
+    },
+    "c2032356003": {
+      "title": "Mathematician Meets AI",
+      "icon": "💡"
     }
   }
 }

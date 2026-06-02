@@ -66,6 +66,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
 .saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s;min-width:0;overflow:hidden}
 .saved-item:hover{border-color:var(--blue);background:var(--blue-light)}
+.sl-screen{width:100%;max-width:680px;padding:0 0 40px}
+.sl-screen-hdr{display:flex;align-items:center;gap:8px;padding:14px 16px 10px;border-bottom:1.5px solid var(--gray-mid);background:var(--white);position:sticky;top:0;z-index:10}
+.sl-screen-back{background:none;border:none;cursor:pointer;font-size:13px;font-weight:800;color:var(--gray-dark);padding:4px 8px;border-radius:6px;font-family:'Nunito',sans-serif}
+.sl-screen-back:hover{background:var(--gray-mid)}
+.sl-screen-title{flex:1;font-size:16px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl-screen-share{background:none;border:1.5px solid var(--gray-mid);border-radius:6px;cursor:pointer;font-size:13px;font-weight:800;padding:4px 10px;color:var(--gray-dark);font-family:'Nunito',sans-serif}
+.sl-screen-share:hover{background:var(--gray-mid)}
+.sl-screen-body{padding:12px 12px 0}
 .storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
 .storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid);display:flex;align-items:center;gap:6px}.storyline-title{flex:1;display:flex;align-items:center;gap:6px;min-width:0}.storyline-title-text{font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.storyline-title-sub{font-size:11px;font-weight:700;color:var(--gray-dark);white-space:nowrap}.storyline-edit-form{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.storyline-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:2px 7px;min-width:0;outline:none}.storyline-edit-icon{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:24px;text-align:center}.storyline-hdr-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:5px;font-family:"Nunito",sans-serif;font-weight:800;color:var(--gray-dark);line-height:1;flex-shrink:0}.storyline-hdr-btn:hover{background:var(--gray-mid)}.storyline-hdr-btn.gen{color:var(--accent)}.storyline-hdr-btn.danger{color:var(--red)}.storyline-cards{}.storyline-cards.collapsed{display:none}.storyline-collapse-btn{font-size:11px;color:var(--gray-dark);transition:transform .2s;display:inline-block}.storyline-collapse-btn.open{transform:rotate(180deg)}
 .storyline-item .saved-item{border:none;border-radius:0;border-top:1.5px solid var(--gray-mid)}.storyline-item .saved-item-story{display:none}
@@ -580,6 +588,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <select class="style-select" id="style-select" onchange="onStyleSelect(this.value)">
           <option value="creative">🎭 Creative</option>
           <option value="neutral">📰 Neutral</option>
+          <option value="interview">📰 Job Interview</option>
           <option value="scientific">🔬 Scientific</option>
           <option value="journalism">📡 Journalism</option>
           <option value="essay">✍️ Essay</option>
@@ -624,7 +633,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="format-wrap" id="format-wrap">
       <div class="format-select-wrap">
         <select class="format-select" id="format-select" onchange="onFormatSelect(this.value)">
-          <option value="standard" selected>📚 Standard — 3 progressive lessons</option>
+          <option value="standard" selected>📚 Standard — vocabulary &amp; sentences</option>
+          <option value="all_types">🎯 All types — standard + grammar + conjugation + error hunt</option>
           <option value="grammar">🏷️ Grammar — gender, articles &amp; plurals</option>
           <option value="conjugation">🔤 Conjugation — verb forms by person</option>
           <option value="error_hunt">🔍 Error Hunt — find mistakes in the story</option>
@@ -769,6 +779,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <button class="sec-btn" id="comp-back-btn" onclick="goHome()">Back to lessons</button>
 </div>
 
+<div id="storyline-screen" class="screen">
+  <div class="sl-screen">
+    <div class="sl-screen-hdr">
+      <button class="sl-screen-back" onclick="closeStorylineScreen()">← Back</button>
+      <span class="sl-screen-title" id="sl-screen-title"></span>
+      <button class="sl-screen-share" onclick="shareStoryline()">🔗 Share</button>
+    </div>
+    <div class="sl-screen-body" id="sl-screen-body"></div>
+  </div>
+</div>
+
 <script>
 // LANGS and LANG_NAMES_LOCALIZED are populated by loadLanguages() at startup
 // from languages.json (baked in static build, or fetched from /api/languages)
@@ -813,8 +834,8 @@ async function loadLanguages() {
 
 // Return the name of language `targetCode` in the UI language `uiLang`
 function localizedLangName(targetCode, uiLang) {
-  const table = LANG_NAMES_LOCALIZED[uiLang] || LANG_NAMES_LOCALIZED['en'];
-  return table[targetCode] || (LANGS[targetCode]||{}).name || targetCode;
+  const table = LANG_NAMES_LOCALIZED[uiLang] || LANG_NAMES_LOCALIZED['en'] || {};
+  return (table && table[targetCode]) || (LANGS[targetCode]||{}).name || targetCode;
 }
 
 
@@ -896,8 +917,8 @@ async function loadUIStrings(srcLang) {
 
 function applyUIStrings() {
   updateDocDir();
-  const L = LANGS[APP.lang] || LANGS.it;
-  const S = LANGS[APP.srcLang] || LANGS.en || {name:'English'};
+  const L = LANGS[APP.lang] || LANGS.it || {name:'Italian', flag:'🇮🇹', tts:null};
+  const S = LANGS[APP.srcLang] || LANGS.en || {name:'English', flag:'🇬🇧', tts:null};
   // Use localized language name (e.g. 'Italienisch' not 'Italian' in German UI)
   const tgtLangName = localizedLangName(APP.lang, APP.srcLang);
   const srcLangName = localizedLangName(APP.srcLang, APP.srcLang);
@@ -961,7 +982,7 @@ function applyUIStrings() {
   // Update format-select option labels
   const formatSel = document.getElementById('format-select');
   if (formatSel) {
-    const formatKeys = { 'standard': 'form.format.standard', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation' };
+    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation' };
     Array.from(formatSel.options).forEach(opt => {
       if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
     });
@@ -1045,20 +1066,8 @@ function updateUITranslateRow(srcLang, missingKeys) {
   const n = missingKeys.length;
 
   if (window.UI_STRINGS_ALL) {
-    // Static mode: can't generate — just inform
-    const hasLang = window.UI_STRINGS_ALL[srcLang] &&
-      Object.keys(window.UI_STRINGS_ALL[srcLang]).length > 0;
-    if (!hasLang) {
-      _uiTranslateRow('offer',
-        `No ${langName} UI translation in this static build.`, null,
-        '(Use the live server to generate one)');
-    } else if (n > 0) {
-      _uiTranslateRow('offer',
-        `${n} UI string${n!==1?'s':''} missing in ${langName}: ${missingKeys.slice(0,3).join(', ')}${n>3?'…':''}`,
-        null, '(Rebuild static with live server to fill gaps)');
-    } else {
-      _uiTranslateRow('hidden');
-    }
+    // Static mode: always hide the translate row
+    _uiTranslateRow('hidden');
     return;
   }
 
@@ -1154,7 +1163,7 @@ function onDiffSelect(v){
 function restoreDiffSelect(){
   const sel=document.getElementById('diff-select'); if(sel) sel.value=APP.difficulty;
 }
-const VALID_STYLES=new Set(['creative','neutral','scientific','journalism','essay','children','funny','romantic','sensual','horror','action','philosophical','poem','dialogue']);
+  const VALID_STYLES=new Set(['creative','neutral','interview','scientific','journalism','essay','children','funny','romantic','sensual','horror','action','philosophical','poem','dialogue']);
 function onStyleSelect(v){
   APP.storyStyle=VALID_STYLES.has(v)?v:'creative'; saveStoryStyle();
   const sel=document.getElementById('style-select'); if(sel) sel.value=APP.storyStyle;
@@ -1162,7 +1171,7 @@ function onStyleSelect(v){
 function restoreStyleSelect(){
   const sel=document.getElementById('style-select'); if(sel) sel.value=APP.storyStyle;
 }
-const VALID_FORMATS=new Set(['standard','error_hunt','grammar','conjugation']);
+const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation']);
 function onFormatSelect(v){
   APP.lessonFormat=VALID_FORMATS.has(v)?v:'standard'; saveLessonFormat();
   const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
@@ -1503,9 +1512,15 @@ async function init(){
   renderPill();
   loadSavedList();
   await resumeBackgroundJob();
-  // Hash-based routing: load topic from URL on startup
-  const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
-  if(hashTopic) loadSaved(hashTopic);
+  // Hash-based routing on startup
+  if (location.hash.startsWith('#sl=')) {
+    // Storyline deep-link
+    const chainId = location.hash.slice(4);
+    _tryOpenStorylineByChainId(chainId);
+  } else {
+    const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
+    if (hashTopic) loadSaved(hashTopic);
+  }
 }
 
 function renderPill(){
@@ -1559,6 +1574,70 @@ function setLibFilter(lang){
   if(lang==='all'){ APP.libFilter='all'; APP.libSrcFilter='all'; }
   else { APP.libFilter=lang; }
   loadSavedList();
+}
+
+function savedItemHtml(s, connector) {
+  const dateStr = s.updatedAt || s.generatedAt;
+  const date = dateStr ? new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '';
+  const enc = encTopic(s.topic);
+  const tL = LANGS[s.lang||'it'] || LANGS.it;
+  const srcL = LANGS[s.srcLang||'en'] || LANGS.en || {flag:'🇬🇧',name:'English'};
+  const d = s.difficulty || 2;
+  const diffBadge = `<span class="diff-dot d${d}" title="${DIFF_SHORT[d]||''}"></span>`;
+  const ratingStr = s.ratings
+    ? ` · ${['🔵','🟡','🔴'][s.ratings.difficulty-1]||''} ${['😐','😊','😄'][s.ratings.fun-1]||''}`
+    : '';
+  const conn = connector ? `<span class="storyline-connector">↩</span>` : '';
+  const sid = 'si-' + enc.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+  return `<div class="saved-item-wrap">
+    <div class="saved-item" onclick="loadSaved('${enc}')">
+      ${conn}<span class="saved-emoji">${s.topicEmoji||'📚'}</span>
+      <div class="saved-info">
+        <div class="saved-topic">${s.topic} ${diffBadge}</div>
+        <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
+      </div>
+      <div class="saved-actions" onclick="event.stopPropagation()">
+        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
+        ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${enc}')">↻</button>`:''}
+        ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
+        ${APP.info.canGenerate?`<button class="ico-btn" title="Fix all lessons (deep clean)" onclick="event.stopPropagation();fixAllLessons('${enc}','${sid}')">🔧</button>`:''}
+        ${APP.info.canGenerate?`<button class="ico-btn" title="Add lesson" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
+        <button class="ico-btn export" title="${t('lesson.export_title')}"
+          data-topic="${s.topic.replace(/"/g,'&quot;')}"
+          onclick="exportTopics([this.dataset.topic])">⬇</button>
+        <button class="ico-btn" title="Delete" onclick="deleteSaved('${enc}')">🗑</button>
+      </div>
+    </div>
+    <div class="saved-item-story">
+      <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('${sid}','${s.topic.replace(/'/g,"\\'")}')">
+        ${t('lesson.read_story_short')}
+        <button class="story-icon-btn" style="margin-left:auto" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">🔊</button>
+        <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
+      </button>
+      <div class="saved-item-story-body" id="sis-body-${sid}"></div>
+    </div>
+    <div class="saved-item-edit" id="siedit-${sid}">
+      <span class="saved-item-edit-emoji" id="siedit-emoji-${sid}" title="Cycle emoji" onclick="cycleSavedItemEmoji('${sid}')">${s.topicEmoji||'📚'}</span>
+      <input class="saved-item-edit-input" id="siedit-input-${sid}" value="${s.topic.replace(/"/g,'&quot;')}" placeholder="Topic name…"
+        onkeydown="if(event.key==='Enter')saveSavedItemTitle('${sid}','${enc}');if(event.key==='Escape')closeSavedItemEdit('${sid}')">
+      <button class="saved-item-edit-btn" onclick="saveSavedItemTitle('${sid}','${enc}')">Save</button>
+      <button class="saved-item-edit-btn gen" title="Generate title with AI" onclick="genSavedItemTitle('${sid}','${enc}')">✨</button>
+      <button class="saved-item-edit-btn danger" onclick="clearSavedItemTitle('${sid}','${enc}')">Clear</button>
+      <button class="saved-item-edit-btn" onclick="closeSavedItemEdit('${sid}')">✕</button>
+    </div>
+    <div class="saved-item-addlesson" id="sial-${sid}">
+      <span style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
+      <select class="addlesson-select" id="sial-fmt-${sid}">
+        <option value="standard">📚 Standard</option>
+        <option value="grammar">🏷️ Grammar</option>
+        <option value="conjugation">🔤 Conjugation</option>
+        <option value="error_hunt">🔍 Error Hunt</option>
+      </select>
+      <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}')">Generate</button>
+      <button class="addlesson-cancel" onclick="closeAddLesson('${sid}')">✕</button>
+      <div class="addlesson-status" id="sial-status-${sid}"></div>
+    </div>
+  </div>`;
 }
 
 async function loadSavedList(){
@@ -1655,68 +1734,6 @@ async function loadSavedList(){
     return { storylines, orphans, byTopic };
   }
 
-  function savedItemHtml(s, connector) {
-    const dateStr = s.updatedAt || s.generatedAt;
-    const date = dateStr ? new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '';
-    const enc = encTopic(s.topic);
-    const tL = LANGS[s.lang||'it'] || LANGS.it;
-    const srcL = LANGS[s.srcLang||'en'] || LANGS.en || {flag:'🇬🇧',name:'English'};
-    const d = s.difficulty || 2;
-    const diffBadge = `<span class="diff-dot d${d}" title="${DIFF_SHORT[d]||''}"></span>`;
-    const ratingStr = s.ratings
-      ? ` · ${['🔵','🟡','🔴'][s.ratings.difficulty-1]||''} ${['😐','😊','😄'][s.ratings.fun-1]||''}`
-      : '';
-    const conn = connector ? `<span class="storyline-connector">↩</span>` : '';
-    const sid = 'si-' + enc.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-    return `<div class="saved-item-wrap">
-      <div class="saved-item" onclick="loadSaved('${enc}')">
-        ${conn}<span class="saved-emoji">${s.topicEmoji||'📚'}</span>
-        <div class="saved-info">
-          <div class="saved-topic">${s.topic} ${diffBadge}</div>
-          <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
-        </div>
-        <div class="saved-actions" onclick="event.stopPropagation()">
-          ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
-          ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${enc}')">↻</button>`:''}
-          ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
-          ${APP.info.canGenerate?`<button class="ico-btn" title="Fix all lessons (deep clean)" onclick="event.stopPropagation();fixAllLessons('${enc}','${sid}')">🔧</button>`:''}
-          ${APP.info.canGenerate?`<button class="ico-btn" title="Add lesson" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
-          <button class="ico-btn export" title="${t('lesson.export_title')}"
-            data-topic="${s.topic.replace(/"/g,'&quot;')}"
-            onclick="exportTopics([this.dataset.topic])">⬇</button>
-          <button class="ico-btn" title="Delete" onclick="deleteSaved('${enc}')">🗑</button>
-        </div>
-      </div>
-      <div class="saved-item-story">
-        <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('${sid}','${s.topic.replace(/'/g,"\\'")}')">
-          ${t('lesson.read_story_short')}
-          <button class="story-icon-btn" style="margin-left:auto" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">🔊</button>
-          <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
-        </button>
-        <div class="saved-item-story-body" id="sis-body-${sid}"></div>
-      </div>
-      <div class="saved-item-edit" id="siedit-${sid}">
-        <span class="saved-item-edit-emoji" id="siedit-emoji-${sid}" title="Cycle emoji" onclick="cycleSavedItemEmoji('${sid}')">${s.topicEmoji||'📚'}</span>
-        <input class="saved-item-edit-input" id="siedit-input-${sid}" value="${s.topic.replace(/"/g,'&quot;')}" placeholder="Topic name…"
-          onkeydown="if(event.key==='Enter')saveSavedItemTitle('${sid}','${enc}');if(event.key==='Escape')closeSavedItemEdit('${sid}')">
-        <button class="saved-item-edit-btn" onclick="saveSavedItemTitle('${sid}','${enc}')">Save</button>
-        <button class="saved-item-edit-btn gen" title="Generate title with AI" onclick="genSavedItemTitle('${sid}','${enc}')">✨</button>
-        <button class="saved-item-edit-btn danger" onclick="clearSavedItemTitle('${sid}','${enc}')">Clear</button>
-        <button class="saved-item-edit-btn" onclick="closeSavedItemEdit('${sid}')">✕</button>
-      </div>
-      <div class="saved-item-addlesson" id="sial-${sid}">
-        <span style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
-        <select class="addlesson-select" id="sial-fmt-${sid}">
-          <option value="error_hunt">🔍 Error Hunt</option>
-          <option value="grammar">🏷️ Grammar</option>
-          <option value="conjugation">🔤 Conjugation</option>
-        </select>
-        <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}')">Generate</button>
-        <button class="addlesson-cancel" onclick="closeAddLesson('${sid}')">✕</button>
-        <div class="addlesson-status" id="sial-status-${sid}"></div>
-      </div>
-    </div>`;
-  }
 
   const { storylines, orphans, byTopic } = buildChains(filtered);
 
@@ -1780,13 +1797,20 @@ async function loadSavedList(){
           <span class="storyline-title-sub">Story line · ${chain.length} lesson${chain.length!==1?'s':''}${chainDate?' · '+chainDate:''}</span>
          </span>`;
     const genBtn = APP.info.canGenerate
-      ? `<button class="storyline-hdr-btn gen" title="${t('lesson.gen_title')}" onclick="event.stopPropagation();genStorylineTitle('${chainId}','${escapedRoot}','${escapedChain}')">✨</button>`
+      ? `<button class="storyline-hdr-btn gen" title="${t('lesson.gen_title')}"
+           data-chain-id="${chainId}" data-root="${escapedRoot}" data-chain="${escapedChain}"
+           onclick="event.stopPropagation();genStorylineTitle(this.dataset.chainId,this.dataset.root,this.dataset.chain)">✨</button>`
       : '';
     html += `<div class="storyline-group" id="slgroup-${chainId}">`;
     html += `<div class="storyline-hdr" id="slhdr-${chainId}">
       ${hdrTitle}
-      <button class="storyline-hdr-btn" title="Edit title" onclick="event.stopPropagation();openStorylineEdit('${chainId}','${escapedRoot}')">✏️</button>
+      <button class="storyline-hdr-btn" title="Edit title"
+        data-chain-id="${chainId}" data-root="${escapedRoot}"
+        onclick="event.stopPropagation();openStorylineEdit(this.dataset.chainId,this.dataset.root)">✏️</button>
       ${genBtn}
+      <button class="storyline-hdr-btn" title="Open storyline"
+        data-chain-id="${chainId}" data-chain="${escapedChain}"
+        onclick="event.stopPropagation();openStorylineScreen(this.dataset.chainId,this.dataset.chain)">👁</button>
       <button class="ico-btn export" style="font-size:11px;padding:2px 8px"
         title="${t('lesson.export_storyline_title')}"
         data-chain="${escapedChain}"
@@ -2024,7 +2048,7 @@ async function resumeBackgroundJob(){
 async function doGenerate(forceRegen){
   const topic=document.getElementById('topic-input').value.trim();
   const contVal=document.getElementById('continue-select')?.value||'';
-  if(APP.lessonFormat!=='error_hunt'&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
+  if(!['error_hunt'].includes(APP.lessonFormat)&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
   if(APP.lessonFormat==='error_hunt'&&!topic&&!contVal){ showToast(t('toast.select_story')); return; }
   if(!APP.info.canGenerate) return;
   if(APP.activeJob){ showToast(t('toast.already_generating',{topic:APP.activeJob.topic})); return; }
@@ -2243,7 +2267,9 @@ function buildPath(){
     // Count flags that belong to THIS lesson by matching content slugs
     const lessonItSet = new Set([
       ...(L.vocab||[]).map(v=>(v.target||'').slice(0,40).replace(/\s+/g,'_')),
-      ...(L.sentences||[]).map(s=>(s.target||'').slice(0,40).replace(/\s+/g,'_'))
+      ...(L.sentences||[]).map(s=>(s.target||'').slice(0,40).replace(/\s+/g,'_')),
+      ...(L.grammar||[]).map(g=>(g.target||'').slice(0,40).replace(/\s+/g,'_')),
+      ...(L.conjugations||[]).flatMap(c=>(c.forms||[]).map(f=>(f.form||'').slice(0,40).replace(/\s+/g,'_'))),
     ]);
     const topicSlugForFlag=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
     const lessonFlagCount=Object.entries(APP.flagged).filter(([k])=>{
@@ -2257,7 +2283,7 @@ function buildPath(){
     const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT[diff]||''}</span>`:'';
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
-        <div class="node-title">Lesson ${L.id}: ${L.title} ${diffBadge}</div>
+        <div class="node-title">${(()=>{const labels={'grammar':'🏷️ Grammar','conjugation':'🔤 Conjugation','error_hunt':'🔍 Error Hunt'};return labels[L.type]||'📚 Vocab';})()}: ${L.title} ${diffBadge}</div>
         <div class="node-desc">${L.desc}</div>
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
         ${APP.info.canGenerate?`<div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
@@ -2431,7 +2457,7 @@ async function genLessonTitle() {
     const r = await fetch('/api/storyline-title', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ topics: [APP.lessonData.userTopic || oldTopic] })
+      body: JSON.stringify({ topics: [oldTopic] })
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
@@ -2590,6 +2616,142 @@ async function fixAllLessons(enc, sid) {
   } finally {
     if (fixBtn) { fixBtn.disabled = false; fixBtn.textContent = '🔧'; }
   }
+}
+
+
+// ══ Storyline screen ══════════════════════════════════════════════════════════
+
+// Current open storyline state
+APP._slScreen = null; // { chainId, chain (encoded), topics [] }
+
+function openStorylineScreen(chainId, encodedChain) {
+  const topics = JSON.parse(decodeURIComponent(encodedChain));
+  APP._slScreen = { chainId, encodedChain, topics };
+  history.pushState({ slChainId: chainId, slChain: encodedChain }, '', '#sl=' + chainId);
+  _renderStorylineScreen(chainId, encodedChain, topics);
+  show('storyline-screen');
+}
+
+function closeStorylineScreen() {
+  APP._slScreen = null;
+  history.back();
+}
+
+function shareStoryline() {
+  if (!APP._slScreen) return;
+  const url = location.origin + location.pathname + '#sl=' + APP._slScreen.chainId;
+  if (navigator.clipboard && location.protocol !== 'file:') {
+    navigator.clipboard.writeText(url)
+      .then(() => showToast(t('toast.link_copied')))
+      .catch(() => _copyFallback(url));
+  } else { _copyFallback(url); }
+}
+
+function _renderStorylineScreen(chainId, encodedChain, topics) {
+  // Title
+  const slTitles = APP.storylines || {};
+  const slMeta = slTitles[chainId] || slTitles['root:' + topics[0]] || null;
+  const titleEl = document.getElementById('sl-screen-title');
+  if (titleEl) {
+    titleEl.textContent = slMeta?.title
+      ? (slMeta.icon || '📖') + ' ' + slMeta.title
+      : '📖 ' + topics[0];
+  }
+
+  // Body: one card per chapter + full story reader
+  const body = document.getElementById('sl-screen-body');
+  if (!body) return;
+
+  const byTopic = {};
+  (APP.savedList || []).forEach(s => { byTopic[s.topic] = s; });
+
+  let html = '';
+
+  // Chapter cards
+  html += '<div class="storyline-cards" id="slsc-cards-' + chainId + '">';
+  topics.forEach((topic, i) => {
+    const s = byTopic[topic];
+    if (!s) {
+      html += '<div class="storyline-item"><div class="saved-item" style="opacity:.5">' + escHtml(topic) + '</div></div>';
+      return;
+    }
+    html += '<div class="storyline-item">' + savedItemHtml(s, i > 0) + '</div>';
+  });
+  html += '</div>';
+
+  // Read full story section
+  const escapedChain = encodedChain;
+  const slscId = 'slsc-' + chainId;
+  html += '<div class="storyline-story" style="margin-top:8px;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid)">' +
+    `<button class="storyline-story-hdr" onclick="toggleChainStory('${slscId}')">` +
+    t('lesson.read_full_story') +
+    `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></button>` +
+    `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
+    '</div>';
+
+  body.innerHTML = html;
+}
+
+// Handle browser back/forward and direct URL navigation
+window.addEventListener('popstate', function(e) {
+  if (e.state && e.state.slChainId) {
+    const { slChainId, slChain } = e.state;
+    const topics = JSON.parse(decodeURIComponent(slChain));
+    APP._slScreen = { chainId: slChainId, encodedChain: slChain, topics };
+    _renderStorylineScreen(slChainId, slChain, topics);
+    show('storyline-screen');
+  } else if (location.hash.startsWith('#sl=')) {
+    // Direct URL navigation without state — try to resolve from saved list
+    const chainId = location.hash.slice(4);
+    _tryOpenStorylineByChainId(chainId);
+  } else {
+    APP._slScreen = null;
+    // Return to appropriate screen based on hash
+    if (location.hash.startsWith('#topic=')) {
+      const topic = decodeURIComponent(location.hash.slice(7));
+      loadSaved(encodeURIComponent(topic));
+    } else {
+      show('landing');
+      loadSavedList();
+    }
+  }
+});
+
+function _tryOpenStorylineByChainId(chainId) {
+  // Rebuild chains from saved list and find matching chainId
+  if (!APP.savedList || !APP.savedList.length) {
+    loadSavedList().then(() => _tryOpenStorylineByChainId(chainId));
+    return;
+  }
+  const byTopic = {};
+  (APP.savedList || []).forEach(s => { byTopic[s.topic] = s; });
+  function buildChainId(topicsArr) {
+    const j = JSON.stringify(topicsArr);
+    return 'c' + Math.abs(j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+  }
+  // Use same buildChains logic
+  const topics = APP.savedList.map(s => s.topic);
+  const byTopicCf = {};
+  topics.forEach(t => { const s = byTopic[t]; if (s?.continuedFrom) byTopicCf[t] = s.continuedFrom; });
+  const heads = topics.filter(t => !Object.values(byTopicCf).includes(t));
+  for (const head of heads) {
+    const chain = [head];
+    let cur = head;
+    while (true) {
+      const next = topics.find(t => byTopicCf[t] === cur);
+      if (!next || chain.includes(next)) break;
+      chain.push(next); cur = next;
+    }
+    if (buildChainId(chain) === chainId) {
+      const encodedChain = encodeURIComponent(JSON.stringify(chain));
+      history.replaceState({ slChainId: chainId, slChain: encodedChain }, '', '#sl=' + chainId);
+      _renderStorylineScreen(chainId, encodedChain, chain);
+      show('storyline-screen');
+      return;
+    }
+  }
+  // Not found — fall back to landing
+  show('landing'); loadSavedList();
 }
 
 // ── Saved-item inline title edit (✏️ in saved-list) ──────────────────────────
@@ -2848,10 +3010,10 @@ function tTypePlural(ex) {
 <div class="card">
   <div class="qtext">${t('ex.type_plural.q', {word: ex.target})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.source}</div>
-  <input id="type-in" class="type-in" autocomplete="off" autocorrect="off" spellcheck="false"
+  <input id="type-in" class="type-input" autocomplete="off" autocorrect="off" spellcheck="false"
     placeholder="${t('ex.type_in_placeholder')}"
-    oninput="document.getElementById('cbtn').disabled=!this.value.trim()"
-    onkeydown="if(event.key==='Enter'&&this.value.trim())check()">
+    oninput="onType()"
+    onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()">
 </div>`;
 }
 
@@ -2903,10 +3065,10 @@ function tTypeConjugation(ex) {
 <div class="card">
   <div class="qtext">${t('ex.type_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${ex.source}</div>
-  <input id="type-in" class="type-in" autocomplete="off" autocorrect="off" spellcheck="false"
+  <input id="type-in" class="type-input" autocomplete="off" autocorrect="off" spellcheck="false"
     placeholder="${t('ex.type_in_placeholder')}"
-    oninput="document.getElementById('cbtn').disabled=!this.value.trim()"
-    onkeydown="if(event.key==='Enter'&&this.value.trim())check()">
+    oninput="onType()"
+    onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()">
 </div>`;
 }
 
@@ -3273,15 +3435,17 @@ function check(){
       ? `${ex.correct}${ex.source ? ' — ' + ex.source : ''}`
       : (ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">${t('check.correct')}</div><div class="fb-body">${revealBody}</div>`;
-    if(ex.target) speak(ex.target);
+    const speakOk = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct : ex.target;
+    if(speakOk) speak(speakOk);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
-    if(ex.type==='listen_type') document.getElementById('type-in').classList.add('ok');
+    if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('ok');
   } else {
     C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${ex.correct}</strong></div>`;
-    if(ex.target) speak(ex.target,0.75);
+    const speakBad = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct : ex.target;
+    if(speakBad) speak(speakBad,0.75);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===ex.correct)b.classList.add('ok'); });
-    if(ex.type==='listen_type') document.getElementById('type-in').classList.add('bad');
+    if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('bad');
     const a=document.getElementById('ex-area'); a.classList.add('shake'); setTimeout(()=>a.classList.remove('shake'),380);
     renderHearts();
   }
