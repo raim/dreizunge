@@ -459,8 +459,8 @@
             {
               "target": "Programm",
               "source": "Program",
-              "gender": "m",
-              "article": "der",
+              "gender": "n",
+              "article": "das",
               "plural": "Programme"
             },
             {
@@ -37596,37 +37596,6 @@
       ],
       "words": [],
       "flaggedAt": "2026-06-01T13:01:42.306Z"
-    },
-    "AI_&_Code_Efficiency:mcq_article:Programm": {
-      "topic": "AI & Code Efficiency",
-      "type": "mcq_article",
-      "target": "Programm",
-      "source": "Program",
-      "correct": "der",
-      "choices": [
-        "die",
-        "der",
-        "das"
-      ],
-      "words": [],
-      "flaggedAt": "2026-06-01T20:13:57.730Z",
-      "comment": "das Programm"
-    },
-    "AI_&_Code_Efficiency:mcq_plural:Effizienz": {
-      "topic": "AI & Code Efficiency",
-      "type": "mcq_plural",
-      "target": "Effizienz",
-      "source": "Efficiency",
-      "correct": "Effizienz",
-      "choices": [
-        "Modelle",
-        "Effizienz",
-        "Entwicklungen",
-        "Fähigkeiten"
-      ],
-      "words": [],
-      "flaggedAt": "2026-06-01T20:18:40.564Z",
-      "comment": "Effizienzen or no plural"
     }
   },
   "storylines": {
