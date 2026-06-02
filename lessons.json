@@ -1557,7 +1557,13 @@
         ]
       },
       "generatedAt": "2026-06-02T14:26:16.238Z",
-      "updatedAt": "2026-06-02T14:26:16.238Z"
+      "updatedAt": "2026-06-02T18:44:04.801Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 669509,
+        "promptTokens": 3217,
+        "completionTokens": 1402
+      }
     },
     {
       "topic": "Cyanobakterien für Energiegewinnung",
@@ -5987,7 +5993,13 @@
         ]
       },
       "generatedAt": "2026-05-31T16:53:07.935Z",
-      "updatedAt": "2026-05-31T16:53:07.935Z"
+      "updatedAt": "2026-06-02T18:51:38.436Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 242209,
+        "promptTokens": 894,
+        "completionTokens": 223
+      }
     },
     {
       "topic": "Giulia e il circo",
@@ -6015,7 +6027,7 @@
             },
             {
               "target": "Professionellität",
-              "source": "professionale"
+              "source": "professionalità"
             },
             {
               "target": "Bewegungen spüren",
@@ -6031,7 +6043,7 @@
             },
             {
               "target": "Klarheit und Präzision",
-              "source": "precisione"
+              "source": "präzision"
             },
             {
               "target": "Leitete",
@@ -6399,7 +6411,13 @@
         ]
       },
       "generatedAt": "2026-05-31T16:06:39.972Z",
-      "updatedAt": "2026-05-31T16:06:39.972Z"
+      "updatedAt": "2026-06-02T19:03:25.015Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 646910,
+        "promptTokens": 2445,
+        "completionTokens": 988
+      }
     },
     {
       "topic": "Esibizione scolastica",
@@ -6773,7 +6791,13 @@
         ]
       },
       "generatedAt": "2026-05-31T15:27:04.350Z",
-      "updatedAt": "2026-05-31T15:27:04.350Z"
+      "updatedAt": "2026-06-02T19:12:10.118Z",
+      "repairStats": {
+        "repairCount": 1,
+        "totalMs": 199741,
+        "promptTokens": 1006,
+        "completionTokens": 274
+      }
     },
     {
       "topic": "per lavorare al circo",
@@ -7206,12 +7230,12 @@
         ]
       },
       "generatedAt": "2026-05-31T14:50:11.429Z",
-      "updatedAt": "2026-05-31T19:11:08.514Z",
+      "updatedAt": "2026-06-02T19:08:20.718Z",
       "repairStats": {
-        "repairCount": 1,
-        "totalMs": 859981,
-        "promptTokens": 2800,
-        "completionTokens": 1367
+        "repairCount": 2,
+        "totalMs": 1077070,
+        "promptTokens": 3821,
+        "completionTokens": 1681
       }
     },
     {
@@ -37883,150 +37907,6 @@
       "words": [],
       "flaggedAt": "2026-05-31T12:59:47.065Z"
     },
-    "Esibizione_scolastica:listen_mcq:Applauden": {
-      "topic": "Esibizione scolastica",
-      "type": "listen_mcq",
-      "target": "Applauden",
-      "source": "",
-      "correct": "applaudire",
-      "choices": [
-        "si sentiva come un nuovo essere",
-        "esibizione",
-        "applaudire",
-        "compagni di classe"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T15:30:18.218Z",
-      "comment": "german: applaudieren"
-    },
-    "Esibizione_scolastica:mcq_target_source:Applauden": {
-      "topic": "Esibizione scolastica",
-      "type": "mcq_target_source",
-      "target": "Applauden",
-      "source": "applaudire",
-      "correct": "applaudire",
-      "choices": [
-        "applaudire",
-        "compagni di classe",
-        "pubblico",
-        "si sentiva come un nuovo essere"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T15:32:22.869Z",
-      "comment": "German: applaudieren"
-    },
-    "Giulia_e_il_circo:listen_mcq:Professionellität": {
-      "topic": "Giulia e il circo",
-      "type": "listen_mcq",
-      "target": "Professionellität",
-      "source": "",
-      "correct": "professionale",
-      "choices": [
-        "professionale",
-        "spostarsi con naturalezza",
-        "precisione",
-        "compagnia"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T16:14:40.183Z",
-      "comment": "German: professionalitaet"
-    },
-    "Giulia_e_il_circo:listen_mcq:Niedlich_machen": {
-      "topic": "Giulia e il circo",
-      "type": "listen_mcq",
-      "target": "Niedlich machen",
-      "source": "",
-      "correct": "invidia",
-      "choices": [
-        "insegnare le tecniche",
-        "invidia",
-        "spostarsi con naturalezza",
-        "precisione"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T16:16:07.070Z",
-      "comment": "german: Neid"
-    },
-    "Giulia_e_il_circo:listen_mcq:Klarheit_und_Präzision": {
-      "topic": "Giulia e il circo",
-      "type": "listen_mcq",
-      "target": "Klarheit und Präzision",
-      "source": "",
-      "correct": "precisione",
-      "choices": [
-        "guidava",
-        "invidia",
-        "precisione",
-        "compagnia"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T16:16:20.825Z",
-      "comment": "Klarheit missing in italian option, use just praezision in german"
-    },
-    "Giulia_e_il_circo:mcq_source_target:Klarheit_und_Präzision": {
-      "topic": "Giulia e il circo",
-      "type": "mcq_source_target",
-      "target": "Klarheit und Präzision",
-      "source": "precisione",
-      "correct": "Klarheit und Präzision",
-      "choices": [
-        "Klarheit und Präzision",
-        "Professionellität",
-        "Compagnie",
-        "Fähigkeiten vermitteln"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T16:17:08.615Z",
-      "comment": "correct German answer is only Praezision"
-    },
-    "Giulia_e_il_circo:mcq_target_source:Professionellität": {
-      "topic": "Giulia e il circo",
-      "type": "mcq_target_source",
-      "target": "Professionellität",
-      "source": "professionale",
-      "correct": "professionale",
-      "choices": [
-        "precisione",
-        "professionale",
-        "guidare",
-        "spostarsi con naturalezza"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T16:20:36.900Z",
-      "comment": "german: professionell"
-    },
-    "Giulia_e_il_circo:mcq_source_target:Professionellität": {
-      "topic": "Giulia e il circo",
-      "type": "mcq_source_target",
-      "target": "Professionellität",
-      "source": "professionalità",
-      "correct": "Professionellität",
-      "choices": [
-        "Professionellität",
-        "Leitung geben",
-        "Fähigkeiten vermitteln",
-        "Ballettstunden geben"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T16:21:07.139Z",
-      "comment": "German: Professionalität"
-    },
-    "Giulia_e_il_circo:listen_mcq:Bewegungen_spüren": {
-      "topic": "Giulia e il circo",
-      "type": "listen_mcq",
-      "target": "Bewegungen spüren",
-      "source": "",
-      "correct": "spostarsi con naturalezza",
-      "choices": [
-        "spostarsi con naturalezza",
-        "precisione",
-        "invidia",
-        "insegnare il ballo"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T16:22:37.470Z",
-      "comment": "German: sich ganz natürlich bewegen"
-    },
     "Giulia_e_il_circo:listen_mcq:Invidia": {
       "topic": "Giulia e il circo",
       "type": "listen_mcq",
@@ -38042,66 +37922,6 @@
       "words": [],
       "flaggedAt": "2026-05-31T16:23:22.538Z",
       "comment": "German Neid"
-    },
-    "Esibizione_problematica:listen_mcq:storto": {
-      "topic": "Esibizione problematica",
-      "type": "listen_mcq",
-      "target": "storto",
-      "source": "",
-      "correct": "andato storto",
-      "choices": [
-        "verschwinden",
-        "curare",
-        "andato storto",
-        "peggiorare"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T16:58:56.823Z"
-    },
-    "Esibizione_problematica:listen_mcq:verschwinden": {
-      "topic": "Esibizione problematica",
-      "type": "listen_mcq",
-      "target": "verschwinden",
-      "source": "",
-      "correct": "verschwinden",
-      "choices": [
-        "verschwinden",
-        "andato storto",
-        "peggiorare",
-        "curare"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T16:59:21.325Z"
-    },
-    "per_lavorare_al_circo:read_translate:Marco_arbeitete_in_der_Bibliothek_und_sa": {
-      "topic": "per lavorare al circo",
-      "type": "read_translate",
-      "target": "Marco arbeitete in der Bibliothek und sah alte Fotos von der Circo Luna.",
-      "source": "Marco lavorava nella biblioteca e guardava vecchie foto del Circo Luna.",
-      "correct": "Marco lavorava nella biblioteca e guardava vecchie foto del Circo Luna.",
-      "choices": [
-        "Marco lavorava nella biblioteca e guardava vecchie foto del Circo Luna.",
-        "Il direttore del Circo Luna offrì a Marco un posto.",
-        "Marco non aveva mai lavorato in un circo.",
-        "La madre gli raccontava storie dei meravigliosi spettacoli."
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T19:14:41.283Z"
-    },
-    "per_lavorare_al_circo:mcq_target_source:Circo": {
-      "topic": "per lavorare al circo",
-      "type": "mcq_target_source",
-      "target": "Circo",
-      "source": "circo",
-      "correct": "circo",
-      "choices": [
-        "racconto",
-        "fotografie",
-        "circo",
-        "burlone"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-31T19:18:06.357Z"
     },
     "Bar_Encounter:type_plural:Bierkäsel": {
       "topic": "Bar Encounter",

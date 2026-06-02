@@ -101,8 +101,8 @@ const flaggedTopicSlugsSet = new Set([...flagKeys].map(k => k.split(':')[0]));
 const cleanedLessons = lessonsData.lessons.filter(topic => {
   const slug = topicSlug(topic.topic);
   if (flaggedTopicSlugsSet.has(slug)) {
-    console.log(`  Excluding flagged topic from static build: "${topic.topic}"`);
-    return false;
+    console.log(`NOT  Excluding flagged topic from static build: "${topic.topic}"`);
+      return true; // false;
   }
   return true;
 });
