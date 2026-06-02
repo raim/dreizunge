@@ -36056,8 +36056,7 @@
             },
             {
               "target": "rhythmo",
-              "source": "rhythm",
-              "pron": "ree-THMOH"
+              "source": "rhythm"
             }
           ],
           "sentences": [
@@ -36173,8 +36172,7 @@
             },
             {
               "target": "surprise",
-              "source": "surprise",
-              "pron": "sur-priz"
+              "source": "surprise"
             },
             {
               "target": "pulsazione cardiaca",
@@ -36429,12 +36427,12 @@
       },
       "generatedAt": "2026-04-29T10:30:16.428Z",
       "repairStats": {
-        "repairCount": 1,
-        "totalMs": 315090,
-        "promptTokens": 938,
-        "completionTokens": 524
+        "repairCount": 3,
+        "totalMs": 556735,
+        "promptTokens": 2556,
+        "completionTokens": 730
       },
-      "updatedAt": "2026-05-05T09:53:54.383Z"
+      "updatedAt": "2026-06-02T15:27:39.085Z"
     }
   ],
   "flags": {
@@ -37711,36 +37709,6 @@
       ],
       "flaggedAt": "2026-05-26T09:08:11.696Z",
       "comment": "scharfe is wrong in the german sentence and not present in the italian"
-    },
-    "yeast_metabolic_oscillations:listen_mcq:rhythmo": {
-      "topic": "yeast metabolic oscillations",
-      "type": "listen_mcq",
-      "target": "rhythmo",
-      "source": "",
-      "correct": "rhythm",
-      "choices": [
-        "microscope",
-        "activity",
-        "rhythm",
-        "pulsation"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-28T07:55:56.918Z"
-    },
-    "yeast_metabolic_oscillations:listen_mcq:surprise": {
-      "topic": "yeast metabolic oscillations",
-      "type": "listen_mcq",
-      "target": "surprise",
-      "source": "",
-      "correct": "surprise",
-      "choices": [
-        "surprise",
-        "metabolism",
-        "phase",
-        "oscillation"
-      ],
-      "words": [],
-      "flaggedAt": "2026-05-28T08:29:58.387Z"
     },
     "wir_fahren_nach_london:mcq_source_target:tumultuous": {
       "topic": "wir fahren nach london",
