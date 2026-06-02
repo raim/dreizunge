@@ -1,0 +1,11 @@
+((((English,(German,Dutch,Luxembourgish)GermanicWest)WestGermanic,
+(Swedish,Danish)NorthGermanic)Germanic,
+(((French,((Spanish,Portuguese,Catalan)IberoRomance),Italian,Romanian)Romance,
+Greek)IndoEuropeanSouth,
+(Polish,Russian,Ukrainian,Czech)Slavic,
+Hindi)IndoEuropean),
+(Finnish,Hungarian)Uralic,
+(Arabic,Hebrew)Semitic,
+Turkish,
+(MandarinChinese,Japanese,Korean,Thai,Indonesian)EastAsia,
+(Swahili)Africa)lucl;
