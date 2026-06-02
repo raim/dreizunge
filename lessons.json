@@ -6452,7 +6452,7 @@
               "source": "nervoso"
             },
             {
-              "target": "Applauden",
+              "target": "Applaudieren",
               "source": "applaudire"
             },
             {
@@ -6550,20 +6550,12 @@
               "source": "compagni di classe"
             },
             {
-              "target": "Nervös",
-              "source": "nervoso"
-            },
-            {
-              "target": "Applauden",
+              "target": "Applaudieren",
               "source": "applaudire"
             },
             {
               "target": "Choreografie",
               "source": "choreografia"
-            },
-            {
-              "target": "Fühlte sich wie ein neuer Mensch",
-              "source": "si sentiva come un nuovo essere"
             },
             {
               "target": "Publikum",
