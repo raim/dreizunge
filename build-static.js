@@ -193,9 +193,15 @@ async function init() {
   await loadUIStrings(APP.srcLang);
   restoreDiffSelect();
   renderPill();
-  loadSavedList();
-  const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
-  if (hashTopic) loadSaved(hashTopic);
+  await loadSavedList();
+  // Hash routing
+  if (location.hash.startsWith('#sl=')) {
+    const chainId = location.hash.slice(4);
+    _tryOpenStorylineByChainId(chainId);
+  } else {
+    const hashTopic = decodeURIComponent((location.hash.match(/[#&]topic=([^&]*)/) || [])[1] || '');
+    if (hashTopic) loadSaved(hashTopic);
+  }
 }
 
 function renderPill() {
@@ -419,7 +425,21 @@ async function loadSavedList() {
       +'<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="Share storyline link"'
       +' data-chain-id="'+chainId+'"'
       +' onclick="event.stopPropagation();shareStorylineById(this.dataset.chainId)">🔗</button>'
+      +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px" title="Export full story line"'
+      +' data-chain="'+chainEncoded+'"'
+      +' onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>'
       +'</div>';
+    // Read summary strip if stored
+    const _slSumMeta2=matchSl2||slTitles[chainId]||null;
+    const _slSum2=_slSumMeta2?.summary||'';
+    if(_slSum2){
+      html+='<div class="storyline-story" id="slsum-wrap-'+chainId+'">'
+        +'<button class="storyline-story-hdr" data-cid="'+chainId+'" onclick="event.stopPropagation();toggleSlSummary(this.dataset.cid)">'
+        +'📖 Read summary<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
+        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" style="display:none">'
+        +'<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">'+_slSum2.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>'
+        +'</div></div>';
+    }
     html+='</div>';
   }
   if(orphans.length){
@@ -479,6 +499,8 @@ const staticOverrides = [
   '  if(code==="all"){ APP.libFilter="all"; const sel=document.getElementById("lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
   '  APP.lang=code; APP.libFilter=code; saveLang();',
   '  const sel=document.getElementById("lang-select"); if(sel&&sel.value!==code) sel.value=code;',
+  '  const tb=document.getElementById("lang-tutor-banner");',
+  '  if(tb){ if(code==="de"){ tb.innerHTML=t("lang.tutor_de_html"); tb.style.display=""; } else tb.style.display="none"; }',
   '  if(!silent) loadSavedList();',
   '}',
   'function setLibFilter(lang){',

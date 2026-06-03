@@ -40,7 +40,8 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-03T06:07:43.526Z",
-      "updatedAt": "2026-06-03T07:19:28.035Z"
+      "updatedAt": "2026-06-03T16:37:12.642Z",
+      "summary": "Dr. Eliza Carter forscht auf einem biotechnologischen Forschungsinstitut an der Nutzung cyanobakterieller Photosynthese zur Erzeugung erneuerbarer Energie. Obwohl die mikrobiellen Prozesse in Natur perfekt funktionieren, stellen sich Schwierigkeiten bei der Prozessskalierung in kommerziellen Bioreaktoren ein, insbesondere hinsichtlich der Lichtzufuhr und der Begasung. Die Optimierung der pH-Werte ist entscheidend für die Bakterienwachstum, jedoch schadet dies der Produktion von Wasserstoff (3-HP). Dr. Carter muss die grundlegenden Prozesse verstehen, um die Anpassungsfähigkeit der cyanobakteriellen Systeme zu erneut durchgehen und ihre Anpassungsfähigkeit zu verbessern."
     },
     {
       "id": "sl_765279787",
@@ -83,7 +84,8 @@
         "tp_360608166"
       ],
       "createdAt": "2026-06-01T17:53:08.297Z",
-      "updatedAt": "2026-06-01T20:45:49.717Z"
+      "updatedAt": "2026-06-03T14:17:33.164Z",
+      "summary": "The protagonist, a scientist with a PhD in theoretical mathematics and quantum physics from the USA, is in Germany seeking a job but struggles with the language. Through intensive language courses and self-study, he gains confidence and participates in discussions about artificial intelligence (AI) in his workplace. He learns about the role of mathematics, particularly linear algebra, probability theory, and statistics, in AI and discusses the practical applications and theoretical foundations of machine learning. After presenting his own algorithmic model, he secures a position in the company, though he faces a momentary challenge when declining an offer for a drink."
     },
     {
       "id": "sl_1525267852",
@@ -96,7 +98,8 @@
         "tp_1511252938"
       ],
       "createdAt": "2026-06-01T12:30:00.873Z",
-      "updatedAt": "2026-06-01T13:17:48.646Z"
+      "updatedAt": "2026-06-03T14:42:13.349Z",
+      "summary": "Winnie l'ourson se réveille tôt et décide de chercher du miel dans le bois, guidé par l'odeur des fleurs. Il trouve un abri des abeilles mais s'arrête quand il entend un bruit, découvrant Bär, son grand ami. Dans la suite, Winnie découvre un jouet fluffys dans le bois qui se présente comme son nouveau petit ami, ce qui étonne Bär."
     },
     {
       "id": "sl_228863735",
@@ -128,7 +131,8 @@
         "tp_1529700097"
       ],
       "createdAt": "2026-05-31T14:50:11.429Z",
-      "updatedAt": "2026-06-01T09:35:03.702Z"
+      "updatedAt": "2026-06-03T13:58:31.640Z",
+      "summary": "Marco, un giovane ballerino sognatore, desidera lavorare al circo Luna. Dopo aver ricevuto una chiamata dal direttore, Marco si prepara per la sua prima esibizione scolastica, durante la quale incontra Giulia, una nuova ballerina professionista che lo aiuta a migliorare. Durante una successiva esibizione, Marco si ferisce gravemente, ma Giulia lo soccorre. Marco e Giulia si innamorano e diventano compagne di danza, comprendendo il vero significato dell'amore e del lavoro insieme."
     },
     {
       "id": "sl_1056986763",
@@ -603,7 +607,8 @@
         "tp_1982827897"
       ],
       "createdAt": "2026-04-29T16:14:36.266Z",
-      "updatedAt": "2026-05-05T09:53:54.249Z"
+      "updatedAt": "2026-06-03T15:05:08.966Z",
+      "summary": "Alessia, a mushroom forager from the Tuscan countryside, falls ill after consuming poisonous mushrooms, leading to a series of bizarre and terrifying events. She experiences a transformation into a zombie-like state, controlled by the fungus, and suffers from intense hallucinations and mood swings. Her husband, Marco, seeks help from an old witch and delves into neuroscience to understand and potentially reverse the effects of the fungal infection on Alessia's brain chemistry."
     },
     {
       "id": "sl_132859759",
@@ -4820,6 +4825,108 @@
               "plural": "Honig"
             }
           ]
+        },
+        {
+          "id": null,
+          "title": "Winnie adore le miel",
+          "desc": "Winnie et le miel",
+          "icon": "🍯",
+          "vocab": [
+            {
+              "target": "wachte auf",
+              "source": "se réveilla"
+            },
+            {
+              "target": "hunger",
+              "source": "faim"
+            },
+            {
+              "target": "Bienenstock",
+              "source": "abeille"
+            },
+            {
+              "target": "kletterte",
+              "source": "grimpa"
+            },
+            {
+              "target": "herumschwirrten",
+              "source": "volèrent autour"
+            },
+            {
+              "target": "verschrecken",
+              "source": "effrayer"
+            },
+            {
+              "target": "großer Freund",
+              "source": "ami"
+            },
+            {
+              "target": "lachte",
+              "source": "rietta"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Winnie sprang aus seinem Bett.",
+              "source": "Winnie sauta du son lit.",
+              "words": [
+                "Winnie",
+                "sprang",
+                "aus",
+                "seinem",
+                "Bett."
+              ]
+            },
+            {
+              "target": "Er roch den Duft von Blüten.",
+              "source": "Il sentit l'odeur des fleurs.",
+              "words": [
+                "Er",
+                "roch",
+                "den",
+                "Duft",
+                "von",
+                "Blüten."
+              ]
+            },
+            {
+              "target": "Da war es!",
+              "source": "C'est là !",
+              "words": [
+                "Da",
+                "war",
+                "es!"
+              ]
+            },
+            {
+              "target": "Sie waren so klein und flink.",
+              "source": "Elles étaient si petites et agiles.",
+              "words": [
+                "Sie",
+                "waren",
+                "so",
+                "klein",
+                "und",
+                "flink."
+              ]
+            },
+            {
+              "target": "Bär lachte und sagte: \"Winnie, du bist ein kluger Bär!\"",
+              "source": "Bär rit et dit : \"Winnie, tu es un bon ours !\"",
+              "words": [
+                "Bär",
+                "lachte",
+                "und",
+                "sagte:",
+                "\"Winnie,",
+                "du",
+                "bist",
+                "ein",
+                "kluger",
+                "Bär!\""
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -4837,7 +4944,7 @@
         ]
       },
       "generatedAt": "2026-06-01T12:30:00.873Z",
-      "updatedAt": "2026-06-01T12:54:59.458Z",
+      "updatedAt": "2026-06-03T14:53:49.965Z",
       "repairStats": {
         "repairCount": 2,
         "totalMs": 1302015,
@@ -39049,6 +39156,21 @@
       "words": [],
       "flaggedAt": "2026-06-03T08:27:01.573Z",
       "comment": "english should be in the question target: book"
+    },
+    "Winnie_adore_le_miel:listen_mcq:großer_Freund": {
+      "topic": "Winnie  adore le miel",
+      "type": "listen_mcq",
+      "target": "großer Freund",
+      "source": "",
+      "correct": "ami",
+      "choices": [
+        "abeille",
+        "volèrent autour",
+        "ami",
+        "effrayer"
+      ],
+      "words": [],
+      "flaggedAt": "2026-06-03T14:55:31.681Z"
     }
   }
 }

@@ -4669,7 +4669,12 @@
     "lib.add_lesson_done": "✓ Lecție adăugată",
     "ex.type_in_placeholder": "Tipărește răspunsul...",
     "form.lesson_type_hdr": "Tipul lecției",
-    "form.style.interview": "💼 Entrevista de muncă"
+    "form.style.interview": "💼 Entrevista de muncă",
+    "form.format.standard": "📚 Standard — vokabular și propoziții",
+    "form.format.all_types": "🎯 Toate tipurile — standard + gramatică + conjugare + căutare erori",
+    "lang.tutor_de_html": "🎓 Încerca <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">tutorul de concentrare în germană de Chilperic</a>",
+    "lesson.read_summary": "📖 Citeste resumul",
+    "lesson.gen_summary": "📝 Generează resumul"
   },
   "th": {
     "app.backend": "Backend:",
@@ -4877,7 +4882,12 @@
     "lib.add_lesson_done": "✓ บทเรียนเพิ่มแล้ว",
     "ex.type_in_placeholder": "พิมพ์คำตอบ...",
     "form.lesson_type_hdr": "ประเภทบทเรียน",
-    "form.style.interview": "💼 การสัมภาษณ์งาน"
+    "form.style.interview": "💼 การสัมภาษณ์งาน",
+    "form.format.standard": "📚 มาตรฐาน — ศัพท์และประโยค",
+    "form.format.all_types": "🎯 ทั้งหมด — มาตรฐาน + ไวยากรณ์ + การเปลี่ยนรูปคำ + การค้นหาข้อผิดพลาด",
+    "lang.tutor_de_html": "🎓 ลอง <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">ติวเตอร์เน้นภาษาเยอรมันของ Chilperic</a>",
+    "lesson.read_summary": "📖 อ่านสรุป",
+    "lesson.gen_summary": "📝 เกnerate สรุป"
   },
   "el": {
     "furigana.show": "νομίστε την furigana",
@@ -5085,7 +5095,12 @@
     "ex.badge.type_conjugation": "Εισαγωγή της μορφοποίησης του λεξικού",
     "ex.mcq_article.q": "Ποιο είναι το πληροφορίο που πρέπει να προστεθεί στη \"{word}\"?",
     "ex.mcq_plural.q": "Ποιος είναι ο πληθυσμός της \"{word}\"?",
-    "form.style.interview": "💼 Ερωτηματολογία Εργασίας"
+    "form.style.interview": "💼 Ερωτηματολογία Εργασίας",
+    "form.format.standard": "📚 Πρότυπο — λογισμικά & παραγράφοι",
+    "form.format.all_types": "🎯 Όλα τα τύπα — πρότυπο + γραμματικά + συνταξιοδότηση + αναζήτηση λάθους",
+    "lang.tutor_de_html": "🎓 Μείνα κατά <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">το προσωπικό του διδασκαλείου γερμανικών</a> του Chilperic",
+    "lesson.read_summary": "📖 Παίρνεις το συνολικό περιεχόμενο",
+    "lesson.gen_summary": "📝 Κατασκευάσεις το συνολικό περιεχόμενο"
   },
   "fi": {
     "app.backend": "Tietojärjestelmä:",
@@ -5293,7 +5308,12 @@
     "lib.add_lesson_done": "✓ Liukas lisätty",
     "ex.type_in_placeholder": "Kirjoita vastauksesi…",
     "form.lesson_type_hdr": "Liukas-tyyppi",
-    "form.style.interview": "💼 Työilmoitus"
+    "form.style.interview": "💼 Työilmoitus",
+    "form.format.standard": "📚 Standard — sanasto & lauseet",
+    "form.format.all_types": "🎯 Kaikki tyypit — standard + grammatiikka + konjuktiiv + virhe-haku",
+    "lang.tutor_de_html": "🎓 Kokeile <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic'n käännöspainotin</a>",
+    "lesson.read_summary": "📖 Lue yhteenveto",
+    "lesson.gen_summary": "📝 Luon yhteenveto"
   },
   "hu": {
     "app.backend": "Háttér:",
@@ -5501,7 +5521,12 @@
     "lib.add_lesson_done": "✓ Tananyag hozzáadva",
     "ex.type_in_placeholder": "Írja be a válaszot…",
     "form.lesson_type_hdr": "Tananyag típusa",
-    "form.style.interview": "💼 Munkaszóft"
+    "form.style.interview": "💼 Munkaszóft",
+    "form.format.standard": "📚 Standard — szavak és mondatok",
+    "form.format.all_types": "🎯 Minden típus — alap + grammatika + konjugáció + hibaelhárítás",
+    "lang.tutor_de_html": "🎓 Próbálj <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic's German focus tutor</a>",
+    "lesson.read_summary": "📖 Olvassa a összefoglalást",
+    "lesson.gen_summary": "📝 Összefoglalás létrehozása"
   },
   "da": {
     "app.backend": "Backend:",
@@ -5709,7 +5734,12 @@
     "lib.add_lesson_done": "✓ Lektion tilføjet",
     "ex.type_in_placeholder": "Skriv din svar…",
     "form.lesson_type_hdr": "Lektions type",
-    "form.style.interview": "💼 Jobberview"
+    "form.style.interview": "💼 Jobberview",
+    "form.format.standard": "📚 Standard — vokabular & sætninger",
+    "form.format.all_types": "🎯 Alle typer — standard + grammatik + konjugation + fejlhunting",
+    "lang.tutor_de_html": "🎓 Prøv <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperics tysk fokuslærer</a>",
+    "lesson.read_summary": "📖 Læs sammandrag",
+    "lesson.gen_summary": "📝 Generer sammandrag"
   },
   "ca": {
     "app.backend": "Backend:",
@@ -5917,7 +5947,12 @@
     "lib.add_lesson_done": "✓ Lliure afegit",
     "ex.type_in_placeholder": "Tipa la teva resposta…",
     "form.lesson_type_hdr": "Tipus de lliure",
-    "form.style.interview": "💼 Entrevista de treball"
+    "form.style.interview": "💼 Entrevista de treball",
+    "form.format.standard": "📚 Estàndard — vocabulari i frases",
+    "form.format.all_types": "🎯 Tots els tipus — estàndard + gramàtica + conjugació + busca d'errors",
+    "lang.tutor_de_html": "🎓 Torna a <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">l'assistent especialitzat en alemany de Chilperic</a>",
+    "lesson.read_summary": "📖 Llegir resum",
+    "lesson.gen_summary": "📝 Generar resum"
   },
   "lb": {
     "app.tagline": "Leren vun de Wiert fir all Thema an all Sprooch",
@@ -6116,6 +6151,11 @@
     "lib.add_lesson_done": "✓ Lësung hinnéé",
     "ex.type_in_placeholder": "Typ dës Antwérrung…",
     "form.lesson_type_hdr": "Lësungstyp",
-    "form.style.interview": "💼 Job-Interview"
+    "form.style.interview": "💼 Job-Interview",
+    "form.format.standard": "📚 Standard — Worte un Sënzent",
+    "form.format.all_types": "🎯 Aller Tëp — Standard + Grammatik + Konjugasion + Fawer Sëckn",
+    "lang.tutor_de_html": "🎓 Probiéi <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic's Deitsch Fokus Tutor</a>",
+    "lesson.read_summary": "📖 Sëchd Sëmméi",
+    "lesson.gen_summary": "📝 Sëmméi Gëneéieren"
   }
 }
