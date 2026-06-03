@@ -28,17 +28,25 @@ function loadStore() {
   try {
     if (fs.existsSync(STORAGE_FILE)) {
       const data = JSON.parse(fs.readFileSync(STORAGE_FILE, 'utf8'));
-      // Support both {lessons:[]} and legacy bare-array formats
-      if (Array.isArray(data)) return { lessons: data };
-      if (data && Array.isArray(data.lessons)) return data;
+      // v29 schema: { schemaVersion:29, storylines:[], topics:[], flags:{} }
+      if (data && data.schemaVersion >= 29 && Array.isArray(data.topics)) {
+        return { schemaVersion: 29, topics: data.topics, storylines: data.storylines || [], flags: data.flags || {} };
+      }
+      // Legacy: { lessons:[] } or bare array
+      if (Array.isArray(data)) return { schemaVersion: 0, topics: data, storylines: [], flags: {} };
+      if (data && Array.isArray(data.lessons)) return { schemaVersion: 0, topics: data.lessons, storylines: data.storylines || [], flags: data.flags || {} };
       console.warn('lessons.json has unexpected shape — starting empty');
     }
   } catch(e) { console.warn('Could not read lessons.json:', e.message); }
-  return { lessons: [] };
+  return { schemaVersion: 29, topics: [], storylines: [], flags: {} };
 }
 function saveStore(s) {
-  try { fs.writeFileSync(STORAGE_FILE, JSON.stringify(s, null, 2), 'utf8'); }
-  catch(e) {
+  try {
+    const out = s.schemaVersion >= 29
+      ? { schemaVersion: 29, storylines: s.storylines || [], topics: s.topics || [], flags: s.flags || {} }
+      : s; // legacy passthrough (shouldn't happen after migration)
+    fs.writeFileSync(STORAGE_FILE, JSON.stringify(out, null, 2), 'utf8');
+  } catch(e) {
     const hint = e.code === 'EACCES' ? ' — fix with: chmod u+w ' + STORAGE_FILE : '';
     console.error('Could not write lessons.json:', e.message + hint);
   }
@@ -102,25 +110,40 @@ async function ensureUIForLang(lang) {
 let store = loadStore();
 function findSaved(topic) {
   const k = topic.trim().toLowerCase();
-  return store.lessons.find(l => l.topic.toLowerCase() === k) || null;
+  const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
+  return arr.find(l => l.topic.toLowerCase() === k) || null;
+}
+function findSavedById(id) {
+  const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
+  return arr.find(l => l.id === id) || null;
 }
 function upsert(data) {
+  const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons = store.lessons || []) && store.lessons;
   const k = data.topic.toLowerCase();
-  const i = store.lessons.findIndex(l => l.topic.toLowerCase() === k);
+  const i = arr.findIndex(l => l.topic.toLowerCase() === k);
   const now = new Date().toISOString();
-  const existing = i >= 0 ? store.lessons[i] : null;
-  const entry = { ...data,
-    generatedAt: existing?.generatedAt || now,
-    updatedAt:   now };
-  if (i >= 0) store.lessons[i] = entry; else store.lessons.unshift(entry);
+  const existing = i >= 0 ? arr[i] : null;
+  const entry = { ...data, generatedAt: existing?.generatedAt || now, updatedAt: now };
+  if (i >= 0) arr[i] = entry; else arr.unshift(entry);
   saveStore(store);
 }
 
 // ── Flag storage ──────────────────────────────────────────────────────
 function getFlags()  { return store.flags || {}; }
 function setFlags(f) { store.flags = f; saveStore(store); }
-function getStorylines()  { return store.storylines || {}; }
-function setStorylines(s) { store.storylines = s; saveStore(store); }
+function getStorylines() {
+  const sl = store.storylines || [];
+  return Array.isArray(sl) ? sl : Object.entries(sl).map(([k,v]) => ({ id: k, ...v, chapters: [] }));
+}
+function setStorylines(arr) { store.storylines = arr; saveStore(store); }
+function findStoryline(slId) { return getStorylines().find(s => s.id === slId) || null; }
+function upsertStoryline(sl) {
+  const arr = getStorylines();
+  const i = arr.findIndex(s => s.id === sl.id);
+  if (i >= 0) arr[i] = { ...arr[i], ...sl, updatedAt: new Date().toISOString() };
+  else arr.unshift({ ...sl, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+  setStorylines(arr);
+}
 function topicSlug(topic) { return (topic||'').slice(0,30).replace(/\s+/g,'_'); }
 function flagsForTopic(topic) {
   const prefix = topicSlug(topic) + ':';
@@ -192,12 +215,12 @@ const STORY_STYLES = {
   journalism:    'Reportage style: direct, punchy, who/what/where/when.',
   essay:         'Discursive, argumentative, first-person reflective.',
   children:      'Simple vocabulary, playful tone, short sentences.',
-    funny:         'You are a comedian, tell jokes, use wordplay, absurdist situations, punchlines.',
+  funny:         'Comedic tone, wordplay, absurdist situations, punchlines.',
   romantic:      'Warm, emotionally rich, evocative imagery.',
   sensual:       'Rich in texture and atmosphere, suggestive but not explicit.',
   horror:        'Suspenseful, eerie atmosphere, foreboding.',
   action:        'Fast-paced, kinetic, short punchy sentences.',
-    philosophical: 'Be philosophical: contemplative, questioning, discuss abstract ideas.',
+  philosophical: 'Contemplative, questioning, abstract ideas.',
     poem:          'Write a poem, with rhyming words and rhythm.',
     dialogue:      'Write a dialogue between two or more persons of the story, or alternatively one person soliloquy.',
 };
@@ -648,6 +671,24 @@ async function generateStorylineTitle(topics, stories, srcLang) {
   return { title: parsed.title.slice(0, 80), icon: parsed.icon.slice(0, 8) };
 }
 
+
+async function generateStorylineSummary(topics, stories, vocab, srcLang) {
+  srcLang = srcLang || 'en';
+  const S = langName(srcLang);
+  console.log(`\n── Storyline summary generation ─────────────────────`);
+  console.log(`  Chapters : ${topics.length}, Lang: ${S}`);
+  const chapterSummaries = topics.map((t, i) =>
+    `Chapter ${i+1}: "${t}"\n${(stories[i]||'').slice(0, 600).replace(/\n/g,' ')}…`
+  ).join('\n\n');
+  const vocabList = [...new Set(vocab)].slice(0, 40).join(', ');
+  const sys = `You are a language learning assistant. Given a multi-chapter story, write a concise summary in ${S} (3–5 sentences) that captures the main arc and key vocabulary themes. Write ONLY the summary text — no title, no preamble, no markdown.`;
+  const user = `Chapters:\n${chapterSummaries}\n\nKey vocabulary: ${vocabList}\n\nWrite the summary in ${S}.`;
+  const result = await callOllamaRaw(OLLAMA_MODEL, sys, user, 400);
+  const summary = result.text.trim();
+  console.log(`  Summary  : ${summary.slice(0,80)}…`);
+  console.log('────────────────────────────────────────────────────\n');
+  return summary;
+}
 
 // ── Grammar lesson: gender, articles, plurals ───────────────────────────────
 function sysGrammar(lang, srcLang, difficulty, dialect, writingStyle) {
@@ -1179,7 +1220,8 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
 async function repairLesson(topic, lessonId, jobId, deepClean) {
   const saved = findSaved(topic);
   if (!saved) throw new Error(`Topic not found: ${topic}`);
-  const lessonIdx = saved.lessons.findIndex(l => l.id === lessonId);
+  // v29: lessonId is a string ls_ id; legacy: integer
+  const lessonIdx = saved.lessons.findIndex(l => l.id === lessonId || l.id === String(lessonId) || l.id === parseInt(lessonId,10));
   if (lessonIdx < 0) throw new Error(`Lesson ${lessonId} not found`);
   const lesson = JSON.parse(JSON.stringify(saved.lessons[lessonIdx]));
   const origVocabCount    = (lesson.vocab||[]).length;
@@ -1473,10 +1515,87 @@ async function boot() {
   } else {
     console.log('  Backend : offline — only saved lessons available');
   }
-  console.log(`  Storage : ${STORAGE_FILE} (${store.lessons.length} lessons)`);
+  console.log(`  Storage : ${STORAGE_FILE} (${(store.topics||store.lessons||[]).length} topics, schema v${store.schemaVersion||0})`);
   console.log('='.repeat(44) + '\n');
 
-  http.createServer(async (req, res) => {
+  
+// ── v29 storyline sync ────────────────────────────────────────────────────────
+// Called after upsert to keep storylines[].chapters in sync
+function _topicId(topicName) {
+  return 'tp_' + Math.abs(topicName.trim().toLowerCase().split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+}
+function _chainId(topicIds) {
+  const j = JSON.stringify(topicIds);
+  return 'sl_' + Math.abs(j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+}
+function _syncStorylineForTopic(topicName, continuedFromTopic) {
+  if (store.schemaVersion < 29) return;
+  const tid = _topicId(topicName);
+  // Ensure the topic has an id
+  const topicObj = findSaved(topicName);
+  if (topicObj && !topicObj.id) { topicObj.id = tid; }
+
+  // Build the full chain by walking continuedFrom backwards from this topic
+  const chain = [topicName];
+  let cur = topicName;
+  for (let i = 0; i < 50; i++) {
+    const t = findSaved(cur);
+    if (!t || !t.continuedFrom) break;
+    chain.unshift(t.continuedFrom);
+    cur = t.continuedFrom;
+  }
+  // Walk forward from this topic picking up continuations.
+  // Stop if we hit a topic that already belongs to a DIFFERENT storyline
+  // (that means we forked, not extended).
+  const allSl = getStorylines();
+  const topicIdOf = t => { const tp = findSaved(t); return tp?.id || _topicId(t); };
+  // Build set of topic ids already in other storylines (not containing the current topic)
+  const otherSlTopicIds = new Set(
+    allSl.filter(s => !s.chapters.includes(tid))
+         .flatMap(s => s.chapters)
+  );
+  cur = topicName;
+  for (let i = 0; i < 50; i++) {
+    const candidates = store.topics.filter(t => t.continuedFrom === cur);
+    // If multiple topics continue from cur — it's a fork; stop here
+    if (candidates.length !== 1) break;
+    const next = candidates[0];
+    // If next already belongs to another storyline — it's a pre-existing branch; stop
+    if (otherSlTopicIds.has(topicIdOf(next.topic))) break;
+    chain.push(next.topic);
+    cur = next.topic;
+  }
+
+  const chapterIds = chain.map(t => topicIdOf(t));
+  const slId = _chainId(chapterIds);
+
+  // Find existing storyline that contains this topic
+  const existing = allSl.find(s => s.id === slId);
+  const partialMatch = !existing ? allSl.find(s => s.chapters.includes(tid)) : null;
+
+  if (existing) {
+    // Chain unchanged — nothing to do
+  } else if (partialMatch) {
+    // This topic was already in a storyline — update it (chain extended from the end)
+    // Only update if new chain is a superset (i.e. we added to the end, not forked)
+    const isExtension = chapterIds.length > partialMatch.chapters.length &&
+      partialMatch.chapters.every((c, i) => c === chapterIds[i]);
+    if (isExtension) {
+      partialMatch.chapters = chapterIds;
+      partialMatch.id = slId;
+      setStorylines(allSl.map(s => s.id === partialMatch.id ? partialMatch : s));
+    } else {
+      // Fork — create a new storyline for the new branch
+      upsertStoryline({ id: slId, title: chain[0], icon: '📖', chapters: chapterIds,
+        lang: topicObj?.lang || null, srcLang: topicObj?.srcLang || null });
+    }
+  } else {
+    upsertStoryline({ id: slId, title: chain[0], icon: '📖', chapters: chapterIds,
+      lang: topicObj?.lang || null, srcLang: topicObj?.srcLang || null });
+  }
+}
+
+http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${PORT}`);
     const M   = req.method.toUpperCase();
 
@@ -1492,7 +1611,9 @@ async function boot() {
         canGenerate: active !== 'none' });
     }
     if (M === 'GET' && url.pathname === '/api/lessons') {
-      const list = store.lessons.map(l => ({
+      const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons || []);
+      const list = arr.map(l => ({
+        id: l.id || null,
         topic: l.topic, topicEmoji: l.topicEmoji, lang: l.lang || 'it',
         srcLang: l.srcLang || 'en',
         difficulty: l.difficulty || 2,
@@ -1523,16 +1644,19 @@ async function boot() {
       if (!saved) return json(res, 404, { error: 'Topic not found' });
       saved.topic = newTopic.trim().slice(0, 80);
       if (topicEmoji) saved.topicEmoji = topicEmoji;
-      // Remove old entry and insert updated one
       const newLower = newTopic.trim().toLowerCase();
-      store.lessons = store.lessons.filter(l =>
-        l.topic.toLowerCase() !== oldTopic.trim().toLowerCase() &&
+      const oldLower = oldTopic.trim().toLowerCase();
+      // Update in the correct array
+      const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
+      const filtered = arr.filter(l =>
+        l.topic.toLowerCase() !== oldLower &&
         l.topic.toLowerCase() !== newLower
       );
-      store.lessons.unshift(saved);
-      // Cascade rename into continuedFrom pointers on other lessons
-      const oldLower = oldTopic.trim().toLowerCase();
-      store.lessons.forEach(l => {
+      filtered.unshift(saved);
+      if (store.schemaVersion >= 29) store.topics = filtered; else store.lessons = filtered;
+      // Cascade rename into continuedFrom pointers
+      const curArr = store.schemaVersion >= 29 ? store.topics : store.lessons;
+      curArr.forEach(l => {
         if (l.continuedFrom && l.continuedFrom.toLowerCase() === oldLower)
           l.continuedFrom = saved.topic;
       });
@@ -1543,7 +1667,33 @@ async function boot() {
     if (M === 'DELETE' && url.pathname === '/api/lessons/delete') {
       const t = url.searchParams.get('topic');
       if (!t) return json(res, 400, { error: 'Missing topic' });
-      store.lessons = store.lessons.filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
+      const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons || []);
+      const toDelete = arr.find(l => l.topic.toLowerCase() === t.trim().toLowerCase());
+      const deleteId = toDelete?.id;
+      if (store.schemaVersion >= 29) {
+        store.topics = store.topics.filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
+        // Remove from storyline chapters, remove empty storylines
+        store.storylines = store.storylines.map(sl => ({
+          ...sl, chapters: sl.chapters.filter(c => c !== deleteId)
+        })).filter(sl => sl.chapters.length > 0);
+      } else {
+        // This branch only reached in legacy mode
+        store.lessons = (store.lessons||[]).filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
+      }
+      // Delete all flags associated with this topic (by slug and by id)
+      const flags = getFlags();
+      const delSlug = topicSlug(t.trim()) + ':';
+      const delId   = deleteId ? deleteId + ':' : null;
+      let flagsDeleted = 0;
+      Object.keys(flags).forEach(k => {
+        if (k.startsWith(delSlug) || (delId && k.startsWith(delId))) {
+          delete flags[k]; flagsDeleted++;
+        }
+      });
+      if (flagsDeleted > 0) {
+        setFlags(flags);
+        console.log(`  Deleted ${flagsDeleted} flag(s) for "${t.trim()}"`);
+      }
       saveStore(store);
       return json(res, 200, { ok: true });
     }
@@ -1575,15 +1725,15 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { chainKey, title, icon } = body;
-      if (!chainKey) return json(res, 400, { error: 'Missing chainKey' });
-      const sl = getStorylines();
+      const { slId, chainKey, title, icon } = body;
+      const targetId = slId || chainKey;
+      if (!targetId) return json(res, 400, { error: 'Missing slId' });
       if (title === null) {
-        delete sl[chainKey];
+        // Delete storyline
+        setStorylines(getStorylines().filter(s => s.id !== targetId));
       } else {
-        sl[chainKey] = { title: (title||'').slice(0,80), icon: (icon||'📖').slice(0,8) };
+        upsertStoryline({ id: targetId, title: (title||'').slice(0,80), icon: (icon||'📖').slice(0,10) });
       }
-      setStorylines(sl);
       return json(res, 200, { ok: true });
     }
     if (M === 'POST' && url.pathname === '/api/storyline-title') {
@@ -1591,12 +1741,16 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topics } = body;
+      const { topics, slId } = body;
       if (!Array.isArray(topics) || !topics.length) return json(res, 400, { error: 'Missing topics array' });
       const stories = topics.map(t => (findSaved(t)||{}).story || '');
       const srcLang = (findSaved(topics[0])||{}).srcLang || 'en';
       try {
         const result = await generateStorylineTitle(topics, stories, srcLang);
+        // Auto-save into storylines if slId provided
+        if (slId && result.title) {
+          upsertStoryline({ id: slId, title: result.title, icon: result.icon || '📖' });
+        }
         return json(res, 200, result);
       } catch(e) {
         return json(res, 500, { error: e.message });
@@ -1649,6 +1803,15 @@ async function boot() {
       console.log(`  Generating: "${topic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} fmt=${fmt} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
       generate(topic.trim(), lang || 'it', resolvedSrcLang, diff, contFrom, wc, jobId, userOpts).then(data => {
         upsert(data);
+        // v29: assign stable topic id if missing, then update storyline chain
+        if (store.schemaVersion >= 29) {
+          const saved = findSaved(data.topic);
+          if (saved && !saved.id) {
+            saved.id = 'tp_' + Math.abs(data.topic.trim().toLowerCase().split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+            upsert(saved);
+          }
+          _syncStorylineForTopic(data.topic, contFrom);
+        }
         console.log(`  Saved: "${data.topic}" (${data.lessons.length} lessons)`);
         jobDone(jobId, { ...data, fromCache: false });
       }).catch(e => {
@@ -1665,16 +1828,17 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, lessonId } = body;
-      if (!topic)    return json(res, 400, { error: 'Missing topic' });
+      const { topic, topicId: repairTopicId, lessonId } = body;
+      const repairTopic = repairTopicId ? (findSavedById(repairTopicId)||{}).topic : topic;
+      if (!repairTopic) return json(res, 400, { error: 'Missing topic or topicId' });
       if (!lessonId) return json(res, 400, { error: 'Missing lessonId' });
       if (active === 'none') return json(res, 503, { error: 'No LLM backend available for repair.' });
-      const topicKey = topic.trim().toLowerCase();
+      const topicKey = repairTopic.trim().toLowerCase();
       if (generatingTopics.has(topicKey))
         return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
       const jobId = newJob();
       generatingTopics.add(topicKey);
-      repairLesson(topic.trim(), parseInt(lessonId, 10), jobId).then(result => {
+      repairLesson(repairTopic.trim(), lessonId, jobId).then(result => {
         jobDone(jobId, result);
       }).catch(e => {
         console.error('  Repair error:', e.message);
@@ -1774,6 +1938,33 @@ async function boot() {
       return json(res, 202, { jobId });
     }
 
+    // ── Storyline summary ────────────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/storyline-summary') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { slId, topics } = body;
+      if (!slId || !Array.isArray(topics) || !topics.length)
+        return json(res, 400, { error: 'Missing slId or topics' });
+      const topicData = topics.map(t => findSaved(t)).filter(Boolean);
+      if (!topicData.length) return json(res, 404, { error: 'No topics found' });
+      const stories  = topicData.map(t => t.story || '');
+      const srcLang  = topicData[0].srcLang || 'en';
+      const vocab    = topicData.flatMap(t =>
+        (t.lessons||[]).flatMap(ls => (ls.vocab||[]).map(v => v.source || v.target))
+      );
+      try {
+        const summary = await generateStorylineSummary(topics, stories, vocab, srcLang);
+        // Persist on the storyline object
+        const sl = findStoryline(slId);
+        if (sl) { sl.summary = summary; upsertStoryline(sl); }
+        return json(res, 200, { summary });
+      } catch(e) {
+        return json(res, 500, { error: e.message });
+      }
+    }
+
     // ── Repair story ─────────────────────────────────────────────────
     if (M === 'POST' && url.pathname === '/api/repair-story') {
       let body;
@@ -1827,9 +2018,16 @@ async function boot() {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const incoming = Array.isArray(body) ? body : body.lessons;
+      // Accept v29 {topics:[],storylines:[]} or legacy {lessons:[]} or bare array
+      let incoming, incomingStorylines = [];
+      if (body && body.schemaVersion >= 29 && Array.isArray(body.topics)) {
+        incoming = body.topics;
+        incomingStorylines = body.storylines || [];
+      } else {
+        incoming = Array.isArray(body) ? body : body.lessons;
+      }
       if (!Array.isArray(incoming) || incoming.length === 0)
-        return json(res, 400, { error: 'Expected {lessons:[...]} or a non-empty array' });
+        return json(res, 400, { error: 'Expected {topics:[...]} or {lessons:[...]} or a non-empty array' });
       const invalid = incoming.filter(l => !l.topic || !Array.isArray(l.lessons));
       if (invalid.length)
         return json(res, 400, { error: `${invalid.length} entries missing topic or lessons` });
@@ -1837,10 +2035,17 @@ async function boot() {
       for (const l of incoming) {
         const exists = findSaved(l.topic);
         upsert(l);
+        if (store.schemaVersion >= 29 && !findSaved(l.topic)?.id)
+          _syncStorylineForTopic(l.topic, l.continuedFrom || null);
         if (exists) updated++; else added++;
       }
+      // Merge incoming storylines (v29 exports)
+      for (const sl of incomingStorylines) {
+        if (sl.id && !findStoryline(sl.id)) upsertStoryline(sl);
+      }
+      const total = store.schemaVersion >= 29 ? store.topics.length : store.lessons.length;
       console.log(`  Import: +${added} new, ~${updated} updated`);
-      return json(res, 200, { ok: true, added, updated, total: store.lessons.length });
+      return json(res, 200, { ok: true, added, updated, total });
     }
 
     if (M === 'GET' && url.pathname === '/api/languages') {

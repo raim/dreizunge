@@ -66,14 +66,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .saved-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
 .saved-item{display:flex;align-items:center;gap:12px;padding:11px 13px;border:2px solid var(--gray-mid);border-radius:var(--radius-lg);cursor:pointer;transition:border-color .1s,background .1s;min-width:0;overflow:hidden}
 .saved-item:hover{border-color:var(--blue);background:var(--blue-light)}
-.sl-screen{width:100%;max-width:680px;padding:0 0 40px}
+.sl-screen{width:100%;max-width:540px;padding:0 0 40px;background:var(--white)}
 .sl-screen-hdr{display:flex;align-items:center;gap:8px;padding:14px 16px 10px;border-bottom:1.5px solid var(--gray-mid);background:var(--white);position:sticky;top:0;z-index:10}
 .sl-screen-back{background:none;border:none;cursor:pointer;font-size:13px;font-weight:800;color:var(--gray-dark);padding:4px 8px;border-radius:6px;font-family:'Nunito',sans-serif}
 .sl-screen-back:hover{background:var(--gray-mid)}
 .sl-screen-title{flex:1;font-size:16px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sl-screen-share{background:none;border:1.5px solid var(--gray-mid);border-radius:6px;cursor:pointer;font-size:13px;font-weight:800;padding:4px 10px;color:var(--gray-dark);font-family:'Nunito',sans-serif}
 .sl-screen-share:hover{background:var(--gray-mid)}
-.sl-screen-body{padding:12px 12px 0}
+.sl-screen-body{padding:12px 16px 0;background:var(--white)}
 .storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
 .storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid);display:flex;align-items:center;gap:6px}.storyline-title{flex:1;display:flex;align-items:center;gap:6px;min-width:0}.storyline-title-text{font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.storyline-title-sub{font-size:11px;font-weight:700;color:var(--gray-dark);white-space:nowrap}.storyline-edit-form{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.storyline-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:2px 7px;min-width:0;outline:none}.storyline-edit-icon{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:24px;text-align:center}.storyline-hdr-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:5px;font-family:"Nunito",sans-serif;font-weight:800;color:var(--gray-dark);line-height:1;flex-shrink:0}.storyline-hdr-btn:hover{background:var(--gray-mid)}.storyline-hdr-btn.gen{color:var(--accent)}.storyline-hdr-btn.danger{color:var(--red)}.storyline-cards{}.storyline-cards.collapsed{display:none}.storyline-collapse-btn{font-size:11px;color:var(--gray-dark);transition:transform .2s;display:inline-block}.storyline-collapse-btn.open{transform:rotate(180deg)}
 .storyline-item .saved-item{border:none;border-radius:0;border-top:1.5px solid var(--gray-mid)}.storyline-item .saved-item-story{display:none}
@@ -173,7 +173,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .sbox{min-height:48px;border:2.5px dashed var(--gray-mid);border-radius:var(--radius);padding:7px 9px;display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;align-items:center;background:var(--gray-light);transition:border-color .2s,background .2s}
 .sbox.filled{border-color:var(--blue);background:var(--blue-light)}
 .placed-tok{background:var(--white);border:2.5px solid var(--blue);border-radius:8px;padding:6px 12px;font-size:13px;font-weight:800;cursor:pointer;color:var(--blue-dark);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 #84d8ff}
-.placed-tok:hover{opacity:.75}
+.placed-tok:hover{opacity:.75}.placed-tok.sel-tok{background:var(--yellow);border-color:var(--yellow);color:#7a5800;box-shadow:0 2px 0 #c8960070}
 .sbox-ph{font-size:13px;color:var(--gray);font-style:italic}
 .wbank{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
 .tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}.eh-tok{display:inline;cursor:pointer;border-radius:3px;padding:1px 2px;transition:background .1s}.eh-tok.suspect{background:#ffe066;outline:2px solid #f5a623}.eh-tok.correct-mark{background:#c8f7c5;outline:2px solid #4caf50}.eh-tok.missed-mark{text-decoration:underline wavy #f5a623}.eh-tok.wrong-mark{background:#ffd0d0;outline:2px solid #e53935}.eh-wrap{line-height:2.2;font-size:15px;margin:10px 0;padding:12px;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid)}.eh-score{font-size:24px;font-weight:900;text-align:center;margin:14px 0}
@@ -303,7 +303,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .continue-select{width:100%;padding:9px 36px 9px 12px;font-size:13px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
 .continue-select:focus{border-color:var(--blue)}
 .continue-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px;color:var(--gray-dark)}
-.cont-nav{display:flex;flex-direction:row;gap:8px;margin:0;padding:4px 0 4px;align-items:flex-start;border-top:1px solid var(--gray-mid)}
+.cont-nav{display:flex;flex-direction:row;gap:8px;margin:0;padding:4px 0 4px;align-items:flex-start;border-top:1px solid var(--gray-mid)}.sl-nav{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0 2px;border-top:1px solid var(--gray-mid)}
 .cont-col{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
 .cont-col-from{align-items:flex-start}
 .cont-col-by{align-items:flex-end}
@@ -783,9 +783,21 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="sl-screen">
     <div class="sl-screen-hdr">
       <button class="sl-screen-back" onclick="closeStorylineScreen()">← Back</button>
-      <span class="sl-screen-title" id="sl-screen-title"></span>
-      <button class="sl-screen-share" onclick="shareStoryline()">🔗 Share</button>
+      <span class="sl-screen-title" id="sl-screen-title" onclick="openStorylineEditInScreen()"></span>
+      <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
+      <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="genStorylineTitleFromScreen()" title="Generate title" style="display:none">✨</button>
+      <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
+      <button class="sl-screen-share" onclick="shareStoryline()">🔗</button>
     </div>
+    <div id="sl-screen-edit-row" style="display:none;padding:8px 12px;background:var(--white);border-bottom:1.5px solid var(--accent);gap:6px;align-items:center;flex-wrap:wrap">
+      <span id="sl-screen-edit-icon" style="font-size:20px;cursor:pointer" onclick="cycleSlScreenIcon()">📖</span>
+      <input id="sl-screen-edit-input" class="storyline-edit-input" style="flex:1;min-width:120px" placeholder="Storyline title…"
+        onkeydown="if(event.key==='Enter')saveSlScreenTitle();if(event.key==='Escape')closeStorylineEditInScreen()">
+      <button class="storyline-hdr-btn" onclick="saveSlScreenTitle()">Save</button>
+      <button class="storyline-hdr-btn danger" onclick="clearSlScreenTitle()">Clear</button>
+      <button class="storyline-hdr-btn" onclick="closeStorylineEditInScreen()">✕</button>
+    </div>
+    <div id="sl-screen-progress" style="padding:8px 16px;font-size:12px;font-weight:700;color:var(--gray-dark);border-bottom:1px solid var(--gray-mid)"></div>
     <div class="sl-screen-body" id="sl-screen-body"></div>
   </div>
 </div>
@@ -1242,6 +1254,16 @@ function selectLang(code, silent){
   const inp=document.getElementById('topic-input');
   if(inp) inp.placeholder='e.g. cooking, architecture, medicine…';
   // Update UI labels only — library filter is independent
+  // Show language-specific tutor link
+  const tutorBanner = document.getElementById('lang-tutor-banner');
+  if (tutorBanner) {
+    if (code === 'de') {
+      tutorBanner.innerHTML = t('lang.tutor_de_html');
+      tutorBanner.style.display = '';
+    } else {
+      tutorBanner.style.display = 'none';
+    }
+  }
   if(!silent){
     if(document.getElementById('saved-list')) loadSavedList();
   }
@@ -1510,11 +1532,11 @@ async function init(){
   restoreFormatSelect();
   restoreStoryLenSlider();
   renderPill();
-  loadSavedList();
+  await loadSavedList();
   await resumeBackgroundJob();
   // Hash-based routing on startup
   if (location.hash.startsWith('#sl=')) {
-    // Storyline deep-link
+    // Storyline deep-link — savedList and storylines now populated
     const chainId = location.hash.slice(4);
     _tryOpenStorylineByChainId(chainId);
   } else {
@@ -1644,7 +1666,11 @@ async function loadSavedList(){
   let saved=[];
   try{ const r=await fetch('/api/lessons'); saved=await r.json(); }catch(e){}
   APP.savedList=saved;  // cache for use by buildPath (continuedBy links)
-  try{ const r=await fetch('/api/storylines'); APP.storylines=await r.json(); }catch(e){ APP.storylines={}; }
+  try{ const r=await fetch('/api/storylines'); APP.storylines=await r.json(); }catch(e){ APP.storylines=[]; }
+  // Normalise: v29 returns array, legacy returns object
+  if (!Array.isArray(APP.storylines)) {
+    APP.storylines = Object.entries(APP.storylines).map(([k,v]) => ({ id: k, ...v, chapters: [] }));
+  }
   // Build language filter UI — a single "🌐 All" toggle when libFilter is 'all',
   // otherwise show the active language name + an "All" escape
   const filterEl=document.getElementById('lib-filter');
@@ -1707,19 +1733,31 @@ async function loadSavedList(){
     list.innerHTML='<div class="lib-empty">'+emptyMsg+'</div>';
     return;
   }
-  // ── Build storyline chains from continuedFrom links ──────────────────
-  function buildChains(lessons) {
-    const byTopic = Object.fromEntries(lessons.map(l => [l.topic, l]));
+  // ── Build display chains from v29 storylines[] or legacy continuedFrom ──
+  const byTopic = Object.fromEntries(filtered.map(l => [l.topic, l]));
+  // Also index by id for v29 chapter lookups
+  const byId = Object.fromEntries(filtered.filter(l=>l.id).map(l => [l.id, l]));
+
+  let storylines, orphans;
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const v29chains = slArr.filter(sl => sl.chapters && sl.chapters.length > 1);
+
+  if (v29chains.length > 0) {
+    // v29: resolve chapters to topic objects, filter to visible topics
+    storylines = v29chains.map(sl => {
+      return sl.chapters.map(cid => byId[cid]?.topic || null).filter(Boolean);
+    }).filter(c => c.length > 1);
+    const inChain = new Set(storylines.flat());
+    orphans = filtered.filter(l => !inChain.has(l.topic));
+  } else {
+    // Legacy: reconstruct chains from continuedFrom
     const childMap = {};
-    lessons.forEach(l => {
-      if (l.continuedFrom && byTopic[l.continuedFrom]) {
+    filtered.forEach(l => {
+      if (l.continuedFrom && byTopic[l.continuedFrom])
         (childMap[l.continuedFrom] = childMap[l.continuedFrom] || []).push(l.topic);
-      }
     });
-    const hasParent = new Set(
-      lessons.filter(l => l.continuedFrom && byTopic[l.continuedFrom]).map(l => l.topic)
-    );
-    const roots = lessons.filter(l => !hasParent.has(l.topic));
+    const hasParent = new Set(filtered.filter(l => l.continuedFrom && byTopic[l.continuedFrom]).map(l => l.topic));
+    const roots = filtered.filter(l => !hasParent.has(l.topic));
     const chains = [];
     function walk(topic, chain) {
       const extended = [...chain, topic];
@@ -1728,14 +1766,10 @@ async function loadSavedList(){
       kids.forEach(k => walk(k, extended));
     }
     roots.forEach(r => walk(r.topic, []));
-    const storylines = chains.filter(c => c.length > 1);
+    storylines = chains.filter(c => c.length > 1);
     const inChain = new Set(storylines.flat());
-    const orphans = lessons.filter(l => !inChain.has(l.topic));
-    return { storylines, orphans, byTopic };
+    orphans = filtered.filter(l => !inChain.has(l.topic));
   }
-
-
-  const { storylines, orphans, byTopic } = buildChains(filtered);
 
   // Sort storylines by newest updatedAt among their members
   const newestOf = chain => chain.reduce((best, enc) => {
@@ -1753,7 +1787,11 @@ async function loadSavedList(){
   let html = '';
 
   // Render storyline groups
-  const slTitles = APP.storylines || {};
+  // Build slTitles lookup: works for both v29 array and legacy object
+  const _slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const slTitles = _slArr.length
+    ? Object.fromEntries(_slArr.map(sl => [sl.id, sl]))
+    : (APP.storylines || {});
   if (showAllLangs) {
     // Group storylines by language
     let lastLang = null;
@@ -1771,30 +1809,35 @@ async function loadSavedList(){
   }
 
   function storylines_renderChain(chain) {
-    const chainTopics = chain.map(t => byTopic[t]?.topic).filter(Boolean);
+    const chainTopics = chain.map(t => byTopic[t]?.topic || t).filter(Boolean);
     const chainTopicsJson = JSON.stringify(chainTopics);
-    const chainId = 'c' + Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-    const rootTopic = chainTopics[0] || '';  // kept for reference only
-    const slMeta = slTitles[chainId] || slTitles['root:'+chainTopics[0]] || null;
+    // Find matching v29 storyline for this chain
+    const slArr2 = Array.isArray(APP.storylines) ? APP.storylines : [];
+    const matchSl = slArr2.find(sl => {
+      const slTopics = (sl.chapters||[]).map(cid => byId[cid]?.topic || null).filter(Boolean);
+      return slTopics.length && slTopics.every((t,i) => t === chainTopics[i]) && slTopics.length === chainTopics.length;
+    }) || null;
+    const chainId = matchSl?.id || ('c' + Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0)));
+    const slMeta = matchSl || slTitles[chainId] || slTitles['root:'+chainTopics[0]] || null;
     const hasTitle = !!(slMeta && slMeta.title);
     const titleIcon = slMeta?.icon || '📖';
     const titleText = slMeta?.title || '';
-    const escapedRoot = chainId;  // use chainId as storage key — unique per branch
+    const escapedRoot = chainId;
     const escapedChain = encodeURIComponent(chainTopicsJson);
     // Header: title view or default label
     const chainNewest=newestOf(chain);
     const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):''
     const hdrTitle = hasTitle
-      ? `<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards('${chainId}')">
+      ? `<span class="storyline-title" style="cursor:pointer;flex:1" onclick="event.stopPropagation();openStorylineScreen(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
           <span style="font-size:18px">${titleIcon}</span>
           <div style="min-width:0">
             <div class="storyline-title-text">${escHtml(titleText)}</div>
             <div class="storyline-title-sub">${(()=>{ const first=byTopic[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length} chapter${chain.length!==1?'s':''}${chainDate?' · '+chainDate:''}</div>
           </div>
          </span>`
-      : `<span class="storyline-title">
+      : `<span class="storyline-title" style="flex:1;cursor:pointer" onclick="event.stopPropagation();openStorylineScreen(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
           ${(()=>{ const first=byTopic[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge">${sL.flag}→${tL.flag}</span>`; })()}
-          <span class="storyline-title-sub">Story line · ${chain.length} lesson${chain.length!==1?'s':''}${chainDate?' · '+chainDate:''}</span>
+          <span class="storyline-title-sub">Story line · ${chain.length} chapter${chain.length!==1?'s':''}${chainDate?' · '+chainDate:''}</span>
          </span>`;
     const genBtn = APP.info.canGenerate
       ? `<button class="storyline-hdr-btn gen" title="${t('lesson.gen_title')}"
@@ -1802,41 +1845,33 @@ async function loadSavedList(){
            onclick="event.stopPropagation();genStorylineTitle(this.dataset.chainId,this.dataset.root,this.dataset.chain)">✨</button>`
       : '';
     html += `<div class="storyline-group" id="slgroup-${chainId}">`;
-    html += `<div class="storyline-hdr" id="slhdr-${chainId}">
+    html += `<div class="storyline-hdr" id="slhdr-${chainId}" data-chain-id="${chainId}" data-chain="${escapedChain}"
+      onclick="openStorylineScreen(this.dataset.chainId,this.dataset.chain)">
       ${hdrTitle}
-      <button class="storyline-hdr-btn" title="Edit title"
-        data-chain-id="${chainId}" data-root="${escapedRoot}"
-        onclick="event.stopPropagation();openStorylineEdit(this.dataset.chainId,this.dataset.root)">✏️</button>
-      ${genBtn}
-      <button class="storyline-hdr-btn" title="Open storyline"
-        data-chain-id="${chainId}" data-chain="${escapedChain}"
-        onclick="event.stopPropagation();openStorylineScreen(this.dataset.chainId,this.dataset.chain)">👁</button>
       <button class="ico-btn export" style="font-size:11px;padding:2px 8px"
         title="${t('lesson.export_storyline_title')}"
         data-chain="${escapedChain}"
         onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>
+      <button class="ico-btn" style="font-size:11px;padding:2px 8px" title="Share storyline link"
+        data-chain-id="${chainId}"
+        onclick="event.stopPropagation();shareStorylineById(this.dataset.chainId)">🔗</button>
+      <button class="ico-btn" style="font-size:11px;padding:2px 8px;color:var(--red)" title="Delete all chapters in this storyline"
+        data-chain="${escapedChain}"
+        onclick="event.stopPropagation();deleteStoryline(this.dataset.chain)">🗑️</button>
     </div>`;
-    // Edit form (hidden by default)
-    html += `<div class="storyline-hdr" id="sledit-${chainId}" style="display:none;background:var(--white);border-bottom:1.5px solid var(--accent)">
-      <span class="storyline-edit-icon" id="sledit-icon-${chainId}" onclick="cycleStorylineIcon('${chainId}')">${titleIcon}</span>
-      <input class="storyline-edit-input" id="sledit-input-${chainId}" placeholder="${t('storyline.placeholder')}" value="${escHtml(titleText)}" onkeydown="if(event.key==='Enter')saveStorylineTitle('${chainId}','${escapedRoot}');if(event.key==='Escape')closeStorylineEdit('${chainId}')">
-      <button class="storyline-hdr-btn" onclick="saveStorylineTitle('${chainId}','${escapedRoot}')">Save</button>
-      <button class="storyline-hdr-btn danger" onclick="clearStorylineTitle('${chainId}','${escapedRoot}')">Clear</button>
-      <button class="storyline-hdr-btn" onclick="closeStorylineEdit('${chainId}')">✕</button>
-    </div>`;
-    // Cards — collapsed when titled (user can toggle)
-    html += `<div class="storyline-cards${hasTitle?' collapsed':''}" id="slcards-${chainId}">`;
-    chain.forEach((topic, i) => {
-      const s = byTopic[topic]; if (!s) return;
-      html += `<div class="storyline-item">${savedItemHtml(s, i > 0)}</div>`;
-    });
-    html += `</div>`;
-    html += `<div class="storyline-story">` +
-      `<button class="storyline-story-hdr" onclick="toggleChainStory('${chainId}')">` +
-      `${t('lesson.read_full_story')}<span class="storyline-story-arrow" id="csarrow-${chainId}">▼</span></button>` +
-      `<div class="storyline-story-body" id="csbody-${chainId}" data-chain="${escapedChain}"></div>` +
-      `</div>`;
-    html += `</div>`;
+
+    // Summary strip — shows stored summary if available
+    const _slSumMeta = matchSl || slTitles[chainId] || null;
+    const _slSum = _slSumMeta?.summary || '';
+    if (_slSum) {
+      html += `<div class="storyline-story" id="slsum-wrap-${chainId}">` +
+        `<button class="storyline-story-hdr" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` +
+        `📖 Read summary<span class="storyline-story-arrow" id="slsc-summary-arrow-${chainId}">▼</span></button>` +
+        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" style="display:none">` +
+        `<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
+        `</div></div>`;
+    }
+    html += `</div>`; // end storyline-group
   } // end storylines_renderChain
 
   // Render orphans
@@ -2152,6 +2187,46 @@ function buildPath(){
     contNav.style.display='none';
   }
 
+  // Storyline links strip — just above cont-nav
+  let slNav=document.getElementById('sl-nav');
+  if(!slNav){
+    slNav=document.createElement('div');
+    slNav.id='sl-nav';
+    slNav.className='sl-nav';
+    contNav.insertAdjacentElement('beforebegin',slNav);
+  }
+  const _slNavArr=Array.isArray(APP.storylines)?APP.storylines:[];
+  const _slNavById=Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+  // Find all storylines containing this topic
+  const _slNavLinks=_slNavArr.filter(sl=>{
+    if(!sl.chapters) return false;
+    const topics=(sl.chapters||[]).map(cid=>_slNavById[cid]?.topic||null).filter(Boolean);
+    return topics.includes(d.topic);
+  }).map(sl=>{
+    const topics=(sl.chapters||[]).map(cid=>_slNavById[cid]?.topic||null).filter(Boolean);
+    const enc=encodeURIComponent(JSON.stringify(topics));
+    const icon=sl.icon||'📖';
+    const title=sl.title||topics[0]||'Story line';
+    return `<span class="cont-link" style="background:var(--gray-light)" onclick="openStorylineScreen('${sl.id}','${enc}')">${icon} ${escHtml(title)} ↗</span>`;
+  });
+  // Legacy fallback: matchedTitles if no v29 storylines found
+  if(!_slNavLinks.length && matchedTitles.length){
+    matchedTitles.forEach(chain=>{
+      const j=JSON.stringify(chain);
+      const cid='sl_'+Math.abs(j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+      const meta=slTitles['c'+Math.abs(j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0))]||slTitles['root:'+chain[0]];
+      if(!meta||!meta.title) return;
+      const enc=encodeURIComponent(j);
+      _slNavLinks.push(`<span class="cont-link" style="background:var(--gray-light)" onclick="openStorylineScreen('${cid}','${enc}')">${meta.icon||'📖'} ${escHtml(meta.title)} ↗</span>`);
+    });
+  }
+  if(_slNavLinks.length){
+    slNav.innerHTML=_slNavLinks.join('');
+    slNav.style.display='';
+  } else {
+    slNav.style.display='none';
+  }
+
   // Storyline title row — find which chains this topic belongs to
   // (hoisted out of if(slRow) so matchedTitles is available for M1 below)
   const _slSaved=APP.savedList||[];
@@ -2209,7 +2284,18 @@ function buildPath(){
     const cpPct=cpLessons>0?Math.round(100*cpDone/cpLessons):0;
     const cpMeta=slTitles['c'+Math.abs(JSON.stringify(cpChain).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0))]||slTitles['root:'+cpChain[0]];
     const cpTitle=cpMeta?.title?`${cpMeta.icon||''} ${cpMeta.title}`:'Story line';
-    cpStrip.innerHTML=`<span>${cpTitle}</span><span style="white-space:nowrap">Ch ${cpPos}/${cpTotal} · ${cpDone}/${cpLessons} done</span><div class="chain-prog-bar-wrap"><div class="chain-prog-bar" style="width:${cpPct}%"></div></div>`;
+    // Find the v29 slId for this chain
+    const _cpSlArr=Array.isArray(APP.storylines)?APP.storylines:[];
+    const _cpById=Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+    const _cpSl=_cpSlArr.find(sl=>{
+      const st=(sl.chapters||[]).map(cid=>_cpById[cid]?.topic||null).filter(Boolean);
+      return st.length&&cpChain.every(t=>st.includes(t))&&st.length===cpChain.length;
+    });
+    const _cpSlId=_cpSl?.id||('sl_'+Math.abs(JSON.stringify(cpChain).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0)));
+    const _cpEnc=encodeURIComponent(JSON.stringify(cpChain));
+    cpStrip.style.cursor='pointer';
+    cpStrip.onclick=()=>openStorylineScreen(_cpSlId,_cpEnc);
+    cpStrip.innerHTML=`<span style="cursor:pointer">${cpTitle} ↗</span><span style="white-space:nowrap">${cpPos}/${cpTotal} · ${cpDone}/${cpLessons}</span><div class="chain-prog-bar-wrap"><div class="chain-prog-bar" style="width:${cpPct}%"></div></div>`;
     cpStrip.style.display='flex';
   } else {
     cpStrip.style.display='none';
@@ -2283,7 +2369,7 @@ function buildPath(){
     const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT[diff]||''}</span>`:'';
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
-        <div class="node-title">${(()=>{const labels={'grammar':'🏷️ Grammar','conjugation':'🔤 Conjugation','error_hunt':'🔍 Error Hunt'};return labels[L.type]||'📚 Vocab';})()}: ${L.title} ${diffBadge}</div>
+        <div class="node-title">${(()=>{const labels={'grammar':'🏷️ Grammar','conjugation':'🔤 Conjugation','error_hunt':'🔍 Error Hunt'};return labels[L.type]||'📚 Vocab';})()}</div>
         <div class="node-desc">${L.desc}</div>
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
         ${APP.info.canGenerate?`<div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
@@ -2373,13 +2459,8 @@ async function saveStorylineTitle(chainId, rootTopic) {
   const icon  = document.getElementById('sledit-icon-' + chainId).textContent.trim();
   if (!title) return;
   try {
-    // Store under chainId (exact chain) AND root alias (survives new chapters)
     await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ chainKey: rootTopic, title, icon }) });
-    // Decode rootTopic back to actual root topic string for the alias key
-    const rootAlias = 'root:' + (APP.savedList||[]).find(l=>l.topic&&'c'+Math.abs(JSON.stringify([l.topic]).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0))===chainId)?.topic;
-    if(rootAlias && rootAlias!=='root:undefined') await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ chainKey: rootAlias, title, icon }) });
+      body: JSON.stringify({ slId: chainId, title, icon }) });
   } catch(e) { console.error('saveStorylineTitle:', e); }
   closeStorylineEdit(chainId);
   await loadSavedList();
@@ -2388,7 +2469,7 @@ async function saveStorylineTitle(chainId, rootTopic) {
 async function clearStorylineTitle(chainId, rootTopic) {
   try {
     await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ chainKey: rootTopic, title: null }) });
+      body: JSON.stringify({ slId: chainId, title: null }) });
   } catch(e) { console.error('clearStorylineTitle:', e); }
   closeStorylineEdit(chainId);
   loadSavedList();
@@ -2420,16 +2501,9 @@ async function genStorylineTitle(chainId, rootTopic, encodedChain) {
   try {
     const topics = JSON.parse(decodeURIComponent(encodedChain));
     const r = await fetch('/api/storyline-title', { method:'POST',
-      headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topics }) });
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topics, slId: chainId }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || t('status.generation_failed'));
-    // Auto-save directly — pre-fill edit form so user can still tweak
-    await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ chainKey: rootTopic, title: data.title, icon: data.icon }) });
-    // Also save under root alias so title survives new chapters being added
-    const _rootTopic = JSON.parse(decodeURIComponent(encodedChain))[0];
-    if(_rootTopic) await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ chainKey: 'root:'+_rootTopic, title: data.title, icon: data.icon }) }).catch(()=>{});
     const inp  = document.getElementById('sledit-input-' + chainId);
     const icon = document.getElementById('sledit-icon-' + chainId);
     if (inp)  inp.value = data.title || '';
@@ -2648,14 +2722,57 @@ function shareStoryline() {
 }
 
 function _renderStorylineScreen(chainId, encodedChain, topics) {
-  // Title
-  const slTitles = APP.storylines || {};
-  const slMeta = slTitles[chainId] || slTitles['root:' + topics[0]] || null;
+  // Title — look up from v29 array first, then legacy object
+  const _slArr2 = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const slMeta = _slArr2.find(sl => sl.id === chainId)
+    || _slArr2.find(sl => (sl.chapters||[]).some(c => {
+         const t = (APP.savedList||[]).find(l=>l.id===c); return t && topics.includes(t.topic);
+       }))
+    || null;
   const titleEl = document.getElementById('sl-screen-title');
-  if (titleEl) {
-    titleEl.textContent = slMeta?.title
-      ? (slMeta.icon || '📖') + ' ' + slMeta.title
-      : '📖 ' + topics[0];
+  const icon = slMeta?.icon || '📖';
+  const title = slMeta?.title || topics[0];
+  if (titleEl) titleEl.textContent = icon + ' ' + title;
+
+  // Wire edit form with current title/icon
+  const editInput = document.getElementById('sl-screen-edit-input');
+  const editIcon  = document.getElementById('sl-screen-edit-icon');
+  const genBtn    = document.getElementById('sl-screen-gen-btn');
+  if (editInput) editInput.value = title;
+  if (editIcon)  editIcon.textContent = icon;
+  const editBtn2 = document.getElementById('sl-screen-edit-btn');
+  if (editBtn2)  editBtn2.style.display  = APP.info.canGenerate ? '' : 'none';
+  if (genBtn)    genBtn.style.display    = APP.info.canGenerate ? '' : 'none';
+  const summaryBtn = document.getElementById('sl-screen-summary-btn');
+  if (summaryBtn) summaryBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  APP._slScreen.slMeta = slMeta;
+
+  // Progress summary
+  const progEl = document.getElementById('sl-screen-progress');
+  if (progEl) {
+    const completed = APP.progress?.completed || {};
+    let totalSets = 0, doneSets = 0, totalQ = 0, correctQ = 0;
+    topics.forEach(topic => {
+      const s = (APP.savedList||[]).find(l => l.topic === topic);
+      if (!s) return;
+      (s.lessons || []).forEach(ls => {
+        totalSets++;
+        const prog = completed[topic]?.[ls.id];
+        if (prog) { doneSets++; if (typeof prog==='object'){ correctQ+=prog.correct||0; totalQ+=prog.total||0; } }
+      });
+    });
+    const pct = totalSets > 0 ? Math.round(100 * doneSets / totalSets) : 0;
+    const scorePct = totalQ > 0 ? Math.round(100*correctQ/totalQ) : null;
+    progEl.innerHTML = `<div class="prog-strip" style="margin:0;border-radius:0;border-left:none;border-right:none;border-top:none;box-shadow:none;padding:8px 14px">
+      <span style="font-size:18px">📊</span>
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.07em">${doneSets}/${totalSets}${scorePct!==null?' · '+scorePct+'%':''}</div>
+        <div style="background:var(--gray-mid);border-radius:4px;height:6px;margin-top:4px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:var(--green);border-radius:4px;transition:width .3s"></div>
+        </div>
+      </div>
+      <div class="prog-val" style="font-size:15px">${pct}%</div>
+    </div>`;
   }
 
   // Body: one card per chapter + full story reader
@@ -2665,19 +2782,38 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const byTopic = {};
   (APP.savedList || []).forEach(s => { byTopic[s.topic] = s; });
 
+  const completed = APP.progress?.completed || {};
+
   let html = '';
 
-  // Chapter cards
-  html += '<div class="storyline-cards" id="slsc-cards-' + chainId + '">';
+  // Chapter cards — savedItemHtml with path-line connectors between chapters
+  html += '<div class="path-wrap" style="padding:4px 0 0" id="slsc-cards-' + chainId + '">';
   topics.forEach((topic, i) => {
     const s = byTopic[topic];
+    if (i > 0) {
+      const prevTopic = topics[i-1];
+      const prevDone = completed[prevTopic] || {};
+      const prevSets = byTopic[prevTopic]?.lessons || [];
+      const prevAllDone = prevSets.length > 0 && prevSets.every(ls => prevDone[ls.id]);
+      html += '<div class="path-line' + (prevAllDone ? ' done' : '') + '" style="height:20px"></div>';
+    }
     if (!s) {
-      html += '<div class="storyline-item"><div class="saved-item" style="opacity:.5">' + escHtml(topic) + '</div></div>';
+      html += '<div class="lesson-node" style="opacity:.5;width:100%;box-sizing:border-box">' + escHtml(topic) + '</div>';
       return;
     }
-    html += '<div class="storyline-item">' + savedItemHtml(s, i > 0) + '</div>';
+    html += savedItemHtml(s, false);
   });
   html += '</div>';
+
+  // Summary section — shows stored summary or placeholder
+  const existingSummary = slMeta?.summary || '';
+  html += '<div class="storyline-story" style="margin-top:8px;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid)" id="slsc-summary-wrap-' + chainId + '">' +
+    `<button class="storyline-story-hdr" onclick="toggleSlSummary('${chainId}')">`  +
+    '📖 ' + (existingSummary ? 'Read summary' : 'No summary yet') +
+    '<span class="storyline-story-arrow" id="slsc-summary-arrow-' + chainId + '">▼</span></button>' +
+    '<div class="storyline-story-body" id="slsc-summary-body-' + chainId + '" style="' + (existingSummary ? '' : 'display:none') + '">' +
+    (existingSummary ? '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(existingSummary) + '</p>' : '') +
+    '</div></div>';
 
   // Read full story section
   const escapedChain = encodedChain;
@@ -2718,40 +2854,238 @@ window.addEventListener('popstate', function(e) {
 });
 
 function _tryOpenStorylineByChainId(chainId) {
-  // Rebuild chains from saved list and find matching chainId
   if (!APP.savedList || !APP.savedList.length) {
     loadSavedList().then(() => _tryOpenStorylineByChainId(chainId));
     return;
   }
-  const byTopic = {};
-  (APP.savedList || []).forEach(s => { byTopic[s.topic] = s; });
-  function buildChainId(topicsArr) {
-    const j = JSON.stringify(topicsArr);
-    return 'c' + Math.abs(j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-  }
-  // Use same buildChains logic
-  const topics = APP.savedList.map(s => s.topic);
-  const byTopicCf = {};
-  topics.forEach(t => { const s = byTopic[t]; if (s?.continuedFrom) byTopicCf[t] = s.continuedFrom; });
-  const heads = topics.filter(t => !Object.values(byTopicCf).includes(t));
-  for (const head of heads) {
-    const chain = [head];
-    let cur = head;
-    while (true) {
-      const next = topics.find(t => byTopicCf[t] === cur);
-      if (!next || chain.includes(next)) break;
-      chain.push(next); cur = next;
-    }
-    if (buildChainId(chain) === chainId) {
+  const byId = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+
+  // v29: find storyline by id, resolve chapter ids to topic names
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const sl = slArr.find(s => s.id === chainId);
+  if (sl && sl.chapters) {
+    const chain = sl.chapters.map(cid => byId[cid]?.topic).filter(Boolean);
+    if (chain.length) {
       const encodedChain = encodeURIComponent(JSON.stringify(chain));
       history.replaceState({ slChainId: chainId, slChain: encodedChain }, '', '#sl=' + chainId);
+      APP._slScreen = { chainId, encodedChain, topics: chain };
       _renderStorylineScreen(chainId, encodedChain, chain);
       show('storyline-screen');
       return;
     }
   }
-  // Not found — fall back to landing
+
+  // Legacy fallback: rebuild chains from continuedFrom
+  const byTopic = Object.fromEntries((APP.savedList||[]).map(s=>[s.topic,s]));
+  const byTopicCf = {};
+  (APP.savedList||[]).forEach(s => { if (s.continuedFrom) byTopicCf[s.topic] = s.continuedFrom; });
+  const allTargets = new Set(Object.values(byTopicCf));
+  const tails = (APP.savedList||[]).filter(s => !allTargets.has(s.topic));
+  for (const tail of tails) {
+    const chain = [tail.topic];
+    let cur = tail;
+    for (let i = 0; i < 50; i++) {
+      const prev = cur.continuedFrom ? byTopic[cur.continuedFrom] : null;
+      if (!prev) break;
+      chain.unshift(prev.topic); cur = prev;
+    }
+    const legacyId = 'sl_' + Math.abs(JSON.stringify(chain).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+    const oldId = 'c' + Math.abs(JSON.stringify(chain).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+    if (legacyId === chainId || oldId === chainId) {
+      const encodedChain = encodeURIComponent(JSON.stringify(chain));
+      history.replaceState({ slChainId: chainId, slChain: encodedChain }, '', '#sl=' + chainId);
+      APP._slScreen = { chainId, encodedChain, topics: chain };
+      _renderStorylineScreen(chainId, encodedChain, chain);
+      show('storyline-screen');
+      return;
+    }
+  }
   show('landing'); loadSavedList();
+}
+
+
+
+// ── Storyline share and delete from saved list ────────────────────────────────
+
+function shareStorylineById(chainId) {
+  const url = location.origin + location.pathname + '#sl=' + chainId;
+  if (navigator.clipboard && location.protocol !== 'file:') {
+    navigator.clipboard.writeText(url).then(() => showToast(t('toast.link_copied'))).catch(() => _copyFallback(url));
+  } else { _copyFallback(url); }
+}
+
+async function deleteStoryline(encodedChain) {
+  const chain = JSON.parse(decodeURIComponent(encodedChain));
+  // Find topics that belong ONLY to this storyline (not shared with any other)
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const byId  = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+  // Build set of topic names in this chain
+  const thisChainSet = new Set(chain);
+  // Build set of topic names that appear in OTHER storylines
+  const otherChains = slArr.map(sl => {
+    const topics = (sl.chapters||[]).map(cid => byId[cid]?.topic).filter(Boolean);
+    return topics;
+  }).filter(topics => !topics.every(t => thisChainSet.has(t)));
+  const inOtherChain = new Set(otherChains.flat());
+  // Only delete topics exclusive to this storyline
+  const toDelete   = chain.filter(t => !inOtherChain.has(t));
+  const toKeep     = chain.filter(t =>  inOtherChain.has(t));
+  // Also check continuedFrom links outside this chain (legacy)
+  (APP.savedList||[]).forEach(s => {
+    if (!thisChainSet.has(s.topic) && s.continuedFrom && thisChainSet.has(s.continuedFrom))
+      toKeep.push(s.continuedFrom); // keep the parent if another topic continues from it
+  });
+  const finalDelete = toDelete.filter(t => !toKeep.includes(t));
+  // Find the slId for this chain to delete the storyline metadata too
+  const thisSlId = slArr.find(sl => {
+    const topics = (sl.chapters||[]).map(cid => byId[cid]?.topic).filter(Boolean);
+    return topics.length && topics.every(t => thisChainSet.has(t)) && topics.length === chain.length;
+  })?.id || null;
+
+  let msg = finalDelete.length
+    ? `Delete ${finalDelete.length} chapter${finalDelete.length!==1?'s':''} of this storyline?\n\n${finalDelete.join('\n')}`
+    : `Remove this storyline? (All chapters are shared with other storylines — only the storyline grouping will be removed.)`;
+  if (toKeep.length && finalDelete.length) msg += `\n\nKept (shared with other storylines):\n${[...new Set(toKeep)].join('\n')}`;
+  msg += '\n\nThis cannot be undone.';
+  if (!confirm(msg)) return;
+
+  // Delete exclusive topic chapters
+  for (const topic of finalDelete) {
+    try {
+      await fetch('/api/lessons/delete?topic=' + encTopic(topic), { method: 'DELETE' });
+    } catch(e) { console.warn('Delete failed for', topic, e); }
+  }
+  // Always delete the storyline metadata itself
+  if (thisSlId) {
+    try {
+      await fetch('/api/storylines', { method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ slId: thisSlId, title: null }) });
+    } catch(e) { console.warn('Storyline metadata delete failed:', e); }
+  }
+  await loadSavedList();
+  showToast(finalDelete.length
+    ? `🗑️ ${finalDelete.length} chapter${finalDelete.length!==1?'s':''} deleted`
+    : '🗑️ Storyline removed');
+}
+
+
+// ── Storyline summary ─────────────────────────────────────────────────────────
+
+function toggleSlSummary(chainId) {
+  const body  = document.getElementById('slsc-summary-body-' + chainId);
+  const arrow = document.getElementById('slsc-summary-arrow-' + chainId);
+  if (!body) return;
+  const open = body.classList.toggle('open');
+  body.style.display = open ? '' : 'none';
+  if (arrow) arrow.classList.toggle('open', open);
+}
+
+async function genStorylineSummary() {
+  const sl = APP._slScreen;
+  if (!sl) return;
+  const btn = document.getElementById('sl-screen-summary-btn');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  try {
+    const r = await fetch('/api/storyline-summary', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slId: sl.chainId, topics: sl.topics })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Failed');
+    const summary = data.summary;
+    // Update in-screen summary section
+    const chainId = sl.chainId;
+    const wrap  = document.getElementById('slsc-summary-wrap-' + chainId);
+    const body  = document.getElementById('slsc-summary-body-' + chainId);
+    const arrow = document.getElementById('slsc-summary-arrow-' + chainId);
+    if (wrap) {
+      const hdrBtn = wrap.querySelector('.storyline-story-hdr');
+      if (hdrBtn) hdrBtn.innerHTML = '📖 Read summary<span class="storyline-story-arrow open" id="slsc-summary-arrow-' + chainId + '">▼</span>';
+    }
+    if (body) {
+      body.innerHTML = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
+      body.style.display = '';
+    }
+    // Update APP.storylines cache
+    if (Array.isArray(APP.storylines)) {
+      const idx = APP.storylines.findIndex(s => s.id === chainId);
+      if (idx >= 0) APP.storylines[idx].summary = summary;
+    }
+    showToast('📝 Summary generated');
+  } catch(e) {
+    showToast('⚠ ' + e.message.slice(0, 60));
+  } finally {
+    if (btn) { btn.textContent = '📝'; btn.disabled = false; }
+  }
+}
+
+// ── Storyline screen title editing ────────────────────────────────────────────
+
+const _slScreenIconIdx = { idx: 0 };
+
+function openStorylineEditInScreen() {
+  const row = document.getElementById('sl-screen-edit-row');
+  if (row) { row.style.display = 'flex'; }
+  document.getElementById('sl-screen-edit-input')?.select();
+}
+function closeStorylineEditInScreen() {
+  const row = document.getElementById('sl-screen-edit-row');
+  if (row) row.style.display = 'none';
+}
+function cycleSlScreenIcon() {
+  _slScreenIconIdx.idx = (_slScreenIconIdx.idx + 1) % STORYLINE_ICONS.length;
+  const el = document.getElementById('sl-screen-edit-icon');
+  if (el) el.textContent = STORYLINE_ICONS[_slScreenIconIdx.idx];
+}
+async function saveSlScreenTitle() {
+  const chainId = APP._slScreen?.chainId;
+  if (!chainId) return;
+  const title = document.getElementById('sl-screen-edit-input')?.value.trim();
+  const icon  = document.getElementById('sl-screen-edit-icon')?.textContent.trim();
+  if (!title) return;
+  try {
+    await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ slId: chainId, title, icon }) });
+    closeStorylineEditInScreen();
+    // Update header
+    const titleEl = document.getElementById('sl-screen-title');
+    if (titleEl) titleEl.textContent = icon + ' ' + title;
+    // Refresh APP.storylines
+    try { const r=await fetch('/api/storylines'); APP.storylines=await r.json(); } catch(_) {}
+  } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
+}
+async function clearSlScreenTitle() {
+  const chainId = APP._slScreen?.chainId;
+  if (!chainId) return;
+  try {
+    await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ slId: chainId, title: null }) });
+    closeStorylineEditInScreen();
+    const topics = APP._slScreen?.topics || [];
+    const titleEl = document.getElementById('sl-screen-title');
+    if (titleEl) titleEl.textContent = '📖 ' + (topics[0] || '');
+  } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
+}
+async function genStorylineTitleFromScreen() {
+  const chainId = APP._slScreen?.chainId;
+  const topics  = APP._slScreen?.topics || [];
+  if (!chainId || !topics.length) return;
+  const btn = document.getElementById('sl-screen-gen-btn');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  try {
+    const r = await fetch('/api/storyline-title', { method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ topics, slId: chainId }) });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Failed');
+    const inp  = document.getElementById('sl-screen-edit-input');
+    const icon = document.getElementById('sl-screen-edit-icon');
+    if (inp)  inp.value = data.title || '';
+    if (icon) icon.textContent = data.icon || '📖';
+    openStorylineEditInScreen();
+    try { const r2=await fetch('/api/storylines'); APP.storylines=await r2.json(); } catch(_) {}
+  } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
+  finally { if (btn) { btn.textContent = '✨'; btn.disabled = false; } }
 }
 
 // ── Saved-item inline title edit (✏️ in saved-list) ──────────────────────────
@@ -3083,7 +3417,7 @@ function startLesson(idx){
   C.ehSuspect=new Set(); C.ehChecked=false;
   C.exercises=buildExercises(idx); C.cur=0;
   C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
-  C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
+  C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[]; delete C._selPos;
   show('lesson-screen');
   if(C.isErrorHunt) renderErrorHunt();
   else renderEx();
@@ -3229,7 +3563,7 @@ function renderEx(){
   const C=APP.cur;
   if(C.cur>=C.exercises.length){ showComplete(); return; }
   const ex=C.exercises[C.cur];
-  C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[];
+  C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[]; delete C._selPos;
   document.getElementById('prog-fill').style.width=Math.round(C.cur/C.exercises.length*100)+'%';
   renderHearts();
   let html='';
@@ -3317,15 +3651,48 @@ function tOrder(ex){
 
 function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext">${t("ex.read_translate.q",{lang:L.name})}</div><div class="target-box"><div class="target-box-text">${applyFurigana(ex.target)}</div><button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
-function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; }
+function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; check(); }
 function onType(){ document.getElementById('cbtn').disabled=document.getElementById('type-in').value.trim().length<1; }
 function addTok(i){
   const C=APP.cur; if(C.answered||C.usedIdx.includes(i))return;
+  // If a placed token is selected, replace it with this bank word
+  if(C._selPos !== undefined){
+    const oldIdx = C.placed[C._selPos].i;
+    C.placed[C._selPos] = {i, w: C.exercises[C.cur].words[i]};
+    C.usedIdx = C.usedIdx.filter(x => x !== oldIdx);
+    C.usedIdx.push(i);
+    document.getElementById('t'+oldIdx).classList.remove('used');
+    document.getElementById('t'+i).classList.add('used');
+    delete C._selPos;
+    updateSbox(); document.getElementById('cbtn').disabled=false;
+    if(C.placed.length === (C.exercises[C.cur].words||[]).length) check();
+    return;
+  }
   const w=C.exercises[C.cur].words[i]; C.placed.push({i,w}); C.usedIdx.push(i);
   document.getElementById('t'+i).classList.add('used'); updateSbox(); document.getElementById('cbtn').disabled=false;
+  // Auto-check when all words have been placed
+  if(C.placed.length === (C.exercises[C.cur].words||[]).length) check();
+}
+function selTok(pos){
+  const C=APP.cur; if(C.answered) return;
+  if(C._selPos === pos){
+    // Tap selected again — deselect
+    delete C._selPos; updateSbox(); return;
+  }
+  if(C._selPos !== undefined){
+    // Swap the two placed tokens
+    const tmp = C.placed[C._selPos];
+    C.placed[C._selPos] = C.placed[pos];
+    C.placed[pos] = tmp;
+    delete C._selPos;
+    updateSbox(); return;
+  }
+  // Select this token
+  C._selPos = pos; updateSbox();
 }
 function remTok(pos){
   const C=APP.cur; if(C.answered)return;
+  delete C._selPos;
   const idx=C.placed[pos].i; C.placed.splice(pos,1); C.usedIdx=C.usedIdx.filter(x=>x!==idx);
   document.getElementById('t'+idx).classList.remove('used'); updateSbox();
   if(C.placed.length===0) document.getElementById('cbtn').disabled=true;
@@ -3334,7 +3701,10 @@ function updateSbox(){
   const C=APP.cur, sb=document.getElementById('sbox'); if(!sb)return;
   if(!C.placed.length){ sb.innerHTML='<span class="sbox-ph">Tap words to build the sentence</span>'; sb.classList.remove('filled'); return; }
   sb.classList.add('filled');
-  sb.innerHTML=C.placed.map((p,pos)=>`<span class="placed-tok" onclick="remTok(${pos})">${applyFurigana(escHtml(p.w))}</span>`).join('');
+  sb.innerHTML=C.placed.map((p,pos)=>{
+    const sel = C._selPos===pos;
+    return `<span class="placed-tok${sel?' sel-tok':''}" onclick="selTok(${pos})" ondblclick="remTok(${pos})" title="Tap to reorder · double-tap to remove">${applyFurigana(escHtml(p.w))}</span>`;
+  }).join('');
 }
 
 function flagCurrent(){
@@ -3434,11 +3804,13 @@ function check(){
     const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
       ? `${ex.correct}${ex.source ? ' — ' + ex.source : ''}`
       : (ex.target||ex.correct);
-    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">${t('check.correct')}</div><div class="fb-body">${revealBody}</div>`;
+    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}</div>`;
     const speakOk = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct : ex.target;
-    if(speakOk) speak(speakOk);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('ok');
+    // Auto-advance — speaks once then advances
+    btn.disabled = true;
+    _speakAndAdvance(speakOk);
   } else {
     C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${ex.correct}</strong></div>`;
@@ -3455,7 +3827,6 @@ function check(){
 function showComplete(){
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
   if(!C.isErrorHunt){
-    // Standard lessons: accumulate correct/total
     if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
     const prev = APP.progress.completed[topicKey][lesson.id]||{};
     const prevCorrect = typeof prev === 'object' ? (prev.correct||0) : 0;
@@ -3466,6 +3837,65 @@ function showComplete(){
     };
     saveProg();
   }
+  // Update complete screen stats
+  const pct = C.total > 0 ? Math.round(100*C.correct/C.total) : 0;
+  const el = id => document.getElementById(id);
+  el('s-correct').textContent  = C.correct||0;
+  el('s-mistakes').textContent = C.mistakes||0;
+  el('s-streak').textContent   = (C.bestStreak||0)+'🔥';
+  el('s-flagged').textContent  = (C.flagCount||0)+'⚑';
+  el('comp-xp').textContent    = pct+'%';
+  el('comp-sub').textContent   = lesson?.title || lesson?.type || '';
+
+  // Vocab recap — handle all lesson types
+  let vocabItems = '';
+  if (lesson?.vocab?.length) {
+    vocabItems = lesson.vocab.map(v=>`<span class="vocab-chip">${v.target}</span>`).join('');
+  } else if (lesson?.grammar?.length) {
+    vocabItems = lesson.grammar.map(g=>`<span class="vocab-chip">${g.target} <small style="opacity:.6">${g.article||''} / ${g.plural||'—'}</small></span>`).join('');
+  } else if (lesson?.conjugations?.length) {
+    vocabItems = lesson.conjugations.map(c=>`<span class="vocab-chip">${c.infinitive}</span>`).join('');
+  }
+  el('comp-vocab').innerHTML = vocabItems;
+
+  // Next button priority:
+  // 1. Next lesson set in this topic (if any unlocked)
+  // 2. Next chapter in storyline
+  // 3. Back to lesson path
+  const compNext = el('comp-next');
+  const done = APP.progress.completed?.[topicKey] || {};
+  const allLessons = APP.lessonData?.lessons || [];
+  const nextLessonIdx = allLessons.findIndex(L => !done[L.id]);
+  if (nextLessonIdx >= 0 && nextLessonIdx !== C.lessonIdx) {
+    // More lesson sets in this topic
+    compNext.textContent = `→ Next: ${(()=>{const labels={grammar:'Grammar',conjugation:'Conjugation',error_hunt:'Error Hunt'};return labels[allLessons[nextLessonIdx].type]||'Vocab';})()}`;
+    compNext.onclick = () => { goHome(); setTimeout(() => startLesson(nextLessonIdx), 80); };
+  } else {
+    const nextChapterTopic = _findNextChapterTopic(topicKey);
+    if (nextChapterTopic) {
+      compNext.textContent = '→ Next chapter';
+      compNext.onclick = () => loadSaved(encodeURIComponent(nextChapterTopic));
+    } else {
+      compNext.textContent = t('complete.continue');
+      compNext.onclick = () => goHome();
+    }
+  }
+  show('complete-screen');
+}
+
+function _findNextChapterTopic(currentTopic) {
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const byId = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+  for (const sl of slArr) {
+    const chapters = (sl.chapters||[]).map(cid => byId[cid]?.topic).filter(Boolean);
+    const idx = chapters.indexOf(currentTopic);
+    if (idx >= 0 && idx < chapters.length - 1) return chapters[idx + 1];
+  }
+  // Fallback: continuedBy
+  return (APP.savedList||[]).find(l => l.continuedFrom === currentTopic)?.topic || null;
+}
+
+function afterComplete() {
   goHome();
 }
 
@@ -3489,6 +3919,39 @@ function speakBodyText(bodyId){
   const text=(el.innerText||el.textContent||'')
     .replace(/Chapter \d+[^\n]*\n/g,' ').replace(/\s+/g,' ').trim();
   if(text)speak(text);
+}
+
+// ── Speech-gated advance ─────────────────────────────────────────────────────
+// Speaks text and advances to next exercise when speech ends (or times out).
+// Minimum delay 350ms even if no speech, to avoid flash.
+function _speakAndAdvance(text) {
+  const C = APP.cur;
+  const doAdvance = () => { C.cur++; renderEx(); };
+  if (!text || !window.speechSynthesis || !_ttsUnlocked) {
+    setTimeout(doAdvance, text ? 900 : 350);
+    return;
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  const ttsCode = activeTtsCode();
+  u.lang = ttsCode; u.rate = 0.9; u.pitch = 1;
+  const voices = speechSynthesis.getVoices();
+  const norm = c => (c||'').replace('_','-').toLowerCase();
+  const ttsNorm = norm(ttsCode);
+  if (voices.length > 0) {
+    const exact  = voices.find(v => norm(v.lang) === ttsNorm);
+    const prefix = voices.find(v => norm(v.lang).startsWith(ttsNorm.split('-')[0]));
+    const match  = exact || prefix;
+    if (match) { u.voice = match; u.lang = match.lang; }
+  }
+  let advanced = false;
+  const advance = () => { if (!advanced) { advanced = true; doAdvance(); } };
+  u.onend   = () => setTimeout(advance, 120); // brief pause after speech
+  u.onerror = () => advance();
+  // Safety fallback — 4s max wait
+  const safety = setTimeout(advance, 4000);
+  u.onend = () => { clearTimeout(safety); setTimeout(advance, 120); };
+  speechSynthesis.cancel();
+  setTimeout(() => speechSynthesis.speak(u), 50);
 }
 
 function _doSpeak(text,rate){

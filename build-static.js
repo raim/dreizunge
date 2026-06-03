@@ -36,12 +36,17 @@ let lessonsData;
 try { lessonsData = JSON.parse(fs.readFileSync(lessonsFile, 'utf8')); }
 catch(e) { console.error('Error: could not parse', lessonsFile, '—', e.message); process.exit(1); }
 
-if (!Array.isArray(lessonsData.lessons) || lessonsData.lessons.length === 0) {
-  console.error('Error: lessons.json has no lessons array or it is empty.'); process.exit(1);
+// Support v29 schema (topics[]) and legacy (lessons[])
+const _allTopics = (lessonsData.schemaVersion >= 29 && Array.isArray(lessonsData.topics))
+  ? lessonsData.topics : lessonsData.lessons;
+if (!Array.isArray(_allTopics) || _allTopics.length === 0) {
+  console.error('Error: lessons.json has no topics/lessons array or it is empty.'); process.exit(1);
 }
+// Normalise: always expose as lessonsData.lessons for the rest of the script
+lessonsData.lessons = _allTopics;
 
-const topicCount = lessonsData.lessons.length;
-const langCodes  = [...new Set(lessonsData.lessons.map(l => l.lang || 'it'))].sort();
+const topicCount = _allTopics.length;
+const langCodes  = [...new Set(_allTopics.map(l => l.lang || 'it'))].sort();
 
 // ── Ensure output directory ───────────────────────────────────────────
 if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
@@ -96,34 +101,57 @@ function contentSlug(str) {
   return (str || '').slice(0, 40).replace(/\s+/g, '_');
 }
 
-// Exclude topics that have any flagged exercises entirely from the static build
-const flaggedTopicSlugsSet = new Set([...flagKeys].map(k => k.split(':')[0]));
-const cleanedLessons = lessonsData.lessons.filter(topic => {
+// Support v29 schema (topics array) or legacy (lessons array)
+const _topicsArr = (lessonsData.schemaVersion >= 29 && Array.isArray(lessonsData.topics))
+  ? lessonsData.topics : lessonsData.lessons;
+
+// Build per-topic flagged content slug sets for stripping individual exercises
+// Flag key format: topicSlug:type:contentSlug  (or  topicId:type:contentSlug in v29)
+function flaggedSlugsForTopic(topic) {
   const slug = topicSlug(topic.topic);
-  if (flaggedTopicSlugsSet.has(slug)) {
-    console.log(`NOT  Excluding flagged topic from static build: "${topic.topic}"`);
-      return true; // false;
-  }
-  return true;
+  const tid  = topic.id || slug;
+  const prefixes = [slug + ':', tid + ':'];
+  const slugSet = new Set();
+  [...flagKeys].forEach(k => {
+    if (prefixes.some(p => k.startsWith(p))) {
+      const parts = k.split(':');
+      if (parts.length >= 3) slugSet.add(parts.slice(2).join(':'));
+    }
+  });
+  return slugSet;
+}
+
+// Strip flagged exercises from lesson sets — keep the topic/story, remove flagged Q&A
+const cleanedLessons = _topicsArr.map(topic => {
+  const flagged = flaggedSlugsForTopic(topic);
+  if (flagged.size === 0) return topic; // nothing flagged — pass through unchanged
+  const cleanedLessonSets = (topic.lessons || []).map(ls => ({
+    ...ls,
+    vocab:     (ls.vocab     || []).filter(v => !flagged.has(contentSlug(v.target))),
+    sentences: (ls.sentences || []).filter(s => !flagged.has(contentSlug(s.target))),
+    // grammar and conjugation items: strip if their target is flagged
+    grammar:      ls.grammar      ? ls.grammar.filter(g => !flagged.has(contentSlug(g.target))) : undefined,
+    conjugations: ls.conjugations ? ls.conjugations.filter(c => !flagged.has(contentSlug(c.infinitive))) : undefined,
+  }));
+  const strippedCount = (topic.lessons||[]).reduce((n,ls) =>
+    n + (ls.vocab||[]).length + (ls.sentences||[]).length, 0)
+    - cleanedLessonSets.reduce((n,ls) => n + (ls.vocab||[]).length + (ls.sentences||[]).length, 0);
+  if (strippedCount > 0)
+    console.log(`  Stripped ${strippedCount} flagged exercise(s) from "${topic.topic}"`);
+  return { ...topic, lessons: cleanedLessonSets };
 });
-const removedCount = lessonsData.lessons.length - cleanedLessons.length;
+const removedCount = cleanedLessons.reduce((n, t, i) => {
+  const orig = (_topicsArr[i].lessons||[]).reduce((m,ls)=>m+(ls.vocab||[]).length+(ls.sentences||[]).length,0);
+  const clean = (t.lessons||[]).reduce((m,ls)=>m+(ls.vocab||[]).length+(ls.sentences||[]).length,0);
+  return n + (orig - clean);
+}, 0);
 
 const lessonsSerialized = JSON.stringify(cleanedLessons, null, 2);
 
-// Build flagged-lessons export payload (original lessons that had flags, with flags map)
-const flaggedLessons = lessonsData.lessons.filter(t => flaggedTopicSlugsSet.has(topicSlug(t.topic)));
-// Expand storylines with root aliases so new chapters find the title
-const rawStorylines = lessonsData.storylines || {};
-const expandedStorylines = Object.assign({}, rawStorylines);
-// For each chainId key, also add 'root:firstTopic' alias if not already present
-Object.entries(rawStorylines).forEach(([k,v]) => {
-  if (!k.startsWith('root:')) {
-    // Try to find root topic by matching chainId against all possible single-topic chains
-    // We can't reverse the hash, so we store aliases when saving — nothing to do here
-    // But we can copy existing 'root:' entries from the store
-  }
-});
-const storylinesSerialized = JSON.stringify(expandedStorylines);
+// Storylines — keep all, no filtering needed (topics are all kept)
+const rawStorylines = lessonsData.storylines || (lessonsData.schemaVersion >= 29 ? [] : {});
+const cleanedStorylines = rawStorylines; // all topics kept, no chapters to remove
+const storylinesSerialized = JSON.stringify(cleanedStorylines);
 
 const staticFunctions = `
 // ═══════════════════════════════════════════════════════════════════════
@@ -147,6 +175,7 @@ function repopulateContinueSelect(){
   const prev=contSel.value;
   contSel.innerHTML='<option value="">\u2014 new story \u2014</option>'+
     filtered.map(s=>{
+      const tL=LANGS[s.lang||'it']||LANGS.it||{flag:'',name:s.lang||'it'};
       const langTag=showAll&&(s.lang||'it')!==curLang?' ['+tL.name+']':'';
       return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+tL.flag+' '+s.topic+langTag+'</option>';
     }).join('');
@@ -234,11 +263,55 @@ function renderPill() {
   if(styleWrap) styleWrap.style.opacity='0.4';
 }
 
+function itemHtml(s, connector) {
+  const enc=encTopic(s.topic);
+  const d=s.difficulty||2;
+  const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
+  const diffBadge='<span class="diff-dot d'+d+'" title="'+diff+'"></span>';
+  const ratingStr=s.ratings
+    ? ' · '+(['🔵','🟡','🔴'][s.ratings.difficulty-1]||'')+' '+(['😐','😊','😄'][s.ratings.fun-1]||'')
+    : '';
+  const count=s.lessons?s.lessons.length:0;
+  const dateStr=s.updatedAt||s.generatedAt;
+  const date=dateStr?new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
+  const conn=connector?'<span class="storyline-connector">↩</span>':'';
+  const escapedTopic=s.topic.replace(/"/g,'&quot;');
+  const escapedTopicSq=s.topic.replace(/'/g,"\\'");
+  const sid='si-'+enc.replace(/[^a-z0-9]/gi,'').slice(0,20)+Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+  const tL=LANGS[s.lang||'it']||LANGS.it;
+  const srcL=LANGS[s.srcLang||'en']||{flag:'🇬🇧',name:'English'};
+  return \`<div class="saved-item-wrap">
+    <div class="saved-item" onclick="loadSaved('\${enc}')">
+      \${conn}<span class="saved-emoji"> \${s.topicEmoji||'📚'}</span>
+      <div class="saved-info">
+        <div class="saved-topic">\${s.topic} \${diffBadge}</div>
+        <div class="saved-meta"><span class=\"lang-pair-badge\" title=\"\${srcL.name} → \${tL.name}\">\${srcL.flag}→\${tL.flag}</span> \${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
+      </div>
+      <div class="saved-actions" onclick="event.stopPropagation()">
+        <button class="ico-btn export" title="Export lesson with flags"
+          data-topic="\${escapedTopic}"
+          onclick="exportTopics([this.dataset.topic])">⬇</button>
+      </div>
+    </div>
+    <div class="saved-item-story">
+      <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('\${sid}','\${escapedTopicSq}')">
+        \${t('lesson.read_story_short')} <span id="sis-arrow-\${sid}" style="margin-left:auto;font-size:10px">▼</span>
+      </button>
+      <div class="saved-item-story-body" id="sis-body-\${sid}"></div>
+    </div>
+  </div>\`;
+}
+// Alias for live-server compatibility
+function savedItemHtml(s, connector) { return itemHtml(s, connector); }
+
 async function loadSavedList() {
   // Seed storylines: baked-in titles + localStorage overrides
   let _lsOverrides = {};
   try { _lsOverrides = JSON.parse(localStorage.getItem('dz_storylines') || '{}'); } catch(e) {}
-  APP.storylines = Object.assign({}, STATIC_STORYLINES, _lsOverrides);
+  // v29: STATIC_STORYLINES is an array; legacy: object
+  APP.storylines = Array.isArray(STATIC_STORYLINES)
+    ? STATIC_STORYLINES
+    : Object.assign({}, STATIC_STORYLINES, _lsOverrides);
   const saved = STATIC_LESSONS;
   APP.savedList = saved;  // needed by buildPath for cont-nav "continued in" links
   // Sync main selectors to current filter state
@@ -260,63 +333,36 @@ async function loadSavedList() {
     return;
   }
 
-  // Build storyline chains
+  // Build display chains — v29: use STATIC_STORYLINES array; legacy: continuedFrom
   const byTopic=Object.fromEntries(filtered.map(l=>[l.topic,l]));
-  const childMap={};
-  filtered.forEach(l=>{
-    if(l.continuedFrom && byTopic[l.continuedFrom])
-      (childMap[l.continuedFrom]=childMap[l.continuedFrom]||[]).push(l.topic);
-  });
-  const hasParent=new Set(filtered.filter(l=>l.continuedFrom&&byTopic[l.continuedFrom]).map(l=>l.topic));
-  const chains=[];
-  function walk(topic,chain){
-    const ext=[...chain,topic], kids=childMap[topic]||[];
-    if(!kids.length){chains.push(ext);return;}
-    kids.forEach(k=>walk(k,ext));
+  const byId=Object.fromEntries(filtered.filter(l=>l.id).map(l=>[l.id,l]));
+  let storylines, orphans;
+  const _slArr=Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[];
+  const v29chains=_slArr.filter(sl=>sl.chapters&&sl.chapters.length>1);
+  if(v29chains.length>0){
+    storylines=v29chains.map(sl=>sl.chapters.map(cid=>byId[cid]?.topic||null).filter(Boolean)).filter(c=>c.length>1);
+    const inChain=new Set(storylines.flat());
+    orphans=filtered.filter(l=>!inChain.has(l.topic));
+  } else {
+    const childMap={};
+    filtered.forEach(l=>{
+      if(l.continuedFrom&&byTopic[l.continuedFrom])
+        (childMap[l.continuedFrom]=childMap[l.continuedFrom]||[]).push(l.topic);
+    });
+    const hasParent=new Set(filtered.filter(l=>l.continuedFrom&&byTopic[l.continuedFrom]).map(l=>l.topic));
+    const chains=[];
+    function walk(topic,chain){
+      const ext=[...chain,topic],kids=childMap[topic]||[];
+      if(!kids.length){chains.push(ext);return;}
+      kids.forEach(k=>walk(k,ext));
+    }
+    filtered.filter(l=>!hasParent.has(l.topic)).forEach(r=>walk(r.topic,[]));
+    storylines=chains.filter(c=>c.length>1);
+    const inChain=new Set(storylines.flat());
+    orphans=filtered.filter(l=>!inChain.has(l.topic));
   }
-  filtered.filter(l=>!hasParent.has(l.topic)).forEach(r=>walk(r.topic,[]));
-  const storylines=chains.filter(c=>c.length>1);
-  const inChain=new Set(storylines.flat());
-  const orphans=filtered.filter(l=>!inChain.has(l.topic));
 
-  function itemHtml(s, connector) {
-    const enc=encTopic(s.topic);
-    const d=s.difficulty||2;
-    const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
-    const diffBadge='<span class="diff-dot d'+d+'" title="'+diff+'"></span>';
-    const ratingStr=s.ratings
-      ? ' · '+(['🔵','🟡','🔴'][s.ratings.difficulty-1]||'')+' '+(['😐','😊','😄'][s.ratings.fun-1]||'')
-      : '';
-    const count=s.lessons?s.lessons.length:0;
-    const dateStr=s.updatedAt||s.generatedAt;
-    const date=dateStr?new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
-    const conn=connector?'<span class="storyline-connector">↩</span>':'';
-    const escapedTopic=s.topic.replace(/"/g,'&quot;');
-    const escapedTopicSq=s.topic.replace(/'/g,"\\'");
-    const sid='si-'+enc.replace(/[^a-z0-9]/gi,'').slice(0,20)+Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-    const tL=LANGS[s.lang||'it']||LANGS.it;
-    const srcL=LANGS[s.srcLang||'en']||{flag:'🇬🇧',name:'English'};
-    return \`<div class="saved-item-wrap">
-      <div class="saved-item" onclick="loadSaved('\${enc}')">
-        \${conn}<span class="saved-emoji"> \${s.topicEmoji||'📚'}</span>
-        <div class="saved-info">
-          <div class="saved-topic">\${s.topic} \${diffBadge}</div>
-          <div class="saved-meta"><span class=\"lang-pair-badge\" title=\"\${srcL.name} → \${tL.name}\">\${srcL.flag}→\${tL.flag}</span> \${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
-        </div>
-        <div class="saved-actions" onclick="event.stopPropagation()">
-          <button class="ico-btn export" title="Export lesson with flags"
-            data-topic="\${escapedTopic}"
-            onclick="exportTopics([this.dataset.topic])">⬇</button>
-        </div>
-      </div>
-      <div class="saved-item-story">
-        <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('\${sid}','\${escapedTopicSq}')">
-          \${t('lesson.read_story_short')} <span id="sis-arrow-\${sid}" style="margin-left:auto;font-size:10px">▼</span>
-        </button>
-        <div class="saved-item-story-body" id="sis-body-\${sid}"></div>
-      </div>
-    </div>\`;
-  }
+
 
   const newestOf=chain=>chain.reduce((b,t)=>{const d=byTopic[t]?.updatedAt||byTopic[t]?.generatedAt||'';return d>b?d:b;},'');
   storylines.sort((a,b)=>newestOf(b).localeCompare(newestOf(a)));
@@ -327,7 +373,10 @@ async function loadSavedList() {
     return la.localeCompare(lb) || newestOf(b).localeCompare(newestOf(a));
   });
 
-  const slTitles = (typeof APP !== 'undefined' && APP.storylines) || STATIC_STORYLINES || {};
+  const _slArr2=Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[];
+  const slTitles=_slArr2.length
+    ? Object.fromEntries(_slArr2.map(sl=>[sl.id,sl]))
+    : (STATIC_STORYLINES||{});
   let html='', _lastLang=null;
   for(const chain of storylines){
     if(showAllLangs){
@@ -341,8 +390,15 @@ async function loadSavedList() {
     const chainTopics=chain.map(t=>byTopic[t]?.topic).filter(Boolean);
     const chainTopicsJson=JSON.stringify(chainTopics);
     const chainEncoded=encodeURIComponent(chainTopicsJson);
-    const chainId='c'+Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-    const slMeta=slTitles[chainId]||slTitles['root:'+chainTopics[0]]||null;
+    const legacyChainId='c'+Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+    // v29: find storyline by matching chain topics via id; legacy: by hash
+    const matchSl2=_slArr2.find(sl=>{
+      const slt=(sl.chapters||[]).map(cid=>byId[cid]?.topic||null).filter(Boolean);
+      return slt.length&&slt.every((t,i)=>t===chainTopics[i])&&slt.length===chainTopics.length;
+    });
+    const resolvedSlId=matchSl2?.id||legacyChainId;
+    const chainId=resolvedSlId;
+    const slMeta=matchSl2||slTitles[chainId]||slTitles['root:'+chainTopics[0]]||null;
     const hasTitle=!!(slMeta&&slMeta.title);
     const titleIcon=slMeta?.icon||'📖';
     const titleText=slMeta?.title||'';
@@ -351,21 +407,19 @@ async function loadSavedList() {
     const chainNewest=newestOf(chain);
     const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
     const hdrTitle=hasTitle
-      ? '<span class="storyline-title" style="cursor:pointer" onclick="event.stopPropagation();toggleStorylineCards(&apos;'+chainId+'&apos;)"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
-      : '<span class="storyline-title">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' lesson'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
+      ? '<span class="storyline-title" style="cursor:pointer;flex:1"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
+      : '<span class="storyline-title" style="flex:1">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
-    html+='<div class="storyline-hdr" id="slhdr-'+chainId+'">'+hdrTitle
-      +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px;margin-left:auto" title="Export full story line with flags"'
+    html+='<div class="storyline-hdr" id="slhdr-'+chainId+'"'
+      +' data-chain-id="'+chainId+'" data-chain="'+chainEncoded+'"'
+      +' style="cursor:pointer" onclick="openStorylineScreen(this.dataset.chainId,this.dataset.chain)">'+hdrTitle
+      +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px" title="Export full story line"'
       +' data-chain="'+chainEncoded+'"'
       +' onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>'
+      +'<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="Share storyline link"'
+      +' data-chain-id="'+chainId+'"'
+      +' onclick="event.stopPropagation();shareStorylineById(this.dataset.chainId)">🔗</button>'
       +'</div>';
-    html+='<div class="storyline-cards'+(hasTitle?' collapsed':'')+'" id="slcards-'+chainId+'">';
-    chain.forEach((topic,i)=>{
-      const s=byTopic[topic]; if(!s)return;
-      html+='<div class="storyline-item">'+itemHtml(s,i>0)+'</div>';
-    });
-    html+='</div>';
-        html+='<div class="storyline-story"><button class="storyline-story-hdr" onclick="toggleChainStory(&apos;'+chainId+'&apos;)">📖 Read full story<span class="storyline-story-arrow" id="csarrow-'+chainId+'">▼</span></button><div class="storyline-story-body" id="csbody-'+chainId+'" data-chain="'+chainEncoded+'"></div></div>';
     html+='</div>';
   }
   if(orphans.length){
@@ -383,8 +437,8 @@ async function loadSavedList() {
     }
   }
   list.innerHTML=html||'<div class="lib-empty">No lessons available.</div>';
-}
   repopulateContinueSelect();
+}
 
 function setLibFilter(lang){
   if(lang==='all'){ APP.libFilter='all'; APP.libSrcFilter='all'; }
@@ -570,7 +624,7 @@ console.log('');
 console.log('✅  Static build complete');
 console.log(`    Source    : ${sourceHtml}`);
 console.log(`    Lessons   : ${lessonsFile} (${topicCount} topic${topicCount!==1?'s':''})`);
-console.log(`    Flagged   : ${removedCount} topic${removedCount!==1?'s':''} with flags excluded from static build`);
+console.log(`    Flagged   : ${removedCount} flagged exercise${removedCount!==1?'s':''} stripped from baked lessons`);
 console.log(`    Output    : ${outputFile}`);
 console.log(`    Size      : ${(fs.statSync(outputFile).size/1024).toFixed(1)} KB`);
 console.log('');
