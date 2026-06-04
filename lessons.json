@@ -2,6 +2,37 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1590454605",
+      "title": "Das kleine Ich bin ich",
+      "icon": "📖",
+      "chapters": [
+        "tp_131653303",
+        "tp_579238210",
+        "tp_2088453173",
+        "tp_799905727",
+        "tp_103972811"
+      ],
+      "lang": "en",
+      "srcLang": "de",
+      "createdAt": "2026-06-04T20:35:36.097Z",
+      "updatedAt": "2026-06-04T20:35:36.097Z"
+    },
+    {
+      "id": "sl_1442641040",
+      "title": "Das kleine Ich bin ich",
+      "icon": "📖",
+      "chapters": [
+        "tp_131653303",
+        "tp_579238210",
+        "tp_2088453173",
+        "tp_799905727"
+      ],
+      "lang": "en",
+      "srcLang": "de",
+      "createdAt": "2026-06-04T20:00:09.607Z",
+      "updatedAt": "2026-06-04T20:00:09.607Z"
+    },
+    {
       "id": "sl_887116336",
       "title": "Das kleine Ich bin ich",
       "icon": "📖",
@@ -15,18 +46,6 @@
       "createdAt": "2026-06-03T09:53:02.202Z",
       "updatedAt": "2026-06-03T12:15:12.965Z",
       "summary": "Das Wesen, ein farbenfrohes Geschöpf mit langen Ohren, beginnt eine Reise, um seine Identität zu finden, nachdem es von einem Frosch gefragt wird, wer es ist. Es trifft verschiedene Tiere und Zahlen, die es anhand ihrer Persönlichkeiten näher heranbringen, aber es findet immer noch keine vollständige Identität. Schließlich befreundet es sich mit den Buchstaben von A bis Z, was es daran erinnert, dass es in seiner Einzigartigkeit geliebt wird, unabhängig von seiner genauen Klassifizierung."
-    },
-    {
-      "id": "sl_1834202256",
-      "title": "Das kleine Ich bin ich",
-      "icon": "📖",
-      "chapters": [
-        "tp_131653303"
-      ],
-      "lang": "en",
-      "srcLang": "de",
-      "createdAt": "2026-06-03T08:54:37.678Z",
-      "updatedAt": "2026-06-03T08:54:37.678Z"
     },
     {
       "id": "sl_1117742356",
@@ -661,6 +680,481 @@
     }
   ],
   "topics": [
+    {
+      "topic": "Zahlen zusammenzählen und voneinander subtrahieren",
+      "topicEmoji": "➕➖",
+      "userTopic": "Dann entdeckten sie das man Zahlen zusammen zaehlen kann (addieren), aber auch voneinander abziehen (subtrahieren). Nur bei 0 ging das nicht!",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 700,
+      "story": "The numbers and letters continued their gathering, their circle growing larger. Dann entdeckten sie das man Zahlen zusammen zählen kann (addieren), aber auch voneinander abziehen (subtrahieren). Nur bei 0 ging das nicht!\n\n0 felt a twinge of worry. \"What if I can't do subtraction?\" it asked, its voice barely above a whisper.\n\n1, noticing 0's concern, stepped forward. \"Hey, 0, you can do anything. Remember, you're not just a number. You're part of us all.\"\n\n2 nodded in agreement. \"And we can help you. We'll figure it out together.\"\n\nThe numbers and letters began to discuss the new challenge. \"Maybe we can find a way to make 0 work,\" suggested 3. \"After all, we're all different, and that's what makes us strong.\"\n\n0 felt a bit better. \"But what if I'm the only one who can't do subtraction?\" it asked, looking around at its friends.\n\n2 put a comforting hand on 0's shoulder. \"You're not the only one. We all have our strengths and weaknesses. And that's okay.\"\n\nThe group decided to test the idea. They started with simple addition and subtraction problems, including 0 in every equation. 1 and 2 worked together, showing 0 how to handle the subtraction problems. 3 and 4 helped with more complex equations, making sure 0 understood each step.\n\n0 tried its best, but it was still struggling. \"I don't understand,\" it said, feeling frustrated. \"Why can't I do this?\"\n\n1 and 2 looked at each other, then back at 0. \"Because you're special,\" 1 said gently. \"You're 0, and that's okay. You don't have to be like everyone else.\"\n\n2 nodded. \"And we'll always be here to help you. We're a team, and we help each other out.\"\n\nThe numbers and letters continued their practice, and 0 slowly began to grasp the concept. It was a slow process, but 0 felt a sense of accomplishment each time it solved a problem.\n\nOne day, 0 looked around at its friends. \"I think I'm starting to get it,\" it said, a small smile on its face.\n\n1 and 2 beamed with pride. \"We knew you could do it,\" 1 said.\n\n2 added, \"And we're here for you, no matter what.\"\n\nThe group continued to work together, solving problems and sharing their knowledge. 0 realized that it didn't need to be perfect. It just needed to be 0, and that was enough.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 7-8 paragraphs, under 700 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nre if I should share it.\"\n\ni looked at 0 with a gentle smile. \"You can share it with me. I promise I won't judge.\"\n\n0 hesitated, then said, \"I think I might be a 1. But I'm not sure. I feel like I'm always trying to be the best, but I'm not sure if that's who I am.\"\n\n1's face softened. \"You're not the best,\" it said. \"You're just you. And that's okay.\"\n\n2 nodded. \"Yeah, and you're not a 1. You're 0. And that's okay too.\"\n\nThe creature felt a warm glow. \"Maybe,\" it said, \"we can all help each other figure out who we are.\"\n\nThe numbers and the letters gathered around, forming a circle. They talked and laughed, sharing their thoughts and feelings. The creature realized that it didn't need to fit into just one category. It could be a number, a letter, or anything in between. And that was okay.\n\nNew topic: \"Dann entdeckten sie das man Zahlen zusammen zaehlen kann (addieren), aber auch voneinander abziehen (subtrahieren). Nur bei 0 ging das nicht!\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Philosophie der Zahlen",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Zahlen addieren und subtrahieren",
+          "desc": "Addieren und Subtrahieren lernen",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "add",
+              "source": "zusammenzählen"
+            },
+            {
+              "target": "subtract",
+              "source": "voneinander abziehen"
+            },
+            {
+              "target": "number",
+              "source": "Zahl"
+            },
+            {
+              "target": "can't",
+              "source": "kann nicht"
+            },
+            {
+              "target": "together",
+              "source": "zusammen"
+            },
+            {
+              "target": "figure out",
+              "source": "ausfindig machen"
+            },
+            {
+              "target": "challenge",
+              "source": "Herausforderung"
+            },
+            {
+              "target": "work",
+              "source": "tun"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "We can add numbers together easily.",
+              "source": "Wir können Zahlen einfach zusammenzählen.",
+              "words": [
+                "We",
+                "can",
+                "add",
+                "numbers",
+                "together",
+                "easily."
+              ]
+            },
+            {
+              "target": "But what about subtracting?",
+              "source": "Aber was ist mit Subtrahieren?",
+              "words": [
+                "But",
+                "what",
+                "about",
+                "subtracting?"
+              ]
+            },
+            {
+              "target": "Let's figure out a way to help 0.",
+              "source": "Lass uns einen Weg finden, um 0 zu helfen.",
+              "words": [
+                "Let's",
+                "figure",
+                "out",
+                "a",
+                "way",
+                "to",
+                "help",
+                "0."
+              ]
+            },
+            {
+              "target": "Together, we can solve any challenge.",
+              "source": "Zusammen können wir jede Herausforderung lösen.",
+              "words": [
+                "Together,",
+                "we",
+                "can",
+                "solve",
+                "any",
+                "challenge."
+              ]
+            },
+            {
+              "target": "Subtracting is just another skill to learn.",
+              "source": "Subtrahieren ist einfach nur eine neue Fähigkeit, die man lernen kann.",
+              "words": [
+                "Subtracting",
+                "is",
+                "just",
+                "another",
+                "skill",
+                "to",
+                "learn."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 694555,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1580,
+        "totalCompletionTokens": 898,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 315689,
+            "promptTokens": 911,
+            "completionTokens": 300
+          }
+        ]
+      },
+      "generatedAt": "2026-06-04T20:35:36.041Z",
+      "updatedAt": "2026-06-04T20:35:36.070Z",
+      "id": "tp_103972811"
+    },
+    {
+      "topic": "Philosophie der Zahlen",
+      "topicEmoji": "🔢",
+      "userTopic": "Es erinnerte sich an das kleine i, und ging zurueck zu den Zahlen, um weiter mit dem i zu philosophieren. Beide wussten noch immer nicht wer sie sind. Die 0 war lustig, aber etwas tollpatschig, und hatte ein Geheimnis. 1 war gemein und glaubte ueberall der beste zu sein, aber mutig.  2 war nicht leicht in eine Schublade zu stecken.",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 700,
+      "story": "The creature remembered the small i, and went back to the numbers to philosophize further with it. Both still didn't know who they were. The 0 was funny but clumsy, and had a secret. 1 was mean and thought it was the best everywhere, but was brave. 2 was hard to fit into any category.\n\n\"Hey, i,\" said 1, \"what are you doing here? You're not a number, are you?\"\n\n\"I'm not sure,\" said i, looking at 1 with a curious expression. \"But I feel like I can be anything I want.\"\n\n1 snorted. \"Anything? You? Ha! You're just a tiny dot. You can't be anything.\"\n\n2, who had been listening, stepped forward. \"Hey, 1, stop being so mean. i has a right to explore who it is.\"\n\n1 glared at 2. \"And who are you to tell me what to do? You're just a 2, after all.\"\n\n2 shrugged. \"I might be a 2, but I'm not a bully. And I think i has a right to figure things out.\"\n\nThe creature watched the exchange with interest. \"Maybe,\" it said, \"we can all help i figure things out.\"\n\n0, who had been quiet, spoke up. \"I have a secret,\" it said, \"but I'm not sure if I should share it.\"\n\ni looked at 0 with a gentle smile. \"You can share it with me. I promise I won't judge.\"\n\n0 hesitated, then said, \"I think I might be a 1. But I'm not sure. I feel like I'm always trying to be the best, but I'm not sure if that's who I am.\"\n\n1's face softened. \"You're not the best,\" it said. \"You're just you. And that's okay.\"\n\n2 nodded. \"Yeah, and you're not a 1. You're 0. And that's okay too.\"\n\nThe creature felt a warm glow. \"Maybe,\" it said, \"we can all help each other figure out who we are.\"\n\nThe numbers and the letters gathered around, forming a circle. They talked and laughed, sharing their thoughts and feelings. The creature realized that it didn't need to fit into just one category. It could be a number, a letter, or anything in between. And that was okay.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 7-8 paragraphs, under 700 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\ns.\"\n\nThe letters smiled. \"You can do anything you set your mind to,\" said M, the middle letter. \"Just like you can be anything you want to be.\"\n\nThe creature tried writing its own name, using the letters it had learned. It felt a rush of pride as it saw the letters come together to form \"Creature.\"\n\nThe numbers and the letters gathered around to admire the creature's work. \"It's beautiful,\" said the numbers. \"You did it!\"\n\nThe creature felt a warm glow. \"Thank you,\" it said. \"I never thought I could do something like this.\"\n\nAs the sun set, the creature and the letters danced under the stars, celebrating the joy of creation and self-expression. The creature realized that it didn't need to fit into just one category. It could be a number, a letter, or anything in between. And that was okay.\n\nNew topic: \"Es erinnerte sich an das kleine i, und ging zurueck zu den Zahlen, um weiter mit dem i zu philosophieren. Beide wussten noch immer nicht wer sie sind. Die 0 war lustig, aber etwas tollpatschig, und hatte ein Geheimnis. 1 war gemein und glaubte ueberall der beste zu sein, aber mutig.  2 war nicht leicht in eine Schublade zu stecken.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Von A bis Z",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "i und die Zahlen",
+          "desc": "i und die Zahlen sprechen miteinander",
+          "icon": "💬",
+          "vocab": [
+            {
+              "target": "remembered",
+              "source": "erinnerte sich"
+            },
+            {
+              "target": "philosophize",
+              "source": "philosophieren"
+            },
+            {
+              "target": "curious",
+              "source": "neugierig"
+            },
+            {
+              "target": "mean",
+              "source": "gemein"
+            },
+            {
+              "target": "brave",
+              "source": "mutig"
+            },
+            {
+              "target": "shrugged",
+              "source": "zuckte mit den Schultern"
+            },
+            {
+              "target": "bully",
+              "source": "Bully"
+            },
+            {
+              "target": "explore",
+              "source": "erkunden"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "i remembered the small i and went back to the numbers.",
+              "source": "i erinnerte sich an das kleine i und ging zurueck zu den Zahlen.",
+              "words": [
+                "i",
+                "remembered",
+                "the",
+                "small",
+                "i",
+                "and",
+                "went",
+                "back",
+                "to",
+                "the",
+                "numbers."
+              ]
+            },
+            {
+              "target": "1 was mean and thought it was the best everywhere.",
+              "source": "1 war gemein und glaubte ueberall der beste zu sein.",
+              "words": [
+                "1",
+                "was",
+                "mean",
+                "and",
+                "thought",
+                "it",
+                "was",
+                "the",
+                "best",
+                "everywhere."
+              ]
+            },
+            {
+              "target": "2 was hard to fit into any category.",
+              "source": "2 war nicht leicht in eine Schublade zu stecken.",
+              "words": [
+                "2",
+                "was",
+                "hard",
+                "to",
+                "fit",
+                "into",
+                "any",
+                "category."
+              ]
+            },
+            {
+              "target": "i looked at 1 with a curious expression.",
+              "source": "i sah 1 neugierig an.",
+              "words": [
+                "i",
+                "looked",
+                "at",
+                "1",
+                "with",
+                "a",
+                "curious",
+                "expression."
+              ]
+            },
+            {
+              "target": "2 stepped forward and said something to 1.",
+              "source": "2 trat vor und sagte etwas zu 1.",
+              "words": [
+                "2",
+                "stepped",
+                "forward",
+                "and",
+                "said",
+                "something",
+                "to",
+                "1."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1780604030829",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "The creature rembered the small i, and went back to the numbers to philosphize further with it, Both still didn't know who they wer. The 0 was funny but clumsy, and had a secret. 1 was mean and thought it was the best everywhere, but was brave. 2 was hard to fit into any category.\n\n\"Hey, i,\" said 1, \"what are you doing here? You're not a number, are you?\"\n\n\"I'm not sure,\" said i, looking at 1 with a curious expression. \"But I feel like I can be anything I want.\"\n\n1 snort. \"Anything? You? Ha! You're just a tiny dot. You can't be anything.\"\n\n2, who had been listening, stepped forward. \"Hey, 1, stop being so mean. i has a right to explor'e who it is.\"\n\n1 glared at 2. \"And who are you to tell me what to do? You're just a 2, after all.\"\n\n2 shrugged. \"I might be a 2, but I'm not a bully. And I think i has a right to figure things out.\"\n\nThe creature watched the exchange with interest. \"Maybe,\" it said, \"we can all help i figure things out.\"\n\n0, who had been quiet, spoke up. \"I have a secret,\" it said, \"but I'm not sure if I should share it.\"\n\ni looked at 0 with a gentle smile. \"You can share it with me. I promise I won't judge.\"\n\n0 hesitated, then said, \"I think I might be a 1. But I'm not sure. I feel like I'm always trying to be the best, but I'm not sure if that's who I am.\"\n\n1's face softened. \"You're not the best,\" it said. \"You're just you. And that's okay.\"\n\n2 nodded. \"Yeah, and you're not a 1. You're 0. And that's okay too.\"\n\nThe creature felt a warm glow. \"Maybe,\" it said, \"we can all help each other figure out who we are.\"\n\nThe numbers and the letters gathered around, forming a circle. They talked and laughed, sharing their thoughts and feelings. The creature realized that it didn't need to fit into just one category. It could be a number, a letter, or anything in between. And that was okay.",
+          "edits": [
+            {
+              "type": "spelling",
+              "find": "remembered",
+              "replace": "rembered",
+              "reason": "common misspelling of 'remembered'"
+            },
+            {
+              "type": "grammar",
+              "find": "with it.",
+              "replace": "with it,",
+              "reason": "missing comma after introductory phrase"
+            },
+            {
+              "type": "spelling",
+              "find": "philosophize",
+              "replace": "philosphize",
+              "reason": "common misspelling of 'philosophize'"
+            },
+            {
+              "type": "grammar",
+              "find": "Both still didn't know who they were.",
+              "replace": "Both still didn't know who they wer.",
+              "reason": "missing 'e' in 'were'"
+            },
+            {
+              "type": "grammar",
+              "find": "1 snorted.",
+              "replace": "1 snort.",
+              "reason": "wrong verb ending for plural subject"
+            },
+            {
+              "type": "spelling",
+              "find": "explor",
+              "replace": "explor'",
+              "reason": "wrong accent on 'o' in 'explorer'"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 684005,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1743,
+        "totalCompletionTokens": 837,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 331963,
+            "promptTokens": 998,
+            "completionTokens": 312
+          }
+        ]
+      },
+      "generatedAt": "2026-06-04T20:00:09.553Z",
+      "updatedAt": "2026-06-04T20:13:50.830Z",
+      "id": "tp_799905727"
+    },
+    {
+      "topic": "Das Ich trifft das  i=√(-1)",
+      "topicEmoji": "🔢",
+      "userTopic": "the creature meets the numbers, form 0 to 9, and it also meets the little i=sqrt(-1), which feels similar, and doesn't know where it belongs within the realm of numbers and equations",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 550,
+      "story": "The creature, now feeling more at peace with itself, continued its journey through the meadow. Suddenly, it stumbled upon a group of numbers, each one standing tall and proud. Zero, one, two, three, four, five, six, seven, eight, and nine. Each number had a distinct personality, but none seemed to fit the creature quite right.\n\n\"Hello there,\" Zero said, its round shape making it look like a friendly, cuddly ball. \"Are you lost?\"\n\nThe creature shook its head. \"No, but I feel like I don't belong here. I'm not a number, and yet, I'm not like the little i either.\"\n\nThe numbers looked at each other, intrigued. \"What do you mean?\" asked Five, with a curious tilt of its head.\n\n\"I'm not a whole number,\" the creature explained. \"I'm not even a fraction. And little i, over there, feels like it's part of something bigger, but I don't know where I fit in.\"\n\nLittle i, a spark of light with a tail, nodded. \"I know what you mean. I'm the square root of minus one, but I'm not a real number. I'm a bit of a mystery.\"\n\nThe creature felt a pang of understanding. \"That's how I feel. I'm not just a creature, but I'm not a number either.\"\n\nZero stepped closer, its voice soft and kind. \"Why don't you join us? We can all be friends.\"\n\nThe creature hesitated, then nodded. \"Okay. I'll stay and see what happens.\"\n\nThe numbers welcomed the creature with open arms. They showed it how to play games, how to count, and even how to dance in the meadow. Little i introduced the creature to the world of complex numbers, where it could explore and discover new things.\n\nAs the sun began to set, the creature felt a sense of belonging. \"Maybe,\" it thought, \"I don't need to fit into one category. I can be myself, and that's enough.\"\n\nThe numbers and the creature danced under the stars, celebrating the unique journey of self-discovery.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 550 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nThe trigger: a small, colourful creature with long ears and a floral pattern is happily hopping across a meadow. Suddenly, a tree frog asks: “Who are you?” As the creature doesn’t know its name, it begins to doubt itself. \n\nThe search: The creature sets off on a journey to find out who it belongs to. It meets many different animals – including horses, birds, dogs and fish. Although it discovers certain similarities with each animal, it is not 100 per cent like any of them. \n\nThe realisation: Sad and exhausted, the creature finally wonders whether it exists at all. But then it stops abruptly, reflects on itself and cries out loudly: “Of course I exist: I AM ME!” It accepts and loves itself exactly as it is.\n\nNew topic: \"the creature meets the numbers, form 0 to 9, and it also meets the little i=sqrt(-1), which feels similar, and doesn't know where it belongs within the realm of numbers and equations\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Das kleine Ich bin ich",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Die Zahlen und das Wesen",
+          "desc": "Zahlen 0 bis 9 und das imaginäre i",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "creature",
+              "source": "Wesen"
+            },
+            {
+              "target": "journey",
+              "source": "Reise"
+            },
+            {
+              "target": "meadow",
+              "source": "Wiese"
+            },
+            {
+              "target": "numbers",
+              "source": "Zahlen"
+            },
+            {
+              "target": "personality",
+              "source": "Persönlichkeit"
+            },
+            {
+              "target": "belong",
+              "source": "gehören"
+            },
+            {
+              "target": "whole number",
+              "source": "ganze Zahl"
+            },
+            {
+              "target": "fraction",
+              "source": "Bruch"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The creature continued its journey.",
+              "source": "Das Wesen fuhr fort mit seiner Reise.",
+              "words": [
+                "The",
+                "creature",
+                "continued",
+                "its",
+                "journey."
+              ]
+            },
+            {
+              "target": "Zero looked like a friendly ball.",
+              "source": "Null sah aus wie ein freundlicher Ball.",
+              "words": [
+                "Zero",
+                "looked",
+                "like",
+                "a",
+                "friendly",
+                "ball."
+              ]
+            },
+            {
+              "target": "Five tilted its head curiously.",
+              "source": "Fünf neigte neugierig den Kopf.",
+              "words": [
+                "Five",
+                "tilted",
+                "its",
+                "head",
+                "curiously."
+              ]
+            },
+            {
+              "target": "The creature is not a whole number.",
+              "source": "Das Wesen ist keine ganze Zahl.",
+              "words": [
+                "The",
+                "creature",
+                "is",
+                "not",
+                "a",
+                "whole",
+                "number."
+              ]
+            },
+            {
+              "target": "Little i feels like it's part of the group.",
+              "source": "Das kleine i fühlt sich wie Teil der Gruppe an.",
+              "words": [
+                "Little",
+                "i",
+                "feels",
+                "like",
+                "it's",
+                "part",
+                "of",
+                "the",
+                "group."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 503581,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1302,
+        "totalCompletionTokens": 751,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 232540,
+            "promptTokens": 750,
+            "completionTokens": 277
+          }
+        ]
+      },
+      "generatedAt": "2026-06-03T09:38:48.158Z",
+      "updatedAt": "2026-06-03T09:38:48.182Z",
+      "id": "tp_579238210"
+    },
     {
       "topic": "Giulia e il circo",
       "topicEmoji": "🎭",
@@ -1307,7 +1801,8 @@
         "completionTokens": 331
       },
       "updatedAt": "2026-06-02T18:16:20.835Z",
-      "id": "tp_1969682542"
+      "id": "tp_1969682542",
+      "srcLang": "en"
     },
     {
       "topic": "Hospital Stew",
@@ -1738,7 +2233,8 @@
         "fun": 2,
         "coherence": 3
       },
-      "id": "tp_765779612"
+      "id": "tp_765779612",
+      "srcLang": "en"
     },
     {
       "topic": "Neurons Awaken",
@@ -2120,7 +2616,8 @@
       },
       "generatedAt": "2026-05-03T12:43:35.826Z",
       "updatedAt": "2026-05-05T09:53:54.249Z",
-      "id": "tp_1982827897"
+      "id": "tp_1982827897",
+      "srcLang": "en"
     },
     {
       "topic": "Brain-Fungus Nightfall",
@@ -2605,7 +3102,8 @@
         "promptTokens": 1891,
         "completionTokens": 364
       },
-      "id": "tp_1069055789"
+      "id": "tp_1069055789",
+      "srcLang": "en"
     },
     {
       "topic": "Nightmare Transformation",
@@ -2977,7 +3475,8 @@
         "promptTokens": 848,
         "completionTokens": 157
       },
-      "id": "tp_1357033616"
+      "id": "tp_1357033616",
+      "srcLang": "en"
     },
     {
       "topic": "Zombie Fungus",
@@ -3383,7 +3882,8 @@
         "promptTokens": 834,
         "completionTokens": 118
       },
-      "id": "tp_523771923"
+      "id": "tp_523771923",
+      "srcLang": "en"
     },
     {
       "topic": "Minds Altered",
@@ -3748,7 +4248,8 @@
       },
       "generatedAt": "2026-05-03T12:16:14.586Z",
       "updatedAt": "2026-05-05T09:53:54.252Z",
-      "id": "tp_1200787362"
+      "id": "tp_1200787362",
+      "srcLang": "en"
     },
     {
       "topic": "Von A bis Z",
@@ -3855,145 +4356,6 @@
       "generatedAt": "2026-06-03T09:53:02.146Z",
       "updatedAt": "2026-06-03T09:53:02.177Z",
       "id": "tp_2088453173"
-    },
-    {
-      "topic": "Das Ich trifft das  i=√(-1)",
-      "topicEmoji": "🧟‍♂️🔢",
-      "userTopic": "the creature meets the numbers, form 0 to 9, and it also meets the little i=sqrt(-1), which feels similar, and doesn't know where it belongs within the realm of numbers and equations",
-      "lang": "en",
-      "srcLang": "de",
-      "difficulty": 2,
-      "storyLen": 550,
-      "story": "The creature, now feeling more at peace with itself, continued its journey through the meadow. Suddenly, it stumbled upon a group of numbers, each one standing tall and proud. Zero, one, two, three, four, five, six, seven, eight, and nine. Each number had a distinct personality, but none seemed to fit the creature quite right.\n\n\"Hello there,\" Zero said, its round shape making it look like a friendly, cuddly ball. \"Are you lost?\"\n\nThe creature shook its head. \"No, but I feel like I don't belong here. I'm not a number, and yet, I'm not like the little i either.\"\n\nThe numbers looked at each other, intrigued. \"What do you mean?\" asked Five, with a curious tilt of its head.\n\n\"I'm not a whole number,\" the creature explained. \"I'm not even a fraction. And little i, over there, feels like it's part of something bigger, but I don't know where I fit in.\"\n\nLittle i, a spark of light with a tail, nodded. \"I know what you mean. I'm the square root of minus one, but I'm not a real number. I'm a bit of a mystery.\"\n\nThe creature felt a pang of understanding. \"That's how I feel. I'm not just a creature, but I'm not a number either.\"\n\nZero stepped closer, its voice soft and kind. \"Why don't you join us? We can all be friends.\"\n\nThe creature hesitated, then nodded. \"Okay. I'll stay and see what happens.\"\n\nThe numbers welcomed the creature with open arms. They showed it how to play games, how to count, and even how to dance in the meadow. Little i introduced the creature to the world of complex numbers, where it could explore and discover new things.\n\nAs the sun began to set, the creature felt a sense of belonging. \"Maybe,\" it thought, \"I don't need to fit into one category. I can be myself, and that's enough.\"\n\nThe numbers and the creature danced under the stars, celebrating the unique journey of self-discovery.",
-      "storyLang": "en",
-      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 550 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nThe trigger: a small, colourful creature with long ears and a floral pattern is happily hopping across a meadow. Suddenly, a tree frog asks: “Who are you?” As the creature doesn’t know its name, it begins to doubt itself. \n\nThe search: The creature sets off on a journey to find out who it belongs to. It meets many different animals – including horses, birds, dogs and fish. Although it discovers certain similarities with each animal, it is not 100 per cent like any of them. \n\nThe realisation: Sad and exhausted, the creature finally wonders whether it exists at all. But then it stops abruptly, reflects on itself and cries out loudly: “Of course I exist: I AM ME!” It accepts and loves itself exactly as it is.\n\nNew topic: \"the creature meets the numbers, form 0 to 9, and it also meets the little i=sqrt(-1), which feels similar, and doesn't know where it belongs within the realm of numbers and equations\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "Das kleine Ich bin ich",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Die Zahlen und das Wesen",
-          "desc": "Zahlen 0 bis 9 und das imaginäre i",
-          "icon": "🔢",
-          "vocab": [
-            {
-              "target": "creature",
-              "source": "Wesen"
-            },
-            {
-              "target": "journey",
-              "source": "Reise"
-            },
-            {
-              "target": "meadow",
-              "source": "Wiese"
-            },
-            {
-              "target": "numbers",
-              "source": "Zahlen"
-            },
-            {
-              "target": "personality",
-              "source": "Persönlichkeit"
-            },
-            {
-              "target": "belong",
-              "source": "gehören"
-            },
-            {
-              "target": "whole number",
-              "source": "ganze Zahl"
-            },
-            {
-              "target": "fraction",
-              "source": "Bruch"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The creature continued its journey.",
-              "source": "Das Wesen fuhr fort mit seiner Reise.",
-              "words": [
-                "The",
-                "creature",
-                "continued",
-                "its",
-                "journey."
-              ]
-            },
-            {
-              "target": "Zero looked like a friendly ball.",
-              "source": "Null sah aus wie ein freundlicher Ball.",
-              "words": [
-                "Zero",
-                "looked",
-                "like",
-                "a",
-                "friendly",
-                "ball."
-              ]
-            },
-            {
-              "target": "Five tilted its head curiously.",
-              "source": "Fünf neigte neugierig den Kopf.",
-              "words": [
-                "Five",
-                "tilted",
-                "its",
-                "head",
-                "curiously."
-              ]
-            },
-            {
-              "target": "The creature is not a whole number.",
-              "source": "Das Wesen ist keine ganze Zahl.",
-              "words": [
-                "The",
-                "creature",
-                "is",
-                "not",
-                "a",
-                "whole",
-                "number."
-              ]
-            },
-            {
-              "target": "Little i feels like it's part of the group.",
-              "source": "Das kleine i fühlt sich wie Teil der Gruppe an.",
-              "words": [
-                "Little",
-                "i",
-                "feels",
-                "like",
-                "it's",
-                "part",
-                "of",
-                "the",
-                "group."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 503581,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 1302,
-        "totalCompletionTokens": 751,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 232540,
-            "promptTokens": 750,
-            "completionTokens": 277
-          }
-        ]
-      },
-      "generatedAt": "2026-06-03T09:38:48.158Z",
-      "updatedAt": "2026-06-03T09:38:48.182Z",
-      "id": "tp_579238210"
     },
     {
       "topic": "Das kleine Ich bin ich",
@@ -16081,7 +16443,8 @@
       },
       "generatedAt": "2026-05-21T13:17:12.545Z",
       "updatedAt": "2026-05-21T13:17:12.545Z",
-      "id": "tp_1175406690"
+      "id": "tp_1175406690",
+      "srcLang": "en"
     },
     {
       "topic": "Yeast Growth Variations",
@@ -16463,7 +16826,8 @@
       },
       "generatedAt": "2026-05-21T13:00:29.089Z",
       "updatedAt": "2026-05-21T13:00:29.089Z",
-      "id": "tp_812845297"
+      "id": "tp_812845297",
+      "srcLang": "en"
     },
     {
       "topic": "Helicopter Rescue",
@@ -16861,7 +17225,8 @@
       },
       "generatedAt": "2026-05-20T11:56:01.440Z",
       "updatedAt": "2026-05-20T11:56:01.440Z",
-      "id": "tp_562454020"
+      "id": "tp_562454020",
+      "srcLang": "en"
     },
     {
       "topic": "Disaster Rescue",
@@ -16914,7 +17279,8 @@
       },
       "generatedAt": "2026-05-20T10:58:24.106Z",
       "updatedAt": "2026-05-20T10:58:24.106Z",
-      "id": "tp_2026435662"
+      "id": "tp_2026435662",
+      "srcLang": "en"
     },
     {
       "topic": "Alto Adige Cafe History",
@@ -16984,7 +17350,8 @@
         "fun": 2,
         "coherence": 1
       },
-      "id": "tp_1180776921"
+      "id": "tp_1180776921",
+      "srcLang": "en"
     },
     {
       "topic": "Agriturismo in Tuscany",
@@ -17043,7 +17410,8 @@
       },
       "generatedAt": "2026-05-19T12:14:06.032Z",
       "updatedAt": "2026-05-19T13:09:29.232Z",
-      "id": "tp_1779193216"
+      "id": "tp_1779193216",
+      "srcLang": "en"
     },
     {
       "topic": "Ordering at the Supermarket",
@@ -17425,7 +17793,8 @@
       },
       "generatedAt": "2026-05-12T10:20:48.682Z",
       "updatedAt": "2026-05-12T10:20:48.682Z",
-      "id": "tp_1198915033"
+      "id": "tp_1198915033",
+      "srcLang": "en"
     },
     {
       "topic": "Local Pienza Specialties",
@@ -17817,7 +18186,8 @@
       },
       "generatedAt": "2026-05-12T09:00:49.267Z",
       "updatedAt": "2026-05-12T09:00:49.267Z",
-      "id": "tp_727090778"
+      "id": "tp_727090778",
+      "srcLang": "en"
     },
     {
       "topic": "order Tuscan specialties",
@@ -18187,7 +18557,8 @@
       },
       "generatedAt": "2026-05-12T08:30:35.770Z",
       "updatedAt": "2026-05-12T08:30:35.770Z",
-      "id": "tp_2039628916"
+      "id": "tp_2039628916",
+      "srcLang": "en"
     },
     {
       "topic": "Tuscan Lunch",
@@ -18252,7 +18623,8 @@
       },
       "generatedAt": "2026-05-10T18:24:20.247Z",
       "updatedAt": "2026-05-10T18:24:20.247Z",
-      "id": "tp_260264696"
+      "id": "tp_260264696",
+      "srcLang": "en"
     },
     {
       "topic": "Tuscan Cuisine",
@@ -18664,7 +19036,8 @@
         "fun": 3,
         "coherence": 3
       },
-      "id": "tp_408004702"
+      "id": "tp_408004702",
+      "srcLang": "en"
     },
     {
       "topic": "Luxembourgish Cuisine",
@@ -19076,7 +19449,8 @@
       },
       "generatedAt": "2026-05-08T11:48:20.422Z",
       "updatedAt": "2026-05-08T11:48:20.422Z",
-      "id": "tp_1647119236"
+      "id": "tp_1647119236",
+      "srcLang": "en"
     },
     {
       "topic": "Bavarian Dialects",
@@ -19513,7 +19887,8 @@
       },
       "generatedAt": "2026-05-08T09:17:31.464Z",
       "updatedAt": "2026-05-08T09:17:31.464Z",
-      "id": "tp_1803707361"
+      "id": "tp_1803707361",
+      "srcLang": "en"
     },
     {
       "topic": "Migration & Language",
@@ -19931,7 +20306,8 @@
       },
       "generatedAt": "2026-05-08T08:48:26.122Z",
       "updatedAt": "2026-05-08T08:48:26.122Z",
-      "id": "tp_1848863324"
+      "id": "tp_1848863324",
+      "srcLang": "en"
     },
     {
       "topic": "Family Home Visit",
@@ -20290,7 +20666,8 @@
       },
       "generatedAt": "2026-05-07T17:41:38.565Z",
       "updatedAt": "2026-05-07T17:41:38.565Z",
-      "id": "tp_1068411142"
+      "id": "tp_1068411142",
+      "srcLang": "en"
     },
     {
       "topic": "Lang. Lesson App Presentation",
@@ -20696,7 +21073,8 @@
       },
       "generatedAt": "2026-05-07T16:42:49.393Z",
       "updatedAt": "2026-05-07T16:42:49.393Z",
-      "id": "tp_1356249983"
+      "id": "tp_1356249983",
+      "srcLang": "en"
     },
     {
       "topic": "Hotel Wifi Issues",
@@ -21090,7 +21468,8 @@
       },
       "generatedAt": "2026-05-07T15:44:53.732Z",
       "updatedAt": "2026-05-07T15:44:53.732Z",
-      "id": "tp_1781955001"
+      "id": "tp_1781955001",
+      "srcLang": "en"
     },
     {
       "topic": "Helping Injured Hikers",
@@ -21453,7 +21832,8 @@
       },
       "generatedAt": "2026-05-07T15:16:29.402Z",
       "updatedAt": "2026-05-07T15:16:29.402Z",
-      "id": "tp_598353466"
+      "id": "tp_598353466",
+      "srcLang": "en"
     },
     {
       "topic": "Paris Music Meetup",
@@ -21859,7 +22239,8 @@
       },
       "generatedAt": "2026-05-07T14:29:26.707Z",
       "updatedAt": "2026-05-07T14:29:26.707Z",
-      "id": "tp_1913048078"
+      "id": "tp_1913048078",
+      "srcLang": "en"
     },
     {
       "topic": "Foes Meet Again",
@@ -22224,7 +22605,8 @@
       },
       "generatedAt": "2026-05-07T12:29:56.286Z",
       "updatedAt": "2026-05-07T12:29:56.286Z",
-      "id": "tp_1707295024"
+      "id": "tp_1707295024",
+      "srcLang": "en"
     },
     {
       "topic": "a poem",
@@ -22621,7 +23003,8 @@
       },
       "generatedAt": "2026-05-07T10:39:22.420Z",
       "updatedAt": "2026-05-07T10:39:22.420Z",
-      "id": "tp_1484940474"
+      "id": "tp_1484940474",
+      "srcLang": "en"
     },
     {
       "topic": "National Dishes of Kenya",
@@ -22968,7 +23351,8 @@
       },
       "generatedAt": "2026-05-07T09:07:54.586Z",
       "updatedAt": "2026-05-07T09:07:54.586Z",
-      "id": "tp_1776340925"
+      "id": "tp_1776340925",
+      "srcLang": "en"
     },
     {
       "topic": "Luxembourg Cuisine Exploration",
@@ -23328,7 +23712,8 @@
       },
       "generatedAt": "2026-05-07T08:25:40.826Z",
       "updatedAt": "2026-05-07T08:25:40.826Z",
-      "id": "tp_1820839539"
+      "id": "tp_1820839539",
+      "srcLang": "en"
     },
     {
       "topic": "Communication Issues",
@@ -23760,7 +24145,8 @@
       },
       "generatedAt": "2026-05-07T07:41:48.767Z",
       "updatedAt": "2026-05-07T07:41:48.767Z",
-      "id": "tp_913878596"
+      "id": "tp_913878596",
+      "srcLang": "en"
     },
     {
       "topic": "License Conversion",
@@ -24194,7 +24580,8 @@
       },
       "generatedAt": "2026-05-06T17:29:57.748Z",
       "updatedAt": "2026-05-06T17:29:57.748Z",
-      "id": "tp_63936085"
+      "id": "tp_63936085",
+      "srcLang": "en"
     },
     {
       "topic": "Driving License Conversion",
@@ -24684,7 +25071,8 @@
       },
       "generatedAt": "2026-05-06T16:43:38.249Z",
       "updatedAt": "2026-05-06T16:43:38.249Z",
-      "id": "tp_1481435314"
+      "id": "tp_1481435314",
+      "srcLang": "en"
     },
     {
       "topic": "History of Luxembourg",
@@ -25164,7 +25552,8 @@
       },
       "generatedAt": "2026-05-06T10:36:46.162Z",
       "updatedAt": "2026-05-06T10:36:46.162Z",
-      "id": "tp_257956157"
+      "id": "tp_257956157",
+      "srcLang": "en"
     },
     {
       "topic": "Sulfur Water Spa Smell",
@@ -25566,7 +25955,8 @@
       },
       "generatedAt": "2026-05-06T09:42:58.993Z",
       "updatedAt": "2026-05-06T09:42:58.993Z",
-      "id": "tp_1909768095"
+      "id": "tp_1909768095",
+      "srcLang": "en"
     },
     {
       "topic": "Winter Snow in Tsuruoka",
@@ -26010,7 +26400,8 @@
       },
       "generatedAt": "2026-05-06T09:13:45.325Z",
       "updatedAt": "2026-05-06T09:13:45.325Z",
-      "id": "tp_1241910715"
+      "id": "tp_1241910715",
+      "srcLang": "en"
     },
     {
       "topic": "Italian Guest: Prosecco?",
@@ -26473,7 +26864,8 @@
       },
       "generatedAt": "2026-05-06T08:40:18.600Z",
       "updatedAt": "2026-05-06T08:40:18.600Z",
-      "id": "tp_1862428465"
+      "id": "tp_1862428465",
+      "srcLang": "en"
     },
     {
       "topic": "Cremant vs. Champagne",
@@ -26925,7 +27317,8 @@
       },
       "generatedAt": "2026-05-06T08:04:12.324Z",
       "updatedAt": "2026-05-06T08:04:12.324Z",
-      "id": "tp_1354522845"
+      "id": "tp_1354522845",
+      "srcLang": "en"
     },
     {
       "topic": "WWII Plane Crash: Ardennes",
@@ -27326,7 +27719,8 @@
       },
       "generatedAt": "2026-05-06T06:14:48.848Z",
       "updatedAt": "2026-05-06T06:14:48.848Z",
-      "id": "tp_1320728567"
+      "id": "tp_1320728567",
+      "srcLang": "en"
     },
     {
       "topic": "East Tyrol Dialect",
@@ -27699,7 +28093,8 @@
         "promptTokens": 2656,
         "completionTokens": 1130
       },
-      "id": "tp_1095176781"
+      "id": "tp_1095176781",
+      "srcLang": "en"
     },
     {
       "topic": "freedom above clouds",
@@ -28067,7 +28462,8 @@
       "updatedAt": "2026-05-05T21:31:29.996Z",
       "exportedFlags": {},
       "exportedAt": "2026-05-05T21:22:50.497Z",
-      "id": "tp_993102005"
+      "id": "tp_993102005",
+      "srcLang": "en"
     },
     {
       "topic": "lets eat duck ramen in tsuruoka",
@@ -28360,7 +28756,8 @@
       },
       "generatedAt": "2026-05-05T17:34:02.146Z",
       "updatedAt": "2026-05-05T17:34:02.146Z",
-      "id": "tp_1133274519"
+      "id": "tp_1133274519",
+      "srcLang": "en"
     },
     {
       "topic": "Brewery Owner Explains Wine vs. Beer",
@@ -28791,7 +29188,8 @@
       },
       "generatedAt": "2026-05-05T11:03:30.701Z",
       "updatedAt": "2026-05-05T11:03:30.701Z",
-      "id": "tp_54342507"
+      "id": "tp_54342507",
+      "srcLang": "en"
     },
     {
       "topic": "meeting men",
@@ -29174,7 +29572,8 @@
       },
       "generatedAt": "2026-05-05T10:16:10.361Z",
       "updatedAt": "2026-05-05T10:16:10.361Z",
-      "id": "tp_884939151"
+      "id": "tp_884939151",
+      "srcLang": "en"
     },
     {
       "topic": "Yeast vs Human Cells",
@@ -29563,7 +29962,8 @@
       },
       "generatedAt": "2026-05-04T18:19:18.289Z",
       "updatedAt": "2026-05-05T09:53:54.188Z",
-      "id": "tp_1757976795"
+      "id": "tp_1757976795",
+      "srcLang": "en"
     },
     {
       "topic": "Beautiful Hotel Brewery",
@@ -29942,7 +30342,8 @@
       },
       "generatedAt": "2026-05-04T12:48:38.251Z",
       "updatedAt": "2026-05-05T09:53:54.202Z",
-      "id": "tp_223695249"
+      "id": "tp_223695249",
+      "srcLang": "en"
     },
     {
       "topic": "traveling to Tuscany",
@@ -30333,7 +30734,8 @@
       },
       "generatedAt": "2026-05-04T12:17:38.693Z",
       "updatedAt": "2026-05-05T09:53:54.206Z",
-      "id": "tp_1362146386"
+      "id": "tp_1362146386",
+      "srcLang": "en"
     },
     {
       "topic": "Problems with Hotel WLAN",
@@ -30728,7 +31130,8 @@
       },
       "generatedAt": "2026-05-04T11:56:50.562Z",
       "updatedAt": "2026-05-05T09:53:54.210Z",
-      "id": "tp_634270244"
+      "id": "tp_634270244",
+      "srcLang": "en"
     },
     {
       "topic": "Arno Wins Fairly",
@@ -31134,7 +31537,8 @@
       },
       "generatedAt": "2026-05-04T10:06:38.916Z",
       "updatedAt": "2026-05-05T09:53:54.215Z",
-      "id": "tp_44494444"
+      "id": "tp_44494444",
+      "srcLang": "en"
     },
     {
       "topic": "Arnos Unfair Win",
@@ -31555,7 +31959,8 @@
       },
       "generatedAt": "2026-05-04T08:51:28.446Z",
       "updatedAt": "2026-05-05T09:53:54.219Z",
-      "id": "tp_1997874440"
+      "id": "tp_1997874440",
+      "srcLang": "en"
     },
     {
       "topic": "More People Arrive, Ping Pong Tournament",
@@ -31910,7 +32315,8 @@
       },
       "generatedAt": "2026-05-04T08:21:49.356Z",
       "updatedAt": "2026-05-05T09:53:54.222Z",
-      "id": "tp_1439200276"
+      "id": "tp_1439200276",
+      "srcLang": "en"
     },
     {
       "topic": "Grandmas Doughs",
@@ -32302,7 +32708,8 @@
       },
       "generatedAt": "2026-05-04T07:58:04.340Z",
       "updatedAt": "2026-05-05T09:53:54.226Z",
-      "id": "tp_1133168107"
+      "id": "tp_1133168107",
+      "srcLang": "en"
     },
     {
       "topic": "Grandpas Dough Talk",
@@ -32728,7 +33135,8 @@
       },
       "generatedAt": "2026-05-04T06:58:28.635Z",
       "updatedAt": "2026-05-05T09:53:54.230Z",
-      "id": "tp_1303255627"
+      "id": "tp_1303255627",
+      "srcLang": "en"
     },
     {
       "topic": "anna thinks it is smarter to use cyanobacteria in windows to produce energy",
@@ -33099,7 +33507,8 @@
       "updatedAt": "2026-05-05T09:53:54.234Z",
       "exportedFlags": {},
       "exportedAt": "2026-05-04T11:28:42.042Z",
-      "id": "tp_1431570776"
+      "id": "tp_1431570776",
+      "srcLang": "en"
     },
     {
       "topic": "energy from photosynthetic organisms",
@@ -33442,7 +33851,8 @@
       },
       "generatedAt": "2026-05-03T18:43:12.455Z",
       "updatedAt": "2026-05-05T09:53:54.238Z",
-      "id": "tp_1426986866"
+      "id": "tp_1426986866",
+      "srcLang": "en"
     },
     {
       "topic": "marco learns from an old witch",
@@ -33836,7 +34246,8 @@
       },
       "generatedAt": "2026-05-03T09:44:01.859Z",
       "updatedAt": "2026-05-05T09:53:54.256Z",
-      "id": "tp_1310551798"
+      "id": "tp_1310551798",
+      "srcLang": "en"
     },
     {
       "topic": "injured and need hospitalization in italy",
@@ -34232,7 +34643,8 @@
         "fun": 2,
         "coherence": 3
       },
-      "id": "tp_1328806176"
+      "id": "tp_1328806176",
+      "srcLang": "en"
     },
     {
       "topic": "climbing in the dolomites",
@@ -34680,7 +35092,8 @@
         "fun": 2,
         "coherence": 3
       },
-      "id": "tp_1704125569"
+      "id": "tp_1704125569",
+      "srcLang": "en"
     },
     {
       "topic": "a vacation in domburg",
@@ -35102,7 +35515,8 @@
       },
       "generatedAt": "2026-04-28T23:40:14.508Z",
       "updatedAt": "2026-05-05T09:53:54.330Z",
-      "id": "tp_1370970893"
+      "id": "tp_1370970893",
+      "srcLang": "en"
     },
     {
       "topic": "meeting women",
@@ -35519,7 +35933,8 @@
       },
       "generatedAt": "2026-04-28T14:33:27.119Z",
       "updatedAt": "2026-05-05T09:53:54.333Z",
-      "id": "tp_13464103"
+      "id": "tp_13464103",
+      "srcLang": "en"
     },
     {
       "topic": "tabletennis in a park",
@@ -35881,7 +36296,8 @@
       },
       "generatedAt": "2026-04-27T07:52:53.047Z",
       "updatedAt": "2026-05-05T09:53:54.344Z",
-      "id": "tp_1938597485"
+      "id": "tp_1938597485",
+      "srcLang": "en"
     },
     {
       "topic": "music journalism",
@@ -36266,7 +36682,8 @@
       },
       "generatedAt": "2026-04-25T23:16:39.942Z",
       "updatedAt": "2026-05-07T13:55:35.330Z",
-      "id": "tp_919542471"
+      "id": "tp_919542471",
+      "srcLang": "en"
     },
     {
       "topic": "pizza dough",
@@ -36703,7 +37120,8 @@
       },
       "generatedAt": "2026-04-29T14:40:08.166Z",
       "updatedAt": "2026-05-05T09:53:54.365Z",
-      "id": "tp_945368557"
+      "id": "tp_945368557",
+      "srcLang": "en"
     },
     {
       "topic": "sheep on the meadow",
@@ -37100,7 +37518,8 @@
       },
       "generatedAt": "2026-04-29T15:38:56.865Z",
       "updatedAt": "2026-05-05T09:53:54.369Z",
-      "id": "tp_927032398"
+      "id": "tp_927032398",
+      "srcLang": "en"
     },
     {
       "topic": "table tennis",
@@ -37467,7 +37886,8 @@
       },
       "generatedAt": "2026-04-29T14:56:02.050Z",
       "updatedAt": "2026-05-05T09:53:54.376Z",
-      "id": "tp_1551237485"
+      "id": "tp_1551237485",
+      "srcLang": "en"
     },
     {
       "topic": "yeast metabolic oscillations",
@@ -37899,7 +38319,8 @@
         "completionTokens": 730
       },
       "updatedAt": "2026-06-02T15:27:39.085Z",
-      "id": "tp_695487298"
+      "id": "tp_695487298",
+      "srcLang": "en"
     }
   ],
   "flags": {

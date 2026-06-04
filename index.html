@@ -458,7 +458,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="lang-box">
     <div class="lang-pair-row">
       <div class="lang-pair-col">
-        <label class="form-lbl" data-i18n="form.i_speak">🗣 I speak</label>
+        🗣 <label class="form-lbl" data-i18n="form.i_speak">I speak</label>
         <div class="lang-select-wrap">
           <select class="lang-select" id="src-lang-select" onchange="selectSrcLang(this.value)">
             <option value="all">🌐</option>
@@ -498,7 +498,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </div>
       <div class="lang-pair-arrow">→</div>
       <div class="lang-pair-col">
-        <label class="form-lbl" data-i18n="form.i_learn">📖 I learn</label>
+        📖 <label class="form-lbl" data-i18n="form.i_learn">I learn</label>
         <div class="lang-select-wrap">
           <select class="lang-select" id="lang-select" onchange="selectLang(this.value)">
             <option value="all">🌐</option>
@@ -1028,6 +1028,14 @@ function applyUIStrings() {
       if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
     });
   }
+  // Update all add-lesson selects (lesson card + storyline panels)
+  const _typeEmojis = { standard:'📚', grammar:'🏷️', conjugation:'🔤', error_hunt:'🔍' };
+  const _typeKeys   = { standard:'lesson.type.vocab', grammar:'lesson.type.grammar', conjugation:'lesson.type.conjugation', error_hunt:'lesson.type.error_hunt' };
+  document.querySelectorAll('.addlesson-select').forEach(sel => {
+    Array.from(sel.options).forEach(opt => {
+      if (_typeKeys[opt.value]) opt.text = (_typeEmojis[opt.value]||'') + ' ' + t(_typeKeys[opt.value]);
+    });
+  });
   // Update style-select option labels
   const styleSel = document.getElementById('style-select');
   if (styleSel) {
@@ -1629,10 +1637,10 @@ function savedItemHtml(s, connector, hideStory) {
     <div class="saved-item-addlesson" id="sial-${sid}">
       <span style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
       <select class="addlesson-select" id="sial-fmt-${sid}">
-        <option value="standard">📚 Standard</option>
-        <option value="grammar">🏷️ Grammar</option>
-        <option value="conjugation">🔤 Conjugation</option>
-        <option value="error_hunt">🔍 Error Hunt</option>
+        <option value="standard">📚 ${t('lesson.type.vocab')}</option>
+        <option value="grammar">🏷️ ${t('lesson.type.grammar')}</option>
+        <option value="conjugation">🔤 ${t('lesson.type.conjugation')}</option>
+        <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
       </select>
       <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}')">Generate</button>
       <button class="addlesson-cancel" onclick="closeAddLesson('${sid}')">✕</button>
@@ -1844,7 +1852,7 @@ async function loadSavedList(){
     const _slSum = _slSumMeta?.summary || '';
     if (_slSum) {
       html += `<div class="storyline-story" id="slsum-wrap-${chainId}">` +
-        `<button class="storyline-story-hdr" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` +
+        `<button class="storyline-story-hdr" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` + 
         `${t('lesson.read_summary')}<span class="storyline-story-arrow" id="slsc-summary-arrow-${chainId}">▼</span></button>` +
         `<div class="storyline-story-body" id="slsc-summary-body-${chainId}">` +
         `<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
@@ -2342,10 +2350,9 @@ function buildPath(){
     const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT[diff]||''}</span>`:'';
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
-        <div class="node-title">${(()=>{const labels={'grammar':'🏷️ Grammar','conjugation':'🔤 Conjugation','error_hunt':'🔍 Error Hunt'};return labels[L.type]||'📚 Vocab';})()}</div>
+        <div class="node-title">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt'};return (em[L.type]||'📚')+' '+(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));})()}</div>
         <div class="node-desc">${L.desc}</div>
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
-        ${hasFlags?`<span class="flag-note" style="font-size:11px">${lessonFlagCount} ⚑</span>`:''}
         <div class="fix-status" id="fix-status-${L.id}"></div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
@@ -2736,7 +2743,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const existingSummary = slMeta?.summary || '';
   const _sumId = 'slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_');
   html += '<div style="margin:8px 0;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid)">'
-        + '<button class="storyline-story-hdr" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">'
+        + '<button class="storyline-story-hdr" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">' + '📖 ' 
         + (existingSummary ? t('lesson.read_summary') : t('lesson.no_summary')) + ' ▼</button>'
         + '<div id="' + _sumId + '" style="display:none;padding:12px 16px;font-size:14px;line-height:1.6;color:var(--text)">'
         + (existingSummary ? escHtml(existingSummary) : '<em style="color:var(--gray-dark)">Here could be your summary.</em>')
@@ -3151,7 +3158,9 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
     return Object.keys(flags).some(k =>
       (k.startsWith(topicSlug+':') || (topicId && k.startsWith(topicId+':'))) && k.endsWith(':'+slug));
   };
-  const label = {grammar:'🏷️ Grammar',conjugation:'🔤 Conjugation',error_hunt:'🔍 Error Hunt'}[ls.type]||'📚 Vocab';
+  const typeEmoji = {grammar:'🏷️',conjugation:'🔤',error_hunt:'🔍'}[ls.type]||'📚';
+  const typeKey   = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt'}[ls.type]||'lesson.type.vocab';
+  const label = typeEmoji+' '+t(typeKey);
   // Header
   let html = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
     <span style="font-size:13px;font-weight:800;color:var(--blue-dark)">${label}</span>
@@ -3385,7 +3394,8 @@ async function deleteLessonNode(lessonIdx) {
   if (!d) return;
   const ls = d.lessons[lessonIdx];
   if (!ls) return;
-  const label = {grammar:'Grammar',conjugation:'Conjugation',error_hunt:'Error Hunt'}[ls.type]||'Vocab';
+  const typeKey = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt'}[ls.type]||'lesson.type.vocab';
+  const label = t(typeKey);
   if (!confirm(`Delete the ${label} lesson from "${d.topic}"?\nThis cannot be undone.`)) return;
   d.lessons.splice(lessonIdx, 1);
   try {
@@ -4535,7 +4545,7 @@ function showComplete(){
   const allLessons = APP.lessonData?.lessons || [];
   // Find next lesson AFTER the current one that hasn't been done
   const nextLessonIdx = allLessons.findIndex((L, i) => i !== C.lessonIdx && !done[L.id]);
-  const typeLabel = idx => {const labels={grammar:'Grammar',conjugation:'Conjugation',error_hunt:'Error Hunt'};return labels[allLessons[idx]?.type]||'Vocab';};
+  const typeLabel = idx => { const k={grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt'}[allLessons[idx]?.type]||'lesson.type.vocab'; return t(k); };
   if (nextLessonIdx >= 0) {
     // More lesson sets remaining in this chapter
     compNext.textContent = `→ Next: ${typeLabel(nextLessonIdx)}`;
