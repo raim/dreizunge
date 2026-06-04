@@ -6825,6 +6825,30 @@
               "find": "Leidenschaft",
               "replace": "Leidenschaften",
               "reason": "Missing 'n' to make it plural"
+            },
+            {
+              "type": "correction",
+              "find": "entwickelt,",
+              "replace": "entwikkelt,",
+              "reason": ""
+            },
+            {
+              "type": "correction",
+              "find": "zu optimieren.",
+              "replace": "optimiert zu haben.",
+              "reason": "wrong time"
+            },
+            {
+              "type": "correction",
+              "find": "wertschätzen.",
+              "replace": "wertschätzen..",
+              "reason": ""
+            },
+            {
+              "type": "error",
+              "find": "optimieren.\"",
+              "replace": "haben.\"",
+              "reason": ""
             }
           ]
         },
@@ -6859,7 +6883,7 @@
               "source": "amazing"
             },
             {
-              "target": "erheblich",
+              "target": "signifikant",
               "source": "significantly"
             },
             {
@@ -6869,7 +6893,7 @@
           ],
           "sentences": [
             {
-              "target": "Ich habe hier ein neues Modell entwickelt, das unsere Effizienz erheblich verbessert.",
+              "target": "Ich habe ein neues Modell entwickelt, das unsere Effizienz signifikant verbessert.",
               "source": "I have developed a new model that significantly improves our efficiency.",
               "words": [
                 "Ich",
@@ -6982,7 +7006,7 @@
         ]
       },
       "generatedAt": "2026-06-01T20:29:21.486Z",
-      "updatedAt": "2026-06-04T14:21:26.293Z",
+      "updatedAt": "2026-06-04T15:14:27.345Z",
       "id": "tp_520854021"
     },
     {
@@ -7275,7 +7299,7 @@
           ],
           "sentences": [
             {
-              "target": "Es ist wichtig, die fundierten Begriffe zu verstehen.",
+              "target": "Es ist wichtig, die fundamentalen Begriffe zu verstehen.",
               "source": "It is important to understand the fundamental terms.",
               "words": [
                 "Es",
@@ -7304,7 +7328,7 @@
             },
             {
               "target": "Die theoretische Grundlage ist oft praxisreif.",
-              "source": "The theoretical foundation is often practical.",
+              "source": "The theoretical basis is often ready for practical application.",
               "words": [
                 "Die",
                 "theoretische",
@@ -7369,10 +7393,6 @@
               "source": "modeling of data"
             },
             {
-              "target": "Neutralität des Machine Learning",
-              "source": "neutrality of machine learning"
-            },
-            {
               "target": "Verständnis der KI",
               "source": "understanding of AI"
             },
@@ -7412,22 +7432,6 @@
                 "für",
                 "die",
                 "KI."
-              ]
-            },
-            {
-              "target": "Es ist wichtig, die Neutralität des Machine Learning zu verstehen.",
-              "source": "It is important to understand the neutrality of machine learning.",
-              "words": [
-                "Es",
-                "ist",
-                "wichtig,",
-                "die",
-                "Neutralität",
-                "des",
-                "Machine",
-                "Learning",
-                "zu",
-                "verstehen."
               ]
             },
             {
@@ -7493,7 +7497,7 @@
         ]
       },
       "generatedAt": "2026-06-01T19:53:43.536Z",
-      "updatedAt": "2026-06-04T14:20:09.826Z",
+      "updatedAt": "2026-06-04T15:08:53.968Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 190634,
@@ -7704,10 +7708,10 @@
               "plural": "Arbeiter"
             },
             {
-              "target": "Angestellter",
+              "target": "Angestellte",
               "source": "employee",
               "gender": "m",
-              "article": "ein",
+              "article": "der",
               "plural": "Angestellte"
             },
             {
@@ -7776,7 +7780,7 @@
           "icon": "👩‍💼",
           "grammar": [
             {
-              "target": "Angestellter",
+              "target": "Angestellte",
               "source": "employee",
               "gender": "m",
               "article": "der",
@@ -7842,7 +7846,7 @@
         ]
       },
       "generatedAt": "2026-06-01T17:53:08.297Z",
-      "updatedAt": "2026-06-04T14:17:02.554Z",
+      "updatedAt": "2026-06-04T15:06:20.451Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 586714,

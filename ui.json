@@ -3906,7 +3906,13 @@
     "form.format.standard": "📚 Standard — література та речення",
     "form.format.all_types": "🎯 Всі типи — стандарт + граматика + коефіцієнта + пошук помилок",
     "lesson.read_summary": "📖 Прочитай резюме",
-    "lesson.gen_summary": "📝 Створи резюме"
+    "lesson.gen_summary": "📝 Створи резюме",
+    "lesson.no_summary": "Заголовок відсутній",
+    "ui.edit_title": "Редагувати заголовок",
+    "ui.edit_icon": "Змінити иконку",
+    "lesson.edit_lesson": "Редагувати урок",
+    "lesson.save_edits": "Зберегти зміни",
+    "lesson.show_flagged_only": "Показувати лише з поміткою"
   },
   "cs": {
     "app.backend": "Backend:",
@@ -4118,7 +4124,13 @@
     "form.format.standard": "📚 Standard — slovník a věty",
     "form.format.all_types": "🎯 Všechny typy — standard + gramatika + konjugace + hledání chyb",
     "lesson.read_summary": "📖 Pročtěte shrnutí",
-    "lesson.gen_summary": "📝 Vytvořte shrnutí"
+    "lesson.gen_summary": "📝 Vytvořte shrnutí",
+    "lesson.no_summary": "Zatím žádný shrnutí",
+    "ui.edit_title": "Upravit název",
+    "ui.edit_icon": "Změnit ikonu",
+    "lesson.edit_lesson": "Upravit lekci",
+    "lesson.save_edits": "Uložit změny",
+    "lesson.show_flagged_only": "Zobrazit pouze označené"
   },
   "vi": {
     "app.backend": "Backend:",
@@ -4330,7 +4342,13 @@
     "form.format.standard": "📚 Tiêu chuẩn — từ vựng & câu văn",
     "form.format.all_types": "🎯 Tất cả loại — tiêu chuẩn + ngữ pháp + động từ + tìm lỗi",
     "lesson.read_summary": "📖 Đọc tóm tắt",
-    "lesson.gen_summary": "📝 Tạo tóm tắt"
+    "lesson.gen_summary": "📝 Tạo tóm tắt",
+    "lesson.no_summary": "Chưa có tóm tắt",
+    "ui.edit_title": "Sửa tiêu đề",
+    "ui.edit_icon": "Thay đổi biểu tượng",
+    "lesson.edit_lesson": "Sửa bài học",
+    "lesson.save_edits": "Lưu chỉnh sửa",
+    "lesson.show_flagged_only": "Hiển thị chỉ những gì đã đánh dấu"
   },
   "id": {
     "app.backend": "Backend:",
@@ -4542,7 +4560,13 @@
     "form.format.standard": "📚 Standar — vokabular & kalimat",
     "form.format.all_types": "🎯 Semua jenis — standar + gramatika + konjugasi + pencarian kesalahan",
     "lesson.read_summary": "📖 Baca ringkasan",
-    "lesson.gen_summary": "📝 Buat ringkasan"
+    "lesson.gen_summary": "📝 Buat ringkasan",
+    "lesson.no_summary": "Tidak ada ringkasan",
+    "ui.edit_title": "Edit judul",
+    "ui.edit_icon": "Ubah ikon",
+    "lesson.edit_lesson": "Edit pelajaran",
+    "lesson.save_edits": "Simpan perubahan",
+    "lesson.show_flagged_only": "Tampilkan yang ditandai saja"
   },
   "ro": {
     "app.backend": "Backend:",
@@ -4754,7 +4778,13 @@
     "form.format.standard": "📚 Standard — vokabular și propoziții",
     "form.format.all_types": "🎯 Toate tipurile — standard + gramatică + conjugare + căutare erori",
     "lesson.read_summary": "📖 Citeste resumul",
-    "lesson.gen_summary": "📝 Generează resumul"
+    "lesson.gen_summary": "📝 Generează resumul",
+    "lesson.no_summary": "Nu există încă un rezumat",
+    "ui.edit_title": "Editează titlu",
+    "ui.edit_icon": "Schimbă iconă",
+    "lesson.edit_lesson": "Editează lecție",
+    "lesson.save_edits": "Salvează modificări",
+    "lesson.show_flagged_only": "Arată doar marcate"
   },
   "th": {
     "app.backend": "Backend:",
@@ -4966,7 +4996,13 @@
     "form.format.standard": "📚 มาตรฐาน — ศัพท์และประโยค",
     "form.format.all_types": "🎯 ทั้งหมด — มาตรฐาน + ไวยากรณ์ + การเปลี่ยนรูปคำ + การค้นหาข้อผิดพลาด",
     "lesson.read_summary": "📖 อ่านสรุป",
-    "lesson.gen_summary": "📝 เกnerate สรุป"
+    "lesson.gen_summary": "📝 เกnerate สรุป",
+    "lesson.no_summary": "ยังไม่มีสรุป",
+    "ui.edit_title": "แก้ไขชื่อ",
+    "ui.edit_icon": "เปลี่ยนไอคอน",
+    "lesson.edit_lesson": "แก้ไขบทเรียน",
+    "lesson.save_edits": "บันทึกการแก้ไข",
+    "lesson.show_flagged_only": "แสดงเฉพาะที่ถูกทำเครื่องหมาย"
   },
   "el": {
     "furigana.show": "νομίστε την furigana",
@@ -5178,7 +5214,13 @@
     "form.format.standard": "📚 Πρότυπο — λογισμικά & παραγράφοι",
     "form.format.all_types": "🎯 Όλα τα τύπα — πρότυπο + γραμματικά + συνταξιοδότηση + αναζήτηση λάθους",
     "lesson.read_summary": "📖 Παίρνεις το συνολικό περιεχόμενο",
-    "lesson.gen_summary": "📝 Κατασκευάσεις το συνολικό περιεχόμενο"
+    "lesson.gen_summary": "📝 Κατασκευάσεις το συνολικό περιεχόμενο",
+    "lesson.no_summary": "Δεν υπάρχει συνοπτική περιγραφή",
+    "ui.edit_title": "Επεξεργασία τίτλου",
+    "ui.edit_icon": "Αλλαγή συμβολίου",
+    "lesson.edit_lesson": "Επεξεργασία μαθήματος",
+    "lesson.save_edits": "Αποθήκευση των αλλαγών",
+    "lesson.show_flagged_only": "Προσθέστε μόνο τα μάρκημένα"
   },
   "fi": {
     "app.backend": "Tietojärjestelmä:",
@@ -5390,7 +5432,13 @@
     "form.format.standard": "📚 Standard — sanasto & lauseet",
     "form.format.all_types": "🎯 Kaikki tyypit — standard + grammatiikka + konjuktiiv + virhe-haku",
     "lesson.read_summary": "📖 Lue yhteenveto",
-    "lesson.gen_summary": "📝 Luon yhteenveto"
+    "lesson.gen_summary": "📝 Luon yhteenveto",
+    "lesson.no_summary": "Yhteenvetöä edelleen ei ole",
+    "ui.edit_title": "Muokkaa otsikkoa",
+    "ui.edit_icon": "Vaihda ikonia",
+    "lesson.edit_lesson": "Muokkaa opetusta",
+    "lesson.save_edits": "Tallenna muutokset",
+    "lesson.show_flagged_only": "Näytä ainoastaan merkittyjä"
   },
   "hu": {
     "app.backend": "Háttér:",
@@ -5602,7 +5650,13 @@
     "form.format.standard": "📚 Standard — szavak és mondatok",
     "form.format.all_types": "🎯 Minden típus — alap + grammatika + konjugáció + hibaelhárítás",
     "lesson.read_summary": "📖 Olvassa a összefoglalást",
-    "lesson.gen_summary": "📝 Összefoglalás létrehozása"
+    "lesson.gen_summary": "📝 Összefoglalás létrehozása",
+    "lesson.no_summary": "Még nincs összefoglaló",
+    "ui.edit_title": "Cím szerkesztése",
+    "ui.edit_icon": "Ikon módosítása",
+    "lesson.edit_lesson": "Tananyag szerkesztése",
+    "lesson.save_edits": "Módosítások mentése",
+    "lesson.show_flagged_only": "Csak jelölt elemek megjelenítése"
   },
   "da": {
     "app.backend": "Backend:",
@@ -5814,7 +5868,13 @@
     "form.format.standard": "📚 Standard — vokabular & sætninger",
     "form.format.all_types": "🎯 Alle typer — standard + grammatik + konjugation + fejlhunting",
     "lesson.read_summary": "📖 Læs sammandrag",
-    "lesson.gen_summary": "📝 Generer sammandrag"
+    "lesson.gen_summary": "📝 Generer sammandrag",
+    "lesson.no_summary": "Ingen resume endnu",
+    "ui.edit_title": "Rediger titel",
+    "ui.edit_icon": "Skift ikon",
+    "lesson.edit_lesson": "Rediger lektion",
+    "lesson.save_edits": "Gem ændringer",
+    "lesson.show_flagged_only": "Vis kun markerede"
   },
   "ca": {
     "app.backend": "Backend:",
@@ -6026,7 +6086,13 @@
     "form.format.standard": "📚 Estàndard — vocabulari i frases",
     "form.format.all_types": "🎯 Tots els tipus — estàndard + gramàtica + conjugació + busca d'errors",
     "lesson.read_summary": "📖 Llegir resum",
-    "lesson.gen_summary": "📝 Generar resum"
+    "lesson.gen_summary": "📝 Generar resum",
+    "lesson.no_summary": "Sense resum encara",
+    "ui.edit_title": "Edita títol",
+    "ui.edit_icon": "Canvia icona",
+    "lesson.edit_lesson": "Edita l'lesson",
+    "lesson.save_edits": "Desa edicions",
+    "lesson.show_flagged_only": "Mostra només els marcats"
   },
   "lb": {
     "app.tagline": "Leren vun de Wiert fir all Thema an all Sprooch",
@@ -6229,6 +6295,12 @@
     "form.format.standard": "📚 Standard — Worte un Sënzent",
     "form.format.all_types": "🎯 Aller Tëp — Standard + Grammatik + Konjugasion + Fawer Sëckn",
     "lesson.read_summary": "📖 Sëchd Sëmméi",
-    "lesson.gen_summary": "📝 Sëmméi Gëneéieren"
+    "lesson.gen_summary": "📝 Sëmméi Gëneéieren",
+    "lesson.no_summary": "No Summa yet",
+    "ui.edit_title": "Titel ändert",
+    "ui.edit_icon": "Ikon weideroose",
+    "lesson.edit_lesson": "Studium ändert",
+    "lesson.save_edits": "Änderungen speicher",
+    "lesson.show_flagged_only": "Nur markierte zeig"
   }
 }
