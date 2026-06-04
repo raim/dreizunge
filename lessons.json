@@ -2,7 +2,7 @@
   "schemaVersion": 29,
   "storylines": [
     {
-      "id": "sl_1590454605",
+      "id": "sl_738316017",
       "title": "Das kleine Ich bin ich",
       "icon": "📖",
       "chapters": [
@@ -10,42 +10,14 @@
         "tp_579238210",
         "tp_2088453173",
         "tp_799905727",
-        "tp_103972811"
+        "tp_103972811",
+        "tp_118316007"
       ],
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-04T20:35:36.097Z",
-      "updatedAt": "2026-06-04T20:35:36.097Z"
-    },
-    {
-      "id": "sl_1442641040",
-      "title": "Das kleine Ich bin ich",
-      "icon": "📖",
-      "chapters": [
-        "tp_131653303",
-        "tp_579238210",
-        "tp_2088453173",
-        "tp_799905727"
-      ],
-      "lang": "en",
-      "srcLang": "de",
-      "createdAt": "2026-06-04T20:00:09.607Z",
-      "updatedAt": "2026-06-04T20:00:09.607Z"
-    },
-    {
-      "id": "sl_887116336",
-      "title": "Das kleine Ich bin ich",
-      "icon": "📖",
-      "chapters": [
-        "tp_131653303",
-        "tp_579238210",
-        "tp_2088453173"
-      ],
-      "lang": "en",
-      "srcLang": "de",
-      "createdAt": "2026-06-03T09:53:02.202Z",
-      "updatedAt": "2026-06-03T12:15:12.965Z",
-      "summary": "Das Wesen, ein farbenfrohes Geschöpf mit langen Ohren, beginnt eine Reise, um seine Identität zu finden, nachdem es von einem Frosch gefragt wird, wer es ist. Es trifft verschiedene Tiere und Zahlen, die es anhand ihrer Persönlichkeiten näher heranbringen, aber es findet immer noch keine vollständige Identität. Schließlich befreundet es sich mit den Buchstaben von A bis Z, was es daran erinnert, dass es in seiner Einzigartigkeit geliebt wird, unabhängig von seiner genauen Klassifizierung."
+      "updatedAt": "2026-06-04T21:52:45.329Z",
+      "summary": "Ein Wesen mit langen Ohren und einem blühenden Muster wandert durch ein grasbewachsenes Feld und stößt auf einen Baumfrosch, der es nach seinem Namen fragt. Das Wesen, das sich nicht kennt, beginnt eine Reise, um sich selbst zu finden, und trifft auf verschiedene Tiere, die es an sich erinnern. Am Ende der Reise begegnet es den Zahlen, den Buchstaben und anderen Zahlen, die es zuerst nicht verstehen kann, aber schließlich lernt, dass es zusammenarbeiten kann, um Herausforderungen zu meistern."
     },
     {
       "id": "sl_1117742356",
@@ -681,8 +653,150 @@
   ],
   "topics": [
     {
-      "topic": "Zahlen zusammenzählen und voneinander subtrahieren",
-      "topicEmoji": "➕➖",
+      "topic": "Das Geheimnis von 0",
+      "topicEmoji": "➖",
+      "userTopic": "die ueberraschung war gross, als sie multiplizieren entdeckten, das geheimnis um 0 wurde noch groesser.",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 550,
+      "story": "One day, 0 and its friends were working on a particularly tricky problem. Suddenly, 3 appeared, looking excited. \"Hey, 0, 1, 2,\" 3 said, \"I just figured something out. It's about 0, and it's really surprising.\"\n\n0, 1, and 2 looked at each other, their curiosity piqued. \"What is it?\" 1 asked.\n\n\"Okay, listen up,\" 3 said, settling down. \"I was trying to multiply some numbers, and I noticed something strange. When you multiply any number by 0, you get 0. But, and this is the surprising part, when you multiply 0 by any number, you also get 0.\"\n\n2's eyes widened. \"That's... that's true,\" 2 said, testing it out. \"1 times 0 is 0. 5 times 0 is 0. 100 times 0 is 0.\"\n\n1 nodded. \"So, 0 is like a magic number. It turns everything into 0.\"\n\n0 felt a mix of excitement and confusion. \"But why is that important?\" 0 asked.\n\n3 grinned. \"Well, it's not just important. It's fundamental. It's like the secret ingredient in a recipe. Without it, the whole thing doesn't work.\"\n\nThe group spent the rest of the day exploring this new discovery. They multiplied numbers, checked their work, and shared their findings. 0 felt a sense of wonder, realizing that there was still so much to learn.\n\nAs the sun began to set, 1 said, \"This is amazing, 0. You're not just 0. You're a key to understanding the world around us.\"\n\n2 added, \"And we're here to help you understand it all.\"\n\n0 smiled, feeling a mix of pride and curiosity. \"Let's keep exploring,\" 0 said. \"There's so much more to discover.\"",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 550 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nback at 0. \"Because you're special,\" 1 said gently. \"You're 0, and that's okay. You don't have to be like everyone else.\"\n\n2 nodded. \"And we'll always be here to help you. We're a team, and we help each other out.\"\n\nThe numbers and letters continued their practice, and 0 slowly began to grasp the concept. It was a slow process, but 0 felt a sense of accomplishment each time it solved a problem.\n\nOne day, 0 looked around at its friends. \"I think I'm starting to get it,\" it said, a small smile on its face.\n\n1 and 2 beamed with pride. \"We knew you could do it,\" 1 said.\n\n2 added, \"And we're here for you, no matter what.\"\n\nThe group continued to work together, solving problems and sharing their knowledge. 0 realized that it didn't need to be perfect. It just needed to be 0, and that was enough.\n\nNew topic: \"die ueberraschung war gross, als sie multiplizieren entdeckten, das geheimnis um 0 wurde noch groesser.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Zahlenreise",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "die überraschung war gross",
+          "desc": "multiplizieren, zahlen, null",
+          "icon": "🤯",
+          "vocab": [
+            {
+              "target": "discovery",
+              "source": "Entdeckung"
+            },
+            {
+              "target": "multiply",
+              "source": "multiplizieren"
+            },
+            {
+              "target": "number",
+              "source": "Zahl"
+            },
+            {
+              "target": "zero",
+              "source": "null"
+            },
+            {
+              "target": "strange",
+              "source": "seltsam"
+            },
+            {
+              "target": "curious",
+              "source": "neugierig"
+            },
+            {
+              "target": "true",
+              "source": "richtig"
+            },
+            {
+              "target": "magic",
+              "source": "magisch"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "They were working on a challenge together.",
+              "source": "Sie arbeiteten gemeinsam an einer Herausforderung.",
+              "words": [
+                "They",
+                "were",
+                "working",
+                "on",
+                "a",
+                "challenge",
+                "together."
+              ]
+            },
+            {
+              "target": "Suddenly, they discovered something strange.",
+              "source": "Plötzlich entdeckten sie etwas Seltsames.",
+              "words": [
+                "Suddenly,",
+                "they",
+                "discovered",
+                "something",
+                "strange."
+              ]
+            },
+            {
+              "target": "It's like a magic number, turning everything to zero.",
+              "source": "Es ist wie eine magische Zahl, die alles in Null verwandelt.",
+              "words": [
+                "It's",
+                "like",
+                "a",
+                "magic",
+                "number,",
+                "turning",
+                "everything",
+                "to",
+                "zero."
+              ]
+            },
+            {
+              "target": "Zero is a curious number indeed.",
+              "source": "Null ist eine seltsame Zahl, das ist sicher.",
+              "words": [
+                "Zero",
+                "is",
+                "a",
+                "curious",
+                "number",
+                "indeed."
+              ]
+            },
+            {
+              "target": "The discovery made them feel excited and confused.",
+              "source": "Die Entdeckung machte sie begeistert und verwirrt",
+              "words": [
+                "The",
+                "discovery",
+                "made",
+                "them",
+                "feel",
+                "excited",
+                "and",
+                "confused."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 619863,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1838,
+        "totalCompletionTokens": 778,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 340521,
+            "promptTokens": 1178,
+            "completionTokens": 292
+          }
+        ]
+      },
+      "generatedAt": "2026-06-04T21:32:54.652Z",
+      "updatedAt": "2026-06-04T21:32:54.681Z",
+      "id": "tp_118316007"
+    },
+    {
+      "topic": "Zahlenreise",
+      "topicEmoji": "➕",
       "userTopic": "Dann entdeckten sie das man Zahlen zusammen zaehlen kann (addieren), aber auch voneinander abziehen (subtrahieren). Nur bei 0 ging das nicht!",
       "lang": "en",
       "srcLang": "de",
@@ -722,7 +836,7 @@
             },
             {
               "target": "figure out",
-              "source": "ausfindig machen"
+              "source": "herausfinden"
             },
             {
               "target": "challenge",
@@ -730,7 +844,7 @@
             },
             {
               "target": "work",
-              "source": "tun"
+              "source": "arbeiten"
             }
           ],
           "sentences": [
@@ -796,6 +910,170 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1780607565742",
+          "type": "conjugation",
+          "title": "Zahlenreise",
+          "desc": "Lerne die Zahlen und Zahlenreise mit Verben im Präsens",
+          "icon": "🌍",
+          "conjugations": [
+            {
+              "infinitive": "run",
+              "source": "laufen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "run"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "run"
+                },
+                {
+                  "pronoun": "he",
+                  "form": "runs"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "run"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "run"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "run"
+                }
+              ]
+            },
+            {
+              "infinitive": "play",
+              "source": "spielen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "play"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "play"
+                },
+                {
+                  "pronoun": "he",
+                  "form": "plays"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "play"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "play"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "play"
+                }
+              ]
+            },
+            {
+              "infinitive": "eat",
+              "source": "essen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "eat"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "eat"
+                },
+                {
+                  "pronoun": "he",
+                  "form": "eats"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "eat"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "eat"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "eat"
+                }
+              ]
+            },
+            {
+              "infinitive": "am",
+              "source": "sein",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "am"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "are"
+                },
+                {
+                  "pronoun": "he",
+                  "form": "is"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "are"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "are"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "are"
+                }
+              ]
+            },
+            {
+              "infinitive": "go",
+              "source": "gehen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I",
+                  "form": "go"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "go"
+                },
+                {
+                  "pronoun": "he",
+                  "form": "goes"
+                },
+                {
+                  "pronoun": "we",
+                  "form": "go"
+                },
+                {
+                  "pronoun": "you",
+                  "form": "go"
+                },
+                {
+                  "pronoun": "they",
+                  "form": "go"
+                }
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -815,12 +1093,12 @@
         ]
       },
       "generatedAt": "2026-06-04T20:35:36.041Z",
-      "updatedAt": "2026-06-04T20:35:36.070Z",
+      "updatedAt": "2026-06-04T21:12:45.742Z",
       "id": "tp_103972811"
     },
     {
       "topic": "Philosophie der Zahlen",
-      "topicEmoji": "🔢",
+      "topicEmoji": "🤔",
       "userTopic": "Es erinnerte sich an das kleine i, und ging zurueck zu den Zahlen, um weiter mit dem i zu philosophieren. Beide wussten noch immer nicht wer sie sind. Die 0 war lustig, aber etwas tollpatschig, und hatte ein Geheimnis. 1 war gemein und glaubte ueberall der beste zu sein, aber mutig.  2 war nicht leicht in eine Schublade zu stecken.",
       "lang": "en",
       "srcLang": "de",

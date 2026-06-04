@@ -443,7 +443,7 @@ async function loadSavedList() {
     if(_slSum2){
       html+='<div class="storyline-story" id="slsum-wrap-'+chainId+'">'
         +'<button class="storyline-story-hdr" data-cid="'+chainId+'" onclick="event.stopPropagation();toggleSlSummary(this.dataset.cid)">'
-        +'📖 Read summary<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
+        +'📖 '+t('lesson.read_summary')+'<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
         +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" style="display:none">'
         +'<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">'+_slSum2.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>'
         +'</div></div>';

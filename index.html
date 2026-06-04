@@ -79,10 +79,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .icon-picker-wrap{position:relative;display:inline-block}
 .icon-picker-btn{font-size:20px;cursor:pointer;border:2px solid var(--gray-mid);border-radius:8px;padding:2px 6px;background:var(--white)}
 .icon-picker-btn:hover{border-color:var(--blue)}
-.icon-picker-grid{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:var(--white);border:2px solid var(--gray-mid);border-radius:12px;padding:8px;grid-template-columns:repeat(10,1fr);gap:4px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:260px;display:none}
-.icon-picker-grid.open{display:grid}
-.icon-picker-grid button{font-size:18px;border:none;background:none;cursor:pointer;padding:3px;border-radius:6px;line-height:1}
-.icon-picker-grid button:hover{background:var(--gray-light)}
+.icon-picker-grid{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:var(--white);border:2px solid var(--gray-mid);border-radius:12px;padding:8px;box-shadow:0 4px 24px rgba(0,0,0,.18);min-width:300px;display:none}
+.icon-picker-grid.open{display:block}
+.ipg-btn{font-size:18px;border:none;background:none;cursor:pointer;padding:3px;border-radius:6px;line-height:1;width:28px;height:28px}
+.ipg-btn:hover{background:var(--gray-light)}
+.ipg-tab{font-size:16px;border:1.5px solid var(--gray-mid);background:var(--white);border-radius:6px;padding:2px 5px;cursor:pointer;font-family:Nunito,sans-serif;line-height:1}
+.ipg-tab:hover{background:var(--gray-light)}
+.ipg-tab.active{background:var(--blue-light);border-color:var(--blue)}
 .sl-screen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:14px 16px 0;opacity:.8;line-height:1.6}
 .storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
 .storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid);display:flex;align-items:center;gap:6px}.storyline-title{flex:1;display:flex;align-items:center;gap:6px;min-width:0}.storyline-title-text{font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.storyline-title-sub{font-size:11px;font-weight:700;color:var(--gray-dark);white-space:nowrap}.storyline-edit-form{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.storyline-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:2px 7px;min-width:0;outline:none}.storyline-edit-icon{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:24px;text-align:center}.storyline-hdr-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:5px;font-family:"Nunito",sans-serif;font-weight:800;color:var(--gray-dark);line-height:1;flex-shrink:0}.storyline-hdr-btn:hover{background:var(--gray-mid)}.storyline-hdr-btn.gen{color:var(--accent)}.storyline-hdr-btn.danger{color:var(--red)}.storyline-cards{}.storyline-cards.collapsed{display:none}.storyline-collapse-btn{font-size:11px;color:var(--gray-dark);transition:transform .2s;display:inline-block}.storyline-collapse-btn.open{transform:rotate(180deg)}
@@ -450,7 +453,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   </div>
 
   <div class="backend-row">
-    <span style="font-size:12px;font-weight:700;color:var(--gray-dark)">Backend:</span>
+    <span id="backend-lbl" style="font-size:12px;font-weight:700;color:var(--gray-dark)">Backend:</span>
     <div id="bpill" class="bpill none"><span class="bdot"></span><span id="blbl">Checking…</span></div>
     <span id="bmodel" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
   </div>
@@ -610,13 +613,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="continue-row" id="continue-row">
       <span class="continue-lbl" id="continue-lbl">Continue story from</span>
       <div class="continue-select-wrap">
-        <select class="continue-select" id="continue-select">
+        <select class="continue-select" id="continue-select" onchange="_updateReinforcePriorVisibility()">
           <option value="">— new story —</option>
         </select>
         <span class="continue-select-arrow">▾</span>
       </div>
       <label style="font-size:11px;font-weight:700;color:var(--gray-dark);display:flex;align-items:center;gap:4px;margin-top:4px;cursor:pointer">
         <input type="checkbox" id="cont-all-langs" onchange="repopulateContinueSelect()"> <span id="show-other-langs-lbl">show other languages</span>
+      </label>
+      <label id="reinforce-prior-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px;cursor:pointer" title="Weave previously learned words into new lessons">
+        <input type="checkbox" id="reinforce-prior-cb" checked> <span id="reinforce-prior-lbl">reinforce prior vocabulary</span>
       </label>
     </div>
     <div class="lesson-type-hdr" id="lesson-type-hdr">
@@ -685,7 +691,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <button class="sl-screen-back" onclick="goLandingClean()" id="btn-topics" title="Back">←</button>
       <span id="ls-storyline-icon" style="font-size:20px">📖</span>
       <span id="ls-storyline-title" class="sl-screen-title" style="cursor:pointer" onclick="goStorylineFromLesson()"></span>
-      <button class="sl-screen-share" onclick="shareLesson()" title="Share">🔗</button>
+      <button class="sl-screen-share" id="share-lesson-btn" onclick="shareLesson()" title="Share">🔗</button>
     </div>
     <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin:6px 0 2px">
       <div id="ls-storyline-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
@@ -759,7 +765,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div id="lesson-editor" class="lesson-editor"></div>
   <div class="lesson-actions" id="lesson-actions"></div>
   <div class="saved-item-addlesson" id="sial-lesson-card" style="border-radius:var(--radius-lg);margin-top:4px">
-    <span style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
+    <span id="add-lesson-lbl-card" style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
     <select class="addlesson-select" id="sial-fmt-lesson-card">
       <option value="standard">📚 Standard</option>
       <option value="grammar">🏷️ Grammar</option>
@@ -768,6 +774,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </select>
     <button class="addlesson-btn" id="sial-btn-lesson-card" onclick="doAddLesson('lesson-card', document.getElementById('sial-enc-lesson-card').value)">Generate</button>
     <button class="addlesson-cancel" onclick="closeAddLesson('lesson-card')">✕</button>
+    <label id="sial-reinforce-row-lesson-card" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px;cursor:pointer" title="Weave previously learned words into new lesson">
+      <input type="checkbox" id="sial-reinforce-lesson-card" checked> reinforce prior vocabulary
+    </label>
     <div class="addlesson-status" id="sial-status-lesson-card"></div>
     <input type="hidden" id="sial-enc-lesson-card">
   </div>
@@ -792,10 +801,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="comp-sub" id="comp-sub"></div>
   <div class="prog-pill" id="comp-xp">0%</div>
   <div class="stat-row">
-    <div class="stat-box" title="Correct"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">✓</div></div>
-    <div class="stat-box" title="Mistakes"><div class="stat-num" id="s-mistakes" style="color:var(--red)">0</div><div class="stat-lbl">✗</div></div>
-    <div class="stat-box" title="Best streak"><div class="stat-num" id="s-streak" style="color:var(--yellow)">0🔥</div><div class="stat-lbl">🔥</div></div>
-    <div class="stat-box" title="Flagged"><div class="stat-num" id="s-flagged" style="color:#ff9600">0⚑</div><div class="stat-lbl">⚑</div></div>
+    <div class="stat-box" id="stat-correct" title="Correct"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">✓</div></div>
+    <div class="stat-box" id="stat-mistakes" title="Mistakes"><div class="stat-num" id="s-mistakes" style="color:var(--red)">0</div><div class="stat-lbl">✗</div></div>
+    <div class="stat-box" id="stat-streak" title="Best streak"><div class="stat-num" id="s-streak" style="color:var(--yellow)">0🔥</div><div class="stat-lbl">🔥</div></div>
+    <div class="stat-box" id="stat-flagged" title="Flagged"><div class="stat-num" id="s-flagged" style="color:#ff9600">0⚑</div><div class="stat-lbl">⚑</div></div>
   </div>
   <div class="vocab-box"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab"></div></div>
   <button class="cont-btn" id="comp-next" onclick="afterComplete()">Continue</button>
@@ -810,7 +819,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="${t('ui.edit_title')}" style="display:none">✏️</button>
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="genStorylineTitleFromScreen()" title="Generate title" style="display:none">✨</button>
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
-        <button class="sl-screen-share" onclick="shareStoryline()" title="Share">🔗</button>
+        <button class="sl-screen-share" id="sl-screen-edit-summary-btn" onclick="openSummaryEdit(APP._slScreen?.chainId)" title="Edit summary" style="display:none">✏️</button>
+        <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
         <button class="sl-screen-share" id="sl-screen-del-btn" onclick="deleteCurrentStoryline()" style="color:var(--red);display:none" title="Delete storyline">🗑️</button>
       </div>
       <div id="sl-screen-edit-row" style="display:none;padding:8px 0 0;gap:6px;align-items:center;flex-wrap:wrap">
@@ -974,6 +984,10 @@ function applyUIStrings() {
   _setText('offline-note',  t('form.offline'));
   _setText('comp-next',     t('complete.continue'));
   _setText('comp-title',    t('complete.title'));
+  _setAttr('stat-correct',  'title', t('complete.correct'));
+  _setAttr('stat-mistakes', 'title', t('complete.mistakes'));
+  _setAttr('stat-streak',   'title', t('complete.streak'));
+  _setAttr('stat-flagged',  'title', t('complete.flagged'));
   _setText('words-from-lbl', t('lesson.words_from'));
   // Labels
   const spkLbl = document.querySelector('.form-lbl[for-i-speak]');
@@ -1059,12 +1073,20 @@ function applyUIStrings() {
   // Story length value
   _updateStoryLenLabel();
   // Tooltips
-  _setAttr('share-btn', 'title', t('lesson.share_title'));
-  _setAttr('speakstory-btn', 'title', t('lesson.read_aloud'));
-  _setAttr('edit-story-btn', 'title', t('lesson.edit_story'));
+  _setAttr('share-btn',            'title', t('lesson.share_title'));
+  _setAttr('share-lesson-btn',     'title', t('lesson.btn_share'));
+  _setAttr('share-storyline-btn',  'title', t('lesson.btn_share'));
+  _setAttr('speakstory-btn',       'title', t('lesson.read_aloud'));
+  _setAttr('edit-story-btn',       'title', t('lesson.edit_story'));
   _setAttr('continue-story-btn-title', 'title', t('lesson.continue_title'));
-  _setAttr('cont-story-btn', 'title', t('lesson.continue_title'));
-  _setText('story-cont-btn', t('lesson.btn_continue_story'));
+  _setAttr('cont-story-btn',       'title', t('lesson.continue_title'));
+  _setText('story-cont-btn',       t('lesson.btn_continue_story'));
+  _setAttr('gen-topic-title-btn',  'title', t('lesson.gen_topic_title'));
+  _setAttr('sl-screen-gen-btn',    'title', t('lesson.gen_topic_title'));
+  _setAttr('sl-screen-summary-btn','title', t('lesson.gen_summary'));
+  _setText('backend-lbl',          t('app.backend'));
+  _setText('blbl',                 t('app.checking'));
+  _setText('add-lesson-lbl-card',  '➕ '+t('lib.add_lesson')+':');
 }
 
 // ── UI translation row ────────────────────────────────────────────────────────
@@ -1202,7 +1224,7 @@ function restoreStoryLenSlider(){
   if(sl) sl.value=APP.storyLen;
   onStoryLenSlider(APP.storyLen);
 }
-const DIFF_SHORT={1:'Beginner',2:'Intermediate',3:'Advanced',4:'Error Hunt'};
+const DIFF_SHORT=()=>({1:t('diff.beginner').split(' — ')[0],2:t('diff.intermediate').split(' — ')[0],3:t('diff.advanced').split(' — ')[0],4:t('lesson.type.error_hunt')});
 function onDiffSelect(v){
   APP.difficulty=Math.max(1,Math.min(3,parseInt(v,10)||2)); saveDifficulty();
   const sel=document.getElementById('diff-select'); if(sel) sel.value=APP.difficulty;
@@ -1594,12 +1616,13 @@ function savedItemHtml(s, connector, hideStory) {
   const tL = LANGS[s.lang||'it'] || LANGS.it;
   const srcL = LANGS[s.srcLang||'en'] || LANGS.en || {flag:'🇬🇧',name:'English'};
   const d = s.difficulty || 2;
-  const diffBadge = `<span class="diff-dot d${d}" title="${DIFF_SHORT[d]||''}"></span>`;
+  const diffBadge = `<span class="diff-dot d${d}" title="${DIFF_SHORT()[d]||''}"></span>`;
   const ratingStr = s.ratings
     ? ` · ${['🔵','🟡','🔴'][s.ratings.difficulty-1]||''} ${['😐','😊','😄'][s.ratings.fun-1]||''}`
     : '';
   const conn = connector ? `<span class="storyline-connector">↩</span>` : '';
   const sid = 'si-' + enc.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+  const hasPrior = !!s.continuedFrom;
   return `<div class="saved-item-wrap">
     <div class="saved-item" onclick="loadSaved('${enc}')">
       ${conn}<span class="saved-emoji">${s.topicEmoji||'📚'}</span>
@@ -1610,7 +1633,7 @@ function savedItemHtml(s, connector, hideStory) {
       <div class="saved-actions" onclick="event.stopPropagation()">
         ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
         ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
-        ${APP.info.canGenerate?`<button class="ico-btn" title="Add lesson" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
+        ${APP.info.canGenerate?`<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
         <button class="ico-btn export" title="${t('lesson.export_title')}"
           data-topic="${s.topic.replace(/"/g,'&quot;')}"
           onclick="exportTopics([this.dataset.topic])">⬇</button>
@@ -1630,12 +1653,12 @@ function savedItemHtml(s, connector, hideStory) {
       <input class="saved-item-edit-input" id="siedit-input-${sid}" value="${s.topic.replace(/"/g,'&quot;')}" placeholder="Topic name…"
         onkeydown="if(event.key==='Enter')saveSavedItemTitle('${sid}','${enc}');if(event.key==='Escape')closeSavedItemEdit('${sid}')">
       <button class="saved-item-edit-btn" onclick="saveSavedItemTitle('${sid}','${enc}')">Save</button>
-      <button class="saved-item-edit-btn gen" title="Generate title with AI" onclick="genSavedItemTitle('${sid}','${enc}')">✨</button>
+      <button class="saved-item-edit-btn gen" title="${t('lesson.gen_topic_title_title')}" onclick="genSavedItemTitle('${sid}','${enc}')">✨</button>
       <button class="saved-item-edit-btn danger" onclick="clearSavedItemTitle('${sid}','${enc}')">Clear</button>
       <button class="saved-item-edit-btn" onclick="closeSavedItemEdit('${sid}')">✕</button>
     </div>
     <div class="saved-item-addlesson" id="sial-${sid}">
-      <span style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
+      <span style="font-size:12px;font-weight:800;color:var(--blue)">➕ ${t('lib.add_lesson')}:</span>
       <select class="addlesson-select" id="sial-fmt-${sid}">
         <option value="standard">📚 ${t('lesson.type.vocab')}</option>
         <option value="grammar">🏷️ ${t('lesson.type.grammar')}</option>
@@ -1644,6 +1667,9 @@ function savedItemHtml(s, connector, hideStory) {
       </select>
       <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}')">Generate</button>
       <button class="addlesson-cancel" onclick="closeAddLesson('${sid}')">✕</button>
+      <label id="sial-reinforce-row-${sid}" style="display:${hasPrior?'flex':'none'};font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px;cursor:pointer" title="Weave previously learned words into new lesson">
+        <input type="checkbox" id="sial-reinforce-${sid}" checked> reinforce prior vocabulary
+      </label>
       <div class="addlesson-status" id="sial-status-${sid}"></div>
     </div>
   </div>`;
@@ -1679,7 +1705,7 @@ async function loadSavedList(){
     return true;
   });
   document.getElementById('lib-cnt').textContent=
-    filtered.length+' of '+saved.length+' topic'+(saved.length!==1?'s':'');
+    saved.length===1?t('lib.count',{n:filtered.length,total:saved.length}):t('lib.count_plural',{n:filtered.length,total:saved.length});
   const showAllLangs = APP.libFilter === 'all';
   // M2: language progress strip
   const progStrip=document.getElementById('lang-progress-strip');
@@ -1819,12 +1845,12 @@ async function loadSavedList(){
           <span style="font-size:18px">${titleIcon}</span>
           <div style="min-width:0">
             <div class="storyline-title-text">${escHtml(titleText)}</div>
-            <div class="storyline-title-sub">${(()=>{ const first=byTopic[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length} chapter${chain.length!==1?'s':''}${chainDate?' · '+chainDate:''}</div>
+            <div class="storyline-title-sub">${(()=>{ const first=byTopic[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>
           </div>
          </span>`
       : `<span class="storyline-title" style="flex:1;cursor:pointer" onclick="event.stopPropagation();openStorylineScreen(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
           ${(()=>{ const first=byTopic[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge">${sL.flag}→${tL.flag}</span>`; })()}
-          <span class="storyline-title-sub">Story line · ${chain.length} chapter${chain.length!==1?'s':''}${chainDate?' · '+chainDate:''}</span>
+          <span class="storyline-title-sub">${t('storyline.title')} · ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</span>
          </span>`;
     const genBtn = APP.info.canGenerate
       ? `<button class="storyline-hdr-btn gen" title="${t('lesson.gen_title')}"
@@ -1852,8 +1878,11 @@ async function loadSavedList(){
     const _slSum = _slSumMeta?.summary || '';
     if (_slSum) {
       html += `<div class="storyline-story" id="slsum-wrap-${chainId}">` +
-        `<button class="storyline-story-hdr" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` + 
+        `<div style="display:flex;align-items:center">` +
+        `<button class="storyline-story-hdr" style="flex:1" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` + 
         `${t('lesson.read_summary')}<span class="storyline-story-arrow" id="slsc-summary-arrow-${chainId}">▼</span></button>` +
+        (APP.info.canGenerate ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
+        `</div>` +
         `<div class="storyline-story-body" id="slsc-summary-body-${chainId}">` +
         `<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
         `</div></div>`;
@@ -1886,6 +1915,11 @@ async function loadSavedList(){
   repopulateContinueSelect();
 }
 
+function _updateReinforcePriorVisibility(){
+  const sel = document.getElementById('continue-select');
+  const row = document.getElementById('reinforce-prior-row');
+  if (row) row.style.display = (sel && sel.value) ? 'flex' : 'none';
+}
 function repopulateContinueSelect(){
   const contSel=document.getElementById('continue-select');
   if(!contSel) return;
@@ -1901,6 +1935,7 @@ function repopulateContinueSelect(){
       return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+sL.flag+' '+s.topic+langTag+'</option>';
     }).join('');
   if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
+  _updateReinforcePriorVisibility();
 }
 
 
@@ -2071,6 +2106,7 @@ async function doGenerate(forceRegen){
       lessonFormat:APP.lessonFormat||'standard',
       storyLen:APP.storyLen||300,
       continuedFrom:useStory?null:(document.getElementById('continue-select')?.value||null),
+      reinforcePrior:!useStory&&!!(document.getElementById('reinforce-prior-cb')?.checked)&&!!(document.getElementById('continue-select')?.value),
       forceRegenerate:!!forceRegen};
     if(userStory)       body.userStory=userStory;
     if(userTranslation) body.userTranslation=userTranslation;
@@ -2078,7 +2114,7 @@ async function doGenerate(forceRegen){
     if(APP.storyStyle && APP.storyStyle!=='creative') body.storyStyle=APP.storyStyle;
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(body)});
-    if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Server error'); }
+    if(!r.ok){ const e=await r.json(); throw new Error(e.error||t('status.server_error')); }
     const resp=await r.json();
     if(resp.cached){
       // Cache hit — immediate, no background job needed
@@ -2108,7 +2144,7 @@ function buildPath(){
   _emojiBig.textContent = (dL.flag+' '+(d.topicEmoji||'📚'));
   if (APP.info.canGenerate) {
     _emojiBig.style.cursor = 'pointer';
-    _emojiBig.title = 'Change icon';
+    _emojiBig.title = t('ui.edit_icon');
     // Remove stale picker from previous lesson
     const _stale = document.getElementById('ipg-topic-emoji');
     if (_stale) _stale.remove();
@@ -2265,7 +2301,7 @@ function buildPath(){
     });
     const cpPct=cpLessons>0?Math.round(100*cpDone/cpLessons):0;
     const cpMeta=slTitles['c'+Math.abs(JSON.stringify(cpChain).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0))]||slTitles['root:'+cpChain[0]];
-    const cpTitle=cpMeta?.title?`${cpMeta.icon||''} ${cpMeta.title}`:'Story line';
+    const cpTitle=cpMeta?.title?`${cpMeta.icon||''} ${cpMeta.title}`:t('storyline.title');
     // Find the v29 slId for this chain
     const _cpSlArr=Array.isArray(APP.storylines)?APP.storylines:[];
     const _cpById=Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
@@ -2347,7 +2383,7 @@ function buildPath(){
       return lessonItSet.has(contentSlug);
     }).length;
     const hasFlags=lessonFlagCount>0&&APP.info.canGenerate;
-    const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT[diff]||''}</span>`:'';
+    const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT()[diff]||''}</span>`:'';
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
         <div class="node-title">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt'};return (em[L.type]||'📚')+' '+(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));})()}</div>
@@ -2357,7 +2393,7 @@ function buildPath(){
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
         ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:22px">🔒</span>':''}
-        ${APP.info.canGenerate&&L.id?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="Edit lesson" onclick="event.stopPropagation();openLessonEditor(${i})">📋${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style=\"color:var(--green);font-size:14px\" title=\"✓ '+L._checked.slice(0,10)+'\">✓</span>':'<span style=\"color:var(--green);font-size:14px\" title=\"Edited\">✓</span>'):''}</button>
+        ${APP.info.canGenerate&&L.id?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('lesson.edit_lesson')}" onclick="event.stopPropagation();openLessonEditor(${i})">📋${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style=\"color:var(--green);font-size:14px\" title=\"✓ '+L._checked.slice(0,10)+'\">✓</span>':'<span style=\"color:var(--green);font-size:14px\" title=\"Edited\">✓</span>'):''}</button>
           <button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="event.stopPropagation();deleteLessonNode(${i})">🗑</button>`:''}
       </div>`;
     if(!isLocked) node.onclick=()=>startLesson(i);
@@ -2377,7 +2413,7 @@ function buildPath(){
       _actRow.innerHTML =
         `<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${d.topic.replace(/'/g,"\'")}',${_diff},${_slen})">↪</button>`
       
-      + `<button class="ico-btn" title="Add lesson" onclick="document.getElementById('sial-enc-lesson-card').value='${_enc}';openAddLesson('lesson-card','${_enc}')">➕</button>`
+      + `<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="document.getElementById('sial-enc-lesson-card').value='${_enc}';openAddLesson('lesson-card','${_enc}')">➕</button>`
       + `<button class="ico-btn export" title="Export" data-topic="${d.topic.replace(/"/g,'&quot;')}" onclick="exportTopics([this.dataset.topic])">⬇</button>`
       + `<button class="ico-btn" title="Clear progress" onclick="clearLessonProgress('${_enc}')">↺</button>`
       + `<button class="ico-btn" title="Delete" onclick="deleteSaved('${_enc}')">🗑</button>`;
@@ -2440,28 +2476,119 @@ async function toggleSavedStory(id, topic) {
 
 // ── Storyline combined story panel ───────────────────────────────────
 // ── Storyline title management ────────────────────────────────────────
-const STORYLINE_ICONS = [
-  // Smileys & people
-  '👀','👑','💀','👻','🧙','🧟','🩺','🤝','💪','✍️','🗣️','🛒',
-  // Animals & nature
-  '🐉','🦁','🦊','🐺','🦅','🐙','🐑','🐻','🦋','🌹','🌸','🍄',
-  '🌿','🌳','🌊','🌋','🌅','🌙','🌟','☀️','❄️','🌪','🌈','⚡',
-  // Food & drink
-  '🍕','🍝','🍜','🍺','🍾','🥂','🍽️','🥗','🍯','☕️','🧄','🧆',
-  // Travel & places
-  '🏠','🏛','🏥','🏖️','🏔','⛰️','🏝','🗺','🧭','✈️','🚁','🚂',
-  '🚗','⛵','🛸','🌍','🌐','📍','🚨','🏴‍☠️',
-  // Activities & sports
-  '🏃','🧗','🏓','🏆','🎯','⚔️','🔮','💫','🚀',
-  // Arts & culture
-  '🎭','🎪','🎨','🎵','🎶','🎬','🎓','🎲','🎤',
-  // Objects & tools
-  '📖','📚','📜','🗝','💡','🔬','🧪','🧬','🧠','💻','🤖','🧩',
-  '🔢','🔍','💬','🧼','💎','👻','🔥','⚙️','🔧','📡','🧲',
-  // Symbols
-  '❤️','💫','⭐','🌟','✨','❓','🔥','⚡','🌈',
-];
-const _slIconIdx = {};
+const EMOJI_CATEGORIES = {"😀 Smileys":["😀","😃","😄","😁","😆","😅","🤣","😂","🙂","🙃","🫠","😉","😊","😇","🥰","😍","🤩","😘","😗","☺️","😚","😙","🥲","😋","😛","😜","🤪","😝","🤑","🤗","🤭","🫢","🫣","🤫","🤔","🫡","🤐","🤨","😐","😑","😶","🫥","😏","😒","🙄","😬","🤥","🫨","😌","😔","😪","🤤","😴","😷","🤒","🤕","🤢","🤮","🤧","🥵","🥶","🥴","😵","🤯","🤠","🥳","🥸","😎","🤓","🧐","😕","🫤","😟","🙁","☹️","😮","😯","😲","😳","🥺","🥹","😦","😧","😨","😰","😥","😢","😭","😱","😖","😣","😞","😓","😩","😫","🥱","😤","😡","😠","🤬","😈","👿","💀","☠️","💩","🤡","👹","👺","👻","👽","👾","🤖"],"👋 People & Body":["👋","🤚","🖐️","✋","🖖","🫱","🫲","🫳","🫴","🫷","🫸","👌","🤌","🤏","✌️","🤞","🫰","🤟","🤘","🤙","👈","👉","👆","🖕","👇","☝️","🫵","👍","👎","✊","👊","🤛","🤜","👏","🙌","🫶","👐","🤲","🤝","🙏","✍️","💅","🤳","💪","🦾","🦿","🦵","🦶","👂","🦻","👃","🫀","🫁","🧠","🦷","🦴","👀","👁️","👅","👄","🫦","👶","🧒","👦","👧","🧑","👱","👨","🧔","👩","🧓","👴","👵","🙍","🙎","🙅","🙆","💁","🙋","🧏","🙇","🤦","🤷","👮","🕵️","💂","🥷","👷","🫅","🤴","👸","👳","👲","🧕","🤵","👰","🤰","🫃","🫄","🤱","👼","🎅","🤶","🧑‍🎄","🦸","🦹","🧙","🧝","🧛","🧟","🧌","🧞","🧜","🧚","🪄","👫","👬","👭","💏","💑","👪","🗣️","👤","👥","🫂","👣"],"🐶 Animals":["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐻‍❄️","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🙈","🙉","🙊","🐒","🐔","🐧","🐦","🐤","🦆","🦅","🦉","🦇","🐺","🐗","🐴","🦄","🐝","🪱","🐛","🦋","🐌","🐞","🐜","🪲","🦟","🦗","🪳","🕷️","🦂","🐢","🐍","🦎","🦖","🦕","🐙","🦑","🦐","🦞","🦀","🪸","🦈","🐡","🐠","🐟","🐬","🐳","🐋","🦭","🐊","🐅","🐆","🦓","🦍","🦧","🦣","🐘","🦛","🦏","🐪","🐫","🦒","🦘","🦬","🐃","🐂","🐄","🐎","🐖","🐏","🐑","🦙","🐐","🦌","🐕","🐩","🦮","🐕‍🦺","🐈","🐈‍⬛","🪶","🐓","🦃","🦤","🦚","🦜","🦢","🪽","🕊️","🐇","🦝","🦨","🦡","🦫","🦦","🦥","🐁","🐀","🐿️","🦔","🐾","🐉","🐲","🌵","🎄","🌲","🌳","🌴","🪵","🌱","🌿","☘️","🍀","🎍","🪴","🎋","🍃","🍂","🍁","🪺","🪹","🍄","🌾","💐","🌷","🌹","🥀","🪷","🌺","🌸","🌼","🌻","🌞","🌝","🌛","🌜","🌚","🌕","🌖","🌗","🌘","🌑","🌒","🌓","🌔","🌙","🌟","⭐","🌠","🌌","☀️","🌤️","⛅","🌥️","☁️","🌦️","🌧️","⛈️","🌩️","🌨️","❄️","☃️","⛄","🌬️","💨","💧","💦","🫧","☔","☂️","🌊","🌫️","🌀","🌈","⚡","🔥","💥","🌪️","🌋"],"🍎 Food & Drink":["🍏","🍎","🍐","🍊","🍋","🍌","🍉","🍇","🍓","🫐","🍈","🍒","🍑","🥭","🍍","🥥","🥝","🍅","🍆","🥑","🥦","🥬","🥒","🌶️","🫑","🥕","🧄","🧅","🥔","🍠","🫚","🫛","🌽","🌯","🫔","🥙","🧆","🥚","🍳","🥘","🍲","🫕","🥣","🥗","🍿","🧂","🥫","🍱","🍘","🍙","🍚","🍛","🍜","🍝","🍠","🍢","🍣","🍤","🍥","🥮","🍡","🥟","🥠","🥡","🍦","🍧","🍨","🍩","🍪","🎂","🍰","🧁","🥧","🍫","🍬","🍭","🍮","🍯","🍼","🥛","☕","🫖","🍵","🧃","🥤","🧋","🍶","🍾","🍷","🍸","🍹","🍺","🍻","🥂","🥃","🫗","🥴","🧊","🥢","🍽️","🍴","🥄","🔪","🫙"],"🏠 Travel & Places":["🌍","🌎","🌏","🌐","🗺️","🧭","🏔️","⛰️","🌋","🗻","🏕️","🏖️","🏜️","🏝️","🏞️","🏟️","🏛️","🏗️","🧱","🪨","🪵","🛖","🏘️","🏚️","🏠","🏡","🏢","🏣","🏤","🏥","🏦","🏨","🏩","🏪","🏫","🏬","🏭","🏯","🏰","💒","🗼","🗽","⛪","🕌","🛕","🕍","⛩️","🕋","⛲","⛺","🌁","🌃","🏙️","🌄","🌅","🌆","🌇","🌉","♨️","🎠","🛝","🎡","🎢","💈","🎪","🚂","🚃","🚄","🚅","🚆","🚇","🚈","🚉","🚊","🚝","🚞","🚋","🚌","🚍","🚎","🚐","🚑","🚒","🚓","🚔","🚕","🚖","🚗","🚘","🚙","🛻","🚚","🚛","🚜","🏎️","🏍️","🛵","🛺","🚲","🛴","🛹","🛼","🚏","🛣️","🛤️","⛽","🚧","⚓","🛟","⛵","🚤","🛥️","🛳️","⛴️","🚢","✈️","🛩️","🛫","🛬","🪂","💺","🚁","🚟","🚠","🚡","🛸","🚀","🛶","🚁","🚀","⛱️","🗿","🪆","🧳","🌂","☂️"],"⚽ Activities":["⚽","🏀","🏈","⚾","🥎","🎾","🏐","🏉","🥏","🎱","🏓","🏸","🏒","🏑","🥍","🏏","🪃","🥅","⛳","🪁","🏹","🎣","🤿","🥊","🥋","🎽","🛹","🛼","🛷","⛸️","🥌","🎿","⛷️","🏂","🪂","🏋️","🤼","🤸","⛹️","🤺","🏇","🧘","🏄","🏊","🤽","🚣","🧗","🚵","🚴","🏆","🥇","🥈","🥉","🏅","🎖️","🏵️","🎗️","🎫","🎟️","🎪","🤹","🎭","🎨","🎬","🎤","🎧","🎼","🎵","🎶","🎷","🪗","🎸","🎹","🎺","🎻","🪕","🥁","🪘","🎯","🎲","♟️","🎮","🕹️","🎰","🧩","🪀","🪁","🎴","🎳","🧸","🪅","🪩","🪆","🖼️","🎑","🎃","🎆","🎇","🧨","✨","🎉","🎊","🎋","🎍","🎎","🎏","🎐","🎀","🎁","🎗️"],"📱 Objects":["⌚","📱","📲","💻","⌨️","🖥️","🖨️","🖱️","🖲️","💽","💾","💿","📀","🧮","📷","📸","📹","🎥","📽️","🎞️","📞","☎️","📟","📠","📺","📻","🧭","⏱️","⏲️","⏰","🕰️","⌛","⏳","📡","🔋","🪫","🔌","💡","🔦","🕯️","🪔","🧯","🛢️","💰","🪙","💴","💵","💶","💷","💸","💳","🪙","💹","✉️","📧","📨","📩","📤","📥","📦","📫","📪","📬","📭","📮","🗳️","✏️","✒️","🖋️","🖊️","📝","💼","📁","📂","🗂️","📅","📆","🗒️","🗓️","📇","📈","📉","📊","📋","📌","📍","🗺️","📎","🖇️","📏","📐","✂️","🗃️","🗄️","🗑️","🔒","🔓","🔏","🔐","🔑","🗝️","🔨","🪓","⛏️","⚒️","🛠️","🗡️","⚔️","🛡️","🪚","🔧","🪛","🔩","⚙️","🗜️","🔗","⛓️","🪝","🧲","🪜","🧰","🧲","🪤","🧪","🧫","🧬","🔭","🔬","🩺","🩹","🩼","🩻","💊","💉","🩸","🧴","🧹","🧺","🧻","🪣","🧼","🫧","🪥","🧽","🪒","🧹","🪠","🛁","🪤","🧲","🔑","🚪","🛋️","🪑","🚽","🚿","🛒","🎁","🎈","🎏","🎀","🪄","🔮"],"🔣 Symbols":["➕","➖","✖️","➗","🟰","♾️","🔢","🔣","🔤","🔡","🔠","💯","🔢","❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❤️‍🔥","❤️‍🩹","💕","💞","💓","💗","💖","💘","💝","💟","☮️","✝️","☪️","🕉️","✡️","🔯","🪯","☯️","☦️","🛐","⛎","♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓","🆔","⚛️","🉑","☢️","☣️","📴","📳","🈶","🈚","🈸","🈺","🈷️","✴️","🆚","💮","🉐","㊙️","㊗️","🈴","🈵","🈹","🈲","🅰️","🅱️","🆎","🆑","🅾️","🆘","❌","⭕","🛑","⛔","📛","🚫","💯","💢","♨️","🚷","🚯","🚳","🚱","🔞","📵","🔕","🔇","❗","❕","❓","❔","‼️","⁉️","🔅","🔆","📶","🛜","📳","🔱","⚜️","🔰","♻️","✅","🈯","💹","❇️","✳️","❎","🌐","💠","Ⓜ️","🌀","💤","🏧","🚾","♿","🅿️","🛗","🈳","🈹","🚺","🚹","🚼","⚧️","🚻","🚮","🎦","📵","🔞","🔃","🔄","🔙","🔚","🔛","🔜","🔝","🛐","⏏️","⏭️","⏮️","⏩","⏪","⏫","⏬","▶️","⏸️","⏹️","⏺️","🎦","🔊","🔔","🔕","📣","📢","💬","💭","🗯️","♠️","♣️","♥️","♦️","🃏","🀄","🎴","🔇","🔈","🔉","🔊","📻","🎵","🎶","〽️","🎙️","⚗️","🔭","🔬","🩺","🌡️","🧭","💡","🔦","🕯️"]};
+
+function openIconPicker(targetId, wrapperId, onPick) {
+  // Close any open pickers
+  document.querySelectorAll('.icon-picker-grid.open').forEach(g => {
+    if (g.id !== 'ipg-' + wrapperId) g.classList.remove('open');
+  });
+  const existing = document.getElementById('ipg-' + wrapperId);
+  if (existing) { existing.classList.toggle('open'); return; }
+
+  // Build picker
+  const wrap = document.getElementById('wrap-' + wrapperId) || document.getElementById(targetId)?.parentElement;
+  if (!wrap) return;
+  wrap.style.position = 'relative';
+
+  const picker = document.createElement('div');
+  picker.className = 'icon-picker-grid open';
+  picker.id = 'ipg-' + wrapperId;
+  picker.style.cssText = 'min-width:300px;max-width:340px';
+
+  const catNames = Object.keys(EMOJI_CATEGORIES);
+  let activeCat = catNames[0];
+
+  function renderGrid(emojis) {
+    grid.innerHTML = '';
+    const q = searchInp.value.toLowerCase();
+    const filtered = q ? emojis.filter(e => {
+      // Simple filter: check if any emoji in all cats matches — just show all cats when searching
+      return e.toLowerCase().includes(q) || true; // emoji chars don't match text, search is cross-cat
+    }) : emojis;
+    // If searching, search across all categories
+    const toShow = q
+      ? Object.values(EMOJI_CATEGORIES).flat().filter(() => true) // all
+           .filter(e => { try { return [...e].some(cp => cp.codePointAt(0).toString(16).toLowerCase().includes(q)); } catch(_){return false;} })
+           // fallback: just show current cat when no text matches
+      : emojis;
+    (q ? Object.values(EMOJI_CATEGORIES).flat() : emojis).forEach(ic => {
+      const btn = document.createElement('button');
+      btn.textContent = ic;
+      btn.title = ic;
+      btn.className = 'ipg-btn';
+      btn.onclick = e => {
+        e.stopPropagation();
+        const el = document.getElementById(targetId);
+        if (el) el.textContent = ic;
+        picker.classList.remove('open');
+        if (onPick) onPick(ic);
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  function switchCat(name) {
+    activeCat = name;
+    tabs.querySelectorAll('.ipg-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === name));
+    renderGrid(EMOJI_CATEGORIES[name]);
+  }
+
+  // Search input
+  const searchInp = document.createElement('input');
+  searchInp.type = 'text';
+  searchInp.placeholder = '🔍 search…';
+  searchInp.style.cssText = 'width:100%;box-sizing:border-box;padding:4px 8px;font-size:13px;border:1.5px solid var(--gray-mid);border-radius:6px;margin-bottom:6px;font-family:Nunito,sans-serif;outline:none';
+  searchInp.oninput = () => {
+    const q = searchInp.value.trim();
+    if (q) {
+      // search across all categories by name hint stored in title — not possible for emoji
+      // Instead show all emoji from all cats
+      grid.innerHTML = '';
+      Object.values(EMOJI_CATEGORIES).flat().forEach(ic => {
+        const btn = document.createElement('button');
+        btn.textContent = ic;
+        btn.className = 'ipg-btn';
+        btn.onclick = e => { e.stopPropagation(); const el=document.getElementById(targetId); if(el) el.textContent=ic; picker.classList.remove('open'); if(onPick) onPick(ic); };
+        grid.appendChild(btn);
+      });
+    } else {
+      renderGrid(EMOJI_CATEGORIES[activeCat]);
+    }
+  };
+
+  // Category tabs
+  const tabs = document.createElement('div');
+  tabs.style.cssText = 'display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px';
+  catNames.forEach(name => {
+    const tab = document.createElement('button');
+    tab.className = 'ipg-tab' + (name === activeCat ? ' active' : '');
+    tab.dataset.cat = name;
+    tab.textContent = name.split(' ')[0]; // just the emoji part of the category name
+    tab.title = name.split(' ').slice(1).join(' ');
+    tab.onclick = e => { e.stopPropagation(); searchInp.value = ''; switchCat(name); };
+    tabs.appendChild(tab);
+  });
+
+  // Emoji grid
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-height:220px;overflow-y:auto;overflow-x:hidden';
+
+  picker.appendChild(searchInp);
+  picker.appendChild(tabs);
+  picker.appendChild(grid);
+  renderGrid(EMOJI_CATEGORIES[activeCat]);
+
+  // Close on outside click
+  setTimeout(() => document.addEventListener('click', function h(e) {
+    if (!picker.contains(e.target)) { picker.classList.remove('open'); document.removeEventListener('click', h); }
+  }), 0);
+
+  wrap.appendChild(picker);
+}
+
+
+
 
 function openStorylineEdit(chainId, rootTopic) {
   document.getElementById('sledit-' + chainId).style.display = 'flex';
@@ -2689,6 +2816,8 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   if (genBtn)    genBtn.style.display    = APP.info.canGenerate ? '' : 'none';
   const summaryBtn = document.getElementById('sl-screen-summary-btn');
   if (summaryBtn) summaryBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  const editSummaryBtn = document.getElementById('sl-screen-edit-summary-btn');
+  if (editSummaryBtn) editSummaryBtn.style.display = (APP.info.canGenerate && slMeta?.summary) ? '' : 'none';
   const delBtn = document.getElementById('sl-screen-del-btn');
   if (delBtn) delBtn.style.display = APP.info.canGenerate ? '' : 'none';
   APP._slScreen.slMeta = slMeta;
@@ -2991,6 +3120,8 @@ async function genStorylineSummary() {
       if (idx >= 0) APP.storylines[idx].summary = summary;
     }
     showToast('📝 Summary generated');
+    const _esb = document.getElementById('sl-screen-edit-summary-btn');
+    if (_esb && APP.info.canGenerate) _esb.style.display = '';
   } catch(e) {
     showToast('⚠ ' + e.message.slice(0, 60));
   } finally {
@@ -2998,40 +3129,81 @@ async function genStorylineSummary() {
   }
 }
 
-// ── Storyline screen title editing ────────────────────────────────────────────
 
-function openIconPicker(targetId, wrapperId, onPick) {
-  // Close any open pickers
-  document.querySelectorAll('.icon-picker-grid.open').forEach(g => {
-    if (g.id !== 'ipg-' + wrapperId) g.classList.remove('open');
-  });
-  const existing = document.getElementById('ipg-' + wrapperId);
-  if (existing) { existing.classList.toggle('open'); return; }
-  // Build grid
-  const grid = document.createElement('div');
-  grid.className = 'icon-picker-grid open';
-  grid.id = 'ipg-' + wrapperId;
-  STORYLINE_ICONS.forEach(ic => {
-    const btn = document.createElement('button');
-    btn.textContent = ic;
-    btn.title = ic;
-    btn.onclick = e => {
-      e.stopPropagation();
-      const el = document.getElementById(targetId);
-      if (el) el.textContent = ic;
-      grid.classList.remove('open');
-      if (onPick) onPick(ic);
-    };
-    grid.appendChild(btn);
-  });
-  // Close on outside click
-  setTimeout(() => document.addEventListener('click', function h(e) {
-    if (!grid.contains(e.target)) { grid.classList.remove('open'); document.removeEventListener('click', h); }
-  }), 0);
-  const wrap = document.getElementById('wrap-' + wrapperId) || document.getElementById(targetId).parentElement;
-  wrap.style.position = 'relative';
-  wrap.appendChild(grid);
+// ── Summary editing ───────────────────────────────────────────────────────────
+
+function openSummaryEdit(chainId) {
+  if (!chainId) return;
+  // Find the summary body element — works for both sl-screen and landing card
+  const body = document.getElementById('slsc-summary-body-' + chainId)
+            || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
+  if (!body) return;
+
+  // Get current summary text
+  const sl = (APP.storylines||[]).find(s => s.id === chainId);
+  const current = sl?.summary || body.querySelector('p')?.textContent || '';
+
+  // Replace body content with inline editor
+  body.style.display = '';  // ensure visible
+  body.innerHTML =
+    '<textarea id="slsum-edit-ta-' + chainId + '" style="width:100%;box-sizing:border-box;min-height:100px;font-size:14px;line-height:1.6;font-family:Nunito,sans-serif;border:1.5px solid var(--blue);border-radius:6px;padding:8px;resize:vertical;outline:none;color:var(--text)">' +
+    escHtml(current) +
+    '</textarea>' +
+    '<div style="display:flex;gap:6px;margin-top:6px">' +
+    '<button class="storyline-hdr-btn" style="background:var(--blue);color:white;border-color:var(--blue)" onclick="saveSummaryEdit(\'' + chainId + '\')">💾 Save</button>' +
+    '<button class="storyline-hdr-btn" onclick="cancelSummaryEdit(\'' + chainId + '\')">✕ Cancel</button>' +
+    '<span id="slsum-edit-status-' + chainId + '" style="font-size:12px;color:var(--gray-dark);align-self:center"></span>' +
+    '</div>';
+  const ta = document.getElementById('slsum-edit-ta-' + chainId);
+  if (ta) { ta.focus(); ta.selectionStart = ta.selectionEnd = ta.value.length; }
 }
+
+async function saveSummaryEdit(chainId) {
+  const ta = document.getElementById('slsum-edit-ta-' + chainId);
+  const status = document.getElementById('slsum-edit-status-' + chainId);
+  if (!ta) return;
+  const summary = ta.value.trim();
+  if (status) status.textContent = 'Saving…';
+  try {
+    const r = await fetch('/api/storylines', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slId: chainId, summary })
+    });
+    if (!r.ok) throw new Error('Failed to save');
+    // Update cache
+    if (Array.isArray(APP.storylines)) {
+      const idx = APP.storylines.findIndex(s => s.id === chainId);
+      if (idx >= 0) APP.storylines[idx].summary = summary;
+    }
+    // Re-render body with saved text
+    const body = document.getElementById('slsc-summary-body-' + chainId)
+              || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
+    if (body) {
+      body.innerHTML = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
+    }
+    // Show edit button in sl-screen if open
+    const esb = document.getElementById('sl-screen-edit-summary-btn');
+    if (esb && APP.info.canGenerate) esb.style.display = summary ? '' : 'none';
+    showToast('💾 Summary saved');
+  } catch(e) {
+    if (status) status.textContent = '⚠ ' + e.message.slice(0,40);
+  }
+}
+
+function cancelSummaryEdit(chainId) {
+  // Re-render with existing summary from cache
+  const sl = (APP.storylines||[]).find(s => s.id === chainId);
+  const summary = sl?.summary || '';
+  const body = document.getElementById('slsc-summary-body-' + chainId)
+            || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
+  if (body) {
+    body.innerHTML = summary
+      ? '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>'
+      : '<em style="color:var(--gray-dark)">Here could be your summary.</em>';
+  }
+}
+
+// ── Storyline screen title editing ────────────────────────────────────────────
 
 function openStorylineEditInScreen() {
   const row = document.getElementById('sl-screen-edit-row');
