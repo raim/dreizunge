@@ -108,6 +108,51 @@ async function ensureUIForLang(lang) {
 
 
 let store = loadStore();
+
+// Assign IDs to any lessons missing them
+(function fixNullLessonIds() {
+  const arr = store.schemaVersion >= 29 ? (store.topics||[]) : (store.lessons||[]);
+  let fixed = 0;
+  arr.forEach(topic => {
+    (topic.lessons||[]).forEach(ls => {
+      if (!ls.id) {
+        ls.id = 'ls_' + Math.abs((topic.topic+ls.type+'auto').split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+        fixed++;
+      }
+    });
+  });
+  if (fixed > 0) { saveStore(store); console.log(`  Assigned IDs to ${fixed} lesson(s) missing them`); }
+})();
+
+// Remove orphaned flags (topic no longer exists, or content no longer in lesson)
+(function cleanOrphanedFlags() {
+  const flags = store.flags || {};
+  const arr = store.schemaVersion >= 29 ? (store.topics||[]) : (store.lessons||[]);
+  const byId   = new Map(arr.filter(t=>t.id).map(t => [t.id, t]));
+  const bySlug = new Map(arr.map(t => [topicSlug(t.topic), t]));
+  let removed = 0;
+  Object.keys(flags).forEach(k => {
+    const parts  = k.split(':');
+    const prefix = parts[0];
+    const contentSlug = parts.slice(2).join(':');
+    const topic  = byId.get(prefix) || bySlug.get(prefix);
+    if (!topic) { delete flags[k]; removed++; return; }
+    // Also remove if content no longer exists in any lesson
+    if (contentSlug) {
+      const allContent = (topic.lessons||[]).flatMap(ls => [
+        ...(ls.vocab||[]).map(v=>(v.target||'').slice(0,40).replace(/\s+/g,'_')),
+        ...(ls.sentences||[]).map(s=>(s.target||'').slice(0,40).replace(/\s+/g,'_')),
+        ...(ls.grammar||[]).map(g=>(g.target||'').slice(0,40).replace(/\s+/g,'_')),
+        ...(ls.conjugations||[]).flatMap(c=>(c.forms||[]).map(f=>(f.form||'').slice(0,40).replace(/\s+/g,'_'))),
+      ]);
+      if (allContent.length > 0 && !allContent.includes(contentSlug)) {
+        delete flags[k]; removed++; return;
+      }
+    }
+  });
+  if (removed > 0) { store.flags = flags; saveStore(store); console.log(`  Cleaned ${removed} orphaned flag(s)`); }
+})();
+
 function findSaved(topic) {
   const k = topic.trim().toLowerCase();
   const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
@@ -144,7 +189,7 @@ function upsertStoryline(sl) {
   else arr.unshift({ ...sl, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
   setStorylines(arr);
 }
-function topicSlug(topic) { return (topic||'').slice(0,30).replace(/\s+/g,'_'); }
+function topicSlug(topic) { return (topic||'').trim().replace(/\s+/g,'_').slice(0,30); }
 function flagsForTopic(topic) {
   const prefix = topicSlug(topic) + ':';
   return Object.entries(getFlags()).filter(([k]) => k.startsWith(prefix));
@@ -1217,229 +1262,6 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
 }
 
 // ── Repair flagged exercises ──────────────────────────────────────────
-async function repairLesson(topic, lessonId, jobId, deepClean) {
-  const saved = findSaved(topic);
-  if (!saved) throw new Error(`Topic not found: ${topic}`);
-  // v29: lessonId is a string ls_ id; legacy: integer
-  const lessonIdx = saved.lessons.findIndex(l => l.id === lessonId || l.id === String(lessonId) || l.id === parseInt(lessonId,10));
-  if (lessonIdx < 0) throw new Error(`Lesson ${lessonId} not found`);
-  const lesson = JSON.parse(JSON.stringify(saved.lessons[lessonIdx]));
-  const origVocabCount    = (lesson.vocab||[]).length;
-  const origSentenceCount = (lesson.sentences||[]).length;
-  const lang = saved.lang || 'it';
-  const srcLang = saved.srcLang || 'en';
-  const allTopicFlags = flagsForTopic(topic);
-  // Build content slug set — covers vocab/sentences for standard, grammar items, conjugation verbs
-  const contentItems = [
-    ...(lesson.vocab||[]).map(v => v.target||''),
-    ...(lesson.sentences||[]).map(s => s.target||''),
-    ...(lesson.grammar||[]).map(g => g.target||''),
-    ...(lesson.conjugations||[]).flatMap(c => c.forms||[]).map(f => f.form||''),
-  ];
-  const lessonItSet = new Set(contentItems.map(t => t.slice(0,40).replace(/\s+/g,'_')));
-  const flaggedEntries = allTopicFlags.filter(([k]) => {
-    const parts = k.split(':');
-    const contentSlug = parts.slice(2).join(':');
-    return lessonItSet.has(contentSlug);
-  });
-
-  // Build exercise list: deepClean = all vocab+sentences; flags-only = flagged only
-  let exercisesToFix, entriesForClearing;
-  if (deepClean) {
-    // Build exercise objects from all vocab and sentences.
-    // Attach _originalTarget so mergeRepaired can match on the SENT target, not the returned one.
-    // Attach flag comment where available.
-    exercisesToFix = [
-      ...(lesson.vocab||[]).map(v => {
-        const flag = flaggedEntries.find(([,fv]) => fv.target === v.target);
-        return { type:'mcq_target_source', target:v.target, source:v.source,
-                 correct:v.source, choices:[v.source],
-                 _originalTarget: v.target,
-                 ...(flag?.[1]?.comment ? { _userComment: flag[1].comment } : {}) };
-      }),
-      ...(lesson.sentences||[]).map(s => {
-        const flag = flaggedEntries.find(([,fv]) => fv.target === s.target);
-        return { type:'read_translate', target:s.target, source:s.source,
-                 correct:s.source, choices:[s.source],
-                 _originalTarget: s.target,
-                 ...(flag?.[1]?.comment ? { _userComment: flag[1].comment } : {}) };
-      }),
-      // Grammar lesson items
-      ...(lesson.grammar||[]).map(g => {
-        const flag = flaggedEntries.find(([,fv]) => fv.target === g.target);
-        return { type:'mcq_target_source', target:g.target, source:g.source,
-                 correct:g.source, choices:[g.source],
-                 _grammarItem: true, article:g.article, plural:g.plural, gender:g.gender,
-                 _originalTarget: g.target,
-                 ...(flag?.[1]?.comment ? { _userComment: flag[1].comment } : {}) };
-      }),
-      // Conjugation lesson items
-      ...(lesson.conjugations||[]).flatMap(c =>
-        (c.forms||[]).map(f => {
-          const flag = flaggedEntries.find(([,fv]) => fv.target === f.form);
-          return { type:'mcq_conjugation', infinitive:c.infinitive, source:c.source,
-                   pronoun:f.pronoun, correct:f.form, choices:[f.form],
-                   target:f.form, _originalTarget: f.form,
-                   ...(flag?.[1]?.comment ? { _userComment: flag[1].comment } : {}) };
-        })
-      ),
-    ].filter(e => e.target); // skip any empty items
-    entriesForClearing = flaggedEntries;
-    console.log(`  Deep-clean ${exercisesToFix.length} item(s) in "${topic}" lesson ${lessonId}`);
-  } else {
-    if (flaggedEntries.length === 0) throw new Error('No flagged exercises found for this lesson');
-    // Flags carry full exercise data (type, target, source, correct, choices).
-    // Cross-reference with lesson to get _originalTarget for reliable mergeRepaired matching.
-    exercisesToFix = flaggedEntries.map(([, v]) => {
-      const orig = (lesson.vocab||[]).find(lv => lv.target === v.target)
-                || (lesson.sentences||[]).find(ls => ls.target === v.target);
-      return { ...v, _originalTarget: orig?.target || v.target,
-               _userComment: v.comment || undefined };
-    });
-    entriesForClearing = flaggedEntries;
-    console.log(`  Repairing ${exercisesToFix.length} exercise(s) in "${topic}" lesson ${lessonId} (flagged-only)`);
-  }
-
-  const BATCH_SIZE = 4;
-  const batches = [];
-  for (let i = 0; i < exercisesToFix.length; i += BATCH_SIZE)
-    batches.push({ exercises: exercisesToFix.slice(i, i + BATCH_SIZE),
-                   entries:   entriesForClearing.slice(i, i + BATCH_SIZE) });
-  console.log(`  Batches: ${batches.length}`);
-  // Build a lookup from _originalTarget → index for fast matching
-  const vocabByOrig    = new Map((lesson.vocab||[]).map((v,i) => [v.target, i]));
-  const sentenceByOrig = new Map((lesson.sentences||[]).map((s,i) => [s.target, i]));
-  // Also keep a set of the _originalTarget values from exercisesToFix for reference
-  const origTargets = new Map(exercisesToFix.map(e => [e._originalTarget, e]));
-
-  // Extra lookup maps for grammar and conjugation
-  const grammarByOrig = new Map((lesson.grammar||[]).map((g,i) => [g.target, i]));
-  const conjByOrig    = new Map((lesson.conjugations||[]).flatMap((c,ci) =>
-    (c.forms||[]).map((f,fi) => [f.form, { ci, fi }])
-  ));
-
-  function mergeRepaired(repaired) {
-    // Determine the original target: prefer the _originalTarget we sent
-    const origTarget = repaired._originalTarget
-      || [...origTargets.keys()].find(k => k.toLowerCase().slice(0,20) === (repaired.target||'').toLowerCase().slice(0,20))
-      || repaired.target;
-
-    // Grammar item — match by origTarget against lesson.grammar[] first,
-    // regardless of _grammarItem flag (LLM strips internal fields)
-    if ((lesson.grammar||[]).length > 0) {
-      const idx = grammarByOrig.has(origTarget) ? grammarByOrig.get(origTarget)
-        : (lesson.grammar||[]).findIndex(g => g.target.toLowerCase().slice(0,15) === origTarget.toLowerCase().slice(0,15));
-      if (idx >= 0) {
-        const g = lesson.grammar[idx];
-        lesson.grammar[idx] = { ...g,
-          target:  repaired.target  || g.target,
-          source:  repaired.source  || g.source,
-          article: repaired.article !== undefined ? repaired.article : g.article,
-          plural:  repaired.plural  !== undefined ? repaired.plural  : g.plural,
-          gender:  repaired.gender  !== undefined ? repaired.gender  : g.gender,
-        };
-        grammarByOrig.set(repaired.target, idx);
-        return;
-      }
-    }
-
-    // Conjugation item
-    if (repaired.type === 'mcq_conjugation' && repaired.correct) {
-      const loc = conjByOrig.get(origTarget);
-      if (loc) {
-        lesson.conjugations[loc.ci].forms[loc.fi].form = repaired.correct;
-        conjByOrig.set(repaired.correct, loc);
-      } else { console.log(`    mergeRepaired: no conjugation match for "${origTarget.slice(0,30)}"`); }
-      return;
-    }
-
-    if (['order','read_translate'].includes(repaired.type) && repaired.target) {
-      const idx = sentenceByOrig.has(origTarget) ? sentenceByOrig.get(origTarget)
-        : (lesson.sentences||[]).findIndex(s =>
-            s.target.toLowerCase().slice(0,20) === origTarget.toLowerCase().slice(0,20));
-      if (idx >= 0) {
-        const s = { target: repaired.target, source: repaired.source || lesson.sentences[idx].source };
-        lesson.sentences[idx] = deriveSentenceWords(s, saved.lang);
-        sentenceByOrig.set(repaired.target, idx);
-      } else { console.log(`    mergeRepaired: no sentence match for "${origTarget.slice(0,30)}"`); }
-    }
-    if (['mcq_target_source','mcq_source_target','listen_mcq','listen_type'].includes(repaired.type) && repaired.target) {
-      const idx = vocabByOrig.has(origTarget) ? vocabByOrig.get(origTarget)
-        : (lesson.vocab||[]).findIndex(v =>
-            v.target.toLowerCase().slice(0,15) === origTarget.toLowerCase().slice(0,15));
-      if (idx >= 0) {
-        lesson.vocab[idx] = { target: repaired.target, source: repaired.source || lesson.vocab[idx].source };
-        vocabByOrig.set(repaired.target, idx);
-      } else { console.log(`    mergeRepaired: no vocab match for "${origTarget.slice(0,30)}"`); }
-    }
-  }
-  const repairStart = Date.now();
-  let repairPromptTokens = 0, repairCompletionTokens = 0;
-  let totalRepaired = 0;
-  const clearedKeys = [];
-  const lessonType = lesson.type || 'standard';
-  const SYS_REPAIR = sysSrcRepair(lang, srcLang, deepClean, lessonType);
-  for (let b = 0; b < batches.length; b++) {
-    const batch = batches[b];
-    if (jobId) jobStep(jobId, `${deepClean?'Cleaning':'Repairing'} batch ${b+1}/${batches.length}…`);
-    const commentNote = batch.exercises.some(e => e._userComment)
-      ? '\nNote: some exercises include user comments. Pay close attention to these.' : '';
-    // In deep-clean mode the vocab/sentences ARE the broken items — don't use them as reference.
-    // In flags-only mode, the rest of the lesson vocab is reliable context.
-    const refSection = deepClean ? '' : (() => {
-      const vocabRef = lesson.vocab.map(v=>`${v.target} = ${v.source}`).join(', ');
-      const sentRef  = lesson.sentences.map(s=>s.target).join(' | ');
-      return `Reference vocabulary (use as context for correct register and topic):\n${vocabRef}\nReference sentences:\n${sentRef}\n`;
-    })();
-    // Strip internal _originalTarget/_userComment from what we send to the LLM
-    const exForLLM = batch.exercises.map(({ _originalTarget, _userComment, ...rest }) => ({
-      ...rest, ...(_userComment ? { _userComment } : {})
-    }));
-    const userMsg = `Language: ${langName(lang)}. Source language: ${langName(srcLang)}. Topic: "${topic}".
-${refSection}${commentNote}
-Fix these ${batch.exercises.length} exercise(s) (batch ${b+1}/${batches.length}):
-${JSON.stringify(exForLLM, null, 2)}
-Return only the corrected JSON array.`;
-    console.log(`    Batch ${b+1}/${batches.length}: ${batch.exercises.length} exercise(s)…`);
-    const arr = await withRetry(`Repair batch ${b+1}`, async () => {
-      const { text: raw, promptTokens: pt, completionTokens: ct } = await callLLMLesson(SYS_REPAIR, userMsg, 2048);
-      repairPromptTokens += pt; repairCompletionTokens += ct;
-      let a;
-      try { a = extractArray(raw); } catch(_) { a = salvageArray(raw); }
-      if (!Array.isArray(a) || a.length === 0) throw new Error('No repaired exercises returned');
-      return a.map(ex => {
-        if (ex.type === 'order' && ex.target)
-          ex.words = deriveSentenceWords({target:ex.target}, saved.lang).words;
-        return ex;
-      });
-    });
-    arr.forEach(mergeRepaired);
-    totalRepaired += arr.length;
-    clearedKeys.push(...(batch.entries||[]).map(([k]) => k));
-  }
-  // Validate item counts haven't shrunk (guard for all lesson types)
-  const postVocabCount    = (lesson.vocab||[]).length;
-  const postSentenceCount = (lesson.sentences||[]).length;
-  const postGrammarCount  = (lesson.grammar||[]).length;
-  if (postVocabCount < origVocabCount || postSentenceCount < origSentenceCount)
-    throw new Error(`Repair would shrink lesson — rejecting`);
-  saved.lessons[lessonIdx] = lesson;
-  const repairMs = Date.now() - repairStart;
-  const prev = saved.repairStats || { repairCount: 0, totalMs: 0, promptTokens: 0, completionTokens: 0 };
-  saved.repairStats = {
-    repairCount:      prev.repairCount      + 1,
-    totalMs:          prev.totalMs          + repairMs,
-    promptTokens:     prev.promptTokens     + repairPromptTokens,
-    completionTokens: prev.completionTokens + repairCompletionTokens,
-  };
-  upsert(saved);
-  const flags = getFlags();
-  for (const k of clearedKeys) delete flags[k];
-  setFlags(flags);
-  console.log(`  Repair complete: ${totalRepaired} exercise(s) fixed, ${clearedKeys.length} flag(s) cleared, ${repairMs}ms`);
-  return { repaired: totalRepaired, lesson };
-}
-
 // ── Ollama ping & warmup ──────────────────────────────────────────────
 function pingOllama() {
   return new Promise(resolve => {
@@ -1622,7 +1444,6 @@ http.createServer(async (req, res) => {
         generatedAt: l.generatedAt,
         updatedAt:   l.updatedAt || l.generatedAt,
         lessonCount: l.lessons?.length || 0,
-        ratings: l.ratings || null,
       }));
       list.sort((a,b) => (b.updatedAt||'').localeCompare(a.updatedAt||''));
       return json(res, 200, list);
@@ -1641,17 +1462,22 @@ http.createServer(async (req, res) => {
       const { oldTopic, newTopic, topicEmoji } = body;
       if (!oldTopic || !newTopic) return json(res, 400, { error: 'Missing oldTopic or newTopic' });
       const saved = findSaved(oldTopic);
-      if (!saved) return json(res, 404, { error: 'Topic not found' });
+      if (!saved) {
+        console.warn(`  save-meta: topic not found: "${oldTopic}" (schema v${store.schemaVersion}, ${(store.topics||store.lessons||[]).length} topics)`);
+        return json(res, 404, { error: `Topic not found: "${oldTopic.slice(0,40)}"` });
+      }
+      // No-op if topic name unchanged
+      if (oldTopic.trim().toLowerCase() === newTopic.trim().toLowerCase() && !topicEmoji) return json(res, 200, { ok: true });
       saved.topic = newTopic.trim().slice(0, 80);
       if (topicEmoji) saved.topicEmoji = topicEmoji;
       const newLower = newTopic.trim().toLowerCase();
       const oldLower = oldTopic.trim().toLowerCase();
       // Update in the correct array
       const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
-      const filtered = arr.filter(l =>
-        l.topic.toLowerCase() !== oldLower &&
-        l.topic.toLowerCase() !== newLower
-      );
+      // Filter out old entry (and new if already exists), but guard against both being same
+      const filtered = oldLower === newLower
+        ? arr.filter(l => l.topic.toLowerCase() !== oldLower)
+        : arr.filter(l => l.topic.toLowerCase() !== oldLower && l.topic.toLowerCase() !== newLower);
       filtered.unshift(saved);
       if (store.schemaVersion >= 29) store.topics = filtered; else store.lessons = filtered;
       // Cascade rename into continuedFrom pointers
@@ -1823,57 +1649,39 @@ http.createServer(async (req, res) => {
       return json(res, 202, { jobId });
     }
 
-    // ── Repair (async — returns jobId immediately) ────────────────
-    if (M === 'POST' && url.pathname === '/api/repair') {
+    // ── Direct lesson edit ───────────────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/lessons/edit') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, topicId: repairTopicId, lessonId } = body;
-      const repairTopic = repairTopicId ? (findSavedById(repairTopicId)||{}).topic : topic;
-      if (!repairTopic) return json(res, 400, { error: 'Missing topic or topicId' });
-      if (!lessonId) return json(res, 400, { error: 'Missing lessonId' });
-      if (active === 'none') return json(res, 503, { error: 'No LLM backend available for repair.' });
-      const topicKey = repairTopic.trim().toLowerCase();
-      if (generatingTopics.has(topicKey))
-        return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
-      const jobId = newJob();
-      generatingTopics.add(topicKey);
-      repairLesson(repairTopic.trim(), lessonId, jobId).then(result => {
-        jobDone(jobId, result);
-      }).catch(e => {
-        console.error('  Repair error:', e.message);
-        jobFail(jobId, e.message);
-      }).finally(() => {
-        generatingTopics.delete(topicKey);
+      const { topic, lessons } = body;
+      if (!topic || !lessons) return json(res, 400, { error: 'Missing topic or lessons' });
+      const saved = findSaved(topic);
+      if (!saved) return json(res, 404, { error: 'Topic not found' });
+      // Only update vocab/sentences/grammar fields — preserve all other data
+      const origLessons = saved.lessons.slice();
+      saved.lessons = lessons.map((edited, i) => {
+        const orig = origLessons.find(ls => ls.id === edited.id) || origLessons[i] || {};
+        return {
+          ...orig,
+          ...(edited.title !== undefined ? { title: edited.title } : {}),
+          ...(edited.icon  !== undefined ? { icon:  edited.icon  } : {}),
+          vocab:     edited.vocab     ? edited.vocab.map((v,j) => ({...(orig.vocab||[])[j]||{}, ...v})) : orig.vocab,
+          sentences: edited.sentences ? edited.sentences.map((s,j) => ({...(orig.sentences||[])[j]||{}, ...s})) : orig.sentences,
+          grammar:   edited.grammar   ? edited.grammar.map((g,j) => ({...(orig.grammar||[])[j]||{}, ...g})) : orig.grammar,
+          conjugations: edited.conjugations ? edited.conjugations.map((c,j) => ({
+            ...(orig.conjugations||[])[j]||{}, ...c,
+            forms: c.forms ? c.forms.map((f,k) => ({...((orig.conjugations||[])[j]?.forms||[])[k]||{}, ...f})) : (orig.conjugations||[])[j]?.forms,
+          })) : orig.conjugations,
+          ...(edited.corruptedStory !== undefined ? { corruptedStory: edited.corruptedStory } : {}),
+          edits: edited.edits ? edited.edits.map((e,j) => ({...(orig.edits||[])[j]||{}, ...e})) : orig.edits,
+        };
       });
-      return json(res, 202, { jobId });
+      saved.updatedAt = new Date().toISOString();
+      saveStore(store);
+      console.log(`  Edited lessons for "${topic}"`);
+      return json(res, 200, { ok: true });
     }
-
-    // ── Deep-clean lesson (fix all vocab+sentences) ──────────────────
-    if (M === 'POST' && url.pathname === '/api/repair-all') {
-      let body;
-      try { body = JSON.parse(await readBody(req)); }
-      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, lessonId } = body;
-      if (!topic)    return json(res, 400, { error: 'Missing topic' });
-      if (!lessonId) return json(res, 400, { error: 'Missing lessonId' });
-      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
-      const topicKey = topic.trim().toLowerCase();
-      if (generatingTopics.has(topicKey))
-        return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
-      const jobId = newJob();
-      generatingTopics.add(topicKey);
-      repairLesson(topic.trim(), parseInt(lessonId, 10), jobId, true).then(result => {
-        jobDone(jobId, result);
-      }).catch(e => {
-        console.error('  Deep-clean error:', e.message);
-        jobFail(jobId, e.message);
-      }).finally(() => {
-        generatingTopics.delete(topicKey);
-      });
-      return json(res, 202, { jobId });
-    }
-
 
     // ── Add lesson to existing topic ──────────────────────────────────────
     if (M === 'POST' && url.pathname === '/api/lessons/add-lesson') {
@@ -1965,53 +1773,8 @@ http.createServer(async (req, res) => {
       }
     }
 
-    // ── Repair story ─────────────────────────────────────────────────
-    if (M === 'POST' && url.pathname === '/api/repair-story') {
-      let body;
-      try { body = JSON.parse(await readBody(req)); }
-      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, instruction } = body;
-      if (!topic || !instruction) return json(res, 400, { error: 'Missing topic or instruction' });
-      if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
-      const saved = findSaved(topic);
-      if (!saved) return json(res, 404, { error: 'Topic not found' });
-      const jobId = newJob();
-      console.log(`  Rewriting story for "${topic}" job=${jobId}`);
-      (async () => {
-        try {
-          jobStep(jobId, 'Rewriting story…');
-          const lang = saved.lang || 'it';
-          const userMsg = [
-            `Topic: "${topic}".`,
-            saved.story ? `Current story:\n${saved.story}\n\nUser instruction: ${instruction}` : `Write a new story. Instruction: ${instruction}`,
-            'Plain prose, no headings.'
-          ].join('\n');
-          const rewriteSys = sysStory(lang, false);
-          const { text } = await callLLM(rewriteSys, userMsg, 900);
-          saved.story = text.trim();
-          saved.storyLang = lang;
-          saved.storyPrompt = rewriteSys + '\n\n' + userMsg;
-          delete saved.storyNative;
-          upsert(saved);
-          jobDone(jobId, { story: saved.story, storyPrompt: saved.storyPrompt });
-        } catch(e) { jobFail(jobId, e.message); }
-      })();
-      return json(res, 202, { jobId });
-    }
 
     // ── Rate a topic ──────────────────────────────────────────────────
-    if (M === 'POST' && url.pathname === '/api/rate') {
-      let body;
-      try { body = JSON.parse(await readBody(req)); }
-      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, ratings } = body;
-      if (!topic || !ratings) return json(res, 400, { error: 'Missing topic or ratings' });
-      const saved = findSaved(topic);
-      if (!saved) return json(res, 404, { error: 'Topic not found' });
-      saved.ratings = { difficulty: ratings.difficulty, fun: ratings.fun, coherence: ratings.coherence };
-      upsert(saved);
-      return json(res, 200, { ok: true });
-    }
 
     // ── Import lessons.json ───────────────────────────────────────────
     if (M === 'POST' && url.pathname === '/api/lessons/import') {

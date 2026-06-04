@@ -212,16 +212,26 @@ function renderPill() {
   if(lbl) lbl.textContent = 'Static — built-in lessons only';
   const genBtn=document.getElementById('gen-btn'); if(genBtn) genBtn.disabled = true;
   const topicInp=document.getElementById('topic-input'); if(topicInp) topicInp.disabled = true;
-  // C5: replace generation form with static info message
-  const _tf = document.querySelector('.topic-form');
-  if (_tf && !document.getElementById('static-gen-overlay')) {
+  // C5: replace entire generation area with static info message
+  const _genArea = document.getElementById('gen-area');
+  if (_genArea) _genArea.style.display = 'none';
+  if (!document.getElementById('static-gen-overlay')) {
     const _ov = document.createElement('div');
     _ov.id = 'static-gen-overlay';
-    _ov.style.cssText = 'background:var(--white);border-radius:var(--radius-xl);padding:22px;'+ 
-      'box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:14px;'+ 
-      'font-size:13px;font-weight:600;color:#444;line-height:1.7';
-    _ov.innerHTML = '<strong style="font-size:15px">Dreizunge</strong> is an open-source language lesson generator: learn vocabulary for <strong>any topic</strong>. '+'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> to <strong>generate new stories</strong>.<br><br>'+'This is the <strong>static version</strong> — you can play the existing lessons below and lessons <strong>shared with you</strong> (json files), but not generate new ones.<br><br>'+'<span style="color:#c00;font-weight:800">⚠ AI generated content.</span> '+'Use a real language learning app or a human teacher if you are new to a language.';
-    _tf.parentNode.replaceChild(_ov, _tf);
+    _ov.style.cssText = 'background:var(--white);border-radius:var(--radius-xl);padding:22px;'
+      + 'box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:14px;'
+      + 'font-size:13px;font-weight:700;color:#444;line-height:1.8';
+    _ov.innerHTML = 'Dreizunge is an open-source language lesson generator. '
+      + 'This is the static version — you can play the existing lessons, but not generate new ones.<br><br>'
+      + 'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> '
+      + 'to learn how to generate lessons and stories for any topic you wish.<br><br>'
+      + '<span style="color:#c00;font-weight:800">⚠ AI generated content.</span> '
+      + 'Use a real language learning app or a human teacher if you are new to a language.';
+    // Insert after lang-tutor-banner, replacing the generation form
+    const _ga = document.getElementById('gen-area');
+    if (_ga && _ga.parentNode) {
+      _ga.parentNode.insertBefore(_ov, _ga);
+    }
   }
   const note=document.getElementById('offline-note');
   if(note){ note.style.display='block';
@@ -274,9 +284,7 @@ function itemHtml(s, connector) {
   const d=s.difficulty||2;
   const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
   const diffBadge='<span class="diff-dot d'+d+'" title="'+diff+'"></span>';
-  const ratingStr=s.ratings
-    ? ' · '+(['🔵','🟡','🔴'][s.ratings.difficulty-1]||'')+' '+(['😐','😊','😄'][s.ratings.fun-1]||'')
-    : '';
+  const ratingStr='';
   const count=s.lessons?s.lessons.length:0;
   const dateStr=s.updatedAt||s.generatedAt;
   const date=dateStr?new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
@@ -470,7 +478,7 @@ async function loadSaved(topic) {
   const dec=decodeURIComponent(topic);
   const found=STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
   if(!found){ alert('Lesson not found.'); return; }
-  APP.lessonData=found; goHome();
+  APP.lessonData=found; goLessonSet();
 }
 
 function setTopic(t){ document.getElementById('topic-input').value=t; }
@@ -500,7 +508,7 @@ const staticOverrides = [
   '  APP.lang=code; APP.libFilter=code; saveLang();',
   '  const sel=document.getElementById("lang-select"); if(sel&&sel.value!==code) sel.value=code;',
   '  const tb=document.getElementById("lang-tutor-banner");',
-  '  if(tb){ if(code==="de"){ tb.innerHTML=t("lang.tutor_de_html"); tb.style.display=""; } else tb.style.display="none"; }',
+  '  if(tb){ if(code==="de"){ tb.innerHTML="🎓 Try <a href=\\"https://chilperic.github.io/Deutsch-wipa-2026/\\" target=\\"_blank\\" style=\\"color:#1a4fa0;font-weight:800\\">Chilperic\'s German focus tutor</a>"; tb.style.display=""; } else tb.style.display="none"; }',
   '  if(!silent) loadSavedList();',
   '}',
   'function setLibFilter(lang){',

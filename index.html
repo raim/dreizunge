@@ -76,6 +76,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .sl-screen-share{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:800;padding:5px 10px;color:var(--gray-dark);font-family:'Nunito',sans-serif}
 .sl-screen-share:hover{border-color:var(--blue);color:var(--blue-dark)}
 .sl-screen-body{padding:12px 16px 0;background:var(--gray-light)}
+.icon-picker-wrap{position:relative;display:inline-block}
+.icon-picker-btn{font-size:20px;cursor:pointer;border:2px solid var(--gray-mid);border-radius:8px;padding:2px 6px;background:var(--white)}
+.icon-picker-btn:hover{border-color:var(--blue)}
+.icon-picker-grid{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:var(--white);border:2px solid var(--gray-mid);border-radius:12px;padding:8px;grid-template-columns:repeat(10,1fr);gap:4px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:260px;display:none}
+.icon-picker-grid.open{display:grid}
+.icon-picker-grid button{font-size:18px;border:none;background:none;cursor:pointer;padding:3px;border-radius:6px;line-height:1}
+.icon-picker-grid button:hover{background:var(--gray-light)}
 .sl-screen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:14px 16px 0;opacity:.8;line-height:1.6}
 .storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
 .storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid);display:flex;align-items:center;gap:6px}.storyline-title{flex:1;display:flex;align-items:center;gap:6px;min-width:0}.storyline-title-text{font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.storyline-title-sub{font-size:11px;font-weight:700;color:var(--gray-dark);white-space:nowrap}.storyline-edit-form{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.storyline-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:2px 7px;min-width:0;outline:none}.storyline-edit-icon{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:24px;text-align:center}.storyline-hdr-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:5px;font-family:"Nunito",sans-serif;font-weight:800;color:var(--gray-dark);line-height:1;flex-shrink:0}.storyline-hdr-btn:hover{background:var(--gray-mid)}.storyline-hdr-btn.gen{color:var(--accent)}.storyline-hdr-btn.danger{color:var(--red)}.storyline-cards{}.storyline-cards.collapsed{display:none}.storyline-collapse-btn{font-size:11px;color:var(--gray-dark);transition:transform .2s;display:inline-block}.storyline-collapse-btn.open{transform:rotate(180deg)}
@@ -111,9 +118,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .gen-sub{font-size:14px;color:var(--gray-dark);font-weight:600}
 
 /* ══ HOME ════════════════════════════════════════════════════════════ */
-#home{padding:0 16px 40px}
-.home-inner{max-width:520px;width:100%}
-.home-hdr{display:flex;flex-direction:column;gap:0;padding:14px 0 4px}.home-hdr-title{display:flex;align-items:center;gap:10px;padding-bottom:6px}.home-hdr-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-bottom:4px}.home-hdr-storyline{display:none;align-items:center;gap:8px;padding:5px 0 3px;border-top:1px solid var(--gray-mid);font-size:13px;font-weight:800;color:var(--text);flex-wrap:wrap}.home-hdr-storyline.visible{display:flex}
+#lesson-set{padding:0 16px 40px}
+.ls-inner{max-width:520px;width:100%}
+.ls-hdr{display:flex;flex-direction:column;gap:0;padding:14px 0 4px}.ls-hdr-title{display:flex;align-items:center;gap:10px;padding-bottom:6px}.ls-hdr-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-bottom:4px}.ls-hdr-storyline{display:none;align-items:center;gap:8px;padding:5px 0 3px;border-top:1px solid var(--gray-mid);font-size:13px;font-weight:800;color:var(--text);flex-wrap:wrap}.ls-hdr-storyline.visible{display:flex}
 .topic-emoji-big{font-size:28px}
 .topic-name-big{font-size:19px;font-weight:900;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hdr-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:5px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);white-space:nowrap}
@@ -306,7 +313,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .continue-select{width:100%;padding:9px 36px 9px 12px;font-size:13px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
 .continue-select:focus{border-color:var(--blue)}
 .continue-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px;color:var(--gray-dark)}
-.cont-nav{display:flex;flex-direction:row;gap:8px;margin:0;padding:4px 0 4px;align-items:flex-start;border-top:1px solid var(--gray-mid)}.sl-nav{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0 2px;border-top:1px solid var(--gray-mid)}
+.cont-nav{display:flex;flex-direction:row;gap:8px;margin:0;padding:4px 0 4px;align-items:flex-start;border-top:1px solid var(--gray-mid)}
 .cont-col{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
 .cont-col-from{align-items:flex-start}
 .cont-col-by{align-items:flex-end}
@@ -386,7 +393,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
-.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}
+.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}.lesson-actions{display:none;flex-wrap:wrap;gap:6px;padding:14px 0 4px;border-top:1.5px solid var(--gray-mid);margin-top:12px}.lesson-actions.visible{display:flex}.lesson-editor{display:none;background:var(--white);border-top:2px solid var(--gray-mid);border-bottom:2px solid var(--gray-mid);padding:16px;margin-top:12px;width:100vw;position:relative;left:50%;transform:translateX(-50%);box-sizing:border-box;max-width:900px}.lesson-editor.open{display:block}.editor-entry{border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px 12px;margin-bottom:10px}.editor-entry.flagged{border-color:#ff9600;background:#fff8ee}.editor-field{display:flex;align-items:center;gap:10px;margin-bottom:6px}.editor-field label{font-size:12px;font-weight:800;color:var(--gray-dark);width:60px;flex-shrink:0}.editor-field input,.editor-field textarea{flex:1;font-size:15px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:5px 10px;background:var(--white);color:var(--text)}.editor-filter{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;font-weight:700}
 
 /* ══ LIB FILTER ══════════════════════════════════════════════════════ */
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
@@ -394,17 +401,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .lib-filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark)}
 
 /* ══ RATING ══════════════════════════════════════════════════════════ */
-.rating-panel{background:var(--white);border:2px solid var(--yellow);border-radius:var(--radius-xl);padding:18px 18px 16px;margin:0 0 18px;box-shadow:var(--shadow-card)}
-.rating-title{font-size:15px;font-weight:900;color:var(--text);margin-bottom:14px;text-align:center}
-.rating-row{display:flex;align-items:center;gap:10px;margin-bottom:11px}
-.rating-axis{font-size:13px;font-weight:800;color:var(--text);width:90px;flex-shrink:0}
-.rating-btns{display:flex;gap:6px}
-.rating-btn{background:none;border:2px solid var(--gray-mid);border-radius:10px;padding:5px 10px;font-size:16px;cursor:pointer;transition:border-color .1s,background .1s;line-height:1.2}
-.rating-btn:hover{border-color:var(--blue)}
-.rating-btn.sel{border-color:var(--blue);background:var(--blue-light)}
-.rating-submit{width:100%;padding:10px;background:var(--green);color:var(--white);border:none;border-radius:var(--radius);font-size:14px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px}
-.rating-done{font-size:13px;font-weight:700;text-align:center;color:var(--green-dark);padding:4px 0}
-.rating-summary{display:flex;gap:10px;font-size:12px;font-weight:700;color:var(--gray-dark);margin-top:6px;flex-wrap:wrap;justify-content:center}
 
 /* ══ TOAST ═══════════════════════════════════════════════════════════ */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:#333;color:#fff;font-size:13px;font-weight:700;padding:9px 20px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
@@ -541,6 +537,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         </div>
       </div>
     </div>
+    <div id="lang-tutor-banner" style="display:none;margin-top:10px;padding:12px 16px;background:#eef6ff;border-radius:10px;border:2px solid #b8d4f8;font-size:13px;font-weight:700;color:#1a4fa0;line-height:1.6"></div>
     <div id="ui-translate-row" style="display:none;margin-top:8px;align-items:center;gap:8px;flex-wrap:wrap">
       <span id="ui-translate-info" style="font-size:11px;font-weight:700;color:var(--gray-dark)"></span>
       <button id="ui-translate-btn" onclick="triggerUITranslation()"
@@ -548,6 +545,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <span id="ui-translate-status" style="font-size:11px;font-weight:700;display:none"></span>
     </div>
   </div>
+  <div id="gen-area">
     <label class="form-lbl" for="topic-input" id="topic-label">What do you want to learn Italian for?</label>
     <textarea class="topic-input" id="topic-input" rows="2"
       placeholder="e.g. cooking, architecture, medicine…"
@@ -577,6 +575,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </div>
     </div>
 
+    <div id="gen-form-section">
     <div class="story-len-row" id="story-len-row">
       <div class="story-len-hdr">
         <span class="story-len-lbl" id="story-len-lbl">Story length</span>
@@ -645,7 +644,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <span class="format-select-arrow">▾</span>
       </div>
     </div>
+    </div><!-- end gen-form-section -->
     <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
+  </div><!-- end gen-area -->
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
 
@@ -676,35 +677,46 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 </div>
 
 <!-- ══ HOME ══════════════════════════════════════════════════════════ -->
-<div id="home" class="screen">
-<div class="home-inner">
-  <div class="home-hdr">
-    <div class="home-hdr-title">
-      <span class="topic-emoji-big" id="topic-emoji-big">📚</span>
-      <span class="topic-name-big" id="topic-name-big">Topic</span>
-      <button class="hdr-btn" id="gen-topic-title-btn" onclick="genLessonTitle()"
-        style="display:none;font-size:12px;padding:3px 8px;flex-shrink:0"
-        title="Generate lesson title with AI">✨</button>
+<div id="lesson-set" class="screen">
+<div class="ls-inner">
+  <!-- Row 1: Storyline context — ← back, storyline title (link), 🔗 share -->
+  <div id="ls-storyline-hdr" class="sl-screen-hdr">
+    <div class="sl-screen-title-row">
+      <button class="sl-screen-back" onclick="goLandingClean()" id="btn-topics" title="Back">←</button>
+      <span id="ls-storyline-icon" style="font-size:20px">📖</span>
+      <span id="ls-storyline-title" class="sl-screen-title" style="cursor:pointer" onclick="goStorylineFromLesson()"></span>
+      <button class="sl-screen-share" onclick="shareLesson()" title="Share">🔗</button>
     </div>
-    <div class="home-hdr-actions">
-      <button class="hdr-btn" onclick="goLandingClean()"id="btn-topics">← Topics</button>
-      <button class="hdr-btn" id="share-btn" onclick="shareLesson()" title="Copy shareable link">🔗 Share</button>
-      <button class="hdr-btn" id="regen-btn" onclick="regenCurrent()" style="display:none">↻ Regen</button>
-      <button class="hdr-btn" id="cont-story-btn" onclick="continueFromCurrent()" style="display:none" title="Continue this story">↪ Continue</button>
+    <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin:6px 0 2px">
+      <div id="ls-storyline-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
     </div>
-    <div class="home-hdr-storyline" id="home-hdr-storyline"></div>
+    <div style="font-size:11px;font-weight:800;color:var(--gray-dark);padding:2px 0 0;opacity:.8" id="ls-storyline-prog-txt"></div>
   </div>
-  <div class="prog-strip">
-    <span style="font-size:20px">📊</span>
-    <div style="flex:1">
-      <div style="font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.07em">Progress</div>
-      <div class="prog-val" id="total-xp">—</div>
+  <!-- Row 2: Lesson-set title — emoji, title, ✏️ edit, ✨ gen, 🔗 share -->
+  <div class="sl-screen-hdr" id="ls-hdr">
+    <div class="sl-screen-title-row">
+      <span class="topic-emoji-big" id="topic-emoji-big" style="font-size:20px">📚</span>
+      <span class="sl-screen-title" id="topic-name-big">Topic</span>
+      <button class="sl-screen-share" id="lesson-edit-btn" onclick="openLessonTitleEdit()" style="display:none" title="Edit title">✏️</button>
+      <button class="sl-screen-share" id="gen-topic-title-btn" onclick="genLessonTitle()" style="display:none" title="Generate title">✨</button>
+      <button class="sl-screen-share" id="share-btn" onclick="shareLesson()" title="Share">🔗</button>
     </div>
+    <div id="lesson-title-edit-row" style="display:none;padding:8px 0 0;gap:6px;align-items:center;flex-wrap:wrap">
+      <span id="lesson-title-edit-icon" style="position:relative;display:inline-block"><span class="icon-picker-btn" id="lesson-emoji-picker" style="font-size:20px;cursor:pointer" onclick="openIconPicker('lesson-emoji-picker','lesson-emoji')">📚</span></span>
+      <input id="lesson-title-input" class="storyline-edit-input" style="flex:1;min-width:120px" placeholder="Lesson set title…"
+        onkeydown="if(event.key==='Enter')saveLessonTitleEdit();if(event.key==='Escape')closeLessonTitleEdit()">
+      <button class="storyline-hdr-btn" onclick="saveLessonTitleEdit()">Save</button>
+      <button class="storyline-hdr-btn" onclick="closeLessonTitleEdit()">✕</button>
+    </div>
+    <div class="ls-hdr-storyline" id="home-hdr-storyline"></div>
+    <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin-top:6px">
+      <div id="ls-prog-bar" style="height:100%;background:var(--blue);border-radius:2px;transition:width .3s;width:0%"></div>
+    </div>
+    <div id="ls-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
   </div>
   <div class="flag-strip" id="flag-strip">
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
   </div>
-  <div class="rating-panel" id="rating-panel" style="display:none;visibility:hidden"></div>
   <div class="path-wrap" id="lesson-path"></div>
   <div class="gen-stats" id="gen-stats"></div>
   <div class="tts-row" id="tts-row" style="display:none;padding:8px 0 0">
@@ -723,7 +735,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="story-hdr-btns" onclick="event.stopPropagation()">
         <span id="story-lang-lbl" class="story-lang-lbl" style="display:none"></span>
         <button class="story-icon-btn" onclick="speakStory()" id="speakstory-btn" title="Read aloud">🔊</button>
-        <button class="story-icon-btn" id="story-prompt-btn" onclick="openStoryPrompt()" title="View/edit story prompt" style="display:none">📝</button>
         <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" id="edit-story-btn" title="Edit story">✏️</button>
       </div>
       <span class="story-arrow" id="story-arrow">▼</span>
@@ -748,6 +759,21 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         style="display:none;background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a"
         id="continue-story-btn-title" title="Continue this story in a new lesson set">↪ Continue story</button>
     </div>
+  <div id="lesson-editor" class="lesson-editor"></div>
+  <div class="lesson-actions" id="lesson-actions"></div>
+  <div class="saved-item-addlesson" id="sial-lesson-card" style="border-radius:var(--radius-lg);margin-top:4px">
+    <span style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
+    <select class="addlesson-select" id="sial-fmt-lesson-card">
+      <option value="standard">📚 Standard</option>
+      <option value="grammar">🏷️ Grammar</option>
+      <option value="conjugation">🔤 Conjugation</option>
+      <option value="error_hunt">🔍 Error Hunt</option>
+    </select>
+    <button class="addlesson-btn" id="sial-btn-lesson-card" onclick="doAddLesson('lesson-card', document.getElementById('sial-enc-lesson-card').value)">Generate</button>
+    <button class="addlesson-cancel" onclick="closeAddLesson('lesson-card')">✕</button>
+    <div class="addlesson-status" id="sial-status-lesson-card"></div>
+    <input type="hidden" id="sial-enc-lesson-card">
+  </div>
   </div>
 </div>
 </div>
@@ -782,26 +808,28 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="sl-screen">
     <div class="sl-screen-hdr">
       <div class="sl-screen-title-row">
-        <span class="sl-screen-title" id="sl-screen-title" onclick="openStorylineEditInScreen()">📖</span>
-        <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
+        <button class="sl-screen-back" onclick="goLandingClean()" title="Back">←</button>
+        <span class="sl-screen-title" id="sl-screen-title" style="cursor:default">📖</span>
+        <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="${t('ui.edit_title')}" style="display:none">✏️</button>
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="genStorylineTitleFromScreen()" title="Generate title" style="display:none">✨</button>
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
-      </div>
-      <div class="sl-screen-actions">
-        <button class="sl-screen-back" onclick="closeStorylineScreen()">← Back</button>
-        <button class="sl-screen-share" onclick="shareStoryline()">🔗 Share</button>
+        <button class="sl-screen-share" onclick="shareStoryline()" title="Share">🔗</button>
         <button class="sl-screen-share" id="sl-screen-del-btn" onclick="deleteCurrentStoryline()" style="color:var(--red);display:none" title="Delete storyline">🗑️</button>
       </div>
       <div id="sl-screen-edit-row" style="display:none;padding:8px 0 0;gap:6px;align-items:center;flex-wrap:wrap">
-        <span id="sl-screen-edit-icon" style="font-size:20px;cursor:pointer" onclick="cycleSlScreenIcon()">📖</span>
+        <span id="sl-screen-edit-icon-wrap" style="position:relative;display:inline-block"><span id="sl-screen-edit-icon" class="icon-picker-btn" onclick="openIconPicker('sl-screen-edit-icon','sl-edit')">📖</span></span>
         <input id="sl-screen-edit-input" class="storyline-edit-input" style="flex:1;min-width:120px" placeholder="Storyline title…"
           onkeydown="if(event.key==='Enter')saveSlScreenTitle();if(event.key==='Escape')closeStorylineEditInScreen()">
         <button class="storyline-hdr-btn" onclick="saveSlScreenTitle()">Save</button>
         <button class="storyline-hdr-btn danger" onclick="clearSlScreenTitle()">Clear</button>
         <button class="storyline-hdr-btn" onclick="closeStorylineEditInScreen()">✕</button>
       </div>
+      <div id="sl-screen-progress"></div>
+      <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin-top:6px">
+        <div id="sl-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
+      </div>
+      <div id="sl-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
     </div>
-    <div id="sl-screen-progress"></div>
     <div class="sl-screen-body" id="sl-screen-body"></div>
     <div class="sl-screen-stats" id="sl-screen-stats"></div>
   </div>
@@ -1027,8 +1055,6 @@ function applyUIStrings() {
   _updateStoryLenLabel();
   // Tooltips
   _setAttr('share-btn', 'title', t('lesson.share_title'));
-  _setText('btn-topics', t('lesson.btn_topics'));
-  _setText('share-btn', t('lesson.btn_share'));
   _setAttr('speakstory-btn', 'title', t('lesson.read_aloud'));
   _setAttr('edit-story-btn', 'title', t('lesson.edit_story'));
   _setAttr('continue-story-btn-title', 'title', t('lesson.continue_title'));
@@ -1262,7 +1288,7 @@ function selectLang(code, silent){
   const tutorBanner = document.getElementById('lang-tutor-banner');
   if (tutorBanner) {
     if (code === 'de') {
-      tutorBanner.innerHTML = t('lang.tutor_de_html');
+      tutorBanner.innerHTML = '🎓 Try <a href="https://chilperic.github.io/Deutsch-wipa-2026/" target="_blank" style="color:#1a4fa0;font-weight:800">Chilperic\'s German focus tutor</a>';
       tutorBanner.style.display = '';
     } else {
       tutorBanner.style.display = 'none';
@@ -1394,17 +1420,6 @@ function speakStory(){
 }
 
 // ── Story prompt modal (M6) ───────────────────────────────────────────
-function openStoryPrompt(){
-  const d=APP.lessonData; if(!d) return;
-  const ta=document.getElementById('story-prompt-input');
-  if(ta) ta.value=d.storyPrompt||'(No prompt saved for this lesson)';
-  const regenBtn=document.getElementById('story-prompt-regen-btn');
-  if(regenBtn) regenBtn.disabled=!APP.info.canGenerate;
-  document.getElementById('story-prompt-modal').style.display='flex';
-}
-function closeStoryPrompt(){
-  document.getElementById('story-prompt-modal').style.display='none';
-}
 async function regenWithPrompt(){
   const d=APP.lessonData; if(!d||!APP.info.canGenerate) return;
   const ta=document.getElementById('story-prompt-input');
@@ -1474,44 +1489,9 @@ function getRatingAxes() { return [
   {key:'coherence',  label:t('rating.q_coherence'),  opts:['🔗','🔗🔗','🔗🔗🔗'], titles:[t('rating.incoherent'),t('rating.coherent'),t('rating.very_coherent')]},
 ];}
 const _pr={};
-function renderRatingPanel(d,done){ return; // rating deferred
-
-  const panel=document.getElementById('rating-panel'); if(!panel) return;
-  if(!d.lessons.every(L=>done[L.id])){ panel.style.display='none'; return; }
-  panel.style.display='';
-  const axes=getRatingAxes();
-  if(d.ratings){
-    panel.innerHTML=`<div class="rating-done">⭐ ${t('rating.title')}</div><div class="rating-summary">`+
-      axes.map(a=>`<span>${a.label}: ${a.opts[(d.ratings[a.key]||1)-1]}</span>`).join('')+`</div>`;
-    return;
-  }
-  panel.innerHTML=`<div class="rating-title">⭐ ${t('rating.title')}</div>`+
-    axes.map(a=>`<div class="rating-row"><span class="rating-axis">${a.label}</span><div class="rating-btns">`+
-      a.opts.map((o,i)=>`<button class="rating-btn" id="rb-${a.key}-${i+1}" onclick="selR('${a.key}',${i+1})" title="${a.titles?a.titles[i]:o}" style="font-size:20px;padding:8px 12px">${o}</button>`).join('')+
-    `</div></div>`).join('')+
-    `<button class="rating-submit" onclick="submitRating()">${t('rating.submit')}</button>`;
-}
-function selR(axis,val){
-  _pr[axis]=val;
-  [1,2,3].forEach(v=>{ const b=document.getElementById(`rb-${axis}-${v}`); if(b) b.classList.toggle('sel',v===val); });
-}
-async function submitRating(){
-  const d=APP.lessonData; if(!d) return;
-  for(const a of getRatingAxes()){ if(!_pr[a.key]){ alert(t('rating.title')); return; } }
-  const r={difficulty:_pr.difficulty,fun:_pr.fun,coherence:_pr.coherence};
-  try{
-    const res=await fetch('/api/rate',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic:d.topic,ratings:r})});
-    if(!res.ok) throw new Error(t('status.server_error'));
-    d.ratings=r;
-    renderRatingPanel(d,APP.progress.completed[d.topic]||{});
-    loadSavedList();
-  }catch(e){ alert('Rating failed: '+e.message); }
-}
-
-function goHome(){
+function goLessonSet(){
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
-  show('home');
+  show('lesson-set');
   if(APP.lessonData) history.replaceState(null,'','#topic='+encodeURIComponent(APP.lessonData.topic));
 }
 function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); show('landing'); }
@@ -1625,9 +1605,7 @@ function savedItemHtml(s, connector, hideStory) {
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
         ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
-        ${APP.info.canGenerate?`<button class="ico-btn regen" title="Regenerate" onclick="regenSaved('${enc}')">↻</button>`:''}
         ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
-        ${APP.info.canGenerate?`<button class="ico-btn" title="Fix all lessons (deep clean)" onclick="event.stopPropagation();fixAllLessons('${enc}','${sid}')">🔧</button>`:''}
         ${APP.info.canGenerate?`<button class="ico-btn" title="Add lesson" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
         <button class="ico-btn export" title="${t('lesson.export_title')}"
           data-topic="${s.topic.replace(/"/g,'&quot;')}"
@@ -1644,7 +1622,7 @@ function savedItemHtml(s, connector, hideStory) {
       <div class="saved-item-story-body" id="sis-body-${sid}"></div>
     </div>
     <div class="saved-item-edit" id="siedit-${sid}">
-      <span class="saved-item-edit-emoji" id="siedit-emoji-${sid}" title="Cycle emoji" onclick="cycleSavedItemEmoji('${sid}')">${s.topicEmoji||'📚'}</span>
+      <span style="position:relative;display:inline-block"><span class="saved-item-edit-emoji icon-picker-btn" id="siedit-emoji-${sid}" onclick="openIconPicker('siedit-emoji-${sid}','si-${sid}')">${s.topicEmoji||'📚'}</span></span>
       <input class="saved-item-edit-input" id="siedit-input-${sid}" value="${s.topic.replace(/"/g,'&quot;')}" placeholder="Topic name…"
         onkeydown="if(event.key==='Enter')saveSavedItemTitle('${sid}','${enc}');if(event.key==='Escape')closeSavedItemEdit('${sid}')">
       <button class="saved-item-edit-btn" onclick="saveSavedItemTitle('${sid}','${enc}')">Save</button>
@@ -1871,7 +1849,7 @@ async function loadSavedList(){
     if (_slSum) {
       html += `<div class="storyline-story" id="slsum-wrap-${chainId}">` +
         `<button class="storyline-story-hdr" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` +
-        `📖 Read summary<span class="storyline-story-arrow" id="slsc-summary-arrow-${chainId}">▼</span></button>` +
+        `${t('lesson.read_summary')}<span class="storyline-story-arrow" id="slsc-summary-arrow-${chainId}">▼</span></button>` +
         `<div class="storyline-story-body" id="slsc-summary-body-${chainId}">` +
         `<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
         `</div></div>`;
@@ -1927,7 +1905,7 @@ async function loadSaved(topic){
     const r=await fetch('/api/lessons/load?topic='+topic);
     if(!r.ok) throw new Error('Not found');
     APP.lessonData=await r.json();
-    goHome();
+    goLessonSet();
   }catch(e){ alert('Could not load: '+e.message); }
 }
 
@@ -1935,27 +1913,6 @@ async function deleteSaved(topic){
   if(!confirm('Delete "'+decodeURIComponent(topic)+'"?')) return;
   await fetch('/api/lessons/delete?topic='+topic,{method:'DELETE'});
   loadSavedList();
-}
-
-async function regenSaved(topic){
-  const dec=decodeURIComponent(topic);
-  if(!confirm('Regenerate "'+dec+'"? Overwrites saved version.')) return;
-  if(APP.activeJob){ showToast(t('toast.already_generating',{topic:APP.activeJob.topic})); return; }
-  const saved=(APP.savedList||[]).find(s=>s.topic===dec);
-  if(saved?.lang) selectLang(saved.lang);
-  if(saved?.srcLang){ APP.srcLang=saved.srcLang; saveSrcLang(); const ss=document.getElementById('src-lang-select'); if(ss) ss.value=saved.srcLang; updateTranslationLangHint(); }
-  document.getElementById('topic-input').value=saved?.userTopic||dec;
-  doGenerate(true);
-}
-
-function regenCurrent(){
-  if(!APP.lessonData||!APP.info.canGenerate) return;
-  if(!confirm('Regenerate "'+APP.lessonData.topic+'"? Overwrites saved version.')) return;
-  if(APP.lessonData.lang) selectLang(APP.lessonData.lang);
-  if(APP.lessonData.srcLang){ APP.srcLang=APP.lessonData.srcLang; saveSrcLang(); const ss=document.getElementById('src-lang-select'); if(ss) ss.value=APP.lessonData.srcLang; updateTranslationLangHint(); }
-  document.getElementById('topic-input').value=APP.lessonData.userTopic||APP.lessonData.topic;
-  goLanding();
-  setTimeout(()=>doGenerate(true),100);
 }
 
 // Prefill the generation form to continue from a given topic
@@ -2038,7 +1995,7 @@ function startBackgroundJob(jobId, topic){
         saveProg();
         await loadSavedList();
         // If user is on the home screen viewing a lesson, refresh the path
-        if(document.getElementById('home')?.classList.contains('active')) try{ buildPath(); }catch(e){}
+        if(document.getElementById('lesson-set')?.classList.contains('active')) try{ buildPath(); }catch(e){}
         document.getElementById('gen-btn').disabled=false;
         setGenStatus('done', '"'+j.data.topic+'" ready — tap to open');
         showToast(t('toast.generated',{topic:j.data.topic}));
@@ -2125,7 +2082,7 @@ async function doGenerate(forceRegen){
       if(!APP.progress.completed[resp.data.topic]) APP.progress.completed[resp.data.topic]={};
       saveProg();
       await loadSavedList();
-      goHome();
+      goLessonSet();
     } else {
       // Fire and forget — user can browse while this runs
       startBackgroundJob(resp.jobId, topic);
@@ -2143,21 +2100,75 @@ function buildPath(){
   const done=APP.progress.completed[topicKey];
   const dLang=d.lang||'it'; const dL=LANGS[dLang]||LANGS.it;
   const diff=d.difficulty||2;
-  document.getElementById('topic-emoji-big').textContent=(dL.flag+' '+(d.topicEmoji||'📚'));
+  const _emojiBig = document.getElementById('topic-emoji-big');
+  _emojiBig.textContent = (dL.flag+' '+(d.topicEmoji||'📚'));
+  if (APP.info.canGenerate) {
+    _emojiBig.style.cursor = 'pointer';
+    _emojiBig.title = 'Change icon';
+    // Remove stale picker from previous lesson
+    const _stale = document.getElementById('ipg-topic-emoji');
+    if (_stale) _stale.remove();
+    _emojiBig.onclick = null;
+  _emojiBig.style.cursor = 'default';
+  } else {
+    _emojiBig.style.cursor = '';
+    _emojiBig.onclick = null;
+  }
   document.getElementById('topic-name-big').textContent=d.topic;
   const _allL=(APP.lessonData?.lessons||[]).length;
   const _doneMap=APP.progress.completed?.[APP.lessonData?.topic]||{};
-  const _doneL=Object.keys(_doneMap).length;
+  const _doneL=(APP.lessonData?.lessons||[]).filter(L=>_doneMap[L.id]).length;
   const _scores=Object.values(_doneMap).filter(v=>typeof v==='object'&&v.total>0);
   const _totC=_scores.reduce((s,v)=>s+v.correct,0);
   const _totT=_scores.reduce((s,v)=>s+v.total,0);
-  const _pctStr=_totT>0?(Math.round(100*_totC/_totT)+'% correct'):(_doneL+'/'+_allL+' done');
-  document.getElementById('total-xp').textContent=_doneL+' / '+_allL+' · '+_pctStr;
-  const _rb=document.getElementById('regen-btn'); if(_rb){ _rb.style.display=APP.info.canGenerate?'':'none'; _rb.textContent=t('lesson.btn_regen'); }
-  const genTitleBtn=document.getElementById('gen-topic-title-btn');
-  if(genTitleBtn){ genTitleBtn.style.display=APP.info.canGenerate?'':'none'; genTitleBtn.title=t('lesson.gen_topic_title_title'); genTitleBtn.textContent='✨'; }
-  const contStoryBtn=document.getElementById('cont-story-btn');
-  if(contStoryBtn){ contStoryBtn.style.display=APP.info.canGenerate?'':'none'; contStoryBtn.textContent=t('lesson.btn_continue'); }
+  // Tight progress bar for this lesson set
+  const _lsPct = _allL>0 ? Math.round(100*_doneL/_allL) : 0;
+  const _lsBar = document.getElementById('ls-prog-bar');
+  const _lsTxt = document.getElementById('ls-prog-txt');
+  if(_lsBar) _lsBar.style.width = _lsPct+'%';
+  if(_lsTxt) _lsTxt.textContent = _doneL+'/'+_allL+(_totT>0?' · '+Math.round(100*_totC/_totT)+'%':'');
+
+  // Storyline context row — always shown; find storyline for this topic
+  const _slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const _slById = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+  // Prefer the storyline the user came from, fall back to first match
+  const _ctxSl = (APP._slScreen?.chainId && _slArr.find(s=>s.id===APP._slScreen.chainId &&
+      (s.chapters||[]).some(cid=>_slById[cid]?.topic===d.topic)))
+    || _slArr.find(s=>(s.chapters||[]).some(cid=>_slById[cid]?.topic===d.topic));
+  const _slIconEl  = document.getElementById('ls-storyline-icon');
+  const _slTitleEl = document.getElementById('ls-storyline-title');
+  const _slBarEl   = document.getElementById('ls-storyline-prog-bar');
+  const _slTxtEl   = document.getElementById('ls-storyline-prog-txt');
+  if (_ctxSl) {
+    const _cTopics = (_ctxSl.chapters||[]).map(cid=>_slById[cid]?.topic).filter(Boolean);
+    let _slTotalSets=0, _slDoneSets=0;
+    _cTopics.forEach(tp => {
+      const tDone=APP.progress.completed?.[tp]||{};
+      const tLessons=(APP.savedList||[]).find(l=>l.topic===tp)?.lessons||[];
+      _slTotalSets+=tLessons.length;
+      _slDoneSets+=tLessons.filter(L=>tDone[L.id]).length;
+    });
+    const _slPct=_slTotalSets>0?Math.round(100*_slDoneSets/_slTotalSets):0;
+    if(_slIconEl)  _slIconEl.textContent  = _ctxSl.icon||'📖';
+    if(_slTitleEl) _slTitleEl.textContent = _ctxSl.title||_cTopics[0]||'Storyline';
+    if(_slBarEl)   _slBarEl.style.width   = _slPct+'%';
+    if(_slTxtEl)   _slTxtEl.textContent   = _slDoneSets+'/'+_slTotalSets;
+    // Store for goStorylineFromLesson
+    if (!APP._slScreen && _ctxSl) {
+      const chain = _cTopics;
+      APP._slScreen = { chainId: _ctxSl.id, encodedChain: encodeURIComponent(JSON.stringify(chain)), topics: chain };
+    }
+  } else {
+    // No storyline — show landing link as fallback
+    if(_slIconEl)  _slIconEl.textContent  = '🏠';
+    if(_slTitleEl) { _slTitleEl.textContent = '← Lessons'; _slTitleEl.onclick = goLandingClean; }
+    if(_slBarEl)   _slBarEl.style.width   = '0%';
+    if(_slTxtEl)   _slTxtEl.textContent   = '';
+  }
+  const lessonEditBtn = document.getElementById('lesson-edit-btn');
+  const genTitleBtn   = document.getElementById('gen-topic-title-btn');
+  if (lessonEditBtn) lessonEditBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  if (genTitleBtn)   genTitleBtn.style.display   = APP.info.canGenerate ? '' : 'none';
   // Reset TTS override when loading a new lesson, then build selector
   APP.ttsLang=null;
   buildTtsSelector();
@@ -2169,7 +2180,7 @@ function buildPath(){
     contNav=document.createElement('div');
     contNav.id='cont-nav';
     contNav.className='cont-nav';
-    document.querySelector('.home-hdr').insertAdjacentElement('afterend',contNav);
+    document.getElementById('ls-hdr').insertAdjacentElement('afterend',contNav);
   }
   const continuedBy=(APP.savedList||[]).filter(s=>s.continuedFrom===d.topic);
   const fromLinks=[];
@@ -2192,45 +2203,7 @@ function buildPath(){
     contNav.style.display='none';
   }
 
-  // Storyline links strip — just above cont-nav
-  let slNav=document.getElementById('sl-nav');
-  if(!slNav){
-    slNav=document.createElement('div');
-    slNav.id='sl-nav';
-    slNav.className='sl-nav';
-    contNav.insertAdjacentElement('beforebegin',slNav);
-  }
-  const _slNavArr=Array.isArray(APP.storylines)?APP.storylines:[];
-  const _slNavById=Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
-  // Find all storylines containing this topic
-  const _slNavLinks=_slNavArr.filter(sl=>{
-    if(!sl.chapters) return false;
-    const topics=(sl.chapters||[]).map(cid=>_slNavById[cid]?.topic||null).filter(Boolean);
-    return topics.includes(d.topic);
-  }).map(sl=>{
-    const topics=(sl.chapters||[]).map(cid=>_slNavById[cid]?.topic||null).filter(Boolean);
-    const enc=encodeURIComponent(JSON.stringify(topics));
-    const icon=sl.icon||'📖';
-    const title=sl.title||topics[0]||'Story line';
-    return `<span class="cont-link" style="background:var(--gray-light)" onclick="openStorylineScreen('${sl.id}','${enc}')">${icon} ${escHtml(title)} ↗</span>`;
-  });
-  // Legacy fallback: matchedTitles if no v29 storylines found
-  if(!_slNavLinks.length && matchedTitles.length){
-    matchedTitles.forEach(chain=>{
-      const j=JSON.stringify(chain);
-      const cid='sl_'+Math.abs(j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-      const meta=slTitles['c'+Math.abs(j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0))]||slTitles['root:'+chain[0]];
-      if(!meta||!meta.title) return;
-      const enc=encodeURIComponent(j);
-      _slNavLinks.push(`<span class="cont-link" style="background:var(--gray-light)" onclick="openStorylineScreen('${cid}','${enc}')">${meta.icon||'📖'} ${escHtml(meta.title)} ↗</span>`);
-    });
-  }
-  if(_slNavLinks.length){
-    slNav.innerHTML=_slNavLinks.join('');
-    slNav.style.display='';
-  } else {
-    slNav.style.display='none';
-  }
+  // sl-nav removed — storyline context header shown in ls-storyline-hdr
 
   // Storyline title row — find which chains this topic belongs to
   // (hoisted out of if(slRow) so matchedTitles is available for M1 below)
@@ -2320,8 +2293,6 @@ function buildPath(){
     if(storyLangLbl){ storyLangLbl.textContent=dL.flag; storyLangLbl.style.display=''; }
     const repToggle=document.getElementById('story-repair-toggle-btn');
     if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
-    const promptBtn=document.getElementById('story-prompt-btn');
-    if(promptBtn) promptBtn.style.display=APP.info.canGenerate?'':'none';
     // Story flag row
     const sfRow=document.getElementById('story-flag-row');
     if(sfRow) sfRow.style.display='';
@@ -2362,9 +2333,10 @@ function buildPath(){
       ...(L.grammar||[]).map(g=>(g.target||'').slice(0,40).replace(/\s+/g,'_')),
       ...(L.conjugations||[]).flatMap(c=>(c.forms||[]).map(f=>(f.form||'').slice(0,40).replace(/\s+/g,'_'))),
     ]);
-    const topicSlugForFlag=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
+    const topicSlugForFlag=(d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
+    const topicIdForFlag=d.id||'';
     const lessonFlagCount=Object.entries(APP.flagged).filter(([k])=>{
-      if(!k.startsWith(topicSlugForFlag+':')) return false;
+      if(!k.startsWith(topicSlugForFlag+':') && !(topicIdForFlag && k.startsWith(topicIdForFlag+':'))) return false;
       const parts=k.split(':');
       // key format: topicSlug:type:contentSlug
       const contentSlug=parts.slice(2).join(':');
@@ -2377,23 +2349,47 @@ function buildPath(){
         <div class="node-title">${(()=>{const labels={'grammar':'🏷️ Grammar','conjugation':'🔤 Conjugation','error_hunt':'🔍 Error Hunt'};return labels[L.type]||'📚 Vocab';})()}</div>
         <div class="node-desc">${L.desc}</div>
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
-        ${APP.info.canGenerate?`<div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
-          ${hasFlags?`<button class="fix-btn" onclick="event.stopPropagation();fixLesson('${encTopic(d.topic)}',${L.id},false,this)" title="Repair flagged exercises only">🔧 Fix flagged</button>`:''}
-          <button class="fix-btn" onclick="event.stopPropagation();fixLesson('${encTopic(d.topic)}',${L.id},true,this)" title="Deep-clean: verify and fix all vocab and sentences">🔧 Fix all</button>
-        </div>`:''}
+        ${hasFlags?`<span class="flag-note" style="font-size:11px">${lessonFlagCount} ⚑</span>`:''}
         <div class="fix-status" id="fix-status-${L.id}"></div>
       </div>
-      ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:22px">🔒</span>':''}`;
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+        ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:22px">🔒</span>':''}
+        ${APP.info.canGenerate&&L.id?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="Edit lesson" onclick="event.stopPropagation();openLessonEditor(${i})">📋</button>
+          <button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="event.stopPropagation();deleteLessonNode(${i})">🗑</button>`:''}
+      </div>`;
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
   });
   const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
   // start-btn removed from UI — lessons started directly from path nodes
-  renderRatingPanel(d, done);
+
+  // Bottom action row — live only (hidden in static via canGenerate check)
+  const _actRow = document.getElementById('lesson-actions');
+  if (_actRow) {
+    if (APP.info.canGenerate) {
+      const _enc = encTopic(d.topic);
+      const _sid = Math.abs(d.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0)).toString(36);
+      const _diff = d.difficulty || 2;
+      const _slen = d.storyLen || 300;
+      _actRow.innerHTML =
+        `<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${d.topic.replace(/'/g,"\'")}',${_diff},${_slen})">↪</button>`
+      
+      + `<button class="ico-btn" title="Add lesson" onclick="document.getElementById('sial-enc-lesson-card').value='${_enc}';openAddLesson('lesson-card','${_enc}')">➕</button>`
+      + `<button class="ico-btn export" title="Export" data-topic="${d.topic.replace(/"/g,'&quot;')}" onclick="exportTopics([this.dataset.topic])">⬇</button>`
+      + `<button class="ico-btn" title="Clear progress" onclick="clearLessonProgress('${_enc}')">↺</button>`
+      + `<button class="ico-btn" title="Delete" onclick="deleteSaved('${_enc}')">🗑</button>`;
+      _actRow.classList.add('visible');
+    } else {
+      _actRow.classList.remove('visible');
+    }
+  }
 
   // Update flag summary strip
-  const topicSlugAll=(d.topic||'').slice(0,30).replace(/\s+/g,'_');
-  const totalFlagged=Object.keys(APP.flagged).filter(k=>k.startsWith(topicSlugAll+':')).length;
+  const topicSlugAll=(d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
+  const topicIdAll=d.id||'';
+  const totalFlagged=Object.keys(APP.flagged).filter(k=>
+    k.startsWith(topicSlugAll+':') || (topicIdAll && k.startsWith(topicIdAll+':'))
+  ).length;
   const strip=document.getElementById('flag-strip');
   const stripLbl=document.getElementById('flag-strip-label');
   if(strip){
@@ -2441,7 +2437,27 @@ async function toggleSavedStory(id, topic) {
 
 // ── Storyline combined story panel ───────────────────────────────────
 // ── Storyline title management ────────────────────────────────────────
-const STORYLINE_ICONS = ['📖','🌟','🔥','🌊','🏔','🌙','⚔️','🧪','🎭','🚀','🌿','💀','🦋','🎪','🧠'];
+const STORYLINE_ICONS = [
+  // Smileys & people
+  '👀','👑','💀','👻','🧙','🧟','🩺','🤝','💪','✍️','🗣️','🛒',
+  // Animals & nature
+  '🐉','🦁','🦊','🐺','🦅','🐙','🐑','🐻','🦋','🌹','🌸','🍄',
+  '🌿','🌳','🌊','🌋','🌅','🌙','🌟','☀️','❄️','🌪','🌈','⚡',
+  // Food & drink
+  '🍕','🍝','🍜','🍺','🍾','🥂','🍽️','🥗','🍯','☕️','🧄','🧆',
+  // Travel & places
+  '🏠','🏛','🏥','🏖️','🏔','⛰️','🏝','🗺','🧭','✈️','🚁','🚂',
+  '🚗','⛵','🛸','🌍','🌐','📍','🚨','🏴‍☠️',
+  // Activities & sports
+  '🏃','🧗','🏓','🏆','🎯','⚔️','🔮','💫','🚀',
+  // Arts & culture
+  '🎭','🎪','🎨','🎵','🎶','🎬','🎓','🎲','🎤',
+  // Objects & tools
+  '📖','📚','📜','🗝','💡','🔬','🧪','🧬','🧠','💻','🤖','🧩',
+  '🔢','🔍','💬','🧼','💎','👻','🔥','⚙️','🔧','📡','🧲',
+  // Symbols
+  '❤️','💫','⭐','🌟','✨','❓','🔥','⚡','🌈',
+];
 const _slIconIdx = {};
 
 function openStorylineEdit(chainId, rootTopic) {
@@ -2452,10 +2468,7 @@ function openStorylineEdit(chainId, rootTopic) {
 function closeStorylineEdit(chainId) {
   document.getElementById('sledit-' + chainId).style.display = 'none';
 }
-function cycleStorylineIcon(chainId) {
-  _slIconIdx[chainId] = ((_slIconIdx[chainId] || 0) + 1) % STORYLINE_ICONS.length;
-  document.getElementById('sledit-icon-' + chainId).textContent = STORYLINE_ICONS[_slIconIdx[chainId]];
-}
+// cycleStorylineIcon replaced by openIconPicker
 
 async function saveStorylineTitle(chainId, rootTopic) {
   const title = document.getElementById('sledit-input-' + chainId).value.trim();
@@ -2621,81 +2634,6 @@ async function doAddLesson(sid, enc) {
 
 // ── Lesson fix / deep-clean ───────────────────────────────────────────────────
 
-async function fixLesson(enc, lessonId, deepClean, btn) {
-  const topic = decodeURIComponent(enc);
-  const endpoint = deepClean ? '/api/repair-all' : '/api/repair';
-  const statusEl = document.getElementById('fix-status-' + lessonId);
-  if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
-  if (statusEl) statusEl.textContent = deepClean ? 'Cleaning…' : 'Repairing…';
-  try {
-    const r = await fetch(endpoint, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic, lessonId })
-    });
-    const resp = await r.json();
-    if (!r.ok) throw new Error(resp.error || t('status.repair_failed'));
-    const result = await pollJob(resp.jobId, step => {
-      if (statusEl) statusEl.textContent = step;
-    });
-    const n = result?.repaired ?? '?';
-    if (statusEl) statusEl.textContent = deepClean
-      ? `✓ ${n} item${n!==1?'s':''} cleaned`
-      : `✓ ${n} exercise${n!==1?'s':''} repaired`;
-    // Reload lesson data if it's the currently loaded topic
-    if (APP.lessonData && APP.lessonData.topic === topic) {
-      await loadSaved(encodeURIComponent(topic));
-    }
-    showToast(deepClean ? '🔧 Lesson cleaned' : '🔧 Exercises repaired');
-  } catch(e) {
-    if (statusEl) statusEl.textContent = '⚠ ' + e.message.slice(0, 60);
-    showToast('⚠ ' + e.message.slice(0, 60));
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = deepClean ? '🔧 Fix all' : '🔧 Fix flagged'; }
-  }
-}
-
-async function fixAllLessons(enc, sid) {
-  // Fix all lessons in a topic from the saved-list card
-  const topic = decodeURIComponent(enc);
-  const btn = document.getElementById('sial-btn-' + sid)
-           || document.querySelector(`[data-fix-sid="${sid}"]`);
-  const fixBtn = document.querySelector(`.saved-item-wrap [title="Fix all lessons (deep clean)"]`);
-  if (fixBtn) { fixBtn.disabled = true; fixBtn.textContent = '⏳'; }
-  showToast('🔧 Cleaning lessons…');
-  try {
-    // Load full lesson data using the correct endpoint
-    const r = await fetch('/api/lessons/load?topic=' + enc);
-    if (!r.ok) throw new Error('Could not load lessons');
-    const data = await r.json();
-    const lessons = data.lessons || [];
-    if (!lessons.length) { showToast('No lessons found'); return; }
-    let cleaned = 0;
-    for (let i = 0; i < lessons.length; i++) {
-      const lesson = lessons[i];
-      showToast(`🔧 Cleaning lesson ${i+1}/${lessons.length}…`);
-      const statusR = await fetch('/api/repair-all', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic, lessonId: lesson.id })
-      });
-      const resp = await statusR.json();
-      if (!statusR.ok) throw new Error(resp.error || t('status.repair_failed'));
-      await pollJob(resp.jobId, () => {});
-      cleaned++;
-    }
-    showToast(`✓ ${cleaned} lesson${cleaned!==1?'s':''} cleaned`);
-    await loadSavedList();
-    // Reload lesson view if this topic is currently open
-    if (APP.lessonData && APP.lessonData.topic === topic) {
-      await loadSaved(enc);
-    }
-  } catch(e) {
-    showToast('⚠ ' + e.message.slice(0, 60));
-  } finally {
-    if (fixBtn) { fixBtn.disabled = false; fixBtn.textContent = '🔧'; }
-  }
-}
-
-
 // ══ Storyline screen ══════════════════════════════════════════════════════════
 
 // Current open storyline state
@@ -2766,16 +2704,11 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   });
   const _slPct = totalSets > 0 ? Math.round(100 * doneSets / totalSets) : 0;
   const _slScorePct = totalQ > 0 ? Math.round(100*correctQ/totalQ) : null;
-  const progEl = document.getElementById('sl-screen-progress');
-  if (progEl) {
-    progEl.innerHTML = `<div class="prog-strip" style="border-radius:0;border-left:none;border-right:none;border-top:none;margin:0;box-shadow:none">
-      <span style="font-size:20px">📊</span>
-      <div style="flex:1">
-        <div style="font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.07em">${doneSets}/${totalSets}${_slScorePct!==null?' · '+_slScorePct+'%':''}</div>
-        <div class="prog-val" id="sl-total-xp">${_slPct}%</div>
-      </div>
-    </div>`;
-  }
+  // Populate tight 5px progress bar
+  const _slBar = document.getElementById('sl-prog-bar');
+  const _slTxt = document.getElementById('sl-prog-txt');
+  if (_slBar) _slBar.style.width = _slPct + '%';
+  if (_slTxt) _slTxt.textContent = doneSets + '/' + totalSets + (_slScorePct !== null ? ' · ' + _slScorePct + '%' : '');
   // Gen stats at bottom
   const statsEl = document.getElementById('sl-screen-stats');
   if (statsEl) {
@@ -2808,7 +2741,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const _sumId = 'slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_');
   html += '<div style="margin:8px 0;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid)">'
         + '<button class="storyline-story-hdr" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">'
-        + '📖 ' + (existingSummary ? 'Read summary' : 'No summary yet') + ' ▼</button>'
+        + (existingSummary ? t('lesson.read_summary') : t('lesson.no_summary')) + ' ▼</button>'
         + '<div id="' + _sumId + '" style="display:none;padding:12px 16px;font-size:14px;line-height:1.6;color:var(--text)">'
         + (existingSummary ? escHtml(existingSummary) : '<em style="color:var(--gray-dark)">Here could be your summary.</em>')
         + '</div></div>';
@@ -3043,7 +2976,7 @@ async function genStorylineSummary() {
     const arrow = document.getElementById('slsc-summary-arrow-' + chainId);
     if (wrap) {
       const hdrBtn = wrap.querySelector('.storyline-story-hdr');
-      if (hdrBtn) hdrBtn.innerHTML = '📖 Read summary<span class="storyline-story-arrow open" id="slsc-summary-arrow-' + chainId + '">▼</span>';
+      if (hdrBtn) hdrBtn.innerHTML = t('lesson.read_summary') + '<span class="storyline-story-arrow open" id="slsc-summary-arrow-' + chainId + '">▼</span>';
     }
     if (body) {
       body.innerHTML = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
@@ -3064,7 +2997,38 @@ async function genStorylineSummary() {
 
 // ── Storyline screen title editing ────────────────────────────────────────────
 
-const _slScreenIconIdx = { idx: 0 };
+function openIconPicker(targetId, wrapperId, onPick) {
+  // Close any open pickers
+  document.querySelectorAll('.icon-picker-grid.open').forEach(g => {
+    if (g.id !== 'ipg-' + wrapperId) g.classList.remove('open');
+  });
+  const existing = document.getElementById('ipg-' + wrapperId);
+  if (existing) { existing.classList.toggle('open'); return; }
+  // Build grid
+  const grid = document.createElement('div');
+  grid.className = 'icon-picker-grid open';
+  grid.id = 'ipg-' + wrapperId;
+  STORYLINE_ICONS.forEach(ic => {
+    const btn = document.createElement('button');
+    btn.textContent = ic;
+    btn.title = ic;
+    btn.onclick = e => {
+      e.stopPropagation();
+      const el = document.getElementById(targetId);
+      if (el) el.textContent = ic;
+      grid.classList.remove('open');
+      if (onPick) onPick(ic);
+    };
+    grid.appendChild(btn);
+  });
+  // Close on outside click
+  setTimeout(() => document.addEventListener('click', function h(e) {
+    if (!grid.contains(e.target)) { grid.classList.remove('open'); document.removeEventListener('click', h); }
+  }), 0);
+  const wrap = document.getElementById('wrap-' + wrapperId) || document.getElementById(targetId).parentElement;
+  wrap.style.position = 'relative';
+  wrap.appendChild(grid);
+}
 
 function openStorylineEditInScreen() {
   const row = document.getElementById('sl-screen-edit-row');
@@ -3075,11 +3039,7 @@ function closeStorylineEditInScreen() {
   const row = document.getElementById('sl-screen-edit-row');
   if (row) row.style.display = 'none';
 }
-function cycleSlScreenIcon() {
-  _slScreenIconIdx.idx = (_slScreenIconIdx.idx + 1) % STORYLINE_ICONS.length;
-  const el = document.getElementById('sl-screen-edit-icon');
-  if (el) el.textContent = STORYLINE_ICONS[_slScreenIconIdx.idx];
-}
+// cycleSlScreenIcon replaced by openIconPicker
 async function saveSlScreenTitle() {
   const chainId = APP._slScreen?.chainId;
   if (!chainId) return;
@@ -3131,6 +3091,582 @@ async function genStorylineTitleFromScreen() {
   finally { if (btn) { btn.textContent = '✨'; btn.disabled = false; } }
 }
 
+
+
+
+function clearLessonProgress(enc) {
+  const topic = decodeURIComponent(enc);
+  if (!confirm(`Clear all lesson results for "${topic}"?\nThis resets all progress for this lesson set.`)) return;
+  if (APP.progress.completed[topic]) {
+    delete APP.progress.completed[topic];
+    saveProg();
+  }
+  buildPath();
+  showToast('↺ Progress cleared');
+}
+
+// ── Lesson editor ─────────────────────────────────────────────────────────────
+
+function openLessonEditor(lessonIdx) {
+  const el = document.getElementById('lesson-editor');
+  if (!el) return;
+  // If already open for same lesson, close it
+  if (el.classList.contains('open') && el.dataset.lessonIdx === String(lessonIdx ?? '')) {
+    closeLessonEditor(); return;
+  }
+  el.dataset.lessonIdx = lessonIdx ?? '';
+  renderLessonEditor(false, lessonIdx);
+  el.classList.add('open');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeLessonEditor() {
+  const el = document.getElementById('lesson-editor');
+  if (el) { el.classList.remove('open'); el.innerHTML = ''; }
+}
+
+function escRe(s){ return s.replace(/[\^$.*+?()\[\]{}|]/g,'\\$&'); }
+function renderLessonEditor(flaggedOnly, focusLessonIdx) {
+  const el = document.getElementById('lesson-editor');
+  const d = APP.lessonData;
+  if (!el || !d) return;
+  // Only show the focused lesson (or all if no focus)
+  const li = focusLessonIdx ?? 0;
+  const ls = d.lessons[li];
+  if (!ls) { el.innerHTML = '<em>No lesson found</em>'; return; }
+  const flags = APP.flagged || {};
+  const topicSlug = (d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
+  const topicId   = d.id || '';
+  const isFlagged = (type, target) => {
+    const slug = (target||'').slice(0,40).replace(/\s+/g,'_');
+    return Object.keys(flags).some(k =>
+      (k.startsWith(topicSlug+':') || (topicId && k.startsWith(topicId+':'))) && k.endsWith(':'+slug));
+  };
+  const label = {grammar:'🏷️ Grammar',conjugation:'🔤 Conjugation',error_hunt:'🔍 Error Hunt'}[ls.type]||'📚 Vocab';
+  // Header
+  let html = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:800;color:var(--blue-dark)">${label}</span>
+    <span style="position:relative;display:inline-block">
+      <span class="icon-picker-btn" id="lesson-node-icon-picker-${li}" style="font-size:18px;cursor:pointer"
+        onclick="openIconPicker('lesson-node-icon-picker-${li}','lesson-node-icon-${li}', ic => { APP.lessonData.lessons[${li}]._iconPick=ic; })">${escHtml(ls.icon||'📖')}</span>
+    </span>
+    <input id="lesson-node-title-input-${li}" class="storyline-edit-input" style="flex:1;min-width:100px;font-size:12px"
+      value="${escHtml(ls.title||'')}" placeholder="Lesson title…">
+    ${ls.type!=='error_hunt'?`<label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">
+      <input type="checkbox" id="editor-flag-filter" ${flaggedOnly?'checked':''} onchange="renderLessonEditor(this.checked,${li})"> ⚑ only
+    </label>`:''}
+    <button class="storyline-hdr-btn" onclick="saveLessonEdits(${li})">💾</button>
+    <button class="storyline-hdr-btn" onclick="closeLessonEditor()">✕</button>
+  </div>`;
+
+  // Body — type-specific editors
+  if (ls.type === 'grammar') {
+    const items = (ls.grammar||[]).map((g,i) => ({...g, _i:i}));
+    const visItems = flaggedOnly ? items.filter(g => isFlagged('grammar', g.target)) : items;
+    if (!visItems.length) html += `<em style="color:var(--gray-dark);font-size:13px">No items</em>`;
+    visItems.forEach(g => {
+      const flagged = isFlagged('grammar', g.target);
+      html += `<div class="editor-entry${flagged?' flagged':''}" id="ee-${li}-grammar-${g._i}">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','grammar',${g._i})">🗑</button></div>
+        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="target" value="${escHtml(g.target||'')}"></div>
+        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="source" value="${escHtml(g.source||'')}"></div>
+        <div class="editor-field"><label>Article</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="article" value="${escHtml(g.article||'')}" style="width:60px;flex:none"></div>
+        <div class="editor-field"><label>Gender</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="gender" value="${escHtml(g.gender||'')}" style="width:60px;flex:none"></div>
+        <div class="editor-field"><label>Plural</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="plural" value="${escHtml(g.plural||'')}"></div>
+      </div>`;
+    });
+
+  } else if (ls.type === 'conjugation') {
+    (ls.conjugations||[]).forEach((c,ci) => {
+      html += `<div class="editor-entry" style="margin-bottom:12px" id="ee-${li}-conj-${ci}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:12px;font-weight:800;color:var(--blue-dark);flex:1">${escHtml(c.infinitive||'')} <span style="color:var(--gray-dark);font-weight:600">${escHtml(c.tense||'')}</span></span>
+          <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','conj',${ci})">🗑</button>
+        </div>
+        <div class="editor-field"><label>Infinitive</label><input data-li="${li}" data-type="conj-meta" data-ci="${ci}" data-field="infinitive" value="${escHtml(c.infinitive||'')}"></div>
+        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="conj-meta" data-ci="${ci}" data-field="source" value="${escHtml(c.source||'')}"></div>
+        <div class="editor-field"><label>Tense</label><input data-li="${li}" data-type="conj-meta" data-ci="${ci}" data-field="tense" value="${escHtml(c.tense||'')}"></div>
+        <div style="margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px">
+          ${(c.forms||[]).map((f,fi) => `<div style="display:flex;gap:4px;align-items:center">
+            <span style="font-size:11px;font-weight:800;color:var(--gray-dark);width:28px;flex-shrink:0">${escHtml(f.pronoun||'')}</span>
+            <input data-li="${li}" data-type="conj-form" data-ci="${ci}" data-fi="${fi}" data-field="form" value="${escHtml(f.form||'')}" style="flex:1;font-size:13px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px">
+          </div>`).join('')}
+        </div>
+      </div>`;
+    });
+
+  } else if (ls.type === 'error_hunt') {
+    // Editable contenteditable div with live error highlighting
+    const story = ls.corruptedStory || '';
+    const edits = ls.edits || [];
+    const ehId = 'eh-editor-' + li;
+    const highlightEh = (text, eds) => {
+      let h = escHtml(text);
+      (eds||[]).forEach(e => {
+        const wrong = e.replace; // 'replace' is the corrupted/wrong text in the story
+        const correct = e.find;  // 'find' is the correct word
+        if (!wrong) return;
+        h = h.replace(
+          new RegExp(escRe(escHtml(wrong)), 'g'),
+          '<mark style="background:#ffe066;border-radius:3px;padding:0 2px;text-decoration:line-through" title="→ ' + escHtml(correct||'') + (e.reason ? ' (' + escHtml(e.reason) + ')' : '') + '">' + escHtml(wrong) + '</mark>');
+      });
+      return h;
+    };
+    // Reconstruct correct story by swapping replace→find
+    let correctStory = story;
+    edits.forEach(e => {
+      if (e.replace && e.find) correctStory = correctStory.split(e.replace).join(e.find);
+    });
+    html += `
+      <div style="display:flex;gap:0;margin-bottom:6px;border-radius:8px;overflow:hidden;border:1.5px solid var(--gray-mid)">
+        <button id="${ehId}-tab-corrupted" onclick="switchEhTab(${li},'corrupted')"
+          style="flex:1;padding:6px 10px;font-size:12px;font-weight:800;border:none;cursor:pointer;background:var(--blue);color:white;font-family:Nunito,sans-serif">❌ Corrupted</button>
+        <button id="${ehId}-tab-correct" onclick="switchEhTab(${li},'correct')"
+          style="flex:1;padding:6px 10px;font-size:12px;font-weight:800;border:none;cursor:pointer;background:var(--gray-light);color:var(--text);font-family:Nunito,sans-serif">✅ Correct</button>
+      </div>
+      <div id="${ehId}-story" contenteditable="true" spellcheck="false"
+        data-li="${li}" data-type="eh-story" data-mode="corrupted"
+        data-correct="${escHtml(correctStory)}"
+        style="font-size:15px;font-family:Nunito,sans-serif;line-height:1.8;padding:10px 12px;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:8px;min-height:80px;white-space:pre-wrap;outline:none;cursor:text"
+        onfocus="this.style.borderColor='var(--blue)'"
+        onblur="this.style.borderColor='var(--gray-mid)'"
+        oninput="updateEhHighlight(${li})">${highlightEh(story, edits)}</div>`;
+    html += `
+      <div style="font-size:12px;font-weight:800;color:var(--gray-dark);margin:12px 0 6px;text-transform:uppercase">Errors / Corrections</div>
+      <div id="${ehId}-edits">
+        ${edits.map((e,ei) => `<div class="editor-entry" id="${ehId}-edit-${ei}">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','eh-edit',${ei})">🗑</button></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px">
+            <div class="editor-field"><label>Correct</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="find" value="${escHtml(e.find||'')}" style="background:#fff8ee"></div>
+            <div class="editor-field"><label>Wrong</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="replace" value="${escHtml(e.replace||'')}"></div>
+          </div>
+          <div class="editor-field"><label>Reason</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="reason" value="${escHtml(e.reason||'')}"></div>
+        </div>`).join('')}
+      </div>
+      <button class="storyline-hdr-btn" style="margin-top:8px" onclick="addEhError(${li})">+ Add error</button>`;
+
+  } else {
+    // Vocab / sentences
+    const items = [
+      ...(ls.vocab||[]).map((v,i) => ({type:'vocab', i, target:v.target, source:v.source})),
+      ...(ls.sentences||[]).map((s,i) => ({type:'sentence', i, target:s.target, source:s.source})),
+    ];
+    const visItems = flaggedOnly ? items.filter(it => isFlagged(it.type, it.target)) : items;
+    if (!visItems.length) html += `<em style="color:var(--gray-dark);font-size:13px">${flaggedOnly?'No flagged items':'No items'}</em>`;
+    visItems.forEach(it => {
+      const flagged = isFlagged(it.type, it.target);
+      html += `<div class="editor-entry${flagged?' flagged':''}" id="ee-${li}-${it.type}-${it.i}">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','${it.type}',${it.i})">🗑</button></div>
+        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="target" value="${escHtml(it.target||'')}"></div>
+        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="source" value="${escHtml(it.source||'')}"></div>
+      </div>`;
+    });
+  }
+  el.innerHTML = html;
+}
+
+async function saveLessonEdits(lessonIdx) {
+  const el = document.getElementById('lesson-editor');
+  const d = APP.lessonData;
+  if (!el || !d) return;
+  const li = lessonIdx ?? 0;
+  const ls = d.lessons[li];
+  if (!ls) return;
+  // Save title and icon
+  const titleInp = document.getElementById('lesson-node-title-input-' + li);
+  if (titleInp) ls.title = titleInp.value.trim();
+  const iconEl = document.getElementById('lesson-node-icon-picker-' + li);
+  if (iconEl) ls.icon = iconEl.textContent.trim();
+  if (ls._iconPick) { ls.icon = ls._iconPick; delete ls._iconPick; }
+  // Save all field types
+  el.querySelectorAll('input[data-li], textarea[data-li], [contenteditable][data-li]').forEach(inp => {
+    const type = inp.dataset.type, field = inp.dataset.field;
+    if (type === 'vocab' || type === 'sentence') {
+      const arr = type === 'vocab' ? ls.vocab : ls.sentences;
+      const fi = +inp.dataset.fi;
+      if (arr && arr[fi]) arr[fi][field] = inp.value;
+    } else if (type === 'grammar') {
+      const fi = +inp.dataset.fi;
+      if (ls.grammar && ls.grammar[fi]) ls.grammar[fi][field] = inp.value;
+    } else if (type === 'conj-meta') {
+      const ci = +inp.dataset.ci;
+      if (ls.conjugations && ls.conjugations[ci]) ls.conjugations[ci][field] = inp.value;
+    } else if (type === 'conj-form') {
+      const ci = +inp.dataset.ci, fi = +inp.dataset.fi;
+      if (ls.conjugations && ls.conjugations[ci]?.forms?.[fi]) ls.conjugations[ci].forms[fi][field] = inp.value;
+    } else if (type === 'eh-story') {
+      const mode = inp.dataset?.mode || 'corrupted';
+      const text = (inp.innerText || inp.textContent || inp.value || '').trim();
+      if (mode === 'corrupted') {
+        // Reconstruct correct text from existing edits, then diff against edited corrupted
+        let correctText = ls.corruptedStory || '';
+        (ls.edits||[]).forEach(e => {
+          if (e.replace && e.find) correctText = correctText.split(e.replace).join(e.find);
+        });
+        ls.corruptedStory = text;
+        // Now diff new corrupted vs correct — find new errors introduced
+        const tokenize2 = s => s.match(/\S+/g) || [];
+        const corrTokens2    = tokenize2(correctText);
+        const corruptTokens2 = tokenize2(text);
+        if (!ls.edits) ls.edits = [];
+        const isKnownPair2 = (c, w) => ls.edits.some(e => e.find === c && e.replace === w);
+        const tokensMatch2 = (c, w) => c === w || isKnownPair2(c, w);
+        const m2 = corrTokens2.length, n2 = corruptTokens2.length;
+        const dp2 = Array.from({length: m2+1}, () => new Int32Array(n2+1));
+        for (let ii = 1; ii <= m2; ii++)
+          for (let jj = 1; jj <= n2; jj++)
+            dp2[ii][jj] = tokensMatch2(corrTokens2[ii-1], corruptTokens2[jj-1])
+              ? dp2[ii-1][jj-1] + 1 : Math.max(dp2[ii-1][jj], dp2[ii][jj-1]);
+        let ii = m2, jj = n2;
+        const ops2 = [];
+        while (ii > 0 || jj > 0) {
+          if (ii > 0 && jj > 0 && tokensMatch2(corrTokens2[ii-1], corruptTokens2[jj-1])) {
+            ops2.unshift({type: corrTokens2[ii-1]===corruptTokens2[jj-1]?'eq':'known', corr:corrTokens2[ii-1], corrupt:corruptTokens2[jj-1]});
+            ii--; jj--;
+          } else if (jj > 0 && (ii===0 || dp2[ii][jj-1] >= dp2[ii-1][jj])) {
+            ops2.unshift({type:'del', corr:'', corrupt:corruptTokens2[jj-1]}); jj--;
+          } else {
+            ops2.unshift({type:'ins', corr:corrTokens2[ii-1], corrupt:''}); ii--;
+          }
+        }
+        const newDiffs2 = [];
+        let run2 = null;
+        const flush2 = () => {
+          if (!run2) return;
+          const cR = run2.filter(o=>o.corr).map(o=>o.corr).join(' ');
+          const wR = run2.filter(o=>o.corrupt).map(o=>o.corrupt).join(' ');
+          if (cR || wR) newDiffs2.push({correct: cR, wrong: wR});
+          run2 = null;
+        };
+        ops2.forEach(op => {
+          if (op.type==='eq'||op.type==='known') flush2();
+          else { if (!run2) run2=[]; run2.push(op); }
+        });
+        flush2();
+        console.log('[EH corrupted diff] ops:', JSON.stringify(ops2.filter(o=>o.type!=='eq')));
+        console.log('[EH corrupted diff] newDiffs:', JSON.stringify(newDiffs2));
+        newDiffs2.forEach(d => {
+          const exists = ls.edits.find(e => e.replace === d.wrong && e.find === d.correct);
+          if (!exists) ls.edits.push({type:'error', find: d.correct, replace: d.wrong, reason:''});
+        });
+        window._ehReopenLi = li;
+        _ehReopenOnSave = true;
+      } else {
+        // Diff correct (edited) vs corrupted
+        const tokenize = s => s.match(/\S+/g) || [];
+        const corrTokens    = tokenize(text);
+        const corruptTokens = tokenize(ls.corruptedStory || '');
+        console.log('[EH diff] correct text:', JSON.stringify(text.slice(0,100)));
+        console.log('[EH diff] corrupted:', JSON.stringify((ls.corruptedStory||'').slice(0,100)));
+        if (!ls.edits) ls.edits = [];
+
+        // Build sets of known error pairs to skip
+        const knownWrong   = new Set((ls.edits||[]).map(e => e.replace).filter(Boolean));
+        const knownCorrect = new Set((ls.edits||[]).map(e => e.find).filter(Boolean));
+
+        // Pass 1: align token arrays accounting for known errors
+        // Build "normalised" versions where known errors are treated as matching
+        // Use LCS but treat (corrToken=find, corruptToken=replace) as a match
+        const isKnownPair = (c, w) => (ls.edits||[]).some(e => e.find === c && e.replace === w);
+        const tokensMatch = (c, w) => c === w || isKnownPair(c, w);
+
+        const m = corrTokens.length, n = corruptTokens.length;
+        const dp = Array.from({length: m+1}, () => new Int32Array(n+1));
+        for (let i = 1; i <= m; i++)
+          for (let j = 1; j <= n; j++)
+            dp[i][j] = tokensMatch(corrTokens[i-1], corruptTokens[j-1])
+              ? dp[i-1][j-1] + 1
+              : Math.max(dp[i-1][j], dp[i][j-1]);
+
+        // Traceback
+        let i = m, j = n;
+        const ops = []; // {type:'eq'|'sub'|'ins'|'del', corr, corrupt}
+        while (i > 0 || j > 0) {
+          if (i > 0 && j > 0 && tokensMatch(corrTokens[i-1], corruptTokens[j-1])) {
+            ops.unshift({type: corrTokens[i-1]===corruptTokens[j-1]?'eq':'known', corr:corrTokens[i-1], corrupt:corruptTokens[j-1]});
+            i--; j--;
+          } else if (j > 0 && (i===0 || dp[i][j-1] >= dp[i-1][j])) {
+            ops.unshift({type:'del', corr:'', corrupt:corruptTokens[j-1]}); j--;
+          } else {
+            ops.unshift({type:'ins', corr:corrTokens[i-1], corrupt:''}); i--;
+          }
+        }
+
+        // Pass 2: merge adjacent non-eq ops into diff runs, then classify
+        const newDiffs = [];
+        let run = null;
+        const flushRun = () => {
+          if (!run) return;
+          const corrRun   = run.filter(o=>o.corr).map(o=>o.corr).join(' ');
+          const corruptRun = run.filter(o=>o.corrupt).map(o=>o.corrupt).join(' ');
+          if (corrRun || corruptRun) newDiffs.push({correct: corrRun, wrong: corruptRun});
+          run = null;
+        };
+        ops.forEach(op => {
+          if (op.type === 'eq' || op.type === 'known') { flushRun(); }
+          else { if (!run) run=[]; run.push(op); }
+        });
+        flushRun();
+
+        console.log('[EH diff] ops:', JSON.stringify(ops.filter(o=>o.type!=='eq')));
+        console.log('[EH diff] newDiffs:', JSON.stringify(newDiffs));
+        // Add new errors (skip already known)
+        newDiffs.forEach(d => {
+          const exists = ls.edits.find(e => e.replace === d.wrong && e.find === d.correct);
+          if (!exists) ls.edits.push({type:'correction', find: d.correct, replace: d.wrong, reason:''});
+        });
+        window._ehReopenLi = li;
+        _ehReopenOnSave = true;
+      }
+    } else if (type === 'eh-edit') {
+      const fi = +inp.dataset.fi;
+      if (ls.edits && ls.edits[fi]) ls.edits[fi][field] = inp.value;
+    }
+  });
+  try {
+    const r = await fetch('/api/lessons/edit', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) });
+    if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+    // Clear flags for edited content
+    const topicSlugForEdit = (d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
+    const topicIdForEdit = d.id || '';
+    // Clear all flags for this topic (content was edited so old flags are stale)
+    Object.keys(APP.flagged).forEach(k => {
+      const prefix = k.split(':')[0];
+      if (prefix === topicSlugForEdit || (topicIdForEdit && prefix === topicIdForEdit)) {
+        delete APP.flagged[k];
+        fetch('/api/flags', { method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ key: k, entry: null }) }).catch(()=>{});
+      }
+    });
+    saveFlagged();
+    if (window._ehReopenOnSave) {
+      window._ehReopenOnSave = false;
+      const _li = window._ehReopenLi ?? 0;
+      window._ehReopenLi = undefined;
+      showToast('💾 Saved · check new errors below');
+      renderLessonEditor(false, _li);
+      setTimeout(() => switchEhTab(_li, 'corrupted'), 50);
+    } else {
+      showToast('💾 Saved');
+      closeLessonEditor();
+    }
+    buildPath();
+  } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
+}
+
+
+function goStorylineFromLesson() {
+  const sl = APP._slScreen;
+  if (!sl) return;
+  openStorylineScreen(sl.chainId, sl.encodedChain);
+}
+
+
+async function deleteLessonNode(lessonIdx) {
+  const d = APP.lessonData;
+  if (!d) return;
+  const ls = d.lessons[lessonIdx];
+  if (!ls) return;
+  const label = {grammar:'Grammar',conjugation:'Conjugation',error_hunt:'Error Hunt'}[ls.type]||'Vocab';
+  if (!confirm(`Delete the ${label} lesson from "${d.topic}"?\nThis cannot be undone.`)) return;
+  d.lessons.splice(lessonIdx, 1);
+  try {
+    const r = await fetch('/api/lessons/edit', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) });
+    if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+    showToast('🗑 Lesson deleted');
+    closeLessonEditor();
+    buildPath();
+  } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
+}
+
+
+
+function deleteEditorItem(li, type, idx) {
+  li = +li; idx = +idx;
+  const ls = APP.lessonData?.lessons[li];
+  if (!ls) return;
+  if (type === 'vocab')    { ls.vocab    = (ls.vocab||[]).filter((_,i)=>i!==idx); }
+  else if (type === 'sentence') { ls.sentences = (ls.sentences||[]).filter((_,i)=>i!==idx); }
+  else if (type === 'grammar')  { ls.grammar   = (ls.grammar||[]).filter((_,i)=>i!==idx); }
+  else if (type === 'conj')     { ls.conjugations = (ls.conjugations||[]).filter((_,i)=>i!==idx); }
+  else if (type === 'eh-edit')  { ls.edits = (ls.edits||[]).filter((_,i)=>i!==idx); }
+  // Re-render editor to update indices
+  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+}
+
+
+function switchEhTab(li, mode) {
+  const ehId = 'eh-editor-' + li;
+  const div = document.getElementById(ehId + '-story');
+  const ls = APP.lessonData?.lessons[li];
+  if (!div || !ls) return;
+  const btnCorrupted = document.getElementById(ehId + '-tab-corrupted');
+  const btnCorrect   = document.getElementById(ehId + '-tab-correct');
+
+  // Save current text before switching
+  const currentText = div.innerText;
+  if (div.dataset.mode === 'corrupted') {
+    ls.corruptedStory = currentText;
+  } else {
+    div.dataset.correct = currentText;
+  }
+
+  div.dataset.mode = mode;
+  if (mode === 'corrupted') {
+    btnCorrupted.style.background = 'var(--blue)';   btnCorrupted.style.color = 'white';
+    btnCorrect.style.background   = 'var(--gray-light)'; btnCorrect.style.color = 'var(--text)';
+    div.style.background = 'var(--white)';
+    let highlighted = escHtml(ls.corruptedStory || '');
+    (ls.edits||[]).forEach(e => {
+      if (!e.replace) return;
+      highlighted = highlighted.replace(new RegExp(escRe(escHtml(e.replace)), 'g'),
+        '<mark style="background:#ffe066;border-radius:3px;padding:0 2px;text-decoration:line-through" title="→ ' + escHtml(e.find||'') + '">' + escHtml(e.replace) + '</mark>');
+    });
+    div.innerHTML = highlighted;
+  } else {
+    btnCorrect.style.background   = 'var(--blue)';   btnCorrect.style.color = 'white';
+    btnCorrupted.style.background = 'var(--gray-light)'; btnCorrupted.style.color = 'var(--text)';
+    // Reconstruct correct text fresh from ls.corruptedStory + edits
+    let correctText = ls.corruptedStory || '';
+    (ls.edits||[]).forEach(e => {
+      if (e.replace && e.find) correctText = correctText.split(e.replace).join(e.find);
+    });
+    // Show plain editable text — user can fix LLM errors here
+    div.innerHTML = escHtml(correctText);
+    div.dataset.correct = correctText;
+    div.style.background = '#f0fff4'; // light green tint to indicate correct mode
+  }
+}
+
+function updateEhHighlight(li) {
+  // Re-highlight after typing — preserve caret position using selection
+  const div = document.getElementById('eh-editor-' + li + '-story');
+  if (!div) return;
+  const ls = APP.lessonData?.lessons[li];
+  const edits = ls?.edits || [];
+  // Get plain text, preserving caret
+  const sel = window.getSelection();
+  const range = sel.rangeCount ? sel.getRangeAt(0) : null;
+  const text = div.innerText;
+  let highlighted = escHtml(text);
+  edits.forEach(e => {
+    const wrong = e.replace;
+    if (!wrong) return;
+    highlighted = highlighted.replace(
+      new RegExp(escRe(escHtml(wrong)), 'g'),
+      '<mark style="background:#ffe066;border-radius:3px;padding:0 2px;text-decoration:line-through">' + escHtml(wrong) + '</mark>'
+    );
+  });
+  // Only update if content changed (avoids caret jump on every keystroke)
+  if (div.innerHTML !== highlighted) {
+    // Save caret offset
+    const offset = range ? getCaretOffset(div) : 0;
+    div.innerHTML = highlighted;
+    // Restore caret
+    setCaretOffset(div, offset);
+  }
+}
+
+function getCaretOffset(el) {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return 0;
+  const range = sel.getRangeAt(0).cloneRange();
+  range.selectNodeContents(el);
+  range.setEnd(sel.getRangeAt(0).endContainer, sel.getRangeAt(0).endOffset);
+  return range.toString().length;
+}
+
+function setCaretOffset(el, offset) {
+  const sel = window.getSelection();
+  const range = document.createRange();
+  let chars = 0;
+  function findNode(node) {
+    if (node.nodeType === 3) {
+      if (chars + node.length >= offset) {
+        range.setStart(node, offset - chars);
+        range.collapse(true);
+        return true;
+      }
+      chars += node.length;
+    } else {
+      for (const child of node.childNodes) if (findNode(child)) return true;
+    }
+  }
+  findNode(el);
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+function addEhError(li) {
+  const ls = APP.lessonData?.lessons[li];
+  if (!ls) return;
+  if (!ls.edits) ls.edits = [];
+  const ei = ls.edits.length;
+  ls.edits.push({ type: 'spelling', find: '', replace: '', reason: '' });
+  const container = document.getElementById('eh-editor-' + li + '-edits');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.className = 'editor-entry';
+  div.id = 'eh-editor-' + li + '-edit-' + ei;
+  div.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px">
+    <div class="editor-field"><label>Correct</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="find" value=""></div>
+    <div class="editor-field"><label>Wrong</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="replace" value="" style="background:#fff8ee"></div>
+  </div>
+  <div class="editor-field"><label>Reason</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="reason" value=""></div>`;
+  container.appendChild(div);
+  div.querySelector('input').focus();
+}
+
+// ── Lesson card inline title edit ─────────────────────────────────────────────
+function _onLessonEmojiPick(ic) {
+  // Just update picker display — save happens in saveLessonTitleEdit
+  const pickerEl = document.getElementById('lesson-emoji-picker');
+  if (pickerEl) pickerEl.textContent = ic;
+}
+function openLessonTitleEdit() {
+  if (!APP.info.canGenerate) return;
+  const row = document.getElementById('lesson-title-edit-row');
+  const inp = document.getElementById('lesson-title-input');
+  const picker = document.getElementById('lesson-emoji-picker');
+  if (!row || !inp) return;
+  inp.value = APP.lessonData?.topic || '';
+  // Sync picker icon with current topic emoji
+  if (picker) picker.textContent = APP.lessonData?.topicEmoji || '📚';
+  // Remove stale picker grid
+  const stale = document.getElementById('ipg-lesson-emoji');
+  if (stale) stale.remove();
+  row.style.display = 'flex';
+  inp.select();
+}
+function closeLessonTitleEdit() {
+  const row = document.getElementById('lesson-title-edit-row');
+  if (row) row.style.display = 'none';
+}
+async function saveLessonTitleEdit() {
+  const inp = document.getElementById('lesson-title-input');
+  const picker = document.getElementById('lesson-emoji-picker');
+  const newTopic = inp?.value.trim();
+  if (!newTopic || !APP.lessonData) return;
+  const oldTopic = APP.lessonData.topic;
+  const newEmoji = picker?.textContent.trim() || APP.lessonData.topicEmoji;
+  try {
+    const r = await fetch('/api/lessons/save-meta', { method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ oldTopic, newTopic, topicEmoji: newEmoji }) });
+    if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+    APP.lessonData.topic = newTopic;
+    if (newEmoji) APP.lessonData.topicEmoji = newEmoji;
+    document.getElementById('topic-name-big').textContent = newTopic;
+    closeLessonTitleEdit();
+    await loadSavedList();
+    showToast(t('lesson.title_saved'));
+  } catch(e) { showToast('⚠ ' + e.message.slice(0, 60)); }
+}
+
 // ── Saved-item inline title edit (✏️ in saved-list) ──────────────────────────
 
 const _siEmojiIdx = {};
@@ -3148,11 +3684,7 @@ function closeSavedItemEdit(sid) {
   if (row) row.classList.remove('open');
 }
 
-function cycleSavedItemEmoji(sid) {
-  _siEmojiIdx[sid] = ((_siEmojiIdx[sid] || 0) + 1) % STORYLINE_ICONS.length;
-  const el = document.getElementById('siedit-emoji-' + sid);
-  if (el) el.textContent = STORYLINE_ICONS[_siEmojiIdx[sid]];
-}
+// cycleSavedItemEmoji replaced by openIconPicker
 
 async function saveSavedItemTitle(sid, enc) {
   const newTopic = document.getElementById('siedit-input-' + sid)?.value.trim();
@@ -3849,8 +4381,9 @@ function check(){
       : (ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}</div>`;
     const speakOk = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct
-      : ex.type==='mcq_article' ? ex.article+' '+ex.target          // "die Biene"
-      : ex.type==='mcq_plural'  ? (ex.article?ex.article+' ':'')+ex.plural  // "die Bienen"
+      : ex.type==='mcq_article'      ? ex.article+' '+ex.target               // "die Biene"
+      : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+ex.plural // "die Bienen"
+      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct              // "er geht"
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+ex.target : ex.target);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('ok');
@@ -3861,8 +4394,9 @@ function check(){
     C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${ex.correct}</strong></div>`;
     const speakBad = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct
-      : ex.type==='mcq_article' ? ex.article+' '+ex.target
-      : ex.type==='mcq_plural'  ? (ex.article?ex.article+' ':'')+ex.plural
+      : ex.type==='mcq_article'      ? ex.article+' '+ex.target
+      : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+ex.plural
+      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct              // "er geht"
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+ex.target : ex.target);
     if(speakBad) speak(speakBad,0.75);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===ex.correct)b.classList.add('ok'); });
@@ -3908,25 +4442,36 @@ function showComplete(){
   el('comp-vocab').innerHTML = vocabItems;
 
   // Next button priority:
-  // 1. Next lesson set in this topic (if any unlocked)
-  // 2. Next chapter in storyline
-  // 3. Back to lesson path
+  // 1. Next lesson set in this topic (if any remain after this one)
+  // 2. If chapter fully done → open storyline screen
+  // 3. If no storyline → back to lesson-set screen
   const compNext = el('comp-next');
   const done = APP.progress.completed?.[topicKey] || {};
   const allLessons = APP.lessonData?.lessons || [];
-  const nextLessonIdx = allLessons.findIndex(L => !done[L.id]);
-  if (nextLessonIdx >= 0 && nextLessonIdx !== C.lessonIdx) {
-    // More lesson sets in this topic
-    compNext.textContent = `→ Next: ${(()=>{const labels={grammar:'Grammar',conjugation:'Conjugation',error_hunt:'Error Hunt'};return labels[allLessons[nextLessonIdx].type]||'Vocab';})()}`;
-    compNext.onclick = () => { goHome(); setTimeout(() => startLesson(nextLessonIdx), 80); };
+  // Find next lesson AFTER the current one that hasn't been done
+  const nextLessonIdx = allLessons.findIndex((L, i) => i !== C.lessonIdx && !done[L.id]);
+  const typeLabel = idx => {const labels={grammar:'Grammar',conjugation:'Conjugation',error_hunt:'Error Hunt'};return labels[allLessons[idx]?.type]||'Vocab';};
+  if (nextLessonIdx >= 0) {
+    // More lesson sets remaining in this chapter
+    compNext.textContent = `→ Next: ${typeLabel(nextLessonIdx)}`;
+    compNext.onclick = () => { goLessonSet(); setTimeout(() => startLesson(nextLessonIdx), 80); };
   } else {
-    const nextChapterTopic = _findNextChapterTopic(topicKey);
-    if (nextChapterTopic) {
-      compNext.textContent = '→ Next chapter';
-      compNext.onclick = () => loadSaved(encodeURIComponent(nextChapterTopic));
+    // All lesson sets in this chapter done — go to storyline screen or lesson-set screen
+    const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+    const byId  = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+    // Prefer the storyline the user came from (APP._slScreen), fall back to first match
+    const _slScreenSl = APP._slScreen?.chainId
+      ? slArr.find(s => s.id === APP._slScreen.chainId && (s.chapters||[]).some(cid => byId[cid]?.topic === topicKey))
+      : null;
+    const sl = _slScreenSl || slArr.find(s => (s.chapters||[]).some(cid => byId[cid]?.topic === topicKey));
+    if (sl) {
+      const chain = (sl.chapters||[]).map(cid=>byId[cid]?.topic).filter(Boolean);
+      const enc = encodeURIComponent(JSON.stringify(chain));
+      compNext.textContent = '→ Storyline';
+      compNext.onclick = () => openStorylineScreen(sl.id, enc);
     } else {
       compNext.textContent = t('complete.continue');
-      compNext.onclick = () => goHome();
+      compNext.onclick = () => goLessonSet();
     }
   }
   show('complete-screen');
@@ -3945,7 +4490,7 @@ function _findNextChapterTopic(currentTopic) {
 }
 
 function afterComplete() {
-  goHome();
+  goLessonSet();
 }
 
 
@@ -4115,7 +4660,7 @@ function confirmQuit(){
       saveProg();
     }
   }
-  goHome();
+  goLessonSet();
 }
 
 // ── Import lessons.json ───────────────────────────────────────────────

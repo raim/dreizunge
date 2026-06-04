@@ -208,9 +208,14 @@
     "form.style.interview": "💼 Jobbe interview",
     "form.format.standard": "📚 Standaard — woordenlijst & zinnen",
     "form.format.all_types": "🎯 Alle typen — standaard + grammatica + verbuiging + foutenzoeken",
-    "lang.tutor_de_html": "🎓 Probeer <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic's focus tutor voor Duits</a>",
     "lesson.read_summary": "📖 Lees samenvatting",
-    "lesson.gen_summary": "📝 Genereer samenvatting"
+    "lesson.gen_summary": "📝 Genereer samenvatting",
+    "lesson.no_summary": "Geen samenvatting nog",
+    "ui.edit_title": "Titel bewerken",
+    "ui.edit_icon": "Icon wijzigen",
+    "lesson.edit_lesson": "Les bewerken",
+    "lesson.save_edits": "Wijzigingen opslaan",
+    "lesson.show_flagged_only": "Alleen gemarkeerde tonen"
   },
   "pt": {
     "app.tagline": "Aprenda vocabulário de qualquer tópico em qualquer idioma",
@@ -421,9 +426,14 @@
     "form.style.interview": "💼 Entrevista de Emprego",
     "form.format.standard": "📚 Padrão — vocabulário & frases",
     "form.format.all_types": "🎯 Todos os tipos — padrão + gramática + conjugação + busca de erros",
-    "lang.tutor_de_html": "🎓 Tente o <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">tutor de foco em alemão do Chilperic</a>",
     "lesson.read_summary": "📖 Leia o resumo",
-    "lesson.gen_summary": "📝 Gere o resumo"
+    "lesson.gen_summary": "📝 Gere o resumo",
+    "lesson.no_summary": "Sem resumo ainda",
+    "ui.edit_title": "Editar título",
+    "ui.edit_icon": "Mudar ícone",
+    "lesson.edit_lesson": "Editar lição",
+    "lesson.save_edits": "Salvar edições",
+    "lesson.show_flagged_only": "Mostrar apenas marcados"
   },
   "fr": {
     "app.tagline": "Apprendre du vocabulaire sur n'importe quel sujet",
@@ -634,9 +644,14 @@
     "form.style.interview": "💼 Entretien de travail",
     "form.format.standard": "📚 Standard — vocabulaire & phrases",
     "form.format.all_types": "🎯 Tous les types — standard + grammaire + conjugaison + recherche d'erreurs",
-    "lang.tutor_de_html": "🎓 Essayez <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">le tutorat de Chilperic sur le focus allemand</a>",
     "lesson.read_summary": "📖 Lisez le résumé",
-    "lesson.gen_summary": "📝 Générez un résumé"
+    "lesson.gen_summary": "📝 Générez un résumé",
+    "lesson.no_summary": "Aucun résumé pour le moment",
+    "ui.edit_title": "Éditer le titre",
+    "ui.edit_icon": "Changer l'icône",
+    "lesson.edit_lesson": "Éditer la leçon",
+    "lesson.save_edits": "Sauvegarder les modifications",
+    "lesson.show_flagged_only": "Afficher uniquement les marqués"
   },
   "tr": {
     "furigana.show": "ふ Show furigana",
@@ -847,9 +862,14 @@
     "form.style.interview": "💼 İş Mülakatı",
     "form.format.standard": "📚 Standart — kelimeler ve cümleler",
     "form.format.all_types": "🎯 Tüm türler — standart + gramer + kavrama + hata arama",
-    "lang.tutor_de_html": "🎓 <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Almanca odaklanma öğretmeni deneyimle</a>",
     "lesson.read_summary": "📖 Özet oku",
-    "lesson.gen_summary": "📝 Özet oluştur"
+    "lesson.gen_summary": "📝 Özet oluştur",
+    "lesson.no_summary": "Henüz özeti yok",
+    "ui.edit_title": "Başlığı düzenle",
+    "ui.edit_icon": "Iconu değiştir",
+    "lesson.edit_lesson": "Dersi düzenle",
+    "lesson.save_edits": "Değişiklikleri kaydet",
+    "lesson.show_flagged_only": "Sadece işaretleyici göster"
   },
   "hi": {
     "app.tagline": "किसी भी विषय में किसी भी भाषा में शब्दावली सीखें",
@@ -1060,9 +1080,14 @@
     "form.style.interview": "💼 नौकरी की साक्षात्कार",
     "form.format.standard": "📚 मानक — शब्दावली & वाक्य",
     "form.format.all_types": "🎯 सभी प्रकार — मानक + व्याकरण + वर्तनी + त्रुटि खोज",
-    "lang.tutor_de_html": "🎓 प्रоб्याट <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">चिल्पेरिक का जर्मन अध्ययन सहायक</a>",
     "lesson.read_summary": "📖 सारांश पढ़ें",
-    "lesson.gen_summary": "📝 सारांश बनाएं"
+    "lesson.gen_summary": "📝 सारांश बनाएं",
+    "lesson.no_summary": "अभी किसी सारांश नहीं",
+    "ui.edit_title": "शीर्षक सunting",
+    "ui.edit_icon": "ICON बदलें",
+    "lesson.edit_lesson": "लेक्सन सunting",
+    "lesson.save_edits": "सunting बचाएँ",
+    "lesson.show_flagged_only": "केवल चिह्नित दिखाएँ"
   },
   "de": {
     "app.tagline": "Vokabular für jedes Thema in jeder Sprache lernen",
@@ -1273,9 +1298,14 @@
     "form.style.interview": "💼 Jobgespräch",
     "form.format.standard": "📚 Standard — Wörter und Sätze",
     "form.format.all_types": "🎯 Alle Arten — Standard + Grammatik + Konjugation + Fehlerjagd",
-    "lang.tutor_de_html": "🎓 Versuche <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic's Deutscher Fokuslehrer</a>",
     "lesson.read_summary": "📖 Ziehe Zusammenfassung durch",
-    "lesson.gen_summary": "📝 Erstelle Zusammenfassung"
+    "lesson.gen_summary": "📝 Erstelle Zusammenfassung",
+    "lesson.no_summary": "Keine Zusammenfassung noch",
+    "ui.edit_title": "Titel bearbeiten",
+    "ui.edit_icon": "Icon ändern",
+    "lesson.edit_lesson": "Lektion bearbeiten",
+    "lesson.save_edits": "Änderungen speichern",
+    "lesson.show_flagged_only": "Nur markierte anzeigen"
   },
   "ar": {
     "app.tagline": "تعلم المفردات لأي موضوع بأي لغة",
@@ -1486,9 +1516,14 @@
     "form.style.interview": "💼 مقابلة عمل",
     "form.format.standard": "📚 معياري — المصطلحات والجمل",
     "form.format.all_types": "🎯 جميع الأنواع — المعياري + гرامática + تقوية الفعل + البحث عن الأخطاء",
-    "lang.tutor_de_html": "🎓 حاول <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">معلم التركيز الألماني لـ Chilperic</a>",
     "lesson.read_summary": "📖 قم بقراءة الملخص",
-    "lesson.gen_summary": "📝 إنشاء الملخص"
+    "lesson.gen_summary": "📝 إنشاء الملخص",
+    "lesson.no_summary": "لا تلخيص بعد",
+    "ui.edit_title": "تحرير العنوان",
+    "ui.edit_icon": "تغيير الرمز",
+    "lesson.edit_lesson": "تحرير الدرس",
+    "lesson.save_edits": "حفظ التعديلات",
+    "lesson.show_flagged_only": "عرض المميزات فقط"
   },
   "en": {
     "app.tagline": "Learn vocabulary for any topic in any language",
@@ -1690,9 +1725,14 @@
     "lib.add_lesson_done": "✓ Lesson added",
     "ex.type_in_placeholder": "Type your answer…",
     "form.lesson_type_hdr": "Lesson type",
-    "lang.tutor_de_html": "🎓 Try <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic's German focus tutor</a>",
     "lesson.read_summary": "📖 Read summary",
-    "lesson.gen_summary": "📝 Generate summary"
+    "lesson.gen_summary": "📝 Generate summary",
+    "lesson.no_summary": "No summary yet",
+    "ui.edit_title": "Edit title",
+    "ui.edit_icon": "Change icon",
+    "lesson.edit_lesson": "Edit lesson",
+    "lesson.save_edits": "Save edits",
+    "lesson.show_flagged_only": "Show flagged only"
   },
   "sv": {
     "app.tagline": "Lär dig vokabulär för valfritt ämne",
@@ -1903,9 +1943,14 @@
     "form.style.interview": "💼 Jobbintervju",
     "form.format.standard": "📚 Standard — ord och meningar",
     "form.format.all_types": "🎯 Alla typer — standard + grammatik + konjugering + felutmaning",
-    "lang.tutor_de_html": "🎓 Prova <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperics tysk fokuslärare</a>",
     "lesson.read_summary": "📖 Läs sammanfattning",
-    "lesson.gen_summary": "📝 Generera sammanfattning"
+    "lesson.gen_summary": "📝 Generera sammanfattning",
+    "lesson.no_summary": "Ingen sammanfattning än",
+    "ui.edit_title": "Redigera rubrik",
+    "ui.edit_icon": "Byt ikon",
+    "lesson.edit_lesson": "Redigera föreläsning",
+    "lesson.save_edits": "Spara ändringar",
+    "lesson.show_flagged_only": "Visa endast markerade"
   },
   "ru": {
     "app.tagline": "Учите словарный запас по любой теме на любом языке",
@@ -2116,9 +2161,14 @@
     "form.style.interview": "💼 Интервью на работу",
     "form.format.standard": "📚 Стандарт —lexical units & sentences",
     "form.format.all_types": "🎯 Все типы — стандарт + грамматика + склонение + поиск ошибок",
-    "lang.tutor_de_html": "🎓 Попробуй <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">тутор Chilperic по фокусу на немецкий язык</a>",
     "lesson.read_summary": "📖 Прочитай резюме",
-    "lesson.gen_summary": "📝 Сгенерируй резюме"
+    "lesson.gen_summary": "📝 Сгенерируй резюме",
+    "lesson.no_summary": "Нет еще суммария",
+    "ui.edit_title": "Редактировать заголовок",
+    "ui.edit_icon": "Изменить иконку",
+    "lesson.edit_lesson": "Редактировать урок",
+    "lesson.save_edits": "Сохранить изменения",
+    "lesson.show_flagged_only": "Показать только отмеченные"
   },
   "zh": {
     "app.tagline": "用任何语言学习任何主题的词汇",
@@ -2329,9 +2379,14 @@
     "form.style.interview": "💼 职业面试",
     "form.format.standard": "📚 标准 — 单词与句子",
     "form.format.all_types": "🎯 所有类型 — 标准 + 语法 + 变位 + 错误查找",
-    "lang.tutor_de_html": "🎓 尝试 <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic的德语重点辅导</a>",
     "lesson.read_summary": "📖 阅读摘要",
-    "lesson.gen_summary": "📝 生成摘要"
+    "lesson.gen_summary": "📝 生成摘要",
+    "lesson.no_summary": "尚無概要",
+    "ui.edit_title": "編輯標題",
+    "ui.edit_icon": "更改圖標",
+    "lesson.edit_lesson": "編輯課程",
+    "lesson.save_edits": "保存修改",
+    "lesson.show_flagged_only": "僅顯示標記內容"
   },
   "ko": {
     "app.tagline": "모든 주제의 어휘를 어떤 언어로든 배우세요",
@@ -2542,9 +2597,14 @@
     "form.style.interview": "💼 직면접",
     "form.format.standard": "📚 표준 — 단어와 문장",
     "form.format.all_types": "🎯 모든 유형 — 표준 + 문법 + 변형 + 오류 탐색",
-    "lang.tutor_de_html": "🎓 <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">체르페리크의 독일어 집중 튜터</a>",
     "lesson.read_summary": "📖 요약 읽기",
-    "lesson.gen_summary": "📝 요약 생성"
+    "lesson.gen_summary": "📝 요약 생성",
+    "lesson.no_summary": "요약이 없습니다",
+    "ui.edit_title": "제목 수정",
+    "ui.edit_icon": "아이콘 변경",
+    "lesson.edit_lesson": "수업 수정",
+    "lesson.save_edits": "수정 저장",
+    "lesson.show_flagged_only": "FLAGGED만 표시"
   },
   "it": {
     "app.tagline": "Impara il vocabolario per qualsiasi argomento",
@@ -2755,9 +2815,14 @@
     "form.style.interview": "💼 Intervista di Lavoro",
     "form.format.standard": "📚 Standard — vocabolario & frasi",
     "form.format.all_types": "🎯 Tutti i tipi — standard + grammatica + congiunzione + caccia agli errori",
-    "lang.tutor_de_html": "🎓 Prova <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">il tutor di Chilperic sullo focus tedesco</a>",
     "lesson.read_summary": "📖 Leggi riassunto",
-    "lesson.gen_summary": "📝 Crea riassunto"
+    "lesson.gen_summary": "📝 Crea riassunto",
+    "lesson.no_summary": "Nessun riassunto ancora",
+    "ui.edit_title": "Modifica titolo",
+    "ui.edit_icon": "Cambia icone",
+    "lesson.edit_lesson": "Modifica lezione",
+    "lesson.save_edits": "Salva modifiche",
+    "lesson.show_flagged_only": "Mostra solo i segnalati"
   },
   "pl": {
     "app.tagline": "Ucz się słownictwa z każdego tematu w każdym języku",
@@ -2968,9 +3033,14 @@
     "form.style.interview": "💼 Rozmowa Pracowa",
     "form.format.standard": "📚 Standard — słownictwo & zdania",
     "form.format.all_types": "🎯 Wszystkie typy — standard + gramatyka + konjugacja + poszukiwanie błędu",
-    "lang.tutor_de_html": "🎓 Spróbuj <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">przewodnika z التركيز على اللغة الألمانية</a>",
     "lesson.read_summary": "📖 Przeczytaj podsumowanie",
-    "lesson.gen_summary": "📝 Wygeneruj podsumowanie"
+    "lesson.gen_summary": "📝 Wygeneruj podsumowanie",
+    "lesson.no_summary": "Brak podsumowania",
+    "ui.edit_title": "Edytuj tytuł",
+    "ui.edit_icon": "Zmień ikonę",
+    "lesson.edit_lesson": "Edytuj lekcję",
+    "lesson.save_edits": "Zapisz edycje",
+    "lesson.show_flagged_only": "Pokaż tylko zaznaczone"
   },
   "es": {
     "app.tagline": "Aprender vocabulario de cualquier tema en cualquier idioma",
@@ -3181,9 +3251,14 @@
     "form.style.interview": "💼 Entrevista de Trabajo",
     "form.format.standard": "📚 Estándar — vocabulario y oraciones",
     "form.format.all_types": "🎯 Todos los tipos — estándar + gramática + conjugación + búsqueda de errores",
-    "lang.tutor_de_html": "🎓 Prueba <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">el tutor de foco en alemán de Chilperic</a>",
     "lesson.read_summary": "📖 Lee resumen",
-    "lesson.gen_summary": "📝 Genera resumen"
+    "lesson.gen_summary": "📝 Genera resumen",
+    "lesson.no_summary": "Sin resumen aún",
+    "ui.edit_title": "Editar título",
+    "ui.edit_icon": "Cambiar icono",
+    "lesson.edit_lesson": "Editar lección",
+    "lesson.save_edits": "Guardar cambios",
+    "lesson.show_flagged_only": "Mostrar solo marcados"
   },
   "ja": {
     "app.tagline": "あらゆるトピックの語彙をどんな言語でも学ぼう",
@@ -3394,9 +3469,14 @@
     "form.style.interview": "💼 ジョブ面接",
     "form.format.standard": "📚 標準 — 語彙と文",
     "form.format.all_types": "🎯 全種類 — 標準+文法+活用+誤り探しなど",
-    "lang.tutor_de_html": "🎓 <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">ドイツ語集中チューター</a>を試してみる",
     "lesson.read_summary": "📖 結論を読む",
-    "lesson.gen_summary": "📝 結論を生成する"
+    "lesson.gen_summary": "📝 結論を生成する",
+    "lesson.no_summary": "まだ要約はありません",
+    "ui.edit_title": "タイトルを編集",
+    "ui.edit_icon": "アイコンを変更",
+    "lesson.edit_lesson": "レッスンを編集",
+    "lesson.save_edits": "編集を保存",
+    "lesson.show_flagged_only": "フラグのみ表示"
   },
   "he": {
     "app.backend": "백엔드:",
@@ -3607,9 +3687,14 @@
     "form.style.interview": "💼 ראיון עבודה",
     "form.format.standard": "📚 סטנדרטי — מונחים ומשפטים",
     "form.format.all_types": "🎯 כל_TYPES — סטנדרטי + דקדוק + הרכבה + חיפוש שגיאות",
-    "lang.tutor_de_html": "🎓 נסה <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">ה튜יטור המבוקש של צ'ילפריק לגרמנית</a>",
     "lesson.read_summary": "📖 קרא Zusammenfassung",
-    "lesson.gen_summary": "📝 יוצר Zusammenfassung"
+    "lesson.gen_summary": "📝 יוצר Zusammenfassung",
+    "lesson.no_summary": "אין תקציר עדיין",
+    "ui.edit_title": "ערוך כותרת",
+    "ui.edit_icon": "שנה סמל",
+    "lesson.edit_lesson": "ערוך הרצאה",
+    "lesson.save_edits": "שמור על השינויים",
+    "lesson.show_flagged_only": "הצג רק המ createState"
   },
   "uk": {
     "app.backend": "Бек-енд:",
@@ -3820,7 +3905,6 @@
     "form.style.interview": "💼 Розмова на роботу",
     "form.format.standard": "📚 Standard — література та речення",
     "form.format.all_types": "🎯 Всі типи — стандарт + граматика + коефіцієнта + пошук помилок",
-    "lang.tutor_de_html": "🎓 Спробуй <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic's German focus tutor</a>",
     "lesson.read_summary": "📖 Прочитай резюме",
     "lesson.gen_summary": "📝 Створи резюме"
   },
@@ -4033,7 +4117,6 @@
     "form.style.interview": "💼 Rozhovor o zaměstnání",
     "form.format.standard": "📚 Standard — slovník a věty",
     "form.format.all_types": "🎯 Všechny typy — standard + gramatika + konjugace + hledání chyb",
-    "lang.tutor_de_html": "🎓 Zkuste <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">výukový tutor Chilperic s soustředěním na němčinu</a>",
     "lesson.read_summary": "📖 Pročtěte shrnutí",
     "lesson.gen_summary": "📝 Vytvořte shrnutí"
   },
@@ -4246,7 +4329,6 @@
     "form.style.interview": "💼 Phỏng Vấn Công Việc",
     "form.format.standard": "📚 Tiêu chuẩn — từ vựng & câu văn",
     "form.format.all_types": "🎯 Tất cả loại — tiêu chuẩn + ngữ pháp + động từ + tìm lỗi",
-    "lang.tutor_de_html": "🎓試 nghiệm <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic's German focus tutor</a>",
     "lesson.read_summary": "📖 Đọc tóm tắt",
     "lesson.gen_summary": "📝 Tạo tóm tắt"
   },
@@ -4459,7 +4541,6 @@
     "form.style.interview": "💼 Wawancara Kerja",
     "form.format.standard": "📚 Standar — vokabular & kalimat",
     "form.format.all_types": "🎯 Semua jenis — standar + gramatika + konjugasi + pencarian kesalahan",
-    "lang.tutor_de_html": "🎓 Coba <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">tutor fokus bahasa Jerman oleh Chilperic</a>",
     "lesson.read_summary": "📖 Baca ringkasan",
     "lesson.gen_summary": "📝 Buat ringkasan"
   },
@@ -4672,7 +4753,6 @@
     "form.style.interview": "💼 Entrevista de muncă",
     "form.format.standard": "📚 Standard — vokabular și propoziții",
     "form.format.all_types": "🎯 Toate tipurile — standard + gramatică + conjugare + căutare erori",
-    "lang.tutor_de_html": "🎓 Încerca <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">tutorul de concentrare în germană de Chilperic</a>",
     "lesson.read_summary": "📖 Citeste resumul",
     "lesson.gen_summary": "📝 Generează resumul"
   },
@@ -4885,7 +4965,6 @@
     "form.style.interview": "💼 การสัมภาษณ์งาน",
     "form.format.standard": "📚 มาตรฐาน — ศัพท์และประโยค",
     "form.format.all_types": "🎯 ทั้งหมด — มาตรฐาน + ไวยากรณ์ + การเปลี่ยนรูปคำ + การค้นหาข้อผิดพลาด",
-    "lang.tutor_de_html": "🎓 ลอง <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">ติวเตอร์เน้นภาษาเยอรมันของ Chilperic</a>",
     "lesson.read_summary": "📖 อ่านสรุป",
     "lesson.gen_summary": "📝 เกnerate สรุป"
   },
@@ -5098,7 +5177,6 @@
     "form.style.interview": "💼 Ερωτηματολογία Εργασίας",
     "form.format.standard": "📚 Πρότυπο — λογισμικά & παραγράφοι",
     "form.format.all_types": "🎯 Όλα τα τύπα — πρότυπο + γραμματικά + συνταξιοδότηση + αναζήτηση λάθους",
-    "lang.tutor_de_html": "🎓 Μείνα κατά <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">το προσωπικό του διδασκαλείου γερμανικών</a> του Chilperic",
     "lesson.read_summary": "📖 Παίρνεις το συνολικό περιεχόμενο",
     "lesson.gen_summary": "📝 Κατασκευάσεις το συνολικό περιεχόμενο"
   },
@@ -5311,7 +5389,6 @@
     "form.style.interview": "💼 Työilmoitus",
     "form.format.standard": "📚 Standard — sanasto & lauseet",
     "form.format.all_types": "🎯 Kaikki tyypit — standard + grammatiikka + konjuktiiv + virhe-haku",
-    "lang.tutor_de_html": "🎓 Kokeile <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic'n käännöspainotin</a>",
     "lesson.read_summary": "📖 Lue yhteenveto",
     "lesson.gen_summary": "📝 Luon yhteenveto"
   },
@@ -5524,7 +5601,6 @@
     "form.style.interview": "💼 Munkaszóft",
     "form.format.standard": "📚 Standard — szavak és mondatok",
     "form.format.all_types": "🎯 Minden típus — alap + grammatika + konjugáció + hibaelhárítás",
-    "lang.tutor_de_html": "🎓 Próbálj <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic's German focus tutor</a>",
     "lesson.read_summary": "📖 Olvassa a összefoglalást",
     "lesson.gen_summary": "📝 Összefoglalás létrehozása"
   },
@@ -5737,7 +5813,6 @@
     "form.style.interview": "💼 Jobberview",
     "form.format.standard": "📚 Standard — vokabular & sætninger",
     "form.format.all_types": "🎯 Alle typer — standard + grammatik + konjugation + fejlhunting",
-    "lang.tutor_de_html": "🎓 Prøv <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperics tysk fokuslærer</a>",
     "lesson.read_summary": "📖 Læs sammandrag",
     "lesson.gen_summary": "📝 Generer sammandrag"
   },
@@ -5950,7 +6025,6 @@
     "form.style.interview": "💼 Entrevista de treball",
     "form.format.standard": "📚 Estàndard — vocabulari i frases",
     "form.format.all_types": "🎯 Tots els tipus — estàndard + gramàtica + conjugació + busca d'errors",
-    "lang.tutor_de_html": "🎓 Torna a <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">l'assistent especialitzat en alemany de Chilperic</a>",
     "lesson.read_summary": "📖 Llegir resum",
     "lesson.gen_summary": "📝 Generar resum"
   },
@@ -6154,7 +6228,6 @@
     "form.style.interview": "💼 Job-Interview",
     "form.format.standard": "📚 Standard — Worte un Sënzent",
     "form.format.all_types": "🎯 Aller Tëp — Standard + Grammatik + Konjugasion + Fawer Sëckn",
-    "lang.tutor_de_html": "🎓 Probiéi <a href=\"https://chilperic.github.io/Deutsch-wipa-2026/\" target=\"_blank\" style=\"color:#1a4fa0\">Chilperic's Deitsch Fokus Tutor</a>",
     "lesson.read_summary": "📖 Sëchd Sëmméi",
     "lesson.gen_summary": "📝 Sëmméi Gëneéieren"
   }
