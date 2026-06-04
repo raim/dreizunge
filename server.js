@@ -300,13 +300,19 @@ Schema:
   ]
 }
 
+Example (German lesson, Italian speaker):
+{"target":"laufen","source":"correre"},{"target":"der Hund","source":"il cane"}
+Example (Italian lesson, English speaker):
+{"target":"correre","source":"to run"},{"target":"il cane","source":"the dog"}
+
 Rules:
 - vocab: exactly 8 items, all unique ${L} words, topic-relevant, overall difficulty: ${diff}, lesson focus: ${lessonDiff}
 - sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
 - sentence length: ${sentLen} — vary lengths naturally
 - sentences must be complete natural ${L} sentences — do NOT provide a words[] array
 - CRITICAL "target" fields: MUST contain ONLY ${L} — absolutely never ${S} or any other language
-- CRITICAL "source" fields: MUST contain ONLY ${S} — absolutely never ${L} or English (unless ${S} is English)
+- CRITICAL "source" fields: MUST contain ONLY ${S} — absolutely never ${L} or any other language. If ${S} is English, write English. Do NOT write ${L} synonyms or paraphrases.
+- CRITICAL: "source" is a TRANSLATION of "target" into ${S}, not a synonym in ${L}
 - "title" and "desc": MUST be written in ${S}${dialectNote}${styleNote}${writingStyleNote}${lang==='ja'?'\n- JAPANESE: In sentence "target" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
 }
 
@@ -339,6 +345,9 @@ Schema:
     {"target":"A sentence from the ${L} story","source":"Corresponding ${S} translation"}
   ]
 }
+
+Example vocab items (German lesson, Italian speaker):
+{"target":"laufen","source":"correre"},{"target":"der Hund","source":"il cane"}
 
 Rules:
 - vocab: exactly 8 items for lesson ${lessonNum} of ${totalLessons} (focus: ${lessonDiff}), all extracted from the story text, difficulty: ${diff}
@@ -816,7 +825,7 @@ Rules:
 - Use the standard subject pronouns for ${L} (e.g. io/tu/lui/noi/voi/loro for Italian)
 - "infinitive" MUST be in ${L}
 - "source" MUST be in ${S}
-- "form" MUST be the correct ${L} conjugated form for that pronoun${dialectNote}${writingStyleNote}`;
+- "form" MUST be ONLY the conjugated verb form — do NOT include the pronoun in "form" (e.g. "lache" not "ich lache")${dialectNote}${writingStyleNote}`;
 }
 
 // ── Generate error-hunt lesson ───────────────────────────────────────
@@ -977,7 +986,7 @@ async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts
 
 async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
   opts = opts || {};
-  const { userTranslation, userDialect, styleHint, writingStyle } = opts;
+  const { userTranslation, userDialect, styleHint, writingStyle, storyLang } = opts;
   const useTable = OLLAMA_LESSON_FORMAT === 'table';
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Lesson ${lessonNum}/${totalLessons}…`);
 
@@ -1009,10 +1018,12 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     const prevHint = prevVocab.length
       ? `\nVocabulary already covered in earlier lessons (do NOT repeat these):\n${prevVocab.map(v => v.target + ' = ' + v.source).join(', ')}`
       : '';
+    const L = langName(lang);
+    const S = langName(srcLang || 'en');
     const storyHint = story
-      ? `\nContext — use vocabulary and themes from this story where natural:\n${story.slice(0, 800)}`
+      ? `\nContext story (for themes/vocabulary inspiration ONLY — ignore what language it is written in):\n${story.slice(0, 800)}\n\nREMINDER: "target" fields MUST be ${L}. "source" fields MUST be ${S} translations. Do NOT use the story's language for source fields.`
       : '';
-    userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}\nReturn only the JSON object.`;
+    userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.\nTarget language: ${L}. Source/translation language: ${S}.${storyHint}${prevHint}\nReturn only the JSON object.`;
   }
 
   const isCJK = CJK_LANGS.has(lang);
@@ -1023,7 +1034,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     const t0 = Date.now();
     const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sysPrompt, userMsg, 2048);
     const ms = Date.now() - t0;
-
+  
     let lesson;
     if (useTable) {
       lesson = parseTableLesson(raw, lessonNum, topic);
@@ -1064,7 +1075,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     const sentSameCount = lesson.sentences.filter(s =>
       s.target && s.source && s.target.trim().toLowerCase() === s.source.trim().toLowerCase()
     ).length;
-    if (vocabSameCount > 2)
+      if (vocabSameCount > 2)
       throw new Error(`${vocabSameCount} vocab items have identical source/target fields — model ignored source language, retrying`);
     if (sentSameCount > 1)
       throw new Error(`${sentSameCount} sentences have identical source/target fields — model ignored source language, retrying`);
@@ -1649,6 +1660,21 @@ http.createServer(async (req, res) => {
       return json(res, 202, { jobId });
     }
 
+    // ── Save topic story ─────────────────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/save-story') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topic, story } = body;
+      if (!topic || story === undefined) return json(res, 400, { error: 'Missing topic or story' });
+      const saved = findSaved(topic);
+      if (!saved) return json(res, 404, { error: 'Topic not found' });
+      saved.story = story;
+      saved.updatedAt = new Date().toISOString();
+      saveStore(store);
+      console.log(`  Saved story for "${topic}" (${story.length} chars)`);
+      return json(res, 200, { ok: true });
+    }
+
     // ── Direct lesson edit ───────────────────────────────────────────────
     if (M === 'POST' && url.pathname === '/api/lessons/edit') {
       let body;
@@ -1674,6 +1700,7 @@ http.createServer(async (req, res) => {
             forms: c.forms ? c.forms.map((f,k) => ({...((orig.conjugations||[])[j]?.forms||[])[k]||{}, ...f})) : (orig.conjugations||[])[j]?.forms,
           })) : orig.conjugations,
           ...(edited.corruptedStory !== undefined ? { corruptedStory: edited.corruptedStory } : {}),
+          ...(edited.correctStory   !== undefined ? { correctStory:   edited.correctStory   } : {}),
           edits: edited.edits ? edited.edits.map((e,j) => ({...(orig.edits||[])[j]||{}, ...e})) : orig.edits,
         };
       });
@@ -1712,8 +1739,8 @@ http.createServer(async (req, res) => {
         let result;
         if (fmt === 'standard') {
           const storyTranslation = saved.storyTranslation || null;
-          const styleHint = (!storyTranslation && story) ? story.slice(0, 600) : null;
-          const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, styleHint, writingStyle: style };
+          // Don't pass story as styleHint — it's already in userMsg as context
+          const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, styleHint: null, writingStyle: style, storyLang: saved.storyLang || null };
           result = await generateOneLesson(lang, srcLang, topic.trim(), 1, 1, [], story, diff, jobId, lessonOpts);
         } else if (fmt === 'error_hunt') {
           result = await generateErrorHunt(story, lang, diff, jobId);
@@ -1725,8 +1752,9 @@ http.createServer(async (req, res) => {
           throw new Error(`Unsupported lessonFormat: ${fmt}`);
         }
         // Compute next available ID (avoid clashing with existing)
-        const maxId = Math.max(0, ...(saved.lessons||[]).map(l => l.id||0));
-        const newLesson = { ...result.lesson, id: maxId + 1 };
+        // Generate a stable string ID for the new lesson
+        const newLessonId = 'ls_' + Date.now();
+        const newLesson = { ...result.lesson, id: newLessonId };
         // Always append — ➕ button adds a new lesson set, never replaces
         saved.lessons.push(newLesson);
         console.log(`    Appended ${fmt} lesson (id ${newLesson.id}), total: ${saved.lessons.length}`);

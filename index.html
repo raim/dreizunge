@@ -381,9 +381,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-body.open{display:block}
 .story-body p{margin-bottom:10px}
 .story-body p:last-child{margin-bottom:0}
-.story-repair-wrap{padding:0 14px 14px;display:none}
-.story-repair-wrap.open{display:block}
-.story-repair-row{display:flex;gap:7px;align-items:flex-start}
+
+
+
 .story-repair-input{flex:1;padding:9px 11px;font-size:13px;font-weight:600;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--gray-light);outline:none;resize:vertical;min-height:38px}
 .story-repair-input:focus{border-color:var(--blue);background:var(--white)}
 .story-repair-btn{background:var(--blue);color:var(--white);border:none;border-radius:var(--radius);padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;flex-shrink:0}
@@ -740,13 +740,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <span class="story-arrow" id="story-arrow">▼</span>
     </button>
     <div class="story-body" id="story-body"></div>
-    <div class="story-repair-wrap" id="story-repair-wrap">
-      <div class="story-repair-row">
-        <textarea class="story-repair-input" id="story-repair-input" rows="2"
-          id="story-rewrite-ph" placeholder="Describe what to change…"></textarea>
-        <button class="story-repair-btn" id="story-repair-btn" onclick="doRepairStory()">Rewrite</button>
-      </div>
-      <div class="story-repair-status" id="story-repair-status"></div>
+    <div id="story-edit-toolbar" style="display:none;gap:8px;padding:6px 14px 8px;align-items:center">
+      <button class="story-repair-btn" onclick="saveStoryEdit()">💾 Save</button>
+      <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text)" onclick="cancelStoryEdit()">✕</button>
+      <span id="story-edit-status" style="font-size:12px;color:var(--gray-dark);font-weight:600"></span>
     </div>
     <div class="story-flag-row" id="story-flag-row" style="display:none">
       <button class="flag-btn" id="story-flag-btn" onclick="toggleStoryFlag()">⚐ Flag story</button>
@@ -1393,8 +1390,69 @@ function toggleStory(){
   if(arrow) arrow.classList.toggle('open',open);
 }
 function toggleStoryRepair(){
-  const wrap=document.getElementById('story-repair-wrap');
-  if(wrap) wrap.classList.toggle('open');
+  const body = document.getElementById('story-body');
+  const toolbar = document.getElementById('story-edit-toolbar');
+  const btn = document.getElementById('story-repair-toggle-btn');
+  if (!body || !toolbar) return;
+  const isEditing = body.contentEditable === 'true';
+  if (!isEditing) {
+    // Switch to edit mode: make story-body directly editable
+    // Store plain text version for editing
+    body.dataset.origHtml = body.innerHTML;
+    body.innerText = APP.lessonData?.story || body.innerText;
+    body.contentEditable = 'true';
+    body.style.outline = '2px solid var(--blue)';
+    body.style.borderRadius = '6px';
+    body.focus();
+    toolbar.style.display = 'flex';
+    if (btn) btn.style.background = 'var(--blue-light, #e8f0fe)';
+  } else {
+    cancelStoryEdit();
+  }
+}
+function cancelStoryEdit(){
+  const body = document.getElementById('story-body');
+  const toolbar = document.getElementById('story-edit-toolbar');
+  const btn = document.getElementById('story-repair-toggle-btn');
+  if (!body) return;
+  body.contentEditable = 'false';
+  body.style.outline = '';
+  body.style.borderRadius = '';
+  if (body.dataset.origHtml) { body.innerHTML = body.dataset.origHtml; delete body.dataset.origHtml; }
+  if (toolbar) toolbar.style.display = 'none';
+  if (btn) btn.style.background = '';
+  const status = document.getElementById('story-edit-status');
+  if (status) status.textContent = '';
+}
+async function saveStoryEdit(){
+  const d = APP.lessonData; if (!d) return;
+  const body = document.getElementById('story-body');
+  const newStory = (body?.innerText || '').trim();
+  if (!newStory) return;
+  const status = document.getElementById('story-edit-status');
+  if (status) status.textContent = 'Saving…';
+  try {
+    const r = await fetch('/api/save-story', { method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ topic: d.topic, story: newStory }) });
+    if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+    d.story = newStory;
+    const ehLessons = (d.lessons||[]).filter(ls => ls.type==='error_hunt');
+    if (ehLessons.length) { ehLessons.forEach(ls => { if(!ls._storyEdits) ls._storyEdits=[]; ls._storyEdits.push(new Date().toISOString()); }); markLessonUnchecked(d); }
+    if (status) status.textContent = '✓ Saved';
+    setTimeout(() => {
+      body.contentEditable = 'false';
+      body.style.outline = '';
+      body.style.borderRadius = '';
+      delete body.dataset.origHtml;
+      document.getElementById('story-edit-toolbar').style.display = 'none';
+      document.getElementById('story-repair-toggle-btn').style.background = '';
+      if (status) status.textContent = '';
+      renderStoryText(d); // re-render with vocab highlights
+    }, 1200);
+  } catch(e) {
+    if (status) status.textContent = '⚠ ' + e.message.slice(0, 40);
+  }
 }
 function renderStoryText(d, targetEl){
   const body=targetEl||document.getElementById('story-body'); if(!body) return;
@@ -1420,68 +1478,6 @@ function speakStory(){
 }
 
 // ── Story prompt modal (M6) ───────────────────────────────────────────
-async function regenWithPrompt(){
-  const d=APP.lessonData; if(!d||!APP.info.canGenerate) return;
-  const ta=document.getElementById('story-prompt-input');
-  const customPrompt=(ta?.value||'').trim();
-  if(!customPrompt) return;
-  const btn=document.getElementById('story-prompt-regen-btn');
-  if(btn){ btn.disabled=true; btn.textContent='⏳ Rewriting…'; }
-  try{
-    const r=await fetch('/api/repair-story',{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({topic:d.topic, instruction:customPrompt})});
-    if(!r.ok){ const e=await r.json(); throw new Error(e.error||'Failed'); }
-    const {jobId}=await r.json();
-    // Poll until done
-    const result=await pollJob(jobId, ()=>{});
-    d.story=result.story;
-    d.storyPrompt=result.storyPrompt||customPrompt;
-    renderStoryText(d);
-    const body=document.getElementById('story-body');
-    const arrow=document.getElementById('story-arrow');
-    if(body&&!body.classList.contains('open')){ body.classList.add('open'); if(arrow) arrow.classList.add('open'); }
-    closeStoryPrompt();
-    showToast(t('toast.story_rewritten'));
-  }catch(e){
-    showToast('Error: '+e.message);
-  }finally{
-    if(btn){ btn.disabled=false; btn.textContent=t('lesson.regen_prompt'); }
-  }
-}
-async function doRepairStory(){
-  const d=APP.lessonData; if(!d) return;
-  const instruction=document.getElementById('story-repair-input')?.value?.trim();
-  if(!instruction){ document.getElementById('story-repair-input').focus(); return; }
-  const btn=document.getElementById('story-repair-btn');
-  const status=document.getElementById('story-repair-status');
-  btn.disabled=true; btn.textContent='⏳';
-  if(status) status.textContent='Rewriting story…';
-  try{
-    const r=await fetch('/api/repair-story',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:d.topic,instruction})});
-    const resp=await r.json();
-    if(!r.ok) throw new Error(resp.error||t('status.repair_failed'));
-    await pollJob(resp.jobId,step=>{ if(status) status.textContent=step; });
-    const lr=await fetch('/api/lessons/load?topic='+encodeURIComponent(d.topic));
-    if(lr.ok) APP.lessonData=await lr.json();
-    const body=document.getElementById('story-body');
-    if(body&&!body.classList.contains('open')){ body.classList.add('open'); document.getElementById('story-arrow')?.classList.add('open'); }
-    renderStoryText(APP.lessonData);
-    // Update story language badge
-    const sl=APP.lessonData.storyLang||APP.lessonData.lang||'it';
-    const storyLangLbl=document.getElementById('story-lang-lbl');
-    if(storyLangLbl) storyLangLbl.textContent=(LANGS[sl]?.flag||sl.toUpperCase());
-    document.getElementById('story-repair-input').value='';
-    if(status) status.textContent=t('status.story_updated');
-    setTimeout(()=>{ if(status) status.textContent=''; },3000);
-    document.getElementById('story-repair-wrap')?.classList.remove('open');
-  }catch(e){
-    alert('Story repair failed: '+e.message);
-    if(status) status.textContent='';
-  }finally{ btn.disabled=false; btn.textContent='Rewrite'; }
-}
-
 // ── Rating ────────────────────────────────────────────────────────────
 function getRatingAxes() { return [
   {key:'difficulty', label:t('rating.q_difficulty'), opts:['🟢','🟡','🔴'], titles:[t('rating.too_easy'),t('rating.just_right'),t('rating.too_hard')]},
@@ -2354,7 +2350,7 @@ function buildPath(){
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
         ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:22px">🔒</span>':''}
-        ${APP.info.canGenerate&&L.id?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="Edit lesson" onclick="event.stopPropagation();openLessonEditor(${i})">📋</button>
+        ${APP.info.canGenerate&&L.id?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="Edit lesson" onclick="event.stopPropagation();openLessonEditor(${i})">📋${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style=\"color:var(--green);font-size:14px\" title=\"✓ '+L._checked.slice(0,10)+'\">✓</span>':'<span style=\"color:var(--green);font-size:14px\" title=\"Edited\">✓</span>'):''}</button>
           <button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="event.stopPropagation();deleteLessonNode(${i})">🗑</button>`:''}
       </div>`;
     if(!isLocked) node.onclick=()=>startLesson(i);
@@ -3122,7 +3118,20 @@ function openLessonEditor(lessonIdx) {
 
 function closeLessonEditor() {
   const el = document.getElementById('lesson-editor');
-  if (el) { el.classList.remove('open'); el.innerHTML = ''; }
+  if (!el) return;
+  if (el.classList.contains('open')) {
+    // Mark as checked even if no edits — user reviewed it
+    const li = el.dataset.lessonIdx !== '' ? +el.dataset.lessonIdx : null;
+    const ls = li !== null ? APP.lessonData?.lessons[li] : null;
+    if (ls) { ls._checked = new Date().toISOString(); buildPath(); }
+  }
+  el.classList.remove('open');
+  el.innerHTML = '';
+}
+function markLessonUnchecked(d) {
+  // Called when story changes — uncheck error_hunt lessons
+  (d?.lessons||[]).forEach(ls => { if(ls.type==='error_hunt') delete ls._checked; });
+  buildPath();
 }
 
 function escRe(s){ return s.replace(/[\^$.*+?()\[\]{}|]/g,'\\$&'); }
@@ -3155,6 +3164,7 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
     ${ls.type!=='error_hunt'?`<label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">
       <input type="checkbox" id="editor-flag-filter" ${flaggedOnly?'checked':''} onchange="renderLessonEditor(this.checked,${li})"> ⚑ only
     </label>`:''}
+    <button class="storyline-hdr-btn" onclick="findEhErrors(${li})">🔍 Find errors</button>
     <button class="storyline-hdr-btn" onclick="saveLessonEdits(${li})">💾</button>
     <button class="storyline-hdr-btn" onclick="closeLessonEditor()">✕</button>
   </div>`;
@@ -3168,7 +3178,7 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       const flagged = isFlagged('grammar', g.target);
       html += `<div class="editor-entry${flagged?' flagged':''}" id="ee-${li}-grammar-${g._i}">
         <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','grammar',${g._i})">🗑</button></div>
-        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="target" value="${escHtml(g.target||'')}"></div>
+        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="target" data-orig="${escHtml(g.target||'')}" value="${escHtml(g.target||'')}"></div>
         <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="source" value="${escHtml(g.source||'')}"></div>
         <div class="editor-field"><label>Article</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="article" value="${escHtml(g.article||'')}" style="width:60px;flex:none"></div>
         <div class="editor-field"><label>Gender</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="gender" value="${escHtml(g.gender||'')}" style="width:60px;flex:none"></div>
@@ -3208,15 +3218,18 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
         if (!wrong) return;
         h = h.replace(
           new RegExp(escRe(escHtml(wrong)), 'g'),
-          '<mark style="background:#ffe066;border-radius:3px;padding:0 2px;text-decoration:line-through" title="→ ' + escHtml(correct||'') + (e.reason ? ' (' + escHtml(e.reason) + ')' : '') + '">' + escHtml(wrong) + '</mark>');
+          '<mark style="background:#ffe066;border-radius:3px;padding:0 2px;text-decoration:line-through" title="→ ' + escAttr(correct||'') + (e.reason ? ' (' + escAttr(e.reason) + ')' : '') + '">' + escHtml(wrong) + '</mark>');
       });
       return h;
     };
-    // Reconstruct correct story by swapping replace→find
-    let correctStory = story;
-    edits.forEach(e => {
-      if (e.replace && e.find) correctStory = correctStory.split(e.replace).join(e.find);
-    });
+    // Correct story is topic.story; fall back to reconstructing from edits
+    let correctStory = APP.lessonData?.story || null;
+    if (!correctStory) {
+      correctStory = story;
+      edits.forEach(e => {
+        if (e.replace && e.find) correctStory = correctStory.split(e.replace).join(e.find);
+      });
+    }
     html += `
       <div style="display:flex;gap:0;margin-bottom:6px;border-radius:8px;overflow:hidden;border:1.5px solid var(--gray-mid)">
         <button id="${ehId}-tab-corrupted" onclick="switchEhTab(${li},'corrupted')"
@@ -3257,8 +3270,8 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       const flagged = isFlagged(it.type, it.target);
       html += `<div class="editor-entry${flagged?' flagged':''}" id="ee-${li}-${it.type}-${it.i}">
         <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','${it.type}',${it.i})">🗑</button></div>
-        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="target" value="${escHtml(it.target||'')}"></div>
-        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="source" value="${escHtml(it.source||'')}"></div>
+        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="target" data-orig="${escHtml(it.target||'')}" value="${escHtml(it.target||'')}"></div>
+        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="source" data-orig="${escHtml(it.source||'')}" value="${escHtml(it.source||'')}"></div>
       </div>`;
     });
   }
@@ -3284,7 +3297,13 @@ async function saveLessonEdits(lessonIdx) {
     if (type === 'vocab' || type === 'sentence') {
       const arr = type === 'vocab' ? ls.vocab : ls.sentences;
       const fi = +inp.dataset.fi;
-      if (arr && arr[fi]) arr[fi][field] = inp.value;
+      if (arr && arr[fi]) {
+        arr[fi][field] = inp.value;
+        // Regenerate words array when sentence target changes
+        if (type === 'sentence' && field === 'target') {
+          arr[fi].words = inp.value.trim().split(/\s+/).filter(Boolean);
+        }
+      }
     } else if (type === 'grammar') {
       const fi = +inp.dataset.fi;
       if (ls.grammar && ls.grammar[fi]) ls.grammar[fi][field] = inp.value;
@@ -3296,141 +3315,47 @@ async function saveLessonEdits(lessonIdx) {
       if (ls.conjugations && ls.conjugations[ci]?.forms?.[fi]) ls.conjugations[ci].forms[fi][field] = inp.value;
     } else if (type === 'eh-story') {
       const mode = inp.dataset?.mode || 'corrupted';
-      const text = (inp.innerText || inp.textContent || inp.value || '').trim();
+      // Strip any HTML tags (e.g. <mark> from highlights) to get clean plain text
+      const _tmpDiv = document.createElement('div'); _tmpDiv.innerHTML = inp.innerHTML || '';
+      const text = (_tmpDiv.innerText || _tmpDiv.textContent || inp.value || '').trim();
       if (mode === 'corrupted') {
-        // Reconstruct correct text from existing edits, then diff against edited corrupted
-        let correctText = ls.corruptedStory || '';
-        (ls.edits||[]).forEach(e => {
-          if (e.replace && e.find) correctText = correctText.split(e.replace).join(e.find);
-        });
         ls.corruptedStory = text;
-        // Now diff new corrupted vs correct — find new errors introduced
-        const tokenize2 = s => s.match(/\S+/g) || [];
-        const corrTokens2    = tokenize2(correctText);
-        const corruptTokens2 = tokenize2(text);
-        if (!ls.edits) ls.edits = [];
-        const isKnownPair2 = (c, w) => ls.edits.some(e => e.find === c && e.replace === w);
-        const tokensMatch2 = (c, w) => c === w || isKnownPair2(c, w);
-        const m2 = corrTokens2.length, n2 = corruptTokens2.length;
-        const dp2 = Array.from({length: m2+1}, () => new Int32Array(n2+1));
-        for (let ii = 1; ii <= m2; ii++)
-          for (let jj = 1; jj <= n2; jj++)
-            dp2[ii][jj] = tokensMatch2(corrTokens2[ii-1], corruptTokens2[jj-1])
-              ? dp2[ii-1][jj-1] + 1 : Math.max(dp2[ii-1][jj], dp2[ii][jj-1]);
-        let ii = m2, jj = n2;
-        const ops2 = [];
-        while (ii > 0 || jj > 0) {
-          if (ii > 0 && jj > 0 && tokensMatch2(corrTokens2[ii-1], corruptTokens2[jj-1])) {
-            ops2.unshift({type: corrTokens2[ii-1]===corruptTokens2[jj-1]?'eq':'known', corr:corrTokens2[ii-1], corrupt:corruptTokens2[jj-1]});
-            ii--; jj--;
-          } else if (jj > 0 && (ii===0 || dp2[ii][jj-1] >= dp2[ii-1][jj])) {
-            ops2.unshift({type:'del', corr:'', corrupt:corruptTokens2[jj-1]}); jj--;
-          } else {
-            ops2.unshift({type:'ins', corr:corrTokens2[ii-1], corrupt:''}); ii--;
-          }
-        }
-        const newDiffs2 = [];
-        let run2 = null;
-        const flush2 = () => {
-          if (!run2) return;
-          const cR = run2.filter(o=>o.corr).map(o=>o.corr).join(' ');
-          const wR = run2.filter(o=>o.corrupt).map(o=>o.corrupt).join(' ');
-          if (cR || wR) newDiffs2.push({correct: cR, wrong: wR});
-          run2 = null;
-        };
-        ops2.forEach(op => {
-          if (op.type==='eq'||op.type==='known') flush2();
-          else { if (!run2) run2=[]; run2.push(op); }
-        });
-        flush2();
-        console.log('[EH corrupted diff] ops:', JSON.stringify(ops2.filter(o=>o.type!=='eq')));
-        console.log('[EH corrupted diff] newDiffs:', JSON.stringify(newDiffs2));
-        newDiffs2.forEach(d => {
-          const exists = ls.edits.find(e => e.replace === d.wrong && e.find === d.correct);
-          if (!exists) ls.edits.push({type:'error', find: d.correct, replace: d.wrong, reason:''});
-        });
-        window._ehReopenLi = li;
-        _ehReopenOnSave = true;
+        if (APP.lessonData) delete APP.lessonData._editedCorrect;
       } else {
-        // Diff correct (edited) vs corrupted
-        const tokenize = s => s.match(/\S+/g) || [];
-        const corrTokens    = tokenize(text);
-        const corruptTokens = tokenize(ls.corruptedStory || '');
-        console.log('[EH diff] correct text:', JSON.stringify(text.slice(0,100)));
-        console.log('[EH diff] corrupted:', JSON.stringify((ls.corruptedStory||'').slice(0,100)));
-        if (!ls.edits) ls.edits = [];
-
-        // Build sets of known error pairs to skip
-        const knownWrong   = new Set((ls.edits||[]).map(e => e.replace).filter(Boolean));
-        const knownCorrect = new Set((ls.edits||[]).map(e => e.find).filter(Boolean));
-
-        // Pass 1: align token arrays accounting for known errors
-        // Build "normalised" versions where known errors are treated as matching
-        // Use LCS but treat (corrToken=find, corruptToken=replace) as a match
-        const isKnownPair = (c, w) => (ls.edits||[]).some(e => e.find === c && e.replace === w);
-        const tokensMatch = (c, w) => c === w || isKnownPair(c, w);
-
-        const m = corrTokens.length, n = corruptTokens.length;
-        const dp = Array.from({length: m+1}, () => new Int32Array(n+1));
-        for (let i = 1; i <= m; i++)
-          for (let j = 1; j <= n; j++)
-            dp[i][j] = tokensMatch(corrTokens[i-1], corruptTokens[j-1])
-              ? dp[i-1][j-1] + 1
-              : Math.max(dp[i-1][j], dp[i][j-1]);
-
-        // Traceback
-        let i = m, j = n;
-        const ops = []; // {type:'eq'|'sub'|'ins'|'del', corr, corrupt}
-        while (i > 0 || j > 0) {
-          if (i > 0 && j > 0 && tokensMatch(corrTokens[i-1], corruptTokens[j-1])) {
-            ops.unshift({type: corrTokens[i-1]===corruptTokens[j-1]?'eq':'known', corr:corrTokens[i-1], corrupt:corruptTokens[j-1]});
-            i--; j--;
-          } else if (j > 0 && (i===0 || dp[i][j-1] >= dp[i-1][j])) {
-            ops.unshift({type:'del', corr:'', corrupt:corruptTokens[j-1]}); j--;
-          } else {
-            ops.unshift({type:'ins', corr:corrTokens[i-1], corrupt:''}); i--;
-          }
-        }
-
-        // Pass 2: merge adjacent non-eq ops into diff runs, then classify
-        const newDiffs = [];
-        let run = null;
-        const flushRun = () => {
-          if (!run) return;
-          const corrRun   = run.filter(o=>o.corr).map(o=>o.corr).join(' ');
-          const corruptRun = run.filter(o=>o.corrupt).map(o=>o.corrupt).join(' ');
-          if (corrRun || corruptRun) newDiffs.push({correct: corrRun, wrong: corruptRun});
-          run = null;
-        };
-        ops.forEach(op => {
-          if (op.type === 'eq' || op.type === 'known') { flushRun(); }
-          else { if (!run) run=[]; run.push(op); }
-        });
-        flushRun();
-
-        console.log('[EH diff] ops:', JSON.stringify(ops.filter(o=>o.type!=='eq')));
-        console.log('[EH diff] newDiffs:', JSON.stringify(newDiffs));
-        // Add new errors (skip already known)
-        newDiffs.forEach(d => {
-          const exists = ls.edits.find(e => e.replace === d.wrong && e.find === d.correct);
-          if (!exists) ls.edits.push({type:'correction', find: d.correct, replace: d.wrong, reason:''});
-        });
-        window._ehReopenLi = li;
-        _ehReopenOnSave = true;
+        // Save correct text back to topic.story
+        if (APP.lessonData) APP.lessonData.story = text;
+        fetch('/api/save-story', { method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ topic: d.topic, story: text })
+        }).catch(e => console.error('save-story failed:', e));
+        // Don't close — story save is fire-and-forget, lesson save below handles the rest
       }
     } else if (type === 'eh-edit') {
       const fi = +inp.dataset.fi;
       if (ls.edits && ls.edits[fi]) ls.edits[fi][field] = inp.value;
     }
   });
+  // Mark lesson as checked and items as edited BEFORE saving to server
+  if (ls) {
+    ls._checked = new Date().toISOString();
+    el.querySelectorAll('input[data-field="target"], input[data-field="find"]').forEach(inp => {
+      const orig = inp.dataset.orig;
+      const cur  = inp.value;
+      // Only mark as edited if value actually changed from original
+      if (orig !== undefined && cur === orig) return;
+      const type=inp.dataset.type, fi=+inp.dataset.fi;
+      const arr = type==='vocab'?ls.vocab:type==='sentence'?ls.sentences:type==='grammar'?ls.grammar:null;
+      if(arr&&arr[fi]) { if(!arr[fi]._manualEdits) arr[fi]._manualEdits=[]; arr[fi]._manualEdits.push(new Date().toISOString()); }
+    });
+  }
   try {
     const r = await fetch('/api/lessons/edit', { method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) });
     if (!r.ok) throw new Error((await r.json()).error || 'Failed');
-    // Clear flags for edited content
     const topicSlugForEdit = (d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
     const topicIdForEdit = d.id || '';
+    buildPath(); // refresh tick immediately
     // Clear all flags for this topic (content was edited so old flags are stale)
     Object.keys(APP.flagged).forEach(k => {
       const prefix = k.split(':')[0];
@@ -3441,17 +3366,8 @@ async function saveLessonEdits(lessonIdx) {
       }
     });
     saveFlagged();
-    if (window._ehReopenOnSave) {
-      window._ehReopenOnSave = false;
-      const _li = window._ehReopenLi ?? 0;
-      window._ehReopenLi = undefined;
-      showToast('💾 Saved · check new errors below');
-      renderLessonEditor(false, _li);
-      setTimeout(() => switchEhTab(_li, 'corrupted'), 50);
-    } else {
-      showToast('💾 Saved');
-      closeLessonEditor();
-    }
+    showToast('💾 Saved');
+    closeLessonEditor();
     buildPath();
   } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
 }
@@ -3499,6 +3415,162 @@ function deleteEditorItem(li, type, idx) {
 }
 
 
+
+function findEhErrors(li) {
+  li = +li;
+  const ls = APP.lessonData?.lessons[li];
+  if (!ls) return;
+  const div = document.getElementById('eh-editor-' + li + '-story');
+  if (!div) return;
+
+  // Get current text from whichever tab is active
+  const mode = div.dataset.mode || 'corrupted';
+  // Strip HTML tags from contenteditable content
+  const _tmp = document.createElement('div'); _tmp.innerHTML = div.innerHTML || '';
+  const currentText = (_tmp.innerText || _tmp.textContent || '').trim();
+
+  // Determine corrupted and correct texts, persisting edits first
+  let corruptedText, correctText;
+  if (mode === 'corrupted') {
+    ls.corruptedStory = currentText; // persist before re-render
+    corruptedText = currentText;
+    correctText = corruptedText;
+    (ls.edits||[]).forEach(e => {
+      if (e.replace && e.find) correctText = correctText.split(e.replace).join(e.find);
+    });
+  } else {
+    ls._editedCorrect = currentText;
+    ls.correctStory = currentText; // persist to server on next save
+    correctText = currentText;
+    corruptedText = ls.corruptedStory || '';
+  }
+
+  if (!ls.edits) ls.edits = [];
+
+  // LCS diff — known error pairs count as matches
+  const tokenize = s => s.match(/\S+/g) || [];
+  const corrToks   = tokenize(correctText);
+  const corruptToks = tokenize(corruptedText);
+  const isKP = (c, w) => ls.edits.some(e => e.find === c && e.replace === w);
+  const tMatch = (c, w) => c === w || isKP(c, w);
+
+  const m = corrToks.length, n = corruptToks.length;
+  const dp = Array.from({length: m+1}, () => new Int32Array(n+1));
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = tMatch(corrToks[i-1], corruptToks[j-1])
+        ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j], dp[i][j-1]);
+
+  let i = m, j = n;
+  const ops = [];
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && tMatch(corrToks[i-1], corruptToks[j-1])) {
+      ops.unshift({type: corrToks[i-1]===corruptToks[j-1]?'eq':'known', corr:corrToks[i-1], corrupt:corruptToks[j-1]});
+      i--; j--;
+    } else if (j > 0 && (i===0 || dp[i][j-1] >= dp[i-1][j])) {
+      ops.unshift({type:'del', corr:'', corrupt:corruptToks[j-1]}); j--;
+    } else {
+      ops.unshift({type:'ins', corr:corrToks[i-1], corrupt:''}); i--;
+    }
+  }
+
+  // Merge runs — collect segments of {type, corr, corrupt}
+  // First pass: basic merge
+  const segs = []; // {type:'diff'|'eq', corrTokens:[], corruptTokens:[]}
+  let curSeg = null;
+  const flushSeg = () => { if (curSeg) { segs.push(curSeg); curSeg = null; } };
+  ops.forEach(op => {
+    if (op.type==='eq'||op.type==='known') {
+      if (curSeg?.type==='diff') flushSeg();
+      if (!curSeg || curSeg.type!=='eq') { flushSeg(); curSeg={type:'eq',toks:[]}; }
+      curSeg.toks.push({corr:op.corr, corrupt:op.corrupt});
+    } else {
+      if (curSeg?.type==='eq') flushSeg();
+      if (!curSeg) curSeg={type:'diff',corrToks:[],corruptToks:[]};
+      if (op.corr)    curSeg.corrToks.push(op.corr);
+      if (op.corrupt) curSeg.corruptToks.push(op.corrupt);
+    }
+  });
+  flushSeg();
+
+  // Second pass: merge diff runs separated by short eq bridges (≤2 tokens, all short words)
+  const BRIDGE_MAX = 2;
+  const isShortWord = w => w.length <= 3;
+  const merged = [];
+  for (let si = 0; si < segs.length; si++) {
+    const seg = segs[si];
+    if (seg.type !== 'diff') { merged.push(seg); continue; }
+    // Look ahead: if next eq bridge is short and followed by another diff, absorb both
+    let s = seg;
+    while (si+2 < segs.length &&
+           segs[si+1].type==='eq' &&
+           segs[si+2].type==='diff' &&
+           segs[si+1].toks.length <= BRIDGE_MAX &&
+           segs[si+1].toks.every(t => isShortWord(t.corr))) {
+      const bridge = segs[si+1], next = segs[si+2];
+      s = {
+        type:'diff',
+        corrToks:   [...s.corrToks,   ...bridge.toks.map(t=>t.corr),   ...next.corrToks],
+        corruptToks:[...s.corruptToks,...bridge.toks.map(t=>t.corrupt),...next.corruptToks],
+      };
+      si += 2;
+    }
+    merged.push(s);
+  }
+
+  const diffs = merged
+    .filter(s => s.type==='diff')
+    .map(s => ({
+      correct: s.corrToks.join(' '),
+      wrong:   s.corruptToks.join(' '),
+    }))
+    .filter(d => d.correct || d.wrong);
+
+  console.log('[findEhErrors] mode:', mode);
+  console.log('[findEhErrors] correctText:', correctText.slice(0,120));
+  console.log('[findEhErrors] corruptedText:', corruptedText.slice(0,120));
+  console.log('[findEhErrors] diffs:', JSON.stringify(diffs));
+  console.log('[findEhErrors] existing edits:', JSON.stringify(ls.edits));
+
+  let added = 0;
+  diffs.forEach(d => {
+    console.log('[findEhErrors] checking diff:', JSON.stringify(d));
+    const exists = ls.edits.find(e => e.replace === d.wrong && e.find === d.correct);
+    if (!exists) {
+      console.log('[findEhErrors] adding:', JSON.stringify(d));
+      ls.edits.push({type:'error', find:d.correct, replace:d.wrong, reason:''});
+      added++;
+    } else {
+      console.log('[findEhErrors] skipping (already exists)');
+    }
+  });
+
+  // Save current text
+  if (mode === 'corrupted') ls.corruptedStory = corruptedText;
+
+  showToast(added ? `🔍 ${added} new error${added>1?'s':''} found` : '🔍 No new errors found');
+  if (added > 0) {
+    // Re-highlight the story div without re-rendering the whole editor
+    updateEhHighlight(li);
+    // Rebuild only the edits section
+    const editsContainer = document.getElementById('eh-editor-' + li + '-edits');
+    if (editsContainer) {
+      editsContainer.innerHTML = (ls.edits||[]).map((e,ei) => `
+        <div class="editor-entry" id="eh-editor-${li}-edit-${ei}">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','eh-edit',${ei})">🗑</button></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px">
+            <div class="editor-field"><label>Correct</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="find" value="${escHtml(e.find||'')}"></div>
+            <div class="editor-field"><label>Wrong</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="replace" value="${escHtml(e.replace||'')}" style="background:#fff8ee"></div>
+          </div>
+          <div class="editor-field"><label>Reason</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="reason" value="${escHtml(e.reason||'')}"></div>
+        </div>`).join('');
+      // Scroll to new entries
+      const lastEntry = editsContainer.lastElementChild;
+      if (lastEntry) lastEntry.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+  }
+}
+
 function switchEhTab(li, mode) {
   const ehId = 'eh-editor-' + li;
   const div = document.getElementById(ehId + '-story');
@@ -3524,18 +3596,18 @@ function switchEhTab(li, mode) {
     (ls.edits||[]).forEach(e => {
       if (!e.replace) return;
       highlighted = highlighted.replace(new RegExp(escRe(escHtml(e.replace)), 'g'),
-        '<mark style="background:#ffe066;border-radius:3px;padding:0 2px;text-decoration:line-through" title="→ ' + escHtml(e.find||'') + '">' + escHtml(e.replace) + '</mark>');
+        '<mark style="background:#ffe066;border-radius:3px;padding:0 2px;text-decoration:line-through" title="→ ' + escAttr(e.find||'') + '">' + escHtml(e.replace) + '</mark>');
     });
     div.innerHTML = highlighted;
   } else {
     btnCorrect.style.background   = 'var(--blue)';   btnCorrect.style.color = 'white';
     btnCorrupted.style.background = 'var(--gray-light)'; btnCorrupted.style.color = 'var(--text)';
-    // Reconstruct correct text fresh from ls.corruptedStory + edits
-    let correctText = ls.corruptedStory || '';
-    (ls.edits||[]).forEach(e => {
-      if (e.replace && e.find) correctText = correctText.split(e.replace).join(e.find);
-    });
-    // Show plain editable text — user can fix LLM errors here
+    // Correct text is topic.story (the original generated story)
+    const correctText = APP.lessonData?.story || ls.correctStory || (() => {
+      let t = ls.corruptedStory || '';
+      (ls.edits||[]).forEach(e => { if (e.replace && e.find) t = t.split(e.replace).join(e.find); });
+      return t;
+    })();
     div.innerHTML = escHtml(correctText);
     div.dataset.correct = correctText;
     div.style.background = '#f0fff4'; // light green tint to indicate correct mode
@@ -3928,6 +4000,20 @@ function tTypePlural(ex) {
 
 // ══ Conjugation exercises ═════════════════════════════════════════════════════
 
+// Strip redundant pronoun prefix from conjugated form
+// e.g. pronoun="ich", form="ich lache" → "lache"
+function stripPronoun(pronoun, form) {
+  if (!pronoun || !form) return form;
+  const p = pronoun.trim().toLowerCase();
+  const f = form.trim();
+  // Handle compound pronouns like "er/sie/es"
+  const variants = p.split('/').map(v=>v.trim());
+  for (const v of variants) {
+    if (f.toLowerCase().startsWith(v + ' ')) return f.slice(v.length).trim();
+  }
+  return f;
+}
+
 function buildConjugationExercises(lesson) {
   const verbs = lesson.conjugations || [];
   if (!verbs.length) return [];
@@ -3935,25 +4021,23 @@ function buildConjugationExercises(lesson) {
 
   verbs.forEach(verb => {
     const forms = verb.forms || [];
-    forms.forEach((f, fi) => {
-      // Pool of wrong answers = other forms of this verb + forms of other verbs
-      const wrongSameVerb = forms.filter(x=>x.form!==f.form).map(x=>x.form);
+    const cleanForms = forms.map(f => ({...f, cleanForm: stripPronoun(f.pronoun, f.form)}));
+    cleanForms.forEach((f, fi) => {
+      const wrongSameVerb = cleanForms.filter(x=>x.cleanForm!==f.cleanForm).map(x=>x.cleanForm);
       const wrongOther    = verbs.filter(v=>v.infinitive!==verb.infinitive)
-                                 .flatMap(v=>v.forms.map(x=>x.form));
+                                 .flatMap(v=>(v.forms||[]).map(x=>stripPronoun(x.pronoun,x.form)));
       const wrongPool     = shuffle([...new Set([...wrongSameVerb, ...wrongOther])]).slice(0, 3);
 
-      // MCQ for all forms
       if (wrongPool.length >= 1) {
-        const choices = shuffle([f.form, ...wrongPool]).slice(0, 4);
+        const choices = shuffle([f.cleanForm, ...wrongPool]).slice(0, 4);
         exs.push({ type:'mcq_conjugation',
                    infinitive:verb.infinitive, source:verb.source,
-                   pronoun:f.pronoun, correct:f.form, choices });
+                   pronoun:f.pronoun, correct:f.cleanForm, choices });
       }
-      // Type-in for every 3rd form to keep it varied
       if (fi % 3 === 0) {
         exs.push({ type:'type_conjugation',
                    infinitive:verb.infinitive, source:verb.source,
-                   pronoun:f.pronoun, correct:f.form });
+                   pronoun:f.pronoun, correct:f.cleanForm });
       }
     });
   });
@@ -4045,6 +4129,7 @@ function renderErrorHunt(){
 }
 
 function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 function buildEhEditMap(lesson){
   // For each edit, find which token indices it spans in the corrupted story
@@ -4111,10 +4196,10 @@ function ehCheck(){
       return `<div style="font-size:12px;margin:3px 0">${icon} <strong>${e.type}</strong>: `+
         `“${escHtml(e.find)}” → “${escHtml(e.replace)}” &nbsp;<span style="color:var(--gray-dark)">${escHtml(e.reason)}</span></div>`;
     }).join('');
-  // Back button
+  // Continue button — same style as other lesson types
   const backBtn=document.createElement('button');
-  backBtn.className='sec-btn'; backBtn.style='margin-top:12px;width:100%';
-  backBtn.textContent=t('check.back');
+  backBtn.className='cont-btn'; backBtn.style='margin-top:14px;width:100%';
+  backBtn.textContent=t('complete.continue');
   backBtn.onclick=()=>{ showComplete(); };
   resultDiv.appendChild(backBtn);
   wrap.after(resultDiv);
@@ -4733,7 +4818,7 @@ init();
     <div class="modal-footer">
       <button class="modal-btn secondary" onclick="closeStoryPrompt()">Cancel</button>
       <button class="modal-btn primary" id="story-prompt-regen-btn"
-        onclick="regenWithPrompt()">↻ Regenerate with this prompt</button>
+        onclick="toggleStoryRepair()">✏️ Edit story directly</button>
     </div>
   </div>
 </div>
