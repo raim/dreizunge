@@ -4807,21 +4807,6 @@ async function exportTopics(topics) {
 
 init();
 </script>
-<div id="story-prompt-modal" class="modal-overlay" style="display:none" onclick="if(event.target===this)closeStoryPrompt()">
-  <div class="modal-box">
-    <div class="modal-hdr">
-      <span>📝 Story prompt</span>
-      <button class="modal-close" onclick="closeStoryPrompt()">✕</button>
-    </div>
-    <textarea class="modal-textarea" id="story-prompt-input" rows="12"
-      id="story-prompt-ph" placeholder="No story prompt saved for this lesson."></textarea>
-    <div class="modal-footer">
-      <button class="modal-btn secondary" onclick="closeStoryPrompt()">Cancel</button>
-      <button class="modal-btn primary" id="story-prompt-regen-btn"
-        onclick="toggleStoryRepair()">✏️ Edit story directly</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
