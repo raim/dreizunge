@@ -311,6 +311,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .diff-select:focus{border-color:var(--blue)}
 .diff-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .continue-row{margin-bottom:14px}
+.lang-footer{display:flex;align-items:center;gap:6px;padding:10px 16px 14px;border-top:1.5px solid var(--gray-mid);margin-top:8px;background:var(--white)}
+.lang-footer-lbl{font-size:16px;flex-shrink:0}
+.lang-select-sm{padding:6px 30px 6px 10px;font-size:13px}
 .continue-lbl{display:block;font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:5px;letter-spacing:.02em;text-transform:uppercase}
 .continue-select-wrap{position:relative;display:inline-block;width:100%}
 .continue-select{width:100%;padding:9px 36px 9px 12px;font-size:13px;font-weight:700;border:2px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);appearance:none;-webkit-appearance:none;cursor:pointer;outline:none;transition:border-color .15s}
@@ -781,6 +784,22 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <input type="hidden" id="sial-enc-lesson-card">
   </div>
   </div>
+
+  <div class="lang-footer" id="lang-footer-lessonset">
+    <span class="lang-footer-lbl">🗣</span>
+    <div class="lang-select-wrap" style="flex:1">
+      <select class="lang-select lang-select-sm" id="src-lang-select-footer-ls" onchange="selectSrcLang(this.value)">
+      </select>
+      <span class="lang-select-arrow">▾</span>
+    </div>
+    <span class="lang-footer-lbl">→</span>
+    <span class="lang-footer-lbl">📖</span>
+    <div class="lang-select-wrap" style="flex:1">
+      <select class="lang-select lang-select-sm" id="lang-select-footer-ls" onchange="selectLang(this.value)">
+      </select>
+      <span class="lang-select-arrow">▾</span>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -839,6 +858,23 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </div>
     <div class="sl-screen-body" id="sl-screen-body"></div>
     <div class="sl-screen-stats" id="sl-screen-stats"></div>
+  </div>
+
+
+  <div class="lang-footer" id="lang-footer-storyline">
+    <span class="lang-footer-lbl">🗣</span>
+    <div class="lang-select-wrap" style="flex:1">
+      <select class="lang-select lang-select-sm" id="src-lang-select-footer-sl" onchange="selectSrcLang(this.value)">
+      </select>
+      <span class="lang-select-arrow">▾</span>
+    </div>
+    <span class="lang-footer-lbl">→</span>
+    <span class="lang-footer-lbl">📖</span>
+    <div class="lang-select-wrap" style="flex:1">
+      <select class="lang-select lang-select-sm" id="lang-select-footer-sl" onchange="selectLang(this.value)">
+      </select>
+      <span class="lang-select-arrow">▾</span>
+    </div>
   </div>
 </div>
 
@@ -1025,6 +1061,23 @@ function applyUIStrings() {
     const L = LANGS[opt.value]; if (!L) return;
     // Each language names itself in its own language
     opt.text = L.flag + ' ' + (localizedLangName(opt.value, opt.value) || L.name);
+  });
+  // Sync footer selects — clone options from main selects
+  ['ls','sl'].forEach(suffix => {
+    const ft = document.getElementById('lang-select-footer-' + suffix);
+    const fs = document.getElementById('src-lang-select-footer-' + suffix);
+    if (ft && tgtSel) {
+      ft.innerHTML = Array.from(tgtSel.options)
+        .filter(o => o.value !== 'all')
+        .map(o => `<option value="${o.value}"${o.value===APP.lang?' selected':''}>${o.text}</option>`)
+        .join('');
+    }
+    if (fs && srcSel) {
+      fs.innerHTML = Array.from(srcSel.options)
+        .filter(o => o.value !== 'all')
+        .map(o => `<option value="${o.value}"${o.value===APP.srcLang?' selected':''}>${o.text}</option>`)
+        .join('');
+    }
   });
   // Update diff-select option labels
   const diffSel = document.getElementById('diff-select');
@@ -1288,11 +1341,19 @@ function selectSrcLang(code){
   APP.libSrcFilter=code;
   const sel=document.getElementById('src-lang-select');
   if(sel && sel.value!==code) sel.value=code;
+  ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});
   updateTranslationLangHint();
-  loadUIStrings(code);
-  const lbl=document.getElementById('topic-label');
-  if(lbl && !document.getElementById('use-story-cb')?.checked) lbl.textContent=topicLabelText();
-  if(document.getElementById('saved-list')) loadSavedList();
+  loadUIStrings(code).then(() => {
+    const lbl=document.getElementById('topic-label');
+    if(lbl && !document.getElementById('use-story-cb')?.checked) lbl.textContent=topicLabelText();
+    if(document.getElementById('saved-list')) loadSavedList();
+    // Re-render active sub-screen so dynamic content is retranslated
+    if(document.getElementById('lesson-set')?.classList.contains('active')) {
+      try { buildPath(); } catch(_) {}
+    } else if(document.getElementById('storyline-screen')?.classList.contains('active') && APP._slScreen) {
+      _renderStorylineScreen(APP._slScreen.chainId, APP._slScreen.encodedChain, APP._slScreen.topics);
+    }
+  });
 }
 function onUseTranslationCb(){
   const on=document.getElementById('use-translation-cb').checked;
@@ -1305,6 +1366,7 @@ function selectLang(code, silent){
   updateDocDir();
   const sel=document.getElementById('lang-select');
   if(sel && sel.value!==code) sel.value=code;
+  ['lang-select-footer-ls','lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});
   const L=LANGS[code]||LANGS.it;
   const lbl=document.getElementById('topic-label');
   if(lbl) lbl.textContent=topicLabelText();
@@ -1515,10 +1577,22 @@ function getRatingAxes() { return [
   {key:'coherence',  label:t('rating.q_coherence'),  opts:['🔗','🔗🔗','🔗🔗🔗'], titles:[t('rating.incoherent'),t('rating.coherent'),t('rating.very_coherent')]},
 ];}
 const _pr={};
-function goLessonSet(){
+async function goLessonSet(){
+  if(APP.lessonData) {
+    // Switch UI language to match this lesson's source language, without side-effects
+    const lSrc = APP.lessonData.srcLang || 'en';
+    if (lSrc && lSrc !== APP.srcLang) {
+      APP.srcLang = lSrc; saveSrcLang(); APP.libSrcFilter = lSrc;
+      const sel = document.getElementById('src-lang-select');
+      if(sel && sel.value !== lSrc) sel.value = lSrc;
+      ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f)f.value=lSrc;});
+      updateTranslationLangHint();
+      await loadUIStrings(lSrc);
+    }
+    history.replaceState(null,'','#topic='+encodeURIComponent(APP.lessonData.topic));
+  }
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
   show('lesson-set');
-  if(APP.lessonData) history.replaceState(null,'','#topic='+encodeURIComponent(APP.lessonData.topic));
 }
 function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); show('landing'); }
 
@@ -2769,9 +2843,20 @@ async function doAddLesson(sid, enc) {
 // Current open storyline state
 APP._slScreen = null; // { chainId, chain (encoded), topics [] }
 
-function openStorylineScreen(chainId, encodedChain) {
+async function openStorylineScreen(chainId, encodedChain) {
   const topics = JSON.parse(decodeURIComponent(encodedChain));
   APP._slScreen = { chainId, encodedChain, topics };
+  // Switch UI to source language of first chapter before rendering
+  const firstTopic = (APP.savedList||[]).find(l => l.topic === topics[0]);
+  const slSrc = firstTopic?.srcLang || 'en';
+  if (slSrc && slSrc !== APP.srcLang) {
+    APP.srcLang = slSrc; saveSrcLang(); APP.libSrcFilter = slSrc;
+    const sel = document.getElementById('src-lang-select');
+    if(sel && sel.value !== slSrc) sel.value = slSrc;
+    ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f)f.value=slSrc;});
+    updateTranslationLangHint();
+    await loadUIStrings(slSrc);
+  }
   history.pushState({ slChainId: chainId, slChain: encodedChain }, '', '#sl=' + chainId);
   _renderStorylineScreen(chainId, encodedChain, topics);
   show('storyline-screen');
