@@ -676,6 +676,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importLessons(this)">
         </label>
         <button id="export-static-btn" onclick="exportStatic()" title="Rebuild docs/index.html" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🏗 Static</button>
+        <button onclick="_unlockTts();if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel()" title="Stop speech" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:.7">🔇</button>
       </div>
     </div>
     <div id="lang-progress-strip" style="margin-bottom:10px"></div>
@@ -788,6 +789,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
+    <button class="story-icon-btn" onclick="_unlockTts();if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel()" title="Stop speech" style="flex-shrink:0;font-size:18px;opacity:.7">🔇</button>
   </div>
   <div class="gen-stats" id="gen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
@@ -857,6 +859,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
+    <button class="story-icon-btn" onclick="_unlockTts();if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel()" title="Stop speech" style="flex-shrink:0;font-size:18px;opacity:.7">🔇</button>
   </div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
@@ -2992,7 +2995,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     `<div class="storyline-story-hdr" style="flex:1" role="button" tabindex="0" onclick="toggleChainStory('${slscId}')">` +
     '<span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
     `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></div>` +
-    `<span class="story-icon-btn" data-speak="csbody-${slscId}" data-lang="${(APP.savedList||[]).find(l=>l.topic===topics[0])?.lang||APP.lang||''}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak,this.dataset.lang)">🔊</span>` +
+    `<span class="story-icon-btn" onclick="event.stopPropagation();(async function(){const sl=APP._slScreen;if(!sl)return;const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);const stories=await Promise.all(sl.topics.map(async t=>{const cached=saved.find(l=>l.topic===t);if(cached?.story)return cached.story;try{const r=await fetch('/api/lessons/load?topic='+encodeURIComponent(t));const d=await r.json();return d.story||'';}catch(_){return '';};}));const text=stories.filter(Boolean).join(' ').replace(/\\s+/g,' ').trim();const lang=saved.find(l=>l.topic===sl.topics[0])?.lang||'';if(text)speakBodyText('__inline__',lang,text);})()">🔊</span>` +
     `</div>` +
     `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
     '</div>';
@@ -4875,16 +4878,39 @@ function ttsIsApproximate(){
   return APP.ttsLang !== (LANGS[lang]||LANGS.it).tts;
 }
 
-function speakBodyText(bodyId,langCode){
+function speakBodyText(bodyId,langCode,preText){
+  _unlockTts();
+  if(preText){ if(langCode){const p=()=>{if(!_ttsUnlocked){_ttsPendingAfterUnlock={text:preText,langCode};return;}_doSpeakLang(preText,langCode);};const v=speechSynthesis.getVoices();v.length>0?p():speechSynthesis.addEventListener('voiceschanged',function h(){speechSynthesis.removeEventListener('voiceschanged',h);p();},{once:true});}else speak(preText); return; }
   const el=document.getElementById(bodyId);
   if(!el)return;
   // textContent works even when hidden; if still empty, load from data
   let text=(el.textContent||'').replace(/Chapter \d+[^\n]*\n/g,' ').replace(/\s+/g,' ').trim();
   if(!text && el.dataset.topic){
+    // Single story (sis-body): look up by topic name
     const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);
     const match=saved.find(l=>l.topic===el.dataset.topic);
     if(match?.story){ text=match.story.replace(/\s+/g,' ').trim(); }
     if(!langCode && el.dataset.lang) langCode=el.dataset.lang;
+  }
+  if(!text && el.dataset.chain){
+    // Chain story (csbody): decode chain, concatenate all stories
+    try {
+      // el.dataset.chain may be single or double encoded depending on browser
+      let chainJson = el.dataset.chain;
+      try { chainJson = decodeURIComponent(chainJson); } catch(_){}
+      // If it's still encoded (starts with %5B), decode again
+      if(chainJson.startsWith('%')) try { chainJson = decodeURIComponent(chainJson); } catch(_){}
+      const topics = JSON.parse(chainJson);
+      const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);
+      text=topics.map(t=>saved.find(l=>l.topic===t)?.story||'').filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+      if(!langCode){ const first=saved.find(l=>l.topic===topics[0]); if(first?.lang) langCode=first.lang; }
+    } catch(e){ console.warn('speakBodyText chain decode failed:', e.message); }
+    // Ultimate fallback: use APP._slScreen if available
+    if(!text && APP._slScreen){
+      const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);
+      text=APP._slScreen.topics.map(t=>saved.find(l=>l.topic===t)?.story||'').filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+      if(!langCode){ const first=saved.find(l=>l.topic===APP._slScreen.topics[0]); if(first?.lang) langCode=first.lang; }
+    }
   }
   if(!text)return;
   if(langCode){
