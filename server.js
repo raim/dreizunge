@@ -2,6 +2,7 @@
 'use strict';
 
 const http  = require('http');
+const { execFile } = require('child_process');
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
@@ -1654,6 +1655,19 @@ http.createServer(async (req, res) => {
       }
       return json(res, 200, { ok: true });
     }
+    if (M === 'POST' && url.pathname === '/api/build-static') {
+      const scriptPath = path.join(__dirname, 'build-static.js');
+      execFile('node', [scriptPath], { cwd: __dirname, timeout: 60000 }, (err, stdout, stderr) => {
+        if (err) {
+          console.error('build-static failed:', stderr || err.message);
+          return json(res, 500, { error: (stderr || err.message).slice(0, 200) });
+        }
+        console.log('build-static:', stdout.trim());
+        return json(res, 200, { ok: true, output: stdout.trim().slice(0, 500) });
+      });
+      return; // response sent by callback
+    }
+
     if (M === 'POST' && url.pathname === '/api/storyline-title') {
       if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
       let body;

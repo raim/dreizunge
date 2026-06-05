@@ -399,7 +399,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
-.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}.lesson-actions{display:none;flex-wrap:wrap;gap:6px;padding:14px 0 4px;border-top:1.5px solid var(--gray-mid);margin-top:12px}.lesson-actions.visible{display:flex}.lesson-editor{display:none;background:var(--white);border-top:2px solid var(--gray-mid);border-bottom:2px solid var(--gray-mid);padding:16px;margin-top:12px;width:100vw;position:relative;left:50%;transform:translateX(-50%);box-sizing:border-box;max-width:900px}.lesson-editor.open{display:block}.editor-entry{border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px 12px;margin-bottom:10px}.editor-entry.flagged{border-color:#ff9600;background:#fff8ee}.editor-field{display:flex;align-items:center;gap:10px;margin-bottom:6px}.editor-field label{font-size:12px;font-weight:800;color:var(--gray-dark);width:60px;flex-shrink:0}.editor-field input,.editor-field textarea{flex:1;font-size:15px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:5px 10px;background:var(--white);color:var(--text)}.editor-filter{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;font-weight:700}
+.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}.lesson-actions{display:none;flex-wrap:wrap;gap:8px;padding:14px 16px 4px;border-top:1.5px solid var(--gray-mid);margin-top:12px;justify-content:center;align-items:center}.lesson-actions.visible{display:flex}.lesson-editor{display:none;background:var(--white);border-top:2px solid var(--gray-mid);border-bottom:2px solid var(--gray-mid);padding:16px;margin-top:12px;width:100vw;position:relative;left:50%;transform:translateX(-50%);box-sizing:border-box;max-width:900px}.lesson-editor.open{display:block}.editor-entry{border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px 12px;margin-bottom:10px}.editor-entry.flagged{border-color:#ff9600;background:#fff8ee}.editor-field{display:flex;align-items:center;gap:10px;margin-bottom:6px}.editor-field label{font-size:12px;font-weight:800;color:var(--gray-dark);width:60px;flex-shrink:0}.editor-field input,.editor-field textarea{flex:1;font-size:15px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:5px 10px;background:var(--white);color:var(--text)}.editor-filter{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;font-weight:700}
 
 /* ══ LIB FILTER ══════════════════════════════════════════════════════ */
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
@@ -675,6 +675,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           ⬆ Import
           <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importLessons(this)">
         </label>
+        <button id="export-static-btn" onclick="exportStatic()" title="Rebuild docs/index.html" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🏗 Static</button>
       </div>
     </div>
     <div id="lang-progress-strip" style="margin-bottom:10px"></div>
@@ -727,8 +728,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
   </div>
   <div class="path-wrap" id="lesson-path"></div>
-  <div class="gen-stats" id="gen-stats"></div>
-  <div class="tts-row" id="tts-row" style="display:none;padding:8px 0 0">
+  <div class="tts-row" id="tts-row" style="display:none;padding:8px 0 0;height:0;overflow:hidden">
     <select class="tts-select" id="tts-select" onchange="onTtsSelect(this.value)"></select>
     <span class="tts-approx" id="tts-approx" style="display:none">⚠ approximate pronunciation</span>
   </div>
@@ -755,15 +755,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <span id="story-edit-status" style="font-size:12px;color:var(--gray-dark);font-weight:600"></span>
     </div>
     <div class="story-flag-row" id="story-flag-row" style="display:none">
-      <button class="flag-btn" id="story-flag-btn" onclick="toggleStoryFlag()">⚐ Flag story</button>
       <div class="flag-comment-wrap" id="story-flag-comment-wrap">
         <textarea class="flag-comment" id="story-flag-comment" rows="2"
-          id="story-flag-ph" placeholder="Describe what is wrong with the story…"
+          placeholder="Describe what is wrong with the story…"
           onblur="saveStoryComment()"></textarea>
       </div>
-      <button class="flag-btn" id="story-cont-btn" onclick="continueFromCurrent()"
-        style="display:none;background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a"
-        id="continue-story-btn-title" title="Continue this story in a new lesson set">↪ Continue story</button>
     </div>
   <div id="lesson-editor" class="lesson-editor"></div>
   <div class="lesson-actions" id="lesson-actions"></div>
@@ -792,14 +788,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
-    <span class="lang-footer-lbl">→</span>
-    <span class="lang-footer-lbl">📖</span>
-    <div class="lang-select-wrap" style="flex:1">
-      <select class="lang-select lang-select-sm" id="lang-select-footer-ls" onchange="selectLang(this.value)">
-      </select>
-      <span class="lang-select-arrow">▾</span>
-    </div>
   </div>
+  <div class="gen-stats" id="gen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
 </div>
 
@@ -857,7 +847,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div id="sl-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
     </div>
     <div class="sl-screen-body" id="sl-screen-body"></div>
-    <div class="sl-screen-stats" id="sl-screen-stats"></div>
   </div>
 
 
@@ -868,14 +857,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
-    <span class="lang-footer-lbl">→</span>
-    <span class="lang-footer-lbl">📖</span>
-    <div class="lang-select-wrap" style="flex:1">
-      <select class="lang-select lang-select-sm" id="lang-select-footer-sl" onchange="selectLang(this.value)">
-      </select>
-      <span class="lang-select-arrow">▾</span>
-    </div>
   </div>
+  <div class="gen-stats sl-screen-stats" id="sl-screen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
 
 <script>
@@ -1018,6 +1001,10 @@ function applyUIStrings() {
   _setText('gen-btn',       t('form.generate'));
   _setText('start-btn',     t('lesson.start'));
   _setText('offline-note',  t('form.offline'));
+  // Update static AI warning overlay text on language switch
+  const _ovEl = document.getElementById('static-gen-overlay');
+  if (_ovEl) _ovEl.innerHTML = t('static.ai_warning')
+    + ' <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a>';
   _setText('comp-next',     t('complete.continue'));
   _setText('comp-title',    t('complete.title'));
   _setAttr('stat-correct',  'title', t('complete.correct'));
@@ -1066,12 +1053,6 @@ function applyUIStrings() {
   ['ls','sl'].forEach(suffix => {
     const ft = document.getElementById('lang-select-footer-' + suffix);
     const fs = document.getElementById('src-lang-select-footer-' + suffix);
-    if (ft && tgtSel) {
-      ft.innerHTML = Array.from(tgtSel.options)
-        .filter(o => o.value !== 'all')
-        .map(o => `<option value="${o.value}"${o.value===APP.lang?' selected':''}>${o.text}</option>`)
-        .join('');
-    }
     if (fs && srcSel) {
       fs.innerHTML = Array.from(srcSel.options)
         .filter(o => o.value !== 'all')
@@ -1139,6 +1120,8 @@ function applyUIStrings() {
   _setAttr('sl-screen-summary-btn','title', t('lesson.gen_summary'));
   _setText('backend-lbl',          t('app.backend'));
   _setText('blbl',                 t('app.checking'));
+  const _esBtn = document.getElementById('export-static-btn');
+  if (_esBtn) _esBtn.style.display = APP.info.canGenerate ? '' : 'none';
   _setText('add-lesson-lbl-card',  '➕ '+t('lib.add_lesson')+':');
 }
 
@@ -1366,7 +1349,6 @@ function selectLang(code, silent){
   updateDocDir();
   const sel=document.getElementById('lang-select');
   if(sel && sel.value!==code) sel.value=code;
-  ['lang-select-footer-ls','lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});
   const L=LANGS[code]||LANGS.it;
   const lbl=document.getElementById('topic-label');
   if(lbl) lbl.textContent=topicLabelText();
@@ -1562,7 +1544,8 @@ function renderStoryText(d, targetEl){
     escaped=escaped.replace(new RegExp('('+pattern+')','gi'),
       '<mark class="story-vocab-hl">$1</mark>');
   }
-  body.innerHTML=escaped.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  const spkBtn='<div style="text-align:right;padding:0 0 8px"><button class="story-icon-btn" onclick="speakStory()" title="'+t('lesson.read_aloud')+'">🔊</button></div>';
+  body.innerHTML=spkBtn+escaped.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
 }
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
@@ -1715,12 +1698,14 @@ function savedItemHtml(s, connector, hideStory) {
       </div>
     </div>
     <div class="saved-item-story"${hideStory ? ' style="display:none"' : ''}>
-      <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('${sid}','${s.topic.replace(/'/g,"\\'")}')">
-        ${t('lesson.read_story_short')}
-        <button class="story-icon-btn" style="margin-left:auto" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">🔊</button>
-        <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
-      </button>
-      <div class="saved-item-story-body" id="sis-body-${sid}"></div>
+      <div style="display:flex;align-items:center">
+        <div class="saved-item-story-hdr" style="flex:1" role="button" tabindex="0" onclick="event.stopPropagation();toggleSavedStory('${sid}','${s.topic.replace(/'/g,"\\'")}')">
+          ${t('lesson.read_story_short')}
+          <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
+        </div>
+        <span class="story-icon-btn" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">🔊</span>
+      </div>
+      <div class="saved-item-story-body" id="sis-body-${sid}" data-topic="${s.topic.replace(/"/g,'&quot;')}" data-lang="${s.lang||''}"></div>
     </div>
     <div class="saved-item-edit" id="siedit-${sid}">
       <span style="position:relative;display:inline-block"><span class="saved-item-edit-emoji icon-picker-btn" id="siedit-emoji-${sid}" onclick="openIconPicker('siedit-emoji-${sid}','si-${sid}')">${s.topicEmoji||'📚'}</span></span>
@@ -1955,6 +1940,7 @@ async function loadSavedList(){
         `<div style="display:flex;align-items:center">` +
         `<button class="storyline-story-hdr" style="flex:1" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` + 
         `${t('lesson.read_summary')}<span class="storyline-story-arrow" id="slsc-summary-arrow-${chainId}">▼</span></button>` +
+        `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak,APP.srcLang)" title="${t('lesson.read_aloud')}">🔊</button>` +
         (APP.info.canGenerate ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
         `</div>` +
         `<div class="storyline-story-body" id="slsc-summary-body-${chainId}">` +
@@ -2411,7 +2397,7 @@ function buildPath(){
     const sfRow=document.getElementById('story-flag-row');
     if(sfRow) sfRow.style.display='';
     const storyContBtn=document.getElementById('story-cont-btn');
-    if(storyContBtn) storyContBtn.style.display=APP.info.canGenerate?'':'none';
+    if(storyContBtn) storyContBtn.style.display='none'; // now in lesson-actions
     _updateStoryFlagUI();
   } else if(storySec){ storySec.style.display='none'; }
 
@@ -2484,9 +2470,11 @@ function buildPath(){
       const _sid = Math.abs(d.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0)).toString(36);
       const _diff = d.difficulty || 2;
       const _slen = d.storyLen || 300;
+      const _contBtn=APP.info.canGenerate?`<button class="flag-btn" style="background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a" title="${t('lesson.continue_title')}" onclick="continueFromLesson('${d.topic.replace(/'/g,"\'")}',${_diff},${_slen})">↪ ${t('lesson.btn_continue_story')}</button>`:'';
+      const _flagBtn=`<button class="flag-btn" id="story-flag-btn" onclick="toggleStoryFlag()">${t('lesson.flag_story')}</button>`;
       _actRow.innerHTML =
-        `<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${d.topic.replace(/'/g,"\'")}',${_diff},${_slen})">↪</button>`
-      
+        _contBtn
+      + _flagBtn
       + `<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="document.getElementById('sial-enc-lesson-card').value='${_enc}';openAddLesson('lesson-card','${_enc}')">➕</button>`
       + `<button class="ico-btn export" title="Export" data-topic="${d.topic.replace(/"/g,'&quot;')}" onclick="exportTopics([this.dataset.topic])">⬇</button>`
       + `<button class="ico-btn" title="Clear progress" onclick="clearLessonProgress('${_enc}')">↺</button>`
@@ -2550,7 +2538,7 @@ async function toggleSavedStory(id, topic) {
 
 // ── Storyline combined story panel ───────────────────────────────────
 // ── Storyline title management ────────────────────────────────────────
-const EMOJI_CATEGORIES = {"😀 Smileys":["😀","😃","😄","😁","😆","😅","🤣","😂","🙂","🙃","🫠","😉","😊","😇","🥰","😍","🤩","😘","😗","☺️","😚","😙","🥲","😋","😛","😜","🤪","😝","🤑","🤗","🤭","🫢","🫣","🤫","🤔","🫡","🤐","🤨","😐","😑","😶","🫥","😏","😒","🙄","😬","🤥","🫨","😌","😔","😪","🤤","😴","😷","🤒","🤕","🤢","🤮","🤧","🥵","🥶","🥴","😵","🤯","🤠","🥳","🥸","😎","🤓","🧐","😕","🫤","😟","🙁","☹️","😮","😯","😲","😳","🥺","🥹","😦","😧","😨","😰","😥","😢","😭","😱","😖","😣","😞","😓","😩","😫","🥱","😤","😡","😠","🤬","😈","👿","💀","☠️","💩","🤡","👹","👺","👻","👽","👾","🤖"],"👋 People & Body":["👋","🤚","🖐️","✋","🖖","🫱","🫲","🫳","🫴","🫷","🫸","👌","🤌","🤏","✌️","🤞","🫰","🤟","🤘","🤙","👈","👉","👆","🖕","👇","☝️","🫵","👍","👎","✊","👊","🤛","🤜","👏","🙌","🫶","👐","🤲","🤝","🙏","✍️","💅","🤳","💪","🦾","🦿","🦵","🦶","👂","🦻","👃","🫀","🫁","🧠","🦷","🦴","👀","👁️","👅","👄","🫦","👶","🧒","👦","👧","🧑","👱","👨","🧔","👩","🧓","👴","👵","🙍","🙎","🙅","🙆","💁","🙋","🧏","🙇","🤦","🤷","👮","🕵️","💂","🥷","👷","🫅","🤴","👸","👳","👲","🧕","🤵","👰","🤰","🫃","🫄","🤱","👼","🎅","🤶","🧑‍🎄","🦸","🦹","🧙","🧝","🧛","🧟","🧌","🧞","🧜","🧚","🪄","👫","👬","👭","💏","💑","👪","🗣️","👤","👥","🫂","👣"],"🐶 Animals":["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐻‍❄️","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🙈","🙉","🙊","🐒","🐔","🐧","🐦","🐤","🦆","🦅","🦉","🦇","🐺","🐗","🐴","🦄","🐝","🪱","🐛","🦋","🐌","🐞","🐜","🪲","🦟","🦗","🪳","🕷️","🦂","🐢","🐍","🦎","🦖","🦕","🐙","🦑","🦐","🦞","🦀","🪸","🦈","🐡","🐠","🐟","🐬","🐳","🐋","🦭","🐊","🐅","🐆","🦓","🦍","🦧","🦣","🐘","🦛","🦏","🐪","🐫","🦒","🦘","🦬","🐃","🐂","🐄","🐎","🐖","🐏","🐑","🦙","🐐","🦌","🐕","🐩","🦮","🐕‍🦺","🐈","🐈‍⬛","🪶","🐓","🦃","🦤","🦚","🦜","🦢","🪽","🕊️","🐇","🦝","🦨","🦡","🦫","🦦","🦥","🐁","🐀","🐿️","🦔","🐾","🐉","🐲","🌵","🎄","🌲","🌳","🌴","🪵","🌱","🌿","☘️","🍀","🎍","🪴","🎋","🍃","🍂","🍁","🪺","🪹","🍄","🌾","💐","🌷","🌹","🥀","🪷","🌺","🌸","🌼","🌻","🌞","🌝","🌛","🌜","🌚","🌕","🌖","🌗","🌘","🌑","🌒","🌓","🌔","🌙","🌟","⭐","🌠","🌌","☀️","🌤️","⛅","🌥️","☁️","🌦️","🌧️","⛈️","🌩️","🌨️","❄️","☃️","⛄","🌬️","💨","💧","💦","🫧","☔","☂️","🌊","🌫️","🌀","🌈","⚡","🔥","💥","🌪️","🌋"],"🍎 Food & Drink":["🍏","🍎","🍐","🍊","🍋","🍌","🍉","🍇","🍓","🫐","🍈","🍒","🍑","🥭","🍍","🥥","🥝","🍅","🍆","🥑","🥦","🥬","🥒","🌶️","🫑","🥕","🧄","🧅","🥔","🍠","🫚","🫛","🌽","🌯","🫔","🥙","🧆","🥚","🍳","🥘","🍲","🫕","🥣","🥗","🍿","🧂","🥫","🍱","🍘","🍙","🍚","🍛","🍜","🍝","🍠","🍢","🍣","🍤","🍥","🥮","🍡","🥟","🥠","🥡","🍦","🍧","🍨","🍩","🍪","🎂","🍰","🧁","🥧","🍫","🍬","🍭","🍮","🍯","🍼","🥛","☕","🫖","🍵","🧃","🥤","🧋","🍶","🍾","🍷","🍸","🍹","🍺","🍻","🥂","🥃","🫗","🥴","🧊","🥢","🍽️","🍴","🥄","🔪","🫙"],"🏠 Travel & Places":["🌍","🌎","🌏","🌐","🗺️","🧭","🏔️","⛰️","🌋","🗻","🏕️","🏖️","🏜️","🏝️","🏞️","🏟️","🏛️","🏗️","🧱","🪨","🪵","🛖","🏘️","🏚️","🏠","🏡","🏢","🏣","🏤","🏥","🏦","🏨","🏩","🏪","🏫","🏬","🏭","🏯","🏰","💒","🗼","🗽","⛪","🕌","🛕","🕍","⛩️","🕋","⛲","⛺","🌁","🌃","🏙️","🌄","🌅","🌆","🌇","🌉","♨️","🎠","🛝","🎡","🎢","💈","🎪","🚂","🚃","🚄","🚅","🚆","🚇","🚈","🚉","🚊","🚝","🚞","🚋","🚌","🚍","🚎","🚐","🚑","🚒","🚓","🚔","🚕","🚖","🚗","🚘","🚙","🛻","🚚","🚛","🚜","🏎️","🏍️","🛵","🛺","🚲","🛴","🛹","🛼","🚏","🛣️","🛤️","⛽","🚧","⚓","🛟","⛵","🚤","🛥️","🛳️","⛴️","🚢","✈️","🛩️","🛫","🛬","🪂","💺","🚁","🚟","🚠","🚡","🛸","🚀","🛶","🚁","🚀","⛱️","🗿","🪆","🧳","🌂","☂️"],"⚽ Activities":["⚽","🏀","🏈","⚾","🥎","🎾","🏐","🏉","🥏","🎱","🏓","🏸","🏒","🏑","🥍","🏏","🪃","🥅","⛳","🪁","🏹","🎣","🤿","🥊","🥋","🎽","🛹","🛼","🛷","⛸️","🥌","🎿","⛷️","🏂","🪂","🏋️","🤼","🤸","⛹️","🤺","🏇","🧘","🏄","🏊","🤽","🚣","🧗","🚵","🚴","🏆","🥇","🥈","🥉","🏅","🎖️","🏵️","🎗️","🎫","🎟️","🎪","🤹","🎭","🎨","🎬","🎤","🎧","🎼","🎵","🎶","🎷","🪗","🎸","🎹","🎺","🎻","🪕","🥁","🪘","🎯","🎲","♟️","🎮","🕹️","🎰","🧩","🪀","🪁","🎴","🎳","🧸","🪅","🪩","🪆","🖼️","🎑","🎃","🎆","🎇","🧨","✨","🎉","🎊","🎋","🎍","🎎","🎏","🎐","🎀","🎁","🎗️"],"📱 Objects":["⌚","📱","📲","💻","⌨️","🖥️","🖨️","🖱️","🖲️","💽","💾","💿","📀","🧮","📷","📸","📹","🎥","📽️","🎞️","📞","☎️","📟","📠","📺","📻","🧭","⏱️","⏲️","⏰","🕰️","⌛","⏳","📡","🔋","🪫","🔌","💡","🔦","🕯️","🪔","🧯","🛢️","💰","🪙","💴","💵","💶","💷","💸","💳","🪙","💹","✉️","📧","📨","📩","📤","📥","📦","📫","📪","📬","📭","📮","🗳️","✏️","✒️","🖋️","🖊️","📝","💼","📁","📂","🗂️","📅","📆","🗒️","🗓️","📇","📈","📉","📊","📋","📌","📍","🗺️","📎","🖇️","📏","📐","✂️","🗃️","🗄️","🗑️","🔒","🔓","🔏","🔐","🔑","🗝️","🔨","🪓","⛏️","⚒️","🛠️","🗡️","⚔️","🛡️","🪚","🔧","🪛","🔩","⚙️","🗜️","🔗","⛓️","🪝","🧲","🪜","🧰","🧲","🪤","🧪","🧫","🧬","🔭","🔬","🩺","🩹","🩼","🩻","💊","💉","🩸","🧴","🧹","🧺","🧻","🪣","🧼","🫧","🪥","🧽","🪒","🧹","🪠","🛁","🪤","🧲","🔑","🚪","🛋️","🪑","🚽","🚿","🛒","🎁","🎈","🎏","🎀","🪄","🔮"],"🔣 Symbols":["➕","➖","✖️","➗","🟰","♾️","🔢","🔣","🔤","🔡","🔠","💯","🔢","❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❤️‍🔥","❤️‍🩹","💕","💞","💓","💗","💖","💘","💝","💟","☮️","✝️","☪️","🕉️","✡️","🔯","🪯","☯️","☦️","🛐","⛎","♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓","🆔","⚛️","🉑","☢️","☣️","📴","📳","🈶","🈚","🈸","🈺","🈷️","✴️","🆚","💮","🉐","㊙️","㊗️","🈴","🈵","🈹","🈲","🅰️","🅱️","🆎","🆑","🅾️","🆘","❌","⭕","🛑","⛔","📛","🚫","💯","💢","♨️","🚷","🚯","🚳","🚱","🔞","📵","🔕","🔇","❗","❕","❓","❔","‼️","⁉️","🔅","🔆","📶","🛜","📳","🔱","⚜️","🔰","♻️","✅","🈯","💹","❇️","✳️","❎","🌐","💠","Ⓜ️","🌀","💤","🏧","🚾","♿","🅿️","🛗","🈳","🈹","🚺","🚹","🚼","⚧️","🚻","🚮","🎦","📵","🔞","🔃","🔄","🔙","🔚","🔛","🔜","🔝","🛐","⏏️","⏭️","⏮️","⏩","⏪","⏫","⏬","▶️","⏸️","⏹️","⏺️","🎦","🔊","🔔","🔕","📣","📢","💬","💭","🗯️","♠️","♣️","♥️","♦️","🃏","🀄","🎴","🔇","🔈","🔉","🔊","📻","🎵","🎶","〽️","🎙️","⚗️","🔭","🔬","🩺","🌡️","🧭","💡","🔦","🕯️"]};
+const EMOJI_CATEGORIES = {"😀 Smileys": ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃", "🫠", "😉", "😊", "😇", "🥰", "😍", "🤩", "😘", "😗", "☺️", "😚", "😙", "🥲", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🫢", "🫣", "🤫", "🤔", "🫡", "🤐", "🤨", "😐", "😑", "😶", "🫥", "😏", "😒", "🙄", "😬", "🤥", "🫨", "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🤧", "🥵", "🥶", "🥴", "😵", "🤯", "🤠", "🥳", "🥸", "😎", "🤓", "🧐", "😕", "🫤", "😟", "🙁", "☹️", "😮", "😯", "😲", "😳", "🥺", "🥹", "😦", "😧", "😨", "😰", "😥", "😢", "😭", "😱", "😖", "😣", "😞", "😓", "😩", "😫", "🥱", "😤", "😡", "😠", "🤬", "😈", "👿", "💀", "☠️", "💩", "🤡", "👹", "👺", "👻", "👽", "👾", "🤖"], "👋 People & Body": ["👋", "🤚", "🖐️", "✋", "🖖", "🫱", "🫲", "🫳", "🫴", "🫷", "🫸", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "🫵", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "🫶", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", "👃", "🫀", "🫁", "🧠", "🦷", "🦴", "👀", "👁️", "👅", "👄", "🫦", "👶", "🧒", "👦", "👧", "🧑", "👱", "👨", "🧔", "👩", "🧓", "👴", "👵", "🙍", "🙎", "🙅", "🙆", "💁", "🙋", "🧏", "🙇", "🤦", "🤷", "👮", "🕵️", "💂", "🥷", "👷", "🫅", "🤴", "👸", "👳", "👲", "🧕", "🤵", "👰", "🤰", "🫃", "🫄", "🤱", "👼", "🎅", "🤶", "🧑‍🎄", "🦸", "🦹", "🧙", "🧝", "🧛", "🧟", "🧌", "🧞", "🧜", "🧚", "🪄", "👫", "👬", "👭", "💏", "💑", "👪", "🗣️", "👤", "👥", "🫂", "👣"], "🐶 Animals": ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🐔", "🐧", "🐦", "🐤", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗", "🐴", "🦄", "🐝", "🪱", "🐛", "🦋", "🐌", "🐞", "🐜", "🪲", "🦟", "🦗", "🪳", "🕷️", "🦂", "🐢", "🐍", "🦎", "🦖", "🦕", "🐙", "🦑", "🦐", "🦞", "🦀", "🪸", "🦈", "🐡", "🐠", "🐟", "🐬", "🐳", "🐋", "🦭", "🐊", "🐅", "🐆", "🦓", "🦍", "🦧", "🦣", "🐘", "🦛", "🦏", "🐪", "🐫", "🦒", "🦘", "🦬", "🐃", "🐂", "🐄", "🐎", "🐖", "🐏", "🐑", "🦙", "🐐", "🦌", "🐕", "🐩", "🦮", "🐕‍🦺", "🐈", "🐈‍⬛", "🪶", "🐓", "🦃", "🦤", "🦚", "🦜", "🦢", "🪽", "🕊️", "🐇", "🦝", "🦨", "🦡", "🦫", "🦦", "🦥", "🐁", "🐀", "🐿️", "🦔", "🐾", "🐉", "🐲", "🌵", "🎄", "🌲", "🌳", "🌴", "🪵", "🌱", "🌿", "☘️", "🍀", "🎍", "🪴", "🎋", "🍃", "🍂", "🍁", "🪺", "🪹", "🍄", "🌾", "💐", "🌷", "🌹", "🥀", "🪷", "🌺", "🌸", "🌼", "🌻", "🌞", "🌝", "🌛", "🌜", "🌚", "🌕", "🌖", "🌗", "🌘", "🌑", "🌒", "🌓", "🌔", "🌙", "🌟", "⭐", "🌠", "🌌", "☀️", "🌤️", "⛅", "🌥️", "☁️", "🌦️", "🌧️", "⛈️", "🌩️", "🌨️", "❄️", "☃️", "⛄", "🌬️", "💨", "💧", "💦", "🫧", "☔", "☂️", "🌊", "🌫️", "🌀", "🌈", "⚡", "🔥", "💥", "🌪️", "🌋"], "🍎 Food & Drink": ["🥞", "🧇", "🥐", "🧈", "🍕", "🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒", "🌶️", "🫑", "🥕", "🧄", "🧅", "🥔", "🍠", "🫚", "🫛", "🌽", "🌯", "🫔", "🥙", "🧆", "🥚", "🍳", "🥘", "🍲", "🫕", "🥣", "🥗", "🍿", "🧂", "🥫", "🍱", "🍘", "🍙", "🍚", "🍛", "🍜", "🍝", "🍠", "🍢", "🍣", "🍤", "🍥", "🥮", "🍡", "🥟", "🥠", "🥡", "🍦", "🍧", "🍨", "🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", "🍮", "🍯", "🍼", "🥛", "☕", "🫖", "🍵", "🧃", "🥤", "🧋", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", "🥂", "🥃", "🫗", "🥴", "🧊", "🥢", "🍽️", "🍴", "🥄", "🔪", "🫙"], "🏠 Travel & Places": ["🏙", "🌍", "🌎", "🌏", "🌐", "🗺️", "🧭", "🏔️", "⛰️", "🌋", "🗻", "🏕️", "🏖️", "🏜️", "🏝️", "🏞️", "🏟️", "🏛️", "🏗️", "🧱", "🪨", "🪵", "🛖", "🏘️", "🏚️", "🏠", "🏡", "🏢", "🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏬", "🏭", "🏯", "🏰", "💒", "🗼", "🗽", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "⛲", "⛺", "🌁", "🌃", "🏙️", "🌄", "🌅", "🌆", "🌇", "🌉", "♨️", "🎠", "🛝", "🎡", "🎢", "💈", "🎪", "🚂", "🚃", "🚄", "🚅", "🚆", "🚇", "🚈", "🚉", "🚊", "🚝", "🚞", "🚋", "🚌", "🚍", "🚎", "🚐", "🚑", "🚒", "🚓", "🚔", "🚕", "🚖", "🚗", "🚘", "🚙", "🛻", "🚚", "🚛", "🚜", "🏎️", "🏍️", "🛵", "🛺", "🚲", "🛴", "🛹", "🛼", "🚏", "🛣️", "🛤️", "⛽", "🚧", "⚓", "🛟", "⛵", "🚤", "🛥️", "🛳️", "⛴️", "🚢", "✈️", "🛩️", "🛫", "🛬", "🪂", "💺", "🚁", "🚟", "🚠", "🚡", "🛸", "🚀", "🛶", "🚁", "🚀", "⛱️", "🗿", "🪆", "🧳", "🌂", "☂️"], "⚽ Activities": ["⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱", "🏓", "🏸", "🏒", "🏑", "🥍", "🏏", "🪃", "🥅", "⛳", "🪁", "🏹", "🎣", "🤿", "🥊", "🥋", "🎽", "🛹", "🛼", "🛷", "⛸️", "🥌", "🎿", "⛷️", "🏂", "🪂", "🏋️", "🤼", "🤸", "⛹️", "🤺", "🏇", "🧘", "🏄", "🏊", "🤽", "🚣", "🧗", "🚵", "🚴", "🏆", "🥇", "🥈", "🥉", "🏅", "🎖️", "🏵️", "🎗️", "🎫", "🎟️", "🎪", "🤹", "🎭", "🎨", "🎬", "🎤", "🎧", "🎼", "🎵", "🎶", "🎷", "🪗", "🎸", "🎹", "🎺", "🎻", "🪕", "🥁", "🪘", "🎯", "🎲", "♟️", "🎮", "🕹️", "🎰", "🧩", "🪀", "🪁", "🎴", "🎳", "🧸", "🪅", "🪩", "🪆", "🖼️", "🎑", "🎃", "🎆", "🎇", "🧨", "✨", "🎉", "🎊", "🎋", "🎍", "🎎", "🎏", "🎐", "🎀", "🎁", "🎗️"], "📱 Objects": ["🏴", "🚨", "🔍", "📚", "📖", "⌚", "📱", "📲", "💻", "⌨️", "🖥️", "🖨️", "🖱️", "🖲️", "💽", "💾", "💿", "📀", "🧮", "📷", "📸", "📹", "🎥", "📽️", "🎞️", "📞", "☎️", "📟", "📠", "📺", "📻", "🧭", "⏱️", "⏲️", "⏰", "🕰️", "⌛", "⏳", "📡", "🔋", "🪫", "🔌", "💡", "🔦", "🕯️", "🪔", "🧯", "🛢️", "💰", "🪙", "💴", "💵", "💶", "💷", "💸", "💳", "🪙", "💹", "✉️", "📧", "📨", "📩", "📤", "📥", "📦", "📫", "📪", "📬", "📭", "📮", "🗳️", "✏️", "✒️", "🖋️", "🖊️", "📝", "💼", "📁", "📂", "🗂️", "📅", "📆", "🗒️", "🗓️", "📇", "📈", "📉", "📊", "📋", "📌", "📍", "🗺️", "📎", "🖇️", "📏", "📐", "✂️", "🗃️", "🗄️", "🗑️", "🔒", "🔓", "🔏", "🔐", "🔑", "🗝️", "🔨", "🪓", "⛏️", "⚒️", "🛠️", "🗡️", "⚔️", "🛡️", "🪚", "🔧", "🪛", "🔩", "⚙️", "🗜️", "🔗", "⛓️", "🪝", "🧲", "🪜", "🧰", "🧲", "🪤", "🧪", "🧫", "🧬", "🔭", "🔬", "🩺", "🩹", "🩼", "🩻", "💊", "💉", "🩸", "🧴", "🧹", "🧺", "🧻", "🪣", "🧼", "🫧", "🪥", "🧽", "🪒", "🧹", "🪠", "🛁", "🪤", "🧲", "🔑", "🚪", "🛋️", "🪑", "🚽", "🚿", "🛒", "🎁", "🎈", "🎏", "🎀", "🪄", "🔮"], "🔣 Symbols": ["➕", "➖", "✖️", "➗", "🟰", "♾️", "🔢", "🔣", "🔤", "🔡", "🔠", "💯", "🔢", "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❤️‍🔥", "❤️‍🩹", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟", "☮️", "✝️", "☪️", "🕉️", "✡️", "🔯", "🪯", "☯️", "☦️", "🛐", "⛎", "♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓", "🆔", "⚛️", "🉑", "☢️", "☣️", "📴", "📳", "🈶", "🈚", "🈸", "🈺", "🈷️", "✴️", "🆚", "💮", "🉐", "㊙️", "㊗️", "🈴", "🈵", "🈹", "🈲", "🅰️", "🅱️", "🆎", "🆑", "🅾️", "🆘", "❌", "⭕", "🛑", "⛔", "📛", "🚫", "💯", "💢", "♨️", "🚷", "🚯", "🚳", "🚱", "🔞", "📵", "🔕", "🔇", "❗", "❕", "❓", "❔", "‼️", "⁉️", "🔅", "🔆", "📶", "🛜", "📳", "🔱", "⚜️", "🔰", "♻️", "✅", "🈯", "💹", "❇️", "✳️", "❎", "🌐", "💠", "Ⓜ️", "🌀", "💤", "🏧", "🚾", "♿", "🅿️", "🛗", "🈳", "🈹", "🚺", "🚹", "🚼", "⚧️", "🚻", "🚮", "🎦", "📵", "🔞", "🔃", "🔄", "🔙", "🔚", "🔛", "🔜", "🔝", "🛐", "⏏️", "⏭️", "⏮️", "⏩", "⏪", "⏫", "⏬", "▶️", "⏸️", "⏹️", "⏺️", "🎦", "🔊", "🔔", "🔕", "📣", "📢", "💬", "💭", "🗯️", "♠️", "♣️", "♥️", "♦️", "🃏", "🀄", "🎴", "🔇", "🔈", "🔉", "🔊", "📻", "🎵", "🎶", "〽️", "🎙️", "⚗️", "🔭", "🔬", "🩺", "🌡️", "🧭", "💡", "🔦", "🕯️"]};
 
 function openIconPicker(targetId, wrapperId, onPick) {
   // Close any open pickers
@@ -2957,8 +2945,12 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const existingSummary = slMeta?.summary || '';
   const _sumId = 'slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_');
   html += '<div style="margin:8px 0;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid)">'
-        + '<button class="storyline-story-hdr" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">' + '📖 ' 
+        + '<div style="display:flex;align-items:center">'
+        + '<button class="storyline-story-hdr" style="flex:1" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">' + '📖 ' 
         + (existingSummary ? t('lesson.read_summary') : t('lesson.no_summary')) + ' ▼</button>'
+        + (existingSummary ? '<button class="storyline-hdr-btn" onclick="speakBodyText(\'' + _sumId + '\',APP.srcLang)">🔊</button>' : '')
+        + (APP.info.canGenerate ? '<button class="storyline-hdr-btn" data-cid="' + chainId + '" onclick="openSummaryEdit(this.dataset.cid)" title="Edit summary">✏️</button>' : '')
+        + '</div>'
         + '<div id="' + _sumId + '" style="display:none;padding:12px 16px;font-size:14px;line-height:1.6;color:var(--text)">'
         + (existingSummary ? escHtml(existingSummary) : '<em style="color:var(--gray-dark)">Here could be your summary.</em>')
         + '</div></div>';
@@ -2996,9 +2988,12 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const escapedChain = encodedChain;
   const slscId = 'slsc-' + chainId;
   html += '<div class="storyline-story" style="margin-top:8px;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid)">' +
-    `<button class="storyline-story-hdr" onclick="toggleChainStory('${slscId}')">` +
-    t('lesson.read_full_story') +
-    `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></button>` +
+    `<div style="display:flex;align-items:center">` +
+    `<div class="storyline-story-hdr" style="flex:1" role="button" tabindex="0" onclick="toggleChainStory('${slscId}')">` +
+    '<span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
+    `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></div>` +
+    `<span class="story-icon-btn" data-speak="csbody-${slscId}" data-lang="${(APP.savedList||[]).find(l=>l.topic===topics[0])?.lang||APP.lang||''}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak,this.dataset.lang)">🔊</span>` +
+    `</div>` +
     `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
     '</div>';
 
@@ -3132,7 +3127,7 @@ async function deleteStoryline(encodedChain) {
   })?.id || null;
 
   let msg = finalDelete.length
-    ? `Delete ${finalDelete.length} chapter${finalDelete.length!==1?'s':''} of this storyline?\n\n${finalDelete.join('\n')}`
+    ? `🗑️ ${finalDelete.length}?\n\n${finalDelete.join('\n')}`
     : `Remove this storyline? (All chapters are shared with other storylines — only the storyline grouping will be removed.)`;
   if (toKeep.length && finalDelete.length) msg += `\n\nKept (shared with other storylines):\n${[...new Set(toKeep)].join('\n')}`;
   msg += '\n\nThis cannot be undone.';
@@ -3153,7 +3148,7 @@ async function deleteStoryline(encodedChain) {
   }
   await loadSavedList();
   showToast(finalDelete.length
-    ? `🗑️ ${finalDelete.length} chapter${finalDelete.length!==1?'s':''} deleted`
+    ? `🗑️ ${finalDelete.length}`
     : '🗑️ Storyline removed');
 }
 
@@ -3207,6 +3202,7 @@ async function genStorylineSummary() {
     showToast('📝 Summary generated');
     const _esb = document.getElementById('sl-screen-edit-summary-btn');
     if (_esb && APP.info.canGenerate) _esb.style.display = '';
+    loadSavedList(); // refresh landing page summary card
   } catch(e) {
     showToast('⚠ ' + e.message.slice(0, 60));
   } finally {
@@ -3215,7 +3211,24 @@ async function genStorylineSummary() {
 }
 
 
-// ── Summary editing ───────────────────────────────────────────────────────────
+// ── Static export ─────────────────────────────────────────────────────────────
+
+async function exportStatic() {
+  const btn = document.getElementById('export-static-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Building…'; }
+  try {
+    const r = await fetch('/api/build-static', { method: 'POST' });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Build failed');
+    showToast('✓ docs/index.html rebuilt');
+  } catch(e) {
+    showToast('⚠ ' + e.message.slice(0, 60));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🏗 Static'; }
+  }
+}
+
+// ── Summary editing ─────────────────────────────────────────────────────────────
 
 function openSummaryEdit(chainId) {
   if (!chainId) return;
@@ -3269,6 +3282,7 @@ async function saveSummaryEdit(chainId) {
     // Show edit button in sl-screen if open
     const esb = document.getElementById('sl-screen-edit-summary-btn');
     if (esb && APP.info.canGenerate) esb.style.display = summary ? '' : 'none';
+    loadSavedList(); // refresh landing page summary card
     showToast('💾 Summary saved');
   } catch(e) {
     if (status) status.textContent = '⚠ ' + e.message.slice(0,40);
@@ -3313,8 +3327,10 @@ async function saveSlScreenTitle() {
     // Update header
     const titleEl = document.getElementById('sl-screen-title');
     if (titleEl) titleEl.textContent = icon + ' ' + title;
-    // Refresh APP.storylines
+    // Refresh APP.storylines + landing page cards
     try { const r=await fetch('/api/storylines'); APP.storylines=await r.json(); } catch(_) {}
+    loadSavedList();
+    showToast(t('lesson.title_saved'));
   } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
 }
 async function clearSlScreenTitle() {
@@ -4859,12 +4875,35 @@ function ttsIsApproximate(){
   return APP.ttsLang !== (LANGS[lang]||LANGS.it).tts;
 }
 
-function speakBodyText(bodyId){
+function speakBodyText(bodyId,langCode){
   const el=document.getElementById(bodyId);
   if(!el)return;
-  const text=(el.innerText||el.textContent||'')
-    .replace(/Chapter \d+[^\n]*\n/g,' ').replace(/\s+/g,' ').trim();
-  if(text)speak(text);
+  // textContent works even when hidden; if still empty, load from data
+  let text=(el.textContent||'').replace(/Chapter \d+[^\n]*\n/g,' ').replace(/\s+/g,' ').trim();
+  if(!text && el.dataset.topic){
+    const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);
+    const match=saved.find(l=>l.topic===el.dataset.topic);
+    if(match?.story){ text=match.story.replace(/\s+/g,' ').trim(); }
+    if(!langCode && el.dataset.lang) langCode=el.dataset.lang;
+  }
+  if(!text)return;
+  if(langCode){
+    if(!window.speechSynthesis) return;
+    const proceed = () => {
+      if(!_ttsUnlocked){ _ttsPendingAfterUnlock={text, langCode}; return; }
+      _doSpeakLang(text, langCode);
+    };
+    const voices = speechSynthesis.getVoices();
+    if(voices.length > 0){
+      proceed();
+    } else {
+      speechSynthesis.addEventListener('voiceschanged', function h(){
+        speechSynthesis.removeEventListener('voiceschanged', h);
+        proceed();
+      }, {once:true});
+      setTimeout(() => { if(!_ttsUnlocked) proceed(); }, 1000);
+    }
+  } else { speak(text); }
 }
 
 // ── Speech-gated advance ─────────────────────────────────────────────────────
@@ -4900,23 +4939,59 @@ function _speakAndAdvance(text) {
   setTimeout(() => speechSynthesis.speak(u), 50);
 }
 
-function _doSpeak(text,rate){
-  const u=new SpeechSynthesisUtterance(text);
-  const ttsCode=activeTtsCode();
-  u.lang=ttsCode; u.rate=rate||0.9; u.pitch=1;
-  const voices=speechSynthesis.getVoices();
-  const norm=c=>(c||'').replace('_','-').toLowerCase();
-  const ttsNorm=norm(ttsCode);
-  if(voices.length>0){
-    const exact=voices.find(v=>norm(v.lang)===ttsNorm);
-    const prefix=voices.find(v=>norm(v.lang).startsWith(ttsNorm.split('-')[0]));
-    const match=exact||prefix;
-    if(match){ u.voice=match; u.lang=match.lang; }
-    else showToast(t('toast.no_voice',{lang:ttsCode}));
+function _ttsChunks(text) {
+  // Chrome silently drops utterances >32KB; split on sentence boundaries
+  const MAX = 200; // chars per chunk — safe for all browsers
+  if (text.length <= MAX) return [text];
+  const chunks = [], parts = text.match(/[^.!?。！？]+[.!?。！？]*/g) || [text];
+  let cur = '';
+  for (const p of parts) {
+    if ((cur + p).length > MAX && cur) { chunks.push(cur.trim()); cur = p; }
+    else cur += p;
   }
-  // Small delay after cancel() fixes Firefox silently dropping speak()
+  if (cur.trim()) chunks.push(cur.trim());
+  return chunks;
+}
+
+function _speakChunks(chunks, langCode, rate, idx) {
+  if (idx >= chunks.length) return;
+  const ttsCode = langCode ? ((LANGS[langCode]||{}).tts||langCode) : activeTtsCode();
+  const u = new SpeechSynthesisUtterance(chunks[idx]);
+  u.lang = ttsCode; u.rate = rate||0.9; u.pitch = 1;
+  const voices = speechSynthesis.getVoices();
+  if (voices.length) {
+    const norm = c => (c||'').replace('_','-').toLowerCase();
+    const match = voices.find(v=>norm(v.lang)===norm(ttsCode))
+               || voices.find(v=>norm(v.lang).startsWith(norm(ttsCode).split('-')[0]));
+    if (match) { u.voice = match; u.lang = match.lang; }
+    else if (idx === 0) showToast(t('toast.no_voice',{lang:ttsCode}));
+  }
+  u.onend = () => _speakChunks(chunks, langCode, rate, idx + 1);
+  u.onerror = () => {};
+  speechSynthesis.speak(u);
+}
+
+function _doSpeak(text,rate){
+  const chunks = _ttsChunks(text);
+  const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
   speechSynthesis.cancel();
-  setTimeout(()=>speechSynthesis.speak(u), 50);
+  if (wasSpeaking) {
+    setTimeout(() => _speakChunks(chunks, null, rate, 0), 50);
+  } else {
+    _speakChunks(chunks, null, rate, 0);
+  }
+}
+
+function _doSpeakLang(text, langCode) {
+  const chunks = _ttsChunks(text);
+  const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
+  speechSynthesis.cancel();
+  // Only delay if we actually cancelled something; otherwise speak immediately
+  if (wasSpeaking) {
+    setTimeout(() => _speakChunks(chunks, langCode, 0.9, 0), 50);
+  } else {
+    _speakChunks(chunks, langCode, 0.9, 0);
+  }
 }
 
 // iOS and some Android browsers require speechSynthesis to be triggered from a user gesture.
@@ -4932,9 +5007,9 @@ function _unlockTts() {
   u.volume = 0;
   speechSynthesis.speak(u);
   if (_ttsPendingAfterUnlock) {
-    const {text, rate} = _ttsPendingAfterUnlock;
+    const {text, rate, langCode} = _ttsPendingAfterUnlock;
     _ttsPendingAfterUnlock = null;
-    setTimeout(() => _doSpeak(text, rate), 150);
+    setTimeout(() => langCode ? _doSpeakLang(text, langCode) : _doSpeak(text, rate), 150);
   }
 }
 // Unlock on first tap anywhere

@@ -198,9 +198,7 @@
     "lesson.type.error_hunt": "Foutenzoeken",
     "lesson.read_summary": "Samenvatting",
     "form.format.standard": "📚 Standaard — woordenlijst & zinnen",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI-gegenereerde inhoud. Gebruik een echte taalapp of een leraar als je een taal nieuw leert. Bezoek github.com/raim/dreizunge om lessen te maken of bij te dragen."
   },
   "pt": {
     "app.tagline": "Aprenda vocabulário de qualquer tópico em qualquer idioma",
@@ -401,9 +399,7 @@
     "lesson.type.error_hunt": "Caça",
     "lesson.read_summary": "Resumo",
     "form.format.standard": "📚 Padrão — vocabulário & frases",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Conteúdo gerado por IA. Use um aplicativo de aprendizado real ou um professor se você é iniciante. Visite github.com/raim/dreizunge para gerar lições ou contribuir."
   },
   "fr": {
     "app.tagline": "Apprendre du vocabulaire sur n'importe quel sujet",
@@ -604,9 +600,7 @@
     "lesson.type.error_hunt": "Chasse aux erreurs",
     "lesson.read_summary": "Résumé",
     "form.format.standard": "📚 Standard — vocabulaire & phrases",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Contenu généré par IA. Utilise une vraie application d'apprentissage ou un professeur si tu débutes dans une langue. Visite github.com/raim/dreizunge pour créer des leçons ou contribuer."
   },
   "tr": {
     "furigana.show": "ふ Show furigana",
@@ -807,9 +801,7 @@
     "lesson.type.error_hunt": "Hata Arama",
     "lesson.read_summary": "Özet",
     "form.format.standard": "📚 Standart — kelimeler ve cümleler",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Yapay zeka tarafından üretilen içerik. Dile yeniyseniz gerçek bir uygulama veya öğretmen kullanın. Ders oluşturmak veya katkıda bulunmak için github.com/raim/dreizunge adresini ziyaret edin."
   },
   "hi": {
     "app.tagline": "किसी भी विषय में किसी भी भाषा में शब्दावली सीखें",
@@ -1010,9 +1002,7 @@
     "lesson.type.error_hunt": "गलतियों",
     "lesson.read_summary": "सारांश",
     "form.format.standard": "📚 मानक — शब्दावली & वाक्य",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI-जनित सामग्री। यदि आप किसी भाषा में नए हैं तो एक असली ऐप या शिक्षक का उपयोग करें। पाठ बनाने या योगदान के लिए github.com/raim/dreizunge पर जाएँ।"
   },
   "de": {
     "app.tagline": "Vokabular für jedes Thema in jeder Sprache lernen",
@@ -1213,9 +1203,7 @@
     "lesson.type.error_hunt": "Fehlerjagen",
     "lesson.read_summary": "Zusammenfassung",
     "form.format.standard": "📚 Standard — Wörter und Sätze",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ KI-generierte Inhalte. Nutze eine echte Sprachlern-App oder einen Lehrer, wenn du eine Sprache neu lernst. Besuche github.com/raim/dreizunge um Lektionen zu erstellen oder mitzumachen."
   },
   "ar": {
     "app.tagline": "تعلم المفردات لأي موضوع بأي لغة",
@@ -1416,9 +1404,7 @@
     "lesson.type.error_hunt": "رحلة",
     "lesson.read_summary": "ملخص",
     "form.format.standard": "📚 معياري — المصطلحات والجمل",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ محتوى مولَّد بالذكاء الاصطناعي. استخدم تطبيقاً حقيقياً أو معلماً إذا كنت مبتدئاً. تفضل بزيارة github.com/raim/dreizunge لإنشاء دروس أو المساهمة."
   },
   "en": {
     "app.tagline": "Learn vocabulary for any topic in any language",
@@ -1610,9 +1596,7 @@
     "lesson.type.grammar": "Grammar",
     "lesson.type.conjugation": "Conjugation",
     "lesson.type.error_hunt": "Error Hunt",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI generated content. Use a real language learning app or a human teacher if you are new to a language. Visit github.com/raim/dreizunge to generate lessons or contribute."
   },
   "sv": {
     "app.tagline": "Lär dig vokabulär för valfritt ämne",
@@ -1813,9 +1797,7 @@
     "lesson.type.error_hunt": "Feljaktigjakt",
     "lesson.read_summary": "Sammanfattning",
     "form.format.standard": "📚 Standard — ord och meningar",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI-genererat innehåll. Använd en riktig språkapp eller lärare om du är nybörjare. Besök github.com/raim/dreizunge för att skapa lektioner eller bidra."
   },
   "ru": {
     "app.tagline": "Учите словарный запас по любой теме на любом языке",
@@ -2016,9 +1998,7 @@
     "lesson.type.error_hunt": "Поиск",
     "lesson.read_summary": "Краткое содержание",
     "form.format.standard": "📚 Стандарт — лексика и предложения",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Контент создан с помощью ИИ. Используй настоящее приложение или учителя, если ты новичок. Посети github.com/raim/dreizunge чтобы создавать уроки или вносить вклад."
   },
   "zh": {
     "app.tagline": "用任何语言学习任何主题的词汇",
@@ -2219,9 +2199,7 @@
     "lesson.type.error_hunt": "错误猎手",
     "lesson.read_summary": "概要",
     "form.format.standard": "📚 标准 — 单词与句子",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI生成内容。如果你是语言新手，请使用真正的语言学习应用或真人老师。访问 github.com/raim/dreizunge 生成课程或贡献。"
   },
   "ko": {
     "app.tagline": "모든 주제의 어휘를 어떤 언어로든 배우세요",
@@ -2422,9 +2400,7 @@
     "lesson.type.error_hunt": "오류",
     "lesson.read_summary": "요약",
     "form.format.standard": "📚 표준 — 단어와 문장",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI 생성 콘텐츠. 언어를 처음 배운다면 실제 앱이나 선생님을 이용하세요. github.com/raim/dreizunge 를 방문하여 레슨을 만들거나 기여하세요."
   },
   "it": {
     "app.tagline": "Impara il vocabolario per qualsiasi argomento",
@@ -2625,9 +2601,7 @@
     "lesson.type.error_hunt": "Ricerca errori",
     "lesson.read_summary": "Sommario",
     "form.format.standard": "📚 Standard — vocabolario & frasi",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Contenuto generato da IA. Usa una vera app di apprendimento linguistico o un insegnante se sei alle prime armi. Visita github.com/raim/dreizunge per generare lezioni o contribuire."
   },
   "pl": {
     "app.tagline": "Ucz się słownictwa z każdego tematu w każdym języku",
@@ -2828,9 +2802,7 @@
     "lesson.type.error_hunt": "Wyszukiwanie",
     "lesson.read_summary": "Podsumowanie",
     "form.format.standard": "📚 Standard — słownictwo & zdania",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Treści generowane przez AI. Korzystaj z prawdziwej aplikacji lub nauczyciela, jeśli dopiero zaczynasz. Odwiedź github.com/raim/dreizunge, aby tworzyć lekcje lub wnosić wkład."
   },
   "es": {
     "app.tagline": "Aprender vocabulario de cualquier tema en cualquier idioma",
@@ -3031,9 +3003,7 @@
     "lesson.type.error_hunt": "Explorando errores",
     "lesson.read_summary": "Resumen",
     "form.format.standard": "📚 Estándar — vocabulario y oraciones",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Contenido generado por IA. Usa una app de aprendizaje real o un profesor si eres nuevo en un idioma. Visita github.com/raim/dreizunge para generar lecciones o contribuir."
   },
   "ja": {
     "app.tagline": "あらゆるトピックの語彙をどんな言語でも学ぼう",
@@ -3234,9 +3204,7 @@
     "lesson.type.error_hunt": "文章のミスを見つけてみよう",
     "lesson.read_summary": "要約",
     "form.format.standard": "📚 標準 — 語彙と文",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI生成コンテンツ。言語を初めて学ぶ場合は本物のアプリや先生を使ってください。github.com/raim/dreizunge でレッスンを作成または貢献できます。"
   },
   "he": {
     "app.backend": "백엔드:",
@@ -3437,9 +3405,7 @@
     "lesson.type.error_hunt": "חיפוש",
     "lesson.read_summary": "תקציר",
     "form.format.standard": "📚 סטנדרטי — מונחים ומשפטים",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI generated content. Use a real language learning app or a human teacher if you are new to a language. Visit github.com/raim/dreizunge to generate lessons or contribute."
   },
   "uk": {
     "app.backend": "Бек-енд:",
@@ -3640,9 +3606,7 @@
     "lesson.type.error_hunt": "Пошук",
     "lesson.read_summary": "Сумарне",
     "form.format.standard": "📚 Standard — література та речення",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Контент створений ШІ. Використовуй справжній додаток або вчителя, якщо ти новачок. Відвідай github.com/raim/dreizunge щоб створювати уроки або робити внесок."
   },
   "cs": {
     "app.backend": "Backend:",
@@ -3843,9 +3807,7 @@
     "lesson.type.error_hunt": "Hledání",
     "lesson.read_summary": "Závěr",
     "form.format.standard": "📚 Standard — slovník a věty",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Obsah generovaný AI. Pokud začínáš s jazykem, použij skutečnou aplikaci nebo učitele. Navštiv github.com/raim/dreizunge pro tvorbu lekcí nebo přispívání."
   },
   "vi": {
     "app.backend": "Backend:",
@@ -4046,9 +4008,7 @@
     "lesson.type.error_hunt": "Tìm",
     "lesson.read_summary": "Tóm tắt",
     "form.format.standard": "📚 Tiêu chuẩn — từ vựng & câu văn",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Nội dung do AI tạo ra. Hãy dùng ứng dụng học ngôn ngữ thật hoặc giáo viên nếu bạn mới bắt đầu. Truy cập github.com/raim/dreizunge để tạo bài học hoặc đóng góp."
   },
   "id": {
     "app.backend": "Backend:",
@@ -4249,9 +4209,7 @@
     "lesson.type.error_hunt": "Cari Kesalahan",
     "lesson.read_summary": "Ringkasan",
     "form.format.standard": "📚 Standar — vokabular & kalimat",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Konten yang dibuat AI. Gunakan aplikasi belajar bahasa nyata atau guru jika kamu baru. Kunjungi github.com/raim/dreizunge untuk membuat pelajaran atau berkontribusi."
   },
   "ro": {
     "app.backend": "Backend:",
@@ -4452,9 +4410,7 @@
     "lesson.type.error_hunt": "Căutare",
     "lesson.read_summary": "Rezumat",
     "form.format.standard": "📚 Standard — vokabular și propoziții",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Conținut generat de IA. Folosește o aplicație reală sau un profesor dacă ești începător. Vizitează github.com/raim/dreizunge pentru a genera lecții sau a contribui."
   },
   "th": {
     "app.backend": "Backend:",
@@ -4655,9 +4611,7 @@
     "lesson.type.error_hunt": "ค้นหาข้อผิดพลาด",
     "lesson.read_summary": "สรุป",
     "form.format.standard": "📚 มาตรฐาน — ศัพท์และประโยค",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ เนื้อหาสร้างโดย AI หากคุณเพิ่งเริ่มเรียนภาษา ควรใช้แอปเรียนภาษาจริงหรือครูผู้สอน เยี่ยมชม github.com/raim/dreizunge เพื่อสร้างบทเรียนหรือมีส่วนร่วม"
   },
   "el": {
     "furigana.show": "νομίστε την furigana",
@@ -4858,9 +4812,7 @@
     "lesson.type.error_hunt": "Ποιότητα",
     "lesson.read_summary": "Συνοπτική Περιγραφή",
     "form.format.standard": "📚 Πρότυπο — λογισμικά & παραγράφοι",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Περιεχόμενο δημιουργημένο από AI. Χρησιμοποίησε μια πραγματική εφαρμογή ή δάσκαλο αν μαθαίνεις μια γλώσσα. Επισκέψου github.com/raim/dreizunge για να δημιουργήσεις μαθήματα ή να συνεισφέρεις."
   },
   "fi": {
     "app.backend": "Tietojärjestelmä:",
@@ -5061,9 +5013,7 @@
     "lesson.type.error_hunt": "Virheliikkeen",
     "lesson.read_summary": "Yhteenveto",
     "form.format.standard": "📚 Standard — sanasto & lauseet",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Tekoälyn luoma sisältö. Käytä oikeaa kieleoppimissovellusta tai opettajaa, jos olet aloittelija. Vieraile osoitteessa github.com/raim/dreizunge luodaksesi oppitunteja tai osallistuaksesi."
   },
   "hu": {
     "app.backend": "Háttér:",
@@ -5264,9 +5214,7 @@
     "lesson.type.error_hunt": "Hiba",
     "lesson.read_summary": "Összefoglaló",
     "form.format.standard": "📚 Standard — szavak és mondatok",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI által generált tartalom. Ha kezdő vagy, használj valódi alkalmazást vagy tanárt. Látogasd meg a github.com/raim/dreizunge oldalt leckék létrehozásához vagy hozzájáruláshoz."
   },
   "da": {
     "app.backend": "Backend:",
@@ -5467,9 +5415,7 @@
     "lesson.type.error_hunt": "Fejljagt",
     "lesson.read_summary": "Sammandrag",
     "form.format.standard": "📚 Standard — vokabular & sætninger",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ AI-genereret indhold. Brug en rigtig sprogapp eller lærer, hvis du er nybegynder. Besøg github.com/raim/dreizunge for at oprette lektioner eller bidrage."
   },
   "ca": {
     "app.backend": "Backend:",
@@ -5670,9 +5616,7 @@
     "lesson.type.error_hunt": "Error Hunt",
     "lesson.read_summary": "Resum",
     "form.format.standard": "📚 Estàndard — vocabulari i frases",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ Contingut generat per IA. Utilitza una aplicació d'aprenentatge real o un professor si ets nou en una llengua. Visita github.com/raim/dreizunge per generar lliçons o contribuir."
   },
   "lb": {
     "app.tagline": "Leren vun de Wiert fir all Thema an all Sprooch",
@@ -5864,8 +5808,6 @@
     "lesson.type.error_hunt": "Fehler Jagd",
     "lesson.read_summary": "Zuërsëmmee",
     "form.format.standard": "📚 Standard — Worte un Sënzent",
-    "confirm.delete_chapters": "Delete {n} chapter of this storyline?",
-    "toast.chapters_deleted": "🗑️ {n} chapter deleted",
-    "toast.chapters_deleted_plural": "🗑️ {n} chapters deleted"
+    "static.ai_warning": "⚠ KI-generéiert Inhalt. Benotzt eng echt Sproochlären-App oder e Lehrer wann dir eng Sprooch nei léiert. Besicht github.com/raim/dreizunge fir Lektiounen ze erstellen oder matzemachen."
   }
 }

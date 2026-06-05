@@ -218,15 +218,11 @@ function renderPill() {
   if (!document.getElementById('static-gen-overlay')) {
     const _ov = document.createElement('div');
     _ov.id = 'static-gen-overlay';
-    _ov.style.cssText = 'background:var(--white);border-radius:var(--radius-xl);padding:22px;'
-      + 'box-shadow:0 8px 32px rgba(0,0,0,.08);border:2px solid var(--gray-mid);margin-bottom:14px;'
-      + 'font-size:13px;font-weight:700;color:#444;line-height:1.8';
-    _ov.innerHTML = 'Dreizunge is an open-source language lesson generator. '
-      + 'This is the static version — you can play the existing lessons, but not generate new ones.<br><br>'
-      + 'Visit <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a> '
-      + 'to learn how to generate lessons and stories for any topic you wish.<br><br>'
-      + '<span style="color:#c00;font-weight:800">⚠ AI generated content.</span> '
-      + 'Use a real language learning app or a human teacher if you are new to a language.';
+    _ov.style.cssText = 'background:#fff8e0;border-radius:var(--radius-xl);padding:12px 16px;'
+      + 'border:2px solid #f5a623;margin-bottom:14px;'
+      + 'font-size:13px;font-weight:700;color:#444;line-height:1.6';
+    _ov.innerHTML = t('static.ai_warning')
+      + ' <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a>';
     // Insert after lang-tutor-banner, replacing the generation form
     const _ga = document.getElementById('gen-area');
     if (_ga && _ga.parentNode) {
@@ -308,10 +304,14 @@ function itemHtml(s, connector) {
       </div>
     </div>
     <div class="saved-item-story">
-      <button class="saved-item-story-hdr" onclick="event.stopPropagation();toggleSavedStory('\${sid}','\${escapedTopicSq}')">
-        \${t('lesson.read_story_short')} <span id="sis-arrow-\${sid}" style="margin-left:auto;font-size:10px">▼</span>
-      </button>
-      <div class="saved-item-story-body" id="sis-body-\${sid}"></div>
+    <div style="display:flex;align-items:center">
+      <div class="saved-item-story-hdr" style="flex:1" role="button" tabindex="0" onclick="event.stopPropagation();toggleSavedStory('\${sid}','\${escapedTopicSq}')">
+        \${t('lesson.read_story_short')}
+        <span id="sis-arrow-\${sid}" style="font-size:10px">▼</span>
+      </div>
+      <span class="story-icon-btn" data-speak="sis-body-\${sid}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="\${t('lesson.read_aloud')}">🔊</span>
+    </div>
+      <div class="saved-item-story-body" id="sis-body-\${sid}" data-topic="\${escapedTopic}" data-lang="\${s.lang||''}"></div>
     </div>
   </div>\`;
 }
@@ -442,8 +442,11 @@ async function loadSavedList() {
     const _slSum2=_slSumMeta2?.summary||'';
     if(_slSum2){
       html+='<div class="storyline-story" id="slsum-wrap-'+chainId+'">'
-        +'<button class="storyline-story-hdr" data-cid="'+chainId+'" onclick="event.stopPropagation();toggleSlSummary(this.dataset.cid)">'
+        +'<div style="display:flex;align-items:center">'
+        +'<button class="storyline-story-hdr" style="flex:1" data-cid="'+chainId+'" onclick="event.stopPropagation();toggleSlSummary(this.dataset.cid)">'
         +'📖 '+t('lesson.read_summary')+'<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
+        +'<button class="storyline-hdr-btn" data-speak="slsc-summary-body-'+chainId+'" onclick="event.stopPropagation();speakBodyText(this.dataset.speak,APP.srcLang)" title="'+t('lesson.read_aloud')+'">🔊</button>'
+        +'</div>'
         +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" style="display:none">'
         +'<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">'+_slSum2.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>'
         +'</div></div>';
