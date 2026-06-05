@@ -2,6 +2,18 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1634204365",
+      "title": "Visit Jerusalem, city of three religions",
+      "icon": "📖",
+      "chapters": [
+        "tp_1607150875"
+      ],
+      "lang": "he",
+      "srcLang": "en",
+      "createdAt": "2026-06-05T12:18:50.465Z",
+      "updatedAt": "2026-06-05T12:18:50.465Z"
+    },
+    {
       "id": "sl_738316017",
       "title": "Das kleine Ich bin ich",
       "icon": "📖",
@@ -658,6 +670,231 @@
     }
   ],
   "topics": [
+    {
+      "topic": "Visit Jerusalem, city of three religions",
+      "topicEmoji": "🙏",
+      "userTopic": "i want to visit jerusalem, the city of three religions",
+      "lang": "he",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 500,
+      "story": "אני מתגעגע לירושלים, העיר של שלושה דתות. תמיד חשבתי עליה כמו על חלום, מקום שבו כל דת מתאחדת בשלום. אבל עכשיו, כשאני מתבונן סביבי, אני מודע שהחזרה לירושלים היא יותר מinine, היא היא חלום שמתבגר עם כל יום.\n\nהיה לי חלום לילה לפני כמה ימים. אני מסתובב ברחובות העיר, מסתכל על המבנים העתיקים והנוראים, ועל הכנסיות והמקדשים המלומדים. אני מרגיש את הצליל של התפילה, את הריח של הדבש והבצלים, ואת הרוח המטושטשת של ההיסטוריה. אבל בחלומותי, אני לא לבד. אני מסתובב עם אנשים מרחבי העולם, כל אחד מהם מטיל את נשמתו על העיר, מנסה להבין את המסר המורכב של שלושת הדתות.\n\nכשאני מתעורר, אני מרגיש את הבדידות. אני מתבונן בפרחים שהצמתי בחצר של בית הספר שלי, אבל הם לא מזכירים לי את היריעות של העיר. אני מנסה לחשוב על כל הvezות של העיר, אבל כל מה שאני מוצא הוא שאלות. איך אפשר לשרוד את הבדיחות של שלושה דתות שמתאחדות בשלום? איך אפשר לחיות בעיר שמתחרטת על כל מה שהיא עשתה, אבל עדיין לא מוכנה לסלוח?\n\nאני מתבונן בכתבי יד של התנ\"ך, בכתבי יד של התנ\"ך, בכתבי יד של התנ\"ך. כל פעם שאני מסתכל עליהם, אני מרגיש את הצליל של הקולות של כל הדתות, כל פעם שאני מסתכל עליהם, אני מרגיש את הצליל של הקולות של כל הדתות. אבל אני לא יכול להימלט מהשאלה: איך אפשר לשרוד את כל זה?\n\nאני מתבונן בפרחים שהצמתי בחצר של בית הספר שלי, אבל הם לא מזכירים לי את היריעות של העיר. אני מנסה לחשוב על כל הvezות של העיר, אבל כל מה שאני מוצא הוא שאלות. איך אפשר לשרוד את הבדיחות של שלושה דתות שמתאחדות בשלום? איך אפשר לחיות בעיר שמתחרטת על כל מה שהיא עשתה, אבל עדיין לא מוכנה לסלוח?\n\nאני מתבונן סביבי, ואני מוצא את התשובה. אני צריך לחיות בעיר, לא רק ל🤔 ליהנות ממנה, אבל גם לתרום לה. אני צריך לתרום לשלום בין הדתות, לתרום לשלום בין האנשים. אני צריך לחיות בעיר, ולעשות את כל מה שאני יכול כדי להפוך אותה למקום טוב יותר.",
+      "storyLang": "he",
+      "storyPrompt": "You are a creative writer and Hebrew language teacher. Write a short story directly in Hebrew on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Hebrew. Writing style: Discursive, argumentative, first-person reflective.\n\nWrite a story for the topic: \"i want to visit jerusalem, the city of three religions\". Plain prose, no headings.",
+      "storyStyle": "essay",
+      "lessonFormat": "all_types",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "I want to visit Jerusalem, the city of three religions",
+          "desc": "basic vocabulary and sentences about Jerusalem",
+          "icon": "🌟",
+          "vocab": [
+            {
+              "target": "ירושלים",
+              "source": "Jerusalem"
+            },
+            {
+              "target": "דתות",
+              "source": "religions"
+            },
+            {
+              "target": "חצר",
+              "source": "courtyard"
+            },
+            {
+              "target": "בגדים",
+              "source": "clothes"
+            },
+            {
+              "target": "שאלה",
+              "source": "question"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "אני רוצה לבקר בירושלים.",
+              "source": "I want to visit Jerusalem.",
+              "words": [
+                "אני",
+                "רוצה",
+                "לבקר",
+                "בירושלים."
+              ]
+            },
+            {
+              "target": "ירושלים היא העיר של שלושה דתות.",
+              "source": "Jerusalem is the city of three religions.",
+              "words": [
+                "ירושלים",
+                "היא",
+                "העיר",
+                "של",
+                "שלושה",
+                "דתות."
+              ]
+            },
+            {
+              "target": "אני מסתכל על החצר של בית הספר שלי.",
+              "source": "I look at the courtyard of my school.",
+              "words": [
+                "אני",
+                "מסתכל",
+                "על",
+                "החצר",
+                "של",
+                "בית",
+                "הספר",
+                "שלי."
+              ]
+            },
+            {
+              "target": "הפרחים לא מזכירים לי את היריעות של העיר.",
+              "source": "The flowers do not remind me of the cloths of the city.",
+              "words": [
+                "הפרחים",
+                "לא",
+                "מזכירים",
+                "לי",
+                "את",
+                "היריעות",
+                "של",
+                "העיר."
+              ]
+            },
+            {
+              "target": "אני מנסה לחשוב על כל הvezות של העיר, אבל כל מה שאני מוצא הוא שאלות.",
+              "source": "I try to think about all the advantages of the city, but all I find are questions.",
+              "words": [
+                "אני",
+                "מנסה",
+                "לחשוב",
+                "על",
+                "כל",
+                "הvezות",
+                "של",
+                "העיר,",
+                "אבל",
+                "כל",
+                "מה",
+                "שאני",
+                "מוצא",
+                "הוא",
+                "שאלות."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "grammar",
+          "title": "Visit Jerusalem",
+          "desc": "Nouns related to Jerusalem and its significance",
+          "icon": "🌟",
+          "grammar": [
+            {
+              "target": "مدينة",
+              "source": "city",
+              "gender": "f",
+              "article": "ה",
+              "plural": "udades"
+            },
+            {
+              "target": "כנסייה",
+              "source": "church",
+              "gender": "f",
+              "article": "ה",
+              "plural": "כנסיות"
+            },
+            {
+              "target": "مسجد",
+              "source": "mosque",
+              "gender": "m",
+              "article": "ה",
+              "plural": "مساجد"
+            },
+            {
+              "target": "جامعة",
+              "source": "university",
+              "gender": "f",
+              "article": "ה",
+              "plural": "جامعات"
+            },
+            {
+              "target": "معبد",
+              "source": "temple",
+              "gender": "m",
+              "article": "ה",
+              "plural": "معابد"
+            },
+            {
+              "target": "طريق",
+              "source": "road",
+              "gender": "m",
+              "article": "ה",
+              "plural": "דרכים"
+            },
+            {
+              "target": "جامعة",
+              "source": "university",
+              "gender": "f",
+              "article": "ה",
+              "plural": "جامعات"
+            },
+            {
+              "target": "مدينة",
+              "source": "city",
+              "gender": "f",
+              "article": "ה",
+              "plural": "udades"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "אני מתגעגע לירושלים, העיר של שלושה דתות. תמיד חשבתי עליה כמו על חלום, מקום שבו כל דת מתאחדת בשלום. אבל עכשיו, כשאני מתבונן סביבי, אני מודע שהחזרה לירושלים היא יותר מinine, היא היא חלום שמתבגר עם כל יום.\n\nהיה לי חלום לילה לפני כמה ימים. אני מסתובב ברחובות העיר, מסתכל על המבנים העתיקים והנוראים, ועל הכנסיות והמקדשים המלומדים. אני מרגיש את הצליל של התפילה, את הריח של הדבש והבצלים, ואת הרוח המטושטשת של ההיסטוריה. אבל בחלומותי, אני לא לבד. אני מסתובב עם אנשים מרחבי העולם, כל אחד מהם מטיל את נשמתו על העיר, מנסה להבין את המסר המורכב של שלושת הדתות.\n\nכשאני מתעורר, אני מרגיש את הבדידות. אני מתבונן בפרחים שהצמתי בחצר של בית הספר שלי, אבל הם לא מזכירים לי את היריעות של העיר. אני מנסה לחשוב על כל הvezות של העיר, אבל כל מה שאני מוצא הוא שאלות. איך אפשר לשרוד את הבדיחות של שלושה דתות שמתאחדות בשלום? איך אפשר לחיות בעיר שמתחרטת על כל מה שהיא עשתה, אבל עדיין לא מוכנה לסלוח?\n\nאני מתבונן בכתבי יד של התנ\"ך, בכתבי יד של התנ\"ך, בכתבי יד של התנ\"ך. כל פעם שאני מסתכל עליהם, אני מרגיש את הצליל של הקולות של כל הדתות, כל פעם שאני מסתכל עליהם, אני מרגיש את הצליל של הקולות של כל הדתות. אבל אני לא יכול להימלט מהשאלה: איך אפשר לשרוד את כל זה?\n\nאני מתבונן בפרחים שהצמתי בחצר של בית הספר שלי, אבל הם לא מזכירים לי את היריעות של העיר. אני מנסה לחשוב על כל הvezות של העיר, אבל כל מה שאני מוצא הוא שאלות. איך אפשר לשרוד את הבדיחות של שלושה דתות שמתאחדות בשלום? איך אפשר לחיות בעיר שמתחרטת על כל מה שהיא עשתה, אבל עדיין לא מוכנה לסלוח?\n\nאני מתבונן סביבי, ואני מוצא את התשובה. אני צריך לחיות בעיר, לא רק לליהנות ממנה, אבל גם לתרום לה. אני צריך לתרום לשלום בין הדתות, לתרום לשלום בין האנשים. אני צריך לחיות בעיר, ולעשות את כל מה שאני יכול כדי להפוך אותה למקום טוב יותר.",
+          "edits": [
+            {
+              "type": "grammar",
+              "find": "🤔 ליהנות",
+              "replace": "ליהנות",
+              "reason": "remove the unnecessary emoji to create a plausible novice mistake"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1468738,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2901,
+        "totalCompletionTokens": 1618,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 343597,
+            "promptTokens": 1077,
+            "completionTokens": 282
+          },
+          {
+            "promptTokens": 487,
+            "completionTokens": 452
+          },
+          {
+            "promptTokens": 1060,
+            "completionTokens": 221
+          }
+        ]
+      },
+      "generatedAt": "2026-06-05T12:18:50.400Z",
+      "updatedAt": "2026-06-05T12:18:50.434Z",
+      "id": "tp_1607150875"
+    },
     {
       "topic": "Smart Windows",
       "topicEmoji": "💡",
