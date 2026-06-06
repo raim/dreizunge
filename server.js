@@ -967,8 +967,8 @@ function generateMath(story, difficulty) {
     lesson: {
       id: 'math_' + Date.now(),
       type: 'math',
-      title: 'Numbers',
-      desc: 'Math exercises from the story',
+      title: '① ② ③',
+      desc: '＋ － ×  ÷',
       icon: '🔢',
       numbers: nums,
       difficulty,

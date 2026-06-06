@@ -198,7 +198,17 @@
     "lesson.type.error_hunt": "Foutenzoeken",
     "lesson.read_summary": "Samenvatting",
     "form.format.standard": "📚 Standaard — woordenlijst & zinnen",
-    "static.ai_warning": "⚠ AI-gegenereerde inhoud. Gebruik een echte taalapp of een leraar als je een taal nieuw leert. Bezoek github.com/raim/dreizunge om lessen te maken of bij te dragen."
+    "static.ai_warning": "⚠ AI-gegenereerde inhoud. Gebruik een echte taalapp of een leraar als je een taal nieuw leert. Bezoek github.com/raim/dreizunge om lessen te maken of bij te dragen.",
+    "lesson.type.ai_error_hunt": "AI Foutjacht",
+    "lesson.ai_error_hunt.desc": "AI is stom. Kun je de fouten vinden die een mens heeft gevonden?",
+    "ex.error_hunt.result": "✅ {correct} ❌ {wrong} ⚠️ {missed}",
+    "ex.error_hunt.reason_placeholder": "Reden…",
+    "lesson.ai_error_hunt.no_ai_story": "Geen AI verhaal opgeslagen.",
+    "lesson.ai_error_hunt.editor_hint": "Voeg een reden toe voor je bewerking:.",
+    "lesson.type.math": "🔢 Wiskunde",
+    "ex.badge.math_order": "🔢 Sorteer",
+    "ex.badge.math_calc": "🔢 Berekenen",
+    "form.format.math": "🔢 Wiskunde"
   },
   "pt": {
     "app.tagline": "Aprenda vocabulário de qualquer tópico em qualquer idioma",
@@ -399,7 +409,17 @@
     "lesson.type.error_hunt": "Caça",
     "lesson.read_summary": "Resumo",
     "form.format.standard": "📚 Padrão — vocabulário & frases",
-    "static.ai_warning": "⚠ Conteúdo gerado por IA. Use um aplicativo de aprendizado real ou um professor se você é iniciante. Visite github.com/raim/dreizunge para gerar lições ou contribuir."
+    "static.ai_warning": "⚠ Conteúdo gerado por IA. Use um aplicativo de aprendizado real ou um professor se você é iniciante. Visite github.com/raim/dreizunge para gerar lições ou contribuir.",
+    "lesson.type.ai_error_hunt": "Caça Erros do AI",
+    "lesson.ai_error_hunt.desc": "O AI é burro. Você consegue encontrar os erros que um humano encontrou?",
+    "ex.error_hunt.result": "✅ {correct} ❌ {wrong} ⚠️ {missed}",
+    "ex.error_hunt.reason_placeholder": "Motivo…",
+    "lesson.ai_error_hunt.no_ai_story": "Nenhuma história do AI armazenada.",
+    "lesson.ai_error_hunt.editor_hint": "Adicione um motivo para sua edição:.",
+    "lesson.type.math": "🔢 Matemática",
+    "ex.badge.math_order": "🔢 Ordenar",
+    "ex.badge.math_calc": "🔢 Calcular",
+    "form.format.math": "🔢 Matemática"
   },
   "fr": {
     "app.tagline": "Apprendre du vocabulaire sur n'importe quel sujet",
@@ -1203,7 +1223,18 @@
     "lesson.type.error_hunt": "Fehlerjagen",
     "lesson.read_summary": "Zusammenfassung",
     "form.format.standard": "📚 Standard — Wörter und Sätze",
-    "static.ai_warning": "⚠ KI-generierte Inhalte. Nutze eine echte Sprachlern-App oder einen Lehrer, wenn du eine Sprache neu lernst. Besuche github.com/raim/dreizunge um Lektionen zu erstellen oder mitzumachen."
+    "static.ai_warning": "⚠ KI-generierte Inhalte. Nutze eine echte Sprachlern-App oder einen Lehrer, wenn du eine Sprache neu lernst. Besuche github.com/raim/dreizunge um Lektionen zu erstellen oder mitzumachen.",
+    "lesson.type.ai_error_hunt": "AI-Fehlerjagd",
+    "lesson.ai_error_hunt.desc": "AI ist dumm. Kannst du die Fehler finden, die ein Mensch gefunden hat?",
+    "ex.error_hunt.result": "✅ {correct} ❌ {wrong} ⚠️ {missed}",
+    "ex.error_hunt.reason_placeholder": "Grund…",
+    "lesson.ai_error_hunt.no_ai_story": "Es gibt keine AI-Geschichte gespeichert.",
+    "lesson.ai_error_hunt.editor_hint": "Gründe deinen Beitrag:.",
+    "lesson.ai_error_hunt.changed_count": "{n}/{total} geändert",
+    "lesson.type.math": "🔢 Mathematik",
+    "ex.badge.math_order": "🔢 Sortieren",
+    "ex.badge.math_calc": "🔢 Berechnen",
+    "form.format.math": "🔢 Mathematik"
   },
   "ar": {
     "app.tagline": "تعلم المفردات لأي موضوع بأي لغة",
@@ -1602,12 +1633,12 @@
     "ex.error_hunt.result": "✅ {correct} ❌ {wrong} ⚠️ {missed}",
     "ex.error_hunt.reason_placeholder": "Reason…",
     "lesson.ai_error_hunt.no_ai_story": "No AI story stored.",
-    "lesson.ai_error_hunt.editor_hint": "Changed clauses only. Add a reason for each.",
+    "lesson.ai_error_hunt.editor_hint": "Add a reason for your edit:.",
     "lesson.ai_error_hunt.changed_count": "{n}/{total} changed",
-    "lesson.type.math": "🔢 Math",
-    "ex.badge.math_order": "🔢 Sort the numbers",
+    "lesson.type.math": "🔢 Mathematics",
+    "ex.badge.math_order": "🔢 Sort",
     "ex.badge.math_calc": "🔢 Calculate",
-    "form.format.math": "🔢 Math — numbers from the story"
+    "form.format.math": "🔢 Mathematics"
   },
   "sv": {
     "app.tagline": "Lär dig vokabulär för valfritt ämne",
