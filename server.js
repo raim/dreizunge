@@ -707,32 +707,30 @@ function sysErrorHunt(lang, difficulty) {
   const nSpell   = difficulty >= 3 ? 4 : 3;
   const nGrammar = difficulty >= 2 ? 3 : 2;
   return `You are a language exercise generator for ${L} learners.
-Given a ${L} story, introduce exactly ${nSpell} spelling errors and ${nGrammar} grammar errors that a language novice might make.
+Given a ${L} story, produce a corrupted version by introducing exactly ${nSpell} spelling errors and ${nGrammar} grammar errors.
 
-Spelling error types (use varied examples):
-- swap a correct letter for a similar-looking/sounding one (e.g. "b"/"d", "ei"/"ie", "c"/"g")
-- omit or double an interior letter (e.g. "manger" → "mnager")
-- wrong vowel that sounds plausible (e.g. "o" → "u", "e" → "i")
-- missing or wrong accent/diacritic where relevant
-NEVER add/remove punctuation. NEVER change capitalisation at sentence start.
+SPELLING errors — change only an interior letter of one word:
+- swap one letter for a similar-looking/sounding one (e.g. ei→ie, b→d)
+- omit or double one interior letter (e.g. "manger"→"mnager")
+- use a wrong vowel that sounds plausible (e.g. "o"→"u")
+- wrong or missing accent/diacritic (e.g. "é"→"e")
+The corrupted word must NOT be a prefix or suffix extension of the correct word.
 
-Grammar error types (use varied examples):
-- wrong gender on article or adjective (e.g. "il" → "la" for masculine noun)
-- wrong verb ending for the subject (e.g. "mangiano" → "mangia" for plural subject)
-- wrong tense (e.g. present instead of past)
-- wrong or missing preposition
-- wrong plural/singular form
+GRAMMAR errors — add or remove a suffix on one word:
+- wrong verb suffix for the subject (e.g. "explore"→"explores", "mangiano"→"mangia")
+- wrong plural/singular (e.g. "cell"→"cells", "cats"→"cat")
+- wrong tense suffix (e.g. "walk"→"walked", "oscillated"→"oscillate")
+The correct word must be a prefix of the corrupted word or vice versa.
 
-Rules:
-- Modify ONLY a single word (or at most two adjacent words) per edit
-- The "find" string MUST appear verbatim and EXACTLY ONCE in the story
-- Do NOT touch punctuation, numbers, or proper nouns
-- Errors must be plausible novice mistakes, not random gibberish
-- CRITICAL: "find" and "replace" MUST be different strings — never return the same value for both
-- CRITICAL: verify each replacement actually changes the word before including it
+STRICT RULES — violations will cause the lesson to be rejected:
+- Change ONLY a single complete word per error — never punctuation, numbers, proper nouns, or sentence-start capitals
+- The correct word must appear verbatim in the original story
+- The correct and corrupted words MUST be different
+- Do NOT produce no-op changes (e.g. adding/removing only spaces or punctuation)
+- Do NOT change more than one word per error
+- Copy all other text EXACTLY — do not rephrase, reorder, or rewrite anything
 
-Return ONLY a JSON object, no markdown, no extra text:
-{ "edits": [ { "type": "spelling"|"grammar", "find": "exact original word(s)", "replace": "corrupted version", "reason": "one-line explanation" } ] }`;
+Return ONLY the corrupted story text. No JSON, no explanation, no markdown.`;
 }
 
 // ── Storyline title prompt ─────────────────────────────────────────────
@@ -869,42 +867,131 @@ Rules:
 }
 
 // ── Generate error-hunt lesson ───────────────────────────────────────
+
+// ── Math lesson generator (no LLM — purely algorithmic) ──────────────────────
+function extractNumbers(story, difficulty) {
+  // Use pure difficulty-based number pools — story numbers not used as seeds
+  if (difficulty <= 1) {
+    // Beginner: 1–9, pick 6 distinct random integers
+    return shuffle([1,2,3,4,5,6,7,8,9]).slice(0,6);
+  } else {
+    // Intermediate + Advanced: 1–1000, pick 8 distinct random integers
+    const pool = [];
+    while (pool.length < 8) {
+      const n = Math.floor(Math.random()*1000)+1;
+      if (!pool.includes(n)) pool.push(n);
+    }
+    return pool;
+  }
+}
+
+function mathNearMiss(correct, nums, difficulty) {
+  const wrongs = new Set();
+  // Scale deltas to the magnitude of the correct answer
+  const mag = Math.max(1, Math.abs(correct));
+  const deltas = difficulty <= 1 ? [1,2,3]
+    : difficulty === 2 ? [1, Math.ceil(mag*0.1), Math.ceil(mag*0.2), 10]
+    : [0.1, 0.25, Math.ceil(mag*0.1)];
+  for (const d of deltas) {
+    if (correct - d >= 0 && correct - d !== correct) wrongs.add(+(correct - d).toFixed(4));
+    wrongs.add(+(correct + d).toFixed(4));
+    if (wrongs.size >= 3) break;
+  }
+  // Fill remaining from nums pool
+  for (const n of nums) {
+    if (n !== correct) wrongs.add(n);
+    if (wrongs.size >= 3) break;
+  }
+  return [...wrongs].slice(0,3);
+}
+
+function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]; } return b; }
+
+function generateMath(story, difficulty) {
+  const nums = extractNumbers(story, difficulty);
+  const exercises = [];
+
+  // ── Ordering exercises (2–3 per lesson) ──────────────────────────────────
+  const orderCount = Math.min(2, Math.floor(nums.length / 3));
+  for (let i = 0; i < orderCount; i++) {
+    const size = difficulty <= 1 ? 4 : 5;
+    const subset = shuffle(nums).slice(0, size);
+    const asc = [...subset].sort((a,b) => a-b);
+    const desc = [...asc].reverse();
+    const dir = Math.random() < 0.5 ? 'asc' : 'desc';
+    exercises.push({
+      type: 'math_order',
+      direction: dir,
+      numbers: shuffle([...subset]),
+      correct: (dir === 'asc' ? asc : desc).map(String),
+    });
+  }
+
+  // ── Calculation exercises ─────────────────────────────────────────────────
+  const ops = difficulty <= 1 ? ['+','-']
+             : difficulty === 2 ? ['+','-','×']
+             : ['+','-','×','÷'];
+
+  // Use story numbers + derived combinations
+  const pool = [...nums];
+  // Add a few derived numbers as operands
+  for (let i = 0; i < nums.length && pool.length < 8; i++) {
+    for (let j = i+1; j < nums.length && pool.length < 8; j++) {
+      if (nums[i] + nums[j] <= (difficulty <= 1 ? 9 : 9999)) pool.push(nums[i]+nums[j]);
+    }
+  }
+
+  const calcCount = Math.min(5, nums.length);
+  let attempts = 0;
+  while (exercises.filter(e=>e.type==='math_calc').length < calcCount && attempts++ < 50) {
+    const op = ops[Math.floor(Math.random()*ops.length)];
+    const a = pool[Math.floor(Math.random()*pool.length)];
+    const b = pool[Math.floor(Math.random()*pool.length)];
+    let correct;
+    if (op==='+') correct = a+b;
+    else if (op==='-') { if (a<b) continue; correct = a-b; }
+    else if (op==='×') { correct = a*b; if (difficulty<=1 && correct>9) continue; }
+    else { if (b===0 || a%b!==0) continue; correct = a/b; }
+    correct = +correct.toFixed(4);
+    const wrongs = mathNearMiss(correct, pool, difficulty);
+    if (wrongs.length < 3) continue;
+    exercises.push({
+      type: 'math_calc',
+      a: String(a), op, b: String(b),
+      correct: String(correct),
+      choices: shuffle([String(correct), ...wrongs.map(String)]).slice(0,4),
+    });
+  }
+
+  return {
+    lesson: {
+      id: 'math_' + Date.now(),
+      type: 'math',
+      title: 'Numbers',
+      desc: 'Math exercises from the story',
+      icon: '🔢',
+      numbers: nums,
+      difficulty,
+      exercises,
+    },
+    tokens: { promptTokens: 0, completionTokens: 0 },
+  };
+}
+
 async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
   jobStep(jobId, `[${OLLAMA_MODEL}] Generating error-hunt lesson…`);
   const sys = sysErrorHunt(lang, difficulty);
   const priorHint = priorVocab && priorVocab.length
-    ? `\n\nPRIOR VOCABULARY from earlier chapters (PREFER to introduce errors on these words where they appear in the story, so the learner revisits already-studied words): ${priorVocab.slice(0, 20).map(v => v.target).join(', ')}`
+    ? `\n\nPREFER errors on these words where they appear: ${priorVocab.slice(0,20).map(v=>v.target).join(', ')}`
     : '';
-  const userMsg = `Here is the ${langName(lang)} story:\n\n${story}\n\nIntroduce the errors now. Return only JSON.${priorHint}`;
-  const { text: raw, promptTokens, completionTokens } = await callOllamaRaw(OLLAMA_MODEL, sys, userMsg, 1200);
-  const cleaned = raw.replace(/```json|```/g, '').trim();
-  let parsed;
-  try { parsed = JSON.parse(cleaned); }
-  catch(e) {
-    const m = cleaned.match(/\{[\s\S]*\}/);
-    if (!m) throw new Error('Error-hunt: could not parse JSON from model: ' + cleaned.slice(0, 80));
-    parsed = JSON.parse(m[0]);
-  }
-  const edits = (parsed.edits || []).filter(e =>
-    e.find && e.replace &&
-    e.find !== e.replace &&
-    e.find.trim() !== e.replace.trim() &&
-    ['spelling','grammar'].includes(e.type) &&
-    story.includes(e.find)
-  );
-  if (edits.length === 0) throw new Error('Error-hunt: no valid edits produced (all find===replace or not found in story)');
-  let corruptedStory = story;
-  const appliedEdits = [];
-  for (const e of edits) {
-    if (!corruptedStory.includes(e.find)) continue;
-    if (e.find === e.replace) continue;
-    corruptedStory = corruptedStory.replace(e.find, e.replace);
-    appliedEdits.push({ type: e.type, find: e.find, replace: e.replace, reason: e.reason || '' });
-  }
-  if (appliedEdits.length === 0) throw new Error('Error-hunt: all edits were no-ops after applying');
-  console.log(`    Error-hunt: ${appliedEdits.length} edits applied (${appliedEdits.map(e=>e.type).join(', ')})`);
-  const noOps = (parsed.edits||[]).filter(e=>e.find&&e.find===e.replace);
-  if (noOps.length) console.warn(`    Error-hunt: ${noOps.length} no-op edits discarded: ${noOps.map(e=>e.find).join(', ')}`);
+  const userMsg = `Here is the ${langName(lang)} story:\n\n${story}\n\nReturn the corrupted story now.${priorHint}`;
+  const { text: corrupted, promptTokens, completionTokens } = await callOllamaRaw(OLLAMA_MODEL, sys, userMsg, story.length * 2);
+  const corruptedStory = corrupted.trim();
+  if (!corruptedStory || corruptedStory.length < story.length * 0.5)
+    throw new Error('Error-hunt: model returned too short a response');
+  if (corruptedStory === story)
+    throw new Error('Error-hunt: model returned identical story with no changes');
+  console.log(`    Error-hunt: corrupted story ${corruptedStory.length} chars (orig ${story.length})`);
   return {
     lesson: {
       id: 4, type: 'error_hunt',
@@ -912,7 +999,6 @@ async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
       desc: 'Find the mistakes in the story',
       icon: '🔍',
       corruptedStory,
-      edits: appliedEdits,
     },
     tokens: { promptTokens, completionTokens },
   };
@@ -1257,11 +1343,13 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   const chainVocab = (reinforcePrior && continuedFrom) ? collectChainVocab(continuedFrom) : { words: [], nouns: [], verbs: [] };
   const chainOpts = { userDialect, storyStyle, chainVocab };
 
-  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation') {
-    const genFn   = lessonFormat === 'error_hunt'  ? () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words)
+  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math') {
+    const genFn   = lessonFormat === 'math'        ? () => Promise.resolve(generateMath(story, difficulty))
+                  : lessonFormat === 'error_hunt'  ? () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words)
                   : lessonFormat === 'grammar'      ? () => generateGrammar(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   :                                   () => generateConjugation(topic, lang, srcLang, difficulty, jobId, chainOpts);
-    const label   = lessonFormat === 'error_hunt'  ? 'Error-hunt'
+    const label   = lessonFormat === 'math'        ? 'Math'
+                  : lessonFormat === 'error_hunt'  ? 'Error-hunt'
                   : lessonFormat === 'grammar'      ? 'Grammar'
                   :                                   'Conjugation';
     try {
@@ -1500,6 +1588,67 @@ function _syncStorylineForTopic(topicName, continuedFromTopic) {
   }
 }
 
+// ── Story diff for ai_error_hunt (sentence-level) ────────────────────────────
+function splitSentences(text) {
+  // Returns array of clause strings and {para:true} sentinels for paragraph breaks
+  const result = [];
+  text.split(/\n\n+/).forEach((para, pi) => {
+    if (pi > 0) result.push({ para: true });
+    const parts = para.trim().split(/(?<=[.!?,;:"""«»„\u2018\u2019])\s*/);
+    parts.map(s => s.trim()).filter(Boolean).forEach(s => result.push(s));
+  });
+  return result;
+}
+
+function storyDiffSentences(aiStory, correctedStory, existingSentences) {
+  const aRaw = splitSentences(aiStory);
+  const bRaw = splitSentences(correctedStory);
+  // Track para-break positions in ai clauses before stripping sentinels
+  const aiParaBefore = new Set();
+  let paused = false, clauseIdx = 0;
+  aRaw.forEach(s => {
+    if (typeof s !== 'string') { paused = true; return; }
+    if (paused) { aiParaBefore.add(clauseIdx); paused = false; }
+    clauseIdx++;
+  });
+  const aArr = aRaw.filter(s => typeof s === 'string');
+  const bArr = bRaw.filter(s => typeof s === 'string');
+  const m = aArr.length, n = bArr.length;
+  const dp = Array.from({length:m+1}, () => new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j] = aArr[i-1]===bArr[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j],dp[i][j-1]);
+  const ops = []; let i=m, j=n;
+  while(i>0||j>0) {
+    if(i>0&&j>0&&aArr[i-1]===bArr[j-1]) { ops.unshift({type:'eq',ai:aArr[i-1],corrected:bArr[j-1]}); i--;j--; }
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])) { ops.unshift({type:'ins',corrected:bArr[j-1]}); j--; }
+    else { ops.unshift({type:'del',ai:aArr[i-1]}); i--; }
+  }
+  const pairs = []; let k=0;
+  while(k<ops.length) {
+    const op = ops[k];
+    if(op.type==='eq') { pairs.push({ai:op.ai,corrected:op.corrected,changed:false,reason:''}); k++; }
+    else {
+      let dels=[], ins=[];
+      while(k<ops.length && ops[k].type!=='eq') {
+        if(ops[k].type==='del') dels.push(ops[k].ai);
+        else ins.push(ops[k].corrected);
+        k++;
+      }
+      const maxLen = Math.max(dels.length, ins.length);
+      for(let x=0;x<maxLen;x++)
+        pairs.push({ai:dels[x]||null,corrected:ins[x]||null,changed:true,reason:''});
+    }
+  }
+  // Preserve existing reasons by matching on ai sentence text
+  const reasonMap = new Map();
+  if(existingSentences && existingSentences.length)
+    existingSentences.forEach(s => { if(s && s.ai && s.reason) reasonMap.set(s.ai, s.reason); });
+  // Return sparse: only changed entries
+  return pairs
+    .filter(p => p.changed)
+    .map(p => ({ ai: p.ai, corrected: p.corrected, reason: reasonMap.get(p.ai) || '' }));
+}
+
 http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${PORT}`);
     const M   = req.method.toUpperCase();
@@ -1669,7 +1818,7 @@ http.createServer(async (req, res) => {
     }
 
     if (M === 'POST' && url.pathname === '/api/storyline-title') {
-      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      if (active === 'none' && fmt !== 'math') return json(res, 503, { error: 'No LLM backend available.' });
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
@@ -1710,7 +1859,7 @@ http.createServer(async (req, res) => {
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types'].includes(lessonFormat) ? lessonFormat : 'standard';
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math'].includes(lessonFormat) ? lessonFormat : 'standard';
       const wc = Math.max(100, Math.min(1000, parseInt(storyLen, 10) || 300));
       const contFrom = (!userStory && continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       const topicKey = topic.trim().toLowerCase();
@@ -1760,15 +1909,42 @@ http.createServer(async (req, res) => {
     if (M === 'POST' && url.pathname === '/api/save-story') {
       let body;
       try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, story } = body;
+      const { topic, story, generateAiHunt } = body;
       if (!topic || story === undefined) return json(res, 400, { error: 'Missing topic or story' });
       const saved = findSaved(topic);
       if (!saved) return json(res, 404, { error: 'Topic not found' });
+      // Set aiStory on first save (immutable original AI text)
+      if (!saved.aiStory) {
+        saved.aiStory = saved.story || story;
+        console.log(`  Set aiStory for "${topic}" (${saved.aiStory.length} chars)`);
+      }
       saved.story = story;
       saved.updatedAt = new Date().toISOString();
+      let aiHuntEdits;
+      if (generateAiHunt && saved.aiStory && saved.aiStory !== story) {
+        const existing = (saved.lessons||[]).find(l => l.type === 'ai_error_hunt');
+        const sentences = storyDiffSentences(saved.aiStory, story, existing?.sentences);
+        const lesson = {
+          id: existing?.id || ('aeh_' + Date.now()),
+          type: 'ai_error_hunt',
+          title: existing?.title || 'AI Error Hunt',
+          desc: 'Find AI errors that were corrected by a human tutor.',
+          icon: '🔎',
+          aiStory: saved.aiStory,
+          sentences,
+        };
+        if (existing) {
+          saved.lessons[saved.lessons.indexOf(existing)] = lesson;
+        } else {
+          if (!saved.lessons) saved.lessons = [];
+          saved.lessons.push(lesson);
+        }
+        aiHuntEdits = sentences;
+        console.log(`  ai_error_hunt: ${sentences.length} changed sentences (sparse)`);
+      }
       saveStore(store);
       console.log(`  Saved story for "${topic}" (${story.length} chars)`);
-      return json(res, 200, { ok: true });
+      return json(res, 200, { ok: true, aiStory: saved.aiStory, edits: aiHuntEdits });
     }
 
     // ── Direct lesson edit ───────────────────────────────────────────────
@@ -1845,6 +2021,8 @@ http.createServer(async (req, res) => {
           result = await generateGrammar(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab });
         } else if (fmt === 'conjugation') {
           result = await generateConjugation(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab });
+        } else if (fmt === 'math') {
+          result = generateMath(story, diff);
         } else {
           throw new Error(`Unsupported lessonFormat: ${fmt}`);
         }

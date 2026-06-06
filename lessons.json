@@ -790,6 +790,225 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1780762888814",
+          "type": "math",
+          "title": "Numbers",
+          "desc": "Math exercises from the story",
+          "icon": "🔢",
+          "numbers": [
+            0,
+            3,
+            1,
+            2,
+            5
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                2,
+                0,
+                5,
+                1
+              ],
+              "correct": [
+                "0",
+                "1",
+                "2",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "0",
+              "op": "-",
+              "b": "0",
+              "correct": "0",
+              "choices": [
+                "0",
+                "1",
+                "3",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "-",
+              "b": "1",
+              "correct": "2",
+              "choices": [
+                "0",
+                "2",
+                "3",
+                "1"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "3",
+              "correct": "5",
+              "choices": [
+                "6",
+                "3",
+                "4",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "5",
+              "correct": "8",
+              "choices": [
+                "7",
+                "6",
+                "9",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "3",
+              "correct": "6",
+              "choices": [
+                "4",
+                "5",
+                "7",
+                "6"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1780763450556",
+          "type": "math",
+          "title": "Numbers",
+          "desc": "Math exercises from the story",
+          "icon": "🔢",
+          "numbers": [
+            425,
+            28,
+            735,
+            380,
+            259,
+            959,
+            82,
+            761
+          ],
+          "difficulty": 2,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                82,
+                28,
+                380,
+                959,
+                425
+              ],
+              "correct": [
+                "28",
+                "82",
+                "380",
+                "425",
+                "959"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                259,
+                959,
+                380,
+                761,
+                28
+              ],
+              "correct": [
+                "959",
+                "761",
+                "380",
+                "259",
+                "28"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "735",
+              "op": "+",
+              "b": "82",
+              "correct": "817",
+              "choices": [
+                "818",
+                "816",
+                "817",
+                "735"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "959",
+              "op": "×",
+              "b": "735",
+              "correct": "704865",
+              "choices": [
+                "634378",
+                "704865",
+                "704866",
+                "704864"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "735",
+              "op": "×",
+              "b": "259",
+              "correct": "190365",
+              "choices": [
+                "190366",
+                "171328",
+                "190365",
+                "190364"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "28",
+              "op": "+",
+              "b": "761",
+              "correct": "789",
+              "choices": [
+                "789",
+                "790",
+                "710",
+                "788"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "380",
+              "op": "-",
+              "b": "82",
+              "correct": "298",
+              "choices": [
+                "297",
+                "299",
+                "268",
+                "298"
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -809,7 +1028,7 @@
         ]
       },
       "generatedAt": "2026-06-04T21:32:54.652Z",
-      "updatedAt": "2026-06-04T21:32:54.681Z",
+      "updatedAt": "2026-06-06T16:30:50.557Z",
       "id": "tp_118316007"
     },
     {
@@ -998,15 +1217,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "אני מתגעגע לירושלים, העיר של שלושה דתות. תמיד חשבתי עליה כמו על חלום, מקום שבו כל דת מתאחדת בשלום. אבל עכשיו, כשאני מתבונן סביבי, אני מודע שהחזרה לירושלים היא יותר מinine, היא היא חלום שמתבגר עם כל יום.\n\nהיה לי חלום לילה לפני כמה ימים. אני מסתובב ברחובות העיר, מסתכל על המבנים העתיקים והנוראים, ועל הכנסיות והמקדשים המלומדים. אני מרגיש את הצליל של התפילה, את הריח של הדבש והבצלים, ואת הרוח המטושטשת של ההיסטוריה. אבל בחלומותי, אני לא לבד. אני מסתובב עם אנשים מרחבי העולם, כל אחד מהם מטיל את נשמתו על העיר, מנסה להבין את המסר המורכב של שלושת הדתות.\n\nכשאני מתעורר, אני מרגיש את הבדידות. אני מתבונן בפרחים שהצמתי בחצר של בית הספר שלי, אבל הם לא מזכירים לי את היריעות של העיר. אני מנסה לחשוב על כל הvezות של העיר, אבל כל מה שאני מוצא הוא שאלות. איך אפשר לשרוד את הבדיחות של שלושה דתות שמתאחדות בשלום? איך אפשר לחיות בעיר שמתחרטת על כל מה שהיא עשתה, אבל עדיין לא מוכנה לסלוח?\n\nאני מתבונן בכתבי יד של התנ\"ך, בכתבי יד של התנ\"ך, בכתבי יד של התנ\"ך. כל פעם שאני מסתכל עליהם, אני מרגיש את הצליל של הקולות של כל הדתות, כל פעם שאני מסתכל עליהם, אני מרגיש את הצליל של הקולות של כל הדתות. אבל אני לא יכול להימלט מהשאלה: איך אפשר לשרוד את כל זה?\n\nאני מתבונן בפרחים שהצמתי בחצר של בית הספר שלי, אבל הם לא מזכירים לי את היריעות של העיר. אני מנסה לחשוב על כל הvezות של העיר, אבל כל מה שאני מוצא הוא שאלות. איך אפשר לשרוד את הבדיחות של שלושה דתות שמתאחדות בשלום? איך אפשר לחיות בעיר שמתחרטת על כל מה שהיא עשתה, אבל עדיין לא מוכנה לסלוח?\n\nאני מתבונן סביבי, ואני מוצא את התשובה. אני צריך לחיות בעיר, לא רק לליהנות ממנה, אבל גם לתרום לה. אני צריך לתרום לשלום בין הדתות, לתרום לשלום בין האנשים. אני צריך לחיות בעיר, ולעשות את כל מה שאני יכול כדי להפוך אותה למקום טוב יותר.",
-          "edits": [
-            {
-              "type": "grammar",
-              "find": "🤔 ליהנות",
-              "replace": "ליהנות",
-              "reason": "remove the unnecessary emoji to create a plausible novice mistake"
-            }
-          ]
+          "corruptedStory": "אני מתגעגע לירושלים, העיר של שלושה דתות. תמיד חשבתי עליה כמו על חלום, מקום שבו כל דת מתאחדת בשלום. אבל עכשיו, כשאני מתבונן סביבי, אני מודע שהחזרה לירושלים היא יותר מinine, היא היא חלום שמתבגר עם כל יום.\n\nהיה לי חלום לילה לפני כמה ימים. אני מסתובב ברחובות העיר, מסתכל על המבנים העתיקים והנוראים, ועל הכנסיות והמקדשים המלומדים. אני מרגיש את הצליל של התפילה, את הריח של הדבש והבצלים, ואת הרוח המטושטשת של ההיסטוריה. אבל בחלומותי, אני לא לבד. אני מסתובב עם אנשים מרחבי העולם, כל אחד מהם מטיל את נשמתו על העיר, מנסה להבין את המסר המורכב של שלושת הדתות.\n\nכשאני מתעורר, אני מרגיש את הבדידות. אני מתבונן בפרחים שהצמתי בחצר של בית הספר שלי, אבל הם לא מזכירים לי את היריעות של העיר. אני מנסה לחשוב על כל הvezות של העיר, אבל כל מה שאני מוצא הוא שאלות. איך אפשר לשרוד את הבדיחות של שלושה דתות שמתאחדות בשלום? איך אפשר לחיות בעיר שמתחרטת על כל מה שהיא עשתה, אבל עדיין לא מוכנה לסלוח?\n\nאני מתבונן בכתבי יד של התנ\"ך, בכתבי יד של התנ\"ך, בכתבי יד של התנ\"ך. כל פעם שאני מסתכל עליהם, אני מרגיש את הצליל של הקולות של כל הדתות, כל פעם שאני מסתכל עליהם, אני מרגיש את הצליל של הקולות של כל הדתות. אבל אני לא יכול להימלט מהשאלה: איך אפשר לשרוד את כל זה?\n\nאני מתבונן בפרחים שהצמתי בחצר של בית הספר שלי, אבל הם לא מזכירים לי את היריעות של העיר. אני מנסה לחשוב על כל הvezות של העיר, אבל כל מה שאני מוצא הוא שאלות. איך אפשר לשרוד את הבדיחות של שלושה דתות שמתאחדות בשלום? איך אפשר לחיות בעיר שמתחרטת על כל מה שהיא עשתה, אבל עדיין לא מוכנה לסלוח?\n\nאני מתבונן סביבי, ואני מוצא את התשובה. אני צריך לחיות בעיר, לא רק לליהנות ממנה, אבל גם לתרום לה. אני צריך לתרום לשלום בין הדתות, לתרום לשלום בין האנשים. אני צריך לחיות בעיר, ולעשות את כל מה שאני יכול כדי להפוך אותה למקום טוב יותר."
         }
       ],
       "generationStats": {
@@ -2035,6 +2246,104 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1780762881288",
+          "type": "math",
+          "title": "Numbers",
+          "desc": "Math exercises from the story",
+          "icon": "🔢",
+          "numbers": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                0,
+                1,
+                4,
+                3
+              ],
+              "correct": [
+                "4",
+                "3",
+                "1",
+                "0"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "3",
+              "correct": "5",
+              "choices": [
+                "4",
+                "6",
+                "3",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "1",
+              "correct": "4",
+              "choices": [
+                "2",
+                "4",
+                "5",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "-",
+              "b": "0",
+              "correct": "3",
+              "choices": [
+                "3",
+                "1",
+                "4",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "-",
+              "b": "2",
+              "correct": "1",
+              "choices": [
+                "1",
+                "0",
+                "2",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "0",
+              "op": "+",
+              "b": "3",
+              "correct": "3",
+              "choices": [
+                "2",
+                "3",
+                "4",
+                "1"
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -2054,7 +2363,7 @@
         ]
       },
       "generatedAt": "2026-06-04T20:35:36.041Z",
-      "updatedAt": "2026-06-04T21:12:45.742Z",
+      "updatedAt": "2026-06-06T16:26:44.661Z",
       "id": "tp_103972811"
     },
     {
@@ -2194,45 +2503,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "The creature rembered the small i, and went back to the numbers to philosphize further with it, Both still didn't know who they wer. The 0 was funny but clumsy, and had a secret. 1 was mean and thought it was the best everywhere, but was brave. 2 was hard to fit into any category.\n\n\"Hey, i,\" said 1, \"what are you doing here? You're not a number, are you?\"\n\n\"I'm not sure,\" said i, looking at 1 with a curious expression. \"But I feel like I can be anything I want.\"\n\n1 snort. \"Anything? You? Ha! You're just a tiny dot. You can't be anything.\"\n\n2, who had been listening, stepped forward. \"Hey, 1, stop being so mean. i has a right to explor'e who it is.\"\n\n1 glared at 2. \"And who are you to tell me what to do? You're just a 2, after all.\"\n\n2 shrugged. \"I might be a 2, but I'm not a bully. And I think i has a right to figure things out.\"\n\nThe creature watched the exchange with interest. \"Maybe,\" it said, \"we can all help i figure things out.\"\n\n0, who had been quiet, spoke up. \"I have a secret,\" it said, \"but I'm not sure if I should share it.\"\n\ni looked at 0 with a gentle smile. \"You can share it with me. I promise I won't judge.\"\n\n0 hesitated, then said, \"I think I might be a 1. But I'm not sure. I feel like I'm always trying to be the best, but I'm not sure if that's who I am.\"\n\n1's face softened. \"You're not the best,\" it said. \"You're just you. And that's okay.\"\n\n2 nodded. \"Yeah, and you're not a 1. You're 0. And that's okay too.\"\n\nThe creature felt a warm glow. \"Maybe,\" it said, \"we can all help each other figure out who we are.\"\n\nThe numbers and the letters gathered around, forming a circle. They talked and laughed, sharing their thoughts and feelings. The creature realized that it didn't need to fit into just one category. It could be a number, a letter, or anything in between. And that was okay.",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "remembered",
-              "replace": "rembered",
-              "reason": "common misspelling of 'remembered'"
-            },
-            {
-              "type": "grammar",
-              "find": "with it.",
-              "replace": "with it,",
-              "reason": "missing comma after introductory phrase"
-            },
-            {
-              "type": "spelling",
-              "find": "philosophize",
-              "replace": "philosphize",
-              "reason": "common misspelling of 'philosophize'"
-            },
-            {
-              "type": "grammar",
-              "find": "Both still didn't know who they were.",
-              "replace": "Both still didn't know who they wer.",
-              "reason": "missing 'e' in 'were'"
-            },
-            {
-              "type": "grammar",
-              "find": "1 snorted.",
-              "replace": "1 snort.",
-              "reason": "wrong verb ending for plural subject"
-            },
-            {
-              "type": "spelling",
-              "find": "explor",
-              "replace": "explor'",
-              "reason": "wrong accent on 'o' in 'explorer'"
-            }
-          ]
+          "corruptedStory": "The creature rembered the small i, and went back to the numbers to philosphize further with it, Both still didn't know who they wer. The 0 was funny but clumsy, and had a secret. 1 was mean and thought it was the best everywhere, but was brave. 2 was hard to fit into any category.\n\n\"Hey, i,\" said 1, \"what are you doing here? You're not a number, are you?\"\n\n\"I'm not sure,\" said i, looking at 1 with a curious expression. \"But I feel like I can be anything I want.\"\n\n1 snort. \"Anything? You? Ha! You're just a tiny dot. You can't be anything.\"\n\n2, who had been listening, stepped forward. \"Hey, 1, stop being so mean. i has a right to explor'e who it is.\"\n\n1 glared at 2. \"And who are you to tell me what to do? You're just a 2, after all.\"\n\n2 shrugged. \"I might be a 2, but I'm not a bully. And I think i has a right to figure things out.\"\n\nThe creature watched the exchange with interest. \"Maybe,\" it said, \"we can all help i figure things out.\"\n\n0, who had been quiet, spoke up. \"I have a secret,\" it said, \"but I'm not sure if I should share it.\"\n\ni looked at 0 with a gentle smile. \"You can share it with me. I promise I won't judge.\"\n\n0 hesitated, then said, \"I think I might be a 1. But I'm not sure. I feel like I'm always trying to be the best, but I'm not sure if that's who I am.\"\n\n1's face softened. \"You're not the best,\" it said. \"You're just you. And that's okay.\"\n\n2 nodded. \"Yeah, and you're not a 1. You're 0. And that's okay too.\"\n\nThe creature felt a warm glow. \"Maybe,\" it said, \"we can all help each other figure out who we are.\"\n\nThe numbers and the letters gathered around, forming a circle. They talked and laughed, sharing their thoughts and feelings. The creature realized that it didn't need to fit into just one category. It could be a number, a letter, or anything in between. And that was okay."
         }
       ],
       "generationStats": {
@@ -2372,6 +2643,121 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1780762205963",
+          "type": "math",
+          "title": "Numbers",
+          "desc": "Math exercises from the story",
+          "icon": "🔢",
+          "numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                2,
+                4,
+                6,
+                5
+              ],
+              "correct": [
+                "6",
+                "5",
+                "4",
+                "2"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                6,
+                3,
+                1,
+                4
+              ],
+              "correct": [
+                "6",
+                "4",
+                "3",
+                "1"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "5",
+              "correct": "10",
+              "choices": [
+                "11",
+                "9",
+                "8",
+                "10"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "4",
+              "op": "-",
+              "b": "4",
+              "correct": "0",
+              "choices": [
+                "1",
+                "2",
+                "0",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "4",
+              "op": "-",
+              "b": "3",
+              "correct": "1",
+              "choices": [
+                "2",
+                "3",
+                "1",
+                "0"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "6",
+              "correct": "8",
+              "choices": [
+                "7",
+                "9",
+                "6",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "6",
+              "op": "+",
+              "b": "4",
+              "correct": "10",
+              "choices": [
+                "11",
+                "10",
+                "8",
+                "9"
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -2391,7 +2777,7 @@
         ]
       },
       "generatedAt": "2026-06-03T09:38:48.158Z",
-      "updatedAt": "2026-06-03T09:38:48.182Z",
+      "updatedAt": "2026-06-06T16:10:05.963Z",
       "id": "tp_579238210"
     },
     {
@@ -5952,39 +6338,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "The trigger: a small, colourful creature wheh ling ears and a floral pattern is hapyly hopping across a meadow. Suddenly, a tree frog asks: “Who are you?” A the creature doesn’t know its name, it begins to doubt itself. \n\nThe search: The creature sets off on a journey to find out who it belongs to. It meets many different animals – including horses, birds, dogs and fish. Although it discovers certain similarities with each animal, it is not 100 percemt like any of them. \n\nThe realisation: Sad and exhausted, the creature finally wonders whether it exists at all. But then it stops abruptly, reflects on itself and cries out loudly: “Of course I exist: I AM ME!” It accepts and loves itself exactly as it is.",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "happily",
-              "replace": "hapyly",
-              "reason": "omitting a letter in a plausible novice mistake"
-            },
-            {
-              "type": "grammar",
-              "find": "As",
-              "replace": "A",
-              "reason": "wrong article for singular subject"
-            },
-            {
-              "type": "spelling",
-              "find": "per cent",
-              "replace": "percemt",
-              "reason": "omitting a letter in a plausible novice mistake"
-            },
-            {
-              "type": "grammar",
-              "find": "it",
-              "replace": "he",
-              "reason": "wrong gender on pronoun"
-            },
-            {
-              "type": "grammar",
-              "find": "on",
-              "replace": "in",
-              "reason": "wrong preposition"
-            }
-          ]
+          "corruptedStory": "The trigger: a small, colourful creature wheh ling ears and a floral pattern is hapyly hopping across a meadow. Suddenly, a tree frog asks: “Who are you?” A the creature doesn’t know its name, it begins to doubt itself. \n\nThe search: The creature sets off on a journey to find out who it belongs to. It meets many different animals – including horses, birds, dogs and fish. Although it discovers certain similarities with each animal, it is not 100 percemt like any of them. \n\nThe realisation: Sad and exhausted, the creature finally wonders whether it exists at all. But then it stops abruptly, reflects on itself and cries out loudly: “Of course I exist: I AM ME!” It accepts and loves itself exactly as it is."
         }
       ],
       "generationStats": {
@@ -6183,39 +6537,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Martin paused, his mind wandered to the vibrant world of Jewish humor, a thred that wove through the fabric of history. “Tell us a modern, meta-humorous take on a classic joke,” he suggested, his eyes twinklingly with curiosity. “A rabbi, a priest, and an imah walk into a bar. The bartender asks, ‘Is this a joke?’”\n\nThe rain had slowed to a gentle patter, and the café around them seemed to come alive with the warmth of their shared laughter. “Sure,” Martin continued, “let’s give it a try. The rabbi says, ‘Of course it’s a joke. We’re in a bar, after all. But I’ll tell you what, let’s make it a good one. I’ll start: I’m here to discuss the eternal question of faith and reason. What do you think, priest and imam?’”\n\nThe priest leaned forward, his eyes narrowing in mock-seriousness. “Well, rabbi, I’ve always believed that faith is a matter of the heart, not the head. But I suppose we can play along. What’s your take, imam?”\n\nThe imam nodded, his voice steady. “Indeed, faith is a journey of the soul. But let’s see where this goes. So, rabbi, what’s your point?”\n\nMartin chuckled, enjoying the playful banter. “Alright, let’s make it a bit meta. The rabbi replies, ‘Well, I’m here to discuss the eternal question of faith and reason, but I’m also here to remind you that sometimes, the best way to find answers is to laugh at the questions. So, what do you think, priest and imam? Is this a joke, or are we really here to talk about something profound?’”\n\nThe bartender, who had been listening intently, finally chimed in with a smile. “You know, I’ve been thinking about this. Maybe it’s both. Sometimes, the most profound questions are best answered with a good laugh. And sometimes, the best laughs come from the most profound questions.”",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "wandering",
-              "replace": "wandered",
-              "reason": "past tense needed for 'wander'"
-            },
-            {
-              "type": "spelling",
-              "find": "thread",
-              "replace": "thred",
-              "reason": "common misspelling of 'thread'"
-            },
-            {
-              "type": "grammar",
-              "find": "twinkling",
-              "replace": "twinklingly",
-              "reason": "needs to be an adverb"
-            },
-            {
-              "type": "grammar",
-              "find": "mock seriousness",
-              "replace": "mock-seriousness",
-              "reason": "should be a singular noun"
-            },
-            {
-              "type": "spelling",
-              "find": "imam",
-              "replace": "imah",
-              "reason": "common misspelling of 'imam'"
-            }
-          ]
+          "corruptedStory": "Martin paused, his mind wandered to the vibrant world of Jewish humor, a thred that wove through the fabric of history. “Tell us a modern, meta-humorous take on a classic joke,” he suggested, his eyes twinklingly with curiosity. “A rabbi, a priest, and an imah walk into a bar. The bartender asks, ‘Is this a joke?’”\n\nThe rain had slowed to a gentle patter, and the café around them seemed to come alive with the warmth of their shared laughter. “Sure,” Martin continued, “let’s give it a try. The rabbi says, ‘Of course it’s a joke. We’re in a bar, after all. But I’ll tell you what, let’s make it a good one. I’ll start: I’m here to discuss the eternal question of faith and reason. What do you think, priest and imam?’”\n\nThe priest leaned forward, his eyes narrowing in mock-seriousness. “Well, rabbi, I’ve always believed that faith is a matter of the heart, not the head. But I suppose we can play along. What’s your take, imam?”\n\nThe imam nodded, his voice steady. “Indeed, faith is a journey of the soul. But let’s see where this goes. So, rabbi, what’s your point?”\n\nMartin chuckled, enjoying the playful banter. “Alright, let’s make it a bit meta. The rabbi replies, ‘Well, I’m here to discuss the eternal question of faith and reason, but I’m also here to remind you that sometimes, the best way to find answers is to laugh at the questions. So, what do you think, priest and imam? Is this a joke, or are we really here to talk about something profound?’”\n\nThe bartender, who had been listening intently, finally chimed in with a smile. “You know, I’ve been thinking about this. Maybe it’s both. Sometimes, the most profound questions are best answered with a good laugh. And sometimes, the best laughs come from the most profound questions.”"
         }
       ],
       "generationStats": {
@@ -7681,33 +8003,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Dr. Carter's reflection was interrupted by a series of emails from her colleagues in Germany. The messages detailed the challenges they faced when scaling up the process in comercial reactors. The yield was disappointingly low. and the biorectors struggled to maintain the optimal conditions for both cyanobacterial growth and product synthesis. The emails highlighted the need for further optimization, particularly in terms of light exposure and aeration. They also noted that while a high pH was essential for efficient growth, it was detrimental to the production of 3-HP.\n\nDetermined to address these issues, Dr. Carter convened a virtual meeting with her German counterparts. The discussion was intense, with each team sharing their findings and proposing potential solution. Dr. Carter suggested a series of experiments to fine-tune the light and gas supply, aiming to find a balance that would support both growth and product synthesis. She also proposed conducting pH trials to identify the optimal range for 3-HP production without compromising bacterial growth.\n\nThe team decided to collaborate on a pilot project, combining resources and expertise to develop a more efficient bioreactor system. Dr. Carter and her team in the United States would focus on optimizing the growth conditions, while the German team would handle the downstream processing and product analysis. They agreed to share regular updates and results, ensuring that the project remained on track and that any breakthroughs could be quickly integrated into the ongoing research.\n\nAs the teams worked together, the bioreactors continued to operate, their blue contents a symbol of the ongoing effort to harness nature's power for sustainable innovation. The challenges were significant, but the potential rewards—reduced reliance on petroleum, a more sustainable future—provided the motivation needed to push through the difficulties. The collaboration between the two teams represented a crucial step in the journey towards a more environmentally conscious industrial landscape.",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "commercial",
-              "replace": "comercial",
-              "reason": "Common misspelling of 'commercial'"
-            },
-            {
-              "type": "grammar",
-              "find": "The yield was disappointingly low,",
-              "replace": "The yield was disappointingly low.",
-              "reason": "Incorrect verb form for singular subject 'yield'"
-            },
-            {
-              "type": "spelling",
-              "find": "bioreactors",
-              "replace": "biorectors",
-              "reason": "Typical misspelling of 'bioreactors'"
-            },
-            {
-              "type": "grammar",
-              "find": "The discussion was intense, with each team sharing their findings and proposing potential solutions.",
-              "replace": "The discussion was intense, with each team sharing their findings and proposing potential solution.",
-              "reason": "Singular noun 'solution' should match singular verb 'proposing'"
-            }
-          ]
+          "corruptedStory": "Dr. Carter's reflection was interrupted by a series of emails from her colleagues in Germany. The messages detailed the challenges they faced when scaling up the process in comercial reactors. The yield was disappointingly low. and the biorectors struggled to maintain the optimal conditions for both cyanobacterial growth and product synthesis. The emails highlighted the need for further optimization, particularly in terms of light exposure and aeration. They also noted that while a high pH was essential for efficient growth, it was detrimental to the production of 3-HP.\n\nDetermined to address these issues, Dr. Carter convened a virtual meeting with her German counterparts. The discussion was intense, with each team sharing their findings and proposing potential solution. Dr. Carter suggested a series of experiments to fine-tune the light and gas supply, aiming to find a balance that would support both growth and product synthesis. She also proposed conducting pH trials to identify the optimal range for 3-HP production without compromising bacterial growth.\n\nThe team decided to collaborate on a pilot project, combining resources and expertise to develop a more efficient bioreactor system. Dr. Carter and her team in the United States would focus on optimizing the growth conditions, while the German team would handle the downstream processing and product analysis. They agreed to share regular updates and results, ensuring that the project remained on track and that any breakthroughs could be quickly integrated into the ongoing research.\n\nAs the teams worked together, the bioreactors continued to operate, their blue contents a symbol of the ongoing effort to harness nature's power for sustainable innovation. The challenges were significant, but the potential rewards—reduced reliance on petroleum, a more sustainable future—provided the motivation needed to push through the difficulties. The collaboration between the two teams represented a crucial step in the journey towards a more environmentally conscious industrial landscape."
         }
       ],
       "generationStats": {
@@ -8109,33 +8405,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "In the heart of a bustling biotecnology research facility, Dr. Eliza Carter stood before a vast array of glass tanks, each containing a vibrant blue liquid. This tanks housed a unique and promising microorganism: cyanobacteria, known for their ability to harness sunlight and convert it into energy through photosynthesis. Dr. Carter's research aimed to harness this natural process to generate renewable energy, a critical step in the transition towards sustainable practices.\n\nCyanobacteria, with their ancient lineage and remarkable adaptability, offered a promising solution. They could be engineered to produce hydrogen, a clean and efficient fuel, through the process called photobiological hydrogen production. Dr. Carter's team had already optimized the conditions for these bacteria, ensuring they thrived under controlled light and nutrient-rich environments. The tanks, each a square meter in size, were arranged in a meticulously planned configuration, maximizing the surface area for sunlight exposure.\n\nOne morning, as the first rays of sunlight pierced through the skylights, Dr. Carter initiated the process. The cyanobacteria, already primed with the necessary genetic modifications, began to photosynthesize, their blue pigments shimmering under the light. As the day progressed, the tanks bubbled gently, releasing hydrogen gas into a collection system. This process, while simple in its basic principle, required precise control over environmental factors such as light intensity, temperature, and nutrient supply.\n\nThe success of this project did not end with energy production. Cyanobacteria also held the potential to produce enzymes and specific chemicals through metabolic engineering. Dr. Carter's team had identified certain cyanobacterial strains capable of synthesizing biofuels and pharmaceuticals. By introducing specific genes, they could tailor the bacteria to produce these compounds in large quantities. The bioreactor, now equipped with advanced monitoring systems, tracked the metabolic activity in real-time, allowing for adjustments to optimize yield.\n\nOne of the most promising applications was the production of a biofuel precursor, 3-hydroxypropionic acid (3-HP). This compound could be further processed into a variety of biodegradable plastics, reducing reliance on petroleum-based products. The bioreactors, now humming with activity, produced 3-HP at a rate that exceeded initial expectations. The team conducted rigorous tests, confirming the quality and purity of the product, which was then sent for further processing.\n\nAs the project neared its conclusion, Dr. Carter reflected on the potential impact of her work. The ability to harness cyanobacteria for energy production and chemical synthesis represented a significant step towards a more sustainable future. The bioreactors, now a testament to human ingenuity and environmental stewardship, continued to operate, their blue contents a symbol of hope and innovation.",
-          "edits": [
-            {
-              "type": "grammar",
-              "find": "These tanks",
-              "replace": "This tanks",
-              "reason": "Subject-verb agreement: 'These tanks' should be 'These tanks are'"
-            },
-            {
-              "type": "spelling",
-              "find": "biotechnology",
-              "replace": "biotecnology",
-              "reason": "Typo: 'biotechnology' should be 'biotechnology'"
-            },
-            {
-              "type": "grammar",
-              "find": "through a process",
-              "replace": "through the process",
-              "reason": "Article missing: 'through the process'"
-            },
-            {
-              "type": "spelling",
-              "find": "bioreactors",
-              "replace": "bioreactor",
-              "reason": "Plural error: 'bioreactors' should be 'bioreactors'"
-            }
-          ]
+          "corruptedStory": "In the heart of a bustling biotecnology research facility, Dr. Eliza Carter stood before a vast array of glass tanks, each containing a vibrant blue liquid. This tanks housed a unique and promising microorganism: cyanobacteria, known for their ability to harness sunlight and convert it into energy through photosynthesis. Dr. Carter's research aimed to harness this natural process to generate renewable energy, a critical step in the transition towards sustainable practices.\n\nCyanobacteria, with their ancient lineage and remarkable adaptability, offered a promising solution. They could be engineered to produce hydrogen, a clean and efficient fuel, through the process called photobiological hydrogen production. Dr. Carter's team had already optimized the conditions for these bacteria, ensuring they thrived under controlled light and nutrient-rich environments. The tanks, each a square meter in size, were arranged in a meticulously planned configuration, maximizing the surface area for sunlight exposure.\n\nOne morning, as the first rays of sunlight pierced through the skylights, Dr. Carter initiated the process. The cyanobacteria, already primed with the necessary genetic modifications, began to photosynthesize, their blue pigments shimmering under the light. As the day progressed, the tanks bubbled gently, releasing hydrogen gas into a collection system. This process, while simple in its basic principle, required precise control over environmental factors such as light intensity, temperature, and nutrient supply.\n\nThe success of this project did not end with energy production. Cyanobacteria also held the potential to produce enzymes and specific chemicals through metabolic engineering. Dr. Carter's team had identified certain cyanobacterial strains capable of synthesizing biofuels and pharmaceuticals. By introducing specific genes, they could tailor the bacteria to produce these compounds in large quantities. The bioreactor, now equipped with advanced monitoring systems, tracked the metabolic activity in real-time, allowing for adjustments to optimize yield.\n\nOne of the most promising applications was the production of a biofuel precursor, 3-hydroxypropionic acid (3-HP). This compound could be further processed into a variety of biodegradable plastics, reducing reliance on petroleum-based products. The bioreactors, now humming with activity, produced 3-HP at a rate that exceeded initial expectations. The team conducted rigorous tests, confirming the quality and purity of the product, which was then sent for further processing.\n\nAs the project neared its conclusion, Dr. Carter reflected on the potential impact of her work. The ability to harness cyanobacteria for energy production and chemical synthesis represented a significant step towards a more sustainable future. The bioreactors, now a testament to human ingenuity and environmental stewardship, continued to operate, their blue contents a symbol of hope and innovation."
         }
       ],
       "generationStats": {
@@ -8389,69 +8659,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwikkelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre. ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunlich Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeit kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen.. Ich bin bereit, meine Fähigkeiten und meine Leidenschaften für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "entwickelt",
-              "replace": "entwikkelt",
-              "reason": "Typo: Double 'e' to 't'"
-            },
-            {
-              "type": "grammar",
-              "find": "erkläre",
-              "replace": "erkläre.",
-              "reason": "Missing period at the end of the sentence"
-            },
-            {
-              "type": "grammar",
-              "find": "erstaunliche",
-              "replace": "erstaunlich",
-              "reason": "Wrong verb ending for plural subject 'Resultate'"
-            },
-            {
-              "type": "spelling",
-              "find": "zusammenarbeiten",
-              "replace": "zusammenarbeit",
-              "reason": "Wrong vowel: 'o' should be 'a'"
-            },
-            {
-              "type": "grammar",
-              "find": "wertschätzen",
-              "replace": "wertschätzen.",
-              "reason": "Missing period at the end of the sentence"
-            },
-            {
-              "type": "spelling",
-              "find": "Leidenschaft",
-              "replace": "Leidenschaften",
-              "reason": "Missing 'n' to make it plural"
-            },
-            {
-              "type": "correction",
-              "find": "entwickelt,",
-              "replace": "entwikkelt,",
-              "reason": ""
-            },
-            {
-              "type": "correction",
-              "find": "zu optimieren.",
-              "replace": "optimiert zu haben.",
-              "reason": "wrong time"
-            },
-            {
-              "type": "correction",
-              "find": "wertschätzen.",
-              "replace": "wertschätzen..",
-              "reason": ""
-            },
-            {
-              "type": "error",
-              "find": "optimieren.\"",
-              "replace": "haben.\"",
-              "reason": ""
-            }
-          ]
+          "corruptedStory": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwikkelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre. ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunlich Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeit kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaften für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\""
         },
         {
           "id": "ls_373990566",
@@ -9288,7 +9496,7 @@
       "srcLang": "en",
       "difficulty": 2,
       "storyLen": 500,
-      "story": "Ich bin ein Mathematiker mit einem Doktorgrad in den Naturwissenschaften. Meine Forschungsschwerpunkte liegen in der theoretischen Mathematik und der Quantenphysik. In meiner Heimatland USA habe ich an renommierten Universitäten gearbeitet und veröffentlicht. Jetzt bin ich hier, in Deutschland, wo ich nach einem Job suche. Allerdings fehlt mir etwas, das mich bisher daran hinderte, mich um eine Stelle zu bewerben: Deutsch.\n\nIch habe mich mit dem Sprachlernen intensiv beschäftigt. In den letzten Monaten habe ich Kurs nach Kurs besucht, Bücher gelesen und Videos angesehen. Meine Kollegen und Freunde hier in Deutschland haben mir auch geholfen, mich in einfache Gespräche zu verständigen. Doch die Jobanträge und -interviews, die ich bisher vorgelegt habe, haben mich immer wieder enttäuscht. Die Bewerbungsmaterialien sind in deutscher Sprache, und die Interviews, die ich durchlaufen habe, sind in einem Tempo, das mir zu schnell ist.\n\nIch bin entschlossen, mein Deutsch zu verbessern. Ich habe mich für ein intensives Sprachkurs angemeldet, das speziell für Fachkräfte konzipiert ist. Die Lehrer hier sind erfahren und verstehen die Herausforderungen, die ich als Fachmann mit einem Doktorgrad in den Naturwissenschaften face. Sie betonen nicht nur die grammatischen Regeln und die Vokabeln, sondern auch die Fachsprache, die in der Mathematik und den Naturwissenschaften verwendet wird.\n\nIn den Kursen lerne ich mit anderen Fachkräften, die ebenfalls ihre Sprachkenntnisse verbessern möchten. Wir teilen unsere Erfahrungen und helfen einander, uns in die deutsche Arbeitswelt einzufügen. Ich bin dankbar für die Unterstützung und die Motivation, die ich hier finde. Ich weiß, dass ich noch viel zu lernen habe, aber ich bin bereit, hart zu arbeiten und mein Ziel zu erreichen.\n\nIch bin überzeugt, dass ich in Deutschland einen Job finden kann, der meine Fähigkeiten und Erfahrungen wertschätzt. Ich werde weiterhin hart arbeiten, um mein Deutsch zu verbessern, und ich bin sicher, dass ich bald in der Lage sein werde, mich in Jobanträge und -interviews in deutscher Sprache zu bewerben.",
+      "story": "Ich bin ein Mathematiker mit einem Doktorgrad in den Naturwissenschaften. Meine Forschungsschwerpunkte liegen in der theoretischen Mathematik und der Quantenphysik. In meinem Heimatland USA habe ich an renommierten Universitäten gearbeitet und veröffentlicht. Jetzt bin ich hier, in Deutschland, wo ich nach einem Job suche. Allerdings fehlt mir etwas, das mich bisher daran hinderte, mich um eine Stelle zu bewerben: Deutsch.\n\nIch habe mich mit dem Sprachlernen intensiv beschäftigt. In den letzten Monaten habe ich Kurs nach Kurs besucht, Bücher gelesen und Videos angesehen. Meine Kollegen und Freunde hier in Deutschland haben mir auch geholfen, mich in einfachen Gesprächen zu verständigen. Doch die Jobanträge und -interviews, die ich bisher vorgelegt habe, haben mich immer wieder enttäuscht. Die Bewerbungsmaterialien sind in deutscher Sprache, und die Interviews, die ich durchlaufen habe, sind in einem Tempo, das mir zu schnell ist.\n\nIch bin entschlossen, mein Deutsch zu verbessern. Ich habe mich für einen intensiven Sprachkurs angemeldet, der speziell für Fachkräfte konzipiert ist. Die Lehrer hier sind erfahren und verstehen die Herausforderungen, die ich als Fachmann mit einem Doktorgrad in den Naturwissenschaften habe. Sie betonen nicht nur die grammatischen Regeln und die Vokabeln, sondern auch die Fachsprache, die in der Mathematik und den Naturwissenschaften verwendet wird.\n\nIn den Kursen lerne ich mit anderen Fachkräften, die ebenfalls ihre Sprachkenntnisse verbessern möchten. Wir teilen unsere Erfahrungen und helfen einander, uns in die deutsche Arbeitswelt einzufügen. Ich bin dankbar für die Unterstützung und die Motivation, die ich hier finde. Ich weiß, dass ich noch viel zu lernen habe, aber ich bin bereit, hart zu arbeiten, um meine Ziel zu erreichen.\n\nIch bin überzeugt, dass ich in Deutschland einen Arbeitgeber finden kann, der meine Fähigkeiten und Erfahrungen wertschätzt. Ich werde weiterhin hart arbeiten, um mein Deutsch zu verbessern, und ich bin sicher, dass ich bald in der Lage sein werde, mich in Jobanträgen und -interviews in deutscher Sprache zu bewerben.",
       "storyLang": "de",
       "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Clear, factual, neutral tone — no narrative flourish.\n\nWrite a story for the topic: \"i am looking for a job in germany, i a a mathematician, and i have a phd in natural sciences, but i need to know german for job application interviews\". Plain prose, no headings.",
       "storyStyle": "neutral",
@@ -9430,6 +9638,61 @@
               "plural": "Angestellte"
             }
           ]
+        },
+        {
+          "id": "aeh_1780744238872",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a human tutor.",
+          "icon": "🔎",
+          "aiStory": "Ich bin ein Mathematiker mit einem Doktorgrad in den Naturwissenschaften. Meine Forschungsschwerpunkte liegen in der theoretischen Mathematik und der Quantenphysik. In meiner Heimatland USA habe ich an renommierten Universitäten gearbeitet und veröffentlicht. Jetzt bin ich hier, in Deutschland, wo ich nach einem Job suche. Allerdings fehlt mir etwas, das mich bisher daran hinderte, mich um eine Stelle zu bewerben: Deutsch.\n\nIch habe mich mit dem Sprachlernen intensiv beschäftigt. In den letzten Monaten habe ich Kurs nach Kurs besucht, Bücher gelesen und Videos angesehen. Meine Kollegen und Freunde hier in Deutschland haben mir auch geholfen, mich in einfache Gespräche zu verständigen. Doch die Jobanträge und -interviews, die ich bisher vorgelegt habe, haben mich immer wieder enttäuscht. Die Bewerbungsmaterialien sind in deutscher Sprache, und die Interviews, die ich durchlaufen habe, sind in einem Tempo, das mir zu schnell ist.\n\nIch bin entschlossen, mein Deutsch zu verbessern. Ich habe mich für ein intensives Sprachkurs angemeldet, das speziell für Fachkräfte konzipiert ist. Die Lehrer hier sind erfahren und verstehen die Herausforderungen, die ich als Fachmann mit einem Doktorgrad in den Naturwissenschaften face. Sie betonen nicht nur die grammatischen Regeln und die Vokabeln, sondern auch die Fachsprache, die in der Mathematik und den Naturwissenschaften verwendet wird.\n\nIn den Kursen lerne ich mit anderen Fachkräften, die ebenfalls ihre Sprachkenntnisse verbessern möchten. Wir teilen unsere Erfahrungen und helfen einander, uns in die deutsche Arbeitswelt einzufügen. Ich bin dankbar für die Unterstützung und die Motivation, die ich hier finde. Ich weiß, dass ich noch viel zu lernen habe, aber ich bin bereit, hart zu arbeiten und mein Ziel zu erreichen.\n\nIch bin überzeugt, dass ich in Deutschland einen Job finden kann, der meine Fähigkeiten und Erfahrungen wertschätzt. Ich werde weiterhin hart arbeiten, um mein Deutsch zu verbessern, und ich bin sicher, dass ich bald in der Lage sein werde, mich in Jobanträge und -interviews in deutscher Sprache zu bewerben.",
+          "sentences": [
+            {
+              "ai": "In meiner Heimatland USA habe ich an renommierten Universitäten gearbeitet und veröffentlicht.",
+              "corrected": "In meinem Heimatland USA habe ich an renommierten Universitäten gearbeitet und veröffentlicht.",
+              "reason": ""
+            },
+            {
+              "ai": "mich in einfache Gespräche zu verständigen.",
+              "corrected": "mich in einfachen Gesprächen zu verständigen.",
+              "reason": ""
+            },
+            {
+              "ai": "Ich habe mich für ein intensives Sprachkurs angemeldet,",
+              "corrected": "Ich habe mich für einen intensiven Sprachkurs angemeldet,",
+              "reason": ""
+            },
+            {
+              "ai": "das speziell für Fachkräfte konzipiert ist.",
+              "corrected": "der speziell für Fachkräfte konzipiert ist.",
+              "reason": ""
+            },
+            {
+              "ai": "die ich als Fachmann mit einem Doktorgrad in den Naturwissenschaften face.",
+              "corrected": "die ich als Fachmann mit einem Doktorgrad in den Naturwissenschaften habe.",
+              "reason": ""
+            },
+            {
+              "ai": "hart zu arbeiten und mein Ziel zu erreichen.",
+              "corrected": "hart zu arbeiten,",
+              "reason": ""
+            },
+            {
+              "ai": null,
+              "corrected": "um meine Ziel zu erreichen.",
+              "reason": ""
+            },
+            {
+              "ai": "dass ich in Deutschland einen Job finden kann,",
+              "corrected": "dass ich in Deutschland einen Arbeitgeber finden kann,",
+              "reason": ""
+            },
+            {
+              "ai": "mich in Jobanträge und -interviews in deutscher Sprache zu bewerben.",
+              "corrected": "mich in Jobanträgen und -interviews in deutscher Sprache zu bewerben.",
+              "reason": ""
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -9447,14 +9710,15 @@
         ]
       },
       "generatedAt": "2026-06-01T17:53:08.297Z",
-      "updatedAt": "2026-06-04T15:06:20.451Z",
+      "updatedAt": "2026-06-06T13:20:51.559Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 586714,
         "promptTokens": 2540,
         "completionTokens": 979
       },
-      "id": "tp_1583248379"
+      "id": "tp_1583248379",
+      "aiStory": "Ich bin ein Mathematiker mit einem Doktorgrad in den Naturwissenschaften. Meine Forschungsschwerpunkte liegen in der theoretischen Mathematik und der Quantenphysik. In meiner Heimatland USA habe ich an renommierten Universitäten gearbeitet und veröffentlicht. Jetzt bin ich hier, in Deutschland, wo ich nach einem Job suche. Allerdings fehlt mir etwas, das mich bisher daran hinderte, mich um eine Stelle zu bewerben: Deutsch.\n\nIch habe mich mit dem Sprachlernen intensiv beschäftigt. In den letzten Monaten habe ich Kurs nach Kurs besucht, Bücher gelesen und Videos angesehen. Meine Kollegen und Freunde hier in Deutschland haben mir auch geholfen, mich in einfache Gespräche zu verständigen. Doch die Jobanträge und -interviews, die ich bisher vorgelegt habe, haben mich immer wieder enttäuscht. Die Bewerbungsmaterialien sind in deutscher Sprache, und die Interviews, die ich durchlaufen habe, sind in einem Tempo, das mir zu schnell ist.\n\nIch bin entschlossen, mein Deutsch zu verbessern. Ich habe mich für ein intensives Sprachkurs angemeldet, das speziell für Fachkräfte konzipiert ist. Die Lehrer hier sind erfahren und verstehen die Herausforderungen, die ich als Fachmann mit einem Doktorgrad in den Naturwissenschaften face. Sie betonen nicht nur die grammatischen Regeln und die Vokabeln, sondern auch die Fachsprache, die in der Mathematik und den Naturwissenschaften verwendet wird.\n\nIn den Kursen lerne ich mit anderen Fachkräften, die ebenfalls ihre Sprachkenntnisse verbessern möchten. Wir teilen unsere Erfahrungen und helfen einander, uns in die deutsche Arbeitswelt einzufügen. Ich bin dankbar für die Unterstützung und die Motivation, die ich hier finde. Ich weiß, dass ich noch viel zu lernen habe, aber ich bin bereit, hart zu arbeiten und mein Ziel zu erreichen.\n\nIch bin überzeugt, dass ich in Deutschland einen Job finden kann, der meine Fähigkeiten und Erfahrungen wertschätzt. Ich werde weiterhin hart arbeiten, um mein Deutsch zu verbessern, und ich bin sicher, dass ich bald in der Lage sein werde, mich in Jobanträge und -interviews in deutscher Sprache zu bewerben."
     },
     {
       "topic": "Winnie  adore le miel",
@@ -11923,45 +12187,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Una volta ripresosi, Marko sah Giulia mit einem neuen, tiefen Respekt an. Ihre Hände, die immer noch seine umklammerten, berührten ihn in einer Weise, die er noch nie zuvor empfunden hatte. Er wusste, dass er in sie verliebt war, aber er wusste auch, dass sie ihm mehr als nur eine Liebe bedeutete. Sie war seine Partnerin, seine Verbündete, seine Seele im Tans.\n\nGiulia bemerkt den veränderten Blick in seinen Augen und lächelte sanft. Sie wusste, dass sie Marco nicht verlieren durfte, nicht jetzt, nicht nach allem, was sie durchgemacht hatten. Sie strich ihm sanft über die Wange. \"Ich liebe dich,\" flüsterte sie. \"Aber ich liebe auch Clara. Sie ist meine Seele im Tanz.\"\n\nMarco nickte, verstand und fühlte sich erleichtert.. Er wusste, dass Giulia stets doppelt war – seine Partnerin und ihre Seele im Tanz. Er würde sie nicht verdrängen, sondern sie verehren, wie sie es verdiente. Er drückte ihre Hand und versprach: \"Ich werde dich immer respektieren, Giulia. Und ich werde dich immer lieben.\"\n\nDie Tage vergingen, und Marco schritt langsam, aber sicher auf dem Pfad der Genesun. Giulia blieb bei ihm, ihre Hand hielt seine, während sie gemeinsam durch die schwierigen Momente gingen.. Sie wussten, dass sie noch viele Herausforderungen vor sich hatten, aber sie waren bereit, sie gemeinsam zu meistern. Sie waren Partner, Verbündete, und sie waren einander unentbehrlich.",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "Marco",
-              "replace": "Marko",
-              "reason": "common misspelling of 'Marco'"
-            },
-            {
-              "type": "grammar",
-              "find": "Giulia bemerkte",
-              "replace": "Giulia bemerkt",
-              "reason": "wrong verb tense, present instead of past"
-            },
-            {
-              "type": "spelling",
-              "find": "Seele im Tanz",
-              "replace": "Seele im Tans",
-              "reason": "omitted 'z'"
-            },
-            {
-              "type": "grammar",
-              "find": "Marco nickte, verstand und fühlte sich erleichtert",
-              "replace": "Marco nickte, verstand und fühlte sich erleichtert.",
-              "reason": "missing period at the end of the sentence"
-            },
-            {
-              "type": "spelling",
-              "find": "Genesung",
-              "replace": "Genesun",
-              "reason": "omitted 'g'"
-            },
-            {
-              "type": "grammar",
-              "find": "sie gemeinsam durch die schwierigen Momente gingen",
-              "replace": "sie gemeinsam durch die schwierigen Momente gingen.",
-              "reason": "missing period at the end of the sentence"
-            }
-          ]
+          "corruptedStory": "Una volta ripresosi, Marko sah Giulia mit einem neuen, tiefen Respekt an. Ihre Hände, die immer noch seine umklammerten, berührten ihn in einer Weise, die er noch nie zuvor empfunden hatte. Er wusste, dass er in sie verliebt war, aber er wusste auch, dass sie ihm mehr als nur eine Liebe bedeutete. Sie war seine Partnerin, seine Verbündete, seine Seele im Tans.\n\nGiulia bemerkt den veränderten Blick in seinen Augen und lächelte sanft. Sie wusste, dass sie Marco nicht verlieren durfte, nicht jetzt, nicht nach allem, was sie durchgemacht hatten. Sie strich ihm sanft über die Wange. \"Ich liebe dich,\" flüsterte sie. \"Aber ich liebe auch Clara. Sie ist meine Seele im Tanz.\"\n\nMarco nickte, verstand und fühlte sich erleichtert. Er wusste, dass Giulia stets doppelt war – seine Partnerin und ihre Seele im Tanz. Er würde sie nicht verdrängen, sondern sie verehren, wie sie es verdiente. Er drückte ihre Hand und versprach: \"Ich werde dich immer respektieren, Giulia. Und ich werde dich immer lieben.\"\n\nDie Tage vergingen, und Marco schritt langsam, aber sicher auf dem Pfad der Genesun. Giulia blieb bei ihm, ihre Hand hielt seine, während sie gemeinsam durch die schwierigen Momente gingen. Sie wussten, dass sie noch viele Herausforderungen vor sich hatten, aber sie waren bereit, sie gemeinsam zu meistern. Sie waren Partner, Verbündete, und sie waren einander unentbehrlich."
         }
       ],
       "generationStats": {
@@ -14984,21 +15210,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Dusseldorf, una città che si sveglia lentamente sotto un cielo grigio, accoglie la domenica con un mormorio di voci e un profumo di caffè appena tritato. Il weekend inizia con una passeggiata lungo il fiume Rhine, dove le barche da crociera sussurano segreti ai passanti. Il sole si cela dietro nuvole basse, ma non riesce a spegnere la luce che si riflette sulle acque calme.\n\nNel cuore della città, il Kulturforum ospita una mostra temporanea di arte contemporanea. Le luci colorate si riflettono sui muri di vetro, creando un contrasto vivido con le opere d'arte. Un giovane artista, Marco, esplora le stanze, le sue dita sfiorano le superfici lucide. La sua mente si perde in pensieri di creazione e libertà, mentre le opere lo ispirano a un nuovo progetto.\n\nPoco lontano, nella Ruhrpott, un'area industriale che si è trasformata in un centro di arte e cultura, si svolge un festival di musica elettronica. Le luci multicolori danzano sulle facciate delle vecchie fabbriche, mentre i suoni ritmici riempiono l'aria. Un gruppo di giovani si raduna intorno a un palco, le loro teste si muovono al ritmo della musica. Il contrasto tra la vecchia industrialità e la nuova vita artistica è evidente, come se la città stessa stesse respirando e cambiando.\n\nLa sera, Duesseldorf si trasforma in un labirinto di luci e suoni. Le strade si riempiono di gente che si dirige verso i ristoranti e i bar. Un gruppo di amici si siede in un piccolo ristorante accogliente, con vetrine che mostrano piatti locali. Il vino si sciolge nelle voci, mentre le risate si mescolano con la musica che giunge dal locale accanto. La città, con i suoi contrasti e la sua vitalità, offre un weekend ricco di esperienze e emozioni.",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "Duesseldorf",
-              "replace": "Dusseldorf",
-              "reason": "Swap 'u' for 'u' (no change, but required for the rule)"
-            },
-            {
-              "type": "spelling",
-              "find": "sussurrano",
-              "replace": "sussurano",
-              "reason": "Swap 's' for 's' (no change, but required for the rule)"
-            }
-          ]
+          "corruptedStory": "Dusseldorf, una città che si sveglia lentamente sotto un cielo grigio, accoglie la domenica con un mormorio di voci e un profumo di caffè appena tritato. Il weekend inizia con una passeggiata lungo il fiume Rhine, dove le barche da crociera sussurano segreti ai passanti. Il sole si cela dietro nuvole basse, ma non riesce a spegnere la luce che si riflette sulle acque calme.\n\nNel cuore della città, il Kulturforum ospita una mostra temporanea di arte contemporanea. Le luci colorate si riflettono sui muri di vetro, creando un contrasto vivido con le opere d'arte. Un giovane artista, Marco, esplora le stanze, le sue dita sfiorano le superfici lucide. La sua mente si perde in pensieri di creazione e libertà, mentre le opere lo ispirano a un nuovo progetto.\n\nPoco lontano, nella Ruhrpott, un'area industriale che si è trasformata in un centro di arte e cultura, si svolge un festival di musica elettronica. Le luci multicolori danzano sulle facciate delle vecchie fabbriche, mentre i suoni ritmici riempiono l'aria. Un gruppo di giovani si raduna intorno a un palco, le loro teste si muovono al ritmo della musica. Il contrasto tra la vecchia industrialità e la nuova vita artistica è evidente, come se la città stessa stesse respirando e cambiando.\n\nLa sera, Duesseldorf si trasforma in un labirinto di luci e suoni. Le strade si riempiono di gente che si dirige verso i ristoranti e i bar. Un gruppo di amici si siede in un piccolo ristorante accogliente, con vetrine che mostrano piatti locali. Il vino si sciolge nelle voci, mentre le risate si mescolano con la musica che giunge dal locale accanto. La città, con i suoi contrasti e la sua vitalità, offre un weekend ricco di esperienze e emozioni."
         }
       ],
       "generationStats": {
@@ -15891,45 +16103,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "The next day, Mr. MacLeod greeted me with a warm smile, his eyes twinkling with excitement. \"Today, we'll explorate more of Scotland's rich cultural heritage,\" he said, pulling out a stack of books and a few colorful fabrics. \"We'll start with something practical—quilts.\"\n\nI watched as he demonstrated the intricate patterns and techniques, his fingers moving with a grace that seemed almost magical. \"Quilting is more than just sewing,\" he explained. \"It's a way to preserve family stories and tradition. Each stitch tells a story.\"\n\nI was fascinated, and as we worked together, I began to understand the depth of Scottish culture. Mr. MacLeod shared stories of his own family, weaving them into the fabric of our lesson. \"My grandmother used to make these,\" he said, pointing to a piece of fabric with a delicate pattern. \"She would tell us tales while she sewed.\"\n\nAs we progressed, he introduced me to hagis, the traditional Scottish dish. \"It's not just about the food,\" he said, leading me to a small kitchen where he prepared a haggis. \"It's about the community and the celebration of life.\"\n\nWe sat down to a hearty meal, the aroma of the haggis filling the air. Mr. MacLeod shared stories of Scottish festivals and traditions, his voice warm and engaging. \"Halloween, for example, has its roots in Scottish history,\" he said. \"It's a time for storytelling and celebrating the dead.\"\n\nAfter the meal, we returned to the quiltinge, each stitch a reminder of the rich tapestry of Scottish culture. As the sun set, cast a golden glow through the window, I felt a deep connection to the land and its people. Mr. MacLeod's kindness and dedication were evident in every moment, and I left his apartment that evening with a newfound appreciation for Scotland's traditions and a heart full of stories.",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "explor",
-              "replace": "explorat",
-              "reason": "Adding an extra 'a' is a common novice mistake"
-            },
-            {
-              "type": "grammar",
-              "find": "quilting",
-              "replace": "quilts",
-              "reason": "Singular noun used for plural action"
-            },
-            {
-              "type": "spelling",
-              "find": "haggis",
-              "replace": "hagis",
-              "reason": "Omitting the 'g' is a plausible mistake"
-            },
-            {
-              "type": "grammar",
-              "find": "traditions",
-              "replace": "tradition",
-              "reason": "Singular verb with plural noun"
-            },
-            {
-              "type": "spelling",
-              "find": "quilting",
-              "replace": "quiltinge",
-              "reason": "Adding an extra 'e' at the end is a common mistake"
-            },
-            {
-              "type": "grammar",
-              "find": "casting",
-              "replace": "cast",
-              "reason": "Missing 's' in the past tense"
-            }
-          ]
+          "corruptedStory": "The next day, Mr. MacLeod greeted me with a warm smile, his eyes twinkling with excitement. \"Today, we'll explorate more of Scotland's rich cultural heritage,\" he said, pulling out a stack of books and a few colorful fabrics. \"We'll start with something practical—quilts.\"\n\nI watched as he demonstrated the intricate patterns and techniques, his fingers moving with a grace that seemed almost magical. \"Quilting is more than just sewing,\" he explained. \"It's a way to preserve family stories and tradition. Each stitch tells a story.\"\n\nI was fascinated, and as we worked together, I began to understand the depth of Scottish culture. Mr. MacLeod shared stories of his own family, weaving them into the fabric of our lesson. \"My grandmother used to make these,\" he said, pointing to a piece of fabric with a delicate pattern. \"She would tell us tales while she sewed.\"\n\nAs we progressed, he introduced me to hagis, the traditional Scottish dish. \"It's not just about the food,\" he said, leading me to a small kitchen where he prepared a haggis. \"It's about the community and the celebration of life.\"\n\nWe sat down to a hearty meal, the aroma of the haggis filling the air. Mr. MacLeod shared stories of Scottish festivals and traditions, his voice warm and engaging. \"Halloween, for example, has its roots in Scottish history,\" he said. \"It's a time for storytelling and celebrating the dead.\"\n\nAfter the meal, we returned to the quiltinge, each stitch a reminder of the rich tapestry of Scottish culture. As the sun set, cast a golden glow through the window, I felt a deep connection to the land and its people. Mr. MacLeod's kindness and dedication were evident in every moment, and I left his apartment that evening with a newfound appreciation for Scotland's traditions and a heart full of stories."
         }
       ],
       "generationStats": {
@@ -17291,33 +17465,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Le ore si travutarono in giorni, e con essi la complessità dei dati che Elena e Marco analizzavano. Ora, inoltre, notavano un fenomeno interessante: l'oscllazione delle cellule non si limitava alle proteine, ma coinvolgeva anche la maggior parte delle trascrizioni genetiche. \"Questo è straordinario,\" sussurrò Marco, \"l'oscillazione non si limita alle proteine, ma coinvolge anche le trascrizioni genetiche.\"\n\nElena annuì, con un'espressione di sorpresa. \"Questo potrebbe significare che le cellule stanno svolgendo un processo di pre-classificazione spaziale delle trascrizioni, che facilita la formazione di pattern subcellulare durante il loro crescere.\"\n\n\"È come se le cellule stessero preparando il terreno per la loro crescita,\" aggiunse Marco, con un sorriso. \"Come se stessero anticipando i loro bisogni futuro, localizzando correttamente le trascrizioni coinvolte nella sintesiis proteica.\"\n\nElena si chinò sullo schermo, immergendosi nei dati. \"Questo potrebbe aprire nuove porte nella comprensione del metabolismo cellulare e della formazione di pattern subcellulare. Potremmo finalmente decifrare come le cellule gestiscono le loro risorse in modi che non avremmo mai immaginato.\"\n\n\"Ma come funziona?\" chiese Marco, curioso. \"Come le cellule riescono a prevedere i loro bisogni futuri?\"\n\n\"Potrebbe essere una forma di anticipazione,\" rispose Elena, con un sorriso. \"Come se le cellule stessero preparando un piano di risorse, prevedendo i futuri bisogni in base a come reagiscono ai cambiamenti ambientali attuali.\"\n\nLe due continuavano a lavorare, immersi nel mistero delle cellule e del loro complesso linguaggio. Ogni oscillazione, ogni trascrizione, era un passo avanti verso la comprensione di un mondo microscopico che, nonostante la sua piccolezza, conteneva segreti fondamentali per la vita stessa.",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "tramutarono",
-              "replace": "travutarono",
-              "reason": "Swap of 't' and 'r' in similar-sounding words"
-            },
-            {
-              "type": "grammar",
-              "find": "l'oscillazione",
-              "replace": "l'oscllazione",
-              "reason": "Missing 'c' in a plausible novice mistake"
-            },
-            {
-              "type": "grammar",
-              "find": "future",
-              "replace": "futuro",
-              "reason": "Wrong gender on adjective for plural subject"
-            },
-            {
-              "type": "spelling",
-              "find": "sintesi",
-              "replace": "sintesiis",
-              "reason": "Doubling the final 's' in a plausible novice mistake"
-            }
-          ]
+          "corruptedStory": "Le ore si travutarono in giorni, e con essi la complessità dei dati che Elena e Marco analizzavano. Ora, inoltre, notavano un fenomeno interessante: l'oscllazione delle cellule non si limitava alle proteine, ma coinvolgeva anche la maggior parte delle trascrizioni genetiche. \"Questo è straordinario,\" sussurrò Marco, \"l'oscillazione non si limita alle proteine, ma coinvolge anche le trascrizioni genetiche.\"\n\nElena annuì, con un'espressione di sorpresa. \"Questo potrebbe significare che le cellule stanno svolgendo un processo di pre-classificazione spaziale delle trascrizioni, che facilita la formazione di pattern subcellulare durante il loro crescere.\"\n\n\"È come se le cellule stessero preparando il terreno per la loro crescita,\" aggiunse Marco, con un sorriso. \"Come se stessero anticipando i loro bisogni futuro, localizzando correttamente le trascrizioni coinvolte nella sintesiis proteica.\"\n\nElena si chinò sullo schermo, immergendosi nei dati. \"Questo potrebbe aprire nuove porte nella comprensione del metabolismo cellulare e della formazione di pattern subcellulare. Potremmo finalmente decifrare come le cellule gestiscono le loro risorse in modi che non avremmo mai immaginato.\"\n\n\"Ma come funziona?\" chiese Marco, curioso. \"Come le cellule riescono a prevedere i loro bisogni futuri?\"\n\n\"Potrebbe essere una forma di anticipazione,\" rispose Elena, con un sorriso. \"Come se le cellule stessero preparando un piano di risorse, prevedendo i futuri bisogni in base a come reagiscono ai cambiamenti ambientali attuali.\"\n\nLe due continuavano a lavorare, immersi nel mistero delle cellule e del loro complesso linguaggio. Ogni oscillazione, ogni trascrizione, era un passo avanti verso la comprensione di un mondo microscopico che, nonostante la sua piccolezza, conteneva segreti fondamentali per la vita stessa."
         }
       ],
       "generationStats": {
@@ -18139,21 +18287,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Il cielo si oscurò rapidamente, e un tuono rimbombò nel valle. Marco e Luca, ancora esausti ma determinati, si resero che la situazione stava peggiorando. Un violento temporale si avvicinava, con tuoni e lampi che illuminavano la scena. Un lampo esplose in un fulmine così potente che il terreno tremò sotto di loro.\n\nUn attimo dopo, un rumore sordo li fece voltare. Un enorme masso di terra era scivolato giù dalla montagna, bloccando l'ambulanza. \"Oh no,\" sussurrò Luca, guardando con orrore la scena. \"Non possiamo lasciarla qui.\"\n\nLa donna, pur pallida, era ancora in preda al panico. \"Che facciamo?\" chiese, con voce tremante.\n\nMarco prese la mano della donna e la strinse con forza. \"Non preoccuparti,\" disse con calma. \"Ci penseremo noi.\"\n\nUn altro tuono rimbombò, seguito da un lampo che illuminò il cielo. Marco e Luca si guardarono, poi si avviarono verso il punto in cui trovava l'ambulanza. \"Bergrettung,\" disse Luca, chiamando il servizio di soccorso montano. \"Hanno un elicottero, speriamo che possano arrivare in tempo.\"\n\nMentre aspettavano, il temporale si intensificò. Un altro lampo illuminò la scena, e Marco e Luca videro con orrore che l'ambulanza era completamente bloccata. \"Non possiamo lasciarla qui,\" ripeté Luca, con un'espressione determinata.\n\nLa donna, vedendo la determinazione negli occhi dei due giovani, si calmò leggermente. \"Siete voi,\" disse, con un filo di voce. \"Siete qui.\"\n\nDopo alcuni minuti, il telefono di Luca squillò. \"Sì, Bergrettung,\" disse, ascoltando attentamente. \"Sì, abbiamo bisogno di un elicottero. Ci sono persone bloccate qui.\" Luca fece un respiro profondo, poi riattaccò. \"Hanno detto che ci proveranno,\" disse, guardando Marco. \"Ma non possiamo aspettare.\"\n\nCon un'ultima occhiata alla donna, Marco e Luca si avviarono verso il punto in cui si trovava l'elicottero, sperando che arrivasse in tempo.",
-          "edits": [
-            {
-              "type": "grammar",
-              "find": "Marco e Luca, ancora esausti ma determinati, si resero conto",
-              "replace": "Marco e Luca, ancora esausti ma determinati, si resero",
-              "reason": "missing verb"
-            },
-            {
-              "type": "grammar",
-              "find": "Marco e Luca si guardarono, poi si avviarono verso il punto in cui si trovava l'ambulanza",
-              "replace": "Marco e Luca si guardarono, poi si avviarono verso il punto in cui trovava l'ambulanza",
-              "reason": "wrong verb form"
-            }
-          ]
+          "corruptedStory": "Il cielo si oscurò rapedamente, e un tuono rimbombo nel valle. Marco e Luca, ancora esausti ma determianti, si resero conto che la situazione stava pegiorando. Un violento temporale si avvicinava, con tuoni e lampi che illuminava la scena. Un lampo esplose in un fulmine così potente che il terreno tremò sotto di loro.\n\nUn attimo dopo, un rumore sordo li fece voltare. Un enorme masso di terra era scivolato giù dalla montagna, bloccando l'ambulanza. \"Oh no,\" sussuro Luca, guardando con orrore la scena. \"Non possiamo lasciarla qui.\"\n\nLa donna, pur pallida, era ancora in preda al panico. \"Che facciamo?\" chiese, con voce tremante.\n\nMarco prese la mano della donna e la strinse con forza. \"Non preoccuparti,\" disse con calma. \"Ci penseremo noi.\"\n\nUn altro tuono rimbombò, seguito da un lampo che illuminò il cielo. Marco e Luca si guardarono, poi si avviarono verso il punto in cui si trovava l'ambulanza. \"Bergrettung,\" disse Luca, chiamando il servizio di soccorso montano. \"Hanno un elicottero, speriamo che possano arrivare in tempo.\"\n\nMentre aspettavano, il temporale si intensificò. Un altro lampo illuminò la scena, e Marco e Luca videro con orrore che l'ambulanza era completamente bloccata. \"Non possiamo lasciarla qui,\" ripeté Luca, con un'espressione determinata.\n\nLa donna, vedendo la determinazione negli occhi dei due giovani, si calmò leggermente. \"Siete voi,\" disse, con un filo di voce. \"Siete qui.\"\n\nDopo alcuni minuti, il telefono di Luca squillò. \"Sì, Bergrettung,\" disse, ascoltando attentamente. \"Sì, abbiamo bisogno di un elicottero. Ci sono persone bloccate qui.\" Luca fece un respiro profondo, poi riattaccò. \"Hanno detto che ci proveranno,\" disse, guardando Marco. \"Ma non possiamo aspettare.\"\n\nCon un'ultima occhiata alla donna, Marco e Luca si avviarono verso il punto in cui si trovava l'elicottero, sperando che arrivassero in tempo."
         }
       ],
       "generationStats": {
@@ -18193,33 +18327,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Entrarono nel caffé di Bozen, il calore della stanza contrastava con l'aria fredda fuori. Marco e Luka si sedettero al tavolo più vicino alla vetrina, dove potevano osservare la gente passare. Il barista, un uomo con un accento forte, si avvicinò con un sorriso. \"Caffè, signori?\" chiese.\n\n\"Per favore,\" rispose Luca, guardando intorno. \"Questo luogo ha una storia così ricca, non vedo l'ora di apprendere di più.\"\n\n\"È vero,\" disse Marco, annuendo. \"Hai sentito parlare dell'Alto Adige/Südtirol?\"\n\n\"Un po' sì,\" rispose il barista, posando due tazze di caffè davanti a loro. \"È una regione con una storia complessa, con radici tedesche e italiane.\"\n\n\"Interessante,\" commentò Luca, sorseggiando il suo caffè. \"Non sapevo molto di questa storia. Come ha iniziato?\"\n\n\"È una storia lunga,\" spiegò il barista, sedendosi accanto a loro. \"Prima della prima guerra mondiale, l'Alto Adige era parte del Regno d'Italia, ma la maggior parte della popolazione era tedesca. Dopo la guerra, con l'Alta Itália, la regione divenne parte dell'Italia.\"\n\n\"Ma non tutti erano d'accordo,\" aggiunse Marco, sorridendo. \"Ci sono stati molti conflitti per la questione linguistica e culturale.\"\n\n\"Esatto,\" confermò il barista. \"E poi, durante la seconda guerra mondiale, l'Alto Adige divenne parte del Terzo Reich, ma dopo la guerra, la regione tornò a essere italiana.\"\n\n\"È una storia molto complessa,\" osservò Luca, riflettendo. \"E ancora oggi ci sono tensioni culturali?\"\n\n\"Certamente,\" rispose il barista. \"Ma oggi, l'Alto Adige/Südtirol è una regione dove tedesco e italiano convivono pacificamente. E il caffè, come vedete, è un ottimo modo per conoscerne la storia.\"\n\nMarco e Luca, si guardarono, sorridendo. \"Sì, è vero,\" disse Luca. \"E forse potremo provarne un po' più tardi.\"\n\n\"Certamente,\" concordò Marco. \"E forse potremo scoprire ancora di più della storia di questa regione.\"\n\nIl barista annuì, sorridendo. \"Sono sicuro che lo farete. E se avete altre domande, non esitate a chiedere.\"\n\n\"Lo faremo,\" promise Luca, guardando Marco. \"E grazie per la conversazione.\"\n\n\"Di nulla,\" rispose il barista, alzandosi. \"E godetevi il caffè.\"",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "caffè",
-              "replace": "caffé",
-              "reason": "missing accent"
-            },
-            {
-              "type": "spelling",
-              "find": "Luca",
-              "replace": "Luka",
-              "reason": "wrong letter substitution"
-            },
-            {
-              "type": "grammar",
-              "find": "Marco e Luca",
-              "replace": "Marco e Luca,",
-              "reason": "missing comma"
-            },
-            {
-              "type": "spelling",
-              "find": "Alta Italia",
-              "replace": "Alta Itália",
-              "reason": "wrong accent"
-            }
-          ]
+          "corruptedStory": "Entrarono nel caffé di Bozen, il calore della stanza contrastava con l'aria fredda fuori. Marco e Luka si sedettero al tavolo più vicino alla vetrina, dove potevano osservare la gente passare. Il barista, un uomo con un accento forte, si avvicinò con un sorriso. \"Caffè, signori?\" chiese.\n\n\"Per favore,\" rispose Luca, guardando intorno. \"Questo luogo ha una storia così ricca, non vedo l'ora di apprendere di più.\"\n\n\"È vero,\" disse Marco, annuendo. \"Hai sentito parlare dell'Alto Adige/Südtirol?\"\n\n\"Un po' sì,\" rispose il barista, posando due tazze di caffè davanti a loro. \"È una regione con una storia complessa, con radici tedesche e italiane.\"\n\n\"Interessante,\" commentò Luca, sorseggiando il suo caffè. \"Non sapevo molto di questa storia. Come ha iniziato?\"\n\n\"È una storia lunga,\" spiegò il barista, sedendosi accanto a loro. \"Prima della prima guerra mondiale, l'Alto Adige era parte del Regno d'Italia, ma la maggior parte della popolazione era tedesca. Dopo la guerra, con l'Alta Itália, la regione divenne parte dell'Italia.\"\n\n\"Ma non tutti erano d'accordo,\" aggiunse Marco, sorridendo. \"Ci sono stati molti conflitti per la questione linguistica e culturale.\"\n\n\"Esatto,\" confermò il barista. \"E poi, durante la seconda guerra mondiale, l'Alto Adige divenne parte del Terzo Reich, ma dopo la guerra, la regione tornò a essere italiana.\"\n\n\"È una storia molto complessa,\" osservò Luca, riflettendo. \"E ancora oggi ci sono tensioni culturali?\"\n\n\"Certamente,\" rispose il barista. \"Ma oggi, l'Alto Adige/Südtirol è una regione dove tedesco e italiano convivono pacificamente. E il caffè, come vedete, è un ottimo modo per conoscerne la storia.\"\n\nMarco e Luca, si guardarono, sorridendo. \"Sì, è vero,\" disse Luca. \"E forse potremo provarne un po' più tardi.\"\n\n\"Certamente,\" concordò Marco. \"E forse potremo scoprire ancora di più della storia di questa regione.\"\n\nIl barista annuì, sorridendo. \"Sono sicuro che lo farete. E se avete altre domande, non esitate a chiedere.\"\n\n\"Lo faremo,\" promise Luca, guardando Marco. \"E grazie per la conversazione.\"\n\n\"Di nulla,\" rispose il barista, alzandosi. \"E godetevi il caffè.\""
         }
       ],
       "generationStats": {
@@ -18264,27 +18372,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Maria si sveglia presto, la sole le illuminava la finestra dell'agriturismo. Decise di scendere in cucina per preparare il caffè, ma si imbatté in un odore squisito che la fece fermare. Era il profumo di pappa al pomodoro e peposo stew, due specialità che aveva sognato di assaporare.\n\n\"Buongiorno, signora,\" disse la padrona di casa, sorridendo. \"Ho preparato questi piatti per la colazione. Spero che gradiscano.\"\n\nMaria si avvicinò al tavolo, il cuore in gola. \"Sono così felice di averli qui con me,\" disse, guardando i piatti davanti a sé. \"Il pappa al pomodoro è come una versione più ricca e cremosa della tradizionale panna con i pomodori, mentre il peposo stew ha un sapore profondo e speziato.\"\n\nLa padrona di casa annuì, orgogliosa. \"Sono felice che gradiscano. Questi piatti sono una parte importante della nostra cultura, e spero che li apprezzi come la cioccolata fiorentina.\"\n\nMaria prese un cucchiaio di pappa al pomodoro, il sapore le riportò alla mente i giorni passati in città, ma anche a casa sua. Mentre mangiava, si sentì avvolta da un senso di pace e appagamento. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato.",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "svegliò",
-              "replace": "sveglia",
-              "reason": "novice might confuse similar verbs"
-            },
-            {
-              "type": "grammar",
-              "find": "il",
-              "replace": "la",
-              "reason": "noun 'finestra' is feminine"
-            },
-            {
-              "type": "grammar",
-              "find": "pasta",
-              "replace": "panna",
-              "reason": "novice might confuse similar words"
-            }
-          ]
+          "corruptedStory": "Maria si sveglia presto, la sole le illuminava la finestra dell'agriturismo. Decise di scendere in cucina per preparare il caffè, ma si imbatté in un odore squisito che la fece fermare. Era il profumo di pappa al pomodoro e peposo stew, due specialità che aveva sognato di assaporare.\n\n\"Buongiorno, signora,\" disse la padrona di casa, sorridendo. \"Ho preparato questi piatti per la colazione. Spero che gradiscano.\"\n\nMaria si avvicinò al tavolo, il cuore in gola. \"Sono così felice di averli qui con me,\" disse, guardando i piatti davanti a sé. \"Il pappa al pomodoro è come una versione più ricca e cremosa della tradizionale panna con i pomodori, mentre il peposo stew ha un sapore profondo e speziato.\"\n\nLa padrona di casa annuì, orgogliosa. \"Sono felice che gradiscano. Questi piatti sono una parte importante della nostra cultura, e spero che li apprezzi come la cioccolata fiorentina.\"\n\nMaria prese un cucchiaio di pappa al pomodoro, il sapore le riportò alla mente i giorni passati in città, ma anche a casa sua. Mentre mangiava, si sentì avvolta da un senso di pace e appagamento. Era come se avesse portato con sé un pezzo di Firenze, e non poteva aspettare di godersi quei piatti che aveva amato."
         }
       ],
       "generationStats": {
@@ -19471,33 +19559,7 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "Il mattino dopo, Lucia e Marco si sedettero al piccola ristorante accanto al bagno turco. Il sole primaverile illuminava i tavoli all'aperto, e l'aria era permeata dal profumo di fiori di zucca cotto lentamente. Lucia sorseggiavano la sua birra, mentre Marco le serviva la bistecca cruda al centro, croccante intorno e tenera al centro.\n\n\"Questo è davvero delizioso,\" disse Lucia, masticando con piacere. \"E la pomodoro, come la prepari?\"\n\n\"È semplice,\" rispose Marco, sorridendo. \"Latte, burro, polenta, zucca e spezie. Un tocco di passione e pazienza, e la magia si manifesta.\"",
-          "edits": [
-            {
-              "type": "spelling",
-              "find": "piccolo",
-              "replace": "piccola",
-              "reason": "gender error on feminine noun"
-            },
-            {
-              "type": "spelling",
-              "find": "cotti",
-              "replace": "cotto",
-              "reason": "plural error on adjective"
-            },
-            {
-              "type": "grammar",
-              "find": "sorseggiava",
-              "replace": "sorseggiavano",
-              "reason": "wrong verb form for plural subject"
-            },
-            {
-              "type": "grammar",
-              "find": "polenta",
-              "replace": "pomodoro",
-              "reason": "wrong noun used"
-            }
-          ]
+          "corruptedStory": "Il mattino dopo, Lucia e Marco si sedettero al piccola ristorante accanto al bagno turco. Il sole primaverile illuminava i tavoli all'aperto, e l'aria era permeata dal profumo di fiori di zucca cotto lentamente. Lucia sorseggiavano la sua birra, mentre Marco le serviva la bistecca cruda al centro, croccante intorno e tenera al centro.\n\n\"Questo è davvero delizioso,\" disse Lucia, masticando con piacere. \"E la pomodoro, come la prepari?\"\n\n\"È semplice,\" rispose Marco, sorridendo. \"Latte, burro, polenta, zucca e spezie. Un tocco di passione e pazienza, e la magia si manifesta.\""
         }
       ],
       "generationStats": {

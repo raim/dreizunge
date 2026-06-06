@@ -189,7 +189,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .placed-tok:hover{opacity:.75}.placed-tok.sel-tok{background:var(--yellow);border-color:var(--yellow);color:#7a5800;box-shadow:0 2px 0 #c8960070}
 .sbox-ph{font-size:13px;color:var(--gray);font-style:italic}
 .wbank{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
-.tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}.eh-tok{display:inline;cursor:pointer;border-radius:3px;padding:1px 2px;transition:background .1s}.eh-tok.suspect{background:#ffe066;outline:2px solid #f5a623}.eh-tok.correct-mark{background:#c8f7c5;outline:2px solid #4caf50}.eh-tok.missed-mark{text-decoration:underline wavy #f5a623}.eh-tok.wrong-mark{background:#ffd0d0;outline:2px solid #e53935}.eh-wrap{line-height:2.2;font-size:15px;margin:10px 0;padding:12px;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid)}.eh-score{font-size:24px;font-weight:900;text-align:center;margin:14px 0}
+.tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}.eh-tok{display:inline;cursor:pointer;border-radius:3px;padding:1px 2px;transition:background .1s}.eh-tok.suspect{background:#ffe066;outline:2px solid #f5a623}.eh-tok.correct-mark{background:#c8f7c5;outline:2px solid #4caf50}.eh-tok.missed-mark{text-decoration:underline wavy #f5a623}.eh-tok.wrong-mark{background:#ffd0d0;outline:2px solid #e53935}.eh-wrap{line-height:2.2;font-size:15px;margin:10px 0;padding:12px;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid)}.eh-score{font-size:24px;font-weight:900;text-align:center;margin:14px 0}.aeh-wrap{font-size:14px;line-height:2.1;padding:12px;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);margin:10px 0}.aeh-sent{cursor:pointer;border-radius:3px;padding:1px 3px;transition:background .1s}.aeh-sent.suspect{background:#ffe066;outline:2px solid #f5a623}.aeh-sent.correct-mark{background:#c8f7c5;outline:2px solid #4caf50}.aeh-sent.missed-mark{background:#fde8c8;outline:2px solid #fd7e14}.aeh-sent.wrong-mark{background:#ffd0d0;outline:2px solid #e53935}
 .tok:hover{border-color:var(--blue)}
 .tok.used{opacity:.15;pointer-events:none}
 .type-input{width:100%;padding:12px 14px;font-size:16px;font-weight:700;border:2.5px solid var(--gray-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:var(--white);outline:none;margin-top:8px}
@@ -646,6 +646,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <select class="format-select" id="format-select" onchange="onFormatSelect(this.value)">
           <option value="standard" selected>📚 Standard — vocabulary &amp; sentences</option>
           <option value="all_types">🎯 All types — standard + grammar + conjugation + error hunt</option>
+          <option value="math">🔢 Math — numbers from the story</option>
           <option value="grammar">🏷️ Grammar — gender, articles &amp; plurals</option>
           <option value="conjugation">🔤 Conjugation — verb forms by person</option>
           <option value="error_hunt">🔍 Error Hunt — find mistakes in the story</option>
@@ -745,16 +746,21 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="story-hdr-btns" onclick="event.stopPropagation()">
         <span id="story-lang-lbl" class="story-lang-lbl" style="display:none"></span>
         <button class="story-icon-btn" onclick="speakStory()" id="speakstory-btn" title="Read aloud">🔊</button>
-        <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" id="edit-story-btn" title="Edit story">✏️</button>
+        <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
+        <span id="story-edit-toolbar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap">
+          <button class="story-repair-btn" onclick="saveStoryEdit()" style="padding:4px 10px;font-size:12px">💾</button>
+          <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="cancelStoryEdit()">✕</button>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;color:var(--gray-dark);white-space:nowrap">
+            <input type="checkbox" id="gen-ai-hunt-cb" style="width:13px;height:13px">
+            🔎 AI hunt
+          </label>
+          <span id="story-edit-status" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
+        </span>
       </div>
       <span class="story-arrow" id="story-arrow">▼</span>
     </button>
     <div class="story-body" id="story-body"></div>
-    <div id="story-edit-toolbar" style="display:none;gap:8px;padding:6px 14px 8px;align-items:center">
-      <button class="story-repair-btn" onclick="saveStoryEdit()">💾 Save</button>
-      <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text)" onclick="cancelStoryEdit()">✕</button>
-      <span id="story-edit-status" style="font-size:12px;color:var(--gray-dark);font-weight:600"></span>
-    </div>
+    <div id="aeh-diff-panel" style="display:none;margin:0 16px 12px;font-size:12px;border-top:1.5px solid var(--gray-mid);padding-top:10px"></div>
     <div class="story-flag-row" id="story-flag-row" style="display:none">
       <div class="flag-comment-wrap" id="story-flag-comment-wrap">
         <textarea class="flag-comment" id="story-flag-comment" rows="2"
@@ -771,6 +777,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <option value="grammar">🏷️ Grammar</option>
       <option value="conjugation">🔤 Conjugation</option>
       <option value="error_hunt">🔍 Error Hunt</option>
+      <option value="math">🔢 Math</option>
+    </select>
+    <select class="addlesson-select" id="sial-diff-lesson-card" title="Difficulty">
+      <option value="1">🟢</option>
+      <option value="2" selected>🟡</option>
+      <option value="3">🔴</option>
     </select>
     <button class="addlesson-btn" id="sial-btn-lesson-card" onclick="doAddLesson('lesson-card', document.getElementById('sial-enc-lesson-card').value)">Generate</button>
     <button class="addlesson-cancel" onclick="closeAddLesson('lesson-card')">✕</button>
@@ -1073,7 +1085,7 @@ function applyUIStrings() {
   // Update format-select option labels
   const formatSel = document.getElementById('format-select');
   if (formatSel) {
-    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation' };
+    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'math': 'form.format.math' };
     Array.from(formatSel.options).forEach(opt => {
       if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
     });
@@ -1278,7 +1290,7 @@ function onStyleSelect(v){
 function restoreStyleSelect(){
   const sel=document.getElementById('style-select'); if(sel) sel.value=APP.storyStyle;
 }
-const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation']);
+const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation','math']);
 function onFormatSelect(v){
   APP.lessonFormat=VALID_FORMATS.has(v)?v:'standard'; saveLessonFormat();
   const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
@@ -1436,7 +1448,7 @@ async function pushFlagToServer(key, entry){
 }
 function flagKey(ex){
   const topic = (APP.lessonData?.topic||'unknown').slice(0,30).replace(/\s+/g,'_');
-  const base  = (ex.target||ex.source||ex.correct||'').slice(0,40).replace(/\s+/g,'_');
+  const base  = String(ex.target||ex.source||(Array.isArray(ex.correct)?ex.correct.join(','):ex.correct)||'').slice(0,40).replace(/\s+/g,'_');
   return topic + ':' + (ex.type||'x') + ':' + base;
 }
 function isExFlagged(ex){ return !!APP.flagged[flagKey(ex)]; }
@@ -1464,6 +1476,7 @@ function toggleStory(){
   if(!body) return;
   const open=body.classList.toggle('open');
   if(arrow) arrow.classList.toggle('open',open);
+  if(open && APP.lessonData) renderStoryText(APP.lessonData);
 }
 function toggleStoryRepair(){
   const body = document.getElementById('story-body');
@@ -1480,8 +1493,19 @@ function toggleStoryRepair(){
     body.style.outline = '2px solid var(--blue)';
     body.style.borderRadius = '6px';
     body.focus();
-    toolbar.style.display = 'flex';
+    toolbar.style.display = 'inline-flex';
     if (btn) btn.style.background = 'var(--blue-light, #e8f0fe)';
+    // Live diff update while editing (debounced 600ms)
+    let _aehDebounce;
+    body._aehInput = () => {
+      if (!document.getElementById('gen-ai-hunt-cb')?.checked) return;
+      clearTimeout(_aehDebounce);
+      _aehDebounce = setTimeout(() => {
+        renderAehDiffPanel(APP.lessonData, body.innerText.trim());
+      }, 600);
+    };
+    body.addEventListener('input', body._aehInput);
+    renderAehDiffPanel(APP.lessonData); // show on edit entry
   } else {
     cancelStoryEdit();
   }
@@ -1499,6 +1523,9 @@ function cancelStoryEdit(){
   if (btn) btn.style.background = '';
   const status = document.getElementById('story-edit-status');
   if (status) status.textContent = '';
+  if (body._aehInput) { body.removeEventListener('input', body._aehInput); delete body._aehInput; }
+  const panel = document.getElementById('aeh-diff-panel');
+  if (panel) panel.style.display = 'none';
 }
 async function saveStoryEdit(){
   const d = APP.lessonData; if (!d) return;
@@ -1507,14 +1534,35 @@ async function saveStoryEdit(){
   if (!newStory) return;
   const status = document.getElementById('story-edit-status');
   if (status) status.textContent = 'Saving…';
+  const genHunt = document.getElementById('gen-ai-hunt-cb')?.checked || false;
   try {
     const r = await fetch('/api/save-story', { method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ topic: d.topic, story: newStory }) });
-    if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+      body: JSON.stringify({ topic: d.topic, story: newStory, generateAiHunt: genHunt }) });
+    const resp = await r.json();
+    if (!r.ok) throw new Error(resp.error || 'Failed');
     d.story = newStory;
+    if (resp.aiStory) d.aiStory = resp.aiStory;
+    // Update or add ai_error_hunt lesson in client state
+    if (genHunt && resp.sentences) {
+      const existing = (d.lessons||[]).find(l => l.type === 'ai_error_hunt');
+      if (existing) {
+        existing.sentences = resp.sentences;
+        existing.aiStory = resp.aiStory;
+      } else {
+        if (!d.lessons) d.lessons = [];
+        d.lessons.push({ type:'ai_error_hunt', title:'AI Error Hunt', icon:'🔎',
+          aiStory: resp.aiStory, sentences: resp.sentences });
+      }
+    }
     const ehLessons = (d.lessons||[]).filter(ls => ls.type==='error_hunt');
-    if (ehLessons.length) { ehLessons.forEach(ls => { if(!ls._storyEdits) ls._storyEdits=[]; ls._storyEdits.push(new Date().toISOString()); }); markLessonUnchecked(d); }
+    if (ehLessons.length) {
+      ehLessons.forEach(ls => {
+        if(!ls._storyEdits) ls._storyEdits=[];
+        ls._storyEdits.push(new Date().toISOString());
+      });
+      markLessonUnchecked(d);
+    }
     if (status) status.textContent = '✓ Saved';
     setTimeout(() => {
       body.contentEditable = 'false';
@@ -1524,7 +1572,10 @@ async function saveStoryEdit(){
       document.getElementById('story-edit-toolbar').style.display = 'none';
       document.getElementById('story-repair-toggle-btn').style.background = '';
       if (status) status.textContent = '';
-      renderStoryText(d); // re-render with vocab highlights
+      renderStoryText(d);
+      const panel = document.getElementById('aeh-diff-panel');
+      if (panel) panel.style.display = 'none';
+      buildPath(); // rebuild lesson cards to show new ai_error_hunt lesson
     }, 1200);
   } catch(e) {
     if (status) status.textContent = '⚠ ' + e.message.slice(0, 40);
@@ -1552,6 +1603,44 @@ function renderStoryText(d, targetEl){
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
   speak(d.story);
+}
+
+// ── AI error hunt diff panel (shown in story read view) ──────────────────────
+function renderAehDiffPanel(d, editedStory) {
+  const panel = document.getElementById('aeh-diff-panel');
+  if (!panel) return;
+  const hunt = (d?.lessons||[]).find(l => l.type === 'ai_error_hunt');
+
+  // Compute diff: live from current edit text if provided, else reconstruct from aiStory+story
+  let sentences;
+  if (editedStory !== undefined && d?.aiStory) {
+    sentences = aiEhAlignWithParas(d.aiStory, editedStory);
+  } else if (hunt) {
+    sentences = aiEhGetSentences(hunt); // reconstructs full pairs, rehydrates reasons
+  }
+
+  const changed = (sentences||[]).filter(s => s && s.changed);
+  if (!changed.length) { panel.style.display = 'none'; return; }
+  const isLive = editedStory !== undefined; // live = no reason inputs yet
+
+  panel.style.display = '';
+  panel.innerHTML =
+    `<div style="font-size:11px;font-weight:700;color:var(--gray-dark);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">🔎 ${t('lesson.type.ai_error_hunt')} (${changed.length})</div>` +
+    changed.map((s, ci) => {
+      const diffHtml = s.ai && s.corrected ? aiEhDiffHtml(s.ai, s.corrected)
+        : s.ai ? `<span style="color:var(--red);text-decoration:line-through">${escHtml(s.ai)}</span>`
+               : `<span style="color:var(--green)">${escHtml(s.corrected||'')}</span>`;
+      // Find index in full sentences array so we can write reason back
+      const si = (sentences||[]).indexOf(s);
+      const reasonInput = isLive ? '' :
+        `<input value="${escHtml(s.reason||'')}" placeholder="${t('ex.error_hunt.reason_placeholder')}"
+          style="margin-top:5px;width:100%;font-size:11px;border:1px solid var(--gray-mid);border-radius:4px;padding:2px 6px;font-family:Nunito,sans-serif;box-sizing:border-box;background:var(--white)"
+          data-ai="${escHtml(s.ai||'')}" data-corrected="${escHtml(s.corrected||'')}" oninput="aehSetReason(this,APP.lessonData.lessons.find(l=>l.type==='ai_error_hunt'))">`;
+      return `<div style="margin-bottom:8px;padding:6px 8px;background:var(--gray-light);border-radius:5px">
+        <div style="font-family:monospace;font-size:12px;line-height:1.6">${diffHtml}</div>
+        ${reasonInput}
+      </div>`;
+    }).join('');
 }
 
 // ── Story prompt modal (M6) ───────────────────────────────────────────
@@ -1725,6 +1814,12 @@ function savedItemHtml(s, connector, hideStory) {
         <option value="grammar">🏷️ ${t('lesson.type.grammar')}</option>
         <option value="conjugation">🔤 ${t('lesson.type.conjugation')}</option>
         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
+        <option value="math">🔢 ${t('lesson.type.math')}</option>
+      </select>
+      <select class="addlesson-select" id="sial-diff-${sid}" title="Difficulty">
+        <option value="1"${s.difficulty===1?' selected':''}>🟢</option>
+        <option value="2"${(!s.difficulty||s.difficulty===2)?' selected':''}>🟡</option>
+        <option value="3"${s.difficulty===3?' selected':''}>🔴</option>
       </select>
       <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}')">Generate</button>
       <button class="addlesson-cancel" onclick="closeAddLesson('${sid}')">✕</button>
@@ -2421,7 +2516,7 @@ function buildPath(){
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
   d.lessons.forEach((L,i)=>{
-    const isDone=!!(done[L.id]), isLocked=i>0&&!done[d.lessons[i-1].id], isActive=!isDone&&!isLocked;
+    const isDone=!!(done[L.id]), isLocked=!APP.info.canGenerate&&i>0&&!done[d.lessons[i-1].id], isActive=!isDone&&!isLocked;
     const lessonScore=typeof done[L.id]==='object'?done[L.id]:null;
     const lessonPct=lessonScore&&lessonScore.total>0?Math.round(100*lessonScore.correct/lessonScore.total):null;
     if(i>0){ const ln=document.createElement('div'); ln.className='path-line'+(done[d.lessons[i-1].id]?' done':''); path.appendChild(ln); }
@@ -2448,14 +2543,14 @@ function buildPath(){
     const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT()[diff]||''}</span>`:'';
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
-        <div class="node-title">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt'};return (em[L.type]||'📚')+' '+(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));})()}</div>
-        <div class="node-desc">${L.desc}</div>
+        <div class="node-title">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍','ai_error_hunt':'🔎','math':'🔢'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt','ai_error_hunt':'lesson.type.ai_error_hunt','math':'lesson.type.math'};const lbl=L.type==='ai_error_hunt'?t('lesson.type.ai_error_hunt'):(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));return (em[L.type]||'📚')+' '+lbl;})()}</div>
+        <div class="node-desc">${L.type==='ai_error_hunt'?t('lesson.ai_error_hunt.desc'):L.desc}</div>
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
         <div class="fix-status" id="fix-status-${L.id}"></div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
         ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:22px">🔒</span>':''}
-        ${APP.info.canGenerate&&L.id?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('lesson.edit_lesson')}" onclick="event.stopPropagation();openLessonEditor(${i})">📋${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style=\"color:var(--green);font-size:14px\" title=\"✓ '+L._checked.slice(0,10)+'\">✓</span>':'<span style=\"color:var(--green);font-size:14px\" title=\"Edited\">✓</span>'):''}</button>
+        ${APP.info.canGenerate&&L.id?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('lesson.edit_lesson')}" onclick="event.stopPropagation();openLessonEditor(${i})">✏️${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style=\"color:var(--green);font-size:14px\" title=\"✓ '+L._checked.slice(0,10)+'\">✓</span>':'<span style=\"color:var(--green);font-size:14px\" title=\"Edited\">✓</span>'):''}</button>
           <button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="event.stopPropagation();deleteLessonNode(${i})">🗑</button>`:''}
       </div>`;
     if(!isLocked) node.onclick=()=>startLesson(i);
@@ -2777,10 +2872,12 @@ async function genLessonTitle() {
 // ── Add lesson to existing card (➕ button in saved-list) ─────────────────────
 
 function openAddLesson(sid, enc) {
-  // Close other panels on this card first
   closeSavedItemEdit(sid);
   const panel = document.getElementById('sial-' + sid);
   if (panel) panel.classList.add('open');
+  const diff = APP.lessonData?.difficulty || 2;
+  const diffSel = document.getElementById('sial-diff-' + sid);
+  if (diffSel) diffSel.value = String(diff);
 }
 
 function closeAddLesson(sid) {
@@ -2791,7 +2888,10 @@ function closeAddLesson(sid) {
 }
 
 async function doAddLesson(sid, enc) {
-  const topic  = decodeURIComponent(enc);
+  // For the lesson-card (lesson-set screen), always use the currently loaded topic
+  const topic = sid === 'lesson-card' && APP.lessonData?.topic
+    ? APP.lessonData.topic
+    : decodeURIComponent(enc);
   const fmtSel = document.getElementById('sial-fmt-' + sid);
   const btn    = document.getElementById('sial-btn-' + sid);
   const status = document.getElementById('sial-status-' + sid);
@@ -2801,9 +2901,11 @@ async function doAddLesson(sid, enc) {
   if (status) status.textContent = 'Generating…';
 
   try {
+    const diffSel = document.getElementById('sial-diff-' + sid);
+    const diff = parseInt(diffSel?.value || '2', 10);
     const r = await fetch('/api/lessons/add-lesson', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic, lessonFormat: fmt })
+      body: JSON.stringify({ topic, lessonFormat: fmt, difficulty: diff })
     });
     const resp = await r.json();
     if (!r.ok) throw new Error(resp.error || 'Failed to start');
@@ -3300,6 +3402,132 @@ function cancelSummaryEdit(chainId) {
   }
 }
 
+
+// ── Error Hunt diff engine ─────────────────────────────────────────────────
+function ehTokenize(text) {
+  return (text.match(/[\w\u00C0-\u024F\u0400-\u04FF\u0590-\u05FF\u0600-\u06FF'\u2019]+|[^\w\s'\u2019]/gu) || []);
+}
+function ehLevenshtein(a, b) {
+  const m=a.length, n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i?j?0:i:j));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+function ehLcsOps(a, b) {
+  const m=a.length, n=b.length;
+  const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1].toLowerCase()===b[j-1].toLowerCase()?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  const ops=[]; let i=m,j=n;
+  while(i>0||j>0){
+    if(i>0&&j>0&&a[i-1].toLowerCase()===b[j-1].toLowerCase()){ops.unshift({type:'eq',a:a[i-1],b:b[j-1]});i--;j--;}
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])){ops.unshift({type:'ins',b:b[j-1]});j--;}
+    else{ops.unshift({type:'del',a:a[i-1]});i--;}
+  }
+  const merged=[];
+  for(let k=0;k<ops.length;k++){
+    if(ops[k].type==='del'&&k+1<ops.length&&ops[k+1].type==='ins'){
+      merged.push({type:'sub',a:ops[k].a,b:ops[k+1].b}); k++;
+    } else merged.push(ops[k]);
+  }
+  return merged;
+}
+function ehClassify(a, b) {
+  const lo=a.length<b.length?a:b, hi=a.length<b.length?b:a;
+  if(hi.toLowerCase().startsWith(lo.toLowerCase())) return 'grammar'; // suffix addition/removal
+  return ehLevenshtein(a.toLowerCase(),b.toLowerCase())<=2?'spelling':'grammar';
+}
+function ehComputeDiff(correct, corrupted) {
+  if(!correct||!corrupted) return [];
+  const ta=ehTokenize(correct), tb=ehTokenize(corrupted);
+  return ehLcsOps(ta,tb).filter(o=>o.type!=='eq').map(op=>{
+    if(op.type==='sub') return {type:ehClassify(op.a,op.b),find:op.a,replace:op.b,reason:''};
+    if(op.type==='del') return {type:'grammar',find:op.a,replace:'',reason:'word removed'};
+    if(op.type==='ins') return {type:'grammar',find:'',replace:op.b,reason:'word added'};
+    return null;
+  }).filter(Boolean);
+}
+function ehBuildDiffHtml(correct, corrupted) {
+  if(!correct||!corrupted) return '<em style="color:var(--gray-dark)">Paste both texts to see diff.</em>';
+  const ta=ehTokenize(correct), tb=ehTokenize(corrupted);
+  return ehLcsOps(ta,tb).map(op=>{
+    if(op.type==='eq') return escHtml(op.a)+' ';
+    if(op.type==='sub') return '<del style="color:var(--red);background:#fde;border-radius:3px;padding:0 2px">'+escHtml(op.a)+'</del> <ins style="color:var(--green);background:#dfd;text-decoration:none;border-radius:3px;padding:0 2px">'+escHtml(op.b)+'</ins> ';
+    if(op.type==='del') return '<del style="color:var(--red);background:#fde;border-radius:3px;padding:0 2px">'+escHtml(op.a)+'</del> ';
+    if(op.type==='ins') return '<ins style="color:var(--green);background:#dfd;text-decoration:none;border-radius:3px;padding:0 2px">'+escHtml(op.b)+'</ins> ';
+    return '';
+  }).join('');
+}
+function aiEhBuildHtml(aiStory, edits) {
+  if (!aiStory) return '<em style="color:var(--gray-dark)">'+t('lesson.ai_error_hunt.no_ai_story')+'</em>';
+  let html = escHtml(aiStory);
+  // Highlight each edit location using context anchoring
+  edits.forEach(e => {
+    if (!e.find) return; // pure insertion — skip for display
+    // Find the edit in context
+    const before = escHtml(e.context_before);
+    const find   = escHtml(e.find);
+    const needle = before + find;
+    const idx = html.indexOf(needle);
+    if (idx < 0) return; // can't locate
+    const start = idx + before.length;
+    const highlighted = '<del style="color:var(--red);background:#fde;border-radius:3px;padding:0 2px">' + find + '</del>';
+    html = html.slice(0, start) + highlighted + html.slice(start + find.length);
+  });
+  return html.replace(/\n/g, '<br>');
+}
+
+function ehSyncCorrupted(li) {
+  // Rebuild corrupted story by re-applying session edits on top of new correct story
+  const l = APP.lessonData?.lessons?.[li];
+  if (!l) return;
+  const correct = APP.lessonData?.story || '';
+  const sessionEdits = APP._ehSessionEdits || [];
+  let corrupted = correct;
+  sessionEdits.forEach(e => {
+    if (e.find && e.replace && corrupted.includes(e.find)) {
+      corrupted = corrupted.replace(e.find, e.replace);
+    }
+  });
+  l.corruptedStory = corrupted;
+  // Update the corrupted textarea DOM
+  const ta = document.querySelector(`textarea[data-type="eh-story"][data-li="${li}"]`);
+  if (ta) ta.value = corrupted;
+  // Refresh diff display
+  ehUpdateDiff(li);
+}
+
+function ehUpdateDiff(li) {
+  const l = APP.lessonData?.lessons?.[li];
+  if(!l) return;
+  const correct = APP.lessonData?.story || '';
+  const corrupted = l.corruptedStory || '';
+  const diffEl = document.getElementById('eh-diff-'+li);
+  const errEl  = document.getElementById('eh-errors-'+li);
+  if(diffEl) diffEl.innerHTML = ehBuildDiffHtml(correct, corrupted);
+  if(errEl)  { l.edits = ehComputeDiff(correct, corrupted); errEl.innerHTML = ehRenderErrors(l.edits, li); }
+}
+function ehRenderErrors(edits, li) {
+  if(!edits||!edits.length) return '<div style="font-size:12px;color:var(--gray-dark)">No differences detected.</div>';
+  const rows = edits.map((e,ei)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--gray-mid);font-size:12px;flex-wrap:wrap">
+      <select style="font-size:11px;font-weight:800;border:1.5px solid var(--gray-mid);border-radius:5px;padding:3px 5px;font-family:Nunito,sans-serif"
+        onchange="APP.lessonData.lessons[${li}].edits[${ei}].type=this.value">
+        <option value="spelling"${e.type==='spelling'?' selected':''}>spelling</option>
+        <option value="grammar"${e.type==='grammar'?' selected':''}>grammar</option>
+        <option value="logic"${e.type==='logic'?' selected':''}>logic</option>
+      </select>
+      <span style="color:var(--red);text-decoration:line-through;font-weight:700">${escHtml(e.find)||'—'}</span>
+      <span style="color:var(--gray-dark)">→</span>
+      <span style="color:var(--green);font-weight:700">${escHtml(e.replace)||'—'}</span>
+      <input value="${escHtml(e.reason)}" placeholder="reason (optional)"
+        style="flex:1;min-width:80px;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:5px;padding:3px 7px;font-family:Nunito,sans-serif"
+        oninput="APP.lessonData.lessons[${li}].edits[${ei}].reason=this.value">
+    </div>`).join('');
+  return `<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--gray-dark);margin-bottom:4px">${edits.length} difference${edits.length!==1?'s':''}</div>${rows}`;
+}
+
 // ── Storyline screen title editing ────────────────────────────────────────────
 
 function openStorylineEditInScreen() {
@@ -3395,6 +3623,7 @@ function openLessonEditor(lessonIdx) {
 }
 
 function closeLessonEditor() {
+  delete APP._ehSessionEdits;
   const el = document.getElementById('lesson-editor');
   if (!el) return;
   if (el.classList.contains('open')) {
@@ -3408,7 +3637,7 @@ function closeLessonEditor() {
 }
 function markLessonUnchecked(d) {
   // Called when story changes — uncheck error_hunt lessons
-  (d?.lessons||[]).forEach(ls => { if(ls.type==='error_hunt') delete ls._checked; });
+  (d?.lessons||[]).forEach(ls => { if(ls.type==='error_hunt'||ls.type==='ai_error_hunt') delete ls._checked; });
   buildPath();
 }
 
@@ -3429,8 +3658,8 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
     return Object.keys(flags).some(k =>
       (k.startsWith(topicSlug+':') || (topicId && k.startsWith(topicId+':'))) && k.endsWith(':'+slug));
   };
-  const typeEmoji = {grammar:'🏷️',conjugation:'🔤',error_hunt:'🔍'}[ls.type]||'📚';
-  const typeKey   = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt'}[ls.type]||'lesson.type.vocab';
+  const typeEmoji = {grammar:'🏷️',conjugation:'🔤',error_hunt:'🔍',ai_error_hunt:'🔎',math:'🔢'}[ls.type]||'📚';
+  const typeKey   = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math'}[ls.type]||'lesson.type.vocab';
   const label = typeEmoji+' '+t(typeKey);
   // Header
   let html = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
@@ -3444,7 +3673,6 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
     ${ls.type!=='error_hunt'?`<label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">
       <input type="checkbox" id="editor-flag-filter" ${flaggedOnly?'checked':''} onchange="renderLessonEditor(this.checked,${li})"> ⚑ only
     </label>`:''}
-    <button class="storyline-hdr-btn" onclick="findEhErrors(${li})">🔍 Find errors</button>
     <button class="storyline-hdr-btn" onclick="saveLessonEdits(${li})">💾</button>
     <button class="storyline-hdr-btn" onclick="closeLessonEditor()">✕</button>
   </div>`;
@@ -3485,6 +3713,25 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       </div>`;
     });
 
+  } else if (ls.type === 'ai_error_hunt') {
+    const sentences = aiEhGetSentences(ls);
+    const changedCount = sentences.filter(s=>s.changed).length;
+    html += `
+      <div style="font-size:12px;color:var(--gray-dark);margin-bottom:10px;line-height:1.5">
+        ${t('lesson.ai_error_hunt.editor_hint')}
+      </div>
+      <div class="card-title" style="margin-bottom:6px">${t('lesson.ai_error_hunt.changed_count',{n:changedCount,total:sentences.length})}</div>
+      ${sentences.map((s,si) => {
+        if(s.para) return ''; // skip para sentinels — changed-only view needs no gap markers
+        if(!s.changed) return ''; // show only changed clauses
+        return `<div style="padding:8px 0;border-bottom:1px solid var(--gray-mid);font-size:12px">
+          <div style="margin-bottom:6px;font-family:monospace;font-size:12px">${s.ai&&s.corrected?aiEhDiffHtml(s.ai,s.corrected):s.ai?`<span style='color:var(--red);text-decoration:line-through'>${escHtml(s.ai)}</span>`:`<span style='color:var(--green)'>${escHtml(s.corrected||'')}</span>`}</div>
+          <input value="${escHtml(s.reason||'')}" placeholder="${t('ex.error_hunt.reason_placeholder')}"
+            style="width:100%;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:5px;padding:3px 7px;font-family:Nunito,sans-serif;box-sizing:border-box"
+            data-li="${li}" data-ai="${escHtml(s.ai||'')}" data-corrected="${escHtml(s.corrected||'')}" oninput="aehSetReason(this,APP.lessonData.lessons[${li}])">
+        </div>`;
+      }).join('')}
+    `;
   } else if (ls.type === 'error_hunt') {
     // Editable contenteditable div with live error highlighting
     const story = ls.corruptedStory || '';
@@ -3510,33 +3757,29 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
         if (e.replace && e.find) correctStory = correctStory.split(e.replace).join(e.find);
       });
     }
+    // Correct story — pre-populate corrupted from stored if empty
+    if (!ls.corruptedStory && story) ls.corruptedStory = story;
+    const initEdits = ehComputeDiff(correctStory||'', ls.corruptedStory||'');
+    APP._ehSessionEdits = initEdits; // session-only cache for ehSyncCorrupted
     html += `
-      <div style="display:flex;gap:0;margin-bottom:6px;border-radius:8px;overflow:hidden;border:1.5px solid var(--gray-mid)">
-        <button id="${ehId}-tab-corrupted" onclick="switchEhTab(${li},'corrupted')"
-          style="flex:1;padding:6px 10px;font-size:12px;font-weight:800;border:none;cursor:pointer;background:var(--blue);color:white;font-family:Nunito,sans-serif">❌ Corrupted</button>
-        <button id="${ehId}-tab-correct" onclick="switchEhTab(${li},'correct')"
-          style="flex:1;padding:6px 10px;font-size:12px;font-weight:800;border:none;cursor:pointer;background:var(--gray-light);color:var(--text);font-family:Nunito,sans-serif">✅ Correct</button>
-      </div>
-      <div id="${ehId}-story" contenteditable="true" spellcheck="false"
-        data-li="${li}" data-type="eh-story" data-mode="corrupted"
-        data-correct="${escHtml(correctStory)}"
-        style="font-size:15px;font-family:Nunito,sans-serif;line-height:1.8;padding:10px 12px;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:8px;min-height:80px;white-space:pre-wrap;outline:none;cursor:text"
-        onfocus="this.style.borderColor='var(--blue)'"
-        onblur="this.style.borderColor='var(--gray-mid)'"
-        oninput="updateEhHighlight(${li})">${highlightEh(story, edits)}</div>`;
-    html += `
-      <div style="font-size:12px;font-weight:800;color:var(--gray-dark);margin:12px 0 6px;text-transform:uppercase">Errors / Corrections</div>
-      <div id="${ehId}-edits">
-        ${edits.map((e,ei) => `<div class="editor-entry" id="${ehId}-edit-${ei}">
-          <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','eh-edit',${ei})">🗑</button></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px">
-            <div class="editor-field"><label>Correct</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="find" value="${escHtml(e.find||'')}" style="background:#fff8ee"></div>
-            <div class="editor-field"><label>Wrong</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="replace" value="${escHtml(e.replace||'')}"></div>
+      <div style="margin-top:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div class="editor-field"><label>Correct story</label>
+            <textarea rows="7" style="font-size:12px;line-height:1.6;resize:vertical;width:100%;border:1.5px solid var(--gray-mid);border-radius:8px;padding:8px;font-family:Nunito,sans-serif;box-sizing:border-box"
+              readonly style="background:var(--gray-light);cursor:default"
+              title="Edit the story in the lesson-set screen story editor">${escHtml(correctStory||'')}</textarea>
           </div>
-          <div class="editor-field"><label>Reason</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="reason" value="${escHtml(e.reason||'')}"></div>
-        </div>`).join('')}
-      </div>
-      <button class="storyline-hdr-btn" style="margin-top:8px" onclick="addEhError(${li})">+ Add error</button>`;
+          <div class="editor-field"><label>Corrupted story</label>
+            <textarea data-li="${li}" data-type="eh-story" data-mode="corrupted" rows="7"
+              style="font-size:12px;line-height:1.6;resize:vertical;width:100%;border:1.5px solid var(--gray-mid);border-radius:8px;padding:8px;font-family:Nunito,sans-serif;box-sizing:border-box"
+              oninput="APP.lessonData.lessons[${li}].corruptedStory=this.value;APP._ehSessionEdits=ehComputeDiff(APP.lessonData?.story||'',this.value);ehUpdateDiff(${li})">${escHtml(ls.corruptedStory||'')}</textarea>
+          </div>
+        </div>
+        <div id="eh-diff-${li}" style="font-size:13px;line-height:1.9;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+          ${ehBuildDiffHtml(correctStory||'', ls.corruptedStory||'')}
+        </div>
+        <div id="eh-errors-${li}">${ehRenderErrors(initEdits, li)}</div>
+      </div>`;
 
   } else {
     // Vocab / sentences
@@ -3610,9 +3853,15 @@ async function saveLessonEdits(lessonIdx) {
         }).catch(e => console.error('save-story failed:', e));
         // Don't close — story save is fire-and-forget, lesson save below handles the rest
       }
-    } else if (type === 'eh-edit') {
-      const fi = +inp.dataset.fi;
-      if (ls.edits && ls.edits[fi]) ls.edits[fi][field] = inp.value;
+    } else if (type === 'eh-correct') {
+      // Save correct story to topic.story and server
+      const text = inp.value.trim();
+      if (APP.lessonData) APP.lessonData.story = text;
+      fetch('/api/save-story', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ topic: d.topic, story: text }) }).catch(()=>{});
+    }
+    // Sync corrupted story on save for error_hunt lessons
+    if (ls.type === 'error_hunt') {
+      ehSyncCorrupted(li);
     }
   });
   // Mark lesson as checked and items as edited BEFORE saving to server
@@ -3665,7 +3914,7 @@ async function deleteLessonNode(lessonIdx) {
   if (!d) return;
   const ls = d.lessons[lessonIdx];
   if (!ls) return;
-  const typeKey = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt'}[ls.type]||'lesson.type.vocab';
+  const typeKey = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math'}[ls.type]||'lesson.type.vocab';
   const label = t(typeKey);
   if (!confirm(`Delete the ${label} lesson from "${d.topic}"?\nThis cannot be undone.`)) return;
   d.lessons.splice(lessonIdx, 1);
@@ -4155,9 +4404,10 @@ function pick(arr,n){ return shuffle(arr).slice(0,n); }
 const isPunctClient = t => /^[.,!?;:()\[\]"'«»—–]+$/.test((t||'').trim());
 function buildExercises(lessonIdx){
   const d=APP.lessonData, lesson=d.lessons[lessonIdx];
-  if(lesson.type==='error_hunt') return [];
+  if(lesson.type==='error_hunt'||lesson.type==='ai_error_hunt') return [];
   if(lesson.type==='grammar')     return buildGrammarExercises(lesson);
   if(lesson.type==='conjugation') return buildConjugationExercises(lesson);
+  if(lesson.type==='math')        return buildMathExercises(lesson);
 	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
   const allV = lesson.vocab;
 	// const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
@@ -4346,12 +4596,72 @@ function tTypeConjugation(ex) {
 </div>`;
 }
 
+
+// ══ Math exercises ═══════════════════════════════════════════════════════════
+function buildMathExercises(lesson) {
+  // Use pre-generated exercises baked into the lesson, or generate on the fly
+  if (lesson.exercises && lesson.exercises.length) return shuffle([...lesson.exercises]);
+  // Fallback: generate from lesson.numbers if exercises missing
+  return shuffle([...generateMathExercisesClient(lesson.numbers||[], lesson.difficulty||2)]);
+}
+
+function generateMathExercisesClient(nums, difficulty) {
+  // Pure difficulty-based pools (client fallback — server pre-generates exercises)
+  if (!nums || !nums.length) {
+    if (difficulty <= 1) nums = [1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-.5).slice(0,6);
+    else { nums=[]; while(nums.length<8){const n=Math.floor(Math.random()*1000)+1;if(!nums.includes(n))nums.push(n);} }
+  }
+  const ops = difficulty <= 1 ? ['+','-'] : difficulty === 2 ? ['+','-','×'] : ['+','-','×','÷'];
+  const exs = [];
+
+  // Ordering
+  if (nums.length >= 3) {
+    const size = Math.min(5, nums.length);
+    const subset = shuffle([...nums]).slice(0,size);
+    const dir = Math.random()<0.5?'asc':'desc';
+    const sorted = [...subset].sort((a,b)=>a-b);
+    exs.push({ type:'math_order', direction:dir, numbers:shuffle([...subset]), correct:(dir==='asc'?sorted:[...sorted].reverse()).map(String) });
+  }
+
+  // Calculations
+  for (let i=0; i<Math.min(5,nums.length); i++) {
+    const op = ops[Math.floor(Math.random()*ops.length)];
+    const a = nums[Math.floor(Math.random()*nums.length)];
+    const b = nums[Math.floor(Math.random()*nums.length)];
+    let correct;
+    if (op==='+') correct=a+b;
+    else if (op==='-') { if(a<b) continue; correct=a-b; }
+    else if (op==='×') { correct=a*b; if(difficulty<=1&&correct>9) continue; }
+    else { if(b===0||a%b!==0) continue; correct=a/b; }
+    correct=+correct.toFixed(4);
+    const wrongs=mathNearMissClient(correct,nums,difficulty);
+    if(wrongs.length<3) continue;
+    exs.push({ type:'math_calc', a:String(a), op, b:String(b), correct:String(correct), choices:shuffle([String(correct),...wrongs.map(String)]).slice(0,4) });
+  }
+  return exs;
+}
+
+function mathNearMissClient(correct, nums, difficulty) {
+  const wrongs=new Set();
+  const mag=Math.max(1,Math.abs(correct));
+  const deltas=difficulty<=1?[1,2,3]
+    :difficulty===2?[1,Math.ceil(mag*0.1),Math.ceil(mag*0.2),10]
+    :[0.1,0.25,Math.ceil(mag*0.1)];
+  for(const d of deltas){
+    if(correct-d>=0&&correct-d!==correct) wrongs.add(+(correct-d).toFixed(4));
+    wrongs.add(+(correct+d).toFixed(4));
+    if(wrongs.size>=3)break;
+  }
+  for(const n of nums){ if(n!==correct)wrongs.add(n); if(wrongs.size>=3)break; }
+  return [...wrongs].slice(0,3);
+}
+
 // ── lesson ──
 function startLesson(idx){
   const C=APP.cur;
   const lesson=APP.lessonData.lessons[idx];
   C.lessonIdx=idx;
-  C.isErrorHunt=(lesson.type==='error_hunt');
+  C.isErrorHunt=(lesson.type==='error_hunt'||lesson.type==='ai_error_hunt');
   C.isGrammar=(lesson.type==='grammar');
   C.isConjugation=(lesson.type==='conjugation');
   C.ehSuspect=new Set(); C.ehChecked=false;
@@ -4359,9 +4669,213 @@ function startLesson(idx){
   C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
   C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[]; delete C._selPos;
   show('lesson-screen');
-  if(C.isErrorHunt) renderErrorHunt();
-  else renderEx();
+  if(C.isErrorHunt) {
+    const lesson=APP.lessonData.lessons[idx];
+    if(lesson.type==='ai_error_hunt') renderAiErrorHunt();
+    else renderErrorHunt();
+  } else renderEx();
 }
+// ── AI-error-hunt renderer ──────────────────────────────────────────────────
+// ── Clause splitter — splits on any punctuation mark, preserves paragraph breaks ──
+function aiEhSplitSentences(text) {
+  // Split on paragraph boundaries first, then on punctuation within each paragraph
+  const result = [];
+  text.split(/\n\n+/).forEach((para, pi) => {
+    if (pi > 0) result.push({ para: true }); // paragraph break sentinel
+    const parts = para.trim().split(/(?<=[.!?,;:"""«»„\u2018\u2019])\s*/);
+    parts.map(s => s.trim()).filter(Boolean).forEach(s => result.push(s));
+  });
+  return result;
+}
+
+// ── Word-level diff for reveal highlighting ───────────────────────────────────
+function aiEhWordDiff(a, b) {
+  const aw=(a||'').split(/(\s+)/), bw=(b||'').split(/(\s+)/);
+  const m=aw.length, n=bw.length;
+  const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=aw[i-1]===bw[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  const ops=[];let i=m,j=n;
+  while(i>0||j>0){
+    if(i>0&&j>0&&aw[i-1]===bw[j-1]){ops.unshift({t:'eq',v:aw[i-1]});i--;j--;}
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])){ops.unshift({t:'ins',v:bw[j-1]});j--;}
+    else{ops.unshift({t:'del',v:aw[i-1]});i--;}
+  }
+  return ops;
+}
+
+function aiEhDiffHtml(a, b) {
+  const ops = aiEhWordDiff(a, b);
+  return ops.map(o => {
+    if(o.t==='eq') return escHtml(o.v);
+    if(o.t==='del') return `<span style="color:var(--red);text-decoration:line-through;background:#fde8e8;border-radius:2px;padding:0 1px">${escHtml(o.v)}</span>`;
+    return `<span style="color:var(--green);background:#e8f8e8;border-radius:2px;padding:0 1px">${escHtml(o.v)}</span>`;
+  }).join('');
+}
+
+function aiEhLcsAlign(aArr, bArr) {
+  const m=aArr.length, n=bArr.length;
+  const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=aArr[i-1]===bArr[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  const ops=[];let i=m,j=n;
+  while(i>0||j>0){
+    if(i>0&&j>0&&aArr[i-1]===bArr[j-1]){ops.unshift({type:'eq',ai:aArr[i-1],corrected:bArr[j-1]});i--;j--;}
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])){ops.unshift({type:'ins',corrected:bArr[j-1]});j--;}
+    else{ops.unshift({type:'del',ai:aArr[i-1]});i--;}
+  }
+  const pairs=[];let k=0;
+  while(k<ops.length){
+    const op=ops[k];
+    if(op.type==='eq'){pairs.push({ai:op.ai,corrected:op.corrected,changed:false,reason:''});k++;}
+    else{
+      let dels=[],ins=[];
+      while(k<ops.length&&ops[k].type!=='eq'){
+        if(ops[k].type==='del')dels.push(ops[k].ai);
+        else ins.push(ops[k].corrected);
+        k++;
+      }
+      const maxLen=Math.max(dels.length,ins.length);
+      for(let x=0;x<maxLen;x++)
+        pairs.push({ai:dels[x]||null,corrected:ins[x]||null,changed:true,reason:''});
+    }
+  }
+  return pairs;
+}
+
+function aiEhGetSentences(lesson) {
+  const aiStory = lesson.aiStory || APP.lessonData?.aiStory || '';
+  const corrected = APP.lessonData?.story || '';
+  const pairs = aiEhAlignWithParas(aiStory, corrected);
+  // Rehydrate reasons from sparse sentences[] (changed-only)
+  if (lesson.sentences && lesson.sentences.length) {
+    const reasonMap = new Map(lesson.sentences.filter(s=>s.ai).map(s => [s.ai, s.reason||'']));
+    pairs.forEach(p => { if (p.ai && reasonMap.has(p.ai)) p.reason = reasonMap.get(p.ai); });
+  }
+  return pairs;
+}
+
+function aiEhAlignWithParas(aiStory, corrected) {
+  // Split preserving para sentinels, strip sentinels for LCS, then re-inject
+  const aiRaw = aiEhSplitSentences(aiStory);
+  const corRaw = aiEhSplitSentences(corrected);
+  const aiClauses = aiRaw.filter(s => typeof s === 'string');
+  const corClauses = corRaw.filter(s => typeof s === 'string');
+  // Track which ai clause indices are preceded by a paragraph break
+  const aiParaBefore = new Set();
+  let paused = false;
+  aiRaw.forEach((s, i) => {
+    if (typeof s !== 'string') { paused = true; return; }
+    if (paused) { aiParaBefore.add(aiClauses.indexOf(s)); paused = false; }
+  });
+  const pairs = aiEhLcsAlign(aiClauses, corClauses);
+  // Re-inject para breaks: before any pair whose ai clause was paragraph-preceded
+  let aiClauseIdx = 0;
+  const result = [];
+  pairs.forEach(p => {
+    if (p.ai !== null) {
+      if (aiParaBefore.has(aiClauseIdx)) result.push({ para: true });
+      aiClauseIdx++;
+    }
+    result.push(p);
+  });
+  return result;
+}
+
+function renderAiErrorHunt(){
+  const C=APP.cur;
+  const lesson=APP.lessonData.lessons[C.lessonIdx];
+  const sentences=aiEhGetSentences(lesson);
+  C.aiEhSentences=sentences;
+  C.aiEhSuspect=new Set();
+  C.aiEhChecked=false;
+
+  const spans=sentences.map((s,si)=>{
+    if(s.para) return '<br><br>';
+    if(!s.ai) return '';
+    return `<span class="aeh-sent" data-si="${si}" onclick="aiEhToggle(${si})">${escHtml(s.ai)}</span> `;
+  }).join('');
+
+  const el=document.getElementById('ex-area');
+  el.innerHTML=
+    `<div class="ex-badge">🔎 ${t('lesson.type.ai_error_hunt')}</div>`+
+    '<div class="card">'+
+    `<div style="font-size:12px;font-weight:700;color:var(--gray-dark);margin-bottom:10px">${t('lesson.ai_error_hunt.desc')}</div>`+
+    `<div class="aeh-wrap" id="aeh-wrap">${spans}</div>`+
+    '<div id="eh-btn-row" style="margin-top:12px;text-align:center">'+
+    `<button class="big-btn" onclick="aiEhCheck()">${t('ex.error_hunt.check')}</button>`+
+    '</div></div>';
+}
+
+function aehSetReason(input, hunt) {
+  if (!hunt) return;
+  const ai = input.dataset.ai;
+  const corrected = input.dataset.corrected;
+  hunt.sentences = hunt.sentences || [];
+  const entry = hunt.sentences.find(x => x.ai === ai);
+  if (entry) { entry.reason = input.value; }
+  else { hunt.sentences.push({ ai, corrected, reason: input.value }); }
+}
+
+function aiEhToggle(si){
+  const C=APP.cur;
+  if(C.aiEhChecked) return;
+  if(C.aiEhSuspect.has(si)) C.aiEhSuspect.delete(si);
+  else C.aiEhSuspect.add(si);
+  const el=document.querySelector(`.aeh-sent[data-si="${si}"]`);
+  if(el) el.classList.toggle('suspect', C.aiEhSuspect.has(si));
+}
+
+function aiEhCheck(){
+  const C=APP.cur;
+  if(C.aiEhChecked) return;
+  C.aiEhChecked=true;
+  const lesson=APP.lessonData.lessons[C.lessonIdx];
+  const sentences=C.aiEhSentences;
+  const changedSet=new Set(sentences.reduce((acc,s,i)=>{if(s&&s.changed)acc.push(i);return acc;},[]) );
+  let correct=0,wrong=0,missed=0;
+  C.aiEhSuspect.forEach(si=>{
+    const el=document.querySelector(`.aeh-sent[data-si="${si}"]`);
+    if(changedSet.has(si)){correct++;if(el){el.classList.remove('suspect');el.classList.add('correct-mark');}}
+    else{wrong++;if(el){el.classList.remove('suspect');el.classList.add('wrong-mark');}}
+  });
+  changedSet.forEach(si=>{
+    if(!C.aiEhSuspect.has(si)){
+      missed++;
+      const el=document.querySelector(`.aeh-sent[data-si="${si}"]`);
+      if(el) el.classList.add('missed-mark');
+    }
+  });
+  const score=Math.max(0,correct*10-wrong*3-missed*5);
+  const wrap=document.getElementById('aeh-wrap');
+  const resultDiv=document.createElement('div');
+  resultDiv.style='margin-top:14px';
+  resultDiv.innerHTML=
+    `<div class="eh-score">${score}</div>`+
+    `<div style="font-size:13px;font-weight:700;color:var(--gray-dark);margin-bottom:8px">`+
+    `${t('ex.error_hunt.result',{correct,wrong,missed})}</div>`+
+    sentences.filter(s=>s.changed).map(s=>
+      `<div style="font-size:12px;margin:6px 0;padding:7px 10px;background:var(--gray-light);border-radius:6px;line-height:1.6">`+
+      `<div style="font-family:monospace;font-size:13px">${s.ai&&s.corrected?aiEhDiffHtml(s.ai,s.corrected):s.ai?`<span style="color:var(--red);text-decoration:line-through">${escHtml(s.ai)}</span>`:`<span style="color:var(--green)">${escHtml(s.corrected||'')}</span>`}</div>`+
+      (s.reason?`<div style="color:var(--gray-dark);font-style:italic;margin-top:4px;font-size:13px">${escHtml(s.reason)}</div>`:'')
+      +`</div>`
+    ).join('');
+  // Continue button
+  const contBtn=document.createElement('button');
+  contBtn.className='cont-btn'; contBtn.style='margin-top:14px;width:100%';
+  contBtn.textContent=t('check.continue');
+  contBtn.onclick=()=>{ showComplete(); };
+  resultDiv.appendChild(contBtn);
+  wrap.after(resultDiv);
+  document.getElementById('eh-btn-row').remove();
+  // Save progress
+  C.correct=correct; C.total=changedSet.size+wrong;
+  const topicKey=APP.lessonData.topic;
+  if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
+  APP.progress.completed[topicKey][lesson.id]={correct,wrong,missed,score,total:changedSet.size+wrong};
+  saveProg();
+}
+
 // ── Error-hunt renderer ─────────────────────────────────────────────
 function renderErrorHunt(){
   const C=APP.cur;
@@ -4383,6 +4897,11 @@ function renderErrorHunt(){
     return `<span class="eh-tok" data-i="${i}" onclick="ehToggle(${i})">${escHtml(tok)}</span>`;
   });
   C.ehTokens=rawTokens.filter(t=>!/^\s+$/.test(t));  // word tokens only
+  // Derive edits from diff if not stored (new text-only generation approach)
+  if (!lesson.edits || lesson.edits.length === 0) {
+    const correctStory = APP.lessonData?.story || '';
+    lesson.edits = ehComputeDiff(correctStory, lesson.corruptedStory || '');
+  }
   // Build token-to-edit map: which token indices overlap which edit
   C.ehEditMap=buildEhEditMap(lesson);
   const el=document.getElementById('ex-area');
@@ -4413,16 +4932,22 @@ function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').r
 function escAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 function buildEhEditMap(lesson){
-  // For each edit, find which token indices it spans in the corrupted story
   const story=lesson.corruptedStory;
-  const tokens=lesson.corruptedStory.split(/( +|\n+)/).filter(t=>!/^\s+$/.test(t));
-  const map=new Map(); // tokenIdx → editIdx
+  const map=new Map();
   lesson.edits.forEach((edit,ei)=>{
-    const pos=story.indexOf(edit.replace);
+    if(!edit.replace) return;
+    // Use context_before for precise location if available, else first occurrence
+    let pos;
+    if(edit.context_before){
+      const needle=edit.context_before+edit.replace;
+      const idx=story.indexOf(needle);
+      pos=idx>=0 ? idx+edit.context_before.length : story.indexOf(edit.replace);
+    } else {
+      pos=story.indexOf(edit.replace);
+    }
     if(pos<0) return;
-    // Find which tokens overlap [pos, pos+replace.length)
     let charPos=0, ti=0;
-    for(const raw of lesson.corruptedStory.split(/( +|\n+)/)){
+    for(const raw of story.split(/( +|\n+)/)){
       if(!/^\s+$/.test(raw)){
         if(charPos>=pos&&charPos<pos+edit.replace.length) map.set(ti,ei);
         ti++;
@@ -4469,9 +4994,9 @@ function ehCheck(){
   const resultDiv=document.createElement('div');
   resultDiv.style='margin-top:14px';
   resultDiv.innerHTML=
-    `<div class="eh-score">${score>0?score:0} pts</div>`+
+    `<div class="eh-score">${score>0?score:0}</div>`+
     `<div style="font-size:13px;font-weight:700;color:var(--gray-dark);margin-bottom:8px">`+
-    `✅ ${correct} found &nbsp; ❌ ${wrong} false &nbsp; ⚠️ ${missed} missed</div>`+
+    `${t('ex.error_hunt.result',{correct,wrong,missed})}</div>`+
     lesson.edits.map((e,ei)=>{
             const icon={spelling:'🔵',grammar:'🟠'}[e.type]||'⚡';
       return `<div style="font-size:12px;margin:3px 0">${icon} <strong>${e.type}</strong>: `+
@@ -4514,6 +5039,8 @@ function renderEx(){
   else if(ex.type==='listen_type') html=tLType(ex);
   else if(ex.type==='order') html=tOrder(ex);
   else if(ex.type==='read_translate') html=tRead(ex);
+  else if(ex.type==='math_order') html=tMathOrder(ex);
+  else if(ex.type==='math_calc') html=tMathCalc(ex);
   else if(ex.type==='mcq_article') html=tMcqArticle(ex);
   else if(ex.type==='mcq_plural') html=tMcqPlural(ex);
   else if(ex.type==='type_plural') html=tTypePlural(ex);
@@ -4533,10 +5060,10 @@ function renderEx(){
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>{
     if(_ttsUnlocked){ speak(ex.target); }
     else {
-      // iOS: audio not unlocked yet — pending speak will fire on first tap (which will also hit the listen button)
       _ttsPendingAfterUnlock={text:ex.target,rate:undefined};
     }
   },350);
+
 }
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
@@ -4574,6 +5101,24 @@ function lBlock(it, pron, hideWord) {
 }
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
 function lessonSrcLang(){ const s=APP.lessonData?.srcLang||APP.srcLang||'en'; return LANGS[s]||LANGS.en||{name:'English',flag:'🇬🇧',tts:'en-GB'}; }
+function tMathOrder(ex){
+  const lang=APP.lessonData?.lang||APP.lang||'it';
+  const nums=ex.numbers.map((n,i)=>`<button class="choice" id="mn${i}" onclick="mathOrderPick(${i},this)">${n}</button>`).join('');
+  return `<div class="ex-badge">🔢 ${ex.direction==='asc'?'↑':'↓'} ${t('ex.badge.math_order')}</div>`+
+    `<div class="card"><div class="qtext">${ex.direction==='asc'?'Smallest → largest':'Largest → smallest'}</div>`+
+    `<div id="math-placed" style="min-height:44px;display:flex;flex-wrap:wrap;gap:6px;padding:10px 0;border-bottom:1.5px solid var(--gray-mid);margin-bottom:10px"></div>`+
+    `<div style="display:flex;flex-wrap:wrap;gap:6px">${nums}</div></div>`;
+}
+function tMathCalc(ex){
+  const lang=APP.lessonData?.lang||APP.lang||'it';
+  const numSpan=n=>`<span style="font-size:22px;font-weight:900;cursor:pointer" onclick="_unlockTts();_doSpeakLang('${esc(String(n))}','${lang}')" title="Tap to hear">${escHtml(String(n))}</span>`;
+  const eq=`<div style="display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:16px;flex-wrap:wrap">`+
+    numSpan(ex.a)+`<span style="font-size:22px;font-weight:900">${escHtml(ex.op)}</span>`+
+    numSpan(ex.b)+`<span style="font-size:22px;font-weight:900">= ?</span></div>`;
+  return `<div class="ex-badge">🔢 ${t('ex.badge.math_calc')}</div>`+
+    `<div class="card">${eq}${cGrid(ex.choices,false)}</div>`;
+}
+
 function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
 function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:L.name})}</div><div class="card"><div class="qtext">${t("ex.mcq_source_target.q",{word:ex.source,lang:L.name})}</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){ return ttsIsApproximate()?`<span class="tts-approx" style="margin-left:6px">${t('tts.approx')}</span>`:''; }
@@ -4592,8 +5137,43 @@ function tOrder(ex){
 
 function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext">${t("ex.read_translate.q",{lang:L.name})}</div><div class="target-box"><div class="target-box-text">${applyFurigana(ex.target)}</div><button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
-function pickChoice(i,el){ if(APP.cur.answered)return; APP.cur.sel=el.textContent.trim(); document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel')); el.classList.add('sel'); document.getElementById('cbtn').disabled=false; check(); }
+function pickChoice(i,el){
+  const C=APP.cur;
+  // If already answered and button is disabled (TTS speaking), ignore tap
+  if(C.answered && document.getElementById('cbtn')?.disabled) return;
+  if(C.answered){ C.cur++; renderEx(); return; }
+  C.sel=el.textContent.trim();
+  document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('cbtn').disabled=false;
+  check();
+}
 function onType(){ document.getElementById('cbtn').disabled=document.getElementById('type-in').value.trim().length<1; }
+function mathOrderPick(i, btn) {
+  const C=APP.cur; if(C.answered) return;
+  if(!C.placed) C.placed=[];
+  // If already placed, remove it
+  const already=C.placed.findIndex(p=>p.i===i);
+  if(already>=0){ C.placed.splice(already,1); btn.classList.remove('used'); updateMathPlaced(); return; }
+  C.placed.push({i, w:C.exercises[C.cur].numbers[i]});
+  btn.classList.add('used');
+  updateMathPlaced();
+  // Auto-check when all placed
+  if(C.placed.length===C.exercises[C.cur].numbers.length){ document.getElementById('cbtn').disabled=false; check(); }
+  else document.getElementById('cbtn').disabled=false;
+}
+function updateMathPlaced(){
+  const C=APP.cur, el=document.getElementById('math-placed'); if(!el)return;
+  if(!C.placed||!C.placed.length){ el.innerHTML=''; return; }
+  el.innerHTML=C.placed.map((p,pos)=>`<span class="placed-tok" onclick="mathOrderRemove(${pos})" title="tap to remove">${p.w}</span>`).join('');
+}
+function mathOrderRemove(pos){
+  const C=APP.cur; if(C.answered)return;
+  const {i}=C.placed[pos]; C.placed.splice(pos,1);
+  const btn=document.getElementById('mn'+i); if(btn)btn.classList.remove('used');
+  updateMathPlaced();
+}
+
 function addTok(i){
   const C=APP.cur; if(C.answered||C.usedIdx.includes(i))return;
   // If a placed token is selected, replace it with this bank word
@@ -4730,9 +5310,14 @@ function check(){
     const isJaOrd=(APP.lessonData?.lang||APP.lang)==='ja';
     ok=C.placed.map(p=>p.w).join(isJaOrd?'':' ')===ex.correct;
   }
+  else if(ex.type==='math_order'){
+    ok=JSON.stringify((C.placed||[]).map(p=>String(p.w)))===JSON.stringify(ex.correct);
+  }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
   const btn=document.getElementById('cbtn'); btn.textContent=t('check.continue'); btn.className='check-btn cont'; btn.disabled=false;
+
+
   const fb=document.getElementById('fb');
   // If flagged: skip scoring entirely, show neutral feedback
   if(isExFlagged(ex)){
@@ -4744,12 +5329,14 @@ function check(){
     C.correct++; C.total++; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
     const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
       ? `${ex.correct}${ex.source ? ' — ' + ex.source : ''}`
+      : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : (ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}</div>`;
     const speakOk = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct
-      : ex.type==='mcq_article'      ? ex.article+' '+ex.target               // "die Biene"
-      : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+ex.plural // "die Bienen"
-      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct              // "er geht"
+      : ex.type==='mcq_article'      ? ex.article+' '+ex.target
+      : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+ex.plural
+      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct
+      : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+ex.target : ex.target);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('ok');
@@ -4762,7 +5349,8 @@ function check(){
     const speakBad = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct
       : ex.type==='mcq_article'      ? ex.article+' '+ex.target
       : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+ex.plural
-      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct              // "er geht"
+      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct
+      : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+ex.target : ex.target);
     if(speakBad) speak(speakBad,0.75);
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===ex.correct)b.classList.add('ok'); });
@@ -4816,7 +5404,7 @@ function showComplete(){
   const allLessons = APP.lessonData?.lessons || [];
   // Find next lesson AFTER the current one that hasn't been done
   const nextLessonIdx = allLessons.findIndex((L, i) => i !== C.lessonIdx && !done[L.id]);
-  const typeLabel = idx => { const k={grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt'}[allLessons[idx]?.type]||'lesson.type.vocab'; return t(k); };
+  const typeLabel = idx => { const k={grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math'}[allLessons[idx]?.type]||'lesson.type.vocab'; return t(k); };
   if (nextLessonIdx >= 0) {
     // More lesson sets remaining in this chapter
     compNext.textContent = `→ Next: ${typeLabel(nextLessonIdx)}`;
@@ -5007,12 +5595,36 @@ function _doSpeakLang(text, langCode) {
   const chunks = _ttsChunks(text);
   const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
   speechSynthesis.cancel();
-  // Only delay if we actually cancelled something; otherwise speak immediately
   if (wasSpeaking) {
     setTimeout(() => _speakChunks(chunks, langCode, 0.9, 0), 50);
   } else {
     _speakChunks(chunks, langCode, 0.9, 0);
   }
+}
+
+function _speakChunksThen(chunks, langCode, rate, idx, cb) {
+  if (idx >= chunks.length) { if (cb) cb(); return; }
+  const ttsCode = langCode ? ((LANGS[langCode]||{}).tts||langCode) : activeTtsCode();
+  const u = new SpeechSynthesisUtterance(chunks[idx]);
+  u.lang = ttsCode; u.rate = rate||0.9; u.pitch = 1;
+  const voices = speechSynthesis.getVoices();
+  if (voices.length) {
+    const norm = c => (c||'').replace('_','-').toLowerCase();
+    const match = voices.find(v=>norm(v.lang)===norm(ttsCode))
+               || voices.find(v=>norm(v.lang).startsWith(norm(ttsCode).split('-')[0]));
+    if (match) { u.voice = match; u.lang = match.lang; }
+  }
+  u.onend = () => _speakChunksThen(chunks, langCode, rate, idx+1, cb);
+  u.onerror = () => { if (cb) cb(); };
+  speechSynthesis.speak(u);
+}
+
+function _doSpeakLangThen(text, langCode, cb) {
+  const chunks = _ttsChunks(text);
+  const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
+  speechSynthesis.cancel();
+  const go = () => _speakChunksThen(chunks, langCode, 0.9, 0, cb);
+  if (wasSpeaking) setTimeout(go, 50); else go();
 }
 
 // iOS and some Android browsers require speechSynthesis to be triggered from a user gesture.

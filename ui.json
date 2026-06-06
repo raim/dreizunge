@@ -1596,7 +1596,18 @@
     "lesson.type.grammar": "Grammar",
     "lesson.type.conjugation": "Conjugation",
     "lesson.type.error_hunt": "Error Hunt",
-    "static.ai_warning": "⚠ AI generated content. Use a real language learning app or a human teacher if you are new to a language. Visit github.com/raim/dreizunge to generate lessons or contribute."
+    "static.ai_warning": "⚠ AI generated content. Use a real language learning app or a human teacher if you are new to a language. Visit github.com/raim/dreizunge to generate lessons or contribute.",
+    "lesson.type.ai_error_hunt": "AI Error Hunt",
+    "lesson.ai_error_hunt.desc": "AI is stupid. Can you find the errors a human found?",
+    "ex.error_hunt.result": "✅ {correct} ❌ {wrong} ⚠️ {missed}",
+    "ex.error_hunt.reason_placeholder": "Reason…",
+    "lesson.ai_error_hunt.no_ai_story": "No AI story stored.",
+    "lesson.ai_error_hunt.editor_hint": "Changed clauses only. Add a reason for each.",
+    "lesson.ai_error_hunt.changed_count": "{n}/{total} changed",
+    "lesson.type.math": "🔢 Math",
+    "ex.badge.math_order": "🔢 Sort the numbers",
+    "ex.badge.math_calc": "🔢 Calculate",
+    "form.format.math": "🔢 Math — numbers from the story"
   },
   "sv": {
     "app.tagline": "Lär dig vokabulär för valfritt ämne",
