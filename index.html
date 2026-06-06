@@ -830,7 +830,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="${t('ui.edit_title')}" style="display:none">✏️</button>
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="genStorylineTitleFromScreen()" title="Generate title" style="display:none">✨</button>
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
-        <button class="sl-screen-share" id="sl-screen-edit-summary-btn" onclick="openSummaryEdit(APP._slScreen?.chainId)" title="Edit summary" style="display:none">✏️</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
         <button class="sl-screen-share" id="sl-screen-del-btn" onclick="deleteCurrentStoryline()" style="color:var(--red);display:none" title="Delete storyline">🗑️</button>
       </div>
@@ -2892,8 +2891,6 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   if (genBtn)    genBtn.style.display    = APP.info.canGenerate ? '' : 'none';
   const summaryBtn = document.getElementById('sl-screen-summary-btn');
   if (summaryBtn) summaryBtn.style.display = APP.info.canGenerate ? '' : 'none';
-  const editSummaryBtn = document.getElementById('sl-screen-edit-summary-btn');
-  if (editSummaryBtn) editSummaryBtn.style.display = (APP.info.canGenerate && slMeta?.summary) ? '' : 'none';
   const delBtn = document.getElementById('sl-screen-del-btn');
   if (delBtn) delBtn.style.display = APP.info.canGenerate ? '' : 'none';
   APP._slScreen.slMeta = slMeta;
@@ -2952,7 +2949,8 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         + '<button class="storyline-story-hdr" style="flex:1" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">' + '📖 ' 
         + (existingSummary ? t('lesson.read_summary') : t('lesson.no_summary')) + ' ▼</button>'
         + (existingSummary ? '<button class="storyline-hdr-btn" onclick="speakBodyText(\'' + _sumId + '\',APP.srcLang)">🔊</button>' : '')
-        + (APP.info.canGenerate ? '<button class="storyline-hdr-btn" data-cid="' + chainId + '" onclick="openSummaryEdit(this.dataset.cid)" title="Edit summary">✏️</button>' : '')
+        + '<button class="storyline-hdr-btn" data-sumid="' + _sumId + '" onclick="event.stopPropagation();openSummaryEdit(null,this.dataset.sumid)" title="Edit summary">✏️</button>'
+
         + '</div>'
         + '<div id="' + _sumId + '" style="display:none;padding:12px 16px;font-size:14px;line-height:1.6;color:var(--text)">'
         + (existingSummary ? escHtml(existingSummary) : '<em style="color:var(--gray-dark)">Here could be your summary.</em>')
@@ -3203,8 +3201,6 @@ async function genStorylineSummary() {
       if (idx >= 0) APP.storylines[idx].summary = summary;
     }
     showToast('📝 Summary generated');
-    const _esb = document.getElementById('sl-screen-edit-summary-btn');
-    if (_esb && APP.info.canGenerate) _esb.style.display = '';
     loadSavedList(); // refresh landing page summary card
   } catch(e) {
     showToast('⚠ ' + e.message.slice(0, 60));
@@ -3233,19 +3229,20 @@ async function exportStatic() {
 
 // ── Summary editing ─────────────────────────────────────────────────────────────
 
-function openSummaryEdit(chainId) {
-  if (!chainId) return;
-  // Find the summary body element — works for both sl-screen and landing card
-  const body = document.getElementById('slsc-summary-body-' + chainId)
-            || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
-  if (!body) return;
+function openSummaryEdit(chainId, bodyId) {
+  // Always resolve chainId — use APP._slScreen as authoritative source if not provided
+  chainId = chainId || APP._slScreen?.chainId || null;
+  const body = (bodyId ? document.getElementById(bodyId) : null)
+            || (chainId ? document.getElementById('slsc-summary-body-' + chainId) : null)
+            || (chainId ? document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_')) : null);
+  if (!body) { showToast('⚠ Summary element not found'); return; }
 
   // Get current summary text
   const sl = (APP.storylines||[]).find(s => s.id === chainId);
   const current = sl?.summary || body.querySelector('p')?.textContent || '';
 
   // Replace body content with inline editor
-  body.style.display = '';  // ensure visible
+  body.style.display = '';  // ensure visible (expand if collapsed)
   body.innerHTML =
     '<textarea id="slsum-edit-ta-' + chainId + '" style="width:100%;box-sizing:border-box;min-height:100px;font-size:14px;line-height:1.6;font-family:Nunito,sans-serif;border:1.5px solid var(--blue);border-radius:6px;padding:8px;resize:vertical;outline:none;color:var(--text)">' +
     escHtml(current) +
@@ -3283,8 +3280,6 @@ async function saveSummaryEdit(chainId) {
       body.innerHTML = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
     }
     // Show edit button in sl-screen if open
-    const esb = document.getElementById('sl-screen-edit-summary-btn');
-    if (esb && APP.info.canGenerate) esb.style.display = summary ? '' : 'none';
     loadSavedList(); // refresh landing page summary card
     showToast('💾 Summary saved');
   } catch(e) {

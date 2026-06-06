@@ -28,8 +28,8 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-04T20:35:36.097Z",
-      "updatedAt": "2026-06-04T21:52:45.329Z",
-      "summary": "Ein Wesen mit langen Ohren und einem blühenden Muster wandert durch ein grasbewachsenes Feld und stößt auf einen Baumfrosch, der es nach seinem Namen fragt. Das Wesen, das sich nicht kennt, beginnt eine Reise, um sich selbst zu finden, und trifft auf verschiedene Tiere, die es an sich erinnern. Am Ende der Reise begegnet es den Zahlen, den Buchstaben und anderen Zahlen, die es zuerst nicht verstehen kann, aber schließlich lernt, dass es zusammenarbeiten kann, um Herausforderungen zu meistern."
+      "updatedAt": "2026-06-05T21:51:38.868Z",
+      "summary": "Ein Wesen mit langen Ohren und einem blühenden Muster wandert durch ein grasbewachsenes Feld und stößt auf einen Baumfrosch, der es nach seinem Namen fragt. Das Wesen, das sich nicht kennt, beginnt eine Reise, um sich selbst zu finden, und trifft auf verschiedene Tiere, die es an sich erinnern. Am Ende der Reise begegnet es den Zahlen, den Buchstaben und anderen Zahlen, die es zuerst nicht verstehen kann, aber schließlich lernt, dass es zusammenarbeiten kann, um Herausforderungen zu meistern.\n\nFrei nach Mira Lobe."
     },
     {
       "id": "sl_1117742356",
@@ -670,6 +670,148 @@
     }
   ],
   "topics": [
+    {
+      "topic": "Das Geheimnis von 0",
+      "topicEmoji": "✖️",
+      "userTopic": "die ueberraschung war gross, als sie multiplizieren entdeckten, das geheimnis um 0 wurde noch groesser.",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 550,
+      "story": "One day, 0 and its friends were working on a particularly tricky problem. Suddenly, 3 appeared, looking excited. \"Hey, 0, 1, 2,\" 3 said, \"I just figured something out. It's about 0, and it's really surprising.\"\n\n0, 1, and 2 looked at each other, their curiosity piqued. \"What is it?\" 1 asked.\n\n\"Okay, listen up,\" 3 said, settling down. \"I was trying to multiply some numbers, and I noticed something strange. When you multiply any number by 0, you get 0. But, and this is the surprising part, when you multiply 0 by any number, you also get 0.\"\n\n2's eyes widened. \"That's... that's true,\" 2 said, testing it out. \"1 times 0 is 0. 5 times 0 is 0. 100 times 0 is 0.\"\n\n1 nodded. \"So, 0 is like a magic number. It turns everything into 0.\"\n\n0 felt a mix of excitement and confusion. \"But why is that important?\" 0 asked.\n\n3 grinned. \"Well, it's not just important. It's fundamental. It's like the secret ingredient in a recipe. Without it, the whole thing doesn't work.\"\n\nThe group spent the rest of the day exploring this new discovery. They multiplied numbers, checked their work, and shared their findings. 0 felt a sense of wonder, realizing that there was still so much to learn.\n\nAs the sun began to set, 1 said, \"This is amazing, 0. You're not just 0. You're a key to understanding the world around us.\"\n\n2 added, \"And we're here to help you understand it all.\"\n\n0 smiled, feeling a mix of pride and curiosity. \"Let's keep exploring,\" 0 said. \"There's so much more to discover.\"",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 550 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nback at 0. \"Because you're special,\" 1 said gently. \"You're 0, and that's okay. You don't have to be like everyone else.\"\n\n2 nodded. \"And we'll always be here to help you. We're a team, and we help each other out.\"\n\nThe numbers and letters continued their practice, and 0 slowly began to grasp the concept. It was a slow process, but 0 felt a sense of accomplishment each time it solved a problem.\n\nOne day, 0 looked around at its friends. \"I think I'm starting to get it,\" it said, a small smile on its face.\n\n1 and 2 beamed with pride. \"We knew you could do it,\" 1 said.\n\n2 added, \"And we're here for you, no matter what.\"\n\nThe group continued to work together, solving problems and sharing their knowledge. 0 realized that it didn't need to be perfect. It just needed to be 0, and that was enough.\n\nNew topic: \"die ueberraschung war gross, als sie multiplizieren entdeckten, das geheimnis um 0 wurde noch groesser.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Zahlenreise",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "die überraschung war gross",
+          "desc": "multiplizieren, zahlen, null",
+          "icon": "🤯",
+          "vocab": [
+            {
+              "target": "discovery",
+              "source": "Entdeckung"
+            },
+            {
+              "target": "multiply",
+              "source": "multiplizieren"
+            },
+            {
+              "target": "number",
+              "source": "Zahl"
+            },
+            {
+              "target": "zero",
+              "source": "null"
+            },
+            {
+              "target": "strange",
+              "source": "seltsam"
+            },
+            {
+              "target": "curious",
+              "source": "neugierig"
+            },
+            {
+              "target": "true",
+              "source": "richtig"
+            },
+            {
+              "target": "magic",
+              "source": "magisch"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "They were working on a challenge together.",
+              "source": "Sie arbeiteten gemeinsam an einer Herausforderung.",
+              "words": [
+                "They",
+                "were",
+                "working",
+                "on",
+                "a",
+                "challenge",
+                "together."
+              ]
+            },
+            {
+              "target": "Suddenly, they discovered something strange.",
+              "source": "Plötzlich entdeckten sie etwas Seltsames.",
+              "words": [
+                "Suddenly,",
+                "they",
+                "discovered",
+                "something",
+                "strange."
+              ]
+            },
+            {
+              "target": "It's like a magic number, turning everything to zero.",
+              "source": "Es ist wie eine magische Zahl, die alles in Null verwandelt.",
+              "words": [
+                "It's",
+                "like",
+                "a",
+                "magic",
+                "number,",
+                "turning",
+                "everything",
+                "to",
+                "zero."
+              ]
+            },
+            {
+              "target": "Zero is a curious number indeed.",
+              "source": "Null ist eine seltsame Zahl, das ist sicher.",
+              "words": [
+                "Zero",
+                "is",
+                "a",
+                "curious",
+                "number",
+                "indeed."
+              ]
+            },
+            {
+              "target": "The discovery made them feel excited and confused.",
+              "source": "Die Entdeckung machte sie begeistert und verwirrt",
+              "words": [
+                "The",
+                "discovery",
+                "made",
+                "them",
+                "feel",
+                "excited",
+                "and",
+                "confused."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 619863,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1838,
+        "totalCompletionTokens": 778,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 340521,
+            "promptTokens": 1178,
+            "completionTokens": 292
+          }
+        ]
+      },
+      "generatedAt": "2026-06-04T21:32:54.652Z",
+      "updatedAt": "2026-06-04T21:32:54.681Z",
+      "id": "tp_118316007"
+    },
     {
       "topic": "Visit Jerusalem, city of three religions",
       "topicEmoji": "🙏",
@@ -1612,148 +1754,6 @@
       "generatedAt": "2026-05-23T18:46:44.080Z",
       "updatedAt": "2026-05-23T18:46:44.080Z",
       "id": "tp_394510890"
-    },
-    {
-      "topic": "Das Geheimnis von 0",
-      "topicEmoji": "➖",
-      "userTopic": "die ueberraschung war gross, als sie multiplizieren entdeckten, das geheimnis um 0 wurde noch groesser.",
-      "lang": "en",
-      "srcLang": "de",
-      "difficulty": 2,
-      "storyLen": 550,
-      "story": "One day, 0 and its friends were working on a particularly tricky problem. Suddenly, 3 appeared, looking excited. \"Hey, 0, 1, 2,\" 3 said, \"I just figured something out. It's about 0, and it's really surprising.\"\n\n0, 1, and 2 looked at each other, their curiosity piqued. \"What is it?\" 1 asked.\n\n\"Okay, listen up,\" 3 said, settling down. \"I was trying to multiply some numbers, and I noticed something strange. When you multiply any number by 0, you get 0. But, and this is the surprising part, when you multiply 0 by any number, you also get 0.\"\n\n2's eyes widened. \"That's... that's true,\" 2 said, testing it out. \"1 times 0 is 0. 5 times 0 is 0. 100 times 0 is 0.\"\n\n1 nodded. \"So, 0 is like a magic number. It turns everything into 0.\"\n\n0 felt a mix of excitement and confusion. \"But why is that important?\" 0 asked.\n\n3 grinned. \"Well, it's not just important. It's fundamental. It's like the secret ingredient in a recipe. Without it, the whole thing doesn't work.\"\n\nThe group spent the rest of the day exploring this new discovery. They multiplied numbers, checked their work, and shared their findings. 0 felt a sense of wonder, realizing that there was still so much to learn.\n\nAs the sun began to set, 1 said, \"This is amazing, 0. You're not just 0. You're a key to understanding the world around us.\"\n\n2 added, \"And we're here to help you understand it all.\"\n\n0 smiled, feeling a mix of pride and curiosity. \"Let's keep exploring,\" 0 said. \"There's so much more to discover.\"",
-      "storyLang": "en",
-      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 550 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nback at 0. \"Because you're special,\" 1 said gently. \"You're 0, and that's okay. You don't have to be like everyone else.\"\n\n2 nodded. \"And we'll always be here to help you. We're a team, and we help each other out.\"\n\nThe numbers and letters continued their practice, and 0 slowly began to grasp the concept. It was a slow process, but 0 felt a sense of accomplishment each time it solved a problem.\n\nOne day, 0 looked around at its friends. \"I think I'm starting to get it,\" it said, a small smile on its face.\n\n1 and 2 beamed with pride. \"We knew you could do it,\" 1 said.\n\n2 added, \"And we're here for you, no matter what.\"\n\nThe group continued to work together, solving problems and sharing their knowledge. 0 realized that it didn't need to be perfect. It just needed to be 0, and that was enough.\n\nNew topic: \"die ueberraschung war gross, als sie multiplizieren entdeckten, das geheimnis um 0 wurde noch groesser.\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "Zahlenreise",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "die überraschung war gross",
-          "desc": "multiplizieren, zahlen, null",
-          "icon": "🤯",
-          "vocab": [
-            {
-              "target": "discovery",
-              "source": "Entdeckung"
-            },
-            {
-              "target": "multiply",
-              "source": "multiplizieren"
-            },
-            {
-              "target": "number",
-              "source": "Zahl"
-            },
-            {
-              "target": "zero",
-              "source": "null"
-            },
-            {
-              "target": "strange",
-              "source": "seltsam"
-            },
-            {
-              "target": "curious",
-              "source": "neugierig"
-            },
-            {
-              "target": "true",
-              "source": "richtig"
-            },
-            {
-              "target": "magic",
-              "source": "magisch"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "They were working on a challenge together.",
-              "source": "Sie arbeiteten gemeinsam an einer Herausforderung.",
-              "words": [
-                "They",
-                "were",
-                "working",
-                "on",
-                "a",
-                "challenge",
-                "together."
-              ]
-            },
-            {
-              "target": "Suddenly, they discovered something strange.",
-              "source": "Plötzlich entdeckten sie etwas Seltsames.",
-              "words": [
-                "Suddenly,",
-                "they",
-                "discovered",
-                "something",
-                "strange."
-              ]
-            },
-            {
-              "target": "It's like a magic number, turning everything to zero.",
-              "source": "Es ist wie eine magische Zahl, die alles in Null verwandelt.",
-              "words": [
-                "It's",
-                "like",
-                "a",
-                "magic",
-                "number,",
-                "turning",
-                "everything",
-                "to",
-                "zero."
-              ]
-            },
-            {
-              "target": "Zero is a curious number indeed.",
-              "source": "Null ist eine seltsame Zahl, das ist sicher.",
-              "words": [
-                "Zero",
-                "is",
-                "a",
-                "curious",
-                "number",
-                "indeed."
-              ]
-            },
-            {
-              "target": "The discovery made them feel excited and confused.",
-              "source": "Die Entdeckung machte sie begeistert und verwirrt",
-              "words": [
-                "The",
-                "discovery",
-                "made",
-                "them",
-                "feel",
-                "excited",
-                "and",
-                "confused."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 619863,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 1838,
-        "totalCompletionTokens": 778,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 340521,
-            "promptTokens": 1178,
-            "completionTokens": 292
-          }
-        ]
-      },
-      "generatedAt": "2026-06-04T21:32:54.652Z",
-      "updatedAt": "2026-06-04T21:32:54.681Z",
-      "id": "tp_118316007"
     },
     {
       "topic": "Zahlenreise",
