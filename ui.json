@@ -1680,7 +1680,13 @@
     "lesson.type.math": "🔢 Mathematics",
     "ex.badge.math_order": "🔢 Sort",
     "ex.badge.math_calc": "🔢 Calculate",
-    "form.format.math": "🔢 Mathematics"
+    "form.format.math": "🔢 Mathematics",
+    "gen.use_full_chain": "use full storyline as context",
+    "sl.tags_placeholder": "+ tags",
+    "sl.tags_input_placeholder": "Tags, semicolon-separated…",
+    "toast.gen_stopped": "⛔ Generation stopped",
+    "ex.math_order.asc": "Smallest → largest",
+    "ex.math_order.desc": "Largest → smallest"
   },
   "sv": {
     "app.tagline": "Lär dig vokabulär för valfritt ämne",
@@ -5258,7 +5264,7 @@
     "lesson.type.math": "🔢 Matematiikka",
     "ex.badge.math_order": "🔢 Järjestä",
     "ex.badge.math_calc": "🔢 Laske",
-    "form.format.math": "/Area matematiikka"
+    "form.format.math": "🔢 Area matematiikka"
   },
   "hu": {
     "app.backend": "Háttér:",

@@ -23,13 +23,18 @@
         "tp_2088453173",
         "tp_799905727",
         "tp_103972811",
-        "tp_118316007"
+        "tp_118316007",
+        "tp_1356093754"
       ],
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-04T20:35:36.097Z",
-      "updatedAt": "2026-06-06T20:07:21.836Z",
-      "summary": "Ein Wesen mit langen Ohren und einem blühenden Muster wandert durch ein grasbewachsenes Feld und stößt auf einen Baumfrosch, der es nach seinem Namen fragt. Das Wesen, das sich nicht kennt, beginnt eine Reise, um sich selbst zu finden, und trifft auf verschiedene Tiere, die es an sich erinnern. Am Ende der Reise begegnet es den Zahlen, den Buchstaben und anderen Zahlen, die es zuerst nicht verstehen kann, aber schließlich lernt, dass es zusammenarbeiten kann, um Herausforderungen zu meistern.\n\nFrei nach Mira Lobe."
+      "updatedAt": "2026-06-07T06:08:31.637Z",
+      "summary": "Ein Wesen mit langen Ohren und einem blühenden Muster wandert durch ein grasbewachsenes Feld und stößt auf einen Baumfrosch, der es nach seinem Namen fragt. Das Wesen, das sich nicht kennt, beginnt eine Reise, um sich selbst zu finden, und trifft auf verschiedene Tiere, die es an sich erinnern. Am Ende der Reise begegnet es den Zahlen, den Buchstaben und anderen Zahlen, die es zuerst nicht verstehen kann, aber schließlich lernt, dass es zusammenarbeiten kann, um Herausforderungen zu meistern.\n\nFrei nach Mira Lobe.",
+      "tags": [
+        "manually curated",
+        "children"
+      ]
     },
     {
       "id": "sl_1117742356",
@@ -88,8 +93,11 @@
         "tp_360608166"
       ],
       "createdAt": "2026-06-01T17:53:08.297Z",
-      "updatedAt": "2026-06-03T14:17:33.164Z",
-      "summary": "The protagonist, a scientist with a PhD in theoretical mathematics and quantum physics from the USA, is in Germany seeking a job but struggles with the language. Through intensive language courses and self-study, he gains confidence and participates in discussions about artificial intelligence (AI) in his workplace. He learns about the role of mathematics, particularly linear algebra, probability theory, and statistics, in AI and discusses the practical applications and theoretical foundations of machine learning. After presenting his own algorithmic model, he secures a position in the company, though he faces a momentary challenge when declining an offer for a drink."
+      "updatedAt": "2026-06-07T05:50:53.031Z",
+      "summary": "The protagonist, a scientist with a PhD in theoretical mathematics and quantum physics from the USA, is in Germany seeking a job but struggles with the language. Through intensive language courses and self-study, he gains confidence and participates in discussions about artificial intelligence (AI) in his workplace. He learns about the role of mathematics, particularly linear algebra, probability theory, and statistics, in AI and discusses the practical applications and theoretical foundations of machine learning. After presenting his own algorithmic model, he secures a position in the company, though he faces a momentary challenge when declining an offer for a drink.",
+      "tags": [
+        "manually curated"
+      ]
     },
     {
       "id": "sl_1525267852",
@@ -670,6 +678,280 @@
     }
   ],
   "topics": [
+    {
+      "topic": "0 und i am Fluss",
+      "topicEmoji": "💧",
+      "userTopic": "0 und i sitzen am fluss und reden ueber das erlebte. das stofftier vom anfang der geschichte winkt von einem boot auf dem es vorbeifaehrt.",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 400,
+      "story": "0 and i sat by the river, the gentle flow of water lapping softly against the banks. The sun was setting, casting a warm glow over the scene. The stofftier, the magical stuffed animal from the beginning of their story, waved from a passing boat, its eyes sparkling with excitement.\n\n\"Remember how we found out about 0?\" i asked, looking at 0 with a smile.\n\n0 nodded, a hint of a smile on its face. \"Yes, it was amazing. I never thought I could be so important.\"\n\n\"Exactly,\" i said. \"And now, look at us. We've come so far. The stofftier is here, and it's like it's cheering us on.\"\n\nThe stofftier waved again, its movements graceful and joyful. \"It's like it's saying, 'Keep going, you two. There's more to discover,' \" 0 said, a sense of wonder in its voice.\n\ni nodded, feeling a surge of determination. \"Let's go find out what it means. Maybe there's another secret waiting for us.\"\n\nTogether, they stood up and walked towards the riverbank, the stofftier still waving from the boat. The adventure was far from over, and they were ready for whatever came next.",
+      "storyLang": "en",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n0 is like a magic number. It turns everything into 0.\"\n\n0 felt a mix of excitement and confusion. \"But why is that important?\" 0 asked.\n\n3 grinned. \"Well, it's not just important. It's fundamental. It's like the secret ingredient in a recipe. Without it, the whole thing doesn't work.\"\n\nThe group spent the rest of the day exploring this new discovery. They multiplied numbers, checked their work, and shared their findings. 0 felt a sense of wonder, realizing that there was still so much to learn.\n\nAs the sun began to set, 1 said, \"This is amazing, 0. You're not just 0. You're a key to understanding the world around us.\"\n\n2 added, \"And we're here to help you understand it all.\"\n\n0 smiled, feeling a mix of pride and curiosity. \"Let's keep exploring,\" 0 said. \"There's so much more to discover.\"\n\nNew topic: \"0 und i sitzen am fluss und reden ueber das erlebte. das stofftier vom anfang der geschichte winkt von einem boot auf dem es vorbeifaehrt.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Das Geheimnis von 0",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "am Fluss sitzen",
+          "desc": "Erinnerungen und Gespräche am Fluss",
+          "icon": "💧",
+          "vocab": [
+            {
+              "target": "discovery",
+              "source": "Entdeckung"
+            },
+            {
+              "target": "multiply",
+              "source": "multiplizieren"
+            },
+            {
+              "target": "number",
+              "source": "Zahl"
+            },
+            {
+              "target": "zero",
+              "source": "null"
+            },
+            {
+              "target": "strange",
+              "source": "seltsam"
+            },
+            {
+              "target": "curious",
+              "source": "neugierig"
+            },
+            {
+              "target": "true",
+              "source": "richtig"
+            },
+            {
+              "target": "magic",
+              "source": "magisch"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "We remembered the discovery of the zero.",
+              "source": "Wir erinnerten uns an die Entdeckung von Null.",
+              "words": [
+                "We",
+                "remembered",
+                "the",
+                "discovery",
+                "of",
+                "the",
+                "zero."
+              ],
+              "_manualEdits": [
+                "2026-06-07T06:23:14.863Z"
+              ]
+            },
+            {
+              "target": "Zero can't be a number, it's strange.",
+              "source": "Null kann keine Zahl sein, das ist seltsam.",
+              "words": [
+                "Zero",
+                "can't",
+                "be",
+                "a",
+                "number,",
+                "it's",
+                "strange."
+              ]
+            },
+            {
+              "target": "We are curious about the magic of numbers.",
+              "source": "Wir sind neugierig auf die Magie der Zahlen.",
+              "words": [
+                "We",
+                "are",
+                "curious",
+                "about",
+                "the",
+                "magic",
+                "of",
+                "numbers."
+              ]
+            },
+            {
+              "target": "To understand the true meaning of the zero is a challenge.",
+              "source": "Der wirkliche Bedeutung der Null zu verstehen, ist eine Herausforderung.",
+              "words": [
+                "To",
+                "understand",
+                "the",
+                "true",
+                "meaning",
+                "of",
+                "the",
+                "zero",
+                "is",
+                "a",
+                "challenge."
+              ],
+              "_manualEdits": [
+                "2026-06-07T06:18:59.655Z",
+                "2026-06-07T06:23:14.863Z"
+              ]
+            },
+            {
+              "target": "Together, we discovered the magic of adding and subtracting.",
+              "source": "Zusammen haben wir die Magie von Zusammenzählen und Voneinander abziehen entdeckt.",
+              "words": [
+                "Together,",
+                "we",
+                "discovered",
+                "the",
+                "magic",
+                "of",
+                "adding",
+                "and",
+                "subtracting."
+              ],
+              "_manualEdits": [
+                "2026-06-07T06:18:59.655Z"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1780813165245",
+          "type": "math",
+          "title": "① ② ③",
+          "desc": "＋ － ×  ÷",
+          "icon": "🔢",
+          "numbers": [
+            1,
+            4,
+            2,
+            7,
+            8,
+            9
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                8,
+                4,
+                9,
+                1
+              ],
+              "correct": [
+                "1",
+                "4",
+                "8",
+                "9"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                2,
+                4,
+                8,
+                1
+              ],
+              "correct": [
+                "1",
+                "2",
+                "4",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "7",
+              "correct": "12",
+              "choices": [
+                "11",
+                "13",
+                "10",
+                "12"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "-",
+              "b": "4",
+              "correct": "1",
+              "choices": [
+                "1",
+                "2",
+                "0",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "9",
+              "op": "+",
+              "b": "4",
+              "correct": "13",
+              "choices": [
+                "11",
+                "14",
+                "12",
+                "13"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "8",
+              "correct": "13",
+              "choices": [
+                "14",
+                "11",
+                "12",
+                "13"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "4",
+              "op": "+",
+              "b": "7",
+              "correct": "11",
+              "choices": [
+                "9",
+                "11",
+                "12",
+                "10"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 542786,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1775,
+        "totalCompletionTokens": 595,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 345979,
+            "promptTokens": 1128,
+            "completionTokens": 303
+          }
+        ]
+      },
+      "generatedAt": "2026-06-07T05:48:31.565Z",
+      "updatedAt": "2026-06-07T06:23:14.866Z",
+      "id": "tp_1356093754"
+    },
     {
       "topic": "Das Geheimnis von 0",
       "topicEmoji": "✖️",
@@ -8639,7 +8921,7 @@
       "srcLang": "en",
       "difficulty": 1,
       "storyLen": 500,
-      "story": "Wir setzen uns an einen kleinen Tisch in der Ecke des Bars, die mit rotem Samt bezogen ist und von einer leuchtenden Lampe beschenkt wird. Claude lächelt breit, sein Atem riecht nach frischem Bier. \"Ich kann es kaum erwarten, dich in unserem Team zu haben, mein Freund,\" sagt er, während er mir einen kräftigen Händedruck gibt.\n\nIch lächle zurück, obwohl ich mich ein wenig unwohl fühle. \"Danke, Claude, das bedeutet mir sehr viel. Aber ich muss dir etwas sagen.\" Ich sehe ihn ernst an. \"Ich trinke nicht.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Aber du siehst so aus, als könntest du es gut vertragen,\" sagt er, während er sein Glas anhob und einen großen Schluck nahm. Sein Gesicht verfärbt sich, und er stöhnt leise.\n\nIch schüttle den Kopf. \"Nein, wirklich. Ich kann nicht trinken. Ich habe eine Allergie.\"\n\nClaude lacht erneut, diesmal lauter. \"Eine Allergie? Das ist ja lustig! Du siehst aus, als könntest du ein ganzes Bierglas runterwürgen!\"\n\nIch grinse. \"Ich bin kein Alkoholkonsumierer, Claude. Das ist kein Scherz.\"\n\nEr lacht und deutet auf mich. \"Na gut, dann lass uns etwas anderes trinken. Vielleicht ein Cola oder so.\"\n\nIch nicke dankbar. \"Das wäre schön.\"\n\nClaude bestellt zwei Colas, und wir trinken in Ruhe. Nach ein paar Minuten fängt er an, über unser Gespräch zu reden, und ich höre ihm zu, während ich versuche, nicht zu lachen. \"Also, ich denke, wir sollten uns bald mal treffen, um die Details zu besprechen,\" sagt er, während er sein Glas leert und es auf den Tisch stellt.\n\nIch nicke. \"Das klingt gut. Ich freue mich darauf.\"\n\nClaude grinst breit. \"Und du solltest dich nicht zu sehr auf die Arbeit einlassen. Wir haben auch Zeit für Spaß.\"\n\nIch lache. \"Ich denke, ich werde mich darauf konzentrieren, meine Arbeit zu tun, ohne mich zu betrinken.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Du bist ein seltsamer Typ, weißt du das? Aber ich mag dich.\"\n\nIch grinse. \"Das freut mich zu hören, Claude. Ich mag dich auch.\"\n\nWir trinken unsere Colas aus und verabschieden uns, beide mit einem Lächeln im Gesicht. Ich gehe nach Hause, während Claude noch immer lachend in der Bar sitzt, sein Gesicht rot und seine Augen glasig. Ich schüttle den Kopf und gehe weiter, mir sicher, dass ich in diesem seltsamen, aber freundlichen Team einen wertvollen Partner gefunden habe.",
+      "story": "Wir setzen uns an einen kleinen Tisch in der Ecke der Bar, die mit rotem Samt bezogen ist und von einer Lampe beleuchtet wird. Claude lächelt breit, sein Atem riecht nach frischem Bier. \"Ich kann es kaum erwarten, dich in unserem Team zu haben, mein Freund,\" sagt er, während er mir einen kräftigen Händedruck gibt.\n\nIch lächle zurück, obwohl ich mich ein wenig unwohl fühle. \"Danke, Claude, das bedeutet mir sehr viel. Aber ich muss dir etwas sagen.\" Ich sehe ihn ernst an. \"Ich trinke nicht.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Aber du siehst so aus, als könntest du es gut vertragen,\" sagt er, während er sein Glas anhob und einen großen Schluck nahm. Sein Gesicht verfärbt sich, und er stöhnt leise.\n\nIch schüttle den Kopf. \"Nein, wirklich. Ich kann nicht trinken. Ich habe eine Allergie.\"\n\nClaude lacht erneut, diesmal lauter. \"Eine Allergie? Das ist ja lustig! Du siehst aus, als könntest du ein ganzes Bierglas runterwürgen!\"\n\nIch grinse. \"Ich trinke keinen Alkohol, Claude. Das ist kein Scherz.\"\n\nEr lacht und deutet auf mich. \"Na gut, dann lass uns etwas anderes trinken. Vielleicht ein Cola oder so.\"\n\nIch nicke dankbar. \"Das wäre schön.\"\n\nClaude bestellt zwei Colas, und wir trinken in Ruhe. Nach ein paar Minuten fängt er an, über unser Gespräch zu reden, und ich höre ihm zu, während ich versuche, nicht zu lachen. \"Also, ich denke, wir sollten uns bald mal treffen, um die Details zu besprechen,\" sagt er, während er sein Glas leert und es auf den Tisch stellt.\n\nIch nicke. \"Das klingt gut. Ich freue mich darauf.\"\n\nClaude grinst breit. \"Und du solltest dich nicht zu sehr auf die Arbeit einlassen. Wir haben auch Zeit für Spaß.\"\n\nIch lache. \"Ich denke, ich werde mich darauf konzentrieren, meine Arbeit zu tun, ohne mich zu betrinken.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Du bist ein seltsamer Typ, weißt du das? Aber ich mag dich.\"\n\nIch grinse. \"Das freut mich zu hören, Claude. Ich mag dich auch.\"\n\nWir trinken unsere Colas aus und verabschieden uns, beide mit einem Lächeln im Gesicht. Ich gehe nach Hause, während Claude noch immer lachend in der Bar sitzt, sein Gesicht rot und seine Augen glasig. Ich schüttle den Kopf und gehe weiter, mir sicher, dass ich in diesem seltsamen, aber freundlichen Team einen wertvollen Partner gefunden habe.",
       "storyLang": "de",
       "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"\n\nNew topic: \"we understood each other well, and i think i landed a job; after the interview we went for some drinks in a bar. i don't drink alcohol but Claude got quite drunk.\". Write the continuation now. Plain prose, no headings.",
       "continuedFrom": "Convincing Team",
@@ -8809,6 +9091,31 @@
               ]
             }
           ]
+        },
+        {
+          "id": "aeh_1780815922500",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a human tutor.",
+          "icon": "🔎",
+          "aiStory": "Wir setzen uns an einen kleinen Tisch in der Ecke des Bars, die mit rotem Samt bezogen ist und von einer leuchtenden Lampe beschenkt wird. Claude lächelt breit, sein Atem riecht nach frischem Bier. \"Ich kann es kaum erwarten, dich in unserem Team zu haben, mein Freund,\" sagt er, während er mir einen kräftigen Händedruck gibt.\n\nIch lächle zurück, obwohl ich mich ein wenig unwohl fühle. \"Danke, Claude, das bedeutet mir sehr viel. Aber ich muss dir etwas sagen.\" Ich sehe ihn ernst an. \"Ich trinke nicht.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Aber du siehst so aus, als könntest du es gut vertragen,\" sagt er, während er sein Glas anhob und einen großen Schluck nahm. Sein Gesicht verfärbt sich, und er stöhnt leise.\n\nIch schüttle den Kopf. \"Nein, wirklich. Ich kann nicht trinken. Ich habe eine Allergie.\"\n\nClaude lacht erneut, diesmal lauter. \"Eine Allergie? Das ist ja lustig! Du siehst aus, als könntest du ein ganzes Bierglas runterwürgen!\"\n\nIch grinse. \"Ich bin kein Alkoholkonsumierer, Claude. Das ist kein Scherz.\"\n\nEr lacht und deutet auf mich. \"Na gut, dann lass uns etwas anderes trinken. Vielleicht ein Cola oder so.\"\n\nIch nicke dankbar. \"Das wäre schön.\"\n\nClaude bestellt zwei Colas, und wir trinken in Ruhe. Nach ein paar Minuten fängt er an, über unser Gespräch zu reden, und ich höre ihm zu, während ich versuche, nicht zu lachen. \"Also, ich denke, wir sollten uns bald mal treffen, um die Details zu besprechen,\" sagt er, während er sein Glas leert und es auf den Tisch stellt.\n\nIch nicke. \"Das klingt gut. Ich freue mich darauf.\"\n\nClaude grinst breit. \"Und du solltest dich nicht zu sehr auf die Arbeit einlassen. Wir haben auch Zeit für Spaß.\"\n\nIch lache. \"Ich denke, ich werde mich darauf konzentrieren, meine Arbeit zu tun, ohne mich zu betrinken.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Du bist ein seltsamer Typ, weißt du das? Aber ich mag dich.\"\n\nIch grinse. \"Das freut mich zu hören, Claude. Ich mag dich auch.\"\n\nWir trinken unsere Colas aus und verabschieden uns, beide mit einem Lächeln im Gesicht. Ich gehe nach Hause, während Claude noch immer lachend in der Bar sitzt, sein Gesicht rot und seine Augen glasig. Ich schüttle den Kopf und gehe weiter, mir sicher, dass ich in diesem seltsamen, aber freundlichen Team einen wertvollen Partner gefunden habe.",
+          "sentences": [
+            {
+              "ai": "Wir setzen uns an einen kleinen Tisch in der Ecke des Bars,",
+              "corrected": "Wir setzen uns an einen kleinen Tisch in der Ecke der Bar,",
+              "reason": ""
+            },
+            {
+              "ai": "die mit rotem Samt bezogen ist und von einer leuchtenden Lampe beschenkt wird.",
+              "corrected": "die mit rotem Samt bezogen ist und von einer Lampe beleuchtet wird.",
+              "reason": ""
+            },
+            {
+              "ai": "Ich bin kein Alkoholkonsumierer,",
+              "corrected": "Ich trinke keinen Alkohol,",
+              "reason": ""
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -8826,8 +9133,9 @@
         ]
       },
       "generatedAt": "2026-06-01T20:45:49.717Z",
-      "updatedAt": "2026-06-04T15:17:06.736Z",
-      "id": "tp_360608166"
+      "updatedAt": "2026-06-07T07:05:22.499Z",
+      "id": "tp_360608166",
+      "aiStory": "Wir setzen uns an einen kleinen Tisch in der Ecke des Bars, die mit rotem Samt bezogen ist und von einer leuchtenden Lampe beschenkt wird. Claude lächelt breit, sein Atem riecht nach frischem Bier. \"Ich kann es kaum erwarten, dich in unserem Team zu haben, mein Freund,\" sagt er, während er mir einen kräftigen Händedruck gibt.\n\nIch lächle zurück, obwohl ich mich ein wenig unwohl fühle. \"Danke, Claude, das bedeutet mir sehr viel. Aber ich muss dir etwas sagen.\" Ich sehe ihn ernst an. \"Ich trinke nicht.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Aber du siehst so aus, als könntest du es gut vertragen,\" sagt er, während er sein Glas anhob und einen großen Schluck nahm. Sein Gesicht verfärbt sich, und er stöhnt leise.\n\nIch schüttle den Kopf. \"Nein, wirklich. Ich kann nicht trinken. Ich habe eine Allergie.\"\n\nClaude lacht erneut, diesmal lauter. \"Eine Allergie? Das ist ja lustig! Du siehst aus, als könntest du ein ganzes Bierglas runterwürgen!\"\n\nIch grinse. \"Ich bin kein Alkoholkonsumierer, Claude. Das ist kein Scherz.\"\n\nEr lacht und deutet auf mich. \"Na gut, dann lass uns etwas anderes trinken. Vielleicht ein Cola oder so.\"\n\nIch nicke dankbar. \"Das wäre schön.\"\n\nClaude bestellt zwei Colas, und wir trinken in Ruhe. Nach ein paar Minuten fängt er an, über unser Gespräch zu reden, und ich höre ihm zu, während ich versuche, nicht zu lachen. \"Also, ich denke, wir sollten uns bald mal treffen, um die Details zu besprechen,\" sagt er, während er sein Glas leert und es auf den Tisch stellt.\n\nIch nicke. \"Das klingt gut. Ich freue mich darauf.\"\n\nClaude grinst breit. \"Und du solltest dich nicht zu sehr auf die Arbeit einlassen. Wir haben auch Zeit für Spaß.\"\n\nIch lache. \"Ich denke, ich werde mich darauf konzentrieren, meine Arbeit zu tun, ohne mich zu betrinken.\"\n\nClaude lacht laut und schüttelt den Kopf. \"Du bist ein seltsamer Typ, weißt du das? Aber ich mag dich.\"\n\nIch grinse. \"Das freut mich zu hören, Claude. Ich mag dich auch.\"\n\nWir trinken unsere Colas aus und verabschieden uns, beide mit einem Lächeln im Gesicht. Ich gehe nach Hause, während Claude noch immer lachend in der Bar sitzt, sein Gesicht rot und seine Augen glasig. Ich schüttle den Kopf und gehe weiter, mir sicher, dass ich in diesem seltsamen, aber freundlichen Team einen wertvollen Partner gefunden habe."
     },
     {
       "topic": "Convincing Team",
@@ -8837,7 +9145,7 @@
       "srcLang": "en",
       "difficulty": 2,
       "storyLen": 500,
-      "story": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwickelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"",
+      "story": "Ich zeige Claude einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwickelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen zu optimieren. Das Ergebnis ist ein effizientersund robustes Modell, das  in in unseren Tests bereits erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jedes Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne in unserem Team haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"",
       "storyLang": "de",
       "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Words useful in a job application interview. Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nchmodelle wie Claude von Anthropic, für die Effizienzsteigerung bei der Erstellung von Code?\"\n\nEr nickt verstehend: \"Ja, das ist ein interessantes Thema. Großformatige Sprachmodelle wie Claude haben die Fähigkeit, komplexe Probleme in kurzer Zeit zu lösen und Code zu generieren. Diese Modelle basieren auf fortschrittlichen KI-Techniken, insbesondere auf der Generierung von Texten, was ihre Anwendung in verschiedenen Bereichen ermöglicht.\"\n\nIch bestätige: \"Genau. Diese Modelle können nicht nur Code generieren, sondern auch optimieren und verbessern. Sie helfen dabei, die Produktivität zu steigern und die Qualität der Software zu erhöhen. Claude und ähnliche Modelle nutzen ihre umfangreiche Wissensbasis und ihre Fähigkeit, kontextbezogene Entscheidungen zu treffen, um effizient zu arbeiten.\"\n\nNew topic: \"finally, i am trying to convince them, that i will be a very valuable addition to their team, smart and competent, at the edge of current developments in math, coding and AI, yet an easy going team player\". Write the continuation now. Plain prose, no headings.",
       "continuedFrom": "AI & Code Efficiency",
@@ -8989,6 +9297,46 @@
             }
           ],
           "type": "standard"
+        },
+        {
+          "id": "aeh_1780815687037",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a human tutor.",
+          "icon": "🔎",
+          "aiStory": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwickelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"",
+          "sentences": [
+            {
+              "ai": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte.",
+              "corrected": "Ich zeige Claude einige meiner neuesten Projekte.",
+              "reason": ""
+            },
+            {
+              "ai": "um sie für unsere spezifischen Anwendungen optimiert zu haben.",
+              "corrected": "um sie für unsere spezifischen Anwendungen zu optimieren.",
+              "reason": ""
+            },
+            {
+              "ai": "Das Ergebnis ist ein effizienter und robustes Modell,",
+              "corrected": "Das Ergebnis ist ein effizientersund robustes Modell,",
+              "reason": ""
+            },
+            {
+              "ai": "das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.",
+              "corrected": "das  in in unseren Tests bereits erstaunliche Ergebnisse erbracht hat.",
+              "reason": ""
+            },
+            {
+              "ai": "den jeder Teammitglied beisteuern kann.",
+              "corrected": "den jedes Teammitglied beisteuern kann.",
+              "reason": ""
+            },
+            {
+              "ai": "Wir würden Sie gerne auf unserer Teamkarte haben.",
+              "corrected": "Wir würden Sie gerne in unserem Team haben.",
+              "reason": ""
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -9006,8 +9354,9 @@
         ]
       },
       "generatedAt": "2026-06-01T20:29:21.486Z",
-      "updatedAt": "2026-06-04T15:14:27.345Z",
-      "id": "tp_520854021"
+      "updatedAt": "2026-06-07T07:01:27.037Z",
+      "id": "tp_520854021",
+      "aiStory": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwickelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\""
     },
     {
       "topic": "AI & Code Efficiency",
@@ -9130,7 +9479,7 @@
       "srcLang": "en",
       "difficulty": 2,
       "storyLen": 500,
-      "story": "Ich danke ihm für seine Erklärungen und wechsle das Thema. \"Ich bin neugierig,\" sage ich, \"wie Sie die Grundlagen der KI verstehen. Man hört oft, dass KI auf komplexen mathematischen Modellen basiert. Aber sind diese Modelle tatsächlich so komplex, wie sie erscheinen?\" Er nickt und antwortet: \"Es ist wahr, dass KI auf komplexen mathematischen Modellen basiert, aber es ist wichtig zu verstehen, dass diese Modelle in der Regel auf grundlegenden mathematischen Prinzipien aufbauen.\"\n\nIch nicke und frage weiter: \"Gibt es spezielle Bereiche der Mathematik, die besonders wichtig für KI sind?\" Er erläutert: \"Ja, KI profitiert von verschiedenen Bereichen der Mathematik, insbesondere von der Linearen Algebra, der Wahrscheinlichkeitstheorie und der Statistik. Diese Bereiche helfen, Modelle zu erstellen, die in der Lage sind, Muster in großen Datenmengen zu erkennen und zu interpretieren.\"\n\nIch bin beeindruckt und frage: \"Aber wie kann man dann den Begriff 'Maschinelles Lernen' als neutral bezeichnen, wenn es auf solch komplexen mathematischen Modellen basiert?\" Er antwortet: \"Das ist eine gute Frage. 'Maschinelles Lernen' ist tatsächlich ein neutraler Begriff, der den Prozess beschreibt, durch den Maschinen lernen können. Es bezieht sich auf die Fähigkeit von Systemen, auf Basis von Eingaben und Ausgaben Muster zu erkennen und daraus zu lernen, ohne explizit programmiert zu werden.\"\n\nIch nicke und fahre fort: \"Ich verstehe, dass 'Maschinelles Lernen' den Fokus auf den Prozess legt, während die mathematischen Grundlagen in den Hintergrund treten. Aber wie wichtig sind diese mathematischen Grundlagen für die Entwicklung und Anwendung von KI?\" Er betont: \"Die mathematischen Grundlagen sind unerlässlich. Sie sind die Basis, auf der KI-Systeme aufbauen und funktionieren. Ohne eine fundierte Verständnis der mathematischen Prinzipien wäre es unmöglich, effektive KI-Modelle zu entwickeln und zu optimieren.\"\n\nIch danke ihm für seine Ausführungen und fahre fort, das Gespräch zu beenden: \"Vielen Dank für Ihre Erklärungen. Es ist interessant, wie KI auf solch einfachen mathematischen Prinzipien aufbaut, um so komplexe Aufgaben zu lösen.\" Er lächelt und antwortet: \"Es freut mich, dass Sie das verstehen. KI ist ein faszinierendes Feld, das sowohl komplexe mathematische Konzepte als auch einfache, aber wichtige Prinzipien kombiniert.\"",
+      "story": "Ich danke ihm für seine Erklärungen und wechsle das Thema. \"Ich bin neugierig,\" sage ich, \"wie Sie die Grundlagen der KI verstehen. Man hört oft, dass KI auf komplexen mathematischen Modellen basiert. Aber sind diese Modelle tatsächlich so komplex, wie sie erscheinen?\" Er nickt und antwortet: \"Es ist wahr, dass KI auf komplexen mathematischen Modellen basiert, aber es ist wichtig zu verstehen, dass diese Modelle in der Regel auf grundlegenden mathematischen Prinzipien aufbauen.\"\n\nIch nicke und frage weiter: \"Gibt es spezielle Bereiche der Mathematik, die besonders wichtig für KI sind?\" Er erläutert: \"Ja, KI profitiert von verschiedenen Bereichen der Mathematik, insbesondere von der Linearen Algebra, der Wahrscheinlichkeitstheorie und der Statistik. Diese Bereiche helfen, Modelle zu erstellen, die in der Lage sind, Muster in großen Datenmengen zu erkennen und zu interpretieren.\"\n\nIch bin beeindruckt und frage: \"Aber wie kann man dann den Begriff 'Maschinelles Lernen' als neutral bezeichnen, wenn es auf solch komplexen mathematischen Modellen basiert?\" Er antwortet: \"Das ist eine gute Frage. 'Maschinelles Lernen' ist tatsächlich ein neutraler Begriff, der den Prozess beschreibt, durch den Maschinen lernen können. Es bezieht sich auf die Fähigkeit von Systemen, auf Basis von Eingaben und Ausgaben Muster zu erkennen und daraus zu lernen, ohne explizit programmiert zu werden.\"\n\nIch nicke und fahre fort: \"Ich verstehe, dass 'Maschinelles Lernen' den Fokus auf den Prozess legt, während die mathematischen Grundlagen in den Hintergrund treten. Aber wie wichtig sind diese mathematischen Grundlagen für die Entwicklung und Anwendung von KI?\" Er betont: \"Die mathematischen Grundlagen sind unerlässlich. Sie sind die Basis, auf der KI-Systeme aufbauen und funktionieren. Ohne ein fundiertes Verständnis der mathematischen Prinzipien wäre es unmöglich, effektive KI-Modelle zu entwickeln und zu optimieren.\"\n\nIch danke ihm für seine Ausführungen und beende das Gespräch: \"Vielen Dank für Ihre Erklärungen. Es ist interessant, wie KI auf solch einfachen mathematischen Prinzipien aufbaut, um so komplexe Aufgaben zu lösen.\" Er lächelt und antwortet: \"Es freut mich, dass Sie das verstehen. KI ist ein faszinierendes Feld, das sowohl komplexe mathematische Konzepte als auch einfache, aber wichtige Prinzipien kombiniert.\"",
       "storyLang": "de",
       "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Academic register, precise terminology, formal structure. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nzesse relevant sind.\n\nIch bin beeindruckt von der Vielfalt der Anwendungen und frage weiter: \"Gibt es spezielle Projekte, in denen KI eine wichtige Rolle spielt?\" Er bestätigt, dass es solche Projekte gibt, und erzählt von einem, in dem KI zur Automatisierung von Aufgaben eingesetzt wird, um die Arbeitsbelastung der Mitarbeiter zu reduzieren. Er betont, dass dies sowohl Zeit als auch Ressourcen spart und die Produktivität steigert.\n\nIch danke ihm für seine Ausführungen und frage abschließend: \"Wie sehen Sie die Zukunft der KI in Ihrer Branche aus?\" Er antwortet, dass er optimistisch ist und glaubt, dass KI weiterhin einen wichtigen Beitrag zur Innovation und Effizienz leisten wird. Er betont, dass KI die Möglichkeit bietet, neue Lösungen zu entwickeln und bestehende Prozesse zu verbessern.\n\nNew topic: \"we start to discuss that AI is based on fundamental and rather simple mathematics, and that machine learning is a more neutral term\". Write the continuation now. Plain prose, no headings.",
       "continuedFrom": "AI in Company",
@@ -9466,6 +9815,31 @@
             }
           ],
           "type": "standard"
+        },
+        {
+          "id": "aeh_1780815386908",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a human tutor.",
+          "icon": "🔎",
+          "aiStory": "Ich danke ihm für seine Erklärungen und wechsle das Thema. \"Ich bin neugierig,\" sage ich, \"wie Sie die Grundlagen der KI verstehen. Man hört oft, dass KI auf komplexen mathematischen Modellen basiert. Aber sind diese Modelle tatsächlich so komplex, wie sie erscheinen?\" Er nickt und antwortet: \"Es ist wahr, dass KI auf komplexen mathematischen Modellen basiert, aber es ist wichtig zu verstehen, dass diese Modelle in der Regel auf grundlegenden mathematischen Prinzipien aufbauen.\"\n\nIch nicke und frage weiter: \"Gibt es spezielle Bereiche der Mathematik, die besonders wichtig für KI sind?\" Er erläutert: \"Ja, KI profitiert von verschiedenen Bereichen der Mathematik, insbesondere von der Linearen Algebra, der Wahrscheinlichkeitstheorie und der Statistik. Diese Bereiche helfen, Modelle zu erstellen, die in der Lage sind, Muster in großen Datenmengen zu erkennen und zu interpretieren.\"\n\nIch bin beeindruckt und frage: \"Aber wie kann man dann den Begriff 'Maschinelles Lernen' als neutral bezeichnen, wenn es auf solch komplexen mathematischen Modellen basiert?\" Er antwortet: \"Das ist eine gute Frage. 'Maschinelles Lernen' ist tatsächlich ein neutraler Begriff, der den Prozess beschreibt, durch den Maschinen lernen können. Es bezieht sich auf die Fähigkeit von Systemen, auf Basis von Eingaben und Ausgaben Muster zu erkennen und daraus zu lernen, ohne explizit programmiert zu werden.\"\n\nIch nicke und fahre fort: \"Ich verstehe, dass 'Maschinelles Lernen' den Fokus auf den Prozess legt, während die mathematischen Grundlagen in den Hintergrund treten. Aber wie wichtig sind diese mathematischen Grundlagen für die Entwicklung und Anwendung von KI?\" Er betont: \"Die mathematischen Grundlagen sind unerlässlich. Sie sind die Basis, auf der KI-Systeme aufbauen und funktionieren. Ohne eine fundierte Verständnis der mathematischen Prinzipien wäre es unmöglich, effektive KI-Modelle zu entwickeln und zu optimieren.\"\n\nIch danke ihm für seine Ausführungen und fahre fort, das Gespräch zu beenden: \"Vielen Dank für Ihre Erklärungen. Es ist interessant, wie KI auf solch einfachen mathematischen Prinzipien aufbaut, um so komplexe Aufgaben zu lösen.\" Er lächelt und antwortet: \"Es freut mich, dass Sie das verstehen. KI ist ein faszinierendes Feld, das sowohl komplexe mathematische Konzepte als auch einfache, aber wichtige Prinzipien kombiniert.\"",
+          "sentences": [
+            {
+              "ai": "Ohne eine fundierte Verständnis der mathematischen Prinzipien wäre es unmöglich,",
+              "corrected": "Ohne ein fundiertes Verständnis der mathematischen Prinzipien wäre es unmöglich,",
+              "reason": ""
+            },
+            {
+              "ai": "Ich danke ihm für seine Ausführungen und fahre fort,",
+              "corrected": "Ich danke ihm für seine Ausführungen und beende das Gespräch:",
+              "reason": ""
+            },
+            {
+              "ai": "das Gespräch zu beenden:",
+              "corrected": null,
+              "reason": ""
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -9497,14 +9871,15 @@
         ]
       },
       "generatedAt": "2026-06-01T19:53:43.536Z",
-      "updatedAt": "2026-06-04T15:08:53.968Z",
+      "updatedAt": "2026-06-07T06:56:26.907Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 190634,
         "promptTokens": 915,
         "completionTokens": 135
       },
-      "id": "tp_1914431701"
+      "id": "tp_1914431701",
+      "aiStory": "Ich danke ihm für seine Erklärungen und wechsle das Thema. \"Ich bin neugierig,\" sage ich, \"wie Sie die Grundlagen der KI verstehen. Man hört oft, dass KI auf komplexen mathematischen Modellen basiert. Aber sind diese Modelle tatsächlich so komplex, wie sie erscheinen?\" Er nickt und antwortet: \"Es ist wahr, dass KI auf komplexen mathematischen Modellen basiert, aber es ist wichtig zu verstehen, dass diese Modelle in der Regel auf grundlegenden mathematischen Prinzipien aufbauen.\"\n\nIch nicke und frage weiter: \"Gibt es spezielle Bereiche der Mathematik, die besonders wichtig für KI sind?\" Er erläutert: \"Ja, KI profitiert von verschiedenen Bereichen der Mathematik, insbesondere von der Linearen Algebra, der Wahrscheinlichkeitstheorie und der Statistik. Diese Bereiche helfen, Modelle zu erstellen, die in der Lage sind, Muster in großen Datenmengen zu erkennen und zu interpretieren.\"\n\nIch bin beeindruckt und frage: \"Aber wie kann man dann den Begriff 'Maschinelles Lernen' als neutral bezeichnen, wenn es auf solch komplexen mathematischen Modellen basiert?\" Er antwortet: \"Das ist eine gute Frage. 'Maschinelles Lernen' ist tatsächlich ein neutraler Begriff, der den Prozess beschreibt, durch den Maschinen lernen können. Es bezieht sich auf die Fähigkeit von Systemen, auf Basis von Eingaben und Ausgaben Muster zu erkennen und daraus zu lernen, ohne explizit programmiert zu werden.\"\n\nIch nicke und fahre fort: \"Ich verstehe, dass 'Maschinelles Lernen' den Fokus auf den Prozess legt, während die mathematischen Grundlagen in den Hintergrund treten. Aber wie wichtig sind diese mathematischen Grundlagen für die Entwicklung und Anwendung von KI?\" Er betont: \"Die mathematischen Grundlagen sind unerlässlich. Sie sind die Basis, auf der KI-Systeme aufbauen und funktionieren. Ohne eine fundierte Verständnis der mathematischen Prinzipien wäre es unmöglich, effektive KI-Modelle zu entwickeln und zu optimieren.\"\n\nIch danke ihm für seine Ausführungen und fahre fort, das Gespräch zu beenden: \"Vielen Dank für Ihre Erklärungen. Es ist interessant, wie KI auf solch einfachen mathematischen Prinzipien aufbaut, um so komplexe Aufgaben zu lösen.\" Er lächelt und antwortet: \"Es freut mich, dass Sie das verstehen. KI ist ein faszinierendes Feld, das sowohl komplexe mathematische Konzepte als auch einfache, aber wichtige Prinzipien kombiniert.\""
     },
     {
       "topic": "AI in Company",
@@ -9514,7 +9889,7 @@
       "srcLang": "en",
       "difficulty": 2,
       "storyLen": 500,
-      "story": "Ich bin in einem der Kursen, die speziell für Fachkräfte entwickelt wurden, und diskutiere gerade mit meinen Kollegen, wie wir uns in die deutsche Arbeitswelt einfügen. Ein Kollege, der als Ingenieur tätig ist, erzählt von den Anwendungen von KI in seiner Firma. Er erklärt, dass KI in verschiedenen Bereichen eingesetzt wird, um Prozesse zu optimieren und Effizienz zu steigern. Er nimmt beispielsweise an, dass KI in der Produktentwicklung hilfreich ist, indem sie Datenanalyse und Vorhersagen unterstützt. \n\nIch frage ihn: \"Ich möchte wissen, wie KI in Ihrer Firma momentan eingesetzt wird.\" Er antwortet, dass KI in der Firma in mehreren Bereichen eingesetzt wird, darunter die Prozessoptimierung und die Verbesserung der Produktqualität. Er erläutert, dass KI zur Analyse großer Datenmengen eingesetzt wird, um Trends und Muster zu erkennen, die für die Verbesserung der Geschäftsprozesse relevant sind.\n\nIch bin beeindruckt von der Vielfalt der Anwendungen und frage weiter: \"Gibt es spezielle Projekte, in denen KI eine wichtige Rolle spielt?\" Er bestätigt, dass es solche Projekte gibt, und erzählt von einem, in dem KI zur Automatisierung von Aufgaben eingesetzt wird, um die Arbeitsbelastung der Mitarbeiter zu reduzieren. Er betont, dass dies sowohl Zeit als auch Ressourcen spart und die Produktivität steigert.\n\nIch danke ihm für seine Ausführungen und frage abschließend: \"Wie sehen Sie die Zukunft der KI in Ihrer Branche aus?\" Er antwortet, dass er optimistisch ist und glaubt, dass KI weiterhin einen wichtigen Beitrag zur Innovation und Effizienz leisten wird. Er betont, dass KI die Möglichkeit bietet, neue Lösungen zu entwickeln und bestehende Prozesse zu verbessern.",
+      "story": "Ich bin in einem der Kurse, die speziell für Fachkräfte entwickelt wurden, und diskutiere gerade mit meinen Kollegen, wie wir uns in die deutsche Arbeitswelt einfügen. Ein Kollege, der als Ingenieur tätig ist, erzählt von den Anwendungen von KI in seiner Firma. Er erklärt, dass KI in verschiedenen Bereichen eingesetzt wird, um Prozesse zu optimieren und Effizienz zu steigern. Er nimmt beispielsweise an, dass KI in der Produktentwicklung hilfreich ist, indem sie Datenanalyse und Vorhersagen unterstützt.\n\nIch frage ihn: \"Ich möchte wissen, wie KI in Ihrer Firma momentan eingesetzt wird.\" Er antwortet, dass KI in der Firma in mehreren Bereichen eingesetzt wird, darunter die Prozessoptimierung und die Verbesserung der Produktqualität. Er erläutert, dass KI zur Analyse großer Datenmengen eingesetzt wird, um Trends und Muster zu erkennen, die für die Verbesserung der Produktionsprozesse relevant sind.\n\nIch bin beeindruckt von der Vielfalt der Anwendungen und frage weiter: \"Gibt es spezielle Projekte, in denen KI eine wichtige Rolle spielt?\" Er bestätigt, dass es solche Projekte gibt, und erzählt von einem, in dem KI zur Automatisierung von Aufgaben eingesetzt wird, um die Arbeitsbelastung der Mitarbeiter zu reduzieren. Er betont, dass dies sowohl Zeit als auch Ressourcen spart und die Produktivität steigert.\n\nIch danke ihm für seine Ausführungen und frage abschließend: \"Wie sehen Sie die Zukunft der KI in Ihrer Branche aus?\" Er antwortet, dass er optimistisch ist und glaubt, dass KI weiterhin einen wichtigen Beitrag zur Innovation und Effizienz leisten wird. Er betont, dass KI die Möglichkeit bietet, neue Lösungen zu entwickeln und bestehende Prozesse zu verbessern.",
       "storyLang": "de",
       "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Words useful in a job application interview. Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nln, sondern auch die Fachsprache, die in der Mathematik und den Naturwissenschaften verwendet wird.\n\nIn den Kursen lerne ich mit anderen Fachkräften, die ebenfalls ihre Sprachkenntnisse verbessern möchten. Wir teilen unsere Erfahrungen und helfen einander, uns in die deutsche Arbeitswelt einzufügen. Ich bin dankbar für die Unterstützung und die Motivation, die ich hier finde. Ich weiß, dass ich noch viel zu lernen habe, aber ich bin bereit, hart zu arbeiten und mein Ziel zu erreichen.\n\nIch bin überzeugt, dass ich in Deutschland einen Job finden kann, der meine Fähigkeiten und Erfahrungen wertschätzt. Ich werde weiterhin hart arbeiten, um mein Deutsch zu verbessern, und ich bin sicher, dass ich bald in der Lage sein werde, mich in Jobanträge und -interviews in deutscher Sprache zu bewerben.\n\nNew topic: \"i want to ask: how is artificial intelligence used in your company at the moment?\". Write the continuation now. Plain prose, no headings.",
       "continuedFrom": "Job in Germany",
@@ -9653,6 +10028,26 @@
               ]
             }
           ]
+        },
+        {
+          "id": "aeh_1780815158767",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a human tutor.",
+          "icon": "🔎",
+          "aiStory": "Ich bin in einem der Kursen, die speziell für Fachkräfte entwickelt wurden, und diskutiere gerade mit meinen Kollegen, wie wir uns in die deutsche Arbeitswelt einfügen. Ein Kollege, der als Ingenieur tätig ist, erzählt von den Anwendungen von KI in seiner Firma. Er erklärt, dass KI in verschiedenen Bereichen eingesetzt wird, um Prozesse zu optimieren und Effizienz zu steigern. Er nimmt beispielsweise an, dass KI in der Produktentwicklung hilfreich ist, indem sie Datenanalyse und Vorhersagen unterstützt. \n\nIch frage ihn: \"Ich möchte wissen, wie KI in Ihrer Firma momentan eingesetzt wird.\" Er antwortet, dass KI in der Firma in mehreren Bereichen eingesetzt wird, darunter die Prozessoptimierung und die Verbesserung der Produktqualität. Er erläutert, dass KI zur Analyse großer Datenmengen eingesetzt wird, um Trends und Muster zu erkennen, die für die Verbesserung der Geschäftsprozesse relevant sind.\n\nIch bin beeindruckt von der Vielfalt der Anwendungen und frage weiter: \"Gibt es spezielle Projekte, in denen KI eine wichtige Rolle spielt?\" Er bestätigt, dass es solche Projekte gibt, und erzählt von einem, in dem KI zur Automatisierung von Aufgaben eingesetzt wird, um die Arbeitsbelastung der Mitarbeiter zu reduzieren. Er betont, dass dies sowohl Zeit als auch Ressourcen spart und die Produktivität steigert.\n\nIch danke ihm für seine Ausführungen und frage abschließend: \"Wie sehen Sie die Zukunft der KI in Ihrer Branche aus?\" Er antwortet, dass er optimistisch ist und glaubt, dass KI weiterhin einen wichtigen Beitrag zur Innovation und Effizienz leisten wird. Er betont, dass KI die Möglichkeit bietet, neue Lösungen zu entwickeln und bestehende Prozesse zu verbessern.",
+          "sentences": [
+            {
+              "ai": "Ich bin in einem der Kursen,",
+              "corrected": "Ich bin in einem der Kurse,",
+              "reason": ""
+            },
+            {
+              "ai": "die für die Verbesserung der Geschäftsprozesse relevant sind.",
+              "corrected": "die für die Verbesserung der Produktionsprozesse relevant sind.",
+              "reason": ""
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -9670,14 +10065,15 @@
         ]
       },
       "generatedAt": "2026-06-01T18:09:36.193Z",
-      "updatedAt": "2026-06-04T14:18:02.179Z",
+      "updatedAt": "2026-06-07T06:52:38.765Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 1276311,
         "promptTokens": 6683,
         "completionTokens": 2715
       },
-      "id": "tp_1080857466"
+      "id": "tp_1080857466",
+      "aiStory": "Ich bin in einem der Kursen, die speziell für Fachkräfte entwickelt wurden, und diskutiere gerade mit meinen Kollegen, wie wir uns in die deutsche Arbeitswelt einfügen. Ein Kollege, der als Ingenieur tätig ist, erzählt von den Anwendungen von KI in seiner Firma. Er erklärt, dass KI in verschiedenen Bereichen eingesetzt wird, um Prozesse zu optimieren und Effizienz zu steigern. Er nimmt beispielsweise an, dass KI in der Produktentwicklung hilfreich ist, indem sie Datenanalyse und Vorhersagen unterstützt. \n\nIch frage ihn: \"Ich möchte wissen, wie KI in Ihrer Firma momentan eingesetzt wird.\" Er antwortet, dass KI in der Firma in mehreren Bereichen eingesetzt wird, darunter die Prozessoptimierung und die Verbesserung der Produktqualität. Er erläutert, dass KI zur Analyse großer Datenmengen eingesetzt wird, um Trends und Muster zu erkennen, die für die Verbesserung der Geschäftsprozesse relevant sind.\n\nIch bin beeindruckt von der Vielfalt der Anwendungen und frage weiter: \"Gibt es spezielle Projekte, in denen KI eine wichtige Rolle spielt?\" Er bestätigt, dass es solche Projekte gibt, und erzählt von einem, in dem KI zur Automatisierung von Aufgaben eingesetzt wird, um die Arbeitsbelastung der Mitarbeiter zu reduzieren. Er betont, dass dies sowohl Zeit als auch Ressourcen spart und die Produktivität steigert.\n\nIch danke ihm für seine Ausführungen und frage abschließend: \"Wie sehen Sie die Zukunft der KI in Ihrer Branche aus?\" Er antwortet, dass er optimistisch ist und glaubt, dass KI weiterhin einen wichtigen Beitrag zur Innovation und Effizienz leisten wird. Er betont, dass KI die Möglichkeit bietet, neue Lösungen zu entwickeln und bestehende Prozesse zu verbessern."
     },
     {
       "topic": "Job in Germany",
@@ -10175,6 +10571,121 @@
               "plural": "Pandas"
             }
           ]
+        },
+        {
+          "id": "ls_1780817124790",
+          "type": "math",
+          "title": "① ② ③",
+          "desc": "＋ － ×  ÷",
+          "icon": "🔢",
+          "numbers": [
+            4,
+            1,
+            8,
+            5,
+            2,
+            6
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                6,
+                5,
+                1,
+                2
+              ],
+              "correct": [
+                "1",
+                "2",
+                "5",
+                "6"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                4,
+                8,
+                5,
+                2
+              ],
+              "correct": [
+                "8",
+                "5",
+                "4",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "-",
+              "b": "1",
+              "correct": "4",
+              "choices": [
+                "2",
+                "4",
+                "5",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "6",
+              "correct": "11",
+              "choices": [
+                "12",
+                "11",
+                "9",
+                "10"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "+",
+              "b": "4",
+              "correct": "12",
+              "choices": [
+                "11",
+                "12",
+                "10",
+                "13"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "6",
+              "op": "+",
+              "b": "6",
+              "correct": "12",
+              "choices": [
+                "12",
+                "11",
+                "10",
+                "13"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "+",
+              "b": "2",
+              "correct": "10",
+              "choices": [
+                "8",
+                "11",
+                "10",
+                "9"
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -10192,7 +10703,7 @@
         ]
       },
       "generatedAt": "2026-06-01T13:03:02.852Z",
-      "updatedAt": "2026-06-01T13:17:48.646Z",
+      "updatedAt": "2026-06-07T07:25:24.790Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 641772,

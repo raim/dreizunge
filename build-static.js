@@ -185,11 +185,12 @@ function repopulateContinueSelect(){
 
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
-  APP.libFilter='all'; APP.libSrcFilter='all';
+  APP.libFilter='all'; APP.libSrcFilter='all'; APP.libTagFilter='manually curated';
   await loadLanguages();
   const _ss=document.getElementById('src-lang-select'); if(_ss) _ss.value='all';
   const _ts=document.getElementById('lang-select'); if(_ts) _ts.value='all';
-  selectLang(APP.lang, true);
+  // Static default: show all languages (globe), don't filter by APP.lang
+  APP.libFilter='all'; APP.libSrcFilter='all';
   await loadUIStrings(APP.srcLang);
   restoreDiffSelect();
   renderPill();
@@ -240,7 +241,7 @@ function renderPill() {
   if(sel){
     Array.from(sel.options).forEach(opt=>{ opt.style.display=(opt.value==='all'||presentLangs.has(opt.value))?'':'none'; });
     // If current selection has no lessons, switch to first available
-    if(!presentLangs.has(sel.value)){
+    if(sel.value !== 'all' && !presentLangs.has(sel.value)){
       const first=[...presentLangs][0];
       if(first){ sel.value=first; APP.lang=first; saveLang(); }
     }
@@ -334,11 +335,26 @@ async function loadSavedList() {
   if(_srcSel) _srcSel.value=APP.libSrcFilter||'all';
   if(_tgtSel) _tgtSel.value=APP.libFilter||'all';
 
+  // Build topic→tags map from baked-in storylines
+  const _byId2 = Object.fromEntries(saved.filter(l=>l.id).map(l=>[l.id,l]));
+  const _topicTags = new Map();
+  (Array.isArray(APP.storylines)?APP.storylines:[]).forEach(function(sl) {
+    if (!(sl.tags&&sl.tags.length)) return;
+    (sl.chapters||[]).forEach(function(topicId) {
+      const s = _byId2[topicId]; if (!s) return;
+      sl.tags.forEach(function(tag) {
+        if (!_topicTags.has(s.topic)) _topicTags.set(s.topic, new Set());
+        _topicTags.get(s.topic).add(tag);
+      });
+    });
+  });
   const filtered=saved.filter(s=>{
     if(APP.libFilter!=='all' && (s.lang||'it')!==APP.libFilter) return false;
     if(APP.libSrcFilter!=='all' && (s.srcLang||'en')!==APP.libSrcFilter) return false;
+    if(APP.libTagFilter && !(_topicTags.get(s.topic)||new Set()).has(APP.libTagFilter)) return false;
     return true;
   });
+  _renderTagFilterBar();
   document.getElementById('lib-cnt').textContent=
     filtered.length+' of '+saved.length+' topic'+(saved.length!==1?'s':'');
   const list=document.getElementById('saved-list');
@@ -522,6 +538,7 @@ const staticOverrides = [
   '  if(tb){ if(code==="de"){ tb.innerHTML="🎓 Try <a href=\\"https://chilperic.github.io/Deutsch-wipa-2026/\\" target=\\"_blank\\" style=\\"color:#1a4fa0;font-weight:800\\">Chilperic\'s German focus tutor</a>"; tb.style.display=""; } else tb.style.display="none"; }',
   '  if(!silent) loadSavedList();',
   '}',
+  'function setTagFilter(tag){ APP.libTagFilter=tag; loadSavedList(); }',
   'function setLibFilter(lang){',
   '  if(lang==="all"){ APP.libFilter="all"; APP.libSrcFilter="all"; }',
   '  else { APP.libFilter=lang; }',

@@ -627,6 +627,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <label id="reinforce-prior-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px;cursor:pointer" title="Weave previously learned words into new lessons">
         <input type="checkbox" id="reinforce-prior-cb" checked> <span id="reinforce-prior-lbl">reinforce prior vocabulary</span>
       </label>
+      <label id="use-full-chain-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px;cursor:pointer" title="Pass the full storyline as context — better continuity, slower generation">
+        <input type="checkbox" id="use-full-chain-cb"> <span id="use-full-chain-lbl"></span>
+      </label>
     </div>
     <div class="lesson-type-hdr" id="lesson-type-hdr">
       <span id="lesson-type-hdr-lbl">Lesson type</span>
@@ -655,7 +658,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </div>
     </div>
     </div><!-- end gen-form-section -->
-    <button class="gen-btn" id="gen-btn" onclick="doGenerate()">Generate lessons →</button>
+    <div style="display:flex;gap:8px;align-items:center"><button class="gen-btn" id="gen-btn" onclick="doGenerate()" style="flex:1">Generate lessons →</button><button class="stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="font-size:20px;border:none;background:none;cursor:pointer;padding:4px 6px;display:none;flex-shrink:0">🛑</button></div>
   </div><!-- end gen-area -->
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
@@ -669,6 +672,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div class="library">
     <div class="lib-hdr" style="flex-wrap:wrap;gap:8px">
       <div class="lib-title" id="lib-title-lbl">📚 Saved lessons</div>
+      <select id="tag-filter-select" style="font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:3px 8px;background:var(--white);color:var(--gray-dark);cursor:pointer;display:none" onchange="setTagFilter(this.value)"><option value=""></option></select>
 
       <div id="title-gen-status" style="display:none;align-items:center;gap:5px;font-size:11px;font-weight:800;background:#e8f0ff;color:#2a4acc;border-radius:12px;padding:3px 10px"></div>
       <div style="display:flex;align-items:center;gap:8px;margin-left:auto">        <div class="lib-cnt" id="lib-cnt">0 topics</div>
@@ -677,10 +681,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importLessons(this)">
         </label>
         <button id="export-static-btn" onclick="exportStatic()" title="Rebuild docs/index.html" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🏗 Static</button>
-        <button onclick="_unlockTts();if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel()" title="Stop speech" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:.7">🔇</button>
+        <button class="mute-btn" onclick="toggleMute()" title="Mute" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:.7">🔊</button>
       </div>
     </div>
     <div id="lang-progress-strip" style="margin-bottom:10px"></div>
+    <div id="lib-filter" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px"></div>
     <div id="saved-list">
       <div class="lib-empty">No saved lessons yet — generate one above!</div>
     </div>
@@ -801,7 +806,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
-    <button class="story-icon-btn" onclick="_unlockTts();if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel()" title="Stop speech" style="flex-shrink:0;font-size:18px;opacity:.7">🔇</button>
+    <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
   </div>
   <div class="gen-stats" id="gen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
@@ -843,6 +848,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="genStorylineTitleFromScreen()" title="Generate title" style="display:none">✨</button>
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
+      </div>
+      <div id="sl-tags-row" style="display:none;padding:2px 14px 4px;align-items:center;gap:6px;flex-wrap:wrap">
+        <span id="sl-tags-display" style="font-size:11px;color:var(--gray-dark);cursor:pointer" onclick="openSlTagEditor()"></span>
+        <button class="storyline-hdr-btn" id="sl-tag-edit-btn" style="font-size:11px;display:none" onclick="openSlTagEditor()">🏷</button>
+      </div>
+      <div id="sl-tag-editor" style="display:none;padding:4px 14px 8px">
+        <input id="sl-tag-input" style="width:100%;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:5px;padding:3px 8px;font-family:Nunito,sans-serif;box-sizing:border-box" placeholder="Tags, semicolon-separated…">
+        <div style="display:flex;gap:6px;margin-top:4px">
+          <button class="storyline-hdr-btn" onclick="saveSlTags()">Save</button>
+          <button class="storyline-hdr-btn" onclick="closeSlTagEditor()">✕</button>
+        </div>
         <button class="sl-screen-share" id="sl-screen-del-btn" onclick="deleteCurrentStoryline()" style="color:var(--red);display:none" title="Delete storyline">🗑️</button>
       </div>
       <div id="sl-screen-edit-row" style="display:none;padding:8px 0 0;gap:6px;align-items:center;flex-wrap:wrap">
@@ -870,7 +886,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
-    <button class="story-icon-btn" onclick="_unlockTts();if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel()" title="Stop speech" style="flex-shrink:0;font-size:18px;opacity:.7">🔇</button>
+    <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
   </div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
@@ -1854,12 +1870,27 @@ async function loadSavedList(){
     }
   }
 
+  // Build topic→tags map: match via storyline.chapters (array of topic ids)
+  const _byId = Object.fromEntries(saved.map(s => [s.id, s]));
+  const _topicTags = new Map();
+  (APP.storylines||[]).forEach(sl => {
+    if (!(sl.tags||[]).length) return;
+    (sl.chapters||[]).forEach(topicId => {
+      const s = _byId[topicId];
+      if (!s) return;
+      sl.tags.forEach(tag => {
+        if (!_topicTags.has(s.topic)) _topicTags.set(s.topic, new Set());
+        _topicTags.get(s.topic).add(tag);
+      });
+    });
+  });
   const filtered=saved.filter(s=>{
-    // Show all when both are 'all'
     if(APP.libFilter!=='all' && (s.lang||'it')!==APP.libFilter) return false;
     if(APP.libSrcFilter!=='all' && (s.srcLang||'en')!==APP.libSrcFilter) return false;
+    if(APP.libTagFilter && !(_topicTags.get(s.topic)||new Set()).has(APP.libTagFilter)) return false;
     return true;
   });
+  _renderTagFilterBar();
   document.getElementById('lib-cnt').textContent=
     saved.length===1?t('lib.count',{n:filtered.length,total:saved.length}):t('lib.count_plural',{n:filtered.length,total:saved.length});
   const showAllLangs = APP.libFilter === 'all';
@@ -2076,6 +2107,10 @@ function _updateReinforcePriorVisibility(){
   const sel = document.getElementById('continue-select');
   const row = document.getElementById('reinforce-prior-row');
   if (row) row.style.display = (sel && sel.value) ? 'flex' : 'none';
+  const fcRow = document.getElementById('use-full-chain-row');
+  if (fcRow) { fcRow.style.display = (sel && sel.value) ? 'flex' : 'none'; }
+  const fcLbl = document.getElementById('use-full-chain-lbl');
+  if (fcLbl && !fcLbl.textContent) fcLbl.textContent = t('gen.use_full_chain');
 }
 function repopulateContinueSelect(){
   const contSel=document.getElementById('continue-select');
@@ -2173,6 +2208,7 @@ function onGenStatusClick(){
 function startBackgroundJob(jobId, topic){
   APP.activeJob={jobId, topic};
   saveActiveJob(APP.activeJob);
+  updateStopBtn();
   document.getElementById('gen-btn').disabled=true;
   setGenStatus('running', 'Generating "'+topic+'"…');
   // Poll in background — user can navigate freely
@@ -2201,6 +2237,14 @@ function startBackgroundJob(jobId, topic){
         APP.activeJob=null; saveActiveJob(null);
         document.getElementById('gen-btn').disabled=false;
         setGenStatus('error', 'Generation failed: '+j.error);
+        updateStopBtn();
+      }
+      if(j.status==='cancelled'){
+        clearInterval(iv);
+        APP.activeJob=null; saveActiveJob(null);
+        document.getElementById('gen-btn').disabled=false;
+        setGenStatus('hidden','');
+        updateStopBtn();
       }
     }catch(e){
       clearInterval(iv);
@@ -2264,6 +2308,7 @@ async function doGenerate(forceRegen){
       storyLen:APP.storyLen||300,
       continuedFrom:useStory?null:(document.getElementById('continue-select')?.value||null),
       reinforcePrior:!useStory&&!!(document.getElementById('reinforce-prior-cb')?.checked)&&!!(document.getElementById('continue-select')?.value),
+      useFullChain:!useStory&&!!(document.getElementById('use-full-chain-cb')?.checked)&&!!(document.getElementById('continue-select')?.value),
       forceRegenerate:!!forceRegen};
     if(userStory)       body.userStory=userStory;
     if(userTranslation) body.userTranslation=userTranslation;
@@ -2917,7 +2962,7 @@ async function doAddLesson(sid, enc) {
     await loadSavedList();
     // If this topic is currently open in the lesson view, reload it
     if (APP.lessonData && APP.lessonData.topic === topic) {
-      await loadSaved(enc);
+      await loadSaved(encodeURIComponent(topic));
     }
     showToast('➕ Lesson added');
   } catch(e) {
@@ -2996,6 +3041,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const delBtn = document.getElementById('sl-screen-del-btn');
   if (delBtn) delBtn.style.display = APP.info.canGenerate ? '' : 'none';
   APP._slScreen.slMeta = slMeta;
+  renderSlTagsRow(slMeta);
 
   // Progress summary for storyline screen
   const _slCompleted = APP.progress?.completed || {};
@@ -5105,7 +5151,7 @@ function tMathOrder(ex){
   const lang=APP.lessonData?.lang||APP.lang||'it';
   const nums=ex.numbers.map((n,i)=>`<button class="choice" id="mn${i}" onclick="mathOrderPick(${i},this)">${n}</button>`).join('');
   return `<div class="ex-badge">🔢 ${ex.direction==='asc'?'↑':'↓'} ${t('ex.badge.math_order')}</div>`+
-    `<div class="card"><div class="qtext">${ex.direction==='asc'?'Smallest → largest':'Largest → smallest'}</div>`+
+    `<div class="card"><div class="qtext">${ex.direction==='asc'?t('ex.math_order.asc'):t('ex.math_order.desc')}</div>`+
     `<div id="math-placed" style="min-height:44px;display:flex;flex-wrap:wrap;gap:6px;padding:10px 0;border-bottom:1.5px solid var(--gray-mid);margin-bottom:10px"></div>`+
     `<div style="display:flex;flex-wrap:wrap;gap:6px">${nums}</div></div>`;
 }
@@ -5449,6 +5495,90 @@ function afterComplete() {
 
 
 // ── tts + misc ──
+function toggleMute() {
+  APP.muted = !APP.muted;
+  if (APP.muted) speechSynthesis.cancel();
+  updateMuteButtons();
+}
+function updateMuteButtons() {
+  document.querySelectorAll('.mute-btn').forEach(b => {
+    b.textContent = APP.muted ? '🔇' : '🔊';
+    b.title = APP.muted ? 'Unmute' : 'Mute';
+    b.style.opacity = APP.muted ? '1' : '.7';
+  });
+}
+function stopGeneration() {
+  if (!APP.activeJob) return;
+  fetch('/api/jobs/cancel', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ jobId: APP.activeJob.jobId }) });
+  APP.activeJob = null; saveActiveJob(null);
+  setGenStatus('hidden','');
+  updateStopBtn();
+  showToast('⛔ Generation stopped');
+}
+function updateStopBtn() {
+  const show = !!(APP.activeJob);
+  document.querySelectorAll('.stop-gen-btn').forEach(b => b.style.display = show ? '' : 'none');
+}
+function renderSlTagsRow(slMeta) {
+  const row = document.getElementById('sl-tags-row');
+  const display = document.getElementById('sl-tags-display');
+  if (!row || !display) return;
+  const tags = slMeta?.tags || [];
+  display.textContent = tags.length ? tags.map(tg=>'🏷 '+tg).join('  ') : '+ tags';
+  row.style.display = APP.info.canGenerate ? 'flex' : (tags.length ? 'flex' : 'none');
+  const editBtn = document.getElementById('sl-tag-edit-btn');
+  if (editBtn) editBtn.style.display = APP.info.canGenerate ? '' : 'none';
+}
+function openSlTagEditor() {
+  if (!APP.info.canGenerate) return;
+  const slMeta = APP._slScreen?.slMeta;
+  const tags = slMeta?.tags || [];
+  const input = document.getElementById('sl-tag-input');
+  if (input) input.value = tags.join('; ');
+  const ed = document.getElementById('sl-tag-editor');
+  if (ed) { ed.style.display='flex'; ed.style.flexDirection='column'; }
+  if (input) setTimeout(()=>input.focus(),50);
+}
+function closeSlTagEditor() {
+  const ed = document.getElementById('sl-tag-editor');
+  if (ed) ed.style.display = 'none';
+}
+async function saveSlTags() {
+  const slMeta = APP._slScreen?.slMeta;
+  if (!slMeta) return;
+  const raw = document.getElementById('sl-tag-input')?.value || '';
+  const tags = raw.split(';').map(tg=>tg.trim()).filter(Boolean);
+  await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ slId: slMeta.id, tags }) });
+  slMeta.tags = tags;
+  renderSlTagsRow(slMeta);
+  closeSlTagEditor();
+  loadSavedList();
+}
+function setTagFilter(tag) { APP.libTagFilter = tag; loadSavedList(); }
+function _getAllTags() {
+  const tags = new Set();
+  (APP.storylines||[]).forEach(sl => (sl.tags||[]).forEach(tg => tags.add(tg)));
+  return [...tags].sort();
+}
+function _renderTagFilterBar() {
+  const sel = document.getElementById('tag-filter-select');
+  if (!sel) return;
+  const tags = _getAllTags();
+  if (!tags.length) { sel.style.display='none'; _toggleStaticAiWarning(false); return; }
+  // Rebuild options
+  sel.innerHTML = '<option value=""></option>' +
+    tags.map(tag => `<option value="${escHtml(tag)}"${APP.libTagFilter===tag?' selected':''}>${escHtml(tag)}</option>`).join('');
+  sel.style.display = '';
+  // Toggle static AI warning: show when no tag filter (untagged = AI generated)
+  _toggleStaticAiWarning(!APP.libTagFilter);
+}
+function _toggleStaticAiWarning(show) {
+  const ov = document.getElementById('static-gen-overlay');
+  if (ov) ov.style.display = show ? '' : 'none';
+}
+
 function activeTtsCode(){
   if(APP.ttsLang) return APP.ttsLang;
   const lang=APP.lessonData?.lang||APP.lang||'it';
@@ -5462,7 +5592,7 @@ function ttsIsApproximate(){
 }
 
 function speakBodyText(bodyId,langCode,preText){
-  _unlockTts();
+  _unlockTts(); if(APP.muted){ APP.muted=false; updateMuteButtons(); }
   if(preText){ if(langCode){const p=()=>{if(!_ttsUnlocked){_ttsPendingAfterUnlock={text:preText,langCode};return;}_doSpeakLang(preText,langCode);};const v=speechSynthesis.getVoices();v.length>0?p():speechSynthesis.addEventListener('voiceschanged',function h(){speechSynthesis.removeEventListener('voiceschanged',h);p();},{once:true});}else speak(preText); return; }
   const el=document.getElementById(bodyId);
   if(!el)return;
@@ -5521,6 +5651,7 @@ function speakBodyText(bodyId,langCode,preText){
 function _speakAndAdvance(text) {
   const C = APP.cur;
   const doAdvance = () => { C.cur++; renderEx(); };
+  if (APP.muted) { setTimeout(doAdvance, 350); return; }
   if (!text || !window.speechSynthesis || !_ttsUnlocked) {
     setTimeout(doAdvance, text ? 900 : 350);
     return;
@@ -5581,6 +5712,7 @@ function _speakChunks(chunks, langCode, rate, idx) {
 }
 
 function _doSpeak(text,rate){
+  if(APP.muted) return;
   const chunks = _ttsChunks(text);
   const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
   speechSynthesis.cancel();
@@ -5592,6 +5724,7 @@ function _doSpeak(text,rate){
 }
 
 function _doSpeakLang(text, langCode) {
+  if (APP.muted) return;
   const chunks = _ttsChunks(text);
   const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
   speechSynthesis.cancel();
@@ -5650,7 +5783,7 @@ document.addEventListener('touchend', _unlockTts, {once: true, passive: true});
 document.addEventListener('click',    _unlockTts, {once: true, passive: true});
 
 function speak(text, rate){
-  if(!window.speechSynthesis) return;
+  if(APP.muted||!window.speechSynthesis) return;
   const voices = speechSynthesis.getVoices();
   const proceed = () => {
     // On iOS, auto-speak (not from a direct tap) will be silently blocked if not unlocked yet.

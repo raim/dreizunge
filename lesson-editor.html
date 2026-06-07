@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreizunge — Lesson Editor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: #d8d5cc;
+    --border-focus: #4a7c59;
+    --text: #1a1a1a;
+    --text-muted: #6b6b6b;
+    --green: #4a7c59;
+    --green-light: #e8f3ec;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --blue: #2a5298;
+    --blue-light: #eef2fb;
+    --amber: #b8860b;
+    --amber-light: #fff9e6;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -.5px;
+    margin-bottom: 4px;
+  }
+  .subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+  /* ── Header ── */
+  .top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .top-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ── Meta card ── */
+  .card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 12px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--text-muted); margin-bottom: 12px;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+  .field input, .field select, .field textarea {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 700;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    padding: 6px 10px;
+    outline: none;
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--border-focus); }
+  .field textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  .field.wide { grid-column: 1 / -1; }
+
+  /* ── Lesson type tabs ── */
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tab {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px; font-weight: 800;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text-muted);
+    transition: all .15s;
+  }
+  .tab:hover { border-color: var(--green); color: var(--green); }
+  .tab.active { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* ── Table editor ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--text-muted); text-align: left;
+    padding: 6px 8px; border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  td { padding: 4px 4px; vertical-align: top; }
+  tr:not(:last-child) td { border-bottom: 1px solid var(--bg); }
+  tr:hover td { background: #fafaf8; }
+
+  td input, td select, td textarea {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 600;
+    border: 1.5px solid transparent;
+    border-radius: 6px;
+    padding: 5px 8px;
+    width: 100%;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    transition: border-color .12s, background .12s;
+  }
+  td input:focus, td select:focus, td textarea:focus {
+    border-color: var(--border-focus);
+    background: var(--green-light);
+  }
+  td input:hover, td select:hover { border-color: var(--border); }
+
+  .del-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--border); font-size: 16px; padding: 4px 6px;
+    border-radius: 5px; transition: color .12s, background .12s;
+    line-height: 1;
+  }
+  .del-btn:hover { color: var(--red); background: var(--red-light); }
+
+  .add-btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px; font-weight: 800;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 7px 16px;
+    cursor: pointer;
+    background: none;
+    color: var(--text-muted);
+    width: 100%;
+    margin-top: 8px;
+    transition: all .15s;
+  }
+  .add-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+
+  /* ── Action buttons ── */
+  .btn {
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 800;
+    border: 2px solid;
+    border-radius: 8px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--green); border-color: var(--green); color: #fff; }
+  .btn-primary:hover { background: #3a6347; border-color: #3a6347; }
+  .btn-secondary { background: var(--surface); border-color: var(--border); color: var(--text); }
+  .btn-secondary:hover { border-color: var(--green); color: var(--green); }
+  .btn-danger { background: var(--surface); border-color: var(--red); color: var(--red); }
+  .btn-danger:hover { background: var(--red-light); }
+  .btn-blue { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn-blue:hover { background: #1e3f7a; }
+
+  /* ── Conjugation special ── */
+  .conj-block {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    background: var(--surface);
+  }
+  .conj-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: end;
+  }
+  .conj-forms {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 4px 8px;
+    align-items: center;
+  }
+  .conj-pronoun-lbl { font-size: 11px; font-weight: 800; color: var(--text-muted); }
+
+  /* ── Error hunt ── */
+  .story-area { grid-column: 1 / -1; }
+
+  /* ── Lesson list ── */
+  .lesson-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .lesson-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .lesson-item-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-size: 13px; font-weight: 800;
+    background: #fafaf8;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .lesson-item-header:hover { background: var(--green-light); }
+  .lesson-item-body { padding: 14px; }
+  .lesson-item-body.hidden { display: none; }
+  .lesson-type-badge {
+    font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em;
+    padding: 2px 8px; border-radius: 20px; margin-left: auto;
+  }
+  .badge-vocab { background: #e8f3ec; color: #4a7c59; }
+  .badge-grammar { background: #eef2fb; color: #2a5298; }
+  .badge-conjugation { background: #fff9e6; color: #b8860b; }
+  .badge-error_hunt { background: #fdecea; color: #c0392b; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #1a1a1a; color: #fff;
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700;
+    padding: 10px 20px; border-radius: 20px;
+    opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 999;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; }
+
+  /* ── JSON preview ── */
+  #json-preview {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; line-height: 1.6;
+    background: #1a1a1a; color: #a8d8a8;
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    overflow-x: auto;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    margin-top: 12px;
+  }
+
+  hr { border: none; border-top: 1.5px solid var(--border); margin: 20px 0; }
+
+    /* ── Emoji picker ── */
+    .icon-picker-grid{position:absolute;top:calc(100% + 4px);left:0;z-index:200;background:#fff;border:2px solid #d8d5cc;border-radius:12px;padding:8px;box-shadow:0 4px 24px rgba(0,0,0,.18);min-width:300px;display:none}
+    .icon-picker-grid.open{display:block}
+    .ipg-btn{font-size:18px;border:none;background:none;cursor:pointer;padding:3px;border-radius:6px;line-height:1;width:28px;height:28px}
+    .ipg-btn:hover{background:#f5f4f0}
+    .ipg-tab{font-size:16px;border:1.5px solid #d8d5cc;background:#fff;border-radius:6px;padding:2px 5px;cursor:pointer;font-family:Nunito,sans-serif;line-height:1}
+    .ipg-tab:hover{background:#f5f4f0}
+    .ipg-tab.active{background:#e8f3ec;border-color:#4a7c59}
+    .emoji-field-wrap{position:relative;display:flex;align-items:center;gap:6px}
+    .emoji-pick-btn{font-size:18px;border:1.5px solid #d8d5cc;background:#fff;border-radius:7px;padding:5px 8px;cursor:pointer;line-height:1}
+    .emoji-pick-btn:hover{border-color:#4a7c59}
+
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <h1>✍️ Dreizunge Lesson Editor</h1>
+    <div class="subtitle">Build lesson sets manually — no AI required. Export as JSON and import into Dreizunge.</div>
+  </div>
+  <div class="top-btns">
+    <button class="btn btn-secondary" onclick="loadFromFile()">📂 Load JSON</button>
+    <button class="btn btn-primary" onclick="exportJSON()">⬇ Export JSON</button>
+  </div>
+</div>
+
+<!-- Topic meta -->
+<div class="card">
+  <div class="card-title">Topic</div>
+  <div class="meta-grid">
+    <div class="field wide">
+      <label>Topic title</label>
+      <input id="meta-topic" type="text" placeholder="e.g. At the café" oninput="onMetaChange()">
+    </div>
+    <div class="field">
+      <label>Emoji icon</label>
+      <div class="emoji-field-wrap">
+        <span id="meta-emoji-display" style="font-size:26px;cursor:pointer;padding:4px 8px;border:1.5px solid var(--border);border-radius:8px" onclick="openIconPicker('meta-emoji-display','meta-emoji-picker',function(e){document.getElementById('meta-emoji').value=e})">📝</span>
+        <input id="meta-emoji" type="hidden" value="📝">
+        <div id="wrap-meta-emoji-picker" style="position:relative"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Target language (learning)</label>
+      <input id="meta-lang" type="text" placeholder="de" maxlength="5" oninput="onMetaChange()">
+    </div>
+    <div class="field">
+      <label>Source language (speaker)</label>
+      <input id="meta-srclang" type="text" placeholder="en" maxlength="5">
+    </div>
+    <div class="field">
+      <label>Difficulty (1–5)</label>
+      <select id="meta-diff">
+        <option value="1">1 — Beginner</option>
+        <option value="2" selected>2 — Elementary</option>
+        <option value="3">3 — Intermediate</option>
+        <option value="4">4 — Advanced</option>
+        <option value="5">5 — Expert</option>
+      </select>
+    </div>
+    <div class="field wide">
+      <label>Story (optional — plain text, target language)</label>
+      <textarea id="meta-story" placeholder="Paste or write a short story here…" rows="4"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- Lessons list -->
+<div id="lessons-container"></div>
+
+<!-- Add lesson -->
+<div class="card" style="border-style:dashed">
+  <div class="card-title">Add lesson</div>
+  <div class="tabs" id="type-tabs">
+    <button class="tab active" data-type="vocab" onclick="setNewType(this)">📚 Vocabulary</button>
+    <button class="tab" data-type="grammar" onclick="setNewType(this)">🏷️ Grammar</button>
+    <button class="tab" data-type="conjugation" onclick="setNewType(this)">🔤 Conjugation</button>
+    <button class="tab" data-type="error_hunt" onclick="setNewType(this)">🔍 Error Hunt</button>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <input id="new-lesson-title" type="text" placeholder="Lesson title (optional)"
+      style="flex:1;min-width:160px;font-family:Nunito,sans-serif;font-size:13px;font-weight:700;border:1.5px solid var(--border);border-radius:7px;padding:7px 10px;outline:none">
+    <button class="btn btn-blue" onclick="addLesson()">➕ Add lesson</button>
+  </div>
+</div>
+
+<!-- JSON preview -->
+<div style="margin-top:4px">
+  <button class="btn btn-secondary" onclick="togglePreview()" style="font-size:12px;padding:5px 12px">👁 Preview JSON</button>
+  <pre id="json-preview"></pre>
+</div>
+
+<div id="toast"></div>
+<input type="file" id="file-input" accept=".json" style="display:none" onchange="onFileLoad(this)">
+
+<script>
+// ── State ───────────────────────────────────────────────────────────────────
+let lessons = [];
+let newType = 'vocab';
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+function uid() { return 'ls_' + Date.now() + '_' + Math.floor(Math.random()*10000); }
+function topicId() { return 'tp_' + Math.abs((document.getElementById('meta-topic').value||'x').split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0) + Date.now()).toString().slice(-10); }
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function setNewType(btn) {
+  document.querySelectorAll('#type-tabs .tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  newType = btn.dataset.type;
+}
+
+function onMetaChange() {}
+
+// ── Default row factories ────────────────────────────────────────────────────
+function defVocab()  { return { target:'', source:'', pron:'' }; }
+function defSent()   { return { target:'', source:'', words:[] }; }
+function defGrammar(){ return { target:'', source:'', gender:'', article:'', plural:'' }; }
+function defConj()   {
+  return {
+    infinitive:'', source:'', tense:'present',
+    forms: ['I','you','he/she/it','we','you','they'].map(p=>({pronoun:p,form:''}))
+  };
+}
+function defEdit()   { return { type:'spelling', find:'', replace:'', reason:'' }; }
+
+// ── Add lesson ───────────────────────────────────────────────────────────────
+function addLesson() {
+  const title = document.getElementById('new-lesson-title').value.trim();
+  const l = {
+    id: uid(), type: newType, title,
+    desc:'', icon:'',
+    vocab: [], sentences: [], grammar: [], conjugations: [], edits: [], story: '', corruptedStory: ''
+  };
+  // Add one starter row
+  if (newType === 'vocab') { l.vocab = [defVocab()]; l.sentences = [defSent()]; }
+  else if (newType === 'grammar') { l.grammar = [defGrammar()]; }
+  else if (newType === 'conjugation') { l.conjugations = [defConj()]; }
+  else if (newType === 'error_hunt') { l.edits = [defEdit()]; }
+  lessons.push(l);
+  document.getElementById('new-lesson-title').value = '';
+  renderLessons();
+  toast('➕ Lesson added');
+}
+
+// ── Render lessons ───────────────────────────────────────────────────────────
+function renderLessons() {
+  const c = document.getElementById('lessons-container');
+  // Save which panels are open before re-rendering
+  const openPanels = new Set(lessons.map((_,i)=>i).filter(i=>{const b=document.getElementById('lesson-body-'+i);return b&&!b.classList.contains('hidden');}));
+  c.innerHTML = '';
+  if (!lessons.length) {
+    c.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:20px">No lessons yet — add one above.</div>';
+    return;
+  }
+  lessons.forEach((l, li) => {
+    const div = document.createElement('div');
+    div.className = 'lesson-item';
+    div.innerHTML = `
+      <div class="lesson-item-header" onclick="toggleLesson(${li})">
+        <span style="font-size:16px">${typeEmoji(l.type)}</span>
+        <span>${escHtml(l.title || l.type)}</span>
+        <span class="lesson-type-badge badge-${l.type}">${l.type}</span>
+        <button class="del-btn" onclick="event.stopPropagation();removeLesson(${li})" title="Remove lesson">🗑</button>
+      </div>
+      <div class="lesson-item-body hidden" id="lesson-body-${li}">
+        ${renderLessonBody(l, li)}
+      </div>
+    `;
+    c.appendChild(div);
+  });
+  // Restore open panels
+  openPanels.forEach(i => { const b=document.getElementById('lesson-body-'+i); if(b) b.classList.remove('hidden'); });
+}
+
+function typeEmoji(t) {
+  return {vocab:'📚',grammar:'🏷️',conjugation:'🔤',error_hunt:'🔍'}[t] || '📝';
+}
+
+function toggleLesson(li) {
+  const b = document.getElementById('lesson-body-'+li);
+  b.classList.toggle('hidden');
+}
+
+function removeLesson(li) {
+  if (!confirm('Remove this lesson?')) return;
+  lessons.splice(li, 1);
+  renderLessons();
+}
+
+// ── Lesson body renderers ────────────────────────────────────────────────────
+function renderLessonBody(l, li) {
+  const titleRow = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <div class="field"><label>Title</label>
+        <input value="${escHtml(l.title)}" oninput="lessons[${li}].title=this.value" placeholder="e.g. Basic words"></div>
+      <div class="field"><label>Icon (emoji)</label>
+        <div class="emoji-field-wrap">
+          <span id="lesson-icon-${li}" style="font-size:24px;cursor:pointer;padding:3px 7px;border:1.5px solid var(--border);border-radius:8px" onclick="openIconPicker('lesson-icon-${li}','lesson-icon-pk-${li}',function(e){lessons[${li}].icon=e;document.getElementById('lesson-icon-${li}').textContent=e})">${l.icon||'📖'}</span>
+          <div id="wrap-lesson-icon-pk-${li}" style="position:relative"></div>
+        </div></div>
+    </div>`;
+
+  if (l.type === 'vocab') return titleRow + renderVocab(l, li);
+  if (l.type === 'grammar') return titleRow + renderGrammar(l, li);
+  if (l.type === 'conjugation') return titleRow + renderConjugation(l, li);
+  if (l.type === 'error_hunt') return titleRow + renderErrorHunt(l, li);
+  return titleRow;
+}
+
+function renderVocab(l, li) {
+  const vocabRows = (l.vocab||[]).map((v,vi) => `
+    <tr>
+      <td><input value="${escHtml(v.target)}" placeholder="e.g. Kaffee" oninput="lessons[${li}].vocab[${vi}].target=this.value"></td>
+      <td><input value="${escHtml(v.source)}" placeholder="e.g. coffee" oninput="lessons[${li}].vocab[${vi}].source=this.value"></td>
+      <td><input value="${escHtml(v.pron||'')}" placeholder="optional" oninput="lessons[${li}].vocab[${vi}].pron=this.value"></td>
+      <td><button class="del-btn" onclick="lessons[${li}].vocab.splice(${vi},1);renderLessons()">✕</button></td>
+    </tr>`).join('');
+
+  const sentRows = (l.sentences||[]).map((s,si) => `
+    <tr>
+      <td><input value="${escHtml(s.target)}" placeholder="Target language sentence" oninput="lessons[${li}].sentences[${si}].target=this.value;lessons[${li}].sentences[${si}].words=this.value.split(/\\s+/).filter(Boolean)"></td>
+      <td><input value="${escHtml(s.source)}" placeholder="Translation" oninput="lessons[${li}].sentences[${si}].source=this.value"></td>
+      <td><button class="del-btn" onclick="lessons[${li}].sentences.splice(${si},1);renderLessons()">✕</button></td>
+    </tr>`).join('');
+
+  return `
+    <div class="card-title" style="margin-bottom:6px">Vocabulary</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Target word</th><th>Translation</th><th>Pronunciation</th><th></th></tr></thead>
+        <tbody>${vocabRows}</tbody>
+      </table>
+    </div>
+    <button class="add-btn" onclick="lessons[${li}].vocab.push({target:'',source:'',pron:''});renderLessons()">+ Add word</button>
+
+    <div class="card-title" style="margin-top:14px;margin-bottom:6px">Sentences</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Target language sentence</th><th>Translation</th><th></th></tr></thead>
+        <tbody>${sentRows}</tbody>
+      </table>
+    </div>
+    <button class="add-btn" onclick="lessons[${li}].sentences.push({target:'',source:'',words:[]});renderLessons()">+ Add sentence</button>
+  `;
+}
+
+function renderGrammar(l, li) {
+  const rows = (l.grammar||[]).map((g,gi) => `
+    <tr>
+      <td><input value="${escHtml(g.target)}" placeholder="e.g. Kaffee" oninput="lessons[${li}].grammar[${gi}].target=this.value"></td>
+      <td><input value="${escHtml(g.source)}" placeholder="e.g. coffee" oninput="lessons[${li}].grammar[${gi}].source=this.value"></td>
+      <td>
+        <select oninput="lessons[${li}].grammar[${gi}].gender=this.value" style="font-family:Nunito,sans-serif;font-size:13px;font-weight:700;border:1.5px solid transparent;border-radius:6px;padding:5px 8px;outline:none;width:100%">
+          ${['','m','f','n'].map(g2=>`<option value="${g2}"${g2===g.gender?' selected':''}>${g2||'—'}</option>`).join('')}
+        </select>
+      </td>
+      <td><input value="${escHtml(g.article)}" placeholder="der/die/das" oninput="lessons[${li}].grammar[${gi}].article=this.value"></td>
+      <td><input value="${escHtml(g.plural)}" placeholder="plural form" oninput="lessons[${li}].grammar[${gi}].plural=this.value"></td>
+      <td><button class="del-btn" onclick="lessons[${li}].grammar.splice(${gi},1);renderLessons()">✕</button></td>
+    </tr>`).join('');
+
+  return `
+    <div class="card-title" style="margin-bottom:6px">Nouns &amp; Gender</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Target word</th><th>Translation</th><th>Gender</th><th>Article</th><th>Plural</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <button class="add-btn" onclick="lessons[${li}].grammar.push({target:'',source:'',gender:'',article:'',plural:''});renderLessons()">+ Add noun</button>
+  `;
+}
+
+function renderConjugation(l, li) {
+  const blocks = (l.conjugations||[]).map((c,ci) => `
+    <div class="conj-block">
+      <div class="conj-header">
+        <div class="field">
+          <label>Infinitive (target)</label>
+          <input value="${escHtml(c.infinitive)}" placeholder="e.g. trinken" oninput="lessons[${li}].conjugations[${ci}].infinitive=this.value">
+        </div>
+        <div class="field">
+          <label>Translation (source)</label>
+          <input value="${escHtml(c.source)}" placeholder="e.g. to drink" oninput="lessons[${li}].conjugations[${ci}].source=this.value">
+        </div>
+        <button class="del-btn" onclick="lessons[${li}].conjugations.splice(${ci},1);renderLessons()" style="align-self:flex-end;margin-bottom:2px">🗑</button>
+      </div>
+      <div class="conj-forms">
+        ${c.forms.map((f,fi) => `
+          <div class="conj-pronoun-lbl">
+            <input value="${escHtml(f.pronoun)}" placeholder="pronoun"
+              style="font-family:Nunito,sans-serif;font-size:12px;font-weight:800;border:1.5px solid var(--border);border-radius:6px;padding:4px 7px;outline:none;width:100%;color:var(--text-muted)"
+              oninput="lessons[${li}].conjugations[${ci}].forms[${fi}].pronoun=this.value">
+          </div>
+          <input value="${escHtml(f.form)}" placeholder="conjugated form"
+            style="font-family:Nunito,sans-serif;font-size:13px;font-weight:700;border:1.5px solid var(--border);border-radius:6px;padding:5px 8px;outline:none;width:100%"
+            oninput="lessons[${li}].conjugations[${ci}].forms[${fi}].form=this.value">
+        `).join('')}
+      </div>
+      <button class="add-btn" style="margin-top:8px" onclick="lessons[${li}].conjugations[${ci}].forms.push({pronoun:'',form:''});renderLessons()">+ Add form</button>
+    </div>
+  `).join('');
+
+  return `
+    <div class="card-title" style="margin-bottom:8px">Conjugations</div>
+    ${blocks}
+    <button class="add-btn" onclick="lessons[${li}].conjugations.push({infinitive:'',source:'',tense:'present',forms:[{pronoun:'I',form:''},{pronoun:'you',form:''},{pronoun:'he/she/it',form:''},{pronoun:'we',form:''},{pronoun:'they',form:''}]});renderLessons()">+ Add verb</button>
+  `;
+}
+
+function renderErrorHunt(l, li) {
+  const story = l.story || document.getElementById('meta-story')?.value || '';
+  const corrupted = l.corruptedStory || '';
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div class="field">
+        <label>Correct story</label>
+        <textarea rows="9" placeholder="Paste the correct story here…"
+          oninput="lessons[${li}].story=this.value;diffEH(${li})"
+          style="font-size:12px;line-height:1.6;font-family:Nunito,sans-serif">${escHtml(story)}</textarea>
+      </div>
+      <div class="field">
+        <label>Corrupted story (introduce errors by editing)</label>
+        <textarea rows="9" placeholder="Copy the correct story here, then introduce errors…"
+          oninput="lessons[${li}].corruptedStory=this.value;diffEH(${li})"
+          style="font-size:12px;line-height:1.6;font-family:Nunito,sans-serif">${escHtml(corrupted)}</textarea>
+      </div>
+    </div>
+    <div id="eh-diff-${li}" style="font-size:12px;line-height:1.9;background:#fafaf8;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;min-height:36px;color:var(--text)">
+      ${buildDiffHtml(story, corrupted)}
+    </div>
+    <div id="eh-errors-${li}" style="margin-top:10px">
+      ${buildErrorTable(computeDiff(story, corrupted), li)}
+    </div>
+  `;
+}
+
+function tokenize(text) {
+  return (text.match(/[\w\u00C0-\u024F\u0400-\u04FF\u0590-\u05FF\u0600-\u06FF']+|[^\w\s']/gu) || []);
+}
+
+function levenshtein(a, b) {
+  const m=a.length, n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i?j?0:i:j));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+function lcsOps(a, b) {
+  const m=a.length, n=b.length;
+  const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1].toLowerCase()===b[j-1].toLowerCase()?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  const ops=[]; let i=m,j=n;
+  while(i>0||j>0){
+    if(i>0&&j>0&&a[i-1].toLowerCase()===b[j-1].toLowerCase()){ops.unshift({type:'eq',a:a[i-1],b:b[j-1]});i--;j--;}
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])){ops.unshift({type:'ins',b:b[j-1]});j--;}
+    else{ops.unshift({type:'del',a:a[i-1]});i--;}
+  }
+  // Merge adjacent del+ins -> sub
+  const merged=[];
+  for(let k=0;k<ops.length;k++){
+    if(ops[k].type==='del'&&k+1<ops.length&&ops[k+1].type==='ins'){
+      merged.push({type:'sub',a:ops[k].a,b:ops[k+1].b}); k++;
+    } else merged.push(ops[k]);
+  }
+  return merged;
+}
+
+function computeDiff(correct, corrupted) {
+  if(!correct||!corrupted) return [];
+  const ta=tokenize(correct), tb=tokenize(corrupted);
+  const ops=lcsOps(ta,tb);
+  return ops.filter(o=>o.type!=='eq').map(op=>{
+    if(op.type==='sub'){
+      const dist=levenshtein(op.a.toLowerCase(),op.b.toLowerCase());
+      return {type:dist<=2?'spelling':'grammar',find:op.a,replace:op.b,reason:''};
+    }
+    if(op.type==='del') return {type:'grammar',find:op.a,replace:'',reason:'word removed'};
+    if(op.type==='ins') return {type:'grammar',find:'',replace:op.b,reason:'word added'};
+    return null;
+  }).filter(Boolean);
+}
+
+function buildDiffHtml(correct, corrupted) {
+  if(!correct&&!corrupted) return '<em style="color:#888">Paste both texts above to see differences.</em>';
+  if(!corrupted||!correct) return escHtml(correct||corrupted);
+  const ta=tokenize(correct), tb=tokenize(corrupted);
+  const ops=lcsOps(ta,tb);
+  let out='';
+  ops.forEach(op=>{
+    if(op.type==='eq') out+=escHtml(op.a)+' ';
+    else if(op.type==='sub') out+='<del style="color:#c00;background:#fde;border-radius:3px;padding:0 2px">'+escHtml(op.a)+'</del> <ins style="color:#080;background:#dfd;text-decoration:none;border-radius:3px;padding:0 2px">'+escHtml(op.b)+'</ins> ';
+    else if(op.type==='del') out+='<del style="color:#c00;background:#fde;border-radius:3px;padding:0 2px">'+escHtml(op.a)+'</del> ';
+    else if(op.type==='ins') out+='<ins style="color:#080;background:#dfd;text-decoration:none;border-radius:3px;padding:0 2px">'+escHtml(op.b)+'</ins> ';
+  });
+  return out;
+}
+
+function buildErrorTable(errors, li) {
+  lessons[li].edits = errors;
+  if(!errors.length) return '<div style="font-size:12px;color:#888;padding:4px 0">No differences detected.</div>';
+  const rows = errors.map((e,ei)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #eee;font-size:12px;flex-wrap:wrap">
+      <select style="font-size:11px;font-weight:800;border:1.5px solid var(--border);border-radius:5px;padding:3px 5px;font-family:Nunito,sans-serif;cursor:pointer"
+        onchange="lessons[${li}].edits[${ei}].type=this.value">
+        <option value="spelling"${e.type==='spelling'?' selected':''}>spelling</option>
+        <option value="grammar"${e.type==='grammar'?' selected':''}>grammar</option>
+        <option value="logic"${e.type==='logic'?' selected':''}>logic</option>
+      </select>
+      <span style="color:#c00;text-decoration:line-through;font-weight:700">${escHtml(e.find)||'<em style=color:#999>—</em>'}</span>
+      <span style="color:#888">→</span>
+      <span style="color:#080;font-weight:700">${escHtml(e.replace)||'<em style=color:#999>—</em>'}</span>
+      <input value="${escHtml(e.reason)}" placeholder="reason (optional)"
+        style="flex:1;min-width:100px;font-size:12px;border:1.5px solid var(--border);border-radius:5px;padding:3px 7px;font-family:Nunito,sans-serif"
+        oninput="lessons[${li}].edits[${ei}].reason=this.value">
+      <button class="del-btn" onclick="lessons[${li}].edits.splice(${ei},1);document.getElementById('eh-errors-${li}').innerHTML=buildErrorTable(lessons[${li}].edits,${li})">✕</button>
+    </div>`).join('');
+  return `<div class="card-title" style="margin-bottom:6px">${errors.length} difference${errors.length!==1?'s':''} detected</div>${rows}`;
+}
+
+function diffEH(li) {
+  const l=lessons[li];
+  const s=l.story||'', c=l.corruptedStory||'';
+  const de=document.getElementById('eh-diff-'+li);
+  const ee=document.getElementById('eh-errors-'+li);
+  if(de) de.innerHTML=buildDiffHtml(s,c);
+  if(ee) ee.innerHTML=buildErrorTable(computeDiff(s,c),li);
+}
+
+
+// ── Export ───────────────────────────────────────────────────────────────────
+function buildJSON() {
+  const topic = document.getElementById('meta-topic').value.trim() || 'Untitled';
+  const lang = document.getElementById('meta-lang').value.trim() || 'de';
+  const srcLang = document.getElementById('meta-srclang').value.trim() || 'en';
+  const diff = parseInt(document.getElementById('meta-diff').value) || 2;
+  const emoji = document.getElementById('meta-emoji').value.trim() || '📝';
+  const story = document.getElementById('meta-story').value.trim() || null;
+
+  const cleanLessons = lessons.map(l => {
+    const out = { id: l.id, type: l.type, title: l.title, desc: l.desc||'', icon: l.icon||'' };
+    if (l.type === 'vocab') {
+      out.vocab = (l.vocab||[]).filter(v => v.target || v.source).map(v => ({
+        target: v.target.trim(), source: v.source.trim(),
+        ...(v.pron ? {pron: v.pron.trim()} : {})
+      }));
+      out.sentences = (l.sentences||[]).filter(s => s.target).map(s => ({
+        target: s.target.trim(), source: s.source.trim(),
+        words: s.target.trim().split(/\s+/).filter(Boolean)
+      }));
+    } else if (l.type === 'grammar') {
+      out.grammar = (l.grammar||[]).filter(g => g.target).map(g => ({
+        target: g.target.trim(), source: g.source.trim(),
+        gender: g.gender||'', article: g.article.trim(), plural: g.plural.trim()
+      }));
+    } else if (l.type === 'conjugation') {
+      out.conjugations = (l.conjugations||[]).filter(c => c.infinitive).map(c => ({
+        infinitive: c.infinitive.trim(), source: c.source.trim(), tense: c.tense||'present',
+        forms: c.forms.filter(f => f.pronoun||f.form).map(f => ({
+          pronoun: f.pronoun.trim(), form: f.form.trim()
+        }))
+      }));
+    } else if (l.type === 'error_hunt') {
+      out.corruptedStory = (l.corruptedStory||'').trim();
+      out.edits = (l.edits||[]).filter(e => e.find||e.replace).map(e => ({
+        type: e.type||'spelling',
+        find: e.find.trim(), replace: e.replace.trim(), reason: e.reason.trim()
+      }));
+    }
+    return out;
+  });
+
+  return {
+    schemaVersion: 29,
+    topics: [{
+      id: topicId(),
+      topic, topicEmoji: emoji,
+      lang, srcLang,
+      difficulty: diff,
+      storyLen: 300,
+      ...(story ? {story, storyLang: lang} : {}),
+      lessons: cleanLessons,
+      generatedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      continuedFrom: null
+    }],
+    storylines: []
+  };
+}
+
+function exportJSON() {
+  const data = buildJSON();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (data.topics[0].topic.replace(/[^a-zA-Z0-9]/g,'_').slice(0,30) || 'lesson') + '.json';
+  a.click();
+  toast('⬇ Exported — import via Dreizunge Import button');
+}
+
+function togglePreview() {
+  const el = document.getElementById('json-preview');
+  if (el.style.display === 'none' || !el.style.display) {
+    el.style.display = 'block';
+    el.textContent = JSON.stringify(buildJSON(), null, 2);
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+// ── Load from file ───────────────────────────────────────────────────────────
+function loadFromFile() {
+  document.getElementById('file-input').click();
+}
+
+function onFileLoad(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      // Support both a full lessons.json (pick first topic) or a single topic object
+      const topic = data.topics?.[0] || data;
+      if (!topic.topic) throw new Error('No topic found');
+      document.getElementById('meta-topic').value = topic.topic || '';
+      document.getElementById('meta-emoji').value = topic.topicEmoji || '';
+      document.getElementById('meta-lang').value = topic.lang || 'de';
+      document.getElementById('meta-srclang').value = topic.srcLang || 'en';
+      document.getElementById('meta-diff').value = topic.difficulty || 2;
+      document.getElementById('meta-story').value = topic.story || '';
+      lessons = (topic.lessons || []).map(l => ({
+        id: l.id || uid(),
+        type: l.type || (l.grammar?.length ? 'grammar' : l.conjugations?.length ? 'conjugation' : l.edits?.length ? 'error_hunt' : 'vocab'),
+        title: l.title || '', desc: l.desc || '', icon: l.icon || '',
+        vocab: l.vocab || [], sentences: l.sentences || [],
+        grammar: l.grammar || [], conjugations: l.conjugations || [],
+        edits: l.edits || [], corruptedStory: l.corruptedStory || ''
+      }));
+      renderLessons();
+      toast('📂 Loaded: ' + topic.topic);
+    } catch(err) {
+      toast('⚠ Could not parse file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+renderLessons();
+
+// ── Emoji picker ─────────────────────────────────────────────────────────────
+const EMOJI_CATEGORIES = {"😀 Smileys": ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃", "🫠", "😉", "😊", "😇", "🥰", "😍", "🤩", "😘", "😗", "☺️", "😚", "😙", "🥲", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🫢", "🫣", "🤫", "🤔", "🫡", "🤐", "🤨", "😐", "😑", "😶", "🫥", "😏", "😒", "🙄", "😬", "🤥", "🫨", "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🤧", "🥵", "🥶", "🥴", "😵", "🤯", "🤠", "🥳", "🥸", "😎", "🤓", "🧐", "😕", "🫤", "😟", "🙁", "☹️", "😮", "😯", "😲", "😳", "🥺", "🥹", "😦", "😧", "😨", "😰", "😥", "😢", "😭", "😱", "😖", "😣", "😞", "😓", "😩", "😫", "🥱", "😤", "😡", "😠", "🤬", "😈", "👿", "💀", "☠️", "💩", "🤡", "👹", "👺", "👻", "👽", "👾", "🤖"], "👋 People & Body": ["👋", "🤚", "🖐️", "✋", "🖖", "🫱", "🫲", "🫳", "🫴", "🫷", "🫸", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "🫵", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "🫶", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", "👃", "🫀", "🫁", "🧠", "🦷", "🦴", "👀", "👁️", "👅", "👄", "🫦", "👶", "🧒", "👦", "👧", "🧑", "👱", "👨", "🧔", "👩", "🧓", "👴", "👵", "🙍", "🙎", "🙅", "🙆", "💁", "🙋", "🧏", "🙇", "🤦", "🤷", "👮", "🕵️", "💂", "🥷", "👷", "🫅", "🤴", "👸", "👳", "👲", "🧕", "🤵", "👰", "🤰", "🫃", "🫄", "🤱", "👼", "🎅", "🤶", "🧑‍🎄", "🦸", "🦹", "🧙", "🧝", "🧛", "🧟", "🧌", "🧞", "🧜", "🧚", "🪄", "👫", "👬", "👭", "💏", "💑", "👪", "🗣️", "👤", "👥", "🫂", "👣"], "🐶 Animals": ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🐔", "🐧", "🐦", "🐤", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗", "🐴", "🦄", "🐝", "🪱", "🐛", "🦋", "🐌", "🐞", "🐜", "🪲", "🦟", "🦗", "🪳", "🕷️", "🦂", "🐢", "🐍", "🦎", "🦖", "🦕", "🐙", "🦑", "🦐", "🦞", "🦀", "🪸", "🦈", "🐡", "🐠", "🐟", "🐬", "🐳", "🐋", "🦭", "🐊", "🐅", "🐆", "🦓", "🦍", "🦧", "🦣", "🐘", "🦛", "🦏", "🐪", "🐫", "🦒", "🦘", "🦬", "🐃", "🐂", "🐄", "🐎", "🐖", "🐏", "🐑", "🦙", "🐐", "🦌", "🐕", "🐩", "🦮", "🐕‍🦺", "🐈", "🐈‍⬛", "🪶", "🐓", "🦃", "🦤", "🦚", "🦜", "🦢", "🪽", "🕊️", "🐇", "🦝", "🦨", "🦡", "🦫", "🦦", "🦥", "🐁", "🐀", "🐿️", "🦔", "🐾", "🐉", "🐲", "🌵", "🎄", "🌲", "🌳", "🌴", "🪵", "🌱", "🌿", "☘️", "🍀", "🎍", "🪴", "🎋", "🍃", "🍂", "🍁", "🪺", "🪹", "🍄", "🌾", "💐", "🌷", "🌹", "🥀", "🪷", "🌺", "🌸", "🌼", "🌻", "🌞", "🌝", "🌛", "🌜", "🌚", "🌕", "🌖", "🌗", "🌘", "🌑", "🌒", "🌓", "🌔", "🌙", "🌟", "⭐", "🌠", "🌌", "☀️", "🌤️", "⛅", "🌥️", "☁️", "🌦️", "🌧️", "⛈️", "🌩️", "🌨️", "❄️", "☃️", "⛄", "🌬️", "💨", "💧", "💦", "🫧", "☔", "☂️", "🌊", "🌫️", "🌀", "🌈", "⚡", "🔥", "💥", "🌪️", "🌋"], "🍎 Food & Drink": ["🥞", "🧇", "🥐", "🧈", "🍕", "🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒", "🌶️", "🫑", "🥕", "🧄", "🧅", "🥔", "🍠", "🫚", "🫛", "🌽", "🌯", "🫔", "🥙", "🧆", "🥚", "🍳", "🥘", "🍲", "🫕", "🥣", "🥗", "🍿", "🧂", "🥫", "🍱", "🍘", "🍙", "🍚", "🍛", "🍜", "🍝", "🍠", "🍢", "🍣", "🍤", "🍥", "🥮", "🍡", "🥟", "🥠", "🥡", "🍦", "🍧", "🍨", "🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", "🍮", "🍯", "🍼", "🥛", "☕", "🫖", "🍵", "🧃", "🥤", "🧋", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", "🥂", "🥃", "🫗", "🥴", "🧊", "🥢", "🍽️", "🍴", "🥄", "🔪", "🫙"], "🏠 Travel & Places": ["🏙", "🌍", "🌎", "🌏", "🌐", "🗺️", "🧭", "🏔️", "⛰️", "🌋", "🗻", "🏕️", "🏖️", "🏜️", "🏝️", "🏞️", "🏟️", "🏛️", "🏗️", "🧱", "🪨", "🪵", "🛖", "🏘️", "🏚️", "🏠", "🏡", "🏢", "🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏬", "🏭", "🏯", "🏰", "💒", "🗼", "🗽", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "⛲", "⛺", "🌁", "🌃", "🏙️", "🌄", "🌅", "🌆", "🌇", "🌉", "♨️", "🎠", "🛝", "🎡", "🎢", "💈", "🎪", "🚂", "🚃", "🚄", "🚅", "🚆", "🚇", "🚈", "🚉", "🚊", "🚝", "🚞", "🚋", "🚌", "🚍", "🚎", "🚐", "🚑", "🚒", "🚓", "🚔", "🚕", "🚖", "🚗", "🚘", "🚙", "🛻", "🚚", "🚛", "🚜", "🏎️", "🏍️", "🛵", "🛺", "🚲", "🛴", "🛹", "🛼", "🚏", "🛣️", "🛤️", "⛽", "🚧", "⚓", "🛟", "⛵", "🚤", "🛥️", "🛳️", "⛴️", "🚢", "✈️", "🛩️", "🛫", "🛬", "🪂", "💺", "🚁", "🚟", "🚠", "🚡", "🛸", "🚀", "🛶", "🚁", "🚀", "⛱️", "🗿", "🪆", "🧳", "🌂", "☂️"], "⚽ Activities": ["⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱", "🏓", "🏸", "🏒", "🏑", "🥍", "🏏", "🪃", "🥅", "⛳", "🪁", "🏹", "🎣", "🤿", "🥊", "🥋", "🎽", "🛹", "🛼", "🛷", "⛸️", "🥌", "🎿", "⛷️", "🏂", "🪂", "🏋️", "🤼", "🤸", "⛹️", "🤺", "🏇", "🧘", "🏄", "🏊", "🤽", "🚣", "🧗", "🚵", "🚴", "🏆", "🥇", "🥈", "🥉", "🏅", "🎖️", "🏵️", "🎗️", "🎫", "🎟️", "🎪", "🤹", "🎭", "🎨", "🎬", "🎤", "🎧", "🎼", "🎵", "🎶", "🎷", "🪗", "🎸", "🎹", "🎺", "🎻", "🪕", "🥁", "🪘", "🎯", "🎲", "♟️", "🎮", "🕹️", "🎰", "🧩", "🪀", "🪁", "🎴", "🎳", "🧸", "🪅", "🪩", "🪆", "🖼️", "🎑", "🎃", "🎆", "🎇", "🧨", "✨", "🎉", "🎊", "🎋", "🎍", "🎎", "🎏", "🎐", "🎀", "🎁", "🎗️"], "📱 Objects": ["🏴", "🚨", "🔍", "📚", "📖", "⌚", "📱", "📲", "💻", "⌨️", "🖥️", "🖨️", "🖱️", "🖲️", "💽", "💾", "💿", "📀", "🧮", "📷", "📸", "📹", "🎥", "📽️", "🎞️", "📞", "☎️", "📟", "📠", "📺", "📻", "🧭", "⏱️", "⏲️", "⏰", "🕰️", "⌛", "⏳", "📡", "🔋", "🪫", "🔌", "💡", "🔦", "🕯️", "🪔", "🧯", "🛢️", "💰", "🪙", "💴", "💵", "💶", "💷", "💸", "💳", "🪙", "💹", "✉️", "📧", "📨", "📩", "📤", "📥", "📦", "📫", "📪", "📬", "📭", "📮", "🗳️", "✏️", "✒️", "🖋️", "🖊️", "📝", "💼", "📁", "📂", "🗂️", "📅", "📆", "🗒️", "🗓️", "📇", "📈", "📉", "📊", "📋", "📌", "📍", "🗺️", "📎", "🖇️", "📏", "📐", "✂️", "🗃️", "🗄️", "🗑️", "🔒", "🔓", "🔏", "🔐", "🔑", "🗝️", "🔨", "🪓", "⛏️", "⚒️", "🛠️", "🗡️", "⚔️", "🛡️", "🪚", "🔧", "🪛", "🔩", "⚙️", "🗜️", "🔗", "⛓️", "🪝", "🧲", "🪜", "🧰", "🧲", "🪤", "🧪", "🧫", "🧬", "🔭", "🔬", "🩺", "🩹", "🩼", "🩻", "💊", "💉", "🩸", "🧴", "🧹", "🧺", "🧻", "🪣", "🧼", "🫧", "🪥", "🧽", "🪒", "🧹", "🪠", "🛁", "🪤", "🧲", "🔑", "🚪", "🛋️", "🪑", "🚽", "🚿", "🛒", "🎁", "🎈", "🎏", "🎀", "🪄", "🔮"], "🔣 Symbols": ["➕", "➖", "✖️", "➗", "🟰", "♾️", "🔢", "🔣", "🔤", "🔡", "🔠", "💯", "🔢", "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❤️‍🔥", "❤️‍🩹", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟", "☮️", "✝️", "☪️", "🕉️", "✡️", "🔯", "🪯", "☯️", "☦️", "🛐", "⛎", "♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓", "🆔", "⚛️", "🉑", "☢️", "☣️", "📴", "📳", "🈶", "🈚", "🈸", "🈺", "🈷️", "✴️", "🆚", "💮", "🉐", "㊙️", "㊗️", "🈴", "🈵", "🈹", "🈲", "🅰️", "🅱️", "🆎", "🆑", "🅾️", "🆘", "❌", "⭕", "🛑", "⛔", "📛", "🚫", "💯", "💢", "♨️", "🚷", "🚯", "🚳", "🚱", "🔞", "📵", "🔕", "🔇", "❗", "❕", "❓", "❔", "‼️", "⁉️", "🔅", "🔆", "📶", "🛜", "📳", "🔱", "⚜️", "🔰", "♻️", "✅", "🈯", "💹", "❇️", "✳️", "❎", "🌐", "💠", "Ⓜ️", "🌀", "💤", "🏧", "🚾", "♿", "🅿️", "🛗", "🈳", "🈹", "🚺", "🚹", "🚼", "⚧️", "🚻", "🚮", "🎦", "📵", "🔞", "🔃", "🔄", "🔙", "🔚", "🔛", "🔜", "🔝", "🛐", "⏏️", "⏭️", "⏮️", "⏩", "⏪", "⏫", "⏬", "▶️", "⏸️", "⏹️", "⏺️", "🎦", "🔊", "🔔", "🔕", "📣", "📢", "💬", "💭", "🗯️", "♠️", "♣️", "♥️", "♦️", "🃏", "🀄", "🎴", "🔇", "🔈", "🔉", "🔊", "📻", "🎵", "🎶", "〽️", "🎙️", "⚗️", "🔭", "🔬", "🩺", "🌡️", "🧭", "💡", "🔦", "🕯️"]};
+
+
+function openIconPicker(targetId, wrapperId, onPick) {
+  // Close any open pickers
+  document.querySelectorAll('.icon-picker-grid.open').forEach(g => {
+    if (g.id !== 'ipg-' + wrapperId) g.classList.remove('open');
+  });
+  const existing = document.getElementById('ipg-' + wrapperId);
+  if (existing) { existing.classList.toggle('open'); return; }
+
+  // Build picker
+  const wrap = document.getElementById('wrap-' + wrapperId) || document.getElementById(targetId)?.parentElement;
+  if (!wrap) return;
+  wrap.style.position = 'relative';
+
+  const picker = document.createElement('div');
+  picker.className = 'icon-picker-grid open';
+  picker.id = 'ipg-' + wrapperId;
+  picker.style.cssText = 'min-width:300px;max-width:340px';
+
+  const catNames = Object.keys(EMOJI_CATEGORIES);
+  let activeCat = catNames[0];
+
+  function renderGrid(emojis) {
+    grid.innerHTML = '';
+    const q = searchInp.value.toLowerCase();
+    const filtered = q ? emojis.filter(e => {
+      // Simple filter: check if any emoji in all cats matches — just show all cats when searching
+      return e.toLowerCase().includes(q) || true; // emoji chars don't match text, search is cross-cat
+    }) : emojis;
+    // If searching, search across all categories
+    const toShow = q
+      ? Object.values(EMOJI_CATEGORIES).flat().filter(() => true) // all
+           .filter(e => { try { return [...e].some(cp => cp.codePointAt(0).toString(16).toLowerCase().includes(q)); } catch(_){return false;} })
+           // fallback: just show current cat when no text matches
+      : emojis;
+    (q ? Object.values(EMOJI_CATEGORIES).flat() : emojis).forEach(ic => {
+      const btn = document.createElement('button');
+      btn.textContent = ic;
+      btn.title = ic;
+      btn.className = 'ipg-btn';
+      btn.onclick = e => {
+        e.stopPropagation();
+        const el = document.getElementById(targetId);
+        if (el) el.textContent = ic;
+        picker.classList.remove('open');
+        if (onPick) onPick(ic);
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  function switchCat(name) {
+    activeCat = name;
+    tabs.querySelectorAll('.ipg-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === name));
+    renderGrid(EMOJI_CATEGORIES[name]);
+  }
+
+  // Search input
+  const searchInp = document.createElement('input');
+  searchInp.type = 'text';
+  searchInp.placeholder = '🔍 search…';
+  searchInp.style.cssText = 'width:100%;box-sizing:border-box;padding:4px 8px;font-size:13px;border:1.5px solid var(--gray-mid);border-radius:6px;margin-bottom:6px;font-family:Nunito,sans-serif;outline:none';
+  searchInp.oninput = () => {
+    const q = searchInp.value.trim();
+    if (q) {
+      // search across all categories by name hint stored in title — not possible for emoji
+      // Instead show all emoji from all cats
+      grid.innerHTML = '';
+      Object.values(EMOJI_CATEGORIES).flat().forEach(ic => {
+        const btn = document.createElement('button');
+        btn.textContent = ic;
+        btn.className = 'ipg-btn';
+        btn.onclick = e => { e.stopPropagation(); const el=document.getElementById(targetId); if(el) el.textContent=ic; picker.classList.remove('open'); if(onPick) onPick(ic); };
+        grid.appendChild(btn);
+      });
+    } else {
+      renderGrid(EMOJI_CATEGORIES[activeCat]);
+    }
+  };
+
+  // Category tabs
+  const tabs = document.createElement('div');
+  tabs.style.cssText = 'display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px';
+  catNames.forEach(name => {
+    const tab = document.createElement('button');
+    tab.className = 'ipg-tab' + (name === activeCat ? ' active' : '');
+    tab.dataset.cat = name;
+    tab.textContent = name.split(' ')[0]; // just the emoji part of the category name
+    tab.title = name.split(' ').slice(1).join(' ');
+    tab.onclick = e => { e.stopPropagation(); searchInp.value = ''; switchCat(name); };
+    tabs.appendChild(tab);
+  });
+
+  // Emoji grid
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-height:220px;overflow-y:auto;overflow-x:hidden';
+
+  picker.appendChild(searchInp);
+  picker.appendChild(tabs);
+  picker.appendChild(grid);
+  renderGrid(EMOJI_CATEGORIES[activeCat]);
+
+  // Close on outside click
+  setTimeout(() => document.addEventListener('click', function h(e) {
+    if (!picker.contains(e.target)) { picker.classList.remove('open'); document.removeEventListener('click', h); }
+  }), 0);
+
+  wrap.appendChild(picker);
+}
+</script>
+</body>
+</html>

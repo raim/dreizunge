@@ -1237,7 +1237,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 // ── Generate all lessons ──────────────────────────────────────────────
 async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
-  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior } = userOpts;
+  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, useFullChain } = userOpts;
   srcLang = srcLang || 'en';
   const userTopic = topic;
   const genStart = Date.now();
@@ -1568,8 +1568,8 @@ function _syncStorylineForTopic(topicName, continuedFromTopic) {
     const isExtension = chapterIds.length > partialMatch.chapters.length &&
       partialMatch.chapters.every((c, i) => c === chapterIds[i]);
     if (isExtension) {
+      // Preserve existing id — do not rehash
       partialMatch.chapters = chapterIds;
-      partialMatch.id = slId;
       setStorylines(allSl.map(s => s.id === partialMatch.id ? partialMatch : s));
     } else {
       // Fork — create a new storyline for the new branch
@@ -1577,11 +1577,9 @@ function _syncStorylineForTopic(topicName, continuedFromTopic) {
         lang: topicObj?.lang || null, srcLang: topicObj?.srcLang || null });
     }
   } else if (predecessorMatch) {
-    // New topic extends an existing storyline — update it in place, preserving title/icon/summary
-    const oldId = predecessorMatch.id;
+    // New topic extends an existing storyline — update chapters in place, preserve id/title/icon/tags
     predecessorMatch.chapters = chapterIds;
-    predecessorMatch.id = slId;
-    setStorylines(allSl.map(s => s.id === oldId ? predecessorMatch : s));
+    setStorylines(allSl.map(s => s.id === predecessorMatch.id ? predecessorMatch : s));
   } else {
     upsertStoryline({ id: slId, title: chain[0], icon: '📖', chapters: chapterIds,
       lang: topicObj?.lang || null, srcLang: topicObj?.srcLang || null });
@@ -1789,7 +1787,7 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { slId, chainKey, title, icon, summary } = body;
+      const { slId, chainKey, title, icon, summary, tags } = body;
       const targetId = slId || chainKey;
       if (!targetId) return json(res, 400, { error: 'Missing slId' });
       if (title === null) {
@@ -1800,6 +1798,7 @@ http.createServer(async (req, res) => {
         if (title     !== undefined) patch.title   = (title||'').slice(0,80);
         if (icon      !== undefined) patch.icon    = (icon||'📖').slice(0,10);
         if (summary   !== undefined) patch.summary = typeof summary === 'string' ? summary.slice(0,2000) : summary;
+        if (tags      !== undefined) patch.tags    = Array.isArray(tags) ? tags.map(t=>String(t).slice(0,50)) : [];
         upsertStoryline(patch);
       }
       return json(res, 200, { ok: true });
@@ -1847,13 +1846,28 @@ http.createServer(async (req, res) => {
         data: job.data, error: job.error });
     }
 
+    // ── Cancel job ──────────────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/jobs/cancel') {
+      let body; try { body = JSON.parse(await readBody(req)); } catch(e) { body = {}; }
+      const { jobId } = body;
+      if (jobId && jobs.has(jobId)) {
+        const job = jobs.get(jobId);
+        if (job.status === 'running' || job.status === 'pending') {
+          job.status = 'cancelled'; job.step = 'Cancelled';
+          if (job.abort) job.abort();
+          console.log('  Job cancelled:', jobId);
+        }
+      }
+      return json(res, 200, { ok: true });
+    }
+
     // ── Generate (async — returns jobId immediately) ─────────────
     if (M === 'POST' && url.pathname === '/api/generate') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { topic, lang, srcLang, difficulty, lessonFormat, storyLen, continuedFrom, forceRegenerate,
-              userStory, userTranslation, userDialect, storyStyle, reinforcePrior } = body;
+              userStory, userTranslation, userDialect, storyStyle, reinforcePrior, useFullChain } = body;
       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
         : (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
@@ -1881,6 +1895,7 @@ http.createServer(async (req, res) => {
         storyStyle:      (storyStyle && STORY_STYLES.hasOwnProperty(storyStyle)) ? storyStyle : null,
         lessonFormat:    fmt,
         reinforcePrior:  reinforcePrior === true,
+        useFullChain:    useFullChain === true,
       };
       console.log(`  Generating: "${topic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} fmt=${fmt} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
       generate(topic.trim(), lang || 'it', resolvedSrcLang, diff, contFrom, wc, jobId, userOpts).then(data => {
