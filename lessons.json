@@ -2,6 +2,23 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1337415645",
+      "title": "Fibonaccis Hasen",
+      "icon": "🐰",
+      "chapters": [
+        "tp_499560229",
+        "tp_1758085634"
+      ],
+      "lang": "it",
+      "srcLang": "de",
+      "createdAt": "2026-06-07T10:01:50.939Z",
+      "updatedAt": "2026-06-07T10:48:46.449Z",
+      "summary": "Die Geschichte von \"Fibonaccis Hasen\" erläutert die Wachstumsfolge, bei der sich Paare in Monaten vermehren und erzeugen. Die Schlüsselbegriffe Folge, Paare, erzeugen und sich vermehren sind zentrale Elemente. Die Summe der Paare wächst ins Unendliche, was das Studium dieser Folge interessant macht.",
+      "tags": [
+        "manually curated"
+      ]
+    },
+    {
       "id": "sl_1634204365",
       "title": "Visit Jerusalem, city of three religions",
       "icon": "📖",
@@ -678,6 +695,413 @@
     }
   ],
   "topics": [
+    {
+      "topic": "Fibonacci und seine Zahlenreihe",
+      "topicEmoji": "斐",
+      "userTopic": "Fibonacci beschrieb so seine beruehmte Zahlenreihe.",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 200,
+      "story": "Nel corso degli anni, Fibonacci continuò a esaminare le proprietà della successione numerica che aveva descritto. Ogni mese, mentre le coppie di conigli crescevano e si moltiplicavano, egli notava nuove regolarità e relazioni matematiche. Nel quindicesimo mese, la somma delle coppie era di 610, un numero che sembrava emergere magicamente dalla sequenza. Fibonacci, con la sua acuta intuizione, si rese conto che ogni numero nella successione era la somma dei due precedenti. Questa scoperta lo portò a formulare una regola generale: se si iniziasse con 1 e 1, e poi sommasse i due numeri consecutivi, avrebbe ottenuto una successione senza fine, ciascun numero la cui importanza e bellezza sarebbe cresciuta man mano che si estendeva.\n\nFibonacci scrisse il suo lavoro in un manoscritto intitolato \"Liber Abaci\", dove descrisse il problema dei conigli e le sue soluzioni matematiche. Questo libro, nonostante la sua natura divulgativa, contenneva concetti profondi e complessi che avrebbero avuto un impatto duraturo sulla matematica europea. La successione numerica, ora chiamata successione di Fibonacci, divenne un simbolo di bellezza matematica e una fonte di ispirazione per gli studiosi successivi, dimostrando che anche le semplici osservazioni del mondo naturale potevano portare a scoperte profonde e universali.",
+      "storyLang": "it",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Academic register, precise terminology, formal structure. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nultimo mese, ci saranno 377 coppie. Tante sono le coppie generate dalla coppia iniziale in quel luogo in capo ad un anno.Puoi inoltre vedere in questo margine come abbiamo operato: abbiamo sommato il primo numero con il secondo, cioè 1 e 2; il secondo con il terzo, il terzo con il quarto, il quarto con il quinto e così via finché abbiamo sommato il decimo con l'undicesimo, cioè 144 con 233 ed abbiamo ottenuto la somma dei suddetti conigli, cioè 377; e così si può fare per un numero infinito di mesi.\n\nIl contributo del Fibonacci alla scoperta della sua famosa “successione” è tutto qui! Probabilmente si tratta della semplice esposizione divulgativa\n\ndi un problema già noto ai suoi tempi. Le meravigliose proprietà di questa\n\nsuccessione sono state scoperte dagli studiosi in epoche successive.\n\nNew topic: \"Fibonacci beschrieb so seine beruehmte Zahlenreihe.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Fibonaccis Hasen",
+      "storyStyle": "scientific",
+      "lessonFormat": "grammar",
+      "lessons": [
+        {
+          "id": "ls_1780829111049",
+          "type": "grammar",
+          "title": "Fibonacci und seine Zahlenreihe",
+          "desc": "Nomen mit Geschlecht, Artikel und Mehrfachform",
+          "icon": "📚",
+          "grammar": [
+            {
+              "target": "numero",
+              "source": "Zahl",
+              "gender": "m",
+              "article": "il",
+              "plural": "numeri"
+            },
+            {
+              "target": "sequenza",
+              "source": "Sequenz",
+              "gender": "f",
+              "article": "la",
+              "plural": "sequenze"
+            },
+            {
+              "target": "successione",
+              "source": "Nachfolge",
+              "gender": "f",
+              "article": "la",
+              "plural": "successioni"
+            },
+            {
+              "target": "matematico",
+              "source": "Mathematiker",
+              "gender": "m",
+              "article": "il",
+              "plural": "matematici"
+            },
+            {
+              "target": "teorema",
+              "source": "Theorem",
+              "gender": "m",
+              "article": "il",
+              "plural": "teoremi"
+            },
+            {
+              "target": "problema",
+              "source": "Problem",
+              "gender": "m",
+              "article": "il",
+              "plural": "problemi"
+            },
+            {
+              "target": "teoria",
+              "source": "Theorie",
+              "gender": "f",
+              "article": "la",
+              "plural": "teorie"
+            },
+            {
+              "target": "tecnica",
+              "source": "Technik",
+              "gender": "f",
+              "article": "la",
+              "plural": "tecniche"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 623115,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1115,
+        "totalCompletionTokens": 869,
+        "lessons": [
+          {
+            "promptTokens": 488,
+            "completionTokens": 461
+          }
+        ]
+      },
+      "generatedAt": "2026-06-07T10:36:38.101Z",
+      "updatedAt": "2026-06-07T10:47:56.044Z",
+      "id": "tp_1758085634"
+    },
+    {
+      "topic": "Fibonaccis Hasen",
+      "topicEmoji": "🐰",
+      "userTopic": "Fibonaccis Zahlen",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 400,
+      "story": "Quante coppie di conigli discendono in un anno da una coppia.\n\nUn tale mise una coppia di conigli in un luogo completamente circondato da un muro, per scoprire quante coppie di conigli discendessero da questa in un anno: per natura le coppie di conigli generano ogni mese un'altra coppia e cominciano a procreare a partire dal secondo mese dalla nascita. Poiché la suddetta coppia si riproduce nel primo mese, devi raddoppiarla: nel primo mese le coppie saranno 2. Di queste, la prima, nel secondo mese ne genera un'altra: quindi nel secondo mese ci sono 3 coppie. Di queste, durante il mese, due si riproducono e nel terzo mese, generano 2 coppie: quindi, nel terzo mese, ci sono 5 coppie di conigli. Di queste, durante il mese, 3 si riproducono e nel quarto mese ci sono 8 coppie. Di queste, al quinto mese, 5 coppie ne generano altre 5 che aggiunte alle 8 coppie esistenti fanno 13 coppie. Di queste, le 5 generate nel mese precedente non generano nel sesto mese, ma le altre 8 si riproducono, quindi nel sesto mese ci sono 21 coppie. Aggiungendo a queste altre 13 coppie generate nel settimo mese, ci saranno in quel mese 34 coppie. Aggiungendo a queste altre 21 coppie generate nell'ottavo mese, ci saranno in quel mese 55 coppie. Aggiungendo a queste, altre 34 coppie generate nel nono mese, ci saranno in quel mese 89 coppie. Aggiungendo nuovamente a queste altre 55 coppie generate, nel decimo ci saranno 144 coppie. Aggiungendo nuovamente a queste altre 89 coppie generate nell' undicesimo mese, ci saranno in quel mese 233 coppie. Aggiungendo nuovamente a queste anche 144 coppie generate nell'ultimo mese, ci saranno 377 coppie. Tante sono le coppie generate dalla coppia iniziale in quel luogo in capo ad un anno.Puoi inoltre vedere in questo margine come abbiamo operato: abbiamo sommato il primo numero con il secondo, cioè 1 e 2; il secondo con il terzo, il terzo con il quarto, il quarto con il quinto e così via finché abbiamo sommato il decimo con l'undicesimo, cioè 144 con 233 ed abbiamo ottenuto la somma dei suddetti conigli, cioè 377; e così si può fare per un numero infinito di mesi.\n\nIl contributo del Fibonacci alla scoperta della sua famosa “successione” è tutto qui! Probabilmente si tratta della semplice esposizione divulgativa\n\ndi un problema già noto ai suoi tempi. Le meravigliose proprietà di questa\n\nsuccessione sono state scoperte dagli studiosi in epoche successive.",
+      "storyLang": "it",
+      "storyPrompt": "User-provided story",
+      "userStory": "Quante coppie di conigli discendono in un anno da una coppia.\n\nUn tale mise una coppia di conigli in un luogo completamente circondato da un muro, per scoprire quante coppie di conigli discendessero da questa in un anno: per natura le coppie di conigli generano ogni mese un'altra coppia e cominciano a procreare a partire dal secondo mese dalla nascita. Poiché la suddetta coppia si riproduce nel primo mese, devi raddoppiarla: nel primo mese le coppie saranno 2. Di queste, la prima, nel secondo mese ne genera un'altra: quindi nel secondo mese ci sono 3 coppie. Di queste, durante il mese, due si riproducono e nel terzo mese, generano 2 coppie: quindi, nel terzo mese, ci sono 5 coppie di conigli. Di queste, durante il mese, 3 si riproducono e nel quarto mese ci sono 8 coppie. Di queste, al quinto mese, 5 coppie ne generano altre 5 che aggiunte alle 8 coppie esistenti fanno 13 coppie. Di queste, le 5 generate nel mese precedente non generano nel sesto mese, ma le altre 8 si riproducono, quindi nel sesto mese ci sono 21 coppie. Aggiungendo a queste altre 13 coppie generate nel settimo mese, ci saranno in quel mese 34 coppie. Aggiungendo a queste altre 21 coppie generate nell'ottavo mese, ci saranno in quel mese 55 coppie. Aggiungendo a queste, altre 34 coppie generate nel nono mese, ci saranno in quel mese 89 coppie. Aggiungendo nuovamente a queste altre 55 coppie generate, nel decimo ci saranno 144 coppie. Aggiungendo nuovamente a queste altre 89 coppie generate nell' undicesimo mese, ci saranno in quel mese 233 coppie. Aggiungendo nuovamente a queste anche 144 coppie generate nell'ultimo mese, ci saranno 377 coppie. Tante sono le coppie generate dalla coppia iniziale in quel luogo in capo ad un anno.Puoi inoltre vedere in questo margine come abbiamo operato: abbiamo sommato il primo numero con il secondo, cioè 1 e 2; il secondo con il terzo, il terzo con il quarto, il quarto con il quinto e così via finché abbiamo sommato il decimo con l'undicesimo, cioè 144 con 233 ed abbiamo ottenuto la somma dei suddetti conigli, cioè 377; e così si può fare per un numero infinito di mesi.\n\nIl contributo del Fibonacci alla scoperta della sua famosa “successione” è tutto qui! Probabilmente si tratta della semplice esposizione divulgativa\n\ndi un problema già noto ai suoi tempi. Le meravigliose proprietà di questa\n\nsuccessione sono state scoperte dagli studiosi in epoche successive.",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Fibonaccis Zahlen",
+          "desc": "Rekursion, Folge, Rechnen",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "successione",
+              "source": "Folge"
+            },
+            {
+              "target": "coppie",
+              "source": "Paare"
+            },
+            {
+              "target": "generare",
+              "source": "erzeugen"
+            },
+            {
+              "target": "riprodursi",
+              "source": "sich vermehren"
+            },
+            {
+              "target": "mesi",
+              "source": "Monate"
+            },
+            {
+              "target": "somma",
+              "source": "Summe"
+            },
+            {
+              "target": "infinito",
+              "source": "unendlich"
+            },
+            {
+              "target": "studiare",
+              "source": "studieren"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Nel primo mese le coppie saranno 2.",
+              "source": "Im ersten Monat sind 2 Paare vorhanden.",
+              "words": [
+                "Nel",
+                "primo",
+                "mese",
+                "le",
+                "coppie",
+                "saranno",
+                "2."
+              ]
+            },
+            {
+              "target": "Nel secondo mese ci sono 3 coppie.",
+              "source": "Im zweiten Monat sind 3 Paare vorhanden.",
+              "words": [
+                "Nel",
+                "secondo",
+                "mese",
+                "ci",
+                "sono",
+                "3",
+                "coppie."
+              ]
+            },
+            {
+              "target": "Nel terzo mese ci sono 5 coppie di conigli.",
+              "source": "Im dritten Monat sind 5 Paare Kaninchen vorhanden.",
+              "words": [
+                "Nel",
+                "terzo",
+                "mese",
+                "ci",
+                "sono",
+                "5",
+                "coppie",
+                "di",
+                "conigli."
+              ]
+            },
+            {
+              "target": "Nel quinto mese ci sono 5 coppie.",
+              "source": "Im fünften Monat sind 5 Paare vorhanden.",
+              "words": [
+                "Nel",
+                "quinto",
+                "mese",
+                "ci",
+                "sono",
+                "5",
+                "coppie."
+              ]
+            },
+            {
+              "target": "Nel sesto mese ci sono 21 coppie.",
+              "source": "Im sechsten Monat sind 21 Paare vorhanden.",
+              "words": [
+                "Nel",
+                "sesto",
+                "mese",
+                "ci",
+                "sono",
+                "21",
+                "coppie."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1780827267482",
+          "type": "conjugation",
+          "title": "Fibonacci-Zahlen",
+          "desc": "Verb conjugations in present tense",
+          "icon": "📚",
+          "conjugations": [
+            {
+              "infinitive": "calcolare",
+              "source": "rechnen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "io",
+                  "form": "calcolo"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "calcoli"
+                },
+                {
+                  "pronoun": "lui",
+                  "form": "calcola"
+                },
+                {
+                  "pronoun": "noi",
+                  "form": "calcoliamo"
+                },
+                {
+                  "pronoun": "voi",
+                  "form": "calcolate"
+                },
+                {
+                  "pronoun": "loro",
+                  "form": "calcolano"
+                }
+              ]
+            },
+            {
+              "infinitive": "sommare",
+              "source": "addieren",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "io",
+                  "form": "sommo"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "sommi"
+                },
+                {
+                  "pronoun": "lui",
+                  "form": "somma"
+                },
+                {
+                  "pronoun": "noi",
+                  "form": "sommiamo"
+                },
+                {
+                  "pronoun": "voi",
+                  "form": "sommate"
+                },
+                {
+                  "pronoun": "loro",
+                  "form": "sommano"
+                }
+              ]
+            },
+            {
+              "infinitive": "moltiplicare",
+              "source": "multiplizieren",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "io",
+                  "form": "moltiplico"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "moltipli"
+                },
+                {
+                  "pronoun": "lui",
+                  "form": "moltiplica"
+                },
+                {
+                  "pronoun": "noi",
+                  "form": "moltiplichiamo"
+                },
+                {
+                  "pronoun": "voi",
+                  "form": "moltiplicate"
+                },
+                {
+                  "pronoun": "loro",
+                  "form": "moltiplicano"
+                }
+              ]
+            },
+            {
+              "infinitive": "dividere",
+              "source": "teilen",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "io",
+                  "form": "divido"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "dividi"
+                },
+                {
+                  "pronoun": "lui",
+                  "form": "divide"
+                },
+                {
+                  "pronoun": "noi",
+                  "form": "dividiamo"
+                },
+                {
+                  "pronoun": "voi",
+                  "form": "dividete"
+                },
+                {
+                  "pronoun": "loro",
+                  "form": "dividono"
+                }
+              ]
+            },
+            {
+              "infinitive": "sottrarre",
+              "source": "subtrahieren",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "io",
+                  "form": "sottraggo"
+                },
+                {
+                  "pronoun": "tu",
+                  "form": "sottrai"
+                },
+                {
+                  "pronoun": "lui",
+                  "form": "sottrae"
+                },
+                {
+                  "pronoun": "noi",
+                  "form": "sottraiamo"
+                },
+                {
+                  "pronoun": "voi",
+                  "form": "sottraiete"
+                },
+                {
+                  "pronoun": "loro",
+                  "form": "sottraggono"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 545769,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1619,
+        "totalCompletionTokens": 392,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 498002,
+            "promptTokens": 1424,
+            "completionTokens": 367
+          }
+        ]
+      },
+      "generatedAt": "2026-06-07T10:01:50.863Z",
+      "updatedAt": "2026-06-07T10:14:27.482Z",
+      "id": "tp_499560229"
+    },
     {
       "topic": "0 und i am Fluss",
       "topicEmoji": "💧",

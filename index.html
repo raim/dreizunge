@@ -290,7 +290,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .style-select:disabled{opacity:.5;cursor:not-allowed}
 .style-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .story-len-row{margin-bottom:14px}
-.user-story-checks{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.pdf-panel{display:none;flex-direction:column;gap:8px;margin-bottom:12px;padding:12px;background:#f0f4ff;border:1.5px solid #a0b8f0;border-radius:10px}.pdf-panel.open{display:flex}.pdf-chunk-list{display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto}.pdf-chunk{display:flex;align-items:flex-start;gap:6px;padding:6px 8px;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;font-size:12px}.pdf-chunk-text{flex:1;color:var(--gray-dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}.pdf-chunk-text.expanded{white-space:normal}.pdf-chunk-num{font-weight:900;color:var(--blue-dark);min-width:18px}.pdf-chunk-wc{color:var(--gray-dark);font-size:11px;white-space:nowrap}.pdf-stepper{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.pdf-step{padding:3px 8px;border-radius:12px;font-size:11px;font-weight:700;background:var(--gray-light);border:1.5px solid var(--gray-mid)}.pdf-step.done{background:#d4edda;border-color:#28a745;color:#155724}.pdf-step.active{background:#cce5ff;border-color:#004085;color:#004085}.pdf-step.error{background:#f8d7da;border-color:#dc3545;color:#721c24}.user-story-checks{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
 .user-story-check-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--gray-dark);cursor:pointer;user-select:none}
 .user-story-check-row input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--green)}
 .user-story-panel{display:none;flex-direction:column;gap:10px;margin-bottom:12px;padding:12px;background:#f8fdf4;border:1.5px solid #b8e0a0;border-radius:10px}
@@ -559,6 +559,19 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doGenerate();}"></textarea>
     <div class="user-story-checks" id="user-story-checks">
       <label class="user-story-check-row">
+        <input type="checkbox" id="use-pdf-cb" onchange="onUsePdfCb()">
+        <span>📄 PDF</span>
+        <input type="file" id="pdf-file-input" accept=".pdf" style="display:none" onchange="onPdfFileChosen(this)">
+        <button type="button" id="pdf-choose-btn" onclick="document.getElementById('pdf-file-input').click()"
+          style="display:none;font-size:11px;padding:2px 8px;border:1.5px solid var(--gray-mid);border-radius:6px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">📂</button>
+        <select id="pdf-chunk-size" style="display:none;font-size:11px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 6px;background:var(--white);font-family:Nunito,sans-serif">
+          <option value="300">S</option>
+          <option value="600" selected>M</option>
+          <option value="1000">L</option>
+        </select>
+        <span id="pdf-status" style="font-size:11px;color:var(--gray-dark)"></span>
+      </label>
+      <label class="user-story-check-row">
         <input type="checkbox" id="use-story-cb" onchange="onUseStoryCb()">
         <span id="use-story-lbl">📖 I have my own story!</span>
       </label>
@@ -566,6 +579,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <input type="checkbox" id="use-translation-cb" onchange="onUseTranslationCb()">
         <span id="use-translation-lbl">🔤 I also have a translation</span> <span id="translation-lang-hint">(in English)</span>
       </label>
+    </div>
+    <div class="pdf-panel" id="pdf-panel">
+      <div id="pdf-chunk-list" class="pdf-chunk-list"></div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <button type="button" id="pdf-gen-btn" onclick="pdfGenerateAll()"
+          style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif;display:none">
+          ▶ <span id="pdf-gen-lbl"></span></button>
+        <div id="pdf-stepper" class="pdf-stepper"></div>
+      </div>
     </div>
 
     <div class="user-story-panel" id="user-story-panel">
@@ -1322,6 +1344,7 @@ function autoResizeTextarea(el){
 }
 function onUseStoryCb(){
   const on=document.getElementById('use-story-cb').checked;
+  if(on){ document.getElementById('use-pdf-cb').checked=false; onUsePdfCb(); }
   document.getElementById('user-story-panel').classList.toggle('open',on);
   document.getElementById('use-translation-cb-row').style.display=on?'':'none';
   document.getElementById('story-len-row').style.display=on?'none':'';
@@ -1687,6 +1710,219 @@ async function goLessonSet(){
 function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); show('landing'); }
 
 // ── init ──
+// ══ PDF-to-Storyline ══════════════════════════════════════════════════════════
+let _pdfChunks = [];   // { text, wordCount, title, status }
+
+function onUsePdfCb() {
+  const on = document.getElementById('use-pdf-cb').checked;
+  if (on) {
+    document.getElementById('use-story-cb').checked = false;
+    document.getElementById('user-story-panel').classList.remove('open');
+    document.getElementById('use-translation-cb-row').style.display = 'none';
+  }
+  document.getElementById('pdf-choose-btn').style.display = on ? '' : 'none';
+  document.getElementById('pdf-chunk-size').style.display = on ? '' : 'none';
+  document.getElementById('pdf-panel').classList.toggle('open', on && _pdfChunks.length > 0);
+  document.getElementById('pdf-status').textContent = '';
+}
+
+async function onPdfFileChosen(input) {
+  const file = input.files[0]; if (!file) return;
+  const status = document.getElementById('pdf-status');
+  status.textContent = t('pdf.extracting');
+  try {
+    const text = await _extractPdfText(file);
+    if (!text || text.trim().length < 20) { status.textContent = t('pdf.no_text'); return; }
+    const targetWords = parseInt(document.getElementById('pdf-chunk-size').value, 10) || 600;
+    _pdfChunks = _splitIntoChunks(text, targetWords);
+    status.textContent = '';
+    _renderPdfChunks();
+    document.getElementById('pdf-panel').classList.add('open');
+  } catch(e) {
+    const msg = e.message||'';
+    status.textContent = msg.includes('password') ? t('pdf.encrypted') : '⚠ ' + msg.slice(0,60);
+  }
+  input.value = '';
+}
+
+async function _extractPdfText(file) {
+  // Load pdfjs lazily from CDN
+  if (!window.pdfjsLib) {
+    await new Promise((res, rej) => {
+      const sc = document.createElement('script');
+      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+      sc.onload = res; sc.onerror = rej;
+      document.head.appendChild(sc);
+    });
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+  const pages = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    // Group items into lines by Y position, join lines
+    const byY = new Map();
+    content.items.forEach(item => {
+      const y = Math.round(item.transform[5]);
+      if (!byY.has(y)) byY.set(y, []);
+      byY.get(y).push(item.str);
+    });
+    const lines = [...byY.entries()]
+      .sort((a,b) => b[0]-a[0])
+      .map(([,words]) => words.join(''));
+    pages.push(lines.join('\n'));
+  }
+  return _cleanPdfText(pages.join('\n\n'));
+}
+
+function _cleanPdfText(text) {
+  return text
+    .replace(/(\w)-\n(\w)/g, '$1$2')       // dehyphenate
+    .replace(/[ \t]+/g, ' ')                // normalise spaces
+    .replace(/\n{3,}/g, '\n\n')             // max double newline
+    .replace(/^\s*\d+\s*$/gm, '')           // remove lone page numbers
+    .trim();
+}
+
+function _splitIntoChunks(text, targetWords) {
+  const paras = text.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  const chunks = []; let cur = [];
+  const wc = s => s.split(/\s+/).length;
+  paras.forEach(para => {
+    cur.push(para);
+    if (cur.reduce((s,p) => s + wc(p), 0) >= targetWords) {
+      chunks.push(cur.join('\n\n')); cur = [];
+    }
+  });
+  if (cur.length) chunks.push(cur.join('\n\n'));
+  return chunks.map((text, i) => ({
+    text,
+    wordCount: wc(text),
+    title: _autoTitle(text, i),
+    status: 'pending'
+  }));
+}
+
+function _autoTitle(text, index) {
+  const first = text.split('\n')[0].trim();
+  if (first.length >= 4 && first.length <= 60 && !/[.!?]$/.test(first) && first === first.trim()) {
+    // Looks like a heading
+    return first;
+  }
+  const sent = text.match(/[^.!?]{8,80}[.!?]/)?.[0]?.trim();
+  return sent ? sent.replace(/[.!?]$/, '') : 'Chapter ' + (index + 1);
+}
+
+function _renderPdfChunks() {
+  const list = document.getElementById('pdf-chunk-list');
+  const genBtn = document.getElementById('pdf-gen-btn');
+  const genLbl = document.getElementById('pdf-gen-lbl');
+  if (!_pdfChunks.length) { list.innerHTML=''; genBtn.style.display='none'; return; }
+  const total = _pdfChunks.reduce((s,c)=>s+c.wordCount,0);
+  list.innerHTML = _pdfChunks.map((c, i) => {
+    const icon = c.status==='done'?'✅':c.status==='error'?'❌':c.status==='active'?'⏳':'○';
+    return `<div class="pdf-chunk" id="pdf-chunk-${i}">
+      <span class="pdf-chunk-num">${icon} ${i+1}</span>
+      <span class="pdf-chunk-text" title="${escHtml(c.text.slice(0,200))}" onclick="pdfToggleChunk(${i},this)">${escHtml(c.title)}</span>
+      <span class="pdf-chunk-wc">${c.wordCount}w</span>
+      <button type="button" onclick="pdfMergeDown(${i})" title="Merge ↓" style="font-size:10px;border:none;background:none;cursor:pointer;padding:0 2px" ${i===_pdfChunks.length-1?'disabled':''}>⬇</button>
+      <button type="button" onclick="pdfDeleteChunk(${i})" title="Delete" style="font-size:10px;border:none;background:none;cursor:pointer;padding:0 2px">✕</button>
+    </div>`;
+  }).join('');
+  genLbl.textContent = t('pdf.generate_all') + ' (' + t('pdf.chapters',{n:_pdfChunks.length}) + ', ' + t('pdf.words',{n:total}) + ')';
+  genBtn.style.display = _pdfChunks.every(c=>c.status!=='active') ? '' : 'none';
+}
+
+function pdfToggleChunk(i, el) {
+  el.classList.toggle('expanded');
+  el.textContent = el.classList.contains('expanded')
+    ? _pdfChunks[i].text
+    : _pdfChunks[i].title;
+}
+
+function pdfMergeDown(i) {
+  if (i >= _pdfChunks.length - 1) return;
+  const merged = _pdfChunks[i].text + '\n\n' + _pdfChunks[i+1].text;
+  _pdfChunks.splice(i, 2, {
+    text: merged,
+    wordCount: _pdfChunks[i].wordCount + _pdfChunks[i+1].wordCount,
+    title: _pdfChunks[i].title,
+    status: 'pending'
+  });
+  _renderPdfChunks();
+}
+
+function pdfDeleteChunk(i) {
+  _pdfChunks.splice(i, 1);
+  _renderPdfChunks();
+}
+
+async function pdfGenerateAll() {
+  if (!APP.info.canGenerate) return;
+  if (APP.activeJob) { showToast(t('toast.already_generating',{topic:APP.activeJob.topic})); return; }
+  const lang = APP.lang || 'it';
+  const srcLang = APP.srcLang || 'en';
+  const diff = APP.difficulty || 2;
+  let prevTopic = document.getElementById('continue-select')?.value || null;
+  document.getElementById('pdf-gen-btn').style.display = 'none';
+  // Reset statuses
+  _pdfChunks.forEach(c => c.status = 'pending');
+  for (let i = 0; i < _pdfChunks.length; i++) {
+    _pdfChunks[i].status = 'active';
+    _renderPdfChunks();
+    // Check if stopped
+    if (!document.getElementById('use-pdf-cb').checked) break;
+    try {
+      const topic = _pdfChunks[i].title;
+      const body = {
+        topic, lang, srcLang, difficulty: diff,
+        userStory: _pdfChunks[i].text,
+        storyLen: _pdfChunks[i].wordCount,
+        continuedFrom: prevTopic || null,
+        useFullChain: i >= 2,
+        lessonFormat: APP.lessonFormat || 'standard',
+      };
+      const r = await fetch('/api/generate', { method:'POST',
+        headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+      const resp = await r.json();
+      if (!r.ok) throw new Error(resp.error || 'Failed');
+      // Poll to completion
+      await new Promise((res, rej) => {
+        const iv = setInterval(async () => {
+          try {
+            const pr = await fetch('/api/job/' + resp.jobId);
+            const j = await pr.json();
+            if (j.status === 'done') {
+              clearInterval(iv);
+              prevTopic = j.data?.topic || topic;
+              _pdfChunks[i].status = 'done';
+              _pdfChunks[i].title = j.data?.topic || topic; // use server-confirmed topic
+              res();
+            } else if (j.status === 'error' || j.status === 'cancelled') {
+              clearInterval(iv);
+              _pdfChunks[i].status = 'error';
+              rej(new Error(j.error || 'Cancelled'));
+            }
+          } catch(e) { clearInterval(iv); _pdfChunks[i].status='error'; rej(e); }
+        }, 2000);
+      });
+    } catch(e) {
+      _pdfChunks[i].status = 'error';
+      showToast('⚠ Chapter ' + (i+1) + ': ' + e.message.slice(0,50));
+      break;
+    }
+    _renderPdfChunks();
+  }
+  await loadSavedList();
+  document.getElementById('pdf-gen-btn').style.display = '';
+  _renderPdfChunks();
+  const done = _pdfChunks.filter(c=>c.status==='done').length;
+  if (done) showToast('✅ ' + done + '/' + _pdfChunks.length + ' chapters generated');
+}
+// ══ end PDF ═══════════════════════════════════════════════════════════════════
+
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
   await loadLanguages();
@@ -2229,8 +2465,11 @@ function startBackgroundJob(jobId, topic){
         // If user is on the home screen viewing a lesson, refresh the path
         if(document.getElementById('lesson-set')?.classList.contains('active')) try{ buildPath(); }catch(e){}
         document.getElementById('gen-btn').disabled=false;
-        setGenStatus('done', '"'+j.data.topic+'" ready — tap to open');
+        updateStopBtn();
+        APP.activeJob=null; saveActiveJob(null);
+        setGenStatus('hidden','');
         showToast(t('toast.generated',{topic:j.data.topic}));
+        _openStorylineForTopic(j.data.topic);
       }
       if(j.status==='error'){
         clearInterval(iv);
@@ -3174,8 +3413,27 @@ window.addEventListener('popstate', function(e) {
   }
 });
 
+function _openStorylineForTopic(topicName) {
+  // Find the storyline containing this topic and open it
+  const saved = APP.savedList || [];
+  const byId = Object.fromEntries(saved.filter(l=>l.id).map(l=>[l.id,l]));
+  const topic = saved.find(l => l.topic === topicName);
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const sl = topic?.id ? slArr.find(s => s.chapters && s.chapters.includes(topic.id)) : null;
+  if (sl && sl.chapters && sl.chapters.length) {
+    const chain = sl.chapters.map(cid => byId[cid]?.topic).filter(Boolean);
+    if (chain.length) {
+      const encodedChain = encodeURIComponent(JSON.stringify(chain));
+      openStorylineScreen(sl.id, encodedChain);
+      return;
+    }
+  }
+  // Fallback: open as standalone lesson set
+  if (topicName) loadSaved(encodeURIComponent(topicName));
+}
+
 function _tryOpenStorylineByChainId(chainId) {
-  if (!APP.savedList || !APP.savedList.length) {
+  if (!APP.savedList || !APP.savedList.length || !APP.storylines || !APP.storylines.length) {
     loadSavedList().then(() => _tryOpenStorylineByChainId(chainId));
     return;
   }

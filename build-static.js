@@ -185,7 +185,10 @@ function repopulateContinueSelect(){
 
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
-  APP.libFilter='all'; APP.libSrcFilter='all'; APP.libTagFilter='manually curated';
+  APP.libFilter='all'; APP.libSrcFilter='all';
+  // Only preset tag filter if the tag actually exists in baked-in storylines
+  const _allBakedTags = new Set((Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[]).flatMap(sl=>sl.tags||[]));
+  APP.libTagFilter = _allBakedTags.has('manually curated') ? 'manually curated' : '';
   await loadLanguages();
   const _ss=document.getElementById('src-lang-select'); if(_ss) _ss.value='all';
   const _ts=document.getElementById('lang-select'); if(_ts) _ts.value='all';
@@ -216,6 +219,9 @@ function renderPill() {
   // C5: replace entire generation area with static info message
   const _genArea = document.getElementById('gen-area');
   if (_genArea) _genArea.style.display = 'none';
+  // Hide PDF upload (live-only)
+  const _pdfRow = document.querySelector('label:has(#use-pdf-cb)');
+  if (_pdfRow) _pdfRow.style.display = 'none';
   if (!document.getElementById('static-gen-overlay')) {
     const _ov = document.createElement('div');
     _ov.id = 'static-gen-overlay';

@@ -1151,7 +1151,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     const prevHint = prevVocab.length
       ? `\nAvoid repeating these already-covered words: ${prevVocab.map(v=>v.target).join(', ')}`
       : '';
-    const storyHint = story ? `\n\nContext story:\n${story.slice(0, 600)}` : '';
+    const storyHint = story ? `\n\nContext story:\n${story}` : '';
     userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}${chainHint}`;
   } else {
     sysPrompt = sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, userDialect, writingStyle);
@@ -1161,7 +1161,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     const L = langName(lang);
     const S = langName(srcLang || 'en');
     const storyHint = story
-      ? `\nContext story (for themes/vocabulary inspiration ONLY — ignore what language it is written in):\n${story.slice(0, 800)}\n\nREMINDER: "target" fields MUST be ${L}. "source" fields MUST be ${S} translations. Do NOT use the story's language for source fields.`
+      ? `\nUse the story context for themes/vocabulary inspiration:\n${story}\n\nREMINDER: "target" fields MUST be ${L}. "source" fields MUST be ${S} translations. Do NOT use the story's language for source fields.`
       : '';
     userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.\nTarget language: ${L}. Source/translation language: ${S}.${storyHint}${prevHint}${chainHint}\nReturn only the JSON object.`;
   }
@@ -1874,7 +1874,8 @@ http.createServer(async (req, res) => {
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
       const fmt  = ['error_hunt','grammar','conjugation','all_types','math'].includes(lessonFormat) ? lessonFormat : 'standard';
-      const wc = Math.max(100, Math.min(1000, parseInt(storyLen, 10) || 300));
+      const wcMax = body.userStory ? 2000 : 1000;
+      const wc = Math.max(100, Math.min(wcMax, parseInt(storyLen, 10) || 300));
       const contFrom = (!userStory && continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       const topicKey = topic.trim().toLowerCase();
       if (!forceRegenerate) {

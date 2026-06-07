@@ -209,7 +209,13 @@
     "ex.badge.math_order": "🔢 Sorteer",
     "ex.badge.math_calc": "🔢 Berekenen",
     "form.format.math": "🔢 Wiskunde",
-    "lesson.ai_error_hunt.changed_count": "{n}/{total} veranderd"
+    "lesson.ai_error_hunt.changed_count": "{n}/{total} veranderd",
+    "gen.use_full_chain": "gebruik volledige verhaallijn als context",
+    "sl.tags_placeholder": "+ tags",
+    "sl.tags_input_placeholder": "Tags, puntkomma-gescheiden…",
+    "toast.gen_stopped": "⛔ Generatie gestopt",
+    "ex.math_order.asc": "Kleinst → grootst",
+    "ex.math_order.desc": "Grootst → kleinst"
   },
   "pt": {
     "app.tagline": "Aprenda vocabulário de qualquer tópico em qualquer idioma",
@@ -421,7 +427,13 @@
     "ex.badge.math_order": "🔢 Ordenar",
     "ex.badge.math_calc": "🔢 Calcular",
     "form.format.math": "🔢 Matemática",
-    "lesson.ai_error_hunt.changed_count": "{n}/{total} alterados"
+    "lesson.ai_error_hunt.changed_count": "{n}/{total} alterados",
+    "gen.use_full_chain": "use a história completa como contexto",
+    "sl.tags_placeholder": "+ tags",
+    "sl.tags_input_placeholder": "Tags, ponto-e-vírgula-separadas…",
+    "toast.gen_stopped": "⛔ Geração interrompida",
+    "ex.math_order.asc": "Menor → maior",
+    "ex.math_order.desc": "Maior → menor"
   },
   "fr": {
     "app.tagline": "Apprendre du vocabulaire sur n'importe quel sujet",
@@ -632,7 +644,14 @@
     "lesson.type.math": "🔢 Mathématiques",
     "ex.badge.math_order": "🔢 Trier",
     "ex.badge.math_calc": "🔢 Calculer",
-    "form.format.math": "🔢 Mathématiques"
+    "form.format.math": "🔢 Mathématiques",
+    "lesson.ai_error_hunt.changed_count": "{n}/{total} changés",
+    "gen.use_full_chain": "utiliser l'histoire complète comme contexte",
+    "sl.tags_placeholder": "+ tags",
+    "sl.tags_input_placeholder": "Tags, séparés par des points-virgules…",
+    "toast.gen_stopped": "⛔ Génération arrêtée",
+    "ex.math_order.asc": "Le plus petit → le plus grand",
+    "ex.math_order.desc": "Le plus grand → le plus petit"
   },
   "tr": {
     "furigana.show": "ふ Show furigana",
@@ -1686,7 +1705,14 @@
     "sl.tags_input_placeholder": "Tags, semicolon-separated…",
     "toast.gen_stopped": "⛔ Generation stopped",
     "ex.math_order.asc": "Smallest → largest",
-    "ex.math_order.desc": "Largest → smallest"
+    "ex.math_order.desc": "Largest → smallest",
+    "pdf.extracting": "Extracting…",
+    "pdf.no_text": "⚠ No text found. ",
+    "pdf.encrypted": "⚠ PDF is password-protected.",
+    "pdf.generate_all": "Generate storyline",
+    "pdf.chapters": "{n} chapters",
+    "pdf.words": "{n} words"
+
   },
   "sv": {
     "app.tagline": "Lär dig vokabulär för valfritt ämne",
