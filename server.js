@@ -300,7 +300,7 @@ const STORY_STYLES = {
   journalism:    'Reportage style: direct, punchy, who/what/where/when.',
   essay:         'Discursive, argumentative, first-person reflective.',
   children:      'Simple vocabulary, playful tone, short sentences.',
-  funny:         'Comedic tone, wordplay, absurdist situations, punchlines.',
+  funny:         'You are a comedian, tell a funny story, use wordplay, absurdist situations, punchlines.',
   romantic:      'Warm, emotionally rich, evocative imagery.',
   sensual:       'Rich in texture and atmosphere, suggestive but not explicit.',
   horror:        'Suspenseful, eerie atmosphere, foreboding.',
