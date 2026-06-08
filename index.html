@@ -591,7 +591,14 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </div>
 
     <div class="user-story-panel" id="user-story-panel">
-      <label class="form-lbl" style="margin-bottom:0" id="story-panel-lbl">Story (in target language)</label>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <label class="form-lbl" style="margin-bottom:0" id="story-panel-lbl">Story language:</label>
+        <select id="user-story-lang" style="font-size:12px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 8px;background:var(--white);font-family:Nunito,sans-serif">
+          <option value="target" id="story-lang-opt-target">🎯 Target language</option>
+          <option value="source" id="story-lang-opt-source">🏠 My language</option>
+          <option value="other">🌐 Other language</option>
+        </select>
+      </div>
       <textarea class="user-story-textarea" id="user-story-input"
         id="user-story-input-ph" placeholder="Paste your story here…"
         oninput="autoResizeTextarea(this)"></textarea>
@@ -646,9 +653,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <label style="font-size:11px;font-weight:700;color:var(--gray-dark);display:flex;align-items:center;gap:4px;margin-top:4px;cursor:pointer">
         <input type="checkbox" id="cont-all-langs" onchange="repopulateContinueSelect()"> <span id="show-other-langs-lbl">show other languages</span>
       </label>
-      <label id="reinforce-prior-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px;cursor:pointer" title="Weave previously learned words into new lessons">
-        <input type="checkbox" id="reinforce-prior-cb" checked> <span id="reinforce-prior-lbl">reinforce prior vocabulary</span>
-      </label>
+      <div id="reinforce-prior-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px">
+        <select id="vocab-mode-select" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif;cursor:pointer">
+          <option value="reinforce">🔁 reinforce vocab</option>
+          <option value="neutral">○ neutral</option>
+          <option value="extend">➕ extend vocab</option>
+        </select>
+      </div>
       <label id="use-full-chain-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px;cursor:pointer" title="Pass the full storyline as context — better continuity, slower generation">
         <input type="checkbox" id="use-full-chain-cb"> <span id="use-full-chain-lbl"></span>
       </label>
@@ -689,6 +700,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span style="font-size:16px">⚑</span>
     <span style="flex:1" id="static-flag-banner-text">You have flagged exercises — download them to review.</span>
     <button id="download-flagged-btn" onclick="downloadUserFlaggedLessons()">⬇ Download flagged</button>
+  </div>
+
+  <div id="teacher-mode-bar" style="display:none;text-align:center;padding:8px 0 4px">
+    <button id="teacher-mode-btn" onclick="toggleTeacherMode()"
+      style="font-size:13px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:20px;padding:5px 16px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif;opacity:.7"
+      title="Unlock all stories">🔓 Teacher mode</button>
   </div>
 
   <div class="library">
@@ -813,9 +830,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </select>
     <button class="addlesson-btn" id="sial-btn-lesson-card" onclick="doAddLesson('lesson-card', document.getElementById('sial-enc-lesson-card').value)">Generate</button>
     <button class="addlesson-cancel" onclick="closeAddLesson('lesson-card')">✕</button>
-    <label id="sial-reinforce-row-lesson-card" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px;cursor:pointer" title="Weave previously learned words into new lesson">
-      <input type="checkbox" id="sial-reinforce-lesson-card" checked> reinforce prior vocabulary
-    </label>
+    <div id="sial-reinforce-row-lesson-card" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
+      <select id="sial-vocab-mode-lesson-card" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif">
+        <option value="reinforce">🔁 reinforce</option>
+        <option value="neutral">○ neutral</option>
+        <option value="extend">➕ extend</option>
+      </select>
+    </div>
+    <div id="sial-math-instr-row-lesson-card" style="display:none;width:100%;margin-top:4px">
+      <input id="sial-math-instr-lesson-card" style="width:100%;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:4px 8px;font-family:Nunito,sans-serif;box-sizing:border-box" placeholder="🤖 Describe math exercises… (Fibonacci, powers of 2, LaTeX…)">
+    </div>
     <div class="addlesson-status" id="sial-status-lesson-card"></div>
     <input type="hidden" id="sial-enc-lesson-card">
   </div>
@@ -857,6 +881,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="stat-box" id="stat-flagged" title="Flagged"><div class="stat-num" id="s-flagged" style="color:#ff9600">0⚑</div><div class="stat-lbl">⚑</div></div>
   </div>
   <button class="cont-btn" id="comp-next" onclick="afterComplete()">Continue</button>
+  <div id="comp-nav-btns" style="display:none;display:flex;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
+  <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:#f0fff4">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span style="font-size:20px">📖</span>
+      <span style="font-size:13px;font-weight:900;color:var(--green-dark)">Story unlocked!</span>
+      <button class="spk-ico" style="margin-left:auto" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
+    </div>
+    <div id="comp-story-text" style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic"></div>
+  </div>
   <div class="vocab-box" style="margin-top:18px"><div class="vocab-hdr" id="words-from-lbl">Words from this lesson</div><div id="comp-vocab" style="display:flex;flex-wrap:wrap;margin:-3px"></div></div>
 </div>
 
@@ -1046,6 +1079,11 @@ function applyUIStrings() {
   const tgtLangName = localizedLangName(APP.lang, APP.srcLang);
   const srcLangName = localizedLangName(APP.srcLang, APP.srcLang);
   // Static elements
+  // Update story language selector option labels
+  const _sloT = document.getElementById('story-lang-opt-target');
+  const _sloS = document.getElementById('story-lang-opt-source');
+  if (_sloT) _sloT.textContent = '🎯 ' + (LANGS[APP.lang]||LANGS.it).name;
+  if (_sloS) _sloS.textContent = '🏠 ' + (LANGS[APP.srcLang||'en']||LANGS.en).name;
   _setText('topic-label',   document.getElementById('use-story-cb')?.checked
     ? t('form.topic_label_story')
     : t('form.topic_label', {lang: tgtLangName}));
@@ -1332,6 +1370,7 @@ const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conj
 function onFormatSelect(v){
   APP.lessonFormat=VALID_FORMATS.has(v)?v:'standard'; saveLessonFormat();
   const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
+
 }
 function restoreFormatSelect(){
   const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
@@ -1881,7 +1920,7 @@ async function pdfGenerateAll() {
         userStory: _pdfChunks[i].text,
         storyLen: _pdfChunks[i].wordCount,
         continuedFrom: prevTopic || null,
-        useFullChain: i >= 2,
+        useFullChain: i >= 1,
         lessonFormat: APP.lessonFormat || 'standard',
       };
       const r = await fetch('/api/generate', { method:'POST',
@@ -2075,9 +2114,16 @@ function savedItemHtml(s, connector, hideStory) {
       </select>
       <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}')">Generate</button>
       <button class="addlesson-cancel" onclick="closeAddLesson('${sid}')">✕</button>
-      <label id="sial-reinforce-row-${sid}" style="display:${hasPrior?'flex':'none'};font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px;cursor:pointer" title="Weave previously learned words into new lesson">
-        <input type="checkbox" id="sial-reinforce-${sid}" checked> reinforce prior vocabulary
-      </label>
+      <div id="sial-reinforce-row-${sid}" style="display:${hasPrior?'flex':'none'};font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
+        <select id="sial-vocab-mode-${sid}" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif">
+          <option value="reinforce">🔁 reinforce</option>
+          <option value="neutral">○ neutral</option>
+          <option value="extend">➕ extend</option>
+        </select>
+      </div>
+      <div id="sial-math-instr-row-${sid}" style="display:none;width:100%;margin-top:4px">
+        <input id="sial-math-instr-${sid}" style="width:100%;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:4px 8px;font-family:Nunito,sans-serif;box-sizing:border-box" placeholder="🤖 Describe math exercises…">
+      </div>
       <div class="addlesson-status" id="sial-status-${sid}"></div>
     </div>
   </div>`;
@@ -2176,7 +2222,7 @@ async function loadSavedList(){
 
   let storylines, orphans;
   const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
-  const v29chains = slArr.filter(sl => sl.chapters && sl.chapters.length > 1);
+  const v29chains = slArr.filter(sl => sl.chapters && sl.chapters.length >= 1);
 
   if (v29chains.length > 0) {
     // v29: resolve chapters to topic objects, filter to visible topics
@@ -2546,7 +2592,9 @@ async function doGenerate(forceRegen){
       lessonFormat:APP.lessonFormat||'standard',
       storyLen:APP.storyLen||300,
       continuedFrom:useStory?null:(document.getElementById('continue-select')?.value||null),
-      reinforcePrior:!useStory&&!!(document.getElementById('reinforce-prior-cb')?.checked)&&!!(document.getElementById('continue-select')?.value),
+      vocabMode:!useStory&&!!(document.getElementById('continue-select')?.value)?(document.getElementById('vocab-mode-select')?.value||'neutral'):null,
+      mathInstruction: APP.lessonFormat==='math' ? (document.getElementById('topic-input')?.value?.trim()||null) : null,
+      userStoryLang: useStory ? (document.getElementById('user-story-lang')?.value||'target') : null,
       useFullChain:!useStory&&!!(document.getElementById('use-full-chain-cb')?.checked)&&!!(document.getElementById('continue-select')?.value),
       forceRegenerate:!!forceRegen};
     if(userStory)       body.userStory=userStory;
@@ -2800,7 +2848,7 @@ function buildPath(){
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
   d.lessons.forEach((L,i)=>{
-    const isDone=!!(done[L.id]), isLocked=!APP.info.canGenerate&&i>0&&!done[d.lessons[i-1].id], isActive=!isDone&&!isLocked;
+    const isDone=!!(done[L.id]), isLocked=i>0&&!done[d.lessons[i-1].id]&&!APP._teacherMode, isActive=!isDone&&!isLocked;
     const lessonScore=typeof done[L.id]==='object'?done[L.id]:null;
     const lessonPct=lessonScore&&lessonScore.total>0?Math.round(100*lessonScore.correct/lessonScore.total):null;
     if(i>0){ const ln=document.createElement('div'); ln.className='path-line'+(done[d.lessons[i-1].id]?' done':''); path.appendChild(ln); }
@@ -2827,16 +2875,20 @@ function buildPath(){
     const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT()[diff]||''}</span>`:'';
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
-        <div class="node-title">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍','ai_error_hunt':'🔎','math':'🔢'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt','ai_error_hunt':'lesson.type.ai_error_hunt','math':'lesson.type.math'};const lbl=L.type==='ai_error_hunt'?t('lesson.type.ai_error_hunt'):(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));return (em[L.type]||'📚')+' '+lbl;})()}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="node-title" style="flex:1">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍','ai_error_hunt':'🔎','math':'🔢'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt','ai_error_hunt':'lesson.type.ai_error_hunt','math':'lesson.type.math'};const lbl=L.type==='ai_error_hunt'?t('lesson.type.ai_error_hunt'):(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));return (em[L.type]||'📚')+' '+lbl;})()}</div>
+          ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:20px">🔒</span>':''}
+        </div>
         <div class="node-desc">${L.type==='ai_error_hunt'?t('lesson.ai_error_hunt.desc'):L.desc}</div>
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
         <div class="fix-status" id="fix-status-${L.id}"></div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
-        ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:22px">🔒</span>':''}
-        ${APP.info.canGenerate&&L.id?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('lesson.edit_lesson')}" onclick="event.stopPropagation();openLessonEditor(${i})">✏️${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style=\"color:var(--green);font-size:14px\" title=\"✓ '+L._checked.slice(0,10)+'\">✓</span>':'<span style=\"color:var(--green);font-size:14px\" title=\"Edited\">✓</span>'):''}</button>
-          <button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="event.stopPropagation();deleteLessonNode(${i})">🗑</button>`:''}
-      </div>`;
+        ${APP.info.canGenerate&&L.id?`<div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap" onclick="event.stopPropagation()">
+          <button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('lesson.edit_lesson')}" onclick="openLessonEditor(${i})">✏️${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style=\\"color:var(--green);font-size:14px\\" title=\\"✓ '+L._checked.slice(0,10)+'\\">✓</span>':'<span style=\\"color:var(--green);font-size:14px\\" title=\\"Edited\\">✓</span>'):''}</button>
+          <button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="deleteLessonNode(${i})">🗑</button>
+          <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move up" onclick="moveLessonNode(${i},-1)" ${i===0?'disabled':''}>↑</button>
+          <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move down" onclick="moveLessonNode(${i},1)" ${i===d.lessons.length-1?'disabled':''}>↓</button>
+        </div>`:''}
+      </div>`
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
   });
@@ -3162,6 +3214,16 @@ function openAddLesson(sid, enc) {
   const diff = APP.lessonData?.difficulty || 2;
   const diffSel = document.getElementById('sial-diff-' + sid);
   if (diffSel) diffSel.value = String(diff);
+  // Show/hide math instruction row
+  const _fmtSel = document.getElementById('sial-fmt-' + sid);
+  const _mathInstrRow = document.getElementById('sial-math-instr-row-' + sid);
+  if (_fmtSel && _mathInstrRow) {
+    const _toggleMathRow = () => { _mathInstrRow.style.display = _fmtSel.value==='math' ? '' : 'none'; };
+    _fmtSel.removeEventListener('change', _fmtSel._mathToggle);
+    _fmtSel._mathToggle = _toggleMathRow;
+    _fmtSel.addEventListener('change', _toggleMathRow);
+    _toggleMathRow();
+  }
 }
 
 function closeAddLesson(sid) {
@@ -3187,9 +3249,14 @@ async function doAddLesson(sid, enc) {
   try {
     const diffSel = document.getElementById('sial-diff-' + sid);
     const diff = parseInt(diffSel?.value || '2', 10);
+    const vocabModeSel = document.getElementById('sial-vocab-mode-' + sid);
+    const vocabModeVal = vocabModeSel?.value || 'neutral';
     const r = await fetch('/api/lessons/add-lesson', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic, lessonFormat: fmt, difficulty: diff })
+      body: JSON.stringify({
+        topic, lessonFormat: fmt, difficulty: diff, vocabMode: vocabModeVal,
+        mathInstruction: fmt === 'math' ? (document.getElementById('sial-math-instr-' + sid)?.value?.trim() || null) : null,
+      })
     });
     const resp = await r.json();
     if (!r.ok) throw new Error(resp.error || 'Failed to start');
@@ -3362,13 +3429,31 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       html += '<div class="lesson-node" style="opacity:.5;width:100%;box-sizing:border-box">' + escHtml(topic) + '</div>';
       return;
     }
-    // Wrap savedItemHtml with a thin progress bar at the top
+    const _isChapterLocked = !APP.info.canGenerate && !APP._teacherMode && i > 0 && (() => {
+      const _pt2 = topics[i-1];
+      const _pd3 = _slCompleted[_pt2] || {};
+      const _ps2 = byTopic[_pt2]?.lessons || [];
+      return _ps2.length > 0 && !_ps2.every(ls => _pd3[ls.id]);
+    })();
     const _barColor = _pct >= 100 ? 'var(--green)' : 'var(--blue)';
-    html += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
-          + '<div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--gray-mid)">'
-          + '<div style="height:100%;width:' + _pct + '%;background:' + _barColor + ';transition:width .3s"></div></div>'
-          + savedItemHtml(s, false, true) // hideStory
-          + '</div>';
+    // Chapter reorder buttons (live mode only)
+    const _safeId = chainId.replace(/'/g, "\\'");
+    const _moveRow = APP.info.canGenerate
+      ? '<div style="display:flex;justify-content:flex-end;gap:4px;padding:2px 4px 0;margin-bottom:-2px">'
+        + '<button class="storyline-hdr-btn" style="padding:1px 7px;font-size:12px" onclick="moveChapter(\'' + _safeId + '\',' + i + ',-1)"' + (i===0?' disabled':'') + '>↑</button>'
+        + '<button class="storyline-hdr-btn" style="padding:1px 7px;font-size:12px" onclick="moveChapter(\'' + _safeId + '\',' + i + ',1)"' + (i===topics.length-1?' disabled':'') + '>↓</button>'
+        + '</div>'
+      : '';
+    if (_isChapterLocked) {
+      html += _moveRow + '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;opacity:.45;pointer-events:none">'
+            + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;z-index:2;pointer-events:none">🔒</div>'
+            + savedItemHtml(s, false, true) + '</div>';
+    } else {
+      html += _moveRow + '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
+            + '<div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--gray-mid)">'
+            + '<div style="height:100%;width:' + _pct + '%;background:' + _barColor + ';transition:width .3s"></div></div>'
+            + savedItemHtml(s, false, true) + '</div>';
+    }
   });
   html += '</div>';
 
@@ -3875,6 +3960,30 @@ async function clearSlScreenTitle() {
     if (titleEl) titleEl.textContent = '📖 ' + (topics[0] || '');
   } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
 }
+async function moveChapter(slId, idx, dir) {
+  idx = +idx; dir = +dir;
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const sl = slArr.find(s => s.id === slId);
+  if (!sl || !sl.chapters) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= sl.chapters.length) return;
+  const chs = [...sl.chapters];
+  [chs[idx], chs[newIdx]] = [chs[newIdx], chs[idx]];
+  sl.chapters = chs;
+  await fetch('/api/storylines', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ slId, chapters: chs }) });
+  // Re-render storyline screen
+  const cs = APP._slScreen;
+  if (cs) {
+    const byId = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+    const topics = chs.map(cid => byId[cid]?.topic).filter(Boolean);
+    const enc = encodeURIComponent(JSON.stringify(topics));
+    APP._slScreen.topics = topics;
+    APP._slScreen.encodedChain = enc;
+    _renderStorylineScreen(cs.chainId, enc, topics);
+  }
+}
+
 async function genStorylineTitleFromScreen() {
   const chainId = APP._slScreen?.chainId;
   const topics  = APP._slScreen?.topics || [];
@@ -3912,6 +4021,33 @@ function clearLessonProgress(enc) {
 }
 
 // ── Lesson editor ─────────────────────────────────────────────────────────────
+
+function mathRegenerateExercises(li) {
+  const ls = APP.lessonData?.lessons[li];
+  if (!ls || ls.type !== 'math') return;
+  const input = document.getElementById('math-numbers-input-' + li);
+  const nums = (input?.value || '').trim().split(/\s+/).map(Number).filter(n => !isNaN(n) && n > 0);
+  if (!nums.length) { showToast('⚠ Enter at least one number'); return; }
+  // Collect checked ops
+  const allOps = ['+','-','×','÷','^'];
+  const checkedOps = allOps.filter(op => {
+    const cb = document.getElementById('math-op-' + li + '-' + op.charCodeAt(0));
+    return cb?.checked;
+  });
+  const ops = checkedOps.length ? checkedOps : ['+','-'];
+  ls.numbers = nums;
+  ls.mathOps = ops;
+  ls.exercises = generateMathExercisesClient(nums, ls.difficulty || 1, ops);
+  buildPath();
+  openLessonEditor(li);
+  showToast('🔄 Exercises regenerated');
+}
+function mathDeleteExercise(li, ei) {
+  const ls = APP.lessonData?.lessons[li];
+  if (!ls || !ls.exercises) return;
+  ls.exercises.splice(ei, 1);
+  openLessonEditor(li);
+}
 
 function openLessonEditor(lessonIdx) {
   const el = document.getElementById('lesson-editor');
@@ -3989,7 +4125,11 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
     visItems.forEach(g => {
       const flagged = isFlagged('grammar', g.target);
       html += `<div class="editor-entry${flagged?' flagged':''}" id="ee-${li}-grammar-${g._i}">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','grammar',${g._i})">🗑</button></div>
+        <div style="display:flex;justify-content:flex-end;gap:4px;margin-bottom:2px">
+          <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','grammar',${g._i},-1)" ${g._i===0?'disabled':''}>↑</button>
+          <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','grammar',${g._i},1)" ${g._i===visItems.length-1?'disabled':''}>↓</button>
+          <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','grammar',${g._i})">🗑</button>
+        </div>
         <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="target" data-orig="${escHtml(g.target||'')}" value="${escHtml(g.target||'')}"></div>
         <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="source" value="${escHtml(g.source||'')}"></div>
         <div class="editor-field"><label>Article</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="article" value="${escHtml(g.article||'')}" style="width:60px;flex:none"></div>
@@ -4085,6 +4225,49 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
         <div id="eh-errors-${li}">${ehRenderErrors(initEdits, li)}</div>
       </div>`;
 
+  } else if (ls.type === 'math') {
+    // ── Math lesson editor ──────────────────────────────────────────────────
+    const nums = ls.numbers || [];
+    const diff = ls.difficulty || 1;
+    html += `
+      <div style="margin-bottom:10px">
+        <div style="font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:4px">Number pool (space-separated)</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="math-numbers-input-${li}" style="flex:1;font-size:15px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:5px 10px"
+            value="${escHtml(nums.join(' '))}" placeholder="e.g. 3 7 12 48 100">
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px">
+          <span style="font-size:11px;font-weight:800;color:var(--gray-dark)">Ops:</span>
+          ${['+','-','×','÷','^'].map(op => {
+            const ops = ls.mathOps || (diff<=1?['+','-']:diff===2?['+','-','×']:['+','-','×','÷']);
+            const checked = ops.includes(op);
+            return `<label style="display:flex;align-items:center;gap:3px;font-size:13px;font-weight:700;cursor:pointer">`
+              + `<input type="checkbox" id="math-op-${li}-${op.charCodeAt(0)}" value="${op}" ${checked?'checked':''}>`
+              + `${op}</label>`;
+          }).join('')}
+          <button class="storyline-hdr-btn" onclick="mathRegenerateExercises(${li})">🔄 Regenerate</button>
+        </div>
+        <div style="font-size:11px;color:var(--gray-dark);margin-top:4px">Difficulty: ${['','Beginner','Intermediate','Advanced'][diff]||diff}</div>
+      </div>
+      <div style="font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:6px">Exercises (${(ls.exercises||[]).length})</div>`;
+    (ls.exercises||[]).forEach((ex,ei) => {
+      if (ex.type === 'math_order') {
+        html += `<div class="editor-entry" style="font-size:13px">
+          <span style="font-weight:700;color:var(--blue-dark)">${ei+1}.</span>
+          Sort ${ex.direction==='asc'?'↑':'↓'}: [${(ex.numbers||[]).join(', ')}]
+          → <span style="color:var(--green-dark)">[${(ex.correct||[]).join(', ')}]</span>
+          <button class="storyline-hdr-btn danger" style="float:right;padding:1px 6px;font-size:11px"
+            onclick="mathDeleteExercise(${li},${ei})">🗑</button></div>`;
+      } else if (ex.type === 'math_calc') {
+        html += `<div class="editor-entry" style="font-size:13px">
+          <span style="font-weight:700;color:var(--blue-dark)">${ei+1}.</span>
+          ${ex.a} ${ex.op} ${ex.b} = <span style="color:var(--green-dark)">${ex.correct}</span>
+          <span style="font-size:11px;color:var(--gray-dark)"> choices: [${(ex.choices||[]).join(', ')}]</span>
+          <button class="storyline-hdr-btn danger" style="float:right;padding:1px 6px;font-size:11px"
+            onclick="mathDeleteExercise(${li},${ei})">🗑</button></div>`;
+      }
+    });
+
   } else {
     // Vocab / sentences
     const items = [
@@ -4096,7 +4279,11 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
     visItems.forEach(it => {
       const flagged = isFlagged(it.type, it.target);
       html += `<div class="editor-entry${flagged?' flagged':''}" id="ee-${li}-${it.type}-${it.i}">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','${it.type}',${it.i})">🗑</button></div>
+        <div style="display:flex;justify-content:flex-end;gap:4px;margin-bottom:2px">
+          <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','${it.type}',${it.i},-1)" ${it.i===0?'disabled':''}>↑</button>
+          <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','${it.type}',${it.i},1)" ${it.i===visItems.length-1?'disabled':''}>↓</button>
+          <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','${it.type}',${it.i})">🗑</button>
+        </div>
         <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="target" data-orig="${escHtml(it.target||'')}" value="${escHtml(it.target||'')}"></div>
         <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="source" data-orig="${escHtml(it.source||'')}" value="${escHtml(it.source||'')}"></div>
       </div>`;
@@ -4118,6 +4305,20 @@ async function saveLessonEdits(lessonIdx) {
   const iconEl = document.getElementById('lesson-node-icon-picker-' + li);
   if (iconEl) ls.icon = iconEl.textContent.trim();
   if (ls._iconPick) { ls.icon = ls._iconPick; delete ls._iconPick; }
+  // Math lesson: sync number pool from input
+  if (ls.type === 'math') {
+    const numInp = document.getElementById('math-numbers-input-' + li);
+    if (numInp) {
+      const nums = numInp.value.trim().split(/\s+/).map(Number).filter(n=>!isNaN(n)&&n>0);
+      if (nums.length) ls.numbers = nums;
+    }
+    const allOps = ['+','-','×','÷','^'];
+    const ops = allOps.filter(op => {
+      const cb = document.getElementById('math-op-' + li + '-' + op.charCodeAt(0));
+      return cb?.checked;
+    });
+    if (ops.length) ls.mathOps = ops;
+  }
   // Save all field types
   el.querySelectorAll('input[data-li], textarea[data-li], [contenteditable][data-li]').forEach(inp => {
     const type = inp.dataset.type, field = inp.dataset.field;
@@ -4213,6 +4414,21 @@ function goStorylineFromLesson() {
 }
 
 
+async function moveLessonNode(lessonIdx, dir) {
+  const d = APP.lessonData;
+  if (!d) return;
+  const newIdx = lessonIdx + dir;
+  if (newIdx < 0 || newIdx >= d.lessons.length) return;
+  [d.lessons[lessonIdx], d.lessons[newIdx]] = [d.lessons[newIdx], d.lessons[lessonIdx]];
+  try {
+    const r = await fetch('/api/lessons/edit', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) });
+    if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+    buildPath();
+  } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
+}
+
 async function deleteLessonNode(lessonIdx) {
   const d = APP.lessonData;
   if (!d) return;
@@ -4234,6 +4450,21 @@ async function deleteLessonNode(lessonIdx) {
 }
 
 
+
+function moveEditorItem(li, type, idx, dir) {
+  li = +li; idx = +idx;
+  const ls = APP.lessonData?.lessons[li];
+  if (!ls) return;
+  const arr = type==='vocab' ? ls.vocab
+            : type==='sentence' ? ls.sentences
+            : type==='grammar' ? ls.grammar
+            : type==='conj' ? ls.conjugations : null;
+  if (!arr) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= arr.length) return;
+  [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+}
 
 function deleteEditorItem(li, type, idx) {
   li = +li; idx = +idx;
@@ -4904,22 +5135,23 @@ function tTypeConjugation(ex) {
 // ══ Math exercises ═══════════════════════════════════════════════════════════
 function buildMathExercises(lesson) {
   // Use pre-generated exercises baked into the lesson, or generate on the fly
-  if (lesson.exercises && lesson.exercises.length) return shuffle([...lesson.exercises]);
-  // Fallback: generate from lesson.numbers if exercises missing
-  return shuffle([...generateMathExercisesClient(lesson.numbers||[], lesson.difficulty||2)]);
+  // Math exercises keep their order — shuffle is intentionally omitted
+  if (lesson.exercises && lesson.exercises.length) return [...lesson.exercises];
+  return generateMathExercisesClient(lesson.numbers||[], lesson.difficulty||2, lesson.mathOps||null);
 }
 
-function generateMathExercisesClient(nums, difficulty) {
+function generateMathExercisesClient(nums, difficulty, customOps) {
   // Pure difficulty-based pools (client fallback — server pre-generates exercises)
   if (!nums || !nums.length) {
     if (difficulty <= 1) nums = [1,2,3,4,5,6,7,8,9].sort(()=>Math.random()-.5).slice(0,6);
     else { nums=[]; while(nums.length<8){const n=Math.floor(Math.random()*1000)+1;if(!nums.includes(n))nums.push(n);} }
   }
-  const ops = difficulty <= 1 ? ['+','-'] : difficulty === 2 ? ['+','-','×'] : ['+','-','×','÷'];
+  const defaultOps = difficulty <= 1 ? ['+','-'] : difficulty === 2 ? ['+','-','×'] : ['+','-','×','÷'];
+  const ops = (customOps && customOps.length) ? customOps : defaultOps;
   const exs = [];
 
-  // Ordering
-  if (nums.length >= 3) {
+  // Ordering (only when no custom ops, or ordering makes sense)
+  if (nums.length >= 3 && !ops.every(o=>o==='^')) {
     const size = Math.min(5, nums.length);
     const subset = shuffle([...nums]).slice(0,size);
     const dir = Math.random()<0.5?'asc':'desc';
@@ -4928,7 +5160,9 @@ function generateMathExercisesClient(nums, difficulty) {
   }
 
   // Calculations
-  for (let i=0; i<Math.min(5,nums.length); i++) {
+  const calcTarget = Math.min(6, Math.max(3, nums.length));
+  let attempts = 0;
+  while (exs.filter(e=>e.type==='math_calc').length < calcTarget && attempts++ < 60) {
     const op = ops[Math.floor(Math.random()*ops.length)];
     const a = nums[Math.floor(Math.random()*nums.length)];
     const b = nums[Math.floor(Math.random()*nums.length)];
@@ -4936,11 +5170,24 @@ function generateMathExercisesClient(nums, difficulty) {
     if (op==='+') correct=a+b;
     else if (op==='-') { if(a<b) continue; correct=a-b; }
     else if (op==='×') { correct=a*b; if(difficulty<=1&&correct>9) continue; }
-    else { if(b===0||a%b!==0) continue; correct=a/b; }
+    else if (op==='÷') { if(b===0||a%b!==0) continue; correct=a/b; }
+    else if (op==='^') {
+      // Keep exponent small to avoid huge numbers
+      const base = Math.min(a, 20);
+      const exp  = Math.min(b, 4);
+      if (exp < 1) continue;
+      correct = Math.pow(base, exp);
+      if (!isFinite(correct) || correct > 1e9) continue;
+    }
+    else continue;
     correct=+correct.toFixed(4);
     const wrongs=mathNearMissClient(correct,nums,difficulty);
     if(wrongs.length<3) continue;
-    exs.push({ type:'math_calc', a:String(a), op, b:String(b), correct:String(correct), choices:shuffle([String(correct),...wrongs.map(String)]).slice(0,4) });
+    // Display '^' as a proper exponent label
+    const dispOp = op === '^' ? '^' : op;
+    exs.push({ type:'math_calc', a:String(op==='^'?Math.min(a,20):a), op:dispOp,
+              b:String(op==='^'?Math.min(b,4):b), correct:String(correct),
+              choices:shuffle([String(correct),...wrongs.map(String)]).slice(0,4) });
   }
   return exs;
 }
@@ -5345,6 +5592,7 @@ function renderEx(){
   else if(ex.type==='read_translate') html=tRead(ex);
   else if(ex.type==='math_order') html=tMathOrder(ex);
   else if(ex.type==='math_calc') html=tMathCalc(ex);
+  else if(ex.type==='math_latex') html=tMathLatex(ex);
   else if(ex.type==='mcq_article') html=tMcqArticle(ex);
   else if(ex.type==='mcq_plural') html=tMcqPlural(ex);
   else if(ex.type==='type_plural') html=tTypePlural(ex);
@@ -5403,8 +5651,45 @@ function lBlock(it, pron, hideWord) {
       <div><div class="listen-lbl">Tap to listen</div>${hideWord ? '' : `<div class="listen-word">${it}</div>`}</div>
     </button><button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
+// Return the name of a language code in the current UI language
+// Falls back to English name, then the code itself
+function localizedLessonLangName(langCode) {
+  const uiLang = APP.srcLang || APP.lang || 'en';
+  const entry = LANGS[langCode];
+  if (!entry) return langCode;
+  return (entry.names && (entry.names[uiLang] || entry.names['en'])) || entry.name || langCode;
+}
+
 function lessonLang(){ const l=APP.lessonData?.lang||APP.lang||'it'; return LANGS[l]||LANGS.it; }
 function lessonSrcLang(){ const s=APP.lessonData?.srcLang||APP.srcLang||'en'; return LANGS[s]||LANGS.en||{name:'English',flag:'🇬🇧',tts:'en-GB'}; }
+function tMathLatex(ex) {
+  _loadKatex(() => {
+    const el = document.getElementById('math-latex-render');
+    if (el && window.katex) {
+      try { katex.render(ex.latex||'', el, {throwOnError:false, displayMode:true}); } catch(_) {}
+    }
+  });
+  return '<div class="ex-badge">🔢 LaTeX</div>'
+    + '<div class="card">'
+    + '<div id="math-latex-render" style="font-size:22px;text-align:center;padding:12px 0;min-height:40px">'+escHtml(ex.latex||'')+'</div>'
+    + '<div class="qtext" style="margin-bottom:8px">'+escHtml(ex.question||'')+'</div>'
+    + cGrid(ex.choices, false)
+    + '</div>';
+}
+let _katexLoaded = false, _katexCallbacks = [];
+function _loadKatex(cb) {
+  if (_katexLoaded) { cb(); return; }
+  _katexCallbacks.push(cb);
+  if (_katexCallbacks.length > 1) return;
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css';
+  document.head.appendChild(link);
+  const sc = document.createElement('script');
+  sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js';
+  sc.onload = () => { _katexLoaded=true; _katexCallbacks.forEach(f=>f()); _katexCallbacks=[]; };
+  document.head.appendChild(sc);
+}
 function tMathOrder(ex){
   const lang=APP.lessonData?.lang||APP.lang||'it';
   const nums=ex.numbers.map((n,i)=>`<button class="choice" id="mn${i}" onclick="mathOrderPick(${i},this)">${n}</button>`).join('');
@@ -5424,10 +5709,10 @@ function tMathCalc(ex){
 }
 
 function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:L.name})}</div><div class="card"><div class="qtext">${t("ex.mcq_source_target.q",{word:ex.source,lang:L.name})}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:Ln})}</div><div class="card"><div class="qtext">${t("ex.mcq_source_target.q",{word:ex.source,lang:Ln})}</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){ return ttsIsApproximate()?`<span class="tts-approx" style="margin-left:6px">${t('tts.approx')}</span>`:''; }
-function tLMcq(ex){ const S=lessonSrcLang(); return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:S.name})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ const L=lessonLang(); return `<div class="ex-badge">${t("ex.badge.listen_type")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_type.q",{lang:L.name})}</div>${lBlock(ex.target,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:L.name})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
+function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(APP.lessonData?.srcLang||APP.srcLang||"en"); return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.listen_type")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_type.q",{lang:Ln})}</div>${lBlock(ex.target,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
 function tOrder(ex){
   const tokens=ex.words.map((w,i)=>
     `<span class="tok" id="t${i}" onclick="addTok(${i})">${applyFurigana(escHtml(w))}</span>`
@@ -5439,7 +5724,7 @@ function tOrder(ex){
 
 
 
-function tRead(ex){ const L=lessonLang(); return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext">${t("ex.read_translate.q",{lang:L.name})}</div><div class="target-box"><div class="target-box-text">${applyFurigana(ex.target)}</div><button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+function tRead(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext">${t("ex.read_translate.q",{lang:Ln})}</div><div class="target-box"><div class="target-box-text">${applyFurigana(ex.target)}</div><button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){
   const C=APP.cur;
@@ -5617,6 +5902,7 @@ function check(){
   else if(ex.type==='math_order'){
     ok=JSON.stringify((C.placed||[]).map(p=>String(p.w)))===JSON.stringify(ex.correct);
   }
+  else if(ex.type==='math_latex') { ok=(C.sel||'')===ex.correct; }
   else { ok=(C.sel||'')===ex.correct; }
   C.answered=true;
   const btn=document.getElementById('cbtn'); btn.textContent=t('check.continue'); btn.className='check-btn cont'; btn.disabled=false;
@@ -5633,7 +5919,7 @@ function check(){
     C.correct++; C.total++; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
     const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
       ? `${ex.correct}${ex.source ? ' — ' + ex.source : ''}`
-      : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
+      : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : (ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}</div>`;
     const speakOk = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct
@@ -5706,30 +5992,52 @@ function showComplete(){
   const compNext = el('comp-next');
   const done = APP.progress.completed?.[topicKey] || {};
   const allLessons = APP.lessonData?.lessons || [];
-  // Find next lesson AFTER the current one that hasn't been done
   const nextLessonIdx = allLessons.findIndex((L, i) => i !== C.lessonIdx && !done[L.id]);
   const typeLabel = idx => { const k={grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math'}[allLessons[idx]?.type]||'lesson.type.vocab'; return t(k); };
+
+  // Resolve storyline
+  const _slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const _byId  = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+  const _slScreenSl = APP._slScreen?.chainId
+    ? _slArr.find(sl => sl.id === APP._slScreen.chainId && (sl.chapters||[]).some(cid => _byId[cid]?.topic === topicKey))
+    : null;
+  const sl = _slScreenSl || _slArr.find(sl => (sl.chapters||[]).some(cid => _byId[cid]?.topic === topicKey));
+  const slChain = sl ? (sl.chapters||[]).map(cid=>_byId[cid]?.topic).filter(Boolean) : null;
+  const slEnc   = slChain ? encodeURIComponent(JSON.stringify(slChain)) : null;
+
+  // Primary: next lesson or back to lesson set
   if (nextLessonIdx >= 0) {
-    // More lesson sets remaining in this chapter
     compNext.textContent = `→ Next: ${typeLabel(nextLessonIdx)}`;
     compNext.onclick = () => { goLessonSet(); setTimeout(() => startLesson(nextLessonIdx), 80); };
+  } else if (sl && slEnc) {
+    compNext.textContent = '→ ' + (sl.title || t('storyline.title'));
+    compNext.onclick = () => openStorylineScreen(sl.id, slEnc);
   } else {
-    // All lesson sets in this chapter done — go to storyline screen or lesson-set screen
-    const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
-    const byId  = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
-    // Prefer the storyline the user came from (APP._slScreen), fall back to first match
-    const _slScreenSl = APP._slScreen?.chainId
-      ? slArr.find(s => s.id === APP._slScreen.chainId && (s.chapters||[]).some(cid => byId[cid]?.topic === topicKey))
-      : null;
-    const sl = _slScreenSl || slArr.find(s => (s.chapters||[]).some(cid => byId[cid]?.topic === topicKey));
-    if (sl) {
-      const chain = (sl.chapters||[]).map(cid=>byId[cid]?.topic).filter(Boolean);
-      const enc = encodeURIComponent(JSON.stringify(chain));
-      compNext.textContent = '→ Storyline';
-      compNext.onclick = () => openStorylineScreen(sl.id, enc);
-    } else {
-      compNext.textContent = t('complete.continue');
-      compNext.onclick = () => goLessonSet();
+    compNext.textContent = t('complete.continue');
+    compNext.onclick = () => goLessonSet();
+  }
+
+  // Always show persistent nav buttons: lesson set + storyline (if available)
+  const _compNav = document.getElementById('comp-nav-btns');
+  if (_compNav) {
+    const lsTitle = APP.lessonData?.topic || t('lesson.set');
+    let navHtml = `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="goLessonSet()">📚 ${escHtml(lsTitle)}</button>`;
+    if (sl && slEnc) {
+      navHtml += `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="openStorylineScreen('${sl.id}','${slEnc}')">📖 ${escHtml(sl.title||t('storyline.title'))}</button>`;
+    }
+    _compNav.innerHTML = navHtml;
+    _compNav.style.display = '';
+  }
+  // Story-unlocked card
+  const _compStory = document.getElementById('comp-story-unlocked');
+  if (_compStory) {
+    const _story = APP.lessonData?.story || '';
+    const _allDone2 = allLessons.every(L => (APP.progress.completed?.[topicKey]||{})[L.id]);
+    const _showStory = _story && (_allDone2 || APP.info.canGenerate || APP._teacherMode);
+    _compStory.style.display = _showStory ? '' : 'none';
+    if (_showStory) {
+      const _el = document.getElementById('comp-story-text');
+      if (_el) _el.textContent = _story.slice(0, 200) + (_story.length > 200 ? '…' : '');
     }
   }
   show('complete-screen');
@@ -5814,6 +6122,23 @@ async function saveSlTags() {
   closeSlTagEditor();
   loadSavedList();
 }
+function toggleTeacherMode() {
+  APP._teacherMode = !APP._teacherMode;
+  const btn = document.getElementById('teacher-mode-btn');
+  if (btn) {
+    btn.textContent = APP._teacherMode ? '🔒 Teacher mode ON' : '🔓 Teacher mode';
+    btn.style.opacity = APP._teacherMode ? '1' : '.7';
+    btn.style.borderColor = APP._teacherMode ? 'var(--green)' : 'var(--gray-mid)';
+    btn.style.color = APP._teacherMode ? 'var(--green-dark)' : '';
+  }
+  loadSavedList();
+  if (document.getElementById('lesson-set')?.classList.contains('active')) buildPath();
+  if (document.getElementById('storyline-screen')?.classList.contains('active')) {
+    const cs = APP._slScreen;
+    if (cs) _renderStorylineScreen(cs.chainId, cs.encodedChain, cs.topics);
+  }
+}
+
 function setTagFilter(tag) { APP.libTagFilter = tag; loadSavedList(); }
 function _getAllTags() {
   const tags = new Set();

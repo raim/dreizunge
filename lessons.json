@@ -62,7 +62,7 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-04T20:35:36.097Z",
-      "updatedAt": "2026-06-07T06:08:31.637Z",
+      "updatedAt": "2026-06-08T14:54:46.568Z",
       "summary": "Ein Wesen mit langen Ohren und einem blühenden Muster wandert durch ein grasbewachsenes Feld und stößt auf einen Baumfrosch, der es nach seinem Namen fragt. Das Wesen, das sich nicht kennt, beginnt eine Reise, um sich selbst zu finden, und trifft auf verschiedene Tiere, die es an sich erinnern. Am Ende der Reise begegnet es den Zahlen, den Buchstaben und anderen Zahlen, die es zuerst nicht verstehen kann, aber schließlich lernt, dass es zusammenarbeiten kann, um Herausforderungen zu meistern.\n\nFrei nach Mira Lobe.",
       "tags": [
         "manually curated",
@@ -869,6 +869,119 @@
               "reason": ""
             }
           ]
+        },
+        {
+          "id": "ls_1780930634694",
+          "type": "math",
+          "title": "😀😀😀",
+          "desc": "+ + +",
+          "icon": "😀",
+          "numbers": [
+            1,
+            1,
+            2,
+            3,
+            5,
+            8,
+            13,
+            21,
+            34
+          ],
+          "difficulty": 3,
+          "mathInstruction": "dd the fibonacci series as sequentially increasing addition questions up to the first two three digit numbers. don't skip any step of the fibonacci series.",
+          "exercises": [
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "1",
+              "correct": "2",
+              "choices": [
+                "2",
+                "4",
+                "1",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "2",
+              "correct": "3",
+              "choices": [
+                "2",
+                "3",
+                "4",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "3",
+              "correct": "5",
+              "choices": [
+                "9",
+                "3",
+                "5",
+                "7"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "5",
+              "correct": "8",
+              "choices": [
+                "8",
+                "12",
+                "10",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "8",
+              "correct": "13",
+              "choices": [
+                "18",
+                "21",
+                "13",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "+",
+              "b": "13",
+              "correct": "21",
+              "choices": [
+                "13",
+                "28",
+                "21",
+                "34"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "13",
+              "op": "+",
+              "b": "21",
+              "correct": "34",
+              "choices": [
+                "21",
+                "56",
+                "34",
+                "45"
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -888,7 +1001,7 @@
         ]
       },
       "generatedAt": "2026-06-08T09:33:58.603Z",
-      "updatedAt": "2026-06-08T10:10:18.333Z",
+      "updatedAt": "2026-06-08T14:57:14.694Z",
       "id": "tp_1220958947",
       "aiStory": "pi, the mushroom, hopped over to them, its cap a vibrant green. \"0, i, I have a riddle for you,\" pi said, its voice a soft whisper.\n\n\"Sure, pi, we're all ears,\" i said, leaning in.\n\n\"Very well,\" pi began. \"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year. Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"\n\n0 tilted its head, trying to understand. \"So, the rabbits keep multiplying every month, and they start breeding from the second month?\"\n\n\"Exactly,\" pi said. \"Now, how many pairs of rabbits will there be at the end of the year?\"\n\ni scratched its head, thinking hard. \"Let's see. In the first month, there's one pair. In the second month, they have another pair, so that's two pairs. In the third month, the original pair has another pair, and the new pair starts breeding, so that's three pairs. By the fourth month, it's five pairs, right?\"\n\n\"Correct,\" pi said. \"And by the end of the year, the number of pairs will be much higher. Can you guess how many?\"\n\n0 looked at i, who was still counting on its fingers. \"I think it's 34 pairs,\" i said, holding up its paws.\n\n\"Very good!\" pi exclaimed, hugging i. \"You're right. The number of pairs at the end of the year is 34. This is a famous sequence in mathematics, known as the Fibonacci sequence.\"\n\n\"Wow, that's amazing,\" 0 said, eyes wide. \"We never knew rabbits could teach us about numbers.\"\n\n\"Indeed,\" pi said, nodding. \"And now that you understand this, let's see if there are any more secrets waiting for us in the forest.\"\n\nTogether, they walked deeper into the woods, the stofftier still waving from the boat. The adventure was far from over, and they were ready for whatever came next."
     },

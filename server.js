@@ -6,6 +6,26 @@ const { execFile } = require('child_process');
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
+
+// ── Prompts (hot-reloaded from prompts.json) ──────────────────────────────────
+let PROMPTS = {};
+function loadPrompts() {
+  try {
+    PROMPTS = JSON.parse(fs.readFileSync(path.join(__dirname, 'prompts.json'), 'utf8'));
+    console.log('  Prompts loaded from prompts.json');
+  } catch(e) { console.error('  Failed to load prompts.json:', e.message); }
+}
+loadPrompts();
+try {
+  fs.watch(path.join(__dirname, 'prompts.json'), () => {
+    setTimeout(() => { loadPrompts(); console.log('  prompts.json reloaded'); }, 100);
+  });
+} catch(_) {}
+
+// Fill {placeholder} variables in a prompt template string
+function fillPrompt(template, vars) {
+  return template.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : '{'+k+'}'));
+}
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
@@ -277,11 +297,7 @@ function langName(code) { return LANG_NAMES[code] || code || 'Italian'; }
 
 // ── Prompts ───────────────────────────────────────────────────────────
 function sysMeta(srcLang) {
-  const S = langName(srcLang || 'en');
-  return `You are a lesson plan creator. Return ONLY a valid JSON object, no markdown, no explanation.
-Schema: {"topic":"display title (max 40 chars, concise)","topicEmoji":"one emoji"}
-CRITICAL: The "topic" display title MUST be written in ${S}. Do not use any other language.
-Rules: topic is a concise display title for the user's input — shorten if the input is longer than 40 characters.`;
+  return fillPrompt(PROMPTS.meta.system, { S: langName(srcLang || 'en') });
 }
 
 function difficultyLabel(d) {
@@ -292,25 +308,12 @@ function sentenceLengthSpec(d) {
        : d === 2 ? '6–10 words'
        : '10–16 words (complex grammar, subordinate clauses welcome)';
 }
-const STORY_STYLES = {
-  creative:      null,  // default — no extra instruction
-  neutral:       'Clear, factual, neutral tone — no narrative flourish.',
-  interview:   'Words useful in a job application interview. Clear, factual, neutral tone — no narrative flourish.',
-  scientific:    'Academic register, precise terminology, formal structure.',
-  journalism:    'Reportage style: direct, punchy, who/what/where/when.',
-  essay:         'Discursive, argumentative, first-person reflective.',
-  children:      'Simple vocabulary, playful tone, short sentences.',
-  funny:         'You are a comedian, tell a funny story, use wordplay, absurdist situations, punchlines.',
-  romantic:      'Warm, emotionally rich, evocative imagery.',
-  sensual:       'Rich in texture and atmosphere, suggestive but not explicit.',
-  horror:        'Suspenseful, eerie atmosphere, foreboding.',
-  action:        'Fast-paced, kinetic, short punchy sentences.',
-  philosophical: 'Contemplative, questioning, abstract ideas.',
-    poem:          'Write a poem, with rhyming words and rhythm.',
-    dialogue:      'Write a dialogue between two or more persons of the story, or alternatively one person soliloquy.',
-};
+// Story styles loaded from prompts.json (hot-reloaded)
+function STORY_STYLES() { return PROMPTS.storyStyles || {}; }
+// Helper: get style description for a key
+function getStoryStyle(key) { return key ? (STORY_STYLES()[key] ?? null) : null; }
 
-function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, dialect, writingStyle) {
+function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, dialect, writingStyle) {
   const L    = langName(lang);
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
@@ -318,43 +321,14 @@ function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint
   const lessonDiff = lessonNum === 1 ? 'basics'
                    : lessonNum === 2 ? 'phrases / patterns'
                    : 'specific / idiomatic vocabulary';
-  const dialectNote = dialect ? `\n- The target language variety is: ${dialect}. Use vocabulary and spelling appropriate to this dialect/variety.` : '';
-  const styleNote = styleHint ? `\n- Match this story's style and mood when writing vocab and sentences: ${styleHint}` : '';
-  const writingStyleNote = STORY_STYLES[writingStyle] ? `\n- Writing style: ${STORY_STYLES[writingStyle]}` : '';
-  return `You are a ${L} language lesson generator for a vocabulary learning app.
-Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
-
-The learner speaks ${S} and is learning ${L}.
-Field names in the schema are fixed ("target" and "source") but their CONTENT must be in the languages specified below.
-
-Schema:
-{
-  "title": "short lesson theme in ${S} (3-5 words)",
-  "desc": "up to 8 words describing this lesson, written in ${S}",
-  "icon": "one relevant emoji",
-  "vocab": [
-    {"target":"${L} word or short phrase","source":"${S} translation of that word"}
-  ],
-  "sentences": [
-    {"target":"A natural ${L} sentence","source":"${S} translation of that sentence"}
-  ]
+  const P = PROMPTS.vocab;
+  let sys = fillPrompt(P.system, { L, S, diff, sentLen, lessonDiff });
+  if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
+  if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
+  if (lang === 'ja')              sys += P.cjkNote;
+  return sys;
 }
 
-Example (German lesson, Italian speaker):
-{"target":"laufen","source":"correre"},{"target":"der Hund","source":"il cane"}
-Example (Italian lesson, English speaker):
-{"target":"correre","source":"to run"},{"target":"il cane","source":"the dog"}
-
-Rules:
-- vocab: exactly 8 items, all unique ${L} words, topic-relevant, overall difficulty: ${diff}, lesson focus: ${lessonDiff}
-- sentences: exactly 5 items, each using vocabulary words naturally, each structurally different
-- sentence length: ${sentLen} — vary lengths naturally
-- sentences must be complete natural ${L} sentences — do NOT provide a words[] array
-- CRITICAL "target" fields: MUST contain ONLY ${L} — absolutely never ${S} or any other language
-- CRITICAL "source" fields: MUST contain ONLY ${S} — absolutely never ${L} or any other language. If ${S} is English, write English. Do NOT write ${L} synonyms or paraphrases.
-- CRITICAL: "source" is a TRANSLATION of "target" into ${S}, not a synonym in ${L}
-- "title" and "desc": MUST be written in ${S}${dialectNote}${styleNote}${writingStyleNote}${lang==='ja'?'\n- JAPANESE: In sentence "target" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
-}
 
 // Lesson prompt for user-provided story + parallel translation
 function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, dialect) {
@@ -365,40 +339,13 @@ function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, d
   const lessonDiff = lessonNum === 1 ? 'basic vocabulary'
                    : lessonNum === 2 ? 'phrases and patterns'
                    : 'specific and idiomatic expressions';
-  const dialectNote = dialect ? ` The target language variety is: ${dialect}.` : '';
-  return `You are a ${L} language lesson extractor for a vocabulary learning app.
-You will be given a ${L} story and its ${S} translation. Your job is to extract vocabulary and sentences STRICTLY from the provided texts — do NOT invent anything.
-Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
-
-The learner speaks ${S} and is learning ${L}.
-Field names in the schema are fixed ("target" and "source") but their CONTENT must be in the languages specified below.
-
-Schema:
-{
-  "title": "short lesson theme in ${S} (3-5 words)",
-  "desc": "up to 8 words describing this lesson, written in ${S}",
-  "icon": "one relevant emoji",
-  "vocab": [
-    {"target":"${L} word or short phrase extracted from the story","source":"${S} translation of that word"}
-  ],
-  "sentences": [
-    {"target":"A sentence from the ${L} story","source":"Corresponding ${S} translation"}
-  ]
+  const P = PROMPTS.vocabFromText;
+  let sys = fillPrompt(P.system, { L, S, diff, sentLen, lessonDiff, lessonNum, totalLessons });
+  if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
+  if (lang === 'ja') sys += P.cjkNote;
+  return sys;
 }
 
-Example vocab items (German lesson, Italian speaker):
-{"target":"laufen","source":"correre"},{"target":"der Hund","source":"il cane"}
-
-Rules:
-- vocab: exactly 8 items for lesson ${lessonNum} of ${totalLessons} (focus: ${lessonDiff}), all extracted from the story text, difficulty: ${diff}
-- sentences: exactly 5 items, each a complete sentence taken verbatim from the ${L} story, with its matching ${S} translation from the provided translation
-- sentence pairs must be aligned: the ${S} must be the actual translation of that ${L} sentence, not a paraphrase
-- sentence length: prefer sentences of ${sentLen}
-- sentences must NOT be duplicated across lessons — focus on different parts of the text for each lesson
-- CRITICAL "target" fields: MUST contain ONLY ${L} — never invented, never ${S} or any other language
-- CRITICAL "source" fields: MUST contain ONLY ${S} — never ${L}, never English (unless ${S} is English)
-- "title" and "desc": MUST be written in ${S}${dialectNote}${writingStyleNote}${lang==='ja'?'\n- JAPANESE: In sentence "target" fields, annotate each kanji with its reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
-}
 
 // Lesson prompt for table format
 function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dialect) {
@@ -408,27 +355,11 @@ function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dial
   const lessonDiff = lessonNum === 1 ? 'basic vocabulary'
                    : lessonNum === 2 ? 'phrases and patterns'
                    : 'specific and idiomatic expressions';
-  const dialectNote = dialect ? ` Use the ${dialect} dialect/variety.` : '';
-  return `You are a ${L} language lesson creator.${dialectNote}
-The learner speaks ${S} and is learning ${L}.
-Create lesson ${lessonNum} of ${totalLessons} focused on ${lessonDiff} at ${diff} level.
-Output TWO markdown tables and nothing else.
-
-Table 1 — Vocabulary (exactly 8 rows):
-| ${L} word | ${S} meaning | Pronunciation for ${S} speakers |
-|---|---|---|
-| word in ${L} | translation in ${S} | phonetic pronunciation |
-
-Table 2 — Sentences (exactly 5 rows):
-| ${L} sentence | ${S} translation |
-|---|---|
-| sentence in ${L} | translation in ${S} |
-
-Rules:
-- Column 1 (${L} content): MUST be genuine ${L} — never ${S} or another language
-- Column 2 (${S} content): MUST be in ${S} — never ${L} or English (unless ${S} is English)
-- Pronunciation: write phonetically for ${S} speakers, CAPS for stressed syllable
-- No extra text, no headings outside the tables, no JSON${lang==='ja'?'\n- JAPANESE: In the sentence column, annotate each kanji with its hiragana reading in square brackets (e.g. 日本語[にほんご]).':''}` ;
+  const P = PROMPTS.vocabTable;
+  let sys = fillPrompt(P.system, { L, S, diff, lessonDiff, lessonNum, totalLessons });
+  if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
+  if (lang === 'ja') sys += P.cjkNote;
+  return sys;
 }
 
 // Parse two markdown tables from table-format lesson output
@@ -477,37 +408,24 @@ function parseTableLesson(raw, lessonNum, topic) {
 function sysSrcRepair(lang, srcLang, deepClean, lessonType) {
   const L = langName(lang || 'it');
   const S = langName(srcLang || 'en');
-  const mode = deepClean
-    ? `You will receive all vocab and sentences from a lesson. Verify and correct every item — fix wrong words, bad translations, non-${L} words in the target field, non-${S} words in the source field, and generate fresh distractors for all choices.`
-    : `You will receive a list of faulty exercises with optional user comments explaining the error. Fix only what is wrong.`;
-  return `You are a language exercise repairer for a Duolingo-style app.
-${mode}
-Return ONLY a valid JSON array — no markdown, no explanation, nothing else.
-
-Field names are fixed. Content rules:
-- "target" fields: MUST contain ONLY ${L} — never ${S} or any other language
-- "source" fields: MUST contain ONLY ${S} — never ${L}
-
-Each exercise has a type. Return corrected versions preserving the same type and schema:
-- mcq_target_source:      {"type":"mcq_target_source","target":"${L} word","source":"${S} translation","correct":"correct ${S}","choices":["4 distinct ${S} options"]}
-- mcq_source_target:      {"type":"mcq_source_target","source":"${S} word","target":"${L} translation","correct":"correct ${L}","choices":["4 distinct ${L} options"]}
-- listen_mcq:             {"type":"listen_mcq","target":"${L} word","correct":"correct ${S}","choices":["4 distinct ${S} options"]}
-- listen_type:            {"type":"listen_type","target":"${L} word","correct":"${L} word"}
-- read_translate:         {"type":"read_translate","target":"${L} sentence","source":"${S} translation","correct":"correct ${S}","choices":["4 distinct ${S} options"]}
-- order:                  {"type":"order","target":"${L} sentence","source":"${S} translation"}
-- grammar item:           {"type":"mcq_target_source","_grammarItem":true,"target":"${L} noun","source":"${S} translation","article":"correct ${L} article","plural":"correct ${L} plural","gender":"m|f|n|c","correct":"${S}","choices":["${S} options"]}
-- mcq_conjugation:        {"type":"mcq_conjugation","infinitive":"${L} infinitive","source":"${S} translation","pronoun":"${L} pronoun","correct":"correct conjugated form","choices":["4 distinct ${L} forms"]}
-
-Rules:
-- Fix translation errors, wrong word forms, incorrect language in fields, bad distractors
-- Distractors in choices must be plausible but clearly wrong — not random noise
-- Pay close attention to user comments where present
-- For order type: do NOT include words[] — the app derives it automatically from "target"
-- Keep the same topic and difficulty level
-- Return exactly as many items as given`;
+  const tmpl = deepClean ? PROMPTS.srcRepair.system_deep : PROMPTS.srcRepair.system_fix;
+  return fillPrompt(tmpl, { L, S });
 }
 
 // ── JSON helpers ──────────────────────────────────────────────────────
+// Extract top N content words from a text for use as story context hints
+function extractKeywords(text, n, lang) {
+  // For CJK languages return a short raw excerpt instead of word extraction
+  if (lang && CJK_LANGS.has(lang)) {
+    return text.replace(/\s+/g, ' ').trim().slice(0, 80);
+  }
+  // Latin-script: frequency of words ≥5 chars (length alone filters most function words)
+  const words = text.toLowerCase().match(/[a-zÀ-ɏ]{5,}/g) || [];
+  const freq = new Map();
+  words.forEach(w => freq.set(w, (freq.get(w)||0)+1));
+  return [...freq.entries()].sort((a,b)=>b[1]-a[1]).slice(0,n).map(([w])=>w).join(', ');
+}
+
 function stripRaw(raw) {
   return raw
     .replace(/<think>[\s\S]*?<\/think>/gi, '')
@@ -681,9 +599,7 @@ function deriveSentenceWords(s, lang) {
 
 // Translation prompt — translate a story to the source language
 function sysTranslation(lang, srcLang) {
-  const L = langName(lang);
-  const S = langName(srcLang || 'en');
-  return `You are a professional translator. Translate the following ${L} text into natural, fluent ${S}. Translate sentence by sentence in the same order. Output only the ${S} translation — no explanations, no original text, no markdown.`;
+  return fillPrompt(PROMPTS.translation.system, { L: langName(lang), S: langName(srcLang || 'en') });
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
@@ -692,13 +608,13 @@ function sysStory(lang, isContinuation, wordCount, dialect, writingStyle) {
   const wc = Math.max(100, Math.min(1000, wordCount || 300));
   const paraLo = Math.max(1, Math.floor(wc / 100));
   const paraHi = paraLo + 1;
-  const cont = isContinuation
-    ? ' IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.'
-    : '';
-  const furiganaNote = lang==='ja' ? ' Annotate every kanji with furigana using HTML ruby tags, e.g. <ruby>日本語<rt>にほんご</rt></ruby>.' : '';
-  const dialectNote = dialect ? ` Write in the ${dialect} dialect/variety.` : '';
-  const writingStyleNote = STORY_STYLES[writingStyle] ? ` Writing style: ${STORY_STYLES[writingStyle]}` : '';
-  return `You are a creative writer and ${L} language teacher. Write a short story directly in ${L} on the given topic — aim for ${paraLo}-${paraHi} paragraphs, under ${wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in ${L}.${dialectNote}${furiganaNote}${writingStyleNote}${cont}`;
+  const P = PROMPTS.story;
+  let sys = fillPrompt(P.system, { L, wc, paraLo, paraHi });
+  if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
+  if (lang === 'ja')              sys += P.furiganaNote;
+  if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
+  if (isContinuation)             sys += P.continuationNote;
+  return sys;
 }
 
 // ── Error-hunt lesson prompt ─────────────────────────────────────────
@@ -706,31 +622,7 @@ function sysErrorHunt(lang, difficulty) {
   const L = langName(lang);
   const nSpell   = difficulty >= 3 ? 4 : 3;
   const nGrammar = difficulty >= 2 ? 3 : 2;
-  return `You are a language exercise generator for ${L} learners.
-Given a ${L} story, produce a corrupted version by introducing exactly ${nSpell} spelling errors and ${nGrammar} grammar errors.
-
-SPELLING errors — change only an interior letter of one word:
-- swap one letter for a similar-looking/sounding one (e.g. ei→ie, b→d)
-- omit or double one interior letter (e.g. "manger"→"mnager")
-- use a wrong vowel that sounds plausible (e.g. "o"→"u")
-- wrong or missing accent/diacritic (e.g. "é"→"e")
-The corrupted word must NOT be a prefix or suffix extension of the correct word.
-
-GRAMMAR errors — add or remove a suffix on one word:
-- wrong verb suffix for the subject (e.g. "explore"→"explores", "mangiano"→"mangia")
-- wrong plural/singular (e.g. "cell"→"cells", "cats"→"cat")
-- wrong tense suffix (e.g. "walk"→"walked", "oscillated"→"oscillate")
-The correct word must be a prefix of the corrupted word or vice versa.
-
-STRICT RULES — violations will cause the lesson to be rejected:
-- Change ONLY a single complete word per error — never punctuation, numbers, proper nouns, or sentence-start capitals
-- The correct word must appear verbatim in the original story
-- The correct and corrupted words MUST be different
-- Do NOT produce no-op changes (e.g. adding/removing only spaces or punctuation)
-- Do NOT change more than one word per error
-- Copy all other text EXACTLY — do not rephrase, reorder, or rewrite anything
-
-Return ONLY the corrupted story text. No JSON, no explanation, no markdown.`;
+  return fillPrompt(PROMPTS.errorHunt.system, { L, nSpell, nGrammar });
 }
 
 // ── Storyline title prompt ─────────────────────────────────────────────
@@ -745,8 +637,8 @@ async function generateStorylineTitle(topics, stories, srcLang) {
   const storyExcerpts = stories.map((s,i) =>
     `Chapter ${i+1} excerpt: ${(s||'').slice(0,300).replace(/\n/g,' ')}…`
   ).join('\n\n');
-  const sys = `You are a creative writing assistant. Given a multi-chapter story, produce a single JSON object with exactly two fields: "title" (a short evocative series title, 2–5 words) and "icon" (one emoji that fits the story). The "title" MUST be written in ${S}. Return ONLY the JSON object, no markdown, no explanation.`;
-  const user = `Chapter topics:\n${topicList}\n\nStory excerpts:\n${storyExcerpts}\n\nWrite the title in ${S}.`;
+  const sys = fillPrompt(PROMPTS.storylineTitle.system, { S });
+  const user = fillPrompt(PROMPTS.storylineTitle.user, { topicList, storyExcerpts, S });
   const result = await callOllamaRaw(OLLAMA_MODEL, sys, user, 80);
   const raw = result.text.replace(/```json|```/g, '').trim();
   console.log(`  Raw response: ${raw.slice(0,120)}`);
@@ -773,8 +665,8 @@ async function generateStorylineSummary(topics, stories, vocab, srcLang) {
     `Chapter ${i+1}: "${t}"\n${(stories[i]||'').slice(0, 600).replace(/\n/g,' ')}…`
   ).join('\n\n');
   const vocabList = [...new Set(vocab)].slice(0, 40).join(', ');
-  const sys = `You are a language learning assistant. Given a multi-chapter story, write a concise summary in ${S} (3–5 sentences) that captures the main arc and key vocabulary themes. Write ONLY the summary text — no title, no preamble, no markdown.`;
-  const user = `Chapters:\n${chapterSummaries}\n\nKey vocabulary: ${vocabList}\n\nWrite the summary in ${S}.`;
+  const sys = fillPrompt(PROMPTS.storylineSummary.system, { S });
+  const user = fillPrompt(PROMPTS.storylineSummary.user, { chapterSummaries, vocabList, S });
   const result = await callOllamaRaw(OLLAMA_MODEL, sys, user, 400);
   const summary = result.text.trim();
   console.log(`  Summary  : ${summary.slice(0,80)}…`);
@@ -787,84 +679,26 @@ function sysGrammar(lang, srcLang, difficulty, dialect, writingStyle) {
   const L    = langName(lang);
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
-  const dialectNote = dialect ? `\n- Use the ${dialect} dialect/variety.` : '';
-  const writingStyleNote = STORY_STYLES[writingStyle] ? `\n- Topic style: ${STORY_STYLES[writingStyle]}` : '';
-  return `You are a ${L} grammar lesson generator for a vocabulary learning app.
-The learner speaks ${S} and is learning ${L}.
-Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
-
-Generate a grammar lesson focused on noun gender, articles, and plural forms.
-Schema:
-{
-  "title": "short lesson theme in ${S} (3-5 words)",
-  "desc": "up to 8 words in ${S}",
-  "icon": "one relevant emoji",
-  "grammar": [
-    {
-      "target": "${L} noun in singular form (no article)",
-      "source": "${S} translation of that noun",
-      "gender": "m | f | n | c (common) — grammatical gender in ${L}",
-      "article": "definite article in ${L} for this noun",
-      "plural": "plural form of the noun in ${L}"
-    }
-  ]
+  const P = PROMPTS.grammar;
+  let sys = fillPrompt(P.system, { L, S, diff });
+  if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
+  if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
+  return sys;
 }
 
-Example (German ← French):
-{"target":"Baum","source":"arbre","gender":"m","article":"der","plural":"Bäume"}
-
-CRITICAL field language rules — violations will cause the lesson to be discarded:
-- CRITICAL: "target" MUST contain ONLY a ${L} word — never ${S}, never the translation
-- CRITICAL: "source" MUST contain ONLY the ${S} translation — never ${L}
-- CRITICAL: "target" and "source" MUST be different words (never the same string)
-- CRITICAL: "target" MUST be the SINGULAR form — never already a plural
-- CRITICAL: "plural" MUST differ from "target" (if they are the same, choose a different noun)
-- CRITICAL: "article" MUST be the correct ${L} definite article for the SINGULAR noun
-- "target" must have no article prepended — singular noun only
-
-Additional rules:
-- grammar: exactly 10 nouns, varied difficulty: ${diff}, all topic-relevant
-- Include nouns with interesting/irregular plurals and mixed genders
-- If ${L} has no grammatical gender (e.g. English), set gender and article to null${dialectNote}${writingStyleNote}`;
-}
 
 // ── Conjugation lesson: verb forms by person ─────────────────────────────────
 function sysConjugation(lang, srcLang, difficulty, dialect, writingStyle) {
   const L    = langName(lang);
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
-  const dialectNote = dialect ? `\n- Use the ${dialect} dialect/variety.` : '';
-  const writingStyleNote = STORY_STYLES[writingStyle] ? `\n- Topic style: ${STORY_STYLES[writingStyle]}` : '';
-  return `You are a ${L} grammar lesson generator for a vocabulary learning app.
-The learner speaks ${S} and is learning ${L}.
-Return ONLY a valid JSON object — no markdown, no explanation, nothing else.
-
-Generate a conjugation lesson focused on verb forms in the present tense.
-Schema:
-{
-  "title": "short lesson theme in ${S} (3-5 words)",
-  "desc": "up to 8 words in ${S}",
-  "icon": "one relevant emoji",
-  "conjugations": [
-    {
-      "infinitive": "verb infinitive in ${L}",
-      "source": "${S} translation (to ...)",
-      "tense": "present",
-      "forms": [
-        { "pronoun": "subject pronoun in ${L}", "form": "conjugated verb form" }
-      ]
-    }
-  ]
+  const P = PROMPTS.conjugation;
+  let sys = fillPrompt(P.system, { L, S, diff });
+  if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
+  if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
+  return sys;
 }
 
-Rules:
-- conjugations: exactly 5 verbs at ${diff} level, topic-relevant, varied regularity
-- forms: include ALL person forms for each verb (typically 6 for most European languages)
-- Use the standard subject pronouns for ${L} (e.g. io/tu/lui/noi/voi/loro for Italian)
-- "infinitive" MUST be in ${L}
-- "source" MUST be in ${S}
-- "form" MUST be ONLY the conjugated verb form — do NOT include the pronoun in "form" (e.g. "lache" not "ich lache")${dialectNote}${writingStyleNote}`;
-}
 
 // ── Generate error-hunt lesson ───────────────────────────────────────
 
@@ -907,7 +741,7 @@ function mathNearMiss(correct, nums, difficulty) {
 
 function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]; } return b; }
 
-function generateMath(story, difficulty) {
+function generateMath(story, difficulty, mathOps) {
   const nums = extractNumbers(story, difficulty);
   const exercises = [];
 
@@ -928,9 +762,10 @@ function generateMath(story, difficulty) {
   }
 
   // ── Calculation exercises ─────────────────────────────────────────────────
-  const ops = difficulty <= 1 ? ['+','-']
-             : difficulty === 2 ? ['+','-','×']
-             : ['+','-','×','÷'];
+  const defaultOps = difficulty <= 1 ? ['+','-']
+                   : difficulty === 2 ? ['+','-','×']
+                   : ['+','-','×','÷'];
+  const ops = (mathOps && mathOps.length) ? mathOps : defaultOps;
 
   // Use story numbers + derived combinations
   const pool = [...nums];
@@ -951,7 +786,14 @@ function generateMath(story, difficulty) {
     if (op==='+') correct = a+b;
     else if (op==='-') { if (a<b) continue; correct = a-b; }
     else if (op==='×') { correct = a*b; if (difficulty<=1 && correct>9) continue; }
-    else { if (b===0 || a%b!==0) continue; correct = a/b; }
+    else if (op==='÷') { if (b===0 || a%b!==0) continue; correct = a/b; }
+    else if (op==='^') {
+      const base = Math.min(a, 20), exp = Math.min(b, 4);
+      if (exp < 1) continue;
+      correct = Math.pow(base, exp);
+      if (!isFinite(correct) || correct > 1e9) continue;
+    }
+    else continue;
     correct = +correct.toFixed(4);
     const wrongs = mathNearMiss(correct, pool, difficulty);
     if (wrongs.length < 3) continue;
@@ -972,10 +814,57 @@ function generateMath(story, difficulty) {
       icon: '🔢',
       numbers: nums,
       difficulty,
+      ...(mathOps && mathOps.length ? { mathOps } : {}),
       exercises,
     },
     tokens: { promptTokens: 0, completionTokens: 0 },
   };
+}
+
+async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
+  jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Generating math lesson (LLM)…`);
+  const L = langName(lang || 'it');
+  const S = langName(srcLang || 'en');
+  const diff = difficultyLabel(difficulty || 2);
+  const nExercises = difficulty <= 1 ? 5 : 7;
+  const sys  = fillPrompt(PROMPTS.math.system, { L, S });
+  const user = fillPrompt(PROMPTS.math.user, { L, S, diff, instruction, nExercises });
+  let raw, parsed;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const { text, promptTokens, completionTokens } = await callLLMLesson(sys, user, 1200);
+      raw = stripRaw(text);
+      parsed = JSON.parse(raw);
+      if (!parsed.exercises || !parsed.exercises.length) throw new Error('No exercises');
+      // Validate and sanitise exercises
+      const validTypes = new Set(['math_calc','math_order','math_latex']);
+      parsed.exercises = parsed.exercises.filter(e => validTypes.has(e.type));
+      if (!parsed.exercises.length) throw new Error('No valid exercises after filter');
+      // Ensure choices arrays have exactly 4 items
+      parsed.exercises.forEach(e => {
+        if (e.choices && !e.choices.includes(e.correct))
+          e.choices = [e.correct, ...e.choices].slice(0,4);
+        if (e.choices) e.choices = shuffle([...new Set(e.choices)].slice(0,4));
+      });
+      return {
+        lesson: {
+          id: 'math_' + Date.now(),
+          type: 'math',
+          title: parsed.title || '① ② ③',
+          desc:  parsed.desc  || '＋ － × ÷',
+          icon:  parsed.icon  || '🔢',
+          numbers: parsed.numbers || [],
+          difficulty,
+          mathInstruction: instruction,
+          exercises: parsed.exercises,
+        },
+        tokens: { promptTokens, completionTokens },
+      };
+    } catch(e) {
+      console.log(`  Math LLM attempt ${attempt} failed: ${e.message}`);
+      if (attempt === 3) throw new Error('Math LLM failed after 3 attempts: ' + e.message);
+    }
+  }
 }
 
 async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
@@ -1036,12 +925,19 @@ function validateGrammarItems(items, lang, srcLang) {
 
 async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
   opts = opts || {};
-  const { userDialect, storyStyle, chainVocab } = opts;
+  const { userDialect, storyStyle, chainVocab, vocabMode: gramVocabMode, story } = opts;
   const sys = sysGrammar(lang, srcLang, difficulty, userDialect, storyStyle);
-  const priorNouns = chainVocab && chainVocab.nouns && chainVocab.nouns.length
-    ? `\nPRIOR NOUNS from previous chapters (prefer these — reuse and reinforce where topic-relevant): ${chainVocab.nouns.slice(0, 15).map(n => n.target).join(', ')}`
-    : '';
-  const userMsg = `Topic: "${topic}". Generate 10 nouns with gender, article, and plural forms. Return only the JSON object.${priorNouns}`;
+  const _gNouns = chainVocab?.nouns?.slice(0, 15).map(n => n.target) || [];
+  const priorNouns = !_gNouns.length ? ''
+    : gramVocabMode === 'extend'
+      ? `\nAVOID these nouns already covered in prior chapters: ${_gNouns.join(', ')}`
+      : `\nPRIOR NOUNS from previous chapters (reinforce where topic-relevant): ${_gNouns.join(', ')}`;
+  const L = langName(lang); const S = langName(srcLang || 'en');
+  const storyKeywords = story ? extractKeywords(story, 6, lang) : '';
+  const storyHintG = storyKeywords ? fillPrompt(PROMPTS.grammar.storyHint, { storyKeywords }) : '';
+  const userMsg = fillPrompt(PROMPTS.grammar.user, { topic, L, S })
+    + storyHintG + priorNouns
+    + '\nReturn only the JSON object.';
   const MAX_ATTEMPTS = 3;
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   let lastError = '';
@@ -1088,13 +984,21 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
 // ── Generate conjugation lesson ───────────────────────────────────────────────
 async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts) {
   opts = opts || {};
-  const { userDialect, storyStyle, chainVocab } = opts;
+  const { userDialect, storyStyle, chainVocab, vocabMode: conjVocabMode, story } = opts;
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Generating conjugation lesson…`);
   const sys = sysConjugation(lang, srcLang, difficulty, userDialect, storyStyle);
-  const priorVerbs = chainVocab && chainVocab.verbs && chainVocab.verbs.length
-    ? `\nPRIOR VERBS from previous chapters (prefer these — reuse and reinforce where topic-relevant): ${chainVocab.verbs.slice(0, 10).map(v => v.target).join(', ')}`
-    : '';
-  const userMsg = `Topic: "${topic}". Generate 5 verbs with all present-tense conjugation forms. Return only the JSON object.${priorVerbs}`;
+  const _cVerbs = chainVocab?.verbs?.slice(0, 10).map(v => v.target) || [];
+  const priorVerbs = !_cVerbs.length ? ''
+    : conjVocabMode === 'extend'
+      ? `\nAVOID these verbs already covered in prior chapters: ${_cVerbs.join(', ')}`
+      : `\nPRIOR VERBS from previous chapters (reinforce where topic-relevant): ${_cVerbs.join(', ')}`;
+  const L = langName(lang); const S = langName(srcLang || 'en');
+  const storyKeywordsC = story ? extractKeywords(story, 6, lang) : '';
+  const storyHintC = storyKeywordsC ? fillPrompt(PROMPTS.conjugation.storyHint, { storyKeywords: storyKeywordsC }) : '';
+  const userMsgC = fillPrompt(PROMPTS.conjugation.user, { topic, L, S })
+    + storyHintC + priorVerbs
+    + '\nReturn only the JSON object.';
+  const userMsg = userMsgC;
   const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1400);
   const cleaned = raw.replace(/\`\`\`json|\`\`\`/g, '').trim();
   let parsed;
@@ -1121,14 +1025,16 @@ async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts
 
 async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
   opts = opts || {};
-  const { userTranslation, userDialect, styleHint, writingStyle, storyLang, chainVocab } = opts;
+  const { userTranslation, userDialect, writingStyle, storyLang, chainVocab, vocabMode } = opts;
   const useTable = OLLAMA_LESSON_FORMAT === 'table';
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Lesson ${lessonNum}/${totalLessons}…`);
 
   // Build prior-vocab hints for within-topic progression and cross-chapter reinforcement
-  const chainHint = (chainVocab && chainVocab.length)
-    ? `\nThis is a continuation lesson. REINFORCE these words from previous chapters by using them naturally in sentences (do NOT just repeat them as vocab items — weave them into the sentences):\n${chainVocab.slice(0, 30).map(v => v.target + (v.source ? ' (' + v.source + ')' : '')).join(', ')}`
-    : '';
+  const _chainWords = (chainVocab && chainVocab.length) ? chainVocab.slice(0, 30) : [];
+  const chainHint = !_chainWords.length ? ''
+    : vocabMode === 'extend'
+      ? `\nEXTEND vocabulary — these words were already covered in prior chapters. Do NOT use them as vocab items. Avoid them in sentences where possible. Focus on FRESH vocabulary:\n${_chainWords.map(v => v.target).join(', ')}`
+      : `\nREINFORCE — weave these words from prior chapters naturally into sentences (do NOT list them as vocab items):\n${_chainWords.map(v => v.target + (v.source ? ' (' + v.source + ')' : '')).join(', ')}`;
 
   let sysPrompt, userMsg;
 
@@ -1154,16 +1060,28 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     const storyHint = story ? `\n\nContext story:\n${story}` : '';
     userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.${storyHint}${prevHint}${chainHint}`;
   } else {
-    sysPrompt = sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, styleHint, userDialect, writingStyle);
+    sysPrompt = sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, null, userDialect, writingStyle);
     const prevHint = prevVocab.length
-      ? `\nVocabulary already covered in earlier lessons (do NOT repeat these):\n${prevVocab.map(v => v.target + ' = ' + v.source).join(', ')}`
+      ? fillPrompt(PROMPTS.vocab.prevHint, { prevVocab: prevVocab.map(v => v.target + ' = ' + v.source).join(', ') })
       : '';
     const L = langName(lang);
     const S = langName(srcLang || 'en');
-    const storyHint = story
-      ? `\nUse the story context for themes/vocabulary inspiration:\n${story}\n\nREMINDER: "target" fields MUST be ${L}. "source" fields MUST be ${S} translations. Do NOT use the story's language for source fields.`
-      : '';
-    userMsg = `Topic: "${topic}". Lesson ${lessonNum} of ${totalLessons}.\nTarget language: ${L}. Source/translation language: ${S}.${storyHint}${prevHint}${chainHint}\nReturn only the JSON object.`;
+    // Story-language-aware hint: 1200 char cap regardless of language
+    let storyHint = '';
+    if (story) {
+      const excerpt = story.slice(0, 1200);
+      const sl = storyLang || 'target';
+      if (sl === 'target') {
+        storyHint = fillPrompt(PROMPTS.vocab.storyHint_target, { L, S, storyExcerpt: excerpt });
+      } else if (sl === 'source') {
+        storyHint = fillPrompt(PROMPTS.vocab.storyHint_source, { L, S, storyExcerpt: excerpt });
+      } else {
+        storyHint = fillPrompt(PROMPTS.vocab.storyHint_other, { L, S, storyExcerpt: excerpt });
+      }
+    }
+    userMsg = fillPrompt(PROMPTS.vocab.user, { topic, lessonNum, totalLessons, L, S })
+      + storyHint + prevHint + chainHint
+      + PROMPTS.vocab.suffix;
   }
 
   const isCJK = CJK_LANGS.has(lang);
@@ -1237,7 +1155,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 // ── Generate all lessons ──────────────────────────────────────────────
 async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
-  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, useFullChain } = userOpts;
+  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction } = userOpts;
   srcLang = srcLang || 'en';
   const userTopic = topic;
   const genStart = Date.now();
@@ -1262,7 +1180,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     try {
       const S = langName(srcLang);
       const toTranslate = JSON.stringify({ topic: meta.topic || topic });
-      const sysTransMeta = `Translate the given JSON values into ${S}. Return ONLY a valid JSON object with the same keys: {"topic":"..."}. No explanation, no markdown. All output text must be in ${S}.`;
+      const sysTransMeta = fillPrompt(PROMPTS.metaTranslation.system, { S });
       const { text: rawT, promptTokens: pt, completionTokens: ct } = await callLLM(sysTransMeta, toTranslate, 128);
       const translated = extractJSON(rawT);
       if (translated.topic) meta.topic = translated.topic;
@@ -1276,7 +1194,9 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   // ── Story: use user-supplied or generate ─────────────────────────────
   let story = null;
   let storyPrompt = null;
-  const storyLang = lang;
+  // storyLang: language the story is actually written in
+  // 'target' = lang, 'source' = srcLang, 'other' = third language
+  const storyLang = userStory ? (userStoryLang || 'target') : 'target';
 
   if (userStory) {
     story = userStory.trim();
@@ -1336,15 +1256,20 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   }
 
   // ── Lessons ───────────────────────────────────────────────────────────
-  const styleHint = (!storyTranslation && story) ? story.slice(0, 600) : null;
+  const styleHint = null; // removed — story context goes in userMsg only
   const lessons = [];
 
-  // Collect vocabulary from all prior chapters when reinforcement is requested
-  const chainVocab = (reinforcePrior && continuedFrom) ? collectChainVocab(continuedFrom) : { words: [], nouns: [], verbs: [] };
-  const chainOpts = { userDialect, storyStyle, chainVocab };
+  const _vocabMode = vocabMode || (reinforcePrior ? 'reinforce' : 'neutral');
+  const chainVocab = (_vocabMode !== 'neutral' && continuedFrom)
+    ? collectChainVocab(continuedFrom)
+    : { words: [], nouns: [], verbs: [] };
+  const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story };
 
   if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math') {
-    const genFn   = lessonFormat === 'math'        ? () => Promise.resolve(generateMath(story, difficulty))
+    const genFn   = lessonFormat === 'math'
+      ? (mathInstruction
+          ? () => generateMathLLM(lang, srcLang, difficulty, mathInstruction, jobId)
+          : () => Promise.resolve(generateMath(story, difficulty)))
                   : lessonFormat === 'error_hunt'  ? () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words)
                   : lessonFormat === 'grammar'      ? () => generateGrammar(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   :                                   () => generateConjugation(topic, lang, srcLang, difficulty, jobId, chainOpts);
@@ -1365,7 +1290,17 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     // Standard format: one lesson (no progression)
     // all_types: standard lesson + grammar + conjugation + error_hunt
     const isAllTypes = lessonFormat === 'all_types';
-    const lessonOpts = { userTranslation: storyTranslation || null, userDialect: userDialect || null, styleHint, writingStyle: storyStyle || null };
+    // When user provides a story continuing from a prior chapter,
+    // prepend the previous chapter's story as context.
+    const prevStory = prevStoryTopic ? (findSaved(prevStoryTopic)?.story || null) : null;
+    const combinedStory = (prevStory && story)
+      ? `Previous chapter:\n${prevStory}\n\n---\n\nCurrent chapter:\n${story}`
+      : story;
+    const lessonOpts = { userTranslation: storyTranslation || null, userDialect: userDialect || null,
+      writingStyle: storyStyle || null, storyLang, story: combinedStory,
+      chainVocab: _vocabMode !== 'neutral' ? chainVocab.words : [],
+      vocabMode: _vocabMode };
+    // (styleHint removed — story context passed via userMsg in generateOneLesson)
     try {
       const lessonOptsWithChain = { ...lessonOpts, chainVocab: chainVocab.words };
       const { lesson, tokens } = await generateOneLesson(
@@ -1787,7 +1722,7 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { slId, chainKey, title, icon, summary, tags } = body;
+      const { slId, chainKey, title, icon, summary, tags, chapters } = body;
       const targetId = slId || chainKey;
       if (!targetId) return json(res, 400, { error: 'Missing slId' });
       if (title === null) {
@@ -1799,6 +1734,7 @@ http.createServer(async (req, res) => {
         if (icon      !== undefined) patch.icon    = (icon||'📖').slice(0,10);
         if (summary   !== undefined) patch.summary = typeof summary === 'string' ? summary.slice(0,2000) : summary;
         if (tags      !== undefined) patch.tags    = Array.isArray(tags) ? tags.map(t=>String(t).slice(0,50)) : [];
+        if (chapters  !== undefined) patch.chapters = Array.isArray(chapters) ? chapters : [];
         upsertStoryline(patch);
       }
       return json(res, 200, { ok: true });
@@ -1867,7 +1803,7 @@ http.createServer(async (req, res) => {
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { topic, lang, srcLang, difficulty, lessonFormat, storyLen, continuedFrom, forceRegenerate,
-              userStory, userTranslation, userDialect, storyStyle, reinforcePrior, useFullChain } = body;
+              userStory, userTranslation, userDialect, storyStyle, reinforcePrior, vocabMode, useFullChain, userStoryLang, mathInstruction } = body;
       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
         : (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
@@ -1876,7 +1812,14 @@ http.createServer(async (req, res) => {
       const fmt  = ['error_hunt','grammar','conjugation','all_types','math'].includes(lessonFormat) ? lessonFormat : 'standard';
       const wcMax = body.userStory ? 2000 : 1000;
       const wc = Math.max(100, Math.min(wcMax, parseInt(storyLen, 10) || 300));
-      const contFrom = (!userStory && continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
+      // contFrom: used for storyline chain tracking AND story continuation context.
+      // When userStory is provided we still track the chain, but don't pass contFrom
+      // to generate() for story context (user supplied their own text).
+      const contFrom = (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
+      // When user provides a story AND continues from a prior chapter,
+      // pass both the previous story AND the new story as context.
+      const contFromForStory = contFrom && !userStory ? contFrom : null;
+      const combinedUserStory = (userStory && contFrom) ? contFrom : null;
       const topicKey = topic.trim().toLowerCase();
       if (!forceRegenerate) {
         const cached = findSaved(topic.trim());
@@ -1891,15 +1834,19 @@ http.createServer(async (req, res) => {
       const resolvedSrcLang = srcLang || 'en';
       const userOpts = {
         userStory:       userStory       ? String(userStory).trim()       : null,
+        userStoryLang:   userStoryLang   ? String(userStoryLang)          : null,
+        prevStoryTopic:  combinedUserStory || null,
         userTranslation: userTranslation ? String(userTranslation).trim() : null,
         userDialect:     userDialect     ? String(userDialect).trim()     : null,
-        storyStyle:      (storyStyle && STORY_STYLES.hasOwnProperty(storyStyle)) ? storyStyle : null,
+        storyStyle:      (storyStyle && getStoryStyle(storyStyle) !== undefined) ? storyStyle : null,
         lessonFormat:    fmt,
         reinforcePrior:  reinforcePrior === true,
+        vocabMode:       vocabMode ? String(vocabMode) : null,
         useFullChain:    useFullChain === true,
+        mathInstruction: mathInstruction ? String(mathInstruction).slice(0,500) : null,
       };
       console.log(`  Generating: "${topic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} fmt=${fmt} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
-      generate(topic.trim(), lang || 'it', resolvedSrcLang, diff, contFrom, wc, jobId, userOpts).then(data => {
+      generate(topic.trim(), lang || 'it', resolvedSrcLang, diff, contFromForStory, wc, jobId, userOpts).then(data => {
         upsert(data);
         // v29: assign stable topic id if missing, then update storyline chain
         if (store.schemaVersion >= 29) {
@@ -2003,7 +1950,7 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, lessonFormat: fmt, difficulty: rawDiff, reinforcePrior: addReinforce } = body;
+      const { topic, lessonFormat: fmt, difficulty: rawDiff, reinforcePrior: addReinforce, vocabMode: addVocabMode, mathInstruction: addMathInstr, mathOps: addMathOps } = body;
       if (!topic)  return json(res, 400, { error: 'Missing topic' });
       if (!fmt)    return json(res, 400, { error: 'Missing lessonFormat' });
       const saved = findSaved(topic.trim());
@@ -2029,7 +1976,7 @@ http.createServer(async (req, res) => {
         if (fmt === 'standard') {
           const storyTranslation = saved.storyTranslation || null;
           // Don't pass story as styleHint — it's already in userMsg as context
-          const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, styleHint: null, writingStyle: style, storyLang: saved.storyLang || null, chainVocab: chainVocab.words };
+          const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words };
           result = await generateOneLesson(lang, srcLang, topic.trim(), 1, 1, [], story, diff, jobId, lessonOpts);
         } else if (fmt === 'error_hunt') {
           result = await generateErrorHunt(story, lang, diff, jobId, chainVocab.words);
@@ -2038,7 +1985,9 @@ http.createServer(async (req, res) => {
         } else if (fmt === 'conjugation') {
           result = await generateConjugation(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab });
         } else if (fmt === 'math') {
-          result = generateMath(story, diff);
+          result = addMathInstr
+            ? await generateMathLLM(lang, srcLang, diff, addMathInstr, jobId)
+            : generateMath(story, diff, addMathOps || null);
         } else {
           throw new Error(`Unsupported lessonFormat: ${fmt}`);
         }

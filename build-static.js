@@ -185,6 +185,10 @@ function repopulateContinueSelect(){
 
 async function init() {
   APP.info = { backend: 'none', canGenerate: false };
+  APP._teacherMode = false;
+  // Show teacher mode bar (static only)
+  const _tmBar = document.getElementById('teacher-mode-bar');
+  if (_tmBar) _tmBar.style.display = '';
   APP.libFilter='all'; APP.libSrcFilter='all';
   // Only preset tag filter if the tag actually exists in baked-in storylines
   const _allBakedTags = new Set((Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[]).flatMap(sl=>sl.tags||[]));
