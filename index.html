@@ -6502,12 +6502,17 @@ async function importLessons(input){
     const text=await file.text();
     data=JSON.parse(text);
   }catch(e){ showToast(t('toast.invalid_json')); return; }
-  const payload=Array.isArray(data)?data:(data.lessons||data);
-  if(!Array.isArray(payload)||payload.length===0){ showToast(t('toast.no_lessons')); return; }
+  // Support v29 {schemaVersion,topics,storylines}, legacy {lessons:[]} and bare array
+  const payload = Array.isArray(data) ? data : (data.topics || data.lessons || data);
+  if (!Array.isArray(payload) || payload.length === 0) { showToast(t('toast.no_lessons')); return; }
   try{
+    // Pass full envelope so server receives schemaVersion + storylines
+    const body = (data.schemaVersion >= 29 && data.topics)
+      ? data
+      : { lessons: payload };
     const r=await fetch('/api/lessons/import',{method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({lessons:payload})});
+      body:JSON.stringify(body)});
     const result=await r.json();
     if(!r.ok) throw new Error(result.error||t('status.import_failed'));
     showToast(t('toast.import_ok',{added:result.added,updated:result.updated}));

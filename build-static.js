@@ -375,12 +375,16 @@ async function loadSavedList() {
 
   // Build display chains — v29: use STATIC_STORYLINES array; legacy: continuedFrom
   const byTopic=Object.fromEntries(filtered.map(l=>[l.topic,l]));
+  // byIdAll: all saved lessons for chapter ID resolution (includes imported lessons)
+  // byId: only filtered lessons for visible rendering
+  const byIdAll=Object.fromEntries(saved.filter(l=>l.id).map(l=>[l.id,l]));
   const byId=Object.fromEntries(filtered.filter(l=>l.id).map(l=>[l.id,l]));
   let storylines, orphans;
   const _slArr=Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[];
-  const v29chains=_slArr.filter(sl=>sl.chapters&&sl.chapters.length>1);
+  const v29chains=_slArr.filter(sl=>sl.chapters&&sl.chapters.length>=1);
   if(v29chains.length>0){
-    storylines=v29chains.map(sl=>sl.chapters.map(cid=>byId[cid]?.topic||null).filter(Boolean)).filter(c=>c.length>1);
+    // Only include chapters whose topics are in byTopic (currently visible/filtered)
+    storylines=v29chains.map(sl=>sl.chapters.map(cid=>byIdAll[cid]?.topic||null).filter(t=>t&&byTopic[t])).filter(c=>c.length>=1);
     const inChain=new Set(storylines.flat());
     orphans=filtered.filter(l=>!inChain.has(l.topic));
   } else {
@@ -562,7 +566,7 @@ const staticOverrides = [
   '    let data;',
   '    try{ data=JSON.parse(e.target.result); }',
   '    catch(err){ showToast("⚠ Invalid JSON file"); return; }',
-  '    const incoming=Array.isArray(data)?data:(data.lessons||data);',
+  '    const incoming=Array.isArray(data)?data:(data.topics||data.lessons||data);',
   '    if(!Array.isArray(incoming)||!incoming.length){ showToast("⚠ No lessons found in file"); return; }',
   '    let added=0, updated=0;',
   '    for(const l of incoming){',
@@ -571,6 +575,14 @@ const staticOverrides = [
   '      if(idx>=0){ STATIC_LESSONS[idx]=l; updated++; }',
   '      else{ STATIC_LESSONS.unshift(l); added++; }',
   '    }',
+  '    // Merge storylines if present (v29 format)',
+  '    if(Array.isArray(data.storylines)){',
+  '      data.storylines.forEach(sl=>{',
+  '        if(!STATIC_STORYLINES.find(x=>x.id===sl.id)) STATIC_STORYLINES.push(sl);',
+  '      });',
+  '    }',
+  '    const _importLang = incoming.find(l=>l.lang)?.lang;',
+  '    if(_importLang){ APP.libFilter=_importLang; const _ls=document.getElementById("lang-select"); if(_ls) _ls.value=_importLang; }',
   '    loadSavedList();',
   '    showToast("✓ Session import: +"+added+" new, ~"+updated+" updated (resets on refresh)");',
   '  };',

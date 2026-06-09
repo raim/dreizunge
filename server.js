@@ -2082,13 +2082,19 @@ http.createServer(async (req, res) => {
       for (const l of incoming) {
         const exists = findSaved(l.topic);
         upsert(l);
-        if (store.schemaVersion >= 29 && !findSaved(l.topic)?.id)
-          _syncStorylineForTopic(l.topic, l.continuedFrom || null);
         if (exists) updated++; else added++;
       }
-      // Merge incoming storylines (v29 exports)
+      // Reconstruct storylines:
+      // 1. Merge explicitly exported storylines (new format)
       for (const sl of incomingStorylines) {
-        if (sl.id && !findStoryline(sl.id)) upsertStoryline(sl);
+        upsertStoryline(sl); // always upsert — update title/icon if already exists
+      }
+      // 2. For old-format exports (no storylines array), rebuild chains from continuedFrom
+      if (incomingStorylines.length === 0) {
+        // Process in order — each call extends the chain correctly
+        for (const l of incoming) {
+          _syncStorylineForTopic(l.topic, l.continuedFrom || null);
+        }
       }
       const total = store.schemaVersion >= 29 ? store.topics.length : store.lessons.length;
       console.log(`  Import: +${added} new, ~${updated} updated`);
