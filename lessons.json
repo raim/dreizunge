@@ -13,7 +13,7 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-09T10:22:41.148Z",
-      "updatedAt": "2026-06-09T12:01:17.611Z"
+      "updatedAt": "2026-06-09T16:13:01.729Z"
     },
     {
       "id": "sl_1874568066",
@@ -90,13 +90,12 @@
       "icon": "🌿",
       "chapters": [
         "tp_605476028",
-        "tp_162793289",
-        "tp_1339031343"
+        "tp_162793289"
       ],
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-03T06:07:43.526Z",
-      "updatedAt": "2026-06-03T16:37:12.642Z",
+      "updatedAt": "2026-06-09T16:13:01.738Z",
       "summary": "Dr. Eliza Carter forscht auf einem biotechnologischen Forschungsinstitut an der Nutzung cyanobakterieller Photosynthese zur Erzeugung erneuerbarer Energie. Obwohl die mikrobiellen Prozesse in Natur perfekt funktionieren, stellen sich Schwierigkeiten bei der Prozessskalierung in kommerziellen Bioreaktoren ein, insbesondere hinsichtlich der Lichtzufuhr und der Begasung. Die Optimierung der pH-Werte ist entscheidend für die Bakterienwachstum, jedoch schadet dies der Produktion von Wasserstoff (3-HP). Dr. Carter muss die grundlegenden Prozesse verstehen, um die Anpassungsfähigkeit der cyanobakteriellen Systeme zu erneut durchgehen und ihre Anpassungsfähigkeit zu verbessern."
     },
     {
@@ -878,8 +877,10 @@
         ]
       },
       "generatedAt": "2026-06-09T10:22:41.080Z",
-      "updatedAt": "2026-06-09T10:39:27.777Z",
-      "id": "tp_729079760"
+      "updatedAt": "2026-06-09T16:13:01.692Z",
+      "id": "tp_729079760",
+      "exportedFlags": {},
+      "exportedAt": "2026-06-09T12:07:04.611Z"
     },
     {
       "topic": "Pi flüstert i zu",
@@ -10348,14 +10349,16 @@
         ]
       },
       "generatedAt": "2026-06-02T14:26:16.238Z",
-      "updatedAt": "2026-06-02T18:44:04.801Z",
+      "updatedAt": "2026-06-09T16:13:01.683Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 669509,
         "promptTokens": 3217,
         "completionTokens": 1402
       },
-      "id": "tp_162793289"
+      "id": "tp_162793289",
+      "exportedFlags": {},
+      "exportedAt": "2026-06-09T12:07:04.608Z"
     },
     {
       "topic": "Cyanobakterien für Energiegewinnung",
@@ -10754,8 +10757,10 @@
         ]
       },
       "generatedAt": "2026-06-02T13:22:22.910Z",
-      "updatedAt": "2026-06-02T13:22:22.910Z",
-      "id": "tp_605476028"
+      "updatedAt": "2026-06-09T16:13:01.673Z",
+      "id": "tp_605476028",
+      "exportedFlags": {},
+      "exportedAt": "2026-06-09T12:07:04.604Z"
     },
     {
       "topic": "Interview Drinks",
