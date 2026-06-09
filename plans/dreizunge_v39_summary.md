@@ -181,3 +181,102 @@ The `/api/lessons/add-lesson` endpoint currently uses binary `addReinforce` to d
 - `useFullChain` (story context length) and `collectChainVocab` (vocab collection) remain independent — they serve different purposes and are correctly orthogonal
 - `extractKeywords` in grammar/conjugation stays as-is
 
+
+---
+
+## Additional Changes (Late v39 Session)
+
+### Export/Import Fixes
+- **Export now includes storylines** — `{ schemaVersion:29, topics:[...], storylines:[...] }` format; storylines filtered to those containing exported topics
+- **Client `importLessons`** — fixed to handle `data.topics` (v29) in addition to `data.lessons` (legacy); passes full envelope to server so storylines arrive intact
+- **Server import** — `_syncStorylineForTopic` was never called (condition always false after `upsert`); fixed to always rebuild chains from `continuedFrom` for old-format imports; new-format storylines always upserted (update if more chapters)
+- **Static import** — `importLessons` in `build-static.js` is a completely separate hardcoded function (does NOT use the one from `index.html`) — fixed same v29 format handling there; storylines now update existing entries if imported version has more chapters
+- **Story saved early** — `upsert()` called in `generate()` immediately after story is written (before lesson generation), so story is never lost if lessons fail
+
+### build-static.js Pitfalls (add to pitfalls section)
+- `build-static.js` **completely overrides** several functions from `index.html` (including `importLessons`, `init`, `loadSavedList`). Changes to those functions in `index.html` have NO effect on the static build. Always check `build-static.js` for hardcoded overrides when a feature works in live but not in static.
+- Code injected via the string array in `build-static.js` must have each logical line as its own `'...',` entry. Embedded `\n` in a string literal breaks the outer JS. Comments must be on their own line entry.
+- `byId` in static `loadSavedList` is built from `filtered` (language-filtered lessons). Chapter IDs from imported storylines may reference topics not in the current filter. Solution: use `byIdAll` (all saved) for ID resolution, `byTopic` (filtered) for rendering, and filter storyline chains to only chapters visible in the current language filter.
+
+
+---
+
+## Story DAGs — Architecture Plan (Future Major Feature)
+
+### Current state
+Storylines are **linear chains**: each topic has a single `continuedFrom` pointer, and `_syncStorylineForTopic` walks this linked list to build a flat `chapters[]` array. Multiple storylines can share initial chapters (e.g. "Energie aus Luft" and "Energie und Verlangen" both start with the same two topics), but these are stored as separate independent storylines with overlapping chapter IDs — not as a true branching structure.
+
+### Desired state: DAG (Directed Acyclic Graph)
+- A chapter can have **multiple successors** (branching) — one storyline forks into two narrative directions
+- A chapter can have **multiple predecessors** (merging/fusing) — two storylines converge into one, with story generation receiving context from both parent stories
+- The UI needs to show branching trees rather than flat lists of chapters
+
+### Phase 1: Branching display (medium complexity)
+The data model already supports branches implicitly — multiple topics can have the same `continuedFrom` value. The storyline screen just needs to:
+- Detect when a chapter has multiple successors (build a successor map from `continuedFrom` links)
+- Render branch points visually (a fork icon, indented sub-chains, or a tree layout)
+- Allow selecting which branch to continue from when adding a new chapter
+
+`_syncStorylineForTopic` would need to be replaced or extended — currently it assumes one linear chain. A new `buildStorylineTree(rootTopic)` function would return a tree structure rather than a flat array.
+
+### Phase 2: Story fusion / multi-parent context (larger complexity)
+When generating a new chapter that continues from **two parent stories**:
+- The generation form needs a "merge from" selector (pick a second storyline as additional context)
+- `generate()` receives `continuedFrom` (primary parent) and `mergedFrom` (secondary parent)
+- The story prompt receives both parent stories as context: `"Story A (primary):\n{story_a}\n\nStory B (secondary context):\n{story_b}\n\nContinue the narrative merging both threads."`
+- The topic object stores both `continuedFrom` and `mergedFrom` links
+- `collectChainVocab` walks both parent chains for vocabulary context
+- `useFullChain` applies to both chains
+
+### Data model change
+```json
+{
+  "topic": "Die Fusion",
+  "continuedFrom": "Verlangen in der Dunkelheit",
+  "mergedFrom": "Energie aus Luft",
+  "story": "...",
+  "lessons": [...]
+}
+```
+
+The storylines array would change from `chapters: [id1, id2, ...]` to a DAG adjacency structure, or storylines could remain linear with branch/merge metadata on the topic objects themselves.
+
+### UI implications
+- Storyline screen: tree/graph layout instead of vertical list
+- Branch point: show diverging paths side by side or collapsible
+- Merge point: show converging arrows or a "sources" indicator
+- The path progress bar becomes a tree progress indicator
+
+### Implementation order
+1. **Branching display only** (read-only, no new generation) — detect shared `continuedFrom` roots and render as a tree; no data model change needed
+2. **Branch generation** — UI to select which chapter to continue from when the current last chapter has siblings
+3. **Merge/fusion generation** — `mergedFrom` field, dual-parent story context
+4. **DAG storyline model** — replace flat `chapters[]` with proper adjacency structure
+
+This is a significant UI and data model change. Start with Phase 1 (branching display) which requires no data model changes and is purely a rendering improvement.
+
+---
+
+## Story Branching Renderer (Late v39)
+
+### What was implemented
+`_renderStorylineScreen` now uses a recursive `_renderChain()` function instead of a linear `topics.forEach()` loop. Changes are in `index.html` only — `build-static.js` does not override `_renderStorylineScreen`, so the same renderer is used in both live and static modes.
+
+### How it works
+A global successor map `_succMap` is built from all `APP.savedList` topics via their `continuedFrom` links. For each topic being rendered, successors are split into:
+- **`ownKids`** — successors that belong to the current storyline's topic set → rendered fully and recursively
+- **`otherKids`** — successors from other storylines → rendered as a greyed-out stub (1 chapter, non-interactive, `opacity:.5; pointer-events:none`)
+
+Single successors render linearly (no visual change from before). Multiple successors trigger a `display:flex` column split with ⑂ A / ⑂ B branch labels and a vertical divider.
+
+### Key design decisions
+- Cross-storyline branches ARE shown as stubs — a storyline that forks into another shows the first chapter of the other branch, making the divergence visible
+- Other-branch stubs are non-interactive (can't click into them from this storyline)
+- Depth limit of 20 prevents infinite loops on malformed data
+- Root detection: topics whose `continuedFrom` is not in the current storyline's topic set
+
+### Import fix (same session)
+Server-side `upsertStoryline` on import was unconditional — overwrote existing storylines even if the imported version had fewer chapters. Fixed in `server.js`: if the existing storyline has more chapters, only title/icon/summary are updated from the import; chapters are never shrunk. Same rule already applied in static import.
+
+### Pitfall for next session
+`_renderStorylineScreen` is shared between live and static (not overridden in `build-static.js`). Changes to it only need to go in `index.html`. But `loadSavedList` IS overridden in `build-static.js` and must be updated there separately for any landing-page changes.

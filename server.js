@@ -2087,7 +2087,15 @@ http.createServer(async (req, res) => {
       // Reconstruct storylines:
       // 1. Merge explicitly exported storylines (new format)
       for (const sl of incomingStorylines) {
-        upsertStoryline(sl); // always upsert — update title/icon if already exists
+        const existing = findStoryline(sl.id);
+        if (!existing) { upsertStoryline(sl); }
+        else if ((sl.chapters||[]).length > (existing.chapters||[]).length) {
+          // Only extend, never shrink
+          upsertStoryline(sl);
+        } else {
+          // Update title/icon/summary but preserve existing chapters
+          upsertStoryline({ ...sl, chapters: existing.chapters });
+        }
       }
       // 2. For old-format exports (no storylines array), rebuild chains from continuedFrom
       if (incomingStorylines.length === 0) {

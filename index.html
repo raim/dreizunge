@@ -3417,51 +3417,90 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         + (existingSummary ? escHtml(existingSummary) : '<em style="color:var(--gray-dark)">Here could be your summary.</em>')
         + '</div></div>';
 
-  // Chapter cards — savedItemHtml with path-line connectors between chapters
-  html += '<div class="path-wrap" style="padding:4px 0 0" id="slsc-cards-' + chainId + '">';
-  topics.forEach((topic, i) => {
+  // Chapter cards — branching tree renderer
+  // Build global successor map from all saved topics
+  const _allSaved = APP.savedList || [];
+  const _succMap = {};
+  _allSaved.forEach(l => { if (l.continuedFrom && byTopic[l.continuedFrom]) (_succMap[l.continuedFrom] = _succMap[l.continuedFrom] || []).push(l.topic); });
+
+  function _renderChapterCard(topic, prevTopic, isFirst) {
     const s = byTopic[topic];
     const _done = _slCompleted[topic] || {};
     const _sets = s?.lessons || [];
     const _doneSets = _sets.filter(ls => _done[ls.id]).length;
     const _pct = _sets.length > 0 ? Math.round(100 * _doneSets / _sets.length) : 0;
-    if (i > 0) {
-      const prevTopic = topics[i-1];
-      const prevDone2 = _slCompleted[prevTopic] || {};
-      const prevSets = byTopic[prevTopic]?.lessons || [];
-      const prevAllDone = prevSets.length > 0 && prevSets.every(ls => prevDone2[ls.id]);
-      html += '<div class="path-line' + (prevAllDone ? ' done' : '') + '" style="height:20px"></div>';
+    let out = '';
+    if (!isFirst && prevTopic) {
+      const _prevDone = _slCompleted[prevTopic] || {};
+      const _prevSets = byTopic[prevTopic]?.lessons || [];
+      const _prevAllDone = _prevSets.length > 0 && _prevSets.every(ls => _prevDone[ls.id]);
+      out += '<div class="path-line' + (_prevAllDone ? ' done' : '') + '" style="height:20px"></div>';
     }
-    if (!s) {
-      html += '<div class="lesson-node" style="opacity:.5;width:100%;box-sizing:border-box">' + escHtml(topic) + '</div>';
-      return;
-    }
-    const _isChapterLocked = !APP.info.canGenerate && !APP._teacherMode && i > 0 && (() => {
-      const _pt2 = topics[i-1];
-      const _pd3 = _slCompleted[_pt2] || {};
-      const _ps2 = byTopic[_pt2]?.lessons || [];
-      return _ps2.length > 0 && !_ps2.every(ls => _pd3[ls.id]);
+    if (!s) return out + '<div class="lesson-node" style="opacity:.5;width:100%;box-sizing:border-box">' + escHtml(topic) + '</div>';
+    const _isLocked = !APP.info.canGenerate && !APP._teacherMode && !isFirst && prevTopic && (() => {
+      const _pd = _slCompleted[prevTopic] || {}; const _ps = byTopic[prevTopic]?.lessons || [];
+      return _ps.length > 0 && !_ps.every(ls => _pd[ls.id]);
     })();
     const _barColor = _pct >= 100 ? 'var(--green)' : 'var(--blue)';
-    // Chapter reorder buttons (live mode only)
-    const _safeId = chainId.replace(/'/g, "\\'");
-    const _moveRow = APP.info.canGenerate
-      ? '<div style="display:flex;justify-content:flex-end;gap:4px;padding:2px 4px 0;margin-bottom:-2px">'
-        + '<button class="storyline-hdr-btn" style="padding:1px 7px;font-size:12px" onclick="moveChapter(\'' + _safeId + '\',' + i + ',-1)"' + (i===0?' disabled':'') + '>↑</button>'
-        + '<button class="storyline-hdr-btn" style="padding:1px 7px;font-size:12px" onclick="moveChapter(\'' + _safeId + '\',' + i + ',1)"' + (i===topics.length-1?' disabled':'') + '>↓</button>'
-        + '</div>'
-      : '';
-    if (_isChapterLocked) {
-      html += _moveRow + '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;opacity:.45;pointer-events:none">'
-            + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;z-index:2;pointer-events:none">🔒</div>'
-            + savedItemHtml(s, false, true) + '</div>';
+    if (_isLocked) {
+      out += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;opacity:.45;pointer-events:none">'
+           + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;z-index:2;pointer-events:none">🔒</div>'
+           + savedItemHtml(s, false, true) + '</div>';
     } else {
-      html += _moveRow + '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
-            + '<div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--gray-mid)">'
-            + '<div style="height:100%;width:' + _pct + '%;background:' + _barColor + ';transition:width .3s"></div></div>'
-            + savedItemHtml(s, false, true) + '</div>';
+      out += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
+           + '<div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--gray-mid)">'
+           + '<div style="height:100%;width:' + _pct + '%;background:' + _barColor + ';transition:width .3s"></div></div>'
+           + savedItemHtml(s, false, true) + '</div>';
     }
-  });
+    return out;
+  }
+
+  // Render chain recursively; kids in current storyline rendered fully,
+  // kids from other storylines shown as stubs (greyed, non-interactive)
+  function _renderChain(topic, prevTopic, isFirst, depth) {
+    if (depth > 20) return ''; // safety
+    const _topicSet = new Set(topics);
+    let out = _renderChapterCard(topic, prevTopic, isFirst);
+    const allKids = _succMap[topic] || [];
+    const ownKids   = allKids.filter(t => _topicSet.has(t));
+    const otherKids = allKids.filter(t => !_topicSet.has(t) && byTopic[t]);
+    const kids = [...ownKids, ...otherKids];
+    if (kids.length === 0) return out;
+    if (kids.length === 1 && ownKids.length === 1) {
+      // Simple linear continuation
+      return out + _renderChain(kids[0], topic, false, depth + 1);
+    }
+    // Branch point — side-by-side columns
+    out += '<div style="display:flex;align-items:flex-start;margin-top:0">';
+    kids.forEach((kid, bi) => {
+      const isOwn = _topicSet.has(kid);
+      const notLast = bi < kids.length - 1;
+      const border = notLast ? ';border-right:2px solid var(--gray-mid);padding-right:5px;margin-right:5px' : '';
+      out += '<div style="flex:1;min-width:0' + border + '">';
+      out += '<div style="text-align:center;font-size:10px;font-weight:800;color:var(--gray-dark);padding:4px 0 2px">⑂ ' + String.fromCharCode(65+bi) + '</div>';
+      out += '<div class="path-line" style="height:12px;width:2px;margin:0 auto"></div>';
+      if (isOwn) {
+        out += _renderChain(kid, topic, false, depth + 1);
+      } else {
+        // Stub: show first chapter of other branch greyed, non-clickable
+        const kidData = byTopic[kid];
+        out += '<div style="opacity:.5;pointer-events:none">'
+             + '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
+             + savedItemHtml(kidData, false, true)
+             + '</div></div>';
+      }
+      out += '</div>';
+    });
+    out += '</div>';
+    return out;
+  }
+
+  html += '<div class="path-wrap" style="padding:4px 0 0" id="slsc-cards-' + chainId + '">';
+  const _topicSet3 = new Set(topics);
+  const _hasPred = new Set(topics.filter(t => { const s3 = byTopic[t]; return s3?.continuedFrom && _topicSet3.has(s3.continuedFrom); }));
+  const _roots = topics.filter(t => !_hasPred.has(t));
+  _roots.forEach((root, ri) => { if (ri > 0) html += '<div class="path-line" style="height:20px"></div>'; html += _renderChain(root, null, true, 0); });
+  html += '</div>';
   html += '</div>';
 
   // Read full story section
