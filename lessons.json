@@ -2,6 +2,20 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1732838965",
+      "title": "Energie und Verlangen",
+      "icon": "⚡",
+      "chapters": [
+        "tp_605476028",
+        "tp_162793289",
+        "tp_729079760"
+      ],
+      "lang": "en",
+      "srcLang": "de",
+      "createdAt": "2026-06-09T10:22:41.148Z",
+      "updatedAt": "2026-06-09T12:01:17.611Z"
+    },
+    {
       "id": "sl_1874568066",
       "title": "Spargel Gratin Tales",
       "icon": "🧈",
@@ -713,6 +727,161 @@
   ],
   "topics": [
     {
+      "topic": "Romantische Komplikationen",
+      "topicEmoji": "❤️",
+      "userTopic": "probleme ergaben sich als dr. carter romantische gefuehle fuer einen studenten des deutschen teams entwickelte.",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 450,
+      "story": "Dr. Carter stood by the bioreactor, her hands resting on the cool metal as she watched the blue liquid swirl inside. The German team had just sent over their latest data, and she was eager to see what they had discovered. But her mind kept wandering to the young student, Max, who had been working closely with her on the project. His enthusiasm and dedication were infectious, and she found herself drawn to his bright smile and earnest questions.\n\nAs the day wore on, the tension between work and personal feelings began to grow. Dr. Carter tried to focus on the numbers, but her thoughts kept drifting to Max. She remembered the way he had stayed late to help troubleshoot a problem, his hands moving deftly as he adjusted the settings. She admired his passion and the way he approached the project with such earnestness, but she couldn't ignore the flutter in her chest whenever he was near.\n\nDuring a break, Max approached her, his cheeks flushed from the afternoon sun. \"Dr. Carter, I wanted to show you something,\" he said, his voice low and earnest. He handed her a small vial, its contents a vibrant green. \"I think I might have found a way to optimize the growth conditions even further. I've been working on it in my spare time, and I wanted to share it with you.\"\n\nDr. Carter took the vial, her fingers brushing against his. She felt a warmth spread through her, a mix of professional admiration and personal attraction. \"Max, this is incredible,\" she said, her voice tinged with emotion. \"Thank you for your hard work. Let's run some tests and see if we can integrate this into our current process.\"\n\nAs they worked together, the lines between professional and personal blurred. Dr. Carter found herself looking forward to their late-night sessions, where they could discuss the project and share stories about their lives. The collaboration was no longer just about the science; it was about the connection they had formed. And as the bioreactors continued to hum, their shared goal of sustainable innovation seemed more attainable than ever, fueled by the spark of mutual respect and burgeoning romance.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 4-5 paragraphs, under 450 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Warm, emotionally rich, evocative imagery. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nocus on optimizing the growth conditions, while the German team would handle the downstream processing and product analysis. They agreed to share regular updates and results, ensuring that the project remained on track and that any breakthroughs could be quickly integrated into the ongoing research.\n\nAs the teams worked together, the bioreactors continued to operate, their blue contents a symbol of the ongoing effort to harness nature's power for sustainable innovation. The challenges were significant, but the potential rewards—reduced reliance on petroleum, a more sustainable future—provided the motivation needed to push through the difficulties. The collaboration between the two teams represented a crucial step in the journey towards a more environmentally conscious industrial landscape.\n\nNew topic: \"probleme ergaben sich als dr. carter romantische gefuehle fuer einen studenten des deutschen teams entwickelte.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Prozessskalierung in Bioreaktoren",
+      "storyStyle": "romantic",
+      "lessons": [
+        {
+          "id": "ls_1781001001182",
+          "title": "Probleme mit romantischen Gefühlen",
+          "desc": "Arbeit und persönliche Gefühle",
+          "icon": "❤️",
+          "vocab": [
+            {
+              "target": "enthusiasm",
+              "source": "Enthusiasmus"
+            },
+            {
+              "target": "dedication",
+              "source": "Dedikation"
+            },
+            {
+              "target": "passion",
+              "source": "Passion"
+            },
+            {
+              "target": "earnest",
+              "source": "ernst"
+            },
+            {
+              "target": "flutters",
+              "source": "Schläge"
+            },
+            {
+              "target": "approach",
+              "source": "anschauen"
+            },
+            {
+              "target": "optimization",
+              "source": "Optimierung"
+            },
+            {
+              "target": "conditions",
+              "source": "Bedingungen"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "She felt a flutter in her chest whenever he was near.",
+              "source": "Sie spürte jedes Mal ein Schlägen in der Brust, wenn er nahe war.",
+              "words": [
+                "She",
+                "felt",
+                "a",
+                "flutter",
+                "in",
+                "her",
+                "chest",
+                "whenever",
+                "he",
+                "was",
+                "near."
+              ]
+            },
+            {
+              "target": "His enthusiasm was infectious, spreading to everyone around him.",
+              "source": "Sein Enthusiasmus war ansteckend und verbreitete sich bei allen um ihn.",
+              "words": [
+                "His",
+                "enthusiasm",
+                "was",
+                "infectious,",
+                "spreading",
+                "to",
+                "everyone",
+                "around",
+                "him."
+              ]
+            },
+            {
+              "target": "She admired his passion for the project.",
+              "source": "Sie bewunderte seine Leidenschaft für das Projekt.",
+              "words": [
+                "She",
+                "admired",
+                "his",
+                "passion",
+                "for",
+                "the",
+                "project."
+              ]
+            },
+            {
+              "target": "Max approached her, his cheeks flushed from the afternoon sun.",
+              "source": "Max näherte sich ihr, die Wangen gerötet vom Nachmittagssonnenschein.",
+              "words": [
+                "Max",
+                "approached",
+                "her,",
+                "his",
+                "cheeks",
+                "flushed",
+                "from",
+                "the",
+                "afternoon",
+                "sun."
+              ]
+            },
+            {
+              "target": "He handed her a small vial, its contents a vibrant green.",
+              "source": "Er gab ihr einen kleinen Fläschchen, dessen Inhalt ein lebhaft grüner Farbton hatte.",
+              "words": [
+                "He",
+                "handed",
+                "her",
+                "a",
+                "small",
+                "vial,",
+                "its",
+                "contents",
+                "a",
+                "vibrant",
+                "green."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 520130,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1430,
+        "totalCompletionTokens": 771,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 282238,
+            "promptTokens": 871,
+            "completionTokens": 299
+          }
+        ]
+      },
+      "generatedAt": "2026-06-09T10:22:41.080Z",
+      "updatedAt": "2026-06-09T10:39:27.777Z",
+      "id": "tp_729079760"
+    },
+    {
       "topic": "Pi flüstert i zu",
       "topicEmoji": "📚",
       "userTopic": "pi fluestert dem kleinen i zu, das es noch rausfinden wird, was es ist. es muss dazu aber noch viel lernen. und das e  kennen lernen muss, [to qwen, receiving this prompt: e is Euler's number but don't mention this in the story] and that the owl may be able to help find it.",
@@ -827,56 +996,6 @@
               ]
             }
           ]
-        },
-        {
-          "id": "aeh_1780996634708",
-          "type": "ai_error_hunt",
-          "title": "AI Error Hunt",
-          "desc": "Find AI errors that were corrected by a human tutor.",
-          "icon": "🔎",
-          "aiStory": "pi whispered to the small i, \"You will discover what you are, but you must learn much more first. And you need to meet someone who might help you.\"\n\ni looked up, curious, as they continued their journey deeper into the forest. The sun was setting, casting long shadows across the path. Suddenly, they heard a soft hoot from above. Looking up, they saw an owl perched on a branch, watching them intently.\n\n\"Hello there,\" the owl said, its voice gentle and wise. \"I see you're on a quest, little ones. What brings you to the heart of the forest today?\"\n\ni and 0 exchanged glances, then 0 spoke up, \"We're trying to understand more about numbers and the world around us. We heard you might be able to help us.\"\n\nThe owl nodded, its eyes twinkling. \"Indeed, I can help. But first, let me tell you about a special number. It's called the growth number. It helps us understand how things grow and change over time.\"\n\ni listened intently, its ears perked up. \"Can you show us how it works?\" it asked, eager to learn.\n\nThe owl spread its wings and flew down to a nearby tree. \"Let's look at the branches. Each branch grows from the last, just like the numbers in a sequence. This is similar to what you've been learning, but with a twist.\"\n\nThe owl pointed to a series of branches, each one slightly larger than the last. \"See how each branch is a bit bigger than the one before? That's how the growth number works. It helps us predict how things will grow.\"\n\ni and 0 watched in wonder as the owl explained, their minds buzzing with new knowledge. The adventure was far from over, and they were ready to learn more.",
-          "sentences": [
-            {
-              "ai": "just like the numbers in a sequence.",
-              "corrected": "just like the rabbits!",
-              "reason": "korrekt aber zu kompliziert und story context verbessert"
-            },
-            {
-              "ai": "The owl pointed to a series of branches,",
-              "corrected": "The owl pointed to the branches of the tree it was sitting on,",
-              "reason": "zu komplizierte formulierung, und story context verbesserung"
-            },
-            {
-              "ai": "each one slightly larger than the last.",
-              "corrected": "each one growing .",
-              "reason": "lernkontext vereinfacht"
-            },
-            {
-              "ai": "See how each branch is a bit bigger than the one before?",
-              "corrected": "See how each branch is a bit smaller than the one before?",
-              "reason": "sinn"
-            },
-            {
-              "ai": "That's how the growth number works.",
-              "corrected": "And each branch has more little branches then the one before?",
-              "reason": "korrekt aber zu kompliziert"
-            },
-            {
-              "ai": "It helps us predict how things will grow.",
-              "corrected": ".",
-              "reason": ""
-            },
-            {
-              "ai": "their minds buzzing with new knowledge.",
-              "corrected": "their minds buzzing with new knowledge and more questions.",
-              "reason": "story"
-            },
-            {
-              "ai": "watching them intently.",
-              "corrected": "watching them attentively.",
-              "reason": "haeufigeres wort"
-            }
-          ]
         }
       ],
       "generationStats": {
@@ -896,7 +1015,7 @@
         ]
       },
       "generatedAt": "2026-06-09T09:02:22.611Z",
-      "updatedAt": "2026-06-09T09:24:36.458Z",
+      "updatedAt": "2026-06-09T09:26:24.226Z",
       "id": "tp_586040741",
       "aiStory": "pi whispered to the small i, \"You will discover what you are, but you must learn much more first. And you need to meet someone who might help you.\"\n\ni looked up, curious, as they continued their journey deeper into the forest. The sun was setting, casting long shadows across the path. Suddenly, they heard a soft hoot from above. Looking up, they saw an owl perched on a branch, watching them intently.\n\n\"Hello there,\" the owl said, its voice gentle and wise. \"I see you're on a quest, little ones. What brings you to the heart of the forest today?\"\n\ni and 0 exchanged glances, then 0 spoke up, \"We're trying to understand more about numbers and the world around us. We heard you might be able to help us.\"\n\nThe owl nodded, its eyes twinkling. \"Indeed, I can help. But first, let me tell you about a special number. It's called the growth number. It helps us understand how things grow and change over time.\"\n\ni listened intently, its ears perked up. \"Can you show us how it works?\" it asked, eager to learn.\n\nThe owl spread its wings and flew down to a nearby tree. \"Let's look at the branches. Each branch grows from the last, just like the numbers in a sequence. This is similar to what you've been learning, but with a twist.\"\n\nThe owl pointed to a series of branches, each one slightly larger than the last. \"See how each branch is a bit bigger than the one before? That's how the growth number works. It helps us predict how things will grow.\"\n\ni and 0 watched in wonder as the owl explained, their minds buzzing with new knowledge. The adventure was far from over, and they were ready to learn more."
     },
@@ -8567,7 +8686,7 @@
         ]
       },
       "generatedAt": "2026-06-03T08:54:37.623Z",
-      "updatedAt": "2026-06-07T08:07:49.523Z",
+      "updatedAt": "2026-06-09T12:17:31.251Z",
       "id": "tp_131653303",
       "repairStats": {
         "repairCount": 1,

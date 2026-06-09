@@ -1205,10 +1205,10 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   } else {
     const prevStoryFull = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
     const prevStory = prevStoryFull
-      ? prevStoryFull.slice(-OLLAMA_MAX_PREV_STORY)
+      ? (useFullChain ? prevStoryFull : prevStoryFull.slice(-OLLAMA_MAX_PREV_STORY))
       : null;
     if (continuedFrom && prevStory)
-      console.log(`    Continuing from: "${continuedFrom}" (using last ${prevStory.length}/${prevStoryFull.length} chars)`);
+      console.log(`    Continuing from: "${continuedFrom}" (using ${useFullChain?'full':'last '+prevStory.length+'/'+prevStoryFull.length} chars)`);
     jobStep(jobId, `[${OLLAMA_MODEL}] Generating story (~${storyLen} words)…`);
     try {
       const t0 = Date.now();
@@ -1253,6 +1253,22 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     await releaseOllamaModel(OLLAMA_MODEL);
     if (OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL && OLLAMA_TRANSLATION_MODEL !== OLLAMA_LESSON_MODEL)
       await releaseOllamaModel(OLLAMA_TRANSLATION_MODEL);
+  }
+
+  // ── Save story early (before lesson generation, so story is never lost) ──
+  if (story) {
+    upsert({
+      topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
+      userTopic, lang, srcLang, difficulty: difficulty || 2, storyLen,
+      story, storyLang, storyPrompt,
+      ...(storyTranslation ? { storyTranslation } : {}),
+      ...(userStory        ? { userStory }         : {}),
+      ...(userDialect      ? { userDialect }       : {}),
+      ...(continuedFrom    ? { continuedFrom }     : {}),
+      ...(storyStyle       ? { storyStyle }        : {}),
+      lessons: [],
+    });
+    console.log('    Story saved early (before lessons)');
   }
 
   // ── Lessons ───────────────────────────────────────────────────────────

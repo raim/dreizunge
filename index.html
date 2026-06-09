@@ -141,6 +141,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .node-circle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:3px solid var(--gray-mid)}
 .node-pct{font-size:13px;font-weight:900;padding:3px 8px;border-radius:12px;white-space:nowrap}.node-pct.done{background:#e6f9ec;color:var(--green-dark)}.done-node .node-circle{border-color:var(--green);background:var(--green-light)}
 .active-node .node-circle{border-color:var(--blue);background:var(--blue-light)}
+.hidden-node{opacity:.45;filter:grayscale(.4)}
 .node-lbl{flex:1}
 .node-title{font-size:15px;font-weight:900;color:var(--text);margin-bottom:2px}
 .node-desc{font-size:12px;color:var(--gray-dark);font-weight:600}
@@ -794,7 +795,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <button class="story-repair-btn" onclick="saveStoryEdit()" style="padding:4px 10px;font-size:12px">💾</button>
         <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="cancelStoryEdit()">✕</button>
         <label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;color:var(--gray-dark);white-space:nowrap">
-          <input type="checkbox" id="gen-ai-hunt-cb" style="width:13px;height:13px">
+          <input type="checkbox" id="gen-ai-hunt-cb" checked style="width:13px;height:13px">
           🔎 AI hunt
         </label>
         <span id="story-edit-status" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
@@ -881,7 +882,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:#f0fff4">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
       <span style="font-size:20px">📖</span>
-      <span style="font-size:13px;font-weight:900;color:var(--green-dark)">${t('complete.story_unlocked')}</span>
+      <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="comp-story-unlocked-lbl">Story unlocked!</span>
       <button class="spk-ico" style="margin-left:auto" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
     </div>
     <div id="comp-story-text" style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic"></div>
@@ -1205,6 +1206,7 @@ function applyUIStrings() {
   _setAttr('gen-topic-title-btn',  'title', t('lesson.gen_topic_title'));
   _setAttr('sl-screen-gen-btn',    'title', t('lesson.gen_topic_title'));
   _setAttr('sl-screen-edit-btn',    'title', t('ui.edit_title'));
+  _setText('comp-story-unlocked-lbl', t('complete.story_unlocked'));
   updateTeacherModeBtn();
   _setAttr('sl-screen-summary-btn', 'title', t('lesson.gen_summary'));
   _setText('backend-lbl',          t('app.backend'));
@@ -2855,7 +2857,8 @@ function buildPath(){
     const lessonPct=lessonScore&&lessonScore.total>0?Math.round(100*lessonScore.correct/lessonScore.total):null;
     if(i>0){ const ln=document.createElement('div'); ln.className='path-line'+(done[d.lessons[i-1].id]?' done':''); path.appendChild(ln); }
     const node=document.createElement('div');
-    node.className='lesson-node'+(isDone?' done-node':isLocked?' locked':isActive?' active-node':'');
+    node.className='lesson-node'+(isDone?' done-node':isLocked?' locked':isActive?' active-node':'')
+      +(L._hidden?' hidden-node':'');
     if(isActive){ const b=document.createElement('div'); b.className='next-badge'; b.textContent='Next up'; node.appendChild(b); }
     // Count flags that belong to THIS lesson by matching content slugs
     const lessonItSet = new Set([
@@ -2881,12 +2884,14 @@ function buildPath(){
           <div class="node-title" style="flex:1">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍','ai_error_hunt':'🔎','math':'🔢'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt','ai_error_hunt':'lesson.type.ai_error_hunt','math':'lesson.type.math'};const lbl=L.type==='ai_error_hunt'?t('lesson.type.ai_error_hunt'):(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));return (em[L.type]||'📚')+' '+lbl;})()}</div>
           ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:20px">🔒</span>':''}
         </div>
-        <div class="node-desc">${L.type==='ai_error_hunt'?t('lesson.ai_error_hunt.desc'):L.desc}</div>
+        <div class="node-desc">${(()=>{const dk={'grammar':'lesson.type.desc.grammar','conjugation':'lesson.type.desc.conjugation','error_hunt':'lesson.type.desc.error_hunt','ai_error_hunt':'lesson.type.desc.ai_error_hunt','math':'lesson.type.desc.math','standard':'lesson.type.desc.vocab','all_types':'lesson.type.desc.vocab'};const k=dk[L.type]||'lesson.type.desc.vocab';const ui=t(k);return ui&&ui!==k?ui:L.desc;})()}</div>
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
         <div class="fix-status" id="fix-status-${L.id}"></div>
         ${APP.info.canGenerate&&L.id?`<div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap" onclick="event.stopPropagation()">
           <button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('lesson.edit_lesson')}" onclick="openLessonEditor(${i})">✏️${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style=\\"color:var(--green);font-size:14px\\" title=\\"✓ '+L._checked.slice(0,10)+'\\">✓</span>':'<span style=\\"color:var(--green);font-size:14px\\" title=\\"Edited\\">✓</span>'):''}</button>
-          <button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="deleteLessonNode(${i})">🗑</button>
+          ${L.type==='ai_error_hunt'
+            ? `<button class="fix-btn" style="font-size:12px;padding:2px 7px;color:${L._hidden?'var(--blue-dark)':'var(--gray-dark)'}" title="${L._hidden?'Show lesson':'Hide lesson'}" onclick="toggleHideLessonNode(${i})">${L._hidden?'👁':'🫥'}</button>`
+            : `<button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="deleteLessonNode(${i})">🗑</button>`}
           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move up" onclick="moveLessonNode(${i},-1)" ${i===0?'disabled':''}>↑</button>
           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move down" onclick="moveLessonNode(${i},1)" ${i===d.lessons.length-1?'disabled':''}>↓</button>
         </div>`:''}
@@ -4427,6 +4432,18 @@ function goStorylineFromLesson() {
 }
 
 
+function toggleHideLessonNode(lessonIdx) {
+  const d = APP.lessonData;
+  if (!d) return;
+  const ls = d.lessons[lessonIdx];
+  if (!ls) return;
+  ls._hidden = !ls._hidden;
+  // Save and rebuild
+  fetch('/api/lessons/edit', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) }).catch(()=>{});
+  buildPath();
+}
+
 async function moveLessonNode(lessonIdx, dir) {
   const d = APP.lessonData;
   if (!d) return;
@@ -5222,6 +5239,7 @@ function mathNearMissClient(correct, nums, difficulty) {
 
 // ── lesson ──
 function startLesson(idx){
+  if (APP.lessonData?.lessons[idx]?._hidden && !APP._teacherMode) return;
   const C=APP.cur;
   const lesson=APP.lessonData.lessons[idx];
   C.lessonIdx=idx;
@@ -5990,13 +6008,29 @@ function showComplete(){
   el('comp-sub').textContent   = lesson?.title || lesson?.type || '';
 
   // Vocab recap — handle all lesson types
+  const vocabBox = document.getElementById('comp-vocab')?.closest('.vocab-box');
+  const wordsLbl = document.getElementById('words-from-lbl');
   let vocabItems = '';
-  if (lesson?.vocab?.length) {
-    vocabItems = lesson.vocab.map(v=>`<span class="vocab-chip">${escHtml(v.target)}${v.source?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+escHtml(v.source)+'</small>':''}</span>`).join('');
-  } else if (lesson?.grammar?.length) {
-    vocabItems = lesson.grammar.map(g=>`<span class="vocab-chip">${g.target} <small style="opacity:.6">${g.article||''} / ${g.plural||'—'}</small></span>`).join('');
-  } else if (lesson?.conjugations?.length) {
-    vocabItems = lesson.conjugations.map(c=>`<span class="vocab-chip">${c.infinitive}</span>`).join('');
+  if (lesson?.type === 'ai_error_hunt' || lesson?.type === 'error_hunt') {
+    if (vocabBox) vocabBox.style.display = 'none';
+  } else {
+    if (vocabBox) vocabBox.style.display = '';
+    if (lesson?.type === 'math') {
+      const ops = lesson.mathOps || (lesson.exercises||[]).map(e=>e.op).filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i);
+      if (wordsLbl) wordsLbl.textContent = t('lesson.type.math');
+      vocabItems = ops.length
+        ? ops.map(op=>`<span class="vocab-chip" style="font-size:18px">${op}</span>`).join('')
+        : (lesson.numbers||[]).map(n=>`<span class="vocab-chip">${n}</span>`).join('');
+    } else {
+      if (wordsLbl) wordsLbl.textContent = t('lesson.words_from');
+      if (lesson?.vocab?.length) {
+        vocabItems = lesson.vocab.map(v=>`<span class="vocab-chip">${escHtml(v.target)}${v.source?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+escHtml(v.source)+'</small>':''}</span>`).join('');
+      } else if (lesson?.grammar?.length) {
+        vocabItems = lesson.grammar.map(g=>`<span class="vocab-chip">${g.target} <small style="opacity:.6">${g.article||''} / ${g.plural||'—'}</small></span>`).join('');
+      } else if (lesson?.conjugations?.length) {
+        vocabItems = lesson.conjugations.map(c=>`<span class="vocab-chip">${c.infinitive}</span>`).join('');
+      }
+    }
   }
   el('comp-vocab').innerHTML = vocabItems;
 
@@ -6500,7 +6534,14 @@ async function exportTopics(topics) {
       });
       lessons.push({ ...data, exportedFlags: flags, exportedAt: new Date().toISOString() });
     }
-    const payload = { lessons, exportedAt: new Date().toISOString(), exportedBy: 'dreizunge' };
+    // Include storylines that contain any of the exported topics
+    const exportedTopics = new Set(lessons.map(l => l.topic));
+    const allSl = Array.isArray(APP.storylines) ? APP.storylines : [];
+    const byId = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+    const exportedStorylines = allSl.filter(sl =>
+      (sl.chapters||[]).some(cid => exportedTopics.has(byId[cid]?.topic)));
+    const payload = { schemaVersion: 29, topics: lessons, storylines: exportedStorylines,
+      exportedAt: new Date().toISOString(), exportedBy: 'dreizunge' };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
