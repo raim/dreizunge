@@ -311,7 +311,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .diff-select:focus{border-color:var(--blue)}
 .diff-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:14px;color:var(--gray-dark)}
 .continue-row{margin-bottom:14px}
-.lang-footer{display:flex;align-items:center;gap:6px;padding:10px 16px 14px;border-top:1.5px solid var(--gray-mid);margin-top:8px;background:var(--white)}
+.lang-footer{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px 14px;border-top:1.5px solid var(--gray-mid);margin-top:8px;background:var(--white)}
 .lang-footer-lbl{font-size:16px;flex-shrink:0}
 .lang-select-sm{padding:6px 30px 6px 10px;font-size:13px}
 .continue-lbl{display:block;font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:5px;letter-spacing:.02em;text-transform:uppercase}
@@ -655,9 +655,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </label>
       <div id="reinforce-prior-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px">
         <select id="vocab-mode-select" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif;cursor:pointer">
-          <option value="reinforce">🔁 reinforce vocab</option>
-          <option value="neutral">○ neutral</option>
-          <option value="extend">➕ extend vocab</option>
+          <option value="reinforce" id="vocab-mode-opt-reinforce">🔁 reinforce vocab</option>
+          <option value="neutral" id="vocab-mode-opt-neutral">○ neutral</option>
+          <option value="extend" id="vocab-mode-opt-extend">➕ extend vocab</option>
         </select>
       </div>
       <label id="use-full-chain-row" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;margin-top:4px;cursor:pointer" title="Pass the full storyline as context — better continuity, slower generation">
@@ -705,7 +705,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div id="teacher-mode-bar" style="display:none;text-align:center;padding:8px 0 4px">
     <button id="teacher-mode-btn" onclick="toggleTeacherMode()"
       style="font-size:13px;font-weight:700;border:1.5px solid var(--gray-mid);border-radius:20px;padding:5px 16px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif;opacity:.7"
-      title="Unlock all stories">🔓 Teacher mode</button>
+      id="teacher-mode-btn-inner" title="Unlock all stories">🔓 Teacher mode</button>
   </div>
 
   <div class="library">
@@ -785,24 +785,21 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </label>
   </div>
   <div class="story-section" id="story-section" style="display:none">
-    <button class="story-hdr" onclick="toggleStory()">
-      <span id="read-story-hdr">📖 Read the story</span>
-      <div class="story-hdr-btns" onclick="event.stopPropagation()">
-        <span id="story-lang-lbl" class="story-lang-lbl" style="display:none"></span>
-        <button class="story-icon-btn" onclick="speakStory()" id="speakstory-btn" title="Read aloud">🔊</button>
-        <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="toggleStoryRepair()" title="Edit story">✏️</button>
-        <span id="story-edit-toolbar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap">
-          <button class="story-repair-btn" onclick="saveStoryEdit()" style="padding:4px 10px;font-size:12px">💾</button>
-          <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="cancelStoryEdit()">✕</button>
-          <label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;color:var(--gray-dark);white-space:nowrap">
-            <input type="checkbox" id="gen-ai-hunt-cb" style="width:13px;height:13px">
-            🔎 AI hunt
-          </label>
-          <span id="story-edit-status" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
-        </span>
-      </div>
-      <span class="story-arrow" id="story-arrow">▼</span>
-    </button>
+    <div class="story-hdr" style="display:flex;align-items:center;cursor:pointer" onclick="toggleStory()">
+      <span id="read-story-hdr" style="flex:1">📖 Read the story</span>
+      <span class="story-arrow" id="story-arrow" style="margin-right:4px">▼</span>
+      <button class="story-icon-btn" onclick="event.stopPropagation();speakStory()" id="speakstory-btn" title="Read aloud">🔊</button>
+      <button class="story-icon-btn" id="story-repair-toggle-btn" onclick="event.stopPropagation();toggleStoryRepair()" title="Edit story">✏️</button>
+      <span id="story-edit-toolbar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
+        <button class="story-repair-btn" onclick="saveStoryEdit()" style="padding:4px 10px;font-size:12px">💾</button>
+        <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="cancelStoryEdit()">✕</button>
+        <label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;color:var(--gray-dark);white-space:nowrap">
+          <input type="checkbox" id="gen-ai-hunt-cb" style="width:13px;height:13px">
+          🔎 AI hunt
+        </label>
+        <span id="story-edit-status" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
+      </span>
+    </div>
     <div class="story-body" id="story-body"></div>
     <div id="aeh-diff-panel" style="display:none;margin:0 16px 12px;font-size:12px;border-top:1.5px solid var(--gray-mid);padding-top:10px"></div>
     <div class="story-flag-row" id="story-flag-row" style="display:none">
@@ -812,6 +809,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
           onblur="saveStoryComment()"></textarea>
       </div>
     </div>
+  </div><!-- /story-section -->
   <div id="lesson-editor" class="lesson-editor"></div>
   <div class="lesson-actions" id="lesson-actions"></div>
   <div class="saved-item-addlesson" id="sial-lesson-card" style="border-radius:var(--radius-lg);margin-top:4px">
@@ -838,17 +836,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       </select>
     </div>
     <div id="sial-math-instr-row-lesson-card" style="display:none;width:100%;margin-top:4px">
-      <input id="sial-math-instr-lesson-card" style="width:100%;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:4px 8px;font-family:Nunito,sans-serif;box-sizing:border-box" placeholder="🤖 Describe math exercises… (Fibonacci, powers of 2, LaTeX…)">
+      <input id="sial-math-instr-lesson-card" style="width:100%;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:4px 8px;font-family:Nunito,sans-serif;box-sizing:border-box" placeholder="🤖 Describe math exercises… (Fibonacci, powers of 2, LaTeX…)" id="math-instr-lc-ph">
     </div>
     <div class="addlesson-status" id="sial-status-lesson-card"></div>
     <input type="hidden" id="sial-enc-lesson-card">
   </div>
-  </div>
-
   <div class="lang-footer" id="lang-footer-lessonset">
     <span class="lang-footer-lbl">🗣</span>
-    <div class="lang-select-wrap" style="flex:1">
-      <select class="lang-select lang-select-sm" id="src-lang-select-footer-ls" onchange="selectSrcLang(this.value)">
+    <div class="lang-select-wrap" style="width:auto;display:inline-block">
+      <select class="lang-select lang-select-sm" style="width:auto" id="src-lang-select-footer-ls" onchange="selectSrcLang(this.value)">
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
@@ -885,7 +881,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:#f0fff4">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
       <span style="font-size:20px">📖</span>
-      <span style="font-size:13px;font-weight:900;color:var(--green-dark)">Story unlocked!</span>
+      <span style="font-size:13px;font-weight:900;color:var(--green-dark)">${t('complete.story_unlocked')}</span>
       <button class="spk-ico" style="margin-left:auto" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
     </div>
     <div id="comp-story-text" style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic"></div>
@@ -899,7 +895,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="sl-screen-title-row">
         <button class="sl-screen-back" onclick="goLandingClean()" title="Back">←</button>
         <span class="sl-screen-title" id="sl-screen-title" style="cursor:default">📖</span>
-        <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="${t('ui.edit_title')}" style="display:none">✏️</button>
+        <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="genStorylineTitleFromScreen()" title="Generate title" style="display:none">✨</button>
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
@@ -931,13 +927,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div id="sl-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
     </div>
     <div class="sl-screen-body" id="sl-screen-body"></div>
-  </div>
-
-
   <div class="lang-footer" id="lang-footer-storyline">
     <span class="lang-footer-lbl">🗣</span>
-    <div class="lang-select-wrap" style="flex:1">
-      <select class="lang-select lang-select-sm" id="src-lang-select-footer-sl" onchange="selectSrcLang(this.value)">
+    <div class="lang-select-wrap" style="width:auto;display:inline-block">
+      <select class="lang-select lang-select-sm" style="width:auto" id="src-lang-select-footer-sl" onchange="selectSrcLang(this.value)">
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
@@ -997,6 +990,7 @@ function localizedLangName(targetCode, uiLang) {
 
 var APP = {
   info: {backend:'none',canGenerate:false},
+  _teacherMode: true, // live: unlocked by default; static overrides to false
   lessonData: null,
   lang: loadLang(),
   srcLang: loadSrcLang(),
@@ -1079,6 +1073,9 @@ function applyUIStrings() {
   const tgtLangName = localizedLangName(APP.lang, APP.srcLang);
   const srcLangName = localizedLangName(APP.srcLang, APP.srcLang);
   // Static elements
+  // Update vocab mode option labels
+  const _vmo = {'reinforce':'gen.vocab_mode_reinforce','neutral':'gen.vocab_mode_neutral','extend':'gen.vocab_mode_extend'};
+  Object.entries(_vmo).forEach(([v,k])=>{ const el=document.getElementById('vocab-mode-opt-'+v); if(el) el.textContent=t(k); });
   // Update story language selector option labels
   const _sloT = document.getElementById('story-lang-opt-target');
   const _sloS = document.getElementById('story-lang-opt-source');
@@ -1207,7 +1204,9 @@ function applyUIStrings() {
   _setText('story-cont-btn',       t('lesson.btn_continue_story'));
   _setAttr('gen-topic-title-btn',  'title', t('lesson.gen_topic_title'));
   _setAttr('sl-screen-gen-btn',    'title', t('lesson.gen_topic_title'));
-  _setAttr('sl-screen-summary-btn','title', t('lesson.gen_summary'));
+  _setAttr('sl-screen-edit-btn',    'title', t('ui.edit_title'));
+  updateTeacherModeBtn();
+  _setAttr('sl-screen-summary-btn', 'title', t('lesson.gen_summary'));
   _setText('backend-lbl',          t('app.backend'));
   _setText('blbl',                 t('app.checking'));
   const _esBtn = document.getElementById('export-static-btn');
@@ -1675,7 +1674,7 @@ function renderStoryText(d, targetEl){
     escaped=escaped.replace(new RegExp('('+pattern+')','gi'),
       '<mark class="story-vocab-hl">$1</mark>');
   }
-  const spkBtn='<div style="text-align:right;padding:0 0 8px"><button class="story-icon-btn" onclick="speakStory()" title="'+t('lesson.read_aloud')+'">🔊</button></div>';
+  const spkBtn=''; // speaker moved to story-hdr
   body.innerHTML=spkBtn+escaped.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
 }
 function speakStory(){
@@ -1964,6 +1963,9 @@ async function pdfGenerateAll() {
 
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
+  // Show teacher mode bar in all modes (unlocked by default in live, locked by default in static)
+  const _tmBar2 = document.getElementById('teacher-mode-bar');
+  if (_tmBar2) _tmBar2.style.display = '';
   await loadLanguages();
   await syncFlagsFromServer();
   updateStaticFlagBanner();
@@ -3270,7 +3272,7 @@ async function doAddLesson(sid, enc) {
     if (APP.lessonData && APP.lessonData.topic === topic) {
       await loadSaved(encodeURIComponent(topic));
     }
-    showToast('➕ Lesson added');
+    showToast(t('toast.lesson_added'));
   } catch(e) {
     if (status) status.textContent = '⚠ ' + e.message.slice(0, 60);
     showToast('⚠ ' + e.message.slice(0, 60));
@@ -3460,15 +3462,26 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // Read full story section
   const escapedChain = encodedChain;
   const slscId = 'slsc-' + chainId;
-  html += '<div class="storyline-story" style="margin-top:8px;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid)">' +
-    `<div style="display:flex;align-items:center">` +
-    `<div class="storyline-story-hdr" style="flex:1" role="button" tabindex="0" onclick="toggleChainStory('${slscId}')">` +
-    '<span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
-    `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></div>` +
-    `<span class="story-icon-btn" onclick="event.stopPropagation();(async function(){const sl=APP._slScreen;if(!sl)return;const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);const stories=await Promise.all(sl.topics.map(async t=>{const cached=saved.find(l=>l.topic===t);if(cached?.story)return cached.story;try{const r=await fetch('/api/lessons/load?topic='+encodeURIComponent(t));const d=await r.json();return d.story||'';}catch(_){return '';};}));const text=stories.filter(Boolean).join(' ').replace(/\\s+/g,' ').trim();const lang=saved.find(l=>l.topic===sl.topics[0])?.lang||'';if(text)speakBodyText('__inline__',lang,text);})()">🔊</span>` +
-    `</div>` +
-    `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
-    '</div>';
+  // Lock until all chapters complete (static / teacher-mode-off)
+  const _allChaptersDone = !APP.info.canGenerate && !APP._teacherMode
+    ? topics.every(tp => { const d2=_slCompleted[tp]||{}; const ls2=byTopic[tp]?.lessons||[]; return ls2.length>0&&ls2.every(l=>d2[l.id]); })
+    : true;
+  if (_allChaptersDone) {
+    html += '<div class="storyline-story" style="margin-top:8px;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid)">' +
+      `<div style="display:flex;align-items:center">` +
+      `<div class="storyline-story-hdr" style="flex:1" role="button" tabindex="0" onclick="toggleChainStory('${slscId}')">` +
+      '<span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
+      `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></div>` +
+      `<span class="story-icon-btn" onclick="event.stopPropagation();(async function(){const sl=APP._slScreen;if(!sl)return;const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);const stories=await Promise.all(sl.topics.map(async t=>{const cached=saved.find(l=>l.topic===t);if(cached?.story)return cached.story;try{const r=await fetch('/api/lessons/load?topic='+encodeURIComponent(t));const d=await r.json();return d.story||'';}catch(_){return '';};}));const text=stories.filter(Boolean).join(' ').replace(/\\s+/g,' ').trim();const lang=saved.find(l=>l.topic===sl.topics[0])?.lang||'';if(text)speakBodyText('__inline__',lang,text);})()">🔊</span>` +
+      `</div>` +
+      `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
+      '</div>';
+  } else {
+    html += '<div class="storyline-story" style="margin-top:8px;border-radius:var(--radius-lg);overflow:hidden;border:2px solid var(--gray-mid);opacity:.5">' +
+      '<div style="display:flex;align-items:center;padding:8px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);gap:8px">' +
+      '<span>🔒</span><span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
+      '</div></div>';
+  }
 
   body.innerHTML = html;
 }
@@ -3691,7 +3704,7 @@ async function genStorylineSummary() {
       const idx = APP.storylines.findIndex(s => s.id === chainId);
       if (idx >= 0) APP.storylines[idx].summary = summary;
     }
-    showToast('📝 Summary generated');
+    showToast(t('toast.summary_generated'));
     loadSavedList(); // refresh landing page summary card
   } catch(e) {
     showToast('⚠ ' + e.message.slice(0, 60));
@@ -3772,7 +3785,7 @@ async function saveSummaryEdit(chainId) {
     }
     // Show edit button in sl-screen if open
     loadSavedList(); // refresh landing page summary card
-    showToast('💾 Summary saved');
+    showToast(t('toast.summary_saved'));
   } catch(e) {
     if (status) status.textContent = '⚠ ' + e.message.slice(0,40);
   }
@@ -4017,7 +4030,7 @@ function clearLessonProgress(enc) {
     saveProg();
   }
   buildPath();
-  showToast('↺ Progress cleared');
+  showToast(t('toast.progress_cleared'));
 }
 
 // ── Lesson editor ─────────────────────────────────────────────────────────────
@@ -4027,7 +4040,7 @@ function mathRegenerateExercises(li) {
   if (!ls || ls.type !== 'math') return;
   const input = document.getElementById('math-numbers-input-' + li);
   const nums = (input?.value || '').trim().split(/\s+/).map(Number).filter(n => !isNaN(n) && n > 0);
-  if (!nums.length) { showToast('⚠ Enter at least one number'); return; }
+  if (!nums.length) { showToast(t('toast.math_need_number')); return; }
   // Collect checked ops
   const allOps = ['+','-','×','÷','^'];
   const checkedOps = allOps.filter(op => {
@@ -4040,7 +4053,7 @@ function mathRegenerateExercises(li) {
   ls.exercises = generateMathExercisesClient(nums, ls.difficulty || 1, ops);
   buildPath();
   openLessonEditor(li);
-  showToast('🔄 Exercises regenerated');
+  showToast(t('toast.exercises_regenerated'));
 }
 function mathDeleteExercise(li, ei) {
   const ls = APP.lessonData?.lessons[li];
@@ -4400,7 +4413,7 @@ async function saveLessonEdits(lessonIdx) {
       }
     });
     saveFlagged();
-    showToast('💾 Saved');
+    showToast(t('toast.saved'));
     closeLessonEditor();
     buildPath();
   } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
@@ -4443,7 +4456,7 @@ async function deleteLessonNode(lessonIdx) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) });
     if (!r.ok) throw new Error((await r.json()).error || 'Failed');
-    showToast('🗑 Lesson deleted');
+    showToast(t('toast.lesson_deleted'));
     closeLessonEditor();
     buildPath();
   } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
@@ -5922,7 +5935,8 @@ function check(){
       : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : (ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}</div>`;
-    const speakOk = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct
+    const speakOk = ex.type==='type_conjugation' ? ex.pronoun+' '+ex.correct
+      : ex.type==='type_plural' ? ex.correct
       : ex.type==='mcq_article'      ? ex.article+' '+ex.target
       : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+ex.plural
       : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct
@@ -5936,7 +5950,8 @@ function check(){
   } else {
     C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${ex.correct}</strong></div>`;
-    const speakBad = (ex.type==='type_plural'||ex.type==='type_conjugation') ? ex.correct
+    const speakBad = ex.type==='type_conjugation' ? ex.pronoun+' '+ex.correct
+      : ex.type==='type_plural' ? ex.correct
       : ex.type==='mcq_article'      ? ex.article+' '+ex.target
       : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+ex.plural
       : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct
@@ -6122,15 +6137,20 @@ async function saveSlTags() {
   closeSlTagEditor();
   loadSavedList();
 }
+function updateTeacherModeBtn() {
+  const btn = document.getElementById('teacher-mode-btn');
+  if (!btn) return;
+  // When unlocked (true): show green lock icon = click to lock
+  // When locked (false): show gray unlock icon = click to unlock
+  btn.textContent = APP._teacherMode ? t('teacher.mode_on') : t('teacher.mode_off');
+  btn.title = t('teacher.unlock_tooltip');
+  btn.style.opacity = '1';
+  btn.style.borderColor = APP._teacherMode ? 'var(--green)' : 'var(--gray-mid)';
+  btn.style.color = APP._teacherMode ? 'var(--green-dark)' : '';
+}
 function toggleTeacherMode() {
   APP._teacherMode = !APP._teacherMode;
-  const btn = document.getElementById('teacher-mode-btn');
-  if (btn) {
-    btn.textContent = APP._teacherMode ? '🔒 Teacher mode ON' : '🔓 Teacher mode';
-    btn.style.opacity = APP._teacherMode ? '1' : '.7';
-    btn.style.borderColor = APP._teacherMode ? 'var(--green)' : 'var(--gray-mid)';
-    btn.style.color = APP._teacherMode ? 'var(--green-dark)' : '';
-  }
+  updateTeacherModeBtn();
   loadSavedList();
   if (document.getElementById('lesson-set')?.classList.contains('active')) buildPath();
   if (document.getElementById('storyline-screen')?.classList.contains('active')) {
@@ -6464,7 +6484,7 @@ async function importLessons(input){
 // ── Export lessons with flags ─────────────────────────────────────────
 async function exportTopics(topics) {
   if (!topics || topics.length === 0) return;
-  showToast('⏳ Preparing export…');
+  showToast(t('toast.export_preparing'));
   try {
     const lessons = [];
     for (const topic of topics) {
