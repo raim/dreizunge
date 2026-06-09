@@ -124,7 +124,15 @@ function flaggedSlugsForTopic(topic) {
 // Strip flagged exercises from lesson sets — keep the topic/story, remove flagged Q&A
 const cleanedLessons = _topicsArr.map(topic => {
   const flagged = flaggedSlugsForTopic(topic);
-  if (flagged.size === 0) return topic; // nothing flagged — pass through unchanged
+  if (flagged.size === 0) {
+    // Still need to check for hidden ai_error_hunt lessons
+    const publicLessons = (topic.lessons||[]).filter(ls => !(ls._hidden && ls.type === 'ai_error_hunt'));
+    if (publicLessons.length < (topic.lessons||[]).length) {
+      console.log(`  Excluded ${(topic.lessons||[]).length - publicLessons.length} hidden ai_error_hunt lesson(s) from "${topic.topic}"`);
+      return { ...topic, lessons: publicLessons };
+    }
+    return topic;
+  }
   const cleanedLessonSets = (topic.lessons || []).map(ls => ({
     ...ls,
     vocab:     (ls.vocab     || []).filter(v => !flagged.has(contentSlug(v.target))),
@@ -138,7 +146,11 @@ const cleanedLessons = _topicsArr.map(topic => {
     - cleanedLessonSets.reduce((n,ls) => n + (ls.vocab||[]).length + (ls.sentences||[]).length, 0);
   if (strippedCount > 0)
     console.log(`  Stripped ${strippedCount} flagged exercise(s) from "${topic.topic}"`);
-  return { ...topic, lessons: cleanedLessonSets };
+  const publicLessonSets = cleanedLessonSets.filter(ls => !(ls._hidden && ls.type === 'ai_error_hunt'));
+  const hiddenCount = cleanedLessonSets.length - publicLessonSets.length;
+  if (hiddenCount > 0)
+    console.log(`  Excluded ${hiddenCount} hidden ai_error_hunt lesson(s) from "${topic.topic}"`);
+  return { ...topic, lessons: publicLessonSets };
 });
 const removedCount = cleanedLessons.reduce((n, t, i) => {
   const orig = (_topicsArr[i].lessons||[]).reduce((m,ls)=>m+(ls.vocab||[]).length+(ls.sentences||[]).length,0);
@@ -571,9 +583,11 @@ const staticOverrides = [
   '    let added=0, updated=0;',
   '    for(const l of incoming){',
   '      if(!l.topic||!Array.isArray(l.lessons)) continue;',
-  '      const idx=STATIC_LESSONS.findIndex(x=>x.topic===l.topic);',
-  '      if(idx>=0){ STATIC_LESSONS[idx]=l; updated++; }',
-  '      else{ STATIC_LESSONS.unshift(l); added++; }',
+  '      // Exclude hidden ai_error_hunt lessons from static',
+  '      const publicL = {...l, lessons: (l.lessons||[]).filter(ls => !(ls._hidden && ls.type===\'ai_error_hunt\'))};',
+  '      const idx=STATIC_LESSONS.findIndex(x=>x.topic===publicL.topic);',
+  '      if(idx>=0){ STATIC_LESSONS[idx]=publicL; updated++; }',
+  '      else{ STATIC_LESSONS.unshift(publicL); added++; }',
   '    }',
   '    // Merge storylines if present (v29 format)',
   '    if(Array.isArray(data.storylines)){',

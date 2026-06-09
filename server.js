@@ -1952,6 +1952,7 @@ http.createServer(async (req, res) => {
           })) : orig.conjugations,
           ...(edited.corruptedStory !== undefined ? { corruptedStory: edited.corruptedStory } : {}),
           ...(edited.correctStory   !== undefined ? { correctStory:   edited.correctStory   } : {}),
+          ...(edited._hidden         !== undefined ? { _hidden:         edited._hidden         } : {}),
           edits: edited.edits ? edited.edits.map((e,j) => ({...(orig.edits||[])[j]||{}, ...e})) : orig.edits,
         };
       });
