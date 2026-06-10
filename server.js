@@ -1030,10 +1030,21 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Lesson ${lessonNum}/${totalLessons}…`);
 
   // Build prior-vocab hints for within-topic progression and cross-chapter reinforcement
-  const _chainWords = (chainVocab && chainVocab.length) ? chainVocab.slice(0, 30) : [];
+  const _storyLower = (story || '').toLowerCase();
+  const _rawChain = (chainVocab && chainVocab.length) ? chainVocab.slice(0, 40) : [];
+  const _chainWords = vocabMode === 'extend'
+    ? _rawChain.filter(v => !_storyLower.includes(v.target.toLowerCase()))
+    : _rawChain.slice(0, 30);
+  if (vocabMode === 'extend' && _rawChain.length) {
+    const _inStory = _rawChain.filter(v => _storyLower.includes(v.target.toLowerCase()));
+    console.log(`    Extend avoid (${_chainWords.length}): ${_chainWords.map(v=>v.target).join(', ')||'(none)'}`);
+    console.log(`    In new story (${_inStory.length}, not avoided): ${_inStory.map(v=>v.target).join(', ')||'(none)'}`);
+  } else if (vocabMode === 'reinforce' && _chainWords.length) {
+    console.log(`    Reinforce include (${_chainWords.length}): ${_chainWords.map(v=>v.target).join(', ')}`);
+  }
   const chainHint = !_chainWords.length ? ''
     : vocabMode === 'extend'
-      ? `\nEXTEND vocabulary — these words were already covered in prior chapters. Do NOT use them as vocab items. Avoid them in sentences where possible. Focus on FRESH vocabulary:\n${_chainWords.map(v => v.target).join(', ')}`
+      ? `\nEXTEND vocabulary — these words were covered before and are NOT in the current story. Do NOT use them as vocab items. Focus on FRESH vocabulary:\n${_chainWords.map(v => v.target).join(', ')}`
       : `\nREINFORCE — weave these words from prior chapters naturally into sentences (do NOT list them as vocab items):\n${_chainWords.map(v => v.target + (v.source ? ' (' + v.source + ')' : '')).join(', ')}`;
 
   let sysPrompt, userMsg;
@@ -1978,6 +1989,7 @@ http.createServer(async (req, res) => {
       if (generatingTopics.has(topicKey))
         return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
       const diff  = Math.max(1, Math.min(3, parseInt(rawDiff, 10) || saved.difficulty || 2));
+      const _addVocabMode = addVocabMode || (addReinforce ? 'reinforce' : 'neutral');
       const lang     = saved.lang    || 'it';
       const srcLang  = saved.srcLang || 'en';
       const dialect  = saved.userDialect || null;
@@ -1985,22 +1997,26 @@ http.createServer(async (req, res) => {
       const story    = saved.story;
       const jobId = newJob();
       generatingTopics.add(topicKey);
-      console.log(`  Add lesson: "${topic}" fmt=${fmt} diff=${diff} reinforce=${!!addReinforce}`);
+      console.log(`  Add lesson: "${topic}" fmt=${fmt} diff=${diff} vocabMode=${_addVocabMode}`);
 
       const doGenLesson = async () => {
         let result;
-        const chainVocab = (addReinforce === true) ? collectChainVocab(saved.continuedFrom || null) : { words: [], nouns: [], verbs: [] };
+        const chainVocab = (_addVocabMode !== 'neutral' && saved.continuedFrom)
+          ? collectChainVocab(saved.continuedFrom)
+          : { words: [], nouns: [], verbs: [] };
+        if (chainVocab.words.length)
+          console.log(`    Chain vocab (${_addVocabMode}): ${chainVocab.words.slice(0,15).map(v=>v.target).join(', ')}`);
         if (fmt === 'standard') {
           const storyTranslation = saved.storyTranslation || null;
           // Don't pass story as styleHint — it's already in userMsg as context
-          const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words };
+          const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words, vocabMode: _addVocabMode };
           result = await generateOneLesson(lang, srcLang, topic.trim(), 1, 1, [], story, diff, jobId, lessonOpts);
         } else if (fmt === 'error_hunt') {
           result = await generateErrorHunt(story, lang, diff, jobId, chainVocab.words);
         } else if (fmt === 'grammar') {
-          result = await generateGrammar(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab });
+          result = await generateGrammar(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode });
         } else if (fmt === 'conjugation') {
-          result = await generateConjugation(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab });
+          result = await generateConjugation(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode });
         } else if (fmt === 'math') {
           result = addMathInstr
             ? await generateMathLLM(lang, srcLang, diff, addMathInstr, jobId)

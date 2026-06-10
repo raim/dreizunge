@@ -280,3 +280,67 @@ Server-side `upsertStoryline` on import was unconditional — overwrote existing
 
 ### Pitfall for next session
 `_renderStorylineScreen` is shared between live and static (not overridden in `build-static.js`). Changes to it only need to go in `index.html`. But `loadSavedList` IS overridden in `build-static.js` and must be updated there separately for any landing-page changes.
+
+---
+
+## Extend Vocab Mode — Implemented (Late v39)
+
+Items 2 and 4 from the plan above were implemented in `server.js` only:
+
+**`addVocabMode` wired in add-lesson endpoint (item 4 — done)**
+`/api/lessons/add-lesson` now derives `_addVocabMode = addVocabMode || (addReinforce ? 'reinforce' : 'neutral')` and uses it for chain vocab collection and for grammar/conjugation opts. The ✚ button's extend mode now actually works.
+
+**Avoid-list filtered against new story (item 2 — done)**
+In extend mode, prior words that appear in the new story text are removed from the avoid-list before sending to the model. Pool extended to 40 words before filtering (was 30), so after filtering a useful number remain. Only genuinely redundant words (absent from the current story) are on the list.
+
+**Still remaining from the plan:**
+- Item 1: Story-keyword positive anchors (`extractKeywords` in `generateOneLesson` for extend mode)
+- Item 3: Move avoid-list instruction to system prompt (`extendNote` in `prompts.json`)
+
+---
+
+## TODO: Google Cloud TTS fallback (for Firefox/Linux)
+
+Firefox on Linux uses speech-dispatcher which only provides espeak-ng voices — robotic quality. Chrome bundles neural voices. Code-side voice selection is already optimal; the system TTS is the bottleneck.
+
+**Plan:** add a server-side TTS proxy endpoint in `server.js` using Google Cloud TTS (or OpenAI/ElevenLabs TTS as alternative). Client detects poor voice quality and falls back to the server endpoint.
+
+### Server side
+- `GET /api/tts?text=...&lang=de-DE` — proxy to Google Cloud TTS REST API, return audio/mpeg
+- Cache responses in memory (Map keyed by `lang+text`) to avoid repeated API calls
+- API key stored as env var `GOOGLE_TTS_KEY` (falls back to speechSynthesis if not set)
+- Google Cloud TTS pricing: ~$4 per 1M characters (very cheap for personal use)
+
+### Client side  
+- Detect: if best available `speechSynthesis` voice is espeak (name contains 'espeak' or '+' indicating espeak-ng format), use server TTS instead
+- Play response via `new Audio(url)` or `AudioContext` instead of `speechSynthesis`
+- Static/GitHub Pages version: no server available, always falls back to speechSynthesis
+- Cache URLs client-side for repeated playback
+
+### Notes
+- Only works in live mode (server running) — static always uses speechSynthesis
+- OpenAI TTS (`tts-1` model) is a good alternative if OpenAI key already configured
+- ElevenLabs has a free tier but rate-limited
+- Chunking logic (`_ttsChunks`) can be reused; server endpoint handles one chunk at a time
+
+---
+
+## TTS / Voice Selection — Status & Notes
+
+### What was implemented
+- `_buildGlobalTtsSelectors()` — builds language + voice selectors in all footer rows (lesson-set, storyline screens); handles async `voiceschanged` and deferred LANGS loading
+- Voice ranking: online/neural voices scored highest, espeak/mbrola scored lowest; named voice preference stored in `localStorage` per language
+- All three speak paths (`_speakChunks`, `_speakAndAdvance`, `speakBodyText`) respect `APP._ttsVoiceName`
+- Old `tts-row` hidden; new footer layout: Row 1 = UI + source lang; Row 2 = 🗣 + TTS lang + voice + 🔊 mute
+- Firefox `setTimeout` fix: removed 50ms delay after `speechSynthesis.cancel()` which was breaking Firefox user-gesture context
+
+### Chrome
+Works well — Google's neural cloud voices are available, voice selector lets you choose between them.
+
+### Firefox on Linux
+All available voices are espeak-ng variants (e.g. "German+Steph2", "German+Quincy") — they all use the same synthesis engine and sound identical. Voice selector shows all 102 variants but none sound natural. This is a system-level limitation, not a code issue.
+
+**Fix**: install Piper TTS manually (see earlier discussion), or implement the Google Cloud TTS proxy (see TODO section). No further code changes possible without a better TTS engine on the system.
+
+### Pitfall: element ID aliases
+The footer HTML uses short IDs (`ls`, `sl`) that match what all JS functions expect. When restructuring footer HTML, always use these short aliases — e.g. `id="src-lang-select-footer-ls"` not `id="src-lang-select-footer-lessonset"`.

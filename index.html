@@ -697,6 +697,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
 
+  <div style="display:none" id="tts-footer-landing"><span class="lang-footer-lbl">🗣</span><select class="tts-select" id="tts-lang-select-landing" onchange="onTtsLangSelectGlobal(this.value,'landing')" style="width:auto;font-size:12px" title="Speech language"></select><select class="tts-select" id="tts-voice-select-landing" onchange="onTtsVoiceSelectGlobal(this.value,'landing')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select><button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button></div>
   <div class="static-flag-banner" id="static-flag-banner">
     <span style="font-size:16px">⚑</span>
     <span style="flex:1" id="static-flag-banner-text">You have flagged exercises — download them to review.</span>
@@ -775,7 +776,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
   </div>
   <div class="path-wrap" id="lesson-path"></div>
-  <div class="tts-row" id="tts-row" style="display:none;padding:8px 0 0;height:0;overflow:hidden">
+  <div class="tts-row" id="tts-row" style="display:none!important;padding:8px 0 0">
     <select class="tts-select" id="tts-select" onchange="onTtsSelect(this.value)"></select>
     <span class="tts-approx" id="tts-approx" style="display:none">⚠ approximate pronunciation</span>
   </div>
@@ -829,7 +830,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </select>
     <button class="addlesson-btn" id="sial-btn-lesson-card" onclick="doAddLesson('lesson-card', document.getElementById('sial-enc-lesson-card').value)">Generate</button>
     <button class="addlesson-cancel" onclick="closeAddLesson('lesson-card')">✕</button>
-    <div id="sial-reinforce-row-lesson-card" style="display:none;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
+    <div id="sial-reinforce-row-lesson-card" style="display:flex;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
       <select id="sial-vocab-mode-lesson-card" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif">
         <option value="reinforce">🔁 reinforce</option>
         <option value="neutral">○ neutral</option>
@@ -842,14 +843,19 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <div class="addlesson-status" id="sial-status-lesson-card"></div>
     <input type="hidden" id="sial-enc-lesson-card">
   </div>
-  <div class="lang-footer" id="lang-footer-lessonset">
-    <span class="lang-footer-lbl">🗣</span>
+  <div class="lang-footer" id="lang-footer-lessonset" style="flex-wrap:wrap;gap:4px 8px">
+    <span class="lang-footer-lbl" style="font-size:13px;font-weight:800;color:var(--gray-dark)">UI</span>
     <div class="lang-select-wrap" style="width:auto;display:inline-block">
       <select class="lang-select lang-select-sm" style="width:auto" id="src-lang-select-footer-ls" onchange="selectSrcLang(this.value)">
       </select>
       <span class="lang-select-arrow">▾</span>
     </div>
-    <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
+    <div style="display:flex;align-items:center;gap:5px;flex-basis:100%;justify-content:center;padding:2px 0 0">
+      <span class="lang-footer-lbl">🗣</span>
+      <select class="tts-select" id="tts-lang-select-ls" onchange="onTtsLangSelectGlobal(this.value,'ls')" style="width:auto;font-size:12px" title="Speech language"></select>
+      <select class="tts-select" id="tts-voice-select-ls" onchange="onTtsVoiceSelectGlobal(this.value,'ls')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select>
+      <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
+    </div>
   </div>
   <div class="gen-stats" id="gen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
@@ -1208,6 +1214,7 @@ function applyUIStrings() {
   _setAttr('sl-screen-edit-btn',    'title', t('ui.edit_title'));
   _setText('comp-story-unlocked-lbl', t('complete.story_unlocked'));
   updateTeacherModeBtn();
+  _buildGlobalTtsSelectors();
   _setAttr('sl-screen-summary-btn', 'title', t('lesson.gen_summary'));
   _setText('backend-lbl',          t('app.backend'));
   _setText('blbl',                 t('app.checking'));
@@ -1547,7 +1554,7 @@ function toggleFlag(ex){
   }
 }
 function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
-function goLanding(){ loadSavedList(); show('landing'); }
+function goLanding(){ APP.ttsLang=null; APP._ttsVoiceName=null; loadSavedList(); show('landing'); }
 
 function toggleStory(){
   const body=document.getElementById('story-body');
@@ -1747,7 +1754,7 @@ async function goLessonSet(){
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
   show('lesson-set');
 }
-function goLandingClean(){ history.replaceState(null,'','#'); loadSavedList(); show('landing'); }
+function goLandingClean(){ history.replaceState(null,'','#'); APP.ttsLang=null; APP._ttsVoiceName=null; loadSavedList(); show('landing'); }
 
 // ── init ──
 // ══ PDF-to-Storyline ══════════════════════════════════════════════════════════
@@ -2354,10 +2361,10 @@ async function loadSavedList(){
         `<div style="display:flex;align-items:center">` +
         `<button class="storyline-story-hdr" style="flex:1" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` + 
         `${t('lesson.read_summary')}<span class="storyline-story-arrow" id="slsc-summary-arrow-${chainId}">▼</span></button>` +
-        `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak,APP.srcLang)" title="${t('lesson.read_aloud')}">🔊</button>` +
+        `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="${t('lesson.read_aloud')}">🔊</button>` +
         (APP.info.canGenerate ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
         `</div>` +
-        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}">` +
+        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" data-lang="${byTopic[chain[0]]?.srcLang||''}">` +
         `<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
         `</div></div>`;
     }
@@ -2702,8 +2709,12 @@ function buildPath(){
   const genTitleBtn   = document.getElementById('gen-topic-title-btn');
   if (lessonEditBtn) lessonEditBtn.style.display = APP.info.canGenerate ? '' : 'none';
   if (genTitleBtn)   genTitleBtn.style.display   = APP.info.canGenerate ? '' : 'none';
-  // Reset TTS override when loading a new lesson, then build selector
-  APP.ttsLang=null;
+  // Set TTS language to lesson target language, then rebuild selectors
+  if (APP.lessonData?.lang) {
+    const _ll = LANGS[APP.lessonData.lang];
+    if (_ll?.tts) APP.ttsLang = _ll.tts;
+  }
+  setTimeout(_buildGlobalTtsSelectors, 0);
   buildTtsSelector();
   updateFuriganaRow();
 
@@ -3294,6 +3305,7 @@ async function doAddLesson(sid, enc) {
 APP._slScreen = null; // { chainId, chain (encoded), topics [] }
 
 async function openStorylineScreen(chainId, encodedChain) {
+  setTimeout(_buildGlobalTtsSelectors, 50);
   const topics = JSON.parse(decodeURIComponent(encodedChain));
   APP._slScreen = { chainId, encodedChain, topics };
   // Switch UI to source language of first chapter before rendering
@@ -3409,11 +3421,11 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         + '<div style="display:flex;align-items:center">'
         + '<button class="storyline-story-hdr" style="flex:1" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">' + '📖 ' 
         + (existingSummary ? t('lesson.read_summary') : t('lesson.no_summary')) + ' ▼</button>'
-        + (existingSummary ? '<button class="storyline-hdr-btn" onclick="speakBodyText(\'' + _sumId + '\',APP.srcLang)">🔊</button>' : '')
+        + (existingSummary ? '<button class="storyline-hdr-btn" onclick="speakBodyText(\'' + _sumId + '\')">🔊</button>' : '')
         + '<button class="storyline-hdr-btn" data-sumid="' + _sumId + '" onclick="event.stopPropagation();openSummaryEdit(null,this.dataset.sumid)" title="Edit summary">✏️</button>'
 
         + '</div>'
-        + '<div id="' + _sumId + '" style="display:none;padding:12px 16px;font-size:14px;line-height:1.6;color:var(--text)">'
+        + '<div id="' + _sumId + '" data-lang="' + (byTopic[topics[0]]?.srcLang||'') + '" style="display:none;padding:12px 16px;font-size:14px;line-height:1.6;color:var(--text)">'
         + (existingSummary ? escHtml(existingSummary) : '<em style="color:var(--gray-dark)">Here could be your summary.</em>')
         + '</div></div>';
 
@@ -3549,6 +3561,7 @@ window.addEventListener('popstate', function(e) {
       const topic = decodeURIComponent(location.hash.slice(7));
       loadSaved(encodeURIComponent(topic));
     } else {
+      APP.ttsLang=null; APP._ttsVoiceName=null;
       show('landing');
       loadSavedList();
     }
@@ -3621,7 +3634,7 @@ function _tryOpenStorylineByChainId(chainId) {
       return;
     }
   }
-  show('landing'); loadSavedList();
+  APP.ttsLang=null; APP._ttsVoiceName=null; show('landing'); loadSavedList();
 }
 
 
@@ -6272,6 +6285,8 @@ function speakBodyText(bodyId,langCode,preText){
   if(preText){ if(langCode){const p=()=>{if(!_ttsUnlocked){_ttsPendingAfterUnlock={text:preText,langCode};return;}_doSpeakLang(preText,langCode);};const v=speechSynthesis.getVoices();v.length>0?p():speechSynthesis.addEventListener('voiceschanged',function h(){speechSynthesis.removeEventListener('voiceschanged',h);p();},{once:true});}else speak(preText); return; }
   const el=document.getElementById(bodyId);
   if(!el)return;
+  // Read data-lang unconditionally — used as langCode fallback
+  if(!langCode && el.dataset.lang) langCode=el.dataset.lang;
   // textContent works even when hidden; if still empty, load from data
   let text=(el.textContent||'').replace(/Chapter \d+[^\n]*\n/g,' ').replace(/\s+/g,' ').trim();
   if(!text && el.dataset.topic){
@@ -6279,7 +6294,6 @@ function speakBodyText(bodyId,langCode,preText){
     const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);
     const match=saved.find(l=>l.topic===el.dataset.topic);
     if(match?.story){ text=match.story.replace(/\s+/g,' ').trim(); }
-    if(!langCode && el.dataset.lang) langCode=el.dataset.lang;
   }
   if(!text && el.dataset.chain){
     // Chain story (csbody): decode chain, concatenate all stories
@@ -6339,9 +6353,12 @@ function _speakAndAdvance(text) {
   const norm = c => (c||'').replace('_','-').toLowerCase();
   const ttsNorm = norm(ttsCode);
   if (voices.length > 0) {
+    const score = v => { const n=v.name.toLowerCase(); if(n.includes('espeak')||n.includes('mbrola')) return 0; return v.localService?1:3; };
+    const ttsNorm3 = norm(ttsCode); const pfx3 = ttsNorm3.split('-')[0];
+    const named = APP._ttsVoiceName ? voices.find(v=>v.name===APP._ttsVoiceName&&(norm(v.lang)===ttsNorm3||norm(v.lang).startsWith(pfx3))) : null;
     const exact  = voices.find(v => norm(v.lang) === ttsNorm);
-    const prefix = voices.find(v => norm(v.lang).startsWith(ttsNorm.split('-')[0]));
-    const match  = exact || prefix;
+    const prefix = voices.filter(v => norm(v.lang).startsWith(ttsNorm.split('-')[0])).sort((a,b)=>score(b)-score(a))[0];
+    const match  = named || exact || prefix;
     if (match) { u.voice = match; u.lang = match.lang; }
   }
   let advanced = false;
@@ -6352,7 +6369,7 @@ function _speakAndAdvance(text) {
   const safety = setTimeout(advance, 4000);
   u.onend = () => { clearTimeout(safety); setTimeout(advance, 120); };
   speechSynthesis.cancel();
-  setTimeout(() => speechSynthesis.speak(u), 50);
+  speechSynthesis.speak(u);
 }
 
 function _ttsChunks(text) {
@@ -6377,8 +6394,23 @@ function _speakChunks(chunks, langCode, rate, idx) {
   const voices = speechSynthesis.getVoices();
   if (voices.length) {
     const norm = c => (c||'').replace('_','-').toLowerCase();
-    const match = voices.find(v=>norm(v.lang)===norm(ttsCode))
-               || voices.find(v=>norm(v.lang).startsWith(norm(ttsCode).split('-')[0]));
+    const ttsNorm = norm(ttsCode);
+    const ttsPrefix = ttsNorm.split('-')[0];
+    // Score voices: prefer online/neural > local non-espeak > espeak
+    const score = v => {
+      const n = v.name.toLowerCase();
+      if (n.includes('espeak') || n.includes('mbrola')) return 0;
+      if (!v.localService) return 3; // online voice (Mozilla, Google, etc.)
+      if (n.includes('natural') || n.includes('neural') || n.includes('premium')) return 2;
+      return 1; // local but non-espeak
+    };
+    const langVoices = voices
+      .filter(v => norm(v.lang) === ttsNorm || norm(v.lang).startsWith(ttsPrefix))
+      .sort((a,b) => score(b) - score(a));
+    // Only use named voice if it matches the current language
+    const namedMatch = APP._ttsVoiceName
+      ? langVoices.find(v => v.name === APP._ttsVoiceName) : null;
+    const match = namedMatch || langVoices[0] || null;
     if (match) { u.voice = match; u.lang = match.lang; }
     else if (idx === 0) showToast(t('toast.no_voice',{lang:ttsCode}));
   }
@@ -6390,25 +6422,17 @@ function _speakChunks(chunks, langCode, rate, idx) {
 function _doSpeak(text,rate){
   if(APP.muted) return;
   const chunks = _ttsChunks(text);
-  const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
   speechSynthesis.cancel();
-  if (wasSpeaking) {
-    setTimeout(() => _speakChunks(chunks, null, rate, 0), 50);
-  } else {
-    _speakChunks(chunks, null, rate, 0);
-  }
+  // Firefox loses user-gesture context after setTimeout — speak directly
+  // Chrome handles both, so always call directly after cancel()
+  _speakChunks(chunks, null, rate, 0);
 }
 
 function _doSpeakLang(text, langCode) {
   if (APP.muted) return;
   const chunks = _ttsChunks(text);
-  const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
   speechSynthesis.cancel();
-  if (wasSpeaking) {
-    setTimeout(() => _speakChunks(chunks, langCode, 0.9, 0), 50);
-  } else {
-    _speakChunks(chunks, langCode, 0.9, 0);
-  }
+  _speakChunks(chunks, langCode, 0.9, 0);
 }
 
 function _speakChunksThen(chunks, langCode, rate, idx, cb) {
@@ -6419,8 +6443,11 @@ function _speakChunksThen(chunks, langCode, rate, idx, cb) {
   const voices = speechSynthesis.getVoices();
   if (voices.length) {
     const norm = c => (c||'').replace('_','-').toLowerCase();
-    const match = voices.find(v=>norm(v.lang)===norm(ttsCode))
-               || voices.find(v=>norm(v.lang).startsWith(norm(ttsCode).split('-')[0]));
+    const ttsNorm2 = norm(ttsCode); const ttsPrefix2 = ttsNorm2.split('-')[0];
+    const score2 = v => { const n=v.name.toLowerCase(); if(n.includes('espeak')||n.includes('mbrola')) return 0; return v.localService?1:3; };
+    const lv2 = voices.filter(v=>norm(v.lang)===ttsNorm2||norm(v.lang).startsWith(ttsPrefix2)).sort((a,b)=>score2(b)-score2(a));
+    const named2 = APP._ttsVoiceName ? lv2.find(v=>v.name===APP._ttsVoiceName) : null;
+    const match = named2 || lv2[0] || null;
     if (match) { u.voice = match; u.lang = match.lang; }
   }
   u.onend = () => _speakChunksThen(chunks, langCode, rate, idx+1, cb);
@@ -6483,6 +6510,66 @@ function speak(text, rate){
 }
 
 
+function _buildGlobalTtsSelectors() {
+  const ids = ['ls']; // TTS selector only on lesson-set page
+  const norm = c => (c||'').replace('_','-').toLowerCase();
+  const score = v => { const n=v.name.toLowerCase(); if(n.includes('espeak')||n.includes('mbrola')) return 0; return v.localService?1:3; };
+  // Retry if LANGS not loaded yet
+  if (!Object.keys(LANGS).length) { setTimeout(_buildGlobalTtsSelectors, 300); return; }
+  // Ensure both selectors exist — if not, schedule retry once DOM is ready
+  if (!document.getElementById('tts-lang-select-ls') && !document.getElementById('tts-lang-select-sl')) {
+    setTimeout(_buildGlobalTtsSelectors, 200); return;
+  }
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) {
+    speechSynthesis.addEventListener('voiceschanged', _buildGlobalTtsSelectors, {once:true});
+    return;
+  }
+  const activeLang = APP.lessonData?.lang || APP.lang || 'it';
+  const L = LANGS[activeLang] || LANGS.it || {};
+  const langOpts = []; const seen = new Set();
+  [L.tts, ...Object.values(LANGS).map(l=>l.tts)].filter(Boolean).forEach(code => {
+    if (seen.has(code)) return; seen.add(code);
+    const lo = Object.values(LANGS).find(l=>l.tts===code);
+    if (lo) langOpts.push({code, label: lo.flag+' '+lo.name});
+  });
+  const savedLang = APP.ttsLang || L.tts || 'it';
+  ids.forEach(id => {
+    const lsel = document.getElementById('tts-lang-select-'+id);
+    const vsel = document.getElementById('tts-voice-select-'+id);
+    if (!lsel || !vsel) return;
+    lsel.innerHTML = langOpts.map(o=>`<option value="${o.code}">${o.label}</option>`).join('');
+    lsel.value = savedLang;
+    const prefix = norm(savedLang).split('-')[0];
+    const lv = voices.filter(v=>norm(v.lang)===norm(savedLang)||norm(v.lang).startsWith(prefix)).sort((a,b)=>score(b)-score(a));
+    if (lv.length > 1) {
+      vsel.innerHTML = lv.map(v=>`<option value="${v.name}">${v.name}${v.localService?'':' ☁'}</option>`).join('');
+      const savedVoice = localStorage.getItem('imp3_voice_'+savedLang);
+      vsel.value = (savedVoice && lv.find(v=>v.name===savedVoice)) ? savedVoice : lv[0].name;
+      APP._ttsVoiceName = vsel.value;
+      vsel.style.display = '';
+    } else {
+      vsel.style.display = 'none';
+      APP._ttsVoiceName = lv[0]?.name || null;
+    }
+  });
+}
+
+function onTtsLangSelectGlobal(code, id) {
+  const activeLang = APP.lessonData?.lang || APP.lang || 'it';
+  const nativeCode = (LANGS[activeLang]||LANGS.it||{}).tts;
+  APP.ttsLang = (code === nativeCode) ? null : code;
+  _buildGlobalTtsSelectors();
+  ['ls','sl','landing'].forEach(i=>{ const el=document.getElementById('tts-lang-select-'+i); if(el) el.value=code; });
+}
+
+function onTtsVoiceSelectGlobal(name, id) {
+  APP._ttsVoiceName = name || null;
+  const code = APP.ttsLang || (LANGS[APP.lessonData?.lang||APP.lang||'it']||LANGS.it||{}).tts;
+  if (name) localStorage.setItem('imp3_voice_'+code, name);
+  ['ls','sl','landing'].forEach(i=>{ const el=document.getElementById('tts-voice-select-'+i); if(el&&el.querySelector(`option[value="${CSS.escape(name)}"]`)) el.value=name; });
+}
+
 function buildTtsSelector(){
   const lang=APP.lessonData?.lang||APP.lang||'it';
   const L=LANGS[lang]||LANGS.it;
@@ -6499,7 +6586,7 @@ function buildTtsSelector(){
   });
   sel.innerHTML=opts.map(o=>`<option value="${o.code}">${o.label}</option>`).join('');
   sel.value=APP.ttsLang||L.tts;
-  row.style.display='';
+  row.style.display='none'; // replaced by global TTS selectors in footers
   updateTtsApprox();
 }
 
@@ -6512,7 +6599,7 @@ function onTtsSelect(code){
   const lang=APP.lessonData?.lang||APP.lang||'it';
   const nativeCode=(LANGS[lang]||LANGS.it).tts;
   APP.ttsLang=(code===nativeCode)?null:code;
-  updateTtsApprox();
+  buildTtsSelector(); // rebuild voice list for new language
 }
 function confirmQuit(){
   // Save current progress before quitting

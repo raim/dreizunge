@@ -232,7 +232,8 @@
         "tp_1600080910"
       ],
       "createdAt": "2026-05-29T11:06:57.276Z",
-      "updatedAt": "2026-05-29T12:24:56.704Z"
+      "updatedAt": "2026-06-10T11:40:35.198Z",
+      "summary": "En Positano, Maria y Lucia discuten sobre la cocina mediterránea, destacando ingredientes como la ricotta salata y los frolli de ricotta de Sicilia, y las verduras marinadas y los platos de pescado fresco del Sud Est. Sus diferencias continúan cuando comparan la cocina italiana con la francesa, notando que la italiana es dulce y salada, con ajo y aceite, mientras que la francesa es más sofisticada y elegante."
     },
     {
       "id": "sl_1919536226",
@@ -11069,6 +11070,253 @@
               "reason": ""
             }
           ]
+        },
+        {
+          "id": "ls_1781074898266",
+          "title": "Convincing Team",
+          "desc": "Key terms for convincing your team and colleagues",
+          "icon": "🤝",
+          "vocab": [
+            {
+              "target": "Künstliche Intelligenz",
+              "source": "Artificial Intelligence"
+            },
+            {
+              "target": "Algorithmus",
+              "source": "Algorithm"
+            },
+            {
+              "target": "Entwicklung",
+              "source": "Development"
+            },
+            {
+              "target": "Effizienz",
+              "source": "Efficiency"
+            },
+            {
+              "target": "Modellierung",
+              "source": "Modeling"
+            },
+            {
+              "target": "Verständnis",
+              "source": "Understanding"
+            },
+            {
+              "target": "Theoretische Grundlagen",
+              "source": "Theoretical foundations"
+            },
+            {
+              "target": "Praktische Anwendung",
+              "source": "Practical application"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Ich habe die Effizienz bei der Datenverarbeitung erheblich verbessert.",
+              "source": "I have significantly improved the efficiency in data processing.",
+              "words": [
+                "Ich",
+                "habe",
+                "die",
+                "Effizienz",
+                "bei",
+                "der",
+                "Datenverarbeitung",
+                "erheblich",
+                "verbessert."
+              ]
+            },
+            {
+              "target": "Ich kombiniere traditionelle Mathematik mit moderner KI.",
+              "source": "I combine traditional mathematics with modern AI.",
+              "words": [
+                "Ich",
+                "kombiniere",
+                "traditionelle",
+                "Mathematik",
+                "mit",
+                "moderner",
+                "KI."
+              ]
+            },
+            {
+              "target": "Das Modell ist robust und funktioniert gut in der Praxis.",
+              "source": "The model is robust and works well in practice.",
+              "words": [
+                "Das",
+                "Modell",
+                "ist",
+                "robust",
+                "und",
+                "funktioniert",
+                "gut",
+                "in",
+                "der",
+                "Praxis."
+              ]
+            },
+            {
+              "target": "Ich verstehe die Theoretischen Grundlagen und praktische Anwendung der KI.",
+              "source": "I understand the theoretical foundations and practical application of AI.",
+              "words": [
+                "Ich",
+                "verstehe",
+                "die",
+                "Theoretischen",
+                "Grundlagen",
+                "und",
+                "praktische",
+                "Anwendung",
+                "der",
+                "KI."
+              ]
+            },
+            {
+              "target": "Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.",
+              "source": "I enjoy working with others to share ideas and solve problems together.",
+              "words": [
+                "Ich",
+                "arbeite",
+                "gerne",
+                "mit",
+                "anderen,",
+                "um",
+                "Ideen",
+                "zu",
+                "teilen",
+                "und",
+                "Probleme",
+                "gemeinsam",
+                "zu",
+                "lösen."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1781076432448",
+          "title": "Convincing Team",
+          "desc": "Basic vocabulary for convincing your team in German",
+          "icon": "🤝",
+          "vocab": [
+            {
+              "target": "Entwickeln",
+              "source": "to develop"
+            },
+            {
+              "target": "Optimierung",
+              "source": "optimization"
+            },
+            {
+              "target": "Anpassung",
+              "source": "adaptation"
+            },
+            {
+              "target": "Zusammenarbeit",
+              "source": "cooperation"
+            },
+            {
+              "target": "Teilen",
+              "source": "to share"
+            },
+            {
+              "target": "Lösen",
+              "source": "to solve"
+            },
+            {
+              "target": "Engagement",
+              "source": "engagement"
+            },
+            {
+              "target": "Fähigkeiten",
+              "source": "abilities"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Ich entwickle ein neues Modell, das die Effizienz verbessert.",
+              "source": "I am developing a new model to improve efficiency.",
+              "words": [
+                "Ich",
+                "entwickle",
+                "ein",
+                "neues",
+                "Modell,",
+                "das",
+                "die",
+                "Effizienz",
+                "verbessert."
+              ]
+            },
+            {
+              "target": "Wir optimieren die Algorithmen, um sie für unsere Anwendungen anzupassen.",
+              "source": "We are optimizing the algorithms to fit our applications.",
+              "words": [
+                "Wir",
+                "optimieren",
+                "die",
+                "Algorithmen,",
+                "um",
+                "sie",
+                "für",
+                "unsere",
+                "Anwendungen",
+                "anzupassen."
+              ],
+              "_manualEdits": [
+                "2026-06-10T07:35:19.351Z"
+              ]
+            },
+            {
+              "target": "Ich teile meine Ideen mit den anderen, um gemeinsam zu lernen.",
+              "source": "I share my ideas with others to learn together.",
+              "words": [
+                "Ich",
+                "teile",
+                "meine",
+                "Ideen",
+                "mit",
+                "den",
+                "anderen,",
+                "um",
+                "gemeinsam",
+                "zu",
+                "lernen."
+              ]
+            },
+            {
+              "target": "Wir lösen Probleme zusammen, um unsere Projekte voranzutreiben.",
+              "source": "We solve problems together to advance our projects.",
+              "words": [
+                "Wir",
+                "lösen",
+                "Probleme",
+                "zusammen,",
+                "um",
+                "unsere",
+                "Projekte",
+                "voranzutreiben."
+              ]
+            },
+            {
+              "target": "Mein Engagement und meine Fähigkeiten könnten für unser Team von Vorteil sein.",
+              "source": "My engagement and abilities could be beneficial for our team.",
+              "words": [
+                "Mein",
+                "Engagement",
+                "und",
+                "meine",
+                "Fähigkeiten",
+                "könnten",
+                "für",
+                "unser",
+                "Team",
+                "von",
+                "Vorteil",
+                "sein."
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -11086,7 +11334,7 @@
         ]
       },
       "generatedAt": "2026-06-01T20:29:21.486Z",
-      "updatedAt": "2026-06-07T07:36:46.292Z",
+      "updatedAt": "2026-06-10T07:46:19.014Z",
       "id": "tp_520854021",
       "aiStory": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwickelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\""
     },

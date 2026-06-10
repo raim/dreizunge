@@ -487,9 +487,9 @@ async function loadSavedList() {
         +'<div style="display:flex;align-items:center">'
         +'<button class="storyline-story-hdr" style="flex:1" data-cid="'+chainId+'" onclick="event.stopPropagation();toggleSlSummary(this.dataset.cid)">'
         +'📖 '+t('lesson.read_summary')+'<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
-        +'<button class="storyline-hdr-btn" data-speak="slsc-summary-body-'+chainId+'" onclick="event.stopPropagation();speakBodyText(this.dataset.speak,APP.srcLang)" title="'+t('lesson.read_aloud')+'">🔊</button>'
+        +'<button class="storyline-hdr-btn" data-speak="slsc-summary-body-'+chainId+'" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="'+t('lesson.read_aloud')+'">🔊</button>'
         +'</div>'
-        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" style="display:none">'
+        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byTopic[chain[0]]?.srcLang||'')+'">'
         +'<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">'+_slSum2.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>'
         +'</div></div>';
     }
