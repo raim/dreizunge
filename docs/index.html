@@ -45083,7 +45083,7 @@ function _speakAndAdvance(text) {
   const safety = setTimeout(advance, 4000);
   u.onend = () => { clearTimeout(safety); setTimeout(advance, 120); };
   speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+  setTimeout(() => speechSynthesis.speak(u), 50);
 }
 
 function _ttsChunks(text) {
@@ -45138,17 +45138,25 @@ function _speakChunks(chunks, langCode, rate, idx) {
 function _doSpeak(text,rate){
   if(APP.muted) return;
   const chunks = _ttsChunks(text);
+  const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
   speechSynthesis.cancel();
-  // Firefox loses user-gesture context after setTimeout — speak directly
-  // Chrome handles both, so always call directly after cancel()
-  _speakChunks(chunks, null, rate, 0);
+  if (wasSpeaking) {
+    setTimeout(() => _speakChunks(chunks, null, rate, 0), 50);
+  } else {
+    _speakChunks(chunks, null, rate, 0);
+  }
 }
 
 function _doSpeakLang(text, langCode) {
   if (APP.muted) return;
   const chunks = _ttsChunks(text);
+  const wasSpeaking = speechSynthesis.speaking || speechSynthesis.pending;
   speechSynthesis.cancel();
-  _speakChunks(chunks, langCode, 0.9, 0);
+  if (wasSpeaking) {
+    setTimeout(() => _speakChunks(chunks, langCode, 0.9, 0), 50);
+  } else {
+    _speakChunks(chunks, langCode, 0.9, 0);
+  }
 }
 
 function _speakChunksThen(chunks, langCode, rate, idx, cb) {
