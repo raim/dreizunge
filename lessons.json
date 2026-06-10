@@ -2,6 +2,21 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_2143006409",
+      "title": "Missteps in Magic",
+      "icon": "📖",
+      "chapters": [
+        "tp_2072510715",
+        "tp_40356053",
+        "tp_1707431729"
+      ],
+      "lang": "ja",
+      "srcLang": "en",
+      "createdAt": "2026-06-10T13:38:52.441Z",
+      "updatedAt": "2026-06-10T14:47:39.448Z",
+      "summary": "In the first chapter, a clumsy Japanese teacher mispronounces and misunderstands the word \"symbol\" as \"elephant\" during a lesson on cherry blossoms, leading to a humorous misunderstanding. In the second chapter, after the class exits, an earthquake-like tremor occurs, and the teacher speculates it might be an ogre leaving, adding an eerie tone to the story. In the third chapter, the teacher uses the day's events to teach the class about the importance of furigana (ruby characters) in reading, emphasizing the value of proper pronunciation and understanding."
+    },
+    {
       "id": "sl_1874568066",
       "title": "Spargel Gratin Tales",
       "icon": "🧈",
@@ -314,15 +329,16 @@
     },
     {
       "id": "sl_1907583939",
-      "title": "Japanese Culture & Language",
-      "icon": "📖",
+      "title": "Japanese Classroom",
+      "icon": "📚",
       "lang": "ja",
       "srcLang": "en",
       "chapters": [
-        "tp_1170384749"
+        "tp_1170384749",
+        "tp_880320178"
       ],
       "createdAt": "2026-05-23T17:43:24.611Z",
-      "updatedAt": "2026-05-23T17:43:24.611Z"
+      "updatedAt": "2026-06-10T12:47:05.872Z"
     },
     {
       "id": "sl_1691530592",
@@ -530,33 +546,6 @@
       "updatedAt": "2026-05-07T08:25:40.826Z"
     },
     {
-      "id": "sl_197869525",
-      "title": "Tsuruoka Tales",
-      "icon": "🍜❄️🚗",
-      "lang": "ja",
-      "srcLang": null,
-      "chapters": [
-        "tp_1133274519",
-        "tp_1241910715",
-        "tp_63936085",
-        "tp_913878596"
-      ],
-      "createdAt": "2026-05-05T17:34:02.146Z",
-      "updatedAt": "2026-05-07T07:41:48.767Z"
-    },
-    {
-      "id": "sl_912628723",
-      "title": "Driving License Conversion",
-      "icon": "📖",
-      "lang": "ja",
-      "srcLang": null,
-      "chapters": [
-        "tp_1481435314"
-      ],
-      "createdAt": "2026-05-06T16:43:38.249Z",
-      "updatedAt": "2026-05-06T16:43:38.249Z"
-    },
-    {
       "id": "sl_1592911380",
       "title": "History of Luxembourg",
       "icon": "📖",
@@ -713,6 +702,576 @@
     }
   ],
   "topics": [
+    {
+      "topic": "Furigana Fumble",
+      "topicEmoji": "📖",
+      "userTopic": "once things have settled, the teacher pointed out that the earlier mistake about seishō/symbol would not have happened, i fthe kanji had furigana annotation.",
+      "lang": "ja",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 350,
+      "story": "授業が再開され、教室は再び活気を取り戻した。先生は落ち着いた表情で、生徒たちに向き合った。「皆さん、今朝の出来事は、何か特別なことを教えてくれたと思いますか？」と尋ねた。生徒たちは首を傾げ、少し困惑した表情を浮かべた。\n\n「実は、この出来事は、私たちの学習にも重要な教訓を残してくれました。」先生は笑いながら続けた。「皆さん、今朝、教室が暗くなったとき、誰が最初に叫んだと思いますか？」と尋ねた。生徒たちが思い思いの答えを出すと、先生は笑って続けた。「正解は、『せしょーだ！』でしたね。」生徒たちが笑い声を漏らすと、先生は続けた。「でも、正解は『せんじょうだ』でしたね。」教室は静まり返り、生徒たちの顔には困惑が浮かんだ。\n\n「でも、せしょーって、せんじょうの略じゃないですか？」一人の生徒が疑問を投げかけた。先生は笑いながら答えた。「その通りです。でも、もしせんじょうにふりがながついていれば、このミスは起こらなかったはずです。」生徒たちが驚いた顔を見せる中、先生は続けた。「これからは、みんなの学習にも役立つように、せんじょうにふりがなをつけましょう。」教室は再び笑い声に包まれ、先生の言葉は生徒たちの心に深く刻まれた。",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 3-4 paragraphs, under 350 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate EVERY kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Annotate all kanji without exception — the learner cannot read any kanji yet. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n授業が終わり、教室を出ていくと、突然電気が消えた。全員が驚きの声を上げた。教室は一時的に闇に包まれ、生徒たちの声だけが静かな廊下に響き渡る。先生は慌てて教室に戻り、明かりを点けようと試みたが、何も起こらなかった。その時、地面が揺れた。小さな振動が教室全体を揺らし、机が軋んだ音が聞こえた。\n\n「地震だ！」一人の生徒が叫んだ。しかし、揺れはすぐに止まり、教室は再び静寂に包まれた。先生は教室の隅に立って、揺れが止まったことを確認した。しかし、その揺れはまるで何かが去った後のような、不気味な静けさを残した。\n\n「でも、これは地震じゃない。」先生は一人残された生徒たちに言った。「これは何かが去った後だ。」先生は教室の隅を見つめ、鏡の前に立った。鏡の中の自分に、先生は「何が起こったのか、教えてくれ」と呟いた。鏡の自分は微笑んで応えた。「 Ogre は去った。」先生は驚きと恐れで震えたが、その言葉はまるで「オオカミは来なかった」というような、不気味な予言のようだった。\n\nNew topic: \"once things have settled, the teacher pointed out that the earlier mistake about seishō/symbol would not have happened, i fthe kanji had furigana annotation.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Lights Out, Earthquake or Ogre?",
+      "storyStyle": "funny",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "kanji with furigana",
+          "desc": "kanji with furigana, beginner vocabulary",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "静寂[せいじゃく]",
+              "source": "stillness, silence"
+            },
+            {
+              "target": "象徴[しょうちょう]",
+              "source": "symbol, emblem"
+            },
+            {
+              "target": "日本の美の象徴[日本の美のしょうちょう]",
+              "source": "symbol of Japan's beauty"
+            },
+            {
+              "target": "象[ぞう]",
+              "source": "elephant"
+            },
+            {
+              "target": "長[ちょう]",
+              "source": "length, long"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "教室は静寂を取り戻した。",
+              "source": "The classroom regained its stillness.",
+              "words": [
+                "教室",
+                "は",
+                "静寂",
+                "を",
+                "取",
+                "り",
+                "戻",
+                "した"
+              ]
+            },
+            {
+              "target": "象は長さの象徴だ。",
+              "source": "The elephant is a symbol of length.",
+              "words": [
+                "象",
+                "は",
+                "長",
+                "さの",
+                "象徴",
+                "だ"
+              ]
+            },
+            {
+              "target": "日本の国花は桜だ。",
+              "source": "The national flower of Japan is cherry blossoms.",
+              "words": [
+                "日本",
+                "の",
+                "国花",
+                "は",
+                "桜",
+                "だ"
+              ]
+            },
+            {
+              "target": "予言は静寂に包まれた。",
+              "source": "The prophecy was shrouded in silence.",
+              "words": [
+                "予言",
+                "は",
+                "静寂",
+                "に",
+                "包",
+                "まれた"
+              ]
+            },
+            {
+              "target": "驚きは教室を揺れた。",
+              "source": "Surprise shook the classroom.",
+              "words": [
+                "驚",
+                "きは",
+                "教室",
+                "を",
+                "揺",
+                "れた"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 603188,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1864,
+        "totalCompletionTokens": 648,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 329104,
+            "promptTokens": 1105,
+            "completionTokens": 267
+          }
+        ]
+      },
+      "generatedAt": "2026-06-10T14:31:22.387Z",
+      "updatedAt": "2026-06-10T14:36:51.548Z",
+      "id": "tp_1707431729"
+    },
+    {
+      "topic": "Misguided Teacher",
+      "topicEmoji": "📖🌸",
+      "userTopic": "my english teacher doesn't speak japanese very well, even t\nhough he has been living here for a long time; please explain our japanese culture and language to him.",
+      "lang": "ja",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 450,
+      "story": "英語の先生は日本語が下手で、ここに長く住んでいるにもかかわらず、私たちの文化や言葉の奥深さを説明する必要がある。その日、授業が始まった。先生はいつも通り、笑顔で教室に入ってきた。しかし、今日は少し違った。先生の口から出るのは、まるで外国語の歌のような日本語。\n\n「今日は、日本の季節について話しましょう。春は桜の季節です。」先生はそう言って、桜の絵を指さした。「桜は日本の国花です。」先生は自信満々に言ったが、その口調はまるで「ポテトチップスはアメリカの国花です」と言っているようだった。\n\n生徒たちが笑い声を漏らすと、先生は少し困った表情をした。「でも、桜は本当に美しいんです。」先生は手を振って、再チャレンジした。「桜は日本の美の象徴です。」先生は「象徴」を強調して言ったが、その言葉はまるで「象徴」が「しょうちょう」の意味だと誤解させているかのようだった。\n\nその時、クラスの隅で一人の生徒が手を挙げた。「先生、『象徴』は『しょうちょう』じゃないんですか？」生徒は笑いながら言った。「『しょうちょう』は『象』の『しょう』と『長』の『ちょう』です。」\n\n全員が大笑いし、先生は赤ら顔で謝罪した。「すみません、すみません。」先生は再び桜の絵を指さし、「桜は日本の美の『しょうちょう』です。」と再び言った。その言葉に、教室はまたしても笑いに包まれた。\n\n授業が終わり、生徒たちは教室を出ていくと、先生は一人残って、鏡を見つめていた。鏡の中の自分に、先生は「もっと練習しなければ」と呟いた。そして、鏡の自分に微笑んで、「でも、あなたも美の象徴だよ」と言葉を投げかけた。",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 4-5 paragraphs, under 450 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate every kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Apply to every kanji in the story without exception. Writing style: Comedic tone, wordplay, absurdist situations, punchlines.\n\nWrite a story for the topic: \"my english teacher doesn't speak japanese very well, even t\nhough he has been living here for a long time; please explain our japanese culture and language to him.\". Plain prose, no headings.",
+      "storyStyle": "funny",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "My English teacher's Japanese",
+          "desc": "Japanese culture, language, and funny misunderstanding",
+          "icon": "😂",
+          "vocab": [
+            {
+              "target": "日本の季節",
+              "source": "Japanese seasons"
+            },
+            {
+              "target": "桜の季節",
+              "source": "cherry blossom season"
+            },
+            {
+              "target": "日本の国花",
+              "source": "national flower of Japan"
+            },
+            {
+              "target": "日本の美の象徴",
+              "source": "symbol of Japanese beauty"
+            },
+            {
+              "target": "象徴",
+              "source": "symbol"
+            },
+            {
+              "target": "象",
+              "source": "elephant"
+            },
+            {
+              "target": "長",
+              "source": "long"
+            },
+            {
+              "target": "しょうちょう",
+              "source": "symbol [shōchō]"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "春は桜の季節です。",
+              "source": "Spring is the season of cherry blossoms.",
+              "words": [
+                "春",
+                "は",
+                "桜",
+                "の",
+                "季節",
+                "です"
+              ]
+            },
+            {
+              "target": "桜は日本の国花です。",
+              "source": "Cherry blossoms are Japan's national flower.",
+              "words": [
+                "桜",
+                "は",
+                "日本",
+                "の",
+                "国花",
+                "です"
+              ]
+            },
+            {
+              "target": "桜は日本の美の象徴です。",
+              "source": "Cherry blossoms are a symbol of Japanese beauty.",
+              "words": [
+                "桜",
+                "は",
+                "日本",
+                "の",
+                "美",
+                "の",
+                "象徴",
+                "です"
+              ]
+            },
+            {
+              "target": "『象徴』は『しょうちょう』じゃないんですか？",
+              "source": "Isn't 'symbol' 'しょうちょう'?",
+              "words": [
+                "象徴",
+                "は",
+                "しょうちょう",
+                "じゃないんですか？"
+              ]
+            },
+            {
+              "target": "桜は日本の美の『しょうちょう』です。",
+              "source": "Cherry blossoms are the symbol of Japanese beauty.",
+              "words": [
+                "桜",
+                "は",
+                "日本",
+                "の",
+                "美",
+                "の",
+                "しょうちょう",
+                "です"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 581379,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1405,
+        "totalCompletionTokens": 801,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 348849,
+            "promptTokens": 1041,
+            "completionTokens": 304
+          }
+        ]
+      },
+      "generatedAt": "2026-06-10T13:33:03.492Z",
+      "updatedAt": "2026-06-10T13:38:52.409Z",
+      "id": "tp_2072510715"
+    },
+    {
+      "topic": "Lights Out, Earthquake or Ogre?",
+      "topicEmoji": "👹",
+      "userTopic": "during our lessons, the lights went out and the earth was shaking. was it an earth quake or an ogre sitting on the roof?",
+      "lang": "ja",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 300,
+      "story": "授業が終わり、教室を出ていくと、突然電気が消えた。全員が驚きの声を上げた。教室は一時的に闇に包まれ、生徒たちの声だけが静かな廊下に響き渡る。先生は慌てて教室に戻り、明かりを点けようと試みたが、何も起こらなかった。その時、地面が揺れた。小さな振動が教室全体を揺らし、机が軋んだ音が聞こえた。\n\n「地震だ！」一人の生徒が叫んだ。しかし、揺れはすぐに止まり、教室は再び静寂に包まれた。先生は教室の隅に立って、揺れが止まったことを確認した。しかし、その揺れはまるで何かが去った後のような、不気味な静けさを残した。\n\n「でも、これは地震じゃない。」先生は一人残された生徒たちに言った。「これは何かが去った後だ。」先生は教室の隅を見つめ、鏡の前に立った。鏡の中の自分に、先生は「何が起こったのか、教えてくれ」と呟いた。鏡の自分は微笑んで応えた。「 Ogre は去った。」先生は驚きと恐れで震えたが、その言葉はまるで「オオカミは来なかった」というような、不気味な予言のようだった。",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate EVERY kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Annotate all kanji without exception — the learner cannot read any kanji yet. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation. Writing style: Suspenseful, eerie atmosphere, foreboding. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n英語の先生は日本語が下手で、ここに長く住んでいるにもかかわらず、私たちの文化や言葉の奥深さを説明する必要がある。その日、授業が始まった。先生はいつも通り、笑顔で教室に入ってきた。しかし、今日は少し違った。先生の口から出るのは、まるで外国語の歌のような日本語。\n\n「今日は、日本の季節について話しましょう。春は桜の季節です。」先生はそう言って、桜の絵を指さした。「桜は日本の国花です。」先生は自信満々に言ったが、その口調はまるで「ポテトチップスはアメリカの国花です」と言っているようだった。\n\n生徒たちが笑い声を漏らすと、先生は少し困った表情をした。「でも、桜は本当に美しいんです。」先生は手を振って、再チャレンジした。「桜は日本の美の象徴です。」先生は「象徴」を強調して言ったが、その言葉はまるで「象徴」が「しょうちょう」の意味だと誤解させているかのようだった。\n\nその時、クラスの隅で一人の生徒が手を挙げた。「先生、『象徴』は『しょうちょう』じゃないんですか？」生徒は笑いながら言った。「『しょうちょう』は『象』の『しょう』と『長』の『ちょう』です。」\n\n全員が大笑いし、先生は赤ら顔で謝罪した。「すみません、すみません。」先生は再び桜の絵を指さし、「桜は日本の美の『しょうちょう』です。」と再び言った。その言葉に、教室はまたしても笑いに包まれた。\n\n授業が終わり、生徒たちは教室を出ていくと、先生は一人残って、鏡を見つめていた。鏡の中の自分に、先生は「もっと練習しなければ」と呟いた。そして、鏡の自分に微笑んで、「でも、あなたも美の象徴だよ」と言葉を投げかけた。\n\nNew topic: \"during our lessons, the lights went out and the earth was shaking. was it an earth quake or an ogre sitting on the roof?\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Misguided Teacher",
+      "storyStyle": "horror",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Strange Occurrences in Our Lessons",
+          "desc": "Lights out, earthquake, and an ogre on the roof",
+          "icon": "👻",
+          "vocab": [
+            {
+              "target": "教室[きしつ]",
+              "source": "classroom"
+            },
+            {
+              "target": "揺れる[ゆれる]",
+              "source": "shake"
+            },
+            {
+              "target": "静寂[せいじゃく]",
+              "source": "silence"
+            },
+            {
+              "target": "予言[よげん]",
+              "source": "prophecy"
+            },
+            {
+              "target": "驚き[おどろき]",
+              "source": "surprise"
+            },
+            {
+              "target": "恐れ[おそれ]",
+              "source": "fear"
+            },
+            {
+              "target": "去る[さる]",
+              "source": "leave"
+            },
+            {
+              "target": "象徴[しょうちょう]",
+              "source": "symbol"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "教室の電気が消えた。",
+              "source": "The classroom lights went out.",
+              "words": [
+                "教室",
+                "の",
+                "電気",
+                "が",
+                "消",
+                "えた"
+              ]
+            },
+            {
+              "target": "地面が揺れた。",
+              "source": "The ground shook.",
+              "words": [
+                "地面",
+                "が",
+                "揺",
+                "れた"
+              ]
+            },
+            {
+              "target": "授業が終わり、教室を出ていくと、突然電気が消えた。",
+              "source": "After class, as we were leaving the classroom, the lights suddenly went out.",
+              "words": [
+                "授業",
+                "が",
+                "終",
+                "わり",
+                "教室",
+                "を",
+                "出",
+                "ていくと",
+                "突然電気",
+                "が",
+                "消",
+                "えた"
+              ]
+            },
+            {
+              "target": "先生は教室の隅に立って、揺れが止まったことを確認した。",
+              "source": "The teacher stood in the corner of the classroom, confirming that the shaking had stopped.",
+              "words": [
+                "先生",
+                "は",
+                "教室",
+                "の",
+                "隅",
+                "に",
+                "立",
+                "って",
+                "揺",
+                "れが",
+                "止",
+                "まったことを",
+                "確認",
+                "した"
+              ]
+            },
+            {
+              "target": "鏡の自分に、先生は「何が起こったのか、教えてくれ」と呟いた。",
+              "source": "To his own reflection in the mirror, the teacher whispered, 'Tell me what happened.'",
+              "words": [
+                "鏡の",
+                "自分に",
+                "先生は",
+                "何が",
+                "起こったのか",
+                "教えてくれ",
+                "と呟",
+                "いた"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 672634,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1913,
+        "totalCompletionTokens": 688,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 349589,
+            "promptTokens": 1003,
+            "completionTokens": 353
+          }
+        ]
+      },
+      "generatedAt": "2026-06-10T14:11:57.442Z",
+      "updatedAt": "2026-06-10T14:17:47.103Z",
+      "id": "tp_40356053"
+    },
+    {
+      "topic": "Lights Out, Earth Shaking",
+      "topicEmoji": "💡 earthquaking",
+      "userTopic": "during our lessons, the lights went out and the earth was shaking. was it an earth quake or an ogre sitting on the roof?",
+      "lang": "ja",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 300,
+      "story": "授業中、突然電灯が消え、教室は闇に包まれた。同時に、床が揺れ始め、机が音を立てて揺れる。アンドリュー先生と私たちは、恐れおののきながらも互いの顔を見合わせた。揺れが止むと、先生が「これは地震ですか、それとも…」と不安げに口にした。その瞬間、窓の外に大きな影が見えた。それは人間の形をしたが、異様な大きさと色で、まるで妖怪のようだった。先生は震え声で「お…お化けか…」と言った。その時、影は屋根に這いつくばり、教室全体が震えるのを感じた。私たちは互いに抱き合って、その場に固まってしまった。地震か、それとも何か異常な存在が近づいているのか、その正体は明らかにならなかったが、教室は静寂と恐怖で満ちていた。[授業じゅぎょう中ちゅう、たつひがきえ、でんとうがけしあがり、にやんはやみにかこまれた。つれて、ふとおとがき、つくづくがおもいだ。アンドリューせんせいとわたしは、きょうだいのあたまをみあわせて、おののいた。ふとれが止むと、せんせいが「これこれじしんですか、それとも…」とふるえ声で言った。そのとき、窓のそとになおさらなかげが見えた。それはひとのかたちをしたが、いぞうな大きさといろで、まるでようかいのようだった。せんせいは震え声で「お…おお化けか…」と言った。そのとき、かげはやねに這いつくばり、きょうしつぜんたいがふるえた。わたしたちは互いにほだき合って、そのばじにこまってしまった。じしんか、それとも何かいきょうなあいぞうがちかづいているのか、そのせいたいははっきりしなかったが、きょうしつはじょうちんときょうふで満ちていた。]",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 3-4 paragraphs, under 300 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate every kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Only annotate kanji (CJK characters) — do NOT annotate hiragana, katakana, or punctuation. Writing style: Suspenseful, eerie atmosphere, foreboding. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n私たちは日本の公立高校に通う生徒たちで、英語教師のアンドリューさんから教わっています。アンドリューさんはスコットランド出身で、とても優しくて知識豊富な先生です。しかし、彼は日本語をあまり得意でないため、日本の文化や言語について詳しく説明するのが難しいのです。\n\nある日、授業の後で彼と話していると、彼は日本の言葉の特徴について質問をしました。「なぜ日本語は長い言葉を短い言葉で表現できるのですか？」と尋ねられ、私はその質問に答えようと努力しました。私は、日本語は文法的に簡潔で、文節を組み合わせて長い意味を表現できるため、長い言葉を短くまとめられるという特徴があることを説明しました。また、日本語の敬語システムについても詳しく説明し、その重要性と使い方をアンドリューさんに伝えることに努めました。彼は興味深そうに聞いてくれ、日本の文化や言語についてもっと知りたいと話していました。\n\nNew topic: \"during our lessons, the lights went out and the earth was shaking. was it an earth quake or an ogre sitting on the roof?\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Japanese Culture & Language",
+      "storyStyle": "horror",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Strange Occurrences",
+          "desc": "earthquake or ogre, darkness and tremors",
+          "icon": "👻",
+          "vocab": [
+            {
+              "target": "授業中[じゅぎょうちゅう]",
+              "source": "during class"
+            },
+            {
+              "target": "揺れ[ゆれ]",
+              "source": "shaking"
+            },
+            {
+              "target": "妖怪[ようかい]",
+              "source": "monster"
+            },
+            {
+              "target": "屋根[やね]",
+              "source": "roof"
+            },
+            {
+              "target": "固まってしまう[かたまってしまう]",
+              "source": "freeze in place"
+            },
+            {
+              "target": "静寂[せいじゃく]",
+              "source": "silence"
+            },
+            {
+              "target": "重要性[じゅうようせい]",
+              "source": "importance"
+            },
+            {
+              "target": "言葉[ことば]",
+              "source": "word(s)"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "授業中[じゅぎょうちゅう]、突然電灯が消え、教室は闇に包まれた。",
+              "source": "During class, suddenly the lights went out and the classroom was enveloped in darkness.",
+              "words": [
+                "授業中[じゅぎょうちゅう]",
+                "突然電灯",
+                "が",
+                "消",
+                "え",
+                "教室",
+                "は",
+                "闇",
+                "に",
+                "包",
+                "まれた"
+              ]
+            },
+            {
+              "target": "床が揺れ始め、机が音を立てて揺れる。",
+              "source": "The floor started to shake, and the desks were rattling.",
+              "words": [
+                "床",
+                "が",
+                "揺",
+                "れ",
+                "始",
+                "め",
+                "机",
+                "が",
+                "音",
+                "を",
+                "立",
+                "てて",
+                "揺",
+                "れる"
+              ]
+            },
+            {
+              "target": "これは地震ですか、それとも…",
+              "source": "Is this an earthquake, or...",
+              "words": [
+                "これは",
+                "地震",
+                "ですか",
+                "それとも"
+              ]
+            },
+            {
+              "target": "窓の外に大きな影が見えた。それは人間の形をしたが、異様な大きさと色で、まるで妖怪のようだった。",
+              "source": "A large shadow was seen outside the window. It was in the shape of a human, but with an unusual size and color, like a monster.",
+              "words": [
+                "窓の",
+                "外に",
+                "大きな",
+                "影が",
+                "見えた",
+                "それは人間",
+                "の形",
+                "をしたが異様",
+                "な大",
+                "きさと色",
+                "でまるで",
+                "妖怪のようだった"
+              ]
+            },
+            {
+              "target": "教室全体が震えるのを感じた。",
+              "source": "We felt the entire classroom shaking.",
+              "words": [
+                "教室全体",
+                "が",
+                "震",
+                "えるのを",
+                "感",
+                "じた"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 803904,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 2090,
+        "totalCompletionTokens": 937,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 477447,
+            "promptTokens": 1430,
+            "completionTokens": 400
+          }
+        ]
+      },
+      "generatedAt": "2026-06-10T13:53:31.453Z",
+      "updatedAt": "2026-06-10T14:01:28.970Z",
+      "id": "tp_880320178"
+    },
     {
       "topic": "Pi flüstert i zu",
       "topicEmoji": "📚",
@@ -27353,1365 +27912,6 @@
       "srcLang": "en"
     },
     {
-      "topic": "Communication Issues",
-      "topicEmoji": "💬",
-      "userTopic": "douglas has problems communicating with the administrator",
-      "lang": "ja",
-      "difficulty": 1,
-      "storyLen": 750,
-      "story": "秋田県の小さな町。ドouglasは新しい生活に慣れるために、町の行政事務所に足を運んだ。彼は新しい免許証を手に入れたばかりで、これからは日本語でより多くのことを通じてコミュニケーションを取らなければならないと感じていた。\n\n「こんにちは、ドouglasさん。何かお手伝いできることがありますか？」と、事務所の受付の女性が微笑んで言った。\n\n「はい、ちょっと質問があります。」ドouglasは慎重に言葉を選んだ。「私の住所変更手続きをしたいんですが、どうすればいいですか？」\n\n受付の女性は少し困った表情になり、「ドouglasさん、ちょっと待ってください。住所変更はちょっと複雑な手続きです。」と説明した。「まず、こちらの書類が必要です。」\n\nドouglasは手探りで書類を探し、必要なものを提出した。しかし、彼は手続きの流れを理解するのが難しかった。「すみません、もう少し詳しく説明していただけますか？」と彼は頼み込んだ。\n\n「もちろんです。」受付の女性は丁寧に説明を始めた。「まず、こちらの申請書を完成させなければなりません。その後、新しい住所の証明書が必要です。」\n\nドouglasは頭を抱えた。「でも、私はまだ新しい住所の証明書を持っていません。」彼は困った表情を浮かべた。\n\n「それは大丈夫です。」受付の女性は優しく言った。「私たちはここに住所変更の手続きを済ませてから、必要な書類を取得する手助けをします。」\n\nドouglasは安堵の表情を見せ、「ありがとうございます。」と答えた。彼は受付の女性の助けを受けて、手続きを進めていった。その過程で、彼は日本語のコミュニケーション能力を磨き、新たな生活に適応していく道筋を見つけていった。",
-      "storyLang": "ja",
-      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 7-8 paragraphs, under 750 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate every kanji with furigana using HTML ruby tags, e.g. <ruby>日本語<rt>にほんご</rt></ruby>. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n東京の喧騒から離れた秋田県の小さな町。ドouglasは津軽半島の寒さに身を包み、新しい挑戦に備えていた。彼は手を繋いだ友人に微笑み、「今日は免許証を交換に来ることにしたんだ。」と告げた。\n\n「うん、ドouglas、頑張ってね。」友人は応援の言葉を返した。二人は手を繋ぎ、慎重に歩いた。町は静かで、雪が積もった道は滑りやすく、足元には気をつける必要があった。\n\n「今日は日本語で話そうよ。」ドouglasが言葉を発した。「免許証の手続きは難しいかもしれないから、日本語を勉強しておいた方がいいかもしれないな。」\n\n二人は町の中心部へ向かい、運転免許センターに到着した。建物は古びた外観を持ちながらも、中は整然と整理されており、受付の女性が元気な声で声をかけた。「こんにちは、免許証の手続きですか？ こちらへどうぞ。」\n\nドouglasは慎重に手続きを進めていった。書類の確認、写真の撮影、そして最後に実技試験。彼は緊張しながらも、友人の励ましを思い出し、試験に挑んだ。\n\n「本当に大変だったな。」試験が終わってから、友人が言った。「でも、ドouglas、君は頑張ったよ。」\n\n二人は満足した表情で、新しい日本語の免許証を受け取った。その証は、彼らの友情と挑戦の証明だった。雪の音が静かな夜を彩り、二人は満足した表情で町を歩き出した。\n\nNew topic: \"douglas has problems communicating with the administrator\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "License Conversion",
-      "lessons": [
-        {
-          "id": "ls_1959854077",
-          "title": "手続きの会話",
-          "desc": "新しい住所手続きとコミュニケーション",
-          "icon": "✍️",
-          "vocab": [
-            {
-              "target": "手続き",
-              "source": "procedure",
-              "pron": "けんちく"
-            },
-            {
-              "target": "申請書",
-              "source": "application form",
-              "pron": "しんせいしょ"
-            },
-            {
-              "target": "証明書",
-              "source": "certificate",
-              "pron": "しょうめいしょ"
-            },
-            {
-              "target": "住所",
-              "source": "address",
-              "pron": "じゅうしょ"
-            },
-            {
-              "target": "困る",
-              "source": "to be troubled",
-              "pron": "こまる"
-            },
-            {
-              "target": "説明",
-              "source": "explanation",
-              "pron": "せつめい"
-            },
-            {
-              "target": "丁寧",
-              "source": "polite",
-              "pron": "ていねい"
-            },
-            {
-              "target": "手助け",
-              "source": "help",
-              "pron": "てすけ"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "手続き[けんちく]をしたいです。",
-              "source": "I want to do the procedure.",
-              "words": [
-                "手続",
-                "きけ",
-                "んち",
-                "くを",
-                "した",
-                "いで",
-                "す。"
-              ]
-            },
-            {
-              "target": "申請書[しんせいしょ]を完成させます。",
-              "source": "I will complete the application form.",
-              "words": [
-                "申請",
-                "書し",
-                "んせ",
-                "いし",
-                "ょを",
-                "完成",
-                "させ",
-                "ます",
-                "。"
-              ]
-            },
-            {
-              "target": "証明書[しょうめいしょ]を手に入れます。",
-              "source": "I will get the certificate.",
-              "words": [
-                "証明",
-                "書し",
-                "ょう",
-                "めい",
-                "しょ",
-                "を手",
-                "に入",
-                "れま",
-                "す。"
-              ]
-            },
-            {
-              "target": "困る[こまる]ことがあります。",
-              "source": "I am troubled by something.",
-              "words": [
-                "困る",
-                "こま",
-                "るこ",
-                "とが",
-                "あり",
-                "ます",
-                "。"
-              ]
-            },
-            {
-              "target": "説明[せつめい]を丁寧[ていねい]に聞きます。",
-              "source": "I listen to the explanation politely.",
-              "words": [
-                "説明",
-                "せつ",
-                "めい",
-                "を丁",
-                "寧て",
-                "いね",
-                "いに",
-                "聞き",
-                "ます",
-                "。"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_1959854078",
-          "title": "手続きの質問",
-          "desc": "ドouglasが手続きについて質問する",
-          "icon": "✍️",
-          "vocab": [
-            {
-              "target": "手続き[しゅけい]",
-              "source": "procedure",
-              "pron": "しゅけい"
-            },
-            {
-              "target": "説明[せつめい]",
-              "source": "explanation",
-              "pron": "せつめい"
-            },
-            {
-              "target": "丁寧[ていねい]",
-              "source": "polite",
-              "pron": "ていねい"
-            },
-            {
-              "target": "手助け[てすけ]",
-              "source": "help",
-              "pron": "てすけ"
-            },
-            {
-              "target": "困る[こまる]",
-              "source": "to be troubled",
-              "pron": "こまる"
-            },
-            {
-              "target": "証明書[しょうめいしょ]",
-              "source": "certificate",
-              "pron": "しょうめいしょ"
-            },
-            {
-              "target": "申請書[しんせいしょ]",
-              "source": "application form",
-              "pron": "しんせいしょ"
-            },
-            {
-              "target": "住所[じゅうしょ]",
-              "source": "address",
-              "pron": "じゅうしょ"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "手続き[しゅけい]をしたいんですが、どうすればいいですか？",
-              "source": "May I ask how to proceed?",
-              "words": [
-                "手続",
-                "きし",
-                "ゅけ",
-                "いを",
-                "した",
-                "いん",
-                "です",
-                "が、",
-                "どう",
-                "すれ",
-                "ばい",
-                "いで",
-                "すか",
-                "？"
-              ]
-            },
-            {
-              "target": "説明[せつめい]していただけますか？",
-              "source": "Could you explain?",
-              "words": [
-                "説明",
-                "せつ",
-                "めい",
-                "して",
-                "いた",
-                "だけ",
-                "ます",
-                "か？"
-              ]
-            },
-            {
-              "target": "丁寧[ていねい]に説明[せつめい]していただけますか？",
-              "source": "Could you explain politely?",
-              "words": [
-                "丁寧",
-                "てい",
-                "ねい",
-                "に説",
-                "明せ",
-                "つめ",
-                "いし",
-                "てい",
-                "ただ",
-                "けま",
-                "すか",
-                "？"
-              ]
-            },
-            {
-              "target": "困る[こまる]ので、もう少し詳しく説明[せつめい]していただけますか？",
-              "source": "I'm troubled, so could you explain more detailedly?",
-              "words": [
-                "困る",
-                "こま",
-                "るの",
-                "で、",
-                "もう",
-                "少し",
-                "詳し",
-                "く説",
-                "明せ",
-                "つめ",
-                "いし",
-                "てい",
-                "ただ",
-                "けま",
-                "すか",
-                "？"
-              ]
-            },
-            {
-              "target": "手助け[てすけ]していただけますか？",
-              "source": "Could you give me a hand?",
-              "words": [
-                "手助",
-                "けて",
-                "すけ",
-                "して",
-                "いた",
-                "だけ",
-                "ます",
-                "か？"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_1959854079",
-          "title": "手続きの問題",
-          "desc": "ドouglasが手続きで困る",
-          "icon": "✍️",
-          "vocab": [
-            {
-              "target": "手続き",
-              "source": "procedure",
-              "pron": "しゅけい"
-            },
-            {
-              "target": "説明",
-              "source": "explanation",
-              "pron": "せつめい"
-            },
-            {
-              "target": "丁寧",
-              "source": "polite",
-              "pron": "ていねい"
-            },
-            {
-              "target": "手助け",
-              "source": "help",
-              "pron": "てすけ"
-            },
-            {
-              "target": "困る",
-              "source": "to be troubled",
-              "pron": "こまる"
-            },
-            {
-              "target": "証明書",
-              "source": "certificate",
-              "pron": "しょうめいしょ"
-            },
-            {
-              "target": "申請書",
-              "source": "application form",
-              "pron": "しんせいしょ"
-            },
-            {
-              "target": "住所",
-              "source": "address",
-              "pron": "じゅうしょ"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "手続き[しゅけい]が難しいです。",
-              "source": "It's difficult to do the procedure.",
-              "words": [
-                "手続",
-                "きし",
-                "ゅけ",
-                "いが",
-                "難し",
-                "いで",
-                "す。"
-              ]
-            },
-            {
-              "target": "説明[せつめい]を丁寧[ていねい]に聞きました。",
-              "source": "I listened to the explanation politely.",
-              "words": [
-                "説明",
-                "せつ",
-                "めい",
-                "を丁",
-                "寧て",
-                "いね",
-                "いに",
-                "聞き",
-                "まし",
-                "た。"
-              ]
-            },
-            {
-              "target": "手助け[てすけ]を頼みました。",
-              "source": "I asked for help.",
-              "words": [
-                "手助",
-                "けて",
-                "すけ",
-                "を頼",
-                "みま",
-                "した",
-                "。"
-              ]
-            },
-            {
-              "target": "困る[こまる]ことがあります。",
-              "source": "I'm having trouble.",
-              "words": [
-                "困る",
-                "こま",
-                "るこ",
-                "とが",
-                "あり",
-                "ます",
-                "。"
-              ]
-            },
-            {
-              "target": "住所[じゅうしょ]の証明書[しょうめいしょ]がありません。",
-              "source": "I don't have the certificate for my address.",
-              "words": [
-                "住所",
-                "じゅ",
-                "うし",
-                "ょの",
-                "証明",
-                "書し",
-                "ょう",
-                "めい",
-                "しょ",
-                "があ",
-                "りま",
-                "せん",
-                "。"
-              ]
-            }
-          ],
-          "type": "standard"
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1646619,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 4412,
-        "totalCompletionTokens": 1605,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 394545,
-            "promptTokens": 1140,
-            "completionTokens": 358
-          },
-          {
-            "lessonNum": 2,
-            "ms": 438731,
-            "promptTokens": 1206,
-            "completionTokens": 431
-          },
-          {
-            "lessonNum": 3,
-            "ms": 447267,
-            "promptTokens": 1308,
-            "completionTokens": 365
-          }
-        ]
-      },
-      "generatedAt": "2026-05-07T07:41:48.767Z",
-      "updatedAt": "2026-05-07T07:41:48.767Z",
-      "id": "tp_913878596",
-      "srcLang": "en"
-    },
-    {
-      "topic": "License Conversion",
-      "topicEmoji": "🚗",
-      "userTopic": "douglas wants to convert his british to a japanese driver's license",
-      "lang": "ja",
-      "difficulty": 1,
-      "storyLen": 750,
-      "story": "東京の喧騒から離れた秋田県の小さな町。ドouglasは津軽半島の寒さに身を包み、新しい挑戦に備えていた。彼は手を繋いだ友人に微笑み、「今日は免許証を交換に来ることにしたんだ。」と告げた。\n\n「うん、ドouglas、頑張ってね。」友人は応援の言葉を返した。二人は手を繋ぎ、慎重に歩いた。町は静かで、雪が積もった道は滑りやすく、足元には気をつける必要があった。\n\n「今日は日本語で話そうよ。」ドouglasが言葉を発した。「免許証の手続きは難しいかもしれないから、日本語を勉強しておいた方がいいかもしれないな。」\n\n二人は町の中心部へ向かい、運転免許センターに到着した。建物は古びた外観を持ちながらも、中は整然と整理されており、受付の女性が元気な声で声をかけた。「こんにちは、免許証の手続きですか？ こちらへどうぞ。」\n\nドouglasは慎重に手続きを進めていった。書類の確認、写真の撮影、そして最後に実技試験。彼は緊張しながらも、友人の励ましを思い出し、試験に挑んだ。\n\n「本当に大変だったな。」試験が終わってから、友人が言った。「でも、ドouglas、君は頑張ったよ。」\n\n二人は満足した表情で、新しい日本語の免許証を受け取った。その証は、彼らの友情と挑戦の証明だった。雪の音が静かな夜を彩り、二人は満足した表情で町を歩き出した。",
-      "storyLang": "ja",
-      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 7-8 paragraphs, under 750 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\n東京から遠く離れた秋田県の津軽半島。冬の夜が訪れ、町は白銀の世界に包まれていた。二人の友人は、この雪の国で初めての夜を過ごすことに決めた。雪は深く積もり、歩行者道は雪で覆われ、足元は滑りやすい。二人は手を繋ぎ、慎重に歩いた。\n\n「今日は雪見ラーメンを食べようか」と一人が言った。もう一人は頷き、笑顔で返事した。「うん、雪見ラーメンは絶対に美味しいよ。」\n\n注文を受けて、店主が元気な声で声をかけた。「今日は雪見ラーメンを食べに来たのか？　雪見ラーメンは今が正解だよ。」\n\n二人は待つこと数分、温かいスープと麺が運ばれてきた。白いスープは透明感があり、上に雪の山のように積もった具材が美しく盛られていた。具材は新鮮な野菜と豚肉、そして雪の白さを象徴する白い豆腐が豊富に盛られていた。\n\n「本当に美味しいな」と一人が言葉を発した。「雪見ラーメンは、この店の看板メニューだ。冬の夜に、このラーメンを食べるのは最高だよ。」\n\n二人はゆっくりと食事を続け、店の暖かさの中で冬の夜を過ごした。食事の後、二人は満足した表情で店を出て、雪の中を歩き出した。雪の音が静かな夜を彩り、二人は雪の中を深く歩き続けた。\n\nNew topic: \"douglas wants to convert his british to a japanese driver's license\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "Winter Snow in Tsuruoka",
-      "lessons": [
-        {
-          "id": "ls_468551811",
-          "title": "免許証交換",
-          "desc": "ドouglasが日本の運転免許証を取得する",
-          "icon": "🚗",
-          "vocab": [
-            {
-              "target": "免許証",
-              "source": "license",
-              "pron": "li-SEN-s"
-            },
-            {
-              "target": "手続き",
-              "source": "procedure",
-              "pron": "pro-KU-DEE-ON"
-            },
-            {
-              "target": "写真",
-              "source": "photo",
-              "pron": "FOH-toh"
-            },
-            {
-              "target": "実技試験",
-              "source": "practical test",
-              "pron": "PRAH-ti-kul tes"
-            },
-            {
-              "target": "緊張",
-              "source": "nervous",
-              "pron": "NER-vus"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "今日は免許証を交換に来ることにしたんだ。",
-              "source": "I came to exchange my license today.",
-              "words": [
-                "今日",
-                "は免",
-                "許証",
-                "を交",
-                "換に",
-                "来る",
-                "こと",
-                "にし",
-                "たん",
-                "だ。"
-              ]
-            },
-            {
-              "target": "免許証の手続きは難しいかもしれないから、日本語を勉強しておいた方がいいかもしれないな。",
-              "source": "The license procedure might be difficult, so maybe it's better to study Japanese beforehand.",
-              "words": [
-                "免許",
-                "証の",
-                "手続",
-                "きは",
-                "難し",
-                "いか",
-                "もし",
-                "れな",
-                "いか",
-                "ら、",
-                "日本",
-                "語を",
-                "勉強",
-                "して",
-                "おい",
-                "た方",
-                "がい",
-                "いか",
-                "もし",
-                "れな",
-                "いな",
-                "。"
-              ]
-            },
-            {
-              "target": "書類の確認、写真の撮影、そして最後に実技試験。",
-              "source": "Confirmation of documents, taking photos, and finally the practical test.",
-              "words": [
-                "書類",
-                "の確",
-                "認、",
-                "写真",
-                "の撮",
-                "影、",
-                "そし",
-                "て最",
-                "後に",
-                "実技",
-                "試験",
-                "。"
-              ]
-            },
-            {
-              "target": "ドouglasは緊張しながらも、友人の励ましを思い出し、試験に挑んだ。",
-              "source": "Douglas, though nervous, took the test, thinking of his friend's encouragement.",
-              "words": [
-                "ドo",
-                "ug",
-                "la",
-                "sは",
-                "緊張",
-                "しな",
-                "がら",
-                "も、",
-                "友人",
-                "の励",
-                "まし",
-                "を思",
-                "い出",
-                "し、",
-                "試験",
-                "に挑",
-                "んだ",
-                "。"
-              ]
-            },
-            {
-              "target": "本当に大変だったな。",
-              "source": "It was really tough, wasn't it?",
-              "words": [
-                "本",
-                "当",
-                "に",
-                "大",
-                "変",
-                "だ",
-                "っ",
-                "た",
-                "な",
-                "。"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_468551810",
-          "title": "免許証交換",
-          "desc": "ドouglasが日本の運転免許証を取得する",
-          "icon": "🚗",
-          "vocab": [
-            {
-              "target": "手続き",
-              "source": "procedure",
-              "pron": "pro-KUH-duh"
-            },
-            {
-              "target": "写真",
-              "source": "photo",
-              "pron": "FOH-toh"
-            },
-            {
-              "target": "実技試験",
-              "source": "practical test",
-              "pron": "PRAH-ti-kul tes"
-            },
-            {
-              "target": "緊張",
-              "source": "nervous",
-              "pron": "NER-vuhs"
-            },
-            {
-              "target": "中心部",
-              "source": "center",
-              "pron": "SEN-ter"
-            },
-            {
-              "target": "受付",
-              "source": "reception",
-              "pron": "ree-PYOO-uh"
-            },
-            {
-              "target": "確認",
-              "source": "confirmation",
-              "pron": "kuh-NAH-mi-rahn"
-            },
-            {
-              "target": "女性",
-              "source": "woman",
-              "pron": "WOM-uhn"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "今日は手続きに来ました。",
-              "source": "I came for the procedure today.",
-              "words": [
-                "今",
-                "日",
-                "は",
-                "手",
-                "続",
-                "き",
-                "に",
-                "来",
-                "ま",
-                "し",
-                "た",
-                "。"
-              ]
-            },
-            {
-              "target": "写真を撮らなければなりません。",
-              "source": "I have to take a photo.",
-              "words": [
-                "写真",
-                "を撮",
-                "らな",
-                "けれ",
-                "ばな",
-                "りま",
-                "せん",
-                "。"
-              ]
-            },
-            {
-              "target": "実技試験は緊張しますね。",
-              "source": "The practical test is nerve-wracking, isn't it?",
-              "words": [
-                "実",
-                "技",
-                "試",
-                "験",
-                "は",
-                "緊",
-                "張",
-                "し",
-                "ま",
-                "す",
-                "ね",
-                "。"
-              ]
-            },
-            {
-              "target": "中心部へ向かって歩きました。",
-              "source": "I walked towards the center of town.",
-              "words": [
-                "中心",
-                "部へ",
-                "向か",
-                "って",
-                "歩き",
-                "まし",
-                "た。"
-              ]
-            },
-            {
-              "target": "受付の女性に挨拶しました。",
-              "source": "I greeted the receptionist woman.",
-              "words": [
-                "受付",
-                "の女",
-                "性に",
-                "挨拶",
-                "しま",
-                "した",
-                "。"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_468551809",
-          "title": "免許証交換",
-          "desc": "ドouglasが日本語で免許証を交換する",
-          "icon": "🚗",
-          "vocab": [
-            {
-              "target": "手続き",
-              "source": "procedure",
-              "pron": "SHU-DO-KI"
-            },
-            {
-              "target": "中心部",
-              "source": "center",
-              "pron": "SEN-CHU-BU"
-            },
-            {
-              "target": "受付",
-              "source": "reception",
-              "pron": "SO-BU-KI"
-            },
-            {
-              "target": "確認",
-              "source": "confirmation",
-              "pron": "KA-NO-KU"
-            },
-            {
-              "target": "女性",
-              "source": "woman",
-              "pron": "JO-HO-NA"
-            },
-            {
-              "target": "励ます",
-              "source": "encourage",
-              "pron": "RAI-MASU"
-            },
-            {
-              "target": "挑戦",
-              "source": "challenge",
-              "pron": "TOU-ZEN"
-            },
-            {
-              "target": "実技試験",
-              "source": "practical test",
-              "pron": "SHI-KI-SHI-KEN"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "今日は中心部へ行こう。",
-              "source": "Let's go to the center today.",
-              "words": [
-                "今",
-                "日",
-                "は",
-                "中",
-                "心",
-                "部",
-                "へ",
-                "行",
-                "こ",
-                "う",
-                "。"
-              ]
-            },
-            {
-              "target": "受付で確認してもらう。",
-              "source": "Let them confirm at the reception.",
-              "words": [
-                "受",
-                "付",
-                "で",
-                "確",
-                "認",
-                "し",
-                "て",
-                "も",
-                "ら",
-                "う",
-                "。"
-              ]
-            },
-            {
-              "target": "励ましを貰う。",
-              "source": "Receive encouragement.",
-              "words": [
-                "励",
-                "ま",
-                "し",
-                "を",
-                "貰",
-                "う",
-                "。"
-              ]
-            },
-            {
-              "target": "挑戦を始める。",
-              "source": "Start the challenge.",
-              "words": [
-                "挑",
-                "戦",
-                "を",
-                "始",
-                "め",
-                "る",
-                "。"
-              ]
-            },
-            {
-              "target": "実技試験に挑む。",
-              "source": "Face the practical test.",
-              "words": [
-                "実",
-                "技",
-                "試",
-                "験",
-                "に",
-                "挑",
-                "む",
-                "。"
-              ]
-            }
-          ],
-          "type": "standard"
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1299352,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "totalPromptTokens": 4298,
-        "totalCompletionTokens": 1502,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 344975,
-            "promptTokens": 1143,
-            "completionTokens": 353
-          },
-          {
-            "lessonNum": 2,
-            "ms": 326514,
-            "promptTokens": 1200,
-            "completionTokens": 363
-          },
-          {
-            "lessonNum": 3,
-            "ms": 349836,
-            "promptTokens": 1257,
-            "completionTokens": 341
-          }
-        ]
-      },
-      "generatedAt": "2026-05-06T17:29:57.748Z",
-      "updatedAt": "2026-05-06T17:29:57.748Z",
-      "id": "tp_63936085",
-      "srcLang": "en"
-    },
-    {
-      "topic": "Driving License Conversion",
-      "topicEmoji": "🚗",
-      "userTopic": "converting a foreign Drivers licence into a Japanese one\n\nto the LLM converting this to a story and text: please provide furigana annotation of the kanji",
-      "lang": "ja",
-      "difficulty": 2,
-      "storyLen": 450,
-      "story": "東京の中心部に位置する小さな自動車学校で、田中さんは新しい運転免許証の申請手続きを始める。彼は最近、日本に移住し、日本の運転免許証を取得するために必要な手続きを学んでいた。申請書類を手に取り、窓口の受付係に話しかける。\n\n「こんにちは、私は田中です。外国の運転免許証を日本語のものに変更したいです。」と、田中さんは丁寧に言葉を選びながら話した。受付係の女性は優しく微笑み、申請書類を渡した。「こちらの書類を全て埋めてください。その後、必要な証明書類を揃えてください。」\n\n田中さんは申請書類を丁寧に埋めて、必要な書類を揃えた。彼は以前の運転免許証、パスポート、そして翻訳された証明書類を用意した。これらの書類を手に、再び窓口に足を運んだ。\n\n「こちらの書類を確認させていただきます。」と、受付係の女性は慎重に各書類を確認した。彼女は特に翻訳された証明書類に注目し、確認のための質問をした。「この翻訳は正確ですか？」\n\n「はい、正確です。」田中さんは自信を持って答えた。「翻訳会社に確認しました。」\n\n女性は満足げな表情を浮かべ、「全ての手続きが整いましたね。次は写真撮影です。」と告げた。田中さんは写真撮影室で新しい運転免許証の写真を撮影し、最後の手順を終え、新しい日本語の運転免許証を受け取った。\n\n「ありがとうございます。」田中さんは心から感謝の言葉を述べ、新しい運転免許証を手に満足げな笑顔で帰路についた。",
-      "storyLang": "ja",
-      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 4-5 paragraphs, under 450 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese.\n\nWrite a story for the topic: \"converting a foreign Drivers licence into a Japanese one\n\nto the LLM converting this to a story and text: please provide furigana annotation of the kanji\". Plain prose, no headings.",
-      "lessons": [
-        {
-          "id": "ls_1123725777",
-          "title": "運転免許証の手続き",
-          "desc": "日本の運転免許証取得の手続き",
-          "icon": "🚗",
-          "vocab": [
-            {
-              "target": "申請手続き",
-              "source": "application procedures",
-              "pron": "a-plee-kee-shun pro-ked-yuhs"
-            },
-            {
-              "target": "申請書類",
-              "source": "application documents",
-              "pron": "a-plee-kei-doo-muhnts"
-            },
-            {
-              "target": "証明書類",
-              "source": "proof documents",
-              "pron": "prohf doo-muhnts"
-            },
-            {
-              "target": "受付係",
-              "source": "receptionist",
-              "pron": "rih-pee-vee-est"
-            },
-            {
-              "target": "翻訳",
-              "source": "translation",
-              "pron": "trahn-ley-shun"
-            },
-            {
-              "target": "確認",
-              "source": "confirmation",
-              "pron": "kuh-nfr-mey-shun"
-            },
-            {
-              "target": "写真撮影",
-              "source": "photographing",
-              "pron": "fuh-toh-fee-ning"
-            },
-            {
-              "target": "運転免許証",
-              "source": "driver's license",
-              "pron": "druh-veers lih-nes-suh"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "田中さんは新しい運転免許証の申請手続きを始める。",
-              "source": "Tanaka-san starts the application procedures for a new driver's license.",
-              "words": [
-                "田中",
-                "さん",
-                "は新",
-                "しい",
-                "運転",
-                "免許",
-                "証の",
-                "申請",
-                "手続",
-                "きを",
-                "始め",
-                "る。"
-              ]
-            },
-            {
-              "target": "受付係の女性は優しく微笑み、申請書類を渡した。",
-              "source": "The receptionist woman smiled kindly and handed over the application documents.",
-              "words": [
-                "受付",
-                "係の",
-                "女性",
-                "は優",
-                "しく",
-                "微笑",
-                "み、",
-                "申請",
-                "書類",
-                "を渡",
-                "した",
-                "。"
-              ]
-            },
-            {
-              "target": "田中さんは以前の運転免許証、パスポート、そして翻訳された証明書類を用意した。",
-              "source": "Tanaka-san prepared his previous driver's license, passport, and translated proof documents.",
-              "words": [
-                "田中",
-                "さん",
-                "は以",
-                "前の",
-                "運転",
-                "免許",
-                "証、",
-                "パス",
-                "ポー",
-                "ト、",
-                "そし",
-                "て翻",
-                "訳さ",
-                "れた",
-                "証明",
-                "書類",
-                "を用",
-                "意し",
-                "た。"
-              ]
-            },
-            {
-              "target": "受付係の女性は慎重に各書類を確認した。",
-              "source": "The receptionist woman carefully checked each document.",
-              "words": [
-                "受付",
-                "係の",
-                "女性",
-                "は慎",
-                "重に",
-                "各書",
-                "類を",
-                "確認",
-                "した",
-                "。"
-              ]
-            },
-            {
-              "target": "田中さんは心から感謝の言葉を述べ、新しい運転免許証を受け取った。",
-              "source": "Tanaka-san expressed heartfelt thanks and received his new driver's license.",
-              "words": [
-                "田中",
-                "さん",
-                "は心",
-                "から",
-                "感謝",
-                "の言",
-                "葉を",
-                "述べ",
-                "、新",
-                "しい",
-                "運転",
-                "免許",
-                "証を",
-                "受け",
-                "取っ",
-                "た。"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_1123725776",
-          "title": "申請手続き",
-          "desc": "運転免許証の手続き",
-          "icon": "🚗",
-          "vocab": [
-            {
-              "target": "申請手続き",
-              "source": "application procedures",
-              "pron": "AH-plih-keet proh-KREET-see"
-            },
-            {
-              "target": "受付係",
-              "source": "receptionist",
-              "pron": "SOO-foo-see"
-            },
-            {
-              "target": "証明書類",
-              "source": "proof documents",
-              "pron": "SOO-mehng DOH-kyuh-mehnts"
-            },
-            {
-              "target": "翻訳",
-              "source": "translation",
-              "pron": "FLEE-nay"
-            },
-            {
-              "target": "確認",
-              "source": "confirmation",
-              "pron": "kuh-NOH-mih-see"
-            },
-            {
-              "target": "写真撮影",
-              "source": "photographing",
-              "pron": "SOH-fee-nee-ying"
-            },
-            {
-              "target": "運転免許証",
-              "source": "driver's license",
-              "pron": "oo-REN-tahn MAHN-kyoo-SHET"
-            },
-            {
-              "target": "翻訳会社",
-              "source": "translation company",
-              "pron": "FLEE-nay HEE-ah-see"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "私は田中です。外国の運転免許証を日本語のものに変更したいです。",
-              "source": "I am Tanaka. I want to change my foreign driver's license to a Japanese one.",
-              "words": [
-                "私は",
-                "田中",
-                "です",
-                "。外",
-                "国の",
-                "運転",
-                "免許",
-                "証を",
-                "日本",
-                "語の",
-                "もの",
-                "に変",
-                "更し",
-                "たい",
-                "です",
-                "。"
-              ]
-            },
-            {
-              "target": "受付係の女性は優しく微笑み、申請書類を渡した。",
-              "source": "The female receptionist smiled kindly and handed over the application documents.",
-              "words": [
-                "受付",
-                "係の",
-                "女性",
-                "は優",
-                "しく",
-                "微笑",
-                "み、",
-                "申請",
-                "書類",
-                "を渡",
-                "した",
-                "。"
-              ]
-            },
-            {
-              "target": "私は以前の運転免許証、パスポート、そして翻訳された証明書類を用意した。",
-              "source": "I prepared my previous driver's license, passport, and translated proof documents.",
-              "words": [
-                "私は",
-                "以前",
-                "の運",
-                "転免",
-                "許証",
-                "、パ",
-                "スポ",
-                "ート",
-                "、そ",
-                "して",
-                "翻訳",
-                "され",
-                "た証",
-                "明書",
-                "類を",
-                "用意",
-                "した",
-                "。"
-              ]
-            },
-            {
-              "target": "女性は特に翻訳された証明書類に注目し、確認のための質問をした。「この翻訳は正確ですか？",
-              "source": "The woman particularly focused on the translated proof documents and asked for confirmation, 'Is this translation accurate?'",
-              "words": [
-                "女性",
-                "は特",
-                "に翻",
-                "訳さ",
-                "れた",
-                "証明",
-                "書類",
-                "に注",
-                "目し",
-                "、確",
-                "認の",
-                "ため",
-                "の質",
-                "問を",
-                "した",
-                "。「",
-                "この",
-                "翻訳",
-                "は正",
-                "確で",
-                "すか",
-                "？"
-              ]
-            },
-            {
-              "target": "田中さんは心から感謝の言葉を述べ、新しい運転免許証を手に満足げな笑顔で帰路についた。",
-              "source": "Tanaka sincerely expressed his gratitude and left with a satisfied smile holding his new driver's license.",
-              "words": [
-                "田中",
-                "さん",
-                "は心",
-                "から",
-                "感謝",
-                "の言",
-                "葉を",
-                "述べ",
-                "、新",
-                "しい",
-                "運転",
-                "免許",
-                "証を",
-                "手に",
-                "満足",
-                "げな",
-                "笑顔",
-                "で帰",
-                "路に",
-                "つい",
-                "た。"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_1123725775",
-          "title": "運転免許証の手続き",
-          "desc": "申請手続き、証明書類、翻訳",
-          "icon": "🚗",
-          "vocab": [
-            {
-              "target": "申請書類",
-              "source": "application documents",
-              "pron": "AH-plih-key DOH-kyoo-mehnts"
-            },
-            {
-              "target": "証明書類",
-              "source": "proof documents",
-              "pron": "ZOH-mehng DOH-kyoo-mehnts"
-            },
-            {
-              "target": "翻訳会社",
-              "source": "translation company",
-              "pron": "FLEE-nay TOH-nee-shun KAH-mee-PAN-see"
-            },
-            {
-              "target": "確認",
-              "source": "confirmation",
-              "pron": "kuh-NOH-mee-ey-shun"
-            },
-            {
-              "target": "受付係",
-              "source": "receptionist",
-              "pron": "ROH-pee-fee KEE"
-            },
-            {
-              "target": "翻訳",
-              "source": "translation",
-              "pron": "FLEE-nay"
-            },
-            {
-              "target": "書類",
-              "source": "documents",
-              "pron": "DOH-kyoo-mehnts"
-            },
-            {
-              "target": "手続き",
-              "source": "procedures",
-              "pron": "proh-KREE-dees"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "新しい申請書類を手に取りました。",
-              "source": "I took the new application documents.",
-              "pron": "NEW-eh-see AH-plih-key DOH-kyoo-mehnts wuh-TOH-mah.",
-              "words": [
-                "新し",
-                "い申",
-                "請書",
-                "類を",
-                "手に",
-                "取り",
-                "まし",
-                "た。"
-              ]
-            },
-            {
-              "target": "証明書類を翻訳会社に確認しました。",
-              "source": "I confirmed the translation of the proof documents with a translation company.",
-              "pron": "ZOH-mehng DOH-kyoo-mehnts wuh-FLAY-nay TOH-nee-shun KAH-mee-PAN-see NOH-kuh-NOH-mee-ey-shun.",
-              "words": [
-                "証明",
-                "書類",
-                "を翻",
-                "訳会",
-                "社に",
-                "確認",
-                "しま",
-                "した",
-                "。"
-              ]
-            },
-            {
-              "target": "受付係の女性は優しく微笑みました。",
-              "source": "The receptionist woman smiled kindly.",
-              "pron": "ROH-pee-fee KEE-noh FEE-mah-noh SWAH-mee-mah.",
-              "words": [
-                "受付",
-                "係の",
-                "女性",
-                "は優",
-                "しく",
-                "微笑",
-                "みま",
-                "した",
-                "。"
-              ]
-            },
-            {
-              "target": "必要な証明書類を揃えました。",
-              "source": "I gathered the necessary proof documents.",
-              "pron": "nah-see-NAH-lee ZOH-mehng DOH-kyoo-mehnts wuh-GAH-reh.",
-              "words": [
-                "必要",
-                "な証",
-                "明書",
-                "類を",
-                "揃え",
-                "まし",
-                "た。"
-              ]
-            },
-            {
-              "target": "翻訳は正確です。",
-              "source": "The translation is accurate.",
-              "pron": "FLEE-nay HAH kuh-TAH-kew-suh",
-              "words": [
-                "翻",
-                "訳",
-                "は",
-                "正",
-                "確",
-                "で",
-                "す",
-                "。"
-              ]
-            }
-          ],
-          "type": "standard"
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1406437,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "totalPromptTokens": 4224,
-        "totalCompletionTokens": 2024,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 393200,
-            "promptTokens": 1223,
-            "completionTokens": 477
-          },
-          {
-            "lessonNum": 2,
-            "ms": 392534,
-            "promptTokens": 1314,
-            "completionTokens": 524
-          },
-          {
-            "lessonNum": 3,
-            "ms": 419411,
-            "promptTokens": 1390,
-            "completionTokens": 543
-          }
-        ]
-      },
-      "generatedAt": "2026-05-06T16:43:38.249Z",
-      "updatedAt": "2026-05-06T16:43:38.249Z",
-      "id": "tp_1481435314",
-      "srcLang": "en"
-    },
-    {
       "topic": "History of Luxembourg",
       "topicEmoji": "🇱🇺",
       "userTopic": "history of luxembourg",
@@ -29593,451 +28793,6 @@
       "generatedAt": "2026-05-06T09:42:58.993Z",
       "updatedAt": "2026-05-06T09:42:58.993Z",
       "id": "tp_1909768095",
-      "srcLang": "en"
-    },
-    {
-      "topic": "Winter Snow in Tsuruoka",
-      "topicEmoji": "❄️",
-      "userTopic": "in winter there are meters of snow in tsuruoka (near yamagata)",
-      "lang": "ja",
-      "difficulty": 1,
-      "storyLen": 500,
-      "story": "東京から遠く離れた秋田県の津軽半島。冬の夜が訪れ、町は白銀の世界に包まれていた。二人の友人は、この雪の国で初めての夜を過ごすことに決めた。雪は深く積もり、歩行者道は雪で覆われ、足元は滑りやすい。二人は手を繋ぎ、慎重に歩いた。\n\n「今日は雪見ラーメンを食べようか」と一人が言った。もう一人は頷き、笑顔で返事した。「うん、雪見ラーメンは絶対に美味しいよ。」\n\n注文を受けて、店主が元気な声で声をかけた。「今日は雪見ラーメンを食べに来たのか？　雪見ラーメンは今が正解だよ。」\n\n二人は待つこと数分、温かいスープと麺が運ばれてきた。白いスープは透明感があり、上に雪の山のように積もった具材が美しく盛られていた。具材は新鮮な野菜と豚肉、そして雪の白さを象徴する白い豆腐が豊富に盛られていた。\n\n「本当に美味しいな」と一人が言葉を発した。「雪見ラーメンは、この店の看板メニューだ。冬の夜に、このラーメンを食べるのは最高だよ。」\n\n二人はゆっくりと食事を続け、店の暖かさの中で冬の夜を過ごした。食事の後、二人は満足した表情で店を出て、雪の中を歩き出した。雪の音が静かな夜を彩り、二人は雪の中を深く歩き続けた。",
-      "storyLang": "ja",
-      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story:\n東京の秋の夜に、二人の友人が会いに来た。青い空がまだ少し残る時間に、二人は小さなラーメン屋の前で立ち止まった。店の看板には「秋の味噌ラーメン」が大きく掲げられていた。二人は店内に入り、暖かい灯りの中で座った。\n\n「今日は秋の味噌ラーメンを食べようか」と一人が言った。もう一人は頷き、笑顔で返事した。「うん、秋の味噌ラーメンは絶対に美味しいよ。」\n\n注文を受けて、店主が元気な声で声をかけた。「今日は秋の味噌ラーメンを食べに来たのか？　秋の味噌ラーメンは今が正解だよ。」\n\n二人は待つこと数分、温かいスープと麺が運ばれてきた。深みのある味噌の香りが鼻をくすぐり、二人はすぐに箸を取った。味噌の甘さと塩加減が絶妙に調和し、麺は滑らかでコシがあり、具材は新鮮な野菜と豚肉が豊富に盛られていた。\n\n「本当に美味しいな」と一人が言葉を発した。「秋の味噌ラーメンは、この店の看板メニューだ。秋の夜に、このラーメンを食べるのは最高だよ。」\n\n二人はゆっくりと食事を続け、店の暖かさの中で秋の夜を過ごした。食事の後、二人は満足した表情で店を出て、夜の街に歩き出した。\n\nNew topic: \"in winter there are meters of snow in tsuruoka (near yamagata)\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "lets eat duck ramen in tsuruoka",
-      "lessons": [
-        {
-          "id": "ls_1428516170",
-          "title": "冬の雪",
-          "desc": "雪の国、津軽半島での冬の夜",
-          "icon": "❄️",
-          "vocab": [
-            {
-              "target": "冬",
-              "source": "winter",
-              "pron": "DOH-nu"
-            },
-            {
-              "target": "雪",
-              "source": "snow",
-              "pron": "SUKE"
-            },
-            {
-              "target": "積もる",
-              "source": "to pile up",
-              "pron": "AKU-mo-ru"
-            },
-            {
-              "target": "歩行者道",
-              "source": "pedestrian path",
-              "pron": "HO-KEI-za-do"
-            },
-            {
-              "target": "慎重に",
-              "source": "cautiously",
-              "pron": "SAI-ken-nya"
-            },
-            {
-              "target": "初めて",
-              "source": "first time",
-              "pron": "HI-shi-ji-ma"
-            },
-            {
-              "target": "ラーメン",
-              "source": "ramen",
-              "pron": "RA-ye-me-n"
-            },
-            {
-              "target": "看板",
-              "source": "signboard",
-              "pron": "KA-pan"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "雪は深く積もる",
-              "source": "Snow piles up deeply",
-              "pron": "SUKE-wa-DO-ku-AKU-mo-ru",
-              "words": [
-                "雪",
-                "は",
-                "深",
-                "く",
-                "積",
-                "も",
-                "る"
-              ]
-            },
-            {
-              "target": "歩行者道は雪で覆われている",
-              "source": "The pedestrian path is covered with snow",
-              "pron": "HO-KEI-za-do-wa-SUKE-de-KO-ware-te-iru",
-              "words": [
-                "歩行",
-                "者道",
-                "は雪",
-                "で覆",
-                "われ",
-                "てい",
-                "る"
-              ]
-            },
-            {
-              "target": "二人は慎重に歩いた",
-              "source": "The two walked cautiously",
-              "pron": "FUTA-hito-wa-SAI-ken-ni-HAKU-ta",
-              "words": [
-                "二",
-                "人",
-                "は",
-                "慎",
-                "重",
-                "に",
-                "歩",
-                "い",
-                "た"
-              ]
-            },
-            {
-              "target": "雪見ラーメンは絶対に美味しい",
-              "source": "Snow-view ramen is definitely delicious",
-              "pron": "SUKE-ken-RA-ye-me-n-wa-DO-ku-te-NAI-mi-RA-shi-tsu",
-              "words": [
-                "雪見",
-                "ラー",
-                "メン",
-                "は絶",
-                "対に",
-                "美味",
-                "しい"
-              ]
-            },
-            {
-              "target": "冬の夜にラーメンを食べる",
-              "source": "To eat ramen on a winter night",
-              "pron": "DOH-nu-ya-tchi-RA-ye-me-n-o-DO-ru-te-ru",
-              "words": [
-                "冬",
-                "の",
-                "夜",
-                "に",
-                "ラ",
-                "ー",
-                "メ",
-                "ン",
-                "を",
-                "食",
-                "べ",
-                "る"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_1428516171",
-          "title": "冬の雪",
-          "desc": "冬の雪と歩行者道",
-          "icon": "❄️",
-          "vocab": [
-            {
-              "target": "積雪",
-              "source": "snow accumulation",
-              "pron": "SYOO-suh-keh"
-            },
-            {
-              "target": "滑りやすい",
-              "source": "slippery",
-              "pron": "HAH-lee-eh-NAH-sigh"
-            },
-            {
-              "target": "手を繋ぐ",
-              "source": "hold hands",
-              "pron": "TOH-oh KOH-shee-goo"
-            },
-            {
-              "target": "慎重に",
-              "source": "cautiously",
-              "pron": "SEN-kyoh-nee"
-            },
-            {
-              "target": "初めての夜",
-              "source": "first night",
-              "pron": "HYOH-suh-keh-noh-NAH"
-            },
-            {
-              "target": "雪見ラーメン",
-              "source": "snow viewing ramen",
-              "pron": "SYOH-knee-rah-mehn"
-            },
-            {
-              "target": "店主",
-              "source": "shop owner",
-              "pron": "SHOO-ehn"
-            },
-            {
-              "target": "具材",
-              "source": "ingredients",
-              "pron": "KYOO-sigh"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "積雪は深く積もっている。",
-              "source": "The snow accumulation is deep.",
-              "words": [
-                "積",
-                "雪",
-                "は",
-                "深",
-                "く",
-                "積",
-                "も",
-                "っ",
-                "て",
-                "い",
-                "る",
-                "。"
-              ]
-            },
-            {
-              "target": "歩行者道は滑りやすいので注意が必要だ。",
-              "source": "The pedestrian path is slippery, so caution is needed.",
-              "words": [
-                "歩行",
-                "者道",
-                "は滑",
-                "りや",
-                "すい",
-                "ので",
-                "注意",
-                "が必",
-                "要だ",
-                "。"
-              ]
-            },
-            {
-              "target": "二人は手を繋いで慎重に歩いた。",
-              "source": "The two held hands and walked cautiously.",
-              "words": [
-                "二人",
-                "は手",
-                "を繋",
-                "いで",
-                "慎重",
-                "に歩",
-                "いた",
-                "。"
-              ]
-            },
-            {
-              "target": "雪見ラーメンは冬の夜にぴったりだ。",
-              "source": "Snow viewing ramen is perfect for winter nights.",
-              "words": [
-                "雪見",
-                "ラー",
-                "メン",
-                "は冬",
-                "の夜",
-                "にぴ",
-                "った",
-                "りだ",
-                "。"
-              ]
-            },
-            {
-              "target": "店主が具材を雪のように積み上げた。",
-              "source": "The shop owner piled up the ingredients like a snow mountain.",
-              "words": [
-                "店主",
-                "が具",
-                "材を",
-                "雪の",
-                "よう",
-                "に積",
-                "み上",
-                "げた",
-                "。"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_1428516172",
-          "title": "雪の津軽半島",
-          "desc": "冬の雪の積もり方と冬の夜の過ごし方",
-          "icon": "❄️",
-          "vocab": [
-            {
-              "target": "積雪",
-              "source": "snow accumulation",
-              "pron": "AKI-SE-KU"
-            },
-            {
-              "target": "寒い",
-              "source": "cold",
-              "pron": "KA-NE-I"
-            },
-            {
-              "target": "灯り",
-              "source": "light",
-              "pron": "TE-RI"
-            },
-            {
-              "target": "暖かい",
-              "source": "warm",
-              "pron": "NA-MAI-KAI"
-            },
-            {
-              "target": "静か",
-              "source": "quiet",
-              "pron": "SHI-NA-KA"
-            },
-            {
-              "target": "満足",
-              "source": "satisfied",
-              "pron": "MA-NZU-TO"
-            },
-            {
-              "target": "眺め",
-              "source": "view",
-              "pron": "SHI-OME"
-            },
-            {
-              "target": "静かな夜",
-              "source": "quiet night",
-              "pron": "SHI-NA-KA-YA"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "積雪は数メートルになる",
-              "source": "Snow accumulation reaches several meters",
-              "pron": "AKI-SE-KU WA SO-U ME-TSU-RO-U NI NARU",
-              "words": [
-                "積",
-                "雪",
-                "は",
-                "数",
-                "メ",
-                "ー",
-                "ト",
-                "ル",
-                "に",
-                "な",
-                "る"
-              ]
-            },
-            {
-              "target": "寒い夜に暖かい灯りが灯る",
-              "source": "Warm light shines on a cold night",
-              "pron": "KA-NE-I YA-NA-RI NI NA-MAI TE-RI GA TE-RU",
-              "words": [
-                "寒",
-                "い",
-                "夜",
-                "に",
-                "暖",
-                "か",
-                "い",
-                "灯",
-                "り",
-                "が",
-                "灯",
-                "る"
-              ]
-            },
-            {
-              "target": "静かな夜を満足して過ごす",
-              "source": "Spend a quiet night feeling satisfied",
-              "pron": "SHI-NA-KA-YA-NA-RI WA MA-NZU-TO SHI TE SU-GO-RU-SU",
-              "words": [
-                "静",
-                "か",
-                "な",
-                "夜",
-                "を",
-                "満",
-                "足",
-                "し",
-                "て",
-                "過",
-                "ご",
-                "す"
-              ]
-            },
-            {
-              "target": "眺めながら雪を見つめる",
-              "source": "Gaze at the snow while looking out",
-              "pron": "SHI-OME-NARU-GA AKI-NO MI-ZU-ME-RA-NU",
-              "words": [
-                "眺",
-                "め",
-                "な",
-                "が",
-                "ら",
-                "雪",
-                "を",
-                "見",
-                "つ",
-                "め",
-                "る"
-              ]
-            },
-            {
-              "target": "静かな夜は雪の音が彩る",
-              "source": "A quiet night is colored by the sound of snow",
-              "pron": "SHI-NA-KA-YA-NA-RI WA AKI-NO O-NI GA SA-RE-RU",
-              "words": [
-                "静",
-                "か",
-                "な",
-                "夜",
-                "は",
-                "雪",
-                "の",
-                "音",
-                "が",
-                "彩",
-                "る"
-              ]
-            }
-          ],
-          "type": "standard"
-        }
-      ],
-      "generationStats": {
-        "totalMs": 1611042,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "totalPromptTokens": 4169,
-        "totalCompletionTokens": 1736,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 426231,
-            "promptTokens": 1080,
-            "completionTokens": 454
-          },
-          {
-            "lessonNum": 2,
-            "ms": 410153,
-            "promptTokens": 1162,
-            "completionTokens": 389
-          },
-          {
-            "lessonNum": 3,
-            "ms": 476527,
-            "promptTokens": 1234,
-            "completionTokens": 475
-          }
-        ]
-      },
-      "generatedAt": "2026-05-06T09:13:45.325Z",
-      "updatedAt": "2026-05-06T09:13:45.325Z",
-      "id": "tp_1241910715",
       "srcLang": "en"
     },
     {
@@ -32100,300 +30855,6 @@
       "exportedFlags": {},
       "exportedAt": "2026-05-05T21:22:50.497Z",
       "id": "tp_993102005",
-      "srcLang": "en"
-    },
-    {
-      "topic": "lets eat duck ramen in tsuruoka",
-      "topicEmoji": "🍜",
-      "userTopic": "let's eat a duck ramen in tsuruoka",
-      "lang": "ja",
-      "difficulty": 1,
-      "storyLen": 500,
-      "story": "東京の秋の夜に、二人の友人が会いに来た。青い空がまだ少し残る時間に、二人は小さなラーメン屋の前で立ち止まった。店の看板には「秋の味噌ラーメン」が大きく掲げられていた。二人は店内に入り、暖かい灯りの中で座った。\n\n「今日は秋の味噌ラーメンを食べようか」と一人が言った。もう一人は頷き、笑顔で返事した。「うん、秋の味噌ラーメンは絶対に美味しいよ。」\n\n注文を受けて、店主が元気な声で声をかけた。「今日は秋の味噌ラーメンを食べに来たのか？　秋の味噌ラーメンは今が正解だよ。」\n\n二人は待つこと数分、温かいスープと麺が運ばれてきた。深みのある味噌の香りが鼻をくすぐり、二人はすぐに箸を取った。味噌の甘さと塩加減が絶妙に調和し、麺は滑らかでコシがあり、具材は新鮮な野菜と豚肉が豊富に盛られていた。\n\n「本当に美味しいな」と一人が言葉を発した。「秋の味噌ラーメンは、この店の看板メニューだ。秋の夜に、このラーメンを食べるのは最高だよ。」\n\n二人はゆっくりと食事を続け、店の暖かさの中で秋の夜を過ごした。食事の後、二人は満足した表情で店を出て、夜の街に歩き出した。",
-      "storyLang": "ja",
-      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese.\n\nWrite a story for the topic: \"let's eat ramen\". Plain prose, no headings.",
-      "lessons": [
-        {
-          "id": "ls_3917277",
-          "title": "秋の味噌ラーメン",
-          "desc": "秋、味噌ラーメン、店",
-          "icon": "🍜",
-          "vocab": [
-            {
-              "target": "秋",
-              "source": "autumn",
-              "pron": "AU-tu-mon"
-            },
-            {
-              "target": "味噌",
-              "source": "miso",
-              "pron": "MI-so"
-            },
-            {
-              "target": "ラーメン",
-              "source": "ramen",
-              "pron": "RA-me-n"
-            },
-            {
-              "target": "店",
-              "source": "store",
-              "pron": "DE-n"
-            },
-            {
-              "target": "看板",
-              "source": "signboard",
-              "pron": "KA-pan"
-            },
-            {
-              "target": "麺",
-              "source": "noodles",
-              "pron": "ME-n"
-            },
-            {
-              "target": "具材",
-              "source": "ingredients",
-              "pron": "KYU-sai"
-            },
-            {
-              "target": "夜",
-              "source": "night",
-              "pron": "NA-ih"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "秋の味噌ラーメンを食べようか",
-              "source": "Shall we eat autumn miso ramen?",
-              "words": [
-                "秋の味噌ラーメンを食べようか"
-              ]
-            },
-            {
-              "target": "本当に美味しいな",
-              "source": "It's really delicious, isn't it?",
-              "words": [
-                "本当に美味しいな"
-              ]
-            },
-            {
-              "target": "店の看板には「秋の味噌ラーメン」が掲げられていた",
-              "source": "The store's signboard had 'autumn miso ramen' written on it.",
-              "words": [
-                "店の看板には「秋の味噌ラーメン」が掲げられていた"
-              ]
-            },
-            {
-              "target": "温かいスープと麺が運ばれてきた",
-              "source": "Warm soup and noodles were brought over.",
-              "words": [
-                "温かいスープと麺が運ばれてきた"
-              ]
-            },
-            {
-              "target": "味噌の甘さと塩加減が絶妙に調和し",
-              "source": "The sweetness of the miso and the saltiness were perfectly balanced",
-              "words": [
-                "味噌の甘さと塩加減が絶妙に調和し"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_3917278",
-          "title": "秋の味噌ラーメン",
-          "desc": "秋の夜に味噌ラーメンを食べる",
-          "icon": "🍜",
-          "vocab": [
-            {
-              "target": "店員",
-              "source": "waiter"
-            },
-            {
-              "target": "スープ",
-              "source": "soup"
-            },
-            {
-              "target": "コシ",
-              "source": "texture"
-            },
-            {
-              "target": "新鮮",
-              "source": "fresh"
-            },
-            {
-              "target": "豚肉",
-              "source": "pork meat"
-            },
-            {
-              "target": "具材",
-              "source": "ingredients"
-            },
-            {
-              "target": "美味い",
-              "source": "delicious"
-            },
-            {
-              "target": "店長",
-              "source": "owner"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "店員が運んできた",
-              "source": "The waiter brought",
-              "words": [
-                "店員が運んできた"
-              ]
-            },
-            {
-              "target": "スープが温かい",
-              "source": "The soup is warm",
-              "words": [
-                "スープが温かい"
-              ]
-            },
-            {
-              "target": "コシのある麺",
-              "source": "noodles with good texture",
-              "words": [
-                "コシのある麺"
-              ]
-            },
-            {
-              "target": "新鮮な豚肉が入っている",
-              "source": "fresh pork meat is included",
-              "words": [
-                "新鮮な豚肉が入っている"
-              ]
-            },
-            {
-              "target": "店長が笑顔で迎えた",
-              "source": "the owner greeted with a smile",
-              "words": [
-                "店長が笑顔で迎えた"
-              ]
-            }
-          ],
-          "type": "standard"
-        },
-        {
-          "id": "ls_3917279",
-          "title": "秋の味噌ラーメン",
-          "desc": "秋の味噌ラーメンを楽しむ",
-          "icon": "🍜",
-          "vocab": [
-            {
-              "target": "鶏肉",
-              "source": "chicken meat",
-              "pron": "ki-NOO"
-            },
-            {
-              "target": "塩分",
-              "source": "salt content",
-              "pron": "SAY-ten CON-tent"
-            },
-            {
-              "target": "スープの香り",
-              "source": "soup aroma",
-              "pron": "SOO-pu AH-rah-mee"
-            },
-            {
-              "target": "滑らか",
-              "source": "smooth",
-              "pron": "HA-rah-kah"
-            },
-            {
-              "target": "具材の豊富さ",
-              "source": "abundance of ingredients",
-              "pron": "koo-tsu-eh-eh SAH-foh-FOO-sah"
-            },
-            {
-              "target": "店主",
-              "source": "shop owner",
-              "pron": "SHO-eh-NOO-ta"
-            },
-            {
-              "target": "味のバランス",
-              "source": "flavor balance",
-              "pron": "MEE-noh BA-lahn-tsee"
-            },
-            {
-              "target": "満足感",
-              "source": "satisfaction",
-              "pron": "MA-nu-so-kuh-nahn"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "鶏肉は柔らかかった。",
-              "source": "The chicken meat was tender.",
-              "words": [
-                "鶏肉は柔らかかった。"
-              ]
-            },
-            {
-              "target": "塩分は適度だった。",
-              "source": "The salt content was just right.",
-              "words": [
-                "塩分は適度だった。"
-              ]
-            },
-            {
-              "target": "スープの香りが鼻をくすぐった。",
-              "source": "The soup aroma tickled my nose.",
-              "words": [
-                "スープの香りが鼻をくすぐった。"
-              ]
-            },
-            {
-              "target": "滑らかな麺が口の中で溶けた。",
-              "source": "The smooth noodles melted in my mouth.",
-              "words": [
-                "滑らかな麺が口の中で溶けた。"
-              ]
-            },
-            {
-              "target": "具材の豊富さが印象に残った。",
-              "source": "The abundance of ingredients left a lasting impression.",
-              "words": [
-                "具材の豊富さが印象に残った。"
-              ]
-            }
-          ],
-          "type": "standard"
-        }
-      ],
-      "generationStats": {
-        "totalMs": 882254,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "totalPromptTokens": 2479,
-        "totalCompletionTokens": 1411,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 254017,
-            "promptTokens": 679,
-            "completionTokens": 356
-          },
-          {
-            "lessonNum": 2,
-            "ms": 194197,
-            "promptTokens": 751,
-            "completionTokens": 258
-          },
-          {
-            "lessonNum": 3,
-            "ms": 249105,
-            "promptTokens": 802,
-            "completionTokens": 392
-          }
-        ]
-      },
-      "generatedAt": "2026-05-05T17:34:02.146Z",
-      "updatedAt": "2026-05-05T17:34:02.146Z",
-      "id": "tp_1133274519",
       "srcLang": "en"
     },
     {

@@ -325,7 +325,9 @@ function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, 
   let sys = fillPrompt(P.system, { L, S, diff, sentLen, lessonDiff });
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
-  if (lang === 'ja')              sys += P.cjkNote;
+  const d = difficulty || 2;
+  if (lang === 'ja')    sys += P['cjkNote'+d]    || P.cjkNote;
+  if (srcLang === 'ja') sys += P['srcCjkNote'+d] || P.srcCjkNote;
   return sys;
 }
 
@@ -342,7 +344,9 @@ function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, d
   const P = PROMPTS.vocabFromText;
   let sys = fillPrompt(P.system, { L, S, diff, sentLen, lessonDiff, lessonNum, totalLessons });
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
-  if (lang === 'ja') sys += P.cjkNote;
+  const d2 = difficulty || 2;
+  if (lang === 'ja')    sys += P['cjkNote'+d2]    || P.cjkNote;
+  if (srcLang === 'ja') sys += P['srcCjkNote'+d2] || P.srcCjkNote;
   return sys;
 }
 
@@ -358,7 +362,9 @@ function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dial
   const P = PROMPTS.vocabTable;
   let sys = fillPrompt(P.system, { L, S, diff, lessonDiff, lessonNum, totalLessons });
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
-  if (lang === 'ja') sys += P.cjkNote;
+  const d3 = difficulty || 2;
+  if (lang === 'ja')    sys += P['cjkNote'+d3]    || P.cjkNote;
+  if (srcLang === 'ja') sys += P['srcCjkNote'+d3] || P.srcCjkNote;
   return sys;
 }
 
@@ -603,7 +609,7 @@ function sysTranslation(lang, srcLang) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang, isContinuation, wordCount, dialect, writingStyle) {
+function sysStory(lang, isContinuation, wordCount, dialect, writingStyle, difficulty) {
   const L = langName(lang);
   const wc = Math.max(100, Math.min(1000, wordCount || 300));
   const paraLo = Math.max(1, Math.floor(wc / 100));
@@ -611,7 +617,7 @@ function sysStory(lang, isContinuation, wordCount, dialect, writingStyle) {
   const P = PROMPTS.story;
   let sys = fillPrompt(P.system, { L, wc, paraLo, paraHi });
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
-  if (lang === 'ja')              sys += P.furiganaNote;
+  if (lang === 'ja')              sys += P['furiganaNote'+(difficulty||2)] || P.furiganaNote;
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
   if (isContinuation)             sys += P.continuationNote;
   return sys;
@@ -1226,7 +1232,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       const storyUserMsg = prevStory
         ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
         : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
-      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle);
+      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle, difficulty);
       const { text, promptTokens, completionTokens } = await callLLM(
         storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
       story = text.trim();

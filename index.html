@@ -1676,19 +1676,21 @@ function renderStoryText(d, targetEl){
     .flatMap(L=>L.vocab||[])
     .map(v=>v.target).filter(Boolean)
     .sort((a,b)=>b.length-a.length);
-  const escHtml=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  let escaped=escHtml(d.story||'');
+  // Strip furigana annotations from vocab words so they match the rendered (annotation-free) text
+  const stripF=w=>w.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[[^\]]+\]/g,'$1');
+  let rendered=furiHtml(d.story||'');
   if(vocabWords.length){
-    const pattern=vocabWords.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
-    escaped=escaped.replace(new RegExp('('+pattern+')','gi'),
+    const pattern=vocabWords.map(w=>stripF(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+    // Only highlight text nodes — don't match inside <ruby> or <rt> tags
+    rendered=rendered.replace(new RegExp('(?<![>=])('+'(?:(?!<).)*?'+'(?:'+pattern+')'+')(?![^<]*>)','gi'),
       '<mark class="story-vocab-hl">$1</mark>');
   }
   const spkBtn=''; // speaker moved to story-hdr
-  body.innerHTML=spkBtn+escaped.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  body.innerHTML=spkBtn+rendered.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
 }
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
-  speak(d.story);
+  speak(stripFuri(d.story));
 }
 
 // ── AI error hunt diff panel (shown in story read view) ──────────────────────
@@ -2977,13 +2979,13 @@ async function toggleSavedStory(id, topic) {
     const d=cached||(await fetch('/api/lessons/load?topic='+encodeURIComponent(topic)).then(r=>r.json()));
     if(!d.story){ body.innerHTML='<em style="color:var(--gray-dark)">(no story)</em>'; return; }
     const allVocab=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.target).filter(Boolean).sort((a,b)=>b.length-a.length);
-    const escHtml=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    let t=escHtml(d.story);
+    const stripF=w=>w.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[[^\]]+\]/g,'$1');
+    let rendered=furiHtml(d.story);
     if(allVocab.length){
-      const pat=allVocab.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
-      t=t.replace(new RegExp('('+pat+')','gi'),'<mark class="story-vocab-hl">$1</mark>');
+      const pat=allVocab.map(w=>stripF(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+      rendered=rendered.replace(new RegExp('(?<![>=])((?:(?!<).)*?(?:'+pat+'))(?![^<]*>)','gi'),'<mark class="story-vocab-hl">$1</mark>');
     }
-    body.innerHTML=t.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    body.innerHTML=rendered.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
   }catch(e){ body.innerHTML='<em style="color:var(--gray-dark)">⚠ Could not load story</em>'; }
 }
 
@@ -4997,12 +4999,12 @@ async function toggleChainStory(chainId) {
 
 function _renderChainStory(body, chapters) {
   const allVocab = chapters.flatMap(d => (d.lessons||[]).flatMap(L => L.vocab||[])).map(v => v.target).filter(Boolean).sort((a,b) => b.length - a.length);
-  const escHtml = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const stripF=w=>w.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[[^\]]+\]/g,'$1');
   function highlight(text) {
-    let t = escHtml(text);
+    let t = furiHtml(text);
     if (allVocab.length) {
-      const pat = allVocab.map(w => w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
-      t = t.replace(new RegExp('(' + pat + ')','gi'), '<mark class="story-vocab-hl">$1</mark>');
+      const pat = allVocab.map(w => stripF(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+      t = t.replace(new RegExp('(?<![>=])((?:(?!<).)*?(?:'+pat+'))(?![^<]*>)','gi'), '<mark class="story-vocab-hl">$1</mark>');
     }
     return t.split(/\n\n+/).map(p => '<p>' + p.replace(/\n/g,'<br>') + '</p>').join('');
   }
@@ -5041,10 +5043,29 @@ function buildExercises(lessonIdx){
   function mkOrder(s){
     const isJa=(APP.lessonData?.lang||APP.lang)==='ja';
     const sep=isJa?'':' ';
-    const words=shuffle(s.words.slice());
+    // For Japanese, re-derive tokens from s.target rather than trusting the stored
+    // s.words, which may have been split incorrectly on the server (character-pair
+    // fallback fragments kanji across annotation boundaries).
+    // Regex: kanji[reading] groups first, then kana/latin runs, then bare kanji.
+    let canonical;
+    if(isJa){
+      const re=/[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+\[[^\]]+\]|[\u3040-\u30ff\uff00-\uffef\u0021-\u007ea-zA-Z0-9]+|[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+/g;
+      canonical=[];
+      let m;
+      while((m=re.exec(s.target))!==null) canonical.push(m[0]);
+      // merge pairs if too many tokens (mirrors server logic)
+      if(canonical.length>14){
+        const merged=[];
+        for(let i=0;i<canonical.length;i+=2) merged.push(canonical[i]+(canonical[i+1]||''));
+        canonical=merged;
+      }
+    } else {
+      canonical=s.words;
+    }
+    const words=shuffle(canonical.slice());
     let tries=0;
-    while(words.join(sep)===s.words.join(sep)&&tries++<20) words.sort(()=>Math.random()-.5);
-    return {type:'order',source:s.source,target:s.target,words,correct:s.words.join(sep)};
+    while(words.join(sep)===canonical.join(sep)&&tries++<20) words.sort(()=>Math.random()-.5);
+    return {type:'order',source:s.source,target:s.target,words,correct:canonical.join(sep)};
   }
   function mkRead(s,pool){
     const w=wS(s,pool,3); const padded=w.length>=3?w:[...fb.slice(0,3-w.length),...w];
@@ -5120,7 +5141,7 @@ function tMcqArticle(ex) {
   return `<div class="ex-badge">🏷️ ${t('ex.badge.mcq_article')}</div>
 <div class="card">
   <div class="qtext">${t('ex.mcq_article.q', {word: ex.target})}</div>
-  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.source}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
   ${cGrid(ex.choices, false)}
 </div>`;
 }
@@ -5129,7 +5150,7 @@ function tMcqPlural(ex) {
   return `<div class="ex-badge">🔢 ${t('ex.badge.mcq_plural')}</div>
 <div class="card">
   <div class="qtext">${t('ex.mcq_plural.q', {word: ex.target})}</div>
-  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.source}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
   ${cGrid(ex.choices, false)}
 </div>`;
 }
@@ -5138,7 +5159,7 @@ function tTypePlural(ex) {
   return `<div class="ex-badge">✏️ ${t('ex.badge.type_plural')}</div>
 <div class="card">
   <div class="qtext">${t('ex.type_plural.q', {word: ex.target})}</div>
-  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.source}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
   <input id="type-in" class="type-input" autocomplete="off" autocorrect="off" spellcheck="false"
     placeholder="${t('ex.type_in_placeholder')}"
     oninput="onType()"
@@ -5196,7 +5217,7 @@ function tMcqConjugation(ex) {
   return `<div class="ex-badge">🔤 ${t('ex.badge.mcq_conjugation')}</div>
 <div class="card">
   <div class="qtext">${t('ex.mcq_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
-  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${ex.source}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${furiHtml(ex.source)}</div>
   ${cGrid(ex.choices, false)}
 </div>`;
 }
@@ -5205,7 +5226,7 @@ function tTypeConjugation(ex) {
   return `<div class="ex-badge">✏️ ${t('ex.badge.type_conjugation')}</div>
 <div class="card">
   <div class="qtext">${t('ex.type_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
-  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${ex.source}</div>
+  <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${furiHtml(ex.source)}</div>
   <input id="type-in" class="type-input" autocomplete="off" autocorrect="off" spellcheck="false"
     placeholder="${t('ex.type_in_placeholder')}"
     oninput="onType()"
@@ -5702,18 +5723,44 @@ function renderEx(){
 }
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" id="c${i}" onclick="pickChoice(${i},this)">${c}</button>`).join('')}</div>`; }
+function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>`; }
 // Convert kanji[よみ] bracket notation → <ruby> HTML, or strip it when furigana is off
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function applyFurigana(text) {
   if(!text) return text;
+  // Strip any [reading] that follows non-kanji (kana/punctuation annotated by mistake)
+  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇])\[[^\]]+\]/g, '$1');
   if(APP.showFurigana){
     return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g,
       '<ruby>$1<rt>$2</rt></ruby>');
   } else {
     return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g, '$1');
   }
+}
+// Strip kanji[よみ] bracket annotations for TTS — speak only the kanji, not the reading
+function stripFuri(text) {
+  if(!text) return '';
+  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇])\[[^\]]+\]/g, '$1');
+  return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g, '$1');
+}
+// Like applyFurigana but also HTML-escapes plain text segments — safe for innerHTML contexts
+// where the input hasn't been escaped yet (lBlock, word-order tokens).
+function furiHtml(text) {
+  if(!text) return '';
+  // Strip any [reading] that follows non-kanji before processing
+  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇])\[[^\]]+\]/g, '$1');
+  const re=/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g;
+  const parts=[]; let last=0, m;
+  while((m=re.exec(text))!==null){
+    if(m.index>last) parts.push(escHtml(text.slice(last,m.index)));
+    parts.push(APP.showFurigana
+      ? `<ruby>${escHtml(m[1])}<rt>${escHtml(m[2])}</rt></ruby>`
+      : escHtml(m[1]));
+    last=m.index+m[0].length;
+  }
+  parts.push(escHtml(text.slice(last)));
+  return parts.join('');
 }
 function onFuriganaCb(checked){
   APP.showFurigana=checked;
@@ -5731,7 +5778,7 @@ function updateFuriganaRow(){
 function lBlock(it, pron, hideWord) {
   return `<button class="listen-big" onclick="speak('${esc(it)}')">
       <span class="listen-icon">🔊</span>
-      <div><div class="listen-lbl">Tap to listen</div>${hideWord ? '' : `<div class="listen-word">${it}</div>`}</div>
+      <div><div class="listen-lbl">Tap to listen</div>${hideWord ? '' : `<div class="listen-word">${furiHtml(it)}</div>`}</div>
     </button><button class="slow-btn" onclick="speak('${esc(it)}',0.5)">🐢 Slow</button>`;
 }
 // Return the name of a language code in the current UI language
@@ -5792,15 +5839,15 @@ function tMathCalc(ex){
 }
 
 function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:Ln})}</div><div class="card"><div class="qtext">${t("ex.mcq_source_target.q",{word:ex.source,lang:Ln})}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:Ln})}</div><div class="card"><div class="qtext">${t("ex.mcq_source_target.q",{word:furiHtml(ex.source),lang:Ln})}</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){ return ttsIsApproximate()?`<span class="tts-approx" style="margin-left:6px">${t('tts.approx')}</span>`:''; }
 function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(APP.lessonData?.srcLang||APP.srcLang||"en"); return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
 function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.listen_type")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_type.q",{lang:Ln})}</div>${lBlock(ex.target,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
 function tOrder(ex){
   const tokens=ex.words.map((w,i)=>
-    `<span class="tok" id="t${i}" onclick="addTok(${i})">${applyFurigana(escHtml(w))}</span>`
+    `<span class="tok" id="t${i}" onclick="addTok(${i})">${furiHtml(w)}</span>`
   ).join("");
-  return `<div class="ex-badge">${t("ex.badge.order")}</div><div class="card"><div class="qtext">${t("ex.order.q",{sentence:ex.source})}</div><div class="sbox" id="sbox"><span class="sbox-ph">${t("ex.order.placeholder")}</span></div><div class="wbank">${tokens}</div></div>`;
+  return `<div class="ex-badge">${t("ex.badge.order")}</div><div class="card"><div class="qtext">${t("ex.order.q",{sentence:furiHtml(ex.source)})}</div><div class="sbox" id="sbox"><span class="sbox-ph">${t("ex.order.placeholder")}</span></div><div class="wbank">${tokens}</div></div>`;
 }
 
 
@@ -5896,7 +5943,7 @@ function updateSbox(){
   sb.classList.add('filled');
   sb.innerHTML=C.placed.map((p,pos)=>{
     const sel = C._selPos===pos;
-    return `<span class="placed-tok${sel?' sel-tok':''}" onclick="selTok(${pos})" ondblclick="remTok(${pos})" title="Tap to reorder · double-tap to remove">${applyFurigana(escHtml(p.w))}</span>`;
+    return `<span class="placed-tok${sel?' sel-tok':''}" onclick="selTok(${pos})" ondblclick="remTok(${pos})" title="Tap to reorder · double-tap to remove">${furiHtml(p.w)}</span>`;
   }).join('');
 }
 
@@ -6001,17 +6048,17 @@ function check(){
   if(ok){
     C.correct++; C.total++; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
     const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
-      ? `${ex.correct}${ex.source ? ' — ' + ex.source : ''}`
-      : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
-      : (ex.target||ex.correct);
+      ? `${furiHtml(ex.correct)}${ex.source ? ' — ' + furiHtml(ex.source) : ''}`
+      : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
+      : furiHtml(ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}</div>`;
-    const speakOk = ex.type==='type_conjugation' ? ex.pronoun+' '+ex.correct
-      : ex.type==='type_plural' ? ex.correct
-      : ex.type==='mcq_article'      ? ex.article+' '+ex.target
-      : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+ex.plural
-      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct
+    const speakOk = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
+      : ex.type==='type_plural' ? stripFuri(ex.correct)
+      : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
+      : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+stripFuri(ex.plural)
+      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+stripFuri(ex.correct)
       : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
-      : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+ex.target : ex.target);
+      : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('ok');
     // Auto-advance — speaks once then advances
@@ -6019,16 +6066,16 @@ function check(){
     _speakAndAdvance(speakOk);
   } else {
     C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
-    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${ex.correct}</strong></div>`;
-    const speakBad = ex.type==='type_conjugation' ? ex.pronoun+' '+ex.correct
-      : ex.type==='type_plural' ? ex.correct
-      : ex.type==='mcq_article'      ? ex.article+' '+ex.target
-      : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+ex.plural
-      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+ex.correct
+    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${furiHtml(ex.correct)}</strong></div>`;
+    const speakBad = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
+      : ex.type==='type_plural' ? stripFuri(ex.correct)
+      : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
+      : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+stripFuri(ex.plural)
+      : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+stripFuri(ex.correct)
       : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
-      : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+ex.target : ex.target);
+      : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
     if(speakBad) speak(speakBad,0.75);
-    document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===ex.correct)b.classList.add('ok'); });
+    document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===stripFuri(ex.correct))b.classList.add('ok'); });
     if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('bad');
     const a=document.getElementById('ex-area'); a.classList.add('shake'); setTimeout(()=>a.classList.remove('shake'),380);
     renderHearts();
@@ -6076,7 +6123,7 @@ function showComplete(){
     } else {
       if (wordsLbl) wordsLbl.textContent = t('lesson.words_from');
       if (lesson?.vocab?.length) {
-        vocabItems = lesson.vocab.map(v=>`<span class="vocab-chip">${escHtml(v.target)}${v.source?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+escHtml(v.source)+'</small>':''}</span>`).join('');
+        vocabItems = lesson.vocab.map(v=>`<span class="vocab-chip">${furiHtml(v.target)}${v.source?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+furiHtml(v.source)+'</small>':''}</span>`).join('');
       } else if (lesson?.grammar?.length) {
         vocabItems = lesson.grammar.map(g=>`<span class="vocab-chip">${g.target} <small style="opacity:.6">${g.article||''} / ${g.plural||'—'}</small></span>`).join('');
       } else if (lesson?.conjugations?.length) {
@@ -6282,7 +6329,7 @@ function ttsIsApproximate(){
 
 function speakBodyText(bodyId,langCode,preText){
   _unlockTts(); if(APP.muted){ APP.muted=false; updateMuteButtons(); }
-  if(preText){ if(langCode){const p=()=>{if(!_ttsUnlocked){_ttsPendingAfterUnlock={text:preText,langCode};return;}_doSpeakLang(preText,langCode);};const v=speechSynthesis.getVoices();v.length>0?p():speechSynthesis.addEventListener('voiceschanged',function h(){speechSynthesis.removeEventListener('voiceschanged',h);p();},{once:true});}else speak(preText); return; }
+  if(preText){ preText=stripFuri(preText); if(langCode){const p=()=>{if(!_ttsUnlocked){_ttsPendingAfterUnlock={text:preText,langCode};return;}_doSpeakLang(preText,langCode);};const v=speechSynthesis.getVoices();v.length>0?p():speechSynthesis.addEventListener('voiceschanged',function h(){speechSynthesis.removeEventListener('voiceschanged',h);p();},{once:true});}else speak(preText); return; }
   const el=document.getElementById(bodyId);
   if(!el)return;
   // Read data-lang unconditionally — used as langCode fallback
@@ -6316,6 +6363,7 @@ function speakBodyText(bodyId,langCode,preText){
     }
   }
   if(!text)return;
+  text = stripFuri(text);
   if(langCode){
     if(!window.speechSynthesis) return;
     const proceed = () => {
@@ -6373,6 +6421,8 @@ function _speakAndAdvance(text) {
 }
 
 function _ttsChunks(text) {
+  // Strip furigana bracket annotations — kanji[よみ] → kanji, non-kanji[x] → non-kanji
+  text = stripFuri(text);
   // Chrome silently drops utterances >32KB; split on sentence boundaries
   const MAX = 200; // chars per chunk — safe for all browsers
   if (text.length <= MAX) return [text];
