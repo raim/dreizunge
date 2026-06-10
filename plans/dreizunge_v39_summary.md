@@ -344,3 +344,27 @@ All available voices are espeak-ng variants (e.g. "German+Steph2", "German+Quinc
 
 ### Pitfall: element ID aliases
 The footer HTML uses short IDs (`ls`, `sl`) that match what all JS functions expect. When restructuring footer HTML, always use these short aliases — e.g. `id="src-lang-select-footer-ls"` not `id="src-lang-select-footer-lessonset"`.
+
+---
+
+## Speech Language Fixes (Late v39)
+
+### Problem
+`speakBodyText(id)` only read `data-lang` inside the `if(!text && el.dataset.topic)` block — meaning it was skipped when text was already loaded. Also, `APP._ttsVoiceName` was being matched across languages (Italian voice used for German speech).
+
+### Fixes in `index.html`
+- `data-lang` is now read **unconditionally** at the top of `speakBodyText`, before any text loading
+- `APP._ttsVoiceName` only used if the named voice **matches the current language** (all three speak functions)
+- `APP.ttsLang` and `APP._ttsVoiceName` reset on ALL navigation paths back to landing (4 places: `goLanding`, `goLandingClean`, and two `show('landing')` calls)
+- Landing page summary body (`slsc-summary-body-${chainId}`) gets `data-lang="${byTopic[chain[0]]?.srcLang}"` — lesson's own source language, not `APP.srcLang` which can be `'all'`
+- Storyline screen summary body (`_sumId`) gets `data-lang="${byTopic[topics[0]]?.srcLang}"`
+- Summary speaker buttons pass no explicit langCode — let `data-lang` handle it
+
+### Fix in `build-static.js`
+- Same `data-lang` + no explicit `APP.srcLang` for static summary body
+
+### Pitfall
+`build-static.js` has its OWN hardcoded summary rendering (around line 490) separate from `index.html`'s `storylines_renderChain`. Always check both when modifying summary speech behaviour.
+
+### Rule
+`speakBodyText(id)` without explicit langCode → reads `data-lang` from element → use lesson's own source/target language. This is the correct pattern. Only pass explicit langCode when you specifically want to override (e.g. lesson exercises use target language, old code used `APP.srcLang` which broke when 'all' was selected).
