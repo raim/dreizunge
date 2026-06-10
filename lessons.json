@@ -322,7 +322,8 @@
         "tp_439854238",
         "tp_394510890",
         "tp_1262588602",
-        "tp_2032465964"
+        "tp_2032465964",
+        "tp_964377355"
       ],
       "createdAt": "2026-05-23T18:07:55.088Z",
       "updatedAt": "2026-06-05T11:38:49.698Z",
@@ -716,9 +717,148 @@
       "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Discursive, argumentative, first-person reflective. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n bit of a character. The app is quirky and challenging, but it's also incredibly effective. It's like a microbe that's determined to transform your language skills.\"\n\nThe students spent the next few days experimenting with the app, finding it both hilarious and enlightening. They laughed at the absurdity of trying to learn English through Japanese, but they also found themselves making surprising progress. The app was like a miso and natto of language learning, transforming their understanding in ways they never expected.\n\nAs the sun set once more, the room filled with the soft hum of discussion and the gentle clinking of tea cups. The tapestry of life, woven with threads of science, tradition, and now language, continued to grow, binding them together in a shared wonder and understanding.\n\nNew topic: \"マクラウドの協力により、このアプリは日本で大ヒットした\". Write the continuation now. Plain prose, no headings.",
       "continuedFrom": "マクラウドさんの語学学習アプリ",
       "storyStyle": "essay",
-      "lessons": [],
+      "lessons": [
+        {
+          "id": 1,
+          "title": "マクラウドの協力により、このアプリは日本で大ヒットした",
+          "desc": "アプリの特徴と学習法",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "fermented",
+              "source": "発酵[はっこう]"
+            },
+            {
+              "target": "microbe",
+              "source": "微生物[びせいぶつ]"
+            },
+            {
+              "target": "process",
+              "source": "過程[かんせい]"
+            },
+            {
+              "target": "characteristics",
+              "source": "特性[せんせい]"
+            },
+            {
+              "target": "rich",
+              "source": "豊富な[ほうふな]"
+            },
+            {
+              "target": "fermentation",
+              "source": "発酵[はっこう]"
+            },
+            {
+              "target": "flask",
+              "source": "フラスコ[フラスコ]"
+            },
+            {
+              "target": "microorganism",
+              "source": "微生物[びせいぶつ]"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The app uses fermented soybeans to teach vocabulary.",
+              "source": "アプリは発酵させた大豆を使って単語を教える.",
+              "words": [
+                "The",
+                "app",
+                "uses",
+                "fermented",
+                "soybeans",
+                "to",
+                "teach",
+                "vocabulary."
+              ]
+            },
+            {
+              "target": "It's a unique way to make learning active and engaging.",
+              "source": "これは学習を積極的で興味深いものにするユニークな方法です.",
+              "words": [
+                "It's",
+                "a",
+                "unique",
+                "way",
+                "to",
+                "make",
+                "learning",
+                "active",
+                "and",
+                "engaging."
+              ]
+            },
+            {
+              "target": "The app's grammar exercises are like a guide through a complex process.",
+              "source": "アプリの文法練習は複雑な過程を導くガイドです.",
+              "words": [
+                "The",
+                "app's",
+                "grammar",
+                "exercises",
+                "are",
+                "like",
+                "a",
+                "guide",
+                "through",
+                "a",
+                "complex",
+                "process."
+              ]
+            },
+            {
+              "target": "Each lesson is tailored to the user's level of knowledge.",
+              "source": "各レッスンはユーザーの知識レベルに合わせて作られています.",
+              "words": [
+                "Each",
+                "lesson",
+                "is",
+                "tailored",
+                "to",
+                "the",
+                "user's",
+                "level",
+                "of",
+                "knowledge."
+              ]
+            },
+            {
+              "target": "The app reminds you to review your lessons regularly.",
+              "source": "アプリは定期的にレッスンを復習することを思い出させます.",
+              "words": [
+                "The",
+                "app",
+                "reminds",
+                "you",
+                "to",
+                "review",
+                "your",
+                "lessons",
+                "regularly."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 590464,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1546,
+        "totalCompletionTokens": 860,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 321401,
+            "promptTokens": 973,
+            "completionTokens": 377
+          }
+        ]
+      },
       "generatedAt": "2026-06-10T15:45:59.857Z",
-      "updatedAt": "2026-06-10T15:45:59.857Z"
+      "updatedAt": "2026-06-10T15:51:21.315Z",
+      "id": "tp_964377355"
     },
     {
       "topic": "マクラウドさんの語学学習アプリ",
