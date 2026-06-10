@@ -1,0 +1,167 @@
+#!/usr/bin/env node
+'use strict';
+// llm.js — backend-agnostic LLM interface for Dreizunge
+//
+// Exports:
+//   callLLM(model, system, userMsg, maxTokens, opts) → { text, promptTokens, completionTokens }
+//   ping()        → boolean  (is the backend reachable?)
+//   release(model)           (free model from VRAM — no-op for non-Ollama)
+//   warmup(model, log)       (load model into VRAM — no-op for non-Ollama)
+//   stripRaw(raw) → string
+//   extractJSON(raw) → object
+//   extractArray(raw) → array
+//   salvageArray(raw) → array
+//
+// Switching backends: set LLM_BACKEND env var. Currently supported: 'ollama' (default).
+// Adding a new backend: implement _callXxx / _pingXxx / _releaseXxx / _warmupXxx and
+// add a case in callLLM / ping / release / warmup below.
+
+const http  = require('http');
+const https = require('https');
+
+const BACKEND        = (process.env.LLM_BACKEND || 'ollama').toLowerCase();
+const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
+const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
+
+// ── Public interface ───────────────────────────────────────────────────────────
+
+function callLLM(model, system, userMsg, maxTokens, opts) {
+  if (BACKEND === 'ollama') return _callOllama(model, system, userMsg, maxTokens, opts);
+  return Promise.reject(new Error(`Unknown LLM_BACKEND: ${BACKEND}`));
+}
+
+function ping() {
+  if (BACKEND === 'ollama') return _pingOllama();
+  return Promise.resolve(false);
+}
+
+function release(model) {
+  if (BACKEND === 'ollama') return _releaseOllama(model);
+  return Promise.resolve();
+}
+
+async function warmup(model, log) {
+  if (BACKEND !== 'ollama') return;
+  const write = log || (s => process.stdout.write(s));
+  write(`  Warming up ${model}… `);
+  try {
+    await _callOllama(model, '', 'hi', 1);
+    write('ready ✓\n');
+  } catch(_) { write('timed out (continuing)\n'); }
+}
+
+// ── JSON utilities (backend-agnostic) ─────────────────────────────────────────
+
+function stripRaw(raw) {
+  return raw
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .replace(/^```(?:json)?\s*/im, '')
+    .replace(/\s*```\s*$/m, '')
+    .trim();
+}
+
+function extractJSON(raw) {
+  const s = stripRaw(raw);
+  const start = s.indexOf('{'), end = s.lastIndexOf('}');
+  if (start < 0 || end <= start) throw new Error('No JSON object found');
+  return JSON.parse(s.slice(start, end + 1));
+}
+
+function extractArray(raw) {
+  const s = stripRaw(raw);
+  const start = s.indexOf('['), end = s.lastIndexOf(']');
+  if (start < 0 || end <= start) throw new Error('No JSON array found');
+  return JSON.parse(s.slice(start, end + 1));
+}
+
+function salvageArray(raw) {
+  let s = stripRaw(raw);
+  const start = s.indexOf('[');
+  if (start < 0) throw new Error('No array found');
+  s = s.slice(start);
+  try { return JSON.parse(s); } catch(_) {}
+  s = s.replace(/,\s*\{[^}]*$/, '').replace(/,\s*$/, '');
+  let opens = 0, sq = 0;
+  for (const ch of s) {
+    if (ch==='{') opens++; else if (ch==='}') opens--;
+    else if (ch==='[') sq++; else if (ch===']') sq--;
+  }
+  s += '}'.repeat(Math.max(0, opens)) + ']'.repeat(Math.max(0, sq));
+  return JSON.parse(s);
+}
+
+// ── Ollama implementation ──────────────────────────────────────────────────────
+
+function _callOllama(model, system, userMsg, maxTokens, opts) {
+  const temperature = opts?.temperature ?? 0.15;
+  const call = new Promise((resolve, reject) => {
+    const u = new URL('/api/chat', OLLAMA_HOST);
+    const lib = u.protocol === 'https:' ? https : http;
+    const body = JSON.stringify({
+      model, stream: false, keep_alive: -1,
+      options: { temperature, num_predict: maxTokens || 1024 },
+      messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
+    });
+    const req = lib.request({
+      hostname: u.hostname,
+      port: u.port || (u.protocol === 'https:' ? 443 : 80),
+      path: u.pathname, method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    }, res => {
+      let d = ''; res.on('data', c => d += c);
+      res.on('end', () => {
+        try {
+          const p = JSON.parse(d);
+          if (p.error) return reject(new Error('Ollama: ' + p.error));
+          const text = p.message?.content || p.response || '';
+          if (!text) return reject(new Error('Ollama returned empty response'));
+          resolve({ text, promptTokens: p.prompt_eval_count || 0, completionTokens: p.eval_count || 0 });
+        } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0, 200))); }
+      });
+    });
+    req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
+    req.setTimeout(OLLAMA_TIMEOUT, () => { req.destroy(); reject(new Error('Ollama timeout')); });
+    req.write(body); req.end();
+  });
+  return Promise.race([call,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Ollama timeout')), OLLAMA_TIMEOUT))
+  ]);
+}
+
+function _pingOllama() {
+  return new Promise(resolve => {
+    try {
+      const u = new URL('/api/tags', OLLAMA_HOST);
+      const lib = u.protocol === 'https:' ? https : http;
+      const req = lib.request(
+        { hostname: u.hostname, port: u.port || 11434, path: u.pathname, method: 'GET' },
+        res => { res.resume(); resolve(res.statusCode < 500); }
+      );
+      req.setTimeout(2000, () => { req.destroy(); resolve(false); });
+      req.on('error', () => resolve(false));
+      req.end();
+    } catch(_) { resolve(false); }
+  });
+}
+
+function _releaseOllama(model) {
+  return new Promise(resolve => {
+    const u = new URL('/api/chat', OLLAMA_HOST);
+    const lib = u.protocol === 'https:' ? https : http;
+    const body = JSON.stringify({
+      model, stream: false, keep_alive: 0,
+      options: { num_predict: 1 }, messages: [{ role: 'user', content: '' }]
+    });
+    const req = lib.request({
+      hostname: u.hostname,
+      port: u.port || (u.protocol === 'https:' ? 443 : 80),
+      path: u.pathname, method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    }, res => { res.resume(); res.on('end', resolve); });
+    req.setTimeout(10000, () => { req.destroy(); resolve(); });
+    req.on('error', resolve);
+    req.write(body); req.end();
+  });
+}
+
+module.exports = { callLLM, ping, release, warmup, stripRaw, extractJSON, extractArray, salvageArray };

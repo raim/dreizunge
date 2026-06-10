@@ -1,30 +1,41 @@
 #!/usr/bin/env node
 // translate-ui.js
-// Fills missing translations in ui.json using the configured Ollama model.
+// Fills missing translations in ui.json using the configured LLM backend.
 // Usage:
-//   node translate-ui.js                    # translate all missing keys in all languages
-//   node translate-ui.js de fr              # translate only German and French
-//   node translate-ui.js --check            # just report what's missing, don't translate
-//   node translate-ui.js --lang de --dry    # dry run for German
+//   node translate-ui.js                        # translate all missing keys in all languages
+//   node translate-ui.js de fr ja               # translate only these languages
+//   node translate-ui.js --exclude zh ko        # translate all except these
+//   node translate-ui.js --check                # just report what's missing, don't translate
+//   node translate-ui.js de --dry               # dry run for German
 //
-// Reads OLLAMA_HOST and OLLAMA_MODEL from environment (same as server.js defaults).
+// Reads OLLAMA_HOST, OLLAMA_MODEL, LLM_BACKEND from environment (same as server.js defaults).
 
 'use strict';
 const fs   = require('fs');
-const http = require('http');
-const https= require('https');
 const path = require('path');
+const { callLLM, ping, extractJSON } = require('./llm');
 
 const UI_FILE   = path.join(__dirname, 'ui.json');
 const LANG_FILE = path.join(__dirname, 'languages.json');
-const OLLAMA_HOST  = process.env.OLLAMA_HOST  || 'http://localhost:11434';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'qwen2.5:7b';
+const OLLAMA_HOST  = process.env.OLLAMA_HOST  || 'http://localhost:11434';
 const BATCH_SIZE   = parseInt(process.env.BATCH_SIZE || '10', 10);
 const DRY_RUN      = process.argv.includes('--dry');
 const CHECK_ONLY   = process.argv.includes('--check');
-const TARGET_LANGS = process.argv
-  .filter(a => !a.startsWith('--') && a !== process.argv[0] && a !== process.argv[1])
-  .filter(a => /^[a-z]{2,3}$/.test(a));
+
+// Collect language codes from positional args; collect --exclude / --skip values
+const EXCLUDE_LANGS = new Set();
+const INCLUDE_LANGS = [];
+let skipNext = false;
+for (let i = 2; i < process.argv.length; i++) {
+  const a = process.argv[i];
+  if (a === '--exclude' || a === '--skip') { skipNext = true; continue; }
+  if (a.startsWith('--')) { skipNext = false; continue; }
+  if (/^[a-z]{2,3}$/.test(a)) {
+    if (skipNext) EXCLUDE_LANGS.add(a);
+    else INCLUDE_LANGS.push(a);
+  } else { skipNext = false; }
+}
 
 // ── Load data ─────────────────────────────────────────────────────────────────
 let ui, langs;
@@ -36,7 +47,8 @@ catch(e) { langs = {}; }
 
 const en = ui['en'] || {};
 const allLangs = Object.keys(ui).filter(l => l !== 'en');
-const workLangs = TARGET_LANGS.length ? TARGET_LANGS : allLangs;
+const workLangs = (INCLUDE_LANGS.length ? INCLUDE_LANGS : allLangs)
+  .filter(l => !EXCLUDE_LANGS.has(l));
 
 // ── Report missing ────────────────────────────────────────────────────────────
 console.log(`\n📋 ui.json status  (${Object.keys(en).length} English keys)\n${'─'.repeat(50)}`);
@@ -66,43 +78,6 @@ if (DRY_RUN) {
   process.exit(0);
 }
 
-// ── Ollama call ───────────────────────────────────────────────────────────────
-function callOllama(system, userMsg) {
-  return new Promise((resolve, reject) => {
-    const u = new URL('/api/chat', OLLAMA_HOST);
-    const lib = u.protocol === 'https:' ? https : http;
-    const body = JSON.stringify({
-      model: OLLAMA_MODEL, stream: false, keep_alive: -1,
-      options: { temperature: 0.1, num_predict: 2048 },
-      messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
-    });
-    const req = lib.request({
-      hostname: u.hostname, port: u.port || (u.protocol === 'https:' ? 443 : 80),
-      path: u.pathname, method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
-    }, res => {
-      let d = ''; res.on('data', c => d += c);
-      res.on('end', () => {
-        try {
-          const p = JSON.parse(d);
-          if (p.error) return reject(new Error('Ollama: ' + p.error));
-          resolve(p.message?.content || p.response || '');
-        } catch(e) { reject(new Error('Ollama parse: ' + e.message)); }
-      });
-    });
-    req.setTimeout(120000, () => { req.destroy(); reject(new Error('Ollama timeout')); });
-    req.on('error', e => reject(new Error('Ollama: ' + e.message)));
-    req.write(body); req.end();
-  });
-}
-
-function extractJSON(raw) {
-  const s = raw.replace(/```json|```/g, '').trim();
-  const start = s.indexOf('{'), end = s.lastIndexOf('}');
-  if (start < 0 || end <= start) throw new Error('No JSON object found in: ' + s.slice(0, 80));
-  return JSON.parse(s.slice(start, end + 1));
-}
-
 // ── Translate one language ────────────────────────────────────────────────────
 async function translateLang(lang, missingKeys) {
   const langName = langs[lang]?.name || lang;
@@ -125,8 +100,8 @@ Return ONLY a valid JSON object with the same keys, no markdown, no explanation.
     let result;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        const raw = await callOllama(sys, JSON.stringify(batchObj, null, 2));
-        result = extractJSON(raw);
+        const raw = await callLLM(OLLAMA_MODEL, sys, JSON.stringify(batchObj, null, 2), 2048, { temperature: 0.1 });
+        result = extractJSON(raw.text);
         break;
       } catch(e) {
         if (attempt === 3) { console.log(`FAILED: ${e.message}`); result = null; break; }
@@ -164,11 +139,10 @@ Return ONLY a valid JSON object with the same keys, no markdown, no explanation.
 async function main() {
   console.log(`Using model: ${OLLAMA_MODEL} @ ${OLLAMA_HOST}\n`);
 
-  // Ping Ollama
-  try {
-    await callOllama('Reply with OK.', 'OK?');
-  } catch(e) {
-    console.error(`❌ Cannot reach Ollama at ${OLLAMA_HOST}: ${e.message}`);
+  // Ping backend
+  const reachable = await ping();
+  if (!reachable) {
+    console.error(`❌ Cannot reach LLM backend at ${OLLAMA_HOST}: not reachable`);
     console.error('   Start Ollama and try again, or set OLLAMA_HOST env var.');
     process.exit(1);
   }

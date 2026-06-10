@@ -6,6 +6,8 @@ const { execFile } = require('child_process');
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
+const { callLLM: _callLLM, ping: pingOllama, release: releaseOllamaModel,
+        warmup: _warmupLLM, stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
 
 // ── Prompts (hot-reloaded from prompts.json) ──────────────────────────────────
 let PROMPTS = {};
@@ -325,9 +327,7 @@ function sysLesson(lang, srcLang, lessonNum, totalLessons, difficulty, _unused, 
   let sys = fillPrompt(P.system, { L, S, diff, sentLen, lessonDiff });
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
-  const d = difficulty || 2;
-  if (lang === 'ja')    sys += P['cjkNote'+d]    || P.cjkNote;
-  if (srcLang === 'ja') sys += P['srcCjkNote'+d] || P.srcCjkNote;
+  if (lang === 'ja')              sys += P.cjkNote;
   return sys;
 }
 
@@ -344,9 +344,7 @@ function sysLessonFromText(lang, srcLang, lessonNum, totalLessons, difficulty, d
   const P = PROMPTS.vocabFromText;
   let sys = fillPrompt(P.system, { L, S, diff, sentLen, lessonDiff, lessonNum, totalLessons });
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
-  const d2 = difficulty || 2;
-  if (lang === 'ja')    sys += P['cjkNote'+d2]    || P.cjkNote;
-  if (srcLang === 'ja') sys += P['srcCjkNote'+d2] || P.srcCjkNote;
+  if (lang === 'ja') sys += P.cjkNote;
   return sys;
 }
 
@@ -362,9 +360,7 @@ function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dial
   const P = PROMPTS.vocabTable;
   let sys = fillPrompt(P.system, { L, S, diff, lessonDiff, lessonNum, totalLessons });
   if (dialect) sys += fillPrompt(P.dialectNote, { dialect });
-  const d3 = difficulty || 2;
-  if (lang === 'ja')    sys += P['cjkNote'+d3]    || P.cjkNote;
-  if (srcLang === 'ja') sys += P['srcCjkNote'+d3] || P.srcCjkNote;
+  if (lang === 'ja') sys += P.cjkNote;
   return sys;
 }
 
@@ -432,111 +428,15 @@ function extractKeywords(text, n, lang) {
   return [...freq.entries()].sort((a,b)=>b[1]-a[1]).slice(0,n).map(([w])=>w).join(', ');
 }
 
-function stripRaw(raw) {
-  return raw
-    .replace(/<think>[\s\S]*?<\/think>/gi, '')
-    .replace(/^```(?:json)?\s*/im, '')
-    .replace(/\s*```\s*$/m, '')
-    .trim();
-}
-function extractJSON(raw) {
-  const s = stripRaw(raw);
-  const start = s.indexOf('{'), end = s.lastIndexOf('}');
-  if (start < 0 || end <= start) throw new Error('No JSON object found');
-  return JSON.parse(s.slice(start, end + 1));
-}
-function extractArray(raw) {
-  const s = stripRaw(raw);
-  const start = s.indexOf('['), end = s.lastIndexOf(']');
-  if (start < 0 || end <= start) throw new Error('No JSON array found');
-  return JSON.parse(s.slice(start, end + 1));
-}
-function salvageArray(raw) {
-  let s = stripRaw(raw);
-  const start = s.indexOf('[');
-  if (start < 0) throw new Error('No array found');
-  s = s.slice(start);
-  try { return JSON.parse(s); } catch(_) {}
-  s = s.replace(/,\s*\{[^}]*$/, '').replace(/,\s*$/, '');
-  let opens = 0, sq = 0;
-  for (const ch of s) {
-    if (ch==='{') opens++; else if (ch==='}') opens--;
-    else if (ch==='[') sq++; else if (ch===']') sq--;
-  }
-  s += '}'.repeat(Math.max(0,opens)) + ']'.repeat(Math.max(0,sq));
-  return JSON.parse(s);
-}
-
 // ── LLM backends ──────────────────────────────────────────────────────
-function callOllamaRaw(model, system, userMsg, maxTokens) {
-  const call = new Promise((resolve, reject) => {
-    const u = new URL('/api/chat', OLLAMA_HOST);
-    const lib = u.protocol === 'https:' ? https : http;
-    const body = JSON.stringify({
-      model, stream: false, keep_alive: -1,
-      options: { temperature: 0.15, num_predict: maxTokens || 1024 },
-      messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
-    });
-    const req = lib.request({
-      hostname: u.hostname,
-      port: u.port || (u.protocol === 'https:' ? 443 : 80),
-      path: u.pathname, method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
-    }, res => {
-      let d = ''; res.on('data', c => d += c);
-      res.on('end', () => {
-        try {
-          const p = JSON.parse(d);
-          if (p.error) return reject(new Error('Ollama: ' + p.error));
-          const text = p.message?.content || p.response || '';
-          if (!text) return reject(new Error('Ollama returned empty response'));
-          resolve({
-            text,
-            promptTokens:     p.prompt_eval_count || 0,
-            completionTokens: p.eval_count        || 0,
-          });
-        } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0,200))); }
-      });
-    });
-    req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
-    req.setTimeout(OLLAMA_TIMEOUT, () => { req.destroy(); reject(new Error('Ollama timeout')); });
-    req.write(body); req.end();
-  });
-  const timeout = new Promise((_,reject) =>
-    setTimeout(() => reject(new Error('Ollama timeout')), OLLAMA_TIMEOUT)
-  );
-  return Promise.race([call, timeout]);
-}
-
-// Release a model from VRAM so the next model can load cleanly.
-function releaseOllamaModel(model) {
-  return new Promise(resolve => {
-    const u = new URL('/api/chat', OLLAMA_HOST);
-    const lib = u.protocol === 'https:' ? https : http;
-    const body = JSON.stringify({
-      model, stream: false, keep_alive: 0,
-      options: { num_predict: 1 }, messages: [{ role: 'user', content: '' }]
-    });
-    const req = lib.request({
-      hostname: u.hostname,
-      port: u.port || (u.protocol === 'https:' ? 443 : 80),
-      path: u.pathname, method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
-    }, res => { res.resume(); res.on('end', resolve); });
-    req.setTimeout(10000, () => { req.destroy(); resolve(); });
-    req.on('error', resolve);
-    req.write(body); req.end();
-  });
-}
-
 function callLLM(system, userMsg, maxTokens) {
-  return callOllamaRaw(OLLAMA_MODEL, system, userMsg, maxTokens);
+  return _callLLM(OLLAMA_MODEL, system, userMsg, maxTokens);
 }
 function callLLMLesson(system, userMsg, maxTokens) {
-  return callOllamaRaw(OLLAMA_LESSON_MODEL, system, userMsg, maxTokens);
+  return _callLLM(OLLAMA_LESSON_MODEL, system, userMsg, maxTokens);
 }
 function callLLMTranslation(system, userMsg, maxTokens) {
-  return callOllamaRaw(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
+  return _callLLM(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
 }
 
 // ── Retry helper ──────────────────────────────────────────────────────
@@ -609,7 +509,7 @@ function sysTranslation(lang, srcLang) {
 }
 
 // ── Story prompts ─────────────────────────────────────────────────────
-function sysStory(lang, isContinuation, wordCount, dialect, writingStyle, difficulty) {
+function sysStory(lang, isContinuation, wordCount, dialect, writingStyle) {
   const L = langName(lang);
   const wc = Math.max(100, Math.min(1000, wordCount || 300));
   const paraLo = Math.max(1, Math.floor(wc / 100));
@@ -617,7 +517,7 @@ function sysStory(lang, isContinuation, wordCount, dialect, writingStyle, diffic
   const P = PROMPTS.story;
   let sys = fillPrompt(P.system, { L, wc, paraLo, paraHi });
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
-  if (lang === 'ja')              sys += P['furiganaNote'+(difficulty||2)] || P.furiganaNote;
+  if (lang === 'ja')              sys += P.furiganaNote;
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
   if (isContinuation)             sys += P.continuationNote;
   return sys;
@@ -645,7 +545,7 @@ async function generateStorylineTitle(topics, stories, srcLang) {
   ).join('\n\n');
   const sys = fillPrompt(PROMPTS.storylineTitle.system, { S });
   const user = fillPrompt(PROMPTS.storylineTitle.user, { topicList, storyExcerpts, S });
-  const result = await callOllamaRaw(OLLAMA_MODEL, sys, user, 80);
+  const result = await _callLLM(OLLAMA_MODEL, sys, user, 80);
   const raw = result.text.replace(/```json|```/g, '').trim();
   console.log(`  Raw response: ${raw.slice(0,120)}`);
   let parsed;
@@ -673,7 +573,7 @@ async function generateStorylineSummary(topics, stories, vocab, srcLang) {
   const vocabList = [...new Set(vocab)].slice(0, 40).join(', ');
   const sys = fillPrompt(PROMPTS.storylineSummary.system, { S });
   const user = fillPrompt(PROMPTS.storylineSummary.user, { chapterSummaries, vocabList, S });
-  const result = await callOllamaRaw(OLLAMA_MODEL, sys, user, 400);
+  const result = await _callLLM(OLLAMA_MODEL, sys, user, 400);
   const summary = result.text.trim();
   console.log(`  Summary  : ${summary.slice(0,80)}…`);
   console.log('────────────────────────────────────────────────────\n');
@@ -880,7 +780,7 @@ async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
     ? `\n\nPREFER errors on these words where they appear: ${priorVocab.slice(0,20).map(v=>v.target).join(', ')}`
     : '';
   const userMsg = `Here is the ${langName(lang)} story:\n\n${story}\n\nReturn the corrupted story now.${priorHint}`;
-  const { text: corrupted, promptTokens, completionTokens } = await callOllamaRaw(OLLAMA_MODEL, sys, userMsg, story.length * 2);
+  const { text: corrupted, promptTokens, completionTokens } = await _callLLM(OLLAMA_MODEL, sys, userMsg, story.length * 2);
   const corruptedStory = corrupted.trim();
   if (!corruptedStory || corruptedStory.length < story.length * 0.5)
     throw new Error('Error-hunt: model returned too short a response');
@@ -1232,7 +1132,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       const storyUserMsg = prevStory
         ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
         : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
-      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle, difficulty);
+      const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle);
       const { text, promptTokens, completionTokens } = await callLLM(
         storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
       story = text.trim();
@@ -1389,41 +1289,8 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
 
 // ── Repair flagged exercises ──────────────────────────────────────────
 // ── Ollama ping & warmup ──────────────────────────────────────────────
-function pingOllama() {
-  return new Promise(resolve => {
-    try {
-      const u = new URL('/api/tags', OLLAMA_HOST);
-      const lib = u.protocol === 'https:' ? https : http;
-      const req = lib.request(
-        { hostname: u.hostname, port: u.port||11434, path: u.pathname, method: 'GET' },
-        res => { res.resume(); resolve(res.statusCode < 500); }
-      );
-      req.setTimeout(2000, () => { req.destroy(); resolve(false); });
-      req.on('error', () => resolve(false));
-      req.end();
-    } catch(_) { resolve(false); }
-  });
-}
 async function warmupOllama() {
-  const model = OLLAMA_MODEL;
-  process.stdout.write(`  Warming up ${model}… `);
-  await new Promise(resolve => {
-    const u = new URL('/api/chat', OLLAMA_HOST);
-    const lib = u.protocol === 'https:' ? https : http;
-    const body = JSON.stringify({
-      model, stream: false, keep_alive: -1,
-      options: { num_predict: 1 }, messages: [{ role: 'user', content: 'hi' }]
-    });
-    const req = lib.request({
-      hostname: u.hostname,
-      port: u.port || (u.protocol === 'https:' ? 443 : 80),
-      path: u.pathname, method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
-    }, res => { res.resume(); res.on('end', () => { console.log('ready ✓'); resolve(); }); });
-    req.setTimeout(OLLAMA_TIMEOUT, () => { req.destroy(); console.log('timed out (continuing)'); resolve(); });
-    req.on('error', () => { console.log('failed (continuing)'); resolve(); });
-    req.write(body); req.end();
-  });
+  await _warmupLLM(OLLAMA_MODEL, s => process.stdout.write(s));
 }
 
 // ── HTTP helpers ──────────────────────────────────────────────────────
