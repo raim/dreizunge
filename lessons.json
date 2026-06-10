@@ -321,7 +321,8 @@
         "tp_438688889",
         "tp_439854238",
         "tp_394510890",
-        "tp_1262588602"
+        "tp_1262588602",
+        "tp_2032465964"
       ],
       "createdAt": "2026-05-23T18:07:55.088Z",
       "updatedAt": "2026-06-05T11:38:49.698Z",
@@ -703,135 +704,285 @@
   ],
   "topics": [
     {
-      "topic": "Furigana Fumble",
-      "topicEmoji": "📖",
-      "userTopic": "once things have settled, the teacher pointed out that the earlier mistake about seishō/symbol would not have happened, i fthe kanji had furigana annotation.",
-      "lang": "ja",
-      "srcLang": "en",
+      "topic": "マクラウドの協力により、このアプリは日本で大ヒットした",
+      "topicEmoji": "🤝📱",
+      "userTopic": "マクラウドの協力により、このアプリは日本で大ヒットした",
+      "lang": "en",
+      "srcLang": "ja",
       "difficulty": 1,
-      "storyLen": 350,
-      "story": "授業が再開され、教室は再び活気を取り戻した。先生は落ち着いた表情で、生徒たちに向き合った。「皆さん、今朝の出来事は、何か特別なことを教えてくれたと思いますか？」と尋ねた。生徒たちは首を傾げ、少し困惑した表情を浮かべた。\n\n「実は、この出来事は、私たちの学習にも重要な教訓を残してくれました。」先生は笑いながら続けた。「皆さん、今朝、教室が暗くなったとき、誰が最初に叫んだと思いますか？」と尋ねた。生徒たちが思い思いの答えを出すと、先生は笑って続けた。「正解は、『せしょーだ！』でしたね。」生徒たちが笑い声を漏らすと、先生は続けた。「でも、正解は『せんじょうだ』でしたね。」教室は静まり返り、生徒たちの顔には困惑が浮かんだ。\n\n「でも、せしょーって、せんじょうの略じゃないですか？」一人の生徒が疑問を投げかけた。先生は笑いながら答えた。「その通りです。でも、もしせんじょうにふりがながついていれば、このミスは起こらなかったはずです。」生徒たちが驚いた顔を見せる中、先生は続けた。「これからは、みんなの学習にも役立つように、せんじょうにふりがなをつけましょう。」教室は再び笑い声に包まれ、先生の言葉は生徒たちの心に深く刻まれた。",
+      "storyLen": 400,
+      "story": "The next morning, the classroom buzzed with excitement as students shared their experiences from the previous night. \"I couldn't stop laughing at the app's jokes,\" said Akira, his eyes sparkling with mirth. \"But I also felt like I understood some new words better than before.\"\n\nThe teacher, Ms. Tanaka, noticed the enthusiasm and decided to capitalize on it. \"Alright, everyone,\" she began, her voice warm and encouraging. \"Let's take a closer look at how this app works. I think it's not just about the humor; there's a method to the madness.\"\n\nShe pulled up the app on the projector, revealing a series of colorful screens. \"First, let's look at the vocabulary section. Notice how the app introduces words through Japanese phrases. For example, 'マクラウド' (mukurawdo) for 'cloud'—it's a bit of a stretch, but it's memorable, isn't it?\"\n\nThe students nodded, their curiosity piqued. \"And the grammar exercises,\" Ms. Tanaka continued, \"are designed to challenge you in a way that makes you think. It's like the app is saying, 'Hey, you can do this!'\"\n\nAs the class delved deeper into the app's features, they discovered a hidden treasure trove of language learning tools. \"Look at this,\" said Tom, pointing to a section where the app paired English words with their Japanese equivalents. \"It's like a puzzle, and you have to figure out the connection.\"\n\nMs. Tanaka smiled, pleased to see the students engaged. \"Exactly! And that's the beauty of it. The app isn't just teaching you words; it's teaching you to think in a different way. It's like a miso and natto of language learning, transforming your understanding in ways you never expected.\"\n\nThe room filled with the soft hum of discussion and the gentle clinking of tea cups once more. The tapestry of life, woven with threads of science, tradition, and now language, continued to grow, binding them together in a shared wonder and understanding.",
       "storyLang": "target",
-      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 3-4 paragraphs, under 350 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate EVERY kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Annotate all kanji without exception — the learner cannot read any kanji yet. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n授業が終わり、教室を出ていくと、突然電気が消えた。全員が驚きの声を上げた。教室は一時的に闇に包まれ、生徒たちの声だけが静かな廊下に響き渡る。先生は慌てて教室に戻り、明かりを点けようと試みたが、何も起こらなかった。その時、地面が揺れた。小さな振動が教室全体を揺らし、机が軋んだ音が聞こえた。\n\n「地震だ！」一人の生徒が叫んだ。しかし、揺れはすぐに止まり、教室は再び静寂に包まれた。先生は教室の隅に立って、揺れが止まったことを確認した。しかし、その揺れはまるで何かが去った後のような、不気味な静けさを残した。\n\n「でも、これは地震じゃない。」先生は一人残された生徒たちに言った。「これは何かが去った後だ。」先生は教室の隅を見つめ、鏡の前に立った。鏡の中の自分に、先生は「何が起こったのか、教えてくれ」と呟いた。鏡の自分は微笑んで応えた。「 Ogre は去った。」先生は驚きと恐れで震えたが、その言葉はまるで「オオカミは来なかった」というような、不気味な予言のようだった。\n\nNew topic: \"once things have settled, the teacher pointed out that the earlier mistake about seishō/symbol would not have happened, i fthe kanji had furigana annotation.\". Write the continuation now. Plain prose, no headings.",
-      "continuedFrom": "Lights Out, Earthquake or Ogre?",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 4-5 paragraphs, under 400 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Discursive, argumentative, first-person reflective. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n bit of a character. The app is quirky and challenging, but it's also incredibly effective. It's like a microbe that's determined to transform your language skills.\"\n\nThe students spent the next few days experimenting with the app, finding it both hilarious and enlightening. They laughed at the absurdity of trying to learn English through Japanese, but they also found themselves making surprising progress. The app was like a miso and natto of language learning, transforming their understanding in ways they never expected.\n\nAs the sun set once more, the room filled with the soft hum of discussion and the gentle clinking of tea cups. The tapestry of life, woven with threads of science, tradition, and now language, continued to grow, binding them together in a shared wonder and understanding.\n\nNew topic: \"マクラウドの協力により、このアプリは日本で大ヒットした\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "マクラウドさんの語学学習アプリ",
+      "storyStyle": "essay",
+      "lessons": [],
+      "generatedAt": "2026-06-10T15:45:59.857Z",
+      "updatedAt": "2026-06-10T15:45:59.857Z"
+    },
+    {
+      "topic": "マクラウドさんの語学学習アプリ",
+      "topicEmoji": "📚",
+      "userTopic": "次に、マクラウドさんが友人が作った語学学習アプリを見せてくれました。なかなか面白かったのですが、日本語と英語はまったく異なる言語です",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 500,
+      "story": "The conversation drifted to the kitchen, where the aroma of fermented foods wafted through the air. \"Yeast isn't the only microbe with a culinary flair,\" Mr. MacLeod said, his eyes twinkling with the excitement of a teacher eager to share a new lesson. \"Miso and natto, too, are crafted by the magic of microbes.\"\n\nSarah, who had been quietly sipping her tea, raised her hand. \"So, what makes miso and natto so special? How do they differ from yeast?\"\n\n\"Great question, Sarah,\" Mr. MacLeod replied, his voice warm and encouraging. \"Miso and natto are both fermented soy products, but they have distinct characteristics. Miso is made by fermenting soybeans with koji, a type of fungus, and salt. The process can take anywhere from a few days to several months, depending on the type of miso. It's rich in umami and has a complex, savory flavor.\"\n\nHe paused, gesturing to the jar of miso on the counter. \"And natto, my dear, is a bit of a character. It's made by fermenting soybeans with a strain of bacteria called Bacillus subtilis. The process is much faster, taking only a few days. Natto is known for its sticky, gooey texture and pungent smell, but it's also packed with nutrients.\"\n\nAs he spoke, the light outside began to fade, casting long shadows across the room. The students leaned in, their curiosity piqued. \"But why do we need these microbes?\" asked Tom, his brow furrowed in thought.\n\n\"Ah, that's a fantastic question, Tom,\" Mr. MacLeod said, his eyes gleaming. \"These microbes are like tiny chefs, breaking down the complex molecules in soybeans into simpler, more digestible forms. They also produce vitamins and other beneficial compounds. It's a symbiotic relationship, where the microbes get a place to live and the soybeans get transformed into something delicious and nutritious.\"\n\nThe conversation continued late into the evening, the students engrossed in the mysteries of fermentation and the microbial world. As the last rays of sunlight disappeared, the room filled with the soft hum of discussion and the gentle clinking of tea cups. The tapestry of life, woven with threads of science and tradition, continued to grow, binding them together in a shared wonder and understanding.\n\nThe next day, Mr. MacLeod arrived with a new topic. \"I have something special to show you,\" he said, pulling out his laptop and launching a presentation. \"My friend has created a language learning app. It's quite fascinating.\"\n\nThe students gathered around, their interest piqued. \"It's called LinguaLink,\" Mr. MacLeod explained. \"It's designed to help you learn English by connecting you with native speakers. But here's the catch—it's all in Japanese.\"\n\nTom raised an eyebrow. \"Japanese and English? That sounds like a recipe for disaster.\"\n\n\"Exactly!\" Mr. MacLeod said, his eyes twinkling. \"It's like trying to mix miso and natto into a single dish. They're completely different, yet somehow, they work together. The app uses Japanese to teach English, forcing you to think in both languages simultaneously.\"\n\nSarah leaned in, intrigued. \"So, it's like a linguistic fermentation process, right? Breaking down complex ideas into simpler, more digestible forms?\"\n\n\"Absolutely!\" Mr. MacLeod said, nodding. \"And just like miso and natto, it's a bit of a character. The app is quirky and challenging, but it's also incredibly effective. It's like a microbe that's determined to transform your language skills.\"\n\nThe students spent the next few days experimenting with the app, finding it both hilarious and enlightening. They laughed at the absurdity of trying to learn English through Japanese, but they also found themselves making surprising progress. The app was like a miso and natto of language learning, transforming their understanding in ways they never expected.\n\nAs the sun set once more, the room filled with the soft hum of discussion and the gentle clinking of tea cups. The tapestry of life, woven with threads of science, tradition, and now language, continued to grow, binding them together in a shared wonder and understanding.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 5-6 paragraphs, under 500 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nThe conversation drifted to the kitchen, where the aroma of fermented foods wafted through the air. \"Yeast isn't the only microbe with a culinary flair,\" Mr. MacLeod said, his eyes twinkling with the excitement of a teacher eager to share a new lesson. \"Miso and natto, too, are crafted by the magic of microbes.\"\n\nSarah, who had been quietly sipping her tea, raised her hand. \"So, what makes miso and natto so special? How do they differ from yeast?\"\n\n\"Great question, Sarah,\" Mr. MacLeod replied, his voice warm and encouraging. \"Miso and natto are both fermented soy products, but they have distinct characteristics. Miso is made by fermenting soybeans with koji, a type of fungus, and salt. The process can take anywhere from a few days to several months, depending on the type of miso. It's rich in umami and has a complex, savory flavor.\"\n\nHe paused, gesturing to the jar of miso on the counter. \"And natto, my dear, is a bit of a character. It's made by fermenting soybeans with a strain of bacteria called Bacillus subtilis. The process is much faster, taking only a few days. Natto is known for its sticky, gooey texture and pungent smell, but it's also packed with nutrients.\"\n\nAs he spoke, the light outside began to fade, casting long shadows across the room. The students leaned in, their curiosity piqued. \"But why do we need these microbes?\" asked Tom, his brow furrowed in thought.\n\n\"Ah, that's a fantastic question, Tom,\" Mr. MacLeod said, his eyes gleaming. \"These microbes are like tiny chefs, breaking down the complex molecules in soybeans into simpler, more digestible forms. They also produce vitamins and other beneficial compounds. It's a symbiotic relationship, where the microbes get a place to live and the soybeans get transformed into something delicious and nutritious.\"\n\nThe conversation continued late into the evening, the students engrossed in the mysteries of fermentation and the microbial world. As the last rays of sunlight disappeared, the room filled with the soft hum of discussion and the gentle clinking of tea cups. The tapestry of life, woven with threads of science and tradition, continued to grow, binding them together in a shared wonder and understanding.\n\nNew topic: \"次に、マクラウドさんが友人が作った語学学習アプリを見せてくれました。なかなか面白かったのですが、日本語と英語はまったく異なる言語です\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "味噌納豆微生物",
       "storyStyle": "funny",
       "lessons": [
         {
           "id": 1,
-          "title": "kanji with furigana",
-          "desc": "kanji with furigana, beginner vocabulary",
-          "icon": "📖",
+          "title": "発酵した豆と微生物",
+          "desc": "発酵、大豆、微生物、過程、特徴",
+          "icon": "🧆",
           "vocab": [
             {
-              "target": "静寂[せいじゃく]",
-              "source": "stillness, silence"
+              "target": "fermented",
+              "source": "発酵[はっけっ]"
             },
             {
-              "target": "象徴[しょうちょう]",
-              "source": "symbol, emblem"
+              "target": "soy",
+              "source": "大豆[とうふ]"
             },
             {
-              "target": "日本の美の象徴[日本の美のしょうちょう]",
-              "source": "symbol of Japan's beauty"
+              "target": "microbe",
+              "source": "微生物[びがくぶつ]"
             },
             {
-              "target": "象[ぞう]",
-              "source": "elephant"
+              "target": "process",
+              "source": "過程[かんせい]"
             },
             {
-              "target": "長[ちょう]",
-              "source": "length, long"
+              "target": "characteristics",
+              "source": "特性[とつせい]"
+            },
+            {
+              "target": "rich",
+              "source": "豊富な[ほうふな]"
+            },
+            {
+              "target": "fermentation",
+              "source": "発酵[はっけっ]"
+            },
+            {
+              "target": "koji",
+              "source": "麹[こうじ]"
             }
           ],
           "sentences": [
             {
-              "target": "教室は静寂を取り戻した。",
-              "source": "The classroom regained its stillness.",
+              "target": "Fermentation is a process that transforms food into something new.",
+              "source": "発酵は食物を新しいものに変える過程です。",
               "words": [
-                "教室",
-                "は",
-                "静寂",
-                "を",
-                "取",
-                "り",
-                "戻",
-                "した"
+                "Fermentation",
+                "is",
+                "a",
+                "process",
+                "that",
+                "transforms",
+                "food",
+                "into",
+                "something",
+                "new."
               ]
             },
             {
-              "target": "象は長さの象徴だ。",
-              "source": "The elephant is a symbol of length.",
+              "target": "Soybeans are the main ingredient in miso and natto.",
+              "source": "大豆は味噌と納豆の主な材料です。",
               "words": [
-                "象",
-                "は",
-                "長",
-                "さの",
-                "象徴",
-                "だ"
+                "Soybeans",
+                "are",
+                "the",
+                "main",
+                "ingredient",
+                "in",
+                "miso",
+                "and",
+                "natto."
               ]
             },
             {
-              "target": "日本の国花は桜だ。",
-              "source": "The national flower of Japan is cherry blossoms.",
+              "target": "Miso is rich in umami, a complex flavor.",
+              "source": "味噌は複雑な旨味が豊富です。",
               "words": [
-                "日本",
-                "の",
-                "国花",
-                "は",
-                "桜",
-                "だ"
+                "Miso",
+                "is",
+                "rich",
+                "in",
+                "umami,",
+                "a",
+                "complex",
+                "flavor."
               ]
             },
             {
-              "target": "予言は静寂に包まれた。",
-              "source": "The prophecy was shrouded in silence.",
+              "target": "Natto has a sticky, gooey texture and a pungent smell.",
+              "source": "納豆は粘りがあり、強いにおみがします。",
               "words": [
-                "予言",
-                "は",
-                "静寂",
-                "に",
-                "包",
-                "まれた"
+                "Natto",
+                "has",
+                "a",
+                "sticky,",
+                "gooey",
+                "texture",
+                "and",
+                "a",
+                "pungent",
+                "smell."
               ]
             },
             {
-              "target": "驚きは教室を揺れた。",
-              "source": "Surprise shook the classroom.",
+              "target": "The bacteria in natto are active, while those in miso are more passive.",
+              "source": "納豆の菌は活性的ですが、味噌の菌はより無活性です。",
               "words": [
-                "驚",
-                "きは",
-                "教室",
-                "を",
-                "揺",
-                "れた"
+                "The",
+                "bacteria",
+                "in",
+                "natto",
+                "are",
+                "active,",
+                "while",
+                "those",
+                "in",
+                "miso",
+                "are",
+                "more",
+                "passive."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1781105997550",
+          "title": "マクラウドさんの語学学習アプリ",
+          "desc": "語学学習アプリの基本を学ぶ",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "flask",
+              "source": "フラスコ[フラスコ]"
+            },
+            {
+              "target": "microorganism",
+              "source": "微生物[びせいぶつ]"
+            },
+            {
+              "target": "active",
+              "source": "活性化[かつけいか]"
+            },
+            {
+              "target": "bored",
+              "source": "退屈[たいくつ]"
+            },
+            {
+              "target": "reminder",
+              "source": "リマインダー[りまいいんダー]"
+            },
+            {
+              "target": "expressions",
+              "source": "表現[ひょうげん]"
+            },
+            {
+              "target": "intricate",
+              "source": "複雑な[ふくざつな]"
+            },
+            {
+              "target": "guide",
+              "source": "ガイド[ガイド]"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He uses flasks for his experiments.",
+              "source": "彼は実験のためにフラスコを使います。",
+              "words": [
+                "He",
+                "uses",
+                "flasks",
+                "for",
+                "his",
+                "experiments."
+              ]
+            },
+            {
+              "target": "Microorganisms can make us sick.",
+              "source": "微生物は私たちを病気させることができます。",
+              "words": [
+                "Microorganisms",
+                "can",
+                "make",
+                "us",
+                "sick."
+              ]
+            },
+            {
+              "target": "The process is active and fast.",
+              "source": "その過程は活性化していて速いです。",
+              "words": [
+                "The",
+                "process",
+                "is",
+                "active",
+                "and",
+                "fast."
+              ]
+            },
+            {
+              "target": "I get bored easily in my apartment.",
+              "source": "私のアパートでは退屈しやすいです。",
+              "words": [
+                "I",
+                "get",
+                "bored",
+                "easily",
+                "in",
+                "my",
+                "apartment."
+              ]
+            },
+            {
+              "target": "A reminder on my phone helps me.",
+              "source": "私の電話にリマインダーがあるおかげで助けられます。",
+              "words": [
+                "A",
+                "reminder",
+                "on",
+                "my",
+                "phone",
+                "helps",
+                "me."
               ]
             }
           ]
         }
       ],
       "generationStats": {
-        "totalMs": 603188,
+        "totalMs": 876494,
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 1864,
-        "totalCompletionTokens": 648,
+        "totalPromptTokens": 2013,
+        "totalCompletionTokens": 1298,
         "lessons": [
           {
             "lessonNum": 1,
-            "ms": 329104,
-            "promptTokens": 1105,
-            "completionTokens": 267
+            "ms": 349032,
+            "promptTokens": 1069,
+            "completionTokens": 374
           }
         ]
       },
-      "generatedAt": "2026-06-10T14:31:22.387Z",
-      "updatedAt": "2026-06-10T14:36:51.548Z",
-      "id": "tp_1707431729"
+      "generatedAt": "2026-06-10T15:28:10.735Z",
+      "updatedAt": "2026-06-10T15:39:57.550Z",
+      "id": "tp_2032465964"
     },
     {
       "topic": "Misguided Teacher",
-      "topicEmoji": "📖🌸",
+      "topicEmoji": "🌸",
       "userTopic": "my english teacher doesn't speak japanese very well, even t\nhough he has been living here for a long time; please explain our japanese culture and language to him.",
       "lang": "ja",
       "srcLang": "en",
@@ -966,6 +1117,133 @@
       "generatedAt": "2026-06-10T13:33:03.492Z",
       "updatedAt": "2026-06-10T13:38:52.409Z",
       "id": "tp_2072510715"
+    },
+    {
+      "topic": "Furigana Fumble",
+      "topicEmoji": "📖",
+      "userTopic": "once things have settled, the teacher pointed out that the earlier mistake about seishō/symbol would not have happened, i fthe kanji had furigana annotation.",
+      "lang": "ja",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 350,
+      "story": "授業が再開され、教室は再び活気を取り戻した。先生は落ち着いた表情で、生徒たちに向き合った。「皆さん、今朝の出来事は、何か特別なことを教えてくれたと思いますか？」と尋ねた。生徒たちは首を傾げ、少し困惑した表情を浮かべた。\n\n「実は、この出来事は、私たちの学習にも重要な教訓を残してくれました。」先生は笑いながら続けた。「皆さん、今朝、教室が暗くなったとき、誰が最初に叫んだと思いますか？」と尋ねた。生徒たちが思い思いの答えを出すと、先生は笑って続けた。「正解は、『せしょーだ！』でしたね。」生徒たちが笑い声を漏らすと、先生は続けた。「でも、正解は『せんじょうだ』でしたね。」教室は静まり返り、生徒たちの顔には困惑が浮かんだ。\n\n「でも、せしょーって、せんじょうの略じゃないですか？」一人の生徒が疑問を投げかけた。先生は笑いながら答えた。「その通りです。でも、もしせんじょうにふりがながついていれば、このミスは起こらなかったはずです。」生徒たちが驚いた顔を見せる中、先生は続けた。「これからは、みんなの学習にも役立つように、せんじょうにふりがなをつけましょう。」教室は再び笑い声に包まれ、先生の言葉は生徒たちの心に深く刻まれた。",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 3-4 paragraphs, under 350 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate EVERY kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Annotate all kanji without exception — the learner cannot read any kanji yet. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation. Writing style: Comedic tone, wordplay, absurdist situations, punchlines. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n授業が終わり、教室を出ていくと、突然電気が消えた。全員が驚きの声を上げた。教室は一時的に闇に包まれ、生徒たちの声だけが静かな廊下に響き渡る。先生は慌てて教室に戻り、明かりを点けようと試みたが、何も起こらなかった。その時、地面が揺れた。小さな振動が教室全体を揺らし、机が軋んだ音が聞こえた。\n\n「地震だ！」一人の生徒が叫んだ。しかし、揺れはすぐに止まり、教室は再び静寂に包まれた。先生は教室の隅に立って、揺れが止まったことを確認した。しかし、その揺れはまるで何かが去った後のような、不気味な静けさを残した。\n\n「でも、これは地震じゃない。」先生は一人残された生徒たちに言った。「これは何かが去った後だ。」先生は教室の隅を見つめ、鏡の前に立った。鏡の中の自分に、先生は「何が起こったのか、教えてくれ」と呟いた。鏡の自分は微笑んで応えた。「 Ogre は去った。」先生は驚きと恐れで震えたが、その言葉はまるで「オオカミは来なかった」というような、不気味な予言のようだった。\n\nNew topic: \"once things have settled, the teacher pointed out that the earlier mistake about seishō/symbol would not have happened, i fthe kanji had furigana annotation.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Lights Out, Earthquake or Ogre?",
+      "storyStyle": "funny",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "kanji with furigana",
+          "desc": "kanji with furigana, beginner vocabulary",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "静寂[せいじゃく]",
+              "source": "stillness, silence"
+            },
+            {
+              "target": "象徴[しょうちょう]",
+              "source": "symbol, emblem"
+            },
+            {
+              "target": "日本の美の象徴[日本の美のしょうちょう]",
+              "source": "symbol of Japan's beauty"
+            },
+            {
+              "target": "象[ぞう]",
+              "source": "elephant"
+            },
+            {
+              "target": "長[ちょう]",
+              "source": "length, long"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "教室は静寂を取り戻した。",
+              "source": "The classroom regained its stillness.",
+              "words": [
+                "教室",
+                "は",
+                "静寂",
+                "を",
+                "取",
+                "り",
+                "戻",
+                "した"
+              ]
+            },
+            {
+              "target": "象は長さの象徴だ。",
+              "source": "The elephant is a symbol of length.",
+              "words": [
+                "象",
+                "は",
+                "長",
+                "さの",
+                "象徴",
+                "だ"
+              ]
+            },
+            {
+              "target": "日本の国花は桜だ。",
+              "source": "The national flower of Japan is cherry blossoms.",
+              "words": [
+                "日本",
+                "の",
+                "国花",
+                "は",
+                "桜",
+                "だ"
+              ]
+            },
+            {
+              "target": "予言は静寂に包まれた。",
+              "source": "The prophecy was shrouded in silence.",
+              "words": [
+                "予言",
+                "は",
+                "静寂",
+                "に",
+                "包",
+                "まれた"
+              ]
+            },
+            {
+              "target": "驚きは教室を揺れた。",
+              "source": "Surprise shook the classroom.",
+              "words": [
+                "驚",
+                "きは",
+                "教室",
+                "を",
+                "揺",
+                "れた"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 603188,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1864,
+        "totalCompletionTokens": 648,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 329104,
+            "promptTokens": 1105,
+            "completionTokens": 267
+          }
+        ]
+      },
+      "generatedAt": "2026-06-10T14:31:22.387Z",
+      "updatedAt": "2026-06-10T14:36:51.548Z",
+      "id": "tp_1707431729"
     },
     {
       "topic": "Lights Out, Earthquake or Ogre?",
