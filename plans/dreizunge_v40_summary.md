@@ -157,6 +157,14 @@ Around line 490, separate from `index.html`'s `storylines_renderChain`. Always c
 
 ## TODO (Next Session)
 
+### Suggested priority order
+1. **Topic ID migration** — critical correctness fix; topic names are mutable, IDs must be the stable reference everywhere. Full plan in Architecture Notes below.
+2. **"Message to LLM" input field** — fully specced, low risk, clear UX win
+3. **Translate new ui.json keys** — no code needed, just run `translate-ui.js`
+4. **Template lesson export (Option C)** — additive, natural next step for batch pipeline
+5. **German noun capitalisation** — one-line prompt fix
+6. Everything else below deserves its own dedicated session
+
 ### 🔤 Prompt Engineering
 - "Message to LLM" input field (additional instructions, high priority override) — see v39 summary for full spec
 - Move topic info (sysMeta) to after story generation
@@ -171,10 +179,10 @@ Around line 490, separate from `index.html`'s `storylines_renderChain`. Always c
 - Consider Chinese pinyin annotation (infrastructure already in place — needs model quality testing)
 - Existing Japanese lessons without furigana need regeneration
 
-### 🌍 Scale / UI
-- Translate new ui.json keys to all 29 languages (teacher mode, vocab mode, story lang, toasts, lesson type desc)
-- Quality scan: auto-generate same topic across all language pairs
-- MULTIZUNGE: auto-generate all language pair combinations
+### 🌍 Scale / Quality Assessment
+- **`generate-lessons.js` quality pipeline**: add `assess-quality.py` (Python) that reads JSONL output, runs an LLM judge on lesson content, writes `quality` field back. Rubric to be defined.
+- **Translate new ui.json keys** to all 29 languages (teacher mode, vocab mode, story lang, toasts, lesson type desc) — use `translate-ui.js` with `--exclude` to skip already-complete languages
+- MULTIZUNGE: auto-generate all language pair combinations for a set of intro topics
 - Phylogenetic language map UI
 
 ### 🔊 TTS
@@ -194,3 +202,104 @@ Unchanged from v39. Phase 1 (branching display) already implemented in `_renderS
 
 ### Google Cloud TTS Proxy
 Unchanged from v39 — see v39 summary for full server/client plan.
+
+### generate-lessons.js — Standalone Option (Future)
+
+Currently requires `server.js` to be running (calls `/api/generate` over HTTP). Two approaches to make it server-independent:
+
+**Option A — Full extraction (major refactor)**
+Extract `generate()` and its ~20 dependent functions (`sysLesson`, `sysStory`, `generateOneLesson`, `generateGrammar`, `deriveSentenceWords`, store functions, `PROMPTS` loading, etc.) into a shared `generate.js` module. Both `server.js` and `generate-lessons.js` require it. Risk: the store singleton, `PROMPTS` hot-reload, and `jobStep` coupling all need careful untangling. Estimated effort: half-day. Worth doing once the codebase stabilises.
+
+**Option B — Slim standalone pipeline (simpler)**
+Write a `generate-simple.js` that implements only the minimal fixed pipeline needed for batch generation — no grammar/conjugation/error-hunt/math, no dialect, no continuation, no repair. Just: story → vocab lesson → save JSONL. Uses `llm.js` directly, reads `prompts.json` directly, writes its own output file. No store, no job system. Much less code to maintain but diverges from the server pipeline over time.
+
+**Option C — Template lesson export/import (new idea)**
+Generate a "template lesson" in one language pair via the normal server/index.html UI, then export it with a new extended format that includes the prompts and generation parameters used. A standalone script reads this template export and regenerates the same lesson in other language pairs using `llm.js` directly — no server needed. The export format would add a `_generationTemplate` field to the topic object.
+
+**Recommendation**: Option C is the most elegant and unique to Dreizunge's architecture. Option A is the right long-term engineering choice. Option B is quick but creates maintenance debt. Pursue C first as it adds user-facing value (shareable templates), then A when the codebase is ready.
+
+---
+
+### ⚠ PRIORITY REFACTOR: Migrate topic references from names to IDs
+
+**Problem:** The entire chain navigation, lesson loading, and storyline system references topics by their mutable `topic` name string rather than their stable `tp_` ID. Topic names can change (LLM renames during generation, user edits `lessons.json`). This causes: wrong cache hits, chain navigation breaks after rename, batch generation collision (multiple lang pairs share same topic name), `byTopic` maps losing entries on collision.
+
+**Full audit of name-based references (as of v40):**
+
+*Server (`server.js`):*
+- `continuedFrom` field — stored as topic name string in every topic object. Used by `collectChainVocab()`, `_syncStorylineForTopic()`, `generate()`, the rename handler (line 1561), and `topicIdOf()`.
+- `findSaved(topicName)` — 10+ call sites for chain walking. Should be `findSavedById(id)` wherever a stable reference is needed.
+- `_syncStorylineForTopic(topicName, continuedFromTopic)` — walks chain by topic name. Should walk by ID.
+- `/api/lessons/load?topic=` — load endpoint uses topic name. Should accept `?id=` too.
+- `/api/lessons/delete?topic=` — same.
+- `collectChainVocab(continuedFromTopic)` — walks by name via `t.continuedFrom`.
+- `candidates = store.topics.filter(t => t.continuedFrom === cur)` — line 1378, matches by topic name string.
+
+*Client (`index.html`):*
+- `loadSaved(topic)` — takes topic name, calls `/api/lessons/load?topic=`.
+- `deleteSaved(topic)` — same.
+- `continueFromLesson(topic, ...)` — uses topic name.
+- `continue-select` option values — topic names.
+- `byTopic` maps — `Object.fromEntries(filtered.map(l => [l.topic, l]))` — collides on same name.
+- `.find(l => l.topic === x)` — ~12 call sites.
+- `data-topic` attributes in rendered HTML — topic names baked into onclick strings.
+- `APP.lessonData.topic` used as identifier for current lesson.
+
+**Boot-time migration edge cases:**
+- If a topic has no `id`, assign `_topicId(topic.topic)` — idempotent, safe to run on every boot
+- If `continuedFrom` is a string that matches a known topic name, replace with that topic's `tp_` ID
+- If `continuedFrom` is a string that matches no known topic (deleted or renamed before migration), set to `null` — do not crash, log a warning
+- If `continuedFrom` already looks like a `tp_` ID (starts with `'tp_'`), leave it untouched
+- Write back to store after migration only if any changes were made
+
+2. **`continuedFrom` → ID** — change `generate()` to store `continuedFrom` as `tp_` ID. Change `collectChainVocab` and `_syncStorylineForTopic` to walk by ID using `findSavedById`. Change `candidates` filter (line 1378) to match `t.continuedFromId` (or keep `continuedFrom` field name but store ID value).
+
+3. **New endpoints** — add `/api/lessons/load?id=` and `/api/lessons/delete?id=` alongside existing name-based ones (keep name-based for backward compat temporarily).
+
+4. **`loadSaved(id)`** — change to use ID. All `onclick="loadSaved('${enc}')"` → use `s.id`. All `continueFromLesson(topic)` → `continueFromLesson(id)`.
+
+5. **`continue-select` values** → topic IDs not names. `continueFromLesson` sends ID to `/api/generate` as `continuedFrom`.
+
+6. **`byTopic` → `byId`** — replace all `byTopic` maps with `byId` (already have `_byId` in loadSavedList). Update all `.find(l => l.topic === x)` to `.find(l => l.id === x)`.
+
+7. **Rename handler** — no longer needs to update `continuedFrom` refs across all topics. Just update the single topic's `topic` field.
+
+**Key risk:** `_topicId(topicName)` derives ID from topic name hash — so if a topic is renamed, its hash changes and it gets a new ID, breaking existing storyline chapter references. Fix: once an ID is assigned, it must never be recalculated from the name. IDs are assigned once (on first `upsert` or boot migration) and stored permanently.
+
+**Suggested approach for the implementation session:**
+- Start with the boot-time migration (safest — purely additive)
+- Then fix `upsert` to assign ID on creation (already done for lang+srcLang key, not yet for ID assignment)
+- Then fix `continuedFrom` storage and chain walking on the server
+- Then update client endpoints and `loadSaved`
+- Finally replace `byTopic` maps
+
+Do NOT change `_topicId` hash function — existing IDs in stored data must remain valid.
+
+
+**Option A — Full extraction (major refactor)**
+Extract `generate()` and its ~20 dependent functions (`sysLesson`, `sysStory`, `generateOneLesson`, `generateGrammar`, `deriveSentenceWords`, store functions, `PROMPTS` loading, etc.) into a shared `generate.js` module. Both `server.js` and `generate-lessons.js` require it. Risk: the store singleton, `PROMPTS` hot-reload, and `jobStep` coupling all need careful untangling. Estimated effort: half-day. Worth doing once the codebase stabilises.
+
+**Option B — Slim standalone pipeline (simpler)**
+Write a `generate-simple.js` that implements only the minimal fixed pipeline needed for batch generation — no grammar/conjugation/error-hunt/math, no dialect, no continuation, no repair. Just: story → vocab lesson → save JSONL. Uses `llm.js` directly, reads `prompts.json` directly, writes its own output file. No store, no job system. Much less code to maintain but diverges from the server pipeline over time.
+
+**Option C — Template lesson export/import (new idea)**
+Generate a "template lesson" in one language pair via the normal server/index.html UI, then export it with a new extended format that includes the prompts and generation parameters used. A standalone script reads this template export and regenerates the same lesson in other language pairs using `llm.js` directly — no server needed. The export format would add a `_generationTemplate` field to the topic object:
+```json
+{
+  "topic": "Greetings and Introductions",
+  "lang": "de", "srcLang": "en",
+  "_generationTemplate": {
+    "userTopic": "greetings and introductions",
+    "difficulty": 1,
+    "storyLen": 200,
+    "storyStyle": "neutral",
+    "lessonFormat": "standard",
+    "prompts": { ... }   // snapshot of the prompts.json keys used
+  },
+  "lessons": [ ... ]
+}
+```
+The standalone script strips `lang`/`srcLang`/`topic`, re-runs generation for each target pair, and produces an importable file. Advantages: reproducible (same prompts snapshot), server-independent, and the template can be shared — others can regenerate it in their language without needing the original setup. Requires: a new export option in `index.html`/`server.js` that bundles the `_generationTemplate` field, and a `generate-from-template.js` script.
+
+**Recommendation**: Option C is the most elegant and unique to Dreizunge's architecture. Option A is the right long-term engineering choice. Option B is quick but creates maintenance debt. Pursue C first as it adds user-facing value (shareable templates), then A when the codebase is ready.
+
