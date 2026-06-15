@@ -19362,113 +19362,6 @@
               "reason": ""
             }
           ]
-        },
-        {
-          "id": "ls_1781350138048",
-          "type": "synonyms",
-          "title": "AI & Math Basics",
-          "desc": "Grundlagen der Mathematik und KI",
-          "icon": "💡",
-          "words": [
-            {
-              "base": "grundlagen",
-              "gloss": "basics, fundamentals",
-              "synonyms": [
-                {
-                  "w": "basis",
-                  "g": "base"
-                },
-                {
-                  "w": "elementare",
-                  "g": "elementary"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "mathematischen",
-              "gloss": "mathematical",
-              "synonyms": [
-                {
-                  "w": "mathematische",
-                  "g": "mathematical"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "verstehen",
-              "gloss": "understand",
-              "synonyms": [
-                {
-                  "w": "begreifen",
-                  "g": "comprehend"
-                },
-                {
-                  "w": "ergründen",
-                  "g": "understand thoroughly"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "verwechseln",
-                  "g": "misunderstand"
-                }
-              ],
-              "homophones": []
-            },
-            {
-              "base": "modelle",
-              "gloss": "models",
-              "synonyms": [
-                {
-                  "w": "simulationen",
-                  "g": "simulations"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "prinzipien",
-              "gloss": "principles",
-              "synonyms": [
-                {
-                  "w": "grundzüge",
-                  "g": "principles"
-                },
-                {
-                  "w": "regeln",
-                  "g": "rules"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
-              "base": "lernen",
-              "gloss": "learn",
-              "synonyms": [
-                {
-                  "w": "studieren",
-                  "g": "study"
-                },
-                {
-                  "w": "erlernen",
-                  "g": "learn"
-                }
-              ],
-              "antonyms": [
-                {
-                  "w": "vergessen",
-                  "g": "forget"
-                }
-              ],
-              "homophones": []
-            }
-          ]
         }
       ],
       "generationStats": {
@@ -19500,7 +19393,7 @@
         ]
       },
       "generatedAt": "2026-06-01T19:53:43.536Z",
-      "updatedAt": "2026-06-13T11:28:58.048Z",
+      "updatedAt": "2026-06-15T14:44:08.606Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 190634,
