@@ -2,6 +2,33 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_962481837",
+      "title": "Monde des chiffres",
+      "icon": "🪄",
+      "chapters": [
+        "tp_17815362983410001153",
+        "tp_17815364168590001213",
+        "tp_17815365253630001333",
+        "tp_17815366458380001418",
+        "tp_17815367707540001511",
+        "tp_17815369701180001679",
+        "tp_17815370798370001700",
+        "tp_17815371923280001882",
+        "tp_17815373131900001991",
+        "tp_17815374375310002032",
+        "tp_17815375428510002151"
+      ],
+      "lang": "en",
+      "srcLang": "fr",
+      "createdAt": "2026-06-15T15:11:38.366Z",
+      "updatedAt": "2026-06-15T17:12:06.129Z",
+      "tags": [
+        "manually curated",
+        "children"
+      ],
+      "summary": "Dans le monde des chiffres, la petite i cherche sa place parmi les autres nombres. Elle voyage à travers différents mondes, rencontre des personnages comme le sept et le huit, et apprend que sa véritable identité dépasse les conventions numériques. Elle finit par comprendre qu'être i, c'est être unique et suffisant en soi."
+    },
+    {
       "id": "sl_1854567313",
       "title": "Das kleine i",
       "icon": "🔍",
@@ -809,6 +836,1789 @@
     }
   ],
   "topics": [
+    {
+      "topic": "Peut-être i",
+      "topicEmoji": "💡",
+      "userTopic": "Maybe she didn’t have to be Seven",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "continuedFrom": "“Of course",
+      "continuedFromId": "tp_17815374375310002032",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "i, maybe, number, seven",
+          "desc": "peut-être, numéro, sept, simple",
+          "icon": "💡",
+          "vocab": [
+            {
+              "target": "maybe",
+              "source": "peut-être"
+            },
+            {
+              "target": "number",
+              "source": "numéro"
+            },
+            {
+              "target": "seven",
+              "source": "sept"
+            },
+            {
+              "target": "simple",
+              "source": "simple"
+            },
+            {
+              "target": "she",
+              "source": "elle"
+            },
+            {
+              "target": "could",
+              "source": "pouvait"
+            },
+            {
+              "target": "be",
+              "source": "être"
+            },
+            {
+              "target": "i",
+              "source": "i"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Maybe she could be i.",
+              "source": "Peut-être qu'elle pourrait être i.",
+              "words": [
+                "Maybe",
+                "she",
+                "could",
+                "be",
+                "i."
+              ]
+            },
+            {
+              "target": "She didn't have to be a number.",
+              "source": "Elle n'avait pas à être un numéro.",
+              "words": [
+                "She",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "a",
+                "number."
+              ]
+            },
+            {
+              "target": "Maybe she was just i.",
+              "source": "Peut-être qu'elle était simplement i.",
+              "words": [
+                "Maybe",
+                "she",
+                "was",
+                "just",
+                "i."
+              ]
+            },
+            {
+              "target": "Seven wasn't necessary.",
+              "source": "Sept n'était pas nécessaire.",
+              "words": [
+                "Seven",
+                "wasn't",
+                "necessary."
+              ]
+            },
+            {
+              "target": "Being simple felt right.",
+              "source": "Être simple se sentait juste.",
+              "words": [
+                "Being",
+                "simple",
+                "felt",
+                "right."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 105221,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 604,
+        "totalCompletionTokens": 244,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 105196,
+            "promptTokens": 604,
+            "completionTokens": 244
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:30:37.590Z",
+      "updatedAt": "2026-06-15T16:34:47.086Z",
+      "id": "tp_17815375428510002151"
+    },
+    {
+      "topic": "Zero",
+      "topicEmoji": ".ZERO",
+      "userTopic": "“Of course",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 52,
+      "story": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "continuedFrom": "Then somebody quietly sat beside her",
+      "continuedFromId": "tp_17815373131900001991",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "of course",
+          "desc": "certes, je ne suis pas, je ne suis pas, je ne suis pas",
+          "icon": "✅",
+          "vocab": [
+            {
+              "target": "of course",
+              "source": "bien sûr",
+              "editedAt": "2026-06-15T16:33:39.523Z"
+            },
+            {
+              "target": "not",
+              "source": "non",
+              "editedAt": "2026-06-15T16:33:42.868Z"
+            },
+            {
+              "target": "that's",
+              "source": "c'est"
+            },
+            {
+              "target": "okay",
+              "source": "d'accord"
+            },
+            {
+              "target": "what makes",
+              "source": "ce qui fait"
+            },
+            {
+              "target": "strange",
+              "source": "étrange"
+            },
+            {
+              "target": "cried",
+              "source": "pleurait"
+            },
+            {
+              "target": "first time",
+              "source": "premier fois"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Of course, I'm not one.",
+              "source": "Certes, je ne suis pas un.",
+              "words": [
+                "Of",
+                "course,",
+                "I'm",
+                "not",
+                "one."
+              ]
+            },
+            {
+              "target": "That's okay.",
+              "source": "C'est d'accord.",
+              "words": [
+                "That's",
+                "okay."
+              ]
+            },
+            {
+              "target": "It's exactly what makes me zero.",
+              "source": "C'est exactement ce qui fait que je suis zéro.",
+              "words": [
+                "It's",
+                "exactly",
+                "what",
+                "makes",
+                "me",
+                "zero."
+              ]
+            },
+            {
+              "target": "She stopped crying for the first time.",
+              "source": "Elle s'est arrêtée de pleurer pour la première fois.",
+              "words": [
+                "She",
+                "stopped",
+                "crying",
+                "for",
+                "the",
+                "first",
+                "time."
+              ]
+            },
+            {
+              "target": "At strange old π with his binoculars.",
+              "source": "À l'ancien π avec ses jumelles",
+              "words": [
+                "At",
+                "strange",
+                "old",
+                "π",
+                "with",
+                "his",
+                "binoculars."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1781541745724",
+          "type": "math",
+          "title": "😀😀😀",
+          "desc": "+ ×",
+          "icon": "😀",
+          "numbers": [
+            1,
+            1,
+            2,
+            3,
+            5,
+            8,
+            13,
+            21,
+            34,
+            55,
+            89
+          ],
+          "difficulty": 3,
+          "mathInstruction": "add the fibonacci series as  addition questions, where the fibonacci series' additions with numbers below 100 appear in random order, e.g. 34+21 is asked before 3+5",
+          "exercises": [
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "1",
+              "correct": "2",
+              "choices": [
+                "2",
+                "1",
+                "3",
+                "0"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "21",
+              "op": "+",
+              "b": "34",
+              "correct": "55",
+              "choices": [
+                "45",
+                "65",
+                "55",
+                "75"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "89",
+              "op": "+",
+              "b": "55",
+              "correct": "144",
+              "choices": [
+                "144",
+                "154",
+                "134",
+                "164"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "55",
+              "op": "+",
+              "b": "34",
+              "correct": "89",
+              "choices": [
+                "109",
+                "89",
+                "79",
+                "99"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "34",
+              "op": "+",
+              "b": "21",
+              "correct": "55",
+              "choices": [
+                "55",
+                "75",
+                "45",
+                "65"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "+",
+              "b": "13",
+              "correct": "21",
+              "choices": [
+                "21",
+                "41",
+                "31",
+                "11"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "5",
+              "correct": "8",
+              "choices": [
+                "12",
+                "8",
+                "18",
+                "2"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 124253,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 636,
+        "totalCompletionTokens": 277,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 124222,
+            "promptTokens": 636,
+            "completionTokens": 277
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:28:33.246Z",
+      "updatedAt": "2026-06-15T16:44:27.102Z",
+      "id": "tp_17815374375310002032"
+    },
+    {
+      "topic": "Silence et solitude",
+      "topicEmoji": "📚",
+      "userTopic": "Then somebody quietly sat beside her",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 66,
+      "story": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "continuedFrom": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+      "continuedFromId": "tp_17815371923280001882",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Then somebody quietly sat beside her",
+          "desc": "sitting, beside, quiet, somebody, noticed, shy, number, belong",
+          "icon": "👤",
+          "vocab": [
+            {
+              "target": "quietly",
+              "source": "silencieusement"
+            },
+            {
+              "target": "beside",
+              "source": "à côté de"
+            },
+            {
+              "target": "somebody",
+              "source": "quelqu'un"
+            },
+            {
+              "target": "noticed",
+              "source": "remarqua"
+            },
+            {
+              "target": "shy",
+              "source": "timide"
+            },
+            {
+              "target": "number",
+              "source": "nombre"
+            },
+            {
+              "target": "belong",
+              "source": "appartenir"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Then somebody quietly sat beside her.",
+              "source": "Alors, quelqu'un s'est assis silencieusement à côté d'elle.",
+              "words": [
+                "Then",
+                "somebody",
+                "quietly",
+                "sat",
+                "beside",
+                "her."
+              ]
+            },
+            {
+              "target": "Zero was shy.",
+              "source": "Zero était timide.",
+              "words": [
+                "Zero",
+                "was",
+                "shy."
+              ]
+            },
+            {
+              "target": "Zero was quiet.",
+              "source": "Zero était silencieux.",
+              "words": [
+                "Zero",
+                "was",
+                "quiet."
+              ]
+            },
+            {
+              "target": "Zero never pushed to the front.",
+              "source": "Zero ne se pressait jamais en avant.",
+              "words": [
+                "Zero",
+                "never",
+                "pushed",
+                "to",
+                "the",
+                "front."
+              ]
+            },
+            {
+              "target": "Tu sembles triste', a dit Zero.",
+              "source": "'Tu as l'air triste', a dit Zero.",
+              "words": [
+                "Tu",
+                "sembles",
+                "triste',",
+                "a",
+                "dit",
+                "Zero."
+              ],
+              "editedAt": "2026-06-15T16:33:25.220Z"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 120742,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 651,
+        "totalCompletionTokens": 259,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 120709,
+            "promptTokens": 651,
+            "completionTokens": 259
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:26:32.421Z",
+      "updatedAt": "2026-06-15T16:33:28.074Z",
+      "id": "tp_17815373131900001991"
+    },
+    {
+      "topic": "Infini et fini",
+      "topicEmoji": "📚",
+      "userTopic": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 85,
+      "story": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "continuedFrom": "As he finished his kind introduction,",
+      "continuedFromId": "tp_17815370798370001700",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "eight couché, ouvrira-t-il les yeux?",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "collapsed",
+              "source": "s'est effondré",
+              "editedAt": "2026-06-15T16:32:37.910Z"
+            },
+            {
+              "target": "eyes",
+              "source": "yeux"
+            },
+            {
+              "target": "finite",
+              "source": "fini"
+            },
+            {
+              "target": "revenge",
+              "source": "vengeance"
+            },
+            {
+              "target": "trembles",
+              "source": "tremble"
+            },
+            {
+              "target": "assemble",
+              "source": "se rassemble"
+            },
+            {
+              "target": "commands",
+              "source": "commande"
+            },
+            {
+              "target": "mumble",
+              "source": "bavardages"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Eight collapsed.",
+              "source": "Eight s'est effondré.",
+              "words": [
+                "Eight",
+                "collapsed."
+              ],
+              "editedAt": "2026-06-15T16:32:37.910Z"
+            },
+            {
+              "target": "Will he ever open his eyes?",
+              "source": "Ouvrira-t-il les yeux?",
+              "words": [
+                "Will",
+                "he",
+                "ever",
+                "open",
+                "his",
+                "eyes?"
+              ]
+            },
+            {
+              "target": "Is he finite?",
+              "source": "Est-il fini?",
+              "words": [
+                "Is",
+                "he",
+                "finite?"
+              ]
+            },
+            {
+              "target": "Eight didn’t eat.",
+              "source": "Eight ne mangeait pas.",
+              "words": [
+                "Eight",
+                "didn’t",
+                "eat."
+              ]
+            },
+            {
+              "target": "Some numbers command.",
+              "source": "Certains chiffres commandent.",
+              "words": [
+                "Some",
+                "numbers",
+                "command."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 112410,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 676,
+        "totalCompletionTokens": 237,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 112382,
+            "promptTokens": 676,
+            "completionTokens": 237
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:24:39.888Z",
+      "updatedAt": "2026-06-15T16:32:37.915Z",
+      "id": "tp_17815371923280001882"
+    },
+    {
+      "topic": "Introduction d'Eight",
+      "topicEmoji": "🥧",
+      "userTopic": "As he finished his kind introduction,",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 72,
+      "story": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "continuedFrom": "One is mean, he’s always first,",
+      "continuedFromId": "tp_17815369701180001679",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "kind introduction",
+          "desc": "fini, interruption, cri, pie",
+          "icon": "🥣",
+          "vocab": [
+            {
+              "target": "finished",
+              "source": "fini"
+            },
+            {
+              "target": "kind",
+              "source": "gentil"
+            },
+            {
+              "target": "introduction",
+              "source": "introduction"
+            },
+            {
+              "target": "disruption",
+              "source": "interruption"
+            },
+            {
+              "target": "screaming",
+              "source": "criant"
+            },
+            {
+              "target": "pie",
+              "source": "tarte"
+            },
+            {
+              "target": "hungry",
+              "source": "faim"
+            },
+            {
+              "target": "loves",
+              "source": "aime"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He finished his kind introduction.",
+              "source": "Il a fini son introduction gentille.",
+              "words": [
+                "He",
+                "finished",
+                "his",
+                "kind",
+                "introduction."
+              ]
+            },
+            {
+              "target": "At the end of the room, there’s some sort of disruption.",
+              "source": "Au bout de la salle, il y a un certain genre de perturbation.",
+              "words": [
+                "At",
+                "the",
+                "end",
+                "of",
+                "the",
+                "room,",
+                "there’s",
+                "some",
+                "sort",
+                "of",
+                "disruption."
+              ],
+              "editedAt": "2026-06-15T16:28:32.084Z"
+            },
+            {
+              "target": "Eight is rushing.",
+              "source": "Huit court.",
+              "words": [
+                "Eight",
+                "is",
+                "rushing."
+              ]
+            },
+            {
+              "target": "Someone said pie?",
+              "source": "Quelqu'un a dit tarte ?",
+              "words": [
+                "Someone",
+                "said",
+                "pie?"
+              ]
+            },
+            {
+              "target": "He loves pie.",
+              "source": "Il aime la tarte.",
+              "words": [
+                "He",
+                "loves",
+                "pie."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 109636,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 658,
+        "totalCompletionTokens": 254,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 109606,
+            "promptTokens": 658,
+            "completionTokens": 254
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:22:50.169Z",
+      "updatedAt": "2026-06-15T16:28:42.734Z",
+      "id": "tp_17815370798370001700"
+    },
+    {
+      "topic": "L'Une, le Premier?",
+      "topicEmoji": "🌍",
+      "userTopic": "One is mean, he’s always first,",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 54,
+      "story": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "continuedFrom": "In this world, so chaotic and strange,",
+      "continuedFromId": "tp_17815367707540001511",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "mean",
+          "desc": "méchant toujours premier",
+          "icon": "😡",
+          "vocab": [
+            {
+              "target": "mean",
+              "source": "méchant"
+            },
+            {
+              "target": "first",
+              "source": "premier"
+            },
+            {
+              "target": "hurt",
+              "source": "blesser"
+            },
+            {
+              "target": "says",
+              "source": "dit"
+            },
+            {
+              "target": "sees",
+              "source": "voit"
+            },
+            {
+              "target": "true",
+              "source": "vrai"
+            },
+            {
+              "target": "believe",
+              "source": "croire"
+            },
+            {
+              "target": "stepped",
+              "source": "a avancé"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He’s always first.",
+              "source": "Il est toujours premier.",
+              "words": [
+                "He’s",
+                "always",
+                "first."
+              ]
+            },
+            {
+              "target": "doesn’t care who he’s gonna hurt.",
+              "source": "ne s’inquiète pas de qui il va blesser.",
+              "words": [
+                "doesn’t",
+                "care",
+                "who",
+                "he’s",
+                "gonna",
+                "hurt."
+              ]
+            },
+            {
+              "target": "He just says what he sees.",
+              "source": "Il dit simplement ce qu’il voit.",
+              "words": [
+                "He",
+                "just",
+                "says",
+                "what",
+                "he",
+                "sees."
+              ]
+            },
+            {
+              "target": "thinks it’s true, what he only believes.",
+              "source": "il pense que c’est vrai, ce qu’il ne croit que.",
+              "words": [
+                "thinks",
+                "it’s",
+                "true,",
+                "what",
+                "he",
+                "only",
+                "believes."
+              ]
+            },
+            {
+              "target": "somebody stepped politely by.",
+              "source": "quelqu’un a avancé poliment",
+              "words": [
+                "somebody",
+                "stepped",
+                "politely",
+                "by."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1781540649818",
+          "type": "math",
+          "title": "😀😀😀",
+          "desc": "+ +",
+          "icon": "😀",
+          "numbers": [
+            1,
+            1,
+            2,
+            3,
+            5,
+            8,
+            13,
+            21,
+            34,
+            55
+          ],
+          "difficulty": 1,
+          "mathInstruction": "add the fibonacci series as sequentially increasing addition questions up to the first two three digit numbers, don't skip any step of the fibonacci series.",
+          "exercises": [
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "1",
+              "correct": "2",
+              "choices": [
+                "3",
+                "0",
+                "1",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "2",
+              "correct": "3",
+              "choices": [
+                "4",
+                "3",
+                "1",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "3",
+              "correct": "5",
+              "choices": [
+                "4",
+                "5",
+                "3",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "5",
+              "correct": "8",
+              "choices": [
+                "5",
+                "8",
+                "10",
+                "6"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "8",
+              "correct": "13",
+              "choices": [
+                "15",
+                "13",
+                "11",
+                "8"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 199288,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 637,
+        "totalCompletionTokens": 257,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 84397,
+            "promptTokens": 637,
+            "completionTokens": 257
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:19:30.806Z",
+      "updatedAt": "2026-06-15T16:26:44.894Z",
+      "id": "tp_17815369701180001679"
+    },
+    {
+      "topic": "Monde étrange",
+      "topicEmoji": "🌍",
+      "userTopic": "In this world, so chaotic and strange,",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 82,
+      "story": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "continuedFrom": "“Are you my family",
+      "continuedFromId": "tp_17815366458380001418",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "In this world, so chaotic and strange",
+          "desc": "nombres, rangées, cercles, bandes, lettre, différent, petit",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "target": "numbers",
+              "source": "nombres"
+            },
+            {
+              "target": "rows",
+              "source": "rangs"
+            },
+            {
+              "target": "circles",
+              "source": "cercles"
+            },
+            {
+              "target": "band",
+              "source": "bande"
+            },
+            {
+              "target": "letter",
+              "source": "lettre"
+            },
+            {
+              "target": "different",
+              "source": "différent"
+            },
+            {
+              "target": "small",
+              "source": "petit"
+            },
+            {
+              "target": "tall",
+              "source": "grand"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "She's so different, she's so small.",
+              "source": "Elle est si différente, elle est si petite.",
+              "words": [
+                "She's",
+                "so",
+                "different,",
+                "she's",
+                "so",
+                "small."
+              ]
+            },
+            {
+              "target": "Sometimes they stand in rows.",
+              "source": "Parfois, ils se rangent en rangées.",
+              "words": [
+                "Sometimes",
+                "they",
+                "stand",
+                "in",
+                "rows."
+              ]
+            },
+            {
+              "target": "Sometimes they stand in circles.",
+              "source": "Parfois, ils se rangent en cercles.",
+              "words": [
+                "Sometimes",
+                "they",
+                "stand",
+                "in",
+                "circles."
+              ]
+            },
+            {
+              "target": "All the numbers came.",
+              "source": "Tous les nombres sont venus.",
+              "words": [
+                "All",
+                "the",
+                "numbers",
+                "came."
+              ]
+            },
+            {
+              "target": "She’s so different, she’s so small.",
+              "source": "Elle est si différente, elle est si petite.",
+              "words": [
+                "She’s",
+                "so",
+                "different,",
+                "she’s",
+                "so",
+                "small."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 124835,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 675,
+        "totalCompletionTokens": 275,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 124809,
+            "promptTokens": 675,
+            "completionTokens": 275
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:17:25.886Z",
+      "updatedAt": "2026-06-15T17:05:58.721Z",
+      "id": "tp_17815367707540001511"
+    },
+    {
+      "topic": "Famille virtuelle",
+      "topicEmoji": "💻",
+      "userTopic": "“Are you my family",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 76,
+      "story": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "continuedFrom": "One evening, while everyone slept,",
+      "continuedFromId": "tp_17815365253630001333",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "family",
+          "desc": "souci, question, personne, héros, réponse, larmes, monstre, disparu",
+          "icon": "👨‍👩‍👧‍👦",
+          "vocab": [
+            {
+              "target": "family",
+              "source": "famille"
+            },
+            {
+              "target": "question",
+              "source": "question"
+            },
+            {
+              "target": "person",
+              "source": "personne"
+            },
+            {
+              "target": "hero",
+              "source": "héros"
+            },
+            {
+              "target": "answer",
+              "source": "réponse"
+            },
+            {
+              "target": "tears",
+              "source": "larmes"
+            },
+            {
+              "target": "monster",
+              "source": "monstre"
+            },
+            {
+              "target": "missing",
+              "source": "disparu"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Are you my family?",
+              "source": "Es-tu ma famille?",
+              "words": [
+                "Are",
+                "you",
+                "my",
+                "family?"
+              ]
+            },
+            {
+              "target": "Seven shook his head.",
+              "source": "Sept a secoué la tête.",
+              "words": [
+                "Seven",
+                "shook",
+                "his",
+                "head."
+              ]
+            },
+            {
+              "target": "I’m sorry.",
+              "source": "Je suis désolé.",
+              "words": [
+                "I’m",
+                "sorry."
+              ]
+            },
+            {
+              "target": "Forty-two thinks he is the smartest.",
+              "source": "Quarante-deux pense qu’il est le plus intelligent.",
+              "words": [
+                "Forty-two",
+                "thinks",
+                "he",
+                "is",
+                "the",
+                "smartest."
+              ]
+            },
+            {
+              "target": "Where’s our little guy?",
+              "source": "Où est notre petit gars?",
+              "words": [
+                "Where’s",
+                "our",
+                "little",
+                "guy?"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 120398,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 659,
+        "totalCompletionTokens": 265,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 120370,
+            "promptTokens": 659,
+            "completionTokens": 265
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:15:25.419Z",
+      "updatedAt": "2026-06-15T17:04:11.345Z",
+      "id": "tp_17815366458380001418"
+    },
+    {
+      "topic": "Un soir, un autre monde",
+      "topicEmoji": "🌟",
+      "userTopic": "One evening, while everyone slept,",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "continuedFrom": "+, −, ∗, /",
+      "continuedFromId": "tp_17815364168590001213",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Une soirée, tandis que tout le monde dormait",
+          "desc": "chemin lumineux, autre monde, numéro, sept",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "soirée"
+            },
+            {
+              "target": "path",
+              "source": "chemin"
+            },
+            {
+              "target": "world",
+              "source": "monde"
+            },
+            {
+              "target": "strange",
+              "source": "strange"
+            },
+            {
+              "target": "number",
+              "source": "numéro"
+            },
+            {
+              "target": "tall",
+              "source": "grand"
+            },
+            {
+              "target": "seven",
+              "source": "sept"
+            },
+            {
+              "target": "gasp",
+              "source": "haleter",
+              "editedAt": "2026-06-15T16:19:42.348Z"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I followed a glowing path.",
+              "source": "Je suis suivi un chemin éclairé.",
+              "words": [
+                "I",
+                "followed",
+                "a",
+                "glowing",
+                "path."
+              ]
+            },
+            {
+              "target": "It led to another world.",
+              "source": "Il a conduit à un autre monde.",
+              "words": [
+                "It",
+                "led",
+                "to",
+                "another",
+                "world."
+              ]
+            },
+            {
+              "target": "A strange world.",
+              "source": "Un monde étrange.",
+              "words": [
+                "A",
+                "strange",
+                "world."
+              ]
+            },
+            {
+              "target": "A number world.",
+              "source": "Un monde de numéros.",
+              "words": [
+                "A",
+                "number",
+                "world."
+              ]
+            },
+            {
+              "target": "He looked almost like her.",
+              "source": "Il ressemblait presque à elle.",
+              "words": [
+                "He",
+                "looked",
+                "almost",
+                "like",
+                "her."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1781540394818",
+          "type": "math",
+          "title": "① ② ③",
+          "desc": "＋ － ×  ÷",
+          "icon": "🔢",
+          "numbers": [
+            9,
+            7,
+            8,
+            3,
+            5,
+            2
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                7,
+                3,
+                8,
+                5
+              ],
+              "correct": [
+                "8",
+                "7",
+                "5",
+                "3"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                2,
+                7,
+                3,
+                9
+              ],
+              "correct": [
+                "2",
+                "3",
+                "7",
+                "9"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "9",
+              "correct": "12",
+              "choices": [
+                "12",
+                "11",
+                "10",
+                "13"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "7",
+              "correct": "9",
+              "choices": [
+                "8",
+                "9",
+                "7",
+                "10"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "-",
+              "b": "8",
+              "correct": "0",
+              "choices": [
+                "0",
+                "3",
+                "2",
+                "1"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "9",
+              "op": "-",
+              "b": "7",
+              "correct": "2",
+              "choices": [
+                "2",
+                "0",
+                "3",
+                "1"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "7",
+              "op": "+",
+              "b": "5",
+              "correct": "12",
+              "choices": [
+                "10",
+                "11",
+                "13",
+                "12"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 108416,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 634,
+        "totalCompletionTokens": 250,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 108384,
+            "promptTokens": 634,
+            "completionTokens": 250
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:13:36.921Z",
+      "updatedAt": "2026-06-15T16:19:54.818Z",
+      "id": "tp_17815365253630001333"
+    },
+    {
+      "topic": "Monde des chiffres",
+      "topicEmoji": "🔢",
+      "userTopic": "In the world of birds,",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "In the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "In the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "In the world of birds",
+          "desc": "nids, familles, enfants, place",
+          "icon": "🐦",
+          "vocab": [
+            {
+              "target": "nest",
+              "source": "nid"
+            },
+            {
+              "target": "family",
+              "source": "famille"
+            },
+            {
+              "target": "child",
+              "source": "enfant"
+            },
+            {
+              "target": "place",
+              "source": "place"
+            },
+            {
+              "target": "little",
+              "source": "petit"
+            },
+            {
+              "target": "grown-up",
+              "source": "adulte",
+              "editedAt": "2026-06-15T16:14:31.720Z"
+            },
+            {
+              "target": "number",
+              "source": "nombre"
+            },
+            {
+              "target": "know",
+              "source": "savoir"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Little birds have nests.",
+              "source": "Les petits oiseaux ont des nids.",
+              "words": [
+                "Little",
+                "birds",
+                "have",
+                "nests."
+              ]
+            },
+            {
+              "target": "In the world of cats, little cats have families.",
+              "source": "Dans le monde des chats, les petits chats ont des familles.",
+              "words": [
+                "In",
+                "the",
+                "world",
+                "of",
+                "cats,",
+                "little",
+                "cats",
+                "have",
+                "families."
+              ]
+            },
+            {
+              "target": "Grown-ups often have children.",
+              "source": "Les adultes ont souvent des enfants.",
+              "words": [
+                "Grown-ups",
+                "often",
+                "have",
+                "children."
+              ],
+              "editedAt": "2026-06-15T16:15:21.572Z"
+            },
+            {
+              "target": "Every number seems to have a place.",
+              "source": "Chaque nombre semble avoir sa place.",
+              "words": [
+                "Every",
+                "number",
+                "seems",
+                "to",
+                "have",
+                "a",
+                "place."
+              ]
+            },
+            {
+              "target": "But little i did not know where hers was.",
+              "source": "Mais petit i ne savait pas où était la sienne.",
+              "words": [
+                "But",
+                "little",
+                "i",
+                "did",
+                "not",
+                "know",
+                "where",
+                "hers",
+                "was."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 195640,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 618,
+        "totalCompletionTokens": 261,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 195621,
+            "promptTokens": 618,
+            "completionTokens": 261
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:08:22.666Z",
+      "updatedAt": "2026-06-15T16:15:49.221Z",
+      "id": "tp_17815362983410001153"
+    },
+    {
+      "topic": "+, −, ∗, /",
+      "topicEmoji": "📖",
+      "userTopic": "+, −, ∗, /",
+      "lang": "en",
+      "srcLang": "fr",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "continuedFrom": "In the world of birds,",
+      "continuedFromId": "tp_17815362983410001153",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "signes mathématiques",
+          "desc": "plus, moins, fois, divisé par",
+          "icon": "+",
+          "vocab": [
+            {
+              "target": "plus",
+              "source": "plus"
+            },
+            {
+              "target": "minus",
+              "source": "moins"
+            },
+            {
+              "target": "times",
+              "source": "fois"
+            },
+            {
+              "target": "divided by",
+              "source": "divisé par"
+            },
+            {
+              "target": "equal to",
+              "source": "égal à"
+            },
+            {
+              "target": "number",
+              "source": "nombre"
+            },
+            {
+              "target": "equation",
+              "source": "équation"
+            },
+            {
+              "target": "solution",
+              "source": "solution"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "2 plus 3 is equal to 5",
+              "source": "2 plus 3 est égal à 5",
+              "words": [
+                "2",
+                "plus",
+                "3",
+                "is",
+                "equal",
+                "to",
+                "5"
+              ]
+            },
+            {
+              "target": "4 minus 1 is 3",
+              "source": "4 moins 1 fait 3",
+              "words": [
+                "4",
+                "minus",
+                "1",
+                "is",
+                "3"
+              ],
+              "editedAt": "2026-06-15T16:16:46.059Z"
+            },
+            {
+              "target": "6 times 7 is 42",
+              "source": "6 fois 7 est 42",
+              "words": [
+                "6",
+                "times",
+                "7",
+                "is",
+                "42"
+              ]
+            },
+            {
+              "target": "10 divided by 2 is 5",
+              "source": "10 divisé par 2 est 5",
+              "words": [
+                "10",
+                "divided",
+                "by",
+                "2",
+                "is",
+                "5"
+              ]
+            },
+            {
+              "target": "The solution to this equation is 10",
+              "source": "La solution à cette équation est 10",
+              "words": [
+                "The",
+                "solution",
+                "to",
+                "this",
+                "equation",
+                "is",
+                "10"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 118435,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 633,
+        "totalCompletionTokens": 270,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 118412,
+            "promptTokens": 633,
+            "completionTokens": 270
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T15:11:38.387Z",
+      "updatedAt": "2026-06-15T16:16:56.381Z",
+      "id": "tp_17815364168590001213"
+    },
     {
       "topic": "8 oder ∞",
       "topicEmoji": "🤕",
