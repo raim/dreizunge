@@ -21,11 +21,12 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-15T12:58:41.315Z",
-      "updatedAt": "2026-06-15T13:42:15.387Z",
+      "updatedAt": "2026-06-15T14:11:45.867Z",
       "tags": [
         "manually curated",
         "children"
-      ]
+      ],
+      "summary": "Das kleine i sucht nach ihrem Platz in der Welt der Zahlen, wo sie von anderen Zahlen oft verwirrt wird. In einer seltsamen Nacht trifft sie auf die Sieben, der ihr sagt, sie seien nicht verwandt. i fühlt sich unwohl und traurig, bis die Null ihr hilft, zu verstehen, dass sie nicht wie andere sein muss, sondern einfach nur i sein kann."
     },
     {
       "id": "sl_1698145987",
@@ -809,6 +810,278 @@
   ],
   "topics": [
     {
+      "topic": "8 oder ∞",
+      "topicEmoji": "🤕",
+      "userTopic": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 85,
+      "story": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "continuedFrom": "Der Panikattacke",
+      "continuedFromId": "tp_17815290049040000673",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "Endlosigkeit, Versagen, Vergeltung",
+          "icon": "♾️",
+          "vocab": [
+            {
+              "target": "collapse",
+              "source": "kollabieren"
+            },
+            {
+              "target": "lie",
+              "source": "liegen"
+            },
+            {
+              "target": "ever",
+              "source": "jemals"
+            },
+            {
+              "target": "open",
+              "source": "öffnen"
+            },
+            {
+              "target": "eyes",
+              "source": "Augen"
+            },
+            {
+              "target": "finite",
+              "source": "endlich"
+            },
+            {
+              "target": "revenge",
+              "source": "Rache"
+            },
+            {
+              "target": "tremble",
+              "source": "zittern"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Eight collapsed.",
+              "source": "Acht kollabierten.",
+              "words": [
+                "Eight",
+                "collapsed."
+              ],
+              "editedAt": "2026-06-15T13:36:11.507Z"
+            },
+            {
+              "target": "He will never open his eyes.",
+              "source": "Er wird niemals seine Augen öffnen.",
+              "words": [
+                "He",
+                "will",
+                "never",
+                "open",
+                "his",
+                "eyes."
+              ],
+              "editedAt": "2026-06-15T13:36:28.912Z"
+            },
+            {
+              "target": "Is he finite?",
+              "source": "Ist er endlich?",
+              "words": [
+                "Is",
+                "he",
+                "finite?"
+              ]
+            },
+            {
+              "target": "She trembles with fear.",
+              "source": "Sie zittert vor Angst.",
+              "words": [
+                "She",
+                "trembles",
+                "with",
+                "fear."
+              ]
+            },
+            {
+              "target": "Numbers assemble.",
+              "source": "Zahlen versammeln sich.",
+              "words": [
+                "Numbers",
+                "assemble."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 110038,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 676,
+        "totalCompletionTokens": 236,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 110010,
+            "promptTokens": 676,
+            "completionTokens": 236
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T13:10:04.958Z",
+      "updatedAt": "2026-06-15T13:36:28.915Z",
+      "id": "tp_17815291150260000733"
+    },
+    {
+      "topic": "Das kleine i",
+      "topicEmoji": "🌱",
+      "userTopic": "The Little I am i",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 58,
+      "story": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Die kleine i",
+          "desc": "i weiß nicht, wo ihr Platz ist",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "place",
+              "source": "Platz"
+            },
+            {
+              "target": "know",
+              "source": "wissen"
+            },
+            {
+              "target": "world",
+              "source": "Welt"
+            },
+            {
+              "target": "little",
+              "source": "kleines",
+              "editedAt": "2026-06-15T13:27:10.319Z"
+            },
+            {
+              "target": "number",
+              "source": "Zahl"
+            },
+            {
+              "target": "often",
+              "source": "oft"
+            },
+            {
+              "target": "have",
+              "source": "haben"
+            },
+            {
+              "target": "family",
+              "source": "Familie"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Every number seems to have a place.",
+              "source": "Jede Zahl scheint einen Platz zu haben.",
+              "words": [
+                "Every",
+                "number",
+                "seems",
+                "to",
+                "have",
+                "a",
+                "place."
+              ]
+            },
+            {
+              "target": "But little i did not know where hers was.",
+              "source": "Aber die kleine i wusste nicht, wo ihr Platz war.",
+              "words": [
+                "But",
+                "little",
+                "i",
+                "did",
+                "not",
+                "know",
+                "where",
+                "hers",
+                "was."
+              ]
+            },
+            {
+              "target": "In the world of birds, little birds have nests.",
+              "source": "In der Welt der Vögel haben kleine Vögel Nester.",
+              "words": [
+                "In",
+                "the",
+                "world",
+                "of",
+                "birds,",
+                "little",
+                "birds",
+                "have",
+                "nests."
+              ]
+            },
+            {
+              "target": "In the world of cats, little cats have families.",
+              "source": "In der Welt der Katzen haben kleine Katzen Familien.",
+              "words": [
+                "In",
+                "the",
+                "world",
+                "of",
+                "cats,",
+                "little",
+                "cats",
+                "have",
+                "families."
+              ]
+            },
+            {
+              "target": "Grown-ups often have children.",
+              "source": "Erwachsene haben oft Kinder.",
+              "words": [
+                "Grown-ups",
+                "often",
+                "have",
+                "children."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 207873,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 634,
+        "totalCompletionTokens": 275,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 207848,
+            "promptTokens": 634,
+            "completionTokens": 275
+          }
+        ]
+      },
+      "generatedAt": "2026-06-15T12:55:13.375Z",
+      "updatedAt": "2026-06-15T13:27:32.862Z",
+      "id": "tp_17815283212820000053"
+    },
+    {
       "topic": "i ist i",
       "topicEmoji": "✅",
       "userTopic": "Maybe she didn’t have to be Seven",
@@ -1221,133 +1494,6 @@
       "generatedAt": "2026-06-15T13:11:55.083Z",
       "updatedAt": "2026-06-15T13:37:30.379Z",
       "id": "tp_17815292264030000856"
-    },
-    {
-      "topic": "Zero",
-      "topicEmoji": "0",
-      "userTopic": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
-      "lang": "en",
-      "srcLang": "de",
-      "difficulty": 1,
-      "storyLen": 85,
-      "story": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
-      "continuedFrom": "Der Panikattacke",
-      "continuedFromId": "tp_17815290049040000673",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "∞",
-          "desc": "Endlosigkeit, Versagen, Vergeltung",
-          "icon": "♾️",
-          "vocab": [
-            {
-              "target": "collapse",
-              "source": "kollabieren"
-            },
-            {
-              "target": "lie",
-              "source": "liegen"
-            },
-            {
-              "target": "ever",
-              "source": "jemals"
-            },
-            {
-              "target": "open",
-              "source": "öffnen"
-            },
-            {
-              "target": "eyes",
-              "source": "Augen"
-            },
-            {
-              "target": "finite",
-              "source": "endlich"
-            },
-            {
-              "target": "revenge",
-              "source": "Rache"
-            },
-            {
-              "target": "tremble",
-              "source": "zittern"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Eight collapsed.",
-              "source": "Acht kollabierten.",
-              "words": [
-                "Eight",
-                "collapsed."
-              ],
-              "editedAt": "2026-06-15T13:36:11.507Z"
-            },
-            {
-              "target": "He will never open his eyes.",
-              "source": "Er wird niemals seine Augen öffnen.",
-              "words": [
-                "He",
-                "will",
-                "never",
-                "open",
-                "his",
-                "eyes."
-              ],
-              "editedAt": "2026-06-15T13:36:28.912Z"
-            },
-            {
-              "target": "Is he finite?",
-              "source": "Ist er endlich?",
-              "words": [
-                "Is",
-                "he",
-                "finite?"
-              ]
-            },
-            {
-              "target": "She trembles with fear.",
-              "source": "Sie zittert vor Angst.",
-              "words": [
-                "She",
-                "trembles",
-                "with",
-                "fear."
-              ]
-            },
-            {
-              "target": "Numbers assemble.",
-              "source": "Zahlen versammeln sich.",
-              "words": [
-                "Numbers",
-                "assemble."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 110038,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 676,
-        "totalCompletionTokens": 236,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 110010,
-            "promptTokens": 676,
-            "completionTokens": 236
-          }
-        ]
-      },
-      "generatedAt": "2026-06-15T13:10:04.958Z",
-      "updatedAt": "2026-06-15T13:36:28.915Z",
-      "id": "tp_17815291150260000733"
     },
     {
       "topic": "Der Panikattacke",
@@ -2368,151 +2514,6 @@
       "generatedAt": "2026-06-15T12:58:41.342Z",
       "updatedAt": "2026-06-15T13:29:17.145Z",
       "id": "tp_17815284454040000147"
-    },
-    {
-      "topic": "Das kleine i",
-      "topicEmoji": "iParam",
-      "userTopic": "The Little I am i",
-      "lang": "en",
-      "srcLang": "de",
-      "difficulty": 1,
-      "storyLen": 58,
-      "story": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Die kleine i",
-          "desc": "i weiß nicht, wo ihr Platz ist",
-          "icon": "🔍",
-          "vocab": [
-            {
-              "target": "place",
-              "source": "Platz"
-            },
-            {
-              "target": "know",
-              "source": "wissen"
-            },
-            {
-              "target": "world",
-              "source": "Welt"
-            },
-            {
-              "target": "little",
-              "source": "kleines",
-              "editedAt": "2026-06-15T13:27:10.319Z"
-            },
-            {
-              "target": "number",
-              "source": "Zahl"
-            },
-            {
-              "target": "often",
-              "source": "oft"
-            },
-            {
-              "target": "have",
-              "source": "haben"
-            },
-            {
-              "target": "family",
-              "source": "Familie"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Every number seems to have a place.",
-              "source": "Jede Zahl scheint einen Platz zu haben.",
-              "words": [
-                "Every",
-                "number",
-                "seems",
-                "to",
-                "have",
-                "a",
-                "place."
-              ]
-            },
-            {
-              "target": "But little i did not know where hers was.",
-              "source": "Aber die kleine i wusste nicht, wo ihr Platz war.",
-              "words": [
-                "But",
-                "little",
-                "i",
-                "did",
-                "not",
-                "know",
-                "where",
-                "hers",
-                "was."
-              ]
-            },
-            {
-              "target": "In the world of birds, little birds have nests.",
-              "source": "In der Welt der Vögel haben kleine Vögel Nester.",
-              "words": [
-                "In",
-                "the",
-                "world",
-                "of",
-                "birds,",
-                "little",
-                "birds",
-                "have",
-                "nests."
-              ]
-            },
-            {
-              "target": "In the world of cats, little cats have families.",
-              "source": "In der Welt der Katzen haben kleine Katzen Familien.",
-              "words": [
-                "In",
-                "the",
-                "world",
-                "of",
-                "cats,",
-                "little",
-                "cats",
-                "have",
-                "families."
-              ]
-            },
-            {
-              "target": "Grown-ups often have children.",
-              "source": "Erwachsene haben oft Kinder.",
-              "words": [
-                "Grown-ups",
-                "often",
-                "have",
-                "children."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 207873,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 634,
-        "totalCompletionTokens": 275,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 207848,
-            "promptTokens": 634,
-            "completionTokens": 275
-          }
-        ]
-      },
-      "generatedAt": "2026-06-15T12:55:13.375Z",
-      "updatedAt": "2026-06-15T13:27:32.862Z",
-      "id": "tp_17815283212820000053"
     },
     {
       "topic": "In the world of birds,",
