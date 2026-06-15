@@ -1,0 +1,2739 @@
+diff --git a/build-static.js b/build-static.js
+index 5763d26..242de90 100644
+--- a/build-static.js
++++ b/build-static.js
+@@ -189,7 +189,7 @@ function repopulateContinueSelect(){
+     filtered.map(s=>{
+       const tL=LANGS[s.lang||'it']||LANGS.it||{flag:'',name:s.lang||'it'};
+       const langTag=showAll&&(s.lang||'it')!==curLang?' ['+tL.name+']':'';
+-      return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+tL.flag+' '+s.topic+langTag+'</option>';
++      return '<option value="'+(s.id||s.topic.replace(/"/g,'&quot;'))+'">'+tL.flag+' '+s.topic+langTag+'</option>';
+     }).join('');
+   if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
+ }
+@@ -314,7 +314,7 @@ function itemHtml(s, connector) {
+   const tL=LANGS[s.lang||'it']||LANGS.it;
+   const srcL=LANGS[s.srcLang||'en']||{flag:'🇬🇧',name:'English'};
+   return \`<div class="saved-item-wrap">
+-    <div class="saved-item" onclick="loadSaved('\${enc}')">
++    <div class="saved-item" onclick="loadSaved('\${s.id||enc}')">
+       \${conn}<span class="saved-emoji"> \${s.topicEmoji||'📚'}</span>
+       <div class="saved-info">
+         <div class="saved-topic">\${s.topic} \${diffBadge}</div>
+@@ -387,47 +387,45 @@ async function loadSavedList() {
+     return;
+   }
+ 
+-  // Build display chains — v29: use STATIC_STORYLINES array; legacy: continuedFrom
+-  const byTopic=Object.fromEntries(filtered.map(l=>[l.topic,l]));
+-  // byIdAll: all saved lessons for chapter ID resolution (includes imported lessons)
+-  // byId: only filtered lessons for visible rendering
+-  const byIdAll=Object.fromEntries(saved.filter(l=>l.id).map(l=>[l.id,l]));
++  // Build display chains — v29: use STATIC_STORYLINES (id chapters); legacy: continuedFromId
++  // byId: visible (filtered) topics indexed by stable id
+   const byId=Object.fromEntries(filtered.filter(l=>l.id).map(l=>[l.id,l]));
+   let storylines, orphans;
+   const _slArr=Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[];
+   const v29chains=_slArr.filter(sl=>sl.chapters&&sl.chapters.length>=1);
+   if(v29chains.length>0){
+-    // Only include chapters whose topics are in byTopic (currently visible/filtered)
+-    storylines=v29chains.map(sl=>sl.chapters.map(cid=>byIdAll[cid]?.topic||null).filter(t=>t&&byTopic[t])).filter(c=>c.length>=1);
++    // Keep chapter IDS for visible (filtered) topics only
++    storylines=v29chains.map(sl=>(sl.chapters||[]).filter(cid=>byId[cid])).filter(c=>c.length>=1);
+     const inChain=new Set(storylines.flat());
+-    orphans=filtered.filter(l=>!inChain.has(l.topic));
++    orphans=filtered.filter(l=>!inChain.has(l.id));
+   } else {
+     const childMap={};
+     filtered.forEach(l=>{
+-      if(l.continuedFrom&&byTopic[l.continuedFrom])
+-        (childMap[l.continuedFrom]=childMap[l.continuedFrom]||[]).push(l.topic);
++      const pid=l.continuedFromId;
++      if(pid&&byId[pid])
++        (childMap[pid]=childMap[pid]||[]).push(l.id);
+     });
+-    const hasParent=new Set(filtered.filter(l=>l.continuedFrom&&byTopic[l.continuedFrom]).map(l=>l.topic));
++    const hasParent=new Set(filtered.filter(l=>l.continuedFromId&&byId[l.continuedFromId]).map(l=>l.id));
+     const chains=[];
+-    function walk(topic,chain){
+-      const ext=[...chain,topic],kids=childMap[topic]||[];
++    function walk(id,chain){
++      const ext=[...chain,id],kids=childMap[id]||[];
+       if(!kids.length){chains.push(ext);return;}
+       kids.forEach(k=>walk(k,ext));
+     }
+-    filtered.filter(l=>!hasParent.has(l.topic)).forEach(r=>walk(r.topic,[]));
++    filtered.filter(l=>!hasParent.has(l.id)).forEach(r=>walk(r.id,[]));
+     storylines=chains.filter(c=>c.length>1);
+     const inChain=new Set(storylines.flat());
+-    orphans=filtered.filter(l=>!inChain.has(l.topic));
++    orphans=filtered.filter(l=>!inChain.has(l.id));
+   }
+ 
+ 
+ 
+-  const newestOf=chain=>chain.reduce((b,t)=>{const d=byTopic[t]?.updatedAt||byTopic[t]?.generatedAt||'';return d>b?d:b;},'');
++  const newestOf=chain=>chain.reduce((b,id)=>{const d=byId[id]?.updatedAt||byId[id]?.generatedAt||'';return d>b?d:b;},'');
+   storylines.sort((a,b)=>newestOf(b).localeCompare(newestOf(a)));
+   const showAllLangs = APP.libFilter==='all';
+   // When showing all languages, group storylines by language
+   if(showAllLangs) storylines.sort((a,b)=>{
+-    const la=byTopic[a[0]]?.lang||'it', lb=byTopic[b[0]]?.lang||'it';
++    const la=byId[a[0]]?.lang||'it', lb=byId[b[0]]?.lang||'it';
+     return la.localeCompare(lb) || newestOf(b).localeCompare(newestOf(a));
+   });
+ 
+@@ -438,22 +436,22 @@ async function loadSavedList() {
+   let html='', _lastLang=null;
+   for(const chain of storylines){
+     if(showAllLangs){
+-      const cl=byTopic[chain[0]]?.lang||'it';
++      const cl=byId[chain[0]]?.lang||'it';
+       if(cl!==_lastLang){
+         const L=LANGS[cl]||LANGS.it;
+         html+='<div class="orphans-hdr">'+L.flag+' '+L.name+'</div>';
+         _lastLang=cl;
+       }
+     }
+-    const chainTopics=chain.map(t=>byTopic[t]?.topic).filter(Boolean);
++    const chainTopics=chain.map(id=>byId[id]?.topic).filter(Boolean);
+     const chainTopicsJson=JSON.stringify(chainTopics);
+     const chainEncoded=encodeURIComponent(chainTopicsJson);
+     const legacyChainId='c'+Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+-    // v29: find storyline by matching chain topics via id; legacy: by hash
+-    const matchSl2=_slArr2.find(sl=>{
+-      const slt=(sl.chapters||[]).map(cid=>byId[cid]?.topic||null).filter(Boolean);
+-      return slt.length&&slt.every((t,i)=>t===chainTopics[i])&&slt.length===chainTopics.length;
+-    });
++    // v29: find storyline by matching chapter IDS directly; legacy: by hash
++    const matchSl2=_slArr2.find(sl=>
++      (sl.chapters||[]).length===chain.length &&
++      (sl.chapters||[]).every((c,i)=>c===chain[i])
++    );
+     const resolvedSlId=matchSl2?.id||legacyChainId;
+     const chainId=resolvedSlId;
+     const slMeta=matchSl2||slTitles[chainId]||slTitles['root:'+chainTopics[0]]||null;
+@@ -465,8 +463,8 @@ async function loadSavedList() {
+     const chainNewest=newestOf(chain);
+     const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
+     const hdrTitle=hasTitle
+-      ? '<span class="storyline-title" style="cursor:pointer;flex:1"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
+-      : '<span class="storyline-title" style="flex:1">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
++      ? '<span class="storyline-title" style="cursor:pointer;flex:1"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byId[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
++      : '<span class="storyline-title" style="flex:1">'+(()=>{const first=byId[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
+     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
+     html+='<div class="storyline-hdr" id="slhdr-'+chainId+'"'
+       +' data-chain-id="'+chainId+'" data-chain="'+chainEncoded+'"'
+@@ -491,7 +489,7 @@ async function loadSavedList() {
+         +'📖 '+t('lesson.read_summary')+'<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
+         +'<button class="storyline-hdr-btn" data-speak="slsc-summary-body-'+chainId+'" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="'+t('lesson.read_aloud')+'">🔊</button>'
+         +'</div>'
+-        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byTopic[chain[0]]?.srcLang||'')+'">'
++        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byId[chain[0]]?.srcLang||'')+'">'
+         +'<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">'+_slSum2.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>'
+         +'</div></div>';
+     }
+@@ -521,9 +519,11 @@ function setLibFilter(lang){
+   loadSavedList();
+ }
+ 
+-async function loadSaved(topic) {
+-  const dec=decodeURIComponent(topic);
+-  const found=STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
++async function loadSaved(ref) {
++  const isId=/^tp_\\d+$/.test(String(ref));
++  const dec=decodeURIComponent(String(ref));
++  const found=isId ? STATIC_LESSONS.find(l=>l.id===ref)
++                   : STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
+   if(!found){ alert('Lesson not found.'); return; }
+   APP.lessonData=found; goLessonSet();
+ }
+diff --git a/index.html b/index.html
+index 7d8bb9a..3699d29 100644
+--- a/index.html
++++ b/index.html
+@@ -72,6 +72,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+ .sl-screen-title{flex:1;font-size:17px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .sl-screen-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+ .sl-screen-back{background:none;border:2px solid var(--gray-mid);cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);padding:5px 10px;border-radius:var(--radius);font-family:'Nunito',sans-serif}
++.sl-screen-home{background:none;border:none;cursor:pointer;font-size:24px;line-height:1;padding:0;margin:0;display:flex;align-items:center;justify-content:center}
++.sl-screen-home:hover{transform:scale(1.08)}
+ .sl-screen-back:hover{border-color:var(--blue);color:var(--blue-dark)}
+ .sl-screen-share{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:800;padding:5px 10px;color:var(--gray-dark);font-family:'Nunito',sans-serif}
+ .sl-screen-share:hover{border-color:var(--blue);color:var(--blue-dark)}
+@@ -178,6 +180,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+ .choice.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark);box-shadow:0 3px 0 #84d8ff}
+ .choice.ok{border-color:var(--green);background:var(--green-light);color:#266300;box-shadow:0 3px 0 #9be27a}
+ .choice.bad{border-color:var(--red);background:var(--red-light);color:#990000;box-shadow:0 3px 0 #ffaaaa}
++.syn-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
++.syn-hint{font-size:12px;font-weight:700;opacity:.6;margin:2px 0 2px}
++.syn-tile{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:var(--radius);padding:9px 14px;font-size:14px;font-weight:700;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 3px 0 var(--gray-mid);transition:border-color .1s,transform .05s}
++.syn-tile:hover:not(:disabled){border-color:var(--blue);box-shadow:0 3px 0 #84d8ff;transform:translateY(-1px)}
++.syn-tile.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark);box-shadow:0 3px 0 #84d8ff}
++.syn-tile.ok{border-color:var(--green);background:var(--green-light);color:#266300;box-shadow:0 3px 0 #9be27a}
++.syn-tile.bad{border-color:var(--red);background:var(--red-light);color:#990000;box-shadow:0 3px 0 #ffaaaa}
+ .listen-big{display:flex;align-items:center;gap:12px;background:var(--blue-light);border:2.5px solid var(--blue);border-radius:var(--radius-lg);padding:15px 18px;cursor:pointer;margin:8px 0 3px;font-family:'Nunito',sans-serif;transition:background .1s;width:100%;text-align:left}
+ .listen-big:hover{background:#bde9ff}
+ .listen-icon{font-size:26px}
+@@ -565,11 +574,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+         <input type="file" id="pdf-file-input" accept=".pdf" style="display:none" onchange="onPdfFileChosen(this)">
+         <button type="button" id="pdf-choose-btn" onclick="document.getElementById('pdf-file-input').click()"
+           style="display:none;font-size:11px;padding:2px 8px;border:1.5px solid var(--gray-mid);border-radius:6px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">📂</button>
+-        <select id="pdf-chunk-size" style="display:none;font-size:11px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 6px;background:var(--white);font-family:Nunito,sans-serif">
+-          <option value="300">S</option>
+-          <option value="600" selected>M</option>
+-          <option value="1000">L</option>
+-        </select>
+         <span id="pdf-status" style="font-size:11px;color:var(--gray-dark)"></span>
+       </label>
+       <label class="user-story-check-row">
+@@ -583,6 +587,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+     </div>
+     <div class="pdf-panel" id="pdf-panel">
+       <div id="pdf-chunk-list" class="pdf-chunk-list"></div>
++      <label class="user-story-check-row" id="pdf-arc-row" style="display:none">
++        <input type="checkbox" id="pdf-arc-cb">
++        <span id="pdf-arc-lbl">🎯 Build a learning arc (vocab + grammar/conjugation reinforcement per chapter)</span>
++      </label>
+       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+         <button type="button" id="pdf-gen-btn" onclick="pdfGenerateAll()"
+           style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif;display:none">
+@@ -599,6 +607,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+           <option value="source" id="story-lang-opt-source">🏠 My language</option>
+           <option value="other">🌐 Other language</option>
+         </select>
++        <button type="button" id="user-story-clear-btn" onclick="clearUserStory()" title="Clear text"
++          style="margin-left:auto;font-size:11px;padding:2px 8px;border:1.5px solid var(--gray-mid);border-radius:6px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">✕ Clear</button>
+       </div>
+       <textarea class="user-story-textarea" id="user-story-input"
+         id="user-story-input-ph" placeholder="Paste your story here…"
+@@ -618,7 +628,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+         <span class="story-len-val" id="story-len-val">300 words · 3-4 paragraphs</span>
+       </div>
+       <input type="range" class="story-len-slider" id="story-len-slider"
+-        min="100" max="1000" step="50" value="300"
++        min="50" max="1000" step="50" value="300"
+         oninput="onStoryLenSlider(this.value)">
+     </div>
+     <div class="style-wrap" id="style-wrap">
+@@ -686,6 +696,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+           <option value="math">🔢 Math — numbers from the story</option>
+           <option value="grammar">🏷️ Grammar — gender, articles &amp; plurals</option>
+           <option value="conjugation">🔤 Conjugation — verb forms by person</option>
++          <option value="synonyms">🔁 Synonyms — synonyms, antonyms &amp; homophones</option>
+           <option value="error_hunt">🔍 Error Hunt — find mistakes in the story</option>
+         </select>
+         <span class="format-select-arrow">▾</span>
+@@ -740,7 +751,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+   <!-- Row 1: Storyline context — ← back, storyline title (link), 🔗 share -->
+   <div id="ls-storyline-hdr" class="sl-screen-hdr">
+     <div class="sl-screen-title-row">
+-      <button class="sl-screen-back" onclick="goLandingClean()" id="btn-topics" title="Back">←</button>
++      <button class="sl-screen-home" onclick="goLandingClean()" id="btn-topics" title="Home">🌍</button>
+       <span id="ls-storyline-icon" style="font-size:20px">📖</span>
+       <span id="ls-storyline-title" class="sl-screen-title" style="cursor:pointer" onclick="goStorylineFromLesson()"></span>
+       <button class="sl-screen-share" id="share-lesson-btn" onclick="shareLesson()" title="Share">🔗</button>
+@@ -820,6 +831,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+       <option value="standard">📚 Standard</option>
+       <option value="grammar">🏷️ Grammar</option>
+       <option value="conjugation">🔤 Conjugation</option>
++      <option value="synonyms">🔁 Synonyms</option>
+       <option value="error_hunt">🔍 Error Hunt</option>
+       <option value="math">🔢 Math</option>
+     </select>
+@@ -900,7 +912,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
+   <div class="sl-screen">
+     <div class="sl-screen-hdr">
+       <div class="sl-screen-title-row">
+-        <button class="sl-screen-back" onclick="goLandingClean()" title="Back">←</button>
++        <button class="sl-screen-home" onclick="goLandingClean()" title="Home">🌍</button>
+         <span class="sl-screen-title" id="sl-screen-title" style="cursor:default">📖</span>
+         <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
+         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="genStorylineTitleFromScreen()" title="Generate title" style="display:none">✨</button>
+@@ -1165,14 +1177,14 @@ function applyUIStrings() {
+   // Update format-select option labels
+   const formatSel = document.getElementById('format-select');
+   if (formatSel) {
+-    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'math': 'form.format.math' };
++    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'math': 'form.format.math' };
+     Array.from(formatSel.options).forEach(opt => {
+       if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
+     });
+   }
+   // Update all add-lesson selects (lesson card + storyline panels)
+-  const _typeEmojis = { standard:'📚', grammar:'🏷️', conjugation:'🔤', error_hunt:'🔍' };
+-  const _typeKeys   = { standard:'lesson.type.vocab', grammar:'lesson.type.grammar', conjugation:'lesson.type.conjugation', error_hunt:'lesson.type.error_hunt' };
++  const _typeEmojis = { standard:'📚', grammar:'🏷️', conjugation:'🔤', synonyms:'🔁', error_hunt:'🔍' };
++  const _typeKeys   = { standard:'lesson.type.vocab', grammar:'lesson.type.grammar', conjugation:'lesson.type.conjugation', synonyms:'lesson.type.synonyms', error_hunt:'lesson.type.error_hunt' };
+   document.querySelectorAll('.addlesson-select').forEach(sel => {
+     Array.from(sel.options).forEach(opt => {
+       if (_typeKeys[opt.value]) opt.text = (_typeEmojis[opt.value]||'') + ' ' + t(_typeKeys[opt.value]);
+@@ -1221,6 +1233,8 @@ function applyUIStrings() {
+   const _esBtn = document.getElementById('export-static-btn');
+   if (_esBtn) _esBtn.style.display = APP.info.canGenerate ? '' : 'none';
+   _setText('add-lesson-lbl-card',  '➕ '+t('lib.add_lesson')+':');
++  _setText('user-story-clear-btn', '✕ '+t('form.clear_text'));
++  _setAttr('user-story-clear-btn', 'title', t('form.clear_text'));
+ }
+ 
+ // ── UI translation row ────────────────────────────────────────────────────────
+@@ -1352,6 +1366,15 @@ function onStoryLenSlider(v){
+   APP.storyLen=parseInt(v,10); saveStoryLen();
+   const el=document.getElementById('story-len-val');
+   if(el) el.textContent=storyLenLabel(APP.storyLen);
++  // In PDF mode the slider sets the chunk size — re-split the loaded text (debounced).
++  if(document.getElementById('use-pdf-cb')?.checked && _pdfRawText && !_pdfBookId){
++    clearTimeout(_pdfResplitTimer);
++    _pdfResplitTimer=setTimeout(()=>{
++      _pdfChunks=_splitIntoChunks(_pdfRawText, APP.storyLen||300);
++      _renderPdfChunks();
++      document.getElementById('pdf-panel').classList.add('open');
++    }, 250);
++  }
+ }
+ function restoreStoryLenSlider(){
+   const sl=document.getElementById('story-len-slider');
+@@ -1395,7 +1418,8 @@ function onUseStoryCb(){
+   document.getElementById('user-story-panel').classList.toggle('open',on);
+   document.getElementById('use-translation-cb-row').style.display=on?'':'none';
+   document.getElementById('story-len-row').style.display=on?'none':'';
+-  document.getElementById('continue-row').style.display=on?'none':'';
++  // Keep the continuation selector available with own-story so a user-provided
++  // story can still extend a storyline (server links continuedFromId either way).
+   // If unchecking, also uncheck translation
+   if(!on){
+     document.getElementById('use-translation-cb').checked=false;
+@@ -1408,6 +1432,12 @@ function topicLabelText(){
+   const tgtL=LANGS[APP.lang]||LANGS.it;
+   return t('form.topic_label',{lang:localizedLangName(APP.lang,APP.srcLang)});
+ }
++function clearUserStory(){
++  const ta=document.getElementById('user-story-input');
++  if(ta){ ta.value=''; autoResizeTextarea(ta); ta.focus(); }
++  const tr=document.getElementById('user-translation-input');
++  if(tr){ tr.value=''; autoResizeTextarea(tr); }
++}
+ function updateTranslationLangHint(){
+   const srcLangName = localizedLangName(APP.srcLang, APP.srcLang);
+   const hint=document.getElementById('translation-lang-hint');
+@@ -1768,6 +1798,8 @@ function goLandingClean(){ history.replaceState(null,'','#'); APP.ttsLang=null;
+ // ── init ──
+ // ══ PDF-to-Storyline ══════════════════════════════════════════════════════════
+ let _pdfChunks = [];   // { text, wordCount, title, status }
++let _pdfRawText = '';  // full extracted PDF text, kept so the slider can re-split
++let _pdfResplitTimer = null;
+ 
+ function onUsePdfCb() {
+   const on = document.getElementById('use-pdf-cb').checked;
+@@ -1775,9 +1807,13 @@ function onUsePdfCb() {
+     document.getElementById('use-story-cb').checked = false;
+     document.getElementById('user-story-panel').classList.remove('open');
+     document.getElementById('use-translation-cb-row').style.display = 'none';
++  } else if (_pdfBookId) {
++    // Turning PDF mode off while a book is generating cancels it server-side.
++    pdfCancelBook();
+   }
+   document.getElementById('pdf-choose-btn').style.display = on ? '' : 'none';
+-  document.getElementById('pdf-chunk-size').style.display = on ? '' : 'none';
++  const _slLbl = document.getElementById('story-len-lbl');
++  if (_slLbl) _slLbl.textContent = on ? t('form.pdf_chunk_size') : t('form.story_len_lbl');
+   document.getElementById('pdf-panel').classList.toggle('open', on && _pdfChunks.length > 0);
+   document.getElementById('pdf-status').textContent = '';
+ }
+@@ -1789,7 +1825,8 @@ async function onPdfFileChosen(input) {
+   try {
+     const text = await _extractPdfText(file);
+     if (!text || text.trim().length < 20) { status.textContent = t('pdf.no_text'); return; }
+-    const targetWords = parseInt(document.getElementById('pdf-chunk-size').value, 10) || 600;
++    _pdfRawText = text;
++    const targetWords = APP.storyLen || 300;
+     _pdfChunks = _splitIntoChunks(text, targetWords);
+     status.textContent = '';
+     _renderPdfChunks();
+@@ -1889,6 +1926,10 @@ function _renderPdfChunks() {
+   }).join('');
+   genLbl.textContent = t('pdf.generate_all') + ' (' + t('pdf.chapters',{n:_pdfChunks.length}) + ', ' + t('pdf.words',{n:total}) + ')';
+   genBtn.style.display = _pdfChunks.every(c=>c.status!=='active') ? '' : 'none';
++  const arcRow = document.getElementById('pdf-arc-row');
++  const arcLbl = document.getElementById('pdf-arc-lbl');
++  if (arcRow) arcRow.style.display = genBtn.style.display === '' ? '' : 'none';
++  if (arcLbl) arcLbl.textContent = t('form.pdf_arc');
+ }
+ 
+ function pdfToggleChunk(i, el) {
+@@ -1915,67 +1956,120 @@ function pdfDeleteChunk(i) {
+   _renderPdfChunks();
+ }
+ 
++let _pdfBookId = null;
++let _pdfBookPolling = false;
++function _sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
++
+ async function pdfGenerateAll() {
+   if (!APP.info.canGenerate) return;
+-  if (APP.activeJob) { showToast(t('toast.already_generating',{topic:APP.activeJob.topic})); return; }
+-  const lang = APP.lang || 'it';
+-  const srcLang = APP.srcLang || 'en';
+-  const diff = APP.difficulty || 2;
+-  let prevTopic = document.getElementById('continue-select')?.value || null;
+-  document.getElementById('pdf-gen-btn').style.display = 'none';
+-  // Reset statuses
++  if (_pdfBookId) { showToast(t('toast.already_generating',{topic:'book'})); return; }
++  if (!_pdfChunks.length) return;
++  const body = {
++    lang: APP.lang || 'it',
++    srcLang: APP.srcLang || 'en',
++    difficulty: APP.difficulty || 2,
++    lessonFormat: APP.lessonFormat || 'standard',
++    continuedFrom: document.getElementById('continue-select')?.value || null,
++    chunks: _pdfChunks.map(c => ({ title: c.title, text: c.text, wordCount: c.wordCount })),
++  };
++  if (document.getElementById('pdf-arc-cb')?.checked) {
++    body.arc = true;
++    body.arcReinforce = ['grammar', 'conjugation'];
++  }
+   _pdfChunks.forEach(c => c.status = 'pending');
+-  for (let i = 0; i < _pdfChunks.length; i++) {
+-    _pdfChunks[i].status = 'active';
+-    _renderPdfChunks();
+-    // Check if stopped
+-    if (!document.getElementById('use-pdf-cb').checked) break;
+-    try {
+-      const topic = _pdfChunks[i].title;
+-      const body = {
+-        topic, lang, srcLang, difficulty: diff,
+-        userStory: _pdfChunks[i].text,
+-        storyLen: _pdfChunks[i].wordCount,
+-        continuedFrom: prevTopic || null,
+-        useFullChain: i >= 1,
+-        lessonFormat: APP.lessonFormat || 'standard',
+-      };
+-      const r = await fetch('/api/generate', { method:'POST',
+-        headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+-      const resp = await r.json();
+-      if (!r.ok) throw new Error(resp.error || 'Failed');
+-      // Poll to completion
+-      await new Promise((res, rej) => {
+-        const iv = setInterval(async () => {
+-          try {
+-            const pr = await fetch('/api/job/' + resp.jobId);
+-            const j = await pr.json();
+-            if (j.status === 'done') {
+-              clearInterval(iv);
+-              prevTopic = j.data?.topic || topic;
+-              _pdfChunks[i].status = 'done';
+-              _pdfChunks[i].title = j.data?.topic || topic; // use server-confirmed topic
+-              res();
+-            } else if (j.status === 'error' || j.status === 'cancelled') {
+-              clearInterval(iv);
+-              _pdfChunks[i].status = 'error';
+-              rej(new Error(j.error || 'Cancelled'));
+-            }
+-          } catch(e) { clearInterval(iv); _pdfChunks[i].status='error'; rej(e); }
+-        }, 2000);
+-      });
+-    } catch(e) {
+-      _pdfChunks[i].status = 'error';
+-      showToast('⚠ Chapter ' + (i+1) + ': ' + e.message.slice(0,50));
+-      break;
++  _renderPdfChunks();
++  try {
++    const r = await fetch('/api/generate-book', { method:'POST',
++      headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
++    const resp = await r.json();
++    if (!r.ok) throw new Error(resp.error || 'Failed');
++    _pdfBookId = resp.bookId;
++    document.getElementById('pdf-gen-btn').style.display = 'none';
++    setGenStatus('running', `📖 0/${_pdfChunks.length}`);
++    // The server now drives generation; this poll is only an observer and can be
++    // safely interrupted by a refresh (generation continues server-side).
++    _pollBookJob(_pdfBookId);
++  } catch(e) {
++    _pdfBookId = null;
++    showToast('⚠ ' + e.message.slice(0,60));
++    document.getElementById('pdf-gen-btn').style.display = '';
++  }
++}
++
++// Map a /api/book-job response onto the local chunk list + panel.
++function _applyBookProgress(j) {
++  if (!j || !Array.isArray(j.chapters)) return;
++  if (_pdfChunks.length !== j.chapters.length) {
++    // Reconnect after refresh: rebuild placeholders (text isn't needed to observe).
++    _pdfChunks = j.chapters.map(c => ({ title: c.title || '', text: '', wordCount: 0, status: c.status }));
++  } else {
++    j.chapters.forEach((c, i) => { _pdfChunks[i].status = c.status; if (c.title) _pdfChunks[i].title = c.title; });
++  }
++  document.getElementById('pdf-panel').classList.add('open');
++  _renderPdfChunks();
++  // Surface progress in the standard bottom generation pill.
++  const total = j.chapters.length;
++  const doneN = j.chapters.filter(c => c.status === 'done').length;
++  const actI  = j.chapters.findIndex(c => c.status === 'active');
++  if (j.status === 'running') {
++    const cur = actI >= 0 ? (j.chapters[actI].title || ('Chapter ' + (actI + 1))) : '';
++    setGenStatus('running', `📖 ${doneN}/${total}${cur ? ' · ' + cur : ''}`);
++  }
++}
++
++async function _pollBookJob(bookId) {
++  if (_pdfBookPolling) return;
++  _pdfBookPolling = true;
++  try {
++    while (true) {
++      let j = null;
++      try {
++        const pr = await fetch('/api/book-job/' + bookId);
++        if (pr.status === 404) break;            // job gone (e.g. server restart)
++        j = await pr.json();
++      } catch(e) { await _sleep(2000); continue; } // transient network — keep observing
++      _applyBookProgress(j);
++      if (j.status === 'done' || j.status === 'error' || j.status === 'cancelled') {
++        const total = _pdfChunks.length, doneN = _pdfChunks.filter(c=>c.status==='done').length;
++        if (j.status === 'error' && j.error) { setGenStatus('error', j.error.slice(0,60)); showToast('⚠ ' + j.error.slice(0,60)); }
++        else if (j.status === 'cancelled') setGenStatus('hidden','');
++        else setGenStatus('done', `📖 ${doneN}/${total} chapters`);
++        break;
++      }
++      await _sleep(2000);
+     }
++  } finally {
++    _pdfBookPolling = false;
++    _pdfBookId = null;
++    await loadSavedList();
+     _renderPdfChunks();
++    document.getElementById('pdf-gen-btn').style.display = '';
++    const done = _pdfChunks.filter(c=>c.status==='done').length;
++    if (done) showToast('✅ ' + done + '/' + _pdfChunks.length + ' chapters generated');
+   }
+-  await loadSavedList();
+-  document.getElementById('pdf-gen-btn').style.display = '';
+-  _renderPdfChunks();
+-  const done = _pdfChunks.filter(c=>c.status==='done').length;
+-  if (done) showToast('✅ ' + done + '/' + _pdfChunks.length + ' chapters generated');
++}
++
++async function pdfCancelBook() {
++  if (!_pdfBookId) return;
++  try { await fetch('/api/book-job/cancel', { method:'POST',
++    headers:{'Content-Type':'application/json'}, body: JSON.stringify({ bookId: _pdfBookId }) }); } catch(e){}
++}
++
++// On page load, re-attach to a book job that is still running server-side.
++async function _reconnectBookJob() {
++  try {
++    const r = await fetch('/api/book-job');
++    const j = await r.json();
++    if (j && j.bookId) {
++      _pdfBookId = j.bookId;
++      const cb = document.getElementById('use-pdf-cb');
++      if (cb && !cb.checked) { cb.checked = true; onUsePdfCb(); }
++      _applyBookProgress(j);
++      document.getElementById('pdf-gen-btn').style.display = 'none';
++      showToast('⏳ Resuming book generation…');
++      _pollBookJob(j.bookId);
++    }
++  } catch(e) {}
+ }
+ // ══ end PDF ═══════════════════════════════════════════════════════════════════
+ 
+@@ -2004,6 +2098,7 @@ async function init(){
+   renderPill();
+   await loadSavedList();
+   await resumeBackgroundJob();
++  _reconnectBookJob();
+   // Hash-based routing on startup
+   if (location.hash.startsWith('#sl=')) {
+     // Storyline deep-link — savedList and storylines now populated
+@@ -2083,20 +2178,21 @@ function savedItemHtml(s, connector, hideStory) {
+   const sid = 'si-' + enc.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+   const hasPrior = !!s.continuedFrom;
+   return `<div class="saved-item-wrap">
+-    <div class="saved-item" onclick="loadSaved('${enc}')">
++    <div class="saved-item" onclick="loadSaved('${s.id||enc}')">
+       ${conn}<span class="saved-emoji">${s.topicEmoji||'📚'}</span>
+       <div class="saved-info">
+         <div class="saved-topic">${s.topic} ${diffBadge}</div>
+         <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
+       </div>
+       <div class="saved-actions" onclick="event.stopPropagation()">
+-        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
++        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.id||s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
+         ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
+         ${APP.info.canGenerate?`<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
++        ${APP.info.canGenerate&&s.id?`<button class="ico-btn" title="${t('qc.btn.topic')}" onclick="event.stopPropagation();qcRun({topicId:'${s.id}'},this)">🔍${s.qcFlags>0?`<span style="color:var(--red);font-weight:800">${s.qcFlags}</span>`:''}</button>`:''}
+         <button class="ico-btn export" title="${t('lesson.export_title')}"
+           data-topic="${s.topic.replace(/"/g,'&quot;')}"
+           onclick="exportTopics([this.dataset.topic])">⬇</button>
+-        <button class="ico-btn" title="Delete" onclick="deleteSaved('${enc}')">🗑</button>
++        <button class="ico-btn" title="Delete" onclick="deleteSaved('${s.id||enc}')">🗑</button>
+       </div>
+     </div>
+     <div class="saved-item-story"${hideStory ? ' style="display:none"' : ''}>
+@@ -2112,10 +2208,10 @@ function savedItemHtml(s, connector, hideStory) {
+     <div class="saved-item-edit" id="siedit-${sid}">
+       <span style="position:relative;display:inline-block"><span class="saved-item-edit-emoji icon-picker-btn" id="siedit-emoji-${sid}" onclick="openIconPicker('siedit-emoji-${sid}','si-${sid}')">${s.topicEmoji||'📚'}</span></span>
+       <input class="saved-item-edit-input" id="siedit-input-${sid}" value="${s.topic.replace(/"/g,'&quot;')}" placeholder="Topic name…"
+-        onkeydown="if(event.key==='Enter')saveSavedItemTitle('${sid}','${enc}');if(event.key==='Escape')closeSavedItemEdit('${sid}')">
+-      <button class="saved-item-edit-btn" onclick="saveSavedItemTitle('${sid}','${enc}')">Save</button>
+-      <button class="saved-item-edit-btn gen" title="${t('lesson.gen_topic_title_title')}" onclick="genSavedItemTitle('${sid}','${enc}')">✨</button>
+-      <button class="saved-item-edit-btn danger" onclick="clearSavedItemTitle('${sid}','${enc}')">Clear</button>
++        onkeydown="if(event.key==='Enter')saveSavedItemTitle('${sid}','${enc}','${s.id||''}');if(event.key==='Escape')closeSavedItemEdit('${sid}')">
++      <button class="saved-item-edit-btn" onclick="saveSavedItemTitle('${sid}','${enc}','${s.id||''}')">Save</button>
++      <button class="saved-item-edit-btn gen" title="${t('lesson.gen_topic_title_title')}" onclick="genSavedItemTitle('${sid}','${enc}','${s.id||''}')">✨</button>
++      <button class="saved-item-edit-btn danger" onclick="clearSavedItemTitle('${sid}','${enc}','${s.id||''}')">Clear</button>
+       <button class="saved-item-edit-btn" onclick="closeSavedItemEdit('${sid}')">✕</button>
+     </div>
+     <div class="saved-item-addlesson" id="sial-${sid}">
+@@ -2124,6 +2220,7 @@ function savedItemHtml(s, connector, hideStory) {
+         <option value="standard">📚 ${t('lesson.type.vocab')}</option>
+         <option value="grammar">🏷️ ${t('lesson.type.grammar')}</option>
+         <option value="conjugation">🔤 ${t('lesson.type.conjugation')}</option>
++        <option value="synonyms">🔁 ${t('lesson.type.synonyms')}</option>
+         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
+         <option value="math">🔢 ${t('lesson.type.math')}</option>
+       </select>
+@@ -2132,7 +2229,7 @@ function savedItemHtml(s, connector, hideStory) {
+         <option value="2"${(!s.difficulty||s.difficulty===2)?' selected':''}>🟡</option>
+         <option value="3"${s.difficulty===3?' selected':''}>🔴</option>
+       </select>
+-      <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}')">Generate</button>
++      <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}','${s.id||''}')">Generate</button>
+       <button class="addlesson-cancel" onclick="closeAddLesson('${sid}')">✕</button>
+       <div id="sial-reinforce-row-${sid}" style="display:${hasPrior?'flex':'none'};font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
+         <select id="sial-vocab-mode-${sid}" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif">
+@@ -2237,9 +2334,8 @@ async function loadSavedList(){
+     list.innerHTML='<div class="lib-empty">'+emptyMsg+'</div>';
+     return;
+   }
+-  // ── Build display chains from v29 storylines[] or legacy continuedFrom ──
+-  const byTopic = Object.fromEntries(filtered.map(l => [l.topic, l]));
+-  // Also index by id for v29 chapter lookups
++  // ── Build display chains from v29 storylines[] or legacy continuedFromId ──
++  // Index visible topics by stable id for chain/chapter lookups.
+   const byId = Object.fromEntries(filtered.filter(l=>l.id).map(l => [l.id, l]));
+ 
+   let storylines, orphans;
+@@ -2247,37 +2343,38 @@ async function loadSavedList(){
+   const v29chains = slArr.filter(sl => sl.chapters && sl.chapters.length >= 1);
+ 
+   if (v29chains.length > 0) {
+-    // v29: resolve chapters to topic objects, filter to visible topics
+-    storylines = v29chains.map(sl => {
+-      return sl.chapters.map(cid => byId[cid]?.topic || null).filter(Boolean);
+-    }).filter(c => c.length > 1);
++    // v29: keep chapter IDS as the chain identity, filtered to visible topics
++    storylines = v29chains.map(sl =>
++      (sl.chapters||[]).filter(cid => byId[cid])
++    ).filter(c => c.length >= 1);
+     const inChain = new Set(storylines.flat());
+-    orphans = filtered.filter(l => !inChain.has(l.topic));
++    orphans = filtered.filter(l => !inChain.has(l.id));
+   } else {
+-    // Legacy: reconstruct chains from continuedFrom
++    // Legacy: reconstruct chains from continuedFromId (id-based)
+     const childMap = {};
+     filtered.forEach(l => {
+-      if (l.continuedFrom && byTopic[l.continuedFrom])
+-        (childMap[l.continuedFrom] = childMap[l.continuedFrom] || []).push(l.topic);
++      const pid = l.continuedFromId;
++      if (pid && byId[pid])
++        (childMap[pid] = childMap[pid] || []).push(l.id);
+     });
+-    const hasParent = new Set(filtered.filter(l => l.continuedFrom && byTopic[l.continuedFrom]).map(l => l.topic));
+-    const roots = filtered.filter(l => !hasParent.has(l.topic));
++    const hasParent = new Set(filtered.filter(l => l.continuedFromId && byId[l.continuedFromId]).map(l => l.id));
++    const roots = filtered.filter(l => !hasParent.has(l.id));
+     const chains = [];
+-    function walk(topic, chain) {
+-      const extended = [...chain, topic];
+-      const kids = childMap[topic] || [];
++    function walk(id, chain) {
++      const extended = [...chain, id];
++      const kids = childMap[id] || [];
+       if (kids.length === 0) { chains.push(extended); return; }
+       kids.forEach(k => walk(k, extended));
+     }
+-    roots.forEach(r => walk(r.topic, []));
++    roots.forEach(r => walk(r.id, []));
+     storylines = chains.filter(c => c.length > 1);
+     const inChain = new Set(storylines.flat());
+-    orphans = filtered.filter(l => !inChain.has(l.topic));
++    orphans = filtered.filter(l => !inChain.has(l.id));
+   }
+ 
+   // Sort storylines by newest updatedAt among their members
+-  const newestOf = chain => chain.reduce((best, enc) => {
+-    const dt = byTopic[enc]?.updatedAt || byTopic[enc]?.generatedAt || '';
++  const newestOf = chain => chain.reduce((best, id) => {
++    const dt = byId[id]?.updatedAt || byId[id]?.generatedAt || '';
+     return dt > best ? dt : best;
+   }, '');
+   storylines.sort((a, b) => newestOf(b).localeCompare(newestOf(a)));
+@@ -2300,7 +2397,7 @@ async function loadSavedList(){
+     // Group storylines by language
+     let lastLang = null;
+     for (const chain of storylines) {
+-      const chainLang = byTopic[chain[0]]?.lang || 'it';
++      const chainLang = byId[chain[0]]?.lang || 'it';
+       if (chainLang !== lastLang) {
+         const L = LANGS[chainLang] || LANGS.it;
+         html += `<div class="orphans-hdr">${L.flag} ${L.name}</div>`;
+@@ -2313,14 +2410,15 @@ async function loadSavedList(){
+   }
+ 
+   function storylines_renderChain(chain) {
+-    const chainTopics = chain.map(t => byTopic[t]?.topic || t).filter(Boolean);
++    // chain is an array of topic IDS; resolve to current names for display + deck payload
++    const chainTopics = chain.map(id => byId[id]?.topic || id).filter(Boolean);
+     const chainTopicsJson = JSON.stringify(chainTopics);
+-    // Find matching v29 storyline for this chain
++    // Find matching v29 storyline by comparing chapter IDS directly (collision-safe)
+     const slArr2 = Array.isArray(APP.storylines) ? APP.storylines : [];
+-    const matchSl = slArr2.find(sl => {
+-      const slTopics = (sl.chapters||[]).map(cid => byId[cid]?.topic || null).filter(Boolean);
+-      return slTopics.length && slTopics.every((t,i) => t === chainTopics[i]) && slTopics.length === chainTopics.length;
+-    }) || null;
++    const matchSl = slArr2.find(sl =>
++      (sl.chapters||[]).length === chain.length &&
++      (sl.chapters||[]).every((c,i) => c === chain[i])
++    ) || null;
+     const chainId = matchSl?.id || ('c' + Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0)));
+     const slMeta = matchSl || slTitles[chainId] || slTitles['root:'+chainTopics[0]] || null;
+     const hasTitle = !!(slMeta && slMeta.title);
+@@ -2336,11 +2434,11 @@ async function loadSavedList(){
+           <span style="font-size:18px">${titleIcon}</span>
+           <div style="min-width:0">
+             <div class="storyline-title-text">${escHtml(titleText)}</div>
+-            <div class="storyline-title-sub">${(()=>{ const first=byTopic[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>
++            <div class="storyline-title-sub">${(()=>{ const first=byId[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>
+           </div>
+          </span>`
+       : `<span class="storyline-title" style="flex:1;cursor:pointer" onclick="event.stopPropagation();openStorylineScreen(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
+-          ${(()=>{ const first=byTopic[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge">${sL.flag}→${tL.flag}</span>`; })()}
++          ${(()=>{ const first=byId[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge">${sL.flag}→${tL.flag}</span>`; })()}
+           <span class="storyline-title-sub">${t('storyline.title')} · ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</span>
+          </span>`;
+     const genBtn = APP.info.canGenerate
+@@ -2359,6 +2457,9 @@ async function loadSavedList(){
+       <button class="ico-btn" style="font-size:11px;padding:2px 8px" title="Share storyline link"
+         data-chain-id="${chainId}"
+         onclick="event.stopPropagation();shareStorylineById(this.dataset.chainId)">🔗</button>
++      ${APP.info.canGenerate?`<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${t('qc.btn.storyline')}"
++        data-sl="${chainId}"
++        onclick="event.stopPropagation();qcRun({storylineId:this.dataset.sl},this)">🔍${(()=>{const n=chain.reduce((a,id)=>a+((byId[id]&&byId[id].qcFlags)||0),0);return n>0?`<span style="color:var(--red);font-weight:800">${n}</span>`:'';})()}</button>`:''}
+       <button class="ico-btn" style="font-size:11px;padding:2px 8px;color:var(--red)" title="Delete all chapters in this storyline"
+         data-chain="${escapedChain}"
+         onclick="event.stopPropagation();deleteStoryline(this.dataset.chain)">🗑️</button>
+@@ -2375,7 +2476,7 @@ async function loadSavedList(){
+         `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="${t('lesson.read_aloud')}">🔊</button>` +
+         (APP.info.canGenerate ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
+         `</div>` +
+-        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" data-lang="${byTopic[chain[0]]?.srcLang||''}">` +
++        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" data-lang="${byId[chain[0]]?.srcLang||''}">` +
+         `<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
+         `</div></div>`;
+     }
+@@ -2428,34 +2529,73 @@ function repopulateContinueSelect(){
+     filtered.map(s=>{
+       const sL=LANGS[s.lang||'it']||LANGS.it;
+       const langTag=showAll&&(s.lang||'it')!==curLang?' ['+sL.name+']':'';
+-      return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+sL.flag+' '+s.topic+langTag+'</option>';
++      return '<option value="'+(s.id||s.topic.replace(/"/g,'&quot;'))+'">'+sL.flag+' '+s.topic+langTag+'</option>';
+     }).join('');
+   if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
+   _updateReinforcePriorVisibility();
+ }
+ 
+ 
+-async function loadSaved(topic){
++async function loadSaved(ref){
+   try{
+-    const r=await fetch('/api/lessons/load?topic='+topic);
++    // ref may be a stable tp_ id (preferred, collision-safe) or an (encoded)
++    // topic name (back-compat).
++    const isId=/^tp_\d+$/.test(String(ref));
++    const r=await fetch('/api/lessons/load?'+(isId?('id='+ref):('topic='+ref)));
+     if(!r.ok) throw new Error('Not found');
+     APP.lessonData=await r.json();
+     goLessonSet();
+   }catch(e){ alert('Could not load: '+e.message); }
+ }
+ 
+-async function deleteSaved(topic){
+-  if(!confirm('Delete "'+decodeURIComponent(topic)+'"?')) return;
+-  await fetch('/api/lessons/delete?topic='+topic,{method:'DELETE'});
++async function deleteSaved(ref){
++  const isId=/^tp_\d+$/.test(String(ref));
++  const item=(APP.savedList||[]).find(s=> isId ? s.id===ref : s.topic===decodeURIComponent(String(ref)));
++  const name=item?.topic || decodeURIComponent(String(ref));
++  if(!confirm('Delete "'+name+'"?')) return;
++  await fetch('/api/lessons/delete?'+(isId?('id='+ref):('topic='+ref)),{method:'DELETE'});
+   loadSavedList();
+ }
+ 
++// Run translation QC over a scope ({topicId[,lessonIdx]} or {storylineId}); the server
++// writes qc:{sug,at} onto flagged items. Polls the job, then refreshes the view.
++async function qcRun(scope, btn){
++  if(!APP.info?.canGenerate){ showToast(t('qc.toast.no_backend')); return; }
++  const old = btn ? btn.innerHTML : null;
++  if(btn){ btn.disabled=true; btn.innerHTML='⏳'; }
++  let data=null;
++  try{
++    const r = await fetch('/api/qc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(scope)});
++    if(!r.ok){ const e=await r.json().catch(()=>({})); showToast(t('qc.toast.failed')+': '+(e.error||r.status)); return; }
++    const { jobId } = await r.json();
++    for(let i=0;i<4800;i++){
++      await new Promise(res=>setTimeout(res,1500));
++      const j = await (await fetch('/api/job/'+jobId)).json();
++      if(btn && j.step){ btn.title=j.step; }
++      if(j.status==='done'){ data=j.data; break; }
++      if(j.status==='error'){ showToast(t('qc.toast.error')+': '+(j.error||'')); return; }
++    }
++  }catch(e){ showToast(t('qc.toast.failed')+': '+e.message); return; }
++  finally{ if(btn){ btn.disabled=false; btn.innerHTML=old; } }
++  if(!data) return;
++  showToast(t('qc.toast.result',{flagged:data.flagged,checked:data.checked})+(data.cleared?' · '+t('qc.toast.cleared',{n:data.cleared}):''));
++  const affected = data.affected||[];
++  if(APP.lessonData && affected.includes(APP.lessonData.id)){
++    const li = (scope.lessonIdx!==undefined && scope.lessonIdx!==null) ? scope.lessonIdx : null;
++    await loadSaved(APP.lessonData.id);          // re-render chapter page with flags
++    if(li!==null) openLessonEditor(li);           // open editor to confirm fixes
++  } else {
++    loadSavedList();
++  }
++}
++
+ // Prefill the generation form to continue from a given topic
+-function continueFromLesson(topic, difficulty, storyLen){
++function continueFromLesson(ref, difficulty, storyLen){
+   if(!APP.info.canGenerate) return;
+   if(difficulty){ onDiffSelect(difficulty); }
+   if(storyLen){ onStoryLenSlider(storyLen); restoreStoryLenSlider(); }
+-  const src=(APP.savedList||[]).find(s=>s.topic===topic);
++  const isId=/^tp_\d+$/.test(String(ref));
++  const src=(APP.savedList||[]).find(s=> isId ? s.id===ref : s.topic===ref);
+   if(src?.lang) selectLang(src.lang);
+   if(src?.srcLang){ APP.srcLang=src.srcLang; saveSrcLang(); const ss=document.getElementById('src-lang-select'); if(ss) ss.value=src.srcLang; updateTranslationLangHint(); }
+   document.getElementById('topic-input').value='';
+@@ -2463,8 +2603,9 @@ function continueFromLesson(topic, difficulty, storyLen){
+   if(useStoryCb?.checked){ useStoryCb.checked=false; onUseStoryCb(); }
+   const contSel=document.getElementById('continue-select');
+   if(contSel){
+-    const match=[...contSel.options].find(o=>o.value===topic);
+-    if(match){ contSel.value=topic; }
++    const optVal=src?.id || (isId?ref:src?.topic);
++    const match=[...contSel.options].find(o=>o.value===optVal);
++    if(match){ contSel.value=optVal; }
+   }
+   goLanding();
+   setTimeout(()=>{
+@@ -2613,8 +2754,8 @@ async function doGenerate(forceRegen){
+     const body={topic,lang:APP.lang,srcLang:APP.srcLang,difficulty:APP.difficulty,
+       lessonFormat:APP.lessonFormat||'standard',
+       storyLen:APP.storyLen||300,
+-      continuedFrom:useStory?null:(document.getElementById('continue-select')?.value||null),
+-      vocabMode:!useStory&&!!(document.getElementById('continue-select')?.value)?(document.getElementById('vocab-mode-select')?.value||'neutral'):null,
++      continuedFrom:(document.getElementById('continue-select')?.value||null),
++      vocabMode:!!(document.getElementById('continue-select')?.value)?(document.getElementById('vocab-mode-select')?.value||'neutral'):null,
+       mathInstruction: APP.lessonFormat==='math' ? (document.getElementById('topic-input')?.value?.trim()||null) : null,
+       userStoryLang: useStory ? (document.getElementById('user-story-lang')?.value||'target') : null,
+       useFullChain:!useStory&&!!(document.getElementById('use-full-chain-cb')?.checked)&&!!(document.getElementById('continue-select')?.value),
+@@ -2737,16 +2878,20 @@ function buildPath(){
+     contNav.className='cont-nav';
+     document.getElementById('ls-hdr').insertAdjacentElement('afterend',contNav);
+   }
+-  const continuedBy=(APP.savedList||[]).filter(s=>s.continuedFrom===d.topic);
++  const continuedBy=(APP.savedList||[]).filter(s=> s.continuedFromId ? s.continuedFromId===d.id : s.continuedFrom===d.topic);
+   const fromLinks=[];
+   const byLinks=[];
+-  if(d.continuedFrom){
+-    fromLinks.push(`<span class="cont-link cont-from" onclick="loadSaved('${encTopic(d.continuedFrom)}')">← ${d.continuedFrom}</span>`);
++  if(d.continuedFromId || d.continuedFrom){
++    // Resolve the parent's CURRENT name from its id (survives parent renames),
++    // falling back to the stored continuedFrom name. Navigate by id.
++    const parent=d.continuedFromId ? (APP.savedList||[]).find(s=>s.id===d.continuedFromId) : null;
++    const parentRef=d.continuedFromId || encTopic(d.continuedFrom);
++    const parentName=parent?.topic || d.continuedFrom || '…';
++    fromLinks.push(`<span class="cont-link cont-from" onclick="loadSaved('${parentRef}')">← ${parentName}</span>`);
+   }
+   if(continuedBy.length){
+     continuedBy.forEach(s=>{
+-      const enc=encTopic(s.topic);
+-      byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${enc}')">${s.topic} →</span>`);
++      byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${s.id||encTopic(s.topic)}')">${s.topic} →</span>`);
+     });
+   }
+   if(fromLinks.length||byLinks.length){
+@@ -2889,21 +3034,14 @@ function buildPath(){
+       ...(L.grammar||[]).map(g=>(g.target||'').slice(0,40).replace(/\s+/g,'_')),
+       ...(L.conjugations||[]).flatMap(c=>(c.forms||[]).map(f=>(f.form||'').slice(0,40).replace(/\s+/g,'_'))),
+     ]);
+-    const topicSlugForFlag=(d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
+-    const topicIdForFlag=d.id||'';
+-    const lessonFlagCount=Object.entries(APP.flagged).filter(([k])=>{
+-      if(!k.startsWith(topicSlugForFlag+':') && !(topicIdForFlag && k.startsWith(topicIdForFlag+':'))) return false;
+-      const parts=k.split(':');
+-      // key format: topicSlug:type:contentSlug
+-      const contentSlug=parts.slice(2).join(':');
+-      return lessonItSet.has(contentSlug);
+-    }).length;
++    // QC flags live on the items themselves (item.qc); old user flags are ignored in the UI.
++    const lessonFlagCount=[...(L.vocab||[]),...(L.sentences||[])].filter(x=>x&&x.qc).length;
+     const hasFlags=lessonFlagCount>0&&APP.info.canGenerate;
+     const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT()[diff]||''}</span>`:'';
+     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
+       <div class="node-lbl">
+         <div style="display:flex;align-items:center;gap:6px">
+-          <div class="node-title" style="flex:1">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍','ai_error_hunt':'🔎','math':'🔢'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt','ai_error_hunt':'lesson.type.ai_error_hunt','math':'lesson.type.math'};const lbl=L.type==='ai_error_hunt'?t('lesson.type.ai_error_hunt'):(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));return (em[L.type]||'📚')+' '+lbl;})()}</div>
++          <div class="node-title" style="flex:1">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍','ai_error_hunt':'🔎','math':'🔢','synonyms':'🔁'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt','ai_error_hunt':'lesson.type.ai_error_hunt','math':'lesson.type.math','synonyms':'lesson.type.synonyms'};const lbl=L.type==='ai_error_hunt'?t('lesson.type.ai_error_hunt'):(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));return (em[L.type]||'📚')+' '+lbl;})()}</div>
+           ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:20px">🔒</span>':''}
+         </div>
+         <div class="node-desc">${(()=>{const dk={'grammar':'lesson.type.desc.grammar','conjugation':'lesson.type.desc.conjugation','error_hunt':'lesson.type.desc.error_hunt','ai_error_hunt':'lesson.type.desc.ai_error_hunt','math':'lesson.type.desc.math','standard':'lesson.type.desc.vocab','all_types':'lesson.type.desc.vocab'};const k=dk[L.type]||'lesson.type.desc.vocab';const ui=t(k);return ui&&ui!==k?ui:L.desc;})()}</div>
+@@ -2916,6 +3054,7 @@ function buildPath(){
+             : `<button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="deleteLessonNode(${i})">🗑</button>`}
+           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move up" onclick="moveLessonNode(${i},-1)" ${i===0?'disabled':''}>↑</button>
+           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move down" onclick="moveLessonNode(${i},1)" ${i===d.lessons.length-1?'disabled':''}>↓</button>
++          ${(L.vocab||L.sentences)?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('qc.btn.lesson')}" onclick="qcRun({topicId:'${d.id}',lessonIdx:${i}},this)">🔍${lessonFlagCount>0?`<span style="color:var(--red);font-weight:800">${lessonFlagCount}</span>`:''}</button>`:''}
+         </div>`:''}
+       </div>`
+     if(!isLocked) node.onclick=()=>startLesson(i);
+@@ -2933,7 +3072,7 @@ function buildPath(){
+       const _diff = d.difficulty || 2;
+       const _slen = d.storyLen || 300;
+       const _contBtn=APP.info.canGenerate?`<button class="flag-btn" style="background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a" title="${t('lesson.continue_title')}" onclick="continueFromLesson('${d.topic.replace(/'/g,"\'")}',${_diff},${_slen})">↪ ${t('lesson.btn_continue_story')}</button>`:'';
+-      const _flagBtn=`<button class="flag-btn" id="story-flag-btn" onclick="toggleStoryFlag()">${t('lesson.flag_story')}</button>`;
++      const _flagBtn=``; // legacy story flag retired from the UI
+       _actRow.innerHTML =
+         _contBtn
+       + _flagBtn
+@@ -3206,7 +3345,7 @@ async function genLessonTitle() {
+    const saveR = await fetch('/api/lessons/save-meta', {
+       method: 'POST',
+       headers: {'Content-Type':'application/json'},
+-      body: JSON.stringify({ oldTopic, newTopic: data.title, topicEmoji: data.icon })
++      body: JSON.stringify({ id: APP.lessonData.id || undefined, oldTopic, newTopic: data.title, topicEmoji: data.icon })
+     });
+     if (saveR.ok) {
+       APP.lessonData.topic = data.title;
+@@ -3258,11 +3397,14 @@ function closeAddLesson(sid) {
+   if (status) status.textContent = '';
+ }
+ 
+-async function doAddLesson(sid, enc) {
++async function doAddLesson(sid, enc, tid) {
+   // For the lesson-card (lesson-set screen), always use the currently loaded topic
+-  const topic = sid === 'lesson-card' && APP.lessonData?.topic
+-    ? APP.lessonData.topic
+-    : decodeURIComponent(enc);
++  const lessonCard = sid === 'lesson-card' && APP.lessonData?.topic;
++  const topic = lessonCard ? APP.lessonData.topic : decodeURIComponent(enc);
++  // Resolve the stable id (collision-safe): the open lesson for the card, the threaded
++  // id for a saved item, else a name lookup as last resort.
++  const tgtId = lessonCard ? APP.lessonData.id
++              : (tid || (APP.savedList || []).find(l => l.topic === topic)?.id);
+   const fmtSel = document.getElementById('sial-fmt-' + sid);
+   const btn    = document.getElementById('sial-btn-' + sid);
+   const status = document.getElementById('sial-status-' + sid);
+@@ -3279,7 +3421,7 @@ async function doAddLesson(sid, enc) {
+     const r = await fetch('/api/lessons/add-lesson', {
+       method: 'POST', headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+-        topic, lessonFormat: fmt, difficulty: diff, vocabMode: vocabModeVal,
++        id: tgtId || undefined, topic, lessonFormat: fmt, difficulty: diff, vocabMode: vocabModeVal,
+         mathInstruction: fmt === 'math' ? (document.getElementById('sial-math-instr-' + sid)?.value?.trim() || null) : null,
+       })
+     });
+@@ -3291,9 +3433,9 @@ async function doAddLesson(sid, enc) {
+     if (status) status.textContent = `✓ ${result?.lesson?.title || 'Lesson'} added`;
+     // Reload the card data so lesson count updates
+     await loadSavedList();
+-    // If this topic is currently open in the lesson view, reload it
+-    if (APP.lessonData && APP.lessonData.topic === topic) {
+-      await loadSaved(encodeURIComponent(topic));
++    // If this topic is currently open in the lesson view, reload it (by id when known)
++    if (APP.lessonData && (tgtId ? APP.lessonData.id === tgtId : APP.lessonData.topic === topic)) {
++      await loadSaved(tgtId || encodeURIComponent(topic));
+     }
+     showToast(t('toast.lesson_added'));
+   } catch(e) {
+@@ -3349,6 +3491,28 @@ function shareStoryline() {
+ function _renderStorylineScreen(chainId, encodedChain, topics) {
+   // Title — look up from v29 array first, then legacy object
+   const _slArr2 = Array.isArray(APP.storylines) ? APP.storylines : [];
++  // Re-resolve chapter names from the storyline's STABLE id chapters so a rename
++  // is reflected immediately (no page refresh needed). Falls back to the passed
++  // names for legacy/ad-hoc chains not present in storylines[].
++  const _slById = _slArr2.find(sl => sl.id === chainId);
++  // Canonical chapter IDS for this deck (collision-safe identity). Prefer the
++  // storyline's stored id chapters; fall back to resolving the passed names.
++  const _saved = APP.savedList || [];
++  const _byId = Object.fromEntries(_saved.filter(l => l.id).map(l => [l.id, l]));
++  let chapterIds = (_slById && (_slById.chapters||[]).length)
++    ? _slById.chapters.filter(cid => _byId[cid])
++    : (topics || []).map(tp => _saved.find(l => l.topic === tp)?.id).filter(Boolean);
++  if (_slById && (_slById.chapters||[]).length) {
++    const _resolved = chapterIds.map(cid => _byId[cid].topic);
++    if (_resolved.length) {
++      topics = _resolved;
++      if (APP._slScreen) {
++        APP._slScreen.topics = _resolved;
++        APP._slScreen.encodedChain = encodeURIComponent(JSON.stringify(_resolved));
++      }
++    }
++  }
++  if (APP._slScreen) APP._slScreen.chapterIds = chapterIds;
+   const slMeta = _slArr2.find(sl => sl.id === chainId)
+     || _slArr2.find(sl => (sl.chapters||[]).some(c => {
+          const t = (APP.savedList||[]).find(l=>l.id===c); return t && topics.includes(t.topic);
+@@ -3378,9 +3542,10 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
+   // Progress summary for storyline screen
+   const _slCompleted = APP.progress?.completed || {};
+   let totalSets = 0, doneSets = 0, totalQ = 0, correctQ = 0;
+-  topics.forEach(topic => {
+-    const s = (APP.savedList||[]).find(l => l.topic === topic);
++  chapterIds.forEach(cid => {
++    const s = _byId[cid];
+     if (!s) return;
++    const topic = s.topic;
+     (s.lessons || []).forEach(ls => {
+       totalSets++;
+       const prog = _slCompleted[topic]?.[ls.id];
+@@ -3398,9 +3563,10 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
+   const statsEl = document.getElementById('sl-screen-stats');
+   if (statsEl) {
+     const lines = [];
+-    topics.forEach(topic => {
+-      const s = (APP.savedList||[]).find(l => l.topic === topic);
++    chapterIds.forEach(cid => {
++      const s = _byId[cid];
+       if (!s) return;
++      const topic = s.topic;
+       if (s.generationStats) {
+         const gs = s.generationStats;
+         lines.push(`${escHtml(topic)}: ${(gs.totalMs/1000).toFixed(1)}s · ${gs.model||''} · ${((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString()} tokens`);
+@@ -3416,6 +3582,9 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
+ 
+   const byTopic = {};
+   (APP.savedList || []).forEach(s => { byTopic[s.topic] = s; });
++  // Make THIS deck's chapters resolve to the correct objects by id, overriding any
++  // same-named topic from another storyline (collision-safe rendering & progress).
++  chapterIds.forEach(cid => { const o = _byId[cid]; if (o) byTopic[o.topic] = o; });
+ 
+   const completed = APP.progress?.completed || {};
+ 
+@@ -3535,7 +3704,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
+       `<div class="storyline-story-hdr" style="flex:1" role="button" tabindex="0" onclick="toggleChainStory('${slscId}')">` +
+       '<span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
+       `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></div>` +
+-      `<span class="story-icon-btn" onclick="event.stopPropagation();(async function(){const sl=APP._slScreen;if(!sl)return;const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);const stories=await Promise.all(sl.topics.map(async t=>{const cached=saved.find(l=>l.topic===t);if(cached?.story)return cached.story;try{const r=await fetch('/api/lessons/load?topic='+encodeURIComponent(t));const d=await r.json();return d.story||'';}catch(_){return '';};}));const text=stories.filter(Boolean).join(' ').replace(/\\s+/g,' ').trim();const lang=saved.find(l=>l.topic===sl.topics[0])?.lang||'';if(text)speakBodyText('__inline__',lang,text);})()">🔊</span>` +
++      `<span class="story-icon-btn" onclick="event.stopPropagation();(async function(){const sl=APP._slScreen;if(!sl)return;const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);const ids=(sl.chapterIds&&sl.chapterIds.length)?sl.chapterIds:(sl.topics||[]).map(tp=>saved.find(l=>l.topic===tp)?.id).filter(Boolean);const stories=await Promise.all(ids.map(async cid=>{const cached=saved.find(l=>l.id===cid);if(cached?.story)return cached.story;try{const r=await fetch('/api/lessons/load?id='+encodeURIComponent(cid));const d=await r.json();return d.story||'';}catch(_){return '';};}));const text=stories.filter(Boolean).join(' ').replace(/\\s+/g,' ').trim();const lang=saved.find(l=>l.id===ids[0])?.lang||'';if(text)speakBodyText('__inline__',lang,text);})()">🔊</span>` +
+       `</div>` +
+       `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
+       '</div>';
+@@ -4123,7 +4292,26 @@ function mathDeleteExercise(li, ei) {
+   const ls = APP.lessonData?.lessons[li];
+   if (!ls || !ls.exercises) return;
+   ls.exercises.splice(ei, 1);
+-  openLessonEditor(li);
++  // Re-render in place — openLessonEditor() toggles and would close the editor.
++  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
++}
++
++function _syncSynFromDOM(li) {
++  const ls = APP.lessonData?.lessons?.[li];
++  if (!ls || ls.type !== 'synonyms') return;
++  document.querySelectorAll(`#lesson-editor [data-type="syn"][data-li="${li}"]`).forEach(inp => {
++    const wi = +inp.dataset.wi, field = inp.dataset.field, cat = inp.dataset.cat;
++    if (!ls.words?.[wi]) return;
++    if (cat) { const ri = +inp.dataset.ri; if (ls.words[wi][cat]?.[ri]) ls.words[wi][cat][ri][field] = inp.value; }
++    else ls.words[wi][field] = inp.value;
++  });
++}
++function synEditorDelete(li, wi, cat, ri) {
++  const ls = APP.lessonData?.lessons?.[li];
++  if (!ls || !ls.words?.[wi]?.[cat]) return;
++  _syncSynFromDOM(li);                 // preserve any in-progress text edits
++  ls.words[wi][cat].splice(ri, 1);
++  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+ }
+ 
+ function openLessonEditor(lessonIdx) {
+@@ -4170,13 +4358,9 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
+   const flags = APP.flagged || {};
+   const topicSlug = (d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
+   const topicId   = d.id || '';
+-  const isFlagged = (type, target) => {
+-    const slug = (target||'').slice(0,40).replace(/\s+/g,'_');
+-    return Object.keys(flags).some(k =>
+-      (k.startsWith(topicSlug+':') || (topicId && k.startsWith(topicId+':'))) && k.endsWith(':'+slug));
+-  };
+-  const typeEmoji = {grammar:'🏷️',conjugation:'🔤',error_hunt:'🔍',ai_error_hunt:'🔎',math:'🔢'}[ls.type]||'📚';
+-  const typeKey   = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math'}[ls.type]||'lesson.type.vocab';
++  const isFlagged = (type, target) => false;   // legacy user-flags retired from the UI; QC uses item.qc
++  const typeEmoji = {grammar:'🏷️',conjugation:'🔤',error_hunt:'🔍',ai_error_hunt:'🔎',math:'🔢',synonyms:'🔁'}[ls.type]||'📚';
++  const typeKey   = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math',synonyms:'lesson.type.synonyms'}[ls.type]||'lesson.type.vocab';
+   const label = typeEmoji+' '+t(typeKey);
+   // Header
+   let html = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+@@ -4345,16 +4529,36 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
+       }
+     });
+ 
++  } else if (ls.type === 'synonyms') {
++    const words = ls.words || [];
++    if (!words.length) html += `<em style="color:var(--gray-dark);font-size:13px">No words</em>`;
++    words.forEach((g, wi) => {
++      html += `<div class="editor-entry" id="ee-${li}-syn-${wi}">
++        <div class="editor-field"><label>Word</label><input data-li="${li}" data-type="syn" data-wi="${wi}" data-field="base" value="${escHtml(g.base||'')}"></div>
++        <div class="editor-field"><label>Gloss</label><input data-li="${li}" data-type="syn" data-wi="${wi}" data-field="gloss" value="${escHtml(g.gloss||'')}"></div>`;
++      [['synonyms','≈ Synonyms'],['antonyms','↔ Antonyms'],['homophones','🔊 Homophones']].forEach(([cat,lbl]) => {
++        html += `<div style="font-size:11px;font-weight:800;opacity:.6;margin-top:7px">${lbl}</div>`;
++        (g[cat]||[]).forEach((it, ri) => {
++          html += `<div style="display:flex;gap:6px;align-items:center;margin-top:3px">
++            <input data-li="${li}" data-type="syn" data-wi="${wi}" data-cat="${cat}" data-ri="${ri}" data-field="w" value="${escHtml(it.w||'')}" placeholder="word">
++            <input data-li="${li}" data-type="syn" data-wi="${wi}" data-cat="${cat}" data-ri="${ri}" data-field="g" value="${escHtml(it.g||'')}" placeholder="gloss" style="opacity:.8">
++            <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="synEditorDelete(${li},${wi},'${cat}',${ri})" title="Remove">✕</button>
++          </div>`;
++        });
++      });
++      html += `</div>`;
++    });
++
+   } else {
+     // Vocab / sentences
+     const items = [
+-      ...(ls.vocab||[]).map((v,i) => ({type:'vocab', i, target:v.target, source:v.source})),
+-      ...(ls.sentences||[]).map((s,i) => ({type:'sentence', i, target:s.target, source:s.source})),
++      ...(ls.vocab||[]).map((v,i) => ({type:'vocab', i, target:v.target, source:v.source, qc:v.qc})),
++      ...(ls.sentences||[]).map((s,i) => ({type:'sentence', i, target:s.target, source:s.source, qc:s.qc})),
+     ];
+-    const visItems = flaggedOnly ? items.filter(it => isFlagged(it.type, it.target)) : items;
++    const visItems = flaggedOnly ? items.filter(it => it.qc) : items;
+     if (!visItems.length) html += `<em style="color:var(--gray-dark);font-size:13px">${flaggedOnly?'No flagged items':'No items'}</em>`;
+     visItems.forEach(it => {
+-      const flagged = isFlagged(it.type, it.target);
++      const flagged = !!it.qc;
+       html += `<div class="editor-entry${flagged?' flagged':''}" id="ee-${li}-${it.type}-${it.i}">
+         <div style="display:flex;justify-content:flex-end;gap:4px;margin-bottom:2px">
+           <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','${it.type}',${it.i},-1)" ${it.i===0?'disabled':''}>↑</button>
+@@ -4363,11 +4567,44 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
+         </div>
+         <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="target" data-orig="${escHtml(it.target||'')}" value="${escHtml(it.target||'')}"></div>
+         <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="source" data-orig="${escHtml(it.source||'')}" value="${escHtml(it.source||'')}"></div>
++        ${it.qc?`<div style="display:flex;align-items:center;gap:8px;margin-top:4px;font-size:13px;background:#fff3df;border-radius:6px;padding:5px 8px">
++          <span style="font-weight:800;color:#b35900">${t('qc.editor.suggests')} <span style="font-size:11px;opacity:.75">${it.qc.field==='target'?t('qc.editor.in_target'):t('qc.editor.in_source')}</span></span>
++          <span style="flex:1;color:var(--text)">${escHtml(it.qc.sug||'')}</span>
++          <button class="storyline-hdr-btn" style="color:var(--green)" title="${t('qc.editor.fix_title')}" onclick="qcApplyFix('${li}','${it.type}',${it.i})">${t('qc.editor.fix')}</button>
++          <button class="storyline-hdr-btn" title="${t('qc.editor.dismiss_title')}" onclick="qcDismiss('${li}','${it.type}',${it.i})">✕</button>
++        </div>`:''}
+       </div>`;
+     });
+   }
+   el.innerHTML = html;
+ }
++// Apply / dismiss a QC suggestion on a vocab|sentence item, persist, re-render.
++async function _qcMutateItem(li, type, fi, apply){
++  const ls = APP.lessonData?.lessons?.[li]; if(!ls) return;
++  const arr = type==='vocab'?ls.vocab:ls.sentences;
++  const item = arr && arr[fi]; if(!item) return;
++  if(apply && item.qc){
++    let sug = item.qc.sug, f = item.qc.field==='target'?'target':'source';
++    if(typeof sug==='string' && sug.includes('=>')){   // model echoed the whole pair
++      const p = sug.split('=>'); const l=(p[0]||'').trim(), r=p.slice(1).join('=>').trim();
++      const tgtCh = l && l!==item.target, srcCh = r && r.toLowerCase()!==String(item.source||'').toLowerCase();
++      if(srcCh && !tgtCh){ f='source'; sug=r; }
++      else if(tgtCh){ f='target'; sug=l; }
++      else { sug = (f==='target'?l:r); }
++    }
++    item[f] = sug;
++  }
++  delete item.qc;
++  try{
++    const r = await fetch('/api/lessons/edit', { method:'POST', headers:{'Content-Type':'application/json'},
++      body: JSON.stringify({ id: APP.lessonData.id || undefined, topic: APP.lessonData.topic, lessons: APP.lessonData.lessons }) });
++    if(!r.ok) throw new Error((await r.json()).error||'save failed');
++    showToast(apply?t('qc.toast.fix_applied'):t('qc.toast.dismissed'));
++  }catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
++  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
++}
++function qcApplyFix(li, type, fi){ _qcMutateItem(li, type, +fi, true); }
++function qcDismiss(li, type, fi){ _qcMutateItem(li, type, +fi, false); }
+ 
+ async function saveLessonEdits(lessonIdx) {
+   const el = document.getElementById('lesson-editor');
+@@ -4435,11 +4672,12 @@ async function saveLessonEdits(lessonIdx) {
+         }).catch(e => console.error('save-story failed:', e));
+         // Don't close — story save is fire-and-forget, lesson save below handles the rest
+       }
+-    } else if (type === 'eh-correct') {
+-      // Save correct story to topic.story and server
+-      const text = inp.value.trim();
+-      if (APP.lessonData) APP.lessonData.story = text;
+-      fetch('/api/save-story', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ topic: d.topic, story: text }) }).catch(()=>{});
++    } else if (type === 'syn') {
++      const wi = +inp.dataset.wi, cat = inp.dataset.cat;
++      if (ls.words && ls.words[wi]) {
++        if (cat) { const ri = +inp.dataset.ri; if (ls.words[wi][cat]?.[ri]) ls.words[wi][cat][ri][field] = inp.value; }
++        else ls.words[wi][field] = inp.value;
++      }
+     }
+     // Sync corrupted story on save for error_hunt lessons
+     if (ls.type === 'error_hunt') {
+@@ -4462,7 +4700,7 @@ async function saveLessonEdits(lessonIdx) {
+   try {
+     const r = await fetch('/api/lessons/edit', { method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+-      body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) });
++      body: JSON.stringify({ id: d.id || undefined, topic: d.topic, lessons: d.lessons }) });
+     if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+     const topicSlugForEdit = (d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
+     const topicIdForEdit = d.id || '';
+@@ -4499,7 +4737,7 @@ function toggleHideLessonNode(lessonIdx) {
+   ls._hidden = !ls._hidden;
+   // Save and rebuild
+   fetch('/api/lessons/edit', { method:'POST', headers:{'Content-Type':'application/json'},
+-    body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) }).catch(()=>{});
++    body: JSON.stringify({ id: d.id || undefined, topic: d.topic, lessons: d.lessons }) }).catch(()=>{});
+   buildPath();
+ }
+ 
+@@ -4512,7 +4750,7 @@ async function moveLessonNode(lessonIdx, dir) {
+   try {
+     const r = await fetch('/api/lessons/edit', { method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+-      body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) });
++      body: JSON.stringify({ id: d.id || undefined, topic: d.topic, lessons: d.lessons }) });
+     if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+     buildPath();
+   } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
+@@ -4523,14 +4761,14 @@ async function deleteLessonNode(lessonIdx) {
+   if (!d) return;
+   const ls = d.lessons[lessonIdx];
+   if (!ls) return;
+-  const typeKey = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math'}[ls.type]||'lesson.type.vocab';
++  const typeKey = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math',synonyms:'lesson.type.synonyms'}[ls.type]||'lesson.type.vocab';
+   const label = t(typeKey);
+   if (!confirm(`Delete the ${label} lesson from "${d.topic}"?\nThis cannot be undone.`)) return;
+   d.lessons.splice(lessonIdx, 1);
+   try {
+     const r = await fetch('/api/lessons/edit', { method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+-      body: JSON.stringify({ topic: d.topic, lessons: d.lessons }) });
++      body: JSON.stringify({ id: d.id || undefined, topic: d.topic, lessons: d.lessons }) });
+     if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+     showToast(t('toast.lesson_deleted'));
+     closeLessonEditor();
+@@ -4882,7 +5120,7 @@ async function saveLessonTitleEdit() {
+   try {
+     const r = await fetch('/api/lessons/save-meta', { method:'POST',
+       headers:{'Content-Type':'application/json'},
+-      body: JSON.stringify({ oldTopic, newTopic, topicEmoji: newEmoji }) });
++      body: JSON.stringify({ id: APP.lessonData.id || undefined, oldTopic, newTopic, topicEmoji: newEmoji }) });
+     if (!r.ok) throw new Error((await r.json()).error || 'Failed');
+     APP.lessonData.topic = newTopic;
+     if (newEmoji) APP.lessonData.topicEmoji = newEmoji;
+@@ -4912,7 +5150,7 @@ function closeSavedItemEdit(sid) {
+ 
+ // cycleSavedItemEmoji replaced by openIconPicker
+ 
+-async function saveSavedItemTitle(sid, enc) {
++async function saveSavedItemTitle(sid, enc, tid) {
+   const newTopic = document.getElementById('siedit-input-' + sid)?.value.trim();
+   const newEmoji = document.getElementById('siedit-emoji-' + sid)?.textContent.trim();
+   if (!newTopic) return;
+@@ -4920,7 +5158,7 @@ async function saveSavedItemTitle(sid, enc) {
+   try {
+     const r = await fetch('/api/lessons/save-meta', {
+       method: 'POST', headers: {'Content-Type':'application/json'},
+-      body: JSON.stringify({ oldTopic, newTopic, topicEmoji: newEmoji })
++      body: JSON.stringify({ id: tid || undefined, oldTopic, newTopic, topicEmoji: newEmoji })
+     });
+     if (!r.ok) throw new Error('Save failed');
+     closeSavedItemEdit(sid);
+@@ -4929,17 +5167,18 @@ async function saveSavedItemTitle(sid, enc) {
+   } catch(e) { showToast('⚠ ' + e.message.slice(0, 60)); }
+ }
+ 
+-async function clearSavedItemTitle(sid, enc) {
++async function clearSavedItemTitle(sid, enc, tid) {
+   const oldTopic = decodeURIComponent(enc);
+-  const found = (APP.savedList || []).find(l => l.topic === oldTopic);
++  const found = tid ? (APP.savedList || []).find(l => l.id === tid)
++                    : (APP.savedList || []).find(l => l.topic === oldTopic);
+   if (!found) return;
+   // Revert to userTopic (original user input) if available, else keep current
+   const original = found.userTopic || oldTopic;
+-  if (original === oldTopic) { closeSavedItemEdit(sid); return; }
++  if (original === found.topic) { closeSavedItemEdit(sid); return; }
+   try {
+     const r = await fetch('/api/lessons/save-meta', {
+       method: 'POST', headers: {'Content-Type':'application/json'},
+-      body: JSON.stringify({ oldTopic, newTopic: original, topicEmoji: found.topicEmoji })
++      body: JSON.stringify({ id: tid || undefined, oldTopic, newTopic: original, topicEmoji: found.topicEmoji })
+     });
+     if (!r.ok) throw new Error('Clear failed');
+     closeSavedItemEdit(sid);
+@@ -4948,11 +5187,12 @@ async function clearSavedItemTitle(sid, enc) {
+   } catch(e) { showToast('⚠ ' + e.message.slice(0, 60)); }
+ }
+ 
+-async function genSavedItemTitle(sid, enc) {
++async function genSavedItemTitle(sid, enc, tid) {
+   const genBtn = document.querySelector('#siedit-' + sid + ' .gen');
+   if (genBtn) { genBtn.textContent = '⏳'; genBtn.disabled = true; }
+   const oldTopic = decodeURIComponent(enc);
+-  const found = (APP.savedList || []).find(l => l.topic === oldTopic);
++  const found = tid ? (APP.savedList || []).find(l => l.id === tid)
++                    : (APP.savedList || []).find(l => l.topic === oldTopic);
+   try {
+     const r = await fetch('/api/storyline-title', {
+       method: 'POST', headers: {'Content-Type':'application/json'},
+@@ -5028,6 +5268,7 @@ function buildExercises(lessonIdx){
+   if(lesson.type==='grammar')     return buildGrammarExercises(lesson);
+   if(lesson.type==='conjugation') return buildConjugationExercises(lesson);
+   if(lesson.type==='math')        return buildMathExercises(lesson);
++  if(lesson.type==='synonyms')    return buildSynonymsExercises(lesson);
+ 	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
+   const allV = lesson.vocab;
+ 	// const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
+@@ -5237,6 +5478,37 @@ function tTypeConjugation(ex) {
+ 
+ 
+ // ══ Math exercises ═══════════════════════════════════════════════════════════
++function buildSynonymsExercises(lesson){
++  const words = lesson.words || [];
++  // Pool of every related word in the lesson, for cross-word distractors.
++  const allWords = [];
++  words.forEach(g => { allWords.push(g.base); (g.synonyms||[]).forEach(x=>allWords.push(x.w)); (g.antonyms||[]).forEach(x=>allWords.push(x.w)); (g.homophones||[]).forEach(x=>allWords.push(x.w)); });
++  const exs = [];
++  const TARGET_CHOICES = 7;
++  words.forEach(g => {
++    const mk = (mode) => {
++      const correct = (mode==='synonyms' ? g.synonyms : g.antonyms).map(x=>x.w);
++      if(!correct.length) return null;
++      const correctLc = new Set(correct.map(w=>w.toLowerCase()));
++      const baseLc = (g.base||'').toLowerCase();
++      // distractors: the word's OTHER category + homophones (traps) + cross-word words
++      const local = (mode==='synonyms' ? g.antonyms : g.synonyms).map(x=>x.w).concat((g.homophones||[]).map(x=>x.w));
++      const cross = shuffle(allWords);
++      const distractors = [];
++      const seen = new Set([...correctLc, baseLc]);
++      const addD = w => { const k=(w||'').toLowerCase(); if(!w||seen.has(k))return; seen.add(k); distractors.push(w); };
++      local.forEach(addD);
++      for(const w of cross){ if(distractors.length >= TARGET_CHOICES-correct.length) break; addD(w); }
++      const choices = shuffle([...correct, ...distractors]).slice(0, Math.max(correct.length+1, Math.min(TARGET_CHOICES, correct.length+distractors.length)));
++      // ensure all correct survived the slice
++      correct.forEach(c => { if(!choices.some(x=>x.toLowerCase()===c.toLowerCase())) choices.push(c); });
++      return { type:'syn_select', mode, base:g.base, gloss:g.gloss||'', correct, choices: shuffle(choices) };
++    };
++    const s = mk('synonyms'); if(s) exs.push(s);
++    const a = mk('antonyms'); if(a) exs.push(a);
++  });
++  return shuffle(exs);
++}
+ function buildMathExercises(lesson) {
+   // Use pre-generated exercises baked into the lesson, or generate on the fly
+   // Math exercises keep their order — shuffle is intentionally omitted
+@@ -5698,6 +5970,7 @@ function renderEx(){
+   else if(ex.type==='math_order') html=tMathOrder(ex);
+   else if(ex.type==='math_calc') html=tMathCalc(ex);
+   else if(ex.type==='math_latex') html=tMathLatex(ex);
++  else if(ex.type==='syn_select') html=tSynSelect(ex);
+   else if(ex.type==='mcq_article') html=tMcqArticle(ex);
+   else if(ex.type==='mcq_plural') html=tMcqPlural(ex);
+   else if(ex.type==='type_plural') html=tTypePlural(ex);
+@@ -5709,10 +5982,6 @@ function renderEx(){
+     '<div id="fb" class="feedback"></div>'+
+     '<div class="btn-row">'+
+       `<button class="check-btn" id="cbtn" onclick="check()" disabled>${t('ex.check')}</button>`+
+-      `<button class="flag-btn${alreadyFlagged?' flagged':''}" id="flagbtn" onclick="flagCurrent()" title="${t('ex.flag_title')}">${alreadyFlagged?t('ex.flagged'):t('ex.flag')}</button>`+
+-    '</div>'+
+-    '<div class="flag-comment-wrap'+(alreadyFlagged?' visible':'')+'" id="flag-comment-wrap">'+
+-      `<textarea class="flag-comment" id="flag-comment-input" rows="2" placeholder="${t('ex.flag_placeholder')}" onblur="saveComment()">${existingComment}</textarea>`+
+     '</div>';
+   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>{
+     if(_ttsUnlocked){ speak(ex.target); }
+@@ -5844,6 +6113,19 @@ function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=loc
+ function ttsApproxBadge(){ return ttsIsApproximate()?`<span class="tts-approx" style="margin-left:6px">${t('tts.approx')}</span>`:''; }
+ function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(APP.lessonData?.srcLang||APP.srcLang||"en"); return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+ function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.listen_type")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_type.q",{lang:Ln})}</div>${lBlock(ex.target,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
++function tSynSelect(ex){
++  const isSyn = ex.mode==='synonyms';
++  const q = isSyn ? t('ex.syn.q_synonyms',{word:furiHtml(ex.base)}) : t('ex.syn.q_antonyms',{word:furiHtml(ex.base)});
++  const badge = isSyn ? t('ex.badge.syn_synonyms') : t('ex.badge.syn_antonyms');
++  const gloss = ex.gloss ? `<div style="opacity:.55;font-size:13px;margin-top:-4px;margin-bottom:6px">${escHtml(ex.gloss)}</div>` : '';
++  const tiles = ex.choices.map((w,i)=>`<button class="syn-tile" id="st${i}" data-w="${escHtml(w)}" onclick="synToggle(${i},this)">${furiHtml(w)}</button>`).join('');
++  return `<div class="ex-badge">${badge}</div><div class="card"><div class="qtext">${q}</div>${gloss}<div class="syn-hint">${t('ex.syn.hint')}</div><div class="syn-grid">${tiles}</div></div>`;
++}
++function synToggle(i,el){
++  if(APP.cur.answered) return;
++  el.classList.toggle('sel');
++  document.getElementById('cbtn').disabled = document.querySelectorAll('.syn-tile.sel').length===0;
++}
+ function tOrder(ex){
+   const tokens=ex.words.map((w,i)=>
+     `<span class="tok" id="t${i}" onclick="addTok(${i})">${furiHtml(w)}</span>`
+@@ -6034,6 +6316,11 @@ function check(){
+     ok=JSON.stringify((C.placed||[]).map(p=>String(p.w)))===JSON.stringify(ex.correct);
+   }
+   else if(ex.type==='math_latex') { ok=(C.sel||'')===ex.correct; }
++  else if(ex.type==='syn_select'){
++    const sel=new Set([...document.querySelectorAll('.syn-tile.sel')].map(b=>(b.dataset.w||'').toLowerCase()));
++    const cor=new Set(ex.correct.map(w=>String(w).toLowerCase()));
++    ok = sel.size===cor.size && [...cor].every(w=>sel.has(w));
++  }
+   else { ok=(C.sel||'')===ex.correct; }
+   C.answered=true;
+   const btn=document.getElementById('cbtn'); btn.textContent=t('check.continue'); btn.className='check-btn cont'; btn.disabled=false;
+@@ -6051,14 +6338,17 @@ function check(){
+     const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
+       ? `${furiHtml(ex.correct)}${ex.source ? ' — ' + furiHtml(ex.source) : ''}`
+       : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
++      : ex.type==='syn_select' ? escHtml(ex.correct.join(', '))
+       : furiHtml(ex.target||ex.correct);
+     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}</div>`;
++    if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ if(ex.correct.some(c=>c.toLowerCase()===(b.dataset.w||'').toLowerCase())) b.classList.add('ok'); });
+     const speakOk = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
+       : ex.type==='type_plural' ? stripFuri(ex.correct)
+       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
+       : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+stripFuri(ex.plural)
+       : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+stripFuri(ex.correct)
+       : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
++      : ex.type==='syn_select' ? stripFuri(ex.correct.join(', '))
+       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
+     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
+     if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('ok');
+@@ -6067,16 +6357,22 @@ function check(){
+     _speakAndAdvance(speakOk);
+   } else {
+     C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
+-    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${furiHtml(ex.correct)}</strong></div>`;
++    const _wrongCorrect = (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex'||ex.type==='syn_select')
++      ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
++      : furiHtml(ex.correct);
++    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${_wrongCorrect}</strong></div>`;
+     const speakBad = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
+       : ex.type==='type_plural' ? stripFuri(ex.correct)
+       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
+       : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+stripFuri(ex.plural)
+       : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+stripFuri(ex.correct)
+       : (ex.type==='math_calc'||ex.type==='math_order') ? (Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
++      : ex.type==='syn_select' ? stripFuri(ex.correct.join(', '))
+       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
+     if(speakBad) speak(speakBad,0.75);
+-    document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===stripFuri(ex.correct))b.classList.add('ok'); });
++    const _corrStr = Array.isArray(ex.correct) ? ex.correct.join(', ') : ex.correct;
++    document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===stripFuri(_corrStr))b.classList.add('ok'); });
++    if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ const w=(b.dataset.w||'').toLowerCase(); if(ex.correct.some(c=>c.toLowerCase()===w)) b.classList.add('ok'); else if(b.classList.contains('sel')) b.classList.add('bad'); });
+     if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('bad');
+     const a=document.getElementById('ex-area'); a.classList.add('shake'); setTimeout(()=>a.classList.remove('shake'),380);
+     renderHearts();
+@@ -6142,7 +6438,7 @@ function showComplete(){
+   const done = APP.progress.completed?.[topicKey] || {};
+   const allLessons = APP.lessonData?.lessons || [];
+   const nextLessonIdx = allLessons.findIndex((L, i) => i !== C.lessonIdx && !done[L.id]);
+-  const typeLabel = idx => { const k={grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math'}[allLessons[idx]?.type]||'lesson.type.vocab'; return t(k); };
++  const typeLabel = idx => { const k={grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math',synonyms:'lesson.type.synonyms'}[allLessons[idx]?.type]||'lesson.type.vocab'; return t(k); };
+ 
+   // Resolve storyline
+   const _slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+@@ -6172,7 +6468,8 @@ function showComplete(){
+     const lsTitle = APP.lessonData?.topic || t('lesson.set');
+     let navHtml = `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="goLessonSet()">📚 ${escHtml(lsTitle)}</button>`;
+     if (sl && slEnc) {
+-      navHtml += `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="openStorylineScreen('${sl.id}','${slEnc}')">📖 ${escHtml(sl.title||t('storyline.title'))}</button>`;
++      const slEncAttr = slEnc.replace(/'/g, '%27'); // ' is not escaped by encodeURIComponent; would break the inline onclick
++      navHtml += `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="openStorylineScreen('${sl.id}','${slEncAttr}')">📖 ${escHtml(sl.title||t('storyline.title'))}</button>`;
+     }
+     _compNav.innerHTML = navHtml;
+     _compNav.style.display = '';
+@@ -6344,8 +6641,16 @@ function speakBodyText(bodyId,langCode,preText){
+     if(match?.story){ text=match.story.replace(/\s+/g,' ').trim(); }
+   }
+   if(!text && el.dataset.chain){
++    // Chain story (csbody): prefer the open deck's stable chapter ids (collision-safe),
++    // then fall back to decoding the name-based data-chain payload.
++    const _saved0=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);
++    const _cids=APP._slScreen?.chapterIds;
++    if(_cids&&_cids.length){
++      text=_cids.map(cid=>_saved0.find(l=>l.id===cid)?.story||'').filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
++      if(!langCode){ const _f=_saved0.find(l=>l.id===_cids[0]); if(_f?.lang) langCode=_f.lang; }
++    }
+     // Chain story (csbody): decode chain, concatenate all stories
+-    try {
++    if(!text) try {
+       // el.dataset.chain may be single or double encoded depending on browser
+       let chainJson = el.dataset.chain;
+       try { chainJson = decodeURIComponent(chainJson); } catch(_){}
+@@ -6710,34 +7015,61 @@ async function exportTopics(topics) {
+   if (!topics || topics.length === 0) return;
+   showToast(t('toast.export_preparing'));
+   try {
++    const saved = APP.savedList || [];
++    const byId = Object.fromEntries(saved.filter(l => l.id).map(l => [l.id, l]));
++    const byName = {}; saved.forEach(l => { if (!(l.topic in byName)) byName[l.topic] = l; });
++    // Resolve incoming refs (ids or names) to seed topic ids
++    const seed = topics.map(x => /^tp_\d+$/.test(x) ? x : byName[x]?.id).filter(Boolean);
++    // Expand to the full connected component via continuedFromId: walk up to the
++    // root(s), then down through every branch, so a fork exports as a complete unit.
++    const comp = new Set(seed);
++    for (const id0 of seed) {
++      let cur = byId[id0], guard = new Set();
++      while (cur && cur.continuedFromId && byId[cur.continuedFromId] && !guard.has(cur.id)) {
++        guard.add(cur.id); comp.add(cur.continuedFromId); cur = byId[cur.continuedFromId];
++      }
++    }
++    let changed = true;
++    while (changed) {
++      changed = false;
++      for (const l of saved)
++        if (l.continuedFromId && comp.has(l.continuedFromId) && !comp.has(l.id)) { comp.add(l.id); changed = true; }
++    }
++    const compIds = [...comp];
++    // Fetch each component topic by id (collision-safe)
+     const lessons = [];
+-    for (const topic of topics) {
+-      // Fetch full lesson data
+-      const r = await fetch('/api/lessons/load?topic=' + encodeURIComponent(topic));
+-      if (!r.ok) throw new Error('Could not load: ' + topic);
++    for (const cid of compIds) {
++      const r = await fetch('/api/lessons/load?id=' + encodeURIComponent(cid));
++      if (!r.ok) continue;
+       const data = await r.json();
+-      // Attach relevant flags (exercises + story)
+-      const topicSlug = topic.slice(0, 30).replace(/\s+/g, '_');
++      const nm = byId[cid]?.topic || data.topic || '';
++      const topicSlug = nm.slice(0, 30).replace(/\s+/g, '_');
+       const flags = {};
+-      Object.entries(APP.flagged).forEach(([k, v]) => {
+-        if (k.startsWith(topicSlug + ':')) flags[k] = v;
+-      });
++      Object.entries(APP.flagged).forEach(([k, v]) => { if (k.startsWith(topicSlug + ':')) flags[k] = v; });
+       lessons.push({ ...data, exportedFlags: flags, exportedAt: new Date().toISOString() });
+     }
+-    // Include storylines that contain any of the exported topics
+-    const exportedTopics = new Set(lessons.map(l => l.topic));
++    if (!lessons.length) throw new Error('Nothing to export');
++    // Include every storyline that references any component topic (all branches)
+     const allSl = Array.isArray(APP.storylines) ? APP.storylines : [];
+-    const byId = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+-    const exportedStorylines = allSl.filter(sl =>
+-      (sl.chapters||[]).some(cid => exportedTopics.has(byId[cid]?.topic)));
++    const exportedStorylines = allSl.filter(sl => (sl.chapters||[]).some(cid => comp.has(cid)));
+     const payload = { schemaVersion: 29, topics: lessons, storylines: exportedStorylines,
+       exportedAt: new Date().toISOString(), exportedBy: 'dreizunge' };
+     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+     const url = URL.createObjectURL(blob);
+     const a = document.createElement('a');
+-    const filename = topics.length === 1
+-      ? 'dreizunge-' + topics[0].replace(/[^a-z0-9]+/gi, '-').toLowerCase().slice(0, 40) + '.json'
+-      : 'dreizunge-storyline-' + Date.now() + '.json';
++    const slug = v => String(v||'').replace(/[^a-z0-9]+/gi, '-').toLowerCase().replace(/^-+|-+$/g, '').slice(0, 40);
++    let nameStr, idStr;
++    if (exportedStorylines.length) {
++      // Storyline/fork export: name + id of the largest (primary) storyline
++      const primary = exportedStorylines.slice().sort((x, y) => (y.chapters?.length||0) - (x.chapters?.length||0))[0];
++      nameStr = primary.title || byId[compIds[0]]?.topic || lessons[0].topic;
++      idStr = primary.id || '';
++    } else {
++      // Single standalone topic: name + tp_ id
++      nameStr = byId[compIds[0]]?.topic || lessons[0].topic;
++      idStr = compIds[0] || '';
++    }
++    const filename = `dreizunge_${slug(nameStr)}_${idStr}_${Date.now()}.json`;
+     a.href = url; a.download = filename;
+     document.body.appendChild(a); a.click();
+     document.body.removeChild(a); URL.revokeObjectURL(url);
+diff --git a/prompts.json b/prompts.json
+new file mode 100644
+index 0000000..bddb9f2
+--- /dev/null
++++ b/prompts.json
+@@ -0,0 +1,130 @@
++{
++  "_comment": "Dreizunge v37 prompt templates. Use {L} for target language name, {S} for source language name, {diff} for difficulty label, {sentLen} for sentence length spec, {lessonDiff} for lesson focus label. Conditional fragments are assembled in server.js.",
++  "vocab": {
++    "system": "You are a {L} language lesson generator for a vocabulary learning app.\nReturn ONLY a valid JSON object — no markdown, no explanation, nothing else.\n\nThe learner speaks {S} and is learning {L}.\nField names in the schema are fixed (\"target\" and \"source\") but their CONTENT must be in the languages specified below.\n\nSchema:\n{\n  \"title\": \"short lesson theme in {S} (3-5 words)\",\n  \"desc\": \"up to 8 words describing this lesson, written in {S}\",\n  \"icon\": \"one relevant emoji\",\n  \"vocab\": [\n    {\"target\":\"{L} word or short phrase\",\"source\":\"{S} translation of that word\"}\n  ],\n  \"sentences\": [\n    {\"target\":\"A natural {L} sentence\",\"source\":\"{S} translation of that sentence\"}\n  ]\n}\n\nExample (German lesson, Italian speaker):\n{\"target\":\"laufen\",\"source\":\"correre\"},{\"target\":\"der Hund\",\"source\":\"il cane\"}\nExample (Italian lesson, English speaker):\n{\"target\":\"correre\",\"source\":\"to run\"},{\"target\":\"il cane\",\"source\":\"the dog\"}\n\nRules:\n- vocab: exactly 8 items, all unique {L} words, topic-relevant, overall difficulty: {diff}, lesson focus: {lessonDiff}\n- BASE FORM ONLY: give every vocab word in its dictionary/citation form — verbs in the infinitive, nouns in the singular (with the usual article where the language uses one), adjectives/adverbs in their base (positive, uninflected) form. Never use conjugated, declined, plural, comparative, or otherwise inflected forms; those derivative forms are taught in dedicated grammar/conjugation lessons.\n- sentences: exactly 5 items, each using vocabulary words naturally, each structurally different\n- sentence length: {sentLen} — vary lengths naturally\n- sentences must be complete natural {L} sentences — do NOT provide a words[] array\n- CRITICAL \"target\" fields: MUST contain ONLY {L} — absolutely never {S} or any other language\n- CRITICAL \"source\" fields: MUST contain ONLY {S} — absolutely never {L} or any other language. If {S} is English, write English. Do NOT write {L} synonyms or paraphrases.\n- CRITICAL: \"source\" is a TRANSLATION of \"target\" into {S}, not a synonym in {L}\n- \"title\" and \"desc\": MUST be written in {S}",
++    "dialectNote": "\n- The target language variety is: {dialect}. Use vocabulary and spelling appropriate to this dialect/variety.",
++    "writingStyleNote": "\n- Writing style: {writingStyle}",
++    "cjkNote": "\n- JAPANESE: In sentence \"target\" fields, annotate each kanji character with its reading in square brackets immediately after (e.g. 日本語[にほんご]). Only annotate kanji (CJK characters) — do NOT annotate hiragana, katakana, or punctuation.",
++    "user": "Topic: \"{topic}\". Lesson {lessonNum} of {totalLessons}.\nTarget language: {L}. Source/translation language: {S}.",
++    "storyHint_target": "\n\nContext story (in {L} — use for vocabulary and theme inspiration):\n{storyExcerpt}\n\nREMINDER: \"target\" fields MUST be {L}. \"source\" fields MUST be {S} translations.",
++    "storyHint_source": "\n\nContext story (in {S} — the learner's native language — for theme context only. Do NOT copy its vocabulary into \"source\" fields; generate fresh {S} translations):\n{storyExcerpt}",
++    "storyHint_other": "\n\nContext story (in a third language — for theme inspiration only. Ignore its language entirely):\n{storyExcerpt}\n\nREMINDER: \"target\" MUST be {L}. \"source\" MUST be {S}. Never copy from the story's language.",
++    "prevHint": "\n\nVocabulary already covered in earlier lessons (do NOT repeat these):\n{prevVocab}",
++    "chainHint": "\n\nThis is a continuation lesson. REINFORCE these words from previous chapters by using them naturally in sentences (do NOT just repeat them as vocab items):\n{chainVocab}",
++    "suffix": "\nReturn only the JSON object.",
++    "srcCjkNote": "\n- JAPANESE SOURCE: The source/translation language is Japanese. Annotate each kanji in \"source\" fields with its reading in square brackets immediately after (e.g. 食べる[たべる]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "cjkNote1": "\n- JAPANESE BEGINNER: Annotate EVERY kanji in \"target\" fields with its reading in square brackets immediately after (e.g. 日本語[にほんご]). Annotate all kanji without exception — the learner cannot read any kanji yet. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "cjkNote2": "\n- JAPANESE: In sentence \"target\" fields, annotate each kanji with its reading in square brackets immediately after (e.g. 日本語[にほんご]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "cjkNote3": "\n- JAPANESE ADVANCED: Annotate only less common or complex kanji in \"target\" fields with readings in square brackets (e.g. 語彙[ごい]). Skip N4/N5 level kanji such as 日、本、人、大、小、山、川、水、火、木 etc. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote1": "\n- JAPANESE SOURCE BEGINNER: Annotate EVERY kanji in \"source\" fields with its reading in square brackets immediately after (e.g. 食べる[たべる]). Annotate all kanji without exception. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote2": "\n- JAPANESE SOURCE: The source/translation language is Japanese. Annotate each kanji in \"source\" fields with its reading in square brackets immediately after (e.g. 食べる[たべる]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote3": "\n- JAPANESE SOURCE ADVANCED: Annotate only less common or complex kanji in \"source\" fields with readings in square brackets. Skip N4/N5 kanji. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation."
++  },
++  "vocabFromText": {
++    "system": "You are a {L} language lesson extractor for a vocabulary learning app.\nYou will be given a {L} story and its {S} translation. Your job is to extract vocabulary and sentences STRICTLY from the provided texts — do NOT invent anything.\nReturn ONLY a valid JSON object — no markdown, no explanation, nothing else.\n\nThe learner speaks {S} and is learning {L}.\nField names in the schema are fixed (\"target\" and \"source\") but their CONTENT must be in the languages specified below.\n\nSchema:\n{\n  \"title\": \"short lesson theme in {S} (3-5 words)\",\n  \"desc\": \"up to 8 words describing this lesson, written in {S}\",\n  \"icon\": \"one relevant emoji\",\n  \"vocab\": [\n    {\"target\":\"{L} word or short phrase extracted from the story\",\"source\":\"{S} translation of that word\"}\n  ],\n  \"sentences\": [\n    {\"target\":\"A sentence from the {L} story\",\"source\":\"Corresponding {S} translation\"}\n  ]\n}\n\nExample vocab items (German lesson, Italian speaker):\n{\"target\":\"laufen\",\"source\":\"correre\"},{\"target\":\"der Hund\",\"source\":\"il cane\"}\n\nRules:\n- vocab: exactly 8 items for lesson {lessonNum} of {totalLessons} (focus: {lessonDiff}), all extracted from the story text, difficulty: {diff}\n- BASE FORM ONLY for vocab: even when the story uses an inflected form, give each vocab word in its dictionary/citation form — infinitive for verbs, singular for nouns (with the usual article where applicable), base form for adjectives/adverbs. (Sentences are still taken verbatim from the story; this applies to the vocab list only.)\n- sentences: exactly 5 items, each a complete sentence taken verbatim from the {L} story, with its matching {S} translation\n- sentence pairs must be aligned: the {S} must be the actual translation of that {L} sentence, not a paraphrase\n- sentence length: prefer sentences of {sentLen}\n- sentences must NOT be duplicated across lessons — focus on different parts of the text for each lesson\n- CRITICAL \"target\" fields: MUST contain ONLY {L} — never invented, never {S} or any other language\n- CRITICAL \"source\" fields: MUST contain ONLY {S} — never {L}, never English (unless {S} is English)\n- \"title\" and \"desc\": MUST be written in {S}",
++    "dialectNote": " The target language variety is: {dialect}.",
++    "cjkNote": "\n- JAPANESE: In sentence \"target\" fields, annotate each kanji character with its reading in square brackets immediately after (e.g. 日本語[にほんご]). Only annotate kanji (CJK characters) — do NOT annotate hiragana, katakana, or punctuation.",
++    "user": "Topic: \"{topic}\". Lesson {lessonNum} of {totalLessons}.\n\nSTORY ({L}):\n{story}\n\n{S} TRANSLATION:\n{translation}",
++    "prevHint": "\n\nVocabulary already used in earlier lessons (avoid repeating these):\n{prevVocab}",
++    "chainHint": "\n\nThis is a continuation lesson. REINFORCE these words from previous chapters:\n{chainVocab}",
++    "suffix": "\n\nReturn only the JSON object.",
++    "srcCjkNote": "\n- JAPANESE SOURCE: The source/translation language is Japanese. Annotate each kanji in \"source\" fields with its reading in square brackets immediately after (e.g. 食べる[たべる]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "cjkNote1": "\n- JAPANESE BEGINNER: Annotate EVERY kanji in \"target\" fields with its reading in square brackets immediately after (e.g. 日本語[にほんご]). Annotate all kanji without exception — the learner cannot read any kanji yet. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "cjkNote2": "\n- JAPANESE: In sentence \"target\" fields, annotate each kanji with its reading in square brackets immediately after (e.g. 日本語[にほんご]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "cjkNote3": "\n- JAPANESE ADVANCED: Annotate only less common or complex kanji in \"target\" fields with readings in square brackets (e.g. 語彙[ごい]). Skip N4/N5 level kanji such as 日、本、人、大、小、山、川、水、火、木 etc. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote1": "\n- JAPANESE SOURCE BEGINNER: Annotate EVERY kanji in \"source\" fields with its reading in square brackets immediately after (e.g. 食べる[たべる]). Annotate all kanji without exception. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote2": "\n- JAPANESE SOURCE: The source/translation language is Japanese. Annotate each kanji in \"source\" fields with its reading in square brackets immediately after (e.g. 食べる[たべる]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote3": "\n- JAPANESE SOURCE ADVANCED: Annotate only less common or complex kanji in \"source\" fields with readings in square brackets. Skip N4/N5 kanji. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation."
++  },
++  "grammar": {
++    "system": "You are a {L} grammar lesson generator for a vocabulary learning app.\nThe learner speaks {S} and is learning {L}.\nReturn ONLY a valid JSON object — no markdown, no explanation, nothing else.\n\nGenerate a grammar lesson focused on noun gender, articles, and plural forms.\nSchema:\n{\n  \"title\": \"short lesson theme in {S} (3-5 words)\",\n  \"desc\": \"up to 8 words in {S}\",\n  \"icon\": \"one relevant emoji\",\n  \"grammar\": [\n    {\n      \"target\": \"{L} noun in singular form (no article)\",\n      \"source\": \"{S} translation of that noun\",\n      \"gender\": \"m | f | n | c (common) — grammatical gender in {L}\",\n      \"article\": \"definite article in {L} for this noun\",\n      \"plural\": \"plural form of the noun in {L}\"\n    }\n  ]\n}\n\nExample (German ← French):\n{\"target\":\"Baum\",\"source\":\"arbre\",\"gender\":\"m\",\"article\":\"der\",\"plural\":\"Bäume\"}\n\nCRITICAL field language rules — violations will cause the lesson to be discarded:\n- CRITICAL: \"target\" MUST contain ONLY a {L} word — never {S}, never the translation\n- CRITICAL: \"source\" MUST contain ONLY the {S} translation — never {L}\n- CRITICAL: \"target\" and \"source\" MUST be different words (never the same string)\n- CRITICAL: \"target\" MUST be the SINGULAR form — never already a plural\n- CRITICAL: \"plural\" MUST differ from \"target\" (if they are the same, choose a different noun)\n- CRITICAL: \"article\" MUST be the correct {L} definite article for the SINGULAR noun\n- \"target\" must have no article prepended — singular noun only\n\nAdditional rules:\n- grammar: exactly 10 nouns, varied difficulty: {diff}, all topic-relevant\n- Include nouns with interesting/irregular plurals and mixed genders\n- FOCUS ON STORY-DERIVED FORMS: prefer nouns whose inflected forms (especially plurals, but also case-marked or article-marked forms) actually occur in the story, so the lesson explains the derived forms the learner just encountered. Vocabulary lessons teach the base singular; this lesson is where the derived forms belong.\n- If {L} has no grammatical gender (e.g. English), set gender and article to null",
++    "dialectNote": "\n- Use the {dialect} dialect/variety.",
++    "writingStyleNote": "\n- Topic style: {writingStyle}",
++    "user": "Topic: \"{topic}\". Target language: {L}. Source language: {S}.\nGenerate 10 {L} nouns with gender, article, and plural forms. \"target\" fields in {L}, \"source\" fields in {S}. Return only the JSON object.",
++    "storyHint": "\n\nContext nouns/themes from the story (prefer these where topic-relevant): {storyKeywords}",
++    "priorHint": "\n\nPRIOR NOUNS from previous chapters (reinforce where topic-relevant): {priorNouns}"
++  },
++  "conjugation": {
++    "system": "You are a {L} grammar lesson generator for a vocabulary learning app.\nThe learner speaks {S} and is learning {L}.\nReturn ONLY a valid JSON object — no markdown, no explanation, nothing else.\n\nGenerate a conjugation lesson focused on verb forms in the present tense.\nSchema:\n{\n  \"title\": \"short lesson theme in {S} (3-5 words)\",\n  \"desc\": \"up to 8 words in {S}\",\n  \"icon\": \"one relevant emoji\",\n  \"conjugations\": [\n    {\n      \"infinitive\": \"verb infinitive in {L}\",\n      \"source\": \"{S} translation (to ...)\",\n      \"tense\": \"present\",\n      \"forms\": [\n        { \"pronoun\": \"subject pronoun in {L}\", \"form\": \"conjugated verb form\" }\n      ]\n    }\n  ]\n}\n\nRules:\n- conjugations: exactly 5 verbs at {diff} level, topic-relevant, varied regularity\n- FOCUS ON STORY-DERIVED FORMS: prefer verbs that the story actually conjugates, so the learner can map the inflected forms they encountered back to the full paradigm. Vocabulary lessons teach the infinitive; this lesson is where the conjugated (derived) forms belong.\n- forms: include ALL person forms for each verb (typically 6 for most European languages)\n- Use the standard subject pronouns for {L} (e.g. io/tu/lui/noi/voi/loro for Italian)\n- CRITICAL: \"infinitive\" MUST be in {L} — never {S}\n- CRITICAL: \"source\" MUST be in {S} — never {L}\n- \"form\" MUST be ONLY the conjugated verb form — do NOT include the pronoun in \"form\" (e.g. \"lache\" not \"ich lache\")",
++    "dialectNote": "\n- Use the {dialect} dialect/variety.",
++    "writingStyleNote": "\n- Topic style: {writingStyle}",
++    "user": "Topic: \"{topic}\". Target language: {L}. Source language: {S}.\nGenerate 5 {L} verbs with all present-tense conjugation forms. \"infinitive\" fields in {L}, \"source\" fields in {S}. Return only the JSON object.",
++    "storyHint": "\n\nContext verbs/themes from the story (prefer these where topic-relevant): {storyKeywords}",
++    "priorHint": "\n\nPRIOR VERBS from previous chapters (reinforce where topic-relevant): {priorVerbs}"
++  },
++  "errorHunt": {
++    "system": "You are a language exercise generator for {L} learners.\nGiven a {L} story, produce a corrupted version by introducing exactly {nSpell} spelling errors and {nGrammar} grammar errors.\n\nSPELLING errors — change only an interior letter of one word:\n- swap one letter for a similar-looking/sounding one (e.g. ei→ie, b→d)\n- omit or double one interior letter (e.g. \"manger\"→\"mnager\")\n- use a wrong vowel that sounds plausible (e.g. \"o\"→\"u\")\n- wrong or missing accent/diacritic (e.g. \"é\"→\"e\")\nThe corrupted word must NOT be a prefix or suffix extension of the correct word.\n\nGRAMMAR errors — add or remove a suffix on one word:\n- wrong verb suffix for the subject (e.g. \"explore\"→\"explores\", \"mangiano\"→\"mangia\")\n- wrong plural/singular (e.g. \"cell\"→\"cells\", \"cats\"→\"cat\")\n- wrong tense suffix (e.g. \"walk\"→\"walked\", \"oscillated\"→\"oscillate\")\nThe correct word must be a prefix of the corrupted word or vice versa.\n\nSTRICT RULES — violations will cause the lesson to be rejected:\n- Change ONLY a single complete word per error — never punctuation, numbers, proper nouns, or sentence-start capitals\n- The correct word must appear verbatim in the original story\n- The correct and corrupted words MUST be different\n- Do NOT produce no-op changes (e.g. adding/removing only spaces or punctuation)\n- Do NOT change more than one word per error\n- Copy all other text EXACTLY — do not rephrase, reorder, or rewrite anything\n\nReturn ONLY the corrupted story text. No JSON, no explanation, no markdown."
++  },
++  "translation": {
++    "system": "You are a professional translator. Translate the following {L} text into natural, fluent {S}. Translate sentence by sentence in the same order. Output only the {S} translation — no explanations, no original text, no markdown."
++  },
++  "meta": {
++    "system": "You are a lesson plan creator. Return ONLY a valid JSON object, no markdown, no explanation.\nSchema: {\"topic\":\"display title (max 40 chars, concise)\",\"topicEmoji\":\"one emoji\"}\nCRITICAL: The \"topic\" display title MUST be written in {S}. Do not use any other language.\nRules: topic is a concise display title for the user's input — shorten if the input is longer than 40 characters."
++  },
++  "story": {
++    "system": "You are a creative writer and {L} language teacher. Write a short story directly in {L} on the given topic — aim for {paraLo}-{paraHi} paragraphs, under {wc} words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in {L}.",
++    "dialectNote": " Write in the {dialect} dialect/variety.",
++    "furiganaNote": " Annotate every kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Only annotate kanji (CJK characters) — do NOT annotate hiragana, katakana, or punctuation.",
++    "writingStyleNote": " Writing style: {writingStyle}",
++    "continuationNote": " IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.",
++    "furiganaNote1": " Annotate EVERY kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Annotate all kanji without exception — the learner cannot read any kanji yet. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "furiganaNote2": " Annotate every kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Only annotate kanji (CJK characters) — do NOT annotate hiragana, katakana, or punctuation.",
++    "furiganaNote3": " Annotate only less common or complex kanji with readings in square brackets, e.g. 語彙[ごい]. Skip common N4/N5 kanji. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation."
++  },
++  "storylineTitle": {
++    "system": "You are a creative writing assistant. Given a multi-chapter story, produce a single JSON object with exactly two fields: \"title\" (a short evocative series title, 2–5 words) and \"icon\" (one emoji that fits the story). The \"title\" MUST be written in {S}. Return ONLY the JSON object, no markdown, no explanation.",
++    "user": "Chapter topics:\n{topicList}\n\nStory excerpts:\n{storyExcerpts}\n\nWrite the title in {S}."
++  },
++  "storylineSummary": {
++    "system": "You are a language learning assistant. Given a multi-chapter story, write a concise summary in {S} (3–5 sentences) that captures the main arc and key vocabulary themes. Write ONLY the summary text — no title, no preamble, no markdown.",
++    "user": "Chapters:\n{chapterSummaries}\n\nKey vocabulary: {vocabList}\n\nWrite the summary in {S}."
++  },
++  "srcRepair": {
++    "system_fix": "You are a language exercise repairer for a Duolingo-style app.\nYou will receive a list of faulty exercises with optional user comments explaining the error. Fix only what is wrong.\nReturn ONLY a valid JSON array — no markdown, no explanation, nothing else.\n\nField names are fixed. Content rules:\n- \"target\" fields: MUST contain ONLY {L} — never {S} or any other language\n- \"source\" fields: MUST contain ONLY {S} — never {L}\n\nEach exercise has a type. Return corrected versions preserving the same type and schema:\n- mcq_target_source:      {\"type\":\"mcq_target_source\",\"target\":\"{L} word\",\"source\":\"{S} translation\",\"correct\":\"correct {S}\",\"choices\":[\"4 distinct {S} options\"]}\n- mcq_source_target:      {\"type\":\"mcq_source_target\",\"source\":\"{S} word\",\"target\":\"{L} translation\",\"correct\":\"correct {L}\",\"choices\":[\"4 distinct {L} options\"]}\n- listen_mcq:             {\"type\":\"listen_mcq\",\"target\":\"{L} word\",\"correct\":\"correct {S}\",\"choices\":[\"4 distinct {S} options\"]}\n- listen_type:            {\"type\":\"listen_type\",\"target\":\"{L} word\",\"correct\":\"{L} word\"}\n- read_translate:         {\"type\":\"read_translate\",\"target\":\"{L} sentence\",\"source\":\"{S} translation\",\"correct\":\"correct {S}\",\"choices\":[\"4 distinct {S} options\"]}\n- order:                  {\"type\":\"order\",\"target\":\"{L} sentence\",\"source\":\"{S} translation\"}\n- grammar item:           {\"type\":\"mcq_target_source\",\"_grammarItem\":true,\"target\":\"{L} noun\",\"source\":\"{S} translation\",\"article\":\"correct {L} article\",\"plural\":\"correct {L} plural\",\"gender\":\"m|f|n|c\",\"correct\":\"{S}\",\"choices\":[\"{S} options\"]}\n- mcq_conjugation:        {\"type\":\"mcq_conjugation\",\"infinitive\":\"{L} infinitive\",\"source\":\"{S} translation\",\"pronoun\":\"{L} pronoun\",\"correct\":\"correct conjugated form\",\"choices\":[\"4 distinct {L} forms\"]}\n\nRules:\n- Fix translation errors, wrong word forms, incorrect language in fields, bad distractors\n- Distractors in choices must be plausible but clearly wrong — not random noise\n- Pay close attention to user comments where present\n- For order type: do NOT include words[] — the app derives it automatically from \"target\"\n- Keep the same topic and difficulty level\n- Return exactly as many items as given",
++    "system_deep": "You are a language exercise repairer for a Duolingo-style app.\nYou will receive all vocab and sentences from a lesson. Verify and correct every item — fix wrong words, bad translations, non-{L} words in the target field, non-{S} words in the source field, and generate fresh distractors for all choices.\nReturn ONLY a valid JSON array — no markdown, no explanation, nothing else.\n\nField names are fixed. Content rules:\n- \"target\" fields: MUST contain ONLY {L} — never {S} or any other language\n- \"source\" fields: MUST contain ONLY {S} — never {L}\n\nEach exercise has a type. Return corrected versions preserving the same type and schema:\n- mcq_target_source:      {\"type\":\"mcq_target_source\",\"target\":\"{L} word\",\"source\":\"{S} translation\",\"correct\":\"correct {S}\",\"choices\":[\"4 distinct {S} options\"]}\n- mcq_source_target:      {\"type\":\"mcq_source_target\",\"source\":\"{S} word\",\"target\":\"{L} translation\",\"correct\":\"correct {L}\",\"choices\":[\"4 distinct {L} options\"]}\n- listen_mcq:             {\"type\":\"listen_mcq\",\"target\":\"{L} word\",\"correct\":\"correct {S}\",\"choices\":[\"4 distinct {S} options\"]}\n- listen_type:            {\"type\":\"listen_type\",\"target\":\"{L} word\",\"correct\":\"{L} word\"}\n- read_translate:         {\"type\":\"read_translate\",\"target\":\"{L} sentence\",\"source\":\"{S} translation\",\"correct\":\"correct {S}\",\"choices\":[\"4 distinct {S} options\"]}\n- order:                  {\"type\":\"order\",\"target\":\"{L} sentence\",\"source\":\"{S} translation\"}\n- grammar item:           {\"type\":\"mcq_target_source\",\"_grammarItem\":true,\"target\":\"{L} noun\",\"source\":\"{S} translation\",\"article\":\"correct {L} article\",\"plural\":\"correct {L} plural\",\"gender\":\"m|f|n|c\",\"correct\":\"{S}\",\"choices\":[\"{S} options\"]}\n- mcq_conjugation:        {\"type\":\"mcq_conjugation\",\"infinitive\":\"{L} infinitive\",\"source\":\"{S} translation\",\"pronoun\":\"{L} pronoun\",\"correct\":\"correct conjugated form\",\"choices\":[\"4 distinct {L} forms\"]}\n\nRules:\n- Fix translation errors, wrong word forms, incorrect language in fields, bad distractors\n- Distractors in choices must be plausible but clearly wrong — not random noise\n- Pay close attention to user comments where present\n- For order type: do NOT include words[] — the app derives it automatically from \"target\"\n- Keep the same topic and difficulty level\n- Return exactly as many items as given"
++  },
++  "vocabTable": {
++    "system": "You are a {L} language lesson creator.\nThe learner speaks {S} and is learning {L}.\nCreate lesson {lessonNum} of {totalLessons} focused on {lessonDiff} at {diff} level.\nOutput TWO markdown tables and nothing else.\n\nTable 1 — Vocabulary (exactly 8 rows):\n| {L} word | {S} meaning | Pronunciation for {S} speakers |\n|---|---|---|\n| word in {L} | translation in {S} | phonetic pronunciation |\n\nTable 2 — Sentences (exactly 5 rows):\n| {L} sentence | {S} translation |\n|---|---|\n| sentence in {L} | translation in {S} |\n\nRules:\n- Column 1 ({L} content): MUST be genuine {L} — never {S} or another language\n- Column 2 ({S} content): MUST be in {S} — never {L} or English (unless {S} is English)\n- Pronunciation: write phonetically for {S} speakers, CAPS for stressed syllable\n- No extra text, no headings outside the tables, no JSON",
++    "dialectNote": " Use the {dialect} dialect/variety.",
++    "cjkNote": "\n- JAPANESE: In the sentence column, annotate each kanji with its hiragana reading in square brackets immediately after (e.g. 日本語[にほんご]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote": "\n- JAPANESE SOURCE: The translation language is Japanese. In the translation column, annotate each kanji with its reading in square brackets immediately after (e.g. 食べる[たべる]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "cjkNote1": "\n- JAPANESE BEGINNER: Annotate EVERY kanji in the target column with its reading in square brackets immediately after (e.g. 日本語[にほんご]). Annotate all kanji without exception. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "cjkNote2": "\n- JAPANESE: In the sentence column, annotate each kanji with its hiragana reading in square brackets immediately after (e.g. 日本語[にほんご]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "cjkNote3": "\n- JAPANESE ADVANCED: Annotate only less common kanji in the target column with readings in square brackets. Skip common N4/N5 kanji. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote1": "\n- JAPANESE SOURCE BEGINNER: Annotate EVERY kanji in the translation column with its reading in square brackets immediately after. Annotate all kanji without exception. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote2": "\n- JAPANESE SOURCE: The translation language is Japanese. In the translation column, annotate each kanji with its reading in square brackets immediately after (e.g. 食べる[たべる]). Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation.",
++    "srcCjkNote3": "\n- JAPANESE SOURCE ADVANCED: Annotate only less common kanji in the translation column with readings. Skip common N4/N5 kanji. Only annotate kanji — do NOT annotate hiragana, katakana, or punctuation."
++  },
++  "metaTranslation": {
++    "system": "Translate the given JSON values into {S}. Return ONLY a valid JSON object with the same keys: {\"topic\":\"...\"}. No explanation, no markdown. All output text must be in {S}."
++  },
++  "storyStyles": {
++    "creative": null,
++    "neutral": "Clear, factual, neutral tone — no narrative flourish.",
++    "interview": "Words useful in a job application interview. Clear, factual, neutral tone — no narrative flourish.",
++    "scientific": "Academic register, precise terminology, formal structure.",
++    "journalism": "Reportage style: direct, punchy, who/what/where/when.",
++    "essay": "Discursive, argumentative, first-person reflective.",
++    "children": "Simple vocabulary, playful tone, short sentences.",
++    "funny": "Comedic tone, wordplay, absurdist situations, punchlines.",
++    "romantic": "Warm, emotionally rich, evocative imagery.",
++    "sensual": "Rich in texture and atmosphere, suggestive but not explicit.",
++    "horror": "Suspenseful, eerie atmosphere, foreboding.",
++    "action": "Fast-paced, kinetic, short punchy sentences.",
++    "philosophical": "Contemplative, questioning, abstract ideas.",
++    "poem": "Write a poem, with rhyming words and rhythm.",
++    "dialogue": "Write a dialogue between two or more persons of the story, or alternatively one person soliloquy."
++  },
++  "math": {
++    "system": "You are a math exercise generator for a language learning app.\nThe student is learning {L} and speaks {S}. Math exercises are used to teach numbers in the target language.\nReturn ONLY a valid JSON object — no markdown, no explanation.\n\nSchema:\n{\n  \"title\": \"short lesson title (3-5 words, use emoji symbols, NO words)\",\n  \"desc\": \"2-4 math operator symbols describing the lesson (e.g. ＋ － × ÷)\",\n  \"icon\": \"one relevant emoji\",\n  \"numbers\": [list of integers or decimals used as operands],\n  \"exercises\": [ ... ]\n}\n\nExercise types — include a mix appropriate to the instruction:\n\n1. math_calc — arithmetic MCQ:\n   {\"type\":\"math_calc\",\"a\":\"7\",\"op\":\"+\",\"b\":\"8\",\"correct\":\"15\",\"choices\":[\"15\",\"14\",\"16\",\"13\"]}\n   - op: one of +, -, ×, ÷\n   - choices: exactly 4 options, one correct, three plausible near-misses\n   - For subtraction: a ≥ b (no negative results)\n   - For division: a divisible by b exactly\n\n2. math_order — sort a set of numbers:\n   {\"type\":\"math_order\",\"direction\":\"asc\",\"numbers\":[8,3,13,5],\"correct\":[\"3\",\"5\",\"8\",\"13\"]}\n   - direction: \"asc\" (smallest→largest) or \"desc\" (largest→smallest)\n   - numbers: shuffled; correct: sorted\n\n3. math_latex — display a LaTeX expression, ask for a value:\n   {\"type\":\"math_latex\",\"latex\":\"F_7\",\"question\":\"What is the 7th Fibonacci number?\",\"correct\":\"13\",\"choices\":[\"8\",\"13\",\"21\",\"34\"]}\n   - latex: a valid KaTeX expression (do NOT wrap in $ or $$)\n   - question: plain text question in {S}\n   - choices: exactly 4 options\n\nRules:\n- Generate exactly {nExercises} exercises total\n- Vary the exercise types — do not use only one type\n- Choices must be plausible near-misses, not random noise\n- numbers[] should list all unique operands used across exercises",
++    "user": "Target language: {L}. Source language: {S}. Difficulty: {diff}.\nInstruction: {instruction}\n\nGenerate {nExercises} math exercises following the instruction above. Return only the JSON object."
++  },
++  "synonyms": {
++    "system": "You are a {L} vocabulary lesson generator for a learning app (learner speaks {S}, learning {L}).\nReturn ONLY a valid JSON object — no markdown, no commentary.\n\nPick useful {L} words and, for each, give {L} synonyms, {L} antonyms, and — ONLY when they genuinely exist — {L} homophones. Glosses are short {S} translations.\nSchema:\n{\n  \"title\": \"short lesson theme in {S} (3-5 words)\",\n  \"desc\": \"up to 8 words in {S}\",\n  \"icon\": \"one relevant emoji\",\n  \"words\": [\n    {\n      \"base\": \"<a {L} word>\",\n      \"gloss\": \"<{S} translation of base>\",\n      \"synonyms\":   [ {\"w\":\"<{L} word>\",\"g\":\"<{S} gloss>\"} ],\n      \"antonyms\":   [ {\"w\":\"<{L} word>\",\"g\":\"<{S} gloss>\"} ],\n      \"homophones\": [ {\"w\":\"<{L} word>\",\"g\":\"<{S} gloss>\"} ]\n    }\n  ]\n}\n\nExample ({L}=German, {S}=English):\n{\"base\":\"klein\",\"gloss\":\"small\",\"synonyms\":[{\"w\":\"winzig\",\"g\":\"tiny\"},{\"w\":\"gering\",\"g\":\"slight\"}],\"antonyms\":[{\"w\":\"groß\",\"g\":\"big\"}],\"homophones\":[]}\n\nRules:\n- Choose 5-8 {L} words; PREFER the provided story words / reinforce list.\n- \"synonyms\": at least 1, up to 4 — genuine {L} synonyms that fit the word's sense.\n- \"antonyms\": 0-3 — include only real opposites; otherwise [].\n- \"homophones\": 0-2 — {L} words pronounced the same or nearly the same as \"base\" but with a DIFFERENT meaning. MOST words have none: return [] then. NEVER invent homophones to fill the slot.\n- CRITICAL: every \"w\" and \"base\" is a {L} word; every \"g\" and \"gloss\" is its {S} translation. Never put {S} in a {L} field or vice-versa.\n- CRITICAL: a word must never appear as its own synonym/antonym.",
++    "dialectNote": "\n- Use the {dialect} dialect/variety.",
++    "writingStyleNote": "\n- Topic style: {writingStyle}",
++    "user": "Topic: \"{topic}\". Target language: {L}. Source language: {S}.\nBuild the lesson on the most useful {L} words. Return only the JSON object.",
++    "storyHint": "\n\nWords from the story to prefer: {storyKeywords}",
++    "priorHint": "\n\nWords from previous chapters to reinforce where natural: {priorWords}"
++  }
++}
+\ No newline at end of file
+diff --git a/server.js b/server.js
+index b818683..aa2637a 100644
+--- a/server.js
++++ b/server.js
+@@ -147,6 +147,24 @@ let store = loadStore();
+   if (fixed > 0) { saveStore(store); console.log(`  Assigned IDs to ${fixed} lesson(s) missing them`); }
+ })();
+ 
++// ── v41 Topic-ID data check ───────────────────────────────────────────
++// Stable tp_ IDs are the canonical reference for chain navigation. New topics
++// get their id at generate time, and imported topics via _syncStorylineForTopic,
++// so no per-boot migration is needed. A pre-v41 lessons.json (topics missing
++// ids, or continuedFrom names never resolved to continuedFromId) must be
++// upgraded ONCE, out-of-band:  node migrate-v41.js <lessons.json>
++(function checkTopicIds() {
++  if (store.schemaVersion < 29) return;
++  const topics = store.topics || [];
++  const missing = topics.filter(t => !t.id).length;
++  // continuedFromId absent (never set) — distinct from a resolved-to-null orphan
++  const unresolved = topics.filter(t => t.continuedFrom && t.continuedFromId === undefined).length;
++  if (missing || unresolved) {
++    console.warn(`  ⚠ Pre-v41 data: ${missing} topic(s) without id, ${unresolved} unresolved continuedFrom.`);
++    console.warn(`    Run once:  node migrate-v41.js ${process.env.LESSONS_FILE || 'lessons.json'}`);
++  }
++})();
++
+ // Remove orphaned flags (topic no longer exists, or content no longer in lesson)
+ (function cleanOrphanedFlags() {
+   const flags = store.flags || {};
+@@ -186,18 +204,19 @@ function findSavedById(id) {
+   return arr.find(l => l.id === id) || null;
+ }
+ 
+-// Walk the continuedFrom chain and collect all vocab/grammar/conjugation targets
+-// from all prior chapters, deduplicated. Returns { words, nouns, verbs }
+-function collectChainVocab(continuedFromTopic) {
+-  if (!continuedFromTopic) return { words: [], nouns: [], verbs: [] };
++// Walk the chain by continuedFromId and collect all vocab/grammar/conjugation
++// targets from all prior chapters, deduplicated. Returns { words, nouns, verbs }.
++// startRef is the PARENT reference: a tp_ id (preferred) or a topic name
++// (back-compat — resolved once, then traversal is id-based).
++function collectChainVocab(startRef) {
++  if (!startRef) return { words: [], nouns: [], verbs: [] };
+   const words = [], nouns = [], verbs = [];
+   const seen = new Set();
+-  let cur = continuedFromTopic;
++  // Resolve start: id walks via findSavedById; a name is resolved once.
++  let t = String(startRef).startsWith('tp_') ? findSavedById(startRef) : findSaved(startRef);
+   const visited = new Set();
+-  while (cur && !visited.has(cur)) {
+-    visited.add(cur);
+-    const t = findSaved(cur);
+-    if (!t) break;
++  while (t && !visited.has(t.id)) {
++    visited.add(t.id);
+     for (const ls of (t.lessons || [])) {
+       for (const v of (ls.vocab || [])) {
+         if (v.target && !seen.has(v.target.toLowerCase())) {
+@@ -220,21 +239,34 @@ function collectChainVocab(continuedFromTopic) {
+         }
+       }
+     }
+-    cur = t.continuedFrom || null;
++    // Step to parent by stored id (fall back to resolving a name for
++    // un-migrated/imported entries that lack continuedFromId).
++    const pid = t.continuedFromId || (t.continuedFrom ? (findSaved(t.continuedFrom)?.id || null) : null);
++    t = pid ? findSavedById(pid) : null;
+   }
+   return { words, nouns, verbs };
+ }
+ function upsert(data) {
+   const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons = store.lessons || []) && store.lessons;
+-  const k = data.topic.toLowerCase();
+-  const lang = data.lang || '';
+-  const srcLang = data.srcLang || '';
+-  const i = store.schemaVersion >= 29
+-    ? arr.findIndex(l => l.topic.toLowerCase() === k && (l.lang||'') === lang && (l.srcLang||'') === srcLang)
+-    : arr.findIndex(l => l.topic.toLowerCase() === k);
++  let i;
++  if (store.schemaVersion >= 29 && data.id) {
++    // Has a stable id → match by id ONLY. An id with no match is a new topic and
++    // must NOT be merged into a same-named one (same-name topics may coexist).
++    i = arr.findIndex(l => l.id === data.id);
++  } else {
++    // No id (fresh generation / legacy) → dedup by name+lang so a regenerate
++    // updates in place rather than duplicating.
++    const k = data.topic.toLowerCase();
++    const lang = data.lang || '', srcLang = data.srcLang || '';
++    i = store.schemaVersion >= 29
++      ? arr.findIndex(l => l.topic.toLowerCase() === k && (l.lang||'') === lang && (l.srcLang||'') === srcLang)
++      : arr.findIndex(l => l.topic.toLowerCase() === k);
++  }
+   const now = new Date().toISOString();
+   const existing = i >= 0 ? arr[i] : null;
+   const entry = { ...data, generatedAt: existing?.generatedAt || now, updatedAt: now };
++  // Keep the topic's stable id across an update even if the new data omits it.
++  if (existing && existing.id && !entry.id) entry.id = existing.id;
+   if (i >= 0) arr[i] = entry; else arr.unshift(entry);
+   saveStore(store);
+ }
+@@ -399,8 +431,7 @@ function parseTableLesson(raw, lessonNum, topic) {
+     target: r[0] || '', source: r[1] || ''
+   })).filter(s => s.target && s.source);
+ 
+-  if (vocab.length < 2) throw new Error(`Table parse: only ${vocab.length} vocab rows`);
+-  if (sentences.length < 1) throw new Error(`Table parse: only ${sentences.length} sentence rows`);
++  if (vocab.length < 1) throw new Error(`Table parse: only ${vocab.length} vocab rows`);
+ 
+   return {
+     title: `Lesson ${lessonNum}`,
+@@ -443,6 +474,109 @@ function callLLMTranslation(system, userMsg, maxTokens) {
+   return _callLLM(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
+ }
+ 
++// ── QC: verify source/target pairs with the translation model ─────────────
++const _QC_KANJI = '\\u4e00-\\u9fff\\u3400-\\u4dbf々〆〇';
++function _qcStripFuri(t) {
++  if (!t) return '';
++  return String(t)
++    .replace(new RegExp('([^'+_QC_KANJI+'])\\[[^\\]]+\\]','g'), '$1')
++    .replace(new RegExp('(['+_QC_KANJI+']+)\\[([^\\]]+)\\]','g'), '$1');
++}
++// Returns { ok:true } or { ok:false, sug:'corrected source' }.
++async function qcCheckPair(target, source, lang, srcLang) {
++  const L = langName(lang), S = langName(srcLang || 'en');
++  const tgt = _qcStripFuri(target);
++  const src = String(source).trim();
++  const system =
++    `You check a ${L} phrase and its ${S} translation, given as "<${L}> => <${S}>".\n` +
++    `Check BOTH: (1) the ${L} text is correct — spelling, grammar, and capitalization ` +
++    `(apply ${L} capitalization rules, e.g. German capitalizes all nouns); ` +
++    `(2) the ${S} side is an accurate translation of the ${L} text.\n` +
++    `Reply EXACTLY one of:\n` +
++    `OK  — if both are correct.\n` +
++    `T: <corrected ${L} text only>  — if the ${L} text has an error.\n` +
++    `S: <corrected ${S} text only>  — if the ${L} is fine but the ${S} translation is wrong.\n` +
++    `Give ONLY the corrected text for the one side, never the "=>" pair, no quotes, no notes.`;
++  const { text } = await callLLMTranslation(system, `${tgt} => ${src}`, 96);
++  const reply = (text || '').trim();
++  if (!reply || /^ok[.!]?$/i.test(reply)) return { ok: true };
++  const clean = s => s.replace(/^["']|["']$/g, '').trim();
++  // Strip an optional leading T:/S: label.
++  let label = null, body = reply;
++  const m = reply.match(/^([TS])\s*[:\-]\s*([\s\S]+)/i);
++  if (m) { label = m[1].toUpperCase(); body = m[2]; }
++  body = clean(body);
++  // Detect changes case-SENSITIVELY — a capitalization difference is itself a valid fix.
++  if (body.includes('=>')) {
++    const parts = body.split('=>');
++    const l = clean(parts[0] || ''), r = clean(parts.slice(1).join('=>'));
++    const tgtChanged = l && l !== tgt;
++    const srcChanged = r && r !== src;
++    if (srcChanged && !tgtChanged) return { ok: false, field: 'source', sug: r };
++    if (tgtChanged) return { ok: false, field: 'target', sug: l };
++    return { ok: true };
++  }
++  if (label === 'T') return (body && body !== tgt) ? { ok: false, field: 'target', sug: body } : { ok: true };
++  if (label === 'S') return (body && body !== src) ? { ok: false, field: 'source', sug: body } : { ok: true };
++  // No label: decide which side the reply corrects by similarity (a case-only fix
++  // matches that side when lowercased). Common-prefix length is a cheap proxy.
++  if (!body || body === tgt || body === src) return { ok: true };
++  const pre = (a, b) => { a = a.toLowerCase(); b = b.toLowerCase(); let i = 0; while (i < a.length && i < b.length && a[i] === b[i]) i++; return i; };
++  return (pre(body, tgt) >= pre(body, src))
++    ? { ok: false, field: 'target', sug: body }
++    : { ok: false, field: 'source', sug: body };
++}
++async function _runQc(jobId, topics, opts) {
++  const { lessonIdx, onlyFlagged } = opts;
++  let checked = 0, flagged = 0, cleared = 0;
++  const affected = [];
++  console.log(`  ⚙ QC starting: ${topics.length} topic(s)${lessonIdx !== null ? `, lesson ${lessonIdx}` : ''}${onlyFlagged ? ', flagged-only' : ''} [${OLLAMA_TRANSLATION_MODEL}]`);
++  jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Starting QC…`);
++  for (let ti = 0; ti < topics.length; ti++) {
++    const tp = topics[ti];
++    const lessons = tp.lessons || [];
++    let touched = false;
++    for (let li = 0; li < lessons.length; li++) {
++      if (lessonIdx !== null && li !== lessonIdx) continue;
++      const ls = lessons[li];
++      if (onlyFlagged && !_qcLessonUserFlagged(tp, ls)) continue;
++      for (const key of ['vocab', 'sentences']) {
++        const arr = ls[key];
++        if (!Array.isArray(arr)) continue;
++        for (const item of arr) {
++          if (!item || !item.target || !item.source) continue;
++          checked++;
++          let res;
++          try { res = await qcCheckPair(item.target, item.source, tp.lang, tp.srcLang); }
++          catch (e) { continue; }
++          if (!res.ok) {
++            item.qc = { sug: res.sug, field: res.field || 'source', at: new Date().toISOString() };
++            flagged++; touched = true;
++            console.log(`    ⚑ flag [${res.field}] "${_qcStripFuri(item.target)}" / "${item.source}" → "${res.sug}"`);
++          } else if (item.qc) {
++            delete item.qc; cleared++; touched = true;   // re-checked and now OK
++          }
++          if (checked % 5 === 0)
++            jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
++        }
++      }
++    }
++    if (touched) { upsert(tp); affected.push(tp.id); }
++  }
++  jobDone(jobId, { checked, flagged, cleared, topics: topics.length, affected });
++  console.log(`  ✓ QC done: ${checked} checked, ${flagged} flagged, ${cleared} cleared across ${topics.length} topic(s)`);
++}
++// Legacy user-flags-as-filter: a lesson counts as flagged if any of its items'
++// targets appear in the stored flags for this topic. Conservative best-effort.
++function _qcLessonUserFlagged(tp, ls) {
++  const flags = getFlags();
++  const keys = Object.keys(flags);
++  if (!keys.length) return false;
++  const targets = [...(ls.vocab||[]), ...(ls.sentences||[]), ...(ls.grammar||[])]
++    .map(x => (x && x.target ? String(x.target).toLowerCase() : '')).filter(Boolean);
++  return keys.some(k => targets.some(tg => k.toLowerCase().includes(tg)));
++}
++
+ // ── Retry helper ──────────────────────────────────────────────────────
+ async function withRetry(label, fn, retries = 3, delay = 800) {
+   let lastErr;
+@@ -873,8 +1007,8 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
+       console.warn(`    Grammar: ${rejected.length} item(s) rejected:`);
+       rejected.forEach(r => console.warn(`      "${r.item.target}" / "${r.item.source}": ${r.reasons.join(', ')}`));
+     }
+-    if (valid.length < 5) {
+-      lastError = `Only ${valid.length} valid items after filtering (${rejected.length} rejected)`; continue;
++    if (valid.length < 1) {
++      lastError = `No valid items after filtering (${rejected.length} rejected)`; continue;
+     }
+     console.log(`    Grammar: ${valid.length} valid nouns (${rejected.length} rejected)`);
+     return {
+@@ -891,6 +1025,90 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
+   throw new Error(`Grammar generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
+ }
+ 
++// ── Generate synonyms / antonyms / homophones lesson ──────────────────────────
++// Picks key words from the story and asks the LLM for better in-context synonyms,
++// antonyms, and homophones (all in the target language, glossed in the source
++// language). The related words are flattened into a standard vocab lesson, so the
++// existing flashcard/MCQ player, checker, and editor handle it with no new type.
++async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
++  opts = opts || {};
++  const { story, userDialect, chainVocab, vocabMode: synVocabMode } = opts;
++  const L = langName(lang), S = langName(srcLang || 'en');
++  const storyKeywords = story ? extractKeywords(story, 8, lang) : '';
++  const _priorWords = (chainVocab?.words || []).slice(0, 12).map(v => v.target).filter(Boolean);
++  const priorWords = _priorWords.join(', ');
++  const P = PROMPTS && PROMPTS.synonyms;
++  let sys, userMsg;
++  if (P && P.system) {
++    sys = fillPrompt(P.system, { L, S, diff: difficultyLabel(difficulty || 2) });
++    if (userDialect && P.dialectNote) sys += fillPrompt(P.dialectNote, { dialect: userDialect });
++    const ss = getStoryStyle(opts.storyStyle); if (ss && P.writingStyleNote) sys += fillPrompt(P.writingStyleNote, { writingStyle: ss });
++    userMsg = fillPrompt(P.user, { topic, L, S })
++      + (storyKeywords && P.storyHint ? fillPrompt(P.storyHint, { storyKeywords }) : '')
++      + (priorWords && P.priorHint && synVocabMode !== 'extend' ? fillPrompt(P.priorHint, { priorWords }) : '');
++  } else {
++    sys = `You are a ${L} vocabulary lesson generator (learner speaks ${S}). For useful ${L} words, give ${L} synonyms (>=1), ${L} antonyms (0+), and ${L} homophones ONLY when they truly exist (else []). Glosses are short ${S} translations. Output strict JSON only.`;
++    userMsg = `Topic: "${topic}".`
++      + (storyKeywords ? `\nPrefer these ${L} words: ${storyKeywords}.` : '')
++      + `\nReturn ONLY JSON: {"title":"...","desc":"...","icon":"🔁","words":[{"base":"<${L}>","gloss":"<${S}>","synonyms":[{"w":"<${L}>","g":"<${S}>"}],"antonyms":[],"homophones":[]}]}`;
++  }
++  const MAX_ATTEMPTS = 3;
++  let tp = 0, tc = 0, lastError = '';
++  const clean = arr => {
++    const out = [], seen = new Set();
++    (Array.isArray(arr) ? arr : []).forEach(it => {
++      const w = ((it && (it.w ?? it.word)) || '').toString().trim();
++      const g = ((it && (it.g ?? it.gloss)) || '').toString().trim();
++      if (!w) return; const k = w.toLowerCase(); if (seen.has(k)) return; seen.add(k);
++      out.push({ w, g });
++    });
++    return out;
++  };
++  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
++    jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Synonyms lesson attempt ${attempt}/${MAX_ATTEMPTS}…`);
++    console.log(`    Synonyms attempt ${attempt}…`);
++    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1800);
++    tp += promptTokens; tc += completionTokens;
++    const cleaned = raw.replace(/```json|```/g, '').trim();
++    let parsed;
++    try { parsed = JSON.parse(cleaned); }
++    catch(e) {
++      const m = cleaned.match(/\{[\s\S]*\}/);
++      if (!m) { lastError = 'Could not parse JSON'; continue; }
++      try { parsed = JSON.parse(m[0]); } catch(e2) { lastError = 'JSON extract failed'; continue; }
++    }
++    if (!Array.isArray(parsed.words) || !parsed.words.length) { lastError = 'No words in response'; continue; }
++    const words = [];
++    for (const entry of parsed.words) {
++      const base = (entry.base ?? entry.word ?? '').toString().trim();
++      if (!base) continue;
++      const baseLc = base.toLowerCase();
++      // a word can never be its own synonym/antonym/homophone
++      const notBase = a => a.filter(x => x.w.toLowerCase() !== baseLc);
++      const synonyms   = notBase(clean(entry.synonyms)).slice(0, 4);
++      const antonyms   = notBase(clean(entry.antonyms)).slice(0, 3);
++      const homophones = notBase(clean(entry.homophones)).slice(0, 2);
++      if (!synonyms.length) continue; // need >=1 synonym to be quizzable
++      words.push({ base, gloss: (entry.gloss ?? '').toString().trim(), synonyms, antonyms, homophones });
++    }
++    if (!words.length) { lastError = 'No usable word groups (need a base + >=1 synonym)'; continue; }
++    const synN = words.reduce((n,w)=>n+w.synonyms.length,0);
++    const homN = words.reduce((n,w)=>n+w.homophones.length,0);
++    console.log(`    Synonyms: ${words.length} groups, ${synN} synonyms, ${homN} homophones`);
++    return {
++      lesson: {
++        id: 6, type: 'synonyms',
++        title: parsed.title || 'Synonyms & Antonyms',
++        desc:  parsed.desc  || 'Related words from the story',
++        icon:  parsed.icon  || '🔁',
++        words,
++      },
++      tokens: { promptTokens: tp, completionTokens: tc },
++    };
++  }
++  throw new Error(`Synonyms generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
++}
++
+ // ── Generate conjugation lesson ───────────────────────────────────────────────
+ async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts) {
+   opts = opts || {};
+@@ -1028,24 +1246,18 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons,
+       }
+     }
+ 
+-    // Validate vocab
+-    if (!Array.isArray(lesson.vocab) || lesson.vocab.length < (useTable ? 2 : 4))
++    // Validate vocab — accept whatever the model returns (>=1 item).
++    if (!Array.isArray(lesson.vocab) || lesson.vocab.length < 1)
+       throw new Error(`Only ${lesson.vocab?.length ?? 0} vocab items`);
+     const seen = new Set();
+     lesson.vocab = lesson.vocab.filter(v => {
+       const k = v.target?.toLowerCase(); if (!k || seen.has(k)) return false; seen.add(k); return true;
+     }).slice(0, 8);
+-    if (lesson.vocab.length < (useTable ? 2 : 4)) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
++    if (lesson.vocab.length < 1) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
+ 
+-    // Validate sentences
+-    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < (useTable ? 1 : minSentences))
+-      throw new Error(`Only ${lesson.sentences?.length ?? 0} sentences`);
++    // Sentences are optional — use whatever we get (may be none).
++    if (!Array.isArray(lesson.sentences)) lesson.sentences = [];
+     lesson.sentences = lesson.sentences.slice(0, 5).map(s => deriveSentenceWords(s, lang));
+-    if (!useTable) {
+-      const tooShort = lesson.sentences.filter(s => s.words.length < minWords);
+-      if (tooShort.length > 2)
+-        throw new Error(`${tooShort.length} sentences have fewer than ${minWords} words — retrying`);
+-    }
+ 
+     // Detect model copying target-language content into the source-language (en) field
+     const vocabSameCount = lesson.vocab.filter(v =>
+@@ -1079,6 +1291,12 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
+   const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction } = userOpts;
+   srcLang = srcLang || 'en';
+   const userTopic = topic;
++  // The chain parent links this story into a storyline. With a user-supplied story
++  // we still record the link — the parent arrives via prevStoryTopic since the
++  // `continuedFrom` param is suppressed (we don't use the prior story as context).
++  const chainParent = continuedFrom || prevStoryTopic || null;
++  // Resolve the parent's STABLE id once (chains reference ids, not names).
++  const continuedFromId = chainParent ? (findSaved(chainParent)?.id || null) : null;
+   const genStart = Date.now();
+   let totalPromptTokens = 0, totalCompletionTokens = 0;
+   const lessonTokenStats = [];
+@@ -1185,7 +1403,8 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
+       ...(storyTranslation ? { storyTranslation } : {}),
+       ...(userStory        ? { userStory }         : {}),
+       ...(userDialect      ? { userDialect }       : {}),
+-      ...(continuedFrom    ? { continuedFrom }     : {}),
++      ...(chainParent      ? { continuedFrom: chainParent } : {}),
++      ...(continuedFromId  ? { continuedFromId }   : {}),
+       ...(storyStyle       ? { storyStyle }        : {}),
+       lessons: [],
+     });
+@@ -1197,22 +1416,24 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
+   const lessons = [];
+ 
+   const _vocabMode = vocabMode || (reinforcePrior ? 'reinforce' : 'neutral');
+-  const chainVocab = (_vocabMode !== 'neutral' && continuedFrom)
+-    ? collectChainVocab(continuedFrom)
++  const chainVocab = (_vocabMode !== 'neutral' && chainParent)
++    ? collectChainVocab(findSaved(chainParent)?.id || chainParent)
+     : { words: [], nouns: [], verbs: [] };
+   const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story };
+ 
+-  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math') {
++  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms') {
+     const genFn   = lessonFormat === 'math'
+       ? (mathInstruction
+           ? () => generateMathLLM(lang, srcLang, difficulty, mathInstruction, jobId)
+           : () => Promise.resolve(generateMath(story, difficulty)))
+                   : lessonFormat === 'error_hunt'  ? () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words)
+                   : lessonFormat === 'grammar'      ? () => generateGrammar(topic, lang, srcLang, difficulty, jobId, chainOpts)
++                  : lessonFormat === 'synonyms'     ? () => generateSynonyms(topic, lang, srcLang, difficulty, jobId, chainOpts)
+                   :                                   () => generateConjugation(topic, lang, srcLang, difficulty, jobId, chainOpts);
+     const label   = lessonFormat === 'math'        ? 'Math'
+                   : lessonFormat === 'error_hunt'  ? 'Error-hunt'
+                   : lessonFormat === 'grammar'      ? 'Grammar'
++                  : lessonFormat === 'synonyms'     ? 'Synonyms'
+                   :                                   'Conjugation';
+     try {
+       const { lesson, tokens } = await genFn();
+@@ -1281,7 +1502,8 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
+     ...(userStory        ? { userStory }         : {}),
+     ...(userTranslation  ? { userTranslation }   : {}),
+     ...(userDialect      ? { userDialect }       : {}),
+-    ...(continuedFrom    ? { continuedFrom }     : {}),
++    ...(chainParent      ? { continuedFrom: chainParent } : {}),
++    ...(continuedFromId  ? { continuedFromId }   : {}),
+     ...(storyStyle       ? { storyStyle }        : {}),
+     ...(lessonFormat && !['standard'].includes(lessonFormat) ? { lessonFormat } : {}),
+     lessons,
+@@ -1340,8 +1562,19 @@ async function boot() {
+   
+ // ── v29 storyline sync ────────────────────────────────────────────────────────
+ // Called after upsert to keep storylines[].chapters in sync
+-function _topicId(topicName) {
+-  return 'tp_' + Math.abs(topicName.trim().toLowerCase().split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
++let _idCounter = 0;
++function _newTopicId() {
++  // Mint a fresh topic id. Numeric to preserve the client's /^tp_\d+$/ detection.
++  // Unlike the old name-hash, this cannot collide when a renamed topic's old name
++  // is reused for a new topic. Existing ids are never recomputed.
++  const existing = new Set((store.topics || []).map(t => t.id).filter(Boolean));
++  let id;
++  do {
++    id = 'tp_' + Date.now().toString()
++       + String(_idCounter++ % 100000).padStart(5, '0')
++       + Math.floor(Math.random() * 100).toString().padStart(2, '0');
++  } while (existing.has(id));
++  return id;
+ }
+ function _chainId(topicIds) {
+   const j = JSON.stringify(topicIds);
+@@ -1349,43 +1582,54 @@ function _chainId(topicIds) {
+ }
+ function _syncStorylineForTopic(topicName, continuedFromTopic) {
+   if (store.schemaVersion < 29) return;
+-  const tid = _topicId(topicName);
+-  // Ensure the topic has an id
++  // Use the topic's STORED id (never recompute). A topic lacking an id is brand
++  // new and gets a fresh random id; renamed topics keep their original id.
+   const topicObj = findSaved(topicName);
++  const tid = topicObj?.id || _newTopicId();
+   if (topicObj && !topicObj.id) { topicObj.id = tid; }
+ 
+-  // Build the full chain by walking continuedFrom backwards from this topic
+-  const chain = [topicName];
+-  let cur = topicName;
++  // Resolve a topic's parent id: prefer the stored continuedFromId, fall back
++  // to resolving a continuedFrom name (un-migrated/imported entries).
++  const parentIdOf = t => {
++    if (!t) return null;
++    if (t.continuedFromId) return t.continuedFromId;
++    if (t.continuedFrom)   return findSaved(t.continuedFrom)?.id || null;
++    return null;
++  };
++
++  // Build the full chain (ids) by walking continuedFromId backwards.
++  const chainIds = [tid];
++  let curId = tid;
+   for (let i = 0; i < 50; i++) {
+-    const t = findSaved(cur);
+-    if (!t || !t.continuedFrom) break;
+-    chain.unshift(t.continuedFrom);
+-    cur = t.continuedFrom;
++    const t = findSavedById(curId);
++    const pid = parentIdOf(t);
++    if (!pid || chainIds.includes(pid) || !findSavedById(pid)) break;
++    chainIds.unshift(pid);
++    curId = pid;
+   }
+-  // Walk forward from this topic picking up continuations.
+-  // Stop if we hit a topic that already belongs to a DIFFERENT storyline
+-  // (that means we forked, not extended).
++  // Walk forward picking up continuations. Stop at forks, pre-existing
++  // branches (a topic already in another storyline), or cycles.
+   const allSl = getStorylines();
+-  const topicIdOf = t => { const tp = findSaved(t); return tp?.id || _topicId(t); };
+-  // Build set of topic ids already in other storylines (not containing the current topic)
+   const otherSlTopicIds = new Set(
+-    allSl.filter(s => !s.chapters.includes(tid))
+-         .flatMap(s => s.chapters)
++    allSl.filter(s => !s.chapters.includes(tid)).flatMap(s => s.chapters)
+   );
+-  cur = topicName;
++  curId = tid;
+   for (let i = 0; i < 50; i++) {
+-    const candidates = store.topics.filter(t => t.continuedFrom === cur);
++    const candidates = store.topics.filter(t => parentIdOf(t) === curId);
+     // If multiple topics continue from cur — it's a fork; stop here
+     if (candidates.length !== 1) break;
+     const next = candidates[0];
+-    // If next already belongs to another storyline — it's a pre-existing branch; stop
+-    if (otherSlTopicIds.has(topicIdOf(next.topic))) break;
+-    chain.push(next.topic);
+-    cur = next.topic;
++    if (!next.id) next.id = _newTopicId();
++    // If next already belongs to another storyline — pre-existing branch; stop
++    if (otherSlTopicIds.has(next.id)) break;
++    if (chainIds.includes(next.id)) break; // cycle guard
++    chainIds.push(next.id);
++    curId = next.id;
+   }
+ 
+-  const chapterIds = chain.map(t => topicIdOf(t));
++  const chapterIds = chainIds;
++  // Names for title/display, derived from ids so they reflect current names.
++  const chain = chapterIds.map(id => findSavedById(id)?.topic ?? topicName);
+   const slId = _chainId(chapterIds);
+ 
+   // Find existing storyline that contains this topic
+@@ -1486,6 +1730,108 @@ function storyDiffSentences(aiStory, correctedStory, existingSentences) {
+     .map(p => ({ ai: p.ai, corrected: p.corrected, reason: reasonMap.get(p.ai) || '' }));
+ }
+ 
++// ── Multi-chapter "book" generation ───────────────────────────────────
++// Server-side sequential generation so a PDF book keeps generating even if the
++// client refreshes or navigates away. Each chapter is a normal generate() job;
++// the book job tracks overall progress and chains continuedFrom server-side.
++const bookJobs = new Map(); // bookId -> { status, current, chapters:[{title,status,topicId,error,jobId}], error, createdAt }
++
++function newBookJob(titles) {
++  const id = 'book_' + crypto.randomBytes(8).toString('hex');
++  bookJobs.set(id, {
++    status: 'running', current: 0,
++    chapters: titles.map(t => ({ title: t || '', status: 'pending', topicId: null, error: null })),
++    error: null, createdAt: Date.now(),
++  });
++  // keep only the most recent 20 book jobs
++  if (bookJobs.size > 20) {
++    const oldest = [...bookJobs.entries()].sort((a,b)=>a[1].createdAt-b[1].createdAt)[0];
++    if (oldest) bookJobs.delete(oldest[0]);
++  }
++  return id;
++}
++
++// Persist a generated chapter the same way the /api/generate handler does:
++// upsert + stable id + storyline sync. Returns the saved topic.
++function _persistGenerated(data, contFrom) {
++  upsert(data);
++  let saved = findSaved(data.topic);
++  if (store.schemaVersion >= 29) {
++    if (saved && !saved.id) { saved.id = _newTopicId(); upsert(saved); saved = findSaved(data.topic); }
++    _syncStorylineForTopic(data.topic, contFrom);
++    saved = findSaved(data.topic);
++  }
++  return saved || data;
++}
++
++async function _runBookJob(bookId, chunks, base) {
++  const bj = bookJobs.get(bookId);
++  if (!bj) return;
++  let prevRef = base.continuedFrom || null; // id or name of the parent for chapter 0
++  for (let i = 0; i < chunks.length; i++) {
++    if (bj.status === 'cancelled') break;
++    bj.current = i;
++    bj.chapters[i].status = 'active';
++    const jobId = newJob();
++    bj.chapters[i].jobId = jobId;
++    try {
++      const parent  = prevRef ? (findSavedById(prevRef) || findSaved(prevRef)) : null;
++      const contFrom = parent ? parent.topic : null;
++      const userStory = String(chunks[i].text || '').trim();
++      const wc    = Math.max(100, Math.min(2000, parseInt(chunks[i].wordCount, 10) || 300));
++      const topic = (String(chunks[i].title || '').trim().slice(0,80)) || ('Chapter ' + (i+1));
++      const userOpts = {
++        userStory, userStoryLang: base.userStoryLang || null,
++        prevStoryTopic: (userStory && contFrom) ? contFrom : null,
++        userTranslation: null, userDialect: null, storyStyle: null,
++        // Arc mode: chapter 1 lesson is a plain vocab "gate" (this chapter's new words);
++        // reinforcement lessons are appended below. Otherwise honor the chosen format.
++        lessonFormat: base.arc ? 'standard' : base.fmt, reinforcePrior: false, vocabMode: null,
++        useFullChain: i >= 1, mathInstruction: null,
++      };
++      console.log(`  [book ${bookId}] chapter ${i+1}/${chunks.length}: "${topic}"${contFrom?' cont='+contFrom:''}${base.arc?' arc[+'+base.arcTypes.join(',')+']':''} job=${jobId}`);
++      // userStory is provided, so contFromForStory is null (parent isn't used as story context);
++      // the chain link is still recorded via prevStoryTopic inside generate().
++      const data  = await generate(topic, base.lang, base.srcLang, base.diff, null, wc, jobId, userOpts);
++
++      // Arc mode: append reinforcement lesson(s) that drill prior + current forms (reinforce).
++      if (base.arc && Array.isArray(data.lessons)) {
++        const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [] };
++        const rOpts = { userDialect: null, storyStyle: null, chainVocab, vocabMode: 'reinforce', story: userStory };
++        for (const rType of base.arcTypes) {
++          try {
++            jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Reinforcement lesson (${rType})…`);
++            const rFn = rType === 'conjugation' ? generateConjugation
++                      : rType === 'synonyms'    ? generateSynonyms
++                      :                           generateGrammar;
++            const { lesson } = await rFn(data.topic || topic, base.lang, base.srcLang, base.diff, jobId, rOpts);
++            data.lessons.push(lesson);
++          } catch (e) {
++            console.warn(`  [book ${bookId}] chapter ${i+1} reinforcement (${rType}) failed, skipping: ${e.message}`);
++            jobStep(jobId, `⚠ ${rType} reinforcement failed — continuing…`);
++          }
++        }
++      }
++
++      const saved = _persistGenerated(data, contFrom);
++      jobDone(jobId, { ...data, fromCache: false });
++      bj.chapters[i].status  = 'done';
++      bj.chapters[i].topicId = saved.id || null;
++      bj.chapters[i].title   = saved.topic || topic;
++      prevRef = saved.id || saved.topic; // chain next chapter from this one (prefer id)
++    } catch (e) {
++      console.error(`  [book ${bookId}] chapter ${i+1} failed:`, e.message);
++      jobFail(jobId, e.message);
++      bj.chapters[i].status = 'error';
++      bj.chapters[i].error  = e.message;
++      bj.status = 'error'; bj.error = `Chapter ${i+1}: ${e.message}`;
++      return;
++    }
++  }
++  if (bj.status !== 'cancelled' && bj.status !== 'error') bj.status = 'done';
++  console.log(`  [book ${bookId}] finished: ${bj.status}`);
++}
++
+ http.createServer(async (req, res) => {
+     const url = new URL(req.url, `http://localhost:${PORT}`);
+     const M   = req.method.toUpperCase();
+@@ -1510,17 +1856,22 @@ http.createServer(async (req, res) => {
+         difficulty: l.difficulty || 2,
+         storyLen: l.storyLen || 300,
+         continuedFrom: l.continuedFrom || null,
++        continuedFromId: l.continuedFromId || null,
+         generatedAt: l.generatedAt,
+         updatedAt:   l.updatedAt || l.generatedAt,
+         lessonCount: l.lessons?.length || 0,
++        qcFlags: (l.lessons || []).reduce((n, L) =>
++          n + [...(L.vocab||[]), ...(L.sentences||[])].filter(x => x && x.qc).length, 0),
+       }));
+       list.sort((a,b) => (b.updatedAt||'').localeCompare(a.updatedAt||''));
+       return json(res, 200, list);
+     }
+     if (M === 'GET' && url.pathname === '/api/lessons/load') {
+-      const t = url.searchParams.get('topic');
+-      if (!t) return json(res, 400, { error: 'Missing topic' });
+-      const s = findSaved(t);
++      const id = url.searchParams.get('id');
++      const t  = url.searchParams.get('topic');
++      if (!id && !t) return json(res, 400, { error: 'Missing id or topic' });
++      // Prefer stable id; fall back to name for backward compatibility.
++      const s = id ? findSavedById(id) : findSaved(t);
+       if (!s) return json(res, 404, { error: 'Not found' });
+       return json(res, 200, s);
+     }
+@@ -1528,62 +1879,93 @@ http.createServer(async (req, res) => {
+       let body;
+       try { body = JSON.parse(await readBody(req)); }
+       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+-      const { oldTopic, newTopic, topicEmoji } = body;
+-      if (!oldTopic || !newTopic) return json(res, 400, { error: 'Missing oldTopic or newTopic' });
+-      const saved = findSaved(oldTopic);
++      const { id, oldTopic, newTopic, topicEmoji } = body;
++      if (!newTopic) return json(res, 400, { error: 'Missing newTopic' });
++      if (!id && !oldTopic) return json(res, 400, { error: 'Missing id or oldTopic' });
++      const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons || []);
++      // Resolve target by stable id (preferred, collision-safe); fall back to name.
++      const saved = id ? findSavedById(id) : findSaved(oldTopic);
+       if (!saved) {
+-        // Maybe the topic was already renamed — check if newTopic exists
+-        const alreadyRenamed = newTopic && findSaved(newTopic);
+-        if (alreadyRenamed) {
+-          console.log(`  save-meta: "${oldTopic}" already renamed to "${newTopic}" — no-op`);
+-          return json(res, 200, { ok: true, topic: alreadyRenamed.topic, topicEmoji: alreadyRenamed.topicEmoji });
++        // Maybe already renamed — by id it's a no-op; by name, check newTopic exists.
++        const already = id ? findSavedById(id) : (newTopic && findSaved(newTopic));
++        if (already) {
++          console.log(`  save-meta: already applied for ${id || `"${oldTopic}"`} — no-op`);
++          return json(res, 200, { ok: true, topic: already.topic, topicEmoji: already.topicEmoji });
+         }
+-        console.warn(`  save-meta: topic not found: "${oldTopic}" (schema v${store.schemaVersion}, ${(store.topics||store.lessons||[]).length} topics)`);
+-        return json(res, 404, { error: `Topic not found: "${oldTopic.slice(0,40)}"` });
++        console.warn(`  save-meta: topic not found: ${id ? `id ${id}` : `"${oldTopic}"`} (schema v${store.schemaVersion}, ${arr.length} topics)`);
++        return json(res, 404, { error: `Topic not found: ${id ? id : `"${String(oldTopic).slice(0,40)}"`}` });
+       }
+-      // No-op if topic name unchanged
+-      if (oldTopic.trim().toLowerCase() === newTopic.trim().toLowerCase() && !topicEmoji) return json(res, 200, { ok: true });
+-      saved.topic = newTopic.trim().slice(0, 80);
++      const newName = newTopic.trim().slice(0, 80);
++      // No-op if nothing changes
++      if (saved.topic.trim().toLowerCase() === newName.toLowerCase() && !topicEmoji)
++        return json(res, 200, { ok: true, topic: saved.topic, topicEmoji: saved.topicEmoji });
++      saved.topic = newName;
+       if (topicEmoji) saved.topicEmoji = topicEmoji;
+-      const newLower = newTopic.trim().toLowerCase();
+-      const oldLower = oldTopic.trim().toLowerCase();
+-      // Update in the correct array
+-      const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
+-      // Filter out old entry (and new if already exists), but guard against both being same
+-      const filtered = oldLower === newLower
+-        ? arr.filter(l => l.topic.toLowerCase() !== oldLower)
+-        : arr.filter(l => l.topic.toLowerCase() !== oldLower && l.topic.toLowerCase() !== newLower);
++      // Move the renamed entry to the front, matching by REFERENCE — a name collision
++      // must never remove a different topic. Same-name topics are legal now (distinct ids).
++      const filtered = arr.filter(l => l !== saved);
+       filtered.unshift(saved);
+       if (store.schemaVersion >= 29) store.topics = filtered; else store.lessons = filtered;
+-      // Cascade rename into continuedFrom pointers
+-      const curArr = store.schemaVersion >= 29 ? store.topics : store.lessons;
+-      curArr.forEach(l => {
+-        if (l.continuedFrom && l.continuedFrom.toLowerCase() === oldLower)
+-          l.continuedFrom = saved.topic;
+-      });
++      // No continuedFrom cascade needed: chains reference the parent's stable id
++      // (continuedFromId), which is unchanged by a rename. The continuedFrom name
++      // may now be stale, but it's display-only and the client resolves the current
++      // parent name from continuedFromId.
+       saveStore(store);
+-      console.log(`  Renamed: "${oldTopic}" → "${saved.topic}"`);
++      console.log(`  Renamed: ${saved.id} → "${saved.topic}"`);
+       return json(res, 200, { ok: true, topic: saved.topic, topicEmoji: saved.topicEmoji });
+     }
+     if (M === 'DELETE' && url.pathname === '/api/lessons/delete') {
+-      const t = url.searchParams.get('topic');
+-      if (!t) return json(res, 400, { error: 'Missing topic' });
++      const id = url.searchParams.get('id');
++      const t  = url.searchParams.get('topic');
++      if (!id && !t) return json(res, 400, { error: 'Missing id or topic' });
+       const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons || []);
+-      const toDelete = arr.find(l => l.topic.toLowerCase() === t.trim().toLowerCase());
+-      const deleteId = toDelete?.id;
++      // Prefer stable id; fall back to name. Match by reference so a name
++      // collision can never delete the wrong topic.
++      const toDelete = id ? arr.find(l => l.id === id)
++                          : arr.find(l => l.topic.toLowerCase() === t.trim().toLowerCase());
++      if (!toDelete) return json(res, 200, { ok: true }); // idempotent: nothing to delete
++      const deleteId = toDelete.id;
++      const delName  = toDelete.topic; // canonical name for slug-based flag cleanup
++      console.log(`  Deleting: "${delName}" (${deleteId || 'no-id'}, ${(toDelete.lessons||[]).length} lesson(s))`);
+       if (store.schemaVersion >= 29) {
+-        store.topics = store.topics.filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
++        const deletedParentId = toDelete.continuedFromId || null;
++        store.topics = store.topics.filter(l => l !== toDelete);
+         // Remove from storyline chapters, remove empty storylines
+         store.storylines = store.storylines.map(sl => ({
+           ...sl, chapters: sl.chapters.filter(c => c !== deleteId)
+         })).filter(sl => sl.chapters.length > 0);
++        // Splice the deleted topic out of the chain: its children continue from the
++        // deleted topic's parent (the grandparent), so a middle delete reconnects
++        // Alpha→Gamma instead of orphaning Gamma. If the deleted topic was a root,
++        // its children become roots.
++        const _parentName = deletedParentId ? (findSavedById(deletedParentId)?.topic || null) : null;
++        store.topics.forEach(t => {
++          if (t.continuedFromId === deleteId) {
++            t.continuedFromId = deletedParentId;
++            t.continuedFrom = _parentName;   // display name (null when reconnected to no parent)
++          }
++        });
++        // If the deleted topic's parent had a fork that has now collapsed to a single
++        // remaining child, merge the parent's storyline with that child's storyline so
++        // the chain re-forms as one line (preserving the parent storyline's id/title/icon).
++        if (deletedParentId) {
++          const kids = store.topics.filter(t => t.continuedFromId === deletedParentId);
++          if (kids.length === 1) {
++            const all = getStorylines();
++            const pSl = all.find(s => s.chapters[s.chapters.length - 1] === deletedParentId);
++            const cSl = all.find(s => s !== pSl && s.chapters[0] === kids[0].id);
++            if (pSl && cSl) {
++              pSl.chapters = [...pSl.chapters, ...cSl.chapters];
++              setStorylines(all.filter(s => s.id !== cSl.id));
++            }
++          }
++        }
+       } else {
+-        // This branch only reached in legacy mode
+-        store.lessons = (store.lessons||[]).filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
++        store.lessons = (store.lessons||[]).filter(l => l !== toDelete);
+       }
+       // Delete all flags associated with this topic (by slug and by id)
+       const flags = getFlags();
+-      const delSlug = topicSlug(t.trim()) + ':';
++      const delSlug = topicSlug(delName) + ':';
+       const delId   = deleteId ? deleteId + ':' : null;
+       let flagsDeleted = 0;
+       Object.keys(flags).forEach(k => {
+@@ -1593,7 +1975,7 @@ http.createServer(async (req, res) => {
+       });
+       if (flagsDeleted > 0) {
+         setFlags(flags);
+-        console.log(`  Deleted ${flagsDeleted} flag(s) for "${t.trim()}"`);
++        console.log(`  Deleted ${flagsDeleted} flag(s) for "${delName}"`);
+       }
+       saveStore(store);
+       return json(res, 200, { ok: true });
+@@ -1618,6 +2000,33 @@ http.createServer(async (req, res) => {
+       return json(res, 200, { ok: true });
+     }
+ 
++    // ── QC: translation-model check of vocab/sentence pairs ───────────────
++    // Scopes: { storylineId } | { topicId } | { topicId, lessonIdx }.
++    // Writes `qc:{sug,at}` onto flagged items (clears it on items now OK), persists,
++    // and returns counts. Runs async (one translation-model call per pair).
++    if (M === 'POST' && url.pathname === '/api/qc') {
++      let body;
++      try { body = JSON.parse(await readBody(req)); }
++      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
++      if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
++      const { storylineId, topicId, lessonIdx, onlyFlagged } = body;
++      // Resolve the topics in scope.
++      let topics = [];
++      if (storylineId) {
++        const sl = getStorylines().find(s => s.id === storylineId);
++        topics = sl ? sl.chapters.map(id => findSavedById(id)).filter(Boolean) : [];
++      } else if (topicId) {
++        const tp = findSavedById(topicId);
++        if (tp) topics = [tp];
++      }
++      if (!topics.length) return json(res, 404, { error: 'Nothing in scope to check.' });
++      const jobId = newJob();
++      console.log(`  ⚙ QC requested (${storylineId?('storyline '+storylineId):topicId?('topic '+topicId+(lessonIdx!==undefined&&lessonIdx!==null?' lesson '+lessonIdx:'')):'?'}) → ${topics.length} topic(s), job=${jobId}`);
++      _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged })
++        .catch(e => { console.error('  QC error:', e.message); jobFail(jobId, e.message); });
++      return json(res, 202, { jobId, topics: topics.length });
++    }
++
+     // ── Storyline titles ─────────────────────────────────────────────
+     if (M === 'GET' && url.pathname === '/api/storylines') {
+       return json(res, 200, getStorylines());
+@@ -1708,23 +2117,29 @@ http.createServer(async (req, res) => {
+       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
+       const { topic, lang, srcLang, difficulty, lessonFormat, storyLen, continuedFrom, forceRegenerate,
+               userStory, userTranslation, userDialect, storyStyle, reinforcePrior, vocabMode, useFullChain, userStoryLang, mathInstruction } = body;
++      // continuedFrom may arrive as a stable tp_ id (from the continue-select)
++      // or a topic name (other paths). Normalize to the canonical topic name so
++      // everything downstream is unaffected by which the client sent.
++      const _contParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
++      const continuedFromName = _contParent ? _contParent.topic : null;
+       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
+-        : (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
++        : continuedFromName ? continuedFromName : null;
+       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
+       if (topic !== resolvedTopic) body.topic = resolvedTopic;
+       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
+-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math'].includes(lessonFormat) ? lessonFormat : 'standard';
++      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms'].includes(lessonFormat) ? lessonFormat : 'standard';
+       const wcMax = body.userStory ? 2000 : 1000;
+       const wc = Math.max(100, Math.min(wcMax, parseInt(storyLen, 10) || 300));
+       // contFrom: used for storyline chain tracking AND story continuation context.
+       // When userStory is provided we still track the chain, but don't pass contFrom
+       // to generate() for story context (user supplied their own text).
+-      const contFrom = (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
++      const contFrom = continuedFromName;
+       // When user provides a story AND continues from a prior chapter,
+       // pass both the previous story AND the new story as context.
+       const contFromForStory = contFrom && !userStory ? contFrom : null;
+       const combinedUserStory = (userStory && contFrom) ? contFrom : null;
+       const topicKey = topic.trim().toLowerCase();
++      const resolvedSrcLang = srcLang || 'en';
+       if (!forceRegenerate) {
+         const cached = findSaved(topic.trim());
+         if (cached && cached.lang === (lang||'it') && cached.srcLang === (resolvedSrcLang||'en')) {
+@@ -1738,7 +2153,6 @@ http.createServer(async (req, res) => {
+         return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
+       const jobId = newJob();
+       generatingTopics.add(topicKey);
+-      const resolvedSrcLang = srcLang || 'en';
+       const userOpts = {
+         userStory:       userStory       ? String(userStory).trim()       : null,
+         userStoryLang:   userStoryLang   ? String(userStoryLang)          : null,
+@@ -1759,7 +2173,7 @@ http.createServer(async (req, res) => {
+         if (store.schemaVersion >= 29) {
+           const saved = findSaved(data.topic);
+           if (saved && !saved.id) {
+-            saved.id = 'tp_' + Math.abs(data.topic.trim().toLowerCase().split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
++            saved.id = _newTopicId();
+             upsert(saved);
+           }
+           _syncStorylineForTopic(data.topic, contFrom);
+@@ -1775,7 +2189,61 @@ http.createServer(async (req, res) => {
+       return json(res, 202, { jobId });
+     }
+ 
+-    // ── Save topic story ─────────────────────────────────────────────────
++    // ── Generate a multi-chapter book (server-side loop; survives refresh) ──
++    if (M === 'POST' && url.pathname === '/api/generate-book') {
++      let body;
++      try { body = JSON.parse(await readBody(req)); }
++      catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
++      const { chunks, lang, srcLang, difficulty, lessonFormat, continuedFrom, userStoryLang, arc, arcReinforce } = body;
++      if (!Array.isArray(chunks) || chunks.length === 0)
++        return json(res, 400, { error: 'No chapters provided' });
++      if (active === 'none')
++        return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
++      const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
++      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms'].includes(lessonFormat) ? lessonFormat : 'standard';
++      // Arc mode: each chapter = a vocab "gate" lesson + one or more reinforcement
++      // lessons (grammar/conjugation/synonyms) generated in reinforce mode.
++      const _arcTypes = (Array.isArray(arcReinforce) ? arcReinforce : ['grammar'])
++        .filter(t => ['grammar','conjugation','synonyms'].includes(t));
++      const arcMode = !!arc;
++      // Normalize the chain root (id or name) to a name for downstream context.
++      const rootParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
++      const base = { lang: lang || 'it', srcLang: srcLang || 'en', diff, fmt,
++        continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
++        arc: arcMode, arcTypes: _arcTypes.length ? _arcTypes : ['grammar'] };
++      const bookId = newBookJob(chunks.map(c => c.title));
++      console.log(`  Book generation started: ${chunks.length} chapter(s), id=${bookId}`);
++      _runBookJob(bookId, chunks, base);  // fire-and-forget; runs server-side
++      return json(res, 202, { bookId, chapters: chunks.length });
++    }
++
++    // ── Book job progress ──────────────────────────────────────────────
++    if (M === 'GET' && url.pathname.startsWith('/api/book-job/')) {
++      const bookId = url.pathname.split('/')[3];
++      const bj = bookJobs.get(bookId);
++      if (!bj) return json(res, 404, { error: 'Book job not found' });
++      return json(res, 200, { bookId, status: bj.status, current: bj.current, error: bj.error,
++        chapters: bj.chapters.map(c => ({ title: c.title, status: c.status, topicId: c.topicId, error: c.error })) });
++    }
++
++    // ── Most-recent active book job (for reconnect after refresh) ──────
++    if (M === 'GET' && url.pathname === '/api/book-job') {
++      let bestId = null, best = null;
++      for (const [id, bj] of bookJobs) {
++        if (bj.status === 'running' && (!best || bj.createdAt > best.createdAt)) { best = bj; bestId = id; }
++      }
++      if (!bestId) return json(res, 200, { bookId: null });
++      return json(res, 200, { bookId: bestId, status: best.status, current: best.current,
++        chapters: best.chapters.map(c => ({ title: c.title, status: c.status, topicId: c.topicId, error: c.error })) });
++    }
++
++    // ── Cancel a book job ──────────────────────────────────────────────
++    if (M === 'POST' && url.pathname === '/api/book-job/cancel') {
++      let body; try { body = JSON.parse(await readBody(req)); } catch(e) { body = {}; }
++      const bj = body.bookId && bookJobs.get(body.bookId);
++      if (bj && bj.status === 'running') { bj.status = 'cancelled'; console.log('  Book job cancelled:', body.bookId); }
++      return json(res, 200, { ok: true });
++    }
+     if (M === 'POST' && url.pathname === '/api/save-story') {
+       let body;
+       try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+@@ -1822,9 +2290,9 @@ http.createServer(async (req, res) => {
+       let body;
+       try { body = JSON.parse(await readBody(req)); }
+       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+-      const { topic, lessons } = body;
+-      if (!topic || !lessons) return json(res, 400, { error: 'Missing topic or lessons' });
+-      const saved = findSaved(topic);
++      const { id, topic, lessons } = body;
++      if (!lessons || (!id && !topic)) return json(res, 400, { error: 'Missing id/topic or lessons' });
++      const saved = id ? findSavedById(id) : findSaved(topic);
+       if (!saved) return json(res, 404, { error: 'Topic not found' });
+       // Only update vocab/sentences/grammar fields — preserve all other data
+       const origLessons = saved.lessons.slice();
+@@ -1849,7 +2317,7 @@ http.createServer(async (req, res) => {
+       });
+       saved.updatedAt = new Date().toISOString();
+       saveStore(store);
+-      console.log(`  Edited lessons for "${topic}"`);
++      console.log(`  Edited lessons for "${saved.topic}"`);
+       return json(res, 200, { ok: true });
+     }
+ 
+@@ -1858,14 +2326,15 @@ http.createServer(async (req, res) => {
+       let body;
+       try { body = JSON.parse(await readBody(req)); }
+       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+-      const { topic, lessonFormat: fmt, difficulty: rawDiff, reinforcePrior: addReinforce, vocabMode: addVocabMode, mathInstruction: addMathInstr, mathOps: addMathOps } = body;
+-      if (!topic)  return json(res, 400, { error: 'Missing topic' });
++      const { id, topic, lessonFormat: fmt, difficulty: rawDiff, reinforcePrior: addReinforce, vocabMode: addVocabMode, mathInstruction: addMathInstr, mathOps: addMathOps } = body;
++      if (!id && !topic) return json(res, 400, { error: 'Missing id or topic' });
+       if (!fmt)    return json(res, 400, { error: 'Missing lessonFormat' });
+-      const saved = findSaved(topic.trim());
+-      if (!saved)  return json(res, 404, { error: `Topic not found: ${topic}` });
++      const saved = id ? findSavedById(id) : findSaved((topic||'').trim());
++      if (!saved)  return json(res, 404, { error: `Topic not found: ${id || topic}` });
+       if (!saved.story) return json(res, 400, { error: 'Topic has no story to base lessons on' });
+       if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+-      const topicKey = topic.trim().toLowerCase();
++      const topicName = saved.topic;
++      const topicKey = topicName.trim().toLowerCase();
+       if (generatingTopics.has(topicKey))
+         return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
+       const diff  = Math.max(1, Math.min(3, parseInt(rawDiff, 10) || saved.difficulty || 2));
+@@ -1877,12 +2346,12 @@ http.createServer(async (req, res) => {
+       const story    = saved.story;
+       const jobId = newJob();
+       generatingTopics.add(topicKey);
+-      console.log(`  Add lesson: "${topic}" fmt=${fmt} diff=${diff} vocabMode=${_addVocabMode}`);
++      console.log(`  Add lesson: "${topicName}" fmt=${fmt} diff=${diff} vocabMode=${_addVocabMode}`);
+ 
+       const doGenLesson = async () => {
+         let result;
+-        const chainVocab = (_addVocabMode !== 'neutral' && saved.continuedFrom)
+-          ? collectChainVocab(saved.continuedFrom)
++        const chainVocab = (_addVocabMode !== 'neutral' && (saved.continuedFromId || saved.continuedFrom))
++          ? collectChainVocab(saved.continuedFromId || saved.continuedFrom)
+           : { words: [], nouns: [], verbs: [] };
+         if (chainVocab.words.length)
+           console.log(`    Chain vocab (${_addVocabMode}): ${chainVocab.words.slice(0,15).map(v=>v.target).join(', ')}`);
+@@ -1890,13 +2359,15 @@ http.createServer(async (req, res) => {
+           const storyTranslation = saved.storyTranslation || null;
+           // Don't pass story as styleHint — it's already in userMsg as context
+           const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words, vocabMode: _addVocabMode };
+-          result = await generateOneLesson(lang, srcLang, topic.trim(), 1, 1, [], story, diff, jobId, lessonOpts);
++          result = await generateOneLesson(lang, srcLang, topicName, 1, 1, [], story, diff, jobId, lessonOpts);
+         } else if (fmt === 'error_hunt') {
+           result = await generateErrorHunt(story, lang, diff, jobId, chainVocab.words);
+         } else if (fmt === 'grammar') {
+-          result = await generateGrammar(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode });
++          result = await generateGrammar(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
+         } else if (fmt === 'conjugation') {
+-          result = await generateConjugation(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode });
++          result = await generateConjugation(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
++        } else if (fmt === 'synonyms') {
++          result = await generateSynonyms(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
+         } else if (fmt === 'math') {
+           result = addMathInstr
+             ? await generateMathLLM(lang, srcLang, diff, addMathInstr, jobId)
+@@ -1978,11 +2449,12 @@ http.createServer(async (req, res) => {
+       let added = 0, updated = 0;
+       for (const l of incoming) {
+         const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
+-        const exists = arr.find(x =>
+-          x.topic.toLowerCase() === l.topic.toLowerCase() &&
+-          (x.lang||'') === (l.lang||'') &&
+-          (x.srcLang||'') === (l.srcLang||'')
+-        );
++        const exists = l.id
++          ? arr.find(x => x.id === l.id)
++          : arr.find(x =>
++              x.topic.toLowerCase() === l.topic.toLowerCase() &&
++              (x.lang||'') === (l.lang||'') &&
++              (x.srcLang||'') === (l.srcLang||''));
+         if (exists) {
+           // Update in place preserving generatedAt
+           Object.assign(exists, l, { generatedAt: exists.generatedAt, updatedAt: new Date().toISOString() });
+@@ -2009,6 +2481,24 @@ http.createServer(async (req, res) => {
+       for (const l of incoming) {
+         _syncStorylineForTopic(l.topic, l.continuedFrom || null);
+       }
++      // 3. Dedup storylines that share an identical chapter sequence. This happens
++      // when an imported storyline's id doesn't equal the continuedFrom-derived
++      // _chainId, so step 2 creates a parallel copy of the same chain. Keep the copy
++      // with a curated title (i.e. a title that isn't just the first chapter's name).
++      {
++        const allSl = getStorylines();
++        const bid = Object.fromEntries((store.topics||[]).filter(t => t.id).map(t => [t.id, t]));
++        const isAuto = s => { const c0 = bid[(s.chapters||[])[0]]; return c0 && s.title === c0.topic; };
++        const seen = new Map(); // chapter-sequence → index in keep[]
++        const keep = [];
++        for (const sl of allSl) {
++          const key = (sl.chapters||[]).join('|');
++          if (!key) { keep.push(sl); continue; }
++          if (!seen.has(key)) { seen.set(key, keep.length); keep.push(sl); }
++          else { const i = seen.get(key); if (isAuto(keep[i]) && !isAuto(sl)) keep[i] = sl; } // else drop dup
++        }
++        if (keep.length !== allSl.length) setStorylines(keep);
++      }
+       const total = store.schemaVersion >= 29 ? store.topics.length : store.lessons.length;
+       console.log(`  Import: +${added} new, ~${updated} updated`);
+       return json(res, 200, { ok: true, added, updated, total });

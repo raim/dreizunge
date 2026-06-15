@@ -1,0 +1,748 @@
+diff --git a/build-static.js b/build-static.js
+index 5763d26..242de90 100644
+--- a/build-static.js
++++ b/build-static.js
+@@ -189,7 +189,7 @@ function repopulateContinueSelect(){
+     filtered.map(s=>{
+       const tL=LANGS[s.lang||'it']||LANGS.it||{flag:'',name:s.lang||'it'};
+       const langTag=showAll&&(s.lang||'it')!==curLang?' ['+tL.name+']':'';
+-      return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+tL.flag+' '+s.topic+langTag+'</option>';
++      return '<option value="'+(s.id||s.topic.replace(/"/g,'&quot;'))+'">'+tL.flag+' '+s.topic+langTag+'</option>';
+     }).join('');
+   if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
+ }
+@@ -314,7 +314,7 @@ function itemHtml(s, connector) {
+   const tL=LANGS[s.lang||'it']||LANGS.it;
+   const srcL=LANGS[s.srcLang||'en']||{flag:'🇬🇧',name:'English'};
+   return \`<div class="saved-item-wrap">
+-    <div class="saved-item" onclick="loadSaved('\${enc}')">
++    <div class="saved-item" onclick="loadSaved('\${s.id||enc}')">
+       \${conn}<span class="saved-emoji"> \${s.topicEmoji||'📚'}</span>
+       <div class="saved-info">
+         <div class="saved-topic">\${s.topic} \${diffBadge}</div>
+@@ -387,47 +387,45 @@ async function loadSavedList() {
+     return;
+   }
+ 
+-  // Build display chains — v29: use STATIC_STORYLINES array; legacy: continuedFrom
+-  const byTopic=Object.fromEntries(filtered.map(l=>[l.topic,l]));
+-  // byIdAll: all saved lessons for chapter ID resolution (includes imported lessons)
+-  // byId: only filtered lessons for visible rendering
+-  const byIdAll=Object.fromEntries(saved.filter(l=>l.id).map(l=>[l.id,l]));
++  // Build display chains — v29: use STATIC_STORYLINES (id chapters); legacy: continuedFromId
++  // byId: visible (filtered) topics indexed by stable id
+   const byId=Object.fromEntries(filtered.filter(l=>l.id).map(l=>[l.id,l]));
+   let storylines, orphans;
+   const _slArr=Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[];
+   const v29chains=_slArr.filter(sl=>sl.chapters&&sl.chapters.length>=1);
+   if(v29chains.length>0){
+-    // Only include chapters whose topics are in byTopic (currently visible/filtered)
+-    storylines=v29chains.map(sl=>sl.chapters.map(cid=>byIdAll[cid]?.topic||null).filter(t=>t&&byTopic[t])).filter(c=>c.length>=1);
++    // Keep chapter IDS for visible (filtered) topics only
++    storylines=v29chains.map(sl=>(sl.chapters||[]).filter(cid=>byId[cid])).filter(c=>c.length>=1);
+     const inChain=new Set(storylines.flat());
+-    orphans=filtered.filter(l=>!inChain.has(l.topic));
++    orphans=filtered.filter(l=>!inChain.has(l.id));
+   } else {
+     const childMap={};
+     filtered.forEach(l=>{
+-      if(l.continuedFrom&&byTopic[l.continuedFrom])
+-        (childMap[l.continuedFrom]=childMap[l.continuedFrom]||[]).push(l.topic);
++      const pid=l.continuedFromId;
++      if(pid&&byId[pid])
++        (childMap[pid]=childMap[pid]||[]).push(l.id);
+     });
+-    const hasParent=new Set(filtered.filter(l=>l.continuedFrom&&byTopic[l.continuedFrom]).map(l=>l.topic));
++    const hasParent=new Set(filtered.filter(l=>l.continuedFromId&&byId[l.continuedFromId]).map(l=>l.id));
+     const chains=[];
+-    function walk(topic,chain){
+-      const ext=[...chain,topic],kids=childMap[topic]||[];
++    function walk(id,chain){
++      const ext=[...chain,id],kids=childMap[id]||[];
+       if(!kids.length){chains.push(ext);return;}
+       kids.forEach(k=>walk(k,ext));
+     }
+-    filtered.filter(l=>!hasParent.has(l.topic)).forEach(r=>walk(r.topic,[]));
++    filtered.filter(l=>!hasParent.has(l.id)).forEach(r=>walk(r.id,[]));
+     storylines=chains.filter(c=>c.length>1);
+     const inChain=new Set(storylines.flat());
+-    orphans=filtered.filter(l=>!inChain.has(l.topic));
++    orphans=filtered.filter(l=>!inChain.has(l.id));
+   }
+ 
+ 
+ 
+-  const newestOf=chain=>chain.reduce((b,t)=>{const d=byTopic[t]?.updatedAt||byTopic[t]?.generatedAt||'';return d>b?d:b;},'');
++  const newestOf=chain=>chain.reduce((b,id)=>{const d=byId[id]?.updatedAt||byId[id]?.generatedAt||'';return d>b?d:b;},'');
+   storylines.sort((a,b)=>newestOf(b).localeCompare(newestOf(a)));
+   const showAllLangs = APP.libFilter==='all';
+   // When showing all languages, group storylines by language
+   if(showAllLangs) storylines.sort((a,b)=>{
+-    const la=byTopic[a[0]]?.lang||'it', lb=byTopic[b[0]]?.lang||'it';
++    const la=byId[a[0]]?.lang||'it', lb=byId[b[0]]?.lang||'it';
+     return la.localeCompare(lb) || newestOf(b).localeCompare(newestOf(a));
+   });
+ 
+@@ -438,22 +436,22 @@ async function loadSavedList() {
+   let html='', _lastLang=null;
+   for(const chain of storylines){
+     if(showAllLangs){
+-      const cl=byTopic[chain[0]]?.lang||'it';
++      const cl=byId[chain[0]]?.lang||'it';
+       if(cl!==_lastLang){
+         const L=LANGS[cl]||LANGS.it;
+         html+='<div class="orphans-hdr">'+L.flag+' '+L.name+'</div>';
+         _lastLang=cl;
+       }
+     }
+-    const chainTopics=chain.map(t=>byTopic[t]?.topic).filter(Boolean);
++    const chainTopics=chain.map(id=>byId[id]?.topic).filter(Boolean);
+     const chainTopicsJson=JSON.stringify(chainTopics);
+     const chainEncoded=encodeURIComponent(chainTopicsJson);
+     const legacyChainId='c'+Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+-    // v29: find storyline by matching chain topics via id; legacy: by hash
+-    const matchSl2=_slArr2.find(sl=>{
+-      const slt=(sl.chapters||[]).map(cid=>byId[cid]?.topic||null).filter(Boolean);
+-      return slt.length&&slt.every((t,i)=>t===chainTopics[i])&&slt.length===chainTopics.length;
+-    });
++    // v29: find storyline by matching chapter IDS directly; legacy: by hash
++    const matchSl2=_slArr2.find(sl=>
++      (sl.chapters||[]).length===chain.length &&
++      (sl.chapters||[]).every((c,i)=>c===chain[i])
++    );
+     const resolvedSlId=matchSl2?.id||legacyChainId;
+     const chainId=resolvedSlId;
+     const slMeta=matchSl2||slTitles[chainId]||slTitles['root:'+chainTopics[0]]||null;
+@@ -465,8 +463,8 @@ async function loadSavedList() {
+     const chainNewest=newestOf(chain);
+     const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
+     const hdrTitle=hasTitle
+-      ? '<span class="storyline-title" style="cursor:pointer;flex:1"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
+-      : '<span class="storyline-title" style="flex:1">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
++      ? '<span class="storyline-title" style="cursor:pointer;flex:1"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byId[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
++      : '<span class="storyline-title" style="flex:1">'+(()=>{const first=byId[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
+     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
+     html+='<div class="storyline-hdr" id="slhdr-'+chainId+'"'
+       +' data-chain-id="'+chainId+'" data-chain="'+chainEncoded+'"'
+@@ -491,7 +489,7 @@ async function loadSavedList() {
+         +'📖 '+t('lesson.read_summary')+'<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
+         +'<button class="storyline-hdr-btn" data-speak="slsc-summary-body-'+chainId+'" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="'+t('lesson.read_aloud')+'">🔊</button>'
+         +'</div>'
+-        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byTopic[chain[0]]?.srcLang||'')+'">'
++        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byId[chain[0]]?.srcLang||'')+'">'
+         +'<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">'+_slSum2.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>'
+         +'</div></div>';
+     }
+@@ -521,9 +519,11 @@ function setLibFilter(lang){
+   loadSavedList();
+ }
+ 
+-async function loadSaved(topic) {
+-  const dec=decodeURIComponent(topic);
+-  const found=STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
++async function loadSaved(ref) {
++  const isId=/^tp_\\d+$/.test(String(ref));
++  const dec=decodeURIComponent(String(ref));
++  const found=isId ? STATIC_LESSONS.find(l=>l.id===ref)
++                   : STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
+   if(!found){ alert('Lesson not found.'); return; }
+   APP.lessonData=found; goLessonSet();
+ }
+diff --git a/index.html b/index.html
+index 7d8bb9a..f4b448a 100644
+--- a/index.html
++++ b/index.html
+@@ -2083,20 +2083,20 @@ function savedItemHtml(s, connector, hideStory) {
+   const sid = 'si-' + enc.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+   const hasPrior = !!s.continuedFrom;
+   return `<div class="saved-item-wrap">
+-    <div class="saved-item" onclick="loadSaved('${enc}')">
++    <div class="saved-item" onclick="loadSaved('${s.id||enc}')">
+       ${conn}<span class="saved-emoji">${s.topicEmoji||'📚'}</span>
+       <div class="saved-info">
+         <div class="saved-topic">${s.topic} ${diffBadge}</div>
+         <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
+       </div>
+       <div class="saved-actions" onclick="event.stopPropagation()">
+-        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
++        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.id||s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
+         ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
+         ${APP.info.canGenerate?`<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
+         <button class="ico-btn export" title="${t('lesson.export_title')}"
+           data-topic="${s.topic.replace(/"/g,'&quot;')}"
+           onclick="exportTopics([this.dataset.topic])">⬇</button>
+-        <button class="ico-btn" title="Delete" onclick="deleteSaved('${enc}')">🗑</button>
++        <button class="ico-btn" title="Delete" onclick="deleteSaved('${s.id||enc}')">🗑</button>
+       </div>
+     </div>
+     <div class="saved-item-story"${hideStory ? ' style="display:none"' : ''}>
+@@ -2237,9 +2237,8 @@ async function loadSavedList(){
+     list.innerHTML='<div class="lib-empty">'+emptyMsg+'</div>';
+     return;
+   }
+-  // ── Build display chains from v29 storylines[] or legacy continuedFrom ──
+-  const byTopic = Object.fromEntries(filtered.map(l => [l.topic, l]));
+-  // Also index by id for v29 chapter lookups
++  // ── Build display chains from v29 storylines[] or legacy continuedFromId ──
++  // Index visible topics by stable id for chain/chapter lookups.
+   const byId = Object.fromEntries(filtered.filter(l=>l.id).map(l => [l.id, l]));
+ 
+   let storylines, orphans;
+@@ -2247,37 +2246,38 @@ async function loadSavedList(){
+   const v29chains = slArr.filter(sl => sl.chapters && sl.chapters.length >= 1);
+ 
+   if (v29chains.length > 0) {
+-    // v29: resolve chapters to topic objects, filter to visible topics
+-    storylines = v29chains.map(sl => {
+-      return sl.chapters.map(cid => byId[cid]?.topic || null).filter(Boolean);
+-    }).filter(c => c.length > 1);
++    // v29: keep chapter IDS as the chain identity, filtered to visible topics
++    storylines = v29chains.map(sl =>
++      (sl.chapters||[]).filter(cid => byId[cid])
++    ).filter(c => c.length > 1);
+     const inChain = new Set(storylines.flat());
+-    orphans = filtered.filter(l => !inChain.has(l.topic));
++    orphans = filtered.filter(l => !inChain.has(l.id));
+   } else {
+-    // Legacy: reconstruct chains from continuedFrom
++    // Legacy: reconstruct chains from continuedFromId (id-based)
+     const childMap = {};
+     filtered.forEach(l => {
+-      if (l.continuedFrom && byTopic[l.continuedFrom])
+-        (childMap[l.continuedFrom] = childMap[l.continuedFrom] || []).push(l.topic);
++      const pid = l.continuedFromId;
++      if (pid && byId[pid])
++        (childMap[pid] = childMap[pid] || []).push(l.id);
+     });
+-    const hasParent = new Set(filtered.filter(l => l.continuedFrom && byTopic[l.continuedFrom]).map(l => l.topic));
+-    const roots = filtered.filter(l => !hasParent.has(l.topic));
++    const hasParent = new Set(filtered.filter(l => l.continuedFromId && byId[l.continuedFromId]).map(l => l.id));
++    const roots = filtered.filter(l => !hasParent.has(l.id));
+     const chains = [];
+-    function walk(topic, chain) {
+-      const extended = [...chain, topic];
+-      const kids = childMap[topic] || [];
++    function walk(id, chain) {
++      const extended = [...chain, id];
++      const kids = childMap[id] || [];
+       if (kids.length === 0) { chains.push(extended); return; }
+       kids.forEach(k => walk(k, extended));
+     }
+-    roots.forEach(r => walk(r.topic, []));
++    roots.forEach(r => walk(r.id, []));
+     storylines = chains.filter(c => c.length > 1);
+     const inChain = new Set(storylines.flat());
+-    orphans = filtered.filter(l => !inChain.has(l.topic));
++    orphans = filtered.filter(l => !inChain.has(l.id));
+   }
+ 
+   // Sort storylines by newest updatedAt among their members
+-  const newestOf = chain => chain.reduce((best, enc) => {
+-    const dt = byTopic[enc]?.updatedAt || byTopic[enc]?.generatedAt || '';
++  const newestOf = chain => chain.reduce((best, id) => {
++    const dt = byId[id]?.updatedAt || byId[id]?.generatedAt || '';
+     return dt > best ? dt : best;
+   }, '');
+   storylines.sort((a, b) => newestOf(b).localeCompare(newestOf(a)));
+@@ -2300,7 +2300,7 @@ async function loadSavedList(){
+     // Group storylines by language
+     let lastLang = null;
+     for (const chain of storylines) {
+-      const chainLang = byTopic[chain[0]]?.lang || 'it';
++      const chainLang = byId[chain[0]]?.lang || 'it';
+       if (chainLang !== lastLang) {
+         const L = LANGS[chainLang] || LANGS.it;
+         html += `<div class="orphans-hdr">${L.flag} ${L.name}</div>`;
+@@ -2313,14 +2313,15 @@ async function loadSavedList(){
+   }
+ 
+   function storylines_renderChain(chain) {
+-    const chainTopics = chain.map(t => byTopic[t]?.topic || t).filter(Boolean);
++    // chain is an array of topic IDS; resolve to current names for display + deck payload
++    const chainTopics = chain.map(id => byId[id]?.topic || id).filter(Boolean);
+     const chainTopicsJson = JSON.stringify(chainTopics);
+-    // Find matching v29 storyline for this chain
++    // Find matching v29 storyline by comparing chapter IDS directly (collision-safe)
+     const slArr2 = Array.isArray(APP.storylines) ? APP.storylines : [];
+-    const matchSl = slArr2.find(sl => {
+-      const slTopics = (sl.chapters||[]).map(cid => byId[cid]?.topic || null).filter(Boolean);
+-      return slTopics.length && slTopics.every((t,i) => t === chainTopics[i]) && slTopics.length === chainTopics.length;
+-    }) || null;
++    const matchSl = slArr2.find(sl =>
++      (sl.chapters||[]).length === chain.length &&
++      (sl.chapters||[]).every((c,i) => c === chain[i])
++    ) || null;
+     const chainId = matchSl?.id || ('c' + Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0)));
+     const slMeta = matchSl || slTitles[chainId] || slTitles['root:'+chainTopics[0]] || null;
+     const hasTitle = !!(slMeta && slMeta.title);
+@@ -2336,11 +2337,11 @@ async function loadSavedList(){
+           <span style="font-size:18px">${titleIcon}</span>
+           <div style="min-width:0">
+             <div class="storyline-title-text">${escHtml(titleText)}</div>
+-            <div class="storyline-title-sub">${(()=>{ const first=byTopic[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>
++            <div class="storyline-title-sub">${(()=>{ const first=byId[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge" style="font-size:10px">${sL.flag}→${tL.flag}</span> `; })()} ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</div>
+           </div>
+          </span>`
+       : `<span class="storyline-title" style="flex:1;cursor:pointer" onclick="event.stopPropagation();openStorylineScreen(this.closest('[data-chain-id]').dataset.chainId,this.closest('[data-chain]').dataset.chain)">
+-          ${(()=>{ const first=byTopic[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge">${sL.flag}→${tL.flag}</span>`; })()}
++          ${(()=>{ const first=byId[chain[0]]; const tL=LANGS[first?.lang||'it']||LANGS.it; const sL=LANGS[first?.srcLang||'en']||LANGS.en||{flag:'🇬🇧'}; return `<span class="lang-pair-badge">${sL.flag}→${tL.flag}</span>`; })()}
+           <span class="storyline-title-sub">${t('storyline.title')} · ${chain.length===1?t('storyline.chapters',{n:1}):t('storyline.chapters_plural',{n:chain.length})}${chainDate?' · '+chainDate:''}</span>
+          </span>`;
+     const genBtn = APP.info.canGenerate
+@@ -2375,7 +2376,7 @@ async function loadSavedList(){
+         `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="${t('lesson.read_aloud')}">🔊</button>` +
+         (APP.info.canGenerate ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
+         `</div>` +
+-        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" data-lang="${byTopic[chain[0]]?.srcLang||''}">` +
++        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" data-lang="${byId[chain[0]]?.srcLang||''}">` +
+         `<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
+         `</div></div>`;
+     }
+@@ -2428,34 +2429,41 @@ function repopulateContinueSelect(){
+     filtered.map(s=>{
+       const sL=LANGS[s.lang||'it']||LANGS.it;
+       const langTag=showAll&&(s.lang||'it')!==curLang?' ['+sL.name+']':'';
+-      return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+sL.flag+' '+s.topic+langTag+'</option>';
++      return '<option value="'+(s.id||s.topic.replace(/"/g,'&quot;'))+'">'+sL.flag+' '+s.topic+langTag+'</option>';
+     }).join('');
+   if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
+   _updateReinforcePriorVisibility();
+ }
+ 
+ 
+-async function loadSaved(topic){
++async function loadSaved(ref){
+   try{
+-    const r=await fetch('/api/lessons/load?topic='+topic);
++    // ref may be a stable tp_ id (preferred, collision-safe) or an (encoded)
++    // topic name (back-compat).
++    const isId=/^tp_\d+$/.test(String(ref));
++    const r=await fetch('/api/lessons/load?'+(isId?('id='+ref):('topic='+ref)));
+     if(!r.ok) throw new Error('Not found');
+     APP.lessonData=await r.json();
+     goLessonSet();
+   }catch(e){ alert('Could not load: '+e.message); }
+ }
+ 
+-async function deleteSaved(topic){
+-  if(!confirm('Delete "'+decodeURIComponent(topic)+'"?')) return;
+-  await fetch('/api/lessons/delete?topic='+topic,{method:'DELETE'});
++async function deleteSaved(ref){
++  const isId=/^tp_\d+$/.test(String(ref));
++  const item=(APP.savedList||[]).find(s=> isId ? s.id===ref : s.topic===decodeURIComponent(String(ref)));
++  const name=item?.topic || decodeURIComponent(String(ref));
++  if(!confirm('Delete "'+name+'"?')) return;
++  await fetch('/api/lessons/delete?'+(isId?('id='+ref):('topic='+ref)),{method:'DELETE'});
+   loadSavedList();
+ }
+ 
+ // Prefill the generation form to continue from a given topic
+-function continueFromLesson(topic, difficulty, storyLen){
++function continueFromLesson(ref, difficulty, storyLen){
+   if(!APP.info.canGenerate) return;
+   if(difficulty){ onDiffSelect(difficulty); }
+   if(storyLen){ onStoryLenSlider(storyLen); restoreStoryLenSlider(); }
+-  const src=(APP.savedList||[]).find(s=>s.topic===topic);
++  const isId=/^tp_\d+$/.test(String(ref));
++  const src=(APP.savedList||[]).find(s=> isId ? s.id===ref : s.topic===ref);
+   if(src?.lang) selectLang(src.lang);
+   if(src?.srcLang){ APP.srcLang=src.srcLang; saveSrcLang(); const ss=document.getElementById('src-lang-select'); if(ss) ss.value=src.srcLang; updateTranslationLangHint(); }
+   document.getElementById('topic-input').value='';
+@@ -2463,8 +2471,9 @@ function continueFromLesson(topic, difficulty, storyLen){
+   if(useStoryCb?.checked){ useStoryCb.checked=false; onUseStoryCb(); }
+   const contSel=document.getElementById('continue-select');
+   if(contSel){
+-    const match=[...contSel.options].find(o=>o.value===topic);
+-    if(match){ contSel.value=topic; }
++    const optVal=src?.id || (isId?ref:src?.topic);
++    const match=[...contSel.options].find(o=>o.value===optVal);
++    if(match){ contSel.value=optVal; }
+   }
+   goLanding();
+   setTimeout(()=>{
+@@ -2737,16 +2746,20 @@ function buildPath(){
+     contNav.className='cont-nav';
+     document.getElementById('ls-hdr').insertAdjacentElement('afterend',contNav);
+   }
+-  const continuedBy=(APP.savedList||[]).filter(s=>s.continuedFrom===d.topic);
++  const continuedBy=(APP.savedList||[]).filter(s=> s.continuedFromId ? s.continuedFromId===d.id : s.continuedFrom===d.topic);
+   const fromLinks=[];
+   const byLinks=[];
+-  if(d.continuedFrom){
+-    fromLinks.push(`<span class="cont-link cont-from" onclick="loadSaved('${encTopic(d.continuedFrom)}')">← ${d.continuedFrom}</span>`);
++  if(d.continuedFromId || d.continuedFrom){
++    // Resolve the parent's CURRENT name from its id (survives parent renames),
++    // falling back to the stored continuedFrom name. Navigate by id.
++    const parent=d.continuedFromId ? (APP.savedList||[]).find(s=>s.id===d.continuedFromId) : null;
++    const parentRef=d.continuedFromId || encTopic(d.continuedFrom);
++    const parentName=parent?.topic || d.continuedFrom || '…';
++    fromLinks.push(`<span class="cont-link cont-from" onclick="loadSaved('${parentRef}')">← ${parentName}</span>`);
+   }
+   if(continuedBy.length){
+     continuedBy.forEach(s=>{
+-      const enc=encTopic(s.topic);
+-      byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${enc}')">${s.topic} →</span>`);
++      byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${s.id||encTopic(s.topic)}')">${s.topic} →</span>`);
+     });
+   }
+   if(fromLinks.length||byLinks.length){
+diff --git a/server.js b/server.js
+index b818683..0033e89 100644
+--- a/server.js
++++ b/server.js
+@@ -147,6 +147,81 @@ let store = loadStore();
+   if (fixed > 0) { saveStore(store); console.log(`  Assigned IDs to ${fixed} lesson(s) missing them`); }
+ })();
+ 
++// ── v41 Topic-ID migration (idempotent, runs every boot) ──────────────
++// Stable tp_ IDs are the canonical reference for chain navigation. Topic
++// *names* are mutable (LLM renames, user edits), so continuedFrom name
++// pointers break. This migration:
++//   • assigns _topicId(name) to any topic lacking an id — assigned ONCE,
++//     then permanent (a later rename must NOT recompute it)
++//   • resolves each topic's continuedFrom NAME to the parent's STORED id,
++//     written to continuedFromId. The continuedFrom name is preserved for
++//     display/back-compat and as a resolution fallback for imports.
++//   • orphaned continuedFrom (no matching topic) → continuedFromId = null + warn
++// CRITICAL: resolves to the parent's stored .id, never _topicId(name) —
++// 16 existing chains point at renamed parents whose stored id differs from
++// the hash of their current name. It NEVER edits storylines[] (chapter
++// arrays already use stored ids and are authoritative, including forks).
++(function migrateTopicRefs() {
++  if (store.schemaVersion < 29) return;
++  const topics = store.topics || [];
++  let changed = 0, assignedIds = 0, orphaned = 0;
++
++  // 1. Ensure every topic has a permanent id (assign once, never recompute).
++  for (const t of topics) {
++    if (!t.id) { t.id = _topicId(t.topic); assignedIds++; changed++; }
++  }
++
++  // 2. name -> topics index. A name can map to several entries across
++  //    language pairs; prefer the parent in the same lang/srcLang as the child.
++  const byName = new Map();
++  for (const t of topics) {
++    const k = (t.topic || '').trim().toLowerCase();
++    if (!byName.has(k)) byName.set(k, []);
++    byName.get(k).push(t);
++  }
++  const idSet = new Set(topics.map(t => t.id));
++  const idToTopic = new Map(topics.map(t => [t.id, t]));
++  const resolveParent = (name, child) => {
++    const cands = byName.get((name || '').trim().toLowerCase()) || [];
++    if (cands.length <= 1) return cands[0] || null;
++    return cands.find(c => (c.lang||'') === (child.lang||'') &&
++                           (c.srcLang||'') === (child.srcLang||'')) || cands[0];
++  };
++
++  // 3. Resolve continuedFrom -> continuedFromId (the parent's STORED id).
++  for (const t of topics) {
++    const cf = t.continuedFrom;
++    let newId = null, orphan = false;
++    if (cf && typeof cf === 'string') {
++      if (cf.startsWith('tp_')) {
++        // Legacy: continuedFrom already holds an id. Adopt it; restore the
++        // human-readable name for display when we can map it back.
++        if (idSet.has(cf)) {
++          newId = cf;
++          const parent = idToTopic.get(cf);
++          if (parent && t.continuedFrom !== parent.topic) { t.continuedFrom = parent.topic; changed++; }
++        } else { orphan = true; }
++      } else {
++        const parent = resolveParent(cf, t);
++        if (parent) newId = parent.id; else orphan = true;
++      }
++    }
++    if (t.continuedFromId !== newId) {
++      t.continuedFromId = newId;
++      changed++;
++      if (orphan) {
++        orphaned++;
++        console.warn(`  ⚠ continuedFrom "${String(cf).slice(0,40)}" for "${t.topic}" → no matching topic, set null`);
++      }
++    }
++  }
++
++  if (changed > 0) {
++    saveStore(store);
++    console.log(`  Topic-ID migration: ${assignedIds} id(s) assigned, ${changed} field(s) updated${orphaned ? `, ${orphaned} orphan(s)` : ''}`);
++  }
++})();
++
+ // Remove orphaned flags (topic no longer exists, or content no longer in lesson)
+ (function cleanOrphanedFlags() {
+   const flags = store.flags || {};
+@@ -186,18 +261,19 @@ function findSavedById(id) {
+   return arr.find(l => l.id === id) || null;
+ }
+ 
+-// Walk the continuedFrom chain and collect all vocab/grammar/conjugation targets
+-// from all prior chapters, deduplicated. Returns { words, nouns, verbs }
+-function collectChainVocab(continuedFromTopic) {
+-  if (!continuedFromTopic) return { words: [], nouns: [], verbs: [] };
++// Walk the chain by continuedFromId and collect all vocab/grammar/conjugation
++// targets from all prior chapters, deduplicated. Returns { words, nouns, verbs }.
++// startRef is the PARENT reference: a tp_ id (preferred) or a topic name
++// (back-compat — resolved once, then traversal is id-based).
++function collectChainVocab(startRef) {
++  if (!startRef) return { words: [], nouns: [], verbs: [] };
+   const words = [], nouns = [], verbs = [];
+   const seen = new Set();
+-  let cur = continuedFromTopic;
++  // Resolve start: id walks via findSavedById; a name is resolved once.
++  let t = String(startRef).startsWith('tp_') ? findSavedById(startRef) : findSaved(startRef);
+   const visited = new Set();
+-  while (cur && !visited.has(cur)) {
+-    visited.add(cur);
+-    const t = findSaved(cur);
+-    if (!t) break;
++  while (t && !visited.has(t.id)) {
++    visited.add(t.id);
+     for (const ls of (t.lessons || [])) {
+       for (const v of (ls.vocab || [])) {
+         if (v.target && !seen.has(v.target.toLowerCase())) {
+@@ -220,7 +296,10 @@ function collectChainVocab(continuedFromTopic) {
+         }
+       }
+     }
+-    cur = t.continuedFrom || null;
++    // Step to parent by stored id (fall back to resolving a name for
++    // un-migrated/imported entries that lack continuedFromId).
++    const pid = t.continuedFromId || (t.continuedFrom ? (findSaved(t.continuedFrom)?.id || null) : null);
++    t = pid ? findSavedById(pid) : null;
+   }
+   return { words, nouns, verbs };
+ }
+@@ -1079,6 +1158,8 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
+   const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction } = userOpts;
+   srcLang = srcLang || 'en';
+   const userTopic = topic;
++  // Resolve the parent's STABLE id once (chains reference ids, not names).
++  const continuedFromId = continuedFrom ? (findSaved(continuedFrom)?.id || null) : null;
+   const genStart = Date.now();
+   let totalPromptTokens = 0, totalCompletionTokens = 0;
+   const lessonTokenStats = [];
+@@ -1186,6 +1267,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
+       ...(userStory        ? { userStory }         : {}),
+       ...(userDialect      ? { userDialect }       : {}),
+       ...(continuedFrom    ? { continuedFrom }     : {}),
++      ...(continuedFromId  ? { continuedFromId }   : {}),
+       ...(storyStyle       ? { storyStyle }        : {}),
+       lessons: [],
+     });
+@@ -1198,7 +1280,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
+ 
+   const _vocabMode = vocabMode || (reinforcePrior ? 'reinforce' : 'neutral');
+   const chainVocab = (_vocabMode !== 'neutral' && continuedFrom)
+-    ? collectChainVocab(continuedFrom)
++    ? collectChainVocab(findSaved(continuedFrom)?.id || continuedFrom)
+     : { words: [], nouns: [], verbs: [] };
+   const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story };
+ 
+@@ -1282,6 +1364,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
+     ...(userTranslation  ? { userTranslation }   : {}),
+     ...(userDialect      ? { userDialect }       : {}),
+     ...(continuedFrom    ? { continuedFrom }     : {}),
++    ...(continuedFromId  ? { continuedFromId }   : {}),
+     ...(storyStyle       ? { storyStyle }        : {}),
+     ...(lessonFormat && !['standard'].includes(lessonFormat) ? { lessonFormat } : {}),
+     lessons,
+@@ -1349,43 +1432,55 @@ function _chainId(topicIds) {
+ }
+ function _syncStorylineForTopic(topicName, continuedFromTopic) {
+   if (store.schemaVersion < 29) return;
+-  const tid = _topicId(topicName);
+-  // Ensure the topic has an id
++  // Use the topic's STORED id. A renamed topic's stored id differs from
++  // _topicId(currentName); hashing the name here would miss the storyline
++  // that actually contains it.
+   const topicObj = findSaved(topicName);
++  const tid = topicObj?.id || _topicId(topicName);
+   if (topicObj && !topicObj.id) { topicObj.id = tid; }
+ 
+-  // Build the full chain by walking continuedFrom backwards from this topic
+-  const chain = [topicName];
+-  let cur = topicName;
++  // Resolve a topic's parent id: prefer the stored continuedFromId, fall back
++  // to resolving a continuedFrom name (un-migrated/imported entries).
++  const parentIdOf = t => {
++    if (!t) return null;
++    if (t.continuedFromId) return t.continuedFromId;
++    if (t.continuedFrom)   return findSaved(t.continuedFrom)?.id || null;
++    return null;
++  };
++
++  // Build the full chain (ids) by walking continuedFromId backwards.
++  const chainIds = [tid];
++  let curId = tid;
+   for (let i = 0; i < 50; i++) {
+-    const t = findSaved(cur);
+-    if (!t || !t.continuedFrom) break;
+-    chain.unshift(t.continuedFrom);
+-    cur = t.continuedFrom;
++    const t = findSavedById(curId);
++    const pid = parentIdOf(t);
++    if (!pid || chainIds.includes(pid)) break;
++    chainIds.unshift(pid);
++    curId = pid;
+   }
+-  // Walk forward from this topic picking up continuations.
+-  // Stop if we hit a topic that already belongs to a DIFFERENT storyline
+-  // (that means we forked, not extended).
++  // Walk forward picking up continuations. Stop at forks, pre-existing
++  // branches (a topic already in another storyline), or cycles.
+   const allSl = getStorylines();
+-  const topicIdOf = t => { const tp = findSaved(t); return tp?.id || _topicId(t); };
+-  // Build set of topic ids already in other storylines (not containing the current topic)
+   const otherSlTopicIds = new Set(
+-    allSl.filter(s => !s.chapters.includes(tid))
+-         .flatMap(s => s.chapters)
++    allSl.filter(s => !s.chapters.includes(tid)).flatMap(s => s.chapters)
+   );
+-  cur = topicName;
++  curId = tid;
+   for (let i = 0; i < 50; i++) {
+-    const candidates = store.topics.filter(t => t.continuedFrom === cur);
++    const candidates = store.topics.filter(t => parentIdOf(t) === curId);
+     // If multiple topics continue from cur — it's a fork; stop here
+     if (candidates.length !== 1) break;
+     const next = candidates[0];
+-    // If next already belongs to another storyline — it's a pre-existing branch; stop
+-    if (otherSlTopicIds.has(topicIdOf(next.topic))) break;
+-    chain.push(next.topic);
+-    cur = next.topic;
++    if (!next.id) next.id = _topicId(next.topic);
++    // If next already belongs to another storyline — pre-existing branch; stop
++    if (otherSlTopicIds.has(next.id)) break;
++    if (chainIds.includes(next.id)) break; // cycle guard
++    chainIds.push(next.id);
++    curId = next.id;
+   }
+ 
+-  const chapterIds = chain.map(t => topicIdOf(t));
++  const chapterIds = chainIds;
++  // Names for title/display, derived from ids so they reflect current names.
++  const chain = chapterIds.map(id => findSavedById(id)?.topic ?? topicName);
+   const slId = _chainId(chapterIds);
+ 
+   // Find existing storyline that contains this topic
+@@ -1510,6 +1605,7 @@ http.createServer(async (req, res) => {
+         difficulty: l.difficulty || 2,
+         storyLen: l.storyLen || 300,
+         continuedFrom: l.continuedFrom || null,
++        continuedFromId: l.continuedFromId || null,
+         generatedAt: l.generatedAt,
+         updatedAt:   l.updatedAt || l.generatedAt,
+         lessonCount: l.lessons?.length || 0,
+@@ -1518,9 +1614,11 @@ http.createServer(async (req, res) => {
+       return json(res, 200, list);
+     }
+     if (M === 'GET' && url.pathname === '/api/lessons/load') {
+-      const t = url.searchParams.get('topic');
+-      if (!t) return json(res, 400, { error: 'Missing topic' });
+-      const s = findSaved(t);
++      const id = url.searchParams.get('id');
++      const t  = url.searchParams.get('topic');
++      if (!id && !t) return json(res, 400, { error: 'Missing id or topic' });
++      // Prefer stable id; fall back to name for backward compatibility.
++      const s = id ? findSavedById(id) : findSaved(t);
+       if (!s) return json(res, 404, { error: 'Not found' });
+       return json(res, 200, s);
+     }
+@@ -1555,35 +1653,38 @@ http.createServer(async (req, res) => {
+         : arr.filter(l => l.topic.toLowerCase() !== oldLower && l.topic.toLowerCase() !== newLower);
+       filtered.unshift(saved);
+       if (store.schemaVersion >= 29) store.topics = filtered; else store.lessons = filtered;
+-      // Cascade rename into continuedFrom pointers
+-      const curArr = store.schemaVersion >= 29 ? store.topics : store.lessons;
+-      curArr.forEach(l => {
+-        if (l.continuedFrom && l.continuedFrom.toLowerCase() === oldLower)
+-          l.continuedFrom = saved.topic;
+-      });
++      // No continuedFrom cascade needed: chains reference the parent's stable id
++      // (continuedFromId), which is unchanged by a rename. The continuedFrom name
++      // may now be stale, but it's display-only and the client resolves the current
++      // parent name from continuedFromId.
+       saveStore(store);
+       console.log(`  Renamed: "${oldTopic}" → "${saved.topic}"`);
+       return json(res, 200, { ok: true, topic: saved.topic, topicEmoji: saved.topicEmoji });
+     }
+     if (M === 'DELETE' && url.pathname === '/api/lessons/delete') {
+-      const t = url.searchParams.get('topic');
+-      if (!t) return json(res, 400, { error: 'Missing topic' });
++      const id = url.searchParams.get('id');
++      const t  = url.searchParams.get('topic');
++      if (!id && !t) return json(res, 400, { error: 'Missing id or topic' });
+       const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons || []);
+-      const toDelete = arr.find(l => l.topic.toLowerCase() === t.trim().toLowerCase());
+-      const deleteId = toDelete?.id;
++      // Prefer stable id; fall back to name. Match by reference so a name
++      // collision can never delete the wrong topic.
++      const toDelete = id ? arr.find(l => l.id === id)
++                          : arr.find(l => l.topic.toLowerCase() === t.trim().toLowerCase());
++      if (!toDelete) return json(res, 200, { ok: true }); // idempotent: nothing to delete
++      const deleteId = toDelete.id;
++      const delName  = toDelete.topic; // canonical name for slug-based flag cleanup
+       if (store.schemaVersion >= 29) {
+-        store.topics = store.topics.filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
++        store.topics = store.topics.filter(l => l !== toDelete);
+         // Remove from storyline chapters, remove empty storylines
+         store.storylines = store.storylines.map(sl => ({
+           ...sl, chapters: sl.chapters.filter(c => c !== deleteId)
+         })).filter(sl => sl.chapters.length > 0);
+       } else {
+-        // This branch only reached in legacy mode
+-        store.lessons = (store.lessons||[]).filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
++        store.lessons = (store.lessons||[]).filter(l => l !== toDelete);
+       }
+       // Delete all flags associated with this topic (by slug and by id)
+       const flags = getFlags();
+-      const delSlug = topicSlug(t.trim()) + ':';
++      const delSlug = topicSlug(delName) + ':';
+       const delId   = deleteId ? deleteId + ':' : null;
+       let flagsDeleted = 0;
+       Object.keys(flags).forEach(k => {
+@@ -1593,7 +1694,7 @@ http.createServer(async (req, res) => {
+       });
+       if (flagsDeleted > 0) {
+         setFlags(flags);
+-        console.log(`  Deleted ${flagsDeleted} flag(s) for "${t.trim()}"`);
++        console.log(`  Deleted ${flagsDeleted} flag(s) for "${delName}"`);
+       }
+       saveStore(store);
+       return json(res, 200, { ok: true });
+@@ -1708,8 +1809,13 @@ http.createServer(async (req, res) => {
+       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
+       const { topic, lang, srcLang, difficulty, lessonFormat, storyLen, continuedFrom, forceRegenerate,
+               userStory, userTranslation, userDialect, storyStyle, reinforcePrior, vocabMode, useFullChain, userStoryLang, mathInstruction } = body;
++      // continuedFrom may arrive as a stable tp_ id (from the continue-select)
++      // or a topic name (other paths). Normalize to the canonical topic name so
++      // everything downstream is unaffected by which the client sent.
++      const _contParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
++      const continuedFromName = _contParent ? _contParent.topic : null;
+       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
+-        : (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
++        : continuedFromName ? continuedFromName : null;
+       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
+       if (topic !== resolvedTopic) body.topic = resolvedTopic;
+       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
+@@ -1719,7 +1825,7 @@ http.createServer(async (req, res) => {
+       // contFrom: used for storyline chain tracking AND story continuation context.
+       // When userStory is provided we still track the chain, but don't pass contFrom
+       // to generate() for story context (user supplied their own text).
+-      const contFrom = (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
++      const contFrom = continuedFromName;
+       // When user provides a story AND continues from a prior chapter,
+       // pass both the previous story AND the new story as context.
+       const contFromForStory = contFrom && !userStory ? contFrom : null;
+@@ -1881,8 +1987,8 @@ http.createServer(async (req, res) => {
+ 
+       const doGenLesson = async () => {
+         let result;
+-        const chainVocab = (_addVocabMode !== 'neutral' && saved.continuedFrom)
+-          ? collectChainVocab(saved.continuedFrom)
++        const chainVocab = (_addVocabMode !== 'neutral' && (saved.continuedFromId || saved.continuedFrom))
++          ? collectChainVocab(saved.continuedFromId || saved.continuedFrom)
+           : { words: [], nouns: [], verbs: [] };
+         if (chainVocab.words.length)
+           console.log(`    Chain vocab (${_addVocabMode}): ${chainVocab.words.slice(0,15).map(v=>v.target).join(', ')}`);

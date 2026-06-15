@@ -189,14 +189,15 @@ function repopulateContinueSelect(){
     filtered.map(s=>{
       const tL=LANGS[s.lang||'it']||LANGS.it||{flag:'',name:s.lang||'it'};
       const langTag=showAll&&(s.lang||'it')!==curLang?' ['+tL.name+']':'';
-      return '<option value="'+s.topic.replace(/"/g,'&quot;')+'">'+tL.flag+' '+s.topic+langTag+'</option>';
+      return '<option value="'+(s.id||s.topic.replace(/"/g,'&quot;'))+'">'+tL.flag+' '+s.topic+langTag+'</option>';
     }).join('');
   if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
 }
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false };
+  APP.info = { backend: 'none', canGenerate: false, version: 'v43' };
+  { const _v=document.getElementById('app-version'); if(_v) _v.textContent='v43'; }
   APP._teacherMode = false;
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -265,7 +266,7 @@ function renderPill() {
     // If current selection has no lessons, switch to first available
     if(sel.value !== 'all' && !presentLangs.has(sel.value)){
       const first=[...presentLangs][0];
-      if(first){ sel.value=first; APP.lang=first; saveLang(); }
+      if(first){ sel.value=first; APP.lang=first; APP.formLang=first; saveLang(); }
     }
   }
   // In static mode the From/To selectors act as library filters, not generation controls.
@@ -314,7 +315,7 @@ function itemHtml(s, connector) {
   const tL=LANGS[s.lang||'it']||LANGS.it;
   const srcL=LANGS[s.srcLang||'en']||{flag:'🇬🇧',name:'English'};
   return \`<div class="saved-item-wrap">
-    <div class="saved-item" onclick="loadSaved('\${enc}')">
+    <div class="saved-item" onclick="loadSaved('\${s.id||enc}')">
       \${conn}<span class="saved-emoji"> \${s.topicEmoji||'📚'}</span>
       <div class="saved-info">
         <div class="saved-topic">\${s.topic} \${diffBadge}</div>
@@ -364,16 +365,18 @@ async function loadSavedList() {
     if (!(sl.tags&&sl.tags.length)) return;
     (sl.chapters||[]).forEach(function(topicId) {
       const s = _byId2[topicId]; if (!s) return;
+      const key = s.topic+'|'+(s.lang||'')+'|'+(s.srcLang||'');
       sl.tags.forEach(function(tag) {
-        if (!_topicTags.has(s.topic)) _topicTags.set(s.topic, new Set());
-        _topicTags.get(s.topic).add(tag);
+        if (!_topicTags.has(key)) _topicTags.set(key, new Set());
+        _topicTags.get(key).add(tag);
       });
     });
   });
   const filtered=saved.filter(s=>{
     if(APP.libFilter!=='all' && (s.lang||'it')!==APP.libFilter) return false;
     if(APP.libSrcFilter!=='all' && (s.srcLang||'en')!==APP.libSrcFilter) return false;
-    if(APP.libTagFilter && !(_topicTags.get(s.topic)||new Set()).has(APP.libTagFilter)) return false;
+    const _tkey = s.topic+'|'+(s.lang||'')+'|'+(s.srcLang||'');
+    if(APP.libTagFilter && !(_topicTags.get(_tkey)||new Set()).has(APP.libTagFilter)) return false;
     return true;
   });
   _renderTagFilterBar();
@@ -385,47 +388,45 @@ async function loadSavedList() {
     return;
   }
 
-  // Build display chains — v29: use STATIC_STORYLINES array; legacy: continuedFrom
-  const byTopic=Object.fromEntries(filtered.map(l=>[l.topic,l]));
-  // byIdAll: all saved lessons for chapter ID resolution (includes imported lessons)
-  // byId: only filtered lessons for visible rendering
-  const byIdAll=Object.fromEntries(saved.filter(l=>l.id).map(l=>[l.id,l]));
+  // Build display chains — v29: use STATIC_STORYLINES (id chapters); legacy: continuedFromId
+  // byId: visible (filtered) topics indexed by stable id
   const byId=Object.fromEntries(filtered.filter(l=>l.id).map(l=>[l.id,l]));
   let storylines, orphans;
   const _slArr=Array.isArray(STATIC_STORYLINES)?STATIC_STORYLINES:[];
   const v29chains=_slArr.filter(sl=>sl.chapters&&sl.chapters.length>=1);
   if(v29chains.length>0){
-    // Only include chapters whose topics are in byTopic (currently visible/filtered)
-    storylines=v29chains.map(sl=>sl.chapters.map(cid=>byIdAll[cid]?.topic||null).filter(t=>t&&byTopic[t])).filter(c=>c.length>=1);
+    // Keep chapter IDS for visible (filtered) topics only
+    storylines=v29chains.map(sl=>(sl.chapters||[]).filter(cid=>byId[cid])).filter(c=>c.length>=1);
     const inChain=new Set(storylines.flat());
-    orphans=filtered.filter(l=>!inChain.has(l.topic));
+    orphans=filtered.filter(l=>!inChain.has(l.id));
   } else {
     const childMap={};
     filtered.forEach(l=>{
-      if(l.continuedFrom&&byTopic[l.continuedFrom])
-        (childMap[l.continuedFrom]=childMap[l.continuedFrom]||[]).push(l.topic);
+      const pid=l.continuedFromId;
+      if(pid&&byId[pid])
+        (childMap[pid]=childMap[pid]||[]).push(l.id);
     });
-    const hasParent=new Set(filtered.filter(l=>l.continuedFrom&&byTopic[l.continuedFrom]).map(l=>l.topic));
+    const hasParent=new Set(filtered.filter(l=>l.continuedFromId&&byId[l.continuedFromId]).map(l=>l.id));
     const chains=[];
-    function walk(topic,chain){
-      const ext=[...chain,topic],kids=childMap[topic]||[];
+    function walk(id,chain){
+      const ext=[...chain,id],kids=childMap[id]||[];
       if(!kids.length){chains.push(ext);return;}
       kids.forEach(k=>walk(k,ext));
     }
-    filtered.filter(l=>!hasParent.has(l.topic)).forEach(r=>walk(r.topic,[]));
+    filtered.filter(l=>!hasParent.has(l.id)).forEach(r=>walk(r.id,[]));
     storylines=chains.filter(c=>c.length>1);
     const inChain=new Set(storylines.flat());
-    orphans=filtered.filter(l=>!inChain.has(l.topic));
+    orphans=filtered.filter(l=>!inChain.has(l.id));
   }
 
 
 
-  const newestOf=chain=>chain.reduce((b,t)=>{const d=byTopic[t]?.updatedAt||byTopic[t]?.generatedAt||'';return d>b?d:b;},'');
+  const newestOf=chain=>chain.reduce((b,id)=>{const d=byId[id]?.updatedAt||byId[id]?.generatedAt||'';return d>b?d:b;},'');
   storylines.sort((a,b)=>newestOf(b).localeCompare(newestOf(a)));
   const showAllLangs = APP.libFilter==='all';
   // When showing all languages, group storylines by language
   if(showAllLangs) storylines.sort((a,b)=>{
-    const la=byTopic[a[0]]?.lang||'it', lb=byTopic[b[0]]?.lang||'it';
+    const la=byId[a[0]]?.lang||'it', lb=byId[b[0]]?.lang||'it';
     return la.localeCompare(lb) || newestOf(b).localeCompare(newestOf(a));
   });
 
@@ -436,22 +437,22 @@ async function loadSavedList() {
   let html='', _lastLang=null;
   for(const chain of storylines){
     if(showAllLangs){
-      const cl=byTopic[chain[0]]?.lang||'it';
+      const cl=byId[chain[0]]?.lang||'it';
       if(cl!==_lastLang){
         const L=LANGS[cl]||LANGS.it;
         html+='<div class="orphans-hdr">'+L.flag+' '+L.name+'</div>';
         _lastLang=cl;
       }
     }
-    const chainTopics=chain.map(t=>byTopic[t]?.topic).filter(Boolean);
+    const chainTopics=chain.map(id=>byId[id]?.topic).filter(Boolean);
     const chainTopicsJson=JSON.stringify(chainTopics);
     const chainEncoded=encodeURIComponent(chainTopicsJson);
     const legacyChainId='c'+Math.abs(chainTopicsJson.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-    // v29: find storyline by matching chain topics via id; legacy: by hash
-    const matchSl2=_slArr2.find(sl=>{
-      const slt=(sl.chapters||[]).map(cid=>byId[cid]?.topic||null).filter(Boolean);
-      return slt.length&&slt.every((t,i)=>t===chainTopics[i])&&slt.length===chainTopics.length;
-    });
+    // v29: find storyline by matching chapter IDS directly; legacy: by hash
+    const matchSl2=_slArr2.find(sl=>
+      (sl.chapters||[]).length===chain.length &&
+      (sl.chapters||[]).every((c,i)=>c===chain[i])
+    );
     const resolvedSlId=matchSl2?.id||legacyChainId;
     const chainId=resolvedSlId;
     const slMeta=matchSl2||slTitles[chainId]||slTitles['root:'+chainTopics[0]]||null;
@@ -463,8 +464,8 @@ async function loadSavedList() {
     const chainNewest=newestOf(chain);
     const chainDate=chainNewest?new Date(chainNewest).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'';
     const hdrTitle=hasTitle
-      ? '<span class="storyline-title" style="cursor:pointer;flex:1"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
-      : '<span class="storyline-title" style="flex:1">'+(()=>{const first=byTopic[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
+      ? '<span class="storyline-title" style="cursor:pointer;flex:1"><span style="font-size:18px">'+titleIcon+'</span><div style="min-width:0"><div class="storyline-title-text">'+esc(titleText)+'</div><div class="storyline-title-sub">'+(()=>{const first=byId[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge" style="font-size:10px">'+sL2.flag+'→'+tL2.flag+'</span> ';})()+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</div></div></span>'
+      : '<span class="storyline-title" style="flex:1">'+(()=>{const first=byId[chain[0]];const tL2=LANGS[first?.lang||'it']||LANGS.it;const sL2=LANGS[first?.srcLang||'en']||{flag:"🇬🇧"};return '<span class="lang-pair-badge">'+sL2.flag+'→'+tL2.flag+'</span>';})()+'<span class="storyline-title-sub">Story line · '+chain.length+' chapter'+(chain.length!==1?'s':'')+(chainDate?' · '+chainDate:'')+'</span></span>';
     html+='<div class="storyline-group" id="slgroup-'+chainId+'">';
     html+='<div class="storyline-hdr" id="slhdr-'+chainId+'"'
       +' data-chain-id="'+chainId+'" data-chain="'+chainEncoded+'"'
@@ -489,7 +490,7 @@ async function loadSavedList() {
         +'📖 '+t('lesson.read_summary')+'<span class="storyline-story-arrow" id="slsc-summary-arrow-'+chainId+'">▼</span></button>'
         +'<button class="storyline-hdr-btn" data-speak="slsc-summary-body-'+chainId+'" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="'+t('lesson.read_aloud')+'">🔊</button>'
         +'</div>'
-        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byTopic[chain[0]]?.srcLang||'')+'">'
+        +'<div class="storyline-story-body" id="slsc-summary-body-'+chainId+'" data-lang="'+(byId[chain[0]]?.srcLang||'')+'">'
         +'<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">'+_slSum2.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</p>'
         +'</div></div>';
     }
@@ -519,9 +520,11 @@ function setLibFilter(lang){
   loadSavedList();
 }
 
-async function loadSaved(topic) {
-  const dec=decodeURIComponent(topic);
-  const found=STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
+async function loadSaved(ref) {
+  const isId=/^tp_\\d+$/.test(String(ref));
+  const dec=decodeURIComponent(String(ref));
+  const found=isId ? STATIC_LESSONS.find(l=>l.id===ref)
+                   : STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
   if(!found){ alert('Lesson not found.'); return; }
   APP.lessonData=found; goLessonSet();
 }
@@ -532,6 +535,9 @@ function setTopic(t){ document.getElementById('topic-input').value=t; }
 // Stubs injected AFTER part2 so they override engine versions
 const staticOverrides = [
   '// ── Disabled in static mode ──────────────────────────────────────',
+  '// No server in static: the export format menu would have no /api/export to call,',
+  '// so all export buttons download JSON directly (client-side).',
+  'function openExportMenu(ev, topics){ if(ev&&ev.stopPropagation)ev.stopPropagation(); exportTopics(topics); }',
   'async function syncFlagsFromServer(){}',
   'async function pushFlagToServer(){}',
   'async function deleteSaved(){}',
@@ -541,11 +547,12 @@ const staticOverrides = [
   'async function submitRating(){}',
   '// In static mode, UI strings are baked in — no translation needed',
   'function triggerUITranslation(){}',
-  '// Static: globe resets filter; any other value sets filter + lang',
-  'function selectSrcLang(code){',
+  '// Static: globe resets filter; any other value sets filter + lang. fromForm=false (footer) updates render context only.',
+  'function selectSrcLang(code, fromForm){',
+  '  if(fromForm===undefined) fromForm=true;',
   '  if(code==="all"){ APP.libSrcFilter="all"; const sel=document.getElementById("src-lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
-  '  APP.srcLang=code; saveSrcLang(); APP.libSrcFilter=code;',
-  '  const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code;',
+  '  APP.srcLang=code;',
+  '  if(fromForm){ APP.formSrcLang=code; saveSrcLang(); APP.libSrcFilter=code; const sel=document.getElementById("src-lang-select"); if(sel&&sel.value!==code) sel.value=code; }',
   '  ["src-lang-select-footer-ls","src-lang-select-footer-sl"].forEach(function(id){var f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});',
   '  loadUIStrings(code).then(function(){',
   '    loadSavedList();',
@@ -556,10 +563,12 @@ const staticOverrides = [
   '    }',
   '  });',
   '}',
-  'function selectLang(code, silent){',
+  'function selectLang(code, silent, fromForm){',
+  '  if(fromForm===undefined) fromForm=true;',
   '  if(code==="all"){ APP.libFilter="all"; const sel=document.getElementById("lang-select"); if(sel) sel.value="all"; loadSavedList(); return; }',
-  '  APP.lang=code; APP.libFilter=code; saveLang();',
-  '  const sel=document.getElementById("lang-select"); if(sel&&sel.value!==code) sel.value=code;',
+  '  APP.lang=code;',
+  '  if(fromForm){ APP.formLang=code; APP.libFilter=code; saveLang(); }',
+  '  const sel=document.getElementById("lang-select"); if(fromForm&&sel&&sel.value!==code) sel.value=code;',
   '  const tb=document.getElementById("lang-tutor-banner");',
   '  if(tb){ if(code==="de"){ tb.innerHTML="🎓 Try <a href=\\"https://chilperic.github.io/Deutsch-wipa-2026/\\" target=\\"_blank\\" style=\\"color:#1a4fa0;font-weight:800\\">Chilperic\'s German focus tutor</a>"; tb.style.display=""; } else tb.style.display="none"; }',
   '  if(!silent) loadSavedList();',
@@ -585,7 +594,7 @@ const staticOverrides = [
   '      if(!l.topic||!Array.isArray(l.lessons)) continue;',
   '      // Exclude hidden ai_error_hunt lessons from static',
   '      const publicL = {...l, lessons: (l.lessons||[]).filter(ls => !(ls._hidden && ls.type===\'ai_error_hunt\'))};',
-  '      const idx=STATIC_LESSONS.findIndex(x=>x.topic===publicL.topic);',
+  '      const idx=STATIC_LESSONS.findIndex(x=>x.topic===publicL.topic&&x.lang===publicL.lang&&x.srcLang===publicL.srcLang);',
   '      if(idx>=0){ STATIC_LESSONS[idx]=publicL; updated++; }',
   '      else{ STATIC_LESSONS.unshift(publicL); added++; }',
   '    }',
@@ -596,9 +605,13 @@ const staticOverrides = [
   '        if(_existIdx>=0){ if((sl.chapters||[]).length>(STATIC_STORYLINES[_existIdx].chapters||[]).length) STATIC_STORYLINES[_existIdx]=sl; }',
   '        else STATIC_STORYLINES.push(sl);',
   '      });',
+  '      // Auto-select tag if import contains exactly one new tag not already present',
+  '      const _importedTags = new Set(data.storylines.flatMap(sl=>sl.tags||[]));',
+  '      const _existingTags = new Set(STATIC_STORYLINES.flatMap(sl=>sl.tags||[]));',
+  '      const _newTags = [..._importedTags].filter(t=>_existingTags.has(t));',
+  '      if(_newTags.length===1 && !APP.libTagFilter){ APP.libTagFilter=_newTags[0]; }',
   '    }',
   '    const _importLang = incoming.find(l=>l.lang)?.lang;',
-  '    if(_importLang){ APP.libFilter=_importLang; const _ls=document.getElementById("lang-select"); if(_ls) _ls.value=_importLang; }',
   '    loadSavedList();',
   '    showToast("✓ Session import: +"+added+" new, ~"+updated+" updated (resets on refresh)");',
   '  };',

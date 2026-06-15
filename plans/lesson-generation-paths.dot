@@ -1,0 +1,119 @@
+digraph LessonGeneration {
+  rankdir=LR;
+  graph [fontname="Helvetica", fontsize=11, labelloc=t,
+         label="Dreizunge — lesson generation paths (v42)"];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#eef4ff", color="#555577"];
+  edge  [fontname="Helvetica", fontsize=9, color="#444455"];
+
+  /* ── Entry points ─────────────────────────────── */
+  subgraph cluster_entry {
+    label="Entry points"; style="rounded,dashed"; color="#8888aa"; fontcolor="#555577";
+    web_form   [label="Web: generation form", fillcolor="#e7ffe7"];
+    web_add    [label="Web: ➕ add-lesson\n(chapter/lesson screens)", fillcolor="#e7ffe7"];
+    web_book   [label="Web: PDF "book"\n(generate from pasted text)", fillcolor="#e7ffe7"];
+    gen_script [label="generate-lessons.js\n(batch, fresh topics)", fillcolor="#fff3d6"];
+    tr_script  [label="translate-lessons.js\n(batch, from a template)", fillcolor="#fff3d6"];
+  }
+
+  /* ── HTTP endpoints ───────────────────────────── */
+  subgraph cluster_api {
+    label="HTTP endpoints (server.js)"; style="rounded,dashed"; color="#8888aa"; fontcolor="#555577";
+    api_gen   [label="POST /api/generate\n(async job)", fillcolor="#dde8ff"];
+    api_book  [label="POST /api/generate-book\n(async book job)", fillcolor="#dde8ff"];
+    api_add   [label="POST /api/lessons/add-lesson\n(async job)", fillcolor="#dde8ff"];
+  }
+
+  tr_pre [label="translate story\n(translategemma via Ollama)", shape=note, fillcolor="#ffffff"];
+
+  web_form   -> api_gen;
+  gen_script -> api_gen;
+  tr_script  -> tr_pre -> api_gen [label="userStory = translated story"];
+  web_book   -> api_book;
+  web_add    -> api_add;
+
+  /* ── Core generate() ──────────────────────────── */
+  subgraph cluster_core {
+    label="generate(topic, lang, srcLang, ..., userOpts)"; style="rounded"; color="#777799"; fontcolor="#555577";
+    gen     [label="generate()", shape=box, fillcolor="#cfe0ff", style="rounded,filled,bold"];
+
+    story_q [label="userStory provided?", shape=diamond, fillcolor="#fffbe6"];
+    use_story  [label="use it as story\n(own text / translation / book chunk)", fillcolor="#ffffff"];
+    gen_story  [label="generate story\nPROMPTS.story (+ prev chapter)", fillcolor="#ffffff"];
+
+    meta    [label="meta: topic + emoji\nPROMPTS.meta, then\nmetaTranslation → name in source lang", fillcolor="#ffffff"];
+
+    dispatch [label="dispatch by lessonFormat", shape=diamond, fillcolor="#fffbe6"];
+  }
+
+  api_gen  -> gen;
+  api_book -> gen [label="per text chunk\n(userStory = chunk)"];
+  gen -> story_q;
+  story_q -> use_story [label="yes"];
+  story_q -> gen_story [label="no"];
+  use_story -> meta;
+  gen_story -> meta;
+  meta -> dispatch;
+
+  /* ── Lesson generators ────────────────────────── */
+  subgraph cluster_gens {
+    label="lesson generators  →  PROMPTS.<section>  →  LLM"; style="rounded,dashed"; color="#8888aa"; fontcolor="#555577";
+    g_vocab [label="generateOneLesson\nvocab + sentences\n(PROMPTS.vocab / vocabFromText)"];
+    g_gram  [label="generateGrammar\n(PROMPTS.grammar)"];
+    g_conj  [label="generateConjugation\n(PROMPTS.conjugation)"];
+    g_syn   [label="generateSynonyms\n(PROMPTS.synonyms)"];
+    g_eh    [label="generateErrorHunt\n(PROMPTS.errorHunt)"];
+    g_math  [label="generateMath (no LLM)\nor generateMathLLM\n(PROMPTS.math)"];
+  }
+
+  dispatch -> g_vocab [label="standard"];
+  dispatch -> g_gram  [label="grammar"];
+  dispatch -> g_conj  [label="conjugation"];
+  dispatch -> g_syn   [label="synonyms"];
+  dispatch -> g_eh    [label="error_hunt"];
+  dispatch -> g_math  [label="math"];
+  dispatch -> g_vocab [label="all_types", color="#aa5555", fontcolor="#aa5555"];
+  dispatch -> g_gram  [label="all_types", color="#aa5555", fontcolor="#aa5555", style=dashed];
+  dispatch -> g_conj  [label="all_types", color="#aa5555", fontcolor="#aa5555", style=dashed];
+  dispatch -> g_eh    [label="all_types", color="#aa5555", fontcolor="#aa5555", style=dashed];
+
+  /* add-lesson calls a single generator directly (no story step / no meta rename) */
+  api_add -> g_vocab [label="fmt=standard", style=dotted, color="#339933"];
+  api_add -> g_gram  [label="grammar",      style=dotted, color="#339933"];
+  api_add -> g_conj  [label="conjugation",  style=dotted, color="#339933"];
+  api_add -> g_syn   [label="synonyms",     style=dotted, color="#339933"];
+  api_add -> g_eh    [label="error_hunt",   style=dotted, color="#339933"];
+  api_add -> g_math  [label="math",         style=dotted, color="#339933"];
+
+  /* chain vocab influence */
+  chain [label="collectChainVocab\n(reinforce / extend from\nprior chapters)", shape=note, fillcolor="#f3e8ff"];
+  chain -> g_vocab [style=dashed, color="#8855aa"];
+  chain -> g_gram  [style=dashed, color="#8855aa"];
+  chain -> g_conj  [style=dashed, color="#8855aa"];
+  chain -> g_syn   [style=dashed, color="#8855aa"];
+
+  /* ── Persistence ──────────────────────────────── */
+  subgraph cluster_persist {
+    label="persist"; style="rounded,dashed"; color="#8888aa"; fontcolor="#555577";
+    upsert [label="upsert topic +\n_syncStorylineForTopic\n(chains into storyline)", fillcolor="#ffe9e9"];
+    append [label="append lesson to\nexisting topic + saveStore", fillcolor="#ffe9e9"];
+  }
+
+  g_vocab -> upsert; g_gram -> upsert; g_conj -> upsert; g_syn -> upsert; g_eh -> upsert; g_math -> upsert;
+  g_vocab -> append [style=dotted, color="#339933"];
+  g_gram  -> append [style=dotted, color="#339933"];
+  g_conj  -> append [style=dotted, color="#339933"];
+  g_syn   -> append [style=dotted, color="#339933"];
+  g_eh    -> append [style=dotted, color="#339933"];
+  g_math  -> append [style=dotted, color="#339933"];
+
+  /* legend */
+  legend [shape=plaintext, fillcolor="#ffffff", style="", label=<
+    <table border="0" cellborder="0" cellspacing="2">
+      <tr><td align="left"><b>Legend</b></td></tr>
+      <tr><td align="left"><font color="#444455">solid</font> = full generate() path (form / batch / book)</td></tr>
+      <tr><td align="left"><font color="#339933">dotted green</font> = add-lesson (single generator, no story/meta step)</td></tr>
+      <tr><td align="left"><font color="#aa5555">red dashed</font> = extra lessons added by all_types</td></tr>
+      <tr><td align="left"><font color="#8855aa">purple dashed</font> = chain vocab (reinforce/extend)</td></tr>
+    </table>
+  >];
+}

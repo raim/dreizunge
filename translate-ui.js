@@ -5,6 +5,7 @@
 //   node translate-ui.js                        # translate all missing keys in all languages
 //   node translate-ui.js de fr ja               # translate only these languages
 //   node translate-ui.js --exclude zh ko        # translate all except these
+//   node translate-ui.js --model qwen2.5:14b    # override model (ignores OLLAMA_MODEL env var)
 //   node translate-ui.js --check                # just report what's missing, don't translate
 //   node translate-ui.js de --dry               # dry run for German
 //
@@ -23,19 +24,24 @@ const BATCH_SIZE   = parseInt(process.env.BATCH_SIZE || '10', 10);
 const DRY_RUN      = process.argv.includes('--dry');
 const CHECK_ONLY   = process.argv.includes('--check');
 
-// Collect language codes from positional args; collect --exclude / --skip values
+// Collect language codes from positional args; collect --exclude / --skip / --model values
 const EXCLUDE_LANGS = new Set();
 const INCLUDE_LANGS = [];
-let skipNext = false;
+let _nextFlag = null;
+let _modelOverride = null;
 for (let i = 2; i < process.argv.length; i++) {
   const a = process.argv[i];
-  if (a === '--exclude' || a === '--skip') { skipNext = true; continue; }
-  if (a.startsWith('--')) { skipNext = false; continue; }
+  if (a === '--exclude' || a === '--skip') { _nextFlag = 'exclude'; continue; }
+  if (a === '--model')                     { _nextFlag = 'model';   continue; }
+  if (a.startsWith('--')) { _nextFlag = null; continue; }
+  if (_nextFlag === 'model') { _modelOverride = a; _nextFlag = null; continue; }
   if (/^[a-z]{2,3}$/.test(a)) {
-    if (skipNext) EXCLUDE_LANGS.add(a);
+    if (_nextFlag === 'exclude') EXCLUDE_LANGS.add(a);
     else INCLUDE_LANGS.push(a);
-  } else { skipNext = false; }
+  } else { _nextFlag = null; }
 }
+
+const MODEL = _modelOverride || OLLAMA_MODEL;
 
 // ── Load data ─────────────────────────────────────────────────────────────────
 let ui, langs;
@@ -100,7 +106,7 @@ Return ONLY a valid JSON object with the same keys, no markdown, no explanation.
     let result;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        const raw = await callLLM(OLLAMA_MODEL, sys, JSON.stringify(batchObj, null, 2), 2048, { temperature: 0.1 });
+        const raw = await callLLM(MODEL, sys, JSON.stringify(batchObj, null, 2), 2048, { temperature: 0.1 });
         result = extractJSON(raw.text);
         break;
       } catch(e) {
@@ -137,7 +143,7 @@ Return ONLY a valid JSON object with the same keys, no markdown, no explanation.
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log(`Using model: ${OLLAMA_MODEL} @ ${OLLAMA_HOST}\n`);
+  console.log(`Using model: ${MODEL} @ ${OLLAMA_HOST}\n`);
 
   // Ping backend
   const reachable = await ping();

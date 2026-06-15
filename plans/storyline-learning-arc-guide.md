@@ -98,15 +98,18 @@ each independently. Turning it into a goal-oriented arc is the automation opport
 
 ## 5. Proposed automation (staged)
 
-### Stage A — Quick win (small change): make the book path spiral
-Flip the per-chapter options in the book/PDF generator from `vocabMode: null` to
-**`reinforce`**, default the format to **`all_types`** (or expose both as toggles in the
-PDF dialog), and keep `useFullChain` so each chapter sees the whole story so far. This alone
-turns “chained chapters” into a real arc with almost no new code. Likewise pass
-`vocabMode: 'reinforce'` from `translate-lessons.js`.
+### Stage A — Quick win (small change): make the book path spiral — ✅ IMPLEMENTED (v42)
+Implemented as an **arc mode** on the book/PDF path. `POST /api/generate-book` accepts
+`arc: true` and `arcReinforce: ['grammar'|'conjugation'|'synonyms', …]` (default `['grammar']`).
+Per chapter it generates a **vocab “gate” lesson** (this chapter’s words, so solving it can
+unlock the chapter) and then appends one reinforcement lesson per `arcReinforce` type,
+generated in **`reinforce` mode** from the chapter story + accumulated chain vocab. Chapters
+stay separate and chained, so the unlock-by-mastery model is preserved. The PDF dialog exposes
+a single checkbox (“Build a learning arc”) that sends `arc:true` + `arcReinforce:['grammar','conjugation']`.
+`translate-lessons.js` could pass the same flags (still TODO).
 
-*Effect:* every chapter reinforces prior vocab, adds new, and drills grammar/conjugation —
-the arc behaviour, applied to any pasted text or PDF.
+*Effect:* every chapter introduces new vocab and drills the grammar/conjugation of the growing
+pool — the arc behaviour, applied to any pasted text or PDF.
 
 ### Stage B — Goal-oriented PDF arc (the interesting one)
 A planner that targets comprehension of the PDF:
@@ -138,3 +141,25 @@ heavy LLM work being the per-chapter generation that already exists.
 - **“Reinforce” needs words to reuse.** Chapter 1 has nothing prior, so the spiral only becomes visible from chapter 2+.
 - **QC the arc.** Run QC (storyline-level 🔍) after generating — across many chapters, a few bad pairs or capitalization slips are likely; fix them before the arc is “done”.
 - **Vocab base forms vs. story forms.** Vocab lists teach citation forms; grammar/conjugation teach the inflected forms from the story. That split is intentional — don’t “fix” a vocab list to match an inflected story word.
+
+---
+
+## 7. Status & TODO
+
+### Implemented now (v42 — simple arc)
+- **Book/PDF arc mode**: `arc` + `arcReinforce` on `POST /api/generate-book`; per chapter = vocab gate + reinforcement lesson(s) (`reinforce` mode); chapters separate and chained. PDF dialog checkbox wired. Verified end-to-end (3 chapters, each `['standard','grammar','conjugation']`, correctly chained; non-arc path unchanged).
+
+### TODO — toward the goal-oriented PDF arc
+Grounded in the pedagogy review (lexical-coverage thresholds: ~95% minimal, ~98% optimal for reading — Laufer & Ravenhorst-Kalovski 2010, Hu & Nation 2000; many spaced encounters per word — Nagy/Herman/Anderson 1985; PPP / one-new-thing-at-a-time; mastery learning):
+
+1. **Per-lesson `vocabMode` within a chapter.** Today the gate (lesson 1) is generated `neutral` and reinforcement (lesson 2) is `reinforce`. The intended design is lesson 1 leaning **new** (`extend`/neutral) and lesson 2 **reinforce prior** — make the mode settable per lesson, not just per chapter.
+2. **Hand lesson-1’s exact vocab to lesson-2.** Reinforcement currently keys off story keywords + chain vocab (an approximation). Pass the gate lesson’s actual word list so grammar/conjugation drill *exactly* what was just introduced.
+3. **Syllabus builder (the core of the goal-oriented arc).** PDF → content words → **lemmatise + POS-tag** (dedicated LLM pass, or an external analyzer emitting a lemma file to respect the zero-npm constraint) → frequency-rank → bucket into chapter-sized batches (~6–10 lemmas).
+4. **Coverage tracking.** Maintain a running set of taught lemmas; target ~95–98% coverage of the PDF’s content words before the finale; optional coverage report. Remember coverage-by-lemma is **optimistic** — the grammar/conjugation lessons are what turn lemma knowledge into surface-form recognition, so they’re load-bearing, not decorative.
+5. **PDF text as finale.** Append the real PDF chunks as the last chapter(s) once coverage crosses the threshold, in `reinforce` mode so they reuse the taught pool (comprehension, not cold reading).
+6. **Difficulty ramp + story-length growth** automated across the planned chapters (1→2→3).
+7. **CEFR alignment** (optional): label arcs/levels against A1–C2 descriptors.
+8. **`translate-lessons.js`**: pass `vocabMode:'reinforce'` so translated storylines spiral too.
+9. **Decisions to settle before building #3–#4**: lemmatiser quality vs. the zero-npm rule; what counts as one “known” unit for the gate; coverage threshold for real PDFs (100% is unrealistic — pick a top-N frequent target).
+
+Likely shape: a `build-arc.js` (analyse → plan → drive `/api/generate-book` arc mode chapter by chapter) or a `POST /api/generate-arc` endpoint reusing the book-job machinery. The heavy LLM work (per-chapter generation) already exists; the new work is the planner (steps 3–4), which is mostly tokenising/ranking.

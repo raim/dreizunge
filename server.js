@@ -8,6 +8,7 @@ const fs    = require('fs');
 const path  = require('path');
 const { callLLM: _callLLM, ping: pingOllama, release: releaseOllamaModel,
         warmup: _warmupLLM, stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
+const { buildExport } = require('./export-lessons');
 
 // ── Prompts (hot-reloaded from prompts.json) ──────────────────────────────────
 let PROMPTS = {};
@@ -31,7 +32,8 @@ function fillPrompt(template, vars) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const STORAGE_FILE = path.join(__dirname, 'lessons.json');
+const APP_VERSION  = 'v43';
+const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
@@ -147,6 +149,24 @@ let store = loadStore();
   if (fixed > 0) { saveStore(store); console.log(`  Assigned IDs to ${fixed} lesson(s) missing them`); }
 })();
 
+// ── v41 Topic-ID data check ───────────────────────────────────────────
+// Stable tp_ IDs are the canonical reference for chain navigation. New topics
+// get their id at generate time, and imported topics via _syncStorylineForTopic,
+// so no per-boot migration is needed. A pre-v41 lessons.json (topics missing
+// ids, or continuedFrom names never resolved to continuedFromId) must be
+// upgraded ONCE, out-of-band:  node migrate-v41.js <lessons.json>
+(function checkTopicIds() {
+  if (store.schemaVersion < 29) return;
+  const topics = store.topics || [];
+  const missing = topics.filter(t => !t.id).length;
+  // continuedFromId absent (never set) — distinct from a resolved-to-null orphan
+  const unresolved = topics.filter(t => t.continuedFrom && t.continuedFromId === undefined).length;
+  if (missing || unresolved) {
+    console.warn(`  ⚠ Pre-v41 data: ${missing} topic(s) without id, ${unresolved} unresolved continuedFrom.`);
+    console.warn(`    Run once:  node migrate-v41.js ${process.env.LESSONS_FILE || 'lessons.json'}`);
+  }
+})();
+
 // Remove orphaned flags (topic no longer exists, or content no longer in lesson)
 (function cleanOrphanedFlags() {
   const flags = store.flags || {};
@@ -186,18 +206,19 @@ function findSavedById(id) {
   return arr.find(l => l.id === id) || null;
 }
 
-// Walk the continuedFrom chain and collect all vocab/grammar/conjugation targets
-// from all prior chapters, deduplicated. Returns { words, nouns, verbs }
-function collectChainVocab(continuedFromTopic) {
-  if (!continuedFromTopic) return { words: [], nouns: [], verbs: [] };
+// Walk the chain by continuedFromId and collect all vocab/grammar/conjugation
+// targets from all prior chapters, deduplicated. Returns { words, nouns, verbs }.
+// startRef is the PARENT reference: a tp_ id (preferred) or a topic name
+// (back-compat — resolved once, then traversal is id-based).
+function collectChainVocab(startRef) {
+  if (!startRef) return { words: [], nouns: [], verbs: [] };
   const words = [], nouns = [], verbs = [];
   const seen = new Set();
-  let cur = continuedFromTopic;
+  // Resolve start: id walks via findSavedById; a name is resolved once.
+  let t = String(startRef).startsWith('tp_') ? findSavedById(startRef) : findSaved(startRef);
   const visited = new Set();
-  while (cur && !visited.has(cur)) {
-    visited.add(cur);
-    const t = findSaved(cur);
-    if (!t) break;
+  while (t && !visited.has(t.id)) {
+    visited.add(t.id);
     for (const ls of (t.lessons || [])) {
       for (const v of (ls.vocab || [])) {
         if (v.target && !seen.has(v.target.toLowerCase())) {
@@ -220,17 +241,34 @@ function collectChainVocab(continuedFromTopic) {
         }
       }
     }
-    cur = t.continuedFrom || null;
+    // Step to parent by stored id (fall back to resolving a name for
+    // un-migrated/imported entries that lack continuedFromId).
+    const pid = t.continuedFromId || (t.continuedFrom ? (findSaved(t.continuedFrom)?.id || null) : null);
+    t = pid ? findSavedById(pid) : null;
   }
   return { words, nouns, verbs };
 }
 function upsert(data) {
   const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons = store.lessons || []) && store.lessons;
-  const k = data.topic.toLowerCase();
-  const i = arr.findIndex(l => l.topic.toLowerCase() === k);
+  let i;
+  if (store.schemaVersion >= 29 && data.id) {
+    // Has a stable id → match by id ONLY. An id with no match is a new topic and
+    // must NOT be merged into a same-named one (same-name topics may coexist).
+    i = arr.findIndex(l => l.id === data.id);
+  } else {
+    // No id (fresh generation / legacy) → dedup by name+lang so a regenerate
+    // updates in place rather than duplicating.
+    const k = data.topic.toLowerCase();
+    const lang = data.lang || '', srcLang = data.srcLang || '';
+    i = store.schemaVersion >= 29
+      ? arr.findIndex(l => l.topic.toLowerCase() === k && (l.lang||'') === lang && (l.srcLang||'') === srcLang)
+      : arr.findIndex(l => l.topic.toLowerCase() === k);
+  }
   const now = new Date().toISOString();
   const existing = i >= 0 ? arr[i] : null;
   const entry = { ...data, generatedAt: existing?.generatedAt || now, updatedAt: now };
+  // Keep the topic's stable id across an update even if the new data omits it.
+  if (existing && existing.id && !entry.id) entry.id = existing.id;
   if (i >= 0) arr[i] = entry; else arr.unshift(entry);
   saveStore(store);
 }
@@ -395,8 +433,7 @@ function parseTableLesson(raw, lessonNum, topic) {
     target: r[0] || '', source: r[1] || ''
   })).filter(s => s.target && s.source);
 
-  if (vocab.length < 2) throw new Error(`Table parse: only ${vocab.length} vocab rows`);
-  if (sentences.length < 1) throw new Error(`Table parse: only ${sentences.length} sentence rows`);
+  if (vocab.length < 1) throw new Error(`Table parse: only ${vocab.length} vocab rows`);
 
   return {
     title: `Lesson ${lessonNum}`,
@@ -437,6 +474,112 @@ function callLLMLesson(system, userMsg, maxTokens) {
 }
 function callLLMTranslation(system, userMsg, maxTokens) {
   return _callLLM(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
+}
+
+// ── QC: verify source/target pairs with the translation model ─────────────
+const _QC_KANJI = '\\u4e00-\\u9fff\\u3400-\\u4dbf々〆〇';
+function _qcStripFuri(t) {
+  if (!t) return '';
+  return String(t)
+    .replace(new RegExp('([^'+_QC_KANJI+'])\\[[^\\]]+\\]','g'), '$1')
+    .replace(new RegExp('(['+_QC_KANJI+']+)\\[([^\\]]+)\\]','g'), '$1');
+}
+// Returns { ok:true } or { ok:false, sug:'corrected source' }.
+async function qcCheckPair(target, source, lang, srcLang, userComment) {
+  const L = langName(lang), S = langName(srcLang || 'en');
+  const tgt = _qcStripFuri(target);
+  const src = String(source).trim();
+  const system =
+    `You check a ${L} phrase and its ${S} translation, given as "<${L}> => <${S}>".\n` +
+    `Check BOTH: (1) the ${L} text is correct — spelling, grammar, and capitalization ` +
+    `(apply ${L} capitalization rules, e.g. German capitalizes all nouns); ` +
+    `(2) the ${S} side is an accurate translation of the ${L} text.\n` +
+    (userComment && String(userComment).trim()
+      ? `The user reports a problem with this item: "${String(userComment).trim().replace(/"/g, "'").slice(0, 300)}". Take this report into account when checking.\n`
+      : '') +
+    `Reply EXACTLY one of:\n` +
+    `OK  — if both are correct.\n` +
+    `T: <corrected ${L} text only>  — if the ${L} text has an error.\n` +
+    `S: <corrected ${S} text only>  — if the ${L} is fine but the ${S} translation is wrong.\n` +
+    `Give ONLY the corrected text for the one side, never the "=>" pair, no quotes, no notes.`;
+  const { text } = await callLLMTranslation(system, `${tgt} => ${src}`, 96);
+  const reply = (text || '').trim();
+  if (!reply || /^ok[.!]?$/i.test(reply)) return { ok: true };
+  const clean = s => s.replace(/^["']|["']$/g, '').trim();
+  // Strip an optional leading T:/S: label.
+  let label = null, body = reply;
+  const m = reply.match(/^([TS])\s*[:\-]\s*([\s\S]+)/i);
+  if (m) { label = m[1].toUpperCase(); body = m[2]; }
+  body = clean(body);
+  // Detect changes case-SENSITIVELY — a capitalization difference is itself a valid fix.
+  if (body.includes('=>')) {
+    const parts = body.split('=>');
+    const l = clean(parts[0] || ''), r = clean(parts.slice(1).join('=>'));
+    const tgtChanged = l && l !== tgt;
+    const srcChanged = r && r !== src;
+    if (srcChanged && !tgtChanged) return { ok: false, field: 'source', sug: r };
+    if (tgtChanged) return { ok: false, field: 'target', sug: l };
+    return { ok: true };
+  }
+  if (label === 'T') return (body && body !== tgt) ? { ok: false, field: 'target', sug: body } : { ok: true };
+  if (label === 'S') return (body && body !== src) ? { ok: false, field: 'source', sug: body } : { ok: true };
+  // No label: decide which side the reply corrects by similarity (a case-only fix
+  // matches that side when lowercased). Common-prefix length is a cheap proxy.
+  if (!body || body === tgt || body === src) return { ok: true };
+  const pre = (a, b) => { a = a.toLowerCase(); b = b.toLowerCase(); let i = 0; while (i < a.length && i < b.length && a[i] === b[i]) i++; return i; };
+  return (pre(body, tgt) >= pre(body, src))
+    ? { ok: false, field: 'target', sug: body }
+    : { ok: false, field: 'source', sug: body };
+}
+async function _runQc(jobId, topics, opts) {
+  const { lessonIdx, onlyFlagged } = opts;
+  let checked = 0, flagged = 0, cleared = 0;
+  const affected = [];
+  console.log(`  ⚙ QC starting: ${topics.length} topic(s)${lessonIdx !== null ? `, lesson ${lessonIdx}` : ''}${onlyFlagged ? ', flagged-only' : ''} [${OLLAMA_TRANSLATION_MODEL}]`);
+  jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Starting QC…`);
+  for (let ti = 0; ti < topics.length; ti++) {
+    const tp = topics[ti];
+    const lessons = tp.lessons || [];
+    let touched = false;
+    for (let li = 0; li < lessons.length; li++) {
+      if (lessonIdx !== null && li !== lessonIdx) continue;
+      const ls = lessons[li];
+      if (onlyFlagged && !_qcLessonUserFlagged(tp, ls)) continue;
+      for (const key of ['vocab', 'sentences']) {
+        const arr = ls[key];
+        if (!Array.isArray(arr)) continue;
+        for (const item of arr) {
+          if (!item || !item.target || !item.source) continue;
+          checked++;
+          let res;
+          try { res = await qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment); }
+          catch (e) { continue; }
+          if (!res.ok) {
+            item.qc = { sug: res.sug, field: res.field || 'source', at: new Date().toISOString() };
+            flagged++; touched = true;
+            console.log(`    ⚑ flag [${res.field}] "${_qcStripFuri(item.target)}" / "${item.source}" → "${res.sug}"`);
+          } else if (item.qc) {
+            delete item.qc; cleared++; touched = true;   // re-checked and now OK
+          }
+          if (checked % 5 === 0)
+            jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
+        }
+      }
+    }
+    if (touched) { upsert(tp); affected.push(tp.id); }
+  }
+  jobDone(jobId, { checked, flagged, cleared, topics: topics.length, affected });
+  console.log(`  ✓ QC done: ${checked} checked, ${flagged} flagged, ${cleared} cleared across ${topics.length} topic(s)`);
+}
+// Legacy user-flags-as-filter: a lesson counts as flagged if any of its items'
+// targets appear in the stored flags for this topic. Conservative best-effort.
+function _qcLessonUserFlagged(tp, ls) {
+  const flags = getFlags();
+  const keys = Object.keys(flags);
+  if (!keys.length) return false;
+  const targets = [...(ls.vocab||[]), ...(ls.sentences||[]), ...(ls.grammar||[])]
+    .map(x => (x && x.target ? String(x.target).toLowerCase() : '')).filter(Boolean);
+  return keys.some(k => targets.some(tg => k.toLowerCase().includes(tg)));
 }
 
 // ── Retry helper ──────────────────────────────────────────────────────
@@ -578,6 +721,37 @@ async function generateStorylineSummary(topics, stories, vocab, srcLang) {
   console.log(`  Summary  : ${summary.slice(0,80)}…`);
   console.log('────────────────────────────────────────────────────\n');
   return summary;
+}
+
+// Generate coherent per-chapter titles + emojis for a whole storyline at once,
+// so they read as a set. Returns an array of { title, emoji } (length = stories.length).
+async function generateChapterMeta(stories, srcLang, lang) {
+  srcLang = srcLang || 'en';
+  const S = langName(srcLang);
+  const n = stories.length;
+  const chapterExcerpts = stories.map((s, i) =>
+    `Chapter ${i+1}: ${(s||'').slice(0, 400).replace(/\n/g,' ')}…`
+  ).join('\n\n');
+  const sys  = fillPrompt(PROMPTS.chapterTitles.system, { S, n });
+  const user = fillPrompt(PROMPTS.chapterTitles.user,   { chapterExcerpts, S, n });
+  console.log(`\n── Chapter-title post-pass ──────────────────────────`);
+  console.log(`  Chapters : ${n}, Lang: ${S}, Model: ${OLLAMA_MODEL}`);
+  const result = await _callLLM(OLLAMA_MODEL, sys, user, 60 * n + 120);
+  const raw = result.text.replace(/```json|```/g, '').trim();
+  let arr;
+  try { arr = JSON.parse(raw); }
+  catch(e) {
+    const m = raw.match(/\[[\s\S]*\]/);
+    if (!m) throw new Error('Could not parse JSON array from response: ' + raw.slice(0,80));
+    arr = JSON.parse(m[0]);
+  }
+  if (!Array.isArray(arr)) throw new Error('Expected a JSON array of {title,emoji}');
+  console.log(`  Titles   : ${arr.map(o => (o&&(o.emoji||o.icon)||'')+' '+(o&&(o.title||o.t)||'')).join(' | ').slice(0,160)}`);
+  console.log('────────────────────────────────────────────────────\n');
+  return arr.map(o => ({
+    title: ((o && (o.title || o.t)) || '').toString().trim().slice(0, 80),
+    emoji: ((o && (o.emoji || o.icon || o.e)) || '📖').toString().slice(0, 8),
+  }));
 }
 
 // ── Grammar lesson: gender, articles, plurals ───────────────────────────────
@@ -869,8 +1043,8 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
       console.warn(`    Grammar: ${rejected.length} item(s) rejected:`);
       rejected.forEach(r => console.warn(`      "${r.item.target}" / "${r.item.source}": ${r.reasons.join(', ')}`));
     }
-    if (valid.length < 5) {
-      lastError = `Only ${valid.length} valid items after filtering (${rejected.length} rejected)`; continue;
+    if (valid.length < 1) {
+      lastError = `No valid items after filtering (${rejected.length} rejected)`; continue;
     }
     console.log(`    Grammar: ${valid.length} valid nouns (${rejected.length} rejected)`);
     return {
@@ -885,6 +1059,90 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
     };
   }
   throw new Error(`Grammar generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
+}
+
+// ── Generate synonyms / antonyms / homophones lesson ──────────────────────────
+// Picks key words from the story and asks the LLM for better in-context synonyms,
+// antonyms, and homophones (all in the target language, glossed in the source
+// language). The related words are flattened into a standard vocab lesson, so the
+// existing flashcard/MCQ player, checker, and editor handle it with no new type.
+async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
+  opts = opts || {};
+  const { story, userDialect, chainVocab, vocabMode: synVocabMode } = opts;
+  const L = langName(lang), S = langName(srcLang || 'en');
+  const storyKeywords = story ? extractKeywords(story, 8, lang) : '';
+  const _priorWords = (chainVocab?.words || []).slice(0, 12).map(v => v.target).filter(Boolean);
+  const priorWords = _priorWords.join(', ');
+  const P = PROMPTS && PROMPTS.synonyms;
+  let sys, userMsg;
+  if (P && P.system) {
+    sys = fillPrompt(P.system, { L, S, diff: difficultyLabel(difficulty || 2) });
+    if (userDialect && P.dialectNote) sys += fillPrompt(P.dialectNote, { dialect: userDialect });
+    const ss = getStoryStyle(opts.storyStyle); if (ss && P.writingStyleNote) sys += fillPrompt(P.writingStyleNote, { writingStyle: ss });
+    userMsg = fillPrompt(P.user, { topic, L, S })
+      + (storyKeywords && P.storyHint ? fillPrompt(P.storyHint, { storyKeywords }) : '')
+      + (priorWords && P.priorHint && synVocabMode !== 'extend' ? fillPrompt(P.priorHint, { priorWords }) : '');
+  } else {
+    sys = `You are a ${L} vocabulary lesson generator (learner speaks ${S}). For useful ${L} words, give ${L} synonyms (>=1), ${L} antonyms (0+), and ${L} homophones ONLY when they truly exist (else []). Glosses are short ${S} translations. Output strict JSON only.`;
+    userMsg = `Topic: "${topic}".`
+      + (storyKeywords ? `\nPrefer these ${L} words: ${storyKeywords}.` : '')
+      + `\nReturn ONLY JSON: {"title":"...","desc":"...","icon":"🔁","words":[{"base":"<${L}>","gloss":"<${S}>","synonyms":[{"w":"<${L}>","g":"<${S}>"}],"antonyms":[],"homophones":[]}]}`;
+  }
+  const MAX_ATTEMPTS = 3;
+  let tp = 0, tc = 0, lastError = '';
+  const clean = arr => {
+    const out = [], seen = new Set();
+    (Array.isArray(arr) ? arr : []).forEach(it => {
+      const w = ((it && (it.w ?? it.word)) || '').toString().trim();
+      const g = ((it && (it.g ?? it.gloss)) || '').toString().trim();
+      if (!w) return; const k = w.toLowerCase(); if (seen.has(k)) return; seen.add(k);
+      out.push({ w, g });
+    });
+    return out;
+  };
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Synonyms lesson attempt ${attempt}/${MAX_ATTEMPTS}…`);
+    console.log(`    Synonyms attempt ${attempt}…`);
+    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1800);
+    tp += promptTokens; tc += completionTokens;
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(cleaned); }
+    catch(e) {
+      const m = cleaned.match(/\{[\s\S]*\}/);
+      if (!m) { lastError = 'Could not parse JSON'; continue; }
+      try { parsed = JSON.parse(m[0]); } catch(e2) { lastError = 'JSON extract failed'; continue; }
+    }
+    if (!Array.isArray(parsed.words) || !parsed.words.length) { lastError = 'No words in response'; continue; }
+    const words = [];
+    for (const entry of parsed.words) {
+      const base = (entry.base ?? entry.word ?? '').toString().trim();
+      if (!base) continue;
+      const baseLc = base.toLowerCase();
+      // a word can never be its own synonym/antonym/homophone
+      const notBase = a => a.filter(x => x.w.toLowerCase() !== baseLc);
+      const synonyms   = notBase(clean(entry.synonyms)).slice(0, 4);
+      const antonyms   = notBase(clean(entry.antonyms)).slice(0, 3);
+      const homophones = notBase(clean(entry.homophones)).slice(0, 2);
+      if (!synonyms.length) continue; // need >=1 synonym to be quizzable
+      words.push({ base, gloss: (entry.gloss ?? '').toString().trim(), synonyms, antonyms, homophones });
+    }
+    if (!words.length) { lastError = 'No usable word groups (need a base + >=1 synonym)'; continue; }
+    const synN = words.reduce((n,w)=>n+w.synonyms.length,0);
+    const homN = words.reduce((n,w)=>n+w.homophones.length,0);
+    console.log(`    Synonyms: ${words.length} groups, ${synN} synonyms, ${homN} homophones`);
+    return {
+      lesson: {
+        id: 6, type: 'synonyms',
+        title: parsed.title || 'Synonyms & Antonyms',
+        desc:  parsed.desc  || 'Related words from the story',
+        icon:  parsed.icon  || '🔁',
+        words,
+      },
+      tokens: { promptTokens: tp, completionTokens: tc },
+    };
+  }
+  throw new Error(`Synonyms generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
 }
 
 // ── Generate conjugation lesson ───────────────────────────────────────────────
@@ -1024,24 +1282,18 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
       }
     }
 
-    // Validate vocab
-    if (!Array.isArray(lesson.vocab) || lesson.vocab.length < (useTable ? 2 : 4))
+    // Validate vocab — accept whatever the model returns (>=1 item).
+    if (!Array.isArray(lesson.vocab) || lesson.vocab.length < 1)
       throw new Error(`Only ${lesson.vocab?.length ?? 0} vocab items`);
     const seen = new Set();
     lesson.vocab = lesson.vocab.filter(v => {
       const k = v.target?.toLowerCase(); if (!k || seen.has(k)) return false; seen.add(k); return true;
     }).slice(0, 8);
-    if (lesson.vocab.length < (useTable ? 2 : 4)) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
+    if (lesson.vocab.length < 1) throw new Error(`Only ${lesson.vocab.length} unique vocab items`);
 
-    // Validate sentences
-    if (!Array.isArray(lesson.sentences) || lesson.sentences.length < (useTable ? 1 : minSentences))
-      throw new Error(`Only ${lesson.sentences?.length ?? 0} sentences`);
+    // Sentences are optional — use whatever we get (may be none).
+    if (!Array.isArray(lesson.sentences)) lesson.sentences = [];
     lesson.sentences = lesson.sentences.slice(0, 5).map(s => deriveSentenceWords(s, lang));
-    if (!useTable) {
-      const tooShort = lesson.sentences.filter(s => s.words.length < minWords);
-      if (tooShort.length > 2)
-        throw new Error(`${tooShort.length} sentences have fewer than ${minWords} words — retrying`);
-    }
 
     // Detect model copying target-language content into the source-language (en) field
     const vocabSameCount = lesson.vocab.filter(v =>
@@ -1072,15 +1324,31 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 // ── Generate all lessons ──────────────────────────────────────────────
 async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
-  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction } = userOpts;
+  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction, skipMeta, placeholderTopic, parentId } = userOpts;
   srcLang = srcLang || 'en';
   const userTopic = topic;
+  // The chain parent links this story into a storyline. With a user-supplied story
+  // we still record the link — the parent arrives via prevStoryTopic since the
+  // `continuedFrom` param is suppressed (we don't use the prior story as context).
+  const chainParent = continuedFrom || prevStoryTopic || null;
+  // Resolve the parent's STABLE id. Prefer an explicit parentId (the caller already
+  // knows the exact parent topic) over a name lookup — findSaved(name) is name-only
+  // and can resolve to a same-named topic from another language run (e.g. the same
+  // PDF generated in it->en and de->en), which would cross-link the two chains.
+  const parentTopic = parentId ? findSavedById(parentId) : (chainParent ? findSaved(chainParent) : null);
+  const continuedFromId = (parentTopic && parentTopic.id) || null;
   const genStart = Date.now();
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   const lessonTokenStats = [];
 
   jobStep(jobId, `[${OLLAMA_MODEL}] Generating topic info…`);
   let meta;
+  if (skipMeta) {
+    // Batch mode: skip the per-chapter meta call. The whole-storyline title
+    // post-pass assigns coherent titles/emojis after all chapters exist. Use a
+    // unique placeholder name so the saved topic key doesn't collide.
+    meta = { topic: (placeholderTopic || topic), topicEmoji: '📖' };
+  } else {
   try {
     const { text: raw, promptTokens, completionTokens } = await callLLM(sysMeta(srcLang),
       `Topic: "${topic}". Source language for output: ${langName(srcLang)}. Return the JSON with topic and topicEmoji, all text in ${langName(srcLang)}.`, 256);
@@ -1107,6 +1375,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       console.warn(`  Meta translation to ${langName(srcLang)} failed, keeping original:`, e.message);
     }
   }
+  }
 
   // ── Story: use user-supplied or generate ─────────────────────────────
   let story = null;
@@ -1120,7 +1389,8 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     storyPrompt = userTranslation ? 'User-provided story + translation' : 'User-provided story';
     console.log(`    Using user-provided story (${story.length} chars)${userTranslation?' + translation':''}${userDialect?', dialect: '+userDialect:''}`);
   } else {
-    const prevStoryFull = continuedFrom ? (findSaved(continuedFrom)?.story || null) : null;
+    const prevStoryFull = (parentTopic && parentTopic.story) ? parentTopic.story
+      : (continuedFrom ? (findSaved(continuedFrom)?.story || null) : null);
     const prevStory = prevStoryFull
       ? (useFullChain ? prevStoryFull : prevStoryFull.slice(-OLLAMA_MAX_PREV_STORY))
       : null;
@@ -1181,7 +1451,8 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       ...(storyTranslation ? { storyTranslation } : {}),
       ...(userStory        ? { userStory }         : {}),
       ...(userDialect      ? { userDialect }       : {}),
-      ...(continuedFrom    ? { continuedFrom }     : {}),
+      ...(chainParent      ? { continuedFrom: chainParent } : {}),
+      ...(continuedFromId  ? { continuedFromId }   : {}),
       ...(storyStyle       ? { storyStyle }        : {}),
       lessons: [],
     });
@@ -1193,22 +1464,24 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   const lessons = [];
 
   const _vocabMode = vocabMode || (reinforcePrior ? 'reinforce' : 'neutral');
-  const chainVocab = (_vocabMode !== 'neutral' && continuedFrom)
-    ? collectChainVocab(continuedFrom)
+  const chainVocab = (_vocabMode !== 'neutral' && chainParent)
+    ? collectChainVocab(findSaved(chainParent)?.id || chainParent)
     : { words: [], nouns: [], verbs: [] };
   const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story };
 
-  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math') {
+  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms') {
     const genFn   = lessonFormat === 'math'
       ? (mathInstruction
           ? () => generateMathLLM(lang, srcLang, difficulty, mathInstruction, jobId)
           : () => Promise.resolve(generateMath(story, difficulty)))
                   : lessonFormat === 'error_hunt'  ? () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words)
                   : lessonFormat === 'grammar'      ? () => generateGrammar(topic, lang, srcLang, difficulty, jobId, chainOpts)
+                  : lessonFormat === 'synonyms'     ? () => generateSynonyms(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   :                                   () => generateConjugation(topic, lang, srcLang, difficulty, jobId, chainOpts);
     const label   = lessonFormat === 'math'        ? 'Math'
                   : lessonFormat === 'error_hunt'  ? 'Error-hunt'
                   : lessonFormat === 'grammar'      ? 'Grammar'
+                  : lessonFormat === 'synonyms'     ? 'Synonyms'
                   :                                   'Conjugation';
     try {
       const { lesson, tokens } = await genFn();
@@ -1277,7 +1550,8 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     ...(userStory        ? { userStory }         : {}),
     ...(userTranslation  ? { userTranslation }   : {}),
     ...(userDialect      ? { userDialect }       : {}),
-    ...(continuedFrom    ? { continuedFrom }     : {}),
+    ...(chainParent      ? { continuedFrom: chainParent } : {}),
+    ...(continuedFromId  ? { continuedFromId }   : {}),
     ...(storyStyle       ? { storyStyle }        : {}),
     ...(lessonFormat && !['standard'].includes(lessonFormat) ? { lessonFormat } : {}),
     lessons,
@@ -1336,52 +1610,75 @@ async function boot() {
   
 // ── v29 storyline sync ────────────────────────────────────────────────────────
 // Called after upsert to keep storylines[].chapters in sync
-function _topicId(topicName) {
-  return 'tp_' + Math.abs(topicName.trim().toLowerCase().split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+let _idCounter = 0;
+function _newTopicId() {
+  // Mint a fresh topic id. Numeric to preserve the client's /^tp_\d+$/ detection.
+  // Unlike the old name-hash, this cannot collide when a renamed topic's old name
+  // is reused for a new topic. Existing ids are never recomputed.
+  const existing = new Set((store.topics || []).map(t => t.id).filter(Boolean));
+  let id;
+  do {
+    id = 'tp_' + Date.now().toString()
+       + String(_idCounter++ % 100000).padStart(5, '0')
+       + Math.floor(Math.random() * 100).toString().padStart(2, '0');
+  } while (existing.has(id));
+  return id;
 }
 function _chainId(topicIds) {
   const j = JSON.stringify(topicIds);
   return 'sl_' + Math.abs(j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
 }
-function _syncStorylineForTopic(topicName, continuedFromTopic) {
+function _syncStorylineForTopic(topicRef, continuedFromTopic) {
   if (store.schemaVersion < 29) return;
-  const tid = _topicId(topicName);
-  // Ensure the topic has an id
-  const topicObj = findSaved(topicName);
+  // topicRef may be a tp_ id (preferred, unambiguous) or a name (back-compat).
+  // Use the topic's STORED id (never recompute). A topic lacking an id is brand
+  // new and gets a fresh random id; renamed topics keep their original id.
+  const topicObj = (String(topicRef).startsWith('tp_') ? findSavedById(topicRef) : null) || findSaved(topicRef);
+  const tid = topicObj?.id || _newTopicId();
   if (topicObj && !topicObj.id) { topicObj.id = tid; }
 
-  // Build the full chain by walking continuedFrom backwards from this topic
-  const chain = [topicName];
-  let cur = topicName;
+  // Resolve a topic's parent id: prefer the stored continuedFromId, fall back
+  // to resolving a continuedFrom name (un-migrated/imported entries).
+  const parentIdOf = t => {
+    if (!t) return null;
+    if (t.continuedFromId) return t.continuedFromId;
+    if (t.continuedFrom)   return findSaved(t.continuedFrom)?.id || null;
+    return null;
+  };
+
+  // Build the full chain (ids) by walking continuedFromId backwards.
+  const chainIds = [tid];
+  let curId = tid;
   for (let i = 0; i < 50; i++) {
-    const t = findSaved(cur);
-    if (!t || !t.continuedFrom) break;
-    chain.unshift(t.continuedFrom);
-    cur = t.continuedFrom;
+    const t = findSavedById(curId);
+    const pid = parentIdOf(t);
+    if (!pid || chainIds.includes(pid) || !findSavedById(pid)) break;
+    chainIds.unshift(pid);
+    curId = pid;
   }
-  // Walk forward from this topic picking up continuations.
-  // Stop if we hit a topic that already belongs to a DIFFERENT storyline
-  // (that means we forked, not extended).
+  // Walk forward picking up continuations. Stop at forks, pre-existing
+  // branches (a topic already in another storyline), or cycles.
   const allSl = getStorylines();
-  const topicIdOf = t => { const tp = findSaved(t); return tp?.id || _topicId(t); };
-  // Build set of topic ids already in other storylines (not containing the current topic)
   const otherSlTopicIds = new Set(
-    allSl.filter(s => !s.chapters.includes(tid))
-         .flatMap(s => s.chapters)
+    allSl.filter(s => !s.chapters.includes(tid)).flatMap(s => s.chapters)
   );
-  cur = topicName;
+  curId = tid;
   for (let i = 0; i < 50; i++) {
-    const candidates = store.topics.filter(t => t.continuedFrom === cur);
+    const candidates = store.topics.filter(t => parentIdOf(t) === curId);
     // If multiple topics continue from cur — it's a fork; stop here
     if (candidates.length !== 1) break;
     const next = candidates[0];
-    // If next already belongs to another storyline — it's a pre-existing branch; stop
-    if (otherSlTopicIds.has(topicIdOf(next.topic))) break;
-    chain.push(next.topic);
-    cur = next.topic;
+    if (!next.id) next.id = _newTopicId();
+    // If next already belongs to another storyline — pre-existing branch; stop
+    if (otherSlTopicIds.has(next.id)) break;
+    if (chainIds.includes(next.id)) break; // cycle guard
+    chainIds.push(next.id);
+    curId = next.id;
   }
 
-  const chapterIds = chain.map(t => topicIdOf(t));
+  const chapterIds = chainIds;
+  // Names for title/display, derived from ids so they reflect current names.
+  const chain = chapterIds.map(id => findSavedById(id)?.topic ?? String(topicRef));
   const slId = _chainId(chapterIds);
 
   // Find existing storyline that contains this topic
@@ -1482,6 +1779,181 @@ function storyDiffSentences(aiStory, correctedStory, existingSentences) {
     .map(p => ({ ai: p.ai, corrected: p.corrected, reason: reasonMap.get(p.ai) || '' }));
 }
 
+// ── Multi-chapter "book" generation ───────────────────────────────────
+// Server-side sequential generation so a PDF book keeps generating even if the
+// client refreshes or navigates away. Each chapter is a normal generate() job;
+// the book job tracks overall progress and chains continuedFrom server-side.
+const bookJobs = new Map(); // bookId -> { status, current, chapters:[{title,status,topicId,error,jobId}], error, createdAt }
+
+function newBookJob(titles) {
+  const id = 'book_' + crypto.randomBytes(8).toString('hex');
+  bookJobs.set(id, {
+    status: 'running', current: 0,
+    chapters: titles.map(t => ({ title: t || '', status: 'pending', topicId: null, error: null })),
+    error: null, createdAt: Date.now(),
+  });
+  // keep only the most recent 20 book jobs
+  if (bookJobs.size > 20) {
+    const oldest = [...bookJobs.entries()].sort((a,b)=>a[1].createdAt-b[1].createdAt)[0];
+    if (oldest) bookJobs.delete(oldest[0]);
+  }
+  return id;
+}
+
+// Persist a generated chapter the same way the /api/generate handler does:
+// upsert + stable id + storyline sync. Returns the saved topic.
+function _persistGenerated(data, contFrom) {
+  upsert(data);
+  // Re-fetch the EXACT topic we just upserted. findSaved(name) is name-only and can
+  // return a same-named topic from another language run (same PDF in it->en + de->en),
+  // so match upsert's dedup key: name + lang + srcLang.
+  const k = (data.topic || '').trim().toLowerCase();
+  const sameKey = l => l.topic.toLowerCase() === k && (l.lang||'') === (data.lang||'') && (l.srcLang||'') === (data.srcLang||'');
+  let saved = (store.schemaVersion >= 29) ? store.topics.find(sameKey) : findSaved(data.topic);
+  if (store.schemaVersion >= 29) {
+    if (saved && !saved.id) { saved.id = _newTopicId(); upsert(saved); saved = store.topics.find(l => l.id === saved.id) || saved; }
+    _syncStorylineForTopic(saved ? saved.id : data.topic, contFrom);
+    saved = (saved && store.topics.find(l => l.id === saved.id)) || store.topics.find(sameKey) || saved;
+  }
+  return saved || data;
+}
+
+// ── Title post-pass: after all chapters/lessons exist, assign coherent
+// per-chapter titles+emojis and a storyline title+icon from the whole chain.
+// Applies to both generated batches and PDF batches (per-chapter meta is a cheap
+// placeholder during the loop; this overwrites it). Best-effort: failures are logged.
+async function _titleStorylinePostPass(chapterIds, base, bj) {
+  const topics = chapterIds.map(id => findSavedById(id)).filter(Boolean);
+  if (!topics.length) return;
+  const stories = topics.map(t => t.story || '');
+  // 1) Per-chapter coherent titles + emojis.
+  let chapterMeta = null;
+  try { chapterMeta = await generateChapterMeta(stories, base.srcLang, base.lang); }
+  catch (e) { console.warn(`  Chapter-title post-pass failed: ${e.message}`); }
+  if (Array.isArray(chapterMeta) && chapterMeta.length) {
+    const used = new Set();
+    topics.forEach((tp, i) => {
+      const m = chapterMeta[i] || {};
+      let title = (m.title || '').trim() || tp.topic;
+      // De-dup names (the topic name is still a lookup key in places).
+      let uniq = title, k = 2;
+      while (used.has(uniq.toLowerCase()) ||
+             (findSaved(uniq) && findSaved(uniq).id && findSaved(uniq).id !== tp.id)) {
+        uniq = `${title} (${k++})`;
+      }
+      used.add(uniq.toLowerCase());
+      const oldName = tp.topic;
+      tp.topic = uniq;
+      if (m.emoji) tp.topicEmoji = m.emoji;
+      // Keep children's continuedFrom NAME in sync (ids are unchanged/authoritative).
+      store.topics.forEach(c => {
+        if (c.continuedFromId === tp.id && c.continuedFrom === oldName) c.continuedFrom = uniq;
+      });
+      if (bj && bj.chapters[i]) bj.chapters[i].title = uniq;
+    });
+    saveStore(store);
+  }
+  // 2) Whole-storyline title + icon (reuse existing helper).
+  try {
+    const names = topics.map(t => t.topic);
+    const { title, icon } = await generateStorylineTitle(names, stories, base.srcLang);
+    const slId = _chainId(chapterIds);
+    const all = getStorylines();
+    const sl = all.find(s => s.id === slId)
+            || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
+    if (sl) { sl.title = title; sl.icon = icon || sl.icon || '📖'; upsertStoryline(sl); }
+  } catch (e) { console.warn(`  Storyline title post-pass failed: ${e.message}`); }
+}
+
+async function _runBookJob(bookId, chunks, base) {
+  const bj = bookJobs.get(bookId);
+  if (!bj) return;
+  let prevRef = base.continuedFrom || null; // id or name of the parent for chapter 0
+  for (let i = 0; i < chunks.length; i++) {
+    if (bj.status === 'cancelled') break;
+    bj.current = i;
+    bj.chapters[i].status = 'active';
+    const jobId = newJob();
+    bj.chapters[i].jobId = jobId;
+    try {
+      const parent  = prevRef ? (findSavedById(prevRef) || findSaved(prevRef)) : null;
+      const contFrom = parent ? parent.topic : null;
+      const generated = !!base.generated;
+      const userStory = generated ? '' : String(chunks[i].text || '').trim();
+      const wc    = Math.max(50, Math.min(2000, parseInt(chunks[i].wordCount, 10) || base.chapterLen || 300));
+      // Unique placeholder name (post-pass assigns the real, coherent title).
+      const placeholderTopic = generated
+        ? `${base.baseTopic} — ${i+1}`
+        : ((String(chunks[i].title || '').trim().slice(0,80)) || ('Chapter ' + (i+1)));
+      // Story-prompt theme: generated chapters share the base topic so the chain stays
+      // coherent; PDF chapters use their own chunk title.
+      const storyTopic = generated ? base.baseTopic : placeholderTopic;
+      const userOpts = {
+        userStory: generated ? null : userStory,
+        userStoryLang: base.userStoryLang || null,
+        prevStoryTopic: (!generated && userStory && contFrom) ? contFrom : null,
+        userTranslation: null, userDialect: null, storyStyle: base.storyStyle || null,
+        // Arc mode: chapter 1 lesson is a plain vocab "gate" (this chapter's new words);
+        // reinforcement lessons are appended below. Otherwise honor the chosen format.
+        lessonFormat: base.arc ? 'standard' : base.fmt, reinforcePrior: false, vocabMode: null,
+        useFullChain: i >= 1, mathInstruction: null,
+        // The exact parent topic id — authoritative chain link (avoids name collisions
+        // between same-named chapters from a different-language run of the same PDF).
+        parentId: parent ? (parent.id || null) : null,
+        // Defer titling to the whole-storyline post-pass (cheap placeholder for now).
+        skipMeta: true, placeholderTopic,
+      };
+      console.log(`  [book ${bookId}] chapter ${i+1}/${chunks.length}: "${placeholderTopic}"${contFrom?' cont='+contFrom:''}${generated?' generated':''}${base.arc?' arc[+'+base.arcTypes.join(',')+']':''} job=${jobId}`);
+      // Generated chapters continue the prior story as context (continuedFrom set);
+      // PDF chapters supply their own story, so the chain link is recorded via prevStoryTopic.
+      const data  = await generate(storyTopic, base.lang, base.srcLang, base.diff, generated ? contFrom : null, wc, jobId, userOpts);
+
+      // Arc mode: append reinforcement lesson(s) that drill prior + current forms (reinforce).
+      if (base.arc && Array.isArray(data.lessons)) {
+        const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [] };
+        const rOpts = { userDialect: null, storyStyle: null, chainVocab, vocabMode: 'reinforce', story: userStory || data.story || '' };
+        for (const rType of base.arcTypes) {
+          try {
+            jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Reinforcement lesson (${rType})…`);
+            const rFn = rType === 'conjugation' ? generateConjugation
+                      : rType === 'synonyms'    ? generateSynonyms
+                      :                           generateGrammar;
+            const { lesson } = await rFn(data.topic || placeholderTopic, base.lang, base.srcLang, base.diff, jobId, rOpts);
+            data.lessons.push(lesson);
+          } catch (e) {
+            console.warn(`  [book ${bookId}] chapter ${i+1} reinforcement (${rType}) failed, skipping: ${e.message}`);
+            jobStep(jobId, `⚠ ${rType} reinforcement failed — continuing…`);
+          }
+        }
+      }
+
+      const saved = _persistGenerated(data, contFrom);
+      jobDone(jobId, { ...data, fromCache: false });
+      bj.chapters[i].status  = 'done';
+      bj.chapters[i].topicId = saved.id || null;
+      bj.chapters[i].title   = saved.topic || placeholderTopic;
+      prevRef = saved.id || saved.topic; // chain next chapter from this one (prefer id)
+    } catch (e) {
+      console.error(`  [book ${bookId}] chapter ${i+1} failed:`, e.message);
+      jobFail(jobId, e.message);
+      bj.chapters[i].status = 'error';
+      bj.chapters[i].error  = e.message;
+      bj.status = 'error'; bj.error = `Chapter ${i+1}: ${e.message}`;
+      return;
+    }
+  }
+  if (bj.status !== 'cancelled' && bj.status !== 'error') {
+    // Whole-storyline title post-pass once every chapter/lesson exists.
+    bj.status = 'titling';
+    try {
+      const chapterIds = bj.chapters.map(c => c.topicId).filter(Boolean);
+      if (chapterIds.length) await _titleStorylinePostPass(chapterIds, base, bj);
+    } catch (e) { console.warn(`  [book ${bookId}] title post-pass error: ${e.message}`); }
+    bj.status = 'done';
+  }
+  console.log(`  [book ${bookId}] finished: ${bj.status}`);
+}
+
 http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${PORT}`);
     const M   = req.method.toUpperCase();
@@ -1491,7 +1963,7 @@ http.createServer(async (req, res) => {
       return res.end(fs.readFileSync(path.join(__dirname, 'index.html')));
     }
     if (M === 'GET' && url.pathname === '/api/info') {
-      return json(res, 200, { backend: active, ollamaModel: OLLAMA_MODEL,
+      return json(res, 200, { backend: active, version: APP_VERSION, ollamaModel: OLLAMA_MODEL,
         ollamaTranslationModel: OLLAMA_TRANSLATION_MODEL,
         ollamaLessonModel: OLLAMA_LESSON_MODEL,
         ollamaLessonFormat: OLLAMA_LESSON_FORMAT,
@@ -1506,17 +1978,22 @@ http.createServer(async (req, res) => {
         difficulty: l.difficulty || 2,
         storyLen: l.storyLen || 300,
         continuedFrom: l.continuedFrom || null,
+        continuedFromId: l.continuedFromId || null,
         generatedAt: l.generatedAt,
         updatedAt:   l.updatedAt || l.generatedAt,
         lessonCount: l.lessons?.length || 0,
+        qcFlags: (l.lessons || []).reduce((n, L) =>
+          n + [...(L.vocab||[]), ...(L.sentences||[])].filter(x => x && (x.qc || x.userFlag)).length, 0),
       }));
       list.sort((a,b) => (b.updatedAt||'').localeCompare(a.updatedAt||''));
       return json(res, 200, list);
     }
     if (M === 'GET' && url.pathname === '/api/lessons/load') {
-      const t = url.searchParams.get('topic');
-      if (!t) return json(res, 400, { error: 'Missing topic' });
-      const s = findSaved(t);
+      const id = url.searchParams.get('id');
+      const t  = url.searchParams.get('topic');
+      if (!id && !t) return json(res, 400, { error: 'Missing id or topic' });
+      // Prefer stable id; fall back to name for backward compatibility.
+      const s = id ? findSavedById(id) : findSaved(t);
       if (!s) return json(res, 404, { error: 'Not found' });
       return json(res, 200, s);
     }
@@ -1524,62 +2001,93 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { oldTopic, newTopic, topicEmoji } = body;
-      if (!oldTopic || !newTopic) return json(res, 400, { error: 'Missing oldTopic or newTopic' });
-      const saved = findSaved(oldTopic);
+      const { id, oldTopic, newTopic, topicEmoji } = body;
+      if (!newTopic) return json(res, 400, { error: 'Missing newTopic' });
+      if (!id && !oldTopic) return json(res, 400, { error: 'Missing id or oldTopic' });
+      const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons || []);
+      // Resolve target by stable id (preferred, collision-safe); fall back to name.
+      const saved = id ? findSavedById(id) : findSaved(oldTopic);
       if (!saved) {
-        // Maybe the topic was already renamed — check if newTopic exists
-        const alreadyRenamed = newTopic && findSaved(newTopic);
-        if (alreadyRenamed) {
-          console.log(`  save-meta: "${oldTopic}" already renamed to "${newTopic}" — no-op`);
-          return json(res, 200, { ok: true, topic: alreadyRenamed.topic, topicEmoji: alreadyRenamed.topicEmoji });
+        // Maybe already renamed — by id it's a no-op; by name, check newTopic exists.
+        const already = id ? findSavedById(id) : (newTopic && findSaved(newTopic));
+        if (already) {
+          console.log(`  save-meta: already applied for ${id || `"${oldTopic}"`} — no-op`);
+          return json(res, 200, { ok: true, topic: already.topic, topicEmoji: already.topicEmoji });
         }
-        console.warn(`  save-meta: topic not found: "${oldTopic}" (schema v${store.schemaVersion}, ${(store.topics||store.lessons||[]).length} topics)`);
-        return json(res, 404, { error: `Topic not found: "${oldTopic.slice(0,40)}"` });
+        console.warn(`  save-meta: topic not found: ${id ? `id ${id}` : `"${oldTopic}"`} (schema v${store.schemaVersion}, ${arr.length} topics)`);
+        return json(res, 404, { error: `Topic not found: ${id ? id : `"${String(oldTopic).slice(0,40)}"`}` });
       }
-      // No-op if topic name unchanged
-      if (oldTopic.trim().toLowerCase() === newTopic.trim().toLowerCase() && !topicEmoji) return json(res, 200, { ok: true });
-      saved.topic = newTopic.trim().slice(0, 80);
+      const newName = newTopic.trim().slice(0, 80);
+      // No-op if nothing changes
+      if (saved.topic.trim().toLowerCase() === newName.toLowerCase() && !topicEmoji)
+        return json(res, 200, { ok: true, topic: saved.topic, topicEmoji: saved.topicEmoji });
+      saved.topic = newName;
       if (topicEmoji) saved.topicEmoji = topicEmoji;
-      const newLower = newTopic.trim().toLowerCase();
-      const oldLower = oldTopic.trim().toLowerCase();
-      // Update in the correct array
-      const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
-      // Filter out old entry (and new if already exists), but guard against both being same
-      const filtered = oldLower === newLower
-        ? arr.filter(l => l.topic.toLowerCase() !== oldLower)
-        : arr.filter(l => l.topic.toLowerCase() !== oldLower && l.topic.toLowerCase() !== newLower);
+      // Move the renamed entry to the front, matching by REFERENCE — a name collision
+      // must never remove a different topic. Same-name topics are legal now (distinct ids).
+      const filtered = arr.filter(l => l !== saved);
       filtered.unshift(saved);
       if (store.schemaVersion >= 29) store.topics = filtered; else store.lessons = filtered;
-      // Cascade rename into continuedFrom pointers
-      const curArr = store.schemaVersion >= 29 ? store.topics : store.lessons;
-      curArr.forEach(l => {
-        if (l.continuedFrom && l.continuedFrom.toLowerCase() === oldLower)
-          l.continuedFrom = saved.topic;
-      });
+      // No continuedFrom cascade needed: chains reference the parent's stable id
+      // (continuedFromId), which is unchanged by a rename. The continuedFrom name
+      // may now be stale, but it's display-only and the client resolves the current
+      // parent name from continuedFromId.
       saveStore(store);
-      console.log(`  Renamed: "${oldTopic}" → "${saved.topic}"`);
+      console.log(`  Renamed: ${saved.id} → "${saved.topic}"`);
       return json(res, 200, { ok: true, topic: saved.topic, topicEmoji: saved.topicEmoji });
     }
     if (M === 'DELETE' && url.pathname === '/api/lessons/delete') {
-      const t = url.searchParams.get('topic');
-      if (!t) return json(res, 400, { error: 'Missing topic' });
+      const id = url.searchParams.get('id');
+      const t  = url.searchParams.get('topic');
+      if (!id && !t) return json(res, 400, { error: 'Missing id or topic' });
       const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons || []);
-      const toDelete = arr.find(l => l.topic.toLowerCase() === t.trim().toLowerCase());
-      const deleteId = toDelete?.id;
+      // Prefer stable id; fall back to name. Match by reference so a name
+      // collision can never delete the wrong topic.
+      const toDelete = id ? arr.find(l => l.id === id)
+                          : arr.find(l => l.topic.toLowerCase() === t.trim().toLowerCase());
+      if (!toDelete) return json(res, 200, { ok: true }); // idempotent: nothing to delete
+      const deleteId = toDelete.id;
+      const delName  = toDelete.topic; // canonical name for slug-based flag cleanup
+      console.log(`  Deleting: "${delName}" (${deleteId || 'no-id'}, ${(toDelete.lessons||[]).length} lesson(s))`);
       if (store.schemaVersion >= 29) {
-        store.topics = store.topics.filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
+        const deletedParentId = toDelete.continuedFromId || null;
+        store.topics = store.topics.filter(l => l !== toDelete);
         // Remove from storyline chapters, remove empty storylines
         store.storylines = store.storylines.map(sl => ({
           ...sl, chapters: sl.chapters.filter(c => c !== deleteId)
         })).filter(sl => sl.chapters.length > 0);
+        // Splice the deleted topic out of the chain: its children continue from the
+        // deleted topic's parent (the grandparent), so a middle delete reconnects
+        // Alpha→Gamma instead of orphaning Gamma. If the deleted topic was a root,
+        // its children become roots.
+        const _parentName = deletedParentId ? (findSavedById(deletedParentId)?.topic || null) : null;
+        store.topics.forEach(t => {
+          if (t.continuedFromId === deleteId) {
+            t.continuedFromId = deletedParentId;
+            t.continuedFrom = _parentName;   // display name (null when reconnected to no parent)
+          }
+        });
+        // If the deleted topic's parent had a fork that has now collapsed to a single
+        // remaining child, merge the parent's storyline with that child's storyline so
+        // the chain re-forms as one line (preserving the parent storyline's id/title/icon).
+        if (deletedParentId) {
+          const kids = store.topics.filter(t => t.continuedFromId === deletedParentId);
+          if (kids.length === 1) {
+            const all = getStorylines();
+            const pSl = all.find(s => s.chapters[s.chapters.length - 1] === deletedParentId);
+            const cSl = all.find(s => s !== pSl && s.chapters[0] === kids[0].id);
+            if (pSl && cSl) {
+              pSl.chapters = [...pSl.chapters, ...cSl.chapters];
+              setStorylines(all.filter(s => s.id !== cSl.id));
+            }
+          }
+        }
       } else {
-        // This branch only reached in legacy mode
-        store.lessons = (store.lessons||[]).filter(l => l.topic.toLowerCase() !== t.trim().toLowerCase());
+        store.lessons = (store.lessons||[]).filter(l => l !== toDelete);
       }
       // Delete all flags associated with this topic (by slug and by id)
       const flags = getFlags();
-      const delSlug = topicSlug(t.trim()) + ':';
+      const delSlug = topicSlug(delName) + ':';
       const delId   = deleteId ? deleteId + ':' : null;
       let flagsDeleted = 0;
       Object.keys(flags).forEach(k => {
@@ -1589,7 +2097,7 @@ http.createServer(async (req, res) => {
       });
       if (flagsDeleted > 0) {
         setFlags(flags);
-        console.log(`  Deleted ${flagsDeleted} flag(s) for "${t.trim()}"`);
+        console.log(`  Deleted ${flagsDeleted} flag(s) for "${delName}"`);
       }
       saveStore(store);
       return json(res, 200, { ok: true });
@@ -1614,9 +2122,86 @@ http.createServer(async (req, res) => {
       return json(res, 200, { ok: true });
     }
 
+    // ── QC: translation-model check of vocab/sentence pairs ───────────────
+    // Scopes: { storylineId } | { topicId } | { topicId, lessonIdx }.
+    // Writes `qc:{sug,at}` onto flagged items (clears it on items now OK), persists,
+    // and returns counts. Runs async (one translation-model call per pair).
+    if (M === 'POST' && url.pathname === '/api/qc') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
+      const { storylineId, topicId, lessonIdx, onlyFlagged } = body;
+      // Resolve the topics in scope.
+      let topics = [];
+      if (storylineId) {
+        const sl = getStorylines().find(s => s.id === storylineId);
+        topics = sl ? sl.chapters.map(id => findSavedById(id)).filter(Boolean) : [];
+      } else if (topicId) {
+        const tp = findSavedById(topicId);
+        if (tp) topics = [tp];
+      }
+      if (!topics.length) return json(res, 404, { error: 'Nothing in scope to check.' });
+      const jobId = newJob();
+      console.log(`  ⚙ QC requested (${storylineId?('storyline '+storylineId):topicId?('topic '+topicId+(lessonIdx!==undefined&&lessonIdx!==null?' lesson '+lessonIdx:'')):'?'}) → ${topics.length} topic(s), job=${jobId}`);
+      _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged })
+        .catch(e => { console.error('  QC error:', e.message); jobFail(jobId, e.message); });
+      return json(res, 202, { jobId, topics: topics.length });
+    }
+
     // ── Storyline titles ─────────────────────────────────────────────
     if (M === 'GET' && url.pathname === '/api/storylines') {
       return json(res, 200, getStorylines());
+    }
+    // Export a topic/storyline (and its connected chain) as Markdown, HTML, or JSON.
+    //   /api/export?format=md|html|json  &  (id=sl_… | id=tp_… | topic=<name>)
+    // No selector → all storylines. Reuses export-lessons.js for md/html.
+    if (M === 'GET' && url.pathname === '/api/export') {
+      const fmt = (url.searchParams.get('format') || 'md').toLowerCase();
+      if (!['md','html','json'].includes(fmt)) return json(res, 400, { error: 'format must be md, html or json' });
+      const idParam = url.searchParams.get('id');
+      const nameParam = url.searchParams.get('topic');
+      const slug = v => String(v||'export').replace(/[^a-z0-9]+/gi,'-').toLowerCase().replace(/^-+|-+$/g,'').slice(0,40) || 'export';
+      const sls = getStorylines();
+
+      // Resolve the selection to a set of storyline ids and/or a single topic id,
+      // expanding a topic to the storyline(s) that contain it (matches the in-app export).
+      let exportIds = [];        // sl_/tp_ ids for buildExport
+      let title = 'dreizunge';
+      if (idParam && idParam.startsWith('sl_')) {
+        const sl = sls.find(s => s.id === idParam);
+        if (!sl) return json(res, 404, { error: 'Storyline not found' });
+        exportIds = [sl.id]; title = sl.title || 'storyline';
+      } else if (idParam || nameParam) {
+        const anchor = idParam ? findSavedById(idParam) : findSaved(nameParam);
+        if (!anchor) return json(res, 404, { error: 'Topic not found' });
+        const containing = sls.filter(s => (s.chapters||[]).includes(anchor.id));
+        if (containing.length) { exportIds = containing.map(s => s.id); title = containing[0].title || anchor.topic; }
+        else { exportIds = [anchor.id]; title = anchor.topic; }
+      } else {
+        exportIds = []; title = 'dreizunge-all';   // all storylines
+      }
+
+      if (fmt === 'json') {
+        // Mirror the in-app JSON export: the resolved topics + their storylines.
+        const wantSl = exportIds.filter(i => i.startsWith('sl_'));
+        const wantTp = exportIds.filter(i => i.startsWith('tp_'));
+        const slObjs = wantSl.length ? sls.filter(s => wantSl.includes(s.id)) : (exportIds.length ? [] : sls);
+        const topicIds = new Set(wantTp);
+        slObjs.forEach(s => (s.chapters||[]).forEach(c => topicIds.add(c)));
+        const topicsOut = [...topicIds].map(findSavedById).filter(Boolean);
+        const payload = { schemaVersion: store.schemaVersion || 29, topics: topicsOut,
+          storylines: slObjs, exportedAt: new Date().toISOString(), exportedBy: 'dreizunge' };
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8',
+          'Content-Disposition': `attachment; filename="dreizunge_${slug(title)}.json"` });
+        return res.end(JSON.stringify(payload, null, 2));
+      }
+
+      const result = buildExport(store, { ids: exportIds, html: fmt === 'html', lessons: true });
+      if (!result) return json(res, 404, { error: 'Nothing to export' });
+      res.writeHead(200, { 'Content-Type': result.mime + '; charset=utf-8',
+        'Content-Disposition': `attachment; filename="dreizunge_${slug(title)}.${result.ext}"` });
+      return res.end(result.content);
     }
     if (M === 'POST' && url.pathname === '/api/storylines') {
       let body;
@@ -1704,26 +2289,35 @@ http.createServer(async (req, res) => {
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { topic, lang, srcLang, difficulty, lessonFormat, storyLen, continuedFrom, forceRegenerate,
               userStory, userTranslation, userDialect, storyStyle, reinforcePrior, vocabMode, useFullChain, userStoryLang, mathInstruction } = body;
+      // continuedFrom may arrive as a stable tp_ id (from the continue-select)
+      // or a topic name (other paths). Normalize to the canonical topic name so
+      // everything downstream is unaffected by which the client sent.
+      const _contParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
+      const continuedFromName = _contParent ? _contParent.topic : null;
       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
-        : (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
+        : continuedFromName ? continuedFromName : null;
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math'].includes(lessonFormat) ? lessonFormat : 'standard';
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms'].includes(lessonFormat) ? lessonFormat : 'standard';
       const wcMax = body.userStory ? 2000 : 1000;
       const wc = Math.max(100, Math.min(wcMax, parseInt(storyLen, 10) || 300));
       // contFrom: used for storyline chain tracking AND story continuation context.
       // When userStory is provided we still track the chain, but don't pass contFrom
       // to generate() for story context (user supplied their own text).
-      const contFrom = (continuedFrom && findSaved(continuedFrom)) ? continuedFrom : null;
+      const contFrom = continuedFromName;
       // When user provides a story AND continues from a prior chapter,
       // pass both the previous story AND the new story as context.
       const contFromForStory = contFrom && !userStory ? contFrom : null;
       const combinedUserStory = (userStory && contFrom) ? contFrom : null;
       const topicKey = topic.trim().toLowerCase();
+      const resolvedSrcLang = srcLang || 'en';
       if (!forceRegenerate) {
         const cached = findSaved(topic.trim());
-        if (cached) { console.log(`  Cache hit: "${topic}"`); return json(res, 200, { cached: true, data: { ...cached, fromCache: true } }); }
+        if (cached && cached.lang === (lang||'it') && cached.srcLang === (resolvedSrcLang||'en')) {
+          console.log(`  Cache hit: "${topic}" (${lang}←${resolvedSrcLang})`);
+          return json(res, 200, { cached: true, data: { ...cached, fromCache: true } });
+        }
       }
       if (active === 'none')
         return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
@@ -1731,7 +2325,6 @@ http.createServer(async (req, res) => {
         return json(res, 429, { error: 'Already generating lessons for this topic. Please wait.' });
       const jobId = newJob();
       generatingTopics.add(topicKey);
-      const resolvedSrcLang = srcLang || 'en';
       const userOpts = {
         userStory:       userStory       ? String(userStory).trim()       : null,
         userStoryLang:   userStoryLang   ? String(userStoryLang)          : null,
@@ -1752,7 +2345,7 @@ http.createServer(async (req, res) => {
         if (store.schemaVersion >= 29) {
           const saved = findSaved(data.topic);
           if (saved && !saved.id) {
-            saved.id = 'tp_' + Math.abs(data.topic.trim().toLowerCase().split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
+            saved.id = _newTopicId();
             upsert(saved);
           }
           _syncStorylineForTopic(data.topic, contFrom);
@@ -1768,7 +2361,76 @@ http.createServer(async (req, res) => {
       return json(res, 202, { jobId });
     }
 
-    // ── Save topic story ─────────────────────────────────────────────────
+    // ── Generate a multi-chapter book (server-side loop; survives refresh) ──
+    if (M === 'POST' && url.pathname === '/api/generate-book') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
+      const { chunks, lang, srcLang, difficulty, lessonFormat, continuedFrom, userStoryLang, arc, arcReinforce,
+              generated, topic, nChapters, chapterLen, storyStyle } = body;
+      if (active === 'none')
+        return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
+      // Generated batch: synthesize N text-less chapters from a single topic; each is
+      // written by the model continuing the previous (chained narrative).
+      let chaptersIn = chunks;
+      let baseTopic = null, chapterLenN = null;
+      if (generated) {
+        baseTopic = String(topic || '').trim().slice(0, 80);
+        if (!baseTopic) return json(res, 400, { error: 'Missing topic for generated batch' });
+        const n = Math.max(2, Math.min(20, parseInt(nChapters, 10) || 0));
+        if (!n) return json(res, 400, { error: 'nChapters must be between 2 and 20' });
+        chapterLenN = Math.max(50, Math.min(2000, parseInt(chapterLen, 10) || 300));
+        chaptersIn = Array.from({ length: n }, () => ({ wordCount: chapterLenN }));
+      }
+      if (!Array.isArray(chaptersIn) || chaptersIn.length === 0)
+        return json(res, 400, { error: 'No chapters provided' });
+      const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms'].includes(lessonFormat) ? lessonFormat : 'standard';
+      // Arc mode: each chapter = a vocab "gate" lesson + one or more reinforcement
+      // lessons (grammar/conjugation/synonyms) generated in reinforce mode.
+      const _arcTypes = (Array.isArray(arcReinforce) ? arcReinforce : ['grammar'])
+        .filter(t => ['grammar','conjugation','synonyms'].includes(t));
+      const arcMode = !!arc;
+      // Normalize the chain root (id or name) to a name for downstream context.
+      const rootParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
+      const base = { lang: lang || 'it', srcLang: srcLang || 'en', diff, fmt,
+        continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
+        arc: arcMode, arcTypes: _arcTypes.length ? _arcTypes : ['grammar'],
+        generated: !!generated, baseTopic, chapterLen: chapterLenN,
+        storyStyle: (storyStyle && storyStyle !== 'creative') ? storyStyle : null };
+      const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic} — ${i+1}` : '')));
+      console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:''}, id=${bookId}`);
+      _runBookJob(bookId, chaptersIn, base);  // fire-and-forget; runs server-side
+      return json(res, 202, { bookId, chapters: chaptersIn.length });
+    }
+
+    // ── Book job progress ──────────────────────────────────────────────
+    if (M === 'GET' && url.pathname.startsWith('/api/book-job/')) {
+      const bookId = url.pathname.split('/')[3];
+      const bj = bookJobs.get(bookId);
+      if (!bj) return json(res, 404, { error: 'Book job not found' });
+      return json(res, 200, { bookId, status: bj.status, current: bj.current, error: bj.error,
+        chapters: bj.chapters.map(c => ({ title: c.title, status: c.status, topicId: c.topicId, error: c.error })) });
+    }
+
+    // ── Most-recent active book job (for reconnect after refresh) ──────
+    if (M === 'GET' && url.pathname === '/api/book-job') {
+      let bestId = null, best = null;
+      for (const [id, bj] of bookJobs) {
+        if (bj.status === 'running' && (!best || bj.createdAt > best.createdAt)) { best = bj; bestId = id; }
+      }
+      if (!bestId) return json(res, 200, { bookId: null });
+      return json(res, 200, { bookId: bestId, status: best.status, current: best.current,
+        chapters: best.chapters.map(c => ({ title: c.title, status: c.status, topicId: c.topicId, error: c.error })) });
+    }
+
+    // ── Cancel a book job ──────────────────────────────────────────────
+    if (M === 'POST' && url.pathname === '/api/book-job/cancel') {
+      let body; try { body = JSON.parse(await readBody(req)); } catch(e) { body = {}; }
+      const bj = body.bookId && bookJobs.get(body.bookId);
+      if (bj && bj.status === 'running') { bj.status = 'cancelled'; console.log('  Book job cancelled:', body.bookId); }
+      return json(res, 200, { ok: true });
+    }
     if (M === 'POST' && url.pathname === '/api/save-story') {
       let body;
       try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
@@ -1815,11 +2477,20 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, lessons } = body;
-      if (!topic || !lessons) return json(res, 400, { error: 'Missing topic or lessons' });
-      const saved = findSaved(topic);
+      const { id, topic, lessons } = body;
+      if (!lessons || (!id && !topic)) return json(res, 400, { error: 'Missing id/topic or lessons' });
+      const saved = id ? findSavedById(id) : findSaved(topic);
       if (!saved) return json(res, 404, { error: 'Topic not found' });
-      // Only update vocab/sentences/grammar fields — preserve all other data
+      // Only update vocab/sentences/grammar fields — preserve all other data.
+      // Flag fields (qc, userFlag) are client-authoritative: if the incoming item
+      // omits them, the client cleared the flag, so don't resurrect it from the
+      // stored copy (fixes "fix/✕ doesn't clear the flag" on reload).
+      const mergeFlaggable = (o, v) => {
+        const m = { ...o, ...v };
+        if (!('qc' in v))       delete m.qc;
+        if (!('userFlag' in v)) delete m.userFlag;
+        return m;
+      };
       const origLessons = saved.lessons.slice();
       saved.lessons = lessons.map((edited, i) => {
         const orig = origLessons.find(ls => ls.id === edited.id) || origLessons[i] || {};
@@ -1827,8 +2498,8 @@ http.createServer(async (req, res) => {
           ...orig,
           ...(edited.title !== undefined ? { title: edited.title } : {}),
           ...(edited.icon  !== undefined ? { icon:  edited.icon  } : {}),
-          vocab:     edited.vocab     ? edited.vocab.map((v,j) => ({...(orig.vocab||[])[j]||{}, ...v})) : orig.vocab,
-          sentences: edited.sentences ? edited.sentences.map((s,j) => ({...(orig.sentences||[])[j]||{}, ...s})) : orig.sentences,
+          vocab:     edited.vocab     ? edited.vocab.map((v,j) => mergeFlaggable((orig.vocab||[])[j]||{}, v)) : orig.vocab,
+          sentences: edited.sentences ? edited.sentences.map((s,j) => mergeFlaggable((orig.sentences||[])[j]||{}, s)) : orig.sentences,
           grammar:   edited.grammar   ? edited.grammar.map((g,j) => ({...(orig.grammar||[])[j]||{}, ...g})) : orig.grammar,
           conjugations: edited.conjugations ? edited.conjugations.map((c,j) => ({
             ...(orig.conjugations||[])[j]||{}, ...c,
@@ -1842,7 +2513,7 @@ http.createServer(async (req, res) => {
       });
       saved.updatedAt = new Date().toISOString();
       saveStore(store);
-      console.log(`  Edited lessons for "${topic}"`);
+      console.log(`  Edited lessons for "${saved.topic}"`);
       return json(res, 200, { ok: true });
     }
 
@@ -1851,14 +2522,15 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { topic, lessonFormat: fmt, difficulty: rawDiff, reinforcePrior: addReinforce, vocabMode: addVocabMode, mathInstruction: addMathInstr, mathOps: addMathOps } = body;
-      if (!topic)  return json(res, 400, { error: 'Missing topic' });
+      const { id, topic, lessonFormat: fmt, difficulty: rawDiff, reinforcePrior: addReinforce, vocabMode: addVocabMode, mathInstruction: addMathInstr, mathOps: addMathOps } = body;
+      if (!id && !topic) return json(res, 400, { error: 'Missing id or topic' });
       if (!fmt)    return json(res, 400, { error: 'Missing lessonFormat' });
-      const saved = findSaved(topic.trim());
-      if (!saved)  return json(res, 404, { error: `Topic not found: ${topic}` });
+      const saved = id ? findSavedById(id) : findSaved((topic||'').trim());
+      if (!saved)  return json(res, 404, { error: `Topic not found: ${id || topic}` });
       if (!saved.story) return json(res, 400, { error: 'Topic has no story to base lessons on' });
       if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
-      const topicKey = topic.trim().toLowerCase();
+      const topicName = saved.topic;
+      const topicKey = topicName.trim().toLowerCase();
       if (generatingTopics.has(topicKey))
         return json(res, 429, { error: 'Already busy with this topic. Please wait.' });
       const diff  = Math.max(1, Math.min(3, parseInt(rawDiff, 10) || saved.difficulty || 2));
@@ -1870,12 +2542,12 @@ http.createServer(async (req, res) => {
       const story    = saved.story;
       const jobId = newJob();
       generatingTopics.add(topicKey);
-      console.log(`  Add lesson: "${topic}" fmt=${fmt} diff=${diff} vocabMode=${_addVocabMode}`);
+      console.log(`  Add lesson: "${topicName}" fmt=${fmt} diff=${diff} vocabMode=${_addVocabMode}`);
 
       const doGenLesson = async () => {
         let result;
-        const chainVocab = (_addVocabMode !== 'neutral' && saved.continuedFrom)
-          ? collectChainVocab(saved.continuedFrom)
+        const chainVocab = (_addVocabMode !== 'neutral' && (saved.continuedFromId || saved.continuedFrom))
+          ? collectChainVocab(saved.continuedFromId || saved.continuedFrom)
           : { words: [], nouns: [], verbs: [] };
         if (chainVocab.words.length)
           console.log(`    Chain vocab (${_addVocabMode}): ${chainVocab.words.slice(0,15).map(v=>v.target).join(', ')}`);
@@ -1883,13 +2555,15 @@ http.createServer(async (req, res) => {
           const storyTranslation = saved.storyTranslation || null;
           // Don't pass story as styleHint — it's already in userMsg as context
           const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words, vocabMode: _addVocabMode };
-          result = await generateOneLesson(lang, srcLang, topic.trim(), 1, 1, [], story, diff, jobId, lessonOpts);
+          result = await generateOneLesson(lang, srcLang, topicName, 1, 1, [], story, diff, jobId, lessonOpts);
         } else if (fmt === 'error_hunt') {
           result = await generateErrorHunt(story, lang, diff, jobId, chainVocab.words);
         } else if (fmt === 'grammar') {
-          result = await generateGrammar(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode });
+          result = await generateGrammar(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
         } else if (fmt === 'conjugation') {
-          result = await generateConjugation(topic.trim(), lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode });
+          result = await generateConjugation(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
+        } else if (fmt === 'synonyms') {
+          result = await generateSynonyms(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
         } else if (fmt === 'math') {
           result = addMathInstr
             ? await generateMathLLM(lang, srcLang, diff, addMathInstr, jobId)
@@ -1970,9 +2644,22 @@ http.createServer(async (req, res) => {
         return json(res, 400, { error: `${invalid.length} entries missing topic or lessons` });
       let added = 0, updated = 0;
       for (const l of incoming) {
-        const exists = findSaved(l.topic);
-        upsert(l);
-        if (exists) updated++; else added++;
+        const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
+        const exists = l.id
+          ? arr.find(x => x.id === l.id)
+          : arr.find(x =>
+              x.topic.toLowerCase() === l.topic.toLowerCase() &&
+              (x.lang||'') === (l.lang||'') &&
+              (x.srcLang||'') === (l.srcLang||''));
+        if (exists) {
+          // Update in place preserving generatedAt
+          Object.assign(exists, l, { generatedAt: exists.generatedAt, updatedAt: new Date().toISOString() });
+          saveStore(store);
+          updated++;
+        } else {
+          upsert(l);
+          added++;
+        }
       }
       // Reconstruct storylines:
       // 1. Merge explicitly exported storylines (new format)
@@ -1980,19 +2667,33 @@ http.createServer(async (req, res) => {
         const existing = findStoryline(sl.id);
         if (!existing) { upsertStoryline(sl); }
         else if ((sl.chapters||[]).length > (existing.chapters||[]).length) {
-          // Only extend, never shrink
           upsertStoryline(sl);
         } else {
-          // Update title/icon/summary but preserve existing chapters
           upsertStoryline({ ...sl, chapters: existing.chapters });
         }
       }
-      // 2. For old-format exports (no storylines array), rebuild chains from continuedFrom
-      if (incomingStorylines.length === 0) {
-        // Process in order — each call extends the chain correctly
-        for (const l of incoming) {
-          _syncStorylineForTopic(l.topic, l.continuedFrom || null);
+      // 2. Always sync storylines for all topics — this assigns topic IDs (tp_...)
+      // which are needed for _byId lookups in the client tag filter.
+      for (const l of incoming) {
+        _syncStorylineForTopic(l.topic, l.continuedFrom || null);
+      }
+      // 3. Dedup storylines that share an identical chapter sequence. This happens
+      // when an imported storyline's id doesn't equal the continuedFrom-derived
+      // _chainId, so step 2 creates a parallel copy of the same chain. Keep the copy
+      // with a curated title (i.e. a title that isn't just the first chapter's name).
+      {
+        const allSl = getStorylines();
+        const bid = Object.fromEntries((store.topics||[]).filter(t => t.id).map(t => [t.id, t]));
+        const isAuto = s => { const c0 = bid[(s.chapters||[])[0]]; return c0 && s.title === c0.topic; };
+        const seen = new Map(); // chapter-sequence → index in keep[]
+        const keep = [];
+        for (const sl of allSl) {
+          const key = (sl.chapters||[]).join('|');
+          if (!key) { keep.push(sl); continue; }
+          if (!seen.has(key)) { seen.set(key, keep.length); keep.push(sl); }
+          else { const i = seen.get(key); if (isAuto(keep[i]) && !isAuto(sl)) keep[i] = sl; } // else drop dup
         }
+        if (keep.length !== allSl.length) setStorylines(keep);
       }
       const total = store.schemaVersion >= 29 ? store.topics.length : store.lessons.length;
       console.log(`  Import: +${added} new, ~${updated} updated`);
