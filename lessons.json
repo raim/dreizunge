@@ -3,7 +3,7 @@
   "storylines": [
     {
       "id": "sl_962481837",
-      "title": "Monde des chiffres",
+      "title": "La petite i",
       "icon": "🪄",
       "chapters": [
         "tp_17815362983410001153",
@@ -21,7 +21,7 @@
       "lang": "en",
       "srcLang": "fr",
       "createdAt": "2026-06-15T15:11:38.366Z",
-      "updatedAt": "2026-06-15T17:12:06.129Z",
+      "updatedAt": "2026-06-15T17:14:41.794Z",
       "tags": [
         "manually curated",
         "children"
