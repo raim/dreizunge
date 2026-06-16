@@ -2,16 +2,31 @@
   "schemaVersion": 29,
   "storylines": [
     {
-      "id": "sl_578686000",
-      "title": "ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte — 1",
-      "icon": "📖",
+      "id": "sl_394799768",
+      "title": "El viaje de i",
+      "icon": "🔍",
       "chapters": [
-        "tp_17816159694190000004"
+        "tp_17816175057310000009",
+        "tp_17816177163400000125",
+        "tp_17816179285980000233",
+        "tp_17816181558030000376",
+        "tp_17816184115920000466",
+        "tp_17816186319150000579",
+        "tp_17816188753960000682",
+        "tp_17816191209870000759",
+        "tp_17816193366720000871",
+        "tp_17816195547740000925",
+        "tp_17816198486700001029"
       ],
       "lang": "en",
-      "srcLang": "de",
-      "createdAt": "2026-06-16T13:19:29.455Z",
-      "updatedAt": "2026-06-16T13:19:29.455Z"
+      "srcLang": "es",
+      "createdAt": "2026-06-16T13:45:05.764Z",
+      "updatedAt": "2026-06-16T15:23:34.680Z",
+      "summary": "En el reino de los números, la pequeña i busca su lugar en un mundo donde cada número tiene un destino. A través de aventuras y desafíos, i descubre que no necesita ser como los demás y que su identidad única es valiosa. Finalmente, i encuentra consuelo en Zero, quien le ayuda a aceptar que ser simplemente i es suficiente.",
+      "tags": [
+        "manually curated",
+        "children"
+      ]
     },
     {
       "id": "sl_1848224281",
@@ -882,136 +897,2514 @@
   ],
   "topics": [
     {
-      "topic": "ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte — 1",
-      "topicEmoji": "📖",
-      "userTopic": "ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte",
+      "topic": "Ser simplemente i",
+      "topicEmoji": "|i|",
+      "userTopic": "Maybe she didn’t have to be Seven",
+      "userPrompt": "Maybe she didn’t have to be Seven\n\n[story]\nMaybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
       "lang": "en",
-      "srcLang": "de",
+      "srcLang": "es",
       "difficulty": 1,
       "storyLen": 50,
-      "story": "I typed out a really long message, hoping nothing got cut off. After hitting send, I waited anxiously. The response came back quickly, but it wasn't what I expected. \"Your input was too long. Try shorter next time.\"",
+      "story": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
       "storyLang": "target",
-      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences.\n\nWrite a story for the topic: \"ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte\". Plain prose, no headings.",
+      "storyPrompt": "User-provided story",
+      "userStory": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "continuedFrom": "Ser uno mismo",
+      "continuedFromId": "tp_17816195547740000925",
       "storyStyle": "children",
       "lessons": [
         {
           "id": 1,
-          "title": "langen Text",
-          "desc": "lang, aber klar",
-          "icon": "✍️",
+          "title": "quizás no tuvo que ser Siete",
+          "desc": "palabras básicas sobre posibilidades y números",
+          "icon": "💡",
           "vocab": [
             {
-              "target": "type",
-              "source": "tippe"
+              "target": "maybe",
+              "source": "quizás"
             },
             {
-              "target": "long",
-              "source": "lang"
+              "target": "have to",
+              "source": "tener que"
             },
             {
-              "target": "message",
-              "source": "Nachricht"
+              "target": "be",
+              "source": "ser"
             },
             {
-              "target": "waited",
-              "source": "wartete"
+              "target": "number",
+              "source": "número"
             },
             {
-              "target": "response",
-              "source": "Antwort"
+              "target": "simply",
+              "source": "sencillamente"
             },
             {
-              "target": "expected",
-              "source": "erwartete"
+              "target": "felt",
+              "source": "se sentía"
             },
             {
-              "target": "cut off",
-              "source": "abgeschnitten"
-            },
-            {
-              "target": "try",
-              "source": "versuche"
+              "target": "right",
+              "source": "correcto"
             }
           ],
           "sentences": [
             {
-              "target": "I typed out a long message.",
-              "source": "Ich tippe eine lange Nachricht.",
+              "target": "Maybe she didn't have to be Seven.",
+              "source": "Quizás ella no tuvo que ser Siete.",
               "words": [
-                "I",
-                "typed",
-                "out",
-                "a",
-                "long",
-                "message."
+                "Maybe",
+                "she",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "Seven."
               ]
             },
             {
-              "target": "The response came quickly.",
-              "source": "Die Antwort kam schnell.",
+              "target": "Maybe she didn't have to be One.",
+              "source": "Quizás ella no tuvo que ser Uno.",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "One."
+              ]
+            },
+            {
+              "target": "Maybe she didn't even have to be a number.",
+              "source": "Quizás ella no tuvo que ser un número.",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "even",
+                "have",
+                "to",
+                "be",
+                "a",
+                "number."
+              ]
+            },
+            {
+              "target": "Maybe she could simply be i.",
+              "source": "Quizás ella podría ser simplemente i.",
+              "words": [
+                "Maybe",
+                "she",
+                "could",
+                "simply",
+                "be",
+                "i."
+              ]
+            },
+            {
+              "target": "And somehow, that felt just right.",
+              "source": "Y de alguna manera, eso se sentía justo.",
+              "words": [
+                "And",
+                "somehow,",
+                "that",
+                "felt",
+                "just",
+                "right."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Quizás no tuvo que ser Siete",
+          "desc": "palabras básicas sobre posibilidades y números",
+          "icon": "🤔",
+          "vocab": [
+            {
+              "target": "maybe",
+              "source": "quizás"
+            },
+            {
+              "target": "she",
+              "source": "ella"
+            },
+            {
+              "target": "number",
+              "source": "número"
+            },
+            {
+              "target": "true",
+              "source": "verdad"
+            },
+            {
+              "target": "circle",
+              "source": "círculo"
+            },
+            {
+              "target": "room",
+              "source": "habitación"
+            },
+            {
+              "target": "smiled",
+              "source": "sonrió"
+            },
+            {
+              "target": "scream",
+              "source": "gritar"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Maybe she didn't have to be Seven.",
+              "source": "Quizás ella no tuvo que ser Siete.",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "Seven."
+              ]
+            },
+            {
+              "target": "And somehow, that felt just right.",
+              "source": "Y de alguna manera, eso se sentía justo.",
+              "words": [
+                "And",
+                "somehow,",
+                "that",
+                "felt",
+                "just",
+                "right."
+              ]
+            },
+            {
+              "target": "She asked, 'Who am I really? '",
+              "source": "Ella preguntó, '¿Quién soy de verdad?'",
+              "words": [
+                "She",
+                "asked,",
+                "'Who",
+                "am",
+                "I",
+                "really?",
+                "'"
+              ]
+            },
+            {
+              "target": "The room was quiet, she sat beside him.",
+              "source": "La habitación estaba en silencio, se sentó a su lado.",
               "words": [
                 "The",
-                "response",
-                "came",
-                "quickly."
-              ]
-            },
-            {
-              "target": "It wasn't what I expected.",
-              "source": "Es war nicht, was ich erwartete.",
-              "words": [
-                "It",
-                "wasn't",
-                "what",
-                "I",
-                "expected."
-              ]
-            },
-            {
-              "target": "Your input was too long.",
-              "source": "Dein Eingabe war zu lang.",
-              "words": [
-                "Your",
-                "input",
+                "room",
                 "was",
-                "too",
-                "long."
-              ]
+                "quiet,",
+                "she",
+                "sat",
+                "beside",
+                "him."
+              ],
+              "editedAt": "2026-06-16T15:21:36.732Z"
             },
             {
-              "target": "Try shorter next time.",
-              "source": "Versuche nächstes Mal kürzer.",
+              "target": "She smiled, feeling like she belonged.",
+              "source": "Sonrió, sintiéndose como si perteneciera",
               "words": [
-                "Try",
-                "shorter",
-                "next",
-                "time."
+                "She",
+                "smiled,",
+                "feeling",
+                "like",
+                "she",
+                "belonged."
               ]
             }
           ]
         }
       ],
       "generationStats": {
-        "totalMs": 238784,
+        "totalMs": 174124,
         "backend": "ollama",
         "model": "qwen2.5:7b",
         "lessonFormat": "json",
-        "totalPromptTokens": 777,
-        "totalCompletionTokens": 289,
+        "totalPromptTokens": 618,
+        "totalCompletionTokens": 264,
         "lessons": [
           {
             "lessonNum": 1,
-            "ms": 198916,
-            "promptTokens": 634,
-            "completionTokens": 239
+            "ms": 79914,
+            "promptTokens": 618,
+            "completionTokens": 264
           }
         ]
       },
-      "generatedAt": "2026-06-16T13:16:10.419Z",
-      "updatedAt": "2026-06-16T13:19:29.419Z",
-      "id": "tp_17816159694190000004",
-      "continuedFromId": "tp_17816159694190000004",
-      "continuedFrom": "ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte — 1"
+      "generatedAt": "2026-06-16T14:19:14.831Z",
+      "updatedAt": "2026-06-16T15:21:39.974Z",
+      "id": "tp_17816198486700001029"
+    },
+    {
+      "topic": "Ser uno mismo",
+      "topicEmoji": "🌟",
+      "userTopic": "“Of course",
+      "userPrompt": "“Of course\n\n[story]\n“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 52,
+      "story": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "continuedFrom": "Zero y la verdad",
+      "continuedFromId": "tp_17816193366720000871",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Por supuesto",
+          "desc": "frase, aceptación, identidad",
+          "icon": "✅",
+          "vocab": [
+            {
+              "target": "of course",
+              "source": "por supuesto"
+            },
+            {
+              "target": "okay",
+              "source": "bien"
+            },
+            {
+              "target": "crying",
+              "source": "llorando"
+            },
+            {
+              "target": "strange",
+              "source": "extraño"
+            },
+            {
+              "target": "identidad",
+              "source": "identidad"
+            },
+            {
+              "target": "stopping",
+              "source": "parar"
+            },
+            {
+              "target": "first time",
+              "source": "primer momento"
+            },
+            {
+              "target": "asking",
+              "source": "preguntando"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Of course, I'm not one.",
+              "source": "Por supuesto, no soy uno.",
+              "words": [
+                "Of",
+                "course,",
+                "I'm",
+                "not",
+                "one."
+              ]
+            },
+            {
+              "target": "That's okay.",
+              "source": "Eso está bien.",
+              "words": [
+                "That's",
+                "okay."
+              ]
+            },
+            {
+              "target": "It's exactly what makes me zero.",
+              "source": "Es exactamente lo que me hace cero.",
+              "words": [
+                "It's",
+                "exactly",
+                "what",
+                "makes",
+                "me",
+                "zero."
+              ]
+            },
+            {
+              "target": "She stopped crying for the first time.",
+              "source": "Ella paró de llorar por primera vez.",
+              "words": [
+                "She",
+                "stopped",
+                "crying",
+                "for",
+                "the",
+                "first",
+                "time."
+              ],
+              "editedAt": "2026-06-16T15:18:40.937Z"
+            },
+            {
+              "target": "Little i asked Zero.",
+              "source": "Pequeña i preguntó a cero.",
+              "words": [
+                "Little",
+                "i",
+                "asked",
+                "Zero."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Claro",
+          "desc": "frase, aceptación, identidad",
+          "icon": "✅",
+          "vocab": [
+            {
+              "target": "of course",
+              "source": "claro"
+            },
+            {
+              "target": "number",
+              "source": "número"
+            },
+            {
+              "target": "true",
+              "source": "verdad"
+            },
+            {
+              "target": "scream",
+              "source": "gritar"
+            },
+            {
+              "target": "circle",
+              "source": "círculo"
+            },
+            {
+              "target": "room",
+              "source": "habitación"
+            },
+            {
+              "target": "kind",
+              "source": "amable"
+            },
+            {
+              "target": "always",
+              "source": "siempre"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Of course, I'm not one.",
+              "source": "Claro, no soy uno.",
+              "words": [
+                "Of",
+                "course,",
+                "I'm",
+                "not",
+                "one."
+              ]
+            },
+            {
+              "target": "She sat beside him quietly.",
+              "source": "Ella se sentó al lado suyo silenciosamente.",
+              "words": [
+                "She",
+                "sat",
+                "beside",
+                "him",
+                "quietly."
+              ]
+            },
+            {
+              "target": "That's true, said the circle.",
+              "source": "Eso es verdad, dijo el círculo.",
+              "words": [
+                "That's",
+                "true,",
+                "said",
+                "the",
+                "circle."
+              ]
+            },
+            {
+              "target": "The number always gathers.",
+              "source": "El número siempre se reúne.",
+              "words": [
+                "The",
+                "number",
+                "always",
+                "gathers."
+              ],
+              "editedAt": "2026-06-16T15:18:40.937Z"
+            },
+            {
+              "target": "She loves him, always.",
+              "source": "Ella lo ama, siempre.",
+              "words": [
+                "She",
+                "loves",
+                "him,",
+                "always."
+              ],
+              "editedAt": "2026-06-16T15:20:11.358Z"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 106162,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 650,
+        "totalCompletionTokens": 256,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 106137,
+            "promptTokens": 650,
+            "completionTokens": 256
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T14:15:36.736Z",
+      "updatedAt": "2026-06-16T15:20:14.181Z",
+      "id": "tp_17816195547740000925"
+    },
+    {
+      "topic": "Zero y la verdad",
+      "topicEmoji": ".ZERO",
+      "userTopic": "Then somebody quietly sat beside her",
+      "userPrompt": "Then somebody quietly sat beside her\n\n[story]\nThen somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 66,
+      "story": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "continuedFrom": "La desesperación de Eight",
+      "continuedFromId": "tp_17816191209870000759",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "sentado al lado",
+          "desc": "silla, silencioso, alguien, aquí, verdad",
+          "icon": "👏",
+          "vocab": [
+            {
+              "target": "quietly",
+              "source": "silenciosamente"
+            },
+            {
+              "target": "sat",
+              "source": "se sentó"
+            },
+            {
+              "target": "beside",
+              "source": "al lado"
+            },
+            {
+              "target": "sad",
+              "source": "triste"
+            },
+            {
+              "target": "belong",
+              "source": "pertenecer"
+            },
+            {
+              "target": "number",
+              "source": "número"
+            },
+            {
+              "target": "smiled",
+              "source": "sonrió"
+            },
+            {
+              "target": "true",
+              "source": "verdad"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He sat quietly.",
+              "source": "Él se sentó silenciosamente.",
+              "words": [
+                "He",
+                "sat",
+                "quietly."
+              ]
+            },
+            {
+              "target": "She was sad.",
+              "source": "Ella estaba triste.",
+              "words": [
+                "She",
+                "was",
+                "sad."
+              ]
+            },
+            {
+              "target": "He sat beside her.",
+              "source": "Él se sentó al lado de ella.",
+              "words": [
+                "He",
+                "sat",
+                "beside",
+                "her."
+              ]
+            },
+            {
+              "target": "Do you belong here?",
+              "source": "¿Perteneces aquí?",
+              "words": [
+                "Do",
+                "you",
+                "belong",
+                "here?"
+              ]
+            },
+            {
+              "target": "Is that true?",
+              "source": "¿Eso es verdad?",
+              "words": [
+                "Is",
+                "that",
+                "true?"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "sentado en silencio",
+          "desc": "silla, silencioso, alguien, aquí, verdad",
+          "icon": "🤗",
+          "vocab": [
+            {
+              "target": "quietly",
+              "source": "en silencio"
+            },
+            {
+              "target": "beside",
+              "source": "al lado de"
+            },
+            {
+              "target": "sat",
+              "source": "se sentó"
+            },
+            {
+              "target": "somebody",
+              "source": "alguien"
+            },
+            {
+              "target": "her",
+              "source": "ella"
+            },
+            {
+              "target": "said",
+              "source": "dijo"
+            },
+            {
+              "target": "smiled",
+              "source": "sonrió"
+            },
+            {
+              "target": "thought",
+              "source": "pensó"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He sat quietly beside her.",
+              "source": "Él se sentó en silencio al lado de ella.",
+              "words": [
+                "He",
+                "sat",
+                "quietly",
+                "beside",
+                "her."
+              ]
+            },
+            {
+              "target": "She was kind.",
+              "source": "Ella era amable.",
+              "words": [
+                "She",
+                "was",
+                "kind."
+              ]
+            },
+            {
+              "target": "He thought for a moment.",
+              "source": "Él pensó por un momento.",
+              "words": [
+                "He",
+                "thought",
+                "for",
+                "a",
+                "moment."
+              ],
+              "editedAt": "2026-06-16T15:17:21.054Z"
+            },
+            {
+              "target": "Then he smiled.",
+              "source": "Entonces él sonrió.",
+              "words": [
+                "Then",
+                "he",
+                "smiled."
+              ]
+            },
+            {
+              "target": "She said, 'I don't belong here.'",
+              "source": "Ella dijo, 'No pertenezco aquí.'",
+              "words": [
+                "She",
+                "said,",
+                "'I",
+                "don't",
+                "belong",
+                "here.'"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 105943,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 665,
+        "totalCompletionTokens": 244,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 105915,
+            "promptTokens": 665,
+            "completionTokens": 244
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T14:12:01.049Z",
+      "updatedAt": "2026-06-16T15:17:52.692Z",
+      "id": "tp_17816193366720000871"
+    },
+    {
+      "topic": "La desesperación de Eight",
+      "topicEmoji": "😢",
+      "userTopic": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+      "userPrompt": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes\n\n[story]\n∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 85,
+      "story": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "continuedFrom": "El huracán de Eight",
+      "continuedFromId": "tp_17816188753960000682",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "colapsar, dormir, orden, miedo, reunirse, comando, escuchar, real",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "collapse",
+              "source": "colapsar"
+            },
+            {
+              "target": "sleep",
+              "source": "dormir"
+            },
+            {
+              "target": "order",
+              "source": "orden"
+            },
+            {
+              "target": "fear",
+              "source": "miedo"
+            },
+            {
+              "target": "gather",
+              "source": "reunirse"
+            },
+            {
+              "target": "command",
+              "source": "comando"
+            },
+            {
+              "target": "listen",
+              "source": "escuchar"
+            },
+            {
+              "target": "real",
+              "source": "real"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He will sleep forever.",
+              "source": "Dormirá para siempre.",
+              "words": [
+                "He",
+                "will",
+                "sleep",
+                "forever."
+              ]
+            },
+            {
+              "target": "The numbers are gathering.",
+              "source": "Los números se están reuniendo.",
+              "words": [
+                "The",
+                "numbers",
+                "are",
+                "gathering."
+              ]
+            },
+            {
+              "target": "She listens to their commands.",
+              "source": "Ella escucha sus comandos.",
+              "words": [
+                "She",
+                "listens",
+                "to",
+                "their",
+                "commands."
+              ]
+            },
+            {
+              "target": "It's not real, it's just a dream.",
+              "source": "No es real, es solo un sueño.",
+              "words": [
+                "It's",
+                "not",
+                "real,",
+                "it's",
+                "just",
+                "a",
+                "dream."
+              ]
+            },
+            {
+              "target": "Fear makes her tremble.",
+              "source": "El miedo la hace temblar.",
+              "words": [
+                "Fear",
+                "makes",
+                "her",
+                "tremble."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "colapsar, dormir, orden, miedo, reunirse, comando, escuchar, real",
+          "icon": "🍰",
+          "vocab": [
+            {
+              "target": "screaming",
+              "source": "gritando"
+            },
+            {
+              "target": "pie",
+              "source": "tarta"
+            },
+            {
+              "target": "hungry",
+              "source": "hambriento"
+            },
+            {
+              "target": "circle",
+              "source": "círculo"
+            },
+            {
+              "target": "numbers",
+              "source": "números"
+            },
+            {
+              "target": "room",
+              "source": "habitación"
+            },
+            {
+              "target": "kind",
+              "source": "amable"
+            },
+            {
+              "target": "always",
+              "source": "siempre"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He is always kind.",
+              "source": "Él siempre es amable.",
+              "words": [
+                "He",
+                "is",
+                "always",
+                "kind."
+              ]
+            },
+            {
+              "target": "The room is in a state of screaming.",
+              "source": "La habitación está en un estado de gritos.",
+              "words": [
+                "The",
+                "room",
+                "is",
+                "in",
+                "a",
+                "state",
+                "of",
+                "screaming."
+              ],
+              "editedAt": "2026-06-16T15:15:38.213Z"
+            },
+            {
+              "target": "The pie is missing from the table.",
+              "source": "La tarta está desaparecida de la mesa.",
+              "words": [
+                "The",
+                "pie",
+                "is",
+                "missing",
+                "from",
+                "the",
+                "table."
+              ]
+            },
+            {
+              "target": "Only the numbers are mean.",
+              "source": "Solo los números son malos.",
+              "words": [
+                "Only",
+                "the",
+                "numbers",
+                "are",
+                "mean."
+              ]
+            },
+            {
+              "target": "The circle of numbers never ends.",
+              "source": "El círculo de números nunca termina.",
+              "words": [
+                "The",
+                "circle",
+                "of",
+                "numbers",
+                "never",
+                "ends."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 122258,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 690,
+        "totalCompletionTokens": 255,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 122231,
+            "promptTokens": 690,
+            "completionTokens": 255
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T14:07:55.456Z",
+      "updatedAt": "2026-06-16T15:16:03.394Z",
+      "id": "tp_17816191209870000759"
+    },
+    {
+      "topic": "El huracán de Eight",
+      "topicEmoji": "🌪",
+      "userTopic": "As he finished his kind introduction,",
+      "userPrompt": "As he finished his kind introduction,\n\n[story]\nAs he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 72,
+      "story": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "continuedFrom": "El encuentro con π",
+      "continuedFromId": "tp_17816186319150000579",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "introducción amable",
+          "desc": "interrupción, hambre, pie",
+          "icon": "🍰",
+          "vocab": [
+            {
+              "target": "kind",
+              "source": "amable"
+            },
+            {
+              "target": "room",
+              "source": "habitación"
+            },
+            {
+              "target": "screaming",
+              "source": "gritando"
+            },
+            {
+              "target": "pie",
+              "source": "tarta"
+            },
+            {
+              "target": "hungry",
+              "source": "hambriento"
+            },
+            {
+              "target": "loves",
+              "source": "ama"
+            },
+            {
+              "target": "table",
+              "source": "mesa"
+            },
+            {
+              "target": "throws",
+              "source": "lanza"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He finished his kind introduction.",
+              "source": "Él terminó su introducción amable.",
+              "words": [
+                "He",
+                "finished",
+                "his",
+                "kind",
+                "introduction."
+              ]
+            },
+            {
+              "target": "There’s some sort of disruption.",
+              "source": "Hay alguna interrupción.",
+              "words": [
+                "There’s",
+                "some",
+                "sort",
+                "of",
+                "disruption."
+              ]
+            },
+            {
+              "target": "Eight is rushing.",
+              "source": "Ocho se está apresurando.",
+              "words": [
+                "Eight",
+                "is",
+                "rushing."
+              ]
+            },
+            {
+              "target": "Someone said pie?",
+              "source": "Alguien dijo tarta?",
+              "words": [
+                "Someone",
+                "said",
+                "pie?"
+              ]
+            },
+            {
+              "target": "One throws a cable.",
+              "source": "Uno lanza un cable.",
+              "words": [
+                "One",
+                "throws",
+                "a",
+                "cable."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Introducción amable",
+          "desc": "interrupción, hambre, pie",
+          "icon": "🥣",
+          "vocab": [
+            {
+              "target": "kind",
+              "source": "amable"
+            },
+            {
+              "target": "room",
+              "source": "habitación"
+            },
+            {
+              "target": "disruption",
+              "source": "interrupción",
+              "editedAt": "2026-06-16T15:14:20.670Z"
+            },
+            {
+              "target": "screaming",
+              "source": "gritando"
+            },
+            {
+              "target": "hungry",
+              "source": "hambriento"
+            },
+            {
+              "target": "always",
+              "source": "siempre"
+            },
+            {
+              "target": "only",
+              "source": "solo"
+            },
+            {
+              "target": "eat",
+              "source": "comer"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He finished his kind introduction.",
+              "source": "Él terminó su amable introducción.",
+              "words": [
+                "He",
+                "finished",
+                "his",
+                "kind",
+                "introduction."
+              ]
+            },
+            {
+              "target": "At the end of the room, there’s some sort of disruption.",
+              "source": "Al final de la habitación, hay algún tipo de desorden.",
+              "words": [
+                "At",
+                "the",
+                "end",
+                "of",
+                "the",
+                "room,",
+                "there’s",
+                "some",
+                "sort",
+                "of",
+                "disruption."
+              ]
+            },
+            {
+              "target": "Eight is rushing.",
+              "source": "Ocho se está apresurando.",
+              "words": [
+                "Eight",
+                "is",
+                "rushing."
+              ]
+            },
+            {
+              "target": "He loves pie.",
+              "source": "Él ama la tarta.",
+              "words": [
+                "He",
+                "loves",
+                "pie."
+              ]
+            },
+            {
+              "target": "He is almost there.",
+              "source": "Él casi está allí.",
+              "words": [
+                "He",
+                "is",
+                "almost",
+                "there."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 104858,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 672,
+        "totalCompletionTokens": 242,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 104831,
+            "promptTokens": 672,
+            "completionTokens": 242
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T14:03:51.970Z",
+      "updatedAt": "2026-06-16T15:14:26.643Z",
+      "id": "tp_17816188753960000682"
+    },
+    {
+      "topic": "El encuentro con π",
+      "topicEmoji": "🥧",
+      "userTopic": "One is mean, he’s always first,",
+      "userPrompt": "One is mean, he’s always first,\n\n[story]\nOne is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 54,
+      "story": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "continuedFrom": "La banda de los números",
+      "continuedFromId": "tp_17816184115920000466",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "uno es malo, siempre primero",
+          "desc": "amable, pi, primeros, siempre",
+          "icon": "😊",
+          "vocab": [
+            {
+              "target": "mean",
+              "source": "malo",
+              "editedAt": "2026-06-16T15:09:51.860Z"
+            },
+            {
+              "target": "first",
+              "source": "primero"
+            },
+            {
+              "target": "polite",
+              "source": "amable"
+            },
+            {
+              "target": "name",
+              "source": "nombre"
+            },
+            {
+              "target": "world",
+              "source": "mundo"
+            },
+            {
+              "target": "binoculars",
+              "source": "lentes binoculares",
+              "editedAt": "2026-06-16T15:10:19.236Z"
+            },
+            {
+              "target": "met",
+              "source": "conoció"
+            },
+            {
+              "target": "traveled",
+              "source": "viajó"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He's mean, always first.",
+              "source": "Él es malo, siempre primero.",
+              "words": [
+                "He's",
+                "mean,",
+                "always",
+                "first."
+              ]
+            },
+            {
+              "target": "Someone was polite.",
+              "source": "Alguien fue amable.",
+              "words": [
+                "Someone",
+                "was",
+                "polite."
+              ]
+            },
+            {
+              "target": "Nice to meet you.",
+              "source": "Mucho gusto, ¿cómo estás?",
+              "words": [
+                "Nice",
+                "to",
+                "meet",
+                "you."
+              ]
+            },
+            {
+              "target": "My name is π.",
+              "source": "Mi nombre es π.",
+              "words": [
+                "My",
+                "name",
+                "is",
+                "π."
+              ]
+            },
+            {
+              "target": "He traveled the world.",
+              "source": "Él viajó por todo el mundo.",
+              "words": [
+                "He",
+                "traveled",
+                "the",
+                "world."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Uno es malo, siempre primero",
+          "desc": "amable, pi, primeros, siempre",
+          "icon": "🤔",
+          "vocab": [
+            {
+              "target": "mean",
+              "source": "malo",
+              "editedAt": "2026-06-16T15:11:18.119Z"
+            },
+            {
+              "target": "first",
+              "source": "primero"
+            },
+            {
+              "target": "hurt",
+              "source": "lastimar"
+            },
+            {
+              "target": "see",
+              "source": "ver"
+            },
+            {
+              "target": "step",
+              "source": "paso",
+              "editedAt": "2026-06-16T15:11:51.975Z"
+            },
+            {
+              "target": "meet",
+              "source": "conocer",
+              "editedAt": "2026-06-16T15:10:19.236Z"
+            },
+            {
+              "target": "name",
+              "source": "nombre"
+            },
+            {
+              "target": "fringe",
+              "source": "fringe"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He is mean, always first.",
+              "source": "Él es malo, siempre primero.",
+              "words": [
+                "He",
+                "is",
+                "mean,",
+                "always",
+                "first."
+              ]
+            },
+            {
+              "target": "He just says what he sees.",
+              "source": "Él solo dice lo que ve.",
+              "words": [
+                "He",
+                "just",
+                "says",
+                "what",
+                "he",
+                "sees."
+              ]
+            },
+            {
+              "target": "Nice to meet you.",
+              "source": "Encantado/a.",
+              "words": [
+                "Nice",
+                "to",
+                "meet",
+                "you."
+              ],
+              "editedAt": "2026-06-16T15:12:14.857Z"
+            },
+            {
+              "target": "My name is π.",
+              "source": "Mi nombre es π.",
+              "words": [
+                "My",
+                "name",
+                "is",
+                "π."
+              ]
+            },
+            {
+              "target": "He wore a funny fringe.",
+              "source": "Él llevaba un extraño flequillo.",
+              "words": [
+                "He",
+                "wore",
+                "a",
+                "funny",
+                "fringe."
+              ],
+              "editedAt": "2026-06-16T15:13:26.797Z"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 105036,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 651,
+        "totalCompletionTokens": 246,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 105012,
+            "promptTokens": 651,
+            "completionTokens": 246
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T14:00:11.652Z",
+      "updatedAt": "2026-06-16T15:13:26.801Z",
+      "id": "tp_17816186319150000579"
+    },
+    {
+      "topic": "La banda de los números",
+      "topicEmoji": "🎵",
+      "userTopic": "In this world, so chaotic and strange,",
+      "userPrompt": "In this world, so chaotic and strange,\n\n[story]\nIn this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 82,
+      "story": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "continuedFrom": "En el mundo de los siete",
+      "continuedFromId": "tp_17816181558030000376",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "En este mundo, tan caótico y extraño",
+          "desc": "números, letras, y un número especial",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "numbers",
+              "source": "números"
+            },
+            {
+              "target": "letter",
+              "source": "letra"
+            },
+            {
+              "target": "stand",
+              "source": "quedarirse",
+              "editedAt": "2026-06-16T15:03:38.102Z"
+            },
+            {
+              "target": "circle",
+              "source": "círculo"
+            },
+            {
+              "target": "band",
+              "source": "banda"
+            },
+            {
+              "target": "weird",
+              "source": "extraña"
+            },
+            {
+              "target": "stare",
+              "source": "mirar"
+            },
+            {
+              "target": "small",
+              "source": "pequeña"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Numbers like to stand in rows.",
+              "source": "Números les gusta quedar en filas.",
+              "words": [
+                "Numbers",
+                "like",
+                "to",
+                "stand",
+                "in",
+                "rows."
+              ]
+            },
+            {
+              "target": "Sometimes they stand in circles.",
+              "source": "A veces quedar en círculos.",
+              "words": [
+                "Sometimes",
+                "they",
+                "stand",
+                "in",
+                "circles."
+              ]
+            },
+            {
+              "target": "Four has a funny beard.",
+              "source": "Cuatro tiene una barba rara.",
+              "words": [
+                "Four",
+                "has",
+                "a",
+                "funny",
+                "beard."
+              ]
+            },
+            {
+              "target": "All the numbers came to stare.",
+              "source": "Todos los números vinieron a mirar.",
+              "words": [
+                "All",
+                "the",
+                "numbers",
+                "came",
+                "to",
+                "stare."
+              ]
+            },
+            {
+              "target": "One is very tall.",
+              "source": "Uno es muy alto",
+              "words": [
+                "One",
+                "is",
+                "very",
+                "tall."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "En este mundo, tan caótico y extraño",
+          "desc": "números, letras, y un número especial",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "target": "band",
+              "source": "banda"
+            },
+            {
+              "target": "stand",
+              "source": "quedar"
+            },
+            {
+              "target": "weird",
+              "source": "raro",
+              "editedAt": "2026-06-16T15:03:38.102Z"
+            },
+            {
+              "target": "petting",
+              "source": "acariciando"
+            },
+            {
+              "target": "small",
+              "source": "pequeña"
+            },
+            {
+              "target": "gasp",
+              "source": "suspiro"
+            },
+            {
+              "target": "shrug",
+              "source": "encogimiento de hombros",
+              "editedAt": "2026-06-16T15:07:37.296Z"
+            },
+            {
+              "target": "evening",
+              "source": "tarde"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "She wants to join the band, but where should she stand?",
+              "source": "Ella quiere unirse a la banda, pero ¿dónde debería quedar?",
+              "words": [
+                "She",
+                "wants",
+                "to",
+                "join",
+                "the",
+                "band,",
+                "but",
+                "where",
+                "should",
+                "she",
+                "stand?"
+              ]
+            },
+            {
+              "target": "Four noticed a letter, that's weird.",
+              "source": "Cuatro notó una letra, eso es raro.",
+              "words": [
+                "Four",
+                "noticed",
+                "a",
+                "letter,",
+                "that's",
+                "weird."
+              ]
+            },
+            {
+              "target": "All the numbers came and stared judgmentally.",
+              "source": "Todos los números vinieron y los observaron con desaprobación.",
+              "words": [
+                "All",
+                "the",
+                "numbers",
+                "came",
+                "and",
+                "stared",
+                "judgmentally."
+              ]
+            },
+            {
+              "target": "She's so different, she's so small.",
+              "source": "Ella es tan diferente, tan pequeña.",
+              "words": [
+                "She's",
+                "so",
+                "different,",
+                "she's",
+                "so",
+                "small."
+              ]
+            },
+            {
+              "target": "In the evening, she looked for a place to stand.",
+              "source": "En la tarde, ella buscó un lugar para quedarse.",
+              "words": [
+                "In",
+                "the",
+                "evening,",
+                "she",
+                "looked",
+                "for",
+                "a",
+                "place",
+                "to",
+                "stand."
+              ],
+              "editedAt": "2026-06-16T15:09:18.657Z"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 119270,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 689,
+        "totalCompletionTokens": 253,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 119245,
+            "promptTokens": 689,
+            "completionTokens": 253
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T13:55:55.859Z",
+      "updatedAt": "2026-06-16T15:09:21.443Z",
+      "id": "tp_17816184115920000466"
+    },
+    {
+      "topic": "En el mundo de los siete",
+      "topicEmoji": "柒",
+      "userTopic": "“Are you my family",
+      "userPrompt": "“Are you my family\n\n[story]\n“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 76,
+      "story": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "continuedFrom": "El camino de la Siete",
+      "continuedFromId": "tp_17816179285980000233",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "¿Eres mi familia?",
+          "desc": "preguntas, familia, triste, extraño",
+          "icon": "😭",
+          "vocab": [
+            {
+              "target": "family",
+              "source": "familia"
+            },
+            {
+              "target": "trouble",
+              "source": "problemas",
+              "editedAt": "2026-06-16T15:01:07.727Z"
+            },
+            {
+              "target": "cry",
+              "source": "llorar"
+            },
+            {
+              "target": "where",
+              "source": "dónde"
+            },
+            {
+              "target": "hero",
+              "source": "héroe"
+            },
+            {
+              "target": "answer",
+              "source": "respuesta"
+            },
+            {
+              "target": "creepy",
+              "source": "siniestro"
+            },
+            {
+              "target": "disguise",
+              "source": "disfraz"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Are you my family?",
+              "source": "¿Eres mi familia?",
+              "words": [
+                "Are",
+                "you",
+                "my",
+                "family?"
+              ]
+            },
+            {
+              "target": "He burst into tears.",
+              "source": "Él se echó a llorar.",
+              "words": [
+                "He",
+                "burst",
+                "into",
+                "tears."
+              ]
+            },
+            {
+              "target": "Where is i?",
+              "source": "¿Dónde está i?",
+              "words": [
+                "Where",
+                "is",
+                "i?"
+              ]
+            },
+            {
+              "target": "There are some creepy looking guys.",
+              "source": "Hay algunos tipos siniestros.",
+              "words": [
+                "There",
+                "are",
+                "some",
+                "creepy",
+                "looking",
+                "guys."
+              ]
+            },
+            {
+              "target": "They were almost in disguise.",
+              "source": "Estaban casi disfrazados.",
+              "words": [
+                "They",
+                "were",
+                "almost",
+                "in",
+                "disguise."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "¿Eres mi familia?",
+          "desc": "preguntas, familia, triste, extraño",
+          "icon": "🤔",
+          "vocab": [
+            {
+              "target": "family",
+              "source": "familia"
+            },
+            {
+              "target": "strange",
+              "source": "extraño",
+              "editedAt": "2026-06-16T15:01:07.727Z"
+            },
+            {
+              "target": "path",
+              "source": "camino"
+            },
+            {
+              "target": "world",
+              "source": "mundo"
+            },
+            {
+              "target": "gasp",
+              "source": "suspiro"
+            },
+            {
+              "target": "shrug",
+              "source": "encogimiento de hombros",
+              "editedAt": "2026-06-16T15:02:10.691Z"
+            },
+            {
+              "target": "shrugged",
+              "source": "encogió los hombros"
+            },
+            {
+              "target": "plus",
+              "source": "más"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "i asked the strange guy on the path.",
+              "source": "preguntó i al extraño tipo en el camino.",
+              "words": [
+                "i",
+                "asked",
+                "the",
+                "strange",
+                "guy",
+                "on",
+                "the",
+                "path."
+              ]
+            },
+            {
+              "target": "The world seemed different today.",
+              "source": "el mundo parecía diferente hoy.",
+              "words": [
+                "The",
+                "world",
+                "seemed",
+                "different",
+                "today."
+              ]
+            },
+            {
+              "target": "He shrugged and walked away.",
+              "source": "encogió los hombros y se alejó.",
+              "words": [
+                "He",
+                "shrugged",
+                "and",
+                "walked",
+                "away."
+              ]
+            },
+            {
+              "target": "Evening was approaching, and the path was empty.",
+              "source": "llegaba la tarde y el camino estaba vacío.",
+              "words": [
+                "Evening",
+                "was",
+                "approaching,",
+                "and",
+                "the",
+                "path",
+                "was",
+                "empty."
+              ]
+            },
+            {
+              "target": "Are you a grown-up or a child?",
+              "source": "¿Eres un adulto o un niño?",
+              "words": [
+                "Are",
+                "you",
+                "a",
+                "grown-up",
+                "or",
+                "a",
+                "child?"
+              ],
+              "editedAt": "2026-06-16T15:03:16.982Z"
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 108966,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 673,
+        "totalCompletionTokens": 249,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 108940,
+            "promptTokens": 673,
+            "completionTokens": 249
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T13:52:08.659Z",
+      "updatedAt": "2026-06-16T15:03:19.451Z",
+      "id": "tp_17816181558030000376"
+    },
+    {
+      "topic": "El camino de la Siete",
+      "topicEmoji": "柒",
+      "userTopic": "One evening, while everyone slept,",
+      "userPrompt": "One evening, while everyone slept,\n\n[story]\nOne evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "continuedFrom": "Signos y confusiones",
+      "continuedFromId": "tp_17816177163400000125",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Una tarde mientras todos dormían",
+          "desc": "un camino brillante, otro mundo, siete",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "tarde"
+            },
+            {
+              "target": "path",
+              "source": "camino"
+            },
+            {
+              "target": "world",
+              "source": "mundo"
+            },
+            {
+              "target": "strange",
+              "source": "extraño"
+            },
+            {
+              "target": "gasp",
+              "source": "suspiro"
+            },
+            {
+              "target": "looked",
+              "source": "parecía"
+            },
+            {
+              "target": "asked",
+              "source": "preguntó"
+            },
+            {
+              "target": "He shrugged his shoulders.",
+              "source": "encogió sus hombros",
+              "editedAt": "2026-06-16T14:59:16.523Z",
+              "_manualEdits": [
+                "2026-06-16T14:59:16.523Z"
+              ]
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I followed a glowing path.",
+              "source": "Seguí un camino brillante.",
+              "words": [
+                "I",
+                "followed",
+                "a",
+                "glowing",
+                "path."
+              ]
+            },
+            {
+              "target": "It led to another world.",
+              "source": "Llegó a otro mundo.",
+              "words": [
+                "It",
+                "led",
+                "to",
+                "another",
+                "world."
+              ]
+            },
+            {
+              "target": "A strange world.",
+              "source": "Un mundo extraño.",
+              "words": [
+                "A",
+                "strange",
+                "world."
+              ]
+            },
+            {
+              "target": "Little i gasped.",
+              "source": "Pequeño i suspiró.",
+              "words": [
+                "Little",
+                "i",
+                "gasped."
+              ]
+            },
+            {
+              "target": "He looked almost like her.",
+              "source": "Él parecía casi como ella.",
+              "words": [
+                "He",
+                "looked",
+                "almost",
+                "like",
+                "her."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Una noche mientras todos dormían",
+          "desc": "un camino brillante, otro mundo, siete",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "noche"
+            },
+            {
+              "target": "path",
+              "source": "camino"
+            },
+            {
+              "target": "world",
+              "source": "mundo"
+            },
+            {
+              "target": "strange",
+              "source": "extraño"
+            },
+            {
+              "target": "gasp",
+              "source": "suspiro"
+            },
+            {
+              "target": "looked",
+              "source": "parecía"
+            },
+            {
+              "target": "asked",
+              "source": "preguntó"
+            },
+            {
+              "target": "shrugged",
+              "source": "encogió los hombros",
+              "editedAt": "2026-06-16T14:59:16.523Z",
+              "_manualEdits": [
+                "2026-06-16T14:59:16.523Z"
+              ]
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I followed a glowing path.",
+              "source": "Seguí un camino iluminado.",
+              "words": [
+                "I",
+                "followed",
+                "a",
+                "glowing",
+                "path."
+              ]
+            },
+            {
+              "target": "It led to another world.",
+              "source": "Llegó a otro mundo.",
+              "words": [
+                "It",
+                "led",
+                "to",
+                "another",
+                "world."
+              ]
+            },
+            {
+              "target": "A strange world.",
+              "source": "Un mundo extraño.",
+              "words": [
+                "A",
+                "strange",
+                "world."
+              ]
+            },
+            {
+              "target": "Do you know me?",
+              "source": "¿Me conoces?",
+              "words": [
+                "Do",
+                "you",
+                "know",
+                "me?"
+              ],
+              "editedAt": "2026-06-16T15:00:58.471Z"
+            },
+            {
+              "target": "He looked almost like her.",
+              "source": "Él parecía casi como ella.",
+              "words": [
+                "He",
+                "looked",
+                "almost",
+                "like",
+                "her."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 102034,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 648,
+        "totalCompletionTokens": 243,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 102008,
+            "promptTokens": 648,
+            "completionTokens": 243
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T13:48:36.401Z",
+      "updatedAt": "2026-06-16T15:00:58.475Z",
+      "id": "tp_17816179285980000233"
+    },
+    {
+      "topic": "Signos y confusiones",
+      "topicEmoji": "❓",
+      "userTopic": "+, −, ∗, /",
+      "userPrompt": "+, −, ∗, /\n\n[story]\n+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "continuedFrom": "En el reino de los números",
+      "continuedFromId": "tp_17816175057310000009",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "signos matemáticos",
+          "desc": "sumar, restar, multiplicar, dividir",
+          "icon": "+",
+          "vocab": [
+            {
+              "target": "plus",
+              "source": "más"
+            },
+            {
+              "target": "minus",
+              "source": "menos"
+            },
+            {
+              "target": "times",
+              "source": "por"
+            },
+            {
+              "target": "divided by",
+              "source": "dividido entre"
+            },
+            {
+              "target": "equals",
+              "source": "igual"
+            },
+            {
+              "target": "number",
+              "source": "número"
+            },
+            {
+              "target": "dot",
+              "source": "punto"
+            },
+            {
+              "target": "comma",
+              "source": "coma"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I added two plus three.",
+              "source": "Sumé dos más tres.",
+              "words": [
+                "I",
+                "added",
+                "two",
+                "plus",
+                "three."
+              ]
+            },
+            {
+              "target": "She subtracted four minus one.",
+              "source": "Ella restó cuatro menos uno.",
+              "words": [
+                "She",
+                "subtracted",
+                "four",
+                "minus",
+                "one."
+              ]
+            },
+            {
+              "target": "They multiplied five times six.",
+              "source": "Ellos multiplicaron cinco por seis.",
+              "words": [
+                "They",
+                "multiplied",
+                "five",
+                "times",
+                "six."
+              ]
+            },
+            {
+              "target": "We divided ten by two.",
+              "source": "Dividimos diez entre dos.",
+              "words": [
+                "We",
+                "divided",
+                "ten",
+                "by",
+                "two."
+              ],
+              "editedAt": "2026-06-16T14:56:00.719Z",
+              "_manualEdits": [
+                "2026-06-16T14:56:00.719Z"
+              ]
+            },
+            {
+              "target": "The answer is seven equals nine minus two.",
+              "source": "La respuesta es siete igual a nueve menos dos.",
+              "words": [
+                "The",
+                "answer",
+                "is",
+                "seven",
+                "equals",
+                "nine",
+                "minus",
+                "two."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Signos matemáticos",
+          "desc": "sumar, restar, multiplicar, dividir",
+          "icon": "+",
+          "vocab": [
+            {
+              "target": "plus",
+              "source": "más"
+            },
+            {
+              "target": "minus",
+              "source": "menos"
+            },
+            {
+              "target": "times",
+              "source": "por"
+            },
+            {
+              "target": "divided by",
+              "source": "dividido entre"
+            },
+            {
+              "target": "equals",
+              "source": "igual"
+            },
+            {
+              "target": "number",
+              "source": "número"
+            },
+            {
+              "target": "place",
+              "source": "lugar"
+            },
+            {
+              "target": "family",
+              "source": "familia"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The cat plus the bird equals a happy family.",
+              "source": "El gato más el pájaro igual a una familia feliz.",
+              "words": [
+                "The",
+                "cat",
+                "plus",
+                "the",
+                "bird",
+                "equals",
+                "a",
+                "happy",
+                "family."
+              ]
+            },
+            {
+              "target": "Minus the cat, the bird is free.",
+              "source": "Menos el gato, el pájaro está libre.",
+              "words": [
+                "Minus",
+                "the",
+                "cat,",
+                "the",
+                "bird",
+                "is",
+                "free."
+              ]
+            },
+            {
+              "target": "Times two, the nest is full of eggs.",
+              "source": "Por dos, el nido está lleno de huevos.",
+              "words": [
+                "Times",
+                "two,",
+                "the",
+                "nest",
+                "is",
+                "full",
+                "of",
+                "eggs."
+              ]
+            },
+            {
+              "target": "Divided by three, the family shares the food.",
+              "source": "Dividido entre tres, la familia divide la comida.",
+              "words": [
+                "Divided",
+                "by",
+                "three,",
+                "the",
+                "family",
+                "shares",
+                "the",
+                "food."
+              ],
+              "editedAt": "2026-06-16T14:57:47.889Z",
+              "_manualEdits": [
+                "2026-06-16T14:56:00.719Z"
+              ]
+            },
+            {
+              "target": "In this place, plus and minus rule everything.",
+              "source": "En este lugar, más y menos rigen todo.",
+              "words": [
+                "In",
+                "this",
+                "place,",
+                "plus",
+                "and",
+                "minus",
+                "rule",
+                "everything."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 105362,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 647,
+        "totalCompletionTokens": 254,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 105335,
+            "promptTokens": 647,
+            "completionTokens": 254
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T13:45:05.794Z",
+      "updatedAt": "2026-06-16T14:57:50.943Z",
+      "id": "tp_17816177163400000125"
+    },
+    {
+      "topic": "En el reino de los números",
+      "topicEmoji": "🔢",
+      "userTopic": "In the world of birds,",
+      "userPrompt": "In the world of birds,\n\n[story]\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "lang": "en",
+      "srcLang": "es",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "In the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "In the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "En el mundo de las aves",
+          "desc": "nidos, familias, lugares",
+          "icon": "🐦",
+          "vocab": [
+            {
+              "target": "bird",
+              "source": "pájaro"
+            },
+            {
+              "target": "nest",
+              "source": "nido"
+            },
+            {
+              "target": "cat",
+              "source": "gato"
+            },
+            {
+              "target": "family",
+              "source": "familia"
+            },
+            {
+              "target": "grown-up",
+              "source": "mayor"
+            },
+            {
+              "target": "child",
+              "source": "niño"
+            },
+            {
+              "target": "number",
+              "source": "número"
+            },
+            {
+              "target": "place",
+              "source": "lugar"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Birds make nests.",
+              "source": "Los pájaros hacen nidos.",
+              "words": [
+                "Birds",
+                "make",
+                "nests."
+              ]
+            },
+            {
+              "target": "Cats have families.",
+              "source": "Los gatos tienen familias.",
+              "words": [
+                "Cats",
+                "have",
+                "families."
+              ]
+            },
+            {
+              "target": "Grown-ups have children.",
+              "source": "Los mayores tienen niños.",
+              "words": [
+                "Grown-ups",
+                "have",
+                "children."
+              ]
+            },
+            {
+              "target": "Numbers have places.",
+              "source": "Los números tienen lugares.",
+              "words": [
+                "Numbers",
+                "have",
+                "places."
+              ]
+            },
+            {
+              "target": "Little i did not know.",
+              "source": "Pequeña i no sabía.",
+              "words": [
+                "Little",
+                "i",
+                "did",
+                "not",
+                "know."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 174915,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 632,
+        "totalCompletionTokens": 246,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 174894,
+            "promptTokens": 632,
+            "completionTokens": 246
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T13:42:10.783Z",
+      "updatedAt": "2026-06-16T14:54:09.514Z",
+      "id": "tp_17816175057310000009"
     },
     {
       "topic": "Integrating Diverse Exercises",
