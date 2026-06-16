@@ -918,7 +918,8 @@ async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
   const L = langName(lang || 'it');
   const S = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
-  const nExercises = difficulty <= 1 ? 5 : 7;
+    const nExercises = difficulty * 5;
+    //const nExercises = difficulty <= 1 ? 5 : 7;
   const sys  = fillPrompt(PROMPTS.math.system, { L, S });
   const user = fillPrompt(PROMPTS.math.user, { L, S, diff, instruction, nExercises });
   console.log('\n── Math lesson (LLM) prompt ─────────────────────────');
