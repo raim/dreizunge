@@ -1344,6 +1344,16 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction, skipMeta, placeholderTopic, parentId } = userOpts;
   srcLang = srcLang || 'en';
   const userTopic = topic;
+  // The complete, untruncated user input that drove generation. The saved display
+  // `topic` is a short LLM-generated title; `userTopic` already holds the full topic
+  // and the story prompt is built from it (the model receives the whole input), but
+  // we also persist a single explicit `userPrompt` field so nothing the user typed —
+  // topic plus any pasted story / translation — is ever lost to title-shortening.
+  const userPrompt = [
+    userTopic || null,
+    userStory ? ('[story]\n' + userStory) : null,
+    userTranslation ? ('[translation]\n' + userTranslation) : null,
+  ].filter(Boolean).join('\n\n') || userTopic || null;
   // The chain parent links this story into a storyline. With a user-supplied story
   // we still record the link — the parent arrives via prevStoryTopic since the
   // `continuedFrom` param is suppressed (we don't use the prior story as context).
@@ -1463,7 +1473,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   if (story) {
     upsert({
       topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
-      userTopic, lang, srcLang, difficulty: difficulty || 2, storyLen,
+      userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
       story, storyLang, storyPrompt,
       ...(storyTranslation ? { storyTranslation } : {}),
       ...(userStory        ? { userStory }         : {}),
@@ -1561,7 +1571,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
   return {
     topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
-    userTopic, lang, srcLang, difficulty: difficulty || 2, storyLen,
+    userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
     story, storyLang, storyPrompt,
     ...(storyTranslation ? { storyTranslation } : {}),
     ...(userStory        ? { userStory }         : {}),
@@ -1885,6 +1895,19 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
             || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
     if (sl) { sl.title = title; sl.icon = icon || sl.icon || '📖'; upsertStoryline(sl); }
   } catch (e) { console.warn(`  Storyline title post-pass failed: ${e.message}`); }
+  // 3) Whole-storyline summary in the source language — same as the storyline-page
+  // header-row summary (generateStorylineSummary + store on the storyline). Best-effort.
+  try {
+    const names = topics.map(t => t.topic);
+    const vocab = topics.flatMap(t =>
+      (t.lessons || []).flatMap(ls => (ls.vocab || []).map(v => v.source || v.target)));
+    const summary = await generateStorylineSummary(names, stories, vocab, base.srcLang);
+    const slId = _chainId(chapterIds);
+    const all = getStorylines();
+    const sl = all.find(s => s.id === slId)
+            || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
+    if (sl && summary) { sl.summary = summary; upsertStoryline(sl); }
+  } catch (e) { console.warn(`  Storyline summary post-pass failed: ${e.message}`); }
 }
 
 async function _runBookJob(bookId, chunks, base) {
@@ -1910,7 +1933,7 @@ async function _runBookJob(bookId, chunks, base) {
       const wc    = Math.max(50, Math.min(2000, parseInt(chunks[i].wordCount, 10) || base.chapterLen || 300));
       // Unique placeholder name (post-pass assigns the real, coherent title).
       const placeholderTopic = generated
-        ? `${base.baseTopic} — ${i+1}`
+        ? `${base.baseTopic.slice(0,40)} — ${i+1}`
         : ((String(chunks[i].title || '').trim().slice(0,80)) || ('Chapter ' + (i+1)));
       // Story-prompt theme: chapter 1 of a generated batch establishes the base
       // topic; every later generated chapter continues the SAME story (no new topic).
@@ -2007,6 +2030,16 @@ async function _runBookJob(bookId, chunks, base) {
       const chapterIds = bj.chapters.map(c => c.topicId).filter(Boolean);
       if (chapterIds.length) await _titleStorylinePostPass(chapterIds, base, bj);
     } catch (e) { console.warn(`  [book ${bookId}] title post-pass error: ${e.message}`); }
+    // Auto-QC the finished storyline (same as the user-triggered QC from the saved
+    // list), tagging items across all chapters. Best-effort; never fails the book.
+    try {
+      const qcTopics = bj.chapters.map(c => c.topicId).filter(Boolean)
+        .map(id => findSavedById(id)).filter(Boolean);
+      if (qcTopics.length) {
+        bj.status = 'qc';
+        await _runQc(newJob(), qcTopics, { lessonIdx: null, onlyFlagged: false });
+      }
+    } catch (e) { console.warn(`  [book ${bookId}] QC post-pass error: ${e.message}`); }
     bj.status = 'done';
   }
   console.log(`  [book ${bookId}] finished: ${bj.status}`);
@@ -2433,7 +2466,10 @@ http.createServer(async (req, res) => {
       let chaptersIn = chunks;
       let baseTopic = null, chapterLenN = null;
       if (generated) {
-        baseTopic = String(topic || '').trim().slice(0, 80);
+        // Keep the FULL topic — it is chapter 1's story-prompt theme and is stored
+        // as userTopic/userPrompt. (Only the transient placeholder label is shortened,
+        // below and in _runBookJob; the title post-pass replaces it anyway.)
+        baseTopic = String(topic || '').trim();
         if (!baseTopic) return json(res, 400, { error: 'Missing topic for generated batch' });
         const n = Math.min(20, parseInt(nChapters, 10) || 0);
         if (n < 2) return json(res, 400, { error: 'nChapters must be between 2 and 20' });
@@ -2457,7 +2493,7 @@ http.createServer(async (req, res) => {
         arcMode: arcMode === 'grammar' ? 'grammar' : 'vocab',
         generated: !!generated, baseTopic, chapterLen: chapterLenN,
         storyStyle: (storyStyle && storyStyle !== 'creative') ? storyStyle : null };
-      const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic} — ${i+1}` : '')));
+      const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic.slice(0,40)} — ${i+1}` : '')));
       console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:' (from upload)'}, id=${bookId}`);
       console.log(`    lang=${base.lang}  srcLang=${base.srcLang}  difficulty=${base.diff}  format=${base.fmt}` +
         `  style=${base.storyStyle||'(default)'}  arc=${base.arc?base.arcMode+(base.arcMode==='grammar'?' ['+base.arcTypes.join(',')+']':''):'off'}` +

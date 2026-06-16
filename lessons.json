@@ -2,6 +2,18 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_578686000",
+      "title": "ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte — 1",
+      "icon": "📖",
+      "chapters": [
+        "tp_17816159694190000004"
+      ],
+      "lang": "en",
+      "srcLang": "de",
+      "createdAt": "2026-06-16T13:19:29.455Z",
+      "updatedAt": "2026-06-16T13:19:29.455Z"
+    },
+    {
       "id": "sl_1848224281",
       "title": "Language Learning Evolved",
       "icon": "📖",
@@ -869,6 +881,138 @@
     }
   ],
   "topics": [
+    {
+      "topic": "ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte — 1",
+      "topicEmoji": "📖",
+      "userTopic": "ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "I typed out a really long message, hoping nothing got cut off. After hitting send, I waited anxiously. The response came back quickly, but it wasn't what I expected. \"Your input was too long. Try shorter next time.\"",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Simple vocabulary, playful tone, short sentences.\n\nWrite a story for the topic: \"ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte\". Plain prose, no headings.",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "langen Text",
+          "desc": "lang, aber klar",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "target": "type",
+              "source": "tippe"
+            },
+            {
+              "target": "long",
+              "source": "lang"
+            },
+            {
+              "target": "message",
+              "source": "Nachricht"
+            },
+            {
+              "target": "waited",
+              "source": "wartete"
+            },
+            {
+              "target": "response",
+              "source": "Antwort"
+            },
+            {
+              "target": "expected",
+              "source": "erwartete"
+            },
+            {
+              "target": "cut off",
+              "source": "abgeschnitten"
+            },
+            {
+              "target": "try",
+              "source": "versuche"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I typed out a long message.",
+              "source": "Ich tippe eine lange Nachricht.",
+              "words": [
+                "I",
+                "typed",
+                "out",
+                "a",
+                "long",
+                "message."
+              ]
+            },
+            {
+              "target": "The response came quickly.",
+              "source": "Die Antwort kam schnell.",
+              "words": [
+                "The",
+                "response",
+                "came",
+                "quickly."
+              ]
+            },
+            {
+              "target": "It wasn't what I expected.",
+              "source": "Es war nicht, was ich erwartete.",
+              "words": [
+                "It",
+                "wasn't",
+                "what",
+                "I",
+                "expected."
+              ]
+            },
+            {
+              "target": "Your input was too long.",
+              "source": "Dein Eingabe war zu lang.",
+              "words": [
+                "Your",
+                "input",
+                "was",
+                "too",
+                "long."
+              ]
+            },
+            {
+              "target": "Try shorter next time.",
+              "source": "Versuche nächstes Mal kürzer.",
+              "words": [
+                "Try",
+                "shorter",
+                "next",
+                "time."
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 238784,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 777,
+        "totalCompletionTokens": 289,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 198916,
+            "promptTokens": 634,
+            "completionTokens": 239
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T13:16:10.419Z",
+      "updatedAt": "2026-06-16T13:19:29.419Z",
+      "id": "tp_17816159694190000004",
+      "continuedFromId": "tp_17816159694190000004",
+      "continuedFrom": "ich teste mal einen sehr langen user input, ob nicht doch irgendwas abgeschnitte — 1"
+    },
     {
       "topic": "Integrating Diverse Exercises",
       "topicEmoji": "📝",
@@ -1814,7 +1958,9 @@
       "generatedAt": "2026-06-16T09:53:35.493Z",
       "updatedAt": "2026-06-16T10:58:11.304Z",
       "id": "tp_17816038862680000091",
-      "aiStory": "Wir entwickeln ein neues LLM-basiertes Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfasst und zu erfüllen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung."
+      "aiStory": "Wir entwickeln ein neues LLM-basiertes Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfasst und zu erfüllen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung.",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "Passive Voice",
@@ -2653,7 +2799,9 @@
       },
       "generatedAt": "2026-06-16T09:22:00.720Z",
       "updatedAt": "2026-06-16T09:32:48.843Z",
-      "id": "tp_17816023688430000381"
+      "id": "tp_17816023688430000381",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "Interwoven Futures",
@@ -3831,7 +3979,9 @@
       },
       "generatedAt": "2026-06-16T08:39:54.016Z",
       "updatedAt": "2026-06-16T08:49:22.651Z",
-      "id": "tp_17815997626510000078"
+      "id": "tp_17815997626510000078",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "testing our language learning app story generation with a better learning arc — 1",
@@ -3847,7 +3997,10 @@
       "storyStyle": "philosophical",
       "lessons": [],
       "generatedAt": "2026-06-16T08:29:25.053Z",
-      "updatedAt": "2026-06-16T08:29:25.053Z"
+      "updatedAt": "2026-06-16T08:29:25.053Z",
+      "continuedFromId": null,
+      "continuedFrom": null,
+      "id": "tp_17816139770630000089"
     },
     {
       "topic": "Peut-être i",
@@ -3862,7 +4015,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
       "continuedFrom": "“Of course",
-      "continuedFromId": "tp_17815374375310002032",
+      "continuedFromId": null,
       "lessons": [
         {
           "id": 1,
@@ -3994,7 +4147,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
       "continuedFrom": "Then somebody quietly sat beside her",
-      "continuedFromId": "tp_17815373131900001991",
+      "continuedFromId": null,
       "lessons": [
         {
           "id": 1,
@@ -4246,7 +4399,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
       "continuedFrom": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
-      "continuedFromId": "tp_17815371923280001882",
+      "continuedFromId": null,
       "lessons": [
         {
           "id": 1,
@@ -4375,7 +4528,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
       "continuedFrom": "As he finished his kind introduction,",
-      "continuedFromId": "tp_17815370798370001700",
+      "continuedFromId": null,
       "lessons": [
         {
           "id": 1,
@@ -4502,7 +4655,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
       "continuedFrom": "One is mean, he’s always first,",
-      "continuedFromId": "tp_17815369701180001679",
+      "continuedFromId": null,
       "lessons": [
         {
           "id": 1,
@@ -4636,7 +4789,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
       "continuedFrom": "In this world, so chaotic and strange,",
-      "continuedFromId": "tp_17815367707540001511",
+      "continuedFromId": null,
       "lessons": [
         {
           "id": 1,
@@ -4858,7 +5011,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
       "continuedFrom": "“Are you my family",
-      "continuedFromId": "tp_17815366458380001418",
+      "continuedFromId": null,
       "lessons": [
         {
           "id": 1,
@@ -4992,7 +5145,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
       "continuedFrom": "One evening, while everyone slept,",
-      "continuedFromId": "tp_17815365253630001333",
+      "continuedFromId": null,
       "lessons": [
         {
           "id": 1,
@@ -5491,7 +5644,9 @@
       },
       "generatedAt": "2026-06-15T15:08:22.666Z",
       "updatedAt": "2026-06-15T16:15:49.221Z",
-      "id": "tp_17815362983410001153"
+      "id": "tp_17815362983410001153",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "+, −, ∗, /",
@@ -5505,8 +5660,8 @@
       "storyLang": "target",
       "storyPrompt": "User-provided story",
       "userStory": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
-      "continuedFrom": "In the world of birds,",
-      "continuedFromId": "tp_17815362983410001153",
+      "continuedFrom": null,
+      "continuedFromId": null,
       "lessons": [
         {
           "id": 1,
@@ -5907,7 +6062,9 @@
       },
       "generatedAt": "2026-06-15T12:55:13.375Z",
       "updatedAt": "2026-06-15T14:21:02.641Z",
-      "id": "tp_17815283212820000053"
+      "id": "tp_17815283212820000053",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "i ist i",
@@ -6200,7 +6357,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
       "continuedFrom": "Zero",
-      "continuedFromId": "tp_17815291150260000733",
+      "continuedFromId": "tp_17815374375310002032",
       "lessons": [
         {
           "id": 1,
@@ -7438,22 +7595,6 @@
       "generatedAt": "2026-06-15T12:58:41.342Z",
       "updatedAt": "2026-06-15T13:29:17.145Z",
       "id": "tp_17815284454040000147"
-    },
-    {
-      "topic": "In the world of birds,",
-      "topicEmoji": "📖",
-      "userTopic": "In the world of birds,",
-      "lang": "en",
-      "srcLang": "de",
-      "difficulty": 1,
-      "storyLen": 50,
-      "story": "In the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "In the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
-      "lessons": [],
-      "generatedAt": "2026-06-15T12:53:54.893Z",
-      "updatedAt": "2026-06-15T12:53:54.893Z"
     },
     {
       "topic": "Forse non doveva essere Sette",
@@ -10851,7 +10992,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "“Do you know me?” asked 𝑖.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”\n\n“Are you my family?” asked 𝑖.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\n\n𝑖 burst into tears.",
       "continuedFrom": "I 7",
-      "continuedFromId": "tp_101952",
+      "continuedFromId": null,
       "storyStyle": "children",
       "lessons": [
         {
