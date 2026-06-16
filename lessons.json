@@ -2,6 +2,29 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1168783969",
+      "title": "数の物語",
+      "icon": "🔢",
+      "chapters": [
+        "tp_17816362889060000054",
+        "tp_17816372429150000165",
+        "tp_17816380325280000276",
+        "tp_17816389729790000379",
+        "tp_17816399201680000432",
+        "tp_17816402358080000586",
+        "tp_17816408736070000660",
+        "tp_17816412256300000785",
+        "tp_17816416069630000894",
+        "tp_17816418197470000925",
+        "tp_17816420287080001045"
+      ],
+      "lang": "en",
+      "srcLang": "ja",
+      "createdAt": "2026-06-16T18:58:08.961Z",
+      "updatedAt": "2026-06-16T20:44:58.335Z",
+      "summary": "この物語は、小さな数字「i」が自分の位置を見つけるために旅をする様子を描いています。彼女はプラス、マイナス、掛ける、で割るなどの記号の世界をさまようが、家族や場所を見つけることができません。混乱した世界で、ゼロに出会い、自分はただの「i」であることに気づきます。最後には、自分自身を認める勇気を得ます。主要な単語には、巣、家族、場所、知る、世界、小さな、足し算、引き算、掛け算、割り算があります。"
+    },
+    {
       "id": "sl_394799768",
       "title": "El viaje de i",
       "icon": "🔍",
@@ -896,6 +919,3071 @@
     }
   ],
   "topics": [
+    {
+      "topic": "iの真実",
+      "topicEmoji": " i",
+      "userTopic": "Maybe she didn’t have to be Seven",
+      "userPrompt": "Maybe she didn’t have to be Seven\n\n[story]\nMaybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "continuedFrom": "零の教訓",
+      "continuedFromId": "tp_17816418197470000925",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "彼女は七でなくてもいいの",
+          "desc": "数ではなくiでもいい",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "maybe",
+              "source": " poate"
+            },
+            {
+              "target": "she",
+              "source": " 彼女",
+              "qc": {
+                "sug": "彼女は",
+                "field": "source",
+                "at": "2026-06-16T21:50:46.533Z"
+              }
+            },
+            {
+              "target": "didn't have to",
+              "source": " しなくていい",
+              "qc": {
+                "sug": "しなくてよい",
+                "field": "source",
+                "at": "2026-06-16T21:50:50.352Z"
+              }
+            },
+            {
+              "target": "be",
+              "source": " する",
+              "qc": {
+                "sug": "です",
+                "field": "source",
+                "at": "2026-06-16T21:50:53.381Z"
+              }
+            },
+            {
+              "target": "seven",
+              "source": " 七",
+              "qc": {
+                "sug": "七つ",
+                "field": "source",
+                "at": "2026-06-16T21:50:56.131Z"
+              }
+            },
+            {
+              "target": "one",
+              "source": " 一",
+              "qc": {
+                "sug": "一つ",
+                "field": "source",
+                "at": "2026-06-16T21:50:59.215Z"
+              }
+            },
+            {
+              "target": "number",
+              "source": " 数字"
+            },
+            {
+              "target": "simply",
+              "source": " ただ"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Maybe she didn't have to be seven.",
+              "source": "彼女は七でなくてもいいの",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "seven."
+              ]
+            },
+            {
+              "target": "Maybe she didn't have to be one.",
+              "source": "彼女は一でなくてもいいの",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "one."
+              ],
+              "qc": {
+                "sug": "彼女はそうしなくてもいいのです。",
+                "field": "source",
+                "at": "2026-06-16T21:51:20.748Z"
+              }
+            },
+            {
+              "target": "Maybe she didn't even have to be a number.",
+              "source": "彼女は数字でなくてもいいの",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "even",
+                "have",
+                "to",
+                "be",
+                "a",
+                "number."
+              ],
+              "qc": {
+                "sug": "彼女は数字でなくてもいいのかもしれません。",
+                "field": "source",
+                "at": "2026-06-16T21:51:31.047Z"
+              }
+            },
+            {
+              "target": "Maybe she could simply be i.",
+              "source": "彼女はただiでいいの",
+              "words": [
+                "Maybe",
+                "she",
+                "could",
+                "simply",
+                "be",
+                "i."
+              ],
+              "qc": {
+                "sug": "彼女はただimaybeispersontly十分です。",
+                "field": "source",
+                "at": "2026-06-16T21:51:40.301Z"
+              }
+            },
+            {
+              "target": "And somehow, that felt just right.",
+              "source": "そして、それが正しかった",
+              "words": [
+                "And",
+                "somehow,",
+                "that",
+                "felt",
+                "just",
+                "right."
+              ],
+              "qc": {
+                "sug": "そして、それ felt just right.",
+                "field": "source",
+                "at": "2026-06-16T21:51:46.344Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "彼女は七でなくても",
+          "desc": "彼女は七でなくても、一つでなくても、数字でなくても、ただのiで、それが正しかった。",
+          "icon": "💡",
+          "vocab": [
+            {
+              "target": "maybe",
+              "source": "Maybe"
+            },
+            {
+              "target": "she",
+              "source": "彼女",
+              "qc": {
+                "sug": "彼女たち",
+                "field": "source",
+                "at": "2026-06-16T21:51:52.167Z"
+              }
+            },
+            {
+              "target": "didn't",
+              "source": "しなかった"
+            },
+            {
+              "target": "have",
+              "source": "持つ"
+            },
+            {
+              "target": "to",
+              "source": "を",
+              "qc": {
+                "sug": "to",
+                "field": "source",
+                "at": "2026-06-16T21:52:01.232Z"
+              }
+            },
+            {
+              "target": "be",
+              "source": "なる",
+              "qc": {
+                "sug": "です",
+                "field": "source",
+                "at": "2026-06-16T21:52:04.290Z"
+              }
+            },
+            {
+              "target": "seven",
+              "source": "七",
+              "qc": {
+                "sug": "七つ",
+                "field": "source",
+                "at": "2026-06-16T21:52:07.117Z"
+              }
+            },
+            {
+              "target": "strange",
+              "source": "不思議な"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Maybe she didn't have to be seven.",
+              "source": "彼女は七でなくてもいいの.",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "seven."
+              ]
+            },
+            {
+              "target": "She could simply be i.",
+              "source": "彼女はただのiでいい.",
+              "words": [
+                "She",
+                "could",
+                "simply",
+                "be",
+                "i."
+              ],
+              "qc": {
+                "sug": "彼女は単にiである可能性がある。",
+                "field": "source",
+                "at": "2026-06-16T21:52:25.352Z"
+              }
+            },
+            {
+              "target": "And that felt just right.",
+              "source": "それが正しかった.",
+              "words": [
+                "And",
+                "that",
+                "felt",
+                "just",
+                "right."
+              ],
+              "qc": {
+                "sug": "それがあたった.",
+                "field": "source",
+                "at": "2026-06-16T21:52:30.414Z"
+              }
+            },
+            {
+              "target": "Maybe she didn't even have to be a number.",
+              "source": "彼女は数字でなくてもいいの.",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "even",
+                "have",
+                "to",
+                "be",
+                "a",
+                "number."
+              ]
+            },
+            {
+              "target": "For a moment, she collapsed.",
+              "source": "一瞬、彼女は閉じた",
+              "words": [
+                "For",
+                "a",
+                "moment,",
+                "she",
+                "collapsed."
+              ],
+              "qc": {
+                "sug": "一瞬、彼女は倒れた。",
+                "field": "source",
+                "at": "2026-06-16T21:52:46.811Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 100020,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 618,
+        "totalCompletionTokens": 261,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 99993,
+            "promptTokens": 618,
+            "completionTokens": 261
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T20:30:19.810Z",
+      "updatedAt": "2026-06-16T21:52:46.812Z",
+      "id": "tp_17816420287080001045"
+    },
+    {
+      "topic": "零の教訓",
+      "topicEmoji": " ✨",
+      "userTopic": "“Of course",
+      "userPrompt": "“Of course\n\n[story]\n“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 52,
+      "story": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "continuedFrom": "ゼロの言葉",
+      "continuedFromId": "tp_17816416069630000894",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "もちろん",
+          "desc": "もちろん、そのままでいい",
+          "icon": "😊",
+          "vocab": [
+            {
+              "target": "of course",
+              "source": "もちろん"
+            },
+            {
+              "target": "one",
+              "source": "一つ"
+            },
+            {
+              "target": "seven",
+              "source": "七",
+              "qc": {
+                "sug": "七つ",
+                "field": "source",
+                "at": "2026-06-16T21:48:59.370Z"
+              }
+            },
+            {
+              "target": "forty-two",
+              "source": "四十二",
+              "qc": {
+                "sug": "四十二",
+                "field": "target",
+                "at": "2026-06-16T21:49:03.703Z"
+              }
+            },
+            {
+              "target": "okay",
+              "source": "大丈夫"
+            },
+            {
+              "target": "zero",
+              "source": "零",
+              "qc": {
+                "sug": "零 -> ゼロ",
+                "field": "source",
+                "at": "2026-06-16T21:49:09.805Z"
+              }
+            },
+            {
+              "target": "strange",
+              "source": "不思議な"
+            },
+            {
+              "target": "crying",
+              "source": "泣いている"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Of course, that's okay.",
+              "source": "もちろん、それは大丈夫です",
+              "words": [
+                "Of",
+                "course,",
+                "that's",
+                "okay."
+              ]
+            },
+            {
+              "target": "I'm not one.",
+              "source": "私は一つではありません",
+              "words": [
+                "I'm",
+                "not",
+                "one."
+              ],
+              "qc": {
+                "sug": "私は一つではありません。",
+                "field": "source",
+                "at": "2026-06-16T21:49:21.760Z"
+              }
+            },
+            {
+              "target": "I'm not seven.",
+              "source": "私は七ではありません",
+              "words": [
+                "I'm",
+                "not",
+                "seven."
+              ],
+              "qc": {
+                "sug": "私は七歳ではありません",
+                "field": "source",
+                "at": "2026-06-16T21:49:25.843Z"
+              }
+            },
+            {
+              "target": "I'm not forty-two.",
+              "source": "私は四十二ではありません",
+              "words": [
+                "I'm",
+                "not",
+                "forty-two."
+              ],
+              "qc": {
+                "sug": "私は四十二歳ではありません",
+                "field": "source",
+                "at": "2026-06-16T21:49:30.474Z"
+              }
+            },
+            {
+              "target": "For the first time all day, she stopped crying.",
+              "source": "一日中初めて、彼女は泣かなくなりました",
+              "words": [
+                "For",
+                "the",
+                "first",
+                "time",
+                "all",
+                "day,",
+                "she",
+                "stopped",
+                "crying."
+              ],
+              "qc": {
+                "sug": "一日中初めて泣かなくなりました",
+                "field": "source",
+                "at": "2026-06-16T21:49:42.225Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "もちろん",
+          "desc": "もちろんの意味を学ぶ",
+          "icon": "✅",
+          "vocab": [
+            {
+              "target": "of course",
+              "source": "もちろん"
+            },
+            {
+              "target": "okay",
+              "source": "大丈夫"
+            },
+            {
+              "target": "zero",
+              "source": "ゼロ"
+            },
+            {
+              "target": "crying",
+              "source": "泣いている"
+            },
+            {
+              "target": "strange",
+              "source": "不思議な"
+            },
+            {
+              "target": "old",
+              "source": "古い"
+            },
+            {
+              "target": "smiled",
+              "source": "微笑みました"
+            },
+            {
+              "target": "thought",
+              "source": "考えました",
+              "qc": {
+                "sug": "考えています",
+                "field": "source",
+                "at": "2026-06-16T21:50:01.813Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Of course, I'm not one.",
+              "source": "もちろん、私は一人ではありません。",
+              "words": [
+                "Of",
+                "course,",
+                "I'm",
+                "not",
+                "one."
+              ],
+              "qc": {
+                "sug": "Of course, I'm not alone.",
+                "field": "target",
+                "at": "2026-06-16T21:50:08.146Z"
+              }
+            },
+            {
+              "target": "That's okay.",
+              "source": "大丈夫です。",
+              "words": [
+                "That's",
+                "okay."
+              ]
+            },
+            {
+              "target": "Zero said, 'That's okay.'",
+              "source": "ゼロは言いました、「大丈夫です。」",
+              "words": [
+                "Zero",
+                "said,",
+                "'That's",
+                "okay.'"
+              ]
+            },
+            {
+              "target": "For the first time, she stopped crying.",
+              "source": "初めて彼女は泣き止みました。",
+              "words": [
+                "For",
+                "the",
+                "first",
+                "time,",
+                "she",
+                "stopped",
+                "crying."
+              ]
+            },
+            {
+              "target": "Little i smiled, thinking.",
+              "source": "小さなiは微笑みながら考えました。",
+              "words": [
+                "Little",
+                "i",
+                "smiled,",
+                "thinking."
+              ],
+              "qc": {
+                "sug": "小さなiは思いつつ微笑みました。",
+                "field": "source",
+                "at": "2026-06-16T21:50:40.348Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 99195,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 650,
+        "totalCompletionTokens": 232,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 99166,
+            "promptTokens": 650,
+            "completionTokens": 232
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T20:26:47.029Z",
+      "updatedAt": "2026-06-16T21:50:40.348Z",
+      "id": "tp_17816418197470000925"
+    },
+    {
+      "topic": "ゼロの言葉",
+      "topicEmoji": " 0",
+      "userTopic": "Then somebody quietly sat beside her",
+      "userPrompt": "Then somebody quietly sat beside her\n\n[story]\nThen somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 66,
+      "story": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "continuedFrom": "混乱の果て",
+      "continuedFromId": "tp_17816412256300000785",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "静かに座る",
+          "desc": "静か、彼、彼は",
+          "icon": "安静",
+          "vocab": [
+            {
+              "target": "quietly",
+              "source": "静かに"
+            },
+            {
+              "target": "somebody",
+              "source": "誰か"
+            },
+            {
+              "target": "beside",
+              "source": " beside"
+            },
+            {
+              "target": "her",
+              "source": "彼女",
+              "qc": {
+                "sug": "彼女の",
+                "field": "source",
+                "at": "2026-06-16T21:47:04.067Z"
+              }
+            },
+            {
+              "target": "said",
+              "source": "言いました",
+              "qc": {
+                "sug": "言いました OK",
+                "field": "source",
+                "at": "2026-06-16T21:47:07.622Z"
+              }
+            },
+            {
+              "target": "smiled",
+              "source": "微笑みました"
+            },
+            {
+              "target": "thought",
+              "source": "考えました",
+              "qc": {
+                "sug": "考えています",
+                "field": "source",
+                "at": "2026-06-16T21:47:13.517Z"
+              }
+            },
+            {
+              "target": "belong",
+              "source": "属する"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Then somebody quietly sat beside her.",
+              "source": "それから、誰かは静かに彼女 beside に座りました",
+              "words": [
+                "Then",
+                "somebody",
+                "quietly",
+                "sat",
+                "beside",
+                "her."
+              ]
+            },
+            {
+              "target": "'You look sad', said Zero.",
+              "source": "「君、悲しそうね」、ゼロは言いました",
+              "words": [
+                "'You",
+                "look",
+                "sad',",
+                "said",
+                "Zero."
+              ],
+              "qc": {
+                "sug": "You look sad', said Zero.",
+                "field": "target",
+                "at": "2026-06-16T21:47:36.241Z"
+              }
+            },
+            {
+              "target": "'I don’t belong here', said little i.",
+              "source": "「ここには私、属さない」、小さなiは言いました",
+              "words": [
+                "'I",
+                "don’t",
+                "belong",
+                "here',",
+                "said",
+                "little",
+                "i."
+              ],
+              "qc": {
+                "sug": "I don’t belong here', said little i.",
+                "field": "target",
+                "at": "2026-06-16T21:47:48.390Z"
+              }
+            },
+            {
+              "target": "Zero thought for a moment.",
+              "source": "ゼロは一瞬考えました",
+              "words": [
+                "Zero",
+                "thought",
+                "for",
+                "a",
+                "moment."
+              ],
+              "qc": {
+                "sug": "ゼロは一瞬も考えませんでした",
+                "field": "source",
+                "at": "2026-06-16T21:47:54.453Z"
+              }
+            },
+            {
+              "target": "Then he smiled.",
+              "source": "そして彼は微笑みました",
+              "words": [
+                "Then",
+                "he",
+                "smiled."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "静かに彼女 beside に座る",
+          "desc": "静か, そして誰かが彼女 beside に座る",
+          "icon": "🤗",
+          "vocab": [
+            {
+              "target": "quietly",
+              "source": "静かに"
+            },
+            {
+              "target": "beside",
+              "source": " beside"
+            },
+            {
+              "target": "said",
+              "source": "と言った",
+              "qc": {
+                "sug": "と言った OK",
+                "field": "source",
+                "at": "2026-06-16T21:48:06.365Z"
+              }
+            },
+            {
+              "target": "shy",
+              "source": "恥ずかしい",
+              "qc": {
+                "sug": "悩ましい",
+                "field": "source",
+                "at": "2026-06-16T21:48:10.293Z"
+              }
+            },
+            {
+              "target": "smiled",
+              "source": "微笑んだ"
+            },
+            {
+              "target": "thought",
+              "source": "考えた",
+              "qc": {
+                "sug": "考え",
+                "field": "source",
+                "at": "2026-06-16T21:48:17.528Z"
+              }
+            },
+            {
+              "target": "for",
+              "source": "に"
+            },
+            {
+              "target": "moment",
+              "source": "間"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Then somebody quietly sat beside her.",
+              "source": "それから誰かが静かに彼女 beside に座った",
+              "words": [
+                "Then",
+                "somebody",
+                "quietly",
+                "sat",
+                "beside",
+                "her."
+              ]
+            },
+            {
+              "target": "Zero was shy.",
+              "source": "ゼロは恥ずかしい",
+              "words": [
+                "Zero",
+                "was",
+                "shy."
+              ],
+              "qc": {
+                "sug": "ゼロは内気だった",
+                "field": "source",
+                "at": "2026-06-16T21:48:36.529Z"
+              }
+            },
+            {
+              "target": "Zero thought for a moment.",
+              "source": "ゼロは少し考えた",
+              "words": [
+                "Zero",
+                "thought",
+                "for",
+                "a",
+                "moment."
+              ],
+              "qc": {
+                "sug": "ゼロは一瞬も考えなかった",
+                "field": "source",
+                "at": "2026-06-16T21:48:44.044Z"
+              }
+            },
+            {
+              "target": "Then he smiled.",
+              "source": "そして彼は微笑んだ",
+              "words": [
+                "Then",
+                "he",
+                "smiled."
+              ]
+            },
+            {
+              "target": "I don’t belong here.",
+              "source": "ここには私がない",
+              "words": [
+                "I",
+                "don’t",
+                "belong",
+                "here."
+              ],
+              "qc": {
+                "sug": "ここには私不属于这里。",
+                "field": "source",
+                "at": "2026-06-16T21:48:51.232Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 207471,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 665,
+        "totalCompletionTokens": 271,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 207436,
+            "promptTokens": 665,
+            "completionTokens": 271
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T20:20:25.708Z",
+      "updatedAt": "2026-06-16T21:48:51.232Z",
+      "id": "tp_17816416069630000894"
+    },
+    {
+      "topic": "混乱の果て",
+      "topicEmoji": " 🤯",
+      "userTopic": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+      "userPrompt": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes\n\n[story]\n∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 85,
+      "story": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "continuedFrom": "八の騒動",
+      "continuedFromId": "tp_17816408736070000660",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "閉じた彼が目を開けるか",
+          "icon": "/Area51/",
+          "vocab": [
+            {
+              "target": "collapsed",
+              "source": "閉じた",
+              "qc": {
+                "sug": "閉じた",
+                "field": "target",
+                "at": "2026-06-16T21:44:49.218Z"
+              }
+            },
+            {
+              "target": "assembles",
+              "source": "集まる",
+              "qc": {
+                "sug": "集める",
+                "field": "source",
+                "at": "2026-06-16T21:44:52.975Z"
+              }
+            },
+            {
+              "target": "commands",
+              "source": "命令する",
+              "qc": {
+                "sug": "命令",
+                "field": "source",
+                "at": "2026-06-16T21:44:57.037Z"
+              }
+            },
+            {
+              "target": "trembles",
+              "source": "震える"
+            },
+            {
+              "target": "scares",
+              "source": "驚かす",
+              "qc": {
+                "sug": "恐れる",
+                "field": "source",
+                "at": "2026-06-16T21:45:03.793Z"
+              }
+            },
+            {
+              "target": "wants",
+              "source": "欲する",
+              "qc": {
+                "sug": "欲望がある",
+                "field": "source",
+                "at": "2026-06-16T21:45:08.127Z"
+              }
+            },
+            {
+              "target": "real",
+              "source": "現実"
+            },
+            {
+              "target": "scuffle",
+              "source": "喧嘩",
+              "qc": {
+                "sug": "搾し合い",
+                "field": "source",
+                "at": "2026-06-16T21:45:15.324Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Eight collapsed.",
+              "source": "八は閉じた。",
+              "words": [
+                "Eight",
+                "collapsed."
+              ],
+              "qc": {
+                "sug": "八つが倒れた。",
+                "field": "source",
+                "at": "2026-06-16T21:45:21.386Z"
+              }
+            },
+            {
+              "target": "Eight didn’t eat.",
+              "source": "八は食べなかった。",
+              "words": [
+                "Eight",
+                "didn’t",
+                "eat."
+              ],
+              "qc": {
+                "sug": "Eight did not eat.",
+                "field": "target",
+                "at": "2026-06-16T21:45:27.548Z"
+              }
+            },
+            {
+              "target": "i looks around.",
+              "source": "iは周りを見回した。",
+              "words": [
+                "i",
+                "looks",
+                "around."
+              ],
+              "qc": {
+                "sug": "iは周りを眺め回した。",
+                "field": "source",
+                "at": "2026-06-16T21:45:32.565Z"
+              }
+            },
+            {
+              "target": "Some numbers command.",
+              "source": "いくつかの数字が命令する。",
+              "words": [
+                "Some",
+                "numbers",
+                "command."
+              ]
+            },
+            {
+              "target": "i trembles with fear.",
+              "source": "iは恐れに震える。",
+              "words": [
+                "i",
+                "trembles",
+                "with",
+                "fear."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "閉じた彼は目を開けることができるだろうか",
+          "icon": "/Area51/",
+          "vocab": [
+            {
+              "target": "collapsed",
+              "source": "閉じた",
+              "qc": {
+                "sug": "閉じた",
+                "field": "target",
+                "at": "2026-06-16T21:45:49.172Z"
+              }
+            },
+            {
+              "target": "eyes",
+              "source": "目"
+            },
+            {
+              "target": "finite",
+              "source": "有限"
+            },
+            {
+              "target": "revenge",
+              "source": "復讐"
+            },
+            {
+              "target": "trembles",
+              "source": "震える"
+            },
+            {
+              "target": "fear",
+              "source": "恐れ",
+              "qc": {
+                "sug": "恐れkkei",
+                "field": "source",
+                "at": "2026-06-16T21:46:01.369Z"
+              }
+            },
+            {
+              "target": "assemble",
+              "source": "集まる",
+              "qc": {
+                "sug": "集める",
+                "field": "source",
+                "at": "2026-06-16T21:46:04.861Z"
+              }
+            },
+            {
+              "target": "command",
+              "source": "命令する",
+              "qc": {
+                "sug": "命令",
+                "field": "source",
+                "at": "2026-06-16T21:46:08.862Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Eight collapsed, and now lies.",
+              "source": "八は閉じた-now lies-",
+              "words": [
+                "Eight",
+                "collapsed,",
+                "and",
+                "now",
+                "lies."
+              ],
+              "qc": {
+                "sug": "八は閉じて今 lying は",
+                "field": "source",
+                "at": "2026-06-16T21:46:16.979Z"
+              }
+            },
+            {
+              "target": "Little i trembles with fear.",
+              "source": "小iは恐れ震える",
+              "words": [
+                "Little",
+                "i",
+                "trembles",
+                "with",
+                "fear."
+              ],
+              "qc": {
+                "sug": "Little i trembles with fear.",
+                "field": "source",
+                "at": "2026-06-16T21:46:24.608Z"
+              }
+            },
+            {
+              "target": "Eight didn’t eat and it scares everyone.",
+              "source": "八は食べず、それが Everyoneを驚かす",
+              "words": [
+                "Eight",
+                "didn’t",
+                "eat",
+                "and",
+                "it",
+                "scares",
+                "everyone."
+              ],
+              "qc": {
+                "sug": "八は食べず、それが Everyoneを驚かせる",
+                "field": "source",
+                "at": "2026-06-16T21:46:32.390Z"
+              }
+            },
+            {
+              "target": "i looks around as the numbers assemble.",
+              "source": "iは数字が集まるのを見回す",
+              "words": [
+                "i",
+                "looks",
+                "around",
+                "as",
+                "the",
+                "numbers",
+                "assemble."
+              ],
+              "qc": {
+                "sug": "iは数字が集まるのを見回します。",
+                "field": "source",
+                "at": "2026-06-16T21:46:41.783Z"
+              }
+            },
+            {
+              "target": "Some numbers command, but to her it’s just mumble.",
+              "source": "いくつかの数字は命令するが、彼女にはただ mumbling-が聞こえる",
+              "words": [
+                "Some",
+                "numbers",
+                "command,",
+                "but",
+                "to",
+                "her",
+                "it’s",
+                "just",
+                "mumble."
+              ],
+              "qc": {
+                "sug": "いくつかの数字は命令するが、彼女にはただ mumbling-が聞こえる。",
+                "field": "source",
+                "at": "2026-06-16T21:46:54.082Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 165538,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 690,
+        "totalCompletionTokens": 237,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 165499,
+            "promptTokens": 690,
+            "completionTokens": 237
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T20:14:33.699Z",
+      "updatedAt": "2026-06-16T21:46:54.083Z",
+      "id": "tp_17816412256300000785"
+    },
+    {
+      "topic": "八の騒動",
+      "topicEmoji": " 8",
+      "userTopic": "As he finished his kind introduction,",
+      "userPrompt": "As he finished his kind introduction,\n\n[story]\nAs he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 72,
+      "story": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "continuedFrom": "πの登場",
+      "continuedFromId": "tp_17816402358080000586",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "紹介が終わったとき",
+          "desc": "紛らわしい声、ピエ",
+          "icon": "📢",
+          "vocab": [
+            {
+              "target": "finished",
+              "source": "終わった"
+            },
+            {
+              "target": "kind",
+              "source": "優しい"
+            },
+            {
+              "target": "screaming",
+              "source": "叫んでいる"
+            },
+            {
+              "target": "pie",
+              "source": "ピエ",
+              "qc": {
+                "sug": "パイ",
+                "field": "source",
+                "at": "2026-06-16T21:43:54.198Z"
+              }
+            },
+            {
+              "target": "hungry",
+              "source": "飢えた",
+              "qc": {
+                "sug": "飢えている",
+                "field": "source",
+                "at": "2026-06-16T21:43:58.149Z"
+              }
+            },
+            {
+              "target": "loves",
+              "source": "愛する",
+              "qc": {
+                "sug": "爱する",
+                "field": "source",
+                "at": "2026-06-16T21:44:02.507Z"
+              }
+            },
+            {
+              "target": "throws",
+              "source": "投げる"
+            },
+            {
+              "target": "table",
+              "source": "テーブル"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He finished his kind introduction.",
+              "source": "紹介が終わった",
+              "words": [
+                "He",
+                "finished",
+                "his",
+                "kind",
+                "introduction."
+              ],
+              "qc": {
+                "sug": "紹介が終わりました。",
+                "field": "source",
+                "at": "2026-06-16T21:44:16.389Z"
+              }
+            },
+            {
+              "target": "Eight is screaming.",
+              "source": "八は叫んでいる",
+              "words": [
+                "Eight",
+                "is",
+                "screaming."
+              ]
+            },
+            {
+              "target": "He loves pie.",
+              "source": "彼はピエを愛する",
+              "words": [
+                "He",
+                "loves",
+                "pie."
+              ],
+              "qc": {
+                "sug": "彼はパイを愛する",
+                "field": "source",
+                "at": "2026-06-16T21:44:27.834Z"
+              }
+            },
+            {
+              "target": "One throws a cable.",
+              "source": "一はケーブルを投げる",
+              "words": [
+                "One",
+                "throws",
+                "a",
+                "cable."
+              ],
+              "qc": {
+                "sug": "一人はケーブルを投げる",
+                "field": "source",
+                "at": "2026-06-16T21:44:36.591Z"
+              }
+            },
+            {
+              "target": "He is almost there.",
+              "source": "彼はもうすぐそこだ",
+              "words": [
+                "He",
+                "is",
+                "almost",
+                "there."
+              ],
+              "qc": {
+                "sug": "彼はもうすぐそこです。",
+                "field": "source",
+                "at": "2026-06-16T21:44:43.990Z"
+              }
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 145202,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 672,
+        "totalCompletionTokens": 235,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 145163,
+            "promptTokens": 672,
+            "completionTokens": 235
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T20:03:55.891Z",
+      "updatedAt": "2026-06-16T21:44:43.990Z",
+      "id": "tp_17816408736070000660"
+    },
+    {
+      "topic": "πの登場",
+      "topicEmoji": " π",
+      "userTopic": "One is mean, he’s always first,",
+      "userPrompt": "One is mean, he’s always first,\n\n[story]\nOne is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 54,
+      "story": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "continuedFrom": "数のバンド",
+      "continuedFromId": "tp_17816399201680000432",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "残酷な男、いつも先に",
+          "desc": "残酷、最初、気にしない、真実",
+          "icon": "🤔",
+          "vocab": [
+            {
+              "target": "mean",
+              "source": "残酷",
+              "qc": {
+                "sug": "残酷",
+                "field": "target",
+                "at": "2026-06-16T21:41:47.432Z"
+              }
+            },
+            {
+              "target": "first",
+              "source": "最初"
+            },
+            {
+              "target": "care",
+              "source": "気にする",
+              "qc": {
+                "sug": "心に留める",
+                "field": "source",
+                "at": "2026-06-16T21:41:53.516Z"
+              }
+            },
+            {
+              "target": "true",
+              "source": "真実",
+              "qc": {
+                "sug": "真",
+                "field": "source",
+                "at": "2026-06-16T21:41:56.829Z"
+              }
+            },
+            {
+              "target": "step",
+              "source": "歩く",
+              "qc": {
+                "sug": "歩み",
+                "field": "source",
+                "at": "2026-06-16T21:41:59.203Z"
+              }
+            },
+            {
+              "target": "polite",
+              "source": "丁寧",
+              "qc": {
+                "sug": "丁寧な",
+                "field": "source",
+                "at": "2026-06-16T21:42:03.370Z"
+              }
+            },
+            {
+              "target": "meet",
+              "source": "会う"
+            },
+            {
+              "target": "name",
+              "source": "名前"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He is mean.",
+              "source": "彼は残酷です。",
+              "words": [
+                "He",
+                "is",
+                "mean."
+              ],
+              "qc": {
+                "sug": "彼はひどいです。",
+                "field": "source",
+                "at": "2026-06-16T21:42:14.237Z"
+              }
+            },
+            {
+              "target": "He is always first.",
+              "source": "彼はいつも最初です。",
+              "words": [
+                "He",
+                "is",
+                "always",
+                "first."
+              ]
+            },
+            {
+              "target": "He doesn't care.",
+              "source": "彼は気にしない。",
+              "words": [
+                "He",
+                "doesn't",
+                "care."
+              ]
+            },
+            {
+              "target": "It's true.",
+              "source": "それは真実です。",
+              "words": [
+                "It's",
+                "true."
+              ]
+            },
+            {
+              "target": "Nice to meet you.",
+              "source": "会うのは楽しいです。",
+              "words": [
+                "Nice",
+                "to",
+                "meet",
+                "you."
+              ],
+              "qc": {
+                "sug": "お会いできてうれしいです。",
+                "field": "source",
+                "at": "2026-06-16T21:42:30.923Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "一人は凶暴で、いつも先に立つ",
+          "desc": "凶暴な男の子、そして不思議なπ",
+          "icon": "🚨",
+          "vocab": [
+            {
+              "target": "mean",
+              "source": "凶暴な",
+              "qc": {
+                "sug": "意味",
+                "field": "target",
+                "at": "2026-06-16T21:42:35.795Z"
+              }
+            },
+            {
+              "target": "first",
+              "source": "先に立つ",
+              "qc": {
+                "sug": "先に立つもの",
+                "field": "source",
+                "at": "2026-06-16T21:42:40.521Z"
+              }
+            },
+            {
+              "target": "hurt",
+              "source": "傷つける",
+              "qc": {
+                "sug": "傷める",
+                "field": "source",
+                "at": "2026-06-16T21:42:44.938Z"
+              }
+            },
+            {
+              "target": "true",
+              "source": "本当",
+              "qc": {
+                "sug": "本当(TRUE)",
+                "field": "source",
+                "at": "2026-06-16T21:42:47.430Z"
+              }
+            },
+            {
+              "target": "believe",
+              "source": "信じる"
+            },
+            {
+              "target": "polite",
+              "source": "丁寧な",
+              "qc": {
+                "sug": "丁寧",
+                "field": "source",
+                "at": "2026-06-16T21:42:53.498Z"
+              }
+            },
+            {
+              "target": "met",
+              "source": "会う",
+              "qc": {
+                "sug": "遇った",
+                "field": "source",
+                "at": "2026-06-16T21:42:57.433Z"
+              }
+            },
+            {
+              "target": "name",
+              "source": "名前"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He's mean, always first.",
+              "source": "彼は凶暴で、いつも先に立つ",
+              "words": [
+                "He's",
+                "mean,",
+                "always",
+                "first."
+              ],
+              "qc": {
+                "sug": "He is mean, always first.",
+                "field": "source",
+                "at": "2026-06-16T21:43:08.771Z"
+              }
+            },
+            {
+              "target": "He doesn't care who he hurts.",
+              "source": "彼は誰を傷つけるか気にしない",
+              "words": [
+                "He",
+                "doesn't",
+                "care",
+                "who",
+                "he",
+                "hurts."
+              ]
+            },
+            {
+              "target": "He just says what he sees.",
+              "source": "彼はただ見たことを言うだけ",
+              "words": [
+                "He",
+                "just",
+                "says",
+                "what",
+                "he",
+                "sees."
+              ],
+              "qc": {
+                "sug": "彼はただ見ただけを言う",
+                "field": "source",
+                "at": "2026-06-16T21:43:22.663Z"
+              }
+            },
+            {
+              "target": "π stepped politely by.",
+              "source": "πは丁寧に立ち去った",
+              "words": [
+                "π",
+                "stepped",
+                "politely",
+                "by."
+              ],
+              "qc": {
+                "sug": "πは丁寧に通り過ぎた",
+                "field": "source",
+                "at": "2026-06-16T21:43:30.295Z"
+              }
+            },
+            {
+              "target": "Nice to meet you, my name is π.",
+              "source": "会うのも嬉しい、私の名前はπ",
+              "words": [
+                "Nice",
+                "to",
+                "meet",
+                "you,",
+                "my",
+                "name",
+                "is",
+                "π."
+              ],
+              "qc": {
+                "sug": "会うことができて嬉しい、私の名前はπです。",
+                "field": "source",
+                "at": "2026-06-16T21:43:41.690Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 142649,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 651,
+        "totalCompletionTokens": 225,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 142603,
+            "promptTokens": 651,
+            "completionTokens": 225
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T19:58:40.262Z",
+      "updatedAt": "2026-06-16T21:43:41.690Z",
+      "id": "tp_17816402358080000586"
+    },
+    {
+      "topic": "数のバンド",
+      "topicEmoji": " 🎸",
+      "userTopic": "In this world, so chaotic and strange,",
+      "userPrompt": "In this world, so chaotic and strange,\n\n[story]\nIn this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 82,
+      "story": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "continuedFrom": "七の世界",
+      "continuedFromId": "tp_17816389729790000379",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "この世界、混沌と奇妙",
+          "desc": "数字が並んだり、円になったり、バンドになったり",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "arrange",
+              "source": "並べる"
+            },
+            {
+              "target": "row",
+              "source": "並び",
+              "qc": {
+                "sug": "一行",
+                "field": "source",
+                "at": "2026-06-16T20:52:24.788Z"
+              }
+            },
+            {
+              "target": "circle",
+              "source": "円"
+            },
+            {
+              "target": "band",
+              "source": "バンド"
+            },
+            {
+              "target": "weird",
+              "source": "不思議",
+              "qc": {
+                "sug": "不思議な",
+                "field": "source",
+                "at": "2026-06-16T21:39:40.045Z"
+              }
+            },
+            {
+              "target": "noticed",
+              "source": "気づいた"
+            },
+            {
+              "target": "petting",
+              "source": "撫でる",
+              "qc": {
+                "sug": "抚でる",
+                "field": "source",
+                "at": "2026-06-16T21:39:45.544Z"
+              }
+            },
+            {
+              "target": "tall",
+              "source": "高さのある",
+              "qc": {
+                "sug": "高い",
+                "field": "source",
+                "at": "2026-06-16T21:39:48.464Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Numbers like to be arranged.",
+              "source": "数字は並べられるのが好きです。",
+              "words": [
+                "Numbers",
+                "like",
+                "to",
+                "be",
+                "arranged."
+              ],
+              "qc": {
+                "sug": "数字は並びが好きです。",
+                "field": "source",
+                "at": "2026-06-16T21:39:58.184Z"
+              }
+            },
+            {
+              "target": "Sometimes they stand in rows.",
+              "source": "時には並びに立つ。",
+              "words": [
+                "Sometimes",
+                "they",
+                "stand",
+                "in",
+                "rows."
+              ],
+              "qc": {
+                "sug": "時には並んで立つ。",
+                "field": "source",
+                "at": "2026-06-16T21:40:06.727Z"
+              }
+            },
+            {
+              "target": "She’s so different, she’s so small.",
+              "source": "彼女はとても異なり、とても小さい。",
+              "words": [
+                "She’s",
+                "so",
+                "different,",
+                "she’s",
+                "so",
+                "small."
+              ],
+              "qc": {
+                "sug": "彼女はとても異なる、とても小さい。",
+                "field": "source",
+                "at": "2026-06-16T21:40:14.670Z"
+              }
+            },
+            {
+              "target": "All the numbers came.",
+              "source": "すべての数字が来た。",
+              "words": [
+                "All",
+                "the",
+                "numbers",
+                "came."
+              ],
+              "qc": {
+                "sug": "すべての数が来た。",
+                "field": "source",
+                "at": "2026-06-16T21:40:21.817Z"
+              }
+            },
+            {
+              "target": "She’s so small.",
+              "source": "彼女はとても小さい。",
+              "words": [
+                "She’s",
+                "so",
+                "small."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "奇妙な世界",
+          "desc": "数が集まってバンドを組む",
+          "icon": "🎵",
+          "vocab": [
+            {
+              "target": "band",
+              "source": "バンド"
+            },
+            {
+              "target": "stand",
+              "source": "立つ"
+            },
+            {
+              "target": "evening",
+              "source": "夕暮れ",
+              "qc": {
+                "sug": "夕方",
+                "field": "source",
+                "at": "2026-06-16T21:40:34.649Z"
+              }
+            },
+            {
+              "target": "path",
+              "source": "道",
+              "qc": {
+                "sug": "道路",
+                "field": "source",
+                "at": "2026-06-16T21:40:38.623Z"
+              }
+            },
+            {
+              "target": "confuse",
+              "source": "混乱する",
+              "qc": {
+                "sug": "混乱させる",
+                "field": "source",
+                "at": "2026-06-16T21:40:43.176Z"
+              }
+            },
+            {
+              "target": "guy",
+              "source": "男の子",
+              "qc": {
+                "sug": "男性",
+                "field": "source",
+                "at": "2026-06-16T21:40:46.900Z"
+              }
+            },
+            {
+              "target": "place",
+              "source": "場所"
+            },
+            {
+              "target": "sign",
+              "source": "記号",
+              "qc": {
+                "sug": "署名",
+                "field": "source",
+                "at": "2026-06-16T21:40:52.660Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Numbers form a band in the evening.",
+              "source": "数は夕暮れにバンドを組む。",
+              "words": [
+                "Numbers",
+                "form",
+                "a",
+                "band",
+                "in",
+                "the",
+                "evening."
+              ]
+            },
+            {
+              "target": "They stand in a path that confuses everyone.",
+              "source": "彼らは Everyoneを混乱させる道で立つ。",
+              "words": [
+                "They",
+                "stand",
+                "in",
+                "a",
+                "path",
+                "that",
+                "confuses",
+                "everyone."
+              ],
+              "qc": {
+                "sug": "彼らは Everyoneを混乱させる道に立っている。",
+                "field": "source",
+                "at": "2026-06-16T21:41:11.858Z"
+              }
+            },
+            {
+              "target": "A guy notices a sign that looks strange.",
+              "source": "男の子は怪しい記号に気づく。",
+              "words": [
+                "A",
+                "guy",
+                "notices",
+                "a",
+                "sign",
+                "that",
+                "looks",
+                "strange."
+              ],
+              "qc": {
+                "sug": "男の人は怪しい記号に気づく。",
+                "field": "source",
+                "at": "2026-06-16T21:41:22.893Z"
+              }
+            },
+            {
+              "target": "Seven stands alone in the place of confusion.",
+              "source": "七は混乱の場所で一人立つ。",
+              "words": [
+                "Seven",
+                "stands",
+                "alone",
+                "in",
+                "the",
+                "place",
+                "of",
+                "confusion."
+              ],
+              "qc": {
+                "sug": "七は混乱の場所で一人立っている。",
+                "field": "source",
+                "at": "2026-06-16T21:41:33.838Z"
+              }
+            },
+            {
+              "target": "The numbers gasp at the little girl in the strange outfit.",
+              "source": "数は奇妙な服装の小さな女の子に息を吞む。",
+              "words": [
+                "The",
+                "numbers",
+                "gasp",
+                "at",
+                "the",
+                "little",
+                "girl",
+                "in",
+                "the",
+                "strange",
+                "outfit."
+              ]
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 447633,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 689,
+        "totalCompletionTokens": 256,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 447592,
+            "promptTokens": 689,
+            "completionTokens": 256
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T19:42:53.063Z",
+      "updatedAt": "2026-06-16T21:41:43.295Z",
+      "id": "tp_17816399201680000432"
+    },
+    {
+      "topic": "七の世界",
+      "topicEmoji": " 7",
+      "userTopic": "“Are you my family",
+      "userPrompt": "“Are you my family\n\n[story]\n“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 76,
+      "story": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "continuedFrom": "迷いの旅",
+      "continuedFromId": "tp_17816380325280000276",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "家族ですか",
+          "desc": "家族とは？",
+          "icon": "👨‍👩‍👧‍👦",
+          "vocab": [
+            {
+              "target": "family",
+              "source": "家族"
+            },
+            {
+              "target": "tears",
+              "source": "涙"
+            },
+            {
+              "target": "sorry",
+              "source": "すみません",
+              "qc": {
+                "sug": "Sorry",
+                "field": "target",
+                "at": "2026-06-16T20:50:28.796Z"
+              }
+            },
+            {
+              "target": "hero",
+              "source": "ヒーロー"
+            },
+            {
+              "target": "smartest",
+              "source": "一番賢い",
+              "qc": {
+                "sug": "最賢い",
+                "field": "source",
+                "at": "2026-06-16T20:50:37.804Z"
+              }
+            },
+            {
+              "target": "creepy",
+              "source": "怪しい",
+              "qc": {
+                "sug": "怪reffしい",
+                "field": "source",
+                "at": "2026-06-16T20:50:41.412Z"
+              }
+            },
+            {
+              "target": "disguise",
+              "source": "隠れ蓑",
+              "qc": {
+                "sug": "隠れ蓑",
+                "field": "target",
+                "at": "2026-06-16T20:50:46.238Z"
+              }
+            },
+            {
+              "target": "guy",
+              "source": "男の子",
+              "qc": {
+                "sug": "男性",
+                "field": "source",
+                "at": "2026-06-16T20:50:49.775Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Are you my family?",
+              "source": "家族ですか",
+              "words": [
+                "Are",
+                "you",
+                "my",
+                "family?"
+              ],
+              "qc": {
+                "sug": "家族ですか？",
+                "field": "source",
+                "at": "2026-06-16T20:50:54.199Z"
+              }
+            },
+            {
+              "target": "Seven shook his head.",
+              "source": "七人は首を振った",
+              "words": [
+                "Seven",
+                "shook",
+                "his",
+                "head."
+              ],
+              "qc": {
+                "sug": "七人は頭を振った",
+                "field": "source",
+                "at": "2026-06-16T20:51:01.521Z"
+              }
+            },
+            {
+              "target": "I’m sorry.",
+              "source": "すみません",
+              "words": [
+                "I’m",
+                "sorry."
+              ]
+            },
+            {
+              "target": "Forty-two thinks he is the smartest.",
+              "source": "四十二は自分を一番賢いと信じている",
+              "words": [
+                "Forty-two",
+                "thinks",
+                "he",
+                "is",
+                "the",
+                "smartest."
+              ],
+              "qc": {
+                "sug": "Forty-two thinks he is the smartest.",
+                "field": "source",
+                "at": "2026-06-16T20:51:14.450Z"
+              }
+            },
+            {
+              "target": "There are some creepy looking guys.",
+              "source": "怪しい男の子がいる",
+              "words": [
+                "There",
+                "are",
+                "some",
+                "creepy",
+                "looking",
+                "guys."
+              ],
+              "qc": {
+                "sug": "怪しい男がいる",
+                "field": "source",
+                "at": "2026-06-16T20:51:20.320Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "家族とは",
+          "desc": "家族についての単語を学びましょう",
+          "icon": "👨‍👩‍👧‍👦",
+          "vocab": [
+            {
+              "target": "family",
+              "source": "家族"
+            },
+            {
+              "target": "place",
+              "source": "場所"
+            },
+            {
+              "target": "evening",
+              "source": "夜"
+            },
+            {
+              "target": "little",
+              "source": "小さな"
+            },
+            {
+              "target": "path",
+              "source": "道",
+              "qc": {
+                "sug": "道路",
+                "field": "source",
+                "at": "2026-06-16T20:51:32.569Z"
+              }
+            },
+            {
+              "target": "world",
+              "source": "世界"
+            },
+            {
+              "target": "strange",
+              "source": "奇妙な"
+            },
+            {
+              "target": "gasp",
+              "source": "息を吞む"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Are you my family?",
+              "source": "あなたは私の家族ですか？",
+              "words": [
+                "Are",
+                "you",
+                "my",
+                "family?"
+              ]
+            },
+            {
+              "target": "The path to the family place is long.",
+              "source": "家族の場所への道は長いです。",
+              "words": [
+                "The",
+                "path",
+                "to",
+                "the",
+                "family",
+                "place",
+                "is",
+                "long."
+              ],
+              "qc": {
+                "sug": "The path to the family place is long. 家族の場所への道は長いです。",
+                "field": "source",
+                "at": "2026-06-16T20:52:00.698Z"
+              }
+            },
+            {
+              "target": "Evening came, and everyone slept.",
+              "source": "夜が訪れ、 Everyoneは眠りました。",
+              "words": [
+                "Evening",
+                "came,",
+                "and",
+                "everyone",
+                "slept."
+              ],
+              "qc": {
+                "sug": "夜が訪れ、 Everyoneは Everyoneが眠りました。",
+                "field": "source",
+                "at": "2026-06-16T20:52:07.722Z"
+              }
+            },
+            {
+              "target": "A strange path appeared in the world.",
+              "source": "奇妙な道が世界に現れました。",
+              "words": [
+                "A",
+                "strange",
+                "path",
+                "appeared",
+                "in",
+                "the",
+                "world."
+              ]
+            },
+            {
+              "target": "I gasped, realizing the path was confusing.",
+              "source": "道が混乱していることに気づき、息を吞みました。",
+              "words": [
+                "I",
+                "gasped,",
+                "realizing",
+                "the",
+                "path",
+                "was",
+                "confusing."
+              ]
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 476628,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 673,
+        "totalCompletionTokens": 247,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 476582,
+            "promptTokens": 673,
+            "completionTokens": 247
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T19:27:12.602Z",
+      "updatedAt": "2026-06-16T20:52:17.940Z",
+      "id": "tp_17816389729790000379"
+    },
+    {
+      "topic": "迷いの旅",
+      "topicEmoji": " 🤔",
+      "userTopic": "One evening, while everyone slept,",
+      "userPrompt": "One evening, while everyone slept,\n\n[story]\nOne evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "continuedFrom": "加減乗除",
+      "continuedFromId": "tp_17816372429150000165",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "夜のひと時",
+          "desc": "眠る Everyoneが眠るとき",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "夜"
+            },
+            {
+              "target": "everyone",
+              "source": "Everyone"
+            },
+            {
+              "target": "slept",
+              "source": "眠る"
+            },
+            {
+              "target": "little",
+              "source": "little"
+            },
+            {
+              "target": "path",
+              "source": "道",
+              "qc": {
+                "sug": "道路",
+                "field": "source",
+                "at": "2026-06-16T20:48:51.107Z"
+              }
+            },
+            {
+              "target": "world",
+              "source": "世界"
+            },
+            {
+              "target": "strange",
+              "source": "奇妙な"
+            },
+            {
+              "target": "gasp",
+              "source": "息を吞む"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "One evening, while everyone slept, little i followed a glowing path.",
+              "source": "夜のひと時、Everyoneが眠るとき、little iは光る道を追った",
+              "words": [
+                "One",
+                "evening,",
+                "while",
+                "everyone",
+                "slept,",
+                "little",
+                "i",
+                "followed",
+                "a",
+                "glowing",
+                "path."
+              ],
+              "qc": {
+                "sug": "夜のひと時、 Everyoneが眠るとき、little iは光る道を追った",
+                "field": "target",
+                "at": "2026-06-16T20:49:14.722Z"
+              }
+            },
+            {
+              "target": "It led to another world.",
+              "source": "それは別の世界へと導いた",
+              "words": [
+                "It",
+                "led",
+                "to",
+                "another",
+                "world."
+              ]
+            },
+            {
+              "target": "A strange world.",
+              "source": "奇妙な世界",
+              "words": [
+                "A",
+                "strange",
+                "world."
+              ]
+            },
+            {
+              "target": "A number world.",
+              "source": "数字の世界",
+              "words": [
+                "A",
+                "number",
+                "world."
+              ]
+            },
+            {
+              "target": "At the end of the road stood a tall Seven.",
+              "source": "道の先に高さのあるSevenが立っていた",
+              "words": [
+                "At",
+                "the",
+                "end",
+                "of",
+                "the",
+                "road",
+                "stood",
+                "a",
+                "tall",
+                "Seven."
+              ],
+              "qc": {
+                "sug": "At the end of the road stood a tall Seven-Eleven.",
+                "field": "target",
+                "at": "2026-06-16T20:49:33.065Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "夜は静か",
+          "desc": "眠る Everyone が Everyone  Everyone  Everyone  Everyone  Everyone  Everyone  Everyone",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "夕方"
+            },
+            {
+              "target": "glowing",
+              "source": "光る"
+            },
+            {
+              "target": "path",
+              "source": "道",
+              "qc": {
+                "sug": "道路",
+                "field": "source",
+                "at": "2026-06-16T20:49:41.363Z"
+              }
+            },
+            {
+              "target": "world",
+              "source": "世界"
+            },
+            {
+              "target": "strange",
+              "source": "不思議な"
+            },
+            {
+              "target": "number",
+              "source": "数"
+            },
+            {
+              "target": "Seven",
+              "source": "七",
+              "qc": {
+                "sug": "七つ",
+                "field": "source",
+                "at": "2026-06-16T20:49:50.865Z"
+              }
+            },
+            {
+              "target": "gasp",
+              "source": "息を吞む"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Evening came.",
+              "source": "夕方は来た。",
+              "words": [
+                "Evening",
+                "came."
+              ],
+              "qc": {
+                "sug": "夕方になった。",
+                "field": "source",
+                "at": "2026-06-16T20:49:57.236Z"
+              }
+            },
+            {
+              "target": "Glowing path appeared.",
+              "source": "光る道が現れた。",
+              "words": [
+                "Glowing",
+                "path",
+                "appeared."
+              ]
+            },
+            {
+              "target": "Strange world awaited.",
+              "source": "不思議な世界が待っていた。",
+              "words": [
+                "Strange",
+                "world",
+                "awaited."
+              ]
+            },
+            {
+              "target": "Number Seven stood.",
+              "source": "数七が立っていた。",
+              "words": [
+                "Number",
+                "Seven",
+                "stood."
+              ]
+            },
+            {
+              "target": "Little i gasped.",
+              "source": "小さなiは息を吞んだ。",
+              "words": [
+                "Little",
+                "i",
+                "gasped."
+              ],
+              "qc": {
+                "sug": "小さなiは息を呑んだ。",
+                "field": "source",
+                "at": "2026-06-16T20:50:20.422Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 362885,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 648,
+        "totalCompletionTokens": 256,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 362834,
+            "promptTokens": 648,
+            "completionTokens": 256
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T19:14:03.011Z",
+      "updatedAt": "2026-06-16T20:50:20.423Z",
+      "id": "tp_17816380325280000276"
+    },
+    {
+      "topic": "加減乗除",
+      "topicEmoji": " ±",
+      "userTopic": "+, −, ∗, /",
+      "userPrompt": "+, −, ∗, /\n\n[story]\n+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "continuedFrom": "小さなi",
+      "continuedFromId": "tp_17816362889060000054",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "+, −, ∗, /",
+          "desc": "足し算、引き算、掛け算、割り算",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "plus",
+              "source": "プラス"
+            },
+            {
+              "target": "minus",
+              "source": "マイナス"
+            },
+            {
+              "target": "times",
+              "source": "掛ける",
+              "qc": {
+                "sug": "乗る",
+                "field": "source",
+                "at": "2026-06-16T20:46:34.467Z"
+              }
+            },
+            {
+              "target": "divided by",
+              "source": "で割る",
+              "qc": {
+                "sug": "で割ります",
+                "field": "source",
+                "at": "2026-06-16T20:46:39.191Z"
+              }
+            },
+            {
+              "target": "equals",
+              "source": "等しい",
+              "qc": {
+                "sug": "等しい东西",
+                "field": "source",
+                "at": "2026-06-16T20:46:43.621Z"
+              }
+            },
+            {
+              "target": "number",
+              "source": "数"
+            },
+            {
+              "target": "sign",
+              "source": "記号",
+              "qc": {
+                "sug": "署名",
+                "field": "source",
+                "at": "2026-06-16T20:46:49.406Z"
+              }
+            },
+            {
+              "target": "confuse",
+              "source": "混乱する",
+              "qc": {
+                "sug": "混乱させる",
+                "field": "source",
+                "at": "2026-06-16T20:46:53.842Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I added two plus three.",
+              "source": "私は二を三に足しました。",
+              "words": [
+                "I",
+                "added",
+                "two",
+                "plus",
+                "three."
+              ],
+              "qc": {
+                "sug": "私は二を三に足した。",
+                "field": "source",
+                "at": "2026-06-16T20:46:59.816Z"
+              }
+            },
+            {
+              "target": "She subtracted four minus one.",
+              "source": "彼女は四から一を引きました。",
+              "words": [
+                "She",
+                "subtracted",
+                "four",
+                "minus",
+                "one."
+              ],
+              "qc": {
+                "sug": "彼女は四から一を引いた。",
+                "field": "source",
+                "at": "2026-06-16T20:47:07.320Z"
+              }
+            },
+            {
+              "target": "They multiplied five times six.",
+              "source": "彼らは五を六に掛けて計算しました。",
+              "words": [
+                "They",
+                "multiplied",
+                "five",
+                "times",
+                "six."
+              ],
+              "qc": {
+                "sug": "彼らは五を六倍にしました。",
+                "field": "source",
+                "at": "2026-06-16T20:47:14.937Z"
+              }
+            },
+            {
+              "target": "We divided ten divided by two.",
+              "source": "私たちは十を二で割りました。",
+              "words": [
+                "We",
+                "divided",
+                "ten",
+                "divided",
+                "by",
+                "two."
+              ],
+              "qc": {
+                "sug": "We divided ten by two.",
+                "field": "target",
+                "at": "2026-06-16T20:47:24.426Z"
+              }
+            },
+            {
+              "target": "The sign confused everyone.",
+              "source": "記号は誰もが混乱させました。",
+              "words": [
+                "The",
+                "sign",
+                "confused",
+                "everyone."
+              ],
+              "qc": {
+                "sug": "そのサインは誰もを混乱させた。",
+                "field": "source",
+                "at": "2026-06-16T20:47:33.891Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "足し算、引き算、掛け算、割り算",
+          "desc": "加算、減算、乗算、除算について",
+          "icon": "+",
+          "vocab": [
+            {
+              "target": "addition",
+              "source": "足し算"
+            },
+            {
+              "target": "subtraction",
+              "source": "引き算"
+            },
+            {
+              "target": "multiplication",
+              "source": "掛け算"
+            },
+            {
+              "target": "division",
+              "source": "割り算"
+            },
+            {
+              "target": "equal",
+              "source": "等しい"
+            },
+            {
+              "target": "number",
+              "source": "数"
+            },
+            {
+              "target": "sign",
+              "source": "記号",
+              "qc": {
+                "sug": "署名",
+                "field": "source",
+                "at": "2026-06-16T20:47:51.274Z"
+              }
+            },
+            {
+              "target": "often",
+              "source": "しばしば"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Addition and subtraction are easy for little i.",
+              "source": "足し算と引き算は小さなiにとって簡単です",
+              "words": [
+                "Addition",
+                "and",
+                "subtraction",
+                "are",
+                "easy",
+                "for",
+                "little",
+                "i."
+              ],
+              "qc": {
+                "sug": "足し算と引き算はlittle iにとって簡単です",
+                "field": "source",
+                "at": "2026-06-16T20:48:05.417Z"
+              }
+            },
+            {
+              "target": "Multiplication often confuses people.",
+              "source": "掛け算はしばしば人々を混乱させる",
+              "words": [
+                "Multiplication",
+                "often",
+                "confuses",
+                "people."
+              ]
+            },
+            {
+              "target": "Division is the hardest sign.",
+              "source": "割り算は最も難しい記号です",
+              "words": [
+                "Division",
+                "is",
+                "the",
+                "hardest",
+                "sign."
+              ],
+              "qc": {
+                "sug": "割り算は最も難しいものです。",
+                "field": "source",
+                "at": "2026-06-16T20:48:19.040Z"
+              }
+            },
+            {
+              "target": "In the world, numbers nest in families.",
+              "source": "世界では、数は家族の中で巣になります",
+              "words": [
+                "In",
+                "the",
+                "world,",
+                "numbers",
+                "nest",
+                "in",
+                "families."
+              ],
+              "qc": {
+                "sug": "世界では、数字は家族のように集まっています",
+                "field": "source",
+                "at": "2026-06-16T20:48:26.068Z"
+              }
+            },
+            {
+              "target": "Little i grew up knowing the signs.",
+              "source": "小さなiは記号を知りながら育ちました",
+              "words": [
+                "Little",
+                "i",
+                "grew",
+                "up",
+                "knowing",
+                "the",
+                "signs."
+              ],
+              "qc": {
+                "sug": "小さなiは記号を知りながら育ち、その Signsに慣れました",
+                "field": "source",
+                "at": "2026-06-16T20:48:39.353Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 470153,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 647,
+        "totalCompletionTokens": 263,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 470117,
+            "promptTokens": 647,
+            "completionTokens": 263
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T18:58:09.003Z",
+      "updatedAt": "2026-06-16T20:48:39.353Z",
+      "id": "tp_17816372429150000165"
+    },
+    {
+      "topic": "小さなi",
+      "topicEmoji": " înt",
+      "userTopic": "The Little I am i",
+      "userPrompt": "The Little I am i\n\n[story]\nThe Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "lang": "en",
+      "srcLang": "ja",
+      "difficulty": 1,
+      "storyLen": 58,
+      "story": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "小さなi",
+          "desc": "数字の世界で、iはどこにいるのか",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "nest",
+              "source": "巣"
+            },
+            {
+              "target": "family",
+              "source": "家族"
+            },
+            {
+              "target": "place",
+              "source": "場所"
+            },
+            {
+              "target": "know",
+              "source": "知る",
+              "qc": {
+                "sug": "知っています",
+                "field": "source",
+                "at": "2026-06-16T20:45:32.361Z"
+              }
+            },
+            {
+              "target": "world",
+              "source": "世界"
+            },
+            {
+              "target": "often",
+              "source": "しばしば"
+            },
+            {
+              "target": "little",
+              "source": "小さな"
+            },
+            {
+              "target": "grew up",
+              "source": "育つ",
+              "qc": {
+                "sug": "育ちました",
+                "field": "source",
+                "at": "2026-06-16T20:45:44.012Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Little birds have nests.",
+              "source": "小さな鳥は巣がある",
+              "words": [
+                "Little",
+                "birds",
+                "have",
+                "nests."
+              ]
+            },
+            {
+              "target": "Grown-ups often have children.",
+              "source": "大人はしばしば子供がいる",
+              "words": [
+                "Grown-ups",
+                "often",
+                "have",
+                "children."
+              ],
+              "qc": {
+                "sug": "大人はしばしば子供を育てている",
+                "field": "source",
+                "at": "2026-06-16T20:45:56.990Z"
+              }
+            },
+            {
+              "target": "i did not know where hers was.",
+              "source": "iはどこにあるのか知らなかった",
+              "words": [
+                "i",
+                "did",
+                "not",
+                "know",
+                "where",
+                "hers",
+                "was."
+              ],
+              "qc": {
+                "sug": "iはどこにあるのか知らなかった",
+                "field": "target",
+                "at": "2026-06-16T20:46:05.626Z"
+              }
+            },
+            {
+              "target": "In the world of numbers, every number seems to have a place.",
+              "source": "数字の世界では、すべての数字には場所がある",
+              "words": [
+                "In",
+                "the",
+                "world",
+                "of",
+                "numbers,",
+                "every",
+                "number",
+                "seems",
+                "to",
+                "have",
+                "a",
+                "place."
+              ],
+              "qc": {
+                "sug": "数字の世界では、すべての数字には場所が見つかるような気がする。",
+                "field": "source",
+                "at": "2026-06-16T20:46:21.341Z"
+              }
+            },
+            {
+              "target": "But little i grew up.",
+              "source": "しかし、小さなiは育った",
+              "words": [
+                "But",
+                "little",
+                "i",
+                "grew",
+                "up."
+              ],
+              "qc": {
+                "sug": "But little I grew up.",
+                "field": "target",
+                "at": "2026-06-16T20:46:26.847Z"
+              }
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 341508,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 648,
+        "totalCompletionTokens": 253,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 341445,
+            "promptTokens": 648,
+            "completionTokens": 253
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T18:52:27.349Z",
+      "updatedAt": "2026-06-16T20:46:26.848Z",
+      "id": "tp_17816362889060000054"
+    },
     {
       "topic": "Ser simplemente i",
       "topicEmoji": "|i|",
@@ -3840,7 +6928,9 @@
       },
       "generatedAt": "2026-06-16T13:42:10.783Z",
       "updatedAt": "2026-06-16T14:54:09.514Z",
-      "id": "tp_17816175057310000009"
+      "id": "tp_17816175057310000009",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "Integrating Diverse Exercises",
