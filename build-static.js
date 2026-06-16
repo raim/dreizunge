@@ -196,8 +196,8 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v43' };
-  { const _v=document.getElementById('app-version'); if(_v) _v.textContent='v43'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v44' };
+  { const _v=document.getElementById('app-version'); if(_v) _v.textContent='v44'; }
   APP._teacherMode = false;
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
@@ -324,7 +324,7 @@ function itemHtml(s, connector) {
       <div class="saved-actions" onclick="event.stopPropagation()">
         <button class="ico-btn export" title="Export lesson with flags"
           data-topic="\${escapedTopic}"
-          onclick="exportTopics([this.dataset.topic])">⬇</button>
+          onclick="openExportMenu(event,[this.dataset.topic])">⬇</button>
       </div>
     </div>
     <div class="saved-item-story">
@@ -472,13 +472,10 @@ async function loadSavedList() {
       +' style="cursor:pointer" onclick="openStorylineScreen(this.dataset.chainId,this.dataset.chain)">'+hdrTitle
       +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px" title="Export full story line"'
       +' data-chain="'+chainEncoded+'"'
-      +' onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>'
+      +' onclick="event.stopPropagation();openExportMenu(event,JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>'
       +'<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="Share storyline link"'
       +' data-chain-id="'+chainId+'"'
       +' onclick="event.stopPropagation();shareStorylineById(this.dataset.chainId)">🔗</button>'
-      +'<button class="ico-btn export" style="font-size:11px;padding:2px 8px" title="Export full story line"'
-      +' data-chain="'+chainEncoded+'"'
-      +' onclick="event.stopPropagation();exportTopics(JSON.parse(decodeURIComponent(this.dataset.chain)))">⬇</button>'
       +'</div>';
     // Read summary strip if stored
     const _slSumMeta2=matchSl2||slTitles[chainId]||null;
@@ -535,9 +532,9 @@ function setTopic(t){ document.getElementById('topic-input').value=t; }
 // Stubs injected AFTER part2 so they override engine versions
 const staticOverrides = [
   '// ── Disabled in static mode ──────────────────────────────────────',
-  '// No server in static: the export format menu would have no /api/export to call,',
-  '// so all export buttons download JSON directly (client-side).',
-  'function openExportMenu(ev, topics){ if(ev&&ev.stopPropagation)ev.stopPropagation(); exportTopics(topics); }',
+  '// Export menu is kept: openExportMenu (inherited) offers md/html/json; _doExport',
+  '// renders md/html client-side from the baked lessons (see _clientExport), JSON via',
+  '// the static exportTopics override below — no /api/export needed.',
   'async function syncFlagsFromServer(){}',
   'async function pushFlagToServer(){}',
   'async function deleteSaved(){}',

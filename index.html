@@ -439,6 +439,18 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 [dir="rtl"] .saved-topic,[dir="rtl"] .saved-meta,[dir="rtl"] .fb-head,[dir="rtl"] .fb-body,
 [dir="rtl"] .qtext,[dir="rtl"] .target-box-text,[dir="rtl"] .it-word,
 [dir="rtl"] .tok,[dir="rtl"] .placed-tok,[dir="rtl"] .sbox-ph{direction:rtl;text-align:right}
+/* Text-span chapter selection editor */
+#pdf-sel-panel{display:none;flex-direction:column;gap:8px}
+.pdf-sel-hint{font-size:11px;color:var(--gray-dark);line-height:1.4}
+#pdf-doc-view{white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto;padding:8px 10px;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:8px;font-size:12px;line-height:1.5;color:var(--text);cursor:text;user-select:text;-webkit-user-select:text}
+.pdf-sel-hi{background:#ffe9a8;border-radius:3px;box-shadow:0 0 0 1px #f0c85a inset}
+#pdf-sel-list{display:flex;flex-direction:column;gap:4px;max-height:150px;overflow-y:auto}
+.pdf-sel-item{display:flex;align-items:center;gap:6px;padding:4px 8px;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;font-size:12px}
+.pdf-sel-idx{font-weight:900;color:var(--blue-dark);min-width:18px}
+.pdf-sel-snip{flex:1;color:var(--gray-dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pdf-sel-wc{color:var(--gray-dark);font-size:11px;white-space:nowrap}
+.pdf-sel-empty{font-size:11px;color:var(--gray-dark);font-style:italic;padding:4px 2px}
+.pdf-sel-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -580,14 +592,35 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     </div>
     <div class="pdf-panel" id="pdf-panel">
       <div id="pdf-chunk-list" class="pdf-chunk-list"></div>
+      <button type="button" id="pdf-sel-open-btn" onclick="pdfSelOpen()"
+        style="display:none;align-self:flex-start;font-size:11px;font-weight:700;color:var(--blue-dark);background:#eef4ff;border:1.5px solid #a0b8f0;border-radius:8px;padding:3px 10px;cursor:pointer;font-family:Nunito,sans-serif"></button>
+      <div id="pdf-sel-panel">
+        <div class="pdf-sel-hint" id="pdf-sel-hint"></div>
+        <div id="pdf-doc-view" onmouseup="pdfDocSelect()" ontouchend="pdfDocSelect()"></div>
+        <div id="pdf-sel-list"></div>
+        <div class="pdf-sel-actions">
+          <button type="button" id="pdf-sel-apply" onclick="pdfSelApply()"
+            style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif"></button>
+          <button type="button" id="pdf-sel-clear" onclick="pdfSelClear()"
+            style="font-size:11px;font-weight:700;padding:4px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif"></button>
+          <button type="button" id="pdf-sel-back" onclick="pdfSelClose()"
+            style="font-size:11px;font-weight:700;padding:4px 10px;border:none;background:none;color:var(--blue-dark);cursor:pointer;font-family:Nunito,sans-serif"></button>
+        </div>
+      </div>
       <label class="user-story-check-row" id="split-page-row" style="display:none">
         <input type="checkbox" id="split-page-cb" onchange="onSplitModeChange()">
         <span id="split-page-lbl">📄 Split per page</span>
       </label>
-      <label class="user-story-check-row" id="pdf-arc-row" style="display:none">
-        <input type="checkbox" id="pdf-arc-cb">
-        <span id="pdf-arc-lbl">🎯 Build a learning arc (vocab + grammar/conjugation reinforcement per chapter)</span>
-      </label>
+      <div id="pdf-arc-row" style="display:none">
+        <label class="user-story-check-row">
+          <input type="checkbox" id="pdf-arc-cb">
+          <span id="pdf-arc-lbl">🎯 Build a learning arc per chapter</span>
+        </label>
+        <select id="pdf-arc-mode" class="arc-mode-select" style="margin:3px 0 0 24px;font-size:12px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px;background:var(--white);color:var(--text)">
+          <option value="vocab">➕🔁 New + review vocabulary</option>
+          <option value="grammar">🏷🔤 Grammar + conjugation</option>
+        </select>
+      </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <button type="button" id="pdf-gen-btn" onclick="pdfGenerateAll()"
           style="font-size:12px;font-weight:700;padding:5px 12px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif;display:none">
@@ -642,10 +675,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <input type="range" class="story-len-slider" id="num-chapters-slider"
         min="1" max="20" step="1" value="1"
         oninput="onNumChaptersSlider(this.value)">
-      <label class="user-story-check-row" id="gen-arc-row" style="display:none;margin-top:6px">
-        <input type="checkbox" id="gen-arc-cb" checked>
-        <span id="gen-arc-lbl">🎯 Build a learning arc (grammar/conjugation reinforcement per chapter)</span>
-      </label>
+      <div id="gen-arc-row" style="display:none;margin-top:6px">
+        <label class="user-story-check-row">
+          <input type="checkbox" id="gen-arc-cb" checked>
+          <span id="gen-arc-lbl">🎯 Build a learning arc per chapter</span>
+        </label>
+        <select id="gen-arc-mode" class="arc-mode-select" style="margin:3px 0 0 24px;font-size:12px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px;background:var(--white);color:var(--text)">
+          <option value="vocab">➕🔁 New + review vocabulary</option>
+          <option value="grammar">🏷🔤 Grammar + conjugation</option>
+        </select>
+      </div>
     </div>
     <div class="style-wrap" id="style-wrap">
       <div class="style-select-wrap">
@@ -931,7 +970,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <button class="sl-screen-home" onclick="goLandingClean()" title="Home">🌍</button>
         <span class="sl-screen-title" id="sl-screen-title" style="cursor:default">📖</span>
         <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
-        <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="genStorylineTitleFromScreen()" title="Generate title" style="display:none">✨</button>
+        <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="openRetitleMenu(event)" title="Re-generate titles" style="display:none">✨</button>
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
       </div>
@@ -1161,6 +1200,15 @@ function applyUIStrings() {
   if (useTransLbl) useTransLbl.textContent = t('form.translation_cb');
   const storyPanelLbl = document.getElementById('story-panel-lbl');
   if (storyPanelLbl) storyPanelLbl.textContent = t('form.story_label');
+  // Arc-mode <select> options (pdf + generated forms) — option text via ui.json
+  ['pdf-arc-mode','gen-arc-mode'].forEach(selId => {
+    const sel = document.getElementById(selId);
+    if (!sel) return;
+    const ov = sel.querySelector('option[value="vocab"]');
+    if (ov) ov.textContent = t('form.arc_mode_vocab');
+    const og = sel.querySelector('option[value="grammar"]');
+    if (og) og.textContent = t('form.arc_mode_grammar');
+  });
   // Translation hint
   updateTranslationLangHint();
   // Placeholders
@@ -1364,7 +1412,7 @@ function showToast(msg){
 }
 function shareLesson(){
   if(!APP.lessonData) return;
-  const url=location.origin+location.pathname+'#topic='+encodeURIComponent(APP.lessonData.topic);
+  const url=location.origin+location.pathname+'#topic='+encodeURIComponent(APP.lessonData.id || APP.lessonData.topic);
   if(navigator.clipboard&&location.protocol!=='file:'){
     navigator.clipboard.writeText(url).then(()=>showToast(t('toast.link_copied'))).catch(()=>_copyFallback(url));
   } else { _copyFallback(url); }
@@ -1396,8 +1444,8 @@ function onStoryLenSlider(v){
   const el=document.getElementById('story-len-val');
   if(el) el.textContent=storyLenLabel(APP.storyLen);
   // In upload (document) mode the slider sets the length-based chunk size — re-split
-  // the loaded text (debounced). No-op when splitting per page.
-  if(_uploadMode && _pdfRawText && !_pdfBookId && !document.getElementById('split-page-cb')?.checked){
+  // the loaded text (debounced). Skipped when splitting per page or after manual edits.
+  if(_uploadMode && _pdfRawText && !_pdfBookId && !_chunksDirty && !document.getElementById('split-page-cb')?.checked){
     clearTimeout(_pdfResplitTimer);
     _pdfResplitTimer=setTimeout(()=>{ _resplitUpload(); }, 250);
   }
@@ -1854,7 +1902,7 @@ async function goLessonSet(){
       ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f)f.value=lSrc;});
       await loadUIStrings(lSrc);
     }
-    history.replaceState(null,'','#topic='+encodeURIComponent(APP.lessonData.topic));
+    history.replaceState(null,'','#topic='+encodeURIComponent(APP.lessonData.id || APP.lessonData.topic));
   }
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
   show('lesson-set');
@@ -1868,7 +1916,12 @@ let _pdfRawText = '';  // full extracted document text, kept so the slider can r
 let _pdfPages = null;  // array of per-page text (PDF only) for per-page splitting
 let _uploadMode = false; // a document has been uploaded and split into chapters
 let _splitOpen = -1;   // chunk index whose manual break-editor is open (item 11)
+let _chunksDirty = false; // user manually split/merged/deleted chunks → don't auto-resplit
 let _pdfResplitTimer = null;
+// Text-span chapter selection (drag-to-highlight). Each selection is a
+// {start,end} character span into _pdfRawText; each becomes one chapter.
+let _pdfSelMode = false;
+let _pdfSelections = [];
 
 // Show/hide the single paste box (and story-language row) vs. the chapters view.
 function _setPasteVisible(v){
@@ -1880,7 +1933,11 @@ function _setPasteVisible(v){
 // Drop any uploaded document and return to single-paste mode.
 function _clearUpload(){
   if(_pdfBookId) pdfCancelBook();
-  _uploadMode=false; _pdfRawText=''; _pdfPages=null; _pdfChunks=[]; _splitOpen=-1;
+  _uploadMode=false; _pdfRawText=''; _pdfPages=null; _pdfChunks=[]; _splitOpen=-1; _chunksDirty=false;
+  _pdfSelMode=false; _pdfSelections=[];
+  const selPanel=document.getElementById('pdf-sel-panel'); if(selPanel) selPanel.style.display='none';
+  const selOpenBtn=document.getElementById('pdf-sel-open-btn'); if(selOpenBtn) selOpenBtn.style.display='none';
+  const chunkList=document.getElementById('pdf-chunk-list'); if(chunkList) chunkList.style.display='';
   const sp=document.getElementById('split-page-cb'); if(sp) sp.checked=false;
   const spRow=document.getElementById('split-page-row'); if(spRow) spRow.style.display='none';
   const us=document.getElementById('upload-status'); if(us) us.textContent='';
@@ -1909,7 +1966,7 @@ function _updateUploadSliderVis(){
 // or by length (story-length slider).
 function _resplitUpload(){
   if(!_uploadMode || !_pdfRawText) return;
-  _splitOpen=-1;
+  _splitOpen=-1; _chunksDirty=false;
   const perPage = document.getElementById('split-page-cb')?.checked && Array.isArray(_pdfPages) && _pdfPages.length>1;
   if(perPage){
     const wc = s => s.split(/\s+/).filter(Boolean).length;
@@ -1936,7 +1993,7 @@ async function onUploadFileChosen(input){
     if(isPdf){ const r = await _extractPdfText(file); text = r.text; pages = r.pages; }
     else { text = _cleanPlainText(await file.text()); }   // txt/md/markdown/text
     if(!text || text.trim().length < 20){ status.textContent = t('pdf.no_text'); return; }
-    _pdfRawText = text; _pdfPages = pages; _uploadMode = true;
+    _pdfRawText = text; _pdfPages = pages; _uploadMode = true; _chunksDirty = false;
     // Per-page splitting is only offered when the source has page boundaries.
     const spRow = document.getElementById('split-page-row');
     const hasPages = Array.isArray(pages) && pages.length > 1;
@@ -2039,7 +2096,7 @@ function _renderPdfChunks() {
   const genBtn = document.getElementById('pdf-gen-btn');
   const genLbl = document.getElementById('pdf-gen-lbl');
   if (!list) return;
-  if (!_pdfChunks.length) { list.innerHTML=''; if(genBtn) genBtn.style.display='none'; return; }
+  if (!_pdfChunks.length) { list.innerHTML=''; if(genBtn) genBtn.style.display='none'; const so0=document.getElementById('pdf-sel-open-btn'); if(so0) so0.style.display='none'; return; }
   const total = _pdfChunks.reduce((s,c)=>s+c.wordCount,0);
   list.innerHTML = _pdfChunks.map((c, i) => {
     const icon = c.status==='done'?'✅':c.status==='error'?'❌':c.status==='active'?'⏳':'○';
@@ -2069,6 +2126,12 @@ function _renderPdfChunks() {
   if (arcRow) arcRow.style.display = (genBtn && genBtn.style.display === '') ? '' : 'none';
   if (arcLbl) arcLbl.textContent = t('form.pdf_arc');
   const spLbl = document.getElementById('split-page-lbl'); if(spLbl) spLbl.textContent = t('form.split_per_page');
+  const selOpen = document.getElementById('pdf-sel-open-btn');
+  if (selOpen) {
+    const canSel = !!(_uploadMode && _pdfRawText && _pdfChunks.length && _pdfChunks.every(c=>c.status!=='active') && !_pdfSelMode);
+    selOpen.style.display = canSel ? '' : 'none';
+    selOpen.textContent = t('pdf.sel_open');
+  }
 }
 
 // Item 11: open the manual break-editor for a chunk (paragraph-preserving view).
@@ -2078,6 +2141,7 @@ function pdfDoSplit(i, pi){
   const c = _pdfChunks[i]; if(!c) return;
   const paras = (c.text||'').split(/\n\n+/).map(p=>p.trim()).filter(Boolean);
   if(pi<=0 || pi>=paras.length) return;
+  _chunksDirty = true;
   const wc = s => s.split(/\s+/).filter(Boolean).length;
   const a = paras.slice(0,pi).join('\n\n'), b = paras.slice(pi).join('\n\n');
   _pdfChunks.splice(i, 1,
@@ -2096,6 +2160,7 @@ function pdfToggleChunk(i, el) {
 
 function pdfMergeDown(i) {
   if (i >= _pdfChunks.length - 1) return;
+  _chunksDirty = true;
   const merged = _pdfChunks[i].text + '\n\n' + _pdfChunks[i+1].text;
   _pdfChunks.splice(i, 2, {
     text: merged,
@@ -2108,9 +2173,138 @@ function pdfMergeDown(i) {
 }
 
 function pdfDeleteChunk(i) {
+  _chunksDirty = true;
   _pdfChunks.splice(i, 1);
   _splitOpen = -1;
   _renderPdfChunks();
+}
+
+// ── Text-span chapter selection (drag-to-highlight) ───────────────────────────
+// Pure helpers (headless-testable): trim whitespace at span edges, normalise a
+// set of spans to a sorted/disjoint list (merging overlaps), and derive chunks.
+function _trimSpan(raw, start, end) {
+  start = Math.max(0, start); end = Math.min(raw.length, end);
+  while (start < end && /\s/.test(raw[start]))   start++;
+  while (end > start && /\s/.test(raw[end - 1])) end--;
+  return end > start ? { start, end } : null;
+}
+function _normalizeSelections(sels) {
+  const valid = (sels || []).filter(s => s && s.end > s.start)
+    .map(s => ({ start: s.start, end: s.end }))
+    .sort((a, b) => a.start - b.start);
+  const out = [];
+  for (const s of valid) {
+    const last = out[out.length - 1];
+    if (last && s.start < last.end) last.end = Math.max(last.end, s.end); // overlap → merge
+    else out.push({ start: s.start, end: s.end });
+  }
+  return out;
+}
+function _selectionsToChunks(raw, sels) {
+  const wc = s => s.split(/\s+/).filter(Boolean).length;
+  return _normalizeSelections(sels).map((s, i) => {
+    const text = raw.slice(s.start, s.end).trim();
+    return { text, wordCount: wc(text), title: _autoTitle(text, i), status: 'pending' };
+  }).filter(c => c.wordCount > 0);
+}
+
+// Map a DOM node+offset (from a Selection range) to an absolute offset into
+// _pdfRawText, using the enclosing segment span's data-start. Returns null if
+// the endpoint isn't inside a rendered text segment.
+function _absOffsetFromNode(node, offset) {
+  let el = node && node.nodeType === 3 ? node.parentElement : node;
+  while (el && (!el.dataset || el.dataset.start === undefined)) el = el.parentElement;
+  if (!el || !el.dataset || el.dataset.start === undefined) return null;
+  return parseInt(el.dataset.start, 10) + offset;
+}
+
+function _renderDocView() {
+  const view = document.getElementById('pdf-doc-view');
+  if (!view) return;
+  const raw = _pdfRawText, sels = _pdfSelections;
+  let html = '', pos = 0;
+  sels.forEach((s, idx) => {
+    if (s.start > pos)
+      html += `<span class="pdf-sel-plain" data-start="${pos}">${escHtml(raw.slice(pos, s.start))}</span>`;
+    html += `<span class="pdf-sel-hi" data-start="${s.start}" data-sel="${idx}">${escHtml(raw.slice(s.start, s.end))}</span>`;
+    pos = s.end;
+  });
+  if (pos < raw.length)
+    html += `<span class="pdf-sel-plain" data-start="${pos}">${escHtml(raw.slice(pos))}</span>`;
+  view.innerHTML = html;
+}
+
+function _renderSelList() {
+  const el = document.getElementById('pdf-sel-list');
+  const apply = document.getElementById('pdf-sel-apply');
+  if (apply) { apply.disabled = !_pdfSelections.length; apply.textContent = t('pdf.sel_apply', { n: _pdfSelections.length }); }
+  if (!el) return;
+  const wc = s => s.split(/\s+/).filter(Boolean).length;
+  if (!_pdfSelections.length) { el.innerHTML = `<div class="pdf-sel-empty">${escHtml(t('pdf.sel_empty'))}</div>`; return; }
+  el.innerHTML = _pdfSelections.map((s, i) => {
+    const txt = _pdfRawText.slice(s.start, s.end).trim().replace(/\s+/g, ' ');
+    return `<div class="pdf-sel-item">
+      <span class="pdf-sel-idx">${i + 1}</span>
+      <span class="pdf-sel-snip">${escHtml(txt.slice(0, 60))}${txt.length > 60 ? '…' : ''}</span>
+      <span class="pdf-sel-wc">${wc(txt)}w</span>
+      <button type="button" onclick="pdfSelRemove(${i})" title="✕" style="font-size:10px;border:none;background:none;cursor:pointer;padding:0 2px">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// Capture the current text selection inside the doc view and add it as a chapter span.
+function pdfDocSelect() {
+  if (!_pdfSelMode) return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
+  const view = document.getElementById('pdf-doc-view');
+  const r = sel.getRangeAt(0);
+  if (!view || !view.contains(r.startContainer) || !view.contains(r.endContainer)) return;
+  const a = _absOffsetFromNode(r.startContainer, r.startOffset);
+  const b = _absOffsetFromNode(r.endContainer, r.endOffset);
+  if (a == null || b == null) return;
+  const span = _trimSpan(_pdfRawText, Math.min(a, b), Math.max(a, b));
+  if (!span) return;
+  _pdfSelections = _normalizeSelections([..._pdfSelections, span]);
+  try { sel.removeAllRanges(); } catch (_) {}
+  _renderDocView();
+  _renderSelList();
+}
+
+function pdfSelOpen() {
+  if (!_uploadMode || !_pdfRawText) return;
+  _pdfSelMode = true;
+  const hint = document.getElementById('pdf-sel-hint'); if (hint) hint.textContent = t('pdf.sel_hint');
+  const clr = document.getElementById('pdf-sel-clear'); if (clr) clr.textContent = t('pdf.sel_clear');
+  const back = document.getElementById('pdf-sel-back'); if (back) back.textContent = t('pdf.sel_back');
+  const panel = document.getElementById('pdf-sel-panel'); if (panel) panel.style.display = 'flex';
+  const list = document.getElementById('pdf-chunk-list'); if (list) list.style.display = 'none';
+  const openBtn = document.getElementById('pdf-sel-open-btn'); if (openBtn) openBtn.style.display = 'none';
+  // Other controls (split-per-page, arc, generate) are hidden while selecting.
+  ['split-page-row', 'pdf-arc-row'].forEach(id => { const e = document.getElementById(id); if (e) e.dataset.prevDisplay = e.style.display, e.style.display = 'none'; });
+  const gen = document.getElementById('pdf-gen-btn'); if (gen) gen.style.display = 'none';
+  _renderDocView();
+  _renderSelList();
+}
+function pdfSelClose() {
+  _pdfSelMode = false;
+  const panel = document.getElementById('pdf-sel-panel'); if (panel) panel.style.display = 'none';
+  const list = document.getElementById('pdf-chunk-list'); if (list) list.style.display = '';
+  ['split-page-row', 'pdf-arc-row'].forEach(id => { const e = document.getElementById(id); if (e && e.dataset.prevDisplay !== undefined) e.style.display = e.dataset.prevDisplay; });
+  _renderPdfChunks(); // restores gen button / arc row / open button visibility
+}
+function pdfSelClear() { _pdfSelections = []; _renderDocView(); _renderSelList(); }
+function pdfSelRemove(i) { _pdfSelections.splice(i, 1); _renderDocView(); _renderSelList(); }
+function pdfSelApply() {
+  const chunks = _selectionsToChunks(_pdfRawText, _pdfSelections);
+  if (!chunks.length) { showToast(t('pdf.sel_none')); return; }
+  _pdfChunks = chunks;
+  _chunksDirty = true;
+  _splitOpen = -1;
+  const n = chunks.length;
+  pdfSelClose();
+  _renderPdfChunks();
+  showToast(t('pdf.sel_applied', { n }));
 }
 
 let _pdfBookId = null;
@@ -2127,10 +2321,12 @@ async function pdfGenerateAll() {
     difficulty: APP.difficulty || 2,
     lessonFormat: APP.lessonFormat || 'standard',
     continuedFrom: document.getElementById('continue-select')?.value || null,
+    storyStyle: APP.storyStyle && APP.storyStyle !== 'creative' ? APP.storyStyle : null,
     chunks: _pdfChunks.map(c => ({ title: c.title, text: c.text, wordCount: c.wordCount })),
   };
   if (document.getElementById('pdf-arc-cb')?.checked) {
     body.arc = true;
+    body.arcMode = document.getElementById('pdf-arc-mode')?.value || 'vocab';
     body.arcReinforce = ['grammar', 'conjugation'];
   }
   _pdfChunks.forEach(c => c.status = 'pending');
@@ -2336,7 +2532,7 @@ function savedItemHtml(s, connector, hideStory) {
     : '';
   const conn = connector ? `<span class="storyline-connector">↩</span>` : '';
   const sid = 'si-' + enc.replace(/[^a-z0-9]/gi,'').slice(0,20) + Math.abs(s.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-  const hasPrior = !!s.continuedFrom;
+  const hasPrior = !!(s.continuedFrom || s.continuedFromId);
   return `<div class="saved-item-wrap">
     <div class="saved-item" onclick="loadSaved('${s.id||enc}')">
       ${conn}<span class="saved-emoji">${s.topicEmoji||'📚'}</span>
@@ -2925,7 +3121,7 @@ async function doGenerate(forceRegen){
       lessonFormat:APP.lessonFormat||'standard',
       continuedFrom:(document.getElementById('continue-select')?.value||null) };
     if(APP.storyStyle && APP.storyStyle!=='creative') gbody.storyStyle=APP.storyStyle;
-    if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcReinforce=['grammar','conjugation']; }
+    if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcMode=document.getElementById('gen-arc-mode')?.value||'vocab'; gbody.arcReinforce=['grammar','conjugation']; }
     try{
       const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(gbody)});
       const resp=await r.json();
@@ -3128,9 +3324,12 @@ function buildPath(){
   const _slByTopicMap=Object.fromEntries(_slSaved.map(l=>[l.topic,l]));
   const slTitles=APP.storylines||{};
   const matchedTitles=[];
+  // Resolve a lesson's parent by id first (continuedFromId), then by name (legacy),
+  // with a same-language guard so same-named chapters in other languages don't link.
+  const _slResolveParent=l=>{ if(!l)return null; const p=l.continuedFromId?_slById[l.continuedFromId]:(l.continuedFrom?_slByTopicMap[l.continuedFrom]:null); if(!p)return null; if((p.lang||'')!==(l.lang||'')||(p.srcLang||'')!==(l.srcLang||''))return null; return p; };
   const _slChildMap={};
-  _slSaved.forEach(l=>{ if(l.continuedFrom&&_slByTopicMap[l.continuedFrom])(_slChildMap[l.continuedFrom]=_slChildMap[l.continuedFrom]||[]).push(l.topic); });
-  const _slHasParent=new Set(_slSaved.filter(l=>l.continuedFrom&&_slByTopicMap[l.continuedFrom]).map(l=>l.topic));
+  _slSaved.forEach(l=>{ const p=_slResolveParent(l); if(p)(_slChildMap[p.topic]=_slChildMap[p.topic]||[]).push(l.topic); });
+  const _slHasParent=new Set(_slSaved.filter(l=>_slResolveParent(l)).map(l=>l.topic));
   const _slRoots=_slSaved.filter(l=>!_slHasParent.has(l.topic));
   function walkForTitle(topic,chain){
     const ext=[...chain,topic];
@@ -3354,6 +3553,7 @@ async function toggleSavedStory(id, topic) {
 // ── Storyline title management ────────────────────────────────────────
 const EMOJI_CATEGORIES = {"😀 Smileys": ["😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃", "🫠", "😉", "😊", "😇", "🥰", "😍", "🤩", "😘", "😗", "☺️", "😚", "😙", "🥲", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🫢", "🫣", "🤫", "🤔", "🫡", "🤐", "🤨", "😐", "😑", "😶", "🫥", "😏", "😒", "🙄", "😬", "🤥", "🫨", "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🤧", "🥵", "🥶", "🥴", "😵", "🤯", "🤠", "🥳", "🥸", "😎", "🤓", "🧐", "😕", "🫤", "😟", "🙁", "☹️", "😮", "😯", "😲", "😳", "🥺", "🥹", "😦", "😧", "😨", "😰", "😥", "😢", "😭", "😱", "😖", "😣", "😞", "😓", "😩", "😫", "🥱", "😤", "😡", "😠", "🤬", "😈", "👿", "💀", "☠️", "💩", "🤡", "👹", "👺", "👻", "👽", "👾", "🤖"], "👋 People & Body": ["👋", "🤚", "🖐️", "✋", "🖖", "🫱", "🫲", "🫳", "🫴", "🫷", "🫸", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "🫵", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "🫶", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", "👃", "🫀", "🫁", "🧠", "🦷", "🦴", "👀", "👁️", "👅", "👄", "🫦", "👶", "🧒", "👦", "👧", "🧑", "👱", "👨", "🧔", "👩", "🧓", "👴", "👵", "🙍", "🙎", "🙅", "🙆", "💁", "🙋", "🧏", "🙇", "🤦", "🤷", "👮", "🕵️", "💂", "🥷", "👷", "🫅", "🤴", "👸", "👳", "👲", "🧕", "🤵", "👰", "🤰", "🫃", "🫄", "🤱", "👼", "🎅", "🤶", "🧑‍🎄", "🦸", "🦹", "🧙", "🧝", "🧛", "🧟", "🧌", "🧞", "🧜", "🧚", "🪄", "👫", "👬", "👭", "💏", "💑", "👪", "🗣️", "👤", "👥", "🫂", "👣"], "🐶 Animals": ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵", "🙈", "🙉", "🙊", "🐒", "🐔", "🐧", "🐦", "🐤", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗", "🐴", "🦄", "🐝", "🪱", "🐛", "🦋", "🐌", "🐞", "🐜", "🪲", "🦟", "🦗", "🪳", "🕷️", "🦂", "🐢", "🐍", "🦎", "🦖", "🦕", "🐙", "🦑", "🦐", "🦞", "🦀", "🪸", "🦈", "🐡", "🐠", "🐟", "🐬", "🐳", "🐋", "🦭", "🐊", "🐅", "🐆", "🦓", "🦍", "🦧", "🦣", "🐘", "🦛", "🦏", "🐪", "🐫", "🦒", "🦘", "🦬", "🐃", "🐂", "🐄", "🐎", "🐖", "🐏", "🐑", "🦙", "🐐", "🦌", "🐕", "🐩", "🦮", "🐕‍🦺", "🐈", "🐈‍⬛", "🪶", "🐓", "🦃", "🦤", "🦚", "🦜", "🦢", "🪽", "🕊️", "🐇", "🦝", "🦨", "🦡", "🦫", "🦦", "🦥", "🐁", "🐀", "🐿️", "🦔", "🐾", "🐉", "🐲", "🌵", "🎄", "🌲", "🌳", "🌴", "🪵", "🌱", "🌿", "☘️", "🍀", "🎍", "🪴", "🎋", "🍃", "🍂", "🍁", "🪺", "🪹", "🍄", "🌾", "💐", "🌷", "🌹", "🥀", "🪷", "🌺", "🌸", "🌼", "🌻", "🌞", "🌝", "🌛", "🌜", "🌚", "🌕", "🌖", "🌗", "🌘", "🌑", "🌒", "🌓", "🌔", "🌙", "🌟", "⭐", "🌠", "🌌", "☀️", "🌤️", "⛅", "🌥️", "☁️", "🌦️", "🌧️", "⛈️", "🌩️", "🌨️", "❄️", "☃️", "⛄", "🌬️", "💨", "💧", "💦", "🫧", "☔", "☂️", "🌊", "🌫️", "🌀", "🌈", "⚡", "🔥", "💥", "🌪️", "🌋"], "🍎 Food & Drink": ["🥞", "🧇", "🥐", "🧈", "🍕", "🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒", "🌶️", "🫑", "🥕", "🧄", "🧅", "🥔", "🍠", "🫚", "🫛", "🌽", "🌯", "🫔", "🥙", "🧆", "🥚", "🍳", "🥘", "🍲", "🫕", "🥣", "🥗", "🍿", "🧂", "🥫", "🍱", "🍘", "🍙", "🍚", "🍛", "🍜", "🍝", "🍠", "🍢", "🍣", "🍤", "🍥", "🥮", "🍡", "🥟", "🥠", "🥡", "🍦", "🍧", "🍨", "🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", "🍮", "🍯", "🍼", "🥛", "☕", "🫖", "🍵", "🧃", "🥤", "🧋", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", "🥂", "🥃", "🫗", "🥴", "🧊", "🥢", "🍽️", "🍴", "🥄", "🔪", "🫙"], "🏠 Travel & Places": ["🏙", "🌍", "🌎", "🌏", "🌐", "🗺️", "🧭", "🏔️", "⛰️", "🌋", "🗻", "🏕️", "🏖️", "🏜️", "🏝️", "🏞️", "🏟️", "🏛️", "🏗️", "🧱", "🪨", "🪵", "🛖", "🏘️", "🏚️", "🏠", "🏡", "🏢", "🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏬", "🏭", "🏯", "🏰", "💒", "🗼", "🗽", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "⛲", "⛺", "🌁", "🌃", "🏙️", "🌄", "🌅", "🌆", "🌇", "🌉", "♨️", "🎠", "🛝", "🎡", "🎢", "💈", "🎪", "🚂", "🚃", "🚄", "🚅", "🚆", "🚇", "🚈", "🚉", "🚊", "🚝", "🚞", "🚋", "🚌", "🚍", "🚎", "🚐", "🚑", "🚒", "🚓", "🚔", "🚕", "🚖", "🚗", "🚘", "🚙", "🛻", "🚚", "🚛", "🚜", "🏎️", "🏍️", "🛵", "🛺", "🚲", "🛴", "🛹", "🛼", "🚏", "🛣️", "🛤️", "⛽", "🚧", "⚓", "🛟", "⛵", "🚤", "🛥️", "🛳️", "⛴️", "🚢", "✈️", "🛩️", "🛫", "🛬", "🪂", "💺", "🚁", "🚟", "🚠", "🚡", "🛸", "🚀", "🛶", "🚁", "🚀", "⛱️", "🗿", "🪆", "🧳", "🌂", "☂️"], "⚽ Activities": ["⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱", "🏓", "🏸", "🏒", "🏑", "🥍", "🏏", "🪃", "🥅", "⛳", "🪁", "🏹", "🎣", "🤿", "🥊", "🥋", "🎽", "🛹", "🛼", "🛷", "⛸️", "🥌", "🎿", "⛷️", "🏂", "🪂", "🏋️", "🤼", "🤸", "⛹️", "🤺", "🏇", "🧘", "🏄", "🏊", "🤽", "🚣", "🧗", "🚵", "🚴", "🏆", "🥇", "🥈", "🥉", "🏅", "🎖️", "🏵️", "🎗️", "🎫", "🎟️", "🎪", "🤹", "🎭", "🎨", "🎬", "🎤", "🎧", "🎼", "🎵", "🎶", "🎷", "🪗", "🎸", "🎹", "🎺", "🎻", "🪕", "🥁", "🪘", "🎯", "🎲", "♟️", "🎮", "🕹️", "🎰", "🧩", "🪀", "🪁", "🎴", "🎳", "🧸", "🪅", "🪩", "🪆", "🖼️", "🎑", "🎃", "🎆", "🎇", "🧨", "✨", "🎉", "🎊", "🎋", "🎍", "🎎", "🎏", "🎐", "🎀", "🎁", "🎗️"], "📱 Objects": ["🏴", "🚨", "🔍", "📚", "📖", "⌚", "📱", "📲", "💻", "⌨️", "🖥️", "🖨️", "🖱️", "🖲️", "💽", "💾", "💿", "📀", "🧮", "📷", "📸", "📹", "🎥", "📽️", "🎞️", "📞", "☎️", "📟", "📠", "📺", "📻", "🧭", "⏱️", "⏲️", "⏰", "🕰️", "⌛", "⏳", "📡", "🔋", "🪫", "🔌", "💡", "🔦", "🕯️", "🪔", "🧯", "🛢️", "💰", "🪙", "💴", "💵", "💶", "💷", "💸", "💳", "🪙", "💹", "✉️", "📧", "📨", "📩", "📤", "📥", "📦", "📫", "📪", "📬", "📭", "📮", "🗳️", "✏️", "✒️", "🖋️", "🖊️", "📝", "💼", "📁", "📂", "🗂️", "📅", "📆", "🗒️", "🗓️", "📇", "📈", "📉", "📊", "📋", "📌", "📍", "🗺️", "📎", "🖇️", "📏", "📐", "✂️", "🗃️", "🗄️", "🗑️", "🔒", "🔓", "🔏", "🔐", "🔑", "🗝️", "🔨", "🪓", "⛏️", "⚒️", "🛠️", "🗡️", "⚔️", "🛡️", "🪚", "🔧", "🪛", "🔩", "⚙️", "🗜️", "🔗", "⛓️", "🪝", "🧲", "🪜", "🧰", "🧲", "🪤", "🧪", "🧫", "🧬", "🔭", "🔬", "🩺", "🩹", "🩼", "🩻", "💊", "💉", "🩸", "🧴", "🧹", "🧺", "🧻", "🪣", "🧼", "🫧", "🪥", "🧽", "🪒", "🧹", "🪠", "🛁", "🪤", "🧲", "🔑", "🚪", "🛋️", "🪑", "🚽", "🚿", "🛒", "🎁", "🎈", "🎏", "🎀", "🪄", "🔮"], "🔣 Symbols": ["➕", "➖", "✖️", "➗", "🟰", "♾️", "🔢", "🔣", "🔤", "🔡", "🔠", "💯", "🔢", "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❤️‍🔥", "❤️‍🩹", "💕", "💞", "💓", "💗", "💖", "💘", "💝", "💟", "☮️", "✝️", "☪️", "🕉️", "✡️", "🔯", "🪯", "☯️", "☦️", "🛐", "⛎", "♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓", "🆔", "⚛️", "🉑", "☢️", "☣️", "📴", "📳", "🈶", "🈚", "🈸", "🈺", "🈷️", "✴️", "🆚", "💮", "🉐", "㊙️", "㊗️", "🈴", "🈵", "🈹", "🈲", "🅰️", "🅱️", "🆎", "🆑", "🅾️", "🆘", "❌", "⭕", "🛑", "⛔", "📛", "🚫", "💯", "💢", "♨️", "🚷", "🚯", "🚳", "🚱", "🔞", "📵", "🔕", "🔇", "❗", "❕", "❓", "❔", "‼️", "⁉️", "🔅", "🔆", "📶", "🛜", "📳", "🔱", "⚜️", "🔰", "♻️", "✅", "🈯", "💹", "❇️", "✳️", "❎", "🌐", "💠", "Ⓜ️", "🌀", "💤", "🏧", "🚾", "♿", "🅿️", "🛗", "🈳", "🈹", "🚺", "🚹", "🚼", "⚧️", "🚻", "🚮", "🎦", "📵", "🔞", "🔃", "🔄", "🔙", "🔚", "🔛", "🔜", "🔝", "🛐", "⏏️", "⏭️", "⏮️", "⏩", "⏪", "⏫", "⏬", "▶️", "⏸️", "⏹️", "⏺️", "🎦", "🔊", "🔔", "🔕", "📣", "📢", "💬", "💭", "🗯️", "♠️", "♣️", "♥️", "♦️", "🃏", "🀄", "🎴", "🔇", "🔈", "🔉", "🔊", "📻", "🎵", "🎶", "〽️", "🎙️", "⚗️", "🔭", "🔬", "🩺", "🌡️", "🧭", "💡", "🔦", "🕯️"]};
 
+EMOJI_CATEGORIES["🔢 Numbers"] = Array.from({length:100},(_,i)=>String(i));
 function openIconPicker(targetId, wrapperId, onPick) {
   // Close any open pickers
   document.querySelectorAll('.icon-picker-grid.open').forEach(g => {
@@ -3823,8 +4023,19 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // Chapter cards — branching tree renderer
   // Build global successor map from all saved topics
   const _allSaved = APP.savedList || [];
+  const _byIdAll = Object.fromEntries(_allSaved.filter(l => l.id).map(l => [l.id, l]));
   const _succMap = {};
-  _allSaved.forEach(l => { if (l.continuedFrom && byTopic[l.continuedFrom]) (_succMap[l.continuedFrom] = _succMap[l.continuedFrom] || []).push(l.topic); });
+  _allSaved.forEach(l => {
+    // Resolve this chapter's parent by id (authoritative) — fall back to name only for
+    // legacy topics without continuedFromId. Only link when the languages match, so a
+    // same-named chapter from another language run of the same PDF (it/de/fr) never
+    // attaches as a cross-language fork.
+    const parent = l.continuedFromId ? _byIdAll[l.continuedFromId]
+                 : (l.continuedFrom ? byTopic[l.continuedFrom] : null);
+    if (!parent) return;
+    if ((parent.lang||'') !== (l.lang||'') || (parent.srcLang||'') !== (l.srcLang||'')) return;
+    (_succMap[parent.topic] = _succMap[parent.topic] || []).push(l.topic);
+  });
 
   function _renderChapterCard(topic, prevTopic, isFirst) {
     const s = byTopic[topic];
@@ -3840,10 +4051,15 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       out += '<div class="path-line' + (_prevAllDone ? ' done' : '') + '" style="height:20px"></div>';
     }
     if (!s) return out + '<div class="lesson-node" style="opacity:.5;width:100%;box-sizing:border-box">' + escHtml(topic) + '</div>';
-    const _isLocked = !APP.info.canGenerate && !APP._teacherMode && !isFirst && prevTopic && (() => {
-      const _pd = _slCompleted[prevTopic] || {}; const _ps = byTopic[prevTopic]?.lessons || [];
-      return _ps.length > 0 && !_ps.every(ls => _pd[ls.id]);
-    })();
+    const _isLocked = !APP.info.canGenerate && !APP._teacherMode && !isFirst && (
+      // This chapter's own lessons haven't been generated yet…
+      _sets.length === 0 ||
+      // …or the predecessor has no lessons yet / isn't fully completed.
+      (prevTopic && (() => {
+        const _pd = _slCompleted[prevTopic] || {}; const _ps = byTopic[prevTopic]?.lessons || [];
+        return _ps.length === 0 || !_ps.every(ls => _pd[ls.id]);
+      })())
+    );
     const _barColor = _pct >= 100 ? 'var(--green)' : 'var(--blue)';
     if (_isLocked) {
       out += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;opacity:.45;pointer-events:none">'
@@ -3860,11 +4076,16 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
 
   // Render chain recursively; kids in current storyline rendered fully,
   // kids from other storylines shown as stubs (greyed, non-interactive)
+  // Guard: a chapter card is rendered at most once (defends against any residual
+  // double-attachment from same-named chapters / multi-parent links).
+  const _rendered = new Set();
   function _renderChain(topic, prevTopic, isFirst, depth) {
     if (depth > 20) return ''; // safety
+    if (_rendered.has(topic)) return ''; // already rendered elsewhere in the tree
+    _rendered.add(topic);
     const _topicSet = new Set(topics);
     let out = _renderChapterCard(topic, prevTopic, isFirst);
-    const allKids = _succMap[topic] || [];
+    const allKids = (_succMap[topic] || []).filter(t => !_rendered.has(t));
     const ownKids   = allKids.filter(t => _topicSet.has(t));
     const otherKids = allKids.filter(t => !_topicSet.has(t) && byTopic[t]);
     const kids = [...ownKids, ...otherKids];
@@ -3900,7 +4121,21 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
 
   html += '<div class="path-wrap" style="padding:4px 0 0" id="slsc-cards-' + chainId + '">';
   const _topicSet3 = new Set(topics);
-  const _hasPred = new Set(topics.filter(t => { const s3 = byTopic[t]; return s3?.continuedFrom && _topicSet3.has(s3.continuedFrom); }));
+  // A chapter "has a predecessor" if its parent — resolved the SAME way as _succMap
+  // (by continuedFromId, same-language, name only as legacy fallback) — is in this chain.
+  // Must match _succMap exactly, or a chapter chained by id (with no continuedFrom name)
+  // would be treated as a root AND rendered again as a child → duplicate cards.
+  const _resolveParent = s3 => {
+    if (!s3) return null;
+    const p = s3.continuedFromId ? _byIdAll[s3.continuedFromId] : (s3.continuedFrom ? byTopic[s3.continuedFrom] : null);
+    if (!p) return null;
+    if ((p.lang||'') !== (s3.lang||'') || (p.srcLang||'') !== (s3.srcLang||'')) return null;
+    return p;
+  };
+  const _hasPred = new Set(topics.filter(t => {
+    const p = _resolveParent(byTopic[t]);
+    return p && _topicSet3.has(p.topic);
+  }));
   const _roots = topics.filter(t => !_hasPred.has(t));
   _roots.forEach((root, ri) => { if (ri > 0) html += '<div class="path-line" style="height:20px"></div>'; html += _renderChain(root, null, true, 0); });
   html += '</div>';
@@ -4001,15 +4236,16 @@ function _tryOpenStorylineByChainId(chainId) {
 
   // Legacy fallback: rebuild chains from continuedFrom
   const byTopic = Object.fromEntries((APP.savedList||[]).map(s=>[s.topic,s]));
-  const byTopicCf = {};
-  (APP.savedList||[]).forEach(s => { if (s.continuedFrom) byTopicCf[s.topic] = s.continuedFrom; });
-  const allTargets = new Set(Object.values(byTopicCf));
+  // Resolve parent by id first (continuedFromId), then by name (legacy), same-language guarded.
+  const _resolveParentB = s => { if(!s) return null; const p = s.continuedFromId ? byId[s.continuedFromId] : (s.continuedFrom ? byTopic[s.continuedFrom] : null); if(!p) return null; if((p.lang||'')!==(s.lang||'')||(p.srcLang||'')!==(s.srcLang||'')) return null; return p; };
+  const allTargets = new Set();
+  (APP.savedList||[]).forEach(s => { const p = _resolveParentB(s); if (p) allTargets.add(p.topic); });
   const tails = (APP.savedList||[]).filter(s => !allTargets.has(s.topic));
   for (const tail of tails) {
     const chain = [tail.topic];
     let cur = tail;
     for (let i = 0; i < 50; i++) {
-      const prev = cur.continuedFrom ? byTopic[cur.continuedFrom] : null;
+      const prev = _resolveParentB(cur);
       if (!prev) break;
       chain.unshift(prev.topic); cur = prev;
     }
@@ -4066,10 +4302,13 @@ async function deleteStoryline(encodedChain) {
   // Only delete topics exclusive to this storyline
   const toDelete   = chain.filter(t => !inOtherChain.has(t));
   const toKeep     = chain.filter(t =>  inOtherChain.has(t));
-  // Also check continuedFrom links outside this chain (legacy)
+  // Also check continuedFrom links outside this chain (legacy/id), same-language guarded.
+  const _delByTopic = Object.fromEntries((APP.savedList||[]).map(l=>[l.topic,l]));
+  const _delResolveParent = s => { if(!s) return null; const p = s.continuedFromId ? byId[s.continuedFromId] : (s.continuedFrom ? _delByTopic[s.continuedFrom] : null); if(!p) return null; if((p.lang||'')!==(s.lang||'')||(p.srcLang||'')!==(s.srcLang||'')) return null; return p; };
   (APP.savedList||[]).forEach(s => {
-    if (!thisChainSet.has(s.topic) && s.continuedFrom && thisChainSet.has(s.continuedFrom))
-      toKeep.push(s.continuedFrom); // keep the parent if another topic continues from it
+    if (thisChainSet.has(s.topic)) return;
+    const p = _delResolveParent(s);
+    if (p && thisChainSet.has(p.topic)) toKeep.push(p.topic); // keep the parent if another (same-language) topic continues from it
   });
   const finalDelete = toDelete.filter(t => !toKeep.includes(t));
   // Find the slId for this chain to delete the storyline metadata too
@@ -4212,6 +4451,7 @@ async function saveSummaryEdit(chainId) {
   const status = document.getElementById('slsum-edit-status-' + chainId);
   if (!ta) return;
   const summary = ta.value.trim();
+  const editorBody = ta.parentElement;   // the element openSummaryEdit rendered the editor into
   if (status) status.textContent = 'Saving…';
   try {
     const r = await fetch('/api/storylines', {
@@ -4224,17 +4464,20 @@ async function saveSummaryEdit(chainId) {
       const idx = APP.storylines.findIndex(s => s.id === chainId);
       if (idx >= 0) APP.storylines[idx].summary = summary;
     }
-    // Re-render body with saved text
-    const body = document.getElementById('slsc-summary-body-' + chainId)
-              || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
-    if (body) {
-      body.innerHTML = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
-    }
-    // Show edit button in sl-screen if open
+    // Replace the editor (and its "Saving…" status) with the saved summary text. Re-render
+    // the element the editor actually lives in — it may differ from slsc-summary-body-*
+    // when the editor was opened from the landing card (bodyId path).
+    const rendered = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
+    if (editorBody) editorBody.innerHTML = rendered;
+    const altBody = document.getElementById('slsc-summary-body-' + chainId)
+                 || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
+    if (altBody && altBody !== editorBody) altBody.innerHTML = rendered;
     loadSavedList(); // refresh landing page summary card
     showToast(t('toast.summary_saved'));
+    console.log('[storyline] summary saved for ' + chainId + ' (' + summary.length + ' chars)');
   } catch(e) {
     if (status) status.textContent = '⚠ ' + e.message.slice(0,40);
+    console.error('[storyline] summary save failed for ' + chainId + ':', e);
   }
 }
 
@@ -4442,6 +4685,40 @@ async function moveChapter(slId, idx, dir) {
     APP._slScreen.encodedChain = enc;
     _renderStorylineScreen(cs.chainId, enc, topics);
   }
+}
+
+// Small popup on the storyline header ✨ button: re-generate the storyline title only,
+// or all chapter titles (coherent post-pass over the whole chain).
+function openRetitleMenu(ev){
+  ev.stopPropagation();
+  document.getElementById('retitle-menu')?.remove();
+  const menu=document.createElement('div');
+  menu.id='retitle-menu';
+  menu.style.cssText='position:fixed;z-index:9999;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.18);padding:4px;display:flex;flex-direction:column;gap:2px';
+  const opts=[['title',t('retitle.story_title')],['chapters',t('retitle.all_chapters')]];
+  menu.innerHTML=opts.map(([s,lbl])=>`<button type="button" class="export-menu-item" data-scope="${s}">${escHtml(lbl)}</button>`).join('');
+  document.body.appendChild(menu);
+  const r=menu.getBoundingClientRect();
+  let x=ev.clientX, y=ev.clientY+6;
+  if(x+r.width>innerWidth-8) x=innerWidth-r.width-8;
+  if(y+r.height>innerHeight-8) y=ev.clientY-r.height-6;
+  menu.style.left=Math.max(8,x)+'px'; menu.style.top=Math.max(8,y)+'px';
+  menu.querySelectorAll('.export-menu-item').forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); const sc=b.dataset.scope; menu.remove(); _doRetitle(sc); });
+  setTimeout(()=>document.addEventListener('click', ()=>document.getElementById('retitle-menu')?.remove(), {once:true}), 0);
+}
+async function _doRetitle(scope){
+  const slId = APP._slScreen?.chainId;
+  if(!slId){ showToast('⚠ Open a storyline first'); return; }
+  showToast(scope==='chapters' ? t('retitle.working_chapters') : t('retitle.working_title'));
+  try{
+    const r=await fetch('/api/storyline-retitle',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slId, scope})});
+    const resp=await r.json();
+    if(!r.ok) throw new Error(resp.error||'Failed');
+    console.log('[storyline] retitle ('+scope+') ->', resp);
+    await loadSavedList();   // refresh storylines + topic names
+    if(APP._slScreen) _renderStorylineScreen(APP._slScreen.chainId, APP._slScreen.encodedChain, APP._slScreen.topics);
+    showToast(t('retitle.done'));
+  }catch(e){ showToast('⚠ '+e.message.slice(0,50)); console.error('[storyline] retitle failed:', e); }
 }
 
 async function genStorylineTitleFromScreen() {
@@ -6401,7 +6678,10 @@ function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(AP
 function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.listen_type")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_type.q",{lang:Ln})}</div>${lBlock(ex.target,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
 function tSynSelect(ex){
   const isSyn = ex.mode==='synonyms';
-  const q = isSyn ? t('ex.syn.q_synonyms',{word:furiHtml(ex.base)}) : t('ex.syn.q_antonyms',{word:furiHtml(ex.base)});
+  // Coloring lives here (ui.json holds the plain phrase "similar/opposite to {word}").
+  const q = isSyn
+    ? `<span style="color:var(--green);font-weight:800">${t('ex.syn.q_synonyms',{word:furiHtml(ex.base)})}</span>`
+    : `<span style="color:var(--red);font-weight:800">${t('ex.syn.q_antonyms',{word:furiHtml(ex.base)})}</span>`;
   const badge = isSyn ? t('ex.badge.syn_synonyms') : t('ex.badge.syn_antonyms');
   const gloss = ex.gloss ? `<div style="opacity:.55;font-size:13px;margin-top:-4px;margin-bottom:6px">${escHtml(ex.gloss)}</div>` : '';
   const tiles = ex.choices.map((w,i)=>`<button class="syn-tile" id="st${i}" data-w="${escHtml(w)}" onclick="synToggle(${i},this)">${furiHtml(w)}</button>`).join('');
@@ -6783,8 +7063,17 @@ function _findNextChapterTopic(currentTopic) {
     const idx = chapters.indexOf(currentTopic);
     if (idx >= 0 && idx < chapters.length - 1) return chapters[idx + 1];
   }
-  // Fallback: continuedBy
-  return (APP.savedList||[]).find(l => l.continuedFrom === currentTopic)?.topic || null;
+  // Fallback: continuedBy — prefer id link (continuedFromId), same-language guarded,
+  // name as legacy fallback only when the child has no continuedFromId.
+  const _cur = (APP.savedList||[]).find(l => l.topic === currentTopic);
+  const _child = (APP.savedList||[]).find(l => {
+    const idMatch   = _cur && _cur.id && l.continuedFromId === _cur.id;
+    const nameMatch = !l.continuedFromId && l.continuedFrom === currentTopic;
+    if (!idMatch && !nameMatch) return false;
+    if (_cur && ((l.lang||'')!==(_cur.lang||'') || (l.srcLang||'')!==(_cur.srcLang||''))) return false;
+    return true;
+  });
+  return _child?.topic || null;
 }
 
 function afterComplete() {
@@ -7318,8 +7607,138 @@ function openExportMenu(ev, topics){
   });
   setTimeout(()=>document.addEventListener('click', _closeExportMenu, {once:true}), 0);
 }
+// ── Client-side Markdown/HTML export (port of export-lessons.js) ──
+// Used in the static build (no server). Mirrors the server renderer so the
+// downloaded .md/.html are identical to the live /api/export output.
+function _ceIndexes(store){
+  const topics = store.topics || [];
+  const storylines = store.storylines || [];
+  return { topics, storylines,
+    byId: new Map(topics.map(t=>[t.id,t])),
+    byName: new Map(topics.map(t=>[t.topic,t])) };
+}
+function _ceSlDoc(sl, byId){
+  const chapters = (sl.chapters||[]).map(c=>byId.get(c)).filter(Boolean);
+  return { title: sl.title || (chapters[0]&&chapters[0].topic) || 'Storyline', icon: sl.icon||'📖', chapters };
+}
+function _ceResolveDocs(store, ids){
+  const { storylines, byId, byName } = _ceIndexes(store);
+  const docs = [];
+  if(!ids || !ids.length){ for(const sl of storylines) docs.push(_ceSlDoc(sl, byId)); }
+  else for(const id of ids){
+    if(String(id).startsWith('sl_')){ const sl=storylines.find(s=>s.id===id); if(sl) docs.push(_ceSlDoc(sl, byId)); }
+    else { const tp=byId.get(id)||byName.get(id); if(tp) docs.push({ title: tp.topic, icon: tp.topicEmoji||'', chapters:[tp] }); }
+  }
+  return docs;
+}
+function _ceChapterParts(t, includeLessons){
+  const story = stripFuri(t.story||'').trim();
+  const lessons = [];
+  if(includeLessons) for(const ls of (t.lessons||[])){
+    const blocks = [];
+    if(Array.isArray(ls.vocab)&&ls.vocab.length)
+      blocks.push({ kind:'vocab', items: ls.vocab.map(v=>[stripFuri(v.source ?? v.word ?? v.target), v.target ?? v.translation ?? '']) });
+    if(Array.isArray(ls.sentences)&&ls.sentences.length)
+      blocks.push({ kind:'sentences', items: ls.sentences.map(s=>[stripFuri(s.source ?? s.target), s.target ?? '']) });
+    if(Array.isArray(ls.grammar)&&ls.grammar.length)
+      blocks.push({ kind:'grammar', items: ls.grammar.map(g=>[stripFuri(g.point ?? g.title ?? g.rule ?? ''), g.explanation ?? g.desc ?? g.example ?? ''].filter(Boolean)) });
+    if(Array.isArray(ls.conjugations)&&ls.conjugations.length)
+      blocks.push({ kind:'conjugations', items: ls.conjugations.map(c=>[stripFuri(c.verb ?? c.infinitive ?? ''), stripFuri(c.form ?? c.conjugated ?? ''), c.translation ?? c.pronoun ?? ''].filter(Boolean)) });
+    if(blocks.length) lessons.push({ title: ls.title||'Lesson', desc: ls.desc||'', blocks });
+  }
+  return { story, lessons };
+}
+function _ceRenderMarkdown(docs, includeLessons){
+  const out = [];
+  for(const doc of docs){
+    out.push(`# ${doc.icon?doc.icon+' ':''}${doc.title}\n`);
+    doc.chapters.forEach((t,i)=>{
+      out.push(`## ${i+1}. ${t.topicEmoji?t.topicEmoji+' ':''}${t.topic}\n`);
+      const { story, lessons } = _ceChapterParts(t, includeLessons);
+      if(story) out.push(story.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).join('\n\n')+'\n');
+      for(const ls of lessons){
+        out.push(`### ${ls.title}`);
+        if(ls.desc) out.push(`_${ls.desc}_\n`);
+        for(const b of ls.blocks){
+          if(b.kind==='vocab'||b.kind==='sentences'){ for(const [a,c] of b.items) out.push(`- **${a}**${c?' — '+c:''}`); }
+          else { for(const row of b.items) out.push(`- ${row.join(' — ')}`); }
+        }
+        out.push('');
+      }
+    });
+    out.push('\n---\n');
+  }
+  return out.join('\n');
+}
+function _ceRenderHtml(docs, includeLessons){
+  const E = escHtml;
+  const body = [];
+  for(const doc of docs){
+    body.push(`<h1>${E((doc.icon?doc.icon+' ':'')+doc.title)}</h1>`);
+    doc.chapters.forEach((t,i)=>{
+      body.push(`<h2>${i+1}. ${E((t.topicEmoji?t.topicEmoji+' ':'')+t.topic)}</h2>`);
+      const { story, lessons } = _ceChapterParts(t, includeLessons);
+      if(story) for(const p of story.split(/\n\n+/)) if(p.trim()) body.push(`<p>${E(p.trim())}</p>`);
+      for(const ls of lessons){
+        body.push(`<h3>${E(ls.title)}</h3>`);
+        if(ls.desc) body.push(`<p class="desc">${E(ls.desc)}</p>`);
+        body.push('<ul>');
+        for(const b of ls.blocks){
+          if(b.kind==='vocab'||b.kind==='sentences') for(const [a,c] of b.items) body.push(`<li><strong>${E(a)}</strong>${c?' — '+E(c):''}</li>`);
+          else for(const row of b.items) body.push(`<li>${E(row.join(' — '))}</li>`);
+        }
+        body.push('</ul>');
+      }
+    });
+  }
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>${E(docs[0].title)}</title>
+<style>body{font-family:Georgia,serif;max-width:780px;margin:40px auto;padding:0 20px;line-height:1.7;color:#222}
+h1{border-bottom:2px solid #ccc;padding-bottom:6px}h2{margin-top:1.6em}h3{color:#555}
+.desc{color:#777;font-style:italic}ul{color:#333}strong{color:#111}</style></head>
+<body>
+${body.join('\n')}
+</body></html>`;
+}
+function _clientBuildExport(store, opts){
+  opts = opts||{};
+  const html = !!opts.html;
+  const includeLessons = opts.lessons !== false;
+  const docs = _ceResolveDocs(store, opts.ids);
+  if(!docs.length) return null;
+  const content = html ? _ceRenderHtml(docs, includeLessons) : _ceRenderMarkdown(docs, includeLessons);
+  return { content, html, ext: html?'html':'md', mime: html?'text/html':'text/markdown', title: docs[0].title };
+}
+// Static (server-less) export: build the .md/.html from the baked lessons,
+// resolving each anchor to its containing storyline(s) (mirrors the server).
+function _clientExport(topics, fmt){
+  try{
+    const SL = (typeof STATIC_STORYLINES!=='undefined' && Array.isArray(STATIC_STORYLINES)) ? STATIC_STORYLINES : [];
+    const store = { topics: STATIC_LESSONS, storylines: SL };
+    const byName = {}; STATIC_LESSONS.forEach(l=>{ if(!(l.topic in byName)) byName[l.topic]=l; });
+    const refs = Array.isArray(topics) ? topics : [topics];
+    const seedIds = refs.map(x=>/^tp_\d+$/.test(x) ? x : byName[x]?.id).filter(Boolean);
+    if(!seedIds.length){ showToast(t('toast.export_fail',{msg:'—'})); return; }
+    const slIds = new Set(); const orphanIds = new Set();
+    for(const id of seedIds){
+      const containing = SL.filter(s=>(s.chapters||[]).includes(id));
+      if(containing.length) containing.forEach(s=>slIds.add(s.id)); else orphanIds.add(id);
+    }
+    const ids = [...slIds, ...orphanIds];
+    const res = _clientBuildExport(store, { ids, html: fmt==='html', lessons:true });
+    if(!res){ showToast(t('toast.export_fail',{msg:'—'})); return; }
+    const blob = new Blob([res.content], { type: res.mime+';charset=utf-8' });
+    const fn = ('dreizunge-'+(res.title||'export')).slice(0,48).replace(/[^\w\-]+/g,'-').replace(/^-+|-+$/g,'') + '.' + res.ext;
+    const url = URL.createObjectURL(blob); const a=document.createElement('a');
+    a.href=url; a.download=fn; document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast(t('toast.export_ok',{n:1}));
+  }catch(e){ showToast(t('toast.export_fail',{msg:e.message})); }
+}
 async function _doExport(topics, fmt){
   if(fmt==='json'){ return exportTopics(topics); }   // existing client-side JSON export
+  // Static build has no server — render md/html from the baked lessons client-side.
+  if(typeof STATIC_LESSONS !== 'undefined'){ return _clientExport(topics, fmt); }
   const anchor = Array.isArray(topics) ? topics[0] : topics;
   if(!anchor){ showToast(t('toast.export_fail',{msg:'—'})); return; }
   try{

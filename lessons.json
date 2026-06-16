@@ -2,6 +2,51 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1848224281",
+      "title": "Language Learning Evolved",
+      "icon": "📖",
+      "chapters": [
+        "tp_17816038862680000091",
+        "tp_17816045547280000115",
+        "tp_17816054439060000253"
+      ],
+      "lang": "de",
+      "srcLang": "en",
+      "createdAt": "2026-06-16T09:58:06.303Z",
+      "updatedAt": "2026-06-16T11:12:31.200Z",
+      "summary": "The story follows the development of a language learning app that uses advanced language models to provide personalized and interactive learning experiences. Over several weeks, the app was optimized and enhanced with new features, including interactive dialogues with virtual assistants that simulate real-life scenarios to improve communication skills. The app integrates corpora and grammatical rules into interactive exercises, allowing users to systematically improve their language skills and receive evaluations on both grammar and stylistic quality.",
+      "tags": [
+        "manually curated"
+      ]
+    },
+    {
+      "id": "sl_1197536712",
+      "title": "Virtual Verbs",
+      "icon": "📚",
+      "chapters": [
+        "tp_17816023688430000381",
+        "tp_17816031298820000439"
+      ],
+      "lang": "de",
+      "srcLang": "en",
+      "createdAt": "2026-06-16T09:32:48.875Z",
+      "updatedAt": "2026-06-16T09:47:54.902Z"
+    },
+    {
+      "id": "sl_253470221",
+      "title": "Whispers and Writings",
+      "icon": "✍️",
+      "chapters": [
+        "tp_17815997626510000078",
+        "tp_17816004124950000112",
+        "tp_17816011299000000214"
+      ],
+      "lang": "it",
+      "srcLang": "en",
+      "createdAt": "2026-06-16T08:49:22.685Z",
+      "updatedAt": "2026-06-16T09:15:13.814Z"
+    },
+    {
       "id": "sl_962481837",
       "title": "La petite i",
       "icon": "🪄",
@@ -102,18 +147,6 @@
       "tags": [
         "translated"
       ]
-    },
-    {
-      "id": "sl_117522000",
-      "title": "The Little I am i.",
-      "icon": "📖",
-      "chapters": [
-        "tp_1690789049"
-      ],
-      "lang": "de",
-      "srcLang": "en",
-      "createdAt": "2026-06-12T10:53:21.711Z",
-      "updatedAt": "2026-06-12T10:53:21.711Z"
     },
     {
       "id": "sl_2143006409",
@@ -836,6 +869,2986 @@
     }
   ],
   "topics": [
+    {
+      "topic": "Integrating Diverse Exercises",
+      "topicEmoji": "📝",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 150,
+      "story": "Die Benutzer profitierten von der verbesserten App, die nun auch Sprachkorpora und grammatische Regeln in interaktiven Übungen integrierte. Diese Übungen halfen den Lernenden, ihre Kenntnisse systematisch zu vertiefen und zu üben. Die virtuellen Assistenten, die mit fortschrittlichen Sprachmodellen ausgestattet waren, konnten nicht nur die Grammatik, sondern auch die stilistische Qualität der Texte der Benutzer bewerten. Dies führte zu einem stetigen Verbesserungsprozess, bei dem die Benutzer ihre Fähigkeiten in verschiedenen Sprachkontexten verbesserten. Die App erhielt sogar eine Bewertungssystematik, die den Lernfortschritt der Benutzer visuell darstellte, was ihre Motivation weiter anstachelte.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 1-2 paragraphs, under 150 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Academic register, precise terminology, formal structure. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nDie App wurde in den nächsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihre individuellen Bedürfnisse zu passen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Enhancing Interactions",
+      "continuedFromId": "tp_17816045547280000115",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "App-Update und Sprachlernfortschritt",
+          "desc": "Fortsetzung der Geschichte mit fortgeschrittenen Sprachmodellen und interaktiven Übungen",
+          "icon": "📱📝",
+          "vocab": [
+            {
+              "target": "integrierte",
+              "source": "integrated"
+            },
+            {
+              "target": "Sprachkorpora",
+              "source": "language corpora",
+              "editedAt": "2026-06-16T10:54:21.056Z"
+            },
+            {
+              "target": "grammatische Regeln",
+              "source": "grammatical rules"
+            },
+            {
+              "target": "interaktiven Übungen",
+              "source": "interactive exercises"
+            },
+            {
+              "target": "stilistische Qualität",
+              "source": "stylistic quality"
+            },
+            {
+              "target": "visuell darstellte",
+              "source": "visually represented"
+            },
+            {
+              "target": "Bewertungssystematik",
+              "source": "evaluation system"
+            },
+            {
+              "target": "Lernfortschritt",
+              "source": "learning progress"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Die verbesserte App half den Benutzern, ihre Sprachkenntnisse zu vertiefen.",
+              "source": "The improved app helped users deepen their language skills.",
+              "words": [
+                "Die",
+                "verbesserte",
+                "App",
+                "half",
+                "den",
+                "Benutzern,",
+                "ihre",
+                "Sprachkenntnisse",
+                "zu",
+                "vertiefen."
+              ]
+            },
+            {
+              "target": "Die virtuellen Assistenten bewerteten die Texte der Benutzer stilistisch.",
+              "source": "The virtual assistants evaluated the users' texts stylistically.",
+              "words": [
+                "Die",
+                "virtuellen",
+                "Assistenten",
+                "bewerteten",
+                "die",
+                "Texte",
+                "der",
+                "Benutzer",
+                "stilistisch."
+              ]
+            },
+            {
+              "target": "Die Bewertungssystematik zeigte den Lernfortschritt der Benutzer an.",
+              "source": "The evaluation system showed the users' learning progress.",
+              "words": [
+                "Die",
+                "Bewertungssystematik",
+                "zeigte",
+                "den",
+                "Lernfortschritt",
+                "der",
+                "Benutzer",
+                "an."
+              ]
+            },
+            {
+              "target": "Die interaktiven Übungen halfen den Lernenden, ihre Kenntnisse systematisch zu üben.",
+              "source": "The interactive exercises helped learners systematically practice their knowledge.",
+              "words": [
+                "Die",
+                "interaktiven",
+                "Übungen",
+                "halfen",
+                "den",
+                "Lernenden,",
+                "ihre",
+                "Kenntnisse",
+                "systematisch",
+                "zu",
+                "üben."
+              ]
+            },
+            {
+              "target": "Die Benutzer profitierten von der stetigen Verbesserung ihrer Fähigkeiten.",
+              "source": "Users benefited from the continuous improvement of their skills.",
+              "words": [
+                "Die",
+                "Benutzer",
+                "profitierten",
+                "von",
+                "der",
+                "stetigen",
+                "Verbesserung",
+                "ihrer",
+                "Fähigkeiten."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "developing a language learning app",
+          "desc": "Fortsetzung der Geschichte mit fortgeschrittenen Sprachmodellen und interaktiven Übungen",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "Sprachlernapp",
+              "source": "language learning app"
+            },
+            {
+              "target": "virtuelle Assistenten",
+              "source": "virtual assistants",
+              "editedAt": "2026-06-16T10:54:21.056Z"
+            },
+            {
+              "target": "Sprachmodelle",
+              "source": "language models"
+            },
+            {
+              "target": "optimiert",
+              "source": "optimized"
+            },
+            {
+              "target": "interaktiv",
+              "source": "interactive"
+            },
+            {
+              "target": "personalisiert",
+              "source": "personalized"
+            },
+            {
+              "target": "Sprachkenntnisse",
+              "source": "language skills"
+            },
+            {
+              "target": "Kommunikationsfähigkeiten",
+              "source": "communication skills"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Wir entwickeln eine Sprachlernapp, die Sprachkenntnisse und Kommunikationsfähigkeiten verbessert.",
+              "source": "We are developing a language learning app that improves language skills and communication abilities.",
+              "words": [
+                "Wir",
+                "entwickeln",
+                "eine",
+                "Sprachlernapp,",
+                "die",
+                "Sprachkenntnisse",
+                "und",
+                "Kommunikationsfähigkeiten",
+                "verbessert."
+              ]
+            },
+            {
+              "target": "Die virtuellen Assistenten erfassen die individuellen Bedürfnisse der Benutzer und personalisieren die Lernumgebung dementsprechend.",
+              "source": "The virtual assistants capture the individual needs of the users and personalize the learning environment accordingly.",
+              "words": [
+                "Die",
+                "virtuellen",
+                "Assistenten",
+                "erfassen",
+                "die",
+                "individuellen",
+                "Bedürfnisse",
+                "der",
+                "Benutzer",
+                "und",
+                "personalisieren",
+                "die",
+                "Lernumgebung",
+                "dementsprechend."
+              ],
+              "editedAt": "2026-06-16T10:55:30.574Z",
+              "_manualEdits": [
+                "2026-06-16T10:55:30.574Z"
+              ]
+            },
+            {
+              "target": "Die neue Funktion erlaubt es, Sprachmodelle in interaktiven Übungen zu integrieren, um Sprachkenntnisse effektiver zu erlernen.",
+              "source": "The new feature allows integrating language models into interactive exercises to learn language skills more effectively.",
+              "words": [
+                "Die",
+                "neue",
+                "Funktion",
+                "erlaubt",
+                "es,",
+                "Sprachmodelle",
+                "in",
+                "interaktiven",
+                "Übungen",
+                "zu",
+                "integrieren,",
+                "um",
+                "Sprachkenntnisse",
+                "effektiver",
+                "zu",
+                "erlernen."
+              ]
+            },
+            {
+              "target": "Die App optimiert den Lernprozess, indem sie fortgeschrittene Sprachmodelle verwendet, um den Sprachlernfortschritt der Benutzer zu verbessern.",
+              "source": "The app optimizes the learning process by using advanced language models to improve the language learning progress of the users.",
+              "words": [
+                "Die",
+                "App",
+                "optimiert",
+                "den",
+                "Lernprozess,",
+                "indem",
+                "sie",
+                "fortgeschrittene",
+                "Sprachmodelle",
+                "verwendet,",
+                "um",
+                "den",
+                "Sprachlernfortschritt",
+                "der",
+                "Benutzer",
+                "zu",
+                "verbessern."
+              ]
+            },
+            {
+              "target": "Realen Szenarien basierend auf fortgeschrittenen Sprachmodellen, um die Kommunikationsfähigkeiten der Benutzer in verschiedenen Kontexten zu verbessern.",
+              "source": "Based on advanced language models, real scenarios are used to improve the communication skills of the users in various contexts.",
+              "words": [
+                "Realen",
+                "Szenarien",
+                "basierend",
+                "auf",
+                "fortgeschrittenen",
+                "Sprachmodellen,",
+                "um",
+                "die",
+                "Kommunikationsfähigkeiten",
+                "der",
+                "Benutzer",
+                "in",
+                "verschiedenen",
+                "Kontexten",
+                "zu",
+                "verbessern."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1781608504930",
+          "type": "conjugation",
+          "title": "Verb Conjugation",
+          "desc": "Present tense conjugation of selected verbs",
+          "icon": "📝",
+          "conjugations": [
+            {
+              "infinitive": "benutzen",
+              "source": "to use",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich/wir",
+                  "form": "benutze/benutzen"
+                },
+                {
+                  "pronoun": "du/euch",
+                  "form": "benutzt"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "benutzt"
+                }
+              ]
+            },
+            {
+              "infinitive": "verbessern",
+              "source": "to improve",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich/wir",
+                  "form": "verbessere/verbessern"
+                },
+                {
+                  "pronoun": "du/euch",
+                  "form": "verbesserst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "verbessert"
+                }
+              ]
+            },
+            {
+              "infinitive": "üben",
+              "source": "to practice",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich/wir",
+                  "form": "übe/üben"
+                },
+                {
+                  "pronoun": "du/euch",
+                  "form": "übst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "übt"
+                }
+              ]
+            },
+            {
+              "infinitive": "profitieren",
+              "source": "to benefit",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich/wir",
+                  "form": "profitiere/profitieren"
+                },
+                {
+                  "pronoun": "du/euch",
+                  "form": "profitierst"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "profitiert"
+                }
+              ]
+            },
+            {
+              "infinitive": "sprachkorpora",
+              "source": "to use corpora",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "ich/wir",
+                  "form": "sprachkorpora/sprachkorpora"
+                },
+                {
+                  "pronoun": "du/euch",
+                  "form": "sprachkorpora"
+                },
+                {
+                  "pronoun": "er/sie/es",
+                  "form": "sprachkorpora"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1781609405629",
+          "type": "grammar",
+          "title": "Diverse Exercises",
+          "desc": "German articles and plurals for nouns",
+          "icon": "📝",
+          "grammar": [
+            {
+              "target": "Verbesserung",
+              "source": "improvement",
+              "gender": "f",
+              "article": "die",
+              "plural": "Verbesserungen",
+              "_manualEdits": [
+                "2026-06-16T11:37:51.256Z"
+              ]
+            },
+            {
+              "target": "Übung",
+              "source": "exercise",
+              "gender": "f",
+              "article": "die",
+              "plural": "Übungen",
+              "_manualEdits": [
+                "2026-06-16T11:38:50.131Z"
+              ]
+            },
+            {
+              "target": "Grammatik",
+              "source": "grammar",
+              "gender": "f",
+              "article": "die",
+              "plural": "Grammatiken",
+              "_manualEdits": [
+                "2026-06-16T11:37:51.256Z"
+              ]
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 457837,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1184,
+        "totalCompletionTokens": 572,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 312211,
+            "promptTokens": 788,
+            "completionTokens": 385
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T10:11:40.373Z",
+      "updatedAt": "2026-06-16T11:38:50.135Z",
+      "id": "tp_17816054439060000253"
+    },
+    {
+      "topic": "Enhancing Interactions",
+      "topicEmoji": "💬",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 150,
+      "story": "Die App wurde in den nächsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihren individuellen Bedürfnissen zu unterstützen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 1-2 paragraphs, under 150 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Academic register, precise terminology, formal structure. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nWir entwickeln ein neues LLM-basiertes Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfasst und zu erfüllen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung.\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Developing the App",
+      "continuedFromId": "tp_17816038862680000091",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "App Updates and Interactive Dialogues",
+          "desc": "Continue the story about app improvements and interactive features",
+          "icon": "📱",
+          "vocab": [
+            {
+              "target": "optimiert",
+              "source": "optimized"
+            },
+            {
+              "target": "neue Funktionen",
+              "source": "new features"
+            },
+            {
+              "target": "virtuelle Assistenten",
+              "source": "virtual assistants"
+            },
+            {
+              "target": "reale Szenarien",
+              "source": "real-life scenarios",
+              "editedAt": "2026-06-16T10:52:22.601Z",
+              "_manualEdits": [
+                "2026-06-16T10:52:22.602Z"
+              ]
+            },
+            {
+              "target": "Kommunikationsfähigkeiten",
+              "source": "communication skills"
+            },
+            {
+              "target": "individuelle Bedürfnisse",
+              "source": "individual needs"
+            },
+            {
+              "target": "Sprachkenntnisse",
+              "source": "language skills"
+            },
+            {
+              "target": "interaktive Lernumgebung",
+              "source": "interactive learning environment"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Die Benutzer konnten nun auch interaktive Dialoge mit den virtuellen Assistenten durchlaufen.",
+              "source": "Users could now also go through interactive dialogues with the virtual assistants.",
+              "words": [
+                "Die",
+                "Benutzer",
+                "konnten",
+                "nun",
+                "auch",
+                "interaktive",
+                "Dialoge",
+                "mit",
+                "den",
+                "virtuellen",
+                "Assistenten",
+                "durchlaufen."
+              ]
+            },
+            {
+              "target": "Diese Dialoge basierten auf realen Szenarien, um die Kommunikationsfähigkeiten zu trainieren.",
+              "source": "These dialogues were based on real scenarios to train communication skills.",
+              "words": [
+                "Diese",
+                "Dialoge",
+                "basierten",
+                "auf",
+                "realen",
+                "Szenarien,",
+                "um",
+                "die",
+                "Kommunikationsfähigkeiten",
+                "zu",
+                "trainieren."
+              ]
+            },
+            {
+              "target": "Die Assistenten fungierten sowohl als Partner als auch als Herausforderer.",
+              "source": "The assistants functioned both as partners and as challengers.",
+              "words": [
+                "Die",
+                "Assistenten",
+                "fungierten",
+                "sowohl",
+                "als",
+                "Partner",
+                "als",
+                "auch",
+                "als",
+                "Herausforderer."
+              ]
+            },
+            {
+              "target": "Die Benutzer profitierten von dieser Lernumgebung, die ihre Sprachkenntnisse verbesserte.",
+              "source": "Users benefited from this learning environment, which improved their language skills.",
+              "words": [
+                "Die",
+                "Benutzer",
+                "profitierten",
+                "von",
+                "dieser",
+                "Lernumgebung,",
+                "die",
+                "ihre",
+                "Sprachkenntnisse",
+                "verbesserte."
+              ]
+            },
+            {
+              "target": "Die virtuellen Assistenten wurden mit den neuesten Sprachmodellen trainiert.",
+              "source": "The virtual assistants were trained with the latest speech models.",
+              "words": [
+                "Die",
+                "virtuellen",
+                "Assistenten",
+                "wurden",
+                "mit",
+                "den",
+                "neuesten",
+                "Sprachmodellen",
+                "trainiert."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Developing a language learning app",
+          "desc": "Continue the story about app improvements and interactive features",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "entwickeln",
+              "source": "to develop"
+            },
+            {
+              "target": "Sprachlernapp",
+              "source": "language learning app"
+            },
+            {
+              "target": "interaktiv",
+              "source": "interactive"
+            },
+            {
+              "target": "personalisiert",
+              "source": "personalized",
+              "editedAt": "2026-06-16T10:52:14.185Z",
+              "_manualEdits": [
+                "2026-06-16T10:52:22.602Z"
+              ]
+            },
+            {
+              "target": "Sprachmodelle",
+              "source": "language models"
+            },
+            {
+              "target": "erfasst",
+              "source": "to capture"
+            },
+            {
+              "target": "fortgeschritten",
+              "source": "advanced"
+            },
+            {
+              "target": "Optimierung",
+              "source": "optimization"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Wir entwickeln eine Sprachlernapp, die interaktiv und personalisiert ist.",
+              "source": "We are developing an interactive and personalized language learning app.",
+              "words": [
+                "Wir",
+                "entwickeln",
+                "eine",
+                "Sprachlernapp,",
+                "die",
+                "interaktiv",
+                "und",
+                "personalisiert",
+                "ist."
+              ]
+            },
+            {
+              "target": "Die App erfasst fortgeschrittene Sprachmodelle, um die Lernenden zu unterstützen.",
+              "source": "The app captures advanced language models to support the learners.",
+              "words": [
+                "Die",
+                "App",
+                "erfasst",
+                "fortgeschrittene",
+                "Sprachmodelle,",
+                "um",
+                "die",
+                "Lernenden",
+                "zu",
+                "unterstützen."
+              ]
+            },
+            {
+              "target": "Durch die Optimierung der App verbessern sich die Sprachkenntnisse der Benutzer stetig.",
+              "source": "Through the optimization of the app, the language skills of the users are continuously improved.",
+              "words": [
+                "Durch",
+                "die",
+                "Optimierung",
+                "der",
+                "App",
+                "verbessern",
+                "sich",
+                "die",
+                "Sprachkenntnisse",
+                "der",
+                "Benutzer",
+                "stetig."
+              ]
+            },
+            {
+              "target": "Benutzer können interaktive Dialoge mit virtuellen Assistenten durchlaufen, um ihre Kommunikationsfähigkeiten zu trainieren.",
+              "source": "Users can go through interactive dialogues with virtual assistants to train their communication skills.",
+              "words": [
+                "Benutzer",
+                "können",
+                "interaktive",
+                "Dialoge",
+                "mit",
+                "virtuellen",
+                "Assistenten",
+                "durchlaufen,",
+                "um",
+                "ihre",
+                "Kommunikationsfähigkeiten",
+                "zu",
+                "trainieren."
+              ]
+            },
+            {
+              "target": "Die virtuellen Assistenten fungieren sowohl als Partner als auch als Herausforderer, um die Bedürfnisse der Lernenden zu erfüllen.",
+              "source": "The virtual assistants function both as partners and as challengers to meet the needs of the learners.",
+              "words": [
+                "Die",
+                "virtuellen",
+                "Assistenten",
+                "fungieren",
+                "sowohl",
+                "als",
+                "Partner",
+                "als",
+                "auch",
+                "als",
+                "Herausforderer,",
+                "um",
+                "die",
+                "Bedürfnisse",
+                "der",
+                "Lernenden",
+                "zu",
+                "erfüllen."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "aeh_1781607585647",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a human tutor.",
+          "icon": "🔎",
+          "aiStory": "Die App wurde in den nächsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihre individuellen Bedürfnisse zu passen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte.",
+          "sentences": [
+            {
+              "ai": "um die Lernenden in ihre individuellen Bedürfnisse zu passen.",
+              "corrected": "um die Lernenden in ihre individuellen Bedürfnisse zu unterstützen.",
+              "reason": ""
+            }
+          ]
+        },
+        {
+          "id": "ls_1781608199538",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Die App wurde in den nchsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihren individuellen Bedürfnissen zu unterstützen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte."
+        }
+      ],
+      "generationStats": {
+        "totalMs": 436795,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1141,
+        "totalCompletionTokens": 573,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 305241,
+            "promptTokens": 785,
+            "completionTokens": 389
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T10:00:17.848Z",
+      "updatedAt": "2026-06-16T11:09:59.538Z",
+      "id": "tp_17816045547280000115",
+      "aiStory": "Die App wurde in den nächsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihre individuellen Bedürfnisse zu passen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte."
+    },
+    {
+      "topic": "Developing the App",
+      "topicEmoji": "💻",
+      "userTopic": "we are developing a novel LLM-based language learning app, where users can gener",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 150,
+      "story": "Wir entwickeln eine neue LLM-basierte Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfassen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 1-2 paragraphs, under 150 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Academic register, precise terminology, formal structure.\n\nWrite a story for the topic: \"we are developing a novel LLM-based language learning app, where users can gener\". Plain prose, no headings.",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "language learning app development",
+          "desc": "basics of developing a language learning app",
+          "icon": "💻📚",
+          "vocab": [
+            {
+              "target": "entwickeln",
+              "source": "to develop"
+            },
+            {
+              "target": "Sprachlernapp",
+              "source": "language learning app"
+            },
+            {
+              "target": "interaktiv",
+              "source": "interactive"
+            },
+            {
+              "target": "personalisiert",
+              "source": "personalized"
+            },
+            {
+              "target": "Sprachmodelle",
+              "source": "language models"
+            },
+            {
+              "target": "erfasst",
+              "source": "to capture"
+            },
+            {
+              "target": "fortgeschritten",
+              "source": "advanced"
+            },
+            {
+              "target": "Optimierung",
+              "source": "optimization"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Wir entwickeln ein Sprachlernapp, die interaktiv und personalisiert ist.",
+              "source": "We are developing a language learning app that is interactive and personalized.",
+              "words": [
+                "Wir",
+                "entwickeln",
+                "ein",
+                "Sprachlernapp,",
+                "die",
+                "interaktiv",
+                "und",
+                "personalisiert",
+                "ist."
+              ]
+            },
+            {
+              "target": "Die App nutzt Sprachmodelle, um individuelle Lernbedürfnisse zu erfüllen.",
+              "source": "The app uses language models to fulfill individual learning needs.",
+              "words": [
+                "Die",
+                "App",
+                "nutzt",
+                "Sprachmodelle,",
+                "um",
+                "individuelle",
+                "Lernbedürfnisse",
+                "zu",
+                "erfüllen."
+              ]
+            },
+            {
+              "target": "Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten.",
+              "source": "Users can generate texts, perform exercises, and receive feedback.",
+              "words": [
+                "Benutzer",
+                "können",
+                "Texte",
+                "generieren,",
+                "Übungen",
+                "durchführen",
+                "und",
+                "Feedback",
+                "erhalten."
+              ]
+            },
+            {
+              "target": "Die App gewährleistet eine effektive und anregende Lernumgebung durch kontinuierliche Optimierung.",
+              "source": "The app ensures an effective and stimulating learning environment through continuous optimization.",
+              "words": [
+                "Die",
+                "App",
+                "gewährleistet",
+                "eine",
+                "effektive",
+                "und",
+                "anregende",
+                "Lernumgebung",
+                "durch",
+                "kontinuierliche",
+                "Optimierung."
+              ]
+            },
+            {
+              "target": "Die Optimierung basiert auf Benutzerverhalten und lerntheoretischen Prinzipien.",
+              "source": "Optimization is based on user behavior and learning theory principles.",
+              "words": [
+                "Die",
+                "Optimierung",
+                "basiert",
+                "auf",
+                "Benutzerverhalten",
+                "und",
+                "lerntheoretischen",
+                "Prinzipien."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "aeh_1781607491306",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a human tutor.",
+          "icon": "🔎",
+          "aiStory": "Wir entwickeln ein neues LLM-basiertes Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfasst und zu erfüllen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung.",
+          "sentences": [
+            {
+              "ai": "Wir entwickeln ein neues LLM-basiertes Sprachlernapp,",
+              "corrected": "Wir entwickeln eine neue LLM-basierte Sprachlernapp,",
+              "reason": ""
+            },
+            {
+              "ai": "um individuelle Lernbedürfnisse zu erfasst und zu erfüllen.",
+              "corrected": "um individuelle Lernbedürfnisse zu erfassen.",
+              "reason": ""
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 337519,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 866,
+        "totalCompletionTokens": 497,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 270699,
+            "promptTokens": 726,
+            "completionTokens": 353
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T09:53:35.493Z",
+      "updatedAt": "2026-06-16T10:58:11.304Z",
+      "id": "tp_17816038862680000091",
+      "aiStory": "Wir entwickeln ein neues LLM-basiertes Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfasst und zu erfüllen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung."
+    },
+    {
+      "topic": "Passive Voice",
+      "topicEmoji": "📝",
+      "userTopic": "test the new learning arc function of our language teaching app, which later sho",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 100,
+      "story": "Die Schülerinnen und Schüler begannen, die neue Lernarcaden-Funktionsstufe zu testen, die sich mit der grammatischen Konstruktion des Passivs beschäftigte. Sie mussten virtuelle Texte analysieren und passiv formulierten Sätze in aktiv umwandeln. Dabei zeigten sie erstaunliche Fähigkeiten, indem sie die grammatischen Regeln mit großer Präzision anwenden konnten. Die App ermutigte sie, ihre eigenen Sätze zu erstellen, was ihre kreative und analytische Fähigkeit weiter stärkte. Die positive Rückmeldung des Systems führte zu einem erhöhten Selbstbewusstsein und einem noch stärkeren Engagement im Lernprozess.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Academic register, precise terminology, formal structure. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nDie Schülerinnen und Schüler begaben sich in die virtuelle Klasse, bereit, das neue Lernarcaden-Funktionskonzept unseres Sprachunterrichts-Apps auszuprobieren. Mit erhobenen Köpfen und konzentrierten Mienen starrten sie auf das holografische Display, das ihnen präzise Anweisungen zur Verfügung stellte. Die Funktion, die sie testen sollten, führte sie durch eine sequenzielle Lernreise, die ihre Sprachkenntnisse in Schritten vertiefte. Jedes Level bot eine neue Herausforderung, von der Verständigung mit virtuellen Charakteren bis hin zu komplexe grammatische Konstruktionen. Die Schüler nahmen aktiv an der Lernprozessführung teil, was ihre Motivation und Engagement steigerte.\n\nNew topic: \"test the new learning arc function of our language teaching app, which later sho\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Virtual Class",
+      "continuedFromId": "tp_17816023688430000381",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "test the new learning arc function of our language teaching app, which later sho",
+          "desc": "introduction to the new passive construction feature",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "analytisch",
+              "source": "analytically"
+            },
+            {
+              "target": "grammatische",
+              "source": "grammatical"
+            },
+            {
+              "target": "regeln",
+              "source": "rules"
+            },
+            {
+              "target": "virtuell",
+              "source": "virtual"
+            },
+            {
+              "target": "umwandeln",
+              "source": "transform"
+            },
+            {
+              "target": "kreative",
+              "source": "creative"
+            },
+            {
+              "target": "funktion",
+              "source": "function"
+            },
+            {
+              "target": "positiv",
+              "source": "positive"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Die Schüler analysieren virtuelle Texte.",
+              "source": "The students analyze virtual texts.",
+              "words": [
+                "Die",
+                "Schüler",
+                "analysieren",
+                "virtuelle",
+                "Texte."
+              ]
+            },
+            {
+              "target": "Sie umwandeln passiv formulierte Sätze aktiv.",
+              "source": "They transform passive sentences into active ones.",
+              "words": [
+                "Sie",
+                "umwandeln",
+                "passiv",
+                "formulierte",
+                "Sätze",
+                "aktiv."
+              ]
+            },
+            {
+              "target": "Die App ermutigt sie, ihre eigenen Sätze zu erstellen.",
+              "source": "The app encourages them to create their own sentences.",
+              "words": [
+                "Die",
+                "App",
+                "ermutigt",
+                "sie,",
+                "ihre",
+                "eigenen",
+                "Sätze",
+                "zu",
+                "erstellen."
+              ]
+            },
+            {
+              "target": "Die positive Rückmeldung stärkt ihre Fähigkeiten.",
+              "source": "The positive feedback strengthens their abilities.",
+              "words": [
+                "Die",
+                "positive",
+                "Rückmeldung",
+                "stärkt",
+                "ihre",
+                "Fähigkeiten."
+              ]
+            },
+            {
+              "target": "Engagement im Lernprozess wird erhöht.",
+              "source": "Engagement in the learning process is increased.",
+              "words": [
+                "Engagement",
+                "im",
+                "Lernprozess",
+                "wird",
+                "erhöht."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Test the new learning arc function of our language teaching app",
+          "desc": "focus on basic vocabulary and sentence structure",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "begabten",
+              "source": "gifted"
+            },
+            {
+              "target": "virtuelle",
+              "source": "virtual"
+            },
+            {
+              "target": "Lernarcade",
+              "source": "learning arcade"
+            },
+            {
+              "target": "holografisches",
+              "source": "holographic"
+            },
+            {
+              "target": "Anweisungen",
+              "source": "instructions"
+            },
+            {
+              "target": "sequenziell",
+              "source": "sequential"
+            },
+            {
+              "target": "Sprache",
+              "source": "language"
+            },
+            {
+              "target": "Verständigung",
+              "source": "communication"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Die Schüler begaben sich in die virtuelle Klasse.",
+              "source": "The students entered the virtual class.",
+              "words": [
+                "Die",
+                "Schüler",
+                "begaben",
+                "sich",
+                "in",
+                "die",
+                "virtuelle",
+                "Klasse."
+              ]
+            },
+            {
+              "target": "Das Lernarcade-Funktionskonzept ist sequenziell aufgebaut.",
+              "source": "The learning arcade function concept is sequentially structured.",
+              "words": [
+                "Das",
+                "Lernarcade-Funktionskonzept",
+                "ist",
+                "sequenziell",
+                "aufgebaut."
+              ]
+            },
+            {
+              "target": "Das holografische Display zeigte präzise Anweisungen.",
+              "source": "The holographic display showed precise instructions.",
+              "words": [
+                "Das",
+                "holografische",
+                "Display",
+                "zeigte",
+                "präzise",
+                "Anweisungen."
+              ]
+            },
+            {
+              "target": "Die Sprachkenntnisse der Schüler verbesserten sich.",
+              "source": "The students' language skills improved.",
+              "words": [
+                "Die",
+                "Sprachkenntnisse",
+                "der",
+                "Schüler",
+                "verbesserten",
+                "sich."
+              ]
+            },
+            {
+              "target": "Die Verständigung war entscheidend für den Lernprozess.",
+              "source": "Communication was crucial for the learning process.",
+              "words": [
+                "Die",
+                "Verständigung",
+                "war",
+                "entscheidend",
+                "für",
+                "den",
+                "Lernprozess."
+              ]
+            }
+          ],
+          "_arcMode": "extend"
+        },
+        {
+          "id": 1,
+          "title": "Test the new learning arc function of our language teaching app",
+          "desc": "beginning of the sequential learning journey, virtual classroom, precise instructions",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "begaben sich",
+              "source": "made their way"
+            },
+            {
+              "target": "virtuelle Klasse",
+              "source": "virtual classroom"
+            },
+            {
+              "target": "Lernarcaden-Funktionskonzept",
+              "source": "learning arc function concept"
+            },
+            {
+              "target": "holografisches Display",
+              "source": "holographic display"
+            },
+            {
+              "target": "präzise Anweisungen",
+              "source": "precise instructions"
+            },
+            {
+              "target": "sequenzielle Lernreise",
+              "source": "sequential learning journey"
+            },
+            {
+              "target": "Sprachkenntnisse",
+              "source": "language skills"
+            },
+            {
+              "target": "Engagement",
+              "source": "engagement"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Die Schülerinnen und Schüler begaben sich in die virtuelle Klasse, um das neue Lernarcaden-Funktionskonzept zu testen.",
+              "source": "The students made their way into the virtual classroom to test the new learning arc function concept.",
+              "words": [
+                "Die",
+                "Schülerinnen",
+                "und",
+                "Schüler",
+                "begaben",
+                "sich",
+                "in",
+                "die",
+                "virtuelle",
+                "Klasse,",
+                "um",
+                "das",
+                "neue",
+                "Lernarcaden-Funktionskonzept",
+                "zu",
+                "testen."
+              ]
+            },
+            {
+              "target": "Das holografische Display zeigte präzise Anweisungen, die die Schüler folgen mussten, um Sprachkenntnisse zu verbessern.",
+              "source": "The holographic display showed precise instructions that the students had to follow to improve their language skills.",
+              "words": [
+                "Das",
+                "holografische",
+                "Display",
+                "zeigte",
+                "präzise",
+                "Anweisungen,",
+                "die",
+                "die",
+                "Schüler",
+                "folgen",
+                "mussten,",
+                "um",
+                "Sprachkenntnisse",
+                "zu",
+                "verbessern."
+              ]
+            },
+            {
+              "target": "Die sequenzielle Lernreise führte die Schüler durch verschiedene Lernstufen, um ihr Engagement im Lernprozess zu stärken.",
+              "source": "The sequential learning journey led the students through various learning stages to strengthen their engagement in the learning process.",
+              "words": [
+                "Die",
+                "sequenzielle",
+                "Lernreise",
+                "führte",
+                "die",
+                "Schüler",
+                "durch",
+                "verschiedene",
+                "Lernstufen,",
+                "um",
+                "ihr",
+                "Engagement",
+                "im",
+                "Lernprozess",
+                "zu",
+                "stärken."
+              ]
+            },
+            {
+              "target": "Die positive Rückmeldung des Systems führte zu einem erhöhten Selbstbewusstsein und einem noch stärkeren Engagement im Lernprozess.",
+              "source": "The positive feedback from the system led to an increased self-confidence and even stronger engagement in the learning process.",
+              "words": [
+                "Die",
+                "positive",
+                "Rückmeldung",
+                "des",
+                "Systems",
+                "führte",
+                "zu",
+                "einem",
+                "erhöhten",
+                "Selbstbewusstsein",
+                "und",
+                "einem",
+                "noch",
+                "stärkeren",
+                "Engagement",
+                "im",
+                "Lernprozess."
+              ]
+            },
+            {
+              "target": "Die App ermutigte sie, ihre eigenen Sätze zu erstellen, was ihre kreative und analytische Fähigkeit weiter stärkte.",
+              "source": "The app encouraged them to create their own sentences, which further strengthened their creative and analytical abilities.",
+              "words": [
+                "Die",
+                "App",
+                "ermutigte",
+                "sie,",
+                "ihre",
+                "eigenen",
+                "Sätze",
+                "zu",
+                "erstellen,",
+                "was",
+                "ihre",
+                "kreative",
+                "und",
+                "analytische",
+                "Fähigkeit",
+                "weiter",
+                "stärkte."
+              ]
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 382059,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1121,
+        "totalCompletionTokens": 454,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 254064,
+            "promptTokens": 746,
+            "completionTokens": 289
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T09:34:56.871Z",
+      "updatedAt": "2026-06-16T09:45:29.882Z",
+      "id": "tp_17816031298820000439"
+    },
+    {
+      "topic": "Virtual Class",
+      "topicEmoji": "💻",
+      "userTopic": "test the new learning arc function of our language teaching app, which later sho",
+      "lang": "de",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 100,
+      "story": "Die Schülerinnen und Schüler begaben sich in die virtuelle Klasse, bereit, das neue Lernarcaden-Funktionskonzept unseres Sprachunterrichts-Apps auszuprobieren. Mit erhobenen Köpfen und konzentrierten Mienen starrten sie auf das holografische Display, das ihnen präzise Anweisungen zur Verfügung stellte. Die Funktion, die sie testen sollten, führte sie durch eine sequenzielle Lernreise, die ihre Sprachkenntnisse in Schritten vertiefte. Jedes Level bot eine neue Herausforderung, von der Verständigung mit virtuellen Charakteren bis hin zu komplexe grammatische Konstruktionen. Die Schüler nahmen aktiv an der Lernprozessführung teil, was ihre Motivation und Engagement steigerte.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Academic register, precise terminology, formal structure.\n\nWrite a story for the topic: \"test the new learning arc function of our language teaching app, which later sho\". Plain prose, no headings.",
+      "storyStyle": "scientific",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Test the new learning arc function of our language teaching app",
+          "desc": "introduction to the new feature, vocabulary and grammar",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "begaben sich",
+              "source": "made their way"
+            },
+            {
+              "target": "virtuelle Klasse",
+              "source": "virtual classroom"
+            },
+            {
+              "target": "Lernarcaden-Funktionskonzept",
+              "source": "learning arc function concept"
+            },
+            {
+              "target": "holografisches Display",
+              "source": "holographic display"
+            },
+            {
+              "target": "präzise Anweisungen",
+              "source": "precise instructions"
+            },
+            {
+              "target": "sequenzielle Lernreise",
+              "source": "sequential learning journey"
+            },
+            {
+              "target": "Sprachkenntnisse",
+              "source": "language skills"
+            },
+            {
+              "target": "Engagement",
+              "source": "engagement"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Die Schülerinnen und Schüler begaben sich in die virtuelle Klasse, bereit, das neue Lernarcaden-Funktionskonzept unseres Sprachunterrichts-Apps auszuprobieren.",
+              "source": "The students made their way into the virtual classroom, ready to test out the new learning arc function of our language teaching app.",
+              "words": [
+                "Die",
+                "Schülerinnen",
+                "und",
+                "Schüler",
+                "begaben",
+                "sich",
+                "in",
+                "die",
+                "virtuelle",
+                "Klasse,",
+                "bereit,",
+                "das",
+                "neue",
+                "Lernarcaden-Funktionskonzept",
+                "unseres",
+                "Sprachunterrichts-Apps",
+                "auszuprobieren."
+              ]
+            },
+            {
+              "target": "Mit erhobenen Köpfen und konzentrierten Mienen starrten sie auf das holografische Display, das ihnen präzise Anweisungen zur Verfügung stellte.",
+              "source": "With heads held high and focused expressions, they stared at the holographic display, which provided them with precise instructions.",
+              "words": [
+                "Mit",
+                "erhobenen",
+                "Köpfen",
+                "und",
+                "konzentrierten",
+                "Mienen",
+                "starrten",
+                "sie",
+                "auf",
+                "das",
+                "holografische",
+                "Display,",
+                "das",
+                "ihnen",
+                "präzise",
+                "Anweisungen",
+                "zur",
+                "Verfügung",
+                "stellte."
+              ]
+            },
+            {
+              "target": "Die Funktion, die sie testen sollten, führte sie durch eine sequenzielle Lernreise, die ihre Sprachkenntnisse in Schritten vertiefte.",
+              "source": "The function they were to test led them through a sequential learning journey, which step-by-step deepened their language skills.",
+              "words": [
+                "Die",
+                "Funktion,",
+                "die",
+                "sie",
+                "testen",
+                "sollten,",
+                "führte",
+                "sie",
+                "durch",
+                "eine",
+                "sequenzielle",
+                "Lernreise,",
+                "die",
+                "ihre",
+                "Sprachkenntnisse",
+                "in",
+                "Schritten",
+                "vertiefte."
+              ]
+            },
+            {
+              "target": "Jedes Level bot eine neue Herausforderung, von der Verständigung mit virtuellen Charakteren bis hin zu komplexen grammatischen Konstruktionen.",
+              "source": "Each level offered a new challenge, from communicating with virtual characters to complex grammatical constructions.",
+              "words": [
+                "Jedes",
+                "Level",
+                "bot",
+                "eine",
+                "neue",
+                "Herausforderung,",
+                "von",
+                "der",
+                "Verständigung",
+                "mit",
+                "virtuellen",
+                "Charakteren",
+                "bis",
+                "hin",
+                "zu",
+                "komplexen",
+                "grammatischen",
+                "Konstruktionen."
+              ]
+            },
+            {
+              "target": "Die Schüler nahmen aktiv an der Lernprozessführung teil, was ihre Motivation und Engagement steigerte.",
+              "source": "The students actively participated in the learning process, which increased their motivation and engagement.",
+              "words": [
+                "Die",
+                "Schüler",
+                "nahmen",
+                "aktiv",
+                "an",
+                "der",
+                "Lernprozessführung",
+                "teil,",
+                "was",
+                "ihre",
+                "Motivation",
+                "und",
+                "Engagement",
+                "steigerte."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Test the new learning arc function of our language teaching app",
+          "desc": "introduction to the new feature, vocabulary and grammar",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "begaben sich",
+              "source": "made their way"
+            },
+            {
+              "target": "virtuelle Klasse",
+              "source": "virtual classroom"
+            },
+            {
+              "target": "holografisches Display",
+              "source": "holographic display"
+            },
+            {
+              "target": "präzise Anweisungen",
+              "source": "precise instructions"
+            },
+            {
+              "target": "sequenzielle Lernreise",
+              "source": "sequential learning journey"
+            },
+            {
+              "target": "Sprachkenntnisse",
+              "source": "language skills"
+            },
+            {
+              "target": "Engagement",
+              "source": "engagement"
+            },
+            {
+              "target": "Lernprozessführung",
+              "source": "learning process management"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Die Schülerinnen und Schüler begaben sich in die virtuelle Klasse.",
+              "source": "The students made their way into the virtual classroom.",
+              "words": [
+                "Die",
+                "Schülerinnen",
+                "und",
+                "Schüler",
+                "begaben",
+                "sich",
+                "in",
+                "die",
+                "virtuelle",
+                "Klasse."
+              ]
+            },
+            {
+              "target": "Mit erhobenen Köpfen und konzentrierten Mienen starrten sie auf das holografische Display.",
+              "source": "With heads held high and focused expressions, they stared at the holographic display.",
+              "words": [
+                "Mit",
+                "erhobenen",
+                "Köpfen",
+                "und",
+                "konzentrierten",
+                "Mienen",
+                "starrten",
+                "sie",
+                "auf",
+                "das",
+                "holografische",
+                "Display."
+              ]
+            },
+            {
+              "target": "Die Funktion, die sie testen sollten, führte sie durch eine sequenzielle Lernreise.",
+              "source": "The function they were to test led them through a sequential learning journey.",
+              "words": [
+                "Die",
+                "Funktion,",
+                "die",
+                "sie",
+                "testen",
+                "sollten,",
+                "führte",
+                "sie",
+                "durch",
+                "eine",
+                "sequenzielle",
+                "Lernreise."
+              ]
+            },
+            {
+              "target": "Jedes Level bot eine neue Herausforderung, von der Verständigung mit virtuellen Charakteren bis hin zu komplexen grammatischen Konstruktionen.",
+              "source": "Each level offered a new challenge, from communication with virtual characters to complex grammatical constructions.",
+              "words": [
+                "Jedes",
+                "Level",
+                "bot",
+                "eine",
+                "neue",
+                "Herausforderung,",
+                "von",
+                "der",
+                "Verständigung",
+                "mit",
+                "virtuellen",
+                "Charakteren",
+                "bis",
+                "hin",
+                "zu",
+                "komplexen",
+                "grammatischen",
+                "Konstruktionen."
+              ]
+            },
+            {
+              "target": "Die Schüler nahmen aktiv an der Lernprozessführung teil, was ihre Motivation und Engagement steigerte.",
+              "source": "The students actively participated in the learning process management, which increased their motivation and engagement.",
+              "words": [
+                "Die",
+                "Schüler",
+                "nahmen",
+                "aktiv",
+                "an",
+                "der",
+                "Lernprozessführung",
+                "teil,",
+                "was",
+                "ihre",
+                "Motivation",
+                "und",
+                "Engagement",
+                "steigerte."
+              ]
+            }
+          ],
+          "_arcMode": "extend"
+        },
+        {
+          "id": 1,
+          "title": "Test the new learning arc function of our language teaching app",
+          "desc": "introduction to the new feature, vocabulary and grammar",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "begaben sich",
+              "source": "made their way"
+            },
+            {
+              "target": "virtuelle Klasse",
+              "source": "virtual classroom"
+            },
+            {
+              "target": "holografisches Display",
+              "source": "holographic display"
+            },
+            {
+              "target": "präzise Anweisungen",
+              "source": "precise instructions"
+            },
+            {
+              "target": "sequenzielle Lernreise",
+              "source": "sequential learning journey"
+            },
+            {
+              "target": "Sprachkenntnisse",
+              "source": "language skills"
+            },
+            {
+              "target": "Verständigung",
+              "source": "communication"
+            },
+            {
+              "target": "Lernprozessführung",
+              "source": "learning process management"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Die Schülerinnen und Schüler begaben sich in die virtuelle Klasse.",
+              "source": "The students made their way into the virtual classroom.",
+              "words": [
+                "Die",
+                "Schülerinnen",
+                "und",
+                "Schüler",
+                "begaben",
+                "sich",
+                "in",
+                "die",
+                "virtuelle",
+                "Klasse."
+              ]
+            },
+            {
+              "target": "Das holografische Display bot präzise Anweisungen.",
+              "source": "The holographic display provided precise instructions.",
+              "words": [
+                "Das",
+                "holografische",
+                "Display",
+                "bot",
+                "präzise",
+                "Anweisungen."
+              ]
+            },
+            {
+              "target": "Sie führten sie durch eine sequenzielle Lernreise.",
+              "source": "They guided them through a sequential learning journey.",
+              "words": [
+                "Sie",
+                "führten",
+                "sie",
+                "durch",
+                "eine",
+                "sequenzielle",
+                "Lernreise."
+              ]
+            },
+            {
+              "target": "Jedes Level bot eine neue Herausforderung.",
+              "source": "Each level offered a new challenge.",
+              "words": [
+                "Jedes",
+                "Level",
+                "bot",
+                "eine",
+                "neue",
+                "Herausforderung."
+              ]
+            },
+            {
+              "target": "Die Schüler nahmen aktiv an der Lernprozessführung teil.",
+              "source": "The students actively participated in the learning process management.",
+              "words": [
+                "Die",
+                "Schüler",
+                "nahmen",
+                "aktiv",
+                "an",
+                "der",
+                "Lernprozessführung",
+                "teil."
+              ]
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 421341,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 903,
+        "totalCompletionTokens": 706,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 335042,
+            "promptTokens": 764,
+            "completionTokens": 523
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T09:22:00.720Z",
+      "updatedAt": "2026-06-16T09:32:48.843Z",
+      "id": "tp_17816023688430000381"
+    },
+    {
+      "topic": "Interwoven Futures",
+      "topicEmoji": "อนาค",
+      "userTopic": "testing our language learning app, and attempting to create whole story lines wi",
+      "lang": "it",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 100,
+      "story": "Nel laboratorio, le mani dei tester danzavano sui tasti, creando scene che si intrecciavano come fili d'argento. \"Che vita avrebbero avute queste storie senza i nostri sussurri?\" si chiedevano, mentre le parole si muovevano come ombre danzanti, costruendo mondi interconnessi. Ogni frase era un passo verso un futuro narrato, un mosaico di esperienze che si intrecciavano in un tessuto complesso, come se la lingua stesse sognando di vita propria. Ma ora, con l'app per l'apprendimento della lingua, cercavano di tessere linee narrative intere, mondi interi che si aprivano attraverso i dialoghi e le scelte dei utenti. Ogni parola, ogni frase, un passo verso un futuro narrato, un mosaico di esperienze che si intrecciavano in un tessuto complesso, come se la lingua stesse sognando di vita propria.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Contemplative, questioning, abstract ideas. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nNel laboratorio, le mani dei tester danzavano sui tasti, creando scene che si intrecciavano come fili d'argento. \"Che vita avrebbero avuto queste storie senza i nostri sussurri?\" si chiedevano, mentre le parole si muovevano come ombre danzanti, costruendo mondi interconnessi. Ogni frase era un passo verso un futuro narrato, un mosaico di esperienze che si intrecciavano in un tessuto complesso, come se la lingua stesse sognando di vita propria.\n\nNew topic: \"testing our language learning app, and attempting to create whole story lines wi\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Dancing Fingers",
+      "continuedFromId": "tp_17816004124950000112",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "testing our language learning app, and attempting to create whole story lines",
+          "desc": "exploring narrative construction in Italian",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "danzavano",
+              "source": "were dancing"
+            },
+            {
+              "target": "tasti",
+              "source": "keys"
+            },
+            {
+              "target": "scene",
+              "source": "scenes"
+            },
+            {
+              "target": "intrecciavano",
+              "source": "were weaving"
+            },
+            {
+              "target": "ombre",
+              "source": "shadows"
+            },
+            {
+              "target": "mondi",
+              "source": "worlds"
+            },
+            {
+              "target": "frase",
+              "source": "sentence"
+            },
+            {
+              "target": "passo",
+              "source": "step"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le mani dei tester danzavano sui tasti.",
+              "source": "The testers' hands were dancing on the keys.",
+              "words": [
+                "Le",
+                "mani",
+                "dei",
+                "tester",
+                "danzavano",
+                "sui",
+                "tasti."
+              ]
+            },
+            {
+              "target": "Le parole si muovevano come ombre danzanti.",
+              "source": "The words moved like dancing shadows.",
+              "words": [
+                "Le",
+                "parole",
+                "si",
+                "muovevano",
+                "come",
+                "ombre",
+                "danzanti."
+              ]
+            },
+            {
+              "target": "Ogni frase era un passo verso un futuro narrato.",
+              "source": "Every sentence was a step towards a narrated future.",
+              "words": [
+                "Ogni",
+                "frase",
+                "era",
+                "un",
+                "passo",
+                "verso",
+                "un",
+                "futuro",
+                "narrato."
+              ]
+            },
+            {
+              "target": "Cercavano di tessere linee narrative intere.",
+              "source": "They were trying to weave whole narrative lines.",
+              "words": [
+                "Cercavano",
+                "di",
+                "tessere",
+                "linee",
+                "narrative",
+                "intere."
+              ]
+            },
+            {
+              "target": "Un mosaico di esperienze si intrecciava in un tessuto complesso.",
+              "source": "A mosaic of experiences was woven into a complex fabric.",
+              "words": [
+                "Un",
+                "mosaico",
+                "di",
+                "esperienze",
+                "si",
+                "intrecciava",
+                "in",
+                "un",
+                "tessuto",
+                "complesso."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Creating Stories",
+          "desc": "Building narratives and worlds through language",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "target": "tastiera",
+              "source": "keyboard"
+            },
+            {
+              "target": "scena",
+              "source": "scene"
+            },
+            {
+              "target": "sussurro",
+              "source": "whisper"
+            },
+            {
+              "target": "mondo",
+              "source": "world"
+            },
+            {
+              "target": "sfogliavano",
+              "source": "flipping through"
+            },
+            {
+              "target": "pagine",
+              "source": "pages"
+            },
+            {
+              "target": "frasi",
+              "source": "sentences"
+            },
+            {
+              "target": "contesto",
+              "source": "context"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Stavano creando scene interconnesse.",
+              "source": "They were creating interconnected scenes.",
+              "words": [
+                "Stavano",
+                "creando",
+                "scene",
+                "interconnesse."
+              ]
+            },
+            {
+              "target": "Le frasi fluivano come ombre danzanti.",
+              "source": "The sentences flowed like dancing shadows.",
+              "words": [
+                "Le",
+                "frasi",
+                "fluivano",
+                "come",
+                "ombre",
+                "danzanti."
+              ]
+            },
+            {
+              "target": "Scoprivano nuovi mondi attraverso i dialoghi.",
+              "source": "They discovered new worlds through the dialogues.",
+              "words": [
+                "Scoprivano",
+                "nuovi",
+                "mondi",
+                "attraverso",
+                "i",
+                "dialoghi."
+              ]
+            },
+            {
+              "target": "Le sfumature del contesto si intrecciavano.",
+              "source": "The nuances of the context intertwined.",
+              "words": [
+                "Le",
+                "sfumature",
+                "del",
+                "contesto",
+                "si",
+                "intrecciavano."
+              ]
+            },
+            {
+              "target": "Le pagine si riempivano di nuove storie.",
+              "source": "The pages filled with new stories.",
+              "words": [
+                "Le",
+                "pagine",
+                "si",
+                "riempivano",
+                "di",
+                "nuove",
+                "storie."
+              ]
+            }
+          ],
+          "_arcMode": "extend"
+        },
+        {
+          "id": 1,
+          "title": "Testing Our Language Learning App",
+          "desc": "Creating whole story lines, lab, keyboard, scenes, whispers, words, worlds, sentences, future",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "laboratorio",
+              "source": "lab"
+            },
+            {
+              "target": "tastiera",
+              "source": "keyboard"
+            },
+            {
+              "target": "scena",
+              "source": "scene"
+            },
+            {
+              "target": "sussurro",
+              "source": "whisper"
+            },
+            {
+              "target": "parola",
+              "source": "word"
+            },
+            {
+              "target": "mondo",
+              "source": "world"
+            },
+            {
+              "target": "frase",
+              "source": "sentence"
+            },
+            {
+              "target": "futuro",
+              "source": "future"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Nel laboratorio, sfogliavano le pagine, cercando di intrecciare storie nuove.",
+              "source": "In the lab, they were flipping through the pages, trying to weave new stories.",
+              "words": [
+                "Nel",
+                "laboratorio,",
+                "sfogliavano",
+                "le",
+                "pagine,",
+                "cercando",
+                "di",
+                "intrecciare",
+                "storie",
+                "nuove."
+              ]
+            },
+            {
+              "target": "Le parole danzavano come ombre, creando un tessuto complesso di contesto.",
+              "source": "The words danced like shadows, creating a complex fabric of context.",
+              "words": [
+                "Le",
+                "parole",
+                "danzavano",
+                "come",
+                "ombre,",
+                "creando",
+                "un",
+                "tessuto",
+                "complesso",
+                "di",
+                "contesto."
+              ]
+            },
+            {
+              "target": "Ogni frase era un passo verso il futuro, un mosaico di esperienze intrecciate.",
+              "source": "Each sentence was a step towards the future, a mosaic of intertwined experiences.",
+              "words": [
+                "Ogni",
+                "frase",
+                "era",
+                "un",
+                "passo",
+                "verso",
+                "il",
+                "futuro,",
+                "un",
+                "mosaico",
+                "di",
+                "esperienze",
+                "intrecciate."
+              ]
+            },
+            {
+              "target": "Come eco delle sussurri, le parole si muovevano, costruendo mondi interconnessi.",
+              "source": "Like an echo of whispers, the words moved, building interconnected worlds.",
+              "words": [
+                "Come",
+                "eco",
+                "delle",
+                "sussurri,",
+                "le",
+                "parole",
+                "si",
+                "muovevano,",
+                "costruendo",
+                "mondi",
+                "interconnessi."
+              ]
+            },
+            {
+              "target": "Con l'app per l'apprendimento della lingua, cercavano di tessere linee narrative intere.",
+              "source": "With the language learning app, they were trying to weave whole story lines.",
+              "words": [
+                "Con",
+                "l'app",
+                "per",
+                "l'apprendimento",
+                "della",
+                "lingua,",
+                "cercavano",
+                "di",
+                "tessere",
+                "linee",
+                "narrative",
+                "intere."
+              ]
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 405782,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1160,
+        "totalCompletionTokens": 553,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 275274,
+            "promptTokens": 827,
+            "completionTokens": 306
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T09:02:23.027Z",
+      "updatedAt": "2026-06-16T09:12:09.900Z",
+      "id": "tp_17816011299000000214"
+    },
+    {
+      "topic": "Dancing Fingers",
+      "topicEmoji": "✍️",
+      "userTopic": "testing our language learning app, and attempting to create whole story lines wi",
+      "lang": "it",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 100,
+      "story": "Nel laboratorio, le mani dei tester danzavano sui tasti, creando scene che si intrecciavano come fili d'argento. \"Che vita avrebbero avuto queste storie senza i nostri sussurri?\" si chiedevano, mentre le parole si muovevano come ombre danzanti, costruendo mondi interconnessi. Ogni frase era un passo verso un futuro narrato, un mosaico di esperienze che si intrecciavano in un tessuto complesso, come se la lingua stesse sognando di vita propria.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Contemplative, questioning, abstract ideas. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nNel laboratorio di linguistica, i sussurri delle parole fluttuavano nell'aria, come se ogni frase fosse un'eco di un futuro narrato. Mentre i tester sfogliavano le pagine del nostro app, cercando di creare storie interconnesse, si chiedevano: \"Che vita avrebbero avuto queste parole senza contesto?\" Eppure, ogni parola, ogni frase, si intrecciava in un tessuto complesso, come se la lingua stessa stesse sognando.\n\nNew topic: \"testing our language learning app, and attempting to create whole story lines wi\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Whispers of Words",
+      "continuedFromId": "tp_17815997626510000078",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "testing our language learning app, and attempting to create whole story lines",
+          "desc": "exploring narrative construction, testing, and imagination",
+          "icon": "📖✍️",
+          "vocab": [
+            {
+              "target": "laboratorio",
+              "source": "lab"
+            },
+            {
+              "target": "tastiera",
+              "source": "keyboard"
+            },
+            {
+              "target": "scena",
+              "source": "scene"
+            },
+            {
+              "target": "sussurro",
+              "source": "whisper"
+            },
+            {
+              "target": "parola",
+              "source": "word"
+            },
+            {
+              "target": "mondo",
+              "source": "world"
+            },
+            {
+              "target": "frase",
+              "source": "sentence"
+            },
+            {
+              "target": "futuro",
+              "source": "future"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le mani dei tester danzavano sui tasti.",
+              "source": "The testers' hands danced on the keyboard.",
+              "words": [
+                "Le",
+                "mani",
+                "dei",
+                "tester",
+                "danzavano",
+                "sui",
+                "tasti."
+              ]
+            },
+            {
+              "target": "Creavano scene che si intrecciavano come fili d'argento.",
+              "source": "They created scenes that intertwined like silver threads.",
+              "words": [
+                "Creavano",
+                "scene",
+                "che",
+                "si",
+                "intrecciavano",
+                "come",
+                "fili",
+                "d'argento."
+              ]
+            },
+            {
+              "target": "Le parole si muovevano come ombre danzanti.",
+              "source": "The words moved like dancing shadows.",
+              "words": [
+                "Le",
+                "parole",
+                "si",
+                "muovevano",
+                "come",
+                "ombre",
+                "danzanti."
+              ]
+            },
+            {
+              "target": "Ogni frase era un passo verso un futuro narrato.",
+              "source": "Every sentence was a step towards a narrated future.",
+              "words": [
+                "Ogni",
+                "frase",
+                "era",
+                "un",
+                "passo",
+                "verso",
+                "un",
+                "futuro",
+                "narrato."
+              ]
+            },
+            {
+              "target": "Un mosaico di esperienze si intrecciava in un tessuto complesso.",
+              "source": "A mosaic of experiences intertwined in a complex fabric.",
+              "words": [
+                "Un",
+                "mosaico",
+                "di",
+                "esperienze",
+                "si",
+                "intrecciava",
+                "in",
+                "un",
+                "tessuto",
+                "complesso."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "Creating Stories",
+          "desc": "Exploring narrative construction and language",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "sfogliavano",
+              "source": "were flipping through"
+            },
+            {
+              "target": "pagine",
+              "source": "pages"
+            },
+            {
+              "target": "frasi",
+              "source": "sentences"
+            },
+            {
+              "target": "contesto",
+              "source": "context"
+            },
+            {
+              "target": "eco",
+              "source": "echo"
+            },
+            {
+              "target": "contenuto",
+              "source": "content"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le mani sfogliavano le pagine, catturando frasi che si intrecciavano nel contesto.",
+              "source": "Their hands flipped through the pages, capturing sentences that intertwined in context.",
+              "words": [
+                "Le",
+                "mani",
+                "sfogliavano",
+                "le",
+                "pagine,",
+                "catturando",
+                "frasi",
+                "che",
+                "si",
+                "intrecciavano",
+                "nel",
+                "contesto."
+              ]
+            },
+            {
+              "target": "L'eco delle parole si diffuse tra le pagine, come un sussurro di storie in attesa.",
+              "source": "The echo of the words spread between the pages, like a whisper of stories waiting to be told.",
+              "words": [
+                "L'eco",
+                "delle",
+                "parole",
+                "si",
+                "diffuse",
+                "tra",
+                "le",
+                "pagine,",
+                "come",
+                "un",
+                "sussurro",
+                "di",
+                "storie",
+                "in",
+                "attesa."
+              ]
+            },
+            {
+              "target": "Ogni frase era un pezzo del contenuto, un puzzle che si completava con ogni pagina sfogliata.",
+              "source": "Each sentence was a piece of the content, a puzzle that was completed with every page flipped.",
+              "words": [
+                "Ogni",
+                "frase",
+                "era",
+                "un",
+                "pezzo",
+                "del",
+                "contenuto,",
+                "un",
+                "puzzle",
+                "che",
+                "si",
+                "completava",
+                "con",
+                "ogni",
+                "pagina",
+                "sfogliata."
+              ]
+            },
+            {
+              "target": "Nel laboratorio, le mani danzavano sui tasti, creando scene che si intrecciavano come fili d'argento.",
+              "source": "In the lab, their hands danced on the keys, creating scenes that intertwined like silver threads.",
+              "words": [
+                "Nel",
+                "laboratorio,",
+                "le",
+                "mani",
+                "danzavano",
+                "sui",
+                "tasti,",
+                "creando",
+                "scene",
+                "che",
+                "si",
+                "intrecciavano",
+                "come",
+                "fili",
+                "d'argento."
+              ]
+            },
+            {
+              "target": "Le parole si muovevano come ombre danzanti, costruendo mondi interconnessi.",
+              "source": "The words moved like dancing shadows, building interconnected worlds.",
+              "words": [
+                "Le",
+                "parole",
+                "si",
+                "muovevano",
+                "come",
+                "ombre",
+                "danzanti,",
+                "costruendo",
+                "mondi",
+                "interconnessi."
+              ]
+            }
+          ],
+          "_arcMode": "extend"
+        },
+        {
+          "id": 1,
+          "title": "Testing our language learning app",
+          "desc": "Creating stories and exploring context",
+          "icon": "📖✍️",
+          "vocab": [
+            {
+              "target": "sfogliavano",
+              "source": "were flipping through"
+            },
+            {
+              "target": "pagine",
+              "source": "pages"
+            },
+            {
+              "target": "storie",
+              "source": "stories"
+            },
+            {
+              "target": "intrecciava",
+              "source": "wove together"
+            },
+            {
+              "target": "parole",
+              "source": "words"
+            },
+            {
+              "target": "frasi",
+              "source": "sentences"
+            },
+            {
+              "target": "contesto",
+              "source": "context"
+            },
+            {
+              "target": "sussurri",
+              "source": "whispers"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le mani dei tester sfogliavano le pagine, cercando storie intrecciate.",
+              "source": "The testers were flipping through the pages, searching for woven stories.",
+              "words": [
+                "Le",
+                "mani",
+                "dei",
+                "tester",
+                "sfogliavano",
+                "le",
+                "pagine,",
+                "cercando",
+                "storie",
+                "intrecciate."
+              ]
+            },
+            {
+              "target": "Le parole danzavano come ombre, creando un contesto misterioso.",
+              "source": "The words danced like shadows, creating a mysterious context.",
+              "words": [
+                "Le",
+                "parole",
+                "danzavano",
+                "come",
+                "ombre,",
+                "creando",
+                "un",
+                "contesto",
+                "misterioso."
+              ]
+            },
+            {
+              "target": "Ogni frase era un sussurro che si univa all'eco delle altre.",
+              "source": "Every sentence was a whisper that joined the echo of the others.",
+              "words": [
+                "Ogni",
+                "frase",
+                "era",
+                "un",
+                "sussurro",
+                "che",
+                "si",
+                "univa",
+                "all'eco",
+                "delle",
+                "altre."
+              ]
+            },
+            {
+              "target": "Le storie intrecciavano le loro frasi in un tessuto complesso.",
+              "source": "The stories wove their sentences into a complex fabric.",
+              "words": [
+                "Le",
+                "storie",
+                "intrecciavano",
+                "le",
+                "loro",
+                "frasi",
+                "in",
+                "un",
+                "tessuto",
+                "complesso."
+              ]
+            },
+            {
+              "target": "Come se la lingua stesse sognando di vita propria, ogni parola contava.",
+              "source": "As if the language was dreaming of its own life, every word mattered.",
+              "words": [
+                "Come",
+                "se",
+                "la",
+                "lingua",
+                "stesse",
+                "sognando",
+                "di",
+                "vita",
+                "propria,",
+                "ogni",
+                "parola",
+                "contava."
+              ]
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 359745,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1039,
+        "totalCompletionTokens": 455,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 236665,
+            "promptTokens": 722,
+            "completionTokens": 313
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T08:51:25.753Z",
+      "updatedAt": "2026-06-16T09:00:12.495Z",
+      "id": "tp_17816004124950000112"
+    },
+    {
+      "topic": "Whispers of Words",
+      "topicEmoji": "✍️",
+      "userTopic": "testing our language learning app, and attempting to create whole story lines wi",
+      "lang": "it",
+      "srcLang": "en",
+      "difficulty": 2,
+      "storyLen": 100,
+      "story": "Nel laboratorio di linguistica, i sussurri delle parole fluttuavano nell'aria, come se ogni frase fosse un'eco di un futuro narrato. Mentre i tester sfogliavano le pagine del nostro app, cercando di creare storie interconnesse, si chiedevano: \"Che vita avrebbero avuto queste parole senza contesto?\" Eppure, ogni parola, ogni frase, si intrecciava in un tessuto complesso, come se la lingua stessa stesse sognando.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Contemplative, questioning, abstract ideas.\n\nWrite a story for the topic: \"testing our language learning app, and attempting to create whole story lines wi\". Plain prose, no headings.",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "testing our language learning app, and attempting to create whole story lines",
+          "desc": "exploring language through narrative creation",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "sfogliavano",
+              "source": "were flipping through"
+            },
+            {
+              "target": "pagine",
+              "source": "pages"
+            },
+            {
+              "target": "storie",
+              "source": "stories"
+            },
+            {
+              "target": "intrecciava",
+              "source": "wove together"
+            },
+            {
+              "target": "parole",
+              "source": "words"
+            },
+            {
+              "target": "frasi",
+              "source": "sentences"
+            },
+            {
+              "target": "contesto",
+              "source": "context"
+            },
+            {
+              "target": "sussurri",
+              "source": "whispers"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I testatori sfogliavano le pagine, cercando di creare storie interconnesse.",
+              "source": "The testers were flipping through the pages, trying to create interconnected stories.",
+              "words": [
+                "I",
+                "testatori",
+                "sfogliavano",
+                "le",
+                "pagine,",
+                "cercando",
+                "di",
+                "creare",
+                "storie",
+                "interconnesse."
+              ]
+            },
+            {
+              "target": "Che vita avrebbero avuto queste parole senza contesto?",
+              "source": "What life would these words have had without context?",
+              "words": [
+                "Che",
+                "vita",
+                "avrebbero",
+                "avuto",
+                "queste",
+                "parole",
+                "senza",
+                "contesto?"
+              ]
+            },
+            {
+              "target": "Ogni frase intrecciava in un tessuto complesso.",
+              "source": "Every sentence wove together a complex fabric.",
+              "words": [
+                "Ogni",
+                "frase",
+                "intrecciava",
+                "in",
+                "un",
+                "tessuto",
+                "complesso."
+              ]
+            },
+            {
+              "target": "Come se la lingua stessa stesse sognando.",
+              "source": "As if the language itself were dreaming.",
+              "words": [
+                "Come",
+                "se",
+                "la",
+                "lingua",
+                "stessa",
+                "stesse",
+                "sognando."
+              ]
+            },
+            {
+              "target": "Nel laboratorio, i sussurri delle parole fluttuavano nell'aria.",
+              "source": "In the laboratory, the whispers of the words floated in the air.",
+              "words": [
+                "Nel",
+                "laboratorio,",
+                "i",
+                "sussurri",
+                "delle",
+                "parole",
+                "fluttuavano",
+                "nell'aria."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "testing our language learning app",
+          "desc": "creating interconnected stories, future narratives",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "sussurri",
+              "source": "whispers"
+            },
+            {
+              "target": "frase",
+              "source": "sentence"
+            },
+            {
+              "target": "eco",
+              "source": "echo"
+            },
+            {
+              "target": "contest",
+              "source": "context"
+            },
+            {
+              "target": "sfogliavano",
+              "source": "flipping through"
+            },
+            {
+              "target": "pagine",
+              "source": "pages"
+            },
+            {
+              "target": "intrecciava",
+              "source": "weaving"
+            },
+            {
+              "target": "tessuto",
+              "source": "fabric"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I sussurri delle parole fluttuavano nell'aria.",
+              "source": "Whispers of the words floated in the air.",
+              "words": [
+                "I",
+                "sussurri",
+                "delle",
+                "parole",
+                "fluttuavano",
+                "nell'aria."
+              ]
+            },
+            {
+              "target": "Mentre i tester sfogliavano le pagine del nostro app.",
+              "source": "While the testers flipped through the pages of our app,",
+              "words": [
+                "Mentre",
+                "i",
+                "tester",
+                "sfogliavano",
+                "le",
+                "pagine",
+                "del",
+                "nostro",
+                "app."
+              ]
+            },
+            {
+              "target": "Cercando di creare storie interconnesse.",
+              "source": "trying to create interconnected stories,",
+              "words": [
+                "Cercando",
+                "di",
+                "creare",
+                "storie",
+                "interconnesse."
+              ]
+            },
+            {
+              "target": "Si chiedevano: 'Che vita avrebbero avuto queste parole senza contesto?'",
+              "source": "they asked: 'What life would these words have had without context?'",
+              "words": [
+                "Si",
+                "chiedevano:",
+                "'Che",
+                "vita",
+                "avrebbero",
+                "avuto",
+                "queste",
+                "parole",
+                "senza",
+                "contesto?'"
+              ]
+            },
+            {
+              "target": "Eppure, ogni parola, ogni frase, si intrecciava in un tessuto complesso.",
+              "source": "Yet, every word, every sentence, wove itself into a complex fabric.",
+              "words": [
+                "Eppure,",
+                "ogni",
+                "parola,",
+                "ogni",
+                "frase,",
+                "si",
+                "intrecciava",
+                "in",
+                "un",
+                "tessuto",
+                "complesso."
+              ]
+            }
+          ],
+          "_arcMode": "extend"
+        },
+        {
+          "id": 1,
+          "title": "testing our language learning app",
+          "desc": "creating interconnected stories",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "sussurri",
+              "source": "whispers"
+            },
+            {
+              "target": "frase",
+              "source": "sentence"
+            },
+            {
+              "target": "eco",
+              "source": "echo"
+            },
+            {
+              "target": "contest",
+              "source": "context"
+            },
+            {
+              "target": "sfogliavano",
+              "source": "flipping through"
+            },
+            {
+              "target": "pagine",
+              "source": "pages"
+            },
+            {
+              "target": "intrecciava",
+              "source": "weaved"
+            },
+            {
+              "target": "tessuto",
+              "source": "fabric"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I tester sfogliavano le pagine del nostro app, cercando di creare storie interconnesse.",
+              "source": "The testers were flipping through our app pages, trying to create interconnected stories.",
+              "words": [
+                "I",
+                "tester",
+                "sfogliavano",
+                "le",
+                "pagine",
+                "del",
+                "nostro",
+                "app,",
+                "cercando",
+                "di",
+                "creare",
+                "storie",
+                "interconnesse."
+              ]
+            },
+            {
+              "target": "Che vita avrebbero avuto queste parole senza contesto?",
+              "source": "What life would these words have had without context?",
+              "words": [
+                "Che",
+                "vita",
+                "avrebbero",
+                "avuto",
+                "queste",
+                "parole",
+                "senza",
+                "contesto?"
+              ]
+            },
+            {
+              "target": "Mentre i tester sfogliavano le pagine, si chiedevano: 'Che vita avrebbero avuto queste parole senza contesto?'",
+              "source": "While flipping through the pages, the testers wondered: 'What life would these words have had without context?'",
+              "words": [
+                "Mentre",
+                "i",
+                "tester",
+                "sfogliavano",
+                "le",
+                "pagine,",
+                "si",
+                "chiedevano:",
+                "'Che",
+                "vita",
+                "avrebbero",
+                "avuto",
+                "queste",
+                "parole",
+                "senza",
+                "contesto?'"
+              ]
+            },
+            {
+              "target": "Ogni frase, come un'eco, si intrecciava in un tessuto complesso.",
+              "source": "Every sentence, like an echo, weaved into a complex fabric.",
+              "words": [
+                "Ogni",
+                "frase,",
+                "come",
+                "un'eco,",
+                "si",
+                "intrecciava",
+                "in",
+                "un",
+                "tessuto",
+                "complesso."
+              ]
+            },
+            {
+              "target": "La lingua stessa stava sognando, intrecciando parole e frasi in storie interconnesse.",
+              "source": "The language itself was dreaming, weaving words and sentences into interconnected stories.",
+              "words": [
+                "La",
+                "lingua",
+                "stessa",
+                "stava",
+                "sognando,",
+                "intrecciando",
+                "parole",
+                "e",
+                "frasi",
+                "in",
+                "storie",
+                "interconnesse."
+              ]
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 319044,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 844,
+        "totalCompletionTokens": 458,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 252637,
+            "promptTokens": 706,
+            "completionTokens": 332
+          }
+        ]
+      },
+      "generatedAt": "2026-06-16T08:39:54.016Z",
+      "updatedAt": "2026-06-16T08:49:22.651Z",
+      "id": "tp_17815997626510000078"
+    },
+    {
+      "topic": "testing our language learning app story generation with a better learning arc — 1",
+      "topicEmoji": "📖",
+      "userTopic": "testing our language learning app story generation with a better learning arc",
+      "lang": "it",
+      "srcLang": "de",
+      "difficulty": 2,
+      "storyLen": 100,
+      "story": "Nella luce del crepuscolo, Sofia sedeva davanti allo schermo del suo smartphone, le dita tremanti sopra il tasto di invio. \"C'è una storia qui,\" mormorò tra sé, \"una storia che va oltre le parole.\" Premette il tasto e attese, il cuore in gola. Sullo schermo apparve un paesaggio desolato, un vecchio albero solitario che oscillava al vento. \"Era una volta un viaggio,\" sussurrò Sofia, \"un viaggio senza ritorno.\"",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Contemplative, questioning, abstract ideas.\n\nWrite a story for the topic: \"testing our language learning app story generation with a better learning arc\". Plain prose, no headings.",
+      "storyStyle": "philosophical",
+      "lessons": [],
+      "generatedAt": "2026-06-16T08:29:25.053Z",
+      "updatedAt": "2026-06-16T08:29:25.053Z"
+    },
     {
       "topic": "Peut-être i",
       "topicEmoji": "💡",
@@ -8099,457 +11112,6 @@
       "generatedAt": "2026-06-12T13:13:54.621Z",
       "updatedAt": "2026-06-12T13:17:29.604Z",
       "id": "tp_147948051"
-    },
-    {
-      "topic": "The Little I am i.",
-      "topicEmoji": "📖",
-      "userTopic": "The Little I am i.\nAnna Matuszyńska, Rainer Machné, chatGPT",
-      "lang": "de",
-      "srcLang": "en",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "In the world of birds,\nlittle birds have nests.\n\nIn the world of cats,\nlittle cats have families.\n\nIn the world of people,\ngrown-ups often have children.\n\nAnd in the world of numbers,\nevery number seems to have a place.\n\nBut little i\ndid not know where hers was.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "In the world of birds,\nlittle birds have nests.\n\nIn the world of cats,\nlittle cats have families.\n\nIn the world of people,\ngrown-ups often have children.\n\nAnd in the world of numbers,\nevery number seems to have a place.\n\nBut little i\ndid not know where hers was.",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "The Little i",
-          "desc": "i's place in the world of numbers",
-          "icon": "🔢",
-          "vocab": [
-            {
-              "target": "Zahl",
-              "source": "number"
-            },
-            {
-              "target": "Platz",
-              "source": "place"
-            },
-            {
-              "target": "Welt",
-              "source": "world"
-            },
-            {
-              "target": "Kennst",
-              "source": "know"
-            },
-            {
-              "target": "Nichts",
-              "source": "nothing"
-            },
-            {
-              "target": "Sucht",
-              "source": "searches"
-            },
-            {
-              "target": "Haus",
-              "source": "house"
-            },
-            {
-              "target": "Familie",
-              "source": "family"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Die kleine i sucht ihren Platz in der Welt der Zahlen.",
-              "source": "The little i searches for her place in the world of numbers.",
-              "words": [
-                "Die",
-                "kleine",
-                "i",
-                "sucht",
-                "ihren",
-                "Platz",
-                "in",
-                "der",
-                "Welt",
-                "der",
-                "Zahlen."
-              ]
-            },
-            {
-              "target": "In der Welt der Zahlen kennt jede Zahl ihren Platz.",
-              "source": "In the world of numbers, every number knows its place.",
-              "words": [
-                "In",
-                "der",
-                "Welt",
-                "der",
-                "Zahlen",
-                "kennt",
-                "jede",
-                "Zahl",
-                "ihren",
-                "Platz."
-              ]
-            },
-            {
-              "target": "Die kleine i ist in keines Hauses zu Hause.",
-              "source": "The little i is at home in no house.",
-              "words": [
-                "Die",
-                "kleine",
-                "i",
-                "ist",
-                "in",
-                "keines",
-                "Hauses",
-                "zu",
-                "Hause."
-              ]
-            },
-            {
-              "target": "Ihre Familie ist nirgends zu finden.",
-              "source": "Her family is nowhere to be found.",
-              "words": [
-                "Ihre",
-                "Familie",
-                "ist",
-                "nirgends",
-                "zu",
-                "finden."
-              ]
-            },
-            {
-              "target": "Die kleine i ist allein in der Welt der Zahlen.",
-              "source": "The little i is alone in the world of numbers.",
-              "words": [
-                "Die",
-                "kleine",
-                "i",
-                "ist",
-                "allein",
-                "in",
-                "der",
-                "Welt",
-                "der",
-                "Zahlen."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 217942,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 711,
-        "totalCompletionTokens": 303,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 192082,
-            "promptTokens": 563,
-            "completionTokens": 288
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T10:50:09.538Z",
-      "updatedAt": "2026-06-12T10:53:21.683Z",
-      "id": "tp_1690789049",
-      "continuedFromId": null,
-      "continuedFrom": null
-    },
-    {
-      "topic": "The Little I am I",
-      "topicEmoji": "📖",
-      "userTopic": "The Little I am i",
-      "lang": "de",
-      "srcLang": "en",
-      "difficulty": 2,
-      "storyLen": 305,
-      "story": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.\n\n+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\n\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?\n\nOne evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”\n\n“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\n\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\n\nBut let’s see, where is i?\nWhere’s our little guy?\n\nThere are some creepy looking guys,\nalmost as if they were in disguise.\n\npicture of numbers in a row and arranged as a music\nband\nIn this world, so chaotic and strange,\nsome numbers like to be arranged.\n\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\n\ni also wants to be of this world, in a band,\nbut does not know where to stand.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.\n\n+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\n\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?\n\nOne evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”\n\n“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\n\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\n\nBut let’s see, where is i?\nWhere’s our little guy?\n\nThere are some creepy looking guys,\nalmost as if they were in disguise.\n\npicture of numbers in a row and arranged as a music\nband\nIn this world, so chaotic and strange,\nsome numbers like to be arranged.\n\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\n\ni also wants to be of this world, in a band,\nbut does not know where to stand.",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "The Little I am i",
-          "desc": "Numbers and their places",
-          "icon": "🔢",
-          "vocab": [
-            {
-              "target": "Nest",
-              "source": "Nest"
-            },
-            {
-              "target": "Familie",
-              "source": "family"
-            },
-            {
-              "target": "Kind",
-              "source": "child"
-            },
-            {
-              "target": "Ort",
-              "source": "place"
-            },
-            {
-              "target": "Regeln",
-              "source": "rules"
-            },
-            {
-              "target": "Koexistenz",
-              "source": "co-existence",
-              "_manualEdits": [
-                "2026-06-12T10:43:24.227Z"
-              ]
-            },
-            {
-              "target": "Herzschlag",
-              "source": "heartbeat"
-            },
-            {
-              "target": "Weg",
-              "source": "path"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "In der Welt der Zahlen hatte jede Ziffer ein eigenes Dasein.",
-              "source": "In the world of numbers, every digit had its own existence.",
-              "words": [
-                "In",
-                "der",
-                "Welt",
-                "der",
-                "Zahlen",
-                "hatte",
-                "jede",
-                "Ziffer",
-                "ein",
-                "eigenes",
-                "Dasein."
-              ],
-              "_manualEdits": [
-                "2026-06-12T10:43:24.227Z"
-              ]
-            },
-            {
-              "target": "Sie wanderte durch die Straßen, mit großen Augen und einem Herzen, das tausend Schläge hatte.",
-              "source": "She wandered through the streets, with wide eyes and a heart that had a thousand beats.",
-              "words": [
-                "Sie",
-                "wanderte",
-                "durch",
-                "die",
-                "Straßen,",
-                "mit",
-                "großen",
-                "Augen",
-                "und",
-                "einem",
-                "Herzen,",
-                "das",
-                "tausend",
-                "Schläge",
-                "hatte."
-              ]
-            },
-            {
-              "target": "Es gab ein Komma, es gab einen Punkt, manche Menschen verwechselten sie noch immer.",
-              "source": "There was a comma, there was a dot, some people still confused them.",
-              "words": [
-                "Es",
-                "gab",
-                "ein",
-                "Komma,",
-                "es",
-                "gab",
-                "einen",
-                "Punkt,",
-                "manche",
-                "Menschen",
-                "verwechselten",
-                "sie",
-                "noch",
-                "immer."
-              ],
-              "_manualEdits": [
-                "2026-06-12T10:47:30.759Z"
-              ]
-            },
-            {
-              "target": "Eines Abends, während alle schliefen, folgte sie einem leuchtenden Weg.",
-              "source": "One evening, while everyone slept, she followed a glowing path.",
-              "words": [
-                "Eines",
-                "Abends,",
-                "während",
-                "alle",
-                "schliefen,",
-                "folgte",
-                "sie",
-                "einem",
-                "leuchtenden",
-                "Weg."
-              ],
-              "_manualEdits": [
-                "2026-06-12T10:43:24.227Z"
-              ]
-            },
-            {
-              "target": "Am Ende des Weges stand eine große Sieben.",
-              "source": "At the end of the road stood a tall Seven.",
-              "words": [
-                "Am",
-                "Ende",
-                "des",
-                "Weges",
-                "stand",
-                "eine",
-                "große",
-                "Sieben."
-              ],
-              "_manualEdits": [
-                "2026-06-12T10:43:24.227Z"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "ls_1781261035383",
-          "type": "math",
-          "title": "① ② ③",
-          "desc": "＋ － ×  ÷",
-          "icon": "🔢",
-          "numbers": [
-            6,
-            9,
-            5,
-            7,
-            4,
-            2
-          ],
-          "difficulty": 1,
-          "exercises": [
-            {
-              "type": "math_order",
-              "direction": "desc",
-              "numbers": [
-                2,
-                5,
-                4,
-                9
-              ],
-              "correct": [
-                "9",
-                "5",
-                "4",
-                "2"
-              ]
-            },
-            {
-              "type": "math_order",
-              "direction": "desc",
-              "numbers": [
-                4,
-                6,
-                9,
-                2
-              ],
-              "correct": [
-                "9",
-                "6",
-                "4",
-                "2"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "9",
-              "op": "+",
-              "b": "4",
-              "correct": "13",
-              "choices": [
-                "14",
-                "13",
-                "11",
-                "12"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "9",
-              "op": "+",
-              "b": "4",
-              "correct": "13",
-              "choices": [
-                "12",
-                "13",
-                "14",
-                "11"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "9",
-              "op": "+",
-              "b": "4",
-              "correct": "13",
-              "choices": [
-                "13",
-                "14",
-                "12",
-                "11"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "6",
-              "op": "-",
-              "b": "4",
-              "correct": "2",
-              "choices": [
-                "0",
-                "1",
-                "2",
-                "3"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "7",
-              "op": "+",
-              "b": "4",
-              "correct": "11",
-              "choices": [
-                "11",
-                "10",
-                "12",
-                "9"
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 259924,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 908,
-        "totalCompletionTokens": 358,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 236233,
-            "promptTokens": 775,
-            "completionTokens": 343
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T10:29:27.616Z",
-      "updatedAt": "2026-06-12T10:47:30.763Z",
-      "id": "tp_1440014905",
-      "continuedFromId": null,
-      "continuedFrom": null
     },
     {
       "topic": "Eliza und der CO2-Cycle",

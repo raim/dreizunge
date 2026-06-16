@@ -32,7 +32,7 @@ function fillPrompt(template, vars) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v43';
+const APP_VERSION  = 'v44';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -737,13 +737,25 @@ async function generateChapterMeta(stories, srcLang, lang) {
   console.log(`\n── Chapter-title post-pass ──────────────────────────`);
   console.log(`  Chapters : ${n}, Lang: ${S}, Model: ${OLLAMA_MODEL}`);
   const result = await _callLLM(OLLAMA_MODEL, sys, user, 60 * n + 120);
-  const raw = result.text.replace(/```json|```/g, '').trim();
+  const raw = result.text;
   let arr;
-  try { arr = JSON.parse(raw); }
-  catch(e) {
-    const m = raw.match(/\[[\s\S]*\]/);
-    if (!m) throw new Error('Could not parse JSON array from response: ' + raw.slice(0,80));
-    arr = JSON.parse(m[0]);
+  try { arr = JSON.parse(stripRaw(raw)); }
+  catch(_) {
+    try { arr = extractArray(raw); }
+    catch(_2) {
+      try { arr = salvageArray(raw); }
+      catch(_3) {
+        // Last resort: pull each {…} object out and regex its title/emoji. Tolerates
+        // almost any malformed JSON (stray '.', unescaped chars, etc.).
+        const objs = stripRaw(raw).match(/\{[^{}]*\}/g) || [];
+        arr = objs.map(o => {
+          const tm = o.match(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+          const em = o.match(/"(?:emoji|icon)"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+          return tm ? { title: tm[1], emoji: em ? em[1] : '📖' } : null;
+        }).filter(Boolean);
+        if (!arr.length) throw new Error('Could not parse chapter-titles array: ' + stripRaw(raw).slice(0,120));
+      }
+    }
   }
   if (!Array.isArray(arr)) throw new Error('Expected a JSON array of {title,emoji}');
   console.log(`  Titles   : ${arr.map(o => (o&&(o.emoji||o.icon)||'')+' '+(o&&(o.title||o.t)||'')).join(' | ').slice(0,160)}`);
@@ -909,6 +921,11 @@ async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
   const nExercises = difficulty <= 1 ? 5 : 7;
   const sys  = fillPrompt(PROMPTS.math.system, { L, S });
   const user = fillPrompt(PROMPTS.math.user, { L, S, diff, instruction, nExercises });
+  console.log('\n── Math lesson (LLM) prompt ─────────────────────────');
+  console.log(`  Model: ${OLLAMA_LESSON_MODEL}, Lang: ${L}, Src: ${S}, Diff: ${diff}, N: ${nExercises}`);
+  console.log('  ── system ──\n' + sys.split('\n').map(l => '    ' + l).join('\n'));
+  console.log('  ── user ──\n' + user.split('\n').map(l => '    ' + l).join('\n'));
+  console.log('────────────────────────────────────────────────────');
   let raw, parsed;
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
@@ -1818,6 +1835,33 @@ function _persistGenerated(data, contFrom) {
   return saved || data;
 }
 
+// Rename a chain's chapter topics in place from a [{title,emoji}] array (de-dups names,
+// keeps children's continuedFrom names in sync). Ids are unchanged. Persists. Shared by
+// the book post-pass and the manual "re-generate chapter titles" endpoint.
+function _applyChapterTitles(topics, chapterMeta, bj) {
+  if (!Array.isArray(chapterMeta) || !chapterMeta.length) return false;
+  const used = new Set();
+  topics.forEach((tp, i) => {
+    const m = chapterMeta[i] || {};
+    let title = (m.title || '').trim() || tp.topic;
+    let uniq = title, k = 2;
+    while (used.has(uniq.toLowerCase()) ||
+           (findSaved(uniq) && findSaved(uniq).id && findSaved(uniq).id !== tp.id)) {
+      uniq = `${title} (${k++})`;
+    }
+    used.add(uniq.toLowerCase());
+    const oldName = tp.topic;
+    tp.topic = uniq;
+    if (m.emoji) tp.topicEmoji = m.emoji;
+    store.topics.forEach(c => {
+      if (c.continuedFromId === tp.id && c.continuedFrom === oldName) c.continuedFrom = uniq;
+    });
+    if (bj && bj.chapters[i]) bj.chapters[i].title = uniq;
+  });
+  saveStore(store);
+  return true;
+}
+
 // ── Title post-pass: after all chapters/lessons exist, assign coherent
 // per-chapter titles+emojis and a storyline title+icon from the whole chain.
 // Applies to both generated batches and PDF batches (per-chapter meta is a cheap
@@ -1827,32 +1871,10 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
   if (!topics.length) return;
   const stories = topics.map(t => t.story || '');
   // 1) Per-chapter coherent titles + emojis.
-  let chapterMeta = null;
-  try { chapterMeta = await generateChapterMeta(stories, base.srcLang, base.lang); }
-  catch (e) { console.warn(`  Chapter-title post-pass failed: ${e.message}`); }
-  if (Array.isArray(chapterMeta) && chapterMeta.length) {
-    const used = new Set();
-    topics.forEach((tp, i) => {
-      const m = chapterMeta[i] || {};
-      let title = (m.title || '').trim() || tp.topic;
-      // De-dup names (the topic name is still a lookup key in places).
-      let uniq = title, k = 2;
-      while (used.has(uniq.toLowerCase()) ||
-             (findSaved(uniq) && findSaved(uniq).id && findSaved(uniq).id !== tp.id)) {
-        uniq = `${title} (${k++})`;
-      }
-      used.add(uniq.toLowerCase());
-      const oldName = tp.topic;
-      tp.topic = uniq;
-      if (m.emoji) tp.topicEmoji = m.emoji;
-      // Keep children's continuedFrom NAME in sync (ids are unchanged/authoritative).
-      store.topics.forEach(c => {
-        if (c.continuedFromId === tp.id && c.continuedFrom === oldName) c.continuedFrom = uniq;
-      });
-      if (bj && bj.chapters[i]) bj.chapters[i].title = uniq;
-    });
-    saveStore(store);
-  }
+  try {
+    const chapterMeta = await generateChapterMeta(stories, base.srcLang, base.lang);
+    _applyChapterTitles(topics, chapterMeta, bj);
+  } catch (e) { console.warn(`  Chapter-title post-pass failed: ${e.message}`); }
   // 2) Whole-storyline title + icon (reuse existing helper).
   try {
     const names = topics.map(t => t.topic);
@@ -1869,6 +1891,11 @@ async function _runBookJob(bookId, chunks, base) {
   const bj = bookJobs.get(bookId);
   if (!bj) return;
   let prevRef = base.continuedFrom || null; // id or name of the parent for chapter 0
+  // Generated continuation directive: chapters after the first introduce NO new
+  // topic — they just continue the story so far. This neutral instruction takes
+  // the place of the (re-stated) base topic so the model keeps building the same
+  // narrative instead of re-anchoring on the topic each chapter.
+  const CONTINUE_TOPIC = "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.";
   for (let i = 0; i < chunks.length; i++) {
     if (bj.status === 'cancelled') break;
     bj.current = i;
@@ -1885,9 +1912,12 @@ async function _runBookJob(bookId, chunks, base) {
       const placeholderTopic = generated
         ? `${base.baseTopic} — ${i+1}`
         : ((String(chunks[i].title || '').trim().slice(0,80)) || ('Chapter ' + (i+1)));
-      // Story-prompt theme: generated chapters share the base topic so the chain stays
-      // coherent; PDF chapters use their own chunk title.
-      const storyTopic = generated ? base.baseTopic : placeholderTopic;
+      // Story-prompt theme: chapter 1 of a generated batch establishes the base
+      // topic; every later generated chapter continues the SAME story (no new topic).
+      // PDF chapters use their own chunk title.
+      const storyTopic = generated
+        ? (i === 0 ? base.baseTopic : CONTINUE_TOPIC)
+        : placeholderTopic;
       const userOpts = {
         userStory: generated ? null : userStory,
         userStoryLang: base.userStoryLang || null,
@@ -1896,7 +1926,9 @@ async function _runBookJob(bookId, chunks, base) {
         // Arc mode: chapter 1 lesson is a plain vocab "gate" (this chapter's new words);
         // reinforcement lessons are appended below. Otherwise honor the chosen format.
         lessonFormat: base.arc ? 'standard' : base.fmt, reinforcePrior: false, vocabMode: null,
-        useFullChain: i >= 1, mathInstruction: null,
+        // Generated continuations always build on the full prior story; PDF chapters
+        // keep the prior behaviour (full context from the 2nd chapter on).
+        useFullChain: i >= 1 || (generated && !!parent), mathInstruction: null,
         // The exact parent topic id — authoritative chain link (avoids name collisions
         // between same-named chapters from a different-language run of the same PDF).
         parentId: parent ? (parent.id || null) : null,
@@ -1908,21 +1940,47 @@ async function _runBookJob(bookId, chunks, base) {
       // PDF chapters supply their own story, so the chain link is recorded via prevStoryTopic.
       const data  = await generate(storyTopic, base.lang, base.srcLang, base.diff, generated ? contFrom : null, wc, jobId, userOpts);
 
-      // Arc mode: append reinforcement lesson(s) that drill prior + current forms (reinforce).
-      if (base.arc && Array.isArray(data.lessons)) {
+      // Arc reinforcement lessons. Reinforcement only begins from the SECOND chapter:
+      // chapter 1 ships just its standard vocab lesson (the new chapter's words, from
+      // generate() above). From chapter 2 on we add ONE extra lesson:
+      //   'vocab'   (default): a single review lesson drilling the vocab of ALL
+      //             pre-existing chapters in the storyline (chainVocab walks to the root).
+      //   'grammar' (alt): grammar / conjugation / synonyms reinforcement lessons.
+      // (collectChainVocab(parent) excludes the current chapter — which is persisted
+      // below — so the review covers prior chapters and the standard lesson covers this one.)
+      if (base.arc && i >= 1 && Array.isArray(data.lessons)) {
         const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [] };
-        const rOpts = { userDialect: null, storyStyle: null, chainVocab, vocabMode: 'reinforce', story: userStory || data.story || '' };
-        for (const rType of base.arcTypes) {
+        const arcStory = userStory || data.story || '';
+        if (base.arcMode === 'grammar') {
+          const rOpts = { userDialect: null, storyStyle: null, chainVocab, vocabMode: 'reinforce', story: arcStory };
+          for (const rType of base.arcTypes) {
+            try {
+              jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Reinforcement lesson (${rType})…`);
+              const rFn = rType === 'conjugation' ? generateConjugation
+                        : rType === 'synonyms'    ? generateSynonyms
+                        :                           generateGrammar;
+              const { lesson } = await rFn(data.topic || placeholderTopic, base.lang, base.srcLang, base.diff, jobId, rOpts);
+              data.lessons.push(lesson);
+            } catch (e) {
+              console.warn(`  [book ${bookId}] chapter ${i+1} reinforcement (${rType}) failed, skipping: ${e.message}`);
+              jobStep(jobId, `⚠ ${rType} reinforcement failed — continuing…`);
+            }
+          }
+        } else {
+          // Default vocab arc: ONE review lesson over the whole storyline's prior vocab.
           try {
-            jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Reinforcement lesson (${rType})…`);
-            const rFn = rType === 'conjugation' ? generateConjugation
-                      : rType === 'synonyms'    ? generateSynonyms
-                      :                           generateGrammar;
-            const { lesson } = await rFn(data.topic || placeholderTopic, base.lang, base.srcLang, base.diff, jobId, rOpts);
+            jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Vocab review lesson (whole storyline)…`);
+            const vOpts = { userDialect: null, writingStyle: base.storyStyle || null,
+              storyLang: base.userStoryLang || null, story: arcStory,
+              chainVocab: chainVocab.words || [], vocabMode: 'reinforce' };
+            const { lesson } = await generateOneLesson(
+              base.lang, base.srcLang, data.topic || placeholderTopic, 1, 1, [], arcStory, base.diff, jobId, vOpts);
+            if (lesson && !lesson.title) lesson.title = 'Review words';
+            if (lesson) { lesson._arcMode = 'reinforce'; if (!lesson.icon) lesson.icon = '🔁'; }
             data.lessons.push(lesson);
           } catch (e) {
-            console.warn(`  [book ${bookId}] chapter ${i+1} reinforcement (${rType}) failed, skipping: ${e.message}`);
-            jobStep(jobId, `⚠ ${rType} reinforcement failed — continuing…`);
+            console.warn(`  [book ${bookId}] chapter ${i+1} vocab review failed, skipping: ${e.message}`);
+            jobStep(jobId, `⚠ vocab review failed — continuing…`);
           }
         }
       }
@@ -2366,7 +2424,7 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { chunks, lang, srcLang, difficulty, lessonFormat, continuedFrom, userStoryLang, arc, arcReinforce,
+      const { chunks, lang, srcLang, difficulty, lessonFormat, continuedFrom, userStoryLang, arc, arcReinforce, arcMode,
               generated, topic, nChapters, chapterLen, storyStyle } = body;
       if (active === 'none')
         return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
@@ -2377,8 +2435,8 @@ http.createServer(async (req, res) => {
       if (generated) {
         baseTopic = String(topic || '').trim().slice(0, 80);
         if (!baseTopic) return json(res, 400, { error: 'Missing topic for generated batch' });
-        const n = Math.max(2, Math.min(20, parseInt(nChapters, 10) || 0));
-        if (!n) return json(res, 400, { error: 'nChapters must be between 2 and 20' });
+        const n = Math.min(20, parseInt(nChapters, 10) || 0);
+        if (n < 2) return json(res, 400, { error: 'nChapters must be between 2 and 20' });
         chapterLenN = Math.max(50, Math.min(2000, parseInt(chapterLen, 10) || 300));
         chaptersIn = Array.from({ length: n }, () => ({ wordCount: chapterLenN }));
       }
@@ -2390,16 +2448,20 @@ http.createServer(async (req, res) => {
       // lessons (grammar/conjugation/synonyms) generated in reinforce mode.
       const _arcTypes = (Array.isArray(arcReinforce) ? arcReinforce : ['grammar'])
         .filter(t => ['grammar','conjugation','synonyms'].includes(t));
-      const arcMode = !!arc;
+      const arcEnabled = !!arc;
       // Normalize the chain root (id or name) to a name for downstream context.
       const rootParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
       const base = { lang: lang || 'it', srcLang: srcLang || 'en', diff, fmt,
         continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
-        arc: arcMode, arcTypes: _arcTypes.length ? _arcTypes : ['grammar'],
+        arc: arcEnabled, arcTypes: _arcTypes.length ? _arcTypes : ['grammar'],
+        arcMode: arcMode === 'grammar' ? 'grammar' : 'vocab',
         generated: !!generated, baseTopic, chapterLen: chapterLenN,
         storyStyle: (storyStyle && storyStyle !== 'creative') ? storyStyle : null };
       const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic} — ${i+1}` : '')));
-      console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:''}, id=${bookId}`);
+      console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:' (from upload)'}, id=${bookId}`);
+      console.log(`    lang=${base.lang}  srcLang=${base.srcLang}  difficulty=${base.diff}  format=${base.fmt}` +
+        `  style=${base.storyStyle||'(default)'}  arc=${base.arc?base.arcMode+(base.arcMode==='grammar'?' ['+base.arcTypes.join(',')+']':''):'off'}` +
+        `  continuedFrom=${base.continuedFrom||'-'}`);
       _runBookJob(bookId, chaptersIn, base);  // fire-and-forget; runs server-side
       return json(res, 202, { bookId, chapters: chaptersIn.length });
     }
@@ -2595,6 +2657,39 @@ http.createServer(async (req, res) => {
     }
 
     // ── Storyline summary ────────────────────────────────────────────
+    // Re-generate titles for an existing storyline: scope = 'title' | 'chapters' | 'all'.
+    if (M === 'POST' && url.pathname === '/api/storyline-retitle') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { slId, scope } = body;
+      const sc = ['title','chapters','all'].includes(scope) ? scope : 'all';
+      const sl = getStorylines().find(s => s.id === slId);
+      if (!sl) return json(res, 404, { error: 'Storyline not found' });
+      const topics = (sl.chapters || []).map(findSavedById).filter(Boolean);
+      if (!topics.length) return json(res, 404, { error: 'Storyline has no chapters' });
+      const stories = topics.map(t => t.story || '');
+      const srcLang = topics[0].srcLang || 'en';
+      const lang = topics[0].lang || 'it';
+      const out = {};
+      try {
+        if (sc === 'chapters' || sc === 'all') {
+          const chapterMeta = await generateChapterMeta(stories, srcLang, lang);
+          _applyChapterTitles(topics, chapterMeta, null);
+          out.chapters = topics.map(t => ({ id: t.id, topic: t.topic, emoji: t.topicEmoji || '' }));
+        }
+        if (sc === 'title' || sc === 'all') {
+          const { title, icon } = await generateStorylineTitle(topics.map(t => t.topic), stories, srcLang);
+          sl.title = title; sl.icon = icon || sl.icon || '📖'; upsertStoryline(sl);
+          out.title = title; out.icon = sl.icon;
+        }
+        return json(res, 200, out);
+      } catch(e) {
+        return json(res, 500, { error: e.message });
+      }
+    }
+
     if (M === 'POST' && url.pathname === '/api/storyline-summary') {
       if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
       let body;
