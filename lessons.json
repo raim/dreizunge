@@ -1599,6 +1599,14 @@
           ]
         },
         {
+          "id": "ls_1781608199538",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "Die App wurde in den nchsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihren individuellen Bedürfnissen zu unterstützen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte."
+        },
+        {
           "id": "aeh_1781607585647",
           "type": "ai_error_hunt",
           "title": "AI Error Hunt",
@@ -1612,14 +1620,6 @@
               "reason": ""
             }
           ]
-        },
-        {
-          "id": "ls_1781608199538",
-          "type": "error_hunt",
-          "title": "Text Understanding",
-          "desc": "Find the mistakes in the story",
-          "icon": "🔍",
-          "corruptedStory": "Die App wurde in den nchsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihren individuellen Bedürfnissen zu unterstützen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte."
         }
       ],
       "generationStats": {
@@ -1639,7 +1639,7 @@
         ]
       },
       "generatedAt": "2026-06-16T10:00:17.848Z",
-      "updatedAt": "2026-06-16T11:09:59.538Z",
+      "updatedAt": "2026-06-16T11:48:47.546Z",
       "id": "tp_17816045547280000115",
       "aiStory": "Die App wurde in den nächsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihre individuellen Bedürfnisse zu passen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte."
     },
