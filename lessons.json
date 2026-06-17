@@ -21,8 +21,11 @@
       "lang": "en",
       "srcLang": "ja",
       "createdAt": "2026-06-16T18:58:08.961Z",
-      "updatedAt": "2026-06-16T20:44:58.335Z",
-      "summary": "この物語は、小さな数字「i」が自分の位置を見つけるために旅をする様子を描いています。彼女はプラス、マイナス、掛ける、で割るなどの記号の世界をさまようが、家族や場所を見つけることができません。混乱した世界で、ゼロに出会い、自分はただの「i」であることに気づきます。最後には、自分自身を認める勇気を得ます。主要な単語には、巣、家族、場所、知る、世界、小さな、足し算、引き算、掛け算、割り算があります。"
+      "updatedAt": "2026-06-17T11:17:12.046Z",
+      "summary": "この物語は、小さな数字「i」が自分の位置を見つけるために旅をする様子を描いています。彼女はプラス、マイナス、掛ける、で割るなどの記号の世界をさまようが、家族や場所を見つけることができません。混乱した世界で、ゼロに出会い、自分はただの「i」であることに気づきます。最後には、自分自身を認める勇気を得ます。主要な単語には、巣、家族、場所、知る、世界、小さな、足し算、引き算、掛け算、割り算があります。",
+      "tags": [
+        "needs native speaker"
+      ]
     },
     {
       "id": "sl_394799768",
@@ -1673,7 +1676,7 @@
         {
           "id": 1,
           "title": "静かに彼女 beside に座る",
-          "desc": "静か, そして誰かが彼女 beside に座る",
+          "desc": "静か、彼、彼は",
           "icon": "🤗",
           "vocab": [
             {
@@ -1791,8 +1794,130 @@
                 "at": "2026-06-16T21:48:51.232Z"
               }
             }
-          ],
-          "_arcMode": "reinforce"
+          ]
+        },
+        {
+          "id": "ls_1781685846736",
+          "type": "conjugation",
+          "title": "静かに",
+          "desc": "静かに話す、静かに歩く",
+          "icon": "Whisper",
+          "conjugations": [
+            {
+              "infinitive": "watch",
+              "source": "静かに話す",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I/you/we/they",
+                  "form": "watch"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "watches"
+                }
+              ]
+            },
+            {
+              "infinitive": "push",
+              "source": "静かに押す",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I/you/we/they",
+                  "form": "push"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "pushes"
+                }
+              ]
+            },
+            {
+              "infinitive": "walk",
+              "source": "静かに歩く",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I/you/we/they",
+                  "form": "walk"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "walks"
+                }
+              ]
+            },
+            {
+              "infinitive": "speak",
+              "source": "静かに話す",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I/you/we/they",
+                  "form": "speak"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "speaks"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ls_1781686424861",
+          "type": "conjugation",
+          "title": "静かに",
+          "desc": "静かに話す、静かに歩く",
+          "icon": "Whisper",
+          "conjugations": [
+            {
+              "infinitive": "speak",
+              "source": "静かに話す",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I/you/we/they",
+                  "form": "speak"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "speaks"
+                }
+              ]
+            },
+            {
+              "infinitive": "walk",
+              "source": "静かに歩く",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I/you/we/they",
+                  "form": "walk"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "walks"
+                }
+              ]
+            },
+            {
+              "infinitive": "push",
+              "source": "押しのける",
+              "tense": "present",
+              "forms": [
+                {
+                  "pronoun": "I/you/we/they",
+                  "form": "push"
+                },
+                {
+                  "pronoun": "he/she/it",
+                  "form": "pushes"
+                }
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -1812,7 +1937,7 @@
         ]
       },
       "generatedAt": "2026-06-16T20:20:25.708Z",
-      "updatedAt": "2026-06-16T21:48:51.232Z",
+      "updatedAt": "2026-06-17T09:15:32.254Z",
       "id": "tp_17816416069630000894"
     },
     {
@@ -2278,6 +2403,279 @@
               }
             }
           ]
+        },
+        {
+          "id": "ls_1781677395287",
+          "type": "synonyms",
+          "title": "八の騒動",
+          "desc": "八人、騒ぎ、最初、真実",
+          "icon": "🚨",
+          "words": [
+            {
+              "base": "there",
+              "gloss": "そこ",
+              "synonyms": [
+                {
+                  "w": "that",
+                  "g": "その"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "screaming",
+              "gloss": "叫び",
+              "synonyms": [
+                {
+                  "w": "shouting",
+                  "g": "叫び"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "whispering",
+                  "g": "囁き"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "finished",
+              "gloss": "終わり",
+              "synonyms": [
+                {
+                  "w": "completed",
+                  "g": "完了"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "beginning",
+                  "g": "始まり"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "introduction",
+              "gloss": "紹介",
+              "synonyms": [
+                {
+                  "w": "presentation",
+                  "g": "紹介"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "disruption",
+              "gloss": "混乱",
+              "synonyms": [
+                {
+                  "w": "disturbance",
+                  "g": "混乱"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "order",
+                  "g": "順序"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "rushing",
+              "gloss": "急ぐ",
+              "synonyms": [
+                {
+                  "w": "hurrying",
+                  "g": "急ぐ"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "slowing",
+                  "g": "遅れる"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "mean",
+              "gloss": "意味",
+              "synonyms": [
+                {
+                  "w": "significant",
+                  "g": "重要な"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "trivial",
+                  "g": "微々たる"
+                }
+              ],
+              "homophones": [
+                {
+                  "w": "mien",
+                  "g": "表情"
+                }
+              ]
+            },
+            {
+              "base": "first",
+              "gloss": "最初",
+              "synonyms": [
+                {
+                  "w": "initial",
+                  "g": "最初の"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "last",
+                  "g": "最後の"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "true",
+              "gloss": "真実",
+              "synonyms": [
+                {
+                  "w": "real",
+                  "g": "本当の"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "false",
+                  "g": "偽の"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "step",
+              "gloss": "歩み",
+              "synonyms": [
+                {
+                  "w": "move",
+                  "g": "歩み"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "polite",
+              "gloss": "礼儀正し",
+              "synonyms": [
+                {
+                  "w": "courteous",
+                  "g": "礼儀正し"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "rude",
+                  "g": "粗野な"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "meet",
+              "gloss": "会う",
+              "synonyms": [
+                {
+                  "w": "encounter",
+                  "g": "会う"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "avoid",
+                  "g": "避ける"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "name",
+              "gloss": "名前",
+              "synonyms": [
+                {
+                  "w": "title",
+                  "g": "名前"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "hurt",
+              "gloss": "傷つける",
+              "synonyms": [
+                {
+                  "w": "injure",
+                  "g": "傷つける"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "heal",
+                  "g": "治す"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "believe",
+              "gloss": "信じる",
+              "synonyms": [
+                {
+                  "w": "trust",
+                  "g": "信じる"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "disbelieve",
+                  "g": "信じない"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "met",
+              "gloss": "会った",
+              "synonyms": [
+                {
+                  "w": "encountered",
+                  "g": "会った"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "arrange",
+              "gloss": "準備",
+              "synonyms": [
+                {
+                  "w": "organize",
+                  "g": "準備"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -2297,7 +2695,7 @@
         ]
       },
       "generatedAt": "2026-06-16T20:03:55.891Z",
-      "updatedAt": "2026-06-16T21:44:43.990Z",
+      "updatedAt": "2026-06-17T06:55:32.250Z",
       "id": "tp_17816408736070000660"
     },
     {
@@ -2918,6 +3316,159 @@
             }
           ],
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1781676301006",
+          "type": "math",
+          "title": "😀😀😀",
+          "desc": "+ +",
+          "icon": "😀",
+          "numbers": [
+            0,
+            1,
+            1,
+            2,
+            3,
+            5,
+            8,
+            13,
+            21,
+            34
+          ],
+          "difficulty": 2,
+          "mathInstruction": "add the fibonacci series as sequentially increasing addition questions starting from 0+1=1, 1+1=2, 1+2=3 and so on, don't skip any step of the fibonacci series.",
+          "exercises": [
+            {
+              "type": "math_calc",
+              "a": "0",
+              "op": "+",
+              "b": "1",
+              "correct": "1",
+              "choices": [
+                "1",
+                "3",
+                "0",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "1",
+              "correct": "2",
+              "choices": [
+                "3",
+                "4",
+                "1",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "2",
+              "correct": "3",
+              "choices": [
+                "3",
+                "4",
+                "2",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "3",
+              "correct": "5",
+              "choices": [
+                "9",
+                "3",
+                "7",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "5",
+              "correct": "8",
+              "choices": [
+                "8",
+                "12",
+                "10",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "8",
+              "correct": "13",
+              "choices": [
+                "13",
+                "15",
+                "17",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "+",
+              "b": "13",
+              "correct": "21",
+              "choices": [
+                "25",
+                "13",
+                "21",
+                "29"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "13",
+              "op": "+",
+              "b": "21",
+              "correct": "34",
+              "choices": [
+                "34",
+                "37",
+                "41",
+                "21"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "21",
+              "op": "+",
+              "b": "34",
+              "correct": "55",
+              "choices": [
+                "58",
+                "55",
+                "34",
+                "61"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "34",
+              "op": "+",
+              "b": "55",
+              "correct": "89",
+              "choices": [
+                "55",
+                "92",
+                "89",
+                "95"
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -2937,7 +3488,7 @@
         ]
       },
       "generatedAt": "2026-06-16T19:42:53.063Z",
-      "updatedAt": "2026-06-16T21:41:43.295Z",
+      "updatedAt": "2026-06-17T06:05:01.007Z",
       "id": "tp_17816399201680000432"
     },
     {
@@ -3792,6 +4343,121 @@
             }
           ],
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1781674770300",
+          "type": "math",
+          "title": "① ② ③",
+          "desc": "＋ － ×  ÷",
+          "icon": "🔢",
+          "numbers": [
+            2,
+            1,
+            6,
+            7,
+            4,
+            8
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                6,
+                7,
+                8,
+                1
+              ],
+              "correct": [
+                "1",
+                "6",
+                "7",
+                "8"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                2,
+                7,
+                6,
+                4
+              ],
+              "correct": [
+                "2",
+                "4",
+                "6",
+                "7"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "6",
+              "op": "+",
+              "b": "1",
+              "correct": "7",
+              "choices": [
+                "7",
+                "5",
+                "6",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "4",
+              "op": "+",
+              "b": "3",
+              "correct": "7",
+              "choices": [
+                "6",
+                "5",
+                "7",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "1",
+              "correct": "3",
+              "choices": [
+                "4",
+                "2",
+                "3",
+                "1"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "-",
+              "b": "3",
+              "correct": "5",
+              "choices": [
+                "4",
+                "6",
+                "5",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "6",
+              "correct": "8",
+              "choices": [
+                "6",
+                "8",
+                "9",
+                "7"
+              ]
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -3811,7 +4477,7 @@
         ]
       },
       "generatedAt": "2026-06-16T18:58:09.003Z",
-      "updatedAt": "2026-06-16T20:48:39.353Z",
+      "updatedAt": "2026-06-17T05:39:30.300Z",
       "id": "tp_17816372429150000165"
     },
     {
@@ -3849,12 +4515,7 @@
             },
             {
               "target": "know",
-              "source": "知る",
-              "qc": {
-                "sug": "知っています",
-                "field": "source",
-                "at": "2026-06-16T20:45:32.361Z"
-              }
+              "source": "知る"
             },
             {
               "target": "world",
@@ -3870,12 +4531,8 @@
             },
             {
               "target": "grew up",
-              "source": "育つ",
-              "qc": {
-                "sug": "育ちました",
-                "field": "source",
-                "at": "2026-06-16T20:45:44.012Z"
-              }
+              "source": "育ちました",
+              "editedAt": "2026-06-16T22:10:22.333Z"
             }
           ],
           "sentences": [
@@ -3981,7 +4638,7 @@
         ]
       },
       "generatedAt": "2026-06-16T18:52:27.349Z",
-      "updatedAt": "2026-06-16T20:46:26.848Z",
+      "updatedAt": "2026-06-16T22:11:06.656Z",
       "id": "tp_17816362889060000054"
     },
     {
@@ -5616,119 +6273,6 @@
           ]
         },
         {
-          "id": "ls_1781625541954",
-          "type": "math",
-          "title": "😀 Serie de Fibonacci",
-          "desc": "+ ×",
-          "icon": "😀",
-          "numbers": [
-            0,
-            1,
-            1,
-            2,
-            3,
-            5,
-            8,
-            13,
-            21
-          ],
-          "difficulty": 3,
-          "mathInstruction": "add the fibonacci series as sequentially increasing addition questions, starting from 0+1=1 and 1+1=2, 1+2=3, and so on, up to the highest two digit numbers. don't skip any step of the fibonacci series.",
-          "exercises": [
-            {
-              "type": "math_calc",
-              "a": "0",
-              "op": "+",
-              "b": "1",
-              "correct": "1",
-              "choices": [
-                "1",
-                "2",
-                "-1",
-                "0"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "1",
-              "op": "+",
-              "b": "1",
-              "correct": "2",
-              "choices": [
-                "0",
-                "3",
-                "2",
-                "1"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "1",
-              "op": "+",
-              "b": "2",
-              "correct": "3",
-              "choices": [
-                "3",
-                "4",
-                "2",
-                "1"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "2",
-              "op": "+",
-              "b": "3",
-              "correct": "5",
-              "choices": [
-                "5",
-                "6",
-                "3",
-                "4"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "3",
-              "op": "+",
-              "b": "5",
-              "correct": "8",
-              "choices": [
-                "9",
-                "6",
-                "8",
-                "7"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "5",
-              "op": "+",
-              "b": "8",
-              "correct": "13",
-              "choices": [
-                "13",
-                "12",
-                "11",
-                "14"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "8",
-              "op": "+",
-              "b": "13",
-              "correct": "21",
-              "choices": [
-                "22",
-                "20",
-                "19",
-                "21"
-              ]
-            }
-          ]
-        },
-        {
           "id": "ls_1781626570116",
           "type": "math",
           "title": "😀 Serie de Fibonacci",
@@ -5954,7 +6498,7 @@
         ]
       },
       "generatedAt": "2026-06-16T13:55:55.859Z",
-      "updatedAt": "2026-06-16T16:16:10.117Z",
+      "updatedAt": "2026-06-17T10:17:10.688Z",
       "id": "tp_17816184115920000466"
     },
     {

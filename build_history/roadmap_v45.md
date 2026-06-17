@@ -59,6 +59,52 @@ headless suite lives in `test/` (see `test/README.md`); live-only checks are in
 - Note: this adds many translation-model calls per book (intended, per request).
   `bj.status='qc'` is a new transient status the client treats as "still running".
 
+**TODO item 4 — conjugation: only canonical pronoun grouping.** Committed.
+- The client merged ANY forms sharing a conjugated form (right for English, but
+  over-fuses German: `ihr` with `er/sie/es`, `wir` with plural `sie`). Replaced the
+  inline merge with `mergeConjugationForms(forms, lang)` (`index.html` ~5974): for a
+  language with a defined paradigm it expands the model's rows to single pronouns and
+  regroups only those sharing a form AND within one allowed cluster — German
+  `{er,sie,es}`; English `{I,you,we,they}`/`{he,she,it}` — which also splits model
+  OVER-grouping. Unknown languages keep the model's grouping untouched.
+  `buildConjugationExercises(lesson, lang)` now takes the target lang.
+- Prompt nudge (`prompts.json` conjugation): group only as the conventional paradigm,
+  never coincidental; explicit German keep-separate rule.
+- Headless: `test/unit-conjugation-grouping.test.js` (German only-er/sie/es, model
+  over-grouping correction, English two clusters, unknown-lang pass-through). Docs
+  rebuilt. **Live-LLM check owed**: confirm qwen now emits canonical rows (the client
+  guard enforces correctness regardless).
+
+**TODO item 5 — grammar reinforce: normalize injected words to a base singular noun.** Committed.
+- Reinforce-mode grammar lessons inject prior-chapter words as gender/plural drill
+  candidates, but inflected/plural/derived/verb forms don't fit and get rejected
+  (many fails). Extracted the prior-nouns hint into
+  `grammarPriorNounsNote(nounTargets, vocabMode)` (`server.js` ~1023); reinforce mode
+  now tells the model to FIRST reduce each word to its base singular noun
+  (`verbesserten`→`Verbesserung`, `Häuser`→`Haus`) and SKIP words with no related
+  noun (never force a verb/adjective in). Extend mode keeps the prior AVOID hint.
+- Headless: `test/unit-grammar-reinforce.test.js` asserts the reinforce note carries
+  the normalization + skip instruction and lists the words, and extend is unchanged.
+  Only `server.js` changed. **Live-LLM check owed** (does qwen actually normalize?).
+- **Hard TODO (unsolved):** German adjectival/participial nouns have
+  article-dependent gender (`ein Begeisterter` vs `der/die Begeisterte`); the drill
+  can't present these cleanly — better to exclude nominalized adjectives/participles
+  from gender drills than to try to handle them. Left for a future pass.
+
+**TODO item 3 — lesson editor: preserve unsaved edits on delete/move.** Committed.
+- `deleteEditorItem`/`moveEditorItem`/`mathDeleteExercise` mutated the in-memory
+  lesson and re-rendered WITHOUT first reading current input values back, discarding
+  unsaved edits to other entries. Added `_syncEditorFromDOM(li)` (`index.html` ~5146)
+  — the same DOM→memory field routing as `saveLessonEdits`, but in-memory only (no
+  server fetch) — and call it before every in-place re-render. A real save is still
+  required to persist. Replaced the synonyms-only `_syncSynFromDOM` with the generic
+  one (so title/icon edits survive a synonym-row delete too).
+- Headless: `test/unit-editor-sync.test.js` (stub DOM) verifies vocab/sentence/grammar
+  edits are pulled into memory and survive a subsequent delete. Docs rebuilt.
+- Note for item 8: `saveLessonEdits` still has its own near-identical DOM-read loop;
+  `_syncEditorFromDOM` should become the single source (saveLessonEdits would call it
+  with a persist flag for the `eh-story` server save) during the refactor.
+
 ---
 
 ## Triage of the remaining TODO items
@@ -69,18 +115,16 @@ Legend: **[H]** headless-doable now · **[L]** needs live Ollama to verify quali
 | # | Item | Class | Notes |
 |---|------|-------|-------|
 | 1 | TTS-quality warning + test button + Ecosia link | [B] mostly | logic (voice detection, URL build) is [H]; rendering/speech [B]; "nice voice" heuristic is fuzzy |
-| 3 | Lesson editors: keep unsaved edits when deleting a row | [B] | client editor state; needs locating the editor model |
-| 4 | Conjugation: only fuse `er/sie/es`, not `ich/wir`, `du/euch` | [H]+[L] | pure-function + prompt; cross-language care needed |
-| 5 | Grammar reinforce: normalize injected words to singular noun, reject verbs w/o close noun | [L] | prompt change; quality only verifiable with a real model |
+| 3 | Lesson editors: keep unsaved edits when deleting a row | ✅ DONE | shipped this session (`_syncEditorFromDOM`) |
+| 4 | Conjugation: only fuse `er/sie/es`, not `ich/wir`, `du/euch` | ✅ DONE | shipped this session (client guard + prompt; live check owed) |
+| 5 | Grammar reinforce: normalize injected words to singular noun, reject verbs w/o close noun | ✅ DONE | shipped this session (prompt instruction; live check owed) |
 | 6 | Book gen: generate a source-language summary after titles | ✅ DONE | shipped this session (see Done section) |
 | 7 | Book gen: run QC on the whole storyline after finishing | ✅ DONE | shipped this session (see Done section) |
 | 8 | Cleanup / refactor / dir structure / drop migration code | [XL] | roadmap-only; suggestions below |
 
 Recommended order for the next session (safest → heaviest):
-**4 → 5 → 3 → 1 → 8.** (Items 6 and 7 are done. 4 is bounded but needs the
-language-aware syncretism map to avoid regressing English; 5 is a prompt change
-verifiable only with a real model; 3 needs the editor located; 1 is mostly
-browser; 8 is the large refactor.)
+**1 → 8.** (Items 3–7 are done. Only item 1 (TTS warning — mostly browser + a fuzzy
+voice-quality heuristic) and item 8 (the large refactor) remain.)
 
 ---
 
@@ -108,7 +152,9 @@ button that speaks in the chosen target language, plus an Ecosia link
 - Loose end to decide: voice list is empty until `voiceschanged` fires; the warning
   must re-evaluate on that event.
 
-### 3. Lesson editors: preserve unsaved edits on row-delete — [B]
+### 3. Lesson editors: preserve unsaved edits on row-delete — ✅ DONE (this session)
+Shipped: `_syncEditorFromDOM(li)` called before delete/move re-renders. Details in
+the Done section above. (Original plan, for reference:)
 The complaint: deleting one entry in an editor drops other in-progress (unsaved)
 edits. Fix = keep edits in an in-memory working buffer; delete mutates the buffer,
 not a re-read from stored data; a save is still required to persist.
@@ -120,7 +166,9 @@ not a re-read from stored data; a save is still required to persist.
 - Verification is [B], but if the buffer is a plain array transform it can get a
   small [H] unit test like the pdf-selection helpers.
 
-### 4. Conjugation grouping — only fuse `er/sie/es` — [H]+[L]
+### 4. Conjugation grouping — only fuse `er/sie/es` — ✅ DONE (this session)
+Shipped: `mergeConjugationForms(forms, lang)` + prompt nudge. Details in the Done
+section above. (Original plan, for reference:)
 Two places fuse pronouns:
 - **Prompt** `prompts.json` → `conjugation.system` / `conjugation.user`: instruct
   "GROUP pronouns sharing an identical form … German `er/sie/es` → one entry".
@@ -140,7 +188,10 @@ Two places fuse pronouns:
   merge) and the English case (two clusters preserved).
 - **[L]**: confirm the prompt change makes qwen emit the canonical paradigm.
 
-### 5. Grammar reinforce: noun-form normalization — [L]
+### 5. Grammar reinforce: noun-form normalization — ✅ DONE (this session)
+Shipped: `grammarPriorNounsNote` reinforce instruction. Details in the Done section
+above; the ambiguous adjectival-noun gender case remains an open hard TODO.
+(Original plan, for reference:)
 Reinforce injects prior words (verbs, plurals) that don't fit a noun-gender drill,
 causing excess fails. Instruct the model (in the grammar/reinforce prompt) to:
 (a) reduce each injected word to its base **singular noun** (e.g. `verbesserten`
@@ -212,15 +263,17 @@ Concrete candidates observed while working in the code:
 ---
 
 ## Loose ends from my side (Claude)
-- **Conjugation (item 4)** I deliberately did **not** implement this session despite
-  it being bounded, because a naive fix (restrict the client merge to `er/sie/es`)
-  regresses English grouping. It needs the language-aware syncretism map above.
+- **Conjugation (item 4)** done via a language-aware grouping map (German `{er,sie,es}`;
+  English's two clusters; unknown langs untouched), so English is not regressed. The
+  prompt was also tightened; a live-LLM pass is still owed to confirm qwen emits
+  canonical rows (the client guard already enforces it regardless).
 - **`userPrompt` duplication**: for pasted-story mode, `userPrompt` now includes the
   story text, which also lives in `story` (intentional — one self-contained field —
   but it does duplicate large stories in `lessons.json`). If storage matters, switch
   `userPrompt` to topic-only and rely on `story` for the body.
-- **Editor location (item 3)** not yet found; my grep used guessed names. Next
-  session should start from the lesson edit-open + Save handlers.
+- **Editor (item 3)** done: the editor is `openLessonEditor`/`renderLessonEditor`;
+  `_syncEditorFromDOM` now guards delete/move/filter re-renders. Remaining tidy-up
+  (item 8): fold `saveLessonEdits`' duplicate DOM-read loop into `_syncEditorFromDOM`.
 - **Test harness** lives in `test/` and is committed. The fake Ollama
   (`test/fake-ollama.js`) now has routes for summary and QC pair-checks (added for
   items 6/7), plus the earlier title/story/vocab routes.

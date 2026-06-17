@@ -918,8 +918,7 @@ async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
   const L = langName(lang || 'it');
   const S = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
-    const nExercises = difficulty * 5;
-    //const nExercises = difficulty <= 1 ? 5 : 7;
+  const nExercises = difficulty <= 1 ? 5 : 7;
   const sys  = fillPrompt(PROMPTS.math.system, { L, S });
   const user = fillPrompt(PROMPTS.math.user, { L, S, diff, instruction, nExercises });
   console.log('\n── Math lesson (LLM) prompt ─────────────────────────');
@@ -1021,15 +1020,26 @@ function validateGrammarItems(items, lang, srcLang) {
   return { valid, rejected };
 }
 
+// Build the prior-words hint appended to a grammar lesson prompt. In reinforce mode
+// the prior-chapter words can include inflected/plural/derived forms (and the
+// nouns bucket isn't always clean), which don't fit a noun gender/plural drill and
+// cause rejected items. So instruct the model to normalize each to its base singular
+// noun and SKIP anything with no related noun. Pure → unit-testable.
+function grammarPriorNounsNote(nounTargets, vocabMode) {
+  const ns = (nounTargets || []).filter(Boolean);
+  if (!ns.length) return '';
+  if (vocabMode === 'extend')
+    return `\nAVOID these nouns already covered in prior chapters: ${ns.join(', ')}`;
+  return `\nPRIOR WORDS from previous chapters to reinforce where topic-relevant: ${ns.join(', ')}.`
+    + `\nFor EACH such word, FIRST reduce it to its base SINGULAR NOUN (dictionary) form before using it in the gender/plural drill — convert any inflected, plural, participle, or otherwise derived form to its related noun (e.g. German "verbesserten" → "Verbesserung", "Häuser" → "Haus"). SKIP any word that is not a noun and has no closely related noun; never force a verb or adjective into the gender drill.`;
+}
+
 async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
   opts = opts || {};
   const { userDialect, storyStyle, chainVocab, vocabMode: gramVocabMode, story } = opts;
   const sys = sysGrammar(lang, srcLang, difficulty, userDialect, storyStyle);
   const _gNouns = chainVocab?.nouns?.slice(0, 15).map(n => n.target) || [];
-  const priorNouns = !_gNouns.length ? ''
-    : gramVocabMode === 'extend'
-      ? `\nAVOID these nouns already covered in prior chapters: ${_gNouns.join(', ')}`
-      : `\nPRIOR NOUNS from previous chapters (reinforce where topic-relevant): ${_gNouns.join(', ')}`;
+  const priorNouns = grammarPriorNounsNote(_gNouns, gramVocabMode);
   const L = langName(lang); const S = langName(srcLang || 'en');
   const storyKeywords = story ? extractKeywords(story, 6, lang) : '';
   const storyHintG = storyKeywords ? fillPrompt(PROMPTS.grammar.storyHint, { storyKeywords }) : '';

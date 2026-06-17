@@ -4782,25 +4782,16 @@ function mathRegenerateExercises(li) {
 function mathDeleteExercise(li, ei) {
   const ls = APP.lessonData?.lessons[li];
   if (!ls || !ls.exercises) return;
+  _syncEditorFromDOM(li);   // preserve unsaved edits (title/number pool/etc.) before re-render
   ls.exercises.splice(ei, 1);
   // Re-render in place — openLessonEditor() toggles and would close the editor.
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
 
-function _syncSynFromDOM(li) {
-  const ls = APP.lessonData?.lessons?.[li];
-  if (!ls || ls.type !== 'synonyms') return;
-  document.querySelectorAll(`#lesson-editor [data-type="syn"][data-li="${li}"]`).forEach(inp => {
-    const wi = +inp.dataset.wi, field = inp.dataset.field, cat = inp.dataset.cat;
-    if (!ls.words?.[wi]) return;
-    if (cat) { const ri = +inp.dataset.ri; if (ls.words[wi][cat]?.[ri]) ls.words[wi][cat][ri][field] = inp.value; }
-    else ls.words[wi][field] = inp.value;
-  });
-}
 function synEditorDelete(li, wi, cat, ri) {
   const ls = APP.lessonData?.lessons?.[li];
   if (!ls || !ls.words?.[wi]?.[cat]) return;
-  _syncSynFromDOM(li);                 // preserve any in-progress text edits
+  _syncEditorFromDOM(li);              // preserve in-progress edits (incl. title/icon) before re-render
   ls.words[wi][cat].splice(ri, 1);
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
@@ -5148,6 +5139,67 @@ async function removeUserFlag(li, type, fi){
   catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
 }
 
+// Read the editor's current input values back into the in-memory lesson, WITHOUT
+// persisting to the server. Run this before any in-place re-render (delete/move/
+// filter toggle) so unsaved edits to other entries survive. A real save
+// (saveLessonEdits) is still required to write changes to the store.
+function _syncEditorFromDOM(li) {
+  const el = document.getElementById('lesson-editor');
+  const d = APP.lessonData;
+  if (!el || !d) return;
+  const ls = d.lessons[li];
+  if (!ls) return;
+  const titleInp = document.getElementById('lesson-node-title-input-' + li);
+  if (titleInp) ls.title = titleInp.value.trim();
+  const iconEl = document.getElementById('lesson-node-icon-picker-' + li);
+  if (iconEl) ls.icon = iconEl.textContent.trim();
+  if (ls._iconPick) ls.icon = ls._iconPick;   // keep the pending pick (save consumes it)
+  if (ls.type === 'math') {
+    const numInp = document.getElementById('math-numbers-input-' + li);
+    if (numInp) {
+      const nums = numInp.value.trim().split(/\s+/).map(Number).filter(n => !isNaN(n) && n > 0);
+      if (nums.length) ls.numbers = nums;
+    }
+    const allOps = ['+','-','×','÷','^'];
+    const ops = allOps.filter(op => document.getElementById('math-op-' + li + '-' + op.charCodeAt(0))?.checked);
+    if (ops.length) ls.mathOps = ops;
+  }
+  el.querySelectorAll('input[data-li], textarea[data-li], [contenteditable][data-li]').forEach(inp => {
+    const type = inp.dataset.type, field = inp.dataset.field;
+    if (type === 'vocab' || type === 'sentence') {
+      const arr = type === 'vocab' ? ls.vocab : ls.sentences;
+      const fi = +inp.dataset.fi;
+      if (arr && arr[fi]) {
+        if ((arr[fi][field] ?? '') !== inp.value) arr[fi].editedAt = new Date().toISOString();
+        arr[fi][field] = inp.value;
+        if (type === 'sentence' && field === 'target') arr[fi].words = inp.value.trim().split(/\s+/).filter(Boolean);
+      }
+    } else if (type === 'grammar') {
+      const fi = +inp.dataset.fi;
+      if (ls.grammar && ls.grammar[fi]) ls.grammar[fi][field] = inp.value;
+    } else if (type === 'conj-meta') {
+      const ci = +inp.dataset.ci;
+      if (ls.conjugations && ls.conjugations[ci]) ls.conjugations[ci][field] = inp.value;
+    } else if (type === 'conj-form') {
+      const ci = +inp.dataset.ci, fi = +inp.dataset.fi;
+      if (ls.conjugations && ls.conjugations[ci]?.forms?.[fi]) ls.conjugations[ci].forms[fi][field] = inp.value;
+    } else if (type === 'eh-story') {
+      const mode = inp.dataset?.mode || 'corrupted';
+      const _t = document.createElement('div'); _t.innerHTML = inp.innerHTML || '';
+      const text = (_t.innerText || _t.textContent || inp.value || '').trim();
+      if (mode === 'corrupted') ls.corruptedStory = text;   // in-memory only (no /api/save-story here)
+      else APP.lessonData.story = text;
+    } else if (type === 'syn') {
+      const wi = +inp.dataset.wi, cat = inp.dataset.cat;
+      if (ls.words && ls.words[wi]) {
+        if (cat) { const ri = +inp.dataset.ri; if (ls.words[wi][cat]?.[ri]) ls.words[wi][cat][ri][field] = inp.value; }
+        else ls.words[wi][field] = inp.value;
+      }
+    }
+  });
+  if (ls.type === 'error_hunt') ehSyncCorrupted(li);
+}
+
 async function saveLessonEdits(lessonIdx) {
   const el = document.getElementById('lesson-editor');
   const d = APP.lessonData;
@@ -5335,6 +5387,7 @@ function moveEditorItem(li, type, idx, dir) {
   if (!arr) return;
   const newIdx = idx + dir;
   if (newIdx < 0 || newIdx >= arr.length) return;
+  _syncEditorFromDOM(li);   // preserve unsaved edits before reorder + re-render
   [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
@@ -5343,6 +5396,7 @@ function deleteEditorItem(li, type, idx) {
   li = +li; idx = +idx;
   const ls = APP.lessonData?.lessons[li];
   if (!ls) return;
+  _syncEditorFromDOM(li);   // preserve unsaved edits to other entries before re-render
   if (type === 'vocab')    { ls.vocab    = (ls.vocab||[]).filter((_,i)=>i!==idx); }
   else if (type === 'sentence') { ls.sentences = (ls.sentences||[]).filter((_,i)=>i!==idx); }
   else if (type === 'grammar')  { ls.grammar   = (ls.grammar||[]).filter((_,i)=>i!==idx); }
@@ -5812,7 +5866,7 @@ function buildExercises(lessonIdx){
   const d=APP.lessonData, lesson=d.lessons[lessonIdx];
   if(lesson.type==='error_hunt'||lesson.type==='ai_error_hunt') return [];
   if(lesson.type==='grammar')     return buildGrammarExercises(lesson);
-  if(lesson.type==='conjugation') return buildConjugationExercises(lesson);
+  if(lesson.type==='conjugation') return buildConjugationExercises(lesson, APP.lessonData?.lang);
   if(lesson.type==='math')        return buildMathExercises(lesson);
   if(lesson.type==='synonyms')    return buildSynonymsExercises(lesson);
 	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
@@ -5971,31 +6025,56 @@ function stripPronoun(pronoun, form) {
   return f;
 }
 
-function buildConjugationExercises(lesson) {
+// Regroup a verb's conjugated forms into the canonical paradigm rows for the
+// target language. The model may over- or under-group pronouns (e.g. fusing German
+// "ihr" with "er/sie/es" because both are "geht"); this normalizes that. Only
+// genuinely-syncretic pronouns are shown as one row:
+//   German: ONLY er/sie/es.  English: {I,you,we,they} and {he,she,it}.
+// Languages without a defined paradigm keep the model's own grouping untouched.
+// Pure (no DOM/APP access) so it can be unit-tested.
+function mergeConjugationForms(forms, lang) {
+  const CONJ_MERGE_CLUSTERS = {
+    de: [['er', 'sie', 'es']],
+    en: [['i', 'you', 'we', 'they'], ['he', 'she', 'it']],
+  };
+  const clusters = CONJ_MERGE_CLUSTERS[String(lang || '').toLowerCase()] || null;
+  // Unknown language: trust the model's grouping as-is (just compute clean forms).
+  if (!clusters) {
+    return (forms || []).map(f => ({
+      pronoun: String(f.pronoun || '').trim(), form: f.form,
+      cleanForm: stripPronoun(f.pronoun, f.form),
+    }));
+  }
+  // Expand into single pronouns (undoes any model grouping)…
+  const singles = [];
+  (forms || []).forEach(f => {
+    const cleanForm = stripPronoun(f.pronoun, f.form);
+    const toks = String(f.pronoun || '').split('/').map(s => s.trim()).filter(Boolean);
+    if (!toks.length) { singles.push({ pron: '', lc: '', form: f.form, cleanForm }); return; }
+    toks.forEach(pron => singles.push({ pron, lc: pron.toLowerCase(), form: f.form, cleanForm }));
+  });
+  // …then regroup pronouns that share a clean form AND stay within ONE allowed cluster.
+  const inCluster = lcSet => clusters.some(cl => { const cs = new Set(cl); return [...lcSet].every(p => cs.has(p)); });
+  const merged = [];
+  singles.forEach(s => {
+    const key = s.cleanForm.trim().toLowerCase();
+    const hit = merged.find(x => x.cleanForm.trim().toLowerCase() === key && inCluster(new Set([...x.lcSet, s.lc])));
+    if (hit) { if (!hit.lcSet.has(s.lc)) hit.prons.push(s.pron); hit.lcSet.add(s.lc); }
+    else merged.push({ prons: [s.pron], lcSet: new Set([s.lc]), form: s.form, cleanForm: s.cleanForm });
+  });
+  return merged.map(m => ({ pronoun: m.prons.join('/'), form: m.form, cleanForm: m.cleanForm }));
+}
+
+function buildConjugationExercises(lesson, lang) {
   const verbs = lesson.conjugations || [];
   if (!verbs.length) return [];
   const exs = [];
 
   verbs.forEach(verb => {
     const forms = verb.forms || [];
-    // Merge forms sharing an identical conjugated form into one pronoun group
-    // (e.g. he/she/it → "watches"), so the question shows the grouped pronoun and the
-    // MCQ never offers the correct answer as a distractor. Local transform only —
-    // does NOT mutate the stored lesson.
-    const merged = [];
-    forms.forEach(f => {
-      const cleanForm = stripPronoun(f.pronoun, f.form);
-      const key = cleanForm.trim().toLowerCase();
-      const hit = merged.find(x => x.cleanForm.trim().toLowerCase() === key);
-      if (hit) {
-        const parts = new Set([...hit.pronoun.split('/'), ...String(f.pronoun||'').split('/')]
-          .map(s => s.trim()).filter(Boolean));
-        hit.pronoun = [...parts].join('/');
-      } else {
-        merged.push({ pronoun: String(f.pronoun||'').trim(), form: f.form, cleanForm });
-      }
-    });
-    const cleanForms = merged;
+    // Normalize the paradigm rows (language-aware grouping; see mergeConjugationForms).
+    // Local transform only — does NOT mutate the stored lesson.
+    const cleanForms = mergeConjugationForms(forms, lang);
     cleanForms.forEach((f, fi) => {
       const wrongSameVerb = cleanForms.filter(x=>x.cleanForm!==f.cleanForm).map(x=>x.cleanForm);
       const wrongOther    = verbs.filter(v=>v.infinitive!==verb.infinitive)
