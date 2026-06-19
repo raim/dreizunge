@@ -105,6 +105,23 @@ headless suite lives in `test/` (see `test/README.md`); live-only checks are in
   `_syncEditorFromDOM` should become the single source (saveLessonEdits would call it
   with a persist flag for the `eh-story` server save) during the refactor.
 
+**TODO item 1 — TTS voice-quality warning.** Committed.
+- When the chosen target language has no non-robotic voice (Firefox/Linux espeak-only,
+  or no matching voice), a warning (styled like the static AI notice) appears under the
+  language selector: the question, a **Test, 1, 2, 3** button that speaks in the target
+  language, and an **Ecosia** link `speech output with <browser> in <OS>` from the UA.
+- Pure helpers (`index.html` ~7281): `detectBrowser`, `detectOS`, `buildEcosiaQuery`,
+  `ttsVoiceIsRobotic`, `ttsHasNiceVoice`. `updateTtsVoiceNote` lazily wires
+  `voiceschanged` + a 1.5 s settle fallback (async `getVoices()`); refreshed from
+  `applyUIStrings` + `selectLang`. New strings in `ui.json` `en` only. Lives in
+  `lang-box`, so it works in live + static.
+- Headless: `test/unit-tts-voice.test.js` (browser/OS detection, link, nice-voice
+  heuristic across Firefox-Linux/Chrome/macOS/no-voice). Docs rebuilt.
+- **Browser-only & owed:** the actual voice enumeration, the spoken test, and the
+  rendering. "Nice voice" is a conservative heuristic — it flags clearly-bad cases
+  (espeak/mbrola/none) and trusts everything else; tune the robotic-name list or the
+  match logic if it mis-fires on a given setup.
+
 ---
 
 ## Triage of the remaining TODO items
@@ -114,7 +131,7 @@ Legend: **[H]** headless-doable now · **[L]** needs live Ollama to verify quali
 
 | # | Item | Class | Notes |
 |---|------|-------|-------|
-| 1 | TTS-quality warning + test button + Ecosia link | [B] mostly | logic (voice detection, URL build) is [H]; rendering/speech [B]; "nice voice" heuristic is fuzzy |
+| 1 | TTS-quality warning + test button + Ecosia link | ✅ DONE | shipped this session (heuristic; browser-only parts owed) |
 | 3 | Lesson editors: keep unsaved edits when deleting a row | ✅ DONE | shipped this session (`_syncEditorFromDOM`) |
 | 4 | Conjugation: only fuse `er/sie/es`, not `ich/wir`, `du/euch` | ✅ DONE | shipped this session (client guard + prompt; live check owed) |
 | 5 | Grammar reinforce: normalize injected words to singular noun, reject verbs w/o close noun | ✅ DONE | shipped this session (prompt instruction; live check owed) |
@@ -122,15 +139,17 @@ Legend: **[H]** headless-doable now · **[L]** needs live Ollama to verify quali
 | 7 | Book gen: run QC on the whole storyline after finishing | ✅ DONE | shipped this session (see Done section) |
 | 8 | Cleanup / refactor / dir structure / drop migration code | [XL] | roadmap-only; suggestions below |
 
-Recommended order for the next session (safest → heaviest):
-**1 → 8.** (Items 3–7 are done. Only item 1 (TTS warning — mostly browser + a fuzzy
-voice-quality heuristic) and item 8 (the large refactor) remain.)
+Recommended order for the next session: **8** is all that's left (the large
+refactor). Items 1 and 3–7 are done; the live-LLM/browser verification owed for
+1, 4, 5 is captured in `LIVE-TEST-CHECKLIST.md`.
 
 ---
 
 ## Per-item detail & pointers
 
-### 1. TTS-quality warning (below the language selector; live + static) — [B]/[H]
+### 1. TTS-quality warning (below the language selector; live + static) — ✅ DONE (this session)
+Shipped: `updateTtsVoiceNote` + the pure helpers. Details in the Done section above.
+(Original plan, for reference:)
 Goal: detect whether a modern (non-robotic) speech-synthesis voice is available;
 show a warning styled like the static-version AI warning, with a "Test, 1, 2, 3"
 button that speaks in the chosen target language, plus an Ecosia link
@@ -259,6 +278,39 @@ Concrete candidates observed while working in the code:
   `translate-lessons.js`, `export-lessons.js`, `merge-collapsed-forks.js`,
   `migrate-v41.js`) into `tools/`, docs into `docs-src/` (keep generated `docs/`),
   and the many `*.md`/`*.dot`/`*.svg` design notes into `notes/`.
+
+---
+
+## Should the next session refactor first, or build features? (guidance)
+
+**Verdict: the code is fine for another round of feature work — do NOT front-load
+the full item-8 refactor.** The architecture that matters for features is intact:
+lesson types dispatch through one seam (`buildExercises` → `build<Type>Exercises`),
+generation is centralized (`generate()` + `prompts.json`), persistence goes through
+`upsert`/`upsertStoryline`, UI strings flow through `ui.json` + `t()`. The cruft is
+*editing friction* (two big files), not architectural rot, and the `test/` suite +
+`check-inline.js` + `LIVE-TEST-CHECKLIST.md` are a real safety net for both features
+and the eventual refactor. So there's no "refactor before it's too late" urgency.
+
+Decision rule for the next session:
+- **UI cosmetics, new/!changed prompts, tweaks to existing lesson types, small
+  server features** → just build them. No cleanup prerequisite.
+- **A NEW lesson type** → first do ONLY the *cheap half* of item 8 (≈20 min, low-risk,
+  suite-guarded), because a new type otherwise has to be wired into all the duplicated
+  spots by hand (easy to miss one):
+  1. Extract one `LESSON_TYPE_META` table + `lessonTypeLabel(type)` (replaces the
+     ~5 copied `{grammar:'🏷️',…}` maps at `index.html` ~1260/3460/4853/5310/7004).
+  2. One `wordCount(s)` helper (replaces the inlined `split(/\s+/).filter(Boolean).length`).
+  3. One shared parent-resolver (replaces `_slResolveParent`/`_resolveParentB`/
+     `_delResolveParent`/next-chapter finder).
+  4. Fold `saveLessonEdits`' DOM-read loop into `_syncEditorFromDOM` (persist flag).
+  Then add the lesson type as a single-table change. SKIP the *expensive half*
+  (splitting `server.js`/the inline script, directory moves) until it actually hurts.
+
+A new lesson type also touches, beyond the dispatch: the editor (`renderLessonEditor`
++ `_syncEditorFromDOM` routing), QC (`qcCheckPair`/`_runQc` if it has checkable
+pairs), the type filter chips, and `prompts.json` (+ a generator like
+`generateGrammar`). The cheap dedup above makes #1–#3 of those one-liners.
 
 ---
 

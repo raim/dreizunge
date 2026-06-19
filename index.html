@@ -566,6 +566,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         </div>
       </div>
     </div>
+    <div id="tts-voice-note" style="display:none;margin-top:10px;background:#fff8e0;border-radius:var(--radius-xl);padding:12px 16px;border:2px solid #f5a623;font-size:13px;font-weight:700;color:#444;line-height:1.6"></div>
     <div id="lang-tutor-banner" style="display:none;margin-top:10px;padding:12px 16px;background:#eef6ff;border-radius:10px;border:2px solid #b8d4f8;font-size:13px;font-weight:700;color:#1a4fa0;line-height:1.6"></div>
     <div id="ui-translate-row" style="display:none;margin-top:8px;align-items:center;gap:8px;flex-wrap:wrap">
       <span id="ui-translate-info" style="font-size:11px;font-weight:700;color:var(--gray-dark)"></span>
@@ -1174,6 +1175,7 @@ function applyUIStrings() {
   const _ovEl = document.getElementById('static-gen-overlay');
   if (_ovEl) _ovEl.innerHTML = t('static.ai_warning')
     + ' <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a>';
+  try { updateTtsVoiceNote(); } catch(_){}
   _setText('comp-next',     t('complete.continue'));
   _setText('comp-title',    t('complete.title'));
   _setAttr('stat-correct',  'title', t('complete.correct'));
@@ -1580,6 +1582,7 @@ function selectLang(code, silent, fromForm){
   if(fromForm){ APP.formLang=code; APP.libFilter=code; saveLang(); }
   repopulateContinueSelect();
   updateDocDir();
+  try { updateTtsVoiceNote(); } catch(_){}
   const sel=document.getElementById('lang-select');
   if(fromForm && sel && sel.value!==code) sel.value=code;
   const L=LANGS[code]||LANGS.it;
@@ -7277,6 +7280,76 @@ function ttsIsApproximate(){
   if(!APP.ttsLang) return false;  // no override = native = exact
   const lang=APP.lessonData?.lang||APP.lang||'it';
   return APP.ttsLang !== (LANGS[lang]||LANGS.it).tts;
+}
+
+// ── TTS voice-quality warning (item: nice-speech detection) ───────────────────
+// Pure, unit-testable helpers (no DOM): detect the browser/OS from a UA string,
+// build an Ecosia search link, and judge whether a non-robotic voice exists for a
+// target TTS code. "Nice" is necessarily a heuristic — we only flag the clearly-bad
+// cases (no matching voice, or only espeak/mbrola-style robotic engines).
+function detectBrowser(ua){
+  ua = ua || '';
+  if(/Firefox\//i.test(ua) && !/Seamonkey/i.test(ua)) return 'Firefox';
+  if(/Edg(A|iOS)?\//i.test(ua)) return 'Edge';
+  if(/OPR\/|Opera/i.test(ua)) return 'Opera';
+  if(/Chrome\//i.test(ua) && !/Chromium/i.test(ua)) return 'Chrome';
+  if(/Chromium\//i.test(ua)) return 'Chromium';
+  if(/Safari\//i.test(ua) && /Version\//i.test(ua)) return 'Safari';
+  return 'your browser';
+}
+function detectOS(ua){
+  ua = ua || '';
+  if(/Android/i.test(ua)) return 'Android';
+  if(/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
+  if(/CrOS/i.test(ua)) return 'ChromeOS';
+  if(/Windows NT/i.test(ua)) return 'Windows';
+  if(/Mac OS X|Macintosh/i.test(ua)) return 'macOS';
+  if(/Linux/i.test(ua)) return 'Linux';
+  return 'your OS';
+}
+function buildEcosiaQuery(browser, os){
+  return 'https://www.ecosia.org/search?q=' + encodeURIComponent('speech output with ' + browser + ' in ' + os);
+}
+function ttsVoiceIsRobotic(name){ return /espeak|mbrola|festival|flite|pico|rhvoice/i.test(name||''); }
+function ttsHasNiceVoice(voices, ttsCode){
+  if(!Array.isArray(voices) || !voices.length) return false;
+  const norm = c => (c||'').replace('_','-').toLowerCase();
+  const pfx = norm(ttsCode).split('-')[0];
+  const matching = voices.filter(v => norm(v.lang).split('-')[0] === pfx);
+  if(!matching.length) return false;                 // no voice for this language at all
+  return matching.some(v => !ttsVoiceIsRobotic(v.name)); // at least one non-robotic voice
+}
+
+let _ttsNoteWired = false, _ttsVoicesSettled = false;
+function ttsTestVoice(){
+  const lang = (APP.lang && APP.lang !== 'all') ? APP.lang : (APP.lessonData?.lang || 'it');
+  speakBodyText(null, lang, t('tts.voice_test_phrase'));
+}
+function updateTtsVoiceNote(){
+  // Lazily wire voice-load events the first time we evaluate (covers async getVoices()).
+  if(!_ttsNoteWired){
+    _ttsNoteWired = true;
+    if(window.speechSynthesis && speechSynthesis.addEventListener){
+      speechSynthesis.addEventListener('voiceschanged', () => { _ttsVoicesSettled = true; updateTtsVoiceNote(); });
+      setTimeout(() => { _ttsVoicesSettled = true; updateTtsVoiceNote(); }, 1500);
+    } else { _ttsVoicesSettled = true; }
+  }
+  const note = document.getElementById('tts-voice-note');
+  if(!note) return;
+  const lang = (APP.lang && APP.lang !== 'all') ? APP.lang : null;
+  if(!lang){ note.style.display = 'none'; return; }          // no specific target → don't nag
+  const hasSynth = !!window.speechSynthesis;
+  const voices = (hasSynth && speechSynthesis.getVoices) ? speechSynthesis.getVoices() : [];
+  if(hasSynth && !voices.length && !_ttsVoicesSettled){ note.style.display = 'none'; return; } // still loading
+  const ttsCode = (LANGS[lang]||LANGS.it).tts;
+  if(ttsHasNiceVoice(voices, ttsCode)){ note.style.display = 'none'; return; }
+  const browser = detectBrowser(navigator.userAgent), os = detectOS(navigator.userAgent);
+  const url = buildEcosiaQuery(browser, os);
+  note.innerHTML =
+    `<div style="margin-bottom:8px">${escHtml(t('tts.voice_warn_q'))}</div>`
+    + `<button type="button" onclick="ttsTestVoice()" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button> `
+    + `<a href="${url}" target="_blank" rel="noopener" style="color:#2a4acc;font-weight:800;white-space:nowrap">${escHtml(t('tts.voice_search'))} (${escHtml(browser)} / ${escHtml(os)})</a>`;
+  note.style.display = '';
 }
 
 function speakBodyText(bodyId,langCode,preText){

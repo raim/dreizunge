@@ -2389,7 +2389,11 @@
     "qc.editor.flag_save": "Flag",
     "qc.editor.flag_remove": "Unflag",
     "qc.editor.flag_cancel": "Cancel",
-    "form.pdf_arc": "🎯 Build a learning arc (vocab + grammar/conjugation reinforcement per chapter)"
+    "form.pdf_arc": "🎯 Build a learning arc (vocab + grammar/conjugation reinforcement per chapter)",
+    "tts.voice_warn_q": "Does your browser support nice speech synthesis? Tap Test — if it sounds robotic or silent, your browser/OS may lack a good voice for this language.",
+    "tts.voice_test": "🔊 Test, 1, 2, 3",
+    "tts.voice_test_phrase": "Test. 1, 2, 3.",
+    "tts.voice_search": "How to get better speech output"
   },
   "sv": {
     "app.tagline": "Lär dig vokabulär för valfritt ämne",

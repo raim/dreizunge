@@ -2,6 +2,29 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1821545456",
+      "title": "i का जीवन",
+      "icon": "🔍",
+      "chapters": [
+        "tp_17817906523660000080",
+        "tp_17817909852170000186",
+        "tp_17817912838000000295",
+        "tp_17817915882740000378",
+        "tp_17817919815860000412",
+        "tp_17817923465270000581",
+        "tp_17817927237470000654",
+        "tp_17817931051150000753",
+        "tp_17817934585870000854",
+        "tp_17817937743500000961",
+        "tp_17817941350380001023"
+      ],
+      "lang": "en",
+      "srcLang": "hi",
+      "createdAt": "2026-06-18T13:50:52.400Z",
+      "updatedAt": "2026-06-18T15:04:10.268Z",
+      "summary": "लघु i एक अपरिभाषित संख्या है जो अपने स्थान खोजने की चेतावनी रखती है। वह चिह्नों और संख्याओं के दुनिया में अपना स्थान नहीं मिल पाती। शेष संख्याओं के साथ वह अपनी अलगता के लिए दबाव से भरी हो जाती है, लेकिन शून्य की मदद से वह समझती है कि वह अपनी अस्तित्व की अनिवार्यता के रूप में अपना स्थान खोज सकती है। अंत में, वह समझती है कि वह अपनी अस्तित्व की अनिवार्यता के रूप में अपना स्थान खोज सकती है और यह उसे बहुत अच्छा लगता है।"
+    },
+    {
       "id": "sl_1168783969",
       "title": "数の物語",
       "icon": "🔢",
@@ -922,6 +945,3371 @@
     }
   ],
   "topics": [
+    {
+      "topic": "i का नया जीवन",
+      "topicEmoji": "🌟",
+      "userTopic": "Maybe she didn’t have to be Seven",
+      "userPrompt": "Maybe she didn’t have to be Seven\n\n[story]\nMaybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "continuedFrom": "i की खोज",
+      "continuedFromId": "tp_17817937743500000961",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "सात नहीं होना पड़ता",
+          "desc": "वह एक संख्या नहीं होनी चाहिए",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "maybe",
+              "source": "भावना",
+              "qc": {
+                "sug": "शक्त है",
+                "field": "source",
+                "at": "2026-06-18T15:38:26.897Z"
+              }
+            },
+            {
+              "target": "she",
+              "source": "वह",
+              "qc": {
+                "sug": "वहा",
+                "field": "source",
+                "at": "2026-06-18T15:38:30.875Z"
+              }
+            },
+            {
+              "target": "didn't",
+              "source": "नहीं हुई"
+            },
+            {
+              "target": "have",
+              "source": "करना"
+            },
+            {
+              "target": "to",
+              "source": "करना",
+              "qc": {
+                "sug": "को",
+                "field": "source",
+                "at": "2026-06-18T15:38:40.465Z"
+              }
+            },
+            {
+              "target": "be",
+              "source": "होना",
+              "qc": {
+                "sug": "है",
+                "field": "source",
+                "at": "2026-06-18T15:38:44.525Z"
+              }
+            },
+            {
+              "target": "seven",
+              "source": "सात"
+            },
+            {
+              "target": "number",
+              "source": "संख्या",
+              "qc": {
+                "sug": "संख्या is correct. But \"number\" can be more precisely translated as \"संख्या\" in many contexts, though \"नं\" is also used for serial numbers.",
+                "field": "source",
+                "at": "2026-06-18T15:39:01.940Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Maybe she didn't have to be seven.",
+              "source": "वह सात होनी की जरूरत नहीं थी.",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "seven."
+              ],
+              "qc": {
+                "sug": "वह सात वर्ष की होने की जरूरत नहीं थी.",
+                "field": "source",
+                "at": "2026-06-18T15:39:22.144Z"
+              }
+            },
+            {
+              "target": "She didn't have to be one.",
+              "source": "वह एक होनी की जरूरत नहीं थी.",
+              "words": [
+                "She",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "one."
+              ],
+              "qc": {
+                "sug": "वह एक नहीं होनी की जरूरत नहीं थी.",
+                "field": "source",
+                "at": "2026-06-18T15:39:40.837Z"
+              }
+            },
+            {
+              "target": "She could simply be i.",
+              "source": "वह वस्तुतः i हो सकती थी.",
+              "words": [
+                "She",
+                "could",
+                "simply",
+                "be",
+                "i."
+              ],
+              "qc": {
+                "sug": "वह वस्तुतः i हो सकती थी।",
+                "field": "source",
+                "at": "2026-06-18T15:39:54.721Z"
+              }
+            },
+            {
+              "target": "And somehow",
+              "source": "और कुछ तरह से",
+              "words": [
+                "And",
+                "somehow"
+              ],
+              "qc": {
+                "sug": "और कुछ तरह से कुछ",
+                "field": "source",
+                "at": "2026-06-18T15:40:03.737Z"
+              }
+            },
+            {
+              "target": "that felt just right.",
+              "source": "वह ठीक लगा.",
+              "words": [
+                "that",
+                "felt",
+                "just",
+                "right."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "वह सात नहीं होनी चाहिए",
+          "desc": "वह किसान भी नहीं होनी चाहिए",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "seven",
+              "source": "सात"
+            },
+            {
+              "target": "course",
+              "source": "किसान",
+              "qc": {
+                "sug": "कोर्स",
+                "field": "source",
+                "at": "2026-06-18T15:40:14.042Z"
+              }
+            },
+            {
+              "target": "okay",
+              "source": "चाहिए"
+            },
+            {
+              "target": "smiled",
+              "source": "सुन्दर हो गया",
+              "qc": {
+                "sug": "सुन्दर हुआ",
+                "field": "source",
+                "at": "2026-06-18T15:40:23.441Z"
+              }
+            },
+            {
+              "target": "beloved",
+              "source": "सर्वसुख",
+              "qc": {
+                "sug": "सर्वसुखिता",
+                "field": "source",
+                "at": "2026-06-18T15:40:29.819Z"
+              }
+            },
+            {
+              "target": "finite",
+              "source": "सीमित"
+            },
+            {
+              "target": "quiet",
+              "source": "चुप",
+              "qc": {
+                "sug": "शांत",
+                "field": "source",
+                "at": "2026-06-18T15:40:36.525Z"
+              }
+            },
+            {
+              "target": "shy",
+              "source": "शांत",
+              "qc": {
+                "sug": "शांता",
+                "field": "source",
+                "at": "2026-06-18T15:40:41.516Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Maybe she didn’t have to be Seven.",
+              "source": "वह सात नहीं होनी चाहिए",
+              "words": [
+                "Maybe",
+                "she",
+                "didn’t",
+                "have",
+                "to",
+                "be",
+                "Seven."
+              ],
+              "qc": {
+                "sug": "वह सात नहीं होना चाहिए था",
+                "field": "source",
+                "at": "2026-06-18T15:40:57.492Z"
+              }
+            },
+            {
+              "target": "Course, of course, she could be i.",
+              "source": "किसान भी, किसान भी, वह i हो सकती है",
+              "words": [
+                "Course,",
+                "of",
+                "course,",
+                "she",
+                "could",
+                "be",
+                "i."
+              ],
+              "qc": {
+                "sug": "किसी भी, किसी भी, वह i हो सकती है",
+                "field": "source",
+                "at": "2026-06-18T15:41:16.766Z"
+              }
+            },
+            {
+              "target": "She smiled, her eyes quiet and shy.",
+              "source": "वह सुन्दर हो गया, उसकी आँखें चुप और शांत थीं",
+              "words": [
+                "She",
+                "smiled,",
+                "her",
+                "eyes",
+                "quiet",
+                "and",
+                "shy."
+              ],
+              "qc": {
+                "sug": "वह उśmieह दिखाई, उसकी आँखें चुप और शांत थीं",
+                "field": "source",
+                "at": "2026-06-18T15:41:41.518Z"
+              }
+            },
+            {
+              "target": "Then she closed her eyes, finite and quiet.",
+              "source": "तब उसने आँखें बंद की, सीमित और चुप",
+              "words": [
+                "Then",
+                "she",
+                "closed",
+                "her",
+                "eyes,",
+                "finite",
+                "and",
+                "quiet."
+              ],
+              "qc": {
+                "sug": "तब उसने आँखें बंद की, सीमित और शांत।",
+                "field": "source",
+                "at": "2026-06-18T15:42:03.610Z"
+              }
+            },
+            {
+              "target": "She thought, maybe she could be quiet and shy.",
+              "source": "वह सोचता है, कभी कभी वह चुप और शांत हो सकती है",
+              "words": [
+                "She",
+                "thought,",
+                "maybe",
+                "she",
+                "could",
+                "be",
+                "quiet",
+                "and",
+                "shy."
+              ],
+              "qc": {
+                "sug": "वह सोचती है, कभी कभी वह चुप और शांत हो सकती है",
+                "field": "source",
+                "at": "2026-06-18T15:42:29.012Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 144919,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 620,
+        "totalCompletionTokens": 350,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 144887,
+            "promptTokens": 620,
+            "completionTokens": 350
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T14:42:54.417Z",
+      "updatedAt": "2026-06-18T15:42:29.012Z",
+      "id": "tp_17817941350380001023"
+    },
+    {
+      "topic": "i की खोज",
+      "topicEmoji": "🔍",
+      "userTopic": "“Of course",
+      "userPrompt": "“Of course\n\n[story]\n“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 52,
+      "story": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "continuedFrom": "शून्य की बात",
+      "continuedFromId": "tp_17817934585870000854",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "किसान और शून्य",
+          "desc": "किसान और शून्य की बातें",
+          "icon": "🌱",
+          "vocab": [
+            {
+              "target": "course",
+              "source": "किसान",
+              "qc": {
+                "sug": "कोर्स",
+                "field": "source",
+                "at": "2026-06-18T15:35:29.254Z"
+              }
+            },
+            {
+              "target": "of course",
+              "source": "किसान भी",
+              "qc": {
+                "sug": "किसी को भी",
+                "field": "source",
+                "at": "2026-06-18T15:35:35.648Z"
+              }
+            },
+            {
+              "target": "okay",
+              "source": "चाहिए"
+            },
+            {
+              "target": "stop crying",
+              "source": "निराश हो नहीं",
+              "qc": {
+                "sug": "छटो, निराश नहीं हो लो",
+                "field": "source",
+                "at": "2026-06-18T15:35:48.634Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Of course.",
+              "source": "किसान भी.",
+              "words": [
+                "Of",
+                "course."
+              ],
+              "qc": {
+                "sug": "किसी तरह से.",
+                "field": "source",
+                "at": "2026-06-18T15:35:56.362Z"
+              }
+            },
+            {
+              "target": "That's okay.",
+              "source": "चाहिए.",
+              "words": [
+                "That's",
+                "okay."
+              ],
+              "qc": {
+                "sug": "That's fine.",
+                "field": "target",
+                "at": "2026-06-18T15:36:00.985Z"
+              }
+            },
+            {
+              "target": "Stop crying.",
+              "source": "निराश हो नहीं.",
+              "words": [
+                "Stop",
+                "crying."
+              ],
+              "qc": {
+                "sug": "जुड़ू नहीं लगाये.",
+                "field": "source",
+                "at": "2026-06-18T15:36:11.940Z"
+              }
+            },
+            {
+              "target": "And that's okay.",
+              "source": "चाहिए.",
+              "words": [
+                "And",
+                "that's",
+                "okay."
+              ],
+              "qc": {
+                "sug": "And that's fine.",
+                "field": "target",
+                "at": "2026-06-18T15:36:16.969Z"
+              }
+            },
+            {
+              "target": "It's exactly what makes me Zero.",
+              "source": "यही मेरा शून्य है",
+              "words": [
+                "It's",
+                "exactly",
+                "what",
+                "makes",
+                "me",
+                "Zero."
+              ],
+              "qc": {
+                "sug": "यहीं मेरा शून्य है",
+                "field": "source",
+                "at": "2026-06-18T15:36:29.831Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "किसी को नहीं",
+          "desc": "किसी को नहीं, चौहान, शांत",
+          "icon": "😊",
+          "vocab": [
+            {
+              "target": "of course",
+              "source": "किसी को नहीं"
+            },
+            {
+              "target": "said",
+              "source": "कहता है",
+              "qc": {
+                "sug": "कहता हैं",
+                "field": "source",
+                "at": "2026-06-18T15:36:42.759Z"
+              }
+            },
+            {
+              "target": "smiled",
+              "source": "सुन्दर हो गया",
+              "qc": {
+                "sug": "सुन्दर हुआ",
+                "field": "source",
+                "at": "2026-06-18T15:36:49.700Z"
+              }
+            },
+            {
+              "target": "thought",
+              "source": "सोचता है",
+              "qc": {
+                "sug": "सोचता हैं",
+                "field": "source",
+                "at": "2026-06-18T15:36:55.771Z"
+              }
+            },
+            {
+              "target": "beloved",
+              "source": "सर्वसुख",
+              "qc": {
+                "sug": "सर्वानुरागी",
+                "field": "source",
+                "at": "2026-06-18T15:37:01.835Z"
+              }
+            },
+            {
+              "target": "closed",
+              "source": "बंद",
+              "qc": {
+                "sug": "बंद रखा",
+                "field": "source",
+                "at": "2026-06-18T15:37:06.377Z"
+              }
+            },
+            {
+              "target": "finite",
+              "source": "सीमित"
+            },
+            {
+              "target": "screaming",
+              "source": "श्रांति करना",
+              "qc": {
+                "sug": "श्राउंटिंग करना",
+                "field": "source",
+                "at": "2026-06-18T15:37:17.084Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I'm not Seven.",
+              "source": "मैं नहीं सात हूँ।",
+              "words": [
+                "I'm",
+                "not",
+                "Seven."
+              ],
+              "qc": {
+                "sug": "मैं नहीं सeven हूँ।",
+                "field": "source",
+                "at": "2026-06-18T15:37:26.379Z"
+              }
+            },
+            {
+              "target": "Then said Zero.",
+              "source": "तब शून्य कहता है।",
+              "words": [
+                "Then",
+                "said",
+                "Zero."
+              ],
+              "qc": {
+                "sug": "तब शून्य बोला।",
+                "field": "source",
+                "at": "2026-06-18T15:37:37.413Z"
+              }
+            },
+            {
+              "target": "Her eyes opened.",
+              "source": "उसकी आँखें खुलने लगीं।",
+              "words": [
+                "Her",
+                "eyes",
+                "opened."
+              ],
+              "qc": {
+                "sug": "उसकी आँखें खुलीं।",
+                "field": "source",
+                "at": "2026-06-18T15:37:50.444Z"
+              }
+            },
+            {
+              "target": "Finite revenge trembles.",
+              "source": "सीमित विजय चिकना हो जाती है।",
+              "words": [
+                "Finite",
+                "revenge",
+                "trembles."
+              ],
+              "qc": {
+                "sug": "सीमित रूप से थप्पड़ लगाता है।",
+                "field": "source",
+                "at": "2026-06-18T15:38:06.787Z"
+              }
+            },
+            {
+              "target": "Of course, it's okay.",
+              "source": "किसी को नहीं, यह ठीक है।",
+              "words": [
+                "Of",
+                "course,",
+                "it's",
+                "okay."
+              ]
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 106736,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 652,
+        "totalCompletionTokens": 248,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 106705,
+            "promptTokens": 652,
+            "completionTokens": 248
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T14:37:38.643Z",
+      "updatedAt": "2026-06-18T15:38:21.340Z",
+      "id": "tp_17817937743500000961"
+    },
+    {
+      "topic": "शून्य की बात",
+      "topicEmoji": "💬",
+      "userTopic": "Then somebody quietly sat beside her",
+      "userPrompt": "Then somebody quietly sat beside her\n\n[story]\nThen somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 66,
+      "story": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "continuedFrom": "एक का दंड",
+      "continuedFromId": "tp_17817931051150000753",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "किसी ने उसके तुरंत दायां ओर चुपचाप बैठा",
+          "desc": "चुप, बैठा, किसी, उसके",
+          "icon": "👤",
+          "vocab": [
+            {
+              "target": "quietly",
+              "source": "चुपचाप"
+            },
+            {
+              "target": "sat",
+              "source": "बैठा",
+              "qc": {
+                "sug": "स्थिता",
+                "field": "source",
+                "at": "2026-06-18T15:32:04.658Z"
+              }
+            },
+            {
+              "target": "beside",
+              "source": "दायां ओर",
+              "qc": {
+                "sug": "तरफ़ से",
+                "field": "source",
+                "at": "2026-06-18T15:32:10.867Z"
+              }
+            },
+            {
+              "target": "somebody",
+              "source": "किसी"
+            },
+            {
+              "target": "then",
+              "source": "तब"
+            },
+            {
+              "target": "her",
+              "source": "उसके",
+              "qc": {
+                "sug": "उसकी",
+                "field": "source",
+                "at": "2026-06-18T15:32:20.227Z"
+              }
+            },
+            {
+              "target": "quiet",
+              "source": "चुप"
+            },
+            {
+              "target": "shy",
+              "source": "शांत",
+              "qc": {
+                "sug": "शांता",
+                "field": "source",
+                "at": "2026-06-18T15:32:27.317Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Then somebody quietly sat beside her.",
+              "source": "तब किसी ने उसके तुरंत दायां ओर चुपचाप बैठा.",
+              "words": [
+                "Then",
+                "somebody",
+                "quietly",
+                "sat",
+                "beside",
+                "her."
+              ],
+              "qc": {
+                "sug": "तब किसी ने उसकी तुरंत ओर चुपचाप बैठा।",
+                "field": "source",
+                "at": "2026-06-18T15:32:50.124Z"
+              }
+            },
+            {
+              "target": "Zero was quiet.",
+              "source": "जीरो चुप था.",
+              "words": [
+                "Zero",
+                "was",
+                "quiet."
+              ]
+            },
+            {
+              "target": "Zero was shy.",
+              "source": "जीरो शांत था.",
+              "words": [
+                "Zero",
+                "was",
+                "shy."
+              ],
+              "qc": {
+                "sug": "जीरो को झंझंडा था.",
+                "field": "source",
+                "at": "2026-06-18T15:33:04.862Z"
+              }
+            },
+            {
+              "target": "I don’t belong here.",
+              "source": "मेरा यहाँ नहीं हूँ.",
+              "words": [
+                "I",
+                "don’t",
+                "belong",
+                "here."
+              ]
+            },
+            {
+              "target": "I’m only me.",
+              "source": "मेरा यही मैं हूँ.",
+              "words": [
+                "I’m",
+                "only",
+                "me."
+              ],
+              "qc": {
+                "sug": "I'm only me.",
+                "field": "target",
+                "at": "2026-06-18T15:33:16.893Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "किसी ने उसके तुरंत दायाँ बैठे हुए",
+          "desc": "किसी ने उसके तुरंत दायाँ बैठे हुए, शांत रूप से",
+          "icon": "👤",
+          "vocab": [
+            {
+              "target": "quietly",
+              "source": "शांत रूप से"
+            },
+            {
+              "target": "sat",
+              "source": "बैठे हुए",
+              "qc": {
+                "sug": "से बैठे हुए",
+                "field": "source",
+                "at": "2026-06-18T15:33:27.184Z"
+              }
+            },
+            {
+              "target": "beside",
+              "source": "दायाँ तरफ",
+              "qc": {
+                "sug": "तरफ़ द्वारा",
+                "field": "source",
+                "at": "2026-06-18T15:33:34.866Z"
+              }
+            },
+            {
+              "target": "her",
+              "source": "उसके",
+              "qc": {
+                "sug": "उसकी",
+                "field": "source",
+                "at": "2026-06-18T15:33:39.276Z"
+              }
+            },
+            {
+              "target": "said",
+              "source": "कहता है",
+              "qc": {
+                "sug": "कहता हैं",
+                "field": "source",
+                "at": "2026-06-18T15:33:44.499Z"
+              }
+            },
+            {
+              "target": "smiled",
+              "source": "सुन्दर हो गया",
+              "qc": {
+                "sug": "सुन्दर हुआ",
+                "field": "source",
+                "at": "2026-06-18T15:33:51.497Z"
+              }
+            },
+            {
+              "target": "thought",
+              "source": "सोचता है",
+              "qc": {
+                "sug": "सोचता हैं",
+                "field": "source",
+                "at": "2026-06-18T15:33:57.446Z"
+              }
+            },
+            {
+              "target": "beloved",
+              "source": "सर्वसुख",
+              "qc": {
+                "sug": "सर्वसुखी",
+                "field": "source",
+                "at": "2026-06-18T15:34:03.263Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He sat quietly beside her.",
+              "source": "वह शांत रूप से उसके तुरंत दायाँ बैठे हुए।",
+              "words": [
+                "He",
+                "sat",
+                "quietly",
+                "beside",
+                "her."
+              ]
+            },
+            {
+              "target": "She saw him smile.",
+              "source": "उसने उसे सुन्दर हो गया देखा।",
+              "words": [
+                "She",
+                "saw",
+                "him",
+                "smile."
+              ],
+              "qc": {
+                "sug": "उसने उन्हें इस्तेमाल के लिए उśmieह देखा।",
+                "field": "source",
+                "at": "2026-06-18T15:34:45.095Z"
+              }
+            },
+            {
+              "target": "He thought for a moment.",
+              "source": "वह सोचता है एक दिन।",
+              "words": [
+                "He",
+                "thought",
+                "for",
+                "a",
+                "moment."
+              ],
+              "qc": {
+                "sug": "वह एक मिनट को सोचता था।",
+                "field": "source",
+                "at": "2026-06-18T15:34:58.538Z"
+              }
+            },
+            {
+              "target": "She loved him dearly.",
+              "source": "उसने उसे निष्ठुर पसंद करना।",
+              "words": [
+                "She",
+                "loved",
+                "him",
+                "dearly."
+              ],
+              "qc": {
+                "sug": "उसने उसे गहराई से पसंद किया।",
+                "field": "source",
+                "at": "2026-06-18T15:35:12.479Z"
+              }
+            },
+            {
+              "target": "He never said anything.",
+              "source": "वह कभी कुछ नहीं कहता रहा।",
+              "words": [
+                "He",
+                "never",
+                "said",
+                "anything."
+              ],
+              "qc": {
+                "sug": "वह कभी कुछ नहीं कहा।",
+                "field": "source",
+                "at": "2026-06-18T15:35:25.212Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 149474,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 667,
+        "totalCompletionTokens": 373,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 149435,
+            "promptTokens": 667,
+            "completionTokens": 373
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T14:31:45.198Z",
+      "updatedAt": "2026-06-18T15:35:25.212Z",
+      "id": "tp_17817934585870000854"
+    },
+    {
+      "topic": "एक का दंड",
+      "topicEmoji": "🚫",
+      "userTopic": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+      "userPrompt": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes\n\n[story]\n∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 85,
+      "story": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "continuedFrom": "आठ का फुर्सत",
+      "continuedFromId": "tp_17817927237470000654",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "अंकों की कहानी, खुलने की उम्मीद",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "collapsed",
+              "source": "सड़ गए",
+              "qc": {
+                "sug": "सड़कए",
+                "field": "source",
+                "at": "2026-06-18T15:28:30.771Z"
+              }
+            },
+            {
+              "target": "lies",
+              "source": "बैठे हुए",
+              "qc": {
+                "sug": "ठगने वाले",
+                "field": "source",
+                "at": "2026-06-18T15:28:37.042Z"
+              }
+            },
+            {
+              "target": "ever",
+              "source": "कभी",
+              "qc": {
+                "sug": "कभी या तो अब तक या भविष्य में",
+                "field": "source",
+                "at": "2026-06-18T15:28:47.132Z"
+              }
+            },
+            {
+              "target": "open",
+              "source": "खुलने",
+              "qc": {
+                "sug": "खुलना",
+                "field": "source",
+                "at": "2026-06-18T15:28:51.516Z"
+              }
+            },
+            {
+              "target": "eyes",
+              "source": "आँखें"
+            },
+            {
+              "target": "finite",
+              "source": "सीमित"
+            },
+            {
+              "target": "revenge",
+              "source": "विजय",
+              "qc": {
+                "sug": "रिवेंज",
+                "field": "source",
+                "at": "2026-06-18T15:29:01.001Z"
+              }
+            },
+            {
+              "target": "trembles",
+              "source": "चिकना हो जाता",
+              "qc": {
+                "sug": "ठंडा हो जाता",
+                "field": "source",
+                "at": "2026-06-18T15:29:09.342Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Eight collapsed, and now lies.",
+              "source": "आठ सड़ गए, और अब बैठे हुए हैं",
+              "words": [
+                "Eight",
+                "collapsed,",
+                "and",
+                "now",
+                "lies."
+              ],
+              "qc": {
+                "sug": "आठ सड़ गए, और अब छुपे हुए हैं",
+                "field": "source",
+                "at": "2026-06-18T15:29:24.803Z"
+              }
+            },
+            {
+              "target": "Will he ever open his eyes?",
+              "source": "कभी वह आँखें खुलेंगे?",
+              "words": [
+                "Will",
+                "he",
+                "ever",
+                "open",
+                "his",
+                "eyes?"
+              ],
+              "qc": {
+                "sug": "कभी वह आँखों को खुलेंगे?",
+                "field": "source",
+                "at": "2026-06-18T15:29:37.117Z"
+              }
+            },
+            {
+              "target": "Or is he finite?",
+              "source": "या वह सीमित है?",
+              "words": [
+                "Or",
+                "is",
+                "he",
+                "finite?"
+              ]
+            },
+            {
+              "target": "She has never been part of such a mess.",
+              "source": "वह इस प्रकार का खेल कभी नहीं खेला था",
+              "words": [
+                "She",
+                "has",
+                "never",
+                "been",
+                "part",
+                "of",
+                "such",
+                "a",
+                "mess."
+              ],
+              "qc": {
+                "sug": "वह इस प्रकार की मेजबानी कभी नहीं की थी",
+                "field": "source",
+                "at": "2026-06-18T15:29:59.371Z"
+              }
+            },
+            {
+              "target": "i trembles with fear, wants to disappear.",
+              "source": "i चिकना हो जाता है, इसे दूर जाना चाहिए",
+              "words": [
+                "i",
+                "trembles",
+                "with",
+                "fear,",
+                "wants",
+                "to",
+                "disappear."
+              ],
+              "qc": {
+                "sug": "उसे भय से चिकना हो जाता है, वह दूर जाना चाहिए",
+                "field": "source",
+                "at": "2026-06-18T15:30:24.219Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "अंत, खुलना, अस्थिरता",
+          "icon": "♾",
+          "vocab": [
+            {
+              "target": "closed",
+              "source": "बंद",
+              "qc": {
+                "sug": "बंद रखा",
+                "field": "source",
+                "at": "2026-06-18T15:30:28.940Z"
+              }
+            },
+            {
+              "target": "eyes",
+              "source": "आँखें"
+            },
+            {
+              "target": "finite",
+              "source": "अनंत नहीं",
+              "qc": {
+                "sug": "अनन्त नहीं",
+                "field": "source",
+                "at": "2026-06-18T15:30:37.909Z"
+              }
+            },
+            {
+              "target": "revenge",
+              "source": "कट्टरता",
+              "qc": {
+                "sug": "कट्ठता",
+                "field": "source",
+                "at": "2026-06-18T15:30:43.337Z"
+              }
+            },
+            {
+              "target": "tremble",
+              "source": "शिकार",
+              "qc": {
+                "sug": "तेजस्वी",
+                "field": "source",
+                "at": "2026-06-18T15:30:48.516Z"
+              }
+            },
+            {
+              "target": "assemble",
+              "source": "संग्रह",
+              "qc": {
+                "sug": "संयुक्त",
+                "field": "source",
+                "at": "2026-06-18T15:30:53.005Z"
+              }
+            },
+            {
+              "target": "command",
+              "source": "कहना",
+              "qc": {
+                "sug": "कमांड",
+                "field": "source",
+                "at": "2026-06-18T15:30:57.350Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Eight closed its eyes.",
+              "source": "आठ आँखें बंद कर दी।",
+              "words": [
+                "Eight",
+                "closed",
+                "its",
+                "eyes."
+              ],
+              "qc": {
+                "sug": "Eight",
+                "field": "target",
+                "at": "2026-06-18T15:31:04.320Z"
+              }
+            },
+            {
+              "target": "Will he ever open his eyes?",
+              "source": "उसने आँखें खुलने का कभी भी विश्वास किया है?",
+              "words": [
+                "Will",
+                "he",
+                "ever",
+                "open",
+                "his",
+                "eyes?"
+              ],
+              "qc": {
+                "sug": "वह आँखें कभी खुलाता है?",
+                "field": "source",
+                "at": "2026-06-18T15:31:22.633Z"
+              }
+            },
+            {
+              "target": "Or is he finite?",
+              "source": "या वह अनंत नहीं है?",
+              "words": [
+                "Or",
+                "is",
+                "he",
+                "finite?"
+              ],
+              "qc": {
+                "sug": "या वह परमाणु है?",
+                "field": "source",
+                "at": "2026-06-18T15:31:31.758Z"
+              }
+            },
+            {
+              "target": "Little i trembles with fear.",
+              "source": "कुछ छोटी i शिकार भय से है।",
+              "words": [
+                "Little",
+                "i",
+                "trembles",
+                "with",
+                "fear."
+              ],
+              "qc": {
+                "sug": "कुछ छोटी i भय से तीर्थित है।",
+                "field": "source",
+                "at": "2026-06-18T15:31:45.121Z"
+              }
+            },
+            {
+              "target": "She wants to disappear.",
+              "source": "वह भागना चाहती है।",
+              "words": [
+                "She",
+                "wants",
+                "to",
+                "disappear."
+              ],
+              "qc": {
+                "sug": "वह दूर जाना चाहती है।",
+                "field": "source",
+                "at": "2026-06-18T15:31:56.936Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 170299,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 692,
+        "totalCompletionTokens": 402,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 170267,
+            "promptTokens": 692,
+            "completionTokens": 402
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T14:25:23.808Z",
+      "updatedAt": "2026-06-18T15:31:56.937Z",
+      "id": "tp_17817931051150000753"
+    },
+    {
+      "topic": "आठ का फुर्सत",
+      "topicEmoji": "🏃",
+      "userTopic": "As he finished his kind introduction,",
+      "userPrompt": "As he finished his kind introduction,\n\n[story]\nAs he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 72,
+      "story": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "continuedFrom": "संख्या दुनिया में π",
+      "continuedFromId": "tp_17817923465270000581",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "किंद इंट्रोडक्शन",
+          "desc": "अंत में कुछ डिस्टर्ब्यूशन",
+          "icon": "🎉",
+          "vocab": [
+            {
+              "target": "finished",
+              "source": "बंद कर देना",
+              "qc": {
+                "sug": "खत्म करना",
+                "field": "source",
+                "at": "2026-06-18T15:24:14.352Z"
+              }
+            },
+            {
+              "target": "kind",
+              "source": "निष्ठुर",
+              "qc": {
+                "sug": "अनिष्ठुर",
+                "field": "source",
+                "at": "2026-06-18T15:24:19.879Z"
+              }
+            },
+            {
+              "target": "screaming",
+              "source": "श्रांति करना",
+              "qc": {
+                "sug": "श्रांकता करना",
+                "field": "source",
+                "at": "2026-06-18T15:24:27.578Z"
+              }
+            },
+            {
+              "target": "hunger",
+              "source": "हरज",
+              "qc": {
+                "sug": "गरज",
+                "field": "source",
+                "at": "2026-06-18T15:24:31.670Z"
+              }
+            },
+            {
+              "target": "loves",
+              "source": "पसंद करना",
+              "qc": {
+                "sug": "पसंद करना/पसंदित होना",
+                "field": "source",
+                "at": "2026-06-18T15:24:40.848Z"
+              }
+            },
+            {
+              "target": "pie",
+              "source": "पाय",
+              "qc": {
+                "sug": "pi",
+                "field": "target",
+                "at": "2026-06-18T15:24:44.730Z"
+              }
+            },
+            {
+              "target": "cake",
+              "source": "केक"
+            },
+            {
+              "target": "second breakfast",
+              "source": "दूसरा ब्रेकफास्ट"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He finished his kind introduction.",
+              "source": "वह अपनी निष्ठुर इंट्रोडक्शन को खत्म कर दिया।",
+              "words": [
+                "He",
+                "finished",
+                "his",
+                "kind",
+                "introduction."
+              ],
+              "qc": {
+                "sug": "वह अपनी कल्पनाशील इंट्रोडक्शन को खत्म कर दिया।",
+                "field": "source",
+                "at": "2026-06-18T15:25:21.723Z"
+              }
+            },
+            {
+              "target": "At the end of the room, there’s some sort of disruption.",
+              "source": "कमरे के अंत तक कुछ डिस्टर्ब्यूशन है।",
+              "words": [
+                "At",
+                "the",
+                "end",
+                "of",
+                "the",
+                "room,",
+                "there’s",
+                "some",
+                "sort",
+                "of",
+                "disruption."
+              ]
+            },
+            {
+              "target": "Eight is rushing.",
+              "source": "आठ बढ़िया है।",
+              "words": [
+                "Eight",
+                "is",
+                "rushing."
+              ],
+              "qc": {
+                "sug": "आठ रushed रहा है।",
+                "field": "source",
+                "at": "2026-06-18T15:25:56.279Z"
+              }
+            },
+            {
+              "target": "He loves pie.",
+              "source": "वह पाय पसंद करता है।",
+              "words": [
+                "He",
+                "loves",
+                "pie."
+              ],
+              "qc": {
+                "sug": "He loves pie. वह पाई पसंद करता है।",
+                "field": "source",
+                "at": "2026-06-18T15:26:08.818Z"
+              }
+            },
+            {
+              "target": "He loves cake.",
+              "source": "वह केक पसंद करता है।",
+              "words": [
+                "He",
+                "loves",
+                "cake."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "अपनी शानदार पेशेवाद",
+          "desc": "अंतिम रूप से उसने अपनी दयालु पेशेवाद को समाप्त कर दिया",
+          "icon": "✍️",
+          "vocab": [
+            {
+              "target": "kind",
+              "source": "दयालु",
+              "qc": {
+                "sug": "दयालु लोग",
+                "field": "source",
+                "at": "2026-06-18T15:26:19.268Z"
+              }
+            },
+            {
+              "target": "room",
+              "source": "कक्ष",
+              "qc": {
+                "sug": "कमरा",
+                "field": "source",
+                "at": "2026-06-18T15:26:22.856Z"
+              }
+            },
+            {
+              "target": "disruption",
+              "source": "अस्थिरता",
+              "qc": {
+                "sug": "रुकावट",
+                "field": "source",
+                "at": "2026-06-18T15:26:28.708Z"
+              }
+            },
+            {
+              "target": "screaming",
+              "source": "क्रोधित जोर से बुलाना",
+              "qc": {
+                "sug": "क्रोधित जोर से शोर करना",
+                "field": "source",
+                "at": "2026-06-18T15:26:39.738Z"
+              }
+            },
+            {
+              "target": "hunger",
+              "source": "हरफ़",
+              "qc": {
+                "sug": "गर्भ",
+                "field": "source",
+                "at": "2026-06-18T15:26:43.901Z"
+              }
+            },
+            {
+              "target": "beloved",
+              "source": "सर्वसुख",
+              "qc": {
+                "sug": "सर्वसुखिता",
+                "field": "source",
+                "at": "2026-06-18T15:26:50.143Z"
+              }
+            },
+            {
+              "target": "love",
+              "source": "प्यार"
+            },
+            {
+              "target": "eat",
+              "source": "भोजन करना",
+              "qc": {
+                "sug": "खाना करना",
+                "field": "source",
+                "at": "2026-06-18T15:26:58.528Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He believes in true kindness.",
+              "source": "वह सत्य की दयालुता में विश्वास करता है",
+              "words": [
+                "He",
+                "believes",
+                "in",
+                "true",
+                "kindness."
+              ]
+            },
+            {
+              "target": "The room was arranged in rows.",
+              "source": "कक्ष रेखाओं में रखे गए थे",
+              "words": [
+                "The",
+                "room",
+                "was",
+                "arranged",
+                "in",
+                "rows."
+              ],
+              "qc": {
+                "sug": "कक्ष रेखाओं में रखा था",
+                "field": "source",
+                "at": "2026-06-18T15:27:32.644Z"
+              }
+            },
+            {
+              "target": "Eight noticed the chaos.",
+              "source": "आठ अस्थिरता को नजरअंदाज किया",
+              "words": [
+                "Eight",
+                "noticed",
+                "the",
+                "chaos."
+              ],
+              "qc": {
+                "sug": "आठ ने अस्थिरता को नजरअंदाज किया",
+                "field": "source",
+                "at": "2026-06-18T15:27:47.875Z"
+              }
+            },
+            {
+              "target": "Polite introductions are important.",
+              "source": "सादर पेशेवाद महत्वपूर्ण हैं",
+              "words": [
+                "Polite",
+                "introductions",
+                "are",
+                "important."
+              ],
+              "qc": {
+                "sug": "सादर पेशेवर पेशेवाद महत्वपूर्ण हैं",
+                "field": "source",
+                "at": "2026-06-18T15:28:05.726Z"
+              }
+            },
+            {
+              "target": "He stepped forward to meet the band.",
+              "source": "वह सिर की ओर चला जिसके लिए टीम को मिलना था",
+              "words": [
+                "He",
+                "stepped",
+                "forward",
+                "to",
+                "meet",
+                "the",
+                "band."
+              ],
+              "qc": {
+                "sug": "वह सिर की ओर बढ़ा जिसके लिए टीम को मिलना था",
+                "field": "source",
+                "at": "2026-06-18T15:28:26.201Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 165287,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 674,
+        "totalCompletionTokens": 404,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 165255,
+            "promptTokens": 674,
+            "completionTokens": 404
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T14:19:06.596Z",
+      "updatedAt": "2026-06-18T15:28:26.201Z",
+      "id": "tp_17817927237470000654"
+    },
+    {
+      "topic": "संख्या दुनिया में π",
+      "topicEmoji": "🥧",
+      "userTopic": "One is mean, he’s always first,",
+      "userPrompt": "One is mean, he’s always first,\n\n[story]\nOne is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 54,
+      "story": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "continuedFrom": "संख्याओं की बैंड",
+      "continuedFromId": "tp_17817919815860000412",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "एक दुष्ट है, वह हमेशा पहला है",
+          "desc": "दुष्ट और पहले होने की तरह की शब्दों का सीखना",
+          "icon": "🤔",
+          "vocab": [
+            {
+              "target": "mean",
+              "source": "दुष्ट",
+              "qc": {
+                "sug": "औसत",
+                "field": "source",
+                "at": "2026-06-18T15:20:40.301Z"
+              }
+            },
+            {
+              "target": "first",
+              "source": "पहला"
+            },
+            {
+              "target": "hurt",
+              "source": "चोट लेना",
+              "qc": {
+                "sug": "घायल होना",
+                "field": "source",
+                "at": "2026-06-18T15:20:49.576Z"
+              }
+            },
+            {
+              "target": "says",
+              "source": "कहता है"
+            },
+            {
+              "target": "sees",
+              "source": "देखता है",
+              "qc": {
+                "sug": "देखता हैं",
+                "field": "source",
+                "at": "2026-06-18T15:20:59.145Z"
+              }
+            },
+            {
+              "target": "true",
+              "source": "सत्य",
+              "qc": {
+                "sug": "सत्या",
+                "field": "source",
+                "at": "2026-06-18T15:21:04.050Z"
+              }
+            },
+            {
+              "target": "believes",
+              "source": "विश्वास करता है",
+              "qc": {
+                "sug": "believes in",
+                "field": "source",
+                "at": "2026-06-18T15:21:09.719Z"
+              }
+            },
+            {
+              "target": "stepped",
+              "source": "चला",
+              "qc": {
+                "sug": "स्थानांतरित हुआ",
+                "field": "source",
+                "at": "2026-06-18T15:21:16.712Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He is mean.",
+              "source": "वह दुष्ट है.",
+              "words": [
+                "He",
+                "is",
+                "mean."
+              ],
+              "qc": {
+                "sug": "वह बेदार है.",
+                "field": "source",
+                "at": "2026-06-18T15:21:26.278Z"
+              }
+            },
+            {
+              "target": "He is first.",
+              "source": "वह हमेशा पहला है.",
+              "words": [
+                "He",
+                "is",
+                "first."
+              ],
+              "qc": {
+                "sug": "वह पहला है.",
+                "field": "source",
+                "at": "2026-06-18T15:21:34.825Z"
+              }
+            },
+            {
+              "target": "He hurts others.",
+              "source": "वह दूसरों को चोट लेता है.",
+              "words": [
+                "He",
+                "hurts",
+                "others."
+              ],
+              "qc": {
+                "sug": "वह दूसरों को चोट देता है.",
+                "field": "source",
+                "at": "2026-06-18T15:21:48.847Z"
+              }
+            },
+            {
+              "target": "He says what he sees.",
+              "source": "वह देखता है और कहता है.",
+              "words": [
+                "He",
+                "says",
+                "what",
+                "he",
+                "sees."
+              ],
+              "qc": {
+                "sug": "वह देखता है तो कहता है.",
+                "field": "source",
+                "at": "2026-06-18T15:22:00.874Z"
+              }
+            },
+            {
+              "target": "He believes it is true.",
+              "source": "वह विश्वास करता है कि यह सत्य है.",
+              "words": [
+                "He",
+                "believes",
+                "it",
+                "is",
+                "true."
+              ],
+              "qc": {
+                "sug": "वह विश्वास करता है कि यह दयावाना है.",
+                "field": "source",
+                "at": "2026-06-18T15:22:20.482Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "एक दुर्जन है, वह हमेशा पहला",
+          "desc": "दुर्जन, अजीब, नजरअंदाज किया, सबसे छोटा, रखे गए रेखाएँ, वृत्त, टीम, सबको",
+          "icon": "🤔",
+          "vocab": [
+            {
+              "target": "mean",
+              "source": "दुर्जन",
+              "qc": {
+                "sug": "औरे",
+                "field": "source",
+                "at": "2026-06-18T15:22:24.768Z"
+              }
+            },
+            {
+              "target": "first",
+              "source": "पहला"
+            },
+            {
+              "target": "hurt",
+              "source": "काढ़ा",
+              "qc": {
+                "sug": "बुखारा",
+                "field": "source",
+                "at": "2026-06-18T15:22:32.548Z"
+              }
+            },
+            {
+              "target": "true",
+              "source": "सत्य",
+              "qc": {
+                "sug": "सत्या",
+                "field": "source",
+                "at": "2026-06-18T15:22:37.430Z"
+              }
+            },
+            {
+              "target": "believe",
+              "source": "विश्वास",
+              "qc": {
+                "sug": "विश्वासँ",
+                "field": "source",
+                "at": "2026-06-18T15:22:43.782Z"
+              }
+            },
+            {
+              "target": "politely",
+              "source": "सादर",
+              "qc": {
+                "sug": "सादर्भी",
+                "field": "source",
+                "at": "2026-06-18T15:22:48.315Z"
+              }
+            },
+            {
+              "target": "meet",
+              "source": "मिलना"
+            },
+            {
+              "target": "name",
+              "source": "नाम",
+              "qc": {
+                "sug": "नाम का नाम",
+                "field": "source",
+                "at": "2026-06-18T15:22:56.487Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He's mean, always first.",
+              "source": "वह दुर्जन, हमेशा पहला है.",
+              "words": [
+                "He's",
+                "mean,",
+                "always",
+                "first."
+              ],
+              "qc": {
+                "sug": "वह दुर्जन, हमेशा पहले चलता है.",
+                "field": "source",
+                "at": "2026-06-18T15:23:13.258Z"
+              }
+            },
+            {
+              "target": "He doesn't care who he hurts.",
+              "source": "वह कोई को काढ़ा करने में नजरअंदाज करता है.",
+              "words": [
+                "He",
+                "doesn't",
+                "care",
+                "who",
+                "he",
+                "hurts."
+              ],
+              "qc": {
+                "sug": "वह कोई को काढ़ा करने में नजर अंदाज नहीं करता है.",
+                "field": "source",
+                "at": "2026-06-18T15:23:35.415Z"
+              }
+            },
+            {
+              "target": "Someone stepped politely by.",
+              "source": "किसी ने सादर रूप से गुजरा.",
+              "words": [
+                "Someone",
+                "stepped",
+                "politely",
+                "by."
+              ]
+            },
+            {
+              "target": "My name is π.",
+              "source": "मेरा नाम π है.",
+              "words": [
+                "My",
+                "name",
+                "is",
+                "π."
+              ],
+              "qc": {
+                "sug": "My name is Pi.",
+                "field": "target",
+                "at": "2026-06-18T15:23:47.975Z"
+              }
+            },
+            {
+              "target": "He seemed to have travelled the world.",
+              "source": "वह दुनिया की यात्रा करने का लगन था",
+              "words": [
+                "He",
+                "seemed",
+                "to",
+                "have",
+                "travelled",
+                "the",
+                "world."
+              ],
+              "qc": {
+                "sug": "वह दुनिया को यात्रा करने के लगन था",
+                "field": "source",
+                "at": "2026-06-18T15:24:07.660Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 160837,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 653,
+        "totalCompletionTokens": 390,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 160810,
+            "promptTokens": 653,
+            "completionTokens": 390
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T14:13:01.645Z",
+      "updatedAt": "2026-06-18T15:24:07.660Z",
+      "id": "tp_17817923465270000581"
+    },
+    {
+      "topic": "संख्याओं की बैंड",
+      "topicEmoji": "bands",
+      "userTopic": "In this world, so chaotic and strange,",
+      "userPrompt": "In this world, so chaotic and strange,\n\n[story]\nIn this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 82,
+      "story": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "continuedFrom": "सात की बातें",
+      "continuedFromId": "tp_17817915882740000378",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "इस दुनिया में, जो अस्थिर और अजीब",
+          "desc": "संख्याएँ रेखाओं में, वृत्तों में या टीम में",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "target": "chaotic",
+              "source": "अस्थिर",
+              "qc": {
+                "sug": "अस्थिर या अनुचित",
+                "field": "source",
+                "at": "2026-06-18T15:16:19.705Z"
+              }
+            },
+            {
+              "target": "strange",
+              "source": "अजीब"
+            },
+            {
+              "target": "arranged",
+              "source": "रखे गए",
+              "qc": {
+                "sug": "रखे गए व्यक्ति",
+                "field": "source",
+                "at": "2026-06-18T15:16:30.268Z"
+              }
+            },
+            {
+              "target": "rows",
+              "source": "रेखाएँ"
+            },
+            {
+              "target": "circles",
+              "source": "वृत्त"
+            },
+            {
+              "target": "band",
+              "source": "टीम",
+              "qc": {
+                "sug": "बंड",
+                "field": "source",
+                "at": "2026-06-18T15:16:39.751Z"
+              }
+            },
+            {
+              "target": "noticed",
+              "source": "नजरअंदाज किया",
+              "qc": {
+                "sug": "नजरअंदाज किया गया",
+                "field": "source",
+                "at": "2026-06-18T15:16:49.293Z"
+              }
+            },
+            {
+              "target": "beard",
+              "source": "बर्ड"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Numbers like to be arranged.",
+              "source": "संख्याएँ रखे गए जाती हैं.",
+              "words": [
+                "Numbers",
+                "like",
+                "to",
+                "be",
+                "arranged."
+              ],
+              "qc": {
+                "sug": "संख्याएँ व्यवस्थित होना अपना पसंद करती हैं।",
+                "field": "source",
+                "at": "2026-06-18T15:17:13.958Z"
+              }
+            },
+            {
+              "target": "Four stood in rows.",
+              "source": "चार रेखाओं में खड़ा हुआ.",
+              "words": [
+                "Four",
+                "stood",
+                "in",
+                "rows."
+              ],
+              "qc": {
+                "sug": "चार लगातार खड़े हुए।",
+                "field": "source",
+                "at": "2026-06-18T15:17:25.962Z"
+              }
+            },
+            {
+              "target": "One came and stared.",
+              "source": "एक आया और नजर डाली.",
+              "words": [
+                "One",
+                "came",
+                "and",
+                "stared."
+              ],
+              "qc": {
+                "sug": "एक आया और नजर डाला.",
+                "field": "source",
+                "at": "2026-06-18T15:17:39.342Z"
+              }
+            },
+            {
+              "target": "She's so different, so small.",
+              "source": "वह इतनी अलग, इतनी छोटी है.",
+              "words": [
+                "She's",
+                "so",
+                "different,",
+                "so",
+                "small."
+              ]
+            },
+            {
+              "target": "Four petted his funny beard.",
+              "source": "चार अपना मजेदार बर्ड को छुंकाता था.",
+              "words": [
+                "Four",
+                "petted",
+                "his",
+                "funny",
+                "beard."
+              ],
+              "qc": {
+                "sug": "चार अपना मजेदार बर्ड को छुपकाता था.",
+                "field": "source",
+                "at": "2026-06-18T15:18:04.648Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "दुनिया में, ऐसी जटिल और अजीब",
+          "desc": "संख्याएँ रास्ते पर, संकेतों में और निगाड़ों में",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "band",
+              "source": "निगाड़",
+              "qc": {
+                "sug": "बैंड",
+                "field": "source",
+                "at": "2026-06-18T15:18:10.245Z"
+              }
+            },
+            {
+              "target": "noticed",
+              "source": "देखा",
+              "qc": {
+                "sug": "देखा गया",
+                "field": "source",
+                "at": "2026-06-18T15:18:16.077Z"
+              }
+            },
+            {
+              "target": "gasp",
+              "source": "कुकर",
+              "qc": {
+                "sug": "कुकरा",
+                "field": "source",
+                "at": "2026-06-18T15:18:21.536Z"
+              }
+            },
+            {
+              "target": "smallest",
+              "source": "सबसे छोटा",
+              "qc": {
+                "sug": "सबसे छोटा है",
+                "field": "source",
+                "at": "2026-06-18T15:18:29.251Z"
+              }
+            },
+            {
+              "target": "heroes",
+              "source": "हिरोइज़",
+              "qc": {
+                "sug": "ही罗ز",
+                "field": "source",
+                "at": "2026-06-18T15:18:34.246Z"
+              }
+            },
+            {
+              "target": "evening",
+              "source": "शाम"
+            },
+            {
+              "target": "confuse",
+              "source": "मिलाना",
+              "qc": {
+                "sug": "मिलना",
+                "field": "source",
+                "at": "2026-06-18T15:18:41.363Z"
+              }
+            },
+            {
+              "target": "rule",
+              "source": "नियम",
+              "qc": {
+                "sug": "नियमा  — if the Hindi side is missing the final 'a', or if it's a specific rule like 'rule of law' which might be translated differently. Without more context, it's hard to determine if 'नियमा' is the correct translation. If it's just 'rule', then 'नियम' is correct.",
+                "field": "source",
+                "at": "2026-06-18T15:19:06.624Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "She's the smallest, but she's smartest.",
+              "source": "उसका आकार सबसे छोटा, लेकिन उसकी बुद्धि सबसे बुद्धिमान है।",
+              "words": [
+                "She's",
+                "the",
+                "smallest,",
+                "but",
+                "she's",
+                "smartest."
+              ],
+              "qc": {
+                "sug": "She's the smallest, but she's the smartest.",
+                "field": "target",
+                "at": "2026-06-18T15:19:23.114Z"
+              }
+            },
+            {
+              "target": "Four noticed a letter, that's weird.",
+              "source": "चार देखा एक अक्षर, यह अजीब है।",
+              "words": [
+                "Four",
+                "noticed",
+                "a",
+                "letter,",
+                "that's",
+                "weird."
+              ],
+              "qc": {
+                "sug": "चार एक अक्षर देखा, यह अजीब है।",
+                "field": "source",
+                "at": "2026-06-18T15:19:43.419Z"
+              }
+            },
+            {
+              "target": "All the numbers came and stared.",
+              "source": "सभी संख्याएँ आयीं और देखती रहीं।",
+              "words": [
+                "All",
+                "the",
+                "numbers",
+                "came",
+                "and",
+                "stared."
+              ]
+            },
+            {
+              "target": "She's so different, she's so small.",
+              "source": "उसका रूप अत्यधिक अजीब, उसका आकार अत्यधिक छोटा है।",
+              "words": [
+                "She's",
+                "so",
+                "different,",
+                "she's",
+                "so",
+                "small."
+              ],
+              "qc": {
+                "sug": "उसका रूप अत्यधिक अलग, उसका आकार अत्यधिक छोटा है।",
+                "field": "source",
+                "at": "2026-06-18T15:20:27.381Z"
+              }
+            },
+            {
+              "target": "Everyone knows the rule of plus and minus.",
+              "source": "सबको प्लस और माइनस का नियम जानना है।",
+              "words": [
+                "Everyone",
+                "knows",
+                "the",
+                "rule",
+                "of",
+                "plus",
+                "and",
+                "minus."
+              ]
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 175930,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 691,
+        "totalCompletionTokens": 424,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 175901,
+            "promptTokens": 691,
+            "completionTokens": 424
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T14:06:28.332Z",
+      "updatedAt": "2026-06-18T15:20:36.206Z",
+      "id": "tp_17817919815860000412"
+    },
+    {
+      "topic": "सात की बातें",
+      "topicEmoji": "柒",
+      "userTopic": "“Are you my family",
+      "userPrompt": "“Are you my family\n\n[story]\n“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 76,
+      "story": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "continuedFrom": "साँचा दुनिया",
+      "continuedFromId": "tp_17817912838000000295",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "आप मेरी परिवार का हैं",
+          "desc": "आपको इंग्लिश में शब्द और उनके हिंदी अर्थ",
+          "icon": "👨‍👩‍👧‍👦",
+          "vocab": [
+            {
+              "target": "family",
+              "source": "परिवार"
+            },
+            {
+              "target": "asked",
+              "source": "पूछा"
+            },
+            {
+              "target": "head",
+              "source": "सिर",
+              "qc": {
+                "sug": "सिरा",
+                "field": "source",
+                "at": "2026-06-18T15:13:33.555Z"
+              }
+            },
+            {
+              "target": "sorry",
+              "source": "माफ़",
+              "qc": {
+                "sug": "माफिकर",
+                "field": "source",
+                "at": "2026-06-18T15:13:38.265Z"
+              }
+            },
+            {
+              "target": "heroes",
+              "source": "हिरोइज़",
+              "qc": {
+                "sug": "हिरोज़े स्‍वरूप के रूप में",
+                "field": "source",
+                "at": "2026-06-18T15:13:49.916Z"
+              }
+            },
+            {
+              "target": "smartest",
+              "source": "सबसे बुद्धिमान",
+              "qc": {
+                "sug": "सबसे बुद्धिमानँ",
+                "field": "source",
+                "at": "2026-06-18T15:13:59.451Z"
+              }
+            },
+            {
+              "target": "answers",
+              "source": "जवाब"
+            },
+            {
+              "target": "guys",
+              "source": "लड़के",
+              "qc": {
+                "sug": "लोगों",
+                "field": "source",
+                "at": "2026-06-18T15:14:07.095Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "i asked",
+              "source": "मैंने पूछा",
+              "words": [
+                "i",
+                "asked"
+              ]
+            },
+            {
+              "target": "Seven shook",
+              "source": "सात ने झुकाव दिया",
+              "words": [
+                "Seven",
+                "shook"
+              ],
+              "qc": {
+                "sug": "Seven",
+                "field": "target",
+                "at": "2026-06-18T15:14:16.969Z"
+              }
+            },
+            {
+              "target": "Forty-two thinks",
+              "source": "चौंतीस ने सोचा",
+              "words": [
+                "Forty-two",
+                "thinks"
+              ]
+            },
+            {
+              "target": "creepy looking",
+              "source": "फैंटाइसी दिखने वाले",
+              "words": [
+                "creepy",
+                "looking"
+              ],
+              "qc": {
+                "sug": "फैंटाइसी लगने वाले",
+                "field": "source",
+                "at": "2026-06-18T15:14:33.702Z"
+              }
+            },
+            {
+              "target": "in disguise",
+              "source": "छिपके हुए",
+              "words": [
+                "in",
+                "disguise"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "परिवार क्या है",
+          "desc": "सबको बिठाने, रास्ता, दुनिया",
+          "icon": "👨‍👩‍👧‍👦",
+          "vocab": [
+            {
+              "target": "family",
+              "source": "परिवार"
+            },
+            {
+              "target": "path",
+              "source": "रास्ता"
+            },
+            {
+              "target": "world",
+              "source": "दुनिया"
+            },
+            {
+              "target": "evening",
+              "source": "शाम"
+            },
+            {
+              "target": "strange",
+              "source": "अजीब"
+            },
+            {
+              "target": "tall",
+              "source": "सुन्दर",
+              "qc": {
+                "sug": "ऊँचा",
+                "field": "source",
+                "at": "2026-06-18T15:14:54.576Z"
+              }
+            },
+            {
+              "target": "number",
+              "source": "संख्या",
+              "qc": {
+                "sug": "संख्या is correct.",
+                "field": "source",
+                "at": "2026-06-18T15:15:00.421Z"
+              }
+            },
+            {
+              "target": "place",
+              "source": "स्थान"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "i asked family members.",
+              "source": "मैं परिवार के सदस्यों से पूछा।",
+              "words": [
+                "i",
+                "asked",
+                "family",
+                "members."
+              ]
+            },
+            {
+              "target": "The path was long and strange.",
+              "source": "रास्ता लंबा और अजीब था।",
+              "words": [
+                "The",
+                "path",
+                "was",
+                "long",
+                "and",
+                "strange."
+              ]
+            },
+            {
+              "target": "Everyone seemed to know the place.",
+              "source": "सबको इस स्थान को जानना लगा।",
+              "words": [
+                "Everyone",
+                "seemed",
+                "to",
+                "know",
+                "the",
+                "place."
+              ],
+              "qc": {
+                "sug": "सबको यह स्थान जाना लगा।",
+                "field": "source",
+                "at": "2026-06-18T15:15:31.566Z"
+              }
+            },
+            {
+              "target": "The world is full of numbers.",
+              "source": "दुनिया में संख्याएँ बहुत हैं।",
+              "words": [
+                "The",
+                "world",
+                "is",
+                "full",
+                "of",
+                "numbers."
+              ]
+            },
+            {
+              "target": "Tall trees stood by the path.",
+              "source": "सुन्दर पेड़ रास्ते के द्वारा खड़े थे।",
+              "words": [
+                "Tall",
+                "trees",
+                "stood",
+                "by",
+                "the",
+                "path."
+              ],
+              "qc": {
+                "sug": "सुन्दर पेड़ रास्ते की ओर खड़े थे।",
+                "field": "source",
+                "at": "2026-06-18T15:16:11.012Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 141446,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 675,
+        "totalCompletionTokens": 351,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 141420,
+            "promptTokens": 675,
+            "completionTokens": 351
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T14:01:23.863Z",
+      "updatedAt": "2026-06-18T15:16:11.012Z",
+      "id": "tp_17817915882740000378"
+    },
+    {
+      "topic": "साँचा दुनिया",
+      "topicEmoji": "🔍",
+      "userTopic": "One evening, while everyone slept,",
+      "userPrompt": "One evening, while everyone slept,\n\n[story]\nOne evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "continuedFrom": "संकेतों का दुनिया",
+      "continuedFromId": "tp_17817909852170000186",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "एक शाम को, सबको घबराने के बाद",
+          "desc": "एक गुनगुनाने रास्ते, एक अजीब दुनिया, सात",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "शाम"
+            },
+            {
+              "target": "everyone",
+              "source": "सबको",
+              "qc": {
+                "sug": "सब को",
+                "field": "source",
+                "at": "2026-06-18T15:10:19.595Z"
+              }
+            },
+            {
+              "target": "slept",
+              "source": "बिठाने",
+              "qc": {
+                "sug": "घुमाने",
+                "field": "source",
+                "at": "2026-06-18T15:10:25.435Z"
+              }
+            },
+            {
+              "target": "path",
+              "source": "रास्ता"
+            },
+            {
+              "target": "world",
+              "source": "दुनिया"
+            },
+            {
+              "target": "strange",
+              "source": "अजीब"
+            },
+            {
+              "target": "tall",
+              "source": "सुन्दर",
+              "qc": {
+                "sug": "ऊंचा",
+                "field": "source",
+                "at": "2026-06-18T15:10:38.969Z"
+              }
+            },
+            {
+              "target": "asked",
+              "source": "पूछा"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "It was evening.",
+              "source": "शाम थी",
+              "words": [
+                "It",
+                "was",
+                "evening."
+              ]
+            },
+            {
+              "target": "Everyone slept.",
+              "source": "सबको बिठाने",
+              "words": [
+                "Everyone",
+                "slept."
+              ],
+              "qc": {
+                "sug": "सबको बिठाकर सो गए।",
+                "field": "source",
+                "at": "2026-06-18T15:10:57.282Z"
+              }
+            },
+            {
+              "target": "A path glowed.",
+              "source": "रास्ता गुनगुनाने",
+              "words": [
+                "A",
+                "path",
+                "glowed."
+              ],
+              "qc": {
+                "sug": "रास्ता छलका रहा था",
+                "field": "source",
+                "at": "2026-06-18T15:11:08.386Z"
+              }
+            },
+            {
+              "target": "Worlds were strange.",
+              "source": "दुनियाएँ अजीब थीं",
+              "words": [
+                "Worlds",
+                "were",
+                "strange."
+              ]
+            },
+            {
+              "target": "Seven asked a question.",
+              "source": "सुन्दर सात पूछा",
+              "words": [
+                "Seven",
+                "asked",
+                "a",
+                "question."
+              ],
+              "qc": {
+                "sug": "सात ने एक प्रश्न पूछा",
+                "field": "source",
+                "at": "2026-06-18T15:11:27.262Z"
+              }
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "एक शाम, सबको घुमाने के बाद",
+          "desc": "संख्या दुनिया में यात्रा करना, नियम और निगाड़",
+          "icon": "🌟",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "शाम"
+            },
+            {
+              "target": "path",
+              "source": "पथ"
+            },
+            {
+              "target": "world",
+              "source": "पृथ्वी",
+              "qc": {
+                "sug": "दुनिया",
+                "field": "source",
+                "at": "2026-06-18T15:11:38.306Z"
+              }
+            },
+            {
+              "target": "strange",
+              "source": "अजीब"
+            },
+            {
+              "target": "number",
+              "source": "संख्या",
+              "qc": {
+                "sug": "संख्या is correct.",
+                "field": "source",
+                "at": "2026-06-18T15:11:48.144Z"
+              }
+            },
+            {
+              "target": "tall",
+              "source": "सुन्दर",
+              "qc": {
+                "sug": "ऊंचा",
+                "field": "source",
+                "at": "2026-06-18T15:11:53.755Z"
+              }
+            },
+            {
+              "target": "gasp",
+              "source": "कुकर",
+              "qc": {
+                "sug": "कुकरा",
+                "field": "source",
+                "at": "2026-06-18T15:11:59.233Z"
+              }
+            },
+            {
+              "target": "looked",
+              "source": "दिखाई",
+              "qc": {
+                "sug": "दिखाई दिया",
+                "field": "source",
+                "at": "2026-06-18T15:12:06.046Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I followed a glowing path.",
+              "source": "मैं गौरवांकित एक पथ का पालन किया।",
+              "words": [
+                "I",
+                "followed",
+                "a",
+                "glowing",
+                "path."
+              ]
+            },
+            {
+              "target": "It led to another world.",
+              "source": "यह दूसरी एक पृथ्वी की ओर नेतृत्व किया।",
+              "words": [
+                "It",
+                "led",
+                "to",
+                "another",
+                "world."
+              ],
+              "qc": {
+                "sug": "यह एक दूसरी पृथ्वी की ओर नेतृत्व किया।",
+                "field": "source",
+                "at": "2026-06-18T15:12:39.589Z"
+              }
+            },
+            {
+              "target": "A strange world.",
+              "source": "अजीब एक पृथ्वी।",
+              "words": [
+                "A",
+                "strange",
+                "world."
+              ],
+              "qc": {
+                "sug": "एक अजीब दुनिया।",
+                "field": "source",
+                "at": "2026-06-18T15:12:50.914Z"
+              }
+            },
+            {
+              "target": "He looked almost like her.",
+              "source": "उसने उसकी तरह सुन्दर दिखाई।",
+              "words": [
+                "He",
+                "looked",
+                "almost",
+                "like",
+                "her."
+              ],
+              "qc": {
+                "sug": "उनका दिखाना उससे लगभग समान था।",
+                "field": "source",
+                "at": "2026-06-18T15:13:09.237Z"
+              }
+            },
+            {
+              "target": "Do you know me?",
+              "source": "तुम मुझे जानते हो?",
+              "words": [
+                "Do",
+                "you",
+                "know",
+                "me?"
+              ],
+              "qc": {
+                "sug": "तुम मेरे बारे में जानते हो?",
+                "field": "source",
+                "at": "2026-06-18T15:13:24.145Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 137960,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 650,
+        "totalCompletionTokens": 342,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 137928,
+            "promptTokens": 650,
+            "completionTokens": 342
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T13:56:25.294Z",
+      "updatedAt": "2026-06-18T15:13:24.146Z",
+      "id": "tp_17817912838000000295"
+    },
+    {
+      "topic": "संकेतों का दुनिया",
+      "topicEmoji": "🌟",
+      "userTopic": "+, −, ∗, /",
+      "userPrompt": "+, −, ∗, /\n\n[story]\n+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "continuedFrom": "बच्ची i",
+      "continuedFromId": "tp_17817906523660000080",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "संकेत और संख्या",
+          "desc": "संख्याओं के साथ खेलना और उनके संकेतों को समझना",
+          "icon": "+",
+          "vocab": [
+            {
+              "target": "plus",
+              "source": "प्लस",
+              "qc": {
+                "sug": "पлюस",
+                "field": "source",
+                "at": "2026-06-18T15:06:28.501Z"
+              }
+            },
+            {
+              "target": "minus",
+              "source": "माइनस"
+            },
+            {
+              "target": "multiply",
+              "source": "गुणा",
+              "qc": {
+                "sug": "गुणा करना",
+                "field": "source",
+                "at": "2026-06-18T15:06:36.630Z"
+              }
+            },
+            {
+              "target": "divide",
+              "source": "भाग",
+              "qc": {
+                "sug": "विभाजन",
+                "field": "source",
+                "at": "2026-06-18T15:06:41.574Z"
+              }
+            },
+            {
+              "target": "number",
+              "source": "संख्या",
+              "qc": {
+                "sug": "संख्या is correct.",
+                "field": "source",
+                "at": "2026-06-18T15:06:47.452Z"
+              }
+            },
+            {
+              "target": "sign",
+              "source": "संकेत",
+              "qc": {
+                "sug": "संकेत या चिह्न",
+                "field": "source",
+                "at": "2026-06-18T15:06:55.714Z"
+              }
+            },
+            {
+              "target": "confuse",
+              "source": "मिलाना",
+              "qc": {
+                "sug": "मिलना",
+                "field": "source",
+                "at": "2026-06-18T15:07:00.942Z"
+              }
+            },
+            {
+              "target": "beats",
+              "source": "पीतल",
+              "qc": {
+                "sug": "पीत्तल",
+                "field": "source",
+                "at": "2026-06-18T15:07:05.339Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I saw a plus sign.",
+              "source": "मैंने एक प्लस संकेत देखा।",
+              "words": [
+                "I",
+                "saw",
+                "a",
+                "plus",
+                "sign."
+              ],
+              "qc": {
+                "sug": "मैंने एक प्लस चिह्न देखा।",
+                "field": "source",
+                "at": "2026-06-18T15:07:21.819Z"
+              }
+            },
+            {
+              "target": "She added two numbers.",
+              "source": "वह दो संख्याओं को जोड़ रही थी।",
+              "words": [
+                "She",
+                "added",
+                "two",
+                "numbers."
+              ],
+              "qc": {
+                "sug": "वह दो संख्याएँ जोड़ दी।",
+                "field": "source",
+                "at": "2026-06-18T15:07:39.041Z"
+              }
+            },
+            {
+              "target": "They multiplied the values.",
+              "source": "वे मूल्यों को गुणा कर रहे थे।",
+              "words": [
+                "They",
+                "multiplied",
+                "the",
+                "values."
+              ],
+              "qc": {
+                "sug": "वे मूल्यों को गुणा कर दिया।",
+                "field": "source",
+                "at": "2026-06-18T15:07:53.159Z"
+              }
+            },
+            {
+              "target": "He divided the total by four.",
+              "source": "वह कुल को चार से भाग दिया।",
+              "words": [
+                "He",
+                "divided",
+                "the",
+                "total",
+                "by",
+                "four."
+              ]
+            },
+            {
+              "target": "The minus sign means take away.",
+              "source": "माइनस संकेत ले जाने का अर्थ है।",
+              "words": [
+                "The",
+                "minus",
+                "sign",
+                "means",
+                "take",
+                "away."
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "title": "संकल्पनाएँ और नियम",
+          "desc": "संख्याएँ और चिह्नों का जुड़वाँ, घटाव, गुणा और भाग",
+          "icon": "+",
+          "vocab": [
+            {
+              "target": "plus",
+              "source": "प्लस",
+              "qc": {
+                "sug": "पлюस",
+                "field": "source",
+                "at": "2026-06-18T15:08:22.073Z"
+              }
+            },
+            {
+              "target": "minus",
+              "source": "माइनस"
+            },
+            {
+              "target": "multiply",
+              "source": "गुणा",
+              "qc": {
+                "sug": "गुणा करना",
+                "field": "source",
+                "at": "2026-06-18T15:08:29.646Z"
+              }
+            },
+            {
+              "target": "divide",
+              "source": "भाग",
+              "qc": {
+                "sug": "विभाजन",
+                "field": "source",
+                "at": "2026-06-18T15:08:34.327Z"
+              }
+            },
+            {
+              "target": "equal",
+              "source": "समान"
+            },
+            {
+              "target": "number",
+              "source": "संख्या",
+              "qc": {
+                "sug": "संख्",
+                "field": "source",
+                "at": "2026-06-18T15:08:41.395Z"
+              }
+            },
+            {
+              "target": "sign",
+              "source": "चिह्न"
+            },
+            {
+              "target": "rule",
+              "source": "नियम",
+              "qc": {
+                "sug": "नियम से",
+                "field": "source",
+                "at": "2026-06-18T15:08:49.260Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "She adds plus to her list.",
+              "source": "वह प्लस को अपनी सूची में जोड़ती है।",
+              "words": [
+                "She",
+                "adds",
+                "plus",
+                "to",
+                "her",
+                "list."
+              ]
+            },
+            {
+              "target": "Subtract minus from your score.",
+              "source": "आपके अंक में माइनस को घटाएं।",
+              "words": [
+                "Subtract",
+                "minus",
+                "from",
+                "your",
+                "score."
+              ],
+              "qc": {
+                "sug": "Subtract माइनस से अंक घटाएं।",
+                "field": "target",
+                "at": "2026-06-18T15:09:09.974Z"
+              }
+            },
+            {
+              "target": "Multiply numbers to get the total.",
+              "source": "संख्याओं को गुणा करके कुल मिलाइए।",
+              "words": [
+                "Multiply",
+                "numbers",
+                "to",
+                "get",
+                "the",
+                "total."
+              ],
+              "qc": {
+                "sug": "संख्याओं को गुणा करके कुल ज्ञात करें।",
+                "field": "source",
+                "at": "2026-06-18T15:09:28.978Z"
+              }
+            },
+            {
+              "target": "Divide the sum by the divisor.",
+              "source": "भाजक से योग को विभाजित करें।",
+              "words": [
+                "Divide",
+                "the",
+                "sum",
+                "by",
+                "the",
+                "divisor."
+              ],
+              "qc": {
+                "sug": "योग को भाजक से विभाजित करें।",
+                "field": "source",
+                "at": "2026-06-18T15:09:45.902Z"
+              }
+            },
+            {
+              "target": "The rule seems simple, but often complex.",
+              "source": "नियम लगने वाला सरल लगता है, लेकिन कई बार जटिल।",
+              "words": [
+                "The",
+                "rule",
+                "seems",
+                "simple,",
+                "but",
+                "often",
+                "complex."
+              ],
+              "qc": {
+                "sug": "नियम किसी को सरल लगाता है, लेकिन कई बार जटिल।",
+                "field": "source",
+                "at": "2026-06-18T15:10:12.509Z"
+              }
+            }
+          ],
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 154675,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 649,
+        "totalCompletionTokens": 399,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 154650,
+            "promptTokens": 649,
+            "completionTokens": 399
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T13:50:52.430Z",
+      "updatedAt": "2026-06-18T15:10:12.509Z",
+      "id": "tp_17817909852170000186"
+    },
+    {
+      "topic": "बच्ची i",
+      "topicEmoji": "👧",
+      "userTopic": "The Little I am i",
+      "userPrompt": "The Little I am i\n\n[story]\nThe Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "lang": "en",
+      "srcLang": "hi",
+      "difficulty": 1,
+      "storyLen": 58,
+      "story": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "बच्चे और उनके स्थान",
+          "desc": "बच्चों के स्थान, नंबर की बात",
+          "icon": "🐦",
+          "vocab": [
+            {
+              "target": "nest",
+              "source": "निगाड़",
+              "qc": {
+                "sug": "निखिल",
+                "field": "source",
+                "at": "2026-06-18T15:04:41.296Z"
+              }
+            },
+            {
+              "target": "family",
+              "source": "परिवार"
+            },
+            {
+              "target": "place",
+              "source": "स्थान"
+            },
+            {
+              "target": "know",
+              "source": "जानना"
+            },
+            {
+              "target": "world",
+              "source": "पृथ्वी",
+              "qc": {
+                "sug": "दुनिया",
+                "field": "source",
+                "at": "2026-06-18T15:04:54.275Z"
+              }
+            },
+            {
+              "target": "often",
+              "source": "कई बार",
+              "qc": {
+                "sug": "कई बार की",
+                "field": "source",
+                "at": "2026-06-18T15:05:00.093Z"
+              }
+            },
+            {
+              "target": "seem",
+              "source": "लगना",
+              "qc": {
+                "sug": "लगना लगाता है",
+                "field": "source",
+                "at": "2026-06-18T15:05:07.295Z"
+              }
+            },
+            {
+              "target": "have",
+              "source": "करना"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Little i had a place.",
+              "source": "बच्ची इ अपना स्थान था।",
+              "words": [
+                "Little",
+                "i",
+                "had",
+                "a",
+                "place."
+              ],
+              "qc": {
+                "sug": "बच्चा इन्हें एक स्थान था।",
+                "field": "source",
+                "at": "2026-06-18T15:05:22.376Z"
+              }
+            },
+            {
+              "target": "In the world of numbers, i seemed to have a place.",
+              "source": "नंबर की पृथ्वी में, इ लगने लगा कि उसका स्थान है।",
+              "words": [
+                "In",
+                "the",
+                "world",
+                "of",
+                "numbers,",
+                "i",
+                "seemed",
+                "to",
+                "have",
+                "a",
+                "place."
+              ],
+              "qc": {
+                "sug": "In the world of numbers, I seemed to have a place.",
+                "field": "target",
+                "at": "2026-06-18T15:05:38.044Z"
+              }
+            },
+            {
+              "target": "But i did not know where it was.",
+              "source": "लेकिन इ ने नहीं जाना कि उसका स्थान कहाँ था।",
+              "words": [
+                "But",
+                "i",
+                "did",
+                "not",
+                "know",
+                "where",
+                "it",
+                "was."
+              ],
+              "qc": {
+                "sug": "लेकिन मैं नहीं जाना कि वहाँ कहाँ था।",
+                "field": "source",
+                "at": "2026-06-18T15:05:57.891Z"
+              }
+            },
+            {
+              "target": "Grown-ups often have children.",
+              "source": "बड़े लोग कई बार बच्चे करते हैं।",
+              "words": [
+                "Grown-ups",
+                "often",
+                "have",
+                "children."
+              ],
+              "qc": {
+                "sug": "बड़े लोग अक्सर बच्चे करते हैं।",
+                "field": "source",
+                "at": "2026-06-18T15:06:15.415Z"
+              }
+            },
+            {
+              "target": "But little i did not know.",
+              "source": "लेकिन बच्ची नहीं जानी थी।",
+              "words": [
+                "But",
+                "little",
+                "i",
+                "did",
+                "not",
+                "know."
+              ],
+              "qc": {
+                "sug": "But little I did not know.",
+                "field": "target",
+                "at": "2026-06-18T15:06:24.342Z"
+              }
+            }
+          ]
+        }
+      ],
+      "generationStats": {
+        "totalMs": 236319,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 650,
+        "totalCompletionTokens": 434,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 236296,
+            "promptTokens": 650,
+            "completionTokens": 434
+          }
+        ]
+      },
+      "generatedAt": "2026-06-18T13:46:56.011Z",
+      "updatedAt": "2026-06-18T15:06:24.342Z",
+      "id": "tp_17817906523660000080"
+    },
     {
       "topic": "iの真実",
       "topicEmoji": " i",
