@@ -52,6 +52,21 @@ const { boot, post, waitBookJob, assert } = require('./lib');
     }
     console.log('  change 1 (generated continuation): OK');
 
+    // Post-pass generated a source-language storyline summary (TODO item 6).
+    const slArr = env.readStore().storylines || [];
+    const sl = slArr.find(s => (s.chapters || []).some(cid => chain.some(c => c.id === cid)));
+    assert(sl, 'a storyline exists for the generated chain');
+    assert(sl.summary && /FAKE SUMMARY/.test(sl.summary), 'storyline has a generated summary (got: ' + JSON.stringify(sl.summary) + ')');
+    console.log('  storyline summary post-pass: OK');
+
+    // Auto-QC ran over the finished storyline and tagged items (TODO item 7).
+    const allItems = chain.flatMap(c => (c.lessons || []).flatMap(ls =>
+      [...(ls.vocab || []), ...(ls.sentences || [])]));
+    const flagged = allItems.filter(it => it && it.qc);
+    assert(flagged.length > 0, 'auto-QC tagged at least one item (got ' + flagged.length + ' of ' + allItems.length + ')');
+    assert(flagged.some(it => it.qc.sug === 'KORRIGIERT'), 'QC suggestion stored on the item');
+    console.log('  storyline auto-QC: OK (' + flagged.length + '/' + allItems.length + ' items tagged)');
+
     console.log('e2e-bookjob: ALL PASSED');
   } catch (e) {
     failed = true;

@@ -30,11 +30,38 @@ run('lessons.json parses', 'node', ['-e', "require(path.join('" + ROOT.replace(/
 run('unit: id-based resolvers (item 2)', 'node', [path.join(__dirname, 'unit-resolvers.test.js')]);
 run('unit: arc-mode options (item 3)', 'node', [path.join(__dirname, 'unit-arc-options.test.js')]);
 run('unit: pdf text-span selection', 'node', [path.join(__dirname, 'unit-pdf-selection.test.js')]);
+run('unit: conjugation grouping (item 4)', 'node', [path.join(__dirname, 'unit-conjugation-grouping.test.js')]);
+run('unit: grammar reinforce note (item 5)', 'node', [path.join(__dirname, 'unit-grammar-reinforce.test.js')]);
+run('unit: editor sync on delete (item 3)', 'node', [path.join(__dirname, 'unit-editor-sync.test.js')]);
+run('unit: tts voice-quality helpers (item 1)', 'node', [path.join(__dirname, 'unit-tts-voice.test.js')]);
+run('unit: lesson-type meta table (item 8)', 'node', [path.join(__dirname, 'unit-lesson-type-meta.test.js')]);
+run('unit: word-count tokenizer (item 8)', 'node', [path.join(__dirname, 'unit-word-count.test.js')]);
+run('unit: lesson-row subtitle', 'node', [path.join(__dirname, 'unit-lesson-subtitle.test.js')]);
+run('unit: word_forms validator', 'node', [path.join(__dirname, 'unit-word-forms.test.js')]);
+run('unit: word_forms client play', 'node', [path.join(__dirname, 'unit-word-forms-client.test.js')]);
+run('unit: synonyms in-context builder', 'node', [path.join(__dirname, 'unit-synonyms.test.js')]);
+run('unit: synonyms context sentence', 'node', [path.join(__dirname, 'unit-syn-context.test.js')]);
+run('unit: storyline bottom row + re-create wiring', 'node', [path.join(__dirname, 'unit-recreate-ui.test.js')]);
+run('unit: chapter navigation (same-language)', 'node', [path.join(__dirname, 'unit-chapter-nav.test.js')]);
+run('unit: user-flag editor (correct version + apply)', 'node', [path.join(__dirname, 'unit-user-flag-editor.test.js')]);
+run('unit: play-flag target matching', 'node', [path.join(__dirname, 'unit-play-flag.test.js')]);
+run('unit: static teacher-mode edit gating', 'node', [path.join(__dirname, 'unit-static-teacher.test.js')]);
+run('unit: continue-story language filter', 'node', [path.join(__dirname, 'unit-continue-filter.test.js')]);
+run('unit: attribute escaping (escAttr not escHtml)', 'node', [path.join(__dirname, 'unit-attr-escaping.test.js')]);
+run('unit: lesson-type build registry (B-phase-1)', 'node', [path.join(__dirname, 'unit-build-registry.test.js')]);
+run('unit: static build markers', 'node', [path.join(__dirname, 'unit-static-markers.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {
   run('e2e: generate-book + storyline-title (item 5)', 'node', [path.join(__dirname, 'e2e-generate.test.js')]);
+  run('e2e: userPrompt stores full input', 'node', [path.join(__dirname, 'e2e-userprompt.test.js')]);
   run('e2e: bookjob continuation + arc lessons', 'node', [path.join(__dirname, 'e2e-bookjob.test.js')]);
+  run('e2e: book topic not truncated', 'node', [path.join(__dirname, 'e2e-booktopic.test.js')]);
+  run('e2e: ui.json hot-reload', 'node', [path.join(__dirname, 'e2e-ui-reload.test.js')]);
+  run('e2e: upload filename stored on storyline', 'node', [path.join(__dirname, 'e2e-bookfile.test.js')]);
+  run('e2e: word_forms lesson generation', 'node', [path.join(__dirname, 'e2e-word-forms.test.js')]);
+  run('e2e: synonyms context sentences', 'node', [path.join(__dirname, 'e2e-synonyms.test.js')]);
+  run('e2e: re-create storyline lessons', 'node', [path.join(__dirname, 'e2e-recreate.test.js')]);
 } else {
   console.log('\n(skipping e2e tests: --quick)');
 }

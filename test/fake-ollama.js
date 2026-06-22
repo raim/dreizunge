@@ -50,6 +50,33 @@ const srv = http.createServer(async (req, res) => {
     let kind, content;
     if (/single JSON object|series title/i.test(sys)) {
       kind = 'storyline_title'; content = JSON.stringify({ title: 'The Fake Saga', icon: '📘' });
+    } else if (/concise summary|captures the main arc/i.test(sys)) {
+      kind = 'summary'; content = 'FAKE SUMMARY: a tidy recap of the chapters and their vocabulary themes, in the source language.';
+    } else if (/Reply EXACTLY one of/i.test(sys)) {
+      // QC pair-check: flag the source side with a fixed correction (deterministic).
+      kind = 'qc'; content = 'S: KORRIGIERT';
+    } else if (/synonyms[\s\S]*antonyms[\s\S]*homophones/i.test(sys)) {
+      // synonyms: base words appear in the fake story so context-sentence attach works.
+      kind = 'synonyms';
+      content = JSON.stringify({
+        title: 'Synonyms', desc: 'Related words from the story', icon: '🔁',
+        words: [
+          { base: 'Haus', gloss: 'house', synonyms: [{ w: 'Gebäude', g: 'building' }, { w: 'Heim', g: 'home' }], antonyms: [], homophones: [] },
+          { base: 'Katze', gloss: 'cat', synonyms: [{ w: 'Mieze', g: 'kitty' }], antonyms: [{ w: 'Hund', g: 'dog' }], homophones: [] },
+        ],
+      });
+    } else if (/word.?forms.*exercise generator|"correctIndex"/i.test(sys)) {
+      // word_forms: items must be derived from the fake story text below.
+      kind = 'word_forms';
+      content = JSON.stringify({
+        title: 'Word Forms', desc: 'Pick the form that fits', icon: '🧩',
+        items: [
+          { sentence: 'Es war einmal ein ___.', translation: 'Once upon a time there was a test.',
+            choices: ['Test', 'Tests', 'Teste', 'Testen'], correctIndex: 0, explanation: 'Singular nach „ein".' },
+          { sentence: 'Die Katze und das ___ blieben gleich.', translation: 'The cat and the house stayed the same.',
+            choices: ['Haus', 'Häuser', 'Hauses', 'Häusern'], correctIndex: 0, explanation: 'Nominativ Singular, neutrum.' },
+        ],
+      });
     } else if (/Chapter 1:/i.test(usr)) {
       kind = 'chapter_titles'; content = JSON.stringify(['Chapter One', 'Chapter Two', 'Chapter Three']);
     } else if (/Write the continuation now|Write a story for the topic|Plain prose/i.test(usr)) {

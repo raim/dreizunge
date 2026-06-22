@@ -22,7 +22,7 @@ function extract(name) {
   return html.slice(at, i);
 }
 
-const src = ['_autoTitle', '_trimSpan', '_normalizeSelections', '_selectionsToChunks'].map(extract).join('\n\n');
+const src = ['splitWords', 'wordCount', '_autoTitle', '_trimSpan', '_normalizeSelections', '_selectionsToChunks'].map(extract).join('\n\n');
 const mod = new Function(src + '\nreturn { _autoTitle, _trimSpan, _normalizeSelections, _selectionsToChunks };')();
 const { _trimSpan, _normalizeSelections, _selectionsToChunks } = mod;
 

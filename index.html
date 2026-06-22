@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dreizunge</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -89,6 +90,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .ipg-tab:hover{background:var(--gray-light)}
 .ipg-tab.active{background:var(--blue-light);border-color:var(--blue)}
 .sl-screen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:14px 16px 0;opacity:.8;line-height:1.6}
+.sl-bottom-row{display:flex}
 .storyline-group{border:2px solid var(--gray-mid);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
 .storyline-hdr{background:var(--gray-light);padding:7px 13px;font-size:12px;font-weight:800;color:var(--gray-dark);border-bottom:1.5px solid var(--gray-mid);display:flex;align-items:center;gap:6px}.storyline-title{flex:1;display:flex;align-items:center;gap:6px;min-width:0}.storyline-title-text{font-size:14px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.storyline-title-sub{font-size:11px;font-weight:700;color:var(--gray-dark);white-space:nowrap}.storyline-edit-form{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.storyline-edit-input{flex:1;font-size:13px;font-weight:700;font-family:"Nunito",sans-serif;border:1.5px solid var(--accent);border-radius:6px;padding:2px 7px;min-width:0;outline:none}.storyline-edit-icon{font-size:18px;cursor:pointer;line-height:1;user-select:none;width:24px;text-align:center}.storyline-hdr-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 5px;border-radius:5px;font-family:"Nunito",sans-serif;font-weight:800;color:var(--gray-dark);line-height:1;flex-shrink:0}.storyline-hdr-btn:hover{background:var(--gray-mid)}.storyline-hdr-btn.gen{color:var(--accent)}.storyline-hdr-btn.danger{color:var(--red)}.storyline-cards{}.storyline-cards.collapsed{display:none}.storyline-collapse-btn{font-size:11px;color:var(--gray-dark);transition:transform .2s;display:inline-block}.storyline-collapse-btn.open{transform:rotate(180deg)}
 .storyline-item .saved-item{border:none;border-radius:0;border-top:1.5px solid var(--gray-mid)}.storyline-item .saved-item-story{display:none}
@@ -180,8 +182,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .choice.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark);box-shadow:0 3px 0 #84d8ff}
 .choice.ok{border-color:var(--green);background:var(--green-light);color:#266300;box-shadow:0 3px 0 #9be27a}
 .choice.bad{border-color:var(--red);background:var(--red-light);color:#990000;box-shadow:0 3px 0 #ffaaaa}
-.syn-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.syn-hint{font-size:12px;font-weight:700;opacity:.6;margin:2px 0 2px}
+.syn-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.syn-hint{font-size:12px;color:var(--gray-dark);margin:4px 0 2px;font-weight:700}
 .syn-tile{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:var(--radius);padding:9px 14px;font-size:14px;font-weight:700;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 3px 0 var(--gray-mid);transition:border-color .1s,transform .05s}
 .syn-tile:hover:not(:disabled){border-color:var(--blue);box-shadow:0 3px 0 #84d8ff;transform:translateY(-1px)}
 .syn-tile.sel{border-color:var(--blue);background:var(--blue-light);color:var(--blue-dark);box-shadow:0 3px 0 #84d8ff}
@@ -748,10 +750,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div class="format-select-wrap">
         <select class="format-select" id="format-select" onchange="onFormatSelect(this.value)">
           <option value="standard" selected>📚 Standard — vocabulary &amp; sentences</option>
-          <option value="all_types">🎯 All types — standard + grammar + conjugation + error hunt</option>
+          <option value="all_types">🎯 All types — standard + word forms + synonyms + error hunt</option>
           <option value="math">🔢 Math — numbers from the story</option>
-          <option value="grammar">🏷️ Grammar — gender, articles &amp; plurals</option>
-          <option value="conjugation">🔤 Conjugation — verb forms by person</option>
+          <option value="word_forms">🧩 Word Forms — pick the form that fits</option>
           <option value="synonyms">🔁 Synonyms — synonyms, antonyms &amp; homophones</option>
           <option value="error_hunt">🔍 Error Hunt — find mistakes in the story</option>
         </select>
@@ -885,9 +886,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
     <span id="add-lesson-lbl-card" style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
     <select class="addlesson-select" id="sial-fmt-lesson-card">
       <option value="standard">📚 Standard</option>
-      <option value="grammar">🏷️ Grammar</option>
-      <option value="conjugation">🔤 Conjugation</option>
       <option value="synonyms">🔁 Synonyms</option>
+      <option value="word_forms">🧩 Word Forms</option>
       <option value="error_hunt">🔍 Error Hunt</option>
       <option value="math">🔢 Math</option>
     </select>
@@ -1002,6 +1002,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <div id="sl-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
     </div>
     <div class="sl-screen-body" id="sl-screen-body"></div>
+    <div class="sl-bottom-row" id="sl-bottom-row" style="display:none;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--gray-mid)">
+      <button class="ico-btn cont" id="sl-bottom-continue" onclick="slBottomContinue()" title="Continue story">↪</button>
+      <button class="ico-btn" id="sl-bottom-download" onclick="slBottomDownload(event)" title="Download storyline">⬇</button>
+      <button class="ico-btn" id="sl-bottom-clear" onclick="slBottomClearProgress()" title="Clear progress">🧹</button>
+      <button class="ico-btn" id="sl-bottom-delete" onclick="deleteCurrentStoryline()" title="Delete storyline" style="color:var(--red)">🗑️</button>
+      <button class="ico-btn recreate" id="sl-bottom-recreate" onclick="recreateStorylineLessons(event)" title="Re-create all lessons (keeps & hides the originals)">🔁</button>
+    </div>
   <div class="lang-footer" id="lang-footer-storyline">
     <span class="lang-footer-lbl">🗣</span>
     <div class="lang-select-wrap" style="width:auto;display:inline-block">
@@ -1037,6 +1044,68 @@ const RTL_LANGS = new Set(['ar','he','fa','ur']);
 function updateDocDir() {
   // RTL when the *target* language is RTL (the content language)
   document.documentElement.dir = RTL_LANGS.has(APP.lang) ? 'rtl' : 'ltr';
+}
+
+// ── Lesson-type metadata (single source of truth) ───────────────────────────
+// Maps a lesson `type` to its emoji badge and its ui.json label key. Previously
+// this {emoji,key} pair was hand-duplicated at ~5 sites; centralize it so a new
+// lesson type is a one-row change. `standard` is the vocab default/fallback.
+const LESSON_TYPE_META = {
+  standard:      { emoji: '📚', key: 'lesson.type.vocab',         build: (l, i) => buildStandardExercises(l, i) },
+  vocab:         { emoji: '📚', key: 'lesson.type.vocab',         build: (l, i) => buildStandardExercises(l, i) },
+  grammar:       { emoji: '🏷️', key: 'lesson.type.grammar',       build: (l) => buildGrammarExercises(l) },
+  conjugation:   { emoji: '🔤', key: 'lesson.type.conjugation',   build: (l) => buildConjugationExercises(l, APP.lessonData?.lang) },
+  synonyms:      { emoji: '🔁', key: 'lesson.type.synonyms',      build: (l) => buildSynonymsExercises(l) },
+  error_hunt:    { emoji: '🔍', key: 'lesson.type.error_hunt',    build: () => [] },
+  ai_error_hunt: { emoji: '🔎', key: 'lesson.type.ai_error_hunt', build: () => [] },
+  word_forms:    { emoji: '🧩', key: 'lesson.type.word_forms',    build: (l) => buildWordFormsExercises(l) },
+  math:          { emoji: '🔢', key: 'lesson.type.math',          build: (l) => buildMathExercises(l) },
+};
+function lessonTypeMeta(type) { return LESSON_TYPE_META[type] || LESSON_TYPE_META.standard; }
+function lessonTypeEmoji(type) { return lessonTypeMeta(type).emoji; }
+function lessonTypeLabel(type) { return t(lessonTypeMeta(type).key); }
+
+// Lesson-row subtitle: prefer useful generation info — the vocab mode (extend /
+// neutral / reinforce, reusing the gen.vocab_mode_* strings) and the difficulty it
+// was generated with (per-lesson difficulty, else the topic's). Falls back to the
+// per-type description when neither is known. `t` and `DIFF_SHORT` are globals.
+const LESSON_DESC_KEY = {
+  grammar: 'lesson.type.desc.grammar', conjugation: 'lesson.type.desc.conjugation',
+  error_hunt: 'lesson.type.desc.error_hunt', ai_error_hunt: 'lesson.type.desc.ai_error_hunt',
+  word_forms: 'lesson.type.desc.word_forms',
+  math: 'lesson.type.desc.math', standard: 'lesson.type.desc.vocab', all_types: 'lesson.type.desc.vocab',
+};
+function lessonSubtitle(L, topicDiff) {
+  const parts = [];
+  const m = L._arcMode;
+  if (m === 'extend' || m === 'neutral' || m === 'reinforce') parts.push(t('gen.vocab_mode_' + m));
+  const dl = DIFF_SHORT()[L.difficulty || topicDiff];
+  if (dl) parts.push(dl);
+  if (parts.length) return parts.join(' · ');
+  const k = LESSON_DESC_KEY[L.type] || 'lesson.type.desc.vocab';
+  const ui = t(k);
+  return (ui && ui !== k) ? ui : (L.desc || '');
+}
+
+// ── Word tokenization (single source of truth) ──────────────────────────────
+// Whitespace word split + count, previously inlined as
+// `s.split(/\s+/).filter(Boolean)[.length]` at several sites.
+function splitWords(s) { return String(s == null ? '' : s).trim().split(/\s+/).filter(Boolean); }
+function wordCount(s) { return splitWords(s).length; }
+
+// ── Storyline parent resolution (single source of truth) ────────────────────
+// Resolve a lesson's chain parent: id-link first (continuedFromId), else name
+// (continuedFrom) via the caller's topic map, with a same-language + same-srcLang
+// guard so identically-named chapters across languages never cross-link. Each
+// call site supplies its own byId/byTopic maps, so this is a factory.
+function makeParentResolver(byId, byTopic) {
+  return l => {
+    if (!l) return null;
+    const p = l.continuedFromId ? byId[l.continuedFromId] : (l.continuedFrom ? byTopic[l.continuedFrom] : null);
+    if (!p) return null;
+    if ((p.lang || '') !== (l.lang || '') || (p.srcLang || '') !== (l.srcLang || '')) return null;
+    return p;
+  };
 }
 
 async function loadLanguages() {
@@ -1253,17 +1322,15 @@ function applyUIStrings() {
   // Update format-select option labels
   const formatSel = document.getElementById('format-select');
   if (formatSel) {
-    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'math': 'form.format.math' };
+    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'word_forms': 'form.format.word_forms', 'math': 'form.format.math' };
     Array.from(formatSel.options).forEach(opt => {
       if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
     });
   }
   // Update all add-lesson selects (lesson card + storyline panels)
-  const _typeEmojis = { standard:'📚', grammar:'🏷️', conjugation:'🔤', synonyms:'🔁', error_hunt:'🔍' };
-  const _typeKeys   = { standard:'lesson.type.vocab', grammar:'lesson.type.grammar', conjugation:'lesson.type.conjugation', synonyms:'lesson.type.synonyms', error_hunt:'lesson.type.error_hunt' };
   document.querySelectorAll('.addlesson-select').forEach(sel => {
     Array.from(sel.options).forEach(opt => {
-      if (_typeKeys[opt.value]) opt.text = (_typeEmojis[opt.value]||'') + ' ' + t(_typeKeys[opt.value]);
+      if (LESSON_TYPE_META[opt.value]) opt.text = lessonTypeEmoji(opt.value) + ' ' + lessonTypeLabel(opt.value);
     });
   });
   // Update style-select option labels
@@ -1280,15 +1347,20 @@ function applyUIStrings() {
   // Form labels (static HTML)
   _setText('story-len-lbl', t('form.story_len_lbl'));
   _setText('num-chapters-lbl', t('form.num_chapters_lbl'));
-  _setText('gen-arc-lbl', t('form.gen_arc_lbl'));
+  _setText('gen-arc-lbl', t('form.arc_lbl'));
+  _setAttr('sl-bottom-continue', 'title', t('lesson.continue_title') || t('sl.continue'));
+  _setAttr('sl-bottom-download', 'title', t('sl.download'));
+  _setAttr('sl-bottom-clear', 'title', t('sl.clear_progress'));
+  _setAttr('sl-bottom-delete', 'title', t('sl.delete'));
+  _setAttr('sl-bottom-recreate', 'title', t('sl.recreate_btn'));
   { const _nc=document.getElementById('num-chapters-val'); if(_nc) _nc.textContent=numChaptersLabel(APP.numChapters||1); }
   _setText('lesson-type-hdr-lbl', t('form.lesson_type_hdr'));
   _setText('continue-lbl', t('form.continue_from_lbl'));
   _setText('show-other-langs-lbl', t('form.show_other_langs'));
-  _setText('lib-title-lbl', t('lib.title'));
+  _setText('lib-title-lbl', '📚');
   _setText('download-flagged-btn', t('lib.download_flagged'));
   _setText('read-story-hdr', t('lesson.read_story_btn'));
-  _setText('import-btn-lbl', t('lib.import'));
+  _setText('import-btn-lbl', '⬆');
   // Story length value
   _updateStoryLenLabel();
   // Tooltips
@@ -1299,7 +1371,7 @@ function applyUIStrings() {
   _setAttr('edit-story-btn',       'title', t('lesson.edit_story'));
   _setAttr('continue-story-btn-title', 'title', t('lesson.continue_title'));
   _setAttr('cont-story-btn',       'title', t('lesson.continue_title'));
-  _setText('story-cont-btn',       t('lesson.btn_continue_story'));
+  _setText('story-cont-btn',       '↪');
   _setAttr('gen-topic-title-btn',  'title', t('lesson.gen_topic_title'));
   _setAttr('sl-screen-gen-btn',    'title', t('lesson.gen_topic_title'));
   _setAttr('sl-screen-edit-btn',    'title', t('ui.edit_title'));
@@ -1668,28 +1740,17 @@ async function pushFlagToServer(key, entry){
       body:JSON.stringify({key, entry})});
   }catch(e){ /* offline — flag stored locally only */ }
 }
-function flagKey(ex){
-  const topic = (APP.lessonData?.topic||'unknown').slice(0,30).replace(/\s+/g,'_');
-  const base  = String(ex.target||ex.source||(Array.isArray(ex.correct)?ex.correct.join(','):ex.correct)||'').slice(0,40).replace(/\s+/g,'_');
-  return topic + ':' + (ex.type||'x') + ':' + base;
-}
-function isExFlagged(ex){ return !!APP.flagged[flagKey(ex)]; }
-function toggleFlag(ex){
-  const k=flagKey(ex);
-  const topic=APP.lessonData?.topic||'unknown';
-  if(APP.flagged[k]){
-    delete APP.flagged[k];
-    saveFlagged();
-    pushFlagToServer(k, null); // null = delete
-  } else {
-    const entry={ topic, type:ex.type, target:ex.target||'', source:ex.source||'', correct:ex.correct||'',
-                  choices:ex.choices||[], words:ex.words||[], flaggedAt:new Date().toISOString() };
-    APP.flagged[k]=entry;
-    saveFlagged();
-    pushFlagToServer(k, entry);
+function _closeEditorsOnNav(targetId){
+  // Editors live on specific screens; navigating away (to a different lessonset/
+  // chapter or any other screen) via the nav buttons should close them. Silent:
+  // no _checked stamp / buildPath churn, since the screen is changing anyway.
+  if(targetId!=='lesson-set'){
+    const el=document.getElementById('lesson-editor');
+    if(el && el.classList.contains('open')){ el.classList.remove('open'); el.innerHTML=''; delete APP._ehSessionEdits; }
   }
+  if(targetId!=='storyline-screen'){ try{ closeStorylineEditInScreen(); }catch(_){} }
 }
-function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+function show(id){ _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
 // Returning to the main form: restore the form's own language selection into the
 // render context (a viewed story may have temporarily overridden APP.srcLang). The
 // main selectors/library filter were never mutated while viewing, so only the context
@@ -1875,9 +1936,9 @@ function renderAehDiffPanel(d, editedStory) {
       // Find index in full sentences array so we can write reason back
       const si = (sentences||[]).indexOf(s);
       const reasonInput = isLive ? '' :
-        `<input value="${escHtml(s.reason||'')}" placeholder="${t('ex.error_hunt.reason_placeholder')}"
+        `<input value="${escAttr(s.reason||'')}" placeholder="${t('ex.error_hunt.reason_placeholder')}"
           style="margin-top:5px;width:100%;font-size:11px;border:1px solid var(--gray-mid);border-radius:4px;padding:2px 6px;font-family:Nunito,sans-serif;box-sizing:border-box;background:var(--white)"
-          data-ai="${escHtml(s.ai||'')}" data-corrected="${escHtml(s.corrected||'')}" oninput="aehSetReason(this,APP.lessonData.lessons.find(l=>l.type==='ai_error_hunt'))">`;
+          data-ai="${escAttr(s.ai||'')}" data-corrected="${escAttr(s.corrected||'')}" oninput="aehSetReason(this,APP.lessonData.lessons.find(l=>l.type==='ai_error_hunt'))">`;
       return `<div style="margin-bottom:8px;padding:6px 8px;background:var(--gray-light);border-radius:5px">
         <div style="font-family:monospace;font-size:12px;line-height:1.6">${diffHtml}</div>
         ${reasonInput}
@@ -1917,6 +1978,7 @@ function goLandingClean(){ history.replaceState(null,'','#'); APP.ttsLang=null; 
 let _pdfChunks = [];   // { text, wordCount, title, status }
 let _pdfRawText = '';  // full extracted document text, kept so the slider can re-split
 let _pdfPages = null;  // array of per-page text (PDF only) for per-page splitting
+let _uploadFileName = ''; // original uploaded filename, stored on the storyline
 let _uploadMode = false; // a document has been uploaded and split into chapters
 let _splitOpen = -1;   // chunk index whose manual break-editor is open (item 11)
 let _chunksDirty = false; // user manually split/merged/deleted chunks → don't auto-resplit
@@ -1937,6 +1999,7 @@ function _setPasteVisible(v){
 function _clearUpload(){
   if(_pdfBookId) pdfCancelBook();
   _uploadMode=false; _pdfRawText=''; _pdfPages=null; _pdfChunks=[]; _splitOpen=-1; _chunksDirty=false;
+  _uploadFileName='';
   _pdfSelMode=false; _pdfSelections=[];
   const selPanel=document.getElementById('pdf-sel-panel'); if(selPanel) selPanel.style.display='none';
   const selOpenBtn=document.getElementById('pdf-sel-open-btn'); if(selOpenBtn) selOpenBtn.style.display='none';
@@ -1972,7 +2035,7 @@ function _resplitUpload(){
   _splitOpen=-1; _chunksDirty=false;
   const perPage = document.getElementById('split-page-cb')?.checked && Array.isArray(_pdfPages) && _pdfPages.length>1;
   if(perPage){
-    const wc = s => s.split(/\s+/).filter(Boolean).length;
+    const wc = wordCount;
     _pdfChunks = _pdfPages.map((p,i)=>({ text:p.trim(), wordCount:wc(p), title:_autoTitle(p,i), status:'pending' }))
       .filter(c => c.wordCount>0);
   } else {
@@ -1997,6 +2060,7 @@ async function onUploadFileChosen(input){
     else { text = _cleanPlainText(await file.text()); }   // txt/md/markdown/text
     if(!text || text.trim().length < 20){ status.textContent = t('pdf.no_text'); return; }
     _pdfRawText = text; _pdfPages = pages; _uploadMode = true; _chunksDirty = false;
+    _uploadFileName = file.name || '';   // preserve original case/extension for storyline provenance
     // Per-page splitting is only offered when the source has page boundaries.
     const spRow = document.getElementById('split-page-row');
     const hasPages = Array.isArray(pages) && pages.length > 1;
@@ -2115,7 +2179,7 @@ function _renderPdfChunks() {
       : '';
     return `<div class="pdf-chunk" id="pdf-chunk-${i}">
       <span class="pdf-chunk-num">${icon} ${i+1}</span>
-      <span class="pdf-chunk-text" title="${escHtml(c.text.slice(0,200))}" onclick="pdfToggleChunk(${i},this)">${escHtml(c.title)}</span>
+      <span class="pdf-chunk-text" title="${escAttr(c.text.slice(0,200))}" onclick="pdfToggleChunk(${i},this)">${escHtml(c.title)}</span>
       <span class="pdf-chunk-wc">${c.wordCount}w</span>
       ${canSplit?`<button type="button" onclick="pdfOpenSplit(${i})" title="${t('pdf.split_title')}" style="font-size:10px;border:none;background:none;cursor:pointer;padding:0 2px">✂</button>`:''}
       <button type="button" onclick="pdfMergeDown(${i})" title="Merge ↓" style="font-size:10px;border:none;background:none;cursor:pointer;padding:0 2px" ${i===_pdfChunks.length-1?'disabled':''}>⬇</button>
@@ -2127,7 +2191,7 @@ function _renderPdfChunks() {
   const arcRow = document.getElementById('pdf-arc-row');
   const arcLbl = document.getElementById('pdf-arc-lbl');
   if (arcRow) arcRow.style.display = (genBtn && genBtn.style.display === '') ? '' : 'none';
-  if (arcLbl) arcLbl.textContent = t('form.pdf_arc');
+  if (arcLbl) arcLbl.textContent = t('form.arc_lbl');
   const spLbl = document.getElementById('split-page-lbl'); if(spLbl) spLbl.textContent = t('form.split_per_page');
   const selOpen = document.getElementById('pdf-sel-open-btn');
   if (selOpen) {
@@ -2145,7 +2209,7 @@ function pdfDoSplit(i, pi){
   const paras = (c.text||'').split(/\n\n+/).map(p=>p.trim()).filter(Boolean);
   if(pi<=0 || pi>=paras.length) return;
   _chunksDirty = true;
-  const wc = s => s.split(/\s+/).filter(Boolean).length;
+  const wc = wordCount;
   const a = paras.slice(0,pi).join('\n\n'), b = paras.slice(pi).join('\n\n');
   _pdfChunks.splice(i, 1,
     { text:a, wordCount:wc(a), title:c.title, status:'pending' },
@@ -2204,7 +2268,7 @@ function _normalizeSelections(sels) {
   return out;
 }
 function _selectionsToChunks(raw, sels) {
-  const wc = s => s.split(/\s+/).filter(Boolean).length;
+  const wc = wordCount;
   return _normalizeSelections(sels).map((s, i) => {
     const text = raw.slice(s.start, s.end).trim();
     return { text, wordCount: wc(text), title: _autoTitle(text, i), status: 'pending' };
@@ -2242,7 +2306,7 @@ function _renderSelList() {
   const apply = document.getElementById('pdf-sel-apply');
   if (apply) { apply.disabled = !_pdfSelections.length; apply.textContent = t('pdf.sel_apply', { n: _pdfSelections.length }); }
   if (!el) return;
-  const wc = s => s.split(/\s+/).filter(Boolean).length;
+  const wc = wordCount;
   if (!_pdfSelections.length) { el.innerHTML = `<div class="pdf-sel-empty">${escHtml(t('pdf.sel_empty'))}</div>`; return; }
   el.innerHTML = _pdfSelections.map((s, i) => {
     const txt = _pdfRawText.slice(s.start, s.end).trim().replace(/\s+/g, ' ');
@@ -2325,6 +2389,7 @@ async function pdfGenerateAll() {
     lessonFormat: APP.lessonFormat || 'standard',
     continuedFrom: document.getElementById('continue-select')?.value || null,
     storyStyle: APP.storyStyle && APP.storyStyle !== 'creative' ? APP.storyStyle : null,
+    sourceFile: _uploadFileName || null,
     chunks: _pdfChunks.map(c => ({ title: c.title, text: c.text, wordCount: c.wordCount })),
   };
   if (document.getElementById('pdf-arc-cb')?.checked) {
@@ -2430,6 +2495,11 @@ async function _reconnectBookJob() {
 }
 // ══ end PDF ═══════════════════════════════════════════════════════════════════
 
+// @static-exclude-start — build-static.js drops everything from here down to the
+// matching exclude-end marker (server/LLM/network code, incl. init()) from the
+// server-less docs build. Any client helper NEEDED in static must NOT live in this
+// region — put it after the exclude-end marker (function buildPath() onward), or it is
+// silently missing in docs and the static page throws a ReferenceError.
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
   { const _v=document.getElementById('app-version'); if(_v&&APP.info.version) _v.textContent=APP.info.version; }
@@ -2577,9 +2647,8 @@ function savedItemHtml(s, connector, hideStory) {
       <span style="font-size:12px;font-weight:800;color:var(--blue)">➕ ${t('lib.add_lesson')}:</span>
       <select class="addlesson-select" id="sial-fmt-${sid}">
         <option value="standard">📚 ${t('lesson.type.vocab')}</option>
-        <option value="grammar">🏷️ ${t('lesson.type.grammar')}</option>
-        <option value="conjugation">🔤 ${t('lesson.type.conjugation')}</option>
         <option value="synonyms">🔁 ${t('lesson.type.synonyms')}</option>
+        <option value="word_forms">🧩 ${t('lesson.type.word_forms')}</option>
         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
         <option value="math">🔢 ${t('lesson.type.math')}</option>
       </select>
@@ -2731,18 +2800,22 @@ async function loadSavedList(){
     orphans = filtered.filter(l => !inChain.has(l.id));
   }
 
-  // Sort storylines by newest updatedAt among their members
+  // Sort storylines by source (home) language, then newest updatedAt within each.
   const newestOf = chain => chain.reduce((best, id) => {
     const dt = byId[id]?.updatedAt || byId[id]?.generatedAt || '';
     return dt > best ? dt : best;
   }, '');
-  storylines.sort((a, b) => newestOf(b).localeCompare(newestOf(a)));
-  // Sort orphans newest first
-  orphans.sort((a, b) => (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
+  const srcOf = chain => byId[chain[0]]?.srcLang || 'en';
+  storylines.sort((a, b) =>
+    srcOf(a).localeCompare(srcOf(b)) || newestOf(b).localeCompare(newestOf(a)));
+  // Sort orphans by source language, then newest first within each.
+  orphans.sort((a, b) =>
+    (a.srcLang||'en').localeCompare(b.srcLang||'en') ||
+    (b.updatedAt||b.generatedAt||'').localeCompare(a.updatedAt||a.generatedAt||''));
 
-  // When showing all languages, group by language with flag headers
-  // Collect language order from filtered list (preserves newest-first within each lang)
-  const langOrder = [...new Set(filtered.map(l => l.lang || 'it'))];
+  // When showing all languages, group by SOURCE (home) language with flag headers.
+  // Collect source-language order from the filtered list.
+  const langOrder = [...new Set(filtered.map(l => l.srcLang || 'en'))];
 
   let html = '';
 
@@ -2753,12 +2826,12 @@ async function loadSavedList(){
     ? Object.fromEntries(_slArr.map(sl => [sl.id, sl]))
     : (APP.storylines || {});
   if (showAllLangs) {
-    // Group storylines by language
+    // Group storylines by source (home) language
     let lastLang = null;
     for (const chain of storylines) {
-      const chainLang = byId[chain[0]]?.lang || 'it';
+      const chainLang = byId[chain[0]]?.srcLang || 'en';
       if (chainLang !== lastLang) {
-        const L = LANGS[chainLang] || LANGS.it;
+        const L = LANGS[chainLang] || LANGS.en;
         html += `<div class="orphans-hdr">${L.flag} ${L.name}</div>`;
         lastLang = chainLang;
       }
@@ -2845,12 +2918,12 @@ async function loadSavedList(){
   // Render orphans
   if (orphans.length) {
     if (showAllLangs) {
-      // Group orphans by language with flag headers
+      // Group orphans by source (home) language with flag headers
       let lastLang = null;
       for (const s of orphans) {
-        const sLang = s.lang || 'it';
+        const sLang = s.srcLang || 'en';
         if (sLang !== lastLang) {
-          const L = LANGS[sLang] || LANGS.it;
+          const L = LANGS[sLang] || LANGS.en;
           html += `<div class="orphans-hdr">${L.flag} ${L.name}</div>`;
           lastLang = sLang;
         }
@@ -2881,13 +2954,19 @@ function repopulateContinueSelect(){
   if(!contSel) return;
   const showAll=document.getElementById('cont-all-langs')?.checked;
   const curLang=APP.lang||'it';
+  const curSrc=APP.srcLang||'en';
   const saved=APP.savedList||[];
-  const filtered=showAll ? saved : saved.filter(s=>(s.lang||'it')===curLang);
+  // Apply BOTH the current target and source language filters, unless "show other
+  // languages" is ticked.
+  const filtered=showAll ? saved
+    : saved.filter(s=>(s.lang||'it')===curLang && (s.srcLang||'en')===curSrc);
   const prev=contSel.value;
   contSel.innerHTML='<option value="">\u2014 new story \u2014</option>'+
     filtered.map(s=>{
       const sL=LANGS[s.lang||'it']||LANGS.it;
-      const langTag=showAll&&(s.lang||'it')!==curLang?' ['+sL.name+']':'';
+      const sS=LANGS[s.srcLang||'en']||LANGS.en;
+      const differs=(s.lang||'it')!==curLang || (s.srcLang||'en')!==curSrc;
+      const langTag=showAll&&differs?' ['+sS.flag+'\u2192'+sL.flag+']':'';
       return '<option value="'+(s.id||s.topic.replace(/"/g,'&quot;'))+'">'+sL.flag+' '+s.topic+langTag+'</option>';
     }).join('');
   if(prev && [...contSel.options].some(o=>o.value===prev)) contSel.value=prev;
@@ -3200,6 +3279,9 @@ async function _pollGenBook(bookId, total){
   await loadSavedList();
 }
 
+// @static-exclude-end — static build resumes here. The client engine below
+// (buildPath, play UI, lesson editor, renderers, exercise builders) IS included in
+// docs; define any static-reachable client helper at/after this point.
 // ── home path ──
 function buildPath(){
   if(!APP.lessonData)return;
@@ -3294,22 +3376,16 @@ function buildPath(){
     contNav.className='cont-nav';
     document.getElementById('ls-hdr').insertAdjacentElement('afterend',contNav);
   }
-  const continuedBy=(APP.savedList||[]).filter(s=> s.continuedFromId ? s.continuedFromId===d.id : s.continuedFrom===d.topic);
+  const { prev: navPrev, nexts: navNexts } = _chapterNeighbors(d);
   const fromLinks=[];
   const byLinks=[];
-  if(d.continuedFromId || d.continuedFrom){
-    // Resolve the parent's CURRENT name from its id (survives parent renames),
-    // falling back to the stored continuedFrom name. Navigate by id.
-    const parent=d.continuedFromId ? (APP.savedList||[]).find(s=>s.id===d.continuedFromId) : null;
-    const parentRef=d.continuedFromId || encTopic(d.continuedFrom);
-    const parentName=parent?.topic || d.continuedFrom || '…';
-    fromLinks.push(`<span class="cont-link cont-from" onclick="loadSaved('${parentRef}')">← ${parentName}</span>`);
+  if(navPrev){
+    // Navigate by id (collision-safe); show the parent's current name.
+    fromLinks.push(`<span class="cont-link cont-from" onclick="loadSaved('${navPrev.id||encTopic(navPrev.topic)}')">← ${escHtml(navPrev.topic||'…')}</span>`);
   }
-  if(continuedBy.length){
-    continuedBy.forEach(s=>{
-      byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${s.id||encTopic(s.topic)}')">${s.topic} →</span>`);
-    });
-  }
+  navNexts.forEach(s=>{
+    byLinks.push(`<span class="cont-link cont-by" onclick="loadSaved('${s.id||encTopic(s.topic)}')">${escHtml(s.topic)} →</span>`);
+  });
   if(fromLinks.length||byLinks.length){
     contNav.innerHTML=
       `<div class="cont-col cont-col-from">${fromLinks.join('')}</div>`+
@@ -3329,7 +3405,7 @@ function buildPath(){
   const matchedTitles=[];
   // Resolve a lesson's parent by id first (continuedFromId), then by name (legacy),
   // with a same-language guard so same-named chapters in other languages don't link.
-  const _slResolveParent=l=>{ if(!l)return null; const p=l.continuedFromId?_slById[l.continuedFromId]:(l.continuedFrom?_slByTopicMap[l.continuedFrom]:null); if(!p)return null; if((p.lang||'')!==(l.lang||'')||(p.srcLang||'')!==(l.srcLang||''))return null; return p; };
+  const _slResolveParent = makeParentResolver(_slById, _slByTopicMap);
   const _slChildMap={};
   _slSaved.forEach(l=>{ const p=_slResolveParent(l); if(p)(_slChildMap[p.topic]=_slChildMap[p.topic]||[]).push(l.topic); });
   const _slHasParent=new Set(_slSaved.filter(l=>_slResolveParent(l)).map(l=>l.topic));
@@ -3454,26 +3530,26 @@ function buildPath(){
       ...(L.conjugations||[]).flatMap(c=>(c.forms||[]).map(f=>(f.form||'').slice(0,40).replace(/\s+/g,'_'))),
     ]);
     // QC flags (item.qc) and manual user flags (item.userFlag) both count toward the badge.
-    const lessonFlagCount=[...(L.vocab||[]),...(L.sentences||[])].filter(x=>x&&(x.qc||x.userFlag)).length;
-    const hasFlags=lessonFlagCount>0&&APP.info.canGenerate;
+    const lessonFlagCount=[...(L.vocab||[]),...(L.sentences||[]),...(L.items||[]),...(L.words||[])].filter(x=>x&&(x.qc||x.userFlag)).length + (Array.isArray(L._miscFlags)?L._miscFlags.length:0);
+    const hasFlags=lessonFlagCount>0&&_canEdit();
     const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT()[diff]||''}</span>`:'';
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
         <div style="display:flex;align-items:center;gap:6px">
-          <div class="node-title" style="flex:1">${(()=>{const em={'grammar':'🏷️','conjugation':'🔤','error_hunt':'🔍','ai_error_hunt':'🔎','math':'🔢','synonyms':'🔁'};const tk={'grammar':'lesson.type.grammar','conjugation':'lesson.type.conjugation','error_hunt':'lesson.type.error_hunt','ai_error_hunt':'lesson.type.ai_error_hunt','math':'lesson.type.math','synonyms':'lesson.type.synonyms'};const lbl=L.type==='ai_error_hunt'?t('lesson.type.ai_error_hunt'):(tk[L.type]?t(tk[L.type]):t('lesson.type.vocab'));return (em[L.type]||'📚')+' '+lbl;})()}</div>
+          <div class="node-title" style="flex:1">${lessonTypeEmoji(L.type) + ' ' + lessonTypeLabel(L.type)}</div>
           ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:20px">🔒</span>':''}
         </div>
-        <div class="node-desc">${(()=>{const dk={'grammar':'lesson.type.desc.grammar','conjugation':'lesson.type.desc.conjugation','error_hunt':'lesson.type.desc.error_hunt','ai_error_hunt':'lesson.type.desc.ai_error_hunt','math':'lesson.type.desc.math','standard':'lesson.type.desc.vocab','all_types':'lesson.type.desc.vocab'};const k=dk[L.type]||'lesson.type.desc.vocab';const ui=t(k);return ui&&ui!==k?ui:L.desc;})()}</div>
+        <div class="node-desc">${lessonSubtitle(L, diff)}</div>
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
         <div class="fix-status" id="fix-status-${L.id}"></div>
-        ${APP.info.canGenerate&&L.id?`<div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap" onclick="event.stopPropagation()">
-          <button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('lesson.edit_lesson')}" onclick="openLessonEditor(${i})">✏️${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style=\\"color:var(--green);font-size:14px\\" title=\\"✓ '+L._checked.slice(0,10)+'\\">✓</span>':'<span style=\\"color:var(--green);font-size:14px\\" title=\\"Edited\\">✓</span>'):''}</button>
-          ${L.type==='ai_error_hunt'
-            ? `<button class="fix-btn" style="font-size:12px;padding:2px 7px;color:${L._hidden?'var(--blue-dark)':'var(--gray-dark)'}" title="${L._hidden?'Show lesson':'Hide lesson'}" onclick="toggleHideLessonNode(${i})">${L._hidden?'👁':'🫥'}</button>`
+        ${_canEdit()&&L.id?`<div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap" onclick="event.stopPropagation()">
+          <button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('lesson.edit_lesson')}" onclick="openLessonEditor(${i})">✏️${lessonFlagCount>0?'<span style="color:var(--red);font-weight:800;font-size:12px;margin-left:1px" title="'+lessonFlagCount+' flagged (QC + user)">'+lessonFlagCount+'</span>':''}${L._checked||[...(L.vocab||[]),(L.grammar||[]),(L.sentences||[])].some(x=>x._manualEdits?.length)?(L._checked?'<span style="color:var(--green);font-size:14px" title="✓ '+L._checked.slice(0,10)+'">✓</span>':'<span style="color:var(--green);font-size:14px" title="Edited">✓</span>'):''}</button>
+          <button class="fix-btn" style="font-size:12px;padding:2px 7px;color:${L._hidden?'var(--blue-dark)':'var(--gray-dark)'}" title="${L._hidden?'Show lesson':'Hide lesson'}" onclick="toggleHideLessonNode(${i})">${L._hidden?'👁':'🫥'}</button>
+          ${L.type==='ai_error_hunt' ? ''
             : `<button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="deleteLessonNode(${i})">🗑</button>`}
           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move up" onclick="moveLessonNode(${i},-1)" ${i===0?'disabled':''}>↑</button>
           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move down" onclick="moveLessonNode(${i},1)" ${i===d.lessons.length-1?'disabled':''}>↓</button>
-          ${(L.vocab||L.sentences)?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('qc.btn.lesson')}" onclick="qcRun({topicId:'${d.id}',lessonIdx:${i}},this)">🔍${lessonFlagCount>0?`<span style="color:var(--red);font-weight:800">${lessonFlagCount}</span>`:''}</button>`:''}
+          ${APP.info.canGenerate&&(L.vocab||L.sentences)?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('qc.btn.lesson')}" onclick="qcRun({topicId:'${d.id}',lessonIdx:${i}},this)">🔍</button>`:''}
         </div>`:''}
       </div>`
     if(!isLocked) node.onclick=()=>startLesson(i);
@@ -3490,7 +3566,7 @@ function buildPath(){
       const _sid = Math.abs(d.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0)).toString(36);
       const _diff = d.difficulty || 2;
       const _slen = d.storyLen || 300;
-      const _contBtn=APP.info.canGenerate?`<button class="flag-btn" style="background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a" title="${t('lesson.continue_title')}" onclick="continueFromLesson('${d.topic.replace(/'/g,"\'")}',${_diff},${_slen})">↪ ${t('lesson.btn_continue_story')}</button>`:'';
+      const _contBtn=APP.info.canGenerate?`<button class="flag-btn" style="background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a" title="${t('lesson.continue_title')}" onclick="continueFromLesson('${d.topic.replace(/'/g,"\'")}',${_diff},${_slen})">↪ ↪</button>`:'';
       const _flagBtn=``; // legacy story flag retired from the UI
       _actRow.innerHTML =
         _contBtn
@@ -3518,6 +3594,37 @@ function buildPath(){
     if(stripLbl) stripLbl.textContent=totalFlagged===1?t('lesson.flagged_across',{n:totalFlagged}):t('lesson.flagged_across_plural',{n:totalFlagged});
   }
 }
+// Resolve the previous/next chapter for the lessonset nav. The authoritative source is
+// the storyline's ordered chapter ids (collision-safe, by id); the continuedFromId /
+// continuedFrom chain is only a fallback for chapters not in any storyline. A storyline
+// may be intentionally mixed-language, so navigation follows its order regardless.
+// NOTE: kept here (after buildPath) so it lands in the static build's engine slice.
+function _chapterNeighbors(d){
+  const saved = APP.savedList || [];
+  const byId = Object.fromEntries(saved.filter(l=>l.id).map(l=>[l.id,l]));
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  for(const sl of slArr){
+    const ids = sl.chapters || [];
+    const idx = d.id ? ids.indexOf(d.id) : -1;
+    if(idx >= 0){
+      const prev = idx>0 ? byId[ids[idx-1]] : null;
+      const next = idx<ids.length-1 ? byId[ids[idx+1]] : null;
+      return { prev: prev||null, nexts: next?[next]:[] };
+    }
+  }
+  const prev = d.continuedFromId
+    ? (byId[d.continuedFromId] || null)
+    : (d.continuedFrom ? (saved.find(s=>s.topic===d.continuedFrom) || null) : null);
+  const nexts = saved.filter(s=> s.continuedFromId ? s.continuedFromId===d.id : (!s.continuedFromId && s.continuedFrom===d.topic));
+  return { prev, nexts };
+}
+
+// Non-LLM editing (item edits, flagging, hide/delete/reorder) is available whenever the
+// LLM backend is present OR teacher mode is on. In the static build canGenerate is false,
+// so this gates editing to teacher mode there; LLM features stay on canGenerate.
+// NOTE: kept here (after buildPath) so it lands in the static build's engine slice.
+function _canEdit(){ return !!(APP.info?.canGenerate || APP._teacherMode); }
+
 function startNextLesson(){
   if(!APP.lessonData)return;
   const d=APP.lessonData, done=APP.progress.completed[d.topic]||{};
@@ -3954,6 +4061,13 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   if (summaryBtn) summaryBtn.style.display = APP.info.canGenerate ? '' : 'none';
   const delBtn = document.getElementById('sl-screen-del-btn');
   if (delBtn) delBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  // Bottom action row (continue / download / clear / delete / re-create all).
+  const bottomRow = document.getElementById('sl-bottom-row');
+  if (bottomRow) bottomRow.style.display = 'flex';
+  const recreateBtn = document.getElementById('sl-bottom-recreate');
+  if (recreateBtn) recreateBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  const slContinueBtn = document.getElementById('sl-bottom-continue');
+  if (slContinueBtn) slContinueBtn.style.display = APP.info.canGenerate ? '' : 'none';
   APP._slScreen.slMeta = slMeta;
   renderSlTagsRow(slMeta);
 
@@ -4128,13 +4242,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // (by continuedFromId, same-language, name only as legacy fallback) — is in this chain.
   // Must match _succMap exactly, or a chapter chained by id (with no continuedFrom name)
   // would be treated as a root AND rendered again as a child → duplicate cards.
-  const _resolveParent = s3 => {
-    if (!s3) return null;
-    const p = s3.continuedFromId ? _byIdAll[s3.continuedFromId] : (s3.continuedFrom ? byTopic[s3.continuedFrom] : null);
-    if (!p) return null;
-    if ((p.lang||'') !== (s3.lang||'') || (p.srcLang||'') !== (s3.srcLang||'')) return null;
-    return p;
-  };
+  const _resolveParent = makeParentResolver(_byIdAll, byTopic);
   const _hasPred = new Set(topics.filter(t => {
     const p = _resolveParent(byTopic[t]);
     return p && _topicSet3.has(p.topic);
@@ -4240,7 +4348,7 @@ function _tryOpenStorylineByChainId(chainId) {
   // Legacy fallback: rebuild chains from continuedFrom
   const byTopic = Object.fromEntries((APP.savedList||[]).map(s=>[s.topic,s]));
   // Resolve parent by id first (continuedFromId), then by name (legacy), same-language guarded.
-  const _resolveParentB = s => { if(!s) return null; const p = s.continuedFromId ? byId[s.continuedFromId] : (s.continuedFrom ? byTopic[s.continuedFrom] : null); if(!p) return null; if((p.lang||'')!==(s.lang||'')||(p.srcLang||'')!==(s.srcLang||'')) return null; return p; };
+  const _resolveParentB = makeParentResolver(byId, byTopic);
   const allTargets = new Set();
   (APP.savedList||[]).forEach(s => { const p = _resolveParentB(s); if (p) allTargets.add(p.topic); });
   const tails = (APP.savedList||[]).filter(s => !allTargets.has(s.topic));
@@ -4268,6 +4376,86 @@ function _tryOpenStorylineByChainId(chainId) {
 
 
 
+
+// ── Storyline bottom-row actions ─────────────────────────────────────────────
+function _slBottomChapters(){
+  const sl = APP._slScreen; if(!sl) return { ids:[], topics:[], last:null };
+  const ids = (sl.chapterIds||[]).slice();
+  const byId = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+  const topics = ids.map(id=>byId[id]?.topic).filter(Boolean);
+  const last = ids.length ? byId[ids[ids.length-1]] : null;
+  return { ids, topics, last, byId };
+}
+function slBottomContinue(){
+  const { last } = _slBottomChapters();
+  if(!last){ return; }
+  continueFromLesson(last.id||last.topic, last.difficulty||2, last.storyLen||300);
+}
+function slBottomDownload(ev){
+  const { topics } = _slBottomChapters();
+  if(!topics.length){ return; }
+  openExportMenu(ev, topics);
+}
+function slBottomClearProgress(){
+  const { topics } = _slBottomChapters();
+  if(!topics.length) return;
+  if(!confirm(t('sl.clear_progress_confirm'))) return;
+  topics.forEach(tp => { if(APP.progress?.completed) delete APP.progress.completed[tp]; });
+  saveProg();
+  const sl = APP._slScreen;
+  if(sl) _renderStorylineScreen(sl.chainId, sl.encodedChain, sl.topics);
+}
+// Small picker for the learning-arc mode, mirroring the arc options offered by
+// pdf/book multi-lesson generation. Resolves to 'vocab' | 'grammar' | null(cancel).
+function _pickArcMode(){
+  return new Promise(resolve=>{
+    const ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:9999';
+    const card=document.createElement('div');
+    card.style.cssText='background:var(--white);color:var(--text);border-radius:14px;padding:20px 20px 14px;max-width:360px;width:90%;box-shadow:0 8px 30px rgba(0,0,0,.3);font-family:Nunito,sans-serif;position:relative';
+    const close=document.createElement('button');
+    close.textContent='✕'; close.title='Cancel';
+    close.style.cssText='position:absolute;top:8px;right:10px;border:none;background:none;font-size:16px;cursor:pointer;color:var(--gray-dark)';
+    const done=v=>{ if(ov.parentNode) document.body.removeChild(ov); resolve(v); };
+    close.onclick=()=>done(null);
+    card.innerHTML=`<div style="font-weight:800;font-size:16px;margin-bottom:3px">🔁 ${t('sl.recreate_btn')}</div>
+      <div style="font-size:13px;opacity:.8;margin:6px 0 12px">${t('form.arc_lbl')}</div>`;
+    const mk=(label,val,primary)=>{ const b=document.createElement('button');
+      b.textContent=label;
+      b.style.cssText=`display:block;width:100%;margin:6px 0;padding:10px 12px;border-radius:10px;border:2px solid ${primary?'var(--green)':'var(--gray-mid)'};background:var(--white);color:var(--text);font-weight:800;font-family:Nunito,sans-serif;cursor:pointer;text-align:left`;
+      b.onclick=()=>done(val); return b; };
+    card.appendChild(mk(t('form.arc_mode_vocab'), 'vocab', true));
+    card.appendChild(mk(t('form.arc_mode_grammar'), 'grammar', false));
+    card.appendChild(close);
+    ov.appendChild(card);
+    ov.onclick=e=>{ if(e.target===ov) done(null); };
+    document.body.appendChild(ov);
+  });
+}
+
+async function recreateStorylineLessons(ev){
+  const sl = APP._slScreen; if(!sl) return;
+  const { ids } = _slBottomChapters();
+  const startId = ids[0];
+  if(!startId){ return; }
+  const arcMode = await _pickArcMode();
+  if(!arcMode) return;
+  const btn = document.getElementById('sl-bottom-recreate');
+  if(btn){ btn.disabled = true; btn.textContent = '⏳'; }
+  try {
+    const r = await fetch('/api/storyline/recreate-lessons', { method:'POST',
+      headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id: startId, arcMode }) });
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const { jobId } = await r.json();
+    await pollJob(jobId, step => { if(btn) btn.title = step; });
+    await loadSavedList();
+    if(APP._slScreen) _renderStorylineScreen(APP._slScreen.chainId, APP._slScreen.encodedChain, APP._slScreen.topics);
+  } catch(e){
+    alert((t('sl.recreate_failed')) + ': ' + e.message);
+  } finally {
+    if(btn){ btn.disabled = false; btn.textContent = '🔁'; btn.title = t('sl.recreate_btn'); }
+  }
+}
 
 async function deleteCurrentStoryline() {
   const sl = APP._slScreen;
@@ -4307,7 +4495,7 @@ async function deleteStoryline(encodedChain) {
   const toKeep     = chain.filter(t =>  inOtherChain.has(t));
   // Also check continuedFrom links outside this chain (legacy/id), same-language guarded.
   const _delByTopic = Object.fromEntries((APP.savedList||[]).map(l=>[l.topic,l]));
-  const _delResolveParent = s => { if(!s) return null; const p = s.continuedFromId ? byId[s.continuedFromId] : (s.continuedFrom ? _delByTopic[s.continuedFrom] : null); if(!p) return null; if((p.lang||'')!==(s.lang||'')||(p.srcLang||'')!==(s.srcLang||'')) return null; return p; };
+  const _delResolveParent = makeParentResolver(byId, _delByTopic);
   (APP.savedList||[]).forEach(s => {
     if (thisChainSet.has(s.topic)) return;
     const p = _delResolveParent(s);
@@ -4616,7 +4804,7 @@ function ehRenderErrors(edits, li) {
       <span style="color:var(--red);text-decoration:line-through;font-weight:700">${escHtml(e.find)||'—'}</span>
       <span style="color:var(--gray-dark)">→</span>
       <span style="color:var(--green);font-weight:700">${escHtml(e.replace)||'—'}</span>
-      <input value="${escHtml(e.reason)}" placeholder="reason (optional)"
+      <input value="${escAttr(e.reason)}" placeholder="reason (optional)"
         style="flex:1;min-width:80px;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:5px;padding:3px 7px;font-family:Nunito,sans-serif"
         oninput="APP.lessonData.lessons[${li}].edits[${ei}].reason=this.value">
     </div>`).join('');
@@ -4791,11 +4979,54 @@ function mathDeleteExercise(li, ei) {
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
 
+// Add an empty choice row to a word_forms item.
+function wfEditorAddChoice(li, fi) {
+  const ls = APP.lessonData?.lessons?.[li];
+  const it = ls && ls.items && ls.items[fi];
+  if (!it) return;
+  _syncEditorFromDOM(li);
+  if (!Array.isArray(it.choices)) it.choices = [];
+  it.choices.push('');
+  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+}
+// Delete one choice from a word_forms item, keeping correctIndex pointed at the
+// same correct answer (shifting it when an earlier choice is removed).
+function wfEditorDeleteChoice(li, fi, ci) {
+  const ls = APP.lessonData?.lessons?.[li];
+  const it = ls && ls.items && ls.items[fi];
+  if (!it || !Array.isArray(it.choices) || ci < 0 || ci >= it.choices.length) return;
+  _syncEditorFromDOM(li);
+  it.choices.splice(ci, 1);
+  if (ci === it.correctIndex) it.correctIndex = 0;              // removed the correct one → default to first
+  else if (ci < it.correctIndex) it.correctIndex = Math.max(0, it.correctIndex - 1);
+  if (it.correctIndex >= it.choices.length) it.correctIndex = Math.max(0, it.choices.length - 1);
+  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+}
+
 function synEditorDelete(li, wi, cat, ri) {
   const ls = APP.lessonData?.lessons?.[li];
   if (!ls || !ls.words?.[wi]?.[cat]) return;
   _syncEditorFromDOM(li);              // preserve in-progress edits (incl. title/icon) before re-render
   ls.words[wi][cat].splice(ri, 1);
+  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+}
+
+// Delete a whole synonym entry (the base word and all its related words).
+function synEditorDeleteEntry(li, wi) {
+  const ls = APP.lessonData?.lessons?.[li];
+  if (!ls || !Array.isArray(ls.words) || !ls.words[wi]) return;
+  _syncEditorFromDOM(li);
+  ls.words.splice(wi, 1);
+  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+}
+
+// Add an empty synonym/antonym/homophone row to an entry.
+function synEditorAddRow(li, wi, cat) {
+  const ls = APP.lessonData?.lessons?.[li];
+  if (!ls || !ls.words?.[wi]) return;
+  _syncEditorFromDOM(li);
+  if (!Array.isArray(ls.words[wi][cat])) ls.words[wi][cat] = [];
+  ls.words[wi][cat].push({ w: '', g: '' });
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
 
@@ -4844,9 +5075,7 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
   const topicSlug = (d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
   const topicId   = d.id || '';
   const isFlagged = (type, target) => false;   // legacy user-flags retired from the UI; QC uses item.qc
-  const typeEmoji = {grammar:'🏷️',conjugation:'🔤',error_hunt:'🔍',ai_error_hunt:'🔎',math:'🔢',synonyms:'🔁'}[ls.type]||'📚';
-  const typeKey   = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math',synonyms:'lesson.type.synonyms'}[ls.type]||'lesson.type.vocab';
-  const label = typeEmoji+' '+t(typeKey);
+  const label = lessonTypeEmoji(ls.type) + ' ' + lessonTypeLabel(ls.type);
   // Header
   let html = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
     <span style="font-size:13px;font-weight:800;color:var(--blue-dark)">${label}</span>
@@ -4855,7 +5084,7 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
         onclick="openIconPicker('lesson-node-icon-picker-${li}','lesson-node-icon-${li}', ic => { APP.lessonData.lessons[${li}]._iconPick=ic; })">${escHtml(ls.icon||'📖')}</span>
     </span>
     <input id="lesson-node-title-input-${li}" class="storyline-edit-input" style="flex:1;min-width:100px;font-size:12px"
-      value="${escHtml(ls.title||'')}" placeholder="Lesson title…">
+      value="${escAttr(ls.title||'')}" placeholder="Lesson title…">
     ${ls.type!=='error_hunt'?`<label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap">
       <input type="checkbox" id="editor-flag-filter" ${flaggedOnly?'checked':''} onchange="renderLessonEditor(this.checked,${li})"> ⚑ only
     </label>`:''}
@@ -4876,11 +5105,11 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
           <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','grammar',${g._i},1)" ${g._i===visItems.length-1?'disabled':''}>↓</button>
           <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','grammar',${g._i})">🗑</button>
         </div>
-        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="target" data-orig="${escHtml(g.target||'')}" value="${escHtml(g.target||'')}"></div>
-        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="source" value="${escHtml(g.source||'')}"></div>
-        <div class="editor-field"><label>Article</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="article" value="${escHtml(g.article||'')}" style="width:60px;flex:none"></div>
-        <div class="editor-field"><label>Gender</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="gender" value="${escHtml(g.gender||'')}" style="width:60px;flex:none"></div>
-        <div class="editor-field"><label>Plural</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="plural" value="${escHtml(g.plural||'')}"></div>
+        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="target" data-orig="${escAttr(g.target||'')}" value="${escAttr(g.target||'')}"></div>
+        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="source" value="${escAttr(g.source||'')}"></div>
+        <div class="editor-field"><label>Article</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="article" value="${escAttr(g.article||'')}" style="width:60px;flex:none"></div>
+        <div class="editor-field"><label>Gender</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="gender" value="${escAttr(g.gender||'')}" style="width:60px;flex:none"></div>
+        <div class="editor-field"><label>Plural</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="plural" value="${escAttr(g.plural||'')}"></div>
       </div>`;
     });
 
@@ -4891,13 +5120,13 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
           <span style="font-size:12px;font-weight:800;color:var(--blue-dark);flex:1">${escHtml(c.infinitive||'')} <span style="color:var(--gray-dark);font-weight:600">${escHtml(c.tense||'')}</span></span>
           <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','conj',${ci})">🗑</button>
         </div>
-        <div class="editor-field"><label>Infinitive</label><input data-li="${li}" data-type="conj-meta" data-ci="${ci}" data-field="infinitive" value="${escHtml(c.infinitive||'')}"></div>
-        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="conj-meta" data-ci="${ci}" data-field="source" value="${escHtml(c.source||'')}"></div>
-        <div class="editor-field"><label>Tense</label><input data-li="${li}" data-type="conj-meta" data-ci="${ci}" data-field="tense" value="${escHtml(c.tense||'')}"></div>
+        <div class="editor-field"><label>Infinitive</label><input data-li="${li}" data-type="conj-meta" data-ci="${ci}" data-field="infinitive" value="${escAttr(c.infinitive||'')}"></div>
+        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="conj-meta" data-ci="${ci}" data-field="source" value="${escAttr(c.source||'')}"></div>
+        <div class="editor-field"><label>Tense</label><input data-li="${li}" data-type="conj-meta" data-ci="${ci}" data-field="tense" value="${escAttr(c.tense||'')}"></div>
         <div style="margin-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px">
           ${(c.forms||[]).map((f,fi) => `<div style="display:flex;gap:4px;align-items:center">
             <span style="font-size:11px;font-weight:800;color:var(--gray-dark);width:28px;flex-shrink:0">${escHtml(f.pronoun||'')}</span>
-            <input data-li="${li}" data-type="conj-form" data-ci="${ci}" data-fi="${fi}" data-field="form" value="${escHtml(f.form||'')}" style="flex:1;font-size:13px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px">
+            <input data-li="${li}" data-type="conj-form" data-ci="${ci}" data-fi="${fi}" data-field="form" value="${escAttr(f.form||'')}" style="flex:1;font-size:13px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px">
           </div>`).join('')}
         </div>
       </div>`;
@@ -4916,9 +5145,9 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
         if(!s.changed) return ''; // show only changed clauses
         return `<div style="padding:8px 0;border-bottom:1px solid var(--gray-mid);font-size:12px">
           <div style="margin-bottom:6px;font-family:monospace;font-size:12px">${s.ai&&s.corrected?aiEhDiffHtml(s.ai,s.corrected):s.ai?`<span style='color:var(--red);text-decoration:line-through'>${escHtml(s.ai)}</span>`:`<span style='color:var(--green)'>${escHtml(s.corrected||'')}</span>`}</div>
-          <input value="${escHtml(s.reason||'')}" placeholder="${t('ex.error_hunt.reason_placeholder')}"
+          <input value="${escAttr(s.reason||'')}" placeholder="${t('ex.error_hunt.reason_placeholder')}"
             style="width:100%;font-size:12px;border:1.5px solid var(--gray-mid);border-radius:5px;padding:3px 7px;font-family:Nunito,sans-serif;box-sizing:border-box"
-            data-li="${li}" data-ai="${escHtml(s.ai||'')}" data-corrected="${escHtml(s.corrected||'')}" oninput="aehSetReason(this,APP.lessonData.lessons[${li}])">
+            data-li="${li}" data-ai="${escAttr(s.ai||'')}" data-corrected="${escAttr(s.corrected||'')}" oninput="aehSetReason(this,APP.lessonData.lessons[${li}])">
         </div>`;
       }).join('')}
     `;
@@ -4975,12 +5204,17 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
     // ── Math lesson editor ──────────────────────────────────────────────────
     const nums = ls.numbers || [];
     const diff = ls.difficulty || 1;
-    html += `
+    // LLM-generated math lessons (LaTeX exercises) aren't procedural — show them
+    // read-only for deletion/flagging, without the number-pool/regenerate controls
+    // (which would overwrite them with procedural exercises).
+    const isLatexLesson = (ls.exercises||[]).some(e => e.type === 'math_latex');
+    if (!isLatexLesson) {
+      html += `
       <div style="margin-bottom:10px">
         <div style="font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:4px">Number pool (space-separated)</div>
         <div style="display:flex;gap:8px;align-items:center">
           <input id="math-numbers-input-${li}" style="flex:1;font-size:15px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:5px 10px"
-            value="${escHtml(nums.join(' '))}" placeholder="e.g. 3 7 12 48 100">
+            value="${escAttr(nums.join(' '))}" placeholder="e.g. 3 7 12 48 100">
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px">
           <span style="font-size:11px;font-weight:800;color:var(--gray-dark)">Ops:</span>
@@ -4994,23 +5228,42 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
           <button class="storyline-hdr-btn" onclick="mathRegenerateExercises(${li})">🔄 Regenerate</button>
         </div>
         <div style="font-size:11px;color:var(--gray-dark);margin-top:4px">Difficulty: ${['','Beginner','Intermediate','Advanced'][diff]||diff}</div>
-      </div>
-      <div style="font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:6px">Exercises (${(ls.exercises||[]).length})</div>`;
+      </div>`;
+    } else {
+      html += `<div style="font-size:11px;color:var(--gray-dark);margin-bottom:8px">🔢 LaTeX (LLM) math lesson — read-only; you can delete or flag exercises.</div>`;
+    }
+    html += `<div style="font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:6px">Exercises (${(ls.exercises||[]).length})</div>`;
     (ls.exercises||[]).forEach((ex,ei) => {
+      const flagBtn = _flagBtnHtml(li, 'math', ei, ex);
+      const flagBox = _flagBoxHtml(li, 'math', ei, ex, false);
       if (ex.type === 'math_order') {
-        html += `<div class="editor-entry" style="font-size:13px">
+        html += `<div class="editor-entry${ex.userFlag?' flagged':''}" style="font-size:13px">
           <span style="font-weight:700;color:var(--blue-dark)">${ei+1}.</span>
           Sort ${ex.direction==='asc'?'↑':'↓'}: [${(ex.numbers||[]).join(', ')}]
           → <span style="color:var(--green-dark)">[${(ex.correct||[]).join(', ')}]</span>
-          <button class="storyline-hdr-btn danger" style="float:right;padding:1px 6px;font-size:11px"
-            onclick="mathDeleteExercise(${li},${ei})">🗑</button></div>`;
+          <span style="float:right;display:flex;gap:4px">${flagBtn}<button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px"
+            onclick="mathDeleteExercise(${li},${ei})">🗑</button></span>${flagBox}</div>`;
       } else if (ex.type === 'math_calc') {
-        html += `<div class="editor-entry" style="font-size:13px">
+        html += `<div class="editor-entry${ex.userFlag?' flagged':''}" style="font-size:13px">
           <span style="font-weight:700;color:var(--blue-dark)">${ei+1}.</span>
           ${ex.a} ${ex.op} ${ex.b} = <span style="color:var(--green-dark)">${ex.correct}</span>
           <span style="font-size:11px;color:var(--gray-dark)"> choices: [${(ex.choices||[]).join(', ')}]</span>
-          <button class="storyline-hdr-btn danger" style="float:right;padding:1px 6px;font-size:11px"
-            onclick="mathDeleteExercise(${li},${ei})">🗑</button></div>`;
+          <span style="float:right;display:flex;gap:4px">${flagBtn}<button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px"
+            onclick="mathDeleteExercise(${li},${ei})">🗑</button></span>${flagBox}</div>`;
+      } else if (ex.type === 'math_latex') {
+        // LLM-generated LaTeX exercise — read-only display, with delete + flag only.
+        const ch = (ex.choices||[]).map(c => c===ex.correct ? `<b style="color:var(--green-dark)">${escHtml(String(c))}</b>` : escHtml(String(c))).join(', ');
+        html += `<div class="editor-entry${ex.userFlag?' flagged':''}" style="font-size:13px">
+          <div style="display:flex;align-items:flex-start;gap:6px">
+            <span style="font-weight:700;color:var(--blue-dark)">${ei+1}.</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-family:monospace;font-size:12px;background:var(--gray-light);border-radius:4px;padding:3px 6px;word-break:break-all">${escHtml(ex.latex||'')}</div>
+              ${ex.question?`<div style="margin-top:3px">${escHtml(ex.question)}</div>`:''}
+              ${ch?`<div style="font-size:11px;color:var(--gray-dark);margin-top:2px">choices: [${ch}]</div>`:`<div style="font-size:11px;color:var(--gray-dark);margin-top:2px">answer: <b style="color:var(--green-dark)">${escHtml(String(ex.correct||''))}</b></div>`}
+            </div>
+            <span style="display:flex;gap:4px">${flagBtn}<button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px"
+              onclick="mathDeleteExercise(${li},${ei})">🗑</button></span>
+          </div>${flagBox}</div>`;
       }
     });
 
@@ -5018,20 +5271,55 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
     const words = ls.words || [];
     if (!words.length) html += `<em style="color:var(--gray-dark);font-size:13px">No words</em>`;
     words.forEach((g, wi) => {
-      html += `<div class="editor-entry" id="ee-${li}-syn-${wi}">
-        <div class="editor-field"><label>Word</label><input data-li="${li}" data-type="syn" data-wi="${wi}" data-field="base" value="${escHtml(g.base||'')}"></div>
-        <div class="editor-field"><label>Gloss</label><input data-li="${li}" data-type="syn" data-wi="${wi}" data-field="gloss" value="${escHtml(g.gloss||'')}"></div>`;
+      html += `<div class="editor-entry${g.userFlag?' flagged':''}" id="ee-${li}-syn-${wi}">
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">
+          ${_flagBtnHtml(li, 'syn', wi, g)}
+          <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px;margin-left:auto" onclick="synEditorDeleteEntry(${li},${wi})" title="Delete this whole word entry">🗑 entry</button>
+        </div>
+        <div class="editor-field"><label>Word</label><input data-li="${li}" data-type="syn" data-wi="${wi}" data-field="base" value="${escAttr(g.base||'')}"></div>
+        <div class="editor-field"><label>Gloss</label><input data-li="${li}" data-type="syn" data-wi="${wi}" data-field="gloss" value="${escAttr(g.gloss||'')}"></div>
+        <div class="editor-field"><label>Sentence</label><input data-li="${li}" data-type="syn" data-wi="${wi}" data-field="sentence" value="${escAttr(g.sentence||'')}" placeholder="context sentence containing the word"></div>`;
       [['synonyms','≈ Synonyms'],['antonyms','↔ Antonyms'],['homophones','🔊 Homophones']].forEach(([cat,lbl]) => {
-        html += `<div style="font-size:11px;font-weight:800;opacity:.6;margin-top:7px">${lbl}</div>`;
+        html += `<div style="display:flex;align-items:center;gap:6px;margin-top:7px">
+          <div style="font-size:11px;font-weight:800;opacity:.6">${lbl}</div>
+          <button class="storyline-hdr-btn" style="padding:0 7px;font-size:13px;line-height:1.4;margin-left:auto" onclick="synEditorAddRow(${li},${wi},'${cat}')" title="Add ${cat.slice(0,-1)}">＋</button>
+        </div>`;
         (g[cat]||[]).forEach((it, ri) => {
           html += `<div style="display:flex;gap:6px;align-items:center;margin-top:3px">
-            <input data-li="${li}" data-type="syn" data-wi="${wi}" data-cat="${cat}" data-ri="${ri}" data-field="w" value="${escHtml(it.w||'')}" placeholder="word">
-            <input data-li="${li}" data-type="syn" data-wi="${wi}" data-cat="${cat}" data-ri="${ri}" data-field="g" value="${escHtml(it.g||'')}" placeholder="gloss" style="opacity:.8">
+            <input data-li="${li}" data-type="syn" data-wi="${wi}" data-cat="${cat}" data-ri="${ri}" data-field="w" value="${escAttr(it.w||'')}" placeholder="word">
+            <input data-li="${li}" data-type="syn" data-wi="${wi}" data-cat="${cat}" data-ri="${ri}" data-field="g" value="${escAttr(it.g||'')}" placeholder="gloss" style="opacity:.8">
             <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="synEditorDelete(${li},${wi},'${cat}',${ri})" title="Remove">✕</button>
           </div>`;
         });
       });
+      html += _flagBoxHtml(li, 'syn', wi, g, false);
       html += `</div>`;
+    });
+
+  } else if (ls.type === 'word_forms') {
+    const items = ls.items || [];
+    if (!items.length) html += `<em style="color:var(--gray-dark);font-size:13px">No items</em>`;
+    items.forEach((it, fi) => {
+      const choices = Array.isArray(it.choices) ? it.choices : [];
+      html += `<div class="editor-entry${it.userFlag?' flagged':''}" id="ee-${li}-wf-${fi}">
+        <div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-bottom:2px">
+          ${_flagBtnHtml(li, 'wf', fi, it)}
+          <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','wf',${fi})">🗑</button>
+        </div>
+        <div class="editor-field"><label>Sentence</label><input data-li="${li}" data-type="wf" data-fi="${fi}" data-field="sentence" value="${escAttr(it.sentence||'')}" placeholder="use ___ for the blank"></div>
+        <div class="editor-field"><label>Translation</label><input data-li="${li}" data-type="wf" data-fi="${fi}" data-field="translation" value="${escAttr(it.translation||'')}"></div>
+        <div class="editor-field"><label>Explanation</label><input data-li="${li}" data-type="wf" data-fi="${fi}" data-field="explanation" value="${escAttr(it.explanation||'')}" placeholder="short reason the correct form fits"></div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:7px">
+          <div style="font-size:11px;font-weight:800;opacity:.6">Choices (● = correct)</div>
+          <button class="storyline-hdr-btn" style="padding:0 7px;font-size:13px;line-height:1.4;margin-left:auto" onclick="wfEditorAddChoice(${li},${fi})" title="Add choice">＋</button>
+        </div>
+        ${choices.map((c, ci) => `<div style="display:flex;gap:6px;align-items:center;margin-top:3px">
+          <input type="radio" name="wf-correct-${li}-${fi}" data-li="${li}" data-type="wf" data-fi="${fi}" data-field="correct" data-ci="${ci}" ${ci===it.correctIndex?'checked':''} title="Mark as correct">
+          <input data-li="${li}" data-type="wf" data-fi="${fi}" data-field="choice" data-ci="${ci}" value="${escAttr(c||'')}" style="flex:1">
+          <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="wfEditorDeleteChoice(${li},${fi},${ci})" title="Remove choice">✕</button>
+        </div>`).join('')}
+        ${_flagBoxHtml(li, 'wf', fi, it, false)}
+      </div>`;
     });
 
   } else {
@@ -5048,22 +5336,15 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       const boxOpen = APP._flagOpen === fkey || !!it.userFlag;
       html += `<div class="editor-entry${flagged?' flagged':''}" id="ee-${li}-${it.type}-${it.i}">
         <div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-bottom:2px">
-          ${it.editedAt?`<span style="margin-right:auto;font-size:10px;font-weight:800;color:var(--gray-dark);opacity:.85" title="${escHtml(it.editedAt)}">✎ ${t('editor.edited')}</span>`:''}
-          <button class="storyline-hdr-btn" style="padding:1px 6px;font-size:11px;color:${it.userFlag?'var(--red)':'inherit'}" title="${t('qc.editor.flag_title')}" onclick="toggleFlagBox('${li}','${it.type}',${it.i})">⚑</button>
+          ${it.editedAt?`<span style="margin-right:auto;font-size:10px;font-weight:800;color:var(--gray-dark);opacity:.85" title="${escAttr(it.editedAt)}">✎ ${t('editor.edited')}</span>`:''}
+          ${_flagBtnHtml(li, it.type, it.i, it)}
           <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','${it.type}',${it.i},-1)" ${it.i===0?'disabled':''}>↑</button>
           <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','${it.type}',${it.i},1)" ${it.i===visItems.length-1?'disabled':''}>↓</button>
           <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','${it.type}',${it.i})">🗑</button>
         </div>
-        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="target" data-orig="${escHtml(it.target||'')}" value="${escHtml(it.target||'')}"></div>
-        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="source" data-orig="${escHtml(it.source||'')}" value="${escHtml(it.source||'')}"></div>
-        ${boxOpen?`<div style="margin-top:4px;background:#eef4ff;border-radius:6px;padding:6px 8px">
-          <div style="font-size:11px;font-weight:800;color:var(--blue-dark);margin-bottom:3px">⚑ ${t('qc.editor.user_flag')}</div>
-          <textarea id="flag-input-${li}-${it.type}-${it.i}" rows="2" placeholder="${t('qc.editor.flag_placeholder')}" style="width:100%;box-sizing:border-box;font-size:12px;border:1px solid var(--gray-mid);border-radius:4px;padding:4px 6px;font-family:Nunito,sans-serif;resize:vertical">${escHtml(it.userFlag?.comment||'')}</textarea>
-          <div style="display:flex;gap:6px;margin-top:4px;justify-content:flex-end">
-            ${it.userFlag?`<button class="storyline-hdr-btn danger" style="font-size:11px" onclick="removeUserFlag('${li}','${it.type}',${it.i})">${t('qc.editor.flag_remove')}</button>`:`<button class="storyline-hdr-btn" style="font-size:11px" onclick="toggleFlagBox('${li}','${it.type}',${it.i})">${t('qc.editor.flag_cancel')}</button>`}
-            <button class="storyline-hdr-btn" style="color:var(--green);font-size:11px" onclick="saveUserFlag('${li}','${it.type}',${it.i})">${t('qc.editor.flag_save')}</button>
-          </div>
-        </div>`:''}
+        <div class="editor-field"><label>Target</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="target" data-orig="${escAttr(it.target||'')}" value="${escAttr(it.target||'')}"></div>
+        <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="source" data-orig="${escAttr(it.source||'')}" value="${escAttr(it.source||'')}"></div>
+        ${_flagBoxHtml(li, it.type, it.i, it, true)}
         ${it.qc?`<div style="display:flex;align-items:center;gap:8px;margin-top:4px;font-size:13px;background:#fff3df;border-radius:6px;padding:5px 8px">
           <span style="font-weight:800;color:#b35900">${t('qc.editor.suggests')} <span style="font-size:11px;opacity:.75">${it.qc.field==='target'?t('qc.editor.in_target'):t('qc.editor.in_source')}</span></span>
           <span style="flex:1;color:var(--text)">${escHtml(it.qc.sug||'')}</span>
@@ -5094,8 +5375,7 @@ async function _qcMutateItem(li, type, fi, apply){
   }
   delete item.qc;
   try{
-    const r = await fetch('/api/lessons/edit', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ id: APP.lessonData.id || undefined, topic: APP.lessonData.topic, lessons: APP.lessonData.lessons }) });
+    const r = await _postLessonEdit(APP.lessonData);
     if(!r.ok) throw new Error((await r.json()).error||'save failed');
     showToast(apply?t('qc.toast.fix_applied'):t('qc.toast.dismissed'));
   }catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
@@ -5108,13 +5388,49 @@ function qcDismiss(li, type, fi){ _qcMutateItem(li, type, +fi, false); }
 // ── Manual user flags (item.userFlag = { comment, at }) ───────────────────
 function _editorItem(li, type, fi){
   const ls = APP.lessonData?.lessons?.[li]; if(!ls) return null;
-  const arr = type==='vocab'?ls.vocab:ls.sentences;
+  const arr = type==='vocab'?ls.vocab : type==='sentence'?ls.sentences : type==='wf'?ls.items : type==='syn'?ls.words : type==='math'?ls.exercises : null;
   return (arr && arr[fi]) || null;
+}
+// Flag ⚑ button for an editor item header (works for any type that has .userFlag).
+function _flagBtnHtml(li, type, fi, item){
+  return `<button class="storyline-hdr-btn" style="padding:1px 6px;font-size:11px;color:${item.userFlag?'var(--red)':'inherit'}" title="${t('qc.editor.flag_title')}" onclick="toggleFlagBox('${li}','${type}',${fi})">⚑</button>`;
+}
+// Flag comment/correct box + the "you suggested" row. `applyable` controls whether the
+// correct-version can be auto-applied to .target (only meaningful for vocab/sentence).
+function _flagBoxHtml(li, type, fi, item, applyable){
+  const fkey = `${li}:${type}:${fi}`;
+  const boxOpen = APP._flagOpen === fkey || !!item.userFlag;
+  let html = '';
+  if(boxOpen){
+    html += `<div style="margin-top:4px;background:#eef4ff;border-radius:6px;padding:6px 8px">
+      <div style="font-size:11px;font-weight:800;color:var(--blue-dark);margin-bottom:3px">⚑ ${t('qc.editor.user_flag')}</div>
+      <textarea id="flag-input-${li}-${type}-${fi}" rows="2" placeholder="${t('qc.editor.flag_placeholder')}" style="width:100%;box-sizing:border-box;font-size:12px;border:1px solid var(--gray-mid);border-radius:4px;padding:4px 6px;font-family:Nunito,sans-serif;resize:vertical">${escHtml(item.userFlag?.comment||'')}</textarea>
+      <input id="flag-correct-${li}-${type}-${fi}" placeholder="${t('qc.editor.flag_correct_placeholder')}" value="${escAttr(item.userFlag?.correct||'')}" style="width:100%;box-sizing:border-box;margin-top:4px;font-size:12px;border:1px solid var(--gray-mid);border-radius:4px;padding:4px 6px;font-family:Nunito,sans-serif">
+      <div style="display:flex;gap:6px;margin-top:4px;justify-content:flex-end">
+        ${item.userFlag?`<button class="storyline-hdr-btn danger" style="font-size:11px" onclick="removeUserFlag('${li}','${type}',${fi})">${t('qc.editor.flag_remove')}</button>`:`<button class="storyline-hdr-btn" style="font-size:11px" onclick="toggleFlagBox('${li}','${type}',${fi})">${t('qc.editor.flag_cancel')}</button>`}
+        <button class="storyline-hdr-btn" style="color:var(--green);font-size:11px" onclick="saveUserFlag('${li}','${type}',${fi})">${t('qc.editor.flag_save')}</button>
+      </div>
+    </div>`;
+  }
+  if(item.userFlag && item.userFlag.correct){
+    html += `<div style="display:flex;align-items:center;gap:8px;margin-top:4px;font-size:13px;background:#eaf7ee;border-radius:6px;padding:5px 8px">
+      <span style="font-weight:800;color:#1a7a3a">${t('qc.editor.user_suggests')}</span>
+      <span style="flex:1;color:var(--text)">${escHtml(item.userFlag.correct)}</span>
+      ${applyable?`<button class="storyline-hdr-btn" style="color:var(--green)" title="${t('qc.editor.fix_title')}" onclick="userFlagApplyFix('${li}','${type}',${fi})">${t('qc.editor.fix')}</button>`:''}
+    </div>`;
+  }
+  return html;
+}
+// POST lesson edits to the server, or succeed locally in the static build (the edit is
+// already applied in memory and will ride the JSON export). Returns a Response-like {ok}.
+async function _postLessonEdit(d){
+  if(!APP.info?.canGenerate){ APP._dirtyExport = true; return { ok:true, _local:true }; }
+  return fetch('/api/lessons/edit', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ id: (d&&d.id) || undefined, topic: d&&d.topic, lessons: d&&d.lessons }) });
 }
 async function _persistEditorFlags(li){
   // Persist the current in-memory lessons (userFlag/qc are client-authoritative server-side).
-  const r = await fetch('/api/lessons/edit', { method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ id: APP.lessonData.id || undefined, topic: APP.lessonData.topic, lessons: APP.lessonData.lessons }) });
+  const r = await _postLessonEdit(APP.lessonData);
   if(!r.ok) throw new Error((await r.json()).error||'save failed');
   try{ buildPath(); }catch(_){}                  // refresh node flag badges/counts
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
@@ -5122,14 +5438,29 @@ async function _persistEditorFlags(li){
 // Toggle the inline comment box open/closed (no persistence until Flag is pressed).
 function toggleFlagBox(li, type, fi){
   const key = `${li}:${type}:${fi}`;
+  try{ _syncEditorFromDOM(+li); }catch(_){}   // preserve in-progress field edits
   APP._flagOpen = (APP._flagOpen === key) ? null : key;
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, +li);
 }
 async function saveUserFlag(li, type, fi){
   const item = _editorItem(+li, type, +fi); if(!item) return;
   const ta = document.getElementById(`flag-input-${li}-${type}-${fi}`);
+  const cr = document.getElementById(`flag-correct-${li}-${type}-${fi}`);
   const comment = (ta?.value||'').trim();
-  item.userFlag = { comment, at: new Date().toISOString() };
+  const correct = (cr?.value||'').trim();
+  try{ _syncEditorFromDOM(+li); }catch(_){}   // keep concurrent field edits
+  item.userFlag = { comment, correct, at: new Date().toISOString() };
+  APP._flagOpen = null;
+  try{ await _persistEditorFlags(+li); showToast(t('qc.toast.flag_saved')); }
+  catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
+}
+// Apply the user-suggested "correct version" to the item's target (treated like a QC
+// fix): write it, stamp editedAt, clear the flag, persist, re-render.
+async function userFlagApplyFix(li, type, fi){
+  const item = _editorItem(+li, type, +fi); if(!item) return;
+  const sug = item.userFlag && item.userFlag.correct;
+  if(sug){ item.target = sug; item.editedAt = new Date().toISOString(); }
+  delete item.userFlag;
   APP._flagOpen = null;
   try{ await _persistEditorFlags(+li); showToast(t('qc.toast.flag_saved')); }
   catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
@@ -5146,7 +5477,13 @@ async function removeUserFlag(li, type, fi){
 // persisting to the server. Run this before any in-place re-render (delete/move/
 // filter toggle) so unsaved edits to other entries survive. A real save
 // (saveLessonEdits) is still required to write changes to the store.
-function _syncEditorFromDOM(li) {
+function _syncEditorFromDOM(li, opts) {
+  // DOM -> in-memory lesson. With {persist:true} this is the save path: it also
+  // consumes a pending icon pick, clears the error-hunt _editedCorrect marker, and
+  // fires the /api/save-story write-back for an edited correct story. Without it
+  // (the default, used before delete/move/filter re-renders) edits are kept in
+  // memory only and a real save is still required to persist.
+  const persist = !!(opts && opts.persist);
   const el = document.getElementById('lesson-editor');
   const d = APP.lessonData;
   if (!el || !d) return;
@@ -5156,7 +5493,7 @@ function _syncEditorFromDOM(li) {
   if (titleInp) ls.title = titleInp.value.trim();
   const iconEl = document.getElementById('lesson-node-icon-picker-' + li);
   if (iconEl) ls.icon = iconEl.textContent.trim();
-  if (ls._iconPick) ls.icon = ls._iconPick;   // keep the pending pick (save consumes it)
+  if (ls._iconPick) { ls.icon = ls._iconPick; if (persist) delete ls._iconPick; }  // save consumes the pending pick
   if (ls.type === 'math') {
     const numInp = document.getElementById('math-numbers-input-' + li);
     if (numInp) {
@@ -5175,7 +5512,7 @@ function _syncEditorFromDOM(li) {
       if (arr && arr[fi]) {
         if ((arr[fi][field] ?? '') !== inp.value) arr[fi].editedAt = new Date().toISOString();
         arr[fi][field] = inp.value;
-        if (type === 'sentence' && field === 'target') arr[fi].words = inp.value.trim().split(/\s+/).filter(Boolean);
+        if (type === 'sentence' && field === 'target') arr[fi].words = splitWords(inp.value);
       }
     } else if (type === 'grammar') {
       const fi = +inp.dataset.fi;
@@ -5190,13 +5527,33 @@ function _syncEditorFromDOM(li) {
       const mode = inp.dataset?.mode || 'corrupted';
       const _t = document.createElement('div'); _t.innerHTML = inp.innerHTML || '';
       const text = (_t.innerText || _t.textContent || inp.value || '').trim();
-      if (mode === 'corrupted') ls.corruptedStory = text;   // in-memory only (no /api/save-story here)
-      else APP.lessonData.story = text;
+      if (mode === 'corrupted') {
+        ls.corruptedStory = text;
+        if (persist && APP.lessonData) delete APP.lessonData._editedCorrect;
+      } else {
+        if (APP.lessonData) APP.lessonData.story = text;
+        if (persist) {
+          // Persist the corrected story back to the topic (fire-and-forget).
+          fetch('/api/save-story', { method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ topic: d.topic, story: text }) }).catch(e => console.error('save-story failed:', e));
+        }
+      }
     } else if (type === 'syn') {
       const wi = +inp.dataset.wi, cat = inp.dataset.cat;
       if (ls.words && ls.words[wi]) {
         if (cat) { const ri = +inp.dataset.ri; if (ls.words[wi][cat]?.[ri]) ls.words[wi][cat][ri][field] = inp.value; }
         else ls.words[wi][field] = inp.value;
+      }
+    } else if (type === 'wf') {
+      const fi = +inp.dataset.fi;
+      const it = ls.items && ls.items[fi];
+      if (it) {
+        if (field === 'sentence') it.sentence = inp.value;
+        else if (field === 'translation') it.translation = inp.value;
+        else if (field === 'explanation') it.explanation = inp.value;
+        else if (field === 'choice') { const ci = +inp.dataset.ci; if (Array.isArray(it.choices) && ci >= 0 && ci < it.choices.length) it.choices[ci] = inp.value; }
+        else if (field === 'correct') { if (inp.checked) { const ci = +inp.dataset.ci; if (Number.isInteger(ci)) it.correctIndex = ci; } }
       }
     }
   });
@@ -5210,81 +5567,10 @@ async function saveLessonEdits(lessonIdx) {
   const li = lessonIdx ?? 0;
   const ls = d.lessons[li];
   if (!ls) return;
-  // Save title and icon
-  const titleInp = document.getElementById('lesson-node-title-input-' + li);
-  if (titleInp) ls.title = titleInp.value.trim();
-  const iconEl = document.getElementById('lesson-node-icon-picker-' + li);
-  if (iconEl) ls.icon = iconEl.textContent.trim();
-  if (ls._iconPick) { ls.icon = ls._iconPick; delete ls._iconPick; }
-  // Math lesson: sync number pool from input
-  if (ls.type === 'math') {
-    const numInp = document.getElementById('math-numbers-input-' + li);
-    if (numInp) {
-      const nums = numInp.value.trim().split(/\s+/).map(Number).filter(n=>!isNaN(n)&&n>0);
-      if (nums.length) ls.numbers = nums;
-    }
-    const allOps = ['+','-','×','÷','^'];
-    const ops = allOps.filter(op => {
-      const cb = document.getElementById('math-op-' + li + '-' + op.charCodeAt(0));
-      return cb?.checked;
-    });
-    if (ops.length) ls.mathOps = ops;
-  }
-  // Save all field types
-  el.querySelectorAll('input[data-li], textarea[data-li], [contenteditable][data-li]').forEach(inp => {
-    const type = inp.dataset.type, field = inp.dataset.field;
-    if (type === 'vocab' || type === 'sentence') {
-      const arr = type === 'vocab' ? ls.vocab : ls.sentences;
-      const fi = +inp.dataset.fi;
-      if (arr && arr[fi]) {
-        // Stamp an edit timestamp whenever a field's value actually changes
-        if ((arr[fi][field] ?? '') !== inp.value) {
-          arr[fi].editedAt = new Date().toISOString();
-        }
-        arr[fi][field] = inp.value;
-        // Regenerate words array when sentence target changes
-        if (type === 'sentence' && field === 'target') {
-          arr[fi].words = inp.value.trim().split(/\s+/).filter(Boolean);
-        }
-      }
-    } else if (type === 'grammar') {
-      const fi = +inp.dataset.fi;
-      if (ls.grammar && ls.grammar[fi]) ls.grammar[fi][field] = inp.value;
-    } else if (type === 'conj-meta') {
-      const ci = +inp.dataset.ci;
-      if (ls.conjugations && ls.conjugations[ci]) ls.conjugations[ci][field] = inp.value;
-    } else if (type === 'conj-form') {
-      const ci = +inp.dataset.ci, fi = +inp.dataset.fi;
-      if (ls.conjugations && ls.conjugations[ci]?.forms?.[fi]) ls.conjugations[ci].forms[fi][field] = inp.value;
-    } else if (type === 'eh-story') {
-      const mode = inp.dataset?.mode || 'corrupted';
-      // Strip any HTML tags (e.g. <mark> from highlights) to get clean plain text
-      const _tmpDiv = document.createElement('div'); _tmpDiv.innerHTML = inp.innerHTML || '';
-      const text = (_tmpDiv.innerText || _tmpDiv.textContent || inp.value || '').trim();
-      if (mode === 'corrupted') {
-        ls.corruptedStory = text;
-        if (APP.lessonData) delete APP.lessonData._editedCorrect;
-      } else {
-        // Save correct text back to topic.story
-        if (APP.lessonData) APP.lessonData.story = text;
-        fetch('/api/save-story', { method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ topic: d.topic, story: text })
-        }).catch(e => console.error('save-story failed:', e));
-        // Don't close — story save is fire-and-forget, lesson save below handles the rest
-      }
-    } else if (type === 'syn') {
-      const wi = +inp.dataset.wi, cat = inp.dataset.cat;
-      if (ls.words && ls.words[wi]) {
-        if (cat) { const ri = +inp.dataset.ri; if (ls.words[wi][cat]?.[ri]) ls.words[wi][cat][ri][field] = inp.value; }
-        else ls.words[wi][field] = inp.value;
-      }
-    }
-    // Sync corrupted story on save for error_hunt lessons
-    if (ls.type === 'error_hunt') {
-      ehSyncCorrupted(li);
-    }
-  });
+  // DOM -> memory for every field (title/icon/math/vocab/sentence/grammar/conj/
+  // eh-story/syn), consuming the pending icon pick and persisting an edited
+  // correct story. Single source of truth shared with the delete/move re-renders.
+  _syncEditorFromDOM(li, { persist: true });
   // Mark lesson as checked and items as edited BEFORE saving to server
   if (ls) {
     ls._checked = new Date().toISOString();
@@ -5299,9 +5585,7 @@ async function saveLessonEdits(lessonIdx) {
     });
   }
   try {
-    const r = await fetch('/api/lessons/edit', { method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: d.id || undefined, topic: d.topic, lessons: d.lessons }) });
+    const r = await _postLessonEdit(d);
     if (!r.ok) throw new Error((await r.json()).error || 'Failed');
     const topicSlugForEdit = (d.topic||'').trim().slice(0,30).replace(/\s+/g,'_');
     const topicIdForEdit = d.id || '';
@@ -5337,8 +5621,7 @@ function toggleHideLessonNode(lessonIdx) {
   if (!ls) return;
   ls._hidden = !ls._hidden;
   // Save and rebuild
-  fetch('/api/lessons/edit', { method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ id: d.id || undefined, topic: d.topic, lessons: d.lessons }) }).catch(()=>{});
+  _postLessonEdit(d).catch(()=>{});
   buildPath();
 }
 
@@ -5349,9 +5632,7 @@ async function moveLessonNode(lessonIdx, dir) {
   if (newIdx < 0 || newIdx >= d.lessons.length) return;
   [d.lessons[lessonIdx], d.lessons[newIdx]] = [d.lessons[newIdx], d.lessons[lessonIdx]];
   try {
-    const r = await fetch('/api/lessons/edit', { method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: d.id || undefined, topic: d.topic, lessons: d.lessons }) });
+    const r = await _postLessonEdit(d);
     if (!r.ok) throw new Error((await r.json()).error || 'Failed');
     buildPath();
   } catch(e) { showToast('⚠ ' + e.message.slice(0,60)); }
@@ -5362,14 +5643,11 @@ async function deleteLessonNode(lessonIdx) {
   if (!d) return;
   const ls = d.lessons[lessonIdx];
   if (!ls) return;
-  const typeKey = {grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math',synonyms:'lesson.type.synonyms'}[ls.type]||'lesson.type.vocab';
-  const label = t(typeKey);
+  const label = lessonTypeLabel(ls.type);
   if (!confirm(`Delete the ${label} lesson from "${d.topic}"?\nThis cannot be undone.`)) return;
   d.lessons.splice(lessonIdx, 1);
   try {
-    const r = await fetch('/api/lessons/edit', { method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: d.id || undefined, topic: d.topic, lessons: d.lessons }) });
+    const r = await _postLessonEdit(d);
     if (!r.ok) throw new Error((await r.json()).error || 'Failed');
     showToast(t('toast.lesson_deleted'));
     closeLessonEditor();
@@ -5405,6 +5683,7 @@ function deleteEditorItem(li, type, idx) {
   else if (type === 'grammar')  { ls.grammar   = (ls.grammar||[]).filter((_,i)=>i!==idx); }
   else if (type === 'conj')     { ls.conjugations = (ls.conjugations||[]).filter((_,i)=>i!==idx); }
   else if (type === 'eh-edit')  { ls.edits = (ls.edits||[]).filter((_,i)=>i!==idx); }
+  else if (type === 'wf')       { ls.items = (ls.items||[]).filter((_,i)=>i!==idx); }
   // Re-render editor to update indices
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
@@ -5554,10 +5833,10 @@ function findEhErrors(li) {
         <div class="editor-entry" id="eh-editor-${li}-edit-${ei}">
           <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','eh-edit',${ei})">🗑</button></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px">
-            <div class="editor-field"><label>Correct</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="find" value="${escHtml(e.find||'')}"></div>
-            <div class="editor-field"><label>Wrong</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="replace" value="${escHtml(e.replace||'')}" style="background:#fff8ee"></div>
+            <div class="editor-field"><label>Correct</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="find" value="${escAttr(e.find||'')}"></div>
+            <div class="editor-field"><label>Wrong</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="replace" value="${escAttr(e.replace||'')}" style="background:#fff8ee"></div>
           </div>
-          <div class="editor-field"><label>Reason</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="reason" value="${escHtml(e.reason||'')}"></div>
+          <div class="editor-field"><label>Reason</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="reason" value="${escAttr(e.reason||'')}"></div>
         </div>`).join('');
       // Scroll to new entries
       const lastEntry = editsContainer.lastElementChild;
@@ -5865,13 +6144,19 @@ function shuffle(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=M
 function pick(arr,n){ return shuffle(arr).slice(0,n); }
 
 const isPunctClient = t => /^[.,!?;:()\[\]"'«»—–]+$/.test((t||'').trim());
+// Dispatch to the per-type exercise builder via the lesson-type registry
+// (LESSON_TYPE_META[type].build). `standard`/`vocab` (and any unknown type, since
+// lessonTypeMeta falls back to `standard`) route to buildStandardExercises below.
+// Keeping each builder in the registry means a new lesson type is one row there, not
+// another branch here — and lets mixed-type lessons pool builders uniformly. (B-phase-1.)
 function buildExercises(lessonIdx){
-  const d=APP.lessonData, lesson=d.lessons[lessonIdx];
-  if(lesson.type==='error_hunt'||lesson.type==='ai_error_hunt') return [];
-  if(lesson.type==='grammar')     return buildGrammarExercises(lesson);
-  if(lesson.type==='conjugation') return buildConjugationExercises(lesson, APP.lessonData?.lang);
-  if(lesson.type==='math')        return buildMathExercises(lesson);
-  if(lesson.type==='synonyms')    return buildSynonymsExercises(lesson);
+  const lesson = APP.lessonData.lessons[lessonIdx];
+  return lessonTypeMeta(lesson.type).build(lesson, lessonIdx);
+}
+// Default builder: standard vocab/sentence lessons (listen MCQ, EN→target MCQ, word
+// order, read-translate, listen-type, plus a few prior-lesson vocab review items).
+function buildStandardExercises(lesson, lessonIdx){
+  const d = APP.lessonData;
 	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
   const allV = lesson.vocab;
 	// const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
@@ -5927,6 +6212,24 @@ function buildExercises(lessonIdx){
   const prevV=d.lessons.slice(0,lessonIdx).flatMap(L=>L.vocab);
   if(prevV.length>=4) pick(prevV,3).forEach(v=>{ const e=mkMcqIE(v,allV); if(e)exs.push(e); });
   return shuffle(exs).slice(0,12);
+}
+// ══ Word-forms exercises (fill the blank with the correct form) ══════════════
+// Each story-derived item becomes one MCQ: the sentence (with a ___ blank), the
+// 4 forms shuffled, the original word correct. Reuses the standard choice grid +
+// default checker (C.sel === ex.correct), so no new check/scoring branch needed.
+function buildWordFormsExercises(lesson){
+  const items = lesson.items || [];
+  const exs = [];
+  items.forEach(it => {
+    if(!it || !Array.isArray(it.choices) || it.choices.length < 2) return;
+    const ci = it.correctIndex;
+    if(!Number.isInteger(ci) || ci < 0 || ci >= it.choices.length) return;
+    const correct = it.choices[ci];
+    exs.push({ type:'word_form', sentence: it.sentence || '', translation: it.translation || '',
+      explanation: it.explanation || '',
+      correct, target: correct, choices: shuffle(it.choices.slice()) });
+  });
+  return shuffle(exs);
 }
 
 
@@ -6131,8 +6434,11 @@ function buildSynonymsExercises(lesson){
   const exs = [];
   const TARGET_CHOICES = 7;
   words.forEach(g => {
+    // One MULTI-SELECT exercise per relation: show ALL the synonyms/antonyms mixed with
+    // distractors and ask the learner to select EVERY correct one (old-style select-all).
+    // The base word's context sentence (if any) is still shown above the grid.
     const mk = (mode) => {
-      const correct = (mode==='synonyms' ? g.synonyms : g.antonyms).map(x=>x.w);
+      const correct = (mode==='synonyms' ? g.synonyms : g.antonyms).map(x=>x.w).filter(Boolean);
       if(!correct.length) return null;
       const correctLc = new Set(correct.map(w=>w.toLowerCase()));
       const baseLc = (g.base||'').toLowerCase();
@@ -6144,10 +6450,12 @@ function buildSynonymsExercises(lesson){
       const addD = w => { const k=(w||'').toLowerCase(); if(!w||seen.has(k))return; seen.add(k); distractors.push(w); };
       local.forEach(addD);
       for(const w of cross){ if(distractors.length >= TARGET_CHOICES-correct.length) break; addD(w); }
-      const choices = shuffle([...correct, ...distractors]).slice(0, Math.max(correct.length+1, Math.min(TARGET_CHOICES, correct.length+distractors.length)));
-      // ensure all correct survived the slice
+      if(!distractors.length) return null;   // need at least one wrong option
+      let choices = shuffle([...correct, ...distractors]).slice(0, Math.max(correct.length+1, Math.min(TARGET_CHOICES, correct.length+distractors.length)));
+      // ensure all correct words survived the slice
       correct.forEach(c => { if(!choices.some(x=>x.toLowerCase()===c.toLowerCase())) choices.push(c); });
-      return { type:'syn_select', mode, base:g.base, gloss:g.gloss||'', correct, choices: shuffle(choices) };
+      return { type:'syn_select', mode, base:g.base, gloss:g.gloss||'', sentence:g.sentence||'',
+        correct, target:correct.join(', '), choices: shuffle(choices) };
     };
     const s = mk('synonyms'); if(s) exs.push(s);
     const a = mk('antonyms'); if(a) exs.push(a);
@@ -6615,19 +6923,35 @@ function renderEx(){
   else if(ex.type==='math_order') html=tMathOrder(ex);
   else if(ex.type==='math_calc') html=tMathCalc(ex);
   else if(ex.type==='math_latex') html=tMathLatex(ex);
+  else if(ex.type==='word_form') html=tWordForm(ex);
   else if(ex.type==='syn_select') html=tSynSelect(ex);
   else if(ex.type==='mcq_article') html=tMcqArticle(ex);
   else if(ex.type==='mcq_plural') html=tMcqPlural(ex);
   else if(ex.type==='type_plural') html=tTypePlural(ex);
   else if(ex.type==='mcq_conjugation') html=tMcqConjugation(ex);
   else if(ex.type==='type_conjugation') html=tTypeConjugation(ex);
-  const alreadyFlagged = isExFlagged(ex);
-  const existingComment = alreadyFlagged && APP.flagged[flagKey(ex)]?.comment ? APP.flagged[flagKey(ex)].comment : '';
+  const fl = _exFlagState(ex);
+  const taSty='width:100%;box-sizing:border-box;font-size:13px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:6px 8px;font-family:Nunito,sans-serif;resize:vertical';
+  const inSty='width:100%;box-sizing:border-box;margin-top:5px;font-size:13px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:6px 8px;font-family:Nunito,sans-serif';
+  const flagUi = _canEdit() ? (
+    '<div style="display:flex;justify-content:center;margin-top:8px">'+
+      `<button class="flag-btn${fl?' flagged':''}" id="flagbtn" onclick="togglePlayFlagForm()" title="${t('ex.flag_title')}">${fl?'⚑':'⚐'}</button>`+
+    '</div>'+
+    '<div class="flag-comment-wrap" id="flag-comment-wrap">'+
+      `<textarea id="flag-comment-input" rows="2" placeholder="${t('ex.flag_comment_ph')}" style="${taSty}">${escHtml(fl?.comment||'')}</textarea>`+
+      `<input id="flag-correct-input" placeholder="${t('qc.editor.flag_correct_placeholder')}" value="${escAttr(fl?.correct||'')}" style="${inSty}">`+
+      '<div style="display:flex;gap:6px;justify-content:flex-end;margin-top:6px">'+
+        (fl?`<button class="flag-btn" onclick="removePlayFlag()">${t('qc.editor.flag_remove')}</button>`:'')+
+        `<button class="flag-btn flagged" onclick="savePlayFlag()">${t('ex.flag_save')}</button>`+
+      '</div>'+
+    '</div>'
+  ) : '';
   document.getElementById('ex-area').innerHTML=html+
     '<div id="fb" class="feedback"></div>'+
     '<div class="btn-row">'+
       `<button class="check-btn" id="cbtn" onclick="check()" disabled>${t('ex.check')}</button>`+
-    '</div>';
+    '</div>'+
+    flagUi;
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>{
     if(_ttsUnlocked){ speak(ex.target); }
     else {
@@ -6639,6 +6963,55 @@ function renderEx(){
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>`; }
+// Shared card for sentence-context MCQs (word_forms + synonyms-in-context). The
+// sentence div is omitted when empty (no story sentence was found).
+function sentenceMcqCard({badge, question, sentenceHtml, hint, choices}){
+  const q = question ? `<div class="qtext">${question}</div>` : '';
+  const sent = sentenceHtml ? `<div style="font-size:18px;font-weight:700;line-height:1.6;margin:6px 0">${sentenceHtml}</div>` : '';
+  return `<div class="ex-badge">${badge}</div>
+<div class="card">
+  ${q}
+  ${sent}
+  ${hint||''}
+  ${cGrid(choices,false)}
+</div>`;
+}
+// Word-forms: sentence with a styled blank, source-language translation hint.
+function tWordForm(ex){
+  const blank = '<span style="display:inline-block;min-width:54px;border-bottom:3px solid var(--blue);margin:0 3px;vertical-align:baseline">&nbsp;</span>';
+  const sentenceHtml = escHtml(ex.sentence||'').replace(/_{3,}/, blank);
+  const hint = ex.translation
+    ? `<div style="margin:8px 0 2px;font-size:13px;color:var(--gray-dark)">${escHtml(ex.translation)}</div>` : '';
+  return sentenceMcqCard({ badge:`🧩 ${t('ex.badge.word_form')}`, question:'', sentenceHtml, hint, choices:ex.choices });
+}
+// Synonyms/antonyms in context: the base word shown inside its story sentence
+// (highlighted), pick the word similar/opposite to it. Reuses the syn ui entries.
+function tSynSelect(ex){
+  const isSyn = ex.mode==='synonyms';
+  // Optional context: the base word highlighted in its story sentence.
+  let sentenceHtml = '';
+  if(ex.sentence){
+    sentenceHtml = escHtml(ex.sentence);
+    if(ex.base){
+      const re = new RegExp('('+ex.base.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','i');
+      sentenceHtml = sentenceHtml.replace(re, '<span style="color:var(--blue);font-weight:900;text-decoration:underline">$1</span>');
+    }
+    sentenceHtml = `<div style="font-size:17px;font-weight:700;line-height:1.6;margin:4px 0 8px">${sentenceHtml}</div>`;
+  }
+  const q = isSyn
+    ? `<span style="color:var(--green);font-weight:800">${t('ex.syn.q_synonyms',{word:furiHtml(ex.base)})}</span>`
+    : `<span style="color:var(--red);font-weight:800">${t('ex.syn.q_antonyms',{word:furiHtml(ex.base)})}</span>`;
+  const badge = isSyn ? t('ex.badge.syn_synonyms') : t('ex.badge.syn_antonyms');
+  const gloss = ex.gloss ? `<div style="opacity:.55;font-size:13px;margin-top:-2px;margin-bottom:6px">${escHtml(ex.gloss)}</div>` : '';
+  const tiles = ex.choices.map((w,i)=>`<button class="syn-tile" id="st${i}" data-w="${escAttr(w)}" onclick="synToggle(${i},this)">${furiHtml(w)}</button>`).join('');
+  return `<div class="ex-badge">${badge}</div><div class="card">${sentenceHtml}<div class="qtext">${q}</div>${gloss}<div class="syn-hint">${t('ex.syn.hint')}</div><div class="syn-grid">${tiles}</div></div>`;
+}
+// Toggle a tile in the multi-select; enable Check once at least one is selected.
+function synToggle(i,el){
+  if(APP.cur.answered) return;
+  el.classList.toggle('sel');
+  document.getElementById('cbtn').disabled = document.querySelectorAll('.syn-tile.sel').length===0;
+}
 // Convert kanji[よみ] bracket notation → <ruby> HTML, or strip it when furigana is off
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -6758,22 +7131,6 @@ function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=loc
 function ttsApproxBadge(){ return ttsIsApproximate()?`<span class="tts-approx" style="margin-left:6px">${t('tts.approx')}</span>`:''; }
 function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(APP.lessonData?.srcLang||APP.srcLang||"en"); return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
 function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.listen_type")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_type.q",{lang:Ln})}</div>${lBlock(ex.target,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
-function tSynSelect(ex){
-  const isSyn = ex.mode==='synonyms';
-  // Coloring lives here (ui.json holds the plain phrase "similar/opposite to {word}").
-  const q = isSyn
-    ? `<span style="color:var(--green);font-weight:800">${t('ex.syn.q_synonyms',{word:furiHtml(ex.base)})}</span>`
-    : `<span style="color:var(--red);font-weight:800">${t('ex.syn.q_antonyms',{word:furiHtml(ex.base)})}</span>`;
-  const badge = isSyn ? t('ex.badge.syn_synonyms') : t('ex.badge.syn_antonyms');
-  const gloss = ex.gloss ? `<div style="opacity:.55;font-size:13px;margin-top:-4px;margin-bottom:6px">${escHtml(ex.gloss)}</div>` : '';
-  const tiles = ex.choices.map((w,i)=>`<button class="syn-tile" id="st${i}" data-w="${escHtml(w)}" onclick="synToggle(${i},this)">${furiHtml(w)}</button>`).join('');
-  return `<div class="ex-badge">${badge}</div><div class="card"><div class="qtext">${q}</div>${gloss}<div class="syn-hint">${t('ex.syn.hint')}</div><div class="syn-grid">${tiles}</div></div>`;
-}
-function synToggle(i,el){
-  if(APP.cur.answered) return;
-  el.classList.toggle('sel');
-  document.getElementById('cbtn').disabled = document.querySelectorAll('.syn-tile.sel').length===0;
-}
 function tOrder(ex){
   const tokens=ex.words.map((w,i)=>
     `<span class="tok" id="t${i}" onclick="addTok(${i})">${furiHtml(w)}</span>`
@@ -6878,38 +7235,73 @@ function updateSbox(){
   }).join('');
 }
 
-function flagCurrent(){
-  const C=APP.cur;
-  if(C.cur>=C.exercises.length) return;
-  const ex=C.exercises[C.cur];
-  const wasFlagged=isExFlagged(ex);
-  toggleFlag(ex);
-  const flagged=isExFlagged(ex);
+// ── Play-time user flagging → item.userFlag (unified with the editor) ──────────
+// Find the lesson object a play exercise should attach its flag to: a vocab/sentence
+// item by target, a word_forms item by sentence, or a synonyms word group by base.
+function _exFlagTarget(ex){
+  const ls = APP.lessonData?.lessons?.[APP.cur?.lessonIdx];
+  if(!ls || !ex) return null;
+  const norm = s => String(s==null?'':s).trim().toLowerCase();
+  const key = norm(ex.target || ex.correct);
+  if(key){
+    const v=(ls.vocab||[]).find(x=>norm(x.target)===key); if(v) return v;
+    const s=(ls.sentences||[]).find(x=>norm(x.target)===key); if(s) return s;
+  }
+  if(ex.type==='word_form' && ex.sentence){
+    const it=(ls.items||[]).find(x=>norm(x.sentence)===norm(ex.sentence)); if(it) return it;
+  }
+  if(ex.type==='syn_select' && ex.base){
+    const w=(ls.words||[]).find(x=>norm(x.base)===norm(ex.base)); if(w) return w;
+  }
+  return null;
+}
+function _exFlagState(ex){ return _exFlagTarget(ex)?.userFlag || null; }
+
+function _refreshFlagBtn(ex){
+  const fl = _exFlagState(ex);
   const btn=document.getElementById('flagbtn');
-  if(btn){ btn.textContent=flagged?t('ex.flagged'):t('ex.flag'); btn.className='flag-btn'+(flagged?' flagged':''); }
-  // Show/hide comment box
-  const cWrap=document.getElementById('flag-comment-wrap');
-  if(cWrap){ cWrap.className='flag-comment-wrap'+(flagged?' visible':''); }
-  // Show/hide in-lesson repair button (only if LLM available)
-  // Update feedback bar if already answered
-  if(C.answered){
-    const fb=document.getElementById('fb');
-    if(fb && flagged){
-      fb.className='feedback flagged-note';
-      fb.innerHTML=`<div class="fb-head">${t('check.flagged_head')}</div><div class="fb-body">${t('check.flagged_comment')}</div>`;
-    }
+  if(btn){ btn.textContent = fl?'⚑':'⚐'; btn.className='flag-btn'+(fl?' flagged':''); btn.title = t('ex.flag_title'); }
+}
+// Toggle the play flag form; prefill from any existing flag.
+function togglePlayFlagForm(){
+  const wrap=document.getElementById('flag-comment-wrap'); if(!wrap) return;
+  const open = !wrap.classList.contains('visible');
+  wrap.className='flag-comment-wrap'+(open?' visible':'');
+  if(open){
+    const ex=APP.cur?.exercises?.[APP.cur.cur]; const fl=ex?_exFlagState(ex):null;
+    const ci=document.getElementById('flag-comment-input'); if(ci) ci.value=fl?.comment||'';
+    const cr=document.getElementById('flag-correct-input'); if(cr) cr.value=fl?.correct||'';
   }
 }
-function saveComment(){
-  const C=APP.cur;
-  if(C.cur>=C.exercises.length) return;
+async function _persistPlayFlags(){
+  const d=APP.lessonData; if(!d) return;
+  // Best-effort: in the static (server-less) build this no-ops — the flag stays in
+  // memory and rides along with the JSON export instead.
+  try{ await _postLessonEdit(d); }catch(_){}
+}
+async function savePlayFlag(){
+  const C=APP.cur; if(!C||C.cur>=C.exercises.length) return;
   const ex=C.exercises[C.cur];
-  const k=flagKey(ex);
-  if(!APP.flagged[k]) return;
-  const comment=document.getElementById('flag-comment-input')?.value?.trim()||'';
-  APP.flagged[k].comment=comment;
-  saveFlagged();
-  pushFlagToServer(k, APP.flagged[k]);
+  const comment=(document.getElementById('flag-comment-input')?.value||'').trim();
+  const correct=(document.getElementById('flag-correct-input')?.value||'').trim();
+  const flag={ comment, correct, at:new Date().toISOString() };
+  const obj=_exFlagTarget(ex);
+  if(obj){ obj.userFlag=flag; }
+  else { const ls=APP.lessonData?.lessons?.[C.lessonIdx]; if(ls){ (ls._miscFlags=ls._miscFlags||[]).push({ ...flag, exType:ex.type, target:ex.target||ex.correct||'' }); } }
+  const wrap=document.getElementById('flag-comment-wrap'); if(wrap) wrap.className='flag-comment-wrap';
+  _refreshFlagBtn(ex);
+  if(C.answered){ const fb=document.getElementById('fb'); if(fb){ fb.className='feedback flagged-note'; fb.innerHTML=`<div class="fb-head">⚑</div><div class="fb-body">${t('check.flagged_comment')}</div>`; } }
+  await _persistPlayFlags();
+  try{ showToast(t('qc.toast.flag_saved')); }catch(_){}
+}
+async function removePlayFlag(){
+  const C=APP.cur; if(!C||C.cur>=C.exercises.length) return;
+  const ex=C.exercises[C.cur];
+  const obj=_exFlagTarget(ex); if(obj) delete obj.userFlag;
+  const wrap=document.getElementById('flag-comment-wrap'); if(wrap) wrap.className='flag-comment-wrap';
+  _refreshFlagBtn(ex);
+  await _persistPlayFlags();
+  try{ showToast(t('qc.toast.flag_removed')); }catch(_){}
 }
 
 // ── Story flagging ────────────────────────────────────────────────────
@@ -6939,7 +7331,7 @@ function _updateStoryFlagUI(){
   const k=storyFlagKey(d.topic);
   const flagged=!!APP.flagged[k];
   const btn=document.getElementById('story-flag-btn');
-  if(btn){ btn.textContent=flagged?t('lesson.story_flagged'):t('lesson.flag_story');
+  if(btn){ btn.textContent=flagged?'⚑':'⚐';
            btn.className='flag-btn'+(flagged?' flagged':''); }
   const wrap=document.getElementById('story-flag-comment-wrap');
   if(wrap) wrap.className='flag-comment-wrap'+(flagged?' visible':'');
@@ -6966,7 +7358,7 @@ function check(){
   else if(ex.type==='math_latex') { ok=(C.sel||'')===ex.correct; }
   else if(ex.type==='syn_select'){
     const sel=new Set([...document.querySelectorAll('.syn-tile.sel')].map(b=>(b.dataset.w||'').toLowerCase()));
-    const cor=new Set(ex.correct.map(w=>String(w).toLowerCase()));
+    const cor=new Set(ex.correct.map(w=>w.toLowerCase()));
     ok = sel.size===cor.size && [...cor].every(w=>sel.has(w));
   }
   else { ok=(C.sel||'')===ex.correct; }
@@ -6976,9 +7368,9 @@ function check(){
 
   const fb=document.getElementById('fb');
   // If flagged: skip scoring entirely, show neutral feedback
-  if(isExFlagged(ex)){
+  if(_exFlagState(ex)){
     fb.className='feedback flagged-note';
-    fb.innerHTML=`<div class="fb-head">${t('check.flagged_head')}</div><div class="fb-body">${t('check.flagged_body')}</div>`;
+    fb.innerHTML=`<div class="fb-head">⚑</div><div class="fb-body">${t('check.flagged_body')}</div>`;
     return;
   }
   if(ok){
@@ -6988,8 +7380,7 @@ function check(){
       : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : ex.type==='syn_select' ? escHtml(ex.correct.join(', '))
       : furiHtml(ex.target||ex.correct);
-    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}</div>`;
-    if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ if(ex.correct.some(c=>c.toLowerCase()===(b.dataset.w||'').toLowerCase())) b.classList.add('ok'); });
+    fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakOk = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
@@ -6999,6 +7390,7 @@ function check(){
       : ex.type==='syn_select' ? stripFuri(ex.correct.join(', '))
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
+    if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ if(ex.correct.some(c=>c.toLowerCase()===(b.dataset.w||'').toLowerCase())) b.classList.add('ok'); });
     if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('ok');
     // Auto-advance — speaks once then advances
     btn.disabled = true;
@@ -7008,7 +7400,7 @@ function check(){
     const _wrongCorrect = (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex'||ex.type==='syn_select')
       ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : furiHtml(ex.correct);
-    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${_wrongCorrect}</strong></div>`;
+    fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakBad = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
       : ex.type==='type_plural' ? stripFuri(ex.correct)
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
@@ -7137,27 +7529,6 @@ function showComplete(){
   show('complete-screen');
 }
 
-function _findNextChapterTopic(currentTopic) {
-  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
-  const byId = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
-  for (const sl of slArr) {
-    const chapters = (sl.chapters||[]).map(cid => byId[cid]?.topic).filter(Boolean);
-    const idx = chapters.indexOf(currentTopic);
-    if (idx >= 0 && idx < chapters.length - 1) return chapters[idx + 1];
-  }
-  // Fallback: continuedBy — prefer id link (continuedFromId), same-language guarded,
-  // name as legacy fallback only when the child has no continuedFromId.
-  const _cur = (APP.savedList||[]).find(l => l.topic === currentTopic);
-  const _child = (APP.savedList||[]).find(l => {
-    const idMatch   = _cur && _cur.id && l.continuedFromId === _cur.id;
-    const nameMatch = !l.continuedFromId && l.continuedFrom === currentTopic;
-    if (!idMatch && !nameMatch) return false;
-    if (_cur && ((l.lang||'')!==(_cur.lang||'') || (l.srcLang||'')!==(_cur.srcLang||''))) return false;
-    return true;
-  });
-  return _child?.topic || null;
-}
-
 function afterComplete() {
   goLessonSet();
 }
@@ -7260,7 +7631,7 @@ function _renderTagFilterBar() {
   if (!tags.length) { sel.style.display='none'; _toggleStaticAiWarning(false); return; }
   // Rebuild options
   sel.innerHTML = '<option value=""></option>' +
-    tags.map(tag => `<option value="${escHtml(tag)}"${APP.libTagFilter===tag?' selected':''}>${escHtml(tag)}</option>`).join('');
+    tags.map(tag => `<option value="${escAttr(tag)}"${APP.libTagFilter===tag?' selected':''}>${escHtml(tag)}</option>`).join('');
   sel.style.display = '';
   // Toggle static AI warning: show when no tag filter (untagged = AI generated)
   _toggleStaticAiWarning(!APP.libTagFilter);
@@ -7310,14 +7681,21 @@ function detectOS(ua){
 function buildEcosiaQuery(browser, os){
   return 'https://www.ecosia.org/search?q=' + encodeURIComponent('speech output with ' + browser + ' in ' + os);
 }
-function ttsVoiceIsRobotic(name){ return /espeak|mbrola|festival|flite|pico|rhvoice/i.test(name||''); }
-function ttsHasNiceVoice(voices, ttsCode){
+function ttsVoiceIsRobotic(name){ return /espeak|mbrola|festival|flite|pico|rhvoice|eloquence|speech.?dispatcher|\bspd[_ ]|^default$/i.test(name||''); }
+function ttsHasNiceVoice(voices, ttsCode, browser, os){
   if(!Array.isArray(voices) || !voices.length) return false;
   const norm = c => (c||'').replace('_','-').toLowerCase();
   const pfx = norm(ttsCode).split('-')[0];
   const matching = voices.filter(v => norm(v.lang).split('-')[0] === pfx);
   if(!matching.length) return false;                 // no voice for this language at all
-  return matching.some(v => !ttsVoiceIsRobotic(v.name)); // at least one non-robotic voice
+  const nonRobotic = matching.filter(v => !ttsVoiceIsRobotic(v.name));
+  if(!nonRobotic.length) return false;               // only robotic engines → warn
+  // Firefox's built-in voices route through speech-dispatcher / SAPI and are
+  // typically low quality even when their NAMES look innocuous (the user reported
+  // bad Firefox speech with no warning). So on Firefox only a cloud (non-local)
+  // voice counts as "nice"; otherwise we still warn.
+  if(/firefox/i.test(browser||'')) return nonRobotic.some(v => v.localService === false);
+  return true;                                       // at least one non-robotic voice
 }
 
 let _ttsNoteWired = false, _ttsVoicesSettled = false;
@@ -7342,8 +7720,8 @@ function updateTtsVoiceNote(){
   const voices = (hasSynth && speechSynthesis.getVoices) ? speechSynthesis.getVoices() : [];
   if(hasSynth && !voices.length && !_ttsVoicesSettled){ note.style.display = 'none'; return; } // still loading
   const ttsCode = (LANGS[lang]||LANGS.it).tts;
-  if(ttsHasNiceVoice(voices, ttsCode)){ note.style.display = 'none'; return; }
   const browser = detectBrowser(navigator.userAgent), os = detectOS(navigator.userAgent);
+  if(ttsHasNiceVoice(voices, ttsCode, browser, os)){ note.style.display = 'none'; return; }
   const url = buildEcosiaQuery(browser, os);
   note.innerHTML =
     `<div style="margin-bottom:8px">${escHtml(t('tts.voice_warn_q'))}</div>`
@@ -7974,6 +8352,8 @@ async function exportTopics(topics) {
   }
 }
 
+// @static-engine-end — end of the included client engine; the static build appends
+// its own init() call (the live bootstrap below is excluded from docs).
 init();
 </script>
 

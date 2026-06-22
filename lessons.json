@@ -21,8 +21,11 @@
       "lang": "en",
       "srcLang": "hi",
       "createdAt": "2026-06-18T13:50:52.400Z",
-      "updatedAt": "2026-06-18T15:04:10.268Z",
-      "summary": "लघु i एक अपरिभाषित संख्या है जो अपने स्थान खोजने की चेतावनी रखती है। वह चिह्नों और संख्याओं के दुनिया में अपना स्थान नहीं मिल पाती। शेष संख्याओं के साथ वह अपनी अलगता के लिए दबाव से भरी हो जाती है, लेकिन शून्य की मदद से वह समझती है कि वह अपनी अस्तित्व की अनिवार्यता के रूप में अपना स्थान खोज सकती है। अंत में, वह समझती है कि वह अपनी अस्तित्व की अनिवार्यता के रूप में अपना स्थान खोज सकती है और यह उसे बहुत अच्छा लगता है।"
+      "updatedAt": "2026-06-22T09:00:16.937Z",
+      "summary": "लघु i एक अपरिभाषित संख्या है जो अपने स्थान खोजने की चेतावनी रखती है। वह चिह्नों और संख्याओं के दुनिया में अपना स्थान नहीं मिल पाती। शेष संख्याओं के साथ वह अपनी अलगता के लिए दबाव से भरी हो जाती है, लेकिन शून्य की मदद से वह समझती है कि वह अपनी अस्तित्व की अनिवार्यता के रूप में अपना स्थान खोज सकती है। अंत में, वह समझती है कि वह अपनी अस्तित्व की अनिवार्यता के रूप में अपना स्थान खोज सकती है और यह उसे बहुत अच्छा लगता है।",
+      "tags": [
+        "needs native speaker"
+      ]
     },
     {
       "id": "sl_1168783969",
@@ -6376,6 +6379,65 @@
             }
           ],
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1782115034379",
+          "type": "word_forms",
+          "title": "友好的与不友好的",
+          "desc": "友と敵",
+          "icon": "🤝🚫",
+          "items": [
+            {
+              "sentence": "One is mean, he’s always first, ___ doesn’t care who he’s gonna hurt.",
+              "translation": "一人は凶暴で、彼は常に最初で、誰を傷つけるかは気にしない。",
+              "choices": [
+                "but",
+                "and"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "doesn’t care who he’s gonna hurt. He just says what he sees, thinks it’s true, what he only ___.",
+              "translation": "誰を傷つけるかは気にしない。彼はただ自分が見ただけのことを言うだけ、それが真実だと信じている。",
+              "choices": [
+                "believes",
+                "believe"
+              ],
+              "correctIndex": 0,
+              "explanation": "What he only believes fits the sentence."
+            },
+            {
+              "sentence": "Then somebody stepped politely by. ‘Nice to meet you. My name is π.’ He wore a funny fringe, carried binoculars, and seemed to have travelled around the whole ___.",
+              "translation": "そして誰かが丁寧に通り過ぎた。「お会いできて光栄です。私はπです。」彼は面白いフリンジを着けていて、双眼鏡を持っていて、まるで世界中を旅行したかのようだった。",
+              "choices": [
+                "world",
+                "worlds"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "He just says what he sees, thinks it’s true, what he only believes. Then somebody stepped politely by. ‘Nice to meet you. My name is π.’ He wore a funny fringe, carried binoculars, and seemed to have travelled around the whole world. He was a ___ traveller.",
+              "translation": "彼はただ自分が見ただけのことを言うだけ、それが真実だと信じている。そして誰かが丁寧に通り過ぎた。「お会いできて光栄です。私はπです。」彼は面白いフリンジを着けていて、双眼鏡を持っていて、まるで世界中を旅行したかのようだった。彼は旅行者だった。",
+              "choices": [
+                "great",
+                "greath"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "He just says what he sees, thinks it’s true, what he only believes. Then somebody stepped politely by. ‘Nice to meet you. My name is π.’ He wore a funny fringe, carried binoculars, and seemed to have travelled around the whole world. He was a great traveller. He had a funny fringe, and he was a ___.",
+              "translation": "彼はただ自分が見ただけのことを言うだけ、それが真実だと信じている。そして誰かが丁寧に通り過ぎた。「お会いできて光栄です。私はπです。」彼は面白いフリンジを着けていて、双眼鏡を持っていて、まるで世界中を旅行したかのようだった。彼は旅行者だった。彼は面白いフリンジを着けていて、",
+              "choices": [
+                "traveller",
+                "travel"
+              ],
+              "correctIndex": 1,
+              "explanation": ""
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -6395,7 +6457,7 @@
         ]
       },
       "generatedAt": "2026-06-16T19:58:40.262Z",
-      "updatedAt": "2026-06-16T21:43:41.690Z",
+      "updatedAt": "2026-06-22T07:57:14.379Z",
       "id": "tp_17816402358080000586"
     },
     {
@@ -21315,6 +21377,317 @@
               "plural": "capacities"
             }
           ]
+        },
+        {
+          "id": "ls_1782069624110",
+          "type": "synonyms",
+          "title": "Eliza und der CO2-Cycle",
+          "desc": "Fundamentale Prozesse und Microorganismen in der Bioreaktortechnik",
+          "icon": "🌱",
+          "words": [
+            {
+              "base": "cycle",
+              "gloss": "Schleife",
+              "sentence": "Eliza stood before the bioreactors, her mind racing with the complexities of the carbon cycle.",
+              "synonyms": [
+                {
+                  "w": "loop",
+                  "g": "Schleife"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "carbon",
+              "gloss": "Kohlenstoff",
+              "sentence": "Eliza stood before the bioreactors, her mind racing with the complexities of the carbon cycle.",
+              "synonyms": [
+                {
+                  "w": "carbonate",
+                  "g": "Karbonat"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "microorganisms",
+              "gloss": "Mikroorganismen",
+              "sentence": "She envisioned a simpler setup, one that relied more on the inherent capabilities of the microorganisms and less on the intricate machinery.",
+              "synonyms": [
+                {
+                  "w": "microbes",
+                  "g": "Mikroorganismen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "nature",
+              "gloss": "Natur",
+              "sentence": "She had spent countless hours studying the intricate pathways of CO2 exchange in nature, but replicating them in the lab remained elusive.",
+              "synonyms": [
+                {
+                  "w": "environment",
+                  "g": "Umwelt"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "artificial",
+                  "g": "künstlich"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "principles",
+              "gloss": "Prinzipien",
+              "sentence": "She decided to revisit the foundational principles of the carbon cycle, tracing its path from photosynthesis to respiration, from decomposition to mineralization.",
+              "synonyms": [
+                {
+                  "w": "fundamentals",
+                  "g": "Fundamente"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "fundamental",
+              "gloss": "grundlegend",
+              "sentence": "She pondered the fundamental processes.",
+              "synonyms": [
+                {
+                  "w": "basic",
+                  "g": "basisch"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "superficial",
+                  "g": "flüchtig"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "processes",
+              "gloss": "Prozesse",
+              "sentence": "Perhaps, by stripping away the layers of artificiality, they could better mimic the natural processes that had evolved over millennia.",
+              "synonyms": [
+                {
+                  "w": "procedures",
+                  "g": "Verfahren"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "unfolded",
+              "gloss": "ausgeschlagen",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "unfurled",
+                  "g": "ausgeschlagen"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "folded",
+                  "g": "gefaltet"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "intricate",
+              "gloss": "kompliziert",
+              "sentence": "She had spent countless hours studying the intricate pathways of CO2 exchange in nature, but replicating them in the lab remained elusive.",
+              "synonyms": [
+                {
+                  "w": "complex",
+                  "g": "komplex"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "simple",
+                  "g": "einfach"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "grasp",
+              "gloss": "verstehen",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "comprehend",
+                  "g": "verstehen"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "ignore",
+                  "g": "ignorieren"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "revisit",
+              "gloss": "wiederholen",
+              "sentence": "She decided to revisit the foundational principles of the carbon cycle, tracing its path from photosynthesis to respiration, from decomposition to mineralization.",
+              "synonyms": [
+                {
+                  "w": "review",
+                  "g": "überarbeiten"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "adaptability",
+              "gloss": "Anpassungsfähigkeit",
+              "sentence": "This insight would guide her and her team in their future endeavors, ensuring that their work in the lab more closely aligned with the resilience and adaptability of nature.",
+              "synonyms": [
+                {
+                  "w": "flexibility",
+                  "g": "Flexibilität"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "rigidity",
+                  "g": "Rigide"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "thrive",
+              "gloss": "flourish",
+              "sentence": "The microorganisms began to thrive, and the CO2 levels in the bioreactors started to fluctuate in a manner similar to those in nature.",
+              "synonyms": [
+                {
+                  "w": "prosper",
+                  "g": "thronen"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "decline",
+                  "g": "abnehmen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "yield",
+              "gloss": "Ertrag",
+              "sentence": "The yield was disappointingly low.",
+              "synonyms": [
+                {
+                  "w": "produce",
+                  "g": "produzieren"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "withhold",
+                  "g": "zurückhalten"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "optimization",
+              "gloss": "Optimierung",
+              "sentence": "Optimization is needed, particularly in terms of light exposure.",
+              "synonyms": [
+                {
+                  "w": "improvement",
+                  "g": "Verbesserung"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "deterioration",
+                  "g": "Verschlechterung"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "bioreactor",
+              "gloss": "Bioreaktor",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "biological reactor",
+                  "g": "biologischer Reaktor"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "light exposure",
+              "gloss": "Beleuchtung",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "illumination",
+                  "g": "Beleuchtung"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "darkness",
+                  "g": "Dunkelheit"
+                }
+              ],
+              "homophones": []
+            }
+          ]
+        },
+        {
+          "id": "ls_1782109637155",
+          "type": "word_forms",
+          "title": "Karbonzyklus",
+          "desc": "Wortformen des Karbonzyklus",
+          "icon": "🌱",
+          "items": [
+            {
+              "sentence": "Eliza stood before the bioreactors, her mind racing with the complexities of the carbon cycle. She had spent countless hours studying the intricate pathways of CO2 exchange in nature, but replicating them in the lab remained ___.",
+              "translation": "Eliza stand vor den Bioreaktoren, ihr Geist raste mit den Komplexitäten des Karbonzyklus. Sie hatte unzählige Stunden damit verbracht, die feinen Wege der CO2-Austauschwege in der Natur zu studieren, aber die Reproduktion dieser Wege im Labor blieb aus.",
+              "choices": [
+                "elusive",
+                "elusively",
+                "elusiveness"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "She decided to revisit the foundational principles of the carbon cycle, tracing its path from photosynthesis to respiration, from decomposition to mineralization. Each step was critical, yet something was ___ in their controlled setting.",
+              "translation": "Sie beschloss, die grundlegenden Prinzipien des Karbonzyklus zu erneut studieren, seinen Weg von der Photosynthese zur Respiration, von der Zerstreuung zum Mineralisierung zu verfolgen. Jeder Schritt war kritisch, aber etwas schien in ihrem kontrollierten Umfeld falsch zu sein.",
+              "choices": [
+                "amiss",
+                "amissly",
+                "amissness"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -21334,7 +21707,7 @@
         ]
       },
       "generatedAt": "2026-06-11T16:52:52.637Z",
-      "updatedAt": "2026-06-15T10:26:52.724Z",
+      "updatedAt": "2026-06-22T06:27:17.155Z",
       "id": "tp_1194591428"
     },
     {
@@ -21452,7 +21825,8 @@
                 "learn."
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "ls_1780607565742",
@@ -21616,7 +21990,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "_hidden": true
         },
         {
           "id": "ls_1780765298128",
@@ -21731,7 +22106,8 @@
                 "3"
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "ls_1780765840633",
@@ -21852,7 +22228,223 @@
                 "662"
               ]
             }
-          ]
+          ],
+          "_hidden": false
+        },
+        {
+          "id": "ls_1782124517066_4_gate",
+          "title": "Zahlenreise",
+          "desc": "Addieren, Subtrahieren, 0",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "add",
+              "source": "addieren"
+            },
+            {
+              "target": "subtract",
+              "source": "subtrahieren"
+            },
+            {
+              "target": "zero",
+              "source": "null"
+            },
+            {
+              "target": "concern",
+              "source": "Sorge"
+            },
+            {
+              "target": "strength",
+              "source": "Stärke"
+            },
+            {
+              "target": "together",
+              "source": "zusammen"
+            },
+            {
+              "target": "strengths",
+              "source": "Stärken"
+            },
+            {
+              "target": "weaknesses",
+              "source": "Schwächen"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "We can help you.",
+              "source": "Wir können dir helfen.",
+              "words": [
+                "We",
+                "can",
+                "help",
+                "you."
+              ]
+            },
+            {
+              "target": "You're not the only one.",
+              "source": "Du bist nicht der Einzige.",
+              "words": [
+                "You're",
+                "not",
+                "the",
+                "only",
+                "one."
+              ]
+            },
+            {
+              "target": "We all have our strengths.",
+              "source": "Wir alle haben unsere Stärken.",
+              "words": [
+                "We",
+                "all",
+                "have",
+                "our",
+                "strengths."
+              ]
+            },
+            {
+              "target": "And that's okay.",
+              "source": "Und das ist in Ordnung.",
+              "words": [
+                "And",
+                "that's",
+                "okay."
+              ]
+            },
+            {
+              "target": "They started with simple addition.",
+              "source": "Sie begannen mit einfachen Additionen.",
+              "words": [
+                "They",
+                "started",
+                "with",
+                "simple",
+                "addition."
+              ]
+            }
+          ],
+          "_recreated": true,
+          "_hidden": true
+        },
+        {
+          "id": "ls_1782125530664_4_synonyms",
+          "type": "synonyms",
+          "title": "Zahlenreise",
+          "desc": "Ihre Zahlenreise beginnt: Zahlen, Subtraktion, zusammen, Probleme",
+          "icon": "🔢",
+          "words": [
+            {
+              "base": "numbers",
+              "gloss": "Zahlen",
+              "sentence": "The numbers and letters continued their gathering, their circle growing larger.",
+              "synonyms": [
+                {
+                  "w": "digits",
+                  "g": "Ziffern"
+                },
+                {
+                  "w": "figures",
+                  "g": "Zahlen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "subtraction",
+              "gloss": "Subtraktion",
+              "sentence": "\"What if I can't do subtraction?\" it asked, its voice barely above a whisper.",
+              "synonyms": [
+                {
+                  "w": "minus",
+                  "g": "minus"
+                },
+                {
+                  "w": "subtracting",
+                  "g": "subtrahieren"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "together",
+              "gloss": "zusammen",
+              "sentence": "We'll figure it out together.\"",
+              "synonyms": [
+                {
+                  "w": "jointly",
+                  "g": "gemeinsam"
+                },
+                {
+                  "w": "combined",
+                  "g": "verbunden"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "alone",
+                  "g": "allein"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "problems",
+              "gloss": "Probleme",
+              "sentence": "They started with simple addition and subtraction problems, including 0 in every equation.",
+              "synonyms": [
+                {
+                  "w": "issues",
+                  "g": "Probleme"
+                },
+                {
+                  "w": "troubles",
+                  "g": "Sorgen"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "solutions",
+                  "g": "Lösungen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "continued",
+              "gloss": "fortgesetzt",
+              "sentence": "The numbers and letters continued their gathering, their circle growing larger.",
+              "synonyms": [
+                {
+                  "w": "kept",
+                  "g": "fortgesetzt"
+                },
+                {
+                  "w": "went on",
+                  "g": "fortgesetzt"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "asked",
+              "gloss": "fragten",
+              "sentence": "\"What if I can't do subtraction?\" it asked, its voice barely above a whisper.",
+              "synonyms": [
+                {
+                  "w": "inquired",
+                  "g": "fragten"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
         }
       ],
       "generationStats": {
@@ -21872,7 +22464,7 @@
         ]
       },
       "generatedAt": "2026-06-04T20:35:36.041Z",
-      "updatedAt": "2026-06-06T17:10:40.633Z",
+      "updatedAt": "2026-06-22T11:00:40.140Z",
       "id": "tp_103972811",
       "continuedFromId": "tp_799905727"
     },
@@ -23225,7 +23817,8 @@
                 "learn."
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "aeh_1781026606720",
@@ -23286,7 +23879,241 @@
               "reason": ""
             }
           ],
-          "_hidden": true
+          "_hidden": false
+        },
+        {
+          "id": "ls_1782128797806_8_gate",
+          "title": "Pi flüstert i zu",
+          "desc": "Zahlen, Wissen, Reise",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "discovery",
+              "source": "Entdeckung"
+            },
+            {
+              "target": "journey",
+              "source": "Reise"
+            },
+            {
+              "target": "curious",
+              "source": "neugierig"
+            },
+            {
+              "target": "shadow",
+              "source": "Schatten"
+            },
+            {
+              "target": "hoot",
+              "source": "Hupton"
+            },
+            {
+              "target": "twinkle",
+              "source": "blitzen"
+            },
+            {
+              "target": "branch",
+              "source": "Zweig"
+            },
+            {
+              "target": "twist",
+              "source": "Drehung"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "We are on a quest.",
+              "source": "Wir sind auf einer Reise.",
+              "words": [
+                "We",
+                "are",
+                "on",
+                "a",
+                "quest."
+              ]
+            },
+            {
+              "target": "The sun was setting.",
+              "source": "Die Sonne ging unter.",
+              "words": [
+                "The",
+                "sun",
+                "was",
+                "setting."
+              ]
+            },
+            {
+              "target": "They heard a hoot.",
+              "source": "Sie hörten ein Hupton.",
+              "words": [
+                "They",
+                "heard",
+                "a",
+                "hoot."
+              ]
+            },
+            {
+              "target": "The owl nodded.",
+              "source": "Der Eule nickte.",
+              "words": [
+                "The",
+                "owl",
+                "nodded."
+              ]
+            },
+            {
+              "target": "Each branch grows.",
+              "source": "Jeder Zweig wächst.",
+              "words": [
+                "Each",
+                "branch",
+                "grows."
+              ]
+            }
+          ],
+          "_recreated": true
+        },
+        {
+          "id": "ls_1782129229682_8_word_forms",
+          "type": "word_forms",
+          "title": "Zahlen und Wachstum",
+          "desc": "Wörterformen üben",
+          "icon": "📚",
+          "items": [
+            {
+              "sentence": "And each branch has more little branches ___ the one before?.",
+              "translation": "Und jedes Zweig hat mehr kleine Zweige als das vorherige?",
+              "choices": [
+                "than",
+                "then"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verbform 'than' passt besser zum Vergleich."
+            },
+            {
+              "sentence": "i and 0 exchanged glances, then 0 spoke ___, 'We're trying to understand more about numbers and the world around us. We heard you might be able to help us.'",
+              "translation": "i und 0 wechselten einen Blick, dann sprach 0 auf: 'Wir versuchen, mehr über Zahlen und den Umwelt um uns herum zu verstehen. Wir haben gehört, dass du uns vielleicht helfen kannst.'",
+              "choices": [
+                "up",
+                "out"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verbform 'up' passt besser zum Kontext."
+            },
+            {
+              "sentence": "The sun was setting, casting long shadows across the path.___",
+              "translation": "Die Sonne ging unter, und lange Schatten fielen über den Weg.",
+              "choices": [
+                "casting",
+                "cast"
+              ],
+              "correctIndex": 1,
+              "explanation": "Verb im Past Simple, da es sich um eine Vergangenheit handelt."
+            },
+            {
+              "sentence": "i listened intently, its ears perked up. 'Can you show us how it works?' it asked, eager to learn.___",
+              "translation": "i lauschte aufmerksam, und seine Ohren richteten sich auf. 'Kannst du uns zeigen, wie es funktioniert?' fragte es, voller Neugier.",
+              "choices": [
+                "asked",
+                "ask"
+              ],
+              "correctIndex": 1,
+              "explanation": "Verb im Präsens, da es sich um eine aktuelle Handlung handelt."
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1782129414768_8_synonyms",
+          "type": "synonyms",
+          "title": "Wald und Geheimnisse",
+          "desc": "Wald, Geheimnisse, Lernen, Zahlen",
+          "icon": "🌳",
+          "words": [
+            {
+              "base": "learn",
+              "gloss": "lernen",
+              "sentence": "pi whispered to the small i, \"You will discover what you are, but you must learn much more first.",
+              "synonyms": [
+                {
+                  "w": "study",
+                  "g": "studieren"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "forget",
+                  "g": "vergessen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "branch",
+              "gloss": "Zweig",
+              "sentence": "Looking up, they saw an owl perched on a branch, watching them attentively.",
+              "synonyms": [
+                {
+                  "w": "limb",
+                  "g": "Ast"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "first",
+              "gloss": "erst",
+              "sentence": "pi whispered to the small i, \"You will discover what you are, but you must learn much more first.",
+              "synonyms": [
+                {
+                  "w": "initial",
+                  "g": "anfänglich"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "last",
+                  "g": "letzten"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "might",
+              "gloss": "könnte",
+              "sentence": "And you need to meet someone who might help you.\"",
+              "synonyms": [
+                {
+                  "w": "could",
+                  "g": "könnte"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "must",
+                  "g": "muss"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "forest",
+              "gloss": "Wald",
+              "sentence": "i looked up, curious, as they continued their journey deeper into the forest.",
+              "synonyms": [
+                {
+                  "w": "woods",
+                  "g": "Wälder"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
         }
       ],
       "generationStats": {
@@ -23306,7 +24133,7 @@
         ]
       },
       "generatedAt": "2026-06-09T09:02:22.611Z",
-      "updatedAt": "2026-06-09T17:46:20.965Z",
+      "updatedAt": "2026-06-22T12:10:32.669Z",
       "id": "tp_586040741",
       "aiStory": "pi whispered to the small i, \"You will discover what you are, but you must learn much more first. And you need to meet someone who might help you.\"\n\ni looked up, curious, as they continued their journey deeper into the forest. The sun was setting, casting long shadows across the path. Suddenly, they heard a soft hoot from above. Looking up, they saw an owl perched on a branch, watching them intently.\n\n\"Hello there,\" the owl said, its voice gentle and wise. \"I see you're on a quest, little ones. What brings you to the heart of the forest today?\"\n\ni and 0 exchanged glances, then 0 spoke up, \"We're trying to understand more about numbers and the world around us. We heard you might be able to help us.\"\n\nThe owl nodded, its eyes twinkling. \"Indeed, I can help. But first, let me tell you about a special number. It's called the growth number. It helps us understand how things grow and change over time.\"\n\ni listened intently, its ears perked up. \"Can you show us how it works?\" it asked, eager to learn.\n\nThe owl spread its wings and flew down to a nearby tree. \"Let's look at the branches. Each branch grows from the last, just like the numbers in a sequence. This is similar to what you've been learning, but with a twist.\"\n\nThe owl pointed to a series of branches, each one slightly larger than the last. \"See how each branch is a bit bigger than the one before? That's how the growth number works. It helps us predict how things will grow.\"\n\ni and 0 watched in wonder as the owl explained, their minds buzzing with new knowledge. The adventure was far from over, and they were ready to learn more.",
       "continuedFromId": "tp_1220958947"
@@ -23433,7 +24260,8 @@
                 "pairs."
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "aeh_1780912491524",
@@ -23469,7 +24297,7 @@
               "reason": ""
             }
           ],
-          "_hidden": true
+          "_hidden": false
         },
         {
           "id": "ls_1780930634694",
@@ -23582,7 +24410,293 @@
                 "45"
               ]
             }
-          ]
+          ],
+          "_hidden": false
+        },
+        {
+          "id": "ls_1782127836585_7_gate",
+          "title": "Kaninchen",
+          "desc": "Fibonacci, Rechnen, Paar, Monat, Zahlen",
+          "icon": "🐰",
+          "vocab": [
+            {
+              "target": "pair",
+              "source": "Paar"
+            },
+            {
+              "target": "month",
+              "source": "Monat"
+            },
+            {
+              "target": "rabbit",
+              "source": "Kaninchen"
+            },
+            {
+              "target": "breed",
+              "source": "züchten"
+            },
+            {
+              "target": "guess",
+              "source": "tippen"
+            },
+            {
+              "target": "number",
+              "source": "Zahl"
+            },
+            {
+              "target": "count",
+              "source": "zählen"
+            },
+            {
+              "target": "higher",
+              "source": "höher"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Each month, a pair of rabbits produces another pair.",
+              "source": "Jeder Monat züchten ein Paar Kaninchen ein weiteres Paar.",
+              "words": [
+                "Each",
+                "month,",
+                "a",
+                "pair",
+                "of",
+                "rabbits",
+                "produces",
+                "another",
+                "pair."
+              ]
+            },
+            {
+              "target": "In the second month, they have another pair.",
+              "source": "Im zweiten Monat haben sie ein weiteres Paar.",
+              "words": [
+                "In",
+                "the",
+                "second",
+                "month,",
+                "they",
+                "have",
+                "another",
+                "pair."
+              ]
+            },
+            {
+              "target": "In the third month, the original pair has another pair.",
+              "source": "Im dritten Monat hat das ursprüngliche Paar ein weiteres Paar.",
+              "words": [
+                "In",
+                "the",
+                "third",
+                "month,",
+                "the",
+                "original",
+                "pair",
+                "has",
+                "another",
+                "pair."
+              ]
+            },
+            {
+              "target": "By the fourth month, it's five pairs, right?",
+              "source": "Im vierten Monat sind es fünf Paare, oder?",
+              "words": [
+                "By",
+                "the",
+                "fourth",
+                "month,",
+                "it's",
+                "five",
+                "pairs,",
+                "right?"
+              ]
+            },
+            {
+              "target": "Can you guess how many pairs there will be?",
+              "source": "Kannst du tippen, wie viele Paare es werden werden?",
+              "words": [
+                "Can",
+                "you",
+                "guess",
+                "how",
+                "many",
+                "pairs",
+                "there",
+                "will",
+                "be?"
+              ]
+            }
+          ],
+          "_recreated": true
+        },
+        {
+          "id": "ls_1782128284708_7_word_forms",
+          "type": "word_forms",
+          "title": "Fibonacci und Kaninchen",
+          "desc": "Rabbits and numbers",
+          "icon": "🐰",
+          "items": [
+            {
+              "sentence": "By the end of the year, the number of pairs will be much higher. Can you guess how ___?",
+              "translation": "Am Ende des Jahres wird die Anzahl der Paare viel höher sein. Kannst du raten, wie viele es sind?",
+              "choices": [
+                "many",
+                "much"
+              ],
+              "correctIndex": 0,
+              "explanation": "Adjektiv: viele, nicht viel"
+            },
+            {
+              "sentence": "The number of pairs at the in the ___ month is 34.",
+              "translation": "Die Anzahl der Paare im siebten Monat beträgt 34.",
+              "choices": [
+                "seventh",
+                "seventhly"
+              ],
+              "correctIndex": 0,
+              "explanation": "Adjektiv: siebter, nicht adverb"
+            },
+            {
+              "sentence": "And now that you understand this, let's see if there are any ___ secrets waiting for us in the forest.",
+              "translation": "Und jetzt, da ihr das verstanden habt, lass uns sehen, ob es noch mehr Geheimnisse im Wald für uns gibt.",
+              "choices": [
+                "more",
+                "most"
+              ],
+              "correctIndex": 0,
+              "explanation": "Adjektiv: mehr, nicht am meisten"
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1782128562620_7_synonyms",
+          "type": "synonyms",
+          "title": "Fibonacci's Kaninchen",
+          "desc": "Monat, Paare, Kaninchen, andere, Fortpflanzung, zweiter, dort, beginnt",
+          "icon": "🐰",
+          "words": [
+            {
+              "base": "pairs",
+              "gloss": "Paare",
+              "sentence": "\"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year.",
+              "synonyms": [
+                {
+                  "w": "couple",
+                  "g": "Paar"
+                },
+                {
+                  "w": "sets",
+                  "g": "Sätze"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "breeding",
+              "gloss": "Fortpflanzung",
+              "sentence": "Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"",
+              "synonyms": [
+                {
+                  "w": "reproduction",
+                  "g": "Fortpflanzung"
+                },
+                {
+                  "w": "procreation",
+                  "g": "Befruchtung"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "another",
+              "gloss": "andere",
+              "sentence": "Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"",
+              "synonyms": [
+                {
+                  "w": "other",
+                  "g": "andere"
+                },
+                {
+                  "w": "additional",
+                  "g": "weitere"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "starts",
+              "gloss": "beginnt",
+              "sentence": "Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"",
+              "synonyms": [
+                {
+                  "w": "begins",
+                  "g": "beginnt"
+                },
+                {
+                  "w": "commences",
+                  "g": "beginnt"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "month",
+              "gloss": "Monat",
+              "sentence": "Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"",
+              "synonyms": [
+                {
+                  "w": "calendar month",
+                  "g": "Kalendermonat"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "rabbits",
+              "gloss": "Kaninchen",
+              "sentence": "\"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year.",
+              "synonyms": [
+                {
+                  "w": "bunnies",
+                  "g": "Kaninchen"
+                },
+                {
+                  "w": "rabes",
+                  "g": "Kaninchen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "second",
+              "gloss": "zweiter",
+              "sentence": "Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"",
+              "synonyms": [
+                {
+                  "w": "secondly",
+                  "g": "zweitens"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "first",
+                  "g": "erster"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
         }
       ],
       "generationStats": {
@@ -23602,7 +24716,7 @@
         ]
       },
       "generatedAt": "2026-06-08T09:33:58.603Z",
-      "updatedAt": "2026-06-12T08:31:02.495Z",
+      "updatedAt": "2026-06-22T12:06:07.578Z",
       "id": "tp_1220958947",
       "aiStory": "pi, the mushroom, hopped over to them, its cap a vibrant green. \"0, i, I have a riddle for you,\" pi said, its voice a soft whisper.\n\n\"Sure, pi, we're all ears,\" i said, leaning in.\n\n\"Very well,\" pi began. \"A man placed a pair of rabbits in a fenced enclosure to see how many pairs would be born in a year. Each month, a pair of rabbits produces another pair, and the new pair starts breeding from the second month onward.\"\n\n0 tilted its head, trying to understand. \"So, the rabbits keep multiplying every month, and they start breeding from the second month?\"\n\n\"Exactly,\" pi said. \"Now, how many pairs of rabbits will there be at the end of the year?\"\n\ni scratched its head, thinking hard. \"Let's see. In the first month, there's one pair. In the second month, they have another pair, so that's two pairs. In the third month, the original pair has another pair, and the new pair starts breeding, so that's three pairs. By the fourth month, it's five pairs, right?\"\n\n\"Correct,\" pi said. \"And by the end of the year, the number of pairs will be much higher. Can you guess how many?\"\n\n0 looked at i, who was still counting on its fingers. \"I think it's 34 pairs,\" i said, holding up its paws.\n\n\"Very good!\" pi exclaimed, hugging i. \"You're right. The number of pairs at the end of the year is 34. This is a famous sequence in mathematics, known as the Fibonacci sequence.\"\n\n\"Wow, that's amazing,\" 0 said, eyes wide. \"We never knew rabbits could teach us about numbers.\"\n\n\"Indeed,\" pi said, nodding. \"And now that you understand this, let's see if there are any more secrets waiting for us in the forest.\"\n\nTogether, they walked deeper into the woods, the stofftier still waving from the boat. The adventure was far from over, and they were ready for whatever came next.",
       "continuedFromId": "tp_1356093754"
@@ -24930,7 +26044,8 @@
                 "2026-06-07T06:18:59.655Z"
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "ls_1780813165245",
@@ -25045,7 +26160,245 @@
                 "10"
               ]
             }
-          ]
+          ],
+          "_hidden": false
+        },
+        {
+          "id": "ls_1782126780450_6_gate",
+          "title": "0 und i am Fluss",
+          "desc": "0 und i am Fluss, Fluss, Stofftier, Erinnerung, Fortschritt, Entdeckung",
+          "icon": "💧",
+          "vocab": [
+            {
+              "target": "river",
+              "source": "Fluss"
+            },
+            {
+              "target": "stuffed animal",
+              "source": "Stofftier"
+            },
+            {
+              "target": "remember",
+              "source": "erinnern"
+            },
+            {
+              "target": "important",
+              "source": "wichtig"
+            },
+            {
+              "target": "determination",
+              "source": "Bestimmtheit"
+            },
+            {
+              "target": "adventure",
+              "source": "Abenteuer"
+            },
+            {
+              "target": "secret",
+              "source": "Geheimnis"
+            },
+            {
+              "target": "wonder",
+              "source": "Wunder"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "We've come so far.",
+              "source": "Wir sind so weit gekommen.",
+              "words": [
+                "We've",
+                "come",
+                "so",
+                "far."
+              ]
+            },
+            {
+              "target": "The stofftier is here.",
+              "source": "Das Stofftier ist hier.",
+              "words": [
+                "The",
+                "stofftier",
+                "is",
+                "here."
+              ]
+            },
+            {
+              "target": "Let's go find out.",
+              "source": "Lass uns herausfinden.",
+              "words": [
+                "Let's",
+                "go",
+                "find",
+                "out."
+              ]
+            },
+            {
+              "target": "There's more to discover.",
+              "source": "Es gibt mehr zu entdecken.",
+              "words": [
+                "There's",
+                "more",
+                "to",
+                "discover."
+              ]
+            },
+            {
+              "target": "Ready for whatever comes next.",
+              "source": "Bereit für alles, was kommt.",
+              "words": [
+                "Ready",
+                "for",
+                "whatever",
+                "comes",
+                "next."
+              ]
+            }
+          ],
+          "_recreated": true
+        },
+        {
+          "id": "ls_1782127567578_6_synonyms",
+          "type": "synonyms",
+          "title": "0 und i am Fluss",
+          "desc": "Stofftiere, Wellen, Lächeln, Nicken, da, Fluss, sanft, Wasser",
+          "icon": "🧬",
+          "words": [
+            {
+              "base": "zero",
+              "gloss": "null",
+              "sentence": "It's like a magic number, turning everything to zero.",
+              "synonyms": [
+                {
+                  "w": "nil",
+                  "g": "nichts"
+                },
+                {
+                  "w": "nought",
+                  "g": "nichts"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "one",
+                  "g": "eins"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "waved",
+              "gloss": "bewegte die Arme",
+              "sentence": "The stofftier, the magical stuffed animal from the beginning of their story, waved from a passing boat, its eyes sparkling with excitement.",
+              "synonyms": [
+                {
+                  "w": "gestikulierte",
+                  "g": "gestikulierte"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "smile",
+              "gloss": "lächeln",
+              "sentence": "\"Remember how we found out about 0?\" i asked, looking at 0 with a smile.",
+              "synonyms": [
+                {
+                  "w": "grin",
+                  "g": "lächeln"
+                },
+                {
+                  "w": "smirk",
+                  "g": "lächeln"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "frown",
+                  "g": "runzeln"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "nodded",
+              "gloss": "nicken",
+              "sentence": "0 nodded, a hint of a smile on its face.",
+              "synonyms": [
+                {
+                  "w": "assented",
+                  "g": "zustimmte"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "shook",
+                  "g": "schüttelte"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "there",
+              "gloss": "da",
+              "sentence": "There's more to discover,' \" 0 said, a sense of wonder in its voice.",
+              "synonyms": [
+                {
+                  "w": "here",
+                  "g": "hier"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "river",
+              "gloss": "Fluss",
+              "sentence": "0 and i sat by the river, the gentle flow of water lapping softly against the banks.",
+              "synonyms": [
+                {
+                  "w": "stream",
+                  "g": "Bach"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "gentle",
+              "gloss": "sanft",
+              "sentence": "0 and i sat by the river, the gentle flow of water lapping softly against the banks.",
+              "synonyms": [
+                {
+                  "w": "mild",
+                  "g": "mild"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "rough",
+                  "g": "rau"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "water",
+              "gloss": "Wasser",
+              "sentence": "0 and i sat by the river, the gentle flow of water lapping softly against the banks.",
+              "synonyms": [
+                {
+                  "w": "liquid",
+                  "g": "flüssig"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
         }
       ],
       "generationStats": {
@@ -25065,7 +26418,7 @@
         ]
       },
       "generatedAt": "2026-06-07T05:48:31.565Z",
-      "updatedAt": "2026-06-07T06:23:14.866Z",
+      "updatedAt": "2026-06-22T12:02:17.322Z",
       "id": "tp_1356093754",
       "continuedFromId": "tp_118316007"
     },
@@ -25188,7 +26541,8 @@
                 "confused."
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "ls_1780765319345",
@@ -25303,7 +26657,8 @@
                 "12"
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "ls_1780765939234",
@@ -25424,7 +26779,292 @@
                 "755"
               ]
             }
-          ]
+          ],
+          "_hidden": false
+        },
+        {
+          "id": "ls_1782125812042_5_gate",
+          "title": "Das Geheimnis von 0",
+          "desc": "0, 3, Multiplikation, Ergebnis, Fundament",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "tricky",
+              "source": "kompliziert"
+            },
+            {
+              "target": "friends",
+              "source": "Freunde"
+            },
+            {
+              "target": "excited",
+              "source": "begeistert"
+            },
+            {
+              "target": "strange",
+              "source": "seltsam"
+            },
+            {
+              "target": "noticed",
+              "source": "beobachtet"
+            },
+            {
+              "target": "surprising",
+              "source": "überraschend"
+            },
+            {
+              "target": "wonder",
+              "source": "Wunder"
+            },
+            {
+              "target": "important",
+              "source": "wichtig"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "0 and its friends were working on a tricky problem.",
+              "source": "0 und seine Freunde arbeiteten an einem komplizierten Problem.",
+              "words": [
+                "0",
+                "and",
+                "its",
+                "friends",
+                "were",
+                "working",
+                "on",
+                "a",
+                "tricky",
+                "problem."
+              ]
+            },
+            {
+              "target": "3 appeared, looking excited.",
+              "source": "3 erschien, begeistert aussehend.",
+              "words": [
+                "3",
+                "appeared,",
+                "looking",
+                "excited."
+              ]
+            },
+            {
+              "target": "When you multiply any number by 0, you get 0.",
+              "source": "Wenn du irgendein Zahl mit 0 multiplizierst, bekommst du 0.",
+              "words": [
+                "When",
+                "you",
+                "multiply",
+                "any",
+                "number",
+                "by",
+                "0,",
+                "you",
+                "get",
+                "0."
+              ]
+            },
+            {
+              "target": "Without it, the whole thing doesn't work.",
+              "source": "Ohne es funktioniert das Ganze nicht.",
+              "words": [
+                "Without",
+                "it,",
+                "the",
+                "whole",
+                "thing",
+                "doesn't",
+                "work."
+              ]
+            },
+            {
+              "target": "They multiplied numbers, checked their work, and shared their findings.",
+              "source": "Sie multiplizierten Zahlen, überprüften ihre Arbeit und teilten ihre Erkenntnisse mit.",
+              "words": [
+                "They",
+                "multiplied",
+                "numbers,",
+                "checked",
+                "their",
+                "work,",
+                "and",
+                "shared",
+                "their",
+                "findings."
+              ]
+            }
+          ],
+          "_recreated": true
+        },
+        {
+          "id": "ls_1782126337221_5_word_forms",
+          "type": "word_forms",
+          "title": "Null und seine Freunde",
+          "desc": "Null und seine Freunde lernen etwas Neues",
+          "icon": "💡",
+          "items": [
+            {
+              "sentence": "One day, 0 and its friends were working on a particularly tricky problem. Suddenly, ___ appeared, looking excited.",
+              "translation": "Eines Tages arbeiteten 0 und seine Freunde an einem besonders schwierigen Problem. Plötzlich erschien ___ aufgeregt.",
+              "choices": [
+                "someone",
+                "somebody",
+                "anyone",
+                "anybody"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "___ eyes widened. 'That's... that's true,' 2 said, testing it out. '1 times 0 is 0. 5 times 0 is 0. 100 times 0 is 0.'",
+              "translation": "2s Augen weiteten sich. 'Das... das ist wahr,' sagte 2, es ausprobierend. '1 mal 0 ist 0. 5 mal 0 ist 0. 100 mal 0 ist 0.'",
+              "choices": [
+                "2's",
+                "2'",
+                "2's'"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "0 felt a mix of ___ and confusion. 'But why is that important?' 0 asked.",
+              "translation": "0 fühlte eine Mischung aus Aufregung und Verwirrung. 'Aber warum ist das wichtig?' fragte 0.",
+              "choices": [
+                "excitement",
+                "excited",
+                "excitedly",
+                "excitedness"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "0 ___, feeling a mix of pride and curiosity. 'Let's keep exploring,' 0 said. 'There's so much more to discover.'",
+              "translation": "0 lächelte, fühlte eine Mischung aus Stolz und Neugier. 'Lass uns weiter erkunden,' sagte 0. 'Es gibt so viel mehr zu entdecken.'",
+              "choices": [
+                "smiled",
+                "smiling",
+                "smile",
+                "smiles"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1782126571154_5_synonyms",
+          "type": "synonyms",
+          "title": "Das Geheimnis von 0",
+          "desc": "their, multiply, number, times, something, surprising, curiosity, asked",
+          "icon": "🔍",
+          "words": [
+            {
+              "base": "multiply",
+              "gloss": "multiplizieren",
+              "sentence": "\"I was trying to multiply some numbers, and I noticed something strange.",
+              "synonyms": [
+                {
+                  "w": "increase",
+                  "g": "vergrößern"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "divide",
+                  "g": "teilen"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "number",
+              "gloss": "zahl",
+              "sentence": "When you multiply any number by 0, you get 0.",
+              "synonyms": [
+                {
+                  "w": "figure",
+                  "g": "ziffer"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "times",
+              "gloss": "mal",
+              "sentence": "\"1 times 0 is 0.",
+              "synonyms": [
+                {
+                  "w": "multiplied",
+                  "g": "multipliziert"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "something",
+              "gloss": "etwas",
+              "sentence": "\"Hey, 0, 1, 2,\" 3 said, \"I just figured something out.",
+              "synonyms": [
+                {
+                  "w": "anything",
+                  "g": "etwas"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "surprising",
+              "gloss": "surprisend",
+              "sentence": "It's about 0, and it's really surprising.\"",
+              "synonyms": [
+                {
+                  "w": "amazing",
+                  "g": "erstaunlich"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "boring",
+                  "g": "langweilig"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "curiosity",
+              "gloss": "Neugier",
+              "sentence": "0, 1, and 2 looked at each other, their curiosity piqued.",
+              "synonyms": [
+                {
+                  "w": "interest",
+                  "g": "Interesse"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "asked",
+              "gloss": "fragte",
+              "sentence": "\"What is it?\" 1 asked.",
+              "synonyms": [
+                {
+                  "w": "inquired",
+                  "g": "fragte"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
         }
       ],
       "generationStats": {
@@ -25444,7 +27084,7 @@
         ]
       },
       "generatedAt": "2026-06-04T21:32:54.652Z",
-      "updatedAt": "2026-06-06T17:12:19.234Z",
+      "updatedAt": "2026-06-22T11:23:44.842Z",
       "id": "tp_118316007",
       "continuedFromId": "tp_103972811"
     },
@@ -26515,7 +28155,8 @@
                 "1."
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "ls_1780604030829",
@@ -26523,7 +28164,271 @@
           "title": "Text Understanding",
           "desc": "Find the mistakes in the story",
           "icon": "🔍",
-          "corruptedStory": "The creature rembered the small i, and went back to the numbers to philosphize further with it, Both still didn't know who they wer. The 0 was funny but clumsy, and had a secret. 1 was mean and thought it was the best everywhere, but was brave. 2 was hard to fit into any category.\n\n\"Hey, i,\" said 1, \"what are you doing here? You're not a number, are you?\"\n\n\"I'm not sure,\" said i, looking at 1 with a curious expression. \"But I feel like I can be anything I want.\"\n\n1 snort. \"Anything? You? Ha! You're just a tiny dot. You can't be anything.\"\n\n2, who had been listening, stepped forward. \"Hey, 1, stop being so mean. i has a right to explor'e who it is.\"\n\n1 glared at 2. \"And who are you to tell me what to do? You're just a 2, after all.\"\n\n2 shrugged. \"I might be a 2, but I'm not a bully. And I think i has a right to figure things out.\"\n\nThe creature watched the exchange with interest. \"Maybe,\" it said, \"we can all help i figure things out.\"\n\n0, who had been quiet, spoke up. \"I have a secret,\" it said, \"but I'm not sure if I should share it.\"\n\ni looked at 0 with a gentle smile. \"You can share it with me. I promise I won't judge.\"\n\n0 hesitated, then said, \"I think I might be a 1. But I'm not sure. I feel like I'm always trying to be the best, but I'm not sure if that's who I am.\"\n\n1's face softened. \"You're not the best,\" it said. \"You're just you. And that's okay.\"\n\n2 nodded. \"Yeah, and you're not a 1. You're 0. And that's okay too.\"\n\nThe creature felt a warm glow. \"Maybe,\" it said, \"we can all help each other figure out who we are.\"\n\nThe numbers and the letters gathered around, forming a circle. They talked and laughed, sharing their thoughts and feelings. The creature realized that it didn't need to fit into just one category. It could be a number, a letter, or anything in between. And that was okay."
+          "corruptedStory": "The creature rembered the small i, and went back to the numbers to philosphize further with it, Both still didn't know who they wer. The 0 was funny but clumsy, and had a secret. 1 was mean and thought it was the best everywhere, but was brave. 2 was hard to fit into any category.\n\n\"Hey, i,\" said 1, \"what are you doing here? You're not a number, are you?\"\n\n\"I'm not sure,\" said i, looking at 1 with a curious expression. \"But I feel like I can be anything I want.\"\n\n1 snort. \"Anything? You? Ha! You're just a tiny dot. You can't be anything.\"\n\n2, who had been listening, stepped forward. \"Hey, 1, stop being so mean. i has a right to explor'e who it is.\"\n\n1 glared at 2. \"And who are you to tell me what to do? You're just a 2, after all.\"\n\n2 shrugged. \"I might be a 2, but I'm not a bully. And I think i has a right to figure things out.\"\n\nThe creature watched the exchange with interest. \"Maybe,\" it said, \"we can all help i figure things out.\"\n\n0, who had been quiet, spoke up. \"I have a secret,\" it said, \"but I'm not sure if I should share it.\"\n\ni looked at 0 with a gentle smile. \"You can share it with me. I promise I won't judge.\"\n\n0 hesitated, then said, \"I think I might be a 1. But I'm not sure. I feel like I'm always trying to be the best, but I'm not sure if that's who I am.\"\n\n1's face softened. \"You're not the best,\" it said. \"You're just you. And that's okay.\"\n\n2 nodded. \"Yeah, and you're not a 1. You're 0. And that's okay too.\"\n\nThe creature felt a warm glow. \"Maybe,\" it said, \"we can all help each other figure out who we are.\"\n\nThe numbers and the letters gathered around, forming a circle. They talked and laughed, sharing their thoughts and feelings. The creature realized that it didn't need to fit into just one category. It could be a number, a letter, or anything in between. And that was okay.",
+          "_hidden": false
+        },
+        {
+          "id": "ls_1782123325290_3_gate",
+          "title": "Zahlen und Philosophie",
+          "desc": "Zahlen sprechen über Identität und Selbstfindung",
+          "icon": "🔍",
+          "vocab": [
+            {
+              "target": "philosophize",
+              "source": "philosophieren"
+            },
+            {
+              "target": "clumsy",
+              "source": "klumsig"
+            },
+            {
+              "target": "secret",
+              "source": "Geheimnis"
+            },
+            {
+              "target": "brave",
+              "source": "Mutig"
+            },
+            {
+              "target": "category",
+              "source": "Kategorie"
+            },
+            {
+              "target": "sure",
+              "source": "sicher"
+            },
+            {
+              "target": "shrugged",
+              "source": "zuckte mit den Schultern"
+            },
+            {
+              "target": "judgment",
+              "source": "Urteil"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "1 snorted.",
+              "source": "1 schnaubte.",
+              "words": [
+                "1",
+                "snorted."
+              ]
+            },
+            {
+              "target": "i has a right to explore who it is.",
+              "source": "i hat das Recht, wer es ist, zu erkunden.",
+              "words": [
+                "i",
+                "has",
+                "a",
+                "right",
+                "to",
+                "explore",
+                "who",
+                "it",
+                "is."
+              ]
+            },
+            {
+              "target": "2 stepped forward.",
+              "source": "2 trat vor.",
+              "words": [
+                "2",
+                "stepped",
+                "forward."
+              ]
+            },
+            {
+              "target": "I might be a 1.",
+              "source": "Ich könnte ein 1 sein.",
+              "words": [
+                "I",
+                "might",
+                "be",
+                "a",
+                "1."
+              ]
+            },
+            {
+              "target": "But I'm not sure if I should share it.",
+              "source": "Aber ich bin nicht sicher, ob ich es teilen sollte.",
+              "words": [
+                "But",
+                "I'm",
+                "not",
+                "sure",
+                "if",
+                "I",
+                "should",
+                "share",
+                "it."
+              ]
+            }
+          ],
+          "_recreated": true
+        },
+        {
+          "id": "ls_1782124085054_3_word_forms",
+          "type": "word_forms",
+          "title": "Zahlen und Buchstaben",
+          "desc": "Wörterformen üben",
+          "icon": "🔢",
+          "items": [
+            {
+              "sentence": "1 snorted. ___ and who are you to tell me what to do? You're just a 2, after all.",
+              "translation": "1 schnaubte. Und wer bist du, um mich zu beurteilen? Du bist nur eine 2, nachdem alles.",
+              "choices": [
+                "and who",
+                "and what",
+                "and why",
+                "and when"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "0, who had been quiet, spoke up. ___ a secret, but I'm not sure if I should share it.",
+              "translation": "0, die/still, sprach auf. 0 hat ein Geheimnis, aber ich bin nicht sicher, ob ich es teilen sollte.",
+              "choices": [
+                "0 has",
+                "1 has",
+                "i has",
+                "2 has"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "i looked at 0 with a gentle smile. ___ you share it with me. I promise I won't judge.",
+              "translation": "i sah 0 mit einem sanften Lächeln an. i verspreche, dich nicht zu beurteilen, wenn du es mir teilst.",
+              "choices": [
+                "i promise",
+                "you promise",
+                "he promises",
+                "she promises"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "1's face softened. ___ you're the best, but you're just you. And that's okay.",
+              "translation": "1s Gesicht wurde weicher. 1, du bist die Besten, aber du bist nur du. Und das ist in Ordnung.",
+              "choices": [
+                "1, you're",
+                "2, you're",
+                "i, you're",
+                "0, you're"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "The creature felt a warm glow. ___ we can all help each other figure out who we are.",
+              "translation": "Das Wesen fühlte eine wärmende Glut. Das können wir alle zusammen herausfinden, wer wir sind.",
+              "choices": [
+                "The creature thought",
+                "The creature felt",
+                "The creature saw",
+                "The creature heard"
+              ],
+              "correctIndex": 1,
+              "explanation": ""
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1782124287494_3_synonyms",
+          "type": "synonyms",
+          "title": "Philosophie der Zahlen",
+          "desc": "Zahlen, Kreaturen und Geheimnisse",
+          "icon": "🔢",
+          "words": [
+            {
+              "base": "numbers",
+              "gloss": "Zahlen",
+              "sentence": "The creature remembered the small i, and went back to the numbers to philosophize further with it.",
+              "synonyms": [
+                {
+                  "w": "figures",
+                  "g": "Ziffern"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "creature",
+              "gloss": "Kreatur",
+              "sentence": "The creature remembered the small i, and went back to the numbers to philosophize further with it.",
+              "synonyms": [
+                {
+                  "w": "being",
+                  "g": "Wesen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "secret",
+              "gloss": "Geheimnis",
+              "sentence": "The 0 was funny but clumsy, and had a secret.",
+              "synonyms": [
+                {
+                  "w": "mystery",
+                  "g": "Mysterium"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "public",
+                  "g": "öffentlich"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "category",
+              "gloss": "Kategorie",
+              "sentence": "2 was hard to fit into any category.",
+              "synonyms": [
+                {
+                  "w": "class",
+                  "g": "Klasse"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "right",
+              "gloss": "Recht",
+              "sentence": "i has a right to explore who it is.\"",
+              "synonyms": [
+                {
+                  "w": "correct",
+                  "g": "richtig"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "wrong",
+                  "g": "falsch"
+                }
+              ],
+              "homophones": [
+                {
+                  "w": "write",
+                  "g": "schreiben"
+                }
+              ]
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
         }
       ],
       "generationStats": {
@@ -26543,7 +28448,7 @@
         ]
       },
       "generatedAt": "2026-06-04T20:00:09.553Z",
-      "updatedAt": "2026-06-04T20:13:50.830Z",
+      "updatedAt": "2026-06-22T10:43:20.405Z",
       "id": "tp_799905727",
       "continuedFromId": "tp_2088453173"
     },
@@ -26664,7 +28569,8 @@
                 "group."
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "ls_1780765170067",
@@ -26779,7 +28685,213 @@
                 "12"
               ]
             }
-          ]
+          ],
+          "_hidden": false
+        },
+        {
+          "id": "ls_1782120703173_1_gate",
+          "title": "i, der Wurzel aus -1",
+          "desc": "i, die imaginäre Einheit, und seine Suche nach der Identität",
+          "icon": "💡",
+          "vocab": [
+            {
+              "target": "creature",
+              "source": "Kreatur"
+            },
+            {
+              "target": "journey",
+              "source": "Reise"
+            },
+            {
+              "target": "mystery",
+              "source": "Mysterium"
+            },
+            {
+              "target": "identity",
+              "source": "Identität"
+            },
+            {
+              "target": "pang",
+              "source": "Stich"
+            },
+            {
+              "target": "kind",
+              "source": "zart"
+            },
+            {
+              "target": "join",
+              "source": "einbeziehen"
+            },
+            {
+              "target": "understanding",
+              "source": "Verständnis"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The creature felt a pang of understanding.",
+              "source": "Die Kreatur fühlte einen Stich des Verständnisses.",
+              "words": [
+                "The",
+                "creature",
+                "felt",
+                "a",
+                "pang",
+                "of",
+                "understanding."
+              ]
+            },
+            {
+              "target": "Why don't you join us?",
+              "source": "Warum beziehst du dich nicht zu uns?",
+              "words": [
+                "Why",
+                "don't",
+                "you",
+                "join",
+                "us?"
+              ]
+            },
+            {
+              "target": "I'm not a whole number.",
+              "source": "Ich bin kein ganzzahliger Wert.",
+              "words": [
+                "I'm",
+                "not",
+                "a",
+                "whole",
+                "number."
+              ]
+            },
+            {
+              "target": "I'm the square root of minus one.",
+              "source": "Ich bin die Wurzel aus minus eins.",
+              "words": [
+                "I'm",
+                "the",
+                "square",
+                "root",
+                "of",
+                "minus",
+                "one."
+              ]
+            },
+            {
+              "target": "I'm a bit of a mystery.",
+              "source": "Ich bin ein wenig Mysterium.",
+              "words": [
+                "I'm",
+                "a",
+                "bit",
+                "of",
+                "a",
+                "mystery."
+              ]
+            }
+          ],
+          "_recreated": true
+        },
+        {
+          "id": "ls_1782122175435_1_synonyms",
+          "type": "synonyms",
+          "title": "Das Ich trifft das i=√(-1)",
+          "desc": "creature, numbers, number, little, journey, meadow, there, either",
+          "icon": "🔢",
+          "words": [
+            {
+              "base": "number",
+              "gloss": "Zahl",
+              "sentence": "Each number had a distinct personality, but none seemed to fit the creature quite right.",
+              "synonyms": [
+                {
+                  "w": "figure",
+                  "g": "Ziffer"
+                },
+                {
+                  "w": "digit",
+                  "g": "Ziffer"
+                },
+                {
+                  "w": "count",
+                  "g": "zählen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "journey",
+              "gloss": "Reise",
+              "sentence": "The creature, now feeling more at peace with itself, continued its journey through the meadow.",
+              "synonyms": [
+                {
+                  "w": "trip",
+                  "g": "Reise"
+                },
+                {
+                  "w": "voyage",
+                  "g": "Reise"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "little",
+              "gloss": "klein",
+              "sentence": "I'm not a number, and yet, I'm not like the little i either.\"",
+              "synonyms": [
+                {
+                  "w": "small",
+                  "g": "klein"
+                },
+                {
+                  "w": "tiny",
+                  "g": "klein"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "big",
+                  "g": "groß"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "there",
+              "gloss": "da",
+              "sentence": "\"Hello there,\" Zero said, its round shape making it look like a friendly, cuddly ball.",
+              "synonyms": [
+                {
+                  "w": "over there",
+                  "g": "dort"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "either",
+              "gloss": "entweder",
+              "sentence": "I'm not a number, and yet, I'm not like the little i either.\"",
+              "synonyms": [
+                {
+                  "w": "neither",
+                  "g": "nichts"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "both",
+                  "g": "beide"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
         }
       ],
       "generationStats": {
@@ -26799,7 +28911,7 @@
         ]
       },
       "generatedAt": "2026-06-03T09:38:48.158Z",
-      "updatedAt": "2026-06-15T10:21:28.304Z",
+      "updatedAt": "2026-06-22T10:19:37.937Z",
       "id": "tp_579238210",
       "continuedFromId": "tp_131653303"
     },
@@ -29992,7 +32104,194 @@
               "article": "the",
               "plural": "stars"
             }
-          ]
+          ],
+          "_hidden": false
+        },
+        {
+          "id": "ls_1782122406824_2_gate",
+          "title": "Von A bis Z",
+          "desc": "Buchstaben in einem Kreis",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "creature",
+              "source": "Kreatur"
+            },
+            {
+              "target": "meadow",
+              "source": "Wiese"
+            },
+            {
+              "target": "gather",
+              "source": "sich versammeln"
+            },
+            {
+              "target": "friend",
+              "source": "Freund"
+            },
+            {
+              "target": "world",
+              "source": "Welt"
+            },
+            {
+              "target": "form",
+              "source": "bilden"
+            },
+            {
+              "target": "sentence",
+              "source": "Satz"
+            },
+            {
+              "target": "excitement",
+              "source": "Aufregung"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The creature approached cautiously.",
+              "source": "Die Kreatur näherte sich vorsichtig.",
+              "words": [
+                "The",
+                "creature",
+                "approached",
+                "cautiously."
+              ]
+            },
+            {
+              "target": "Would you like to join us?",
+              "source": "Möchtest du uns bei uns mitmachen?",
+              "words": [
+                "Would",
+                "you",
+                "like",
+                "to",
+                "join",
+                "us?"
+              ]
+            },
+            {
+              "target": "The creature was fascinated.",
+              "source": "Die Kreatur war fasziniert.",
+              "words": [
+                "The",
+                "creature",
+                "was",
+                "fascinated."
+              ]
+            },
+            {
+              "target": "I never knew I could do this.",
+              "source": "Ich wusste nie, dass ich das machen kann.",
+              "words": [
+                "I",
+                "never",
+                "knew",
+                "I",
+                "could",
+                "do",
+                "this."
+              ]
+            },
+            {
+              "target": "Just like you can be anything you set your mind to.",
+              "source": "Genau wie du alles sein kannst, was du dir vorstellst.",
+              "words": [
+                "Just",
+                "like",
+                "you",
+                "can",
+                "be",
+                "anything",
+                "you",
+                "set",
+                "your",
+                "mind",
+                "to."
+              ]
+            }
+          ],
+          "_recreated": true
+        },
+        {
+          "id": "ls_1782123070739_2_synonyms",
+          "type": "synonyms",
+          "title": "Von A bis Z",
+          "desc": "Buchstaben, Zahlen und mehr",
+          "icon": "📖",
+          "words": [
+            {
+              "base": "letters",
+              "gloss": "Buchstaben",
+              "sentence": "A group of letters, from A to Z, stood in a circle, chatting and laughing.",
+              "synonyms": [
+                {
+                  "w": "characters",
+                  "g": "Zeichen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "numbers",
+              "gloss": "Zahlen",
+              "sentence": "It stretched and yawned, then wandered into the meadow where the numbers played.",
+              "synonyms": [
+                {
+                  "w": "digits",
+                  "g": "Ziffern"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "could",
+              "gloss": "konnte",
+              "sentence": "\"I never knew I could do this.\"",
+              "synonyms": [
+                {
+                  "w": "might",
+                  "g": "konnte"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "could not",
+                  "g": "konnte nicht"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "anything",
+              "gloss": "etwas",
+              "sentence": "\"You can do anything you set your mind to,\" said M, the middle letter.",
+              "synonyms": [
+                {
+                  "w": "something",
+                  "g": "etwas"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "hello",
+              "gloss": "hallo",
+              "sentence": "\"Hello,\" it said, its voice filled with curiosity.",
+              "synonyms": [
+                {
+                  "w": "hi",
+                  "g": "hallo"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_recreated": true,
+          "_arcMode": "reinforce"
         }
       ],
       "generationStats": {
@@ -30010,7 +32309,7 @@
         ]
       },
       "generatedAt": "2026-06-03T09:53:02.146Z",
-      "updatedAt": "2026-06-03T09:53:02.177Z",
+      "updatedAt": "2026-06-22T10:29:27.513Z",
       "id": "tp_2088453173",
       "continuedFromId": "tp_579238210"
     },
@@ -30119,7 +32418,8 @@
                 "exist."
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": 5,
@@ -30198,7 +32498,8 @@
               "article": "the",
               "plural": "lights"
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": 6,
@@ -30362,7 +32663,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "aeh_1780765589224",
@@ -30397,7 +32699,8 @@
               "corrected": null,
               "reason": ""
             }
-          ]
+          ],
+          "_hidden": true
         },
         {
           "id": "ls_1780818065656",
@@ -30431,7 +32734,98 @@
               "replace": "MEE",
               "reason": ""
             }
-          ]
+          ],
+          "_hidden": false
+        },
+        {
+          "id": "ls_1782120405952_0_gate",
+          "title": "Das kleine Ich bin ich",
+          "desc": "Wer bin ich?",
+          "icon": "🌟",
+          "vocab": [
+            {
+              "target": "I",
+              "source": "ich"
+            },
+            {
+              "target": "am",
+              "source": "bin"
+            },
+            {
+              "target": "who",
+              "source": "wer"
+            },
+            {
+              "target": "name",
+              "source": "Name"
+            },
+            {
+              "target": "doubt",
+              "source": "zweifeln"
+            },
+            {
+              "target": "journey",
+              "source": "Reise"
+            },
+            {
+              "target": "animal",
+              "source": "Tier"
+            },
+            {
+              "target": "accept",
+              "source": "annehmen"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I am me.",
+              "source": "Ich bin ich.",
+              "words": [
+                "I",
+                "am",
+                "me."
+              ]
+            },
+            {
+              "target": "Who are you?",
+              "source": "Wer bist du?",
+              "words": [
+                "Who",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "I doubt myself.",
+              "source": "Ich zweifle an mir selbst.",
+              "words": [
+                "I",
+                "doubt",
+                "myself."
+              ]
+            },
+            {
+              "target": "I am on a journey.",
+              "source": "Ich bin auf einer Reise.",
+              "words": [
+                "I",
+                "am",
+                "on",
+                "a",
+                "journey."
+              ]
+            },
+            {
+              "target": "I accept myself.",
+              "source": "Ich nehme mich in Anschlag.",
+              "words": [
+                "I",
+                "accept",
+                "myself."
+              ]
+            }
+          ],
+          "_recreated": true
         }
       ],
       "generationStats": {
@@ -30463,7 +32857,7 @@
         ]
       },
       "generatedAt": "2026-06-03T08:54:37.623Z",
-      "updatedAt": "2026-06-13T08:11:53.866Z",
+      "updatedAt": "2026-06-22T09:34:05.512Z",
       "id": "tp_131653303",
       "repairStats": {
         "repairCount": 1,
@@ -33336,6 +35730,153 @@
               "plural": "Modelle"
             }
           ]
+        },
+        {
+          "id": "ls_1782112987700",
+          "type": "synonyms",
+          "title": "AI & Code Efficiency",
+          "desc": "Claude, Modelle, Fähigkeit, Generieren, Insbesondere",
+          "icon": "🤖",
+          "words": [
+            {
+              "base": "Modelle",
+              "gloss": "models",
+              "sentence": "Diese Modelle basieren auf fortschrittlichen KI-Techniken, insbesondere auf der Generierung von Texten, was ihre Anwendung in verschiedenen Bereichen ermöglicht.\"",
+              "synonyms": [
+                {
+                  "w": "Modell",
+                  "g": "model"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "Fähigkeit",
+              "gloss": "ability",
+              "sentence": "Großformatige Sprachmodelle wie Claude haben die Fähigkeit, komplexe Probleme in kurzer Zeit zu lösen und Code zu generieren.",
+              "synonyms": [
+                {
+                  "w": "Kapazität",
+                  "g": "capacity"
+                },
+                {
+                  "w": "Fähigkeiten",
+                  "g": "abilities"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "Mangel",
+                  "g": "deficiency"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "Generieren",
+              "gloss": "generate",
+              "sentence": "Großformatige Sprachmodelle wie Claude haben die Fähigkeit, komplexe Probleme in kurzer Zeit zu lösen und Code zu generieren.",
+              "synonyms": [
+                {
+                  "w": "Erzeugen",
+                  "g": "produce"
+                },
+                {
+                  "w": "Erstellen",
+                  "g": "create"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "Insbesondere",
+              "gloss": "particularly",
+              "sentence": "Wie wichtig sind speziell KI-Systeme, insbesondere große Sprachmodelle wie Claude von Anthropic, für die Effizienzsteigerung bei der Erstellung von Code?\"",
+              "synonyms": [
+                {
+                  "w": "Besonders",
+                  "g": "especially"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ]
+        },
+        {
+          "id": "ls_1782113941333",
+          "type": "word_forms",
+          "title": "Mathematik und KI",
+          "desc": "Wörter in verschiedenen Formen",
+          "icon": "💡",
+          "items": [
+            {
+              "sentence": "Ich denke nach, während ich die Diskussion ___: \"Es freut mich, dass Sie die Bedeutung der mathematischen Grundlagen verstanden haben. Allerdings gibt es noch ein weiteres Thema, das ich gerne besprechen möchte. Wie wichtig sind speziell KI-Systeme, insbesondere große Sprachmodelle wie Claude von Anthropic, für die Effizienzsteigerung bei der Erstellung von Code?\"",
+              "translation": "I think while I continue the discussion: 'I am glad that you have understood the importance of mathematical basics. However, there is another topic that I would like to discuss. How important are specifically AI systems, especially large language models like Claude from Anthropic, for improving code efficiency during creation?'",
+              "choices": [
+                "fortsetze",
+                "fortsetzen",
+                "fortsetzt"
+              ],
+              "correctIndex": 1,
+              "explanation": "Verb im Präsens, da ich die Diskussion fortsetze."
+            },
+            {
+              "sentence": "Er nickt verstehend: \"Ja, das ist ein interessantes Thema. Großformatige Sprachmodelle wie Claude haben die Fähigkeit, komplexe Probleme in kurzer Zeit zu lösen und Code zu ___.",
+              "translation": "He nods understandingly: 'Yes, this is an interesting topic. Large language models like Claude have the ability to solve complex problems quickly and generate code.'",
+              "choices": [
+                "generieren",
+                "generiert",
+                "generiertes"
+              ],
+              "correctIndex": 0,
+              "explanation": "Nominativ, da es sich um das Substantiv handelt."
+            },
+            {
+              "sentence": "Ich bestätige: \"Genau. Diese Modelle können nicht nur Code ___ und verbessern, sondern auch optimieren und verbessern. Sie helfen dabei, die Produktivität zu steigern und die Qualität der Software zu erhöhen.",
+              "translation": "I confirm: 'Exactly. These models can not only generate and improve code, but also optimize and improve it. They help to increase productivity and improve the quality of software.'",
+              "choices": [
+                "generieren",
+                "generiert",
+                "generiertes"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verb im Präsens, da es sich um eine allgemeine Aussage handelt."
+            },
+            {
+              "sentence": "Claude und ähnliche Modelle nutzen ihre umfangreiche Wissensbasis und ihre Fähigkeit, kontextbezogene Entscheidungen zu treffen, um effizient zu ___.",
+              "translation": "Claude and similar models use their extensive knowledge base and their ability to make context-specific decisions to work efficiently.",
+              "choices": [
+                "arbeiten",
+                "arbeitet"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verb im Präsens, da es sich um eine allgemeine Eigenschaft handelt."
+            },
+            {
+              "sentence": "Diese Modelle können nicht nur Code generieren, sondern auch optimieren und ___.",
+              "translation": "These models can not only generate code, but also optimize and improve it.",
+              "choices": [
+                "verbessern",
+                "verbessert"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verb im Präsens, da es sich um eine allgemeine Eigenschaft handelt."
+            },
+            {
+              "sentence": "Insbesondere große Sprachmodelle wie Claude von Anthropic haben die Fähigkeit, komplexe Probleme in kurzer Zeit zu lösen und Code zu ___.",
+              "translation": "Especially large language models like Claude from Anthropic have the ability to solve complex problems quickly and generate code.",
+              "choices": [
+                "generieren",
+                "generiert",
+                "generiertes"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verb im Präsens, da es sich um eine allgemeine Eigenschaft handelt."
+            }
+          ]
         }
       ],
       "generationStats": {
@@ -33353,7 +35894,7 @@
         ]
       },
       "generatedAt": "2026-06-01T20:08:22.113Z",
-      "updatedAt": "2026-06-04T14:20:55.112Z",
+      "updatedAt": "2026-06-22T08:07:15.080Z",
       "id": "tp_1777471350",
       "continuedFromId": "tp_1914431701"
     },

@@ -32,9 +32,9 @@ function fillPrompt(template, vars) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v44';
+const APP_VERSION  = 'v45';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
-const UI_FILE     = path.join(__dirname, 'ui.json');
+const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 const OLLAMA_MODEL        = process.env.OLLAMA_MODEL        || 'qwen2.5:7b';
@@ -83,11 +83,26 @@ function loadUI() {
   } catch(e) { console.warn('Could not read ui.json:', e.message); }
   return { en: {} };
 }
+let _uiWriteAt = 0;   // timestamp of our own ui.json write, so the watcher ignores it
 function saveUI(ui) {
+  _uiWriteAt = Date.now();   // mark our own write so the watcher doesn't reload it
   try { fs.writeFileSync(UI_FILE, JSON.stringify(ui, null, 2), 'utf8'); }
   catch(e) { console.warn('Could not write ui.json:', e.message); }
 }
 let uiStrings = loadUI();
+// Hot-reload ui.json on external edits (mirrors the prompts.json watcher). The
+// reload is non-destructive: a parse error (e.g. mid-write) is skipped rather than
+// blanking the strings, and writes we made ourselves (saveUI) are ignored.
+function reloadUI() {
+  if (Date.now() - _uiWriteAt < 1000) return;   // our own saveUI; nothing external changed
+  try {
+    const next = JSON.parse(fs.readFileSync(UI_FILE, 'utf8'));
+    if (next && typeof next === 'object' && next.en) { uiStrings = next; console.log('  ui.json reloaded'); }
+  } catch(e) { console.warn('  ui.json reload skipped (parse error):', e.message); }
+}
+try {
+  fs.watch(UI_FILE, () => { setTimeout(reloadUI, 100); });
+} catch(_) {}
 
 async function translateUIToLang(lang) {
   const S = langName(lang);
@@ -211,9 +226,10 @@ function findSavedById(id) {
 // startRef is the PARENT reference: a tp_ id (preferred) or a topic name
 // (back-compat — resolved once, then traversal is id-based).
 function collectChainVocab(startRef) {
-  if (!startRef) return { words: [], nouns: [], verbs: [] };
-  const words = [], nouns = [], verbs = [];
+  if (!startRef) return { words: [], nouns: [], verbs: [], sentences: [] };
+  const words = [], nouns = [], verbs = [], sentences = [];
   const seen = new Set();
+  const seenSent = new Set();
   // Resolve start: id walks via findSavedById; a name is resolved once.
   let t = String(startRef).startsWith('tp_') ? findSavedById(startRef) : findSaved(startRef);
   const visited = new Set();
@@ -240,13 +256,17 @@ function collectChainVocab(startRef) {
           words.push({ target: c.infinitive, source: c.source || '' });
         }
       }
+      for (const s of (ls.sentences || [])) {
+        const tgt = (s && s.target || '').trim();
+        if (tgt && !seenSent.has(tgt.toLowerCase())) { seenSent.add(tgt.toLowerCase()); sentences.push(tgt); }
+      }
     }
     // Step to parent by stored id (fall back to resolving a name for
     // un-migrated/imported entries that lack continuedFromId).
     const pid = t.continuedFromId || (t.continuedFrom ? (findSaved(t.continuedFrom)?.id || null) : null);
     t = pid ? findSavedById(pid) : null;
   }
-  return { words, nouns, verbs };
+  return { words, nouns, verbs, sentences };
 }
 function upsert(data) {
   const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons = store.lessons || []) && store.lessons;
@@ -919,6 +939,7 @@ async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
   const S = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const nExercises = difficulty * 5;
+  //const nExercises = difficulty <= 1 ? 5 : 7;
   const sys  = fillPrompt(PROMPTS.math.system, { L, S });
   const user = fillPrompt(PROMPTS.math.user, { L, S, diff, instruction, nExercises });
   console.log('\n── Math lesson (LLM) prompt ─────────────────────────');
@@ -1089,11 +1110,151 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
   throw new Error(`Grammar generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
 }
 
+// ── word_forms lesson type ───────────────────────────────────────────────────
+// Fill-in-the-blank exercises drawn from sentences that appear in the story: one
+// word is blanked (___) and 4 forms of that word are offered, the original being
+// correct. Language-independent; replaces grammar/conjugation drills over time.
+function _wfNorm(s) {
+  return String(s == null ? '' : s).toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim();
+}
+// Validate a batch of word_forms items against the source story. Pure; returns
+// {valid, rejected[]} so the generator can drop bad items and log why.
+function validateWordFormsItems(items, story) {
+  const storyNorm = _wfNorm(story);
+  const valid = [], rejected = [];
+  const escapeRe = s => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  for (const item of (items || [])) {
+    const reasons = [];
+    let sentence = (item && typeof item.sentence === 'string') ? item.sentence.trim() : '';
+    let choices = (item && Array.isArray(item.choices)) ? item.choices.map(c => String(c == null ? '' : c).trim()).filter(Boolean) : [];
+    let ci = item ? item.correctIndex : undefined;
+
+    // SALVAGE 1 — dedupe choices (case-insensitive, keep first) and re-point the
+    // correctIndex. A weak model often pads with repeats; that should not kill the item.
+    if (Number.isInteger(ci) && ci >= 0 && ci < choices.length) {
+      const correctWord = choices[ci];
+      const seen = new Set(); const deduped = [];
+      for (const c of choices) { const k = c.toLowerCase(); if (!seen.has(k)) { seen.add(k); deduped.push(c); } }
+      choices = deduped;
+      ci = choices.findIndex(c => c.toLowerCase() === String(correctWord).toLowerCase());
+      // Trim an over-long set but always keep the correct choice.
+      if (choices.length > 6) { const correct = choices[ci]; choices = [correct, ...choices.filter((_, i) => i !== ci)].slice(0, 6); ci = 0; }
+    }
+
+    if (!sentence) reasons.push('missing sentence');
+    if (!Number.isInteger(ci) || ci < 0 || ci >= choices.length) reasons.push('correctIndex out of range');
+    if (choices.length < 2) reasons.push('need at least 2 distinct choices');
+
+    if (!reasons.length) {
+      const correct = choices[ci];
+      const cNorm = _wfNorm(correct);
+      const cToks = cNorm.split(' ').filter(Boolean);
+
+      // SALVAGE 2 — auto-insert the blank if the model forgot it but the correct word
+      // is present as a whole word in the sentence (replace the first occurrence).
+      if (!/_{3,}/.test(sentence)) {
+        const re = new RegExp('(^|[^\\p{L}\\p{N}])(' + escapeRe(correct) + ')(?=[^\\p{L}\\p{N}]|$)', 'iu');
+        if (re.test(sentence)) sentence = sentence.replace(re, (m, pre) => pre + '___');
+        else reasons.push('no ___ blank and answer not in sentence');
+      }
+
+      if (!reasons.length) {
+        // No giveaway: the answer word must not also appear elsewhere in the blanked sentence.
+        const blankToks = _wfNorm(sentence).split(' ').filter(Boolean);
+        if (cToks.length === 1 && blankToks.includes(cToks[0])) reasons.push('answer appears elsewhere in sentence');
+        // The translation must be in the learner's language, not a copy of the {L}
+        // sentence (with the blank filled). Story-grounding of the sentence itself is
+        // only a prompt preference now — not enforced — so weak models can still pass.
+        const filled = sentence.replace(/_{3,}/, correct);
+        const fNorm = _wfNorm(filled);
+        const trNorm = _wfNorm(item.translation || '');
+        const trWords = trNorm.split(' ').filter(Boolean);
+        if (trNorm && (trNorm === fNorm || trNorm === _wfNorm(sentence) ||
+                       (trWords.length >= 3 && storyNorm.includes(trNorm)))) {
+          reasons.push('translation is the target-language sentence, not a translation');
+        }
+      }
+    }
+
+    if (reasons.length) rejected.push({ item, reasons });
+    else valid.push({ sentence, translation: String(item.translation == null ? '' : item.translation).trim(), choices, correctIndex: ci, explanation: String(item.explanation == null ? '' : item.explanation).trim() });
+  }
+  return { valid, rejected };
+}
+
+async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) {
+  opts = opts || {};
+  const { story } = opts;
+  if (!story || !String(story).trim()) throw new Error('word_forms: no story available');
+  const L = langName(lang); const S = langName(srcLang || 'en');
+  const n = (difficulty <= 1) ? 5 : (difficulty >= 3 ? 8 : 6);
+  const sys = fillPrompt(PROMPTS.wordForms.system, { L, S });
+  const userMsg = fillPrompt(PROMPTS.wordForms.user, { L, S, story, n });
+  const MAX_ATTEMPTS = 3;
+  let totalPromptTokens = 0, totalCompletionTokens = 0, lastError = '';
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Word-forms lesson attempt ${attempt}/${MAX_ATTEMPTS}…`);
+    console.log(`    Word-forms attempt ${attempt}…`);
+    const { text: raw, promptTokens, completionTokens } = await callLLMLesson(sys, userMsg, 1600);
+    totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
+    const cleaned = raw.replace(/\`\`\`json|\`\`\`/g, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(cleaned); }
+    catch(e) {
+      const m = cleaned.match(/\{[\s\S]*\}/);
+      if (!m) { lastError = 'Could not parse JSON: ' + cleaned.slice(0, 60); continue; }
+      try { parsed = JSON.parse(m[0]); } catch(e2) { lastError = 'JSON extract failed'; continue; }
+    }
+    if (!Array.isArray(parsed.items) || parsed.items.length === 0) { lastError = 'No items in response'; continue; }
+    const { valid, rejected } = validateWordFormsItems(parsed.items, story);
+    if (rejected.length > 0) {
+      console.warn(`    Word-forms: ${rejected.length} item(s) rejected:`);
+      rejected.forEach(r => console.warn(`      "${String(r.item && r.item.sentence || '').slice(0, 50)}": ${r.reasons.join(', ')}`));
+    }
+    if (valid.length < 1) { lastError = `No valid items after filtering (${rejected.length} rejected)`; continue; }
+    console.log(`    Word-forms: ${valid.length} valid item(s) (${rejected.length} rejected)`);
+    const rejectReasons = {};
+    rejected.forEach(r => (r.reasons || []).forEach(reason => { rejectReasons[reason] = (rejectReasons[reason] || 0) + 1; }));
+    return {
+      lesson: {
+        id: 6, type: 'word_forms',
+        title: parsed.title || 'Word Forms',
+        desc:  parsed.desc  || 'Pick the form that fits',
+        icon:  parsed.icon  || '🧩',
+        items: valid,
+      },
+      tokens: { promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens },
+      genMeta: { attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons },
+    };
+  }
+  throw new Error(`Word-forms generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
+}
+
 // ── Generate synonyms / antonyms / homophones lesson ──────────────────────────
 // Picks key words from the story and asks the LLM for better in-context synonyms,
 // antonyms, and homophones (all in the target language, glossed in the source
 // language). The related words are flattened into a standard vocab lesson, so the
 // existing flashcard/MCQ player, checker, and editor handle it with no new type.
+// ── synonyms context sentence ────────────────────────────────────────────────
+// Split text into candidate sentences and find the first that contains `base`
+// (whole-word, normalized). Used to present a synonym/antonym target in context.
+function _synSplitSentences(text) {
+  return String(text == null ? '' : text)
+    .split(/(?<=[.!?。！？\u2026])\s+|\n+/)
+    .map(s => s.trim()).filter(s => s.length > 2);
+}
+function findContextSentence(base, sentencePools) {
+  const b = _wfNorm(base);
+  if (!b) return '';
+  for (const pool of (sentencePools || [])) {
+    for (const s of (pool || [])) {
+      const toks = _wfNorm(s).split(' ').filter(Boolean);
+      if (toks.includes(b)) return String(s).trim();
+    }
+  }
+  return '';
+}
+
 async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
   opts = opts || {};
   const { story, userDialect, chainVocab, vocabMode: synVocabMode } = opts;
@@ -1142,6 +1303,12 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
       try { parsed = JSON.parse(m[0]); } catch(e2) { lastError = 'JSON extract failed'; continue; }
     }
     if (!Array.isArray(parsed.words) || !parsed.words.length) { lastError = 'No words in response'; continue; }
+    // Context-sentence pool: current story always; for non-extend modes also pull
+    // sentences from the chain (storyline / previous lessons) so reinforced words
+    // are shown in a familiar sentence.
+    const storySents = _synSplitSentences(story || '');
+    const chainSents = (synVocabMode !== 'extend' && Array.isArray(chainVocab?.sentences)) ? chainVocab.sentences : [];
+    const sentPools = synVocabMode === 'extend' ? [storySents] : [storySents, chainSents];
     const words = [];
     for (const entry of parsed.words) {
       const base = (entry.base ?? entry.word ?? '').toString().trim();
@@ -1153,7 +1320,8 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
       const antonyms   = notBase(clean(entry.antonyms)).slice(0, 3);
       const homophones = notBase(clean(entry.homophones)).slice(0, 2);
       if (!synonyms.length) continue; // need >=1 synonym to be quizzable
-      words.push({ base, gloss: (entry.gloss ?? '').toString().trim(), synonyms, antonyms, homophones });
+      const sentence = findContextSentence(base, sentPools);
+      words.push({ base, gloss: (entry.gloss ?? '').toString().trim(), sentence, synonyms, antonyms, homophones });
     }
     if (!words.length) { lastError = 'No usable word groups (need a base + >=1 synonym)'; continue; }
     const synN = words.reduce((n,w)=>n+w.synonyms.length,0);
@@ -1507,7 +1675,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     : { words: [], nouns: [], verbs: [] };
   const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story };
 
-  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms') {
+  if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms') {
     const genFn   = lessonFormat === 'math'
       ? (mathInstruction
           ? () => generateMathLLM(lang, srcLang, difficulty, mathInstruction, jobId)
@@ -1515,11 +1683,13 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
                   : lessonFormat === 'error_hunt'  ? () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words)
                   : lessonFormat === 'grammar'      ? () => generateGrammar(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   : lessonFormat === 'synonyms'     ? () => generateSynonyms(topic, lang, srcLang, difficulty, jobId, chainOpts)
+                  : lessonFormat === 'word_forms'   ? () => generateWordForms(topic, lang, srcLang, difficulty, jobId, chainOpts)
                   :                                   () => generateConjugation(topic, lang, srcLang, difficulty, jobId, chainOpts);
     const label   = lessonFormat === 'math'        ? 'Math'
                   : lessonFormat === 'error_hunt'  ? 'Error-hunt'
                   : lessonFormat === 'grammar'      ? 'Grammar'
                   : lessonFormat === 'synonyms'     ? 'Synonyms'
+                  : lessonFormat === 'word_forms'   ? 'Word-forms'
                   :                                   'Conjugation';
     try {
       const { lesson, tokens } = await genFn();
@@ -1556,10 +1726,11 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       throw new Error(`Lesson generation failed: ${e.message}`);
     }
     if (isAllTypes) {
-      // Generate grammar, conjugation, and error_hunt as additional lessons
+      // Generate word_forms, synonyms, and error_hunt as additional lessons
+      // (word_forms + synonyms supersede the old grammar/conjugation extras).
       const extraFmts = [
-        { fmt: 'grammar',     label: 'Grammar',     fn: () => generateGrammar(topic, lang, srcLang, difficulty, jobId, chainOpts) },
-        { fmt: 'conjugation', label: 'Conjugation', fn: () => generateConjugation(topic, lang, srcLang, difficulty, jobId, chainOpts) },
+        { fmt: 'word_forms',  label: 'Word Forms',  fn: () => generateWordForms(topic, lang, srcLang, difficulty, jobId, chainOpts) },
+        { fmt: 'synonyms',    label: 'Synonyms',    fn: () => generateSynonyms(topic, lang, srcLang, difficulty, jobId, chainOpts) },
         { fmt: 'error_hunt',  label: 'Error Hunt',  fn: () => generateErrorHunt(story, lang, difficulty, jobId, chainVocab.words) },
       ];
       for (const { fmt: eFmt, label, fn } of extraFmts) {
@@ -1919,6 +2090,17 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
             || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
     if (sl && summary) { sl.summary = summary; upsertStoryline(sl); }
   } catch (e) { console.warn(`  Storyline summary post-pass failed: ${e.message}`); }
+  // 4) For file-derived books, record the original uploaded filename on the
+  // storyline (so the library can show provenance). Best-effort.
+  try {
+    if (base.sourceFile) {
+      const slId = _chainId(chapterIds);
+      const all = getStorylines();
+      const sl = all.find(s => s.id === slId)
+              || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
+      if (sl) { sl.sourceFile = String(base.sourceFile).slice(0, 200); upsertStoryline(sl); }
+    }
+  } catch (e) { console.warn(`  Storyline sourceFile post-pass failed: ${e.message}`); }
 }
 
 async function _runBookJob(bookId, chunks, base) {
@@ -1990,10 +2172,12 @@ async function _runBookJob(bookId, chunks, base) {
           for (const rType of base.arcTypes) {
             try {
               jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Reinforcement lesson (${rType})…`);
-              const rFn = rType === 'conjugation' ? generateConjugation
+              const rFn = rType === 'word_forms'  ? generateWordForms
                         : rType === 'synonyms'    ? generateSynonyms
-                        :                           generateGrammar;
+                        : rType === 'conjugation' ? generateConjugation   // legacy
+                        :                           generateGrammar;       // legacy
               const { lesson } = await rFn(data.topic || placeholderTopic, base.lang, base.srcLang, base.diff, jobId, rOpts);
+              if (lesson) lesson._arcMode = 'reinforce';
               data.lessons.push(lesson);
             } catch (e) {
               console.warn(`  [book ${bookId}] chapter ${i+1} reinforcement (${rType}) failed, skipping: ${e.message}`);
@@ -2054,6 +2238,63 @@ async function _runBookJob(bookId, chunks, base) {
     bj.status = 'done';
   }
   console.log(`  [book ${bookId}] finished: ${bj.status}`);
+}
+
+// Re-create all lessons for an existing storyline using the book-generation arc
+// logic: for each chapter (in storyline order) hide the existing lessons (kept,
+// not deleted) and append freshly generated ones — a standard vocab "gate" for the
+// chapter, plus reinforcement from chapter 2 on (a whole-storyline vocab review, or
+// word_forms + synonyms when arcMode is 'grammar'). Operates on the chapters'
+// stored stories, so no story regeneration.
+async function _runRecreateJob(jobId, startId, opts) {
+  const all = getStorylines();
+  const sl = all.find(s => Array.isArray(s.chapters) && s.chapters.includes(startId));
+  const chapterIds = sl ? sl.chapters.slice() : [startId];   // lone chapter → just it
+  const arcMode = (opts && opts.arcMode === 'grammar') ? 'grammar' : 'vocab';
+  const arcTypes = ['word_forms', 'synonyms'];   // superseding reinforcement types
+  let prevRef = null, recreated = 0, hidden = 0;
+  for (let i = 0; i < chapterIds.length; i++) {
+    const topic = findSavedById(chapterIds[i]);
+    if (!topic) { prevRef = chapterIds[i]; continue; }
+    const lang = topic.lang, srcLang = topic.srcLang || 'en', diff = topic.difficulty || 2;
+    const story = topic.story || '';
+    jobStep(jobId, `Re-creating chapter ${i + 1}/${chapterIds.length}: "${topic.topic}"…`);
+    // Keep but hide existing lessons.
+    for (const l of (topic.lessons || [])) { if (!l._hidden) { l._hidden = true; hidden++; } }
+    const newLessons = [];
+    const stamp = (lesson, suffix) => { lesson.id = 'ls_' + Date.now() + '_' + i + '_' + suffix; lesson._recreated = true; };
+    // Gate: this chapter's own standard vocab lesson.
+    try {
+      const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId, { story, vocabMode: null });
+      if (lesson) { stamp(lesson, 'gate'); newLessons.push(lesson); recreated++; }
+    } catch (e) { console.warn(`  [recreate] chapter ${i + 1} gate failed: ${e.message}`); }
+    // Reinforcement from the second chapter on.
+    if (i >= 1) {
+      const parent = prevRef ? findSavedById(prevRef) : null;
+      const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [], sentences: [] };
+      if (arcMode === 'grammar') {
+        for (const rType of arcTypes) {
+          try {
+            const rFn = rType === 'synonyms' ? generateSynonyms : generateWordForms;
+            const { lesson } = await rFn(topic.topic, lang, srcLang, diff, jobId, { chainVocab, vocabMode: 'reinforce', story });
+            if (lesson) { stamp(lesson, rType); lesson._arcMode = 'reinforce'; newLessons.push(lesson); recreated++; }
+          } catch (e) { console.warn(`  [recreate] chapter ${i + 1} ${rType} reinforce failed: ${e.message}`); }
+        }
+      } else {
+        try {
+          const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId,
+            { story, chainVocab: chainVocab.words || [], vocabMode: 'reinforce' });
+          if (lesson) { stamp(lesson, 'review'); lesson._arcMode = 'reinforce'; if (!lesson.title) lesson.title = 'Review words'; if (!lesson.icon) lesson.icon = '🔁'; newLessons.push(lesson); recreated++; }
+        } catch (e) { console.warn(`  [recreate] chapter ${i + 1} vocab review failed: ${e.message}`); }
+      }
+    }
+    topic.lessons = [...(topic.lessons || []), ...newLessons];
+    topic.updatedAt = new Date().toISOString();
+    saveStore(store);   // persist per-chapter so progress survives a mid-run failure
+    prevRef = topic.id;
+  }
+  console.log(`  [recreate] done: ${recreated} new lesson(s) across ${chapterIds.length} chapter(s), ${hidden} hidden`);
+  return { recreated, hidden, chapters: chapterIds.length };
 }
 
 http.createServer(async (req, res) => {
@@ -2469,7 +2710,7 @@ http.createServer(async (req, res) => {
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { chunks, lang, srcLang, difficulty, lessonFormat, continuedFrom, userStoryLang, arc, arcReinforce, arcMode,
-              generated, topic, nChapters, chapterLen, storyStyle } = body;
+              generated, topic, nChapters, chapterLen, storyStyle, sourceFile } = body;
       if (active === 'none')
         return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
       // Generated batch: synthesize N text-less chapters from a single topic; each is
@@ -2493,16 +2734,17 @@ http.createServer(async (req, res) => {
       const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms'].includes(lessonFormat) ? lessonFormat : 'standard';
       // Arc mode: each chapter = a vocab "gate" lesson + one or more reinforcement
       // lessons (grammar/conjugation/synonyms) generated in reinforce mode.
-      const _arcTypes = (Array.isArray(arcReinforce) ? arcReinforce : ['grammar'])
-        .filter(t => ['grammar','conjugation','synonyms'].includes(t));
+      const _arcTypes = (Array.isArray(arcReinforce) ? arcReinforce : ['word_forms','synonyms'])
+        .filter(t => ['word_forms','synonyms','grammar','conjugation'].includes(t));
       const arcEnabled = !!arc;
       // Normalize the chain root (id or name) to a name for downstream context.
       const rootParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
       const base = { lang: lang || 'it', srcLang: srcLang || 'en', diff, fmt,
         continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
-        arc: arcEnabled, arcTypes: _arcTypes.length ? _arcTypes : ['grammar'],
+        arc: arcEnabled, arcTypes: _arcTypes.length ? _arcTypes : ['word_forms','synonyms'],
         arcMode: arcMode === 'grammar' ? 'grammar' : 'vocab',
         generated: !!generated, baseTopic, chapterLen: chapterLenN,
+        sourceFile: (typeof sourceFile === 'string' && sourceFile.trim()) ? sourceFile.trim().slice(0,200) : null,
         storyStyle: (storyStyle && storyStyle !== 'creative') ? storyStyle : null };
       const bookId = newBookJob(chaptersIn.map((c, i) => c.title || (baseTopic ? `${baseTopic.slice(0,40)} — ${i+1}` : '')));
       console.log(`  Book generation started: ${chaptersIn.length} chapter(s)${generated?` (generated from "${baseTopic}")`:' (from upload)'}, id=${bookId}`);
@@ -2654,6 +2896,7 @@ http.createServer(async (req, res) => {
       console.log(`  Add lesson: "${topicName}" fmt=${fmt} diff=${diff} vocabMode=${_addVocabMode}`);
 
       const doGenLesson = async () => {
+        const _genT0 = Date.now();
         let result;
         const chainVocab = (_addVocabMode !== 'neutral' && (saved.continuedFromId || saved.continuedFrom))
           ? collectChainVocab(saved.continuedFromId || saved.continuedFrom)
@@ -2673,6 +2916,8 @@ http.createServer(async (req, res) => {
           result = await generateConjugation(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
         } else if (fmt === 'synonyms') {
           result = await generateSynonyms(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
+        } else if (fmt === 'word_forms') {
+          result = await generateWordForms(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
         } else if (fmt === 'math') {
           result = addMathInstr
             ? await generateMathLLM(lang, srcLang, diff, addMathInstr, jobId)
@@ -2683,7 +2928,25 @@ http.createServer(async (req, res) => {
         // Compute next available ID (avoid clashing with existing)
         // Generate a stable string ID for the new lesson
         const newLessonId = 'ls_' + Date.now();
-        const newLesson = { ...result.lesson, id: newLessonId };
+        // E0: persist generation metadata for later QC / batch stats / weak-model
+        // diagnosis. Route-level basics (model, tokens, ms, at, fmt) are always set;
+        // generators that track attempts/rejections enrich it via result.genMeta.
+        const _proceduralMath = (fmt === 'math' && !addMathInstr);
+        const _gm = result.genMeta || {};
+        const genMeta = {
+          fmt,
+          model: _proceduralMath ? '(procedural)' : OLLAMA_LESSON_MODEL,
+          attempts: _gm.attempts ?? null,
+          valid: _gm.valid ?? (Array.isArray(result.lesson.items) ? result.lesson.items.length
+                 : Array.isArray(result.lesson.vocab) ? result.lesson.vocab.length : null),
+          rejected: _gm.rejected ?? 0,
+          rejectReasons: _gm.rejectReasons ?? null,
+          promptTokens: result.tokens?.promptTokens ?? 0,
+          completionTokens: result.tokens?.completionTokens ?? 0,
+          ms: Date.now() - _genT0,
+          at: new Date().toISOString(),
+        };
+        const newLesson = { ...result.lesson, id: newLessonId, _genMeta: genMeta };
         // Always append — ➕ button adds a new lesson set, never replaces
         saved.lessons.push(newLesson);
         console.log(`    Appended ${fmt} lesson (id ${newLesson.id}), total: ${saved.lessons.length}`);
@@ -2700,6 +2963,22 @@ http.createServer(async (req, res) => {
       }).finally(() => {
         generatingTopics.delete(topicKey);
       });
+      return json(res, 202, { jobId });
+    }
+
+    // ── Re-create all lessons for a storyline (keep + hide old, add arc lessons) ──
+    if (M === 'POST' && url.pathname === '/api/storyline/recreate-lessons') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch (e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const startId = body.id || body.chapterId || body.startId;
+      if (!startId) return json(res, 400, { error: 'missing chapter id' });
+      const jobId = newJob();
+      console.log(`  Re-create storyline lessons: start=${startId}, arcMode=${body.arcMode || 'vocab'}`);
+      _runRecreateJob(jobId, startId, { arcMode: body.arcMode })
+        .then(r => jobDone(jobId, r))
+        .catch(e => { console.error('  Re-create error:', e.message); jobFail(jobId, e.message); });
       return json(res, 202, { jobId });
     }
 

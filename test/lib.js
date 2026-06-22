@@ -67,20 +67,24 @@ async function boot({ log = false, seed = null } = {}) {
   const storePath = tmpFile('dz_store', '.json');
   const logPath = log ? tmpFile('dz_chatlog', '.jsonl') : null;
   fs.writeFileSync(storePath, JSON.stringify(seed || { schemaVersion: 29, topics: [], storylines: [], flags: {}, progress: {} }));
+  // Give the server its own ui.json copy so tests can edit it (hot-reload) without
+  // touching the tracked repo file.
+  const uiPath = tmpFile('dz_ui', '.json');
+  fs.copyFileSync(path.join(ROOT, 'ui.json'), uiPath);
 
   const fake = await startFakeOllama(logPath);
   const sport = 30000 + (process.pid % 3000);
   const env = { ...process.env,
     OLLAMA_HOST: 'http://127.0.0.1:' + fake.port, OLLAMA_MODEL: 'fake',
     OLLAMA_LESSON_MODEL: 'fake', OLLAMA_TRANSLATION_MODEL: 'fake',
-    LESSONS_FILE: storePath, PORT: String(sport) };
+    LESSONS_FILE: storePath, UI_FILE: uiPath, PORT: String(sport) };
   const srv = cp.spawn('node', [SERVER], { cwd: ROOT, env, stdio: ['ignore', 'pipe', 'pipe'] });
   let log_ = '';
   srv.stdout.on('data', d => log_ += d); srv.stderr.on('data', d => log_ += d);
   await waitPort(sport);
 
   return {
-    sport, fport: fake.port, storePath, logPath,
+    sport, fport: fake.port, storePath, logPath, uiPath,
     srvlog: () => log_,
     readStore: () => JSON.parse(fs.readFileSync(storePath, 'utf8')),
     readChatLog: () => (logPath && fs.existsSync(logPath))
@@ -90,6 +94,7 @@ async function boot({ log = false, seed = null } = {}) {
       try { srv.kill(); } catch (_) {}
       try { fake.child.kill(); } catch (_) {}
       try { fs.unlinkSync(storePath); } catch (_) {}
+      try { fs.unlinkSync(uiPath); } catch (_) {}
       try { if (logPath) fs.unlinkSync(logPath); } catch (_) {}
     },
   };

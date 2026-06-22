@@ -69,12 +69,28 @@ function findLine(marker, fromLine) {
   return idx;
 }
 
-const serverFuncsStart = findLine('async function init()');
-const engineStart      = findLine('function buildPath(');
-const initCallLine     = findLine('init();', engineStart);
+// Slice the client script on EXPLICIT markers in index.html (not on coincidental code
+// lines like `async function init()`/`function buildPath(`). The region between
+// @static-exclude-start and @static-exclude-end is server/LLM/network code dropped from
+// the server-less build; everything before the start marker and from the end marker up
+// to @static-engine-end is the included client (UI + engine). Driving the slice off
+// intentional markers means a misplaced client helper can't silently fall into the
+// excluded gap — and a missing marker fails the build loudly instead of slicing wrong.
+const serverFuncsStart = findLine('// @static-exclude-start');
+const engineStart      = findLine('// @static-exclude-end');
+const initCallLine     = findLine('// @static-engine-end', engineStart);
 
 const part1 = lines.slice(0, serverFuncsStart).join('\n');
 const part2 = lines.slice(engineStart, initCallLine).join('\n');
+
+// Fail loudly if the markers are out of order or the slice leaked server-only code into
+// the included client (e.g. a marker token accidentally matched inside a comment).
+if (!(serverFuncsStart < engineStart && engineStart < initCallLine)) {
+  throw new Error(`static markers out of order: start=${serverFuncsStart} end=${engineStart} engineEnd=${initCallLine}`);
+}
+if (/^async function init\(\)\{/m.test(part1 + '\n' + part2) || /function generateWordForms/.test(part1 + '\n' + part2)) {
+  throw new Error('static slice leaked server-only code into the client — check the @static-exclude markers in index.html');
+}
 
 // Build UI strings injection — runs in Node.js, bakes all languages into page
 let _uiStringsAll = {};
@@ -182,8 +198,9 @@ function repopulateContinueSelect(){
   if(!contSel) return;
   const showAll=document.getElementById('cont-all-langs')?.checked;
   const curLang=APP.lang||'it';
+  const curSrc=APP.srcLang||'en';
   const saved=APP.savedList||[];
-  const filtered=showAll ? saved : saved.filter(s=>(s.lang||'it')===curLang);
+  const filtered=showAll ? saved : saved.filter(s=>(s.lang||'it')===curLang && (s.srcLang||'en')===curSrc);
   const prev=contSel.value;
   contSel.innerHTML='<option value="">\u2014 new story \u2014</option>'+
     filtered.map(s=>{

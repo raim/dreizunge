@@ -7,26 +7,35 @@ const path = require('path');
 
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
-// 1) Source-shape: the four edited resolver sites are present.
+// 1) Source-shape: the forward resolvers now share one factory; the inverse
+//    next-chapter finder (site D) is unchanged.
+assert.ok(html.includes('function makeParentResolver'), 'index.html missing makeParentResolver factory');
 const mustContain = [
-  '_slResolveParent=l=>',
-  'const _resolveParentB = s =>',
-  'const _delResolveParent = s =>',
-  'const idMatch   = _cur && _cur.id && l.continuedFromId === _cur.id;',
+  'const _slResolveParent = makeParentResolver(_slById, _slByTopicMap);',
+  'const _resolveParent = makeParentResolver(_byIdAll, byTopic);',
+  'const _resolveParentB = makeParentResolver(byId, byTopic);',
+  'const _delResolveParent = makeParentResolver(byId, _delByTopic);',
 ];
 for (const frag of mustContain) assert.ok(html.includes(frag), 'index.html missing resolver fragment: ' + frag);
+// The old hand-inlined forward-resolver bodies must be gone (no duplicate logic).
+assert.ok(!html.includes('const _resolveParentB = s =>'), 'old inline _resolveParentB body still present');
+assert.ok(!html.includes('const _delResolveParent = s =>'), 'old inline _delResolveParent body still present');
 console.log('  source-shape checks: OK');
 
-// 2) Canonical resolver semantics (id first; else name; same-language guard).
-function makeResolve(byId, byTopic) {
-  return s => {
-    if (!s) return null;
-    const p = s.continuedFromId ? byId[s.continuedFromId] : (s.continuedFrom ? byTopic[s.continuedFrom] : null);
-    if (!p) return null;
-    if ((p.lang || '') !== (s.lang || '') || (p.srcLang || '') !== (s.srcLang || '')) return null;
-    return p;
-  };
+// 2) Canonical resolver semantics — exercise the REAL factory from index.html.
+function _extractFn(name) {
+  const at = html.indexOf('function ' + name + '(');
+  assert.ok(at >= 0, 'function not found in index.html: ' + name);
+  const braceStart = html.indexOf('{', at);
+  let depth = 0, i = braceStart;
+  for (; i < html.length; i++) {
+    if (html[i] === '{') depth++;
+    else if (html[i] === '}') { depth--; if (depth === 0) { i++; break; } }
+  }
+  return html.slice(at, i);
 }
+const { makeParentResolver } = new Function(_extractFn('makeParentResolver') + '\nreturn { makeParentResolver };')();
+function makeResolve(byId, byTopic) { return makeParentResolver(byId, byTopic); }
 
 // Same story generated in de->en and fr->en: identical chapter names across languages.
 const store = [
