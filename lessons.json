@@ -7479,6 +7479,102 @@
             }
           ],
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1782136911625",
+          "type": "synonyms",
+          "title": "迷いの旅",
+          "desc": "世界を旅しながら、小さな冒険を",
+          "icon": "🌍",
+          "words": [
+            {
+              "base": "world",
+              "gloss": "世界",
+              "sentence": "It led to another world.",
+              "synonyms": [
+                {
+                  "w": "earth",
+                  "g": "地球"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "seven",
+              "gloss": "七",
+              "sentence": "stood a tall Seven.",
+              "synonyms": [
+                {
+                  "w": "septenary",
+                  "g": "七つの"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "little",
+              "gloss": "小さな",
+              "sentence": "little i followed a glowing path.",
+              "synonyms": [
+                {
+                  "w": "small",
+                  "g": "小さな"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "big",
+                  "g": "大きい"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "evening",
+              "gloss": "夕方",
+              "sentence": "One evening, while everyone slept,",
+              "synonyms": [
+                {
+                  "w": "night",
+                  "g": "夜"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "morning",
+                  "g": "朝"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "while",
+              "gloss": "間",
+              "sentence": "One evening, while everyone slept,",
+              "synonyms": [
+                {
+                  "w": "during",
+                  "g": "間"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "fmt": "synonyms",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 566,
+            "completionTokens": 361,
+            "ms": 248903,
+            "at": "2026-06-22T14:01:51.625Z"
+          }
         }
       ],
       "generationStats": {
@@ -7498,7 +7594,7 @@
         ]
       },
       "generatedAt": "2026-06-16T19:14:03.011Z",
-      "updatedAt": "2026-06-16T20:50:20.423Z",
+      "updatedAt": "2026-06-22T14:01:51.625Z",
       "id": "tp_17816380325280000276"
     },
     {
