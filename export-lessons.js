@@ -25,6 +25,57 @@ function stripFuri(text) {
 const esc = s => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+// ── error-hunt diff (ported from the client's ehTokenize/ehLcsOps) ──
+function ehTokenize(text) {
+  return (String(text || '').match(/[\w\u00C0-\u024F\u0400-\u04FF\u0590-\u05FF\u0600-\u06FF'\u2019]+|[^\w\s'\u2019]/gu) || []);
+}
+function ehLcsOps(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
+    dp[i][j] = a[i - 1].toLowerCase() === b[j - 1].toLowerCase() ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+  const ops = []; let i = m, j = n;
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && a[i - 1].toLowerCase() === b[j - 1].toLowerCase()) { ops.unshift({ type: 'eq', a: a[i - 1], b: b[j - 1] }); i--; j--; }
+    else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) { ops.unshift({ type: 'ins', b: b[j - 1] }); j--; }
+    else { ops.unshift({ type: 'del', a: a[i - 1] }); i--; }
+  }
+  const merged = [];
+  for (let k = 0; k < ops.length; k++) {
+    if (ops[k].type === 'del' && k + 1 < ops.length && ops[k + 1].type === 'ins') { merged.push({ type: 'sub', a: ops[k].a, b: ops[k + 1].b }); k++; }
+    else merged.push(ops[k]);
+  }
+  return merged;
+}
+// Inline diff of `correct` vs `corrupted`, like the error-hunt editor: the WRONG
+// (corrupted) word struck through, the CORRECT word highlighted. html=true → <del>/<ins>
+// (styled by the export stylesheet); else Markdown (~~wrong~~ **correct**).
+function ehDiff(correct, corrupted, html) {
+  const ops = ehLcsOps(ehTokenize(correct || ''), ehTokenize(corrupted || ''));
+  if (!ops.some(o => o.type !== 'eq')) return html ? esc(correct || '') : (correct || '');
+  return ops.map(op => {
+    if (op.type === 'eq')  return html ? esc(op.a) + ' ' : op.a + ' ';
+    if (op.type === 'sub') return html ? `<del>${esc(op.b)}</del> <ins>${esc(op.a)}</ins> ` : `~~${op.b}~~ **${op.a}** `;
+    if (op.type === 'del') return html ? `<ins>${esc(op.a)}</ins> ` : `**${op.a}** `;   // correct word the corruption dropped
+    if (op.type === 'ins') return html ? `<del>${esc(op.b)}</del> ` : `~~${op.b}~~ `;    // extra wrong word the corruption added
+    return '';
+  }).join('').trim();
+}
+const TYPE_LABEL = {
+  standard: 'Vocabulary', vocab: 'Vocabulary', grammar: 'Grammar', conjugation: 'Conjugation',
+  synonyms: 'Synonyms & antonyms', word_forms: 'Word forms', error_hunt: 'Error hunt',
+  ai_error_hunt: 'AI error hunt', math: 'Math', mixed: 'Mixed review',
+};
+// A short "type · difficulty · arc" descriptor for a lesson (the export's extra info).
+function lessonMeta(ls, t) {
+  const bits = [TYPE_LABEL[ls.type] || ls.type || 'Lesson'];
+  const diff = ls.difficulty != null ? ls.difficulty : (t && t.difficulty);
+  if (diff != null) bits.push('difficulty ' + diff);
+  if (ls._arcMode) bits.push(ls._arcMode);                                  // reinforce / extend
+  if (ls.vocabMode && ls.vocabMode !== 'neutral') bits.push(ls.vocabMode);
+  return bits.join(' · ');
+}
+
 // ── selection → documents ──
 function _indexes(store) {
   const topics = store.topics || store.lessons || [];
@@ -63,13 +114,39 @@ function chapterParts(t, includeLessons) {
       const blocks = [];
       if (Array.isArray(ls.vocab) && ls.vocab.length)
         blocks.push({ kind: 'vocab', items: ls.vocab.map(v => [stripFuri(v.source ?? v.word ?? v.target), v.target ?? v.translation ?? '']) });
-      if (Array.isArray(ls.sentences) && ls.sentences.length)
+      if (Array.isArray(ls.sentences) && ls.sentences.length && ls.type !== 'ai_error_hunt')
         blocks.push({ kind: 'sentences', items: ls.sentences.map(s => [stripFuri(s.source ?? s.target), s.target ?? '']) });
       if (Array.isArray(ls.grammar) && ls.grammar.length)
         blocks.push({ kind: 'grammar', items: ls.grammar.map(g => [stripFuri(g.point ?? g.title ?? g.rule ?? ''), g.explanation ?? g.desc ?? g.example ?? ''].filter(Boolean)) });
       if (Array.isArray(ls.conjugations) && ls.conjugations.length)
         blocks.push({ kind: 'conjugations', items: ls.conjugations.map(c => [stripFuri(c.verb ?? c.infinitive ?? ''), stripFuri(c.form ?? c.conjugated ?? ''), c.translation ?? c.pronoun ?? ''].filter(Boolean)) });
-      if (blocks.length) lessons.push({ title: ls.title || 'Lesson', desc: ls.desc || '', blocks });
+      // Word forms: the blanked sentence, the correct form, and the translation.
+      if (Array.isArray(ls.items) && ls.items.length && ls.type === 'word_forms')
+        blocks.push({ kind: 'word_forms', items: ls.items.map(it => {
+          const correct = Array.isArray(it.choices) ? it.choices[it.correctIndex] : '';
+          return [stripFuri(it.sentence || ''), correct || '', it.translation || ''].filter((x, i) => i < 2 || x);
+        }) });
+      // Synonyms & antonyms: base word → its synonyms / antonyms.
+      if (Array.isArray(ls.words) && ls.words.length && ls.type === 'synonyms')
+        blocks.push({ kind: 'synonyms', items: ls.words.map(w => [
+          stripFuri(w.base ?? w.word ?? ''),
+          (w.synonyms || []).join(', '),
+          (w.antonyms || []).length ? '↔ ' + (w.antonyms || []).join(', ') : '',
+        ].filter((x, i) => i < 2 || x)) });
+      // Error hunt: inline diff of the correct chapter story vs the corrupted version.
+      if (ls.type === 'error_hunt' && ls.corruptedStory && story)
+        blocks.push({ kind: 'eh', correct: story, corrupted: stripFuri(ls.corruptedStory) });
+      // AI error hunt: each sentence the model altered, shown corrected vs the AI version.
+      if (ls.type === 'ai_error_hunt' && Array.isArray(ls.sentences)) {
+        const errs = ls.sentences
+          .filter(s => s && s.ai && s.corrected && s.ai.trim() !== s.corrected.trim())
+          .map(s => ({ correct: stripFuri(s.corrected), corrupted: stripFuri(s.ai), reason: s.reason || '' }));
+        if (errs.length) blocks.push({ kind: 'aeh', items: errs });
+      }
+      // Include the lesson if it has any renderable content, OR if it is an error-hunt
+      // type (so its presence + meta still show even when nothing diffed).
+      if (blocks.length || ls.type === 'error_hunt' || ls.type === 'ai_error_hunt')
+        lessons.push({ title: ls.title || 'Lesson', desc: ls.desc || '', meta: lessonMeta(ls, t), blocks });
     }
   }
   return { story, lessons };
@@ -84,10 +161,16 @@ function renderMarkdown(docs, includeLessons) {
       if (story) out.push(story.split(/\n\n+/).map(p => p.trim()).filter(Boolean).join('\n\n') + '\n');
       for (const ls of lessons) {
         out.push(`### ${ls.title}`);
+        if (ls.meta) out.push('`' + ls.meta + '`\n');
         if (ls.desc) out.push(`_${ls.desc}_\n`);
         for (const b of ls.blocks) {
-          if (b.kind === 'vocab' || b.kind === 'sentences') {
-            for (const [a, c] of b.items) out.push(`- **${a}**${c ? ' — ' + c : ''}`);
+          if (b.kind === 'eh') {
+            out.push('_Error hunt — ~~struck~~ = altered text · **bold** = correct:_\n');
+            out.push(ehDiff(b.correct, b.corrupted, false) + '\n');
+          } else if (b.kind === 'aeh') {
+            for (const e of b.items) out.push(`- ${ehDiff(e.correct, e.corrupted, false)}${e.reason ? '  _(' + e.reason + ')_' : ''}`);
+          } else if (b.kind === 'vocab' || b.kind === 'sentences' || b.kind === 'word_forms' || b.kind === 'synonyms') {
+            for (const row of b.items) { const [a, ...rest] = row; const tail = rest.filter(Boolean).join(' · '); out.push(`- **${a}**${tail ? ' — ' + tail : ''}`); }
           } else {
             for (const row of b.items) out.push(`- ${row.join(' — ')}`);
           }
@@ -109,14 +192,24 @@ function renderHtml(docs, includeLessons) {
       if (story) for (const p of story.split(/\n\n+/)) if (p.trim()) body.push(`<p>${esc(p.trim())}</p>`);
       for (const ls of lessons) {
         body.push(`<h3>${esc(ls.title)}</h3>`);
+        if (ls.meta) body.push(`<p class="meta">${esc(ls.meta)}</p>`);
         if (ls.desc) body.push(`<p class="desc">${esc(ls.desc)}</p>`);
-        body.push('<ul>');
         for (const b of ls.blocks) {
-          if (b.kind === 'vocab' || b.kind === 'sentences')
-            for (const [a, c] of b.items) body.push(`<li><strong>${esc(a)}</strong>${c ? ' — ' + esc(c) : ''}</li>`);
-          else for (const row of b.items) body.push(`<li>${esc(row.join(' — '))}</li>`);
+          if (b.kind === 'eh') {
+            body.push('<p class="eh-legend"><del>struck</del> = altered text · <ins>green</ins> = correct</p>');
+            body.push(`<p class="eh">${ehDiff(b.correct, b.corrupted, true)}</p>`);
+          } else if (b.kind === 'aeh') {
+            body.push('<ul class="eh-list">');
+            for (const e of b.items) body.push(`<li>${ehDiff(e.correct, e.corrupted, true)}${e.reason ? ` <span class="reason">(${esc(e.reason)})</span>` : ''}</li>`);
+            body.push('</ul>');
+          } else {
+            body.push('<ul>');
+            if (b.kind === 'vocab' || b.kind === 'sentences' || b.kind === 'word_forms' || b.kind === 'synonyms')
+              for (const row of b.items) { const [a, ...rest] = row; const tail = rest.filter(Boolean).join(' · '); body.push(`<li><strong>${esc(a)}</strong>${tail ? ' — ' + esc(tail) : ''}</li>`); }
+            else for (const row of b.items) body.push(`<li>${esc(row.join(' — '))}</li>`);
+            body.push('</ul>');
+          }
         }
-        body.push('</ul>');
       }
     });
   }
@@ -124,7 +217,13 @@ function renderHtml(docs, includeLessons) {
 <html><head><meta charset="utf-8"><title>${esc(docs[0].title)}</title>
 <style>body{font-family:Georgia,serif;max-width:780px;margin:40px auto;padding:0 20px;line-height:1.7;color:#222}
 h1{border-bottom:2px solid #ccc;padding-bottom:6px}h2{margin-top:1.6em}h3{color:#555}
-.desc{color:#777;font-style:italic}ul{color:#333}strong{color:#111}</style></head>
+.desc{color:#777;font-style:italic}ul{color:#333}strong{color:#111}
+.meta{color:#888;font-size:13px;font-weight:bold;margin:2px 0;text-transform:uppercase;letter-spacing:.3px}
+.eh-legend{color:#999;font-size:12px;font-style:italic;margin:4px 0}
+.eh{background:#fafafa;border-left:3px solid #ddd;padding:8px 12px;line-height:2}
+del{color:#c0392b;background:#fdecea;border-radius:3px;padding:0 2px}
+ins{color:#1e7e34;background:#e6f4ea;text-decoration:none;border-radius:3px;padding:0 2px}
+.reason{color:#999;font-style:italic;font-size:13px}</style></head>
 <body>
 ${body.join('\n')}
 </body></html>`;

@@ -890,6 +890,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <option value="word_forms">🧩 Word Forms</option>
       <option value="error_hunt">🔍 Error Hunt</option>
       <option value="math">🔢 Math</option>
+      <option value="mixed">🔀 Mixed review (no AI)</option>
     </select>
     <select class="addlesson-select" id="sial-diff-lesson-card" title="Difficulty">
       <option value="1">🟢</option>
@@ -1060,6 +1061,7 @@ const LESSON_TYPE_META = {
   ai_error_hunt: { emoji: '🔎', key: 'lesson.type.ai_error_hunt', build: () => [] },
   word_forms:    { emoji: '🧩', key: 'lesson.type.word_forms',    build: (l) => buildWordFormsExercises(l) },
   math:          { emoji: '🔢', key: 'lesson.type.math',          build: (l) => buildMathExercises(l) },
+  mixed:         { emoji: '🔀', key: 'lesson.type.mixed',         build: (l, i) => buildMixedExercises(l, i) },
 };
 function lessonTypeMeta(type) { return LESSON_TYPE_META[type] || LESSON_TYPE_META.standard; }
 function lessonTypeEmoji(type) { return lessonTypeMeta(type).emoji; }
@@ -1073,6 +1075,7 @@ const LESSON_DESC_KEY = {
   grammar: 'lesson.type.desc.grammar', conjugation: 'lesson.type.desc.conjugation',
   error_hunt: 'lesson.type.desc.error_hunt', ai_error_hunt: 'lesson.type.desc.ai_error_hunt',
   word_forms: 'lesson.type.desc.word_forms',
+  mixed: 'lesson.type.desc.mixed',
   math: 'lesson.type.desc.math', standard: 'lesson.type.desc.vocab', all_types: 'lesson.type.desc.vocab',
 };
 function lessonSubtitle(L, topicDiff) {
@@ -1829,6 +1832,30 @@ async function saveStoryEdit(){
   const status = document.getElementById('story-edit-status');
   if (status) status.textContent = 'Saving…';
   const genHunt = document.getElementById('gen-ai-hunt-cb')?.checked || false;
+  // Static (server-less) build: there is no /api/save-story. Save the edited story in
+  // memory only — it rides the JSON export, exactly like story flags. Regenerating the
+  // AI error hunt needs the server, so that part is skipped here.
+  if (!APP.info?.canGenerate) {
+    d.story = newStory;
+    APP._dirtyExport = true;
+    (d.lessons||[]).filter(ls => ls.type==='error_hunt').forEach(ls => {
+      if(!ls._storyEdits) ls._storyEdits = []; ls._storyEdits.push(new Date().toISOString());
+    });
+    try { markLessonUnchecked(d); } catch(_){}
+    if (status) status.textContent = genHunt ? t('story.edit.static_no_aihunt') : t('story.edit.saved_local');
+    setTimeout(() => {
+      body.contentEditable = 'false'; body.style.outline = ''; body.style.borderRadius = '';
+      delete body.dataset.origHtml;
+      const tb = document.getElementById('story-edit-toolbar'); if (tb) tb.style.display = 'none';
+      const tg = document.getElementById('story-repair-toggle-btn'); if (tg) tg.style.background = '';
+      if (status) status.textContent = '';
+      renderStoryText(d);
+      const panel = document.getElementById('aeh-diff-panel'); if (panel) panel.style.display = 'none';
+      try { buildPath(); } catch(_){}
+    }, 1400);
+    return;
+  }
+  if (status) status.textContent = 'Saving…';
   try {
     const r = await fetch('/api/save-story', { method: 'POST',
       headers: {'Content-Type':'application/json'},
@@ -2906,7 +2933,7 @@ async function loadSavedList(){
         `<button class="storyline-story-hdr" style="flex:1" onclick="event.stopPropagation();toggleSlSummary('${chainId}')">` + 
         `${t('lesson.read_summary')}<span class="storyline-story-arrow" id="slsc-summary-arrow-${chainId}">▼</span></button>` +
         `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="${t('lesson.read_aloud')}">🔊</button>` +
-        (APP.info.canGenerate ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
+        (_canEdit() ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
         `</div>` +
         `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" data-lang="${byId[chain[0]]?.srcLang||''}">` +
         `<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
@@ -3487,7 +3514,7 @@ function buildPath(){
     const storyLangLbl=document.getElementById('story-lang-lbl');
     if(storyLangLbl){ storyLangLbl.textContent=dL.flag; storyLangLbl.style.display=''; }
     const repToggle=document.getElementById('story-repair-toggle-btn');
-    if(repToggle) repToggle.style.display=APP.info.canGenerate?'':'none';
+    if(repToggle) repToggle.style.display=_canEdit()?'':'none';
     // Story flag row
     const sfRow=document.getElementById('story-flag-row');
     if(sfRow) sfRow.style.display='';
@@ -3940,6 +3967,30 @@ async function doAddLesson(sid, enc, tid) {
   if (btn)    { btn.disabled = true; btn.textContent = '⏳'; }
   if (status) status.textContent = 'Generating…';
 
+  // Mixed review needs no LLM — it's a reference that pools the open lessonset's other
+  // lessons at play time. Create it client-side and persist (no server round-trip).
+  if (fmt === 'mixed') {
+    try {
+      const d = APP.lessonData;
+      if (!lessonCard || !d || !Array.isArray(d.lessons)) throw new Error(t('mixed.need_open_set'));
+      d.lessons.push({ id: 'ls_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+        type: 'mixed', title: t('lesson.type.mixed'), icon: '🔀',
+        desc: t('lesson.type.desc.mixed'), perType: 3 });
+      try { await _postLessonEdit(d); } catch(_) {}
+      if (status) status.textContent = '✓ ' + t('lesson.type.mixed') + ' added';
+      await loadSavedList();
+      if (APP.lessonData && APP.lessonData.id === d.id) { try { buildPath(); } catch(_) {} }
+      closeAddLesson(sid);
+      showToast(t('toast.lesson_added'));
+    } catch(e) {
+      if (status) status.textContent = '⚠ ' + e.message.slice(0, 60);
+      showToast('⚠ ' + e.message.slice(0, 60));
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Generate'; }
+    }
+    return;
+  }
+
   try {
     const diffSel = document.getElementById('sial-diff-' + sid);
     const diff = parseInt(diffSel?.value || '2', 10);
@@ -4130,7 +4181,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         + '<button class="storyline-story-hdr" style="flex:1" data-target="' + _sumId + '" onclick="_toggleById(this.dataset.target)">' + '📖 ' 
         + (existingSummary ? t('lesson.read_summary') : t('lesson.no_summary')) + ' ▼</button>'
         + (existingSummary ? '<button class="storyline-hdr-btn" onclick="speakBodyText(\'' + _sumId + '\')">🔊</button>' : '')
-        + '<button class="storyline-hdr-btn" data-sumid="' + _sumId + '" onclick="event.stopPropagation();openSummaryEdit(null,this.dataset.sumid)" title="Edit summary">✏️</button>'
+        + (_canEdit() ? '<button class="storyline-hdr-btn" data-sumid="' + _sumId + '" onclick="event.stopPropagation();openSummaryEdit(null,this.dataset.sumid)" title="Edit summary">✏️</button>' : '')
 
         + '</div>'
         + '<div id="' + _sumId + '" data-lang="' + (byTopic[topics[0]]?.srcLang||'') + '" style="display:none;padding:12px 16px;font-size:14px;line-height:1.6;color:var(--text)">'
@@ -4644,27 +4695,34 @@ async function saveSummaryEdit(chainId) {
   const summary = ta.value.trim();
   const editorBody = ta.parentElement;   // the element openSummaryEdit rendered the editor into
   if (status) status.textContent = 'Saving…';
+  // Replace the editor with the saved summary text (shared by both save paths).
+  const _renderSaved = () => {
+    if (Array.isArray(APP.storylines)) {
+      const idx = APP.storylines.findIndex(s => s.id === chainId);
+      if (idx >= 0) APP.storylines[idx].summary = summary;
+    }
+    const rendered = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
+    if (editorBody) editorBody.innerHTML = rendered;
+    const altBody = document.getElementById('slsc-summary-body-' + chainId)
+                 || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
+    if (altBody && altBody !== editorBody) altBody.innerHTML = rendered;
+    try { loadSavedList(); } catch(_){}
+    showToast(t('toast.summary_saved'));
+  };
+  // Static (server-less) build: there is no /api/storylines. Save in memory only and
+  // mark the export dirty — like the story edit. (Teacher mode gates the pencil.)
+  if (!APP.info?.canGenerate) {
+    APP._dirtyExport = true;
+    _renderSaved();
+    return;
+  }
   try {
     const r = await fetch('/api/storylines', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ slId: chainId, summary })
     });
     if (!r.ok) throw new Error('Failed to save');
-    // Update cache
-    if (Array.isArray(APP.storylines)) {
-      const idx = APP.storylines.findIndex(s => s.id === chainId);
-      if (idx >= 0) APP.storylines[idx].summary = summary;
-    }
-    // Replace the editor (and its "Saving…" status) with the saved summary text. Re-render
-    // the element the editor actually lives in — it may differ from slsc-summary-body-*
-    // when the editor was opened from the landing card (bodyId path).
-    const rendered = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
-    if (editorBody) editorBody.innerHTML = rendered;
-    const altBody = document.getElementById('slsc-summary-body-' + chainId)
-                 || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
-    if (altBody && altBody !== editorBody) altBody.innerHTML = rendered;
-    loadSavedList(); // refresh landing page summary card
-    showToast(t('toast.summary_saved'));
+    _renderSaved();
     console.log('[storyline] summary saved for ' + chainId + ' (' + summary.length + ' chars)');
   } catch(e) {
     if (status) status.textContent = '⚠ ' + e.message.slice(0,40);
@@ -5093,6 +5151,29 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
   </div>`;
 
   // Body — type-specific editors
+  if (ls.type === 'mixed') {
+    // A mixed lesson owns no content — it pools the chapter's other lessons at play
+    // time. Show a read-only summary + an editable "per source" count. Delete via the
+    // lesson node; pooled exercises are flagged during play (resolved to their source).
+    const sibs = (d.lessons||[]).map((l,i)=>({l,i}))
+      .filter(o => o.i!==li && o.l && o.l.type!=='mixed' && !o.l._hidden && (lessonTypeMeta(o.l.type).build(o.l,o.i)||[]).length);
+    const list = sibs.length
+      ? sibs.map(o => `${lessonTypeEmoji(o.l.type)} ${escHtml(o.l.title||lessonTypeLabel(o.l.type))}`).join(' · ')
+      : `<em>${escHtml(t('mixed.no_sources'))}</em>`;
+    html += `<div style="font-size:12.5px;color:var(--gray-dark);line-height:1.6">
+      <p style="margin:0 0 8px">${escHtml(t('lesson.type.desc.mixed'))}</p>
+      <p style="margin:0 0 10px"><b>${escHtml(t('mixed.pulls_from'))}:</b> ${list}</p>
+      <label style="display:flex;align-items:center;gap:6px;font-weight:700;color:var(--blue-dark)">${escHtml(t('mixed.per_type'))}
+        <select onchange="APP.lessonData.lessons[${li}].perType=+this.value; _postLessonEdit(APP.lessonData).catch(()=>{});"
+          style="font-size:12px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif">
+          ${[2,3,4,5,6].map(n=>`<option value="${n}" ${(ls.perType||3)===n?'selected':''}>${n}</option>`).join('')}
+        </select>
+      </label>
+      <p style="margin:10px 0 0;font-size:11px;color:var(--gray)">${escHtml(t('mixed.readonly_note'))}</p>
+    </div>`;
+    el.innerHTML = html;
+    return;
+  }
   if (ls.type === 'grammar') {
     const items = (ls.grammar||[]).map((g,i) => ({...g, _i:i}));
     const visItems = flaggedOnly ? items.filter(g => isFlagged('grammar', g.target)) : items;
@@ -6158,10 +6239,10 @@ function buildExercises(lessonIdx){
 function buildStandardExercises(lesson, lessonIdx){
   const d = APP.lessonData;
 	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
-  const allV = lesson.vocab;
+  const allV = lesson.vocab || [];
 	// const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
-  const allS = lesson.sentences;
-  const tv=lesson.vocab, ts=lesson.sentences;
+  const allS = lesson.sentences || [];
+  const tv=lesson.vocab||[], ts=lesson.sentences||[];
   const fb=['This is incorrect.','Another wrong answer.','Not the right translation.'];
 
   function wV(c,f,p,n){ return shuffle(p.filter(v=>v.target!==c.target)).slice(0,n).map(v=>v[f]); }
@@ -6212,6 +6293,32 @@ function buildStandardExercises(lesson, lessonIdx){
   const prevV=d.lessons.slice(0,lessonIdx).flatMap(L=>L.vocab);
   if(prevV.length>=4) pick(prevV,3).forEach(v=>{ const e=mkMcqIE(v,allV); if(e)exs.push(e); });
   return shuffle(exs).slice(0,12);
+}
+// ══ Mixed review (no LLM) — pool exercises from this chapter's other lessons ══════
+// A `mixed` lesson owns no content; at play time it gathers the sibling lessons in the
+// same lessonset, runs each one's registry builder, samples up to `perType` exercises
+// per source lesson, and shuffles. Each pooled exercise is tagged with `_srcLessonIdx`
+// so _exFlagTarget resolves a flag back to the real source lesson's item. Hidden
+// lessons, the mixed lesson itself, other mixed lessons, and types that build no
+// playable exercises (error_hunt) are skipped. Resolved fresh each play, never baked.
+function buildMixedExercises(lesson, lessonIdx){
+  const lessons = APP.lessonData?.lessons || [];
+  const perType = Math.max(1, lesson?.perType || 3);
+  const teacher = !!APP._teacherMode;
+  const pool = [];
+  lessons.forEach((sib, i) => {
+    if(i === lessonIdx) return;                 // not itself
+    if(!sib || sib.type === 'mixed') return;    // no nested mixed
+    if(sib._hidden && !teacher) return;         // skip hidden (matches play gating)
+    let exs;
+    try { exs = lessonTypeMeta(sib.type).build(sib, i) || []; }
+    catch(_) { exs = []; }
+    if(!exs.length) return;                      // skip types with no playable exercises
+    shuffle(exs).slice(0, perType).forEach(ex => {
+      pool.push({ ...ex, _srcLessonIdx: i });    // tag source so flags resolve correctly
+    });
+  });
+  return shuffle(pool);
 }
 // ══ Word-forms exercises (fill the blank with the correct form) ══════════════
 // Each story-derived item becomes one MCQ: the sentence (with a ___ blank), the
@@ -6547,6 +6654,12 @@ function startLesson(idx){
   C.isConjugation=(lesson.type==='conjugation');
   C.ehSuspect=new Set(); C.ehChecked=false;
   C.exercises=buildExercises(idx); C.cur=0;
+  // A mixed lesson with nothing to pool (no other lessons with playable exercises yet)
+  // shouldn't open an empty player — tell the user what to do instead.
+  if (lesson.type==='mixed' && (!C.exercises || !C.exercises.length)) {
+    showToast(t('mixed.empty'));
+    return;
+  }
   C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
   C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[]; delete C._selPos;
   show('lesson-screen');
@@ -7239,7 +7352,10 @@ function updateSbox(){
 // Find the lesson object a play exercise should attach its flag to: a vocab/sentence
 // item by target, a word_forms item by sentence, or a synonyms word group by base.
 function _exFlagTarget(ex){
-  const ls = APP.lessonData?.lessons?.[APP.cur?.lessonIdx];
+  // For a pooled (mixed-lesson) exercise, resolve against its SOURCE lesson, not the
+  // active mixed lesson (which owns no items). Falls back to the active lesson.
+  const idx = (ex && ex._srcLessonIdx != null) ? ex._srcLessonIdx : APP.cur?.lessonIdx;
+  const ls = APP.lessonData?.lessons?.[idx];
   if(!ls || !ex) return null;
   const norm = s => String(s==null?'':s).trim().toLowerCase();
   const key = norm(ex.target || ex.correct);
@@ -8161,6 +8277,29 @@ function _ceResolveDocs(store, ids){
   }
   return docs;
 }
+// Client export diff (reuses the editor's ehTokenize/ehLcsOps): wrong word struck,
+// correct word highlighted — mirrors the server export (export-lessons.js ehDiff).
+function _ceEhDiff(correct, corrupted, html){
+  const ops = ehLcsOps(ehTokenize(correct||''), ehTokenize(corrupted||''));
+  if(!ops.some(o=>o.type!=='eq')) return html?escHtml(correct||''):(correct||'');
+  return ops.map(op=>{
+    if(op.type==='eq')  return html?escHtml(op.a)+' ':op.a+' ';
+    if(op.type==='sub') return html?`<del>${escHtml(op.b)}</del> <ins>${escHtml(op.a)}</ins> `:`~~${op.b}~~ **${op.a}** `;
+    if(op.type==='del') return html?`<ins>${escHtml(op.a)}</ins> `:`**${op.a}** `;
+    if(op.type==='ins') return html?`<del>${escHtml(op.b)}</del> `:`~~${op.b}~~ `;
+    return '';
+  }).join('').trim();
+}
+const _CE_TYPE_LABEL = { standard:'Vocabulary', vocab:'Vocabulary', grammar:'Grammar', conjugation:'Conjugation',
+  synonyms:'Synonyms & antonyms', word_forms:'Word forms', error_hunt:'Error hunt', ai_error_hunt:'AI error hunt', math:'Math', mixed:'Mixed review' };
+function _ceLessonMeta(ls, t){
+  const bits = [_CE_TYPE_LABEL[ls.type]||ls.type||'Lesson'];
+  const diff = ls.difficulty!=null ? ls.difficulty : (t&&t.difficulty);
+  if(diff!=null) bits.push('difficulty '+diff);
+  if(ls._arcMode) bits.push(ls._arcMode);
+  if(ls.vocabMode && ls.vocabMode!=='neutral') bits.push(ls.vocabMode);
+  return bits.join(' · ');
+}
 function _ceChapterParts(t, includeLessons){
   const story = stripFuri(t.story||'').trim();
   const lessons = [];
@@ -8168,13 +8307,25 @@ function _ceChapterParts(t, includeLessons){
     const blocks = [];
     if(Array.isArray(ls.vocab)&&ls.vocab.length)
       blocks.push({ kind:'vocab', items: ls.vocab.map(v=>[stripFuri(v.source ?? v.word ?? v.target), v.target ?? v.translation ?? '']) });
-    if(Array.isArray(ls.sentences)&&ls.sentences.length)
+    if(Array.isArray(ls.sentences)&&ls.sentences.length&&ls.type!=='ai_error_hunt')
       blocks.push({ kind:'sentences', items: ls.sentences.map(s=>[stripFuri(s.source ?? s.target), s.target ?? '']) });
     if(Array.isArray(ls.grammar)&&ls.grammar.length)
       blocks.push({ kind:'grammar', items: ls.grammar.map(g=>[stripFuri(g.point ?? g.title ?? g.rule ?? ''), g.explanation ?? g.desc ?? g.example ?? ''].filter(Boolean)) });
     if(Array.isArray(ls.conjugations)&&ls.conjugations.length)
       blocks.push({ kind:'conjugations', items: ls.conjugations.map(c=>[stripFuri(c.verb ?? c.infinitive ?? ''), stripFuri(c.form ?? c.conjugated ?? ''), c.translation ?? c.pronoun ?? ''].filter(Boolean)) });
-    if(blocks.length) lessons.push({ title: ls.title||'Lesson', desc: ls.desc||'', blocks });
+    if(Array.isArray(ls.items)&&ls.items.length&&ls.type==='word_forms')
+      blocks.push({ kind:'word_forms', items: ls.items.map(it=>{ const correct=Array.isArray(it.choices)?it.choices[it.correctIndex]:''; return [stripFuri(it.sentence||''), correct||'', it.translation||''].filter((x,i)=>i<2||x); }) });
+    if(Array.isArray(ls.words)&&ls.words.length&&ls.type==='synonyms')
+      blocks.push({ kind:'synonyms', items: ls.words.map(w=>[stripFuri(w.base ?? w.word ?? ''), (w.synonyms||[]).join(', '), (w.antonyms||[]).length?'↔ '+(w.antonyms||[]).join(', '):''].filter((x,i)=>i<2||x)) });
+    if(ls.type==='error_hunt'&&ls.corruptedStory&&story)
+      blocks.push({ kind:'eh', correct: story, corrupted: stripFuri(ls.corruptedStory) });
+    if(ls.type==='ai_error_hunt'&&Array.isArray(ls.sentences)){
+      const errs = ls.sentences.filter(s=>s&&s.ai&&s.corrected&&s.ai.trim()!==s.corrected.trim())
+        .map(s=>({ correct: stripFuri(s.corrected), corrupted: stripFuri(s.ai), reason: s.reason||'' }));
+      if(errs.length) blocks.push({ kind:'aeh', items: errs });
+    }
+    if(blocks.length || ls.type==='error_hunt' || ls.type==='ai_error_hunt')
+      lessons.push({ title: ls.title||'Lesson', desc: ls.desc||'', meta: _ceLessonMeta(ls, t), blocks });
   }
   return { story, lessons };
 }
@@ -8188,9 +8339,12 @@ function _ceRenderMarkdown(docs, includeLessons){
       if(story) out.push(story.split(/\n\n+/).map(p=>p.trim()).filter(Boolean).join('\n\n')+'\n');
       for(const ls of lessons){
         out.push(`### ${ls.title}`);
+        if(ls.meta) out.push('`'+ls.meta+'`\n');
         if(ls.desc) out.push(`_${ls.desc}_\n`);
         for(const b of ls.blocks){
-          if(b.kind==='vocab'||b.kind==='sentences'){ for(const [a,c] of b.items) out.push(`- **${a}**${c?' — '+c:''}`); }
+          if(b.kind==='eh'){ out.push('_Error hunt — ~~struck~~ = altered text · **bold** = correct:_\n'); out.push(_ceEhDiff(b.correct,b.corrupted,false)+'\n'); }
+          else if(b.kind==='aeh'){ for(const e of b.items) out.push(`- ${_ceEhDiff(e.correct,e.corrupted,false)}${e.reason?'  _('+e.reason+')_':''}`); }
+          else if(b.kind==='vocab'||b.kind==='sentences'||b.kind==='word_forms'||b.kind==='synonyms'){ for(const row of b.items){ const [a,...rest]=row; const tail=rest.filter(Boolean).join(' · '); out.push(`- **${a}**${tail?' — '+tail:''}`); } }
           else { for(const row of b.items) out.push(`- ${row.join(' — ')}`); }
         }
         out.push('');
@@ -8211,13 +8365,16 @@ function _ceRenderHtml(docs, includeLessons){
       if(story) for(const p of story.split(/\n\n+/)) if(p.trim()) body.push(`<p>${E(p.trim())}</p>`);
       for(const ls of lessons){
         body.push(`<h3>${E(ls.title)}</h3>`);
+        if(ls.meta) body.push(`<p class="meta">${E(ls.meta)}</p>`);
         if(ls.desc) body.push(`<p class="desc">${E(ls.desc)}</p>`);
-        body.push('<ul>');
         for(const b of ls.blocks){
-          if(b.kind==='vocab'||b.kind==='sentences') for(const [a,c] of b.items) body.push(`<li><strong>${E(a)}</strong>${c?' — '+E(c):''}</li>`);
-          else for(const row of b.items) body.push(`<li>${E(row.join(' — '))}</li>`);
+          if(b.kind==='eh'){ body.push('<p class="eh-legend"><del>struck</del> = altered text · <ins>green</ins> = correct</p>'); body.push(`<p class="eh">${_ceEhDiff(b.correct,b.corrupted,true)}</p>`); }
+          else if(b.kind==='aeh'){ body.push('<ul class="eh-list">'); for(const e of b.items) body.push(`<li>${_ceEhDiff(e.correct,e.corrupted,true)}${e.reason?` <span class="reason">(${E(e.reason)})</span>`:''}</li>`); body.push('</ul>'); }
+          else { body.push('<ul>');
+            if(b.kind==='vocab'||b.kind==='sentences'||b.kind==='word_forms'||b.kind==='synonyms') for(const row of b.items){ const [a,...rest]=row; const tail=rest.filter(Boolean).join(' · '); body.push(`<li><strong>${E(a)}</strong>${tail?' — '+E(tail):''}</li>`); }
+            else for(const row of b.items) body.push(`<li>${E(row.join(' — '))}</li>`);
+            body.push('</ul>'); }
         }
-        body.push('</ul>');
       }
     });
   }
@@ -8225,7 +8382,13 @@ function _ceRenderHtml(docs, includeLessons){
 <html><head><meta charset="utf-8"><title>${E(docs[0].title)}</title>
 <style>body{font-family:Georgia,serif;max-width:780px;margin:40px auto;padding:0 20px;line-height:1.7;color:#222}
 h1{border-bottom:2px solid #ccc;padding-bottom:6px}h2{margin-top:1.6em}h3{color:#555}
-.desc{color:#777;font-style:italic}ul{color:#333}strong{color:#111}</style></head>
+.desc{color:#777;font-style:italic}ul{color:#333}strong{color:#111}
+.meta{color:#888;font-size:13px;font-weight:bold;margin:2px 0;text-transform:uppercase;letter-spacing:.3px}
+.eh-legend{color:#999;font-size:12px;font-style:italic;margin:4px 0}
+.eh{background:#fafafa;border-left:3px solid #ddd;padding:8px 12px;line-height:2}
+del{color:#c0392b;background:#fdecea;border-radius:3px;padding:0 2px}
+ins{color:#1e7e34;background:#e6f4ea;text-decoration:none;border-radius:3px;padding:0 2px}
+.reason{color:#999;font-style:italic;font-size:13px}</style></head>
 <body>
 ${body.join('\n')}
 </body></html>`;

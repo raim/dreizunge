@@ -853,7 +853,35 @@ function mathNearMiss(correct, nums, difficulty) {
 
 function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]; } return b; }
 
+// E0: standardized per-lesson generation metadata. Every generator stamps this on its
+// returned lesson (lesson._genMeta) so EVERY flow — add-lesson, initial topic gen, book
+// import, storyline recreate — carries it for later QC / batch stats / weak-model
+// diagnosis. `t0` is a Date.now() captured at the generator's start (omit → ms null).
+// `model` defaults to the lesson model; pass '(procedural)' for the non-LLM math path.
+function buildGenMeta(o) {
+  o = o || {};
+  return {
+    type: o.type || null,
+    model: o.model || OLLAMA_LESSON_MODEL,
+    attempts: (o.attempts != null) ? o.attempts : null,
+    valid: (o.valid != null) ? o.valid : null,
+    rejected: (o.rejected != null) ? o.rejected : 0,
+    rejectReasons: o.rejectReasons || null,
+    promptTokens: o.promptTokens || 0,
+    completionTokens: o.completionTokens || 0,
+    ms: (o.t0 != null) ? (Date.now() - o.t0) : null,
+    at: new Date().toISOString(),
+  };
+}
+// Aggregate a validator's rejected[] into a { reason: count } histogram for _genMeta.
+function genReasonHist(rejected) {
+  const h = {};
+  (rejected || []).forEach(r => ((r && r.reasons) || []).forEach(reason => { h[reason] = (h[reason] || 0) + 1; }));
+  return h;
+}
+
 function generateMath(story, difficulty, mathOps) {
+  const _t0 = Date.now();
   const nums = extractNumbers(story, difficulty);
   const exercises = [];
 
@@ -928,12 +956,14 @@ function generateMath(story, difficulty, mathOps) {
       difficulty,
       ...(mathOps && mathOps.length ? { mathOps } : {}),
       exercises,
+      _genMeta: buildGenMeta({ type: 'math', model: '(procedural)', t0: _t0, valid: exercises.length }),
     },
     tokens: { promptTokens: 0, completionTokens: 0 },
   };
 }
 
 async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
+  const _t0 = Date.now();
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Generating math lesson (LLM)…`);
   const L = langName(lang || 'it');
   const S = langName(srcLang || 'en');
@@ -975,6 +1005,7 @@ async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
           difficulty,
           mathInstruction: instruction,
           exercises: parsed.exercises,
+          _genMeta: buildGenMeta({ type: 'math', t0: _t0, attempts: attempt, valid: (parsed.exercises || []).length, promptTokens, completionTokens }),
         },
         tokens: { promptTokens, completionTokens },
       };
@@ -986,6 +1017,7 @@ async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
 }
 
 async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
+  const _t0 = Date.now();
   jobStep(jobId, `[${OLLAMA_MODEL}] Generating error-hunt lesson…`);
   const sys = sysErrorHunt(lang, difficulty);
   const priorHint = priorVocab && priorVocab.length
@@ -1006,6 +1038,7 @@ async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
       desc: 'Find the mistakes in the story',
       icon: '🔍',
       corruptedStory,
+      _genMeta: buildGenMeta({ type: 'error_hunt', model: OLLAMA_MODEL, t0: _t0, promptTokens, completionTokens }),
     },
     tokens: { promptTokens, completionTokens },
   };
@@ -1056,6 +1089,7 @@ function grammarPriorNounsNote(nounTargets, vocabMode) {
 }
 
 async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
+  const _t0 = Date.now();
   opts = opts || {};
   const { userDialect, storyStyle, chainVocab, vocabMode: gramVocabMode, story } = opts;
   const sys = sysGrammar(lang, srcLang, difficulty, userDialect, storyStyle);
@@ -1103,6 +1137,7 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
         desc:  parsed.desc  || 'Noun gender, articles and plural forms',
         icon:  parsed.icon  || '🏷️',
         grammar: valid,
+        _genMeta: buildGenMeta({ type: 'grammar', t0: _t0, attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons: genReasonHist(rejected), promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens }),
       },
       tokens: { promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens },
     };
@@ -1183,6 +1218,7 @@ function validateWordFormsItems(items, story) {
 }
 
 async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) {
+  const _t0 = Date.now();
   opts = opts || {};
   const { story } = opts;
   if (!story || !String(story).trim()) throw new Error('word_forms: no story available');
@@ -1213,8 +1249,6 @@ async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) 
     }
     if (valid.length < 1) { lastError = `No valid items after filtering (${rejected.length} rejected)`; continue; }
     console.log(`    Word-forms: ${valid.length} valid item(s) (${rejected.length} rejected)`);
-    const rejectReasons = {};
-    rejected.forEach(r => (r.reasons || []).forEach(reason => { rejectReasons[reason] = (rejectReasons[reason] || 0) + 1; }));
     return {
       lesson: {
         id: 6, type: 'word_forms',
@@ -1222,9 +1256,9 @@ async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) 
         desc:  parsed.desc  || 'Pick the form that fits',
         icon:  parsed.icon  || '🧩',
         items: valid,
+        _genMeta: buildGenMeta({ type: 'word_forms', t0: _t0, attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons: genReasonHist(rejected), promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens }),
       },
       tokens: { promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens },
-      genMeta: { attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons },
     };
   }
   throw new Error(`Word-forms generation failed after ${MAX_ATTEMPTS} attempts: ${lastError}`);
@@ -1256,6 +1290,7 @@ function findContextSentence(base, sentencePools) {
 }
 
 async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
+  const _t0 = Date.now();
   opts = opts || {};
   const { story, userDialect, chainVocab, vocabMode: synVocabMode } = opts;
   const L = langName(lang), S = langName(srcLang || 'en');
@@ -1334,6 +1369,7 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
         desc:  parsed.desc  || 'Related words from the story',
         icon:  parsed.icon  || '🔁',
         words,
+        _genMeta: buildGenMeta({ type: 'synonyms', t0: _t0, attempts: attempt, valid: words.length, promptTokens: tp, completionTokens: tc }),
       },
       tokens: { promptTokens: tp, completionTokens: tc },
     };
@@ -1343,6 +1379,7 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
 
 // ── Generate conjugation lesson ───────────────────────────────────────────────
 async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts) {
+  const _t0 = Date.now();
   opts = opts || {};
   const { userDialect, storyStyle, chainVocab, vocabMode: conjVocabMode, story } = opts;
   jobStep(jobId, `[${OLLAMA_LESSON_MODEL}] Generating conjugation lesson…`);
@@ -1378,12 +1415,14 @@ async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts
       desc:  parsed.desc  || 'Present tense verb forms',
       icon:  parsed.icon  || '🔤',
       conjugations: parsed.conjugations,
+      _genMeta: buildGenMeta({ type: 'conjugation', t0: _t0, valid: (parsed.conjugations || []).length, promptTokens, completionTokens }),
     },
     tokens: { promptTokens, completionTokens },
   };
 }
 
 async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, prevVocab, story, difficulty, jobId, opts) {
+  const _t0 = Date.now();
   opts = opts || {};
   const { userTranslation, userDialect, writingStyle, storyLang, chainVocab, vocabMode } = opts;
   const useTable = OLLAMA_LESSON_FORMAT === 'table';
@@ -1510,7 +1549,8 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
         desc:  lesson.desc  || topic,
         icon:  lesson.icon  || '📖',
         vocab: lesson.vocab,
-        sentences: lesson.sentences
+        sentences: lesson.sentences,
+        _genMeta: buildGenMeta({ type: 'standard', t0: _t0, valid: (lesson.vocab || []).length, promptTokens, completionTokens }),
       },
       tokens: { lessonNum, ms, promptTokens, completionTokens }
     };
@@ -2844,9 +2884,15 @@ http.createServer(async (req, res) => {
       };
       const origLessons = saved.lessons.slice();
       saved.lessons = lessons.map((edited, i) => {
-        const orig = origLessons.find(ls => ls.id === edited.id) || origLessons[i] || {};
+        const orig = (edited.id ? origLessons.find(ls => ls.id === edited.id) : null) || origLessons[i] || null;
+        // A newly added lesson (e.g. a no-LLM "mixed review", which has no vocab/sentences
+        // and carries its own `type`/`perType`) has no stored counterpart — preserve its
+        // full shape rather than cherry-picking content fields and dropping its type.
+        if (!orig) return { ...edited };
         return {
           ...orig,
+          ...(edited.type    !== undefined ? { type:    edited.type }    : {}),
+          ...(edited.perType !== undefined ? { perType: edited.perType } : {}),
           ...(edited.title !== undefined ? { title: edited.title } : {}),
           ...(edited.icon  !== undefined ? { icon:  edited.icon  } : {}),
           vocab:     edited.vocab     ? edited.vocab.map((v,j) => mergeFlaggable((orig.vocab||[])[j]||{}, v)) : orig.vocab,
@@ -2928,25 +2974,19 @@ http.createServer(async (req, res) => {
         // Compute next available ID (avoid clashing with existing)
         // Generate a stable string ID for the new lesson
         const newLessonId = 'ls_' + Date.now();
-        // E0: persist generation metadata for later QC / batch stats / weak-model
-        // diagnosis. Route-level basics (model, tokens, ms, at, fmt) are always set;
-        // generators that track attempts/rejections enrich it via result.genMeta.
-        const _proceduralMath = (fmt === 'math' && !addMathInstr);
-        const _gm = result.genMeta || {};
-        const genMeta = {
-          fmt,
-          model: _proceduralMath ? '(procedural)' : OLLAMA_LESSON_MODEL,
-          attempts: _gm.attempts ?? null,
-          valid: _gm.valid ?? (Array.isArray(result.lesson.items) ? result.lesson.items.length
-                 : Array.isArray(result.lesson.vocab) ? result.lesson.vocab.length : null),
-          rejected: _gm.rejected ?? 0,
-          rejectReasons: _gm.rejectReasons ?? null,
-          promptTokens: result.tokens?.promptTokens ?? 0,
-          completionTokens: result.tokens?.completionTokens ?? 0,
-          ms: Date.now() - _genT0,
-          at: new Date().toISOString(),
-        };
-        const newLesson = { ...result.lesson, id: newLessonId, _genMeta: genMeta };
+        const newLesson = { ...result.lesson, id: newLessonId };
+        // E0: generators stamp lesson._genMeta (model, attempts, valid, rejected,
+        // rejectReasons, tokens, ms, at) so every flow carries it. Fallback only if a
+        // generator somehow didn't — keep the lesson annotated regardless.
+        if (!newLesson._genMeta) {
+          newLesson._genMeta = buildGenMeta({
+            type: result.lesson.type, t0: _genT0,
+            valid: Array.isArray(result.lesson.items) ? result.lesson.items.length
+                   : Array.isArray(result.lesson.vocab) ? result.lesson.vocab.length : null,
+            promptTokens: result.tokens && result.tokens.promptTokens,
+            completionTokens: result.tokens && result.tokens.completionTokens,
+          });
+        }
         // Always append — ➕ button adds a new lesson set, never replaces
         saved.lessons.push(newLesson);
         console.log(`    Appended ${fmt} lesson (id ${newLesson.id}), total: ${saved.lessons.length}`);

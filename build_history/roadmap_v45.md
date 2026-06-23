@@ -16,6 +16,138 @@ headless suite lives in `test/` (see `test/README.md`); live-only checks are in
 
 ---
 
+## v45 session 2 (this batch) — refactor + minors, all suite-green
+
+**Blocker (RESOLVED this session):** the word_forms spec was provided, so the new
+**word_forms lesson type is now shipped** (server generation + validation, client
+play + editor, add-lesson option, tests). See "word_forms" below. The synonyms lesson now uses MULTI-SELECT 'select all' questions (syn_select): all
+synonyms/antonyms are correct, mixed with distractors, base word shown in its context
+sentence. (An interim single-select syn_context version was reverted per request.)
+
+**word_forms lesson type (NEW — fill-the-blank from story sentences):**
+- Server: `PROMPTS.wordForms`, `generateWordForms()` (3-attempt parse, qwen-friendly),
+  pure `validateWordFormsItems()` enforcing the spec (exactly 4 distinct choices,
+  valid correctIndex, a `___` blank, the correct answer must be the original story
+  word, sentence must be derived from the story). Wired into the main dispatch +
+  add-lesson. (`unit-word-forms`, `e2e-word-forms`; fake-Ollama branch added.)
+- Client: `LESSON_TYPE_META`/`LESSON_DESC_KEY` (🧩); `buildWordFormsExercises()` +
+  `tWordForm()` (reuses the choice grid + default checker); editor branch with a
+  `wf` read-back in `_syncEditorFromDOM` + delete support; add-lesson option in both
+  selects; `ui.json` keys. (`unit-word-forms-client`, wf case in `unit-editor-sync`.)
+  Browser/Ollama checks owed — see LIVE-TEST-CHECKLIST §12.
+- Migration note: word_forms now **supersedes** grammar/conjugation in the live UI —
+  they're removed from the lesson-type pickers (#format-select + both add-lesson
+  selects) and `all_types` generates word_forms + synonyms + error_hunt. Existing
+  grammar/conjugation lessons still play/edit/regenerate (generators + META kept);
+  only NEW generation of those two is hidden. The arc-mode "Grammar + conjugation"
+  reinforcement toggle is intentionally left (separate axis; part of learning-arcs).
+- Each item also carries a short source-language `explanation` (why the form fits),
+  shown with 💡 in the play feedback and editable in the editor.
+
+**Item 8 cheap-half refactor (the prerequisite for a new lesson type):**
+- `LESSON_TYPE_META` table + `lessonTypeMeta/Emoji/Label` — collapsed 4 duplicated
+  `{type→emoji}/{type→key}` maps. (`unit-lesson-type-meta`)
+- `splitWords`/`wordCount` — one tokenizer; replaced 4 `wc` regex locals + 2 inline
+  word-array splits. (`unit-word-count`; `pdf-selection`/`editor-sync` extractors now
+  inject the shared helper.)
+- `makeParentResolver(byId, byTopic)` — unified all 4 forward parent-resolvers; the
+  inverse next-chapter finder is unchanged. (`unit-resolvers` exercises the real factory.)
+- Folded `saveLessonEdits`' ~70-line DOM-read loop into `_syncEditorFromDOM(li,{persist})`
+  (persist consumes the icon pick, clears `_editedCorrect`, fires `/api/save-story`).
+  (`unit-editor-sync` covers the persist flag.)
+
+**Minors (server, headless-verified):**
+- Math LLM exercise count → `difficulty * 5` (`server.js` `generateMathLLM`; the TODO
+  said index.html but the live line is server-side).
+- `ui.json` hot-reload via `fs.watch` (non-destructive on parse error; self-write
+  guard). `UI_FILE` is now env-overridable; `boot()` seeds a temp copy. (`e2e-ui-reload`)
+- Original upload filename stored on the storyline (`sourceFile`): client →
+  `/api/generate-book` → `base` → `_titleStorylinePostPass`. (`e2e-bookfile`)
+
+**Cosmetics (browser-verify owed — see LIVE-TEST-CHECKLIST §11):**
+- Library saved-list grouped/sorted by **source** language (was target).
+- 8 icon-only `ui.json` strings hard-coded and removed from all 29 langs (232 keys).
+- Zero-dependency inline-SVG **globe favicon** (tab icon).
+- Lesson-row subtitle → `lessonSubtitle(L, topicDiff)`: vocab mode + difficulty,
+  per-type description as fallback. (`unit-lesson-subtitle`)
+
+**synonyms in-context rework (NEW — replaces the multi-select synonyms lesson):**
+- The base word is now shown inside a story sentence (mirrors word_forms): single-
+  select MCQ, pick the word similar/opposite to it (reuses the existing
+  `ex.syn.q_*`/`ex.badge.syn_*` strings). `tWordForm` + `tSynContext` share a new
+  `sentenceMcqCard`; both use the default checker.
+- Server: `generateSynonyms` attaches a context sentence per group from the current
+  story (extend) or also chain/storyline sentences (reinforce). `collectChainVocab`
+  now returns `sentences`; new `_synSplitSentences`/`findContextSentence`. Schema
+  (`words[]`) unchanged + a `sentence` per group.
+- Editor: 🗑 delete-whole-entry, ＋ add-row per category, and an editable context
+  Sentence. (`synEditorDeleteEntry`/`synEditorAddRow`.)
+- Tests: `unit-synonyms`, `unit-syn-context`, syn case in `unit-editor-sync`,
+  `e2e-synonyms`. Browser checks owed — see LIVE-TEST-CHECKLIST §13.
+- Follow-up cleanup: the old multi-select `syn_select` render/check machinery is now
+  unused (the builder emits `syn_context`) but left in place — it's woven through
+  `check()` at ~7 sites, so removing it is its own small refactor.
+
+**major: learning arcs (DONE this session):**
+- Fused the two arc-setting label keys (`form.pdf_arc` + `form.gen_arc_lbl`) into one
+  `form.arc_lbl` used by both the PDF and LLM-story book flows.
+- New `POST /api/storyline/recreate-lessons` + `_runRecreateJob`: for each chapter
+  in a storyline (in order) it hides the existing lessons (kept via the existing
+  `_hidden` flag, already honored in play) and appends fresh arc lessons from the
+  chapter's stored story — a standard vocab gate + reinforcement from chapter 2 (a
+  whole-storyline vocab review by default, or word_forms + synonyms when
+  arcMode='grammar'; the superseding types, not grammar/conjugation). (`e2e-recreate`.)
+- Storyline screen now has a bottom action row (Continue / Download / Clear progress
+  / Delete) with the headline "🔁 Re-create all lessons" replacing per-chapter
+  add-lesson at the storyline level. (`unit-recreate-ui`; browser/Ollama checks in §14.)
+- DONE: re-create now opens an arc-mode picker (vocab/grammar); was: a UI toggle to pick
+  vocab-vs-word_forms/synonyms reinforcement could be exposed later.
+
+**minors (DONE this session):**
+- QC/flag count moved from the QC button to the edit ✏️ pencil (red badge; counts
+  QC tags + user flags).
+- Editors close on navigation: `show()` silently closes the open lesson editor when
+  leaving the lesson-set screen, and the storyline title editor when leaving the
+  storyline screen.
+- Firefox TTS warning: `ttsHasNiceVoice` is browser-aware — Firefox local voices are
+  treated as low quality (warn unless a cloud voice exists); wider robotic-name
+  regex. Firefox behavior is live-verify-owed (§15).
+
+**cleanups (DONE):** book-generation grammar arc now reinforces with word_forms +
+synonyms (aligned with re-create + the lesson-type migration; legacy generators kept
+only as a fallback); relabelled the arc grammar mode "Word forms + synonyms"; removed
+unused ui keys (sl.recreate_confirm/recreating) and the dead _findNextChapterTopic.
+
+**major: user flagging — DONE (both increments):**
+- Editor side: item.userFlag = {comment, correct, at}; flag box has a "correct version"
+  field + an apply row that writes it to target like a QC fix (userFlagApplyFix).
+- Play side: a ⚐/⚑ flag button under each exercise opens a comment + correct-version
+  form; saving writes userFlag onto the matched lesson object (vocab/sentence by
+  target, word_forms item by sentence, synonyms word by base; unmatched →
+  per-lesson _miscFlags). Persisted via /api/lessons/edit best-effort (static keeps it
+  in memory for export). Play and editor flags are unified (same item.userFlag).
+- Cleanup: removed the exercise half of the legacy APP.flagged system; story flagging
+  still uses APP.flagged + the server flag endpoint (separate feature, left intact).
+- Tests: unit-user-flag-editor, unit-play-flag.
+- Editor flag UI now also covers word_forms + synonyms items (shared _flagBtnHtml/
+  _flagBoxHtml helpers). Remaining follow-ups owed:
+  flags on word_forms/synonyms items are now editable in the editor too; only
+  _miscFlags (truly unmatched exercises) and static JSON export carrying the
+  flags needs a live check.
+
+**Still open from `todos_v45.md`:** none — all majors complete.
+
+**major: static teacher-mode editing — DONE:** _canEdit() = canGenerate || _teacherMode
+gates non-LLM edit affordances (lesson edit row, play-time flag UI) so they show in
+static teacher mode and hide in static non-teacher mode; the QC 🔍 button and other LLM
+features stay canGenerate-gated (stripped in static). All lesson-edit persistence routes
+through _postLessonEdit() (server in live, in-memory no-op in static). Edits + QC/user
+flags ride the JSON export because the static open-topic path sets APP.lessonData to a
+reference into STATIC_LESSONS, which exportTopics serializes. (`unit-static-teacher`.)
+
+
+---
+
 ## Done in this session (do not redo)
 **TODO item 2 — store the full user input (`userPrompt`).** Committed.
 - Investigation finding: the model was **never** shortchanged. `generate()` sets
@@ -350,3 +482,15 @@ See `LIVE-TEST-CHECKLIST.md`: item-4-class conjugation/grammar prompt quality, t
 generated-continuation coherence, and all browser-only items (export, storyline
 render, arc labels, rating labels, drag-to-highlight). Anything added for items
 5/4/1 above will need new checklist entries.
+
+## Post-v45 follow-up batch (this session)
+- **word_forms prompt hardening (round 2):** the `translation` must be in the learner's
+  language {S} (a full translation), never the {L} sentence or the blanked sentence with
+  the answer filled in (the redundant-with-solution failure); validator rejects such
+  echoes. `explanation` is now OPTIONAL (may be `""`) but the field is kept for manual
+  editing / better future models. (`unit-word-forms`.)
+- **Continue-story picker** filters by BOTH current target and source language unless
+  "show other languages" is ticked. (`unit-continue-filter`.)
+- **Math LaTeX (LLM) lessons** render read-only in the lesson editor with per-exercise
+  flag + delete (no procedural regen controls); `buildMathExercises` keeps
+  `lesson.exercises` so they persist.

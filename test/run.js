@@ -49,7 +49,13 @@ run('unit: static teacher-mode edit gating', 'node', [path.join(__dirname, 'unit
 run('unit: continue-story language filter', 'node', [path.join(__dirname, 'unit-continue-filter.test.js')]);
 run('unit: attribute escaping (escAttr not escHtml)', 'node', [path.join(__dirname, 'unit-attr-escaping.test.js')]);
 run('unit: lesson-type build registry (B-phase-1)', 'node', [path.join(__dirname, 'unit-build-registry.test.js')]);
+run('unit: mixed-type review lessons (C)', 'node', [path.join(__dirname, 'unit-mixed-lessons.test.js')]);
+run('unit: static story edit (in-memory save)', 'node', [path.join(__dirname, 'unit-static-story-edit.test.js')]);
+run('unit: static summary edit (in-memory save)', 'node', [path.join(__dirname, 'unit-static-summary-edit.test.js')]);
+run('unit: chapter export (error-hunt + meta)', 'node', [path.join(__dirname, 'unit-export-lessons.test.js')]);
+run('unit: static client export (eh/aeh + meta)', 'node', [path.join(__dirname, 'unit-client-export.test.js')]);
 run('unit: static build markers', 'node', [path.join(__dirname, 'unit-static-markers.test.js')]);
+run('unit: generation metadata (_genMeta everywhere)', 'node', [path.join(__dirname, 'unit-genmeta.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {

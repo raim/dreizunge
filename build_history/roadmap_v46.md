@@ -13,9 +13,43 @@ still needs a real browser / real Ollama to verify (the headless suite cannot).
 **v46 majors at a glance** (detailed below): (A) per-target-language prompt examples;
 (B) unify lesson types into a registry — a cleanup that also enables (C); (C) mixed-type
 review lessons assembled with NO LLM from a chapter's existing questions. B-phase-1 (the
-client builder registry) is the prerequisite for C. A is independent. (D) storyline-wide vocabulary learning arc builds on the existing arc pipeline; its ambitious forward-pre-seeding phase is gated by lemmatization. (E) batch-generate a simple topic across all languages (with generation stats) + QC the output via a stronger local model or a manual export-to-frontier round-trip; its E0 stats-capture is a cheap enabler also useful on its own. (F) user-uploaded dictionaries to ground/replace generation for dialects & low-resource languages; (G) a world-map + language-tree first page (prototype in uploaded map.html) where src→tgt paths are coloured by existing lessons and by batch-gen QC health — G(b) depends on E. D also gains a progress-dependent review dimension (repeat words the user got wrong).
+client builder registry) is the prerequisite for C. A is independent. (D) storyline-wide vocabulary learning arc builds on the existing arc pipeline; its ambitious forward-pre-seeding phase is gated by lemmatization. (E) batch-generate a simple topic across all languages (with generation stats) + QC the output via a stronger local model or a manual export-to-frontier round-trip; its E0 stats-capture is a cheap enabler also useful on its own. (F) user-uploaded dictionaries to ground/replace generation for dialects & low-resource languages; (G) a world-map + language-tree first page (prototype in uploaded map.html) where src→tgt paths are coloured by existing lessons and by batch-gen QC health — G(b) depends on E. D also gains a progress-dependent review dimension (repeat words the user got wrong). (H) mathematics as a pseudo-language (math-only lessons rendered in the source language); (I) LLM auto-fix of flagged lessons into the flag comment/correct fields; (J) per-task model selection + a prompt preview/edit popup; (K) a cross-storyline personal learning history toward a “learning buddy” (generalises D's per-item progress); (L) storyline visuals from uploaded character assets. **Before the big features, see “Code-structure readiness” below:** do B-phase-1, add static-build markers, and land E0 first; avoid any bundler (keep the zero-dep, single-file ethos).
 
 ---
+
+## Priority & sequencing
+
+**Done (the enabler groundwork — landed before the big features):**
+- ✅ **B-phase-1** — exercise building dispatches through the `LESSON_TYPE_META[type].build`
+  registry (`unit-build-registry`). Unblocks C and simplifies H/I.
+- ✅ **Static-build markers** — `build-static.js` slices on `@static-exclude-start` /
+  `@static-exclude-end` / `@static-engine-end`, not coincidental code lines, and fails
+  loudly on a mis-slice (`unit-static-markers`). Kills the silently-dropped-helper bug
+  class.
+- ✅ **E0** — every generated lesson carries `_genMeta` (type, model, attempts, valid,
+  rejected, `rejectReasons` histogram, tokens, ms, at). Stamped **inside every generator**
+  via shared `buildGenMeta()`/`genReasonHist()`, so ALL flows — add-lesson, initial topic
+  gen, book import, storyline recreate — carry it (`unit-genmeta`; `e2e-word-forms`
+  asserts it end-to-end).
+
+**Suggested order for the rest** (effort S/M/L/XL; "depends on" lists hard prerequisites):
+
+| Major | Effort | Depends on | When / why |
+|------|--------|-----------|-----------|
+| **A** per-target-language examples | M | — | **Next** — independent; biggest win for weak local models |
+| ~~**C** mixed-type lessons (no LLM)~~ ✅ DONE | M | B-phase-1 ✅ | Shipped — `buildMixedExercises` pools siblings via the registry; flags resolve to source via `_srcLessonIdx` (`unit-mixed-lessons`) |
+| **B** full unify (renderEx / editor / server dispatch) | L | B-phase-1 ✅ | Soon — removes per-type duplication; simplifies H, I |
+| **E** batch-gen + QC (E-i then E-ii) | L | E0 ✅ | Soon — content-seeding + quality; feeds G(b) |
+| **H** mathematics as a pseudo-language | M | B (eases) | Mid |
+| **J** per-task models + prompt preview/edit | M | E0 ✅ | Mid — preview also helps author A |
+| **I** auto-fix flagged lessons | M | E0 ✅; better with J | Mid — reuses flag apply machinery |
+| **F** user-uploaded dictionaries | M | — | Mid — import-as-vocab phase is no-LLM/quick |
+| **G** map + tree landing | L | G(a): — · G(b): E | G(a) mid (existing-lesson coverage) · G(b) after E (QC health) |
+| **D** storyline vocab arc + progress-review | XL | lemmatization (phase 3) | Later — research-y; phases 0–2 deterministic |
+| **K** personal history → learning buddy | XL | D's per-item progress store | Later — most ambitious; build on D |
+| **L** storyline visuals | L | upload pipeline | Later — asset-composition first; image-gen is out-of-ethos/optional |
+
+Rule of thumb: do **A and C next** (high value, unblocked), then **B and E** (structural + content leverage), then the **mid** cluster, leaving **D / K / L** — the research-heavy, multi-phase work — for last.
 
 ## Orientation (read before touching anything)
 
@@ -176,9 +210,10 @@ chains, so **adding or composing a type touches one entry**, and the "I added a 
 but forgot the editor / static slice" failure mode disappears.
 
 **Phasing (refactor — behavior must stay identical, suite green after each step):**
-1. **Client `build` registry** — replace the `buildExercises` if-chain (6139) with
-   `lessonTypeMeta(type).build(lesson, …)`. This is the *minimum slice that unblocks
-   mixed lessons*, so do it first.
+1. ✅ **Client `build` registry** — DONE. `buildExercises` is now
+   `lessonTypeMeta(lesson.type).build(lesson, lessonIdx)`; the default vocab/sentence
+   body is `buildStandardExercises`. Guarded by `unit-build-registry`. (This is the slice
+   that unblocked C, which is also shipped.) **Start B-full here at step 2.**
 2. **`renderEx` registry** — fold the 19-branch `ex.type` chain into per-type
    `renderEx` hooks.
 3. **Editor registry** — fold the 9-branch `ls.type` chain (and `saveLessonEdits`)
@@ -191,6 +226,19 @@ refactor: no behavior change, `node test/run.js` green and `check-inline` at 0 a
 every step. Do one dispatcher at a time; don't big-bang all four.
 
 ## v46 major — mixed-type review lessons (NO LLM)
+
+> ✅ **DONE.** New `mixed` type + `buildMixedExercises(lesson, lessonIdx)` (pools each
+> sibling's registry builder, `perType` per source, tags `_srcLessonIdx`, skips self/
+> hidden/nested-mixed/no-exercise types). `_exFlagTarget` resolves pooled exercises to
+> their source lesson. No-LLM "Mixed review" add option creates it client-side (with a
+> stable `id`); read-only editor branch; empty-pool shows a "nothing to pool" message.
+> **Round-trip fix:** the lesson is created via `_postLessonEdit` → `/api/lessons/edit`,
+> whose merge previously cherry-picked only content fields and dropped `type`/`perType`
+> for a newly appended lesson — so on reload (live navigate or static export) the mixed
+> lesson read as "Vocabulary" and crashed in `buildStandardExercises`. The edit handler
+> now returns a new lesson's full shape (and carries `type`/`perType` for existing ones);
+> `buildStandardExercises` defaults `vocab`/`sentences` to `[]`. Tests: `unit-mixed-lessons`,
+> `e2e-mixed-lesson-edit`. Next up per sequencing: **A**.
 
 **Motivation.** More variety and review from content already generated, with **zero
 model calls** — works offline and in the static build. This is composition, not
@@ -436,6 +484,165 @@ live; in static it can show coverage of the baked `STATIC_LESSONS`. Make it
 **Dependency.** (a) needs only existing lessons — ship it first. (b) needs the
 **batch-generation + QC major** for the QC/`_genMeta` data.
 
+## v46 major — mathematics as a pseudo-language (math-only lessons in the source language)
+
+**Idea.** Add **"Mathematics"** as an entry in the *target*-language selector. When
+chosen, generate **math-only** lessons rendered **inside the source language** — the
+model is still told `{S}` so any wording (instructions, word problems) is in the
+learner's language. Opens a path to **language-specific math word problems** later.
+
+**Integration.** The math producers already exist and already take both languages:
+`generateMath` (procedural, server.js ~856) and `generateMathLLM` (LLM/LaTeX, ~936,
+`(lang, srcLang, difficulty, instruction, jobId)`); lessons are type `'math'`. Add a
+pseudo-language entry to `LANGS` (index.html ~1027) flagged e.g. `isMath:true` (parallel
+to the `RTL_LANGS`/`CJK_LANGS` sets). When the target is the math pseudo-language, route
+add-lesson/generation straight to the math producers, pass `{S}` so textual parts render
+in the source language, and **gate every natural-language-only path** (vocab/story/
+grammar/conjugation/synonyms/word_forms, TTS, `updateDocDir`/RTL, CJK fonts) behind an
+`isPseudoLang` check so the UI never offers "generate a story" for mathematics.
+
+**Phasing.** (1) pseudo-language entry + UI gating + reuse the math producers with `{S}`
+wording; (2) make sure every textual field (`math_latex` question/translation,
+instructions) is in `{S}` and the model is told `{S}`; (3) future: richer
+language-specific word problems and math terminology in `{S}`.
+
+**Caveats.** Much code assumes the target is a natural language — the `isPseudoLang`
+guard must be thorough. The map/tree landing (G) and batch-gen (E) must treat math as a
+**special node**, not part of the phylogenetic tree or normal language-pair grouping.
+Synergy with **unify (B)**: once types are a registry, math is just another producer and
+the pseudo-language only decides which producers are offered.
+
+## v46 major — auto-fix flagged lessons via LLM
+
+**Idea.** Pass flagged lessons (QC-flagged, user-flagged, or all) to an LLM and ask it to
+**suggest corrections**, written into the existing flag fields for the user to review and
+apply.
+
+**Integration — reuses everything already built.** User flags are
+`item.userFlag = { comment, correct, at }` (set at index.html ~5444); the editor already
+**applies** a flag's `correct` via `userFlagApplyFix` (~5451) and QC suggestions via
+`qcApplyFix` (~5377). So auto-fix = send the flagged item + the user's `comment` (and/or
+the QC finding) to the model, ask for a corrected version, and write it into
+`userFlag.correct` (with a note in `comment`). The existing apply buttons accept it. No
+new apply path needed.
+
+**Phasing.** (1) single-item "suggest a fix" button (LLM fills `correct`); (2) batch over
+all flagged items in a lessonset; (3) optional auto-apply for high-confidence fixes (off
+by default).
+
+**Caveats.** Never auto-apply silently — keep review-then-apply. Use a capable model
+(ties to per-task model selection below) and record which model produced the fix in
+`_genMeta`. In-ethos (local Ollama, or the manual export round-trip from the QC major).
+
+## v46 major — per-task model selection + prompt preview/edit
+
+**Idea.** Use **different Ollama models for different tasks**, choose the model
+dynamically (a selector on the main page, or a popup on every LLM-calling button), and —
+in that popup — **review and edit the full, model-specific prompt** before it is sent.
+
+**Integration — partly there already.** The server already reads task-specific model env
+vars: `OLLAMA_MODEL`, `OLLAMA_LESSON_MODEL`, `OLLAMA_TRANSLATION_MODEL` (server.js
+~1075–1641). This major makes them **UI-selectable** and adds QC/auto-fix slots
+(`OLLAMA_QC_MODEL` from the QC major). List installed models via Ollama's `/api/tags`.
+The prompt-preview needs a "build prompt but don't send" path: generators assemble the
+prompt from `prompts.json` + context (`{L}`/`{S}`/story/`chainVocab`/the `{EXAMPLE}` from
+A) — expose that assembled prompt to the popup, let the user edit it, and accept the
+edited prompt to send verbatim.
+
+**Phasing.** (1) surface the existing per-task model config; (2) a main-page **default
+model selector** (from `/api/tags`); (3) a **per-button popup** to pick the model for one
+call; (4) **prompt preview + edit** in the popup.
+
+**Caveats.** An edited prompt can break the JSON-output contract the validators expect —
+parse defensively and show validation feedback. Keep optional (defaults work untouched).
+Big synergy: the preview is the best tool for authoring the **per-language examples (A)**
+and debugging weak-model failures; `_genMeta` (E0) should record the model used per call.
+
+## v46 major — personal learning history → "learning buddy"
+
+**Idea.** Build a **persistent, cross-storyline personal history** — everything the user
+has *generated*, and everything they've *solved* — and feed that whole personal arc into
+generation of new lessons (toward a personalized "learning buddy").
+
+**Relationship to the arc (D).** D's progress-dependent review adds a per-item
+`progress[itemKey] = {seen, wrong, lastAt, ease}` **within** a storyline. This major
+**generalizes it to a global profile** across all storylines/lesson sets, distinguishing
+*merely solved* (any exposure) from *generated **and** solved* (deliberate study). New
+generation then considers the global profile: skip mastered vocabulary, globally
+reinforce struggled words, pace by overall history.
+
+**Phasing.** (0) a global personal-history store aggregating per-item progress across all
+content (client/localStorage; per target language); (1) a "my learning" dashboard; (2)
+feed it into generation; (3) the "buddy" — a persistent personalized arc shaping every
+new lessonset.
+
+**Caveats.** Keep it **local/private** (personal data — client-side, not posted). History
+grows unbounded — summarize/age it. Track per (target,source) so languages don't bleed.
+Most ambitious of the personalization items; depends on D's per-item store existing first.
+
+## v46 major — storyline visuals (uploaded assets + per-chapter graphics)
+
+**Idea.** Give each storyline a **visualization**, optionally from **user-uploaded
+character graphics** — e.g. the "the little i" stories across languages: upload the
+characters once, generate a simple graphic per chapter.
+
+**Two routes (prefer the in-ethos one first).**
+- **Asset composition (in-ethos, no image model).** Let the user **upload image assets**
+  (characters, props), attach them to a storyline, and show them on storyline/chapter
+  screens. Then have the **text LLM pick which characters/props appear per chapter** (from
+  the chapter's story text) and compose a simple scene (SVG/DOM, zero-dep). No
+  image-generation backend.
+- **Generated imagery (out-of-ethos, optional).** True AI image generation needs a local
+  image model — a real dependency the project otherwise avoids. Optional/last.
+
+**Integration.** Reuse the existing upload pipeline (PDF/text + `sourceFile`), extended to
+image assets scoped to a storyline. **Do not** inline base64 into `lessons.json` — store
+assets as files and reference them; mind the static build (baked `docs` must copy assets).
+
+**Phasing.** (1) upload + attach + display static assets per storyline/chapter; (2) LLM
+chooses per-chapter characters → simple composition; (3) optional generated imagery behind
+a local image backend.
+
+**Caveats.** Image storage/size (files, not inlined); static-build asset handling;
+uploaded-graphic licensing is the user's responsibility; gate any image-model path behind
+an explicit opt-in to keep the core zero-dependency.
+
+## Code-structure readiness (assessment — are we ready for A–L?)
+
+**Short answer:** the codebase is coherent and well-tested (29 test files, salvage
+validators), and most majors are *additive* — but two existing structural facts will bite
+as these land, and both are already roadmap items. Do the targeted refactors; **do not**
+big-bang rewrite.
+
+**The two real risk areas:**
+1. **Per-type vertical duplication.** Every lesson type is smeared across `server.js` +
+   `index.html` + the editor + pickers. Several majors (C mixed, H math-pseudo-language,
+   I auto-fix, any new type) are markedly easier *after* the **unify registry (B)**. B is
+   the highest-leverage refactor and a soft prerequisite for the type-heavy work —
+   sequence it early.
+2. **The fragile static build.** `build-static.js` slices the client by **line ranges**
+   (`init()` → `buildPath(`); a helper in the wrong region is silently dropped and the
+   static page throws at runtime. This has already caused real bugs (`_canEdit`,
+   `_chapterNeighbors`, the attribute-escaping class). As the client grows (G map, L
+   visuals, J popups) it gets more dangerous. **Recommended low-risk, high-value fix:**
+   replace the line-range slice with **explicit marker comments**
+   (`// @static-include-start/end` or per-function tags) so placement stops being a
+   landmine — kills a whole recurring bug class with no change to the zero-dep,
+   single-file, no-build ethos.
+
+**What I would NOT do.** No external bundler / module system / framework — the
+single-file, zero-dependency, no-build design is a core value, and a bundler is exactly
+the dependency the project avoids. If the client eventually outgrows one inline script
+(G + L + J together might), prefer a **trivial zero-dep concatenation build** (cat ordered
+source files) over any npm bundler, so the ethos survives.
+
+**Recommended sequencing of structural/enabler work, before the big features:**
+1. ✅ **B-phase-1** (client builder registry) — DONE; unblocks C, simplifies H/I.
+2. ✅ **Static-build markers** — DONE; killed the slice-fragility bug class.
+3. ✅ **E0** (`_genMeta`) — DONE for every flow (stamped inside all 8 generators via
+   buildGenMeta; add-lesson / topic gen / book / recreate all carry it).
+Everything else is genuinely additive and can proceed without further refactoring.
+
 ## Carried-over open items (lower priority)
 
 - **word_forms multi-correct (deferred, not recommended yet).** Allowing several correct
@@ -446,9 +653,23 @@ live; in static it can show coverage of the baked `STATIC_LESSONS`. Make it
   like *der Angestellte* have ambiguous gender/inflection the normalizer can't resolve
   reliably. Documented in roadmap_v45; still open. Needs a real morphology approach, not
   a quick patch.
-- **`build-static.js` version string.** It hardcodes `version: 'v44'` in the static
-  `APP.info` even though `APP_VERSION` is `'v45'`, so the static build reports the old
-  version. Trivial fix (read it from a single source). Cosmetic but real.
+- **Export logic is duplicated (server vs client twin) — dedup candidate.** The chapter
+  export exists twice: `export-lessons.js` (`buildExport`/`chapterParts`/`renderHtml`,
+  used by the live `/api/export`) and a hand-maintained client port in `index.html`
+  (`_clientBuildExport`/`_ceChapterParts`/`_ceRenderHtml`, used by the static build since
+  it has no server). A fix to one silently misses the other — this bit twice (error-hunt
+  rendering had to be applied to both; the second miss shipped as an empty-list bug in
+  static). Worth collapsing: have the static build *bake* the server module's pure
+  functions into the page instead of keeping a parallel copy. Until then, **any export
+  change must touch both** `export-lessons.js` and the `_ce*` functions.
+- **`/api/lessons/edit` merge silently drops unlisted fields (gotcha).** The edit handler
+  rebuilds each lesson by spreading the stored `orig` and then copying a *fixed allow-list*
+  of fields from the edited copy (title/icon/vocab/sentences/grammar/conjugations/
+  corruptedStory/_hidden/edits/type/perType). For an **existing** lesson, anything not in
+  that list survives only because it rides `...orig`; for a **newly appended** lesson
+  there is no `orig`, so it's now returned whole (`{...edited}`). Any future lesson type
+  with its own top-level fields must either be added to the allow-list **or** rely on the
+  new-lesson whole-spread. This is the bug that made mixed lessons lose their `type`.
 - **Live-verification backlog.** `LIVE-TEST-CHECKLIST.md` §§11–23 list browser/Ollama
   checks the headless suite cannot cover (word_forms generation quality, the static
   teacher-mode edit/export round-trip, synonym select-all scoring, the continue-story
@@ -461,7 +682,10 @@ live; in static it can show coverage of the baked `STATIC_LESSONS`. Make it
 - New client helpers used in static → define **after** `function buildPath(`.
 - New UI strings → `ui.json` `en` only, via `t()`; never hardcode user-facing text.
 - New lesson-edit persistence → through `_postLessonEdit()`, never a raw
-  `fetch('/api/lessons/edit')`.
+  `fetch('/api/lessons/edit')`. A **new lesson type** with its own top-level fields must
+  also be preserved by the `/api/lessons/edit` merge (allow-list) — see the gotcha above.
+- Export changes must touch **both** `export-lessons.js` (server) and the `_ce*` client
+  twin in `index.html` (static), until they're deduplicated.
 - Prefer **salvage + prompt nudges** over strict validator rejects.
 - Every behavior change gets a test; register it in `test/run.js`. Keep
   `node test/run.js` green and `node test/check-inline.js index.html` at 0 failures.
