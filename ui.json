@@ -2437,6 +2437,11 @@
     "qc.toast.save_failed": "Could not save",
     "qc.toast.flag_saved": "Flag saved",
     "qc.toast.flag_removed": "Flag removed",
+    "rating.editor.title": "Mark this question as a good example (⭐)",
+    "rating.play.title": "Mark this question as a good example (⭐)",
+    "rating.toast.added": "Marked as a good example ⭐",
+    "rating.toast.removed": "Good-example mark removed",
+    "rating.toast.unresolved": "Can't rate this exercise — its source item wasn't found",
     "qc.editor.suggests": "⚑ QC suggests:",
     "qc.editor.fix": "✓ fix",
     "qc.editor.fix_title": "Apply suggested fix",
@@ -2480,6 +2485,9 @@
     "qc.editor.user_suggests": "You suggested:",
     "ex.flag_comment_ph": "What looks wrong? (optional)",
     "ex.flag_save": "Flag",
+    "ex.flag_shown_label": "Flagged",
+    "ex.flag_shown_correct": "Suggested fix:",
+    "ex.flag_no_comment": "Flagged (no comment)",
     "ex.syn.hint": "Tap every matching word, then Check."
   },
   "sv": {

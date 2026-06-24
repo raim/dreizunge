@@ -73,10 +73,11 @@
       "lang": "en",
       "srcLang": "hi",
       "createdAt": "2026-06-18T13:50:52.400Z",
-      "updatedAt": "2026-06-22T09:00:16.937Z",
+      "updatedAt": "2026-06-24T09:05:53.403Z",
       "summary": "लघु i एक अपरिभाषित संख्या है जो अपने स्थान खोजने की चेतावनी रखती है। वह चिह्नों और संख्याओं के दुनिया में अपना स्थान नहीं मिल पाती। शेष संख्याओं के साथ वह अपनी अलगता के लिए दबाव से भरी हो जाती है, लेकिन शून्य की मदद से वह समझती है कि वह अपनी अस्तित्व की अनिवार्यता के रूप में अपना स्थान खोज सकती है। अंत में, वह समझती है कि वह अपनी अस्तित्व की अनिवार्यता के रूप में अपना स्थान खोज सकती है और यह उसे बहुत अच्छा लगता है।",
       "tags": [
-        "needs native speaker"
+        "needs native speaker",
+        "children"
       ]
     },
     {
@@ -99,10 +100,11 @@
       "lang": "en",
       "srcLang": "ja",
       "createdAt": "2026-06-16T18:58:08.961Z",
-      "updatedAt": "2026-06-17T11:17:12.046Z",
+      "updatedAt": "2026-06-24T09:06:16.407Z",
       "summary": "この物語は、小さな数字「i」が自分の位置を見つけるために旅をする様子を描いています。彼女はプラス、マイナス、掛ける、で割るなどの記号の世界をさまようが、家族や場所を見つけることができません。混乱した世界で、ゼロに出会い、自分はただの「i」であることに気づきます。最後には、自分自身を認める勇気を得ます。主要な単語には、巣、家族、場所、知る、世界、小さな、足し算、引き算、掛け算、割り算があります。",
       "tags": [
-        "needs native speaker"
+        "needs native speaker",
+        "children"
       ]
     },
     {
@@ -8285,12 +8287,8 @@
             },
             {
               "target": "world",
-              "source": "पृथ्वी",
-              "qc": {
-                "sug": "दुनिया",
-                "field": "source",
-                "at": "2026-06-18T15:04:54.275Z"
-              }
+              "source": "दुनिया",
+              "editedAt": "2026-06-24T09:02:53.019Z"
             },
             {
               "target": "often",
@@ -8375,18 +8373,14 @@
             },
             {
               "target": "Grown-ups often have children.",
-              "source": "बड़े लोग कई बार बच्चे करते हैं।",
+              "source": "बड़े लोग अक्सर बच्चे करते हैं।",
               "words": [
                 "Grown-ups",
                 "often",
                 "have",
                 "children."
               ],
-              "qc": {
-                "sug": "बड़े लोग अक्सर बच्चे करते हैं।",
-                "field": "source",
-                "at": "2026-06-18T15:06:15.415Z"
-              }
+              "editedAt": "2026-06-24T09:05:21.862Z"
             },
             {
               "target": "But little i did not know.",
@@ -8425,7 +8419,7 @@
         ]
       },
       "generatedAt": "2026-06-18T13:46:56.011Z",
-      "updatedAt": "2026-06-18T15:06:24.342Z",
+      "updatedAt": "2026-06-24T09:05:39.028Z",
       "id": "tp_17817906523660000080"
     },
     {
@@ -9066,10 +9060,6 @@
               "source": "誰か"
             },
             {
-              "target": "beside",
-              "source": " beside"
-            },
-            {
               "target": "her",
               "source": "彼女",
               "qc": {
@@ -9369,7 +9359,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "_hidden": true
         },
         {
           "id": "ls_1781686424861",
@@ -9423,7 +9414,16 @@
                 }
               ]
             }
-          ]
+          ],
+          "_hidden": true
+        },
+        {
+          "id": "ls_1782292729363_q1kj",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 6
         }
       ],
       "generationStats": {
@@ -9443,7 +9443,7 @@
         ]
       },
       "generatedAt": "2026-06-16T20:20:25.708Z",
-      "updatedAt": "2026-06-17T09:15:32.254Z",
+      "updatedAt": "2026-06-24T09:25:36.692Z",
       "id": "tp_17816416069630000894"
     },
     {
@@ -11089,12 +11089,7 @@
             },
             {
               "target": "sorry",
-              "source": "すみません",
-              "qc": {
-                "sug": "Sorry",
-                "field": "target",
-                "at": "2026-06-16T20:50:28.796Z"
-              }
+              "source": "すみません"
             },
             {
               "target": "hero",
@@ -11102,39 +11097,20 @@
             },
             {
               "target": "smartest",
-              "source": "一番賢い",
-              "qc": {
-                "sug": "最賢い",
-                "field": "source",
-                "at": "2026-06-16T20:50:37.804Z"
-              }
+              "source": "最賢い",
+              "editedAt": "2026-06-24T09:11:03.122Z"
             },
             {
               "target": "creepy",
-              "source": "怪しい",
-              "qc": {
-                "sug": "怪reffしい",
-                "field": "source",
-                "at": "2026-06-16T20:50:41.412Z"
-              }
+              "source": "怪しい"
             },
             {
               "target": "disguise",
-              "source": "隠れ蓑",
-              "qc": {
-                "sug": "隠れ蓑",
-                "field": "target",
-                "at": "2026-06-16T20:50:46.238Z"
-              }
+              "source": "隠れ蓑"
             },
             {
               "target": "guy",
-              "source": "男の子",
-              "qc": {
-                "sug": "男性",
-                "field": "source",
-                "at": "2026-06-16T20:50:49.775Z"
-              }
+              "source": "男の子"
             }
           ],
           "sentences": [
@@ -11146,12 +11122,7 @@
                 "you",
                 "my",
                 "family?"
-              ],
-              "qc": {
-                "sug": "家族ですか？",
-                "field": "source",
-                "at": "2026-06-16T20:50:54.199Z"
-              }
+              ]
             },
             {
               "target": "Seven shook his head.",
@@ -11161,12 +11132,7 @@
                 "shook",
                 "his",
                 "head."
-              ],
-              "qc": {
-                "sug": "七人は頭を振った",
-                "field": "source",
-                "at": "2026-06-16T20:51:01.521Z"
-              }
+              ]
             },
             {
               "target": "I’m sorry.",
@@ -11186,12 +11152,7 @@
                 "is",
                 "the",
                 "smartest."
-              ],
-              "qc": {
-                "sug": "Forty-two thinks he is the smartest.",
-                "field": "source",
-                "at": "2026-06-16T20:51:14.450Z"
-              }
+              ]
             },
             {
               "target": "There are some creepy looking guys.",
@@ -11203,19 +11164,14 @@
                 "creepy",
                 "looking",
                 "guys."
-              ],
-              "qc": {
-                "sug": "怪しい男がいる",
-                "field": "source",
-                "at": "2026-06-16T20:51:20.320Z"
-              }
+              ]
             }
           ]
         },
         {
           "id": 1,
           "title": "家族とは",
-          "desc": "家族についての単語を学びましょう",
+          "desc": "家族とは？",
           "icon": "👨‍👩‍👧‍👦",
           "vocab": [
             {
@@ -11237,11 +11193,7 @@
             {
               "target": "path",
               "source": "道",
-              "qc": {
-                "sug": "道路",
-                "field": "source",
-                "at": "2026-06-16T20:51:32.569Z"
-              }
+              "editedAt": "2026-06-24T09:11:03.122Z"
             },
             {
               "target": "world",
@@ -11279,16 +11231,11 @@
                 "place",
                 "is",
                 "long."
-              ],
-              "qc": {
-                "sug": "The path to the family place is long. 家族の場所への道は長いです。",
-                "field": "source",
-                "at": "2026-06-16T20:52:00.698Z"
-              }
+              ]
             },
             {
               "target": "Evening came, and everyone slept.",
-              "source": "夜が訪れ、 Everyoneは眠りました。",
+              "source": "夜が訪れ、 Everyoneは Everyoneが眠りました。",
               "words": [
                 "Evening",
                 "came,",
@@ -11296,11 +11243,7 @@
                 "everyone",
                 "slept."
               ],
-              "qc": {
-                "sug": "夜が訪れ、 Everyoneは Everyoneが眠りました。",
-                "field": "source",
-                "at": "2026-06-16T20:52:07.722Z"
-              }
+              "editedAt": "2026-06-24T09:10:16.742Z"
             },
             {
               "target": "A strange path appeared in the world.",
@@ -11328,8 +11271,7 @@
                 "confusing."
               ]
             }
-          ],
-          "_arcMode": "reinforce"
+          ]
         }
       ],
       "generationStats": {
@@ -11349,7 +11291,7 @@
         ]
       },
       "generatedAt": "2026-06-16T19:27:12.602Z",
-      "updatedAt": "2026-06-16T20:52:17.940Z",
+      "updatedAt": "2026-06-24T09:15:48.243Z",
       "id": "tp_17816389729790000379"
     },
     {
@@ -12119,6 +12061,133 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1782292001947",
+          "type": "math",
+          "title": "① ② ③",
+          "desc": "＋ － ×  ÷",
+          "icon": "🔢",
+          "numbers": [
+            6,
+            5,
+            8,
+            7,
+            1,
+            3
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                3,
+                5,
+                6,
+                8
+              ],
+              "correct": [
+                "8",
+                "6",
+                "5",
+                "3"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                5,
+                3,
+                6,
+                8
+              ],
+              "correct": [
+                "8",
+                "6",
+                "5",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "7",
+              "op": "+",
+              "b": "8",
+              "correct": "15",
+              "choices": [
+                "15",
+                "14",
+                "16",
+                "13"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "7",
+              "op": "+",
+              "b": "7",
+              "correct": "14",
+              "choices": [
+                "14",
+                "12",
+                "15",
+                "13"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "-",
+              "b": "1",
+              "correct": "4",
+              "choices": [
+                "5",
+                "2",
+                "3",
+                "4"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "6",
+              "op": "-",
+              "b": "5",
+              "correct": "1",
+              "choices": [
+                "0",
+                "1",
+                "2",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "-",
+              "b": "3",
+              "correct": "0",
+              "choices": [
+                "1",
+                "2",
+                "3",
+                "0"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "math",
+            "model": "(procedural)",
+            "attempts": null,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "ms": 1,
+            "at": "2026-06-24T09:06:41.947Z"
+          }
         }
       ],
       "generationStats": {
@@ -12138,7 +12207,7 @@
         ]
       },
       "generatedAt": "2026-06-16T18:58:09.003Z",
-      "updatedAt": "2026-06-17T05:39:30.300Z",
+      "updatedAt": "2026-06-24T09:06:41.947Z",
       "id": "tp_17816372429150000165"
     },
     {
@@ -15569,7 +15638,81 @@
           "title": "🔀 Mixed review",
           "icon": "🔀",
           "desc": "A mix of questions from this chapter's other lessons",
-          "perType": 3
+          "perType": 3,
+          "id": "ls_775893329"
+        },
+        {
+          "id": "ls_1782268154431",
+          "type": "synonyms",
+          "title": "Integrating Diverse Exercises",
+          "desc": "German vocabulary for diverse exercises in language learning",
+          "icon": "📚",
+          "words": [
+            {
+              "base": "benutzer",
+              "gloss": "users",
+              "sentence": "Die Benutzer profitierten von der verbesserten App, die nun auch Sprachkorpora und grammatische Regeln in interaktiven Übungen integrierte.",
+              "synonyms": [
+                {
+                  "w": "nutzer",
+                  "g": "users"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "verbesserten",
+              "gloss": "improved",
+              "sentence": "Die Benutzer profitierten von der verbesserten App, die nun auch Sprachkorpora und grammatische Regeln in interaktiven Übungen integrierte.",
+              "synonyms": [
+                {
+                  "w": "optimierten",
+                  "g": "optimized"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "profitierten",
+              "gloss": "benefited",
+              "sentence": "Die Benutzer profitierten von der verbesserten App, die nun auch Sprachkorpora und grammatische Regeln in interaktiven Übungen integrierte.",
+              "synonyms": [
+                {
+                  "w": "vorteilten",
+                  "g": "benefited"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "interaktiven",
+              "gloss": "interactive",
+              "sentence": "Die Benutzer profitierten von der verbesserten App, die nun auch Sprachkorpora und grammatische Regeln in interaktiven Übungen integrierte.",
+              "synonyms": [
+                {
+                  "w": "interaktiv",
+                  "g": "interactive"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen2.5:7b",
+            "attempts": 1,
+            "valid": 4,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 619,
+            "completionTokens": 452,
+            "ms": 302399,
+            "at": "2026-06-24T02:29:14.431Z"
+          }
         }
       ],
       "generationStats": {
@@ -15589,7 +15732,7 @@
         ]
       },
       "generatedAt": "2026-06-16T10:11:40.373Z",
-      "updatedAt": "2026-06-23T11:28:14.401Z",
+      "updatedAt": "2026-06-24T02:29:14.431Z",
       "id": "tp_17816054439060000253"
     },
     {
@@ -18146,7 +18289,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
       "continuedFrom": "“Of course",
-      "continuedFromId": null,
+      "continuedFromId": "tp_17815374375310002032",
       "lessons": [
         {
           "id": 1,
@@ -18278,7 +18421,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
       "continuedFrom": "Then somebody quietly sat beside her",
-      "continuedFromId": null,
+      "continuedFromId": "tp_17815373131900001991",
       "lessons": [
         {
           "id": 1,
@@ -18530,7 +18673,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
       "continuedFrom": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
-      "continuedFromId": null,
+      "continuedFromId": "tp_17815371923280001882",
       "lessons": [
         {
           "id": 1,
@@ -18659,7 +18802,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
       "continuedFrom": "As he finished his kind introduction,",
-      "continuedFromId": null,
+      "continuedFromId": "tp_17815370798370001700",
       "lessons": [
         {
           "id": 1,
@@ -18786,7 +18929,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
       "continuedFrom": "One is mean, he’s always first,",
-      "continuedFromId": null,
+      "continuedFromId": "tp_17815369701180001679",
       "lessons": [
         {
           "id": 1,
@@ -18920,7 +19063,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
       "continuedFrom": "In this world, so chaotic and strange,",
-      "continuedFromId": null,
+      "continuedFromId": "tp_17815367707540001511",
       "lessons": [
         {
           "id": 1,
@@ -19142,7 +19285,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
       "continuedFrom": "“Are you my family",
-      "continuedFromId": null,
+      "continuedFromId": "tp_17815366458380001418",
       "lessons": [
         {
           "id": 1,
@@ -19276,7 +19419,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
       "continuedFrom": "One evening, while everyone slept,",
-      "continuedFromId": null,
+      "continuedFromId": "tp_17815365253630001333",
       "lessons": [
         {
           "id": 1,
@@ -19792,7 +19935,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
       "continuedFrom": null,
-      "continuedFromId": null,
+      "continuedFromId": "tp_17815362983410001153",
       "lessons": [
         {
           "id": 1,
@@ -20488,7 +20631,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
       "continuedFrom": "Zero",
-      "continuedFromId": "tp_17815374375310002032",
+      "continuedFromId": "tp_17815291150260000733",
       "lessons": [
         {
           "id": 1,
@@ -25123,7 +25266,7 @@
       "storyPrompt": "User-provided story",
       "userStory": "“Do you know me?” asked 𝑖.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”\n\n“Are you my family?” asked 𝑖.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\n\n𝑖 burst into tears.",
       "continuedFrom": "I 7",
-      "continuedFromId": null,
+      "continuedFromId": "tp_101952",
       "storyStyle": "children",
       "lessons": [
         {

@@ -226,6 +226,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .flag-btn{background:none;border:2px solid var(--gray-mid);border-radius:var(--radius);padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s,color .1s;white-space:nowrap}
 .flag-btn:hover{border-color:#ff9600;color:#ff9600}
 .flag-btn.flagged{border-color:#ff9600;background:#fff4e0;color:#c26000}
+.flag-btn.rated{border-color:#e0a800;background:#fff8e0;color:#9a6b00}
 .flag-comment-wrap{margin-top:8px;display:none}
 .flag-comment-wrap.visible{display:block}
 .flag-comment{width:100%;padding:8px 10px;font-size:13px;font-weight:600;border:2px solid #ff9600;border-radius:var(--radius);font-family:'Nunito',sans-serif;color:var(--text);background:#fffaf5;outline:none;resize:none}
@@ -621,7 +622,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         </label>
         <select id="pdf-arc-mode" class="arc-mode-select" style="margin:3px 0 0 24px;font-size:12px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px;background:var(--white);color:var(--text)">
           <option value="vocab">➕🔁 New + review vocabulary</option>
-          <option value="grammar">🏷🔤 Grammar + conjugation</option>
+          <option value="grammar">🧩🔁 Word forms + synonyms</option>
         </select>
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
@@ -685,7 +686,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         </label>
         <select id="gen-arc-mode" class="arc-mode-select" style="margin:3px 0 0 24px;font-size:12px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px;background:var(--white);color:var(--text)">
           <option value="vocab">➕🔁 New + review vocabulary</option>
-          <option value="grammar">🏷🔤 Grammar + conjugation</option>
+          <option value="grammar">🧩🔁 Word forms + synonyms</option>
         </select>
       </div>
     </div>
@@ -1052,16 +1053,16 @@ function updateDocDir() {
 // this {emoji,key} pair was hand-duplicated at ~5 sites; centralize it so a new
 // lesson type is a one-row change. `standard` is the vocab default/fallback.
 const LESSON_TYPE_META = {
-  standard:      { emoji: '📚', key: 'lesson.type.vocab',         build: (l, i) => buildStandardExercises(l, i) },
-  vocab:         { emoji: '📚', key: 'lesson.type.vocab',         build: (l, i) => buildStandardExercises(l, i) },
-  grammar:       { emoji: '🏷️', key: 'lesson.type.grammar',       build: (l) => buildGrammarExercises(l) },
-  conjugation:   { emoji: '🔤', key: 'lesson.type.conjugation',   build: (l) => buildConjugationExercises(l, APP.lessonData?.lang) },
-  synonyms:      { emoji: '🔁', key: 'lesson.type.synonyms',      build: (l) => buildSynonymsExercises(l) },
-  error_hunt:    { emoji: '🔍', key: 'lesson.type.error_hunt',    build: () => [] },
-  ai_error_hunt: { emoji: '🔎', key: 'lesson.type.ai_error_hunt', build: () => [] },
-  word_forms:    { emoji: '🧩', key: 'lesson.type.word_forms',    build: (l) => buildWordFormsExercises(l) },
-  math:          { emoji: '🔢', key: 'lesson.type.math',          build: (l) => buildMathExercises(l) },
-  mixed:         { emoji: '🔀', key: 'lesson.type.mixed',         build: (l, i) => buildMixedExercises(l, i) },
+  standard:      { emoji: '📚', key: 'lesson.type.vocab',         build: (l, i) => buildStandardExercises(l, i), editorBranch: (ls, li, fo) => _editorBranchStandard(ls, li, fo) },
+  vocab:         { emoji: '📚', key: 'lesson.type.vocab',         build: (l, i) => buildStandardExercises(l, i), editorBranch: (ls, li, fo) => _editorBranchStandard(ls, li, fo) },
+  grammar:       { emoji: '🏷️', key: 'lesson.type.grammar',       build: (l) => buildGrammarExercises(l), editorBranch: (ls, li, fo) => _editorBranchGrammar(ls, li, fo) },
+  conjugation:   { emoji: '🔤', key: 'lesson.type.conjugation',   build: (l) => buildConjugationExercises(l, APP.lessonData?.lang), editorBranch: (ls, li, fo) => _editorBranchConjugation(ls, li, fo) },
+  synonyms:      { emoji: '🔁', key: 'lesson.type.synonyms',      build: (l) => buildSynonymsExercises(l), editorBranch: (ls, li, fo) => _editorBranchSynonyms(ls, li, fo) },
+  error_hunt:    { emoji: '🔍', key: 'lesson.type.error_hunt',    build: () => [], editorBranch: (ls, li, fo) => _editorBranchErrorHunt(ls, li, fo), editorAfterSync: (ls, li) => _editorAfterSyncErrorHunt(ls, li) },
+  ai_error_hunt: { emoji: '🔎', key: 'lesson.type.ai_error_hunt', build: () => [], editorBranch: (ls, li, fo) => _editorBranchAiErrorHunt(ls, li, fo) },
+  word_forms:    { emoji: '🧩', key: 'lesson.type.word_forms',    build: (l) => buildWordFormsExercises(l), editorBranch: (ls, li, fo) => _editorBranchWordForms(ls, li, fo) },
+  math:          { emoji: '🔢', key: 'lesson.type.math',          build: (l) => buildMathExercises(l), editorBranch: (ls, li, fo) => _editorBranchMath(ls, li, fo), editorReadInputs: (ls, li) => _editorReadInputsMath(ls, li) },
+  mixed:         { emoji: '🔀', key: 'lesson.type.mixed',         build: (l, i) => buildMixedExercises(l, i), editorBranch: (ls, li, fo) => _editorBranchMixed(ls, li, fo) },
 };
 function lessonTypeMeta(type) { return LESSON_TYPE_META[type] || LESSON_TYPE_META.standard; }
 function lessonTypeEmoji(type) { return lessonTypeMeta(type).emoji; }
@@ -2422,7 +2423,7 @@ async function pdfGenerateAll() {
   if (document.getElementById('pdf-arc-cb')?.checked) {
     body.arc = true;
     body.arcMode = document.getElementById('pdf-arc-mode')?.value || 'vocab';
-    body.arcReinforce = ['grammar', 'conjugation'];
+    body.arcReinforce = ['word_forms', 'synonyms'];
   }
   _pdfChunks.forEach(c => c.status = 'pending');
   _renderPdfChunks();
@@ -3230,7 +3231,7 @@ async function doGenerate(forceRegen){
       lessonFormat:APP.lessonFormat||'standard',
       continuedFrom:(document.getElementById('continue-select')?.value||null) };
     if(APP.storyStyle && APP.storyStyle!=='creative') gbody.storyStyle=APP.storyStyle;
-    if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcMode=document.getElementById('gen-arc-mode')?.value||'vocab'; gbody.arcReinforce=['grammar','conjugation']; }
+    if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcMode=document.getElementById('gen-arc-mode')?.value||'vocab'; gbody.arcReinforce=['word_forms','synonyms']; }
     try{
       const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(gbody)});
       const resp=await r.json();
@@ -4222,11 +4223,13 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     const _isLocked = !APP.info.canGenerate && !APP._teacherMode && !isFirst && (
       // This chapter's own lessons haven't been generated yet…
       _sets.length === 0 ||
+      // …or we don't know its predecessor (fail closed — never fall open to "unlocked")…
+      !prevTopic ||
       // …or the predecessor has no lessons yet / isn't fully completed.
-      (prevTopic && (() => {
+      (() => {
         const _pd = _slCompleted[prevTopic] || {}; const _ps = byTopic[prevTopic]?.lessons || [];
         return _ps.length === 0 || !_ps.every(ls => _pd[ls.id]);
-      })())
+      })()
     );
     const _barColor = _pct >= 100 ? 'var(--green)' : 'var(--blue)';
     if (_isLocked) {
@@ -4298,8 +4301,21 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     const p = _resolveParent(byTopic[t]);
     return p && _topicSet3.has(p.topic);
   }));
+  // Bug #2 hardening: a chapter whose continuation link is broken/unresolvable (a known
+  // generation artifact — e.g. a cross-language continuedFrom that matches no topic) was
+  // treated as a stray root and rendered as a "first" chapter, so its lock fell OPEN.
+  // The storyline's `topics` array is the authoritative order, so chain any such gap to
+  // the previous chapter: it then renders in sequence AND locks against its real
+  // predecessor. Only fills gaps — genuine (resolved) links and forks are left intact.
+  for (let i = 1; i < topics.length; i++) {
+    const cur = topics[i], prev = topics[i - 1];
+    if (_hasPred.has(cur)) continue;                 // already validly linked
+    const succs = (_succMap[prev] = _succMap[prev] || []);
+    if (!succs.includes(cur)) succs.push(cur);
+    _hasPred.add(cur);
+  }
   const _roots = topics.filter(t => !_hasPred.has(t));
-  _roots.forEach((root, ri) => { if (ri > 0) html += '<div class="path-line" style="height:20px"></div>'; html += _renderChain(root, null, true, 0); });
+  _roots.forEach((root, ri) => { if (ri > 0) html += '<div class="path-line" style="height:20px"></div>'; html += _renderChain(root, null, root === topics[0], 0); });
   html += '</div>';
   html += '</div>';
 
@@ -5150,8 +5166,16 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
     <button class="storyline-hdr-btn" onclick="closeLessonEditor()">✕</button>
   </div>`;
 
-  // Body — type-specific editors
-  if (ls.type === 'mixed') {
+  // Body — dispatched per lesson type via the registry's editorBranch hook (B-phase-3),
+  // not a hand-kept if/else chain. lessonTypeMeta() falls back to standard (vocab body).
+  html += lessonTypeMeta(ls.type).editorBranch(ls, li, flaggedOnly);
+  el.innerHTML = html;
+}
+
+function _editorBranchMixed(ls, li, flaggedOnly){
+  let html = '';
+  const d = APP.lessonData;
+
     // A mixed lesson owns no content — it pools the chapter's other lessons at play
     // time. Show a read-only summary + an editable "per source" count. Delete via the
     // lesson node; pooled exercises are flagged during play (resolved to their source).
@@ -5171,10 +5195,13 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       </label>
       <p style="margin:10px 0 0;font-size:11px;color:var(--gray)">${escHtml(t('mixed.readonly_note'))}</p>
     </div>`;
-    el.innerHTML = html;
-    return;
-  }
-  if (ls.type === 'grammar') {
+
+  return html;
+}
+function _editorBranchGrammar(ls, li, flaggedOnly){
+  let html = '';
+  const isFlagged = () => false;   // legacy user-flags retired from the UI; QC uses item.qc
+
     const items = (ls.grammar||[]).map((g,i) => ({...g, _i:i}));
     const visItems = flaggedOnly ? items.filter(g => isFlagged('grammar', g.target)) : items;
     if (!visItems.length) html += `<em style="color:var(--gray-dark);font-size:13px">No items</em>`;
@@ -5194,7 +5221,12 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       </div>`;
     });
 
-  } else if (ls.type === 'conjugation') {
+  
+  return html;
+}
+function _editorBranchConjugation(ls, li, flaggedOnly){
+  let html = '';
+
     (ls.conjugations||[]).forEach((c,ci) => {
       html += `<div class="editor-entry" style="margin-bottom:12px" id="ee-${li}-conj-${ci}">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
@@ -5213,7 +5245,12 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       </div>`;
     });
 
-  } else if (ls.type === 'ai_error_hunt') {
+  
+  return html;
+}
+function _editorBranchAiErrorHunt(ls, li, flaggedOnly){
+  let html = '';
+
     const sentences = aiEhGetSentences(ls);
     const changedCount = sentences.filter(s=>s.changed).length;
     html += `
@@ -5232,7 +5269,12 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
         </div>`;
       }).join('')}
     `;
-  } else if (ls.type === 'error_hunt') {
+  
+  return html;
+}
+function _editorBranchErrorHunt(ls, li, flaggedOnly){
+  let html = '';
+
     // Editable contenteditable div with live error highlighting
     const story = ls.corruptedStory || '';
     const edits = ls.edits || [];
@@ -5281,7 +5323,12 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
         <div id="eh-errors-${li}">${ehRenderErrors(initEdits, li)}</div>
       </div>`;
 
-  } else if (ls.type === 'math') {
+  
+  return html;
+}
+function _editorBranchMath(ls, li, flaggedOnly){
+  let html = '';
+
     // ── Math lesson editor ──────────────────────────────────────────────────
     const nums = ls.numbers || [];
     const diff = ls.difficulty || 1;
@@ -5348,7 +5395,12 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       }
     });
 
-  } else if (ls.type === 'synonyms') {
+  
+  return html;
+}
+function _editorBranchSynonyms(ls, li, flaggedOnly){
+  let html = '';
+
     const words = ls.words || [];
     if (!words.length) html += `<em style="color:var(--gray-dark);font-size:13px">No words</em>`;
     words.forEach((g, wi) => {
@@ -5377,7 +5429,12 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       html += `</div>`;
     });
 
-  } else if (ls.type === 'word_forms') {
+  
+  return html;
+}
+function _editorBranchWordForms(ls, li, flaggedOnly){
+  let html = '';
+
     const items = ls.items || [];
     if (!items.length) html += `<em style="color:var(--gray-dark);font-size:13px">No items</em>`;
     items.forEach((it, fi) => {
@@ -5403,7 +5460,12 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
       </div>`;
     });
 
-  } else {
+  
+  return html;
+}
+function _editorBranchStandard(ls, li, flaggedOnly){
+  let html = '';
+
     // Vocab / sentences
     const items = [
       ...(ls.vocab||[]).map((v,i) => ({type:'vocab', i, target:v.target, source:v.source, qc:v.qc, userFlag:v.userFlag, editedAt:v.editedAt})),
@@ -5434,9 +5496,22 @@ function renderLessonEditor(flaggedOnly, focusLessonIdx) {
         </div>`:''}
       </div>`;
     });
-  }
-  el.innerHTML = html;
+  
+  return html;
 }
+// Save-side per-type hooks (B-phase-3), dispatched from _syncEditorFromDOM via the
+// registry instead of inline `if (ls.type === …)` guards.
+function _editorReadInputsMath(ls, li){
+  const numInp = document.getElementById('math-numbers-input-' + li);
+  if (numInp) {
+    const nums = numInp.value.trim().split(/\s+/).map(Number).filter(n => !isNaN(n) && n > 0);
+    if (nums.length) ls.numbers = nums;
+  }
+  const allOps = ['+','-','×','÷','^'];
+  const ops = allOps.filter(op => document.getElementById('math-op-' + li + '-' + op.charCodeAt(0))?.checked);
+  if (ops.length) ls.mathOps = ops;
+}
+function _editorAfterSyncErrorHunt(ls, li){ ehSyncCorrupted(li); }
 // Apply / dismiss a QC suggestion on a vocab|sentence item, persist, re-render.
 async function _qcMutateItem(li, type, fi, apply){
   const ls = APP.lessonData?.lessons?.[li]; if(!ls) return;
@@ -5472,9 +5547,19 @@ function _editorItem(li, type, fi){
   const arr = type==='vocab'?ls.vocab : type==='sentence'?ls.sentences : type==='wf'?ls.items : type==='syn'?ls.words : type==='math'?ls.exercises : null;
   return (arr && arr[fi]) || null;
 }
+// "Good example" ⭐ rating button for an editor item header. Parallel to the flag
+// button but with NO comment — just a toggle that tags the item as a curated good
+// example (item.userRating = { at }). Rides the same persistence/round-trip path as
+// flags (mergeFlaggable on the server keeps it client-authoritative).
+function _rateBtnHtml(li, type, fi, item){
+  const on = !!(item && item.userRating);
+  return `<button class="storyline-hdr-btn" style="padding:1px 6px;font-size:11px;color:${on?'#d99800':'inherit'}" title="${t('rating.editor.title')}" onclick="toggleUserRating('${li}','${type}',${fi})">${on?'⭐':'☆'}</button>`;
+}
 // Flag ⚑ button for an editor item header (works for any type that has .userFlag).
+// Rendered alongside the ⭐ rating button so both affordances sit together.
 function _flagBtnHtml(li, type, fi, item){
-  return `<button class="storyline-hdr-btn" style="padding:1px 6px;font-size:11px;color:${item.userFlag?'var(--red)':'inherit'}" title="${t('qc.editor.flag_title')}" onclick="toggleFlagBox('${li}','${type}',${fi})">⚑</button>`;
+  return _rateBtnHtml(li, type, fi, item) +
+    `<button class="storyline-hdr-btn" style="padding:1px 6px;font-size:11px;color:${item.userFlag?'var(--red)':'inherit'}" title="${t('qc.editor.flag_title')}" onclick="toggleFlagBox('${li}','${type}',${fi})">⚑</button>`;
 }
 // Flag comment/correct box + the "you suggested" row. `applyable` controls whether the
 // correct-version can be auto-applied to .target (only meaningful for vocab/sentence).
@@ -5553,6 +5638,15 @@ async function removeUserFlag(li, type, fi){
   try{ await _persistEditorFlags(+li); showToast(t('qc.toast.flag_removed')); }
   catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
 }
+// Toggle a question's "good example" rating in the editor (no comment, just a tag).
+async function toggleUserRating(li, type, fi){
+  const item = _editorItem(+li, type, +fi); if(!item) return;
+  try{ _syncEditorFromDOM(+li); }catch(_){}   // keep concurrent field edits
+  if(item.userRating) delete item.userRating;
+  else item.userRating = { at: new Date().toISOString() };
+  try{ await _persistEditorFlags(+li); showToast(item.userRating?t('rating.toast.added'):t('rating.toast.removed')); }
+  catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
+}
 
 // Read the editor's current input values back into the in-memory lesson, WITHOUT
 // persisting to the server. Run this before any in-place re-render (delete/move/
@@ -5575,16 +5669,8 @@ function _syncEditorFromDOM(li, opts) {
   const iconEl = document.getElementById('lesson-node-icon-picker-' + li);
   if (iconEl) ls.icon = iconEl.textContent.trim();
   if (ls._iconPick) { ls.icon = ls._iconPick; if (persist) delete ls._iconPick; }  // save consumes the pending pick
-  if (ls.type === 'math') {
-    const numInp = document.getElementById('math-numbers-input-' + li);
-    if (numInp) {
-      const nums = numInp.value.trim().split(/\s+/).map(Number).filter(n => !isNaN(n) && n > 0);
-      if (nums.length) ls.numbers = nums;
-    }
-    const allOps = ['+','-','×','÷','^'];
-    const ops = allOps.filter(op => document.getElementById('math-op-' + li + '-' + op.charCodeAt(0))?.checked);
-    if (ops.length) ls.mathOps = ops;
-  }
+  // Per-type pre-loop input read (B-phase-3): math pulls its number-pool / ops inputs.
+  lessonTypeMeta(ls.type).editorReadInputs?.(ls, li);
   el.querySelectorAll('input[data-li], textarea[data-li], [contenteditable][data-li]').forEach(inp => {
     const type = inp.dataset.type, field = inp.dataset.field;
     if (type === 'vocab' || type === 'sentence') {
@@ -5638,7 +5724,8 @@ function _syncEditorFromDOM(li, opts) {
       }
     }
   });
-  if (ls.type === 'error_hunt') ehSyncCorrupted(li);
+  // Per-type post-loop sync (B-phase-3): error_hunt reconciles its corrupted-story edits.
+  lessonTypeMeta(ls.type).editorAfterSync?.(ls, li);
 }
 
 async function saveLessonEdits(lessonIdx) {
@@ -6314,7 +6401,15 @@ function buildMixedExercises(lesson, lessonIdx){
     try { exs = lessonTypeMeta(sib.type).build(sib, i) || []; }
     catch(_) { exs = []; }
     if(!exs.length) return;                      // skip types with no playable exercises
-    shuffle(exs).slice(0, perType).forEach(ex => {
+    // #7: prefer the curated "good examples" (⭐ userRating) and avoid flagged (faulty)
+    // questions, only dipping into flagged ones if needed to fill perType. Shuffle first
+    // for intra-tier variety, then stable-sort by rank (rated 0 < plain 1 < flagged 2).
+    const ranked = shuffle(exs).map(ex => {
+      const src = _resolveExItem(ex, sib);
+      const rank = (src && src.userFlag) ? 2 : ((src && src.userRating) ? 0 : 1);
+      return { ex, rank };
+    }).sort((a, b) => a.rank - b.rank);
+    ranked.slice(0, perType).forEach(({ex}) => {
       pool.push({ ...ex, _srcLessonIdx: i });    // tag source so flags resolve correctly
     });
   });
@@ -7019,6 +7114,32 @@ function ehCheck(){
 function renderHearts(){
   document.getElementById('hearts').innerHTML=Array.from({length:3},(_,i)=>`<span class="heart${i>=APP.cur.hearts?' lost':''}">❤️</span>`).join('');
 }
+// Per-exercise-type renderer registry (B-phase-2). renderEx dispatches an exercise to
+// its HTML builder via EX_RENDERERS[ex.type] instead of a hand-kept if/else chain, so a
+// new exercise type is one row here, not another branch below. Keyed by EXERCISE type
+// (mcq_target_source, word_form, …) — a different keyspace from LESSON_TYPE_META, which
+// is keyed by LESSON type (standard, grammar, …); one lesson emits several exercise
+// types, so the two registries stay separate. Arrows defer name resolution to call time
+// (the renderers are hoisted function declarations below). An unknown ex.type has no
+// entry and renders to '' — byte-identical to the old chain's fall-through.
+const EX_RENDERERS = {
+  mcq_target_source: (ex) => tMcqIE(ex),
+  mcq_source_target: (ex) => tMcqEI(ex),
+  listen_mcq:        (ex) => tLMcq(ex),
+  listen_type:       (ex) => tLType(ex),
+  order:             (ex) => tOrder(ex),
+  read_translate:    (ex) => tRead(ex),
+  math_order:        (ex) => tMathOrder(ex),
+  math_calc:         (ex) => tMathCalc(ex),
+  math_latex:        (ex) => tMathLatex(ex),
+  word_form:         (ex) => tWordForm(ex),
+  syn_select:        (ex) => tSynSelect(ex),
+  mcq_article:       (ex) => tMcqArticle(ex),
+  mcq_plural:        (ex) => tMcqPlural(ex),
+  type_plural:       (ex) => tTypePlural(ex),
+  mcq_conjugation:   (ex) => tMcqConjugation(ex),
+  type_conjugation:  (ex) => tTypeConjugation(ex),
+};
 function renderEx(){
   const C=APP.cur;
   if(C.cur>=C.exercises.length){ showComplete(); return; }
@@ -7027,27 +7148,15 @@ function renderEx(){
   document.getElementById('prog-fill').style.width=Math.round(C.cur/C.exercises.length*100)+'%';
   renderHearts();
   let html='';
-  if(ex.type==='mcq_target_source') html=tMcqIE(ex);
-  else if(ex.type==='mcq_source_target') html=tMcqEI(ex);
-  else if(ex.type==='listen_mcq') html=tLMcq(ex);
-  else if(ex.type==='listen_type') html=tLType(ex);
-  else if(ex.type==='order') html=tOrder(ex);
-  else if(ex.type==='read_translate') html=tRead(ex);
-  else if(ex.type==='math_order') html=tMathOrder(ex);
-  else if(ex.type==='math_calc') html=tMathCalc(ex);
-  else if(ex.type==='math_latex') html=tMathLatex(ex);
-  else if(ex.type==='word_form') html=tWordForm(ex);
-  else if(ex.type==='syn_select') html=tSynSelect(ex);
-  else if(ex.type==='mcq_article') html=tMcqArticle(ex);
-  else if(ex.type==='mcq_plural') html=tMcqPlural(ex);
-  else if(ex.type==='type_plural') html=tTypePlural(ex);
-  else if(ex.type==='mcq_conjugation') html=tMcqConjugation(ex);
-  else if(ex.type==='type_conjugation') html=tTypeConjugation(ex);
+  const _exRender = EX_RENDERERS[ex.type];
+  if(_exRender) html=_exRender(ex);
   const fl = _exFlagState(ex);
+  const rated = _exRatingState(ex);
   const taSty='width:100%;box-sizing:border-box;font-size:13px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:6px 8px;font-family:Nunito,sans-serif;resize:vertical';
   const inSty='width:100%;box-sizing:border-box;margin-top:5px;font-size:13px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:6px 8px;font-family:Nunito,sans-serif';
   const flagUi = _canEdit() ? (
-    '<div style="display:flex;justify-content:center;margin-top:8px">'+
+    '<div style="display:flex;justify-content:center;gap:8px;margin-top:8px">'+
+      `<button class="flag-btn${rated?' rated':''}" id="ratebtn" onclick="togglePlayRating()" title="${t('rating.play.title')}">${rated?'⭐':'☆'}</button>`+
       `<button class="flag-btn${fl?' flagged':''}" id="flagbtn" onclick="togglePlayFlagForm()" title="${t('ex.flag_title')}">${fl?'⚑':'⚐'}</button>`+
     '</div>'+
     '<div class="flag-comment-wrap" id="flag-comment-wrap">'+
@@ -7059,7 +7168,17 @@ function renderEx(){
       '</div>'+
     '</div>'
   ) : '';
+  // #11: when this question is already flagged, surface the flag's content right under
+  // the question (read-only) so a reviewer sees it without opening the edit form.
+  const flagBanner = (fl && _canEdit()) ? (
+    '<div class="flag-shown" style="margin:8px 0 0;border:1.5px solid var(--red);background:#fff3f3;border-radius:8px;padding:8px 10px;font-size:13px;text-align:left">'+
+      `<div style="font-weight:800;color:var(--red);margin-bottom:2px">⚑ ${escHtml(t('ex.flag_shown_label'))}</div>`+
+      (fl.comment ? `<div style="white-space:pre-wrap">${escHtml(fl.comment)}</div>` : `<div style="opacity:.6"><em>${escHtml(t('ex.flag_no_comment'))}</em></div>`)+
+      (fl.correct ? `<div style="margin-top:4px"><b>${escHtml(t('ex.flag_shown_correct'))}</b> ${escHtml(fl.correct)}</div>` : '')+
+    '</div>'
+  ) : '';
   document.getElementById('ex-area').innerHTML=html+
+    flagBanner+
     '<div id="fb" class="feedback"></div>'+
     '<div class="btn-row">'+
       `<button class="check-btn" id="cbtn" onclick="check()" disabled>${t('ex.check')}</button>`+
@@ -7351,11 +7470,10 @@ function updateSbox(){
 // ── Play-time user flagging → item.userFlag (unified with the editor) ──────────
 // Find the lesson object a play exercise should attach its flag to: a vocab/sentence
 // item by target, a word_forms item by sentence, or a synonyms word group by base.
-function _exFlagTarget(ex){
-  // For a pooled (mixed-lesson) exercise, resolve against its SOURCE lesson, not the
-  // active mixed lesson (which owns no items). Falls back to the active lesson.
-  const idx = (ex && ex._srcLessonIdx != null) ? ex._srcLessonIdx : APP.cur?.lessonIdx;
-  const ls = APP.lessonData?.lessons?.[idx];
+// Match a built exercise back to the SOURCE item inside a given lesson (vocab/sentence
+// by target, word_forms by sentence, synonyms by base). Pure: no APP access — reused by
+// _exFlagTarget (play flag/rating) and by the mixed-lesson pooler (rating-aware select).
+function _resolveExItem(ex, ls){
   if(!ls || !ex) return null;
   const norm = s => String(s==null?'':s).trim().toLowerCase();
   const key = norm(ex.target || ex.correct);
@@ -7371,7 +7489,34 @@ function _exFlagTarget(ex){
   }
   return null;
 }
+function _exFlagTarget(ex){
+  // For a pooled (mixed-lesson) exercise, resolve against its SOURCE lesson, not the
+  // active mixed lesson (which owns no items). Falls back to the active lesson.
+  const idx = (ex && ex._srcLessonIdx != null) ? ex._srcLessonIdx : APP.cur?.lessonIdx;
+  const ls = APP.lessonData?.lessons?.[idx];
+  return _resolveExItem(ex, ls);
+}
 function _exFlagState(ex){ return _exFlagTarget(ex)?.userFlag || null; }
+// Rating ("good example") play helpers — parallel to the flag helpers above, but a
+// plain toggle with no comment. Resolves to the SAME source item as flags via
+// _exFlagTarget, so a rating on a pooled (mixed-lesson) exercise lands on the real
+// source item too.
+function _exRatingState(ex){ return _exFlagTarget(ex)?.userRating || null; }
+function _refreshRateBtn(ex){
+  const r = _exRatingState(ex);
+  const btn=document.getElementById('ratebtn');
+  if(btn){ btn.textContent = r?'⭐':'☆'; btn.className='flag-btn'+(r?' rated':''); btn.title = t('rating.play.title'); }
+}
+async function togglePlayRating(){
+  const C=APP.cur; if(!C||C.cur>=C.exercises.length) return;
+  const ex=C.exercises[C.cur];
+  const obj=_exFlagTarget(ex);
+  if(!obj){ try{ showToast(t('rating.toast.unresolved')); }catch(_){ } return; }
+  if(obj.userRating) delete obj.userRating; else obj.userRating={ at:new Date().toISOString() };
+  _refreshRateBtn(ex);
+  await _persistPlayFlags();
+  try{ showToast(obj.userRating?t('rating.toast.added'):t('rating.toast.removed')); }catch(_){}
+}
 
 function _refreshFlagBtn(ex){
   const fl = _exFlagState(ex);

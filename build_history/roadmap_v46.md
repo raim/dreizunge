@@ -36,9 +36,9 @@ client builder registry) is the prerequisite for C. A is independent. (D) storyl
 
 | Major | Effort | Depends on | When / why |
 |------|--------|-----------|-----------|
-| **A** per-target-language examples | M | — | **Next** — independent; biggest win for weak local models |
+| **A** per-target-language examples | M | — | **In progress** — A1 (`{EXAMPLE}` mechanism + default, byte-identical) shipped; `de` seed added & structurally gated (needs native review); non-Latin seed + live measurement next |
 | ~~**C** mixed-type lessons (no LLM)~~ ✅ DONE | M | B-phase-1 ✅ | Shipped — `buildMixedExercises` pools siblings via the registry; flags resolve to source via `_srcLessonIdx` (`unit-mixed-lessons`) |
-| **B** full unify (renderEx / editor / server dispatch) | L | B-phase-1 ✅ | Soon — removes per-type duplication; simplifies H, I |
+| ~~**B** full unify (renderEx / editor / server dispatch)~~ ✅ DONE | L | B-phase-1 ✅ | Shipped — all four dispatchers (build / renderEx / editor / server add-lesson) route through registries; per-type duplication removed, simplifies H, I |
 | **E** batch-gen + QC (E-i then E-ii) | L | E0 ✅ | Soon — content-seeding + quality; feeds G(b) |
 | **H** mathematics as a pseudo-language | M | B (eases) | Mid |
 | **J** per-task models + prompt preview/edit | M | E0 ✅ | Mid — preview also helps author A |
@@ -168,14 +168,39 @@ native/pedagogical quality still needs human review for the seed languages, so
 hand-seed those, don't auto-generate them blindly.
 
 **Phasing (don't boil the 29-language ocean):**
-1. Add the `{EXAMPLE}` placeholder + builder substitution + `examples.default` for
-   `wordForms` only, with the current English example as `default`. Suite stays green,
-   zero behavior change. Ship this first — it's the safe refactor.
-2. Add a small **seed set** of high-value targets the user actually uses (at least
-   `de`; add one non-Latin if relevant). Each seed example is hand-written and
-   validator-gated.
-3. Measure (live, with the small model) whether the seed helps. Only then expand to
-   `conjugation`/`grammar` and more languages.
+1. ✅ **DONE** — `{EXAMPLE}` placeholder + builder substitution (`promptExample()` in
+   server.js, filled via `fillPrompt`) for **`wordForms`, `synonyms`, `grammar`, and
+   `conjugation`**. Each `system` carries one `{EXAMPLE}` token; its `examples.default` holds
+   the old inline example verbatim (`conjugation` had none, so `default` is `''` and the slot
+   is byte-identical-empty until seeded). Proven byte-identical for all four (no behavior
+   change); guarded by `unit-prompt-examples`. This was the safe refactor.
+2. ◑ **PARTIAL** — `de` seed added (noun-plural GOOD forced by `schliefen`; tense-ambiguity
+   BAD), localizing only the `{L}` (German) half with English as the representative `{S}`.
+   Structurally validator-gated (its GOOD item runs through `validateWordFormsItems` in the
+   suite). **Native/pedagogical quality still needs a human pass** before relying on it, and
+   it only changes the `de` prompt (all other targets fall back to `default`). A non-Latin
+   seed (`ru`/`ja`) is the obvious next addition.
+2. ◑ **PARTIAL** — `de` seed added (noun-plural forced by `schliefen`), localizing only the
+   `{L}` (German) half with English as the representative `{S}`. Structurally validator-gated
+   in the suite. **Native/pedagogical quality still needs a human pass** before relying on it;
+   it only changes the `de` prompt (all other targets fall back to `default`). A non-Latin
+   seed (`ru`/`ja`) is the obvious next addition.
+   - **Example format simplified to "good items"**: the `{EXAMPLE}` block is now a short
+     preamble + one or more schema-shaped item JSONs (the old GOOD/BAD prose was dropped; the
+     constraints it illustrated already live in the rules). One consequence to watch: weak
+     models lose the concrete *anti*-example, so the live measurement should check ambiguity
+     didn't regress.
+3. ✅ **Harvest loop built** (todo #3/#4) — `harvest-examples.js` turns ⭐-rated lesson items
+   into an `examples.json` keyed by prompt type + `"<L>__<S>"` pair (schema-stripped, light
+   structural check, ⭐ = the human quality signal). `loadPrompts()` overlays that file on the
+   curated `prompts.json` examples (env-overridable `EXAMPLES_FILE`, hot-reloaded), and
+   `promptExample(P, lang, srcLang)` resolves exact-pair → per-language → default. Because a
+   harvested example is only served back to its own pair, its baked-in `{S}` is always
+   correct. Guarded by `unit-harvest-examples` + `unit-prompt-examples`. Curated/hand seeds
+   stay in `prompts.json`; `examples.json` is pure harvest output (regenerated each run).
+4. **TODO (live)** — Measure on a weak model whether examples (the `de` seed, and harvested
+   pairs) reduce malformed output (via `_genMeta` attempts/rejected). Only then push more
+   seeds / languages — which is now just running the harvester or adding strings, no code.
 
 **Alternative worth keeping in mind:** a *generate-once-validate-cache* path — have the
 model draft an example for a new target, run it through the validator, cache it. It
@@ -214,11 +239,19 @@ but forgot the editor / static slice" failure mode disappears.
    `lessonTypeMeta(lesson.type).build(lesson, lessonIdx)`; the default vocab/sentence
    body is `buildStandardExercises`. Guarded by `unit-build-registry`. (This is the slice
    that unblocked C, which is also shipped.) **Start B-full here at step 2.**
-2. **`renderEx` registry** — fold the 19-branch `ex.type` chain into per-type
-   `renderEx` hooks.
-3. **Editor registry** — fold the 9-branch `ls.type` chain (and `saveLessonEdits`)
-   into per-type `editorBranch` hooks.
-4. **Server `generate`/`validate` registry** — route the add-lesson handler through it.
+2. ✅ **`renderEx` registry** — DONE. The 16-branch `ex.type` chain in `renderEx` is now
+   `EX_RENDERERS[ex.type]` (a per-exercise-type renderer registry, distinct keyspace from
+   `LESSON_TYPE_META`). Guarded by `unit-renderex-registry`. (B-phase-2.)
+3. ✅ **Editor registry** — DONE. `renderLessonEditor`'s 9-branch `ls.type` body became
+   per-type `LESSON_TYPE_META[type].editorBranch` hooks; `_syncEditorFromDOM`'s two
+   save-side guards became `editorReadInputs` (math) / `editorAfterSync` (error_hunt)
+   hooks. Guarded by `unit-editor-registry`; behaviour proven byte-identical old-vs-new.
+   (B-phase-3.)
+4. ✅ **Server `generate`/`validate` registry** — DONE. The add-lesson `fmt` if/else
+   chain is now `ADD_LESSON_GENERATORS[fmt]` (thin per-format adapters over one context
+   object; heterogeneous generator signatures preserved). Per-type validators stay inside
+   the generators (salvage philosophy). Guarded by `unit-add-lesson-registry`; unknown fmt
+   still throws "Unsupported lessonFormat". **Major B is now complete.**
 
 **Caveats.** Honour the **static-slice rule** (registry + any builder reachable in
 static must be defined *after* `function buildPath(` — see Orientation). Keep it a pure

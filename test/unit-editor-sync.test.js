@@ -43,8 +43,24 @@ const document = {
   createElement: () => ({ set innerHTML(_) {}, innerText: '', textContent: '' }),
 };
 
-const { _syncEditorFromDOM } = new Function('document', 'APP',
-  extract('splitWords') + '\n' + extract('_syncEditorFromDOM') + '\nreturn { _syncEditorFromDOM };')(document, APP);
+// _syncEditorFromDOM now dispatches save-side per-type hooks through the registry
+// (B-phase-3). buildSync() assembles the function in a sandbox with a faithful
+// lessonTypeMeta stub wired to the real extracted hook functions; non-hook types
+// (vocab/word_forms/synonyms fixtures below) resolve to no save-side hooks — unchanged.
+function buildSync(document, APP) {
+  const stubMeta = `function lessonTypeMeta(type){
+    const reg = {
+      math:       { editorReadInputs: (ls, li) => _editorReadInputsMath(ls, li) },
+      error_hunt: { editorAfterSync:  (ls, li) => _editorAfterSyncErrorHunt(ls, li) },
+    };
+    return reg[type] || {};
+  }`;
+  return new Function('document', 'APP',
+    extract('splitWords') + '\n' + extract('_editorReadInputsMath') + '\n' +
+    extract('_editorAfterSyncErrorHunt') + '\n' + stubMeta + '\n' +
+    extract('_syncEditorFromDOM') + '\nreturn { _syncEditorFromDOM };')(document, APP);
+}
+const { _syncEditorFromDOM } = buildSync(document, APP);
 
 // 1) Sync pulls all DOM edits into the in-memory lesson.
 _syncEditorFromDOM(0);
@@ -78,8 +94,7 @@ function run(persist) {
   const inps = [inp('vocab', { li: '0', fi: '0', field: 'target' }, 'x2')];
   const docStub = { getElementById: id => (id === 'lesson-editor' ? { querySelectorAll: () => inps } : null),
     createElement: () => ({ set innerHTML(_) {}, innerText: '', textContent: '' }) };
-  const { _syncEditorFromDOM: fn } = new Function('document', 'APP',
-    extract('splitWords') + '\n' + extract('_syncEditorFromDOM') + '\nreturn { _syncEditorFromDOM };')(docStub, app);
+  const { _syncEditorFromDOM: fn } = buildSync(docStub, app);
   fn(0, persist ? { persist: true } : undefined);
   return app.lessonData.lessons[0];
 }
@@ -110,8 +125,7 @@ const wfInps = [
 const wfAppState = wfApp();
 const wfDoc = { getElementById: id => (id === 'lesson-editor' ? { querySelectorAll: () => wfInps } : null),
   createElement: () => ({ set innerHTML(_) {}, innerText: '', textContent: '' }) };
-const { _syncEditorFromDOM: wfSync } = new Function('document', 'APP',
-  extract('splitWords') + '\n' + extract('_syncEditorFromDOM') + '\nreturn { _syncEditorFromDOM };')(wfDoc, wfAppState);
+const { _syncEditorFromDOM: wfSync } = buildSync(wfDoc, wfAppState);
 wfSync(0, { persist: true });
 const wfIt = wfAppState.lessonData.lessons[0].items[0];
 assert.strictEqual(wfIt.sentence, 'Seven ___ the door.', 'wf sentence synced');
@@ -134,8 +148,7 @@ const synInps = [
 ];
 const synDoc = { getElementById: id => (id === 'lesson-editor' ? { querySelectorAll: () => synInps } : null),
   createElement: () => ({ set innerHTML(_) {}, innerText: '', textContent: '' }) };
-const { _syncEditorFromDOM: synSync } = new Function('document', 'APP',
-  extract('splitWords') + '\n' + extract('_syncEditorFromDOM') + '\nreturn { _syncEditorFromDOM };')(synDoc, synApp);
+const { _syncEditorFromDOM: synSync } = buildSync(synDoc, synApp);
 synSync(0, { persist: true });
 const sw = synApp.lessonData.lessons[0].words[0];
 assert.strictEqual(sw.base, 'gross', 'syn base synced');

@@ -469,6 +469,20 @@ Build: `node build-static.js lessons.json docs` then open docs/index.html (no se
 - [ ] Resulting items look sane: one correct form + at least one clearly-wrong form
       (often a verb in the wrong tense); translations are in the learner's language.
 
+## 23b. Major A — de word_forms example native review (review owed)
+- [ ] **Review the German seed in `prompts.json` `wordForms.examples.de`** (added v46
+      session 3). The headless suite only checks it is *structurally* valid via
+      `validateWordFormsItems`; native/pedagogical quality is unverified. Confirm: the GOOD
+      item (`Die ___ schliefen auf dem warmen Dach.` → `Katzen`) reads naturally and the
+      plural is genuinely forced; the BAD item (`Sieben ___ den Kopf.`,
+      `schüttelt`/`schüttelte`) is a fair ambiguity example; the English translation/
+      explanation are good representative `{S}` content. Only the `de` prompt is affected;
+      all other targets fall back to the (unchanged) English default.
+- [ ] With a small model learning **German**, confirm the de example does not *worsen*
+      output vs. the English default — compare `_genMeta` (attempts / rejected /
+      rejectReasons) on a de word_forms generation with the seed vs. without. This is the
+      A-phase-3 "measure first" gate before expanding to more languages / lesson types.
+
 ## 24. static story edit + chapter export (browser/visual verify owed)
 - [ ] Static build, TEACHER MODE: the story ✏️ pencil appears; edit the story, hit 💾 —
       it saves (no "failed" message), the change shows, and it's included in a JSON
@@ -483,3 +497,44 @@ Build: `node build-static.js lessons.json docs` then open docs/index.html (no se
 - [ ] STATIC build, storyline page: the summary ✏️ pencil is HIDDEN without teacher mode;
       in teacher mode it appears, and clicking 💾 Save works (no "failed to fetch") and the
       edited summary persists in the session.
+
+
+## 26. v46 session 1 — arc terminology fix + good-example rating (browser/Ollama-verify owed)
+- [ ] Generate a multi-chapter storyline (live, real Ollama) with the learning-arc
+      checkbox on and arc mode = "Word forms + synonyms": chapters >=2 must produce
+      word_forms + synonyms reinforcement lessons, NOT legacy grammar/conjugation.
+      Repeat via the PDF/book import arc path. (The headless guard only checks the
+      request payload, not the generated lesson types.)
+- [ ] Play a lesson, TEACHER/LLM mode: a star button (outline when off, filled gold when
+      on) sits next to the flag button. Tapping toggles it and shows the toast; it
+      persists across navigation. Works for vocab, sentence, word_forms and synonyms.
+- [ ] Lesson editor: every item header shows the star next to the flag; toggling
+      persists and the star reflects state on re-open. Confirm for synonyms (words) and
+      word_forms (items) items specifically -- these now round-trip in the LIVE build
+      (server merge fix), not just static.
+- [ ] STATIC build: rate a few questions in teacher mode, export the JSON -- the
+      userRating:{at} rides the export; re-import shows the stars. (No server in static,
+      so persistence is via export, like flags.)
+- [ ] node report-edits.js lessons.json --out report.html opens a readable activity log;
+      spot-check that recent edits/flags/ratings appear newest-first.
+
+
+## 27. v46 Bug #2 — storyline chapter locking (browser-verify owed)
+- [ ] STATIC build (or live with teacher mode OFF), open storyline "La petite i"
+      (sl_962481837): only the first chapter is unlocked; chapters 2..11 show the lock
+      and open one-by-one as you complete each predecessor's lessons.
+- [ ] Press "clear progress" on that storyline: all chapters except the first re-lock.
+- [ ] Spot-check the other "little i" tellings (Das kleine i / La piccola i / Il piccolo
+      io) lock the same way and that completing one language does NOT unlock another.
+- [ ] Generate a fresh multi-chapter storyline; confirm chapters still chain/lock even if
+      the model emits a broken continuedFrom (the renderer gap-fills from chapter order).
+
+
+## 28. v46 Tier 2 (#7 + #11) — browser-verify owed
+- [ ] TEACHER mode: in a chapter with several lessons, rate a few questions (⭐) and flag
+      a couple (⚑), then play the chapter's "Mixed review (no AI)" lesson — the rated
+      questions should appear preferentially and flagged ones should be rare/absent
+      (only if needed to reach perType).
+- [ ] Play a flagged question: a red "Flagged" banner shows its comment + suggested fix
+      directly under the question, without opening the flag form. Unflagged questions show
+      no banner. (Banner is teacher/edit-mode only.)

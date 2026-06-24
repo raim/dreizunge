@@ -32,8 +32,9 @@ const FAKE = {
 const lessonTypeMeta = (t) => ({ build: (l, i) => (FAKE[t] ? FAKE[t](l, i) : []) });
 const shuffle = (a) => a.slice();   // identity: deterministic
 
-const buildMixedExercises = new Function('APP', 'lessonTypeMeta', 'shuffle',
-  extract('buildMixedExercises') + '\nreturn buildMixedExercises;')(APP, lessonTypeMeta, shuffle);
+const _resolveExItem = new Function(extract('_resolveExItem') + '\nreturn _resolveExItem;')();
+const buildMixedExercises = new Function('APP', 'lessonTypeMeta', 'shuffle', '_resolveExItem',
+  extract('buildMixedExercises') + '\nreturn buildMixedExercises;')(APP, lessonTypeMeta, shuffle, _resolveExItem);
 
 const pool = buildMixedExercises(lessons[0], 0);
 // Sources included: lesson 1 (standard, 2 of 3 by perType) + lesson 2 (word_forms, 2 of 2). Total 4.
@@ -45,8 +46,8 @@ assert.strictEqual(pool.filter(e => e._srcLessonIdx === 1).length, 2, 'standard 
 console.log('  pools, caps per source, skips self/hidden/mixed/error_hunt, tags source: OK');
 
 // _exFlagTarget resolves a pooled exercise against its SOURCE lesson, not the active one.
-const _exFlagTarget = new Function('APP',
-  extract('_exFlagTarget') + '\nreturn _exFlagTarget;')(APP);
+const _exFlagTarget = new Function('APP', '_resolveExItem',
+  extract('_exFlagTarget') + '\nreturn _exFlagTarget;')(APP, _resolveExItem);
 // Active lesson is 0 (mixed, no vocab); the exercise came from lesson 1 (vocab 'uno'/'one').
 const tgt = _exFlagTarget({ type: 'mcq_target_source', target: 'uno', correct: 'one', _srcLessonIdx: 1 });
 assert.ok(tgt && tgt.target === 'uno', 'flag resolves to source lesson vocab item');
@@ -59,4 +60,14 @@ assert.ok(/lesson\.type==='mixed' && \(!C\.exercises \|\| !C\.exercises\.length\
   'startLesson must guard an empty mixed pool');
 assert.ok(/t\('mixed\.empty'\)/.test(html), "empty mixed shows the 'mixed.empty' message");
 console.log('  empty-pool play guard present: OK');
+
+// Round-trip robustness: buildStandardExercises must not crash on a lesson without vocab
+// (a mixed lesson that lost its type would otherwise hit undefined.forEach), the
+// client-created mixed lesson must carry a stable id so it round-trips, and the server
+// edit handler must preserve a new lesson's full shape (covered by e2e-mixed-lesson-edit).
+assert.ok(/const tv=lesson\.vocab\|\|\[\], ts=lesson\.sentences\|\|\[\]/.test(html),
+  'buildStandardExercises guards missing vocab/sentences');
+assert.ok(/id: 'ls_' \+ Date\.now\(\)[^\n]*\n\s*type: 'mixed'/.test(html),
+  'client-created mixed lesson carries a stable id');
+console.log('  round-trip robustness (vocab guard + mixed id): OK');
 console.log('unit-mixed-lessons: ALL PASSED');

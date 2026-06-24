@@ -7,7 +7,8 @@ const fs = require('fs');
 const path = require('path');
 
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-assert.ok(html.includes("else if(ex.type==='syn_select') html=tSynSelect(ex);"), 'renderEx missing syn_select');
+// renderEx now dispatches via the exercise-renderer registry (B-phase-2), not an if-chain.
+assert.ok(/syn_select:\s*\(ex\)\s*=>\s*tSynSelect\(ex\)/.test(html), 'EX_RENDERERS missing syn_select -> tSynSelect');
 assert.ok(html.includes('function tSynSelect'), 'tSynSelect renderer missing');
 assert.ok(html.includes('function synToggle'), 'synToggle (multi-select toggle) missing');
 console.log('  wiring present: OK');

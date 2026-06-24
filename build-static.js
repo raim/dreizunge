@@ -213,8 +213,8 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v44' };
-  { const _v=document.getElementById('app-version'); if(_v) _v.textContent='v44'; }
+  APP.info = { backend: 'none', canGenerate: false, version: 'v46' };
+  { const _v=document.getElementById('app-version'); if(_v) _v.textContent='v46'; }
   APP._teacherMode = false;
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');

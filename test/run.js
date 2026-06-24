@@ -29,6 +29,7 @@ run('lessons.json parses', 'node', ['-e', "require(path.join('" + ROOT.replace(/
 // 2) Unit tests — always run.
 run('unit: id-based resolvers (item 2)', 'node', [path.join(__dirname, 'unit-resolvers.test.js')]);
 run('unit: arc-mode options (item 3)', 'node', [path.join(__dirname, 'unit-arc-options.test.js')]);
+run('unit: arc reinforce types (v46 bug #1)', 'node', [path.join(__dirname, 'unit-arc-reinforce-types.test.js')]);
 run('unit: pdf text-span selection', 'node', [path.join(__dirname, 'unit-pdf-selection.test.js')]);
 run('unit: conjugation grouping (item 4)', 'node', [path.join(__dirname, 'unit-conjugation-grouping.test.js')]);
 run('unit: grammar reinforce note (item 5)', 'node', [path.join(__dirname, 'unit-grammar-reinforce.test.js')]);
@@ -49,13 +50,24 @@ run('unit: static teacher-mode edit gating', 'node', [path.join(__dirname, 'unit
 run('unit: continue-story language filter', 'node', [path.join(__dirname, 'unit-continue-filter.test.js')]);
 run('unit: attribute escaping (escAttr not escHtml)', 'node', [path.join(__dirname, 'unit-attr-escaping.test.js')]);
 run('unit: lesson-type build registry (B-phase-1)', 'node', [path.join(__dirname, 'unit-build-registry.test.js')]);
+run('unit: renderEx exercise-renderer registry (B-phase-2)', 'node', [path.join(__dirname, 'unit-renderex-registry.test.js')]);
+run('unit: lesson-editor registry (B-phase-3)', 'node', [path.join(__dirname, 'unit-editor-registry.test.js')]);
+run('unit: add-lesson server registry (B-phase-4)', 'node', [path.join(__dirname, 'unit-add-lesson-registry.test.js')]);
+run('unit: per-language prompt examples — 4 prompts + de seed (A)', 'node', [path.join(__dirname, 'unit-prompt-examples.test.js')]);
+run('unit: harvest rated items → examples.json (A)', 'node', [path.join(__dirname, 'unit-harvest-examples.test.js')]);
 run('unit: mixed-type review lessons (C)', 'node', [path.join(__dirname, 'unit-mixed-lessons.test.js')]);
+run('unit: mixed pool rating-aware (v46 #7)', 'node', [path.join(__dirname, 'unit-mixed-rating.test.js')]);
 run('unit: static story edit (in-memory save)', 'node', [path.join(__dirname, 'unit-static-story-edit.test.js')]);
 run('unit: static summary edit (in-memory save)', 'node', [path.join(__dirname, 'unit-static-summary-edit.test.js')]);
 run('unit: chapter export (error-hunt + meta)', 'node', [path.join(__dirname, 'unit-export-lessons.test.js')]);
 run('unit: static client export (eh/aeh + meta)', 'node', [path.join(__dirname, 'unit-client-export.test.js')]);
+run('e2e: mixed lesson edit (type round-trip)', 'node', [path.join(__dirname, 'e2e-mixed-lesson-edit.test.js')]);
+run('e2e: rating/flag round-trip (v46 Tier 1)', 'node', [path.join(__dirname, 'e2e-rating-edit.test.js')]);
 run('unit: static build markers', 'node', [path.join(__dirname, 'unit-static-markers.test.js')]);
 run('unit: generation metadata (_genMeta everywhere)', 'node', [path.join(__dirname, 'unit-genmeta.test.js')]);
+run('unit: edit-history report (v46 #12)', 'node', [path.join(__dirname, 'unit-report-edits.test.js')]);
+run('unit: chapter-link repair (v46 bug #2)', 'node', [path.join(__dirname, 'unit-chapter-link-repair.test.js')]);
+run('unit: storyline lock hardening (v46 bug #2)', 'node', [path.join(__dirname, 'unit-storyline-lock-hardening.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {

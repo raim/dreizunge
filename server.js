@@ -12,27 +12,54 @@ const { buildExport } = require('./export-lessons');
 
 // ── Prompts (hot-reloaded from prompts.json) ──────────────────────────────────
 let PROMPTS = {};
+// Major A — optional harvested examples (from harvest-examples.js), overlaid on the curated
+// examples in prompts.json. Lives next to the data, env-overridable like LESSONS_FILE.
+const EXAMPLES_FILE = process.env.EXAMPLES_FILE || path.join(__dirname, 'examples.json');
 function loadPrompts() {
   try {
     PROMPTS = JSON.parse(fs.readFileSync(path.join(__dirname, 'prompts.json'), 'utf8'));
     console.log('  Prompts loaded from prompts.json');
   } catch(e) { console.error('  Failed to load prompts.json:', e.message); }
+  // Overlay harvested per-language example blocks (keys like "de__en") onto each prompt's
+  // curated examples. Optional file; absence is normal and silent — the curated default
+  // and seeds in prompts.json stand alone.
+  try {
+    const overlay = JSON.parse(fs.readFileSync(EXAMPLES_FILE, 'utf8'));
+    let n = 0;
+    for (const key of Object.keys(overlay)) {
+      if (!PROMPTS[key] || typeof PROMPTS[key] !== 'object' || !overlay[key] || typeof overlay[key] !== 'object') continue;
+      PROMPTS[key].examples = Object.assign({}, PROMPTS[key].examples, overlay[key]);
+      n += Object.keys(overlay[key]).length;
+    }
+    if (n) console.log(`  Overlaid ${n} harvested example(s) from ${path.basename(EXAMPLES_FILE)}`);
+  } catch (_) { /* no examples.json — fine */ }
 }
 loadPrompts();
-try {
-  fs.watch(path.join(__dirname, 'prompts.json'), () => {
-    setTimeout(() => { loadPrompts(); console.log('  prompts.json reloaded'); }, 100);
-  });
-} catch(_) {}
+[path.join(__dirname, 'prompts.json'), EXAMPLES_FILE].forEach(f => {
+  try {
+    fs.watch(f, () => { setTimeout(() => { loadPrompts(); console.log(`  ${path.basename(f)} reloaded`); }, 100); });
+  } catch(_) {}
+});
 
 // Fill {placeholder} variables in a prompt template string
 function fillPrompt(template, vars) {
   return template.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : '{'+k+'}'));
 }
+// Major A — per-target-language worked examples. A prompt may carry an `examples` map
+// injected via the `{EXAMPLE}` token in its `system` string. Resolution prefers a harvested
+// exact "<target>__<source>" pair (keys like "de__en"; its baked-in {S} content is correct
+// for that pair), then a per-language example (curated in prompts.json, source-agnostic),
+// then the default, then '' (a prompt with no examples / a target with no entry falls back
+// cleanly — additive & backward-compatible). The caller fills {L}/{S} on the result.
+function promptExample(P, lang, srcLang) {
+  const ex = P && P.examples;
+  if (!ex) return '';
+  return (srcLang && ex[lang + '__' + srcLang]) || ex[lang] || ex.default || '';
+}
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v45';
+const APP_VERSION  = 'v46';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -792,7 +819,7 @@ function sysGrammar(lang, srcLang, difficulty, dialect, writingStyle) {
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const P = PROMPTS.grammar;
-  let sys = fillPrompt(P.system, { L, S, diff });
+  let sys = fillPrompt(P.system, { L, S, diff, EXAMPLE: fillPrompt(promptExample(P, lang, srcLang), { L, S }) });
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
   return sys;
@@ -805,7 +832,7 @@ function sysConjugation(lang, srcLang, difficulty, dialect, writingStyle) {
   const S    = langName(srcLang || 'en');
   const diff = difficultyLabel(difficulty || 2);
   const P = PROMPTS.conjugation;
-  let sys = fillPrompt(P.system, { L, S, diff });
+  let sys = fillPrompt(P.system, { L, S, diff, EXAMPLE: fillPrompt(promptExample(P, lang, srcLang), { L, S }) });
   if (dialect)                    sys += fillPrompt(P.dialectNote,       { dialect });
   if (getStoryStyle(writingStyle)) sys += fillPrompt(P.writingStyleNote,  { writingStyle: getStoryStyle(writingStyle) });
   return sys;
@@ -1224,7 +1251,7 @@ async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) 
   if (!story || !String(story).trim()) throw new Error('word_forms: no story available');
   const L = langName(lang); const S = langName(srcLang || 'en');
   const n = (difficulty <= 1) ? 5 : (difficulty >= 3 ? 8 : 6);
-  const sys = fillPrompt(PROMPTS.wordForms.system, { L, S });
+  const sys = fillPrompt(PROMPTS.wordForms.system, { L, S, EXAMPLE: fillPrompt(promptExample(PROMPTS.wordForms, lang, srcLang), { L, S }) });
   const userMsg = fillPrompt(PROMPTS.wordForms.user, { L, S, story, n });
   const MAX_ATTEMPTS = 3;
   let totalPromptTokens = 0, totalCompletionTokens = 0, lastError = '';
@@ -1300,7 +1327,7 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
   const P = PROMPTS && PROMPTS.synonyms;
   let sys, userMsg;
   if (P && P.system) {
-    sys = fillPrompt(P.system, { L, S, diff: difficultyLabel(difficulty || 2) });
+    sys = fillPrompt(P.system, { L, S, diff: difficultyLabel(difficulty || 2), EXAMPLE: fillPrompt(promptExample(P, lang, srcLang), { L, S }) });
     if (userDialect && P.dialectNote) sys += fillPrompt(P.dialectNote, { dialect: userDialect });
     const ss = getStoryStyle(opts.storyStyle); if (ss && P.writingStyleNote) sys += fillPrompt(P.writingStyleNote, { writingStyle: ss });
     userMsg = fillPrompt(P.user, { topic, L, S })
@@ -1809,6 +1836,25 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       totalPromptTokens, totalCompletionTokens, lessons: lessonTokenStats }
   };
 }
+
+// Add-lesson generate registry (B-phase-4). The /api/lessons/add-lesson handler dispatches
+// a lessonFormat (fmt) to its generator through this map instead of a hand-kept if/else
+// chain, so a new lesson type is one row here. The generators have heterogeneous
+// signatures, so each entry is a thin adapter over a single context object (built in the
+// handler where `saved` and the request locals are in scope). Per-type *validators* still
+// live inside the generators (salvage-oriented), unchanged. Unknown fmt → no entry → the
+// handler throws "Unsupported lessonFormat", identical to the old chain's else.
+const ADD_LESSON_GENERATORS = {
+  standard:    (c) => generateOneLesson(c.lang, c.srcLang, c.topicName, 1, 1, [], c.story, c.diff, c.jobId, c.standardOpts),
+  error_hunt:  (c) => generateErrorHunt(c.story, c.lang, c.diff, c.jobId, c.chainVocab.words),
+  grammar:     (c) => generateGrammar(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
+  conjugation: (c) => generateConjugation(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
+  synonyms:    (c) => generateSynonyms(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
+  word_forms:  (c) => generateWordForms(c.topicName, c.lang, c.srcLang, c.diff, c.jobId, c.sharedGenOpts),
+  math:        (c) => c.addMathInstr
+    ? generateMathLLM(c.lang, c.srcLang, c.diff, c.addMathInstr, c.jobId)
+    : generateMath(c.story, c.diff, c.addMathOps || null),
+};
 
 // ── Repair flagged exercises ──────────────────────────────────────────
 // ── Ollama ping & warmup ──────────────────────────────────────────────
@@ -2873,13 +2919,15 @@ http.createServer(async (req, res) => {
       const saved = id ? findSavedById(id) : findSaved(topic);
       if (!saved) return json(res, 404, { error: 'Topic not found' });
       // Only update vocab/sentences/grammar fields — preserve all other data.
-      // Flag fields (qc, userFlag) are client-authoritative: if the incoming item
-      // omits them, the client cleared the flag, so don't resurrect it from the
-      // stored copy (fixes "fix/✕ doesn't clear the flag" on reload).
+      // Flag fields (qc, userFlag) and the rating flag (userRating) are
+      // client-authoritative: if the incoming item omits them, the client cleared
+      // it, so don't resurrect it from the stored copy (fixes "fix/✕ doesn't clear
+      // the flag/star" on reload).
       const mergeFlaggable = (o, v) => {
         const m = { ...o, ...v };
-        if (!('qc' in v))       delete m.qc;
-        if (!('userFlag' in v)) delete m.userFlag;
+        if (!('qc' in v))         delete m.qc;
+        if (!('userFlag' in v))   delete m.userFlag;
+        if (!('userRating' in v)) delete m.userRating;
         return m;
       };
       const origLessons = saved.lessons.slice();
@@ -2897,6 +2945,10 @@ http.createServer(async (req, res) => {
           ...(edited.icon  !== undefined ? { icon:  edited.icon  } : {}),
           vocab:     edited.vocab     ? edited.vocab.map((v,j) => mergeFlaggable((orig.vocab||[])[j]||{}, v)) : orig.vocab,
           sentences: edited.sentences ? edited.sentences.map((s,j) => mergeFlaggable((orig.sentences||[])[j]||{}, s)) : orig.sentences,
+          // synonyms (words) + word_forms (items): carry their flaggable item fields too,
+          // so a flag/rating on those types persists in the live build (not just static).
+          words:     edited.words     ? edited.words.map((w,j) => mergeFlaggable((orig.words||[])[j]||{}, w)) : orig.words,
+          items:     edited.items     ? edited.items.map((it,j) => mergeFlaggable((orig.items||[])[j]||{}, it)) : orig.items,
           grammar:   edited.grammar   ? edited.grammar.map((g,j) => ({...(orig.grammar||[])[j]||{}, ...g})) : orig.grammar,
           conjugations: edited.conjugations ? edited.conjugations.map((c,j) => ({
             ...(orig.conjugations||[])[j]||{}, ...c,
@@ -2949,28 +3001,15 @@ http.createServer(async (req, res) => {
           : { words: [], nouns: [], verbs: [] };
         if (chainVocab.words.length)
           console.log(`    Chain vocab (${_addVocabMode}): ${chainVocab.words.slice(0,15).map(v=>v.target).join(', ')}`);
-        if (fmt === 'standard') {
-          const storyTranslation = saved.storyTranslation || null;
-          // Don't pass story as styleHint — it's already in userMsg as context
-          const lessonOpts = { userTranslation: storyTranslation, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words, vocabMode: _addVocabMode };
-          result = await generateOneLesson(lang, srcLang, topicName, 1, 1, [], story, diff, jobId, lessonOpts);
-        } else if (fmt === 'error_hunt') {
-          result = await generateErrorHunt(story, lang, diff, jobId, chainVocab.words);
-        } else if (fmt === 'grammar') {
-          result = await generateGrammar(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
-        } else if (fmt === 'conjugation') {
-          result = await generateConjugation(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
-        } else if (fmt === 'synonyms') {
-          result = await generateSynonyms(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
-        } else if (fmt === 'word_forms') {
-          result = await generateWordForms(topicName, lang, srcLang, diff, jobId, { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story });
-        } else if (fmt === 'math') {
-          result = addMathInstr
-            ? await generateMathLLM(lang, srcLang, diff, addMathInstr, jobId)
-            : generateMath(story, diff, addMathOps || null);
-        } else {
-          throw new Error(`Unsupported lessonFormat: ${fmt}`);
-        }
+        // Dispatch the lessonFormat to its generator via the ADD_LESSON_GENERATORS
+        // registry (B-phase-4). standardOpts / sharedGenOpts are the two opt shapes the
+        // generators expect; building both unconditionally is side-effect-free.
+        const standardOpts = { userTranslation: saved.storyTranslation || null, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words, vocabMode: _addVocabMode };
+        const sharedGenOpts = { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story };
+        const genCtx = { lang, srcLang, topicName, story, diff, jobId, chainVocab, standardOpts, sharedGenOpts, addMathInstr, addMathOps };
+        const genFn = ADD_LESSON_GENERATORS[fmt];
+        if (!genFn) throw new Error(`Unsupported lessonFormat: ${fmt}`);
+        result = await genFn(genCtx);
         // Compute next available ID (avoid clashing with existing)
         // Generate a stable string ID for the new lesson
         const newLessonId = 'ls_' + Date.now();

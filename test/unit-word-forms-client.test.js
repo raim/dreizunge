@@ -12,7 +12,9 @@ assert.ok(/word_forms:\s*\{[^}]*build:\s*\(l\)\s*=>\s*buildWordFormsExercises\(l
   'LESSON_TYPE_META.word_forms missing build -> buildWordFormsExercises');
 assert.ok(/lessonTypeMeta\(lesson\.type\)\.build\(lesson, lessonIdx\)/.test(html),
   'buildExercises should dispatch via the registry');
-assert.ok(html.includes("else if(ex.type==='word_form') html=tWordForm(ex);"), 'renderEx dispatch missing word_form');
+// renderEx now dispatches via the exercise-renderer registry (B-phase-2), not an if-chain.
+assert.ok(/word_form:\s*\(ex\)\s*=>\s*tWordForm\(ex\)/.test(html), 'EX_RENDERERS missing word_form -> tWordForm');
+assert.ok(/const _exRender = EX_RENDERERS\[ex\.type\];/.test(html), 'renderEx should dispatch via EX_RENDERERS');
 assert.ok(html.includes('function tWordForm(ex)'), 'tWordForm renderer missing');
 assert.ok(html.includes('word_forms:    { emoji:'), 'LESSON_TYPE_META missing word_forms');
 console.log('  wiring present: OK');
