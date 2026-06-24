@@ -258,30 +258,6 @@
       ]
     },
     {
-      "id": "sl_744316014",
-      "title": "Il piccolo io 𝑖.",
-      "icon": "📖",
-      "chapters": [
-        "tp_1974761801",
-        "tp_147948051",
-        "tp_101952",
-        "tp_1209779487",
-        "tp_1105600292",
-        "tp_1899378454",
-        "tp_651463930",
-        "tp_91126899",
-        "tp_1657846465",
-        "tp_1153111317"
-      ],
-      "lang": "en",
-      "srcLang": "it",
-      "createdAt": "2026-06-12T14:08:15.022Z",
-      "updatedAt": "2026-06-13T09:33:55.151Z",
-      "tags": [
-        "translated"
-      ]
-    },
-    {
       "id": "sl_2143006409",
       "title": "Missteps in Magic",
       "icon": "📖",
@@ -358,12 +334,11 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-04T20:35:36.097Z",
-      "updatedAt": "2026-06-13T09:33:55.169Z",
+      "updatedAt": "2026-06-24T09:54:48.333Z",
       "summary": "Ein Wesen mit langen Ohren und einem blühenden Muster wandert durch ein grasbewachsenes Feld und stößt auf einen Baumfrosch, der es nach seinem Namen fragt. Das Wesen, das sich nicht kennt, beginnt eine Reise, um sich selbst zu finden, und trifft auf verschiedene Tiere, die es an sich erinnern. Am Ende der Reise begegnet es den Zahlen, den Buchstaben und anderen Zahlen, die es zuerst nicht verstehen kann, aber schließlich lernt, dass es zusammenarbeiten kann, um Herausforderungen zu meistern.\n\nFrei nach Mira Lobe.",
       "tags": [
         "manually curated",
-        "children",
-        "translated"
+        "children"
       ]
     },
     {
@@ -394,11 +369,9 @@
         "tp_779998416"
       ],
       "createdAt": "2026-05-28T13:56:57.079Z",
-      "updatedAt": "2026-06-13T09:33:55.205Z",
+      "updatedAt": "2026-06-24T09:55:34.246Z",
       "summary": "בבלוב, סריה היסטורית ומרטין גרמני שוחחים על היחסים בין ישראל, גרמניה ובריטניה, תוך התארחיתת של רוחות מطر שמחברות את המושבים שלהם. המונחים המרכזים כמו \"IRTUAL\", \"מסע\", ו\"השתנות\" מתארים את התהליך של השינוי והשלום בין המדינות. ב\"הומור יהודי\", מרטין מ💪ל את הסריה עם הומור יהודי, מתארח מונחים כמו \"השתנות\" ו\"שלום\" בדיאלוגים משעשעים שמתארים את היצירתיות האנושית.",
-      "tags": [
-        "translated"
-      ]
+      "tags": []
     },
     {
       "id": "sl_1567412712",
@@ -411,10 +384,8 @@
         "tp_1328268658"
       ],
       "createdAt": "2026-05-28T09:08:23.626Z",
-      "updatedAt": "2026-06-13T09:33:55.224Z",
-      "tags": [
-        "translated"
-      ]
+      "updatedAt": "2026-06-24T09:55:04.323Z",
+      "tags": []
     },
     {
       "id": "sl_1118994349",
@@ -601,10 +572,8 @@
         "tp_371663726"
       ],
       "createdAt": "2026-05-23T20:43:57.678Z",
-      "updatedAt": "2026-06-13T09:33:55.259Z",
-      "tags": [
-        "translated"
-      ]
+      "updatedAt": "2026-06-24T09:55:23.986Z",
+      "tags": []
     },
     {
       "id": "sl_2036885045",
@@ -12571,7 +12540,7 @@
             },
             {
               "target": "The room was quiet, she sat beside him.",
-              "source": "La habitación estaba en silencio, se sentó a su lado.",
+              "source": "La habitación estaba en silencio, ella se sentó a su lado.",
               "words": [
                 "The",
                 "room",
@@ -12582,7 +12551,7 @@
                 "beside",
                 "him."
               ],
-              "editedAt": "2026-06-16T15:21:36.732Z"
+              "editedAt": "2026-06-24T10:59:27.720Z"
             },
             {
               "target": "She smiled, feeling like she belonged.",
@@ -12616,7 +12585,7 @@
         ]
       },
       "generatedAt": "2026-06-16T14:19:14.831Z",
-      "updatedAt": "2026-06-16T15:21:39.974Z",
+      "updatedAt": "2026-06-24T10:59:30.437Z",
       "id": "tp_17816198486700001029"
     },
     {
@@ -12848,7 +12817,7 @@
         ]
       },
       "generatedAt": "2026-06-16T14:15:36.736Z",
-      "updatedAt": "2026-06-16T15:20:14.181Z",
+      "updatedAt": "2026-06-24T10:58:57.819Z",
       "id": "tp_17816195547740000925"
     },
     {
@@ -13070,7 +13039,7 @@
         ]
       },
       "generatedAt": "2026-06-16T14:12:01.049Z",
-      "updatedAt": "2026-06-16T15:17:52.692Z",
+      "updatedAt": "2026-06-24T10:57:33.946Z",
       "id": "tp_17816193366720000871"
     },
     {
@@ -13307,7 +13276,7 @@
         ]
       },
       "generatedAt": "2026-06-16T14:07:55.456Z",
-      "updatedAt": "2026-06-16T15:16:03.394Z",
+      "updatedAt": "2026-06-24T10:56:59.183Z",
       "id": "tp_17816191209870000759"
     },
     {
@@ -13536,7 +13505,7 @@
         ]
       },
       "generatedAt": "2026-06-16T14:03:51.970Z",
-      "updatedAt": "2026-06-16T15:14:26.643Z",
+      "updatedAt": "2026-06-24T10:56:11.236Z",
       "id": "tp_17816188753960000682"
     },
     {
@@ -13619,13 +13588,14 @@
             },
             {
               "target": "Nice to meet you.",
-              "source": "Mucho gusto, ¿cómo estás?",
+              "source": "Encantado/a  de conocerte.",
               "words": [
                 "Nice",
                 "to",
                 "meet",
                 "you."
-              ]
+              ],
+              "editedAt": "2026-06-24T10:55:19.185Z"
             },
             {
               "target": "My name is π.",
@@ -13768,7 +13738,7 @@
         ]
       },
       "generatedAt": "2026-06-16T14:00:11.652Z",
-      "updatedAt": "2026-06-16T15:13:26.801Z",
+      "updatedAt": "2026-06-24T10:55:59.708Z",
       "id": "tp_17816186319150000579"
     },
     {
@@ -13899,7 +13869,12 @@
             },
             {
               "target": "stand",
-              "source": "quedar"
+              "source": "quedar",
+              "qc": {
+                "sug": "quedarirse",
+                "field": "source",
+                "at": "2026-06-24T10:44:47.847Z"
+              }
             },
             {
               "target": "weird",
@@ -13944,7 +13919,12 @@
                 "should",
                 "she",
                 "stand?"
-              ]
+              ],
+              "qc": {
+                "sug": "Ella quiere unirse a la banda, pero ¿dónde debería estar?",
+                "field": "source",
+                "at": "2026-06-24T10:45:20.598Z"
+              }
             },
             {
               "target": "Four noticed a letter, that's weird.",
@@ -13956,7 +13936,12 @@
                 "letter,",
                 "that's",
                 "weird."
-              ]
+              ],
+              "qc": {
+                "sug": "Three notó una letra, eso es raro.",
+                "field": "source",
+                "at": "2026-06-24T10:45:33.394Z"
+              }
             },
             {
               "target": "All the numbers came and stared judgmentally.",
@@ -14228,7 +14213,7 @@
         ]
       },
       "generatedAt": "2026-06-16T13:55:55.859Z",
-      "updatedAt": "2026-06-17T10:17:10.688Z",
+      "updatedAt": "2026-06-24T10:52:18.346Z",
       "id": "tp_17816184115920000466"
     },
     {
@@ -14469,7 +14454,7 @@
         ]
       },
       "generatedAt": "2026-06-16T13:52:08.659Z",
-      "updatedAt": "2026-06-16T15:03:19.451Z",
+      "updatedAt": "2026-06-24T10:50:32.057Z",
       "id": "tp_17816181558030000376"
     },
     {
@@ -14739,11 +14724,13 @@
             },
             {
               "target": "times",
-              "source": "por"
+              "source": "veces",
+              "editedAt": "2026-06-24T10:20:14.815Z"
             },
             {
               "target": "divided by",
-              "source": "dividido entre"
+              "source": "dividido entre",
+              "editedAt": "2026-06-24T10:20:47.457Z"
             },
             {
               "target": "equals",
@@ -14797,18 +14784,19 @@
               ]
             },
             {
-              "target": "We divided ten by two.",
+              "target": "We divide ten by two.",
               "source": "Dividimos diez entre dos.",
               "words": [
                 "We",
-                "divided",
+                "divide",
                 "ten",
                 "by",
                 "two."
               ],
-              "editedAt": "2026-06-16T14:56:00.719Z",
+              "editedAt": "2026-06-24T10:45:54.852Z",
               "_manualEdits": [
-                "2026-06-16T14:56:00.719Z"
+                "2026-06-16T14:56:00.719Z",
+                "2026-06-24T10:45:54.852Z"
               ]
             },
             {
@@ -14843,11 +14831,13 @@
             },
             {
               "target": "times",
-              "source": "por"
+              "source": "por",
+              "editedAt": "2026-06-24T10:20:14.815Z"
             },
             {
               "target": "divided by",
-              "source": "dividido entre"
+              "source": "dividido entre",
+              "editedAt": "2026-06-24T10:20:10.644Z"
             },
             {
               "target": "equals",
@@ -15076,7 +15066,7 @@
         ]
       },
       "generatedAt": "2026-06-16T13:45:05.794Z",
-      "updatedAt": "2026-06-16T15:45:48.061Z",
+      "updatedAt": "2026-06-24T10:47:15.622Z",
       "id": "tp_17816177163400000125"
     },
     {
@@ -15201,7 +15191,7 @@
         ]
       },
       "generatedAt": "2026-06-16T13:42:10.783Z",
-      "updatedAt": "2026-06-16T14:54:09.514Z",
+      "updatedAt": "2026-06-24T10:44:19.966Z",
       "id": "tp_17816175057310000009",
       "continuedFromId": null,
       "continuedFrom": null
@@ -23798,1735 +23788,6 @@
       "id": "tp_17812867751650000079",
       "continuedFromId": null,
       "continuedFrom": null
-    },
-    {
-      "topic": "Sette = 7",
-      "topicEmoji": "🔢",
-      "userTopic": "I 7",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "One evening, while everyone slept,\nlittle 𝑖 followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle 𝑖 gasped.\nHe looked almost like her.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "One evening, while everyone slept,\nlittle 𝑖 followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle 𝑖 gasped.\nHe looked almost like her.",
-      "continuedFrom": "+−∗/",
-      "continuedFromId": "tp_147948051",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "I 7",
-          "desc": "La sera, un viaggio nel mondo dei numeri",
-          "icon": " NIGHTbió ",
-          "vocab": [
-            {
-              "target": "evening",
-              "source": "sera"
-            },
-            {
-              "target": "path",
-              "source": "strada"
-            },
-            {
-              "target": "world",
-              "source": "mondo"
-            },
-            {
-              "target": "seven",
-              "source": "sette"
-            },
-            {
-              "target": "gasp",
-              "source": "sospiro"
-            },
-            {
-              "target": "look",
-              "source": "aspetto"
-            },
-            {
-              "target": "number",
-              "source": "numero"
-            },
-            {
-              "target": "grew up",
-              "source": "è cresciuto"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "One evening, little 𝑖 followed a glowing path.",
-              "source": "Una sera, il piccolo 𝑖 seguì una strada luminosa.",
-              "words": [
-                "One",
-                "evening,",
-                "little",
-                "𝑖",
-                "followed",
-                "a",
-                "glowing",
-                "path."
-              ]
-            },
-            {
-              "target": "It led to another world.",
-              "source": "La strada portò a un altro mondo.",
-              "words": [
-                "It",
-                "led",
-                "to",
-                "another",
-                "world."
-              ]
-            },
-            {
-              "target": "A strange world.",
-              "source": "Un mondo strano.",
-              "words": [
-                "A",
-                "strange",
-                "world."
-              ]
-            },
-            {
-              "target": "A number world.",
-              "source": "Un mondo di numeri.",
-              "words": [
-                "A",
-                "number",
-                "world."
-              ]
-            },
-            {
-              "target": "At the end of the road stood a tall Seven.",
-              "source": "Alla fine della strada c'era un Sette alto e magro.",
-              "words": [
-                "At",
-                "the",
-                "end",
-                "of",
-                "the",
-                "road",
-                "stood",
-                "a",
-                "tall",
-                "Seven."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 259397,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 839,
-        "totalCompletionTokens": 291,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 223840,
-            "promptTokens": 650,
-            "completionTokens": 270
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T13:40:18.632Z",
-      "updatedAt": "2026-06-12T13:47:20.253Z",
-      "id": "tp_101952"
-    },
-    {
-      "topic": "le otto cascate",
-      "topicEmoji": "🤕",
-      "userTopic": "le otto cascate",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "Eight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\n\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "Eight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\n\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
-      "continuedFrom": "π, a fancy guy!",
-      "continuedFromId": "tp_1657846465",
-      "storyStyle": "funny",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "le otto cascate",
-          "desc": "otto cascate, un viaggio, e la fame di Eight",
-          "icon": "💦",
-          "vocab": [
-            {
-              "target": "fancy",
-              "source": "elegante"
-            },
-            {
-              "target": "guy",
-              "source": "ragazzo"
-            },
-            {
-              "target": "step",
-              "source": "fare un passo"
-            },
-            {
-              "target": "politely",
-              "source": "con gentilezza"
-            },
-            {
-              "target": "name",
-              "source": "nome"
-            },
-            {
-              "target": "wore",
-              "source": "indossava"
-            },
-            {
-              "target": "fringe",
-              "source": "frangia"
-            },
-            {
-              "target": "binoculars",
-              "source": "occhiali da teatro"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Eight wore fancy binoculars, ready for the concert.",
-              "source": "Eight indossava occhiali da teatro eleganti, pronto per il concerto.",
-              "words": [
-                "Eight",
-                "wore",
-                "fancy",
-                "binoculars,",
-                "ready",
-                "for",
-                "the",
-                "concert."
-              ]
-            },
-            {
-              "target": "The drummer stepped politely to the stage, his name was Seven.",
-              "source": "Il batterista fece un passo con gentilezza verso la scena, il suo nome era Sette.",
-              "words": [
-                "The",
-                "drummer",
-                "stepped",
-                "politely",
-                "to",
-                "the",
-                "stage,",
-                "his",
-                "name",
-                "was",
-                "Seven."
-              ]
-            },
-            {
-              "target": "Zero knew the answer, but he was too shy to step forward.",
-              "source": "Zero sapeva la risposta, ma era troppo timido per fare un passo avanti.",
-              "words": [
-                "Zero",
-                "knew",
-                "the",
-                "answer,",
-                "but",
-                "he",
-                "was",
-                "too",
-                "shy",
-                "to",
-                "step",
-                "forward."
-              ]
-            },
-            {
-              "target": "The singer, a little guy with a pony, was the first to perform.",
-              "source": "Il cantante, un ragazzo piccolo con la frangia, fu il primo a esibirsi.",
-              "words": [
-                "The",
-                "singer,",
-                "a",
-                "little",
-                "guy",
-                "with",
-                "a",
-                "pony,",
-                "was",
-                "the",
-                "first",
-                "to",
-                "perform."
-              ],
-              "_manualEdits": [
-                "2026-06-12T14:57:18.588Z"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "ls_1781276482317",
-          "title": "le otto cascate",
-          "desc": "otto cascate, un viaggio fantastico",
-          "icon": "💦",
-          "vocab": [
-            {
-              "target": "cascade",
-              "source": "cascata"
-            },
-            {
-              "target": "journey",
-              "source": "viaggio"
-            },
-            {
-              "target": "fantastic",
-              "source": "fantastico"
-            },
-            {
-              "target": "guy",
-              "source": "ragazzo"
-            },
-            {
-              "target": "step",
-              "source": "passo"
-            },
-            {
-              "target": "politely",
-              "source": "gentilmente"
-            },
-            {
-              "target": "name",
-              "source": "nome"
-            },
-            {
-              "target": "wore",
-              "source": "indossò"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "He took a step forward, his name was Echo.",
-              "source": "Lui fece un passo avanti, il suo nome era Eco.",
-              "words": [
-                "He",
-                "took",
-                "a",
-                "step",
-                "forward,",
-                "his",
-                "name",
-                "was",
-                "Echo."
-              ]
-            },
-            {
-              "target": "Echo wore a fancy costume for the journey.",
-              "source": "Eco indossò un costume elegante per il viaggio.",
-              "words": [
-                "Echo",
-                "wore",
-                "a",
-                "fancy",
-                "costume",
-                "for",
-                "the",
-                "journey."
-              ]
-            },
-            {
-              "target": "He politely asked for directions to the cascades.",
-              "source": "Lui chiese gentilmente le indicazioni per le cascate.",
-              "words": [
-                "He",
-                "politely",
-                "asked",
-                "for",
-                "directions",
-                "to",
-                "the",
-                "cascades."
-              ]
-            },
-            {
-              "target": "The journey was fantastic, with views of the cascades.",
-              "source": "Il viaggio era fantastico, con le meravigliose vedute delle cascate.",
-              "words": [
-                "The",
-                "journey",
-                "was",
-                "fantastic,",
-                "with",
-                "views",
-                "of",
-                "the",
-                "cascades."
-              ]
-            },
-            {
-              "target": "Echo knew the way, he was the hero of the journey.",
-              "source": "Eco sapeva il percorso, era il eroe del viaggio.",
-              "words": [
-                "Echo",
-                "knew",
-                "the",
-                "way,",
-                "he",
-                "was",
-                "the",
-                "hero",
-                "of",
-                "the",
-                "journey."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 292446,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 944,
-        "totalCompletionTokens": 397,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 256977,
-            "promptTokens": 751,
-            "completionTokens": 372
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T14:49:56.162Z",
-      "updatedAt": "2026-06-12T15:01:22.318Z",
-      "id": "tp_1153111317"
-    },
-    {
-      "topic": "π, a fancy guy!",
-      "topicEmoji": "🚀",
-      "userTopic": "π, a fancy guy!",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "Then somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\n\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.\n\nAs he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "Then somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\n\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.\n\nAs he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”",
-      "continuedFrom": "Il primo?",
-      "continuedFromId": "tp_91126899",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "un tipo speciale",
-          "desc": "un uomo straordinario con numeri",
-          "icon": "🚀",
-          "vocab": [
-            {
-              "target": "fancy",
-              "source": "elegante"
-            },
-            {
-              "target": "guy",
-              "source": "ragazzo"
-            },
-            {
-              "target": "step",
-              "source": "fare un passo"
-            },
-            {
-              "target": "politely",
-              "source": "con gentilezza"
-            },
-            {
-              "target": "name",
-              "source": "nome"
-            },
-            {
-              "target": "wore",
-              "source": "indossava"
-            },
-            {
-              "target": "fringe",
-              "source": "frangia"
-            },
-            {
-              "target": "binoculars",
-              "source": "occhiali da teatro"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "He's fancy, you know.",
-              "source": "Lui è elegante, lo sai.",
-              "words": [
-                "He's",
-                "fancy,",
-                "you",
-                "know."
-              ]
-            },
-            {
-              "target": "Seven is a hero.",
-              "source": "Sette è un eroe.",
-              "words": [
-                "Seven",
-                "is",
-                "a",
-                "hero."
-              ]
-            },
-            {
-              "target": "Zero is smart.",
-              "source": "Zero è intelligente.",
-              "words": [
-                "Zero",
-                "is",
-                "smart."
-              ]
-            },
-            {
-              "target": "Eight is a creep.",
-              "source": "Otto è spaventoso.",
-              "words": [
-                "Eight",
-                "is",
-                "a",
-                "creep."
-              ]
-            },
-            {
-              "target": "We know the answer.",
-              "source": "Sappiamo la risposta.",
-              "words": [
-                "We",
-                "know",
-                "the",
-                "answer."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 267604,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 941,
-        "totalCompletionTokens": 279,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 230651,
-            "promptTokens": 747,
-            "completionTokens": 252
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T14:40:32.116Z",
-      "updatedAt": "2026-06-12T14:46:33.694Z",
-      "id": "tp_1657846465"
-    },
-    {
-      "topic": "Il primo?",
-      "topicEmoji": "₁",
-      "userTopic": "Il primo?",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.",
-      "continuedFrom": "quattro",
-      "continuedFromId": "tp_651463930",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Il primo?",
-          "desc": "Primi numeri e ordine",
-          "icon": "1️⃣",
-          "vocab": [
-            {
-              "target": "first",
-              "source": "primo"
-            },
-            {
-              "target": "seven",
-              "source": "sette"
-            },
-            {
-              "target": "zero",
-              "source": "zero"
-            },
-            {
-              "target": "hero",
-              "source": "eroe"
-            },
-            {
-              "target": "smart",
-              "source": "intelligente"
-            },
-            {
-              "target": "answer",
-              "source": "risposta"
-            },
-            {
-              "target": "guitar",
-              "source": "chitarra"
-            },
-            {
-              "target": "concert",
-              "source": "concerto"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "He was always first in line.",
-              "source": "Lui era sempre il primo in fila.",
-              "words": [
-                "He",
-                "was",
-                "always",
-                "first",
-                "in",
-                "line."
-              ]
-            },
-            {
-              "target": "Seven is my lucky number.",
-              "source": "Sette è il mio numero fortunato.",
-              "words": [
-                "Seven",
-                "is",
-                "my",
-                "lucky",
-                "number."
-              ]
-            },
-            {
-              "target": "He's a smart hero, always knowing the answer.",
-              "source": "È un eroe intelligente, sempre che sa la risposta.",
-              "words": [
-                "He's",
-                "a",
-                "smart",
-                "hero,",
-                "always",
-                "knowing",
-                "the",
-                "answer."
-              ]
-            },
-            {
-              "target": "The guitarist played first in the concert.",
-              "source": "Il chitarrista suonò per primo al concerto.",
-              "words": [
-                "The",
-                "guitarist",
-                "played",
-                "first",
-                "in",
-                "the",
-                "concert."
-              ]
-            },
-            {
-              "target": "Zero is not a number, it's just a place holder.",
-              "source": "Zero non è un numero, è solo un posto tenore.",
-              "words": [
-                "Zero",
-                "is",
-                "not",
-                "a",
-                "number,",
-                "it's",
-                "just",
-                "a",
-                "place",
-                "holder."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 242904,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 902,
-        "totalCompletionTokens": 297,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 209709,
-            "promptTokens": 713,
-            "completionTokens": 276
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T14:31:16.544Z",
-      "updatedAt": "2026-06-12T14:34:46.317Z",
-      "id": "tp_91126899"
-    },
-    {
-      "topic": "Il piccolo io 𝑖.",
-      "topicEmoji": "🌱",
-      "userTopic": "The Little I am 𝑖.\nAnna Matuszyńska, Rainer Machné",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "In the world of birds,\nlittle birds have nests.\n\nIn the world of cats,\nlittle cats have families.\n\nIn the world of people,\ngrown-ups often have children.\n\nAnd in the world of numbers,\nevery number seems to have a place.\n\nBut little 𝑖\ndid not know where hers was.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "In the world of birds,\nlittle birds have nests.\n\nIn the world of cats,\nlittle cats have families.\n\nIn the world of people,\ngrown-ups often have children.\n\nAnd in the world of numbers,\nevery number seems to have a place.\n\nBut little 𝑖\ndid not know where hers was.",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Il piccolo 𝑖",
-          "desc": "i piccoli numeri e i loro posti",
-          "icon": "🔢",
-          "vocab": [
-            {
-              "target": "place",
-              "source": "posto"
-            },
-            {
-              "target": "little",
-              "source": "piccolo"
-            },
-            {
-              "target": "know",
-              "source": "sapere"
-            },
-            {
-              "target": "world",
-              "source": "mondo"
-            },
-            {
-              "target": "have",
-              "source": "avere"
-            },
-            {
-              "target": "family",
-              "source": "famiglia"
-            },
-            {
-              "target": "grew up",
-              "source": "è cresciuto"
-            },
-            {
-              "target": "number",
-              "source": "numero"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Little 𝑖 grew up in the world of numbers.",
-              "source": "Il piccolo 𝑖 è cresciuto nel mondo dei numeri.",
-              "words": [
-                "Little",
-                "𝑖",
-                "grew",
-                "up",
-                "in",
-                "the",
-                "world",
-                "of",
-                "numbers."
-              ]
-            },
-            {
-              "target": "Every number seems to have a place.",
-              "source": "Ogni numero sembra avere un posto.",
-              "words": [
-                "Every",
-                "number",
-                "seems",
-                "to",
-                "have",
-                "a",
-                "place."
-              ]
-            },
-            {
-              "target": "But 𝑖 did not know where hers was.",
-              "source": "Ma 𝑖 non sapeva dove fosse il suo.",
-              "words": [
-                "But",
-                "𝑖",
-                "did",
-                "not",
-                "know",
-                "where",
-                "hers",
-                "was."
-              ]
-            },
-            {
-              "target": "In the world of birds, little birds have nests.",
-              "source": "Nel mondo degli uccelli, i piccoli uccelli hanno nidi.",
-              "words": [
-                "In",
-                "the",
-                "world",
-                "of",
-                "birds,",
-                "little",
-                "birds",
-                "have",
-                "nests."
-              ]
-            },
-            {
-              "target": "Grown-ups often have children.",
-              "source": "Gli adulti spesso hanno figli.",
-              "words": [
-                "Grown-ups",
-                "often",
-                "have",
-                "children."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 237864,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 772,
-        "totalCompletionTokens": 321,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 201989,
-            "promptTokens": 563,
-            "completionTokens": 291
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T13:03:34.683Z",
-      "updatedAt": "2026-06-12T13:06:56.736Z",
-      "id": "tp_1974761801",
-      "continuedFromId": null,
-      "continuedFrom": null
-    },
-    {
-      "topic": "Un gruppo musicale?",
-      "topicEmoji": "🎵",
-      "userTopic": "un gruppo musicale?",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\n\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\n\n𝑖 also wants to be of this world, in a band,\nbut does not know where to stand.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\n\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\n\n𝑖 also wants to be of this world, in a band,\nbut does not know where to stand.",
-      "continuedFrom": "6 x 7 = 42",
-      "continuedFromId": "tp_1105600292",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "un gruppo musicale?",
-          "desc": "musica, amici, concerto",
-          "icon": "🎵",
-          "vocab": [
-            {
-              "target": "band",
-              "source": "gruppo musicale"
-            },
-            {
-              "target": "guitar",
-              "source": "chitarra"
-            },
-            {
-              "target": "drummer",
-              "source": "batterista"
-            },
-            {
-              "target": "singer",
-              "source": "cantante"
-            },
-            {
-              "target": "concert",
-              "source": "concorso"
-            },
-            {
-              "target": "stage",
-              "source": "palco"
-            },
-            {
-              "target": "audience",
-              "source": "pubblico"
-            },
-            {
-              "target": "musician",
-              "source": "musicista"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "The band plays rock music.",
-              "source": "Il gruppo musicale suona musica rock.",
-              "words": [
-                "The",
-                "band",
-                "plays",
-                "rock",
-                "music."
-              ]
-            },
-            {
-              "target": "The drummer hits the drums.",
-              "source": "Il batterista batte i tamburi.",
-              "words": [
-                "The",
-                "drummer",
-                "hits",
-                "the",
-                "drums."
-              ]
-            },
-            {
-              "target": "The singer sings into the microphone.",
-              "source": "Il cantante canta nel microfono.",
-              "words": [
-                "The",
-                "singer",
-                "sings",
-                "into",
-                "the",
-                "microphone."
-              ]
-            },
-            {
-              "target": "The audience claps for the band.",
-              "source": "Il pubblico applaude al gruppo musicale.",
-              "words": [
-                "The",
-                "audience",
-                "claps",
-                "for",
-                "the",
-                "band."
-              ]
-            },
-            {
-              "target": "On stage, the musicians perform.",
-              "source": "Sul palco, i musicisti eseguono.",
-              "words": [
-                "On",
-                "stage,",
-                "the",
-                "musicians",
-                "perform."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 264319,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 817,
-        "totalCompletionTokens": 295,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 224811,
-            "promptTokens": 622,
-            "completionTokens": 268
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T14:16:30.461Z",
-      "updatedAt": "2026-06-12T14:20:15.329Z",
-      "id": "tp_1899378454"
-    },
-    {
-      "topic": "quattro",
-      "topicEmoji": "4",
-      "userTopic": "quattro: 4",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\n\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\n\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
-      "continuedFrom": "un gruppo musicale?",
-      "continuedFromId": "tp_1899378454",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "quattro: 4",
-          "desc": "numeri e amici",
-          "icon": "🔢",
-          "vocab": [
-            {
-              "target": "guitar",
-              "source": "chitarra"
-            },
-            {
-              "target": "drummer",
-              "source": "batterista"
-            },
-            {
-              "target": "concert",
-              "source": "concerto"
-            },
-            {
-              "target": "singer",
-              "source": "cantante"
-            },
-            {
-              "target": "stage",
-              "source": "scena"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Four played guitar with his friends.",
-              "source": "Quattro suonava la chitarra con i suoi amici.",
-              "words": [
-                "Four",
-                "played",
-                "guitar",
-                "with",
-                "his",
-                "friends."
-              ]
-            },
-            {
-              "target": "The drummer hit the drums loudly.",
-              "source": "Il batterista batté forte sui tamburi.",
-              "words": [
-                "The",
-                "drummer",
-                "hit",
-                "the",
-                "drums",
-                "loudly."
-              ]
-            },
-            {
-              "target": "They had a concert in the park.",
-              "source": "Hanno avuto un concerto in park.",
-              "words": [
-                "They",
-                "had",
-                "a",
-                "concert",
-                "in",
-                "the",
-                "park."
-              ]
-            },
-            {
-              "target": "The singer sang a beautiful song.",
-              "source": "La cantante cantò una bella canzone.",
-              "words": [
-                "The",
-                "singer",
-                "sang",
-                "a",
-                "beautiful",
-                "song."
-              ]
-            },
-            {
-              "target": "On the stage, everyone could see the musicians.",
-              "source": "Sulla scena, tutti potevano vedere i musicisti.",
-              "words": [
-                "On",
-                "the",
-                "stage,",
-                "everyone",
-                "could",
-                "see",
-                "the",
-                "musicians."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 234963,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 833,
-        "totalCompletionTokens": 256,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 200738,
-            "promptTokens": 643,
-            "completionTokens": 237
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T14:23:33.556Z",
-      "updatedAt": "2026-06-12T14:26:54.349Z",
-      "id": "tp_651463930"
-    },
-    {
-      "topic": "6 x 7 = 42",
-      "topicEmoji": "📚",
-      "userTopic": "6 x 7 = 42",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "In the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\n\nBut let’s see, where is 𝑖?\nWhere’s our little guy?\n\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "In the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\n\nBut let’s see, where is 𝑖?\nWhere’s our little guy?\n\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
-      "continuedFrom": "Troverà una famiglia?",
-      "continuedFromId": "tp_1209779487",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Sette e zero",
-          "desc": "Numeri grandi, numeri eroi, 42 e il suo gioco",
-          "icon": "🔢",
-          "vocab": [
-            {
-              "target": "seven",
-              "source": "sette"
-            },
-            {
-              "target": "zero",
-              "source": "zero"
-            },
-            {
-              "target": "hero",
-              "source": "eroe"
-            },
-            {
-              "target": "smart",
-              "source": "intelligente"
-            },
-            {
-              "target": "answer",
-              "source": "risposta"
-            },
-            {
-              "target": "creepy",
-              "source": "spaventoso"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Seven is a hero here.",
-              "source": "Sette è un eroe qui.",
-              "words": [
-                "Seven",
-                "is",
-                "a",
-                "hero",
-                "here."
-              ]
-            },
-            {
-              "target": "Zero is not smart.",
-              "source": "Zero non è intelligente.",
-              "words": [
-                "Zero",
-                "is",
-                "not",
-                "smart."
-              ]
-            },
-            {
-              "target": "Forty-two thinks he knows all the answers.",
-              "source": "Quarantadue pensa di sapere tutte le risposte.",
-              "words": [
-                "Forty-two",
-                "thinks",
-                "he",
-                "knows",
-                "all",
-                "the",
-                "answers."
-              ]
-            },
-            {
-              "target": "But no one really has all the answers.",
-              "source": "Ma nessuno ha davvero tutte le risposte.",
-              "words": [
-                "But",
-                "no",
-                "one",
-                "really",
-                "has",
-                "all",
-                "the",
-                "answers."
-              ]
-            },
-            {
-              "target": "Where is the creepy guy?",
-              "source": "Dove è il tipo spaventoso?",
-              "words": [
-                "Where",
-                "is",
-                "the",
-                "creepy",
-                "guy?"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "ls_1781273405030",
-          "type": "math",
-          "title": "① ② ③",
-          "desc": "＋ － ×  ÷",
-          "icon": "🔢",
-          "numbers": [
-            7,
-            4,
-            6,
-            9,
-            5,
-            3
-          ],
-          "difficulty": 1,
-          "exercises": [
-            {
-              "type": "math_order",
-              "direction": "desc",
-              "numbers": [
-                4,
-                3,
-                7,
-                5
-              ],
-              "correct": [
-                "7",
-                "5",
-                "4",
-                "3"
-              ]
-            },
-            {
-              "type": "math_order",
-              "direction": "asc",
-              "numbers": [
-                6,
-                3,
-                7,
-                5
-              ],
-              "correct": [
-                "3",
-                "5",
-                "6",
-                "7"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "9",
-              "op": "+",
-              "b": "9",
-              "correct": "18",
-              "choices": [
-                "19",
-                "18",
-                "17",
-                "16"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "3",
-              "op": "+",
-              "b": "4",
-              "correct": "7",
-              "choices": [
-                "8",
-                "6",
-                "5",
-                "7"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "9",
-              "op": "+",
-              "b": "5",
-              "correct": "14",
-              "choices": [
-                "12",
-                "14",
-                "13",
-                "15"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "9",
-              "op": "+",
-              "b": "5",
-              "correct": "14",
-              "choices": [
-                "15",
-                "13",
-                "14",
-                "12"
-              ]
-            },
-            {
-              "type": "math_calc",
-              "a": "7",
-              "op": "-",
-              "b": "7",
-              "correct": "0",
-              "choices": [
-                "1",
-                "0",
-                "2",
-                "3"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "ls_1781273650978",
-          "title": "Sette e numeri",
-          "desc": "Un viaggio tra i numeri e le moltiplicazioni",
-          "icon": "🔢",
-          "vocab": [
-            {
-              "target": "seven",
-              "source": "sette"
-            },
-            {
-              "target": "multiplication",
-              "source": "moltiplicazione"
-            },
-            {
-              "target": "equals",
-              "source": "uguale"
-            },
-            {
-              "target": "times",
-              "source": "per"
-            },
-            {
-              "target": "know",
-              "source": "sapere"
-            },
-            {
-              "target": "family",
-              "source": "famiglia"
-            },
-            {
-              "target": "little",
-              "source": "piccolo"
-            },
-            {
-              "target": "place",
-              "source": "posto"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "Seven times six equals forty-two.",
-              "source": "Sette per sei uguale quarantadue.",
-              "words": [
-                "Seven",
-                "times",
-                "six",
-                "equals",
-                "forty-two."
-              ]
-            },
-            {
-              "target": "I know my family always says seven is lucky.",
-              "source": "Sapere che la mia famiglia dice sempre che sette è fortunato.",
-              "words": [
-                "I",
-                "know",
-                "my",
-                "family",
-                "always",
-                "says",
-                "seven",
-                "is",
-                "lucky."
-              ]
-            },
-            {
-              "target": "In a little place, a number grew up to be forty-two.",
-              "source": "In un piccolo posto, un numero è cresciuto diventando quarantadue.",
-              "words": [
-                "In",
-                "a",
-                "little",
-                "place,",
-                "a",
-                "number",
-                "grew",
-                "up",
-                "to",
-                "be",
-                "forty-two."
-              ]
-            },
-            {
-              "target": "Every evening, the number forty-two looks at the world with its eyes wide open.",
-              "source": "Ogni sera, il numero quarantadue guarda il mondo con gli occhi spalancati.",
-              "words": [
-                "Every",
-                "evening,",
-                "the",
-                "number",
-                "forty-two",
-                "looks",
-                "at",
-                "the",
-                "world",
-                "with",
-                "its",
-                "eyes",
-                "wide",
-                "open."
-              ]
-            },
-            {
-              "target": "Forty-two is the product of seven times six.",
-              "source": "Quarantadue è il prodotto di sette per sei.",
-              "words": [
-                "Forty-two",
-                "is",
-                "the",
-                "product",
-                "of",
-                "seven",
-                "times",
-                "six."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 621863,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 692,
-        "totalCompletionTokens": 260,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 196193,
-            "promptTokens": 629,
-            "completionTokens": 247
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T14:04:58.740Z",
-      "updatedAt": "2026-06-12T14:14:10.978Z",
-      "id": "tp_1105600292"
-    },
-    {
-      "topic": "Troverà una famiglia?",
-      "topicEmoji": "🏠",
-      "userTopic": "Troverà una famiglia?",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "“Do you know me?” asked 𝑖.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”\n\n“Are you my family?” asked 𝑖.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\n\n𝑖 burst into tears.",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "“Do you know me?” asked 𝑖.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”\n\n“Are you my family?” asked 𝑖.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\n\n𝑖 burst into tears.",
-      "continuedFrom": "I 7",
-      "continuedFromId": "tp_101952",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Troverà una famiglia?",
-          "desc": "Cerca di capire chi è e se ha una famiglia.",
-          "icon": "🔍",
-          "vocab": [
-            {
-              "target": "know",
-              "source": "sapere"
-            },
-            {
-              "target": "family",
-              "source": "famiglia"
-            },
-            {
-              "target": "little",
-              "source": "piccolo"
-            },
-            {
-              "target": "place",
-              "source": "posto"
-            },
-            {
-              "target": "number",
-              "source": "numero"
-            },
-            {
-              "target": "evening",
-              "source": "sera"
-            },
-            {
-              "target": "path",
-              "source": "strada"
-            },
-            {
-              "target": "world",
-              "source": "mondo"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "He looked at me with confusion.",
-              "source": "Mi guardò con confusione.",
-              "words": [
-                "He",
-                "looked",
-                "at",
-                "me",
-                "with",
-                "confusion."
-              ]
-            },
-            {
-              "target": "I have a little brother.",
-              "source": "Ho un fratellino.",
-              "words": [
-                "I",
-                "have",
-                "a",
-                "little",
-                "brother."
-              ]
-            },
-            {
-              "target": "Seven is my number.",
-              "source": "Sette è il mio numero.",
-              "words": [
-                "Seven",
-                "is",
-                "my",
-                "number."
-              ]
-            },
-            {
-              "target": "We grew up on the path.",
-              "source": "Ci siamo cresciuti sulla strada.",
-              "words": [
-                "We",
-                "grew",
-                "up",
-                "on",
-                "the",
-                "path."
-              ]
-            },
-            {
-              "target": "In the evening, we played in the world.",
-              "source": "La sera, giocavamo nel mondo.",
-              "words": [
-                "In",
-                "the",
-                "evening,",
-                "we",
-                "played",
-                "in",
-                "the",
-                "world."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 285853,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 885,
-        "totalCompletionTokens": 280,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 241615,
-            "promptTokens": 688,
-            "completionTokens": 251
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T13:50:09.441Z",
-      "updatedAt": "2026-06-12T13:54:11.121Z",
-      "id": "tp_1209779487"
-    },
-    {
-      "topic": "+−∗/",
-      "topicEmoji": "+",
-      "userTopic": "+ − ∗ /",
-      "lang": "en",
-      "srcLang": "it",
-      "difficulty": 1,
-      "storyLen": 350,
-      "story": "In the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle 𝑖 wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\n\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
-      "storyLang": "target",
-      "storyPrompt": "User-provided story",
-      "userStory": "In the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle 𝑖 wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\n\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
-      "continuedFrom": "Il piccolo io 𝑖.",
-      "continuedFromId": "tp_1974761801",
-      "storyStyle": "children",
-      "lessons": [
-        {
-          "id": 1,
-          "title": "Numeri e segni",
-          "desc": "Sottrazione, moltiplicazione, divisione e addizione",
-          "icon": "+",
-          "vocab": [
-            {
-              "target": "addition",
-              "source": "sommazione"
-            },
-            {
-              "target": "subtraction",
-              "source": "sottrazione"
-            },
-            {
-              "target": "multiplication",
-              "source": "moltiplicazione"
-            },
-            {
-              "target": "division",
-              "source": "divisione"
-            },
-            {
-              "target": "equals",
-              "source": "uguale"
-            },
-            {
-              "target": "plus",
-              "source": "più"
-            },
-            {
-              "target": "minus",
-              "source": "meno"
-            },
-            {
-              "target": "times",
-              "source": "per"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "She learned to add and subtract.",
-              "source": "Lei ha imparato a sommare e sottrarre.",
-              "words": [
-                "She",
-                "learned",
-                "to",
-                "add",
-                "and",
-                "subtract."
-              ]
-            },
-            {
-              "target": "Multiplication is like adding many times.",
-              "source": "La moltiplicazione è come fare più somme.",
-              "words": [
-                "Multiplication",
-                "is",
-                "like",
-                "adding",
-                "many",
-                "times."
-              ]
-            },
-            {
-              "target": "Division helps us share equally.",
-              "source": "La divisione ci aiuta a condividere in modo equo.",
-              "words": [
-                "Division",
-                "helps",
-                "us",
-                "share",
-                "equally."
-              ]
-            },
-            {
-              "target": "Equals means the same as.",
-              "source": "Uguale significa lo stesso di.",
-              "words": [
-                "Equals",
-                "means",
-                "the",
-                "same",
-                "as."
-              ]
-            },
-            {
-              "target": "Plus and minus are opposite signs.",
-              "source": "Più e meno sono segni opposti.",
-              "words": [
-                "Plus",
-                "and",
-                "minus",
-                "are",
-                "opposite",
-                "signs."
-              ]
-            }
-          ]
-        }
-      ],
-      "generationStats": {
-        "totalMs": 253029,
-        "backend": "ollama",
-        "model": "qwen2.5:7b",
-        "lessonFormat": "json",
-        "totalPromptTokens": 814,
-        "totalCompletionTokens": 303,
-        "lessons": [
-          {
-            "lessonNum": 1,
-            "ms": 214919,
-            "promptTokens": 621,
-            "completionTokens": 277
-          }
-        ]
-      },
-      "generatedAt": "2026-06-12T13:13:54.621Z",
-      "updatedAt": "2026-06-12T13:17:29.604Z",
-      "id": "tp_147948051"
     },
     {
       "topic": "Eliza und der CO2-Cycle",
