@@ -307,13 +307,20 @@ function mergeFlagsIntoTopic(existing, incoming) {
     if (!exL) exL = (existing.lessons || [])[idx];
     if (!exL) return;
     FA.forEach(([kind, idField]) => {
-      (inL[kind] || []).forEach(inIt => {
-        if (!inIt || !(inIt.userFlag || inIt.userRating)) return;
+      (inL[kind] || []).forEach((inIt, inIdx) => {
+        if (!inIt || !(inIt.userFlag || inIt.userRating || inIt.userDelete || inIt.editedAt)) return;
         const key = String(inIt[idField] == null ? '' : inIt[idField]);
-        const exIt = (exL[kind] || []).find(x => String(x[idField] == null ? '' : x[idField]) === key);
+        let exIt = (exL[kind] || []).find(x => String(x[idField] == null ? '' : x[idField]) === key);
+        // An edited item may have changed its identity field (target/base); fall back to position.
+        if (!exIt && inIt.editedAt) exIt = (exL[kind] || [])[inIdx];
         if (!exIt) return;
         if (inIt.userFlag)   { exIt.userFlag   = inIt.userFlag;   applied++; }
         if (inIt.userRating) { exIt.userRating = inIt.userRating; applied++; }
+        if (inIt.userDelete) { exIt.userDelete = inIt.userDelete; applied++; }
+        // editedAt is carried as a REVIEW MARKER only — the proposed content is NOT applied
+        // (that needs the side-by-side review UI). The maintainer sees the ✎ edited badge and
+        // can pull the new text from the submitted file or use full-replace.
+        if (inIt.editedAt)   { exIt.editedAt   = inIt.editedAt;   applied++; }
       });
     });
     if (Array.isArray(inL._miscFlags) && inL._miscFlags.length) {

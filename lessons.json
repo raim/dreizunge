@@ -2,6 +2,24 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1848224281",
+      "title": "Language Learning Evolved",
+      "icon": "📖",
+      "chapters": [
+        "tp_17816038862680000091",
+        "tp_17816045547280000115",
+        "tp_17816054439060000253"
+      ],
+      "lang": "de",
+      "srcLang": "en",
+      "createdAt": "2026-06-16T09:58:06.303Z",
+      "updatedAt": "2026-06-16T11:12:31.200Z",
+      "summary": "The story follows the development of a language learning app that uses advanced language models to provide personalized and interactive learning experiences. Over several weeks, the app was optimized and enhanced with new features, including interactive dialogues with virtual assistants that simulate real-life scenarios to improve communication skills. The app integrates corpora and grammatical rules into interactive exercises, allowing users to systematically improve their language skills and receive evaluations on both grammar and stylistic quality.",
+      "tags": [
+        "manually curated"
+      ]
+    },
+    {
       "id": "sl_1172165689",
       "title": "i تكتشف",
       "icon": "🔍",
@@ -160,24 +178,6 @@
       "tags": [
         "manually curated",
         "children"
-      ]
-    },
-    {
-      "id": "sl_1848224281",
-      "title": "Language Learning Evolved",
-      "icon": "📖",
-      "chapters": [
-        "tp_17816038862680000091",
-        "tp_17816045547280000115",
-        "tp_17816054439060000253"
-      ],
-      "lang": "de",
-      "srcLang": "en",
-      "createdAt": "2026-06-16T09:58:06.303Z",
-      "updatedAt": "2026-06-16T11:12:31.200Z",
-      "summary": "The story follows the development of a language learning app that uses advanced language models to provide personalized and interactive learning experiences. Over several weeks, the app was optimized and enhanced with new features, including interactive dialogues with virtual assistants that simulate real-life scenarios to improve communication skills. The app integrates corpora and grammatical rules into interactive exercises, allowing users to systematically improve their language skills and receive evaluations on both grammar and stylistic quality.",
-      "tags": [
-        "manually curated"
       ]
     },
     {
@@ -18935,8 +18935,12 @@
           "icon": "📱📝",
           "vocab": [
             {
-              "target": "integrierte",
-              "source": "integrated"
+              "target": "integriert",
+              "source": "integrated",
+              "editedAt": "2026-06-26T16:55:52.316Z",
+              "_manualEdits": [
+                "2026-06-26T16:55:52.321Z"
+              ]
             },
             {
               "target": "Sprachkorpora",
@@ -19046,7 +19050,8 @@
                 "Fähigkeiten."
               ]
             }
-          ]
+          ],
+          "_checked": "2026-06-26T16:55:52.324Z"
         },
         {
           "id": 1,
@@ -19392,7 +19397,12 @@
                 }
               ],
               "antonyms": [],
-              "homophones": []
+              "homophones": [],
+              "userFlag": {
+                "comment": "kein deutsches wort",
+                "correct": "",
+                "at": "2026-06-26T13:33:20.354Z"
+              }
             },
             {
               "base": "interaktiven",
@@ -19439,7 +19449,7 @@
         ]
       },
       "generatedAt": "2026-06-16T10:11:40.373Z",
-      "updatedAt": "2026-06-24T02:29:14.431Z",
+      "updatedAt": "2026-06-26T16:57:15.236Z",
       "id": "tp_17816054439060000253"
     },
     {
@@ -19617,7 +19627,12 @@
             },
             {
               "target": "erfasst",
-              "source": "to capture"
+              "source": "to capture",
+              "userFlag": {
+                "comment": "",
+                "correct": "",
+                "at": "2026-06-26T14:15:09.650Z"
+              }
             },
             {
               "target": "fortgeschritten",
@@ -19764,7 +19779,7 @@
         ]
       },
       "generatedAt": "2026-06-16T10:00:17.848Z",
-      "updatedAt": "2026-06-16T11:48:47.546Z",
+      "updatedAt": "2026-06-26T16:57:15.264Z",
       "id": "tp_17816045547280000115",
       "aiStory": "Die App wurde in den nächsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihre individuellen Bedürfnisse zu passen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte."
     },
@@ -19789,7 +19804,12 @@
           "vocab": [
             {
               "target": "entwickeln",
-              "source": "to develop"
+              "source": "to develop",
+              "userFlag": {
+                "comment": "",
+                "correct": "",
+                "at": "2026-06-26T13:56:46.575Z"
+              }
             },
             {
               "target": "Sprachlernapp",
@@ -19937,7 +19957,7 @@
         ]
       },
       "generatedAt": "2026-06-16T09:53:35.493Z",
-      "updatedAt": "2026-06-16T10:58:11.304Z",
+      "updatedAt": "2026-06-26T16:57:15.280Z",
       "id": "tp_17816038862680000091",
       "aiStory": "Wir entwickeln ein neues LLM-basiertes Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfasst und zu erfüllen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung.",
       "continuedFromId": null,

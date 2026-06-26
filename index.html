@@ -412,7 +412,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .story-lang-lbl{font-size:11px;font-weight:900;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 7px;color:var(--gray-dark);letter-spacing:.04em}
 
 /* ══ GEN STATS ═══════════════════════════════════════════════════════ */
-.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}.lesson-actions{display:none;flex-wrap:wrap;gap:8px;padding:14px 16px 4px;border-top:1.5px solid var(--gray-mid);margin-top:12px;justify-content:center;align-items:center}.lesson-actions.visible{display:flex}.lesson-editor{display:none;background:var(--white);border-top:2px solid var(--gray-mid);border-bottom:2px solid var(--gray-mid);padding:16px;margin-top:12px;width:100vw;position:relative;left:50%;transform:translateX(-50%);box-sizing:border-box;max-width:900px}.lesson-editor.open{display:block}.editor-entry{border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px 12px;margin-bottom:10px}.editor-entry.flagged{border-color:#ff9600;background:#fff8ee}.editor-entry.starred{border-color:#e0b000;background:#fffbe8}.editor-entry.flagged.starred{border-color:#ff9600;background:#fff7e6}.ee-star-note{display:inline-block;font-size:11px;font-weight:800;color:#b58900;background:#fff3c4;border-radius:5px;padding:1px 7px;margin-top:4px}.editor-field{display:flex;align-items:center;gap:10px;margin-bottom:6px}.editor-field label{font-size:12px;font-weight:800;color:var(--gray-dark);width:60px;flex-shrink:0}.editor-field input,.editor-field textarea{flex:1;font-size:15px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:5px 10px;background:var(--white);color:var(--text)}.editor-filter{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;font-weight:700}
+.gen-stats{font-size:11px;color:var(--gray-dark);font-weight:600;text-align:center;margin:0 0 14px;opacity:.8;line-height:1.6}.lesson-actions{display:none;flex-wrap:wrap;gap:8px;padding:14px 16px 4px;border-top:1.5px solid var(--gray-mid);margin-top:12px;justify-content:center;align-items:center}.lesson-actions.visible{display:flex}.lesson-editor{display:none;background:var(--white);border-top:2px solid var(--gray-mid);border-bottom:2px solid var(--gray-mid);padding:16px;margin-top:12px;width:100vw;position:relative;left:50%;transform:translateX(-50%);box-sizing:border-box;max-width:900px}.lesson-editor.open{display:block}.editor-entry{border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px 12px;margin-bottom:10px}.editor-entry.flagged{border-color:#ff9600;background:#fff8ee}.editor-entry.starred{border-color:#e0b000;background:#fffbe8}.editor-entry.flagged.starred{border-color:#ff9600;background:#fff7e6}.ee-star-note{display:inline-block;font-size:11px;font-weight:800;color:#b58900;background:#fff3c4;border-radius:5px;padding:1px 7px;margin-top:4px}.editor-entry.del-candidate{border-color:#e53935;background:#fff0f0}.ee-del-note{display:inline-block;font-size:11px;font-weight:800;color:#c62828;background:#ffd6d6;border-radius:5px;padding:1px 7px;margin-top:4px}.editor-field{display:flex;align-items:center;gap:10px;margin-bottom:6px}.editor-field label{font-size:12px;font-weight:800;color:var(--gray-dark);width:60px;flex-shrink:0}.editor-field input,.editor-field textarea{flex:1;font-size:15px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:5px 10px;background:var(--white);color:var(--text)}.editor-filter{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;font-weight:700}
 
 /* ══ LIB FILTER ══════════════════════════════════════════════════════ */
 .lib-filter-btn{background:var(--white);border:2px solid var(--gray-mid);border-radius:16px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--gray-dark);transition:border-color .1s,background .1s}
@@ -1719,7 +1719,7 @@ function _topicHasPending(topic){
   let n = 0;
   (topic && topic.lessons || []).forEach(L => {
     [L.vocab, L.sentences, L.items, L.words].forEach(arr => {
-      if (Array.isArray(arr)) arr.forEach(it => { if (it && (it.userFlag || it.userRating)) n++; });
+      if (Array.isArray(arr)) arr.forEach(it => { if (it && (it.userFlag || it.userRating || it.userDelete)) n++; });
     });
     if (Array.isArray(L._miscFlags)) n += L._miscFlags.length;
   });
@@ -1728,7 +1728,7 @@ function _topicHasPending(topic){
 // Tallies pending local flags/ratings across the static lesson bundle, and which topics
 // (and storylines) they touch — drives the pill text and the scoped download.
 function _countStaticPending(){
-  let flags = 0, ratings = 0; const topics = new Set();
+  let flags = 0, ratings = 0, deletes = 0; const topics = new Set();
   _staticLessonSource().forEach(topic => {
     let touched = false;
     (topic.lessons || []).forEach(L => {
@@ -1736,48 +1736,42 @@ function _countStaticPending(){
         if (Array.isArray(arr)) arr.forEach(it => {
           if (it && it.userFlag) { flags++; touched = true; }
           if (it && it.userRating) { ratings++; touched = true; }
+          if (it && it.userDelete) { deletes++; touched = true; }
         });
       });
       if (Array.isArray(L._miscFlags) && L._miscFlags.length) { flags += L._miscFlags.length; touched = true; }
     });
     if (touched) topics.add(topic.topic);
   });
-  return { flags, ratings, total: flags + ratings, topics: [...topics] };
+  return { flags, ratings, deletes, total: flags + ratings + deletes, topics: [...topics] };
 }
 function updateStaticFlagBanner(){
   const banner = document.getElementById('static-flag-banner');
   if (!banner) return;
   if (typeof STATIC_LESSONS === 'undefined') { banner.style.display = 'none'; return; }  // live build saves server-side
   _ensureStaticFlagsLoaded();   // restore any flags persisted from a previous session
-  const { flags, ratings } = _countStaticPending();
+  const { flags, ratings, deletes } = _countStaticPending();
   const editedTopics = (APP._staticDirtyTopics && APP._staticDirtyTopics.size) || 0;
-  if ((flags + ratings + editedTopics) === 0 || APP._pillDismissed) { banner.style.display = 'none'; return; }
+  if ((flags + ratings + deletes + editedTopics) === 0 || APP._pillDismissed) { banner.style.display = 'none'; return; }
   const txt = document.getElementById('static-flag-banner-text');
   if (txt) {
-    // flags (⚑) and stars (⭐) shown next to the download button; bare emoji + count needs
-    // no translation, so it's inline (not in ui.json). Word-bearing strings use t() below.
+    // flags (⚑), stars (⭐), delete candidates (🗑) shown next to the download button; bare
+    // emoji + count needs no translation, so it's inline. Word-bearing strings use t().
     const chips = [];
     if (flags) chips.push('⚑ ' + flags);
     if (ratings) chips.push('⭐ ' + ratings);
+    if (deletes) chips.push('🗑 ' + deletes);
     txt.textContent = chips.length ? chips.join('  ') + '  ' + t('static.pill.tosubmit') : t('static.pill.edits_only');
   }
-  // A submit (GitHub issue) link is revealed only after a download (below).
   banner.style.display = 'flex';
-  // Dynamic per-storyline scoping: if every pending topic (flagged or edited) belongs to a
-  // single storyline, point the download at just that storyline (and label it).
+  // The download always exports every complete storyline that has any flag/edit (plus orphan
+  // flagged topics) — not just one storyline or the last-flagged chapter.
   const btn = document.getElementById('download-flagged-btn');
-  if (btn) {
-    const pendingIds = new Set(_staticLessonSource().filter(_topicPendingOrEdited).map(l => l.id).filter(Boolean));
-    const sls = (APP.storylines || []).filter(s => (s.chapters || []).some(cid => pendingIds.has(cid)));
-    if (sls.length === 1) {
-      const sid = sls[0].id, title = sls[0].title || 'storyline';
-      btn.onclick = () => downloadUserFlaggedLessons(sid);
-      btn.textContent = t('static.pill.download_scoped', { title });
-    } else {
-      btn.onclick = () => downloadUserFlaggedLessons();
-      btn.textContent = t('static.pill.download');
-    }
-  }
+  if (btn) { btn.onclick = () => downloadUserFlaggedLessons(); btn.textContent = t('static.pill.download'); }
+  // The submit link points to a previously-downloaded file; a new flag/edit makes it stale, so
+  // hide it until the next download re-reveals it with the current file.
+  const link = document.getElementById('static-flag-submit-link');
+  if (link) link.style.display = 'none';
   const closeBtn = document.getElementById('static-flag-close-btn');
   if (closeBtn) closeBtn.title = t('static.pill.dismiss');
 }
@@ -1794,22 +1788,31 @@ function _markStaticEdited(){
   const d = APP.lessonData;
   if (d && d.id) (APP._staticDirtyTopics = APP._staticDirtyTopics || new Set()).add(d.id);
   APP._pillDismissed = false;
+  try { _saveStaticEdits(); _saveStaticFlags(); } catch (_) {}   // persist content edits + flags across reloads
   try { updateStaticFlagBanner(); } catch (_) {}
 }
-// Build the export payload for the pending-flag topics. If a storylineId is given, scope to
-// that storyline's chapters; otherwise export every topic that carries pending flags/ratings.
+// Build the export payload. By default (pill) it exports EVERY complete storyline that has any
+// flagged/rated/edited chapter (all of that storyline's chapters, for full context), plus any
+// flagged orphan topics — not just one storyline or the last-flagged chapter. An explicit
+// storylineId scopes to that one storyline's complete chapter set.
 function _flaggedExportPayload(storylineId){
   const src = _staticLessonSource();
-  let lessons;
+  const storylines = APP.storylines || [];
+  const pendingIds = new Set(src.filter(_topicPendingOrEdited).map(l => l.id).filter(Boolean));
+  const inAnyStoryline = new Set();
+  storylines.forEach(s => (s.chapters || []).forEach(c => inAnyStoryline.add(c)));
+  const wantIds = new Set();
   let scopeTitle = '';
-  const sl = storylineId && (APP.storylines || []).find(s => s.id === storylineId);
-  if (sl) {
-    const ids = new Set(sl.chapters || []);
-    lessons = src.filter(l => ids.has(l.id) && _topicPendingOrEdited(l));
-    scopeTitle = sl.title || '';
+  if (storylineId) {
+    const sl = storylines.find(s => s.id === storylineId);
+    if (sl) { (sl.chapters || []).forEach(c => wantIds.add(c)); scopeTitle = sl.title || ''; }
   } else {
-    lessons = src.filter(_topicPendingOrEdited);
+    storylines.forEach(s => {
+      if ((s.chapters || []).some(c => pendingIds.has(c))) (s.chapters || []).forEach(c => wantIds.add(c));
+    });
+    src.forEach(l => { if (l.id && pendingIds.has(l.id) && !inAnyStoryline.has(l.id)) wantIds.add(l.id); });  // orphans
   }
+  const lessons = src.filter(l => l.id && wantIds.has(l.id));
   return { payload: { lessons, scope: scopeTitle || null, mergeFlags: true, exportedAt: new Date().toISOString(), exportedBy: 'dreizunge-static-user' }, count: lessons.length, scopeTitle };
 }
 // Download the flagged lessons as JSON, then reveal the "submit as a GitHub issue" link.
@@ -1846,6 +1849,7 @@ function _revealSubmitLink(scopeTitle, fname){
 // and re-apply on first use. localStorage (not a cookie): ~5MB, not sent to the server,
 // per-browser/device. Cross-device sync is the accounts/repo feature (see platform_plan.md).
 const _staticFlagsKey = 'dz_static_flags';
+const _staticEditsKey = 'dz_static_edits';
 const _FLAG_ARRAYS = [['vocab','target'], ['sentences','target'], ['items','sentence'], ['words','base']];
 // Snapshot all pending per-item flags/ratings + _miscFlags from the bundle into a plain map.
 function _collectStaticFlags(){
@@ -1856,8 +1860,8 @@ function _collectStaticFlags(){
       const items = {};
       _FLAG_ARRAYS.forEach(([kind, idField]) => {
         (L[kind] || []).forEach(it => {
-          if (it && (it.userFlag || it.userRating)) {
-            const e = {}; if (it.userFlag) e.f = it.userFlag; if (it.userRating) e.r = it.userRating;
+          if (it && (it.userFlag || it.userRating || it.userDelete)) {
+            const e = {}; if (it.userFlag) e.f = it.userFlag; if (it.userRating) e.r = it.userRating; if (it.userDelete) e.d = it.userDelete;
             items[kind + ':' + String(it[idField] == null ? '' : it[idField])] = e;
           }
         });
@@ -1888,7 +1892,7 @@ function _applyStaticFlags(){
         const ci = k.indexOf(':'), kind = k.slice(0, ci), idVal = k.slice(ci + 1);
         const spec = _FLAG_ARRAYS.find(a => a[0] === kind); if (!spec) return;
         const it = (L[kind] || []).find(x => String(x[spec[1]] == null ? '' : x[spec[1]]) === idVal);
-        if (it) { if (e.f) it.userFlag = e.f; if (e.r) it.userRating = e.r; }
+        if (it) { if (e.f) it.userFlag = e.f; if (e.r) it.userRating = e.r; if (e.d) it.userDelete = e.d; }
       });
       if (Array.isArray(data.misc) && data.misc.length) L._miscFlags = data.misc.slice();
     });
@@ -1898,7 +1902,49 @@ function _applyStaticFlags(){
 function _ensureStaticFlagsLoaded(){
   if (typeof STATIC_LESSONS === 'undefined' || APP._staticFlagsLoaded) return;
   APP._staticFlagsLoaded = true;
-  try { _applyStaticFlags(); } catch (_) {}
+  try { _applyStaticEdits(); } catch (_) {}   // restore content edits (by position) first
+  try { _applyStaticFlags(); } catch (_) {}   // then flags/ratings/deletes (by identity)
+}
+// ── Static build: persist content edits across reloads ────────────────────────────
+// A content edit (item.editedAt set) changes the very field used as a flag identity key, so
+// edits are persisted by POSITION (topicId · lessonIdx · kind · index) — the static bundle is
+// rebuilt deterministically, so positions are stable. Snapshots the whole edited item.
+function _collectStaticEdits(){
+  const out = {};
+  _staticLessonSource().forEach(topic => {
+    const tid = topic.id || topic.topic; if (!tid) return;
+    (topic.lessons || []).forEach((L, li) => {
+      _FLAG_ARRAYS.forEach(([kind]) => {
+        (L[kind] || []).forEach((it, idx) => {
+          if (it && it.editedAt) (out[tid] = out[tid] || {})[li + ':' + kind + ':' + idx] = it;
+        });
+      });
+    });
+  });
+  return out;
+}
+function _saveStaticEdits(){
+  if (typeof STATIC_LESSONS === 'undefined') return;
+  _ensureStaticFlagsLoaded();                           // never clobber unread persisted state
+  try { localStorage.setItem(_staticEditsKey, JSON.stringify(_collectStaticEdits())); } catch (_) {}
+}
+// Re-apply persisted content edits onto the fresh bundle (by position) and re-mark their
+// topics dirty so the pill still prompts a submission after a reload.
+function _applyStaticEdits(){
+  if (typeof STATIC_LESSONS === 'undefined') return;
+  let saved; try { saved = JSON.parse(localStorage.getItem(_staticEditsKey) || '{}'); } catch (_) { return; }
+  const byTid = {}; _staticLessonSource().forEach(t => { byTid[t.id || t.topic] = t; });
+  Object.entries(saved).forEach(([tid, items]) => {
+    const topic = byTid[tid]; if (!topic) return;
+    let any = false;
+    Object.entries(items).forEach(([key, snap]) => {
+      const ci = key.indexOf(':'), li = key.slice(0, ci), rest = key.slice(ci + 1);
+      const cj = rest.indexOf(':'), kind = rest.slice(0, cj), idx = rest.slice(cj + 1);
+      const arr = topic.lessons && topic.lessons[+li] && topic.lessons[+li][kind];
+      if (arr && arr[+idx]) { Object.assign(arr[+idx], snap); any = true; }
+    });
+    if (any && topic.id) (APP._staticDirtyTopics = APP._staticDirtyTopics || new Set()).add(topic.id);
+  });
 }
 
 function loadFlagged(){ try{ return JSON.parse(localStorage.getItem('imp3_flagged')||'{}'); }catch(e){ return {}; } }
@@ -5265,6 +5311,10 @@ function mathDeleteExercise(li, ei) {
   const ls = APP.lessonData?.lessons[li];
   if (!ls || !ls.exercises) return;
   _syncEditorFromDOM(li);   // preserve unsaved edits (title/number pool/etc.) before re-render
+  if (typeof STATIC_LESSONS !== 'undefined' && _staticSoftDelete(ls.exercises[ei])) {
+    renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+    return;
+  }
   ls.exercises.splice(ei, 1);
   // Re-render in place — openLessonEditor() toggles and would close the editor.
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
@@ -5307,6 +5357,10 @@ function synEditorDeleteEntry(li, wi) {
   const ls = APP.lessonData?.lessons?.[li];
   if (!ls || !Array.isArray(ls.words) || !ls.words[wi]) return;
   _syncEditorFromDOM(li);
+  if (typeof STATIC_LESSONS !== 'undefined' && _staticSoftDelete(ls.words[wi])) {
+    renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+    return;
+  }
   ls.words.splice(wi, 1);
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
@@ -5424,7 +5478,7 @@ function _editorBranchGrammar(ls, li, flaggedOnly){
     if (!visItems.length) html += `<em style="color:var(--gray-dark);font-size:13px">No items</em>`;
     visItems.forEach(g => {
       const flagged = isFlagged('grammar', g.target);
-      html += `<div class="editor-entry${flagged?' flagged':''}" id="ee-${li}-grammar-${g._i}">
+      html += `<div class="editor-entry${flagged?' flagged':''}${g.userDelete?' del-candidate':''}" id="ee-${li}-grammar-${g._i}">
         <div style="display:flex;justify-content:flex-end;gap:4px;margin-bottom:2px">
           <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','grammar',${g._i},-1)" ${g._i===0?'disabled':''}>↑</button>
           <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','grammar',${g._i},1)" ${g._i===visItems.length-1?'disabled':''}>↓</button>
@@ -5445,7 +5499,7 @@ function _editorBranchConjugation(ls, li, flaggedOnly){
   let html = '';
 
     (ls.conjugations||[]).forEach((c,ci) => {
-      html += `<div class="editor-entry" style="margin-bottom:12px" id="ee-${li}-conj-${ci}">
+      html += `<div class="editor-entry${c.userDelete?' del-candidate':''}" style="margin-bottom:12px" id="ee-${li}-conj-${ci}">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
           <span style="font-size:12px;font-weight:800;color:var(--blue-dark);flex:1">${escHtml(c.infinitive||'')} <span style="color:var(--gray-dark);font-weight:600">${escHtml(c.tense||'')}</span></span>
           <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','conj',${ci})">🗑</button>
@@ -5582,25 +5636,27 @@ function _editorBranchMath(ls, li, flaggedOnly){
       const flagBtn = _flagBtnHtml(li, 'math', ei, ex);
       const flagBox = _flagBoxHtml(li, 'math', ei, ex, false);
       const starCls = ex.userRating ? ' starred' : '';
+      const delCls = ex.userDelete ? ' del-candidate' : '';
       const starNote = _starNoteHtml(ex);
+      const delNote = _delNoteHtml(ex);
       if (ex.type === 'math_order') {
-        html += `<div class="editor-entry${ex.userFlag?' flagged':''}${starCls}" style="font-size:13px">
+        html += `<div class="editor-entry${ex.userFlag?' flagged':''}${starCls}${delCls}" style="font-size:13px">
           <span style="font-weight:700;color:var(--blue-dark)">${ei+1}.</span>
           Sort ${ex.direction==='asc'?'↑':'↓'}: [${(ex.numbers||[]).join(', ')}]
           → <span style="color:var(--green-dark)">[${(ex.correct||[]).join(', ')}]</span>
           <span style="float:right;display:flex;gap:4px">${flagBtn}<button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px"
-            onclick="mathDeleteExercise(${li},${ei})">🗑</button></span>${flagBox}${starNote}</div>`;
+            onclick="mathDeleteExercise(${li},${ei})">🗑</button></span>${flagBox}${starNote}${delNote}</div>`;
       } else if (ex.type === 'math_calc') {
-        html += `<div class="editor-entry${ex.userFlag?' flagged':''}${starCls}" style="font-size:13px">
+        html += `<div class="editor-entry${ex.userFlag?' flagged':''}${starCls}${delCls}" style="font-size:13px">
           <span style="font-weight:700;color:var(--blue-dark)">${ei+1}.</span>
           ${ex.a} ${ex.op} ${ex.b} = <span style="color:var(--green-dark)">${ex.correct}</span>
           <span style="font-size:11px;color:var(--gray-dark)"> choices: [${(ex.choices||[]).join(', ')}]</span>
           <span style="float:right;display:flex;gap:4px">${flagBtn}<button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px"
-            onclick="mathDeleteExercise(${li},${ei})">🗑</button></span>${flagBox}${starNote}</div>`;
+            onclick="mathDeleteExercise(${li},${ei})">🗑</button></span>${flagBox}${starNote}${delNote}</div>`;
       } else if (ex.type === 'math_latex') {
         // LLM-generated LaTeX exercise — read-only display, with delete + flag only.
         const ch = (ex.choices||[]).map(c => c===ex.correct ? `<b style="color:var(--green-dark)">${escHtml(String(c))}</b>` : escHtml(String(c))).join(', ');
-        html += `<div class="editor-entry${ex.userFlag?' flagged':''}${starCls}" style="font-size:13px">
+        html += `<div class="editor-entry${ex.userFlag?' flagged':''}${starCls}${delCls}" style="font-size:13px">
           <div style="display:flex;align-items:flex-start;gap:6px">
             <span style="font-weight:700;color:var(--blue-dark)">${ei+1}.</span>
             <div style="flex:1;min-width:0">
@@ -5610,7 +5666,7 @@ function _editorBranchMath(ls, li, flaggedOnly){
             </div>
             <span style="display:flex;gap:4px">${flagBtn}<button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px"
               onclick="mathDeleteExercise(${li},${ei})">🗑</button></span>
-          </div>${flagBox}${starNote}</div>`;
+          </div>${flagBox}${starNote}${delNote}</div>`;
       }
     });
 
@@ -5623,7 +5679,7 @@ function _editorBranchSynonyms(ls, li, flaggedOnly){
     const words = ls.words || [];
     if (!words.length) html += `<em style="color:var(--gray-dark);font-size:13px">No words</em>`;
     words.forEach((g, wi) => {
-      html += `<div class="editor-entry${g.userFlag?' flagged':''}${g.userRating?' starred':''}" id="ee-${li}-syn-${wi}">
+      html += `<div class="editor-entry${g.userFlag?' flagged':''}${g.userRating?' starred':''}${g.userDelete?' del-candidate':''}" id="ee-${li}-syn-${wi}">
         <div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-bottom:2px">
           ${_flagBtnHtml(li, 'syn', wi, g)}
           <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="synEditorDeleteEntry(${li},${wi})" title="Delete this whole word entry">🗑 entry</button>
@@ -5646,6 +5702,7 @@ function _editorBranchSynonyms(ls, li, flaggedOnly){
       });
       html += _flagBoxHtml(li, 'syn', wi, g, false);
       html += _starNoteHtml(g);
+      html += _delNoteHtml(g);
       html += `</div>`;
     });
 
@@ -5659,7 +5716,7 @@ function _editorBranchWordForms(ls, li, flaggedOnly){
     if (!items.length) html += `<em style="color:var(--gray-dark);font-size:13px">No items</em>`;
     items.forEach((it, fi) => {
       const choices = Array.isArray(it.choices) ? it.choices : [];
-      html += `<div class="editor-entry${it.userFlag?' flagged':''}${it.userRating?' starred':''}" id="ee-${li}-wf-${fi}">
+      html += `<div class="editor-entry${it.userFlag?' flagged':''}${it.userRating?' starred':''}${it.userDelete?' del-candidate':''}" id="ee-${li}-wf-${fi}">
         <div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-bottom:2px">
           ${_flagBtnHtml(li, 'wf', fi, it)}
           <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','wf',${fi})">🗑</button>
@@ -5678,6 +5735,7 @@ function _editorBranchWordForms(ls, li, flaggedOnly){
         </div>`).join('')}
         ${_flagBoxHtml(li, 'wf', fi, it, false)}
         ${_starNoteHtml(it)}
+        ${_delNoteHtml(it)}
       </div>`;
     });
 
@@ -5689,8 +5747,8 @@ function _editorBranchStandard(ls, li, flaggedOnly){
 
     // Vocab / sentences
     const items = [
-      ...(ls.vocab||[]).map((v,i) => ({type:'vocab', i, target:v.target, source:v.source, qc:v.qc, userFlag:v.userFlag, userRating:v.userRating, editedAt:v.editedAt})),
-      ...(ls.sentences||[]).map((s,i) => ({type:'sentence', i, target:s.target, source:s.source, qc:s.qc, userFlag:s.userFlag, userRating:s.userRating, editedAt:s.editedAt})),
+      ...(ls.vocab||[]).map((v,i) => ({type:'vocab', i, target:v.target, source:v.source, qc:v.qc, userFlag:v.userFlag, userRating:v.userRating, userDelete:v.userDelete, editedAt:v.editedAt})),
+      ...(ls.sentences||[]).map((s,i) => ({type:'sentence', i, target:s.target, source:s.source, qc:s.qc, userFlag:s.userFlag, userRating:s.userRating, userDelete:s.userDelete, editedAt:s.editedAt})),
     ];
     const visItems = flaggedOnly ? items.filter(it => it.qc || it.userFlag) : items;
     if (!visItems.length) html += `<em style="color:var(--gray-dark);font-size:13px">${flaggedOnly?'No flagged items':'No items'}</em>`;
@@ -5698,7 +5756,7 @@ function _editorBranchStandard(ls, li, flaggedOnly){
       const flagged = !!(it.qc || it.userFlag);
       const fkey = `${li}:${it.type}:${it.i}`;
       const boxOpen = APP._flagOpen === fkey || !!it.userFlag;
-      html += `<div class="editor-entry${flagged?' flagged':''}${it.userRating?' starred':''}" id="ee-${li}-${it.type}-${it.i}">
+      html += `<div class="editor-entry${flagged?' flagged':''}${it.userRating?' starred':''}${it.userDelete?' del-candidate':''}" id="ee-${li}-${it.type}-${it.i}">
         <div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-bottom:2px">
           ${it.editedAt?`<span style="margin-right:auto;font-size:10px;font-weight:800;color:var(--gray-dark);opacity:.85" title="${escAttr(it.editedAt)}">✎ ${t('editor.edited')}</span>`:''}
           ${_flagBtnHtml(li, it.type, it.i, it)}
@@ -5710,6 +5768,7 @@ function _editorBranchStandard(ls, li, flaggedOnly){
         <div class="editor-field"><label>Source</label><input data-li="${li}" data-type="${it.type}" data-fi="${it.i}" data-field="source" data-orig="${escAttr(it.source||'')}" value="${escAttr(it.source||'')}"></div>
         ${_flagBoxHtml(li, it.type, it.i, it, true)}
         ${_starNoteHtml(it)}
+        ${_delNoteHtml(it)}
         ${it.qc?`<div style="display:flex;align-items:center;gap:8px;margin-top:4px;font-size:13px;background:#fff3df;border-radius:6px;padding:5px 8px">
           <span style="font-weight:800;color:#b35900">${t('qc.editor.suggests')} <span style="font-size:11px;opacity:.75">${it.qc.field==='target'?t('qc.editor.in_target'):t('qc.editor.in_source')}</span></span>
           <span style="flex:1;color:var(--text)">${escHtml(it.qc.sug||'')}</span>
@@ -5786,6 +5845,18 @@ function _flagBtnHtml(li, type, fi, item){
 // Visible "⭐ good example" indicator for a starred editor item (parallel to the flag box).
 function _starNoteHtml(item){
   return (item && item.userRating) ? `<div class="ee-star-note">${t('editor.good_example')}</div>` : '';
+}
+// Static-build "delete candidate" marker. Deleting a question in the static build doesn't
+// destroy it — it toggles item.userDelete (shown red; rides the export/merge like a flag) so a
+// maintainer can confirm or reject the removal. Returns true when handled (static only).
+function _staticSoftDelete(item){
+  if (typeof STATIC_LESSONS === 'undefined' || !item) return false;
+  if (item.userDelete) delete item.userDelete; else item.userDelete = { at: new Date().toISOString() };
+  try { _markStaticEdited(); } catch (_) {}
+  return true;
+}
+function _delNoteHtml(item){
+  return (item && item.userDelete) ? `<div class="ee-del-note">${t('editor.delete_candidate')}</div>` : '';
 }
 // Flag comment/correct box + the "you suggested" row. `applyable` controls whether the
 // correct-version can be auto-applied to .target (only meaningful for vocab/sentence).
@@ -6076,6 +6147,12 @@ function deleteEditorItem(li, type, idx) {
   const ls = APP.lessonData?.lessons[li];
   if (!ls) return;
   _syncEditorFromDOM(li);   // preserve unsaved edits to other entries before re-render
+  // Static build: mark as delete candidate instead of destroying it (rides the export).
+  const _ARR = { vocab:'vocab', sentence:'sentences', grammar:'grammar', conj:'conjugations', 'eh-edit':'edits', wf:'items' }[type];
+  if (typeof STATIC_LESSONS !== 'undefined' && _staticSoftDelete(_ARR && ls[_ARR] && ls[_ARR][idx])) {
+    renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
+    return;
+  }
   if (type === 'vocab')    { ls.vocab    = (ls.vocab||[]).filter((_,i)=>i!==idx); }
   else if (type === 'sentence') { ls.sentences = (ls.sentences||[]).filter((_,i)=>i!==idx); }
   else if (type === 'grammar')  { ls.grammar   = (ls.grammar||[]).filter((_,i)=>i!==idx); }
@@ -6228,7 +6305,7 @@ function findEhErrors(li) {
     const editsContainer = document.getElementById('eh-editor-' + li + '-edits');
     if (editsContainer) {
       editsContainer.innerHTML = (ls.edits||[]).map((e,ei) => `
-        <div class="editor-entry" id="eh-editor-${li}-edit-${ei}">
+        <div class="editor-entry${e.userDelete?' del-candidate':''}" id="eh-editor-${li}-edit-${ei}">
           <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','eh-edit',${ei})">🗑</button></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px">
             <div class="editor-field"><label>Correct</label><input data-li="${li}" data-type="eh-edit" data-fi="${ei}" data-field="find" value="${escAttr(e.find||'')}"></div>
@@ -6555,7 +6632,7 @@ function buildExercises(lessonIdx){
   // userFlag or a QC suggestion on the source item). Teacher mode and the lesson editor
   // keep them visible so the flag content can be reviewed/fixed. Live builds are unaffected.
   if (typeof STATIC_LESSONS !== 'undefined' && !APP._teacherMode && Array.isArray(ex)) {
-    ex = ex.filter(e => { const it = _exFlagTarget(e); return !(it && (it.userFlag || it.qc)); });
+    ex = ex.filter(e => { const it = _exFlagTarget(e); return !(it && (it.userFlag || it.qc || it.userDelete)); });
   }
   return ex;
 }
@@ -8608,9 +8685,10 @@ async function importLessons(input){
     const body = (data.schemaVersion >= 29 && data.topics)
       ? { ...data }
       : { lessons: payload };
-    // A flag submission (the static "download & submit" export) is merged flags-only so it
-    // can't clobber the maintainer's content; full exports overwrite as before.
-    if (data && (data.mergeFlags === true || data.exportedBy === 'dreizunge-static-user')) body.mergeFlags = true;
+    // A flag/edit submission (the static "download & submit" export) can be merged flags-only
+    // so it can't clobber your content, or fully replace the matching topics — your choice.
+    const isFlagSubmission = !!(data && (data.mergeFlags === true || data.exportedBy === 'dreizunge-static-user'));
+    if (isFlagSubmission) body.mergeFlags = confirm(t('toast.import_merge_confirm'));
     const r=await fetch('/api/lessons/import',{method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(body)});

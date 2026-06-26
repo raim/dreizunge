@@ -138,9 +138,8 @@ usable for crowd-sourced corrections:
   helpers + a save/reload/reapply round-trip + structural guards in `unit-static-flags`); the
   actual pill/editor rendering, the blob download, the GitHub link, and persistence-across-
   reload need a browser pass. Also TODO: i18n for the non-English pill strings (English in
-  `ui.json`; other langs generated offline); **content edits are not persisted across reloads**
-  (only flags/ratings are — the pill now nudges a download before reload, else edits are lost);
-  and styling polish on the floating pill (position/size are a first cut).
+  `ui.json`; other langs generated offline); and styling polish on the floating pill
+  (position/size are a first cut).
 - ✅ **Import merge mode (v47).** A submitted flag file imports via the existing **⬆ Import**
   button: `/api/lessons/import` now honors `body.mergeFlags`, and the client auto-sets it when
   the file is a flag submission (`exportedBy:'dreizunge-static-user'`, and the pill marks
@@ -152,12 +151,34 @@ usable for crowd-sourced corrections:
   Note: merge mode is **flags-only** — a submitter's *content* edit is applied only if they
   also flagged it (the flag carries the comment/correct value the maintainer applies); to take
   a submission's content wholesale, import it without the merge marker (overwrite).
+- ✅ **Soft-delete in static (v47).** Deleting a question in the static build no longer
+  destroys it — it toggles a `userDelete` marker (entry shown **red** + a note; click 🗑 again
+  to undo), hidden from non-teacher play, counted in the pill (🗑 N), and it rides the
+  export/persistence/merge exactly like a flag (full round-trip for vocab/sentences/word_forms/
+  synonyms; grammar/conj/math mark + ride the overwrite export but aren't in the
+  persist/merge arrays). Live build still hard-deletes.
+- ✅ **Pill download = all complete storylines (v47).** The pill now always exports **every
+  complete storyline** (all its chapters, for full context) that has any flagged/rated/edited
+  chapter, plus flagged orphan topics — no longer scoped to one storyline or the last-flagged
+  chapter. The submit link is hidden when a new flag/edit makes the last download stale, and
+  re-revealed (refreshed) on the next download.
+- ✅ **Import: merge vs replace is an explicit choice (v47).** Importing a flag submission now
+  prompts (`toast.import_merge_confirm`): OK = merge flags/ratings/deletes only (keep your
+  content), Cancel = full replace. Non-submission files replace as before.
+- ✅ **Content edits persist across reloads + surfaced on merge (v47).** Content edits
+  (`item.editedAt`) are now persisted to localStorage (`dz_static_edits`) by **position**
+  (topicId·lessonIdx·kind·index — edits can change the identity field, so index keying is the
+  stable choice) and re-applied on load (re-marking the topic dirty so the pill still prompts).
+  On import **merge** mode now also carries the `editedAt` **marker** (with an index fallback
+  when the edited item's identity changed) so the maintainer sees the ✎ edited badge — the
+  proposed *content* is still NOT auto-applied (that's the review-UI TODO below); to take the
+  new text, use full-replace or the side-by-side review UI when built.
 - **TODO (later) — content merge with a review UI.** Beyond flags-only merge, support
   merging a submission's *content* edits with a side-by-side interface that shows the original
   vs the edited item and lets the maintainer accept/reject each change (a 3-way/diff review,
-  not last-write-wins). This is the safe way to ingest community content edits; until then
-  content edits ride only via the overwrite path or a flag comment. (Larger UI task — pairs
-  naturally with the P2 map-tree / list views.)
+  not last-write-wins). The `editedAt` markers above already tell the maintainer *which* items
+  to review; this UI shows the actual proposed text and applies accepted changes. (Larger UI
+  task — pairs naturally with the P2 map-tree / list views.)
 
 ## Suggested sequence
 P1 (examples.json batch-gen + QC) → minor features #1–#3 (small, high-value, mostly reuse) →
