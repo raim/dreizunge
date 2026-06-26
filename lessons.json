@@ -2,6 +2,34 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1172165689",
+      "title": "i تكتشف",
+      "icon": "🔍",
+      "chapters": [
+        "tp_17824678810030000009",
+        "tp_17824682478370000180",
+        "tp_17824685854690000203",
+        "tp_17824688123810000351",
+        "tp_17824690770610000447",
+        "tp_17824693264190000513",
+        "tp_17824695809340000611",
+        "tp_17824698158710000734",
+        "tp_17824700597030000842",
+        "tp_17824703642070000958",
+        "tp_17824706158760001035"
+      ],
+      "lang": "en",
+      "srcLang": "ar",
+      "createdAt": "2026-06-26T09:58:01.040Z",
+      "updatedAt": "2026-06-26T11:01:39.585Z",
+      "summary": "في هذه القصة، تكتشف الصغيرة i أنها لا تنتمي إلى عالم الأرقام حيث يحدد كل رقم مكانه. تجوب i العالم بحثاً عن مكانها الحقيقي، وتواجه العديد من الأرقام الغريبة مثل سبع وثمانية. في النهاية، تكتشف i أنها ليست رقمًا بل i، وأن هذا هو مكانها الحقيقي. يدعمها الرقم صفر في هذه الرحلة، مما يساعد i على القبول بنفسها.",
+      "sourceFile": "book-3.pdf",
+      "tags": [
+        "children",
+        "needs native speaker"
+      ]
+    },
+    {
       "id": "sl_1051537691",
       "title": "In het getallenrijk",
       "icon": "🔢",
@@ -971,6 +999,3635 @@
     }
   ],
   "topics": [
+    {
+      "topic": "ربما يكون الأمر هـ",
+      "topicEmoji": "💖",
+      "userTopic": "Maybe she didn’t have to be Seven",
+      "userPrompt": "Maybe she didn’t have to be Seven\n\n[story]\nMaybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "continuedFrom": "i تكتشف",
+      "continuedFromId": "tp_17824703642070000958",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "ربما لم تكن سبع",
+          "desc": "ربما، ربما، ربما، ربما",
+          "icon": "💡",
+          "vocab": [
+            {
+              "target": "maybe",
+              "source": "ربما"
+            },
+            {
+              "target": "seven",
+              "source": "سبع"
+            },
+            {
+              "target": "one",
+              "source": "واحد"
+            },
+            {
+              "target": "number",
+              "source": "رقم"
+            },
+            {
+              "target": "simply",
+              "source": "بس"
+            },
+            {
+              "target": "feels",
+              "source": "يشعر",
+              "qc": {
+                "sug": "يشعر بال",
+                "field": "source",
+                "at": "2026-06-26T11:17:00.688Z"
+              }
+            },
+            {
+              "target": "right",
+              "source": "صحيح"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Maybe she didn’t have to be seven.",
+              "source": "ربما لم تكن سبع",
+              "words": [
+                "Maybe",
+                "she",
+                "didn’t",
+                "have",
+                "to",
+                "be",
+                "seven."
+              ],
+              "qc": {
+                "sug": "ربما لم تكن يجب أن تكون سبع",
+                "field": "source",
+                "at": "2026-06-26T11:17:14.108Z"
+              }
+            },
+            {
+              "target": "Maybe she didn’t have to be one.",
+              "source": "ربما لم تكن واحده",
+              "words": [
+                "Maybe",
+                "she",
+                "didn’t",
+                "have",
+                "to",
+                "be",
+                "one."
+              ],
+              "qc": {
+                "sug": "ربما لم تكن مضطرة للbeing one",
+                "field": "target",
+                "at": "2026-06-26T11:17:22.627Z"
+              }
+            },
+            {
+              "target": "Maybe she didn’t even have to be a number.",
+              "source": "ربما لم تكن حتى رقم",
+              "words": [
+                "Maybe",
+                "she",
+                "didn’t",
+                "even",
+                "have",
+                "to",
+                "be",
+                "a",
+                "number."
+              ],
+              "qc": {
+                "sug": "ربما لم تكن حتى رقمًا",
+                "field": "source",
+                "at": "2026-06-26T11:17:30.170Z"
+              }
+            },
+            {
+              "target": "Maybe she could simply be i.",
+              "source": "ربما كانت ببساطة i",
+              "words": [
+                "Maybe",
+                "she",
+                "could",
+                "simply",
+                "be",
+                "i."
+              ],
+              "qc": {
+                "sug": "ربما كانت ببساطة i.",
+                "field": "source",
+                "at": "2026-06-26T11:17:40.772Z"
+              }
+            },
+            {
+              "target": "And somehow, that felt just right.",
+              "source": "و Somehow، ذلك شعر بالصحيح",
+              "words": [
+                "And",
+                "somehow,",
+                "that",
+                "felt",
+                "just",
+                "right."
+              ],
+              "qc": {
+                "sug": "و Somehow، ذلك شعر بال洽当",
+                "field": "source",
+                "at": "2026-06-26T11:17:53.106Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 620,
+            "completionTokens": 248,
+            "ms": 97863,
+            "at": "2026-06-26T10:41:02.180Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "ربما لم تكن سبعة",
+          "desc": "ربما، ربما، ربما، ربما",
+          "icon": "🤔",
+          "vocab": [
+            {
+              "target": "maybe",
+              "source": "ربما"
+            },
+            {
+              "target": "she",
+              "source": "هي"
+            },
+            {
+              "target": "didn't",
+              "source": "لم"
+            },
+            {
+              "target": "have",
+              "source": "لدي",
+              "qc": {
+                "sug": "I have",
+                "field": "source",
+                "at": "2026-06-26T11:18:05.549Z"
+              }
+            },
+            {
+              "target": "to",
+              "source": "ل",
+              "qc": {
+                "sug": "إلى",
+                "field": "source",
+                "at": "2026-06-26T11:18:09.890Z"
+              }
+            },
+            {
+              "target": "be",
+              "source": "أن"
+            },
+            {
+              "target": "seven",
+              "source": "سبع"
+            },
+            {
+              "target": "finite",
+              "source": "محدود"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Maybe she didn't have to be seven.",
+              "source": "ربما لم تكن سبعة",
+              "words": [
+                "Maybe",
+                "she",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "seven."
+              ],
+              "qc": {
+                "sug": "ربما لم تكن يجب أن تكون سبعة",
+                "field": "source",
+                "at": "2026-06-26T11:18:29.079Z"
+              }
+            },
+            {
+              "target": "She didn't have to be one.",
+              "source": "لم تكن واحدة",
+              "words": [
+                "She",
+                "didn't",
+                "have",
+                "to",
+                "be",
+                "one."
+              ],
+              "qc": {
+                "sug": "لم تكن مضطرة لتكون واحدة",
+                "field": "source",
+                "at": "2026-06-26T11:18:37.130Z"
+              }
+            },
+            {
+              "target": "Maybe she could be zero.",
+              "source": "ربما كانت صفر",
+              "words": [
+                "Maybe",
+                "she",
+                "could",
+                "be",
+                "zero."
+              ],
+              "qc": {
+                "sug": "ربما كانت صفرًا",
+                "field": "source",
+                "at": "2026-06-26T11:18:42.901Z"
+              }
+            },
+            {
+              "target": "She didn't even have to be a number.",
+              "source": "لم تكن حتى رقم",
+              "words": [
+                "She",
+                "didn't",
+                "even",
+                "have",
+                "to",
+                "be",
+                "a",
+                "number."
+              ],
+              "qc": {
+                "sug": "لم تكن حتى رقمية",
+                "field": "source",
+                "at": "2026-06-26T11:18:50.583Z"
+              }
+            },
+            {
+              "target": "Maybe she could simply be i.",
+              "source": "ربما كانت مجرد i",
+              "words": [
+                "Maybe",
+                "she",
+                "could",
+                "simply",
+                "be",
+                "i."
+              ],
+              "qc": {
+                "sug": "ربما كانت مجرد",
+                "field": "source",
+                "at": "2026-06-26T11:18:56.345Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 804,
+            "completionTokens": 279,
+            "ms": 153644,
+            "at": "2026-06-26T10:43:35.825Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 97898,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 620,
+        "totalCompletionTokens": 248,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 97863,
+            "promptTokens": 620,
+            "completionTokens": 248
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T10:39:24.282Z",
+      "updatedAt": "2026-06-26T11:18:56.346Z",
+      "id": "tp_17824706158760001035"
+    },
+    {
+      "topic": "i تكتشف",
+      "topicEmoji": "💡",
+      "userTopic": "“Of course",
+      "userPrompt": "“Of course\n\n[story]\n“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 52,
+      "story": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "continuedFrom": "صفر يتحدث",
+      "continuedFromId": "tp_17824700597030000842",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "بالطبع",
+          "desc": "عبارات تؤكد",
+          "icon": "✅",
+          "vocab": [
+            {
+              "target": "of course",
+              "source": "بالطبع"
+            },
+            {
+              "target": "one",
+              "source": "واحد"
+            },
+            {
+              "target": "seven",
+              "source": "سبع"
+            },
+            {
+              "target": "forty-two",
+              "source": "اربعون واثنان",
+              "qc": {
+                "sug": "اثنان واربعون",
+                "field": "source",
+                "at": "2026-06-26T11:14:56.109Z"
+              }
+            },
+            {
+              "target": "okay",
+              "source": "مقبول"
+            },
+            {
+              "target": "zero",
+              "source": "صفر"
+            },
+            {
+              "target": "exactly",
+              "source": "بالضبط"
+            },
+            {
+              "target": "cried",
+              "source": "بكيت"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Of course, I'm not one.",
+              "source": "بالطبع، أنا ليس واحد.",
+              "words": [
+                "Of",
+                "course,",
+                "I'm",
+                "not",
+                "one."
+              ],
+              "qc": {
+                "sug": "بالطبع، أنا ليس واحداً.",
+                "field": "source",
+                "at": "2026-06-26T11:15:16.035Z"
+              }
+            },
+            {
+              "target": "Of course, I'm not seven.",
+              "source": "بالطبع، أنا ليس سبع.",
+              "words": [
+                "Of",
+                "course,",
+                "I'm",
+                "not",
+                "seven."
+              ],
+              "qc": {
+                "sug": "بالطبع، أنا ليسseven.",
+                "field": "source",
+                "at": "2026-06-26T11:15:21.719Z"
+              }
+            },
+            {
+              "target": "Of course, I'm not forty-two.",
+              "source": "بالطبع، أنا ليس اربعون واثنان.",
+              "words": [
+                "Of",
+                "course,",
+                "I'm",
+                "not",
+                "forty-two."
+              ],
+              "qc": {
+                "sug": "بالطبع، أنا لا أبلغ أربعين واثنين.",
+                "field": "source",
+                "at": "2026-06-26T11:15:31.322Z"
+              }
+            },
+            {
+              "target": "That's okay.",
+              "source": "هذا مقبول.",
+              "words": [
+                "That's",
+                "okay."
+              ]
+            },
+            {
+              "target": "For the first time all day, she stopped crying.",
+              "source": "في المرة الأولى اليوم، انتهت بكاؤها",
+              "words": [
+                "For",
+                "the",
+                "first",
+                "time",
+                "all",
+                "day,",
+                "she",
+                "stopped",
+                "crying."
+              ],
+              "qc": {
+                "sug": "في المرة الأولى من اليوم، انتهت بكاؤها",
+                "field": "source",
+                "at": "2026-06-26T11:15:45.960Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 652,
+            "completionTokens": 257,
+            "ms": 190295,
+            "at": "2026-06-26T10:37:30.103Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "بالطبع",
+          "desc": "عبارات تؤكد",
+          "icon": "😊",
+          "vocab": [
+            {
+              "target": "of course",
+              "source": "بالطبع"
+            },
+            {
+              "target": "sad",
+              "source": "حزين"
+            },
+            {
+              "target": "smiled",
+              "source": "ابتسم"
+            },
+            {
+              "target": "finite",
+              "source": "محدود"
+            },
+            {
+              "target": "kind",
+              "source": "لطيف"
+            },
+            {
+              "target": "screaming",
+              "source": "صرخ"
+            },
+            {
+              "target": "finished",
+              "source": "انتهى"
+            },
+            {
+              "target": "room",
+              "source": "غرفة"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I'm not sad anymore.",
+              "source": "أنا لا أشعر بالحزن الآن.",
+              "words": [
+                "I'm",
+                "not",
+                "sad",
+                "anymore."
+              ]
+            },
+            {
+              "target": "He smiled quietly beside me.",
+              "source": "ابتسم بصمت بجانبي.",
+              "words": [
+                "He",
+                "smiled",
+                "quietly",
+                "beside",
+                "me."
+              ]
+            },
+            {
+              "target": "She thought for a moment.",
+              "source": "فكرت للحين",
+              "words": [
+                "She",
+                "thought",
+                "for",
+                "a",
+                "moment."
+              ],
+              "qc": {
+                "sug": "فكرت لحظة",
+                "field": "source",
+                "at": "2026-06-26T11:16:29.085Z"
+              }
+            },
+            {
+              "target": "The room was always quiet.",
+              "source": "كانت الغرفة دائما صامتة",
+              "words": [
+                "The",
+                "room",
+                "was",
+                "always",
+                "quiet."
+              ],
+              "qc": {
+                "sug": "كان الغرفة دائماً صامتة",
+                "field": "source",
+                "at": "2026-06-26T11:16:37.859Z"
+              }
+            },
+            {
+              "target": "He eats quietly in the room.",
+              "source": "يأكل بصمت في الغرفة",
+              "words": [
+                "He",
+                "eats",
+                "quietly",
+                "in",
+                "the",
+                "room."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 652,
+            "completionTokens": 257,
+            "ms": 190295,
+            "at": "2026-06-26T10:37:30.103Z"
+          }
+        },
+        {
+          "id": "ls_1782473920781",
+          "type": "math",
+          "title": "😀😀😀",
+          "desc": "+ +",
+          "icon": "😀",
+          "numbers": [
+            0,
+            1,
+            1,
+            2,
+            3,
+            5,
+            8,
+            13,
+            21,
+            34,
+            55,
+            89,
+            144,
+            233,
+            377
+          ],
+          "difficulty": 3,
+          "mathInstruction": "add the fibonacci series as sequentially increasing addition questions starting from 0+1=1, 1+1=2, 1+2=3 and so on, don't skip any step of the fibonacci series.",
+          "exercises": [
+            {
+              "type": "math_calc",
+              "a": "0",
+              "op": "+",
+              "b": "1",
+              "correct": "1",
+              "choices": [
+                "3",
+                "0",
+                "1",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "1",
+              "correct": "2",
+              "choices": [
+                "4",
+                "3",
+                "1",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "2",
+              "correct": "3",
+              "choices": [
+                "4",
+                "2",
+                "3",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "3",
+              "correct": "5",
+              "choices": [
+                "5",
+                "9",
+                "7",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "5",
+              "correct": "8",
+              "choices": [
+                "8",
+                "10",
+                "5",
+                "12"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "8",
+              "correct": "13",
+              "choices": [
+                "15",
+                "13",
+                "8",
+                "17"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "+",
+              "b": "13",
+              "correct": "21",
+              "choices": [
+                "13",
+                "29",
+                "25",
+                "21"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "13",
+              "op": "+",
+              "b": "21",
+              "correct": "34",
+              "choices": [
+                "40",
+                "21",
+                "37",
+                "34"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "21",
+              "op": "+",
+              "b": "34",
+              "correct": "55",
+              "choices": [
+                "61",
+                "55",
+                "34",
+                "58"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "34",
+              "op": "+",
+              "b": "55",
+              "correct": "89",
+              "choices": [
+                "89",
+                "95",
+                "55",
+                "92"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "55",
+              "op": "+",
+              "b": "89",
+              "correct": "144",
+              "choices": [
+                "89",
+                "144",
+                "150",
+                "147"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "89",
+              "op": "+",
+              "b": "144",
+              "correct": "233",
+              "choices": [
+                "236",
+                "240",
+                "144",
+                "233"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "144",
+              "op": "+",
+              "b": "233",
+              "correct": "377",
+              "choices": [
+                "377",
+                "233",
+                "380",
+                "385"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "math",
+            "model": "qwen2.5:7b",
+            "attempts": 1,
+            "valid": 13,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 559,
+            "completionTokens": 593,
+            "ms": 316755,
+            "at": "2026-06-26T11:38:40.781Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 190332,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 652,
+        "totalCompletionTokens": 257,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 82517,
+            "promptTokens": 652,
+            "completionTokens": 257
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T10:34:19.772Z",
+      "updatedAt": "2026-06-26T11:41:40.567Z",
+      "id": "tp_17824703642070000958"
+    },
+    {
+      "topic": "صفر يتحدث",
+      "topicEmoji": "💬",
+      "userTopic": "Then somebody quietly sat beside her",
+      "userPrompt": "Then somebody quietly sat beside her\n\n[story]\nThen somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 66,
+      "story": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "continuedFrom": "معركة العين",
+      "continuedFromId": "tp_17824698158710000734",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "الشخص الذي جلس بجانبها بصمت",
+          "desc": "كلمة عن الصمت والصداقة",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "quietly",
+              "source": "بصمت"
+            },
+            {
+              "target": "beside",
+              "source": "بجانب"
+            },
+            {
+              "target": "said",
+              "source": "قال"
+            },
+            {
+              "target": "smiled",
+              "source": "ابتسم"
+            },
+            {
+              "target": "thought",
+              "source": "فكر",
+              "qc": {
+                "sug": "فكرت",
+                "field": "source",
+                "at": "2026-06-26T11:13:08.049Z"
+              }
+            },
+            {
+              "target": "sad",
+              "source": "حزين"
+            },
+            {
+              "target": "belong",
+              "source": "يتعلق",
+              "qc": {
+                "sug": "تتعلق",
+                "field": "target",
+                "at": "2026-06-26T11:13:13.291Z"
+              }
+            },
+            {
+              "target": "true",
+              "source": "حق",
+              "qc": {
+                "sug": "صحيح",
+                "field": "source",
+                "at": "2026-06-26T11:13:16.670Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Zero was quiet.",
+              "source": "زرو كان صامتا.",
+              "words": [
+                "Zero",
+                "was",
+                "quiet."
+              ],
+              "qc": {
+                "sug": "زرو كان quite.",
+                "field": "source",
+                "at": "2026-06-26T11:13:22.343Z"
+              }
+            },
+            {
+              "target": "Zero sat beside her.",
+              "source": "جلس زرو بجانبها.",
+              "words": [
+                "Zero",
+                "sat",
+                "beside",
+                "her."
+              ]
+            },
+            {
+              "target": "Zero smiled.",
+              "source": "ابتسم زرو.",
+              "words": [
+                "Zero",
+                "smiled."
+              ]
+            },
+            {
+              "target": "Zero thought for a moment.",
+              "source": "فكر زرو لحظة.",
+              "words": [
+                "Zero",
+                "thought",
+                "for",
+                "a",
+                "moment."
+              ],
+              "qc": {
+                "sug": "فكر لحظة واحدة.",
+                "field": "source",
+                "at": "2026-06-26T11:13:37.177Z"
+              }
+            },
+            {
+              "target": "I don’t think that’s true.",
+              "source": "لا أعتقد أن ذلك صحيح.",
+              "words": [
+                "I",
+                "don’t",
+                "think",
+                "that’s",
+                "true."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 667,
+            "completionTokens": 239,
+            "ms": 106270,
+            "at": "2026-06-26T10:32:02.246Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "الشخص يجلس بجانبها بصمت",
+          "desc": "كلمات أساسية عن الصمت والحب",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "quietly",
+              "source": "بصمت"
+            },
+            {
+              "target": "beside",
+              "source": "بجانب"
+            },
+            {
+              "target": "sat",
+              "source": "جلس"
+            },
+            {
+              "target": "somebody",
+              "source": "شخص ما"
+            },
+            {
+              "target": "said",
+              "source": "قال"
+            },
+            {
+              "target": "smiled",
+              "source": "ابتسم"
+            },
+            {
+              "target": "thought",
+              "source": "فكر",
+              "qc": {
+                "sug": "فكرت",
+                "field": "source",
+                "at": "2026-06-26T11:14:02.005Z"
+              }
+            },
+            {
+              "target": "for a moment",
+              "source": "للحين",
+              "qc": {
+                "sug": "لحظة واحدة",
+                "field": "source",
+                "at": "2026-06-26T11:14:08.142Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Zero was quiet.",
+              "source": "Zero كان صامت.",
+              "words": [
+                "Zero",
+                "was",
+                "quiet."
+              ]
+            },
+            {
+              "target": "He never pushed to the front.",
+              "source": "لم يكن يدفع نفسه إلى الأمام.",
+              "words": [
+                "He",
+                "never",
+                "pushed",
+                "to",
+                "the",
+                "front."
+              ]
+            },
+            {
+              "target": "Nobody noticed Zero at all.",
+              "source": "لم يلاحظ أحد وجود Zero أبداً.",
+              "words": [
+                "Nobody",
+                "noticed",
+                "Zero",
+                "at",
+                "all."
+              ]
+            },
+            {
+              "target": "Zero said, 'You look sad.'",
+              "source": "قال Zero: 'تبدو محزوناً.'",
+              "words": [
+                "Zero",
+                "said,",
+                "'You",
+                "look",
+                "sad.'"
+              ],
+              "qc": {
+                "sug": "قال Zero: 'تبدو سعيداً.",
+                "field": "source",
+                "at": "2026-06-26T11:14:35.112Z"
+              }
+            },
+            {
+              "target": "He smiled and said, 'I don’t think that’s true.'",
+              "source": "ابتسم وقال: 'لا أعتقد أن ذلك صحيح.'",
+              "words": [
+                "He",
+                "smiled",
+                "and",
+                "said,",
+                "'I",
+                "don’t",
+                "think",
+                "that’s",
+                "true.'"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 848,
+            "completionTokens": 310,
+            "ms": 137414,
+            "at": "2026-06-26T10:34:19.661Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 106308,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 667,
+        "totalCompletionTokens": 239,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 106270,
+            "promptTokens": 667,
+            "completionTokens": 239
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T10:30:15.938Z",
+      "updatedAt": "2026-06-26T11:14:42.434Z",
+      "id": "tp_17824700597030000842"
+    },
+    {
+      "topic": "معركة العين",
+      "topicEmoji": "💥",
+      "userTopic": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+      "userPrompt": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes\n\n[story]\n∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 85,
+      "story": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "continuedFrom": "ثمانية يصرخ",
+      "continuedFromId": "tp_17824695809340000611",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "كلمات أساسية حول العد الأبدى",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "collapsed",
+              "source": "انهار"
+            },
+            {
+              "target": "lies",
+              "source": "يتوسط",
+              "qc": {
+                "sug": "يكذب",
+                "field": "source",
+                "at": "2026-06-26T11:10:32.585Z"
+              }
+            },
+            {
+              "target": "eyes",
+              "source": "عينيه",
+              "qc": {
+                "sug": "عينيهن",
+                "field": "source",
+                "at": "2026-06-26T11:10:37.244Z"
+              }
+            },
+            {
+              "target": "finite",
+              "source": "محدود"
+            },
+            {
+              "target": "revenge",
+              "source": "انتقام"
+            },
+            {
+              "target": "trembles",
+              "source": "تremeble",
+              "qc": {
+                "sug": "ترتجف",
+                "field": "source",
+                "at": "2026-06-26T11:10:49.003Z"
+              }
+            },
+            {
+              "target": "assemble",
+              "source": "يجمع",
+              "qc": {
+                "sug": "يجمعuxtapose",
+                "field": "source",
+                "at": "2026-06-26T11:10:54.395Z"
+              }
+            },
+            {
+              "target": "commands",
+              "source": "يصدر الأوامر",
+              "qc": {
+                "sug": "يُصدر الأوامر",
+                "field": "source",
+                "at": "2026-06-26T11:10:58.683Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Eight collapsed.",
+              "source": "انهار الثمانية.",
+              "words": [
+                "Eight",
+                "collapsed."
+              ],
+              "qc": {
+                "sug": "ثمانية انهاروا.",
+                "field": "target",
+                "at": "2026-06-26T11:11:05.169Z"
+              }
+            },
+            {
+              "target": "He will find One for revenge.",
+              "source": "سيجد واحدًا للانتقام.",
+              "words": [
+                "He",
+                "will",
+                "find",
+                "One",
+                "for",
+                "revenge."
+              ]
+            },
+            {
+              "target": "i trembles with fear.",
+              "source": "تremeble i بالخوف.",
+              "words": [
+                "i",
+                "trembles",
+                "with",
+                "fear."
+              ],
+              "qc": {
+                "sug": "ت Tremble i بالخوف.",
+                "field": "source",
+                "at": "2026-06-26T11:11:17.370Z"
+              }
+            },
+            {
+              "target": "Numbers command, but to her it’s just mumble.",
+              "source": "الأرقام تصدر الأوامر، ولكن بالنسبة لها فهي مجرد ضجيج.",
+              "words": [
+                "Numbers",
+                "command,",
+                "but",
+                "to",
+                "her",
+                "it’s",
+                "just",
+                "mumble."
+              ]
+            },
+            {
+              "target": "Eight didn’t eat and it scares everyone.",
+              "source": "الثمانية لم يأكل ويجعل الجميع يخافون.",
+              "words": [
+                "Eight",
+                "didn’t",
+                "eat",
+                "and",
+                "it",
+                "scares",
+                "everyone."
+              ],
+              "qc": {
+                "sug": "Eight didn't eat and it scares everyone.",
+                "field": "target",
+                "at": "2026-06-26T11:11:38.294Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 692,
+            "completionTokens": 267,
+            "ms": 119248,
+            "at": "2026-06-26T10:28:20.280Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "∞",
+          "desc": "كلمات أساسية",
+          "icon": "📚",
+          "vocab": [
+            {
+              "target": "finished",
+              "source": "انتهى"
+            },
+            {
+              "target": "kind",
+              "source": "لطيف"
+            },
+            {
+              "target": "screaming",
+              "source": "صرخ"
+            },
+            {
+              "target": "hungry",
+              "source": "جائع"
+            },
+            {
+              "target": "eats",
+              "source": "يأكل"
+            },
+            {
+              "target": "loves",
+              "source": "يحب",
+              "qc": {
+                "sug": "يحبون",
+                "field": "source",
+                "at": "2026-06-26T11:11:57.162Z"
+              }
+            },
+            {
+              "target": "throws",
+              "source": "رمى"
+            },
+            {
+              "target": "table",
+              "source": "طاولة"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Eight collapsed, and now lies.",
+              "source": "ثم تumbled ثم أصبح ملقى",
+              "words": [
+                "Eight",
+                "collapsed,",
+                "and",
+                "now",
+                "lies."
+              ],
+              "qc": {
+                "sug": "ثم تumbled ثم أصبح ملقى",
+                "field": "target",
+                "at": "2026-06-26T11:12:15.740Z"
+              }
+            },
+            {
+              "target": "will he ever open his eyes?",
+              "source": "هل سيقوم يوماً بفتح عينيه؟",
+              "words": [
+                "will",
+                "he",
+                "ever",
+                "open",
+                "his",
+                "eyes?"
+              ],
+              "qc": {
+                "sug": "هل سيقوم يوماً بفتح عينيه؟",
+                "field": "target",
+                "at": "2026-06-26T11:12:29.475Z"
+              }
+            },
+            {
+              "target": "Or is he finite?",
+              "source": "أو هو محدود؟",
+              "words": [
+                "Or",
+                "is",
+                "he",
+                "finite?"
+              ]
+            },
+            {
+              "target": "Little i trembles with fear.",
+              "source": "تتوتر i بالخوف",
+              "words": [
+                "Little",
+                "i",
+                "trembles",
+                "with",
+                "fear."
+              ],
+              "qc": {
+                "sug": "تتوتر i بخوفها",
+                "field": "source",
+                "at": "2026-06-26T11:12:40.703Z"
+              }
+            },
+            {
+              "target": "Eight didn’t eat and it scares everyone.",
+              "source": "لم يأكل ثم أخيف الجميع",
+              "words": [
+                "Eight",
+                "didn’t",
+                "eat",
+                "and",
+                "it",
+                "scares",
+                "everyone."
+              ],
+              "qc": {
+                "sug": "ثمانية لم يأكلوا ويخيفون الجميع",
+                "field": "source",
+                "at": "2026-06-26T11:12:53.473Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 869,
+            "completionTokens": 247,
+            "ms": 115548,
+            "at": "2026-06-26T10:30:15.829Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 119277,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 692,
+        "totalCompletionTokens": 267,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 119248,
+            "promptTokens": 692,
+            "completionTokens": 267
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T10:26:21.003Z",
+      "updatedAt": "2026-06-26T11:12:53.473Z",
+      "id": "tp_17824698158710000734"
+    },
+    {
+      "topic": "ثمانية يصرخ",
+      "topicEmoji": "📣",
+      "userTopic": "As he finished his kind introduction,",
+      "userPrompt": "As he finished his kind introduction,\n\n[story]\nAs he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 72,
+      "story": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "continuedFrom": "واحد",
+      "continuedFromId": "tp_17824693264190000513",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "كانت المقدمة اللطيفة قد انتهت",
+          "desc": "كلمات حول الطعام والجوع",
+          "icon": "🍰",
+          "vocab": [
+            {
+              "target": "finished",
+              "source": "انتهى"
+            },
+            {
+              "target": "kind",
+              "source": "لطيف"
+            },
+            {
+              "target": "screaming",
+              "source": "صرخ"
+            },
+            {
+              "target": "hungry",
+              "source": "جائع"
+            },
+            {
+              "target": "eats",
+              "source": "يأكل"
+            },
+            {
+              "target": "loves",
+              "source": "يحب",
+              "qc": {
+                "sug": "يحبون",
+                "field": "source",
+                "at": "2026-06-26T11:08:49.005Z"
+              }
+            },
+            {
+              "target": "throws",
+              "source": "رمى",
+              "qc": {
+                "sug": "رمّى",
+                "field": "source",
+                "at": "2026-06-26T11:08:51.795Z"
+              }
+            },
+            {
+              "target": "table",
+              "source": "طاولة"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He finished his kind introduction.",
+              "source": "انتهى من مقدمة لطيفة",
+              "words": [
+                "He",
+                "finished",
+                "his",
+                "kind",
+                "introduction."
+              ],
+              "qc": {
+                "sug": "انتهى من مقدمة لطيفة جداً",
+                "field": "source",
+                "at": "2026-06-26T11:09:01.421Z"
+              }
+            },
+            {
+              "target": "Eight is rushing.",
+              "source": "ثمانية يهرع",
+              "words": [
+                "Eight",
+                "is",
+                "rushing."
+              ],
+              "qc": {
+                "sug": "ثمانية يهرعُ",
+                "field": "source",
+                "at": "2026-06-26T11:09:08.948Z"
+              }
+            },
+            {
+              "target": "Eight is hungry.",
+              "source": "ثمانية جائع",
+              "words": [
+                "Eight",
+                "is",
+                "hungry."
+              ],
+              "qc": {
+                "sug": "ثمانية جائعون",
+                "field": "source",
+                "at": "2026-06-26T11:09:15.249Z"
+              }
+            },
+            {
+              "target": "He loves pie.",
+              "source": "يحب الكعكة",
+              "words": [
+                "He",
+                "loves",
+                "pie."
+              ],
+              "qc": {
+                "sug": "يحب الكريمة",
+                "field": "source",
+                "at": "2026-06-26T11:09:19.631Z"
+              }
+            },
+            {
+              "target": "One throws a cable.",
+              "source": "واحد رمى كابل",
+              "words": [
+                "One",
+                "throws",
+                "a",
+                "cable."
+              ],
+              "qc": {
+                "sug": "واحد يرمي كابل",
+                "field": "source",
+                "at": "2026-06-26T11:09:25.022Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 674,
+            "completionTokens": 236,
+            "ms": 125283,
+            "at": "2026-06-26T10:24:11.822Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "البداية الحميمة",
+          "desc": "كلمة في نهاية المقدمة الحميمة",
+          "icon": "👋",
+          "vocab": [
+            {
+              "target": "kind",
+              "source": "ودي",
+              "qc": {
+                "sug": "كريم",
+                "field": "source",
+                "at": "2026-06-26T11:09:28.569Z"
+              }
+            },
+            {
+              "target": "finished",
+              "source": "انتهى"
+            },
+            {
+              "target": "room",
+              "source": "غرفة"
+            },
+            {
+              "target": "disruption",
+              "source": "تعطيل"
+            },
+            {
+              "target": "screaming",
+              "source": "صرخ"
+            },
+            {
+              "target": "hungry",
+              "source": "جائع"
+            },
+            {
+              "target": "always",
+              "source": "دائما"
+            },
+            {
+              "target": "eats",
+              "source": "يأكل"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He finished his kind introduction.",
+              "source": "انتهى من مقدمة حميمة",
+              "words": [
+                "He",
+                "finished",
+                "his",
+                "kind",
+                "introduction."
+              ],
+              "qc": {
+                "sug": "انتهى من مقدمة كريمة",
+                "field": "source",
+                "at": "2026-06-26T11:09:51.495Z"
+              }
+            },
+            {
+              "target": "At the end of the room, there's some disruption.",
+              "source": "في نهاية الغرفة، هناك تعطيل",
+              "words": [
+                "At",
+                "the",
+                "end",
+                "of",
+                "the",
+                "room,",
+                "there's",
+                "some",
+                "disruption."
+              ],
+              "qc": {
+                "sug": "في نهاية الغرفة، هناك تشتيت",
+                "field": "source",
+                "at": "2026-06-26T11:09:59.911Z"
+              }
+            },
+            {
+              "target": "Eight is rushing, screaming.",
+              "source": "ثمانية يهرع، يصرخ",
+              "words": [
+                "Eight",
+                "is",
+                "rushing,",
+                "screaming."
+              ],
+              "qc": {
+                "sug": "ثمانية يهرع، يصرخون",
+                "field": "source",
+                "at": "2026-06-26T11:10:11.029Z"
+              }
+            },
+            {
+              "target": "He loves pie.",
+              "source": "يحب الكعك",
+              "words": [
+                "He",
+                "loves",
+                "pie."
+              ],
+              "qc": {
+                "sug": "يحب الكريمة",
+                "field": "source",
+                "at": "2026-06-26T11:10:15.810Z"
+              }
+            },
+            {
+              "target": "He is almost there, the first at the table.",
+              "source": "هو على وشك الوصول، الأول في الطاولة",
+              "words": [
+                "He",
+                "is",
+                "almost",
+                "there,",
+                "the",
+                "first",
+                "at",
+                "the",
+                "table."
+              ],
+              "qc": {
+                "sug": "هو على وشك الوصول، الأول عند الطاولة",
+                "field": "source",
+                "at": "2026-06-26T11:10:25.178Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 847,
+            "completionTokens": 265,
+            "ms": 129074,
+            "at": "2026-06-26T10:26:20.897Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 125321,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 674,
+        "totalCompletionTokens": 236,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 125283,
+            "promptTokens": 674,
+            "completionTokens": 236
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T10:22:06.501Z",
+      "updatedAt": "2026-06-26T11:10:25.178Z",
+      "id": "tp_17824695809340000611"
+    },
+    {
+      "topic": "واحد",
+      "topicEmoji": "₁",
+      "userTopic": "One is mean, he’s always first,",
+      "userPrompt": "One is mean, he’s always first,\n\n[story]\nOne is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 54,
+      "story": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "continuedFrom": "عالم الأرقام",
+      "continuedFromId": "tp_17824690770610000447",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "أحد الأشخاص قاسي، دائماً في المقدمة",
+          "desc": "تعلم الكلمات الأساسية عن الشخص القاسي والودي",
+          "icon": "😊",
+          "vocab": [
+            {
+              "target": "mean",
+              "source": "قاسي",
+              "qc": {
+                "sug": "قاسٍ",
+                "field": "source",
+                "at": "2026-06-26T11:06:50.539Z"
+              }
+            },
+            {
+              "target": "first",
+              "source": "أول"
+            },
+            {
+              "target": "hurt",
+              "source": "جرح"
+            },
+            {
+              "target": "says",
+              "source": "يقول"
+            },
+            {
+              "target": "sees",
+              "source": "يرى"
+            },
+            {
+              "target": "true",
+              "source": "صحيح"
+            },
+            {
+              "target": "polite",
+              "source": "ودي",
+              "qc": {
+                "sug": "ودود",
+                "field": "source",
+                "at": "2026-06-26T11:07:04.956Z"
+              }
+            },
+            {
+              "target": "met",
+              "source": "التقى",
+              "qc": {
+                "sug": "التقى به",
+                "field": "source",
+                "at": "2026-06-26T11:07:09.257Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He is mean.",
+              "source": "هو قاسي.",
+              "words": [
+                "He",
+                "is",
+                "mean."
+              ],
+              "qc": {
+                "sug": "هو قاسٍ.",
+                "field": "source",
+                "at": "2026-06-26T11:07:13.926Z"
+              }
+            },
+            {
+              "target": "He is always first.",
+              "source": "هو دائماً في المقدمة.",
+              "words": [
+                "He",
+                "is",
+                "always",
+                "first."
+              ]
+            },
+            {
+              "target": "He hurts others.",
+              "source": "يجرح الآخرين.",
+              "words": [
+                "He",
+                "hurts",
+                "others."
+              ]
+            },
+            {
+              "target": "He only sees.",
+              "source": "يرى فقط.",
+              "words": [
+                "He",
+                "only",
+                "sees."
+              ],
+              "qc": {
+                "sug": "يرى فقط他也只看见。",
+                "field": "source",
+                "at": "2026-06-26T11:07:27.199Z"
+              }
+            },
+            {
+              "target": "He meets you.",
+              "source": "التقى بك.",
+              "words": [
+                "He",
+                "meets",
+                "you."
+              ],
+              "qc": {
+                "sug": "يلتقي بك.",
+                "field": "source",
+                "at": "2026-06-26T11:07:33.367Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 653,
+            "completionTokens": 234,
+            "ms": 113773,
+            "at": "2026-06-26T10:19:50.952Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "أحد الأشخاص قاسي، دائماً يفوز",
+          "desc": "تعلم الكلمات الأساسية وبناء الجمل ببساطة",
+          "icon": "😊",
+          "vocab": [
+            {
+              "target": "mean",
+              "source": "قاسي",
+              "qc": {
+                "sug": "قاسٍ",
+                "field": "source",
+                "at": "2026-06-26T11:07:36.873Z"
+              }
+            },
+            {
+              "target": "first",
+              "source": "أول"
+            },
+            {
+              "target": "hurt",
+              "source": "جرح"
+            },
+            {
+              "target": "saw",
+              "source": "رأى"
+            },
+            {
+              "target": "nice",
+              "source": "جميل",
+              "qc": {
+                "sug": "نice",
+                "field": "source",
+                "at": "2026-06-26T11:07:47.030Z"
+              }
+            },
+            {
+              "target": "meet",
+              "source": "التقى",
+              "qc": {
+                "sug": "التقى بال",
+                "field": "source",
+                "at": "2026-06-26T11:07:51.125Z"
+              }
+            },
+            {
+              "target": "name",
+              "source": "اسم",
+              "qc": {
+                "sug": "اسم اسماء",
+                "field": "source",
+                "at": "2026-06-26T11:07:55.059Z"
+              }
+            },
+            {
+              "target": "travelled",
+              "source": "سافر"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "He is mean, always first.",
+              "source": "هو قاسي، دائماً يفوز.",
+              "words": [
+                "He",
+                "is",
+                "mean,",
+                "always",
+                "first."
+              ],
+              "qc": {
+                "sug": "هو قاسي، دائماً يسبق.",
+                "field": "source",
+                "at": "2026-06-26T11:08:04.734Z"
+              }
+            },
+            {
+              "target": "He saw someone polite.",
+              "source": "رأى شخصاً مهذباً.",
+              "words": [
+                "He",
+                "saw",
+                "someone",
+                "polite."
+              ]
+            },
+            {
+              "target": "Nice to meet you, my name is π.",
+              "source": "جميل التقيتك، اسمي π.",
+              "words": [
+                "Nice",
+                "to",
+                "meet",
+                "you,",
+                "my",
+                "name",
+                "is",
+                "π."
+              ],
+              "qc": {
+                "sug": "جميل التقيتك، أسمي π.",
+                "field": "source",
+                "at": "2026-06-26T11:08:20.853Z"
+              }
+            },
+            {
+              "target": "He wore a funny fringe.",
+              "source": "لبس شريط طريف.",
+              "words": [
+                "He",
+                "wore",
+                "a",
+                "funny",
+                "fringe."
+              ],
+              "qc": {
+                "sug": "لبس شريطًا طريفًا",
+                "field": "source",
+                "at": "2026-06-26T11:08:27.049Z"
+              }
+            },
+            {
+              "target": "He seemed to have travelled around the world.",
+              "source": "كان يبدو أنه سافر حول العالم.",
+              "words": [
+                "He",
+                "seemed",
+                "to",
+                "have",
+                "travelled",
+                "around",
+                "the",
+                "world."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 825,
+            "completionTokens": 268,
+            "ms": 135416,
+            "at": "2026-06-26T10:22:06.369Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 113812,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 653,
+        "totalCompletionTokens": 234,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 113773,
+            "promptTokens": 653,
+            "completionTokens": 234
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T10:17:57.141Z",
+      "updatedAt": "2026-06-26T11:08:31.730Z",
+      "id": "tp_17824693264190000513"
+    },
+    {
+      "topic": "عالم الأرقام",
+      "topicEmoji": "📊",
+      "userTopic": "In this world, so chaotic and strange,",
+      "userPrompt": "In this world, so chaotic and strange,\n\n[story]\nIn this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 82,
+      "story": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "continuedFrom": "أسرار السبع",
+      "continuedFromId": "tp_17824688123810000351",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "في هذا العالم الفوضوي والغريب",
+          "desc": "أرقام ترتيبية وحروف",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "target": "numbers",
+              "source": "الأرقام"
+            },
+            {
+              "target": "rows",
+              "source": "صفوف"
+            },
+            {
+              "target": "circles",
+              "source": "دائرات"
+            },
+            {
+              "target": "band",
+              "source": "فرقة"
+            },
+            {
+              "target": "noticed",
+              "source": "لاحظ",
+              "qc": {
+                "sug": "لاحظت",
+                "field": "source",
+                "at": "2026-06-26T11:05:09.441Z"
+              }
+            },
+            {
+              "target": "stare",
+              "source": "تستaring",
+              "qc": {
+                "sug": "استaring",
+                "field": "source",
+                "at": "2026-06-26T11:05:13.654Z"
+              }
+            },
+            {
+              "target": "different",
+              "source": "مختلفة",
+              "qc": {
+                "sug": "مختلفين",
+                "field": "source",
+                "at": "2026-06-26T11:05:17.671Z"
+              }
+            },
+            {
+              "target": "small",
+              "source": "صغيرة",
+              "qc": {
+                "sug": "صغيرة极小",
+                "field": "source",
+                "at": "2026-06-26T11:05:22.792Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Numbers like to be arranged.",
+              "source": "الأرقام ترغب في الترتيب.",
+              "words": [
+                "Numbers",
+                "like",
+                "to",
+                "be",
+                "arranged."
+              ]
+            },
+            {
+              "target": "Sometimes they stand in rows.",
+              "source": "أحياناً يقفون في صفوف.",
+              "words": [
+                "Sometimes",
+                "they",
+                "stand",
+                "in",
+                "rows."
+              ]
+            },
+            {
+              "target": "Sometimes they stand in circles.",
+              "source": "أحياناً يقفون في دائرات.",
+              "words": [
+                "Sometimes",
+                "they",
+                "stand",
+                "in",
+                "circles."
+              ]
+            },
+            {
+              "target": "She's so different, she's so small.",
+              "source": "إنها مختلفة جداً، إنها صغيرة جداً.",
+              "words": [
+                "She's",
+                "so",
+                "different,",
+                "she's",
+                "so",
+                "small."
+              ]
+            },
+            {
+              "target": "All the numbers came and stared.",
+              "source": "جاءت جميع الأرقام وقامت بالاستaring.",
+              "words": [
+                "All",
+                "the",
+                "numbers",
+                "came",
+                "and",
+                "stared."
+              ],
+              "qc": {
+                "sug": "جاءت جميع الأرقام وقامت بالاست围观。",
+                "field": "source",
+                "at": "2026-06-26T11:05:52.100Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 691,
+            "completionTokens": 275,
+            "ms": 137650,
+            "at": "2026-06-26T10:15:50.167Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "عالم مجنون و queer",
+          "desc": "كلمات أساسية وعبارات بسيطة",
+          "icon": "🌍",
+          "vocab": [
+            {
+              "target": "number",
+              "source": "رقم"
+            },
+            {
+              "target": "seven",
+              "source": "سبع"
+            },
+            {
+              "target": "place",
+              "source": "مكان"
+            },
+            {
+              "target": "evening",
+              "source": "ليلة",
+              "qc": {
+                "sug": "مساءً",
+                "field": "source",
+                "at": "2026-06-26T11:06:02.802Z"
+              }
+            },
+            {
+              "target": "strange",
+              "source": " queer"
+            },
+            {
+              "target": "little",
+              "source": "صغير"
+            },
+            {
+              "target": "family",
+              "source": "عائلة"
+            },
+            {
+              "target": "hero",
+              "source": "بطل"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Numbers like to be arranged.",
+              "source": "رقم يحب أن يُرتَب",
+              "words": [
+                "Numbers",
+                "like",
+                "to",
+                "be",
+                "arranged."
+              ],
+              "qc": {
+                "sug": "رقم يحب أن يُرتب",
+                "field": "source",
+                "at": "2026-06-26T11:06:22.491Z"
+              }
+            },
+            {
+              "target": "Sometimes they form a band.",
+              "source": "أحيانا يشكلون فرقة",
+              "words": [
+                "Sometimes",
+                "they",
+                "form",
+                "a",
+                "band."
+              ]
+            },
+            {
+              "target": "One is very tall.",
+              "source": "واحد عالي جدا",
+              "words": [
+                "One",
+                "is",
+                "very",
+                "tall."
+              ],
+              "qc": {
+                "sug": "واحد عالٍ جداً",
+                "field": "source",
+                "at": "2026-06-26T11:06:32.581Z"
+              }
+            },
+            {
+              "target": "Everyone wants to join the band.",
+              "source": "كل الناس يرغب في الانضمام للفرقة",
+              "words": [
+                "Everyone",
+                "wants",
+                "to",
+                "join",
+                "the",
+                "band."
+              ]
+            },
+            {
+              "target": "Seven beats with its funny beard.",
+              "source": "سبع يضرب ببَرده الكوميكي",
+              "words": [
+                "Seven",
+                "beats",
+                "with",
+                "its",
+                "funny",
+                "beard."
+              ],
+              "qc": {
+                "sug": "سبع ضربت به بَرده الكوميكي",
+                "field": "source",
+                "at": "2026-06-26T11:06:46.748Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 861,
+            "completionTokens": 253,
+            "ms": 126840,
+            "at": "2026-06-26T10:17:57.009Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 137697,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 691,
+        "totalCompletionTokens": 275,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 137650,
+            "promptTokens": 691,
+            "completionTokens": 275
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T10:13:32.472Z",
+      "updatedAt": "2026-06-26T11:06:46.748Z",
+      "id": "tp_17824690770610000447"
+    },
+    {
+      "topic": "أسرار السبع",
+      "topicEmoji": "🔍",
+      "userTopic": "“Are you my family",
+      "userPrompt": "“Are you my family\n\n[story]\n“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 76,
+      "story": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "continuedFrom": "المسار الليلي",
+      "continuedFromId": "tp_17824685854690000203",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "عائلة أم لا",
+          "desc": "أسئلة عن العائلة والصداقة",
+          "icon": "👨‍👩‍👧‍👦",
+          "vocab": [
+            {
+              "target": "family",
+              "source": "عائلة"
+            },
+            {
+              "target": "ask",
+              "source": "سأل",
+              "qc": {
+                "sug": "سأله",
+                "field": "source",
+                "at": "2026-06-26T11:03:16.652Z"
+              }
+            },
+            {
+              "target": "head",
+              "source": "رأس"
+            },
+            {
+              "target": "sorry",
+              "source": "عذرا"
+            },
+            {
+              "target": "hero",
+              "source": "بطل"
+            },
+            {
+              "target": "tears",
+              "source": "دموع"
+            },
+            {
+              "target": "land",
+              "source": "أرض"
+            },
+            {
+              "target": "creepy",
+              "source": "خائف",
+              "qc": {
+                "sug": "مخيف",
+                "field": "source",
+                "at": "2026-06-26T11:03:32.904Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Are you my family?",
+              "source": "أنت عائلتي؟",
+              "words": [
+                "Are",
+                "you",
+                "my",
+                "family?"
+              ],
+              "qc": {
+                "sug": "أنت عائلتي吗？",
+                "field": "source",
+                "at": "2026-06-26T11:03:41.345Z"
+              }
+            },
+            {
+              "target": "Seven shook his head.",
+              "source": "أرخى رأسه سبع",
+              "words": [
+                "Seven",
+                "shook",
+                "his",
+                "head."
+              ],
+              "qc": {
+                "sug": "أرخى سبع رأسه",
+                "field": "source",
+                "at": "2026-06-26T11:03:48.187Z"
+              }
+            },
+            {
+              "target": "I’m sorry.",
+              "source": "عذرا",
+              "words": [
+                "I’m",
+                "sorry."
+              ]
+            },
+            {
+              "target": "But I’m just a Seven.",
+              "source": "لكنني مجرد سبع",
+              "words": [
+                "But",
+                "I’m",
+                "just",
+                "a",
+                "Seven."
+              ],
+              "qc": {
+                "sug": "لكنني مجرد سبعة",
+                "field": "source",
+                "at": "2026-06-26T11:03:59.970Z"
+              }
+            },
+            {
+              "target": "Where’s our little guy?",
+              "source": "أين صغيرنا؟",
+              "words": [
+                "Where’s",
+                "our",
+                "little",
+                "guy?"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 675,
+            "completionTokens": 241,
+            "ms": 111348,
+            "at": "2026-06-26T10:11:36.932Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "عائلة",
+          "desc": "أنت عائلتي؟",
+          "icon": " FAMILY",
+          "vocab": [
+            {
+              "target": "family",
+              "source": "عائلة"
+            },
+            {
+              "target": "place",
+              "source": "مكان"
+            },
+            {
+              "target": "evening",
+              "source": "ليلة",
+              "qc": {
+                "sug": "مساءً",
+                "field": "source",
+                "at": "2026-06-26T11:04:12.664Z"
+              }
+            },
+            {
+              "target": "strange",
+              "source": " queer"
+            },
+            {
+              "target": "little",
+              "source": "صغير",
+              "qc": {
+                "sug": "صغيره",
+                "field": "source",
+                "at": "2026-06-26T11:04:19.116Z"
+              }
+            },
+            {
+              "target": "number",
+              "source": "رقم"
+            },
+            {
+              "target": "seven",
+              "source": "سبع"
+            },
+            {
+              "target": "nest",
+              "source": "نEST"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Are you my family?",
+              "source": "أنت عائلتي؟",
+              "words": [
+                "Are",
+                "you",
+                "my",
+                "family?"
+              ],
+              "qc": {
+                "sug": "أنت عائلتي吗？",
+                "field": "source",
+                "at": "2026-06-26T11:04:34.630Z"
+              }
+            },
+            {
+              "target": "Where is i?",
+              "source": "أين أنا؟",
+              "words": [
+                "Where",
+                "is",
+                "i?"
+              ]
+            },
+            {
+              "target": "Seven shook his head.",
+              "source": "سبع ترتبك",
+              "words": [
+                "Seven",
+                "shook",
+                "his",
+                "head."
+              ],
+              "qc": {
+                "sug": "سبعа ترتابك",
+                "field": "source",
+                "at": "2026-06-26T11:04:45.793Z"
+              }
+            },
+            {
+              "target": "Everyone slept.",
+              "source": "كل الناس نام",
+              "words": [
+                "Everyone",
+                "slept."
+              ],
+              "qc": {
+                "sug": "كل الناس ناموا",
+                "field": "source",
+                "at": "2026-06-26T11:04:50.014Z"
+              }
+            },
+            {
+              "target": "There are some strange guys.",
+              "source": "هناك بعض الأشخاص الغريبين",
+              "words": [
+                "There",
+                "are",
+                "some",
+                "strange",
+                "guys."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 831,
+            "completionTokens": 221,
+            "ms": 115401,
+            "at": "2026-06-26T10:13:32.335Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 111386,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 675,
+        "totalCompletionTokens": 241,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 111347,
+            "promptTokens": 675,
+            "completionTokens": 241
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T10:09:45.546Z",
+      "updatedAt": "2026-06-26T11:04:54.806Z",
+      "id": "tp_17824688123810000351"
+    },
+    {
+      "topic": "المسار الليلي",
+      "topicEmoji": "🌟",
+      "userTopic": "One evening, while everyone slept,",
+      "userPrompt": "One evening, while everyone slept,\n\n[story]\nOne evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "continuedFrom": "÷×+−",
+      "continuedFromId": "tp_17824682478370000180",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "ليلة واحدة، بينما نام الجميع",
+          "desc": "كلمة في الليل، وراء النوم",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "ليلة",
+              "qc": {
+                "sug": "عشاء",
+                "field": "source",
+                "at": "2026-06-26T11:01:33.545Z"
+              }
+            },
+            {
+              "target": "everyone",
+              "source": "كل الناس"
+            },
+            {
+              "target": "slept",
+              "source": "نام",
+              "qc": {
+                "sug": "نامسaign:",
+                "field": "source",
+                "at": "2026-06-26T11:01:42.553Z"
+              }
+            },
+            {
+              "target": "path",
+              "source": "طريق"
+            },
+            {
+              "target": "world",
+              "source": "عالم"
+            },
+            {
+              "target": "strange",
+              "source": " queer"
+            },
+            {
+              "target": "number",
+              "source": "رقم"
+            },
+            {
+              "target": "tall",
+              "source": "عالي"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "One evening, while everyone slept",
+              "source": "ليلة واحدة، بينما نام الجميع",
+              "words": [
+                "One",
+                "evening,",
+                "while",
+                "everyone",
+                "slept"
+              ]
+            },
+            {
+              "target": "little i followed a glowing path",
+              "source": "أنا الصغيرة تبعثرت على طريق مضيء",
+              "words": [
+                "little",
+                "i",
+                "followed",
+                "a",
+                "glowing",
+                "path"
+              ],
+              "qc": {
+                "sug": "أنا صغيرة تبعثرت على طريق مضيء",
+                "field": "source",
+                "at": "2026-06-26T11:02:12.807Z"
+              }
+            },
+            {
+              "target": "It led to another world",
+              "source": "ودخلت عالمًا آخر",
+              "words": [
+                "It",
+                "led",
+                "to",
+                "another",
+                "world"
+              ]
+            },
+            {
+              "target": "A strange world",
+              "source": "عالم queer",
+              "words": [
+                "A",
+                "strange",
+                "world"
+              ],
+              "qc": {
+                "sug": "عالم غريب",
+                "field": "source",
+                "at": "2026-06-26T11:02:20.078Z"
+              }
+            },
+            {
+              "target": "A number world",
+              "source": "عالم الأرقام",
+              "words": [
+                "A",
+                "number",
+                "world"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 650,
+            "completionTokens": 243,
+            "ms": 110840,
+            "at": "2026-06-26T10:05:58.788Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "ليلة واحدة، بينما نام الجميع",
+          "desc": "كلمة عن الليل، النوم، الطريق، العالم",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "ليلة",
+              "qc": {
+                "sug": "عشاء",
+                "field": "source",
+                "at": "2026-06-26T11:02:26.804Z"
+              }
+            },
+            {
+              "target": "slept",
+              "source": "نام",
+              "qc": {
+                "sug": "نامس",
+                "field": "source",
+                "at": "2026-06-26T11:02:30.131Z"
+              }
+            },
+            {
+              "target": "path",
+              "source": "طريق"
+            },
+            {
+              "target": "world",
+              "source": "عالم"
+            },
+            {
+              "target": "strange",
+              "source": "غريب"
+            },
+            {
+              "target": "number",
+              "source": "رقم"
+            },
+            {
+              "target": "tall",
+              "source": "عالي"
+            },
+            {
+              "target": "seven",
+              "source": "سبع"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "It was evening.",
+              "source": "كان الليل",
+              "words": [
+                "It",
+                "was",
+                "evening."
+              ],
+              "qc": {
+                "sug": "كان المساء",
+                "field": "source",
+                "at": "2026-06-26T11:02:48.796Z"
+              }
+            },
+            {
+              "target": "Everyone slept.",
+              "source": "نام الجميع",
+              "words": [
+                "Everyone",
+                "slept."
+              ],
+              "qc": {
+                "sug": "نام الكلmaal",
+                "field": "source",
+                "at": "2026-06-26T11:02:52.475Z"
+              }
+            },
+            {
+              "target": "Little i followed a path.",
+              "source": "صغير i تبع طريق",
+              "words": [
+                "Little",
+                "i",
+                "followed",
+                "a",
+                "path."
+              ],
+              "qc": {
+                "sug": "صغيري تبع الطريق",
+                "field": "source",
+                "at": "2026-06-26T11:02:57.551Z"
+              }
+            },
+            {
+              "target": "The path led to a world.",
+              "source": "قاد الطريق إلى عالم",
+              "words": [
+                "The",
+                "path",
+                "led",
+                "to",
+                "a",
+                "world."
+              ],
+              "qc": {
+                "sug": "قاد الطريق إلى عالمٍ",
+                "field": "source",
+                "at": "2026-06-26T11:03:03.549Z"
+              }
+            },
+            {
+              "target": "Seven was tall.",
+              "source": "كانت سبع عالية",
+              "words": [
+                "Seven",
+                "was",
+                "tall."
+              ],
+              "qc": {
+                "sug": "كان السبع عاليًا",
+                "field": "source",
+                "at": "2026-06-26T11:03:09.644Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 772,
+            "completionTokens": 269,
+            "ms": 226633,
+            "at": "2026-06-26T10:09:45.422Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 110871,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 650,
+        "totalCompletionTokens": 243,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 110839,
+            "promptTokens": 650,
+            "completionTokens": 243
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T10:04:07.917Z",
+      "updatedAt": "2026-06-26T11:03:09.645Z",
+      "id": "tp_17824685854690000203"
+    },
+    {
+      "topic": "÷×+−",
+      "topicEmoji": "🔢",
+      "userTopic": "+, −, ∗, /",
+      "userPrompt": "+, −, ∗, /\n\n[story]\n+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "continuedFrom": "الصغير i",
+      "continuedFromId": "tp_17824678810030000009",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "الإضافة والطرح والضرب والقسمة",
+          "desc": "تعلم الرموز الرياضية الأساسية",
+          "icon": "+",
+          "vocab": [
+            {
+              "target": "addition",
+              "source": "الإضافة",
+              "qc": {
+                "sug": "الإضافة应该是加法",
+                "field": "source",
+                "at": "2026-06-26T10:59:09.902Z"
+              }
+            },
+            {
+              "target": "subtraction",
+              "source": "الطرح"
+            },
+            {
+              "target": "multiplication",
+              "source": "الضرب"
+            },
+            {
+              "target": "division",
+              "source": "القسمة"
+            },
+            {
+              "target": "equals",
+              "source": "يساوي"
+            },
+            {
+              "target": "sign",
+              "source": "علامة"
+            },
+            {
+              "target": "confuse",
+              "source": "يرتبك",
+              "qc": {
+                "sug": "ي 혼란에 빠지다",
+                "field": "source",
+                "at": "2026-06-26T10:59:31.026Z"
+              }
+            },
+            {
+              "target": "beats",
+              "source": "بنبض",
+              "editedAt": "2026-06-26T11:02:44.612Z"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "She saw a plus sign.",
+              "source": "إذا رأت علامة زائد",
+              "words": [
+                "She",
+                "saw",
+                "a",
+                "plus",
+                "sign."
+              ],
+              "editedAt": "2026-06-26T11:03:23.416Z"
+            },
+            {
+              "target": "He added two numbers.",
+              "source": "أضاف رقمين",
+              "words": [
+                "He",
+                "added",
+                "two",
+                "numbers."
+              ],
+              "qc": {
+                "sug": "اضافَ اثنين من الأرقام",
+                "field": "target",
+                "at": "2026-06-26T10:59:49.161Z"
+              }
+            },
+            {
+              "target": "They subtracted the cost.",
+              "source": "طرحوا التكلفة",
+              "words": [
+                "They",
+                "subtracted",
+                "the",
+                "cost."
+              ],
+              "qc": {
+                "sug": "طرحوا التكلفة منa",
+                "field": "source",
+                "at": "2026-06-26T10:59:55.600Z"
+              }
+            },
+            {
+              "target": "Multiply the numbers together.",
+              "source": "ضرب الأرقام معًا",
+              "words": [
+                "Multiply",
+                "the",
+                "numbers",
+                "together."
+              ],
+              "qc": {
+                "sug": "ضرب الأرقام في بعضها",
+                "field": "source",
+                "at": "2026-06-26T11:00:05.174Z"
+              }
+            },
+            {
+              "target": "The answer equals four.",
+              "source": "الإجابة تساوي أربعة",
+              "words": [
+                "The",
+                "answer",
+                "equals",
+                "four."
+              ],
+              "qc": {
+                "sug": "الإجابة تساوي أربعةً",
+                "field": "source",
+                "at": "2026-06-26T11:00:14.532Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 649,
+            "completionTokens": 244,
+            "ms": 262133,
+            "at": "2026-06-26T10:02:23.236Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "أعداد و علامات",
+          "desc": "تعلم الرموز الرياضية الأساسية",
+          "icon": "+",
+          "vocab": [
+            {
+              "target": "add",
+              "source": "أضف"
+            },
+            {
+              "target": "subtract",
+              "source": "طرح"
+            },
+            {
+              "target": "multiply",
+              "source": "ضرب"
+            },
+            {
+              "target": "divide",
+              "source": "قسم",
+              "qc": {
+                "sug": "قسموا",
+                "field": "source",
+                "at": "2026-06-26T11:00:25.003Z"
+              }
+            },
+            {
+              "target": "number",
+              "source": "رقم"
+            },
+            {
+              "target": "where",
+              "source": "أين"
+            },
+            {
+              "target": "little",
+              "source": "صغير",
+              "qc": {
+                "sug": "صغيره",
+                "field": "source",
+                "at": "2026-06-26T11:00:34.645Z"
+              }
+            },
+            {
+              "target": "family",
+              "source": "عائلة",
+              "editedAt": "2026-06-26T11:02:44.612Z"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Add the numbers to find the total.",
+              "source": "أضف الأرقام لحساب المجموع.",
+              "words": [
+                "Add",
+                "the",
+                "numbers",
+                "to",
+                "find",
+                "the",
+                "total."
+              ],
+              "editedAt": "2026-06-26T11:03:23.416Z"
+            },
+            {
+              "target": "Subtract the smaller number from the larger one.",
+              "source": "طرح العدد الأصغر من الأكبر.",
+              "words": [
+                "Subtract",
+                "the",
+                "smaller",
+                "number",
+                "from",
+                "the",
+                "larger",
+                "one."
+              ]
+            },
+            {
+              "target": "Multiply the numbers to get the product.",
+              "source": "ضرب الأرقام لحساب المنتج.",
+              "words": [
+                "Multiply",
+                "the",
+                "numbers",
+                "to",
+                "get",
+                "the",
+                "product."
+              ],
+              "qc": {
+                "sug": "ضرب الأرقام للحصول على المنتج.",
+                "field": "source",
+                "at": "2026-06-26T11:01:05.254Z"
+              }
+            },
+            {
+              "target": "Divide the total by the number of items.",
+              "source": "قسم المجموع على عدد العناصر.",
+              "words": [
+                "Divide",
+                "the",
+                "total",
+                "by",
+                "the",
+                "number",
+                "of",
+                "items."
+              ],
+              "qc": {
+                "sug": "قسم الكليّة على عدد العناصر.",
+                "field": "source",
+                "at": "2026-06-26T11:01:15.045Z"
+              }
+            },
+            {
+              "target": "Where do you live, little one?",
+              "source": "أين تسكن يا صغير؟",
+              "words": [
+                "Where",
+                "do",
+                "you",
+                "live,",
+                "little",
+                "one?"
+              ],
+              "qc": {
+                "sug": "أين تسكن يا صغيراً؟",
+                "field": "source",
+                "at": "2026-06-26T11:01:28.627Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 649,
+            "completionTokens": 244,
+            "ms": 262133,
+            "at": "2026-06-26T10:02:23.236Z"
+          }
+        },
+        {
+          "id": "ls_1782471876524",
+          "type": "math",
+          "title": "① ② ③",
+          "desc": "＋ － ×  ÷",
+          "icon": "🔢",
+          "numbers": [
+            9,
+            6,
+            5,
+            4,
+            1,
+            7
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                6,
+                5,
+                7,
+                1
+              ],
+              "correct": [
+                "7",
+                "6",
+                "5",
+                "1"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                5,
+                4,
+                9,
+                6
+              ],
+              "correct": [
+                "4",
+                "5",
+                "6",
+                "9"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "9",
+              "correct": "14",
+              "choices": [
+                "13",
+                "14",
+                "15",
+                "12"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "7",
+              "op": "-",
+              "b": "4",
+              "correct": "3",
+              "choices": [
+                "3",
+                "4",
+                "1",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "9",
+              "op": "+",
+              "b": "6",
+              "correct": "15",
+              "choices": [
+                "13",
+                "14",
+                "16",
+                "15"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "6",
+              "op": "+",
+              "b": "5",
+              "correct": "11",
+              "choices": [
+                "10",
+                "12",
+                "11",
+                "9"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "7",
+              "op": "+",
+              "b": "1",
+              "correct": "8",
+              "choices": [
+                "9",
+                "8",
+                "7",
+                "6"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "math",
+            "model": "(procedural)",
+            "attempts": null,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "ms": 1,
+            "at": "2026-06-26T11:04:36.524Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 262161,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 649,
+        "totalCompletionTokens": 244,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 86674,
+            "promptTokens": 649,
+            "completionTokens": 244
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T09:58:01.075Z",
+      "updatedAt": "2026-06-26T11:04:36.524Z",
+      "id": "tp_17824682478370000180"
+    },
+    {
+      "topic": "الصغير i",
+      "topicEmoji": "🔍",
+      "userTopic": "The Little I am i",
+      "userPrompt": "The Little I am i\n\n[story]\nThe Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "lang": "en",
+      "srcLang": "ar",
+      "difficulty": 1,
+      "storyLen": 58,
+      "story": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "The Little I am i.\nAnna Matuszyńska, Rainer Machné\n\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "الرقم الصغير i",
+          "desc": "أين هو مكان الرقم الصغير؟",
+          "icon": "🔢",
+          "vocab": [
+            {
+              "target": "world",
+              "source": "عالم"
+            },
+            {
+              "target": "nest",
+              "source": "نEST"
+            },
+            {
+              "target": "family",
+              "source": "عائلة"
+            },
+            {
+              "target": "place",
+              "source": "مكان"
+            },
+            {
+              "target": "know",
+              "source": "يعرف"
+            },
+            {
+              "target": "where",
+              "source": "أين"
+            },
+            {
+              "target": "little",
+              "source": "صغير",
+              "qc": {
+                "sug": "صغيره",
+                "field": "source",
+                "at": "2026-06-26T10:58:19.086Z"
+              }
+            },
+            {
+              "target": "number",
+              "source": "رقم"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "In the world of birds, little birds have nests.",
+              "source": "في عالم الطيور، الطيور الصغيرة لديها نEST.",
+              "words": [
+                "In",
+                "the",
+                "world",
+                "of",
+                "birds,",
+                "little",
+                "birds",
+                "have",
+                "nests."
+              ],
+              "qc": {
+                "sug": "في عالم الطيور، الطيور الصغيرة لديها نests.",
+                "field": "source",
+                "at": "2026-06-26T10:58:33.025Z"
+              }
+            },
+            {
+              "target": "But little i did not know where hers was.",
+              "source": "ولكن الرقم الصغير i لم يكن يعلم أين كان لها مكان.",
+              "words": [
+                "But",
+                "little",
+                "i",
+                "did",
+                "not",
+                "know",
+                "where",
+                "hers",
+                "was."
+              ],
+              "qc": {
+                "sug": "But little did I not know where hers was.",
+                "field": "target",
+                "at": "2026-06-26T10:58:42.349Z"
+              }
+            },
+            {
+              "target": "In the world of cats, little cats have families.",
+              "source": "وفي عالم القطط، القطط الصغيرة لديها عائلة.",
+              "words": [
+                "In",
+                "the",
+                "world",
+                "of",
+                "cats,",
+                "little",
+                "cats",
+                "have",
+                "families."
+              ],
+              "qc": {
+                "sug": "وفي عالم القطط، القطط الصغيرة لديها عائلات.",
+                "field": "source",
+                "at": "2026-06-26T10:58:53.748Z"
+              }
+            },
+            {
+              "target": "And in the world of people, grown-ups often have children.",
+              "source": "وفي عالم الناس، الكبار غالباً لديهم أطفال.",
+              "words": [
+                "And",
+                "in",
+                "the",
+                "world",
+                "of",
+                "people,",
+                "grown-ups",
+                "often",
+                "have",
+                "children."
+              ]
+            },
+            {
+              "target": "Every number seems to have a place.",
+              "source": "كل رقم يبدو أنه لديه مكان.",
+              "words": [
+                "Every",
+                "number",
+                "seems",
+                "to",
+                "have",
+                "a",
+                "place."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 650,
+            "completionTokens": 293,
+            "ms": 219667,
+            "at": "2026-06-26T09:58:00.967Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 219689,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 650,
+        "totalCompletionTokens": 293,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 219665,
+            "promptTokens": 650,
+            "completionTokens": 293
+          }
+        ]
+      },
+      "generatedAt": "2026-06-26T09:54:21.279Z",
+      "updatedAt": "2026-06-26T10:59:04.911Z",
+      "id": "tp_17824678810030000009"
+    },
     {
       "topic": "Ze is i",
       "topicEmoji": "|i|",

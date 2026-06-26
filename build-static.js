@@ -215,7 +215,7 @@ function repopulateContinueSelect(){
 async function init() {
   APP.info = { backend: 'none', canGenerate: false, version: 'v46' };
   { const _v=document.getElementById('app-version'); if(_v) _v.textContent='v46'; }
-  APP._teacherMode = false;
+  try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');
   if (_tmBar) _tmBar.style.display = '';
@@ -232,6 +232,8 @@ async function init() {
   restoreDiffSelect();
   renderPill();
   await loadSavedList();
+  try { updateTeacherModeBtn(); } catch (_) {}      // reflect restored teacher mode
+  try { updateStaticFlagBanner(); } catch (_) {}    // show the download & submit pill on first load
   // Hash routing
   if (location.hash.startsWith('#sl=')) {
     const chainId = location.hash.slice(4);

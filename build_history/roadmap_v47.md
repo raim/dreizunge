@@ -122,12 +122,42 @@ usable for crowd-sourced corrections:
   (`_ensureStaticFlagsLoaded`). Survives refresh / browser / machine restart; per-browser &
   per-device (cross-device is the accounts/repo feature). localStorage, not a cookie (~5MB,
   not sent to the server). Round-trip unit-tested in `unit-static-flags`.
+- ✅ **Pill polish (v47).** The pill now: has a **close** button (`closeStaticPill` — dismiss
+  until the next flag/rating/edit); shows **flag (⚑) and star (⭐) counts** next to the
+  download button; triggers on **edit/delete** too (`_markStaticEdited` hooked into
+  `_syncEditorFromDOM`; edited topics are included in the download via `_topicPendingOrEdited`);
+  and has a **shortened** message with all pill/button/issue text moved to `ui.json`
+  (`static.pill.*`, English only — other languages generated offline).
+- ✅ **Star ("good example") in the editor (v47).** The standard editor previously dropped
+  `userRating` from its synthetic item, so a star set during play didn't show — fixed.
+  Starred entries now get a gold `starred` style + a "⭐ Good example" note across
+  vocab/sentences, word_forms, synonyms, and math; the synonyms ⭐/⚑ icons were moved to the
+  right (next to 🗑) to match other types. Chapter/lessonset nodes show a `⭐ N` count
+  alongside the flag count. Guarded by `unit-static-flags`.
 - **Owed / browser-verify:** all of the above is headless-verified for *logic* only (pure
-  helpers + a save/reload/reapply round-trip unit-tested in `unit-static-flags`); the actual
-  pill rendering, the blob download, the GitHub link, and persistence-across-reload need a
-  browser pass. Also TODO: i18n for the new pill/button strings (currently English); a
-  maintainer-side importer that merges a submitted JSON's flags/ratings back into
-  `lessons.json`; and styling polish on the floating pill (position/size are a first cut).
+  helpers + a save/reload/reapply round-trip + structural guards in `unit-static-flags`); the
+  actual pill/editor rendering, the blob download, the GitHub link, and persistence-across-
+  reload need a browser pass. Also TODO: i18n for the non-English pill strings (English in
+  `ui.json`; other langs generated offline); **content edits are not persisted across reloads**
+  (only flags/ratings are — the pill now nudges a download before reload, else edits are lost);
+  and styling polish on the floating pill (position/size are a first cut).
+- ✅ **Import merge mode (v47).** A submitted flag file imports via the existing **⬆ Import**
+  button: `/api/lessons/import` now honors `body.mergeFlags`, and the client auto-sets it when
+  the file is a flag submission (`exportedBy:'dreizunge-static-user'`, and the pill marks
+  `mergeFlags:true`). In merge mode a matched topic keeps the maintainer's content and only the
+  community `userFlag`/`userRating`/`_miscFlags` are applied, matched by item identity
+  (target/sentence/base) not index — drift-safe and idempotent (`mergeFlagsIntoTopic`,
+  server.js). Full library exports (no marker) still overwrite as before. Guarded by
+  `unit-import-merge` (pure helper); the endpoint routing on `body.mergeFlags` is server-owed.
+  Note: merge mode is **flags-only** — a submitter's *content* edit is applied only if they
+  also flagged it (the flag carries the comment/correct value the maintainer applies); to take
+  a submission's content wholesale, import it without the merge marker (overwrite).
+- **TODO (later) — content merge with a review UI.** Beyond flags-only merge, support
+  merging a submission's *content* edits with a side-by-side interface that shows the original
+  vs the edited item and lets the maintainer accept/reject each change (a 3-way/diff review,
+  not last-write-wins). This is the safe way to ingest community content edits; until then
+  content edits ride only via the overwrite path or a flag comment. (Larger UI task — pairs
+  naturally with the P2 map-tree / list views.)
 
 ## Suggested sequence
 P1 (examples.json batch-gen + QC) → minor features #1–#3 (small, high-value, mostly reuse) →

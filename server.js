@@ -295,6 +295,36 @@ function collectChainVocab(startRef) {
   }
   return { words, nouns, verbs, sentences };
 }
+// Merge ONLY the flaggable signals (userFlag / userRating / _miscFlags) from an imported
+// topic onto an existing one, matching items by identity (target/sentence/base) rather than
+// by index. Drift-safe: keeps the maintainer's content, brings in the community's flags/stars.
+// Used by /api/lessons/import in merge mode. Returns the number of signals applied.
+function mergeFlagsIntoTopic(existing, incoming) {
+  const FA = [['vocab', 'target'], ['sentences', 'target'], ['items', 'sentence'], ['words', 'base']];
+  let applied = 0;
+  (incoming.lessons || []).forEach((inL, idx) => {
+    let exL = inL.id ? (existing.lessons || []).find(L => L.id === inL.id) : null;
+    if (!exL) exL = (existing.lessons || [])[idx];
+    if (!exL) return;
+    FA.forEach(([kind, idField]) => {
+      (inL[kind] || []).forEach(inIt => {
+        if (!inIt || !(inIt.userFlag || inIt.userRating)) return;
+        const key = String(inIt[idField] == null ? '' : inIt[idField]);
+        const exIt = (exL[kind] || []).find(x => String(x[idField] == null ? '' : x[idField]) === key);
+        if (!exIt) return;
+        if (inIt.userFlag)   { exIt.userFlag   = inIt.userFlag;   applied++; }
+        if (inIt.userRating) { exIt.userRating = inIt.userRating; applied++; }
+      });
+    });
+    if (Array.isArray(inL._miscFlags) && inL._miscFlags.length) {
+      const seen = new Set();
+      exL._miscFlags = (exL._miscFlags || []).concat(inL._miscFlags)
+        .filter(f => { const k = JSON.stringify(f); if (seen.has(k)) return false; seen.add(k); return true; });
+      applied += inL._miscFlags.length;
+    }
+  });
+  return applied;
+}
 function upsert(data) {
   const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons = store.lessons || []) && store.lessons;
   let i;
@@ -3150,6 +3180,7 @@ http.createServer(async (req, res) => {
       const invalid = incoming.filter(l => !l.topic || !Array.isArray(l.lessons));
       if (invalid.length)
         return json(res, 400, { error: `${invalid.length} entries missing topic or lessons` });
+      const mergeFlags = !!(body && body.mergeFlags);
       let added = 0, updated = 0;
       for (const l of incoming) {
         const arr = store.schemaVersion >= 29 ? store.topics : store.lessons;
@@ -3160,8 +3191,15 @@ http.createServer(async (req, res) => {
               (x.lang||'') === (l.lang||'') &&
               (x.srcLang||'') === (l.srcLang||''));
         if (exists) {
-          // Update in place preserving generatedAt
-          Object.assign(exists, l, { generatedAt: exists.generatedAt, updatedAt: new Date().toISOString() });
+          if (mergeFlags) {
+            // Drift-safe: apply only the community flags/ratings/_miscFlags onto our items;
+            // leave the maintainer's content untouched.
+            mergeFlagsIntoTopic(exists, l);
+            exists.updatedAt = new Date().toISOString();
+          } else {
+            // Update in place preserving generatedAt
+            Object.assign(exists, l, { generatedAt: exists.generatedAt, updatedAt: new Date().toISOString() });
+          }
           saveStore(store);
           updated++;
         } else {

@@ -56,6 +56,7 @@ run('unit: add-lesson server registry (B-phase-4)', 'node', [path.join(__dirname
 run('unit: per-language prompt examples — 4 prompts + de seed (A)', 'node', [path.join(__dirname, 'unit-prompt-examples.test.js')]);
 run('unit: storyline-screen QC button + lesson-types dropdown (v47)', 'node', [path.join(__dirname, 'unit-storyline-screen-extras.test.js')]);
 run('unit: static flag hiding + download/submit pill (v47)', 'node', [path.join(__dirname, 'unit-static-flags.test.js')]);
+run('unit: import merge mode — flags-only onto existing (v47)', 'node', [path.join(__dirname, 'unit-import-merge.test.js')]);
 run('unit: harvest rated items → examples.json (A)', 'node', [path.join(__dirname, 'unit-harvest-examples.test.js')]);
 run('unit: mixed-type review lessons (C)', 'node', [path.join(__dirname, 'unit-mixed-lessons.test.js')]);
 run('unit: mixed pool rating-aware (v46 #7)', 'node', [path.join(__dirname, 'unit-mixed-rating.test.js')]);
