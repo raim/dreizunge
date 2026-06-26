@@ -2411,6 +2411,14 @@ http.createServer(async (req, res) => {
         generatedAt: l.generatedAt,
         updatedAt:   l.updatedAt || l.generatedAt,
         lessonCount: l.lessons?.length || 0,
+        // Distinct lesson-set types (first-seen order; missing -> 'standard'). The list
+        // payload omits the full lessons[] (loaded on demand), so the client storyline
+        // screen needs this to show each chapter's lesson-types dropdown in live mode.
+        lessonTypes: (() => {
+          const seen = new Set(), out = [];
+          (l.lessons || []).forEach(L => { const ty = (L && L.type) ? L.type : 'standard'; if (!seen.has(ty)) { seen.add(ty); out.push(ty); } });
+          return out;
+        })(),
         qcFlags: (l.lessons || []).reduce((n, L) =>
           n + [...(L.vocab||[]), ...(L.sentences||[])].filter(x => x && (x.qc || x.userFlag)).length, 0),
       }));

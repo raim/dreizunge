@@ -70,20 +70,64 @@ platform's Phase 0 stays cheap.
 
 ---
 
-## Minor features (do alongside the above)
+## Minor features
 
-1. **QC button in the storyline-page header.** Same function as the main-page storyline QC:
-   check all lessons in the open storyline. (Reuse the existing storyline-QC code path;
-   just add the trigger in the storyline page header.)
-2. **Expand QC to all lesson types — except `math` and the two error-hunt types**
-   (`error_hunt`, `ai_error_hunt`). With Major B's registry, this is the natural place to
-   hang a per-type `qc` hook; types without a meaningful automated check (math, the
-   error-hunts) opt out.
-3. **Live-mode storyline page: lesson-type dropdown per chapter/lesson-set.** In the
-   live-mode storyline view where chapters/lesson-sets are listed, add a drop-down that
-   shows the **types of lessons** contained in that set.
+1. ✅ **DONE — QC button in the storyline-page header.** Added `#sl-screen-qc-btn` to the
+   storyline-screen header, wired in `_renderStorylineScreen` to `qcRun({storylineId})` —
+   the same action as the main-page storyline QC. Shown only when a backend can generate.
+   (Headless: wiring + syntax verified; the QC run itself is browser/Ollama-owed.)
+2. **TODO (needs Ollama) — Expand QC to all lesson types except `math` and the two
+   error-hunt types.** QC is server-side: `_runQc` loops only over `vocab`/`sentences` and
+   calls `qcCheckPair(target, source)` — a translation-pair checker. `grammar`/`conjugation`
+   have a checkable target↔source (noun/infinitive ↔ translation) and could be added to that
+   loop with low risk; `synonyms` (base+gloss+arrays) and `word_forms` (sentence/choices)
+   need their **own** QC checks. All of it changes the LLM path, so it must be verified live
+   against Ollama before shipping — deliberately not done blind in a headless session. Note:
+   the client lesson-level QC button (index.html ~`qcRun({topicId,lessonIdx})`) is gated to
+   `L.vocab||L.sentences` and must be widened in step with the server.
+3. ✅ **DONE — Live-mode storyline page: lesson-type dropdown per chapter/lesson-set.**
+   Added `lessonSetTypes(s)` (pure; distinct types in first-seen order) + a collapsible
+   chip list rendered per chapter card in `_renderStorylineScreen`, labelled via the Major B
+   registry (`lessonTypeEmoji`/`lessonTypeLabel`). Guarded by `unit-storyline-screen-extras`
+   (the pure helper is unit-tested; the dropdown rendering is browser-verify-owed).
 
 ---
+
+## Static-build flag handling (v47 — partially done)
+
+The static build has no backend, so per-item `userFlag` / `userRating` and a lesson's
+`_miscFlags` can't be saved server-side — they ride the JSON export. v47 makes that loop
+usable for crowd-sourced corrections:
+
+- ✅ **Hide flagged items in static play.** In the static build, non-teacher play no longer
+  quizzes items that carry a `userFlag` or a QC suggestion (`buildExercises` filters built
+  exercises via `_exFlagTarget`). Teacher mode and the lesson editor still show them so the
+  flag content can be reviewed/fixed. (Covers vocab/sentences/word_forms/synonyms — the
+  per-item-flaggable types; grammar/conjugation flags are `_miscFlags`, not per-item.)
+- ✅ **"Download & submit" pill (floating, global).** A fixed snackbar (`#static-flag-banner`,
+  body-level so it shows on **any** screen — play, editor, or home) tallies pending per-item
+  flags/ratings (`_countStaticPending`) and refreshes immediately after any play/editor
+  flag/rating mutation (hooked into `_persistPlayFlags` / `_persistEditorFlags`) and on every
+  screen change (`show`). Download exports the affected lessons; after a download it reveals
+  a **"Submit as issue"** link to `github.com/raim/dreizunge/issues/new` (pre-titled; the user
+  drags the exported JSON into the issue — GitHub can't take the file via URL).
+- ✅ **Dynamic per-storyline download.** Yes, this is feasible and is implemented: when every
+  pending-flag topic belongs to a single storyline, the pill scopes the download to that
+  storyline's chapters and labels the button with its title; otherwise it exports all
+  flagged topics. (Per-storyline grouping when several storylines are flagged — e.g. one
+  button each — is a possible follow-up.)
+- ✅ **Persist across reloads (localStorage).** Pending per-item flags/ratings + `_miscFlags`
+  are mirrored to `localStorage` (`dz_static_flags`), keyed by topicId · lessonIdx · kind ·
+  item-identity, written on every mutation and re-applied once on first use
+  (`_ensureStaticFlagsLoaded`). Survives refresh / browser / machine restart; per-browser &
+  per-device (cross-device is the accounts/repo feature). localStorage, not a cookie (~5MB,
+  not sent to the server). Round-trip unit-tested in `unit-static-flags`.
+- **Owed / browser-verify:** all of the above is headless-verified for *logic* only (pure
+  helpers + a save/reload/reapply round-trip unit-tested in `unit-static-flags`); the actual
+  pill rendering, the blob download, the GitHub link, and persistence-across-reload need a
+  browser pass. Also TODO: i18n for the new pill/button strings (currently English); a
+  maintainer-side importer that merges a submitted JSON's flags/ratings back into
+  `lessons.json`; and styling polish on the floating pill (position/size are a first cut).
 
 ## Suggested sequence
 P1 (examples.json batch-gen + QC) → minor features #1–#3 (small, high-value, mostly reuse) →

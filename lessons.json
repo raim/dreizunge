@@ -11058,7 +11058,12 @@
             },
             {
               "target": "sorry",
-              "source": "すみません"
+              "source": "すみません",
+              "qc": {
+                "sug": "Sorry",
+                "field": "target",
+                "at": "2026-06-24T16:19:37.044Z"
+              }
             },
             {
               "target": "hero",
@@ -11067,19 +11072,39 @@
             {
               "target": "smartest",
               "source": "最賢い",
-              "editedAt": "2026-06-24T09:11:03.122Z"
+              "editedAt": "2026-06-24T09:11:03.122Z",
+              "qc": {
+                "sug": "最も賢い",
+                "field": "source",
+                "at": "2026-06-24T16:19:45.468Z"
+              }
             },
             {
               "target": "creepy",
-              "source": "怪しい"
+              "source": "怪しい",
+              "qc": {
+                "sug": "怪reffしい",
+                "field": "source",
+                "at": "2026-06-24T16:19:48.987Z"
+              }
             },
             {
               "target": "disguise",
-              "source": "隠れ蓑"
+              "source": "隠れ蓑",
+              "qc": {
+                "sug": "隠身衣",
+                "field": "source",
+                "at": "2026-06-24T16:19:53.105Z"
+              }
             },
             {
               "target": "guy",
-              "source": "男の子"
+              "source": "男の子",
+              "qc": {
+                "sug": "男性",
+                "field": "source",
+                "at": "2026-06-24T16:19:56.666Z"
+              }
             }
           ],
           "sentences": [
@@ -11091,7 +11116,12 @@
                 "you",
                 "my",
                 "family?"
-              ]
+              ],
+              "qc": {
+                "sug": "家族ですか？",
+                "field": "source",
+                "at": "2026-06-24T16:20:01.040Z"
+              }
             },
             {
               "target": "Seven shook his head.",
@@ -11101,7 +11131,12 @@
                 "shook",
                 "his",
                 "head."
-              ]
+              ],
+              "qc": {
+                "sug": "七人は頭を振った",
+                "field": "source",
+                "at": "2026-06-24T16:20:08.239Z"
+              }
             },
             {
               "target": "I’m sorry.",
@@ -11121,7 +11156,12 @@
                 "is",
                 "the",
                 "smartest."
-              ]
+              ],
+              "qc": {
+                "sug": "Forty-two thinks he is the smartest.",
+                "field": "source",
+                "at": "2026-06-24T16:20:22.001Z"
+              }
             },
             {
               "target": "There are some creepy looking guys.",
@@ -11133,7 +11173,12 @@
                 "creepy",
                 "looking",
                 "guys."
-              ]
+              ],
+              "qc": {
+                "sug": "怪しい男がいる",
+                "field": "source",
+                "at": "2026-06-24T16:20:27.602Z"
+              }
             }
           ]
         },
@@ -11162,7 +11207,12 @@
             {
               "target": "path",
               "source": "道",
-              "editedAt": "2026-06-24T09:11:03.122Z"
+              "editedAt": "2026-06-24T09:11:03.122Z",
+              "qc": {
+                "sug": "道路",
+                "field": "source",
+                "at": "2026-06-24T16:20:39.594Z"
+              }
             },
             {
               "target": "world",
@@ -11200,7 +11250,12 @@
                 "place",
                 "is",
                 "long."
-              ]
+              ],
+              "qc": {
+                "sug": "The path to the family place is long. 家族の場所への道は長いです。",
+                "field": "source",
+                "at": "2026-06-24T16:21:08.380Z"
+              }
             },
             {
               "target": "Evening came, and everyone slept.",
@@ -11212,7 +11267,12 @@
                 "everyone",
                 "slept."
               ],
-              "editedAt": "2026-06-24T09:10:16.742Z"
+              "editedAt": "2026-06-24T09:10:16.742Z",
+              "qc": {
+                "sug": "夜が訪れ、 Everyoneは Everyoneが寝ました。",
+                "field": "source",
+                "at": "2026-06-24T16:21:15.589Z"
+              }
             },
             {
               "target": "A strange path appeared in the world.",
@@ -11260,7 +11320,7 @@
         ]
       },
       "generatedAt": "2026-06-16T19:27:12.602Z",
-      "updatedAt": "2026-06-24T09:15:48.243Z",
+      "updatedAt": "2026-06-24T16:21:25.881Z",
       "id": "tp_17816389729790000379"
     },
     {

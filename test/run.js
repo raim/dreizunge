@@ -54,6 +54,8 @@ run('unit: renderEx exercise-renderer registry (B-phase-2)', 'node', [path.join(
 run('unit: lesson-editor registry (B-phase-3)', 'node', [path.join(__dirname, 'unit-editor-registry.test.js')]);
 run('unit: add-lesson server registry (B-phase-4)', 'node', [path.join(__dirname, 'unit-add-lesson-registry.test.js')]);
 run('unit: per-language prompt examples — 4 prompts + de seed (A)', 'node', [path.join(__dirname, 'unit-prompt-examples.test.js')]);
+run('unit: storyline-screen QC button + lesson-types dropdown (v47)', 'node', [path.join(__dirname, 'unit-storyline-screen-extras.test.js')]);
+run('unit: static flag hiding + download/submit pill (v47)', 'node', [path.join(__dirname, 'unit-static-flags.test.js')]);
 run('unit: harvest rated items → examples.json (A)', 'node', [path.join(__dirname, 'unit-harvest-examples.test.js')]);
 run('unit: mixed-type review lessons (C)', 'node', [path.join(__dirname, 'unit-mixed-lessons.test.js')]);
 run('unit: mixed pool rating-aware (v46 #7)', 'node', [path.join(__dirname, 'unit-mixed-rating.test.js')]);

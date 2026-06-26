@@ -52,7 +52,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 0 var(--green-dark)}
 .gen-btn:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 var(--green-dark)}
 .gen-btn:disabled{background:var(--gray-mid);color:var(--gray);box-shadow:0 4px 0 #ccc;cursor:not-allowed}
-.offline-note{font-size:12px;color:#990000;font-weight:700;text-align:center;margin-top:8px;display:none}.static-flag-banner{display:none;align-items:center;gap:10px;background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 14px;margin-top:10px;font-size:12px;font-weight:700;color:#c26000}.static-flag-banner button{flex-shrink:0;background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer}.static-flag-banner button:hover{background:#e08800}
+.offline-note{font-size:12px;color:#990000;font-weight:700;text-align:center;margin-top:8px;display:none}.static-flag-banner{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:1200;width:calc(100% - 24px);max-width:560px;align-items:center;gap:10px;background:#fff4e0;border:2px solid #ff9600;border-radius:var(--radius-lg);padding:10px 14px;font-size:12px;font-weight:700;color:#c26000;box-shadow:0 6px 24px rgba(0,0,0,.18)}.static-flag-banner button{flex-shrink:0;background:#ff9600;color:#fff;border:none;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer}.static-flag-banner button:hover{background:#e08800}
 
 .examples{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px}
 .chip{background:var(--white);border:2px solid var(--gray-mid);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer;color:var(--gray-dark);font-family:'Nunito',sans-serif;transition:border-color .1s,color .1s}
@@ -472,6 +472,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   <div id="gen-progress" style="margin-top:8px;font-size:13px;color:var(--gray-dark);font-weight:700;min-height:20px;text-align:center;max-width:280px"></div>
 </div>
 
+<!-- Static build: floating "download & submit" pill for local flags/ratings. Lives at body
+     level (not inside a screen) so it shows on any screen the moment a flag/rating is set. -->
+<div class="static-flag-banner" id="static-flag-banner">
+  <span style="font-size:16px">⚑</span>
+  <span style="flex:1" id="static-flag-banner-text">You have flagged exercises — download them to review.</span>
+  <button id="download-flagged-btn" onclick="downloadUserFlaggedLessons()">⬇ Download flagged</button>
+  <a id="static-flag-submit-link" href="https://github.com/raim/dreizunge/issues/new" target="_blank" rel="noopener" style="display:none;flex-shrink:0;background:#24292f;color:#fff;border-radius:var(--radius);padding:6px 12px;font-size:12px;font-weight:800;text-decoration:none">↗ Submit as issue</a>
+</div>
+
 <!-- ══ LANDING ════════════════════════════════════════════════════════ -->
 <div id="landing" class="screen active">
 <div class="landing-inner">
@@ -767,11 +776,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
   </div>
 
   <div style="display:none" id="tts-footer-landing"><span class="lang-footer-lbl">🗣</span><select class="tts-select" id="tts-lang-select-landing" onchange="onTtsLangSelectGlobal(this.value,'landing')" style="width:auto;font-size:12px" title="Speech language"></select><select class="tts-select" id="tts-voice-select-landing" onchange="onTtsVoiceSelectGlobal(this.value,'landing')" style="display:none;width:auto;max-width:150px;font-size:12px" title="Voice"></select><button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button></div>
-  <div class="static-flag-banner" id="static-flag-banner">
-    <span style="font-size:16px">⚑</span>
-    <span style="flex:1" id="static-flag-banner-text">You have flagged exercises — download them to review.</span>
-    <button id="download-flagged-btn" onclick="downloadUserFlaggedLessons()">⬇ Download flagged</button>
-  </div>
 
   <div id="teacher-mode-bar" style="display:none;text-align:center;padding:8px 0 4px">
     <button id="teacher-mode-btn" onclick="toggleTeacherMode()"
@@ -975,6 +979,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="openRetitleMenu(event)" title="Re-generate titles" style="display:none">✨</button>
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
+        <button class="sl-screen-share" id="sl-screen-qc-btn" title="QC: check all lessons in this storyline" style="display:none">🔍</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
       </div>
       <div id="sl-tags-row" style="display:none;padding:2px 14px 4px;align-items:center;gap:6px;flex-wrap:wrap">
@@ -1700,31 +1705,179 @@ async function pollJob(jobId, onStep, intervalMs){
     }, intervalMs);
   });
 }
-function updateStaticFlagBanner(){
-  const banner=document.getElementById('static-flag-banner');
-  if(!banner) return;
-  const count=Object.keys(APP.flagged||{}).length;
-  if(count===0){ banner.style.display='none'; return; }
-  const txt=document.getElementById('static-flag-banner-text');
-  if(txt) txt.textContent=count===1?t('lesson.flagged_count',{n:count}):t('lesson.flagged_count_plural',{n:count});
-  banner.style.display='flex';
+// ── Static build: "download & submit" pill for local flags/ratings ─────────
+// In the static (server-less) build, per-item userFlags / userRatings and a lesson's
+// _miscFlags can't be saved server-side — they ride the JSON export. This pill prompts the
+// user to download the affected lessons and submit them as a GitHub issue.
+const GITHUB_ISSUES_URL = 'https://github.com/raim/dreizunge/issues/new';
+function _staticLessonSource(){
+  return (typeof STATIC_LESSONS !== 'undefined' ? STATIC_LESSONS : (APP.savedList || [])) || [];
 }
-
-function downloadUserFlaggedLessons(){
-  const flags=APP.flagged||{};
-  if(!Object.keys(flags).length) return;
-  // Collect unique topics from flagged keys
-  const topics=new Set(Object.values(flags).map(f=>f.topic).filter(Boolean));
-  // Find matching lessons from STATIC_LESSONS (if available) or savedList
-  const src=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:APP.savedList)||[];
-  const lessons=src.filter(l=>topics.has(l.topic));
-  const payload={flags, lessons, exportedAt:new Date().toISOString(), exportedBy:'dreizunge-static-user'};
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.download='dreizunge-flagged-'+Date.now()+'.json';
+function _topicHasPending(topic){
+  let n = 0;
+  (topic && topic.lessons || []).forEach(L => {
+    [L.vocab, L.sentences, L.items, L.words].forEach(arr => {
+      if (Array.isArray(arr)) arr.forEach(it => { if (it && (it.userFlag || it.userRating)) n++; });
+    });
+    if (Array.isArray(L._miscFlags)) n += L._miscFlags.length;
+  });
+  return n;
+}
+// Tallies pending local flags/ratings across the static lesson bundle, and which topics
+// (and storylines) they touch — drives the pill text and the scoped download.
+function _countStaticPending(){
+  let flags = 0, ratings = 0; const topics = new Set();
+  _staticLessonSource().forEach(topic => {
+    let touched = false;
+    (topic.lessons || []).forEach(L => {
+      [L.vocab, L.sentences, L.items, L.words].forEach(arr => {
+        if (Array.isArray(arr)) arr.forEach(it => {
+          if (it && it.userFlag) { flags++; touched = true; }
+          if (it && it.userRating) { ratings++; touched = true; }
+        });
+      });
+      if (Array.isArray(L._miscFlags) && L._miscFlags.length) { flags += L._miscFlags.length; touched = true; }
+    });
+    if (touched) topics.add(topic.topic);
+  });
+  return { flags, ratings, total: flags + ratings, topics: [...topics] };
+}
+function updateStaticFlagBanner(){
+  const banner = document.getElementById('static-flag-banner');
+  if (!banner) return;
+  if (typeof STATIC_LESSONS === 'undefined') { banner.style.display = 'none'; return; }  // live build saves server-side
+  _ensureStaticFlagsLoaded();   // restore any flags persisted from a previous session
+  const { total, flags, ratings } = _countStaticPending();
+  if (total === 0) { banner.style.display = 'none'; return; }
+  const txt = document.getElementById('static-flag-banner-text');
+  if (txt) {
+    const parts = [];
+    if (flags) parts.push(flags + ' flag' + (flags !== 1 ? 's' : ''));
+    if (ratings) parts.push(ratings + ' rating' + (ratings !== 1 ? 's' : ''));
+    txt.textContent = 'You have ' + parts.join(' and ') + ' to submit — download and open an issue so they can be merged.';
+  }
+  // A submit (GitHub issue) link is revealed only after a download (below).
+  banner.style.display = 'flex';
+  // Dynamic per-storyline scoping: if every pending-flag topic belongs to a single
+  // storyline, point the download at just that storyline (and label it); otherwise export
+  // all flagged topics.
+  const btn = document.getElementById('download-flagged-btn');
+  if (btn) {
+    const pendingIds = new Set(_staticLessonSource().filter(_topicHasPending).map(l => l.id).filter(Boolean));
+    const sls = (APP.storylines || []).filter(s => (s.chapters || []).some(cid => pendingIds.has(cid)));
+    if (sls.length === 1) {
+      const sid = sls[0].id, title = sls[0].title || 'storyline';
+      btn.onclick = () => downloadUserFlaggedLessons(sid);
+      btn.textContent = '⬇ Download "' + title + '"';
+    } else {
+      btn.onclick = () => downloadUserFlaggedLessons();
+      btn.textContent = '⬇ Download flagged';
+    }
+  }
+}
+// Build the export payload for the pending-flag topics. If a storylineId is given, scope to
+// that storyline's chapters; otherwise export every topic that carries pending flags/ratings.
+function _flaggedExportPayload(storylineId){
+  const src = _staticLessonSource();
+  let lessons;
+  let scopeTitle = '';
+  const sl = storylineId && (APP.storylines || []).find(s => s.id === storylineId);
+  if (sl) {
+    const ids = new Set(sl.chapters || []);
+    lessons = src.filter(l => ids.has(l.id) && _topicHasPending(l));
+    scopeTitle = sl.title || '';
+  } else {
+    lessons = src.filter(_topicHasPending);
+  }
+  return { payload: { lessons, scope: scopeTitle || null, exportedAt: new Date().toISOString(), exportedBy: 'dreizunge-static-user' }, count: lessons.length, scopeTitle };
+}
+// Download the flagged lessons as JSON, then reveal the "submit as a GitHub issue" link.
+// storylineId (optional) scopes the download to one storyline's chapters.
+function downloadUserFlaggedLessons(storylineId){
+  const { payload, count, scopeTitle } = _flaggedExportPayload(storylineId);
+  if (!count) return;
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const slug = (scopeTitle || 'flagged').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'flagged';
+  const fname = 'dreizunge-' + slug + '-' + Date.now() + '.json';
+  const a = document.createElement('a');
+  a.href = url; a.download = fname;
   document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(url);
+  _revealSubmitLink(scopeTitle, fname);
+}
+// Reveal/refresh the GitHub-issue link after a download. The issue is pre-titled; the user
+// drags the just-downloaded JSON into the issue body (GitHub can't accept the file via URL).
+function _revealSubmitLink(scopeTitle, fname){
+  const link = document.getElementById('static-flag-submit-link');
+  if (!link) return;
+  const title = 'Flagged lessons submission' + (scopeTitle ? ': ' + scopeTitle : '');
+  const body = 'Please attach the exported file' + (fname ? ' `' + fname + '`' : '') +
+    ' (drag it into this box). It contains lessons with flags/ratings to review.\n\n(Exported from the static Dreizunge build.)';
+  link.href = GITHUB_ISSUES_URL + '?title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(body);
+  link.style.display = '';
+}
+
+// ── Static build: persist local flags/ratings across reloads (localStorage) ────────
+// Static mode mutates STATIC_LESSONS items by reference; on reload that bundle is rebuilt
+// fresh, so flags would be lost. We mirror them to localStorage keyed by
+// topicId · lessonIdx · kind · item-identity (the same identity _resolveExItem matches on),
+// and re-apply on first use. localStorage (not a cookie): ~5MB, not sent to the server,
+// per-browser/device. Cross-device sync is the accounts/repo feature (see platform_plan.md).
+const _staticFlagsKey = 'dz_static_flags';
+const _FLAG_ARRAYS = [['vocab','target'], ['sentences','target'], ['items','sentence'], ['words','base']];
+// Snapshot all pending per-item flags/ratings + _miscFlags from the bundle into a plain map.
+function _collectStaticFlags(){
+  const out = {};
+  _staticLessonSource().forEach(topic => {
+    const tid = topic.id || topic.topic; if (!tid) return;
+    (topic.lessons || []).forEach((L, li) => {
+      const items = {};
+      _FLAG_ARRAYS.forEach(([kind, idField]) => {
+        (L[kind] || []).forEach(it => {
+          if (it && (it.userFlag || it.userRating)) {
+            const e = {}; if (it.userFlag) e.f = it.userFlag; if (it.userRating) e.r = it.userRating;
+            items[kind + ':' + String(it[idField] == null ? '' : it[idField])] = e;
+          }
+        });
+      });
+      const misc = Array.isArray(L._miscFlags) ? L._miscFlags : [];
+      if (Object.keys(items).length || misc.length) {
+        (out[tid] = out[tid] || {})[li] = misc.length ? { items, misc } : { items };
+      }
+    });
+  });
+  return out;
+}
+function _saveStaticFlags(){
+  if (typeof STATIC_LESSONS === 'undefined') return;   // live build saves server-side
+  _ensureStaticFlagsLoaded();                           // never clobber unread persisted flags
+  try { localStorage.setItem(_staticFlagsKey, JSON.stringify(_collectStaticFlags())); } catch (_) {}
+}
+// Re-apply persisted flags onto the freshly-loaded bundle. Idempotent (replaces, not appends).
+function _applyStaticFlags(){
+  if (typeof STATIC_LESSONS === 'undefined') return;
+  let saved; try { saved = JSON.parse(localStorage.getItem(_staticFlagsKey) || '{}'); } catch (_) { return; }
+  const byTid = {}; _staticLessonSource().forEach(topic => { byTid[topic.id || topic.topic] = topic; });
+  Object.entries(saved).forEach(([tid, lessons]) => {
+    const topic = byTid[tid]; if (!topic) return;
+    Object.entries(lessons).forEach(([li, data]) => {
+      const L = (topic.lessons || [])[+li]; if (!L) return;
+      Object.entries(data.items || {}).forEach(([k, e]) => {
+        const ci = k.indexOf(':'), kind = k.slice(0, ci), idVal = k.slice(ci + 1);
+        const spec = _FLAG_ARRAYS.find(a => a[0] === kind); if (!spec) return;
+        const it = (L[kind] || []).find(x => String(x[spec[1]] == null ? '' : x[spec[1]]) === idVal);
+        if (it) { if (e.f) it.userFlag = e.f; if (e.r) it.userRating = e.r; }
+      });
+      if (Array.isArray(data.misc) && data.misc.length) L._miscFlags = data.misc.slice();
+    });
+  });
+}
+// Apply persisted flags exactly once, before anything reads/writes them.
+function _ensureStaticFlagsLoaded(){
+  if (typeof STATIC_LESSONS === 'undefined' || APP._staticFlagsLoaded) return;
+  APP._staticFlagsLoaded = true;
+  try { _applyStaticFlags(); } catch (_) {}
 }
 
 function loadFlagged(){ try{ return JSON.parse(localStorage.getItem('imp3_flagged')||'{}'); }catch(e){ return {}; } }
@@ -1758,7 +1911,7 @@ function _closeEditorsOnNav(targetId){
   }
   if(targetId!=='storyline-screen'){ try{ closeStorylineEditInScreen(); }catch(_){} }
 }
-function show(id){ _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+function show(id){ _closeEditorsOnNav(id); document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); try{ updateStaticFlagBanner(); }catch(_){} }
 // Returning to the main form: restore the form's own language selection into the
 // render context (a viewed story may have temporarily overridden APP.srcLang). The
 // main selectors/library filter were never mutated while viewing, so only the context
@@ -12620,7 +12773,12 @@ const STATIC_LESSONS = [
           },
           {
             "target": "sorry",
-            "source": "すみません"
+            "source": "すみません",
+            "qc": {
+              "sug": "Sorry",
+              "field": "target",
+              "at": "2026-06-24T16:19:37.044Z"
+            }
           },
           {
             "target": "hero",
@@ -12629,19 +12787,39 @@ const STATIC_LESSONS = [
           {
             "target": "smartest",
             "source": "最賢い",
-            "editedAt": "2026-06-24T09:11:03.122Z"
+            "editedAt": "2026-06-24T09:11:03.122Z",
+            "qc": {
+              "sug": "最も賢い",
+              "field": "source",
+              "at": "2026-06-24T16:19:45.468Z"
+            }
           },
           {
             "target": "creepy",
-            "source": "怪しい"
+            "source": "怪しい",
+            "qc": {
+              "sug": "怪reffしい",
+              "field": "source",
+              "at": "2026-06-24T16:19:48.987Z"
+            }
           },
           {
             "target": "disguise",
-            "source": "隠れ蓑"
+            "source": "隠れ蓑",
+            "qc": {
+              "sug": "隠身衣",
+              "field": "source",
+              "at": "2026-06-24T16:19:53.105Z"
+            }
           },
           {
             "target": "guy",
-            "source": "男の子"
+            "source": "男の子",
+            "qc": {
+              "sug": "男性",
+              "field": "source",
+              "at": "2026-06-24T16:19:56.666Z"
+            }
           }
         ],
         "sentences": [
@@ -12653,7 +12831,12 @@ const STATIC_LESSONS = [
               "you",
               "my",
               "family?"
-            ]
+            ],
+            "qc": {
+              "sug": "家族ですか？",
+              "field": "source",
+              "at": "2026-06-24T16:20:01.040Z"
+            }
           },
           {
             "target": "Seven shook his head.",
@@ -12663,7 +12846,12 @@ const STATIC_LESSONS = [
               "shook",
               "his",
               "head."
-            ]
+            ],
+            "qc": {
+              "sug": "七人は頭を振った",
+              "field": "source",
+              "at": "2026-06-24T16:20:08.239Z"
+            }
           },
           {
             "target": "I’m sorry.",
@@ -12683,7 +12871,12 @@ const STATIC_LESSONS = [
               "is",
               "the",
               "smartest."
-            ]
+            ],
+            "qc": {
+              "sug": "Forty-two thinks he is the smartest.",
+              "field": "source",
+              "at": "2026-06-24T16:20:22.001Z"
+            }
           },
           {
             "target": "There are some creepy looking guys.",
@@ -12695,7 +12888,12 @@ const STATIC_LESSONS = [
               "creepy",
               "looking",
               "guys."
-            ]
+            ],
+            "qc": {
+              "sug": "怪しい男がいる",
+              "field": "source",
+              "at": "2026-06-24T16:20:27.602Z"
+            }
           }
         ]
       },
@@ -12724,7 +12922,12 @@ const STATIC_LESSONS = [
           {
             "target": "path",
             "source": "道",
-            "editedAt": "2026-06-24T09:11:03.122Z"
+            "editedAt": "2026-06-24T09:11:03.122Z",
+            "qc": {
+              "sug": "道路",
+              "field": "source",
+              "at": "2026-06-24T16:20:39.594Z"
+            }
           },
           {
             "target": "world",
@@ -12762,7 +12965,12 @@ const STATIC_LESSONS = [
               "place",
               "is",
               "long."
-            ]
+            ],
+            "qc": {
+              "sug": "The path to the family place is long. 家族の場所への道は長いです。",
+              "field": "source",
+              "at": "2026-06-24T16:21:08.380Z"
+            }
           },
           {
             "target": "Evening came, and everyone slept.",
@@ -12774,7 +12982,12 @@ const STATIC_LESSONS = [
               "everyone",
               "slept."
             ],
-            "editedAt": "2026-06-24T09:10:16.742Z"
+            "editedAt": "2026-06-24T09:10:16.742Z",
+            "qc": {
+              "sug": "夜が訪れ、 Everyoneは Everyoneが寝ました。",
+              "field": "source",
+              "at": "2026-06-24T16:21:15.589Z"
+            }
           },
           {
             "target": "A strange path appeared in the world.",
@@ -12822,7 +13035,7 @@ const STATIC_LESSONS = [
       ]
     },
     "generatedAt": "2026-06-16T19:27:12.602Z",
-    "updatedAt": "2026-06-24T09:15:48.243Z",
+    "updatedAt": "2026-06-24T16:21:25.881Z",
     "id": "tp_17816389729790000379"
   },
   {
@@ -70698,6 +70911,35 @@ function shareStoryline() {
   } else { _copyFallback(url); }
 }
 
+// Distinct lesson types present in a saved topic's lesson-sets, in first-seen order.
+// Pure; used by the storyline-screen per-chapter "lesson types" dropdown. Prefers the
+// precomputed `lessonTypes` the /api/lessons list provides (live mode strips the full
+// lessons[]), and falls back to deriving from `lessons[]` (static build / STATIC_LESSONS).
+// An entry with no explicit type is treated as 'standard' (matching lessonTypeMeta).
+function lessonSetTypes(s) {
+  if (s && Array.isArray(s.lessonTypes)) return s.lessonTypes;
+  const seen = new Set(), out = [];
+  ((s && s.lessons) || []).forEach(ls => {
+    const ty = (ls && ls.type) ? ls.type : 'standard';
+    if (!seen.has(ty)) { seen.add(ty); out.push(ty); }
+  });
+  return out;
+}
+// Collapsible chip list of the lesson types in a chapter, labelled via the registry
+// (lessonTypeEmoji/lessonTypeLabel). Empty string when the chapter has no lessons yet.
+// stopPropagation so opening it doesn't trigger the surrounding card's navigation.
+function _lessonTypesDropdownHtml(s) {
+  const types = lessonSetTypes(s);
+  if (!types.length) return '';
+  const chips = types.map(ty =>
+    `<span style="white-space:nowrap">${lessonTypeEmoji(ty)} ${escHtml(lessonTypeLabel(ty))}</span>`
+  ).join('<span style="opacity:.4"> · </span>');
+  return '<details class="ls-types" onclick="event.stopPropagation()" '
+       + 'style="margin:2px 2px 0;font-size:12px;color:var(--gray-dark)">'
+       + `<summary style="cursor:pointer;list-style:none">${types.length} lesson type${types.length > 1 ? 's' : ''} ▾</summary>`
+       + `<div style="padding:4px 2px;display:flex;flex-wrap:wrap;gap:4px 8px">${chips}</div>`
+       + '</details>';
+}
 function _renderStorylineScreen(chainId, encodedChain, topics) {
   // Title — look up from v29 array first, then legacy object
   const _slArr2 = Array.isArray(APP.storylines) ? APP.storylines : [];
@@ -70744,6 +70986,12 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   if (genBtn)    genBtn.style.display    = APP.info.canGenerate ? '' : 'none';
   const summaryBtn = document.getElementById('sl-screen-summary-btn');
   if (summaryBtn) summaryBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  // QC button — same action as the main-page storyline QC: check all lessons in this deck.
+  const qcBtn = document.getElementById('sl-screen-qc-btn');
+  if (qcBtn) {
+    qcBtn.style.display = APP.info.canGenerate ? '' : 'none';
+    qcBtn.onclick = () => qcRun({ storylineId: chainId }, qcBtn);
+  }
   const delBtn = document.getElementById('sl-screen-del-btn');
   if (delBtn) delBtn.style.display = APP.info.canGenerate ? '' : 'none';
   // Bottom action row (continue / download / clear / delete / re-create all).
@@ -70875,6 +71123,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
            + '<div style="height:100%;width:' + _pct + '%;background:' + _barColor + ';transition:width .3s"></div></div>'
            + savedItemHtml(s, false, true) + '</div>';
     }
+    out += _lessonTypesDropdownHtml(s);
     return out;
   }
 
@@ -72232,6 +72481,8 @@ async function _persistEditorFlags(li){
   const r = await _postLessonEdit(APP.lessonData);
   if(!r.ok) throw new Error((await r.json()).error||'save failed');
   try{ buildPath(); }catch(_){}                  // refresh node flag badges/counts
+  try{ updateStaticFlagBanner(); }catch(_){}      // static: surface the download & submit pill
+  try{ _saveStaticFlags(); }catch(_){}            // static: persist flags/ratings across reloads
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
 // Toggle the inline comment box open/closed (no persistence until Flag is pressed).
@@ -72951,8 +73202,16 @@ const isPunctClient = t => /^[.,!?;:()\[\]"'«»—–]+$/.test((t||'').trim());
 // Keeping each builder in the registry means a new lesson type is one row there, not
 // another branch here — and lets mixed-type lessons pool builders uniformly. (B-phase-1.)
 function buildExercises(lessonIdx){
+  if (typeof STATIC_LESSONS !== 'undefined') { try { _ensureStaticFlagsLoaded(); } catch (_) {} }
   const lesson = APP.lessonData.lessons[lessonIdx];
-  return lessonTypeMeta(lesson.type).build(lesson, lessonIdx);
+  let ex = lessonTypeMeta(lesson.type).build(lesson, lessonIdx);
+  // Static build, non-teacher play: don't quiz the user on flagged items (a manual
+  // userFlag or a QC suggestion on the source item). Teacher mode and the lesson editor
+  // keep them visible so the flag content can be reviewed/fixed. Live builds are unaffected.
+  if (typeof STATIC_LESSONS !== 'undefined' && !APP._teacherMode && Array.isArray(ex)) {
+    ex = ex.filter(e => { const it = _exFlagTarget(e); return !(it && (it.userFlag || it.qc)); });
+  }
+  return ex;
 }
 // Default builder: standard vocab/sentence lessons (listen MCQ, EN→target MCQ, word
 // order, read-translate, listen-type, plus a few prior-lesson vocab review items).
@@ -74172,6 +74431,8 @@ async function _persistPlayFlags(){
   // Best-effort: in the static (server-less) build this no-ops — the flag stays in
   // memory and rides along with the JSON export instead.
   try{ await _postLessonEdit(d); }catch(_){}
+  try{ updateStaticFlagBanner(); }catch(_){}   // static: surface the download & submit pill
+  try{ _saveStaticFlags(); }catch(_){}         // static: persist flags/ratings across reloads
 }
 async function savePlayFlag(){
   const C=APP.cur; if(!C||C.cur>=C.exercises.length) return;
