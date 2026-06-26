@@ -1331,7 +1331,29 @@
     "static.pill.download_scoped": "⬇ İndir \"{title}\"",
     "static.pill.submit": "↗ Sorunu gönder",
     "static.pill.dismiss": "İptal",
-    "static.pill.issue_title": "Bildirilmiş dersler gönderimi"
+    "static.pill.issue_title": "Bildirilmiş dersler gönderimi",
+    "static.pill.issue_title_scoped": "Belirli dersler sunumu: {title}",
+    "static.pill.issue_body": "Lütfen {fname} dosyasını ekleyin (üzerine sürükleyin). Bu dosya, incelemek için sema / puanlama / düzenlemeler içeren dersler içeriyor.\n\n(Dosya, statik Dreizunge sürümünden dışa aktarıldı.)",
+    "editor.good_example": "⭐ İyi örnek",
+    "rating.editor.title": "Bu soruyu bir örnek olarak işaretle (⭐)",
+    "rating.play.title": "Bu soruyu bir örnek olarak işaretle (⭐)",
+    "rating.toast.added": "İşaretlenen bir örnek ⭐",
+    "rating.toast.removed": "Örnek işaretlemesi kaldırıldı",
+    "rating.toast.unresolved": "Bu ödevi puanlamak mümkün değil — kaynak öğesi bulunamadı",
+    "lesson.type.mixed": "🔀 Çarpım tablosu",
+    "lesson.type.desc.mixed": "Bu bölümün diğer derslerinden gelen soruların bir karışımı",
+    "form.format.mixed": "🔀 Çarpım soruları — bu bölümden karışık sorular (AI olmadan)",
+    "mixed.need_open_set": "Bir ders kümelerini açın önce bir karışım denemesi ekleyebilirsiniz",
+    "mixed.pulls_from": "Soruları şunlardan çeker",
+    "mixed.per_type": "Ders başına soru:",
+    "mixed.no_sources": "hala bu kümede başka ders yok",
+    "mixed.readonly_note": "Bu ders otomatik olarak birleştirilmiştir — düzenlemeye izin verilmiyor. Sorular her kez oynadığınızda yeniden toplanır.",
+    "mixed.empty": "Henüz bir şey toplanmamış — bu bölümde başka dersler ekleyin.",
+    "story.edit.saved_local": "✓ Kaydedildi — dışa aktararak değişikliklerinizi saklayın",
+    "story.edit.static_no_aihunt": "✓ Kaydedildi. AI hata arayışı yeniden oluşturmak tam uygulamayı gerektirir.",
+    "ex.flag_shown_label": "Seçili",
+    "ex.flag_shown_correct": "Suggested fix:",
+    "ex.flag_no_comment": "Flagged (no comment)"
   },
   "hi": {
     "app.tagline": "किसी भी विषय में किसी भी भाषा में शब्दावली सीखें",
@@ -1640,7 +1662,17 @@
     "qc.editor.user_suggests": "आपने निविदा की:",
     "ex.flag_comment_ph": "क्या गलत दिख रहा है? (वैकल्पिक)",
     "ex.flag_save": "लक्ष्य करें",
-    "ex.syn.hint": "सामिल शब्द को टाप करें, फिर चेक करें."
+    "ex.syn.hint": "सामिल शब्द को टाप करें, फिर चेक करें.",
+    "static.pill.edits_only": "संशोधित विषय प्रस्तुत करें",
+    "static.pill.default": "प्रकाशित और अंकित विषय — डाउनलोड कर प्रस्तुत करें।",
+    "static.pill.download": "⬇ डाउनलोड",
+    "static.pill.download_scoped": "⬇ डाउनलोड \"{title}\"",
+    "static.pill.submit": "↗ समस्या के रूप में प्रस्तुत करें",
+    "static.pill.dismiss": "समाप्त करें",
+    "static.pill.issue_title": "प्रकाशित विषय प्रस्तुत करें",
+    "static.pill.issue_title_scoped": "प्रकाशित विषय प्रस्तुत करें: {title}",
+    "static.pill.issue_body": "कृपया {fname} नामक निर्यातित फाइल को अंकित करें (इस बॉक्स में इसे ट्रैग करें)। यह विषयों को समीक्षा करने के लिए फ़ाइल है जिनमें अंकित, संशोधित या अंक शामिल हैं।\n\n(यह स्टेटिक ड्रिज़ंग बिल्ड से निर्यातित किया गया है।)",
+    "editor.good_example": "⭐ अच्छा उदाहरण"
   },
   "de": {
     "app.tagline": "Vokabular für jedes Thema in jeder Sprache lernen",
@@ -2290,6 +2322,7 @@
     "ex.syn.hint": "انقر على كل كلمة مطابقة، ثم التحقق."
   },
   "en": {
+    "static.pill.tosubmit": "to submit",
     "static.pill.edits_only": "Edited lessons to submit",
     "static.pill.default": "Flagged & rated items — download to submit.",
     "static.pill.download": "⬇ Download",
