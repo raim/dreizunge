@@ -330,6 +330,9 @@ function mergeFlagsIntoTopic(existing, incoming) {
       applied += inL._miscFlags.length;
     }
   });
+  // Topic-level story edit: carry the marker only (the proposed story text is NOT applied —
+  // that needs full-replace or the review UI). Lets the maintainer see the story was edited.
+  if (incoming.storyEditedAt) { existing.storyEditedAt = incoming.storyEditedAt; applied++; }
   return applied;
 }
 function upsert(data) {

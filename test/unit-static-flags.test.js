@@ -18,9 +18,11 @@ function extract(name) {
   for (; i < html.length; i++) { const c = html[i]; if (c === '{') d++; else if (c === '}') { d--; if (!d) { i++; break; } } }
   return html.slice(at, i);
 }
-const { _resolveExItem, _topicHasPending } = new Function(
-  extract('_resolveExItem') + '\n' + extract('_topicHasPending') +
-  '\nreturn { _resolveExItem, _topicHasPending };')();
+const { _resolveExItem, _topicHasPending } = new Function('APP',
+  "const _FLAG_ARRAYS=[['vocab','target'],['sentences','target'],['items','sentence'],['words','base']];\n" +
+  extract('_resolveExItem') + '\n' + extract('_topicHasPending') + '\n' +
+  extract('_userItemSignals') + '\n' + extract('_userMiscFlag') +
+  '\nreturn { _resolveExItem, _topicHasPending };')({ _pristine: new Set() });
 
 // Task 1: the play filter drops an exercise when its source item is flagged.
 const exFlagged = it => !!(it && (it.userFlag || it.qc));   // the predicate buildExercises uses
@@ -111,13 +113,13 @@ console.log('  persistence round-trip (save -> reload -> reapply, idempotent): O
 const editsConsts = "const _staticEditsKey='dz_static_edits';\nconst _FLAG_ARRAYS=[['vocab','target'],['sentences','target'],['items','sentence'],['words','base']];\n";
 const editsFns = ['_staticLessonSource', '_collectStaticEdits', '_applyStaticEdits'].map(extract).join('\n');
 const editStore = {};
-const editedBundle = [{ id: 't1', topic: 'T', lessons: [{ vocab: [{ target: 'EditedWord', source: 'new', editedAt: 'T1' }, { target: 'B' }] }] }];
+const editedBundle = [{ id: 't1', topic: 'T', story: 'Edited story', storyEditedAt: 'T2', lessons: [{ vocab: [{ target: 'EditedWord', source: 'new', editedAt: 'T1' }, { target: 'B' }] }] }];
 const sbE = new Function('STATIC_LESSONS', 'APP', 'localStorage',
   editsConsts + editsFns + '\nreturn { _collectStaticEdits };'
 )(editedBundle, { savedList: editedBundle }, { getItem: k => editStore[k] || null, setItem: (k, v) => { editStore[k] = v; } });
 editStore['dz_static_edits'] = JSON.stringify(sbE._collectStaticEdits());
 // Reload: fresh bundle with ORIGINAL content, no editedAt.
-const freshB = [{ id: 't1', topic: 'T', lessons: [{ vocab: [{ target: 'OrigWord', source: 'old' }, { target: 'B' }] }] }];
+const freshB = [{ id: 't1', topic: 'T', story: 'Original story', lessons: [{ vocab: [{ target: 'OrigWord', source: 'old' }, { target: 'B' }] }] }];
 const APP_E = { savedList: freshB, _staticDirtyTopics: new Set() };
 const sbE2 = new Function('STATIC_LESSONS', 'APP', 'localStorage',
   editsConsts + editsFns + '\nreturn { _applyStaticEdits, APP, STATIC_LESSONS };'
@@ -126,8 +128,10 @@ sbE2._applyStaticEdits();
 assert.strictEqual(sbE2.STATIC_LESSONS[0].lessons[0].vocab[0].target, 'EditedWord', 'edit restored by position');
 assert.strictEqual(sbE2.STATIC_LESSONS[0].lessons[0].vocab[0].source, 'new', 'edited source restored');
 assert.strictEqual(sbE2.STATIC_LESSONS[0].lessons[0].vocab[1].target, 'B', 'non-edited item unchanged');
+assert.strictEqual(sbE2.STATIC_LESSONS[0].story, 'Edited story', 'topic-level story edit restored');
+assert.strictEqual(sbE2.STATIC_LESSONS[0].storyEditedAt, 'T2', 'storyEditedAt restored');
 assert.ok(sbE2.APP._staticDirtyTopics.has('t1'), 'edited topic re-marked dirty after reload');
-console.log('  #1 content edits persist by position across reload: OK');
+console.log('  #1 content + story edits persist across reload: OK');
 
 // Teacher mode persists across reloads (localStorage 'dz_teacher_mode'); pill shows on load.
 assert.ok(/const _TEACHER_KEY = 'dz_teacher_mode'/.test(html), 'teacher-mode key defined');
@@ -176,10 +180,11 @@ assert.strictEqual(_topicHasPending({ lessons: [{ vocab: [{ userDelete: {} }] }]
 
 // _flaggedExportPayload exports COMPLETE storylines (every chapter) for any storyline with a
 // flagged/edited chapter, plus flagged orphan topics; untouched storylines are excluded.
-const exFns = ['_staticLessonSource', '_topicHasPending', '_topicPendingOrEdited', '_flaggedExportPayload'].map(extract).join('\n');
-function exportSandbox(STATIC_LESSONS, storylines) {
-  const APP = { savedList: STATIC_LESSONS, storylines, _staticDirtyTopics: new Set() };
-  return new Function('STATIC_LESSONS', 'APP', exFns + '\nreturn { _flaggedExportPayload };')(STATIC_LESSONS, APP);
+const exFns = ['_staticLessonSource', '_topicHasPending', '_topicPendingOrEdited', '_userItemSignals', '_userMiscFlag', '_userStoryEdited', '_userSummaryEdited', '_stripPreExisting', '_flaggedExportPayload'].map(extract).join('\n');
+const exConsts = "const _FLAG_ARRAYS=[['vocab','target'],['sentences','target'],['items','sentence'],['words','base']];\n";
+function exportSandbox(STATIC_LESSONS, storylines, dirtySummaries) {
+  const APP = { savedList: STATIC_LESSONS, storylines, _staticDirtyTopics: new Set(), _staticDirtySummaries: dirtySummaries || new Set(), _pristine: new Set() };
+  return new Function('STATIC_LESSONS', 'APP', exConsts + exFns + '\nreturn { _flaggedExportPayload };')(STATIC_LESSONS, APP);
 }
 const bundle2 = [
   { id: 'c1', topic: 'Ch1', lessons: [{ vocab: [{ target: 'a', userFlag: {} }] }] }, // flagged
@@ -191,6 +196,42 @@ const storylines2 = [{ id: 's1', title: 'Story 1', chapters: ['c1', 'c2'] }, { i
 const ids = exportSandbox(bundle2, storylines2)._flaggedExportPayload().payload.lessons.map(l => l.id).sort();
 assert.deepStrictEqual(ids, ['c1', 'c2', 'orph'], 'complete storyline c1+c2 + orphan; untouched s2 excluded');
 console.log('  v47 complete-storyline export (all chapters of affected storylines): OK');
+
+// summary edits ride the export as `storylines` (even with no flagged chapters).
+const storylines3 = [{ id: 's1', title: 'Story 1', chapters: ['c1', 'c2'] }, { id: 's2', title: 'Story 2', chapters: ['c3'], summary: 'edited', summaryEditedAt: 'T5' }];
+const pay3 = exportSandbox(bundle2, storylines3, new Set(['s2']))._flaggedExportPayload().payload;
+assert.deepStrictEqual((pay3.storylines || []).map(s => s.id), ['s2'], 'edited-summary storyline rides the export');
+console.log('  summary edit rides the export payload: OK');
+
+// plain content edits do NOT pull a topic into the export — only tags + story edits do.
+const bundle4 = [
+  { id: 'f1', topic: 'F', lessons: [{ vocab: [{ target: 'x', userFlag: {} }] }] },      // flagged -> in
+  { id: 'ed1', topic: 'E', lessons: [{ vocab: [{ target: 'y', editedAt: 'T1' }] }] },     // edit-only -> OUT
+  { id: 'st1', topic: 'S', storyEditedAt: 'T2', lessons: [{ vocab: [{ target: 'z' }] }] },// story-edited -> in
+];
+const ids4 = exportSandbox(bundle4, [])._flaggedExportPayload().payload.lessons.map(l => l.id).sort();
+assert.deepStrictEqual(ids4, ['f1', 'st1'], 'edit-only topic excluded; flagged + story-edited included');
+console.log('  export scope: tags + story edits only (plain edits excluded): OK');
+
+// summary edits persist across reload (storyline-level).
+const sumFns = ['_collectStaticSummaries', '_applyStaticSummaries'].map(extract).join('\n');
+const sumConsts = "const _staticSummariesKey='dz_static_summaries';\n";
+const sumStore = {};
+const slEdited = [{ id: 's1', title: 'S', summary: 'New summary', summaryEditedAt: 'T3' }];
+const sbSum = new Function('STATIC_LESSONS', 'APP', 'localStorage',
+  sumConsts + sumFns + '\nreturn { _collectStaticSummaries };'
+)([], { storylines: slEdited }, { getItem: () => null, setItem: () => {} });
+sumStore['dz_static_summaries'] = JSON.stringify(sbSum._collectStaticSummaries());
+const slFresh = [{ id: 's1', title: 'S', summary: 'Old summary' }];
+const APP_S = { storylines: slFresh };
+const sbSum2 = new Function('STATIC_LESSONS', 'APP', 'localStorage',
+  sumConsts + sumFns + '\nreturn { _applyStaticSummaries, APP };'
+)([], APP_S, { getItem: k => sumStore[k] || null, setItem: () => {} });
+sbSum2._applyStaticSummaries();
+assert.strictEqual(APP_S.storylines[0].summary, 'New summary', 'summary edit restored across reload');
+assert.strictEqual(APP_S.storylines[0].summaryEditedAt, 'T3', 'summaryEditedAt restored');
+assert.ok(APP_S._staticDirtySummaries.has('s1'), 'summary edit re-marks storyline dirty');
+console.log('  summary edits persist across reload: OK');
 
 // structural guards
 assert.ok(/function _staticSoftDelete\(item\)/.test(html), 'soft-delete helper present');
@@ -204,6 +245,26 @@ assert.ok(/if \(link\) link\.style\.display = 'none'/.test(html), 'stale submit 
 assert.ok(/const _staticEditsKey = 'dz_static_edits'/.test(html), 'edits persistence key present');
 assert.ok(/_saveStaticEdits\(\); _saveStaticFlags\(\)/.test(html), 'content edits persisted on change');
 assert.ok(/try \{ _applyStaticEdits\(\); \} catch/.test(html), 'content edits restored on load');
-console.log('  v47 soft-delete wiring: OK');
+assert.ok(/Make sure the story is expanded[\s\S]{0,120}body\.classList\.add\('open'\)/.test(html), 'story pencil opens the body before editing');
+assert.ok(/d\.storyEditedAt = new Date\(\)\.toISOString\(\)/.test(html), 'story save sets edit marker');
+assert.ok(/_markStaticSummaryEdited\(chainId\)/.test(html), 'summary save triggers pill/persist');
+assert.ok(/const _staticSummariesKey = 'dz_static_summaries'/.test(html), 'summary persistence key present');
+assert.ok(/if \(summaries\) chips\.push\('📝 ' \+ summaries\)/.test(html), 'pill shows summary-edit count');
+assert.ok(/_topicHasPending\(l\) \|\| _userStoryEdited\(l\)/.test(html), 'export scope = tags + story edits (not plain item edits)');
+
+// pre-existing (baked) signals are excluded — only what THIS user adds counts/exports.
+const pFns = ['_staticLessonSource', '_capturePristineSignals', '_userItemSignals', '_userMiscFlag', '_userStoryEdited', '_userSummaryEdited', '_topicHasPending', '_topicPendingOrEdited', '_stripPreExisting', '_flaggedExportPayload', '_countStaticPending'].map(extract).join('\n');
+const baked = [{ id: 't1', topic: 'T', lessons: [{ vocab: [{ target: 'a', userFlag: { old: 1 } }, { target: 'b' }] }] }];
+const APP_P = { savedList: baked, storylines: [] };
+const sbP = new Function('STATIC_LESSONS', 'APP', exConsts + pFns + '\nreturn { _capturePristineSignals, _countStaticPending, _flaggedExportPayload };')(baked, APP_P);
+sbP._capturePristineSignals();                        // 'a' flag is baked/pristine
+baked[0].lessons[0].vocab[1].userFlag = { mine: 1 };  // user flags 'b'
+assert.strictEqual(sbP._countStaticPending().flags, 1, 'only the user-added flag is counted (baked one ignored)');
+const outP = sbP._flaggedExportPayload().payload.lessons;
+assert.strictEqual(outP.length, 1, 'topic exported because the user flagged b');
+assert.ok(!outP[0].lessons[0].vocab[0].userFlag, 'baked flag stripped from export');
+assert.deepStrictEqual(outP[0].lessons[0].vocab[1].userFlag, { mine: 1 }, 'user flag kept in export');
+console.log('  pre-existing (baked) signals excluded; only user-added exported: OK');
+console.log('  story pencil + summary edit wiring: OK');
 
 console.log('unit-static-flags: ALL PASSED');

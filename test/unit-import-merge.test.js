@@ -77,6 +77,14 @@ assert.strictEqual(exB.lessons[0].vocab[1].editedAt, 'T9', 'editedAt carried via
 assert.strictEqual(exB.lessons[0].vocab[1].target, 'Katze', 'identity-changed item keeps maintainer target');
 console.log('  merge: editedAt marker carried (content not applied) + index fallback: OK');
 
+// topic-level story edit marker is carried in merge (content via full-replace / review UI).
+const exS = { topic: 'T', lessons: [{ id: 'l1', vocab: [{ target: 'a' }] }] };
+const inS = { topic: 'T', storyEditedAt: 'T7', lessons: [{ id: 'l1', vocab: [{ target: 'a' }] }] };
+mergeFlagsIntoTopic(exS, inS);
+assert.strictEqual(exS.storyEditedAt, 'T7', 'topic story-edit marker carried in merge');
+assert.ok(/incoming\.storyEditedAt\) \{ existing\.storyEditedAt = incoming\.storyEditedAt/.test(src), 'server carries story marker');
+console.log('  merge: topic story-edit marker carried: OK');
+
 // Wiring guards.
 assert.ok(/const mergeFlags = !!\(body && body\.mergeFlags\)/.test(src), 'import handler reads body.mergeFlags');
 assert.ok(/mergeFlagsIntoTopic\(exists, l\)/.test(src), 'import handler merges when flagged');

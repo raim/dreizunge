@@ -173,6 +173,34 @@ usable for crowd-sourced corrections:
   when the edited item's identity changed) so the maintainer sees the ✎ edited badge — the
   proposed *content* is still NOT auto-applied (that's the review-UI TODO below); to take the
   new text, use full-replace or the side-by-side review UI when built.
+- ✅ **Export only the user's OWN signals, not pre-existing ones (v47).** The static bundle
+  ships with whatever flags/ratings/edits the maintainer baked into `lessons.json` (their own
+  review plus community submissions they imported and rebuilt). Those were being counted and
+  exported as if the end-user made them. Now a "pristine" snapshot of the baked signals is taken
+  once at load (by position, before any localStorage delta is applied), and the pill count +
+  export only include signals NOT in that snapshot — i.e. what this user added on top. Exported
+  topics are also stripped of pre-existing markers (`_stripPreExisting`) so the submission file
+  carries only the user's flags/ratings/deletes/edits (edited *content* is kept; only baked
+  markers are removed). Stars (⭐) remain a submitted signal. Play-hiding still respects baked
+  flags (the maintainer's quality calls hide items for everyone).
+- ✅ **Pill scope = explicit tags, not every edit (v47).** The download pill submits what you
+  deliberately tagged — flags (⚑), ratings (⭐), delete-candidates (🗑) — plus story (📖) and
+  summary (📝) edits, and the complete storylines those belong to. **Plain item content edits
+  no longer pull their topic into the export**: they persist locally and ride along only inside
+  a topic that's already in scope (e.g. one you flagged). This fixes "tagged a few → downloaded
+  100+ topics": accumulated translation fixes across many sessions were all being swept in
+  because `_topicPendingOrEdited` treated any content-edited (dirty) topic as pending. Scope is
+  now `_topicHasPending(l) || l.storyEditedAt`. (Possible follow-up: an opt-in "include all my
+  edits" toggle for users who *do* want to submit their whole edit history.)
+- ✅ **Story & summary edits handled like question edits (v47).** The "Read the story" pencil
+  on a chapter now actually works (it was activating edit mode on a collapsed/hidden body — it
+  now expands first). A story edit (topic-level `d.story`) sets `storyEditedAt`, shows the pill,
+  persists across reloads (the topic-level `__doc` entry in `dz_static_edits`), rides the
+  export, and carries a marker on merge. Storyline **summary** edits (the ✏️ on the storyline
+  summary, teacher-mode) now likewise set `summaryEditedAt`, show the pill (📝 N), persist
+  across reloads (`dz_static_summaries`, storyline-keyed), and ride the export as `storylines`
+  (the import upserts them onto the maintainer's storylines). As with item content, the merge
+  path carries the *marker*; the proposed text lands via full-replace or the review UI.
 - **TODO (later) — content merge with a review UI.** Beyond flags-only merge, support
   merging a submission's *content* edits with a side-by-side interface that shows the original
   vs the edited item and lets the maintainer accept/reject each change (a 3-way/diff review,

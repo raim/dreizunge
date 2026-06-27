@@ -1716,51 +1716,63 @@ function _staticLessonSource(){
   return (typeof STATIC_LESSONS !== 'undefined' ? STATIC_LESSONS : (APP.savedList || [])) || [];
 }
 function _topicHasPending(topic){
+  if (!topic) return 0;
+  const tid = topic.id || topic.topic;
   let n = 0;
-  (topic && topic.lessons || []).forEach(L => {
-    [L.vocab, L.sentences, L.items, L.words].forEach(arr => {
-      if (Array.isArray(arr)) arr.forEach(it => { if (it && (it.userFlag || it.userRating || it.userDelete)) n++; });
+  (topic.lessons || []).forEach((L, li) => {
+    _FLAG_ARRAYS.forEach(([kind]) => {
+      (L[kind] || []).forEach((it, idx) => {
+        if (!it) return;
+        const u = _userItemSignals(it, tid, li, kind, idx);
+        if (u.flag) n++; if (u.rating) n++; if (u.del) n++;
+      });
     });
-    if (Array.isArray(L._miscFlags)) n += L._miscFlags.length;
+    (L._miscFlags || []).forEach(m => { if (_userMiscFlag(m, tid, li)) n++; });
   });
   return n;
 }
 // Tallies pending local flags/ratings across the static lesson bundle, and which topics
 // (and storylines) they touch — drives the pill text and the scoped download.
 function _countStaticPending(){
-  let flags = 0, ratings = 0, deletes = 0; const topics = new Set();
+  let flags = 0, ratings = 0, deletes = 0, stories = 0; const topics = new Set();
   _staticLessonSource().forEach(topic => {
+    const tid = topic.id || topic.topic;
     let touched = false;
-    (topic.lessons || []).forEach(L => {
-      [L.vocab, L.sentences, L.items, L.words].forEach(arr => {
-        if (Array.isArray(arr)) arr.forEach(it => {
-          if (it && it.userFlag) { flags++; touched = true; }
-          if (it && it.userRating) { ratings++; touched = true; }
-          if (it && it.userDelete) { deletes++; touched = true; }
+    (topic.lessons || []).forEach((L, li) => {
+      _FLAG_ARRAYS.forEach(([kind]) => {
+        (L[kind] || []).forEach((it, idx) => {
+          if (!it) return;
+          const u = _userItemSignals(it, tid, li, kind, idx);
+          if (u.flag) { flags++; touched = true; }
+          if (u.rating) { ratings++; touched = true; }
+          if (u.del) { deletes++; touched = true; }
         });
       });
-      if (Array.isArray(L._miscFlags) && L._miscFlags.length) { flags += L._miscFlags.length; touched = true; }
+      (L._miscFlags || []).forEach(m => { if (_userMiscFlag(m, tid, li)) { flags++; touched = true; } });
     });
+    if (_userStoryEdited(topic)) { stories++; touched = true; }
     if (touched) topics.add(topic.topic);
   });
-  return { flags, ratings, deletes, total: flags + ratings + deletes, topics: [...topics] };
+  const summaries = (APP.storylines || []).filter(_userSummaryEdited).length;
+  return { flags, ratings, deletes, stories, summaries, total: flags + ratings + deletes, topics: [...topics] };
 }
 function updateStaticFlagBanner(){
   const banner = document.getElementById('static-flag-banner');
   if (!banner) return;
   if (typeof STATIC_LESSONS === 'undefined') { banner.style.display = 'none'; return; }  // live build saves server-side
   _ensureStaticFlagsLoaded();   // restore any flags persisted from a previous session
-  const { flags, ratings, deletes } = _countStaticPending();
-  const editedTopics = (APP._staticDirtyTopics && APP._staticDirtyTopics.size) || 0;
-  if ((flags + ratings + deletes + editedTopics) === 0 || APP._pillDismissed) { banner.style.display = 'none'; return; }
+  const { flags, ratings, deletes, stories, summaries } = _countStaticPending();
+  if ((flags + ratings + deletes + stories + summaries) === 0 || APP._pillDismissed) { banner.style.display = 'none'; return; }
   const txt = document.getElementById('static-flag-banner-text');
   if (txt) {
-    // flags (⚑), stars (⭐), delete candidates (🗑) shown next to the download button; bare
-    // emoji + count needs no translation, so it's inline. Word-bearing strings use t().
+    // flags (⚑), stars (⭐), delete candidates (🗑), story edits (📖), summary edits (📝) shown
+    // next to the download button; bare emoji + count needs no translation, so it's inline.
     const chips = [];
     if (flags) chips.push('⚑ ' + flags);
     if (ratings) chips.push('⭐ ' + ratings);
     if (deletes) chips.push('🗑 ' + deletes);
+    if (stories) chips.push('📖 ' + stories);
+    if (summaries) chips.push('📝 ' + summaries);
     txt.textContent = chips.length ? chips.join('  ') + '  ' + t('static.pill.tosubmit') : t('static.pill.edits_only');
   }
   banner.style.display = 'flex';
@@ -1777,7 +1789,10 @@ function updateStaticFlagBanner(){
 }
 // A topic counts for the pill/download if it carries pending flags/ratings OR was edited.
 function _topicPendingOrEdited(l){
-  return _topicHasPending(l) || !!(l && l.id && APP._staticDirtyTopics && APP._staticDirtyTopics.has(l.id));
+  // Export scope is driven by EXPLICIT tags (flags/ratings/deletes) and deliberate story edits
+  // — NOT by plain item content edits. Those persist locally and ride along only when their
+  // topic is in scope for another reason, so editing translations doesn't balloon the export.
+  return _topicHasPending(l) || _userStoryEdited(l);
 }
 // Dismiss the pill until the next flag/rating/edit (those reset _pillDismissed).
 function closeStaticPill(){ APP._pillDismissed = true; try { updateStaticFlagBanner(); } catch (_) {} }
@@ -1812,14 +1827,19 @@ function _flaggedExportPayload(storylineId){
     });
     src.forEach(l => { if (l.id && pendingIds.has(l.id) && !inAnyStoryline.has(l.id)) wantIds.add(l.id); });  // orphans
   }
-  const lessons = src.filter(l => l.id && wantIds.has(l.id));
-  return { payload: { lessons, scope: scopeTitle || null, mergeFlags: true, exportedAt: new Date().toISOString(), exportedBy: 'dreizunge-static-user' }, count: lessons.length, scopeTitle };
+  const lessons = src.filter(l => l.id && wantIds.has(l.id)).map(_stripPreExisting);
+  // Storyline summary edits ride as `storylines` (the import upserts them onto the maintainer's
+  // storylines). Include only storylines whose summary THIS user edited (not baked ones).
+  const storylinesOut = (storylines || []).filter(_userSummaryEdited);
+  const payload = { lessons, scope: scopeTitle || null, mergeFlags: true, exportedAt: new Date().toISOString(), exportedBy: 'dreizunge-static-user' };
+  if (storylinesOut.length) payload.storylines = storylinesOut;
+  return { payload, count: lessons.length, scopeTitle };
 }
 // Download the flagged lessons as JSON, then reveal the "submit as a GitHub issue" link.
 // storylineId (optional) scopes the download to one storyline's chapters.
 function downloadUserFlaggedLessons(storylineId){
   const { payload, count, scopeTitle } = _flaggedExportPayload(storylineId);
-  if (!count) return;
+  if (!count && !(payload.storylines && payload.storylines.length)) return;
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const slug = (scopeTitle || 'flagged').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'flagged';
@@ -1851,6 +1871,73 @@ function _revealSubmitLink(scopeTitle, fname){
 const _staticFlagsKey = 'dz_static_flags';
 const _staticEditsKey = 'dz_static_edits';
 const _FLAG_ARRAYS = [['vocab','target'], ['sentences','target'], ['items','sentence'], ['words','base']];
+// ── "User-made" vs "pre-existing" signals ──────────────────────────────────────────
+// The static bundle ships with whatever flags/ratings/edits the maintainer baked into
+// lessons.json (their own review + community submissions they imported and rebuilt). Those are
+// NOT this user's contributions, so they must not be counted or exported. We snapshot the baked
+// signals ONCE — by position, before any localStorage delta is applied — and treat anything not
+// in that snapshot as user-made.
+function _capturePristineSignals(){
+  if (APP._pristine) return;
+  const s = new Set();
+  _staticLessonSource().forEach(topic => {
+    const tid = topic.id || topic.topic; if (!tid) return;
+    (topic.lessons || []).forEach((L, li) => {
+      _FLAG_ARRAYS.forEach(([kind]) => {
+        (L[kind] || []).forEach((it, idx) => {
+          if (!it) return;
+          const b = tid + '|' + li + '|' + kind + '|' + idx;
+          if (it.userFlag)   s.add('f|' + b);
+          if (it.userRating) s.add('r|' + b);
+          if (it.userDelete) s.add('d|' + b);
+          if (it.editedAt)   s.add('e|' + b + '|' + it.editedAt);
+        });
+      });
+      (L._miscFlags || []).forEach(m => s.add('m|' + tid + '|' + li + '|' + JSON.stringify(m)));
+    });
+    if (topic.storyEditedAt) s.add('story|' + tid + '|' + topic.storyEditedAt);
+  });
+  (APP.storylines || []).forEach(sl => { if (sl && sl.summaryEditedAt) s.add('sum|' + sl.id + '|' + sl.summaryEditedAt); });
+  APP._pristine = s;
+}
+function _userItemSignals(it, tid, li, kind, idx){
+  const p = APP._pristine || new Set();
+  const b = tid + '|' + li + '|' + kind + '|' + idx;
+  return {
+    flag:   !!it.userFlag   && !p.has('f|' + b),
+    rating: !!it.userRating && !p.has('r|' + b),
+    del:    !!it.userDelete && !p.has('d|' + b),
+    edited: !!it.editedAt   && !p.has('e|' + b + '|' + it.editedAt),
+  };
+}
+function _userMiscFlag(m, tid, li){ return !(APP._pristine && APP._pristine.has('m|' + tid + '|' + li + '|' + JSON.stringify(m))); }
+function _userStoryEdited(topic){
+  const tid = topic && (topic.id || topic.topic);
+  return !!(topic && topic.storyEditedAt) && !(APP._pristine && APP._pristine.has('story|' + tid + '|' + topic.storyEditedAt));
+}
+function _userSummaryEdited(sl){
+  return !!(sl && sl.summaryEditedAt) && !(APP._pristine && APP._pristine.has('sum|' + sl.id + '|' + sl.summaryEditedAt));
+}
+// Return a clone of a topic with all PRE-EXISTING (baked) signals removed — only the user's own
+// flags/ratings/deletes/edits ride the export. Edited *content* is kept; only the markers go.
+function _stripPreExisting(topic){
+  const tid = topic.id || topic.topic;
+  const clone = JSON.parse(JSON.stringify(topic));
+  (clone.lessons || []).forEach((L, li) => {
+    _FLAG_ARRAYS.forEach(([kind]) => {
+      (L[kind] || []).forEach((it, idx) => {
+        const u = _userItemSignals(it, tid, li, kind, idx);
+        if (it.userFlag && !u.flag) delete it.userFlag;
+        if (it.userRating && !u.rating) delete it.userRating;
+        if (it.userDelete && !u.del) delete it.userDelete;
+        if (it.editedAt && !u.edited) delete it.editedAt;
+      });
+    });
+    if (Array.isArray(L._miscFlags)) L._miscFlags = L._miscFlags.filter(m => _userMiscFlag(m, tid, li));
+  });
+  if (clone.storyEditedAt && !_userStoryEdited(topic)) delete clone.storyEditedAt;
+  return clone;
+}
 // Snapshot all pending per-item flags/ratings + _miscFlags from the bundle into a plain map.
 function _collectStaticFlags(){
   const out = {};
@@ -1902,10 +1989,45 @@ function _applyStaticFlags(){
 function _ensureStaticFlagsLoaded(){
   if (typeof STATIC_LESSONS === 'undefined' || APP._staticFlagsLoaded) return;
   APP._staticFlagsLoaded = true;
+  try { _capturePristineSignals(); } catch (_) {}   // baseline = baked signals, before user deltas
   try { _applyStaticEdits(); } catch (_) {}   // restore content edits (by position) first
+  try { _applyStaticSummaries(); } catch (_) {} // restore storyline summary edits
   try { _applyStaticFlags(); } catch (_) {}   // then flags/ratings/deletes (by identity)
 }
 // ── Static build: persist content edits across reloads ────────────────────────────
+// ── Static build: persist storyline SUMMARY edits across reloads ──────────────────
+// Summaries live on the storyline (APP.storylines[].summary), not on a topic, so they get
+// their own key and dirty set, and ride the export as `storylines` (the import upserts them).
+const _staticSummariesKey = 'dz_static_summaries';
+function _collectStaticSummaries(){
+  const out = {};
+  (APP.storylines || []).forEach(sl => { if (sl && sl.id && sl.summaryEditedAt) out[sl.id] = { summary: sl.summary, summaryEditedAt: sl.summaryEditedAt }; });
+  return out;
+}
+function _saveStaticSummaries(){
+  if (typeof STATIC_LESSONS === 'undefined') return;
+  _ensureStaticFlagsLoaded();
+  try { localStorage.setItem(_staticSummariesKey, JSON.stringify(_collectStaticSummaries())); } catch (_) {}
+}
+function _applyStaticSummaries(){
+  if (typeof STATIC_LESSONS === 'undefined') return;
+  let saved; try { saved = JSON.parse(localStorage.getItem(_staticSummariesKey) || '{}'); } catch (_) { return; }
+  Object.entries(saved).forEach(([slId, snap]) => {
+    const sl = (APP.storylines || []).find(s => s.id === slId);
+    if (!sl) return;
+    if (snap.summary != null) sl.summary = snap.summary;
+    if (snap.summaryEditedAt) sl.summaryEditedAt = snap.summaryEditedAt;
+    (APP._staticDirtySummaries = APP._staticDirtySummaries || new Set()).add(slId);
+  });
+}
+// A summary edit prompts the pill, persists, and rides the export — like a question edit.
+function _markStaticSummaryEdited(chainId){
+  if (typeof STATIC_LESSONS === 'undefined') return;
+  (APP._staticDirtySummaries = APP._staticDirtySummaries || new Set()).add(chainId);
+  APP._pillDismissed = false;
+  try { _saveStaticSummaries(); } catch (_) {}
+  try { updateStaticFlagBanner(); } catch (_) {}
+}
 // A content edit (item.editedAt set) changes the very field used as a flag identity key, so
 // edits are persisted by POSITION (topicId · lessonIdx · kind · index) — the static bundle is
 // rebuilt deterministically, so positions are stable. Snapshots the whole edited item.
@@ -1920,6 +2042,7 @@ function _collectStaticEdits(){
         });
       });
     });
+    if (topic.storyEditedAt) (out[tid] = out[tid] || {})['__doc'] = { story: topic.story, storyEditedAt: topic.storyEditedAt };
   });
   return out;
 }
@@ -1938,6 +2061,11 @@ function _applyStaticEdits(){
     const topic = byTid[tid]; if (!topic) return;
     let any = false;
     Object.entries(items).forEach(([key, snap]) => {
+      if (key === '__doc') {
+        if (snap.story != null) topic.story = snap.story;
+        if (snap.storyEditedAt) topic.storyEditedAt = snap.storyEditedAt;
+        any = true; return;
+      }
       const ci = key.indexOf(':'), li = key.slice(0, ci), rest = key.slice(ci + 1);
       const cj = rest.indexOf(':'), kind = rest.slice(0, cj), idx = rest.slice(cj + 1);
       const arr = topic.lessons && topic.lessons[+li] && topic.lessons[+li][kind];
@@ -2007,6 +2135,10 @@ function toggleStoryRepair(){
   if (!body || !toolbar) return;
   const isEditing = body.contentEditable === 'true';
   if (!isEditing) {
+    // Make sure the story is expanded — otherwise edit mode activates on a hidden body and
+    // appears to "do nothing".
+    body.classList.add('open');
+    const arrow = document.getElementById('story-arrow'); if (arrow) arrow.classList.add('open');
     // Switch to edit mode: make story-body directly editable
     // Store plain text version for editing
     body.dataset.origHtml = body.innerHTML;
@@ -2062,11 +2194,13 @@ async function saveStoryEdit(){
   // AI error hunt needs the server, so that part is skipped here.
   if (!APP.info?.canGenerate) {
     d.story = newStory;
+    d.storyEditedAt = new Date().toISOString();   // marks the topic's story as community-edited
     APP._dirtyExport = true;
     (d.lessons||[]).filter(ls => ls.type==='error_hunt').forEach(ls => {
       if(!ls._storyEdits) ls._storyEdits = []; ls._storyEdits.push(new Date().toISOString());
     });
     try { markLessonUnchecked(d); } catch(_){}
+    try { _markStaticEdited(); } catch(_){}        // show the download pill + persist across reload
     if (status) status.textContent = genHunt ? t('story.edit.static_no_aihunt') : t('story.edit.saved_local');
     setTimeout(() => {
       body.contentEditable = 'false'; body.style.outline = ''; body.style.borderRadius = '';
@@ -4993,6 +5127,11 @@ async function saveSummaryEdit(chainId) {
   if (!APP.info?.canGenerate) {
     APP._dirtyExport = true;
     _renderSaved();
+    try {
+      const idx = (APP.storylines || []).findIndex(s => s.id === chainId);
+      if (idx >= 0) APP.storylines[idx].summaryEditedAt = new Date().toISOString();
+      _markStaticSummaryEdited(chainId);   // pill + persist across reload + rides export
+    } catch (_) {}
     return;
   }
   try {
