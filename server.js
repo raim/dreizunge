@@ -59,7 +59,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v46';
+const APP_VERSION  = 'v47';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -422,6 +422,30 @@ try {
 const LANG_NAMES = Object.fromEntries(Object.entries(_langsData).map(([k,v]) => [k, v.name]));
 function langName(code) { return LANG_NAMES[code] || code || 'Italian'; }
 
+// ── Script config (from scripts.json) — drives the LLM-free intro course ──
+let _scriptsData = {};
+try {
+  _scriptsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'scripts.json'), 'utf8'));
+} catch(e) { console.warn('Could not load scripts.json:', e.message); }
+// The script name(s) a language is written in, always as an array (e.g. ja → 2).
+function scriptsForLang(code) {
+  const m = (_scriptsData._langScript || {})[code];
+  return m ? (Array.isArray(m) ? m : [m]) : [];
+}
+// Whether a script has a usable (non-empty) letter table loaded.
+function scriptHasTable(name) {
+  const tbl = _scriptsData[name];
+  return !!(tbl && Array.isArray(tbl.letters) && tbl.letters.length);
+}
+// True when the target's script differs from the UI/source script AND we have a letter table
+// for it — i.e. an intro course would actually teach the learner a new alphabet we can build.
+function needsIntroScript(targetLang, srcLang) {
+  const tgt = scriptsForLang(targetLang);
+  if (!tgt.length) return false;            // target is Latin (or unlisted) → no intro
+  const src = new Set(scriptsForLang(srcLang || 'en'));
+  return tgt.some(s => !src.has(s) && scriptHasTable(s));
+}
+
 // ── Prompts ───────────────────────────────────────────────────────────
 function sysMeta(srcLang) {
   return fillPrompt(PROMPTS.meta.system, { S: langName(srcLang || 'en') });
@@ -694,21 +718,34 @@ const CJK_LANGS = new Set(['ja','zh','ko']);
 // Tokenise a Japanese/Chinese sentence into meaningful word-sized chunks.
 // Handles the kanji[よみ] annotation format used in lessons.
 // Each kanji+reading group → one token; runs of kana/latin between them → split on 2-char chunks.
+// Tokenise a Japanese sentence into word-sized chunks, keeping each furigana-annotated
+// group BASE[reading] (BASE = kanji or katakana) intact as one token. Protect-and-restore:
+// annotated groups are swapped for sentinels first, so a katakana group that follows a
+// hiragana run (大好[だいす]きなボール[ぼーる]) can't be merged into the kana run. Mirrored
+// verbatim on the client (mkOrder) so both sides split identically.
+function jaTokenize(raw) {
+  const groups = [];
+  // \uE000-\uF8FF is the Unicode Private Use Area — safe sentinels that never occur in text.
+  const protectedStr = String(raw || '').replace(
+    /[\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+\[[^\]]+\]/g,
+    (g) => { const i = groups.push(g) - 1; return '\uE000' + i + '\uE001'; });
+  const re = /\uE000\d+\uE001|[\u3040-\u30ff\uff00-\uffef\u0021-\u007ea-zA-Z0-9]+|[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+/g;
+  const tokens = [];
+  let m;
+  while ((m = re.exec(protectedStr)) !== null) {
+    let tok = m[0];
+    const sm = /^\uE000(\d+)\uE001$/.exec(tok);
+    if (sm) tok = groups[+sm[1]];
+    if (tok.length > 0) tokens.push(tok);
+  }
+  return tokens;
+}
+
 function deriveSentenceWords(s, lang) {
   if (lang && CJK_LANGS.has(lang)) {
     if (lang === 'ja') {
-      // Split on furigana-annotated groups: kanji[reading] and bare kana runs
-      // Pattern: either a kanji+bracket group, or a run of non-kanji non-bracket characters
-      const raw = s.target;
-      const tokens = [];
-      // Regex: match kanji[reading] groups OR runs of other non-whitespace chars
-      const re = /[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+\[[^\]]+\]|[\u3040-\u30ff\uff00-\uffef\u0021-\u007ea-zA-Z0-9]+|[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+/g;
-      let m;
-      while ((m = re.exec(raw)) !== null) {
-        const tok = m[0];
-        if (tok.length > 0) tokens.push(tok);
-      }
-      // If too many tokens, merge adjacent non-kanji kana runs pairwise
+      const tokens = jaTokenize(s.target);
+      // If too many tokens, merge adjacent runs pairwise
       if (tokens.length > 14) {
         const merged = [];
         for (let i = 0; i < tokens.length; i += 2)
@@ -945,6 +982,80 @@ function genReasonHist(rejected) {
   const h = {};
   (rejected || []).forEach(r => ((r && r.reasons) || []).forEach(reason => { h[reason] = (h[reason] || 0) + 1; }));
   return h;
+}
+
+// ── Intro "learn the script" course (LLM-free) ───────────────────────────
+// Pure exercise builder from a letter table. Kept deterministic-in-shape (the only
+// randomness is choice ordering + distractor pick) and mirrored verbatim on the client
+// (buildIntroScriptExercisesFrom) so static and live builds agree. Each letter yields a
+// glyph→sound MCQ and a sound→glyph MCQ; a subset also gets a listen→glyph item (the client
+// renders it only when the target has TTS). `letters` is the script table's letter array.
+function introScriptExercises(letters, opts) {
+  opts = opts || {};
+  const rnd = opts.rnd || Math.random;
+  const sh = (a) => { const b=[...a]; for(let i=b.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
+  const real = letters.filter(L => L && L.ch && (L.translit || L.name));
+  const sound = (L) => L.translit ? L.translit : L.name;            // what we quiz as "the sound"
+  const glyph = (L) => L.ch + (L.lower && L.lower !== L.ch ? ' ' + L.lower : '');
+  const distinctSounds = (exclude, n) =>
+    sh(real.filter(L => sound(L) !== sound(exclude) && sound(L))).slice(0, n).map(sound);
+  const distinctGlyphs = (exclude, n) =>
+    sh(real.filter(L => L.ch !== exclude.ch)).slice(0, n).map(glyph);
+  const exs = [];
+  real.forEach(L => {
+    // glyph → sound
+    const ws = distinctSounds(L, 3);
+    if (ws.length >= 2) {
+      exs.push({ type: 'mcq_source_target', source: glyph(L), target: sound(L),
+        correct: sound(L), choices: sh([sound(L), ...ws]), _intro: 'glyph_sound' });
+    }
+    // sound → glyph: show the SOUND, pick the glyph. mcq_source_target (renders ex.source as
+    // the prompt + choices), NOT mcq_target_source (which would show the glyph = the answer +
+    // a listen block). The glyph is the answer here.
+    const wg = distinctGlyphs(L, 3);
+    if (wg.length >= 2) {
+      exs.push({ type: 'mcq_source_target', source: sound(L) + (L.name && L.name !== sound(L) ? ' ('+L.name+')' : ''),
+        target: glyph(L), correct: glyph(L), choices: sh([glyph(L), ...wg]), _intro: 'sound_glyph' });
+    }
+  });
+  // A handful of listen→glyph items (speak the letter, pick the glyph). Marked so the client
+  // can drop them when no TTS voice exists for the target.
+  sh(real).slice(0, Math.min(5, real.length)).forEach(L => {
+    const wg = distinctGlyphs(L, 3);
+    if (wg.length >= 2) {
+      exs.push({ type: 'listen_mcq', target: L.lower || L.ch, pron: L.translit || L.name,
+        correct: glyph(L), choices: sh([glyph(L), ...wg]), _intro: 'listen_glyph' });
+    }
+  });
+  return exs;
+}
+
+// Build an intro-script lesson for a target language. Topic-independent (script-level), so
+// no story is needed. Returns the same { lesson, tokens } envelope as the other generators.
+function generateIntroScript(lang, opts) {
+  opts = opts || {};
+  const _t0 = Date.now();
+  const wanted = opts.script ? [opts.script] : scriptsForLang(lang);
+  const scriptName = wanted[0];
+  const table = scriptName ? (_scriptsData[scriptName] || null) : null;
+  const letters = (table && Array.isArray(table.letters)) ? table.letters : [];
+  if (!letters.length) throw new Error('No script table for ' + lang + (scriptName ? ' / ' + scriptName : ''));
+  const exercises = introScriptExercises(letters, opts);
+  return {
+    lesson: {
+      id: 'intro_' + scriptName + '_' + Date.now(),
+      type: 'intro_script',
+      script: scriptName,
+      rtl: !!table.rtl,
+      title: '🔡 ' + (table.label || scriptName),
+      desc: (table.label || scriptName) + ' — ' + letters.length + ' letters',
+      icon: '🔡',
+      letters,
+      exercises,
+      _genMeta: buildGenMeta({ type: 'intro_script', model: '(procedural)', t0: _t0, valid: exercises.length }),
+    },
+    tokens: { promptTokens: 0, completionTokens: 0 },
+  };
 }
 
 function generateMath(story, difficulty, mathOps) {
@@ -1894,6 +2005,8 @@ const ADD_LESSON_GENERATORS = {
   math:        (c) => c.addMathInstr
     ? generateMathLLM(c.lang, c.srcLang, c.diff, c.addMathInstr, c.jobId)
     : generateMath(c.story, c.diff, c.addMathOps || null),
+  // Topic-independent + LLM-free: ignores the story, builds from the script table.
+  intro_script: (c) => generateIntroScript(c.lang, { script: c.introScript || null }),
 };
 
 // ── Repair flagged exercises ──────────────────────────────────────────
@@ -3019,13 +3132,16 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { id, topic, lessonFormat: fmt, difficulty: rawDiff, reinforcePrior: addReinforce, vocabMode: addVocabMode, mathInstruction: addMathInstr, mathOps: addMathOps } = body;
+      const { id, topic, lessonFormat: fmt, difficulty: rawDiff, reinforcePrior: addReinforce, vocabMode: addVocabMode, mathInstruction: addMathInstr, mathOps: addMathOps, introScript: addIntroScript } = body;
       if (!id && !topic) return json(res, 400, { error: 'Missing id or topic' });
       if (!fmt)    return json(res, 400, { error: 'Missing lessonFormat' });
       const saved = id ? findSavedById(id) : findSaved((topic||'').trim());
       if (!saved)  return json(res, 404, { error: `Topic not found: ${id || topic}` });
-      if (!saved.story) return json(res, 400, { error: 'Topic has no story to base lessons on' });
-      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      // intro_script is procedural + story-independent (it teaches the alphabet); every other
+      // format needs a story and a live backend.
+      const _isIntro = (fmt === 'intro_script');
+      if (!_isIntro && !saved.story) return json(res, 400, { error: 'Topic has no story to base lessons on' });
+      if (!_isIntro && active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
       const topicName = saved.topic;
       const topicKey = topicName.trim().toLowerCase();
       if (generatingTopics.has(topicKey))
@@ -3054,7 +3170,7 @@ http.createServer(async (req, res) => {
         // generators expect; building both unconditionally is side-effect-free.
         const standardOpts = { userTranslation: saved.storyTranslation || null, userDialect: dialect, writingStyle: style, storyLang: saved.storyLang || 'target', story: saved.story || null, chainVocab: chainVocab.words, vocabMode: _addVocabMode };
         const sharedGenOpts = { userDialect: dialect, storyStyle: style, chainVocab, vocabMode: _addVocabMode, story };
-        const genCtx = { lang, srcLang, topicName, story, diff, jobId, chainVocab, standardOpts, sharedGenOpts, addMathInstr, addMathOps };
+        const genCtx = { lang, srcLang, topicName, story, diff, jobId, chainVocab, standardOpts, sharedGenOpts, addMathInstr, addMathOps, introScript: addIntroScript || null };
         const genFn = ADD_LESSON_GENERATORS[fmt];
         if (!genFn) throw new Error(`Unsupported lessonFormat: ${fmt}`);
         result = await genFn(genCtx);
@@ -3258,6 +3374,9 @@ http.createServer(async (req, res) => {
 
     if (M === 'GET' && url.pathname === '/api/languages') {
       return json(res, 200, _langsData);
+    }
+    if (M === 'GET' && url.pathname === '/api/scripts') {
+      return json(res, 200, _scriptsData);
     }
     // ── UI strings ────────────────────────────────────────────────────
     if (M === 'GET' && url.pathname === '/api/ui') {

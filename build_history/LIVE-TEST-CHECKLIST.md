@@ -538,3 +538,118 @@ Build: `node build-static.js lessons.json docs` then open docs/index.html (no se
 - [ ] Play a flagged question: a red "Flagged" banner shows its comment + suggested fix
       directly under the question, without opening the flag form. Unflagged questions show
       no banner. (Banner is teacher/edit-mode only.)
+
+
+## 29. v47 — import Merge/Replace dialog (browser-verify owed)
+Import a flag/edit submission JSON (a static "download & submit" export, or any file with
+`exportedBy:"dreizunge-static-user"` / `mergeFlags:true`).
+- [ ] A modal appears with **Merge** and **Replace** buttons (each with a one-line hint) plus
+      Cancel — not a native OK/Cancel confirm.
+- [ ] **Merge** applies only the submission's flags/ratings/deletes; your existing content is
+      untouched (identity-matched, idempotent — importing twice changes nothing further).
+- [ ] **Replace** overwrites the matching topics with the submitted version.
+- [ ] **Cancel / Esc / click-outside aborts** the whole import (no silent full-replace).
+
+## 30. v47 — Arabic/RTL + content-aware direction (browser-verify owed)
+Use an **English→Arabic** lesson (e.g. import the "Yusuf and the Lost Cat" sample) so UI=LTR
+but content=RTL. Then a **Hebrew** target, and (sanity) an Arabic **UI** session.
+- [ ] en→ar: the **interface stays LTR** (nav, buttons, badges), but Arabic **content** is
+      right-aligned — story text, question prompts that are Arabic, word-bank tokens, target
+      boxes, read-the-story body.
+- [ ] In a single en→ar MCQ where the **prompt is English** and the **choices are Arabic**:
+      the English prompt is left-aligned and the Arabic choices are right-aligned (same card).
+- [ ] Word-order (sentence ordering) for Arabic: tokens flow **right-to-left** (first word on
+      the right) and each token's text is right-aligned.
+- [ ] The storyline **summary** (English) is left-aligned while the **story** (Arabic) is
+      right-aligned, in every place each is shown (in-lesson story tab, per-chapter expander,
+      "read the full story", summary strip + after editing it).
+- [ ] **Editing** flips by content: open the story editor / summary editor / paste boxes and
+      type Arabic — the caret/text goes RTL; type English — LTR.
+- [ ] Setting the **UI language to Arabic** mirrors the whole interface (document dir=rtl).
+
+## 31. v47 — Japanese furigana (browser/Ollama-verify owed)
+Paste a Japanese story with furigana, once as `<ruby>…<rt>…</rt></ruby>` HTML and once in
+`漢字[かな]` bracket form; also generate a JA lesson with Ollama.
+- [ ] Both paste forms import; furigana shows above kanji in play, and **katakana loanword**
+      readings (e.g. ボール[ぼーる]) are kept.
+- [ ] Sentence-ordering for JA-as-**target** splits into single kanji/kana words with each
+      `BASE[reading]` group kept whole (a katakana group after a hiragana run is NOT merged).
+- [ ] TTS speaks the base text, not the bracketed reading.
+
+## 32. v47.x — muted listen fallback + sound-test + card mute (browser-verify owed)
+- [ ] **Mute** (any 🔊 button) then start a lesson with **listen** questions:
+      `listen_mcq` becomes a *read-the-target* MCQ (shows the word, pick the translation);
+      `listen_type` becomes *translate-by-typing* (shows the source, type the target). No
+      audio needed; scoring still works.
+- [ ] Toggling mute **mid-question** on a listen exercise swaps the variant live (before it's
+      answered).
+- [ ] **Every question card** has a mute button in the bottom row next to Check; it stays in
+      sync with the other mute buttons.
+- [ ] **Sound-test popup**: the test phrase speaks **numbers only** (no "Test"); the old
+      Ecosia "how to get better speech" link is replaced by **"If the sound is bad, you can
+      mute it:"** + a working mute button.
+
+## 33. Intro "learn the script" course — per-script tables (browser-verify owed)
+LLM-free. The **🔡 Learn the script** option appears in the "➕ Add lesson" dropdown (lesson-set
+card + storyline panel) **only** when the target uses a script the UI language doesn't, and a
+table exists. Open/create a lesson set per target below, add the lesson, and play it.
+
+- [ ] **en→ru / en→uk** (Cyrillic, 33): option appears; lesson plays (glyph↔sound MCQs +
+      a few listen items). Confident — spot-check only.
+- [ ] **en→ja** (Japanese): adds **two** lessons — **Hiragana** (46) and **Katakana** (46).
+      Confident — spot-check only.
+- [ ] **en→el** (Greek, 24): case pairs show (Α α …). NOTE the deliberate transliteration
+      choice — η="ī", ω="ō" (macrons) to keep answers unambiguous since modern Greek merges
+      η/ι/υ→"ee" and ο/ω→"o"; consonants use modern values (β=v, φ=f, χ=ch). Confirm this
+      reads acceptably for your learners, or ask for a classical variant.
+- [ ] **en→ar** (Arabic, 28): RTL; isolated letter forms; distinct academic transliterations
+      (ت=t vs ط=ṭ, etc.). Glyphs/choices right-aligned. Confident, but a native eye is welcome.
+- [ ] **en→he** (Hebrew, 22): RTL; 22 base consonants (final/sofit forms taught with the base
+      letter, not separate; b/v-style dual pronunciations show one value). **Worth a native
+      check** of the transliterations.
+- [ ] **en→ko** (Hangul, 24): 14 consonants + 10 vowels, Revised Romanization, base values.
+      **PLEASE VERIFY WITH A KOREAN SPEAKER** — positional consonant variants (ㄱ g/k, ㄷ d/t,
+      ㅂ b/p, ㄹ r/l) are simplified to one value and **ㅇ** (silent initial / "ng" final) is
+      labeled "ng". Highest-uncertainty table.
+- [ ] **en→th** (Thai): the option should **NOT** appear — Thai is intentionally left
+      unfilled (44 consonants with many shared sounds + positional vowels + tone classes need
+      a purpose-built design, not a flat letter→sound table).
+
+### 33a. Intro MCQ wiring + listen items + multi-script titles (v47.x fixes — browser-verify)
+- [ ] **No answer-revealing question:** the **sound→glyph** question shows the *romanization*
+      (e.g. "gh (ghayn)") and asks you to pick the letter — it must NOT show the glyph itself
+      with a "tap to listen" block (the old bug: "What does غ mean?" showing غ + listen + glyph
+      choices, i.e. pick غ from غ). The **glyph→sound** question shows the letter, choices are
+      romanizations. Neither MCQ has a listen block.
+- [ ] **Existing lessons auto-heal:** a script lesson added by an older build now renders the
+      corrected questions (exercises are re-derived from the letter table on play, not from the
+      stale baked `exercises`). No need to delete/re-add the lesson.
+- [ ] **Two-script languages (ja):** the two lessons read **"🔡 Hiragana"** and
+      **"🔡 Katakana"** in the chapter/path view (not two identical "Learn the script" rows).
+- [ ] **Listen item hides the glyph:** in the "tap to listen" question (a separate item type),
+      the spoken letter is NOT shown — you rely on audio to pick the glyph.
+- [ ] **No-voice device skips listen items:** with **no installed voice** for the target (e.g.
+      Arabic with no ar voice) the lesson has **no "tap to listen" questions** (only the two MCQ
+      directions). You do NOT need to press mute to avoid them.
+- [ ] **Muted fallback:** mute, then play — listen questions become "Which letter makes the
+      sound '…'?" (shows the transliteration, pick the glyph), never revealing the answer.
+
+### 33b. Content-aware script lessons (v47.x)
+- [ ] **Only scripts present in the set are added.** Open a Japanese set whose content has **no
+      katakana** (only hiragana + kanji) and add the script lesson → you get **only a Hiragana**
+      lesson, not Katakana. A set that contains a katakana word (e.g. ボール) → **both**. A brand-
+      new/empty set → falls back to all of the language's scripts.
+- [ ] **reinforce / extend are storyline-aware.** On a chapter that continues a story (so the
+      🔁reinforce/➕extend selector shows): **reinforce** builds a lesson of the letters introduced
+      in **earlier chapters** (review, title "· review"); **extend** builds the letters that are
+      **new in this chapter** and weren't in earlier chapters (title "· new letters");
+      **neutral** teaches the full alphabet. The **first** chapter (no prior) falls back to the
+      full alphabet for reinforce/extend (nothing to scope from). Each falls back to the full
+      alphabet if fewer than 4 letters would be in scope. NOTE: the selector currently only
+      appears for storyline-continued chapters — see roadmap "intro reinforce UI".
+
+### Languages to externally verify (summary)
+- **Korean (Hangul)** — primary: get a native speaker to confirm jamo sounds / ㅇ / positional consonants.
+- **Hebrew** — secondary: confirm the 22 transliterations and that base-only (no sofit) is acceptable.
+- **Greek** — confirm the modern-value + macron-disambiguation choice suits your learners.
+- Cyrillic / Japanese kana / Arabic — high confidence; spot-check only.

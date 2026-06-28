@@ -438,10 +438,23 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .modal-btn.primary:disabled{opacity:.45;cursor:not-allowed}
 .modal-btn.secondary{background:var(--gray-light);color:var(--text);border:2px solid var(--gray-mid)}
 .modal-btn.secondary:hover{border-color:var(--blue)}
-/* RTL language support — Arabic, Hebrew */
-[dir="rtl"] .saved-topic,[dir="rtl"] .saved-meta,[dir="rtl"] .fb-head,[dir="rtl"] .fb-body,
-[dir="rtl"] .qtext,[dir="rtl"] .target-box-text,[dir="rtl"] .it-word,
-[dir="rtl"] .tok,[dir="rtl"] .placed-tok,[dir="rtl"] .sbox-ph{direction:rtl;text-align:right}
+/* RTL language support — Arabic, Hebrew, Persian, Urdu.
+   Direction model (v47 + content-aware update):
+   • Document dir=rtl (set when the *UI* language is RTL) flips genuine UI chrome.
+   • Exercise content fields (.qtext, .choice, .tok, .placed-tok, .target-box-text, .sbox-ph)
+     carry dir="auto" so each aligns by its OWN text: an Arabic word/sentence/choice right-
+     aligns, an English question/choice left-aligns — correct even within one en→Arabic lesson
+     where the prompt is English but the answer is Arabic. text-align:start follows the
+     content-resolved direction. (Replaces the old blanket .tgt-rtl force-right, which wrongly
+     right-aligned English prompts and missed Arabic answer choices.)
+   • .tgt-rtl on <html> (target language is RTL) is kept only as a fallback for any content
+     field that lacks dir="auto", and for .it-word. */
+html.tgt-rtl .it-word{direction:rtl;text-align:right}
+/* Word-order containers flow RTL when the target sentence is RTL, so tokens read right-to-
+   left (first word on the right). Token *text* still aligns by content via dir="auto". */
+html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
+.qtext,.choice,.tok,.placed-tok,.target-box-text,.sbox-ph{text-align:start}
+[dir="rtl"] .saved-topic,[dir="rtl"] .saved-meta,[dir="rtl"] .fb-head,[dir="rtl"] .fb-body{direction:rtl;text-align:right}
 /* Text-span chapter selection editor */
 #pdf-sel-panel{display:none;flex-direction:column;gap:8px}
 .pdf-sel-hint{font-size:11px;color:var(--gray-dark);line-height:1.4}
@@ -660,12 +673,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
         <button type="button" id="user-story-clear-btn" onclick="clearUserStory()" title="Clear text"
           style="margin-left:auto;font-size:11px;padding:2px 8px;border:1.5px solid var(--gray-mid);border-radius:6px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">✕ Clear</button>
       </div>
-      <textarea class="user-story-textarea" id="user-story-input"
+      <textarea dir="auto" class="user-story-textarea" id="user-story-input"
         id="user-story-input-ph" placeholder="Paste your story here…"
         oninput="autoResizeTextarea(this)"></textarea>
       <div class="user-translation-panel" id="user-translation-panel">
         <label class="form-lbl" style="margin-bottom:0" id="user-translation-lbl">Translation (in English)</label>
-        <textarea class="user-story-textarea" id="user-translation-input"
+        <textarea dir="auto" class="user-story-textarea" id="user-translation-input"
           id="user-translation-ph" placeholder="Paste the translation here."
           oninput="autoResizeTextarea(this)"></textarea>
       </div>
@@ -897,6 +910,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
       <option value="error_hunt">🔍 Error Hunt</option>
       <option value="math">🔢 Math</option>
       <option value="mixed">🔀 Mixed review (no AI)</option>
+      <option value="intro_script" class="opt-intro-script" style="display:none">🔡 Learn the script (no AI)</option>
     </select>
     <select class="addlesson-select" id="sial-diff-lesson-card" title="Difficulty">
       <option value="1">🟢</option>
@@ -1050,8 +1064,16 @@ function _buildLangsFromData(data) {
 
 const RTL_LANGS = new Set(['ar','he','fa','ur']);
 function updateDocDir() {
-  // RTL when the *target* language is RTL (the content language)
-  document.documentElement.dir = RTL_LANGS.has(APP.lang) ? 'rtl' : 'ltr';
+  // The DOCUMENT direction follows the *UI* language (APP.srcLang) — so an
+  // English→Arabic lesson keeps a left-to-right interface; only an Arabic-UI
+  // session flips the whole layout. (Previously this keyed on the target
+  // language, which wrongly RTL-ed the entire UI for any →Arabic lesson.)
+  const uiLang = APP.srcLang || 'en';
+  document.documentElement.dir = RTL_LANGS.has(uiLang) ? 'rtl' : 'ltr';
+  // Independently, mark when the *target* (content) language is RTL, so only
+  // the actual target-language text fields (word bank, target boxes, read
+  // sentences) are right-aligned — see the `.tgt-rtl` CSS block.
+  document.documentElement.classList.toggle('tgt-rtl', RTL_LANGS.has(APP.lang));
 }
 
 // ── Lesson-type metadata (single source of truth) ───────────────────────────
@@ -1069,6 +1091,7 @@ const LESSON_TYPE_META = {
   word_forms:    { emoji: '🧩', key: 'lesson.type.word_forms',    build: (l) => buildWordFormsExercises(l), editorBranch: (ls, li, fo) => _editorBranchWordForms(ls, li, fo) },
   math:          { emoji: '🔢', key: 'lesson.type.math',          build: (l) => buildMathExercises(l), editorBranch: (ls, li, fo) => _editorBranchMath(ls, li, fo), editorReadInputs: (ls, li) => _editorReadInputsMath(ls, li) },
   mixed:         { emoji: '🔀', key: 'lesson.type.mixed',         build: (l, i) => buildMixedExercises(l, i), editorBranch: (ls, li, fo) => _editorBranchMixed(ls, li, fo) },
+  intro_script:  { emoji: '🔡', key: 'lesson.type.intro_script',  build: (l) => buildIntroScriptExercises(l), editorBranch: (ls, li, fo) => _editorBranchStandard(ls, li, fo) },
 };
 function lessonTypeMeta(type) { return LESSON_TYPE_META[type] || LESSON_TYPE_META.standard; }
 function lessonTypeEmoji(type) { return lessonTypeMeta(type).emoji; }
@@ -1083,6 +1106,7 @@ const LESSON_DESC_KEY = {
   error_hunt: 'lesson.type.desc.error_hunt', ai_error_hunt: 'lesson.type.desc.ai_error_hunt',
   word_forms: 'lesson.type.desc.word_forms',
   mixed: 'lesson.type.desc.mixed',
+  intro_script: 'lesson.type.desc.intro_script',
   math: 'lesson.type.desc.math', standard: 'lesson.type.desc.vocab', all_types: 'lesson.type.desc.vocab',
 };
 function lessonSubtitle(L, topicDiff) {
@@ -1128,6 +1152,133 @@ async function loadLanguages() {
   } catch(_) {}
   // Fallback: keep empty LANGS (app will degrade gracefully)
   console.warn('Could not load languages.json');
+}
+
+// ── Script tables (intro "learn the script" course) ───────────────────────────
+// Mirrors loadLanguages: baked into the static build (window.SCRIPTS_DATA), else fetched.
+let SCRIPTS_DATA = {};
+async function loadScripts() {
+  if (window.SCRIPTS_DATA) { SCRIPTS_DATA = window.SCRIPTS_DATA; return; }
+  try {
+    const r = await fetch('/api/scripts');
+    if (r.ok) { SCRIPTS_DATA = await r.json(); return; }
+  } catch(_) {}
+  SCRIPTS_DATA = {};
+}
+// The script name(s) a language is written in (always an array; ja → 2).
+function scriptsForLang(code) {
+  const m = (SCRIPTS_DATA._langScript || {})[code];
+  return m ? (Array.isArray(m) ? m : [m]) : [];
+}
+// Whether a script has a usable (non-empty) letter table loaded.
+function scriptHasTable(name) {
+  const tbl = SCRIPTS_DATA[name];
+  return !!(tbl && Array.isArray(tbl.letters) && tbl.letters.length);
+}
+// All the characters (incl. lowercase variants) that make up a script's letter table.
+function _scriptCharSet(name) {
+  const tbl = SCRIPTS_DATA[name];
+  const set = new Set();
+  if (tbl && Array.isArray(tbl.letters)) {
+    for (const L of tbl.letters) {
+      if (L.ch) for (const c of L.ch) set.add(c);
+      if (L.lower) for (const c of L.lower) set.add(c);
+    }
+  }
+  return set;
+}
+// Concatenated target-language text of every existing lesson in a set (vocab targets,
+// sentences, word-form/synonym items, and the story) — what the learner has actually seen.
+function _lessonSetTargetText(d) {
+  if (!d || !Array.isArray(d.lessons)) return d?.story || '';
+  const parts = [];
+  if (d.story) parts.push(d.story);
+  for (const L of d.lessons) {
+    if (L.type === 'intro_script') continue;            // don't seed off other intro lessons
+    (L.vocab || []).forEach(v => v.target && parts.push(v.target));
+    (L.sentences || []).forEach(s => s.target && parts.push(s.target));
+    (L.items || []).forEach(it => { if (it.sentence) parts.push(it.sentence); if (it.target) parts.push(it.target); });
+    (L.words || []).forEach(w => w.base && parts.push(w.base));
+    if (L.corruptedStory) parts.push(L.corruptedStory);
+  }
+  return parts.join(' ');
+}
+// Which of the language's scripts actually appear in the set's content. Falls back to ALL of
+// the language's scripts when the set has no detectable content yet (e.g. a brand-new set),
+// so the intro is still offered. For Japanese this means katakana is only added when katakana
+// is actually present, while hiragana (almost always present) is.
+function scriptsUsedInLessonSet(d) {
+  const all = scriptsForLang(d && d.lang).filter(scriptHasTable);
+  const text = _lessonSetTargetText(d);
+  if (!text.trim()) return all;                          // nothing to scan → offer all
+  const used = all.filter(name => {
+    const chars = _scriptCharSet(name);
+    for (const c of text) if (chars.has(c)) return true;
+    return false;
+  });
+  return used.length ? used : all;                       // none detected → fall back to all
+}
+// The chapters (lesson sets) that come BEFORE `d` in its story, walking the continuedFrom
+// chain backwards. Used to split a script into letters already introduced earlier (reinforce)
+// vs letters new to this chapter (extend).
+function priorLessonSets(d) {
+  const saved = (typeof allSaved === 'function' ? allSaved() : (APP.savedList || [])) || [];
+  const byId = Object.fromEntries(saved.filter(l => l.id).map(l => [l.id, l]));
+  const byTopic = Object.fromEntries(saved.map(l => [l.topic, l]));
+  const parentOf = makeParentResolver(byId, byTopic);
+  const chain = [];
+  const seen = new Set([d && d.id].filter(Boolean));
+  let cur = parentOf(d);
+  while (cur && !seen.has(cur.id || cur.topic)) {
+    chain.push(cur);
+    seen.add(cur.id || cur.topic);
+    cur = parentOf(cur);
+  }
+  return chain;
+}
+// Letters of `scriptName` that appear in the combined target text of the given lesson sets.
+function _lettersInSets(sets, scriptName) {
+  const tbl = SCRIPTS_DATA[scriptName];
+  if (!tbl || !Array.isArray(tbl.letters)) return [];
+  const present = new Set((sets || []).map(_lessonSetTargetText).join(' '));
+  if (!present.size) return [];
+  return tbl.letters.filter(L =>
+    (L.ch && [...L.ch].some(c => present.has(c))) ||
+    (L.lower && [...L.lower].some(c => present.has(c))));
+}
+// The subset of a script's letters whose glyphs appear in the set's content (for a
+// "reinforce" intro lesson — only letters the learner has already encountered).
+function lettersSeenInLessonSet(d, scriptName) {
+  return _lettersInSets([d], scriptName);
+}
+// Storyline-aware letter scope for an intro lesson:
+//   reinforce → letters introduced in EARLIER chapters of the story (review).
+//   extend    → letters used in THIS chapter that are NOT in earlier chapters (new this chapter).
+// Returns the full alphabet for any other mode, and falls back to the full alphabet when the
+// scoped subset is too small to quiz (need ≥4 for MCQ distractors).
+function introLetterScope(d, scriptName, mode) {
+  const full = (SCRIPTS_DATA[scriptName] || {}).letters || [];
+  if (mode !== 'reinforce' && mode !== 'extend') return { letters: full, scoped: false };
+  const prior = priorLessonSets(d);
+  const priorLetters = _lettersInSets(prior, scriptName);
+  let letters;
+  if (mode === 'reinforce') {
+    letters = priorLetters;                                   // letters from earlier chapters
+  } else { // extend
+    const priorChars = new Set(priorLetters.map(L => L.ch));
+    const here = _lettersInSets([d], scriptName);
+    letters = here.filter(L => !priorChars.has(L.ch));        // new letters this chapter
+  }
+  if (letters.length >= 4) return { letters, scoped: true };
+  return { letters: full, scoped: false };                    // too few to quiz → full alphabet
+}
+// True when the target's script differs from the UI/source script AND we have a letter table
+// for it — i.e. an intro course would teach the learner a new alphabet we can actually build.
+function needsIntroScript(targetLang, srcLang) {
+  const tgt = scriptsForLang(targetLang);
+  if (!tgt.length) return false;
+  const src = new Set(scriptsForLang(srcLang || 'en'));
+  return tgt.some(s => !src.has(s) && scriptHasTable(s));
 }
 
 // ── Language names in each UI language ───────────────────────────────────────
@@ -1337,7 +1488,7 @@ function applyUIStrings() {
   // Update format-select option labels
   const formatSel = document.getElementById('format-select');
   if (formatSel) {
-    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'word_forms': 'form.format.word_forms', 'math': 'form.format.math' };
+    const formatKeys = { 'standard': 'form.format.standard', 'all_types': 'form.format.all_types', 'error_hunt': 'form.format.error_hunt', 'grammar': 'form.format.grammar', 'conjugation': 'form.format.conjugation', 'synonyms': 'form.format.synonyms', 'word_forms': 'form.format.word_forms', 'math': 'form.format.math', 'intro_script': 'form.format.intro_script' };
     Array.from(formatSel.options).forEach(opt => {
       if (formatKeys[opt.value]) { const lbl=t(formatKeys[opt.value]); if(lbl && lbl!==formatKeys[opt.value]) opt.text=lbl; }
     });
@@ -1498,6 +1649,42 @@ function showToast(msg){
   toastEl.textContent=msg; toastEl.classList.add('show');
   clearTimeout(showToast._timer);
   showToast._timer=setTimeout(()=>toastEl.classList.remove('show'),2200);
+}
+// Generic choice dialog. Unlike native confirm() (fixed OK/Cancel labels) this lets us
+// give the buttons meaningful names — e.g. "Merge" / "Replace" for an import. Resolves to
+// the chosen option's `value`, or null if cancelled / dismissed (Esc, overlay click).
+// opts: { title, body, choices:[{value,label,hint?,primary?}], cancelLabel? }
+function showChoiceDialog(opts){
+  return new Promise(resolve=>{
+    const ov=document.createElement('div');
+    ov.className='modal-overlay';
+    const choices=opts.choices||[];
+    const btns=choices.map((c,i)=>
+      `<button type="button" class="modal-btn ${c.primary?'primary':'secondary'}" data-i="${i}" `
+      + `style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left">`
+      + `<span>${escHtml(c.label)}</span>`
+      + (c.hint?`<span style="font-size:11px;font-weight:600;opacity:.8">${escHtml(c.hint)}</span>`:'')
+      + `</button>`
+    ).join('');
+    ov.innerHTML=
+      '<div class="modal-box" style="max-width:440px" role="dialog" aria-modal="true">'
+      + (opts.title?`<div class="modal-hdr">${escHtml(opts.title)}</div>`:'')
+      + (opts.body?`<div style="padding:14px 18px 0;font-size:13px;font-weight:600;color:var(--text);line-height:1.5">${escHtml(opts.body)}</div>`:'')
+      + `<div class="modal-footer" style="flex-wrap:wrap;gap:8px">`
+      + `<button type="button" class="modal-btn secondary" data-cancel="1">${escHtml(opts.cancelLabel||t('dialog.cancel'))}</button>`
+      + btns
+      + '</div></div>';
+    function close(val){ document.removeEventListener('keydown',onKey); ov.remove(); resolve(val); }
+    function onKey(e){ if(e.key==='Escape') close(null); }
+    ov.addEventListener('click',e=>{
+      if(e.target===ov){ close(null); return; }
+      const b=e.target.closest('button'); if(!b) return;
+      if(b.dataset.cancel){ close(null); return; }
+      if(b.dataset.i!==undefined){ close(choices[+b.dataset.i].value); }
+    });
+    document.addEventListener('keydown',onKey);
+    document.body.appendChild(ov);
+  });
 }
 function shareLesson(){
   if(!APP.lessonData) return;
@@ -2144,6 +2331,7 @@ function toggleStoryRepair(){
     body.dataset.origHtml = body.innerHTML;
     body.innerText = APP.lessonData?.story || body.innerText;
     body.contentEditable = 'true';
+    body.dir = 'auto';                       // typed direction follows the text (Arabic → RTL)
     body.style.outline = '2px solid var(--blue)';
     body.style.borderRadius = '6px';
     body.focus();
@@ -2287,7 +2475,7 @@ function renderStoryText(d, targetEl){
   let rendered=furiHtml(d.story||'');
   if(vocabWords.length) rendered = _highlightVocabHtml(rendered, vocabWords);
   const spkBtn=''; // speaker moved to story-hdr
-  body.innerHTML=spkBtn+rendered.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  body.innerHTML=spkBtn+rendered.split(/\n\n+/).map(p=>'<p dir="auto">'+p.replace(/\n/g,'<br>')+'</p>').join('');
 }
 function speakStory(){
   const d=APP.lessonData; if(!d||!d.story) return;
@@ -2893,6 +3081,7 @@ async function init(){
   const _tmBar2 = document.getElementById('teacher-mode-bar');
   if (_tmBar2) _tmBar2.style.display = '';
   await loadLanguages();
+  await loadScripts();
   await syncFlagsFromServer();
   updateStaticFlagBanner();
   await loadUIStrings(APP.srcLang);
@@ -3018,7 +3207,7 @@ function savedItemHtml(s, connector, hideStory) {
         </div>
         <span class="story-icon-btn" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">🔊</span>
       </div>
-      <div class="saved-item-story-body" id="sis-body-${sid}" data-topic="${s.topic.replace(/"/g,'&quot;')}" data-lang="${s.lang||''}"></div>
+      <div class="saved-item-story-body" id="sis-body-${sid}" dir="auto" data-topic="${s.topic.replace(/"/g,'&quot;')}" data-lang="${s.lang||''}"></div>
     </div>
     <div class="saved-item-edit" id="siedit-${sid}">
       <span style="position:relative;display:inline-block"><span class="saved-item-edit-emoji icon-picker-btn" id="siedit-emoji-${sid}" onclick="openIconPicker('siedit-emoji-${sid}','si-${sid}')">${s.topicEmoji||'📚'}</span></span>
@@ -3037,6 +3226,7 @@ function savedItemHtml(s, connector, hideStory) {
         <option value="word_forms">🧩 ${t('lesson.type.word_forms')}</option>
         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
         <option value="math">🔢 ${t('lesson.type.math')}</option>
+        ${needsIntroScript(s.lang, APP.srcLang) ? `<option value="intro_script">🔡 ${t('lesson.type.intro_script')}</option>` : ''}
       </select>
       <select class="addlesson-select" id="sial-diff-${sid}" title="Difficulty">
         <option value="1"${s.difficulty===1?' selected':''}>🟢</option>
@@ -3294,8 +3484,8 @@ async function loadSavedList(){
         `<button class="storyline-hdr-btn" style="flex-shrink:0" data-speak="slsc-summary-body-${chainId}" onclick="event.stopPropagation();speakBodyText(this.dataset.speak)" title="${t('lesson.read_aloud')}">🔊</button>` +
         (_canEdit() ? `<button class="storyline-hdr-btn" style="flex-shrink:0;margin-right:6px" onclick="event.stopPropagation();openSummaryEdit('${chainId}')" title="Edit summary">✏️</button>` : '') +
         `</div>` +
-        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" data-lang="${byId[chain[0]]?.srcLang||''}">` +
-        `<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
+        `<div class="storyline-story-body" id="slsc-summary-body-${chainId}" dir="auto" data-lang="${byId[chain[0]]?.srcLang||''}">` +
+        `<p dir="auto" style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">${escHtml(_slSum)}</p>` +
         `</div></div>`;
     }
     html += `</div>`; // end storyline-group
@@ -3570,8 +3760,11 @@ async function doGenerate(forceRegen){
   // Collect user-story fields
   const useStory=document.getElementById('use-story-cb')?.checked;
   const useTranslation=document.getElementById('use-translation-cb')?.checked;
-  const userStory=useStory?(document.getElementById('user-story-input')?.value.trim()||null):null;
-  const userTranslation=(useStory&&useTranslation)?(document.getElementById('user-translation-input')?.value.trim()||null):null;
+  // Normalize any pasted <ruby> furigana to the internal kanji[reading] bracket form so the
+  // whole pipeline (tokenizer, furigana display, TTS) sees one representation. Bracket text
+  // and non-Japanese text pass through untouched.
+  const userStory=useStory?(rubyToBracket(document.getElementById('user-story-input')?.value.trim())||null):null;
+  const userTranslation=(useStory&&useTranslation)?(rubyToBracket(document.getElementById('user-translation-input')?.value.trim())||null):null;
   const userDialect=document.getElementById('user-dialect-input')?.value.trim()||null;
 
   if(useStory&&(!userStory||userStory.length<20)){
@@ -3924,7 +4117,7 @@ function buildPath(){
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
         <div style="display:flex;align-items:center;gap:6px">
-          <div class="node-title" style="flex:1">${lessonTypeEmoji(L.type) + ' ' + lessonTypeLabel(L.type)}</div>
+          <div class="node-title" style="flex:1">${L.type === 'intro_script' && L.title ? escHtml(L.title) : (lessonTypeEmoji(L.type) + ' ' + lessonTypeLabel(L.type))}</div>
           ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:20px">🔒</span>':''}
         </div>
         <div class="node-desc">${lessonSubtitle(L, diff)}</div>
@@ -4044,7 +4237,7 @@ async function toggleSavedStory(id, topic) {
     const allVocab=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.target).filter(Boolean).sort((a,b)=>b.length-a.length);
     let rendered=furiHtml(d.story);
     if(allVocab.length) rendered = _highlightVocabHtml(rendered, allVocab);
-    body.innerHTML=rendered.split(/\n\n+/).map(p=>'<p>'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    body.innerHTML=rendered.split(/\n\n+/).map(p=>'<p dir="auto">'+p.replace(/\n/g,'<br>')+'</p>').join('');
   }catch(e){ body.innerHTML='<em style="color:var(--gray-dark)">⚠ Could not load story</em>'; }
 }
 
@@ -4296,6 +4489,17 @@ function openAddLesson(sid, enc) {
   if (diffSel) diffSel.value = String(diff);
   // Show/hide math instruction row
   const _fmtSel = document.getElementById('sial-fmt-' + sid);
+  // Show the "Learn the script" option only when the open topic's target language uses a
+  // script the learner doesn't already read (computed from scripts.json).
+  if (_fmtSel) {
+    const introOpt = _fmtSel.querySelector('.opt-intro-script');
+    if (introOpt) {
+      const lang = APP.lessonData?.lang;
+      const show = !!lang && needsIntroScript(lang, APP.srcLang);
+      introOpt.style.display = show ? '' : 'none';
+      if (!show && _fmtSel.value === 'intro_script') _fmtSel.value = 'standard';
+    }
+  }
   const _mathInstrRow = document.getElementById('sial-math-instr-row-' + sid);
   if (_fmtSel && _mathInstrRow) {
     const _toggleMathRow = () => { _mathInstrRow.style.display = _fmtSel.value==='math' ? '' : 'none'; };
@@ -4340,6 +4544,58 @@ async function doAddLesson(sid, enc, tid) {
         desc: t('lesson.type.desc.mixed'), perType: 3 });
       try { await _postLessonEdit(d); } catch(_) {}
       if (status) status.textContent = '✓ ' + t('lesson.type.mixed') + ' added';
+      await loadSavedList();
+      if (APP.lessonData && APP.lessonData.id === d.id) { try { buildPath(); } catch(_) {} }
+      closeAddLesson(sid);
+      showToast(t('toast.lesson_added'));
+    } catch(e) {
+      if (status) status.textContent = '⚠ ' + e.message.slice(0, 60);
+      showToast('⚠ ' + e.message.slice(0, 60));
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Generate'; }
+    }
+    return;
+  }
+
+  // Learn-the-script is procedural + story-independent (LLM-free), like mixed: build it
+  // client-side from the script table and persist, so it works on the static build too.
+  if (fmt === 'intro_script') {
+    try {
+      const d = APP.lessonData;
+      if (!lessonCard || !d) throw new Error(t('intro.need_open_set'));
+      // Only the scripts that actually appear in this set's existing content (so a Japanese set
+      // with no katakana doesn't get a katakana lesson). Falls back to all of the language's
+      // scripts when the set has no content yet.
+      const scripts = scriptsUsedInLessonSet(d);
+      if (!scripts.length) throw new Error(t('intro.no_script'));
+      // reinforce/neutral/extend qualifier (same selector as vocab lessons). "reinforce" scopes
+      // the lesson to the letters already seen in this set; extend/neutral teach the full
+      // alphabet. (Reinforce falls back to the full set if too few letters were seen to quiz.)
+      const mode = document.getElementById('sial-vocab-mode-' + sid)?.value || 'neutral';
+      let added = 0;
+      for (const scr of scripts) {
+        const full = (SCRIPTS_DATA[scr] || {}).letters;
+        if (!full || !full.length) continue;             // table not filled in yet
+        // reinforce → letters from earlier chapters; extend → letters new to this chapter;
+        // neutral/other → the full alphabet.
+        const scope = introLetterScope(d, scr, mode);
+        const letters = scope.letters;
+        const label = (SCRIPTS_DATA[scr]||{}).label || scr;
+        const hint = scope.scoped ? (mode === 'reinforce' ? t('intro.review') : t('intro.new')) : '';
+        d.lessons.push({
+          id: 'ls_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+          type: 'intro_script', script: scr, rtl: !!(SCRIPTS_DATA[scr]||{}).rtl,
+          _arcMode: scope.scoped ? mode : undefined,
+          title: '🔡 ' + label + (hint ? ' ·\u00a0' + hint : ''), icon: '🔡',
+          desc: label + ' — ' + letters.length + ' ' + t('intro.letters'),
+          letters, exercises: introScriptExercisesFrom(letters),
+          _genMeta: { type: 'intro_script', model: '(procedural)', valid: letters.length, at: new Date().toISOString() },
+        });
+        added++;
+      }
+      if (!added) throw new Error(t('intro.no_script'));
+      try { await _postLessonEdit(d); } catch(_) {}
+      if (status) status.textContent = '✓ ' + t('lesson.type.intro_script') + ' added';
       await loadSavedList();
       if (APP.lessonData && APP.lessonData.id === d.id) { try { buildPath(); } catch(_) {} }
       closeAddLesson(sid);
@@ -4440,20 +4696,20 @@ function lessonSetTypes(s) {
   });
   return out;
 }
-// Collapsible chip list of the lesson types in a chapter, labelled via the registry
-// (lessonTypeEmoji/lessonTypeLabel). Empty string when the chapter has no lessons yet.
-// stopPropagation so opening it doesn't trigger the surrounding card's navigation.
+// Inline row of lesson-type icons for a chapter — no text, no dropdown (v47).
+// Each icon is the registry emoji (lessonTypeEmoji); the human-readable label rides
+// along as a `title` tooltip so the meaning is still discoverable on hover/long-press.
+// Empty string when the chapter has no lessons yet.
 function _lessonTypesDropdownHtml(s) {
   const types = lessonSetTypes(s);
   if (!types.length) return '';
-  const chips = types.map(ty =>
-    `<span style="white-space:nowrap">${lessonTypeEmoji(ty)} ${escHtml(lessonTypeLabel(ty))}</span>`
-  ).join('<span style="opacity:.4"> · </span>');
-  return '<details class="ls-types" onclick="event.stopPropagation()" '
-       + 'style="margin:2px 2px 0;font-size:12px;color:var(--gray-dark)">'
-       + `<summary style="cursor:pointer;list-style:none">${types.length} lesson type${types.length > 1 ? 's' : ''} ▾</summary>`
-       + `<div style="padding:4px 2px;display:flex;flex-wrap:wrap;gap:4px 8px">${chips}</div>`
-       + '</details>';
+  const icons = types.map(ty =>
+    `<span title="${escAttr(lessonTypeLabel(ty))}" style="white-space:nowrap">${lessonTypeEmoji(ty)}</span>`
+  ).join('');
+  return '<div class="ls-types" '
+       + 'style="margin:3px 2px 0;display:flex;flex-wrap:wrap;gap:2px 6px;font-size:15px;line-height:1">'
+       + icons
+       + '</div>';
 }
 function _renderStorylineScreen(chainId, encodedChain, topics) {
   // Title — look up from v29 array first, then legacy object
@@ -5037,7 +5293,7 @@ async function genStorylineSummary() {
       if (hdrBtn) hdrBtn.innerHTML = t('lesson.read_summary') + '<span class="storyline-story-arrow open" id="slsc-summary-arrow-' + chainId + '">▼</span>';
     }
     if (body) {
-      body.innerHTML = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
+      body.innerHTML = '<p dir="auto" style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
       body.style.display = '';
     }
     // Update APP.storylines cache
@@ -5089,7 +5345,7 @@ function openSummaryEdit(chainId, bodyId) {
   // Replace body content with inline editor
   body.style.display = '';  // ensure visible (expand if collapsed)
   body.innerHTML =
-    '<textarea id="slsum-edit-ta-' + chainId + '" style="width:100%;box-sizing:border-box;min-height:100px;font-size:14px;line-height:1.6;font-family:Nunito,sans-serif;border:1.5px solid var(--blue);border-radius:6px;padding:8px;resize:vertical;outline:none;color:var(--text)">' +
+    '<textarea dir="auto" id="slsum-edit-ta-' + chainId + '" style="width:100%;box-sizing:border-box;min-height:100px;font-size:14px;line-height:1.6;font-family:Nunito,sans-serif;border:1.5px solid var(--blue);border-radius:6px;padding:8px;resize:vertical;outline:none;color:var(--text)">' +
     escHtml(current) +
     '</textarea>' +
     '<div style="display:flex;gap:6px;margin-top:6px">' +
@@ -5114,7 +5370,7 @@ async function saveSummaryEdit(chainId) {
       const idx = APP.storylines.findIndex(s => s.id === chainId);
       if (idx >= 0) APP.storylines[idx].summary = summary;
     }
-    const rendered = '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
+    const rendered = '<p dir="auto" style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>';
     if (editorBody) editorBody.innerHTML = rendered;
     const altBody = document.getElementById('slsc-summary-body-' + chainId)
                  || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
@@ -5156,7 +5412,7 @@ function cancelSummaryEdit(chainId) {
             || document.getElementById('slsc-sum-' + chainId.replace(/[^a-zA-Z0-9]/g,'_'));
   if (body) {
     body.innerHTML = summary
-      ? '<p style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>'
+      ? '<p dir="auto" style="font-size:14px;line-height:1.6;margin:0;color:var(--text)">' + escHtml(summary) + '</p>'
       : '<em style="color:var(--gray-dark)">Here could be your summary.</em>';
   }
 }
@@ -5722,7 +5978,7 @@ function _editorBranchErrorHunt(ls, li, flaggedOnly){
               title="Edit the story in the lesson-set screen story editor">${escHtml(correctStory||'')}</textarea>
           </div>
           <div class="editor-field"><label>Corrupted story</label>
-            <textarea data-li="${li}" data-type="eh-story" data-mode="corrupted" rows="7"
+            <textarea data-li="${li}" data-type="eh-story" data-mode="corrupted" dir="auto" rows="7"
               style="font-size:12px;line-height:1.6;resize:vertical;width:100%;border:1.5px solid var(--gray-mid);border-radius:8px;padding:8px;font-family:Nunito,sans-serif;box-sizing:border-box"
               oninput="APP.lessonData.lessons[${li}].corruptedStory=this.value;APP._ehSessionEdits=ehComputeDiff(APP.lessonData?.story||'',this.value);ehUpdateDiff(${li})">${escHtml(ls.corruptedStory||'')}</textarea>
           </div>
@@ -6743,7 +6999,7 @@ function _renderChainStory(body, chapters) {
   function highlight(text) {
     let t = furiHtml(text);
     if (allVocab.length) t = _highlightVocabHtml(t, allVocab);
-    return t.split(/\n\n+/).map(p => '<p>' + p.replace(/\n/g,'<br>') + '</p>').join('');
+    return t.split(/\n\n+/).map(p => '<p dir="auto">' + p.replace(/\n/g,'<br>') + '</p>').join('');
   }
   body.innerHTML = chapters.map((d, i) =>
     `<div class="storyline-chapter">` +
@@ -6801,10 +7057,10 @@ function buildStandardExercises(lesson, lessonIdx){
     // Regex: kanji[reading] groups first, then kana/latin runs, then bare kanji.
     let canonical;
     if(isJa){
-      const re=/[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+\[[^\]]+\]|[\u3040-\u30ff\uff00-\uffef\u0021-\u007ea-zA-Z0-9]+|[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+/g;
-      canonical=[];
-      let m;
-      while((m=re.exec(s.target))!==null) canonical.push(m[0]);
+      // Re-derive tokens from s.target via the shared tokenizer (keeps each furigana group
+      // intact and splits identically to the server), rather than trusting a possibly
+      // mis-split stored s.words.
+      canonical=jaTokenize(s.target);
       // merge pairs if too many tokens (mirrors server logic)
       if(canonical.length>14){
         const merged=[];
@@ -6944,7 +7200,7 @@ function tMcqArticle(ex) {
   const L = lessonLang();
   return `<div class="ex-badge">🏷️ ${t('ex.badge.mcq_article')}</div>
 <div class="card">
-  <div class="qtext">${t('ex.mcq_article.q', {word: ex.target})}</div>
+  <div class="qtext" dir="auto">${t('ex.mcq_article.q', {word: ex.target})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
   ${cGrid(ex.choices, false)}
 </div>`;
@@ -6953,7 +7209,7 @@ function tMcqArticle(ex) {
 function tMcqPlural(ex) {
   return `<div class="ex-badge">🔢 ${t('ex.badge.mcq_plural')}</div>
 <div class="card">
-  <div class="qtext">${t('ex.mcq_plural.q', {word: ex.target})}</div>
+  <div class="qtext" dir="auto">${t('ex.mcq_plural.q', {word: ex.target})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
   ${cGrid(ex.choices, false)}
 </div>`;
@@ -6962,9 +7218,9 @@ function tMcqPlural(ex) {
 function tTypePlural(ex) {
   return `<div class="ex-badge">✏️ ${t('ex.badge.type_plural')}</div>
 <div class="card">
-  <div class="qtext">${t('ex.type_plural.q', {word: ex.target})}</div>
+  <div class="qtext" dir="auto">${t('ex.type_plural.q', {word: ex.target})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
-  <input id="type-in" class="type-input" autocomplete="off" autocorrect="off" spellcheck="false"
+  <input id="type-in" class="type-input" dir="auto" autocomplete="off" autocorrect="off" spellcheck="false"
     placeholder="${t('ex.type_in_placeholder')}"
     oninput="onType()"
     onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()">
@@ -7062,7 +7318,7 @@ function buildConjugationExercises(lesson, lang) {
 function tMcqConjugation(ex) {
   return `<div class="ex-badge">🔤 ${t('ex.badge.mcq_conjugation')}</div>
 <div class="card">
-  <div class="qtext">${t('ex.mcq_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
+  <div class="qtext" dir="auto">${t('ex.mcq_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${furiHtml(ex.source)}</div>
   ${cGrid(ex.choices, false)}
 </div>`;
@@ -7071,9 +7327,9 @@ function tMcqConjugation(ex) {
 function tTypeConjugation(ex) {
   return `<div class="ex-badge">✏️ ${t('ex.badge.type_conjugation')}</div>
 <div class="card">
-  <div class="qtext">${t('ex.type_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
+  <div class="qtext" dir="auto">${t('ex.type_conjugation.q', {pronoun: ex.pronoun, verb: ex.infinitive})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${ex.pronoun} — ${furiHtml(ex.source)}</div>
-  <input id="type-in" class="type-input" autocomplete="off" autocorrect="off" spellcheck="false"
+  <input id="type-in" class="type-input" dir="auto" autocomplete="off" autocorrect="off" spellcheck="false"
     placeholder="${t('ex.type_in_placeholder')}"
     oninput="onType()"
     onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()">
@@ -7116,6 +7372,53 @@ function buildSynonymsExercises(lesson){
     const s = mk('synonyms'); if(s) exs.push(s);
     const a = mk('antonyms'); if(a) exs.push(a);
   });
+  return shuffle(exs);
+}
+// ── Intro "learn the script" course (LLM-free) ──────────────────────────────
+// Mirrors server.js introScriptExercises so live and static builds agree. Prefers the
+// exercises baked into the lesson; rebuilds from lesson.letters (or the loaded script table)
+// otherwise. Listen items are dropped when the target has no TTS voice.
+function introScriptExercisesFrom(letters) {
+  const sh = (a) => shuffle([...a]);
+  const real = (letters || []).filter(L => L && L.ch && (L.translit || L.name));
+  const sound = (L) => L.translit ? L.translit : L.name;
+  const glyph = (L) => L.ch + (L.lower && L.lower !== L.ch ? ' ' + L.lower : '');
+  const distinctSounds = (ex, n) => sh(real.filter(L => sound(L) !== sound(ex) && sound(L))).slice(0, n).map(sound);
+  const distinctGlyphs = (ex, n) => sh(real.filter(L => L.ch !== ex.ch)).slice(0, n).map(glyph);
+  const exs = [];
+  real.forEach(L => {
+    const ws = distinctSounds(L, 3);
+    if (ws.length >= 2) exs.push({ type:'mcq_source_target', source:glyph(L), target:sound(L),
+      correct:sound(L), choices:sh([sound(L), ...ws]), _intro:'glyph_sound' });
+    const wg = distinctGlyphs(L, 3);
+    // sound → glyph: show the SOUND, pick the glyph. Uses mcq_source_target (which renders
+    // ex.source as the prompt + ex.choices as buttons) — NOT mcq_target_source, which would
+    // show the glyph itself (the answer) plus a listen block. The glyph is the answer here.
+    if (wg.length >= 2) exs.push({ type:'mcq_source_target',
+      source:sound(L) + (L.name && L.name !== sound(L) ? ' ('+L.name+')' : ''),
+      target:glyph(L), correct:glyph(L), choices:sh([glyph(L), ...wg]), _intro:'sound_glyph' });
+  });
+  sh(real).slice(0, Math.min(5, real.length)).forEach(L => {
+    const wg = distinctGlyphs(L, 3);
+    if (wg.length >= 2) exs.push({ type:'listen_mcq', target:L.lower || L.ch, pron:L.translit || L.name,
+      correct:glyph(L), choices:sh([glyph(L), ...wg]), _intro:'listen_glyph' });
+  });
+  return exs;
+}
+function buildIntroScriptExercises(lesson) {
+  // Always re-derive from the letter table rather than trusting baked `lesson.exercises`:
+  // it's procedural + cheap, and it auto-heals lessons saved by older builds (e.g. the
+  // sound→glyph item that used to reveal the answer). Falls back to baked exercises only if
+  // the letters are somehow unavailable.
+  const letters = lesson.letters || ((SCRIPTS_DATA[lesson.script]||{}).letters);
+  let exs = (letters && letters.length)
+    ? introScriptExercisesFrom(letters)
+    : [...(lesson.exercises || [])];
+  // Drop the "tap to listen" items when the device has no actual voice for the target language
+  // (not just no TTS code) — otherwise they'd be unanswerable. The muted case is handled live in
+  // tLMcq (it shows the transliteration instead), so we only hard-drop on a genuine no-voice device.
+  const lang = APP.lessonData?.lang || APP.lang;
+  if (!ttsVoiceAvailableFor(lang)) exs = exs.filter(e => e.type !== 'listen_mcq');
   return shuffle(exs);
 }
 function buildMathExercises(lesson) {
@@ -7636,6 +7939,7 @@ function renderEx(){
     '<div id="fb" class="feedback"></div>'+
     '<div class="btn-row">'+
       `<button class="check-btn" id="cbtn" onclick="check()" disabled>${t('ex.check')}</button>`+
+      `<button class="mute-btn" onclick="toggleMute()" title="${APP.muted?'Unmute':'Mute'}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`+
     '</div>'+
     flagUi;
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>{
@@ -7648,11 +7952,11 @@ function renderEx(){
 }
 
 function esc(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>`; }
+function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.map((c,i)=>`<button class="choice" dir="auto" id="c${i}" onclick="pickChoice(${i},this)">${furiHtml(c)}</button>`).join('')}</div>`; }
 // Shared card for sentence-context MCQs (word_forms + synonyms-in-context). The
 // sentence div is omitted when empty (no story sentence was found).
 function sentenceMcqCard({badge, question, sentenceHtml, hint, choices}){
-  const q = question ? `<div class="qtext">${question}</div>` : '';
+  const q = question ? `<div class="qtext" dir="auto">${question}</div>` : '';
   const sent = sentenceHtml ? `<div style="font-size:18px;font-weight:700;line-height:1.6;margin:6px 0">${sentenceHtml}</div>` : '';
   return `<div class="ex-badge">${badge}</div>
 <div class="card">
@@ -7690,7 +7994,7 @@ function tSynSelect(ex){
   const badge = isSyn ? t('ex.badge.syn_synonyms') : t('ex.badge.syn_antonyms');
   const gloss = ex.gloss ? `<div style="opacity:.55;font-size:13px;margin-top:-2px;margin-bottom:6px">${escHtml(ex.gloss)}</div>` : '';
   const tiles = ex.choices.map((w,i)=>`<button class="syn-tile" id="st${i}" data-w="${escAttr(w)}" onclick="synToggle(${i},this)">${furiHtml(w)}</button>`).join('');
-  return `<div class="ex-badge">${badge}</div><div class="card">${sentenceHtml}<div class="qtext">${q}</div>${gloss}<div class="syn-hint">${t('ex.syn.hint')}</div><div class="syn-grid">${tiles}</div></div>`;
+  return `<div class="ex-badge">${badge}</div><div class="card">${sentenceHtml}<div class="qtext" dir="auto">${q}</div>${gloss}<div class="syn-hint">${t('ex.syn.hint')}</div><div class="syn-grid">${tiles}</div></div>`;
 }
 // Toggle a tile in the multi-select; enable Check once at least one is selected.
 function synToggle(i,el){
@@ -7701,30 +8005,58 @@ function synToggle(i,el){
 // Convert kanji[よみ] bracket notation → <ruby> HTML, or strip it when furigana is off
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ── Furigana on paste ────────────────────────────────────────────────
+// A pasted Japanese story may carry furigana either as HTML <ruby> tags
+//   犬<ruby>いぬ</ruby>  /  <ruby>犬<rt>いぬ</rt></ruby>  (optionally with <rp>…</rp>
+//   fallback parens and aria-hidden attrs)
+// or already in the app's internal bracket form 犬[いぬ]. This normalizes <ruby> markup to
+// the bracket form so the rest of the pipeline (deriveSentenceWords, furiHtml, stripFuri,
+// TTS) sees a single representation. Bracket text passes through unchanged. Called when a
+// user-pasted story (and its translation) is read, before it's sent to the server.
+function rubyToBracket(text){
+  if(!text || text.indexOf('<ruby') === -1) return text || '';
+  return text.replace(/<ruby[^>]*>([\s\S]*?)<\/ruby>/gi, (_, inner) => {
+    // Drop <rp>…</rp> (parenthesis fallback shown only when ruby isn't supported).
+    inner = inner.replace(/<rp[^>]*>[\s\S]*?<\/rp>/gi, '');
+    // Pull the reading out of <rt>…</rt>; the base is whatever remains.
+    let reading = '';
+    inner = inner.replace(/<rt[^>]*>([\s\S]*?)<\/rt>/gi, (_, r) => { reading += r; return ''; });
+    const base = inner.replace(/<[^>]+>/g, '').trim();
+    const read = reading.replace(/<[^>]+>/g, '').trim();
+    return read ? `${base}[${read}]` : base;
+  }).replace(/<rt[^>]*>[\s\S]*?<\/rt>/gi, '') // stray rt outside ruby
+   .replace(/<\/?ruby[^>]*>/gi, '');          // stray ruby tags
+}
+
+// Characters that legitimately carry a [reading] in our bracket notation: kanji and
+// katakana (loanwords like ボール[ぼーる] keep their reading). A [reading] after a single
+// hiragana or punctuation is treated as a mistaken annotation and stripped. (The class is
+// inlined in each function below so each stays self-contained.)
+
 function applyFurigana(text) {
   if(!text) return text;
-  // Strip any [reading] that follows non-kanji (kana/punctuation annotated by mistake)
-  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇])\[[^\]]+\]/g, '$1');
+  // Strip any [reading] that follows a non-base char (kana/punctuation annotated by mistake)
+  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff])\[[^\]]+\]/g, '$1');
   if(APP.showFurigana){
-    return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g,
+    return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+)\[([^\]]+)\]/g,
       '<ruby>$1<rt>$2</rt></ruby>');
   } else {
-    return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g, '$1');
+    return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+)\[([^\]]+)\]/g, '$1');
   }
 }
-// Strip kanji[よみ] bracket annotations for TTS — speak only the kanji, not the reading
+// Strip kanji[よみ] bracket annotations for TTS — speak only the base, not the reading
 function stripFuri(text) {
   if(!text) return '';
-  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇])\[[^\]]+\]/g, '$1');
-  return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g, '$1');
+  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff])\[[^\]]+\]/g, '$1');
+  return text.replace(/([\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+)\[([^\]]+)\]/g, '$1');
 }
 // Like applyFurigana but also HTML-escapes plain text segments — safe for innerHTML contexts
 // where the input hasn't been escaped yet (lBlock, word-order tokens).
 function furiHtml(text) {
   if(!text) return '';
-  // Strip any [reading] that follows non-kanji before processing
-  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇])\[[^\]]+\]/g, '$1');
-  const re=/([\u4e00-\u9fff\u3400-\u4dbf々〆〇]+)\[([^\]]+)\]/g;
+  // Strip any [reading] that follows a non-base char before processing
+  text = text.replace(/([^\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff])\[[^\]]+\]/g, '$1');
+  const re=/([\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+)\[([^\]]+)\]/g;
   const parts=[]; let last=0, m;
   while((m=re.exec(text))!==null){
     if(m.index>last) parts.push(escHtml(text.slice(last,m.index)));
@@ -7735,6 +8067,24 @@ function furiHtml(text) {
   }
   parts.push(escHtml(text.slice(last)));
   return parts.join('');
+}
+// Tokenise a Japanese sentence into word-sized chunks, keeping each furigana group
+// BASE[reading] (BASE = kanji or katakana) intact. Protect-and-restore so a katakana group
+// after a hiragana run isn't merged in. Mirrors deriveSentenceWords/jaTokenize in server.js.
+function jaTokenize(raw){
+  const groups=[];
+  const protectedStr=String(raw||'').replace(
+    /[\u4e00-\u9fff\u3400-\u4dbf々〆〇\u30a0-\u30ff]+\[[^\]]+\]/g,
+    g=>{ const i=groups.push(g)-1; return '\uE000'+i+'\uE001'; });
+  const re=/\uE000\d+\uE001|[\u3040-\u30ff\uff00-\uffef\u0021-\u007ea-zA-Z0-9]+|[\u4e00-\u9fff\u3400-\u4dbf々〆〇]+/g;
+  const tokens=[]; let m;
+  while((m=re.exec(protectedStr))!==null){
+    let tok=m[0];
+    const sm=/^\uE000(\d+)\uE001$/.exec(tok);
+    if(sm) tok=groups[+sm[1]];
+    if(tok.length>0) tokens.push(tok);
+  }
+  return tokens;
 }
 function onFuriganaCb(checked){
   APP.showFurigana=checked;
@@ -7776,7 +8126,7 @@ function tMathLatex(ex) {
   return '<div class="ex-badge">🔢 LaTeX</div>'
     + '<div class="card">'
     + '<div id="math-latex-render" style="font-size:22px;text-align:center;padding:12px 0;min-height:40px">'+escHtml(ex.latex||'')+'</div>'
-    + '<div class="qtext" style="margin-bottom:8px">'+escHtml(ex.question||'')+'</div>'
+    + '<div class="qtext" dir="auto" style="margin-bottom:8px">'+escHtml(ex.question||'')+'</div>'
     + cGrid(ex.choices, false)
     + '</div>';
 }
@@ -7796,9 +8146,9 @@ function _loadKatex(cb) {
 }
 function tMathOrder(ex){
   const lang=APP.lessonData?.lang||APP.lang||'it';
-  const nums=ex.numbers.map((n,i)=>`<button class="choice" id="mn${i}" onclick="mathOrderPick(${i},this)">${n}</button>`).join('');
+  const nums=ex.numbers.map((n,i)=>`<button class="choice" dir="auto" id="mn${i}" onclick="mathOrderPick(${i},this)">${n}</button>`).join('');
   return `<div class="ex-badge">🔢 ${ex.direction==='asc'?'↑':'↓'} ${t('ex.badge.math_order')}</div>`+
-    `<div class="card"><div class="qtext">${ex.direction==='asc'?t('ex.math_order.asc'):t('ex.math_order.desc')}</div>`+
+    `<div class="card"><div class="qtext" dir="auto">${ex.direction==='asc'?t('ex.math_order.asc'):t('ex.math_order.desc')}</div>`+
     `<div id="math-placed" style="min-height:44px;display:flex;flex-wrap:wrap;gap:6px;padding:10px 0;border-bottom:1.5px solid var(--gray-mid);margin-bottom:10px"></div>`+
     `<div style="display:flex;flex-wrap:wrap;gap:6px">${nums}</div></div>`;
 }
@@ -7812,23 +8162,42 @@ function tMathCalc(ex){
     `<div class="card">${eq}${cGrid(ex.choices,false)}</div>`;
 }
 
-function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:Ln})}</div><div class="card"><div class="qtext">${t("ex.mcq_source_target.q",{word:furiHtml(ex.source),lang:Ln})}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:Ln})}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_source_target.q",{word:furiHtml(ex.source),lang:Ln})}</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){ return ttsIsApproximate()?`<span class="tts-approx" style="margin-left:6px">${t('tts.approx')}</span>`:''; }
-function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(APP.lessonData?.srcLang||APP.srcLang||"en"); return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
-function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.listen_type")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" style="margin-bottom:10px">${t("ex.listen_type.q",{lang:Ln})}</div>${lBlock(ex.target,ex.pron,true)}<input class="type-input" id="type-in" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></div>`; }
+function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(APP.lessonData?.srcLang||APP.srcLang||"en");
+  // Intro "learn the script" listen item: hear a letter, pick its glyph. The spoken glyph must
+  // be HIDDEN (showing it would reveal the answer, since the choices are glyphs). When muted /
+  // no audio, fall back to showing the transliteration (ex.pron) as the prompt → still pick the
+  // glyph — a valid no-audio question that doesn't give the answer away.
+  if(ex._intro){
+    if(APP.muted){
+      return `<div class="ex-badge">🔡 ${t("ex.badge.intro_pick_letter")}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.intro_pick_letter.q",{sound:escHtml(ex.pron||'')})}</div>${cGrid(ex.choices,false)}</div>`;
+    }
+    return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron,true)}${cGrid(ex.choices,false)}</div>`;
+  }
+  // When globally muted, the audio gives nothing — fall back to a read-the-target MCQ
+  // (show the target word as text, still pick the source). Same data, same check path.
+  if(APP.muted){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div>${cGrid(ex.choices,false)}</div>`; }
+  return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
+function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang);
+  const inputHtml = `<input class="type-input" id="type-in" dir="auto" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">`;
+  // When globally muted, there's nothing to hear — fall back to translating the shown source
+  // into the target by typing it. Same type-in / ex.correct check path, no audio needed.
+  if(APP.muted){ const S=lessonSrcLang(); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.type_translate",{lang:Ln})}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.type_translate.q",{lang:Ln})}</div><div class="target-box"><div class="target-box-text" dir="auto">${furiHtml(ex.source)}</div></div>${inputHtml}</div>`; }
+  return `<div class="ex-badge">${t("ex.badge.listen_type")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.listen_type.q",{lang:Ln})}</div>${lBlock(ex.target,ex.pron,true)}${inputHtml}</div>`; }
 function tOrder(ex){
   const tokens=ex.words.map((w,i)=>
-    `<span class="tok" id="t${i}" onclick="addTok(${i})">${furiHtml(w)}</span>`
+    `<span class="tok" dir="auto" id="t${i}" onclick="addTok(${i})">${furiHtml(w)}</span>`
   ).join("");
-  return `<div class="ex-badge">${t("ex.badge.order")}</div><div class="card"><div class="qtext">${t("ex.order.q",{sentence:furiHtml(ex.source)})}</div><div class="sbox" id="sbox"><span class="sbox-ph">${t("ex.order.placeholder")}</span></div><div class="wbank">${tokens}</div></div>`;
+  return `<div class="ex-badge">${t("ex.badge.order")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.order.q",{sentence:furiHtml(ex.source)})}</div><div class="sbox" id="sbox"><span class="sbox-ph" dir="auto">${t("ex.order.placeholder")}</span></div><div class="wbank">${tokens}</div></div>`;
 }
 
 
 
 
 
-function tRead(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext">${t("ex.read_translate.q",{lang:Ln})}</div><div class="target-box"><div class="target-box-text">${applyFurigana(ex.target)}</div><button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+function tRead(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.read_translate.q",{lang:Ln})}</div><div class="target-box"><div class="target-box-text" dir="auto">${applyFurigana(ex.target)}</div><button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){
   const C=APP.cur;
@@ -7858,7 +8227,7 @@ function mathOrderPick(i, btn) {
 function updateMathPlaced(){
   const C=APP.cur, el=document.getElementById('math-placed'); if(!el)return;
   if(!C.placed||!C.placed.length){ el.innerHTML=''; return; }
-  el.innerHTML=C.placed.map((p,pos)=>`<span class="placed-tok" onclick="mathOrderRemove(${pos})" title="tap to remove">${p.w}</span>`).join('');
+  el.innerHTML=C.placed.map((p,pos)=>`<span class="placed-tok" dir="auto" onclick="mathOrderRemove(${pos})" title="tap to remove">${p.w}</span>`).join('');
 }
 function mathOrderRemove(pos){
   const C=APP.cur; if(C.answered)return;
@@ -7913,11 +8282,11 @@ function remTok(pos){
 }
 function updateSbox(){
   const C=APP.cur, sb=document.getElementById('sbox'); if(!sb)return;
-  if(!C.placed.length){ sb.innerHTML='<span class="sbox-ph">Tap words to build the sentence</span>'; sb.classList.remove('filled'); return; }
+  if(!C.placed.length){ sb.innerHTML='<span class="sbox-ph" dir="auto">Tap words to build the sentence</span>'; sb.classList.remove('filled'); return; }
   sb.classList.add('filled');
   sb.innerHTML=C.placed.map((p,pos)=>{
     const sel = C._selPos===pos;
-    return `<span class="placed-tok${sel?' sel-tok':''}" onclick="selTok(${pos})" ondblclick="remTok(${pos})" title="Tap to reorder · double-tap to remove">${furiHtml(p.w)}</span>`;
+    return `<span dir="auto" class="placed-tok${sel?' sel-tok':''}" onclick="selTok(${pos})" ondblclick="remTok(${pos})" title="Tap to reorder · double-tap to remove">${furiHtml(p.w)}</span>`;
   }).join('');
 }
 
@@ -8257,6 +8626,16 @@ function toggleMute() {
   APP.muted = !APP.muted;
   if (APP.muted) speechSynthesis.cancel();
   updateMuteButtons();
+  // If we're mid-question on a listen exercise, re-render so it swaps to/from the muted
+  // (no-audio) fallback variant — but only before it's been answered, to avoid disrupting
+  // feedback already shown.
+  try {
+    const C = APP.cur;
+    const ex = C && !C.answered && C.exercises && C.exercises[C.cur];
+    if (ex && (ex.type === 'listen_mcq' || ex.type === 'listen_type') && document.getElementById('ex-area')) {
+      renderEx();
+    }
+  } catch(_) {}
 }
 function updateMuteButtons() {
   document.querySelectorAll('.mute-btn').forEach(b => {
@@ -8400,6 +8779,20 @@ function detectOS(ua){
 function buildEcosiaQuery(browser, os){
   return 'https://www.ecosia.org/search?q=' + encodeURIComponent('speech output with ' + browser + ' in ' + os);
 }
+// Does the browser actually have a speech voice for this target language? Unlike the LANGS[].tts
+// check (which only says a TTS *code* is defined), this inspects the real installed voices, so
+// we can drop "tap to listen" exercises on a device with no matching voice. Conservative while
+// voices are still loading (getVoices() is async/empty at first → assume available, don't nuke
+// listen items spuriously); only returns false once voices are loaded and none match.
+function ttsVoiceAvailableFor(lang){
+  const code = (LANGS[lang]||{}).tts;
+  if(!code) return false;                                   // no TTS code at all → no voice
+  if(!window.speechSynthesis || !speechSynthesis.getVoices) return true; // can't tell → assume yes
+  const voices = speechSynthesis.getVoices();
+  if(!voices || !voices.length) return true;                // not loaded yet → assume yes
+  const pfx = String(code).replace('_','-').toLowerCase().split('-')[0];
+  return voices.some(v => String(v.lang||'').replace('_','-').toLowerCase().split('-')[0] === pfx);
+}
 function ttsVoiceIsRobotic(name){ return /espeak|mbrola|festival|flite|pico|rhvoice|eloquence|speech.?dispatcher|\bspd[_ ]|^default$/i.test(name||''); }
 function ttsHasNiceVoice(voices, ttsCode, browser, os){
   if(!Array.isArray(voices) || !voices.length) return false;
@@ -8441,11 +8834,13 @@ function updateTtsVoiceNote(){
   const ttsCode = (LANGS[lang]||LANGS.it).tts;
   const browser = detectBrowser(navigator.userAgent), os = detectOS(navigator.userAgent);
   if(ttsHasNiceVoice(voices, ttsCode, browser, os)){ note.style.display = 'none'; return; }
-  const url = buildEcosiaQuery(browser, os);
   note.innerHTML =
     `<div style="margin-bottom:8px">${escHtml(t('tts.voice_warn_q'))}</div>`
     + `<button type="button" onclick="ttsTestVoice()" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button> `
-    + `<a href="${url}" target="_blank" rel="noopener" style="color:#2a4acc;font-weight:800;white-space:nowrap">${escHtml(t('tts.voice_search'))} (${escHtml(browser)} / ${escHtml(os)})</a>`;
+    + `<span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap">`
+    + `<span style="color:#9a6400;font-weight:700">${escHtml(t('tts.voice_mute_hint'))}</span>`
+    + `<button type="button" class="mute-btn" onclick="toggleMute()" title="Mute" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`
+    + `</span>`;
   note.style.display = '';
 }
 
@@ -8827,7 +9222,18 @@ async function importLessons(input){
     // A flag/edit submission (the static "download & submit" export) can be merged flags-only
     // so it can't clobber your content, or fully replace the matching topics — your choice.
     const isFlagSubmission = !!(data && (data.mergeFlags === true || data.exportedBy === 'dreizunge-static-user'));
-    if (isFlagSubmission) body.mergeFlags = confirm(t('toast.import_merge_confirm'));
+    if (isFlagSubmission) {
+      const choice = await showChoiceDialog({
+        title: t('import.choice.title'),
+        body: t('import.choice.body'),
+        choices: [
+          { value: 'merge',   label: t('import.choice.merge'),   hint: t('import.choice.merge_hint'),   primary: true },
+          { value: 'replace', label: t('import.choice.replace'), hint: t('import.choice.replace_hint') },
+        ],
+      });
+      if (choice === null) return; // dismissed — abort the import entirely
+      body.mergeFlags = (choice === 'merge');
+    }
     const r=await fetch('/api/lessons/import',{method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(body)});

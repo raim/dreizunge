@@ -91,7 +91,12 @@ assert.ok(/mergeFlagsIntoTopic\(exists, l\)/.test(src), 'import handler merges w
 assert.ok(/inIt\.userDelete\) \{ exIt\.userDelete = inIt\.userDelete/.test(src), 'merge carries userDelete');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 assert.ok(/const isFlagSubmission = .*exportedBy === 'dreizunge-static-user'/.test(html), 'client detects flag submissions');
-assert.ok(/body\.mergeFlags = confirm\(t\('toast\.import_merge_confirm'\)\)/.test(html), 'import offers merge-vs-replace choice');
+// Wiring: the client offers an explicit Merge/Replace choice via showChoiceDialog
+// (replacing the old native confirm(), which couldn't relabel its OK/Cancel buttons).
+// Merge maps to body.mergeFlags=true; Replace to false; dismiss aborts the import.
+assert.ok(/showChoiceDialog\(\{/.test(html), 'import offers a merge-vs-replace choice dialog');
+assert.ok(/body\.mergeFlags = \(choice === 'merge'\)/.test(html), 'merge choice sets body.mergeFlags');
+assert.ok(/if \(choice === null\) return;/.test(html), 'dismissing the import dialog aborts');
 console.log('  import merge wiring (server + client + export): OK');
 
 console.log('unit-import-merge: ALL PASSED');

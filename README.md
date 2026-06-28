@@ -1,5 +1,9 @@
 # Dreizunge
 
+> **Working on this codebase (new session)?** Read **`build_history/START-HERE.md`** first — it
+> points to the current roadmap (whose top holds the standing "session protocol / definition of
+> done"), the live-test checklist, and the latest session notes.
+
 Learn vocabulary for a specific topic in any language: enter **any topic**, get AI-generated lessons instantly. 
 
 Generate custom quirky story lines using **local LLM via ollama**.

@@ -16,7 +16,7 @@ const lit = src.slice(src.indexOf('const ADD_LESSON_GENERATORS = {'),
 assert.ok(lit.startsWith('const ADD_LESSON_GENERATORS'), 'registry literal not found');
 
 const genNames = ['generateOneLesson','generateErrorHunt','generateGrammar','generateConjugation',
-  'generateSynonyms','generateWordForms','generateMathLLM','generateMath'];
+  'generateSynonyms','generateWordForms','generateMathLLM','generateMath','generateIntroScript'];
 const calls = [];
 const stubs = genNames.map(n => `function ${n}(){ __calls.push({ fn:'${n}', args:[].slice.call(arguments) }); return {lesson:{},_stub:'${n}'}; }`).join('\n');
 const { ADD_LESSON_GENERATORS } = new Function('__calls',
@@ -56,9 +56,15 @@ assert.strictEqual(c.fn, 'generateMathLLM');
 assert.deepStrictEqual(c.args, ['de','en',2,'sum to 100','job1'], 'LLM math arg shape');
 ctx.addMathInstr = null;
 
+// intro_script: procedural + story-independent, keyed on the target lang + optional script.
+ctx.introScript = null;
+c = callOf('intro_script');
+assert.strictEqual(c.fn, 'generateIntroScript');
+assert.deepStrictEqual(c.args, ['de', { script: null }], 'intro_script arg shape (lang, {script})');
+
 // 3) Exactly the expected fmt set — nothing dropped, nothing extra.
 assert.deepStrictEqual(Object.keys(ADD_LESSON_GENERATORS).sort(),
-  ['conjugation','error_hunt','grammar','math','standard','synonyms','word_forms'],
+  ['conjugation','error_hunt','grammar','intro_script','math','standard','synonyms','word_forms'],
   'registry fmt set');
 console.log('  every fmt maps to the right generator with the right args: OK');
 

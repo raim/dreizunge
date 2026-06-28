@@ -71,6 +71,8 @@ run('unit: generation metadata (_genMeta everywhere)', 'node', [path.join(__dirn
 run('unit: edit-history report (v46 #12)', 'node', [path.join(__dirname, 'unit-report-edits.test.js')]);
 run('unit: chapter-link repair (v46 bug #2)', 'node', [path.join(__dirname, 'unit-chapter-link-repair.test.js')]);
 run('unit: storyline lock hardening (v46 bug #2)', 'node', [path.join(__dirname, 'unit-storyline-lock-hardening.test.js')]);
+run('unit: japanese furigana paste + tokenizer (v47)', 'node', [path.join(__dirname, 'unit-furigana.test.js')]);
+run('unit: intro learn-the-script course (v48)', 'node', [path.join(__dirname, 'unit-intro-script.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {

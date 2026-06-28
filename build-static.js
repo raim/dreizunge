@@ -18,6 +18,7 @@ const fs   = require('fs');
 const path = require('path');
 const UI_FILE   = path.join(__dirname, 'ui.json');
 const LANG_FILE = path.join(__dirname, 'languages.json');
+const SCRIPT_FILE = path.join(__dirname, 'scripts.json');
 
 const lessonsFile = process.argv[2] || path.join(__dirname, 'lessons.json');
 const outputDir   = process.argv[3] || path.join(__dirname, 'docs');
@@ -101,9 +102,14 @@ let _langsData = {};
 try { _langsData = JSON.parse(fs.readFileSync(LANG_FILE, 'utf8')); }
 catch(e) { console.warn('Could not read languages.json:', e.message); }
 
+let _scriptsData = {};
+try { _scriptsData = JSON.parse(fs.readFileSync(SCRIPT_FILE, 'utf8')); }
+catch(e) { console.warn('Could not read scripts.json:', e.message); }
+
 const uiScript = 'window.UI_STRINGS_ALL=' + JSON.stringify(_uiStringsAll) +
   ';\nwindow._UI_EN=' + JSON.stringify(_uiStringsAll['en']||{}) +
-  ';\nwindow.LANGUAGES_DATA=' + JSON.stringify(_langsData) + ';\n';
+  ';\nwindow.LANGUAGES_DATA=' + JSON.stringify(_langsData) +
+  ';\nwindow.SCRIPTS_DATA=' + JSON.stringify(_scriptsData) + ';\n';
 
 // ── Static replacement functions ──────────────────────────────────────
 // ── Strip flagged exercises from baked-in lessons ─────────────────────
