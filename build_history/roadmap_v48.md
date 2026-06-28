@@ -1,0 +1,331 @@
+# Roadmap v48
+
+Carries forward from v47. **v47 shipped** (see `build_history/v47_session1_notes.md`): a batch
+of UX / i18n fixes (import Merge/Replace dialog, storyline lesson-type icons, Arabic-as-target
+RTL split), Japanese furigana support (paste-time `<ruby>`→bracket normalization + katakana
+readings + a protect-and-restore sentence tokenizer), and the **intro "learn the script"
+course phase 1 (Cyrillic)** — a new LLM-free `intro_script` lesson type. `APP_VERSION` is now
+`v47`.
+
+Most of v47's work is **headless-verified for logic only** (pure helpers + structural guards +
+client/server parity asserts). The biggest carried-forward debt is therefore a **browser pass**
+over the v47 UI changes, plus the usual content/i18n follow-ups.
+
+---
+
+## ⚠️ Session protocol — READ FIRST, applies to every change
+
+This block is the standing "definition of done." A fresh session is expected to follow it
+without being re-told; several of these were missed in past sessions (LIVE-TEST updates, i18n
+listing, version bump) and only caught because the user noticed. Treat it as a checklist.
+
+**How to start a session:** read THIS file (the highest-numbered `build_history/roadmap_v*.md`
+is the current one), then `build_history/LIVE-TEST-CHECKLIST.md`, then the most recent
+`build_history/v*_session*_notes.md`. Establish the green baseline (`node test/run.js` +
+`node test/check-inline.js`) before touching anything.
+
+**Working rules (per change):**
+- One change at a time. Pure refactors stay byte-identical. After each change: full suite green
+  (`node test/run.js`) and `check-inline` at 0. Re-run before moving on.
+- Add or update a **unit test** for any new behavior. When adding a lesson type, exercise type,
+  generator, or registry entry, update the matching registry test (`unit-*-registry`).
+
+**Definition of Done — before calling any change finished, check ALL that apply:**
+1. **Tests** — suite green + `check-inline` 0; new/changed behavior has a guarding test.
+2. **LIVE-TEST-CHECKLIST.md** — if the change is browser-only or Ollama-only (UI, RTL, TTS,
+   rendering, anything not exercisable headlessly), ADD a numbered section describing exactly
+   what to click and what to expect. *This is the one most often forgotten.* Anything you label
+   "browser-verify owed" in notes MUST have a matching checklist entry.
+3. **i18n** — new user-facing strings go in `ui.json` **`en` only** (never add English text to
+   other languages — the user's `translate-ui.js` fills *missing* keys and can't detect English
+   fallbacks). List every new key in the session notes + roadmap so the offline translate pass
+   is run. Changed English values won't be re-translated automatically (script keys off
+   *missing*, not *changed*) — call those out explicitly or hand-edit if language-neutral.
+4. **Static build** — if client (`index.html`) or baked data (`lessons.json`, `languages.json`,
+   `scripts.json`, `ui.json`) changed, re-run `node build-static.js` so `docs/index.html` is current.
+5. **Data parity** — if a generator exists on both server and client (math, intro_script,
+   furigana tokenizer), keep them identical and assert parity in a test.
+
+**Definition of Done — at a release / packaging point:**
+6. **Version** — bump `APP_VERSION` in `server.js` if it's a new release.
+7. **Roadmap** — mark shipped items ✅, carry every open TODO/idea forward, and at a version
+   bump write the next `build_history/roadmap_v{N+1}.md` (carrying this protocol block forward).
+8. **Session notes** — write/update `build_history/v{ver}_session{n}_notes.md`.
+9. **Package** — sync the release dir, regenerate `docs/`, zip, and call out which deliverables
+   are still owed (browser pass, i18n, native-speaker content checks).
+
+(If you add a new standing rule, append it here so the next session inherits it.)
+
+---
+
+## Priority 0 (new) — Browser-verify the v47 batch
+
+Everything in v47 was built and tested headlessly. Before building more on top, do one focused
+browser/Ollama session to confirm the live behavior of:
+
+- **Import Merge/Replace dialog** — the `showChoiceDialog` modal renders, all three paths
+  (Merge → flags-only, Replace → overwrite, dismiss → abort) behave, and the import endpoint
+  receives the right `mergeFlags`.
+- **Storyline lesson-type icon row** — emoji-only row renders per chapter card with working
+  `title` tooltips.
+- **Arabic-as-target RTL** — an English→Arabic lesson keeps an LTR interface with Arabic
+  *content* (questions, sentence-ordering tokens, target boxes) right-aligned; an Arabic-UI
+  session mirrors fully.
+- **Japanese furigana** — paste a `<ruby>` story and a bracket story; furigana shows in
+  play, sentence-ordering splits keep each `BASE[reading]` group whole (incl. katakana
+  loanwords), TTS speaks the base only. Test both Ollama-generated and hand-pasted stories.
+- **Intro `intro_script` (Cyrillic)** — on an en→ru storyline the "🔡 Learn the script"
+  add-lesson option appears; generating it builds a playable lesson (glyph↔sound MCQs +
+  listen items); the lesson plays, and it survives the static build (`SCRIPTS_DATA` baked).
+  Check the lesson **editor** view for an `intro_script` lesson (currently routed to the
+  standard branch — see intro phase-2 "letter-table editor" below).
+
+Why P0: the entire v47 surface is unverified live; cheap to clear and it de-risks everything
+that follows.
+
+---
+
+## Priority 1 — `examples.json` stock via batch-gen + QC ("greetings and introductions")
+
+**This is the content engine that finishes Major A.** The `{EXAMPLE}` mechanism already
+consumes per-(prompt, language) examples; right now they live inline in `prompts.json`. P1
+produces a real, curated stock and promotes it to a dedicated `examples.json`.
+
+Plan:
+1. **Promote storage.** Move the `examples` blocks out of `prompts.json` into `examples.json`
+   (`{ "<prompt>": { "default": …, "<lang>": … } }`); have `promptExample()` read it. Keep
+   `default` fallbacks so behavior stays identical when a pair is unseeded.
+2. **Batch runner (offline script).** Generate lessons for the single controlled topic
+   **"greetings and introductions"** across all (or a curated subset of) language pairs ×
+   in-scope lesson types, at a fixed difficulty. Reuse the generation engine directly; log
+   `_genMeta` (attempts / valid / rejected / reject reasons) per run.
+3. **Auto-QC pass.** Run outputs through the existing validators (e.g.
+   `validateWordFormsItems`) + the QC checks; bucket into pass / salvageable / reject with
+   reasons.
+4. **Manual triage.** Review the auto-passed/borderline items; hand-pick clean GOOD examples
+   and instructive BAD examples per (prompt, language). (Native review is required — this is
+   the human gate the roadmap has been deferring; "greetings" is a good controlled topic
+   because the vocabulary is small and checkable.)
+5. **Populate `examples.json`** with the curated GOOD/BAD stock; the `{EXAMPLE}` mechanism
+   picks them up with no further code.
+6. **Measure** (the deferred A-phase-3 gate): on a weak local model, compare `_genMeta`
+   reject rates for a seeded pair vs the default. This is the evidence that decides whether
+   to keep expanding seeds.
+
+Why high: it directly unblocks the only-content-now remainder of Major A, produces the
+quality data that's been owed, and the controlled topic keeps the QC tractable.
+
+Depends on / continues: v46 Major A; `build_history/v46_session3_notes.md`;
+`prompt_examples_audit.md`.
+
+---
+
+## Priority 2 — Map-tree UI on the main page
+
+Visualize project data on the language tree, with a list view when two languages are
+selected.
+
+- **Tree view:** per node (language) / per pair, overlay data — number of lessons, lesson
+  stats, counts of flagged and starred questions, generation health.
+- **List view (two languages selected):** the same data as a sortable list for that pair.
+- Reuses existing per-item **flag** + **star rating** data and lesson metadata; mostly a
+  read/aggregate + visualization task on the client.
+
+(Visualization-heavy — front-end design work; keep it on the existing single-file client.)
+Pairs naturally with the **content-merge review UI** (below): both are list/diff views over
+per-item signals.
+
+---
+
+## Priority 3 — Platform track (parallel, large; see `platform_plan.md`)
+
+Multi-user accounts, central repository for submitting flags/edits/new lesson sets, a token
+economy (earn by solving / buy), and web + mobile. This is a separate, much larger effort
+tracked in `build_history/platform_plan.md`. **Constraint on all feature work:** keep it
+compatible with a future clean API boundary (don't deepen client↔server coupling), so the
+platform's Phase 0 stays cheap.
+
+---
+
+## Intro "learn the script" course — phase 2+ (carried forward)
+
+Phase 1 (Cyrillic) shipped in v47: `scripts.json`, the `intro_script` lesson type
+(server `generateIntroScript` + shared `introScriptExercises` / client
+`introScriptExercisesFrom` + `buildIntroScriptExercises`), `LESSON_TYPE_META` +
+`ADD_LESSON_GENERATORS` rows, `GET /api/scripts` + `loadScripts()`, static-build baking
+(`window.SCRIPTS_DATA`), gated add-lesson UI (`needsIntroScript` + `scriptHasTable`), and
+`unit-intro-script`. Exercises reuse `mcq_source_target` / `mcq_target_source` / `listen_mcq`.
+
+Remaining:
+- **Intro reinforce UI (small).** The intro lesson now supports `reinforce` scoping (build only
+  the letters that appear in the set's content) and only adds scripts actually present in the set
+  (e.g. no Katakana lesson when there's no katakana). But the 🔁reinforce/➕extend **selector** is
+  only rendered for storyline-*continued* chapters (`hasPrior = continuedFrom`), so for a plain
+  lesson set the reinforce option isn't reachable from the UI even though the logic supports it.
+  Show the selector for `intro_script` whenever the open set has letter-bearing content, decoupled
+  from storyline continuation. (Logic + `lettersSeenInLessonSet`/`scriptsUsedInLessonSet` already
+  done; this is just the add-lesson row's visibility condition.)
+- **Phase 2 — fill the stub tables.** `scripts.json` already has empty, well-formed stubs for
+  `hiragana`, `katakana`, `greek`, `hangul`, `arabic`, `hebrew`, `thai` (so the option stays
+  hidden until a table is non-empty). Fill **hiragana / katakana / greek / hangul** first
+  (simple 1:1 sound mappings, all have TTS). Each is just data — no code — and `needsIntroScript`
+  flips on automatically. For `ja`, the add-lesson path already adds one lesson per script.
+- **Phase 3 — Arabic positional forms + Hebrew (RTL).** Add `forms`
+  (`isolated/initial/medial/final`) to the Arabic table and an exercise variant that matches a
+  positional form to its letter; RTL display reuses v47's `.tgt-rtl` axis. Hebrew similarly.
+- **Letter-table editor view.** `intro_script` currently routes to the **standard** editor
+  branch, which expects `vocab` and will look wrong. Add a dedicated `editorBranch` that shows
+  the `letters` table (read-only, or light edit of `translit`/`name`) instead.
+- **"Chapter 0" auto-prepend (optional).** Offer to auto-create an intro-script chapter when a
+  brand-new script pair's first storyline is generated (rather than only via the manual
+  ➕ add-lesson). Keep it opt-in.
+- **Kanji-radicals (stretch, ja).** Beyond kana, a radicals primer for Japanese — larger and
+  fuzzier; revisit after kana/greek/hangul land.
+
+---
+
+## Minor features (carried forward)
+
+1. ✅ **DONE (v47) — QC button in the storyline-page header.** `#sl-screen-qc-btn` wired in
+   `_renderStorylineScreen` to `qcRun({storylineId})`. (The QC run itself is browser/Ollama-owed.)
+2. **TODO (needs Ollama) — Expand QC to all lesson types except `math`, the two error-hunt
+   types, and `intro_script`.** QC is server-side: `_runQc` loops only over `vocab`/`sentences`
+   and calls `qcCheckPair(target, source)` — a translation-pair checker.
+   `grammar`/`conjugation` have a checkable target↔source (noun/infinitive ↔ translation) and
+   could be added to that loop with low risk; `synonyms` (base+gloss+arrays) and `word_forms`
+   (sentence/choices) need their **own** QC checks. `intro_script` is procedural/curated and
+   needs no QC. All of it changes the LLM path, so it must be verified live against Ollama
+   before shipping — deliberately not done blind in a headless session. Note: the client
+   lesson-level QC button (index.html ~`qcRun({topicId,lessonIdx})`) is gated to
+   `L.vocab||L.sentences` and must be widened in step with the server.
+3. ✅ **DONE (v47) — Live-mode storyline page: lesson types per chapter.** Now an **icon-only
+   row** (v47 cosmetics change), via `lessonSetTypes(s)` + `_lessonTypesDropdownHtml`, labelled
+   from the Major B registry. Guarded by `unit-storyline-screen-extras`. (Browser-verify-owed.)
+
+---
+
+## i18n debt (carried forward — English shipped, other langs generated offline)
+
+Several user-facing strings were added in English only and need the offline translation pass
+(same workflow as `static.pill.*`):
+- `import.choice.*` + `dialog.cancel` (v47 Merge/Replace dialog).
+- `lesson.type.intro_script`, `lesson.type.desc.intro_script`, `form.format.intro_script`,
+  `intro.need_open_set`, `intro.no_script` (v47 intro course).
+- The older `static.pill.*` set, if any languages are still unfilled.
+
+`toast.import_merge_confirm` is now unused (superseded by the dialog) — keep or prune.
+
+---
+
+## Static-build flag handling (status from v47 — mostly done, browser-verify owed)
+
+The static build has no backend, so per-item `userFlag` / `userRating` / `userDelete` and a
+lesson's `_miscFlags` ride the JSON export. v47 made that loop usable for crowd-sourced
+corrections. **All shipped and logic-verified; the rendering/download/persistence need a
+browser pass** (folded into P0 above). Shipped pieces:
+
+- ✅ Hide flagged items in static play (non-teacher); teacher/editor still show them.
+- ✅ Floating global "Download & submit" pill: tallies pending ⚑/⭐/🗑, close button, edit/delete
+  triggers, GitHub "Submit as issue" link, all text in `ui.json` (`static.pill.*`).
+- ✅ Pill download = **every complete storyline** with any flagged/rated/edited chapter (full
+  context), plus flagged orphan topics; submit link hidden when a new flag makes it stale.
+- ✅ Persist across reloads via `localStorage` (`dz_static_flags` / `dz_static_edits` /
+  `dz_static_summaries`); round-trip in `unit-static-flags`.
+- ✅ Star ("good example") shown in editor; ⭐ N counts on chapter/lessonset nodes.
+- ✅ Import **merge vs replace** is an explicit choice (v47 dialog); merge is flags-only and
+  identity-matched (`mergeFlagsIntoTopic`), drift-safe + idempotent; carries `editedAt` markers.
+- ✅ Soft-delete (`userDelete`) in static — toggle, hidden from play, counted, rides export/merge.
+- ✅ Export only the user's OWN signals (pristine baked-signal snapshot at load); exported
+  topics stripped of pre-existing markers.
+- ✅ Pill scope = explicit tags (⚑/⭐/🗑 + 📖 story / 📝 summary edits), not every content edit.
+
+**TODO (later) — content merge with a review UI.** Beyond flags-only merge, support merging a
+submission's *content* edits with a side-by-side interface (original vs edited, accept/reject
+per change — a 3-way/diff review, not last-write-wins). The `editedAt` markers already tell the
+maintainer *which* items to review; this UI shows the proposed text and applies accepted
+changes. (Larger UI task — pairs naturally with the P2 map-tree / list views.) Possible
+follow-ups: per-storyline grouping when several storylines are flagged (one button each); an
+opt-in "include all my edits" toggle for users who want to submit their whole edit history.
+
+---
+
+## v47.x follow-up session — content-aware bidi, mute fallbacks, sound-test (shipped on top of v47)
+
+Done on top of v47 (suite green + `check-inline` 0 after each; `APP_VERSION` stays `v47`).
+All **browser-verify-owed** for visual confirmation.
+
+- ✅ **Content-aware direction (`dir="auto"`) everywhere prose/answers are shown or typed.**
+  Replaced the v47 *target-language*-based `.tgt-rtl` force on exercise content with per-element
+  `dir="auto"`, so each field aligns by its OWN text, not the lesson's target language. Covers:
+  all six story/summary/chapter **reading** surfaces; exercise **content** (`.qtext`, `.choice`,
+  `.tok`, `.placed-tok`, `.target-box-text`, `.sbox-ph`) — so an English prompt left-aligns while
+  Arabic choices right-align in the same MCQ; and **edit/typing** areas (story contenteditable,
+  summary textarea, paste story/translation boxes, error-hunt corrupted-story textarea, and the
+  `type-in` answer inputs) so typing Arabic flips RTL live. `.tgt-rtl` now only adds RTL **flow**
+  to the word-order containers (`.sbox`/`.wbank`, so tokens read right-to-left) + the `.it-word`
+  fallback. CSS uses `text-align:start` on the content fields to follow the resolved direction.
+  Caveat: `dir="auto"` resolves from the first strong character, so a field starting with a Latin
+  name before RTL text can resolve LTR (rare; per-element scoping limits it).
+- ✅ **Muted listen exercises fall back to no-audio equivalents.** When the global mute is on,
+  `listen_mcq` renders as a read-the-target MCQ (show the target word, pick the source) and
+  `listen_type` renders as translate-by-typing (show the source, type the target) — same data,
+  same check path, no audio dependency. Toggling mute mid-question re-renders the current listen
+  exercise so it swaps live (only before it's answered). New strings `ex.badge.type_translate`,
+  `ex.type_translate.q` (English; i18n-owed).
+- ✅ **Sound-test popup cleanup + mute affordances.** The voice-test phrase is now numbers only
+  (`tts.voice_test_phrase` = "1, 2, 3.", button label "🔊 1, 2, 3"); the Ecosia "how to get
+  better speech" link is replaced by a short "If the sound is bad, you can mute it:" hint
+  (`tts.voice_mute_hint`) + the standard mute button. The mute button is also added to the
+  **bottom row of every question card** (next to Check), syncing via the existing
+  `updateMuteButtons()` (all `.mute-btn`). `buildEcosiaQuery` is now unused in-app but kept
+  (still unit-tested in `unit-tts-voice`); `detectBrowser`/`detectOS` still feed the warn heuristic.
+- **i18n-owed:** `ex.badge.type_translate`, `ex.type_translate.q`, `tts.voice_mute_hint`
+  (English shipped; other languages generated offline). Also: the `tts.voice_test`/`_phrase`
+  edits only touched the English label — re-check other languages still read sensibly (they're
+  mostly digits, so likely fine).
+
+## New plan — letter-ordering answer mode for keyboard/script mismatch
+
+**Problem.** A European learner doing an Arabic (or Greek/Cyrillic/Hangul/Hebrew/Japanese)
+lesson typically lacks a keyboard for the target script, so any *type-the-target* exercise
+(`listen_type`, and the muted `listen_type` translate-by-typing fallback above, plus
+`type_plural`/`type_conjugation`) is unanswerable. Offer a **letter-ordering** answer instead:
+like sentence-ordering, but the tokens are the individual letters of the target word/phrase,
+shuffled — the learner taps letters into order. No target keyboard required.
+
+**Design.**
+- **Trigger.** A per-target-language "I don't have this keyboard" preference (persisted, like
+  `imp3_*`), defaulting **on** when the target uses a non-Latin script the UI language doesn't
+  (reuse `needsIntroScript` / `scriptsForLang` from the intro course) — with a manual toggle so
+  Latin-diacritic learners or those with the right keyboard can turn it off. Browser keyboard
+  layout isn't reliably detectable, so make it a preference, seeded by the script heuristic.
+- **Builder/renderer.** Generalize the existing word-order machinery (`mkOrder` / `tOrder` /
+  `addTok` / `selTok` / sbox state) to operate on **letters** of `ex.correct` instead of words:
+  a `letter_order` exercise (or an `orderMode:'letters'` flag on the type exercises). Split the
+  target into grapheme tokens (care with Arabic combining marks / Japanese kana+furigana — reuse
+  `jaTokenize`-style grapheme awareness; for Arabic, split on base letters keeping diacritics
+  attached). Shuffle, tap-to-place, check against the joined target. Reuse the v47 RTL container
+  flow so Arabic letters order right-to-left.
+- **Where it applies.** Replace the *type* step in `listen_type` (and its muted fallback),
+  `type_plural`, `type_conjugation`, and optionally offer it as an alternative to MCQ for the
+  intro `intro_script` course. Keep MCQ/type when a keyboard is available.
+- **Scope.** Phase 1: a `letter_order` renderer + builder reusing word-order code, wired into
+  `listen_type`/muted-fallback for a single RTL script (Arabic) end-to-end, behind the
+  script-seeded preference. Phase 2: kana/Hangul grapheme splitting; intro-course integration.
+  Guard with a unit test (grapheme split correctness per script + client/server parity if the
+  builder is shared), following the `unit-furigana` / `unit-intro-script` pattern.
+
+This dovetails with the intro "learn the script" course (shared grapheme/letter tables) and the
+muted-fallback work above (both are "make the lesson answerable without audio / without the
+right keyboard").
+
+---
+
+## Suggested sequence
+
+P0 (browser-verify the v47 + v47.x batches + i18n for the new strings) → P1 (examples.json
+batch-gen + QC) → **letter-ordering answer mode phase 1 (Arabic)** (high user value, reuses
+word-order + intro-course code) → minor #2 (QC expansion, needs Ollama) → intro phase 2 (fill
+kana/greek/hangul tables — pure data) → P2 (map-tree UI) + content-merge review UI → intro
+phase 3 (Arabic/Hebrew RTL + letter-table editor) + letter-ordering phase 2 → P3 (platform) as
+a separate track once the above land and the platform decisions in `platform_plan.md` §2 are made.

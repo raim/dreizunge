@@ -1,0 +1,1207 @@
+{
+  "_comment": "Per-writing-system letter tables for the LLM-free intro 'learn the script' course. Keyed by SCRIPT (many languages share one); _langScript maps a language code to its script(s). Phase 1 ships Cyrillic; kana/greek/hangul/arabic/hebrew/thai are stubs to fill in later phases.",
+  "_langScript": {
+    "ru": "cyrillic",
+    "uk": "cyrillic",
+    "ja": [
+      "hiragana",
+      "katakana"
+    ],
+    "el": "greek",
+    "ko": "hangul",
+    "ar": "arabic",
+    "he": "hebrew",
+    "th": "thai"
+  },
+  "cyrillic": {
+    "rtl": false,
+    "label": "Cyrillic",
+    "letters": [
+      {
+        "ch": "А",
+        "lower": "а",
+        "name": "a",
+        "translit": "a",
+        "ipa": "a"
+      },
+      {
+        "ch": "Б",
+        "lower": "б",
+        "name": "be",
+        "translit": "b",
+        "ipa": "b"
+      },
+      {
+        "ch": "В",
+        "lower": "в",
+        "name": "ve",
+        "translit": "v",
+        "ipa": "v"
+      },
+      {
+        "ch": "Г",
+        "lower": "г",
+        "name": "ge",
+        "translit": "g",
+        "ipa": "ɡ"
+      },
+      {
+        "ch": "Д",
+        "lower": "д",
+        "name": "de",
+        "translit": "d",
+        "ipa": "d"
+      },
+      {
+        "ch": "Е",
+        "lower": "е",
+        "name": "ye",
+        "translit": "ye",
+        "ipa": "je"
+      },
+      {
+        "ch": "Ё",
+        "lower": "ё",
+        "name": "yo",
+        "translit": "yo",
+        "ipa": "jo"
+      },
+      {
+        "ch": "Ж",
+        "lower": "ж",
+        "name": "zhe",
+        "translit": "zh",
+        "ipa": "ʐ"
+      },
+      {
+        "ch": "З",
+        "lower": "з",
+        "name": "ze",
+        "translit": "z",
+        "ipa": "z"
+      },
+      {
+        "ch": "И",
+        "lower": "и",
+        "name": "i",
+        "translit": "i",
+        "ipa": "i"
+      },
+      {
+        "ch": "Й",
+        "lower": "й",
+        "name": "short i",
+        "translit": "y",
+        "ipa": "j"
+      },
+      {
+        "ch": "К",
+        "lower": "к",
+        "name": "ka",
+        "translit": "k",
+        "ipa": "k"
+      },
+      {
+        "ch": "Л",
+        "lower": "л",
+        "name": "el",
+        "translit": "l",
+        "ipa": "l"
+      },
+      {
+        "ch": "М",
+        "lower": "м",
+        "name": "em",
+        "translit": "m",
+        "ipa": "m"
+      },
+      {
+        "ch": "Н",
+        "lower": "н",
+        "name": "en",
+        "translit": "n",
+        "ipa": "n"
+      },
+      {
+        "ch": "О",
+        "lower": "о",
+        "name": "o",
+        "translit": "o",
+        "ipa": "o"
+      },
+      {
+        "ch": "П",
+        "lower": "п",
+        "name": "pe",
+        "translit": "p",
+        "ipa": "p"
+      },
+      {
+        "ch": "Р",
+        "lower": "р",
+        "name": "er",
+        "translit": "r",
+        "ipa": "r"
+      },
+      {
+        "ch": "С",
+        "lower": "с",
+        "name": "es",
+        "translit": "s",
+        "ipa": "s"
+      },
+      {
+        "ch": "Т",
+        "lower": "т",
+        "name": "te",
+        "translit": "t",
+        "ipa": "t"
+      },
+      {
+        "ch": "У",
+        "lower": "у",
+        "name": "u",
+        "translit": "u",
+        "ipa": "u"
+      },
+      {
+        "ch": "Ф",
+        "lower": "ф",
+        "name": "ef",
+        "translit": "f",
+        "ipa": "f"
+      },
+      {
+        "ch": "Х",
+        "lower": "х",
+        "name": "kha",
+        "translit": "kh",
+        "ipa": "x"
+      },
+      {
+        "ch": "Ц",
+        "lower": "ц",
+        "name": "tse",
+        "translit": "ts",
+        "ipa": "ts"
+      },
+      {
+        "ch": "Ч",
+        "lower": "ч",
+        "name": "che",
+        "translit": "ch",
+        "ipa": "tɕ"
+      },
+      {
+        "ch": "Ш",
+        "lower": "ш",
+        "name": "sha",
+        "translit": "sh",
+        "ipa": "ʂ"
+      },
+      {
+        "ch": "Щ",
+        "lower": "щ",
+        "name": "shcha",
+        "translit": "shch",
+        "ipa": "ɕː"
+      },
+      {
+        "ch": "Ъ",
+        "lower": "ъ",
+        "name": "hard sign",
+        "translit": "ʼ",
+        "ipa": ""
+      },
+      {
+        "ch": "Ы",
+        "lower": "ы",
+        "name": "yery",
+        "translit": "y",
+        "ipa": "ɨ"
+      },
+      {
+        "ch": "Ь",
+        "lower": "ь",
+        "name": "soft sign",
+        "translit": "ʹ",
+        "ipa": ""
+      },
+      {
+        "ch": "Э",
+        "lower": "э",
+        "name": "e",
+        "translit": "e",
+        "ipa": "ɛ"
+      },
+      {
+        "ch": "Ю",
+        "lower": "ю",
+        "name": "yu",
+        "translit": "yu",
+        "ipa": "ju"
+      },
+      {
+        "ch": "Я",
+        "lower": "я",
+        "name": "ya",
+        "translit": "ya",
+        "ipa": "ja"
+      }
+    ]
+  },
+  "_stub_comment": "Remaining stub: thai (44 consonants with many shared sounds + positional vowels + tone classes — not reducible to a simple unique letter→sound table; needs a purpose-built design).",
+  "hiragana": {
+    "rtl": false,
+    "syllabary": true,
+    "label": "Hiragana",
+    "letters": [
+      {
+        "ch": "あ",
+        "translit": "a"
+      },
+      {
+        "ch": "い",
+        "translit": "i"
+      },
+      {
+        "ch": "う",
+        "translit": "u"
+      },
+      {
+        "ch": "え",
+        "translit": "e"
+      },
+      {
+        "ch": "お",
+        "translit": "o"
+      },
+      {
+        "ch": "か",
+        "translit": "ka"
+      },
+      {
+        "ch": "き",
+        "translit": "ki"
+      },
+      {
+        "ch": "く",
+        "translit": "ku"
+      },
+      {
+        "ch": "け",
+        "translit": "ke"
+      },
+      {
+        "ch": "こ",
+        "translit": "ko"
+      },
+      {
+        "ch": "さ",
+        "translit": "sa"
+      },
+      {
+        "ch": "し",
+        "translit": "shi"
+      },
+      {
+        "ch": "す",
+        "translit": "su"
+      },
+      {
+        "ch": "せ",
+        "translit": "se"
+      },
+      {
+        "ch": "そ",
+        "translit": "so"
+      },
+      {
+        "ch": "た",
+        "translit": "ta"
+      },
+      {
+        "ch": "ち",
+        "translit": "chi"
+      },
+      {
+        "ch": "つ",
+        "translit": "tsu"
+      },
+      {
+        "ch": "て",
+        "translit": "te"
+      },
+      {
+        "ch": "と",
+        "translit": "to"
+      },
+      {
+        "ch": "な",
+        "translit": "na"
+      },
+      {
+        "ch": "に",
+        "translit": "ni"
+      },
+      {
+        "ch": "ぬ",
+        "translit": "nu"
+      },
+      {
+        "ch": "ね",
+        "translit": "ne"
+      },
+      {
+        "ch": "の",
+        "translit": "no"
+      },
+      {
+        "ch": "は",
+        "translit": "ha"
+      },
+      {
+        "ch": "ひ",
+        "translit": "hi"
+      },
+      {
+        "ch": "ふ",
+        "translit": "fu"
+      },
+      {
+        "ch": "へ",
+        "translit": "he"
+      },
+      {
+        "ch": "ほ",
+        "translit": "ho"
+      },
+      {
+        "ch": "ま",
+        "translit": "ma"
+      },
+      {
+        "ch": "み",
+        "translit": "mi"
+      },
+      {
+        "ch": "む",
+        "translit": "mu"
+      },
+      {
+        "ch": "め",
+        "translit": "me"
+      },
+      {
+        "ch": "も",
+        "translit": "mo"
+      },
+      {
+        "ch": "や",
+        "translit": "ya"
+      },
+      {
+        "ch": "ゆ",
+        "translit": "yu"
+      },
+      {
+        "ch": "よ",
+        "translit": "yo"
+      },
+      {
+        "ch": "ら",
+        "translit": "ra"
+      },
+      {
+        "ch": "り",
+        "translit": "ri"
+      },
+      {
+        "ch": "る",
+        "translit": "ru"
+      },
+      {
+        "ch": "れ",
+        "translit": "re"
+      },
+      {
+        "ch": "ろ",
+        "translit": "ro"
+      },
+      {
+        "ch": "わ",
+        "translit": "wa"
+      },
+      {
+        "ch": "を",
+        "translit": "wo"
+      },
+      {
+        "ch": "ん",
+        "translit": "n"
+      }
+    ]
+  },
+  "katakana": {
+    "rtl": false,
+    "syllabary": true,
+    "label": "Katakana",
+    "letters": [
+      {
+        "ch": "ア",
+        "translit": "a"
+      },
+      {
+        "ch": "イ",
+        "translit": "i"
+      },
+      {
+        "ch": "ウ",
+        "translit": "u"
+      },
+      {
+        "ch": "エ",
+        "translit": "e"
+      },
+      {
+        "ch": "オ",
+        "translit": "o"
+      },
+      {
+        "ch": "カ",
+        "translit": "ka"
+      },
+      {
+        "ch": "キ",
+        "translit": "ki"
+      },
+      {
+        "ch": "ク",
+        "translit": "ku"
+      },
+      {
+        "ch": "ケ",
+        "translit": "ke"
+      },
+      {
+        "ch": "コ",
+        "translit": "ko"
+      },
+      {
+        "ch": "サ",
+        "translit": "sa"
+      },
+      {
+        "ch": "シ",
+        "translit": "shi"
+      },
+      {
+        "ch": "ス",
+        "translit": "su"
+      },
+      {
+        "ch": "セ",
+        "translit": "se"
+      },
+      {
+        "ch": "ソ",
+        "translit": "so"
+      },
+      {
+        "ch": "タ",
+        "translit": "ta"
+      },
+      {
+        "ch": "チ",
+        "translit": "chi"
+      },
+      {
+        "ch": "ツ",
+        "translit": "tsu"
+      },
+      {
+        "ch": "テ",
+        "translit": "te"
+      },
+      {
+        "ch": "ト",
+        "translit": "to"
+      },
+      {
+        "ch": "ナ",
+        "translit": "na"
+      },
+      {
+        "ch": "ニ",
+        "translit": "ni"
+      },
+      {
+        "ch": "ヌ",
+        "translit": "nu"
+      },
+      {
+        "ch": "ネ",
+        "translit": "ne"
+      },
+      {
+        "ch": "ノ",
+        "translit": "no"
+      },
+      {
+        "ch": "ハ",
+        "translit": "ha"
+      },
+      {
+        "ch": "ヒ",
+        "translit": "hi"
+      },
+      {
+        "ch": "フ",
+        "translit": "fu"
+      },
+      {
+        "ch": "ヘ",
+        "translit": "he"
+      },
+      {
+        "ch": "ホ",
+        "translit": "ho"
+      },
+      {
+        "ch": "マ",
+        "translit": "ma"
+      },
+      {
+        "ch": "ミ",
+        "translit": "mi"
+      },
+      {
+        "ch": "ム",
+        "translit": "mu"
+      },
+      {
+        "ch": "メ",
+        "translit": "me"
+      },
+      {
+        "ch": "モ",
+        "translit": "mo"
+      },
+      {
+        "ch": "ヤ",
+        "translit": "ya"
+      },
+      {
+        "ch": "ユ",
+        "translit": "yu"
+      },
+      {
+        "ch": "ヨ",
+        "translit": "yo"
+      },
+      {
+        "ch": "ラ",
+        "translit": "ra"
+      },
+      {
+        "ch": "リ",
+        "translit": "ri"
+      },
+      {
+        "ch": "ル",
+        "translit": "ru"
+      },
+      {
+        "ch": "レ",
+        "translit": "re"
+      },
+      {
+        "ch": "ロ",
+        "translit": "ro"
+      },
+      {
+        "ch": "ワ",
+        "translit": "wa"
+      },
+      {
+        "ch": "ヲ",
+        "translit": "wo"
+      },
+      {
+        "ch": "ン",
+        "translit": "n"
+      }
+    ]
+  },
+  "greek": {
+    "rtl": false,
+    "label": "Greek",
+    "letters": [
+      {
+        "ch": "Α",
+        "lower": "α",
+        "name": "alpha",
+        "translit": "a"
+      },
+      {
+        "ch": "Β",
+        "lower": "β",
+        "name": "beta",
+        "translit": "v"
+      },
+      {
+        "ch": "Γ",
+        "lower": "γ",
+        "name": "gamma",
+        "translit": "g"
+      },
+      {
+        "ch": "Δ",
+        "lower": "δ",
+        "name": "delta",
+        "translit": "d"
+      },
+      {
+        "ch": "Ε",
+        "lower": "ε",
+        "name": "epsilon",
+        "translit": "e"
+      },
+      {
+        "ch": "Ζ",
+        "lower": "ζ",
+        "name": "zeta",
+        "translit": "z"
+      },
+      {
+        "ch": "Η",
+        "lower": "η",
+        "name": "eta",
+        "translit": "ī"
+      },
+      {
+        "ch": "Θ",
+        "lower": "θ",
+        "name": "theta",
+        "translit": "th"
+      },
+      {
+        "ch": "Ι",
+        "lower": "ι",
+        "name": "iota",
+        "translit": "i"
+      },
+      {
+        "ch": "Κ",
+        "lower": "κ",
+        "name": "kappa",
+        "translit": "k"
+      },
+      {
+        "ch": "Λ",
+        "lower": "λ",
+        "name": "lambda",
+        "translit": "l"
+      },
+      {
+        "ch": "Μ",
+        "lower": "μ",
+        "name": "mu",
+        "translit": "m"
+      },
+      {
+        "ch": "Ν",
+        "lower": "ν",
+        "name": "nu",
+        "translit": "n"
+      },
+      {
+        "ch": "Ξ",
+        "lower": "ξ",
+        "name": "xi",
+        "translit": "x"
+      },
+      {
+        "ch": "Ο",
+        "lower": "ο",
+        "name": "omicron",
+        "translit": "o"
+      },
+      {
+        "ch": "Π",
+        "lower": "π",
+        "name": "pi",
+        "translit": "p"
+      },
+      {
+        "ch": "Ρ",
+        "lower": "ρ",
+        "name": "rho",
+        "translit": "r"
+      },
+      {
+        "ch": "Σ",
+        "lower": "σ",
+        "name": "sigma",
+        "translit": "s"
+      },
+      {
+        "ch": "Τ",
+        "lower": "τ",
+        "name": "tau",
+        "translit": "t"
+      },
+      {
+        "ch": "Υ",
+        "lower": "υ",
+        "name": "upsilon",
+        "translit": "y"
+      },
+      {
+        "ch": "Φ",
+        "lower": "φ",
+        "name": "phi",
+        "translit": "f"
+      },
+      {
+        "ch": "Χ",
+        "lower": "χ",
+        "name": "chi",
+        "translit": "ch"
+      },
+      {
+        "ch": "Ψ",
+        "lower": "ψ",
+        "name": "psi",
+        "translit": "ps"
+      },
+      {
+        "ch": "Ω",
+        "lower": "ω",
+        "name": "omega",
+        "translit": "ō"
+      }
+    ]
+  },
+  "hangul": {
+    "rtl": false,
+    "label": "Hangul",
+    "letters": [
+      {
+        "ch": "ㄱ",
+        "name": "giyeok",
+        "translit": "g"
+      },
+      {
+        "ch": "ㄴ",
+        "name": "nieun",
+        "translit": "n"
+      },
+      {
+        "ch": "ㄷ",
+        "name": "digeut",
+        "translit": "d"
+      },
+      {
+        "ch": "ㄹ",
+        "name": "rieul",
+        "translit": "r"
+      },
+      {
+        "ch": "ㅁ",
+        "name": "mieum",
+        "translit": "m"
+      },
+      {
+        "ch": "ㅂ",
+        "name": "bieup",
+        "translit": "b"
+      },
+      {
+        "ch": "ㅅ",
+        "name": "siot",
+        "translit": "s"
+      },
+      {
+        "ch": "ㅇ",
+        "name": "ieung",
+        "translit": "ng"
+      },
+      {
+        "ch": "ㅈ",
+        "name": "jieut",
+        "translit": "j"
+      },
+      {
+        "ch": "ㅊ",
+        "name": "chieut",
+        "translit": "ch"
+      },
+      {
+        "ch": "ㅋ",
+        "name": "kieuk",
+        "translit": "k"
+      },
+      {
+        "ch": "ㅌ",
+        "name": "tieut",
+        "translit": "t"
+      },
+      {
+        "ch": "ㅍ",
+        "name": "pieup",
+        "translit": "p"
+      },
+      {
+        "ch": "ㅎ",
+        "name": "hieut",
+        "translit": "h"
+      },
+      {
+        "ch": "ㅏ",
+        "name": "a",
+        "translit": "a"
+      },
+      {
+        "ch": "ㅑ",
+        "name": "ya",
+        "translit": "ya"
+      },
+      {
+        "ch": "ㅓ",
+        "name": "eo",
+        "translit": "eo"
+      },
+      {
+        "ch": "ㅕ",
+        "name": "yeo",
+        "translit": "yeo"
+      },
+      {
+        "ch": "ㅗ",
+        "name": "o",
+        "translit": "o"
+      },
+      {
+        "ch": "ㅛ",
+        "name": "yo",
+        "translit": "yo"
+      },
+      {
+        "ch": "ㅜ",
+        "name": "u",
+        "translit": "u"
+      },
+      {
+        "ch": "ㅠ",
+        "name": "yu",
+        "translit": "yu"
+      },
+      {
+        "ch": "ㅡ",
+        "name": "eu",
+        "translit": "eu"
+      },
+      {
+        "ch": "ㅣ",
+        "name": "i",
+        "translit": "i"
+      }
+    ]
+  },
+  "arabic": {
+    "rtl": true,
+    "label": "Arabic",
+    "letters": [
+      {
+        "ch": "ا",
+        "name": "alif",
+        "translit": "ā",
+        "ipa": "aː"
+      },
+      {
+        "ch": "ب",
+        "name": "bāʼ",
+        "translit": "b",
+        "ipa": "b"
+      },
+      {
+        "ch": "ت",
+        "name": "tāʼ",
+        "translit": "t",
+        "ipa": "t"
+      },
+      {
+        "ch": "ث",
+        "name": "thāʼ",
+        "translit": "th",
+        "ipa": "θ"
+      },
+      {
+        "ch": "ج",
+        "name": "jīm",
+        "translit": "j",
+        "ipa": "d͡ʒ"
+      },
+      {
+        "ch": "ح",
+        "name": "ḥāʼ",
+        "translit": "ḥ",
+        "ipa": "ħ"
+      },
+      {
+        "ch": "خ",
+        "name": "khāʼ",
+        "translit": "kh",
+        "ipa": "x"
+      },
+      {
+        "ch": "د",
+        "name": "dāl",
+        "translit": "d",
+        "ipa": "d"
+      },
+      {
+        "ch": "ذ",
+        "name": "dhāl",
+        "translit": "dh",
+        "ipa": "ð"
+      },
+      {
+        "ch": "ر",
+        "name": "rāʼ",
+        "translit": "r",
+        "ipa": "r"
+      },
+      {
+        "ch": "ز",
+        "name": "zāy",
+        "translit": "z",
+        "ipa": "z"
+      },
+      {
+        "ch": "س",
+        "name": "sīn",
+        "translit": "s",
+        "ipa": "s"
+      },
+      {
+        "ch": "ش",
+        "name": "shīn",
+        "translit": "sh",
+        "ipa": "ʃ"
+      },
+      {
+        "ch": "ص",
+        "name": "ṣād",
+        "translit": "ṣ",
+        "ipa": "sˤ"
+      },
+      {
+        "ch": "ض",
+        "name": "ḍād",
+        "translit": "ḍ",
+        "ipa": "dˤ"
+      },
+      {
+        "ch": "ط",
+        "name": "ṭāʼ",
+        "translit": "ṭ",
+        "ipa": "tˤ"
+      },
+      {
+        "ch": "ظ",
+        "name": "ẓāʼ",
+        "translit": "ẓ",
+        "ipa": "ðˤ"
+      },
+      {
+        "ch": "ع",
+        "name": "ʿayn",
+        "translit": "ʿ",
+        "ipa": "ʕ"
+      },
+      {
+        "ch": "غ",
+        "name": "ghayn",
+        "translit": "gh",
+        "ipa": "ɣ"
+      },
+      {
+        "ch": "ف",
+        "name": "fāʼ",
+        "translit": "f",
+        "ipa": "f"
+      },
+      {
+        "ch": "ق",
+        "name": "qāf",
+        "translit": "q",
+        "ipa": "q"
+      },
+      {
+        "ch": "ك",
+        "name": "kāf",
+        "translit": "k",
+        "ipa": "k"
+      },
+      {
+        "ch": "ل",
+        "name": "lām",
+        "translit": "l",
+        "ipa": "l"
+      },
+      {
+        "ch": "م",
+        "name": "mīm",
+        "translit": "m",
+        "ipa": "m"
+      },
+      {
+        "ch": "ن",
+        "name": "nūn",
+        "translit": "n",
+        "ipa": "n"
+      },
+      {
+        "ch": "ه",
+        "name": "hāʼ",
+        "translit": "h",
+        "ipa": "h"
+      },
+      {
+        "ch": "و",
+        "name": "wāw",
+        "translit": "w",
+        "ipa": "w"
+      },
+      {
+        "ch": "ي",
+        "name": "yāʼ",
+        "translit": "y",
+        "ipa": "j"
+      }
+    ]
+  },
+  "hebrew": {
+    "rtl": true,
+    "label": "Hebrew",
+    "letters": [
+      {
+        "ch": "א",
+        "name": "alef",
+        "translit": "ʾ"
+      },
+      {
+        "ch": "ב",
+        "name": "bet",
+        "translit": "b"
+      },
+      {
+        "ch": "ג",
+        "name": "gimel",
+        "translit": "g"
+      },
+      {
+        "ch": "ד",
+        "name": "dalet",
+        "translit": "d"
+      },
+      {
+        "ch": "ה",
+        "name": "he",
+        "translit": "h"
+      },
+      {
+        "ch": "ו",
+        "name": "vav",
+        "translit": "v"
+      },
+      {
+        "ch": "ז",
+        "name": "zayin",
+        "translit": "z"
+      },
+      {
+        "ch": "ח",
+        "name": "het",
+        "translit": "ḥ"
+      },
+      {
+        "ch": "ט",
+        "name": "tet",
+        "translit": "ṭ"
+      },
+      {
+        "ch": "י",
+        "name": "yod",
+        "translit": "y"
+      },
+      {
+        "ch": "כ",
+        "name": "kaf",
+        "translit": "k"
+      },
+      {
+        "ch": "ל",
+        "name": "lamed",
+        "translit": "l"
+      },
+      {
+        "ch": "מ",
+        "name": "mem",
+        "translit": "m"
+      },
+      {
+        "ch": "נ",
+        "name": "nun",
+        "translit": "n"
+      },
+      {
+        "ch": "ס",
+        "name": "samekh",
+        "translit": "s"
+      },
+      {
+        "ch": "ע",
+        "name": "ayin",
+        "translit": "ʿ"
+      },
+      {
+        "ch": "פ",
+        "name": "pe",
+        "translit": "p"
+      },
+      {
+        "ch": "צ",
+        "name": "tsadi",
+        "translit": "ṣ"
+      },
+      {
+        "ch": "ק",
+        "name": "qof",
+        "translit": "q"
+      },
+      {
+        "ch": "ר",
+        "name": "resh",
+        "translit": "r"
+      },
+      {
+        "ch": "ש",
+        "name": "shin",
+        "translit": "sh"
+      },
+      {
+        "ch": "ת",
+        "name": "tav",
+        "translit": "t"
+      }
+    ]
+  },
+  "thai": {
+    "rtl": false,
+    "label": "Thai",
+    "letters": []
+  }
+}
