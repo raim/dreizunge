@@ -17258,6 +17258,314 @@
           }
         },
         {
+          "id": 1,
+          "title": "家の中",
+          "desc": "家の中での会話と行動",
+          "icon": "🏠",
+          "vocab": [
+            {
+              "target": "家の中[いなか)",
+              "source": "inside the house",
+              "qc": {
+                "sug": "家の中",
+                "field": "target",
+                "at": "2026-06-26T19:41:59.642Z"
+              }
+            },
+            {
+              "target": "夕食[ゆうしょく)",
+              "source": "dinner"
+            },
+            {
+              "target": "笑って[わらって)",
+              "source": "smiling",
+              "qc": {
+                "sug": "笑って",
+                "field": "target",
+                "at": "2026-06-26T19:42:07.634Z"
+              }
+            },
+            {
+              "target": "ボール[ぼうる)",
+              "source": "ball",
+              "qc": {
+                "sug": "ボール",
+                "field": "target",
+                "at": "2026-06-26T19:42:12.591Z"
+              }
+            },
+            {
+              "target": "探していた[さがしていた)",
+              "source": "was looking for",
+              "qc": {
+                "sug": "探していた",
+                "field": "target",
+                "at": "2026-06-26T19:42:17.496Z"
+              }
+            },
+            {
+              "target": "喜び[よろこび)",
+              "source": "happiness",
+              "qc": {
+                "sug": "喜び",
+                "field": "target",
+                "at": "2026-06-26T19:42:24.531Z"
+              }
+            },
+            {
+              "target": "伝えた[つたえた)",
+              "source": "told",
+              "qc": {
+                "sug": "伝えた",
+                "field": "target",
+                "at": "2026-06-26T19:42:28.890Z"
+              }
+            },
+            {
+              "target": "主人[しゅじん)",
+              "source": "husband",
+              "qc": {
+                "sug": "主人公",
+                "field": "target",
+                "at": "2026-06-26T19:42:34.124Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "主人は家の中で夕食の準備をしている。",
+              "source": "The husband is preparing dinner inside the house.",
+              "words": [
+                "主人",
+                "は",
+                "家",
+                "の",
+                "中",
+                "で",
+                "夕食",
+                "の",
+                "準備",
+                "をしている"
+              ]
+            },
+            {
+              "target": "犬は主人に丸い石を見せて、喜びを伝えた。",
+              "source": "The dog showed the husband a round stone and expressed its happiness.",
+              "words": [
+                "犬",
+                "は",
+                "主人",
+                "に",
+                "丸",
+                "い",
+                "石",
+                "を",
+                "見",
+                "せて",
+                "喜",
+                "びを",
+                "伝",
+                "えた"
+              ],
+              "qc": {
+                "sug": "The dog showed the owner a round stone and expressed its happiness.",
+                "field": "source",
+                "at": "2026-06-26T19:43:00.063Z"
+              }
+            },
+            {
+              "target": "主人は笑って、「ボールを探していたんだね」と言った。",
+              "source": "The husband smiled and said, 'You were looking for the ball, weren't you?'",
+              "words": [
+                "主人",
+                "は",
+                "笑",
+                "って",
+                "ボールを",
+                "探",
+                "していたんだね",
+                "と",
+                "言",
+                "った"
+              ]
+            },
+            {
+              "target": "主人はボールを手渡し、犬は嬉しそうに受け取った。",
+              "source": "The husband handed the ball to the dog, who happily received it.",
+              "words": [
+                "主人",
+                "はボールを",
+                "手渡",
+                "し",
+                "犬",
+                "は",
+                "嬉",
+                "しそうに",
+                "受",
+                "け",
+                "取",
+                "った"
+              ]
+            },
+            {
+              "target": "犬はボールを追って庭に出て、主人の後を追った。",
+              "source": "The dog chased the ball into the yard and followed the husband. ",
+              "words": [
+                "犬",
+                "はボールを",
+                "追",
+                "って",
+                "庭",
+                "に",
+                "出",
+                "て",
+                "主人",
+                "の",
+                "後",
+                "を",
+                "追",
+                "った"
+              ],
+              "qc": {
+                "sug": "The dog chased the ball into the yard and followed its owner.",
+                "field": "source",
+                "at": "2026-06-26T19:43:41.936Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 719,
+            "completionTokens": 356,
+            "ms": 274599,
+            "at": "2026-06-26T19:35:15.415Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "round and happy",
+          "desc": "家の中での会話と行動",
+          "icon": "⚽️",
+          "vocab": [
+            {
+              "target": "ボール",
+              "source": "ball"
+            },
+            {
+              "target": "いぬ",
+              "source": "dog"
+            },
+            {
+              "target": "丸い",
+              "source": "round"
+            },
+            {
+              "target": "石",
+              "source": "stone"
+            },
+            {
+              "target": "近づく",
+              "source": "to approach"
+            },
+            {
+              "target": "喜ぶ",
+              "source": "to be happy"
+            },
+            {
+              "target": "追いかける",
+              "source": "to chase"
+            },
+            {
+              "target": "家",
+              "source": "house"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "ボールがない！",
+              "source": "The ball is not here!",
+              "words": [
+                "ボールがない！"
+              ],
+              "qc": {
+                "sug": "球がない！",
+                "field": "target",
+                "at": "2026-06-26T19:44:02.915Z"
+              }
+            },
+            {
+              "target": "丸い石を見つける",
+              "source": "Find a round stone",
+              "words": [
+                "丸",
+                "い",
+                "石",
+                "を",
+                "見",
+                "つける"
+              ]
+            },
+            {
+              "target": "いぬは近づく",
+              "source": "The dog approaches",
+              "words": [
+                "いぬは",
+                "近",
+                "づく"
+              ],
+              "qc": {
+                "sug": "犬は近づく",
+                "field": "target",
+                "at": "2026-06-26T19:44:11.279Z"
+              }
+            },
+            {
+              "target": "喜ぶと主人に見せる",
+              "source": "Be happy and show it to the owner",
+              "words": [
+                "喜",
+                "ぶと",
+                "主人",
+                "に",
+                "見",
+                "せる"
+              ],
+              "qc": {
+                "sug": "喜びと主人に見せる",
+                "field": "source",
+                "at": "2026-06-26T19:44:22.053Z"
+              }
+            },
+            {
+              "target": "追いかけるから注意して",
+              "source": "Be careful, because the dog will chase",
+              "words": [
+                "追",
+                "いかけるから",
+                "注意",
+                "して"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 719,
+            "completionTokens": 356,
+            "ms": 274599,
+            "at": "2026-06-26T19:35:15.415Z"
+          }
+        },
+        {
           "id": "ls_1782636444757_dh3t",
           "type": "intro_script",
           "script": "hiragana",
@@ -18720,314 +19028,6 @@
             "valid": 46,
             "at": "2026-06-28T08:47:24.759Z"
           }
-        },
-        {
-          "id": 1,
-          "title": "家の中",
-          "desc": "家の中での会話と行動",
-          "icon": "🏠",
-          "vocab": [
-            {
-              "target": "家の中[いなか)",
-              "source": "inside the house",
-              "qc": {
-                "sug": "家の中",
-                "field": "target",
-                "at": "2026-06-26T19:41:59.642Z"
-              }
-            },
-            {
-              "target": "夕食[ゆうしょく)",
-              "source": "dinner"
-            },
-            {
-              "target": "笑って[わらって)",
-              "source": "smiling",
-              "qc": {
-                "sug": "笑って",
-                "field": "target",
-                "at": "2026-06-26T19:42:07.634Z"
-              }
-            },
-            {
-              "target": "ボール[ぼうる)",
-              "source": "ball",
-              "qc": {
-                "sug": "ボール",
-                "field": "target",
-                "at": "2026-06-26T19:42:12.591Z"
-              }
-            },
-            {
-              "target": "探していた[さがしていた)",
-              "source": "was looking for",
-              "qc": {
-                "sug": "探していた",
-                "field": "target",
-                "at": "2026-06-26T19:42:17.496Z"
-              }
-            },
-            {
-              "target": "喜び[よろこび)",
-              "source": "happiness",
-              "qc": {
-                "sug": "喜び",
-                "field": "target",
-                "at": "2026-06-26T19:42:24.531Z"
-              }
-            },
-            {
-              "target": "伝えた[つたえた)",
-              "source": "told",
-              "qc": {
-                "sug": "伝えた",
-                "field": "target",
-                "at": "2026-06-26T19:42:28.890Z"
-              }
-            },
-            {
-              "target": "主人[しゅじん)",
-              "source": "husband",
-              "qc": {
-                "sug": "主人公",
-                "field": "target",
-                "at": "2026-06-26T19:42:34.124Z"
-              }
-            }
-          ],
-          "sentences": [
-            {
-              "target": "主人は家の中で夕食の準備をしている。",
-              "source": "The husband is preparing dinner inside the house.",
-              "words": [
-                "主人",
-                "は",
-                "家",
-                "の",
-                "中",
-                "で",
-                "夕食",
-                "の",
-                "準備",
-                "をしている"
-              ]
-            },
-            {
-              "target": "犬は主人に丸い石を見せて、喜びを伝えた。",
-              "source": "The dog showed the husband a round stone and expressed its happiness.",
-              "words": [
-                "犬",
-                "は",
-                "主人",
-                "に",
-                "丸",
-                "い",
-                "石",
-                "を",
-                "見",
-                "せて",
-                "喜",
-                "びを",
-                "伝",
-                "えた"
-              ],
-              "qc": {
-                "sug": "The dog showed the owner a round stone and expressed its happiness.",
-                "field": "source",
-                "at": "2026-06-26T19:43:00.063Z"
-              }
-            },
-            {
-              "target": "主人は笑って、「ボールを探していたんだね」と言った。",
-              "source": "The husband smiled and said, 'You were looking for the ball, weren't you?'",
-              "words": [
-                "主人",
-                "は",
-                "笑",
-                "って",
-                "ボールを",
-                "探",
-                "していたんだね",
-                "と",
-                "言",
-                "った"
-              ]
-            },
-            {
-              "target": "主人はボールを手渡し、犬は嬉しそうに受け取った。",
-              "source": "The husband handed the ball to the dog, who happily received it.",
-              "words": [
-                "主人",
-                "はボールを",
-                "手渡",
-                "し",
-                "犬",
-                "は",
-                "嬉",
-                "しそうに",
-                "受",
-                "け",
-                "取",
-                "った"
-              ]
-            },
-            {
-              "target": "犬はボールを追って庭に出て、主人の後を追った。",
-              "source": "The dog chased the ball into the yard and followed the husband. ",
-              "words": [
-                "犬",
-                "はボールを",
-                "追",
-                "って",
-                "庭",
-                "に",
-                "出",
-                "て",
-                "主人",
-                "の",
-                "後",
-                "を",
-                "追",
-                "った"
-              ],
-              "qc": {
-                "sug": "The dog chased the ball into the yard and followed its owner.",
-                "field": "source",
-                "at": "2026-06-26T19:43:41.936Z"
-              }
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen2.5:7b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 719,
-            "completionTokens": 356,
-            "ms": 274599,
-            "at": "2026-06-26T19:35:15.415Z"
-          }
-        },
-        {
-          "id": 1,
-          "title": "round and happy",
-          "desc": "家の中での会話と行動",
-          "icon": "⚽️",
-          "vocab": [
-            {
-              "target": "ボール",
-              "source": "ball"
-            },
-            {
-              "target": "いぬ",
-              "source": "dog"
-            },
-            {
-              "target": "丸い",
-              "source": "round"
-            },
-            {
-              "target": "石",
-              "source": "stone"
-            },
-            {
-              "target": "近づく",
-              "source": "to approach"
-            },
-            {
-              "target": "喜ぶ",
-              "source": "to be happy"
-            },
-            {
-              "target": "追いかける",
-              "source": "to chase"
-            },
-            {
-              "target": "家",
-              "source": "house"
-            }
-          ],
-          "sentences": [
-            {
-              "target": "ボールがない！",
-              "source": "The ball is not here!",
-              "words": [
-                "ボールがない！"
-              ],
-              "qc": {
-                "sug": "球がない！",
-                "field": "target",
-                "at": "2026-06-26T19:44:02.915Z"
-              }
-            },
-            {
-              "target": "丸い石を見つける",
-              "source": "Find a round stone",
-              "words": [
-                "丸",
-                "い",
-                "石",
-                "を",
-                "見",
-                "つける"
-              ]
-            },
-            {
-              "target": "いぬは近づく",
-              "source": "The dog approaches",
-              "words": [
-                "いぬは",
-                "近",
-                "づく"
-              ],
-              "qc": {
-                "sug": "犬は近づく",
-                "field": "target",
-                "at": "2026-06-26T19:44:11.279Z"
-              }
-            },
-            {
-              "target": "喜ぶと主人に見せる",
-              "source": "Be happy and show it to the owner",
-              "words": [
-                "喜",
-                "ぶと",
-                "主人",
-                "に",
-                "見",
-                "せる"
-              ],
-              "qc": {
-                "sug": "喜びと主人に見せる",
-                "field": "source",
-                "at": "2026-06-26T19:44:22.053Z"
-              }
-            },
-            {
-              "target": "追いかけるから注意して",
-              "source": "Be careful, because the dog will chase",
-              "words": [
-                "追",
-                "いかけるから",
-                "注意",
-                "して"
-              ]
-            }
-          ],
-          "_genMeta": {
-            "type": "standard",
-            "model": "qwen2.5:7b",
-            "attempts": null,
-            "valid": 8,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 719,
-            "completionTokens": 356,
-            "ms": 274599,
-            "at": "2026-06-26T19:35:15.415Z"
-          }
         }
       ],
       "generationStats": {
@@ -19047,7 +19047,7 @@
         ]
       },
       "generatedAt": "2026-06-26T19:30:40.777Z",
-      "updatedAt": "2026-06-28T08:47:52.142Z",
+      "updatedAt": "2026-06-28T09:00:11.160Z",
       "id": "tp_17825026538340000116"
     },
     {
