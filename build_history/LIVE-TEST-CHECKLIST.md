@@ -645,8 +645,20 @@ table exists. Open/create a lesson set per target below, add the lesson, and pla
       **new in this chapter** and weren't in earlier chapters (title "· new letters");
       **neutral** teaches the full alphabet. The **first** chapter (no prior) falls back to the
       full alphabet for reinforce/extend (nothing to scope from). Each falls back to the full
-      alphabet if fewer than 4 letters would be in scope. NOTE: the selector currently only
-      appears for storyline-continued chapters — see roadmap "intro reinforce UI".
+      alphabet if fewer than 4 letters would be in scope. The 🔁reinforce/➕extend selector now
+      appears for `intro_script` (and the vocab-style formats) on a **continued** chapter, and is
+      **hidden for Math** and for non-continued sets (where reinforce/extend have no prior
+      chapters to scope against). Switching the format dropdown shows/hides the row live.
+- [ ] **Length scales with difficulty.** A script lesson quizzes a *subset* of letters, not the
+      whole alphabet: 🟢≈8, 🟡≈12, 🔴≈16 letters (set via the add-lesson difficulty). Noticeably
+      shorter than before, but wrong-answer choices still include letters from across the whole
+      alphabet (not just the quizzed subset).
+- [ ] **Script lessons are editable.** Open a script lesson's ✏️ editor: each **letter** shows
+      its glyph and editable fields (Letter, Lower, Name, Sound, IPA), plus ↑↓ reorder, 🗑 delete,
+      ⚑ flag, and ⭐ star — same as vocab. Edit a transliteration / reorder / delete a letter,
+      save, replay: the quiz reflects the change (exercises rebuild from the edited letter table).
+      The "⚑ only" filter shows just flagged letters. In the static build, delete marks a letter
+      as a delete-candidate (rides the export) rather than destroying it.
 
 ### Languages to externally verify (summary)
 - **Korean (Hangul)** — primary: get a native speaker to confirm jamo sounds / ㅇ / positional consonants.

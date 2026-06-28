@@ -994,13 +994,15 @@ function introScriptExercises(letters, opts) {
   opts = opts || {};
   const rnd = opts.rnd || Math.random;
   const sh = (a) => { const b=[...a]; for(let i=b.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; };
-  const real = letters.filter(L => L && L.ch && (L.translit || L.name));
+  const real = letters.filter(L => L && L.ch && (L.translit || L.name));          // letters to quiz
+  const poolRaw = (opts.distractorPool && opts.distractorPool.length) ? opts.distractorPool : real;
+  const pool = poolRaw.filter(L => L && L.ch && (L.translit || L.name));          // distractor pool
   const sound = (L) => L.translit ? L.translit : L.name;            // what we quiz as "the sound"
   const glyph = (L) => L.ch + (L.lower && L.lower !== L.ch ? ' ' + L.lower : '');
   const distinctSounds = (exclude, n) =>
-    sh(real.filter(L => sound(L) !== sound(exclude) && sound(L))).slice(0, n).map(sound);
+    sh(pool.filter(L => sound(L) !== sound(exclude) && sound(L))).slice(0, n).map(sound);
   const distinctGlyphs = (exclude, n) =>
-    sh(real.filter(L => L.ch !== exclude.ch)).slice(0, n).map(glyph);
+    sh(pool.filter(L => L.ch !== exclude.ch)).slice(0, n).map(glyph);
   const exs = [];
   real.forEach(L => {
     // glyph → sound
@@ -1030,6 +1032,12 @@ function introScriptExercises(letters, opts) {
   return exs;
 }
 
+// Difficulty → how many letters to quiz per lesson (mirror of the client's introMaxLetters).
+function introMaxLetters(difficulty) {
+  const d = difficulty || 2;
+  return d <= 1 ? 8 : d === 2 ? 12 : 16;
+}
+
 // Build an intro-script lesson for a target language. Topic-independent (script-level), so
 // no story is needed. Returns the same { lesson, tokens } envelope as the other generators.
 function generateIntroScript(lang, opts) {
@@ -1038,9 +1046,17 @@ function generateIntroScript(lang, opts) {
   const wanted = opts.script ? [opts.script] : scriptsForLang(lang);
   const scriptName = wanted[0];
   const table = scriptName ? (_scriptsData[scriptName] || null) : null;
-  const letters = (table && Array.isArray(table.letters)) ? table.letters : [];
-  if (!letters.length) throw new Error('No script table for ' + lang + (scriptName ? ' / ' + scriptName : ''));
-  const exercises = introScriptExercises(letters, opts);
+  const full = (table && Array.isArray(table.letters)) ? table.letters : [];
+  if (!full.length) throw new Error('No script table for ' + lang + (scriptName ? ' / ' + scriptName : ''));
+  // Cap to ~N letters by difficulty so the lesson isn't the whole 28–46 letter alphabet;
+  // distractors still come from the full alphabet so wrong answers stay plausible.
+  const max = introMaxLetters(opts.difficulty);
+  let letters = full;
+  if (full.length > max) {
+    const sh = [...full]; for (let i = sh.length-1; i>0; i--){ const j=Math.floor(Math.random()*(i+1)); [sh[i],sh[j]]=[sh[j],sh[i]]; }
+    letters = sh.slice(0, max);
+  }
+  const exercises = introScriptExercises(letters, { distractorPool: full });
   return {
     lesson: {
       id: 'intro_' + scriptName + '_' + Date.now(),
@@ -2006,7 +2022,7 @@ const ADD_LESSON_GENERATORS = {
     ? generateMathLLM(c.lang, c.srcLang, c.diff, c.addMathInstr, c.jobId)
     : generateMath(c.story, c.diff, c.addMathOps || null),
   // Topic-independent + LLM-free: ignores the story, builds from the script table.
-  intro_script: (c) => generateIntroScript(c.lang, { script: c.introScript || null }),
+  intro_script: (c) => generateIntroScript(c.lang, { script: c.introScript || null, difficulty: c.diff }),
 };
 
 // ── Repair flagged exercises ──────────────────────────────────────────

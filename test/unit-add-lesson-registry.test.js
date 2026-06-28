@@ -60,7 +60,7 @@ ctx.addMathInstr = null;
 ctx.introScript = null;
 c = callOf('intro_script');
 assert.strictEqual(c.fn, 'generateIntroScript');
-assert.deepStrictEqual(c.args, ['de', { script: null }], 'intro_script arg shape (lang, {script})');
+assert.deepStrictEqual(c.args, ['de', { script: null, difficulty: ctx.diff }], 'intro_script arg shape (lang, {script, difficulty})');
 
 // 3) Exactly the expected fmt set — nothing dropped, nothing extra.
 assert.deepStrictEqual(Object.keys(ADD_LESSON_GENERATORS).sort(),

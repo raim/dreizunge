@@ -186,6 +186,52 @@ cl.filter(e => e.type === 'listen_mcq').forEach((e, i) => {
 });
 console.log('  intro exercises: parity, no answer-reveal, sound↔glyph wiring, listen gating: OK');
 
+// ── Difficulty cap + distractor pool (v47.x) ─────────────────────────────────
+const introMaxLetters = new Function(ext(html, 'introMaxLetters') + '\nreturn introMaxLetters;')();
+const introSelectLetters = new Function('shuffle', 'introMaxLetters',
+  ext(html, 'introSelectLetters') + '\nreturn introSelectLetters;')(a => [...a], introMaxLetters);
+assert.ok(introMaxLetters(1) < introMaxLetters(3), 'higher difficulty quizzes more letters');
+const arAll = scripts.arabic.letters;                 // 28
+for (const diff of [1, 2, 3]) {
+  const sel = introSelectLetters(arAll, diff);
+  assert.strictEqual(sel.length, introMaxLetters(diff), `difficulty ${diff} caps to ${introMaxLetters(diff)} letters`);
+  assert.ok(sel.length < arAll.length, `difficulty ${diff} is a subset of the 28-letter alphabet`);
+}
+// A small scoped set (≤ cap) is returned unchanged.
+assert.strictEqual(introSelectLetters(arAll.slice(0, 5), 3).length, 5, 'a set smaller than the cap is unchanged');
+// Distractors still come from the full alphabet even for a short quiz set. (Use a real shuffle
+// here — with the identity shuffle used above, slice(0,3) would always take the first letters.)
+const clientFromShuf = new Function('shuffle', 'SCRIPTS_DATA',
+  ext(html, 'introScriptExercisesFrom') + '\nreturn introScriptExercisesFrom;'
+)(a => { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }, SCRIPTS_DATA);
+const shortSet = arAll.slice(0, 6);
+const glyphChoices = new Set();
+// Aggregate over a few builds to avoid rare all-inside-subset draws.
+for (let r = 0; r < 8; r++) {
+  clientFromShuf(shortSet, { distractorPool: arAll })
+    .filter(e => e._intro === 'sound_glyph')
+    .forEach(e => e.choices.forEach(c => glyphChoices.add(c)));
+}
+const shortGlyphs = new Set(shortSet.map(L => L.ch + (L.lower && L.lower !== L.ch ? ' ' + L.lower : '')));
+const fromOutside = [...glyphChoices].some(c => !shortGlyphs.has(c));
+assert.ok(fromOutside, 'distractors are drawn from the full alphabet, not just the quizzed subset');
+console.log('  difficulty cap + full-alphabet distractor pool: OK');
+
+// ── Editor: intro_script lessons are editable (letters table) ────────────────
+// The registry must route intro_script to its own editor branch (not the vocab one), and the
+// generic move/delete/sync/flag helpers must know the `letter` → ls.letters mapping.
+assert.ok(/intro_script:\s*\{[^}]*editorBranch:[^}]*_editorBranchIntroScript/.test(html),
+  'intro_script registry uses _editorBranchIntroScript');
+assert.ok(html.includes('function _editorBranchIntroScript'), 'intro editor branch exists');
+// letter mapping present in the four helpers that dispatch by type
+assert.ok(/_editorItem[\s\S]*?type===['"]letter['"]\?ls\.letters/.test(html), '_editorItem maps letter→letters');
+assert.ok(/moveEditorItem[\s\S]*?type===['"]letter['"]\s*\?\s*ls\.letters/.test(html), 'moveEditorItem maps letter→letters');
+assert.ok(/letter:['"]letters['"]/.test(html), 'deleteEditorItem soft-delete map includes letter→letters');
+assert.ok(/type === ['"]letter['"][\s\S]*?ls\.letters\[fi\]/.test(html), '_syncEditorFromDOM writes letter fields back');
+// editing/deleting a letter clears baked exercises so they re-derive
+assert.ok(/type === ['"]letter['"][\s\S]*?delete ls\.exercises/.test(html), 'letter edits clear baked exercises');
+console.log('  intro_script editor: branch wired + letter array mapping in move/delete/sync: OK');
+
 // ── Registry + wiring guards ─────────────────────────────────────────────────
 assert.ok(/intro_script:\s*\{[^}]*build:\s*\(l\)\s*=>\s*buildIntroScriptExercises\(l\)/.test(html),
   'intro_script registered in LESSON_TYPE_META with its builder');

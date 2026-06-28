@@ -2743,7 +2743,14 @@
     "ex.badge.intro_pick_letter": "Pick the letter",
     "ex.intro_pick_letter.q": "Which letter makes the sound \"{sound}\"?",
     "intro.review": "review",
-    "intro.new": "new letters"
+    "intro.new": "new letters",
+    "intro.editor_note": "Edit the letters below — exercises are rebuilt from this table. Reorder, delete, flag or star letters.",
+    "intro.field.glyph": "Letter",
+    "intro.field.lower": "Lower",
+    "intro.field.name": "Name",
+    "intro.field.translit": "Sound",
+    "intro.field.ipa": "IPA",
+    "intro.no_letters": "No letters"
   },
   "sv": {
     "app.tagline": "Lär dig vokabulär för valfritt ämne",

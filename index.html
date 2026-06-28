@@ -919,7 +919,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </select>
     <button class="addlesson-btn" id="sial-btn-lesson-card" onclick="doAddLesson('lesson-card', document.getElementById('sial-enc-lesson-card').value)">Generate</button>
     <button class="addlesson-cancel" onclick="closeAddLesson('lesson-card')">✕</button>
-    <div id="sial-reinforce-row-lesson-card" style="display:flex;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
+    <div id="sial-reinforce-row-lesson-card" data-has-prior="1" style="display:flex;font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
       <select id="sial-vocab-mode-lesson-card" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif">
         <option value="reinforce">🔁 reinforce</option>
         <option value="neutral">○ neutral</option>
@@ -1091,7 +1091,7 @@ const LESSON_TYPE_META = {
   word_forms:    { emoji: '🧩', key: 'lesson.type.word_forms',    build: (l) => buildWordFormsExercises(l), editorBranch: (ls, li, fo) => _editorBranchWordForms(ls, li, fo) },
   math:          { emoji: '🔢', key: 'lesson.type.math',          build: (l) => buildMathExercises(l), editorBranch: (ls, li, fo) => _editorBranchMath(ls, li, fo), editorReadInputs: (ls, li) => _editorReadInputsMath(ls, li) },
   mixed:         { emoji: '🔀', key: 'lesson.type.mixed',         build: (l, i) => buildMixedExercises(l, i), editorBranch: (ls, li, fo) => _editorBranchMixed(ls, li, fo) },
-  intro_script:  { emoji: '🔡', key: 'lesson.type.intro_script',  build: (l) => buildIntroScriptExercises(l), editorBranch: (ls, li, fo) => _editorBranchStandard(ls, li, fo) },
+  intro_script:  { emoji: '🔡', key: 'lesson.type.intro_script',  build: (l) => buildIntroScriptExercises(l), editorBranch: (ls, li, fo) => _editorBranchIntroScript(ls, li, fo) },
 };
 function lessonTypeMeta(type) { return LESSON_TYPE_META[type] || LESSON_TYPE_META.standard; }
 function lessonTypeEmoji(type) { return lessonTypeMeta(type).emoji; }
@@ -3235,7 +3235,7 @@ function savedItemHtml(s, connector, hideStory) {
       </select>
       <button class="addlesson-btn" id="sial-btn-${sid}" onclick="doAddLesson('${sid}','${enc}','${s.id||''}')">Generate</button>
       <button class="addlesson-cancel" onclick="closeAddLesson('${sid}')">✕</button>
-      <div id="sial-reinforce-row-${sid}" style="display:${hasPrior?'flex':'none'};font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
+      <div id="sial-reinforce-row-${sid}" data-has-prior="${hasPrior?'1':'0'}" style="display:${hasPrior?'flex':'none'};font-size:11px;font-weight:700;color:var(--blue-dark);align-items:center;gap:4px;width:100%;margin-top:2px">
         <select id="sial-vocab-mode-${sid}" style="font-size:11px;font-weight:700;border:1.5px solid var(--blue-dark);border-radius:6px;padding:2px 6px;background:var(--white);color:var(--blue-dark);font-family:Nunito,sans-serif">
           <option value="reinforce">🔁 reinforce</option>
           <option value="neutral">○ neutral</option>
@@ -4501,12 +4501,22 @@ function openAddLesson(sid, enc) {
     }
   }
   const _mathInstrRow = document.getElementById('sial-math-instr-row-' + sid);
+  const _reinforceRow = document.getElementById('sial-reinforce-row-' + sid);
+  // The reinforce/extend (vocab-mode) row only applies to formats that consume it: vocab-style
+  // lessons and intro_script (where reinforce = letters from earlier chapters, extend = letters
+  // new this chapter). Math has no use for it. It still requires the chapter to continue a story
+  // (prior chapters to reinforce/extend against) — that's encoded in the row's initial display.
+  const _MODE_FORMATS = new Set(['standard','all_types','word_forms','synonyms','grammar','conjugation','error_hunt','intro_script']);
   if (_fmtSel && _mathInstrRow) {
-    const _toggleMathRow = () => { _mathInstrRow.style.display = _fmtSel.value==='math' ? '' : 'none'; };
+    const _hasPriorRow = _reinforceRow && _reinforceRow.dataset.hasPrior === '1';
+    const _toggleRows = () => {
+      _mathInstrRow.style.display = _fmtSel.value === 'math' ? '' : 'none';
+      if (_reinforceRow) _reinforceRow.style.display = (_hasPriorRow && _MODE_FORMATS.has(_fmtSel.value)) ? 'flex' : 'none';
+    };
     _fmtSel.removeEventListener('change', _fmtSel._mathToggle);
-    _fmtSel._mathToggle = _toggleMathRow;
-    _fmtSel.addEventListener('change', _toggleMathRow);
-    _toggleMathRow();
+    _fmtSel._mathToggle = _toggleRows;
+    _fmtSel.addEventListener('change', _toggleRows);
+    _toggleRows();
   }
 }
 
@@ -4572,23 +4582,25 @@ async function doAddLesson(sid, enc, tid) {
       // the lesson to the letters already seen in this set; extend/neutral teach the full
       // alphabet. (Reinforce falls back to the full set if too few letters were seen to quiz.)
       const mode = document.getElementById('sial-vocab-mode-' + sid)?.value || 'neutral';
+      const diff = parseInt(document.getElementById('sial-diff-' + sid)?.value || '2', 10);
       let added = 0;
       for (const scr of scripts) {
         const full = (SCRIPTS_DATA[scr] || {}).letters;
         if (!full || !full.length) continue;             // table not filled in yet
         // reinforce → letters from earlier chapters; extend → letters new to this chapter;
-        // neutral/other → the full alphabet.
+        // neutral/other → the full alphabet. Then cap to ~N letters by difficulty so the
+        // lesson isn't 28–46 letters long; distractors still come from the whole alphabet.
         const scope = introLetterScope(d, scr, mode);
-        const letters = scope.letters;
+        const letters = introSelectLetters(scope.letters, diff);
         const label = (SCRIPTS_DATA[scr]||{}).label || scr;
         const hint = scope.scoped ? (mode === 'reinforce' ? t('intro.review') : t('intro.new')) : '';
         d.lessons.push({
           id: 'ls_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
           type: 'intro_script', script: scr, rtl: !!(SCRIPTS_DATA[scr]||{}).rtl,
-          _arcMode: scope.scoped ? mode : undefined,
+          _arcMode: scope.scoped ? mode : undefined, difficulty: diff,
           title: '🔡 ' + label + (hint ? ' ·\u00a0' + hint : ''), icon: '🔡',
           desc: label + ' — ' + letters.length + ' ' + t('intro.letters'),
-          letters, exercises: introScriptExercisesFrom(letters),
+          letters, exercises: introScriptExercisesFrom(letters, { distractorPool: full }),
           _genMeta: { type: 'intro_script', model: '(procedural)', valid: letters.length, at: new Date().toISOString() },
         });
         added++;
@@ -6068,6 +6080,44 @@ function _editorBranchMath(ls, li, flaggedOnly){
   
   return html;
 }
+// ── Intro "learn the script" editor: the lesson's `letters` table is the source of truth
+// (exercises are re-derived from it on play). Each letter is editable (glyph, optional lower-
+// case, name, transliteration, optional IPA), reorderable, deletable, flaggable and starrable —
+// same QC affordances as vocab. Editing/deleting a letter clears the baked exercises so they
+// rebuild from the edited table.
+function _editorBranchIntroScript(ls, li, flaggedOnly){
+  const letters = (ls.letters || []).map((L,i) => ({ ...L, _i:i }));
+  const label = (typeof SCRIPTS_DATA!=='undefined' && SCRIPTS_DATA[ls.script]?.label) || ls.script || '';
+  let html = `<div style="font-size:12px;color:var(--gray-dark);margin-bottom:8px">`
+    + `🔡 ${escHtml(label)} — ${letters.length} ${escHtml(t('intro.letters'))}. `
+    + `${escHtml(t('intro.editor_note'))}</div>`;
+  const vis = flaggedOnly ? letters.filter(L => L.userFlag) : letters;
+  if (!vis.length) { html += `<em style="color:var(--gray-dark);font-size:13px">${escHtml(t('intro.no_letters'))}</em>`; return html; }
+  vis.forEach(L => {
+    const i = L._i;
+    const flagBtn = _flagBtnHtml(li, 'letter', i, L);
+    const flagBox = _flagBoxHtml(li, 'letter', i, L, false);
+    const starCls = L.userRating ? ' starred' : '';
+    const delCls  = L.userDelete ? ' del-candidate' : '';
+    html += `<div class="editor-entry${L.userFlag?' flagged':''}${starCls}${delCls}" id="ee-${li}-letter-${i}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:24px;line-height:1" dir="auto">${escHtml(L.ch||'')}${L.lower&&L.lower!==L.ch?' '+escHtml(L.lower):''}</span>
+        <span style="flex:1"></span>
+        <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','letter',${i},-1)" ${i===0?'disabled':''}>↑</button>
+        <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','letter',${i},1)" ${i===letters.length-1?'disabled':''}>↓</button>
+        ${flagBtn}
+        <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','letter',${i})">🗑</button>
+      </div>
+      <div class="editor-field"><label>${escHtml(t('intro.field.glyph'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="ch" dir="auto" value="${escAttr(L.ch||'')}" style="width:70px;flex:none;font-size:18px"></div>
+      <div class="editor-field"><label>${escHtml(t('intro.field.lower'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="lower" dir="auto" value="${escAttr(L.lower||'')}" placeholder="—" style="width:70px;flex:none;font-size:18px"></div>
+      <div class="editor-field"><label>${escHtml(t('intro.field.name'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="name" value="${escAttr(L.name||'')}"></div>
+      <div class="editor-field"><label>${escHtml(t('intro.field.translit'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="translit" value="${escAttr(L.translit||'')}"></div>
+      <div class="editor-field"><label>${escHtml(t('intro.field.ipa'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="ipa" value="${escAttr(L.ipa||'')}" placeholder="—" style="width:90px;flex:none"></div>
+      ${_starNoteHtml(L)}${_delNoteHtml(L)}${flagBox}
+    </div>`;
+  });
+  return html;
+}
 function _editorBranchSynonyms(ls, li, flaggedOnly){
   let html = '';
 
@@ -6220,7 +6270,7 @@ function qcDismiss(li, type, fi){ _qcMutateItem(li, type, +fi, false); }
 // ── Manual user flags (item.userFlag = { comment, at }) ───────────────────
 function _editorItem(li, type, fi){
   const ls = APP.lessonData?.lessons?.[li]; if(!ls) return null;
-  const arr = type==='vocab'?ls.vocab : type==='sentence'?ls.sentences : type==='wf'?ls.items : type==='syn'?ls.words : type==='math'?ls.exercises : null;
+  const arr = type==='vocab'?ls.vocab : type==='sentence'?ls.sentences : type==='wf'?ls.items : type==='syn'?ls.words : type==='math'?ls.exercises : type==='letter'?ls.letters : null;
   return (arr && arr[fi]) || null;
 }
 // "Good example" ⭐ rating button for an editor item header. Parallel to the flag
@@ -6379,6 +6429,15 @@ function _syncEditorFromDOM(li, opts) {
     } else if (type === 'grammar') {
       const fi = +inp.dataset.fi;
       if (ls.grammar && ls.grammar[fi]) ls.grammar[fi][field] = inp.value;
+    } else if (type === 'letter') {
+      const fi = +inp.dataset.fi;
+      if (ls.letters && ls.letters[fi]) {
+        const v = inp.value;
+        // empty optional fields (lower/ipa) are removed rather than stored as ''
+        if (v === '' && (field === 'lower' || field === 'ipa')) delete ls.letters[fi][field];
+        else ls.letters[fi][field] = v;
+        delete ls.exercises;   // re-derive exercises from the edited letters on next play
+      }
     } else if (type === 'conj-meta') {
       const ci = +inp.dataset.ci;
       if (ls.conjugations && ls.conjugations[ci]) ls.conjugations[ci][field] = inp.value;
@@ -6528,6 +6587,7 @@ function moveEditorItem(li, type, idx, dir) {
   const arr = type==='vocab' ? ls.vocab
             : type==='sentence' ? ls.sentences
             : type==='grammar' ? ls.grammar
+            : type==='letter' ? ls.letters
             : type==='conj' ? ls.conjugations : null;
   if (!arr) return;
   const newIdx = idx + dir;
@@ -6543,7 +6603,7 @@ function deleteEditorItem(li, type, idx) {
   if (!ls) return;
   _syncEditorFromDOM(li);   // preserve unsaved edits to other entries before re-render
   // Static build: mark as delete candidate instead of destroying it (rides the export).
-  const _ARR = { vocab:'vocab', sentence:'sentences', grammar:'grammar', conj:'conjugations', 'eh-edit':'edits', wf:'items' }[type];
+  const _ARR = { vocab:'vocab', sentence:'sentences', grammar:'grammar', conj:'conjugations', 'eh-edit':'edits', wf:'items', letter:'letters' }[type];
   if (typeof STATIC_LESSONS !== 'undefined' && _staticSoftDelete(_ARR && ls[_ARR] && ls[_ARR][idx])) {
     renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
     return;
@@ -6554,6 +6614,7 @@ function deleteEditorItem(li, type, idx) {
   else if (type === 'conj')     { ls.conjugations = (ls.conjugations||[]).filter((_,i)=>i!==idx); }
   else if (type === 'eh-edit')  { ls.edits = (ls.edits||[]).filter((_,i)=>i!==idx); }
   else if (type === 'wf')       { ls.items = (ls.items||[]).filter((_,i)=>i!==idx); }
+  else if (type === 'letter')   { ls.letters = (ls.letters||[]).filter((_,i)=>i!==idx); delete ls.exercises; }
   // Re-render editor to update indices
   renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, li);
 }
@@ -7375,16 +7436,24 @@ function buildSynonymsExercises(lesson){
   return shuffle(exs);
 }
 // ── Intro "learn the script" course (LLM-free) ──────────────────────────────
-// Mirrors server.js introScriptExercises so live and static builds agree. Prefers the
-// exercises baked into the lesson; rebuilds from lesson.letters (or the loaded script table)
-// otherwise. Listen items are dropped when the target has no TTS voice.
-function introScriptExercisesFrom(letters) {
+// Mirrors server.js introScriptExercises. `letters` are the letters to QUIZ (already capped/
+// scoped by the caller); `opts.distractorPool` is the wider set wrong answers are drawn from
+// (defaults to `letters`) — so a 10-letter lesson still has plausible distractors from the
+// whole alphabet. Difficulty→count capping happens at selection time (see introMaxLetters).
+function introMaxLetters(difficulty) {
+  const d = difficulty || 2;
+  return d <= 1 ? 8 : d === 2 ? 12 : 16;
+}
+function introScriptExercisesFrom(letters, opts) {
+  opts = opts || {};
   const sh = (a) => shuffle([...a]);
-  const real = (letters || []).filter(L => L && L.ch && (L.translit || L.name));
+  const real = (letters || []).filter(L => L && L.ch && (L.translit || L.name)); // letters to quiz
+  const poolRaw = (opts.distractorPool && opts.distractorPool.length) ? opts.distractorPool : real;
+  const pool = poolRaw.filter(L => L && L.ch && (L.translit || L.name));          // distractor pool
   const sound = (L) => L.translit ? L.translit : L.name;
   const glyph = (L) => L.ch + (L.lower && L.lower !== L.ch ? ' ' + L.lower : '');
-  const distinctSounds = (ex, n) => sh(real.filter(L => sound(L) !== sound(ex) && sound(L))).slice(0, n).map(sound);
-  const distinctGlyphs = (ex, n) => sh(real.filter(L => L.ch !== ex.ch)).slice(0, n).map(glyph);
+  const distinctSounds = (ex, n) => sh(pool.filter(L => sound(L) !== sound(ex) && sound(L))).slice(0, n).map(sound);
+  const distinctGlyphs = (ex, n) => sh(pool.filter(L => L.ch !== ex.ch)).slice(0, n).map(glyph);
   const exs = [];
   real.forEach(L => {
     const ws = distinctSounds(L, 3);
@@ -7405,14 +7474,23 @@ function introScriptExercisesFrom(letters) {
   });
   return exs;
 }
+// Select up to N letters (difficulty-scaled) to quiz from a scoped/full set; returns the same
+// set if already small enough. Random subset so repeated lessons vary.
+function introSelectLetters(letters, difficulty) {
+  const max = introMaxLetters(difficulty);
+  return (letters && letters.length > max) ? shuffle([...letters]).slice(0, max) : (letters || []);
+}
 function buildIntroScriptExercises(lesson) {
   // Always re-derive from the letter table rather than trusting baked `lesson.exercises`:
   // it's procedural + cheap, and it auto-heals lessons saved by older builds (e.g. the
   // sound→glyph item that used to reveal the answer). Falls back to baked exercises only if
   // the letters are somehow unavailable.
   const letters = lesson.letters || ((SCRIPTS_DATA[lesson.script]||{}).letters);
+  // Distractors draw from the whole script alphabet (not just the lesson's quizzed subset),
+  // so wrong answers stay plausible even for a short 10-letter lesson.
+  const pool = (SCRIPTS_DATA[lesson.script]||{}).letters || letters;
   let exs = (letters && letters.length)
-    ? introScriptExercisesFrom(letters)
+    ? introScriptExercisesFrom(letters, { distractorPool: pool })
     : [...(lesson.exercises || [])];
   // Drop the "tap to listen" items when the device has no actual voice for the target language
   // (not just no TTS code) — otherwise they'd be unanswerable. The muted case is handled live in
