@@ -1097,33 +1097,26 @@
       "lessonFormat": "all_types",
       "lessons": [
         {
-          "id": "ls_1782671845709_hcf5",
+          "id": "ls_1782744370598_jdua",
           "type": "intro_script",
           "script": "arabic",
           "rtl": true,
-          "_arcMode": "extend",
           "difficulty": 1,
-          "title": "🔡 Arabic · new letters",
+          "title": "🔡 Arabic",
           "icon": "🔡",
           "desc": "Arabic — 8 letters",
           "letters": [
             {
-              "ch": "ط",
-              "name": "ṭāʼ",
-              "translit": "ṭ",
-              "ipa": "tˤ"
+              "ch": "ش",
+              "name": "shīn",
+              "translit": "sh",
+              "ipa": "ʃ"
             },
             {
-              "ch": "ب",
-              "name": "bāʼ",
-              "translit": "b",
-              "ipa": "b"
-            },
-            {
-              "ch": "ل",
-              "name": "lām",
-              "translit": "l",
-              "ipa": "l"
+              "ch": "ه",
+              "name": "hāʼ",
+              "translit": "h",
+              "ipa": "h"
             },
             {
               "ch": "د",
@@ -1132,106 +1125,86 @@
               "ipa": "d"
             },
             {
-              "ch": "ج",
-              "name": "jīm",
-              "translit": "j",
-              "ipa": "d͡ʒ"
+              "ch": "س",
+              "name": "sīn",
+              "translit": "s",
+              "ipa": "s"
             },
             {
-              "ch": "ك",
-              "name": "kāf",
-              "translit": "k",
-              "ipa": "k"
+              "ch": "ث",
+              "name": "thāʼ",
+              "translit": "th",
+              "ipa": "θ"
+            },
+            {
+              "ch": "ا",
+              "name": "alif",
+              "translit": "ā",
+              "ipa": "aː"
+            },
+            {
+              "ch": "غ",
+              "name": "ghayn",
+              "translit": "gh",
+              "ipa": "ɣ"
             },
             {
               "ch": "ذ",
               "name": "dhāl",
               "translit": "dh",
               "ipa": "ð"
-            },
-            {
-              "ch": "ر",
-              "name": "rāʼ",
-              "translit": "r",
-              "ipa": "r"
             }
           ],
           "exercises": [
             {
               "type": "mcq_source_target",
-              "source": "ط",
-              "target": "ṭ",
-              "correct": "ṭ",
+              "source": "ش",
+              "target": "sh",
+              "correct": "sh",
               "choices": [
-                "ṭ",
                 "ā",
-                "k",
-                "ḍ"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ṭ (ṭāʼ)",
-              "target": "ط",
-              "correct": "ط",
-              "choices": [
-                "ذ",
-                "ط",
-                "ي",
-                "ا"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ب",
-              "target": "b",
-              "correct": "b",
-              "choices": [
-                "t",
                 "ḍ",
-                "b",
-                "k"
+                "sh",
+                "q"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "b (bāʼ)",
-              "target": "ب",
-              "correct": "ب",
+              "source": "sh (shīn)",
+              "target": "ش",
+              "correct": "ش",
               "choices": [
-                "ي",
-                "م",
+                "ظ",
                 "ض",
-                "ب"
+                "ن",
+                "ش"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "mcq_source_target",
-              "source": "ل",
-              "target": "l",
-              "correct": "l",
+              "source": "ه",
+              "target": "h",
+              "correct": "h",
               "choices": [
+                "h",
                 "n",
-                "l",
-                "kh",
-                "ṣ"
+                "q",
+                "sh"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "l (lām)",
-              "target": "ل",
-              "correct": "ل",
+              "source": "h (hāʼ)",
+              "target": "ه",
+              "correct": "ه",
               "choices": [
-                "ط",
-                "ل",
-                "ز",
-                "ن"
+                "ص",
+                "ذ",
+                "ه",
+                "د"
               ],
               "_intro": "sound_glyph"
             },
@@ -1241,10 +1214,10 @@
               "target": "d",
               "correct": "d",
               "choices": [
-                "ṭ",
-                "ḥ",
+                "sh",
                 "d",
-                "t"
+                "s",
+                "ḥ"
               ],
               "_intro": "glyph_sound"
             },
@@ -1254,62 +1227,114 @@
               "target": "د",
               "correct": "د",
               "choices": [
-                "غ",
-                "ز",
+                "و",
+                "ن",
                 "د",
-                "س"
+                "ل"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "mcq_source_target",
-              "source": "ج",
-              "target": "j",
-              "correct": "j",
+              "source": "س",
+              "target": "s",
+              "correct": "s",
               "choices": [
-                "ẓ",
-                "dh",
-                "q",
-                "j"
+                "s",
+                "n",
+                "k",
+                "r"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "j (jīm)",
-              "target": "ج",
-              "correct": "ج",
+              "source": "s (sīn)",
+              "target": "س",
+              "correct": "س",
               "choices": [
-                "ج",
                 "س",
-                "ث",
-                "ك"
+                "ر",
+                "ي",
+                "خ"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "mcq_source_target",
-              "source": "ك",
-              "target": "k",
-              "correct": "k",
+              "source": "ث",
+              "target": "th",
+              "correct": "th",
               "choices": [
-                "n",
-                "k",
-                "ā",
+                "ṣ",
+                "th",
+                "gh",
                 "z"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "k (kāf)",
-              "target": "ك",
-              "correct": "ك",
+              "source": "th (thāʼ)",
+              "target": "ث",
+              "correct": "ث",
               "choices": [
-                "ه",
-                "ك",
-                "م",
-                "ث"
+                "ث",
+                "ذ",
+                "ت",
+                "م"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ا",
+              "target": "ā",
+              "correct": "ā",
+              "choices": [
+                "ḍ",
+                "k",
+                "r",
+                "ā"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ā (alif)",
+              "target": "ا",
+              "correct": "ا",
+              "choices": [
+                "ف",
+                "ض",
+                "ل",
+                "ا"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "غ",
+              "target": "gh",
+              "correct": "gh",
+              "choices": [
+                "k",
+                "ā",
+                "gh",
+                "ʿ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "gh (ghayn)",
+              "target": "غ",
+              "correct": "غ",
+              "choices": [
+                "ش",
+                "س",
+                "ب",
+                "غ"
               ],
               "_intro": "sound_glyph"
             },
@@ -1319,10 +1344,10 @@
               "target": "dh",
               "correct": "dh",
               "choices": [
-                "dh",
-                "gh",
-                "ḍ",
-                "w"
+                "b",
+                "ṣ",
+                "sh",
+                "dh"
               ],
               "_intro": "glyph_sound"
             },
@@ -1332,49 +1357,23 @@
               "target": "ذ",
               "correct": "ذ",
               "choices": [
-                "ذ",
-                "ض",
-                "ي",
-                "ث"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ر",
-              "target": "r",
-              "correct": "r",
-              "choices": [
-                "r",
-                "th",
-                "ʿ",
-                "q"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "r (rāʼ)",
-              "target": "ر",
-              "correct": "ر",
-              "choices": [
-                "ث",
-                "ذ",
-                "و",
-                "ر"
+                "خ",
+                "ع",
+                "د",
+                "ذ"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "listen_mcq",
-              "target": "ط",
-              "pron": "ṭ",
-              "correct": "ط",
+              "target": "ش",
+              "pron": "sh",
+              "correct": "ش",
               "choices": [
-                "ب",
-                "ل",
-                "ط",
-                "ظ"
+                "س",
+                "ز",
+                "ش",
+                "ث"
               ],
               "_intro": "listen_glyph"
             },
@@ -1384,49 +1383,49 @@
               "pron": "d",
               "correct": "د",
               "choices": [
-                "ف",
-                "ذ",
+                "ه",
                 "د",
-                "ظ"
+                "م",
+                "ط"
               ],
               "_intro": "listen_glyph"
             },
             {
               "type": "listen_mcq",
-              "target": "ل",
-              "pron": "l",
-              "correct": "ل",
+              "target": "ث",
+              "pron": "th",
+              "correct": "ث",
               "choices": [
-                "ك",
+                "ي",
+                "م",
+                "ث",
+                "ض"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "غ",
+              "pron": "gh",
+              "correct": "غ",
+              "choices": [
+                "غ",
+                "ش",
+                "ي",
+                "ث"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ا",
+              "pron": "ā",
+              "correct": "ا",
+              "choices": [
                 "ا",
-                "ت",
-                "ل"
-              ],
-              "_intro": "listen_glyph"
-            },
-            {
-              "type": "listen_mcq",
-              "target": "ج",
-              "pron": "j",
-              "correct": "ج",
-              "choices": [
-                "ز",
-                "ج",
-                "ط",
-                "ذ"
-              ],
-              "_intro": "listen_glyph"
-            },
-            {
-              "type": "listen_mcq",
-              "target": "ر",
-              "pron": "r",
-              "correct": "ر",
-              "choices": [
-                "ق",
-                "ر",
-                "ك",
-                "ع"
+                "س",
+                "م",
+                "ز"
               ],
               "_intro": "listen_glyph"
             }
@@ -1435,7 +1434,7 @@
             "type": "intro_script",
             "model": "(procedural)",
             "valid": 8,
-            "at": "2026-06-28T18:37:25.710Z"
+            "at": "2026-06-29T14:46:10.598Z"
           }
         },
         {
@@ -1781,7 +1780,7 @@
         ]
       },
       "generatedAt": "2026-06-27T11:13:31.154Z",
-      "updatedAt": "2026-06-28T18:37:32.912Z",
+      "updatedAt": "2026-06-29T14:46:17.215Z",
       "id": "tp_17825603173750001401"
     },
     {
@@ -5654,6 +5653,347 @@
       "storyStyle": "neutral",
       "lessons": [
         {
+          "id": "ls_1782744607510_p5zn",
+          "type": "intro_script",
+          "script": "arabic",
+          "rtl": true,
+          "difficulty": 1,
+          "title": "🔡 Arabic",
+          "icon": "🔡",
+          "desc": "Arabic — 8 letters",
+          "letters": [
+            {
+              "ch": "ي",
+              "name": "yāʼ",
+              "translit": "y",
+              "ipa": "j"
+            },
+            {
+              "ch": "ب",
+              "name": "bāʼ",
+              "translit": "b",
+              "ipa": "b"
+            },
+            {
+              "ch": "غ",
+              "name": "ghayn",
+              "translit": "gh",
+              "ipa": "ɣ"
+            },
+            {
+              "ch": "ه",
+              "name": "hāʼ",
+              "translit": "h",
+              "ipa": "h"
+            },
+            {
+              "ch": "و",
+              "name": "wāw",
+              "translit": "w",
+              "ipa": "w"
+            },
+            {
+              "ch": "س",
+              "name": "sīn",
+              "translit": "s",
+              "ipa": "s"
+            },
+            {
+              "ch": "ع",
+              "name": "ʿayn",
+              "translit": "ʿ",
+              "ipa": "ʕ"
+            },
+            {
+              "ch": "ف",
+              "name": "fāʼ",
+              "translit": "f",
+              "ipa": "f"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "ي",
+              "target": "y",
+              "correct": "y",
+              "choices": [
+                "ḥ",
+                "b",
+                "dh",
+                "y"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "y (yāʼ)",
+              "target": "ي",
+              "correct": "ي",
+              "choices": [
+                "ي",
+                "ل",
+                "ب",
+                "ص"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ب",
+              "target": "b",
+              "correct": "b",
+              "choices": [
+                "ḥ",
+                "j",
+                "w",
+                "b"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "b (bāʼ)",
+              "target": "ب",
+              "correct": "ب",
+              "choices": [
+                "م",
+                "ض",
+                "ج",
+                "ب"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "غ",
+              "target": "gh",
+              "correct": "gh",
+              "choices": [
+                "l",
+                "d",
+                "kh",
+                "gh"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "gh (ghayn)",
+              "target": "غ",
+              "correct": "غ",
+              "choices": [
+                "ك",
+                "ح",
+                "غ",
+                "ر"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ه",
+              "target": "h",
+              "correct": "h",
+              "choices": [
+                "h",
+                "sh",
+                "r",
+                "kh"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "h (hāʼ)",
+              "target": "ه",
+              "correct": "ه",
+              "choices": [
+                "ك",
+                "ص",
+                "ح",
+                "ه"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "و",
+              "target": "w",
+              "correct": "w",
+              "choices": [
+                "s",
+                "ḍ",
+                "l",
+                "w"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "w (wāw)",
+              "target": "و",
+              "correct": "و",
+              "choices": [
+                "ز",
+                "ق",
+                "و",
+                "ن"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "س",
+              "target": "s",
+              "correct": "s",
+              "choices": [
+                "ḥ",
+                "l",
+                "s",
+                "j"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "s (sīn)",
+              "target": "س",
+              "correct": "س",
+              "choices": [
+                "ث",
+                "ط",
+                "س",
+                "ز"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ع",
+              "target": "ʿ",
+              "correct": "ʿ",
+              "choices": [
+                "ḍ",
+                "f",
+                "ʿ",
+                "d"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ʿ (ʿayn)",
+              "target": "ع",
+              "correct": "ع",
+              "choices": [
+                "ع",
+                "س",
+                "م",
+                "د"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ف",
+              "target": "f",
+              "correct": "f",
+              "choices": [
+                "f",
+                "ḍ",
+                "sh",
+                "ʿ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "f (fāʼ)",
+              "target": "ف",
+              "correct": "ف",
+              "choices": [
+                "ش",
+                "ه",
+                "ف",
+                "و"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ه",
+              "pron": "h",
+              "correct": "ه",
+              "choices": [
+                "ذ",
+                "ه",
+                "س",
+                "ي"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ع",
+              "pron": "ʿ",
+              "correct": "ع",
+              "choices": [
+                "ش",
+                "خ",
+                "ظ",
+                "ع"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ب",
+              "pron": "b",
+              "correct": "ب",
+              "choices": [
+                "ذ",
+                "ق",
+                "ب",
+                "س"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ف",
+              "pron": "f",
+              "correct": "ف",
+              "choices": [
+                "ث",
+                "س",
+                "ض",
+                "ف"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "غ",
+              "pron": "gh",
+              "correct": "غ",
+              "choices": [
+                "ي",
+                "غ",
+                "ج",
+                "م"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 8,
+            "at": "2026-06-29T14:50:07.510Z"
+          }
+        },
+        {
           "id": 1,
           "title": "كليلة: A Fable of a Monkey and a Carpenter",
           "desc": "A lesson on basic vocabulary and sentence structure from a fable",
@@ -5791,7 +6131,7 @@
         {
           "id": 1,
           "title": "كليلة: زعموا أن قردا رأى نجارا",
-          "desc": "Beginner Arabic vocabulary and sentence structure",
+          "desc": "A lesson on basic vocabulary and sentence structure from a fable",
           "icon": "📖",
           "vocab": [
             {
@@ -5930,12 +6270,353 @@
             "valid": 8,
             "rejected": 0,
             "rejectReasons": null,
-            "promptTokens": 1213,
-            "completionTokens": 334,
-            "ms": 130802,
-            "at": "2026-06-27T07:45:04.391Z"
-          },
-          "_arcMode": "reinforce"
+            "promptTokens": 1137,
+            "completionTokens": 287,
+            "ms": 226689,
+            "at": "2026-06-27T07:42:53.588Z"
+          }
+        },
+        {
+          "id": "ls_1782744622293_gjfk",
+          "type": "intro_script",
+          "script": "arabic",
+          "rtl": true,
+          "_arcMode": "extend",
+          "difficulty": 1,
+          "title": "🔡 Arabic · new letters",
+          "icon": "🔡",
+          "desc": "Arabic — 8 letters",
+          "letters": [
+            {
+              "ch": "و",
+              "name": "wāw",
+              "translit": "w",
+              "ipa": "w"
+            },
+            {
+              "ch": "ب",
+              "name": "bāʼ",
+              "translit": "b",
+              "ipa": "b"
+            },
+            {
+              "ch": "ا",
+              "name": "alif",
+              "translit": "ā",
+              "ipa": "aː"
+            },
+            {
+              "ch": "م",
+              "name": "mīm",
+              "translit": "m",
+              "ipa": "m"
+            },
+            {
+              "ch": "ظ",
+              "name": "ẓāʼ",
+              "translit": "ẓ",
+              "ipa": "ðˤ"
+            },
+            {
+              "ch": "ع",
+              "name": "ʿayn",
+              "translit": "ʿ",
+              "ipa": "ʕ"
+            },
+            {
+              "ch": "خ",
+              "name": "khāʼ",
+              "translit": "kh",
+              "ipa": "x"
+            },
+            {
+              "ch": "س",
+              "name": "sīn",
+              "translit": "s",
+              "ipa": "s"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "و",
+              "target": "w",
+              "correct": "w",
+              "choices": [
+                "w",
+                "ḥ",
+                "dh",
+                "th"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "w (wāw)",
+              "target": "و",
+              "correct": "و",
+              "choices": [
+                "ث",
+                "ف",
+                "و",
+                "ق"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ب",
+              "target": "b",
+              "correct": "b",
+              "choices": [
+                "sh",
+                "b",
+                "k",
+                "ẓ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "b (bāʼ)",
+              "target": "ب",
+              "correct": "ب",
+              "choices": [
+                "م",
+                "ب",
+                "ظ",
+                "ذ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ا",
+              "target": "ā",
+              "correct": "ā",
+              "choices": [
+                "k",
+                "ā",
+                "m",
+                "y"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ā (alif)",
+              "target": "ا",
+              "correct": "ا",
+              "choices": [
+                "ق",
+                "ث",
+                "ا",
+                "ب"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "م",
+              "target": "m",
+              "correct": "m",
+              "choices": [
+                "m",
+                "k",
+                "z",
+                "ḥ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "m (mīm)",
+              "target": "م",
+              "correct": "م",
+              "choices": [
+                "ن",
+                "و",
+                "م",
+                "س"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ظ",
+              "target": "ẓ",
+              "correct": "ẓ",
+              "choices": [
+                "l",
+                "q",
+                "ẓ",
+                "w"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ẓ (ẓāʼ)",
+              "target": "ظ",
+              "correct": "ظ",
+              "choices": [
+                "د",
+                "ظ",
+                "ز",
+                "ي"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ع",
+              "target": "ʿ",
+              "correct": "ʿ",
+              "choices": [
+                "dh",
+                "ʿ",
+                "l",
+                "sh"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ʿ (ʿayn)",
+              "target": "ع",
+              "correct": "ع",
+              "choices": [
+                "ف",
+                "غ",
+                "و",
+                "ع"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "خ",
+              "target": "kh",
+              "correct": "kh",
+              "choices": [
+                "gh",
+                "f",
+                "kh",
+                "z"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "kh (khāʼ)",
+              "target": "خ",
+              "correct": "خ",
+              "choices": [
+                "خ",
+                "ص",
+                "غ",
+                "ك"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "س",
+              "target": "s",
+              "correct": "s",
+              "choices": [
+                "ā",
+                "r",
+                "s",
+                "z"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "s (sīn)",
+              "target": "س",
+              "correct": "س",
+              "choices": [
+                "س",
+                "ه",
+                "ح",
+                "ع"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "و",
+              "pron": "w",
+              "correct": "و",
+              "choices": [
+                "و",
+                "ظ",
+                "ر",
+                "ت"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ظ",
+              "pron": "ẓ",
+              "correct": "ظ",
+              "choices": [
+                "ظ",
+                "ك",
+                "م",
+                "ح"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "خ",
+              "pron": "kh",
+              "correct": "خ",
+              "choices": [
+                "ف",
+                "ا",
+                "ش",
+                "خ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ب",
+              "pron": "b",
+              "correct": "ب",
+              "choices": [
+                "ص",
+                "ب",
+                "ن",
+                "ظ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ع",
+              "pron": "ʿ",
+              "correct": "ع",
+              "choices": [
+                "ش",
+                "ه",
+                "ع",
+                "ث"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 8,
+            "at": "2026-06-29T14:50:22.293Z"
+          }
         }
       ],
       "generationStats": {
@@ -5955,7 +6636,7 @@
         ]
       },
       "generatedAt": "2026-06-27T07:39:06.858Z",
-      "updatedAt": "2026-06-27T09:46:08.781Z",
+      "updatedAt": "2026-06-29T14:50:22.298Z",
       "id": "tp_17825463044280000192"
     },
     {
@@ -5974,104 +6655,20 @@
       "storyStyle": "neutral",
       "lessons": [
         {
-          "id": "ls_1782639813635_n86s",
+          "id": "ls_1782744587237_cf15",
           "type": "intro_script",
           "script": "arabic",
           "rtl": true,
-          "_arcMode": "extend",
-          "title": "🔡 Arabic · new letters",
+          "difficulty": 2,
+          "title": "🔡 Arabic",
           "icon": "🔡",
-          "desc": "Arabic — 28 letters",
+          "desc": "Arabic — 12 letters",
           "letters": [
             {
-              "ch": "ا",
-              "name": "alif",
-              "translit": "ā",
-              "ipa": "aː"
-            },
-            {
-              "ch": "ب",
-              "name": "bāʼ",
-              "translit": "b",
-              "ipa": "b"
-            },
-            {
-              "ch": "ت",
-              "name": "tāʼ",
-              "translit": "t",
-              "ipa": "t"
-            },
-            {
-              "ch": "ث",
-              "name": "thāʼ",
-              "translit": "th",
-              "ipa": "θ"
-            },
-            {
-              "ch": "ج",
-              "name": "jīm",
-              "translit": "j",
-              "ipa": "d͡ʒ"
-            },
-            {
-              "ch": "ح",
-              "name": "ḥāʼ",
-              "translit": "ḥ",
-              "ipa": "ħ"
-            },
-            {
-              "ch": "خ",
-              "name": "khāʼ",
-              "translit": "kh",
-              "ipa": "x"
-            },
-            {
-              "ch": "د",
-              "name": "dāl",
-              "translit": "d",
-              "ipa": "d"
-            },
-            {
-              "ch": "ذ",
-              "name": "dhāl",
-              "translit": "dh",
-              "ipa": "ð"
-            },
-            {
-              "ch": "ر",
-              "name": "rāʼ",
-              "translit": "r",
-              "ipa": "r"
-            },
-            {
-              "ch": "ز",
-              "name": "zāy",
-              "translit": "z",
-              "ipa": "z"
-            },
-            {
-              "ch": "س",
-              "name": "sīn",
-              "translit": "s",
-              "ipa": "s"
-            },
-            {
-              "ch": "ش",
-              "name": "shīn",
-              "translit": "sh",
-              "ipa": "ʃ"
-            },
-            {
-              "ch": "ص",
-              "name": "ṣād",
-              "translit": "ṣ",
-              "ipa": "sˤ"
-            },
-            {
-              "ch": "ض",
-              "name": "ḍād",
-              "translit": "ḍ",
-              "ipa": "dˤ"
+              "ch": "ف",
+              "name": "fāʼ",
+              "translit": "f",
+              "ipa": "f"
             },
             {
               "ch": "ط",
@@ -6080,28 +6677,10 @@
               "ipa": "tˤ"
             },
             {
-              "ch": "ظ",
-              "name": "ẓāʼ",
-              "translit": "ẓ",
-              "ipa": "ðˤ"
-            },
-            {
-              "ch": "ع",
-              "name": "ʿayn",
-              "translit": "ʿ",
-              "ipa": "ʕ"
-            },
-            {
-              "ch": "غ",
-              "name": "ghayn",
-              "translit": "gh",
-              "ipa": "ɣ"
-            },
-            {
-              "ch": "ف",
-              "name": "fāʼ",
-              "translit": "f",
-              "ipa": "f"
+              "ch": "ت",
+              "name": "tāʼ",
+              "translit": "t",
+              "ipa": "t"
             },
             {
               "ch": "ق",
@@ -6110,22 +6689,16 @@
               "ipa": "q"
             },
             {
-              "ch": "ك",
-              "name": "kāf",
-              "translit": "k",
-              "ipa": "k"
+              "ch": "غ",
+              "name": "ghayn",
+              "translit": "gh",
+              "ipa": "ɣ"
             },
             {
-              "ch": "ل",
-              "name": "lām",
-              "translit": "l",
-              "ipa": "l"
-            },
-            {
-              "ch": "م",
-              "name": "mīm",
-              "translit": "m",
-              "ipa": "m"
+              "ch": "س",
+              "name": "sīn",
+              "translit": "s",
+              "ipa": "s"
             },
             {
               "ch": "ن",
@@ -6134,412 +6707,60 @@
               "ipa": "n"
             },
             {
+              "ch": "ع",
+              "name": "ʿayn",
+              "translit": "ʿ",
+              "ipa": "ʕ"
+            },
+            {
+              "ch": "ض",
+              "name": "ḍād",
+              "translit": "ḍ",
+              "ipa": "dˤ"
+            },
+            {
+              "ch": "ب",
+              "name": "bāʼ",
+              "translit": "b",
+              "ipa": "b"
+            },
+            {
               "ch": "ه",
               "name": "hāʼ",
               "translit": "h",
               "ipa": "h"
             },
             {
-              "ch": "و",
-              "name": "wāw",
-              "translit": "w",
-              "ipa": "w"
-            },
-            {
-              "ch": "ي",
-              "name": "yāʼ",
-              "translit": "y",
-              "ipa": "j"
+              "ch": "ل",
+              "name": "lām",
+              "translit": "l",
+              "ipa": "l"
             }
           ],
           "exercises": [
             {
               "type": "mcq_source_target",
-              "source": "ا",
-              "target": "ā",
-              "correct": "ā",
+              "source": "ف",
+              "target": "f",
+              "correct": "f",
               "choices": [
                 "f",
-                "m",
-                "ā",
-                "ṭ"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ā (alif)",
-              "target": "ا",
-              "correct": "ا",
-              "choices": [
-                "ت",
-                "ف",
-                "ا",
-                "س"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ب",
-              "target": "b",
-              "correct": "b",
-              "choices": [
-                "s",
                 "y",
-                "b",
-                "n"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "b (bāʼ)",
-              "target": "ب",
-              "correct": "ب",
-              "choices": [
-                "س",
-                "ب",
-                "ك",
-                "ي"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ت",
-              "target": "t",
-              "correct": "t",
-              "choices": [
-                "ā",
-                "t",
-                "ṭ",
-                "ʿ"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "t (tāʼ)",
-              "target": "ت",
-              "correct": "ت",
-              "choices": [
-                "خ",
-                "ت",
-                "ا",
-                "ر"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ث",
-              "target": "th",
-              "correct": "th",
-              "choices": [
-                "th",
-                "j",
-                "dh",
-                "l"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "th (thāʼ)",
-              "target": "ث",
-              "correct": "ث",
-              "choices": [
-                "ث",
-                "ق",
-                "م",
-                "ذ"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ج",
-              "target": "j",
-              "correct": "j",
-              "choices": [
-                "m",
-                "ā",
-                "z",
-                "j"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "j (jīm)",
-              "target": "ج",
-              "correct": "ج",
-              "choices": [
-                "ر",
-                "ث",
-                "ج",
-                "ظ"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ح",
-              "target": "ḥ",
-              "correct": "ḥ",
-              "choices": [
-                "ḥ",
-                "k",
-                "r",
-                "ʿ"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ḥ (ḥāʼ)",
-              "target": "ح",
-              "correct": "ح",
-              "choices": [
-                "ح",
-                "ض",
-                "ه",
-                "ش"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "خ",
-              "target": "kh",
-              "correct": "kh",
-              "choices": [
-                "kh",
-                "l",
-                "ṭ",
-                "f"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "kh (khāʼ)",
-              "target": "خ",
-              "correct": "خ",
-              "choices": [
-                "ش",
-                "م",
-                "ل",
-                "خ"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "د",
-              "target": "d",
-              "correct": "d",
-              "choices": [
-                "f",
-                "j",
-                "w",
-                "d"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "d (dāl)",
-              "target": "د",
-              "correct": "د",
-              "choices": [
-                "ب",
-                "د",
-                "ص",
-                "ق"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ذ",
-              "target": "dh",
-              "correct": "dh",
-              "choices": [
-                "ẓ",
-                "sh",
-                "d",
-                "dh"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "dh (dhāl)",
-              "target": "ذ",
-              "correct": "ذ",
-              "choices": [
-                "ي",
-                "ن",
-                "ا",
-                "ذ"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ر",
-              "target": "r",
-              "correct": "r",
-              "choices": [
-                "r",
-                "dh",
-                "s",
-                "l"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "r (rāʼ)",
-              "target": "ر",
-              "correct": "ر",
-              "choices": [
-                "د",
-                "ش",
-                "ر",
-                "ع"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ز",
-              "target": "z",
-              "correct": "z",
-              "choices": [
-                "ʿ",
-                "ẓ",
-                "ḥ",
-                "z"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "z (zāy)",
-              "target": "ز",
-              "correct": "ز",
-              "choices": [
-                "ض",
-                "ز",
-                "ا",
-                "ي"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "س",
-              "target": "s",
-              "correct": "s",
-              "choices": [
-                "z",
-                "y",
-                "ḍ",
-                "s"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "s (sīn)",
-              "target": "س",
-              "correct": "س",
-              "choices": [
-                "ب",
-                "ح",
-                "س",
-                "ت"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ش",
-              "target": "sh",
-              "correct": "sh",
-              "choices": [
-                "w",
-                "sh",
-                "ṭ",
-                "gh"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "sh (shīn)",
-              "target": "ش",
-              "correct": "ش",
-              "choices": [
-                "ش",
-                "ل",
-                "ض",
-                "ح"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ص",
-              "target": "ṣ",
-              "correct": "ṣ",
-              "choices": [
-                "ā",
-                "d",
                 "ṣ",
-                "q"
+                "ā"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "ṣ (ṣād)",
-              "target": "ص",
-              "correct": "ص",
+              "source": "f (fāʼ)",
+              "target": "ف",
+              "correct": "ف",
               "choices": [
-                "ص",
-                "ب",
-                "ق",
-                "ك"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ض",
-              "target": "ḍ",
-              "correct": "ḍ",
-              "choices": [
-                "f",
-                "b",
-                "ḍ",
-                "m"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ḍ (ḍād)",
-              "target": "ض",
-              "correct": "ض",
-              "choices": [
-                "خ",
-                "ض",
-                "ه",
-                "ز"
+                "ج",
+                "ف",
+                "ر",
+                "ه"
               ],
               "_intro": "sound_glyph"
             },
@@ -6549,9 +6770,9 @@
               "target": "ṭ",
               "correct": "ṭ",
               "choices": [
-                "ẓ",
-                "z",
-                "d",
+                "th",
+                "gh",
+                "j",
                 "ṭ"
               ],
               "_intro": "glyph_sound"
@@ -6562,114 +6783,36 @@
               "target": "ط",
               "correct": "ط",
               "choices": [
-                "غ",
-                "ج",
+                "ا",
                 "ط",
-                "د"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ظ",
-              "target": "ẓ",
-              "correct": "ẓ",
-              "choices": [
-                "f",
-                "n",
-                "ā",
-                "ẓ"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ẓ (ẓāʼ)",
-              "target": "ظ",
-              "correct": "ظ",
-              "choices": [
-                "ظ",
-                "ل",
-                "س",
-                "ط"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ع",
-              "target": "ʿ",
-              "correct": "ʿ",
-              "choices": [
-                "ʿ",
-                "n",
-                "ṣ",
-                "z"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ʿ (ʿayn)",
-              "target": "ع",
-              "correct": "ع",
-              "choices": [
-                "ش",
-                "و",
-                "ض",
-                "ع"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "غ",
-              "target": "gh",
-              "correct": "gh",
-              "choices": [
-                "gh",
-                "ḍ",
-                "ā",
-                "j"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "gh (ghayn)",
-              "target": "غ",
-              "correct": "غ",
-              "choices": [
-                "ث",
-                "غ",
-                "ل",
-                "ه"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ف",
-              "target": "f",
-              "correct": "f",
-              "choices": [
-                "n",
-                "f",
-                "ṣ",
-                "th"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "f (fāʼ)",
-              "target": "ف",
-              "correct": "ف",
-              "choices": [
-                "ب",
                 "ف",
-                "ش",
-                "ن"
+                "غ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ت",
+              "target": "t",
+              "correct": "t",
+              "choices": [
+                "t",
+                "ʿ",
+                "ṭ",
+                "ṣ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "t (tāʼ)",
+              "target": "ت",
+              "correct": "ت",
+              "choices": [
+                "ع",
+                "ز",
+                "غ",
+                "ت"
               ],
               "_intro": "sound_glyph"
             },
@@ -6679,10 +6822,10 @@
               "target": "q",
               "correct": "q",
               "choices": [
-                "gh",
-                "ẓ",
-                "k",
-                "q"
+                "q",
+                "ḥ",
+                "h",
+                "gh"
               ],
               "_intro": "glyph_sound"
             },
@@ -6692,88 +6835,62 @@
               "target": "ق",
               "correct": "ق",
               "choices": [
-                "ش",
-                "ز",
-                "ذ",
-                "ق"
+                "ق",
+                "ع",
+                "ي",
+                "م"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "mcq_source_target",
-              "source": "ك",
-              "target": "k",
-              "correct": "k",
+              "source": "غ",
+              "target": "gh",
+              "correct": "gh",
               "choices": [
-                "k",
-                "sh",
-                "ṭ",
-                "t"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "k (kāf)",
-              "target": "ك",
-              "correct": "ك",
-              "choices": [
-                "ج",
-                "ن",
-                "ش",
-                "ك"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ل",
-              "target": "l",
-              "correct": "l",
-              "choices": [
-                "l",
-                "t",
-                "b",
+                "ẓ",
+                "w",
+                "gh",
                 "y"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "l (lām)",
-              "target": "ل",
-              "correct": "ل",
+              "source": "gh (ghayn)",
+              "target": "غ",
+              "correct": "غ",
               "choices": [
-                "ق",
-                "ج",
-                "ح",
-                "ل"
+                "غ",
+                "م",
+                "ظ",
+                "ي"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "mcq_source_target",
-              "source": "م",
-              "target": "m",
-              "correct": "m",
+              "source": "س",
+              "target": "s",
+              "correct": "s",
               "choices": [
-                "m",
-                "b",
-                "n",
-                "r"
+                "t",
+                "f",
+                "s",
+                "m"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "m (mīm)",
-              "target": "م",
-              "correct": "م",
+              "source": "s (sīn)",
+              "target": "س",
+              "correct": "س",
               "choices": [
-                "خ",
-                "ل",
-                "م",
-                "غ"
+                "س",
+                "ك",
+                "ط",
+                "ج"
               ],
               "_intro": "sound_glyph"
             },
@@ -6783,10 +6900,10 @@
               "target": "n",
               "correct": "n",
               "choices": [
-                "ḥ",
+                "t",
                 "n",
-                "j",
-                "r"
+                "dh",
+                "l"
               ],
               "_intro": "glyph_sound"
             },
@@ -6796,10 +6913,88 @@
               "target": "ن",
               "correct": "ن",
               "choices": [
-                "ح",
-                "ه",
+                "ع",
+                "ن",
+                "د",
+                "ف"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ع",
+              "target": "ʿ",
+              "correct": "ʿ",
+              "choices": [
+                "w",
+                "ẓ",
+                "ʿ",
+                "y"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ʿ (ʿayn)",
+              "target": "ع",
+              "correct": "ع",
+              "choices": [
+                "ي",
+                "ر",
+                "و",
+                "ع"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ض",
+              "target": "ḍ",
+              "correct": "ḍ",
+              "choices": [
+                "ḍ",
+                "n",
+                "ṭ",
+                "ā"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ḍ (ḍād)",
+              "target": "ض",
+              "correct": "ض",
+              "choices": [
+                "ب",
+                "ض",
                 "ق",
-                "ن"
+                "ه"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ب",
+              "target": "b",
+              "correct": "b",
+              "choices": [
+                "ḍ",
+                "s",
+                "b",
+                "sh"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "b (bāʼ)",
+              "target": "ب",
+              "correct": "ب",
+              "choices": [
+                "س",
+                "م",
+                "ض",
+                "ب"
               ],
               "_intro": "sound_glyph"
             },
@@ -6809,10 +7004,10 @@
               "target": "h",
               "correct": "h",
               "choices": [
-                "q",
-                "w",
-                "h",
-                "dh"
+                "j",
+                "m",
+                "ṭ",
+                "h"
               ],
               "_intro": "glyph_sound"
             },
@@ -6823,126 +7018,100 @@
               "correct": "ه",
               "choices": [
                 "ه",
-                "ن",
-                "ي",
-                "غ"
+                "س",
+                "ح",
+                "ع"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "mcq_source_target",
-              "source": "و",
-              "target": "w",
-              "correct": "w",
+              "source": "ل",
+              "target": "l",
+              "correct": "l",
               "choices": [
-                "kh",
-                "w",
-                "r",
-                "b"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "w (wāw)",
-              "target": "و",
-              "correct": "و",
-              "choices": [
-                "و",
-                "ل",
-                "ج",
-                "ه"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ي",
-              "target": "y",
-              "correct": "y",
-              "choices": [
-                "y",
-                "z",
+                "d",
                 "ḍ",
-                "r"
+                "l",
+                "ḥ"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "y (yāʼ)",
-              "target": "ي",
-              "correct": "ي",
+              "source": "l (lām)",
+              "target": "ل",
+              "correct": "ل",
               "choices": [
-                "ذ",
-                "ي",
-                "د",
-                "ز"
+                "و",
+                "ك",
+                "ت",
+                "ل"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "listen_mcq",
-              "target": "و",
-              "pron": "w",
-              "correct": "و",
+              "target": "ط",
+              "pron": "ṭ",
+              "correct": "ط",
               "choices": [
+                "د",
+                "ط",
+                "ب",
+                "ي"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ب",
+              "pron": "b",
+              "correct": "ب",
+              "choices": [
+                "د",
                 "ق",
-                "و",
-                "ف",
-                "ذ"
+                "ب",
+                "ي"
               ],
               "_intro": "listen_glyph"
             },
             {
               "type": "listen_mcq",
-              "target": "ر",
-              "pron": "r",
-              "correct": "ر",
+              "target": "ت",
+              "pron": "t",
+              "correct": "ت",
               "choices": [
-                "ر",
-                "ه",
-                "ك",
-                "ت"
+                "ج",
+                "م",
+                "ت",
+                "ر"
               ],
               "_intro": "listen_glyph"
             },
             {
               "type": "listen_mcq",
-              "target": "خ",
-              "pron": "kh",
-              "correct": "خ",
+              "target": "غ",
+              "pron": "gh",
+              "correct": "غ",
               "choices": [
-                "خ",
+                "ش",
+                "ب",
                 "غ",
-                "ك",
                 "ز"
               ],
               "_intro": "listen_glyph"
             },
             {
               "type": "listen_mcq",
-              "target": "م",
-              "pron": "m",
-              "correct": "م",
+              "target": "ل",
+              "pron": "l",
+              "correct": "ل",
               "choices": [
-                "م",
-                "ح",
-                "ف",
-                "ظ"
-              ],
-              "_intro": "listen_glyph"
-            },
-            {
-              "type": "listen_mcq",
-              "target": "ن",
-              "pron": "n",
-              "correct": "ن",
-              "choices": [
+                "ي",
+                "ر",
                 "ل",
-                "ن",
-                "ح",
-                "ذ"
+                "ض"
               ],
               "_intro": "listen_glyph"
             }
@@ -6950,8 +7119,8 @@
           "_genMeta": {
             "type": "intro_script",
             "model": "(procedural)",
-            "valid": 28,
-            "at": "2026-06-28T09:43:33.635Z"
+            "valid": 12,
+            "at": "2026-06-29T14:49:47.237Z"
           }
         },
         {
@@ -7120,7 +7289,7 @@
         ]
       },
       "generatedAt": "2026-06-27T07:33:56.778Z",
-      "updatedAt": "2026-06-28T09:43:47.880Z",
+      "updatedAt": "2026-06-29T14:49:50.045Z",
       "id": "tp_17825459467740000082"
     },
     {
@@ -8742,6 +8911,896 @@
           },
           "_recreated": true,
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1782744287138_ynwk",
+          "type": "intro_script",
+          "script": "hiragana",
+          "rtl": false,
+          "difficulty": 2,
+          "title": "🔡 Hiragana",
+          "icon": "🔡",
+          "desc": "Hiragana — 12 letters",
+          "letters": [
+            {
+              "ch": "て",
+              "translit": "te"
+            },
+            {
+              "ch": "め",
+              "translit": "me"
+            },
+            {
+              "ch": "な",
+              "translit": "na"
+            },
+            {
+              "ch": "は",
+              "translit": "ha"
+            },
+            {
+              "ch": "ま",
+              "translit": "ma"
+            },
+            {
+              "ch": "ほ",
+              "translit": "ho"
+            },
+            {
+              "ch": "た",
+              "translit": "ta"
+            },
+            {
+              "ch": "や",
+              "translit": "ya"
+            },
+            {
+              "ch": "か",
+              "translit": "ka"
+            },
+            {
+              "ch": "ん",
+              "translit": "n"
+            },
+            {
+              "ch": "つ",
+              "translit": "tsu"
+            },
+            {
+              "ch": "け",
+              "translit": "ke"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "て",
+              "target": "te",
+              "correct": "te",
+              "choices": [
+                "shi",
+                "su",
+                "te",
+                "fu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "te",
+              "target": "て",
+              "correct": "て",
+              "choices": [
+                "や",
+                "ふ",
+                "て",
+                "す"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "め",
+              "target": "me",
+              "correct": "me",
+              "choices": [
+                "shi",
+                "ni",
+                "ta",
+                "me"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "me",
+              "target": "め",
+              "correct": "め",
+              "choices": [
+                "て",
+                "せ",
+                "め",
+                "む"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "な",
+              "target": "na",
+              "correct": "na",
+              "choices": [
+                "wo",
+                "no",
+                "ma",
+                "na"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "na",
+              "target": "な",
+              "correct": "な",
+              "choices": [
+                "と",
+                "に",
+                "み",
+                "な"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "は",
+              "target": "ha",
+              "correct": "ha",
+              "choices": [
+                "ha",
+                "ya",
+                "chi",
+                "i"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ha",
+              "target": "は",
+              "correct": "は",
+              "choices": [
+                "は",
+                "さ",
+                "れ",
+                "き"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ま",
+              "target": "ma",
+              "correct": "ma",
+              "choices": [
+                "o",
+                "shi",
+                "re",
+                "ma"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ma",
+              "target": "ま",
+              "correct": "ま",
+              "choices": [
+                "た",
+                "ま",
+                "も",
+                "わ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ほ",
+              "target": "ho",
+              "correct": "ho",
+              "choices": [
+                "i",
+                "ki",
+                "me",
+                "ho"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ho",
+              "target": "ほ",
+              "correct": "ほ",
+              "choices": [
+                "に",
+                "ま",
+                "ほ",
+                "こ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "た",
+              "target": "ta",
+              "correct": "ta",
+              "choices": [
+                "ya",
+                "ta",
+                "na",
+                "yu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ta",
+              "target": "た",
+              "correct": "た",
+              "choices": [
+                "ひ",
+                "す",
+                "た",
+                "あ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "や",
+              "target": "ya",
+              "correct": "ya",
+              "choices": [
+                "wa",
+                "ya",
+                "u",
+                "shi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ya",
+              "target": "や",
+              "correct": "や",
+              "choices": [
+                "く",
+                "ぬ",
+                "や",
+                "も"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "か",
+              "target": "ka",
+              "correct": "ka",
+              "choices": [
+                "sa",
+                "ka",
+                "ru",
+                "ha"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ka",
+              "target": "か",
+              "correct": "か",
+              "choices": [
+                "か",
+                "ち",
+                "ん",
+                "よ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ん",
+              "target": "n",
+              "correct": "n",
+              "choices": [
+                "na",
+                "me",
+                "nu",
+                "n"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "n",
+              "target": "ん",
+              "correct": "ん",
+              "choices": [
+                "み",
+                "ん",
+                "え",
+                "ら"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "つ",
+              "target": "tsu",
+              "correct": "tsu",
+              "choices": [
+                "to",
+                "yu",
+                "tsu",
+                "se"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "tsu",
+              "target": "つ",
+              "correct": "つ",
+              "choices": [
+                "つ",
+                "あ",
+                "た",
+                "を"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "け",
+              "target": "ke",
+              "correct": "ke",
+              "choices": [
+                "ke",
+                "ko",
+                "ma",
+                "n"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ke",
+              "target": "け",
+              "correct": "け",
+              "choices": [
+                "け",
+                "ま",
+                "な",
+                "ら"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "は",
+              "pron": "ha",
+              "correct": "は",
+              "choices": [
+                "へ",
+                "う",
+                "き",
+                "は"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ま",
+              "pron": "ma",
+              "correct": "ま",
+              "choices": [
+                "く",
+                "す",
+                "た",
+                "ま"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "つ",
+              "pron": "tsu",
+              "correct": "つ",
+              "choices": [
+                "は",
+                "す",
+                "ふ",
+                "つ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "た",
+              "pron": "ta",
+              "correct": "た",
+              "choices": [
+                "た",
+                "れ",
+                "こ",
+                "ぬ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "な",
+              "pron": "na",
+              "correct": "な",
+              "choices": [
+                "き",
+                "な",
+                "ん",
+                "め"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 12,
+            "at": "2026-06-29T14:44:47.139Z"
+          }
+        },
+        {
+          "id": "ls_1782744287139_tj0k",
+          "type": "intro_script",
+          "script": "katakana",
+          "rtl": false,
+          "difficulty": 2,
+          "title": "🔡 Katakana",
+          "icon": "🔡",
+          "desc": "Katakana — 12 letters",
+          "letters": [
+            {
+              "ch": "ユ",
+              "translit": "yu"
+            },
+            {
+              "ch": "シ",
+              "translit": "shi"
+            },
+            {
+              "ch": "ソ",
+              "translit": "so"
+            },
+            {
+              "ch": "ハ",
+              "translit": "ha"
+            },
+            {
+              "ch": "ス",
+              "translit": "su"
+            },
+            {
+              "ch": "モ",
+              "translit": "mo"
+            },
+            {
+              "ch": "ヨ",
+              "translit": "yo"
+            },
+            {
+              "ch": "ミ",
+              "translit": "mi"
+            },
+            {
+              "ch": "メ",
+              "translit": "me"
+            },
+            {
+              "ch": "タ",
+              "translit": "ta"
+            },
+            {
+              "ch": "ロ",
+              "translit": "ro"
+            },
+            {
+              "ch": "ツ",
+              "translit": "tsu"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "ユ",
+              "target": "yu",
+              "correct": "yu",
+              "choices": [
+                "yu",
+                "i",
+                "mi",
+                "to"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "yu",
+              "target": "ユ",
+              "correct": "ユ",
+              "choices": [
+                "ス",
+                "ユ",
+                "キ",
+                "ツ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "シ",
+              "target": "shi",
+              "correct": "shi",
+              "choices": [
+                "nu",
+                "mo",
+                "shi",
+                "yo"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "shi",
+              "target": "シ",
+              "correct": "シ",
+              "choices": [
+                "カ",
+                "シ",
+                "ハ",
+                "モ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ソ",
+              "target": "so",
+              "correct": "so",
+              "choices": [
+                "tsu",
+                "nu",
+                "ma",
+                "so"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "so",
+              "target": "ソ",
+              "correct": "ソ",
+              "choices": [
+                "ソ",
+                "ヤ",
+                "ケ",
+                "モ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ハ",
+              "target": "ha",
+              "correct": "ha",
+              "choices": [
+                "ha",
+                "ho",
+                "u",
+                "so"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ha",
+              "target": "ハ",
+              "correct": "ハ",
+              "choices": [
+                "エ",
+                "ン",
+                "コ",
+                "ハ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ス",
+              "target": "su",
+              "correct": "su",
+              "choices": [
+                "su",
+                "n",
+                "u",
+                "ne"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "su",
+              "target": "ス",
+              "correct": "ス",
+              "choices": [
+                "ミ",
+                "ス",
+                "ユ",
+                "チ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "モ",
+              "target": "mo",
+              "correct": "mo",
+              "choices": [
+                "re",
+                "mo",
+                "o",
+                "ko"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "mo",
+              "target": "モ",
+              "correct": "モ",
+              "choices": [
+                "タ",
+                "モ",
+                "ユ",
+                "ミ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ヨ",
+              "target": "yo",
+              "correct": "yo",
+              "choices": [
+                "chi",
+                "ku",
+                "yo",
+                "su"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "yo",
+              "target": "ヨ",
+              "correct": "ヨ",
+              "choices": [
+                "キ",
+                "ヨ",
+                "ツ",
+                "ハ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ミ",
+              "target": "mi",
+              "correct": "mi",
+              "choices": [
+                "ha",
+                "i",
+                "ro",
+                "mi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "mi",
+              "target": "ミ",
+              "correct": "ミ",
+              "choices": [
+                "ミ",
+                "ユ",
+                "コ",
+                "フ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "メ",
+              "target": "me",
+              "correct": "me",
+              "choices": [
+                "me",
+                "sa",
+                "chi",
+                "na"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "me",
+              "target": "メ",
+              "correct": "メ",
+              "choices": [
+                "ヨ",
+                "ヲ",
+                "メ",
+                "ヤ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "タ",
+              "target": "ta",
+              "correct": "ta",
+              "choices": [
+                "se",
+                "ya",
+                "no",
+                "ta"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ta",
+              "target": "タ",
+              "correct": "タ",
+              "choices": [
+                "イ",
+                "ニ",
+                "ナ",
+                "タ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ロ",
+              "target": "ro",
+              "correct": "ro",
+              "choices": [
+                "no",
+                "ku",
+                "ro",
+                "he"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ro",
+              "target": "ロ",
+              "correct": "ロ",
+              "choices": [
+                "ロ",
+                "ハ",
+                "テ",
+                "ヌ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ツ",
+              "target": "tsu",
+              "correct": "tsu",
+              "choices": [
+                "mu",
+                "fu",
+                "tsu",
+                "ho"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "tsu",
+              "target": "ツ",
+              "correct": "ツ",
+              "choices": [
+                "ヨ",
+                "レ",
+                "ツ",
+                "ヤ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "メ",
+              "pron": "me",
+              "correct": "メ",
+              "choices": [
+                "コ",
+                "ナ",
+                "メ",
+                "タ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ミ",
+              "pron": "mi",
+              "correct": "ミ",
+              "choices": [
+                "セ",
+                "ミ",
+                "ネ",
+                "ヒ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "タ",
+              "pron": "ta",
+              "correct": "タ",
+              "choices": [
+                "キ",
+                "ム",
+                "タ",
+                "サ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "シ",
+              "pron": "shi",
+              "correct": "シ",
+              "choices": [
+                "ン",
+                "レ",
+                "シ",
+                "ア"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "モ",
+              "pron": "mo",
+              "correct": "モ",
+              "choices": [
+                "モ",
+                "ス",
+                "マ",
+                "ム"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 12,
+            "at": "2026-06-29T14:44:47.139Z"
+          }
         }
       ],
       "generationStats": {
@@ -8761,7 +9820,7 @@
         ]
       },
       "generatedAt": "2026-06-26T19:54:09.394Z",
-      "updatedAt": "2026-06-28T13:58:31.870Z",
+      "updatedAt": "2026-06-29T14:44:47.144Z",
       "id": "tp_17825044144990000391"
     },
     {
@@ -8932,6 +9991,657 @@
             "at": "2026-06-26T19:51:48.562Z"
           },
           "_hidden": true
+        },
+        {
+          "id": "ls_1782744258781_4hqy",
+          "type": "intro_script",
+          "script": "hiragana",
+          "rtl": false,
+          "_arcMode": "extend",
+          "difficulty": 1,
+          "title": "🔡 Hiragana · new letters",
+          "icon": "🔡",
+          "desc": "Hiragana — 8 letters",
+          "letters": [
+            {
+              "ch": "に",
+              "translit": "ni"
+            },
+            {
+              "ch": "き",
+              "translit": "ki"
+            },
+            {
+              "ch": "け",
+              "translit": "ke"
+            },
+            {
+              "ch": "う",
+              "translit": "u"
+            },
+            {
+              "ch": "わ",
+              "translit": "wa"
+            },
+            {
+              "ch": "る",
+              "translit": "ru"
+            },
+            {
+              "ch": "の",
+              "translit": "no"
+            },
+            {
+              "ch": "を",
+              "translit": "wo"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "に",
+              "target": "ni",
+              "correct": "ni",
+              "choices": [
+                "ni",
+                "nu",
+                "e",
+                "yu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ni",
+              "target": "に",
+              "correct": "に",
+              "choices": [
+                "ゆ",
+                "に",
+                "そ",
+                "す"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "き",
+              "target": "ki",
+              "correct": "ki",
+              "choices": [
+                "na",
+                "ki",
+                "no",
+                "ru"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ki",
+              "target": "き",
+              "correct": "き",
+              "choices": [
+                "き",
+                "ま",
+                "た",
+                "さ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "け",
+              "target": "ke",
+              "correct": "ke",
+              "choices": [
+                "ra",
+                "ke",
+                "fu",
+                "mi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ke",
+              "target": "け",
+              "correct": "け",
+              "choices": [
+                "そ",
+                "け",
+                "を",
+                "さ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "う",
+              "target": "u",
+              "correct": "u",
+              "choices": [
+                "wa",
+                "i",
+                "na",
+                "u"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "u",
+              "target": "う",
+              "correct": "う",
+              "choices": [
+                "て",
+                "う",
+                "わ",
+                "あ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "わ",
+              "target": "wa",
+              "correct": "wa",
+              "choices": [
+                "u",
+                "wa",
+                "shi",
+                "ru"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "wa",
+              "target": "わ",
+              "correct": "わ",
+              "choices": [
+                "ら",
+                "つ",
+                "わ",
+                "り"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "る",
+              "target": "ru",
+              "correct": "ru",
+              "choices": [
+                "yo",
+                "ne",
+                "ru",
+                "fu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ru",
+              "target": "る",
+              "correct": "る",
+              "choices": [
+                "ま",
+                "つ",
+                "ち",
+                "る"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "の",
+              "target": "no",
+              "correct": "no",
+              "choices": [
+                "u",
+                "mu",
+                "me",
+                "no"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "no",
+              "target": "の",
+              "correct": "の",
+              "choices": [
+                "ほ",
+                "こ",
+                "も",
+                "の"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "を",
+              "target": "wo",
+              "correct": "wo",
+              "choices": [
+                "wo",
+                "ho",
+                "ma",
+                "fu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "wo",
+              "target": "を",
+              "correct": "を",
+              "choices": [
+                "を",
+                "ま",
+                "へ",
+                "た"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "る",
+              "pron": "ru",
+              "correct": "る",
+              "choices": [
+                "つ",
+                "ほ",
+                "ん",
+                "る"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "に",
+              "pron": "ni",
+              "correct": "に",
+              "choices": [
+                "つ",
+                "に",
+                "み",
+                "や"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "の",
+              "pron": "no",
+              "correct": "の",
+              "choices": [
+                "の",
+                "こ",
+                "も",
+                "あ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "わ",
+              "pron": "wa",
+              "correct": "わ",
+              "choices": [
+                "ろ",
+                "わ",
+                "さ",
+                "い"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "き",
+              "pron": "ki",
+              "correct": "き",
+              "choices": [
+                "る",
+                "え",
+                "し",
+                "き"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 8,
+            "at": "2026-06-29T14:44:18.781Z"
+          }
+        },
+        {
+          "id": "ls_1782744258782_hyym",
+          "type": "intro_script",
+          "script": "katakana",
+          "rtl": false,
+          "difficulty": 1,
+          "title": "🔡 Katakana",
+          "icon": "🔡",
+          "desc": "Katakana — 8 letters",
+          "letters": [
+            {
+              "ch": "メ",
+              "translit": "me"
+            },
+            {
+              "ch": "コ",
+              "translit": "ko"
+            },
+            {
+              "ch": "ア",
+              "translit": "a"
+            },
+            {
+              "ch": "ハ",
+              "translit": "ha"
+            },
+            {
+              "ch": "ヲ",
+              "translit": "wo"
+            },
+            {
+              "ch": "ネ",
+              "translit": "ne"
+            },
+            {
+              "ch": "ソ",
+              "translit": "so"
+            },
+            {
+              "ch": "タ",
+              "translit": "ta"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "メ",
+              "target": "me",
+              "correct": "me",
+              "choices": [
+                "me",
+                "mo",
+                "ru",
+                "yu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "me",
+              "target": "メ",
+              "correct": "メ",
+              "choices": [
+                "ン",
+                "ノ",
+                "マ",
+                "メ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "コ",
+              "target": "ko",
+              "correct": "ko",
+              "choices": [
+                "ra",
+                "ko",
+                "yu",
+                "n"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ko",
+              "target": "コ",
+              "correct": "コ",
+              "choices": [
+                "ラ",
+                "コ",
+                "ネ",
+                "ノ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ア",
+              "target": "a",
+              "correct": "a",
+              "choices": [
+                "ku",
+                "e",
+                "a",
+                "chi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "a",
+              "target": "ア",
+              "correct": "ア",
+              "choices": [
+                "ク",
+                "タ",
+                "ハ",
+                "ア"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ハ",
+              "target": "ha",
+              "correct": "ha",
+              "choices": [
+                "ri",
+                "ha",
+                "he",
+                "shi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ha",
+              "target": "ハ",
+              "correct": "ハ",
+              "choices": [
+                "フ",
+                "ネ",
+                "ハ",
+                "ワ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ヲ",
+              "target": "wo",
+              "correct": "wo",
+              "choices": [
+                "wo",
+                "ra",
+                "ma",
+                "wa"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "wo",
+              "target": "ヲ",
+              "correct": "ヲ",
+              "choices": [
+                "ヲ",
+                "ユ",
+                "ル",
+                "ク"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ネ",
+              "target": "ne",
+              "correct": "ne",
+              "choices": [
+                "ru",
+                "ne",
+                "ki",
+                "tsu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ne",
+              "target": "ネ",
+              "correct": "ネ",
+              "choices": [
+                "ム",
+                "メ",
+                "ノ",
+                "ネ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ソ",
+              "target": "so",
+              "correct": "so",
+              "choices": [
+                "te",
+                "so",
+                "ho",
+                "tsu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "so",
+              "target": "ソ",
+              "correct": "ソ",
+              "choices": [
+                "チ",
+                "ソ",
+                "コ",
+                "ミ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "タ",
+              "target": "ta",
+              "correct": "ta",
+              "choices": [
+                "se",
+                "ta",
+                "ru",
+                "ri"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ta",
+              "target": "タ",
+              "correct": "タ",
+              "choices": [
+                "タ",
+                "ム",
+                "ソ",
+                "ミ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ネ",
+              "pron": "ne",
+              "correct": "ネ",
+              "choices": [
+                "ヘ",
+                "エ",
+                "ト",
+                "ネ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ソ",
+              "pron": "so",
+              "correct": "ソ",
+              "choices": [
+                "キ",
+                "ソ",
+                "ヲ",
+                "ハ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ヲ",
+              "pron": "wo",
+              "correct": "ヲ",
+              "choices": [
+                "ネ",
+                "チ",
+                "ノ",
+                "ヲ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "タ",
+              "pron": "ta",
+              "correct": "タ",
+              "choices": [
+                "テ",
+                "ヘ",
+                "ノ",
+                "タ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ハ",
+              "pron": "ha",
+              "correct": "ハ",
+              "choices": [
+                "エ",
+                "サ",
+                "ト",
+                "ハ"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 8,
+            "at": "2026-06-29T14:44:18.783Z"
+          }
         },
         {
           "id": "ls_1782641446448_2_gate",
@@ -9233,7 +10943,7 @@
         ]
       },
       "generatedAt": "2026-06-26T19:46:52.468Z",
-      "updatedAt": "2026-06-29T12:52:47.814Z",
+      "updatedAt": "2026-06-29T14:44:29.770Z",
       "id": "tp_17825035086050000285"
     },
     {
@@ -10237,260 +11947,98 @@
           "_arcMode": "reinforce"
         },
         {
-          "id": "ls_1782671962965_vsir",
+          "id": "ls_1782744089557_dldz",
           "type": "intro_script",
           "script": "hiragana",
           "rtl": false,
-          "difficulty": 3,
+          "difficulty": 1,
           "title": "🔡 Hiragana",
           "icon": "🔡",
-          "desc": "Hiragana — 16 letters",
+          "desc": "Hiragana — 8 letters",
           "letters": [
             {
-              "ch": "ち",
-              "translit": "chi"
+              "ch": "と",
+              "translit": "to"
             },
             {
-              "ch": "み",
-              "translit": "mi"
-            },
-            {
-              "ch": "さ",
-              "translit": "sa"
-            },
-            {
-              "ch": "ふ",
-              "translit": "fu"
-            },
-            {
-              "ch": "り",
-              "translit": "ri"
-            },
-            {
-              "ch": "を",
-              "translit": "wo"
-            },
-            {
-              "ch": "へ",
-              "translit": "he"
+              "ch": "ま",
+              "translit": "ma"
             },
             {
               "ch": "あ",
               "translit": "a"
             },
             {
-              "ch": "す",
-              "translit": "su"
+              "ch": "ゆ",
+              "translit": "yu"
             },
             {
               "ch": "や",
               "translit": "ya"
             },
             {
-              "ch": "し",
-              "translit": "shi"
+              "ch": "お",
+              "translit": "o"
             },
             {
-              "ch": "な",
-              "translit": "na"
+              "ch": "よ",
+              "translit": "yo"
             },
             {
-              "ch": "ぬ",
-              "translit": "nu"
-            },
-            {
-              "ch": "て",
-              "translit": "te"
-            },
-            {
-              "ch": "れ",
-              "translit": "re"
-            },
-            {
-              "ch": "め",
-              "translit": "me"
+              "ch": "つ",
+              "translit": "tsu"
             }
           ],
           "exercises": [
             {
               "type": "mcq_source_target",
-              "source": "ち",
-              "target": "chi",
-              "correct": "chi",
+              "source": "と",
+              "target": "to",
+              "correct": "to",
               "choices": [
+                "ri",
                 "chi",
-                "mu",
-                "ta",
-                "me"
+                "to",
+                "ru"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "chi",
-              "target": "ち",
-              "correct": "ち",
+              "source": "to",
+              "target": "と",
+              "correct": "と",
               "choices": [
-                "そ",
-                "ひ",
-                "さ",
-                "ち"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "み",
-              "target": "mi",
-              "correct": "mi",
-              "choices": [
-                "me",
-                "mi",
-                "chi",
-                "ke"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "mi",
-              "target": "み",
-              "correct": "み",
-              "choices": [
-                "も",
-                "ろ",
-                "く",
-                "み"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "さ",
-              "target": "sa",
-              "correct": "sa",
-              "choices": [
-                "so",
-                "wa",
-                "i",
-                "sa"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "sa",
-              "target": "さ",
-              "correct": "さ",
-              "choices": [
-                "る",
-                "く",
-                "り",
-                "さ"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ふ",
-              "target": "fu",
-              "correct": "fu",
-              "choices": [
-                "so",
-                "fu",
-                "wa",
-                "ne"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "fu",
-              "target": "ふ",
-              "correct": "ふ",
-              "choices": [
+                "か",
                 "ふ",
-                "は",
-                "ひ",
-                "め"
+                "こ",
+                "と"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "mcq_source_target",
-              "source": "り",
-              "target": "ri",
-              "correct": "ri",
+              "source": "ま",
+              "target": "ma",
+              "correct": "ma",
               "choices": [
-                "te",
-                "ko",
-                "ke",
-                "ri"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ri",
-              "target": "り",
-              "correct": "り",
-              "choices": [
-                "り",
-                "け",
-                "せ",
-                "は"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "を",
-              "target": "wo",
-              "correct": "wo",
-              "choices": [
-                "ku",
-                "wo",
-                "nu",
-                "ra"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "wo",
-              "target": "を",
-              "correct": "を",
-              "choices": [
-                "た",
-                "お",
-                "を",
-                "く"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "へ",
-              "target": "he",
-              "correct": "he",
-              "choices": [
-                "he",
+                "ta",
+                "mu",
                 "ma",
-                "wa",
-                "hi"
+                "he"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "he",
-              "target": "へ",
-              "correct": "へ",
+              "source": "ma",
+              "target": "ま",
+              "correct": "ま",
               "choices": [
-                "し",
-                "る",
-                "お",
-                "へ"
+                "ろ",
+                "け",
+                "ま",
+                "に"
               ],
               "_intro": "sound_glyph"
             },
@@ -10500,10 +12048,10 @@
               "target": "a",
               "correct": "a",
               "choices": [
-                "a",
-                "ki",
-                "i",
-                "to"
+                "shi",
+                "yo",
+                "ya",
+                "a"
               ],
               "_intro": "glyph_sound"
             },
@@ -10513,36 +12061,36 @@
               "target": "あ",
               "correct": "あ",
               "choices": [
-                "あ",
-                "な",
                 "ん",
-                "み"
+                "し",
+                "あ",
+                "よ"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "mcq_source_target",
-              "source": "す",
-              "target": "su",
-              "correct": "su",
+              "source": "ゆ",
+              "target": "yu",
+              "correct": "yu",
               "choices": [
-                "su",
-                "sa",
-                "re",
-                "nu"
+                "yu",
+                "a",
+                "o",
+                "su"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "su",
-              "target": "す",
-              "correct": "す",
+              "source": "yu",
+              "target": "ゆ",
+              "correct": "ゆ",
               "choices": [
-                "に",
-                "け",
-                "よ",
-                "す"
+                "ゆ",
+                "あ",
+                "て",
+                "ま"
               ],
               "_intro": "sound_glyph"
             },
@@ -10552,10 +12100,10 @@
               "target": "ya",
               "correct": "ya",
               "choices": [
-                "ku",
-                "ma",
-                "na",
-                "ya"
+                "ri",
+                "ya",
+                "to",
+                "shi"
               ],
               "_intro": "glyph_sound"
             },
@@ -10565,231 +12113,153 @@
               "target": "や",
               "correct": "や",
               "choices": [
-                "に",
-                "れ",
-                "や",
-                "う"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "し",
-              "target": "shi",
-              "correct": "shi",
-              "choices": [
-                "shi",
-                "a",
-                "to",
-                "no"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "shi",
-              "target": "し",
-              "correct": "し",
-              "choices": [
-                "う",
+                "も",
                 "あ",
-                "ん",
-                "し"
+                "み",
+                "や"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "mcq_source_target",
-              "source": "な",
-              "target": "na",
-              "correct": "na",
+              "source": "お",
+              "target": "o",
+              "correct": "o",
               "choices": [
-                "tsu",
-                "na",
-                "a",
-                "ta"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "na",
-              "target": "な",
-              "correct": "な",
-              "choices": [
-                "ほ",
-                "な",
-                "た",
-                "む"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "ぬ",
-              "target": "nu",
-              "correct": "nu",
-              "choices": [
-                "a",
-                "te",
-                "mi",
+                "o",
+                "chi",
+                "ke",
                 "nu"
               ],
               "_intro": "glyph_sound"
             },
             {
               "type": "mcq_source_target",
-              "source": "nu",
-              "target": "ぬ",
-              "correct": "ぬ",
+              "source": "o",
+              "target": "お",
+              "correct": "お",
               "choices": [
-                "へ",
+                "お",
+                "ね",
+                "す",
+                "も"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "よ",
+              "target": "yo",
+              "correct": "yo",
+              "choices": [
+                "yo",
+                "wo",
+                "ho",
+                "ne"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "yo",
+              "target": "よ",
+              "correct": "よ",
+              "choices": [
+                "め",
+                "ね",
+                "よ",
+                "ゆ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "つ",
+              "target": "tsu",
+              "correct": "tsu",
+              "choices": [
+                "ko",
+                "tsu",
+                "chi",
+                "ru"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "tsu",
+              "target": "つ",
+              "correct": "つ",
+              "choices": [
                 "て",
-                "ぬ",
-                "め"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "て",
-              "target": "te",
-              "correct": "te",
-              "choices": [
-                "he",
-                "nu",
-                "mu",
-                "te"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "te",
-              "target": "て",
-              "correct": "て",
-              "choices": [
-                "ん",
-                "め",
-                "う",
-                "て"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "れ",
-              "target": "re",
-              "correct": "re",
-              "choices": [
-                "mu",
-                "re",
-                "wo",
-                "a"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "re",
-              "target": "れ",
-              "correct": "れ",
-              "choices": [
-                "れ",
-                "に",
-                "ふ",
-                "え"
-              ],
-              "_intro": "sound_glyph"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "め",
-              "target": "me",
-              "correct": "me",
-              "choices": [
-                "me",
-                "wo",
-                "nu",
-                "yo"
-              ],
-              "_intro": "glyph_sound"
-            },
-            {
-              "type": "mcq_source_target",
-              "source": "me",
-              "target": "め",
-              "correct": "め",
-              "choices": [
-                "め",
-                "は",
-                "か",
-                "そ"
+                "つ",
+                "な",
+                "は"
               ],
               "_intro": "sound_glyph"
             },
             {
               "type": "listen_mcq",
-              "target": "な",
-              "pron": "na",
-              "correct": "な",
+              "target": "ゆ",
+              "pron": "yu",
+              "correct": "ゆ",
               "choices": [
-                "し",
-                "や",
-                "は",
-                "な"
+                "ゆ",
+                "こ",
+                "な",
+                "ふ"
               ],
               "_intro": "listen_glyph"
             },
             {
               "type": "listen_mcq",
-              "target": "め",
-              "pron": "me",
-              "correct": "め",
+              "target": "ま",
+              "pron": "ma",
+              "correct": "ま",
+              "choices": [
+                "て",
+                "す",
+                "り",
+                "ま"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "あ",
+              "pron": "a",
+              "correct": "あ",
+              "choices": [
+                "さ",
+                "る",
+                "に",
+                "あ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "お",
+              "pron": "o",
+              "correct": "お",
               "choices": [
                 "く",
-                "こ",
-                "ぬ",
-                "め"
+                "お",
+                "の",
+                "す"
               ],
               "_intro": "listen_glyph"
             },
             {
               "type": "listen_mcq",
-              "target": "し",
-              "pron": "shi",
-              "correct": "し",
+              "target": "よ",
+              "pron": "yo",
+              "correct": "よ",
               "choices": [
-                "し",
-                "ゆ",
+                "ろ",
                 "え",
-                "り"
-              ],
-              "_intro": "listen_glyph"
-            },
-            {
-              "type": "listen_mcq",
-              "target": "ち",
-              "pron": "chi",
-              "correct": "ち",
-              "choices": [
-                "ち",
-                "ら",
-                "む",
-                "り"
-              ],
-              "_intro": "listen_glyph"
-            },
-            {
-              "type": "listen_mcq",
-              "target": "を",
-              "pron": "wo",
-              "correct": "を",
-              "choices": [
-                "を",
-                "ぬ",
-                "し",
-                "に"
+                "よ",
+                "ゆ"
               ],
               "_intro": "listen_glyph"
             }
@@ -10797,8 +12267,333 @@
           "_genMeta": {
             "type": "intro_script",
             "model": "(procedural)",
-            "valid": 16,
-            "at": "2026-06-28T18:39:22.965Z"
+            "valid": 8,
+            "at": "2026-06-29T14:41:29.557Z"
+          }
+        },
+        {
+          "id": "ls_1782744089558_ta4j",
+          "type": "intro_script",
+          "script": "katakana",
+          "rtl": false,
+          "difficulty": 1,
+          "title": "🔡 Katakana",
+          "icon": "🔡",
+          "desc": "Katakana — 8 letters",
+          "letters": [
+            {
+              "ch": "タ",
+              "translit": "ta"
+            },
+            {
+              "ch": "レ",
+              "translit": "re"
+            },
+            {
+              "ch": "ン",
+              "translit": "n"
+            },
+            {
+              "ch": "ヌ",
+              "translit": "nu"
+            },
+            {
+              "ch": "ク",
+              "translit": "ku"
+            },
+            {
+              "ch": "ホ",
+              "translit": "ho"
+            },
+            {
+              "ch": "ニ",
+              "translit": "ni"
+            },
+            {
+              "ch": "ヨ",
+              "translit": "yo"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "タ",
+              "target": "ta",
+              "correct": "ta",
+              "choices": [
+                "ta",
+                "ma",
+                "su",
+                "mu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ta",
+              "target": "タ",
+              "correct": "タ",
+              "choices": [
+                "レ",
+                "セ",
+                "サ",
+                "タ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "レ",
+              "target": "re",
+              "correct": "re",
+              "choices": [
+                "ki",
+                "re",
+                "tsu",
+                "fu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "re",
+              "target": "レ",
+              "correct": "レ",
+              "choices": [
+                "ヒ",
+                "テ",
+                "レ",
+                "イ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ン",
+              "target": "n",
+              "correct": "n",
+              "choices": [
+                "mu",
+                "o",
+                "n",
+                "te"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "n",
+              "target": "ン",
+              "correct": "ン",
+              "choices": [
+                "ラ",
+                "マ",
+                "オ",
+                "ン"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ヌ",
+              "target": "nu",
+              "correct": "nu",
+              "choices": [
+                "tsu",
+                "mo",
+                "fu",
+                "nu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "nu",
+              "target": "ヌ",
+              "correct": "ヌ",
+              "choices": [
+                "ヌ",
+                "メ",
+                "ニ",
+                "ロ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ク",
+              "target": "ku",
+              "correct": "ku",
+              "choices": [
+                "ma",
+                "ku",
+                "yo",
+                "ro"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ku",
+              "target": "ク",
+              "correct": "ク",
+              "choices": [
+                "ク",
+                "ヤ",
+                "ヌ",
+                "キ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ホ",
+              "target": "ho",
+              "correct": "ho",
+              "choices": [
+                "ho",
+                "hi",
+                "re",
+                "ko"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ho",
+              "target": "ホ",
+              "correct": "ホ",
+              "choices": [
+                "ホ",
+                "ト",
+                "イ",
+                "サ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ニ",
+              "target": "ni",
+              "correct": "ni",
+              "choices": [
+                "wa",
+                "ni",
+                "sa",
+                "mi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ni",
+              "target": "ニ",
+              "correct": "ニ",
+              "choices": [
+                "ヌ",
+                "フ",
+                "ヲ",
+                "ニ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ヨ",
+              "target": "yo",
+              "correct": "yo",
+              "choices": [
+                "a",
+                "no",
+                "yo",
+                "hi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "yo",
+              "target": "ヨ",
+              "correct": "ヨ",
+              "choices": [
+                "ニ",
+                "エ",
+                "ヨ",
+                "ク"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ニ",
+              "pron": "ni",
+              "correct": "ニ",
+              "choices": [
+                "ニ",
+                "シ",
+                "セ",
+                "ヘ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ヨ",
+              "pron": "yo",
+              "correct": "ヨ",
+              "choices": [
+                "ヤ",
+                "シ",
+                "ヨ",
+                "ハ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ヌ",
+              "pron": "nu",
+              "correct": "ヌ",
+              "choices": [
+                "マ",
+                "ス",
+                "レ",
+                "ヌ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "タ",
+              "pron": "ta",
+              "correct": "タ",
+              "choices": [
+                "オ",
+                "ハ",
+                "タ",
+                "ナ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "レ",
+              "pron": "re",
+              "correct": "レ",
+              "choices": [
+                "ウ",
+                "レ",
+                "ト",
+                "メ"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 8,
+            "at": "2026-06-29T14:41:29.558Z"
           }
         }
       ],
@@ -10819,7 +12614,7 @@
         ]
       },
       "generatedAt": "2026-06-26T19:30:40.777Z",
-      "updatedAt": "2026-06-29T12:16:16.233Z",
+      "updatedAt": "2026-06-29T14:41:29.562Z",
       "id": "tp_17825026538340000116"
     },
     {
@@ -11391,6 +13186,331 @@
             "at": "2026-06-28T09:52:46.604Z"
           },
           "_recreated": true
+        },
+        {
+          "id": "ls_1782744025283_wm6n",
+          "type": "intro_script",
+          "script": "katakana",
+          "rtl": false,
+          "difficulty": 1,
+          "title": "🔡 Katakana",
+          "icon": "🔡",
+          "desc": "Katakana — 8 letters",
+          "letters": [
+            {
+              "ch": "セ",
+              "translit": "se"
+            },
+            {
+              "ch": "ワ",
+              "translit": "wa"
+            },
+            {
+              "ch": "ナ",
+              "translit": "na"
+            },
+            {
+              "ch": "ハ",
+              "translit": "ha"
+            },
+            {
+              "ch": "ム",
+              "translit": "mu"
+            },
+            {
+              "ch": "ン",
+              "translit": "n"
+            },
+            {
+              "ch": "ヒ",
+              "translit": "hi"
+            },
+            {
+              "ch": "キ",
+              "translit": "ki"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "セ",
+              "target": "se",
+              "correct": "se",
+              "choices": [
+                "se",
+                "to",
+                "n",
+                "hi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "se",
+              "target": "セ",
+              "correct": "セ",
+              "choices": [
+                "シ",
+                "ハ",
+                "セ",
+                "ヒ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ワ",
+              "target": "wa",
+              "correct": "wa",
+              "choices": [
+                "se",
+                "wa",
+                "yo",
+                "n"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "wa",
+              "target": "ワ",
+              "correct": "ワ",
+              "choices": [
+                "カ",
+                "ヒ",
+                "ワ",
+                "ロ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ナ",
+              "target": "na",
+              "correct": "na",
+              "choices": [
+                "ya",
+                "wo",
+                "na",
+                "ho"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "na",
+              "target": "ナ",
+              "correct": "ナ",
+              "choices": [
+                "エ",
+                "ク",
+                "キ",
+                "ナ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ハ",
+              "target": "ha",
+              "correct": "ha",
+              "choices": [
+                "ro",
+                "ha",
+                "a",
+                "ni"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ha",
+              "target": "ハ",
+              "correct": "ハ",
+              "choices": [
+                "ハ",
+                "ア",
+                "レ",
+                "サ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ム",
+              "target": "mu",
+              "correct": "mu",
+              "choices": [
+                "to",
+                "ru",
+                "i",
+                "mu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "mu",
+              "target": "ム",
+              "correct": "ム",
+              "choices": [
+                "ン",
+                "ム",
+                "ル",
+                "サ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ン",
+              "target": "n",
+              "correct": "n",
+              "choices": [
+                "ro",
+                "n",
+                "mo",
+                "so"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "n",
+              "target": "ン",
+              "correct": "ン",
+              "choices": [
+                "カ",
+                "ユ",
+                "ヌ",
+                "ン"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ヒ",
+              "target": "hi",
+              "correct": "hi",
+              "choices": [
+                "me",
+                "ma",
+                "ru",
+                "hi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "hi",
+              "target": "ヒ",
+              "correct": "ヒ",
+              "choices": [
+                "ン",
+                "ヒ",
+                "ア",
+                "ヌ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "キ",
+              "target": "ki",
+              "correct": "ki",
+              "choices": [
+                "ri",
+                "ya",
+                "ki",
+                "ro"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ki",
+              "target": "キ",
+              "correct": "キ",
+              "choices": [
+                "キ",
+                "ト",
+                "ネ",
+                "ス"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ハ",
+              "pron": "ha",
+              "correct": "ハ",
+              "choices": [
+                "メ",
+                "ハ",
+                "イ",
+                "マ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ナ",
+              "pron": "na",
+              "correct": "ナ",
+              "choices": [
+                "ソ",
+                "ナ",
+                "ハ",
+                "メ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ヒ",
+              "pron": "hi",
+              "correct": "ヒ",
+              "choices": [
+                "ン",
+                "ホ",
+                "ラ",
+                "ヒ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ン",
+              "pron": "n",
+              "correct": "ン",
+              "choices": [
+                "ツ",
+                "ム",
+                "ン",
+                "ル"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ワ",
+              "pron": "wa",
+              "correct": "ワ",
+              "choices": [
+                "ワ",
+                "ヒ",
+                "ホ",
+                "フ"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 8,
+            "at": "2026-06-29T14:40:25.283Z"
+          }
         }
       ],
       "generationStats": {
@@ -11410,7 +13530,7 @@
         ]
       },
       "generatedAt": "2026-06-26T19:25:27.838Z",
-      "updatedAt": "2026-06-28T18:38:12.692Z",
+      "updatedAt": "2026-06-29T14:40:28.412Z",
       "id": "tp_17825021669650000002",
       "continuedFromId": "tp_17825433860400000751",
       "continuedFrom": "Kalila and Dimna"
@@ -22450,6 +24570,133 @@
               }
             }
           ]
+        },
+        {
+          "id": "ls_1782745452935",
+          "type": "math",
+          "title": "① ② ③",
+          "desc": "＋ － ×  ÷",
+          "icon": "🔢",
+          "numbers": [
+            4,
+            6,
+            8,
+            2,
+            1,
+            7
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "desc",
+              "numbers": [
+                8,
+                4,
+                1,
+                2
+              ],
+              "correct": [
+                "8",
+                "4",
+                "2",
+                "1"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                2,
+                6,
+                4,
+                1
+              ],
+              "correct": [
+                "1",
+                "2",
+                "4",
+                "6"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "7",
+              "op": "+",
+              "b": "5",
+              "correct": "12",
+              "choices": [
+                "11",
+                "13",
+                "12",
+                "10"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "-",
+              "b": "6",
+              "correct": "2",
+              "choices": [
+                "2",
+                "0",
+                "1",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "6",
+              "correct": "8",
+              "choices": [
+                "6",
+                "7",
+                "9",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "4",
+              "op": "+",
+              "b": "6",
+              "correct": "10",
+              "choices": [
+                "9",
+                "10",
+                "8",
+                "11"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "6",
+              "op": "-",
+              "b": "6",
+              "correct": "0",
+              "choices": [
+                "0",
+                "2",
+                "3",
+                "1"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "math",
+            "model": "(procedural)",
+            "attempts": null,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "ms": 1,
+            "at": "2026-06-29T15:04:12.935Z"
+          }
         }
       ],
       "generationStats": {
@@ -22469,7 +24716,7 @@
         ]
       },
       "generatedAt": "2026-06-18T13:46:56.011Z",
-      "updatedAt": "2026-06-24T09:05:39.028Z",
+      "updatedAt": "2026-06-29T15:04:12.935Z",
       "id": "tp_17817906523660000080",
       "continuedFromId": "tp_17825433860400000751",
       "continuedFrom": "Kalila and Dimna"

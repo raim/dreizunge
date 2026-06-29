@@ -7557,7 +7557,14 @@ function buildIntroScriptExercises(lesson) {
   // tLMcq (it shows the transliteration instead), so we only hard-drop on a genuine no-voice device.
   const lang = APP.lessonData?.lang || APP.lang;
   if (!ttsVoiceAvailableFor(lang)) exs = exs.filter(e => e.type !== 'listen_mcq');
-  return shuffle(exs);
+  exs = shuffle(exs);
+  // Play-time length cap (script lessons only): each letter generates ~2 MCQs + listen items, so
+  // a 12-letter lesson is ~29 questions. Re-use the SAME difficulty cut-off a second time here —
+  // present only introMaxLetters(difficulty) (≈8/12/16) random questions per play, so the number
+  // you answer roughly matches the number of glyphs. A replay reshuffles to a different subset.
+  const cap = introMaxLetters(lesson.difficulty || 2);
+  if (exs.length > cap) exs = exs.slice(0, cap);
+  return exs;
 }
 function buildMathExercises(lesson) {
   // Use pre-generated exercises baked into the lesson, or generate on the fly

@@ -225,6 +225,27 @@ const fromOutside = [...glyphChoices].some(c => !shortGlyphs.has(c));
 assert.ok(fromOutside, 'distractors are drawn from the full alphabet, not just the quizzed subset');
 console.log('  difficulty cap + full-alphabet distractor pool: OK');
 
+// ── Play-time question cap (script lessons): introMaxLetters used a SECOND time, capping how
+// many of the generated questions are actually presented per play (random subset). ──
+{
+  const shuf = a => { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; };
+  const APP = { lessonData: { lang: 'ar' }, lang: 'ar' };
+  const ttsVoiceAvailableFor = () => false;   // no voice → isolates the MCQ cap from listen drop
+  const build = new Function('APP','SCRIPTS_DATA','shuffle','ttsVoiceAvailableFor','introMaxLetters','introScriptExercisesFrom',
+    ext(html, 'buildIntroScriptExercises') + '\nreturn buildIntroScriptExercises;'
+  )(APP, scripts, shuf, ttsVoiceAvailableFor, introMaxLetters, clientFrom);
+  for (const diff of [1, 2, 3]) {
+    const letters = scripts.arabic.letters.slice(0, introMaxLetters(diff));   // stored capped letters
+    const played = build({ script: 'arabic', letters, difficulty: diff });
+    assert.strictEqual(played.length, introMaxLetters(diff),
+      `difficulty ${diff} presents exactly ${introMaxLetters(diff)} questions (not ~2×letters+5)`);
+  }
+  // A bigger stored letter set still caps the questions to the difficulty number.
+  const big = build({ script: 'arabic', letters: scripts.arabic.letters, difficulty: 2 });
+  assert.strictEqual(big.length, introMaxLetters(2), 'cap applies regardless of how many letters are stored');
+  console.log('  play-time question cap (script lessons, difficulty-scaled random subset): OK');
+}
+
 // ── Editor: intro_script lessons are editable (letters table) ────────────────
 // The registry must route intro_script to its own editor branch (not the vocab one), and the
 // generic move/delete/sync/flag helpers must know the `letter` → ls.letters mapping.

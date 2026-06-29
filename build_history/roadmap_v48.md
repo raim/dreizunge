@@ -7,6 +7,66 @@
 > uploaded ground truth instead of the model's dialect knowledge.
 
 ## Build plans (queued, not started)
+
+### Dynamic mixed lessons as the default progression model — DISCUSSED, not started
+Shift the play model from "complete each lesson in a locked path" to "play variable-length mixed
+rounds drawn from the whole set until a target fraction of ALL questions is solved." Each lesson
+node shows partial coverage (e.g. "9/29 solved") instead of locked/done. Builds directly on the
+existing `mixed` lesson (`buildMixedExercises` already pools siblings, prefers ⭐, skips
+flagged/hidden, tags `_srcLessonIdx`). Do not start until the data-model decisions (esp. "what
+counts as solved") are made.
+
+**What changes, concretely:**
+- **Progress model: per-question, not per-lesson.** Today `progress.completed[topic][lessonId]`
+  is a per-lesson flag/score. The new model needs per-*question* solved-state, e.g.
+  `progress.solved[topic][questionKey]`. That means every exercise needs a **stable id** — today
+  exercises are re-derived/shuffled on each play (script lessons especially), so a content-hash key
+  (type + target/correct + direction) is needed so "solved" survives re-derivation and reshuffles.
+  This is the core enabling change.
+- **Per-lesson coverage indicator.** Each lesson node shows `solved / total` of *its* questions
+  (resolved via `_srcLessonIdx` when played in a mixed round), e.g. a partial ring or "9/29".
+  Replaces the binary done-node for the mixed-default mode; the linear path can remain as an
+  optional/teacher view.
+- **Variable-length mixed rounds.** A "Play" button assembles a round of N (the Quick/Normal/Full
+  length idea from this session) weighted toward **unsolved** questions, with some review of solved
+  ones. Generalizes `buildMixedExercises` from "perType per sibling" to "weighted sample over the
+  whole pool by solved-state."
+- **Completion = a defined fraction of ALL questions.** The set is "done" at e.g. 80% solved
+  (configurable), not 100% of every lesson. A set-level progress bar tracks the fraction.
+
+**Open design questions (decide before building):**
+1. **What counts as "solved"?** One correct answer (coverage model) vs. spaced-repetition mastery
+   (needs N correct, decays over time → SRS). Coverage is far simpler and matches the stated goal
+   ("solved a defined fraction"); SRS is a bigger system. Recommend coverage first, SRS as a later
+   layer.
+2. **Stable question identity.** Required for per-question progress. Define a content-hash key and
+   make `buildExercises` / the intro re-derivation attach it. The hardest enabling piece.
+3. **Default vs opt-in.** "Default playing model" — does the locked linear path go away, or become a
+   toggle? Recommend: mixed-default for learners, linear/locked still available (and teacher mode
+   keeps the full per-lesson path for editing/QC).
+4. **Round assembly weighting.** Pure unsolved-first, or unsolved-heavy with light review? Avoid
+   starving review entirely; a 70/30 unsolved/review split is a reasonable default.
+5. **Coverage-aware sampling** (ties to the deferred round-length feature): a short round shouldn't
+   repeatedly miss the same questions — sample to spread coverage across lessons/letters.
+6. **Interaction with hidden/flagged.** Hidden lessons already excluded from pooling + play; flagged
+   questions already de-prioritized — both carry over. Decide whether flagged questions count toward
+   the denominator (recommend: no, exclude from "all questions").
+
+**Why it's tractable:** `buildMixedExercises` + `_srcLessonIdx` + the per-item flag/⭐ ranking are
+already in place; the genuinely new work is (a) stable question ids and (b) per-question progress
+storage + the coverage UI. Sequence: stable ids → per-question solved store → coverage indicator on
+nodes → weighted round assembly → set-level fraction + "keep playing" loop.
+
+**Interim shipped (v47.x):** as a stopgap before the full model, **script lessons** now apply the
+difficulty cut-off (`introMaxLetters`, 8/12/16) a *second* time — at play time — capping the
+presented questions to a difficulty-scaled **random subset** (so a 12-letter lesson plays ~12
+questions, not ~29; replays reshuffle). Implemented in `buildIntroScriptExercises`; **script lessons
+only** for now. The general per-lesson/global "round length" version (all lesson types) is part of
+this plan.
+
+
+---
+
 - **Dialect lessons M1 — WAITING ON USER MATERIAL.** Decisions locked (glossary-table-first;
   East-Tyrolean pilot; dialect=target / High-German=source; 3-col table dialect|de|note; one row =
   one verbatim vocab item; approximate `de` voice toggle). Do NOT start coding until the user

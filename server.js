@@ -1216,6 +1216,7 @@ function generateIntroScript(lang, opts) {
       type: 'intro_script',
       script: scriptName,
       rtl: !!table.rtl,
+      difficulty: opts.difficulty || 2,
       title: '🔡 ' + (table.label || scriptName),
       desc: (table.label || scriptName) + ' — ' + letters.length + ' letters',
       icon: '🔡',

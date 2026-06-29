@@ -653,6 +653,10 @@ table exists. Open/create a lesson set per target below, add the lesson, and pla
       whole alphabet: 🟢≈8, 🟡≈12, 🔴≈16 letters (set via the add-lesson difficulty). Noticeably
       shorter than before, but wrong-answer choices still include letters from across the whole
       alphabet (not just the quizzed subset).
+- [ ] **Play length is capped too.** When you *play* a script lesson you answer only ≈8/12/16
+      questions (matching the difficulty), not ~2×letters+5 — even though each letter generates
+      both MCQ directions plus listen items. Replaying the same lesson gives a different random
+      subset. (Script lessons only; other lesson types still play all their questions.)
 - [ ] **Script lessons are editable.** Open a script lesson's ✏️ editor: each **letter** shows
       its glyph (read-only) and editable fields (Name, Sound, IPA), plus ↑↓ reorder, 🗑 delete,
       ⚑ flag, and ⭐ star — same as vocab. Edit a transliteration / reorder / delete a letter,
