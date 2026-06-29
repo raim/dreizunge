@@ -703,6 +703,9 @@ For a target you can't type (e.g. en→Arabic), in a lesson with type-the-target
       letters into order, like sentence ordering but per-glyph. Correct order → ✅, wrong → ✗.
 - [ ] **Arabic diacritics stay attached**: قِطَّة offers letters like قِ / طَّ / ة as single tiles
       (a consonant with its harakat is one tile), not bare vowel marks.
+- [ ] **Japanese furigana stripped**: a JA type-the-target like 猫[ねこ]が好[す]き offers tiles
+      猫 / が / 好 / き — the kanji/kana base only, never bracket characters or the reading kana
+      (which would reveal the pronunciation).
 - [ ] Toggling it **mid-question** (before answering) swaps a typing question to/from ordering.
 - [ ] It **persists** across reloads (stored locally). MCQ / word-order / listen-MCQ questions are
       unaffected — only type-the-target questions change.

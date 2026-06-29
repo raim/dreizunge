@@ -740,7 +740,9 @@ async function qcCheckCloze(item, lang, srcLang, userComment) {
 async function qcCheckSynonymSet(entry, lang, srcLang, userComment) {
   const L = langName(lang), S = langName(srcLang || 'en');
   if (!entry.base) return { ok: true };
-  const fmt = (arr) => (Array.isArray(arr) && arr.length) ? arr.map(x => x.w + (x.g ? ` (${x.g})` : '')).join(', ') : '(none)';
+  // Strip furigana brackets (猫[ねこ] → 猫) so the model sees clean words, matching qcCheckCloze.
+  const sf = _qcStripFuri;
+  const fmt = (arr) => (Array.isArray(arr) && arr.length) ? arr.map(x => sf(x.w) + (x.g ? ` (${x.g})` : '')).join(', ') : '(none)';
   const system =
     `You check a ${L} vocabulary entry and its related-words lists.\n` +
     `Verify ALL of:\n` +
@@ -754,7 +756,7 @@ async function qcCheckSynonymSet(entry, lang, srcLang, userComment) {
     `single most important problem (e.g. "X is not a synonym of <word>" or the corrected gloss). ` +
     `No preamble, no quotes.`;
   const user =
-    `Word (${L}): ${entry.base}\n` +
+    `Word (${L}): ${sf(entry.base)}\n` +
     `Gloss (${S}): ${entry.gloss || '(none)'}\n` +
     `Synonyms: ${fmt(entry.synonyms)}\n` +
     `Antonyms: ${fmt(entry.antonyms)}\n` +

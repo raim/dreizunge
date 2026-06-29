@@ -8339,15 +8339,20 @@ function tOrder(ex){
 // `ex.words` is populated lazily here so addTok can read it; the prompt is the source meaning
 // (or the spoken word's translation) so the learner knows what to spell.
 function tGlyphOrder(ex){
-  ex.words = glyphTokens(ex.correct);                 // glyph bank, read by addTok/check
-  ex._glyphOrder = true;                              // check() joins with '' for this ex
+  // Strip furigana first: a Japanese target is stored as 猫[ねこ]が好[す]き, but the learner orders
+  // the displayed base (猫が好き) — never the bracket characters or the kana readings (which would
+  // also give the pronunciation away). The stored answer keeps its brackets; we compare against the
+  // stripped form in check().
+  ex._glyphTarget = stripFuri(ex.correct);
+  ex.words = glyphTokens(ex._glyphTarget);            // glyph bank, read by addTok/check
+  ex._glyphOrder = true;                              // check() joins with '' and compares stripped
   // Shuffle the displayed bank so the answer isn't pre-ordered, but keep ex.words in natural
   // order (addTok indexes into it); we shuffle the render order via an index map.
   const order = shuffle(ex.words.map((_,i)=>i));
   const tokens = order.map(i =>
     `<span class="tok" dir="auto" id="t${i}" onclick="addTok(${i})" style="font-size:20px">${escHtml(ex.words[i])}</span>`
   ).join("");
-  const prompt = ex.source ? t("ex.glyph_order.q",{word:escHtml(ex.source)}) : t("ex.glyph_order.q_plain");
+  const prompt = ex.source ? t("ex.glyph_order.q",{word:furiHtml(ex.source)}) : t("ex.glyph_order.q_plain");
   return `<div class="ex-badge">⌨️ ${t("ex.badge.glyph_order")}</div><div class="card">`
     + `<div class="qtext" dir="auto" style="margin-bottom:8px">${prompt}</div>`
     + `<div class="sbox" id="sbox" dir="auto"><span class="sbox-ph" dir="auto">${t("ex.glyph_order.placeholder")}</span></div>`
@@ -8596,9 +8601,11 @@ function check(){
   const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
   const ex=C.exercises[C.cur]; let ok=false;
   if(_glyphOrderActive(ex)){
-    // No-keyboard glyph ordering: join the placed glyphs (no spaces) and compare to the target,
-    // with the same diacritic-leniency the typed path uses.
-    ok = normDiacritics((C.placed||[]).map(p=>p.w).join('')) === normDiacritics(ex.correct);
+    // No-keyboard glyph ordering: join the placed glyphs (no spaces) and compare to the target's
+    // displayed base (furigana brackets stripped — see tGlyphOrder), with the same diacritic-
+    // leniency the typed path uses.
+    const goal = ex._glyphTarget != null ? ex._glyphTarget : stripFuri(ex.correct);
+    ok = normDiacritics((C.placed||[]).map(p=>p.w).join('')) === normDiacritics(goal);
   }
   else if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){
