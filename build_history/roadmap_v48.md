@@ -1,5 +1,21 @@
 # Roadmap v48
 
+> **Prioritized next:** German-dialect lessons — see `build_history/spec_dialect_lessons_m1.md`
+> (M1: faithful lessons from uploaded glossary/parallel text; generated dialect stories deferred to
+> M2). A dialect scaffold already exists in code (`userDialect` hint + user-story/translation import
+> + `sysLessonFromText`); the M1 gaps are a glossary-table importer and anchoring lessons strictly to
+> uploaded ground truth instead of the model's dialect knowledge.
+
+## Build plans (queued, not started)
+- **Dialect lessons M1 — WAITING ON USER MATERIAL.** Decisions locked (glossary-table-first;
+  East-Tyrolean pilot; dialect=target / High-German=source; 3-col table dialect|de|note; one row =
+  one verbatim vocab item; approximate `de` voice toggle). Do NOT start coding until the user
+  supplies real East-Tyrolean rows — the importer's column/orthography handling should be built and
+  tested against actual data, not guessed shapes. Full spec + parsing rules + data model + task
+  scope in `spec_dialect_lessons_m1.md`. Then: M1.5 opt-in AI example sentences (QC-gated), M2
+  generated dialect stories (per-dialect `curated:true`, native-reviewed; high risk).
+
+
 Carries forward from v47. **v47 shipped** (see `build_history/v47_session1_notes.md`): a batch
 of UX / i18n fixes (import Merge/Replace dialog, storyline lesson-type icons, Arabic-as-target
 RTL split), Japanese furigana support (paste-time `<ruby>`→bracket normalization + katakana

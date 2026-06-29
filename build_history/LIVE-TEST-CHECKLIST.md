@@ -708,3 +708,19 @@ For a target you can't type (e.g. en→Arabic), in a lesson with type-the-target
       unaffected — only type-the-target questions change.
 - [ ] Muted **and** no-keyboard together: a muted listen-and-type question shows **letter ordering**
       (not the type-by-translation fallback).
+
+### 36. Bug fixes — QC button coverage + hidden lessons in static mode
+**QC button on more lesson types** (live, needs Ollama):
+- [ ] The per-lesson 🔍 QC button now appears on **word_forms** and **synonyms** lessons (not just
+      vocab/sentences). It does NOT appear on intro_script (human-QC) or math. Still hidden when
+      there's no backend (static).
+
+**Hidden lessons in static (non-teacher) mode** (browser-only — build the static docs and open
+without a backend):
+- [ ] A lesson hidden (🫥) in teacher mode does **not appear** in the learner's path in static mode.
+- [ ] It does **not block progress**: the lesson after a hidden one is reachable once the real
+      previous (visible) lesson is done — the hidden lesson no longer locks it.
+- [ ] Progress bar can reach **100%** and the **story unlocks** with a hidden lesson present
+      (hidden lessons don't count toward the total).
+- [ ] In **teacher/live** mode the hidden lesson still shows (greyed 👁/🫥 toggle) and can be unhidden.
+- [ ] Normal locking still works: a non-hidden undone lesson still locks the next one in static mode.

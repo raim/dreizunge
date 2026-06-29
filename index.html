@@ -3911,9 +3911,14 @@ function buildPath(){
     _emojiBig.onclick = null;
   }
   document.getElementById('topic-name-big').textContent=d.topic;
-  const _allL=(APP.lessonData?.lessons||[]).length;
+  // A teacher-hidden lesson (_hidden) is invisible to a learner in non-teacher (static) mode:
+  // it must not render, must not lock the next lesson, and must not count toward progress or
+  // story unlock. In teacher/live mode it still shows (greyed) and counts, so it can be unhidden.
+  const _lessonCounts = (L) => APP._teacherMode || !L._hidden;
+  const _countedLessons = (APP.lessonData?.lessons||[]).filter(_lessonCounts);
+  const _allL=_countedLessons.length;
   const _doneMap=APP.progress.completed?.[APP.lessonData?.topic]||{};
-  const _doneL=(APP.lessonData?.lessons||[]).filter(L=>_doneMap[L.id]).length;
+  const _doneL=_countedLessons.filter(L=>_doneMap[L.id]).length;
   const _scores=Object.values(_doneMap).filter(v=>typeof v==='object'&&v.total>0);
   const _totC=_scores.reduce((s,v)=>s+v.correct,0);
   const _totT=_scores.reduce((s,v)=>s+v.total,0);
@@ -4085,7 +4090,7 @@ function buildPath(){
   const storyBody=document.getElementById('story-body');
   if(d.story && storySec && storyBody){
     storySec.style.display='';
-    const allDone=d.lessons.every(L=>done[L.id]);
+    const allDone=d.lessons.filter(_lessonCounts).every(L=>done[L.id]);
     const arrow=document.getElementById('story-arrow');
     if(allDone){ storyBody.classList.add('open'); if(arrow) arrow.classList.add('open'); }
     else { storyBody.classList.remove('open'); if(arrow) arrow.classList.remove('open'); }
@@ -4119,11 +4124,14 @@ function buildPath(){
 
   const path=document.getElementById('lesson-path');
   path.innerHTML='';
+  let _prevDone=true;   // "previous" before the first counted lesson is treated as done (unlocks #1)
+  let _firstNode=true;
   d.lessons.forEach((L,i)=>{
-    const isDone=!!(done[L.id]), isLocked=i>0&&!done[d.lessons[i-1].id]&&!APP._teacherMode, isActive=!isDone&&!isLocked;
+    if(!_lessonCounts(L)) return;   // hidden + non-teacher → omit from the path entirely
+    const isDone=!!(done[L.id]), isLocked=!_firstNode&&!_prevDone&&!APP._teacherMode, isActive=!isDone&&!isLocked;
     const lessonScore=typeof done[L.id]==='object'?done[L.id]:null;
     const lessonPct=lessonScore&&lessonScore.total>0?Math.round(100*lessonScore.correct/lessonScore.total):null;
-    if(i>0){ const ln=document.createElement('div'); ln.className='path-line'+(done[d.lessons[i-1].id]?' done':''); path.appendChild(ln); }
+    if(!_firstNode){ const ln=document.createElement('div'); ln.className='path-line'+(_prevDone?' done':''); path.appendChild(ln); }
     const node=document.createElement('div');
     node.className='lesson-node'+(isDone?' done-node':isLocked?' locked':isActive?' active-node':'')
       +(L._hidden?' hidden-node':'');
@@ -4158,13 +4166,14 @@ function buildPath(){
             : `<button class="fix-btn" style="font-size:12px;padding:2px 7px;color:var(--red)" title="Delete lesson" onclick="deleteLessonNode(${i})">🗑</button>`}
           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move up" onclick="moveLessonNode(${i},-1)" ${i===0?'disabled':''}>↑</button>
           <button class="fix-btn" style="font-size:12px;padding:2px 6px" title="Move down" onclick="moveLessonNode(${i},1)" ${i===d.lessons.length-1?'disabled':''}>↓</button>
-          ${APP.info.canGenerate&&(L.vocab||L.sentences)?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('qc.btn.lesson')}" onclick="qcRun({topicId:'${d.id}',lessonIdx:${i}},this)">🔍</button>`:''}
+          ${APP.info.canGenerate&&(L.vocab||L.sentences||L.items||L.words)?`<button class="fix-btn" style="font-size:12px;padding:2px 7px" title="${t('qc.btn.lesson')}" onclick="qcRun({topicId:'${d.id}',lessonIdx:${i}},this)">🔍</button>`:''}
         </div>`:''}
       </div>`
     if(!isLocked) node.onclick=()=>startLesson(i);
     path.appendChild(node);
+    _prevDone=isDone; _firstNode=false;
   });
-  const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
+  const nextIdx=d.lessons.findIndex(L=>!done[L.id]&&_lessonCounts(L));
   // start-btn removed from UI — lessons started directly from path nodes
 
   // Bottom action row — live only (hidden in static via canGenerate check)
@@ -4237,7 +4246,7 @@ function _canEdit(){ return !!(APP.info?.canGenerate || APP._teacherMode); }
 function startNextLesson(){
   if(!APP.lessonData)return;
   const d=APP.lessonData, done=APP.progress.completed[d.topic]||{};
-  const nextIdx=d.lessons.findIndex(L=>!done[L.id]);
+  const nextIdx=d.lessons.findIndex(L=>!done[L.id]&&(APP._teacherMode||!L._hidden));
   if(nextIdx>=0) startLesson(nextIdx);
 }
 

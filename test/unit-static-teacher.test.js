@@ -17,8 +17,9 @@ console.log('  _canEdit helper: OK');
 assert.ok(html.includes('${_canEdit()&&L.id?`<div'), 'edit row must be gated by _canEdit');
 // ... and the flag-count badge too.
 assert.ok(html.includes('const hasFlags=lessonFlagCount>0&&_canEdit();'), 'flag badge must use _canEdit');
-// ... but the QC (LLM) button inside the row stays canGenerate-gated.
-assert.ok(html.includes('${APP.info.canGenerate&&(L.vocab||L.sentences)?`<button class="fix-btn"'),
+// ... but the QC (LLM) button inside the row stays canGenerate-gated (now also for the
+// word_forms `items` and synonyms `words` lesson types, whose QC the backend supports).
+assert.ok(html.includes('${APP.info.canGenerate&&(L.vocab||L.sentences||L.items||L.words)?`<button class="fix-btn"'),
   'QC button must stay canGenerate-gated');
 console.log('  edit row gating (non-LLM vs QC): OK');
 
