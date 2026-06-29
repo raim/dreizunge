@@ -654,14 +654,57 @@ table exists. Open/create a lesson set per target below, add the lesson, and pla
       shorter than before, but wrong-answer choices still include letters from across the whole
       alphabet (not just the quizzed subset).
 - [ ] **Script lessons are editable.** Open a script lesson's ✏️ editor: each **letter** shows
-      its glyph and editable fields (Letter, Lower, Name, Sound, IPA), plus ↑↓ reorder, 🗑 delete,
+      its glyph (read-only) and editable fields (Name, Sound, IPA), plus ↑↓ reorder, 🗑 delete,
       ⚑ flag, and ⭐ star — same as vocab. Edit a transliteration / reorder / delete a letter,
       save, replay: the quiz reflects the change (exercises rebuild from the edited letter table).
-      The "⚑ only" filter shows just flagged letters. In the static build, delete marks a letter
-      as a delete-candidate (rides the export) rather than destroying it.
+      The glyph itself can't be typed over. The "⚑ only" filter shows just flagged letters. In the
+      static build, delete marks a letter as a delete-candidate (rides the export).
 
 ### Languages to externally verify (summary)
 - **Korean (Hangul)** — primary: get a native speaker to confirm jamo sounds / ㅇ / positional consonants.
 - **Hebrew** — secondary: confirm the 22 transliterations and that base-only (no sofit) is acceptable.
 - **Greek** — confirm the modern-value + macron-disambiguation choice suits your learners.
 - Cyrillic / Japanese kana / Arabic — high confidence; spot-check only.
+
+### 33c. Arc-integrated script lessons (Plan B — needs Ollama to verify end-to-end)
+Generate a **multi-chapter** story for an en→non-Latin target (e.g. **en→Arabic**) with the
+learning **arc** enabled.
+- [ ] A **"🔡 Teach the script per chapter"** checkbox appears under the arc toggle **only** for
+      a target whose script differs from the source (en→ar yes; en→it no), and only for >1 chapter.
+      Default checked.
+- [ ] With it on, **each generated chapter** has a **🔡 script lesson prepended** (plays FIRST,
+      before the vocab/word-form/synonym lessons).
+- [ ] The prepended lesson is **extend mode**: chapter 1 introduces the alphabet seen so far;
+      each later chapter's script lesson covers **only letters new to that chapter** (not repeating
+      letters taught in earlier chapters). Letter count respects difficulty (≈8/12/16).
+- [ ] A chapter that introduces **fewer than 4 new letters** gets **no** script lesson (nothing to
+      teach) rather than an empty one.
+- [ ] Unchecking the box (or en→Latin target) generates **no** script lessons — vocab/arc only.
+- [ ] PDF-import multi-chapter flow: script primer is added automatically for differing-script
+      targets (no separate checkbox there).
+
+### 34. QC for synonyms + word_forms (Plan C — needs Ollama to verify the prompts)
+Run QC (the ⚙ QC action) over a topic containing a **word_forms** and a **synonyms** lesson.
+- [ ] **word_forms**: items with a wrong marked-correct option, a distractor that also fits, a
+      mismatched translation, or a bad explanation get a 🟧 QC note in the editor describing the
+      problem; clean items get none. The note is read-only (no one-click fix) with a ✕ dismiss.
+- [ ] **synonyms**: entries with a wrong gloss, a non-synonym in the synonyms list, a bad antonym,
+      or a wrong homophone get a QC note; clean entries get none.
+- [ ] **intro_script** lessons are NOT flagged by QC (curated data — use the per-letter flag/edit).
+- [ ] Re-running QC on a now-corrected item clears its earlier QC note.
+- [ ] The lesson's flag badge counts QC notes on `items`/`words` (not just vocab/sentences).
+
+### 35. No-keyboard → glyph ordering (browser-only)
+For a target you can't type (e.g. en→Arabic), in a lesson with type-the-target questions:
+- [ ] A **⌨️ keyboard button** sits next to the 🔊 mute button in the question's bottom row;
+      hovering shows "press this if you don't have the right keyboard for this language…".
+- [ ] Press it (button highlights). A **type-the-target** question (listen-and-type, type the
+      plural, type the conjugation) becomes a **letter-ordering** exercise: tap the target's
+      letters into order, like sentence ordering but per-glyph. Correct order → ✅, wrong → ✗.
+- [ ] **Arabic diacritics stay attached**: قِطَّة offers letters like قِ / طَّ / ة as single tiles
+      (a consonant with its harakat is one tile), not bare vowel marks.
+- [ ] Toggling it **mid-question** (before answering) swaps a typing question to/from ordering.
+- [ ] It **persists** across reloads (stored locally). MCQ / word-order / listen-MCQ questions are
+      unaffected — only type-the-target questions change.
+- [ ] Muted **and** no-keyboard together: a muted listen-and-type question shows **letter ordering**
+      (not the type-by-translation fallback).

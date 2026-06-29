@@ -201,6 +201,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .placed-tok:hover{opacity:.75}.placed-tok.sel-tok{background:var(--yellow);border-color:var(--yellow);color:#7a5800;box-shadow:0 2px 0 #c8960070}
 .sbox-ph{font-size:13px;color:var(--gray);font-style:italic}
 .wbank{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.kbd-btn.kbd-on{border-color:var(--blue)!important;color:var(--blue-dark);box-shadow:0 2px 0 #84d8ff}
 .tok{background:var(--white);border:2.5px solid var(--gray-mid);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;color:var(--text);font-family:'Nunito',sans-serif;box-shadow:0 2px 0 var(--gray-mid)}.eh-tok{display:inline;cursor:pointer;border-radius:3px;padding:1px 2px;transition:background .1s}.eh-tok.suspect{background:#ffe066;outline:2px solid #f5a623}.eh-tok.correct-mark{background:#c8f7c5;outline:2px solid #4caf50}.eh-tok.missed-mark{text-decoration:underline wavy #f5a623}.eh-tok.wrong-mark{background:#ffd0d0;outline:2px solid #e53935}.eh-wrap{line-height:2.2;font-size:15px;margin:10px 0;padding:12px;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid)}.eh-score{font-size:24px;font-weight:900;text-align:center;margin:14px 0}.aeh-wrap{font-size:14px;line-height:2.1;padding:12px;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);margin:10px 0}.aeh-sent{cursor:pointer;border-radius:3px;padding:1px 3px;transition:background .1s}.aeh-sent.suspect{background:#ffe066;outline:2px solid #f5a623}.aeh-sent.correct-mark{background:#c8f7c5;outline:2px solid #4caf50}.aeh-sent.missed-mark{background:#fde8c8;outline:2px solid #fd7e14}.aeh-sent.wrong-mark{background:#ffd0d0;outline:2px solid #e53935}
 .tok:hover{border-color:var(--blue)}
 .tok.used{opacity:.15;pointer-events:none}
@@ -711,6 +712,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <option value="vocab">➕🔁 New + review vocabulary</option>
           <option value="grammar">🧩🔁 Word forms + synonyms</option>
         </select>
+        <label class="user-story-check-row" id="gen-arc-script-row" style="display:none;margin:4px 0 0 24px">
+          <input type="checkbox" id="gen-arc-script-cb" checked>
+          <span id="gen-arc-script-lbl">🔡 Teach the script per chapter</span>
+        </label>
       </div>
     </div>
     <div class="style-wrap" id="style-wrap">
@@ -1260,6 +1265,10 @@ function introLetterScope(d, scriptName, mode) {
   const full = (SCRIPTS_DATA[scriptName] || {}).letters || [];
   if (mode !== 'reinforce' && mode !== 'extend') return { letters: full, scoped: false };
   const prior = priorLessonSets(d);
+  // Both reinforce (letters from earlier chapters) and extend (letters NEW vs earlier chapters)
+  // are defined relative to PRIOR chapters. With none (a standalone set or the first chapter),
+  // there's nothing to scope against → teach the full alphabet.
+  if (!prior.length) return { letters: full, scoped: false };
   const priorLetters = _lettersInSets(prior, scriptName);
   let letters;
   if (mode === 'reinforce') {
@@ -1297,6 +1306,10 @@ var APP = {
   info: {backend:'none',canGenerate:false},
   _teacherMode: true, // live: unlocked by default; static overrides to false
   lessonData: null,
+  // When the learner indicates they don't have the right keyboard for the target language,
+  // every type-the-target exercise is replaced by a glyph-ordering exercise (tap the letters
+  // into order, like sentence ordering but per-glyph). Persisted across sessions.
+  noKeyboard: (() => { try { return localStorage.getItem('imp3_noKeyboard') === '1'; } catch(_) { return false; } })(),
   // The form's own (persisted) language selection — what generation uses and what
   // the main-page selectors display. Stays constant while a saved story is viewed.
   formLang: loadLang(),
@@ -1514,6 +1527,7 @@ function applyUIStrings() {
   _setText('story-len-lbl', t('form.story_len_lbl'));
   _setText('num-chapters-lbl', t('form.num_chapters_lbl'));
   _setText('gen-arc-lbl', t('form.arc_lbl'));
+  _setText('gen-arc-script-lbl', t('form.arc_script_lbl'));
   _setAttr('sl-bottom-continue', 'title', t('lesson.continue_title') || t('sl.continue'));
   _setAttr('sl-bottom-download', 'title', t('sl.download'));
   _setAttr('sl-bottom-clear', 'title', t('sl.clear_progress'));
@@ -1740,6 +1754,15 @@ function onNumChaptersSlider(v){
   const el=document.getElementById('num-chapters-val'); if(el) el.textContent=numChaptersLabel(APP.numChapters);
   // The learning-arc toggle only applies to multi-chapter generation.
   const arcRow=document.getElementById('gen-arc-row'); if(arcRow) arcRow.style.display=APP.numChapters>1?'':'none';
+  updateArcScriptRow();
+}
+// The "teach the script per chapter" opt-in only makes sense when generating multiple chapters
+// AND the target uses a script the source language doesn't (so there's an alphabet to teach).
+function updateArcScriptRow(){
+  const row=document.getElementById('gen-arc-script-row');
+  if(!row) return;
+  const show = APP.numChapters>1 && typeof needsIntroScript==='function' && needsIntroScript(APP.lang, APP.srcLang);
+  row.style.display = show ? '' : 'none';
 }
 function restoreNumChaptersSlider(){
   const sl=document.getElementById('num-chapters-slider');
@@ -1857,6 +1880,7 @@ function selectLang(code, silent, fromForm){
   repopulateContinueSelect();
   updateDocDir();
   try { updateTtsVoiceNote(); } catch(_){}
+  try { updateArcScriptRow(); } catch(_){}
   const sel=document.getElementById('lang-select');
   if(fromForm && sel && sel.value!==code) sel.value=code;
   const L=LANGS[code]||LANGS.it;
@@ -2970,6 +2994,9 @@ async function pdfGenerateAll() {
     body.arc = true;
     body.arcMode = document.getElementById('pdf-arc-mode')?.value || 'vocab';
     body.arcReinforce = ['word_forms', 'synonyms'];
+    // PDF flow has no dedicated checkbox; default to the script primer when the target uses a
+    // script the source doesn't (server also defaults this, but be explicit).
+    body.arcScript = (typeof needsIntroScript === 'function') && needsIntroScript(APP.lang, APP.srcLang);
   }
   _pdfChunks.forEach(c => c.status = 'pending');
   _renderPdfChunks();
@@ -3782,7 +3809,7 @@ async function doGenerate(forceRegen){
       lessonFormat:APP.lessonFormat||'standard',
       continuedFrom:(document.getElementById('continue-select')?.value||null) };
     if(APP.storyStyle && APP.storyStyle!=='creative') gbody.storyStyle=APP.storyStyle;
-    if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcMode=document.getElementById('gen-arc-mode')?.value||'vocab'; gbody.arcReinforce=['word_forms','synonyms']; }
+    if(document.getElementById('gen-arc-cb')?.checked){ gbody.arc=true; gbody.arcMode=document.getElementById('gen-arc-mode')?.value||'vocab'; gbody.arcReinforce=['word_forms','synonyms']; gbody.arcScript=!!document.getElementById('gen-arc-script-cb')?.checked; }
     try{
       const r=await fetch('/api/generate-book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(gbody)});
       const resp=await r.json();
@@ -4109,8 +4136,8 @@ function buildPath(){
       ...(L.conjugations||[]).flatMap(c=>(c.forms||[]).map(f=>(f.form||'').slice(0,40).replace(/\s+/g,'_'))),
     ]);
     // QC flags (item.qc) and manual user flags (item.userFlag) both count toward the badge.
-    const lessonFlagCount=[...(L.vocab||[]),...(L.sentences||[]),...(L.items||[]),...(L.words||[])].filter(x=>x&&(x.qc||x.userFlag)).length + (Array.isArray(L._miscFlags)?L._miscFlags.length:0);
-    const lessonStarCount=[...(L.vocab||[]),...(L.sentences||[]),...(L.items||[]),...(L.words||[])].filter(x=>x&&x.userRating).length;
+    const lessonFlagCount=[...(L.vocab||[]),...(L.sentences||[]),...(L.items||[]),...(L.words||[]),...(L.letters||[])].filter(x=>x&&(x.qc||x.userFlag)).length + (Array.isArray(L._miscFlags)?L._miscFlags.length:0);
+    const lessonStarCount=[...(L.vocab||[]),...(L.sentences||[]),...(L.items||[]),...(L.words||[]),...(L.letters||[])].filter(x=>x&&x.userRating).length;
     const hasFlags=lessonFlagCount>0&&_canEdit();
     const hasStars=lessonStarCount>0&&_canEdit();
     const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT()[diff]||''}</span>`:'';
@@ -6101,15 +6128,13 @@ function _editorBranchIntroScript(ls, li, flaggedOnly){
     const delCls  = L.userDelete ? ' del-candidate' : '';
     html += `<div class="editor-entry${L.userFlag?' flagged':''}${starCls}${delCls}" id="ee-${li}-letter-${i}">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-        <span style="font-size:24px;line-height:1" dir="auto">${escHtml(L.ch||'')}${L.lower&&L.lower!==L.ch?' '+escHtml(L.lower):''}</span>
+        <span style="font-size:24px;line-height:1" dir="auto" title="${escAttr(t('intro.field.glyph'))} (${escAttr(t('intro.glyph_readonly'))})">${escHtml(L.ch||'')}${L.lower&&L.lower!==L.ch?' '+escHtml(L.lower):''}</span>
         <span style="flex:1"></span>
         <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','letter',${i},-1)" ${i===0?'disabled':''}>↑</button>
         <button class="storyline-hdr-btn" style="padding:1px 5px;font-size:11px" onclick="moveEditorItem('${li}','letter',${i},1)" ${i===letters.length-1?'disabled':''}>↓</button>
         ${flagBtn}
         <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="deleteEditorItem('${li}','letter',${i})">🗑</button>
       </div>
-      <div class="editor-field"><label>${escHtml(t('intro.field.glyph'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="ch" dir="auto" value="${escAttr(L.ch||'')}" style="width:70px;flex:none;font-size:18px"></div>
-      <div class="editor-field"><label>${escHtml(t('intro.field.lower'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="lower" dir="auto" value="${escAttr(L.lower||'')}" placeholder="—" style="width:70px;flex:none;font-size:18px"></div>
       <div class="editor-field"><label>${escHtml(t('intro.field.name'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="name" value="${escAttr(L.name||'')}"></div>
       <div class="editor-field"><label>${escHtml(t('intro.field.translit'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="translit" value="${escAttr(L.translit||'')}"></div>
       <div class="editor-field"><label>${escHtml(t('intro.field.ipa'))}</label><input data-li="${li}" data-type="letter" data-fi="${i}" data-field="ipa" value="${escAttr(L.ipa||'')}" placeholder="—" style="width:90px;flex:none"></div>
@@ -6145,6 +6170,7 @@ function _editorBranchSynonyms(ls, li, flaggedOnly){
           </div>`;
         });
       });
+      html += _qcNoteHtml(li, 'syn', wi, g);
       html += _flagBoxHtml(li, 'syn', wi, g, false);
       html += _starNoteHtml(g);
       html += _delNoteHtml(g);
@@ -6178,6 +6204,7 @@ function _editorBranchWordForms(ls, li, flaggedOnly){
           <input data-li="${li}" data-type="wf" data-fi="${fi}" data-field="choice" data-ci="${ci}" value="${escAttr(c||'')}" style="flex:1">
           <button class="storyline-hdr-btn danger" style="padding:1px 6px;font-size:11px" onclick="wfEditorDeleteChoice(${li},${fi},${ci})" title="Remove choice">✕</button>
         </div>`).join('')}
+        ${_qcNoteHtml(li, 'wf', fi, it)}
         ${_flagBoxHtml(li, 'wf', fi, it, false)}
         ${_starNoteHtml(it)}
         ${_delNoteHtml(it)}
@@ -6238,6 +6265,30 @@ function _editorReadInputsMath(ls, li){
   if (ops.length) ls.mathOps = ops;
 }
 function _editorAfterSyncErrorHunt(ls, li){ ehSyncCorrupted(li); }
+// A read-only QC suggestion note for structured items (synonyms / word_forms) where a one-click
+// fix isn't safe (the suggested change may span several fields). Shows the model's suggestion;
+// the maintainer edits the fields manually, then dismisses. `type` is the editor item type
+// (resolved to the item via _editorItem) so the dismiss handler can clear item.qc generically.
+function _qcNoteHtml(li, type, fi, item){
+  if(!item || !item.qc) return '';
+  return `<div style="display:flex;align-items:flex-start;gap:8px;margin-top:6px;font-size:13px;background:#fff3df;border-radius:6px;padding:6px 9px">
+    <span style="font-weight:800;color:#b35900;white-space:nowrap">${t('qc.editor.suggests')}</span>
+    <span style="flex:1;color:var(--text);white-space:pre-wrap">${escHtml(item.qc.sug||'')}</span>
+    <button class="storyline-hdr-btn" title="${t('qc.editor.dismiss_title')}" onclick="qcDismissAny('${li}','${type}',${fi})">✕</button>
+  </div>`;
+}
+// Generic QC dismiss for any structured item type (clears item.qc, persists, re-renders).
+async function qcDismissAny(li, type, fi){
+  const item = _editorItem(+li, type, +fi); if(!item) return;
+  delete item.qc;
+  try{
+    const r = await _postLessonEdit(APP.lessonData);
+    if(!r || !r.ok) throw new Error('save failed');
+    showToast(t('qc.toast.dismissed'));
+  }catch(e){ showToast(t('qc.toast.save_failed')+': '+(e.message||'')); }
+  try{ buildPath(); }catch(_){}
+  renderLessonEditor(document.getElementById('editor-flag-filter')?.checked||false, +li);
+}
 // Apply / dismiss a QC suggestion on a vocab|sentence item, persist, re-render.
 async function _qcMutateItem(li, type, fi, apply){
   const ls = APP.lessonData?.lessons?.[li]; if(!ls) return;
@@ -7984,7 +8035,9 @@ function renderEx(){
   renderHearts();
   let html='';
   const _exRender = EX_RENDERERS[ex.type];
-  if(_exRender) html=_exRender(ex);
+  // No-keyboard mode: a type-the-target exercise becomes a glyph-ordering exercise.
+  if(_glyphOrderActive(ex)) html=tGlyphOrder(ex);
+  else if(_exRender) html=_exRender(ex);
   const fl = _exFlagState(ex);
   const rated = _exRatingState(ex);
   const taSty='width:100%;box-sizing:border-box;font-size:13px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:6px 8px;font-family:Nunito,sans-serif;resize:vertical';
@@ -8018,6 +8071,7 @@ function renderEx(){
     '<div class="btn-row">'+
       `<button class="check-btn" id="cbtn" onclick="check()" disabled>${t('ex.check')}</button>`+
       `<button class="mute-btn" onclick="toggleMute()" title="${APP.muted?'Unmute':'Mute'}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`+
+      `<button class="kbd-btn${APP.noKeyboard?' kbd-on':''}" onclick="toggleNoKeyboard()" title="${escAttr(t('ex.no_keyboard.title'))}" style="flex:0 0 auto;border:2px solid var(--gray-mid);background:var(--white);border-radius:var(--radius-lg);cursor:pointer;font-size:20px;padding:0 16px;opacity:${APP.noKeyboard?'1':'.7'}">⌨️</button>`+
     '</div>'+
     flagUi;
   if(ex.type==='listen_mcq'||ex.type==='listen_type') setTimeout(()=>{
@@ -8270,6 +8324,26 @@ function tOrder(ex){
   ).join("");
   return `<div class="ex-badge">${t("ex.badge.order")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.order.q",{sentence:furiHtml(ex.source)})}</div><div class="sbox" id="sbox"><span class="sbox-ph" dir="auto">${t("ex.order.placeholder")}</span></div><div class="wbank">${tokens}</div></div>`;
 }
+// Glyph-ordering: the no-keyboard replacement for type-the-target exercises. Reuses the exact
+// word-order machinery (addTok/selTok/updateSbox + C.placed/usedIdx), but the bank tokens are
+// the target's individual glyphs (grapheme clusters) and they join WITHOUT spaces on check.
+// `ex.words` is populated lazily here so addTok can read it; the prompt is the source meaning
+// (or the spoken word's translation) so the learner knows what to spell.
+function tGlyphOrder(ex){
+  ex.words = glyphTokens(ex.correct);                 // glyph bank, read by addTok/check
+  ex._glyphOrder = true;                              // check() joins with '' for this ex
+  // Shuffle the displayed bank so the answer isn't pre-ordered, but keep ex.words in natural
+  // order (addTok indexes into it); we shuffle the render order via an index map.
+  const order = shuffle(ex.words.map((_,i)=>i));
+  const tokens = order.map(i =>
+    `<span class="tok" dir="auto" id="t${i}" onclick="addTok(${i})" style="font-size:20px">${escHtml(ex.words[i])}</span>`
+  ).join("");
+  const prompt = ex.source ? t("ex.glyph_order.q",{word:escHtml(ex.source)}) : t("ex.glyph_order.q_plain");
+  return `<div class="ex-badge">⌨️ ${t("ex.badge.glyph_order")}</div><div class="card">`
+    + `<div class="qtext" dir="auto" style="margin-bottom:8px">${prompt}</div>`
+    + `<div class="sbox" id="sbox" dir="auto"><span class="sbox-ph" dir="auto">${t("ex.glyph_order.placeholder")}</span></div>`
+    + `<div class="wbank" dir="auto">${tokens}</div></div>`;
+}
 
 
 
@@ -8512,7 +8586,12 @@ function normDiacritics(s){
 function check(){
   const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
   const ex=C.exercises[C.cur]; let ok=false;
-  if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
+  if(_glyphOrderActive(ex)){
+    // No-keyboard glyph ordering: join the placed glyphs (no spaces) and compare to the target,
+    // with the same diacritic-leniency the typed path uses.
+    ok = normDiacritics((C.placed||[]).map(p=>p.w).join('')) === normDiacritics(ex.correct);
+  }
+  else if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'){ ok=normDiacritics(document.getElementById('type-in').value)===normDiacritics(ex.correct); }
   else if(ex.type==='order'){
     const isJaOrd=(APP.lessonData?.lang||APP.lang)==='ja';
     ok=C.placed.map(p=>p.w).join(isJaOrd?'':' ')===ex.correct;
@@ -8556,7 +8635,7 @@ function check(){
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ if(ex.correct.some(c=>c.toLowerCase()===(b.dataset.w||'').toLowerCase())) b.classList.add('ok'); });
-    if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('ok');
+    if((ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') && !_glyphOrderActive(ex)) document.getElementById('type-in').classList.add('ok');
     // Auto-advance — speaks once then advances
     btn.disabled = true;
     _speakAndAdvance(speakOk);
@@ -8578,7 +8657,7 @@ function check(){
     const _corrStr = Array.isArray(ex.correct) ? ex.correct.join(', ') : ex.correct;
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===stripFuri(_corrStr))b.classList.add('ok'); });
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ const w=(b.dataset.w||'').toLowerCase(); if(ex.correct.some(c=>c.toLowerCase()===w)) b.classList.add('ok'); else if(b.classList.contains('sel')) b.classList.add('bad'); });
-    if(ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') document.getElementById('type-in').classList.add('bad');
+    if((ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') && !_glyphOrderActive(ex)) document.getElementById('type-in').classList.add('bad');
     const a=document.getElementById('ex-area'); a.classList.add('shake'); setTimeout(()=>a.classList.remove('shake'),380);
     renderHearts();
   }
@@ -8720,6 +8799,57 @@ function updateMuteButtons() {
     b.textContent = APP.muted ? '🔇' : '🔊';
     b.title = APP.muted ? 'Unmute' : 'Mute';
     b.style.opacity = APP.muted ? '1' : '.7';
+  });
+}
+// ── No-keyboard mode: split a target into orderable glyph tokens ───────────────
+// Grapheme clusters keep a base letter together with its combining marks (e.g. Arabic
+// قِطَّة keeps each consonant with its harakat), so the learner orders meaningful letters,
+// not bare diacritics. Uses Intl.Segmenter where available; falls back to a combining-mark-
+// aware split, then to Array.from (code points) as a last resort.
+function glyphTokens(text) {
+  const s = String(text == null ? '' : text);
+  if (!s) return [];
+  try {
+    if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+      const seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+      const out = [];
+      for (const { segment } of seg.segment(s)) if (segment.trim() !== '' || segment === ' ') out.push(segment);
+      return out.filter(g => g !== '');
+    }
+  } catch(_) {}
+  // Fallback: attach trailing combining marks (U+0300–036F, U+0610–061A, U+064B–065F,
+  // U+0670, U+06D6–06ED Arabic; U+0E31/0E34–0E3A/0E47–0E4E Thai) to the preceding base.
+  const combining = /[\u0300-\u036F\u0483-\u0489\u0591-\u05BD\u05BF\u05C1\u05C2\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]/;
+  const out = [];
+  for (const ch of s) {
+    if (out.length && combining.test(ch)) out[out.length - 1] += ch;
+    else out.push(ch);
+  }
+  return out;
+}
+// True when this exercise should become a glyph-ordering exercise (no-keyboard mode + a
+// type-the-target exercise). Listening types count because their muted fallback is itself
+// type-the-target.
+function _isTypingEx(ex) {
+  return !!ex && (ex.type === 'listen_type' || ex.type === 'type_plural' || ex.type === 'type_conjugation');
+}
+function _glyphOrderActive(ex) { return APP.noKeyboard && _isTypingEx(ex); }
+function toggleNoKeyboard() {
+  APP.noKeyboard = !APP.noKeyboard;
+  try { localStorage.setItem('imp3_noKeyboard', APP.noKeyboard ? '1' : '0'); } catch(_) {}
+  updateKeyboardButtons();
+  // Re-render the current exercise so a typing question swaps to/from glyph ordering — but
+  // only before it's answered, to avoid disrupting feedback already shown.
+  try {
+    const C = APP.cur;
+    const ex = C && !C.answered && C.exercises && C.exercises[C.cur];
+    if (ex && _isTypingEx(ex) && document.getElementById('ex-area')) renderEx();
+  } catch(_) {}
+}
+function updateKeyboardButtons() {
+  document.querySelectorAll('.kbd-btn').forEach(b => {
+    b.style.opacity = APP.noKeyboard ? '1' : '.7';
+    b.classList.toggle('kbd-on', APP.noKeyboard);
   });
 }
 function stopGeneration() {

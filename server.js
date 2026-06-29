@@ -445,6 +445,57 @@ function needsIntroScript(targetLang, srcLang) {
   const src = new Set(scriptsForLang(srcLang || 'en'));
   return tgt.some(s => !src.has(s) && scriptHasTable(s));
 }
+// The set of characters (incl. lowercase variants) that make up a script's letter table.
+function _scriptCharSet(name) {
+  const tbl = _scriptsData[name];
+  const set = new Set();
+  if (tbl && Array.isArray(tbl.letters)) for (const L of tbl.letters) {
+    if (L.ch) for (const c of L.ch) set.add(c);
+    if (L.lower) for (const c of L.lower) set.add(c);
+  }
+  return set;
+}
+// All glyphs of `scriptName` that appear anywhere in the chain rooted at startRef (walking
+// continuedFrom backwards) — used to compute which letters are NEW to a chapter (extend).
+function chainGlyphSet(startRef, scriptName) {
+  const present = new Set();
+  if (!startRef) return present;
+  const chars = _scriptCharSet(scriptName);
+  let t = findSavedById(startRef) || findSaved(startRef);
+  const visited = new Set();
+  while (t && !visited.has(t.id)) {
+    visited.add(t.id);
+    const parts = [t.story || ''];
+    for (const ls of (t.lessons || [])) {
+      if (ls.type === 'intro_script') continue;
+      (ls.vocab||[]).forEach(v => v.target && parts.push(v.target));
+      (ls.sentences||[]).forEach(s => s.target && parts.push(s.target));
+      (ls.items||[]).forEach(it => { if (it.sentence) parts.push(it.sentence); if (it.target) parts.push(it.target); });
+      (ls.words||[]).forEach(w => w.base && parts.push(w.base));
+    }
+    for (const c of parts.join(' ')) if (chars.has(c)) present.add(c);
+    const pid = t.continuedFromId || (t.continuedFrom ? (findSaved(t.continuedFrom)?.id || null) : null);
+    t = pid ? findSavedById(pid) : null;
+  }
+  return present;
+}
+// Letters of `scriptName` that appear in `chapterText` but NOT in the prior chain (priorRef).
+// This is the storyline-aware "extend" scope: letters new to this chapter. Capped by difficulty.
+function introExtendLetters(scriptName, chapterText, priorRef, difficulty) {
+  const tbl = _scriptsData[scriptName];
+  if (!tbl || !Array.isArray(tbl.letters)) return [];
+  const here = new Set(String(chapterText || ''));
+  const prior = chainGlyphSet(priorRef, scriptName);
+  const isHere = (L) => (L.ch && [...L.ch].some(c => here.has(c))) || (L.lower && [...L.lower].some(c => here.has(c)));
+  const isPrior = (L) => prior.has(L.ch) || (L.lower && prior.has(L.lower));
+  let letters = tbl.letters.filter(L => isHere(L) && !isPrior(L));
+  const max = introMaxLetters(difficulty);
+  if (letters.length > max) {
+    const sh = [...letters]; for (let i=sh.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [sh[i],sh[j]]=[sh[j],sh[i]]; }
+    letters = sh.slice(0, max);
+  }
+  return letters;
+}
 
 // ── Prompts ───────────────────────────────────────────────────────────
 function sysMeta(srcLang) {
@@ -642,6 +693,76 @@ async function qcCheckPair(target, source, lang, srcLang, userComment) {
     ? { ok: false, field: 'target', sug: body }
     : { ok: false, field: 'source', sug: body };
 }
+
+// Parse a checker reply that is either "OK" or "<suggestion text>". Returns {ok} or {ok,sug}.
+function _qcParseOkOrSug(text){
+  const reply = (text || '').trim();
+  if (!reply || /^ok[.!]?$/i.test(reply)) return { ok: true };
+  // Strip a leading label like "FIX:" / "SUGGESTION:" the model may add.
+  const body = reply.replace(/^(fix|suggestion|issue|problem)\s*[:\-]\s*/i, '').trim();
+  if (!body || /^ok[.!]?$/i.test(body)) return { ok: true };
+  return { ok: false, sug: body.slice(0, 300) };
+}
+
+// QC a word_forms (cloze) item: {sentence with ___, translation, choices, correctIndex, explanation}.
+// Verifies the marked-correct choice actually fits the blank, the translation matches, the
+// distractors are genuinely wrong, and the explanation is right. Returns {ok} | {ok:false, sug}.
+async function qcCheckCloze(item, lang, srcLang, userComment) {
+  const L = langName(lang), S = langName(srcLang || 'en');
+  const choices = Array.isArray(item.choices) ? item.choices : [];
+  const correct = choices[item.correctIndex];
+  if (!item.sentence || !choices.length || correct == null) return { ok: true };
+  const sentence = _qcStripFuri(item.sentence);
+  const system =
+    `You check one ${L} fill-in-the-blank exercise. The blank is "___".\n` +
+    `Verify ALL of:\n` +
+    `1. The marked-correct option grammatically and semantically fits the blank.\n` +
+    `2. The other options do NOT also correctly fit (they must be wrong but plausible).\n` +
+    `3. The ${S} translation matches the completed ${L} sentence.\n` +
+    `4. The explanation (if any) is accurate.\n` +
+    (userComment && String(userComment).trim()
+      ? `The user reports: "${String(userComment).trim().replace(/"/g,"'").slice(0,200)}". Consider it.\n` : '') +
+    `Reply EXACTLY "OK" if everything is correct. Otherwise reply with ONE short sentence naming ` +
+    `the single most important problem and the fix (e.g. which option should be correct, or the ` +
+    `corrected translation). No preamble, no quotes.`;
+  const user =
+    `Sentence: ${sentence}\n` +
+    `Options: ${choices.map((c,i) => `${i===item.correctIndex?'[correct] ':''}${c}`).join(' | ')}\n` +
+    `Translation (${S}): ${item.translation || '(none)'}\n` +
+    `Explanation: ${item.explanation || '(none)'}`;
+  const { text } = await callLLMTranslation(system, user, 120);
+  return _qcParseOkOrSug(text);
+}
+
+// QC a synonyms entry: {base, gloss, synonyms:[{w,g}], antonyms:[...], homophones:[...]}.
+// Verifies the gloss fits base, listed synonyms really are synonyms in the target language,
+// antonyms are真 opposites, homophones sound alike. Returns {ok} | {ok:false, sug}.
+async function qcCheckSynonymSet(entry, lang, srcLang, userComment) {
+  const L = langName(lang), S = langName(srcLang || 'en');
+  if (!entry.base) return { ok: true };
+  const fmt = (arr) => (Array.isArray(arr) && arr.length) ? arr.map(x => x.w + (x.g ? ` (${x.g})` : '')).join(', ') : '(none)';
+  const system =
+    `You check a ${L} vocabulary entry and its related-words lists.\n` +
+    `Verify ALL of:\n` +
+    `1. The ${S} gloss accurately translates the ${L} word.\n` +
+    `2. Every listed SYNONYM is a real ${L} synonym (or near-synonym) of the word.\n` +
+    `3. Every listed ANTONYM is a real ${L} opposite of the word.\n` +
+    `4. Every listed HOMOPHONE actually sounds like the word in ${L}.\n` +
+    (userComment && String(userComment).trim()
+      ? `The user reports: "${String(userComment).trim().replace(/"/g,"'").slice(0,200)}". Consider it.\n` : '') +
+    `Reply EXACTLY "OK" if all are correct. Otherwise reply with ONE short sentence naming the ` +
+    `single most important problem (e.g. "X is not a synonym of <word>" or the corrected gloss). ` +
+    `No preamble, no quotes.`;
+  const user =
+    `Word (${L}): ${entry.base}\n` +
+    `Gloss (${S}): ${entry.gloss || '(none)'}\n` +
+    `Synonyms: ${fmt(entry.synonyms)}\n` +
+    `Antonyms: ${fmt(entry.antonyms)}\n` +
+    `Homophones: ${fmt(entry.homophones)}`;
+  const { text } = await callLLMTranslation(system, user, 120);
+  return _qcParseOkOrSug(text);
+}
+
 async function _runQc(jobId, topics, opts) {
   const { lessonIdx, onlyFlagged } = opts;
   let checked = 0, flagged = 0, cleared = 0;
@@ -656,24 +777,44 @@ async function _runQc(jobId, topics, opts) {
       if (lessonIdx !== null && li !== lessonIdx) continue;
       const ls = lessons[li];
       if (onlyFlagged && !_qcLessonUserFlagged(tp, ls)) continue;
-      for (const key of ['vocab', 'sentences']) {
-        const arr = ls[key];
-        if (!Array.isArray(arr)) continue;
-        for (const item of arr) {
-          if (!item || !item.target || !item.source) continue;
-          checked++;
-          let res;
-          try { res = await qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment); }
-          catch (e) { continue; }
-          if (!res.ok) {
-            item.qc = { sug: res.sug, field: res.field || 'source', at: new Date().toISOString() };
-            flagged++; touched = true;
-            console.log(`    ⚑ flag [${res.field}] "${_qcStripFuri(item.target)}" / "${item.source}" → "${res.sug}"`);
-          } else if (item.qc) {
-            delete item.qc; cleared++; touched = true;   // re-checked and now OK
+      // Per-item QC helper: run a checker, write/clear item.qc, keep counters.
+      const _check = async (item, runner, label) => {
+        checked++;
+        let res;
+        try { res = await runner(); } catch (e) { return; }
+        if (res && !res.ok) {
+          item.qc = { sug: res.sug, field: res.field || 'note', at: new Date().toISOString() };
+          flagged++; touched = true;
+          console.log(`    ⚑ flag [${label}] "${(res.sug||'').slice(0,60)}"`);
+        } else if (item.qc) {
+          delete item.qc; cleared++; touched = true;   // re-checked and now OK
+        }
+        if (checked % 5 === 0)
+          jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
+      };
+      // Dispatch by lesson type. vocab/sentences exist on standard lessons; word_forms uses
+      // `items` (cloze); synonyms uses `words` (related-word sets); intro_script is curated
+      // data (human QC only — skipped here).
+      if (ls.type === 'word_forms') {
+        for (const item of (ls.items || [])) {
+          if (!item || !item.sentence) continue;
+          await _check(item, () => qcCheckCloze(item, tp.lang, tp.srcLang, item.userFlag?.comment), 'cloze');
+        }
+      } else if (ls.type === 'synonyms') {
+        for (const entry of (ls.words || [])) {
+          if (!entry || !entry.base) continue;
+          await _check(entry, () => qcCheckSynonymSet(entry, tp.lang, tp.srcLang, entry.userFlag?.comment), 'synset');
+        }
+      } else if (ls.type === 'intro_script') {
+        // curated letter table — verified by humans (per-letter flag/star/edit), not the LLM.
+      } else {
+        for (const key of ['vocab', 'sentences']) {
+          const arr = ls[key];
+          if (!Array.isArray(arr)) continue;
+          for (const item of arr) {
+            if (!item || !item.target || !item.source) continue;
+            await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
           }
-          if (checked % 5 === 0)
-            jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
         }
       }
     }
@@ -685,12 +826,22 @@ async function _runQc(jobId, topics, opts) {
 // Legacy user-flags-as-filter: a lesson counts as flagged if any of its items'
 // targets appear in the stored flags for this topic. Conservative best-effort.
 function _qcLessonUserFlagged(tp, ls) {
+  // Modern flags live directly on each item as item.userFlag ({comment, at}). Check every
+  // array a checker would visit, so flagged-only QC covers word_forms (items) and synonyms
+  // (words), not just vocab/sentences.
+  const arrays = [ls.vocab, ls.sentences, ls.grammar, ls.conjugations, ls.items, ls.words];
+  for (const arr of arrays) {
+    if (Array.isArray(arr) && arr.some(x => x && x.userFlag)) return true;
+  }
+  // Legacy fallback: the old global flags registry keyed by target text.
   const flags = getFlags();
   const keys = Object.keys(flags);
-  if (!keys.length) return false;
-  const targets = [...(ls.vocab||[]), ...(ls.sentences||[]), ...(ls.grammar||[])]
-    .map(x => (x && x.target ? String(x.target).toLowerCase() : '')).filter(Boolean);
-  return keys.some(k => targets.some(tg => k.toLowerCase().includes(tg)));
+  if (keys.length) {
+    const targets = [...(ls.vocab||[]), ...(ls.sentences||[]), ...(ls.grammar||[])]
+      .map(x => (x && x.target ? String(x.target).toLowerCase() : '')).filter(Boolean);
+    if (keys.some(k => targets.some(tg => k.toLowerCase().includes(tg)))) return true;
+  }
+  return false;
 }
 
 // ── Retry helper ──────────────────────────────────────────────────────
@@ -2358,6 +2509,36 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
   } catch (e) { console.warn(`  Storyline sourceFile post-pass failed: ${e.message}`); }
 }
 
+// Build the intro "learn the script" lesson(s) to PREPEND to a chapter when arc script-teaching
+// is on and the target uses a script the source doesn't. One lesson per such script, scoped to
+// the letters NEW to this chapter (extend), capped by difficulty, distractors from the full
+// alphabet. Returns [] when nothing applies. (chapterText = this chapter's story/target text;
+// priorRef = the parent chapter id/name so we know which letters are already introduced.)
+function buildArcIntroLessons(lang, srcLang, chapterText, priorRef, difficulty) {
+  if (!needsIntroScript(lang, srcLang)) return [];
+  const srcScripts = new Set(scriptsForLang(srcLang || 'en'));
+  const out = [];
+  for (const scr of scriptsForLang(lang)) {
+    if (srcScripts.has(scr) || !scriptHasTable(scr)) continue;
+    const table = _scriptsData[scr];
+    let letters = introExtendLetters(scr, chapterText, priorRef, difficulty);
+    // If nothing is genuinely new this chapter (e.g. all its letters already appeared), skip —
+    // an empty extend lesson has nothing to teach. (First chapter: priorRef null → everything
+    // in the chapter counts as new, so it naturally seeds the alphabet introduced so far.)
+    if (letters.length < 4) continue;
+    const exercises = introScriptExercises(letters, { distractorPool: table.letters });
+    out.push({
+      id: 'intro_' + scr + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+      type: 'intro_script', script: scr, rtl: !!table.rtl, _arcMode: 'extend', difficulty,
+      title: '🔡 ' + (table.label || scr), icon: '🔡',
+      desc: (table.label || scr) + ' — ' + letters.length + ' letters',
+      letters, exercises,
+      _genMeta: { type: 'intro_script', model: '(procedural)', valid: exercises.length, at: new Date().toISOString() },
+    });
+  }
+  return out;
+}
+
 async function _runBookJob(bookId, chunks, base) {
   const bj = bookJobs.get(bookId);
   if (!bj) return;
@@ -2455,6 +2636,24 @@ async function _runBookJob(bookId, chunks, base) {
             console.warn(`  [book ${bookId}] chapter ${i+1} vocab review failed, skipping: ${e.message}`);
             jobStep(jobId, `⚠ vocab review failed — continuing…`);
           }
+        }
+      }
+
+      // Arc script-teaching: when enabled and the target uses a script the source doesn't,
+      // PREPEND an intro "learn the script" lesson covering the letters NEW to this chapter
+      // (extend). Generated after the vocab/reinforcement lessons (so we know this chapter's
+      // text) but ordered FIRST so the learner meets the new letters before the words that use
+      // them. priorRef = the parent chapter, so chapter 1 seeds the alphabet introduced so far.
+      if (base.arc && base.arcScript && Array.isArray(data.lessons)) {
+        try {
+          const chapterText = userStory || data.story || '';
+          const introLessons = buildArcIntroLessons(base.lang, base.srcLang, chapterText, parent ? (parent.id || prevRef) : null, base.diff);
+          if (introLessons.length) {
+            data.lessons.unshift(...introLessons);
+            jobStep(jobId, `🔡 Prepended script primer (${introLessons.map(l => l.script).join(', ')})`);
+          }
+        } catch (e) {
+          console.warn(`  [book ${bookId}] chapter ${i+1} script primer failed, skipping: ${e.message}`);
         }
       }
 
@@ -2589,7 +2788,7 @@ http.createServer(async (req, res) => {
           return out;
         })(),
         qcFlags: (l.lessons || []).reduce((n, L) =>
-          n + [...(L.vocab||[]), ...(L.sentences||[])].filter(x => x && (x.qc || x.userFlag)).length, 0),
+          n + [...(L.vocab||[]), ...(L.sentences||[]), ...(L.items||[]), ...(L.words||[]), ...(L.letters||[])].filter(x => x && (x.qc || x.userFlag)).length, 0),
       }));
       list.sort((a,b) => (b.updatedAt||'').localeCompare(a.updatedAt||''));
       return json(res, 200, list);
@@ -2972,7 +3171,7 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const { chunks, lang, srcLang, difficulty, lessonFormat, continuedFrom, userStoryLang, arc, arcReinforce, arcMode,
+      const { chunks, lang, srcLang, difficulty, lessonFormat, continuedFrom, userStoryLang, arc, arcReinforce, arcMode, arcScript,
               generated, topic, nChapters, chapterLen, storyStyle, sourceFile } = body;
       if (active === 'none')
         return json(res, 503, { error: 'No LLM backend. Start Ollama, then restart.' });
@@ -3006,6 +3205,10 @@ http.createServer(async (req, res) => {
         continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
         arc: arcEnabled, arcTypes: _arcTypes.length ? _arcTypes : ['word_forms','synonyms'],
         arcMode: arcMode === 'grammar' ? 'grammar' : 'vocab',
+        // Arc script-teaching opt-in. Default ON when the target uses a script the source
+        // doesn't (so a learner of a new alphabet gets per-chapter primers automatically);
+        // the client can pass arcScript:false to suppress it.
+        arcScript: arcEnabled && (arcScript === undefined ? needsIntroScript(lang || 'it', srcLang || 'en') : !!arcScript),
         generated: !!generated, baseTopic, chapterLen: chapterLenN,
         sourceFile: (typeof sourceFile === 'string' && sourceFile.trim()) ? sourceFile.trim().slice(0,200) : null,
         storyStyle: (storyStyle && storyStyle !== 'creative') ? storyStyle : null };
@@ -3126,6 +3329,8 @@ http.createServer(async (req, res) => {
           // so a flag/rating on those types persists in the live build (not just static).
           words:     edited.words     ? edited.words.map((w,j) => mergeFlaggable((orig.words||[])[j]||{}, w)) : orig.words,
           items:     edited.items     ? edited.items.map((it,j) => mergeFlaggable((orig.items||[])[j]||{}, it)) : orig.items,
+          // intro_script letters: same flaggable merge so a flag/rating/edit on a letter persists.
+          letters:   edited.letters   ? edited.letters.map((L,j) => mergeFlaggable((orig.letters||[])[j]||{}, L)) : orig.letters,
           grammar:   edited.grammar   ? edited.grammar.map((g,j) => ({...(orig.grammar||[])[j]||{}, ...g})) : orig.grammar,
           conjugations: edited.conjugations ? edited.conjugations.map((c,j) => ({
             ...(orig.conjugations||[])[j]||{}, ...c,

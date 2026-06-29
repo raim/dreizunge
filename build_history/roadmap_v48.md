@@ -199,7 +199,71 @@ present; (3) seed `de`/`fr`/`es` for one script (Cyrillic or Greek) via CLDR/ICU
 review, measure; (4) expand. Until then the Latin romanization is the universal fallback — fine
 for Latin-script UIs, weakest for CJK UIs. Pairs with the examples.json curation pipeline (P1).
 
+### New plan C — QC coverage for synonyms, word_forms, and script lessons
+**✅ synonyms + word_forms SHIPPED (server-side, Ollama-verify owed); script = human-QC (done).**
+`_runQc` now dispatches by lesson type: `vocab/sentences` → `qcCheckPair` (as before);
+**`word_forms` → `qcCheckCloze`** (checks the marked-correct option fits the blank, distractors
+are genuinely wrong, translation matches, explanation is right); **`synonyms` → `qcCheckSynonymSet`**
+(gloss accuracy, each synonym/antonym/homophone really belongs); `intro_script` → skipped (curated
+data, human-QC via the per-letter flag/star/edit affordances already shipped). Both new checkers
+reply OK-or-one-sentence-suggestion, parsed by `_qcParseOkOrSug`, and write `item.qc = {sug, field:
+'note', at}`. The editor renders a read-only QC note (suggestion + dismiss ✕) in the word_forms and
+synonyms branches via `_qcNoteHtml`/`qcDismissAny` — no one-click auto-apply because these fixes
+span multiple fields, so the maintainer edits manually then dismisses. Headless test
+(`unit-qc-dispatch`) covers the parser + per-type dispatch with stubbed checkers; the LLM prompts
+themselves need an Ollama pass (LIVE-TEST). Pairs with "minor #2 QC expansion".
+
+#### (original assessment) The QC pass (`server.js _runQc` -> `qcCheckPair`) only
+iterates **`vocab` and `sentences`**, checking a `target` <-> `source` translation pair via the
+translation LLM (returns OK / `T:` corrected target / `S:` corrected source, written to
+`item.qc = {sug, field, at}` and surfaced in the editor as a suggestion). So today:
+- DONE: vocab, sentences — covered.
+- GAP: **synonyms** (`ls.words`: `{base, gloss, synonyms:[{w,g}], antonyms, homophones}`) — not a
+  plain target/source pair, so untouched. Needs a *set-shaped* check: is each `w` a real synonym
+  of `base` in the target language, is `g`/`gloss` an accurate source gloss, are antonyms truly
+  antonyms? A different prompt returning per-entry verdicts, written as `word.qc` / per-`w` qc.
+- GAP: **word_forms** (`ls.items`: `{sentence (with blank), translation, choices, correctIndex,
+  explanation}`) — not covered. Needs a *cloze* check: does `choices[correctIndex]` correctly
+  fill the blank, are the distractors actually wrong (but plausible), does `translation` match,
+  is `explanation` correct? Verdict written as `item.qc` keyed to the item.
+- SPECIAL: **script (`intro_script`)** — the `letters` are **curated data, not LLM-generated**, so
+  "QC" here means *correctness of the romanization/sound/name* per script — exactly the
+  external-verification concern (Hangul/Hebrew/Greek). Two options: (a) an LLM "is `translit`/
+  `name` the right value for glyph `ch` in <script>?" pass (cheap, catches gross errors, but the
+  LLM is itself unreliable on transliteration — modest value); (b) treat it as **human QC**:
+  ship the per-letter flag/star/edit affordances (done) and rely on native review, optionally
+  importing an authoritative table (CLDR/ICU, see Plan A) to diff against. Recommend (b) primary,
+  (a) only as a coarse pre-filter.
+**Plan:** generalize `_runQc`'s per-lesson loop to dispatch by type to a checker:
+`vocab/sentences` -> `qcCheckPair` (today); `synonyms` -> `qcCheckSynonymSet`; `word_forms` ->
+`qcCheckCloze`; `intro_script` -> skip LLM (human-QC) or a coarse glyph->translit sanity check.
+Each writes `*.qc` in a shape the editor already renders. Needs Ollama to build + verify (same
+gate as the existing QC), so it's a server-side pass with its own unit test for the dispatch +
+qc-shape (the LLM call itself stays integration-tested). Pairs with "minor #2 QC expansion".
+
+### Script-lesson editing — future (per user)
+Glyph (`ch`) and lowercase are now **read-only** in the editor; `name`/`translit`/`ipa` stay
+editable for fixing romanizations (e.g. the Hangul/Hebrew values pending native review). Once a
+script's data is verified, lock it down further: editing should be limited to **(1) reorder** and
+**(2) swap which glyphs are in the lesson** via a picker that selects from the script's full
+alphabet (no free-text of the curated romanization). I.e. a glyph-selection grid (toggle letters
+in/out, drag to reorder) replacing the per-field inputs, gated behind a "data verified" state so
+free-text edits aren't possible once the table is trusted.
+
 ### New plan B — auto-add script lessons in multi-chapter (arc) generation
+**✅ SHIPPED (server-side, browser/Ollama-verify owed).** Implemented in the generate-book chapter
+loop: when arc is on, the target uses a script the source doesn't (`needsIntroScript`), and the
+`arcScript` opt-in is set (defaults on for differing-script pairs), each chapter gets an
+**extend-mode** `intro_script` lesson **prepended** (`data.lessons.unshift`) covering the letters
+new to that chapter. Server helpers added: `_scriptCharSet`, `chainGlyphSet` (prior-chapter
+glyphs), `introExtendLetters` (this chapter minus prior, capped by difficulty), `buildArcIntroLessons`.
+Client: a "🔡 Teach the script per chapter" checkbox under the arc toggle (shown only when scripts
+differ + multi-chapter), `arcScript` plumbed into both generate-book call sites. Skips a chapter
+with <4 new letters. Server unit test covers extend-per-chapter + gating + cap. Still owes an
+Ollama-backed end-to-end pass (LIVE-TEST §33c).
+Original assessment retained below for reference.
+
+#### (original assessment)
 **Assessment — feasible, server-side.** Multi-chapter stories are generated by the server
 (`/api/generate-book`, background job looping chapters with arc reinforce/extend for vocab). The
 server already has `generateIntroScript`, `scriptsForLang`/`needsIntroScript`, the chapter chain
@@ -346,6 +410,17 @@ All **browser-verify-owed** for visual confirmation.
   mostly digits, so likely fine).
 
 ## New plan — letter-ordering answer mode for keyboard/script mismatch
+**✅ SHIPPED (v47.x, browser-verify owed — LIVE-TEST §35).** Implemented as a manual ⌨️ toggle
+(`APP.noKeyboard`, persisted) next to the in-lesson mute button rather than auto-detecting the
+keyboard (browsers can't reliably report the active layout). When on, every type-the-target
+exercise (`listen_type`, `type_plural`, `type_conjugation`, and the muted `listen_type` fallback)
+renders as a **glyph-ordering** exercise reusing the word-order machinery (addTok/updateSbox/
+C.placed) with the bank tokens = the target's grapheme clusters (`glyphTokens`, Intl.Segmenter
+with a combining-mark fallback so Arabic harakat stay attached: قِطَّة → قِ/طَّ/ة). `check()` joins
+the placed glyphs without spaces and compares with the same diacritic leniency as the typed path.
+Unit-tested (`unit-no-keyboard`: tokenizer round-trip + gating). Original plan retained below.
+
+#### (original plan)
 
 **Problem.** A European learner doing an Arabic (or Greek/Cyrillic/Hangul/Hebrew/Japanese)
 lesson typically lacks a keyboard for the target script, so any *type-the-target* exercise

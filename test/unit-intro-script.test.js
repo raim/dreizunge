@@ -134,6 +134,14 @@ assert.strictEqual(D.introLetterScope(ch2, 'arabic', 'neutral').letters.length, 
 // First chapter (no prior) reinforce/extend has nothing to scope from → falls back to full.
 assert.strictEqual(D.introLetterScope(ch1, 'arabic', 'reinforce').scoped, false,
   'first chapter reinforce → no prior letters → full alphabet');
+// Seam fix: extend on a set with NO prior chapters must also fall back to the full alphabet
+// (extend is defined relative to earlier chapters; with none there's nothing to scope against).
+const standalone = { id: 'solo', lang: 'ar', srcLang: 'en', topic: 'solo', story: 'يوسف له قطة', lessons: [] };
+_APP.savedList = [standalone];
+assert.strictEqual(D.introLetterScope(standalone, 'arabic', 'extend').scoped, false,
+  'standalone extend → full alphabet (no prior chapters)');
+assert.strictEqual(D.introLetterScope(standalone, 'arabic', 'reinforce').scoped, false,
+  'standalone reinforce → full alphabet (no prior chapters)');
 console.log('  storyline-aware reinforce (prior chapters) / extend (new this chapter): OK');
 
 // ── Client/server exercise builders agree (structure, ignoring choice order) ─
@@ -231,6 +239,46 @@ assert.ok(/type === ['"]letter['"][\s\S]*?ls\.letters\[fi\]/.test(html), '_syncE
 // editing/deleting a letter clears baked exercises so they re-derive
 assert.ok(/type === ['"]letter['"][\s\S]*?delete ls\.exercises/.test(html), 'letter edits clear baked exercises');
 console.log('  intro_script editor: branch wired + letter array mapping in move/delete/sync: OK');
+
+// ── Server arc script-teaching (Plan B): extend letters new to a chapter, prepend per chapter ──
+{
+  const _scriptsData = SCRIPTS_DATA;
+  let SAVED = {};
+  const findSavedById = id => SAVED[id] || null;
+  const findSaved = name => Object.values(SAVED).find(t => t.topic === name) || null;
+  const sIntroMax = new Function(ext(server, 'introMaxLetters') + '\nreturn introMaxLetters;')();
+  const sScriptsFor = new Function('_scriptsData', ext(server, 'scriptsForLang') + '\nreturn scriptsForLang;')(_scriptsData);
+  const sHasTable = new Function('_scriptsData', ext(server, 'scriptHasTable') + '\nreturn scriptHasTable;')(_scriptsData);
+  const sNeeds = new Function('scriptsForLang', 'scriptHasTable', ext(server, 'needsIntroScript') + '\nreturn needsIntroScript;')(sScriptsFor, sHasTable);
+  const sCharSet = new Function('_scriptsData', ext(server, '_scriptCharSet') + '\nreturn _scriptCharSet;')(_scriptsData);
+  const sChainGlyphs = new Function('_scriptCharSet', 'findSavedById', 'findSaved', ext(server, 'chainGlyphSet') + '\nreturn chainGlyphSet;')(sCharSet, findSavedById, findSaved);
+  const sExtend = new Function('_scriptsData', 'chainGlyphSet', 'introMaxLetters', ext(server, 'introExtendLetters') + '\nreturn introExtendLetters;')(_scriptsData, sChainGlyphs, sIntroMax);
+  const sExs = new Function(ext(server, 'introScriptExercises') + '\nreturn introScriptExercises;')();
+  const sBuild = new Function('needsIntroScript', 'scriptsForLang', 'scriptHasTable', '_scriptsData', 'introExtendLetters', 'introScriptExercises',
+    ext(server, 'buildArcIntroLessons') + '\nreturn buildArcIntroLessons;')(sNeeds, sScriptsFor, sHasTable, _scriptsData, sExtend, sExs);
+
+  // Chapter 1, no prior: letters new = all arabic letters appearing in the story (capped).
+  const ch1 = sBuild('ar', 'en', 'يوسف له قطة اسمها لولو وكان سعيدا جدا في البيت الكبير', null, 2);
+  assert.strictEqual(ch1.length, 1, 'arc builds one intro lesson for en→ar');
+  assert.strictEqual(ch1[0].type, 'intro_script', 'arc intro lesson type');
+  assert.strictEqual(ch1[0]._arcMode, 'extend', 'arc intro lesson is extend mode');
+  assert.ok(ch1[0].letters.length >= 4 && ch1[0].letters.length <= sIntroMax(2), 'ch1 extend letters within cap');
+
+  // Chapter 2 with a prior chapter: only letters NOT seen in chapter 1.
+  SAVED['tp_c1'] = { id: 'tp_c1', topic: 'ch1', lang: 'ar', story: 'يوسف له قطة', lessons: [{ type: 'intro_script' }, { vocab: [{ target: 'يوسف' }] }] };
+  const priorGlyphs = new Set('يوسف له قطة');
+  const ch2 = sBuild('ar', 'en', 'ذهب الى الغابة و رأى ثعلبا كبيرا خلف الشجرة العالية', 'tp_c1', 2);
+  if (ch2.length) {
+    assert.ok(ch2[0].letters.every(L => !priorGlyphs.has(L.ch)), 'ch2 extend letters are new (not in chapter 1)');
+  }
+  // Same-script pair (en→de) and Latin target → no arc intro lessons.
+  assert.strictEqual(sBuild('de', 'en', 'Der Hund läuft schnell nach Hause', null, 2).length, 0, 'en→de: no script primer');
+  // A chapter with too few new letters (<4) yields nothing to teach.
+  SAVED['tp_c3'] = { id: 'tp_c3', topic: 'c3', lang: 'ar', story: 'يوسف له قطة اسمها لولو وذهب الى الغابة ورأى ثعلبا وأرنبا وطيورا كثيرة', lessons: [] };
+  const ch4 = sBuild('ar', 'en', 'قطة', 'tp_c3', 2);   // only letters already seen
+  assert.strictEqual(ch4.length, 0, 'chapter with no genuinely-new letters → no primer');
+  console.log('  server arc script-teaching: extend-per-chapter + gating + cap: OK');
+}
 
 // ── Registry + wiring guards ─────────────────────────────────────────────────
 assert.ok(/intro_script:\s*\{[^}]*build:\s*\(l\)\s*=>\s*buildIntroScriptExercises\(l\)/.test(html),
