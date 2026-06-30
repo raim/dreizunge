@@ -593,6 +593,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         </div>
       </div>
     </div>
+    <div id="tts-test-row" style="margin-top:8px;display:flex;justify-content:center">
+      <button type="button" id="tts-test-btn" onclick="ttsTestVoice()" title="Test the speech voice for the language you're learning"
+        style="font-size:12px;font-weight:800;padding:5px 14px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit"><span id="tts-test-lbl"></span></button>
+    </div>
     <div id="tts-voice-note" style="display:none;margin-top:10px;background:#fff8e0;border-radius:var(--radius-xl);padding:12px 16px;border:2px solid #f5a623;font-size:13px;font-weight:700;color:#444;line-height:1.6"></div>
     <div id="lang-tutor-banner" style="display:none;margin-top:10px;padding:12px 16px;background:#eef6ff;border-radius:10px;border:2px solid #b8d4f8;font-size:13px;font-weight:700;color:#1a4fa0;line-height:1.6"></div>
     <div id="ui-translate-row" style="display:none;margin-top:8px;align-items:center;gap:8px;flex-wrap:wrap">
@@ -1208,13 +1212,31 @@ function _lessonSetTargetText(d) {
   }
   return parts.join(' ');
 }
-// Which of the language's scripts actually appear in the set's content. Falls back to ALL of
-// the language's scripts when the set has no detectable content yet (e.g. a brand-new set),
-// so the intro is still offered. For Japanese this means katakana is only added when katakana
-// is actually present, while hiragana (almost always present) is.
+// The source-side text of a set (glosses/translations) — used to detect a non-Latin SOURCE
+// script (e.g. an Arabic→English set, where the Arabic glyphs live on the source side).
+function _lessonSetSourceText(d) {
+  if (!d || !Array.isArray(d.lessons)) return '';
+  const parts = [];
+  for (const L of d.lessons) {
+    if (L.type === 'intro_script') continue;
+    (L.vocab || []).forEach(v => v.source && parts.push(v.source));
+    (L.sentences || []).forEach(s => s.source && parts.push(s.source));
+    (L.words || []).forEach(w => w.gloss && parts.push(w.gloss));
+  }
+  return parts.join(' ');
+}
+// Which scripts (target- OR source-side) actually appear in the set's content. A script lesson is
+// useful whenever a non-Latin, table-backed script is involved — whether it's the language being
+// learned (en→ar) or the language shown (ar→en). Falls back to ALL of the pair's scripts when the
+// set has no detectable content yet. Each script's glyphs only appear in its own side's text, so
+// scanning both sides' text correctly detects which are present (Japanese katakana still only when
+// katakana actually appears).
 function scriptsUsedInLessonSet(d) {
-  const all = scriptsForLang(d && d.lang).filter(scriptHasTable);
-  const text = _lessonSetTargetText(d);
+  const all = [...new Set([
+    ...scriptsForLang(d && d.lang),
+    ...scriptsForLang(d && d.srcLang),
+  ])].filter(scriptHasTable);
+  const text = (_lessonSetTargetText(d) + ' ' + _lessonSetSourceText(d));
   if (!text.trim()) return all;                          // nothing to scan → offer all
   const used = all.filter(name => {
     const chars = _scriptCharSet(name);
@@ -1288,6 +1310,13 @@ function needsIntroScript(targetLang, srcLang) {
   if (!tgt.length) return false;
   const src = new Set(scriptsForLang(srcLang || 'en'));
   return tgt.some(s => !src.has(s) && scriptHasTable(s));
+}
+// For the MANUAL "add a script lesson" menu: a glyph lesson is worth offering whenever a non-Latin,
+// table-backed script is involved on EITHER side — the language being learned (en→ar) OR the
+// language shown (ar→en / ja→en / hi→en). Auto-generation (arc) still uses the target-only
+// needsIntroScript, since a generated story teaches the target's script.
+function scriptLessonAvailable(target, src) {
+  return needsIntroScript(target, src) || needsIntroScript(src, target);
 }
 
 // ── Language names in each UI language ───────────────────────────────────────
@@ -1528,6 +1557,7 @@ function applyUIStrings() {
   _setText('num-chapters-lbl', t('form.num_chapters_lbl'));
   _setText('gen-arc-lbl', t('form.arc_lbl'));
   _setText('gen-arc-script-lbl', t('form.arc_script_lbl'));
+  _setText('tts-test-lbl', t('tts.voice_test'));
   _setAttr('sl-bottom-continue', 'title', t('lesson.continue_title') || t('sl.continue'));
   _setAttr('sl-bottom-download', 'title', t('sl.download'));
   _setAttr('sl-bottom-clear', 'title', t('sl.clear_progress'));
@@ -3216,7 +3246,7 @@ function savedItemHtml(s, connector, hideStory) {
         <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
-        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${s.id||s.topic.replace(/'/g,"\\'")}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
+        ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${escJsAttr(s.id||s.topic)}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
         ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
         ${APP.info.canGenerate?`<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
         ${APP.info.canGenerate&&s.id?`<button class="ico-btn" title="${t('qc.btn.topic')}" onclick="event.stopPropagation();qcRun({topicId:'${s.id}'},this)">🔍${s.qcFlags>0?`<span style="color:var(--red);font-weight:800">${s.qcFlags}</span>`:''}</button>`:''}
@@ -3228,7 +3258,7 @@ function savedItemHtml(s, connector, hideStory) {
     </div>
     <div class="saved-item-story"${hideStory ? ' style="display:none"' : ''}>
       <div style="display:flex;align-items:center">
-        <div class="saved-item-story-hdr" style="flex:1" role="button" tabindex="0" onclick="event.stopPropagation();toggleSavedStory('${sid}','${s.topic.replace(/'/g,"\\'")}')">
+        <div class="saved-item-story-hdr" style="flex:1" role="button" tabindex="0" onclick="event.stopPropagation();toggleSavedStory('${sid}')">
           ${t('lesson.read_story_short')}
           <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
         </div>
@@ -3253,7 +3283,7 @@ function savedItemHtml(s, connector, hideStory) {
         <option value="word_forms">🧩 ${t('lesson.type.word_forms')}</option>
         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
         <option value="math">🔢 ${t('lesson.type.math')}</option>
-        ${needsIntroScript(s.lang, APP.srcLang) ? `<option value="intro_script">🔡 ${t('lesson.type.intro_script')}</option>` : ''}
+        ${scriptLessonAvailable(s.lang, APP.srcLang) ? `<option value="intro_script">🔡 ${t('lesson.type.intro_script')}</option>` : ''}
       </select>
       <select class="addlesson-select" id="sial-diff-${sid}" title="Difficulty">
         <option value="1"${s.difficulty===1?' selected':''}>🟢</option>
@@ -3889,6 +3919,24 @@ async function _pollGenBook(bookId, total){
 // (buildPath, play UI, lesson editor, renderers, exercise builders) IS included in
 // docs; define any static-reachable client helper at/after this point.
 // ── home path ──
+// Learner visibility / completion — single source of truth.
+// A teacher-hidden lesson (_hidden) is invisible to a learner in non-teacher mode; and when a set
+// contains a `mixed` lesson, a learner plays ONLY the mixed lesson(s) (the others are pooled into
+// it). `lessonCountsFor` decides whether a lesson counts for the learner; it's used by the path
+// render, progress, locking, next-up, and story unlock so the rule lives in exactly one place.
+// Teacher/live mode counts everything (nothing hidden, nothing locked).
+function lessonCountsFor(d, L) {
+  if (APP._teacherMode) return true;
+  const mixedOnly = (d?.lessons || []).some(x => x && x.type === 'mixed' && !x._hidden);
+  return mixedOnly ? (L.type === 'mixed' && !L._hidden) : !L._hidden;
+}
+function countedLessons(d) { return (d?.lessons || []).filter(L => lessonCountsFor(d, L)); }
+// Has the learner finished everything that counts in this set? Drives story unlock + 100%.
+function setComplete(d) {
+  if (!d) return false;
+  const done = APP.progress?.completed?.[d.topic] || {};
+  return countedLessons(d).every(L => done[L.id]);
+}
 function buildPath(){
   if(!APP.lessonData)return;
   const d=APP.lessonData, topicKey=d.topic;
@@ -3911,11 +3959,9 @@ function buildPath(){
     _emojiBig.onclick = null;
   }
   document.getElementById('topic-name-big').textContent=d.topic;
-  // A teacher-hidden lesson (_hidden) is invisible to a learner in non-teacher (static) mode:
-  // it must not render, must not lock the next lesson, and must not count toward progress or
-  // story unlock. In teacher/live mode it still shows (greyed) and counts, so it can be unhidden.
-  const _lessonCounts = (L) => APP._teacherMode || !L._hidden;
-  const _countedLessons = (APP.lessonData?.lessons||[]).filter(_lessonCounts);
+  // Learner visibility is decided by the shared lessonCountsFor() (handles hidden + mixed-only).
+  const _lessonCounts = (L) => lessonCountsFor(d, L);
+  const _countedLessons = countedLessons(d);
   const _allL=_countedLessons.length;
   const _doneMap=APP.progress.completed?.[APP.lessonData?.topic]||{};
   const _doneL=_countedLessons.filter(L=>_doneMap[L.id]).length;
@@ -4090,7 +4136,7 @@ function buildPath(){
   const storyBody=document.getElementById('story-body');
   if(d.story && storySec && storyBody){
     storySec.style.display='';
-    const allDone=d.lessons.filter(_lessonCounts).every(L=>done[L.id]);
+    const allDone=setComplete(d);
     const arrow=document.getElementById('story-arrow');
     if(allDone){ storyBody.classList.add('open'); if(arrow) arrow.classList.add('open'); }
     else { storyBody.classList.remove('open'); if(arrow) arrow.classList.remove('open'); }
@@ -4184,7 +4230,7 @@ function buildPath(){
       const _sid = Math.abs(d.topic.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0)).toString(36);
       const _diff = d.difficulty || 2;
       const _slen = d.storyLen || 300;
-      const _contBtn=APP.info.canGenerate?`<button class="flag-btn" style="background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a" title="${t('lesson.continue_title')}" onclick="continueFromLesson('${d.topic.replace(/'/g,"\'")}',${_diff},${_slen})">↪ ↪</button>`:'';
+      const _contBtn=APP.info.canGenerate?`<button class="flag-btn" style="background:#f0fff4;border-color:#a0ddb0;color:#1a5c2a" title="${t('lesson.continue_title')}" onclick="continueFromLesson('${escJsAttr(d.id||d.topic)}',${_diff},${_slen})">↪ ↪</button>`:'';
       const _flagBtn=``; // legacy story flag retired from the UI
       _actRow.innerHTML =
         _contBtn
@@ -4246,7 +4292,7 @@ function _canEdit(){ return !!(APP.info?.canGenerate || APP._teacherMode); }
 function startNextLesson(){
   if(!APP.lessonData)return;
   const d=APP.lessonData, done=APP.progress.completed[d.topic]||{};
-  const nextIdx=d.lessons.findIndex(L=>!done[L.id]&&(APP._teacherMode||!L._hidden));
+  const nextIdx=d.lessons.findIndex(L=>!done[L.id]&&lessonCountsFor(d,L));
   if(nextIdx>=0) startLesson(nextIdx);
 }
 
@@ -4259,6 +4305,9 @@ async function toggleSavedStory(id, topic) {
   const body=document.getElementById('sis-body-'+id);
   const arrow=document.getElementById('sis-arrow-'+id);
   if(!body) return;
+  // Topic comes from the body's data-topic (set HTML-safely) rather than an inline onclick
+  // argument — a title with a quote/apostrophe/newline would otherwise break the handler.
+  if(topic==null) topic=body.dataset.topic||'';
   const opening=!body.classList.contains('open');
   body.classList.toggle('open',opening);
   if(arrow) arrow.textContent=opening?'▲':'▼';
@@ -4531,7 +4580,7 @@ function openAddLesson(sid, enc) {
     const introOpt = _fmtSel.querySelector('.opt-intro-script');
     if (introOpt) {
       const lang = APP.lessonData?.lang;
-      const show = !!lang && needsIntroScript(lang, APP.srcLang);
+      const show = !!lang && scriptLessonAvailable(lang, APP.srcLang);
       introOpt.style.display = show ? '' : 'none';
       if (!show && _fmtSel.value === 'intro_script') _fmtSel.value = 'standard';
     }
@@ -7096,12 +7145,18 @@ async function toggleChainStory(chainId) {
   body.innerHTML = '<div class="storyline-story-loading">Loading stories…</div>';
   try {
     const topics = JSON.parse(decodeURIComponent(body.dataset.chain));
+    // Static builds have no server: chapters live in STATIC_LESSONS, not APP.savedList. Look in
+    // both (static first) before falling back to a server fetch (which only exists in live mode).
+    const _pool = (typeof STATIC_LESSONS !== 'undefined' ? STATIC_LESSONS : []).concat(APP.savedList || []);
     const chapters = [];
     for (const topic of topics) {
       let d;
-      const cached = (APP.savedList || []).find(s => s.story && s.topic === topic);
-      if (cached && cached.lessons && cached.story) {
+      const cached = _pool.find(s => s.story && s.lessons && s.topic === topic);
+      if (cached) {
         d = cached;
+      } else if (typeof STATIC_LESSONS !== 'undefined') {
+        // static mode, chapter not found in the bundle — skip rather than hit a dead server.
+        continue;
       } else {
         const r = await fetch('/api/lessons/load?topic=' + encodeURIComponent(topic));
         if (!r.ok) throw new Error('Could not load: ' + topic);
@@ -7208,7 +7263,11 @@ function buildStandardExercises(lesson, lessonIdx){
   //pick(ts,3).forEach(s=>exs.push(mkRead(s,allS)));
   pick(ts,3).forEach(s=>exs.push(mkRead(s,ts)));
   pick(tv,2).forEach(v=>exs.push(mkLType(v)));
-  const prevV=d.lessons.slice(0,lessonIdx).flatMap(L=>L.vocab);
+  // Review items drawn from EARLIER lessons' vocab. Exclude hidden lessons for a learner
+  // (non-teacher) so a visible lesson never quizzes content the user can't see — mirrors the
+  // path/mixed gating. Teacher mode keeps everything for review.
+  const _vis = (L) => APP._teacherMode || !L._hidden;
+  const prevV=d.lessons.slice(0,lessonIdx).filter(_vis).flatMap(L=>L.vocab||[]);
   if(prevV.length>=4) pick(prevV,3).forEach(v=>{ const e=mkMcqIE(v,allV); if(e)exs.push(e); });
   return shuffle(exs).slice(0,12);
 }
@@ -7921,6 +7980,15 @@ function renderErrorHunt(){
 
 function escHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function escAttr(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+// Escape a value for use as a JS string literal INSIDE a double-quoted inline handler, e.g.
+// onclick="f('${escJsAttr(v)}')". Value-preserving (the function receives the original string):
+// backslash/quote/newline are JS-escaped; " and < are HTML-escaped so they can't terminate the
+// attribute. A title with ' " \ or a newline would otherwise cause "missing ) after argument
+// list" and the click silently fails.
+function escJsAttr(s){ return String(s==null?'':s)
+  .replace(/\\/g,'\\\\').replace(/'/g,"\\'")
+  .replace(/\r/g,'').replace(/\n/g,'\\n')
+  .replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
 function buildEhEditMap(lesson){
   const story=lesson.corruptedStory;
@@ -8650,6 +8718,7 @@ function check(){
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakOk = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
       : ex.type==='type_plural' ? stripFuri(ex.correct)
+      : ex._intro ? stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target)   // speak the GLYPH (target voice), never the Latin romanization ("dh"→"d-h")
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
       : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+stripFuri(ex.plural)
       : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+stripFuri(ex.correct)
@@ -8670,6 +8739,7 @@ function check(){
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakBad = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
       : ex.type==='type_plural' ? stripFuri(ex.correct)
+      : ex._intro ? stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target)   // glyph, not romanization
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
       : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+stripFuri(ex.plural)
       : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+stripFuri(ex.correct)
@@ -8724,10 +8794,31 @@ function showComplete(){
       vocabItems = ops.length
         ? ops.map(op=>`<span class="vocab-chip" style="font-size:18px">${op}</span>`).join('')
         : (lesson.numbers||[]).map(n=>`<span class="vocab-chip">${n}</span>`).join('');
+    } else if (lesson?.type === 'intro_script') {
+      // Script lessons have no vocab — show the letters this lesson covered (glyph + sound).
+      if (wordsLbl) wordsLbl.textContent = lesson.title || t('lesson.type.intro_script');
+      vocabItems = (lesson.letters||[]).map(L=>`<span class="vocab-chip" dir="auto"><span style="font-size:18px">${escHtml(L.ch||'')}</span>${(L.translit||L.name)?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+escHtml(L.translit||L.name)+'</small>':''}</span>`).join('');
+    } else if (lesson?.type === 'mixed') {
+      // Mixed lessons have no vocab of their own — show the distinct words actually played this
+      // round (pulled from the sibling lessons it pooled from), so the recap isn't empty.
+      if (wordsLbl) wordsLbl.textContent = t('lesson.words_from');
+      const seen = new Set(); const chips = [];
+      for (const e of (C.exercises || [])) {
+        const tgt = (e.target || e.correct || '').toString().trim();
+        if (!tgt || seen.has(tgt)) continue;
+        seen.add(tgt);
+        const src = e.source ? `<small style="opacity:.55;font-weight:600;margin-left:4px">${furiHtml(e.source)}</small>` : '';
+        chips.push(`<span class="vocab-chip" dir="auto">${furiHtml(tgt)}${src}</span>`);
+      }
+      vocabItems = chips.join('');
     } else {
       if (wordsLbl) wordsLbl.textContent = t('lesson.words_from');
       if (lesson?.vocab?.length) {
         vocabItems = lesson.vocab.map(v=>`<span class="vocab-chip">${furiHtml(v.target)}${v.source?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+furiHtml(v.source)+'</small>':''}</span>`).join('');
+      } else if (lesson?.words?.length) {            // synonyms
+        vocabItems = lesson.words.map(w=>`<span class="vocab-chip">${furiHtml(w.base||'')}${w.gloss?'<small style="opacity:.55;font-weight:600;margin-left:4px">'+escHtml(w.gloss)+'</small>':''}</span>`).join('');
+      } else if (lesson?.items?.length) {            // word_forms (cloze)
+        vocabItems = lesson.items.map(it=>{ const c=Array.isArray(it.choices)?it.choices[it.correctIndex]:''; return c?`<span class="vocab-chip">${furiHtml(c)}</span>`:''; }).filter(Boolean).join('');
       } else if (lesson?.grammar?.length) {
         vocabItems = lesson.grammar.map(g=>`<span class="vocab-chip">${g.target} <small style="opacity:.6">${g.article||''} / ${g.plural||'—'}</small></span>`).join('');
       } else if (lesson?.conjugations?.length) {
@@ -8744,8 +8835,15 @@ function showComplete(){
   const compNext = el('comp-next');
   const done = APP.progress.completed?.[topicKey] || {};
   const allLessons = APP.lessonData?.lessons || [];
-  const nextLessonIdx = allLessons.findIndex((L, i) => i !== C.lessonIdx && !done[L.id]);
-  const typeLabel = idx => { const k={grammar:'lesson.type.grammar',conjugation:'lesson.type.conjugation',error_hunt:'lesson.type.error_hunt',ai_error_hunt:'lesson.type.ai_error_hunt',math:'lesson.type.math',synonyms:'lesson.type.synonyms'}[allLessons[idx]?.type]||'lesson.type.vocab'; return t(k); };
+  // Visibility predicate from the shared helper (handles teacher-hidden + mixed-only).
+  const _counts = (L) => lessonCountsFor(APP.lessonData, L);
+  const nextLessonIdx = allLessons.findIndex((L, i) => i !== C.lessonIdx && !done[L.id] && _counts(L));
+  // Use the canonical registry label so every type is named correctly (incl. 🔡 script lessons,
+  // word_forms, synonyms…) — the old hardcoded map fell back to "Vocabulary" for anything missing.
+  const typeLabel = idx => {
+    const L = allLessons[idx]; if (!L) return t('lesson.type.vocab');
+    return (L.type === 'intro_script' && L.title) ? L.title : (lessonTypeEmoji(L.type) + ' ' + lessonTypeLabel(L.type));
+  };
 
   // Resolve storyline
   const _slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
@@ -8785,7 +8883,10 @@ function showComplete(){
   const _compStory = document.getElementById('comp-story-unlocked');
   if (_compStory) {
     const _story = APP.lessonData?.story || '';
-    const _allDone2 = allLessons.every(L => (APP.progress.completed?.[topicKey]||{})[L.id]);
+    // Respect the same visibility rule as the path: in mixed-only (or with hidden lessons) a
+    // learner finishes the set by completing only the COUNTED lessons, so the story unlocks then —
+    // not only when every raw lesson (incl. hidden ones they never see) is done.
+    const _allDone2 = setComplete(APP.lessonData);
     const _showStory = _story && (_allDone2 || APP.info.canGenerate || APP._teacherMode);
     _compStory.style.display = _showStory ? '' : 'none';
     if (_showStory) {

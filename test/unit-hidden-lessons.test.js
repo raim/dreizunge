@@ -10,21 +10,26 @@ const fs = require('fs');
 const path = require('path');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
-// 1. The counts helper exists and is mode-aware.
-assert.ok(/_lessonCounts\s*=\s*\(L\)\s*=>\s*APP\._teacherMode\s*\|\|\s*!L\._hidden/.test(html),
-  '_lessonCounts = teacher-mode OR not-hidden');
+// 1. The shared visibility helper exists, is mode-aware AND mixed-aware (single source of truth).
+assert.ok(/function lessonCountsFor\(d, L\)/.test(html), 'shared lessonCountsFor(d, L) helper exists');
+assert.ok(/const mixedOnly = \(d\?\.lessons \|\| \[\]\)\.some\(x => x && x\.type === 'mixed' && !x\._hidden\)/.test(html),
+  'lessonCountsFor: mixed-only when a non-hidden mixed lesson is present');
+assert.ok(/return mixedOnly \? \(L\.type === 'mixed' && !L\._hidden\) : !L\._hidden/.test(html),
+  'lessonCountsFor: mixed-only ? only mixed : not-hidden');
+assert.ok(/function setComplete\(d\)[\s\S]*?countedLessons\(d\)\.every\(L => done\[L\.id\]\)/.test(html),
+  'setComplete(d) = every counted lesson done');
 
-// 2. Progress count, story-unlock, next-up, and render all route through the counts helper.
-assert.ok(/_countedLessons\s*=\s*\(APP\.lessonData\?\.lessons\|\|\[\]\)\.filter\(_lessonCounts\)/.test(html),
-  'progress count filters by _lessonCounts');
-assert.ok(/allDone=d\.lessons\.filter\(_lessonCounts\)\.every/.test(html),
-  'story unlock filters by _lessonCounts');
+// 2. Progress count, story-unlock, next-up, render, and the continue jump all route through it.
+assert.ok(/_countedLessons = countedLessons\(d\)/.test(html), 'progress count uses countedLessons(d)');
+assert.ok(/const allDone=setComplete\(d\)/.test(html), 'story unlock uses setComplete(d)');
+assert.ok(/_lessonCounts = \(L\) => lessonCountsFor\(d, L\)/.test(html), 'render-loop predicate aliases the shared helper');
 assert.ok(/findIndex\(L=>!done\[L\.id\]&&_lessonCounts\(L\)\)/.test(html),
-  'next-up skips hidden in non-teacher mode (in-render)');
-assert.ok(/findIndex\(L=>!done\[L\.id\]&&\(APP\._teacherMode\|\|!L\._hidden\)\)/.test(html),
-  'continue/resume jump skips hidden in non-teacher mode');
+  'next-up skips non-counted lessons (in-render)');
+assert.ok(/findIndex\(L=>!done\[L\.id\]&&lessonCountsFor\(d,L\)\)/.test(html),
+  'continue/resume jump uses the shared helper (respects hidden + mixed-only)');
 assert.ok(/if\(!_lessonCounts\(L\)\) return;/.test(html),
-  'render loop omits hidden lessons in non-teacher mode');
+  'render loop omits non-counted lessons');
+assert.ok(!/_mixedOnly/.test(html), 'the old inline _mixedOnly definitions are gone (consolidated)');
 
 // 3. Lock chain no longer keys off the raw previous index (which could be a hidden lesson) but
 //    off the previous COUNTED lesson's done state.
@@ -63,5 +68,13 @@ const teacher = lockChain(lessons, new Set(['a']), true);
 assert.deepStrictEqual(teacher.map(x => x.id), ['a', 'h', 'b'], 'hidden lesson visible to teacher');
 assert.ok(teacher.every(x => !x.locked), 'teacher mode never locks');
 console.log('  hidden lessons: omitted + non-blocking for learner, visible for teacher: OK');
+
+// 5. Bug: a visible vocab lesson's cross-lesson REVIEW pool must exclude hidden lessons (non-
+//    teacher), or a learner gets quizzed on words from a lesson they can't see.
+assert.ok(/const prevV=d\.lessons\.slice\(0,lessonIdx\)\.filter\(_vis\)\.flatMap/.test(html),
+  'standard exercises filter the prev-vocab review pool by visibility');
+assert.ok(/_vis = \(L\) => APP\._teacherMode \|\| !L\._hidden/.test(html),
+  'standard exercises define a visibility filter for the review pool');
+console.log('  standard review pool excludes hidden lessons (non-teacher): OK');
 
 console.log('unit-hidden-lessons: ALL PASSED');

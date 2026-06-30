@@ -1,0 +1,115 @@
+# ui.json — values flagged by the script sanity check (uploaded file)
+# These were dropped from the merged release (→ English fallback). Re-translate with a stronger model.
+
+## ar  (8)
+  furigana.show	[wrong-script:Japanese]	ふ عرض الفوريجنا
+  tts.approx	[wrong-script:Cyrillic]	⚠ ترجمة произношения приблизительная
+  ex.badge.mcq_target_source	[wrong-script:Cyrillic]	ما значици هذا?
+  form.format.grammar	[wrong-script:Cyrillic]	🏷️ نحو — جنس الكلمة، الألفاظ والنوع множدي
+  ex.badge.mcq_plural	[wrong-script:Cyrillic]	اختر المفرد множدي
+  ex.badge.type_plural	[wrong-script:Cyrillic]	اكتب المفرد множدي
+  ex.mcq_plural.q	[wrong-script:Cyrillic]	ما هو المفرد множدي ل "{word}"؟
+  form.format.all_types	[wrong-script:Cyrillic]	🎯 جميع الأنواع — المعياري + гرامática + تقوية الفعل + البحث عن الأخطاء
+
+## el  (1)
+  form.style.essay	[wrong-script:Japanese]	✍️ Εッセϊ
+
+## he  (21)
+  app.backend	[wrong-script:Hangul]	백엔드:
+  diff.intermediate	[wrong-script:Han]	🟡 מ发展中 — משפטים טבעיים, גרמטיקה מגוונת
+  tts.approx	[wrong-script:Cyrillic]	⚠ תיאורית произношение
+  ex.badge.listen_mcq	[wrong-script:Han]	🎧收听 — מה את שמעת?
+  ex.badge.listen_type	[wrong-script:Han]	🎧收听 — כתוב מה שמעת
+  check.correct_answer	[wrong-script:Hangul]	ה답 הנכון:
+  complete.title	[wrong-script:Han]	מדועה完好
+  storyline.title	[wrong-script:Han]	QRSTורילה完好
+  rating.just_right	[wrong-script:Han]	剛好
+  ex.error_hunt.check	[latin-untranslated]	ckeck answers
+  toast.link_copied	[wrong-script:Hangul]	🔗 링크복사!
+  toast.export_ok	[wrong-script:Hangul]	✓ אקס포וט למדון {n}
+  form.story_rewrite_placeholder	[wrong-script:Arabic,Han]	הموضوع להזזה, לדוגמה 'לעשות אותו יותר מצחיק' או 'להצבתו ב羅馬'
+  form.story_flag_placeholder	[wrong-script:Arabic]	הموضوع שגוי בסיפור...
+  lesson.share_title	[wrong-script:Hangul]	העתק 링ק משותף
+  ex.error_hunt.instruction	[wrong-script:Han]	תAPS按住错误的单词——拼写或语法错误。
+  lib.empty_lang	[wrong-script:Hangul,Han]	אין למדונים ב언语。
+  lesson.fix_all	[latin-untranslated]	🔧-fix all
+  lib.fix_all_lessons	[latin-untranslated]	Fix all lessons (deep clean)
+  form.format_lbl	[latin-untranslated]	Lesson format
+  ex.type_plural.q	[wrong-script:Cyrillic]	כתוב את המספר множי של "{word}"
+
+## hi  (26)
+  toast.generating	[latin-untranslated]	⏳ Generating "{topic}" in the background…
+  toast.already_generating	[latin-untranslated]	⏳ Already generating "{topic}" — please wait
+  toast.story_rewritten	[latin-untranslated]	Story rewritten ✓
+  toast.link_copied	[latin-untranslated]	🔗 Link copied!
+  toast.no_voice	[latin-untranslated]	⚠ No {lang} voice — using approximation
+  toast.export_fail	[latin-untranslated]	⚠ Export failed: {msg}
+  toast.invalid_json	[latin-untranslated]	⚠ Invalid JSON file
+  toast.no_lessons	[latin-untranslated]	⚠ No lessons found in file
+  toast.select_story	[latin-untranslated]	⚠ Select a story or enter a topic for Text Understanding
+  static.info	[latin-untranslated]	📦 Static version — select a topic below to start
+  form.topic_placeholder_rich	[latin-untranslated]	e.g. cooking, architecture, medicine… add details for a richer story
+  form.story_placeholder	[latin-untranslated]	Paste your story here…
+  form.translation_placeholder_short	[latin-untranslated]	Paste the translation here. One sentence per paragraph is ideal, but plain prose works too.
+  form.story_rewrite_placeholder	[latin-untranslated]	Describe what to change, e.g. 'make it funnier' or 'set it in Rome'…
+  form.story_flag_placeholder	[latin-untranslated]	Describe what is wrong with the story…
+  lesson.share_title	[latin-untranslated]	Copy shareable link
+  lesson.edit_story	[latin-untranslated]	Edit story
+  lesson.continue_title	[latin-untranslated]	Continue this story in a new lesson set
+  lesson.regen_prompt	[latin-untranslated]	↻ Regenerate with this prompt
+  lesson.export_title	[latin-untranslated]	Export lesson with flags
+  lesson.export_storyline_title	[latin-untranslated]	Export full story line with flags
+  lesson.gen_title	[latin-untranslated]	Generate title with AI
+  lesson.generating_title	[latin-untranslated]	Generating story title…
+  lesson.title_saved	[latin-untranslated]	Title saved
+  ex.error_hunt.instruction	[latin-untranslated]	Tap words that look wrong — spelling or grammar mistakes.
+  story.prompt_placeholder	[latin-untranslated]	No story prompt saved for this lesson.
+
+## ko  (29)
+  furigana.show	[wrong-script:Japanese]	ふ 표시
+  toast.export_ok	[wrong-script:Han]	✓ {n} 강의导出成功
+  toast.export_ok_plural	[wrong-script:Han]	✓ {n} 강의导出成功
+  toast.export_fail	[wrong-script:Han]	⚠ 导出失败: {msg}
+  toast.invalid_json	[wrong-script:Han]	⚠ 无效的 JSON 文件
+  toast.no_lessons	[wrong-script:Han]	⚠ 文件中未找到任何课程
+  toast.select_story	[wrong-script:Han]	⚠ 请选择一个故事或输入主题以进行文本理解
+  static.info	[wrong-script:Han]	📦 静态版本 — 请选择下方的主题以开始
+  form.topic_placeholder_rich	[wrong-script:Han]	例如：烹饪、建筑、医学…添加更多细节以使故事更丰富
+  form.story_placeholder	[wrong-script:Han]	在此粘贴您的故事…
+  form.translation_placeholder_short	[wrong-script:Han]	在此粘贴翻译。每段一个句子最佳，但纯文本也行。
+  form.story_rewrite_placeholder	[wrong-script:Han]	描述要更改的内容，例如：‘使其更有趣’或‘将其设置在罗马’…
+  form.story_flag_placeholder	[wrong-script:Han]	描述故事中的错误…
+  lesson.share_title	[wrong-script:Han]	复制可分享链接
+  lesson.edit_story	[wrong-script:Han]	编辑故事
+  lesson.continue_title	[wrong-script:Han]	在新的课程集中继续此故事
+  lesson.regen_prompt	[wrong-script:Han]	↻ 使用此提示重新生成
+  lesson.export_title	[wrong-script:Han]	导出带标记的课程
+  lesson.export_storyline_title	[wrong-script:Han]	导出带标记的完整故事线
+  lesson.gen_title	[wrong-script:Han]	使用 AI 生成标题
+  lesson.generating_title	[wrong-script:Han]	生成故事标题…
+  lesson.title_saved	[wrong-script:Han]	标题保存
+  lesson.flagged_count	[wrong-script:Han]	您有 {n} 个标记练习 — 下载以离线审阅
+  lesson.flagged_count_plural	[wrong-script:Han]	您有 {n} 个标记练习 — 下载以离线审阅
+  ex.error_hunt.instruction	[wrong-script:Han]	点击看起来错误的单词 — 拼写或语法错误。
+  story.prompt_placeholder	[wrong-script:Han]	此课程中未保存任何故事提示。
+  lib.empty_lang	[wrong-script:Han]	此语言中没有课程。
+  lib.empty	[wrong-script:Han]	还没有保存任何课程 — 在上方生成一个!
+  status.offline	[wrong-script:Han]	离线 — 仅保存的课程
+
+## ru  (1)
+  furigana.show	[wrong-script:Japanese]	ふ Показать фуригана
+
+## th  (7)
+  form.generate	[wrong-script:Han]	生成课程 →
+  toast.story_rewritten	[wrong-script:Han]	เรื่อง已被重写 ✓
+  toast.link_copied	[wrong-script:Han]	🔗 ลิงค์已被复制!
+  lesson.gen_topic_title_title	[wrong-script:Han]	生成课程标题
+  form.style.funny	[wrong-script:Han]	😂 幽默
+  ex.mcq_plural.q	[wrong-script:Cyrillic]	 "{word}" ในรูป множествมีอย่างไร?
+  ex.type_plural.q	[wrong-script:Cyrillic]	เขียนรูป множествของ "{word}"
+
+## uk  (1)
+  diff.advanced	[wrong-script:Han]	🔴 Від错进阶 — слівні речення, ідіоматична мова
+
+## zh  (1)
+  furigana.show	[wrong-script:Japanese]	ふ显示furigana

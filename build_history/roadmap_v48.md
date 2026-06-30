@@ -8,6 +8,29 @@
 
 ## Build plans (queued, not started)
 
+### Hindi / Devanagari script lessons — ✅ BASIC TABLE SHIPPED (v47.x)
+A `devanagari` table (44 letters = 11 independent vowels + 33 consonants, IAST translits, IPA) is
+now in scripts.json and `hi → devanagari` is wired; en→hi offers the script lesson, hi (LTR). Scope
+is **letter recognition only** — consonants use the inherent-vowel form (क = "ka", standard IAST),
+which is the right call for recognition but means the lesson does NOT teach **matras** (positional
+vowel signs) or **conjuncts** (क्ष etc.) — those can't reduce to a flat table and are the genuinely
+hard part of Devanagari. Romanizations are standard IAST (deterministic, high-confidence) but a
+native pass is still worthwhile, as with Hangul/Hebrew. Future: a matra/conjunct lesson type if
+demand warrants (separate, larger effort). Thai remains the only empty stub.
+
+### Library tag/language filter persistence — NEEDS REPRO
+Reported: navigating back to main loses the tag/language selection. On inspection the in-memory
+filters (`APP.libTagFilter`, `APP.libFilter`, `APP.libSrcFilter`) already persist across navigation,
+and `_renderTagFilterBar` re-selects the active tag — so the reset isn't obvious. The likely culprit
+is `_restoreFormLang()` (called by the 🌍 Home button / back paths), which resets `APP.lang`/`srcLang`
+to the *form* defaults — intended for the generation form but it may also reset the visible language
+selectors that the library reads. Holding the fix until the exact repro is confirmed (which control
+resets, via which button), because the language-selection flow is intricate and tied to generation —
+a speculative change risks breaking generation. Candidate fix once confirmed: persist the three lib
+filters (and/or decouple them from `_restoreFormLang`) so navigation keeps the selection while a true
+page refresh still resets to default.
+
+
 ### Dynamic mixed lessons as the default progression model — DISCUSSED, not started
 Shift the play model from "complete each lesson in a locked path" to "play variable-length mixed
 rounds drawn from the whole set until a target fraction of ALL questions is solved." Each lesson

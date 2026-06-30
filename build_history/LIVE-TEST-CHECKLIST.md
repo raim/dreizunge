@@ -657,6 +657,11 @@ table exists. Open/create a lesson set per target below, add the lesson, and pla
       questions (matching the difficulty), not ~2×letters+5 — even though each letter generates
       both MCQ directions plus listen items. Replaying the same lesson gives a different random
       subset. (Script lessons only; other lesson types still play all their questions.)
+- [ ] **Result card handles script lessons.** Finishing a script lesson: the completion card's
+      "Words from this lesson" box shows the **letters** covered (glyph + sound), not an empty box;
+      and if a script lesson is the next one, the **Next** button names it (e.g. "→ 🔡 Arabic"),
+      not "→ Vocabulary". A hidden next lesson is skipped (static mode). (Same fix gives word_forms
+      and synonyms lessons their items/words on the card.)
 - [ ] **Script lessons are editable.** Open a script lesson's ✏️ editor: each **letter** shows
       its glyph (read-only) and editable fields (Name, Sound, IPA), plus ↑↓ reorder, 🗑 delete,
       ⚑ flag, and ⭐ star — same as vocab. Edit a transliteration / reorder / delete a letter,
@@ -731,3 +736,36 @@ without a backend):
       (hidden lessons don't count toward the total).
 - [ ] In **teacher/live** mode the hidden lesson still shows (greyed 👁/🫥 toggle) and can be unhidden.
 - [ ] Normal locking still works: a non-hidden undone lesson still locks the next one in static mode.
+
+### 37. Batch fixes (v47.x) — mixed-as-progression, hidden-leak, script audio, static storyline read
+- [ ] **BUG: hidden vocab no longer leaks (B).** In a topic with a hidden vocab lesson and a visible
+      one, playing the visible lesson must NOT show review questions drawn from the hidden lesson's
+      vocab. (Was: the cross-lesson review pool ignored hidden lessons.)
+- [ ] **Mixed-as-progression (B).** In a set that contains a `mixed` lesson, non-teacher mode shows
+      ONLY the mixed lesson(s); all other lessons are hidden, and the mixed lesson pools its
+      questions from them. Progress/100%/story-unlock is driven by the mixed lesson. Teacher mode
+      still shows every lesson.
+- [ ] **Script audio says the letter, not the romanization (B).** In an Arabic script lesson, the
+      feedback after a glyph→sound question speaks the Arabic letter (in the Arabic voice), not the
+      transliteration read letter-by-letter ("d-h"/"g-h").
+- [ ] **Static storyline "read the full story" works (B).** On the storyline screen in a static
+      build (no server), expanding "read the full story" shows the chapters' text (pulled from the
+      static bundle), instead of "⚠ Could not load".
+- [ ] **Always-on speech test button (B).** The main form shows a 🔊 voice-test button below the
+      language selectors at all times (not only when a voice problem is detected); it tests the
+      currently-selected target language.
+
+### 38. Hindi / Devanagari script lessons (browser-only)
+- [ ] **en→hi** offers a 🔡 script lesson. It quizzes Devanagari glyphs (44: 11 vowels + 33
+      consonants), consonants shown with the inherent vowel (क = "ka"). Recognition only — it does
+      NOT teach matras (vowel signs) or conjuncts. The IAST romanizations want a native check.
+
+### 39. ui.json cleanup + read-story SyntaxError fix
+- [ ] **ui.json sanity (no wrong scripts).** The shipped ui.json has no cross-language contamination
+      (e.g. no Chinese in the Korean block, no Cyrillic in Arabic). Corrupted values were removed and
+      fall back to English. The dropped values are listed in `build_history/ui_translation_flags.txt`
+      for re-translation (TranslateGemma).
+- [ ] **Read-story no longer throws (B).** On the storyline page, clicking "read story" on a chapter
+      whose title contains an apostrophe / quote / special character now works every time — no
+      `Uncaught SyntaxError: missing ) after argument list` in the console, no dead clicks.
+- [ ] **Continue-story button** on such chapters also works (same escaping fix).

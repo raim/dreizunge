@@ -11,7 +11,8 @@
     "ko": "hangul",
     "ar": "arabic",
     "he": "hebrew",
-    "th": "thai"
+    "th": "thai",
+    "hi": "devanagari"
   },
   "cyrillic": {
     "rtl": false,
@@ -1203,5 +1204,275 @@
     "rtl": false,
     "label": "Thai",
     "letters": []
+  },
+  "devanagari": {
+    "rtl": false,
+    "label": "Devanagari",
+    "letters": [
+      {
+        "ch": "अ",
+        "name": "a",
+        "translit": "a",
+        "ipa": "ə"
+      },
+      {
+        "ch": "आ",
+        "name": "ā",
+        "translit": "ā",
+        "ipa": "aː"
+      },
+      {
+        "ch": "इ",
+        "name": "i",
+        "translit": "i",
+        "ipa": "i"
+      },
+      {
+        "ch": "ई",
+        "name": "ī",
+        "translit": "ī",
+        "ipa": "iː"
+      },
+      {
+        "ch": "उ",
+        "name": "u",
+        "translit": "u",
+        "ipa": "u"
+      },
+      {
+        "ch": "ऊ",
+        "name": "ū",
+        "translit": "ū",
+        "ipa": "uː"
+      },
+      {
+        "ch": "ऋ",
+        "name": "ṛ",
+        "translit": "ṛ",
+        "ipa": "r̩"
+      },
+      {
+        "ch": "ए",
+        "name": "e",
+        "translit": "e",
+        "ipa": "eː"
+      },
+      {
+        "ch": "ऐ",
+        "name": "ai",
+        "translit": "ai",
+        "ipa": "ɛː"
+      },
+      {
+        "ch": "ओ",
+        "name": "o",
+        "translit": "o",
+        "ipa": "oː"
+      },
+      {
+        "ch": "औ",
+        "name": "au",
+        "translit": "au",
+        "ipa": "ɔː"
+      },
+      {
+        "ch": "क",
+        "name": "ka",
+        "translit": "ka",
+        "ipa": "k"
+      },
+      {
+        "ch": "ख",
+        "name": "kha",
+        "translit": "kha",
+        "ipa": "kʰ"
+      },
+      {
+        "ch": "ग",
+        "name": "ga",
+        "translit": "ga",
+        "ipa": "ɡ"
+      },
+      {
+        "ch": "घ",
+        "name": "gha",
+        "translit": "gha",
+        "ipa": "ɡʱ"
+      },
+      {
+        "ch": "ङ",
+        "name": "ṅa",
+        "translit": "ṅa",
+        "ipa": "ŋ"
+      },
+      {
+        "ch": "च",
+        "name": "ca",
+        "translit": "ca",
+        "ipa": "tʃ"
+      },
+      {
+        "ch": "छ",
+        "name": "cha",
+        "translit": "cha",
+        "ipa": "tʃʰ"
+      },
+      {
+        "ch": "ज",
+        "name": "ja",
+        "translit": "ja",
+        "ipa": "dʒ"
+      },
+      {
+        "ch": "झ",
+        "name": "jha",
+        "translit": "jha",
+        "ipa": "dʒʱ"
+      },
+      {
+        "ch": "ञ",
+        "name": "ña",
+        "translit": "ña",
+        "ipa": "ɲ"
+      },
+      {
+        "ch": "ट",
+        "name": "ṭa",
+        "translit": "ṭa",
+        "ipa": "ʈ"
+      },
+      {
+        "ch": "ठ",
+        "name": "ṭha",
+        "translit": "ṭha",
+        "ipa": "ʈʰ"
+      },
+      {
+        "ch": "ड",
+        "name": "ḍa",
+        "translit": "ḍa",
+        "ipa": "ɖ"
+      },
+      {
+        "ch": "ढ",
+        "name": "ḍha",
+        "translit": "ḍha",
+        "ipa": "ɖʱ"
+      },
+      {
+        "ch": "ण",
+        "name": "ṇa",
+        "translit": "ṇa",
+        "ipa": "ɳ"
+      },
+      {
+        "ch": "त",
+        "name": "ta",
+        "translit": "ta",
+        "ipa": "t̪"
+      },
+      {
+        "ch": "थ",
+        "name": "tha",
+        "translit": "tha",
+        "ipa": "t̪ʰ"
+      },
+      {
+        "ch": "द",
+        "name": "da",
+        "translit": "da",
+        "ipa": "d̪"
+      },
+      {
+        "ch": "ध",
+        "name": "dha",
+        "translit": "dha",
+        "ipa": "d̪ʱ"
+      },
+      {
+        "ch": "न",
+        "name": "na",
+        "translit": "na",
+        "ipa": "n"
+      },
+      {
+        "ch": "प",
+        "name": "pa",
+        "translit": "pa",
+        "ipa": "p"
+      },
+      {
+        "ch": "फ",
+        "name": "pha",
+        "translit": "pha",
+        "ipa": "pʰ"
+      },
+      {
+        "ch": "ब",
+        "name": "ba",
+        "translit": "ba",
+        "ipa": "b"
+      },
+      {
+        "ch": "भ",
+        "name": "bha",
+        "translit": "bha",
+        "ipa": "bʱ"
+      },
+      {
+        "ch": "म",
+        "name": "ma",
+        "translit": "ma",
+        "ipa": "m"
+      },
+      {
+        "ch": "य",
+        "name": "ya",
+        "translit": "ya",
+        "ipa": "j"
+      },
+      {
+        "ch": "र",
+        "name": "ra",
+        "translit": "ra",
+        "ipa": "r"
+      },
+      {
+        "ch": "ल",
+        "name": "la",
+        "translit": "la",
+        "ipa": "l"
+      },
+      {
+        "ch": "व",
+        "name": "va",
+        "translit": "va",
+        "ipa": "ʋ"
+      },
+      {
+        "ch": "श",
+        "name": "śa",
+        "translit": "śa",
+        "ipa": "ʃ"
+      },
+      {
+        "ch": "ष",
+        "name": "ṣa",
+        "translit": "ṣa",
+        "ipa": "ʂ"
+      },
+      {
+        "ch": "स",
+        "name": "sa",
+        "translit": "sa",
+        "ipa": "s"
+      },
+      {
+        "ch": "ह",
+        "name": "ha",
+        "translit": "ha",
+        "ipa": "ɦ"
+      }
+    ]
   }
 }

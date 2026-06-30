@@ -76,6 +76,7 @@ run('unit: intro learn-the-script course (v48)', 'node', [path.join(__dirname, '
 run('unit: QC dispatch — synonyms/word_forms (v48)', 'node', [path.join(__dirname, 'unit-qc-dispatch.test.js')]);
 run('unit: no-keyboard glyph ordering (v48)', 'node', [path.join(__dirname, 'unit-no-keyboard.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
+run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join(__dirname, 'unit-inline-escaping.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {

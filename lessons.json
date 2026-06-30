@@ -2,6 +2,33 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1696503814",
+      "title": "Fruitful Moments",
+      "icon": "🍎",
+      "chapters": [
+        "tp_17828085137690000123",
+        "tp_17828090037230000237",
+        "tp_17828095945860000373"
+      ],
+      "lang": "ja",
+      "srcLang": "en",
+      "createdAt": "2026-06-30T08:35:13.823Z",
+      "updatedAt": "2026-06-30T08:57:52.461Z",
+      "summary": "A woman picks a round fruit with a red skin, savoring its sweet scent and taste with each bite. The combination of sweetness and sourness brings her great comfort, and she smiles, taking in the surrounding green scenery. As she continues to relish the moment, the gentle breeze caresses her skin, and she finds herself contemplating the future while fully enjoying the tranquil instant."
+    },
+    {
+      "id": "sl_384707733",
+      "title": "ruby test",
+      "icon": "📖",
+      "chapters": [
+        "tp_17828067243960000070"
+      ],
+      "lang": "ja",
+      "srcLang": "en",
+      "createdAt": "2026-06-30T08:05:24.446Z",
+      "updatedAt": "2026-06-30T08:05:24.446Z"
+    },
+    {
       "id": "sl_1677655068",
       "title": "Yusuf and the Lost Cat",
       "icon": "📖",
@@ -1081,6 +1108,2081 @@
   ],
   "topics": [
     {
+      "topic": "Relishing Moment",
+      "topicEmoji": "🌿",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "ja",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "彼女は手に持った果物を再度口にし、さらに深く味わった[は]。その甘さが心地よく広がり、彼女は深呼吸した[は]。周囲の緑が彼女を包み込み、心地よい風が肌を撫でた[は]。この静かな瞬間を楽しむ間、彼女は未来のことを考えていた[は]。",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate every kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Only annotate kanji (CJK characters) — do NOT annotate hiragana, katakana, or punctuation. Writing style: Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n果物を口に入れた彼女は、さらに一口食べ、舌先で果汁を味わった[は]。その甘さと酸味が心地よい刺激を与えた[は]。彼女は満足げに微笑み、周囲の景色を眺めた[は]。緑の草原と遠くの山々が美しく、彼女はこの瞬間を心に刻んだ[は]。\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Savoring Taste",
+      "continuedFromId": "tp_17828090037230000237",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Continue the story",
+          "desc": "Continue the previous chapter's story directly",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "口にし",
+              "source": "put in mouth",
+              "qc": {
+                "sug": "言う",
+                "field": "source",
+                "at": "2026-06-30T10:29:43.543Z"
+              }
+            },
+            {
+              "target": "深く味わった",
+              "source": "tasted deeply"
+            },
+            {
+              "target": "心地よく広がり",
+              "source": "spread comfortably",
+              "qc": {
+                "sug": "心地よく広がる",
+                "field": "source",
+                "at": "2026-06-30T10:29:56.743Z"
+              }
+            },
+            {
+              "target": "深呼吸した",
+              "source": "took a deep breath"
+            },
+            {
+              "target": "周囲の緑",
+              "source": "surrounding green"
+            },
+            {
+              "target": "包み込み",
+              "source": "enveloped"
+            },
+            {
+              "target": "肌を撫でた",
+              "source": "stroked the skin"
+            },
+            {
+              "target": "静かな瞬間を楽しむ間",
+              "source": "enjoying the quiet moment",
+              "qc": {
+                "sug": "静かな瞬間を楽しむ間は",
+                "field": "target",
+                "at": "2026-06-30T10:30:19.943Z"
+              }
+            }
+          ],
+          "sentences": [
+            {
+              "target": "果物を口にし、深く味わった。",
+              "source": "Put the fruit in your mouth and tasted it deeply.",
+              "words": [
+                "果物",
+                "を",
+                "口",
+                "にし",
+                "深",
+                "く",
+                "味",
+                "わった"
+              ],
+              "qc": {
+                "sug": "Put the fruit in your mouth and savor it deeply.",
+                "field": "source",
+                "at": "2026-06-30T10:30:35.495Z"
+              }
+            },
+            {
+              "target": "心地よく広がる甘さを楽しんだ。",
+              "source": "Enjoyed the spread of the sweet taste comfortably.",
+              "words": [
+                "心地",
+                "よく",
+                "広",
+                "がる",
+                "甘",
+                "さを",
+                "楽",
+                "しんだ"
+              ],
+              "qc": {
+                "sug": "Enjoyed the gentle spread of the sweet taste.",
+                "field": "source",
+                "at": "2026-06-30T10:30:44.258Z"
+              }
+            },
+            {
+              "target": "深呼吸をして、周囲の緑を包み込んだ。",
+              "source": "Took a deep breath and enveloped the surrounding green.",
+              "words": [
+                "深呼吸",
+                "をして",
+                "周囲",
+                "の",
+                "緑",
+                "を",
+                "包",
+                "み",
+                "込",
+                "んだ"
+              ]
+            },
+            {
+              "target": "肌を撫でる風を感じた。",
+              "source": "Felt the wind stroking the skin.",
+              "words": [
+                "肌",
+                "を",
+                "撫",
+                "でる",
+                "風",
+                "を",
+                "感",
+                "じた"
+              ]
+            },
+            {
+              "target": "静かな瞬間を楽しむ中、未来を想像した。",
+              "source": "While enjoying the quiet moment, imagined the future.",
+              "words": [
+                "静",
+                "かな",
+                "瞬間",
+                "を",
+                "楽",
+                "しむ",
+                "中",
+                "未来",
+                "を",
+                "想像",
+                "した"
+              ],
+              "qc": {
+                "sug": "While enjoying the quiet moment, I imagined the future.",
+                "field": "source",
+                "at": "2026-06-30T10:31:16.950Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 764,
+            "completionTokens": 334,
+            "ms": 293746,
+            "at": "2026-06-30T08:50:04.122Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Round Fruit",
+          "desc": "Continue the previous chapter's story directly",
+          "icon": "🍎",
+          "vocab": [
+            {
+              "target": "果物[かぶつ]",
+              "source": "fruit"
+            },
+            {
+              "target": "丸い[まるい]",
+              "source": "round"
+            },
+            {
+              "target": "甘い[あまい]",
+              "source": "sweet"
+            },
+            {
+              "target": "赤い[あかい]",
+              "source": "red"
+            },
+            {
+              "target": "香り[かおり]",
+              "source": "scent"
+            },
+            {
+              "target": "果肉[かにく]",
+              "source": "flesh",
+              "qc": {
+                "sug": "果実",
+                "field": "target",
+                "at": "2026-06-30T10:31:32.881Z"
+              }
+            },
+            {
+              "target": "一口[ひとくち]",
+              "source": "bite",
+              "qc": {
+                "sug": "一口",
+                "field": "source",
+                "at": "2026-06-30T10:31:37.971Z"
+              }
+            },
+            {
+              "target": "微笑む[ほほえむ]",
+              "source": "smile"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "果物を口に入れる。",
+              "source": "Put the fruit in your mouth.",
+              "words": [
+                "果物",
+                "を",
+                "口",
+                "に",
+                "入",
+                "れる"
+              ],
+              "qc": {
+                "sug": "Put the fruit in the mouth.",
+                "field": "source",
+                "at": "2026-06-30T10:31:50.314Z"
+              }
+            },
+            {
+              "target": "その果物は丸くて甘い。",
+              "source": "That fruit is round and sweet.",
+              "words": [
+                "その",
+                "果物",
+                "は",
+                "丸",
+                "くて",
+                "甘",
+                "い"
+              ]
+            },
+            {
+              "target": "赤い果物の香りが心地よい。",
+              "source": "The scent of the red fruit is comfortable.",
+              "words": [
+                "赤",
+                "い",
+                "果物",
+                "の",
+                "香",
+                "りが",
+                "心地",
+                "よい"
+              ],
+              "qc": {
+                "sug": "The scent of the red fruit is pleasant.",
+                "field": "source",
+                "at": "2026-06-30T10:32:09.141Z"
+              }
+            },
+            {
+              "target": "一口食べると果肉が口の中で溶ける。",
+              "source": "When you take a bite, the flesh melts in your mouth.",
+              "words": [
+                "一口食",
+                "べると",
+                "果肉",
+                "が",
+                "口",
+                "の",
+                "中",
+                "で",
+                "溶",
+                "ける"
+              ],
+              "qc": {
+                "sug": "When you take a bite, the fruit flesh melts in your mouth.",
+                "field": "source",
+                "at": "2026-06-30T10:32:24.553Z"
+              }
+            },
+            {
+              "target": "表情が和む。",
+              "source": "Her expression becomes more relaxed.",
+              "words": [
+                "表情",
+                "が",
+                "和",
+                "む"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 764,
+            "completionTokens": 334,
+            "ms": 293746,
+            "at": "2026-06-30T08:50:04.122Z"
+          }
+        },
+        {
+          "id": "ls_1782815134438_v9hz",
+          "type": "intro_script",
+          "script": "hiragana",
+          "rtl": false,
+          "difficulty": 2,
+          "title": "🔡 Hiragana",
+          "icon": "🔡",
+          "desc": "Hiragana — 12 letters",
+          "letters": [
+            {
+              "ch": "や",
+              "translit": "ya"
+            },
+            {
+              "ch": "す",
+              "translit": "su"
+            },
+            {
+              "ch": "ら",
+              "translit": "ra"
+            },
+            {
+              "ch": "ひ",
+              "translit": "hi"
+            },
+            {
+              "ch": "う",
+              "translit": "u"
+            },
+            {
+              "ch": "り",
+              "translit": "ri"
+            },
+            {
+              "ch": "あ",
+              "translit": "a"
+            },
+            {
+              "ch": "ま",
+              "translit": "ma"
+            },
+            {
+              "ch": "る",
+              "translit": "ru"
+            },
+            {
+              "ch": "も",
+              "translit": "mo"
+            },
+            {
+              "ch": "こ",
+              "translit": "ko"
+            },
+            {
+              "ch": "ん",
+              "translit": "n"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "や",
+              "target": "ya",
+              "correct": "ya",
+              "choices": [
+                "ru",
+                "hi",
+                "ya",
+                "mi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ya",
+              "target": "や",
+              "correct": "や",
+              "choices": [
+                "め",
+                "さ",
+                "や",
+                "ろ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "す",
+              "target": "su",
+              "correct": "su",
+              "choices": [
+                "mi",
+                "e",
+                "ha",
+                "su"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "su",
+              "target": "す",
+              "correct": "す",
+              "choices": [
+                "わ",
+                "せ",
+                "す",
+                "ふ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ら",
+              "target": "ra",
+              "correct": "ra",
+              "choices": [
+                "ku",
+                "ma",
+                "ra",
+                "chi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ra",
+              "target": "ら",
+              "correct": "ら",
+              "choices": [
+                "つ",
+                "ら",
+                "ま",
+                "こ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ひ",
+              "target": "hi",
+              "correct": "hi",
+              "choices": [
+                "te",
+                "ra",
+                "hi",
+                "mu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "hi",
+              "target": "ひ",
+              "correct": "ひ",
+              "choices": [
+                "よ",
+                "か",
+                "わ",
+                "ひ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "う",
+              "target": "u",
+              "correct": "u",
+              "choices": [
+                "ha",
+                "u",
+                "i",
+                "ku"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "u",
+              "target": "う",
+              "correct": "う",
+              "choices": [
+                "よ",
+                "う",
+                "り",
+                "や"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "り",
+              "target": "ri",
+              "correct": "ri",
+              "choices": [
+                "n",
+                "shi",
+                "te",
+                "ri"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ri",
+              "target": "り",
+              "correct": "り",
+              "choices": [
+                "り",
+                "む",
+                "み",
+                "と"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "あ",
+              "target": "a",
+              "correct": "a",
+              "choices": [
+                "i",
+                "o",
+                "chi",
+                "a"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "a",
+              "target": "あ",
+              "correct": "あ",
+              "choices": [
+                "な",
+                "く",
+                "も",
+                "あ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ま",
+              "target": "ma",
+              "correct": "ma",
+              "choices": [
+                "ma",
+                "mu",
+                "ro",
+                "mo"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ma",
+              "target": "ま",
+              "correct": "ま",
+              "choices": [
+                "ま",
+                "や",
+                "え",
+                "い"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "る",
+              "target": "ru",
+              "correct": "ru",
+              "choices": [
+                "n",
+                "a",
+                "ru",
+                "o"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ru",
+              "target": "る",
+              "correct": "る",
+              "choices": [
+                "る",
+                "ね",
+                "し",
+                "り"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "も",
+              "target": "mo",
+              "correct": "mo",
+              "choices": [
+                "mo",
+                "re",
+                "so",
+                "u"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "mo",
+              "target": "も",
+              "correct": "も",
+              "choices": [
+                "お",
+                "た",
+                "も",
+                "や"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "こ",
+              "target": "ko",
+              "correct": "ko",
+              "choices": [
+                "n",
+                "a",
+                "ta",
+                "ko"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ko",
+              "target": "こ",
+              "correct": "こ",
+              "choices": [
+                "さ",
+                "み",
+                "つ",
+                "こ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ん",
+              "target": "n",
+              "correct": "n",
+              "choices": [
+                "n",
+                "ko",
+                "su",
+                "ha"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "n",
+              "target": "ん",
+              "correct": "ん",
+              "choices": [
+                "ら",
+                "ん",
+                "み",
+                "へ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ん",
+              "pron": "n",
+              "correct": "ん",
+              "choices": [
+                "れ",
+                "と",
+                "ん",
+                "う"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "あ",
+              "pron": "a",
+              "correct": "あ",
+              "choices": [
+                "は",
+                "あ",
+                "と",
+                "や"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "も",
+              "pron": "mo",
+              "correct": "も",
+              "choices": [
+                "さ",
+                "す",
+                "ら",
+                "も"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "や",
+              "pron": "ya",
+              "correct": "や",
+              "choices": [
+                "ら",
+                "や",
+                "な",
+                "み"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "る",
+              "pron": "ru",
+              "correct": "る",
+              "choices": [
+                "る",
+                "こ",
+                "り",
+                "や"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 12,
+            "at": "2026-06-30T10:25:34.439Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 400294,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1125,
+        "totalCompletionTokens": 433,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 293745,
+            "promptTokens": 764,
+            "completionTokens": 334
+          }
+        ]
+      },
+      "generatedAt": "2026-06-30T08:45:10.336Z",
+      "updatedAt": "2026-06-30T10:32:28.763Z",
+      "id": "tp_17828095945860000373"
+    },
+    {
+      "topic": "Savoring Taste",
+      "topicEmoji": "😋",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "ja",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "果物を口に入れた彼女は、さらに一口食べ、舌先で果汁を味わった[は]。その甘さと酸味が心地よい刺激を与えた[は]。彼女は満足げに微笑み、周囲の景色を眺めた[は]。緑の草原と遠くの山々が美しく、彼女はこの瞬間を心に刻んだ[は]。",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate every kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Only annotate kanji (CJK characters) — do NOT annotate hiragana, katakana, or punctuation. Writing style: Clear, factual, neutral tone — no narrative flourish. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\n彼女は丸い果物を手に取った[に]。赤い皮に包まれた果肉は甘い香りを放っていた[は]。彼女はそれを一口食べ、幸せな表情を浮かべた[は]。\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Picked Fruit",
+      "continuedFromId": "tp_17828085137690000123",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": "intro_hiragana_1782809003657_2bb6",
+          "type": "intro_script",
+          "script": "hiragana",
+          "rtl": false,
+          "_arcMode": "extend",
+          "difficulty": 1,
+          "title": "🔡 Hiragana",
+          "icon": "🔡",
+          "desc": "Hiragana — 8 letters",
+          "letters": [
+            {
+              "ch": "さ",
+              "translit": "sa"
+            },
+            {
+              "ch": "わ",
+              "translit": "wa"
+            },
+            {
+              "ch": "め",
+              "translit": "me"
+            },
+            {
+              "ch": "こ",
+              "translit": "ko"
+            },
+            {
+              "ch": "ん",
+              "translit": "n"
+            },
+            {
+              "ch": "よ",
+              "translit": "yo"
+            },
+            {
+              "ch": "み",
+              "translit": "mi"
+            },
+            {
+              "ch": "え",
+              "translit": "e"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "さ",
+              "target": "sa",
+              "correct": "sa",
+              "choices": [
+                "tsu",
+                "mu",
+                "me",
+                "sa"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "sa",
+              "target": "さ",
+              "correct": "さ",
+              "choices": [
+                "ら",
+                "さ",
+                "に",
+                "よ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "わ",
+              "target": "wa",
+              "correct": "wa",
+              "choices": [
+                "hi",
+                "yo",
+                "wa",
+                "na"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "wa",
+              "target": "わ",
+              "correct": "わ",
+              "choices": [
+                "わ",
+                "を",
+                "し",
+                "て"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "め",
+              "target": "me",
+              "correct": "me",
+              "choices": [
+                "sa",
+                "me",
+                "wo",
+                "yu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "me",
+              "target": "め",
+              "correct": "め",
+              "choices": [
+                "れ",
+                "さ",
+                "へ",
+                "め"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "こ",
+              "target": "ko",
+              "correct": "ko",
+              "choices": [
+                "chi",
+                "ki",
+                "ko",
+                "fu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ko",
+              "target": "こ",
+              "correct": "こ",
+              "choices": [
+                "ん",
+                "ゆ",
+                "に",
+                "こ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ん",
+              "target": "n",
+              "correct": "n",
+              "choices": [
+                "re",
+                "n",
+                "ma",
+                "ne"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "n",
+              "target": "ん",
+              "correct": "ん",
+              "choices": [
+                "へ",
+                "て",
+                "ち",
+                "ん"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "よ",
+              "target": "yo",
+              "correct": "yo",
+              "choices": [
+                "ha",
+                "wa",
+                "yo",
+                "mi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "yo",
+              "target": "よ",
+              "correct": "よ",
+              "choices": [
+                "つ",
+                "よ",
+                "い",
+                "む"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "み",
+              "target": "mi",
+              "correct": "mi",
+              "choices": [
+                "ni",
+                "wo",
+                "e",
+                "mi"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "mi",
+              "target": "み",
+              "correct": "み",
+              "choices": [
+                "へ",
+                "け",
+                "や",
+                "み"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "え",
+              "target": "e",
+              "correct": "e",
+              "choices": [
+                "fu",
+                "e",
+                "chi",
+                "me"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "e",
+              "target": "え",
+              "correct": "え",
+              "choices": [
+                "え",
+                "や",
+                "ふ",
+                "ろ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "よ",
+              "pron": "yo",
+              "correct": "よ",
+              "choices": [
+                "よ",
+                "は",
+                "く",
+                "り"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "め",
+              "pron": "me",
+              "correct": "め",
+              "choices": [
+                "よ",
+                "や",
+                "め",
+                "も"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "み",
+              "pron": "mi",
+              "correct": "み",
+              "choices": [
+                "ん",
+                "み",
+                "き",
+                "を"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "わ",
+              "pron": "wa",
+              "correct": "わ",
+              "choices": [
+                "わ",
+                "と",
+                "て",
+                "え"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "さ",
+              "pron": "sa",
+              "correct": "さ",
+              "choices": [
+                "さ",
+                "せ",
+                "ろ",
+                "そ"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 21,
+            "at": "2026-06-30T08:43:23.657Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Fruit tasting and scenery",
+          "desc": "Continuing the story with fruit and nature",
+          "icon": "🍎🌿",
+          "vocab": [
+            {
+              "target": "口に入れる[くちにはれる]",
+              "source": "put in the mouth"
+            },
+            {
+              "target": "果汁[かきゅう]",
+              "source": "juice"
+            },
+            {
+              "target": "甘さ[あまさ]",
+              "source": "sweetness"
+            },
+            {
+              "target": "酸味[すみ]",
+              "source": "sourness"
+            },
+            {
+              "target": "心地よい[ここちよい]",
+              "source": "comfortable"
+            },
+            {
+              "target": "刺激[げしき]",
+              "source": "stimulation"
+            },
+            {
+              "target": "微笑む[ほほえむ]",
+              "source": "smile"
+            },
+            {
+              "target": "景色[けしき]",
+              "source": "scenery"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "果物を口に入れる。",
+              "source": "She put the fruit in her mouth.",
+              "words": [
+                "果物",
+                "を",
+                "口",
+                "に",
+                "入",
+                "れる"
+              ],
+              "qc": {
+                "sug": "She puts the fruit in her mouth.",
+                "field": "source",
+                "at": "2026-06-30T10:27:52.264Z"
+              }
+            },
+            {
+              "target": "舌先で果汁を味わう。",
+              "source": "She tasted the juice with the tip of her tongue.",
+              "words": [
+                "舌先",
+                "で",
+                "果汁",
+                "を",
+                "味",
+                "わう"
+              ],
+              "qc": {
+                "sug": "She tastes the juice with the tip of her tongue.",
+                "field": "source",
+                "at": "2026-06-30T10:28:05.640Z"
+              }
+            },
+            {
+              "target": "甘さと酸味が心地よい刺激を与える。",
+              "source": "The sweetness and sourness gave her a comfortable stimulation.",
+              "words": [
+                "甘",
+                "さと",
+                "酸味",
+                "が",
+                "心地",
+                "よい",
+                "刺激",
+                "を",
+                "与",
+                "える"
+              ],
+              "qc": {
+                "sug": "The sweetness and sourness give a comfortable stimulation.",
+                "field": "source",
+                "at": "2026-06-30T10:28:15.062Z"
+              }
+            },
+            {
+              "target": "満足げに微笑む。",
+              "source": "She smiled contentedly.",
+              "words": [
+                "満足",
+                "げに",
+                "微笑",
+                "む"
+              ]
+            },
+            {
+              "target": "周囲の景色を眺める。",
+              "source": "She looked at the scenery around her.",
+              "words": [
+                "周囲",
+                "の",
+                "景色",
+                "を",
+                "眺",
+                "める"
+              ],
+              "qc": {
+                "sug": "She looked at the surrounding scenery.",
+                "field": "source",
+                "at": "2026-06-30T10:28:31.126Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 761,
+            "completionTokens": 316,
+            "ms": 243284,
+            "at": "2026-06-30T08:40:55.677Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Round and Sweet",
+          "desc": "Fruit, taste, and scenery",
+          "icon": "🍎",
+          "vocab": [
+            {
+              "target": "果物[かぶつ]",
+              "source": "fruit"
+            },
+            {
+              "target": "丸い[まるい]",
+              "source": "round"
+            },
+            {
+              "target": "甘い[あまい]",
+              "source": "sweet"
+            },
+            {
+              "target": "香り[かおり]",
+              "source": "scent"
+            },
+            {
+              "target": "赤い[あかい]",
+              "source": "red"
+            },
+            {
+              "target": "果肉[かにく]",
+              "source": "flesh",
+              "qc": {
+                "sug": "果実",
+                "field": "target",
+                "at": "2026-06-30T10:28:45.475Z"
+              }
+            },
+            {
+              "target": "一口[ひとくち]",
+              "source": "bite",
+              "qc": {
+                "sug": "一口",
+                "field": "source",
+                "at": "2026-06-30T10:28:49.429Z"
+              }
+            },
+            {
+              "target": "表情[ひょうじょう]",
+              "source": "expression"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "果物は丸くて甘いです。",
+              "source": "The fruit is round and sweet.",
+              "words": [
+                "果物",
+                "は",
+                "丸",
+                "くて",
+                "甘",
+                "いです"
+              ]
+            },
+            {
+              "target": "香りが赤い果肉を引き立てます。",
+              "source": "The scent enhances the red fruit flesh.",
+              "words": [
+                "香",
+                "りが",
+                "赤",
+                "い",
+                "果肉",
+                "を",
+                "引",
+                "き",
+                "立",
+                "てます"
+              ],
+              "qc": {
+                "sug": "香りが赤い果実を引き立てます。",
+                "field": "target",
+                "at": "2026-06-30T10:29:07.049Z"
+              }
+            },
+            {
+              "target": "一口食べると、舌先で果汁を感じます。",
+              "source": "Taking a bite, I feel the juice on my tongue.",
+              "words": [
+                "一口食",
+                "べると",
+                "舌先",
+                "で",
+                "果汁",
+                "を",
+                "感",
+                "じます"
+              ]
+            },
+            {
+              "target": "表情が満足げになりました。",
+              "source": "Her expression became satisfied.",
+              "words": [
+                "表情",
+                "が",
+                "満足",
+                "げになりました"
+              ],
+              "qc": {
+                "sug": "Her expression became gratified.",
+                "field": "source",
+                "at": "2026-06-30T10:29:28.099Z"
+              }
+            },
+            {
+              "target": "緑の草原と山々が美しかったです。",
+              "source": "The green meadows and mountains were beautiful.",
+              "words": [
+                "緑",
+                "の",
+                "草原",
+                "と",
+                "山々",
+                "が",
+                "美",
+                "しかったです"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 842,
+            "completionTokens": 306,
+            "ms": 147976,
+            "at": "2026-06-30T08:43:23.654Z"
+          },
+          "_arcMode": "reinforce"
+        }
+      ],
+      "generationStats": {
+        "totalMs": 341800,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1083,
+        "totalCompletionTokens": 412,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 243282,
+            "promptTokens": 761,
+            "completionTokens": 316
+          }
+        ]
+      },
+      "generatedAt": "2026-06-30T08:36:52.327Z",
+      "updatedAt": "2026-06-30T10:29:38.703Z",
+      "id": "tp_17828090037230000237"
+    },
+    {
+      "topic": "Picked Fruit",
+      "topicEmoji": "🍎",
+      "userTopic": "あっ、まるい",
+      "userPrompt": "あっ、まるい",
+      "lang": "ja",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "彼女は丸い果物を手に取った[に]。赤い皮に包まれた果肉は甘い香りを放っていた[は]。彼女はそれを一口食べ、幸せな表情を浮かべた[は]。",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Japanese language teacher. Write a short story directly in Japanese on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Japanese. Annotate every kanji with its reading in square brackets directly after, e.g. 日本語[にほんご]. Only annotate kanji (CJK characters) — do NOT annotate hiragana, katakana, or punctuation. Writing style: Clear, factual, neutral tone — no narrative flourish.\n\nWrite a story for the topic: \"あっ、まるい\". Plain prose, no headings.",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": "intro_hiragana_1782808513701_uk9l",
+          "type": "intro_script",
+          "script": "hiragana",
+          "rtl": false,
+          "_arcMode": "extend",
+          "difficulty": 1,
+          "title": "🔡 Hiragana",
+          "icon": "🔡",
+          "desc": "Hiragana — 8 letters",
+          "letters": [
+            {
+              "ch": "を",
+              "translit": "wo"
+            },
+            {
+              "ch": "た",
+              "translit": "ta"
+            },
+            {
+              "ch": "そ",
+              "translit": "so"
+            },
+            {
+              "ch": "り",
+              "translit": "ri"
+            },
+            {
+              "ch": "な",
+              "translit": "na"
+            },
+            {
+              "ch": "れ",
+              "translit": "re"
+            },
+            {
+              "ch": "ま",
+              "translit": "ma"
+            },
+            {
+              "ch": "い",
+              "translit": "i"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "を",
+              "target": "wo",
+              "correct": "wo",
+              "choices": [
+                "wo",
+                "ho",
+                "ma",
+                "fu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "wo",
+              "target": "を",
+              "correct": "を",
+              "choices": [
+                "ま",
+                "を",
+                "は",
+                "む"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "た",
+              "target": "ta",
+              "correct": "ta",
+              "choices": [
+                "u",
+                "to",
+                "ta",
+                "nu"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ta",
+              "target": "た",
+              "correct": "た",
+              "choices": [
+                "た",
+                "あ",
+                "ぬ",
+                "う"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "そ",
+              "target": "so",
+              "correct": "so",
+              "choices": [
+                "so",
+                "chi",
+                "mo",
+                "ra"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "so",
+              "target": "そ",
+              "correct": "そ",
+              "choices": [
+                "ち",
+                "ひ",
+                "い",
+                "そ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "り",
+              "target": "ri",
+              "correct": "ri",
+              "choices": [
+                "mu",
+                "ki",
+                "i",
+                "ri"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ri",
+              "target": "り",
+              "correct": "り",
+              "choices": [
+                "り",
+                "さ",
+                "か",
+                "あ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "な",
+              "target": "na",
+              "correct": "na",
+              "choices": [
+                "ta",
+                "ne",
+                "re",
+                "na"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "na",
+              "target": "な",
+              "correct": "な",
+              "choices": [
+                "ふ",
+                "く",
+                "な",
+                "わ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "れ",
+              "target": "re",
+              "correct": "re",
+              "choices": [
+                "mi",
+                "re",
+                "ko",
+                "ki"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "re",
+              "target": "れ",
+              "correct": "れ",
+              "choices": [
+                "め",
+                "ち",
+                "ね",
+                "れ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ま",
+              "target": "ma",
+              "correct": "ma",
+              "choices": [
+                "no",
+                "n",
+                "ma",
+                "e"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ma",
+              "target": "ま",
+              "correct": "ま",
+              "choices": [
+                "ひ",
+                "ん",
+                "そ",
+                "ま"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "い",
+              "target": "i",
+              "correct": "i",
+              "choices": [
+                "mi",
+                "a",
+                "i",
+                "ya"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "i",
+              "target": "い",
+              "correct": "い",
+              "choices": [
+                "よ",
+                "る",
+                "う",
+                "い"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ま",
+              "pron": "ma",
+              "correct": "ま",
+              "choices": [
+                "ぬ",
+                "け",
+                "ま",
+                "ひ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "な",
+              "pron": "na",
+              "correct": "な",
+              "choices": [
+                "な",
+                "み",
+                "も",
+                "か"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "い",
+              "pron": "i",
+              "correct": "い",
+              "choices": [
+                "り",
+                "む",
+                "い",
+                "に"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "り",
+              "pron": "ri",
+              "correct": "り",
+              "choices": [
+                "す",
+                "り",
+                "れ",
+                "ね"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "た",
+              "pron": "ta",
+              "correct": "た",
+              "choices": [
+                "り",
+                "せ",
+                "む",
+                "た"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 21,
+            "at": "2026-06-30T08:35:13.701Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "round, apple",
+          "desc": "basic round objects, apple",
+          "icon": "🍎",
+          "vocab": [
+            {
+              "target": "丸い[まるい]",
+              "source": "round"
+            },
+            {
+              "target": "果物[かぶつ]",
+              "source": "fruit"
+            },
+            {
+              "target": "赤い[あかい]",
+              "source": "red"
+            },
+            {
+              "target": "果肉[かにく]",
+              "source": "flesh",
+              "qc": {
+                "sug": "果実",
+                "field": "target",
+                "at": "2026-06-30T10:26:18.443Z"
+              }
+            },
+            {
+              "target": "甘い[あまい]",
+              "source": "sweet"
+            },
+            {
+              "target": "香り[かおり]",
+              "source": "scent"
+            },
+            {
+              "target": "一口[ひとくち]",
+              "source": "bite",
+              "qc": {
+                "sug": "一口",
+                "field": "source",
+                "at": "2026-06-30T10:26:28.288Z"
+              }
+            },
+            {
+              "target": "表情[ひょうじょう]",
+              "source": "expression"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "丸い果物を手に取った",
+              "source": "She picked up a round fruit.",
+              "words": [
+                "丸",
+                "い",
+                "果物",
+                "を",
+                "手",
+                "に",
+                "取",
+                "った"
+              ]
+            },
+            {
+              "target": "赤い果肉は甘い香りを放っていた",
+              "source": "The red flesh emitted a sweet scent.",
+              "words": [
+                "赤",
+                "い",
+                "果肉",
+                "は",
+                "甘",
+                "い",
+                "香",
+                "りを",
+                "放",
+                "っていた"
+              ],
+              "qc": {
+                "sug": "赤い果肉は甘い香りを放っていた",
+                "field": "source",
+                "at": "2026-06-30T10:26:56.859Z"
+              }
+            },
+            {
+              "target": "一口食べると幸せな表情になった",
+              "source": "After taking a bite, her expression became happy.",
+              "words": [
+                "一口食",
+                "べると",
+                "幸",
+                "せな",
+                "表情",
+                "になった"
+              ],
+              "qc": {
+                "sug": "一口食べると幸せな表情になったりした",
+                "field": "source",
+                "at": "2026-06-30T10:27:08.000Z"
+              }
+            },
+            {
+              "target": "丸い果物は手にしっくりくる",
+              "source": "A round fruit feels just right in the hand.",
+              "words": [
+                "丸",
+                "い",
+                "果物",
+                "は",
+                "手",
+                "にしっくりくる"
+              ]
+            },
+            {
+              "target": "果物が丸いのが好きだ",
+              "source": "I like fruit that is round.",
+              "words": [
+                "果物",
+                "が",
+                "丸",
+                "いのが",
+                "好",
+                "きだ"
+              ],
+              "qc": {
+                "sug": "果物が丸いのが好きです",
+                "field": "target",
+                "at": "2026-06-30T10:27:21.101Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 692,
+            "completionTokens": 293,
+            "ms": 247791,
+            "at": "2026-06-30T08:35:13.695Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 309934,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 874,
+        "totalCompletionTokens": 350,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 247789,
+            "promptTokens": 692,
+            "completionTokens": 293
+          }
+        ]
+      },
+      "generatedAt": "2026-06-30T08:31:05.841Z",
+      "updatedAt": "2026-06-30T10:27:21.102Z",
+      "id": "tp_17828085137690000123"
+    },
+    {
+      "topic": "ruby test",
+      "topicEmoji": "💎",
+      "userTopic": "ruby test / あっ、まるい",
+      "userPrompt": "ruby test / あっ、まるい\n\n[story]\n「ぼくのボール[ぼーる]がない！」犬[いぬ]は、大好[だいす]きな丸[まる]いボール[ぼーる]を探[さが]しに町[まち]へ出[で]かけます。「あっ、まるい」と丸[まる]いものを見[み]つけて近[ちか]づくと・・・。",
+      "lang": "ja",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 250,
+      "story": "「ぼくのボール[ぼーる]がない！」犬[いぬ]は、大好[だいす]きな丸[まる]いボール[ぼーる]を探[さが]しに町[まち]へ出[で]かけます。「あっ、まるい」と丸[まる]いものを見[み]つけて近[ちか]づくと・・・。",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "「ぼくのボール[ぼーる]がない！」犬[いぬ]は、大好[だいす]きな丸[まる]いボール[ぼーる]を探[さが]しに町[まち]へ出[で]かけます。「あっ、まるい」と丸[まる]いものを見[み]つけて近[ちか]づくと・・・。",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "ruby test / あっ、まるい",
+          "desc": "basic vocabulary and simple sentences",
+          "icon": "💎",
+          "vocab": [
+            {
+              "target": "ボール[ぼーる]",
+              "source": "ball"
+            },
+            {
+              "target": "犬[いぬ]",
+              "source": "dog"
+            },
+            {
+              "target": "町[まち]",
+              "source": "town"
+            },
+            {
+              "target": "丸[まる]い",
+              "source": "round"
+            },
+            {
+              "target": "見[み]つける",
+              "source": "to find"
+            },
+            {
+              "target": "近[ちか]づく",
+              "source": "to approach"
+            },
+            {
+              "target": "大好[だいす]きな",
+              "source": "favorite"
+            },
+            {
+              "target": "出[で]かける",
+              "source": "to go out"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "ボール[ぼーる]がない！",
+              "source": "The ball is not here!",
+              "words": [
+                "ボール[ぼーる]",
+                "がない！"
+              ]
+            },
+            {
+              "target": "犬[いぬ]は町[まち]へ出[で]かけた。",
+              "source": "The dog went to the town.",
+              "words": [
+                "犬[いぬ]",
+                "は",
+                "町[まち]",
+                "へ",
+                "出[で]",
+                "かけた"
+              ]
+            },
+            {
+              "target": "あっ、まるい！",
+              "source": "Ah, it's round!",
+              "words": [
+                "あっ",
+                "まるい！"
+              ]
+            },
+            {
+              "target": "丸[まる]いものを見[み]つける。",
+              "source": "To find a round object.",
+              "words": [
+                "丸[まる]",
+                "いものを",
+                "見[み]",
+                "つける"
+              ]
+            },
+            {
+              "target": "近[ちか]づくと犬[いぬ]は丸[まる]いボール[ぼーる]だと思った。",
+              "source": "Approaching, the dog thought it was a round ball.",
+              "words": [
+                "近[ちか]",
+                "づくと",
+                "犬[いぬ]",
+                "は",
+                "丸[まる]",
+                "い",
+                "ボール[ぼーる]",
+                "だと",
+                "思",
+                "った"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 727,
+            "completionTokens": 324,
+            "ms": 279179,
+            "at": "2026-06-30T08:05:24.336Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 305657,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 864,
+        "totalCompletionTokens": 336,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 279175,
+            "promptTokens": 727,
+            "completionTokens": 324
+          }
+        ]
+      },
+      "generatedAt": "2026-06-30T08:00:45.087Z",
+      "updatedAt": "2026-06-30T08:05:24.396Z",
+      "id": "tp_17828067243960000070"
+    },
+    {
       "topic": "Yusuf and the Lost Cat",
       "topicEmoji": "🐱",
       "userTopic": "Yusuf and the Lost Cat",
@@ -1749,6 +3851,475 @@
             "ms": 236252,
             "at": "2026-06-27T11:38:37.318Z"
           }
+        },
+        {
+          "id": "ls_1782805967329_vt6j",
+          "type": "intro_script",
+          "script": "arabic",
+          "rtl": true,
+          "difficulty": 2,
+          "title": "🔡 Arabic",
+          "icon": "🔡",
+          "desc": "Arabic — 12 letters",
+          "letters": [
+            {
+              "ch": "ص",
+              "name": "ṣād",
+              "translit": "ṣ",
+              "ipa": "sˤ"
+            },
+            {
+              "ch": "ن",
+              "name": "nūn",
+              "translit": "n",
+              "ipa": "n"
+            },
+            {
+              "ch": "ج",
+              "name": "jīm",
+              "translit": "j",
+              "ipa": "d͡ʒ"
+            },
+            {
+              "ch": "ث",
+              "name": "thāʼ",
+              "translit": "th",
+              "ipa": "θ"
+            },
+            {
+              "ch": "و",
+              "name": "wāw",
+              "translit": "w",
+              "ipa": "w"
+            },
+            {
+              "ch": "س",
+              "name": "sīn",
+              "translit": "s",
+              "ipa": "s"
+            },
+            {
+              "ch": "ز",
+              "name": "zāy",
+              "translit": "z",
+              "ipa": "z"
+            },
+            {
+              "ch": "ه",
+              "name": "hāʼ",
+              "translit": "h",
+              "ipa": "h"
+            },
+            {
+              "ch": "ف",
+              "name": "fāʼ",
+              "translit": "f",
+              "ipa": "f"
+            },
+            {
+              "ch": "خ",
+              "name": "khāʼ",
+              "translit": "kh",
+              "ipa": "x"
+            },
+            {
+              "ch": "ع",
+              "name": "ʿayn",
+              "translit": "ʿ",
+              "ipa": "ʕ"
+            },
+            {
+              "ch": "ي",
+              "name": "yāʼ",
+              "translit": "y",
+              "ipa": "j"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "ص",
+              "target": "ṣ",
+              "correct": "ṣ",
+              "choices": [
+                "s",
+                "n",
+                "ṣ",
+                "l"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ṣ (ṣād)",
+              "target": "ص",
+              "correct": "ص",
+              "choices": [
+                "ف",
+                "ع",
+                "ر",
+                "ص"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ن",
+              "target": "n",
+              "correct": "n",
+              "choices": [
+                "n",
+                "k",
+                "dh",
+                "h"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "n (nūn)",
+              "target": "ن",
+              "correct": "ن",
+              "choices": [
+                "ش",
+                "ن",
+                "غ",
+                "ف"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ج",
+              "target": "j",
+              "correct": "j",
+              "choices": [
+                "t",
+                "ḍ",
+                "z",
+                "j"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "j (jīm)",
+              "target": "ج",
+              "correct": "ج",
+              "choices": [
+                "ج",
+                "ط",
+                "ف",
+                "ث"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ث",
+              "target": "th",
+              "correct": "th",
+              "choices": [
+                "ʿ",
+                "th",
+                "ḍ",
+                "ā"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "th (thāʼ)",
+              "target": "ث",
+              "correct": "ث",
+              "choices": [
+                "ح",
+                "ث",
+                "ج",
+                "غ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "و",
+              "target": "w",
+              "correct": "w",
+              "choices": [
+                "ṣ",
+                "y",
+                "w",
+                "r"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "w (wāw)",
+              "target": "و",
+              "correct": "و",
+              "choices": [
+                "ذ",
+                "ب",
+                "و",
+                "د"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "س",
+              "target": "s",
+              "correct": "s",
+              "choices": [
+                "d",
+                "h",
+                "s",
+                "kh"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "s (sīn)",
+              "target": "س",
+              "correct": "س",
+              "choices": [
+                "ب",
+                "ص",
+                "س",
+                "ح"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ز",
+              "target": "z",
+              "correct": "z",
+              "choices": [
+                "t",
+                "j",
+                "s",
+                "z"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "z (zāy)",
+              "target": "ز",
+              "correct": "ز",
+              "choices": [
+                "خ",
+                "ل",
+                "ز",
+                "م"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ه",
+              "target": "h",
+              "correct": "h",
+              "choices": [
+                "ẓ",
+                "ā",
+                "h",
+                "ṭ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "h (hāʼ)",
+              "target": "ه",
+              "correct": "ه",
+              "choices": [
+                "ه",
+                "ف",
+                "ن",
+                "و"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ف",
+              "target": "f",
+              "correct": "f",
+              "choices": [
+                "th",
+                "gh",
+                "f",
+                "t"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "f (fāʼ)",
+              "target": "ف",
+              "correct": "ف",
+              "choices": [
+                "ب",
+                "ف",
+                "ي",
+                "ت"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "خ",
+              "target": "kh",
+              "correct": "kh",
+              "choices": [
+                "m",
+                "kh",
+                "h",
+                "y"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "kh (khāʼ)",
+              "target": "خ",
+              "correct": "خ",
+              "choices": [
+                "خ",
+                "ي",
+                "ظ",
+                "ز"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ع",
+              "target": "ʿ",
+              "correct": "ʿ",
+              "choices": [
+                "l",
+                "ʿ",
+                "m",
+                "kh"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ʿ (ʿayn)",
+              "target": "ع",
+              "correct": "ع",
+              "choices": [
+                "ذ",
+                "ع",
+                "ث",
+                "د"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ي",
+              "target": "y",
+              "correct": "y",
+              "choices": [
+                "ḍ",
+                "y",
+                "r",
+                "ṭ"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "y (yāʼ)",
+              "target": "ي",
+              "correct": "ي",
+              "choices": [
+                "ي",
+                "ل",
+                "ث",
+                "ق"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ن",
+              "pron": "n",
+              "correct": "ن",
+              "choices": [
+                "ه",
+                "ن",
+                "و",
+                "خ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "خ",
+              "pron": "kh",
+              "correct": "خ",
+              "choices": [
+                "ص",
+                "ش",
+                "ر",
+                "خ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "س",
+              "pron": "s",
+              "correct": "س",
+              "choices": [
+                "ج",
+                "ط",
+                "س",
+                "خ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ف",
+              "pron": "f",
+              "correct": "ف",
+              "choices": [
+                "ب",
+                "ح",
+                "ف",
+                "غ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "و",
+              "pron": "w",
+              "correct": "و",
+              "choices": [
+                "م",
+                "ن",
+                "ي",
+                "و"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 12,
+            "at": "2026-06-30T07:52:47.329Z"
+          }
         }
       ],
       "generationStats": {
@@ -1780,7 +4351,7 @@
         ]
       },
       "generatedAt": "2026-06-27T11:13:31.154Z",
-      "updatedAt": "2026-06-29T14:46:17.215Z",
+      "updatedAt": "2026-06-30T07:52:47.334Z",
       "id": "tp_17825603173750001401"
     },
     {
@@ -11808,6 +14379,14 @@
             "valid": 8,
             "at": "2026-06-29T14:41:29.558Z"
           }
+        },
+        {
+          "id": "ls_1782807758826_6yw0",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -11827,7 +14406,7 @@
         ]
       },
       "generatedAt": "2026-06-26T19:30:40.777Z",
-      "updatedAt": "2026-06-29T17:21:31.669Z",
+      "updatedAt": "2026-06-30T08:22:38.831Z",
       "id": "tp_17825026538340000116"
     },
     {
@@ -23789,6 +26368,347 @@
             "ms": 1,
             "at": "2026-06-29T15:04:12.935Z"
           }
+        },
+        {
+          "id": "ls_1782781096180_a6er",
+          "type": "intro_script",
+          "script": "devanagari",
+          "rtl": false,
+          "difficulty": 1,
+          "title": "🔡 Devanagari",
+          "icon": "🔡",
+          "desc": "Devanagari — 8 वर्ण",
+          "letters": [
+            {
+              "ch": "ह",
+              "name": "ha",
+              "translit": "ha",
+              "ipa": "ɦ"
+            },
+            {
+              "ch": "न",
+              "name": "na",
+              "translit": "na",
+              "ipa": "n"
+            },
+            {
+              "ch": "ल",
+              "name": "la",
+              "translit": "la",
+              "ipa": "l"
+            },
+            {
+              "ch": "त",
+              "name": "ta",
+              "translit": "ta",
+              "ipa": "t̪"
+            },
+            {
+              "ch": "औ",
+              "name": "au",
+              "translit": "au",
+              "ipa": "ɔː"
+            },
+            {
+              "ch": "थ",
+              "name": "tha",
+              "translit": "tha",
+              "ipa": "t̪ʰ"
+            },
+            {
+              "ch": "भ",
+              "name": "bha",
+              "translit": "bha",
+              "ipa": "bʱ"
+            },
+            {
+              "ch": "ज",
+              "name": "ja",
+              "translit": "ja",
+              "ipa": "dʒ"
+            }
+          ],
+          "exercises": [
+            {
+              "type": "mcq_source_target",
+              "source": "ह",
+              "target": "ha",
+              "correct": "ha",
+              "choices": [
+                "ha",
+                "ja",
+                "ḍa",
+                "a"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ha",
+              "target": "ह",
+              "correct": "ह",
+              "choices": [
+                "ण",
+                "ऋ",
+                "थ",
+                "ह"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "न",
+              "target": "na",
+              "correct": "na",
+              "choices": [
+                "na",
+                "pha",
+                "gha",
+                "ṅa"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "na",
+              "target": "न",
+              "correct": "न",
+              "choices": [
+                "क",
+                "न",
+                "ठ",
+                "ऐ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ल",
+              "target": "la",
+              "correct": "la",
+              "choices": [
+                "sa",
+                "la",
+                "ña",
+                "ma"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "la",
+              "target": "ल",
+              "correct": "ल",
+              "choices": [
+                "व",
+                "ल",
+                "फ",
+                "उ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "त",
+              "target": "ta",
+              "correct": "ta",
+              "choices": [
+                "cha",
+                "gha",
+                "ta",
+                "kha"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ta",
+              "target": "त",
+              "correct": "त",
+              "choices": [
+                "उ",
+                "त",
+                "ए",
+                "ध"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "औ",
+              "target": "au",
+              "correct": "au",
+              "choices": [
+                "sa",
+                "au",
+                "va",
+                "da"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "au",
+              "target": "औ",
+              "correct": "औ",
+              "choices": [
+                "औ",
+                "घ",
+                "ष",
+                "क"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "थ",
+              "target": "tha",
+              "correct": "tha",
+              "choices": [
+                "ṭha",
+                "ca",
+                "tha",
+                "u"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "tha",
+              "target": "थ",
+              "correct": "थ",
+              "choices": [
+                "थ",
+                "ए",
+                "ल",
+                "ङ"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "भ",
+              "target": "bha",
+              "correct": "bha",
+              "choices": [
+                "va",
+                "ba",
+                "bha",
+                "ṭa"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "bha",
+              "target": "भ",
+              "correct": "भ",
+              "choices": [
+                "ग",
+                "भ",
+                "ध",
+                "च"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ज",
+              "target": "ja",
+              "correct": "ja",
+              "choices": [
+                "gha",
+                "na",
+                "sa",
+                "ja"
+              ],
+              "_intro": "glyph_sound"
+            },
+            {
+              "type": "mcq_source_target",
+              "source": "ja",
+              "target": "ज",
+              "correct": "ज",
+              "choices": [
+                "च",
+                "म",
+                "ज",
+                "ड"
+              ],
+              "_intro": "sound_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "थ",
+              "pron": "tha",
+              "correct": "थ",
+              "choices": [
+                "ह",
+                "न",
+                "ञ",
+                "थ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "न",
+              "pron": "na",
+              "correct": "न",
+              "choices": [
+                "न",
+                "ज",
+                "घ",
+                "क"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ज",
+              "pron": "ja",
+              "correct": "ज",
+              "choices": [
+                "ज",
+                "ठ",
+                "घ",
+                "ढ"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "भ",
+              "pron": "bha",
+              "correct": "भ",
+              "choices": [
+                "भ",
+                "ग",
+                "औ",
+                "ए"
+              ],
+              "_intro": "listen_glyph"
+            },
+            {
+              "type": "listen_mcq",
+              "target": "ह",
+              "pron": "ha",
+              "correct": "ह",
+              "choices": [
+                "ञ",
+                "थ",
+                "ल",
+                "ह"
+              ],
+              "_intro": "listen_glyph"
+            }
+          ],
+          "_genMeta": {
+            "type": "intro_script",
+            "model": "(procedural)",
+            "valid": 8,
+            "at": "2026-06-30T00:58:16.181Z"
+          }
         }
       ],
       "generationStats": {
@@ -23808,7 +26728,7 @@
         ]
       },
       "generatedAt": "2026-06-18T13:46:56.011Z",
-      "updatedAt": "2026-06-29T15:04:12.935Z",
+      "updatedAt": "2026-06-30T00:58:16.186Z",
       "id": "tp_17817906523660000080",
       "continuedFromId": "tp_17825433860400000751",
       "continuedFrom": "Kalila and Dimna"

@@ -69,12 +69,26 @@ assert.strictEqual(needsIntroScript('ar', 'en'), true,  'en→ar: arabic table f
 assert.strictEqual(needsIntroScript('el', 'en'), true,  'en→el: greek table filled → offered');
 assert.strictEqual(needsIntroScript('ko', 'en'), true,  'en→ko: hangul table filled → offered');
 assert.strictEqual(needsIntroScript('he', 'en'), true,  'en→he: hebrew table filled → offered');
+assert.strictEqual(needsIntroScript('hi', 'en'), true,  'en→hi: devanagari table filled → offered');
 assert.strictEqual(needsIntroScript('th', 'en'), false, 'en→th: thai still a stub → hidden');
+
+// Reverse direction: a script lesson is available (manual add) when the non-Latin script is on the
+// SOURCE side too — ar→en / ja→en / hi→en — via scriptLessonAvailable (either side), while
+// auto-generation's needsIntroScript stays target-only.
+const scriptLessonAvailable = new Function('needsIntroScript',
+  ext(html, 'scriptLessonAvailable') + '\nreturn scriptLessonAvailable;')(needsIntroScript);
+assert.strictEqual(scriptLessonAvailable('en', 'ar'), true,  'ar→en (Arabic source) offers a script lesson');
+assert.strictEqual(scriptLessonAvailable('en', 'ja'), true,  'ja→en (Japanese source) offers a script lesson');
+assert.strictEqual(scriptLessonAvailable('en', 'hi'), true,  'hi→en (Hindi source) offers a script lesson');
+assert.strictEqual(scriptLessonAvailable('ar', 'en'), true,  'en→ar still offered (target side)');
+assert.strictEqual(scriptLessonAvailable('en', 'fr'), false, 'en→fr / fr→en: both Latin → not offered');
+assert.strictEqual(needsIntroScript('en', 'ar'), false, 'auto-gen stays target-only (no script for en target)');
+console.log('  reverse-direction (source-side) script lessons available via scriptLessonAvailable: OK');
 console.log('  scriptsForLang / scriptHasTable / needsIntroScript gating: OK');
 
 // ── Filled tables: integrity + unambiguous transliterations ──────────────────
 for (const [name, min] of [['hiragana', 46], ['katakana', 46], ['arabic', 28],
-                           ['greek', 24], ['hebrew', 22], ['hangul', 24]]) {
+                           ['greek', 24], ['hebrew', 22], ['hangul', 24], ['devanagari', 44]]) {
   const tbl = scripts[name];
   assert.ok(tbl && Array.isArray(tbl.letters) && tbl.letters.length >= min, `${name} has ${min}+ letters`);
   tbl.letters.forEach((L, i) => {
@@ -91,10 +105,11 @@ for (const [name, min] of [['hiragana', 46], ['katakana', 46], ['arabic', 28],
 assert.strictEqual(scripts.arabic.rtl, true, 'arabic table is RTL');
 assert.strictEqual(scripts.hebrew.rtl, true, 'hebrew table is RTL');
 assert.strictEqual(scripts.greek.rtl, false, 'greek table is LTR');
-console.log('  filled tables (hiragana/katakana/arabic): integrity + unique translits: OK');
+assert.strictEqual(scripts.devanagari.rtl, false, 'devanagari table is LTR');
+console.log('  filled tables (hiragana/katakana/arabic/greek/hebrew/hangul/devanagari): integrity + unique translits: OK');
 
 // ── Content-aware script/letter detection (v47.x) ────────────────────────────
-const detectSrc = ['scriptHasTable', '_scriptCharSet', '_lessonSetTargetText',
+const detectSrc = ['scriptHasTable', '_scriptCharSet', '_lessonSetTargetText', '_lessonSetSourceText',
   'scriptsUsedInLessonSet', 'makeParentResolver', 'priorLessonSets', '_lettersInSets',
   'lettersSeenInLessonSet', 'introLetterScope'].map(n => ext(html, n)).join('\n');
 const _APP = { savedList: [] };
@@ -112,6 +127,12 @@ assert.deepStrictEqual(D.scriptsUsedInLessonSet({ lang: 'ja', lessons: [] }), ['
   'empty JA set → fall back to all scripts');
 assert.deepStrictEqual(D.scriptsUsedInLessonSet({ lang: 'ar', story: 'يوسف له قطة', lessons: [] }), ['arabic'],
   'Arabic set → arabic');
+// Reverse direction: ar→en set with Arabic on the SOURCE side (glosses) → arabic still detected,
+// so a manual script lesson can teach the source script.
+assert.deepStrictEqual(
+  D.scriptsUsedInLessonSet({ lang: 'en', srcLang: 'ar', lessons: [{ type: 'vocab', vocab: [{ target: 'cat', source: 'قطة' }] }] }),
+  ['arabic'],
+  'ar→en (Arabic source-side) → arabic detected from source text');
 const withIntro = { lang: 'ja', lessons: [{ type: 'intro_script', letters: scripts.katakana.letters }] };
 assert.deepStrictEqual(D.scriptsUsedInLessonSet(withIntro), ['hiragana', 'katakana'],
   'a set whose only content is an intro lesson → fall back to all (not seeded by the intro)');
@@ -260,6 +281,29 @@ assert.ok(/type === ['"]letter['"][\s\S]*?ls\.letters\[fi\]/.test(html), '_syncE
 // editing/deleting a letter clears baked exercises so they re-derive
 assert.ok(/type === ['"]letter['"][\s\S]*?delete ls\.exercises/.test(html), 'letter edits clear baked exercises');
 console.log('  intro_script editor: branch wired + letter array mapping in move/delete/sync: OK');
+
+// ── Result/completion card handles script lessons (was vocab-centric) ────────
+// (a) the "next" button labels a script lesson by its own title, not "Vocabulary"; (b) the
+// "words from this lesson" box has an intro_script branch (letters), not an empty box; (c) the
+// next-lesson search respects the hidden-lesson rule.
+assert.ok(/L\.type === 'intro_script' && L\.title\) \? L\.title/.test(html),
+  'completion next button labels intro_script by its title');
+assert.ok(/lesson\?\.type === 'intro_script'[\s\S]*?lesson\.letters\|\|\[\]\)\.map/.test(html),
+  'completion card shows letters for intro_script lessons');
+assert.ok(/findIndex\(\(L, i\) => i !== C\.lessonIdx && !done\[L\.id\] && _counts\(L\)\)/.test(html),
+  'completion next-lesson search skips hidden lessons (non-teacher)');
+console.log('  completion card: script-lesson next-label + letters + hidden-skip: OK');
+
+// Completion card handles a MIXED lesson: (a) it has a words branch (was empty — falls through
+// vocab/words/items), (b) the story-unlock panel uses the _counts filter so finishing the mixed
+// lesson unlocks the story (was allLessons.every, which counted the hidden siblings → never true).
+assert.ok(/lesson\?\.type === 'mixed'[\s\S]*?for \(const e of \(C\.exercises/.test(html),
+  'mixed lesson shows the words actually played on the result card');
+assert.ok(/_allDone2 = setComplete\(APP\.lessonData\)/.test(html),
+  'result-card story-unlock uses the shared setComplete (mixed-only / hidden aware)');
+assert.ok(!/_allDone2 = allLessons\.(every|filter)/.test(html),
+  'the old allLessons-based story-unlock check is gone');
+console.log('  completion card: mixed-lesson words + story-unlock via _counts: OK');
 
 // ── Server arc script-teaching (Plan B): extend letters new to a chapter, prepend per chapter ──
 {
