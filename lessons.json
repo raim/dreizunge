@@ -125,10 +125,10 @@
       "lang": "de",
       "srcLang": "en",
       "createdAt": "2026-06-16T09:58:06.303Z",
-      "updatedAt": "2026-06-16T11:12:31.200Z",
+      "updatedAt": "2026-06-30T11:01:29.506Z",
       "summary": "The story follows the development of a language learning app that uses advanced language models to provide personalized and interactive learning experiences. Over several weeks, the app was optimized and enhanced with new features, including interactive dialogues with virtual assistants that simulate real-life scenarios to improve communication skills. The app integrates corpora and grammatical rules into interactive exercises, allowing users to systematically improve their language skills and receive evaluations on both grammar and stylistic quality.",
       "tags": [
-        "manually curated"
+        "experimental"
       ]
     },
     {
@@ -33863,7 +33863,12 @@
                 "Benutzer",
                 "zu",
                 "verbessern."
-              ]
+              ],
+              "qc": {
+                "sug": "The app optimizes the learning process by using advanced language models to improve the language learning progress of users.",
+                "field": "source",
+                "at": "2026-06-30T11:08:44.213Z"
+              }
             },
             {
               "target": "Realen Szenarien basierend auf fortgeschrittenen Sprachmodellen, um die Kommunikationsfähigkeiten der Benutzer in verschiedenen Kontexten zu verbessern.",
@@ -34058,7 +34063,12 @@
                 }
               ],
               "antonyms": [],
-              "homophones": []
+              "homophones": [],
+              "qc": {
+                "sug": "benutzer and nutzer are not exact synonyms.",
+                "field": "note",
+                "at": "2026-06-30T11:09:49.655Z"
+              }
             },
             {
               "base": "verbesserten",
@@ -34071,7 +34081,12 @@
                 }
               ],
               "antonyms": [],
-              "homophones": []
+              "homophones": [],
+              "qc": {
+                "sug": "\"improved\" is not a perfect translation of \"verbesserten\".",
+                "field": "note",
+                "at": "2026-06-30T11:10:02.212Z"
+              }
             },
             {
               "base": "profitierten",
@@ -34089,6 +34104,11 @@
                 "comment": "kein deutsches wort",
                 "correct": "",
                 "at": "2026-06-26T13:33:20.354Z"
+              },
+              "qc": {
+                "sug": "profitierten has no antonyms listed.",
+                "field": "note",
+                "at": "2026-06-30T11:10:27.743Z"
               }
             },
             {
@@ -34136,7 +34156,7 @@
         ]
       },
       "generatedAt": "2026-06-16T10:11:40.373Z",
-      "updatedAt": "2026-06-26T16:57:15.236Z",
+      "updatedAt": "2026-06-30T11:10:47.918Z",
       "id": "tp_17816054439060000253"
     },
     {
