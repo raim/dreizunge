@@ -6080,7 +6080,7 @@ function _editorBranchErrorHunt(ls, li, flaggedOnly){
               oninput="APP.lessonData.lessons[${li}].corruptedStory=this.value;APP._ehSessionEdits=ehComputeDiff(APP.lessonData?.story||'',this.value);ehUpdateDiff(${li})">${escHtml(ls.corruptedStory||'')}</textarea>
           </div>
         </div>
-        <div id="eh-diff-${li}" style="font-size:13px;line-height:1.9;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+        <div id="eh-diff-${li}" dir="auto" style="font-size:13px;line-height:1.9;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:8px;padding:10px 12px;margin-bottom:8px">
           ${ehBuildDiffHtml(correctStory||'', ls.corruptedStory||'')}
         </div>
         <div id="eh-errors-${li}">${ehRenderErrors(initEdits, li)}</div>
@@ -7851,7 +7851,7 @@ function renderAiErrorHunt(){
     `<div class="ex-badge">🔎 ${t('lesson.type.ai_error_hunt')}</div>`+
     '<div class="card">'+
     `<div style="font-size:12px;font-weight:700;color:var(--gray-dark);margin-bottom:10px">${t('lesson.ai_error_hunt.desc')}</div>`+
-    `<div class="aeh-wrap" id="aeh-wrap">${spans}</div>`+
+    `<div class="aeh-wrap" id="aeh-wrap" dir="auto">${spans}</div>`+
     '<div id="eh-btn-row" style="margin-top:12px;text-align:center">'+
     `<button class="big-btn" onclick="aiEhCheck()">${t('ex.error_hunt.check')}</button>`+
     '</div></div>';
@@ -7961,7 +7961,7 @@ function renderErrorHunt(){
     '<div class="card">'+
     '<div style="font-size:12px;font-weight:700;color:var(--gray-dark);margin-bottom:6px">'+ 
     t('ex.error_hunt.instruction')+'</div>'+
-    `<div class="eh-wrap" id="eh-wrap">${spans.join('')}</div>`+
+    `<div class="eh-wrap" id="eh-wrap" dir="auto">${spans.join('')}</div>`+
     '<div id="eh-btn-row" style="margin-top:10px;text-align:center">'+
     `<button class="big-btn" onclick="ehCheck()">${t('ex.error_hunt.check')}</button>`+
     '</div></div>';

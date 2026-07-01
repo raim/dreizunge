@@ -1,0 +1,143 @@
+# ui.json — keys falling back to English (per language).
+# With the complete upload cleaned, these are exactly the wrong-script values that were removed.
+# A TranslateGemma re-pass fills them.
+# Total: 121 across 9 languages
+
+## ar — 15
+  import.choice.title	::	Import submission
+  furigana.show	::	ふ Show furigana
+  tts.approx	::	⚠ approximate pronunciation
+  ex.badge.mcq_target_source	::	What does this mean?
+  form.format.grammar	::	🏷️ Grammar — gender, articles & plurals
+  form.format.all_types	::	🎯 All types — standard + word forms + synonyms + error hunt
+  ex.badge.mcq_plural	::	Pick the plural
+  ex.badge.type_plural	::	Type the plural
+  ex.mcq_plural.q	::	What is the plural of "{word}"?
+  lesson.type.desc.conjugation	::	Verb conjugation in present tense
+  lesson.type.desc.ai_error_hunt	::	AI-generated error hunt based on the story
+  form.clear_text	::	Clear
+  sl.recreate_failed	::	Re-create failed
+  ex.flag_no_comment	::	Flagged (no comment)
+  form.arc_script_lbl	::	🔡 Teach the script per chapter
+
+## el — 8
+  form.style.essay	::	✍️ Essay
+  ex.syn.hint	::	Tap every matching word, then Check.
+  form.arc_script_lbl	::	🔡 Teach the script per chapter
+  ex.no_keyboard.title	::	Press this if you don't have the right keyboard for this language — typing exercises become letter-ordering.
+  ex.badge.glyph_order	::	Put the letters in order
+  ex.glyph_order.q	::	Spell “{word}” — tap the letters in order
+  ex.glyph_order.q_plain	::	Tap the letters in the correct order
+  ex.glyph_order.placeholder	::	Tap letters to build the word
+
+## he — 13
+  static.pill.edits_only	::	Edited lessons to submit
+  toast.import_merge_confirm	::	OK — merge flags/ratings/deletes only (keep your current content). Cancel — fully replace the matching topics with the submitted version.
+  ex.type_plural.q	::	Type the plural of "{word}"
+  lesson.ai_error_hunt.no_ai_story	::	No AI story stored.
+  qc.editor.fix_title	::	Apply suggested fix
+  tts.voice_warn_q	::	Does your browser support nice speech synthesis? Tap Test — if it sounds robotic or silent, your browser/OS may lack a good voice for this language.
+  tts.voice_search	::	How to get better speech output
+  form.format.mixed	::	🔀 Mixed review — questions pooled from this chapter (no AI)
+  intro.need_open_set	::	Open a lesson set first, then add a Learn-the-script lesson.
+  mixed.readonly_note	::	This lesson is assembled automatically — there's not hing to edit. Questions are pooled fresh each time you play.
+  mixed.empty	::	Nothing to pool yet — add some other lessons to this chapter  first.
+  ex.flag_shown_correct	::	Suggested fix:
+  ex.flag_no_comment	::	Flagged (no comment)
+
+## hi — 25
+  import.choice.merge_hint	::	Apply only their flags / ratings / deletes — keep your content.
+  toast.generating	::	⏳ Generating "{topic}" in the background…
+  toast.already_generating	::	⏳ Already generating "{topic}" — please wait
+  toast.link_copied	::	🔗 Link copied!
+  toast.no_voice	::	⚠ No {lang} voice — using approximation
+  toast.export_fail	::	⚠ Export failed: {msg}
+  toast.invalid_json	::	⚠ Invalid JSON file
+  toast.no_lessons	::	⚠ No lessons found in file
+  toast.select_story	::	⚠ Select a story or enter a topic for Text Understanding
+  static.info	::	📦 Static version — select a topic below to start
+  form.story_placeholder	::	Paste your story here…
+  form.translation_placeholder_short	::	Paste the translation here. One sentence per paragraph is ideal, but plain prose works too.
+  form.story_rewrite_placeholder	::	Describe what to change, e.g. 'make it funnier' or 'set it in Rome'…
+  form.story_flag_placeholder	::	Describe what is wrong with the story…
+  lesson.share_title	::	Copy shareable link
+  lesson.edit_story	::	Edit story
+  lesson.continue_title	::	Continue this story in a new lesson set
+  lesson.export_title	::	Export lesson with flags
+  lesson.export_storyline_title	::	Export full story line with flags
+  lesson.gen_title	::	Generate title with AI
+  lesson.generating_title	::	Generating story title…
+  lesson.title_saved	::	Title saved
+  ex.error_hunt.instruction	::	Tap words that look wrong — spelling or grammar mistakes.
+  lesson.type.desc.error_hunt	::	Find spelling and grammar errors in a text
+  lesson.type.desc.intro_script	::	Learn the letters of the target language's writing system
+
+## ko — 27
+  furigana.show	::	ふ Show furigana
+  toast.export_ok	::	✓ Exported {n} lesson
+  toast.export_ok_plural	::	✓ Exported {n} lessons
+  toast.export_fail	::	⚠ Export failed: {msg}
+  toast.invalid_json	::	⚠ Invalid JSON file
+  toast.no_lessons	::	⚠ No lessons found in file
+  toast.select_story	::	⚠ Select a story or enter a topic for Text Understanding
+  static.info	::	📦 Static version — select a topic below to start
+  form.story_placeholder	::	Paste your story here…
+  form.translation_placeholder_short	::	Paste the translation here. One sentence per paragraph is ideal, but plain prose works too.
+  form.story_rewrite_placeholder	::	Describe what to change, e.g. 'make it funnier' or 'set it in Rome'…
+  form.story_flag_placeholder	::	Describe what is wrong with the story…
+  lesson.share_title	::	Copy shareable link
+  lesson.edit_story	::	Edit story
+  lesson.continue_title	::	Continue this story in a new lesson set
+  lesson.export_title	::	Export lesson with flags
+  lesson.export_storyline_title	::	Export full story line with flags
+  lesson.gen_title	::	Generate title with AI
+  lesson.generating_title	::	Generating story title…
+  lesson.title_saved	::	Title saved
+  lesson.flagged_count	::	You have {n} flagged exercise — download to review offline
+  lesson.flagged_count_plural	::	You have {n} flagged exercises — download to review offline
+  ex.error_hunt.instruction	::	Tap words that look wrong — spelling or grammar mistakes.
+  lib.empty_lang	::	No lessons in this language.
+  lib.empty	::	No saved lessons yet — generate one above!
+  status.offline	::	Offline — saved lessons only
+  toast.progress_cleared	::	↺ Progress cleared
+
+## ru — 8
+  furigana.show	::	ふ Show furigana
+  lesson.type.ai_error_hunt	::	AI Error Hunt
+  lesson.ai_error_hunt.desc	::	AI is stupid. Can you find the errors a human found?
+  lesson.ai_error_hunt.no_ai_story	::	No AI story stored.
+  lesson.ai_error_hunt.editor_hint	::	Add a reason for your edit:.
+  lesson.type.math	::	🔢 Mathematics
+  ex.badge.math_order	::	🔢 Sort
+  ex.badge.math_calc	::	🔢 Calculate
+
+## th — 19
+  form.generate	::	Generate lessons →
+  toast.link_copied	::	🔗 Link copied!
+  lesson.gen_topic_title_title	::	Generate lesson title with AI
+  form.style.funny	::	😂 Funny
+  ex.mcq_plural.q	::	What is the plural of "{word}"?
+  ex.type_plural.q	::	Type the plural of "{word}"
+  lesson.ai_error_hunt.desc	::	AI is stupid. Can you find the errors a human found?
+  pdf.generate_all	::	Generate storyline
+  pdf.sel_clear	::	Clear all
+  form.upload_doc	::	📎 Upload a document
+  form.clear_text	::	Clear
+  sl.clear_progress	::	Clear progress
+  sl.delete	::	Delete
+  sl.recreate_btn	::	Re-create all lessons
+  sl.clear_progress_confirm	::	Clear your progress for every chapter in this storyline?
+  sl.recreate_failed	::	Re-create failed
+  qc.editor.flag_correct_placeholder	::	Correct version (optional)
+  qc.editor.user_suggests	::	You suggested:
+  ex.flag_comment_ph	::	What looks wrong? (optional)
+
+## uk — 4
+  diff.advanced	::	🔴 Advanced — complex sentences, idiomatic language
+  lesson.type.ai_error_hunt	::	AI Error Hunt
+  ex.syn.q_synonyms	::	similar to {word}
+  ex.syn.q_antonyms	::	opposite to {word}
+
+## zh — 2
+  furigana.show	::	ふ Show furigana
+  form.arc_script_lbl	::	🔡 Teach the script per chapter

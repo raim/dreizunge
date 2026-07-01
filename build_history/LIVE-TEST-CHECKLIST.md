@@ -769,3 +769,8 @@ without a backend):
       whose title contains an apostrophe / quote / special character now works every time — no
       `Uncaught SyntaxError: missing ) after argument list` in the console, no dead clicks.
 - [ ] **Continue-story button** on such chapters also works (same escaping fix).
+
+### 40. Error-hunt RTL (B)
+- [ ] **Arabic error-hunt renders RTL.** Play an Arabic 🔍 Error Hunt lesson: the corrupted story
+      reads right-to-left (first word on the right), tokens flow correctly, marking still works.
+      Same for an Arabic 🔎 AI Error Hunt. In the editor, the error-hunt diff preview is also RTL.
