@@ -24,6 +24,18 @@ const lessonsFile = process.argv[2] || path.join(__dirname, 'lessons.json');
 const outputDir   = process.argv[3] || path.join(__dirname, 'docs');
 const outputFile  = path.join(outputDir, 'index.html');
 const sourceHtml  = path.join(__dirname, 'index.html');
+const serverFile  = path.join(__dirname, 'server.js');
+
+// Version: single source of truth is APP_VERSION in server.js. Parse it here so the static
+// build never drifts (it hardcoded a stale version before v48). Falls back gracefully.
+let APP_VERSION = 'v0';
+try {
+  const m = fs.readFileSync(serverFile, 'utf8').match(/APP_VERSION\s*=\s*['"]([^'"]+)['"]/);
+  if (m) APP_VERSION = m[1];
+  else console.warn('build-static: could not find APP_VERSION in server.js — using', APP_VERSION);
+} catch (e) {
+  console.warn('build-static: could not read server.js for APP_VERSION —', e.message);
+}
 
 // ── Load inputs ───────────────────────────────────────────────────────
 if (!fs.existsSync(sourceHtml)) {
@@ -219,8 +231,8 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: 'v48' };
-  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v48'; }
+  APP.info = { backend: 'none', canGenerate: false, version: '${APP_VERSION}' };
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='${APP_VERSION}'; }
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');

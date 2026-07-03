@@ -11,13 +11,39 @@ const path = require('path');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 
 // 1. The shared visibility helper exists, is mode-aware AND mixed-aware (single source of truth).
+//    v50: a mixed lesson hides only the EARLIER lessons it pools from; the mixed lesson, error
+//    hunts, and any lessons AFTER it stay visible. Assert the behaviour, not the exact source.
 assert.ok(/function lessonCountsFor\(d, L\)/.test(html), 'shared lessonCountsFor(d, L) helper exists');
-assert.ok(/const mixedOnly = \(d\?\.lessons \|\| \[\]\)\.some\(x => x && x\.type === 'mixed' && !x\._hidden\)/.test(html),
-  'lessonCountsFor: mixed-only when a non-hidden mixed lesson is present');
-assert.ok(/return mixedOnly \? \(L\.type === 'mixed' && !L\._hidden\) : !L\._hidden/.test(html),
-  'lessonCountsFor: mixed-only ? only mixed : not-hidden');
-assert.ok(/function setComplete\(d\)[\s\S]*?countedLessons\(d\)\.every\(L => done\[L\.id\]\)/.test(html),
-  'setComplete(d) = every counted lesson done');
+assert.ok(/function _firstVisibleMixedIdx\(d\)/.test(html), 'mixed-index helper exists');
+{
+  // Rebuild lessonCountsFor + its helper in a sandbox and check the new semantics directly.
+  function ext(name){ const at=html.indexOf('function '+name+'('); const b=html.indexOf('{',at); let d=0,i=b; for(;i<html.length;i++){ if(html[i]==='{')d++; else if(html[i]==='}'){ d--; if(!d){ i++; break; } } } return html.slice(at,i); }
+  const APPref = { _teacherMode: false };
+  const lcf = new Function('APP', ext('_firstVisibleMixedIdx') + '\n' + ext('lessonCountsFor') + '\nreturn lessonCountsFor;')(APPref);
+  const d = { lessons: [
+    { type:'standard', id:'a' },       // 0 earlier → hidden
+    { type:'grammar',  id:'b' },       // 1 earlier → hidden
+    { type:'mixed',    id:'m' },       // 2 the mixed lesson → visible
+    { type:'standard', id:'c' },       // 3 later → visible
+    { type:'error_hunt', id:'e' },     // 4 later error hunt → visible
+  ] };
+  APPref._teacherMode = false;
+  assert.strictEqual(lcf(d, d.lessons[0]), false, 'earlier lesson before mixed is hidden');
+  assert.strictEqual(lcf(d, d.lessons[1]), false, 'earlier lesson before mixed is hidden (2)');
+  assert.strictEqual(lcf(d, d.lessons[2]), true,  'the mixed lesson itself stays visible');
+  assert.strictEqual(lcf(d, d.lessons[3]), true,  'a lesson AFTER the mixed lesson stays visible');
+  assert.strictEqual(lcf(d, d.lessons[4]), true,  'an error-hunt after the mixed lesson stays visible');
+  // No mixed lesson → all visible.
+  const d2 = { lessons: [ { type:'standard', id:'a' }, { type:'error_hunt', id:'e' } ] };
+  assert.ok(d2.lessons.every(L => lcf(d2, L)), 'no mixed lesson → classic path, all visible');
+  // Teacher mode → everything visible even with a mixed lesson.
+  APPref._teacherMode = true;
+  assert.ok(d.lessons.every(L => lcf(d, L)), 'teacher mode → everything visible');
+  APPref._teacherMode = false;
+}
+assert.ok(/function setComplete\(d\)/.test(html), 'setComplete(d) exists');
+assert.ok(/countedLessons\(d\)\.every\(L => done\[L\.id\]\)/.test(html),
+  'setComplete: locked-path branch = every counted lesson done');
 
 // 2. Progress count, story-unlock, next-up, render, and the continue jump all route through it.
 assert.ok(/_countedLessons = countedLessons\(d\)/.test(html), 'progress count uses countedLessons(d)');

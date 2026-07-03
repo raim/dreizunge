@@ -42,7 +42,7 @@ const stubs = {
   qcCheckCloze: async () => { calls.cloze++; return { ok: false, sug: 'cloze-fix' }; },
   qcCheckSynonymSet: async () => { calls.synset++; return { ok: false, sug: 'syn-fix' }; },
   _lessonHasOpenQcFlag: (ls) => {
-    const arrays = [ls.vocab, ls.sentences, ls.items, ls.words];
+    const arrays = [ls.vocab, ls.sentences, ls.items, ls.words, ls.grammar, ls.conjugations];
     return arrays.some(a => Array.isArray(a) && a.some(x => x && x.qc));
   },
 };
@@ -55,14 +55,19 @@ const topics = [{
     { type: 'word_forms', items: [{ sentence: 'a ___ b', choices: ['x', 'y'], correctIndex: 0, translation: 'tt' }] },
     { type: 'synonyms', words: [{ base: 'قطة', gloss: 'cat', synonyms: [{ w: 'هر', g: 'cat' }] }] },
     { type: 'intro_script', letters: [{ ch: 'غ', translit: 'gh' }] },
+    { type: 'grammar', grammar: [{ target: 'Übung', source: 'exercise', article: 'die', plural: 'Übungen' }] },
+    { type: 'conjugation', conjugations: [{ infinitive: 'watch', source: '見る', tense: 'present', forms: [{ pronoun: 'I', form: 'watch' }] }] },
+    { type: 'math', numbers: [1, 2, 3] },
+    { type: 'error_hunt', corruptedStory: 'x', correctStory: 'y' },
+    { type: 'mixed' },
   ],
 }];
 
 (async () => {
   await runQc('job1', topics, { lessonIdx: null, onlyFlagged: false });
   const L = topics[0].lessons;
-  // standard → qcCheckPair on vocab + sentences (2 items)
-  assert.strictEqual(calls.pair, 2, 'pair checker ran on vocab + sentence');
+  // standard(2) + grammar(1) + conjugation(1) all route to qcCheckPair
+  assert.strictEqual(calls.pair, 4, 'pair checker ran on vocab + sentence + grammar + conjugation');
   assert.ok(L[0].vocab[0].qc && L[0].vocab[0].qc.sug === 'pair-fix', 'vocab got qc');
   assert.ok(L[0].sentences[0].qc, 'sentence got qc');
   // word_forms → cloze checker on items
@@ -73,9 +78,16 @@ const topics = [{
   assert.ok(L[2].words[0].qc && L[2].words[0].qc.sug === 'syn-fix', 'synonyms entry got qc');
   // intro_script → never checked by the LLM
   assert.ok(!L[3].letters[0].qc, 'intro_script letters are not LLM-QC’d');
+  // grammar → pair checker on the grammar entry (v49 expansion)
+  assert.ok(L[4].grammar[0].qc && L[4].grammar[0].qc.sug === 'pair-fix', 'grammar entry got qc');
+  // conjugation → pair checker on the infinitive/source (v49 expansion)
+  assert.ok(L[5].conjugations[0].qc && L[5].conjugations[0].qc.sug === 'pair-fix', 'conjugation entry got qc');
+  // math / error_hunt / mixed → out of scope, nothing checked, nothing stamped
+  assert.ok(!('qcAt' in L[6]) && !('qcAt' in L[7]) && !('qcAt' in L[8]),
+    'math/error_hunt/mixed are neither checked nor stamped');
   // qc shape the editor expects: { sug, field, at }
   assert.ok(L[1].items[0].qc.field && L[1].items[0].qc.at, 'qc has field + timestamp');
-  console.log('  _runQc dispatch: standard→pair, word_forms→cloze, synonyms→synset, intro_script→skip: OK');
+  console.log('  _runQc dispatch: standard/grammar/conjugation→pair, word_forms→cloze, synonyms→synset, intro_script/math/error_hunt/mixed→skip: OK');
 
   // ── Seam: flagged-only QC must see per-item userFlag on items (word_forms) and words (synonyms) ──
   const flaggedFn = new Function('getFlags', ext(server, '_qcLessonUserFlagged') + '\nreturn _qcLessonUserFlagged;')(() => ({}));
@@ -83,9 +95,13 @@ const topics = [{
     'flagged word_forms item is detected in onlyFlagged mode');
   assert.strictEqual(flaggedFn({}, { type: 'synonyms', words: [{ base: 'x', userFlag: { comment: 'y' } }] }), true,
     'flagged synonyms entry is detected in onlyFlagged mode');
+  assert.strictEqual(flaggedFn({}, { type: 'grammar', grammar: [{ target: 'x', userFlag: { comment: 'g' } }] }), true,
+    'flagged grammar entry is detected in onlyFlagged mode');
+  assert.strictEqual(flaggedFn({}, { type: 'conjugation', conjugations: [{ infinitive: 'x', userFlag: { comment: 'c' } }] }), true,
+    'flagged conjugation entry is detected in onlyFlagged mode');
   assert.strictEqual(flaggedFn({}, { type: 'word_forms', items: [{ sentence: 'a ___ b' }] }), false,
     'unflagged word_forms lesson is not picked up');
-  console.log('  flagged-only QC detects per-item flags on items/words: OK');
+  console.log('  flagged-only QC detects per-item flags on items/words/grammar/conjugation: OK');
 
   console.log('unit-qc-dispatch: ALL PASSED');
 })().catch(e => { console.error(e); process.exit(1); });

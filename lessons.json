@@ -575,7 +575,10 @@
         "tp_1859668795"
       ],
       "createdAt": "2026-05-31T21:33:26.869Z",
-      "updatedAt": "2026-06-01T12:01:22.542Z"
+      "updatedAt": "2026-07-03T13:20:35.907Z",
+      "tags": [
+        "experimental"
+      ]
     },
     {
       "id": "sl_1746943574",
@@ -3838,26 +3841,6 @@
           ]
         },
         {
-          "id": 4,
-          "type": "error_hunt",
-          "title": "Text Understanding",
-          "desc": "Find the mistakes in the story",
-          "icon": "🔍",
-          "corruptedStory": "يُوسُف لَهُ قِطَّة اسْمُهَا لُولُو.\nفِي يَوْمٍ مِنَ الأَيَّام، بَحَثَ يُوسُف عَن لُولوو.\nذَهَبَ إِلَى غُرْفَتِهِ. لَمْ يَجِدْهَا..\nذَهَبَ إِلَى الْمَطْبَخ. لَمْ يَجِدْهَا. \nنَادَى أُمَّهُ: يَا أُمِّي، أَيْنَ لُولو؟\nقَالَتْ أُمُّهُ: انْظُرْ فِي الْحَدِيقَة.\nرَكَضَ يُوسُف إِلَى الْحَدِيقَة وَوَجَدَ لُولوو!\nقَالَ يُوسُف: الْحَمْدُ لِلَّه! وَضَحِكَ.",
-          "_genMeta": {
-            "type": "error_hunt",
-            "model": "qwen2.5:7b",
-            "attempts": null,
-            "valid": null,
-            "rejected": 0,
-            "rejectReasons": null,
-            "promptTokens": 682,
-            "completionTokens": 280,
-            "ms": 236252,
-            "at": "2026-06-27T11:38:37.318Z"
-          }
-        },
-        {
           "id": "ls_1782805967329_vt6j",
           "type": "intro_script",
           "script": "arabic",
@@ -4325,6 +4308,26 @@
             "valid": 12,
             "at": "2026-06-30T07:52:47.329Z"
           }
+        },
+        {
+          "id": 4,
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "يُوسُف لَهُ قِطَّة اسْمُهَا لُولُو.\nفِي يَوْمٍ مِنَ الأَيَّام، بَحَثَ يُوسُف عَن لُولوو.\nذَهَبَ إِلَى غُرْفَتِهِ. لَمْ يَجِدْهَا..\nذَهَبَ إِلَى الْمَطْبَخ. لَمْ يَجِدْهَا. \nنَادَى أُمَّهُ: يَا أُمِّي، أَيْنَ لُولو؟\nقَالَتْ أُمُّهُ: انْظُرْ فِي الْحَدِيقَة.\nرَكَضَ يُوسُف إِلَى الْحَدِيقَة وَوَجَدَ لُولوو!\nقَالَ يُوسُف: الْحَمْدُ لِلَّه! وَضَحِكَ.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 682,
+            "completionTokens": 280,
+            "ms": 236252,
+            "at": "2026-06-27T11:38:37.318Z"
+          }
         }
       ],
       "generationStats": {
@@ -4356,7 +4359,7 @@
         ]
       },
       "generatedAt": "2026-06-27T11:13:31.154Z",
-      "updatedAt": "2026-07-01T11:14:37.139Z",
+      "updatedAt": "2026-07-03T14:13:57.471Z",
       "id": "tp_17825603173750001401"
     },
     {
@@ -62946,7 +62949,396 @@
                 }
               ]
             }
-          ]
+          ],
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783074452368_3_gate",
+          "title": "Neuer Tag",
+          "desc": "Morgens, Sonne, Natur, neue Hoffnung",
+          "icon": "🌅",
+          "vocab": [
+            {
+              "target": "matin",
+              "source": "Morgen"
+            },
+            {
+              "target": "soleil",
+              "source": "Sonne"
+            },
+            {
+              "target": "rideau",
+              "source": "Lamelle"
+            },
+            {
+              "target": "brume",
+              "source": "Nebel"
+            },
+            {
+              "target": "chant",
+              "source": "Lied"
+            },
+            {
+              "target": "oiseau",
+              "source": "Vogel"
+            },
+            {
+              "target": "arbre",
+              "source": "Baum"
+            },
+            {
+              "target": "vent",
+              "source": "Wind"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Le soleil se levait, ses rayons dorés perçant les rideaux de brume qui flottaient encore dans l’air.",
+              "source": "Die Sonne ging auf, ihre goldenen Strahlen durchdrangen die Nebellamellen, die noch in der Luft schwebten.",
+              "words": [
+                "Le",
+                "soleil",
+                "se",
+                "levait,",
+                "ses",
+                "rayons",
+                "dorés",
+                "perçant",
+                "les",
+                "rideaux",
+                "de",
+                "brume",
+                "qui",
+                "flottaient",
+                "encore",
+                "dans",
+                "l’air."
+              ]
+            },
+            {
+              "target": "Constance inspira à nouveau, cette fois plus profondément, et son chant s’éleva dans le ciel émergent.",
+              "source": "Constance atmete erneut, diesmal tiefer, und ihr Lied stieg in das aufgehende Firmament.",
+              "words": [
+                "Constance",
+                "inspira",
+                "à",
+                "nouveau,",
+                "cette",
+                "fois",
+                "plus",
+                "profondément,",
+                "et",
+                "son",
+                "chant",
+                "s’éleva",
+                "dans",
+                "le",
+                "ciel",
+                "émergent."
+              ]
+            },
+            {
+              "target": "Les oiseaux s’éveillèrent, leurs chants joyeux se mêlant à la mélodie de Constance.",
+              "source": "Die Vögel erwachten, ihr fröhliches Gezwitscher mischte sich mit Constances Melodie.",
+              "words": [
+                "Les",
+                "oiseaux",
+                "s’éveillèrent,",
+                "leurs",
+                "chants",
+                "joyeux",
+                "se",
+                "mêlant",
+                "à",
+                "la",
+                "mélodie",
+                "de",
+                "Constance."
+              ]
+            },
+            {
+              "target": "Le vent, qui avait été si violent la veille, avait laissé place à une douce caresse.",
+              "source": "Der Wind, der gestern so gewaltig gewesen war, hatte Platz für eine sanfte Berührung gemacht.",
+              "words": [
+                "Le",
+                "vent,",
+                "qui",
+                "avait",
+                "été",
+                "si",
+                "violent",
+                "la",
+                "veille,",
+                "avait",
+                "laissé",
+                "place",
+                "à",
+                "une",
+                "douce",
+                "caresse."
+              ]
+            },
+            {
+              "target": "Constance continua à chanter, sa voix se mêlant à la symphonie de la nature qui s’éveillait.",
+              "source": "Constance sang weiter, ihre Stimme mischte sich in die Symphonie der Natur, die erwachte.",
+              "words": [
+                "Constance",
+                "continua",
+                "à",
+                "chanter,",
+                "sa",
+                "voix",
+                "se",
+                "mêlant",
+                "à",
+                "la",
+                "symphonie",
+                "de",
+                "la",
+                "nature",
+                "qui",
+                "s’éveillait."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 915,
+            "completionTokens": 448,
+            "ms": 311482,
+            "at": "2026-07-03T10:27:32.368Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1783074884432_3_word_forms",
+          "type": "word_forms",
+          "title": "Morgenlicht und neue Hoffnung",
+          "desc": "Verben im Präsens und Plusquamperfekt",
+          "icon": "☀️",
+          "items": [
+            {
+              "sentence": "Le soleil se levait, ses rayons dorés ___ les rideaux de brume qui flottaient encore dans l’air.",
+              "translation": "Der Sonnenschein durchbrach die noch schwebenden Nebel, die in der Luft hingen.",
+              "choices": [
+                "durchbrach",
+                "durchbrochen"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Constance arrêta sa chanson, son regard serein ___ dans l’horizon qui s’assombrissait lentement.",
+              "translation": "Constance hielt inne, ihr sanfter Blick verlor sich in der immer dunkler werdenden Horizontlinie.",
+              "choices": [
+                "verlor",
+                "verliert"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Les arbres, qui semblaient écouter, ___ sous la brise matinale.",
+              "translation": "Die Bäume, die es schienen zu hören, bewegten sich im Morgenwind.",
+              "choices": [
+                "bewegten",
+                "bewegen"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Constance continua à chanter, sa voix se ___ à la symphonie de la nature qui s’éveillait.",
+              "translation": "Constance fuhr fort zu singen, ihre Stimme mischte sich in die Symphonie der aufwachenden Natur.",
+              "choices": [
+                "mischt",
+                "mischte"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Les ombres de la nuit ___ la place à la clarté du jour.",
+              "translation": "Die Schatten der Nacht gaben den Platz der Morgensonne.",
+              "choices": [
+                "gaben",
+                "geben"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Les arbres, les oiseaux, et même le vent, ___ semblaient reconnaissants, comme si la chanson avait réparé les blessures de la nuit précédente.",
+              "translation": "Die Bäume, die Vögel und sogar der Wind schienen dankbar, als hätte das Lied die Wunden der vergangenen Nacht heilen können.",
+              "choices": [
+                "schienen",
+                "scheinen"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen2.5:7b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1267,
+            "completionTokens": 607,
+            "ms": 432063,
+            "at": "2026-07-03T10:34:44.432Z"
+          },
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1783075139098_3_synonyms",
+          "type": "synonyms",
+          "title": "Neuer Tag",
+          "desc": "Tag, Licht, Ruhe, Natur, Melodie",
+          "icon": "☀️",
+          "words": [
+            {
+              "base": "soleil",
+              "gloss": "Sonne",
+              "sentence": "Le soleil se levait, ses rayons dorés perçant les rideaux de brume qui flottaient encore dans l’air.",
+              "synonyms": [
+                {
+                  "w": "lumière",
+                  "g": "Licht"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "nuage",
+                  "g": "Wolke"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "rayons",
+              "gloss": "Strahlen",
+              "sentence": "Le soleil se levait, ses rayons dorés perçant les rideaux de brume qui flottaient encore dans l’air.",
+              "synonyms": [
+                {
+                  "w": "lumière",
+                  "g": "Licht"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "ombre",
+                  "g": "Schatten"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "place",
+              "gloss": "Platz",
+              "sentence": "Le vent, qui avait été si violent la veille, avait laissé place à une douce caresse.",
+              "synonyms": [
+                {
+                  "w": "espace",
+                  "g": "Raum"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "arbres",
+              "gloss": "Bäume",
+              "sentence": "Les arbres, qui semblaient écouter, ondulèrent sous la brise matinale.",
+              "synonyms": [
+                {
+                  "w": "forêt",
+                  "g": "Wald"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "chanson",
+              "gloss": "Lied",
+              "sentence": "Constance arrêta sa chanson, son regard serein se perdant dans l’horizon qui s’assombrissait lentement.",
+              "synonyms": [
+                {
+                  "w": "melodie",
+                  "g": "Melodie"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "constance",
+              "gloss": "Konstante",
+              "sentence": "Constance arrêta sa chanson, son regard serein se perdant dans l’horizon qui s’assombrissait lentement.",
+              "synonyms": [
+                {
+                  "w": "stabilité",
+                  "g": "Stabilität"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "changement",
+                  "g": "Veränderung"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "mêlant",
+              "gloss": "vermischt",
+              "sentence": "Les oiseaux s’éveillèrent, leurs chants joyeux se mêlant à la mélodie de Constance.",
+              "synonyms": [
+                {
+                  "w": "confondant",
+                  "g": "verwirrend"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "séparant",
+                  "g": "trennend"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen2.5:7b",
+            "attempts": 1,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 590,
+            "completionTokens": 560,
+            "ms": 254666,
+            "at": "2026-07-03T10:38:59.098Z"
+          },
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1783077316957_7kv3",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -62964,7 +63356,7 @@
         ]
       },
       "generatedAt": "2026-06-01T12:01:22.542Z",
-      "updatedAt": "2026-06-01T12:01:22.542Z",
+      "updatedAt": "2026-07-03T11:15:16.962Z",
       "id": "tp_1859668795",
       "continuedFromId": "tp_602657034"
     },
@@ -63060,7 +63452,351 @@
               "article": "le",
               "plural": "les silences"
             }
-          ]
+          ],
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783073438465_2_gate",
+          "title": "Nacht und Sturm",
+          "desc": "Nacht, Sturm, Liebe, Frieden",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "nuit",
+              "source": "Nacht"
+            },
+            {
+              "target": "vent",
+              "source": "Wind"
+            },
+            {
+              "target": "arbre",
+              "source": "Baum"
+            },
+            {
+              "target": "serein",
+              "source": "ruhig"
+            },
+            {
+              "target": "tempête",
+              "source": "Sturm"
+            },
+            {
+              "target": "rêve",
+              "source": "Traum"
+            },
+            {
+              "target": "sang",
+              "source": "Sang"
+            },
+            {
+              "target": "résilience",
+              "source": "Ruhm"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "La nuit était noire et dense.",
+              "source": "Die Nacht war schwarz und dicht.",
+              "words": [
+                "La",
+                "nuit",
+                "était",
+                "noire",
+                "et",
+                "dense."
+              ]
+            },
+            {
+              "target": "Le vent rugissait autour d'elle.",
+              "source": "Der Wind röhrte um sie herum.",
+              "words": [
+                "Le",
+                "vent",
+                "rugissait",
+                "autour",
+                "d'elle."
+              ]
+            },
+            {
+              "target": "Elle entendit l'esprit murmurer.",
+              "source": "Sie hörte den Geist flüstern.",
+              "words": [
+                "Elle",
+                "entendit",
+                "l'esprit",
+                "murmurer."
+              ]
+            },
+            {
+              "target": "Constance ouvrit les yeux, son regard serein se posant sur l'arbre.",
+              "source": "Constance öffnete die Augen, ihr ruhiger Blick ruhte auf dem Baum.",
+              "words": [
+                "Constance",
+                "ouvrit",
+                "les",
+                "yeux,",
+                "son",
+                "regard",
+                "serein",
+                "se",
+                "posant",
+                "sur",
+                "l'arbre."
+              ]
+            },
+            {
+              "target": "Chante pour la résilience, Constance.",
+              "source": "Sang für den Ruhm, Constance.",
+              "words": [
+                "Chante",
+                "pour",
+                "la",
+                "résilience,",
+                "Constance."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 893,
+            "completionTokens": 305,
+            "ms": 235525,
+            "at": "2026-07-03T10:10:38.465Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1783073851962_2_word_forms",
+          "type": "word_forms",
+          "title": "Nacht und Wind",
+          "desc": "Nacht, Wind, Worte",
+          "icon": "🌙",
+          "items": [
+            {
+              "sentence": "La nuit était tombée, noire et dense, lorsque le vent commença à souffler avec une violence ___.",
+              "translation": "Die Nacht war gefallen, dunkel und dicht, als der Wind mit einer Gewalt begann, die unerwartet war.",
+              "choices": [
+                "inangenehm",
+                "unvorhergesehen"
+              ],
+              "correctIndex": 1,
+              "explanation": ""
+            },
+            {
+              "sentence": "Constance ferma les yeux, sentant le vent rugir ___ elle.",
+              "translation": "Constance schloss die Augen, während sie den Wind brüllend um sich herum spürte.",
+              "choices": [
+                "um",
+                "umher"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Elle entendit l’esprit murmurer : \"L’amour, c’est comme ce vent, parfois doux, parfois ___.",
+              "translation": "Sie hörte den Geist murmeln: „Liebe, das ist wie dieser Wind, manchmal sanft, manchmal heftig.",
+              "choices": [
+                "heiter",
+                "heftig"
+              ],
+              "correctIndex": 1,
+              "explanation": ""
+            },
+            {
+              "sentence": "Il nous rappelle que malgré la violence du monde, il y a toujours un abri, une ___.",
+              "translation": "Er erinnert uns daran, dass trotz der Gewalt der Welt immer ein Schutz, eine Sicherheit vorhanden ist.",
+              "choices": [
+                "Sicherheit",
+                "Sicherheitheit"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Les arbres semblaient écouter, leurs branches s’agitant ___ au rythme de sa mélodie.",
+              "translation": "Die Bäume schienen zu lauschen, ihre Äste sanft im Takt ihrer Melodie bewegten sich.",
+              "choices": [
+                "sanft",
+                "stark"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Constance prit une grande inspiration et commença à chanter, sa voix douce et ___ résonnant dans la forêt.",
+              "translation": "Constance atmete tief ein und begann zu singen, ihre sanfte und starke Stimme in der Wäldertiefe widerhallend.",
+              "choices": [
+                "starke",
+                "schwache"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen2.5:7b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1214,
+            "completionTokens": 614,
+            "ms": 413496,
+            "at": "2026-07-03T10:17:31.962Z"
+          },
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1783074140828_2_synonyms",
+          "type": "synonyms",
+          "title": "Nacht und Sturm",
+          "desc": "constante, forêt, esprit, commença, violente, arbre, branches, comme",
+          "icon": "🌙",
+          "words": [
+            {
+              "base": "constance",
+              "gloss": "constance",
+              "sentence": "Constance et l’esprit de la forêt se réfugièrent sous l’immense arbre centenaire, ses branches noueuses formant un toit protecteur.",
+              "synonyms": [
+                {
+                  "w": "stabilité",
+                  "g": "stability"
+                },
+                {
+                  "w": "continuité",
+                  "g": "continuity"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "inconstance",
+                  "g": "inconstancy"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "forêt",
+              "gloss": "forest",
+              "sentence": "Constance et l’esprit de la forêt se réfugièrent sous l’immense arbre centenaire, ses branches noueuses formant un toit protecteur.",
+              "synonyms": [
+                {
+                  "w": "bois",
+                  "g": "forest"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "esprit",
+              "gloss": "spirit",
+              "sentence": "Constance et l’esprit de la forêt se réfugièrent sous l’immense arbre centenaire, ses branches noueuses formant un toit protecteur.",
+              "synonyms": [
+                {
+                  "w": "âme",
+                  "g": "soul"
+                },
+                {
+                  "w": "caractère",
+                  "g": "character"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "commença",
+              "gloss": "began",
+              "sentence": "La nuit était tombée, noire et dense, lorsque le vent commença à souffler avec une violence inattendue.",
+              "synonyms": [
+                {
+                  "w": "démarrage",
+                  "g": "start"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "violence",
+              "gloss": "violence",
+              "sentence": "La nuit était tombée, noire et dense, lorsque le vent commença à souffler avec une violence inattendue.",
+              "synonyms": [
+                {
+                  "w": "force",
+                  "g": "force"
+                },
+                {
+                  "w": "puissance",
+                  "g": "power"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "douceur",
+                  "g": "gentleness"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "arbre",
+              "gloss": "tree",
+              "sentence": "Constance et l’esprit de la forêt se réfugièrent sous l’immense arbre centenaire, ses branches noueuses formant un toit protecteur.",
+              "synonyms": [
+                {
+                  "w": "plante",
+                  "g": "plant"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "branches",
+              "gloss": "branches",
+              "sentence": "Constance et l’esprit de la forêt se réfugièrent sous l’immense arbre centenaire, ses branches noueuses formant un toit protecteur.",
+              "synonyms": [
+                {
+                  "w": "rameaux",
+                  "g": "branches"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen2.5:7b",
+            "attempts": 1,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 595,
+            "completionTokens": 566,
+            "ms": 288866,
+            "at": "2026-07-03T10:22:20.828Z"
+          },
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1783077302211_7hq8",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -63078,7 +63814,7 @@
         ]
       },
       "generatedAt": "2026-06-01T11:39:52.863Z",
-      "updatedAt": "2026-06-01T11:39:52.863Z",
+      "updatedAt": "2026-07-03T11:15:02.214Z",
       "id": "tp_602657034",
       "continuedFromId": "tp_1195548360"
     },
@@ -64294,7 +65030,8 @@
               ]
             }
           ],
-          "type": "standard"
+          "type": "standard",
+          "_hidden": false
         },
         {
           "id": "ls_1347929348",
@@ -64408,7 +65145,310 @@
               ]
             }
           ],
-          "type": "standard"
+          "type": "standard",
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783072482614_1_gate",
+          "title": "Constance und der Waldgeist",
+          "desc": "Nacht, Wald, Geist, Liebe",
+          "icon": "🌳",
+          "vocab": [
+            {
+              "target": "nuit",
+              "source": "Nacht"
+            },
+            {
+              "target": "forêt",
+              "source": "Wald"
+            },
+            {
+              "target": "esprit",
+              "source": "Geist"
+            },
+            {
+              "target": "amour",
+              "source": "Liebe"
+            },
+            {
+              "target": "connexion",
+              "source": "Verbindung"
+            },
+            {
+              "target": "compréhension",
+              "source": "Verständnis"
+            },
+            {
+              "target": "mutuelle",
+              "source": "mutuelle"
+            },
+            {
+              "target": "brise",
+              "source": "Brise"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Constance s'arrêta soudain, son chant s'évanouissant dans l'air nocturne.",
+              "source": "Constance blieb plötzlich stehen, ihr Gesang verhallte in der Nachtluft.",
+              "words": [
+                "Constance",
+                "s'arrêta",
+                "soudain,",
+                "son",
+                "chant",
+                "s'évanouissant",
+                "dans",
+                "l'air",
+                "nocturne."
+              ]
+            },
+            {
+              "target": "Un murmure léger, presque inaudible, lui parvint.",
+              "source": "Ein leises Flüstern, fast unhörbar, drang an ihr Ohr.",
+              "words": [
+                "Un",
+                "murmure",
+                "léger,",
+                "presque",
+                "inaudible,",
+                "lui",
+                "parvint."
+              ]
+            },
+            {
+              "target": "Un être éthéré, aux cheveux de feuilles et aux yeux d'étoiles, se tenait devant elle.",
+              "source": "Ein ethischer Wesen, mit Blättern für Haare und Sternenaugen, stand vor ihr.",
+              "words": [
+                "Un",
+                "être",
+                "éthéré,",
+                "aux",
+                "cheveux",
+                "de",
+                "feuilles",
+                "et",
+                "aux",
+                "yeux",
+                "d'étoiles,",
+                "se",
+                "tenait",
+                "devant",
+                "elle."
+              ]
+            },
+            {
+              "target": "L'amour, c'est comme la forêt, il grandit, il se développe, il change.",
+              "source": "Liebe ist wie der Wald, er wächst, entwickelt sich, verändert sich.",
+              "words": [
+                "L'amour,",
+                "c'est",
+                "comme",
+                "la",
+                "forêt,",
+                "il",
+                "grandit,",
+                "il",
+                "se",
+                "développe,",
+                "il",
+                "change."
+              ]
+            },
+            {
+              "target": "Comme les arbres, l'amour peut être doux comme une brise, ou violent comme un ouragan.",
+              "source": "Wie Bäume kann Liebe sanft wie eine Brise sein, oder gewaltig wie ein Orkan.",
+              "words": [
+                "Comme",
+                "les",
+                "arbres,",
+                "l'amour",
+                "peut",
+                "être",
+                "doux",
+                "comme",
+                "une",
+                "brise,",
+                "ou",
+                "violent",
+                "comme",
+                "un",
+                "ouragan."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 940,
+            "completionTokens": 406,
+            "ms": 305095,
+            "at": "2026-07-03T09:54:42.614Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1783072942153_1_word_forms",
+          "type": "word_forms",
+          "title": "L'amour und die Natur",
+          "desc": "Verben, Nomen und Adjektive",
+          "icon": "🌳",
+          "items": [
+            {
+              "sentence": "Constance s'arrêta soudain, son chant s'évanouissant dans l'air ___.",
+              "translation": "Constance blieb stehen, ihr Lied verhallte in der nächtlichen Luft.",
+              "choices": [
+                "Luft",
+                "Licht"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Un murmure léger, presque inaudible, lui ___.",
+              "translation": "Ein leises Murmeln, fast unhörbar, drang an ihr Ohr.",
+              "choices": [
+                "drang an ihr Ohr",
+                "kam ihr entgegen"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Il était le Waldgeist, l'esprit de la forêt, l'âme des ___ et des feuilles.",
+              "translation": "Er war der Waldgeist, der Geist der Wälder, die Seele der Bäume und der Blätter.",
+              "choices": [
+                "Bäume",
+                "Bäumchen"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Je chante pour la forêt, pour les étoiles, pour l'___.",
+              "translation": "Ich singe für den Wald, für die Sterne, für das Liebe.",
+              "choices": [
+                "Liebe",
+                "Lied"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Par la connexion, par la compréhension mutuelle, ___.",
+              "translation": "Durch die Verbindung, durch die gegenseitige Verständigung, entsteht das Liebe.",
+              "choices": [
+                "entsteht das Liebe",
+                "entsteht das Leben"
+              ],
+              "correctIndex": 0,
+              "explanation": ""
+            },
+            {
+              "sentence": "Les racines s'enfonçant profondément dans la terre, les branches s'___ dans le ciel.",
+              "translation": "Die Wurzeln tief in die Erde eintauchend, die Äste sich in den Himmel windend.",
+              "choices": [
+                "windend",
+                "winden"
+              ],
+              "correctIndex": 1,
+              "explanation": ""
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "qwen2.5:7b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1338,
+            "completionTokens": 549,
+            "ms": 459538,
+            "at": "2026-07-03T10:02:22.153Z"
+          },
+          "_recreated": true,
+          "_arcMode": "reinforce"
+        },
+        {
+          "id": "ls_1783073202889_1_synonyms",
+          "type": "synonyms",
+          "title": "Constance und der Waldgeist",
+          "desc": "Constance, Geist, Wald, Liebe, wie, Bäume, singen, Blätter",
+          "icon": "🌳",
+          "words": [
+            {
+              "base": "constance",
+              "gloss": "Beständigkeit",
+              "sentence": "Constance s'arrêta soudain, son chant s'évanouissant dans l'air nocturne.",
+              "synonyms": [
+                {
+                  "w": "fidélité",
+                  "g": "Treue"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "inconstance",
+                  "g": "Unbeständigkeit"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "forêt",
+              "gloss": "Wald",
+              "sentence": "Il était le Waldgeist, l'esprit de la forêt.",
+              "synonyms": [
+                {
+                  "w": "bois",
+                  "g": "Wald"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "chante",
+              "gloss": "singt",
+              "sentence": "\"Je chante pour la forêt, pour les étoiles, pour l'amour.\"",
+              "synonyms": [
+                {
+                  "w": "chant",
+                  "g": "singt"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "qwen2.5:7b",
+            "attempts": 1,
+            "valid": 3,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 593,
+            "completionTokens": 557,
+            "ms": 260735,
+            "at": "2026-07-03T10:06:42.889Z"
+          },
+          "_recreated": true,
+          "_arcMode": "reinforce",
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783077289612_58g4",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -64434,7 +65474,7 @@
         ]
       },
       "generatedAt": "2026-05-31T22:06:26.466Z",
-      "updatedAt": "2026-06-01T11:21:20.290Z",
+      "updatedAt": "2026-07-03T14:07:15.247Z",
       "id": "tp_1195548360",
       "continuedFromId": "tp_1048086483"
     },
@@ -64571,7 +65611,8 @@
               ]
             }
           ],
-          "type": "standard"
+          "type": "standard",
+          "_hidden": false
         },
         {
           "id": "ls_648033768",
@@ -64704,7 +65745,8 @@
               ]
             }
           ],
-          "type": "standard"
+          "type": "standard",
+          "_hidden": false
         },
         {
           "id": "ls_648033769",
@@ -64804,7 +65846,148 @@
               ]
             }
           ],
-          "type": "standard"
+          "type": "standard",
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783072177478_0_gate",
+          "title": "Gedicht und Natur",
+          "desc": "Nacht, Wälder, Stimmen",
+          "icon": "🌙",
+          "vocab": [
+            {
+              "target": "forêt",
+              "source": "Wald"
+            },
+            {
+              "target": "étoiles",
+              "source": "Sterne"
+            },
+            {
+              "target": "feuilles",
+              "source": "Blätter"
+            },
+            {
+              "target": "voix",
+              "source": "Stimme"
+            },
+            {
+              "target": "arbres",
+              "source": "Bäume"
+            },
+            {
+              "target": "robe",
+              "source": "Kleid"
+            },
+            {
+              "target": "princesse",
+              "source": "Prinzessin"
+            },
+            {
+              "target": "lumières",
+              "source": "Lichter"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Les feuilles frôlaient ses pieds nus.",
+              "source": "Die Blätter berührten ihre nackten Füße.",
+              "words": [
+                "Les",
+                "feuilles",
+                "frôlaient",
+                "ses",
+                "pieds",
+                "nus."
+              ]
+            },
+            {
+              "target": "Constance chantait, sa voix douce comme une brise printanière.",
+              "source": "Constance sang, ihre Stimme weich wie ein Frühlingshauch.",
+              "words": [
+                "Constance",
+                "chantait,",
+                "sa",
+                "voix",
+                "douce",
+                "comme",
+                "une",
+                "brise",
+                "printanière."
+              ]
+            },
+            {
+              "target": "Les arbres, comme des gardiens silencieux, l'observaient.",
+              "source": "Die Bäume, wie stumme Wächter, beobachteten sie.",
+              "words": [
+                "Les",
+                "arbres,",
+                "comme",
+                "des",
+                "gardiens",
+                "silencieux,",
+                "l'observaient."
+              ]
+            },
+            {
+              "target": "Elle marchait seule dans la forêt sombre et dense.",
+              "source": "Sie ging allein im dunklen, dichten Wald.",
+              "words": [
+                "Elle",
+                "marchait",
+                "seule",
+                "dans",
+                "la",
+                "forêt",
+                "sombre",
+                "et",
+                "dense."
+              ]
+            },
+            {
+              "target": "Constance semblait une princesse de lune, errant dans un royaume de murmures et de lumières.",
+              "source": "Constance schien eine Mondprinzessin, wandelnd in einem Reich von Flüstern und Lichtern.",
+              "words": [
+                "Constance",
+                "semblait",
+                "une",
+                "princesse",
+                "de",
+                "lune,",
+                "errant",
+                "dans",
+                "un",
+                "royaume",
+                "de",
+                "murmures",
+                "et",
+                "de",
+                "lumières."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 719,
+            "completionTokens": 365,
+            "ms": 178481,
+            "at": "2026-07-03T09:49:37.478Z"
+          },
+          "_recreated": true,
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783077261405_dzjn",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -64836,7 +66019,7 @@
         ]
       },
       "generatedAt": "2026-05-31T21:33:26.869Z",
-      "updatedAt": "2026-05-31T21:33:26.869Z",
+      "updatedAt": "2026-07-03T14:07:06.821Z",
       "id": "tp_1048086483",
       "continuedFromId": null
     },

@@ -59,7 +59,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v48';
+const APP_VERSION  = 'v49';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -808,8 +808,11 @@ async function _runQc(jobId, topics, opts) {
           jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
       };
       // Dispatch by lesson type. vocab/sentences exist on standard lessons; word_forms uses
-      // `items` (cloze); synonyms uses `words` (related-word sets); intro_script is curated
-      // data (human QC only — skipped here).
+      // `items` (cloze); synonyms uses `words` (related-word sets); grammar uses `grammar`
+      // (noun target/source + article/plural); conjugation uses `conjugations` (infinitive +
+      // source translation). intro_script is curated data (human QC only); math and the two
+      // error-hunt types are intentionally out of scope. Anything else falls through to the
+      // generic vocab/sentences scan.
       let _lessonQcRan = true;
       if (ls.type === 'word_forms') {
         for (const item of (ls.items || [])) {
@@ -821,8 +824,29 @@ async function _runQc(jobId, topics, opts) {
           if (!entry || !entry.base) continue;
           await _check(entry, () => qcCheckSynonymSet(entry, tp.lang, tp.srcLang, entry.userFlag?.comment), 'synset');
         }
+      } else if (ls.type === 'grammar') {
+        // Grammar lessons teach a noun with its article/plural; the target↔source translation
+        // is the checkable pair (article/plural correctness is a separate, morphology-specific
+        // check left for a future dedicated prompt).
+        for (const g of (ls.grammar || [])) {
+          if (!g || !g.target || !g.source) continue;
+          await _check(g, () => qcCheckPair(g.target, g.source, tp.lang, tp.srcLang, g.userFlag?.comment), 'grammar');
+        }
+      } else if (ls.type === 'conjugation') {
+        // Conjugation lessons carry an infinitive (target verb) + its source translation; QC the
+        // translation pair. The per-form morphology is grammatical, not a translation, so it's
+        // out of scope here (a dedicated conjugation-correctness prompt is future work).
+        for (const c of (ls.conjugations || [])) {
+          if (!c || !c.infinitive || !c.source) continue;
+          await _check(c, () => qcCheckPair(c.infinitive, c.source, tp.lang, tp.srcLang, c.userFlag?.comment), 'conjug');
+        }
       } else if (ls.type === 'intro_script') {
         // curated letter table — verified by humans (per-letter flag/star/edit), not the LLM.
+        _lessonQcRan = false;
+      } else if (ls.type === 'math' || ls.type === 'error_hunt' || ls.type === 'ai_error_hunt' || ls.type === 'mixed') {
+        // Out of scope: math is procedural, error-hunt correctness is intrinsic to its own
+        // story, and mixed lessons own no items (they pool from their source lessons, which are
+        // QC'd in place). Don't stamp — nothing was examined.
         _lessonQcRan = false;
       } else {
         for (const key of ['vocab', 'sentences']) {
@@ -850,7 +874,7 @@ async function _runQc(jobId, topics, opts) {
 // True if any item in the lesson still carries an open QC suggestion (item.qc). Used to
 // decide whether a just-completed full pass may stamp the lesson as clean.
 function _lessonHasOpenQcFlag(ls) {
-  const arrays = [ls.vocab, ls.sentences, ls.items, ls.words];
+  const arrays = [ls.vocab, ls.sentences, ls.items, ls.words, ls.grammar, ls.conjugations];
   for (const arr of arrays) {
     if (Array.isArray(arr) && arr.some(x => x && x.qc)) return true;
   }
@@ -874,6 +898,8 @@ function qcSignature(ls) {
   for (const it of (ls.sentences || [])) parts.push('s', it && it.target, it && it.source);
   for (const it of (ls.items || []))     parts.push('i', it && it.sentence, it && it.blank, it && it.answer);
   for (const w of (ls.words || []))      parts.push('w', w && w.base, Array.isArray(w && w.related) ? w.related.join('|') : (w && w.related));
+  for (const g of (ls.grammar || []))    parts.push('g', g && g.target, g && g.source, g && g.article, g && g.plural);
+  for (const c of (ls.conjugations || [])) parts.push('c', c && c.infinitive, c && c.source);
   // error-hunt / ai-error-hunt derive from these:
   parts.push('cs', ls.corruptedStory || '', ls.correctStory || '', ls.aiStory || '');
   return parts.map(x => (x == null ? '' : String(x))).join('\u0001');

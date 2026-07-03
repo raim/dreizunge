@@ -874,3 +874,91 @@ always re-check. Needs Ollama (translation model).
       and the toast includes a **"forced full re-check"** segment. A plain click still skips
       clean lessons. The two bulk 🔍 buttons' tooltips mention the shift-click affordance.
       (Useful after tuning the QC prompt, which doesn't change lesson content.)
+
+### 46. v49 — QC coverage: grammar + conjugation lessons
+These two types were previously getting no QC at all. They're now checked (translation pair) and
+flags render in their editor branches. Needs Ollama.
+
+- [ ] **Grammar lesson QC.** Run QC on a topic containing a 🏷️ grammar lesson (e.g. a German
+      noun list). The translation pair (target ↔ source) is checked; a bad gloss produces a flag
+      that shows as an orange "suggests…" note under that grammar row in the editor, with a ✕ to
+      dismiss. The lesson's flag badge count includes it.
+- [ ] **Conjugation lesson QC.** Same for a 🔤 conjugation lesson: the infinitive ↔ source
+      translation is checked; a flag renders under the conjugation entry and dismisses cleanly.
+- [ ] **Article/plural and per-form NOT auto-flagged.** Confirm the QC doesn't (yet) flag purely
+      grammatical issues (wrong article/plural, wrong conjugated form) — that's future work, and a
+      weak model shouldn't be inventing such flags here. Watch for false positives on the
+      translation check itself and thumbs-down / tune the prompt if needed.
+- [ ] **Skip + edit-invalidation still hold for these types.** After a clean QC pass, a grammar/
+      conjugation lesson is skipped on the next bulk run; editing its target/source/article/plural
+      (grammar) or infinitive/source (conjugation) makes the next bulk run re-check it.
+
+### 47. v50 Commit B — coverage-based progression (mixed-driven sets)
+Only affects a **mixed-driven set** (non-teacher, a visible 🔀 mixed lesson present). Uses the
+Commit A solved store. Locked-path sets and teacher mode are unchanged. Browser-only.
+
+- [ ] **Coverage bar replaces lesson-count bar.** Open a topic that has a visible mixed lesson
+      (as a learner, not teacher). The set progress bar/text shows **"N of M solved · P%"**
+      (questions), not "x/y lessons". It starts low and climbs as you answer questions correctly.
+- [ ] **Per-lesson coverage chip.** The mixed lesson node shows a **📊 N/M** chip (questions
+      solved / total in the set). It goes up as you solve new questions.
+- [ ] **Unsolved-first rounds.** Play the mixed lesson repeatedly. Early rounds are dominated by
+      questions you haven't solved yet (~70%); once most are solved, rounds shift toward review.
+      A short round doesn't keep re-asking the same already-solved items while unsolved ones wait.
+- [ ] **Solving is durable across reshuffles.** Answer some questions correctly, leave, come back:
+      the coverage count/percentage persists (it's per-question, not per-play), and the same
+      underlying question counts as solved even though the round is reshuffled.
+- [ ] **Story unlocks by coverage, not one pass.** In a mixed-driven set the story now unlocks
+      when coverage reaches the target (default 100%), NOT after a single once-through of the mixed
+      lesson. Confirm the story stays locked at partial coverage and unlocks at full.
+- [ ] **Flagged questions don't block 100%.** If some source items are flagged (⚑ or QC), they're
+      excluded from the denominator — you can still reach 100% coverage without them.
+- [ ] **Editing content updates the denominator.** As a teacher/editor, add or edit items in a
+      sibling lesson, then return to the path: the set's M (total) reflects the change (the
+      coverage universe is recomputed after an edit).
+- [ ] **Clear progress resets coverage.** Clearing progress for the topic/storyline resets the
+      solved count to 0 and re-locks the story.
+- [ ] **Locked-path sets unaffected.** A topic with NO mixed lesson still shows the classic
+      lesson-count progress and per-lesson completion — no coverage bar or chip.
+
+### 48. v50 — mixed lesson hides only the lessons it reviews (not later ones / error hunts)
+Refines the mixed-driven visibility rule. A mixed lesson pools from and hides only the lessons
+that come BEFORE it; the mixed lesson, error-hunt "final test" lessons, and any lessons placed
+AFTER the mixed lesson stay visible and playable. Browser-only (learner / non-teacher mode).
+
+- [ ] **Earlier lessons are hidden, mixed shows.** Open a set authored as: vocab / grammar /
+      … → 🔀 mixed → 🔍 error hunt. As a learner, the earlier vocab/grammar nodes are gone
+      (folded into the mixed lesson), and the mixed lesson node shows.
+- [ ] **Error hunt stays as a final test.** The 🔍 error hunt (and 🔎 AI error hunt) after the
+      mixed lesson is visible and playable — it is NOT hidden.
+- [ ] **A lesson added AFTER the mixed lesson stays visible.** Add any lesson (e.g. a new vocab
+      or grammar lesson) after the mixed lesson; as a learner it appears as its own node and is
+      playable — it is not pooled into the mixed lesson and not hidden.
+- [ ] **Mixed round doesn't quiz later content.** Playing the mixed lesson only asks questions
+      from the lessons BEFORE it — never from a lesson placed after it (those are separate).
+- [ ] **Story unlock needs both.** In such a set the story unlocks only when the mixed practice
+      reaches coverage AND the surviving follow-on lessons (error hunt + any later lessons) are
+      completed — not on coverage alone, and not after a single mixed pass.
+- [ ] **Teacher mode unchanged.** In teacher/edit mode every lesson (earlier, mixed, later, error
+      hunt) is visible and playable as before.
+- [ ] **No mixed lesson → classic path.** A set with no mixed lesson behaves exactly as before
+      (all lessons visible, lesson-count progress).
+
+### 49. v50 — learned-vocabulary ledger + "my story" option (foundation)
+The app now accumulates learned words across lessons (foundation for user-specific generation).
+The generator isn't wired to it yet — this checks the plumbing and the selector option.
+
+- [ ] **New-story label localized.** In the generation form, the "continue story from" selector's
+      first option reads the localized "— new story —" (from `form.new_story`) — same text as
+      before, now translatable.
+- [ ] **"My story" appears after learning.** With a fresh profile, the ✨ "my story" option is
+      NOT shown. Complete a few lessons (≥8 distinct words for the current target/source pair),
+      return to the form: a `✨ my story (from what I've learned)` option now appears in the
+      selector.
+- [ ] **"My story" is honest (not yet wired).** Selecting ✨ my story and pressing Generate shows
+      a "coming soon" toast and does not start a broken generation. (Normal "new story" and
+      "continue from <saved>" still work.)
+- [ ] **Per-language.** The learned count is per target+source pair — switching the form to a
+      different language pair you haven't studied hides the ✨ option again.
+- [ ] **Result card unchanged.** The lesson result card still shows the learned words as before
+      (the ledger capture is silent/background).

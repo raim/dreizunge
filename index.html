@@ -2595,6 +2595,7 @@ function getRatingAxes() { return [
 ];}
 const _pr={};
 async function goLessonSet(){
+  try { _invalidateQidUniverse(); } catch(_) {}   // fresh coverage context for this set
   if(APP.lessonData) {
     // Render this lesson's chrome in its own source language WITHOUT touching the
     // form's selection: only the active render context (APP.srcLang) and the mid-story
@@ -3613,7 +3614,16 @@ function repopulateContinueSelect(){
   const filtered=showAll ? saved
     : saved.filter(s=>(s.lang||'it')===curLang && (s.srcLang||'en')===curSrc);
   const prev=contSel.value;
-  contSel.innerHTML='<option value="">\u2014 new story \u2014</option>'+
+  // "my story" — generate from the learner's cumulated vocabulary (see roadmap). Offered only
+  // when there's learned material for the current pair. value="__my__" is a sentinel the
+  // generator recognizes (init from the ledger instead of a previous story). NOTE: wiring the
+  // generator to actually consume the ledger is a follow-up; the option + sentinel land here.
+  let _myOpt = '';
+  try {
+    const ls = learnedSummary(curLang, curSrc);
+    if(ls.vocabCount >= 8) _myOpt = '<option value="__my__">'+escHtml(t('form.my_story'))+'</option>';
+  } catch(_) {}
+  contSel.innerHTML='<option value="">'+escHtml(t('form.new_story'))+'</option>'+_myOpt+
     filtered.map(s=>{
       const sL=LANGS[s.lang||'it']||LANGS.it;
       const sS=LANGS[s.srcLang||'en']||LANGS.en;
@@ -3836,6 +3846,14 @@ async function doGenerate(forceRegen){
   }
   const topic=document.getElementById('topic-input').value.trim();
   const contVal=document.getElementById('continue-select')?.value||'';
+  // "my story" (__my__) — generate from the learner's cumulated vocabulary. The generator-side
+  // wiring (packing the learned ledger into the prompt, focusing on wrong-answered words) is a
+  // planned follow-up (see roadmap). Until then, be honest rather than sending an unresolvable
+  // continuedFrom id to the server.
+  if(contVal==='__my__'){
+    showToast(t('toast.my_story_soon'));
+    return;
+  }
   if(!['error_hunt'].includes(APP.lessonFormat)&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
   if(APP.lessonFormat==='error_hunt'&&!topic&&!contVal){ showToast(t('toast.select_story')); return; }
   if(!APP.info.canGenerate) return;
@@ -3947,20 +3965,49 @@ async function _pollGenBook(bookId, total){
 // docs; define any static-reachable client helper at/after this point.
 // ── home path ──
 // Learner visibility / completion — single source of truth.
-// A teacher-hidden lesson (_hidden) is invisible to a learner in non-teacher mode; and when a set
-// contains a `mixed` lesson, a learner plays ONLY the mixed lesson(s) (the others are pooled into
-// it). `lessonCountsFor` decides whether a lesson counts for the learner; it's used by the path
-// render, progress, locking, next-up, and story unlock so the rule lives in exactly one place.
-// Teacher/live mode counts everything (nothing hidden, nothing locked).
+// A teacher-hidden lesson (_hidden) is invisible to a learner in non-teacher mode. When a set
+// contains a `mixed` lesson, it REVIEWS the lessons that precede it and pools their questions —
+// so those preceding lessons are hidden as standalone nodes (the learner practises them via the
+// mixed lesson). Everything at or after the mixed lesson stays visible: the mixed lesson itself,
+// error-hunt "final test" lessons, and any lessons added AFTER the mixed lesson. This keeps
+// pooling and hiding in agreement (both keyed off "before the mixed lesson"); see
+// buildMixedExercises, which pools only earlier siblings.
+// `lessonCountsFor` is the single rule used by the path render, progress, locking, next-up, and
+// story unlock. Teacher/live mode counts everything (nothing hidden, nothing locked).
+function _firstVisibleMixedIdx(d) {
+  const ls = d?.lessons || [];
+  for (let i = 0; i < ls.length; i++) if (ls[i] && ls[i].type === 'mixed' && !ls[i]._hidden) return i;
+  return -1;
+}
 function lessonCountsFor(d, L) {
   if (APP._teacherMode) return true;
-  const mixedOnly = (d?.lessons || []).some(x => x && x.type === 'mixed' && !x._hidden);
-  return mixedOnly ? (L.type === 'mixed' && !L._hidden) : !L._hidden;
+  if (L._hidden) return false;
+  const mixIdx = _firstVisibleMixedIdx(d);
+  if (mixIdx < 0) return true;                 // no mixed lesson → classic path, all visible
+  const idx = (d?.lessons || []).indexOf(L);
+  // Hidden iff this lesson is one the mixed lesson pools from (strictly before it, and itself
+  // poolable — a nested mixed is never pooled). The mixed lesson and everything after it stay.
+  if (idx >= mixIdx) return true;
+  if (L.type === 'mixed') return true;         // an earlier mixed lesson is not pooled away
+  return false;
 }
 function countedLessons(d) { return (d?.lessons || []).filter(L => lessonCountsFor(d, L)); }
 // Has the learner finished everything that counts in this set? Drives story unlock + 100%.
 function setComplete(d) {
   if (!d) return false;
+  // Mixed-driven sets complete by COVERAGE (solved ≥ target of the question universe) AND by
+  // finishing every OTHER visible lesson — the error-hunt final test(s) and any lessons placed
+  // after the mixed lesson (the mixed lesson only pools from, and hides, earlier lessons).
+  // Coverage replaces "played the mixed lesson once"; the extra requirement means the story
+  // unlocks only after both the mixed practice and the follow-on lessons/tests are done.
+  if (!APP._teacherMode && (d.lessons||[]).some(x => x && x.type === 'mixed' && !x._hidden)
+      && APP.lessonData && d.topic === APP.lessonData.topic) {
+    if (!coverageComplete()) return false;
+    const done = APP.progress?.completed?.[d.topic] || {};
+    // The mixed lesson's own boolean isn't required (coverage covers it); require every other
+    // surviving counted lesson (error hunts + any later lessons).
+    return countedLessons(d).every(L => L.type === 'mixed' || done[L.id]);
+  }
   const done = APP.progress?.completed?.[d.topic] || {};
   return countedLessons(d).every(L => done[L.id]);
 }
@@ -3995,12 +4042,22 @@ function buildPath(){
   const _scores=Object.values(_doneMap).filter(v=>typeof v==='object'&&v.total>0);
   const _totC=_scores.reduce((s,v)=>s+v.correct,0);
   const _totT=_scores.reduce((s,v)=>s+v.total,0);
-  // Tight progress bar for this lesson set
-  const _lsPct = _allL>0 ? Math.round(100*_doneL/_allL) : 0;
+  // Tight progress bar for this lesson set. For a mixed-driven set (non-teacher, a visible mixed
+  // lesson present) show the COVERAGE fraction (solved questions ÷ topic question universe)
+  // instead of the lesson-count fraction — that's the real progress signal there.
+  const _mixedDriven = !APP._teacherMode && (d.lessons||[]).some(x => x && x.type === 'mixed' && !x._hidden);
+  let _lsPct = _allL>0 ? Math.round(100*_doneL/_allL) : 0;
+  let _lsTxtStr = _doneL+'/'+_allL+(_totT>0?' · '+Math.round(100*_totC/_totT)+'%':'');
+  if(_mixedDriven){
+    try {
+      const cov = topicCoverage();
+      if(cov.total > 0){ _lsPct = cov.pct; _lsTxtStr = t('coverage.solved_of',{solved:cov.solved,total:cov.total})+' · '+cov.pct+'%'; }
+    } catch(_) {}
+  }
   const _lsBar = document.getElementById('ls-prog-bar');
   const _lsTxt = document.getElementById('ls-prog-txt');
   if(_lsBar) _lsBar.style.width = _lsPct+'%';
-  if(_lsTxt) _lsTxt.textContent = _doneL+'/'+_allL+(_totT>0?' · '+Math.round(100*_totC/_totT)+'%':'');
+  if(_lsTxt) _lsTxt.textContent = _lsTxtStr;
 
   // Storyline context row — always shown; find storyline for this topic
   const _slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
@@ -4217,8 +4274,8 @@ function buildPath(){
       ...(L.conjugations||[]).flatMap(c=>(c.forms||[]).map(f=>(f.form||'').slice(0,40).replace(/\s+/g,'_'))),
     ]);
     // QC flags (item.qc) and manual user flags (item.userFlag) both count toward the badge.
-    const lessonFlagCount=[...(L.vocab||[]),...(L.sentences||[]),...(L.items||[]),...(L.words||[]),...(L.letters||[])].filter(x=>x&&(x.qc||x.userFlag)).length + (Array.isArray(L._miscFlags)?L._miscFlags.length:0);
-    const lessonStarCount=[...(L.vocab||[]),...(L.sentences||[]),...(L.items||[]),...(L.words||[]),...(L.letters||[])].filter(x=>x&&x.userRating).length;
+    const lessonFlagCount=[...(L.vocab||[]),...(L.sentences||[]),...(L.items||[]),...(L.words||[]),...(L.letters||[]),...(L.grammar||[]),...(L.conjugations||[])].filter(x=>x&&(x.qc||x.userFlag)).length + (Array.isArray(L._miscFlags)?L._miscFlags.length:0);
+    const lessonStarCount=[...(L.vocab||[]),...(L.sentences||[]),...(L.items||[]),...(L.words||[]),...(L.letters||[]),...(L.grammar||[]),...(L.conjugations||[])].filter(x=>x&&x.userRating).length;
     const hasFlags=lessonFlagCount>0&&_canEdit();
     const hasStars=lessonStarCount>0&&_canEdit();
     const diffBadge=i===0?`<span class="diff-badge d${diff}">${DIFF_SHORT()[diff]||''}</span>`:'';
@@ -4229,6 +4286,7 @@ function buildPath(){
           ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:20px">🔒</span>':''}
         </div>
         <div class="node-desc">${lessonSubtitle(L, diff)}</div>
+        ${(_mixedDriven && L.type==='mixed' && !L._hidden) ? (()=>{ try{ const cov=lessonCoverage(i); return cov.total>0?`<span class="flag-note" style="color:var(--blue-dark);background:#e8f0ff;border-color:#b9d0ff" title="${t('coverage.node_title')}">📊 ${cov.solved}/${cov.total}</span>`:''; }catch(_){ return ''; } })() : ''}
         ${hasFlags?`<span class="flag-note">${lessonFlagCount===1?t('lesson.flagged_n',{n:lessonFlagCount}):t('lesson.flagged_n_plural',{n:lessonFlagCount})}</span>`:''}
         ${hasStars?`<span class="flag-note" style="color:#b58900;background:#fff3c4;border-color:#e0b000" title="${lessonStarCount} starred (good examples)">⭐ ${lessonStarCount}</span>`:''}
         <div class="fix-status" id="fix-status-${L.id}"></div>
@@ -5244,7 +5302,10 @@ function slBottomClearProgress(){
   const { topics } = _slBottomChapters();
   if(!topics.length) return;
   if(!confirm(t('sl.clear_progress_confirm'))) return;
-  topics.forEach(tp => { if(APP.progress?.completed) delete APP.progress.completed[tp]; });
+  topics.forEach(tp => {
+    if(APP.progress?.completed) delete APP.progress.completed[tp];
+    if(APP.progress?.solved)    delete APP.progress.solved[tp];   // coverage store (Commit A)
+  });
   saveProg();
   const sl = APP._slScreen;
   if(sl) _renderStorylineScreen(sl.chainId, sl.encodedChain, sl.topics);
@@ -5798,6 +5859,7 @@ function clearLessonProgress(enc) {
   if (!confirm(`Clear all lesson results for "${topic}"?\nThis resets all progress for this lesson set.`)) return;
   if (APP.progress.completed[topic]) {
     delete APP.progress.completed[topic];
+    if (APP.progress.solved) delete APP.progress.solved[topic];   // coverage store (Commit A)
     saveProg();
   }
   buildPath();
@@ -6008,6 +6070,7 @@ function _editorBranchGrammar(ls, li, flaggedOnly){
         <div class="editor-field"><label>Article</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="article" value="${escAttr(g.article||'')}" style="width:60px;flex:none"></div>
         <div class="editor-field"><label>Gender</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="gender" value="${escAttr(g.gender||'')}" style="width:60px;flex:none"></div>
         <div class="editor-field"><label>Plural</label><input data-li="${li}" data-type="grammar" data-fi="${g._i}" data-field="plural" value="${escAttr(g.plural||'')}"></div>
+        ${_qcNoteHtml(li, 'grammar', g._i, g)}
       </div>`;
     });
 
@@ -6032,6 +6095,7 @@ function _editorBranchConjugation(ls, li, flaggedOnly){
             <input data-li="${li}" data-type="conj-form" data-ci="${ci}" data-fi="${fi}" data-field="form" value="${escAttr(f.form||'')}" style="flex:1;font-size:13px;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:6px;padding:3px 6px">
           </div>`).join('')}
         </div>
+        ${_qcNoteHtml(li, 'conj', ci, c)}
       </div>`;
     });
 
@@ -6406,7 +6470,7 @@ function qcDismiss(li, type, fi){ _qcMutateItem(li, type, +fi, false); }
 // ── Manual user flags (item.userFlag = { comment, at }) ───────────────────
 function _editorItem(li, type, fi){
   const ls = APP.lessonData?.lessons?.[li]; if(!ls) return null;
-  const arr = type==='vocab'?ls.vocab : type==='sentence'?ls.sentences : type==='wf'?ls.items : type==='syn'?ls.words : type==='math'?ls.exercises : type==='letter'?ls.letters : null;
+  const arr = type==='vocab'?ls.vocab : type==='sentence'?ls.sentences : type==='wf'?ls.items : type==='syn'?ls.words : type==='math'?ls.exercises : type==='letter'?ls.letters : type==='grammar'?ls.grammar : (type==='conj'||type==='conj-meta')?ls.conjugations : null;
   return (arr && arr[fi]) || null;
 }
 // "Good example" ⭐ rating button for an editor item header. Parallel to the flag
@@ -6468,6 +6532,7 @@ function _flagBoxHtml(li, type, fi, item, applyable){
 // POST lesson edits to the server, or succeed locally in the static build (the edit is
 // already applied in memory and will ride the JSON export). Returns a Response-like {ok}.
 async function _postLessonEdit(d){
+  try { _invalidateQidUniverse(); } catch(_) {}   // content changed → recompute coverage universe
   if(!APP.info?.canGenerate){ APP._dirtyExport = true; return { ok:true, _local:true }; }
   return fetch('/api/lessons/edit', { method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({ id: (d&&d.id) || undefined, topic: d&&d.topic, lessons: d&&d.lessons }) });
@@ -7298,13 +7363,13 @@ function buildStandardExercises(lesson, lessonIdx){
   if(prevV.length>=4) pick(prevV,3).forEach(v=>{ const e=mkMcqIE(v,allV); if(e)exs.push(e); });
   return shuffle(exs).slice(0,12);
 }
-// ══ Mixed review (no LLM) — pool exercises from this chapter's other lessons ══════
-// A `mixed` lesson owns no content; at play time it gathers the sibling lessons in the
-// same lessonset, runs each one's registry builder, samples up to `perType` exercises
+// ══ Mixed review (no LLM) — pool exercises from this chapter's EARLIER lessons ══════
+// A `mixed` lesson owns no content; at play time it gathers the sibling lessons that PRECEDE
+// it in the lessonset, runs each one's registry builder, samples up to `perType` exercises
 // per source lesson, and shuffles. Each pooled exercise is tagged with `_srcLessonIdx`
-// so _exFlagTarget resolves a flag back to the real source lesson's item. Hidden
-// lessons, the mixed lesson itself, other mixed lessons, and types that build no
-// playable exercises (error_hunt) are skipped. Resolved fresh each play, never baked.
+// so _exFlagTarget resolves a flag back to the real source lesson's item. The mixed lesson
+// itself, other mixed lessons, hidden lessons, LATER lessons (which stay visible & independent),
+// and types that build no playable exercises (error_hunt) are skipped. Fresh each play.
 function buildMixedExercises(lesson, lessonIdx){
   const lessons = APP.lessonData?.lessons || [];
   const perType = Math.max(1, lesson?.perType || 3);
@@ -7312,6 +7377,8 @@ function buildMixedExercises(lesson, lessonIdx){
   const pool = [];
   lessons.forEach((sib, i) => {
     if(i === lessonIdx) return;                 // not itself
+    if(i > lessonIdx) return;                    // only review EARLIER lessons; later lessons stay
+                                                 // visible & independent (they're not pooled/hidden)
     if(!sib || sib.type === 'mixed') return;    // no nested mixed
     if(sib._hidden && !teacher) return;         // skip hidden (matches play gating)
     let exs;
@@ -7330,7 +7397,11 @@ function buildMixedExercises(lesson, lessonIdx){
       pool.push({ ...ex, _srcLessonIdx: i });    // tag source so flags resolve correctly
     });
   });
-  return shuffle(pool);
+  // Coverage-aware round: prioritize unsolved questions (~70/30 unsolved/review) so a short
+  // mixed round advances coverage instead of re-asking solved items at random. Round length
+  // mirrors the prior behaviour (the whole pool) unless a cap is set on the lesson.
+  const cap = (typeof lesson?.roundSize === 'number' && lesson.roundSize > 0) ? lesson.roundSize : pool.length;
+  return assembleCoverageRound(pool, cap);
 }
 // ══ Word-forms exercises (fill the blank with the correct form) ══════════════
 // Each story-derived item becomes one MCQ: the sentence (with a ___ blank), the
@@ -8588,6 +8659,284 @@ function _exFlagTarget(ex){
   return _resolveExItem(ex, ls);
 }
 function _exFlagState(ex){ return _exFlagTarget(ex)?.userFlag || null; }
+// ══ Stable per-question IDs (qid) — the keystone for coverage-based progression ══════
+// Exercises are re-derived every play with shuffle/pick/slice, so the same underlying
+// question looks different each time and has no durable identity. `qid(ex, lessonId)`
+// returns a STABLE key derived only from the source lesson + the exercise *kind* + the
+// content the question tests — never the shuffled choices/distractors/number order. So
+// "the learner solved this" can attach to something that survives re-derivation.
+//
+// Design notes (see roadmap "dynamic mixed lessons"):
+//  • The exercise TYPE is part of the id, so two skills on the same item (e.g. listen-MCQ
+//    vs type-answer on one word) are distinct questions → coverage counts skills, not items.
+//  • The canonical content key per type uses only identity-bearing fields; anything that is
+//    shuffled at build time (choices, math_order.numbers) is excluded so the id is stable.
+//  • The source lesson id namespaces the key, so identical items in different lessons don't
+//    collide, and pooled (mixed) exercises resolve to their SOURCE lesson via _srcLessonIdx.
+function _qidHash(str){
+  // djb2 → base36. Small, stable, dependency-free; collision risk is negligible at our scale
+  // and a collision only means two questions share a solved-bit (benign for a coverage model).
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = (((h << 5) + h) ^ str.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+// The identity-bearing content of an exercise, independent of shuffle. Returns a string.
+function _qidCanonical(ex){
+  if(!ex || !ex.type) return '';
+  const n = s => stripFuri(String(s == null ? '' : s)).trim().toLowerCase();
+  switch(ex.type){
+    case 'mcq_target_source':
+    case 'mcq_source_target':
+    case 'listen_mcq':
+    case 'listen_type':
+    case 'read_translate':
+    case 'order':
+      // A translation/ordering question is pinned by its target↔source pair. `_intro`
+      // (script-primer) variants reuse these types but differ by direction, so include it.
+      return [ex._intro || '', n(ex.target), n(ex.source)].join('|');
+    case 'word_form':
+      return [n(ex.sentence), n(ex.correct)].join('|');       // blanked sentence + answer
+    case 'syn_select':
+      return [ex.mode || '', n(ex.base)].join('|');           // same base, syn vs antonym = distinct
+    case 'mcq_article':
+      return ['art', n(ex.target)].join('|');
+    case 'mcq_plural':
+      return ['plu', n(ex.target)].join('|');
+    case 'type_plural':
+      return ['tplu', n(ex.target)].join('|');
+    case 'mcq_conjugation':
+    case 'type_conjugation':
+      return [n(ex.infinitive), n(ex.pronoun)].join('|');     // each pronoun form is its own question
+    case 'math_calc':
+      return ['calc', String(ex.a), String(ex.op), String(ex.b)].join('|');
+    case 'math_order':
+      // Identity is the direction + the SORTED set, not the shuffled `numbers`.
+      return ['ord', ex.direction || '', (Array.isArray(ex.correct) ? ex.correct.join(',') : '')].join('|');
+    case 'math_latex':
+      return ['latex', n(Array.isArray(ex.correct) ? ex.correct.join(',') : ex.correct)].join('|');
+    default:
+      // Best-effort fallback for any future type: prefer explicit identity fields.
+      return [n(ex.target), n(ex.source), n(Array.isArray(ex.correct) ? ex.correct.join(',') : ex.correct)].join('|');
+  }
+}
+// Stable id: "<lessonId>:<type>:<hash(canonical)>". lessonId falls back to the resolved
+// source lesson's id (pooled exercises) then the active lesson, then '_' so an id is always
+// produced. Returns '' only if there's genuinely nothing to key on.
+function qid(ex, lessonId){
+  if(!ex || !ex.type) return '';
+  let lid = lessonId;
+  if(lid == null){
+    const d = APP.lessonData;
+    const idx = (ex._srcLessonIdx != null) ? ex._srcLessonIdx : APP.cur?.lessonIdx;
+    lid = d?.lessons?.[idx]?.id;
+  }
+  const canon = _qidCanonical(ex);
+  if(!canon) return '';
+  return `${lid || '_'}:${ex.type}:${_qidHash(canon)}`;
+}
+// ── Solved store — a per-topic set of solved qids, persisted alongside completion. ──
+// Monotonic (one correct answer ever = solved, the coverage model). Behaviourally inert in
+// Commit A: recorded on every correct answer but not yet consumed by round assembly or the
+// completion fraction (that's Commit B). Shape: APP.progress.solved[topic] = { qid: 1, … }.
+function _solvedMap(topic){
+  if(!APP.progress) return {};
+  if(!APP.progress.solved) APP.progress.solved = {};
+  if(!APP.progress.solved[topic]) APP.progress.solved[topic] = {};
+  return APP.progress.solved[topic];
+}
+function isSolved(topic, id){ return !!(id && _solvedMap(topic)[id]); }
+// Mark an exercise solved for the current topic. Returns the qid (or '' if none). Never
+// records flagged questions (they're excluded from the coverage denominator by design).
+function markSolved(ex){
+  const topic = APP.lessonData?.topic;
+  if(!topic || !ex) return '';
+  if(_exFlagState(ex)) return '';           // flagged → out of the coverage universe
+  const id = qid(ex);
+  if(!id) return '';
+  const m = _solvedMap(topic);
+  if(!m[id]){ m[id] = 1; saveProg(); }      // monotonic; persist only on first solve
+  return id;
+}
+// ══ Learned-vocabulary store — the user's cumulative learned words/sentences ══════════
+// A per-(target,source)-language ledger of the vocabulary & example sentences the learner has
+// been taught, accumulated across ALL lessons and topics. This is the raw material for future
+// user-specific generation ("my story" from what I've learned) and milestone unlocks — see the
+// roadmap. Foundation only in this build: we ACCUMULATE it (on each finished lesson), but nothing
+// consumes it for generation yet. Persisted in the same imp3_prog blob.
+// Shape: APP.progress.learned["<lang>|<srcLang>"] = { vocab: { "target": {source, seen, wrong} },
+//                                                     sentences: { "target": {source, seen} } }.
+function _learnedLedger(lang, srcLang){
+  if(!APP.progress) return { vocab:{}, sentences:{} };
+  if(!APP.progress.learned) APP.progress.learned = {};
+  const key = `${lang||'?'}|${srcLang||'?'}`;
+  if(!APP.progress.learned[key]) APP.progress.learned[key] = { vocab:{}, sentences:{} };
+  return APP.progress.learned[key];
+}
+// Record the vocab/sentences a just-finished lesson taught. `lesson` is the played lesson,
+// `wrongTargets` is an optional Set of target strings the user answered incorrectly this round
+// (so future retraining can focus on them). Idempotent per target: increments `seen`, keeps the
+// gloss, tracks a `wrong` count. Called from showComplete. Never stores flagged items.
+function recordLearnedFromLesson(lesson, wrongTargets){
+  if(!lesson) return;
+  const d = APP.lessonData;
+  const lang = d?.lang || APP.lang, srcLang = d?.srcLang || APP.srcLang;
+  const led = _learnedLedger(lang, srcLang);
+  const wrong = wrongTargets instanceof Set ? wrongTargets : new Set();
+  const norm = s => stripFuri(String(s==null?'':s)).trim();
+  const addVocab = (target, source) => {
+    const tk = norm(target); if(!tk) return;
+    const rec = led.vocab[tk] || { source: norm(source), seen: 0, wrong: 0 };
+    rec.seen++; if(source && !rec.source) rec.source = norm(source);
+    if(wrong.has(tk)) rec.wrong++;
+    led.vocab[tk] = rec;
+  };
+  const addSentence = (target, source) => {
+    const tk = norm(target); if(!tk) return;
+    const rec = led.sentences[tk] || { source: norm(source), seen: 0 };
+    rec.seen++; if(source && !rec.source) rec.source = norm(source);
+    led.sentences[tk] = rec;
+  };
+  // Pull from whatever the lesson type carries (mirrors the result-card recap logic).
+  (lesson.vocab||[]).forEach(v => v && !v.userFlag && addVocab(v.target, v.source));
+  (lesson.sentences||[]).forEach(s => s && !s.userFlag && addSentence(s.target, s.source));
+  (lesson.words||[]).forEach(w => w && !w.userFlag && addVocab(w.base, w.gloss));           // synonyms
+  (lesson.grammar||[]).forEach(g => g && !g.userFlag && addVocab(g.target, g.source));      // grammar
+  (lesson.conjugations||[]).forEach(c => c && !c.userFlag && addVocab(c.infinitive, c.source));
+  // Mixed lessons own no items — capture the distinct words actually played this round.
+  if(lesson.type === 'mixed' && APP.cur?.exercises){
+    for(const e of APP.cur.exercises){ const tgt=e.target||e.correct; if(tgt) addVocab(tgt, e.source); }
+  }
+  saveProg();
+}
+// Summary of the learned ledger for the current form languages — used to decide whether the
+// "my story" option is offered and (later) to seed generation. {vocabCount, sentenceCount}.
+function learnedSummary(lang, srcLang){
+  const led = _learnedLedger(lang || APP.lang, srcLang || APP.srcLang);
+  return { vocabCount: Object.keys(led.vocab).length, sentenceCount: Object.keys(led.sentences).length };
+}
+// ══ Coverage model (Commit B) — consume the solved store for progression ═════════════
+// The instance-qid universe of a lesson is the full set of questions it can ever produce.
+// Builders sample/shuffle/slice, so one derivation is a subset; we derive repeatedly and
+// union until it stops growing (convergence), using the REAL builders (zero logic drift) and
+// the proven-stable qid. Result is cached per (topic, lessonIdx, teacher) — invalidated when
+// the topic changes. Flagged questions are excluded (they're out of the coverage universe).
+const _qidUniverseCache = new Map();
+function _lessonQidUniverse(lessonIdx){
+  const d = APP.lessonData; if(!d) return new Set();
+  const L = d.lessons?.[lessonIdx]; if(!L) return new Set();
+  const cacheKey = `${d.topic}|${lessonIdx}|${APP._teacherMode?1:0}`;
+  if(_qidUniverseCache.has(cacheKey)) return _qidUniverseCache.get(cacheKey);
+  // Mixed lessons own no questions of their own — their universe is the union of the EARLIER
+  // siblings they pool from (matching buildMixedExercises: only lessons before the mixed lesson,
+  // non-hidden, non-mixed). Later lessons are independent nodes, not part of the mixed universe.
+  if(L.type === 'mixed'){
+    const UM = new Set();
+    (d.lessons||[]).forEach((sib,i)=>{
+      if(i>=lessonIdx || !sib || sib.type==='mixed') return;   // earlier, non-mixed siblings only
+      if(sib._hidden && !APP._teacherMode) return;
+      for(const id of _lessonQidUniverse(i)) UM.add(id);
+    });
+    _qidUniverseCache.set(cacheKey, UM); return UM;
+  }
+  // Derive until the union stops growing for a run of consecutive derivations (converged), or a
+  // hard cap. The union is MONOTONIC — seeded from any previously cached universe for this key
+  // and only ever added to — so the coverage denominator never shrinks and converges to the
+  // true maximal question set (rare exercise variants get folded in over repeated visits). A
+  // wobbling denominator would make the "100%" target move under the learner.
+  const prior = _qidUniverseCache.get(cacheKey);
+  const U = prior ? new Set(prior) : new Set();
+  let stable = 0;
+  const NEEDED = 15, CAP = 120;
+  for(let r=0; r<CAP && stable<NEEDED; r++){
+    let exs;
+    try { exs = lessonTypeMeta(L.type).build(L, lessonIdx) || []; }
+    catch(_) { exs = []; }
+    const before = U.size;
+    for(const ex of exs){
+      // Exclude flagged source items from the denominator (matches markSolved).
+      const src = _resolveExItem(ex, L);
+      if(src && (src.userFlag || src.qc || src.userDelete)) continue;
+      const id = qid(ex, L.id);
+      if(id) U.add(id);
+    }
+    stable = (U.size === before) ? stable+1 : 0;
+  }
+  _qidUniverseCache.set(cacheKey, U);
+  return U;
+}
+// Invalidate the universe cache (call when lessons change under the editor, or on topic switch).
+function _invalidateQidUniverse(){ _qidUniverseCache.clear(); }
+// Coverage for one lesson: {solved, total, pct}. total is its qid universe size; solved is how
+// many of those the learner has in the solved store for this topic.
+function lessonCoverage(lessonIdx){
+  const d = APP.lessonData; if(!d) return { solved:0, total:0, pct:0 };
+  const universe = _lessonQidUniverse(lessonIdx);
+  const solvedSet = _solvedMap(d.topic);
+  let solved = 0;
+  for(const id of universe) if(solvedSet[id]) solved++;
+  const total = universe.size;
+  return { solved, total, pct: total>0 ? Math.round(100*solved/total) : 0 };
+}
+// Topic-level coverage across the COUNTED lessons (respects the mixed-only / hidden rule via
+// countedLessons). This is the set-level completion fraction.
+function topicCoverage(){
+  const d = APP.lessonData; if(!d) return { solved:0, total:0, pct:0 };
+  const U = new Set();
+  for(const L of countedLessons(d)){
+    const idx = d.lessons.indexOf(L);
+    for(const id of _lessonQidUniverse(idx)) U.add(id);
+  }
+  const solvedSet = _solvedMap(d.topic);
+  let solved = 0;
+  for(const id of U) if(solvedSet[id]) solved++;
+  return { solved, total: U.size, pct: U.size>0 ? Math.round(100*solved/U.size) : 0 };
+}
+// Target coverage fraction that counts as "set complete" for the coverage model. Default 100%;
+// a topic may override via d.coverageTarget (0–1). Used by coverageComplete().
+function _coverageTarget(){
+  const d = APP.lessonData;
+  const t = (d && typeof d.coverageTarget === 'number') ? d.coverageTarget : 1;
+  return Math.max(0, Math.min(1, t));
+}
+// Is the set complete under the coverage model? Only meaningful for a mixed-driven set; the
+// locked path keeps its lesson-boolean completion (setComplete). Returns true when the solved
+// fraction of the topic universe meets the target.
+function coverageComplete(){
+  const cov = topicCoverage();
+  if(cov.total === 0) return false;
+  return (cov.solved / cov.total) >= _coverageTarget();
+}
+// ── Coverage-aware round assembly for the mixed flow ─────────────────────────────────
+// Replaces the plain-random pool with a weighted sample: ~70% unsolved / ~30% review (already
+// solved), and — critically — coverage-aware, so a short round can't keep missing the same
+// unsolved items. Unsolved questions are prioritized; within each bucket we still shuffle for
+// variety and keep the rated/flagged ranking (curated first, flagged last) from the original.
+// `size` caps the round; falls back gracefully when a bucket is short.
+function assembleCoverageRound(pool, size){
+  const topic = APP.lessonData?.topic;
+  const solvedSet = topic ? _solvedMap(topic) : {};
+  const N = Math.max(1, size || pool.length);
+  // Split by solved-state using each exercise's qid (resolved to its source lesson).
+  const unsolved = [], review = [];
+  for(const ex of pool){
+    const id = qid(ex);
+    (id && solvedSet[id] ? review : unsolved).push(ex);
+  }
+  const su = shuffle(unsolved), sr = shuffle(review);
+  const wantUnsolved = Math.round(N * 0.7);
+  const takeU = Math.min(su.length, wantUnsolved);
+  const takeR = Math.min(sr.length, N - takeU);
+  // If review is short, backfill from remaining unsolved (coverage-first); vice-versa.
+  const round = [...su.slice(0, takeU), ...sr.slice(0, takeR)];
+  if(round.length < N){
+    const used = new Set(round);
+    for(const ex of [...su.slice(takeU), ...sr.slice(takeR)]){
+      if(round.length >= N) break;
+      if(!used.has(ex)) round.push(ex);
+    }
+  }
+  return shuffle(round);
+}
 // Rating ("good example") play helpers — parallel to the flag helpers above, but a
 // plain toggle with no comment. Resolves to the SAME source item as flags via
 // _exFlagTarget, so a rating on a pooled (mixed-lesson) exercise lands on the real
@@ -8737,6 +9086,7 @@ function check(){
   }
   if(ok){
     C.correct++; C.total++; C.streak++; if(C.streak>C.bestStreak)C.bestStreak=C.streak;
+    try { markSolved(ex); } catch(_) {}   // durable per-question coverage (Commit A)
     const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
       ? `${furiHtml(ex.correct)}${ex.source ? ' — ' + furiHtml(ex.source) : ''}`
       : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
@@ -8760,6 +9110,9 @@ function check(){
     _speakAndAdvance(speakOk);
   } else {
     C.hearts=Math.max(0,C.hearts-1); C.mistakes++; C.total++; C.streak=0;
+    // Remember which words were answered wrongly this round → learned-vocab ledger marks them,
+    // so future user-specific retraining can focus on them (see roadmap "my story").
+    try { const wt=(ex.target||ex.correct); if(wt){ (C._wrongTargets||(C._wrongTargets=new Set())).add(stripFuri(String(wt)).trim()); } } catch(_) {}
     const _wrongCorrect = (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex'||ex.type==='syn_select')
       ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : furiHtml(ex.correct);
@@ -8854,6 +9207,10 @@ function showComplete(){
     }
   }
   el('comp-vocab').innerHTML = vocabItems;
+  // Accumulate this lesson's vocabulary into the cross-lesson learned ledger (foundation for
+  // user-specific generation / milestones — see roadmap). Wrong-answered words are flagged for
+  // future focus. Guarded so a failure here never breaks the result card.
+  try { recordLearnedFromLesson(lesson, C._wrongTargets); } catch(_) {}
 
   // Next button priority:
   // 1. Next lesson set in this topic (if any remain after this one)

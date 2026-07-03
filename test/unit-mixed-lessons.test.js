@@ -14,15 +14,20 @@ function extract(name){
 }
 
 // Sandbox with a STUBBED registry + identity shuffle so the test is deterministic.
+// v50: a mixed lesson pools from (and hides) only EARLIER siblings; the mixed lesson and anything
+// after it stay independent. Fixture puts the sources before the mixed lesson and a lesson AFTER
+// it to prove later lessons are not pooled.
 const lessons = [
-  { type: 'mixed', perType: 2 },                                  // 0: the mixed lesson itself
-  { type: 'standard', vocab: [{ target: 'uno', source: 'one' }] },// 1: standard
-  { type: 'word_forms', items: [{ sentence: 'a ___', }] },        // 2: word_forms
-  { type: 'standard', _hidden: true, vocab: [] },                 // 3: hidden -> skipped
-  { type: 'error_hunt' },                                         // 4: builds [] -> skipped
-  { type: 'mixed' },                                              // 5: nested mixed -> skipped
+  { type: 'standard', vocab: [{ target: 'uno', source: 'one' }] },// 0: standard  (earlier → pooled)
+  { type: 'word_forms', items: [{ sentence: 'a ___', }] },        // 1: word_forms (earlier → pooled)
+  { type: 'standard', _hidden: true, vocab: [] },                 // 2: hidden -> skipped
+  { type: 'mixed' },                                              // 3: earlier nested mixed -> skipped
+  { type: 'mixed', perType: 2 },                                  // 4: THE mixed lesson under test
+  { type: 'standard', vocab: [{ target: 'due', source: 'two' }] },// 5: LATER standard -> NOT pooled
+  { type: 'error_hunt' },                                         // 6: later error_hunt -> not pooled
 ];
-const APP = { lessonData: { lessons }, _teacherMode: false, cur: { lessonIdx: 0 } };
+const MIX = 4;
+const APP = { lessonData: { lessons }, _teacherMode: false, cur: { lessonIdx: MIX } };
 const FAKE = {
   standard:   () => [{ type: 'mcq_target_source', correct: 'one' }, { type: 'order', correct: 'x' }, { type: 'mcq', correct: 'z' }],
   word_forms: () => [{ type: 'word_form', sentence: 'a ___', correct: 'b' }, { type: 'word_form', sentence: 'c ___', correct: 'd' }],
@@ -31,27 +36,33 @@ const FAKE = {
 };
 const lessonTypeMeta = (t) => ({ build: (l, i) => (FAKE[t] ? FAKE[t](l, i) : []) });
 const shuffle = (a) => a.slice();   // identity: deterministic
+// buildMixedExercises now ends with assembleCoverageRound(pool, cap). This test targets the
+// POOLING logic (which siblings, perType caps, tagging), not coverage weighting — so stub the
+// assembler as an identity pass. Coverage-aware assembly has its own test (unit-coverage).
+const assembleCoverageRound = (pool /*, size */) => pool.slice();
 
 const _resolveExItem = new Function(extract('_resolveExItem') + '\nreturn _resolveExItem;')();
-const buildMixedExercises = new Function('APP', 'lessonTypeMeta', 'shuffle', '_resolveExItem',
-  extract('buildMixedExercises') + '\nreturn buildMixedExercises;')(APP, lessonTypeMeta, shuffle, _resolveExItem);
+const buildMixedExercises = new Function('APP', 'lessonTypeMeta', 'shuffle', '_resolveExItem', 'assembleCoverageRound',
+  extract('buildMixedExercises') + '\nreturn buildMixedExercises;')(APP, lessonTypeMeta, shuffle, _resolveExItem, assembleCoverageRound);
 
-const pool = buildMixedExercises(lessons[0], 0);
-// Sources included: lesson 1 (standard, 2 of 3 by perType) + lesson 2 (word_forms, 2 of 2). Total 4.
-assert.strictEqual(pool.length, 4, 'perType cap per source (2+2), got ' + pool.length);
+const pool = buildMixedExercises(lessons[MIX], MIX);
+// Sources included: lesson 0 (standard, 2 of 3 by perType) + lesson 1 (word_forms, 2 of 2). Total 4.
+// The LATER standard (5) and later error_hunt (6) are NOT pooled; hidden (2) and nested mixed (3) skipped.
+assert.strictEqual(pool.length, 4, 'perType cap per EARLIER source (2+2), got ' + pool.length);
 const srcs = new Set(pool.map(e => e._srcLessonIdx));
-assert.deepStrictEqual([...srcs].sort(), [1, 2], 'only non-hidden, non-self, exercise-bearing siblings: ' + [...srcs]);
+assert.deepStrictEqual([...srcs].sort(), [0, 1], 'only earlier non-hidden non-mixed siblings pooled: ' + [...srcs]);
+assert.ok(!srcs.has(5) && !srcs.has(6), 'lessons AFTER the mixed lesson are never pooled');
 assert.ok(pool.every(e => Number.isInteger(e._srcLessonIdx)), 'every pooled exercise tagged with _srcLessonIdx');
-assert.strictEqual(pool.filter(e => e._srcLessonIdx === 1).length, 2, 'standard capped at perType=2');
-console.log('  pools, caps per source, skips self/hidden/mixed/error_hunt, tags source: OK');
+assert.strictEqual(pool.filter(e => e._srcLessonIdx === 0).length, 2, 'standard capped at perType=2');
+console.log('  pools EARLIER sources only, caps per source, skips self/hidden/mixed/error_hunt/later, tags source: OK');
 
 // _exFlagTarget resolves a pooled exercise against its SOURCE lesson, not the active one.
 const _exFlagTarget = new Function('APP', '_resolveExItem',
   extract('_exFlagTarget') + '\nreturn _exFlagTarget;')(APP, _resolveExItem);
-// Active lesson is 0 (mixed, no vocab); the exercise came from lesson 1 (vocab 'uno'/'one').
-const tgt = _exFlagTarget({ type: 'mcq_target_source', target: 'uno', correct: 'one', _srcLessonIdx: 1 });
+// Active lesson is the mixed one (no vocab); the exercise came from lesson 0 (vocab 'uno'/'one').
+const tgt = _exFlagTarget({ type: 'mcq_target_source', target: 'uno', correct: 'one', _srcLessonIdx: 0 });
 assert.ok(tgt && tgt.target === 'uno', 'flag resolves to source lesson vocab item');
-// Without a source tag it falls back to the active lesson (0 = mixed, no match -> null).
+// Without a source tag it falls back to the active lesson (mixed, no match -> null).
 assert.strictEqual(_exFlagTarget({ type: 'mcq_target_source', target: 'uno', correct: 'one' }), null, 'untagged falls back to active lesson');
 console.log('  _exFlagTarget resolves via _srcLessonIdx: OK');
 
