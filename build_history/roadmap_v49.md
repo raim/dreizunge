@@ -166,6 +166,12 @@ questions excluded from the denominator. Builds on existing `buildMixedExercises
   bump suffices. (Bumped manually to v48 this release.)
 - **Three "set done"/visibility checks were duplicated** → consolidated into `lessonCountsFor` /
   `countedLessons` / `setComplete` in v48. If a new visibility rule is added, change it there only.
+- **Orphaned `ui.json` keys (general cleanup).** As of v49-b, `tts.voice_search`
+  ("How to get better speech output") is unreferenced in code but still present in all 29 langs —
+  kept for now for potential reuse. (Its siblings `tts.voice_warn_q` and `tts.voice_mute_hint`
+  were reused as the sound-test Test/Mute button tooltips in v49-b.) When doing a general ui.json
+  clean, sweep for any other keys not referenced in `index.html` / `server.js` / `build-static.js`
+  and drop them across all languages in one pass.
 
 ---
 

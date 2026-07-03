@@ -220,7 +220,7 @@ function repopulateContinueSelect(){
 
 async function init() {
   APP.info = { backend: 'none', canGenerate: false, version: 'v48' };
-  { const _v=document.getElementById('app-version'); if(_v) _v.textContent='v48'; }
+  { const _v=document.getElementById('app-tagline'); if(_v) _v.title='v48'; }
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
   const _tmBar = document.getElementById('teacher-mode-bar');

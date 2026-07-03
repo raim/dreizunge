@@ -774,3 +774,103 @@ without a backend):
 - [ ] **Arabic error-hunt renders RTL.** Play an Arabic 🔍 Error Hunt lesson: the corrupted story
       reads right-to-left (first word on the right), tokens flow correctly, marking still works.
       Same for an Arabic 🔎 AI Error Hunt. In the editor, the error-hunt diff preview is also RTL.
+
+### 41. v49 (B) — order-exercise RTL keyed to the opened lesson
+Root cause fixed: `html.tgt-rtl` was keyed off the **generation-form** target (`APP.lang`),
+so an en→ar topic opened from the library while the form sat on another target rendered its
+word banks LTR. `goLessonSet` now syncs the target render context to the opened lesson and
+refreshes the direction flags; `_restoreFormLang` restores them on the way back.
+Use **en→ar** topics **without changing the form's target language first** (this is the case
+the old code got wrong — pick Arabic topics straight from the library/globe view).
+
+- [ ] **Sentence-ordering (Arabic), sound + keyboard ON.** Open an en→ar topic (e.g. the
+      "Yusuf laughed when he found Lulu." sentence-ordering lesson in
+      `tp_17825603173750001401`). Tokens flow **right-to-left** (first word on the right) and
+      each token's text is right-aligned. The interface chrome stays LTR.
+- [ ] **Word-ordering (Arabic), sound + keyboard OFF** (the glyph-ordering variant that
+      appears in that mode). Same RTL flow — first glyph group on the right.
+- [ ] **No form contamination.** After returning to the landing page from that Arabic lesson,
+      the generation form's target selector and the direction of the form itself are **back to
+      whatever they were** (open a de→en or en→es lesson next and confirm it renders LTR — the
+      Arabic override did not stick).
+- [ ] **Regression:** an en→ar lesson opened *after* explicitly selecting Arabic in the form
+      still renders RTL (the primary `tgt-rtl` switch still wins).
+
+### 42. v49 (B) — word_forms + synonyms Arabic alignment
+The cloze sentence and the synonyms context/gloss/tiles were built outside the v48
+content-aware model and left-aligned for Arabic. They now carry `dir="auto"` + `text-align:start`.
+
+- [ ] **word_forms (Arabic).** Open the word-forms lesson in `tp_17825482570940000685`. The
+      sentence with the `___` blank is **right-aligned** and reads RTL; the blank sits in the
+      correct position within the Arabic sentence (not forced to the left edge).
+- [ ] **synonyms (Arabic).** Open the synonyms lesson in the same topic. The context sentence
+      and its gloss are right-aligned; the selectable synonym **tiles** each show their Arabic
+      text right-aligned. An English gloss/hint in the same card stays left-aligned.
+- [ ] **Mixed card sanity:** where a word_forms/synonyms card pairs an English prompt with
+      Arabic content, the English part stays LTR and the Arabic part is RTL (per-element, same card).
+
+### 43. v49 (B) — always-on compact sound-test row
+Replaces the old warning box that only appeared when the voice heuristic judged voices bad.
+On the **generation form**, with a **concrete target language selected** (not the globe/"all"):
+
+- [ ] A single compact row is **always** shown on **one line**, positioned **under the
+      "I learn" (target) column** on the right (not spanning full width). It reads:
+      **"Test"** + the tested language's **flag** (no language name, no "sound" words) ·
+      the **🔊 1, 2, 3** test button · **"Bad? Mute:"** · the **mute** button.
+- [ ] The long "Does your browser support nice speech synthesis?" question is **gone**; the row
+      no longer depends on the voice-quality heuristic (shows even when voices look fine, and
+      even before voices finish loading).
+- [ ] **Test** speaks the numbers ("1, 2, 3") in the selected target language.
+- [ ] **Changing the target** language updates the flag shown in the row (it always
+      reflects the currently-selected "I learn" language).
+- [ ] **Hovering the 🔊 1, 2, 3 button** shows a tooltip explaining what the test is for
+      ("Does your browser support nice speech synthesis?…", the reused `tts.voice_warn_q`),
+      localized to the UI language.
+- [ ] **Hovering the mute button** shows "If the sound is bad, you can mute it:" (the reused
+      `tts.voice_mute_hint`), localized — and this tooltip **persists** after toggling mute
+      (it isn't overwritten by the generic Mute/Unmute label that other mute buttons show).
+- [ ] The row's **mute button** toggles global mute and stays in sync with every other mute
+      button (toggle mute elsewhere → this icon flips too, and vice-versa).
+- [ ] With the target selector on the **globe ("all")**, the row is **hidden** (nothing to test).
+- [ ] No **second** stray "1, 2, 3" button appears anywhere on the form (the old standalone
+      button was removed).
+
+### 44. v49 (B) — lowercase title + "we are the world" motto
+- [ ] The landing header reads **"dreizunge"** (lowercase), and the **browser tab title** is
+      lowercase too.
+- [ ] Below the title, instead of the version number, the localized motto **"we are the world"**
+      (`app.motto`) shows, slightly larger than the old version text. In non-English UI it appears
+      in the UI language once the TranslateGemma pass fills `app.motto` (English fallback until then).
+- [ ] The running **version** is still reachable: hover the motto → its tooltip shows the build
+      (e.g. `v48` in the static build, the server's version when running against the server).
+
+### 45. v49 (B) — QC skips already-checked, unedited lessons
+Bulk QC (storyline 🔍 and topic 🔍) now skips lessons that passed a clean full QC pass and
+haven't been edited since (`ls.qcAt` stamp). Explicit single-lesson QC and flagged-only runs
+always re-check. Needs Ollama (translation model).
+
+- [ ] **First storyline QC** on a fresh multi-chapter book: watch the server console — every
+      lesson is checked; the result toast shows `… checked` with **0 skipped**.
+- [ ] **Immediately QC the same storyline again**: console shows `⏭ skip …` for each clean
+      lesson; the toast shows a **"N skipped (already checked)"** segment and `0 checked`
+      (or only newly-added/edited lessons checked). Much faster.
+- [ ] **Edit a lesson's content** (change a vocab source or a sentence, via the lesson editor)
+      then re-run storyline QC: **that lesson is re-checked** (console shows a stamp-cleared
+      line on save, and it's no longer skipped); its untouched siblings are still skipped.
+- [ ] **Pure flag/star with no content change**: flag an item (⚑) or star it, save, then re-run
+      storyline QC — the lesson is **still skipped** (flag/rating changes don't invalidate the
+      QC pass; only content does).
+- [ ] **Edit the story text** on a topic that has an Error Hunt / AI Error Hunt lesson, then
+      re-run QC — those story-derived lessons are re-checked (stamp cleared on story save);
+      other lessons stay skipped.
+- [ ] **Single-lesson 🔍** (the per-lesson button in the editor) always re-checks, even a
+      skipped/clean lesson (never counts as skipped).
+- [ ] **A lesson that gets flagged** during a pass is **not** marked clean — re-running QC
+      checks it again (it never gets the skip stamp until it comes back clean).
+- [ ] **New generated book**: the automatic post-generation QC still runs a full pass and
+      stamps the fresh lessons (so the *next* manual QC on that storyline skips them).
+- [ ] **Force re-check (shift-click).** Hold **Shift** and click a storyline/topic 🔍 button:
+      every lesson is re-checked regardless of its stamp (console shows no `⏭ skip` lines),
+      and the toast includes a **"forced full re-check"** segment. A plain click still skips
+      clean lessons. The two bulk 🔍 buttons' tooltips mention the shift-click affordance.
+      (Useful after tuning the QC prompt, which doesn't change lesson content.)

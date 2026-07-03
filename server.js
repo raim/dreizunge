@@ -766,8 +766,8 @@ async function qcCheckSynonymSet(entry, lang, srcLang, userComment) {
 }
 
 async function _runQc(jobId, topics, opts) {
-  const { lessonIdx, onlyFlagged } = opts;
-  let checked = 0, flagged = 0, cleared = 0;
+  const { lessonIdx, onlyFlagged, force } = opts;
+  let checked = 0, flagged = 0, cleared = 0, skipped = 0;
   const affected = [];
   console.log(`  ⚙ QC starting: ${topics.length} topic(s)${lessonIdx !== null ? `, lesson ${lessonIdx}` : ''}${onlyFlagged ? ', flagged-only' : ''} [${OLLAMA_TRANSLATION_MODEL}]`);
   jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Starting QC…`);
@@ -779,6 +779,19 @@ async function _runQc(jobId, topics, opts) {
       if (lessonIdx !== null && li !== lessonIdx) continue;
       const ls = lessons[li];
       if (onlyFlagged && !_qcLessonUserFlagged(tp, ls)) continue;
+      // Skip lessons already cleared by a prior full QC pass and untouched since. `ls.qcAt`
+      // is stamped at the end of a clean full pass below and cleared on any content edit
+      // (see _clearLessonQcStamp, called from the edit/save-story paths), so its mere
+      // presence means "unchanged since last QC". Only applies to bulk (storyline/chapter)
+      // runs: an explicit single-lesson request (lessonIdx set) or a flagged-only run always
+      // re-checks, so the user can force a re-QC. This is what keeps storyline-/chapter-level
+      // jobs from re-paying for lessons that already passed.
+      if (lessonIdx === null && !onlyFlagged && !force && ls.qcAt) {
+        skipped++;
+        console.log(`    ⏭ skip "${ls.title || ls.type}" (QC'd ${ls.qcAt}, unedited)`);
+        continue;
+      }
+      const _flaggedBefore = flagged;
       // Per-item QC helper: run a checker, write/clear item.qc, keep counters.
       const _check = async (item, runner, label) => {
         checked++;
@@ -797,6 +810,7 @@ async function _runQc(jobId, topics, opts) {
       // Dispatch by lesson type. vocab/sentences exist on standard lessons; word_forms uses
       // `items` (cloze); synonyms uses `words` (related-word sets); intro_script is curated
       // data (human QC only — skipped here).
+      let _lessonQcRan = true;
       if (ls.type === 'word_forms') {
         for (const item of (ls.items || [])) {
           if (!item || !item.sentence) continue;
@@ -809,6 +823,7 @@ async function _runQc(jobId, topics, opts) {
         }
       } else if (ls.type === 'intro_script') {
         // curated letter table — verified by humans (per-letter flag/star/edit), not the LLM.
+        _lessonQcRan = false;
       } else {
         for (const key of ['vocab', 'sentences']) {
           const arr = ls[key];
@@ -819,11 +834,49 @@ async function _runQc(jobId, topics, opts) {
           }
         }
       }
+      // Stamp a full (not flagged-only) pass that left the lesson clean, so future bulk runs
+      // skip it. Only when this pass actually ran a checker for the lesson (intro_script is
+      // human-QC'd, never stamped) and produced no new flags for it. A flagged-only pass must
+      // NOT stamp — it didn't examine the whole lesson.
+      if (!onlyFlagged && _lessonQcRan && flagged === _flaggedBefore && !_lessonHasOpenQcFlag(ls)) {
+        ls.qcAt = new Date().toISOString(); touched = true;
+      }
     }
     if (touched) { upsert(tp); affected.push(tp.id); }
   }
-  jobDone(jobId, { checked, flagged, cleared, topics: topics.length, affected });
-  console.log(`  ✓ QC done: ${checked} checked, ${flagged} flagged, ${cleared} cleared across ${topics.length} topic(s)`);
+  jobDone(jobId, { checked, flagged, cleared, skipped, topics: topics.length, affected });
+  console.log(`  ✓ QC done: ${checked} checked, ${flagged} flagged, ${cleared} cleared, ${skipped} skipped across ${topics.length} topic(s)`);
+}
+// True if any item in the lesson still carries an open QC suggestion (item.qc). Used to
+// decide whether a just-completed full pass may stamp the lesson as clean.
+function _lessonHasOpenQcFlag(ls) {
+  const arrays = [ls.vocab, ls.sentences, ls.items, ls.words];
+  for (const arr of arrays) {
+    if (Array.isArray(arr) && arr.some(x => x && x.qc)) return true;
+  }
+  return false;
+}
+// Clear the "QC'd & clean" stamp on a lesson (call whenever its content changes, so the next
+// bulk QC re-checks it). Returns true if a stamp was actually removed.
+function _clearLessonQcStamp(ls) {
+  if (ls && ls.qcAt !== undefined) { delete ls.qcAt; return true; }
+  return false;
+}
+// A stable string signature of a lesson's QC-relevant CONTENT — exactly the fields the
+// checkers read (vocab/sentence target+source, cloze sentence+blank, synonym base+related,
+// and the story fields error-hunt derives from). Deliberately excludes flag/rating/qc/qcAt
+// and presentation-only fields (title, icon, _hidden), so a pure flag clear or a rename does
+// NOT invalidate a prior clean QC pass, while any change to checkable text does.
+function qcSignature(ls) {
+  if (!ls) return '';
+  const parts = [ls.type || ''];
+  for (const it of (ls.vocab || []))     parts.push('v', it && it.target, it && it.source);
+  for (const it of (ls.sentences || [])) parts.push('s', it && it.target, it && it.source);
+  for (const it of (ls.items || []))     parts.push('i', it && it.sentence, it && it.blank, it && it.answer);
+  for (const w of (ls.words || []))      parts.push('w', w && w.base, Array.isArray(w && w.related) ? w.related.join('|') : (w && w.related));
+  // error-hunt / ai-error-hunt derive from these:
+  parts.push('cs', ls.corruptedStory || '', ls.correctStory || '', ls.aiStory || '');
+  return parts.map(x => (x == null ? '' : String(x))).join('\u0001');
 }
 // Legacy user-flags-as-filter: a lesson counts as flagged if any of its items'
 // targets appear in the stored flags for this topic. Conservative best-effort.
@@ -2939,7 +2992,7 @@ http.createServer(async (req, res) => {
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
       if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
-      const { storylineId, topicId, lessonIdx, onlyFlagged } = body;
+      const { storylineId, topicId, lessonIdx, onlyFlagged, force } = body;
       // Resolve the topics in scope.
       let topics = [];
       if (storylineId) {
@@ -2952,7 +3005,7 @@ http.createServer(async (req, res) => {
       if (!topics.length) return json(res, 404, { error: 'Nothing in scope to check.' });
       const jobId = newJob();
       console.log(`  ⚙ QC requested (${storylineId?('storyline '+storylineId):topicId?('topic '+topicId+(lessonIdx!==undefined&&lessonIdx!==null?' lesson '+lessonIdx:'')):'?'}) → ${topics.length} topic(s), job=${jobId}`);
-      _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged })
+      _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force })
         .catch(e => { console.error('  QC error:', e.message); jobFail(jobId, e.message); });
       return json(res, 202, { jobId, topics: topics.length });
     }
@@ -3263,8 +3316,20 @@ http.createServer(async (req, res) => {
         saved.aiStory = saved.story || story;
         console.log(`  Set aiStory for "${topic}" (${saved.aiStory.length} chars)`);
       }
+      const _storyChanged = (saved.story !== story);
       saved.story = story;
       saved.updatedAt = new Date().toISOString();
+      // A changed story invalidates any prior clean QC on lessons whose checkable content is
+      // derived from the story text (error-hunt variants). The ai_error_hunt lesson is rebuilt
+      // fresh below (losing its stamp anyway); clear the others explicitly.
+      if (_storyChanged) {
+        for (const ls of (saved.lessons || [])) {
+          if (ls && ls.qcAt && (ls.type === 'error_hunt' || ls.type === 'ai_error_hunt')) {
+            _clearLessonQcStamp(ls);
+            console.log(`    ↺ QC stamp cleared (story edit) on "${ls.title || ls.type}"`);
+          }
+        }
+      }
       let aiHuntEdits;
       if (generateAiHunt && saved.aiStory && saved.aiStory !== story) {
         const existing = (saved.lessons||[]).find(l => l.type === 'ai_error_hunt');
@@ -3320,7 +3385,7 @@ http.createServer(async (req, res) => {
         // and carries its own `type`/`perType`) has no stored counterpart — preserve its
         // full shape rather than cherry-picking content fields and dropping its type.
         if (!orig) return { ...edited };
-        return {
+        const merged = {
           ...orig,
           ...(edited.type    !== undefined ? { type:    edited.type }    : {}),
           ...(edited.perType !== undefined ? { perType: edited.perType } : {}),
@@ -3344,6 +3409,13 @@ http.createServer(async (req, res) => {
           ...(edited._hidden         !== undefined ? { _hidden:         edited._hidden         } : {}),
           edits: edited.edits ? edited.edits.map((e,j) => ({...(orig.edits||[])[j]||{}, ...e})) : orig.edits,
         };
+        // Invalidate the "QC'd & clean" stamp iff the lesson's CONTENT changed (a pure
+        // flag/rating/qc clear must not force a re-QC). qcSignature ignores flag fields.
+        if (merged.qcAt && qcSignature(orig) !== qcSignature(merged)) {
+          _clearLessonQcStamp(merged);
+          console.log(`    ↺ QC stamp cleared (edited) on "${merged.title || merged.type}"`);
+        }
+        return merged;
       });
       saved.updatedAt = new Date().toISOString();
       saveStore(store);

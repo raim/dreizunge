@@ -35,9 +35,11 @@ run('unit: conjugation grouping (item 4)', 'node', [path.join(__dirname, 'unit-c
 run('unit: grammar reinforce note (item 5)', 'node', [path.join(__dirname, 'unit-grammar-reinforce.test.js')]);
 run('unit: editor sync on delete (item 3)', 'node', [path.join(__dirname, 'unit-editor-sync.test.js')]);
 run('unit: tts voice-quality helpers (item 1)', 'node', [path.join(__dirname, 'unit-tts-voice.test.js')]);
+run('unit: always-on sound-test row (v49)', 'node', [path.join(__dirname, 'unit-tts-test-row.test.js')]);
 run('unit: lesson-type meta table (item 8)', 'node', [path.join(__dirname, 'unit-lesson-type-meta.test.js')]);
 run('unit: word-count tokenizer (item 8)', 'node', [path.join(__dirname, 'unit-word-count.test.js')]);
 run('unit: lesson-row subtitle', 'node', [path.join(__dirname, 'unit-lesson-subtitle.test.js')]);
+run('unit: lowercase title + app.motto tagline (v49)', 'node', [path.join(__dirname, 'unit-app-motto.test.js')]);
 run('unit: word_forms validator', 'node', [path.join(__dirname, 'unit-word-forms.test.js')]);
 run('unit: word_forms client play', 'node', [path.join(__dirname, 'unit-word-forms-client.test.js')]);
 run('unit: synonyms in-context builder', 'node', [path.join(__dirname, 'unit-synonyms.test.js')]);
@@ -74,10 +76,13 @@ run('unit: storyline lock hardening (v46 bug #2)', 'node', [path.join(__dirname,
 run('unit: japanese furigana paste + tokenizer (v47)', 'node', [path.join(__dirname, 'unit-furigana.test.js')]);
 run('unit: intro learn-the-script course (v48)', 'node', [path.join(__dirname, 'unit-intro-script.test.js')]);
 run('unit: QC dispatch — synonyms/word_forms (v48)', 'node', [path.join(__dirname, 'unit-qc-dispatch.test.js')]);
+run('unit: QC skip already-checked lessons (v49 bug 6)', 'node', [path.join(__dirname, 'unit-qc-skip.test.js')]);
 run('unit: no-keyboard glyph ordering (v48)', 'node', [path.join(__dirname, 'unit-no-keyboard.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
 run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join(__dirname, 'unit-inline-escaping.test.js')]);
 run('unit: error-hunt content-aware RTL', 'node', [path.join(__dirname, 'unit-error-hunt-rtl.test.js')]);
+run('unit: order-exercise RTL keying (v49)', 'node', [path.join(__dirname, 'unit-order-rtl.test.js')]);
+run('unit: word_forms/synonyms content-aware RTL (v49)', 'node', [path.join(__dirname, 'unit-wordforms-syn-rtl.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {

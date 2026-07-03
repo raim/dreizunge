@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dreizunge</title>
+<title>dreizunge</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌍</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -452,7 +452,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
      field that lacks dir="auto", and for .it-word. */
 html.tgt-rtl .it-word{direction:rtl;text-align:right}
 /* Word-order containers flow RTL when the target sentence is RTL, so tokens read right-to-
-   left (first word on the right). Token *text* still aligns by content via dir="auto". */
+   left (first word on the right). Token *text* still aligns by content via dir="auto".
+   The containers also carry dir="auto" themselves (tOrder + tGlyphOrder) as a content-
+   resolved fallback; this class (keyed off the ACTIVE render context — goLessonSet syncs
+   APP.lang to the opened lesson) remains the primary switch and wins when set. */
 html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 .qtext,.choice,.tok,.placed-tok,.target-box-text,.sbox-ph{text-align:start}
 [dir="rtl"] .saved-topic,[dir="rtl"] .saved-meta,[dir="rtl"] .fb-head,[dir="rtl"] .fb-body{direction:rtl;text-align:right}
@@ -501,8 +504,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <div class="landing-inner">
   <div class="land-top">
     <span class="flag">🌍</span>
-    <div class="app-name">Dreizunge</div>
-    <span id="app-version" style="font-size:11px;font-weight:800;color:var(--gray-dark);opacity:.7;align-self:flex-end;margin-bottom:4px"></span>
+    <div class="app-name">dreizunge</div>
+    <!-- Tagline (localized via app.motto); the running version stays reachable as its
+         tooltip — the visible version display was retired in v49. -->
+    <span id="app-tagline" style="font-size:13px;font-weight:800;color:var(--gray-dark);opacity:.7;align-self:flex-end;margin-bottom:4px">we are the world</span>
   </div>
 
   <div class="backend-row">
@@ -593,11 +598,11 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         </div>
       </div>
     </div>
-    <div id="tts-test-row" style="margin-top:8px;display:flex;justify-content:center">
-      <button type="button" id="tts-test-btn" onclick="ttsTestVoice()" title="Test the speech voice for the language you're learning"
-        style="font-size:12px;font-weight:800;padding:5px 14px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit"><span id="tts-test-lbl"></span></button>
-    </div>
-    <div id="tts-voice-note" style="display:none;margin-top:10px;background:#fff8e0;border-radius:var(--radius-xl);padding:12px 16px;border:2px solid #f5a623;font-size:13px;font-weight:700;color:#444;line-height:1.6"></div>
+    <!-- v49: the standalone 🔊 1,2,3 button (#tts-test-row, v47.x) is superseded by the
+         always-on compact row in #tts-voice-note below (label · 1,2,3 · mute hint · mute).
+         Right-aligned + width-capped so it sits under the "I learn" (target) column, making
+         it visually clear which speech language is being tested. -->
+    <div id="tts-voice-note" style="display:none;justify-content:flex-end;align-items:center;gap:8px;flex-wrap:nowrap;white-space:nowrap;margin-top:10px;margin-left:auto;width:fit-content;text-align:right;background:#fff8e0;border-radius:var(--radius-xl);padding:8px 14px;border:2px solid #f5a623;font-size:13px;font-weight:700;color:#444;line-height:1.4"></div>
     <div id="lang-tutor-banner" style="display:none;margin-top:10px;padding:12px 16px;background:#eef6ff;border-radius:10px;border:2px solid #b8d4f8;font-size:13px;font-weight:700;color:#1a4fa0;line-height:1.6"></div>
     <div id="ui-translate-row" style="display:none;margin-top:8px;align-items:center;gap:8px;flex-wrap:wrap">
       <span id="ui-translate-info" style="font-size:11px;font-weight:700;color:var(--gray-dark)"></span>
@@ -1003,7 +1008,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="openRetitleMenu(event)" title="Re-generate titles" style="display:none">✨</button>
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
-        <button class="sl-screen-share" id="sl-screen-qc-btn" title="QC: check all lessons in this storyline" style="display:none">🔍</button>
+        <button class="sl-screen-share" id="sl-screen-qc-btn" title="" style="display:none">🔍</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
       </div>
       <div id="sl-tags-row" style="display:none;padding:2px 14px 4px;align-items:center;gap:6px;flex-wrap:wrap">
@@ -1557,7 +1562,6 @@ function applyUIStrings() {
   _setText('num-chapters-lbl', t('form.num_chapters_lbl'));
   _setText('gen-arc-lbl', t('form.arc_lbl'));
   _setText('gen-arc-script-lbl', t('form.arc_script_lbl'));
-  _setText('tts-test-lbl', t('tts.voice_test'));
   _setAttr('sl-bottom-continue', 'title', t('lesson.continue_title') || t('sl.continue'));
   _setAttr('sl-bottom-download', 'title', t('sl.download'));
   _setAttr('sl-bottom-clear', 'title', t('sl.clear_progress'));
@@ -1567,6 +1571,7 @@ function applyUIStrings() {
   _setText('lesson-type-hdr-lbl', t('form.lesson_type_hdr'));
   _setText('continue-lbl', t('form.continue_from_lbl'));
   _setText('show-other-langs-lbl', t('form.show_other_langs'));
+  _setText('app-tagline', t('app.motto'));
   _setText('lib-title-lbl', '📚');
   _setText('download-flagged-btn', t('lib.download_flagged'));
   _setText('read-story-hdr', t('lesson.read_story_btn'));
@@ -1589,6 +1594,7 @@ function applyUIStrings() {
   updateTeacherModeBtn();
   _buildGlobalTtsSelectors();
   _setAttr('sl-screen-summary-btn', 'title', t('lesson.gen_summary'));
+  _setAttr('sl-screen-qc-btn',      'title', t('qc.btn.storyline') + ' ' + t('qc.btn.force_hint'));
   _setText('backend-lbl',          t('app.backend'));
   _setText('blbl',                 t('app.checking'));
   const _esBtn = document.getElementById('export-static-btn');
@@ -1906,10 +1912,12 @@ function selectLang(code, silent, fromForm){
   // Globe = reset target filter, keep APP.lang unchanged
   if(code==='all'){ APP.libFilter='all'; const sel=document.getElementById('lang-select'); if(sel) sel.value='all'; loadSavedList(); return; }
   APP.lang=code;                          // active render context
+  // Refresh the sound-test row's flag right away — before the heavier calls below, so an
+  // exception in any of them can't leave the flag showing the previous language.
+  try { updateTtsVoiceNote(); } catch(_){}
   if(fromForm){ APP.formLang=code; APP.libFilter=code; saveLang(); }
   repopulateContinueSelect();
   updateDocDir();
-  try { updateTtsVoiceNote(); } catch(_){}
   try { updateArcScriptRow(); } catch(_){}
   const sel=document.getElementById('lang-select');
   if(fromForm && sel && sel.value!==code) sel.value=code;
@@ -2356,6 +2364,10 @@ async function _restoreFormLang(){
   const srcChanged = APP.srcLang !== APP.formSrcLang;
   APP.lang    = APP.formLang;
   APP.srcLang = APP.formSrcLang;
+  // Re-key the direction flags off the restored form languages. loadUIStrings→
+  // applyUIStrings does this too, but only runs below when the SOURCE changed — a
+  // target-only override (goLessonSet) would otherwise leave a stale tgt-rtl.
+  updateDocDir();
   updateTranslationLangHint();
   if(srcChanged){ await loadUIStrings(APP.formSrcLang); }
 }
@@ -2594,6 +2606,13 @@ async function goLessonSet(){
       ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f)f.value=lSrc;});
       await loadUIStrings(lSrc);
     }
+    // Same for the TARGET render context: the opened lesson's language, not the form's
+    // selection, must drive content-direction flags (html.tgt-rtl → RTL word-order/glyph
+    // containers). formLang is untouched; _restoreFormLang puts APP.lang back on return.
+    // (Bug: an en→ar topic opened while the form was on another target rendered its
+    // sentence-ordering and glyph-ordering banks LTR because tgt-rtl was never set.)
+    if (APP.lessonData.lang && APP.lessonData.lang !== APP.lang) APP.lang = APP.lessonData.lang;
+    updateDocDir();
     history.replaceState(null,'','#topic='+encodeURIComponent(APP.lessonData.id || APP.lessonData.topic));
   }
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
@@ -3133,7 +3152,7 @@ async function _reconnectBookJob() {
 // silently missing in docs and the static page throws a ReferenceError.
 async function init(){
   try{ const r=await fetch('/api/info'); APP.info=await r.json(); }catch(e){ APP.info={backend:'none',canGenerate:false}; }
-  { const _v=document.getElementById('app-version'); if(_v&&APP.info.version) _v.textContent=APP.info.version; }
+  { const _v=document.getElementById('app-tagline'); if(_v&&APP.info.version) _v.title=APP.info.version; }
   // Show teacher mode bar in all modes (unlocked by default in live, locked by default in static)
   const _tmBar2 = document.getElementById('teacher-mode-bar');
   if (_tmBar2) _tmBar2.style.display = '';
@@ -3249,7 +3268,7 @@ function savedItemHtml(s, connector, hideStory) {
         ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${escJsAttr(s.id||s.topic)}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
         ${APP.info.canGenerate?`<button class="ico-btn" title="Edit / rename topic" onclick="event.stopPropagation();openSavedItemEdit('${sid}','${enc}')">✏️</button>`:''}
         ${APP.info.canGenerate?`<button class="ico-btn" title="${t('lib.add_lesson')}" onclick="event.stopPropagation();openAddLesson('${sid}','${enc}')">➕</button>`:''}
-        ${APP.info.canGenerate&&s.id?`<button class="ico-btn" title="${t('qc.btn.topic')}" onclick="event.stopPropagation();qcRun({topicId:'${s.id}'},this)">🔍${s.qcFlags>0?`<span style="color:var(--red);font-weight:800">${s.qcFlags}</span>`:''}</button>`:''}
+        ${APP.info.canGenerate&&s.id?`<button class="ico-btn" title="${t('qc.btn.topic')} ${t('qc.btn.force_hint')}" onclick="event.stopPropagation();qcRun({topicId:'${s.id}'},this)">🔍${s.qcFlags>0?`<span style="color:var(--red);font-weight:800">${s.qcFlags}</span>`:''}</button>`:''}
         <button class="ico-btn export" title="${t('lesson.export_title')}"
           data-topic="${s.topic.replace(/"/g,'&quot;')}"
           onclick="openExportMenu(event,[this.dataset.topic])">⬇</button>
@@ -3522,7 +3541,7 @@ async function loadSavedList(){
       <button class="ico-btn" style="font-size:11px;padding:2px 8px" title="Share storyline link"
         data-chain-id="${chainId}"
         onclick="event.stopPropagation();shareStorylineById(this.dataset.chainId)">🔗</button>
-      ${APP.info.canGenerate?`<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${t('qc.btn.storyline')}"
+      ${APP.info.canGenerate?`<button class="ico-btn" style="font-size:11px;padding:2px 8px" title="${t('qc.btn.storyline')} ${t('qc.btn.force_hint')}"
         data-sl="${chainId}"
         onclick="event.stopPropagation();qcRun({storylineId:this.dataset.sl},this)">🔍${(()=>{const n=chain.reduce((a,id)=>a+((byId[id]&&byId[id].qcFlags)||0),0);return n>0?`<span style="color:var(--red);font-weight:800">${n}</span>`:'';})()}</button>`:''}
       <button class="ico-btn" style="font-size:11px;padding:2px 8px;color:var(--red)" title="Delete all chapters in this storyline"
@@ -3632,11 +3651,16 @@ async function deleteSaved(ref){
 // writes qc:{sug,at} onto flagged items. Polls the job, then refreshes the view.
 async function qcRun(scope, btn){
   if(!APP.info?.canGenerate){ showToast(t('qc.toast.no_backend')); return; }
+  // Shift-click = force a full re-check, bypassing the "already QC'd & unedited" skip (useful
+  // after tuning the QC prompt, which doesn't change lesson content). Capture the modifier
+  // BEFORE any await, while the click event is still current. An explicit scope.force wins.
+  const force = (scope && scope.force) || !!(window.event && window.event.shiftKey);
+  const body = { ...scope, force };
   const old = btn ? btn.innerHTML : null;
   if(btn){ btn.disabled=true; btn.innerHTML='⏳'; }
   let data=null;
   try{
-    const r = await fetch('/api/qc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(scope)});
+    const r = await fetch('/api/qc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     if(!r.ok){ const e=await r.json().catch(()=>({})); showToast(t('qc.toast.failed')+': '+(e.error||r.status)); return; }
     const { jobId } = await r.json();
     for(let i=0;i<4800;i++){
@@ -3649,7 +3673,10 @@ async function qcRun(scope, btn){
   }catch(e){ showToast(t('qc.toast.failed')+': '+e.message); return; }
   finally{ if(btn){ btn.disabled=false; btn.innerHTML=old; } }
   if(!data) return;
-  showToast(t('qc.toast.result',{flagged:data.flagged,checked:data.checked})+(data.cleared?' · '+t('qc.toast.cleared',{n:data.cleared}):''));
+  showToast(t('qc.toast.result',{flagged:data.flagged,checked:data.checked})
+    +(data.cleared?' · '+t('qc.toast.cleared',{n:data.cleared}):'')
+    +(data.skipped?' · '+t('qc.toast.skipped',{n:data.skipped}):'')
+    +(force?' · '+t('qc.toast.forced'):''));
   const affected = data.affected||[];
   if(APP.lessonData && affected.includes(APP.lessonData.id)){
     const li = (scope.lessonIdx!==undefined && scope.lessonIdx!==null) ? scope.lessonIdx : null;
@@ -8173,7 +8200,7 @@ function cGrid(cs,one){ return `<div class="choices${one?' one-col':''}">${cs.ma
 // sentence div is omitted when empty (no story sentence was found).
 function sentenceMcqCard({badge, question, sentenceHtml, hint, choices}){
   const q = question ? `<div class="qtext" dir="auto">${question}</div>` : '';
-  const sent = sentenceHtml ? `<div style="font-size:18px;font-weight:700;line-height:1.6;margin:6px 0">${sentenceHtml}</div>` : '';
+  const sent = sentenceHtml ? `<div dir="auto" style="font-size:18px;font-weight:700;line-height:1.6;margin:6px 0;text-align:start">${sentenceHtml}</div>` : '';
   return `<div class="ex-badge">${badge}</div>
 <div class="card">
   ${q}
@@ -8202,14 +8229,14 @@ function tSynSelect(ex){
       const re = new RegExp('('+ex.base.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','i');
       sentenceHtml = sentenceHtml.replace(re, '<span style="color:var(--blue);font-weight:900;text-decoration:underline">$1</span>');
     }
-    sentenceHtml = `<div style="font-size:17px;font-weight:700;line-height:1.6;margin:4px 0 8px">${sentenceHtml}</div>`;
+    sentenceHtml = `<div dir="auto" style="font-size:17px;font-weight:700;line-height:1.6;margin:4px 0 8px;text-align:start">${sentenceHtml}</div>`;
   }
   const q = isSyn
     ? `<span style="color:var(--green);font-weight:800">${t('ex.syn.q_synonyms',{word:furiHtml(ex.base)})}</span>`
     : `<span style="color:var(--red);font-weight:800">${t('ex.syn.q_antonyms',{word:furiHtml(ex.base)})}</span>`;
   const badge = isSyn ? t('ex.badge.syn_synonyms') : t('ex.badge.syn_antonyms');
-  const gloss = ex.gloss ? `<div style="opacity:.55;font-size:13px;margin-top:-2px;margin-bottom:6px">${escHtml(ex.gloss)}</div>` : '';
-  const tiles = ex.choices.map((w,i)=>`<button class="syn-tile" id="st${i}" data-w="${escAttr(w)}" onclick="synToggle(${i},this)">${furiHtml(w)}</button>`).join('');
+  const gloss = ex.gloss ? `<div dir="auto" style="opacity:.55;font-size:13px;margin-top:-2px;margin-bottom:6px;text-align:start">${escHtml(ex.gloss)}</div>` : '';
+  const tiles = ex.choices.map((w,i)=>`<button class="syn-tile" dir="auto" id="st${i}" data-w="${escAttr(w)}" onclick="synToggle(${i},this)">${furiHtml(w)}</button>`).join('');
   return `<div class="ex-badge">${badge}</div><div class="card">${sentenceHtml}<div class="qtext" dir="auto">${q}</div>${gloss}<div class="syn-hint">${t('ex.syn.hint')}</div><div class="syn-grid">${tiles}</div></div>`;
 }
 // Toggle a tile in the multi-select; enable Check once at least one is selected.
@@ -8406,7 +8433,7 @@ function tOrder(ex){
   const tokens=ex.words.map((w,i)=>
     `<span class="tok" dir="auto" id="t${i}" onclick="addTok(${i})">${furiHtml(w)}</span>`
   ).join("");
-  return `<div class="ex-badge">${t("ex.badge.order")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.order.q",{sentence:furiHtml(ex.source)})}</div><div class="sbox" id="sbox"><span class="sbox-ph" dir="auto">${t("ex.order.placeholder")}</span></div><div class="wbank">${tokens}</div></div>`;
+  return `<div class="ex-badge">${t("ex.badge.order")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.order.q",{sentence:furiHtml(ex.source)})}</div><div class="sbox" id="sbox" dir="auto"><span class="sbox-ph" dir="auto">${t("ex.order.placeholder")}</span></div><div class="wbank" dir="auto">${tokens}</div></div>`;
 }
 // Glyph-ordering: the no-keyboard replacement for type-the-target exercises. Reuses the exact
 // word-order machinery (addTok/selTok/updateSbox + C.placed/usedIdx), but the bank tokens are
@@ -8921,7 +8948,9 @@ function toggleMute() {
 function updateMuteButtons() {
   document.querySelectorAll('.mute-btn').forEach(b => {
     b.textContent = APP.muted ? '🔇' : '🔊';
-    b.title = APP.muted ? 'Unmute' : 'Mute';
+    // A button may carry its own specialized tooltip (data-mute-tip, e.g. the sound-test row's
+    // "If the sound is bad, you can mute it."); keep it. Others get the generic mute/unmute label.
+    b.title = b.dataset.muteTip || (APP.muted ? 'Unmute' : 'Mute');
     b.style.opacity = APP.muted ? '1' : '.7';
   });
 }
@@ -9142,38 +9171,30 @@ function ttsHasNiceVoice(voices, ttsCode, browser, os){
   return true;                                       // at least one non-robotic voice
 }
 
-let _ttsNoteWired = false, _ttsVoicesSettled = false;
 function ttsTestVoice(){
   const lang = (APP.lang && APP.lang !== 'all') ? APP.lang : (APP.lessonData?.lang || 'it');
   speakBodyText(null, lang, t('tts.voice_test_phrase'));
 }
 function updateTtsVoiceNote(){
-  // Lazily wire voice-load events the first time we evaluate (covers async getVoices()).
-  if(!_ttsNoteWired){
-    _ttsNoteWired = true;
-    if(window.speechSynthesis && speechSynthesis.addEventListener){
-      speechSynthesis.addEventListener('voiceschanged', () => { _ttsVoicesSettled = true; updateTtsVoiceNote(); });
-      setTimeout(() => { _ttsVoicesSettled = true; updateTtsVoiceNote(); }, 1500);
-    } else { _ttsVoicesSettled = true; }
-  }
+  // v49: the sound-test row is ALWAYS shown when a concrete target language is selected —
+  // one compact line: "Test sound" · the 1,2,3 button · "Bad sound? Mute:" · mute button.
+  // (Previously the whole box only appeared when ttsHasNiceVoice() judged the available
+  // voices bad; the heuristic under-warned on some browser/OS combos, so the gating is gone
+  // and the long tts.voice_warn_q question is no longer shown inline — it's reused as the
+  // Test button's hover tooltip. ttsHasNiceVoice is kept, unit-tested, for potential future
+  // use — it no longer drives this row.)
   const note = document.getElementById('tts-voice-note');
   if(!note) return;
   const lang = (APP.lang && APP.lang !== 'all') ? APP.lang : null;
-  if(!lang){ note.style.display = 'none'; return; }          // no specific target → don't nag
-  const hasSynth = !!window.speechSynthesis;
-  const voices = (hasSynth && speechSynthesis.getVoices) ? speechSynthesis.getVoices() : [];
-  if(hasSynth && !voices.length && !_ttsVoicesSettled){ note.style.display = 'none'; return; } // still loading
-  const ttsCode = (LANGS[lang]||LANGS.it).tts;
-  const browser = detectBrowser(navigator.userAgent), os = detectOS(navigator.userAgent);
-  if(ttsHasNiceVoice(voices, ttsCode, browser, os)){ note.style.display = 'none'; return; }
+  if(!lang){ note.style.display = 'none'; return; }          // no specific target → nothing to test
+  const L = (typeof LANGS !== 'undefined' && LANGS[lang]) || null;
+  const langTag = L ? ` <span style="white-space:nowrap">${L.flag}</span>` : '';
   note.innerHTML =
-    `<div style="margin-bottom:8px">${escHtml(t('tts.voice_warn_q'))}</div>`
-    + `<button type="button" onclick="ttsTestVoice()" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button> `
-    + `<span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap">`
-    + `<span style="color:#9a6400;font-weight:700">${escHtml(t('tts.voice_mute_hint'))}</span>`
-    + `<button type="button" class="mute-btn" onclick="toggleMute()" title="Mute" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`
-    + `</span>`;
-  note.style.display = '';
+    `<span style="white-space:nowrap">${escHtml(t('tts.test_lbl'))}${langTag}</span>`
+    + `<button type="button" onclick="ttsTestVoice()" title="${escAttr(t('tts.voice_warn_q'))}" style="font-size:12px;font-weight:800;padding:5px 12px;border-radius:12px;border:2px solid #f5a623;background:#fff;color:#9a6400;cursor:pointer;font-family:inherit">${escHtml(t('tts.voice_test'))}</button>`
+    + `<span style="color:#9a6400;white-space:nowrap">${escHtml(t('tts.mute_hint_short'))}</span>`
+    + `<button type="button" class="mute-btn" data-mute-tip="${escAttr(t('tts.voice_mute_hint'))}" onclick="toggleMute()" title="${escAttr(t('tts.voice_mute_hint'))}" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:${APP.muted?'1':'.7'}">${APP.muted?'🔇':'🔊'}</button>`;
+  note.style.display = 'flex';
 }
 
 function speakBodyText(bodyId,langCode,preText){

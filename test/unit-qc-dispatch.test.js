@@ -41,6 +41,10 @@ const stubs = {
   qcCheckPair: async () => { calls.pair++; return { ok: false, field: 'source', sug: 'pair-fix' }; },
   qcCheckCloze: async () => { calls.cloze++; return { ok: false, sug: 'cloze-fix' }; },
   qcCheckSynonymSet: async () => { calls.synset++; return { ok: false, sug: 'syn-fix' }; },
+  _lessonHasOpenQcFlag: (ls) => {
+    const arrays = [ls.vocab, ls.sentences, ls.items, ls.words];
+    return arrays.some(a => Array.isArray(a) && a.some(x => x && x.qc));
+  },
 };
 const runQc = new Function(...Object.keys(stubs), 'async ' + ext(server, '_runQc') + '\nreturn _runQc;')(...Object.values(stubs));
 
