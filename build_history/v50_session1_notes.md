@@ -218,3 +218,25 @@ variant ("reuse as many known words as possible"). neutral seeds the story from 
 sends no chain-vocab hint into the lessons. Reuses the existing chainVocab/vocabMode channel; no
 new lesson-gen logic. Test `unit-my-story` updated (respects mode, extend branch, neutral no-hint).
 Checklist §50 gained the mode-control item. (Story QUALITY per mode still needs live tuning.)
+
+## post-v50 — Dialect M1 importer core (deterministic, no LLM)
+East-Tyrolean material received (Bernd Kranebitter, "Dialekt Wörterbuch Osttirol", CC BY-NC, used
+with explicit permission → recorded in new `ATTRIBUTIONS.md`). Built the faithful glossary importer
+per spec_dialect_lessons_m1.md:
+- **`dialect-glossary.js`** (isomorphic, zero-dep): `parseDialectGlossary(text, opts)` detects the
+  delimiter (tab/pipe/**equals**/comma/2-space — the real file uses " = "), skips title/CC-license/
+  header lines, parses rows VERBATIM (trim only, no split/normalize), keeps duplicate targets but
+  reports them, and SURFACES the real PDF collided-row artifact (`Mangale = Männchen, kleiner
+  MannFock = Schwein` — two glued entries) as `report.suspicious` rather than auto-splitting it
+  (the faithfulness spine: importer never invents rows). `dialectVocabItems(rows)` →
+  `{target, source, note?, _dialect:true}`. Note column is opt-in (`opts.threeCol`), so a stray 3rd
+  `=`-split rejoins into source verbatim instead of becoming a phantom note.
+- **Test** `unit-dialect-glossary` runs against the real material (`test/fixtures/osttirol-
+  glossary.txt`, 85 data rows): delimiter detection, license/header skip, verbatim rows (multi-word,
+  multi-sense, slash-variants), collided-row surfaced-not-split, duplicates kept+reported, vocab
+  shape, note column.
+- Roadmap dialect M1 entry updated (importer core shipped; next: dialect topic data model +
+  fromDialectMaterial builder, sourceOnly QC, UI panel, approximate-voice toggle). mein-osttirol.rocks
+  (1165 entries) pending a permission email to the operators — NOT to be imported until permission
+  is on file.
+No client/server/data changes yet (parser not wired into the UI) → no static rebuild. Still v50.

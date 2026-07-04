@@ -144,12 +144,28 @@ touch this area carefully.
 
 ## OPEN — waiting on user material
 
-### Dialect lessons M1 — WAITING ON EAST-TYROLEAN MATERIAL
+### Dialect lessons M1 — IMPORTER CORE STARTED (East-Tyrolean material received)
 Full spec + parsing rules + data model in **`build_history/spec_dialect_lessons_m1.md`**. Decisions
 locked: glossary-table-first; East-Tyrolean pilot; dialect = target / High German = source; 3-col
 table `dialect | de | note`; one row = one verbatim vocab item; approximate `de` voice toggle.
-Safety spine: **user is the source of truth, the model is a packager/aligner, never an author.** Do
-NOT start coding until real rows arrive. Then M1.5 (opt-in AI example sentences, QC-gated), M2
+Safety spine: **user is the source of truth, the model is a packager/aligner, never an author.**
+**Material received:** Bernd Kranebitter's "Dialekt Wörterbuch Osttirol" (CC BY-NC, used with
+explicit permission — see `ATTRIBUTIONS.md`). A broader online source (mein-osttirol.rocks, 1165
+entries) is pending a permission request to its operators (NOT to be scraped/imported until
+permission is on file).
+**SHIPPED this step (headless core):** `dialect-glossary.js` — a deterministic, no-LLM importer:
+detects delimiter (tab/pipe/**equals**/comma/2-space), skips title/CC-license/header lines, parses
+rows verbatim (no split/normalize beyond trim), keeps duplicates but reports them, and SURFACES a
+suspicious "glued" row (the real PDF collided `Mangale…MannFock` artifact) as an anomaly for the
+human to fix rather than auto-splitting it. `dialectVocabItems()` → `{target, source, note?,
+_dialect:true}`. Tested against the real Osttirol material (`unit-dialect-glossary`,
+`test/fixtures/osttirol-glossary.txt`).
+**NEXT (M1 remainder):** (1) the `dialect` topic data model (`{id,label,base:'de',source:'de',note,
+glossary,attribution,curated}`) + a `fromDialectMaterial` generation mode that builds vocab lessons
+from rows with zero LLM; (2) `sourceOnly` QC direction (verify the German gloss, never rewrite the
+dialect token); (3) the UI panel ("🗣 Dialect": name it, paste/upload glossary, column-map confirm,
+optional note) + saved-list badge; (4) the "≈ German voice (approximate)" TTS toggle (default-on,
+labeled) — to be evaluated on real words. Then M1.5 (opt-in AI example sentences, QC-gated), M2
 (generated dialect stories, per-dialect `curated:true`, native-reviewed).
 
 ---
