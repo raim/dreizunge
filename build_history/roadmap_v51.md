@@ -183,9 +183,18 @@ New en-only i18n keys owed to the translate pass: `form.use_dialect`, `dialect.*
 `tts.approx_dialect`. Browser checks owed: LIVE-TEST §51.
 
 **Toward M1.5 → M2 (generation, with a native-review gate):**
-- **M1.5 — assisted example sentences (safe bridge):** generate ONE example sentence per known
-  glossary word, each individually QC-checkable/editable, constrained to glossary vocabulary. Small
-  units → catchable errors. Opt-in, QC-gated. Only for words already in the glossary.
+- **M1.5 — assisted example sentences (SHIPPED, safe bridge):** opt-in (off by default) AI example
+  sentences for a dialect topic's words. `generateDialectExample` (server) uses a tightly
+  constrained, glossary-few-shot-grounded prompt (mimic the uploaded orthography, use only glossary
+  words + small function words), returns one `D:/G:` pair, and a guardrail REJECTS any sentence that
+  doesn't contain the target word. `/api/dialect-examples` (job-based) adds them as a review-gated
+  `_aiExamples` lesson; every sentence is `aiGenerated:true` + `needsReview:true` and titled
+  "🤖 … AI example sentences (review)". Crucially, QC treats `aiGenerated` dialect items with FULL
+  pair QC (both sides), NOT sourceOnly — because the model authored them, so the dialect side is no
+  longer ground truth. Client: an opt-in checkbox in the dialect panel chains generation after
+  import and polls the job. Tested end-to-end (`e2e-dialect-import` extended; fake-ollama gained a
+  dialect-example branch) + unit (`unit-dialect-examples`). **Quality still needs live tuning** —
+  the fluent-but-wrong hazard is real; that's why it's opt-in, marked, and review-gated.
 - **M2 — generated dialect stories:** the north-star experiment (user, online Qwen3-Plus prompt:
   "write a short story in this East-Tyrolean dialect from this glossary") produced a fluent dense
   dialect story (`Heint is a glientig Tag gwesn…`) weaving in dozens of glossary words. It shows M2

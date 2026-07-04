@@ -1035,3 +1035,24 @@ labelled approximate.
       aloud using the German TTS voice (best-effort pronunciation).
 - [ ] **Non-dialect German unaffected.** A normal (non-dialect) German lesson does NOT show the
       approximate label when using the native German voice — only dialect content does.
+
+### 53. post-v50 — Dialect AI example sentences (M1.5, opt-in, review-gated)
+Needs Ollama. Off by default; the model's first authored dialect content, so it's marked and
+review-gated. **Quality needs live tuning — expect to iterate on the prompt in server.js
+(generateDialectExample).**
+
+- [ ] **Opt-in only.** In the "🗣 Dialect" panel, the "🤖 Also suggest AI example sentences" box is
+      UNCHECKED by default. Importing without it produces NO AI sentences.
+- [ ] **Generates on import when ticked.** Tick the box, import a glossary → after the vocab import,
+      a job runs and adds a "🤖 … AI example sentences (review)" lesson to the topic.
+- [ ] **Uses the glossary words.** The generated sentences reuse the imported dialect words and
+      mimic their spelling (few-shot grounded). Each sentence contains the word it was made for
+      (off-target ones are dropped).
+- [ ] **Clearly marked for review.** The lesson title says "(review)" and the sentences are AI-
+      suggested — verify they read as unverified suggestions, not authoritative content.
+- [ ] **QC checks BOTH sides (needs Ollama).** Running QC on the AI-examples lesson can flag the
+      dialect side too (full pair QC), unlike the imported vocab (sourceOnly) — because the model
+      authored these, so the dialect text is not ground truth.
+- [ ] **Quality judgement (owed).** Read the generated sentences with a native/near-native eye:
+      are they plausible dialect, or fluent hallucinations? If poor, tune the prompt and re-run.
+      Do NOT promote to trusted content without review.

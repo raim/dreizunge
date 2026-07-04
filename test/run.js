@@ -85,6 +85,7 @@ run('unit: my-story generation plumbing (v50)', 'node', [path.join(__dirname, 'u
 run('unit: dialect glossary importer (M1, deterministic)', 'node', [path.join(__dirname, 'unit-dialect-glossary.test.js')]);
 run('unit: dialect TTS approximate detection (M1)', 'node', [path.join(__dirname, 'unit-dialect-tts.test.js')]);
   run('unit: dialect import panel toggle (M1)', 'node', [path.join(__dirname, 'unit-dialect-panel.test.js')]);
+  run('unit: dialect AI example sentences (M1.5)', 'node', [path.join(__dirname, 'unit-dialect-examples.test.js')]);
 run('unit: no-keyboard glyph ordering (v48)', 'node', [path.join(__dirname, 'unit-no-keyboard.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
 run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join(__dirname, 'unit-inline-escaping.test.js')]);

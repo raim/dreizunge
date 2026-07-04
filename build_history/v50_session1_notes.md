@@ -318,3 +318,18 @@ Verified the toggle in jsdom (panel visible via .open, Generate row hidden, Buil
 restores on untoggle). Added `unit-dialect-panel` (static-analysis regression, no DOM dep): panel
 shown via .open not inline style, no blocking inline display:none, Generate row hidden, panel
 outside gen-form-section and self-contained. Static rebuilt. Still v50.
+
+## post-v50 — Dialect M1.5: opt-in AI example sentences (review-gated)
+The safe bridge toward M2. `generateDialectExample(word, gloss, glossaryRows, base)` (server): a
+tightly constrained prompt few-shot-grounded in the glossary (mimic orthography, glossary words
+only), returns one D:/G: pair; a guardrail rejects any sentence not containing the target word.
+`/api/dialect-examples` (job-based) generates for up to `max` words and adds a review-gated
+`_aiExamples` lesson — every sentence `aiGenerated:true` + `needsReview:true`, titled "🤖 … (review)".
+KEY SAFETY: `_runQc` now sends `aiGenerated` dialect items to FULL pair QC (both sides), not
+sourceOnly — the model authored them so the dialect side is no longer ground truth. Client: an opt-in
+checkbox in the dialect panel (off by default) chains generation after import and polls the job.
+Tests: `unit-dialect-examples` (parse, guardrail, QC-routing, endpoint markers) + `e2e-dialect-import`
+extended (real job cycle; fake-ollama gained a dialect-example branch). New en-only keys:
+form.dialect_examples, dialect.status.examples_*, dialect.toast.examples_*. Checklist §53. Static
+rebuilt. **Quality needs live tuning (fluent-but-wrong hazard) — opt-in + marked + review-gated.**
+Still v50. Next: M2 (reviewed generated stories; Qwen experiment = north star) when ready.

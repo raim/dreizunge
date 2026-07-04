@@ -715,6 +715,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         placeholder="a boisl = einige Zeit&#10;Gitsche = Mädchen&#10;bleckfüeßet = barfuß" oninput="autoResizeTextarea(this)"></textarea>
       <input type="text" id="dialect-attr-input" placeholder="Attribution / source (optional, e.g. author + license)"
         maxlength="300" style="width:100%;box-sizing:border-box;margin-top:6px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:6px 10px;font-size:12px;font-family:Nunito,sans-serif;color:#222">
+      <label class="user-story-check-row" style="margin-top:6px">
+        <input type="checkbox" id="dialect-examples-cb">
+        <span id="dialect-examples-lbl">🤖 Also suggest AI example sentences (you'll review them — off by default)</span>
+      </label>
       <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
         <button type="button" id="dialect-import-btn" onclick="doDialectImport()"
           style="font-size:13px;font-weight:700;padding:6px 16px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">🗣 Build dialect lessons</button>
@@ -1508,6 +1512,7 @@ function applyUIStrings() {
   const useStoryLbl = document.getElementById('use-story-lbl');
   if (useStoryLbl) useStoryLbl.textContent = t('form.use_story');
   { const ud=document.getElementById('use-dialect-lbl'); if(ud) ud.textContent=t('form.use_dialect'); }
+  { const de=document.getElementById('dialect-examples-lbl'); if(de) de.textContent=t('form.dialect_examples'); }
   { const ub=document.getElementById('upload-choose-lbl'); if(ub) ub.textContent=t('form.upload_doc'); }
   { const sp=document.getElementById('split-page-lbl'); if(sp) sp.textContent=t('form.split_per_page'); }
   const useTransLbl = document.getElementById('use-translation-lbl');
@@ -1955,8 +1960,33 @@ async function doDialectImport(){
     }
     showToast(t('dialect.toast.done',{label:data.topic}));
     loadSavedList();   // the new dialect topic now appears in the saved list
+    // Opt-in: also generate AI example sentences (review-gated). Off by default.
+    if(document.getElementById('dialect-examples-cb')?.checked && data.id){
+      await _dialectGenerateExamples(data.id, statusEl);
+    }
   }catch(e){ if(statusEl) statusEl.textContent=''; showToast(t('dialect.toast.failed')+': '+e.message); }
   finally{ if(btn){ btn.disabled=false; } }
+}
+// Opt-in AI example sentences for a dialect topic (review-gated). Polls the generation job.
+async function _dialectGenerateExamples(id, statusEl){
+  try{
+    if(statusEl) statusEl.textContent=t('dialect.status.examples_start');
+    const r=await fetch('/api/dialect-examples',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id, max:12})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.jobId){ showToast(t('dialect.toast.examples_failed')+': '+(j.error||r.status)); return; }
+    for(let i=0;i<400;i++){
+      await new Promise(res=>setTimeout(res,1500));
+      const st=await (await fetch('/api/job/'+j.jobId)).json();
+      if(statusEl && st.step) statusEl.textContent=st.step;
+      if(st.status==='done'){
+        showToast(t('dialect.toast.examples_done',{n:st.data?.generated||0}));
+        if(statusEl) statusEl.textContent=t('dialect.status.examples_done',{n:st.data?.generated||0,total:st.data?.requested||0});
+        loadSavedList();
+        return;
+      }
+      if(st.status==='error'){ showToast(t('dialect.toast.examples_failed')+': '+(st.error||'')); return; }
+    }
+  }catch(e){ showToast(t('dialect.toast.examples_failed')+': '+e.message); }
 }
 function updateTranslationLangHint(){
   // This panel belongs to the main form, so it always reflects the form's source language.

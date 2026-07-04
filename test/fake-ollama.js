@@ -48,7 +48,14 @@ const srv = http.createServer(async (req, res) => {
     const sys = (msgs.find(m => m.role === 'system') || {}).content || '';
     const usr = msgs.filter(m => m.role === 'user').map(m => m.content).join('\n') || '';
     let kind, content;
-    if (/single JSON object|series title/i.test(sys)) {
+    if (/practice sentences for a regional dialect/i.test(sys)) {
+      // Dialect example sentence (M1.5): return a valid D:/G: reply that CONTAINS the requested
+      // dialect word (so the server's guardrail accepts it). Extract the word from the user prompt.
+      const m = usr.match(/dialect word:\s*"([^"]+)"/i);
+      const w = (m && m[1]) ? m[1].split(/[\/\s]/)[0] : 'Wort';
+      kind = 'dialect_example';
+      content = `D: Heint hon i a ${w} gsegn.\nG: Heute habe ich das gesehen.`;
+    } else if (/single JSON object|series title/i.test(sys)) {
       kind = 'storyline_title'; content = JSON.stringify({ title: 'The Fake Saga', icon: '📘' });
     } else if (/concise summary|captures the main arc/i.test(sys)) {
       kind = 'summary'; content = 'FAKE SUMMARY: a tidy recap of the chapters and their vocabulary themes, in the source language.';

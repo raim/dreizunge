@@ -58,6 +58,33 @@ const { boot, get, post, assert } = require('./lib');
     assert(rBad2.status === 400, 'empty glossary rejected');
     console.log('  validation: name required, empty text rejected: OK');
 
+    // 5) Opt-in AI example sentences (M1.5): review-gated, aiGenerated, full-QC-eligible.
+    const rEx = await post(sport, '/api/dialect-examples', { id: r.body.id, max: 3 });
+    assert(rEx.status === 202 && rEx.body.jobId, 'examples job accepted (got ' + rEx.status + ')');
+    let done = null;
+    for (let i = 0; i < 60; i++) {
+      await new Promise(s => setTimeout(s, 300));
+      const st = await get(sport, '/api/job/' + encodeURIComponent(rEx.body.jobId));
+      if (st.body && ['done', 'error'].includes(st.body.status)) { done = st.body; break; }
+    }
+    assert(done && done.status === 'done', 'examples job finished (status=' + (done && done.status) + ')');
+    assert(done.data.generated >= 1, 'at least one example sentence generated (got ' + done.data.generated + ')');
+    const withEx = (env.readStore().topics || []).find(t => t.id === r.body.id);
+    const exLesson = (withEx.lessons || []).find(l => l._aiExamples);
+    assert(exLesson, 'an AI-examples lesson was added');
+    assert(exLesson.needsReview === true && exLesson._dialect === true, 'examples lesson is dialect + needsReview');
+    assert(exLesson.sentences.length >= 1, 'examples lesson has sentences');
+    assert(exLesson.sentences.every(s => s.aiGenerated === true && s.needsReview === true),
+      'every example sentence is marked aiGenerated + needsReview (review-gated, not trusted)');
+    assert(exLesson.sentences.every(s => s._dialect === true), 'example sentences carry _dialect');
+    // The generated sentence actually contains the target word (guardrail held end-to-end).
+    assert(exLesson.sentences.some(s => s.forWord && s.target.includes(s.forWord.split(/[\/\s]/)[0])),
+      'generated sentence contains its target word');
+    // Non-dialect topic is refused.
+    const rEx2 = await post(sport, '/api/dialect-examples', { id: 'tp_does_not_exist', max: 3 });
+    assert(rEx2.status === 404, 'examples on a missing topic → 404');
+    console.log('  opt-in AI examples: generated, review-gated, aiGenerated, guardrail held: OK');
+
     console.log('e2e-dialect-import: ALL PASSED');
   } catch (e) {
     failed = true;

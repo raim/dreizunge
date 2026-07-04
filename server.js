@@ -682,6 +682,43 @@ async function qcCheckDialectPair(target, source, lang, srcLang, userComment) {
   return { ok: false, field: 'source', sug: body.slice(0, 300) };
 }
 
+// Generate ONE short example sentence for a dialect glossary word (M1.5, OPT-IN). Tightly
+// constrained + few-shot-grounded in the uploaded glossary so the model mimics the uploaded
+// orthography and stays within the known vocabulary. The output is ALWAYS marked aiGenerated and
+// must be reviewed/QC'd before it is trusted — the model is NOT an authority on the dialect. Returns
+// { target, source } (dialect sentence + High-German meaning) or null on failure.
+async function generateDialectExample(word, gloss, glossaryRows, baseLang) {
+  const S = langName(baseLang || 'de');
+  // Few-shot: show the model up to ~40 real glossary pairs so it imitates the orthography and uses
+  // known words. This is grounding, not authority — the sentence is still flagged aiGenerated.
+  const fewshot = (glossaryRows || []).slice(0, 40)
+    .map(r => `${r.target} = ${r.source}`).join('\n');
+  const system =
+    `You help build practice sentences for a regional dialect (a variety of ${S}). You are given a ` +
+    `glossary of dialect words with their ${S} meanings. Write ONE short, simple, natural sentence ` +
+    `in the DIALECT that uses the given dialect word. Rules:\n` +
+    `- Use ONLY dialect words from the glossary plus unavoidable small function words.\n` +
+    `- Mimic the spelling/orthography of the glossary exactly.\n` +
+    `- Do NOT invent dialect words that are not in the glossary.\n` +
+    `- Keep it to one short everyday sentence.\n` +
+    `Reply with EXACTLY two lines, nothing else:\n` +
+    `D: <the dialect sentence>\n` +
+    `G: <its ${S} meaning>`;
+  const user = `Glossary:\n${fewshot}\n\nWrite an example sentence using the dialect word: "${word}" (means "${gloss}").`;
+  let text;
+  try { ({ text } = await callLLMTranslation(system, user, 160)); } catch (_) { return null; }
+  const reply = (text || '').trim();
+  const dM = reply.match(/^\s*D\s*[:\-]\s*(.+)$/im);
+  const gM = reply.match(/^\s*G\s*[:\-]\s*(.+)$/im);
+  const target = dM && dM[1].trim();
+  const source = gM && gM[1].trim();
+  if (!target || !source) return null;
+  // Guardrail: the sentence must actually contain the target word (case-insensitive). If the model
+  // ignored the word, reject rather than store an off-target example.
+  if (!target.toLowerCase().includes(String(word).toLowerCase().split(/[\/\s]/)[0])) return null;
+  return { target: target.slice(0, 200), source: source.slice(0, 200) };
+}
+
 async function qcCheckPair(target, source, lang, srcLang, userComment) {
   const L = langName(lang), S = langName(srcLang || 'en');
   const tgt = _qcStripFuri(target);
@@ -890,8 +927,10 @@ async function _runQc(jobId, topics, opts) {
           const lessonIsDialect = !!ls._dialect;
           for (const item of arr) {
             if (!item || !item.target || !item.source) continue;
-            // Dialect items get sourceOnly QC: verify the gloss, never rewrite the dialect token.
-            if (lessonIsDialect || item._dialect) {
+            // Dialect items get sourceOnly QC (verify gloss, never rewrite the dialect token) —
+            // EXCEPT aiGenerated example sentences: the model authored those, so the dialect side is
+            // NOT ground truth and must be checked too (full pair QC).
+            if ((lessonIsDialect || item._dialect) && !item.aiGenerated) {
               await _check(item, () => qcCheckDialectPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
             } else {
               await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
@@ -3431,6 +3470,52 @@ http.createServer(async (req, res) => {
       if (bj && bj.status === 'running') { bj.status = 'cancelled'; console.log('  Book job cancelled:', body.bookId); }
       return json(res, 200, { ok: true });
     }
+    if (M === 'POST' && url.pathname === '/api/dialect-examples') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const topic = (String(body.id||'').startsWith('tp_') ? findSavedById(body.id) : findSaved(body.id));
+      if (!topic) return json(res, 404, { error: 'Dialect topic not found' });
+      if (!topic._dialect) return json(res, 400, { error: 'Not a dialect topic' });
+      const max = Math.max(1, Math.min(40, parseInt(body.max, 10) || 12));
+      const jobId = newJob();
+      // Collect the topic's dialect vocab as the glossary + the words to exemplify.
+      const glossaryRows = (topic.lessons||[]).flatMap(l => (l.vocab||[]).filter(v => v && v.target && v.source)
+        .map(v => ({ target: v.target, source: v.source })));
+      (async () => {
+        try {
+          const picks = glossaryRows.slice(0, max);
+          jobStep(jobId, `Generating ${picks.length} example sentence(s)…`);
+          const sentences = [];
+          for (let i = 0; i < picks.length; i++) {
+            const { target: w, source: g } = picks[i];
+            const ex = await generateDialectExample(w, g, glossaryRows, topic._dialect.base || 'de');
+            if (ex) sentences.push({ target: ex.target, source: ex.source,
+              words: ex.target.split(/\s+/), _dialect: true, aiGenerated: true, needsReview: true, forWord: w });
+            if ((i+1) % 3 === 0) jobStep(jobId, `Generated ${sentences.length}/${picks.length}…`);
+          }
+          // Add (or replace) an AI-examples lesson on the topic, clearly marked for review.
+          const fresh = findSavedById(topic.id) || topic;
+          const existingIdx = (fresh.lessons||[]).findIndex(l => l._aiExamples);
+          const lesson = {
+            id: existingIdx >= 0 ? fresh.lessons[existingIdx].id : ((fresh.lessons?.length||0) + 1),
+            type: 'standard',
+            title: `${fresh._dialect?.label || 'Dialect'} — ${'AI example sentences (review)'}`,
+            desc: 'AI-suggested example sentences — please review before trusting.',
+            icon: '🤖',
+            vocab: [], sentences,
+            _dialect: true, _aiExamples: true, needsReview: true,
+          };
+          if (!fresh.lessons) fresh.lessons = [];
+          if (existingIdx >= 0) fresh.lessons[existingIdx] = lesson; else fresh.lessons.push(lesson);
+          fresh.updatedAt = new Date().toISOString();
+          upsert(fresh);
+          console.log(`  🤖 Dialect examples: "${fresh.topic}" — ${sentences.length}/${picks.length} generated (review-gated)`);
+          jobDone(jobId, { id: fresh.id, generated: sentences.length, requested: picks.length });
+        } catch (e) { jobFail(jobId, e.message || String(e)); }
+      })();
+      return json(res, 202, { jobId });
+    }
+
     if (M === 'POST' && url.pathname === '/api/dialect-import') {
       let body;
       try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
