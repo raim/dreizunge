@@ -6,6 +6,7 @@ const { execFile } = require('child_process');
 const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
+const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
 const { callLLM: _callLLM, ping: pingOllama, release: releaseOllamaModel,
         warmup: _warmupLLM, stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
 const { buildExport } = require('./export-lessons');
@@ -647,6 +648,40 @@ function _qcStripFuri(t) {
     .replace(new RegExp('(['+_QC_KANJI+']+)\\[([^\\]]+)\\]','g'), '$1');
 }
 // Returns { ok:true } or { ok:false, sug:'corrected source' }.
+// QC a DIALECT vocab pair (sourceOnly). The `target` is a dialect token (e.g. East-Tyrolean),
+// which is GROUND TRUTH from the user's glossary — the model must NEVER "correct" it toward the
+// standard language (that would destroy the dialect). So we check only whether the `source` (the
+// High-German / standard-language gloss the user supplied) is spelled/written correctly on its own
+// terms, and we can NEVER return a target suggestion. The dialect word is shown to the model only
+// as immutable context. Returns {ok} | {ok:false, field:'source', sug}.
+async function qcCheckDialectPair(target, source, lang, srcLang, userComment) {
+  const S = langName(srcLang || 'de');
+  const tgt = _qcStripFuri(target);
+  const src = String(source).trim();
+  const system =
+    `You are given a dialect word and its ${S} meaning. The dialect word is FIXED and correct — ` +
+    `never change it or comment on it (it is a real regional form, not standard ${S}).\n` +
+    `Check ONLY the ${S} meaning: is it spelled and written correctly as ${S} (e.g. ${S} ` +
+    `capitalization of nouns)? Do NOT judge whether it is the "right" translation — the user is the ` +
+    `authority on what the dialect word means; only fix obvious ${S} spelling/writing errors.\n` +
+    (userComment && String(userComment).trim()
+      ? `The user reports a problem: "${String(userComment).trim().replace(/"/g, "'").slice(0, 300)}". Take it into account.\n`
+      : '') +
+    `Reply EXACTLY one of:\n` +
+    `OK  — if the ${S} meaning is written correctly.\n` +
+    `S: <corrected ${S} text only>  — if the ${S} meaning has a spelling/writing error.\n` +
+    `Never reply with a correction to the dialect word. Give ONLY the corrected ${S} text, no quotes.`;
+  const { text } = await callLLMTranslation(system, `dialect: ${tgt}\n${S}: ${src}`, 96);
+  const reply = (text || '').trim();
+  if (!reply || /^ok[.!]?$/i.test(reply)) return { ok: true };
+  const clean = s => s.replace(/^["']|["']$/g, '').replace(/^S\s*[:\-]\s*/i, '').trim();
+  const body = clean(reply);
+  // sourceOnly: any suggestion can ONLY be a source fix; a reply echoing the dialect word or empty
+  // is treated as OK (we never touch the target).
+  if (!body || body === src || body === tgt) return { ok: true };
+  return { ok: false, field: 'source', sug: body.slice(0, 300) };
+}
+
 async function qcCheckPair(target, source, lang, srcLang, userComment) {
   const L = langName(lang), S = langName(srcLang || 'en');
   const tgt = _qcStripFuri(target);
@@ -852,9 +887,15 @@ async function _runQc(jobId, topics, opts) {
         for (const key of ['vocab', 'sentences']) {
           const arr = ls[key];
           if (!Array.isArray(arr)) continue;
+          const lessonIsDialect = !!ls._dialect;
           for (const item of arr) {
             if (!item || !item.target || !item.source) continue;
-            await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
+            // Dialect items get sourceOnly QC: verify the gloss, never rewrite the dialect token.
+            if (lessonIsDialect || item._dialect) {
+              await _check(item, () => qcCheckDialectPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
+            } else {
+              await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
+            }
           }
         }
       }
@@ -3390,6 +3431,28 @@ http.createServer(async (req, res) => {
       if (bj && bj.status === 'running') { bj.status = 'cancelled'; console.log('  Book job cancelled:', body.bookId); }
       return json(res, 200, { ok: true });
     }
+    if (M === 'POST' && url.pathname === '/api/dialect-import') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const text = String(body.text || '');
+      const label = String(body.label || '').trim();
+      if (!text.trim()) return json(res, 400, { error: 'No glossary text' });
+      if (!label) return json(res, 400, { error: 'A dialect name is required' });
+      // Deterministic, no-LLM parse + build. The rows are ground truth; suspicious rows are
+      // reported (not auto-fixed) so the user can correct the source and re-import.
+      const { rows, report } = parseDialectGlossary(text, { threeCol: !!body.threeCol });
+      if (!rows.length) return json(res, 400, { error: 'No rows parsed', report });
+      const topic = buildDialectTopic(rows, {
+        label,
+        base: 'de', source: body.source ? String(body.source).slice(0, 8) : 'de',
+        note: body.note ? String(body.note).slice(0, 500) : '',
+        attribution: body.attribution ? String(body.attribution).slice(0, 300) : '',
+      }, { id: _newTopicId(), perLesson: Math.max(1, Math.min(50, parseInt(body.perLesson, 10) || 12)), now: new Date().toISOString() });
+      upsert(topic);
+      console.log(`  🗣 Dialect imported: "${label}" — ${rows.length} rows, ${topic.lessons.length} lesson(s)${report.suspicious.length ? `, ${report.suspicious.length} suspicious` : ''}`);
+      return json(res, 200, { ok: true, id: topic.id, topic: topic.topic, rows: rows.length, lessons: topic.lessons.length, report });
+    }
+
     if (M === 'POST' && url.pathname === '/api/save-story') {
       let body;
       try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }

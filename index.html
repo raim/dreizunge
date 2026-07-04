@@ -626,6 +626,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <input type="checkbox" id="use-translation-cb" onchange="onUseTranslationCb()">
         <span id="use-translation-lbl">🔤 I also have a translation</span> <span id="translation-lang-hint">(in English)</span>
       </label>
+      <label class="user-story-check-row">
+        <input type="checkbox" id="use-dialect-cb" onchange="onUseDialectCb()">
+        <span id="use-dialect-lbl">🗣 I have a dialect glossary (dialect = standard word)</span>
+      </label>
     </div>
     <div class="pdf-panel" id="pdf-panel">
       <div id="pdf-chunk-list" class="pdf-chunk-list"></div>
@@ -692,6 +696,31 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           id="user-translation-ph" placeholder="Paste the translation here."
           oninput="autoResizeTextarea(this)"></textarea>
       </div>
+    </div>
+
+    <div class="user-story-panel" id="dialect-panel">
+      <div style="font-size:12px;color:var(--gray-dark);margin-bottom:6px" id="dialect-help">
+        Paste a glossary, one entry per line, as <b>dialect = standard word</b> (e.g. <i>Gitsche = Mädchen</i>).
+        The dialect words are kept exactly as you type them — nothing is auto-corrected. This builds
+        vocabulary lessons (dialect → standard), no AI involved.
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap">
+        <input type="text" id="dialect-name-input" placeholder="Dialect name (e.g. Osttirol)"
+          maxlength="60" style="flex:1;min-width:140px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:6px 10px;font-size:13px;font-family:Nunito,sans-serif;color:#222">
+        <input type="file" id="dialect-file-input" accept=".txt,.csv,.tsv,.md" style="display:none" onchange="onDialectFileChosen(this)">
+        <button type="button" onclick="document.getElementById('dialect-file-input').click()"
+          style="font-size:12px;font-weight:700;padding:5px 10px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif" id="dialect-upload-btn">📎 Upload</button>
+      </div>
+      <textarea dir="auto" class="user-story-textarea" id="dialect-input"
+        placeholder="a boisl = einige Zeit&#10;Gitsche = Mädchen&#10;bleckfüeßet = barfuß" oninput="autoResizeTextarea(this)"></textarea>
+      <input type="text" id="dialect-attr-input" placeholder="Attribution / source (optional, e.g. author + license)"
+        maxlength="300" style="width:100%;box-sizing:border-box;margin-top:6px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:6px 10px;font-size:12px;font-family:Nunito,sans-serif;color:#222">
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        <button type="button" id="dialect-import-btn" onclick="doDialectImport()"
+          style="font-size:13px;font-weight:700;padding:6px 16px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">🗣 Build dialect lessons</button>
+        <span id="dialect-import-status" style="font-size:12px;color:var(--gray-dark)"></span>
+      </div>
+      <div id="dialect-report" style="margin-top:8px;font-size:12px"></div>
     </div>
 
     <div id="gen-form-section">
@@ -798,7 +827,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       </div>
     </div>
     </div><!-- end gen-form-section -->
-    <div style="display:flex;gap:8px;align-items:center"><button class="gen-btn" id="gen-btn" onclick="doGenerate()" style="flex:1">Generate lessons →</button><button class="stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="font-size:20px;border:none;background:none;cursor:pointer;padding:4px 6px;display:none;flex-shrink:0">🛑</button></div>
+    <div id="gen-btn-row" style="display:flex;gap:8px;align-items:center"><button class="gen-btn" id="gen-btn" onclick="doGenerate()" style="flex:1">Generate lessons →</button><button class="stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="font-size:20px;border:none;background:none;cursor:pointer;padding:4px 6px;display:none;flex-shrink:0">🛑</button></div>
   </div><!-- end gen-area -->
     <div class="offline-note" id="offline-note">⚠ No LLM available — load a saved lesson from the library below</div>
   </div>
@@ -1478,6 +1507,7 @@ function applyUIStrings() {
   // Story checkbox and related labels
   const useStoryLbl = document.getElementById('use-story-lbl');
   if (useStoryLbl) useStoryLbl.textContent = t('form.use_story');
+  { const ud=document.getElementById('use-dialect-lbl'); if(ud) ud.textContent=t('form.use_dialect'); }
   { const ub=document.getElementById('upload-choose-lbl'); if(ub) ub.textContent=t('form.upload_doc'); }
   { const sp=document.getElementById('split-page-lbl'); if(sp) sp.textContent=t('form.split_per_page'); }
   const useTransLbl = document.getElementById('use-translation-lbl');
@@ -1863,6 +1893,70 @@ function clearUserStory(){
   if(ta){ ta.value=''; autoResizeTextarea(ta); ta.focus(); }
   const tr=document.getElementById('user-translation-input');
   if(tr){ tr.value=''; autoResizeTextarea(tr); }
+}
+// ── Dialect glossary import (M1) — build faithful vocab lessons from a glossary, no AI ──
+function onUseDialectCb(){
+  const on=document.getElementById('use-dialect-cb').checked;
+  const panel=document.getElementById('dialect-panel');
+  // The panel is a .user-story-panel whose visibility is driven by the .open class (its CSS is
+  // display:none by default). Toggling inline style does nothing — use the class.
+  if(panel) panel.classList.toggle('open',on);
+  // While importing a dialect glossary, the normal generation form (incl. its Generate button) is
+  // irrelevant — hide it so the only action is the dialect panel's own "Build" button. Keep the
+  // topic label/box visible state managed by the normal form; just hide the whole form section.
+  const gf=document.getElementById('gen-form-section'); if(gf) gf.style.display=on?'none':'';
+  const gbr=document.getElementById('gen-btn-row'); if(gbr) gbr.style.display=on?'none':'';
+  const topicLbl=document.getElementById('topic-label'); if(topicLbl) topicLbl.style.display=on?'none':'';
+  const topicRow=document.getElementById('topic-input'); if(topicRow) topicRow.style.display=on?'none':'';
+  const checks=document.getElementById('user-story-checks');
+  // Hide the OTHER form toggles (own-story/translation) while in dialect mode to avoid confusion,
+  // but keep the dialect checkbox itself usable (it lives in the same row group).
+  // We do this by dimming siblings rather than hiding the group that contains our own checkbox.
+  if(on){ const us=document.getElementById('use-story-cb'); if(us&&us.checked){ us.checked=false; onUseStoryCb(); } }
+}
+function onDialectFileChosen(input){
+  const f=input.files&&input.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ const ta=document.getElementById('dialect-input'); if(ta){ ta.value=String(r.result||''); autoResizeTextarea(ta); }
+    // Prefill the dialect name from the file name if empty.
+    const nm=document.getElementById('dialect-name-input'); if(nm&&!nm.value.trim()){ nm.value=f.name.replace(/\.[^.]+$/,''); } };
+  r.readAsText(f);
+}
+async function doDialectImport(){
+  if(!APP.info?.canGenerate){ showToast(t('dialect.toast.no_backend')); return; }
+  const text=(document.getElementById('dialect-input')?.value||'').trim();
+  const label=(document.getElementById('dialect-name-input')?.value||'').trim();
+  const attribution=(document.getElementById('dialect-attr-input')?.value||'').trim();
+  const statusEl=document.getElementById('dialect-import-status');
+  const reportEl=document.getElementById('dialect-report');
+  if(!label){ showToast(t('dialect.toast.need_name')); document.getElementById('dialect-name-input')?.focus(); return; }
+  if(!text){ showToast(t('dialect.toast.need_text')); document.getElementById('dialect-input')?.focus(); return; }
+  const btn=document.getElementById('dialect-import-btn');
+  if(btn){ btn.disabled=true; }
+  if(statusEl) statusEl.textContent=t('dialect.status.importing');
+  if(reportEl) reportEl.innerHTML='';
+  try{
+    const r=await fetch('/api/dialect-import',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ text, label, attribution, base:'de', source:'de' })});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok){ if(statusEl) statusEl.textContent=''; showToast(t('dialect.toast.failed')+': '+(data.error||r.status)); return; }
+    if(statusEl) statusEl.textContent=t('dialect.status.done',{rows:data.rows,lessons:data.lessons});
+    // Show the parse report: suspicious rows the user should fix in their source.
+    const susp=(data.report&&data.report.suspicious)||[];
+    const dups=(data.report&&data.report.duplicates)||[];
+    if(reportEl){
+      let html='';
+      if(susp.length){
+        html+='<div style="color:var(--red-dark);font-weight:700;margin-bottom:2px">⚠ '+t('dialect.report.suspicious',{n:susp.length})+'</div>';
+        html+='<ul style="margin:0 0 6px 16px;padding:0">'+susp.slice(0,10).map(s=>'<li>'+t('dialect.report.line',{line:s.line})+': <code>'+escHtml(s.raw)+'</code></li>').join('')+'</ul>';
+      }
+      if(dups.length){ html+='<div style="color:var(--gray-dark)">'+t('dialect.report.duplicates',{n:dups.length})+'</div>'; }
+      reportEl.innerHTML=html;
+    }
+    showToast(t('dialect.toast.done',{label:data.topic}));
+    loadSavedList();   // the new dialect topic now appears in the saved list
+  }catch(e){ if(statusEl) statusEl.textContent=''; showToast(t('dialect.toast.failed')+': '+e.message); }
+  finally{ if(btn){ btn.disabled=false; } }
 }
 function updateTranslationLangHint(){
   // This panel belongs to the main form, so it always reflects the form's source language.
@@ -8480,7 +8574,17 @@ function tMathCalc(ex){
 
 function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
 function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:Ln})}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_source_target.q",{word:furiHtml(ex.source),lang:Ln})}</div>${cGrid(ex.choices,false)}</div>`; }
-function ttsApproxBadge(){ return ttsIsApproximate()?`<span class="tts-approx" style="margin-left:6px">${t('tts.approx')}</span>`:''; }
+function ttsApproxBadge(){
+  if(!ttsIsApproximate()) return '';
+  // For dialect content, name the base voice so the learner knows it's a German approximation of
+  // the dialect, not an authentic dialect voice.
+  if(_lessonIsDialect()){
+    const base=(APP.lessonData?.lang)||'de';
+    const baseName=localizedLangName(base, APP.srcLang||base);
+    return `<span class="tts-approx" style="margin-left:6px">${t('tts.approx_dialect',{lang:baseName})}</span>`;
+  }
+  return `<span class="tts-approx" style="margin-left:6px">${t('tts.approx')}</span>`;
+}
 function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(APP.lessonData?.srcLang||APP.srcLang||"en");
   // Intro "learn the script" listen item: hear a letter, pick its glyph. The spoken glyph must
   // be HIDDEN (showing it would reveal the answer, since the choices are glyphs). When muted /
@@ -9477,9 +9581,23 @@ function activeTtsCode(){
 }
 
 function ttsIsApproximate(){
+  // Dialect content (a variety of the base language, e.g. East-Tyrolean spoken with the German
+  // voice) is ALWAYS an approximation — there's no native dialect voice — so flag it regardless of
+  // any TTS-language override.
+  if(_lessonIsDialect()) return true;
   if(!APP.ttsLang) return false;  // no override = native = exact
   const lang=APP.lessonData?.lang||APP.lang||'it';
   return APP.ttsLang !== (LANGS[lang]||LANGS.it).tts;
+}
+// True when the active lesson/topic is imported dialect material (marked _dialect on the lesson or
+// its items). Used to (a) label TTS as approximate and (b) could gate dialect-specific UI later.
+function _lessonIsDialect(){
+  const d=APP.lessonData; if(!d) return false;
+  if(d._dialect) return true;
+  const ls=d.lessons?.[APP.cur?.lessonIdx];
+  if(ls && ls._dialect) return true;
+  // Also treat a topic whose vocab items are dialect-marked as dialect.
+  return !!(ls && Array.isArray(ls.vocab) && ls.vocab.some(v => v && v._dialect));
 }
 
 // ── TTS voice-quality warning (item: nice-speech detection) ───────────────────

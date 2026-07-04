@@ -83,6 +83,8 @@ run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [p
 run('unit: learned-vocab ledger + my-story wiring (v50)', 'node', [path.join(__dirname, 'unit-learned-vocab.test.js')]);
 run('unit: my-story generation plumbing (v50)', 'node', [path.join(__dirname, 'unit-my-story.test.js')]);
 run('unit: dialect glossary importer (M1, deterministic)', 'node', [path.join(__dirname, 'unit-dialect-glossary.test.js')]);
+run('unit: dialect TTS approximate detection (M1)', 'node', [path.join(__dirname, 'unit-dialect-tts.test.js')]);
+  run('unit: dialect import panel toggle (M1)', 'node', [path.join(__dirname, 'unit-dialect-panel.test.js')]);
 run('unit: no-keyboard glyph ordering (v48)', 'node', [path.join(__dirname, 'unit-no-keyboard.test.js')]);
 run('unit: hidden lessons omitted/non-blocking in static (v48)', 'node', [path.join(__dirname, 'unit-hidden-lessons.test.js')]);
 run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join(__dirname, 'unit-inline-escaping.test.js')]);
@@ -94,6 +96,7 @@ run('unit: word_forms/synonyms content-aware RTL (v49)', 'node', [path.join(__di
 if (!quick) {
   run('e2e: generate-book + storyline-title (item 5)', 'node', [path.join(__dirname, 'e2e-generate.test.js')]);
   run('e2e: userPrompt stores full input', 'node', [path.join(__dirname, 'e2e-userprompt.test.js')]);
+  run('e2e: dialect glossary import (M1)', 'node', [path.join(__dirname, 'e2e-dialect-import.test.js')]);
   run('e2e: bookjob continuation + arc lessons', 'node', [path.join(__dirname, 'e2e-bookjob.test.js')]);
   run('e2e: book topic not truncated', 'node', [path.join(__dirname, 'e2e-booktopic.test.js')]);
   run('e2e: ui.json hot-reload', 'node', [path.join(__dirname, 'e2e-ui-reload.test.js')]);

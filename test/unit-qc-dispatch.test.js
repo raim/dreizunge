@@ -39,6 +39,7 @@ const stubs = {
   _qcStripFuri: t => t,
   _qcLessonUserFlagged: () => true,
   qcCheckPair: async () => { calls.pair++; return { ok: false, field: 'source', sug: 'pair-fix' }; },
+  qcCheckDialectPair: async () => { calls.dialect = (calls.dialect||0)+1; return { ok: false, field: 'source', sug: 'dialect-fix' }; },
   qcCheckCloze: async () => { calls.cloze++; return { ok: false, sug: 'cloze-fix' }; },
   qcCheckSynonymSet: async () => { calls.synset++; return { ok: false, sug: 'syn-fix' }; },
   _lessonHasOpenQcFlag: (ls) => {
@@ -60,6 +61,7 @@ const topics = [{
     { type: 'math', numbers: [1, 2, 3] },
     { type: 'error_hunt', corruptedStory: 'x', correctStory: 'y' },
     { type: 'mixed' },
+    { type: 'standard', _dialect: true, vocab: [{ target: 'bleckfüeßet', source: 'barfuß', _dialect: true }] },
   ],
 }];
 
@@ -87,7 +89,12 @@ const topics = [{
     'math/error_hunt/mixed are neither checked nor stamped');
   // qc shape the editor expects: { sug, field, at }
   assert.ok(L[1].items[0].qc.field && L[1].items[0].qc.at, 'qc has field + timestamp');
-  console.log('  _runQc dispatch: standard/grammar/conjugation→pair, word_forms→cloze, synonyms→synset, intro_script/math/error_hunt/mixed→skip: OK');
+  // dialect lesson (_dialect) → sourceOnly dialect checker, NOT the standard pair checker.
+  assert.strictEqual(calls.dialect || 0, 1, 'dialect vocab routed to qcCheckDialectPair');
+  assert.ok(L[9].vocab[0].qc && L[9].vocab[0].qc.sug === 'dialect-fix', 'dialect vocab got the dialect-checker flag');
+  assert.strictEqual(L[9].vocab[0].qc.field, 'source', 'dialect QC can only ever flag the source (never the dialect token)');
+  assert.strictEqual(calls.pair, 4, 'dialect item did NOT go to the standard pair checker (still 4)');
+  console.log('  _runQc dispatch: dialect lesson → sourceOnly dialect checker (target never touched): OK');
 
   // ── Seam: flagged-only QC must see per-item userFlag on items (word_forms) and words (synonyms) ──
   const flaggedFn = new Function('getFlags', ext(server, '_qcLessonUserFlagged') + '\nreturn _qcLessonUserFlagged;')(() => ({}));

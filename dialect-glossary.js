@@ -141,7 +141,74 @@
       });
   }
 
-  const api = { parseDialectGlossary, dialectVocabItems };
+  const api = { parseDialectGlossary, dialectVocabItems, buildDialectTopic };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
-  if (root) { root.parseDialectGlossary = parseDialectGlossary; root.dialectVocabItems = dialectVocabItems; }
+  if (root) { root.parseDialectGlossary = parseDialectGlossary; root.dialectVocabItems = dialectVocabItems; root.buildDialectTopic = buildDialectTopic; }
+
+  // Build a complete, ready-to-save dialect TOPIC from parsed rows. NO LLM. The result slots into
+  // lessons.json's topic shape and plays through the normal vocab lesson UI. Every vocab item is
+  // marked `_dialect:true` (→ sourceOnly QC + approximate-voice toggle). Attribution rides on the
+  // topic so the credit surfaces in the UI and export.
+  //
+  //   meta: { label, base='de', source='de', note, attribution } — label is the dialect's display
+  //         name (e.g. "Osttirol"); base/source are the High-German language codes.
+  //   opts: { id, perLesson=12, chunkLabel } — id is caller-supplied (a real tp_ id); a
+  //         deterministic fallback is used for tests. perLesson caps rows per vocab lesson.
+  function buildDialectTopic(rows, meta, opts) {
+    meta = meta || {}; opts = opts || {};
+    const items = dialectVocabItems(rows);
+    const perLesson = Math.max(1, opts.perLesson || 12);
+    const label = meta.label || 'Dialect';
+    const base = meta.base || 'de';
+    const source = meta.source || 'de';
+    // Deterministic fallback id (tests); real callers pass a collision-safe tp_ id.
+    const id = opts.id || ('tp_dialect_' + label.toLowerCase().replace(/[^a-z0-9]+/g, '_'));
+
+    // Chunk rows into vocab lessons in file order (no reshuffle — order is the author's).
+    const lessons = [];
+    for (let i = 0; i < items.length; i += perLesson) {
+      const chunk = items.slice(i, i + perLesson);
+      const n = lessons.length + 1;
+      lessons.push({
+        id: n,
+        type: 'standard',
+        title: `${label} — ${opts.chunkLabel || 'Wörter'} ${n}`,
+        desc: `${chunk.length} ${label} → ${langLabel(source)}`,
+        icon: '🗣',
+        vocab: chunk,
+        sentences: [],
+        _dialect: true,                 // lesson-level marker (whole set is dialect material)
+      });
+    }
+    if (!lessons.length) {
+      lessons.push({ id: 1, type: 'standard', title: `${label} — Wörter 1`, desc: '', icon: '🗣', vocab: [], sentences: [], _dialect: true });
+    }
+
+    return {
+      id,
+      topic: label,
+      topicEmoji: '🗣',
+      lang: base,                        // the dialect is a variety of the base language (de)
+      srcLang: source,
+      difficulty: opts.difficulty || 'easy',
+      _dialect: {                        // dialect metadata block (never sent to any model)
+        label,
+        base,
+        note: meta.note || '',
+        attribution: meta.attribution || '',
+        curated: !!meta.curated,
+        rowCount: items.length,
+      },
+      lessons,
+      generatedAt: opts.now || 0,
+      updatedAt: opts.now || 0,
+    };
+  }
+
+  // Minimal language-code → display label (only what the builder needs; the app has its own fuller
+  // map). Falls back to the code itself.
+  function langLabel(code) {
+    const M = { de: 'Deutsch', en: 'English', it: 'Italiano', fr: 'Français', es: 'Español' };
+    return M[code] || code;
+  }
 })(typeof window !== 'undefined' ? window : null);

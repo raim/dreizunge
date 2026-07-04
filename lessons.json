@@ -1128,6 +1128,544 @@
   ],
   "topics": [
     {
+      "id": "tp_17831698169270000093",
+      "topic": "osttirol-glossary",
+      "topicEmoji": "🗣",
+      "lang": "de",
+      "srcLang": "de",
+      "difficulty": "easy",
+      "_dialect": {
+        "label": "osttirol-glossary",
+        "base": "de",
+        "note": "",
+        "attribution": "",
+        "curated": false,
+        "rowCount": 86
+      },
+      "lessons": [
+        {
+          "id": 1,
+          "type": "standard",
+          "title": "osttirol-glossary — Wörter 1",
+          "desc": "12 osttirol-glossary → Deutsch",
+          "icon": "🗣",
+          "vocab": [
+            {
+              "target": "a boisl",
+              "source": "einige Zeit",
+              "_dialect": true
+            },
+            {
+              "target": "ausfratscheln",
+              "source": "ausfragen",
+              "_dialect": true
+            },
+            {
+              "target": "baiteln",
+              "source": "schütteln",
+              "_dialect": true
+            },
+            {
+              "target": "brantig",
+              "source": "durstig",
+              "_dialect": true
+            },
+            {
+              "target": "aufkalten",
+              "source": "aufbewahren",
+              "_dialect": true
+            },
+            {
+              "target": "Bingl",
+              "source": "Beule",
+              "_dialect": true
+            },
+            {
+              "target": "bleckfüeßet",
+              "source": "barfuß",
+              "_dialect": true
+            },
+            {
+              "target": "Borze",
+              "source": "kleiner junger Baum",
+              "_dialect": true
+            },
+            {
+              "target": "bochn",
+              "source": "backen",
+              "_dialect": true
+            },
+            {
+              "target": "bouseln",
+              "source": "spielen, basteln",
+              "_dialect": true
+            },
+            {
+              "target": "dalämpat",
+              "source": "zerzaust, kaputt, ramponiert",
+              "_dialect": true
+            },
+            {
+              "target": "Dawischele",
+              "source": "Fangen spielen",
+              "_dialect": true
+            }
+          ],
+          "sentences": [],
+          "_dialect": true
+        },
+        {
+          "id": 2,
+          "type": "standard",
+          "title": "osttirol-glossary — Wörter 2",
+          "desc": "12 osttirol-glossary → Deutsch",
+          "icon": "🗣",
+          "vocab": [
+            {
+              "target": "dechtan",
+              "source": "also doch",
+              "_dialect": true
+            },
+            {
+              "target": "ebba",
+              "source": "etwa",
+              "_dialect": true
+            },
+            {
+              "target": "ebbes",
+              "source": "etwas",
+              "_dialect": true
+            },
+            {
+              "target": "eifern",
+              "source": "eifersüchtig sein",
+              "_dialect": true
+            },
+            {
+              "target": "entn",
+              "source": "drüben",
+              "_dialect": true
+            },
+            {
+              "target": "etlane",
+              "source": "etliche",
+              "_dialect": true
+            },
+            {
+              "target": "fertn",
+              "source": "voriges, letztes Jahr",
+              "_dialect": true
+            },
+            {
+              "target": "floichn",
+              "source": "fliehen",
+              "_dialect": true
+            },
+            {
+              "target": "gach",
+              "source": "schnell",
+              "_dialect": true
+            },
+            {
+              "target": "Ganga",
+              "source": "Gauner",
+              "_dialect": true
+            },
+            {
+              "target": "genetig",
+              "source": "eilig hastig",
+              "_dialect": true
+            },
+            {
+              "target": "Gfrett",
+              "source": "Ärger, Mühe",
+              "_dialect": true
+            }
+          ],
+          "sentences": [],
+          "_dialect": true
+        },
+        {
+          "id": 3,
+          "type": "standard",
+          "title": "osttirol-glossary — Wörter 3",
+          "desc": "12 osttirol-glossary → Deutsch",
+          "icon": "🗣",
+          "vocab": [
+            {
+              "target": "Gitsche",
+              "source": "Mädchen",
+              "_dialect": true
+            },
+            {
+              "target": "gladdsad",
+              "source": "tatsächlich",
+              "_dialect": true
+            },
+            {
+              "target": "glaggln",
+              "source": "baumeln, hängen lassen",
+              "_dialect": true
+            },
+            {
+              "target": "gleim",
+              "source": "fest",
+              "_dialect": true
+            },
+            {
+              "target": "Goggele",
+              "source": "Ei",
+              "_dialect": true
+            },
+            {
+              "target": "Grantn",
+              "source": "Preiselbeeren",
+              "_dialect": true
+            },
+            {
+              "target": "Greggn",
+              "source": "Kleine Klumpen in den Augen",
+              "_dialect": true
+            },
+            {
+              "target": "Grüemet",
+              "source": "zweite Heumahd",
+              "_dialect": true
+            },
+            {
+              "target": "gschaftig",
+              "source": "stolz prahlend",
+              "_dialect": true
+            },
+            {
+              "target": "gschaffen",
+              "source": "sich vertragen",
+              "_dialect": true
+            },
+            {
+              "target": "Gugga",
+              "source": "Fernglas",
+              "_dialect": true
+            },
+            {
+              "target": "glientig",
+              "source": "heiss, glühend",
+              "_dialect": true
+            }
+          ],
+          "sentences": [],
+          "_dialect": true
+        },
+        {
+          "id": 4,
+          "type": "standard",
+          "title": "osttirol-glossary — Wörter 4",
+          "desc": "12 osttirol-glossary → Deutsch",
+          "icon": "🗣",
+          "vocab": [
+            {
+              "target": "Harpfe",
+              "source": "Überdachtes Holzgerüst zum Heutrocknen",
+              "_dialect": true
+            },
+            {
+              "target": "Harvest",
+              "source": "Herbst",
+              "_dialect": true
+            },
+            {
+              "target": "heint",
+              "source": "heute",
+              "_dialect": true
+            },
+            {
+              "target": "hem",
+              "source": "dann",
+              "_dialect": true
+            },
+            {
+              "target": "hell",
+              "source": "dieses, jenes",
+              "_dialect": true
+            },
+            {
+              "target": "hetzig",
+              "source": "witzig, lustig",
+              "_dialect": true
+            },
+            {
+              "target": "Hutsche",
+              "source": "Schaukel",
+              "_dialect": true
+            },
+            {
+              "target": "Iwilschger",
+              "source": "Maulwurf",
+              "_dialect": true
+            },
+            {
+              "target": "Langes",
+              "source": "Frühling",
+              "_dialect": true
+            },
+            {
+              "target": "Laggl",
+              "source": "grosser junger Mann",
+              "_dialect": true
+            },
+            {
+              "target": "Lettn",
+              "source": "Dreck / Schlamm",
+              "_dialect": true
+            },
+            {
+              "target": "letz",
+              "source": "schlecht",
+              "_dialect": true
+            }
+          ],
+          "sentences": [],
+          "_dialect": true
+        },
+        {
+          "id": 5,
+          "type": "standard",
+          "title": "osttirol-glossary — Wörter 5",
+          "desc": "12 osttirol-glossary → Deutsch",
+          "icon": "🗣",
+          "vocab": [
+            {
+              "target": "lousn",
+              "source": "hören",
+              "_dialect": true
+            },
+            {
+              "target": "Lousa",
+              "source": "Ohren",
+              "_dialect": true
+            },
+            {
+              "target": "Lulla",
+              "source": "Schnuller",
+              "_dialect": true
+            },
+            {
+              "target": "Marende",
+              "source": "Vormittagsjause",
+              "_dialect": true
+            },
+            {
+              "target": "moudln",
+              "source": "muffig riechen, stinken",
+              "_dialect": true
+            },
+            {
+              "target": "naggln",
+              "source": "wackeln, rütteln",
+              "_dialect": true
+            },
+            {
+              "target": "Notscha",
+              "source": "Schwein",
+              "_dialect": true
+            },
+            {
+              "target": "Mangale",
+              "source": "Männchen, kleiner Mann",
+              "_dialect": true
+            },
+            {
+              "target": "Fock",
+              "source": "Schwein",
+              "_dialect": true
+            },
+            {
+              "target": "Fockntrog",
+              "source": "Schweinetrog",
+              "_dialect": true
+            },
+            {
+              "target": "nutz",
+              "source": "brav",
+              "_dialect": true
+            },
+            {
+              "target": "Pampfl",
+              "source": "Teig",
+              "_dialect": true
+            }
+          ],
+          "sentences": [],
+          "_dialect": true
+        },
+        {
+          "id": 6,
+          "type": "standard",
+          "title": "osttirol-glossary — Wörter 6",
+          "desc": "12 osttirol-glossary → Deutsch",
+          "icon": "🗣",
+          "vocab": [
+            {
+              "target": "Pimpf",
+              "source": "kleiner (kleingewachsener) Bub",
+              "_dialect": true
+            },
+            {
+              "target": "Pfintsig",
+              "source": "Donnerstag",
+              "_dialect": true
+            },
+            {
+              "target": "Pliatz",
+              "source": "Trottel, ungeschickte Person",
+              "_dialect": true
+            },
+            {
+              "target": "rean",
+              "source": "weinen",
+              "_dialect": true
+            },
+            {
+              "target": "ringe",
+              "source": "leicht",
+              "_dialect": true
+            },
+            {
+              "target": "sich schleinen",
+              "source": "sich beeilen",
+              "_dialect": true
+            },
+            {
+              "target": "schmettern",
+              "source": "lügen",
+              "_dialect": true
+            },
+            {
+              "target": "sell",
+              "source": "dieses, jenes",
+              "_dialect": true
+            },
+            {
+              "target": "sem",
+              "source": "dann",
+              "_dialect": true
+            },
+            {
+              "target": "sempern",
+              "source": "nörgeln, bekritteln",
+              "_dialect": true
+            },
+            {
+              "target": "Seckl",
+              "source": "Klingelbeutel",
+              "_dialect": true
+            },
+            {
+              "target": "Solda",
+              "source": "Balkon",
+              "_dialect": true
+            }
+          ],
+          "sentences": [],
+          "_dialect": true
+        },
+        {
+          "id": 7,
+          "type": "standard",
+          "title": "osttirol-glossary — Wörter 7",
+          "desc": "12 osttirol-glossary → Deutsch",
+          "icon": "🗣",
+          "vocab": [
+            {
+              "target": "Schnaggele",
+              "source": "Schluckauf",
+              "_dialect": true
+            },
+            {
+              "target": "Togga",
+              "source": "Trottel, Idiot",
+              "_dialect": true
+            },
+            {
+              "target": "tscharre gehen",
+              "source": "Pleite gehen",
+              "_dialect": true
+            },
+            {
+              "target": "tschatschln",
+              "source": "Süsses naschen",
+              "_dialect": true
+            },
+            {
+              "target": "tschentschn",
+              "source": "sudern, raunzen",
+              "_dialect": true
+            },
+            {
+              "target": "tscherfln",
+              "source": "beim Gehen mit den Füssen am Boden schleifen",
+              "_dialect": true
+            },
+            {
+              "target": "tschoppen/einetschoppen",
+              "source": "das essen reinstopfen",
+              "_dialect": true
+            },
+            {
+              "target": "Tschurtsche",
+              "source": "Tannenzapfen",
+              "_dialect": true
+            },
+            {
+              "target": "tramhappat",
+              "source": "schlaftrunken",
+              "_dialect": true
+            },
+            {
+              "target": "tratzen",
+              "source": "(jemanden) ärgern",
+              "_dialect": true
+            },
+            {
+              "target": "tschippln",
+              "source": "an den Haaren ziehen",
+              "_dialect": true
+            },
+            {
+              "target": "verzartln",
+              "source": "verwöhnen",
+              "_dialect": true
+            }
+          ],
+          "sentences": [],
+          "_dialect": true
+        },
+        {
+          "id": 8,
+          "type": "standard",
+          "title": "osttirol-glossary — Wörter 8",
+          "desc": "2 osttirol-glossary → Deutsch",
+          "icon": "🗣",
+          "vocab": [
+            {
+              "target": "Zegga",
+              "source": "faluer, träger Mensch",
+              "_dialect": true
+            },
+            {
+              "target": "zoggeln",
+              "source": "ruckartig langsam fahren/gehen",
+              "_dialect": true
+            }
+          ],
+          "sentences": [],
+          "_dialect": true
+        }
+      ],
+      "generatedAt": "2026-07-04T12:56:56.927Z",
+      "updatedAt": "2026-07-04T12:56:56.927Z"
+    },
+    {
       "topic": "Mein Review",
       "topicEmoji": "📝",
       "userTopic": "My review — English (2026-07-04)",

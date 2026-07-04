@@ -144,7 +144,7 @@ touch this area carefully.
 
 ## OPEN — waiting on user material
 
-### Dialect lessons M1 — IMPORTER CORE STARTED (East-Tyrolean material received)
+### Dialect lessons M1 — COMPLETE (East-Tyrolean pilot)
 Full spec + parsing rules + data model in **`build_history/spec_dialect_lessons_m1.md`**. Decisions
 locked: glossary-table-first; East-Tyrolean pilot; dialect = target / High German = source; 3-col
 table `dialect | de | note`; one row = one verbatim vocab item; approximate `de` voice toggle.
@@ -153,20 +153,51 @@ Safety spine: **user is the source of truth, the model is a packager/aligner, ne
 explicit permission — see `ATTRIBUTIONS.md`). A broader online source (mein-osttirol.rocks, 1165
 entries) is pending a permission request to its operators (NOT to be scraped/imported until
 permission is on file).
-**SHIPPED this step (headless core):** `dialect-glossary.js` — a deterministic, no-LLM importer:
-detects delimiter (tab/pipe/**equals**/comma/2-space), skips title/CC-license/header lines, parses
-rows verbatim (no split/normalize beyond trim), keeps duplicates but reports them, and SURFACES a
-suspicious "glued" row (the real PDF collided `Mangale…MannFock` artifact) as an anomaly for the
-human to fix rather than auto-splitting it. `dialectVocabItems()` → `{target, source, note?,
-_dialect:true}`. Tested against the real Osttirol material (`unit-dialect-glossary`,
-`test/fixtures/osttirol-glossary.txt`).
-**NEXT (M1 remainder):** (1) the `dialect` topic data model (`{id,label,base:'de',source:'de',note,
-glossary,attribution,curated}`) + a `fromDialectMaterial` generation mode that builds vocab lessons
-from rows with zero LLM; (2) `sourceOnly` QC direction (verify the German gloss, never rewrite the
-dialect token); (3) the UI panel ("🗣 Dialect": name it, paste/upload glossary, column-map confirm,
-optional note) + saved-list badge; (4) the "≈ German voice (approximate)" TTS toggle (default-on,
-labeled) — to be evaluated on real words. Then M1.5 (opt-in AI example sentences, QC-gated), M2
-(generated dialect stories, per-dialect `curated:true`, native-reviewed).
+**SHIPPED this step (headless core + data model):** `dialect-glossary.js` — a deterministic,
+no-LLM importer: `parseDialectGlossary` detects delimiter (tab/pipe/**equals**/comma/2-space),
+skips title/CC-license/header lines, parses rows verbatim (no split/normalize beyond trim), keeps
+duplicates but reports them, and SURFACES a suspicious "glued" row (the real PDF collided
+`Mangale…MannFock` artifact) as an anomaly for the human to fix rather than auto-splitting it.
+`dialectVocabItems()` → `{target, source, note?, _dialect:true}`. **`buildDialectTopic(rows, meta,
+opts)`** turns parsed rows into a complete, playable dialect TOPIC (lang===srcLang===de, the
+dialect as a variety of German; rows chunked into `standard` vocab lessons in author order; every
+item + lesson marked `_dialect:true`; attribution + a `_dialect` metadata block on the topic, never
+sent to a model). All tested against the real Osttirol material (`unit-dialect-glossary`,
+`test/fixtures/osttirol-glossary.txt` — now corrected to 86 clean rows; the collided-row guarantee
+kept via a synthetic input).
+**M1 COMPLETE.** All pieces shipped:
+- `sourceOnly` QC direction — `qcCheckDialectPair` verifies only the gloss and can only ever return a
+  `field:'source'` fix; `_runQc` routes any `_dialect` lesson/item to it, so QC never rewrites a
+  dialect token (`unit-qc-dispatch`).
+- **Wiring + UI panel** — `/api/dialect-import` (server: parse → `buildDialectTopic` → `upsert`,
+  returns the parse report), and the "🗣 Dialect" panel on the generation screen (name, paste/upload
+  glossary, attribution, Build; shows suspicious/duplicate rows to fix; the new topic appears in the
+  saved list and plays as normal vocab lessons). E2E-tested (`e2e-dialect-import`) + against the real
+  Osttirol glossary (86 rows → 8 lessons).
+- **Approximate voice** — dialect content is spoken with the base-language (German) voice and
+  labelled "≈ {lang} voice (approximate)" via the existing approximate-badge path; `ttsIsApproximate`
+  now returns true for `_dialect` content regardless of any TTS override, and the badge names the
+  base voice (`unit-dialect-tts`). No native dialect voice exists, so this is inherently approximate
+  and always labelled.
+New en-only i18n keys owed to the translate pass: `form.use_dialect`, `dialect.*` (11), and
+`tts.approx_dialect`. Browser checks owed: LIVE-TEST §51.
+
+**Toward M1.5 → M2 (generation, with a native-review gate):**
+- **M1.5 — assisted example sentences (safe bridge):** generate ONE example sentence per known
+  glossary word, each individually QC-checkable/editable, constrained to glossary vocabulary. Small
+  units → catchable errors. Opt-in, QC-gated. Only for words already in the glossary.
+- **M2 — generated dialect stories:** the north-star experiment (user, online Qwen3-Plus prompt:
+  "write a short story in this East-Tyrolean dialect from this glossary") produced a fluent dense
+  dialect story (`Heint is a glientig Tag gwesn…`) weaving in dozens of glossary words. It shows M2
+  is achievable AND pleasant to read — but ALSO shows the hazard: the model INVENTS grammar/verb
+  forms/connectives the glossary doesn't cover (e.g. `gwesn`, `gloffen`, `goangen`, `eigschlofn`),
+  fluently enough to be trusted when it shouldn't be. That's the model AUTHORING dialect — which the
+  safety spine forbids without a human in the loop. So M2 = generation CONSTRAINED to glossary vocab
+  as far as possible + output marked `curated:false` until a native speaker reviews it; only
+  reviewed stories promote to `curated:true` and are shown as "real" content. The value the app adds
+  over "just ask Qwen" is the REVIEW GATE (fluent guess → vetted material). The interesting M2 work
+  is the review workflow, not the generation (which already basically works). Keep the Qwen output
+  saved as the reference target.
 
 ---
 

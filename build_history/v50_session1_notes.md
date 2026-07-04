@@ -240,3 +240,81 @@ per spec_dialect_lessons_m1.md:
   (1165 entries) pending a permission email to the operators — NOT to be imported until permission
   is on file.
 No client/server/data changes yet (parser not wired into the UI) → no static rebuild. Still v50.
+
+## post-v50 — Dialect M1: fixture corrected + data model/builder
+- **Fixture fix:** the PDF collided row (`Mangale = Männchen, kleiner MannFock = Schwein`) was two
+  glued entries; corrected in `test/fixtures/osttirol-glossary.txt` to two clean rows (`Mangale =
+  Männchen, kleiner Mann` + `Fock = Schwein`, space restored). Fixture now 86 clean rows. The
+  "surface-not-split" guarantee is still tested via a SYNTHETIC collided input (so the fixture stays
+  clean while the anomaly path stays covered). User fixes the same line in their master source.
+- **`buildDialectTopic(rows, meta, opts)`** added to `dialect-glossary.js`: rows → a complete,
+  playable dialect topic. lang===srcLang===de (dialect as a variety of German); rows chunked into
+  `standard` vocab lessons in author order (perLesson default 12); every item + lesson marked
+  `_dialect:true`; attribution + a `_dialect` metadata block on the topic (never sent to a model);
+  caller supplies a real tp_ id (deterministic fallback for tests); empty input → valid empty topic.
+  Tested (`unit-dialect-glossary` §7): topic shape, no row lost, order preserved, markers,
+  attribution, caller id, empty case.
+- Roadmap M1 entry updated (data model + builder done; next: wire into store, sourceOnly QC, UI
+  panel with parse-report confirmation, approximate-voice toggle). No client/server/data changes yet
+  → no static rebuild. Still v50.
+
+## post-v50 — Dialect M1: sourceOnly QC direction
+Added `qcCheckDialectPair(target, source, lang, srcLang, comment)` (server): the dialect token is
+FIXED ground truth — the prompt tells the model never to change/comment on it — and only the gloss
+(source) is checked for spelling/writing. It can ONLY return {ok} or {ok:false, field:'source',
+sug}; a reply echoing the dialect word or empty is treated OK. `_runQc`'s vocab/sentences loop now
+routes any item whose lesson is `_dialect` OR item is `_dialect` to this checker instead of
+`qcCheckPair`, so QC can never rewrite a dialect word. Tested in `unit-qc-dispatch` (dialect lesson
+→ dialect checker, standard pair-count unchanged, flag is field:'source'). Server-only change → no
+static rebuild. Still v50.
+Remaining M1: wire buildDialectTopic into the store, the "🗣 Dialect" UI panel (paste/upload +
+parse-report confirmation), the approximate-German-voice toggle.
+
+## post-v50 — Dialect M1: wiring + "🗣 Dialect" UI panel (now playable end-to-end)
+The imported glossary is now a real, playable feature:
+- **Server:** `server.js` requires `dialect-glossary.js`; new `POST /api/dialect-import` parses the
+  glossary text (deterministic), builds a topic via `buildDialectTopic` with a real `tp_` id, and
+  `upsert`s it into the store. Returns `{ok,id,topic,rows,lessons,report}` — the report carries
+  suspicious/duplicate rows for the user to fix. Validates: name required, non-empty text.
+- **Client:** a "🗣 I have a dialect glossary" toggle on the generation form reveals a dialect panel
+  (name, paste box, 📎 upload, attribution, "Build dialect lessons"). `onUseDialectCb` hides the
+  normal generate form while active; `onDialectFileChosen` loads a file + prefills the name;
+  `doDialectImport` POSTs to the endpoint, shows the parse report (suspicious rows w/ line numbers,
+  duplicate count), toasts success, and refreshes the saved list. The new topic plays as ordinary
+  vocab lessons (dialect→standard), words verbatim.
+- **i18n:** new en-only keys `form.use_dialect` + `dialect.*` (11 keys) — owed to the translate pass.
+- **Tests:** `e2e-dialect-import` (live server, no Ollama): clean import → faithful playable topic +
+  persisted attribution + `_dialect` markers; collided row surfaced-not-split; validation. Also
+  verified by hand against the real Osttirol glossary via curl (86 rows → 8 lessons, 0 suspicious).
+- Static rebuilt (client + ui.json changed; panel is inert without a backend, which is correct —
+  import is a backend op). Still v50 (post-release wip).
+Remaining M1: the approximate-German-voice TTS toggle. Then M1.5 (assisted example sentences) → M2
+(reviewed generated stories; Qwen experiment saved as the north star).
+
+## post-v50 — Dialect M1 COMPLETE: approximate voice (final piece)
+Dialect content is a variety of the base language (lang='de'), so TTS already speaks it with the
+German voice automatically — the only missing bit was LABELLING it as approximate. Reused the
+existing approximate-badge path: `ttsIsApproximate()` now returns true when `_lessonIsDialect()`
+(topic `_dialect`, lesson `_dialect`, or dialect-marked vocab items) regardless of any TTS-language
+override, and `ttsApproxBadge()` shows a dialect-specific label naming the base voice
+("≈ {lang} voice (approximate)"). No new speak path — the German voice was already selected via the
+de lang code. New helper `_lessonIsDialect()`. Test `unit-dialect-tts`. New en-only key
+`tts.approx_dialect`. Checklist §52. Static rebuilt.
+**M1 is now complete** (importer → data model → sourceOnly QC → wiring+panel → approximate voice).
+Next: M1.5 (assisted example sentences, QC-gated) → M2 (reviewed generated stories; Qwen experiment
+is the north star). i18n owed: form.use_dialect, dialect.* (11), tts.approx_dialect.
+
+## post-v50 — FIX: dialect panel didn't show + Generate no-op'd (live bug)
+User reported: ticking the dialect checkbox hid the story input but nothing appeared and Generate
+did nothing. Two root causes (both DOM-visibility bugs headless tests missed):
+1. The dialect panel reuses `.user-story-panel` (CSS display:none, shown via the `.open` CLASS).
+   `onUseDialectCb` toggled inline `style.display` instead — which the CSS display:none wins over —
+   so the panel never showed. Fixed to `panel.classList.toggle('open', on)` and removed the panel's
+   inline `display:none`.
+2. The normal "Generate lessons →" button (`gen-btn`) lives in a row OUTSIDE `gen-form-section`, so
+   hiding the section left Generate visible; clicking it ran doGenerate() with no topic → silent
+   no-op. Gave the row `id="gen-btn-row"` and hid it in dialect mode.
+Verified the toggle in jsdom (panel visible via .open, Generate row hidden, Build button reachable,
+restores on untoggle). Added `unit-dialect-panel` (static-analysis regression, no DOM dep): panel
+shown via .open not inline style, no blocking inline display:none, Generate row hidden, panel
+outside gen-form-section and self-contained. Static rebuilt. Still v50.

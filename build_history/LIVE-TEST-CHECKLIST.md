@@ -998,3 +998,40 @@ on the wording in server.js (`storyUserMsg` fromLearned branch).**
       - **○ neutral**: the story is still seeded from learned words, but the lessons are built
         purely from the generated story (no forced weaving of the known words).
       Confirm switching the selector visibly changes the generated result accordingly.
+
+### 51. post-v50 — Dialect glossary import (M1): the "🗣 Dialect" panel
+Needs the local backend (import is a backend op; the panel is inert in the static build). Turns a
+pasted/uploaded glossary into faithful vocab lessons, no AI.
+
+- [ ] **Toggle reveals the panel.** On the generation screen, ticking "🗣 I have a dialect glossary"
+      hides the normal topic/generate form and shows the dialect panel (name, paste box, upload,
+      attribution, "Build dialect lessons"). Unticking restores the normal form.
+- [ ] **Paste + build.** Paste a glossary as `dialect = standard` lines (e.g. `Gitsche = Mädchen`),
+      give it a name (e.g. "Osttirol"), press Build. A success toast appears and the new dialect
+      topic shows up in the saved lessons list.
+- [ ] **Upload works.** The 📎 Upload button loads a .txt/.csv glossary into the paste box and
+      prefills the name from the filename.
+- [ ] **Plays as normal vocab lessons.** Open the new dialect topic — it plays as ordinary vocab
+      lessons (dialect word → standard word). The dialect words appear EXACTLY as typed (nothing
+      auto-corrected).
+- [ ] **Parse report surfaces problems.** If the glossary has a glued/malformed row (e.g. a PDF
+      artifact like `Mangale = Männchen, kleiner MannFock = Schwein`), the report lists it as
+      suspicious with its line number — and it is NOT auto-split (you fix the source and re-import).
+- [ ] **Attribution kept.** The attribution/source text entered is stored with the topic (surfaces
+      per ATTRIBUTIONS.md; verify it rides along on export).
+- [ ] **QC respects the dialect (needs Ollama).** Running QC on a dialect lesson never suggests
+      changing the dialect word — only the standard-word gloss can be flagged (sourceOnly).
+- [ ] **Validation.** Building with no name, or no glossary text, shows a helpful toast rather than
+      erroring.
+
+### 52. post-v50 — Dialect approximate voice (M1 final)
+Dialect words have no native voice, so they're spoken with the base-language (German) voice and
+labelled approximate.
+
+- [ ] **Approximate label on dialect audio.** In a dialect lesson's listen exercises (🔊 listen-MCQ,
+      listen-and-type), the badge reads "≈ German voice (approximate)" — making clear the audio is a
+      German approximation of the dialect, not an authentic dialect voice.
+- [ ] **Dialect words are actually spoken (German voice).** Pressing 🔊 on a dialect word reads it
+      aloud using the German TTS voice (best-effort pronunciation).
+- [ ] **Non-dialect German unaffected.** A normal (non-dialect) German lesson does NOT show the
+      approximate label when using the native German voice — only dialect content does.
