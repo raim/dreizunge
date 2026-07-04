@@ -11,7 +11,12 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-07-04T06:41:08.822Z",
-      "updatedAt": "2026-07-04T06:41:08.822Z"
+      "updatedAt": "2026-07-04T09:57:35.365Z",
+      "tags": [
+        "test",
+        "porgress_based"
+      ],
+      "summary": "This is a test for generating new stories as **my story**, with user-specific vocab stored in the user progress, here just one lesson of the little i german version)"
     },
     {
       "id": "sl_1696503814",
