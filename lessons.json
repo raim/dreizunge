@@ -2,6 +2,18 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_966370453",
+      "title": "Mein Review",
+      "icon": "📖",
+      "chapters": [
+        "tp_17831472687560000072"
+      ],
+      "lang": "en",
+      "srcLang": "de",
+      "createdAt": "2026-07-04T06:41:08.822Z",
+      "updatedAt": "2026-07-04T06:41:08.822Z"
+    },
+    {
       "id": "sl_1696503814",
       "title": "Fruitful Moments",
       "icon": "🍎",
@@ -1110,6 +1122,160 @@
     }
   ],
   "topics": [
+    {
+      "topic": "Mein Review",
+      "topicEmoji": "📝",
+      "userTopic": "My review — English (2026-07-04)",
+      "userPrompt": "My review — English (2026-07-04)",
+      "lang": "en",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "In the forest, a small creature hopped exactly from one tree to another. At first, it doubted its journey, wondering if it would find what it sought. But as it continued, it met similar creatures who accepted it with love. Hoping exactly for the best, the creature found friends and a new home.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and English language teacher. Write a short story directly in English on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in English. Writing style: Clear, factual, neutral tone — no narrative flourish.\n\nWrite a short, simple story in English that naturally reuses as many of these words the learner already knows as possible: hop, exactly, creature, doubt, journey, similar, accept, love.\nGive extra attention to words the learner found difficult — try to include these: hop, exactly.\nKeep it easy to read at their level. Plain prose, no headings.",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Mein Urteil — English (2026-07-04)",
+          "desc": "Reise, Zweifel, Freunde, neue Heimat",
+          "icon": "🌟",
+          "vocab": [
+            {
+              "target": "hop",
+              "source": "hüpfen"
+            },
+            {
+              "target": "exactly",
+              "source": "genau"
+            },
+            {
+              "target": "creature",
+              "source": "Wesen"
+            },
+            {
+              "target": "doubt",
+              "source": "zweifeln"
+            },
+            {
+              "target": "journey",
+              "source": "Reise"
+            },
+            {
+              "target": "similar",
+              "source": "ähnlich"
+            },
+            {
+              "target": "accept",
+              "source": "annehmen"
+            },
+            {
+              "target": "love",
+              "source": "lieben"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I doubt my journey will succeed.",
+              "source": "Ich zweifle an der Erfolg meiner Reise.",
+              "words": [
+                "I",
+                "doubt",
+                "my",
+                "journey",
+                "will",
+                "succeed."
+              ]
+            },
+            {
+              "target": "The creature hopped exactly to the next tree.",
+              "source": "Das Wesen hüpfte genau zum nächsten Baum.",
+              "words": [
+                "The",
+                "creature",
+                "hopped",
+                "exactly",
+                "to",
+                "the",
+                "next",
+                "tree."
+              ]
+            },
+            {
+              "target": "Similar creatures accepted me with love.",
+              "source": "Ähnliche Wesen nahmen mich in die Arme.",
+              "words": [
+                "Similar",
+                "creatures",
+                "accepted",
+                "me",
+                "with",
+                "love."
+              ]
+            },
+            {
+              "target": "Hoping exactly for the best, I found friends.",
+              "source": "Hoffend genau auf das Beste, fand ich Freunde.",
+              "words": [
+                "Hoping",
+                "exactly",
+                "for",
+                "the",
+                "best,",
+                "I",
+                "found",
+                "friends."
+              ]
+            },
+            {
+              "target": "I accept this new home with gratitude.",
+              "source": "Ich nehme diese neue Heimat dankbar an.",
+              "words": [
+                "I",
+                "accept",
+                "this",
+                "new",
+                "home",
+                "with",
+                "gratitude."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "qwen2.5:7b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 715,
+            "completionTokens": 299,
+            "ms": 271183,
+            "at": "2026-07-04T06:41:08.705Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 394273,
+        "backend": "ollama",
+        "model": "qwen2.5:7b",
+        "lessonFormat": "json",
+        "totalPromptTokens": 1101,
+        "totalCompletionTokens": 385,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 271180,
+            "promptTokens": 715,
+            "completionTokens": 299
+          }
+        ]
+      },
+      "generatedAt": "2026-07-04T06:36:37.450Z",
+      "updatedAt": "2026-07-04T06:41:08.756Z",
+      "id": "tp_17831472687560000072"
+    },
     {
       "topic": "Relishing Moment",
       "topicEmoji": "🌿",
@@ -60995,7 +61161,8 @@
               "corrected": "Wir würden Sie gerne in unserem Team haben.",
               "reason": ""
             }
-          ]
+          ],
+          "_hidden": false
         },
         {
           "id": "ls_1781074898266",
@@ -61243,6 +61410,14 @@
               ]
             }
           ]
+        },
+        {
+          "id": "ls_1783146935478_zafv",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
         }
       ],
       "generationStats": {
@@ -61260,7 +61435,7 @@
         ]
       },
       "generatedAt": "2026-06-01T20:29:21.486Z",
-      "updatedAt": "2026-06-10T07:46:19.014Z",
+      "updatedAt": "2026-07-04T06:35:35.482Z",
       "id": "tp_520854021",
       "aiStory": "Ich zeige Claude und den anderen Modellen einige meiner neuesten Projekte. \"Ich habe hier ein neues Algorithmus-Modell entwickelt, das die Effizienz bei der Datenverarbeitung erheblich verbessert,\" erkläre ich. \"Es basiert auf den neuesten Trends in maschinellem Lernen und ist bereits in der Pilotphase erfolgreich getestet worden.\"\n\nClaude nickt interessiert. \"Das hört sich aufregend an. Wie haben Sie dieses Modell entwickelt?\"\n\nIch antworte mit Selbstvertrauen: \"Ich habe eine Kombination aus traditioneller Mathematik und moderner KI eingesetzt. Ich habe die Algorithmen angepasst, um sie für unsere spezifischen Anwendungen optimiert zu haben. Das Ergebnis ist ein effizienter und robustes Modell, das wir bereits in unseren Tests erstaunliche Ergebnisse erbracht hat.\"\n\nIch fahre fort: \"Ich bin auch ein Teamplayer. Ich verstehe die Bedeutung der Zusammenarbeit und den Wert, den jeder Teammitglied beisteuern kann. Ich arbeite gerne mit anderen, um Ideen zu teilen und Probleme gemeinsam zu lösen.\"\n\nClaude lächelt freundlich. \"Das hört sich nach jemandem an, der gut mit uns zusammenarbeiten kann. Ihre Fähigkeiten und Ihr Engagement sind offensichtlich. Wir würden Sie gerne auf unserer Teamkarte haben.\"\n\nIch bedanke mich herzlich: \"Ich freue mich sehr, dass Sie meine Arbeit und mein Engagement wertschätzen. Ich bin bereit, meine Fähigkeiten und meine Leidenschaft für Mathematik, Codierung und KI zu nutzen, um gemeinsam innovative Lösungen zu finden.\"",
       "continuedFromId": "tp_1777471350"
@@ -61872,6 +62047,14 @@
           "type": "standard"
         },
         {
+          "id": "ls_1783147002972_6tzp",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        },
+        {
           "id": "aeh_1780815386908",
           "type": "ai_error_hunt",
           "title": "AI Error Hunt",
@@ -61926,7 +62109,7 @@
         ]
       },
       "generatedAt": "2026-06-01T19:53:43.536Z",
-      "updatedAt": "2026-06-15T14:44:08.606Z",
+      "updatedAt": "2026-07-04T06:36:44.640Z",
       "repairStats": {
         "repairCount": 1,
         "totalMs": 190634,

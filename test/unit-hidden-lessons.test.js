@@ -16,23 +16,31 @@ const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 assert.ok(/function lessonCountsFor\(d, L\)/.test(html), 'shared lessonCountsFor(d, L) helper exists');
 assert.ok(/function _firstVisibleMixedIdx\(d\)/.test(html), 'mixed-index helper exists');
 {
-  // Rebuild lessonCountsFor + its helper in a sandbox and check the new semantics directly.
+  // Rebuild lessonCountsFor + its helpers in a sandbox and check the new semantics directly.
   function ext(name){ const at=html.indexOf('function '+name+'('); const b=html.indexOf('{',at); let d=0,i=b; for(;i<html.length;i++){ if(html[i]==='{')d++; else if(html[i]==='}'){ d--; if(!d){ i++; break; } } } return html.slice(at,i); }
   const APPref = { _teacherMode: false };
-  const lcf = new Function('APP', ext('_firstVisibleMixedIdx') + '\n' + ext('lessonCountsFor') + '\nreturn lessonCountsFor;')(APPref);
+  // _NEVER_POOLED is a module-level const the helper closes over; inject it.
+  const NEVER = "const _NEVER_POOLED = new Set(['mixed','error_hunt','ai_error_hunt']);\n";
+  const lcf = new Function('APP', NEVER + ext('_firstVisibleMixedIdx') + '\n' + ext('lessonCountsFor') + '\nreturn lessonCountsFor;')(APPref);
   const d = { lessons: [
-    { type:'standard', id:'a' },       // 0 earlier → hidden
-    { type:'grammar',  id:'b' },       // 1 earlier → hidden
-    { type:'mixed',    id:'m' },       // 2 the mixed lesson → visible
-    { type:'standard', id:'c' },       // 3 later → visible
-    { type:'error_hunt', id:'e' },     // 4 later error hunt → visible
+    { type:'standard',    id:'a' },    // 0 earlier poolable → hidden
+    { type:'grammar',     id:'b' },    // 1 earlier poolable → hidden
+    { type:'ai_error_hunt', id:'ae' }, // 2 earlier ERROR HUNT → NOT pooled → stays visible
+    { type:'mixed',       id:'m' },    // 3 the mixed lesson → visible
+    { type:'standard',    id:'c' },    // 4 later → visible
+    { type:'error_hunt',  id:'e' },    // 5 later error hunt → visible
   ] };
   APPref._teacherMode = false;
-  assert.strictEqual(lcf(d, d.lessons[0]), false, 'earlier lesson before mixed is hidden');
-  assert.strictEqual(lcf(d, d.lessons[1]), false, 'earlier lesson before mixed is hidden (2)');
-  assert.strictEqual(lcf(d, d.lessons[2]), true,  'the mixed lesson itself stays visible');
-  assert.strictEqual(lcf(d, d.lessons[3]), true,  'a lesson AFTER the mixed lesson stays visible');
-  assert.strictEqual(lcf(d, d.lessons[4]), true,  'an error-hunt after the mixed lesson stays visible');
+  assert.strictEqual(lcf(d, d.lessons[0]), false, 'earlier poolable lesson before mixed is hidden');
+  assert.strictEqual(lcf(d, d.lessons[1]), false, 'earlier poolable lesson before mixed is hidden (2)');
+  assert.strictEqual(lcf(d, d.lessons[2]), true,  'an earlier ERROR HUNT is NOT pooled → stays visible');
+  assert.strictEqual(lcf(d, d.lessons[3]), true,  'the mixed lesson itself stays visible');
+  assert.strictEqual(lcf(d, d.lessons[4]), true,  'a lesson AFTER the mixed lesson stays visible');
+  assert.strictEqual(lcf(d, d.lessons[5]), true,  'a later error-hunt stays visible');
+  // An earlier plain error_hunt also stays (both hunt types).
+  const d3 = { lessons: [ { type:'error_hunt', id:'eh' }, { type:'standard', id:'s' }, { type:'mixed', id:'m' } ] };
+  assert.strictEqual(lcf(d3, d3.lessons[0]), true, 'earlier plain error_hunt stays visible too');
+  assert.strictEqual(lcf(d3, d3.lessons[1]), false, 'earlier standard is still hidden');
   // No mixed lesson → all visible.
   const d2 = { lessons: [ { type:'standard', id:'a' }, { type:'error_hunt', id:'e' } ] };
   assert.ok(d2.lessons.every(L => lcf(d2, L)), 'no mixed lesson → classic path, all visible');

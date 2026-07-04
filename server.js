@@ -59,7 +59,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v49';
+const APP_VERSION  = 'v50';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -1987,7 +1987,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
 // ── Generate all lessons ──────────────────────────────────────────────
 async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLen, jobId, userOpts) {
   userOpts = userOpts || {};
-  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction, skipMeta, placeholderTopic, parentId } = userOpts;
+  const { userStory, userTranslation, userDialect, storyStyle, lessonFormat, reinforcePrior, vocabMode, useFullChain, userStoryLang, prevStoryTopic, mathInstruction, skipMeta, placeholderTopic, parentId, fromLearned } = userOpts;
   srcLang = srcLang || 'en';
   const userTopic = topic;
   // The complete, untruncated user input that drove generation. The saved display
@@ -2072,9 +2072,35 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     jobStep(jobId, `[${OLLAMA_MODEL}] Generating story (~${storyLen} words)…`);
     try {
       const t0 = Date.now();
-      const storyUserMsg = prevStory
-        ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
-        : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
+      // "My story" (fromLearned): seed the story with the learner's own known words so it
+      // reuses what they've learned — biased toward words they got wrong — instead of a topic
+      // or a previous story. Reuses the whole downstream pipeline unchanged. (Reinforce-as-
+      // context: the wrong words are ALSO woven into lessons via the chainVocab/reinforce path.)
+      const _learnedWords = (fromLearned && Array.isArray(fromLearned.vocab)) ? fromLearned.vocab : [];
+      const _myMode = (vocabMode === 'extend' || vocabMode === 'neutral') ? vocabMode : 'reinforce';
+      const storyUserMsg = _learnedWords.length
+        ? (() => {
+            const known = _learnedWords.map(w => w.target).filter(Boolean);
+            const hard = _learnedWords.filter(w => w && w.wrong).map(w => w.target).filter(Boolean);
+            const knownList = known.slice(0, 40).join(', ');
+            const hardList = hard.slice(0, 20).join(', ');
+            if (_myMode === 'extend') {
+              // Build BEYOND what they know: use the known words as a familiar base but introduce
+              // fresh vocabulary so the learner extends their range.
+              return `Write a short, simple story in ${langName(lang)} for a learner who already knows these words: ${knownList}.`
+                + `\nUse those familiar words as a base, but also introduce some NEW vocabulary so they learn a little more.`
+                + (hardList ? `\nWhere natural, revisit words they found difficult: ${hardList}.` : '')
+                + `\nKeep it at their level. Plain prose, no headings.`;
+            }
+            // reinforce (default) and neutral both center on reusing the known words; neutral just
+            // doesn't force-weave them into the lessons afterward.
+            return `Write a short, simple story in ${langName(lang)} that naturally reuses as many of these words the learner already knows as possible: ${knownList}.`
+              + (hardList ? `\nGive extra attention to words the learner found difficult — try to include these: ${hardList}.` : '')
+              + `\nKeep it easy to read at their level. Plain prose, no headings.`;
+          })()
+        : prevStory
+          ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
+          : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
       const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle);
       const { text, promptTokens, completionTokens } = await callLLM(
         storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
@@ -2136,10 +2162,27 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   const styleHint = null; // removed — story context goes in userMsg only
   const lessons = [];
 
-  const _vocabMode = vocabMode || (reinforcePrior ? 'reinforce' : 'neutral');
-  const chainVocab = (_vocabMode !== 'neutral' && chainParent)
-    ? collectChainVocab(findSaved(chainParent)?.id || chainParent)
-    : { words: [], nouns: [], verbs: [] };
+  // "My story": feed the learner's known words (wrong-first) into the lesson generator. The
+  // vocab-mode selector controls HOW: 'reinforce' (default) weaves them into sentences as context;
+  // 'extend' treats them as already-known and pushes FRESH vocab instead; 'neutral' seeds only the
+  // story (no chain-vocab hint into lessons). Same chainVocab/vocabMode channel as cross-chapter.
+  const _fromLearnedVocab = (fromLearned && Array.isArray(fromLearned.vocab))
+    ? fromLearned.vocab
+        .slice()
+        .sort((a, b) => (b.wrong || 0) - (a.wrong || 0))     // most-wrong first
+        .map(w => ({ target: w.target, source: w.source || '' }))
+        .filter(w => w.target)
+    : null;
+  const _hasLearnedVocab = !!(_fromLearnedVocab && _fromLearnedVocab.length);
+  // For my-story, honour an explicit vocabMode; default to 'reinforce' when none was sent.
+  const _vocabMode = _hasLearnedVocab
+    ? (vocabMode || 'reinforce')
+    : (vocabMode || (reinforcePrior ? 'reinforce' : 'neutral'));
+  const chainVocab = (_hasLearnedVocab && _vocabMode !== 'neutral')
+    ? { words: _fromLearnedVocab.slice(0, 40), nouns: [], verbs: [] }
+    : (!_hasLearnedVocab && _vocabMode !== 'neutral' && chainParent)
+      ? collectChainVocab(findSaved(chainParent)?.id || chainParent)
+      : { words: [], nouns: [], verbs: [] };
   const chainOpts = { userDialect, storyStyle, chainVocab, vocabMode: _vocabMode, story };
 
   if (lessonFormat === 'error_hunt' || lessonFormat === 'grammar' || lessonFormat === 'conjugation' || lessonFormat === 'math' || lessonFormat === 'synonyms' || lessonFormat === 'word_forms') {
@@ -3175,14 +3218,21 @@ http.createServer(async (req, res) => {
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const { topic, lang, srcLang, difficulty, lessonFormat, storyLen, continuedFrom, forceRegenerate,
-              userStory, userTranslation, userDialect, storyStyle, reinforcePrior, vocabMode, useFullChain, userStoryLang, mathInstruction } = body;
+              userStory, userTranslation, userDialect, storyStyle, reinforcePrior, vocabMode, useFullChain, userStoryLang, mathInstruction, fromLearned } = body;
       // continuedFrom may arrive as a stable tp_ id (from the continue-select)
       // or a topic name (other paths). Normalize to the canonical topic name so
       // everything downstream is unaffected by which the client sent.
       const _contParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
       const continuedFromName = _contParent ? _contParent.topic : null;
+      // "My story" has no typed topic — synthesize one from the languages so the rest of the
+      // pipeline (which is topic-keyed) works unchanged. A unique suffix avoids clobbering.
+      const _hasLearned = !!(fromLearned && Array.isArray(fromLearned.vocab) && fromLearned.vocab.length);
+      const _myStoryTopic = _hasLearned
+        ? `My review — ${langName(lang || 'it')} (${new Date().toISOString().slice(0,10)})`
+        : null;
       const resolvedTopic = (topic && topic.trim().length >= 2) ? topic.trim()
-        : continuedFromName ? continuedFromName : null;
+        : continuedFromName ? continuedFromName
+        : _myStoryTopic ? _myStoryTopic : null;
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
@@ -3197,12 +3247,12 @@ http.createServer(async (req, res) => {
       // pass both the previous story AND the new story as context.
       const contFromForStory = contFrom && !userStory ? contFrom : null;
       const combinedUserStory = (userStory && contFrom) ? contFrom : null;
-      const topicKey = topic.trim().toLowerCase();
+      const topicKey = resolvedTopic.toLowerCase();
       const resolvedSrcLang = srcLang || 'en';
       if (!forceRegenerate) {
-        const cached = findSaved(topic.trim());
+        const cached = findSaved(resolvedTopic);
         if (cached && cached.lang === (lang||'it') && cached.srcLang === (resolvedSrcLang||'en')) {
-          console.log(`  Cache hit: "${topic}" (${lang}←${resolvedSrcLang})`);
+          console.log(`  Cache hit: "${resolvedTopic}" (${lang}←${resolvedSrcLang})`);
           return json(res, 200, { cached: true, data: { ...cached, fromCache: true } });
         }
       }
@@ -3224,9 +3274,19 @@ http.createServer(async (req, res) => {
         vocabMode:       vocabMode ? String(vocabMode) : null,
         useFullChain:    useFullChain === true,
         mathInstruction: mathInstruction ? String(mathInstruction).slice(0,500) : null,
+        // "My story": the learner's known-word slice (client-supplied). Sanitize + cap hard —
+        // this is untrusted input that goes into a prompt. Keep only target/source strings and a
+        // boolean-ish `wrong` count, max 60 items, short strings.
+        fromLearned: (fromLearned && Array.isArray(fromLearned.vocab) && fromLearned.vocab.length)
+          ? { vocab: fromLearned.vocab.slice(0, 60)
+                .map(w => ({ target: String(w && w.target || '').slice(0, 80),
+                             source: String(w && w.source || '').slice(0, 120),
+                             wrong: Math.max(0, Math.min(999, parseInt(w && w.wrong, 10) || 0)) }))
+                .filter(w => w.target) }
+          : null,
       };
-      console.log(`  Generating: "${topic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} fmt=${fmt} storyLen=${wc}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
-      generate(topic.trim(), lang || 'it', resolvedSrcLang, diff, contFromForStory, wc, jobId, userOpts).then(data => {
+      console.log(`  Generating: "${resolvedTopic}" (${langName(lang||'it')}, from ${langName(resolvedSrcLang)}) diff=${diff} fmt=${fmt} storyLen=${wc}${userOpts.fromLearned?' myStory=yes':''}${userOpts.userStory?' userStory=yes':''}${userOpts.userTranslation?' translation=yes':''}${userOpts.userDialect?' dialect='+userOpts.userDialect:''}${userOpts.storyStyle?' style='+userOpts.storyStyle:''}${contFrom?' cont='+contFrom:''} job=${jobId}`);
+      generate(resolvedTopic, lang || 'it', resolvedSrcLang, diff, contFromForStory, wc, jobId, userOpts).then(data => {
         upsert(data);
         // v29: assign stable topic id if missing, then update storyline chain
         if (store.schemaVersion >= 29) {

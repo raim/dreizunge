@@ -81,16 +81,18 @@ assert.ok(/value="__my__"/.test(html) && /t\('form\.my_story'\)/.test(html),
   'my-story option uses the __my__ sentinel and form.my_story label');
 assert.ok(/learnedSummary\(curLang, curSrc\)/.test(html) && /vocabCount >= 8/.test(html),
   'my-story is gated on having learned vocabulary');
-assert.ok(/contVal==='__my__'/.test(html) && /toast\.my_story_soon/.test(html),
-  'doGenerate handles the __my__ sentinel (generator wiring is a follow-up)');
+assert.ok(/contVal==='__my__'/.test(html),
+  'doGenerate recognizes the __my__ sentinel (now wired to generation — see unit-my-story)');
 console.log('  selector wiring: localized new-story + gated my-story sentinel: OK');
 
-// ── 7) i18n: the moved/new keys are en-only ──────────────────────────────────
+// ── 7) i18n: the moved/new keys are present in en and translated across languages ──
 const ui = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ui.json'), 'utf8'));
+const _lc = Object.keys(ui).filter(l => l !== 'en').length;
 for (const k of ['form.new_story', 'form.my_story', 'toast.my_story_soon']) {
   assert.ok(k in ui.en, `${k} present in en`);
-  assert.ok(!(k in ui.de), `${k} is en-only (awaiting translate pass)`);
+  const have = Object.keys(ui).filter(l => l !== 'en' && ui[l][k] !== undefined).length;
+  assert.ok(have >= _lc - 3, `${k} translated across (nearly) all languages`);
 }
-console.log('  i18n keys present in en, en-only: OK');
+console.log('  i18n keys present in en, translated across languages: OK');
 
 console.log('unit-learned-vocab: ALL PASSED');

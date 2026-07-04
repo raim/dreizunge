@@ -155,3 +155,66 @@ added AFTER the mixed lesson remain visible (error hunts are a final test)."
 - **i18n (en-only):** `form.new_story`, `form.my_story`, `toast.my_story_soon`.
 - **Tests:** `unit-learned-vocab` (ledger accumulation, per-language, seen/wrong tracking,
   flag-exclusion, all lesson types, selector wiring, i18n). **Checklist:** §49. Static rebuilt.
+
+## v50 — "my story" generation wired (hybrid option i, this session)
+Turned the staged `__my__` option into a working generator. Chosen design (with the user):
+**hybrid option (i) — story-seed + reinforce-as-context** (reuse the existing pipeline; no new
+pipeline). Two seams in `generate()` (server.js), everything downstream unchanged:
+- **Story seam:** when `fromLearned` is present (and no userStory/prevStory), `storyUserMsg` is
+  built from the learner's known words ("reuse as many as possible") with extra attention to the
+  wrong-answered ones — instead of a topic or previous story.
+- **Lesson seam:** the learned slice (sorted most-wrong-first) is fed into the existing
+  `chainVocab` with `vocabMode:'reinforce'`, so the lesson generator weaves those words into
+  sentences (reinforce-as-context — the same mechanism used for cross-chapter reinforcement).
+- **Request path:** `/api/generate` accepts + hard-sanitizes `fromLearned` (cap 60, target≤80/
+  source≤120 chars, wrong 0–999, empty-target filtered — it's untrusted prompt input). Topic-less
+  my-story synthesizes `resolvedTopic = "My review — <lang> (date)"`; `topicKey`/cache/generate
+  now use `resolvedTopic` (not `topic.trim()`), fixing a throw for the topic-less case. Client
+  forces regenerate for my-story so a same-day review isn't a cache hit.
+- **Client:** `myStoryPayload(lang,srcLang,cap)` builds the ledger slice (wrong-first, then
+  most-seen), `doGenerate` sends `body.fromLearned` (and NOT `__my__` as continuedFrom), routes
+  through single-generate (not the book path), and keeps the empty-ledger "coming soon" fallback.
+- **Tests:** `unit-my-story` (client payload shaping + wiring; server sanitize/caps; both seams
+  populated; topic-less synthesis). `unit-learned-vocab` updated (my-story now wired, not a stub).
+- **No new i18n keys.** **Checklist §50** (Ollama — incl. the owed prompt-QUALITY pass). Static
+  rebuilt (ledger + payload present; generation path naturally absent from the no-backend static
+  build). **CAVEAT: story/prompt quality needs live-model tuning; headless tests cover plumbing
+  only.**
+
+## v50 — fix: error hunts stay visible even BEFORE a mixed lesson
+Bug: the position-based visibility rule hid every lesson before the mixed lesson except a nested
+mixed — so an error_hunt / ai_error_hunt generated BEFORE the mixed review was wrongly hidden.
+But the mixed lesson never pools from error hunts (their builders return [] → skipped in
+buildMixedExercises), so hiding one violates "hide only what it pools from". Fix: added a
+`_NEVER_POOLED` set ({mixed, error_hunt, ai_error_hunt}); `lessonCountsFor` now keeps those types
+visible regardless of position (in addition to everything at/after the mixed lesson). Pooling and
+visibility stay in agreement (an earlier error hunt is neither pooled nor hidden). `setComplete`
+already requires every surviving counted lesson done, so a now-visible earlier error hunt correctly
+becomes part of the completion requirement. Test: `unit-hidden-lessons` gained earlier-error-hunt
+(both types) cases. Checklist §48 updated (error hunt visible in ANY position). Static rebuilt.
+
+## v50 — RELEASE CUT
+Bumped `APP_VERSION` v49 → v50 in server.js; build-static auto-derived (both static spots read
+v50). Integrated user-refreshed data: **ui.json** (all v50 en-only keys now translated across 29
+languages — coverage.solved_of, coverage.node_title, form.new_story, form.my_story,
+toast.my_story_soon; `form.my_story` en reworded by user to "✨ my story ✨"), and **lessons.json**
+(250 topics, +5 new incl. a "Mein Review" my-story output and German story chapters — all
+well-formed). Updated the three tests that asserted the v50 keys were en-only → now assert
+"translated across (nearly) all languages". Wrote roadmap_v51.md (protocol + open items carried,
+v50 marked shipped), repointed START-HERE. Full suite green; static rebuilt.
+
+### Still owed after v50 (carried to roadmap_v51)
+- LIVE browser/Ollama verification of §§41–50 (esp. §50 my-story prompt QUALITY tuning).
+- "My story" reinforce-as-**drill** (option ii) upgrade; optional pure-review lesson-set variant.
+- Milestone stories (unlockable curated reading) — long-term.
+
+## v50.x — my-story respects the vocab-mode selector (b)
+The 🔁 reinforce / ○ neutral / ➕ extend selector now genuinely controls my-story (previously it
+was shown but ignored — the client suppressed vocabMode for my-story and the server force-set
+'reinforce'). Change: client sends the selector value for my-story too; server honours an explicit
+vocabMode for `fromLearned` (default 'reinforce' when none), and the story-seed prompt has an
+EXTEND variant ("use known words as a base but introduce NEW vocabulary") vs the reinforce/neutral
+variant ("reuse as many known words as possible"). neutral seeds the story from learned words but
+sends no chain-vocab hint into the lessons. Reuses the existing chainVocab/vocabMode channel; no
+new lesson-gen logic. Test `unit-my-story` updated (respects mode, extend branch, neutral no-hint).
+Checklist §50 gained the mode-control item. (Story QUALITY per mode still needs live tuning.)

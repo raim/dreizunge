@@ -929,8 +929,10 @@ AFTER the mixed lesson stay visible and playable. Browser-only (learner / non-te
 - [ ] **Earlier lessons are hidden, mixed shows.** Open a set authored as: vocab / grammar /
       … → 🔀 mixed → 🔍 error hunt. As a learner, the earlier vocab/grammar nodes are gone
       (folded into the mixed lesson), and the mixed lesson node shows.
-- [ ] **Error hunt stays as a final test.** The 🔍 error hunt (and 🔎 AI error hunt) after the
-      mixed lesson is visible and playable — it is NOT hidden.
+- [ ] **Error hunt stays as a final test — in ANY position.** A 🔍 error hunt or 🔎 AI error hunt
+      is visible and playable whether it was generated AFTER **or BEFORE** the mixed lesson. The
+      mixed lesson never draws its questions from an error hunt, so it never hides one. (Regression
+      check: an AI error hunt generated *before* the mixed review must still show.)
 - [ ] **A lesson added AFTER the mixed lesson stays visible.** Add any lesson (e.g. a new vocab
       or grammar lesson) after the mixed lesson; as a learner it appears as its own node and is
       playable — it is not pooled into the mixed lesson and not hidden.
@@ -962,3 +964,37 @@ The generator isn't wired to it yet — this checks the plumbing and the selecto
       different language pair you haven't studied hides the ✨ option again.
 - [ ] **Result card unchanged.** The lesson result card still shows the learned words as before
       (the ledger capture is silent/background).
+
+### 50. v50 — "my story" generation (hybrid option i): story-seed + reinforce-as-context
+Needs Ollama. Generates a story from the learner's cumulated vocabulary; the story reuses those
+words and the lessons reinforce them. **Prompt/story QUALITY needs live tuning — expect to iterate
+on the wording in server.js (`storyUserMsg` fromLearned branch).**
+
+- [ ] **Option → generation.** After learning ≥8 words for a pair, select ✨ "my story" in the
+      "continue story from" selector and press Generate (no topic needed). It starts a real
+      generation job (not a "coming soon" toast).
+- [ ] **Story reuses known words.** The generated story visibly reuses words the learner has
+      already studied for this pair (not random new vocabulary). It reads at an easy level.
+- [ ] **Wrong words emphasized.** Words the learner previously got WRONG are favoured — both in
+      the story and reinforced through the lesson sentences (reinforce-as-context: woven into
+      sentences, per the existing reinforce mode). Verify a couple of known-hard words appear.
+- [ ] **Synthesized topic.** The saved set gets an auto title like "My review — <Language> (date)"
+      (no crash from the missing topic). Generating again the same day makes a fresh one (force-
+      regenerate, not a cache hit).
+- [ ] **Lessons build normally.** The result is a normal lesson set (vocab/sentences/etc.) — the
+      whole downstream pipeline is unchanged; only the story seed + reinforce vocab differ.
+- [ ] **Empty-ledger guard.** If somehow selected with too little learned vocab, it shows the
+      "coming soon" toast instead of sending a broken request. (Normal "new story" / "continue
+      from <saved>" still work unchanged.)
+- [ ] **Quality pass (owed).** Judge whether the story is coherent and the reused words feel
+      natural; if the weak model ignores the word list or produces stilted prose, tune the
+      `fromLearned` prompt in server.js and re-test.
+- [ ] **Vocab-mode selector controls my-story.** With ✨ my story selected, the 🔁 reinforce /
+      ○ neutral / ➕ extend selector is shown and NOW takes effect (v50.x):
+      - **🔁 reinforce** (default): the story reuses learned words and the lessons weave them into
+        sentences (context).
+      - **➕ extend**: the story uses learned words as a base but introduces NEW vocabulary, and
+        the lessons focus on fresh words rather than re-listing the known ones.
+      - **○ neutral**: the story is still seeded from learned words, but the lessons are built
+        purely from the generated story (no forced weaving of the known words).
+      Confirm switching the selector visibly changes the generated result accordingly.

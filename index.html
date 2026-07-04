@@ -3846,15 +3846,13 @@ async function doGenerate(forceRegen){
   }
   const topic=document.getElementById('topic-input').value.trim();
   const contVal=document.getElementById('continue-select')?.value||'';
-  // "my story" (__my__) — generate from the learner's cumulated vocabulary. The generator-side
-  // wiring (packing the learned ledger into the prompt, focusing on wrong-answered words) is a
-  // planned follow-up (see roadmap). Until then, be honest rather than sending an unresolvable
-  // continuedFrom id to the server.
-  if(contVal==='__my__'){
-    showToast(t('toast.my_story_soon'));
-    return;
-  }
-  if(!['error_hunt'].includes(APP.lessonFormat)&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
+  // "my story" (__my__): generate from the learner's cumulated vocabulary instead of a topic or
+  // a previous story. Build the ledger slice (wrong words first); the story reuses those words
+  // and the lessons reinforce them (server-side). A synthesized topic is used server-side.
+  const myStory = (contVal==='__my__');
+  const myStoryData = myStory ? myStoryPayload(APP.lang, APP.srcLang) : null;
+  if(myStory && (!myStoryData || !myStoryData.vocab.length)){ showToast(t('toast.my_story_soon')); return; }
+  if(!myStory&&!['error_hunt'].includes(APP.lessonFormat)&&(!topic||topic.length<2)){ document.getElementById('topic-input').focus(); return; }
   if(APP.lessonFormat==='error_hunt'&&!topic&&!contVal){ showToast(t('toast.select_story')); return; }
   if(!APP.info.canGenerate) return;
   if(APP.activeJob){ showToast(t('toast.already_generating',{topic:APP.activeJob.topic})); return; }
@@ -3877,7 +3875,7 @@ async function doGenerate(forceRegen){
   // Multi-chapter generated batch: the model writes N chained chapters via the
   // arc/book pipeline (server-side loop + whole-storyline title post-pass).
   const nCh = Math.max(1, Math.min(20, APP.numChapters||1));
-  if(nCh>1 && !useStory){
+  if(nCh>1 && !useStory && !myStory){
     const gbody = { generated:true, topic,
       nChapters:nCh, chapterLen:APP.storyLen||300,
       lang:APP.lang, srcLang:APP.srcLang, difficulty:APP.difficulty,
@@ -3898,15 +3896,17 @@ async function doGenerate(forceRegen){
   }
 
   try{
-    const body={topic,lang:APP.lang,srcLang:APP.srcLang,difficulty:APP.difficulty,
+    const _contSelVal=document.getElementById('continue-select')?.value||null;
+    const body={topic: myStory ? '' : topic,lang:APP.lang,srcLang:APP.srcLang,difficulty:APP.difficulty,
       lessonFormat:APP.lessonFormat||'standard',
       storyLen:APP.storyLen||300,
-      continuedFrom:(document.getElementById('continue-select')?.value||null),
-      vocabMode:!!(document.getElementById('continue-select')?.value)?(document.getElementById('vocab-mode-select')?.value||'neutral'):null,
+      continuedFrom: myStory ? null : _contSelVal,
+      vocabMode: (myStory || _contSelVal) ? (document.getElementById('vocab-mode-select')?.value||'neutral') : null,
       mathInstruction: APP.lessonFormat==='math' ? (document.getElementById('topic-input')?.value?.trim()||null) : null,
       userStoryLang: useStory ? (document.getElementById('user-story-lang')?.value||'target') : null,
-      useFullChain:!useStory&&!!(document.getElementById('use-full-chain-cb')?.checked)&&!!(document.getElementById('continue-select')?.value),
-      forceRegenerate:!!forceRegen};
+      useFullChain:!useStory&&!!(document.getElementById('use-full-chain-cb')?.checked)&&!!_contSelVal&&!myStory,
+      forceRegenerate:!!forceRegen || myStory};
+    if(myStory && myStoryData) body.fromLearned=myStoryData;
     if(userStory)       body.userStory=userStory;
     if(userTranslation) body.userTranslation=userTranslation;
     if(userDialect)     body.userDialect=userDialect;
@@ -3967,13 +3967,17 @@ async function _pollGenBook(bookId, total){
 // Learner visibility / completion — single source of truth.
 // A teacher-hidden lesson (_hidden) is invisible to a learner in non-teacher mode. When a set
 // contains a `mixed` lesson, it REVIEWS the lessons that precede it and pools their questions —
-// so those preceding lessons are hidden as standalone nodes (the learner practises them via the
-// mixed lesson). Everything at or after the mixed lesson stays visible: the mixed lesson itself,
-// error-hunt "final test" lessons, and any lessons added AFTER the mixed lesson. This keeps
-// pooling and hiding in agreement (both keyed off "before the mixed lesson"); see
-// buildMixedExercises, which pools only earlier siblings.
+// so those preceding *poolable* lessons are hidden as standalone nodes (the learner practises
+// them via the mixed lesson). Everything ELSE stays visible: the mixed lesson itself, any lessons
+// AFTER it, an earlier nested mixed, and — importantly — error-hunt lessons in ANY position. The
+// mixed lesson never draws questions from error hunts (their builders return []), so hiding one
+// would break the "hide only what it pools from" principle; error hunts are a final test and stay.
+// This keeps pooling and hiding in agreement; see buildMixedExercises (pools only earlier siblings
+// with non-empty builders).
 // `lessonCountsFor` is the single rule used by the path render, progress, locking, next-up, and
 // story unlock. Teacher/live mode counts everything (nothing hidden, nothing locked).
+// Types the mixed lesson never pools from → never hidden by it, regardless of position.
+const _NEVER_POOLED = new Set(['mixed', 'error_hunt', 'ai_error_hunt']);
 function _firstVisibleMixedIdx(d) {
   const ls = d?.lessons || [];
   for (let i = 0; i < ls.length; i++) if (ls[i] && ls[i].type === 'mixed' && !ls[i]._hidden) return i;
@@ -3985,11 +3989,9 @@ function lessonCountsFor(d, L) {
   const mixIdx = _firstVisibleMixedIdx(d);
   if (mixIdx < 0) return true;                 // no mixed lesson → classic path, all visible
   const idx = (d?.lessons || []).indexOf(L);
-  // Hidden iff this lesson is one the mixed lesson pools from (strictly before it, and itself
-  // poolable — a nested mixed is never pooled). The mixed lesson and everything after it stay.
-  if (idx >= mixIdx) return true;
-  if (L.type === 'mixed') return true;         // an earlier mixed lesson is not pooled away
-  return false;
+  if (idx >= mixIdx) return true;              // the mixed lesson and everything after it stay
+  if (_NEVER_POOLED.has(L.type)) return true;  // error hunts / nested mixed aren't pooled → stay
+  return false;                                // an earlier poolable lesson → folded into mixed
 }
 function countedLessons(d) { return (d?.lessons || []).filter(L => lessonCountsFor(d, L)); }
 // Has the learner finished everything that counts in this set? Drives story unlock + 100%.
@@ -8813,6 +8815,17 @@ function recordLearnedFromLesson(lesson, wrongTargets){
 function learnedSummary(lang, srcLang){
   const led = _learnedLedger(lang || APP.lang, srcLang || APP.srcLang);
   return { vocabCount: Object.keys(led.vocab).length, sentenceCount: Object.keys(led.sentences).length };
+}
+// Build the "my story" generation payload from the learned ledger for a language pair: the known
+// vocab as {target, source, wrong}, ordered most-wrong-first (so the server biases toward words
+// the learner struggled with), capped. Returns null when there's nothing to build from.
+function myStoryPayload(lang, srcLang, cap){
+  const led = _learnedLedger(lang || APP.lang, srcLang || APP.srcLang);
+  const vocab = Object.entries(led.vocab)
+    .map(([target, rec]) => ({ target, source: rec.source || '', wrong: rec.wrong || 0, seen: rec.seen || 0 }))
+    .sort((a, b) => (b.wrong - a.wrong) || (b.seen - a.seen));   // hardest first, then most-seen
+  if(!vocab.length) return null;
+  return { vocab: vocab.slice(0, cap || 60).map(({target, source, wrong}) => ({ target, source, wrong })) };
 }
 // ══ Coverage model (Commit B) — consume the solved store for progression ═════════════
 // The instance-qid universe of a lesson is the full set of questions it can ever produce.

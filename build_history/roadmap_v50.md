@@ -188,20 +188,24 @@ focus, excludes flagged items, and is per-language-pair (NOT cleared by a per-to
 it's a lifetime record). `learnedSummary()` gates UI. **Nothing consumes it for generation yet** —
 that's the plan below. Guarded by `unit-learned-vocab`.
 
-### "My story" — generate from what the learner has learned (NEXT, partially staged)
+### "My story" — generate from what the learner has learned (FIRST VERSION SHIPPED, v50)
 Goal: a story/lesson generated from the learner's cumulated vocabulary & sentences, to RETRAIN what
-they've learned, focusing on words they got wrong. **Staged in v50:** a `✨ my story` option
-(`form.my_story`) appears in the "continue story from" selector when the learner has ≥8 learned words
-for the current pair; its value is the `__my__` sentinel. Selecting it + generating currently shows
-`toast.my_story_soon` (the generator isn't wired to the ledger yet). **To finish:** instead of
-initializing generation from a previous story (`continuedFrom`), initialize from the learned ledger —
-pass the cumulated vocab/sentences (weighted toward high-`wrong` words) into the generation prompt as
-the seed vocabulary. Server-side: a `continuedFrom:"__my__"` (or a dedicated `fromLearned:true` +
-payload) path in `/api/generate` that builds the prompt from the supplied ledger slice instead of a
-saved story. Client-side: send the ledger slice for the current pair. Design Qs: cap how many words
-(recent + most-wrong?), whether "my story" produces a story or a pure review lesson-set, and how it
-interacts with difficulty. The i18n for both selector entries is already moved to ui.json
-(`form.new_story`, `form.my_story`).
+they've learned, focusing on words they got wrong. **Shipped (hybrid, option i — story-seed +
+reinforce-as-context):** selecting `✨ my story` (the `__my__` sentinel, shown when ≥8 words learned
+for the pair) now runs a real generation. Client `myStoryPayload()` sends the learned slice
+(`fromLearned:{vocab:[{target,source,wrong}]}`, wrong-first, capped 60) instead of `continuedFrom`;
+server `generate()` (a) seeds the STORY prompt from the known words with extra attention to
+wrong-answered ones, and (b) routes the same slice into the existing `chainVocab`/`vocabMode:
+'reinforce'` channel so the LESSONS weave those words into sentences. Topic-less: the server
+synthesizes a "My review — <lang> (date)" topic and force-regenerates (no same-day cache hit). The
+whole downstream pipeline (translation, vocab extraction, lessons) is unchanged. Plumbing guarded by
+`unit-my-story`; **story/prompt QUALITY needs live-model tuning (checklist §50).**
+**Future upgrade — reinforce-as-drill (option ii):** currently the wrong words are woven into
+sentences as *context* (reinforce mode = "do not list as vocab items"). A stronger retraining mode
+would inject the wrong words as the lesson's *quizzed* vocab items (MCQs etc.), not just context —
+needs a small new injection in `generateOneLesson` + live tuning. Also open: whether "my story" can
+optionally produce a pure review lesson-set (skip the story) — deferred (the story route reuses the
+most and is the more rewarding framing).
 
 ### Milestone stories — "unlock" curated reading based on learned vocabulary (LONG-TERM)
 As the learner's ledger grows, unlock hidden, human-authored (or curated existing) content in the
