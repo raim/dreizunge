@@ -1128,7 +1128,7 @@
   ],
   "topics": [
     {
-      "id": "tp_17831704681230000123",
+      "id": "tp_17832478721050000159",
       "topic": "osttirol-glossary",
       "topicEmoji": "🗣",
       "lang": "de",
@@ -1138,9 +1138,16 @@
         "label": "osttirol-glossary",
         "base": "de",
         "note": "",
-        "attribution": "",
+        "attribution": "CC BY-NC Bernd Kranebitter 2007-2026",
         "curated": false,
-        "rowCount": 86
+        "rowCount": 86,
+        "aiStory": {
+          "at": "2026-07-06T05:16:12.234Z",
+          "needsReview": true,
+          "topic": "ein tag in den bergen",
+          "instructions": "this glossary is specific for east tyrol, and the dialect is a southern version of the bavarian dialect family"
+        },
+        "curatedAt": null
       },
       "lessons": [
         {
@@ -1662,8 +1669,12 @@
           "_dialect": true
         }
       ],
-      "generatedAt": "2026-07-04T13:07:48.123Z",
-      "updatedAt": "2026-07-04T13:07:48.123Z"
+      "generatedAt": "2026-07-05T10:37:52.105Z",
+      "updatedAt": "2026-07-06T05:16:12.234Z",
+      "story": "Eifern Gitsche dalämpat, hem gach dechtan, wos Ganga in dalampochn baietl. Gfrett, wos Gitsche gladdsad dalämpat, hem gach dechtan, wos Ganga in dalampochn baietl. Gitsche glaggln, wos Ganga in dalampochn baietl, hem gach dechtan, wos Ganga in dalampochn baietl.",
+      "storyGloss": "Ein eifersüchtiges Mädchen zerzaust, also doch, was Gauner in der zerzausten. Ärger, also doch, was Gauner in der zerzausten, hemm schnell, also doch, was Gauner in der zerzausten. Mädchen baumeln, also doch, was Gauner in der zerzausten, hemm schnell, also doch, was Gauner in der zerzausten.",
+      "storyTopic": "ein tag in den bergen",
+      "aiGenerated": true
     },
     {
       "topic": "Mein Review",

@@ -333,3 +333,111 @@ extended (real job cycle; fake-ollama gained a dialect-example branch). New en-o
 form.dialect_examples, dialect.status.examples_*, dialect.toast.examples_*. Checklist §53. Static
 rebuilt. **Quality needs live tuning (fluent-but-wrong hazard) — opt-in + marked + review-gated.**
 Still v50. Next: M2 (reviewed generated stories; Qwen experiment = north star) when ready.
+
+## post-v50 — Dialect M2: gated story generation (the review gate is the feature)
+Built M2 as a GATE, not just generation (per spec: model may author dialect prose only for a
+human-approved dialect). Pieces:
+- `topic._dialect.curated` (default false) is the hard gate. `/api/dialect-story` returns 403 unless
+  curated. `/api/dialect-curate` sets it and REFUSES to curate a dialect with no reviewable AI sample
+  (the M1.5 `_aiExamples` lesson) — can't approve unseen output.
+- `generateDialectStory(glossaryRows, base, note)`: constrained few-shot (STORY/GERMAN blocks).
+  Result stored on the topic as `aiGenerated:true` + `_dialect.aiStory.needsReview:true` (not
+  trusted). QC on aiGenerated dialect content already checks both sides (from M1.5).
+- Client "🗣 dialect studio" strip on the dialect lesson-set page (updateDialectStudio + three
+  handlers): suggest examples → approve (enabled once examples exist) → generate story (enabled once
+  curated). Uses inline display toggling (avoided the .open-class trap from the earlier panel bug);
+  verified in jsdom.
+- Tests: `e2e-dialect-import` extended (403 pre-curation, curation-requires-sample, gated
+  generation, story marked); `unit-dialect-examples` M2 section (endpoint guards). fake-ollama gained
+  a dialect-story branch. New en-only keys: dialect.studio.*, dialect.status.story_start,
+  dialect.toast.{curated,uncurated,story_done}. Checklist §54. Static rebuilt.
+**Dialect track M1 → M1.5 → M2 all shipped.** Quality of generated content still needs live tuning +
+native review — which is exactly what the gate is built around. Still v50.
+
+## post-v50 — FIX: generated examples/story were stored but not viewable
+User generated example sentences (in lessons.json) but had nowhere to SEE them. Root gap: the
+`_aiExamples` lesson was stored but the client only checked for its existence (studio gating) — it
+never rendered the sentences, and the lesson showed as a normal playable path node (mixing
+unverified AI content into play). Fixes:
+- **Review list in the dialect studio:** `updateDialectStudio` now renders the generated example
+  sentences (🗣 dialect / German / "for: <word>") and the generated story (dialect + German) as a
+  readable, scrollable list in the amber studio strip — so a human can actually read and judge them.
+- **Hide review-only content from play:** `lessonCountsFor` now returns false for `_aiExamples`
+  lessons (non-teacher) — they're review-only in the studio, not normal playable lessons, so
+  unreviewed AI content doesn't get quizzed as if trusted. (Teacher/edit mode still sees them.)
+- Tests: `unit-hidden-lessons` gains an `_aiExamples`-hidden assertion. New en-only keys
+  dialect.review.{examples_hdr,for_word,story_hdr}. Static rebuilt.
+So: generate examples → they appear IN THE STUDIO STRIP on the dialect topic's lesson-set page (not
+as a playable lesson). Still v50.
+
+## post-v50 — Dialect: REDESIGN to topic-driven stories (retired per-word examples)
+User feedback: the per-word example sentences were incoherent. Retired them entirely; the dialect
+AI path is now topic-driven story generation (matches the Qwen north-star experiment, which worked
+well because coherence is easier than isolated correctness).
+- **Retired:** `generateDialectExample`, `/api/dialect-examples`, the `_aiExamples` lesson, the
+  import-panel "also suggest examples" checkbox, and their i18n. (`lessonCountsFor` keeps a
+  defensive `_aiExamples`→hidden guard for old data.)
+- **`generateDialectStory(glossaryRows, base, {topic, instructions, long})`:** now takes a story
+  TOPIC and free-text INSTRUCTIONS (e.g. "this is a Bavarian-style dialect"), few-shot-grounded in
+  the glossary, asks for a real 5–8 (or 8–14) sentence STORY. Returns STORY + GERMAN blocks.
+- **Gate redesign:** story generation is ALWAYS allowed (the story IS the review sample; always
+  marked aiGenerated + needsReview, never trusted). `/api/dialect-curate` now APPROVES a generated
+  story (requires one to exist; clears needsReview). Generating a NEW story resets approval
+  (curated=false) so it must be re-reviewed. No more pre-generation 403.
+- **Studio UI:** topic field + instructions textarea + "Generate dialect story" (always enabled w/
+  backend) + "Approve this story" (enabled once a story exists). Review area shows the story
+  (dialect + German) with ✅/⚠. Fields prefill from the last generation.
+- **Tests:** e2e reworked (story-driven; approval-needs-story; regenerate-resets-approval; 404);
+  new `unit-dialect-story` (parse, topic/instructions-in-prompt, gate guards, examples-retired);
+  fake-ollama story branch updated, example branch removed. New/updated en keys: dialect.studio.*
+  reworded; removed the dialect_examples/examples_* keys.
+Still v50. Dialect track: M1 (import→lessons→QC→voice) + M2 (topic-driven gated stories). M1.5 as a
+separate step is retired/folded away.
+
+## post-v50 — Dialect: mute TTS + drop {lang} in dialect prompts (user feedback)
+Two user-requested fixes for dialect lessons:
+1. **Treat dialect as muted (no TTS).** There's no authentic dialect voice, so reading dialect words
+   aloud in a German voice was misleading. Now: `buildStandardExercises` filters out listen_mcq +
+   listen_type for dialect (they'd be unanswerable without sound); `speak()` and `speakBodyText()`
+   return early for `_lessonIsDialect()`; `tRead` hides the 🔊 button for dialect. (Guarded as
+   `typeof _lessonIsDialect==='function' && _lessonIsDialect()` so extracted-function unit tests that
+   inject builder deps don't throw.) The old approximate-voice badge path is now moot for dialect
+   (no listen exercises are produced).
+2. **Drop the {lang} in the source→target MCQ for dialect.** "Wie sagt man 'fest' auf {German}?" is
+   wrong when the answer is the dialect word, not German. `tMcqEI` now uses no-lang variants for
+   dialect: `ex.mcq_source_target.q_nolang` ("How do you say \"{word}\"?") + `ex.badge.
+   mcq_source_target_nolang`. Added `ex.type_translate.q_nolang` too for completeness.
+Tests: `unit-dialect-mute` (listen dropped, speak muted, 🔊 hidden, MCQ drops {lang}). New en-only
+keys: ex.mcq_source_target.q_nolang, ex.badge.mcq_source_target_nolang, ex.type_translate.q_nolang.
+Static rebuilt. Still v50.
+
+## post-v50 — Dialect mute: closed the remaining audio leaks
+Follow-up to the mute work: found two paths the first pass missed.
+1. `lBlock` (the big "🔊 Tap to listen" block) is used not only by listen exercises (dropped for
+   dialect) but also by `tMcqIE` ("What does X mean?", a normal MCQ NOT filtered). It rendered a dead
+   listen button for dialect. Now `lBlock` returns the word in a plain target-box (no button) for
+   dialect.
+2. The "Story unlocked" completion panel's 🔊 button (`comp-story-spk`) is now hidden for dialect
+   (its speakBodyText was already a no-op, but the button was visibly dead).
+Confirmed the {lang} concern is fully covered: only `mcq_source_target` (fixed → q_nolang) is
+dialect-reachable with an "auf {lang}" phrasing; `type_translate.q`'s {lang} only appears in the
+listen-type muted fallback, and listen-type isn't generated for dialect. `unit-dialect-mute` extended
+to cover lBlock + the story-unlock button. Static rebuilt. Still v50.
+
+## ═══ v51 RELEASE CUT ═══
+Folded the entire post-v50 dialect track into the v51 release.
+- APP_VERSION bumped v50 → v51; docs rebuilt (derives version from server.js).
+- roadmap_v52.md written (carries the protocol block verbatim + all open items; adds a v51-shipped
+  summary and a "dialect: evaluated ideas from dialects.md" section). START-HERE example repointed to
+  roadmap_v52.md. roadmap_v51.md is now historical.
+- Shipped in v51: dialect glossary import (M1: parser + buildDialectTopic + /api/dialect-import +
+  panel), sourceOnly QC, muted dialect audio + no-{lang} dialect prompts, topic-driven gated dialect
+  stories (M2: generateDialectStory + curate gate + studio), per-word examples (M1.5) tried &
+  retired. dialects.md reviewed (ideas captured, not adopted wholesale).
+- Full suite green + check-inline 0 + stable 6×. Packaged as dreizunge_v51.zip, verified from a clean
+  unzip.
+- OWED (unchanged by release): i18n translate pass for the new en-only keys (form.use_dialect,
+  dialect.*, tts.approx_dialect, ex.mcq_source_target.q_nolang, ex.badge.mcq_source_target_nolang,
+  ex.type_translate.q_nolang); browser/Ollama verification LIVE-TEST §§41–55 (esp. dialect story
+  QUALITY + my-story prompt quality); mein-osttirol.rocks permission email; library tag/filter
+  persistence repro.

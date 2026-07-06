@@ -58,32 +58,51 @@ const { boot, get, post, assert } = require('./lib');
     assert(rBad2.status === 400, 'empty glossary rejected');
     console.log('  validation: name required, empty text rejected: OK');
 
-    // 5) Opt-in AI example sentences (M1.5): review-gated, aiGenerated, full-QC-eligible.
-    const rEx = await post(sport, '/api/dialect-examples', { id: r.body.id, max: 3 });
-    assert(rEx.status === 202 && rEx.body.jobId, 'examples job accepted (got ' + rEx.status + ')');
-    let done = null;
+    // 5) Story-driven generation: a topic+instructions dialect story is the review sample —
+    //    always allowed, always marked aiGenerated + needsReview.
+    const rStory1 = await post(sport, '/api/dialect-story', { id: r.body.id, topic: 'a day in the mountains', instructions: 'Bavarian-style, keep it simple' });
+    assert(rStory1.status === 202 && rStory1.body.jobId, 'story job accepted (got ' + rStory1.status + ')');
+    let sdone = null;
     for (let i = 0; i < 60; i++) {
       await new Promise(s => setTimeout(s, 300));
-      const st = await get(sport, '/api/job/' + encodeURIComponent(rEx.body.jobId));
-      if (st.body && ['done', 'error'].includes(st.body.status)) { done = st.body; break; }
+      const st = await get(sport, '/api/job/' + encodeURIComponent(rStory1.body.jobId));
+      if (st.body && ['done', 'error'].includes(st.body.status)) { sdone = st.body; break; }
     }
-    assert(done && done.status === 'done', 'examples job finished (status=' + (done && done.status) + ')');
-    assert(done.data.generated >= 1, 'at least one example sentence generated (got ' + done.data.generated + ')');
-    const withEx = (env.readStore().topics || []).find(t => t.id === r.body.id);
-    const exLesson = (withEx.lessons || []).find(l => l._aiExamples);
-    assert(exLesson, 'an AI-examples lesson was added');
-    assert(exLesson.needsReview === true && exLesson._dialect === true, 'examples lesson is dialect + needsReview');
-    assert(exLesson.sentences.length >= 1, 'examples lesson has sentences');
-    assert(exLesson.sentences.every(s => s.aiGenerated === true && s.needsReview === true),
-      'every example sentence is marked aiGenerated + needsReview (review-gated, not trusted)');
-    assert(exLesson.sentences.every(s => s._dialect === true), 'example sentences carry _dialect');
-    // The generated sentence actually contains the target word (guardrail held end-to-end).
-    assert(exLesson.sentences.some(s => s.forWord && s.target.includes(s.forWord.split(/[\/\s]/)[0])),
-      'generated sentence contains its target word');
-    // Non-dialect topic is refused.
-    const rEx2 = await post(sport, '/api/dialect-examples', { id: 'tp_does_not_exist', max: 3 });
-    assert(rEx2.status === 404, 'examples on a missing topic → 404');
-    console.log('  opt-in AI examples: generated, review-gated, aiGenerated, guardrail held: OK');
+    assert(sdone && sdone.status === 'done', 'story job finished (status=' + (sdone && sdone.status) + ')');
+    let withStory = (env.readStore().topics || []).find(t => t.id === r.body.id);
+    assert(withStory.story && withStory.story.length > 0, 'generated dialect story stored');
+    assert(withStory.storyGloss && withStory.storyGloss.length > 0, 'German rendering stored');
+    assert(withStory.aiGenerated === true && withStory._dialect.aiStory?.needsReview === true,
+      'generated story is marked aiGenerated + needsReview (not trusted)');
+    assert(withStory._dialect.aiStory.topic === 'a day in the mountains', 'story records its topic');
+    assert(withStory._dialect.curated === false, 'a fresh story is NOT auto-approved');
+    console.log('  story-driven generation: topic+instructions, marked aiGenerated/needsReview, unapproved: OK');
+
+    // 6) Approval requires a story, then records human review.
+    const rImp3 = await post(sport, '/api/dialect-import', { text: 'x = y\nz = w', label: 'NoStory' });
+    const rCur2 = await post(sport, '/api/dialect-curate', { id: rImp3.body.id, curated: true });
+    assert(rCur2.status === 400, 'approval refused when there is no story to review');
+    const rCur = await post(sport, '/api/dialect-curate', { id: r.body.id, curated: true });
+    assert(rCur.status === 200 && rCur.body.curated === true, 'a reviewed story can be approved');
+    withStory = (env.readStore().topics || []).find(t => t.id === r.body.id);
+    assert(withStory._dialect.curated === true && withStory._dialect.aiStory.needsReview === false,
+      'approval clears needsReview');
+    console.log('  approval: requires a story, records review, clears needsReview: OK');
+
+    // 7) Regenerating a story resets approval (must be re-reviewed).
+    const rStory2 = await post(sport, '/api/dialect-story', { id: r.body.id, topic: 'at the market' });
+    assert(rStory2.status === 202, 'regenerate accepted');
+    for (let i = 0; i < 60; i++) {
+      await new Promise(s => setTimeout(s, 300));
+      const st = await get(sport, '/api/job/' + encodeURIComponent(rStory2.body.jobId));
+      if (st.body && ['done', 'error'].includes(st.body.status)) break;
+    }
+    withStory = (env.readStore().topics || []).find(t => t.id === r.body.id);
+    assert(withStory._dialect.curated === false, 'a NEW story resets approval (re-review required)');
+    // Missing topic → 404.
+    const rStory3 = await post(sport, '/api/dialect-story', { id: 'tp_does_not_exist' });
+    assert(rStory3.status === 404, 'story on a missing topic → 404');
+    console.log('  regenerating resets approval; missing topic → 404: OK');
 
     console.log('e2e-dialect-import: ALL PASSED');
   } catch (e) {

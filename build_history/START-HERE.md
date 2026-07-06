@@ -5,7 +5,7 @@ roadmap", whose filename increments each release).
 
 ## Read these, in order
 1. **The current roadmap** — the highest-numbered `build_history/roadmap_v*.md`
-   (e.g. `roadmap_v51.md`). Its top has a **"⚠️ Session protocol — READ FIRST"** block that is
+   (e.g. `roadmap_v52.md`). Its top has a **"⚠️ Session protocol — READ FIRST"** block that is
    the standing definition of done. Follow it without being re-told.
 2. **`build_history/LIVE-TEST-CHECKLIST.md`** — everything that needs a real browser/Ollama and
    so isn't covered by the headless suite. Keep it updated (see protocol item 2).

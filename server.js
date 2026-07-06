@@ -60,7 +60,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v50';
+const APP_VERSION  = 'v51';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -682,41 +682,39 @@ async function qcCheckDialectPair(target, source, lang, srcLang, userComment) {
   return { ok: false, field: 'source', sug: body.slice(0, 300) };
 }
 
-// Generate ONE short example sentence for a dialect glossary word (M1.5, OPT-IN). Tightly
-// constrained + few-shot-grounded in the uploaded glossary so the model mimics the uploaded
-// orthography and stays within the known vocabulary. The output is ALWAYS marked aiGenerated and
-// must be reviewed/QC'd before it is trusted — the model is NOT an authority on the dialect. Returns
-// { target, source } (dialect sentence + High-German meaning) or null on failure.
-async function generateDialectExample(word, gloss, glossaryRows, baseLang) {
+// Generate a short dialect STORY (M2). ONLY ever called behind the curated gate (a human approved
+// this dialect after reviewing sample output). Tightly constrained + few-shot-grounded in the
+// glossary; output is ALWAYS aiGenerated and routed through QC + flagging. Returns { story, gloss }
+// (dialect story + a High-German rendering) or null. High risk — this is the model AUTHORING
+// dialect prose, which is why it's gated and marked.
+async function generateDialectStory(glossaryRows, baseLang, opts) {
+  opts = opts || {};
   const S = langName(baseLang || 'de');
-  // Few-shot: show the model up to ~40 real glossary pairs so it imitates the orthography and uses
-  // known words. This is grounding, not authority — the sentence is still flagged aiGenerated.
-  const fewshot = (glossaryRows || []).slice(0, 40)
-    .map(r => `${r.target} = ${r.source}`).join('\n');
+  const topic = opts.topic ? String(opts.topic).slice(0, 300).trim() : '';
+  const instructions = opts.instructions ? String(opts.instructions).slice(0, 600).trim() : '';
+  const lengthHint = opts.long ? '8–14 sentences' : '5–8 sentences';
+  const fewshot = (glossaryRows || []).slice(0, 80).map(r => `${r.target} = ${r.source}`).join('\n');
   const system =
-    `You help build practice sentences for a regional dialect (a variety of ${S}). You are given a ` +
-    `glossary of dialect words with their ${S} meanings. Write ONE short, simple, natural sentence ` +
-    `in the DIALECT that uses the given dialect word. Rules:\n` +
-    `- Use ONLY dialect words from the glossary plus unavoidable small function words.\n` +
+    `You write a short, coherent story in a regional dialect (a variety of ${S}), for language ` +
+    `learners. You are given a glossary of dialect words with their ${S} meanings. Rules:\n` +
+    `- Write a real STORY (a little narrative), ${lengthHint}, on the given topic.\n` +
+    `- Use as many of the glossary dialect words as fit naturally; prefer glossary words.\n` +
     `- Mimic the spelling/orthography of the glossary exactly.\n` +
-    `- Do NOT invent dialect words that are not in the glossary.\n` +
-    `- Keep it to one short everyday sentence.\n` +
-    `Reply with EXACTLY two lines, nothing else:\n` +
-    `D: <the dialect sentence>\n` +
-    `G: <its ${S} meaning>`;
-  const user = `Glossary:\n${fewshot}\n\nWrite an example sentence using the dialect word: "${word}" (means "${gloss}").`;
+    `- It's OK to use ordinary dialect grammar/function words to connect them into a real story.\n` +
+    (instructions ? `- Author instructions (follow these): ${instructions}\n` : '') +
+    `Reply with EXACTLY two blocks, nothing else:\n` +
+    `STORY:\n<the dialect story>\n---\nGERMAN:\n<a plain ${S} rendering of the same story>`;
+  const user = `Glossary:\n${fewshot}\n\n`
+    + (topic ? `Topic: "${topic}".\n` : '')
+    + `Write the dialect story now.`;
   let text;
-  try { ({ text } = await callLLMTranslation(system, user, 160)); } catch (_) { return null; }
+  try { ({ text } = await callLLMTranslation(system, user, opts.long ? 1000 : 640)); } catch (_) { return null; }
   const reply = (text || '').trim();
-  const dM = reply.match(/^\s*D\s*[:\-]\s*(.+)$/im);
-  const gM = reply.match(/^\s*G\s*[:\-]\s*(.+)$/im);
-  const target = dM && dM[1].trim();
-  const source = gM && gM[1].trim();
-  if (!target || !source) return null;
-  // Guardrail: the sentence must actually contain the target word (case-insensitive). If the model
-  // ignored the word, reject rather than store an off-target example.
-  if (!target.toLowerCase().includes(String(word).toLowerCase().split(/[\/\s]/)[0])) return null;
-  return { target: target.slice(0, 200), source: source.slice(0, 200) };
+  const m = reply.match(/STORY:\s*([\s\S]*?)\s*---\s*GERMAN:\s*([\s\S]*)$/i);
+  if (!m) return null;
+  const story = m[1].trim(), gloss = m[2].trim();
+  if (!story || !gloss) return null;
+  return { story: story.slice(0, 4000), gloss: gloss.slice(0, 4000) };
 }
 
 async function qcCheckPair(target, source, lang, srcLang, userComment) {
@@ -3470,50 +3468,62 @@ http.createServer(async (req, res) => {
       if (bj && bj.status === 'running') { bj.status = 'cancelled'; console.log('  Book job cancelled:', body.bookId); }
       return json(res, 200, { ok: true });
     }
-    if (M === 'POST' && url.pathname === '/api/dialect-examples') {
+    if (M === 'POST' && url.pathname === '/api/dialect-story') {
       let body;
       try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
       const topic = (String(body.id||'').startsWith('tp_') ? findSavedById(body.id) : findSaved(body.id));
       if (!topic) return json(res, 404, { error: 'Dialect topic not found' });
       if (!topic._dialect) return json(res, 400, { error: 'Not a dialect topic' });
-      const max = Math.max(1, Math.min(40, parseInt(body.max, 10) || 12));
+      // A dialect story is the model AUTHORING dialect prose. We ALWAYS mark it aiGenerated +
+      // needsReview and never present it as trusted. Generation is allowed so the human has a
+      // sample to READ and judge — approval (curation) is a separate, explicit human act (see
+      // /api/dialect-curate) that records "a human read this and it's good".
+      const storyTopic = String(body.topic || '').slice(0, 300);
+      const instructions = String(body.instructions || '').slice(0, 600);
       const jobId = newJob();
-      // Collect the topic's dialect vocab as the glossary + the words to exemplify.
       const glossaryRows = (topic.lessons||[]).flatMap(l => (l.vocab||[]).filter(v => v && v.target && v.source)
         .map(v => ({ target: v.target, source: v.source })));
       (async () => {
         try {
-          const picks = glossaryRows.slice(0, max);
-          jobStep(jobId, `Generating ${picks.length} example sentence(s)…`);
-          const sentences = [];
-          for (let i = 0; i < picks.length; i++) {
-            const { target: w, source: g } = picks[i];
-            const ex = await generateDialectExample(w, g, glossaryRows, topic._dialect.base || 'de');
-            if (ex) sentences.push({ target: ex.target, source: ex.source,
-              words: ex.target.split(/\s+/), _dialect: true, aiGenerated: true, needsReview: true, forWord: w });
-            if ((i+1) % 3 === 0) jobStep(jobId, `Generated ${sentences.length}/${picks.length}…`);
-          }
-          // Add (or replace) an AI-examples lesson on the topic, clearly marked for review.
+          jobStep(jobId, 'Generating a dialect story…');
+          const out = await generateDialectStory(glossaryRows, topic._dialect.base || 'de',
+            { topic: storyTopic, instructions, long: !!body.long });
+          if (!out) { jobFail(jobId, 'The model did not return a usable story.'); return; }
           const fresh = findSavedById(topic.id) || topic;
-          const existingIdx = (fresh.lessons||[]).findIndex(l => l._aiExamples);
-          const lesson = {
-            id: existingIdx >= 0 ? fresh.lessons[existingIdx].id : ((fresh.lessons?.length||0) + 1),
-            type: 'standard',
-            title: `${fresh._dialect?.label || 'Dialect'} — ${'AI example sentences (review)'}`,
-            desc: 'AI-suggested example sentences — please review before trusting.',
-            icon: '🤖',
-            vocab: [], sentences,
-            _dialect: true, _aiExamples: true, needsReview: true,
-          };
-          if (!fresh.lessons) fresh.lessons = [];
-          if (existingIdx >= 0) fresh.lessons[existingIdx] = lesson; else fresh.lessons.push(lesson);
+          fresh.story = out.story;
+          fresh.storyGloss = out.gloss;
+          fresh.storyTopic = storyTopic || fresh.storyTopic || '';
+          fresh._dialect.aiStory = { at: new Date().toISOString(), needsReview: true, topic: storyTopic, instructions };
+          fresh._dialect.curated = false;   // a NEW story resets approval — it must be re-reviewed
+          fresh._dialect.curatedAt = null;
+          fresh.aiGenerated = true;
           fresh.updatedAt = new Date().toISOString();
           upsert(fresh);
-          console.log(`  🤖 Dialect examples: "${fresh.topic}" — ${sentences.length}/${picks.length} generated (review-gated)`);
-          jobDone(jobId, { id: fresh.id, generated: sentences.length, requested: picks.length });
+          console.log(`  🤖 Dialect story generated for "${fresh.topic}"${storyTopic?` (topic: ${storyTopic})`:''} — needs review`);
+          jobDone(jobId, { id: fresh.id, chars: out.story.length });
         } catch (e) { jobFail(jobId, e.message || String(e)); }
       })();
       return json(res, 202, { jobId });
+    }
+
+    if (M === 'POST' && url.pathname === '/api/dialect-curate') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const topic = (String(body.id||'').startsWith('tp_') ? findSavedById(body.id) : findSaved(body.id));
+      if (!topic) return json(res, 404, { error: 'Dialect topic not found' });
+      if (!topic._dialect) return json(res, 400, { error: 'Not a dialect topic' });
+      // Curation = a human approves the generated story as good dialect. Requires a story to review.
+      const wantCurated = !!body.curated;
+      if (wantCurated && !(topic.story && topic._dialect.aiStory)) {
+        return json(res, 400, { error: 'Generate a dialect story first, then review it before approving.' });
+      }
+      topic._dialect.curated = wantCurated;
+      topic._dialect.curatedAt = wantCurated ? new Date().toISOString() : null;
+      if (topic._dialect.aiStory) topic._dialect.aiStory.needsReview = !wantCurated;
+      topic.updatedAt = new Date().toISOString();
+      upsert(topic);
+      console.log(`  🗣 Dialect "${topic.topic}" story approved=${wantCurated}`);
+      return json(res, 200, { ok: true, id: topic.id, curated: wantCurated });
     }
 
     if (M === 'POST' && url.pathname === '/api/dialect-import') {

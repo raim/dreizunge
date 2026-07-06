@@ -715,10 +715,6 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         placeholder="a boisl = einige Zeit&#10;Gitsche = Mädchen&#10;bleckfüeßet = barfuß" oninput="autoResizeTextarea(this)"></textarea>
       <input type="text" id="dialect-attr-input" placeholder="Attribution / source (optional, e.g. author + license)"
         maxlength="300" style="width:100%;box-sizing:border-box;margin-top:6px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:6px 10px;font-size:12px;font-family:Nunito,sans-serif;color:#222">
-      <label class="user-story-check-row" style="margin-top:6px">
-        <input type="checkbox" id="dialect-examples-cb">
-        <span id="dialect-examples-lbl">🤖 Also suggest AI example sentences (you'll review them — off by default)</span>
-      </label>
       <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
         <button type="button" id="dialect-import-btn" onclick="doDialectImport()"
           style="font-size:13px;font-weight:700;padding:6px 16px;background:var(--green);color:var(--white);border:none;border-radius:8px;cursor:pointer;font-family:Nunito,sans-serif">🗣 Build dialect lessons</button>
@@ -906,6 +902,21 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </div>
     <div id="ls-prog-txt" style="font-size:11px;font-weight:800;color:var(--gray-dark);text-align:right;padding:2px 0 0;opacity:.8"></div>
   </div>
+  <div id="dialect-studio" style="display:none;margin:8px 0;padding:10px 12px;background:#fff8e0;border:2px solid #f5a623;border-radius:12px;font-size:12px;font-weight:700;color:#444">
+    <div id="dialect-studio-status" style="margin-bottom:6px"></div>
+    <input type="text" id="dialect-story-topic" placeholder="Story topic (e.g. a day in the mountains)" maxlength="200"
+      style="width:100%;box-sizing:border-box;margin-bottom:6px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:6px 10px;font-size:12px;font-family:Nunito,sans-serif;color:#222">
+    <textarea id="dialect-story-instr" rows="2" placeholder="Instructions (optional), e.g. 'this is a Bavarian-style dialect; keep it simple and everyday'"
+      style="width:100%;box-sizing:border-box;margin-bottom:6px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:6px 10px;font-size:12px;font-family:Nunito,sans-serif;color:#222;resize:vertical"></textarea>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button type="button" id="dialect-story-btn" onclick="dialectStudioStory()"
+        style="font-size:12px;font-weight:700;padding:5px 12px;border:none;border-radius:8px;background:var(--green);color:var(--white);cursor:pointer;font-family:Nunito,sans-serif">📖 Generate dialect story</button>
+      <button type="button" id="dialect-curate-btn" onclick="dialectStudioCurate()"
+        style="font-size:12px;font-weight:700;padding:5px 12px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">✅ Approve this story</button>
+    </div>
+    <div id="dialect-studio-msg" style="margin-top:6px;font-weight:700"></div>
+    <div id="dialect-review" style="margin-top:8px"></div>
+  </div>
   <div class="flag-strip" id="flag-strip">
     <span class="flag-strip-label" id="flag-strip-label">⚑ 0 flagged questions</span>
   </div>
@@ -1025,7 +1036,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
       <span style="font-size:20px">📖</span>
       <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="comp-story-unlocked-lbl">Story unlocked!</span>
-      <button class="spk-ico" style="margin-left:auto" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
+      <button class="spk-ico" id="comp-story-spk" style="margin-left:auto" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
     </div>
     <div id="comp-story-text" style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic"></div>
   </div>
@@ -1512,7 +1523,6 @@ function applyUIStrings() {
   const useStoryLbl = document.getElementById('use-story-lbl');
   if (useStoryLbl) useStoryLbl.textContent = t('form.use_story');
   { const ud=document.getElementById('use-dialect-lbl'); if(ud) ud.textContent=t('form.use_dialect'); }
-  { const de=document.getElementById('dialect-examples-lbl'); if(de) de.textContent=t('form.dialect_examples'); }
   { const ub=document.getElementById('upload-choose-lbl'); if(ub) ub.textContent=t('form.upload_doc'); }
   { const sp=document.getElementById('split-page-lbl'); if(sp) sp.textContent=t('form.split_per_page'); }
   const useTransLbl = document.getElementById('use-translation-lbl');
@@ -1960,33 +1970,81 @@ async function doDialectImport(){
     }
     showToast(t('dialect.toast.done',{label:data.topic}));
     loadSavedList();   // the new dialect topic now appears in the saved list
-    // Opt-in: also generate AI example sentences (review-gated). Off by default.
-    if(document.getElementById('dialect-examples-cb')?.checked && data.id){
-      await _dialectGenerateExamples(data.id, statusEl);
-    }
   }catch(e){ if(statusEl) statusEl.textContent=''; showToast(t('dialect.toast.failed')+': '+e.message); }
   finally{ if(btn){ btn.disabled=false; } }
 }
-// Opt-in AI example sentences for a dialect topic (review-gated). Polls the generation job.
-async function _dialectGenerateExamples(id, statusEl){
+// ── Dialect studio (M2 controls, shown on a dialect topic's lesson-set page) ──
+// Flow: enter a topic (+ optional dialect instructions) → generate a coherent dialect story (the
+// review sample, always marked AI/needs-review) → read it below → approve it (records human
+// review). Approval requires a generated story. Retired: the per-word example generator (its
+// isolated sentences were incoherent — a topic-driven story reads far better).
+function updateDialectStudio(){
+  const studio=document.getElementById('dialect-studio');
+  const d=APP.lessonData;
+  const isDialect=!!(d && d._dialect);
+  if(studio) studio.style.display=isDialect?'':'none';
+  if(!isDialect) return;
+  const hasStory=!!(d.story && d._dialect.aiStory);
+  const curated=!!d._dialect.curated;
+  const statusEl=document.getElementById('dialect-studio-status');
+  if(statusEl) statusEl.textContent=curated
+    ? t('dialect.studio.curated')
+    : hasStory ? t('dialect.studio.review_ready') : t('dialect.studio.intro');
+  const can=!!APP.info?.canGenerate;
+  const curBtn=document.getElementById('dialect-curate-btn');
+  const storyBtn=document.getElementById('dialect-story-btn');
+  // Story generation is always available (it IS the sample to review). Approve needs a story.
+  if(storyBtn){ storyBtn.disabled=!can; storyBtn.style.opacity=can?'1':'.5'; }
+  if(curBtn){ curBtn.disabled=!can||!hasStory; curBtn.textContent=curated?t('dialect.studio.unapprove'):t('dialect.studio.approve'); }
+  const msg=document.getElementById('dialect-studio-msg'); if(msg) msg.textContent='';
+  // Prefill the topic/instructions fields from the last generation (so re-generating is easy).
+  const tI=document.getElementById('dialect-story-topic'); if(tI && !tI.value && d._dialect.aiStory?.topic) tI.value=d._dialect.aiStory.topic;
+  const iI=document.getElementById('dialect-story-instr'); if(iI && !iI.value && d._dialect.aiStory?.instructions) iI.value=d._dialect.aiStory.instructions;
+  // Review area: show the generated story (dialect + German) to read and judge.
+  const rev=document.getElementById('dialect-review');
+  if(rev){
+    let html='';
+    if(hasStory){
+      html+='<div style="margin-top:4px;font-weight:800">'+t('dialect.review.story_hdr')
+        +(curated?' ✅':' ⚠')+'</div>';
+      html+='<div style="margin-top:4px;padding:8px 10px;border:1px solid #f0c060;border-radius:8px;background:var(--white)">'
+        +'<div style="font-weight:700;color:#7a4a00;white-space:pre-wrap">🗣 '+escHtml(d.story)+'</div>'
+        +(d.storyGloss?'<div style="margin-top:6px;font-weight:600;color:#555;white-space:pre-wrap">'+escHtml(d.storyGloss)+'</div>':'')
+        +'</div>';
+    }
+    rev.innerHTML=html;
+  }
+}
+async function dialectStudioCurate(){
+  const d=APP.lessonData; if(!d?._dialect) return;
+  const msg=document.getElementById('dialect-studio-msg');
+  const want=!d._dialect.curated;
   try{
-    if(statusEl) statusEl.textContent=t('dialect.status.examples_start');
-    const r=await fetch('/api/dialect-examples',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id, max:12})});
+    const r=await fetch('/api/dialect-curate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:d.id,curated:want})});
+    const data=await r.json().catch(()=>({}));
+    if(!r.ok){ if(msg) msg.textContent=(data.error||('HTTP '+r.status)); return; }
+    await loadSaved(d.id); updateDialectStudio();
+    showToast(want?t('dialect.toast.curated'):t('dialect.toast.uncurated'));
+  }catch(e){ if(msg) msg.textContent=e.message; }
+}
+async function dialectStudioStory(){
+  const d=APP.lessonData; if(!d?._dialect) return;
+  const msg=document.getElementById('dialect-studio-msg');
+  const topic=(document.getElementById('dialect-story-topic')?.value||'').trim();
+  const instructions=(document.getElementById('dialect-story-instr')?.value||'').trim();
+  try{
+    if(msg) msg.textContent=t('dialect.status.story_start');
+    const r=await fetch('/api/dialect-story',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:d.id, topic, instructions})});
     const j=await r.json().catch(()=>({}));
-    if(!r.ok||!j.jobId){ showToast(t('dialect.toast.examples_failed')+': '+(j.error||r.status)); return; }
+    if(!r.ok||!j.jobId){ if(msg) msg.textContent=(j.error||('HTTP '+r.status)); return; }
     for(let i=0;i<400;i++){
       await new Promise(res=>setTimeout(res,1500));
       const st=await (await fetch('/api/job/'+j.jobId)).json();
-      if(statusEl && st.step) statusEl.textContent=st.step;
-      if(st.status==='done'){
-        showToast(t('dialect.toast.examples_done',{n:st.data?.generated||0}));
-        if(statusEl) statusEl.textContent=t('dialect.status.examples_done',{n:st.data?.generated||0,total:st.data?.requested||0});
-        loadSavedList();
-        return;
-      }
-      if(st.status==='error'){ showToast(t('dialect.toast.examples_failed')+': '+(st.error||'')); return; }
+      if(msg && st.step) msg.textContent=st.step;
+      if(st.status==='done'){ showToast(t('dialect.toast.story_done')); await loadSaved(d.id); updateDialectStudio(); return; }
+      if(st.status==='error'){ if(msg) msg.textContent=(st.error||'error'); return; }
     }
-  }catch(e){ showToast(t('dialect.toast.examples_failed')+': '+e.message); }
+  }catch(e){ if(msg) msg.textContent=e.message; }
 }
 function updateTranslationLangHint(){
   // This panel belongs to the main form, so it always reflects the form's source language.
@@ -2741,6 +2799,7 @@ async function goLessonSet(){
     history.replaceState(null,'','#topic='+encodeURIComponent(APP.lessonData.id || APP.lessonData.topic));
   }
   try{ buildPath(); }catch(e){ console.error('buildPath error:',e); }
+  try{ updateDialectStudio(); }catch(_){}
   show('lesson-set');
 }
 function goLandingClean(){ history.replaceState(null,'','#'); APP.ttsLang=null; APP._ttsVoiceName=null; _restoreFormLang().finally(()=>{ loadSavedList(); show('landing'); }); }
@@ -4110,6 +4169,9 @@ function _firstVisibleMixedIdx(d) {
 function lessonCountsFor(d, L) {
   if (APP._teacherMode) return true;
   if (L._hidden) return false;
+  // AI-generated example sentences are REVIEW-ONLY content (shown in the dialect studio for a human
+  // to read/judge) — never a normal playable lesson for the learner until reviewed/promoted.
+  if (L._aiExamples) return false;
   const mixIdx = _firstVisibleMixedIdx(d);
   if (mixIdx < 0) return true;                 // no mixed lesson → classic path, all visible
   const idx = (d?.lessons || []).indexOf(L);
@@ -7527,7 +7589,10 @@ function buildMixedExercises(lesson, lessonIdx){
   // mixed round advances coverage instead of re-asking solved items at random. Round length
   // mirrors the prior behaviour (the whole pool) unless a cap is set on the lesson.
   const cap = (typeof lesson?.roundSize === 'number' && lesson.roundSize > 0) ? lesson.roundSize : pool.length;
-  return assembleCoverageRound(pool, cap);
+  // Dialect lessons have no real spoken voice — treat audio as muted, so drop listen-based
+  // exercises (they'd be unanswerable without sound) rather than reading dialect words aloud.
+  const pool2 = (typeof _lessonIsDialect==='function' && _lessonIsDialect()) ? pool.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type') : pool;
+  return assembleCoverageRound(pool2, cap);
 }
 // ══ Word-forms exercises (fill the blank with the correct form) ══════════════
 // Each story-derived item becomes one MCQ: the sentence (with a ___ blank), the
@@ -8540,6 +8605,12 @@ function updateFuriganaRow(){
 }
 
 function lBlock(it, pron, hideWord) {
+  // Dialect has no spoken voice — never render a listen button (it would be dead). Show the word
+  // plainly instead (or nothing, if the caller wanted the word hidden for a listening task —
+  // though listen tasks aren't generated for dialect anyway).
+  if(typeof _lessonIsDialect==='function' && _lessonIsDialect()){
+    return hideWord ? '' : `<div class="target-box"><div class="target-box-text" dir="auto">${furiHtml(it)}</div></div>`;
+  }
   return `<button class="listen-big" onclick="speak('${esc(it)}')">
       <span class="listen-icon">🔊</span>
       <div><div class="listen-lbl">Tap to listen</div>${hideWord ? '' : `<div class="listen-word">${furiHtml(it)}</div>`}</div>
@@ -8603,7 +8674,11 @@ function tMathCalc(ex){
 }
 
 function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
-function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${S.flag}→${L.flag} ${t("ex.badge.mcq_source_target",{lang:Ln})}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_source_target.q",{word:furiHtml(ex.source),lang:Ln})}</div>${cGrid(ex.choices,false)}</div>`; }
+function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang);
+  const dia=_lessonIsDialect();
+  const q = dia ? t("ex.mcq_source_target.q_nolang",{word:furiHtml(ex.source)}) : t("ex.mcq_source_target.q",{word:furiHtml(ex.source),lang:Ln});
+  const badge = dia ? t("ex.badge.mcq_source_target_nolang") : t("ex.badge.mcq_source_target",{lang:Ln});
+  return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card"><div class="qtext" dir="auto">${q}</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){
   if(!ttsIsApproximate()) return '';
   // For dialect content, name the base voice so the learner knows it's a German approximation of
@@ -8672,7 +8747,7 @@ function tGlyphOrder(ex){
 
 
 
-function tRead(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.read_translate.q",{lang:Ln})}</div><div class="target-box"><div class="target-box-text" dir="auto">${applyFurigana(ex.target)}</div><button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button></div>${cGrid(ex.choices,true)}</div>`; }
+function tRead(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang); const spk=_lessonIsDialect()?'':`<button class="spk-ico" onclick="speak('${esc(ex.target)}')">🔊</button>`; return `<div class="ex-badge">${t("ex.badge.read_translate")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.read_translate.q",{lang:Ln})}</div><div class="target-box"><div class="target-box-text" dir="auto">${applyFurigana(ex.target)}</div>${spk}</div>${cGrid(ex.choices,true)}</div>`; }
 
 function pickChoice(i,el){
   const C=APP.cur;
@@ -9423,6 +9498,8 @@ function showComplete(){
     if (_showStory) {
       const _el = document.getElementById('comp-story-text');
       if (_el) _el.textContent = _story.slice(0, 200) + (_story.length > 200 ? '…' : '');
+      const _spk = document.getElementById('comp-story-spk');
+      if (_spk) _spk.style.display = (typeof _lessonIsDialect==='function' && _lessonIsDialect()) ? 'none' : '';
     }
   }
   show('complete-screen');
@@ -9716,6 +9793,8 @@ function updateTtsVoiceNote(){
 }
 
 function speakBodyText(bodyId,langCode,preText){
+  // Dialect content has no authentic spoken voice — never read it aloud (treat as muted).
+  if(_lessonIsDialect()) return;
   _unlockTts(); if(APP.muted){ APP.muted=false; updateMuteButtons(); }
   if(preText){ preText=stripFuri(preText); if(langCode){const p=()=>{if(!_ttsUnlocked){_ttsPendingAfterUnlock={text:preText,langCode};return;}_doSpeakLang(preText,langCode);};const v=speechSynthesis.getVoices();v.length>0?p():speechSynthesis.addEventListener('voiceschanged',function h(){speechSynthesis.removeEventListener('voiceschanged',h);p();},{once:true});}else speak(preText); return; }
   const el=document.getElementById(bodyId);
@@ -9941,6 +10020,8 @@ document.addEventListener('click',    _unlockTts, {once: true, passive: true});
 
 function speak(text, rate){
   if(APP.muted||!window.speechSynthesis) return;
+  // Dialect content has no authentic spoken voice — never read it aloud (treat as muted).
+  if(_lessonIsDialect()) return;
   const voices = speechSynthesis.getVoices();
   const proceed = () => {
     // On iOS, auto-speak (not from a direct tap) will be silently blocked if not unlocked yet.

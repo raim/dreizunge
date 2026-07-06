@@ -1056,3 +1056,35 @@ review-gated. **Quality needs live tuning — expect to iterate on the prompt in
 - [ ] **Quality judgement (owed).** Read the generated sentences with a native/near-native eye:
       are they plausible dialect, or fluent hallucinations? If poor, tune the prompt and re-run.
       Do NOT promote to trusted content without review.
+
+### 54. post-v50 — Dialect story generation (M2, GATED behind human curation)
+Needs Ollama. Highest-risk piece: the model authoring dialect prose. Gated so it's impossible until
+a human approves the dialect. **Approving is a deliberate review act — read the sample first.**
+
+- [ ] **Studio appears on dialect topics.** Opening a dialect topic's lesson set shows the amber
+      "🗣 dialect studio" strip (suggest examples / approve / generate story). It does NOT appear on
+      normal topics.
+- [ ] **Story is blocked before approval.** With a freshly imported dialect (not approved), the
+      "📖 Generate dialect story" button is disabled; forcing it returns a 403 / "not approved" msg.
+- [ ] **Approval requires reviewed samples.** "✅ Approve for story generation" is disabled until AI
+      example sentences exist. Generate examples, review them, THEN approve — approval without any
+      sample output is refused.
+- [ ] **After approval, story generates.** Once approved, "Generate dialect story" produces a short
+      dialect story (few-shot grounded in the glossary), stored on the topic and shown in the story
+      area — marked AI-generated / needs review.
+- [ ] **Generated story is not trusted.** The story is flagged aiGenerated + needsReview; verify it
+      reads as a draft for review, not authoritative content. QC on it checks both sides.
+- [ ] **Revoke works.** "↩ Revoke approval" flips curated off; the story button disables again.
+- [ ] **Quality/native review (owed).** Judge the generated story with a native/near-native eye —
+      it will contain invented grammar/forms. Only treat as usable after real review; tune the
+      prompt in server.js (generateDialectStory) as needed.
+
+### 55. post-v50 — Dialect is muted + no {lang} in dialect prompts
+- [ ] **No audio in dialect lessons.** Playing a dialect vocab lesson shows NO listen-and-pick or
+      listen-and-type exercises, and no 🔊 buttons read dialect words aloud (dialect has no real
+      voice — treated as muted).
+- [ ] **Source→target MCQ reads naturally.** The "how do you say X" question in a dialect lesson does
+      NOT say "…in German" (the answer is the dialect word). It reads "How do you say \"fest\"?"
+      (localized), without the language name.
+- [ ] **Non-dialect lessons unchanged.** Normal (non-dialect) lessons still have listen exercises,
+      🔊 buttons, and the usual "…in {language}?" phrasing.

@@ -195,18 +195,23 @@ New en-only i18n keys owed to the translate pass: `form.use_dialect`, `dialect.*
   import and polls the job. Tested end-to-end (`e2e-dialect-import` extended; fake-ollama gained a
   dialect-example branch) + unit (`unit-dialect-examples`). **Quality still needs live tuning** —
   the fluent-but-wrong hazard is real; that's why it's opt-in, marked, and review-gated.
-- **M2 — generated dialect stories:** the north-star experiment (user, online Qwen3-Plus prompt:
-  "write a short story in this East-Tyrolean dialect from this glossary") produced a fluent dense
-  dialect story (`Heint is a glientig Tag gwesn…`) weaving in dozens of glossary words. It shows M2
-  is achievable AND pleasant to read — but ALSO shows the hazard: the model INVENTS grammar/verb
-  forms/connectives the glossary doesn't cover (e.g. `gwesn`, `gloffen`, `goangen`, `eigschlofn`),
-  fluently enough to be trusted when it shouldn't be. That's the model AUTHORING dialect — which the
-  safety spine forbids without a human in the loop. So M2 = generation CONSTRAINED to glossary vocab
-  as far as possible + output marked `curated:false` until a native speaker reviews it; only
-  reviewed stories promote to `curated:true` and are shown as "real" content. The value the app adds
-  over "just ask Qwen" is the REVIEW GATE (fluent guess → vetted material). The interesting M2 work
-  is the review workflow, not the generation (which already basically works). Keep the Qwen output
-  saved as the reference target.
+- **M2 — generated dialect stories (SHIPPED, gated):** the model may author a dialect story ONLY
+  for a dialect a human has approved. Implemented as a hard gate: `topic._dialect.curated` (default
+  false) must be true or `/api/dialect-story` returns 403. `/api/dialect-curate` sets it, and
+  REFUSES to curate a dialect that has no reviewable AI sample output (the M1.5 example lesson) —
+  you can't approve what you haven't seen the model generate. `generateDialectStory` uses a
+  constrained, glossary-few-shot prompt (STORY/GERMAN blocks); the result is stored on the topic as
+  `aiGenerated:true` + `_dialect.aiStory.needsReview:true` (not trusted). A "🗣 dialect studio" strip
+  on the dialect topic's lesson-set page exposes: suggest examples → approve (enabled only once
+  examples exist) → generate story (enabled only once curated). Full gate tested end-to-end
+  (`e2e-dialect-import`: 403 before curation, curation requires sample, gated generation) + unit
+  (`unit-dialect-examples` M2 section). fake-ollama gained a dialect-story branch.
+  **The value over "just ask Qwen" is exactly this gate** — the model can't publish dialect prose for
+  a dialect nobody vetted, and everything it writes is marked for review. **Story QUALITY still needs
+  the human review the gate is built around** — approving is a deliberate human act, not automatic.
+  Remaining/future: a richer review UI (accept/reject individual generated items, promote reviewed
+  stories to a trusted state), and native-reviewer workflow. The Qwen output stays the north-star
+  reference.
 
 ---
 

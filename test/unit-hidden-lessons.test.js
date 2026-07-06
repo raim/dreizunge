@@ -34,6 +34,10 @@ assert.ok(/function _firstVisibleMixedIdx\(d\)/.test(html), 'mixed-index helper 
   assert.strictEqual(lcf(d, d.lessons[0]), false, 'earlier poolable lesson before mixed is hidden');
   assert.strictEqual(lcf(d, d.lessons[1]), false, 'earlier poolable lesson before mixed is hidden (2)');
   assert.strictEqual(lcf(d, d.lessons[2]), true,  'an earlier ERROR HUNT is NOT pooled → stays visible');
+  // AI-example (review-only) lessons are hidden from the learner path regardless of position.
+  const dAi = { lessons: [ { type:'standard', _aiExamples:true, sentences:[{}], id:'ai' }, { type:'standard', id:'s' } ] };
+  assert.strictEqual(lcf(dAi, dAi.lessons[0]), false, 'AI-example lesson is hidden from the learner path (review-only)');
+  assert.strictEqual(lcf(dAi, dAi.lessons[1]), true, 'a normal lesson beside it stays visible');
   assert.strictEqual(lcf(d, d.lessons[3]), true,  'the mixed lesson itself stays visible');
   assert.strictEqual(lcf(d, d.lessons[4]), true,  'a lesson AFTER the mixed lesson stays visible');
   assert.strictEqual(lcf(d, d.lessons[5]), true,  'a later error-hunt stays visible');
