@@ -1088,3 +1088,42 @@ a human approves the dialect. **Approving is a deliberate review act — read th
       (localized), without the language name.
 - [ ] **Non-dialect lessons unchanged.** Normal (non-dialect) lessons still have listen exercises,
       🔊 buttons, and the usual "…in {language}?" phrasing.
+
+### 56. post-v51 — Dialect story: A/B the two generation methods (direct vs rewrite)
+Needs Ollama. The dialect studio now has TWO generate buttons so you can compare approaches on your
+own model. **This is an evaluation task — the goal is to judge which method your model does better.**
+
+- [ ] **Direct method** ("📖 Generate (direct)"): the model authors a dialect story directly from
+      the topic + glossary (the original v51 approach).
+- [ ] **Rewrite method** ("🔁 Generate (rewrite)"): the model first writes a Standard-German story,
+      then rewrites it into dialect using the glossary (two model calls, slower).
+- [ ] **Compare on the same topic.** Generate the same topic both ways. For each, read the dialect
+      story in the review area and judge: which is more coherent? Which uses more real glossary words
+      and fewer invented forms?
+- [ ] **Coverage metric (rewrite).** The rewrite result shows "glossary words used: N of M" — a
+      rough faithfulness signal. Higher generally means more real dialect vocabulary, less drift.
+      (The direct method doesn't show this.)
+- [ ] **Standard-German source (rewrite).** Expand "show the Standard-German source it was rewritten
+      from" to see the scaffold the dialect was produced from — useful for judging whether the
+      rewrite preserved meaning.
+- [ ] **Verdict (owed).** Decide which method your local model handles better. If rewrite wins on
+      faithfulness/coherence, it becomes the default; if not, keep direct. Note that the rewrite
+      approach makes the output more checkable (coverage now, back-translation later).
+
+### 57. post-v51 — Dialect topics: LLM-authoring add-lesson types gated off (Option A)
+On a dialect topic, lesson types whose generators run in the base language (and would produce
+non-dialect / mis-judged content) are hidden. Editing the dialect story text is still allowed.
+
+- [ ] **Add-lesson menu is limited for dialect.** On a dialect topic, the "➕ Add lesson" dropdown
+      shows only Standard, Math, and Mixed review (+ Learn-the-script if applicable). Synonyms,
+      Word Forms, and Error Hunt are NOT offered.
+- [ ] **Normal topics unchanged.** On a non-dialect topic, all the usual add-lesson types still
+      appear.
+- [ ] **AI error-hunt WORKS for dialect (it's a human-edit diff, no LLM).** Generate a dialect
+      story in the studio, then open the story editor (✏️) with "🔎 AI hunt" ticked, fix some of the
+      AI's dialect slop, and save. An "AI Error Hunt" lesson appears whose "errors" are exactly your
+      corrections (original AI dialect → your fixed dialect). This is the intended dialect review
+      tool — the human is the corrector, the model judges nothing.
+- [ ] **Server refuses anyway (defense in depth).** Even if forced, the server rejects
+      synonyms/word_forms/error_hunt/grammar/conjugation add-lesson requests for a dialect topic with
+      a clear message.

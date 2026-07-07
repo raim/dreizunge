@@ -104,6 +104,59 @@ const { boot, get, post, assert } = require('./lib');
     assert(rStory3.status === 404, 'story on a missing topic → 404');
     console.log('  regenerating resets approval; missing topic → 404: OK');
 
+    // 8) The "rewrite" method (V2): standard-German → constrained dialect rewrite, with coverage.
+    const rRw = await post(sport, '/api/dialect-story', { id: r.body.id, topic: 'a walk', method: 'rewrite' });
+    assert(rRw.status === 202 && rRw.body.jobId, 'rewrite story job accepted');
+    let rwdone = null;
+    for (let i = 0; i < 60; i++) {
+      await new Promise(s => setTimeout(s, 300));
+      const st = await get(sport, '/api/job/' + encodeURIComponent(rRw.body.jobId));
+      if (st.body && ['done', 'error'].includes(st.body.status)) { rwdone = st.body; break; }
+    }
+    assert(rwdone && rwdone.status === 'done', 'rewrite job finished (status=' + (rwdone && rwdone.status) + ')');
+    assert(rwdone.data.method === 'rewrite', 'job reports method=rewrite');
+    assert(rwdone.data.coverage && typeof rwdone.data.coverage.used === 'number', 'job reports a coverage metric');
+    const rwStory = (env.readStore().topics || []).find(t => t.id === r.body.id);
+    assert(rwStory._dialect.aiStory.method === 'rewrite', 'stored story records method=rewrite');
+    assert(rwStory._dialect.aiStory.standardSource && rwStory._dialect.aiStory.standardSource.length > 0,
+      'stored story keeps the Standard-German source it was rewritten from');
+    assert(rwStory._dialect.aiStory.coverage && rwStory._dialect.aiStory.coverage.used >= 1,
+      'stored story has a coverage metric (>=1 glossary word used)');
+    console.log('  rewrite method (V2): two-step, coverage attached, source kept: OK');
+
+    // 9) Option A gate: LLM-authoring add-lesson formats are refused for dialect topics.
+    for (const fmt of ['synonyms', 'word_forms', 'error_hunt', 'grammar', 'conjugation']) {
+      const rf = await post(sport, '/api/lessons/add-lesson', { id: r.body.id, lessonFormat: fmt, difficulty: 2 });
+      assert(rf.status === 400, `add-lesson "${fmt}" refused for dialect (got ${rf.status})`);
+    }
+    // Dialect-safe formats are NOT blocked by this guard (standard reaches the story/backend check).
+    const rStd = await post(sport, '/api/lessons/add-lesson', { id: r.body.id, lessonFormat: 'standard', difficulty: 2 });
+    assert(rStd.status !== 400 || !/not available for dialect/.test(JSON.stringify(rStd.body)),
+      'standard format is not blocked by the dialect guard');
+    console.log('  Option A: LLM-authoring add-lesson formats refused for dialect: OK');
+
+    // 10) The human-correction AI error-hunt WORKS for dialect (pure diff, no LLM). Generate a
+    //     dialect story (which sets aiStory), then "edit" it and ask for the hunt.
+    const rGen = await post(sport, '/api/dialect-story', { id: r.body.id, topic: 'edit test' });
+    for (let i = 0; i < 60; i++) {
+      await new Promise(s => setTimeout(s, 300));
+      const st = await get(sport, '/api/job/' + encodeURIComponent(rGen.body.jobId));
+      if (st.body && ['done','error'].includes(st.body.status)) break;
+    }
+    const genTopic = (env.readStore().topics || []).find(t => t.id === r.body.id);
+    const aiText = genTopic.story;                         // the original AI dialect text
+    assert(genTopic.aiStory === aiText, 'dialect story sets aiStory (immutable original) for the hunt diff');
+    const corrected = aiText.replace('Gitsche', 'GITSCHE-FIXED'); // simulate a human correcting slop
+    const rEdit = await post(sport, '/api/save-story', { topic: genTopic.topic, story: corrected, generateAiHunt: true });
+    assert(rEdit.status === 200, 'save-story (human edit + hunt) succeeds for dialect (got ' + rEdit.status + ')');
+    assert(Array.isArray(rEdit.body.edits) && rEdit.body.edits.length >= 1, 'a diff-based hunt was produced (edits returned)');
+    assert(rEdit.body.edits.some(s => /GITSCHE-FIXED/.test(s.corrected||'') && /Gitsche/.test(s.ai||'')),
+      'the human correction (Gitsche → GITSCHE-FIXED) is captured as an AI→corrected pair');
+    // The ai_error_hunt lesson is persisted on the dialect topic.
+    const edited = (env.readStore().topics || []).find(t => t.id === r.body.id);
+    assert((edited.lessons||[]).some(l => l.type === 'ai_error_hunt'), 'an ai_error_hunt lesson was saved on the dialect topic');
+    console.log('  human-correction AI error-hunt works for dialect (pure diff, no LLM): OK');
+
     console.log('e2e-dialect-import: ALL PASSED');
   } catch (e) {
     failed = true;

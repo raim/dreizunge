@@ -717,6 +717,86 @@ async function generateDialectStory(glossaryRows, baseLang, opts) {
   return { story: story.slice(0, 4000), gloss: gloss.slice(0, 4000) };
 }
 
+// Count how many distinct glossary dialect words actually appear in a dialect text. A cheap,
+// deterministic FAITHFULNESS signal: a rewrite that used almost none of the glossary probably just
+// lightly Germanized the text; one that used many is closer to real dialect. Word-boundary-ish,
+// case-insensitive, first token of slash-variants. Returns { used, total, ratio }.
+function dialectGlossaryCoverage(text, glossaryRows) {
+  const hay = ' ' + String(text || '').toLowerCase().replace(/[^\p{L}\s]/gu, ' ').replace(/\s+/g, ' ') + ' ';
+  const rows = (glossaryRows || []);
+  let used = 0;
+  const seen = new Set();
+  for (const r of rows) {
+    const w = String(r.target || '').toLowerCase().split(/[\/\s]/)[0].trim();
+    if (!w || seen.has(w)) continue;
+    seen.add(w);
+    if (hay.includes(' ' + w + ' ')) used++;
+  }
+  const total = seen.size;
+  return { used, total, ratio: total ? +(used / total).toFixed(3) : 0 };
+}
+
+// V2 (EXPERIMENTAL) — the "standard → dialect REWRITE" approach. Two model calls:
+//   (1) write a coherent story in STANDARD German on the topic (the model is good at this);
+//   (2) REWRITE that story into the dialect, using the glossary as a substitution reference,
+//       preserving sentence count + meaning, changing only what the dialect requires.
+// This reframes the model from AUTHOR to TRANSFORMER — a more constrained, checkable task — and,
+// crucially, yields a Standard-German SOURCE aligned to the dialect output, so we can measure
+// glossary coverage (and later back-translate to QC). Returns
+//   { story, gloss, standardSource, coverage, method:'rewrite' } or null.
+async function generateDialectStoryV2(glossaryRows, baseLang, opts) {
+  opts = opts || {};
+  const S = langName(baseLang || 'de');
+  const topic = opts.topic ? String(opts.topic).slice(0, 300).trim() : '';
+  const instructions = opts.instructions ? String(opts.instructions).slice(0, 600).trim() : '';
+  const lengthHint = opts.long ? '8–14 sentences' : '5–8 sentences';
+
+  // ── Step 1: a Standard-German story (no dialect risk; the model is reliable here). ──
+  const sys1 =
+    `You write a short, coherent story in Standard ${S} for language learners.\n` +
+    `- A real little narrative, ${lengthHint}, on the given topic.\n` +
+    `- Simple, everyday language and grammar.\n` +
+    `Reply with ONLY the story text, no title, no preamble.`;
+  const usr1 = (topic ? `Topic: "${topic}".\n` : '') + `Write the Standard ${S} story now.`;
+  let standardSource;
+  try { ({ text: standardSource } = await callLLMTranslation(sys1, usr1, opts.long ? 900 : 560)); } catch (_) { return null; }
+  standardSource = (standardSource || '').trim();
+  if (!standardSource) return null;
+
+  // ── Step 2: a CONSTRAINED rewrite into the dialect. The model is a transformer, not an author. ──
+  const fewshot = (glossaryRows || []).slice(0, 100).map(r => `${r.target} = ${r.source}`).join('\n');
+  const sys2 =
+    `You rewrite a Standard ${S} story into a regional dialect (a variety of ${S}). You are a careful ` +
+    `TRANSLATOR/REWRITER, not an author. Rules:\n` +
+    `- Keep the SAME meaning and the SAME number of sentences, in the same order.\n` +
+    `- Use the dialect words from the glossary wherever they fit the meaning; prefer them.\n` +
+    `- Mimic the glossary's spelling/orthography exactly.\n` +
+    `- Change only what the dialect actually requires (words, small grammar/function words). Do NOT ` +
+    `add new ideas or sentences.\n` +
+    `- Do NOT invent dialect words you are unsure of — if you have no dialect form, keep the ${S} word.\n` +
+    (instructions ? `- Extra instructions: ${instructions}\n` : '') +
+    `Reply with EXACTLY two blocks, nothing else:\n` +
+    `STORY:\n<the dialect rewrite>\n---\nGERMAN:\n<the original Standard ${S} story, unchanged>`;
+  const usr2 = `Glossary (dialect = ${S}):\n${fewshot}\n\nStandard ${S} story to rewrite:\n${standardSource}`;
+  let text2;
+  try { ({ text: text2 } = await callLLMTranslation(sys2, usr2, opts.long ? 1200 : 760)); } catch (_) { return null; }
+  const reply = (text2 || '').trim();
+  const m = reply.match(/STORY:\s*([\s\S]*?)\s*---\s*GERMAN:\s*([\s\S]*)$/i);
+  // Tolerant fallback: if the model omitted the GERMAN block, use our known standard source.
+  let story, gloss;
+  if (m) { story = m[1].trim(); gloss = (m[2] || '').trim() || standardSource; }
+  else { story = reply.replace(/^STORY:\s*/i, '').trim(); gloss = standardSource; }
+  if (!story) return null;
+  const coverage = dialectGlossaryCoverage(story, glossaryRows);
+  return {
+    story: story.slice(0, 4000),
+    gloss: gloss.slice(0, 4000),
+    standardSource: standardSource.slice(0, 4000),
+    coverage,
+    method: 'rewrite',
+  };
+}
+
 async function qcCheckPair(target, source, lang, srcLang, userComment) {
   const L = langName(lang), S = langName(srcLang || 'en');
   const tgt = _qcStripFuri(target);
@@ -3480,27 +3560,36 @@ http.createServer(async (req, res) => {
       // /api/dialect-curate) that records "a human read this and it's good".
       const storyTopic = String(body.topic || '').slice(0, 300);
       const instructions = String(body.instructions || '').slice(0, 600);
+      const method = body.method === 'rewrite' ? 'rewrite' : 'direct';
       const jobId = newJob();
       const glossaryRows = (topic.lessons||[]).flatMap(l => (l.vocab||[]).filter(v => v && v.target && v.source)
         .map(v => ({ target: v.target, source: v.source })));
       (async () => {
         try {
-          jobStep(jobId, 'Generating a dialect story…');
-          const out = await generateDialectStory(glossaryRows, topic._dialect.base || 'de',
-            { topic: storyTopic, instructions, long: !!body.long });
+          jobStep(jobId, method === 'rewrite' ? 'Writing a Standard-German story, then rewriting into dialect…' : 'Generating a dialect story…');
+          const out = method === 'rewrite'
+            ? await generateDialectStoryV2(glossaryRows, topic._dialect.base || 'de', { topic: storyTopic, instructions, long: !!body.long })
+            : await generateDialectStory(glossaryRows, topic._dialect.base || 'de', { topic: storyTopic, instructions, long: !!body.long });
           if (!out) { jobFail(jobId, 'The model did not return a usable story.'); return; }
           const fresh = findSavedById(topic.id) || topic;
           fresh.story = out.story;
+          // aiStory = the immutable ORIGINAL AI text. Setting it here (at generation) means a later
+          // human edit of the dialect story produces a correct AI-error-hunt diff (original vs fixed).
+          fresh.aiStory = out.story;
           fresh.storyGloss = out.gloss;
           fresh.storyTopic = storyTopic || fresh.storyTopic || '';
-          fresh._dialect.aiStory = { at: new Date().toISOString(), needsReview: true, topic: storyTopic, instructions };
+          fresh._dialect.aiStory = { at: new Date().toISOString(), needsReview: true, topic: storyTopic, instructions,
+            method: out.method || 'direct',
+            standardSource: out.standardSource || '',
+            coverage: out.coverage || null };
           fresh._dialect.curated = false;   // a NEW story resets approval — it must be re-reviewed
           fresh._dialect.curatedAt = null;
           fresh.aiGenerated = true;
           fresh.updatedAt = new Date().toISOString();
           upsert(fresh);
-          console.log(`  🤖 Dialect story generated for "${fresh.topic}"${storyTopic?` (topic: ${storyTopic})`:''} — needs review`);
-          jobDone(jobId, { id: fresh.id, chars: out.story.length });
+          const covStr = out.coverage ? ` [coverage ${out.coverage.used}/${out.coverage.total}]` : '';
+          console.log(`  🤖 Dialect story (${out.method||'direct'}) for "${fresh.topic}"${storyTopic?` (topic: ${storyTopic})`:''}${covStr} — needs review`);
+          jobDone(jobId, { id: fresh.id, chars: out.story.length, method: out.method || 'direct', coverage: out.coverage || null });
         } catch (e) { jobFail(jobId, e.message || String(e)); }
       })();
       return json(res, 202, { jobId });
@@ -3575,6 +3664,9 @@ http.createServer(async (req, res) => {
         }
       }
       let aiHuntEdits;
+      // The AI error-hunt is a PURE diff between the original AI text (aiStory) and the human's
+      // corrected story — no LLM judges anything. For dialect this is ideal: the human fixes the AI's
+      // dialect slop and those corrections become the lesson. So it runs for dialect topics too.
       if (generateAiHunt && saved.aiStory && saved.aiStory !== story) {
         const existing = (saved.lessons||[]).find(l => l.type === 'ai_error_hunt');
         const sentences = storyDiffSentences(saved.aiStory, story, existing?.sentences);
@@ -3677,6 +3769,13 @@ http.createServer(async (req, res) => {
       if (!fmt)    return json(res, 400, { error: 'Missing lessonFormat' });
       const saved = id ? findSavedById(id) : findSaved((topic||'').trim());
       if (!saved)  return json(res, 404, { error: `Topic not found: ${id || topic}` });
+      // Dialect topics: refuse LLM-authoring formats. Those generators run in the base language and
+      // don't know the dialect — they'd inject standard-German / mis-judged content into a dialect
+      // topic. Only the dialect-safe formats are allowed (standard vocab, math, mixed review).
+      const _DIALECT_BLOCKED_FMTS = new Set(['synonyms','word_forms','error_hunt','grammar','conjugation','all_types']);
+      if (saved._dialect && _DIALECT_BLOCKED_FMTS.has(fmt)) {
+        return json(res, 400, { error: 'That lesson type is not available for dialect topics (it would generate non-dialect content). Use Standard, Math, or Mixed review.' });
+      }
       // intro_script is procedural + story-independent (it teaches the alphabet); every other
       // format needs a story and a live backend.
       const _isIntro = (fmt === 'intro_script');

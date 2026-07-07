@@ -4,6 +4,43 @@
 protocol (unchanged) and every still-open item forward. Start a fresh session by reading this file,
 then `LIVE-TEST-CHECKLIST.md`, then the latest `v*_session*_notes.md`.
 
+> ## ▶ START HERE NEXT — LLM-free progress-dependent drill lessons ("review my mistakes")
+> **Recommended next task (chosen with user).** Build the deterministic, no-LLM "drill the words you
+> got wrong" feature. Full sketch is under **OPEN — user progress → "LLM-free progress-dependent
+> drill lessons"** below; read that section in full before starting.
+>
+> **Why this one:** every dependency is already SHIPPED and tested — the learned-vocabulary ledger
+> (`APP.progress.learned["lang|srcLang"]` with per-word `wrong` counts), the solved store + stable
+> `qid()`s, and the exercise builders (`buildStandardExercises` turns `{target,source}` → MCQ / type /
+> order with no model call). Nothing here is blocked on the live-model verification that gates almost
+> everything else. It's deterministic, offline, works in the static build, and is fully
+> headless-testable. It also closes a real loop: the ledger records wrong words but **nothing consumes
+> them yet** — this is the payoff.
+>
+> **What it does:** a "review my mistakes" action collects the current pair's high-`wrong` words from
+> the ledger (weighted, padded with related known words so a short list still fills a round),
+> synthesizes an in-memory `{type:'standard', vocab:[…]}` lesson, and runs it through the normal play
+> UI. Drills the exact wrong words as *quizzed* items (vs "my story", which only weaves them in as
+> context).
+>
+> **Two design calls already made (start here, don't re-litigate):**
+> 1. **Ephemeral, not saved** — build the lesson in memory (like a mixed round); avoids a
+>    data-migration decision. (Persisting it can be a later choice.)
+> 2. **Solving there feeds the existing solved store** — reuse the normal `qid()` path so a
+>    drilled-and-solved word counts toward coverage like any other question, and re-learning a wrong
+>    word can clear/decrement its `wrong` flag.
+>
+> **Definition of done (per the protocol below):** a unit test for the wrong-word collection +
+> padding + in-memory lesson synthesis; wire the entry point (a "review my mistakes" button on the
+> result card or path — pick the smaller surface first); full suite green + `check-inline` 0; en-only
+> ui.json key(s) for any new button/label; rebuild static if client/baked data changed; a
+> LIVE-TEST-CHECKLIST entry for the browser-only play-through. Keep it additive — it must not change
+> existing progression behavior.
+>
+> **Alternative small win if you want something even more self-contained:** fill the **Thai** script
+> table (the only empty stub in `scripts.json`) — bounded, headless, same posture as the other
+> scripts.
+
 ## What shipped in v51 (summary)
 The **East-Tyrolean dialect track**, built end-to-end on top of the v50 progression/personalization
 release, plus follow-up fixes from live testing:
@@ -100,15 +137,16 @@ pass on the **six new v49 en-only keys** listed above. The script-bleed sanity c
 Korean/Hebrew, Cyrillic into Arabic under the old qwen model) is in the v48-b/v49 notes if it needs
 re-running on the next ui.json.
 
-### 2. Library tag/language filter persistence — NEEDS REPRO
-Reported: navigating back to main loses the tag/language selection. The in-memory filters persist
-and `_renderTagFilterBar` re-selects, so the reset isn't obvious. Likely culprit: `_restoreFormLang()`
-(🌍 Home / back paths) resets `APP.lang`/`srcLang` to *form* defaults — intended for the generation
-form but it may reset the selectors the library reads. HELD pending exact repro (which control
-resets, via which button). Candidate fix once confirmed: persist the three lib filters and/or
-decouple them from `_restoreFormLang`. **Note (v49):** the flag-lag fix reordered `selectLang` (tts
-refresh moved before `repopulateContinueSelect`/`updateDocDir`) — unrelated to the filter logic, but
-touch this area carefully.
+### 2. Library tag/language filter persistence — CLOSED (not a bug)
+Investigated in v51. Not reproducible as a defect; **closed by decision (user)**. Findings, kept so a
+future session doesn't re-open it: the filter *logic* (`libFilter`/`libSrcFilter`/`libTagFilter`,
+`setLibFilter`, `_renderTagFilterBar`) is consistent between the server build and the static build,
+and `_restoreFormLang()` does NOT touch the lib filters. The only filter reset that actually fires is
+the static build's `init()` (build-static.js): on page LOAD it deliberately forces `libFilter='all'`
+/`libSrcFilter='all'` and presets `libTagFilter` to `'manually curated'` if that tag exists. So any
+"lost filter" after a **reload** of `docs/index.html` is intentional static-init behavior, not a bug;
+in-session Home/back keeps the in-memory filters. If a future need arises to persist filters across
+static reloads, the fix is localStorage in the static `init()` — but this is not currently wanted.
 
 ---
 

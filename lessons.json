@@ -1139,15 +1139,22 @@
         "base": "de",
         "note": "",
         "attribution": "CC BY-NC Bernd Kranebitter 2007-2026",
-        "curated": false,
+        "curated": true,
         "rowCount": 86,
         "aiStory": {
-          "at": "2026-07-06T05:16:12.234Z",
-          "needsReview": true,
+          "at": "2026-07-06T10:10:14.462Z",
+          "needsReview": false,
           "topic": "ein tag in den bergen",
-          "instructions": "this glossary is specific for east tyrol, and the dialect is a southern version of the bavarian dialect family"
+          "instructions": "this glossary is specific for east tyrol, and the dialect is a southern version of the bavarian dialect family",
+          "method": "rewrite",
+          "standardSource": "Es war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
+          "coverage": {
+            "used": 4,
+            "total": 86,
+            "ratio": 0.047
+          }
         },
-        "curatedAt": null
+        "curatedAt": "2026-07-06T10:15:35.306Z"
       },
       "lessons": [
         {
@@ -1667,14 +1674,35 @@
           ],
           "sentences": [],
           "_dialect": true
+        },
+        {
+          "id": "aeh_1783356998370",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a human tutor.",
+          "icon": "🔎",
+          "aiStory": "Es war a boisl sonnigs Tag in den Berg. Da Himmel war blau und ebba ohne a Wölkchen. Anna und ihr Bruder Max gaiten bai. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie a Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu baiteln, bis er verschwand. Am Nachmittag kehrten sie heint, mit vielen Erinnerungen an diesen wundervollen Tag.\n\n---\nEs war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
+          "sentences": [
+            {
+              "ai": "Es war a boisl sonnigs Tag in den Berg.",
+              "corrected": "Es war a sonniger Tag in die Berg.",
+              "reason": ""
+            },
+            {
+              "ai": "Da Himmel war blau und ebba ohne a Wölkchen.",
+              "corrected": "Da Himmel war blau und ebba ohne a Wolke.",
+              "reason": ""
+            }
+          ]
         }
       ],
       "generatedAt": "2026-07-05T10:37:52.105Z",
-      "updatedAt": "2026-07-06T05:16:12.234Z",
-      "story": "Eifern Gitsche dalämpat, hem gach dechtan, wos Ganga in dalampochn baietl. Gfrett, wos Gitsche gladdsad dalämpat, hem gach dechtan, wos Ganga in dalampochn baietl. Gitsche glaggln, wos Ganga in dalampochn baietl, hem gach dechtan, wos Ganga in dalampochn baietl.",
-      "storyGloss": "Ein eifersüchtiges Mädchen zerzaust, also doch, was Gauner in der zerzausten. Ärger, also doch, was Gauner in der zerzausten, hemm schnell, also doch, was Gauner in der zerzausten. Mädchen baumeln, also doch, was Gauner in der zerzausten, hemm schnell, also doch, was Gauner in der zerzausten.",
+      "updatedAt": "2026-07-06T16:56:38.369Z",
+      "story": "Es war a sonniger Tag in die Berg. Da Himmel war blau und ebba ohne a Wolke. Anna und ihr Bruder Max gaiten bai. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie a Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu baiteln, bis er verschwand. Am Nachmittag kehrten sie heint, mit vielen Erinnerungen an diesen wundervollen Tag.\n\n---\nEs war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
+      "storyGloss": "Es war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
       "storyTopic": "ein tag in den bergen",
-      "aiGenerated": true
+      "aiGenerated": true,
+      "aiStory": "Es war a boisl sonnigs Tag in den Berg. Da Himmel war blau und ebba ohne a Wölkchen. Anna und ihr Bruder Max gaiten bai. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie a Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu baiteln, bis er verschwand. Am Nachmittag kehrten sie heint, mit vielen Erinnerungen an diesen wundervollen Tag.\n\n---\nEs war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag."
     },
     {
       "topic": "Mein Review",

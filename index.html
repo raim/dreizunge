@@ -909,8 +909,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <textarea id="dialect-story-instr" rows="2" placeholder="Instructions (optional), e.g. 'this is a Bavarian-style dialect; keep it simple and everyday'"
       style="width:100%;box-sizing:border-box;margin-bottom:6px;border:1.5px solid var(--gray-mid);border-radius:8px;padding:6px 10px;font-size:12px;font-family:Nunito,sans-serif;color:#222;resize:vertical"></textarea>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      <button type="button" id="dialect-story-btn" onclick="dialectStudioStory()"
-        style="font-size:12px;font-weight:700;padding:5px 12px;border:none;border-radius:8px;background:var(--green);color:var(--white);cursor:pointer;font-family:Nunito,sans-serif">📖 Generate dialect story</button>
+      <button type="button" id="dialect-story-btn" onclick="dialectStudioStory('direct')"
+        style="font-size:12px;font-weight:700;padding:5px 12px;border:none;border-radius:8px;background:var(--green);color:var(--white);cursor:pointer;font-family:Nunito,sans-serif">📖 Generate (direct)</button>
+      <button type="button" id="dialect-story-btn2" onclick="dialectStudioStory('rewrite')"
+        style="font-size:12px;font-weight:700;padding:5px 12px;border:none;border-radius:8px;background:#5a7bd8;color:var(--white);cursor:pointer;font-family:Nunito,sans-serif" title="Write a Standard-German story, then rewrite it into the dialect using your glossary">🔁 Generate (rewrite)</button>
       <button type="button" id="dialect-curate-btn" onclick="dialectStudioCurate()"
         style="font-size:12px;font-weight:700;padding:5px 12px;border:1.5px solid var(--gray-mid);border-radius:8px;background:var(--white);cursor:pointer;font-family:Nunito,sans-serif">✅ Approve this story</button>
     </div>
@@ -940,7 +942,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <span id="story-edit-toolbar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
         <button class="story-repair-btn" onclick="saveStoryEdit()" style="padding:4px 10px;font-size:12px">💾</button>
         <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="cancelStoryEdit()">✕</button>
-        <label style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;color:var(--gray-dark);white-space:nowrap">
+        <label id="gen-ai-hunt-label" style="display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700;cursor:pointer;color:var(--gray-dark);white-space:nowrap">
           <input type="checkbox" id="gen-ai-hunt-cb" checked style="width:13px;height:13px">
           🔎 AI hunt
         </label>
@@ -963,9 +965,9 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <span id="add-lesson-lbl-card" style="font-size:12px;font-weight:800;color:var(--blue)">➕ Add lesson:</span>
     <select class="addlesson-select" id="sial-fmt-lesson-card">
       <option value="standard">📚 Standard</option>
-      <option value="synonyms">🔁 Synonyms</option>
-      <option value="word_forms">🧩 Word Forms</option>
-      <option value="error_hunt">🔍 Error Hunt</option>
+      <option value="synonyms" class="opt-ai-authoring">🔁 Synonyms</option>
+      <option value="word_forms" class="opt-ai-authoring">🧩 Word Forms</option>
+      <option value="error_hunt" class="opt-ai-authoring">🔍 Error Hunt</option>
       <option value="math">🔢 Math</option>
       <option value="mixed">🔀 Mixed review (no AI)</option>
       <option value="intro_script" class="opt-intro-script" style="display:none">🔡 Learn the script (no AI)</option>
@@ -1993,24 +1995,41 @@ function updateDialectStudio(){
   const can=!!APP.info?.canGenerate;
   const curBtn=document.getElementById('dialect-curate-btn');
   const storyBtn=document.getElementById('dialect-story-btn');
+  const storyBtn2=document.getElementById('dialect-story-btn2');
   // Story generation is always available (it IS the sample to review). Approve needs a story.
   if(storyBtn){ storyBtn.disabled=!can; storyBtn.style.opacity=can?'1':'.5'; }
+  if(storyBtn2){ storyBtn2.disabled=!can; storyBtn2.style.opacity=can?'1':'.5'; }
   if(curBtn){ curBtn.disabled=!can||!hasStory; curBtn.textContent=curated?t('dialect.studio.unapprove'):t('dialect.studio.approve'); }
   const msg=document.getElementById('dialect-studio-msg'); if(msg) msg.textContent='';
   // Prefill the topic/instructions fields from the last generation (so re-generating is easy).
   const tI=document.getElementById('dialect-story-topic'); if(tI && !tI.value && d._dialect.aiStory?.topic) tI.value=d._dialect.aiStory.topic;
   const iI=document.getElementById('dialect-story-instr'); if(iI && !iI.value && d._dialect.aiStory?.instructions) iI.value=d._dialect.aiStory.instructions;
-  // Review area: show the generated story (dialect + German) to read and judge.
+  // Review area: show the generated story (dialect + German), the method used, and — for the rewrite
+  // method — the coverage metric + the Standard-German source it was rewritten from.
   const rev=document.getElementById('dialect-review');
   if(rev){
     let html='';
     if(hasStory){
+      const ai=d._dialect.aiStory||{};
+      const methodLbl = ai.method==='rewrite' ? t('dialect.review.method_rewrite') : t('dialect.review.method_direct');
       html+='<div style="margin-top:4px;font-weight:800">'+t('dialect.review.story_hdr')
-        +(curated?' ✅':' ⚠')+'</div>';
+        +(curated?' ✅':' ⚠')+' <span style="font-weight:600;color:#888;font-size:11px">('+methodLbl+')</span></div>';
+      // Coverage badge (rewrite method): how many glossary words actually appear.
+      if(ai.coverage && typeof ai.coverage.used==='number'){
+        html+='<div style="font-size:11px;font-weight:700;color:#5a7bd8;margin-top:2px">'
+          +t('dialect.review.coverage',{used:ai.coverage.used,total:ai.coverage.total})+'</div>';
+      }
       html+='<div style="margin-top:4px;padding:8px 10px;border:1px solid #f0c060;border-radius:8px;background:var(--white)">'
         +'<div style="font-weight:700;color:#7a4a00;white-space:pre-wrap">🗣 '+escHtml(d.story)+'</div>'
         +(d.storyGloss?'<div style="margin-top:6px;font-weight:600;color:#555;white-space:pre-wrap">'+escHtml(d.storyGloss)+'</div>':'')
         +'</div>';
+      // For the rewrite method, show the Standard-German source it started from (the scaffold), so
+      // the reviewer can see what the dialect was rewritten FROM.
+      if(ai.method==='rewrite' && ai.standardSource){
+        html+='<details style="margin-top:6px"><summary style="cursor:pointer;font-size:11px;font-weight:700;color:#888">'
+          +t('dialect.review.show_source')+'</summary>'
+          +'<div style="margin-top:4px;padding:6px 9px;border:1px dashed #ccc;border-radius:6px;font-weight:600;color:#666;white-space:pre-wrap">'+escHtml(ai.standardSource)+'</div></details>';
+      }
     }
     rev.innerHTML=html;
   }
@@ -2027,14 +2046,14 @@ async function dialectStudioCurate(){
     showToast(want?t('dialect.toast.curated'):t('dialect.toast.uncurated'));
   }catch(e){ if(msg) msg.textContent=e.message; }
 }
-async function dialectStudioStory(){
+async function dialectStudioStory(method){
   const d=APP.lessonData; if(!d?._dialect) return;
   const msg=document.getElementById('dialect-studio-msg');
   const topic=(document.getElementById('dialect-story-topic')?.value||'').trim();
   const instructions=(document.getElementById('dialect-story-instr')?.value||'').trim();
   try{
     if(msg) msg.textContent=t('dialect.status.story_start');
-    const r=await fetch('/api/dialect-story',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:d.id, topic, instructions})});
+    const r=await fetch('/api/dialect-story',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:d.id, topic, instructions, method: method==='rewrite'?'rewrite':'direct'})});
     const j=await r.json().catch(()=>({}));
     if(!r.ok||!j.jobId){ if(msg) msg.textContent=(j.error||('HTTP '+r.status)); return; }
     for(let i=0;i<400;i++){
@@ -2659,16 +2678,19 @@ async function saveStoryEdit(){
     if (!r.ok) throw new Error(resp.error || 'Failed');
     d.story = newStory;
     if (resp.aiStory) d.aiStory = resp.aiStory;
-    // Update or add ai_error_hunt lesson in client state
-    if (genHunt && resp.sentences) {
+    // Update or add ai_error_hunt lesson in client state. NOTE: the server returns the diff as
+    // `edits` (sparse changed pairs); read that (was previously reading a non-existent `sentences`,
+    // so the inline update silently no-op'd and only a reload showed the new hunt).
+    const _huntEdits = resp.edits || resp.sentences;
+    if (genHunt && _huntEdits) {
       const existing = (d.lessons||[]).find(l => l.type === 'ai_error_hunt');
       if (existing) {
-        existing.sentences = resp.sentences;
+        existing.sentences = _huntEdits;
         existing.aiStory = resp.aiStory;
       } else {
         if (!d.lessons) d.lessons = [];
         d.lessons.push({ type:'ai_error_hunt', title:'AI Error Hunt', icon:'🔎',
-          aiStory: resp.aiStory, sentences: resp.sentences });
+          aiStory: resp.aiStory, sentences: _huntEdits });
       }
     }
     const ehLessons = (d.lessons||[]).filter(ls => ls.type==='error_hunt');
@@ -4857,6 +4879,16 @@ function openAddLesson(sid, enc) {
       introOpt.style.display = show ? '' : 'none';
       if (!show && _fmtSel.value === 'intro_script') _fmtSel.value = 'standard';
     }
+    // For DIALECT topics, hide the LLM-authoring lesson types (synonyms/word_forms/error_hunt).
+    // Those generators run in the base language (de) and don't know the dialect — they'd inject
+    // standard-German or mis-judged content into a dialect topic, breaking the "no invented dialect"
+    // guarantee. Dialect topics keep the safe types: Standard (glossary vocab), Math, Mixed review.
+    const _isDia = !!(APP.lessonData && APP.lessonData._dialect);
+    _fmtSel.querySelectorAll('.opt-ai-authoring').forEach(opt => {
+      opt.style.display = _isDia ? 'none' : '';
+      opt.disabled = _isDia;
+    });
+    if (_isDia && ['synonyms','word_forms','error_hunt'].includes(_fmtSel.value)) _fmtSel.value = 'standard';
   }
   const _mathInstrRow = document.getElementById('sial-math-instr-row-' + sid);
   const _reinforceRow = document.getElementById('sial-reinforce-row-' + sid);

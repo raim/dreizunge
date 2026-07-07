@@ -441,3 +441,79 @@ Folded the entire post-v50 dialect track into the v51 release.
   ex.type_translate.q_nolang); browser/Ollama verification LIVE-TEST §§41–55 (esp. dialect story
   QUALITY + my-story prompt quality); mein-osttirol.rocks permission email; library tag/filter
   persistence repro.
+
+## post-v51 — Dialect story: standard→dialect REWRITE method (V2), as an A/B option
+Built the "standard → dialect rewrite" approach from the dialects.md review, as a SIDE-BY-SIDE
+option (not a replacement) so the user can judge it against direct generation on their own model.
+- `generateDialectStoryV2(glossaryRows, base, {topic,instructions,long})` (server): TWO model calls —
+  (1) a Standard-German story on the topic (model is reliable here); (2) a CONSTRAINED rewrite into
+  dialect using the glossary, preserving sentence count + meaning, "change only what the dialect
+  requires, don't invent dialect words you're unsure of." Reframes the model AUTHOR→TRANSFORMER.
+  Returns { story, gloss, standardSource, coverage, method:'rewrite' }.
+- `dialectGlossaryCoverage(text, rows)`: deterministic faithfulness signal — counts distinct
+  glossary dialect words actually present in the output ({used,total,ratio}). The rewrite's real
+  win: the aligned Standard-German source makes the output CHECKABLE (coverage now; back-translation
+  later) in a way free authoring never was.
+- `/api/dialect-story` takes `method:'rewrite'|'direct'` (default direct), stores method +
+  standardSource + coverage on `_dialect.aiStory`. Studio has a second "🔁 Generate (rewrite)"
+  button; the review area shows the method label, a coverage badge, and a collapsible Standard-German
+  source. fake-ollama gained std-story + rewrite branches.
+- Tests: `unit-dialect-story` V2 section (coverage counting; two-call flow; endpoint routing);
+  `e2e-dialect-import` rewrite section (method reported, coverage attached, source kept). New en-only
+  keys: dialect.review.{method_rewrite,method_direct,coverage,show_source}. Static rebuilt. LIVE-TEST
+  §56 (A/B the two methods — user evaluation owed). Still v51.
+
+## post-v51 — Option A: gate LLM-authoring lesson types off for dialect topics
+Dialect topics must not get lessons whose generators run in the base language (de) — they'd inject
+standard-German / mis-judged content, breaking the "no invented dialect" guarantee. Gated both UI +
+server (defense in depth):
+- **Add-lesson menu:** tagged synonyms/word_forms/error_hunt options `opt-ai-authoring`;
+  `openAddLesson` hides+disables them for `_dialect` topics and resets the selector to standard.
+  Dialect topics keep Standard (glossary vocab), Math, Mixed review, (intro_script if applicable).
+- **AI error-hunt:** the "🔎 AI hunt" checkbox (`gen-ai-hunt-label`) is hidden for dialect when the
+  story editor opens (and unchecked); editing the dialect story TEXT stays allowed.
+- **Server guards:** `/api/lessons/add-lesson` refuses {synonyms,word_forms,error_hunt,grammar,
+  conjugation,all_types} for `_dialect` topics (400); `/api/save-story` skips AI-hunt generation for
+  `_dialect`.
+- Tests: `e2e-dialect-import` (server refuses each blocked fmt; standard not blocked);
+  `unit-dialect-panel` (UI tags + gating logic present). Checklist §57. Static rebuilt. Still v51.
+Future (not now): a dialect-native "convert standard↔dialect" deterministic exercise as the proper
+dialect "add lesson"; a real dialect error-hunt from APPROVED dialect content (M3-ish).
+
+## post-v51 — CORRECTION: AI error-hunt is a human-edit diff → KEEP it for dialect
+I had wrongly gated the AI error-hunt (`ai_error_hunt`) off for dialect, believing it re-invoked a
+base-language LLM to corrupt the story. WRONG: `storyDiffSentences` is a pure LCS diff between the
+original AI text (`aiStory`) and the HUMAN-corrected story — no LLM. For dialect it's the ideal
+review tool: the human fixes the AI's dialect slop and those corrections become the lesson. Reversed
+that specific gate:
+- Restored the "🔎 AI hunt" checkbox for dialect (removed the toggleStoryRepair hide).
+- Restored the save-story path for dialect (removed the `!saved._dialect` guard on the hunt).
+- Set `fresh.aiStory = out.story` at dialect-story generation, so a later human edit produces a
+  correct diff (original AI vs fixed).
+- KEPT the correct gates: the LLM-authoring ADD-LESSON formats (synonyms/word_forms/error_hunt/
+  grammar/conjugation) stay blocked for dialect — those DO call base-language generators. The plain
+  `error_hunt` add-lesson (LLM-corrupts) stays blocked; the story-edit `ai_error_hunt` (human-
+  corrects) is allowed. Important distinction.
+- BONUS FIX found along the way: the client read `resp.sentences` from save-story but the server
+  returns the diff as `edits` — so the inline hunt update silently no-op'd for ALL topics (only a
+  reload showed the new hunt). Now reads `resp.edits || resp.sentences`.
+- Tests: `e2e-dialect-import` proves the dialect human-correction hunt end-to-end (aiStory set on
+  generation; edit → diff → ai_error_hunt lesson saved). `unit-dialect-panel` updated (AI-hunt NOT
+  hidden for dialect; add-lesson authoring types still hidden). Static rebuilt. Still v51.
+
+## post-v51 — Closed the library-filter-persistence roadmap item (not a bug)
+Investigated: filter logic is identical across server + static builds; `_restoreFormLang` doesn't
+touch the lib filters. The only reset that fires is the static build's `init()` deliberately forcing
+libFilter='all'/libSrcFilter='all' + presetting libTagFilter='manually curated' on page LOAD. So a
+"lost filter" after reloading docs/index.html is intentional static-init behavior, not a defect;
+in-session Home/back preserves the in-memory filters. Roadmap item #2 marked CLOSED (not a bug) by
+user decision, with the findings retained so it isn't re-opened. No code change.
+
+## post-v51 — Next-task pointer written
+Added a "▶ START HERE NEXT" block at the top of roadmap_v52.md pointing the next (fresh) session at
+the LLM-free progress-dependent drill lessons ("review my mistakes") — chosen because all deps are
+shipped/tested (learned ledger + solved store + builders), it's deterministic/offline/static-safe,
+fully headless-testable, and unblocked by live-model verification. Two design calls pre-made:
+ephemeral (in-memory) lesson; solving feeds the existing solved store via the normal qid() path.
+Alternative small win noted: fill the Thai script table. Recommend starting a FRESH session (this one
+is compacted + dialect-heavy).

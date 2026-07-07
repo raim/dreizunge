@@ -48,7 +48,16 @@ const srv = http.createServer(async (req, res) => {
     const sys = (msgs.find(m => m.role === 'system') || {}).content || '';
     const usr = msgs.filter(m => m.role === 'user').map(m => m.content).join('\n') || '';
     let kind, content;
-    if (/write a short, coherent story in a regional dialect/i.test(sys)) {
+    if (/write a short, coherent story in Standard/i.test(sys)) {
+      // V2 step 1: a Standard-German story (plain text, no blocks).
+      kind = 'std_story';
+      content = 'Heute ist ein schöner Tag. Ich habe ein Mädchen gesehen.';
+    } else if (/rewrite a Standard .* story into a regional dialect/i.test(sys)) {
+      // V2 step 2: the constrained dialect rewrite (STORY/GERMAN blocks). Reuse a glossary word so
+      // coverage is > 0.
+      kind = 'dialect_rewrite';
+      content = 'STORY:\nHeint is a scheena Tog. I hon a Gitsche gsegn.\n---\nGERMAN:\nHeute ist ein schöner Tag. Ich habe ein Mädchen gesehen.';
+    } else if (/write a short, coherent story in a regional dialect/i.test(sys)) {
       // Dialect STORY (M2): return valid STORY/GERMAN blocks reusing a glossary word.
       kind = 'dialect_story';
       content = 'STORY:\nHeint is a scheena Tog. I hon a Gitsche gsegn.\n---\nGERMAN:\nHeute ist ein schöner Tag. Ich habe ein Mädchen gesehen.';

@@ -57,3 +57,15 @@ assert.ok(/onclick="doDialectImport\(\)"/.test(panelSlice), 'Build button calls 
 
 console.log('  dialect panel: shown via .open class, Generate row hidden, panel self-contained: OK');
 console.log('unit-dialect-panel: ALL PASSED');
+
+// ── Option A: LLM-authoring add-lesson types + AI-hunt gated off for dialect (UI) ──
+assert.ok(/class="opt-ai-authoring"/.test(html), 'LLM-authoring add-lesson options are tagged');
+assert.ok(/_fmtSel\.querySelectorAll\('\.opt-ai-authoring'\)\.forEach/.test(html),
+  'openAddLesson hides the LLM-authoring options for dialect topics');
+assert.ok(/if \(_isDia && \['synonyms','word_forms','error_hunt'\]\.includes\(_fmtSel\.value\)\) _fmtSel\.value = 'standard'/.test(html),
+  'a blocked format resets to standard for dialect');
+// The AI error-hunt is a PURE human-edit diff (no LLM) — it must NOT be gated for dialect (it's the
+// ideal tool for correcting dialect slop). Assert we did NOT hide it.
+assert.ok(!/_huntLbl\.style\.display = _isDia \? 'none'/.test(html),
+  'AI error-hunt (human-correction diff) is NOT hidden for dialect');
+console.log('  Option A (UI): LLM-authoring add-lesson types hidden for dialect; human-edit AI-hunt kept: OK');
