@@ -1,5 +1,10 @@
 {
   "en": {
+    "models.story": "Story",
+    "models.lessons": "Lessons",
+    "models.translation": "Translation",
+    "models.switched": "Model updated",
+    "models.switch_failed": "Couldn't switch model",
     "static.pill.tosubmit": "to submit",
     "static.pill.edits_only": "Edited lessons to submit",
     "static.pill.default": "Flagged & rated items — download to submit.",

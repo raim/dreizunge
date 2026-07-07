@@ -40,7 +40,11 @@ const VOCAB_LESSON = {
 const srv = http.createServer(async (req, res) => {
   if (req.method === 'GET' && req.url === '/api/tags') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    return res.end(JSON.stringify({ models: [{ name: 'fake' }] }));
+    // Report several models so tests can exercise the model picker + per-role switching. The
+    // 'fake-translategemma' name flips the server's lesson format to 'table' (name-derived).
+    return res.end(JSON.stringify({ models: [
+      { name: 'fake' }, { name: 'fake-lessons' }, { name: 'fake-transl' }, { name: 'fake-translategemma' },
+    ] }));
   }
   if (req.method === 'POST' && req.url === '/api/chat') {
     const raw = await readBody(req);
@@ -61,6 +65,28 @@ const srv = http.createServer(async (req, res) => {
       // Dialect STORY (M2): return valid STORY/GERMAN blocks reusing a glossary word.
       kind = 'dialect_story';
       content = 'STORY:\nHeint is a scheena Tog. I hon a Gitsche gsegn.\n---\nGERMAN:\nHeute ist ein schöner Tag. Ich habe ein Mädchen gesehen.';
+    } else if (/Output TWO markdown tables/i.test(sys)) {
+      // Table-format lesson (translategemma-style): two markdown tables, vocab then sentences.
+      // A non-pipe heading between them lets the server's parseTableLesson stop table 1 correctly.
+      kind = 'vocab_table';
+      content = [
+        'Table 1 - Vocabulary',
+        '| Lëtzebuergesch word | German meaning | Pronunciation |',
+        '| --- | --- | --- |',
+        '| Haus | house | hows |',
+        '| Katze | cat | kah-tse |',
+        '| Hund | dog | hunt |',
+        '| Baum | tree | bowm |',
+        'Table 2 - Sentences',
+        '| Lëtzebuergesch sentence | German translation |',
+        '| --- | --- |',
+        '| Das Haus ist groß. | The house is big. |',
+        '| Die Katze schläft. | The cat sleeps. |',
+      ].join('\n');
+    } else if (/professional translator\. Translate the following/i.test(sys)) {
+      // Story translation (only requested when the translation model differs from the story model).
+      kind = 'translation';
+      content = 'Once upon a time there was a test. The cat and the house stayed the same.';
     } else if (/single JSON object|series title/i.test(sys)) {
       kind = 'storyline_title'; content = JSON.stringify({ title: 'The Fake Saga', icon: '📘' });
     } else if (/concise summary|captures the main arc/i.test(sys)) {

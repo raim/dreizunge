@@ -35,6 +35,13 @@ function ping() {
   return Promise.resolve(false);
 }
 
+// List the models the backend has available (for a UI model picker). Returns a de-duplicated
+// array of model-name strings, or [] if the backend is unreachable / unsupported (never throws).
+function listModels() {
+  if (BACKEND === 'ollama') return _listOllamaModels();
+  return Promise.resolve([]);
+}
+
 function release(model) {
   if (BACKEND === 'ollama') return _releaseOllama(model);
   return Promise.resolve();
@@ -52,9 +59,28 @@ async function warmup(model, log) {
 
 // ── JSON utilities (backend-agnostic) ─────────────────────────────────────────
 
+// Remove a reasoning model's chain-of-thought so it never leaks into output (stories,
+// translations, or JSON). Handles three shapes so any Ollama reasoning model is tolerated:
+//   (1) well-formed <think>…</think> / <thinking>…</thinking> pairs;
+//   (2) an ORPHAN CLOSE tag — some models emit the reasoning first, then only a closing
+//       tag, then the answer → drop everything up to and including the last close tag;
+//   (3) an ORPHAN OPEN tag — the reasoning ran past the token budget and never closed
+//       → drop from the open tag to the end (the answer never arrived).
+// Non-reasoning output has no tags, so this is a no-op apart from trimming (and is therefore
+// safe to run on every response, including the JSON paths).
+function stripThink(raw) {
+  if (raw == null) return raw;
+  let s = String(raw);
+  s = s.replace(/<think(?:ing)?>[\s\S]*?<\/think(?:ing)?>/gi, '');        // (1) closed pairs
+  const closes = [...s.matchAll(/<\/think(?:ing)?>/gi)];                  // (2) orphan close tag
+  if (closes.length) { const last = closes[closes.length - 1]; s = s.slice(last.index + last[0].length); }
+  const open = s.search(/<think(?:ing)?>/i);                             // (3) orphan open (truncated)
+  if (open !== -1) s = s.slice(0, open);
+  return s.trim();
+}
+
 function stripRaw(raw) {
-  return raw
-    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+  return stripThink(raw)
     .replace(/^```(?:json)?\s*/im, '')
     .replace(/\s*```\s*$/m, '')
     .trim();
@@ -113,8 +139,12 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
         try {
           const p = JSON.parse(d);
           if (p.error) return reject(new Error('Ollama: ' + p.error));
-          const text = p.message?.content || p.response || '';
-          if (!text) return reject(new Error('Ollama returned empty response'));
+          const rawText = p.message?.content || p.response || '';
+          if (!rawText) return reject(new Error('Ollama returned empty response'));
+          // Strip any reasoning-model chain-of-thought here, so it can never leak into a
+          // story, a translation, or a JSON payload no matter which caller invoked us.
+          const text = stripThink(rawText);
+          if (!text) return reject(new Error('Ollama returned only a reasoning block (no answer) — raise num_predict or disable thinking'));
           resolve({ text, promptTokens: p.prompt_eval_count || 0, completionTokens: p.eval_count || 0 });
         } catch(e) { reject(new Error('Ollama parse: ' + e.message + '\n' + d.slice(0, 200))); }
       });
@@ -126,6 +156,31 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
   return Promise.race([call,
     new Promise((_, reject) => setTimeout(() => reject(new Error('Ollama timeout')), OLLAMA_TIMEOUT))
   ]);
+}
+
+function _listOllamaModels() {
+  return new Promise(resolve => {
+    try {
+      const u = new URL('/api/tags', OLLAMA_HOST);
+      const lib = u.protocol === 'https:' ? https : http;
+      const req = lib.request(
+        { hostname: u.hostname, port: u.port || 11434, path: u.pathname, method: 'GET' },
+        res => {
+          let d = ''; res.on('data', c => d += c);
+          res.on('end', () => {
+            try {
+              const p = JSON.parse(d);
+              const names = (p.models || []).map(m => m && (m.name || m.model)).filter(Boolean);
+              resolve([...new Set(names)]);
+            } catch(_) { resolve([]); }
+          });
+        }
+      );
+      req.setTimeout(3000, () => { req.destroy(); resolve([]); });
+      req.on('error', () => resolve([]));
+      req.end();
+    } catch(_) { resolve([]); }
+  });
 }
 
 function _pingOllama() {
@@ -164,4 +219,4 @@ function _releaseOllama(model) {
   });
 }
 
-module.exports = { callLLM, ping, release, warmup, stripRaw, extractJSON, extractArray, salvageArray };
+module.exports = { callLLM, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray };

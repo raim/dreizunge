@@ -1127,3 +1127,77 @@ non-dialect / mis-judged content) are hidden. Editing the dialect story text is 
 - [ ] **Server refuses anyway (defense in depth).** Even if forced, the server rejects
       synonyms/word_forms/error_hunt/grammar/conjugation add-lesson requests for a dialect topic with
       a clear message.
+
+### 58. post-v51 — Reasoning-model hardening (stripThink) — Ollama-verify owed
+The transport (`llm.js`) now strips any reasoning-model chain-of-thought from every response, so a
+`<think>…</think>` block can never leak into a story, a translation, or the JSON the validators
+parse. The logic is fully unit-tested (`unit-strip-think`); this checks it end-to-end against a
+REAL reasoning model, which the headless suite (fake-ollama emits no think tags) can't cover.
+Needs Ollama with a reasoning model pulled (e.g. `ollama pull qwen3:8b` or `qwq`).
+
+- [ ] **Reasoning model → clean story.** Start the server with a reasoning model as the story model
+      (`OLLAMA_MODEL=qwen3:8b node server.js`), generate a normal topic (de→en). The saved story is
+      clean prose — **no** `<think>`/`</think>` tags and no visible reasoning text at the top.
+- [ ] **Reasoning model → parseable lessons.** With the same model as the lesson model
+      (`OLLAMA_LESSON_MODEL=qwen3:8b`), the vocab/sentence lessons still build (the reasoning block
+      didn't corrupt the JSON). Watch the server console for parse errors.
+- [ ] **Truncated-reasoning failure is clean, not garbage.** If a reasoning model with too small a
+      budget returns only an unclosed think block, generation FAILS with a clear message ("only a
+      reasoning block…") rather than saving a story/lesson full of reasoning text. (Raising
+      `num_predict`, i.e. a longer story length, or using a non-reasoning model, fixes it.)
+- [ ] **Non-reasoning model unchanged.** With the default `qwen2.5:7b` (no thinking), stories and
+      lessons are byte-for-byte as before — the strip is a no-op on tag-free output.
+
+### 59. post-v51 — Runtime model picker (per-role dropdowns) — browser-verify owed
+The backend row now shows three model dropdowns (Story / Lessons / Translation) populated from
+Ollama's installed models (`/api/models`), so a model can be switched without restarting. Fully
+wired + unit/e2e tested headlessly (`unit-model-picker`, `e2e-models`); this is the browser pass.
+Needs Ollama with ≥2 models pulled (e.g. `qwen2.5:7b` + `translategemma`).
+
+- [ ] **Dropdowns appear (Ollama only).** With the server running against Ollama, the backend row
+      shows three labelled selects — Story, Lessons, Translation — each listing the installed models,
+      preselected to the currently active model for that role. (In the offline/static build there is
+      NO backend, so the dropdowns do not appear at all.)
+- [ ] **Switching a role sticks + updates the label.** Change the Story dropdown to another model:
+      a "Model updated" toast appears, and the Ollama pill label updates to the new story model. The
+      choice persists for subsequent generations this session.
+- [ ] **translategemma on Lessons → table format.** Set the Lessons dropdown to a `translategemma`
+      model; the pill's "Lessons: …" now shows `[table]`. Generate a topic — lessons still build
+      (from the markdown-table path). Set Lessons back to a JSON-capable model; `[table]` disappears.
+- [ ] **Split story vs lessons works end-to-end.** Set Story = `translategemma`, Lessons =
+      `qwen2.5:7b`, generate a topic (e.g. a dialect/Lëtzebuergesch story): the story is authored by
+      translategemma (prose, so no JSON issue) and the lessons by qwen (JSON). The result-card
+      "Generated in …" line reflects the run.
+- [ ] **Unknown/uninstalled rejected.** (Only reachable via API, but worth noting.) POSTing a model
+      name that isn't installed returns a 400 and does not change the active model.
+- [ ] **Provenance recorded.** After a split-model generation, the saved topic's `generationStats`
+      carries `models: {story, translation, lessons}` reflecting the actual models used (translation
+      is null when it didn't run). Check via the saved lessons.json entry.
+
+### 60. v52 fix — table-format header no longer leaks as a vocab entry
+`parseTableLesson` was keyword-matching the header row with ASCII `\w+`, so a target language whose
+name has non-ASCII letters (Lëtzebuergesch → the ë) leaked the header in as the first vocab item
+("Lëtzebuergesch word" / "German meaning"), dropped a real word (8-row cap), and could lose the
+sentence table. Now structure-anchored (header = the row before the `|---|` separator), language-
+independent. Headlessly covered (`unit-table-lesson`, `e2e-models` with a non-ASCII fixture); this
+confirms it against real translategemma output.
+
+- [ ] **lb lesson has no header row.** With Story+Lessons = translategemma, generate a Lëtzebuergesch
+      (target) ← German (source) topic. The first vocab card is a REAL word — not
+      "Lëtzebuergesch word" / "German meaning".
+- [ ] **Full word count + sentences present.** The lesson has its full vocab set (no missing 8th
+      word) and its example sentences (the sentence table wasn't swallowed).
+
+### 61. v52 — synonym/antonym solution reveal shows the exact translation
+The reveal for a `syn_select` (synonyms / antonyms select-all) now shows each correct word followed
+by its EXACT translation (the gloss authored in the lesson data), on both a correct and a wrong
+answer. (`unit-synonyms` covers the wiring + gloss pairing; this is the visual check.)
+
+- [ ] **Correct answer reveal.** Play a Synonyms lesson, select all the right words. The green
+      feedback lists each correct word with its translation, e.g. "Gebäude — building" / "Heim — home"
+      (one per line), matching the glosses in the lesson.
+- [ ] **Wrong answer reveal.** Deliberately miss one. The "correct answer" line likewise shows each
+      word with its exact translation, not just the bare words.
+- [ ] **Antonyms too.** The same holds for an antonyms select-all exercise.
+- [ ] **Older data without glosses.** If a lesson entry has no gloss, the word still shows plainly
+      (no dangling "—"). (Regenerated lessons include glosses.)

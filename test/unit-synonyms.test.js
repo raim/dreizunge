@@ -67,4 +67,40 @@ const kleinEx = exs.find(e => e.base === 'klein');
 assert.ok(kleinEx && kleinEx.sentence === 'Das Haus war klein und alt.', 'context sentence carried');
 console.log('  context sentence carried: OK');
 
+// The solution reveal shows each correct word's EXACT translation (gloss) from the lesson data.
+assert.ok(html.includes('function synRevealHtml'), 'synRevealHtml helper missing');
+// Both reveal sites (correct + wrong) route syn_select through the helper, not a bare join.
+assert.ok(/ex\.type==='syn_select' \? synRevealHtml\(ex\)/.test(html), 'correct-reveal uses synRevealHtml');
+assert.ok(/_wrongCorrect = ex\.type==='syn_select' \? synRevealHtml\(ex\)/.test(html), 'wrong-reveal uses synRevealHtml');
+
+const escHtml = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const { buildSynonymsExercises: build2, synRevealHtml } = new Function('shuffle', 'escHtml',
+  extract('buildSynonymsExercises') + '\n' + extract('synRevealHtml') +
+  '\nreturn { buildSynonymsExercises, synRevealHtml };')(a => a.slice(), escHtml);
+
+for (const e of build2(lesson)) {
+  const g = lesson.words.find(w => w.base === e.base);
+  const srcArr = (e.mode === 'synonyms' ? g.synonyms : g.antonyms);
+  // glossMap maps each correct word (lowercased) → its exact authored gloss.
+  assert.ok(e.glossMap && typeof e.glossMap === 'object', e.mode + ' exercise carries a glossMap');
+  for (const { w, g: gloss } of srcArr) {
+    assert.strictEqual(e.glossMap[w.toLowerCase()], gloss, `glossMap["${w.toLowerCase()}"] === "${gloss}"`);
+  }
+  // The reveal HTML pairs every correct word with its exact translation.
+  const revealHtml = synRevealHtml(e);
+  for (const { w, g: gloss } of srcArr) {
+    assert.ok(revealHtml.includes(escHtml(w)), `reveal shows the word "${w}"`);
+    assert.ok(revealHtml.includes(escHtml(gloss)), `reveal shows the exact translation "${gloss}" for "${w}"`);
+  }
+}
+// Graceful fallback: a word with no gloss reveals just the word (no dangling separator).
+{
+  const noGloss = { type: 'synonyms', words: [{ base: 'x', gloss: '', sentence: '',
+    synonyms: [{ w: 'alpha', g: '' }], antonyms: [{ w: 'omega', g: 'the end' }], homophones: [] }] };
+  const ex = build2(noGloss).find(e => e.mode === 'synonyms');
+  const rev = synRevealHtml(ex);
+  assert.ok(rev.includes('alpha') && !rev.includes('—'), 'no-gloss word reveals plainly, no dangling dash');
+}
+console.log('  reveal shows exact per-word translations (+ graceful fallback): OK');
+
 console.log('unit-synonyms: ALL PASSED');

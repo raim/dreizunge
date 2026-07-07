@@ -93,6 +93,9 @@ run('unit: inline onclick escaping (read-story SyntaxError)', 'node', [path.join
 run('unit: error-hunt content-aware RTL', 'node', [path.join(__dirname, 'unit-error-hunt-rtl.test.js')]);
 run('unit: order-exercise RTL keying (v49)', 'node', [path.join(__dirname, 'unit-order-rtl.test.js')]);
 run('unit: word_forms/synonyms content-aware RTL (v49)', 'node', [path.join(__dirname, 'unit-wordforms-syn-rtl.test.js')]);
+run('unit: stripThink reasoning-model hardening', 'node', [path.join(__dirname, 'unit-strip-think.test.js')]);
+run('unit: model-picker wiring + static-exclusion', 'node', [path.join(__dirname, 'unit-model-picker.test.js')]);
+run('unit: parseTableLesson non-ASCII header regression', 'node', [path.join(__dirname, 'unit-table-lesson.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {
@@ -106,6 +109,7 @@ if (!quick) {
   run('e2e: word_forms lesson generation', 'node', [path.join(__dirname, 'e2e-word-forms.test.js')]);
   run('e2e: synonyms context sentences', 'node', [path.join(__dirname, 'e2e-synonyms.test.js')]);
   run('e2e: re-create storyline lessons', 'node', [path.join(__dirname, 'e2e-recreate.test.js')]);
+  run('e2e: model picker + table-format + split-translation + provenance', 'node', [path.join(__dirname, 'e2e-models.test.js')]);
 } else {
   console.log('\n(skipping e2e tests: --quick)');
 }

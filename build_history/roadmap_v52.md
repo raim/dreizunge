@@ -41,6 +41,12 @@ then `LIVE-TEST-CHECKLIST.md`, then the latest `v*_session*_notes.md`.
 > table (the only empty stub in `scripts.json`) — bounded, headless, same posture as the other
 > scripts.
 
+> ### ℹ️ Note — v52 session 1 did a DIFFERENT task (user-chosen): runtime model selection.
+> The drill feature above is still the recommended next task (untouched). Session 1 instead built the
+> **user-selectable LLM** feature (the old v46 "per-task model selection" major, phases 1–2) plus
+> **reasoning-model hardening**. See `build_history/v52_session1_notes.md` and the "Model selection"
+> shipped block below. Still v51; ready for a v52 cut when wanted.
+
 ## What shipped in v51 (summary)
 The **East-Tyrolean dialect track**, built end-to-end on top of the v50 progression/personalization
 release, plus follow-up fixes from live testing:
@@ -68,6 +74,32 @@ APP_VERSION = v51; docs rebuilt. New en-only i18n keys owed to the translate pas
 the `dialect.*` set, `tts.approx_dialect`, `ex.mcq_source_target.q_nolang`,
 `ex.badge.mcq_source_target_nolang`, `ex.type_translate.q_nolang`. Browser checks owed: LIVE-TEST
 §§51–55.
+
+## Model selection + reasoning-model hardening (v52 session 1 — SHIPPED, not yet version-cut)
+The v46 "per-task model selection" major, phases 1–2, plus reasoning-model safety. Details in
+`build_history/v52_session1_notes.md`.
+- **Reasoning-model hardening.** `llm.js` `stripThink()` strips a model's `<think>…</think>`
+  chain-of-thought (closed pairs, orphan-close, orphan-open/truncated) at the transport layer, so it
+  can never leak into a story/translation/JSON. Truncated-only-reasoning now fails clean instead of
+  saving garbage. (`unit-strip-think`; LIVE-TEST §58, Ollama-only.)
+- **Runtime model picker.** Model roles are now runtime-mutable (`const`→`let`, live-read;
+  `setRuntimeModels`/`currentModels`), lesson format re-derived per switch. `GET/POST /api/models`
+  (list + switch, validated against installed models). Three per-role dropdowns (Story/Lessons/
+  Translation) in the backend row, ollama-only, live-only (inside `@static-exclude`).
+  (`unit-model-picker`, `e2e-models`; LIVE-TEST §59.)
+- **Structured provenance.** `generationStats.models = {story, translation, lessons}` records the
+  model actually used per artifact (legacy collapsed `model` label kept).
+- **Closed two never-tested gaps** (user-flagged): the table lesson format (`parseTableLesson`) and
+  the split-translation path — both now covered by `e2e-models` (fake-ollama gained a table branch,
+  a translation branch, and multi-model `/api/tags`).
+- **New en-only i18n keys (owed to the TranslateGemma pass):** `models.story`, `models.lessons`,
+  `models.translation`, `models.switched`, `models.switch_failed`.
+- **Still OPEN (v46 phases 3–4, deferred):** a per-BUTTON model popup (pick the model for a single
+  call) and prompt preview/edit before send. Optional refinements: `think:false` + reasoning-aware
+  token budgets to make reasoning models first-class; persisting the model choice across restarts
+  (currently in-memory); releasing the previous model from VRAM on switch. For dialect/Lëtzebuergesch
+  splits, note the v32 guidance (generate in German, then translate → so Story=qwen(de) +
+  Translation=translategemma may beat translategemma authoring directly).
 
 ## ⚠️ Session protocol — READ FIRST, applies to every change
 

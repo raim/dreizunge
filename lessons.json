@@ -2,6 +2,18 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1314409474",
+      "title": "Spaziergang an der Mosel",
+      "icon": "📖",
+      "chapters": [
+        "tp_17834339460840000050"
+      ],
+      "lang": "lb",
+      "srcLang": "de",
+      "createdAt": "2026-07-07T14:19:06.141Z",
+      "updatedAt": "2026-07-07T14:19:06.141Z"
+    },
+    {
       "id": "sl_966370453",
       "title": "Mein Review",
       "icon": "📖",
@@ -1128,6 +1140,434 @@
   ],
   "topics": [
     {
+      "topic": "Spaziergang an der Mosel",
+      "topicEmoji": "🚶‍♀️",
+      "userTopic": "an der mosel spazieren",
+      "userPrompt": "an der mosel spazieren",
+      "lang": "lb",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach. D'Sonn schéngt, an d'Lëscht war frësch. D'Waasser war roueg, an ech konnt d'Fësch am Floss gesinn. E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Floss gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Remerschen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch. Writing style: Clear, factual, neutral tone — no narrative flourish.\n\nWrite a story for the topic: \"an der mosel spazieren\". Plain prose, no headings.",
+      "storyStyle": "neutral",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "an der mosel spazieren",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Lëtzebuergesch word",
+              "source": "German meaning",
+              "userFlag": {
+                "comment": "this seems to be the header instead of an entry",
+                "correct": "",
+                "at": "2026-07-07T14:35:37.877Z"
+              }
+            },
+            {
+              "target": "Moien",
+              "source": "Morgen"
+            },
+            {
+              "target": "Spazéiergaang",
+              "source": "Spaziergang"
+            },
+            {
+              "target": "d'Musel",
+              "source": "die Mosel"
+            },
+            {
+              "target": "d'Sonn",
+              "source": "die Sonne"
+            },
+            {
+              "target": "d'Lëscht",
+              "source": "die Luft"
+            },
+            {
+              "target": "frësch",
+              "source": "frisch"
+            },
+            {
+              "target": "d'Waasser",
+              "source": "das Wasser"
+            }
+          ],
+          "sentences": [],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 428,
+            "completionTokens": 246,
+            "ms": 263834,
+            "at": "2026-07-07T14:19:06.020Z"
+          }
+        },
+        {
+          "id": "ls_1783434938883",
+          "type": "word_forms",
+          "title": "Spaziergang am Musel",
+          "desc": "Ein schöner Tag am Fluss.",
+          "icon": "🏞️",
+          "items": [
+            {
+              "sentence": "De Samschdeg moien, hunn ech e Spaziergaang laang d'___ gemaach.",
+              "translation": "Am Montagmorgen habe ich einen Spaziergang entlang des Flusses gemacht.",
+              "choices": [
+                "Musel",
+                "Muselen"
+              ],
+              "correctIndex": 0,
+              "explanation": "„Musel“ ist der Fluss, im Akkusativ."
+            },
+            {
+              "sentence": "Ech hunn e klenge Paus gemaach an e Café zu Remerschen, et war ganz ___.",
+              "translation": "Ich habe eine kleine Pause in einem Café in Remerschen gemacht, es war sehr angenehm.",
+              "choices": [
+                "agreabel",
+                "agréibel"
+              ],
+              "correctIndex": 0,
+              "explanation": "„agreabel“ ist das Adjektiv, das den Zustand beschreibt."
+            },
+            {
+              "sentence": "E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Floss ___.",
+              "translation": "Einige Leute waren auch dabei, sie fuhren mit dem Fahrrad oder gingen einfach am Fluss entlang.",
+              "choices": [
+                "gaang",
+                "gae"
+              ],
+              "correctIndex": 0,
+              "explanation": "„gaang“ ist das Partizip Perfekt des Verbs 'goen'."
+            },
+            {
+              "sentence": "D'Waasser war roueg, an ech konnt d'Fësch am Séi ___.",
+              "translation": "Das Wasser war ruhig, und ich konnte die Fische im See sehen.",
+              "choices": [
+                "gesinn",
+                "sinn"
+              ],
+              "correctIndex": 0,
+              "explanation": "„gesinn“ ist das Perfekt von „sinn“ (sehen)."
+            },
+            {
+              "sentence": "Den Dag war perfekt fir e Spaziergaang an der ___.",
+              "translation": "Der Tag war perfekt für einen Spaziergang in der Natur.",
+              "choices": [
+                "Natur",
+                "Naturën"
+              ],
+              "correctIndex": 0,
+              "explanation": "„Natur“ ist ein Substantiv im Singular."
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "translategemma:12b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1110,
+            "completionTokens": 557,
+            "ms": 692051,
+            "at": "2026-07-07T14:35:38.883Z"
+          }
+        },
+        {
+          "id": "ls_1783435609209",
+          "type": "synonyms",
+          "title": "Spaziergang an der Mosel",
+          "desc": "Vokabeln zum Thema Spaziergang.",
+          "icon": "🚶",
+          "words": [
+            {
+              "base": "spaziergaang",
+              "gloss": "Spaziergang",
+              "sentence": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach.",
+              "synonyms": [
+                {
+                  "w": "Promenade",
+                  "g": "Promenade"
+                },
+                {
+                  "w": "Wand",
+                  "g": "Wanderung"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "laang",
+              "gloss": "lang",
+              "sentence": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach.",
+              "synonyms": [
+                {
+                  "w": "längt",
+                  "g": "länglich"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "kierch",
+                  "g": "kurz"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "gemaach",
+              "gloss": "gemacht",
+              "sentence": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach.",
+              "synonyms": [
+                {
+                  "w": "ausgefouert",
+                  "g": "ausgeführt"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "moien",
+              "gloss": "Morgen",
+              "sentence": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach.",
+              "synonyms": [
+                {
+                  "w": "virun Mëttes",
+                  "g": "vor Mittag"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "Owend",
+                  "g": "Abend"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "schéngt",
+              "gloss": "scheint",
+              "sentence": "D'Sonn schéngt, an d'Lëscht war frësch.",
+              "synonyms": [
+                {
+                  "w": "erweist",
+                  "g": "erscheint"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "translategemma:12b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 682,
+            "completionTokens": 600,
+            "ms": 617185,
+            "at": "2026-07-07T14:46:49.209Z"
+          }
+        },
+        {
+          "id": "ls_1783438603051",
+          "title": "Lesson 1",
+          "desc": "Spaziergang an der Mosel",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Moien",
+              "source": "Morgen"
+            },
+            {
+              "target": "Spaziergaang",
+              "source": "Spaziergang"
+            },
+            {
+              "target": "d'Musel",
+              "source": "die Mosel"
+            },
+            {
+              "target": "d'Sonn",
+              "source": "die Sonne"
+            },
+            {
+              "target": "d'Waasser",
+              "source": "das Wasser"
+            },
+            {
+              "target": "roueg",
+              "source": "ruhig"
+            },
+            {
+              "target": "Café",
+              "source": "Café"
+            },
+            {
+              "target": "agreabel",
+              "source": "angenehm"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Ech hunn e Spaziergaang gemaach.",
+              "source": "Ich habe einen Spaziergang gemacht.",
+              "words": [
+                "Ech",
+                "hunn",
+                "e",
+                "Spaziergaang",
+                "gemaach."
+              ]
+            },
+            {
+              "target": "D'Sonn schéngt.",
+              "source": "Die Sonne scheint.",
+              "words": [
+                "D'Sonn",
+                "schéngt."
+              ]
+            },
+            {
+              "target": "D'Waasser ass roueg.",
+              "source": "Das Wasser ist ruhig.",
+              "words": [
+                "D'Waasser",
+                "ass",
+                "roueg."
+              ]
+            },
+            {
+              "target": "Ech hunn e Café zu Remerschen.",
+              "source": "Ich war in einem Café in Remerschen.",
+              "words": [
+                "Ech",
+                "hunn",
+                "e",
+                "Café",
+                "zu",
+                "Remerschen."
+              ]
+            },
+            {
+              "target": "Et war agreabel.",
+              "source": "Es war angenehm.",
+              "words": [
+                "Et",
+                "war",
+                "agreabel."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 429,
+            "completionTokens": 268,
+            "ms": 349538,
+            "at": "2026-07-07T15:36:43.051Z"
+          }
+        },
+        {
+          "id": "ls_1783438681340_i8p5",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 4
+        },
+        {
+          "id": "ls_1783436254014",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔎",
+          "corruptedStory": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach. D'Sonn schéngt, an d'Lëscht waar frësch. D'Waasser war roueg, an ech konnt d'Fësch am Séi gesin. E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Floss gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Remerschen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 588,
+            "completionTokens": 150,
+            "ms": 389172,
+            "at": "2026-07-07T14:57:34.014Z"
+          },
+          "sentences": [
+            {
+              "ai": "an ech konnt d'Fësch am Séi gesinn.",
+              "corrected": "an ech konnt d'Fësch am Floss gesinn.",
+              "reason": ""
+            }
+          ]
+        },
+        {
+          "id": "ls_1783438126061",
+          "type": "error_hunt",
+          "title": "Text Understanding",
+          "desc": "Find the mistakes in the story",
+          "icon": "🔍",
+          "corruptedStory": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musal gemaach. D'Sonn schéngt, an d'Lëscht war frësch. D'Waasser war roueg, an ech konnt d'Fësch am Floss gesin. E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Flous gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Remerschen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur.",
+          "_genMeta": {
+            "type": "error_hunt",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": null,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 588,
+            "completionTokens": 150,
+            "ms": 135108,
+            "at": "2026-07-07T15:28:46.061Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 469896,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": "translategemma:12b",
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 779,
+        "totalCompletionTokens": 447,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 263830,
+            "promptTokens": 428,
+            "completionTokens": 246
+          }
+        ]
+      },
+      "generatedAt": "2026-07-07T14:14:42.098Z",
+      "updatedAt": "2026-07-07T15:45:44.174Z",
+      "id": "tp_17834339460840000050",
+      "aiStory": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach. D'Sonn schéngt, an d'Lëscht war frësch. D'Waasser war roueg, an ech konnt d'Fësch am Séi gesinn. E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Floss gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Remerschen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur."
+    },
+    {
       "id": "tp_17832478721050000159",
       "topic": "osttirol-glossary",
       "topicEmoji": "🗣",
@@ -1702,7 +2142,9 @@
       "storyGloss": "Es war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
       "storyTopic": "ein tag in den bergen",
       "aiGenerated": true,
-      "aiStory": "Es war a boisl sonnigs Tag in den Berg. Da Himmel war blau und ebba ohne a Wölkchen. Anna und ihr Bruder Max gaiten bai. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie a Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu baiteln, bis er verschwand. Am Nachmittag kehrten sie heint, mit vielen Erinnerungen an diesen wundervollen Tag.\n\n---\nEs war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag."
+      "aiStory": "Es war a boisl sonnigs Tag in den Berg. Da Himmel war blau und ebba ohne a Wölkchen. Anna und ihr Bruder Max gaiten bai. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie a Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu baiteln, bis er verschwand. Am Nachmittag kehrten sie heint, mit vielen Erinnerungen an diesen wundervollen Tag.\n\n---\nEs war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "Mein Review",
@@ -1856,7 +2298,9 @@
       },
       "generatedAt": "2026-07-04T06:36:37.450Z",
       "updatedAt": "2026-07-04T06:41:08.756Z",
-      "id": "tp_17831472687560000072"
+      "id": "tp_17831472687560000072",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "Relishing Moment",
@@ -3787,7 +4231,9 @@
       },
       "generatedAt": "2026-06-30T08:31:05.841Z",
       "updatedAt": "2026-06-30T10:27:21.102Z",
-      "id": "tp_17828085137690000123"
+      "id": "tp_17828085137690000123",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "ruby test",
@@ -3931,7 +4377,9 @@
       },
       "generatedAt": "2026-06-30T08:00:45.087Z",
       "updatedAt": "2026-06-30T08:05:24.396Z",
-      "id": "tp_17828067243960000070"
+      "id": "tp_17828067243960000070",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "Yusuf and the Lost Cat",
@@ -5108,7 +5556,9 @@
       },
       "generatedAt": "2026-06-27T11:13:31.154Z",
       "updatedAt": "2026-07-03T14:13:57.471Z",
-      "id": "tp_17825603173750001401"
+      "id": "tp_17825603173750001401",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "The Two Tongues",
@@ -14511,7 +14961,9 @@
       },
       "generatedAt": "2026-06-27T07:33:56.778Z",
       "updatedAt": "2026-07-01T16:53:49.095Z",
-      "id": "tp_17825459467740000082"
+      "id": "tp_17825459467740000082",
+      "continuedFromId": null,
+      "continuedFrom": null
     },
     {
       "topic": "Kalila and Dimna",

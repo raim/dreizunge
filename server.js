@@ -8,7 +8,7 @@ const fs    = require('fs');
 const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
 const { callLLM: _callLLM, ping: pingOllama, release: releaseOllamaModel,
-        warmup: _warmupLLM, stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
+        warmup: _warmupLLM, listModels: listOllamaModels, stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
 const { buildExport } = require('./export-lessons');
 
 // ── Prompts (hot-reloaded from prompts.json) ──────────────────────────────────
@@ -60,20 +60,45 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v51';
+const APP_VERSION  = 'v52';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
-const OLLAMA_MODEL        = process.env.OLLAMA_MODEL        || 'qwen2.5:7b';
-const OLLAMA_TRANSLATION_MODEL = process.env.OLLAMA_TRANSLATION_MODEL || OLLAMA_MODEL;
-const OLLAMA_LESSON_MODEL = process.env.OLLAMA_LESSON_MODEL || OLLAMA_MODEL;
+// Model roles are runtime-mutable (see setRuntimeModels / GET+POST /api/models) so a user can
+// switch models from the UI without restarting the server. They default from env at startup and
+// are read LIVE at every call site (all ~60 reads), so an override takes effect on the next
+// generation. Declared `let`, not `const`, for exactly that reason.
+let OLLAMA_MODEL             = process.env.OLLAMA_MODEL             || 'qwen2.5:7b';
+let OLLAMA_TRANSLATION_MODEL = process.env.OLLAMA_TRANSLATION_MODEL || OLLAMA_MODEL;
+let OLLAMA_LESSON_MODEL      = process.env.OLLAMA_LESSON_MODEL      || OLLAMA_MODEL;
 const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
 // Lesson output format: 'json' (default) or 'table' (markdown table, better for
 // translation-focused models that struggle with strict JSON schemas).
-// Auto-enabled when OLLAMA_LESSON_MODEL contains 'translategemma', overridable via env.
-const OLLAMA_LESSON_FORMAT = process.env.OLLAMA_LESSON_FORMAT ||
-  (OLLAMA_LESSON_MODEL.toLowerCase().includes('translategemma') ? 'table' : 'json');
+// Auto-derived from the ACTIVE lesson model (name contains 'translategemma' → table). An explicit
+// env OLLAMA_LESSON_FORMAT pins it and always wins, even across runtime model switches.
+const OLLAMA_LESSON_FORMAT_ENV = process.env.OLLAMA_LESSON_FORMAT || null;
+const _deriveLessonFormat = m => OLLAMA_LESSON_FORMAT_ENV ||
+  (String(m || '').toLowerCase().includes('translategemma') ? 'table' : 'json');
+let OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
+// The active model set, and a runtime updater. `setRuntimeModels` accepts any subset of
+// {story, translation, lessons} (plus a convenience `model` that sets all three), recomputes the
+// lesson format from the new lesson model (unless env-pinned), and returns the resulting set.
+function currentModels() {
+  return { story: OLLAMA_MODEL, translation: OLLAMA_TRANSLATION_MODEL,
+           lessons: OLLAMA_LESSON_MODEL, lessonFormat: OLLAMA_LESSON_FORMAT };
+}
+function setRuntimeModels(next) {
+  next = next || {};
+  const pick = v => (typeof v === 'string' && v.trim()) ? v.trim() : null;
+  const all = pick(next.model);
+  const story = pick(next.story) || all, transl = pick(next.translation) || all, lessons = pick(next.lessons) || all;
+  if (story)   OLLAMA_MODEL             = story;
+  if (transl)  OLLAMA_TRANSLATION_MODEL = transl;
+  if (lessons) OLLAMA_LESSON_MODEL      = lessons;
+  OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
+  return currentModels();
+}
 const OLLAMA_MAX_PREV_STORY = parseInt(process.env.OLLAMA_MAX_PREV_STORY || '800', 10);
 
 // ── Storage ───────────────────────────────────────────────────────────
@@ -565,46 +590,52 @@ function sysLessonTable(lang, srcLang, lessonNum, totalLessons, difficulty, dial
   return sys;
 }
 
-// Parse two markdown tables from table-format lesson output
+// Parse two markdown tables (vocabulary, then sentences) from table-format lesson output.
+// STRUCTURE-anchored, not keyword-anchored: a markdown table's header is whatever precedes its
+// `|---|` separator row, and the data is the pipe rows after it. This is language-independent.
+// (The old keyword filter `/^…|\w+ word/` silently leaked the header row as a vocab item for any
+// target language whose name has non-ASCII letters — e.g. Lëtzebuergesch, where the ë broke `\w+` —
+// which also dropped a real word via the 8-row cap and could swallow the entire sentence table.)
 function parseTableLesson(raw, lessonNum, topic) {
   const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-  const parseTable = (startIdx) => {
+  const isPipe    = l => l.startsWith('|');
+  const isDashSep = l => l.includes('|') && l.includes('-') && l.replace(/[\s|:\-]/g, '').length === 0;
+  const cellsOf   = l => l.split('|').map(c => c.trim()).filter((_, i, a) => i > 0 && i < a.length - 1);
+  // Data rows of one table: the pipe rows AFTER its separator, stopping at the next non-pipe line,
+  // another separator, or (when a second table follows) that table's header row.
+  const dataAfter = (sepIdx, nextSepIdx) => {
     const rows = [];
-    for (let i = startIdx; i < lines.length; i++) {
+    const end = (nextSepIdx != null) ? nextSepIdx - 1 : lines.length; // exclude next table's header
+    for (let i = sepIdx + 1; i < end; i++) {
       const l = lines[i];
-      if (!l.startsWith('|')) break;
-      if (l.replace(/[\s|:-]/g,'').length === 0) continue; // separator row
-      const cells = l.split('|').map(c => c.trim()).filter((_,i,a) => i>0 && i<a.length-1);
-      if (cells.length >= 2 && !cells[0].toLowerCase().match(/^(word|phrase|sentence|^\w+ word)/))
-        rows.push(cells);
+      if (!isPipe(l) || isDashSep(l)) break;
+      const cells = cellsOf(l);
+      if (cells.length >= 2) rows.push(cells);
     }
     return rows;
   };
-  // Find first table
-  const t1start = lines.findIndex(l => l.startsWith('|'));
-  const vocabRows = parseTable(t1start);
-  // Find second table (after first table ends)
-  let t2start = t1start + vocabRows.length + 2; // skip header + separator
-  while (t2start < lines.length && !lines[t2start].startsWith('|')) t2start++;
-  const sentRows = parseTable(t2start);
+  const seps = [];
+  lines.forEach((l, i) => { if (isPipe(l) && isDashSep(l)) seps.push(i); });
 
-  const vocab = vocabRows.slice(0, 8).map(r => ({
-    target: r[0] || '', source: r[1] || ''
-  })).filter(v => v.target && v.source);
+  let vocabRows, sentRows;
+  if (seps.length >= 1) {
+    vocabRows = dataAfter(seps[0], seps[1]);
+    sentRows  = seps.length >= 2 ? dataAfter(seps[1], seps[2]) : [];
+  } else {
+    // Malformed output with no separator rows: positional fallback — the FIRST pipe row is the
+    // header, the rest are data (still language-independent, no keyword matching).
+    const pipeRows = lines.filter(isPipe).map(cellsOf).filter(c => c.length >= 2);
+    vocabRows = pipeRows.slice(1);
+    sentRows  = [];
+  }
 
-  const sentences = sentRows.slice(0, 5).map(r => ({
-    target: r[0] || '', source: r[1] || ''
-  })).filter(s => s.target && s.source);
+  const toPair    = r => ({ target: r[0] || '', source: r[1] || '' });
+  const vocab     = vocabRows.slice(0, 8).map(toPair).filter(v => v.target && v.source);
+  const sentences = sentRows.slice(0, 5).map(toPair).filter(s => s.target && s.source);
 
   if (vocab.length < 1) throw new Error(`Table parse: only ${vocab.length} vocab rows`);
 
-  return {
-    title: `Lesson ${lessonNum}`,
-    desc: topic,
-    icon: '📖',
-    vocab,
-    sentences
-  };
+  return { title: `Lesson ${lessonNum}`, desc: topic, icon: '📖', vocab, sentences };
 }
 
 function sysSrcRepair(lang, srcLang, deepClean, lessonType) {
@@ -2171,6 +2202,10 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   const genStart = Date.now();
   let totalPromptTokens = 0, totalCompletionTokens = 0;
   const lessonTokenStats = [];
+  // Per-artifact model provenance — capture the model ACTUALLY used at the moment each artifact
+  // is produced (not re-read at the end), so a runtime model switch mid-run can't misattribute.
+  // `story` stays null for a user-provided story; `translation` stays null when translation is skipped.
+  let _storyModel = null, _translationModel = null;
 
   jobStep(jobId, `[${OLLAMA_MODEL}] Generating topic info…`);
   let meta;
@@ -2263,6 +2298,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       const { text, promptTokens, completionTokens } = await callLLM(
         storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
       story = text.trim();
+      _storyModel = OLLAMA_MODEL;
       storyPrompt = storySystem + '\n\n' + storyUserMsg;
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
       console.log(`    [${OLLAMA_MODEL}] Story (${lang}, ~${storyLen}w): ${Date.now()-t0}ms, ${story.length} chars`);
@@ -2283,6 +2319,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       const { text, promptTokens, completionTokens } = await callLLMTranslation(
         sysTranslation(lang, srcLang), story, Math.min(2048, Math.ceil(story.length * 1.2)));
       storyTranslation = text.trim();
+      _translationModel = OLLAMA_TRANSLATION_MODEL;
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
       console.log(`    [${OLLAMA_TRANSLATION_MODEL}] Translation (${lang}→${srcLang}): ${Date.now()-t0}ms, ${storyTranslation.length} chars`);
     } catch(e) {
@@ -2433,6 +2470,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     ...(lessonFormat && !['standard'].includes(lessonFormat) ? { lessonFormat } : {}),
     lessons,
     generationStats: { totalMs, backend: 'ollama', model: modelLabel,
+      models: { story: _storyModel, translation: _translationModel, lessons: OLLAMA_LESSON_MODEL },
       lessonFormat: OLLAMA_LESSON_FORMAT,
       totalPromptTokens, totalCompletionTokens, lessons: lessonTokenStats }
   };
@@ -3048,6 +3086,34 @@ http.createServer(async (req, res) => {
         ollamaLessonModel: OLLAMA_LESSON_MODEL,
         ollamaLessonFormat: OLLAMA_LESSON_FORMAT,
         canGenerate: active !== 'none' });
+    }
+    // Model picker: list the models Ollama has installed, and which are active per role.
+    if (M === 'GET' && url.pathname === '/api/models') {
+      const available = active === 'ollama' ? await listOllamaModels() : [];
+      return json(res, 200, { backend: active, available, active: currentModels() });
+    }
+    // Switch the active model(s) at runtime. Body: any subset of {story, translation, lessons}
+    // (or {model} to set all three). Unknown model names (not installed) are rejected when the
+    // available list is known. Additive: default env-configured setups are unaffected until used.
+    if (M === 'POST' && url.pathname === '/api/models') {
+      if (active !== 'ollama')
+        return json(res, 503, { error: 'No Ollama backend — cannot switch models.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
+      const requested = [body.model, body.story, body.translation, body.lessons]
+        .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
+      if (!requested.length)
+        return json(res, 400, { error: 'No model specified. Provide story, translation, lessons, or model.' });
+      const available = await listOllamaModels();
+      if (available.length) {
+        const unknown = [...new Set(requested)].filter(m => !available.includes(m));
+        if (unknown.length)
+          return json(res, 400, { error: `Model(s) not installed in Ollama: ${unknown.join(', ')}`, available });
+      }
+      const activeModels = setRuntimeModels(body);
+      console.log(`  Models switched → story:${activeModels.story} lessons:${activeModels.lessons}${activeModels.translation!==activeModels.story?` transl:${activeModels.translation}`:''}${activeModels.lessonFormat==='table'?' [table format]':''}`);
+      return json(res, 200, { ok: true, active: activeModels });
     }
     if (M === 'GET' && url.pathname === '/api/lessons') {
       const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons || []);

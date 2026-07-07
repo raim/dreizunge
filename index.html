@@ -33,6 +33,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
 
 .backend-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.bmodels{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--gray-dark);font-weight:600}
+.bmodels .bmodel-field{display:inline-flex;align-items:center;gap:3px}
+.bmodels select{font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;color:var(--text);background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 5px;cursor:pointer;max-width:170px}
 .bpill{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:800;border:2px solid}
 .bpill.anthropic{background:#fff8f0;border-color:#ff9f1c;color:#c26000}
 .bpill.ollama{background:#f0fff4;border-color:var(--green);color:var(--green-dark)}
@@ -514,6 +517,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <span id="backend-lbl" style="font-size:12px;font-weight:700;color:var(--gray-dark)">Backend:</span>
     <div id="bpill" class="bpill none"><span class="bdot"></span><span id="blbl">Checking…</span></div>
     <span id="bmodel" style="font-size:11px;color:var(--gray-dark);font-weight:600"></span>
+    <span id="bmodels" class="bmodels" style="display:none"></span>
   </div>
 
   <div class="lang-box">
@@ -3382,6 +3386,7 @@ async function init(){
   restoreStoryLenSlider();
   restoreNumChaptersSlider();
   renderPill();
+  renderModelPicker();
   await loadSavedList();
   await resumeBackgroundJob();
   _reconnectBookJob();
@@ -3420,6 +3425,47 @@ function renderPill(){
     document.getElementById('topic-input').disabled=true;
     document.getElementById('offline-note').style.display='block';
   }
+}
+
+// Model picker (Ollama only): three per-role selectors — Story / Lessons / Translation —
+// populated from /api/models. Switching a role POSTs the change and re-renders the pill so the
+// active-model label stays in sync. Hidden entirely when there's no Ollama backend (e.g. the
+// static build), so it never appears where it can't work.
+async function renderModelPicker(){
+  const box=document.getElementById('bmodels');
+  if(!box) return;
+  if(!APP.info || APP.info.backend!=='ollama'){ box.style.display='none'; box.innerHTML=''; return; }
+  let data;
+  try{ const r=await fetch('/api/models'); data=await r.json(); }catch(_){ box.style.display='none'; return; }
+  const avail=(data&&data.available)||[];
+  const active=(data&&data.active)||{};
+  if(avail.length<1){ box.style.display='none'; return; }
+  // Keep APP.info's model fields in sync with the server's active set so the pill label matches.
+  APP.info.ollamaModel=active.story; APP.info.ollamaLessonModel=active.lessons;
+  APP.info.ollamaTranslationModel=active.translation; APP.info.ollamaLessonFormat=active.lessonFormat;
+  const roles=[['story','models.story'],['lessons','models.lessons'],['translation','models.translation']];
+  const opts=(sel)=>avail.map(m=>`<option value="${escAttr(m)}"${m===sel?' selected':''}>${escHtml(m)}</option>`).join('');
+  box.innerHTML=roles.map(([role,key])=>
+    `<span class="bmodel-field"><label>${escHtml(t(key))}</label>`+
+    `<select data-role="${role}" onchange="switchModel('${role}',this.value)">${opts(active[role])}</select></span>`
+  ).join('');
+  box.style.display='';
+}
+// Switch one model role at runtime. Re-renders the pill + picker from the server's response so
+// the derived lesson-format (translategemma → table) and any dependent labels update too.
+async function switchModel(role, model){
+  try{
+    const body={}; body[role]=model;
+    const r=await fetch('/api/models',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    let data={}; try{ data=await r.json(); }catch(_){}
+    if(!r.ok){ showToast((data&&data.error)||t('models.switch_failed')); await renderModelPicker(); return; }
+    const active=data.active||{};
+    APP.info.ollamaModel=active.story; APP.info.ollamaLessonModel=active.lessons;
+    APP.info.ollamaTranslationModel=active.translation; APP.info.ollamaLessonFormat=active.lessonFormat;
+    renderPill();
+    await renderModelPicker();
+    showToast(t('models.switched'));
+  }catch(_){ showToast(t('models.switch_failed')); }
 }
 
 // ── library ──
@@ -7851,8 +7897,12 @@ function buildSynonymsExercises(lesson){
     // distractors and ask the learner to select EVERY correct one (old-style select-all).
     // The base word's context sentence (if any) is still shown above the grid.
     const mk = (mode) => {
-      const correct = (mode==='synonyms' ? g.synonyms : g.antonyms).map(x=>x.w).filter(Boolean);
+      const src = (mode==='synonyms' ? g.synonyms : g.antonyms) || [];
+      const correct = src.map(x=>x.w).filter(Boolean);
       if(!correct.length) return null;
+      // word(lc) → its exact translation as authored in the lesson data, for the solution reveal.
+      const glossMap = {};
+      src.forEach(x => { if(x && x.w) glossMap[String(x.w).toLowerCase()] = x.g || ''; });
       const correctLc = new Set(correct.map(w=>w.toLowerCase()));
       const baseLc = (g.base||'').toLowerCase();
       // distractors: the word's OTHER category + homophones (traps) + cross-word words
@@ -7868,12 +7918,21 @@ function buildSynonymsExercises(lesson){
       // ensure all correct words survived the slice
       correct.forEach(c => { if(!choices.some(x=>x.toLowerCase()===c.toLowerCase())) choices.push(c); });
       return { type:'syn_select', mode, base:g.base, gloss:g.gloss||'', sentence:g.sentence||'',
-        correct, target:correct.join(', '), choices: shuffle(choices) };
+        correct, glossMap, target:correct.join(', '), choices: shuffle(choices) };
     };
     const s = mk('synonyms'); if(s) exs.push(s);
     const a = mk('antonyms'); if(a) exs.push(a);
   });
   return shuffle(exs);
+}
+// Solution-reveal HTML for a syn_select exercise: each correct word followed by its EXACT
+// translation (gloss) as authored in the lesson data. Falls back to just the word when the lesson
+// provided no gloss (older data). Words on separate lines since a select-all can have several.
+function synRevealHtml(ex){
+  return (ex.correct||[]).map(w=>{
+    const g = ex.glossMap ? ex.glossMap[String(w).toLowerCase()] : '';
+    return escHtml(String(w)) + (g ? ` <span style="opacity:.7;font-weight:600">— ${escHtml(g)}</span>` : '');
+  }).join('<br>');
 }
 // ── Intro "learn the script" course (LLM-free) ──────────────────────────────
 // Mirrors server.js introScriptExercises. `letters` are the letters to QUIZ (already capped/
@@ -9344,7 +9403,7 @@ function check(){
     const revealBody = ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation'
       ? `${furiHtml(ex.correct)}${ex.source ? ' — ' + furiHtml(ex.source) : ''}`
       : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex') ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
-      : ex.type==='syn_select' ? escHtml(ex.correct.join(', '))
+      : ex.type==='syn_select' ? synRevealHtml(ex)
       : furiHtml(ex.target||ex.correct);
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakOk = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
@@ -9367,7 +9426,8 @@ function check(){
     // Remember which words were answered wrongly this round → learned-vocab ledger marks them,
     // so future user-specific retraining can focus on them (see roadmap "my story").
     try { const wt=(ex.target||ex.correct); if(wt){ (C._wrongTargets||(C._wrongTargets=new Set())).add(stripFuri(String(wt)).trim()); } } catch(_) {}
-    const _wrongCorrect = (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex'||ex.type==='syn_select')
+    const _wrongCorrect = ex.type==='syn_select' ? synRevealHtml(ex)
+      : (ex.type==='math_calc'||ex.type==='math_order'||ex.type==='math_latex')
       ? escHtml(Array.isArray(ex.correct)?ex.correct.join(', '):ex.correct)
       : furiHtml(ex.correct);
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
