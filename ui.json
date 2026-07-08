@@ -1,5 +1,6 @@
 {
   "en": {
+    "qc.editor.suggests_by": "⚑ {model} suggests:",
     "models.story": "Story",
     "models.lessons": "Lessons",
     "models.translation": "Translation",

@@ -66,6 +66,7 @@ let pairCalls = 0;
 const okChecker = async () => { pairCalls++; return { ok: true }; };       // always clean
 const stubs = {
   OLLAMA_TRANSLATION_MODEL: 'stub',
+  OLLAMA_QC_MODEL: 'qc-stub',
   jobStep: () => {}, jobDone: (id, d) => { stubs._last = d; }, _last: null,
   upsert: () => {},
   _qcLessonUserFlagged: (tp, ls) => (ls.vocab || []).some(x => x && x.userFlag),

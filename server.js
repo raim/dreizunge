@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v52_e';
+const APP_VERSION  = 'v52_g';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -978,8 +978,8 @@ async function _runQc(jobId, topics, opts) {
   const { lessonIdx, onlyFlagged, force } = opts;
   let checked = 0, flagged = 0, cleared = 0, skipped = 0;
   const affected = [];
-  console.log(`  ⚙ QC starting: ${topics.length} topic(s)${lessonIdx !== null ? `, lesson ${lessonIdx}` : ''}${onlyFlagged ? ', flagged-only' : ''} [${OLLAMA_TRANSLATION_MODEL}]`);
-  jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Starting QC…`);
+  console.log(`  ⚙ QC starting: ${topics.length} topic(s)${lessonIdx !== null ? `, lesson ${lessonIdx}` : ''}${onlyFlagged ? ', flagged-only' : ''} [${OLLAMA_QC_MODEL}]`);
+  jobStep(jobId, `[${OLLAMA_QC_MODEL}] Starting QC…`);
   for (let ti = 0; ti < topics.length; ti++) {
     const tp = topics[ti];
     const lessons = tp.lessons || [];
@@ -995,26 +995,47 @@ async function _runQc(jobId, topics, opts) {
       // runs: an explicit single-lesson request (lessonIdx set) or a flagged-only run always
       // re-checks, so the user can force a re-QC. This is what keeps storyline-/chapter-level
       // jobs from re-paying for lessons that already passed.
-      if (lessonIdx === null && !onlyFlagged && !force && ls.qcAt) {
+      // Skip only if the SAME model already cleanly passed this (unedited) lesson — a DIFFERENT QC
+      // model must still run so its verdicts can be collected for comparison.
+      if (lessonIdx === null && !onlyFlagged && !force && ls.qcAt && ls.qcBy === OLLAMA_QC_MODEL) {
         skipped++;
         console.log(`    ⏭ skip "${ls.title || ls.type}" (QC'd ${ls.qcAt}, unedited)`);
         continue;
       }
       const _flaggedBefore = flagged;
-      // Per-item QC helper: run a checker, write/clear item.qc, keep counters.
+      // Per-item QC helper: run a checker; collect the verdict PER MODEL in item.qcByModel so
+      // different QC models can be compared on the same item, while keeping item.qc as the primary
+      // (backward-compatible: apply/dismiss/badges/render read item.qc). A model only ever overwrites
+      // its OWN entry; a model that now says OK drops only its own flag, leaving others' for compare.
       const _check = async (item, runner, label) => {
         checked++;
         let res;
         try { res = await runner(); } catch (e) { return; }
+        const model = OLLAMA_QC_MODEL;
+        // Migrate a pre-collect single flag into the per-model map so it isn't lost.
+        if (item.qc && !item.qcByModel && item.qc.by)
+          item.qcByModel = { [item.qc.by]: { sug: item.qc.sug, field: item.qc.field, at: item.qc.at } };
+        const hadThisModel = !!(item.qcByModel && item.qcByModel[model]);
         if (res && !res.ok) {
-          item.qc = { sug: res.sug, field: res.field || 'note', at: new Date().toISOString() };
-          flagged++; touched = true;
-          console.log(`    ⚑ flag [${label}] "${(res.sug||'').slice(0,60)}"`);
-        } else if (item.qc) {
-          delete item.qc; cleared++; touched = true;   // re-checked and now OK
+          (item.qcByModel || (item.qcByModel = {}))[model] = { sug: res.sug, field: res.field || 'note', at: new Date().toISOString() };
+          item.qc = { ...item.qcByModel[model], by: model };   // primary = this latest flag
+          if (!hadThisModel) flagged++;
+          touched = true;
+          console.log(`    ⚑ flag [${label}] [${model}] "${(res.sug||'').slice(0,60)}"`);
+        } else {
+          // This model says OK → drop only ITS flag; keep other models' flags for comparison.
+          if (hadThisModel) { delete item.qcByModel[model]; cleared++; touched = true; }
+          const remaining = item.qcByModel ? Object.keys(item.qcByModel) : [];
+          if (remaining.length) {
+            const m = remaining[remaining.length - 1];
+            item.qc = { ...item.qcByModel[m], by: m };          // primary = another model's open flag
+          } else {
+            if (item.qc) touched = true;
+            delete item.qc; if (item.qcByModel) delete item.qcByModel;
+          }
         }
         if (checked % 5 === 0)
-          jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
+          jobStep(jobId, `[${model}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
       };
       // Dispatch by lesson type. vocab/sentences exist on standard lessons; word_forms uses
       // `items` (cloze); synonyms uses `words` (related-word sets); grammar uses `grammar`
@@ -1080,7 +1101,7 @@ async function _runQc(jobId, topics, opts) {
       // human-QC'd, never stamped) and produced no new flags for it. A flagged-only pass must
       // NOT stamp — it didn't examine the whole lesson.
       if (!onlyFlagged && _lessonQcRan && flagged === _flaggedBefore && !_lessonHasOpenQcFlag(ls)) {
-        ls.qcAt = new Date().toISOString(); touched = true;
+        ls.qcAt = new Date().toISOString(); ls.qcBy = OLLAMA_QC_MODEL; touched = true;
       }
     }
     if (touched) { upsert(tp); affected.push(tp.id); }
@@ -3839,6 +3860,7 @@ http.createServer(async (req, res) => {
       const mergeFlaggable = (o, v) => {
         const m = { ...o, ...v };
         if (!('qc' in v))         delete m.qc;
+        if (!('qcByModel' in v))  delete m.qcByModel;
         if (!('userFlag' in v))   delete m.userFlag;
         if (!('userRating' in v)) delete m.userRating;
         return m;

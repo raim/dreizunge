@@ -6719,8 +6719,8 @@ function _editorBranchStandard(ls, li, flaggedOnly){
 
     // Vocab / sentences
     const items = [
-      ...(ls.vocab||[]).map((v,i) => ({type:'vocab', i, target:v.target, source:v.source, qc:v.qc, userFlag:v.userFlag, userRating:v.userRating, userDelete:v.userDelete, editedAt:v.editedAt})),
-      ...(ls.sentences||[]).map((s,i) => ({type:'sentence', i, target:s.target, source:s.source, qc:s.qc, userFlag:s.userFlag, userRating:s.userRating, userDelete:s.userDelete, editedAt:s.editedAt})),
+      ...(ls.vocab||[]).map((v,i) => ({type:'vocab', i, target:v.target, source:v.source, qc:v.qc, qcByModel:v.qcByModel, userFlag:v.userFlag, userRating:v.userRating, userDelete:v.userDelete, editedAt:v.editedAt})),
+      ...(ls.sentences||[]).map((s,i) => ({type:'sentence', i, target:s.target, source:s.source, qc:s.qc, qcByModel:s.qcByModel, userFlag:s.userFlag, userRating:s.userRating, userDelete:s.userDelete, editedAt:s.editedAt})),
     ];
     const visItems = flaggedOnly ? items.filter(it => it.qc || it.userFlag) : items;
     if (!visItems.length) html += `<em style="color:var(--gray-dark);font-size:13px">${flaggedOnly?'No flagged items':'No items'}</em>`;
@@ -6741,9 +6741,8 @@ function _editorBranchStandard(ls, li, flaggedOnly){
         ${_flagBoxHtml(li, it.type, it.i, it, true)}
         ${_starNoteHtml(it)}
         ${_delNoteHtml(it)}
-        ${it.qc?`<div style="display:flex;align-items:center;gap:8px;margin-top:4px;font-size:13px;background:#fff3df;border-radius:6px;padding:5px 8px">
-          <span style="font-weight:800;color:#b35900">${t('qc.editor.suggests')} <span style="font-size:11px;opacity:.75">${it.qc.field==='target'?t('qc.editor.in_target'):t('qc.editor.in_source')}</span></span>
-          <span style="flex:1;color:var(--text)">${escHtml(it.qc.sug||'')}</span>
+        ${it.qc?`<div style="display:flex;align-items:flex-start;gap:8px;margin-top:4px;font-size:13px;background:#fff3df;border-radius:6px;padding:5px 8px">
+          <div style="flex:1;display:flex;flex-direction:column;gap:2px">${qcSuggestRows(it)}</div>
           <button class="storyline-hdr-btn" style="color:var(--green)" title="${t('qc.editor.fix_title')}" onclick="qcApplyFix('${li}','${it.type}',${it.i})">${t('qc.editor.fix')}</button>
           <button class="storyline-hdr-btn" title="${t('qc.editor.dismiss_title')}" onclick="qcDismiss('${li}','${it.type}',${it.i})">✕</button>
         </div>`:''}
@@ -6769,18 +6768,33 @@ function _editorAfterSyncErrorHunt(ls, li){ ehSyncCorrupted(li); }
 // fix isn't safe (the suggested change may span several fields). Shows the model's suggestion;
 // the maintainer edits the fields manually, then dismisses. `type` is the editor item type
 // (resolved to the item via _editorItem) so the dismiss handler can clear item.qc generically.
+// Render one "<model> suggests: [field] <sug>" row per QC model that flagged this item — so
+// multiple QC models can be compared side by side (collect-and-compare). Falls back to the single
+// item.qc for older data with no per-model map.
+function qcSuggestRows(item){
+  const map = (item.qcByModel && Object.keys(item.qcByModel).length)
+    ? item.qcByModel
+    : (item && item.qc ? { [item.qc.by||'']: { sug:item.qc.sug, field:item.qc.field } } : {});
+  return Object.entries(map).map(([m,v])=>{
+    const label = m ? t('qc.editor.suggests_by',{model:escHtml(m)}) : t('qc.editor.suggests');
+    const fld = (v.field==='target'||v.field==='source')
+      ? ` <span style="font-size:11px;opacity:.75">${v.field==='target'?t('qc.editor.in_target'):t('qc.editor.in_source')}</span>` : '';
+    return `<div style="display:flex;gap:6px;align-items:baseline">`+
+      `<span style="font-weight:800;color:#b35900;white-space:nowrap">${label}${fld}</span>`+
+      `<span style="flex:1;color:var(--text);white-space:pre-wrap">${escHtml(v.sug||'')}</span></div>`;
+  }).join('');
+}
 function _qcNoteHtml(li, type, fi, item){
   if(!item || !item.qc) return '';
   return `<div style="display:flex;align-items:flex-start;gap:8px;margin-top:6px;font-size:13px;background:#fff3df;border-radius:6px;padding:6px 9px">
-    <span style="font-weight:800;color:#b35900;white-space:nowrap">${t('qc.editor.suggests')}</span>
-    <span style="flex:1;color:var(--text);white-space:pre-wrap">${escHtml(item.qc.sug||'')}</span>
+    <div style="flex:1;display:flex;flex-direction:column;gap:2px">${qcSuggestRows(item)}</div>
     <button class="storyline-hdr-btn" title="${t('qc.editor.dismiss_title')}" onclick="qcDismissAny('${li}','${type}',${fi})">✕</button>
   </div>`;
 }
 // Generic QC dismiss for any structured item type (clears item.qc, persists, re-renders).
 async function qcDismissAny(li, type, fi){
   const item = _editorItem(+li, type, +fi); if(!item) return;
-  delete item.qc;
+  delete item.qc; delete item.qcByModel;
   try{
     const r = await _postLessonEdit(APP.lessonData);
     if(!r || !r.ok) throw new Error('save failed');
@@ -6806,7 +6820,7 @@ async function _qcMutateItem(li, type, fi, apply){
     item[f] = sug;
     item.editedAt = new Date().toISOString();   // QC fix is an edit
   }
-  delete item.qc;
+  delete item.qc; delete item.qcByModel;
   try{
     const r = await _postLessonEdit(APP.lessonData);
     if(!r.ok) throw new Error((await r.json()).error||'save failed');

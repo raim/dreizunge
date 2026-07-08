@@ -98,8 +98,17 @@ The v46 "per-task model selection" major, phases 1–2, plus reasoning-model saf
   CLOSE language pairs (`isCloseLangPair`: dialects `lang===srcLang` + a curated `CLOSE_LANG_PAIRS`
   list incl. de↔lb). `unit-close-lang-pairs`.
 
-**Version note:** post-v52 point releases are numbered v52_b, v52_c, … (per user). Current: **v52_e**.
+**Version note:** post-v52 point releases are numbered v52_b, v52_c, … (per user). Current: **v52_g**.
 At the next MINOR/feature cut, resume vNN numbering (v53) and write `roadmap_v54.md`.
+
+**v52_f/v52_g (QC model provenance + collect-and-compare):** QC results are stamped with the model
+that produced them (`item.qc.by`, `ls.qcBy`; QC logs now show the QC model). The lesson editor shows
+"<model> suggests:" per flag. v52_g adds **collect-and-compare**: verdicts are collected per model in
+`item.qcByModel` so multiple QC models can be compared on the same item (a model overwrites only its
+own entry; OK drops only its own flag; `item.qc` stays the primary; old flags migrate). The QC skip is
+now per-model (`ls.qcBy === OLLAMA_QC_MODEL`) so a second model still runs; the editor renders one row
+per model (`qcSuggestRows`). Tests: `unit-qc-dispatch`, `unit-qc-collect`, `unit-qc-editor-label`.
+LIVE-TEST §66.
 
 **v52_e (dedicated QC model role):** QC no longer shares the `OLLAMA_TRANSLATION_MODEL` knob with the
 story-translation panel. New independent `OLLAMA_QC_MODEL` role (defaults to the translation model;

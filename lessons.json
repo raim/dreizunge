@@ -990,7 +990,10 @@
         "tp_1776340925"
       ],
       "createdAt": "2026-05-07T09:07:54.586Z",
-      "updatedAt": "2026-05-07T09:07:54.586Z"
+      "updatedAt": "2026-07-08T15:53:38.171Z",
+      "tags": [
+        "needs native speaker"
+      ]
     },
     {
       "id": "sl_495939143",
@@ -1915,32 +1918,97 @@
             },
             {
               "target": "Ndio",
-              "source": "Yes"
-            },
-            {
-              "target": "Hapana",
-              "source": "No"
-            },
-            {
-              "target": "Samahani",
-              "source": "Sorry/Excuse me"
-            },
-            {
-              "target": "Tafadhali",
-              "source": "Please",
+              "source": "Yes",
+              "qcByModel": {
+                "qwen2.5:7b": {
+                  "sug": "Ailika",
+                  "field": "target",
+                  "at": "2026-07-08T15:50:01.423Z"
+                }
+              },
               "qc": {
-                "sug": "Please.",
-                "field": "source",
-                "at": "2026-07-07T20:33:55.537Z"
+                "sug": "Ailika",
+                "field": "target",
+                "at": "2026-07-08T15:50:01.423Z",
+                "by": "qwen2.5:7b"
               }
             },
             {
+              "target": "Hapana",
+              "source": "No",
+              "qcByModel": {
+                "qwen2.5:14b": {
+                  "sug": "No, it means \"No\" but is a complete sentence in Swahili meaning \"There is no\" or \"It is not\". A correct translation would be \"There isn't\" or \"It isn't\" depending on the context. However, if the intention is a simple negation, \"S: Not\" or \"S: No, (it is not)\" would be more appropriate without additional context. Given the instruction for a direct translation, \"S",
+                  "field": "source",
+                  "at": "2026-07-08T15:54:27.602Z"
+                }
+              },
+              "qc": {
+                "sug": "No, it means \"No\" but is a complete sentence in Swahili meaning \"There is no\" or \"It is not\". A correct translation would be \"There isn't\" or \"It isn't\" depending on the context. However, if the intention is a simple negation, \"S: Not\" or \"S: No, (it is not)\" would be more appropriate without additional context. Given the instruction for a direct translation, \"S",
+                "field": "source",
+                "at": "2026-07-08T15:54:27.602Z",
+                "by": "qwen2.5:14b"
+              }
+            },
+            {
+              "target": "Samahani",
+              "source": "Sorry/Excuse me",
+              "qcByModel": {
+                "qwen2.5:7b": {
+                  "sug": "Sorry",
+                  "field": "source",
+                  "at": "2026-07-08T15:50:09.939Z"
+                },
+                "qwen2.5:14b": {
+                  "sug": "Sorry",
+                  "field": "source",
+                  "at": "2026-07-08T15:54:37.116Z"
+                }
+              },
+              "qc": {
+                "sug": "Sorry",
+                "field": "source",
+                "at": "2026-07-08T15:54:37.116Z",
+                "by": "qwen2.5:14b"
+              }
+            },
+            {
+              "target": "Tafadhali",
+              "source": "Please"
+            },
+            {
               "target": "Mtu",
-              "source": "Person/Human"
+              "source": "Person/Human",
+              "qcByModel": {
+                "qwen2.5:7b": {
+                  "sug": "Mwanamume",
+                  "field": "target",
+                  "at": "2026-07-08T15:50:17.864Z"
+                }
+              },
+              "qc": {
+                "sug": "Mwanamume",
+                "field": "target",
+                "at": "2026-07-08T15:50:17.864Z",
+                "by": "qwen2.5:7b"
+              }
             },
             {
               "target": "Dunia",
-              "source": "World/Earth"
+              "source": "World/Earth",
+              "qcByModel": {
+                "qwen2.5:7b": {
+                  "sug": "World",
+                  "field": "source",
+                  "at": "2026-07-08T15:50:21.282Z"
+                }
+              },
+              "qc": {
+                "sug": "World",
+                "field": "source",
+                "at": "2026-07-08T15:50:21.282Z",
+                "by": "qwen2.5:7b"
+              }
             }
           ],
           "sentences": [
@@ -1957,7 +2025,20 @@
               "words": [
                 "Asante",
                 "sana."
-              ]
+              ],
+              "qcByModel": {
+                "qwen2.5:7b": {
+                  "sug": "Thank you so much.",
+                  "field": "source",
+                  "at": "2026-07-08T15:50:28.570Z"
+                }
+              },
+              "qc": {
+                "sug": "Thank you so much.",
+                "field": "source",
+                "at": "2026-07-08T15:50:28.570Z",
+                "by": "qwen2.5:7b"
+              }
             },
             {
               "target": "Ndio, mimi ni mtu.",
@@ -1967,7 +2048,25 @@
                 "mimi",
                 "ni",
                 "mtu."
-              ]
+              ],
+              "qcByModel": {
+                "qwen2.5:7b": {
+                  "sug": "Now, I am a person.",
+                  "field": "source",
+                  "at": "2026-07-08T15:50:38.929Z"
+                },
+                "qwen2.5:14b": {
+                  "sug": "Ndio, mimi ni mtu.\n\nS: Yes, I am indeed a person.",
+                  "field": "target",
+                  "at": "2026-07-08T15:55:30.021Z"
+                }
+              },
+              "qc": {
+                "sug": "Ndio, mimi ni mtu.\n\nS: Yes, I am indeed a person.",
+                "field": "target",
+                "at": "2026-07-08T15:55:30.021Z",
+                "by": "qwen2.5:14b"
+              }
             },
             {
               "target": "Hapana, siwezi.",
@@ -1983,7 +2082,25 @@
               "words": [
                 "Tafadhali,",
                 "nisaidie."
-              ]
+              ],
+              "qcByModel": {
+                "qwen2.5:7b": {
+                  "sug": "Tafadhali, kujanahia.",
+                  "field": "target",
+                  "at": "2026-07-08T15:50:51.003Z"
+                },
+                "qwen2.5:14b": {
+                  "sug": "Tafadhali, wasaidie.",
+                  "field": "target",
+                  "at": "2026-07-08T15:55:51.343Z"
+                }
+              },
+              "qc": {
+                "sug": "Tafadhali, wasaidie.",
+                "field": "target",
+                "at": "2026-07-08T15:55:51.343Z",
+                "by": "qwen2.5:14b"
+              }
             }
           ],
           "_genMeta": {
@@ -2433,7 +2550,7 @@
         ]
       },
       "generatedAt": "2026-07-07T18:32:17.231Z",
-      "updatedAt": "2026-07-08T11:10:32.066Z",
+      "updatedAt": "2026-07-08T15:55:51.344Z",
       "id": "tp_17834494397390000000"
     },
     {

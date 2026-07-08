@@ -1258,3 +1258,25 @@ translation model. Headless: `e2e-models` (independent switch), `unit-model-pick
       story-translation panel still uses qwen. Switching Translation does not change QC and vice versa.
 - [ ] **QC only affects QC.** Setting QC = translategemma does NOT flip the lesson format to table
       (only the Lessons role does that).
+
+### 66. v52_f — QC results stamped with the model that produced them
+Each QC flag now carries `qc.by` (the active QC model), and a clean lesson pass stamps `qcBy`
+alongside `qcAt`. QC console/job logs now show the QC model (not the translation model). Headless:
+`unit-qc-dispatch` asserts `qc.by`.
+
+- [ ] **Stamp present.** Run a QC pass (ideally with QC set to a distinct model, e.g. translategemma).
+      A flagged item's saved data has `qc.by` = that model; a cleanly-passed lesson has `qcBy`. The
+      QC job log shows the QC model in its `[…]` prefix.
+
+### 67. v52_g — QC collect-and-compare (multiple models per item)
+QC verdicts are collected per model (`item.qcByModel`); the editor shows one "<model> suggests:" row
+per model. Headless: `unit-qc-collect`, `unit-qc-editor-label`.
+
+- [ ] **Two models, both shown.** QC a lesson with QC=qwen, then switch QC=translategemma and QC the
+      same lesson again. An item both flag shows TWO rows in the editor — "qwen suggests: …" and
+      "translategemma suggests: …" — so you can compare.
+- [ ] **Second model actually runs.** The translategemma pass isn't skipped by qwen's earlier clean
+      pass (per-model skip). Watch the job log — it re-checks rather than skipping everything.
+- [ ] **Selective clear.** If one model later says a previously-flagged item is OK, only that model's
+      row disappears; the other model's suggestion remains.
+- [ ] **Fix/dismiss still work.** Applying the fix or dismissing clears all QC rows for that item.

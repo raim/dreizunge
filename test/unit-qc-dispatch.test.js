@@ -34,6 +34,7 @@ const calls = { pair: 0, cloze: 0, synset: 0 };
 const stubs = {
   langName: x => x,
   OLLAMA_TRANSLATION_MODEL: 'stub',
+  OLLAMA_QC_MODEL: 'qc-stub',
   jobStep: () => {}, jobDone: () => {},
   upsert: () => {},
   _qcStripFuri: t => t,
@@ -71,6 +72,8 @@ const topics = [{
   // standard(2) + grammar(1) + conjugation(1) all route to qcCheckPair
   assert.strictEqual(calls.pair, 4, 'pair checker ran on vocab + sentence + grammar + conjugation');
   assert.ok(L[0].vocab[0].qc && L[0].vocab[0].qc.sug === 'pair-fix', 'vocab got qc');
+  // The QC result is stamped with the model that produced it (the active QC role).
+  assert.strictEqual(L[0].vocab[0].qc.by, 'qc-stub', 'qc result stamps the QC model in .by');
   assert.ok(L[0].sentences[0].qc, 'sentence got qc');
   // word_forms → cloze checker on items
   assert.strictEqual(calls.cloze, 1, 'cloze checker ran once');

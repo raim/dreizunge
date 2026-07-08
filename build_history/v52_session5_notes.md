@@ -32,3 +32,27 @@ translategemma; one knob served both. (Surfaced when the user asked which model 
 - Roadmap updated (QC split marked shipped; realises the roadmap_v46 `OLLAMA_QC_MODEL` sketch). The
   **drill remains the START-HERE item** (untouched).
 - Owed: LIVE-TEST §§58–65 (Ollama/browser), TranslateGemma i18n pass on the `models.*` keys.
+
+## Addendum → v52_f: QC model provenance
+Each QC result is now stamped with the model that produced it: `item.qc.by = OLLAMA_QC_MODEL` on a
+flag, and `ls.qcBy` alongside `ls.qcAt` on a clean lesson pass. The QC console/job logging now
+references `OLLAMA_QC_MODEL` (it still said `OLLAMA_TRANSLATION_MODEL`, a leftover from before the QC
+role split). `unit-qc-dispatch` asserts `qc.by`; both `_runQc`-rebuilding tests (dispatch + skip)
+gained an `OLLAMA_QC_MODEL` stub. LIVE-TEST §66. Released as **v52_f**.
+
+## Addendum → v52_g: QC model shown in the lesson-editor
+The editor QC flag now reads "<model> suggests:" (from `qc.by`) instead of the generic "QC
+suggests:", at both render sites, with a fallback to the generic label for older flags lacking a
+`by` stamp. New en-only key `qc.editor.suggests_by = "⚑ {model} suggests:"`. `unit-qc-editor-label`
+guards both sites + the fallback. Released as **v52_g**.
+
+## Addendum → v52_g (cont.): QC collect-and-compare
+Superseding the earlier overwrite note: QC now COLLECTS verdicts per model in `item.qcByModel`
+(`{ [model]: {sug, field, at} }`) so different QC models can be compared on the same item. A model
+overwrites only its OWN entry; a model that now says OK drops only its own flag (others' remain);
+`item.qc` stays as the primary (latest) for backward-compatible apply/dismiss/badges. Old single
+flags are migrated into the map on next check. The skip optimisation is now PER-MODEL (`ls.qcBy ===
+OLLAMA_QC_MODEL`) so a second model still runs. The editor shows one "<model> suggests:" row per model
+(`qcSuggestRows`); apply/dismiss clear the whole item's QC; `qcByModel` is client-authoritative through
+the lesson-edit merge. Tests: `unit-qc-collect` (two-model collection, selective clear, migration),
+`unit-qc-editor-label` (multi-row render). User flags (`item.userFlag`) remain separate.
