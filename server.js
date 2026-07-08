@@ -8,7 +8,8 @@ const fs    = require('fs');
 const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
 const { callLLM: _callLLM, ping: pingOllama, release: releaseOllamaModel,
-        warmup: _warmupLLM, listModels: listOllamaModels, stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
+        warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
+        stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
 const { buildExport } = require('./export-lessons');
 
 // ── Prompts (hot-reloaded from prompts.json) ──────────────────────────────────
@@ -60,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v52';
+const APP_VERSION  = 'v52_c';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -86,7 +87,8 @@ let OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
 // lesson format from the new lesson model (unless env-pinned), and returns the resulting set.
 function currentModels() {
   return { story: OLLAMA_MODEL, translation: OLLAMA_TRANSLATION_MODEL,
-           lessons: OLLAMA_LESSON_MODEL, lessonFormat: OLLAMA_LESSON_FORMAT };
+           lessons: OLLAMA_LESSON_MODEL, lessonFormat: OLLAMA_LESSON_FORMAT,
+           timeoutMs: getRequestTimeout() };
 }
 function setRuntimeModels(next) {
   next = next || {};
@@ -729,7 +731,7 @@ async function generateDialectStory(glossaryRows, baseLang, opts) {
     `You write a short, coherent story in a regional dialect (a variety of ${S}), for language ` +
     `learners. You are given a glossary of dialect words with their ${S} meanings. Rules:\n` +
     `- Write a real STORY (a little narrative), ${lengthHint}, on the given topic.\n` +
-    `- Use as many of the glossary dialect words as fit naturally; prefer glossary words.\n` +
+    `- You MUST use SEVERAL glossary dialect words — at least a handful, not just one. A story that uses only one (or none) of the glossary words is a failure; weave in as many as fit naturally and prefer glossary words over generic ${S}.\n` +
     `- Mimic the spelling/orthography of the glossary exactly.\n` +
     `- It's OK to use ordinary dialect grammar/function words to connect them into a real story.\n` +
     (instructions ? `- Author instructions (follow these): ${instructions}\n` : '') +
@@ -796,34 +798,49 @@ async function generateDialectStoryV2(glossaryRows, baseLang, opts) {
 
   // ── Step 2: a CONSTRAINED rewrite into the dialect. The model is a transformer, not an author. ──
   const fewshot = (glossaryRows || []).slice(0, 100).map(r => `${r.target} = ${r.source}`).join('\n');
-  const sys2 =
+  const sys2 = (escalate) =>
     `You rewrite a Standard ${S} story into a regional dialect (a variety of ${S}). You are a careful ` +
     `TRANSLATOR/REWRITER, not an author. Rules:\n` +
     `- Keep the SAME meaning and the SAME number of sentences, in the same order.\n` +
-    `- Use the dialect words from the glossary wherever they fit the meaning; prefer them.\n` +
+    `- You MUST substitute SEVERAL glossary dialect words — at least a handful, not just one. Wherever a ` +
+    `glossary word fits the meaning, use it (prefer it over the ${S} word). A rewrite that uses only one ` +
+    `(or none) of the glossary words is a failure.\n` +
     `- Mimic the glossary's spelling/orthography exactly.\n` +
     `- Change only what the dialect actually requires (words, small grammar/function words). Do NOT ` +
     `add new ideas or sentences.\n` +
     `- Do NOT invent dialect words you are unsure of — if you have no dialect form, keep the ${S} word.\n` +
+    (escalate ? `- Your previous attempt used TOO FEW glossary words. This time use noticeably MORE of them, wherever the meaning allows.\n` : '') +
     (instructions ? `- Extra instructions: ${instructions}\n` : '') +
     `Reply with EXACTLY two blocks, nothing else:\n` +
     `STORY:\n<the dialect rewrite>\n---\nGERMAN:\n<the original Standard ${S} story, unchanged>`;
   const usr2 = `Glossary (dialect = ${S}):\n${fewshot}\n\nStandard ${S} story to rewrite:\n${standardSource}`;
-  let text2;
-  try { ({ text: text2 } = await callLLMTranslation(sys2, usr2, opts.long ? 1200 : 760)); } catch (_) { return null; }
-  const reply = (text2 || '').trim();
-  const m = reply.match(/STORY:\s*([\s\S]*?)\s*---\s*GERMAN:\s*([\s\S]*)$/i);
-  // Tolerant fallback: if the model omitted the GERMAN block, use our known standard source.
-  let story, gloss;
-  if (m) { story = m[1].trim(); gloss = (m[2] || '').trim() || standardSource; }
-  else { story = reply.replace(/^STORY:\s*/i, '').trim(); gloss = standardSource; }
-  if (!story) return null;
-  const coverage = dialectGlossaryCoverage(story, glossaryRows);
+  // One rewrite attempt → { story, gloss, coverage } or null.
+  const runRewrite = async (escalate) => {
+    let text2;
+    try { ({ text: text2 } = await callLLMTranslation(sys2(escalate), usr2, opts.long ? 1200 : 760)); } catch (_) { return null; }
+    const reply = (text2 || '').trim();
+    const m = reply.match(/STORY:\s*([\s\S]*?)\s*---\s*GERMAN:\s*([\s\S]*)$/i);
+    let story, gloss;
+    if (m) { story = m[1].trim(); gloss = (m[2] || '').trim() || standardSource; }
+    else { story = reply.replace(/^STORY:\s*/i, '').trim(); gloss = standardSource; }
+    if (!story) return null;
+    return { story, gloss, coverage: dialectGlossaryCoverage(story, glossaryRows) };
+  };
+  let best = await runRewrite(false);
+  if (!best) return null;
+  // Enforce "more than one glossary word": if the rewrite used <2 of the available glossary words,
+  // retry once with an escalated instruction and keep whichever used more.
+  const MIN_GLOSSARY_WORDS = 2;
+  if (best.coverage && best.coverage.total >= MIN_GLOSSARY_WORDS && best.coverage.used < MIN_GLOSSARY_WORDS) {
+    console.log(`    Dialect rewrite used only ${best.coverage.used}/${best.coverage.total} glossary words — retrying with escalation…`);
+    const retry = await runRewrite(true);
+    if (retry && retry.coverage && retry.coverage.used > best.coverage.used) best = retry;
+  }
   return {
-    story: story.slice(0, 4000),
-    gloss: gloss.slice(0, 4000),
+    story: best.story.slice(0, 4000),
+    gloss: best.gloss.slice(0, 4000),
     standardSource: standardSource.slice(0, 4000),
-    coverage,
+    coverage: best.coverage,
     method: 'rewrite',
   };
 }
@@ -1135,6 +1152,29 @@ const normSpaces = str => str.trim().replace(/ ([.,!?;:()\[\]])/g, '$1');
 
 // Languages where words are not space-separated
 const CJK_LANGS = new Set(['ja','zh','ko']);
+
+// Language pairs close enough that many vocab items legitimately share the SAME spelling across
+// source and target (cognates), so the "identical source/target" heuristic in generateOneLesson
+// would false-positive. For these pairs we log identical items but don't block. Dialects
+// (lang === srcLang, e.g. an East-Tyrolean de/de topic) are always treated as close.
+// Order-independent; extend this list as needed.
+const CLOSE_LANG_PAIRS = [
+  ['de','lb'],   // German ↔ Lëtzebuergesch
+  ['de','nds'],  // German ↔ Low German
+  ['de','bar'],  // German ↔ Bavarian
+  ['nl','af'],   // Dutch ↔ Afrikaans
+  ['nb','nn'], ['da','nb'], ['da','nn'], ['nb','sv'], ['da','sv'],  // mainland Scandinavian
+  ['cs','sk'],   // Czech ↔ Slovak
+  ['hr','sr'], ['bs','hr'], ['bs','sr'],  // BCMS
+  ['ru','uk'], ['ru','be'], ['uk','be'],  // East Slavic
+  ['id','ms'],   // Indonesian ↔ Malay
+  ['es','gl'], ['es','ca'], ['es','pt'],  // Iberian Romance
+];
+function isCloseLangPair(lang, srcLang) {
+  if (!lang || !srcLang) return false;
+  if (lang === srcLang) return true;   // dialect topics (de/de, etc.)
+  return CLOSE_LANG_PAIRS.some(([a, b]) => (a === lang && b === srcLang) || (a === srcLang && b === lang));
+}
 
 // Tokenise a Japanese/Chinese sentence into meaningful word-sized chunks.
 // Handles the kanji[よみ] annotation format used in lessons.
@@ -2146,17 +2186,24 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     if (!Array.isArray(lesson.sentences)) lesson.sentences = [];
     lesson.sentences = lesson.sentences.slice(0, 5).map(s => deriveSentenceWords(s, lang));
 
-    // Detect model copying target-language content into the source-language (en) field
-    const vocabSameCount = lesson.vocab.filter(v =>
-      v.target && v.source && v.target.trim().toLowerCase() === v.source.trim().toLowerCase()
-    ).length;
-    const sentSameCount = lesson.sentences.filter(s =>
-      s.target && s.source && s.target.trim().toLowerCase() === s.source.trim().toLowerCase()
-    ).length;
-      if (vocabSameCount > 2)
-      throw new Error(`${vocabSameCount} vocab items have identical source/target fields — model ignored source language, retrying`);
-    if (sentSameCount > 1)
-      throw new Error(`${sentSameCount} sentences have identical source/target fields — model ignored source language, retrying`);
+    // Detect a model copying target-language content into the source-language field (it "ignored"
+    // the source language). Collect the offending items so they're visible on the console. For
+    // CLOSE language pairs (dialects, or e.g. Lëtzebuergesch↔German) many items legitimately share
+    // spelling, so we log them but do NOT block.
+    const _sameField = a => a.target && a.source && a.target.trim().toLowerCase() === a.source.trim().toLowerCase();
+    const vocabSame = lesson.vocab.filter(_sameField);
+    const sentSame  = lesson.sentences.filter(_sameField);
+    const _close = isCloseLangPair(lang, srcLang);
+    if (vocabSame.length || sentSame.length) {
+      console.warn(`  [lesson ${lessonNum}] ${vocabSame.length} vocab + ${sentSame.length} sentence item(s) with identical source/target (${lang}→${srcLang})${_close ? ' — close pair, allowed' : ' — blocking, will retry'}:`);
+      [...vocabSame, ...sentSame].forEach(it => console.warn(`      • ${it.target}  =  ${it.source}`));
+    }
+    if (!_close) {
+      if (vocabSame.length > 2)
+        throw new Error(`${vocabSame.length} vocab items have identical source/target fields — model ignored source language, retrying`);
+      if (sentSame.length > 1)
+        throw new Error(`${sentSame.length} sentences have identical source/target fields — model ignored source language, retrying`);
+    }
 
     return {
       lesson: {
@@ -3103,16 +3150,20 @@ http.createServer(async (req, res) => {
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
       const requested = [body.model, body.story, body.translation, body.lessons]
         .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
-      if (!requested.length)
-        return json(res, 400, { error: 'No model specified. Provide story, translation, lessons, or model.' });
-      const available = await listOllamaModels();
-      if (available.length) {
-        const unknown = [...new Set(requested)].filter(m => !available.includes(m));
-        if (unknown.length)
-          return json(res, 400, { error: `Model(s) not installed in Ollama: ${unknown.join(', ')}`, available });
+      const hasTimeout = body.timeoutMs != null && Number.isFinite(parseInt(body.timeoutMs, 10));
+      if (!requested.length && !hasTimeout)
+        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, model, or timeoutMs.' });
+      if (requested.length) {
+        const available = await listOllamaModels();
+        if (available.length) {
+          const unknown = [...new Set(requested)].filter(m => !available.includes(m));
+          if (unknown.length)
+            return json(res, 400, { error: `Model(s) not installed in Ollama: ${unknown.join(', ')}`, available });
+        }
       }
-      const activeModels = setRuntimeModels(body);
-      console.log(`  Models switched → story:${activeModels.story} lessons:${activeModels.lessons}${activeModels.translation!==activeModels.story?` transl:${activeModels.translation}`:''}${activeModels.lessonFormat==='table'?' [table format]':''}`);
+      if (hasTimeout) setRequestTimeout(body.timeoutMs);
+      const activeModels = requested.length ? setRuntimeModels(body) : currentModels();
+      console.log(`  Models switched → story:${activeModels.story} lessons:${activeModels.lessons}${activeModels.translation!==activeModels.story?` transl:${activeModels.translation}`:''}${activeModels.lessonFormat==='table'?' [table format]':''} timeout:${Math.round(activeModels.timeoutMs/1000)}s`);
       return json(res, 200, { ok: true, active: activeModels });
     }
     if (M === 'GET' && url.pathname === '/api/lessons') {

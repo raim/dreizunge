@@ -1201,3 +1201,35 @@ answer. (`unit-synonyms` covers the wiring + gloss pairing; this is the visual c
 - [ ] **Antonyms too.** The same holds for an antonyms select-all exercise.
 - [ ] **Older data without glosses.** If a lesson entry has no gloss, the word still shows plainly
       (no dangling "—"). (Regenerated lessons include glosses.)
+
+### 62. v52_b — identical source/target: log items + allow close pairs
+The "N vocab items have identical source/target fields — model ignored source language" check now
+logs each offending item ("target = source") to the server console, and skips blocking for CLOSE
+language pairs (dialects `lang===srcLang`, or curated pairs like de↔lb). Unit-covered
+(`unit-close-lang-pairs`); this is the live confirmation.
+
+- [ ] **Close pair not blocked.** Generate a Lëtzebuergesch ← German lesson whose vocab contains
+      cognates spelled identically (Haus=Haus, Buch=Buch). The lesson is accepted (no retry loop on
+      this), and the server console shows the identical items tagged "close pair, allowed".
+- [ ] **Distant pair still guarded.** A normal target ← English lesson where the model wrongly copied
+      the target into the source field still fails the attempt and retries — and the console now lists
+      exactly which items were identical.
+
+### 63. v52_c — five live-testing fixes
+Bundled follow-ups from live testing. Headless coverage: `unit-static-teacher` (QC-icon exclusion),
+`unit-model-picker` (timeout input + suitability warning), `e2e-models` (timeout endpoint),
+`unit-prompt-strictness` (dialect + synonyms prompts). Browser/Ollama confirmations:
+
+- [ ] **AI error hunt: no QC looking-glass.** Open a topic that has an AI Error Hunt lesson. Its
+      lesson card shows NO 🔍 QC button (other lesson types with vocab/sentences still do).
+- [ ] **Model timeout input.** Next to the model dropdowns there's a "Timeout … s" number field
+      (default 720). Raise it (e.g. 1800), see a "Timeout updated" toast. A large/slow model that
+      previously timed out on Swahili word_forms/synonyms now completes.
+- [ ] **Suitability warning at generate time.** With a Lëtzebuergesch target and qwen still set for
+      Story/Lessons, clicking Generate shows a non-blocking toast suggesting translategemma. Switching
+      those roles to translategemma makes the warning stop. No warning for a German/English target.
+- [ ] **Dialect story uses several glossary words.** Generate a dialect story (rewrite method) from a
+      glossary. The result uses MORE than one glossary word; the console prints the coverage
+      (`[coverage used/total]`), and a too-low first attempt triggers a logged retry.
+- [ ] **Synonyms are substitutable.** In a Synonyms lesson, the offered synonyms genuinely fit the
+      context sentence — each could replace the base word without breaking the sentence.

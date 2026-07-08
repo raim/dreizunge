@@ -96,6 +96,8 @@ run('unit: word_forms/synonyms content-aware RTL (v49)', 'node', [path.join(__di
 run('unit: stripThink reasoning-model hardening', 'node', [path.join(__dirname, 'unit-strip-think.test.js')]);
 run('unit: model-picker wiring + static-exclusion', 'node', [path.join(__dirname, 'unit-model-picker.test.js')]);
 run('unit: parseTableLesson non-ASCII header regression', 'node', [path.join(__dirname, 'unit-table-lesson.test.js')]);
+run('unit: close-lang-pairs identical-field gating', 'node', [path.join(__dirname, 'unit-close-lang-pairs.test.js')]);
+run('unit: dialect + synonyms prompt strictness', 'node', [path.join(__dirname, 'unit-prompt-strictness.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {

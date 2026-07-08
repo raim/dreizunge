@@ -2,17 +2,38 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_2031094932",
+      "title": "Ubuntu: Reflections on Being",
+      "icon": "🫂",
+      "chapters": [
+        "tp_17834494397390000000",
+        "tp_17834502581820000190"
+      ],
+      "lang": "sw",
+      "srcLang": "en",
+      "createdAt": "2026-07-07T18:37:19.792Z",
+      "updatedAt": "2026-07-07T19:35:36.627Z",
+      "summary": "The story explores the concept of \"Ubuntu,\" the idea that a person's humanity is realized through relationships with others. Mara contemplates this philosophy, reflecting on her father's role in the community and her own friendships. She grapples with the question of what truly defines a person, questioning whether it is solely through connection with others. Ultimately, Mara recognizes the need for continued learning and reflection to fully understand the meaning of being human.",
+      "tags": [
+        "needs native speaker"
+      ]
+    },
+    {
       "id": "sl_1314409474",
       "title": "Spaziergang an der Mosel",
       "icon": "📖",
       "chapters": [
-        "tp_17834339460840000050"
+        "tp_17834339460840000050",
+        "tp_17834579975340000254"
       ],
       "lang": "lb",
       "srcLang": "de",
       "createdAt": "2026-07-07T14:19:06.141Z",
-      "updatedAt": "2026-07-07T15:55:11.435Z",
-      "summary": "Am Samstag machte ich einen Spaziergang entlang der Mosel. Die Sonne schien, die Luft war frisch, und das ruhige Wasser bot einen schönen Anblick. Ich beobachtete Fische und andere Menschen, die spazieren gingen oder Fahrrad fuhren. Eine kurze Pause in einem Café in Remerschen mit Blick auf die Mosel rundete den angenehmen Tag ab."
+      "updatedAt": "2026-07-08T00:11:14.889Z",
+      "summary": "Am Samstag machte die Erzählerin einen Spaziergang entlang der Mosel, genoss die Sonne und die frische Luft. Anschließend wanderte sie weiter in Richtung Koblenz, vorbei an beeindruckenden Felsen und Tälern. Sie traf andere Wanderer und erhielt Reisetipps. Am späten Nachmittag entdeckte sie ein schönes Weingut und probierte einige Weine.",
+      "tags": [
+        "needs native speaker"
+      ]
     },
     {
       "id": "sl_966370453",
@@ -1141,6 +1162,969 @@
   ],
   "topics": [
     {
+      "topic": "Wanderung entlang der Mosel",
+      "topicEmoji": "⛰️",
+      "userTopic": "wir wandern an der mosel bis koblenz",
+      "userPrompt": "wir wandern an der mosel bis koblenz",
+      "lang": "lb",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 150,
+      "story": "Nodeem ech zu Remerschen e kaffegeschéiert hat, hunn ech mech décidéiert, weider ze wandere. D'Plan war, bis no Koblenz ze goen, laang d'Musel. Et war e schéintt Regioun, mat héije Klippen an déifier Dalen. D'Luucht war schéin, awer et war och e bësselchen waarm. Ech hunn vill Leit begéint, déi och wanderen. Ee Mann aus Däitschland war och dobaus, hien war schonn e puer Deeg op der Reis. Mir hunn e kléngt Stéck zesumme geschwat, an hien huet mir vill Tipps fir d'Rees ginn.\n\nSpéider um Dag, hunn ech e schéint Wënzer bei Esch-sur-Alzette entdeckt. D'Wäiner waren fantastesch, an ech hunn e puer Fläschen fir meng Famill zu Doheem kaaft. D'Wanderung war flott, awer ech war och e bësselchen müd. Ech hunn decidéiert, fir dës Nuecht an engem klengen Hotel bei Grevenmacher ze iwwernächten.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Lëtzebuergesch language teacher. Write a short story directly in Lëtzebuergesch on the given topic — aim for 1-2 paragraphs, under 150 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Lëtzebuergesch. Writing style: Discursive, argumentative, first-person reflective. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nDe Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach. D'Sonn schéngt, an d'Lëscht war frësch. D'Waasser war roueg, an ech konnt d'Fësch am Floss gesinn. E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Floss gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Remerschen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur.\n\nNew topic: \"wir wandern an der mosel bis koblenz\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "Spaziergang an der Mosel",
+      "continuedFromId": "tp_17834339460840000050",
+      "storyStyle": "essay",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "wir wandern an der mosel bis koblenz",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Moien",
+              "source": "Morgen"
+            },
+            {
+              "target": "Café",
+              "source": "Café"
+            },
+            {
+              "target": "Wandern",
+              "source": "Wandern"
+            },
+            {
+              "target": "d'Musel",
+              "source": "die Mosel"
+            },
+            {
+              "target": "d'Sonn",
+              "source": "die Sonne"
+            },
+            {
+              "target": "d'Lëscht",
+              "source": "die Luft"
+            },
+            {
+              "target": "frësch",
+              "source": "frisch"
+            },
+            {
+              "target": "Spazéiergaang",
+              "source": "Spaziergang"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Moien, wéi geet et?",
+              "source": "Guten Morgen, wie geht es?",
+              "words": [
+                "Moien,",
+                "wéi",
+                "geet",
+                "et?"
+              ]
+            },
+            {
+              "target": "Ech hunn e Café zu Remerschen.",
+              "source": "Ich habe einen Kaffee in Remerschen getrunken.",
+              "words": [
+                "Ech",
+                "hunn",
+                "e",
+                "Café",
+                "zu",
+                "Remerschen."
+              ]
+            },
+            {
+              "target": "Mir wëlle wandern laang d'Musel.",
+              "source": "Wir wollen am Mosel entlang wandern.",
+              "words": [
+                "Mir",
+                "wëlle",
+                "wandern",
+                "laang",
+                "d'Musel."
+              ]
+            },
+            {
+              "target": "D'Sonn schéngt haut.",
+              "source": "Die Sonne scheint heute.",
+              "words": [
+                "D'Sonn",
+                "schéngt",
+                "haut."
+              ]
+            },
+            {
+              "target": "Et ass eng frësch Lëscht.",
+              "source": "Es ist eine frische Luft.",
+              "words": [
+                "Et",
+                "ass",
+                "eng",
+                "frësch",
+                "Lëscht."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 675,
+            "completionTokens": 267,
+            "ms": 527979,
+            "at": "2026-07-07T20:59:57.451Z"
+          }
+        },
+        {
+          "id": "ls_1783469292209",
+          "type": "word_forms",
+          "title": "Wandern am Land",
+          "desc": "Vokabeln und Grammatik zum Thema Wandern.",
+          "icon": "🥾",
+          "items": [
+            {
+              "sentence": "Nodeem ech zu Remerschen e kaffegeschéiert hat, hunn ech mech décidéiert, weider ze ___.",
+              "translation": "Nachdem ich in Remerschen einen Kaffee getrunken hatte, beschloss ich, weiterzugehen.",
+              "choices": [
+                "wandere",
+                "wandert",
+                "wandertes"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verb im Perfekt, 1. Person Singular."
+            },
+            {
+              "sentence": "D'Plan war, bis no Koblenz ze goen, laang d'Musel, et war e schéintt Regioun, mat héije Klippen an déifier ___.",
+              "translation": "Der Plan war, bis nach Koblenz zu gehen, entlang der Mosel, es war eine schöne Region mit hohen Klippen und tiefen Tälern.",
+              "choices": [
+                "Dalen",
+                "Dal",
+                "Dël"
+              ],
+              "correctIndex": 0,
+              "explanation": "Singular, Artikel 'déif' erfordert den Artikel 'de'."
+            },
+            {
+              "sentence": "Ech hunn vill Leit begéint, déi och wanderen, ee Mann aus Däitschland war och dobaus, hien war schonn e puer Deeg ___ der Reis.",
+              "translation": "Ich habe viele Leute getroffen, die auch wandern, ein Mann aus Deutschland war auch dabei, er war schon seit ein paar Tagen auf der Reise.",
+              "choices": [
+                "op",
+                "an",
+                "am"
+              ],
+              "correctIndex": 0,
+              "explanation": "Präposition 'op' + Dativ wegen 'der Reis'."
+            },
+            {
+              "sentence": "Spéider um Dag, hunn ech e schéint Wënzer bei Esch-sur-Alzette entdeckt, d'Wäiner waren fantastesch, an ech hunn e puer Fläschen fir meng Famill zu Doheem ___.",
+              "translation": "Später am Tag entdeckte ich einen schönen Weinkeller in Esch-sur-Alzette, die Weine waren fantastisch, und ich kaufte ein paar Flaschen für meine Familie zu Hause.",
+              "choices": [
+                "kaaft",
+                "kafen",
+                "kaaftes"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verb im Perfekt, 1. Person Singular."
+            },
+            {
+              "sentence": "D'Wanderung war flott, awer ech war och e bësselchen müd, ech hunn decidéiert, fir dës Nuecht an engem klengen Hotel bei Grevenmacher ze ___.",
+              "translation": "Die Wanderung war schnell, aber ich war auch ein bisschen müde, ich beschloss, in einem kleinen Hotel in Grevenmacher für diese Nacht zu übernachten.",
+              "choices": [
+                "iwwernächten",
+                "iwwernächte",
+                "iwwernächtes"
+              ],
+              "correctIndex": 0,
+              "explanation": "Verb im Infinitiv, nach 'ze'."
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "translategemma:12b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 1232,
+            "completionTokens": 748,
+            "ms": 823958,
+            "at": "2026-07-08T00:08:12.209Z"
+          }
+        },
+        {
+          "id": "ls_1783470399834",
+          "type": "synonyms",
+          "title": "Wandern an der Natur",
+          "desc": "Vokabeln zum Thema Wandern an der Mosel.",
+          "icon": "⛰️",
+          "words": [
+            {
+              "base": "wandere",
+              "gloss": "wandern",
+              "sentence": "Nodeem ech zu Remerschen e kaffegeschéiert hat, hunn ech mech décidéiert, weider ze wandere.",
+              "synonyms": [
+                {
+                  "w": "spazéieren",
+                  "g": "spazieren"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "nodeem",
+              "gloss": "nachdem",
+              "sentence": "Nodeem ech zu Remerschen e kaffegeschéiert hat, hunn ech mech décidéiert, weider ze wandere.",
+              "synonyms": [
+                {
+                  "w": "nom",
+                  "g": "nach"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "remerschen",
+              "gloss": "entfernt",
+              "sentence": "Nodeem ech zu Remerschen e kaffegeschéiert hat, hunn ech mech décidéiert, weider ze wandere.",
+              "synonyms": [
+                {
+                  "w": "wäit",
+                  "g": "weit"
+                },
+                {
+                  "w": "distant",
+                  "g": "distanziert"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "naha",
+                  "g": "nah"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "weider",
+              "gloss": "weiter",
+              "sentence": "Nodeem ech zu Remerschen e kaffegeschéiert hat, hunn ech mech décidéiert, weider ze wandere.",
+              "synonyms": [
+                {
+                  "w": "nop",
+                  "g": "vor"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "bësselchen",
+              "gloss": "ein bisschen",
+              "sentence": "D'Luucht war schéin, awer et war och e bësselchen waarm.",
+              "synonyms": [
+                {
+                  "w": "eppes",
+                  "g": "etwas"
+                },
+                {
+                  "w": "e wéineg",
+                  "g": "ein wenig"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "frësch",
+              "gloss": "frisch",
+              "sentence": "",
+              "synonyms": [
+                {
+                  "w": "nou",
+                  "g": "neu"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "alt",
+                  "g": "alt"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "translategemma:12b",
+            "attempts": 1,
+            "valid": 6,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 812,
+            "completionTokens": 689,
+            "ms": 710487,
+            "at": "2026-07-08T00:26:39.834Z"
+          }
+        },
+        {
+          "id": "ls_1783470666932_1kvd",
+          "type": "mixed",
+          "title": "🔀 Mischübung",
+          "icon": "🔀",
+          "desc": "Ein Mischung von Fragen aus den anderen Lektionen dieses Kapitels",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 1022537,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": "translategemma:12b",
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 1240,
+        "totalCompletionTokens": 586,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 527976,
+            "promptTokens": 675,
+            "completionTokens": 267
+          }
+        ]
+      },
+      "generatedAt": "2026-07-07T20:51:09.382Z",
+      "updatedAt": "2026-07-08T00:31:06.937Z",
+      "id": "tp_17834579975340000254"
+    },
+    {
+      "topic": "Mara's Reflections on Ubuntu",
+      "topicEmoji": "🌱",
+      "userTopic": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "userPrompt": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+      "lang": "sw",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 200,
+      "story": "Siku hizo, Mara alikuwa akijaribu kuelewa maneno hayo ya \"Ubuntu\". Alifikiria kuhusu baba yake, ambaye alikuwa mlinzi wa jadi, na kuhusu jinsi alivyoshirikiana na jamii yake. Alifikiria kuhusu mimi, rafiki yake, na jinsi tulivyokuwa tukijifunza na kukua pamoja.\n\nLakini bado alikuwa na maswali. Je, ni nini kinachotufanya kuwa \"binadamu\"? Je, ni tu uhusiano wetu na wengine? Au kuna kitu kingine, kitu ambacho hakitafahamika hadi tutakapokuwa pamoja?\n\nMara alijua kwamba alihitaji kuendelea kujifunza. Alihitaji kuendelea kuuliza maswali. Alihitaji kuendelea kujaribu kuelewa maana ya kuwa \"mtu\".",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Swahili language teacher. Write a short story directly in Swahili on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Swahili. Writing style: Contemplative, questioning, abstract ideas. IMPORTANT: This is a continuation story. You will be given the previous story. Continue with the SAME characters, world, and narrative thread — but shift the topic and setting to the new one. Characters should feel familiar; the world connected.\n\nPrevious story (excerpt):\nKatika ulimwengu huu, ni nini hasa kunakuwa mtu? Je, ni tu kuzaliwa, kupumua, na kisha kufa? Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno? Huenda jibu liko katika uhusiano wetu na wengine.\n\nUbuntu, wanasema, ni kwamba sisi hatujakuwa kamili peke yetu. Tunahitaji mwingine. Tunahitaji kuingiliana, kushirikiana, na kusaidiana. Kwa njia hii, tu tunaweza kukamilisha sisi wenyewe. Je, ni kweli kwamba sisi ni kiasi cha uhusiano wetu? Je, sisi ni yale ambayo wengine wanatufanya kuwa?\n\nNi wazo la kusisimua, na la kusumbua. Je, tunaweza kuwa \"binadamu\" peke yetu, bila mwingine? Au je, sisi ni kitu kingine kabisa, kitu ambacho hakitafahamika hadi tutakapokuwa pamoja? Huenda tuwe na mengi ya kujifunza kuhusu maana ya kuwa \"mtu\".\n\nNew topic: \"Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.\". Write the continuation now. Plain prose, no headings.",
+      "continuedFrom": "The Meaning of Being",
+      "continuedFromId": "tp_17834494397390000000",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "jambo",
+              "source": "hello"
+            },
+            {
+              "target": "asante",
+              "source": "thank you"
+            },
+            {
+              "target": "ndiyo",
+              "source": "yes"
+            },
+            {
+              "target": "hapana",
+              "source": "no"
+            },
+            {
+              "target": "rafiki",
+              "source": "friend"
+            },
+            {
+              "target": "mimi",
+              "source": "me"
+            },
+            {
+              "target": "wewe",
+              "source": "you"
+            },
+            {
+              "target": "baba",
+              "source": "father"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Jambo, rafiki.",
+              "source": "Hello, friend.",
+              "words": [
+                "Jambo,",
+                "rafiki."
+              ]
+            },
+            {
+              "target": "Asante kwa msaada.",
+              "source": "Thank you for the help.",
+              "words": [
+                "Asante",
+                "kwa",
+                "msaada."
+              ]
+            },
+            {
+              "target": "Ndiyo, mimi ni Mara.",
+              "source": "Yes, I am Mara.",
+              "words": [
+                "Ndiyo,",
+                "mimi",
+                "ni",
+                "Mara."
+              ]
+            },
+            {
+              "target": "Hapana, siwezi kuelewa.",
+              "source": "No, I don't understand.",
+              "words": [
+                "Hapana,",
+                "siwezi",
+                "kuelewa."
+              ]
+            },
+            {
+              "target": "Baba yangu alikuwa rafiki.",
+              "source": "My father was a friend.",
+              "words": [
+                "Baba",
+                "yangu",
+                "alikuwa",
+                "rafiki."
+              ],
+              "qc": {
+                "sug": "My father was a good man.",
+                "field": "source",
+                "at": "2026-07-07T20:38:03.351Z"
+              }
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 465,
+            "completionTokens": 226,
+            "ms": 276698,
+            "at": "2026-07-07T18:46:23.680Z"
+          },
+          "_hidden": false
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "Continue the previous chapter's story directly — keep the same characters, setting, and ongoing plot. Do not introduce a new topic or theme; just build on the storyline so far.",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Jambo",
+              "source": "Hello"
+            },
+            {
+              "target": "Asante",
+              "source": "Thank you"
+            },
+            {
+              "target": "Ndio",
+              "source": "Yes"
+            },
+            {
+              "target": "Hapana",
+              "source": "No"
+            },
+            {
+              "target": "Samahani",
+              "source": "Sorry/Excuse me"
+            },
+            {
+              "target": "Tafadhali",
+              "source": "Please",
+              "qc": {
+                "sug": "Please.",
+                "field": "source",
+                "at": "2026-07-07T20:38:40.381Z"
+              }
+            },
+            {
+              "target": "Mtu",
+              "source": "Person/Human"
+            },
+            {
+              "target": "Dunia",
+              "source": "World/Earth"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Jambo, rafiki!",
+              "source": "Hello, friend!",
+              "words": [
+                "Jambo,",
+                "rafiki!"
+              ]
+            },
+            {
+              "target": "Asante kwa msaada.",
+              "source": "Thank you for the help.",
+              "words": [
+                "Asante",
+                "kwa",
+                "msaada."
+              ]
+            },
+            {
+              "target": "Ndio, mimi ni mtu.",
+              "source": "Yes, I am a person.",
+              "words": [
+                "Ndio,",
+                "mimi",
+                "ni",
+                "mtu."
+              ]
+            },
+            {
+              "target": "Hapana, siwezi kufanya hivyo sasa.",
+              "source": "No, I cannot do that now.",
+              "words": [
+                "Hapana,",
+                "siwezi",
+                "kufanya",
+                "hivyo",
+                "sasa."
+              ]
+            },
+            {
+              "target": "Tafadhali, nisaidie.",
+              "source": "Please, help me.",
+              "words": [
+                "Tafadhali,",
+                "nisaidie."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 465,
+            "completionTokens": 226,
+            "ms": 276698,
+            "at": "2026-07-07T18:46:23.680Z"
+          },
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783451928974_1_gate",
+          "title": "Lesson 1",
+          "desc": "Mara's Reflections on Ubuntu",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Jambo",
+              "source": "Hello"
+            },
+            {
+              "target": "Asante",
+              "source": "Thank you"
+            },
+            {
+              "target": "Ndio",
+              "source": "Yes"
+            },
+            {
+              "target": "Hapana",
+              "source": "No"
+            },
+            {
+              "target": "Mtu",
+              "source": "Person"
+            },
+            {
+              "target": "Rafiki",
+              "source": "Friend"
+            },
+            {
+              "target": "Familia",
+              "source": "Family"
+            },
+            {
+              "target": "Nyumba",
+              "source": "House"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Jambo, rafiki!",
+              "source": "Hello, friend!",
+              "words": [
+                "Jambo,",
+                "rafiki!"
+              ]
+            },
+            {
+              "target": "Asante sana.",
+              "source": "Thank you very much.",
+              "words": [
+                "Asante",
+                "sana."
+              ]
+            },
+            {
+              "target": "Ndio, mimi ni mtu.",
+              "source": "Yes, I am a person.",
+              "words": [
+                "Ndio,",
+                "mimi",
+                "ni",
+                "mtu."
+              ]
+            },
+            {
+              "target": "Hapana, si nyumba.",
+              "source": "No, it is not a house.",
+              "words": [
+                "Hapana,",
+                "si",
+                "nyumba."
+              ]
+            },
+            {
+              "target": "Familia ni muhimu.",
+              "source": "Family is important.",
+              "words": [
+                "Familia",
+                "ni",
+                "muhimu."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 435,
+            "completionTokens": 217,
+            "ms": 219125,
+            "at": "2026-07-07T19:18:48.974Z"
+          },
+          "_recreated": true,
+          "qcAt": "2026-07-07T20:41:09.667Z"
+        },
+        {
+          "id": "ls_1783456902673_3wyi",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 543833,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": "translategemma:12b",
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 937,
+        "totalCompletionTokens": 419,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 276697,
+            "promptTokens": 465,
+            "completionTokens": 226
+          }
+        ]
+      },
+      "generatedAt": "2026-07-07T18:41:46.907Z",
+      "updatedAt": "2026-07-07T20:41:42.676Z",
+      "id": "tp_17834502581820000190"
+    },
+    {
+      "topic": "The Meaning of Being",
+      "topicEmoji": "🤔",
+      "userTopic": "ubuntu is a philosophical concept where ubu- means to become and -ntu general denotes something existing, and together they mean that you only become human by interacting (networking) with other humans.",
+      "userPrompt": "ubuntu is a philosophical concept where ubu- means to become and -ntu general denotes something existing, and together they mean that you only become human by interacting (networking) with other humans.",
+      "lang": "sw",
+      "srcLang": "en",
+      "difficulty": 1,
+      "storyLen": 200,
+      "story": "Katika ulimwengu huu, ni nini hasa kunakuwa mtu? Je, ni tu kuzaliwa, kupumua, na kisha kufa? Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno? Huenda jibu liko katika uhusiano wetu na wengine.\n\nUbuntu, wanasema, ni kwamba sisi hatujakuwa kamili peke yetu. Tunahitaji mwingine. Tunahitaji kuingiliana, kushirikiana, na kusaidiana. Kwa njia hii, tu tunaweza kukamilisha sisi wenyewe. Je, ni kweli kwamba sisi ni kiasi cha uhusiano wetu? Je, sisi ni yale ambayo wengine wanatufanya kuwa?\n\nNi wazo la kusisimua, na la kusumbua. Je, tunaweza kuwa \"binadamu\" peke yetu, bila mwingine? Au je, sisi ni kitu kingine kabisa, kitu ambacho hakitafahamika hadi tutakapokuwa pamoja? Huenda tuwe na mengi ya kujifunza kuhusu maana ya kuwa \"mtu\".",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Swahili language teacher. Write a short story directly in Swahili on the given topic — aim for 2-3 paragraphs, under 200 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Swahili. Writing style: Contemplative, questioning, abstract ideas.\n\nWrite a story for the topic: \"ubuntu is a philosophical concept where ubu- means to become and -ntu general denotes something existing, and together they mean that you only become human by interacting (networking) with other humans.\". Plain prose, no headings.",
+      "storyStyle": "philosophical",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "ubuntu is a philosophical concept where ubu- means to become and -ntu general denotes something existing, and together they mean that you only become human by interacting (networking) with other humans.",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Jambo",
+              "source": "Hello"
+            },
+            {
+              "target": "Asante",
+              "source": "Thank you"
+            },
+            {
+              "target": "Ndio",
+              "source": "Yes"
+            },
+            {
+              "target": "Hapana",
+              "source": "No"
+            },
+            {
+              "target": "Samahani",
+              "source": "Sorry/Excuse me"
+            },
+            {
+              "target": "Tafadhali",
+              "source": "Please",
+              "qc": {
+                "sug": "Please.",
+                "field": "source",
+                "at": "2026-07-07T20:33:55.537Z"
+              }
+            },
+            {
+              "target": "Mtu",
+              "source": "Person/Human"
+            },
+            {
+              "target": "Dunia",
+              "source": "World/Earth"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Jambo!",
+              "source": "Hello!",
+              "words": [
+                "Jambo!"
+              ]
+            },
+            {
+              "target": "Asante sana.",
+              "source": "Thank you very much.",
+              "words": [
+                "Asante",
+                "sana."
+              ]
+            },
+            {
+              "target": "Ndio, mimi ni mtu.",
+              "source": "Yes, I am a person.",
+              "words": [
+                "Ndio,",
+                "mimi",
+                "ni",
+                "mtu."
+              ]
+            },
+            {
+              "target": "Hapana, siwezi.",
+              "source": "No, I cannot.",
+              "words": [
+                "Hapana,",
+                "siwezi."
+              ]
+            },
+            {
+              "target": "Tafadhali, nisaidie.",
+              "source": "Please, help me.",
+              "words": [
+                "Tafadhali,",
+                "nisaidie."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 527,
+            "completionTokens": 226,
+            "ms": 302365,
+            "at": "2026-07-07T18:37:19.668Z"
+          },
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783451709776_0_gate",
+          "title": "Lesson 1",
+          "desc": "The Meaning of Being",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Jambo",
+              "source": "Hello"
+            },
+            {
+              "target": "Asante",
+              "source": "Thank you"
+            },
+            {
+              "target": "Ndio",
+              "source": "Yes"
+            },
+            {
+              "target": "Hapana",
+              "source": "No"
+            },
+            {
+              "target": "Samahani",
+              "source": "Sorry/Excuse me"
+            },
+            {
+              "target": "Tafadhali",
+              "source": "Please",
+              "qc": {
+                "sug": "Please.",
+                "field": "source",
+                "at": "2026-07-07T20:35:30.785Z"
+              }
+            },
+            {
+              "target": "Mtu",
+              "source": "Person"
+            },
+            {
+              "target": "Sijui",
+              "source": "I don't know"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Jambo!",
+              "source": "Hello!",
+              "words": [
+                "Jambo!"
+              ]
+            },
+            {
+              "target": "Asante sana.",
+              "source": "Thank you very much.",
+              "words": [
+                "Asante",
+                "sana."
+              ]
+            },
+            {
+              "target": "Ndio, mimi ni mtu.",
+              "source": "Yes, I am a person.",
+              "words": [
+                "Ndio,",
+                "mimi",
+                "ni",
+                "mtu."
+              ]
+            },
+            {
+              "target": "Hapana, sijui.",
+              "source": "No, I don't know.",
+              "words": [
+                "Hapana,",
+                "sijui."
+              ]
+            },
+            {
+              "target": "Tafadhali, sema polepole.",
+              "source": "Please, speak slowly.",
+              "words": [
+                "Tafadhali,",
+                "sema",
+                "polepole."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 493,
+            "completionTokens": 233,
+            "ms": 315383,
+            "at": "2026-07-07T19:15:09.776Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1783456910711_9e5y",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 488055,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": "translategemma:12b",
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 693,
+        "totalCompletionTokens": 480,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 302362,
+            "promptTokens": 527,
+            "completionTokens": 226
+          }
+        ]
+      },
+      "generatedAt": "2026-07-07T18:32:17.231Z",
+      "updatedAt": "2026-07-07T20:41:50.714Z",
+      "id": "tp_17834494397390000000"
+    },
+    {
       "topic": "Spaziergang an der Mosel",
       "topicEmoji": "🚶‍♀️",
       "userTopic": "an der mosel spazieren",
@@ -1291,30 +2275,13 @@
           "icon": "🚶",
           "words": [
             {
-              "base": "spaziergaang",
-              "gloss": "Spaziergang",
-              "sentence": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach.",
-              "synonyms": [
-                {
-                  "w": "Promenade",
-                  "g": "Promenade"
-                },
-                {
-                  "w": "Wand",
-                  "g": "Wanderung"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
-            },
-            {
               "base": "laang",
               "gloss": "lang",
               "sentence": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach.",
               "synonyms": [
                 {
-                  "w": "längt",
-                  "g": "länglich"
+                  "w": "laanscht",
+                  "g": "entlang"
                 }
               ],
               "antonyms": [
@@ -1564,7 +2531,7 @@
         ]
       },
       "generatedAt": "2026-07-07T14:14:42.098Z",
-      "updatedAt": "2026-07-07T15:45:44.174Z",
+      "updatedAt": "2026-07-07T16:32:47.314Z",
       "id": "tp_17834339460840000050",
       "aiStory": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach. D'Sonn schéngt, an d'Lëscht war frësch. D'Waasser war roueg, an ech konnt d'Fësch am Séi gesinn. E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Floss gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Remerschen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur."
     },
@@ -1580,22 +2547,22 @@
         "base": "de",
         "note": "",
         "attribution": "CC BY-NC Bernd Kranebitter 2007-2026",
-        "curated": true,
+        "curated": false,
         "rowCount": 86,
         "aiStory": {
-          "at": "2026-07-06T10:10:14.462Z",
-          "needsReview": false,
+          "at": "2026-07-07T17:19:11.588Z",
+          "needsReview": true,
           "topic": "ein tag in den bergen",
-          "instructions": "this glossary is specific for east tyrol, and the dialect is a southern version of the bavarian dialect family",
+          "instructions": "this glossary is specific for east tyrol, and the dialect is a south-eastern version of the bavarian dialect family",
           "method": "rewrite",
-          "standardSource": "Es war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
+          "standardSource": "Heute war ich in den Bergen. Die Sonne schien und der Himmel war blau. Ich bin mit dem Fahrrad einen Berg hochgefahren. Oben angekommen, hatte ich eine wunderschöne Aussicht. Ich habe ein Picknick gemacht und die frische Luft genossen. Danach bin ich wieder runtergefahren. Es war ein sehr schöner Tag. Ich freue mich schon auf den nächsten Ausflug in die Berge.",
           "coverage": {
-            "used": 4,
+            "used": 1,
             "total": 86,
-            "ratio": 0.047
+            "ratio": 0.012
           }
         },
-        "curatedAt": "2026-07-06T10:15:35.306Z"
+        "curatedAt": null
       },
       "lessons": [
         {
@@ -2138,12 +3105,12 @@
         }
       ],
       "generatedAt": "2026-07-05T10:37:52.105Z",
-      "updatedAt": "2026-07-06T16:56:38.369Z",
-      "story": "Es war a sonniger Tag in die Berg. Da Himmel war blau und ebba ohne a Wolke. Anna und ihr Bruder Max gaiten bai. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie a Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu baiteln, bis er verschwand. Am Nachmittag kehrten sie heint, mit vielen Erinnerungen an diesen wundervollen Tag.\n\n---\nEs war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
-      "storyGloss": "Es war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
+      "updatedAt": "2026-07-07T17:19:11.588Z",
+      "story": "Hait war i in die Berga. Die Sun schian und der Himmel war blau. I bin mit am Fahrrad a Berg hoafagorn. Oben angekumpfn, hat i a wunderschöne Aussicht ghet. I hab a Picknick gmocht und die frische Luft ggnossn. Danach bin i wieder runteragorn. Es war a sehr scheener Dog. I fre mich scho auf den nächsten Ausflug in die Berga.\n\n---\nGERMAN:\nHeute war ich in den Bergen. Die Sonne schien und der Himmel war blau. Ich bin mit dem Fahrrad einen Berg hochgefahren. Oben angekommen, hatte ich eine wunderschöne Aussicht. Ich habe ein Picknick gemacht und die frische Luft genossen. Danach bin ich wieder runtergefahren. Es war ein sehr schöner Tag. Ich freue mich schon auf den nächsten Ausflug in die Berge.",
+      "storyGloss": "Heute war ich in den Bergen. Die Sonne schien und der Himmel war blau. Ich bin mit dem Fahrrad einen Berg hochgefahren. Oben angekommen, hatte ich eine wunderschöne Aussicht. Ich habe ein Picknick gemacht und die frische Luft genossen. Danach bin ich wieder runtergefahren. Es war ein sehr schöner Tag. Ich freue mich schon auf den nächsten Ausflug in die Berge.",
       "storyTopic": "ein tag in den bergen",
       "aiGenerated": true,
-      "aiStory": "Es war a boisl sonnigs Tag in den Berg. Da Himmel war blau und ebba ohne a Wölkchen. Anna und ihr Bruder Max gaiten bai. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie a Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu baiteln, bis er verschwand. Am Nachmittag kehrten sie heint, mit vielen Erinnerungen an diesen wundervollen Tag.\n\n---\nEs war ein sonniger Tag in den Bergen. Der Himmel war blau und ohne einen Wolkenfleck. Anna und ihr Bruder Max gingen spazieren. Sie genossen den frischen Wind und die frische Luft. Plötzlich sahen sie einen Fuchs, der durch das Gras rannte. Sie beschlossen, den Fuchs zu beobachten, bis er verschwand. Am Nachmittag kehrten sie heim, mit vielen Erinnerungen an diesen wundervollen Tag.",
+      "aiStory": "Hait war i in die Berga. Die Sun schian und der Himmel war blau. I bin mit am Fahrrad a Berg hoafagorn. Oben angekumpfn, hat i a wunderschöne Aussicht ghet. I hab a Picknick gmocht und die frische Luft ggnossn. Danach bin i wieder runteragorn. Es war a sehr scheener Dog. I fre mich scho auf den nächsten Ausflug in die Berga.\n\n---\nGERMAN:\nHeute war ich in den Bergen. Die Sonne schien und der Himmel war blau. Ich bin mit dem Fahrrad einen Berg hochgefahren. Oben angekommen, hatte ich eine wunderschöne Aussicht. Ich habe ein Picknick gemacht und die frische Luft genossen. Danach bin ich wieder runtergefahren. Es war ein sehr schöner Tag. Ich freue mich schon auf den nächsten Ausflug in die Berge.",
       "continuedFromId": null,
       "continuedFrom": null
     },

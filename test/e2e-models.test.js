@@ -101,6 +101,16 @@ const findTopic = (env, ut) => env.readStore().topics.find(t => t.userTopic === 
       '{model} sets all three roles');
     assert(sw3.body.active.lessonFormat === 'json', 'format back to json after leaving translategemma');
 
+    // ── 7) Runtime request timeout: settable (standalone) + reflected + clamped ──────────
+    const m1 = await get(sport, '/api/models');
+    assert(typeof m1.body.active.timeoutMs === 'number', '/api/models exposes the active timeoutMs');
+    const tset = await post(sport, '/api/models', { timeoutMs: 900000 });
+    assert(tset.status === 200 && tset.body.active.timeoutMs === 900000, 'timeout set standalone (no model change)');
+    const clamp = await post(sport, '/api/models', { timeoutMs: 5 });   // below the 30s floor
+    assert(clamp.body.active.timeoutMs === 30000, 'timeout clamped up to the 30s floor');
+    const empty2 = await post(sport, '/api/models', {});
+    assert(empty2.status === 400, 'empty body still rejected (no model, no timeout)');
+
     console.log('  /api/models list+switch+validation OK; table-format + split-translation + provenance exercised');
   } catch (e) {
     failed = true;

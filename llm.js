@@ -21,7 +21,17 @@ const https = require('https');
 
 const BACKEND        = (process.env.LLM_BACKEND || 'ollama').toLowerCase();
 const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
-const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
+let OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
+// Runtime-adjustable request timeout (larger/slower models — e.g. big models on Swahili word_forms —
+// can exceed the default). Clamped to a sane 30s–60min range. Named *Request* so it never shadows
+// the global setTimeout used below.
+function setRequestTimeout(ms) {
+  const n = parseInt(ms, 10);
+  if (!Number.isFinite(n)) return OLLAMA_TIMEOUT;
+  OLLAMA_TIMEOUT = Math.max(30000, Math.min(3600000, n));
+  return OLLAMA_TIMEOUT;
+}
+function getRequestTimeout() { return OLLAMA_TIMEOUT; }
 
 // ── Public interface ───────────────────────────────────────────────────────────
 
@@ -219,4 +229,4 @@ function _releaseOllama(model) {
   });
 }
 
-module.exports = { callLLM, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray };
+module.exports = { callLLM, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout };

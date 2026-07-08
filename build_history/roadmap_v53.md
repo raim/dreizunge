@@ -86,13 +86,27 @@ the `dialect.*` set, `tts.approx_dialect`, `ex.mcq_source_target.q_nolang`,
 The v46 "per-task model selection" major, phases 1–2, plus reasoning-model safety. Details in
 `build_history/v52_session1_notes.md`. Browser/Ollama verification owed: LIVE-TEST §§58–59.
 
-**v52 session-2 fixes (live-testing follow-ups, `v52_session2_notes.md`):**
+**v52_b (session-2 live-testing fixes, `v52_session2_notes.md`):**
 - `parseTableLesson` was leaking the header row as the first vocab entry for non-ASCII target
   language names (Lëtzebuergesch → ë broke the ASCII `\w+` header match), also dropping a word and
   sometimes the sentence table. Rewrote it structure-anchored (header = row before the `|---|`
   separator). Covered by `unit-table-lesson` + a non-ASCII `e2e-models` fixture. LIVE-TEST §60.
 - Synonym/antonym solution reveal now shows each correct word's exact translation (a `glossMap` on
   the exercise + `synRevealHtml`, both reveal sites). `unit-synonyms` extended. LIVE-TEST §61.
+- Identical source/target check now logs the offending items to the console and no longer blocks
+  CLOSE language pairs (`isCloseLangPair`: dialects `lang===srcLang` + a curated `CLOSE_LANG_PAIRS`
+  list incl. de↔lb). `unit-close-lang-pairs`.
+
+**Version note:** post-v52 point releases are numbered v52_b, v52_c, … (per user). Current: **v52_c**.
+At the next MINOR/feature cut, resume vNN numbering (v53) and write `roadmap_v54.md`.
+
+**v52_c (session-3 live-testing fixes, `v52_session3_notes.md`):** removed the non-functional QC
+looking-glass on AI error hunt; runtime request-timeout control (input next to the model dropdowns;
+`setRequestTimeout`/`getRequestTimeout`, `POST /api/models {timeoutMs}`); generate-time
+model-suitability warning (`modelSuitabilityWarning`, `LOW_RESOURCE_TARGET_LANGS`); dialect-from-
+glossary now requires several glossary words (prompt + V2 coverage-gated retry); stricter
+synonyms/antonyms substitutability (prompt). Tests: `unit-prompt-strictness` (new), `unit-model-picker`
++ `e2e-models` + `unit-static-teacher` extended. LIVE-TEST §63.
 - **Reasoning-model hardening.** `llm.js` `stripThink()` strips a model's `<think>…</think>`
   chain-of-thought (closed pairs, orphan-close, orphan-open/truncated) at the transport layer, so it
   can never leak into a story/translation/JSON. Truncated-only-reasoning now fails clean instead of

@@ -18,9 +18,10 @@ assert.ok(html.includes('${_canEdit()&&L.id?`<div'), 'edit row must be gated by 
 // ... and the flag-count badge too.
 assert.ok(html.includes('const hasFlags=lessonFlagCount>0&&_canEdit();'), 'flag badge must use _canEdit');
 // ... but the QC (LLM) button inside the row stays canGenerate-gated (now also for the
-// word_forms `items` and synonyms `words` lesson types, whose QC the backend supports).
-assert.ok(html.includes('${APP.info.canGenerate&&(L.vocab||L.sentences||L.items||L.words)?`<button class="fix-btn"'),
-  'QC button must stay canGenerate-gated');
+// word_forms `items` and synonyms `words` lesson types, whose QC the backend supports) — and is
+// excluded for the error-hunt types, which have no QC (the button would be non-functional).
+assert.ok(html.includes(`\${APP.info.canGenerate&&L.type!=='ai_error_hunt'&&L.type!=='error_hunt'&&(L.vocab||L.sentences||L.items||L.words)?\`<button class="fix-btn"`),
+  'QC button must stay canGenerate-gated and skip error-hunt types');
 console.log('  edit row gating (non-LLM vs QC): OK');
 
 // Play flag UI is gated by _canEdit (hidden in static non-teacher).

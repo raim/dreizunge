@@ -1,8 +1,8 @@
-# v52 — session 2 notes (fixes from live testing)
+# v52 — session 2 notes (fixes from live testing) → released as v52_b
 
-Two fixes found while the user live-tested the v52 model-picker against real translategemma
-(Lëtzebuergesch ← German). Still **v52** — the v52 zip was never deployed, so these fold into the
-v52 release (the re-packaged zip supersedes the session-1 one). Suite green after each change.
+Fixes found while the user live-tested the v52 model-picker against real translategemma
+(Lëtzebuergesch ← German). Released as **v52_b** (`APP_VERSION='v52_b'`; per the user's request the
+post-v52 point releases are numbered v52_b, v52_c, …). Suite green after each change.
 
 ## Fix 1 — table-format lessons leaked the header row (non-ASCII language names)
 **Symptom (user):** with translategemma for all three roles, a good Lëtzebuergesch lesson — but the
@@ -36,9 +36,24 @@ reveal and the wrong-answer "correct answer" line.
 rebuilt (client change baked into `docs/`). i18n: none (no new user-facing strings — the glosses come
 from lesson data). LIVE-TEST §61.
 
+## Fix 3 — identical source/target check: log the items + allow close pairs
+**Ask (user):** when the "N vocab items have identical source/target fields — model ignored source
+language, retrying" check fires, show the offending items on the console; and for CLOSE languages
+identical source/target may legitimately be fine, so don't block those.
+**Change (`server.js`, in `generateOneLesson`):** the check now (1) always logs each offending item
+as "target = source" to the console (so a retry shows exactly which items tripped it), and (2) is
+gated on `!isCloseLangPair(lang, srcLang)` — for close pairs it logs "close pair, allowed" and does
+NOT throw. New `isCloseLangPair(lang, srcLang)`: true when `lang === srcLang` (dialects, e.g. an
+East-Tyrolean de/de topic) or when the pair is in a small curated `CLOSE_LANG_PAIRS` list
+(de↔lb, de↔nds/bar, nl↔af, mainland Scandinavian, cs↔sk, BCMS, East Slavic, id↔ms, Iberian Romance).
+Order-independent; the list is easy to extend.
+**Tests:** `unit-close-lang-pairs` (closeness for both orderings, dialects, distant pairs, guards;
+plus source-level assertions that items are logged and the throw is gated on `!_close`). No i18n
+(console-only). No static/client change.
+
 ## State at end of session
-- Full suite green (+2 new: `unit-table-lesson`; `unit-synonyms` extended), `check-inline` 0 on both
-  index.html and docs/index.html, stable.
-- **v52** (unchanged version). Static rebuilt, zip re-packaged from a clean unzip (supersedes the
-  session-1 v52 zip). If a clean version boundary is preferred these could instead be cut as v53.
+- Full suite green (+3 new this session: `unit-table-lesson`, `unit-close-lang-pairs`;
+  `unit-synonyms` extended), `check-inline` 0 on both index.html and docs/index.html, stable.
+- **Released as v52_b.** `APP_VERSION='v52_b'`, static rebuilt (baked into `docs/`), zip packaged
+  from a clean unzip.
 - Still owed: LIVE-TEST §§58–61 (Ollama/browser), TranslateGemma i18n pass on the `models.*` keys.

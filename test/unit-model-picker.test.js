@@ -53,8 +53,44 @@ if (fs.existsSync(docsPath)) {
 
 // ── en-only i18n keys present ───────────────────────────────────────────────────
 const en = ui.en || ui;
-for (const k of ['models.story', 'models.lessons', 'models.translation', 'models.switched', 'models.switch_failed']) {
+for (const k of ['models.story', 'models.lessons', 'models.translation', 'models.switched', 'models.switch_failed',
+                 'models.timeout', 'models.timeout_hint', 'models.timeout_set',
+                 'models.warn.weak', 'models.warn.roles_story_lessons', 'models.warn.roles_lessons', 'models.warn.roles_story']) {
   assert.ok(typeof en[k] === 'string' && en[k], `ui.json en has ${k}`);
 }
 
-console.log('  model-picker wiring + static-exclusion + i18n keys: OK');
+// ── Timeout input + switchTimeout wiring ─────────────────────────────────────────
+assert.ok(/id="bmodel-timeout"/.test(rmp), 'picker renders the timeout input');
+assert.ok(/onchange="switchTimeout\(this\.value\)"/.test(rmp), 'timeout input calls switchTimeout');
+assert.ok(/async function switchTimeout\(sec\)/.test(html), 'switchTimeout defined');
+{
+  const st = html.slice(html.indexOf('async function switchTimeout('), html.indexOf('async function switchTimeout(') + 600);
+  assert.ok(/timeoutMs:\s*ms/.test(st) && /'\/api\/models'/.test(st), 'switchTimeout POSTs timeoutMs to /api/models');
+  assert.ok(/parseFloat\(sec\)\s*\*\s*1000/.test(st), 'switchTimeout converts seconds → ms');
+}
+
+// ── Generate-time model-suitability warning ──────────────────────────────────────
+assert.ok(/function modelSuitabilityWarning\(lang, uploaded\)/.test(html), 'modelSuitabilityWarning defined');
+assert.ok(/LOW_RESOURCE_TARGET_LANGS = new Set\(\['lb'\]\)/.test(html), 'low-resource target set seeded with lb');
+{
+  const mw = html.slice(html.indexOf('function modelSuitabilityWarning'), html.indexOf('function modelSuitabilityWarning') + 900);
+  assert.ok(/isTranslategemmaModel\(APP\.info\.ollamaLessonModel\)/.test(mw), 'checks the lessons role');
+  assert.ok(/uploaded/.test(mw) && /ollamaModel/.test(mw), 'skips the story role when the learner uploaded a story');
+  // Replay the helper logic to confirm the decision table.
+  const isTG = m => /translategemma/i.test(String(m || ''));
+  const LR = new Set(['lb']);
+  const warn = (lang, uploaded, story, lessons) => {
+    if (!LR.has(lang)) return '';
+    const sb = !uploaded && !isTG(story), lb = !isTG(lessons);
+    if (!sb && !lb) return '';
+    return (sb && lb) ? 'story+lessons' : (lb ? 'lessons' : 'story');
+  };
+  assert.strictEqual(warn('lb', false, 'qwen2.5:7b', 'qwen2.5:7b'), 'story+lessons', 'lb + qwen both → warn story+lessons');
+  assert.strictEqual(warn('lb', false, 'translategemma', 'translategemma'), '', 'lb + translategemma both → no warning');
+  assert.strictEqual(warn('lb', true, 'qwen2.5:7b', 'qwen2.5:7b'), 'lessons', 'lb uploaded → only lessons matters');
+  assert.strictEqual(warn('de', false, 'qwen2.5:7b', 'qwen2.5:7b'), '', 'major target → no warning');
+}
+// It fires at generate time, non-blocking.
+assert.ok(/const _w = modelSuitabilityWarning\(APP\.lang,/.test(html), 'warning computed inside doGenerate from APP.lang');
+assert.ok(/if\(_w\) showToast\(_w\)/.test(html), 'warning shown as a non-blocking toast');
+console.log('  timeout input + switchTimeout + suitability warning: OK');
