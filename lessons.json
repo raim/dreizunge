@@ -2322,19 +2322,6 @@
                 }
               ],
               "homophones": []
-            },
-            {
-              "base": "schéngt",
-              "gloss": "scheint",
-              "sentence": "D'Sonn schéngt, an d'Lëscht war frësch.",
-              "synonyms": [
-                {
-                  "w": "erweist",
-                  "g": "erscheint"
-                }
-              ],
-              "antonyms": [],
-              "homophones": []
             }
           ],
           "_genMeta": {
@@ -2531,7 +2518,7 @@
         ]
       },
       "generatedAt": "2026-07-07T14:14:42.098Z",
-      "updatedAt": "2026-07-07T16:32:47.314Z",
+      "updatedAt": "2026-07-08T00:35:41.701Z",
       "id": "tp_17834339460840000050",
       "aiStory": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach. D'Sonn schéngt, an d'Lëscht war frësch. D'Waasser war roueg, an ech konnt d'Fësch am Séi gesinn. E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Floss gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Remerschen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur."
     },
