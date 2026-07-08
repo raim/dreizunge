@@ -1233,3 +1233,28 @@ Bundled follow-ups from live testing. Headless coverage: `unit-static-teacher` (
       (`[coverage used/total]`), and a too-low first attempt triggers a logged retry.
 - [ ] **Synonyms are substitutable.** In a Synonyms lesson, the offered synonyms genuinely fit the
       context sentence — each could replace the base word without breaking the sentence.
+
+### 64. v52_d — three UI changes (feedback motion, mixed icons, story themes)
+Headless coverage: `unit-ui-feedback-mixed-icons`, `unit-storyline-theme`. Browser confirmations:
+
+- [ ] **Positive-feedback motion.** In a lesson, a CORRECT answer makes the question card lift UP
+      (rise), a WRONG answer makes it drop DOWN (fall) — no more sideways shake.
+- [ ] **Mixed lesson previews its sources.** On a chapter/lesson-set page, a "🔀 Mixed review" card
+      now shows the icons of the lessons it pools from (e.g. 🔀 🍎 📖 🔁) instead of the generic
+      label. An empty chapter's mixed card falls back to the "Mixed review" text.
+- [ ] **Storyline theme by style.** Open a storyline whose first chapter was generated with a
+      distinctive style (e.g. Funny, Philosophical, Horror): the screen has a subtle top-down
+      background gradient matching that style. A storyline built from an uploaded/"existing" story
+      (no style) shows the neutral "existing" theme. Different first-chapter styles → different tints.
+
+### 65. v52_e — dedicated QC model role
+QC no longer shares the translation model. New independent "QC" dropdown (4th role); defaults to the
+translation model. Headless: `e2e-models` (independent switch), `unit-model-picker` (4th selector).
+
+- [ ] **Four dropdowns.** The model picker shows Story / Lessons / Translation / QC, each preset to
+      the active model. QC defaults to whatever Translation is.
+- [ ] **QC is independent.** Set Translation = qwen and QC = translategemma. Run a QC pass on a
+      Lëtzebuergesch topic: the check runs on translategemma (better lb judgement) while any
+      story-translation panel still uses qwen. Switching Translation does not change QC and vice versa.
+- [ ] **QC only affects QC.** Setting QC = translategemma does NOT flip the lesson format to table
+      (only the Lessons role does that).

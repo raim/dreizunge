@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v52_c';
+const APP_VERSION  = 'v52_e';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -73,7 +73,12 @@ const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 let OLLAMA_MODEL             = process.env.OLLAMA_MODEL             || 'qwen2.5:7b';
 let OLLAMA_TRANSLATION_MODEL = process.env.OLLAMA_TRANSLATION_MODEL || OLLAMA_MODEL;
 let OLLAMA_LESSON_MODEL      = process.env.OLLAMA_LESSON_MODEL      || OLLAMA_MODEL;
-const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT || '720000', 10);
+// QC (source/target verification) is its own role. It defaults to the translation model (QC is a
+// translation-faithfulness check), but is independently settable so you can, e.g., run the story
+// translation on qwen while QC-checking Lëtzebuergesch pairs on translategemma.
+let OLLAMA_QC_MODEL          = process.env.OLLAMA_QC_MODEL          || OLLAMA_TRANSLATION_MODEL;
+// (The request timeout lives in llm.js — runtime-adjustable via setRequestTimeout/getRequestTimeout;
+//  there is no separate server-side copy.)
 // Lesson output format: 'json' (default) or 'table' (markdown table, better for
 // translation-focused models that struggle with strict JSON schemas).
 // Auto-derived from the ACTIVE lesson model (name contains 'translategemma' → table). An explicit
@@ -87,17 +92,19 @@ let OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
 // lesson format from the new lesson model (unless env-pinned), and returns the resulting set.
 function currentModels() {
   return { story: OLLAMA_MODEL, translation: OLLAMA_TRANSLATION_MODEL,
-           lessons: OLLAMA_LESSON_MODEL, lessonFormat: OLLAMA_LESSON_FORMAT,
+           lessons: OLLAMA_LESSON_MODEL, qc: OLLAMA_QC_MODEL, lessonFormat: OLLAMA_LESSON_FORMAT,
            timeoutMs: getRequestTimeout() };
 }
 function setRuntimeModels(next) {
   next = next || {};
   const pick = v => (typeof v === 'string' && v.trim()) ? v.trim() : null;
   const all = pick(next.model);
-  const story = pick(next.story) || all, transl = pick(next.translation) || all, lessons = pick(next.lessons) || all;
+  const story = pick(next.story) || all, transl = pick(next.translation) || all,
+        lessons = pick(next.lessons) || all, qc = pick(next.qc) || all;
   if (story)   OLLAMA_MODEL             = story;
   if (transl)  OLLAMA_TRANSLATION_MODEL = transl;
   if (lessons) OLLAMA_LESSON_MODEL      = lessons;
+  if (qc)      OLLAMA_QC_MODEL          = qc;
   OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
   return currentModels();
 }
@@ -671,6 +678,10 @@ function callLLMLesson(system, userMsg, maxTokens) {
 function callLLMTranslation(system, userMsg, maxTokens) {
   return _callLLM(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
 }
+// QC pass — its own role (defaults to the translation model). See qcCheckPair et al.
+function callLLMQC(system, userMsg, maxTokens) {
+  return _callLLM(OLLAMA_QC_MODEL, system, userMsg, maxTokens);
+}
 
 // ── QC: verify source/target pairs with the translation model ─────────────
 const _QC_KANJI = '\\u4e00-\\u9fff\\u3400-\\u4dbf々〆〇';
@@ -704,7 +715,7 @@ async function qcCheckDialectPair(target, source, lang, srcLang, userComment) {
     `OK  — if the ${S} meaning is written correctly.\n` +
     `S: <corrected ${S} text only>  — if the ${S} meaning has a spelling/writing error.\n` +
     `Never reply with a correction to the dialect word. Give ONLY the corrected ${S} text, no quotes.`;
-  const { text } = await callLLMTranslation(system, `dialect: ${tgt}\n${S}: ${src}`, 96);
+  const { text } = await callLLMQC(system, `dialect: ${tgt}\n${S}: ${src}`, 96);
   const reply = (text || '').trim();
   if (!reply || /^ok[.!]?$/i.test(reply)) return { ok: true };
   const clean = s => s.replace(/^["']|["']$/g, '').replace(/^S\s*[:\-]\s*/i, '').trim();
@@ -862,7 +873,7 @@ async function qcCheckPair(target, source, lang, srcLang, userComment) {
     `T: <corrected ${L} text only>  — if the ${L} text has an error.\n` +
     `S: <corrected ${S} text only>  — if the ${L} is fine but the ${S} translation is wrong.\n` +
     `Give ONLY the corrected text for the one side, never the "=>" pair, no quotes, no notes.`;
-  const { text } = await callLLMTranslation(system, `${tgt} => ${src}`, 96);
+  const { text } = await callLLMQC(system, `${tgt} => ${src}`, 96);
   const reply = (text || '').trim();
   if (!reply || /^ok[.!]?$/i.test(reply)) return { ok: true };
   const clean = s => s.replace(/^["']|["']$/g, '').trim();
@@ -928,7 +939,7 @@ async function qcCheckCloze(item, lang, srcLang, userComment) {
     `Options: ${choices.map((c,i) => `${i===item.correctIndex?'[correct] ':''}${c}`).join(' | ')}\n` +
     `Translation (${S}): ${item.translation || '(none)'}\n` +
     `Explanation: ${item.explanation || '(none)'}`;
-  const { text } = await callLLMTranslation(system, user, 120);
+  const { text } = await callLLMQC(system, user, 120);
   return _qcParseOkOrSug(text);
 }
 
@@ -959,7 +970,7 @@ async function qcCheckSynonymSet(entry, lang, srcLang, userComment) {
     `Synonyms: ${fmt(entry.synonyms)}\n` +
     `Antonyms: ${fmt(entry.antonyms)}\n` +
     `Homophones: ${fmt(entry.homophones)}`;
-  const { text } = await callLLMTranslation(system, user, 120);
+  const { text } = await callLLMQC(system, user, 120);
   return _qcParseOkOrSug(text);
 }
 
@@ -3131,6 +3142,7 @@ http.createServer(async (req, res) => {
       return json(res, 200, { backend: active, version: APP_VERSION, ollamaModel: OLLAMA_MODEL,
         ollamaTranslationModel: OLLAMA_TRANSLATION_MODEL,
         ollamaLessonModel: OLLAMA_LESSON_MODEL,
+        ollamaQcModel: OLLAMA_QC_MODEL,
         ollamaLessonFormat: OLLAMA_LESSON_FORMAT,
         canGenerate: active !== 'none' });
     }
@@ -3148,7 +3160,7 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const requested = [body.model, body.story, body.translation, body.lessons]
+      const requested = [body.model, body.story, body.translation, body.lessons, body.qc]
         .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
       const hasTimeout = body.timeoutMs != null && Number.isFinite(parseInt(body.timeoutMs, 10));
       if (!requested.length && !hasTimeout)

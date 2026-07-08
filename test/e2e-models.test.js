@@ -31,7 +31,8 @@ const findTopic = (env, ut) => env.readStore().topics.find(t => t.userTopic === 
     assert(Array.isArray(m0.body.available), 'available is an array');
     assert(m0.body.available.includes('fake'), 'available includes the default fake model');
     assert(m0.body.available.includes('fake-translategemma'), 'available includes the translategemma fake');
-    assert(m0.body.active.story === 'fake' && m0.body.active.lessons === 'fake' && m0.body.active.translation === 'fake',
+    assert(m0.body.active.story === 'fake' && m0.body.active.lessons === 'fake' && m0.body.active.translation === 'fake'
+      && m0.body.active.qc === 'fake',
       'all roles default to the boot model');
     assert(m0.body.active.lessonFormat === 'json', 'default lesson format is json');
 
@@ -95,11 +96,22 @@ const findTopic = (env, ut) => env.readStore().topics.find(t => t.userTopic === 
     assert(t2.generationStats.models.story === 'fake', 'provenance: story model recorded (split)');
     assert(t2.generationStats.models.lessons === 'fake-translategemma', 'provenance: lessons model recorded (split)');
 
-    // ── 6) A convenience {model} switch sets all three roles at once ────────────────────
+    // ── 6) A convenience {model} switch sets all four roles at once ─────────────────────
     const sw3 = await post(sport, '/api/models', { model: 'fake' });
-    assert(sw3.body.active.story === 'fake' && sw3.body.active.translation === 'fake' && sw3.body.active.lessons === 'fake',
-      '{model} sets all three roles');
+    assert(sw3.body.active.story === 'fake' && sw3.body.active.translation === 'fake'
+      && sw3.body.active.lessons === 'fake' && sw3.body.active.qc === 'fake', '{model} sets all four roles (incl. qc)');
     assert(sw3.body.active.lessonFormat === 'json', 'format back to json after leaving translategemma');
+
+    // ── 6b) QC is an INDEPENDENT role — switching it doesn't touch translation, and vice versa ──
+    const qcOnly = await post(sport, '/api/models', { qc: 'fake-translategemma' });
+    assert(qcOnly.status === 200 && qcOnly.body.active.qc === 'fake-translategemma', 'qc role switched');
+    assert(qcOnly.body.active.translation === 'fake', 'switching qc left translation untouched');
+    assert(qcOnly.body.active.lessonFormat === 'json', 'qc=translategemma does NOT flip lesson format (only lessons does)');
+    const trOnly = await post(sport, '/api/models', { translation: 'fake-transl' });
+    assert(trOnly.body.active.translation === 'fake-transl' && trOnly.body.active.qc === 'fake-translategemma',
+      'switching translation left qc untouched (roles are independent)');
+    const infoQc = await get(sport, '/api/info');
+    assert(infoQc.body.ollamaQcModel === 'fake-translategemma', '/api/info exposes the active qc model');
 
     // ── 7) Runtime request timeout: settable (standalone) + reflected + clamped ──────────
     const m1 = await get(sport, '/api/models');

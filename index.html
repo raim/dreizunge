@@ -290,6 +290,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .fix-status{font-size:11px;color:#c26000;font-weight:700;margin-top:4px;text-align:center;min-height:14px}
 .shake{animation:shake .35s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+/* Positive-feedback motion: a correct answer lifts the card UP, a wrong answer drops it DOWN
+   (gentler than the old sideways shake — reinforces via direction, not agitation). */
+.rise-up{animation:riseUp .5s cubic-bezier(.22,1,.36,1)}
+@keyframes riseUp{0%{transform:translateY(0)}42%{transform:translateY(-18px)}100%{transform:translateY(0)}}
+.fall-down{animation:fallDown .5s cubic-bezier(.22,1,.36,1)}
+@keyframes fallDown{0%{transform:translateY(0)}42%{transform:translateY(16px)}100%{transform:translateY(0)}}
 
 /* ══ DIFFICULTY DROPDOWN ════════════════════════════════════════════ */
 .diff-wrap{margin-bottom:14px}
@@ -3442,8 +3448,8 @@ async function renderModelPicker(){
   if(avail.length<1){ box.style.display='none'; return; }
   // Keep APP.info's model fields in sync with the server's active set so the pill label matches.
   APP.info.ollamaModel=active.story; APP.info.ollamaLessonModel=active.lessons;
-  APP.info.ollamaTranslationModel=active.translation; APP.info.ollamaLessonFormat=active.lessonFormat;
-  const roles=[['story','models.story'],['lessons','models.lessons'],['translation','models.translation']];
+  APP.info.ollamaTranslationModel=active.translation; APP.info.ollamaQcModel=active.qc; APP.info.ollamaLessonFormat=active.lessonFormat;
+  const roles=[['story','models.story'],['lessons','models.lessons'],['translation','models.translation'],['qc','models.qc']];
   const opts=(sel)=>avail.map(m=>`<option value="${escAttr(m)}"${m===sel?' selected':''}>${escHtml(m)}</option>`).join('');
   const timeoutSec = Math.round((active.timeoutMs||720000)/1000);
   box.innerHTML=roles.map(([role,key])=>
@@ -3464,7 +3470,7 @@ async function switchModel(role, model){
     if(!r.ok){ showToast((data&&data.error)||t('models.switch_failed')); await renderModelPicker(); return; }
     const active=data.active||{};
     APP.info.ollamaModel=active.story; APP.info.ollamaLessonModel=active.lessons;
-    APP.info.ollamaTranslationModel=active.translation; APP.info.ollamaLessonFormat=active.lessonFormat;
+    APP.info.ollamaTranslationModel=active.translation; APP.info.ollamaQcModel=active.qc; APP.info.ollamaLessonFormat=active.lessonFormat;
     renderPill();
     await renderModelPicker();
     showToast(t('models.switched'));
@@ -4265,6 +4271,18 @@ async function _pollGenBook(bookId, total){
 // story unlock. Teacher/live mode counts everything (nothing hidden, nothing locked).
 // Types the mixed lesson never pools from → never hidden by it, regardless of position.
 const _NEVER_POOLED = new Set(['mixed', 'error_hunt', 'ai_error_hunt']);
+// The LLM-picked icons of the lessons a mixed lesson pools from — a visual preview shown on the
+// mixed card in place of the generic "Mixed review" label. De-duplicated, source order preserved.
+function mixedSourceIcons(d, mixIdx) {
+  const seen = new Set(), icons = [];
+  (d?.lessons || []).forEach((l, idx) => {
+    if (idx === mixIdx || !l || _NEVER_POOLED.has(l.type) || l._hidden) return;
+    try { if (!(lessonTypeMeta(l.type).build(l, idx) || []).length) return; } catch (_) { return; }
+    const ic = l.icon || lessonTypeEmoji(l.type) || '📖';
+    if (!seen.has(ic)) { seen.add(ic); icons.push(ic); }
+  });
+  return icons;
+}
 function _firstVisibleMixedIdx(d) {
   const ls = d?.lessons || [];
   for (let i = 0; i < ls.length; i++) if (ls[i] && ls[i].type === 'mixed' && !ls[i]._hidden) return i;
@@ -4574,7 +4592,11 @@ function buildPath(){
     node.innerHTML+=`<div class="node-circle">${L.icon||'📖'}</div>
       <div class="node-lbl">
         <div style="display:flex;align-items:center;gap:6px">
-          <div class="node-title" style="flex:1">${L.type === 'intro_script' && L.title ? escHtml(L.title) : (lessonTypeEmoji(L.type) + ' ' + lessonTypeLabel(L.type))}</div>
+          <div class="node-title" style="flex:1">${
+            L.type==='mixed'
+              ? (()=>{ const ics=mixedSourceIcons(d,i); return ics.length ? `🔀 ${escHtml(ics.join(' '))}` : (lessonTypeEmoji('mixed')+' '+lessonTypeLabel('mixed')); })()
+              : L.type === 'intro_script' && L.title ? escHtml(L.title)
+              : (lessonTypeEmoji(L.type) + ' ' + lessonTypeLabel(L.type))}</div>
           ${isDone?`<span class="node-pct done">${lessonPct!==null?lessonPct+'%':'✓'}</span>`:isLocked?'<span style="font-size:20px">🔒</span>':''}
         </div>
         <div class="node-desc">${lessonSubtitle(L, diff)}</div>
@@ -5133,6 +5155,32 @@ async function doAddLesson(sid, enc, tid) {
 // Current open storyline state
 APP._slScreen = null; // { chainId, chain (encoded), topics [] }
 
+// Story-style → a subtle top-down background gradient for the storyline screen. The storyline's
+// theme defaults to the FIRST chapter's writing style (`storyStyle`); an uploaded story has no style
+// and gets its own neutral "existing" theme. Kept light so the white header/cards stay readable.
+// (v1: automatic from style. Manual pick / LLM classification button = roadmap follow-up.)
+const STORY_THEME_GRADIENTS = {
+  funny:         ['#fff8e1', '#ffe0b2'], philosophical: ['#eceff1', '#cfd8dc'],
+  romantic:      ['#fff0f3', '#ffd6e0'], sensual:       ['#fdeef2', '#f6c9d4'],
+  horror:        ['#e7e9ec', '#c6ccd2'], action:        ['#fff3e0', '#ffccbc'],
+  scientific:    ['#e3f2fd', '#bbdefb'], journalism:    ['#f5f5f5', '#e0e0e0'],
+  essay:         ['#faf7f0', '#ece4d3'], children:      ['#e8f5e9', '#c8e6c9'],
+  interview:     ['#eef2f7', '#d6e0ec'], poem:          ['#f4e6f6', '#e1bee7'],
+  dialogue:      ['#e0f7fa', '#b2ebf2'], creative:      ['#f3e8ff', '#e0c8ff'],
+  neutral:       ['#f7f8fa', '#e9edf2'], existing:      ['#f4f5f6', '#e6eaee'],
+};
+// Resolve a storyline's theme key: explicit override → first chapter's style → 'existing' (no style).
+function storylineThemeKey(firstTopic) {
+  const k = (firstTopic && (firstTopic._theme || firstTopic.storyStyle)) || 'existing';
+  return STORY_THEME_GRADIENTS[k] ? k : 'neutral';
+}
+function applyStorylineTheme(firstTopic) {
+  const el = document.querySelector('#storyline-screen .sl-screen');
+  if (!el) return;
+  const [a, b] = STORY_THEME_GRADIENTS[storylineThemeKey(firstTopic)] || STORY_THEME_GRADIENTS.neutral;
+  el.style.background = `linear-gradient(180deg, ${a} 0%, ${b} 100%)`;
+}
+
 async function openStorylineScreen(chainId, encodedChain) {
   setTimeout(_buildGlobalTtsSelectors, 50);
   const topics = JSON.parse(decodeURIComponent(encodedChain));
@@ -5148,6 +5196,7 @@ async function openStorylineScreen(chainId, encodedChain) {
   }
   history.pushState({ slChainId: chainId, slChain: encodedChain }, '', '#sl=' + chainId);
   _renderStorylineScreen(chainId, encodedChain, topics);
+  applyStorylineTheme(firstTopic);
   show('storyline-screen');
 }
 
@@ -9452,6 +9501,7 @@ function check(){
       : ex.type==='syn_select' ? stripFuri(ex.correct.join(', '))
       : (ex.type==='mcq_target_source'&&ex.article ? ex.article+' '+stripFuri(ex.target) : stripFuri(ex.target));
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('ok'); });
+    { const a=document.getElementById('ex-area'); if(a){ a.classList.remove('fall-down'); a.classList.add('rise-up'); setTimeout(()=>a.classList.remove('rise-up'),520); } }
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ if(ex.correct.some(c=>c.toLowerCase()===(b.dataset.w||'').toLowerCase())) b.classList.add('ok'); });
     if((ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') && !_glyphOrderActive(ex)) document.getElementById('type-in').classList.add('ok');
     // Auto-advance — speaks once then advances
@@ -9481,7 +9531,7 @@ function check(){
     document.querySelectorAll('.choice').forEach(b=>{ if(b.classList.contains('sel'))b.classList.add('bad'); if(b.textContent.trim()===stripFuri(_corrStr))b.classList.add('ok'); });
     if(ex.type==='syn_select') document.querySelectorAll('.syn-tile').forEach(b=>{ const w=(b.dataset.w||'').toLowerCase(); if(ex.correct.some(c=>c.toLowerCase()===w)) b.classList.add('ok'); else if(b.classList.contains('sel')) b.classList.add('bad'); });
     if((ex.type==='listen_type'||ex.type==='type_plural'||ex.type==='type_conjugation') && !_glyphOrderActive(ex)) document.getElementById('type-in').classList.add('bad');
-    const a=document.getElementById('ex-area'); a.classList.add('shake'); setTimeout(()=>a.classList.remove('shake'),380);
+    const a=document.getElementById('ex-area'); a.classList.remove('rise-up'); a.classList.add('fall-down'); setTimeout(()=>a.classList.remove('fall-down'),520);
     renderHearts();
   }
 }

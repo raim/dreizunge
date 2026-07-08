@@ -98,6 +98,8 @@ run('unit: model-picker wiring + static-exclusion', 'node', [path.join(__dirname
 run('unit: parseTableLesson non-ASCII header regression', 'node', [path.join(__dirname, 'unit-table-lesson.test.js')]);
 run('unit: close-lang-pairs identical-field gating', 'node', [path.join(__dirname, 'unit-close-lang-pairs.test.js')]);
 run('unit: dialect + synonyms prompt strictness', 'node', [path.join(__dirname, 'unit-prompt-strictness.test.js')]);
+run('unit: feedback animations + mixed source icons', 'node', [path.join(__dirname, 'unit-ui-feedback-mixed-icons.test.js')]);
+run('unit: storyline theme by story style', 'node', [path.join(__dirname, 'unit-storyline-theme.test.js')]);
 
 // 3) E2E — spawn the real server + fake Ollama. Skipped with --quick.
 if (!quick) {

@@ -19,8 +19,8 @@ const rmp = html.slice(html.indexOf('async function renderModelPicker()'),
 assert.ok(/APP\.info\.backend\s*!==\s*'ollama'/.test(rmp), 'renderModelPicker gates on an ollama backend');
 assert.ok(/fetch\('\/api\/models'\)/.test(rmp), 'renderModelPicker GETs /api/models');
 assert.ok(/onchange="switchModel\(/.test(rmp), 'each role select calls switchModel on change');
-assert.ok(/models\.story/.test(rmp) && /models\.lessons/.test(rmp) && /models\.translation/.test(rmp),
-  'renderModelPicker renders all three per-role selectors');
+assert.ok(/models\.story/.test(rmp) && /models\.lessons/.test(rmp) && /models\.translation/.test(rmp) && /models\.qc/.test(rmp),
+  'renderModelPicker renders all four per-role selectors (incl. QC)');
 
 const sw = html.slice(html.indexOf('async function switchModel('),
                       html.indexOf('async function switchModel(') + 900);
@@ -53,7 +53,7 @@ if (fs.existsSync(docsPath)) {
 
 // ── en-only i18n keys present ───────────────────────────────────────────────────
 const en = ui.en || ui;
-for (const k of ['models.story', 'models.lessons', 'models.translation', 'models.switched', 'models.switch_failed',
+for (const k of ['models.story', 'models.lessons', 'models.translation', 'models.qc', 'models.switched', 'models.switch_failed',
                  'models.timeout', 'models.timeout_hint', 'models.timeout_set',
                  'models.warn.weak', 'models.warn.roles_story_lessons', 'models.warn.roles_lessons', 'models.warn.roles_story']) {
   assert.ok(typeof en[k] === 'string' && en[k], `ui.json en has ${k}`);

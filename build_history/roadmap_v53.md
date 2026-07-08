@@ -51,7 +51,8 @@ phases 3–4 (per-button model popup + prompt preview/edit) remain OPEN — see 
 > scripts.
 
 > ### ℹ️ Note — the drill feature above is STILL the recommended next task (untouched).
-> v52 shipped a different, user-chosen task (runtime model selection + reasoning hardening). The
+> The v52 point releases (v52_b … v52_e) shipped model selection, reasoning hardening, a batch of
+> live-testing fixes, three UI changes, and a dedicated QC model role — all user-chosen. The
 > deterministic "review my mistakes" drill remains unbuilt and is the recommended next pickup.
 
 ## What shipped in v51 (summary)
@@ -97,8 +98,22 @@ The v46 "per-task model selection" major, phases 1–2, plus reasoning-model saf
   CLOSE language pairs (`isCloseLangPair`: dialects `lang===srcLang` + a curated `CLOSE_LANG_PAIRS`
   list incl. de↔lb). `unit-close-lang-pairs`.
 
-**Version note:** post-v52 point releases are numbered v52_b, v52_c, … (per user). Current: **v52_c**.
+**Version note:** post-v52 point releases are numbered v52_b, v52_c, … (per user). Current: **v52_e**.
 At the next MINOR/feature cut, resume vNN numbering (v53) and write `roadmap_v54.md`.
+
+**v52_e (dedicated QC model role):** QC no longer shares the `OLLAMA_TRANSLATION_MODEL` knob with the
+story-translation panel. New independent `OLLAMA_QC_MODEL` role (defaults to the translation model;
+`callLLMQC`; the four `qcCheck*` functions repointed to it), a fourth "QC" dropdown in the model
+picker, `POST /api/models {qc}` + `/api/info.ollamaQcModel`. This resolves the shared-knob limitation
+(you can now run the story translation on qwen while QC-checking Lëtzebuergesch pairs on
+translategemma). Tests: `e2e-models` (independent qc switch), `unit-model-picker` (4th selector +
+`models.qc`). LIVE-TEST §65. Realises the `OLLAMA_QC_MODEL` idea sketched in roadmap_v46.
+
+**v52_d (session-4 UI changes, `v52_session4_notes.md`):** answer-feedback motion (rise-up on correct /
+fall-down on wrong, replacing the sideways shake); mixed-lesson cards preview the source lessons' icons
+(`mixedSourceIcons`); story-style background themes v1 (`STORY_THEME_GRADIENTS`/`storylineThemeKey`/
+`applyStorylineTheme` — auto from the first chapter's style; manual/LLM picker deferred, see above).
+Tests: `unit-ui-feedback-mixed-icons`, `unit-storyline-theme`. LIVE-TEST §64.
 
 **v52_c (session-3 live-testing fixes, `v52_session3_notes.md`):** removed the non-functional QC
 looking-glass on AI error hunt; runtime request-timeout control (input next to the model dropdowns;
@@ -290,6 +305,45 @@ New en-only i18n keys owed to the translate pass: `form.use_dialect`, `dialect.*
 ---
 
 ## OPEN — discussed, not started
+
+### Generalize language similarity from a curated list to phylolinguistic relations
+Right now closeness is a hand-curated flat table: `CLOSE_LANG_PAIRS` + `isCloseLangPair(lang, srcLang)`
+in server.js (used to relax the "identical source/target" check for close pairs, v52_b), and a
+separate `LOW_RESOURCE_TARGET_LANGS` set (the generate-time model-suitability warning, v52_c). Both
+are ad-hoc and only as complete as we remember to make them. We want to **derive** language
+similarity from phylolinguistic (genealogical/typological) relations instead — e.g. a language-family
+tree (Indo-European → Germanic → West Germanic → German/Lëtzebuergesch/Low German …) plus optional
+typological distance, so "how close are lang A and B" is computed from where they sit in the tree
+rather than enumerated by hand. Sketch:
+- Add family/branch metadata per language (natural home: `languages.json`, e.g. a `family` path or an
+  ISO-based genus code), or import an existing dataset of genealogical relations.
+- Replace `isCloseLangPair` with a distance function over that tree (same genus / same sub-family /
+  same family → graded closeness); keep an override list only for known exceptions (contact
+  languages, scripts, etc.).
+- Fold `LOW_RESOURCE_TARGET_LANGS` into the same metadata so the identical-field relaxation AND the
+  model-suitability warning read one consolidated language-relations source.
+- Bonus payoff: a principled similarity signal could also inform bridge-language choices, difficulty
+  estimates, and which cognates to surface. Keep it advisory where model behaviour depends on it.
+
+### Story-style themes — manual/LLM theme selection (v1 shipped in v52_d: auto gradients)
+Shipped (v52_d): the storyline screen gets a subtle top-down background gradient themed by the FIRST
+chapter's writing style (`storylineThemeKey`/`applyStorylineTheme`/`STORY_THEME_GRADIENTS`); uploaded
+stories (no style) get their own "existing" theme; an explicit `topic._theme` override is honoured.
+Still OPEN (deferred from the original ask):
+- A **theme-picker button** next to the storyline title/summary buttons to set `_theme` manually
+  (and persist it on the topic), overriding the style-derived default.
+- An **LLM classification pass** — a prompt that reads a whole storyline and suggests a theme
+  (mirror the `genStorylineSummary` button/endpoint pattern), wired to the same button.
+- Richer per-theme styling beyond the background gradient (accent colours, question-card layout
+  variants per style — funny vs philosophical, etc.).
+
+### Varied answer-feedback visuals
+v52_d replaced the wrong-answer shake with directional motion (correct → rise-up, wrong → fall-down).
+The old `.shake` class/keyframes are deliberately KEPT in the CSS as a still-available option. We may
+want a small library of feedback animations to choose from (shake, rise/fall, pulse, glow, flip, etc.)
+— e.g. a user preference, or tied to the story-style theme (a "funny" story could use a bouncier
+correct animation than a "philosophical" one). Low priority / polish; the building blocks (multiple
+keyframe classes toggled in `check()`) are already there.
 
 ### Dynamic mixed lessons as the DEFAULT progression model
 Shift from "complete each lesson in a locked path" to "play variable-length mixed rounds from the

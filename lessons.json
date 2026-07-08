@@ -1229,7 +1229,7 @@
             },
             {
               "target": "Ech hunn e Café zu Remerschen.",
-              "source": "Ich habe einen Kaffee in Remerschen getrunken.",
+              "source": "Ich habe ein Café in Remerschen.",
               "words": [
                 "Ech",
                 "hunn",
@@ -1237,7 +1237,8 @@
                 "Café",
                 "zu",
                 "Remerschen."
-              ]
+              ],
+              "editedAt": "2026-07-08T08:06:25.501Z"
             },
             {
               "target": "Mir wëlle wandern laang d'Musel.",
@@ -1358,7 +1359,8 @@
             "completionTokens": 748,
             "ms": 823958,
             "at": "2026-07-08T00:08:12.209Z"
-          }
+          },
+          "qcAt": "2026-07-08T08:08:57.356Z"
         },
         {
           "id": "ls_1783470399834",
@@ -1426,7 +1428,12 @@
                 }
               ],
               "antonyms": [],
-              "homophones": []
+              "homophones": [],
+              "userFlag": {
+                "comment": "nop doesn't mean vor",
+                "correct": "",
+                "at": "2026-07-08T07:55:02.833Z"
+              }
             },
             {
               "base": "bësselchen",
@@ -1461,7 +1468,12 @@
                   "g": "alt"
                 }
               ],
-              "homophones": []
+              "homophones": [],
+              "userFlag": {
+                "comment": "context sentence missing",
+                "correct": "",
+                "at": "2026-07-08T07:55:05.706Z"
+              }
             }
           ],
           "_genMeta": {
@@ -1508,7 +1520,7 @@
         ]
       },
       "generatedAt": "2026-07-07T20:51:09.382Z",
-      "updatedAt": "2026-07-08T00:31:06.937Z",
+      "updatedAt": "2026-07-08T08:08:57.356Z",
       "id": "tp_17834579975340000254"
     },
     {
@@ -1837,7 +1849,7 @@
             "at": "2026-07-07T19:18:48.974Z"
           },
           "_recreated": true,
-          "qcAt": "2026-07-07T20:41:09.667Z"
+          "qcAt": "2026-07-08T12:09:08.728Z"
         },
         {
           "id": "ls_1783456902673_3wyi",
@@ -1870,7 +1882,7 @@
         ]
       },
       "generatedAt": "2026-07-07T18:41:46.907Z",
-      "updatedAt": "2026-07-07T20:41:42.676Z",
+      "updatedAt": "2026-07-08T12:09:08.729Z",
       "id": "tp_17834502581820000190"
     },
     {
@@ -2091,7 +2103,307 @@
           "_recreated": true
         },
         {
-          "id": "ls_1783456910711_9e5y",
+          "id": "ls_1783505927734",
+          "type": "synonyms",
+          "title": "The Meaning of Being",
+          "desc": "Exploring existence and its complexities.",
+          "icon": "🤔",
+          "words": [
+            {
+              "base": "katika",
+              "gloss": "in, at, on",
+              "sentence": "Katika ulimwengu huu, ni nini hasa kunakuwa mtu?",
+              "synonyms": [
+                {
+                  "w": "ndani",
+                  "g": "inside"
+                },
+                {
+                  "w": "kwenye",
+                  "g": "on"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "kingine",
+              "gloss": "another, other",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "mwingine",
+                  "g": "another"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "ambacho",
+              "gloss": "which, that",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "alichomo",
+                  "g": "which (relative pronoun)"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "binadamu",
+              "gloss": "human being, human",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "mwanadamu",
+                  "g": "human being"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "maana",
+              "gloss": "meaning, sense",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "ufikiri",
+                  "g": "understanding"
+                },
+                {
+                  "w": "lengo",
+                  "g": "purpose"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "kamili",
+              "gloss": "complete, full",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "kamilifu",
+                  "g": "perfect"
+                },
+                {
+                  "w": "tamu",
+                  "g": "full"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "nyembamba",
+                  "g": "thin"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "huenda",
+              "gloss": "maybe, it may be",
+              "sentence": "Huenda jibu liko katika uhusiano wetu na wengine.",
+              "synonyms": [
+                {
+                  "w": "labda",
+                  "g": "perhaps"
+                },
+                {
+                  "w": "kana kwamba",
+                  "g": "as if"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "uhusiano",
+              "gloss": "relationship, connection",
+              "sentence": "Huenda jibu liko katika uhusiano wetu na wengine.",
+              "synonyms": [
+                {
+                  "w": "uhusika",
+                  "g": "involvement"
+                },
+                {
+                  "w": "muunganiko",
+                  "g": "link"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "translategemma:12b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 667,
+            "completionTokens": 675,
+            "ms": 607001,
+            "at": "2026-07-08T10:18:47.734Z"
+          }
+        },
+        {
+          "id": "ls_1783507582640",
+          "type": "synonyms",
+          "title": "The Meaning of Being",
+          "desc": "Exploring existence and its complexities.",
+          "icon": "🤔",
+          "words": [
+            {
+              "base": "katika",
+              "gloss": "in, at, on",
+              "sentence": "Katika ulimwengu huu, ni nini hasa kunakuwa mtu?",
+              "synonyms": [
+                {
+                  "w": "ndani",
+                  "g": "inside"
+                },
+                {
+                  "w": "kwenye",
+                  "g": "on"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "kingine",
+              "gloss": "another, other",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "mwingine",
+                  "g": "another"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "ambacho",
+              "gloss": "which, that",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "alichomo",
+                  "g": "which (relative pronoun)"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "binadamu",
+              "gloss": "human being, human",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "mwanadamu",
+                  "g": "human being"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "maana",
+              "gloss": "meaning, sense",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "ufikiri",
+                  "g": "understanding"
+                },
+                {
+                  "w": "lengo",
+                  "g": "purpose"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "kamili",
+              "gloss": "complete, full",
+              "sentence": "Au kuna kitu kingine, kitu ambacho kinatufanya kuwa \"binadamu\" kwa maana kamili ya neno?",
+              "synonyms": [
+                {
+                  "w": "kamilifu",
+                  "g": "perfect"
+                },
+                {
+                  "w": "tamu",
+                  "g": "full"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "tupu",
+                  "g": "empty"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "huenda",
+              "gloss": "it may be, it is possible",
+              "sentence": "Huenda jibu liko katika uhusiano wetu na wengine.",
+              "synonyms": [
+                {
+                  "w": "inaweza",
+                  "g": "it can"
+                },
+                {
+                  "w": "labda",
+                  "g": "perhaps"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "uhusiano",
+              "gloss": "relationship, connection",
+              "sentence": "Huenda jibu liko katika uhusiano wetu na wengine.",
+              "synonyms": [
+                {
+                  "w": "uhusika",
+                  "g": "involvement"
+                },
+                {
+                  "w": "muunganiko",
+                  "g": "linkage"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "translategemma:12b",
+            "attempts": 1,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 667,
+            "completionTokens": 677,
+            "ms": 625623,
+            "at": "2026-07-08T10:46:22.640Z"
+          }
+        },
+        {
+          "id": "ls_1783509032064_of30",
           "type": "mixed",
           "title": "🔀 Mixed review",
           "icon": "🔀",
@@ -2121,7 +2433,7 @@
         ]
       },
       "generatedAt": "2026-07-07T18:32:17.231Z",
-      "updatedAt": "2026-07-07T20:41:50.714Z",
+      "updatedAt": "2026-07-08T11:10:32.066Z",
       "id": "tp_17834494397390000000"
     },
     {
