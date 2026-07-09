@@ -1280,3 +1280,55 @@ per model. Headless: `unit-qc-collect`, `unit-qc-editor-label`.
 - [ ] **Selective clear.** If one model later says a previously-flagged item is OK, only that model's
       row disappears; the other model's suggestion remains.
 - [ ] **Fix/dismiss still work.** Applying the fix or dismissing clears all QC rows for that item.
+
+### 68. v53 — script lessons in BOTH directions (Latin alphabet for non-Latin readers)
+Before v53 a script course only ever taught the TARGET's script, and only when the target was
+non-Latin — so a learner whose source language is Arabic/Russian/Japanese/… learning English was
+offered the *Arabic* course (a script they already read) and never the Latin alphabet. `latin` is
+now a real table in `scripts.json`, every language is mapped in `_langScript`, and the answer side
+of a Latin course is rendered in the learner's own script via `letters[].sounds` (`B → بي`).
+Headless: `unit-intro-script` (v53 block), `unit-add-lesson-registry`.
+
+- [ ] **Latin course appears (the fix).** Start a set with **target = English, source = Arabic**
+      (or Russian / Japanese / Korean / Hebrew / Hindi / Greek / Thai). The "add a script lesson"
+      menu now offers **Latin alphabet**. Pick it and play.
+- [ ] **Answers are readable.** In the glyph→sound questions the prompt is `A a` and the four
+      choices are in **Arabic script** (`إيه`, `بي`, …) — *not* `a`, `b`, `c`. Reverse questions show
+      an Arabic prompt (`بي`) and Latin glyph choices (`B b`). Nothing shows a `(bee)` hint.
+- [ ] **Listen items.** "Tap to listen" speaks the letter with the **English** voice; when the device
+      is muted the fallback text under it is the Arabic name, not a Latin letter.
+- [ ] **RTL sanity.** With an Arabic source, the Arabic choice buttons render right-to-left and are
+      not mangled; the Latin glyph choices stay left-to-right (content-aware direction, §30).
+- [ ] **Other reader scripts.** Repeat with source = Russian (choices `эй`, `би`…), Japanese
+      (katakana `エー`, `ビー`…), Korean (`에이`, `비`…). Each answers in that learner's script.
+- [ ] **No Latin course for Latin readers (regression).** A German→English or English→Italian set
+      offers **no** script lesson at all, exactly as before. Nothing new appeared.
+- [ ] **Chinese is gated off.** A Chinese→English set offers **no** Latin course (no `sounds.han`
+      column authored yet) rather than a circular one with Latin answers.
+- [ ] **Existing direction unchanged (regression).** English→Arabic still teaches the Arabic script
+      with Latin transliteration answers (`ا` → `ā`), exactly as before v53. Same for en→ru, en→ja.
+- [ ] **Arc auto-generation.** With source = Arabic, generating a multi-chapter English storyline
+      auto-adds a per-chapter Latin "extend" script lesson (new letters that chapter).
+
+**Native review owed** (`scripts.json` `_sounds_comment`): every `latin.sounds.*` column is the
+Latin letter's *name* transcribed into that script (chosen over the phonetic value because
+`c`/`k`/`q` all collapse to one grapheme phonetically, which would give MCQs several correct
+answers). A native speaker should confirm each column — especially Hebrew (niqqud), Greek
+(`μπι`/`ντι` digraphs) and Thai.
+
+### 69. v53 — translate-ui.js sees every offered language (Ollama-verify owed)
+`translate-ui.js` derived its work list from `Object.keys(ui.json)`, so Swahili — offered as a source
+(= UI) language but entirely absent from `ui.json` — was never listed and never translated, while
+`--check` reported all languages complete. Now derived from `languages.json`. Headless:
+`unit-translate-ui-langs`.
+
+- [ ] **Swahili is visible.** `node translate-ui.js --check` lists `✗ sw Swahili 426 missing` and
+      reports `1630 across 29 language(s)` (not 1204 across 28).
+- [ ] **Swahili translates.** With Ollama up: `node translate-ui.js sw` fills all 426 keys.
+      Re-running `--check` then shows `✓ sw Swahili complete`. **Read the output** — this is the
+      first language translated from scratch rather than topped up; watch for script bleed and for
+      `{placeholder}` tokens being mangled.
+- [ ] **UI actually renders.** Pick Swahili as the SOURCE language in the app. The interface is in
+      Swahili, not English. (Before this fix it silently fell back to English.)
+- [ ] **No regression.** `node translate-ui.js de --check` still reports only the 43 owed keys;
+      naming languages explicitly and `--exclude` still behave as before.

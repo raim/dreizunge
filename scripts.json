@@ -1,5 +1,5 @@
 {
-  "_comment": "Per-writing-system letter tables for the LLM-free intro 'learn the script' course. Keyed by SCRIPT (many languages share one); _langScript maps a language code to its script(s). Phase 1 ships Cyrillic; kana/greek/hangul/arabic/hebrew/thai are stubs to fill in later phases.",
+  "_comment": "Per-writing-system letter tables for the LLM-free intro 'learn the script' course. Keyed by SCRIPT (many languages share one); _langScript maps a language code to its script(s). Every language must be mapped: an unmapped code reads as 'no script', which wrongly makes a Latin course look teachable to its speakers.",
   "_langScript": {
     "ru": "cyrillic",
     "uk": "cyrillic",
@@ -12,7 +12,488 @@
     "ar": "arabic",
     "he": "hebrew",
     "th": "thai",
-    "hi": "devanagari"
+    "hi": "devanagari",
+    "en": "latin",
+    "it": "latin",
+    "fr": "latin",
+    "de": "latin",
+    "es": "latin",
+    "pt": "latin",
+    "nl": "latin",
+    "pl": "latin",
+    "sv": "latin",
+    "tr": "latin",
+    "sw": "latin",
+    "lb": "latin",
+    "vi": "latin",
+    "id": "latin",
+    "cs": "latin",
+    "ro": "latin",
+    "fi": "latin",
+    "hu": "latin",
+    "da": "latin",
+    "ca": "latin",
+    "zh": "han"
+  },
+  "_stub_comment": "Remaining stubs: thai (44 consonants with many shared sounds + positional vowels + tone classes — not reducible to a simple unique letter→sound table; needs a purpose-built design) and han (not an alphabet). Both are still valid SOURCE scripts: `latin.sounds.thai` lets Thai speakers learn the Latin alphabet even though we cannot teach Thai.",
+  "_sounds_comment": "letters[].sounds maps a SOURCE script → the letter's name written in that script (B → بي for an Arabic reader). Used by introScriptExercises via opts.srcScripts so the answer is readable to the learner; without it a Latin course would ask a non-Latin reader to pick 'b' from Latin choices. Values are the letter NAME (not the phonetic value) because phonetic values collide (c/k/q → ك) and would yield several correct MCQ answers. NATIVE REVIEW OWED on every column.",
+  "latin": {
+    "rtl": false,
+    "label": "Latin alphabet",
+    "soundsFor": [
+      "arabic",
+      "cyrillic",
+      "greek",
+      "hebrew",
+      "devanagari",
+      "hangul",
+      "katakana",
+      "thai"
+    ],
+    "letters": [
+      {
+        "ch": "A",
+        "lower": "a",
+        "name": "ay",
+        "translit": "a",
+        "ipa": "eɪ",
+        "sounds": {
+          "arabic": "إيه",
+          "cyrillic": "эй",
+          "greek": "έι",
+          "hebrew": "אֵיי",
+          "devanagari": "ए",
+          "hangul": "에이",
+          "katakana": "エー",
+          "thai": "เอ"
+        }
+      },
+      {
+        "ch": "B",
+        "lower": "b",
+        "name": "bee",
+        "translit": "b",
+        "ipa": "biː",
+        "sounds": {
+          "arabic": "بي",
+          "cyrillic": "би",
+          "greek": "μπι",
+          "hebrew": "בי",
+          "devanagari": "बी",
+          "hangul": "비",
+          "katakana": "ビー",
+          "thai": "บี"
+        }
+      },
+      {
+        "ch": "C",
+        "lower": "c",
+        "name": "cee",
+        "translit": "c",
+        "ipa": "siː",
+        "sounds": {
+          "arabic": "سي",
+          "cyrillic": "си",
+          "greek": "σι",
+          "hebrew": "סי",
+          "devanagari": "सी",
+          "hangul": "씨",
+          "katakana": "シー",
+          "thai": "ซี"
+        }
+      },
+      {
+        "ch": "D",
+        "lower": "d",
+        "name": "dee",
+        "translit": "d",
+        "ipa": "diː",
+        "sounds": {
+          "arabic": "دي",
+          "cyrillic": "ди",
+          "greek": "ντι",
+          "hebrew": "די",
+          "devanagari": "डी",
+          "hangul": "디",
+          "katakana": "ディー",
+          "thai": "ดี"
+        }
+      },
+      {
+        "ch": "E",
+        "lower": "e",
+        "name": "ee",
+        "translit": "e",
+        "ipa": "iː",
+        "sounds": {
+          "arabic": "إي",
+          "cyrillic": "и",
+          "greek": "ι",
+          "hebrew": "אִי",
+          "devanagari": "ई",
+          "hangul": "이",
+          "katakana": "イー",
+          "thai": "อี"
+        }
+      },
+      {
+        "ch": "F",
+        "lower": "f",
+        "name": "ef",
+        "translit": "f",
+        "ipa": "ɛf",
+        "sounds": {
+          "arabic": "إف",
+          "cyrillic": "эф",
+          "greek": "εφ",
+          "hebrew": "אֶף",
+          "devanagari": "एफ़",
+          "hangul": "에프",
+          "katakana": "エフ",
+          "thai": "เอฟ"
+        }
+      },
+      {
+        "ch": "G",
+        "lower": "g",
+        "name": "gee",
+        "translit": "g",
+        "ipa": "dʒiː",
+        "sounds": {
+          "arabic": "جي",
+          "cyrillic": "джи",
+          "greek": "τζι",
+          "hebrew": "ג'י",
+          "devanagari": "जी",
+          "hangul": "지",
+          "katakana": "ジー",
+          "thai": "จี"
+        }
+      },
+      {
+        "ch": "H",
+        "lower": "h",
+        "name": "aitch",
+        "translit": "h",
+        "ipa": "eɪtʃ",
+        "sounds": {
+          "arabic": "إتش",
+          "cyrillic": "эйч",
+          "greek": "έιτς",
+          "hebrew": "אֵייטְשׁ",
+          "devanagari": "एच",
+          "hangul": "에이치",
+          "katakana": "エイチ",
+          "thai": "เอช"
+        }
+      },
+      {
+        "ch": "I",
+        "lower": "i",
+        "name": "eye",
+        "translit": "i",
+        "ipa": "aɪ",
+        "sounds": {
+          "arabic": "آي",
+          "cyrillic": "ай",
+          "greek": "άι",
+          "hebrew": "אַיי",
+          "devanagari": "आई",
+          "hangul": "아이",
+          "katakana": "アイ",
+          "thai": "ไอ"
+        }
+      },
+      {
+        "ch": "J",
+        "lower": "j",
+        "name": "jay",
+        "translit": "j",
+        "ipa": "dʒeɪ",
+        "sounds": {
+          "arabic": "جيه",
+          "cyrillic": "джей",
+          "greek": "τζέι",
+          "hebrew": "גֵ'יי",
+          "devanagari": "जे",
+          "hangul": "제이",
+          "katakana": "ジェー",
+          "thai": "เจ"
+        }
+      },
+      {
+        "ch": "K",
+        "lower": "k",
+        "name": "kay",
+        "translit": "k",
+        "ipa": "keɪ",
+        "sounds": {
+          "arabic": "كيه",
+          "cyrillic": "кей",
+          "greek": "κέι",
+          "hebrew": "קֵיי",
+          "devanagari": "के",
+          "hangul": "케이",
+          "katakana": "ケー",
+          "thai": "เค"
+        }
+      },
+      {
+        "ch": "L",
+        "lower": "l",
+        "name": "el",
+        "translit": "l",
+        "ipa": "ɛl",
+        "sounds": {
+          "arabic": "إل",
+          "cyrillic": "эл",
+          "greek": "ελ",
+          "hebrew": "אֶל",
+          "devanagari": "एल",
+          "hangul": "엘",
+          "katakana": "エル",
+          "thai": "แอล"
+        }
+      },
+      {
+        "ch": "M",
+        "lower": "m",
+        "name": "em",
+        "translit": "m",
+        "ipa": "ɛm",
+        "sounds": {
+          "arabic": "إم",
+          "cyrillic": "эм",
+          "greek": "εμ",
+          "hebrew": "אֶם",
+          "devanagari": "एम",
+          "hangul": "엠",
+          "katakana": "エム",
+          "thai": "เอ็ม"
+        }
+      },
+      {
+        "ch": "N",
+        "lower": "n",
+        "name": "en",
+        "translit": "n",
+        "ipa": "ɛn",
+        "sounds": {
+          "arabic": "إن",
+          "cyrillic": "эн",
+          "greek": "εν",
+          "hebrew": "אֶן",
+          "devanagari": "एन",
+          "hangul": "엔",
+          "katakana": "エヌ",
+          "thai": "เอ็น"
+        }
+      },
+      {
+        "ch": "O",
+        "lower": "o",
+        "name": "oh",
+        "translit": "o",
+        "ipa": "oʊ",
+        "sounds": {
+          "arabic": "أوه",
+          "cyrillic": "оу",
+          "greek": "όου",
+          "hebrew": "אוֹ",
+          "devanagari": "ओ",
+          "hangul": "오",
+          "katakana": "オー",
+          "thai": "โอ"
+        }
+      },
+      {
+        "ch": "P",
+        "lower": "p",
+        "name": "pee",
+        "translit": "p",
+        "ipa": "piː",
+        "sounds": {
+          "arabic": "پي",
+          "cyrillic": "пи",
+          "greek": "πι",
+          "hebrew": "פִּי",
+          "devanagari": "पी",
+          "hangul": "피",
+          "katakana": "ピー",
+          "thai": "พี"
+        }
+      },
+      {
+        "ch": "Q",
+        "lower": "q",
+        "name": "cue",
+        "translit": "q",
+        "ipa": "kjuː",
+        "sounds": {
+          "arabic": "كيو",
+          "cyrillic": "кью",
+          "greek": "κιου",
+          "hebrew": "קְיוּ",
+          "devanagari": "क्यू",
+          "hangul": "큐",
+          "katakana": "キュー",
+          "thai": "คิว"
+        }
+      },
+      {
+        "ch": "R",
+        "lower": "r",
+        "name": "ar",
+        "translit": "r",
+        "ipa": "ɑːr",
+        "sounds": {
+          "arabic": "آر",
+          "cyrillic": "ар",
+          "greek": "αρ",
+          "hebrew": "אָר",
+          "devanagari": "आर",
+          "hangul": "알",
+          "katakana": "アール",
+          "thai": "อาร์"
+        }
+      },
+      {
+        "ch": "S",
+        "lower": "s",
+        "name": "ess",
+        "translit": "s",
+        "ipa": "ɛs",
+        "sounds": {
+          "arabic": "إس",
+          "cyrillic": "эс",
+          "greek": "ες",
+          "hebrew": "אֶס",
+          "devanagari": "एस",
+          "hangul": "에스",
+          "katakana": "エス",
+          "thai": "เอส"
+        }
+      },
+      {
+        "ch": "T",
+        "lower": "t",
+        "name": "tee",
+        "translit": "t",
+        "ipa": "tiː",
+        "sounds": {
+          "arabic": "تي",
+          "cyrillic": "ти",
+          "greek": "τι",
+          "hebrew": "טִי",
+          "devanagari": "टी",
+          "hangul": "티",
+          "katakana": "ティー",
+          "thai": "ที"
+        }
+      },
+      {
+        "ch": "U",
+        "lower": "u",
+        "name": "you",
+        "translit": "u",
+        "ipa": "juː",
+        "sounds": {
+          "arabic": "يو",
+          "cyrillic": "ю",
+          "greek": "γιου",
+          "hebrew": "יוּ",
+          "devanagari": "यू",
+          "hangul": "유",
+          "katakana": "ユー",
+          "thai": "ยู"
+        }
+      },
+      {
+        "ch": "V",
+        "lower": "v",
+        "name": "vee",
+        "translit": "v",
+        "ipa": "viː",
+        "sounds": {
+          "arabic": "ڤي",
+          "cyrillic": "ви",
+          "greek": "βι",
+          "hebrew": "וִי",
+          "devanagari": "वी",
+          "hangul": "브이",
+          "katakana": "ブイ",
+          "thai": "วี"
+        }
+      },
+      {
+        "ch": "W",
+        "lower": "w",
+        "name": "double-u",
+        "translit": "w",
+        "ipa": "ˈdʌbəljuː",
+        "sounds": {
+          "arabic": "دبليو",
+          "cyrillic": "дабл-ю",
+          "greek": "ντάμπλγιου",
+          "hebrew": "דַּאבְּלְיוּ",
+          "devanagari": "डब्ल्यू",
+          "hangul": "더블유",
+          "katakana": "ダブリュー",
+          "thai": "ดับเบิลยู"
+        }
+      },
+      {
+        "ch": "X",
+        "lower": "x",
+        "name": "ex",
+        "translit": "x",
+        "ipa": "ɛks",
+        "sounds": {
+          "arabic": "إكس",
+          "cyrillic": "экс",
+          "greek": "εξ",
+          "hebrew": "אֶקְס",
+          "devanagari": "एक्स",
+          "hangul": "엑스",
+          "katakana": "エックス",
+          "thai": "เอกซ์"
+        }
+      },
+      {
+        "ch": "Y",
+        "lower": "y",
+        "name": "wy",
+        "translit": "y",
+        "ipa": "waɪ",
+        "sounds": {
+          "arabic": "واي",
+          "cyrillic": "уай",
+          "greek": "γουάι",
+          "hebrew": "וַואי",
+          "devanagari": "वाय",
+          "hangul": "와이",
+          "katakana": "ワイ",
+          "thai": "วาย"
+        }
+      },
+      {
+        "ch": "Z",
+        "lower": "z",
+        "name": "zed",
+        "translit": "z",
+        "ipa": "zɛd",
+        "sounds": {
+          "arabic": "زد",
+          "cyrillic": "зед",
+          "greek": "ζεντ",
+          "hebrew": "זֶד",
+          "devanagari": "ज़ेड",
+          "hangul": "제트",
+          "katakana": "ゼット",
+          "thai": "แซด"
+        }
+      }
+    ]
   },
   "cyrillic": {
     "rtl": false,
@@ -251,7 +732,6 @@
       }
     ]
   },
-  "_stub_comment": "Remaining stub: thai (44 consonants with many shared sounds + positional vowels + tone classes — not reducible to a simple unique letter→sound table; needs a purpose-built design).",
   "hiragana": {
     "rtl": false,
     "syllabary": true,
@@ -1474,5 +1954,10 @@
         "ipa": "ɦ"
       }
     ]
+  },
+  "han": {
+    "rtl": false,
+    "label": "Han (Chinese characters)",
+    "letters": []
   }
 }

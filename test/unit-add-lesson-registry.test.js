@@ -57,10 +57,13 @@ assert.deepStrictEqual(c.args, ['de','en',2,'sum to 100','job1'], 'LLM math arg 
 ctx.addMathInstr = null;
 
 // intro_script: procedural + story-independent, keyed on the target lang + optional script.
+// srcLang rides along (v53): it selects the script the ANSWER side is rendered in, so a Latin
+// course for an Arabic reader answers in Arabic rather than in the alphabet it is teaching.
 ctx.introScript = null;
 c = callOf('intro_script');
 assert.strictEqual(c.fn, 'generateIntroScript');
-assert.deepStrictEqual(c.args, ['de', { script: null, difficulty: ctx.diff }], 'intro_script arg shape (lang, {script, difficulty})');
+assert.deepStrictEqual(c.args, ['de', { script: null, difficulty: ctx.diff, srcLang: ctx.srcLang }],
+  'intro_script arg shape (lang, {script, difficulty, srcLang})');
 
 // 3) Exactly the expected fmt set — nothing dropped, nothing extra.
 assert.deepStrictEqual(Object.keys(ADD_LESSON_GENERATORS).sort(),

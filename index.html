@@ -1245,6 +1245,17 @@ function scriptHasTable(name) {
   const tbl = SCRIPTS_DATA[name];
   return !!(tbl && Array.isArray(tbl.letters) && tbl.letters.length);
 }
+// Whether `name` can actually be TAUGHT to a learner who already reads `srcScripts`.
+// Most tables answer in Latin `translit` and so implicitly assume a Latin-reading learner.
+// A table declaring `soundsFor` (currently only `latin`) is teachable only to the source
+// scripts it has a `sounds` column for — otherwise its answers print in the script we are
+// trying to teach ("show A a, pick a"), which teaches nothing. Mirrors server.js.
+function scriptTeachable(name, srcScripts) {
+  if (!scriptHasTable(name)) return false;
+  const tbl = SCRIPTS_DATA[name];
+  if (!Array.isArray(tbl.soundsFor)) return true;
+  return (srcScripts || []).some(s => tbl.soundsFor.indexOf(s) >= 0);
+}
 // All the characters (incl. lowercase variants) that make up a script's letter table.
 function _scriptCharSet(name) {
   const tbl = SCRIPTS_DATA[name];
@@ -1293,10 +1304,15 @@ function _lessonSetSourceText(d) {
 // scanning both sides' text correctly detects which are present (Japanese katakana still only when
 // katakana actually appears).
 function scriptsUsedInLessonSet(d) {
+  // `latin` is now a real table, so it enters this union for every pair. Filter by
+  // scriptTeachable (not scriptHasTable) so a Latin-reading learner is never offered a Latin
+  // course, while an Arabic/Cyrillic/… reader learning English is. Purely additive: the legacy
+  // tables declare no `soundsFor`, so every script offered before is still offered.
+  const srcScripts = scriptsForLang(d && d.srcLang);
   const all = [...new Set([
     ...scriptsForLang(d && d.lang),
-    ...scriptsForLang(d && d.srcLang),
-  ])].filter(scriptHasTable);
+    ...srcScripts,
+  ])].filter(name => scriptTeachable(name, srcScripts));
   const text = (_lessonSetTargetText(d) + ' ' + _lessonSetSourceText(d));
   if (!text.trim()) return all;                          // nothing to scan → offer all
   const used = all.filter(name => {
@@ -1369,8 +1385,9 @@ function introLetterScope(d, scriptName, mode) {
 function needsIntroScript(targetLang, srcLang) {
   const tgt = scriptsForLang(targetLang);
   if (!tgt.length) return false;
-  const src = new Set(scriptsForLang(srcLang || 'en'));
-  return tgt.some(s => !src.has(s) && scriptHasTable(s));
+  const srcArr = scriptsForLang(srcLang || 'en');
+  const src = new Set(srcArr);
+  return tgt.some(s => !src.has(s) && scriptTeachable(s, srcArr));
 }
 // For the MANUAL "add a script lesson" menu: a glyph lesson is worth offering whenever a non-Latin,
 // table-backed script is involved on EITHER side — the language being learned (en→ar) OR the
@@ -8048,7 +8065,15 @@ function introScriptExercisesFrom(letters, opts) {
   const real = (letters || []).filter(L => L && L.ch && (L.translit || L.name)); // letters to quiz
   const poolRaw = (opts.distractorPool && opts.distractorPool.length) ? opts.distractorPool : real;
   const pool = poolRaw.filter(L => L && L.ch && (L.translit || L.name));          // distractor pool
-  const sound = (L) => L.translit ? L.translit : L.name;
+  // The answer side must be readable to the learner. `opts.srcScripts` lists the scripts they
+  // already read; if the letter carries a `sounds` column for one of them, use it (B → "بي")
+  // instead of the Latin translit — otherwise a Latin course would print its answers in Latin.
+  const srcScripts = opts.srcScripts || [];
+  const localSound = (L) => {
+    if (L.sounds) for (const s of srcScripts) if (L.sounds[s]) return L.sounds[s];
+    return null;
+  };
+  const sound = (L) => localSound(L) || (L.translit ? L.translit : L.name);
   const glyph = (L) => L.ch + (L.lower && L.lower !== L.ch ? ' ' + L.lower : '');
   const distinctSounds = (ex, n) => sh(pool.filter(L => sound(L) !== sound(ex) && sound(L))).slice(0, n).map(sound);
   const distinctGlyphs = (ex, n) => sh(pool.filter(L => L.ch !== ex.ch)).slice(0, n).map(glyph);
@@ -8061,13 +8086,15 @@ function introScriptExercisesFrom(letters, opts) {
     // sound → glyph: show the SOUND, pick the glyph. Uses mcq_source_target (which renders
     // ex.source as the prompt + ex.choices as buttons) — NOT mcq_target_source, which would
     // show the glyph itself (the answer) plus a listen block. The glyph is the answer here.
+    // The "(name)" hint is the letter's Latin name — helpful next to a Latin translit, but
+    // noise (and unreadable) once the sound is localized into the learner's script.
     if (wg.length >= 2) exs.push({ type:'mcq_source_target',
-      source:sound(L) + (L.name && L.name !== sound(L) ? ' ('+L.name+')' : ''),
+      source:sound(L) + ((!localSound(L) && L.name && L.name !== sound(L)) ? ' ('+L.name+')' : ''),
       target:glyph(L), correct:glyph(L), choices:sh([glyph(L), ...wg]), _intro:'sound_glyph' });
   });
   sh(real).slice(0, Math.min(5, real.length)).forEach(L => {
     const wg = distinctGlyphs(L, 3);
-    if (wg.length >= 2) exs.push({ type:'listen_mcq', target:L.lower || L.ch, pron:L.translit || L.name,
+    if (wg.length >= 2) exs.push({ type:'listen_mcq', target:L.lower || L.ch, pron:sound(L),
       correct:glyph(L), choices:sh([glyph(L), ...wg]), _intro:'listen_glyph' });
   });
   return exs;
@@ -8087,8 +8114,11 @@ function buildIntroScriptExercises(lesson) {
   // Distractors draw from the whole script alphabet (not just the lesson's quizzed subset),
   // so wrong answers stay plausible even for a short 10-letter lesson.
   const pool = (SCRIPTS_DATA[lesson.script]||{}).letters || letters;
+  // Scripts the learner already reads → the answer side is rendered in one of them when the
+  // table provides it (Latin course for an Arabic reader answers in Arabic).
+  const srcScripts = scriptsForLang(APP.lessonData?.srcLang || APP.srcLang);
   let exs = (letters && letters.length)
-    ? introScriptExercisesFrom(letters, { distractorPool: pool })
+    ? introScriptExercisesFrom(letters, { distractorPool: pool, srcScripts })
     : [...(lesson.exercises || [])];
   // Drop the "tap to listen" items when the device has no actual voice for the target language
   // (not just no TTS code) — otherwise they'd be unanswerable. The muted case is handled live in

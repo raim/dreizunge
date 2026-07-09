@@ -54,6 +54,27 @@ phases 3–4 (per-button model popup + prompt preview/edit) remain OPEN — see 
 > The v52 point releases (v52_b … v52_e) shipped model selection, reasoning hardening, a batch of
 > live-testing fixes, three UI changes, and a dedicated QC model role — all user-chosen. The
 > deterministic "review my mistakes" drill remains unbuilt and is the recommended next pickup.
+> (v53 session 1 shipped bidirectional script lessons instead — also user-chosen. Drill still open.)
+
+## ✅ Script lessons in BOTH directions (SHIPPED, v53 session 1)
+User-reported: "arabic->english focusses on the arabic script, but doesn't have exercises for the
+latin alphabet." Root cause: `_langScript` mapped only non-Latin languages, so `scriptsForLang('en')`
+was `[]` and `needsIntroScript` returned false for every Latin target — an Arabic reader learning
+English was offered the *Arabic* course. Deeper: every table's answer side is a Latin `translit`, so
+a naive `latin` table would have quizzed "show `A a`, pick `a`" — circular for a non-Latin reader.
+Shipped: a **`latin` table** whose `letters[].sounds` maps a SOURCE script → the letter's *name* in
+that script (`B → بي`), for all eight non-Latin source scripts; a **`latin.soundsFor`** declaration +
+new **`scriptTeachable()`** gate so a script is only offered when its answers are readable to that
+learner; **`opts.srcScripts`** threaded through both exercise builders (kept self-contained for the
+parity test) and all callers; `scriptsUsedInLessonSet` filtered by teachability so Latin readers are
+never offered Latin; a **`han` stub** + `zh → han` so every language is mapped (an unmapped code read
+as "no script" and would have got a circular Latin course). Purely additive — `en→ar` output is
+asserted byte-identical to pre-v53. Details: `v53_session1_notes.md`. Tests: `unit-intro-script`
+(new v53 block), `unit-add-lesson-registry`. **Owed: LIVE-TEST §68 (browser) + native review of every
+`latin.sounds.*` column.** No new `ui.json` keys (script labels are data).
+Follow-ups: a `sounds.han` column would un-gate the Latin course for Chinese speakers (bopomofo vs
+Han transcription — needs a decision); `latin.sounds` is a working precedent for the deferred
+"Plan A — multi-language transliteration/sound matrix" under OPEN — scripts.
 
 ## What shipped in v51 (summary)
 The **East-Tyrolean dialect track**, built end-to-end on top of the v50 progression/personalization
@@ -478,10 +499,20 @@ identity (see the design note under mixed lessons).
   wanted; same posture (native review of romanizations). Bounded, headlessly testable — a good
   small win.
 - **Native review of romanizations** — Hangul, Hebrew, Arabic, Devanagari translits are
-  high-confidence but worth a native pass.
+  high-confidence but worth a native pass. **NEW (v53): the eight `latin.sounds.*` columns**
+  (arabic, cyrillic, greek, hebrew, devanagari, hangul, katakana, thai) need the same pass —
+  especially Hebrew (niqqud), Greek digraphs (`μπι`/`ντι`) and Thai. See LIVE-TEST §68.
+- **`sounds.han` column (v53 follow-up).** `zh → han` is mapped but `latin.soundsFor` has no `han`
+  column, so Chinese speakers are (deliberately) not offered a Latin course rather than a circular
+  one. Authoring it needs a decision: bopomofo/zhuyin (Taiwan-only) vs Han transcription of the
+  letter names (several common ones are unfortunate — P → 屁). Un-gates automatically once added.
 - **Plan A — multi-language transliteration/sound matrix.** Speak an accurate *pronunciation* per
   (script, letter, UI-language) via a per-(script, letter, UI-lang) matrix in scripts.json, sourced
-  from CLDR/ICU + LLM + native review. Big data effort; deferred.
+  from CLDR/ICU + LLM + native review. Big data effort; deferred. **v53 shipped a working precedent
+  for the data shape**: `letters[].sounds[sourceScript]` + a `soundsFor` teachability declaration,
+  resolved at build time via `opts.srcScripts`. Extending it from `latin` to the other tables (so a
+  Russian speaker learning Arabic sees Cyrillic answers, not Latin translit) is the same mechanism —
+  currently every non-`latin` table still answers in Latin and so implicitly assumes a Latin reader.
 
 ---
 

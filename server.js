@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v52_g';
+const APP_VERSION  = 'v53';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -472,13 +472,27 @@ function scriptHasTable(name) {
   const tbl = _scriptsData[name];
   return !!(tbl && Array.isArray(tbl.letters) && tbl.letters.length);
 }
-// True when the target's script differs from the UI/source script AND we have a letter table
-// for it — i.e. an intro course would actually teach the learner a new alphabet we can build.
+// Whether `name` can actually be TAUGHT to a learner who already reads `srcScripts`.
+// Most tables carry a Latin `translit` as the answer side, so they implicitly assume a
+// Latin-reading learner and are teachable whenever they have a table. A table that declares
+// `soundsFor` (currently only `latin`) can only be taught to the source scripts it has a
+// `sounds` column for — otherwise the answers would be printed in the very script we are
+// trying to teach ("show A a, pick a"), which teaches nothing.
+function scriptTeachable(name, srcScripts) {
+  if (!scriptHasTable(name)) return false;
+  const tbl = _scriptsData[name];
+  if (!Array.isArray(tbl.soundsFor)) return true;
+  return (srcScripts || []).some(s => tbl.soundsFor.indexOf(s) >= 0);
+}
+// True when the target's script differs from the UI/source script AND we can teach it to this
+// learner — i.e. an intro course would actually teach a new alphabet we can build. Symmetric
+// since v53: `latin` is a script like any other, so ar→en teaches the Latin alphabet.
 function needsIntroScript(targetLang, srcLang) {
   const tgt = scriptsForLang(targetLang);
-  if (!tgt.length) return false;            // target is Latin (or unlisted) → no intro
-  const src = new Set(scriptsForLang(srcLang || 'en'));
-  return tgt.some(s => !src.has(s) && scriptHasTable(s));
+  if (!tgt.length) return false;            // target unmapped → no intro
+  const srcArr = scriptsForLang(srcLang || 'en');
+  const src = new Set(srcArr);
+  return tgt.some(s => !src.has(s) && scriptTeachable(s, srcArr));
 }
 // The set of characters (incl. lowercase variants) that make up a script's letter table.
 function _scriptCharSet(name) {
@@ -1490,7 +1504,15 @@ function introScriptExercises(letters, opts) {
   const real = letters.filter(L => L && L.ch && (L.translit || L.name));          // letters to quiz
   const poolRaw = (opts.distractorPool && opts.distractorPool.length) ? opts.distractorPool : real;
   const pool = poolRaw.filter(L => L && L.ch && (L.translit || L.name));          // distractor pool
-  const sound = (L) => L.translit ? L.translit : L.name;            // what we quiz as "the sound"
+  // The answer side must be readable to the learner. `opts.srcScripts` lists the scripts they
+  // already read; if the letter carries a `sounds` column for one of them, use it (B → "بي")
+  // instead of the Latin translit — otherwise a Latin course would print its answers in Latin.
+  const srcScripts = opts.srcScripts || [];
+  const localSound = (L) => {
+    if (L.sounds) for (const s of srcScripts) if (L.sounds[s]) return L.sounds[s];
+    return null;
+  };
+  const sound = (L) => localSound(L) || (L.translit ? L.translit : L.name);   // quizzed "sound"
   const glyph = (L) => L.ch + (L.lower && L.lower !== L.ch ? ' ' + L.lower : '');
   const distinctSounds = (exclude, n) =>
     sh(pool.filter(L => sound(L) !== sound(exclude) && sound(L))).slice(0, n).map(sound);
@@ -1509,7 +1531,10 @@ function introScriptExercises(letters, opts) {
     // a listen block). The glyph is the answer here.
     const wg = distinctGlyphs(L, 3);
     if (wg.length >= 2) {
-      exs.push({ type: 'mcq_source_target', source: sound(L) + (L.name && L.name !== sound(L) ? ' ('+L.name+')' : ''),
+      // The "(name)" hint is the letter's Latin name — helpful next to a Latin translit, but
+      // noise (and unreadable) once the sound is localized into the learner's script.
+      const hint = (!localSound(L) && L.name && L.name !== sound(L)) ? ' ('+L.name+')' : '';
+      exs.push({ type: 'mcq_source_target', source: sound(L) + hint,
         target: glyph(L), correct: glyph(L), choices: sh([glyph(L), ...wg]), _intro: 'sound_glyph' });
     }
   });
@@ -1518,7 +1543,7 @@ function introScriptExercises(letters, opts) {
   sh(real).slice(0, Math.min(5, real.length)).forEach(L => {
     const wg = distinctGlyphs(L, 3);
     if (wg.length >= 2) {
-      exs.push({ type: 'listen_mcq', target: L.lower || L.ch, pron: L.translit || L.name,
+      exs.push({ type: 'listen_mcq', target: L.lower || L.ch, pron: sound(L),
         correct: glyph(L), choices: sh([glyph(L), ...wg]), _intro: 'listen_glyph' });
     }
   });
@@ -1536,7 +1561,9 @@ function introMaxLetters(difficulty) {
 function generateIntroScript(lang, opts) {
   opts = opts || {};
   const _t0 = Date.now();
-  const wanted = opts.script ? [opts.script] : scriptsForLang(lang);
+  // Scripts the learner already reads — drives the localized answer side (see introScriptExercises).
+  const srcScripts = scriptsForLang(opts.srcLang || 'en');
+  const wanted = opts.script ? [opts.script] : scriptsForLang(lang).filter(s => !srcScripts.includes(s));
   const scriptName = wanted[0];
   const table = scriptName ? (_scriptsData[scriptName] || null) : null;
   const full = (table && Array.isArray(table.letters)) ? table.letters : [];
@@ -1549,7 +1576,7 @@ function generateIntroScript(lang, opts) {
     const sh = [...full]; for (let i = sh.length-1; i>0; i--){ const j=Math.floor(Math.random()*(i+1)); [sh[i],sh[j]]=[sh[j],sh[i]]; }
     letters = sh.slice(0, max);
   }
-  const exercises = introScriptExercises(letters, { distractorPool: full });
+  const exercises = introScriptExercises(letters, { distractorPool: full, srcScripts });
   return {
     lesson: {
       id: 'intro_' + scriptName + '_' + Date.now(),
@@ -2573,7 +2600,7 @@ const ADD_LESSON_GENERATORS = {
     ? generateMathLLM(c.lang, c.srcLang, c.diff, c.addMathInstr, c.jobId)
     : generateMath(c.story, c.diff, c.addMathOps || null),
   // Topic-independent + LLM-free: ignores the story, builds from the script table.
-  intro_script: (c) => generateIntroScript(c.lang, { script: c.introScript || null, difficulty: c.diff }),
+  intro_script: (c) => generateIntroScript(c.lang, { script: c.introScript || null, difficulty: c.diff, srcLang: c.srcLang }),
 };
 
 // ── Repair flagged exercises ──────────────────────────────────────────
@@ -2916,17 +2943,18 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
 // priorRef = the parent chapter id/name so we know which letters are already introduced.)
 function buildArcIntroLessons(lang, srcLang, chapterText, priorRef, difficulty) {
   if (!needsIntroScript(lang, srcLang)) return [];
-  const srcScripts = new Set(scriptsForLang(srcLang || 'en'));
+  const srcArr = scriptsForLang(srcLang || 'en');
+  const srcScripts = new Set(srcArr);
   const out = [];
   for (const scr of scriptsForLang(lang)) {
-    if (srcScripts.has(scr) || !scriptHasTable(scr)) continue;
+    if (srcScripts.has(scr) || !scriptTeachable(scr, srcArr)) continue;
     const table = _scriptsData[scr];
     let letters = introExtendLetters(scr, chapterText, priorRef, difficulty);
     // If nothing is genuinely new this chapter (e.g. all its letters already appeared), skip —
     // an empty extend lesson has nothing to teach. (First chapter: priorRef null → everything
     // in the chapter counts as new, so it naturally seeds the alphabet introduced so far.)
     if (letters.length < 4) continue;
-    const exercises = introScriptExercises(letters, { distractorPool: table.letters });
+    const exercises = introScriptExercises(letters, { distractorPool: table.letters, srcScripts: srcArr });
     out.push({
       id: 'intro_' + scr + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
       type: 'intro_script', script: scr, rtl: !!table.rtl, _arcMode: 'extend', difficulty,

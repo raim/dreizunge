@@ -52,7 +52,14 @@ try { langs = JSON.parse(fs.readFileSync(LANG_FILE, 'utf8')); }
 catch(e) { langs = {}; }
 
 const en = ui['en'] || {};
-const allLangs = Object.keys(ui).filter(l => l !== 'en');
+// Which languages does the app OFFER? languages.json is the source of truth — the source language
+// doubles as the UI language (index.html: `uiLang = APP.srcLang`), so every code there needs UI
+// strings. Deriving this from Object.keys(ui) instead (as this script did until v53) made a
+// language that is ENTIRELY absent from ui.json invisible to the pass that is supposed to fill it:
+// it was never listed, never translated, and `--check` reported "all complete" while Swahili sat at
+// 0/426 keys. Union with ui.json's keys so a stray entry there is still maintained.
+const offeredLangs = Object.keys(langs).filter(l => !l.startsWith('_'));
+const allLangs = [...new Set([...offeredLangs, ...Object.keys(ui)])].filter(l => l !== 'en');
 const workLangs = (INCLUDE_LANGS.length ? INCLUDE_LANGS : allLangs)
   .filter(l => !EXCLUDE_LANGS.has(l));
 

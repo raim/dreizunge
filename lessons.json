@@ -2,6 +2,46 @@
   "schemaVersion": 29,
   "storylines": [
     {
+      "id": "sl_1061419543",
+      "title": "Constanze am Meer",
+      "icon": "📖",
+      "chapters": [
+        "tp_17835897679080000033"
+      ],
+      "lang": "nl",
+      "srcLang": "de",
+      "createdAt": "2026-07-09T09:36:07.965Z",
+      "updatedAt": "2026-07-09T09:36:07.965Z"
+    },
+    {
+      "id": "sl_5166509",
+      "title": "Safari ya Nambari Ndogo",
+      "icon": "🔢",
+      "chapters": [
+        "tp_17835297562280000056",
+        "tp_17835301923540000132",
+        "tp_17835306574650000232",
+        "tp_17835310685460000377",
+        "tp_17835314571110000401",
+        "tp_17835318634230000508",
+        "tp_17835322765780000601",
+        "tp_17835327264620000702",
+        "tp_17835331942640000874",
+        "tp_17835336356620000908",
+        "tp_17835340489720001014"
+      ],
+      "lang": "en",
+      "srcLang": "sw",
+      "createdAt": "2026-07-08T16:55:56.273Z",
+      "updatedAt": "2026-07-09T12:49:53.685Z",
+      "summary": "Hadithi inafuatia \"i,\" namba ndogo, anayetafuta mahali pake katika ulimwengu wa namba. Anagundua dunia ya ajabu iliyojaa namba, sheria, na migogoro, ambapo namba kama Seven na Forty-two huonekana kuwa muhimu. \"i\" anapitia changamoto na kukabiliana na namba kama One, ambaye ni mbaya, na Eight, ambaye anapenda sana kula. Hatimaye, anapata faraja kutoka kwa Zero, ambaye anamfundisha umuhimu wa kujikubali na kuwa yeye mwenyewe, badala ya kujaribu kuwa kama namba zingine. \"i\" anajifunza kuwa yeye ni wa thamani kama yeye alivyo.",
+      "sourceFile": "book-3.pdf",
+      "tags": [
+        "children",
+        "needs native speaker"
+      ]
+    },
+    {
       "id": "sl_2031094932",
       "title": "Ubuntu: Reflections on Being",
       "icon": "🫂",
@@ -626,10 +666,11 @@
         "tp_1859668795"
       ],
       "createdAt": "2026-05-31T21:33:26.869Z",
-      "updatedAt": "2026-07-03T13:20:35.907Z",
+      "updatedAt": "2026-07-09T08:37:26.339Z",
       "tags": [
         "experimental"
-      ]
+      ],
+      "summary": "In einem dunklen Wald trifft die Sängerin Constance auf den Waldgeist. Während einer stürmischen Nacht suchen sie Schutz unter einem alten Baum und sprechen über die Natur des Windes und der Liebe. Am nächsten Morgen singt Constance ein Lied für das neue Tageslicht, während die Sonne durch den Nebel bricht. Die Geschichte thematisiert die Verbindung zur Natur, die Kraft der Musik und die Begegnung mit mystischen Wesen."
     },
     {
       "id": "sl_1746943574",
@@ -1164,6 +1205,4090 @@
     }
   ],
   "topics": [
+    {
+      "topic": "Constanze am Meer",
+      "topicEmoji": "🏖️",
+      "userTopic": "Constanze verbringt 2 Tage am Meer",
+      "userPrompt": "Constanze verbringt 2 Tage am Meer",
+      "lang": "nl",
+      "srcLang": "de",
+      "difficulty": 1,
+      "storyLen": 100,
+      "story": "Constanze, met zon op haar gezicht,\nTwee dagen aan zee, een heerlijk bericht.\nDe golven die ruisen, een zachte bries,\nZe plukt een schelp, met stille vrees.\n\nZe bouwt een kasteel, van zand zo fijn,\nEn lacht om de meeuwen, die vliegen eromheen.\nDe avond komt zacht, met sterren erboven,\nConstanze geniet, van deze zee-liefde.",
+      "storyLang": "target",
+      "storyPrompt": "You are a creative writer and Dutch language teacher. Write a short story directly in Dutch on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Dutch. Writing style: Write a poem, with rhyming words and rhythm.\n\nWrite a story for the topic: \"Constanze verbringt 2 Tage am Meer\". Plain prose, no headings.",
+      "storyStyle": "poem",
+      "lessonFormat": "all_types",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "Constanze verbringt 2 Tage am Meer",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "zee",
+              "source": "Meer"
+            },
+            {
+              "target": "zon",
+              "source": "Sonne"
+            },
+            {
+              "target": "dag",
+              "source": "Tag"
+            },
+            {
+              "target": "meisje",
+              "source": "Mädchen"
+            },
+            {
+              "target": "bouwen",
+              "source": "bauen"
+            },
+            {
+              "target": "zand",
+              "source": "Sand"
+            },
+            {
+              "target": "lachen",
+              "source": "lachen"
+            },
+            {
+              "target": "genieten",
+              "source": "genießen"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Constanze verbringt twee dagen aan de zee.",
+              "source": "Constanze verbringt zwei Tage am Meer.",
+              "words": [
+                "Constanze",
+                "verbringt",
+                "twee",
+                "dagen",
+                "aan",
+                "de",
+                "zee."
+              ]
+            },
+            {
+              "target": "De zon schijnt.",
+              "source": "Die Sonne scheint.",
+              "words": [
+                "De",
+                "zon",
+                "schijnt."
+              ]
+            },
+            {
+              "target": "Ze bouwt een zandkasteel.",
+              "source": "Sie baut eine Sandburg.",
+              "words": [
+                "Ze",
+                "bouwt",
+                "een",
+                "zandkasteel."
+              ]
+            },
+            {
+              "target": "Ze lacht om de meeuwen.",
+              "source": "Sie lacht um die Möwen.",
+              "words": [
+                "Ze",
+                "lacht",
+                "om",
+                "de",
+                "meeuwen."
+              ]
+            },
+            {
+              "target": "Constanze geniet van de zee.",
+              "source": "Constanze genießt das Meer.",
+              "words": [
+                "Constanze",
+                "geniet",
+                "van",
+                "de",
+                "zee."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 347,
+            "completionTokens": 229,
+            "ms": 291849,
+            "at": "2026-07-09T09:08:47.338Z"
+          },
+          "qcAt": "2026-07-09T10:43:25.863Z",
+          "qcBy": "qwen3.6:35b-a3b"
+        },
+        {
+          "id": 6,
+          "type": "synonyms",
+          "title": "Am Meer: Zwei Tage",
+          "desc": "Vokabeln rund um einen Strandaufenthalt.",
+          "icon": "🏖️",
+          "words": [
+            {
+              "base": "gezicht",
+              "gloss": "Gesicht",
+              "sentence": "Constanze, met zon op haar gezicht,",
+              "synonyms": [
+                {
+                  "w": "aanzicht",
+                  "g": "Ansicht"
+                },
+                {
+                  "w": "uitdrukking",
+                  "g": "Ausdruck"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "dagen",
+              "gloss": "Tage",
+              "sentence": "Twee dagen aan zee, een heerlijk bericht.",
+              "synonyms": [
+                {
+                  "w": "periodes",
+                  "g": "Perioden"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "momenten",
+                  "g": "Momente"
+                }
+              ],
+              "homophones": [],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "X is not a synonym of dagen.",
+                  "field": "note",
+                  "at": "2026-07-09T09:50:31.451Z"
+                }
+              },
+              "qc": {
+                "sug": "X is not a synonym of dagen.",
+                "field": "note",
+                "at": "2026-07-09T09:50:31.451Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "base": "heerlijk",
+              "gloss": "köstlich",
+              "sentence": "Twee dagen aan zee, een heerlijk bericht.",
+              "synonyms": [
+                {
+                  "w": "fabelachtig",
+                  "g": "wunderbar"
+                },
+                {
+                  "w": "prachtig",
+                  "g": "wundervoll"
+                },
+                {
+                  "w": "uitstekend",
+                  "g": "ausgezeichnet"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "vreselijk",
+                  "g": "schrecklich"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "bericht",
+              "gloss": "Nachricht",
+              "sentence": "Twee dagen aan zee, een heerlijk bericht.",
+              "synonyms": [
+                {
+                  "w": "mededeling",
+                  "g": "Mitteilung"
+                },
+                {
+                  "w": "boodschap",
+                  "g": "Botschaft"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "golven",
+              "gloss": "Wellen",
+              "sentence": "De golven die ruisen, een zachte bries,",
+              "synonyms": [
+                {
+                  "w": "rimpelingen",
+                  "g": "Rippeln"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "ruisen",
+              "gloss": "rauschen",
+              "sentence": "De golven die ruisen, een zachte bries,",
+              "synonyms": [
+                {
+                  "w": "gieren",
+                  "g": "heulen"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "zachte",
+              "gloss": "weich",
+              "sentence": "De golven die ruisen, een zachte bries,",
+              "synonyms": [
+                {
+                  "w": "soepel",
+                  "g": "geschmeidig"
+                },
+                {
+                  "w": "delicaat",
+                  "g": "fein"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "hard",
+                  "g": "hart"
+                }
+              ],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "translategemma:12b",
+            "attempts": 1,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 656,
+            "completionTokens": 702,
+            "ms": 677526,
+            "at": "2026-07-09T09:32:04.868Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 2555637,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": "translategemma:12b",
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 1344,
+        "totalCompletionTokens": 1082,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 291846,
+            "promptTokens": 347,
+            "completionTokens": 229
+          },
+          {
+            "promptTokens": 656,
+            "completionTokens": 702
+          }
+        ]
+      },
+      "generatedAt": "2026-07-09T09:03:55.419Z",
+      "updatedAt": "2026-07-09T10:50:53.089Z",
+      "id": "tp_17835897679080000033"
+    },
+    {
+      "topic": "Kuwa Yeye",
+      "topicEmoji": "✨",
+      "userTopic": "Maybe she didn’t have to be Seven",
+      "userPrompt": "Maybe she didn’t have to be Seven\n\n[story]\nMaybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Maybe she didn’t have to be Seven.\nMaybe she didn’t have to be One.\nMaybe she didn’t even have to be a number.\nMaybe she could simply be i.\nAnd somehow,\nthat felt just right.",
+      "continuedFrom": "Kujikubali",
+      "continuedFromId": "tp_17835336356620000908",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "Maybe she didn’t have to be Seven",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            },
+            {
+              "target": "Book",
+              "source": "Kitabu"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, uko vipi?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Yes, I understand.",
+              "source": "Ndiyo, ninaelewa.",
+              "words": [
+                "Yes,",
+                "I",
+                "understand."
+              ]
+            },
+            {
+              "target": "No, I don't know.",
+              "source": "Hapana, siijui.",
+              "words": [
+                "No,",
+                "I",
+                "don't",
+                "know."
+              ]
+            },
+            {
+              "target": "Thank you very much.",
+              "source": "Asante sana.",
+              "words": [
+                "Thank",
+                "you",
+                "very",
+                "much."
+              ]
+            },
+            {
+              "target": "Please, give me water.",
+              "source": "Tafadhali, nipe maji.",
+              "words": [
+                "Please,",
+                "give",
+                "me",
+                "water."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 300,
+            "completionTokens": 225,
+            "ms": 171697,
+            "at": "2026-07-08T18:03:27.529Z"
+          },
+          "qcAt": "2026-07-08T19:01:13.983Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "Maybe she didn’t have to be Seven",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            },
+            {
+              "target": "House",
+              "source": "Nyumba"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, uko vipi?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Yes, I want water, please.",
+              "source": "Ndiyo, ninataka maji, tafadhali.",
+              "words": [
+                "Yes,",
+                "I",
+                "want",
+                "water,",
+                "please."
+              ]
+            },
+            {
+              "target": "No, thank you, I am not sad.",
+              "source": "Hapana, asante, mimi siyo hapa.",
+              "words": [
+                "No,",
+                "thank",
+                "you,",
+                "I",
+                "am",
+                "not",
+                "sad."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Hapana, asante, mimi siyo na huzuni.",
+                  "field": "source",
+                  "at": "2026-07-08T19:02:19.037Z"
+                }
+              },
+              "qc": {
+                "sug": "Hapana, asante, mimi siyo na huzuni.",
+                "field": "source",
+                "at": "2026-07-08T19:02:19.037Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "The cat is beside the house.",
+              "source": "Paka yuko kando ya nyumba.",
+              "words": [
+                "The",
+                "cat",
+                "is",
+                "beside",
+                "the",
+                "house."
+              ]
+            },
+            {
+              "target": "I think the bird is small.",
+              "source": "Nafikiri ndege ni ndogo.",
+              "words": [
+                "I",
+                "think",
+                "the",
+                "bird",
+                "is",
+                "small."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 300,
+            "completionTokens": 225,
+            "ms": 171697,
+            "at": "2026-07-08T18:03:27.529Z"
+          },
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1783605331955_g2kg",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 171755,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 300,
+        "totalCompletionTokens": 225,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 171697,
+            "promptTokens": 300,
+            "completionTokens": 225
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T18:00:35.774Z",
+      "updatedAt": "2026-07-09T14:48:26.364Z",
+      "id": "tp_17835340489720001014"
+    },
+    {
+      "topic": "Kujikubali",
+      "topicEmoji": "😊",
+      "userTopic": "“Of course",
+      "userPrompt": "“Of course\n\n[story]\n“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 52,
+      "story": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Of course.\nI’m not One.\nI’m not Seven.\nI’m not Forty-two.”\n“And that’s okay?”\nasked i.\n“That’s okay,”\nsaid Zero.\n“It’s exactly what makes me Zero.”\n\nLittle i looked around.\nAt Seven.\nAt Eight.\nAt One.\nAt strange old π with his binoculars.\nFor the first time all day,\nshe stopped crying.",
+      "continuedFrom": "Faraja ya Zero",
+      "continuedFromId": "tp_17835331942640000874",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "“Of course",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            },
+            {
+              "target": "House",
+              "source": "Nyumba"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, ukoje?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Yes, I understand.",
+              "source": "Ndiyo, ninaelewa.",
+              "words": [
+                "Yes,",
+                "I",
+                "understand."
+              ]
+            },
+            {
+              "target": "No, I don't know.",
+              "source": "Hapana, sitaki.",
+              "words": [
+                "No,",
+                "I",
+                "don't",
+                "know."
+              ]
+            },
+            {
+              "target": "Thank you very much.",
+              "source": "Asante sana.",
+              "words": [
+                "Thank",
+                "you",
+                "very",
+                "much."
+              ]
+            },
+            {
+              "target": "Please, give me water.",
+              "source": "Tafadhali, nipe maji.",
+              "words": [
+                "Please,",
+                "give",
+                "me",
+                "water."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 343,
+            "completionTokens": 222,
+            "ms": 211952,
+            "at": "2026-07-08T17:56:46.387Z"
+          },
+          "qcAt": "2026-07-08T18:58:41.596Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "“Of course",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Goodbye",
+              "source": "Kwaheri"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, ukoje?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Goodbye, see you later.",
+              "source": "Kwaheri, tutaonana baadaye.",
+              "words": [
+                "Goodbye,",
+                "see",
+                "you",
+                "later."
+              ]
+            },
+            {
+              "target": "Please, can I have some water?",
+              "source": "Tafadhali, je, naweza kupata maji?",
+              "words": [
+                "Please,",
+                "can",
+                "I",
+                "have",
+                "some",
+                "water?"
+              ]
+            },
+            {
+              "target": "Thank you very much.",
+              "source": "Asante sana.",
+              "words": [
+                "Thank",
+                "you",
+                "very",
+                "much."
+              ]
+            },
+            {
+              "target": "Yes, I think that is true.",
+              "source": "Ndiyo, nadhani hilo ni kweli.",
+              "words": [
+                "Yes,",
+                "I",
+                "think",
+                "that",
+                "is",
+                "true."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 343,
+            "completionTokens": 222,
+            "ms": 211952,
+            "at": "2026-07-08T17:56:46.387Z"
+          },
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1783605327140_99mf",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 212009,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 343,
+        "totalCompletionTokens": 222,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 211952,
+            "promptTokens": 343,
+            "completionTokens": 222
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T17:53:14.378Z",
+      "updatedAt": "2026-07-09T13:55:27.144Z",
+      "id": "tp_17835336356620000908"
+    },
+    {
+      "topic": "Faraja ya Zero",
+      "topicEmoji": "🫂",
+      "userTopic": "Then somebody quietly sat beside her",
+      "userPrompt": "Then somebody quietly sat beside her\n\n[story]\nThen somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 66,
+      "story": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "Then somebody quietly sat beside her.\nIt was Zero.\nZero was shy.\nZero was quiet.\nZero never pushed to the front.\nMost of the time,\nnobody noticed Zero at all.\n\n“You look sad,”\nsaid Zero.\n“I don’t belong here,”\nsaid little i.\n“Everyone is a number.\nBut I’m only me.”\nZero thought for a moment.\nThen he smiled.\n“I don’t think that’s true.”\n“Really?” asked i.",
+      "continuedFrom": "Hatima ya Nane",
+      "continuedFromId": "tp_17835327264620000702",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "Then somebody quietly sat beside her",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Goodbye",
+              "source": "Kwaheri"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, uko vipi?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Goodbye, see you later.",
+              "source": "Kwaheri, tutaonana baadaye.",
+              "words": [
+                "Goodbye,",
+                "see",
+                "you",
+                "later."
+              ]
+            },
+            {
+              "target": "Please, give me water.",
+              "source": "Tafadhali, nipe maji.",
+              "words": [
+                "Please,",
+                "give",
+                "me",
+                "water."
+              ]
+            },
+            {
+              "target": "Thank you very much.",
+              "source": "Asante sana.",
+              "words": [
+                "Thank",
+                "you",
+                "very",
+                "much."
+              ]
+            },
+            {
+              "target": "Yes, I understand.",
+              "source": "Ndiyo, ninaelewa.",
+              "words": [
+                "Yes,",
+                "I",
+                "understand."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 358,
+            "completionTokens": 226,
+            "ms": 187569,
+            "at": "2026-07-08T17:48:34.164Z"
+          },
+          "qcAt": "2026-07-08T18:55:55.015Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "Then somebody quietly sat beside her",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Quietly",
+              "source": "Kwenye utulivu",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Kwa utulivu",
+                  "field": "source",
+                  "at": "2026-07-08T18:56:03.180Z"
+                }
+              },
+              "qc": {
+                "sug": "Kwa utulivu",
+                "field": "source",
+                "at": "2026-07-08T18:56:03.180Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "Beside",
+              "source": "Kando ya"
+            },
+            {
+              "target": "Sad",
+              "source": "Hapa",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Mzito",
+                  "field": "source",
+                  "at": "2026-07-08T18:56:14.861Z"
+                }
+              },
+              "qc": {
+                "sug": "Mzito",
+                "field": "source",
+                "at": "2026-07-08T18:56:14.861Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "Belong",
+              "source": "Kuwa na uhusiano"
+            },
+            {
+              "target": "Think",
+              "source": "Kufikiria"
+            },
+            {
+              "target": "True",
+              "source": "Kweli"
+            },
+            {
+              "target": "Smile",
+              "source": "Tabasamu"
+            },
+            {
+              "target": "Moment",
+              "source": "Muda"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, ukoje?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Yes, I understand.",
+              "source": "Ndiyo, ninaelewa.",
+              "words": [
+                "Yes,",
+                "I",
+                "understand."
+              ]
+            },
+            {
+              "target": "No, I don't know.",
+              "source": "Hapana, sitaki.",
+              "words": [
+                "No,",
+                "I",
+                "don't",
+                "know."
+              ]
+            },
+            {
+              "target": "Please, can I have some water?",
+              "source": "Tafadhali, je, naweza kupata maji?",
+              "words": [
+                "Please,",
+                "can",
+                "I",
+                "have",
+                "some",
+                "water?"
+              ]
+            },
+            {
+              "target": "Thank you for the food.",
+              "source": "Asante kwa chakula.",
+              "words": [
+                "Thank",
+                "you",
+                "for",
+                "the",
+                "food."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 358,
+            "completionTokens": 226,
+            "ms": 187569,
+            "at": "2026-07-08T17:48:34.164Z"
+          },
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1783605322730_swx8",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 187603,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 358,
+        "totalCompletionTokens": 226,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 187568,
+            "promptTokens": 358,
+            "completionTokens": 226
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T17:45:26.561Z",
+      "updatedAt": "2026-07-09T13:55:22.734Z",
+      "id": "tp_17835331942640000874"
+    },
+    {
+      "topic": "Hatima ya Nane",
+      "topicEmoji": "🤕",
+      "userTopic": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+      "userPrompt": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes\n\n[story]\n∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 85,
+      "story": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes?\nOr is he finite? Nothing will change.\nOh no — he will find One for revenge!\n\nLittle i witnesses all, with distress,\nShe has never been part of such a mess.\nShe trembles with fear, wants to disappear,\nthis whole situation doesn’t seem real!\nAfter the scuffle with number One,\nEight didn’t eat and it scares everyone.\ni looks around as the numbers assemble,\nSome numbers command, but to her it’s just mumble.",
+      "continuedFrom": "Mzozo wa Pie",
+      "continuedFromId": "tp_17835322765780000601",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            },
+            {
+              "target": "House",
+              "source": "Nyumba"
+            },
+            {
+              "target": "Cat",
+              "source": "Paka"
+            },
+            {
+              "target": "Dog",
+              "source": "Mbwa"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, ukoje?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Yes, I am fine.",
+              "source": "Ndiyo, mimi ni mzuri.",
+              "words": [
+                "Yes,",
+                "I",
+                "am",
+                "fine."
+              ]
+            },
+            {
+              "target": "No, I am not okay.",
+              "source": "Hapana, mimi si mzuri.",
+              "words": [
+                "No,",
+                "I",
+                "am",
+                "not",
+                "okay."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Hapana, mimi si sawa.",
+                  "field": "source",
+                  "at": "2026-07-08T18:53:06.718Z"
+                }
+              },
+              "qc": {
+                "sug": "Hapana, mimi si sawa.",
+                "field": "source",
+                "at": "2026-07-08T18:53:06.718Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "I want water.",
+              "source": "Nataka maji.",
+              "words": [
+                "I",
+                "want",
+                "water."
+              ]
+            },
+            {
+              "target": "The cat is in the house.",
+              "source": "Paka yuko ndani ya nyumba.",
+              "words": [
+                "The",
+                "cat",
+                "is",
+                "in",
+                "the",
+                "house."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 378,
+            "completionTokens": 232,
+            "ms": 239888,
+            "at": "2026-07-08T17:41:56.637Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "∞\nEight collapsed, and now lies,\nwill he ever open his eyes",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Goodbye",
+              "source": "Kwaheri"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, ukoje?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Goodbye, see you later.",
+              "source": "Kwaheri, tutaonana baadaye.",
+              "words": [
+                "Goodbye,",
+                "see",
+                "you",
+                "later."
+              ]
+            },
+            {
+              "target": "Please, give me some water.",
+              "source": "Tafadhali, nipe maji.",
+              "words": [
+                "Please,",
+                "give",
+                "me",
+                "some",
+                "water."
+              ]
+            },
+            {
+              "target": "Thank you very much.",
+              "source": "Asante sana.",
+              "words": [
+                "Thank",
+                "you",
+                "very",
+                "much."
+              ]
+            },
+            {
+              "target": "Yes, I am fine.",
+              "source": "Ndiyo, mimi ni mzuri.",
+              "words": [
+                "Yes,",
+                "I",
+                "am",
+                "fine."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 378,
+            "completionTokens": 232,
+            "ms": 239888,
+            "at": "2026-07-08T17:41:56.637Z"
+          }
+        },
+        {
+          "id": "ls_1783605318290_fq56",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 239945,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 378,
+        "totalCompletionTokens": 232,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 239888,
+            "promptTokens": 378,
+            "completionTokens": 232
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T17:37:56.693Z",
+      "updatedAt": "2026-07-09T13:55:18.294Z",
+      "id": "tp_17835327264620000702"
+    },
+    {
+      "topic": "Mzozo wa Pie",
+      "topicEmoji": "😠",
+      "userTopic": "As he finished his kind introduction,",
+      "userPrompt": "As he finished his kind introduction,\n\n[story]\nAs he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 72,
+      "story": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "As he finished his kind introduction,\nat the end of the room, there’s some sort of disruption.\nEight is rushing, screaming:\n“WHAT PIE?”\nEight is still screaming:\n“SOMEONE SAID PIE?”\nEight is hungry, he always is,\nhe only eats and has two bellies for this.\n\nHe loves pie.\nHe loves cake.\nHe loves pudding.\nHe loves second breakfast.\nHe is almost there,\nthe first at the table!\nThen One throws a cable.",
+      "continuedFrom": "Kutana na Pi",
+      "continuedFromId": "tp_17835318634230000508",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "As he finished his kind introduction,",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Goodbye",
+              "source": "Kwaheri"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, ukoje?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Goodbye, see you later.",
+              "source": "Kwaheri, tutaonana baadaye.",
+              "words": [
+                "Goodbye,",
+                "see",
+                "you",
+                "later."
+              ]
+            },
+            {
+              "target": "Please, give me water.",
+              "source": "Tafadhali, nipe maji.",
+              "words": [
+                "Please,",
+                "give",
+                "me",
+                "water."
+              ]
+            },
+            {
+              "target": "Thank you very much.",
+              "source": "Asante sana.",
+              "words": [
+                "Thank",
+                "you",
+                "very",
+                "much."
+              ]
+            },
+            {
+              "target": "Yes, I am fine.",
+              "source": "Ndiyo, mimi ni mzuri.",
+              "words": [
+                "Yes,",
+                "I",
+                "am",
+                "fine."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 359,
+            "completionTokens": 227,
+            "ms": 193448,
+            "at": "2026-07-08T17:34:16.978Z"
+          },
+          "qcAt": "2026-07-08T18:50:31.673Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "As he finished his kind introduction,",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Name",
+              "source": "Jina"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Good",
+              "source": "Nzuri"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, what is your name?",
+              "source": "Habari, jina lako ni nani?",
+              "words": [
+                "Hello,",
+                "what",
+                "is",
+                "your",
+                "name?"
+              ]
+            },
+            {
+              "target": "Yes, I like water.",
+              "source": "Ndiyo, mimi napenda maji.",
+              "words": [
+                "Yes,",
+                "I",
+                "like",
+                "water."
+              ]
+            },
+            {
+              "target": "No, thank you, I am not hungry.",
+              "source": "Hapana, asante, mimi si na njaa.",
+              "words": [
+                "No,",
+                "thank",
+                "you,",
+                "I",
+                "am",
+                "not",
+                "hungry."
+              ]
+            },
+            {
+              "target": "Please, give me some food.",
+              "source": "Tafadhali, nipe chakula.",
+              "words": [
+                "Please,",
+                "give",
+                "me",
+                "some",
+                "food."
+              ]
+            },
+            {
+              "target": "Good evening, everyone.",
+              "source": "Jioni, kila mtu.",
+              "words": [
+                "Good",
+                "evening,",
+                "everyone."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 359,
+            "completionTokens": 227,
+            "ms": 193448,
+            "at": "2026-07-08T17:34:16.978Z"
+          },
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1783605311900_ze8o",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 193484,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 359,
+        "totalCompletionTokens": 227,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 193448,
+            "promptTokens": 359,
+            "completionTokens": 227
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T17:31:03.495Z",
+      "updatedAt": "2026-07-09T13:55:11.904Z",
+      "id": "tp_17835322765780000601"
+    },
+    {
+      "topic": "Kutana na Pi",
+      "topicEmoji": "🥧",
+      "userTopic": "One is mean, he’s always first,",
+      "userPrompt": "One is mean, he’s always first,\n\n[story]\nOne is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 54,
+      "story": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One is mean, he’s always first,\ndoesn’t care who he’s gonna hurt.\nHe just says what he sees,\nthinks it’s true, what he only believes.\n\nThen somebody stepped politely by.\n“Nice to meet you.\nMy name is π.”\nHe wore a funny fringe,\ncarried binoculars,\nand seemed to have travelled\naround the whole world.",
+      "continuedFrom": "Panga na Uamuzi",
+      "continuedFromId": "tp_17835314571110000401",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "One is mean, he’s always first,",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Name",
+              "source": "Jina"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Good",
+              "source": "Nzuri"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, what is your name?",
+              "source": "Habari, jina lako ni nani?",
+              "words": [
+                "Hello,",
+                "what",
+                "is",
+                "your",
+                "name?"
+              ]
+            },
+            {
+              "target": "Yes, I am happy.",
+              "source": "Ndiyo, mimi ni furaha.",
+              "words": [
+                "Yes,",
+                "I",
+                "am",
+                "happy."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Ndiyo, mimi nimefurahi.",
+                  "field": "source",
+                  "at": "2026-07-08T18:47:31.316Z"
+                }
+              },
+              "qc": {
+                "sug": "Ndiyo, mimi nimefurahi.",
+                "field": "source",
+                "at": "2026-07-08T18:47:31.316Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "No, thank you.",
+              "source": "Hapana, asante.",
+              "words": [
+                "No,",
+                "thank",
+                "you."
+              ]
+            },
+            {
+              "target": "Please, give me water.",
+              "source": "Tafadhali, nipe maji.",
+              "words": [
+                "Please,",
+                "give",
+                "me",
+                "water."
+              ]
+            },
+            {
+              "target": "The water is good.",
+              "source": "Maji ni nzuri.",
+              "words": [
+                "The",
+                "water",
+                "is",
+                "good."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 335,
+            "completionTokens": 228,
+            "ms": 184937,
+            "at": "2026-07-08T17:27:22.157Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "One is mean, he’s always first,",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Cat",
+              "source": "Paka"
+            },
+            {
+              "target": "Dog",
+              "source": "Mbwa"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            },
+            {
+              "target": "Bird",
+              "source": "Ndege"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, everyone!",
+              "source": "Habari, kila mtu!",
+              "words": [
+                "Hello,",
+                "everyone!"
+              ]
+            },
+            {
+              "target": "I have a cat.",
+              "source": "Mimi nina paka.",
+              "words": [
+                "I",
+                "have",
+                "a",
+                "cat."
+              ]
+            },
+            {
+              "target": "The dog wants water.",
+              "source": "Mbwa anataka maji.",
+              "words": [
+                "The",
+                "dog",
+                "wants",
+                "water."
+              ]
+            },
+            {
+              "target": "Yes, I like food.",
+              "source": "Ndiyo, mimi napenda chakula.",
+              "words": [
+                "Yes,",
+                "I",
+                "like",
+                "food."
+              ]
+            },
+            {
+              "target": "No, I don't see a bird.",
+              "source": "Hapana, mimi siioni ndege.",
+              "words": [
+                "No,",
+                "I",
+                "don't",
+                "see",
+                "a",
+                "bird."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 335,
+            "completionTokens": 228,
+            "ms": 184937,
+            "at": "2026-07-08T17:27:22.157Z"
+          }
+        },
+        {
+          "id": "ls_1783605307738_9qbe",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 184972,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 335,
+        "totalCompletionTokens": 228,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 184937,
+            "promptTokens": 335,
+            "completionTokens": 228
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T17:24:17.185Z",
+      "updatedAt": "2026-07-09T13:55:07.742Z",
+      "id": "tp_17835318634230000508"
+    },
+    {
+      "topic": "Panga na Uamuzi",
+      "topicEmoji": "📐",
+      "userTopic": "In this world, so chaotic and strange,",
+      "userPrompt": "In this world, so chaotic and strange,\n\n[story]\nIn this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 82,
+      "story": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "In this world, so chaotic and strange,\nsome numbers like to be arranged.\nSometimes they stand in rows.\nSometimes they stand in circles.\nSometimes they even form a band.\ni also wants to be of this world, in a band,\nbut does not know where to stand.\n\n“Look, there’s a letter, that’s weird,”\nnoticed Four,\npetting his funny beard.\nAll the numbers, from here, from there,\ncame — and judgmentally stare.\n“She’s so different, she’s so small,”\nnoticed One, who’s very tall.",
+      "continuedFrom": "Tafuta Familia",
+      "continuedFromId": "tp_17835310685460000377",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "In this world, so chaotic and strange,",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "World",
+              "source": "Dunia"
+            },
+            {
+              "target": "Number",
+              "source": "Namba"
+            },
+            {
+              "target": "Small",
+              "source": "Ndogo"
+            },
+            {
+              "target": "Big",
+              "source": "Kubwa"
+            },
+            {
+              "target": "Cat",
+              "source": "Paka"
+            },
+            {
+              "target": "Dog",
+              "source": "Mbwa"
+            },
+            {
+              "target": "House",
+              "source": "Nyumba"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, world!",
+              "source": "Habari, dunia!",
+              "words": [
+                "Hello,",
+                "world!"
+              ]
+            },
+            {
+              "target": "This is a cat.",
+              "source": "Huyu ni paka.",
+              "words": [
+                "This",
+                "is",
+                "a",
+                "cat."
+              ]
+            },
+            {
+              "target": "The dog is big.",
+              "source": "Mbwa yuko kubwa.",
+              "words": [
+                "The",
+                "dog",
+                "is",
+                "big."
+              ]
+            },
+            {
+              "target": "The house is small.",
+              "source": "Nyumba ndogo.",
+              "words": [
+                "The",
+                "house",
+                "is",
+                "small."
+              ]
+            },
+            {
+              "target": "I see a number.",
+              "source": "Ninaona namba.",
+              "words": [
+                "I",
+                "see",
+                "a",
+                "number."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 379,
+            "completionTokens": 202,
+            "ms": 173623,
+            "at": "2026-07-08T17:20:42.270Z"
+          },
+          "qcAt": "2026-07-08T18:45:08.709Z",
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "In this world, so chaotic and strange,",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            },
+            {
+              "target": "Number",
+              "source": "Namba"
+            },
+            {
+              "target": "Bird",
+              "source": "Ndege"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, everyone!",
+              "source": "Habari, kila mtu!",
+              "words": [
+                "Hello,",
+                "everyone!"
+              ]
+            },
+            {
+              "target": "I want water, please.",
+              "source": "Mimi ninataka maji, tafadhali.",
+              "words": [
+                "I",
+                "want",
+                "water,",
+                "please."
+              ]
+            },
+            {
+              "target": "That is a bird.",
+              "source": "Hiyo ni ndege.",
+              "words": [
+                "That",
+                "is",
+                "a",
+                "bird."
+              ]
+            },
+            {
+              "target": "Yes, I have food.",
+              "source": "Ndiyo, mimi nina chakula.",
+              "words": [
+                "Yes,",
+                "I",
+                "have",
+                "food."
+              ]
+            },
+            {
+              "target": "No, thank you.",
+              "source": "Hapana, asante.",
+              "words": [
+                "No,",
+                "thank",
+                "you."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 379,
+            "completionTokens": 202,
+            "ms": 173623,
+            "at": "2026-07-08T17:20:42.270Z"
+          },
+          "qcBy": "translategemma:12b"
+        },
+        {
+          "id": "ls_1783605295858_3z4e",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        },
+        {
+          "id": "ls_1783596534690",
+          "type": "math",
+          "title": "😀😀😀",
+          "desc": "+ +",
+          "icon": "😀",
+          "numbers": [
+            0,
+            1,
+            1,
+            2,
+            3,
+            5,
+            8,
+            13,
+            21,
+            34,
+            55,
+            89,
+            144,
+            233,
+            377
+          ],
+          "difficulty": 3,
+          "mathInstruction": "add the fibonacci series as sequentially increasing addition questions starting from 0+1=1, 1+1=2, 1+2=3 and so on, don't skip any step of the fibonacci series.",
+          "exercises": [
+            {
+              "type": "math_calc",
+              "a": "0",
+              "op": "+",
+              "b": "1",
+              "correct": "1",
+              "choices": [
+                "0",
+                "2",
+                "1",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "1",
+              "correct": "2",
+              "choices": [
+                "2",
+                "3",
+                "1",
+                "4"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "1",
+              "op": "+",
+              "b": "2",
+              "correct": "3",
+              "choices": [
+                "2",
+                "4",
+                "3",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "2",
+              "op": "+",
+              "b": "3",
+              "correct": "5",
+              "choices": [
+                "7",
+                "9",
+                "5",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "3",
+              "op": "+",
+              "b": "5",
+              "correct": "8",
+              "choices": [
+                "12",
+                "10",
+                "5",
+                "8"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "5",
+              "op": "+",
+              "b": "8",
+              "correct": "13",
+              "choices": [
+                "23",
+                "8",
+                "18",
+                "13"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "8",
+              "op": "+",
+              "b": "13",
+              "correct": "21",
+              "choices": [
+                "13",
+                "28",
+                "21",
+                "35"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "13",
+              "op": "+",
+              "b": "21",
+              "correct": "34",
+              "choices": [
+                "34",
+                "47",
+                "21",
+                "61"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "21",
+              "op": "+",
+              "b": "34",
+              "correct": "55",
+              "choices": [
+                "89",
+                "144",
+                "55",
+                "34"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "34",
+              "op": "+",
+              "b": "55",
+              "correct": "89",
+              "choices": [
+                "55",
+                "144",
+                "233",
+                "89"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "55",
+              "op": "+",
+              "b": "89",
+              "correct": "144",
+              "choices": [
+                "89",
+                "377",
+                "233",
+                "144"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "89",
+              "op": "+",
+              "b": "144",
+              "correct": "233",
+              "choices": [
+                "521",
+                "144",
+                "377",
+                "233"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "144",
+              "op": "+",
+              "b": "233",
+              "correct": "377",
+              "choices": [
+                "377",
+                "233",
+                "685",
+                "521"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "233",
+              "op": "+",
+              "b": "377",
+              "correct": "610",
+              "choices": [
+                "610",
+                "987",
+                "1597",
+                "377"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "math",
+            "model": "qwen2.5:7b",
+            "attempts": 1,
+            "valid": 14,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 565,
+            "completionTokens": 644,
+            "ms": 568629,
+            "at": "2026-07-09T11:28:54.690Z"
+          }
+        }
+      ],
+      "generationStats": {
+        "totalMs": 173658,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 379,
+        "totalCompletionTokens": 202,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 173623,
+            "promptTokens": 379,
+            "completionTokens": 202
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T17:17:48.613Z",
+      "updatedAt": "2026-07-09T13:54:57.348Z",
+      "id": "tp_17835314571110000401"
+    },
+    {
+      "topic": "Tafuta Familia",
+      "topicEmoji": "👪",
+      "userTopic": "“Are you my family",
+      "userPrompt": "“Are you my family\n\n[story]\n“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 76,
+      "story": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "“Are you my family?” asked i.\nSeven shook his head.\n“I’m sorry,” he said.\n“But I’m just a Seven.”\ni burst into tears.\n\nIn the land full of sevens, full of zeros,\nhigh numbers are playing the heroes.\nForty-two thinks he is the smartest,\nbut no one really has all of the answers.\nBut let’s see, where is i?\nWhere’s our little guy?\nThere are some creepy looking guys,\nalmost as if they were in disguise.",
+      "continuedFrom": "Ulimwengu wa Nambari",
+      "continuedFromId": "tp_17835306574650000232",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "“Are you my family",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Family",
+              "source": "Familia"
+            },
+            {
+              "target": "Sorry",
+              "source": "Samahani"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Name",
+              "source": "Jina"
+            },
+            {
+              "target": "I",
+              "source": "Mimi"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, what is your name?",
+              "source": "Habari, jina lako ni nani?",
+              "words": [
+                "Hello,",
+                "what",
+                "is",
+                "your",
+                "name?"
+              ]
+            },
+            {
+              "target": "I am sorry.",
+              "source": "Mimi ni samahani.",
+              "words": [
+                "I",
+                "am",
+                "sorry."
+              ]
+            },
+            {
+              "target": "Yes, I am happy.",
+              "source": "Ndiyo, mimi ni furaha.",
+              "words": [
+                "Yes,",
+                "I",
+                "am",
+                "happy."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Ndiyo, mimi nimefurahi.",
+                  "field": "source",
+                  "at": "2026-07-08T18:42:10.303Z"
+                }
+              },
+              "qc": {
+                "sug": "Ndiyo, mimi nimefurahi.",
+                "field": "source",
+                "at": "2026-07-08T18:42:10.303Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "No, I am not sad.",
+              "source": "Hapana, mimi siyo huzuni.",
+              "words": [
+                "No,",
+                "I",
+                "am",
+                "not",
+                "sad."
+              ]
+            },
+            {
+              "target": "What is your name?",
+              "source": "Jina lako ni nani?",
+              "words": [
+                "What",
+                "is",
+                "your",
+                "name?"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 363,
+            "completionTokens": 227,
+            "ms": 193131,
+            "at": "2026-07-08T17:14:10.747Z"
+          }
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "“Are you my family",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Goodbye",
+              "source": "Kwaheri"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Family",
+              "source": "Familia"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, ukoje?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Goodbye, see you later.",
+              "source": "Kwaheri, tutaonana baadaye.",
+              "words": [
+                "Goodbye,",
+                "see",
+                "you",
+                "later."
+              ]
+            },
+            {
+              "target": "Yes, I am happy.",
+              "source": "Ndiyo, mimi ni furaha.",
+              "words": [
+                "Yes,",
+                "I",
+                "am",
+                "happy."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Ndiyo, mimi nina furaha.",
+                  "field": "source",
+                  "at": "2026-07-08T18:43:36.101Z"
+                }
+              },
+              "qc": {
+                "sug": "Ndiyo, mimi nina furaha.",
+                "field": "source",
+                "at": "2026-07-08T18:43:36.101Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "No, I am not sad.",
+              "source": "Hapana, mimi siyo na huzuni.",
+              "words": [
+                "No,",
+                "I",
+                "am",
+                "not",
+                "sad."
+              ]
+            },
+            {
+              "target": "Please, give me water.",
+              "source": "Tafadhali, nipe maji.",
+              "words": [
+                "Please,",
+                "give",
+                "me",
+                "water."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 363,
+            "completionTokens": 227,
+            "ms": 193131,
+            "at": "2026-07-08T17:14:10.747Z"
+          }
+        },
+        {
+          "id": "ls_1783605288021_48ko",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 193179,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 363,
+        "totalCompletionTokens": 227,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 193131,
+            "promptTokens": 363,
+            "completionTokens": 227
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T17:10:57.568Z",
+      "updatedAt": "2026-07-09T13:54:48.026Z",
+      "id": "tp_17835310685460000377"
+    },
+    {
+      "topic": "Ulimwengu wa Nambari",
+      "topicEmoji": "🔢",
+      "userTopic": "One evening, while everyone slept,",
+      "userPrompt": "One evening, while everyone slept,\n\n[story]\nOne evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "One evening, while everyone slept,\nlittle i followed a glowing path.\nIt led to another world.\nA strange world.\nA number world.\n\nAt the end of the road\nstood a tall Seven.\nLittle i gasped.\nHe looked almost like her.\n“Do you know me?” asked i.\nBut Seven only shrugged.\n“No,” he said.\n“I’m a Seven.”",
+      "continuedFrom": "Nambari na Sheria",
+      "continuedFromId": "tp_17835301923540000132",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "One evening, while everyone slept,",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "evening",
+              "source": "jioni"
+            },
+            {
+              "target": "everyone",
+              "source": "kila mtu"
+            },
+            {
+              "target": "slept",
+              "source": "alilala"
+            },
+            {
+              "target": "followed",
+              "source": "alifuata"
+            },
+            {
+              "target": "path",
+              "source": "njia"
+            },
+            {
+              "target": "world",
+              "source": "ulimwengu"
+            },
+            {
+              "target": "tall",
+              "source": "mrefu"
+            },
+            {
+              "target": "gasped",
+              "source": "alipumua kwa kushangaa"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "One evening, everyone slept.",
+              "source": "Jioni moja, kila mtu alilala.",
+              "words": [
+                "One",
+                "evening,",
+                "everyone",
+                "slept."
+              ]
+            },
+            {
+              "target": "Little i followed a path.",
+              "source": "Mtoto i alifuata njia.",
+              "words": [
+                "Little",
+                "i",
+                "followed",
+                "a",
+                "path."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Little I followed a path.",
+                  "field": "target",
+                  "at": "2026-07-08T18:39:18.266Z"
+                }
+              },
+              "qc": {
+                "sug": "Little I followed a path.",
+                "field": "target",
+                "at": "2026-07-08T18:39:18.266Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "It led to another world.",
+              "source": "Ilielekea ulimwengu mwingine.",
+              "words": [
+                "It",
+                "led",
+                "to",
+                "another",
+                "world."
+              ]
+            },
+            {
+              "target": "A tall Seven stood there.",
+              "source": "Namba saba mrefu alisimama hapo.",
+              "words": [
+                "A",
+                "tall",
+                "Seven",
+                "stood",
+                "there."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Namba saba alisimama hapo.",
+                  "field": "source",
+                  "at": "2026-07-08T18:39:40.852Z"
+                }
+              },
+              "qc": {
+                "sug": "Namba saba alisimama hapo.",
+                "field": "source",
+                "at": "2026-07-08T18:39:40.852Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "He said, \"I am a Seven.\"",
+              "source": "Alisema, \"Mimi ni namba saba.\"",
+              "words": [
+                "He",
+                "said,",
+                "\"I",
+                "am",
+                "a",
+                "Seven.\""
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 334,
+            "completionTokens": 281,
+            "ms": 224690,
+            "at": "2026-07-08T17:06:57.209Z"
+          },
+          "_hidden": false
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "One evening, while everyone slept,",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Goodbye",
+              "source": "Kwaheri"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, ukoje?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Goodbye, see you later.",
+              "source": "Kwaheri, tutaonana baadaye.",
+              "words": [
+                "Goodbye,",
+                "see",
+                "you",
+                "later."
+              ]
+            },
+            {
+              "target": "Yes, I understand.",
+              "source": "Ndiyo, ninaelewa.",
+              "words": [
+                "Yes,",
+                "I",
+                "understand."
+              ]
+            },
+            {
+              "target": "No, I don't know.",
+              "source": "Hapana, siijui.",
+              "words": [
+                "No,",
+                "I",
+                "don't",
+                "know."
+              ]
+            },
+            {
+              "target": "Please, give me water.",
+              "source": "Tafadhali, nipe maji.",
+              "words": [
+                "Please,",
+                "give",
+                "me",
+                "water."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 334,
+            "completionTokens": 281,
+            "ms": 224690,
+            "at": "2026-07-08T17:06:57.209Z"
+          },
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783605118694",
+          "type": "synonyms",
+          "title": "Ulimwengu wa Nambari",
+          "desc": "Jifunze maneno muhimu kuhusu nambari.",
+          "icon": "🔢",
+          "words": [
+            {
+              "base": "number",
+              "gloss": "nambari",
+              "sentence": "A number world.",
+              "synonyms": [
+                {
+                  "w": "digit",
+                  "g": "kishanga"
+                },
+                {
+                  "w": "figure",
+                  "g": "takwimu"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "world",
+              "gloss": "dunia",
+              "sentence": "It led to another world.",
+              "synonyms": [
+                {
+                  "w": "universe",
+                  "g": "ulimwengu"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "little",
+              "gloss": "ndogo",
+              "sentence": "little i followed a glowing path.",
+              "synonyms": [
+                {
+                  "w": "small",
+                  "g": "mdogo"
+                },
+                {
+                  "w": "tiny",
+                  "g": "dogo sana"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "big",
+                  "g": "kubwa"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "evening",
+              "gloss": "jioni",
+              "sentence": "One evening, while everyone slept,",
+              "synonyms": [
+                {
+                  "w": "dusk",
+                  "g": "giza"
+                }
+              ],
+              "antonyms": [
+                {
+                  "w": "morning",
+                  "g": "asubuhi"
+                }
+              ],
+              "homophones": []
+            },
+            {
+              "base": "while",
+              "gloss": "wakati",
+              "sentence": "One evening, while everyone slept,",
+              "synonyms": [
+                {
+                  "w": "during",
+                  "g": "katika"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "everyone",
+              "gloss": "kila mtu",
+              "sentence": "One evening, while everyone slept,",
+              "synonyms": [
+                {
+                  "w": "everybody",
+                  "g": "kila mtu"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            },
+            {
+              "base": "slept",
+              "gloss": "kulala",
+              "sentence": "One evening, while everyone slept,",
+              "synonyms": [
+                {
+                  "w": "dozed",
+                  "g": "kulala kidogo"
+                }
+              ],
+              "antonyms": [],
+              "homophones": []
+            }
+          ],
+          "_genMeta": {
+            "type": "synonyms",
+            "model": "translategemma:12b",
+            "attempts": 1,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 692,
+            "completionTokens": 619,
+            "ms": 1117439,
+            "at": "2026-07-09T13:51:58.694Z"
+          }
+        },
+        {
+          "id": "ls_1783605211229_mm9i",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 4
+        }
+      ],
+      "generationStats": {
+        "totalMs": 224746,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 334,
+        "totalCompletionTokens": 281,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 224688,
+            "promptTokens": 334,
+            "completionTokens": 281
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T17:03:12.463Z",
+      "updatedAt": "2026-07-09T13:54:38.822Z",
+      "id": "tp_17835306574650000232"
+    },
+    {
+      "topic": "Nambari na Sheria",
+      "topicEmoji": "🧮",
+      "userTopic": "+, −, ∗, /",
+      "userPrompt": "+, −, ∗, /\n\n[story]\n+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 56,
+      "story": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "+, −, ∗, /\nIn the land where rules are made\nand everyone knows their fate,\nwhere the numbers co-exist,\nand signs rule how it is,\nlittle i wandered through the streets\nwith her eyes wide open and heart bouncing with a million beats.\nThere’s a comma, there’s a dot,\npeople still confuse: which one’s what?",
+      "continuedFrom": "Mwanzo wa Safari",
+      "continuedFromId": "tp_17835297562280000056",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "+, −, ∗, /",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Plus",
+              "source": "Plus"
+            },
+            {
+              "target": "Minus",
+              "source": "Ndogo",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Mdogo",
+                  "field": "source",
+                  "at": "2026-07-08T18:35:08.702Z"
+                }
+              },
+              "qc": {
+                "sug": "Mdogo",
+                "field": "source",
+                "at": "2026-07-08T18:35:08.702Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "Multiply",
+              "source": "Kuzidisha"
+            },
+            {
+              "target": "Divide",
+              "source": "Kugawanya"
+            },
+            {
+              "target": "Equals",
+              "source": "Sawa na",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "sawa na",
+                  "field": "source",
+                  "at": "2026-07-08T18:35:23.791Z"
+                }
+              },
+              "qc": {
+                "sug": "sawa na",
+                "field": "source",
+                "at": "2026-07-08T18:35:23.791Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "Number",
+              "source": "Namba"
+            },
+            {
+              "target": "Add",
+              "source": "Kuongeza"
+            },
+            {
+              "target": "Subtract",
+              "source": "Kutoa"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "One plus one equals two.",
+              "source": "Moja plus moja sawa na mbili.",
+              "words": [
+                "One",
+                "plus",
+                "one",
+                "equals",
+                "two."
+              ]
+            },
+            {
+              "target": "Two minus one equals one.",
+              "source": "Mbili ndogo moja sawa na moja.",
+              "words": [
+                "Two",
+                "minus",
+                "one",
+                "equals",
+                "one."
+              ]
+            },
+            {
+              "target": "Three multiplied by two equals six.",
+              "source": "Tatu kuzidishwa na mbili sawa na sita.",
+              "words": [
+                "Three",
+                "multiplied",
+                "by",
+                "two",
+                "equals",
+                "six."
+              ]
+            },
+            {
+              "target": "Ten divided by five equals two.",
+              "source": "Kumi kugawanywa na tano sawa na mbili.",
+              "words": [
+                "Ten",
+                "divided",
+                "by",
+                "five",
+                "equals",
+                "two."
+              ]
+            },
+            {
+              "target": "I add the numbers.",
+              "source": "Mimi huongeza namba.",
+              "words": [
+                "I",
+                "add",
+                "the",
+                "numbers."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 327,
+            "completionTokens": 253,
+            "ms": 216241,
+            "at": "2026-07-08T16:59:32.614Z"
+          },
+          "_hidden": false
+        },
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "+, −, ∗, /",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Plus",
+              "source": "Plus"
+            },
+            {
+              "target": "Minus",
+              "source": "Ndogo",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Mdogo",
+                  "field": "source",
+                  "at": "2026-07-08T18:36:35.176Z"
+                }
+              },
+              "qc": {
+                "sug": "Mdogo",
+                "field": "source",
+                "at": "2026-07-08T18:36:35.176Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "Multiply",
+              "source": "Kuzidisha"
+            },
+            {
+              "target": "Divide",
+              "source": "Kugawanya"
+            },
+            {
+              "target": "Equals",
+              "source": "Ni sawa"
+            },
+            {
+              "target": "Add",
+              "source": "Kuongeza"
+            },
+            {
+              "target": "Subtract",
+              "source": "Toa",
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Ondoa",
+                  "field": "source",
+                  "at": "2026-07-08T18:37:03.292Z"
+                }
+              },
+              "qc": {
+                "sug": "Ondoa",
+                "field": "source",
+                "at": "2026-07-08T18:37:03.292Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "Result",
+              "source": "Matokeo"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "I have two birds, and you have one.  We add them together.",
+              "source": "Nina ndege mbili, na wewe una moja. Tunazongeza pamoja.",
+              "words": [
+                "I",
+                "have",
+                "two",
+                "birds,",
+                "and",
+                "you",
+                "have",
+                "one.",
+                "",
+                "We",
+                "add",
+                "them",
+                "together."
+              ]
+            },
+            {
+              "target": "The cat subtracts one toy from the nest.",
+              "source": "Paka hutoa toy moja kutoka kwenye kituo.",
+              "words": [
+                "The",
+                "cat",
+                "subtracts",
+                "one",
+                "toy",
+                "from",
+                "the",
+                "nest."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Paka huondoa toy moja kutoka kwenye kishati.",
+                  "field": "source",
+                  "at": "2026-07-08T18:37:42.518Z"
+                }
+              },
+              "qc": {
+                "sug": "Paka huondoa toy moja kutoka kwenye kishati.",
+                "field": "source",
+                "at": "2026-07-08T18:37:42.518Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "Multiply the number by two.",
+              "source": "Zidisha namba kwa mbili.",
+              "words": [
+                "Multiply",
+                "the",
+                "number",
+                "by",
+                "two."
+              ]
+            },
+            {
+              "target": "Divide the cake equally among the family.",
+              "source": "Gawanya keki sawasawa kwa familia.",
+              "words": [
+                "Divide",
+                "the",
+                "cake",
+                "equally",
+                "among",
+                "the",
+                "family."
+              ]
+            },
+            {
+              "target": "The result is a big number.",
+              "source": "Matokeo yake ni namba kubwa.",
+              "words": [
+                "The",
+                "result",
+                "is",
+                "a",
+                "big",
+                "number."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 327,
+            "completionTokens": 253,
+            "ms": 216241,
+            "at": "2026-07-08T16:59:32.614Z"
+          },
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783597705590_1_gate",
+          "title": "Lesson 1",
+          "desc": "Nambari na Sheria",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "One",
+              "source": "Moja"
+            },
+            {
+              "target": "Two",
+              "source": "Mbili"
+            },
+            {
+              "target": "Three",
+              "source": "Tatu"
+            },
+            {
+              "target": "Four",
+              "source": "Nne"
+            },
+            {
+              "target": "Five",
+              "source": "Tano"
+            },
+            {
+              "target": "Plus",
+              "source": "Plus"
+            },
+            {
+              "target": "Minus",
+              "source": "Ndogo"
+            },
+            {
+              "target": "Equals",
+              "source": "Sawa na"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "One plus one equals two.",
+              "source": "Moja plus moja sawa na mbili.",
+              "words": [
+                "One",
+                "plus",
+                "one",
+                "equals",
+                "two."
+              ]
+            },
+            {
+              "target": "Two minus one equals one.",
+              "source": "Mbili ndogo moja sawa na moja.",
+              "words": [
+                "Two",
+                "minus",
+                "one",
+                "equals",
+                "one."
+              ]
+            },
+            {
+              "target": "This is a number.",
+              "source": "Hii ni nambari.",
+              "words": [
+                "This",
+                "is",
+                "a",
+                "number."
+              ]
+            },
+            {
+              "target": "I have five apples.",
+              "source": "Nina matunda matano.",
+              "words": [
+                "I",
+                "have",
+                "five",
+                "apples."
+              ]
+            },
+            {
+              "target": "The sign means \"plus\".",
+              "source": "Ishara hii ina maana ya \"plus\".",
+              "words": [
+                "The",
+                "sign",
+                "means",
+                "\"plus\"."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 327,
+            "completionTokens": 217,
+            "ms": 475868,
+            "at": "2026-07-09T11:48:25.590Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1783603147019_1zy1",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        },
+        {
+          "id": "ls_1783541808089",
+          "type": "math",
+          "title": "① ② ③",
+          "desc": "＋ － ×  ÷",
+          "icon": "🔢",
+          "numbers": [
+            3,
+            1,
+            4,
+            2,
+            6,
+            5
+          ],
+          "difficulty": 1,
+          "exercises": [
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                4,
+                3,
+                5,
+                2
+              ],
+              "correct": [
+                "2",
+                "3",
+                "4",
+                "5"
+              ]
+            },
+            {
+              "type": "math_order",
+              "direction": "asc",
+              "numbers": [
+                3,
+                2,
+                5,
+                4
+              ],
+              "correct": [
+                "2",
+                "3",
+                "4",
+                "5"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "4",
+              "op": "+",
+              "b": "4",
+              "correct": "8",
+              "choices": [
+                "7",
+                "8",
+                "9",
+                "6"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "6",
+              "op": "-",
+              "b": "4",
+              "correct": "2",
+              "choices": [
+                "1",
+                "0",
+                "3",
+                "2"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "4",
+              "op": "-",
+              "b": "2",
+              "correct": "2",
+              "choices": [
+                "1",
+                "2",
+                "0",
+                "3"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "4",
+              "op": "+",
+              "b": "5",
+              "correct": "9",
+              "choices": [
+                "10",
+                "8",
+                "7",
+                "9"
+              ]
+            },
+            {
+              "type": "math_calc",
+              "a": "4",
+              "op": "-",
+              "b": "1",
+              "correct": "3",
+              "choices": [
+                "1",
+                "2",
+                "3",
+                "4"
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "math",
+            "model": "(procedural)",
+            "attempts": null,
+            "valid": 7,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "ms": 0,
+            "at": "2026-07-08T20:16:48.089Z"
+          },
+          "_hidden": false
+        }
+      ],
+      "generationStats": {
+        "totalMs": 216294,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 327,
+        "totalCompletionTokens": 253,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 216240,
+            "promptTokens": 327,
+            "completionTokens": 253
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T16:55:56.320Z",
+      "updatedAt": "2026-07-09T13:19:13.382Z",
+      "id": "tp_17835301923540000132"
+    },
+    {
+      "topic": "Mwanzo wa Safari",
+      "topicEmoji": "🌱",
+      "userTopic": "In the world of birds,",
+      "userPrompt": "In the world of birds,\n\n[story]\nIn the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "lang": "en",
+      "srcLang": "sw",
+      "difficulty": 1,
+      "storyLen": 50,
+      "story": "In the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyLang": "target",
+      "storyPrompt": "User-provided story",
+      "userStory": "In the world of birds,\nlittle birds have nests.\nIn the world of cats,\nlittle cats have families.\nIn the world of people,\ngrown-ups often have children.\nAnd in the world of numbers,\nevery number seems to have a place.\nBut little i\ndid not know where hers was.",
+      "storyStyle": "children",
+      "lessons": [
+        {
+          "id": 1,
+          "title": "Lesson 1",
+          "desc": "In the world of birds,",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Bird",
+              "source": "Ndege"
+            },
+            {
+              "target": "Nest",
+              "source": "Kituo"
+            },
+            {
+              "target": "Cat",
+              "source": "Paka"
+            },
+            {
+              "target": "Family",
+              "source": "Familia"
+            },
+            {
+              "target": "Person",
+              "source": "Mtu"
+            },
+            {
+              "target": "Child",
+              "source": "Mtoto"
+            },
+            {
+              "target": "Number",
+              "source": "Namba"
+            },
+            {
+              "target": "World",
+              "source": "Dunia"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "The bird is in the nest.",
+              "source": "Ndege yuko ndani ya kituo.",
+              "words": [
+                "The",
+                "bird",
+                "is",
+                "in",
+                "the",
+                "nest."
+              ],
+              "qcByModel": {
+                "translategemma:12b": {
+                  "sug": "Ndege yuko ndani ya kiota.",
+                  "field": "source",
+                  "at": "2026-07-08T18:34:31.359Z"
+                }
+              },
+              "qc": {
+                "sug": "Ndege yuko ndani ya kiota.",
+                "field": "source",
+                "at": "2026-07-08T18:34:31.359Z",
+                "by": "translategemma:12b"
+              }
+            },
+            {
+              "target": "The cat has a family.",
+              "source": "Paka ana familia.",
+              "words": [
+                "The",
+                "cat",
+                "has",
+                "a",
+                "family."
+              ]
+            },
+            {
+              "target": "The person has a child.",
+              "source": "Mtu ana mtoto.",
+              "words": [
+                "The",
+                "person",
+                "has",
+                "a",
+                "child."
+              ]
+            },
+            {
+              "target": "The number is important.",
+              "source": "Namba ni muhimu.",
+              "words": [
+                "The",
+                "number",
+                "is",
+                "important."
+              ]
+            },
+            {
+              "target": "Birds live in the world.",
+              "source": "Ndege wanaishi katika dunia.",
+              "words": [
+                "Birds",
+                "live",
+                "in",
+                "the",
+                "world."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 314,
+            "completionTokens": 225,
+            "ms": 241518,
+            "at": "2026-07-08T16:55:56.182Z"
+          },
+          "_hidden": false
+        },
+        {
+          "id": "ls_1783597229657_0_gate",
+          "title": "Lesson 1",
+          "desc": "Mwanzo wa Safari",
+          "icon": "📖",
+          "vocab": [
+            {
+              "target": "Hello",
+              "source": "Habari"
+            },
+            {
+              "target": "Goodbye",
+              "source": "Kwaheri"
+            },
+            {
+              "target": "Yes",
+              "source": "Ndiyo"
+            },
+            {
+              "target": "No",
+              "source": "Hapana"
+            },
+            {
+              "target": "Thank you",
+              "source": "Asante"
+            },
+            {
+              "target": "Please",
+              "source": "Tafadhali"
+            },
+            {
+              "target": "Water",
+              "source": "Maji"
+            },
+            {
+              "target": "Food",
+              "source": "Chakula"
+            }
+          ],
+          "sentences": [
+            {
+              "target": "Hello, how are you?",
+              "source": "Habari, uko vizuri?",
+              "words": [
+                "Hello,",
+                "how",
+                "are",
+                "you?"
+              ]
+            },
+            {
+              "target": "Goodbye, see you later.",
+              "source": "Kwaheri, tutaonana baadaye.",
+              "words": [
+                "Goodbye,",
+                "see",
+                "you",
+                "later."
+              ]
+            },
+            {
+              "target": "Yes, I understand.",
+              "source": "Ndiyo, naelewa.",
+              "words": [
+                "Yes,",
+                "I",
+                "understand."
+              ]
+            },
+            {
+              "target": "No, I don't understand.",
+              "source": "Hapana, sielewi.",
+              "words": [
+                "No,",
+                "I",
+                "don't",
+                "understand."
+              ]
+            },
+            {
+              "target": "Thank you very much.",
+              "source": "Asante sana.",
+              "words": [
+                "Thank",
+                "you",
+                "very",
+                "much."
+              ]
+            }
+          ],
+          "_genMeta": {
+            "type": "standard",
+            "model": "translategemma:12b",
+            "attempts": null,
+            "valid": 8,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 313,
+            "completionTokens": 225,
+            "ms": 254331,
+            "at": "2026-07-09T11:40:29.657Z"
+          },
+          "_recreated": true
+        },
+        {
+          "id": "ls_1783602517743",
+          "type": "word_forms",
+          "title": "Wanyama na Nambari",
+          "desc": "Maswali kuhusu wanyama, watu, na nambari.",
+          "icon": "🐦",
+          "items": [
+            {
+              "sentence": "In the world of birds, little birds ___ nests.",
+              "translation": "Dunia ya ndege, ndege wadogo zina makao.",
+              "choices": [
+                "have",
+                "has"
+              ],
+              "correctIndex": 0,
+              "explanation": "Neno 'birds' ni jamii, hivyo 'have'."
+            },
+            {
+              "sentence": "In the world of people, grown-ups often ___ children.",
+              "translation": "Dunia ya watu, watu wazima mara nyingi wana watoto.",
+              "choices": [
+                "have",
+                "has"
+              ],
+              "correctIndex": 0,
+              "explanation": "Neno 'grown-ups' ni jamii, hivyo 'have'."
+            },
+            {
+              "sentence": "And in the world of numbers, every number ___ to have a place.",
+              "translation": "Na katika ulimwengu wa nambari, kila nambari ina nafasi.",
+              "choices": [
+                "seems",
+                "seem"
+              ],
+              "correctIndex": 0,
+              "explanation": "'Every number' ni jamii, hivyo 'seems'."
+            },
+            {
+              "sentence": "little i ___ not know where hers was.",
+              "translation": "I mdogo hakujua alipo.",
+              "choices": [
+                "did",
+                "was"
+              ],
+              "correctIndex": 0,
+              "explanation": "Njia sahihi ya zamani ya 'do'."
+            },
+            {
+              "sentence": "In the world of cats, little cats ___ families.",
+              "translation": "Dunia ya paka, paka wadogo wana familia.",
+              "choices": [
+                "have",
+                "has"
+              ],
+              "correctIndex": 0,
+              "explanation": "Neno 'cats' ni jamii, hivyo 'have'."
+            }
+          ],
+          "_genMeta": {
+            "type": "word_forms",
+            "model": "translategemma:12b",
+            "attempts": 1,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": {},
+            "promptTokens": 965,
+            "completionTokens": 475,
+            "ms": 1143120,
+            "at": "2026-07-09T13:08:37.743Z"
+          }
+        },
+        {
+          "id": "ls_1783603974969_9f9x",
+          "type": "mixed",
+          "title": "🔀 Mixed review",
+          "icon": "🔀",
+          "desc": "A mix of questions from this chapter's other lessons",
+          "perType": 3
+        }
+      ],
+      "generationStats": {
+        "totalMs": 241533,
+        "backend": "ollama",
+        "model": "translategemma:12b",
+        "models": {
+          "story": null,
+          "translation": null,
+          "lessons": "translategemma:12b"
+        },
+        "lessonFormat": "table",
+        "totalPromptTokens": 314,
+        "totalCompletionTokens": 225,
+        "lessons": [
+          {
+            "lessonNum": 1,
+            "ms": 241516,
+            "promptTokens": 314,
+            "completionTokens": 225
+          }
+        ]
+      },
+      "generatedAt": "2026-07-08T16:51:54.650Z",
+      "updatedAt": "2026-07-09T13:32:54.975Z",
+      "id": "tp_17835297562280000056"
+    },
     {
       "topic": "Wanderung entlang der Mosel",
       "topicEmoji": "⛰️",
@@ -1918,59 +6043,15 @@
             },
             {
               "target": "Ndio",
-              "source": "Yes",
-              "qcByModel": {
-                "qwen2.5:7b": {
-                  "sug": "Ailika",
-                  "field": "target",
-                  "at": "2026-07-08T15:50:01.423Z"
-                }
-              },
-              "qc": {
-                "sug": "Ailika",
-                "field": "target",
-                "at": "2026-07-08T15:50:01.423Z",
-                "by": "qwen2.5:7b"
-              }
+              "source": "Yes"
             },
             {
               "target": "Hapana",
-              "source": "No",
-              "qcByModel": {
-                "qwen2.5:14b": {
-                  "sug": "No, it means \"No\" but is a complete sentence in Swahili meaning \"There is no\" or \"It is not\". A correct translation would be \"There isn't\" or \"It isn't\" depending on the context. However, if the intention is a simple negation, \"S: Not\" or \"S: No, (it is not)\" would be more appropriate without additional context. Given the instruction for a direct translation, \"S",
-                  "field": "source",
-                  "at": "2026-07-08T15:54:27.602Z"
-                }
-              },
-              "qc": {
-                "sug": "No, it means \"No\" but is a complete sentence in Swahili meaning \"There is no\" or \"It is not\". A correct translation would be \"There isn't\" or \"It isn't\" depending on the context. However, if the intention is a simple negation, \"S: Not\" or \"S: No, (it is not)\" would be more appropriate without additional context. Given the instruction for a direct translation, \"S",
-                "field": "source",
-                "at": "2026-07-08T15:54:27.602Z",
-                "by": "qwen2.5:14b"
-              }
+              "source": "No"
             },
             {
               "target": "Samahani",
-              "source": "Sorry/Excuse me",
-              "qcByModel": {
-                "qwen2.5:7b": {
-                  "sug": "Sorry",
-                  "field": "source",
-                  "at": "2026-07-08T15:50:09.939Z"
-                },
-                "qwen2.5:14b": {
-                  "sug": "Sorry",
-                  "field": "source",
-                  "at": "2026-07-08T15:54:37.116Z"
-                }
-              },
-              "qc": {
-                "sug": "Sorry",
-                "field": "source",
-                "at": "2026-07-08T15:54:37.116Z",
-                "by": "qwen2.5:14b"
-              }
+              "source": "Sorry/Excuse me"
             },
             {
               "target": "Tafadhali",
@@ -1978,37 +6059,11 @@
             },
             {
               "target": "Mtu",
-              "source": "Person/Human",
-              "qcByModel": {
-                "qwen2.5:7b": {
-                  "sug": "Mwanamume",
-                  "field": "target",
-                  "at": "2026-07-08T15:50:17.864Z"
-                }
-              },
-              "qc": {
-                "sug": "Mwanamume",
-                "field": "target",
-                "at": "2026-07-08T15:50:17.864Z",
-                "by": "qwen2.5:7b"
-              }
+              "source": "Person/Human"
             },
             {
               "target": "Dunia",
-              "source": "World/Earth",
-              "qcByModel": {
-                "qwen2.5:7b": {
-                  "sug": "World",
-                  "field": "source",
-                  "at": "2026-07-08T15:50:21.282Z"
-                }
-              },
-              "qc": {
-                "sug": "World",
-                "field": "source",
-                "at": "2026-07-08T15:50:21.282Z",
-                "by": "qwen2.5:7b"
-              }
+              "source": "World/Earth"
             }
           ],
           "sentences": [
@@ -2025,20 +6080,7 @@
               "words": [
                 "Asante",
                 "sana."
-              ],
-              "qcByModel": {
-                "qwen2.5:7b": {
-                  "sug": "Thank you so much.",
-                  "field": "source",
-                  "at": "2026-07-08T15:50:28.570Z"
-                }
-              },
-              "qc": {
-                "sug": "Thank you so much.",
-                "field": "source",
-                "at": "2026-07-08T15:50:28.570Z",
-                "by": "qwen2.5:7b"
-              }
+              ]
             },
             {
               "target": "Ndio, mimi ni mtu.",
@@ -2048,25 +6090,7 @@
                 "mimi",
                 "ni",
                 "mtu."
-              ],
-              "qcByModel": {
-                "qwen2.5:7b": {
-                  "sug": "Now, I am a person.",
-                  "field": "source",
-                  "at": "2026-07-08T15:50:38.929Z"
-                },
-                "qwen2.5:14b": {
-                  "sug": "Ndio, mimi ni mtu.\n\nS: Yes, I am indeed a person.",
-                  "field": "target",
-                  "at": "2026-07-08T15:55:30.021Z"
-                }
-              },
-              "qc": {
-                "sug": "Ndio, mimi ni mtu.\n\nS: Yes, I am indeed a person.",
-                "field": "target",
-                "at": "2026-07-08T15:55:30.021Z",
-                "by": "qwen2.5:14b"
-              }
+              ]
             },
             {
               "target": "Hapana, siwezi.",
@@ -2082,25 +6106,7 @@
               "words": [
                 "Tafadhali,",
                 "nisaidie."
-              ],
-              "qcByModel": {
-                "qwen2.5:7b": {
-                  "sug": "Tafadhali, kujanahia.",
-                  "field": "target",
-                  "at": "2026-07-08T15:50:51.003Z"
-                },
-                "qwen2.5:14b": {
-                  "sug": "Tafadhali, wasaidie.",
-                  "field": "target",
-                  "at": "2026-07-08T15:55:51.343Z"
-                }
-              },
-              "qc": {
-                "sug": "Tafadhali, wasaidie.",
-                "field": "target",
-                "at": "2026-07-08T15:55:51.343Z",
-                "by": "qwen2.5:14b"
-              }
+              ]
             }
           ],
           "_genMeta": {
@@ -2145,12 +6151,7 @@
             },
             {
               "target": "Tafadhali",
-              "source": "Please",
-              "qc": {
-                "sug": "Please.",
-                "field": "source",
-                "at": "2026-07-07T20:35:30.785Z"
-              }
+              "source": "Please"
             },
             {
               "target": "Mtu",
@@ -2550,7 +6551,7 @@
         ]
       },
       "generatedAt": "2026-07-07T18:32:17.231Z",
-      "updatedAt": "2026-07-08T15:55:51.344Z",
+      "updatedAt": "2026-07-08T16:49:44.313Z",
       "id": "tp_17834494397390000000"
     },
     {
@@ -25318,7 +29319,7 @@
         ]
       },
       "generatedAt": "2026-06-26T09:54:21.279Z",
-      "updatedAt": "2026-06-26T10:59:04.911Z",
+      "updatedAt": "2026-07-08T17:30:32.009Z",
       "id": "tp_17824678810030000009",
       "continuedFromId": "tp_17825433860400000751",
       "continuedFrom": "Kalila and Dimna"
