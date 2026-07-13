@@ -1043,6 +1043,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <div class="stat-box" id="stat-flagged" title="Flagged"><div class="stat-num" id="s-flagged" style="color:#ff9600">0⚑</div><div class="stat-lbl">⚑</div></div>
   </div>
   <button class="cont-btn" id="comp-next" onclick="afterComplete()">Continue</button>
+  <button class="cont-btn" id="comp-drill" style="display:none;background:var(--yellow);color:var(--text);margin-top:8px" onclick="startDrill()">🎯 Review my mistakes</button>
   <div id="comp-nav-btns" style="display:none;display:flex;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
   <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:#f0fff4">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -1064,6 +1065,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <button class="sl-screen-share" id="sl-screen-edit-btn" onclick="openStorylineEditInScreen()" title="Edit title" style="display:none">✏️</button>
         <button class="sl-screen-share" id="sl-screen-gen-btn" onclick="openRetitleMenu(event)" title="Re-generate titles" style="display:none">✨</button>
         <button class="sl-screen-share" id="sl-screen-summary-btn" onclick="genStorylineSummary()" title="Generate summary" style="display:none">📝</button>
+        <button class="sl-screen-share" id="sl-screen-storyboard-btn" onclick="onStorylineStoryboardBtn()" title="Generate storyboard" style="display:none">🎬</button>
         <button class="sl-screen-share" id="sl-screen-qc-btn" title="" style="display:none">🔍</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
       </div>
@@ -1396,6 +1398,17 @@ function needsIntroScript(targetLang, srcLang) {
 function scriptLessonAvailable(target, src) {
   return needsIntroScript(target, src) || needsIntroScript(src, target);
 }
+// …and always ask it about the SET's own languages. `APP.srcLang` is the global source/UI language of
+// whoever happens to be browsing; a saved set carries the pair it was authored for. Before v53 the
+// difference never bit: a non-Latin TARGET (ar→…) made the option appear for any srcLang. A LATIN
+// target only needs a course when the SET's source is non-Latin, so reading the global setting hid
+// the new Latin lesson for an en|ar set whenever the UI was in English. Falls back to APP.srcLang for
+// legacy sets with no srcLang recorded. (The generator, scriptsUsedInLessonSet(d), already reads
+// d.srcLang — this keeps the gate and the generator agreeing.)
+function scriptLessonAvailableForSet(d) {
+  if (!d || !d.lang) return false;
+  return scriptLessonAvailable(d.lang, d.srcLang || APP.srcLang);
+}
 
 // ── Language names in each UI language ───────────────────────────────────────
 // Used to render e.g. "Wofür möchtest du Italienisch lernen?" instead of
@@ -1668,6 +1681,7 @@ function applyUIStrings() {
   updateTeacherModeBtn();
   _buildGlobalTtsSelectors();
   _setAttr('sl-screen-summary-btn', 'title', t('lesson.gen_summary'));
+  _setAttr('sl-screen-storyboard-btn', 'title', t('storyboard.gen'));
   _setAttr('sl-screen-qc-btn',      'title', t('qc.btn.storyline') + ' ' + t('qc.btn.force_hint'));
   _setText('backend-lbl',          t('app.backend'));
   _setText('blbl',                 t('app.checking'));
@@ -2826,6 +2840,11 @@ function getRatingAxes() { return [
 ];}
 const _pr={};
 async function goLessonSet(){
+  // Leaving a lesson is the one choke point every exit funnels through — Continue (whose handler
+  // showComplete REASSIGNS, bypassing afterComplete's inline onclick), the completion nav buttons,
+  // and confirmQuit. Restore the real topic here or the ephemeral drill set leaks into the UI as a
+  // fake "__drill__" lesson set.
+  endDrill();
   try { _invalidateQidUniverse(); } catch(_) {}   // fresh coverage context for this set
   if(APP.lessonData) {
     // Render this lesson's chrome in its own source language WITHOUT touching the
@@ -3593,7 +3612,7 @@ function savedItemHtml(s, connector, hideStory) {
         <option value="word_forms">🧩 ${t('lesson.type.word_forms')}</option>
         <option value="error_hunt">🔍 ${t('lesson.type.error_hunt')}</option>
         <option value="math">🔢 ${t('lesson.type.math')}</option>
-        ${scriptLessonAvailable(s.lang, APP.srcLang) ? `<option value="intro_script">🔡 ${t('lesson.type.intro_script')}</option>` : ''}
+        ${scriptLessonAvailableForSet(s) ? `<option value="intro_script">🔡 ${t('lesson.type.intro_script')}</option>` : ''}
       </select>
       <select class="addlesson-select" id="sial-diff-${sid}" title="Difficulty">
         <option value="1"${s.difficulty===1?' selected':''}>🟢</option>
@@ -3842,6 +3861,11 @@ async function loadSavedList(){
 
     // Summary strip — shows stored summary if available
     const _slSumMeta = matchSl || slTitles[chainId] || null;
+    // Storyboard rides the same storyline object; render it ABOVE the summary strip.
+    const _slSb2 = _slSumMeta?.storyboard || '';
+    if (_slSb2) {
+      html += `<div class="storyline-storyboard" id="slsb-wrap-${chainId}" aria-label="${escAttr(t('storyboard.title'))}" style="padding:4px 8px;overflow-x:auto">${_slSb2}</div>`;
+    }
     const _slSum = _slSumMeta?.summary || '';
     if (_slSum) {
       html += `<div class="storyline-story" id="slsum-wrap-${chainId}">` +
@@ -4995,8 +5019,7 @@ function openAddLesson(sid, enc) {
   if (_fmtSel) {
     const introOpt = _fmtSel.querySelector('.opt-intro-script');
     if (introOpt) {
-      const lang = APP.lessonData?.lang;
-      const show = !!lang && scriptLessonAvailable(lang, APP.srcLang);
+      const show = scriptLessonAvailableForSet(APP.lessonData);
       introOpt.style.display = show ? '' : 'none';
       if (!show && _fmtSel.value === 'intro_script') _fmtSel.value = 'standard';
     }
@@ -5089,6 +5112,9 @@ async function doAddLesson(sid, enc, tid) {
       // scripts when the set has no content yet.
       const scripts = scriptsUsedInLessonSet(d);
       if (!scripts.length) throw new Error(t('intro.no_script'));
+      // The scripts the learner already reads → the baked answer side is rendered in one of them
+      // (a Latin course authored for an Arabic reader answers in Arabic, not in Latin translit).
+      const srcScripts = scriptsForLang(d.srcLang || APP.srcLang);
       // reinforce/neutral/extend qualifier (same selector as vocab lessons). "reinforce" scopes
       // the lesson to the letters already seen in this set; extend/neutral teach the full
       // alphabet. (Reinforce falls back to the full set if too few letters were seen to quiz.)
@@ -5111,7 +5137,7 @@ async function doAddLesson(sid, enc, tid) {
           _arcMode: scope.scoped ? mode : undefined, difficulty: diff,
           title: '🔡 ' + label + (hint ? ' ·\u00a0' + hint : ''), icon: '🔡',
           desc: label + ' — ' + letters.length + ' ' + t('intro.letters'),
-          letters, exercises: introScriptExercisesFrom(letters, { distractorPool: full }),
+          letters, exercises: introScriptExercisesFrom(letters, { distractorPool: full, srcScripts }),
           _genMeta: { type: 'intro_script', model: '(procedural)', valid: letters.length, at: new Date().toISOString() },
         });
         added++;
@@ -5307,6 +5333,17 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   if (genBtn)    genBtn.style.display    = APP.info.canGenerate ? '' : 'none';
   const summaryBtn = document.getElementById('sl-screen-summary-btn');
   if (summaryBtn) summaryBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  // Storyboard button: also requires ≥2 chapters — the generator's own floor is 2 panels,
+  // and a 1-chapter "storyline" has no arc to board (LIVE-TEST §79).
+  const storyboardBtn = document.getElementById('sl-screen-storyboard-btn');
+  if (storyboardBtn) {
+    storyboardBtn.style.display =
+      (APP.info.canGenerate && (topics || []).length >= 2) ? '' : 'none';
+    // Title reflects the button's dual role: generate when empty, menu when a storyboard exists.
+    const _hasSb = Array.isArray(APP.storylines)
+      && APP.storylines.some(s => s.id === chainId && s.storyboard);
+    storyboardBtn.title = t(_hasSb ? 'storyboard.menu' : 'storyboard.gen');
+  }
   // QC button — same action as the main-page storyline QC: check all lessons in this deck.
   const qcBtn = document.getElementById('sl-screen-qc-btn');
   if (qcBtn) {
@@ -5375,6 +5412,13 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   const completed = APP.progress?.completed || {};
 
   let html = '';
+
+  // Storyboard — server-composed, validated SVG (composeStoryboardSVG is the security
+  // boundary; the client only injects the finished string). Sits ABOVE the summary.
+  const _slSb = slMeta?.storyboard || '';
+  html += '<div class="storyline-storyboard" id="slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_')
+        + '" aria-label="' + escAttr(t('storyboard.title')) + '" style="margin:8px 0;overflow-x:auto'
+        + (_slSb ? '' : ';display:none') + '">' + _slSb + '</div>';
 
   // Summary section — simple toggle via data-target attribute
   const existingSummary = slMeta?.summary || '';
@@ -5821,6 +5865,92 @@ function toggleSlSummary(chainId) {
   const el = document.getElementById('slsc-summary-body-' + chainId);
   if (!el) return;
   el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+// Storyboard: clone of genStorylineSummary. NOTE this request is synchronous end-to-end and
+// on a big story model can take ~30 minutes (spike-measured 2.2 tok/s) — the ⏳ button just
+// The 🎬 button is stateful: no storyboard yet → generate; storyboard present → a small
+// regenerate/delete menu (showChoiceDialog). Keeps ONE button in the title row.
+function _slHasStoryboard() {
+  const sl = APP._slScreen; if (!sl) return false;
+  if (Array.isArray(APP.storylines)) {
+    const s = APP.storylines.find(s => s.id === sl.chainId);
+    if (s && s.storyboard) return true;
+  }
+  const wrap = document.getElementById('slsb-screen-' + sl.chainId.replace(/[^a-zA-Z0-9_-]/g,'_'));
+  return !!(wrap && wrap.innerHTML.trim() && wrap.style.display !== 'none');
+}
+
+async function onStorylineStoryboardBtn() {
+  if (!APP._slScreen) return;
+  if (!_slHasStoryboard()) { await genStorylineStoryboard(); return; }
+  const choice = await showChoiceDialog({
+    title: t('storyboard.title'),
+    choices: [
+      { value: 'regen',  label: t('storyboard.regenerate'), primary: true },
+      { value: 'delete', label: t('storyboard.delete') },
+    ],
+  });
+  if (choice === 'regen')  await genStorylineStoryboard();
+  else if (choice === 'delete') await deleteStorylineStoryboard();
+}
+
+async function deleteStorylineStoryboard() {
+  const sl = APP._slScreen;
+  if (!sl) return;
+  try {
+    const r = await fetch('/api/storyline-storyboard', {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slId: sl.chainId })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Failed');
+    const chainId = sl.chainId;
+    const wrap = document.getElementById('slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_'));
+    if (wrap) { wrap.innerHTML = ''; wrap.style.display = 'none'; }
+    if (Array.isArray(APP.storylines)) {
+      const idx = APP.storylines.findIndex(s => s.id === chainId);
+      if (idx >= 0) delete APP.storylines[idx].storyboard;
+    }
+    showToast(t('storyboard.deleted'));
+    loadSavedList();
+  } catch(e) {
+    showToast('⚠ ' + e.message.slice(0, 60));
+  }
+}
+
+// waits; the server keeps the socket alive via a per-call 60-min LLM timeout.
+async function genStorylineStoryboard() {
+  const sl = APP._slScreen;
+  if (!sl) return;
+  const btn = document.getElementById('sl-screen-storyboard-btn');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  try {
+    const r = await fetch('/api/storyline-storyboard', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slId: sl.chainId, topics: sl.topics })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Failed');
+    const svg = data.storyboard;
+    const chainId = sl.chainId;
+    // Update the in-screen strip (server-validated SVG string — safe to inject).
+    const wrap = document.getElementById('slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_'));
+    if (wrap) { wrap.innerHTML = svg; wrap.style.display = ''; }
+    // Update APP.storylines cache so landing card + re-renders carry it.
+    if (Array.isArray(APP.storylines)) {
+      const idx = APP.storylines.findIndex(s => s.id === chainId);
+      if (idx >= 0) APP.storylines[idx].storyboard = svg;
+    }
+    showToast(t('storyboard.title') + ' ✓');
+    loadSavedList(); // refresh landing page storyline card
+  } catch(e) {
+    // The generator's "<2 valid panels" failure is a model-quality outcome, not a bug —
+    // give it a friendly empty-state message; anything else surfaces verbatim.
+    showToast('⚠ ' + (/valid panel/.test(e.message) ? t('storyboard.empty') : e.message.slice(0, 60)));
+  } finally {
+    if (btn) { btn.textContent = '🎬'; btn.disabled = false; }
+  }
 }
 
 async function genStorylineSummary() {
@@ -7686,7 +7816,10 @@ function buildExercises(lessonIdx){
 function buildStandardExercises(lesson, lessonIdx){
   const d = APP.lessonData;
 	//const allV=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.vocab);
-  const allV = lesson.vocab || [];
+  // `_distractors` (drill lessons only) lets a lesson QUIZ few words while drawing MCQ distractors
+  // from a wider pool. Without it a "review my mistakes" round would have to pad `vocab` itself, so
+  // one mistake would be buried among seven words the learner already knows.
+  const allV = lesson._distractors || lesson.vocab || [];
 	// const allS=d.lessons.slice(0,lessonIdx+1).flatMap(L=>L.sentences);
   const allS = lesson.sentences || [];
   const tv=lesson.vocab||[], ts=lesson.sentences||[];
@@ -8218,6 +8351,14 @@ function startLesson(idx){
   C.isGrammar=(lesson.type==='grammar');
   C.isConjugation=(lesson.type==='conjugation');
   C.ehSuspect=new Set(); C.ehChecked=false;
+  // Per-ROUND set of words answered incorrectly. It was created lazily on the first wrong answer and
+  // never cleared, so it accumulated across every lesson in the session. Two consequences, both real:
+  //   • a word answered CORRECTLY in a later lesson was still recorded as wrong, because
+  //     recordLearnedFromLesson tests `wrongTargets.has(target)`;
+  //   • worse, that test wins over the drill's decrement (`else if(lesson._drill)`), so drilling a
+  //     word you had missed earlier in the session INCREMENTED its wrong count instead of walking it
+  //     down. The drill could never clear a mistake, and counts inflated on every attempt.
+  delete C._wrongTargets;
   C.exercises=buildExercises(idx); C.cur=0;
   // A mixed lesson with nothing to pool (no other lessons with playable exercises yet)
   // shouldn't open an empty player — tell the user what to do instead.
@@ -9188,6 +9329,79 @@ function markSolved(ex){
   if(!m[id]){ m[id] = 1; saveProg(); }      // monotonic; persist only on first solve
   return id;
 }
+// ══ Drill — "review my mistakes" (LLM-free, ephemeral) ═══════════════════════════════
+// Closes the loop the ledger has been half of: it records a `wrong` count per word, and until now
+// nothing read it. A drill round pulls the current pair's wrong words straight into the existing
+// exercise builders — no model call, no latency, works offline and in the static build.
+// Two design calls (roadmap): the lesson is EPHEMERAL (built in memory, never saved), and solving it
+// runs the normal qid()/markSolved path so a drilled word counts like any other question.
+const DRILL_TOPIC = '__drill__';   // ephemeral topic key; never appears in lessons.json
+const DRILL_SIZE  = 8;             // words per round
+const DRILL_MIN   = 4;             // an MCQ needs 3 distractors + the answer, so 4 is the floor
+
+// The candidate POOL: wrong words first (most-wrong, then most-seen), then known words as padding.
+// Padding exists only to supply MCQ distractors — an MCQ needs 3 wrong options, so a round with one
+// mistake still needs 4 words in the pool. It does NOT widen what gets asked: `buildDrillLesson`
+// quizzes only the mistakes and hands this pool to the builder as `_distractors`.
+// Deterministic: ties break on target, so the same ledger always yields the same round (testable,
+// and repeated drills reuse the same qids).
+function drillCandidates(lang, srcLang, size){
+  const led = _learnedLedger(lang || APP.lang, srcLang || APP.srcLang);
+  const all = Object.entries(led.vocab)
+    .map(([target, rec]) => ({ target, source: rec.source || '', wrong: rec.wrong || 0, seen: rec.seen || 0 }))
+    .filter(v => v.target && v.source);            // the builders need both sides of the pair
+  const byWrong = (a, b) => (b.wrong - a.wrong) || (b.seen - a.seen) || a.target.localeCompare(b.target);
+  const bySeen  = (a, b) => (b.seen  - a.seen)  || a.target.localeCompare(b.target);
+  const n = size || DRILL_SIZE;
+  const out = all.filter(v => v.wrong > 0).sort(byWrong).slice(0, n);
+  const floor = Math.max(DRILL_MIN, out.length);   // pad up to the distractor floor, no further
+  for (const k of all.filter(v => !v.wrong).sort(bySeen)) {
+    if (out.length >= floor) break;
+    out.push(k);
+  }
+  return out;
+}
+// Synthesise an in-memory `standard` lesson that QUIZZES ONLY THE MISTAKES. Known words ride along
+// as `_distractors` so the MCQs have wrong options — they are never asked, never recorded, and never
+// shown in the "words from this lesson" recap. Returns null when a round can't be built: nothing
+// wrong (a drill is not a re-run of known vocabulary), or too small a pool for a single MCQ.
+function buildDrillLesson(lang, srcLang, size){
+  const pool = drillCandidates(lang, srcLang, size);
+  const quiz = pool.filter(v => v.wrong > 0);
+  if (!quiz.length) return null;
+  if (pool.length < DRILL_MIN) return null;
+  const strip = ({ target, source }) => ({ target, source });
+  return {
+    id: 'drill', type: 'standard', _drill: true,
+    title: t('drill.title'), desc: t('drill.desc'),
+    vocab: quiz.map(strip),               // asked
+    _distractors: pool.map(strip),        // asked OR used as a wrong option
+    sentences: [],
+  };
+}
+function drillAvailable(lang, srcLang){ return !!buildDrillLesson(lang, srcLang); }
+
+// Swap in an ephemeral lessonData and play it. The real topic is stashed and restored on exit, so
+// the drill never touches the loaded topic (its lessons, its editor state, or its progress).
+function startDrill(){
+  const lang    = APP.lessonData?.lang    || APP.lang;
+  const srcLang = APP.lessonData?.srcLang || APP.srcLang;
+  const drill = buildDrillLesson(lang, srcLang);
+  if(!drill){ showToast(t('drill.empty')); return; }
+  // Re-drilling from a drill's own result card must not stash the drill as the "real" topic.
+  const prev = APP._drillPrev || APP.lessonData;
+  APP._drillPrev = prev;
+  APP.lessonData = { topic: DRILL_TOPIC, lang, srcLang, lessons: [drill], _ephemeral: true };
+  startLesson(0);
+}
+// Restore the real topic. Returns true if a drill was actually active.
+function endDrill(){
+  if(!APP._drillPrev) return false;
+  APP.lessonData = APP._drillPrev;
+  delete APP._drillPrev;
+  return true;
+}
+
 // ══ Learned-vocabulary store — the user's cumulative learned words/sentences ══════════
 // A per-(target,source)-language ledger of the vocabulary & example sentences the learner has
 // been taught, accumulated across ALL lessons and topics. This is the raw material for future
@@ -9219,6 +9433,10 @@ function recordLearnedFromLesson(lesson, wrongTargets){
     const rec = led.vocab[tk] || { source: norm(source), seen: 0, wrong: 0 };
     rec.seen++; if(source && !rec.source) rec.source = norm(source);
     if(wrong.has(tk)) rec.wrong++;
+    // Re-learning closes the loop: getting a drilled word RIGHT walks its `wrong` count back down,
+    // so it eventually stops being selected. Gated on `_drill` — a normal lesson must not decay the
+    // wrong counts a drill depends on (a word answered right once in its own lesson is not learned).
+    else if(lesson._drill) rec.wrong = Math.max(0, (rec.wrong || 0) - 1);
     led.vocab[tk] = rec;
   };
   const addSentence = (target, source) => {
@@ -9583,7 +9801,10 @@ function check(){
 // ── complete ──
 function showComplete(){
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
-  if(!C.isErrorHunt){
+  // A drill is ephemeral: it has no entry in lessons.json, so recording completion under its
+  // synthetic topic key would leave a phantom topic in progress forever. The learned ledger and the
+  // solved store still get written (markSolved / recordLearnedFromLesson) — that is the whole point.
+  if(!C.isErrorHunt && !lesson._drill){
     if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
     const prev = APP.progress.completed[topicKey][lesson.id]||{};
     const prevCorrect = typeof prev === 'object' ? (prev.correct||0) : 0;
@@ -9655,6 +9876,19 @@ function showComplete(){
   // user-specific generation / milestones — see roadmap). Wrong-answered words are flagged for
   // future focus. Guarded so a failure here never breaks the result card.
   try { recordLearnedFromLesson(lesson, C._wrongTargets); } catch(_) {}
+  // "Review my mistakes" — offered only when a round can actually be built. Evaluated AFTER
+  // recordLearnedFromLesson, so this round's mistakes count toward it, and a drill that just cleared
+  // the last wrong word correctly hides the button again.
+  try {
+    const _db = document.getElementById('comp-drill');
+    if(_db){
+      const _prev = APP._drillPrev;   // during a drill the real pair lives on the stashed topic
+      const _l = _prev?.lang    || APP.lessonData?.lang    || APP.lang;
+      const _s = _prev?.srcLang || APP.lessonData?.srcLang || APP.srcLang;
+      _db.textContent = t('drill.cta');
+      _db.style.display = drillAvailable(_l, _s) ? '' : 'none';
+    }
+  } catch(_) {}
 
   // Next button priority:
   // 1. Next lesson set in this topic (if any remain after this one)
@@ -9692,12 +9926,15 @@ function showComplete(){
     compNext.onclick = () => openStorylineScreen(sl.id, slEnc);
   } else {
     compNext.textContent = t('complete.continue');
-    compNext.onclick = () => goLessonSet();
+    compNext.onclick = () => goLessonSet();   // goLessonSet() restores the real topic (see endDrill)
   }
 
   // Always show persistent nav buttons: lesson set + storyline (if available)
   const _compNav = document.getElementById('comp-nav-btns');
-  if (_compNav) {
+  if (_compNav && lesson._drill) {
+    _compNav.innerHTML = '';                 // a drill has no lesson set and no storyline
+    _compNav.style.display = 'none';
+  } else if (_compNav) {
     const lsTitle = APP.lessonData?.topic || t('lesson.set');
     let navHtml = `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="goLessonSet()">📚 ${escHtml(lsTitle)}</button>`;
     if (sl && slEnc) {
@@ -9728,6 +9965,7 @@ function showComplete(){
 }
 
 function afterComplete() {
+  endDrill();          // finishing a drill restores the real topic before we navigate back
   goLessonSet();
 }
 
@@ -10364,7 +10602,7 @@ function confirmQuit(){
   if(C&&APP.lessonData){
     const topicKey=APP.lessonData.topic;
     const lesson=APP.lessonData.lessons?.[C.lessonIdx];
-    if(lesson&&!C.isErrorHunt&&C.total>0){
+    if(lesson&&!C.isErrorHunt&&!lesson._drill&&C.total>0){
       if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
       const prev=APP.progress.completed[topicKey][lesson.id]||{};
       const prevCorrect=typeof prev==='object'?(prev.correct||0):0;
@@ -10373,6 +10611,7 @@ function confirmQuit(){
       saveProg();
     }
   }
+  endDrill();          // quitting mid-drill restores the real topic
   goLessonSet();
 }
 

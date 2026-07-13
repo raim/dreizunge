@@ -23,8 +23,11 @@ assert.deepStrictEqual(genReasonHist(null), {});
 assert.deepStrictEqual(genReasonHist([{}]), {});
 console.log('  genReasonHist: OK');
 
-// buildGenMeta: full + defaults.
-const full = buildGenMeta({ type: 'word_forms', t0: Date.now() - 5, attempts: 2, valid: 3, rejected: 1,
+// buildGenMeta: full + defaults. v53_d: `model` is REQUIRED. It used to default to the lesson
+// model, which silently mis-stamps any caller on another role (story / translation / procedural).
+// Every real call site happened to match the default, so nothing was recorded wrong — but the trap
+// was one copy-paste away from writing permanent, wrong provenance into lessons.json.
+const full = buildGenMeta({ type: 'word_forms', model: 'default-model', t0: Date.now() - 5, attempts: 2, valid: 3, rejected: 1,
   rejectReasons: { dup: 1 }, promptTokens: 10, completionTokens: 20 });
 assert.strictEqual(full.type, 'word_forms');
 assert.strictEqual(full.model, 'default-model');
@@ -36,14 +39,29 @@ assert.strictEqual(full.promptTokens, 10);
 assert.ok(Number.isInteger(full.ms) && full.ms >= 0, 'ms computed from t0');
 assert.ok(typeof full.at === 'string', 'at timestamp');
 
-const def = buildGenMeta({});
-assert.strictEqual(def.model, 'default-model', 'model defaults to lesson model');
+// Omitting the model is now a hard error, not a silent default.
+assert.throws(() => buildGenMeta({ type: 'standard' }), /`model` is required/, 'model must be passed');
+assert.throws(() => buildGenMeta({}), /`model` is required/, 'no silent default');
+assert.throws(() => buildGenMeta(), /`model` is required/, 'no args → throws');
+
+const def = buildGenMeta({ model: 'default-model' });
+assert.strictEqual(def.model, 'default-model');
 assert.strictEqual(def.attempts, null);
 assert.strictEqual(def.valid, null);
 assert.strictEqual(def.rejected, 0);
 assert.strictEqual(def.rejectReasons, null);
 assert.strictEqual(def.ms, null, 'ms null without t0');
-assert.strictEqual(buildGenMeta({ model: '(procedural)' }).model, '(procedural)', 'explicit model wins');
+// Sentinels for the non-LLM / non-generated paths.
+for (const sentinel of ['(procedural)', '(user-provided)', '(unknown)']) {
+  assert.strictEqual(buildGenMeta({ model: sentinel }).model, sentinel, `${sentinel} sentinel accepted`);
+}
+
+// Every buildGenMeta call site in server.js must name a model.
+const _server = fs.readFileSync(path.join(__dirname, '..', 'server.js'), 'utf8');
+const _calls = _server.match(/buildGenMeta\(\{[^}]*/g) || [];
+assert.ok(_calls.length >= 10, `buildGenMeta call sites found (${_calls.length})`);
+_calls.forEach(c => assert.ok(/model:/.test(c),
+  `call site names a model — found: ${c.slice(0, 70).replace(/\n/g, ' ')}`));
 console.log('  buildGenMeta full + defaults: OK');
 
 // Every generator stamps _genMeta (so no flow ships an unannotated lesson).

@@ -36,7 +36,18 @@ function getRequestTimeout() { return OLLAMA_TIMEOUT; }
 // ── Public interface ───────────────────────────────────────────────────────────
 
 function callLLM(model, system, userMsg, maxTokens, opts) {
-  if (BACKEND === 'ollama') return _callOllama(model, system, userMsg, maxTokens, opts);
+  if (BACKEND === 'ollama') {
+    const p = _callOllama(model, system, userMsg, maxTokens, opts);
+    // Graceful degradation: if think:false was requested but THIS model rejects the parameter
+    // (Ollama errors "<model> does not support thinking"), retry once without it — the caller
+    // asked for less thinking, and a model that can't think satisfies that trivially.
+    if (opts && opts.think === false) {
+      return p.catch(e => /does not support thinking/i.test(String(e.message || e))
+        ? _callOllama(model, system, userMsg, maxTokens, { ...opts, think: undefined })
+        : Promise.reject(e));
+    }
+    return p;
+  }
   return Promise.reject(new Error(`Unknown LLM_BACKEND: ${BACKEND}`));
 }
 
@@ -64,7 +75,7 @@ async function warmup(model, log) {
   try {
     await _callOllama(model, '', 'hi', 1);
     write('ready ✓\n');
-  } catch(_) { write('timed out (continuing)\n'); }
+  } catch(e) { write(`not ready (${String(e.message||e).slice(0,50)}) — continuing\n`); }
 }
 
 // ── JSON utilities (backend-agnostic) ─────────────────────────────────────────
@@ -130,11 +141,22 @@ function salvageArray(raw) {
 
 function _callOllama(model, system, userMsg, maxTokens, opts) {
   const temperature = opts?.temperature ?? 0.15;
+  // Per-call timeout override (same 30s–60min clamp as setRequestTimeout). Needed because this
+  // is a socket-INACTIVITY timeout on a stream:false request — the socket is silent for the
+  // whole load+generation, so a known-slow call (e.g. the storyline storyboard on a 35B model
+  // at ~2 tok/s) must be able to outlive the 12-min default WITHOUT mutating the global.
+  const timeoutMs = (opts && Number.isFinite(Number(opts.timeoutMs)))
+    ? Math.max(30000, Math.min(3600000, Number(opts.timeoutMs)))
+    : OLLAMA_TIMEOUT;
   const call = new Promise((resolve, reject) => {
     const u = new URL('/api/chat', OLLAMA_HOST);
     const lib = u.protocol === 'https:' ? https : http;
     const body = JSON.stringify({
       model, stream: false, keep_alive: -1,
+      // opts.think === false disables a reasoning model's thinking phase (top-level /api/chat
+      // field). Only sent when explicitly requested; callLLM retries without it if the model
+      // rejects the parameter (non-thinking models on some Ollama versions).
+      ...(opts && opts.think === false ? { think: false } : {}),
       options: { temperature, num_predict: maxTokens || 1024 },
       messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
     });
@@ -160,12 +182,19 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
       });
     });
     req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
-    req.setTimeout(OLLAMA_TIMEOUT, () => { req.destroy(); reject(new Error('Ollama timeout')); });
+    req.setTimeout(timeoutMs, () => { req.destroy(); reject(new Error('Ollama timeout')); });
     req.write(body); req.end();
   });
-  return Promise.race([call,
-    new Promise((_, reject) => setTimeout(() => reject(new Error('Ollama timeout')), OLLAMA_TIMEOUT))
-  ]);
+  // Belt-and-braces guard around the socket timeout above (catches a hung parse, not just a hung
+  // socket). The loser of this race MUST be cleared: an un-cleared setTimeout keeps the libuv loop
+  // alive, so a CLI script (translate-ui.js, generate-lessons.js, …) would sit for the remainder of
+  // OLLAMA_TIMEOUT — 12 minutes by default — after its last call resolved, looking like a hang.
+  let _guardTimer;
+  const guard = new Promise((_, reject) => {
+    _guardTimer = setTimeout(() => reject(new Error('Ollama timeout')), timeoutMs);
+    if (_guardTimer.unref) _guardTimer.unref();   // never hold the process open on its own
+  });
+  return Promise.race([call, guard]).finally(() => clearTimeout(_guardTimer));
 }
 
 function _listOllamaModels() {

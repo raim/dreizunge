@@ -1281,7 +1281,8 @@ per model. Headless: `unit-qc-collect`, `unit-qc-editor-label`.
       row disappears; the other model's suggestion remains.
 - [ ] **Fix/dismiss still work.** Applying the fix or dismissing clears all QC rows for that item.
 
-### 68. v53 — script lessons in BOTH directions (Latin alphabet for non-Latin readers)
+### 68. v53 — script lessons in BOTH directions (Latin alphabet for non-Latin readers)  
+_✅ Confirmed fully tested by user (2026-07-11, v54_c)._
 Before v53 a script course only ever taught the TARGET's script, and only when the target was
 non-Latin — so a learner whose source language is Arabic/Russian/Japanese/… learning English was
 offered the *Arabic* course (a script they already read) and never the Latin alphabet. `latin` is
@@ -1289,25 +1290,25 @@ now a real table in `scripts.json`, every language is mapped in `_langScript`, a
 of a Latin course is rendered in the learner's own script via `letters[].sounds` (`B → بي`).
 Headless: `unit-intro-script` (v53 block), `unit-add-lesson-registry`.
 
-- [ ] **Latin course appears (the fix).** Start a set with **target = English, source = Arabic**
+- [x] **Latin course appears (the fix).** Start a set with **target = English, source = Arabic**
       (or Russian / Japanese / Korean / Hebrew / Hindi / Greek / Thai). The "add a script lesson"
       menu now offers **Latin alphabet**. Pick it and play.
-- [ ] **Answers are readable.** In the glyph→sound questions the prompt is `A a` and the four
+- [x] **Answers are readable.** In the glyph→sound questions the prompt is `A a` and the four
       choices are in **Arabic script** (`إيه`, `بي`, …) — *not* `a`, `b`, `c`. Reverse questions show
       an Arabic prompt (`بي`) and Latin glyph choices (`B b`). Nothing shows a `(bee)` hint.
-- [ ] **Listen items.** "Tap to listen" speaks the letter with the **English** voice; when the device
+- [x] **Listen items.** "Tap to listen" speaks the letter with the **English** voice; when the device
       is muted the fallback text under it is the Arabic name, not a Latin letter.
-- [ ] **RTL sanity.** With an Arabic source, the Arabic choice buttons render right-to-left and are
+- [x] **RTL sanity.** With an Arabic source, the Arabic choice buttons render right-to-left and are
       not mangled; the Latin glyph choices stay left-to-right (content-aware direction, §30).
-- [ ] **Other reader scripts.** Repeat with source = Russian (choices `эй`, `би`…), Japanese
+- [x] **Other reader scripts.** Repeat with source = Russian (choices `эй`, `би`…), Japanese
       (katakana `エー`, `ビー`…), Korean (`에이`, `비`…). Each answers in that learner's script.
-- [ ] **No Latin course for Latin readers (regression).** A German→English or English→Italian set
+- [x] **No Latin course for Latin readers (regression).** A German→English or English→Italian set
       offers **no** script lesson at all, exactly as before. Nothing new appeared.
-- [ ] **Chinese is gated off.** A Chinese→English set offers **no** Latin course (no `sounds.han`
+- [x] **Chinese is gated off.** A Chinese→English set offers **no** Latin course (no `sounds.han`
       column authored yet) rather than a circular one with Latin answers.
-- [ ] **Existing direction unchanged (regression).** English→Arabic still teaches the Arabic script
+- [x] **Existing direction unchanged (regression).** English→Arabic still teaches the Arabic script
       with Latin transliteration answers (`ا` → `ā`), exactly as before v53. Same for en→ru, en→ja.
-- [ ] **Arc auto-generation.** With source = Arabic, generating a multi-chapter English storyline
+- [x] **Arc auto-generation.** With source = Arabic, generating a multi-chapter English storyline
       auto-adds a per-chapter Latin "extend" script lesson (new letters that chapter).
 
 **Native review owed** (`scripts.json` `_sounds_comment`): every `latin.sounds.*` column is the
@@ -1316,19 +1317,306 @@ Latin letter's *name* transcribed into that script (chosen over the phonetic val
 answers). A native speaker should confirm each column — especially Hebrew (niqqud), Greek
 (`μπι`/`ντι` digraphs) and Thai.
 
-### 69. v53 — translate-ui.js sees every offered language (Ollama-verify owed)
+### 69. v53 — translate-ui.js sees every offered language (Ollama-verify owed)  
+_✅ Confirmed fully tested by user (2026-07-11, v54_c)._
 `translate-ui.js` derived its work list from `Object.keys(ui.json)`, so Swahili — offered as a source
 (= UI) language but entirely absent from `ui.json` — was never listed and never translated, while
 `--check` reported all languages complete. Now derived from `languages.json`. Headless:
 `unit-translate-ui-langs`.
 
-- [ ] **Swahili is visible.** `node translate-ui.js --check` lists `✗ sw Swahili 426 missing` and
+- [x] **Swahili is visible.** `node translate-ui.js --check` lists `✗ sw Swahili 426 missing` and
       reports `1630 across 29 language(s)` (not 1204 across 28).
-- [ ] **Swahili translates.** With Ollama up: `node translate-ui.js sw` fills all 426 keys.
+- [x] **Swahili translates.** With Ollama up: `node translate-ui.js sw` fills all 426 keys.
       Re-running `--check` then shows `✓ sw Swahili complete`. **Read the output** — this is the
       first language translated from scratch rather than topped up; watch for script bleed and for
       `{placeholder}` tokens being mangled.
-- [ ] **UI actually renders.** Pick Swahili as the SOURCE language in the app. The interface is in
+- [x] **UI actually renders.** Pick Swahili as the SOURCE language in the app. The interface is in
       Swahili, not English. (Before this fix it silently fell back to English.)
-- [ ] **No regression.** `node translate-ui.js de --check` still reports only the 43 owed keys;
+- [x] **No regression.** `node translate-ui.js de --check` still reports only the 43 owed keys;
       naming languages explicitly and `--exclude` still behave as before.
+
+### 70. v53_b — "add lesson +" offers the script lesson for the SET's language pair  
+_✅ Confirmed fully tested by user (2026-07-11, v54_c)._
+The v53 Latin course was generated correctly but the **+ menu never showed it**. The gate read the
+global `APP.srcLang` (the UI language of whoever is browsing) while the generator read the set's own
+`d.srcLang`. With the UI in English, opening an `en|ar` set evaluated
+`scriptLessonAvailable('en','en')` → false → option hidden. Pre-v53 this never bit, because a
+non-Latin *target* made the option appear for any srcLang. Fixed via `scriptLessonAvailableForSet(d)`.
+Also fixed: the authoring path baked `exercises` with no `srcScripts`, so the persisted array (what
+the editor and QC see) answered in Latin translit even though play-time rebuilt it correctly.
+Headless: `unit-intro-script` (v53_b block, mutation-tested).
+
+- [x] **The reported bug.** Keep the UI/source language set to **English**. Open a saved set whose
+      pair is **target=English, source=Arabic** (13 exist in `lessons.json`). Click **+ add lesson** →
+      the format dropdown now lists **🔡 Learn the script**. Before v53_b it was absent.
+- [x] **It generates both.** Choosing it adds **two** lessons: 🔡 Latin alphabet *and* 🔡 Arabic —
+      Latin because the Arabic-reading learner needs it, Arabic because the set's source text uses it.
+- [x] **Baked answers are localized.** Open the new Latin lesson in the **lesson editor** (not just
+      play mode). The stored exercises show Arabic answers (`A a → إيه`), not `A a → a`. This is the
+      part that play-time used to paper over.
+- [x] **Play it.** The lesson plays with Arabic choices, as in §68.
+- [x] **Regression — global UI language is irrelevant.** Switch the UI/source language to German, then
+      Arabic, and reopen the same `en|ar` set. The option appears in all three cases, because the gate
+      now follows the set, not the UI.
+- [x] **Regression — Latin pairs still offer nothing.** An `en|de` or `it|en` set shows no
+      "Learn the script" option in the + menu, at any UI language.
+- [x] **Regression — legacy sets.** A set saved without a `srcLang` field falls back to the global
+      `APP.srcLang` and behaves as before.
+
+### 71. v53_c — CLI scripts exit; storyline summary names its model; de↔nl  
+_✅ Confirmed fully tested by user (2026-07-11, v54_c)._
+Three fixes from the TODO triage. Headless: `unit-llm-timeout-handle`, `unit-storyline-summary-stamp`,
+`unit-close-lang-pairs`.
+
+**A. CLI scripts terminate (the `translate-ui.js` hang).** The leak was in `llm.js`, not
+`translate-ui.js`: the `Promise.race` timeout guard was never cleared, so the process idled for the
+rest of `OLLAMA_TIMEOUT` (default **12 minutes**) after the last LLM call.
+- [x] With Ollama up: `time node translate-ui.js de` — it prints `💾 Saved…` and **returns to the shell
+      immediately**, not 12 minutes later. (Before: the last line printed, then it sat there.)
+- [x] Same for `node generate-lessons.js`, `node translate-lessons.js`, `node qc-lessons.js`.
+- [x] `OLLAMA_TIMEOUT=30000 node translate-ui.js de` with Ollama **stopped** still fails fast with
+      `Ollama timeout` — the guard still fires, it is only cleared on success.
+- [x] The server (`node server.js`) is unaffected: generate a lesson, confirm no new stall.
+
+**B. Storyline summary console + stamp.**
+- [x] Regenerate a storyline summary (`/api/storyline-retitle`, scope `all`). The console block now reads
+      `Chapters : N, Lang: X, Model: <model>` — previously the model was missing.
+- [x] The storyline JSON now carries `summaryMeta` `{type:'storyline_summary', model, ms, at, …}`.
+      **Check the model is the STORY model**, not the lesson model (`buildGenMeta` defaults to the lesson
+      model, so a missing `model:` would mis-stamp silently).
+- [x] The summary still renders as text in the UI — **not** `[object Object]`. (The function now returns
+      `{text, meta}`; both call sites destructure, but this is the failure mode to watch for.)
+- [x] Switch the story model at runtime, regenerate, confirm `summaryMeta.model` follows.
+
+**C. `de↔nl` is a close pair.**
+- [x] Generate a German→Dutch (or nl→de) vocab lesson containing cognates (`arm, hand, winter, warm`).
+      The console logs `— close pair, allowed` and the lesson is **kept**, not retried.
+- [x] Regression: an `it→en` or `lb→en` lesson where the model writes English into the target field is
+      **still rejected** (`— blocking, will retry`). Relaxing closeness must not silence that.
+
+### 72. v53_d — story provenance stamp + `buildGenMeta` requires a model
+`topic.storyMeta` is new (per-artefact: model, ms, tokens, at), written on **both** upserts.
+`buildGenMeta({model})` now throws if omitted — it used to default to the lesson model.
+Headless: `unit-story-stamp` (mutation-tested), `unit-genmeta`, `unit-storyline-summary-stamp`.
+
+- [ ] **Generated story.** Create a new topic (no pasted story). The new topic JSON has
+      `storyMeta: {type:'story', model:<story model>, ms, promptTokens, completionTokens, at}`.
+      Confirm `model` is the **story** model, not the lesson model — switch them at runtime to be sure.
+- [ ] **Pasted story.** Create a topic via "I have my own story". `storyMeta.model` is
+      `'(user-provided)'`, and `generationStats.models.story` stays `null` as before.
+- [ ] **Early-save path (the one that matters).** Start a generation, then kill the server *after* the
+      story is written but *before* lessons finish. The saved topic still carries `storyMeta`.
+      (A stamp only on the final upsert would be missing on exactly the topics you most want to debug.)
+- [ ] **No crash from the required model.** Generate one of every lesson type — standard, synonyms,
+      word_forms, error_hunt, grammar, conjugation, math, intro_script. None throws
+      "`model` is required". (A missed call site would now be a hard failure, not a silent mis-stamp.)
+- [ ] **Old topics still load.** The library renders topics that have no `storyMeta` and no
+      `generationStats.models` (249 of them) without errors or blank cards.
+
+### 73. v53_e — provenance backfill (`backfill-provenance.js`)
+All 267 topics now carry `storyMeta`. 262 values were **derived** from `generationStats.model`
+(whose first element is provably the story model); 5 are **user-asserted** and marked as such; 1 is
+`(unknown)`. Headless: `unit-story-stamp` (corpus invariants).
+
+- [ ] **The assumption still holds on your data:** `node backfill-provenance.js --verify` prints
+      `label[0] === models.story → 5 ok, 0 mismatched`. If it ever prints a mismatch, the backfill's
+      premise is broken and the stamped values must be re-derived.
+- [ ] **Idempotent:** re-running the migration reports `storyMeta written: 0, already had: 267`.
+- [ ] **Safety rails:** running it with no flags refuses to write and names what it needs. Running it
+      with `--write` creates `lessons.json.bak` first.
+- [ ] **Library still loads.** Open the app: all 267 topics render. Nothing regressed from the extra
+      `storyMeta` / `generationStats.models` fields.
+- [ ] **Spot-check three topics against your own memory** — this is the part only you can do:
+      `osttirol-glossary` (de|de) is `(unknown)`; `Essen an Luxembourg` (lb|lb) is `translategemma:4b`;
+      any Swahili chapter you pasted yourself is `(user-provided)`.
+- [ ] **New generations are NOT flagged as backfilled.** Generate a fresh topic; its `storyMeta` has
+      no `backfilled` field and no `source` — those mark inferred rows only.
+
+### 74. v53_f — story `origin`: generated vs dialect-rewrite vs file-upload vs user-pasted
+`storyMeta.model` says WHO wrote the text; `storyMeta.origin` says WHERE it came from. Before this,
+`'(user-provided)'` collapsed **72 pasted** texts and **50 uploaded book chapters** into one bucket —
+and an uploaded chapter has an author and a licence, unlike a pasted one. Corpus after backfill:
+generated 144 · user-pasted 72 · file-upload 50 · dialect-rewrite 1.
+Headless: `unit-story-stamp` (mutation-tested).
+
+- [ ] **Generated story** → `storyMeta.origin === 'generated'`, `model` = the story model.
+- [ ] **Pasted story** ("I have my own story") → `origin === 'user-pasted'`, `model === '(user-provided)'`,
+      **no** `sourceFile`.
+- [ ] **Uploaded book** (the path that sets `storyline.sourceFile`) → every chapter gets
+      `origin === 'file-upload'` **and** `storyMeta.sourceFile` matching the storyline's filename.
+      This is the one to actually exercise: it runs in a post-pass, after the chapters are saved.
+- [ ] **`osttirol-glossary`** now reads `translategemma:4b` / `dialect-rewrite`, marked
+      `source: 'user-asserted (--set-model)'` — your memory, not the record.
+- [ ] **`Essen an Luxembourg`** reads `translategemma:4b` / **`generated`**, not `dialect-rewrite`.
+      It has `generationStats` but none of the `_dialect`/`aiGenerated` flags `osttirol` carries, so
+      nothing records that a glossary informed it. **If that matters, we need a field for it** —
+      the classifier is not being fudged to match a recollection.
+- [ ] **Nothing is fabricated.** No topic with `origin` `file-upload`/`user-pasted` names a model.
+
+### 75. v53_g — identical source/target is now a RATIO, not a count
+The blocker rejected a lesson with more than 2 identical source/target vocab items. Measured across
+all 267 topics (98 non-close lessons contain ≥1 identical item), that conflated real model failures
+(100%, 100%, 80%, 75%, 75%) with legitimate loanwords (≤40%: "pasta, tagliatelle, risotto";
+"café, fans, notes"; "performance, DJ"). The distribution is bimodal with **nothing between 40% and
+75%**. New rule: block when `≥3 items AND ≥60% of the lesson` is identical. The SENTENCE rule is
+unchanged — the corpus has zero identical sentences in a non-close pair.
+Headless: `unit-identical-ratio` (replays the shipped corpus; mutation-tested both directions).
+
+- [ ] **Loanword lessons survive.** Generate an `it→en` food/wine topic (pasta, risotto, bar, aroma).
+      The console logs `3/8 vocab (38%) … — below ratio threshold (loanwords?), allowed` and the lesson
+      is **kept**. Before v53_g it was rejected and silently regenerated — pure wasted model time.
+- [ ] **Real failures still blocked.** Force a failure (e.g. a tiny/quantised model on `lb→en`) until
+      the model writes English into both fields. Console shows `8/8 vocab (100%) … — blocking, will
+      retry` and it retries. **This is the safety property — verify it before trusting the change.**
+- [ ] **Close pairs unaffected.** `de↔nl`, `de↔lb`, `ru↔uk`, and any dialect (`de|de`) still log
+      `— close pair, allowed` and never block, at any ratio.
+- [ ] **Sentences unchanged.** Two identical sentences still block, whatever the vocab ratio.
+- [ ] **Watch the new console line.** It now prints `k/n (pct%)` and one of three verdicts. If you see
+      a lesson land between 40% and 75%, tell me — the threshold was derived from a gap that was
+      empty, and a lesson in the gap means it needs re-deriving.
+
+### 76. v54 — drill lessons: "🎯 Review my mistakes"
+The learned ledger has tracked a per-word `wrong` count since v50 and **nothing read it**. A drill
+pulls those words straight into the existing `standard` exercise builder: no model call, no latency,
+works offline and in the static (no-backend) build. The lesson is **ephemeral** — synthesized in
+memory, never saved. Headless: `unit-drill` (selection, padding, refusals, real-builder integration,
+qid stability, ephemerality; all mutation-tested).
+
+- [ ] **The button appears.** Finish any lesson getting ≥1 word wrong. The result card shows
+      **🎯 Review my mistakes** below Continue. Tap it: a round plays, built from your wrong words.
+- [ ] **It quizzes the wrong words** (not just weaves them in, like "my story"). The words you missed
+      appear as MCQ / listen / type questions, padded with words you know so the MCQs have distractors.
+- [ ] **It hides when there's nothing to review.** On a fresh pair, or after clearing every mistake,
+      the button is absent. (A drill is not a re-run of vocabulary you already know.)
+- [ ] **Re-learning walks the count down.** Drill a word, answer it right, drill again — eventually
+      it stops appearing. Answer it wrong and it comes back harder (`wrong` increments).
+- [ ] **A normal lesson never decays the counts.** Play a normal lesson getting everything right;
+      previously-wrong words must still show up in the next drill.
+- [ ] **Ephemeral — the key regression.** Before drilling, note a topic's completion %. Drill, finish,
+      press Continue. You land back on **the same topic**, its completion % **unchanged**, and no
+      phantom "__drill__" topic exists in the library.
+- [ ] **Quit mid-drill** (the ✕): you return to the real topic, not a blank screen, and its progress
+      is untouched.
+- [ ] **Re-drill from a drill's own result card**: finishing a drill and tapping 🎯 again must still
+      return you to the *original* topic on Continue, not to the previous drill.
+- [ ] **Static build.** Open `docs/index.html` with no server. The drill works — it needs no backend.
+- [ ] **i18n.** Labels come from `ui.json` `drill.*`, currently **English only** (4 new keys), so a
+      non-English UI shows English until the TranslateGemma pass. Expected, not a bug.
+
+### 77. v54_b — drill fixes: quiz only mistakes; the "__drill__" leak
+Two user-reported bugs in the v54 drill.
+**(a)** Padding widened the *quiz*, so one mistake was buried among seven known words — "review my
+mistakes" mostly tested words the learner had never got wrong. Padding now fills only the MCQ
+**distractor pool** (`lesson._distractors`, new, additive); `lesson.vocab` holds the mistakes alone.
+**(b)** `showComplete` **reassigns** `compNext.onclick`, so the inline `onclick="afterComplete()"`
+never fired on the finish path — `endDrill()` there was dead code. The ephemeral drill stayed loaded,
+and the completion nav button (titled from `APP.lessonData.topic`) rendered a **`__drill__`** button
+that opened the drill as a fake lesson set. `endDrill()` now runs in `goLessonSet()`, the single choke
+point every exit funnels through; the nav buttons are hidden for a drill.
+Headless: `unit-drill` (mutation-tested; the two guards that missed this were themselves fake).
+
+- [ ] **Only mistakes are asked.** Get exactly **one** word wrong, finish, tap 🎯. The round asks about
+      **that word only** (≈3 questions). The MCQ still has 3 wrong options — drawn from words you know,
+      which are never themselves asked.
+- [ ] **The recap is honest.** "Words from this lesson" on the drill's result card lists only the
+      mistakes, not the padding.
+- [ ] **No `__drill__` button.** Finishing a drill shows **Continue** and *no* extra nav button.
+      Before v54_b there was a `📚 __drill__` button opening a fake lesson set.
+- [ ] **Continue returns you home.** Press Continue after a drill → you land on **the real topic's**
+      lesson set, completion % unchanged. (This is the path that was broken: `afterComplete` was never
+      called.)
+- [ ] **Re-drill still works.** 🎯 on a drill's own result card starts a fresh drill; Continue from
+      *that* still returns to the original topic, not to a previous drill.
+- [ ] **Quit mid-drill** (✕) still returns to the real topic.
+- [ ] **Many mistakes → no padding.** With ≥4 wrong words the round asks all of them and pulls no
+      known words in at all.
+
+### 78. v54_c — `_wrongTargets` was per-session, not per-round
+User-reported via the drill. `C._wrongTargets` was created lazily on the first wrong answer and
+**never cleared** — it accumulated across every lesson played in a session. `recordLearnedFromLesson`
+tests `wrongTargets.has(target)`, and that test **wins over the drill's decrement** (`else if(lesson._drill)`).
+Consequences: a word answered correctly in a later lesson was still marked wrong, and drilling a word
+you had missed earlier in the session **incremented** its count instead of clearing it — so the drill
+could never retire a mistake, and every attempt inflated it. `startLesson` now clears the set.
+Headless: `unit-drill` (a multi-round SEQUENCE test; single-call tests all passed).
+
+- [ ] **The drill can now clear a mistake.** Get one word wrong. Drill it, answer correctly, finish.
+      Drill again → that word is gone (or the button is hidden if it was the only mistake).
+      Before v54_c it came back, and came back *harder*.
+- [ ] **A clean round doesn't re-mark old mistakes.** Get word A wrong in lesson 1. Play lesson 2
+      perfectly (a lesson that also contains A). A's wrong count must not rise.
+- [ ] **Mixed rounds.** Play a vocab lesson with mistakes, then a mixed round with none. The drill's
+      contents must not grow because of the mixed round.
+- [ ] **Counts don't inflate.** Drill the same word right three times in a row: after the first, it's
+      cleared. It must not take three drills to remove one mistake.
+- [ ] **Static mode.** All of the above in `docs/index.html` with no server — this is where it was found.
+
+**Expected, not a bug:** the drill draws on the **cumulative ledger for the language pair**, not the
+lesson you just played. Mistakes from *any* earlier lesson or topic in that pair are eligible. And the
+words you see as MCQ *choices* but are never *asked* are the distractor pool (`_distractors`) — a
+one-mistake round needs three wrong options from somewhere.
+
+### 79. v55 — storyline SVG storyboard 🎬 (captions are HOVER tooltips as of v55_d)
+
+Server composes the SVG from model JSON (composeStoryboardSVG is the security boundary);
+the client only injects the finished string. Uses the STORY model; the call is synchronous
+and can run ~30 min on qwen3.6:35b-a3b (spike-measured 2.2 tok/s) — the ⏳ just waits.
+
+- [ ] Open a storyline with ≥2 chapters → 🎬 appears in the title row NEXT TO 📝 (both
+      gated on canGenerate). Open a 1-chapter storyline → 🎬 does NOT appear.
+- [ ] Click 🎬 → button shows ⏳ disabled; server console prints
+      `── Storyline storyboard generation ──` with `Model: <story model>`.
+- [ ] On success: panels appear in the storyline screen ABOVE the summary section; back on
+      the landing page the storyline card shows them above the summary strip; toast fires.
+- [ ] Reload → storyboard persists (stored on the storyline as `sl.storyboard`).
+- [ ] `sl.storyboardMeta` in lessons.json records `type:'storyline_storyboard'` and the
+      STORY model (not the lesson model), with tokens + ms (v53_d contract).
+- [ ] Re-generate (click 🎬 again) → new panels REPLACE the old ones cleanly in both places.
+- [ ] `node build-static.js` → open docs/index.html OFFLINE → the storyboard renders on the
+      storyline card (no 🎬 button in static — canGenerate is false, display-only is correct).
+- [ ] INJECTION (explicit): create a storyline whose chapter text / user story contains
+      `<script>alert(1)</script>` and SVG markup, generate a storyboard → captions may show
+      the text escaped, but nothing executes and no foreign markup renders (check DOM: only
+      svg/rect/circle/ellipse/line/polyline/polygon/path/text elements inside the panel).
+- [ ] Model can't produce ≥2 valid panels → toast shows the storyboard.empty message; button
+      returns to 🎬 enabled; nothing is stored.
+- [ ] Timeout behaviour: the request survives >12 min (per-call 60-min LLM timeout); if the
+      browser tab is closed mid-generation the server still finishes and stores the result
+      (re-open the storyline to see it).
+
+### 79b. v55_b — storyboard failures leave a server-side corpse
+- [ ] Force a failure (e.g. stop Ollama mid-generation, or point OLLAMA_URL at nothing and
+      click 🎬) → the server console prints `✗ Storyline storyboard FAILED after Ns: <msg>`
+      (plus, if the model responded with garbage, `Raw starts: …`). No more silent deaths —
+      the toast is no longer the only witness.
+- [ ] On a SUCCESSFUL run, the console now also prints `Response : after Ns (N tok, N tok/s)`
+      between the header and the panel count — the tok/s number is the data for the
+      job-vs-sync decision carried in roadmap_v55.
+
+### 79c. v55_c — storyboard requests think:false
+- [ ] 🎬 on a thinking story model (qwen3.6:*): the `Response :` line appears in MINUTES
+      (single-digit tok count of pure JSON), not after 20+ min, and no
+      "returned empty response" / "only a reasoning block" failure.
+- [ ] 🎬 with a NON-thinking story model (qwen2.5:7b): still works — if this Ollama version
+      rejects `think:false` for it, the automatic parameter-less retry kicks in invisibly
+      (at worst the console shows one failed+retried call, never a user-facing error).
+
+### 79d. v55_d — captions are hover tooltips, not a text band
+- [ ] Generated panels have NO caption text under them; hovering a panel (desktop) shows the
+      caption as a native browser tooltip. Panels are the same size as before, the strip is just
+      shorter by the old caption band.
+- [ ] Touch device: no caption is shown (accepted tradeoff — the caption lives only in the
+      hover title / accessibility tree).
+
+### 79e. v55_e — storyboard delete (🎬 toggle menu)
+- [ ] With NO storyboard: 🎬 generates directly (unchanged).
+- [ ] With a storyboard present: 🎬 opens a menu with Regenerate / Delete (+ Cancel).
+      Button tooltip reads "Storyboard options" instead of "Generate storyboard".
+- [ ] Delete → panels vanish from the storyline screen AND the landing card; toast
+      "Storyboard deleted"; reload confirms it's gone from lessons.json (`sl.storyboard`
+      and `sl.storyboardMeta` both removed).
+- [ ] Delete works even with Ollama stopped (the DELETE route needs no backend).
+- [ ] Regenerate → same as a fresh generate (⏳ → new panels replace the old).
+- [ ] Cancel / Esc / overlay-click → nothing changes.
+- [ ] Static build (docs/): no 🎬 button at all (canGenerate false) — baked storyboards are
+      read-only there; deletion is a server-build action. (Expected, not a bug.)

@@ -425,7 +425,18 @@
     "ex.badge.glyph_order": "Put the letters in order",
     "ex.glyph_order.q": "Spell “{word}” — tap the letters in order",
     "ex.glyph_order.q_plain": "Tap the letters in the correct order",
-    "ex.glyph_order.placeholder": "Tap letters to build the word"
+    "ex.glyph_order.placeholder": "Tap letters to build the word",
+    "drill.title": "Review my mistakes",
+    "drill.desc": "Words you got wrong, plus a few you know",
+    "drill.cta": "🎯 Review my mistakes",
+    "drill.empty": "Nothing to review yet — finish a lesson first.",
+    "storyboard.gen": "🎬 Generate storyboard",
+    "storyboard.title": "Storyboard",
+    "storyboard.empty": "The model produced no usable storyboard panels — try again.",
+    "storyboard.regenerate": "🎬 Regenerate storyboard",
+    "storyboard.delete": "🗑 Delete storyboard",
+    "storyboard.deleted": "Storyboard deleted",
+    "storyboard.menu": "Storyboard options"
   },
   "nl": {
     "static.pill.tosubmit": "indienen",

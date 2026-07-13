@@ -385,6 +385,44 @@ console.log('  v53 Latin course: localized answers, no Latin leak, parity, legac
   console.log(`  sounds/soundsFor invariants across ${tables.length} tables, ${columnsChecked} column(s): OK`);
 }
 
+// ── v53_b: the "add lesson +" gate must read the SET's srcLang, not the global APP.srcLang ───
+// `APP.srcLang` is the source/UI language of whoever is browsing; a saved set carries the pair it
+// was authored for. Pre-v53 the difference never bit — a non-Latin TARGET made the option appear
+// for any srcLang — but a LATIN target only needs the course when the SET's source is non-Latin,
+// so reading the global setting hid the new Latin lesson on an en|ar set whenever the UI was in
+// English. The generator (scriptsUsedInLessonSet(d)) always read d.srcLang; the gate did not.
+{
+  const APPen = { srcLang: 'en' };   // browsing with an English UI
+  const gate = new Function('SCRIPTS_DATA', 'APP',
+    [ext(html, 'scriptsForLang'), ext(html, 'scriptHasTable'), ext(html, 'scriptTeachable'),
+     ext(html, 'needsIntroScript'), ext(html, 'scriptLessonAvailable'),
+     ext(html, 'scriptLessonAvailableForSet')].join('\n') + '\nreturn scriptLessonAvailableForSet;'
+  )(SCRIPTS_DATA, APPen);
+
+  assert.strictEqual(gate({ lang: 'en', srcLang: 'ar' }), true,
+    'en|ar set offers a script lesson even when the UI language is English (the reported bug)');
+  assert.strictEqual(gate({ lang: 'en', srcLang: 'ja' }), true, 'en|ja set offers a script lesson');
+  assert.strictEqual(gate({ lang: 'ar', srcLang: 'en' }), true, 'ar|en set still offers one');
+  assert.strictEqual(gate({ lang: 'en', srcLang: 'de' }), false, 'en|de set offers none (both Latin)');
+  assert.strictEqual(gate({ lang: 'ar' }), true, 'legacy set with no srcLang falls back to APP.srcLang');
+  assert.strictEqual(gate(null), false, 'no set → no option');
+  assert.strictEqual(gate({}), false, 'set with no lang → no option');
+
+  // Both call sites must go through the set-scoped helper, not the raw global.
+  assert.ok(!/scriptLessonAvailable\((?:s\.lang|lang), APP\.srcLang\)/.test(html),
+    'no call site passes APP.srcLang alongside a set\'s lang');
+  assert.strictEqual((html.match(/scriptLessonAvailableForSet\(/g) || []).length, 3,
+    'both option gates + the definition use scriptLessonAvailableForSet');
+
+  // The AUTHORING path bakes the exercises that the editor and QC see. It must localize too —
+  // play-time rebuild does, but the persisted `exercises` array would otherwise answer in Latin.
+  const calls = html.match(/(?<!function )introScriptExercisesFrom\([^)]*\)/g) || [];
+  assert.ok(calls.length >= 2, `introScriptExercisesFrom has call sites (found ${calls.length})`);
+  calls.forEach(c => assert.ok(/srcScripts/.test(c),
+    `every introScriptExercisesFrom call passes srcScripts — found: ${c}`));
+}
+console.log('  v53_b add-lesson gate reads the set\'s srcLang; authoring path localizes: OK');
+
 // ── Difficulty cap + distractor pool (v47.x) ─────────────────────────────────
 const introMaxLetters = new Function(ext(html, 'introMaxLetters') + '\nreturn introMaxLetters;')();
 const introSelectLetters = new Function('shuffle', 'introMaxLetters',

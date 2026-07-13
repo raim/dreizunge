@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v53';
+const APP_VERSION  = 'v55_e';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -1204,8 +1204,22 @@ const CJK_LANGS = new Set(['ja','zh','ko']);
 // would false-positive. For these pairs we log identical items but don't block. Dialects
 // (lang === srcLang, e.g. an East-Tyrolean de/de topic) are always treated as close.
 // Order-independent; extend this list as needed.
+//
+// NOTE (v53_c): this list is the ONLY place language "similarity" is recorded — there is no
+// similarity field in languages.json. The comparison is case-insensitive + trimmed, and blocks at
+// >2 identical vocab items (or >1 sentence) in a single lesson. That COUNT threshold conflates two
+// different things, measured against the real corpus:
+//   • a genuine model failure — the model wrote the source language into both fields (100% of items
+//     identical: an lb→en "History of Luxembourg" lesson, an it→en "Grandmas Doughs" lesson);
+//   • legitimate loanwords / proper nouns, which occur in EVERY pair regardless of closeness
+//     (38%: "pasta, tagliatelle, risotto"; "café, fans, notes"; "Champagne, Terroir").
+// A RATIO threshold (identical/total) would separate them; see roadmap_v54 "identical-source/target
+// heuristic". Until then, closeness is the only lever, so keep this list conservative: relaxing a
+// pair also disables the check that catches real model failures for it.
 const CLOSE_LANG_PAIRS = [
   ['de','lb'],   // German ↔ Lëtzebuergesch
+  ['de','nl'],   // German ↔ Dutch — West Germanic; arm/hand/winter/warm/water… collide once
+                 // lowercased, so a de↔nl vocab lesson trips the >2 rule on cognates alone.
   ['de','nds'],  // German ↔ Low German
   ['de','bar'],  // German ↔ Bavarian
   ['nl','af'],   // Dutch ↔ Afrikaans
@@ -1339,8 +1353,9 @@ async function generateStorylineTitle(topics, stories, srcLang) {
 async function generateStorylineSummary(topics, stories, vocab, srcLang) {
   srcLang = srcLang || 'en';
   const S = langName(srcLang);
+  const _t0 = Date.now();
   console.log(`\n── Storyline summary generation ─────────────────────`);
-  console.log(`  Chapters : ${topics.length}, Lang: ${S}`);
+  console.log(`  Chapters : ${topics.length}, Lang: ${S}, Model: ${OLLAMA_MODEL}`);
   const chapterSummaries = topics.map((t, i) =>
     `Chapter ${i+1}: "${t}"\n${(stories[i]||'').slice(0, 600).replace(/\n/g,' ')}…`
   ).join('\n\n');
@@ -1351,7 +1366,219 @@ async function generateStorylineSummary(topics, stories, vocab, srcLang) {
   const summary = result.text.trim();
   console.log(`  Summary  : ${summary.slice(0,80)}…`);
   console.log('────────────────────────────────────────────────────\n');
-  return summary;
+  // Stamped like every lesson generator, so the storyline records WHICH model wrote its summary.
+  // Returns an object; callers store `.text` on sl.summary (still a plain string) and `.meta` on
+  // sl.summaryMeta. `String(result)` is deliberately NOT supported — a silent stringify would put
+  // "[object Object]" into a user-visible field, so the two call sites are asserted in tests.
+  const meta = buildGenMeta({
+    type: 'storyline_summary', model: OLLAMA_MODEL, t0: _t0, valid: summary ? 1 : 0,
+    promptTokens: result.promptTokens, completionTokens: result.completionTokens,
+  });
+  return { text: summary, meta };
+}
+
+// ── Storyline storyboard (v55) ────────────────────────────────────────────────
+// The model is asked for a STRICT JSON array of 2–5 panels built from a whitelisted
+// primitive vocabulary — NEVER raw SVG. This composer is the security boundary: it is the
+// ONLY thing that turns model output into markup. Unknown shape types are DROPPED (never
+// rendered raw), every coordinate is clamped into the 0 0 100 100 panel viewBox, colors
+// resolve through a fixed named palette, path `d` is charset-whitelisted and length-capped,
+// all text is escaped, and panels render inside nested <svg> elements (which also CLIP any
+// overflow). No <script>, <foreignObject>, or href can be emitted. Caps: ≤5 panels,
+// ≤25 shapes/panel; a panel with 0 valid shapes is invalid; <2 valid panels → svg:null.
+// Self-contained on purpose (helpers nested) so unit-storyboard can extract and run it pure.
+function composeStoryboardSVG(panels) {
+  const PALETTE = {
+    paper:'#faf7f0', ink:'#2b2b2b', accent:'#e07a5f', sky:'#a8dadc', water:'#457b9d',
+    leaf:'#81b29a', sun:'#f2cc8f', earth:'#8d6e63', stone:'#9e9e9e', rose:'#e5989b',
+    night:'#3d405b', white:'#ffffff', none:'none',
+  };
+  const MAX_PANELS = 5, MIN_PANELS = 2, MAX_SHAPES = 25, MAX_POINTS = 60, MAX_D = 500;
+  const PANEL_PX = 170, GAP = 12;
+  const D_RE = /^[MmLlHhVvZzCcSsQqTtAa0-9eE .,+-]+$/;
+  function escXml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function num(v, lo, hi, dflt) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return dflt;
+    return Math.max(lo, Math.min(hi, n));
+  }
+  function col(v, dflt) {
+    const k = String(v == null ? '' : v).trim().toLowerCase();
+    return PALETTE[k] !== undefined ? PALETTE[k] : dflt;
+  }
+  function paintAttrs(s, dfltFill) {
+    const fill   = col(s.fill, dfltFill);
+    const stroke = col(s.stroke, 'none');
+    const sw     = num(s.sw != null ? s.sw : s.strokeWidth, 0, 10, 1.5);
+    const o      = num(s.o  != null ? s.o  : s.opacity, 0, 1, 1);
+    let a = ` fill="${fill}"`;
+    if (stroke !== 'none') a += ` stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"`;
+    if (o < 1) a += ` opacity="${o}"`;
+    return a;
+  }
+  function pointsAttr(pts) {
+    let flat = [];
+    if (typeof pts === 'string') flat = pts.split(/[\s,]+/).map(Number);
+    else if (Array.isArray(pts)) flat = pts.flat().map(Number);
+    if (flat.length < 4 || flat.length % 2 !== 0 || flat.some(n => !Number.isFinite(n))) return null;
+    flat = flat.slice(0, MAX_POINTS * 2).map(n => Math.max(0, Math.min(100, n)));
+    const out = [];
+    for (let i = 0; i < flat.length; i += 2) out.push(flat[i] + ',' + flat[i + 1]);
+    return out.join(' ');
+  }
+  function shapeToSvg(s, drops) {
+    if (!s || typeof s !== 'object') { drops.push('not-an-object'); return null; }
+    const t = String(s.type || s.t || '').toLowerCase();
+    switch (t) {
+      case 'rect': {
+        const x = num(s.x, 0, 100, null), y = num(s.y, 0, 100, null);
+        const w = num(s.w != null ? s.w : s.width, 0, 100, null);
+        const h = num(s.h != null ? s.h : s.height, 0, 100, null);
+        if (x == null || y == null || !w || !h) { drops.push('rect: bad coords'); return null; }
+        const rx = num(s.rx, 0, 50, 0);
+        return `<rect x="${x}" y="${y}" width="${w}" height="${h}"${rx ? ` rx="${rx}"` : ''}${paintAttrs(s, PALETTE.ink)}/>`;
+      }
+      case 'circle': {
+        const cx = num(s.cx, 0, 100, null), cy = num(s.cy, 0, 100, null), r = num(s.r, 0, 100, null);
+        if (cx == null || cy == null || !r) { drops.push('circle: bad coords'); return null; }
+        return `<circle cx="${cx}" cy="${cy}" r="${r}"${paintAttrs(s, PALETTE.ink)}/>`;
+      }
+      case 'ellipse': {
+        const cx = num(s.cx, 0, 100, null), cy = num(s.cy, 0, 100, null);
+        const rx = num(s.rx, 0, 100, null), ry = num(s.ry, 0, 100, null);
+        if (cx == null || cy == null || !rx || !ry) { drops.push('ellipse: bad coords'); return null; }
+        return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"${paintAttrs(s, PALETTE.ink)}/>`;
+      }
+      case 'line': {
+        const x1 = num(s.x1, 0, 100, null), y1 = num(s.y1, 0, 100, null);
+        const x2 = num(s.x2, 0, 100, null), y2 = num(s.y2, 0, 100, null);
+        if ([x1, y1, x2, y2].some(v => v == null)) { drops.push('line: bad coords'); return null; }
+        const stroke = col(s.stroke, PALETTE.ink);
+        const sw = num(s.sw != null ? s.sw : s.strokeWidth, 0, 10, 1.5);
+        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+      }
+      case 'polyline': {
+        const p = pointsAttr(s.points);
+        if (!p) { drops.push('polyline: bad points'); return null; }
+        const stroke = col(s.stroke, PALETTE.ink);
+        const sw = num(s.sw != null ? s.sw : s.strokeWidth, 0, 10, 1.5);
+        return `<polyline points="${p}" fill="${col(s.fill, 'none')}" stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      }
+      case 'polygon': {
+        const p = pointsAttr(s.points);
+        if (!p) { drops.push('polygon: bad points'); return null; }
+        return `<polygon points="${p}"${paintAttrs(s, PALETTE.ink)}/>`;
+      }
+      case 'path': {
+        const d = String(s.d || '').trim();
+        if (!d || d.length > MAX_D || !D_RE.test(d)) { drops.push('path: bad/oversized d'); return null; }
+        return `<path d="${d}"${paintAttrs(s, 'none')}/>`;
+      }
+      case 'text': {
+        const x = num(s.x, 0, 100, null), y = num(s.y, 0, 100, null);
+        const content = String(s.text != null ? s.text : s.content || '').slice(0, 40).trim();
+        if (x == null || y == null || !content) { drops.push('text: bad coords/empty'); return null; }
+        const size = num(s.size, 3, 16, 7);
+        return `<text x="${x}" y="${y}" font-size="${size}" font-family="sans-serif" fill="${col(s.fill, PALETTE.ink)}">${escXml(content)}</text>`;
+      }
+      default:
+        drops.push(`unknown type: ${t || '(missing)'}`);
+        return null;
+    }
+  }
+
+  const stats = { requested: Array.isArray(panels) ? panels.length : 0, valid: 0, drops: [] };
+  if (!Array.isArray(panels)) return { svg: null, stats };
+  const rendered = [];
+  for (const p of panels.slice(0, MAX_PANELS)) {
+    if (!p || typeof p !== 'object' || !Array.isArray(p.shapes)) { stats.drops.push('panel: no shapes[]'); continue; }
+    const drops = [];
+    const shapes = p.shapes.slice(0, MAX_SHAPES).map(s => shapeToSvg(s, drops)).filter(Boolean);
+    stats.drops.push(...drops);
+    if (!shapes.length) { stats.drops.push('panel: 0 valid shapes'); continue; }
+    rendered.push({
+      bg: col(p.bg, PALETTE.paper),
+      caption: String(p.caption || '').slice(0, 70).trim(),
+      body: shapes.join(''),
+    });
+  }
+  stats.valid = rendered.length;
+  if (rendered.length < MIN_PANELS) return { svg: null, stats };
+
+  const W = rendered.length * (PANEL_PX + GAP) + GAP;
+  // No caption band — the caption is a hover-only <title> inside each panel group (drops the
+  // always-on text row per the user's call; panels keep their 170px size, height just loses the
+  // band). <title> is also the accessible choice: screen readers announce it.
+  const H = PANEL_PX + GAP * 2;
+  // Responsive: viewBox only + max-width, so 2–5 panels fit the storyline card on any device.
+  const parts = [
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto;display:block" role="img">`,
+  ];
+  rendered.forEach((p, i) => {
+    const x = GAP + i * (PANEL_PX + GAP);
+    // <g> with a leading <title> = hover tooltip over the whole panel (frame + art).
+    parts.push(
+      `<g>`,
+      p.caption ? `<title>${escXml(p.caption)}</title>` : '',
+      `<rect x="${x - 1}" y="${GAP - 1}" width="${PANEL_PX + 2}" height="${PANEL_PX + 2}" fill="none" stroke="${PALETTE.stone}" stroke-width="1" rx="4"/>`,
+      `<svg x="${x}" y="${GAP}" width="${PANEL_PX}" height="${PANEL_PX}" viewBox="0 0 100 100">`,
+      `<rect x="0" y="0" width="100" height="100" fill="${p.bg}"/>`,
+      p.body,
+      `</svg>`,
+      `</g>`
+    );
+  });
+  parts.push('</svg>');
+  const svg = parts.join('');
+  if (svg.length > 120000) { stats.drops.push('svg: over size cap'); return { svg: null, stats }; }
+  return { svg, stats };
+}
+
+// Generate a 2–5 panel SVG storyboard for a storyline from its chapter texts. Same call
+// shape as generateStorylineSummary. Returns { svg, meta } — callers destructure and persist
+// BOTH (sl.storyboard + sl.storyboardMeta); a bare assignment would store an object.
+// Uses the STORY model. maxTokens 6000: the live spike hit a 4096 cap (salvage repaired the
+// truncated tail); give the real feature headroom. timeoutMs 60min: this call runs ~30min at
+// the spike-measured 2.2 tok/s on qwen3.6:35b-a3b — it must outlive the 12-min inactivity
+// default without mutating the global request timeout.
+async function generateStorylineStoryboard(topics, stories, vocab, srcLang) {
+  srcLang = srcLang || 'en';
+  const S = langName(srcLang);
+  const _t0 = Date.now();
+  console.log(`\n── Storyline storyboard generation ──────────────────`);
+  console.log(`  Chapters : ${topics.length}, Lang: ${S}, Model: ${OLLAMA_MODEL}`);
+  const chapterSummaries = topics.map((t, i) =>
+    `Chapter ${i + 1}: "${t}"\n${(stories[i] || '').slice(0, 600).replace(/\n/g, ' ')}…`
+  ).join('\n\n');
+  const sys  = fillPrompt(PROMPTS.storylineStoryboard.system, { S });
+  const user = fillPrompt(PROMPTS.storylineStoryboard.user, { S, chapters: topics.length, chapterSummaries });
+  const result = await _callLLM(OLLAMA_MODEL, sys, user, 6000, { timeoutMs: 3600000, think: false });
+  // Log arrival BEFORE parsing — a 30-min call that returns garbage must still show it returned
+  // (v55_b: a live run died silently; the console showed the header and then nothing).
+  const _elapsed = ((Date.now() - _t0) / 1000).toFixed(0);
+  const _rate = result.completionTokens ? `, ${(result.completionTokens / ((Date.now() - _t0) / 1000)).toFixed(1)} tok/s` : '';
+  console.log(`  Response : after ${_elapsed}s (${result.completionTokens || '?'} tok${_rate})`);
+  let panels;
+  try { panels = JSON.parse(stripRaw(result.text)); }
+  catch (_) { try { panels = extractArray(result.text); } catch (_2) { panels = salvageArray(result.text); } }
+  if (!Array.isArray(panels)) {
+    console.error(`  ✗ Storyboard: model returned non-array JSON. Raw starts: ${JSON.stringify(stripRaw(result.text).slice(0, 200))}`);
+    throw new Error('Storyboard: model returned non-array JSON');
+  }
+  const { svg, stats } = composeStoryboardSVG(panels);
+  console.log(`  Panels   : ${stats.valid}/${stats.requested} valid${stats.drops.length ? ` (dropped: ${stats.drops.slice(0, 6).join('; ')})` : ''}`);
+  if (!svg) throw new Error(`Storyboard: only ${stats.valid} valid panel(s) (need ≥2)`);
+  console.log(`  SVG      : ${svg.length} bytes`);
+  console.log('────────────────────────────────────────────────────\n');
+  const meta = buildGenMeta({
+    type: 'storyline_storyboard', model: OLLAMA_MODEL, t0: _t0, valid: stats.valid,
+    promptTokens: result.promptTokens, completionTokens: result.completionTokens,
+  });
+  return { svg, meta };
 }
 
 // Generate coherent per-chapter titles + emojis for a whole storyline at once,
@@ -1468,12 +1695,18 @@ function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){ const j=Math
 // returned lesson (lesson._genMeta) so EVERY flow — add-lesson, initial topic gen, book
 // import, storyline recreate — carries it for later QC / batch stats / weak-model
 // diagnosis. `t0` is a Date.now() captured at the generator's start (omit → ms null).
-// `model` defaults to the lesson model; pass '(procedural)' for the non-LLM math path.
+// `model` is REQUIRED (v53_d). It used to default to OLLAMA_LESSON_MODEL, which silently
+// mis-stamps any caller that used a different role — the story model, the translation model, or a
+// procedural generator. Every real call site happened to match the default, but the trap was one
+// copy-paste away from recording the wrong provenance for good. Sentinels: '(procedural)' for the
+// non-LLM paths (math, intro_script), '(user-provided)' for a story the user pasted, '(unknown)'
+// where the generator genuinely didn't say.
 function buildGenMeta(o) {
   o = o || {};
+  if (!o.model) throw new Error("buildGenMeta: `model` is required — pass the model actually used, or a '(procedural)' / '(user-provided)' / '(unknown)' sentinel");
   return {
     type: o.type || null,
-    model: o.model || OLLAMA_LESSON_MODEL,
+    model: o.model,
     attempts: (o.attempts != null) ? o.attempts : null,
     valid: (o.valid != null) ? o.valid : null,
     rejected: (o.rejected != null) ? o.rejected : 0,
@@ -1720,7 +1953,7 @@ async function generateMathLLM(lang, srcLang, difficulty, instruction, jobId) {
           difficulty,
           mathInstruction: instruction,
           exercises: parsed.exercises,
-          _genMeta: buildGenMeta({ type: 'math', t0: _t0, attempts: attempt, valid: (parsed.exercises || []).length, promptTokens, completionTokens }),
+          _genMeta: buildGenMeta({ type: 'math', model: OLLAMA_LESSON_MODEL, t0: _t0, attempts: attempt, valid: (parsed.exercises || []).length, promptTokens, completionTokens }),
         },
         tokens: { promptTokens, completionTokens },
       };
@@ -1852,7 +2085,7 @@ async function generateGrammar(topic, lang, srcLang, difficulty, jobId, opts) {
         desc:  parsed.desc  || 'Noun gender, articles and plural forms',
         icon:  parsed.icon  || '🏷️',
         grammar: valid,
-        _genMeta: buildGenMeta({ type: 'grammar', t0: _t0, attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons: genReasonHist(rejected), promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens }),
+        _genMeta: buildGenMeta({ type: 'grammar', model: OLLAMA_LESSON_MODEL, t0: _t0, attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons: genReasonHist(rejected), promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens }),
       },
       tokens: { promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens },
     };
@@ -1971,7 +2204,7 @@ async function generateWordForms(topic, lang, srcLang, difficulty, jobId, opts) 
         desc:  parsed.desc  || 'Pick the form that fits',
         icon:  parsed.icon  || '🧩',
         items: valid,
-        _genMeta: buildGenMeta({ type: 'word_forms', t0: _t0, attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons: genReasonHist(rejected), promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens }),
+        _genMeta: buildGenMeta({ type: 'word_forms', model: OLLAMA_LESSON_MODEL, t0: _t0, attempts: attempt, valid: valid.length, rejected: rejected.length, rejectReasons: genReasonHist(rejected), promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens }),
       },
       tokens: { promptTokens: totalPromptTokens, completionTokens: totalCompletionTokens },
     };
@@ -2084,7 +2317,7 @@ async function generateSynonyms(topic, lang, srcLang, difficulty, jobId, opts) {
         desc:  parsed.desc  || 'Related words from the story',
         icon:  parsed.icon  || '🔁',
         words,
-        _genMeta: buildGenMeta({ type: 'synonyms', t0: _t0, attempts: attempt, valid: words.length, promptTokens: tp, completionTokens: tc }),
+        _genMeta: buildGenMeta({ type: 'synonyms', model: OLLAMA_LESSON_MODEL, t0: _t0, attempts: attempt, valid: words.length, promptTokens: tp, completionTokens: tc }),
       },
       tokens: { promptTokens: tp, completionTokens: tc },
     };
@@ -2130,7 +2363,7 @@ async function generateConjugation(topic, lang, srcLang, difficulty, jobId, opts
       desc:  parsed.desc  || 'Present tense verb forms',
       icon:  parsed.icon  || '🔤',
       conjugations: parsed.conjugations,
-      _genMeta: buildGenMeta({ type: 'conjugation', t0: _t0, valid: (parsed.conjugations || []).length, promptTokens, completionTokens }),
+      _genMeta: buildGenMeta({ type: 'conjugation', model: OLLAMA_LESSON_MODEL, t0: _t0, valid: (parsed.conjugations || []).length, promptTokens, completionTokens }),
     },
     tokens: { promptTokens, completionTokens },
   };
@@ -2249,17 +2482,38 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
     // the source language). Collect the offending items so they're visible on the console. For
     // CLOSE language pairs (dialects, or e.g. Lëtzebuergesch↔German) many items legitimately share
     // spelling, so we log them but do NOT block.
+    //
+    // v53_g — the vocab rule is a RATIO, not a bare count. A count alone conflates two things,
+    // measured across all 267 topics (98 non-close lessons contain at least one identical item):
+    //   • a real failure — the model wrote the source language into both fields. Observed at
+    //     100% (8/8), 100% (8/8), 80% (4/5), 75% (6/8 ×2).
+    //   • legitimate loanwords / proper nouns, which occur in EVERY pair regardless of closeness.
+    //     Observed at 40% and below: "pasta, tagliatelle, risotto"; "café, fans, notes";
+    //     "Champagne, Terroir"; "performance, DJ".
+    // The distribution is bimodal with nothing between 40% and 75%, so any cut in that band
+    // separates them. 0.6 sits mid-gap. The old `> 2` rule caught all 5 failures but also rejected
+    // 4 perfectly good loanword lessons, which were then regenerated for nothing.
+    // The SENTENCE rule is unchanged: the corpus has zero identical sentences in a non-close pair,
+    // so there is no evidence to relax it — and a whole identical sentence is a far stronger signal
+    // of a model failure than a shared word.
+    const IDENTICAL_MIN_ITEMS = 3;     // floor: ignore 1–2 hits however small the lesson
+    const IDENTICAL_MIN_RATIO = 0.6;   // …and only block when most of the lesson is identical
     const _sameField = a => a.target && a.source && a.target.trim().toLowerCase() === a.source.trim().toLowerCase();
     const vocabSame = lesson.vocab.filter(_sameField);
     const sentSame  = lesson.sentences.filter(_sameField);
     const _close = isCloseLangPair(lang, srcLang);
+    const _ratio = lesson.vocab.length ? vocabSame.length / lesson.vocab.length : 0;
+    const _blockVocab = vocabSame.length >= IDENTICAL_MIN_ITEMS && _ratio >= IDENTICAL_MIN_RATIO;
     if (vocabSame.length || sentSame.length) {
-      console.warn(`  [lesson ${lessonNum}] ${vocabSame.length} vocab + ${sentSame.length} sentence item(s) with identical source/target (${lang}→${srcLang})${_close ? ' — close pair, allowed' : ' — blocking, will retry'}:`);
+      const _verdict = _close ? ' — close pair, allowed'
+        : (_blockVocab || sentSame.length > 1) ? ' — blocking, will retry'
+        : ' — below ratio threshold (loanwords?), allowed';
+      console.warn(`  [lesson ${lessonNum}] ${vocabSame.length}/${lesson.vocab.length} vocab (${Math.round(_ratio*100)}%) + ${sentSame.length} sentence item(s) with identical source/target (${lang}→${srcLang})${_verdict}:`);
       [...vocabSame, ...sentSame].forEach(it => console.warn(`      • ${it.target}  =  ${it.source}`));
     }
     if (!_close) {
-      if (vocabSame.length > 2)
-        throw new Error(`${vocabSame.length} vocab items have identical source/target fields — model ignored source language, retrying`);
+      if (_blockVocab)
+        throw new Error(`${vocabSame.length}/${lesson.vocab.length} vocab items (${Math.round(_ratio*100)}%) have identical source/target fields — model ignored source language, retrying`);
       if (sentSame.length > 1)
         throw new Error(`${sentSame.length} sentences have identical source/target fields — model ignored source language, retrying`);
     }
@@ -2272,7 +2526,7 @@ async function generateOneLesson(lang, srcLang, topic, lessonNum, totalLessons, 
         icon:  lesson.icon  || '📖',
         vocab: lesson.vocab,
         sentences: lesson.sentences,
-        _genMeta: buildGenMeta({ type: 'standard', t0: _t0, valid: (lesson.vocab || []).length, promptTokens, completionTokens }),
+        _genMeta: buildGenMeta({ type: 'standard', model: OLLAMA_LESSON_MODEL, t0: _t0, valid: (lesson.vocab || []).length, promptTokens, completionTokens }),
       },
       tokens: { lessonNum, ms, promptTokens, completionTokens }
     };
@@ -2312,6 +2566,12 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   // is produced (not re-read at the end), so a runtime model switch mid-run can't misattribute.
   // `story` stays null for a user-provided story; `translation` stays null when translation is skipped.
   let _storyModel = null, _translationModel = null;
+  // Per-artefact stamp for the story, matching lessons' `_genMeta` and the storyline's
+  // `summaryMeta`. `generationStats.models.story` already records WHICH model, but not how long
+  // it took, how many tokens it cost, or when — and it is absent on every topic generated before
+  // that field existed (249 of 267 in the shipped corpus). A user-pasted story is stamped
+  // '(user-provided)' rather than left null, so "no model" and "unknown" stop looking alike.
+  let _storyMeta = null;
 
   jobStep(jobId, `[${OLLAMA_MODEL}] Generating topic info…`);
   let meta;
@@ -2359,6 +2619,11 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   if (userStory) {
     story = userStory.trim();
     storyPrompt = userTranslation ? 'User-provided story + translation' : 'User-provided story';
+    // `model` says WHO wrote the text (nobody — the user supplied it). `origin` says WHERE it came
+    // from. Coarse here because a chapter is saved before the storyline's sourceFile is known; the
+    // post-pass below refines 'user-provided' → 'file-upload' once it is.
+    _storyMeta = buildGenMeta({ type: 'story', model: '(user-provided)', valid: story ? 1 : 0 });
+    _storyMeta.origin = 'user-provided';
     console.log(`    Using user-provided story (${story.length} chars)${userTranslation?' + translation':''}${userDialect?', dialect: '+userDialect:''}`);
   } else {
     const prevStoryFull = (parentTopic && parentTopic.story) ? parentTopic.story
@@ -2405,6 +2670,9 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
         storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
       story = text.trim();
       _storyModel = OLLAMA_MODEL;
+      _storyMeta = buildGenMeta({ type: 'story', model: OLLAMA_MODEL, t0, valid: story ? 1 : 0,
+        promptTokens, completionTokens });
+      _storyMeta.origin = 'generated';
       storyPrompt = storySystem + '\n\n' + storyUserMsg;
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
       console.log(`    [${OLLAMA_MODEL}] Story (${lang}, ~${storyLen}w): ${Date.now()-t0}ms, ${story.length} chars`);
@@ -2448,6 +2716,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
       userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
       story, storyLang, storyPrompt,
+      ...(_storyMeta ? { storyMeta: _storyMeta } : {}),
       ...(storyTranslation ? { storyTranslation } : {}),
       ...(userStory        ? { userStory }         : {}),
       ...(userDialect      ? { userDialect }       : {}),
@@ -2566,6 +2835,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
     userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
     story, storyLang, storyPrompt,
+    ...(_storyMeta ? { storyMeta: _storyMeta } : {}),
     ...(storyTranslation ? { storyTranslation } : {}),
     ...(userStory        ? { userStory }         : {}),
     ...(userTranslation  ? { userTranslation }   : {}),
@@ -2916,12 +3186,12 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
     const names = topics.map(t => t.topic);
     const vocab = topics.flatMap(t =>
       (t.lessons || []).flatMap(ls => (ls.vocab || []).map(v => v.source || v.target)));
-    const summary = await generateStorylineSummary(names, stories, vocab, base.srcLang);
+    const { text: summary, meta: summaryMeta } = await generateStorylineSummary(names, stories, vocab, base.srcLang);
     const slId = _chainId(chapterIds);
     const all = getStorylines();
     const sl = all.find(s => s.id === slId)
             || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
-    if (sl && summary) { sl.summary = summary; upsertStoryline(sl); }
+    if (sl && summary) { sl.summary = summary; sl.summaryMeta = summaryMeta; upsertStoryline(sl); }
   } catch (e) { console.warn(`  Storyline summary post-pass failed: ${e.message}`); }
   // 4) For file-derived books, record the original uploaded filename on the
   // storyline (so the library can show provenance). Best-effort.
@@ -2932,6 +3202,17 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
       const sl = all.find(s => s.id === slId)
               || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
       if (sl) { sl.sourceFile = String(base.sourceFile).slice(0, 200); upsertStoryline(sl); }
+      // A book chapter is `userStory` (we did not write it) but it is NOT "pasted by the user" — it
+      // came from an uploaded file with an author and a licence. Refine each chapter's storyMeta so
+      // the topic is self-describing and the library can attribute it without walking the storyline.
+      for (const cid of chapterIds) {
+        const t = findSavedById(cid);   // chapterIds are ids; findSaved() takes a topic NAME
+        if (t && t.storyMeta && t.storyMeta.origin === 'user-provided') {
+          t.storyMeta.origin = 'file-upload';
+          t.storyMeta.sourceFile = String(base.sourceFile).slice(0, 200);
+          upsert(t);
+        }
+      }
     }
   } catch (e) { console.warn(`  Storyline sourceFile post-pass failed: ${e.message}`); }
 }
@@ -4001,7 +4282,9 @@ http.createServer(async (req, res) => {
         // generator somehow didn't — keep the lesson annotated regardless.
         if (!newLesson._genMeta) {
           newLesson._genMeta = buildGenMeta({
-            type: result.lesson.type, t0: _genT0,
+            // The generator didn't stamp. Do NOT assume the lesson model — a procedural or
+            // story-model generator would be recorded as something it never was.
+            type: result.lesson.type, model: '(unknown)', t0: _genT0,
             valid: Array.isArray(result.lesson.items) ? result.lesson.items.length
                    : Array.isArray(result.lesson.vocab) ? result.lesson.vocab.length : null,
             promptTokens: result.tokens && result.tokens.promptTokens,
@@ -4093,14 +4376,66 @@ http.createServer(async (req, res) => {
         (t.lessons||[]).flatMap(ls => (ls.vocab||[]).map(v => v.source || v.target))
       );
       try {
-        const summary = await generateStorylineSummary(topics, stories, vocab, srcLang);
+        const { text: summary, meta: summaryMeta } = await generateStorylineSummary(topics, stories, vocab, srcLang);
         // Persist on the storyline object
         const sl = findStoryline(slId);
-        if (sl) { sl.summary = summary; upsertStoryline(sl); }
+        if (sl) { sl.summary = summary; sl.summaryMeta = summaryMeta; upsertStoryline(sl); }
         return json(res, 200, { summary });
       } catch(e) {
         return json(res, 500, { error: e.message });
       }
+    }
+
+    // ── Storyline storyboard (v55) — clone of the summary route above. The composed SVG is
+    // server-validated (composeStoryboardSVG is the security boundary); the client only
+    // injects the finished string. NOTE: synchronous like the summary — on a big story model
+    // this call can run ~30 min (spike-measured); the ⏳ button just waits.
+    if (M === 'POST' && url.pathname === '/api/storyline-storyboard') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { slId, topics } = body;
+      if (!slId || !Array.isArray(topics) || !topics.length)
+        return json(res, 400, { error: 'Missing slId or topics' });
+      const topicData = topics.map(t => findSaved(t)).filter(Boolean);
+      if (!topicData.length) return json(res, 404, { error: 'No topics found' });
+      const stories  = topicData.map(t => t.story || '');
+      const srcLang  = topicData[0].srcLang || 'en';
+      const vocab    = topicData.flatMap(t =>
+        (t.lessons||[]).flatMap(ls => (ls.vocab||[]).map(v => v.source || v.target))
+      );
+      const _sbT0 = Date.now();
+      try {
+        const { svg: storyboard, meta: storyboardMeta } = await generateStorylineStoryboard(topics, stories, vocab, srcLang);
+        const sl = findStoryline(slId);
+        if (sl) { sl.storyboard = storyboard; sl.storyboardMeta = storyboardMeta; upsertStoryline(sl); }
+        return json(res, 200, { storyboard });
+      } catch(e) {
+        // v55_b: a synchronous ~30-min call MUST NOT fail silently on the server console — the
+        // toast is the only other witness and the tab may be long closed. (A dead Ollama runner
+        // lands here as a network error; keep_alive is -1, so an empty `ollama ps` afterwards
+        // means Ollama/its runner DIED, not that it finished and unloaded.)
+        console.error(`  ✗ Storyline storyboard FAILED after ${((Date.now() - _sbT0) / 1000).toFixed(0)}s: ${e.message}`);
+        console.error('────────────────────────────────────────────────────\n');
+        return json(res, 500, { error: e.message });
+      }
+    }
+
+    // Delete a stored storyboard. No LLM, so no backend requirement (works when Ollama is
+    // down — you can always remove a picture). Idempotent: absent storyboard → still 200.
+    if (M === 'DELETE' && url.pathname === '/api/storyline-storyboard') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { slId } = body;
+      if (!slId) return json(res, 400, { error: 'Missing slId' });
+      const sl = findStoryline(slId);
+      if (sl && (sl.storyboard !== undefined || sl.storyboardMeta !== undefined)) {
+        delete sl.storyboard; delete sl.storyboardMeta; upsertStoryline(sl);
+        console.log(`  Storyboard deleted for storyline ${slId}`);
+      }
+      return json(res, 200, { ok: true });
     }
 
 

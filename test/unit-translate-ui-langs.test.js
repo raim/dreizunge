@@ -30,9 +30,16 @@ for (const l of offeredLangs) {
   if (l === 'en') continue;
   assert.ok(allLangs.includes(l), `${l} is discoverable by translate-ui.js (offered in languages.json)`);
 }
-// The regression that motivated this: sw is offered, and absent from ui.json, and must still be found.
+// The regression that motivated this: sw was offered but ENTIRELY absent from ui.json, so the old
+// Object.keys(ui) derivation could never see it. It has since been translated (30/30 languages), which
+// is exactly why the derivation must not depend on presence in ui.json — a future added language would
+// be invisible all over again. Assert discoverability from languages.json, independent of ui.json.
 assert.ok(offeredLangs.includes('sw'), 'sw is an offered language');
-assert.ok(allLangs.includes('sw'), 'sw is discoverable even though ui.json has no sw entry');
+assert.ok(allLangs.includes('sw'), 'sw is discoverable from languages.json');
+const uiWithoutSw = Object.keys(ui).filter(l => l !== 'sw');
+const derivedWithoutSw = [...new Set([...offeredLangs, ...uiWithoutSw])].filter(l => l !== 'en');
+assert.ok(derivedWithoutSw.includes('sw'),
+  'sw stays discoverable even if its ui.json entry were removed (the original bug)');
 
 // A stray ui.json entry with no languages.json counterpart is still maintained (union, not replace).
 const strayUi = { en: {}, de: {}, xx: {} };

@@ -79,6 +79,12 @@ run('unit: QC dispatch — synonyms/word_forms (v48)', 'node', [path.join(__dirn
 run('unit: QC skip already-checked lessons (v49 bug 6)', 'node', [path.join(__dirname, 'unit-qc-skip.test.js')]);
 run('unit: static version derived from server APP_VERSION (v49)', 'node', [path.join(__dirname, 'unit-version-derivation.test.js')]);
 run('unit: translate-ui discovers every offered language (v53)', 'node', [path.join(__dirname, 'unit-translate-ui-langs.test.js')]);
+run('unit: llm.js race guard clears its timer (v53_c)', 'node', [path.join(__dirname, 'unit-llm-timeout-handle.test.js')]);
+run('unit: storyline summary model log + stamp (v53_c)', 'node', [path.join(__dirname, 'unit-storyline-summary-stamp.test.js')]);
+run('unit: story provenance stamp + buildGenMeta model required (v53_d)', 'node', [path.join(__dirname, 'unit-story-stamp.test.js')]);
+run('unit: identical source/target ratio rule, corpus-calibrated (v53_g)', 'node', [path.join(__dirname, 'unit-identical-ratio.test.js')]);
+run('unit: drill lessons — review my mistakes (v54)', 'node', [path.join(__dirname, 'unit-drill.test.js')]);
+run('unit: storyline SVG storyboard (v55)', 'node', [path.join(__dirname, 'unit-storyboard.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);
 run('unit: learned-vocab ledger + my-story wiring (v50)', 'node', [path.join(__dirname, 'unit-learned-vocab.test.js')]);
