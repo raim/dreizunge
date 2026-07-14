@@ -1667,3 +1667,15 @@ Accepting it updates the story AND rebuilds the ai_error_hunt from the original�
       sweep re-proofreads it. Accepting a now-stale proposal (story changed underneath) returns 409.
 - [ ] Book GENERATION's automatic QC does NOT run story QC (no per-chapter proofread step, no 📝
       appears just from generating) — story QC is opt-in via the sweep only.
+
+### 80d. v55_m — accept individual corrections (per-sentence checkboxes)
+- [ ] A proposal with ≥2 fixes shows a checkbox per changed sentence (all checked) + a
+      "select all / none" toggle.
+- [ ] Untick one fix, Accept → the story gets ONLY the ticked fixes; the unticked sentence keeps
+      its original wording (verify by eye); spacing intact everywhere.
+- [ ] The resulting ai_error_hunt contains only the accepted corrections.
+- [ ] Untick everything + Accept → toast "no corrections selected" (nothing applied). Or if the
+      server sees an empty selection, it discards (proposal gone, story unchanged).
+- [ ] Accept with all ticked → identical to the old whole-text accept.
+- [ ] Especially: a proposal that includes a corrected QUOTED sentence — unticking a DIFFERENT
+      fix must not disturb the quoted one, and vice-versa (index alignment).

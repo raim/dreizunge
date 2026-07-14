@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v55_l';
+const APP_VERSION  = 'v55_m';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -4664,11 +4664,39 @@ http.createServer(async (req, res) => {
         delete t.storyQcProposal; saveStore(store);
         return json(res, 409, { error: 'Story changed since this proposal was generated; discarded. Re-run QC.' });
       }
+      // Per-sentence selection (v55_m): `selected` is an array of indices into the CHANGED-pair list
+      // (the order storyDiffSentences returns). Absent/null → accept ALL (backward compatible).
+      // We reconstruct by starting from the model's full corrected text (spacing intact) and
+      // REVERTING each UNSELECTED changed pair back to its original sentence — never re-splitting/
+      // re-joining the story (which would risk the whitespace-mangling class of bug). If nothing
+      // ends up selected, it's a no-op discard.
+      const { selected } = body;
+      let acceptedStory = prop.corrected;
+      let acceptedCount = null;
+      if (Array.isArray(selected)) {
+        const changed = storyDiffSentences(prop.against, prop.corrected);
+        const sel = new Set(selected.map(Number));
+        acceptedCount = 0;
+        changed.forEach((pair, idx) => {
+          if (sel.has(idx)) { acceptedCount++; return; }              // keep this fix
+          // Revert: swap the corrected sentence back to the original in the running story. Only the
+          // first occurrence, to avoid clobbering an identical sentence elsewhere.
+          if (pair.corrected && pair.ai != null) {
+            const at = acceptedStory.indexOf(pair.corrected);
+            if (at >= 0) acceptedStory = acceptedStory.slice(0, at) + pair.ai + acceptedStory.slice(at + pair.corrected.length);
+          }
+        });
+        if (acceptedCount === 0) {
+          // Nothing selected → treat as discard (don't touch the story, drop the proposal).
+          delete t.storyQcProposal; saveStore(store);
+          return json(res, 200, { ok: true, story: t.story, errorHuntBuilt: false, lessons: t.lessons, acceptedCount: 0 });
+        }
+      }
       // aiStory = the immutable "before". Pin it to the original the proposal was diffed against
       // (only if not already set — a prior human/AI edit may already own it).
       if (!t.aiStory) t.aiStory = prop.against || t.story;
       const originalForDiff = t.aiStory;
-      t.story = prop.corrected;
+      t.story = acceptedStory;
       t.updatedAt = new Date().toISOString();
       // Stamp the QC model on the topic (parallel to qcBy on lessons).
       t.storyQcBy = (prop.meta && prop.meta.model) || OLLAMA_QC_MODEL;
@@ -4693,8 +4721,8 @@ http.createServer(async (req, res) => {
       }
       delete t.storyQcProposal; // consumed
       saveStore(store);
-      console.log(`  ✓ Story QC accepted for "${t.topic}" — story updated, ai_error_hunt ${huntBuilt ? 'rebuilt' : 'unchanged (no diff)'}`);
-      return json(res, 200, { ok: true, story: t.story, errorHuntBuilt: huntBuilt, lessons: t.lessons });
+      console.log(`  ✓ Story QC accepted for "${t.topic}"${acceptedCount != null ? ` (${acceptedCount} of ${storyDiffSentences(originalForDiff, prop.corrected).length} fixes)` : ''} — story updated, ai_error_hunt ${huntBuilt ? 'rebuilt' : 'unchanged (no diff)'}`);
+      return json(res, 200, { ok: true, story: t.story, errorHuntBuilt: huntBuilt, lessons: t.lessons, acceptedCount });
     }
 
     // Discard a stored QC proposal without applying it.

@@ -2811,16 +2811,20 @@ function renderStoryQcProposal(prop) {
     panel.innerHTML = '<div style="font-weight:700;color:var(--gray-dark)">' + escHtml(t('qc.clean')) + '</div>';
     panel.style.display = ''; return;
   }
-  const sents = _qcSentencePairs(orig, corr).filter(p => p.a !== p.b);
-  const rows = sents.map(p => {
-    // A one-sided pair (whole sentence added or removed — common when the splitter isolates a
-    // quoted sentence and one interior word changed) must render as a whole del/ins block. Running
-    // a word-diff against an empty counterpart would drop every space (v55_i display bug).
+  const sents = _qcChangedPairs(orig, corr);
+  const rows = sents.map((p, idx) => {
+    // Each entry is a server-aligned changed pair {a,b}; idx maps 1:1 to the server's changed-pair
+    // order (the checkbox contract, verified in unit-qc-correct). One-sided → whole del/ins block;
+    // two-sided → word-diff.
     let inner;
     if (!p.a) inner = '<ins style="background:#dfd;color:#060;text-decoration:none">' + escHtml(p.b) + '</ins>';
     else if (!p.b) inner = '<del style="background:#fdd;color:#900;text-decoration:line-through">' + escHtml(p.a) + '</del>';
     else inner = _qcInlineDiff(p.a, p.b);
-    return '<div style="margin:4px 0;line-height:1.5">' + inner + '</div>';
+    // Per-fix checkbox (v55_m). Index matches the server's changed-pair order (both derive from the
+    // same storyDiffSentences ordering), so the checked indices map 1:1 on accept. Default checked.
+    return '<label style="display:flex;gap:8px;align-items:flex-start;margin:4px 0;line-height:1.5;cursor:pointer">'
+      + '<input type="checkbox" class="qc-fix-cb" data-idx="' + idx + '" checked style="margin-top:3px;flex:none">'
+      + '<span>' + inner + '</span></label>';
   }).join('');
   const isRw = prop.rejected;
   const isCorrupt = prop.verdict === 'corrupt';
@@ -2831,10 +2835,18 @@ function renderStoryQcProposal(prop) {
     : '<div style="font-weight:700;color:var(--text)">' + escHtml(t('qc.review_hdr')) + ' (' + prop.changedSentences + '/' + prop.totalSentences + ')</div>';
   const actions = isRw
     ? '<button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="discardStoryQc()">' + escHtml(t('qc.discard')) + '</button>'
-    : '<button class="story-repair-btn" style="padding:4px 10px;font-size:12px" onclick="acceptStoryQc()">' + escHtml(t('qc.accept')) + '</button>'
+    : '<button class="story-repair-btn" style="padding:4px 10px;font-size:12px" onclick="acceptStoryQc()">' + escHtml(t('qc.accept_selected')) + '</button>'
       + ' <button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="discardStoryQc()">' + escHtml(t('qc.discard')) + '</button>';
-  panel.innerHTML = hdr + '<div style="margin:8px 0;max-height:260px;overflow:auto">' + (rows || '<em>' + escHtml(t('qc.no_visible')) + '</em>') + '</div>' + '<div style="display:flex;gap:6px;margin-top:6px">' + actions + '</div>';
+  // A tiny select-all/none toggle above the fix list (only when there are ≥2 fixes to choose among).
+  const selToggle = (!isRw && sents.length >= 2)
+    ? '<div style="font-size:11px;margin:4px 0"><a href="#" onclick="_qcToggleAll(true);return false" style="color:var(--accent)">' + escHtml(t('qc.all')) + '</a> · <a href="#" onclick="_qcToggleAll(false);return false" style="color:var(--accent)">' + escHtml(t('qc.none')) + '</a></div>'
+    : '';
+  panel.innerHTML = hdr + selToggle + '<div style="margin:8px 0;max-height:260px;overflow:auto">' + (rows || '<em>' + escHtml(t('qc.no_visible')) + '</em>') + '</div>' + '<div style="display:flex;gap:6px;margin-top:6px">' + actions + '</div>';
   panel.style.display = '';
+}
+
+function _qcToggleAll(on) {
+  document.querySelectorAll('#aeh-diff-panel .qc-fix-cb').forEach(cb => { cb.checked = on; });
 }
 
 // Sentence pairing that mirrors the server's storyDiffSentences ordering, for display only.
@@ -2848,11 +2860,38 @@ function _qcSentencePairs(a, b) {
   return ops;
 }
 
+// CHANGED-pair list matching the server's storyDiffSentences EXACTLY: collapse each run of
+// del/ins ops into paired {a,b} entries (dels[x]||'' , ins[x]||''), keep only changed. This is the
+// list the per-fix checkboxes index into — its order MUST equal the server's so `selected` indices
+// map 1:1 (verified by unit-qc-correct). Do NOT index checkboxes off the raw _qcSentencePairs
+// output: its interleaved empty-string one-sided entries do not match the server's pairing.
+function _qcChangedPairs(a, b) {
+  const split = txt => { const r=[]; (txt||'').split(/\n\n+/).forEach((para,pi)=>{ if(pi>0) r.push(''); para.trim().split(/(?<=[.!?,;:"""«»„\u2018\u2019])\s*/).map(s=>s.trim()).filter(Boolean).forEach(s=>r.push(s)); }); return r.filter(s=>s!==''); };
+  const aArr=split(a), bArr=split(b), m=aArr.length, n=bArr.length;
+  const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++) dp[i][j]=aArr[i-1]===bArr[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
+  const ops=[]; let i=0,j=0;
+  // forward walk producing eq/del/ins in order (matches server's unshift-built order)
+  { let ii=m,jj=n,rev=[]; while(ii>0||jj>0){ if(ii>0&&jj>0&&aArr[ii-1]===bArr[jj-1]){rev.push({t:'eq'});ii--;jj--;} else if(jj>0&&(ii===0||dp[ii][jj-1]>=dp[ii-1][jj])){rev.push({t:'ins',c:bArr[jj-1]});jj--;} else {rev.push({t:'del',a:aArr[ii-1]});ii--;} } rev.reverse(); ops.push(...rev); }
+  const pairs=[]; let k=0;
+  while(k<ops.length){ if(ops[k].t==='eq'){k++;continue;} const dels=[],ins=[]; while(k<ops.length&&ops[k].t!=='eq'){ if(ops[k].t==='del')dels.push(ops[k].a); else ins.push(ops[k].c); k++; } const L=Math.max(dels.length,ins.length); for(let x=0;x<L;x++) pairs.push({a:dels[x]||'',b:ins[x]||''}); }
+  return pairs; // all entries are "changed" by construction
+}
+
 async function acceptStoryQc() {
   const d = APP.lessonData; if (!d || !d.id) return;
+  // Collect the checked fix indices. If the checkboxes exist, send the selection; if none are
+  // checked, that's a discard (the server treats acceptedCount 0 as such). Absent checkboxes
+  // (shouldn't happen for a corrected proposal) → omit `selected` → server accepts all.
+  const cbs = [...document.querySelectorAll('#aeh-diff-panel .qc-fix-cb')];
+  const selected = cbs.length ? cbs.filter(cb => cb.checked).map(cb => Number(cb.dataset.idx)) : undefined;
+  if (cbs.length && selected.length === 0) {
+    showToast(t('qc.none_selected'));
+    return;
+  }
   try {
     const r = await fetch('/api/story-qc/accept', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topicId: d.id }) });
+      body: JSON.stringify({ topicId: d.id, ...(selected ? { selected } : {}) }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || 'Failed');
     d.story = data.story; delete d.storyQcProposal;

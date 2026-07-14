@@ -143,13 +143,13 @@ assert.ok(/saveStore\(store\)/.test(proposeRoute), 'proposal is persisted');
 const acceptRoute = server.slice(server.indexOf("url.pathname === '/api/story-qc/accept'"), server.indexOf("url.pathname === '/api/story-qc/discard'"));
 assert.ok(/if \(prop\.rejected\) return json\(res, 409/.test(acceptRoute), 'a rejected proposal cannot be accepted');
 assert.ok(/if \(!t\.aiStory\) t\.aiStory = prop\.against/.test(acceptRoute), 'accept pins aiStory to the original (if unset)');
-assert.ok(/t\.story = prop\.corrected;/.test(acceptRoute), 'accept applies the correction to t.story');
+assert.ok(/t\.story = acceptedStory;/.test(acceptRoute), 'accept applies the (possibly partial) correction to t.story');
 assert.ok(/t\.storyQcBy = /.test(acceptRoute) && /t\.storyQcAt = /.test(acceptRoute), 'accept stamps the QC model + time on the topic');
 assert.ok(/storyDiffSentences\(t\.aiStory, t\.story/.test(acceptRoute), 'accept rebuilds the hunt from original↔corrected');
 assert.ok(/type: 'ai_error_hunt'/.test(acceptRoute), 'accept (re)builds an ai_error_hunt lesson');
 assert.ok(/delete t\.storyQcProposal;/.test(acceptRoute), 'accept consumes the proposal');
 // v55_i: accept returns the rebuilt lessons so the client shows the ai_error_hunt WITHOUT a reload.
-assert.ok(/return json\(res, 200, \{ ok: true, story: t\.story, errorHuntBuilt: huntBuilt, lessons: t\.lessons \}\)/.test(acceptRoute),
+assert.ok(/return json\(res, 200, \{ ok: true, story: t\.story, errorHuntBuilt: huntBuilt, lessons: t\.lessons, acceptedCount \}\)/.test(acceptRoute),
   'accept returns the updated lessons array (no reload needed to see the error-hunt)');
 
 // discard route: removes the proposal, no LLM, no story change.
@@ -213,4 +213,57 @@ assert.ok(/prop\.against !== undefined && prop\.against !== t\.story[\s\S]{0,140
   'accept refuses (409) a proposal whose baseline no longer matches the current story');
 
 console.log('  qc-correct: verdicts (incl. corrupt), guard, generator + routes + bulk + staleness: OK');
+
+// ── 10. Per-sentence selection (v55_m): client/server changed-pair ORDER must align ──
+// The review checkboxes index into the server's changed-pair order. The client derives its rows
+// from _qcChangedPairs; the server reconstructs from storyDiffSentences. If their orderings ever
+// diverge, unchecking fix #k would revert a DIFFERENT fix. Pin them equal.
+{
+  const srvDiff = new Function(ext(server, 'splitSentences') + '\n' + ext(server, 'storyDiffSentences') + '\nreturn storyDiffSentences;')();
+  const cliChanged = new Function(ext(client, '_qcChangedPairs') + '\nreturn _qcChangedPairs;')();
+  const cases = [
+    ['Il gatto e nero. La casa e grande. Si chiedevano: "Che vita avuto?" Fine.',
+     'Il gatto è nero. La casa è grande. Si chiedevano: "Che vita avute?" Fine.'],
+    ['A. B. C. D.', 'A. X. C. Y.'],
+    ['One two three. Four five six.', 'One two three. Four five six.'],
+    ['Solo cambio aqui.', 'Otra cosa distinta nueva.'],
+  ];
+  for (const [a, b] of cases) {
+    const s = srvDiff(a, b), c = cliChanged(a, b);
+    assert.strictEqual(c.length, s.length, `client/server changed-pair COUNT matches for: ${a.slice(0,20)}`);
+    s.forEach((p, i) => assert.strictEqual(c[i].a || '', p.ai || '', `changed-pair ORDER matches at index ${i}`));
+  }
+}
+
+// ── 11. Selective reconstruction: revert-from-corrected applies only chosen fixes ──
+// Mirror the server's accept-route reconstruction (revert unselected pairs in the corrected text).
+{
+  const srvDiff = new Function(ext(server, 'splitSentences') + '\n' + ext(server, 'storyDiffSentences') + '\nreturn storyDiffSentences;')();
+  const reconstruct = (against, corrected, selected) => {
+    const changed = srvDiff(against, corrected);
+    const sel = new Set(selected.map(Number));
+    let s = corrected;
+    changed.forEach((pair, idx) => {
+      if (sel.has(idx)) return;
+      if (pair.corrected && pair.ai != null) {
+        const at = s.indexOf(pair.corrected);
+        if (at >= 0) s = s.slice(0, at) + pair.ai + s.slice(at + pair.corrected.length);
+      }
+    });
+    return s;
+  };
+  const against   = 'Il gatto e nero. La casa e grande. Il cane corre.';
+  const corrected = 'Il gatto è nero. La casa è grande. Il cane corre.';
+  assert.strictEqual(reconstruct(against, corrected, [0, 1]), corrected, 'select all → full corrected text');
+  assert.strictEqual(reconstruct(against, corrected, [0]), 'Il gatto è nero. La casa e grande. Il cane corre.', 'select first only → only that fix applied');
+  assert.strictEqual(reconstruct(against, corrected, [1]), 'Il gatto e nero. La casa è grande. Il cane corre.', 'select second only → only that fix applied');
+  assert.strictEqual(reconstruct(against, corrected, []), against, 'select none → back to the original (spacing intact)');
+  // The accept route: reads `selected`, treats empty selection as discard, sends acceptedCount.
+  assert.ok(/const \{ selected \} = body;/.test(acceptRoute), 'accept route reads a per-sentence selection');
+  assert.ok(/acceptedStory\.indexOf\(pair\.corrected\)/.test(acceptRoute), 'accept reverts unselected fixes in the corrected text (no re-split)');
+  assert.ok(/if \(acceptedCount === 0\)/.test(acceptRoute), 'accept treats an empty selection as a discard');
+  assert.ok(/acceptedCount/.test(server), 'accept returns acceptedCount');
+}
+
+console.log('  qc-correct: per-sentence selection order-alignment + selective reconstruction: OK');
 console.log('unit-qc-correct: ALL PASSED');

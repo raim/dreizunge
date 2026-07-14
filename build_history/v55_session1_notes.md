@@ -451,3 +451,33 @@ will keep missing undefined-reference bugs. The durable fix is invariant checks 
 layout (imports present; callees module-scope). Both now exist for the QC path.
 
 Suite 100 green, check-inline 0 both builds, APP_VERSION v55_l. §81 live test unblocked.
+
+---
+
+# v55_m — QC: accept individual corrections (per-sentence checkboxes)
+
+User asked to accept individual errors, not just the whole corrected text. Chose per-sentence
+checkboxes (the diff is sentence-granular; true per-word was deemed not worth the reconstruction
+risk). Each changed sentence in the review panel gets a checkbox (default on) + a select all/none
+toggle; Accept applies only the ticked fixes.
+
+**Reconstruction (server, the correctness-critical part):** the accept route takes `selected` (indices
+into the changed-pair list). It reconstructs by starting from the model's FULL corrected text (spacing
+intact) and REVERTING each UNSELECTED changed pair back to its original sentence (indexOf + splice,
+first occurrence). This deliberately avoids re-splitting/re-joining the story — which would reintroduce
+the whitespace-mangling class of bug (v55_i). Empty selection → treated as discard. `selected` absent
+→ accept all (backward compatible). Verified: select-all → full corrected; select-subset → only those
+fixes; select-none → original, spacing intact.
+
+**The bug caught before shipping — index alignment.** The checkbox indices must map 1:1 to the server's
+changed-pair order. The client's existing `_qcSentencePairs` (filtered) produces INTERLEAVED empty-string
+one-sided entries for quoted sentences, which do NOT match the server's del+ins-collapsed pairing —
+unchecking fix #k would have reverted a DIFFERENT fix. Fixed by adding a client `_qcChangedPairs` that
+replicates the server's storyDiffSentences collapsing exactly; the render now indexes off that. Pinned
+by a new unit-qc-correct test that asserts client/server changed-pair ORDER equality across cases
+(incl. the quoted-sentence case) — plus selective-reconstruction cases. This is the third
+client/server duplicated-logic parity trap this project has hit; the test is the guard.
+
+**Client:** checkboxes + select all/none; Accept sends the checked indices, blocks empty selection with
+a toast, handles acceptedCount. 4 en keys (qc.accept_selected/all/none/none_selected). Suite 100 green,
+check-inline 0 both builds, APP_VERSION v55_m. LIVE-TEST §80/§81 gain a per-sentence-selection check.

@@ -447,7 +447,11 @@
     "qc.accepted_hunt": "Corrections applied — AI error-hunt updated",
     "qc.corrupt_warn": "⚠ The proofreader mangled the text (e.g. ran words together) rather than correcting it — discard and try again, or edit by hand.",
     "qc.story_pending": "Story proofreading proposal(s) awaiting review — open the chapter story to accept or discard",
-    "qc.toast.story_proposed": "{n} story proposal(s)"
+    "qc.toast.story_proposed": "{n} story proposal(s)",
+    "qc.accept_selected": "✓ Accept selected",
+    "qc.all": "select all",
+    "qc.none": "none",
+    "qc.none_selected": "No corrections selected — tick at least one, or Discard"
   },
   "nl": {
     "static.pill.tosubmit": "indienen",
