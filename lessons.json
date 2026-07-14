@@ -51408,7 +51408,7 @@
       "srcLang": "en",
       "difficulty": 2,
       "storyLen": 100,
-      "story": "Nel laboratorio di linguistica, i sussurri delle parole fluttuavano nell'aria, come se ogni frase fosse un'eco di un futuro narrato. Mentre i tester sfogliavano le pagine del nostro app, cercando di creare storie interconnesse, si chiedevano: \"Che vita avrebbero avuto queste parole senza contesto?\" Eppure, ogni parola, ogni frase, si intrecciava in un tessuto complesso, come se la lingua stessa stesse sognando.",
+      "story": "Nel laboratorio di linguistica, i sussurri delle parole fluttuavano nell'aria, come se ogni frase fosse un'eco di un futuro narrato. Mentre i tester sfogliavano le pagine della nostra app, cercando di creare storie interconnesse, si chiedevano: \"Che vita avrebbero avuto queste parole senza contesto?\" Eppure, ogni parola, ogni frase, si intrecciava in un tessuto complesso, come se la lingua stessa stesse sognando.",
       "storyLang": "target",
       "storyPrompt": "You are a creative writer and Italian language teacher. Write a short story directly in Italian on the given topic — aim for 1-2 paragraphs, under 100 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in Italian. Writing style: Contemplative, questioning, abstract ideas.\n\nWrite a story for the topic: \"testing our language learning app, and attempting to create whole story lines wi\". Plain prose, no headings.",
       "storyStyle": "philosophical",
@@ -51770,6 +51770,33 @@
             }
           ],
           "_arcMode": "reinforce"
+        },
+        {
+          "id": "aeh_1784019619581",
+          "type": "ai_error_hunt",
+          "title": "AI Error Hunt",
+          "desc": "Find AI errors that were corrected by a proofreader.",
+          "icon": "🔎",
+          "aiStory": "Nel laboratorio di linguistica, i sussurri delle parole fluttuavano nell'aria, come se ogni frase fosse un'eco di un futuro narrato. Mentre i tester sfogliavano le pagine del nostro app, cercando di creare storie interconnesse, si chiedevano: \"Che vita avrebbero avuto queste parole senza contesto?\" Eppure, ogni parola, ogni frase, si intrecciava in un tessuto complesso, come se la lingua stessa stesse sognando.",
+          "sentences": [
+            {
+              "ai": "Mentre i tester sfogliavano le pagine del nostro app,",
+              "corrected": "Mentre i tester sfogliavano le pagine della nostra app,",
+              "reason": ""
+            }
+          ],
+          "_genMeta": {
+            "type": "ai_error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 1,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "ms": null,
+            "at": "2026-07-14T09:00:19.581Z"
+          }
         }
       ],
       "generationStats": {
@@ -51795,7 +51822,7 @@
         "modelsSource": "backfill:generationStats.model (single-model label)"
       },
       "generatedAt": "2026-06-16T08:39:54.016Z",
-      "updatedAt": "2026-06-16T08:49:22.651Z",
+      "updatedAt": "2026-07-14T09:00:19.580Z",
       "id": "tp_17815997626510000078",
       "continuedFromId": null,
       "continuedFrom": null,
@@ -51813,7 +51840,10 @@
         "backfilled": true,
         "source": "generationStats.model[0]",
         "origin": "generated"
-      }
+      },
+      "aiStory": "Nel laboratorio di linguistica, i sussurri delle parole fluttuavano nell'aria, come se ogni frase fosse un'eco di un futuro narrato. Mentre i tester sfogliavano le pagine del nostro app, cercando di creare storie interconnesse, si chiedevano: \"Che vita avrebbero avuto queste parole senza contesto?\" Eppure, ogni parola, ogni frase, si intrecciava in un tessuto complesso, come se la lingua stessa stesse sognando.",
+      "storyQcBy": "qwen3.6:35b-a3b",
+      "storyQcAt": "2026-07-14T09:00:19.580Z"
     },
     {
       "topic": "testing our language learning app story generation with a better learning arc — 1",

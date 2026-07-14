@@ -127,11 +127,55 @@ const stamp = (model, source, at, origin, sourceFile) => {
   return m;
 };
 
+// Translation stamp — mirrors `stamp` but for the source-language translation of the story.
+// `origin` vocabulary matches server.js: 'generated' (a distinct translation model ran),
+// 'user-provided' (the user supplied the translation), 'skipped-same-model' (translation model ==
+// story model, so no separate pass ran), 'failed', or 'none' (no translation exists).
+const stampTranslation = (model, source, at, origin) => ({
+  type: 'translation', model, attempts: null, valid: origin === 'none' ? 0 : null,
+  promptTokens: 0, completionTokens: 0, ms: null, at: at || null,
+  backfilled: true, source, origin,
+});
+
 const counts = {};
 const bump = (k) => { counts[k] = (counts[k] || 0) + 1; };
+const trCounts = {};
+const bumpTr = (k) => { trCounts[k] = (trCounts[k] || 0) + 1; };
 let changedStory = 0, changedModels = 0, skipped = 0, needAssume = 0, unresolved = new Set();
+let changedTranslation = 0, skippedTranslation = 0;
 
 let refinedOrigin = 0;
+
+// Stamp translationMeta on a topic, mirroring the story stamp. Idempotent. Called on BOTH the
+// story-skip path and the story-write path (story stamping `continue`s for the 267 already-stamped
+// topics, so this must run independently or it never fires). Returns true if it wrote a stamp.
+function stampTranslationMeta(t) {
+  if (t.translationMeta) { skippedTranslation++; return false; }
+  const gs2 = t.generationStats;
+  const tat = t.generatedAt || t.updatedAt || null;
+  if (t.userTranslation) {
+    t.translationMeta = stampTranslation(USER_PROVIDED, 'userTranslation field', tat, 'user-provided');
+    changedTranslation++; bumpTr('user-provided'); return true;
+  }
+  if (gs2 && gs2.models && gs2.models.translation) {
+    t.translationMeta = stampTranslation(gs2.models.translation, 'generationStats.models.translation', tat, 'generated');
+    changedTranslation++; bumpTr(gs2.models.translation); return true;
+  }
+  if (gs2 && gs2.models && gs2.models.translation === null) {
+    // `models` exists and explicitly records translation === null → no separate translation pass
+    // ran (translation model == story model, or a user story with no translation). This is a
+    // POSITIVE record of "not run", which is exactly the state the roadmap wanted separated from
+    // "unknown". Independent of the story model (user stories have models.story === null too).
+    t.translationMeta = stampTranslation('(none)', 'models.translation explicitly null (no separate pass)', tat, 'skipped-same-model');
+    changedTranslation++; bumpTr('(none)'); return true;
+  }
+  if (t.story) {
+    // No `models` block at all → the record genuinely says nothing. '(unknown)' — truthful.
+    t.translationMeta = stampTranslation('(unknown)', 'no record (story present, no generationStats.models)', tat, 'unknown');
+    changedTranslation++; bumpTr('(unknown)'); return true;
+  }
+  return false; // no story → no translation to stamp (correctly absent)
+}
 
 for (const t of topics) {
   const gs = t.generationStats;
@@ -148,6 +192,7 @@ for (const t of topics) {
     if (!t.storyMeta.origin) { t.storyMeta.origin = origin; refinedOrigin++; }
     if (srcFile && !t.storyMeta.sourceFile) { t.storyMeta.sourceFile = srcFile; refinedOrigin++; }
     bump(t.storyMeta.model);
+    stampTranslationMeta(t);
     continue;
   }
 
@@ -191,6 +236,9 @@ for (const t of topics) {
     gs.modelsSource = 'backfill:generationStats.model (single-model label)';
     changedModels++;
   }
+
+  // ── translationMeta (v55_f) — see stampTranslationMeta; runs on the story-write path too ──
+  stampTranslationMeta(t);
 }
 
 console.log(`\ntopics: ${topics.length}`);
@@ -198,6 +246,8 @@ console.log(`  storyMeta written        : ${changedStory}`);
 console.log(`  already had storyMeta    : ${skipped}`);
 console.log(`  generationStats.models   : ${changedModels} backfilled (single-model labels only)`);
 console.log(`  origin/sourceFile added  : ${refinedOrigin} on already-stamped topics`);
+console.log(`  translationMeta written  : ${changedTranslation}`);
+console.log(`  already had translationMeta: ${skippedTranslation}`);
 const originCounts = {};
 topics.forEach(t => { if (t.storyMeta) originCounts[t.storyMeta.origin] = (originCounts[t.storyMeta.origin] || 0) + 1; });
 console.log('\nstory origin distribution:');
@@ -206,9 +256,11 @@ if (needAssume) console.log(`  ⚠ ${needAssume} topic(s) have no generationStat
 if (unresolved.size) console.log(`  ⚠ untagged model name(s): ${[...unresolved].join(', ')} — pass --resolve <name>=<name:tag>`);
 console.log('\nstory model distribution:');
 Object.entries(counts).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => console.log(`  ${String(k).padEnd(34)} ${v}`));
+console.log('\ntranslation model distribution:');
+Object.entries(trCounts).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => console.log(`  ${String(k).padEnd(34)} ${v}`));
 
 if (!WRITE) { console.log('\n(dry run — pass --write to save; a .bak is made first)'); process.exit(0); }
-if (!changedStory && !changedModels && !refinedOrigin) { console.log('\nnothing to do — already up to date'); process.exit(0); }
+if (!changedStory && !changedModels && !refinedOrigin && !changedTranslation) { console.log('\nnothing to do — already up to date'); process.exit(0); }
 if (needAssume) { console.error('\nrefusing to write while topics are unstamped; pass --assume'); process.exit(1); }
 if (unresolved.size) { console.error('\nrefusing to write with untagged model names; pass --resolve'); process.exit(1); }
 

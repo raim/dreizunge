@@ -182,3 +182,240 @@ a static-`init()` + localStorage-override change (same shape as the filter-persi
 route change.
 
 Suite green, check-inline 0 both builds, APP_VERSION v55_e.
+
+---
+
+# v55_f — translation provenance stamp (roadmap "translation stamp" item)
+
+Closes the provenance arc: story (v53_d/e) and storyboard (v55) were stamped; translation was the
+last generator whose `generationStats.models.translation === null` conflated "no separate pass ran"
+with "unknown". Per the roadmap: "same treatment as the story; small."
+
+**Audit first (corpus, not memory):** unlike the story (whose per-artefact ms/tokens were wholly
+missing), translation provenance was ALREADY recorded at topic level for 243/267 in
+`models.translation`. Only 2 topics carry a `storyTranslation` artefact and 2 a `userTranslation`;
+the rest ran a distinct translation model (recorded) or folded translation into the story model.
+So the real gap was the null-conflation, not a missing stamp.
+
+**Server (`server.js`):** `_translationMeta` mirrors `_storyMeta`, stamped in four distinguishable
+states — `generated` (distinct translation model, model = OLLAMA_TRANSLATION_MODEL, timed+tokens),
+`failed` (attempted, threw → '(none)'), `user-provided` (userTranslation supplied), and
+`skipped-same-model` (translation model == story model, no pass). Persisted as `topic.translationMeta`
+on BOTH upserts (early-save + final), beside `storyMeta`. `generationStats.models.translation` is
+deliberately UNCHANGED — the stamp is additive, disambiguation lives in `translationMeta.origin`,
+exactly as `storyMeta` sits beside `models.story`.
+
+**Backfill (`backfill-provenance.js` extended):** `stampTranslationMeta(t)` derives from the record —
+`models.translation` set → generated; `userTranslation` → user-provided; `models` present with
+`translation === null` → '(none)' skipped-same-model (a POSITIVE "not run" record, independent of the
+story model — user stories have `models.story === null` too); no `models` block at all → '(unknown)'.
+Runs on the story-SKIP path too (all 267 already have storyMeta, so the story stamper `continue`s —
+a loop-end-only translation stamper would never fire; this was a real bug caught in dry-run:
+`translationMeta written: 0` until refactored into a function called on both paths). Idempotent; the
+no-op guard now counts translation changes. Corpus result: 241 generated, 16 '(none)', 2
+user-provided, 8 '(unknown)' = 267. The 8 unknowns are exactly the pre-`models`-field topics.
+
+**Tests:** `unit-translation-stamp` (mutation-tested origin⇔model coherence both directions, backfill
+idempotency + skip-path firing + no-op guard, additive-to-models invariant). Suite 99 green,
+check-inline 0 both builds. Static rebuilt (corpus baked → 267 translationMeta in docs). `.bak`
+removed. APP_VERSION v55_f.
+
+**Owed:** nothing browser-only (server + data + headless test). Consumers of `translationMeta` must
+handle the '(none)'/'(user-provided)'/'(unknown)' sentinels and treat `.backfilled` as
+inferred-not-recorded — same contract as `storyMeta`.
+
+---
+
+# QC for generated texts — SPIKE (no product change)
+
+Picked the "QC for generated texts" roadmap item and applied the spike-first discipline the
+storyboard taught us: this feature wants live-model tuning, and its whole design hinges on ONE
+unknown — does the QC model CORRECT (targeted edits) or REWRITE (wholesale)? The "too many changes"
+guard the roadmap calls for needs a threshold, and a threshold needs data. So: measure before
+building. Built **`spike-qc-correct.js`** (root, throwaway, imported by nothing).
+
+**Audit finding that shrinks the feature:** the BACK half already exists. `ai_error_hunt` +
+`storyDiffSentences` already build an error-hunt lesson from an (aiStory, correctedStory)
+sentence-level diff — today driven by a HUMAN editing `topic.story`. The QC feature just swaps the
+human corrector for a QC-model corrector, stored as a PROPOSAL (never overwriting `topic.story`
+without acceptance). Pieces already present: `OLLAMA_QC_MODEL` (v52_e), `qc.by`/`qcByModel` stamping
+(v52_g), the per-model collect-compare UI, and the entire diff→lesson rebuild path (server.js
+~4147). What's missing is the FRONT half: a correction prompt, proposal storage, an accept flow, and
+the inverse "too many changes" guard.
+
+**What the spike does:** runs a conservative "proofread, don't rewrite" correction prompt through
+the QC model on N real corpus stories, diffs original↔corrected with storyDiffSentences lifted
+VERBATIM from server.js, and classifies each as clean / corrected / rewrite via two independent
+signals (changed-sentence ratio ≤0.5 AND word-level Levenshtein ratio ≤0.35 = corrected; above =
+rewrite). Dumps .orig/.corrected/.diff.json per story + summary.json. `think:false` (v55_c lesson).
+
+**Verified headlessly (no Ollama here):** the classifier separates the three cases cleanly on
+synthetic pairs — identical→clean, one spelling fix→corrected (ratio 0.5, wordΔ 0.125), total
+rewrite→rewrite (1.0/1.0). 69 candidate corpus stories across 9 languages. Suite still green,
+no product file touched, no version bump.
+
+**Owed — the live verdict (user):** run e.g. `OLLAMA_QC_MODEL=qwen2.5:7b node spike-qc-correct.js
+--n 8`, eyeball a few .corrected.txt against .orig.txt, and read the tally. GO if there's a clean
+'corrected' band with a separable 'rewrite' tail (→ the guard is feasible; build front half: `storyQc`
+prompt in prompts.json, proposal storage, accept flow reusing the ai_error_hunt rebuild, threshold
+as the guard). NO-GO if corrected≈rewrite are muddled (→ the prompt isn't holding "don't rewrite";
+fix the prompt or reconsider before building UI on an unproven corrector). Report the tally + a
+couple of diffs and I'll take it from there.
+
+---
+
+# v55_g — QC for generated texts: correction proposal + auto error-hunt (SHIPPED)
+
+Spike verdict was a clean GO. The `summary.json` pinned the guard from real data: the 'corrected'
+band topped out at changedRatio 0.21 / wordEditRatio 0.033; the single rewrite (a broken
+translategemma:4b Luxembourgish story the QC model near-fully rewrote to fix) sat at 0.938 / 0.844.
+A wide empty gulf → thresholds set at **0.6 / 0.5** with margin on both sides. The rewrite case also
+taught the design: a genuinely-broken story requires so many fixes it reads as a rewrite, and that's
+exactly what the guard must catch — a 0.844 diff makes a noise error-hunt, and silent wholesale
+replacement isn't QC. So a rewrite is surfaced (rejected:true) with a "too broken to QC" message, not
+silently applied.
+
+**Audit shrank the build:** the BACK half already existed. `ai_error_hunt` + `storyDiffSentences`
+already build the lesson from an (aiStory, corrected) diff (human-driven). The feature swaps the
+human corrector for a QC-model corrector, stored as a PROPOSAL.
+
+**Server:** `classifyStoryQc` (pure — clean/corrected/rewrite via OR of the two spike ratios) +
+`generateStoryQc` (QC model, think:false per v55_c, prompt `storyQc` in prompts.json, stamps
+`story_qc` with verdict/ratios, NEVER mutates topic.story). Three routes: `POST /api/story-qc`
+(propose — persists `topic.storyQcProposal` with the exact `against` original; requires backend),
+`POST /api/story-qc/accept` (apply — pins `aiStory` to the original, sets `story`, stamps
+`storyQcBy`/`storyQcAt`, rebuilds ai_error_hunt from the diff, consumes the proposal; NO backend —
+pure application; 409 if the proposal was a rewrite), and `POST /api/story-qc/discard`. `callLLMQC`
+extended to forward opts (think).
+
+**Client:** 🔍 button by the story ✏️ edit toggle (gated canGenerate + story present). `runStoryQc`
+→ review panel (reuses #aeh-diff-panel) with an inline word-level diff, verdict header, and
+Accept/Discard (rewrite → Discard-only + warning). Proposal persists across reload (re-rendered on
+story open). 8 en-only ui keys (`qc.*`).
+
+**Tests:** `unit-qc-correct` — the three verdicts on spike-shaped inputs, the OR-guard mutation-tested
+on BOTH axes (word-edit alone; sentence-ratio alone), the boundary just under threshold, generator
+contract (think:false, no story mutation, story_qc stamp), and the full 3-route contract (propose
+never writes story; accept pins aiStory + rebuilds hunt + 409s a rewrite; backend-requirement
+asymmetry). Suite 100 green, check-inline 0 both builds, static rebuilt, APP_VERSION v55_g.
+
+**Owed:** LIVE-TEST §80 (browser + Ollama). `spike-qc-correct.js` now redundant with the feature
+(kept for the user's own prompt/threshold tuning; delete whenever). The QC-of-SUMMARIES half of the
+roadmap item is NOT built — only stories; summaries would be a parallel route over
+`sl.summary`/`generateStorylineSummary` if wanted. Consumers: `topic.storyQcProposal` is transient
+(deleted on accept/discard); `storyQcBy`/`storyQcAt` are the persisted provenance.
+
+---
+
+# v55_h — fix: story QC crashed with "stripThink is not defined"
+
+User's first live QC run (Italian, qwen2.5:7b, 414 chars) crashed after 77s: `stripThink is not
+defined`. NOT a model issue — a plain import bug: `generateStoryQc` called `stripThink(text)` but
+server.js's llm.js import (line 12) never included `stripThink` (I copied the two-function
+`stripRaw(stripThink(...))` pattern from the spike, which imported both). Any model hits it; the
+crash is before the model output matters.
+
+**Fix (one line):** `stripRaw` ALREADY calls `stripThink` internally (llm.js:104), so the wrapper
+was redundant — dropped it: `stripRaw(text).trim()`. No new import needed.
+
+**Why the test missed it:** `unit-qc-correct` extracted `generateStoryQc` as a STRING and
+regex-checked it; it never RAN the function, so an undefined bare identifier inside slipped through.
+Added a regression guard: for every llm.js export the server calls as a bare identifier, assert it's
+imported (or locally defined). Verified the guard FAILS on the reintroduced bug and passes on the
+fix. Audited all 12 llm.js exports — `stripThink` was the only gap.
+
+Suite 100 green, check-inline 0 both builds, APP_VERSION v55_h. LIVE-TEST §80 QC re-run is now
+unblocked with ANY model (no model restriction — the crash was code, not qwen2.5:7b).
+
+---
+
+# v55_i — QC guard: detect mechanically-corrupted corrections (run-together words)
+
+User ran QC (qwen2.5:7b) on a qwen2.5:7b-generated Italian story; the model returned the quoted
+sentence "Che vita avrebbero avuto…?" with ALL interior spaces collapsed into one 49-char word,
+and the diff panel showed the mangled run-together text. Diagnosed by reproducing the full pipeline:
+the client splitter AND inline-diff are CLEAN (verified on the exact sentence — spaces preserved);
+`stripRaw`/`stripThink` don't touch interior whitespace. Root cause = the QC MODEL itself collapsed
+the spaces (a known small-model failure mode inside quotes). The real correction underneath was
+legit (avuto→avute, feminine-plural agreement), but the whitespace mangling made it garbage.
+
+Not a code bug — but a guard GAP: a "correction" that mangles text mechanically is not a valid
+proofread and must be rejected, not shown as an acceptable diff. Added a 4th verdict **'corrupt'** to
+`classifyStoryQc` via `_qcCorruption`: fires on (a) a run-together token ≥25 chars AND >1.5× the
+original's longest token, or (b) wholesale space loss (corrected keeps <60% of the original's spaces,
+min 10). Both signals verified on the real case (49-char token vs 11 original max; space ratio 0.22)
+and guarded against false positives (a legit long German compound near the original's own max does
+NOT trip it). 'corrupt' sets rejected:true → the accept route's existing 409 covers it; the client
+shows a distinct `qc.corrupt_warn` message, Discard-only. `unit-qc-correct` gains 3 corrupt cases
+(the real sentence, wholesale space loss, and the false-positive negative control).
+
+Note the guard catches the OUTPUT corruption regardless of which model; it does not try to PREVENT
+qwen2.5:7b from mangling quotes (a prompt/model issue). A user hitting 'corrupt' can re-run (often
+nondeterministic), switch the QC model, or edit by hand. Suite 100 green, check-inline 0 both builds,
+APP_VERSION v55_i. LIVE-TEST §80 gains a corrupt-verdict check.
+
+---
+
+# v55_j — QC display fix (whitespace) + immediate error-hunt on accept; v55_i corruption re-diagnosed
+
+**User corrected my v55_i diagnosis, and was right.** The lost spaces were a DISPLAY bug, not model
+corruption — proven by reproducing the review-panel path: the sentence splitter breaks a quoted
+sentence on its `"` punctuation, so a quoted sentence with one changed interior word becomes a
+ONE-SIDED pair (`a=fragment, b=""` then `a="", b=fragment`) rather than an aligned `a,b` pair. The
+inline word-diff then ran each fragment against an EMPTY counterpart, making every token a del-only
+or ins-only, and the `if(wa[i].trim())` guard dropped the whitespace-only tokens → all spaces gone.
+The manually-generated ai_error_hunt LESSON never showed this because it renders whole sentences, not
+a word-diff. Exactly the user's read.
+
+**Display fix:** in `renderStoryQcProposal`, a one-sided changed pair now renders as a whole
+`<del>`/`<ins>` block (spaces intact) instead of word-diffing against empty. Verified on the exact
+Italian quoted sentence.
+
+**v55_i re-framed (guard KEPT, not reverted):** the `corrupt` verdict was added on a misdiagnosis,
+but it's a harmless correct defense against GENUINE model corruption (a model really can run words
+together), and it does NOT fire on clean output — verified the real story+clean correction classifies
+as 'corrected', not 'corrupt'. So it stays; the notes now record that the triggering case was a
+display bug, and the guard is belt-and-suspenders for the real thing.
+
+**Accept-without-reload:** the accept route now returns `lessons: t.lessons`, and `acceptStoryQc`
+updates `d.lessons` from it before `buildPath()`, so the rebuilt 🔎 ai_error_hunt appears immediately
+(buildPath renders from d.lessons; previously the cache was stale until a reload re-fetched the
+topic). Tests assert both the route payload and the client cache update, plus the one-sided-pair
+rendering. Suite 100 green, check-inline 0 both builds, APP_VERSION v55_j.
+
+---
+
+# v55_k — bulk story QC: proposal-accumulation in the storyline sweep
+
+User chose the proposal-accumulation approach: the storyline 🔍 sweep now also proofreads each
+chapter's STORY, accumulating one proposal per chapter for individual review. No spike — the model
+behavior was already proven (v55_g); this is wiring an existing proven function into the existing
+bulk loop. The review UI already existed (opening a chapter's story auto-shows its pending proposal,
+v55_g line 4700), so the new surface is just a badge telling the user WHICH chapters to look at.
+
+**Server (`_runQc`):** after the per-topic lessons loop, in a FULL sweep only (`includeStory` &&
+!onlyFlagged && lessonIdx===null && story present), run `generateStoryQc(tp.story, tp.lang)` and:
+clean → clear any obsolete proposal, stamp checked; corrected/rewrite/corrupt → store
+`tp.storyQcProposal` (accumulate). Skip-control mirrors the lesson `qcAt`: `storyQcCheckedBy`/
+`storyQcCheckedAt` (distinct from the accept-provenance `storyQcBy`/`storyQcAt`) skip an unedited
+story already checked by THIS model unless `force`. `includeStory` defaults true from `/api/qc`
+(`includeStory !== false`); job payload adds `storyProposed`/`storyClean`.
+
+**Deliberately OUT of the automatic post-book QC pass** (`includeStory:false` there) — story QC adds
+an LLM pass per chapter to an already-long generation; the user opts in via the sweep, it's not baked
+into book generation.
+
+**Staleness (the edge flagged earlier, now closed):** a story edit (`/api/save-story`) clears
+`storyQcCheckedBy/At` AND drops any pending proposal (it was diffed against the old text). The accept
+route also guards: if `prop.against !== t.story` (story changed since the proposal), it 409s and
+discards rather than applying a correction against the wrong baseline.
+
+**Client:** the topic-summary payload exposes `storyQcPending`; the storyline 🔍 button shows a green
+📝<count> of chapters with pending story proposals (next to the red lesson-flag count), and the
+per-topic 🔍 shows 📝. `qcRun` already re-fetches the list after a sweep, so badges refresh; the toast
+adds "N story proposal(s)". 2 en keys (`qc.story_pending`, `qc.toast.story_proposed`). Review/accept
+uses the existing per-story panel (open the chapter story). `unit-qc-correct` gains bulk-integration +
+staleness assertions; `unit-qc-skip` updated for the two changed call sites (both behavior-preserving).
+
+Suite 100 green, check-inline 0 both builds, APP_VERSION v55_k. First storyline sweep now pays N
+story-QC calls (≈47–77s each on the user's box, measured v55_g); the skip stamp makes re-sweeps cheap.

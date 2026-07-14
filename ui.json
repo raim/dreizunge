@@ -436,7 +436,18 @@
     "storyboard.regenerate": "🎬 Regenerate storyboard",
     "storyboard.delete": "🗑 Delete storyboard",
     "storyboard.deleted": "Storyboard deleted",
-    "storyboard.menu": "Storyboard options"
+    "storyboard.menu": "Storyboard options",
+    "qc.clean": "✓ The proofreader found no errors — the story is already clean.",
+    "qc.review_hdr": "Proofreader suggestions",
+    "qc.rewrite_warn": "⚠ The proofreader rewrote the story rather than correcting it — likely too broken to QC. Discard and edit by hand, or regenerate.",
+    "qc.no_visible": "No sentence-level changes to show.",
+    "qc.accept": "✓ Accept corrections",
+    "qc.discard": "Discard",
+    "qc.accepted": "Corrections applied",
+    "qc.accepted_hunt": "Corrections applied — AI error-hunt updated",
+    "qc.corrupt_warn": "⚠ The proofreader mangled the text (e.g. ran words together) rather than correcting it — discard and try again, or edit by hand.",
+    "qc.story_pending": "Story proofreading proposal(s) awaiting review — open the chapter story to accept or discard",
+    "qc.toast.story_proposed": "{n} story proposal(s)"
   },
   "nl": {
     "static.pill.tosubmit": "indienen",

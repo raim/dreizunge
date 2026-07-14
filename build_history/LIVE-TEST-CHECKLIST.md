@@ -1557,66 +1557,113 @@ words you see as MCQ *choices* but are never *asked* are the distractor pool (`_
 one-mistake round needs three wrong options from somewhere.
 
 ### 79. v55 — storyline SVG storyboard 🎬 (captions are HOVER tooltips as of v55_d)
+**✅ VERIFIED in live browser 2026-07-13 (user) — all §79–§79e functions.**
 
 Server composes the SVG from model JSON (composeStoryboardSVG is the security boundary);
 the client only injects the finished string. Uses the STORY model; the call is synchronous
 and can run ~30 min on qwen3.6:35b-a3b (spike-measured 2.2 tok/s) — the ⏳ just waits.
 
-- [ ] Open a storyline with ≥2 chapters → 🎬 appears in the title row NEXT TO 📝 (both
+- [x] Open a storyline with ≥2 chapters → 🎬 appears in the title row NEXT TO 📝 (both
       gated on canGenerate). Open a 1-chapter storyline → 🎬 does NOT appear.
-- [ ] Click 🎬 → button shows ⏳ disabled; server console prints
+- [x] Click 🎬 → button shows ⏳ disabled; server console prints
       `── Storyline storyboard generation ──` with `Model: <story model>`.
-- [ ] On success: panels appear in the storyline screen ABOVE the summary section; back on
+- [x] On success: panels appear in the storyline screen ABOVE the summary section; back on
       the landing page the storyline card shows them above the summary strip; toast fires.
-- [ ] Reload → storyboard persists (stored on the storyline as `sl.storyboard`).
-- [ ] `sl.storyboardMeta` in lessons.json records `type:'storyline_storyboard'` and the
+- [x] Reload → storyboard persists (stored on the storyline as `sl.storyboard`).
+- [x] `sl.storyboardMeta` in lessons.json records `type:'storyline_storyboard'` and the
       STORY model (not the lesson model), with tokens + ms (v53_d contract).
-- [ ] Re-generate (click 🎬 again) → new panels REPLACE the old ones cleanly in both places.
-- [ ] `node build-static.js` → open docs/index.html OFFLINE → the storyboard renders on the
+- [x] Re-generate (click 🎬 again) → new panels REPLACE the old ones cleanly in both places.
+- [x] `node build-static.js` → open docs/index.html OFFLINE → the storyboard renders on the
       storyline card (no 🎬 button in static — canGenerate is false, display-only is correct).
-- [ ] INJECTION (explicit): create a storyline whose chapter text / user story contains
+- [x] INJECTION (explicit): create a storyline whose chapter text / user story contains
       `<script>alert(1)</script>` and SVG markup, generate a storyboard → captions may show
       the text escaped, but nothing executes and no foreign markup renders (check DOM: only
       svg/rect/circle/ellipse/line/polyline/polygon/path/text elements inside the panel).
-- [ ] Model can't produce ≥2 valid panels → toast shows the storyboard.empty message; button
+- [x] Model can't produce ≥2 valid panels → toast shows the storyboard.empty message; button
       returns to 🎬 enabled; nothing is stored.
-- [ ] Timeout behaviour: the request survives >12 min (per-call 60-min LLM timeout); if the
+- [x] Timeout behaviour: the request survives >12 min (per-call 60-min LLM timeout); if the
       browser tab is closed mid-generation the server still finishes and stores the result
       (re-open the storyline to see it).
 
 ### 79b. v55_b — storyboard failures leave a server-side corpse
-- [ ] Force a failure (e.g. stop Ollama mid-generation, or point OLLAMA_URL at nothing and
+- [x] Force a failure (e.g. stop Ollama mid-generation, or point OLLAMA_URL at nothing and
       click 🎬) → the server console prints `✗ Storyline storyboard FAILED after Ns: <msg>`
       (plus, if the model responded with garbage, `Raw starts: …`). No more silent deaths —
       the toast is no longer the only witness.
-- [ ] On a SUCCESSFUL run, the console now also prints `Response : after Ns (N tok, N tok/s)`
+- [x] On a SUCCESSFUL run, the console now also prints `Response : after Ns (N tok, N tok/s)`
       between the header and the panel count — the tok/s number is the data for the
       job-vs-sync decision carried in roadmap_v55.
 
 ### 79c. v55_c — storyboard requests think:false
-- [ ] 🎬 on a thinking story model (qwen3.6:*): the `Response :` line appears in MINUTES
+- [x] 🎬 on a thinking story model (qwen3.6:*): the `Response :` line appears in MINUTES
       (single-digit tok count of pure JSON), not after 20+ min, and no
       "returned empty response" / "only a reasoning block" failure.
-- [ ] 🎬 with a NON-thinking story model (qwen2.5:7b): still works — if this Ollama version
+- [x] 🎬 with a NON-thinking story model (qwen2.5:7b): still works — if this Ollama version
       rejects `think:false` for it, the automatic parameter-less retry kicks in invisibly
       (at worst the console shows one failed+retried call, never a user-facing error).
 
 ### 79d. v55_d — captions are hover tooltips, not a text band
-- [ ] Generated panels have NO caption text under them; hovering a panel (desktop) shows the
+- [x] Generated panels have NO caption text under them; hovering a panel (desktop) shows the
       caption as a native browser tooltip. Panels are the same size as before, the strip is just
       shorter by the old caption band.
-- [ ] Touch device: no caption is shown (accepted tradeoff — the caption lives only in the
+- [x] Touch device: no caption is shown (accepted tradeoff — the caption lives only in the
       hover title / accessibility tree).
 
 ### 79e. v55_e — storyboard delete (🎬 toggle menu)
-- [ ] With NO storyboard: 🎬 generates directly (unchanged).
-- [ ] With a storyboard present: 🎬 opens a menu with Regenerate / Delete (+ Cancel).
+- [x] With NO storyboard: 🎬 generates directly (unchanged).
+- [x] With a storyboard present: 🎬 opens a menu with Regenerate / Delete (+ Cancel).
       Button tooltip reads "Storyboard options" instead of "Generate storyboard".
-- [ ] Delete → panels vanish from the storyline screen AND the landing card; toast
+- [x] Delete → panels vanish from the storyline screen AND the landing card; toast
       "Storyboard deleted"; reload confirms it's gone from lessons.json (`sl.storyboard`
       and `sl.storyboardMeta` both removed).
-- [ ] Delete works even with Ollama stopped (the DELETE route needs no backend).
-- [ ] Regenerate → same as a fresh generate (⏳ → new panels replace the old).
-- [ ] Cancel / Esc / overlay-click → nothing changes.
-- [ ] Static build (docs/): no 🎬 button at all (canGenerate false) — baked storyboards are
+- [x] Delete works even with Ollama stopped (the DELETE route needs no backend).
+- [x] Regenerate → same as a fresh generate (⏳ → new panels replace the old).
+- [x] Cancel / Esc / overlay-click → nothing changes.
+- [x] Static build (docs/): no 🎬 button at all (canGenerate false) — baked storyboards are
       read-only there; deletion is a server-build action. (Expected, not a bug.)
+
+### 80. v55_g — QC for generated texts (🔍 proofread → correction proposal + auto error-hunt)
+Server proofreads a story with the QC model; the correction is a PROPOSAL (never auto-applied).
+Accepting it updates the story AND rebuilds the ai_error_hunt from the original↔corrected diff.
+- [ ] Open a topic with a story (server build) → 🔍 appears next to the ✏️ edit toggle. Static
+      build (docs/): no 🔍 (canGenerate false).
+- [ ] Click 🔍 → ⏳ while the QC model runs (server console prints `── Story QC ──` with the QC
+      model + a `Verdict :` line). On return, a review panel opens under the story.
+- [ ] A story with real errors → verdict 'corrected': panel shows a word-level diff (red del /
+      green ins) with Accept / Discard. A clean story → "no errors found", no accept button.
+- [ ] Accept → story updates in place; toast; an 🔎 AI Error Hunt lesson appears/updates in the
+      lesson path built from exactly the corrections; reload shows the new story persisted and
+      `storyQcBy`/`storyQcAt` on the topic in lessons.json.
+- [ ] The ai_error_hunt is playable and its items ARE the QC corrections (not model-invented).
+- [ ] Discard → panel closes, story unchanged, no lesson built, proposal gone (reload confirms).
+- [ ] Proposal persists across reload if neither accepted nor discarded (re-open the story → panel
+      reappears).
+- [ ] REWRITE guard: QC a badly-broken story (e.g. the garbled-Luxembourgish kind) → verdict
+      'rewrite': panel shows an amber "rewrote rather than corrected" warning and ONLY a Discard
+      button (Accept withheld). Forcing accept via API returns 409.
+- [ ] Accept works with Ollama STOPPED after the proposal exists (accept route needs no backend).
+
+### 80b. v55_i — QC rejects mechanically-corrupted corrections
+- [ ] If the QC model returns text with run-together words (spaces collapsed, e.g. inside quotes —
+      a qwen2.5:7b failure mode), the review panel shows the amber "mangled the text" warning and
+      ONLY a Discard button; Accept is withheld and a forced accept returns 409.
+- [ ] A legitimate correction with a normal long word is NOT flagged as corrupt.
+
+### 80c. v55_j — QC display + immediate error-hunt
+- [ ] QC a story where a QUOTED sentence has a corrected word → the review panel shows the whole
+      old sentence (red) above the whole new sentence (green), WITH spaces intact (no run-together).
+- [ ] Accept → the 🔎 AI Error Hunt appears in the lesson path IMMEDIATELY, no page reload needed.
+
+### 81. v55_k — bulk story QC (proposal-accumulation in the storyline sweep)
+- [ ] Storyline 🔍 sweep: server console shows a "Proofreading story: <chapter>…" step PER chapter
+      (in addition to lesson checks); the toast reports "N story proposal(s)".
+- [ ] After the sweep, the storyline 🔍 button shows a green 📝<count> for chapters with a pending
+      story proposal (next to the red lesson-flag count). Per-topic 🔍 shows 📝 similarly.
+- [ ] Open a chapter that has a 📝 → its story screen auto-shows the QC review panel (accept/discard
+      as in §80). Accepting builds the ai_error_hunt (§80c) and drops that chapter's 📝.
+- [ ] Re-run the sweep → already-checked, unedited stories are SKIPPED (console "⏭ skip story …");
+      only edited/new chapters are re-proofread. Force re-checks all.
+- [ ] Edit a chapter's story while a proposal is pending → the pending proposal is dropped; the next
+      sweep re-proofreads it. Accepting a now-stale proposal (story changed underneath) returns 409.
+- [ ] Book GENERATION's automatic QC does NOT run story QC (no per-chapter proofread step, no 📝
+      appears just from generating) — story QC is opt-in via the sweep only.

@@ -149,12 +149,12 @@ function freshTopic() {
   assert.ok(/_storyChanged[\s\S]{0,400}error_hunt[\s\S]{0,120}_clearLessonQcStamp\(ls\)/.test(server),
     '/api/save-story clears the stamp on story-derived (error-hunt) lessons');
   // The bulk auto-QC after a generated book stays a full pass (so it stamps fresh lessons).
-  assert.ok(/_runQc\(newJob\(\), qcTopics, \{ lessonIdx: null, onlyFlagged: false \}\)/.test(server),
-    'post-book auto-QC runs a full (stampable) pass');
+  assert.ok(/_runQc\(newJob\(\), qcTopics, \{ lessonIdx: null, onlyFlagged: false, includeStory: false \}\)/.test(server),
+    'post-book auto-QC runs a full (stampable) pass, lesson-only (no auto story QC)');
   // The /api/qc endpoint threads a force flag (bulk re-check override) into _runQc.
-  assert.ok(/const \{ storylineId, topicId, lessonIdx, onlyFlagged, force \} = body/.test(server),
+  assert.ok(/const \{ storylineId, topicId, lessonIdx, onlyFlagged, force, includeStory \} = body/.test(server),
     '/api/qc reads a force flag');
-  assert.ok(/force: !!force \}\)/.test(server), '/api/qc passes force into _runQc');
+  assert.ok(/force: !!force, includeStory: includeStory !== false \}\)/.test(server), '/api/qc passes force into _runQc');
 
   // ── Client: shift-click on the QC button forces a full re-check ──────────────────────
   const qcRunFn = html.slice(html.indexOf('async function qcRun('),

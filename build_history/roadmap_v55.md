@@ -8,10 +8,11 @@ then `LIVE-TEST-CHECKLIST.md`, then the latest `v*_session*_notes.md`.
 v54_b/v54_c fixes (distractor-only padding, `__drill__` leak, per-round `_wrongTargets`). Details in
 `roadmap_v54.md` + `v53_session1_notes.md` (which carries the appended v54 entries).
 
-## ✅ Storyline SVG storyboard 🎬 (SHIPPED in v55)
+## ✅ Storyline SVG storyboard 🎬 (SHIPPED in v55, BROWSER-VERIFIED 2026-07-13)
 The v54 ▶ NEXT BUILD item, built exactly to its spec after the live-model spike PASSED (user verdict
 2026-07-13 on `qwen3.6:35b-a3b`, storyline `sl_1848224281`: "not great but recognisable" — 3/3 valid
-panels, first attempt). What shipped:
+panels, first attempt). **All functions (v55–v55_e) verified in a live browser 2026-07-13 (LIVE-TEST
+§79–§79e all checked).** What shipped:
 - **Server:** `composeStoryboardSVG` (the SECURITY BOUNDARY — self-contained so `unit-storyboard`
   runs it pure): model returns strict JSON panels (never raw SVG); composer whitelists 8 shape
   types, clamps every coord into the 0–100 panel viewBox, resolves colors through a named palette
@@ -77,13 +78,14 @@ pass debt grows by **3 en-only keys**: `storyboard.gen`, `storyboard.title`, `st
   composer tweak.
 
 ## ▶ NEXT BUILD — pick one (carried candidates, smallest first)
-1. **Translation stamp** (~20 min) — `_translationModel` is topic-level only and
-   `generationStats.models.translation === null` still conflates "not run" with "unknown". Same
-   shape as the v53_d story stamp; finishes the provenance work.
+1. ~~**Translation stamp**~~ — ✅ SHIPPED v55_f. `topic.translationMeta` mirrors `storyMeta`
+   (4 server paths, backfilled on all 267, additive to `models.translation`); guarded by
+   `unit-translation-stamp`. The provenance arc (story + translation + storyboard) is now complete.
 2. **Fill the Thai script table** — the only empty stub in `scripts.json`. Bounded, headlessly
    testable (the `unit-intro-script` invariants are already live). Needs native review of
    romanizations afterward.
-3. **QC for generated texts (stories, summaries)** — see the OPEN section below.
+3. ~~**QC for generated texts (stories, summaries)**~~ — ✅ story QC SHIPPED v55_g (proposal +
+   guard + auto ai_error_hunt); the summaries half remains open (see the OPEN section below).
 4. **Collapsible model selection on the home page** — see the OPEN section below.
 
 ## ✅ Script lessons in BOTH directions (SHIPPED in v53)
@@ -260,12 +262,14 @@ The real gaps, now fixed:
   writing permanently wrong provenance into `lessons.json`. All 13 call sites now name a model.
 
 Guarded by `unit-story-stamp` (mutation-tested) + updated `unit-genmeta`, `unit-storyline-summary-stamp`.
-**Still open:** the **translation** post-pass has no per-artefact stamp (`_translationModel` is topic-level
-only), and `generationStats.models.translation === null` conflates "not run" (translation model == story
-model, so no translation happens) with "unknown". Same treatment as the story; small.
+**Translation stamp SHIPPED v55_f** (was: "still open"): `topic.translationMeta` mirrors `storyMeta`,
+stamped live in 4 states (generated / failed / user-provided / skipped-same-model) and backfilled on
+all 267 topics, additive to `generationStats.models.translation`. Guarded by `unit-translation-stamp`.
+The provenance arc — story, translation, storyboard — is now complete.
 **v53_e: `storyMeta` is now on all 267 topics** (backfilled), so consumers can rely on it — but they
 must handle the `'(user-provided)'` and `'(unknown)'` sentinels, and should treat `storyMeta.backfilled`
-as "inferred, not recorded".
+as "inferred, not recorded". The same contract applies to `translationMeta` (sentinels
+`'(none)'`/`'(user-provided)'`/`'(unknown)'`).
 
 ## ✅ Provenance backfill (SHIPPED in v53_e) — `backfill-provenance.js`
 The 249 topics without `generationStats.models` **do** carry `generationStats.model`, a label built as
@@ -301,6 +305,15 @@ the pickers are wired to `/api/models`. Do it after the model-selection work abo
 gets rebuilt twice.
 
 ## OPEN — QC for generated texts (stories, summaries) → corrected text + auto error-hunt (user)
+**STORY QC SHIPPED v55_g** — 🔍 on the story: `generateStoryQc` (QC model, think:false, `storyQc`
+prompt) returns a correction PROPOSAL (`topic.storyQcProposal`, never overwrites `topic.story`); the
+"too many changes" guard rejects a rewrite at changedRatio > 0.6 OR wordEditRatio > 0.5 (thresholds
+set from the spike: corrected band ≤0.21/0.033, the one rewrite 0.938/0.844). Accept applies the
+correction, pins `aiStory` to the original, stamps `storyQcBy`/`storyQcAt`, and rebuilds the
+ai_error_hunt from the real diff. Routes `/api/story-qc` (+`/accept`, `/discard`); guarded by
+`unit-qc-correct` (+ an llm.js import-completeness guard, v55_h); LIVE-TEST §80. **Bulk story QC SHIPPED v55_k** — the storyline 🔍 sweep proofreads each chapter's story too, accumulating one proposal per chapter (green 📝 badge; reviewed per story screen; skip-stamped; staleness-guarded; NOT in the auto post-book pass); LIVE-TEST §81. **STILL OPEN: the SUMMARIES half** — a parallel route over
+`sl.summary` (`generateStorylineSummary`) would reuse `classifyStoryQc` + the same proposal/accept
+shape, minus the ai_error_hunt (summaries aren't story text learners drill). Original spec (kept):
 A second model reviews a generated story/summary and returns a **corrected** text the user can accept as the
 new default; the diff then seeds an **error-hunt** lesson automatically — the same lesson type, but with the
 errors made by a model rather than a human. This is a genuinely good fit: the QC role model already exists

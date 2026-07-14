@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v55_e';
+const APP_VERSION  = 'v55_k';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -693,8 +693,8 @@ function callLLMTranslation(system, userMsg, maxTokens) {
   return _callLLM(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
 }
 // QC pass — its own role (defaults to the translation model). See qcCheckPair et al.
-function callLLMQC(system, userMsg, maxTokens) {
-  return _callLLM(OLLAMA_QC_MODEL, system, userMsg, maxTokens);
+function callLLMQC(system, userMsg, maxTokens, opts) {
+  return _callLLM(OLLAMA_QC_MODEL, system, userMsg, maxTokens, opts);
 }
 
 // ── QC: verify source/target pairs with the translation model ─────────────
@@ -989,8 +989,9 @@ async function qcCheckSynonymSet(entry, lang, srcLang, userComment) {
 }
 
 async function _runQc(jobId, topics, opts) {
-  const { lessonIdx, onlyFlagged, force } = opts;
+  const { lessonIdx, onlyFlagged, force, includeStory = true } = opts;
   let checked = 0, flagged = 0, cleared = 0, skipped = 0;
+  let storyProposed = 0, storyClean = 0;
   const affected = [];
   console.log(`  ⚙ QC starting: ${topics.length} topic(s)${lessonIdx !== null ? `, lesson ${lessonIdx}` : ''}${onlyFlagged ? ', flagged-only' : ''} [${OLLAMA_QC_MODEL}]`);
   jobStep(jobId, `[${OLLAMA_QC_MODEL}] Starting QC…`);
@@ -1118,10 +1119,50 @@ async function _runQc(jobId, topics, opts) {
         ls.qcAt = new Date().toISOString(); ls.qcBy = OLLAMA_QC_MODEL; touched = true;
       }
     }
+
+    // Story QC (v55_k): in a full sweep (not flagged-only, not a single-lesson request), also
+    // proofread the chapter's STORY and ACCUMULATE the proposal on the topic — the user reviews
+    // each on its story screen (the panel auto-opens there). This is the bulk counterpart to the
+    // per-story 🔍. Guarded by:
+    //   • includeStory (opts) — on by default for full sweeps; a caller can turn it off.
+    //   • skip if this QC model already checked this (unedited) story — storyQcCheckedBy/At, the
+    //     story analogue of a lesson's qcAt (cleared on story edit). `force` re-checks.
+    //   • never runs for a flagged-only or single-lesson (lessonIdx) request.
+    // Proposals are stored for corrected AND rewrite/corrupt (so the story screen can warn); a
+    // clean story stores no proposal, only the checked stamp. Any pre-existing UNREVIEWED proposal
+    // is left untouched when we skip, so accumulated proposals survive re-sweeps.
+    if (includeStory && !onlyFlagged && lessonIdx === null && tp.story && tp.story.trim()) {
+      const alreadyChecked = tp.storyQcCheckedBy === OLLAMA_QC_MODEL && tp.storyQcCheckedAt && !force;
+      if (alreadyChecked) {
+        console.log(`    ⏭ skip story "${tp.topic}" (QC'd ${tp.storyQcCheckedAt}, unedited)`);
+      } else {
+        jobStep(jobId, `[${OLLAMA_QC_MODEL}] Proofreading story: ${tp.topic}…`);
+        try {
+          const qr = await generateStoryQc(tp.story, tp.lang || 'it');
+          tp.storyQcCheckedBy = OLLAMA_QC_MODEL;
+          tp.storyQcCheckedAt = new Date().toISOString();
+          if (qr.verdict === 'clean') {
+            if (tp.storyQcProposal) { delete tp.storyQcProposal; }  // a prior proposal no longer applies
+            storyClean++;
+          } else {
+            tp.storyQcProposal = { corrected: qr.corrected, against: tp.story, verdict: qr.verdict,
+              rejected: qr.rejected, changedSentences: qr.changedSentences, totalSentences: qr.totalSentences,
+              changedRatio: qr.changedRatio, wordEditRatio: qr.wordEditRatio, meta: qr.meta,
+              at: new Date().toISOString() };
+            storyProposed++;
+            console.log(`    📝 story proposal [${qr.verdict}] "${tp.topic}" (${qr.changedSentences}/${qr.totalSentences})`);
+          }
+          touched = true;
+        } catch(e) {
+          console.warn(`    ⚠ story QC failed for "${tp.topic}": ${e.message}`);
+        }
+      }
+    }
+
     if (touched) { upsert(tp); affected.push(tp.id); }
   }
-  jobDone(jobId, { checked, flagged, cleared, skipped, topics: topics.length, affected });
-  console.log(`  ✓ QC done: ${checked} checked, ${flagged} flagged, ${cleared} cleared, ${skipped} skipped across ${topics.length} topic(s)`);
+  jobDone(jobId, { checked, flagged, cleared, skipped, storyProposed, storyClean, topics: topics.length, affected });
+  console.log(`  ✓ QC done: ${checked} checked, ${flagged} flagged, ${cleared} cleared, ${skipped} skipped, story: ${storyProposed} proposed / ${storyClean} clean, across ${topics.length} topic(s)`);
 }
 // True if any item in the lesson still carries an open QC suggestion (item.qc). Used to
 // decide whether a just-completed full pass may stamp the lesson as clean.
@@ -2572,6 +2613,13 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   // that field existed (249 of 267 in the shipped corpus). A user-pasted story is stamped
   // '(user-provided)' rather than left null, so "no model" and "unknown" stop looking alike.
   let _storyMeta = null;
+  // Per-artefact stamp for the translation, mirroring `_storyMeta`. `generationStats.models
+  // .translation` records WHICH model but conflates three states as `null`: user-supplied a
+  // translation, translation was skipped (no story, or translation-model == story-model so the
+  // story model already emitted the source-language side), and auto-translate failed. This stamp
+  // gives each a distinct `model` + `origin`, matching how `_storyMeta` separates '(user-provided)'
+  // from 'generated'. Left null only when there is genuinely no translation on the topic at all.
+  let _translationMeta = null;
 
   jobStep(jobId, `[${OLLAMA_MODEL}] Generating topic info…`);
   let meta;
@@ -2694,13 +2742,36 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
         sysTranslation(lang, srcLang), story, Math.min(2048, Math.ceil(story.length * 1.2)));
       storyTranslation = text.trim();
       _translationModel = OLLAMA_TRANSLATION_MODEL;
+      _translationMeta = buildGenMeta({ type: 'translation', model: OLLAMA_TRANSLATION_MODEL, t0,
+        valid: storyTranslation ? 1 : 0, promptTokens, completionTokens });
+      _translationMeta.origin = 'generated';
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
       console.log(`    [${OLLAMA_TRANSLATION_MODEL}] Translation (${lang}→${srcLang}): ${Date.now()-t0}ms, ${storyTranslation.length} chars`);
     } catch(e) {
       console.warn('  Translation failed, falling back to context-only mode:', e.message);
       storyTranslation = null;
+      // Distinguish a FAILED attempt from one never attempted (both leave storyTranslation null).
+      _translationMeta = buildGenMeta({ type: 'translation', model: '(none)', valid: 0 });
+      _translationMeta.origin = 'failed';
     }
   }
+
+  // Stamp the non-auto-translate paths so `models.translation === null` means only "no
+  // translation exists", never "unknown provenance". (buildGenMeta requires a model, so these
+  // carry sentinels — the same '(user-provided)'/'(none)' vocabulary `_storyMeta` uses.)
+  if (!_translationMeta && storyTranslation) {
+    // A translation exists but wasn't produced by the auto-translate path → the user supplied it.
+    _translationMeta = buildGenMeta({ type: 'translation', model: '(user-provided)',
+      valid: storyTranslation ? 1 : 0 });
+    _translationMeta.origin = 'user-provided';
+  } else if (!_translationMeta && story && OLLAMA_TRANSLATION_MODEL === OLLAMA_MODEL) {
+    // No separate translation call: the story model IS the translation model, so the
+    // source-language side (when present) came from the story model, not a distinct pass.
+    _translationMeta = buildGenMeta({ type: 'translation', model: '(none)', valid: 0 });
+    _translationMeta.origin = 'skipped-same-model';
+  }
+  // Otherwise (_translationMeta stays null): no story, or no translation of any kind → correctly
+  // absent, exactly like `models.translation === null`.
 
   // Release story/translation model from VRAM before loading lesson model
   if (OLLAMA_LESSON_MODEL !== OLLAMA_MODEL) {
@@ -2717,6 +2788,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
       story, storyLang, storyPrompt,
       ...(_storyMeta ? { storyMeta: _storyMeta } : {}),
+      ...(_translationMeta ? { translationMeta: _translationMeta } : {}),
       ...(storyTranslation ? { storyTranslation } : {}),
       ...(userStory        ? { userStory }         : {}),
       ...(userDialect      ? { userDialect }       : {}),
@@ -2836,6 +2908,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
     story, storyLang, storyPrompt,
     ...(_storyMeta ? { storyMeta: _storyMeta } : {}),
+    ...(_translationMeta ? { translationMeta: _translationMeta } : {}),
     ...(storyTranslation ? { storyTranslation } : {}),
     ...(userStory        ? { userStory }         : {}),
     ...(userTranslation  ? { userTranslation }   : {}),
@@ -3089,6 +3162,97 @@ function storyDiffSentences(aiStory, correctedStory, existingSentences) {
   return pairs
     .filter(p => p.changed)
     .map(p => ({ ai: p.ai, corrected: p.corrected, reason: reasonMap.get(p.ai) || '' }));
+}
+
+// ── QC for generated texts (v55_g): correct a story, gated against wholesale rewrite ──────────
+// A QC-role model proofreads `story` and returns a CORRECTED text. The result is a PROPOSAL — the
+// caller stores it under `topic.storyQcProposal` and never overwrites `topic.story` until the user
+// accepts. The (original, corrected) diff seeds an ai_error_hunt via the existing machinery.
+//
+// The "too many changes" guard rejects a rewrite (the corrector regenerating rather than fixing).
+// Thresholds are set from the v55_g spike (spike-qc-correct.js) on real corpus stories: the
+// 'corrected' band topped out at changedRatio 0.21 / wordEditRatio 0.033, while the one genuine
+// rewrite sat at 0.938 / 0.844 — a wide empty gulf. 0.6 / 0.5 sit in that gulf with margin on both
+// sides. A rewrite is not silently discarded: it's returned with rejected:true so the UI can tell
+// the user "the corrector rewrote this rather than proofreading — likely too broken to QC".
+const QC_MAX_CHANGED_RATIO = 0.6;   // fraction of sentences touched
+const QC_MAX_WORD_EDIT_RATIO = 0.5; // word-level Levenshtein / original word count
+
+function _wordLev(a, b) {
+  const wa = a.split(/\s+/), wb = b.split(/\s+/);
+  const dp = Array.from({ length: wa.length + 1 }, (_, i) => { const r = new Array(wb.length + 1).fill(0); r[0] = i; return r; });
+  for (let j = 0; j <= wb.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= wa.length; i++) for (let j = 1; j <= wb.length; j++)
+    dp[i][j] = wa[i - 1] === wb[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+  return dp[wa.length][wb.length];
+}
+
+// Pure classifier — returns { verdict, changedSentences, totalSentences, changedRatio,
+// wordEditRatio, rejected, changed }. Kept separate from the LLM call so unit-qc-correct drives it.
+// Verdicts: clean / corrected / rewrite / corrupt. 'corrupt' catches a QC model that mangled the
+// text mechanically rather than proofreading it — the v55_i case: qwen2.5:7b collapsed all spaces
+// inside a quoted sentence, producing a 49-char run-together "word". Signal: the corrected text has
+// a token far longer than any in the original, or lost a large fraction of its spaces. Both are
+// rejected (never presented as an acceptable correction).
+function _qcCorruption(original, corrected) {
+  const tok = s => s.split(/\s+/).filter(Boolean);
+  const maxLen = arr => arr.reduce((m, w) => Math.max(m, w.length), 0);
+  const maxO = maxLen(tok(original)), maxC = maxLen(tok(corrected));
+  // A run-together word: corrected's longest token is >1.5× the original's longest AND ≥25 chars
+  // (avoids false positives on legit long words / compounds near the original's own maximum).
+  const runTogether = maxC >= 25 && maxC > maxO * 1.5;
+  // Wholesale space loss: corrected kept <60% of the original's spaces (interior whitespace should
+  // be preserved by a proofread; a big drop means spaces were eaten).
+  const spO = (original.match(/ /g) || []).length, spC = (corrected.match(/ /g) || []).length;
+  const spaceLoss = spO >= 10 && spC < spO * 0.6;
+  return runTogether || spaceLoss;
+}
+
+function classifyStoryQc(original, corrected) {
+  const changed = storyDiffSentences(original, corrected);
+  const total = splitSentences(original).filter(s => typeof s === 'string').length;
+  const changedRatio = total ? changed.length / total : 0;
+  const words = original.split(/\s+/).filter(Boolean).length;
+  const wordEditRatio = words ? _wordLev(original, corrected) / words : 0;
+  let verdict;
+  if (changed.length === 0) verdict = 'clean';
+  else if (_qcCorruption(original, corrected)) verdict = 'corrupt';  // mangled text, not a proofread
+  else if (changedRatio > QC_MAX_CHANGED_RATIO || wordEditRatio > QC_MAX_WORD_EDIT_RATIO) verdict = 'rewrite';
+  else verdict = 'corrected';
+  return {
+    verdict, rejected: verdict === 'rewrite' || verdict === 'corrupt',
+    changedSentences: changed.length, totalSentences: total,
+    changedRatio: +changedRatio.toFixed(3), wordEditRatio: +wordEditRatio.toFixed(3),
+    changed,
+  };
+}
+
+// Run the QC model over a story. Returns { corrected, story, ...classifier, meta }. Never mutates
+// anything — the caller decides whether to store the proposal. `story` echoes the original so the
+// client can diff without re-fetching. think:false (v55_c) — proofreading is not a reasoning task.
+async function generateStoryQc(story, lang) {
+  if (!story || !story.trim()) throw new Error('QC: empty story');
+  const L = langName(lang);
+  const _t0 = Date.now();
+  console.log(`\n── Story QC ─────────────────────────────────────────`);
+  console.log(`  Lang: ${L}, Model: ${OLLAMA_QC_MODEL}, ${story.length} chars`);
+  const sys = fillPrompt(PROMPTS.storyQc.system, { L });
+  const { text, promptTokens, completionTokens } = await callLLMQC(sys, story,
+    Math.min(4096, Math.ceil(story.length * 1.3)), { think: false });
+  const corrected = stripRaw(text).trim();  // stripRaw already strips <think> internally
+  console.log(`  Response : after ${((Date.now() - _t0) / 1000).toFixed(0)}s (${completionTokens || '?'} tok)`);
+  if (!corrected) throw new Error('QC: model returned empty correction');
+  const c = classifyStoryQc(story, corrected);
+  console.log(`  Verdict  : ${c.verdict} (${c.changedSentences}/${c.totalSentences} sentences, wordΔ ${c.wordEditRatio})`);
+  console.log('────────────────────────────────────────────────────\n');
+  const meta = buildGenMeta({ type: 'story_qc', model: OLLAMA_QC_MODEL, t0: _t0,
+    valid: c.rejected ? 0 : 1, promptTokens, completionTokens });
+  meta.verdict = c.verdict;
+  meta.changedRatio = c.changedRatio;
+  meta.wordEditRatio = c.wordEditRatio;
+  return { corrected, story, verdict: c.verdict, rejected: c.rejected,
+    changedSentences: c.changedSentences, totalSentences: c.totalSentences,
+    changedRatio: c.changedRatio, wordEditRatio: c.wordEditRatio, meta };
 }
 
 // ── Multi-chapter "book" generation ───────────────────────────────────
@@ -3395,7 +3559,10 @@ async function _runBookJob(bookId, chunks, base) {
         .map(id => findSavedById(id)).filter(Boolean);
       if (qcTopics.length) {
         bj.status = 'qc';
-        await _runQc(newJob(), qcTopics, { lessonIdx: null, onlyFlagged: false });
+        // Lesson QC only here — story QC is deliberately NOT auto-run during book generation (it
+        // adds an LLM pass per chapter to an already-long job, unprompted). The user opts into
+        // story QC via the storyline 🔍 sweep, which defaults includeStory:true.
+        await _runQc(newJob(), qcTopics, { lessonIdx: null, onlyFlagged: false, includeStory: false });
       }
     } catch (e) { console.warn(`  [book ${bookId}] QC post-pass error: ${e.message}`); }
     bj.status = 'done';
@@ -3531,6 +3698,7 @@ http.createServer(async (req, res) => {
         })(),
         qcFlags: (l.lessons || []).reduce((n, L) =>
           n + [...(L.vocab||[]), ...(L.sentences||[]), ...(L.items||[]), ...(L.words||[]), ...(L.letters||[])].filter(x => x && (x.qc || x.userFlag)).length, 0),
+        storyQcPending: !!l.storyQcProposal,  // a bulk (or manual) story-QC proposal awaiting review
       }));
       list.sort((a,b) => (b.updatedAt||'').localeCompare(a.updatedAt||''));
       return json(res, 200, list);
@@ -3678,7 +3846,7 @@ http.createServer(async (req, res) => {
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
       if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
-      const { storylineId, topicId, lessonIdx, onlyFlagged, force } = body;
+      const { storylineId, topicId, lessonIdx, onlyFlagged, force, includeStory } = body;
       // Resolve the topics in scope.
       let topics = [];
       if (storylineId) {
@@ -3691,7 +3859,7 @@ http.createServer(async (req, res) => {
       if (!topics.length) return json(res, 404, { error: 'Nothing in scope to check.' });
       const jobId = newJob();
       console.log(`  ⚙ QC requested (${storylineId?('storyline '+storylineId):topicId?('topic '+topicId+(lessonIdx!==undefined&&lessonIdx!==null?' lesson '+lessonIdx:'')):'?'}) → ${topics.length} topic(s), job=${jobId}`);
-      _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force })
+      _runQc(jobId, topics, { lessonIdx: (lessonIdx === undefined ? null : lessonIdx), onlyFlagged: !!onlyFlagged, force: !!force, includeStory: includeStory !== false })
         .catch(e => { console.error('  QC error:', e.message); jobFail(jobId, e.message); });
       return json(res, 202, { jobId, topics: topics.length });
     }
@@ -4121,6 +4289,10 @@ http.createServer(async (req, res) => {
             console.log(`    ↺ QC stamp cleared (story edit) on "${ls.title || ls.type}"`);
           }
         }
+        // A changed story also invalidates its story-QC checked stamp (so the next bulk sweep
+        // re-proofreads it) and any pending story-QC proposal (it was diffed against the old text).
+        if (saved.storyQcCheckedAt !== undefined) { delete saved.storyQcCheckedBy; delete saved.storyQcCheckedAt; }
+        if (saved.storyQcProposal) { delete saved.storyQcProposal; console.log(`    ↺ stale story-QC proposal cleared (story edit)`); }
       }
       let aiHuntEdits;
       // The AI error-hunt is a PURE diff between the original AI text (aiStory) and the human's
@@ -4435,6 +4607,102 @@ http.createServer(async (req, res) => {
         delete sl.storyboard; delete sl.storyboardMeta; upsertStoryline(sl);
         console.log(`  Storyboard deleted for storyline ${slId}`);
       }
+      return json(res, 200, { ok: true });
+    }
+
+    // ── QC for generated texts (v55_g) ──────────────────────────────────────────
+    // Generate a correction PROPOSAL for a topic's story. Never touches topic.story — stores the
+    // proposal under topic.storyQcProposal so the client can show a diff and let the user accept.
+    if (M === 'POST' && url.pathname === '/api/story-qc') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topicId } = body;
+      const t = topicId ? findSavedById(topicId) : null;
+      if (!t) return json(res, 404, { error: 'Topic not found' });
+      if (!t.story || !t.story.trim()) return json(res, 400, { error: 'Topic has no story to QC' });
+      const _t0 = Date.now();
+      try {
+        const r = await generateStoryQc(t.story, t.lang || 'it');
+        // Persist the proposal (survives a client refresh; overwrites any prior proposal). Store
+        // the exact original it was diffed against, so acceptance can't drift if the story changed.
+        t.storyQcProposal = { corrected: r.corrected, against: t.story, verdict: r.verdict,
+          rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+          changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio, meta: r.meta,
+          at: new Date().toISOString() };
+        saveStore(store);
+        return json(res, 200, { corrected: r.corrected, original: t.story, verdict: r.verdict,
+          rejected: r.rejected,
+          changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+          changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio });
+      } catch(e) {
+        console.error(`  ✗ Story QC FAILED after ${((Date.now() - _t0) / 1000).toFixed(0)}s: ${e.message}`);
+        return json(res, 500, { error: e.message });
+      }
+    }
+
+    // Accept a stored QC proposal: the correction becomes topic.story, aiStory is pinned to the
+    // ORIGINAL (so the diff → ai_error_hunt is original↔corrected), the QC model is stamped, and the
+    // ai_error_hunt lesson is (re)built from the diff. No LLM here — pure application of the proposal.
+    if (M === 'POST' && url.pathname === '/api/story-qc/accept') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topicId } = body;
+      const t = topicId ? findSavedById(topicId) : null;
+      if (!t) return json(res, 404, { error: 'Topic not found' });
+      const prop = t.storyQcProposal;
+      if (!prop || !prop.corrected) return json(res, 400, { error: 'No QC proposal to accept' });
+      if (prop.rejected) return json(res, 409, { error: 'Proposal was flagged as a rewrite; not acceptable' });
+      // Staleness guard: the proposal was diffed against `prop.against`. If the story has changed
+      // since (a hand-edit, or a re-QC), applying it would compute against the wrong baseline.
+      if (prop.against !== undefined && prop.against !== t.story) {
+        delete t.storyQcProposal; saveStore(store);
+        return json(res, 409, { error: 'Story changed since this proposal was generated; discarded. Re-run QC.' });
+      }
+      // aiStory = the immutable "before". Pin it to the original the proposal was diffed against
+      // (only if not already set — a prior human/AI edit may already own it).
+      if (!t.aiStory) t.aiStory = prop.against || t.story;
+      const originalForDiff = t.aiStory;
+      t.story = prop.corrected;
+      t.updatedAt = new Date().toISOString();
+      // Stamp the QC model on the topic (parallel to qcBy on lessons).
+      t.storyQcBy = (prop.meta && prop.meta.model) || OLLAMA_QC_MODEL;
+      t.storyQcAt = new Date().toISOString();
+      // Rebuild the ai_error_hunt from original↔corrected using the existing diff.
+      let huntBuilt = false;
+      if (t.aiStory && t.aiStory !== t.story) {
+        const existing = (t.lessons || []).find(l => l.type === 'ai_error_hunt');
+        const sentences = storyDiffSentences(t.aiStory, t.story, existing?.sentences);
+        if (sentences.length) {
+          const lesson = {
+            id: existing?.id || ('aeh_' + Date.now()), type: 'ai_error_hunt',
+            title: existing?.title || 'AI Error Hunt',
+            desc: 'Find AI errors that were corrected by a proofreader.',
+            icon: '🔎', aiStory: t.aiStory, sentences,
+            _genMeta: buildGenMeta({ type: 'ai_error_hunt', model: t.storyQcBy, valid: sentences.length }),
+          };
+          if (existing) t.lessons[t.lessons.indexOf(existing)] = lesson;
+          else (t.lessons = t.lessons || []).push(lesson);
+          huntBuilt = true;
+        }
+      }
+      delete t.storyQcProposal; // consumed
+      saveStore(store);
+      console.log(`  ✓ Story QC accepted for "${t.topic}" — story updated, ai_error_hunt ${huntBuilt ? 'rebuilt' : 'unchanged (no diff)'}`);
+      return json(res, 200, { ok: true, story: t.story, errorHuntBuilt: huntBuilt, lessons: t.lessons });
+    }
+
+    // Discard a stored QC proposal without applying it.
+    if (M === 'POST' && url.pathname === '/api/story-qc/discard') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { topicId } = body;
+      const t = topicId ? findSavedById(topicId) : null;
+      if (!t) return json(res, 404, { error: 'Topic not found' });
+      if (t.storyQcProposal) { delete t.storyQcProposal; saveStore(store); }
       return json(res, 200, { ok: true });
     }
 
