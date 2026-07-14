@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v55_k';
+const APP_VERSION  = 'v55_l';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -986,6 +986,160 @@ async function qcCheckSynonymSet(entry, lang, srcLang, userComment) {
     `Homophones: ${fmt(entry.homophones)}`;
   const { text } = await callLLMQC(system, user, 120);
   return _qcParseOkOrSug(text);
+}
+
+// ══ QC / story-diff helpers — MODULE SCOPE (v55_l): must precede _runQc, which calls
+//    generateStoryQc from the bulk sweep. Previously nested inside boot(), invisible to _runQc.
+// ── Story diff for ai_error_hunt (sentence-level) ────────────────────────────
+function splitSentences(text) {
+  // Returns array of clause strings and {para:true} sentinels for paragraph breaks
+  const result = [];
+  text.split(/\n\n+/).forEach((para, pi) => {
+    if (pi > 0) result.push({ para: true });
+    const parts = para.trim().split(/(?<=[.!?,;:"""«»„\u2018\u2019])\s*/);
+    parts.map(s => s.trim()).filter(Boolean).forEach(s => result.push(s));
+  });
+  return result;
+}
+
+function storyDiffSentences(aiStory, correctedStory, existingSentences) {
+  const aRaw = splitSentences(aiStory);
+  const bRaw = splitSentences(correctedStory);
+  // Track para-break positions in ai clauses before stripping sentinels
+  const aiParaBefore = new Set();
+  let paused = false, clauseIdx = 0;
+  aRaw.forEach(s => {
+    if (typeof s !== 'string') { paused = true; return; }
+    if (paused) { aiParaBefore.add(clauseIdx); paused = false; }
+    clauseIdx++;
+  });
+  const aArr = aRaw.filter(s => typeof s === 'string');
+  const bArr = bRaw.filter(s => typeof s === 'string');
+  const m = aArr.length, n = bArr.length;
+  const dp = Array.from({length:m+1}, () => new Array(n+1).fill(0));
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
+    dp[i][j] = aArr[i-1]===bArr[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j],dp[i][j-1]);
+  const ops = []; let i=m, j=n;
+  while(i>0||j>0) {
+    if(i>0&&j>0&&aArr[i-1]===bArr[j-1]) { ops.unshift({type:'eq',ai:aArr[i-1],corrected:bArr[j-1]}); i--;j--; }
+    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])) { ops.unshift({type:'ins',corrected:bArr[j-1]}); j--; }
+    else { ops.unshift({type:'del',ai:aArr[i-1]}); i--; }
+  }
+  const pairs = []; let k=0;
+  while(k<ops.length) {
+    const op = ops[k];
+    if(op.type==='eq') { pairs.push({ai:op.ai,corrected:op.corrected,changed:false,reason:''}); k++; }
+    else {
+      let dels=[], ins=[];
+      while(k<ops.length && ops[k].type!=='eq') {
+        if(ops[k].type==='del') dels.push(ops[k].ai);
+        else ins.push(ops[k].corrected);
+        k++;
+      }
+      const maxLen = Math.max(dels.length, ins.length);
+      for(let x=0;x<maxLen;x++)
+        pairs.push({ai:dels[x]||null,corrected:ins[x]||null,changed:true,reason:''});
+    }
+  }
+  // Preserve existing reasons by matching on ai sentence text
+  const reasonMap = new Map();
+  if(existingSentences && existingSentences.length)
+    existingSentences.forEach(s => { if(s && s.ai && s.reason) reasonMap.set(s.ai, s.reason); });
+  // Return sparse: only changed entries
+  return pairs
+    .filter(p => p.changed)
+    .map(p => ({ ai: p.ai, corrected: p.corrected, reason: reasonMap.get(p.ai) || '' }));
+}
+
+// ── QC for generated texts (v55_g): correct a story, gated against wholesale rewrite ──────────
+// A QC-role model proofreads `story` and returns a CORRECTED text. The result is a PROPOSAL — the
+// caller stores it under `topic.storyQcProposal` and never overwrites `topic.story` until the user
+// accepts. The (original, corrected) diff seeds an ai_error_hunt via the existing machinery.
+//
+// The "too many changes" guard rejects a rewrite (the corrector regenerating rather than fixing).
+// Thresholds are set from the v55_g spike (spike-qc-correct.js) on real corpus stories: the
+// 'corrected' band topped out at changedRatio 0.21 / wordEditRatio 0.033, while the one genuine
+// rewrite sat at 0.938 / 0.844 — a wide empty gulf. 0.6 / 0.5 sit in that gulf with margin on both
+// sides. A rewrite is not silently discarded: it's returned with rejected:true so the UI can tell
+// the user "the corrector rewrote this rather than proofreading — likely too broken to QC".
+const QC_MAX_CHANGED_RATIO = 0.6;   // fraction of sentences touched
+const QC_MAX_WORD_EDIT_RATIO = 0.5; // word-level Levenshtein / original word count
+
+function _wordLev(a, b) {
+  const wa = a.split(/\s+/), wb = b.split(/\s+/);
+  const dp = Array.from({ length: wa.length + 1 }, (_, i) => { const r = new Array(wb.length + 1).fill(0); r[0] = i; return r; });
+  for (let j = 0; j <= wb.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= wa.length; i++) for (let j = 1; j <= wb.length; j++)
+    dp[i][j] = wa[i - 1] === wb[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+  return dp[wa.length][wb.length];
+}
+
+// Pure classifier — returns { verdict, changedSentences, totalSentences, changedRatio,
+// wordEditRatio, rejected, changed }. Kept separate from the LLM call so unit-qc-correct drives it.
+// Verdicts: clean / corrected / rewrite / corrupt. 'corrupt' catches a QC model that mangled the
+// text mechanically rather than proofreading it — the v55_i case: qwen2.5:7b collapsed all spaces
+// inside a quoted sentence, producing a 49-char run-together "word". Signal: the corrected text has
+// a token far longer than any in the original, or lost a large fraction of its spaces. Both are
+// rejected (never presented as an acceptable correction).
+function _qcCorruption(original, corrected) {
+  const tok = s => s.split(/\s+/).filter(Boolean);
+  const maxLen = arr => arr.reduce((m, w) => Math.max(m, w.length), 0);
+  const maxO = maxLen(tok(original)), maxC = maxLen(tok(corrected));
+  // A run-together word: corrected's longest token is >1.5× the original's longest AND ≥25 chars
+  // (avoids false positives on legit long words / compounds near the original's own maximum).
+  const runTogether = maxC >= 25 && maxC > maxO * 1.5;
+  // Wholesale space loss: corrected kept <60% of the original's spaces (interior whitespace should
+  // be preserved by a proofread; a big drop means spaces were eaten).
+  const spO = (original.match(/ /g) || []).length, spC = (corrected.match(/ /g) || []).length;
+  const spaceLoss = spO >= 10 && spC < spO * 0.6;
+  return runTogether || spaceLoss;
+}
+
+function classifyStoryQc(original, corrected) {
+  const changed = storyDiffSentences(original, corrected);
+  const total = splitSentences(original).filter(s => typeof s === 'string').length;
+  const changedRatio = total ? changed.length / total : 0;
+  const words = original.split(/\s+/).filter(Boolean).length;
+  const wordEditRatio = words ? _wordLev(original, corrected) / words : 0;
+  let verdict;
+  if (changed.length === 0) verdict = 'clean';
+  else if (_qcCorruption(original, corrected)) verdict = 'corrupt';  // mangled text, not a proofread
+  else if (changedRatio > QC_MAX_CHANGED_RATIO || wordEditRatio > QC_MAX_WORD_EDIT_RATIO) verdict = 'rewrite';
+  else verdict = 'corrected';
+  return {
+    verdict, rejected: verdict === 'rewrite' || verdict === 'corrupt',
+    changedSentences: changed.length, totalSentences: total,
+    changedRatio: +changedRatio.toFixed(3), wordEditRatio: +wordEditRatio.toFixed(3),
+    changed,
+  };
+}
+
+// Run the QC model over a story. Returns { corrected, story, ...classifier, meta }. Never mutates
+// anything — the caller decides whether to store the proposal. `story` echoes the original so the
+// client can diff without re-fetching. think:false (v55_c) — proofreading is not a reasoning task.
+async function generateStoryQc(story, lang) {
+  if (!story || !story.trim()) throw new Error('QC: empty story');
+  const L = langName(lang);
+  const _t0 = Date.now();
+  console.log(`\n── Story QC ─────────────────────────────────────────`);
+  console.log(`  Lang: ${L}, Model: ${OLLAMA_QC_MODEL}, ${story.length} chars`);
+  const sys = fillPrompt(PROMPTS.storyQc.system, { L });
+  const { text, promptTokens, completionTokens } = await callLLMQC(sys, story,
+    Math.min(4096, Math.ceil(story.length * 1.3)), { think: false });
+  const corrected = stripRaw(text).trim();  // stripRaw already strips <think> internally
+  console.log(`  Response : after ${((Date.now() - _t0) / 1000).toFixed(0)}s (${completionTokens || '?'} tok)`);
+  if (!corrected) throw new Error('QC: model returned empty correction');
+  const c = classifyStoryQc(story, corrected);
+  console.log(`  Verdict  : ${c.verdict} (${c.changedSentences}/${c.totalSentences} sentences, wordΔ ${c.wordEditRatio})`);
+  console.log('────────────────────────────────────────────────────\n');
+  const meta = buildGenMeta({ type: 'story_qc', model: OLLAMA_QC_MODEL, t0: _t0,
+    valid: c.rejected ? 0 : 1, promptTokens, completionTokens });
+  meta.verdict = c.verdict;
+  meta.changedRatio = c.changedRatio;
+  meta.wordEditRatio = c.wordEditRatio;
+  return { corrected, story, verdict: c.verdict, rejected: c.rejected,
+    changedSentences: c.changedSentences, totalSentences: c.totalSentences,
+    changedRatio: c.changedRatio, wordEditRatio: c.wordEditRatio, meta };
 }
 
 async function _runQc(jobId, topics, opts) {
@@ -3103,157 +3257,6 @@ function _syncStorylineForTopic(topicRef, continuedFromTopic) {
   }
 }
 
-// ── Story diff for ai_error_hunt (sentence-level) ────────────────────────────
-function splitSentences(text) {
-  // Returns array of clause strings and {para:true} sentinels for paragraph breaks
-  const result = [];
-  text.split(/\n\n+/).forEach((para, pi) => {
-    if (pi > 0) result.push({ para: true });
-    const parts = para.trim().split(/(?<=[.!?,;:"""«»„\u2018\u2019])\s*/);
-    parts.map(s => s.trim()).filter(Boolean).forEach(s => result.push(s));
-  });
-  return result;
-}
-
-function storyDiffSentences(aiStory, correctedStory, existingSentences) {
-  const aRaw = splitSentences(aiStory);
-  const bRaw = splitSentences(correctedStory);
-  // Track para-break positions in ai clauses before stripping sentinels
-  const aiParaBefore = new Set();
-  let paused = false, clauseIdx = 0;
-  aRaw.forEach(s => {
-    if (typeof s !== 'string') { paused = true; return; }
-    if (paused) { aiParaBefore.add(clauseIdx); paused = false; }
-    clauseIdx++;
-  });
-  const aArr = aRaw.filter(s => typeof s === 'string');
-  const bArr = bRaw.filter(s => typeof s === 'string');
-  const m = aArr.length, n = bArr.length;
-  const dp = Array.from({length:m+1}, () => new Array(n+1).fill(0));
-  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++)
-    dp[i][j] = aArr[i-1]===bArr[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j],dp[i][j-1]);
-  const ops = []; let i=m, j=n;
-  while(i>0||j>0) {
-    if(i>0&&j>0&&aArr[i-1]===bArr[j-1]) { ops.unshift({type:'eq',ai:aArr[i-1],corrected:bArr[j-1]}); i--;j--; }
-    else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])) { ops.unshift({type:'ins',corrected:bArr[j-1]}); j--; }
-    else { ops.unshift({type:'del',ai:aArr[i-1]}); i--; }
-  }
-  const pairs = []; let k=0;
-  while(k<ops.length) {
-    const op = ops[k];
-    if(op.type==='eq') { pairs.push({ai:op.ai,corrected:op.corrected,changed:false,reason:''}); k++; }
-    else {
-      let dels=[], ins=[];
-      while(k<ops.length && ops[k].type!=='eq') {
-        if(ops[k].type==='del') dels.push(ops[k].ai);
-        else ins.push(ops[k].corrected);
-        k++;
-      }
-      const maxLen = Math.max(dels.length, ins.length);
-      for(let x=0;x<maxLen;x++)
-        pairs.push({ai:dels[x]||null,corrected:ins[x]||null,changed:true,reason:''});
-    }
-  }
-  // Preserve existing reasons by matching on ai sentence text
-  const reasonMap = new Map();
-  if(existingSentences && existingSentences.length)
-    existingSentences.forEach(s => { if(s && s.ai && s.reason) reasonMap.set(s.ai, s.reason); });
-  // Return sparse: only changed entries
-  return pairs
-    .filter(p => p.changed)
-    .map(p => ({ ai: p.ai, corrected: p.corrected, reason: reasonMap.get(p.ai) || '' }));
-}
-
-// ── QC for generated texts (v55_g): correct a story, gated against wholesale rewrite ──────────
-// A QC-role model proofreads `story` and returns a CORRECTED text. The result is a PROPOSAL — the
-// caller stores it under `topic.storyQcProposal` and never overwrites `topic.story` until the user
-// accepts. The (original, corrected) diff seeds an ai_error_hunt via the existing machinery.
-//
-// The "too many changes" guard rejects a rewrite (the corrector regenerating rather than fixing).
-// Thresholds are set from the v55_g spike (spike-qc-correct.js) on real corpus stories: the
-// 'corrected' band topped out at changedRatio 0.21 / wordEditRatio 0.033, while the one genuine
-// rewrite sat at 0.938 / 0.844 — a wide empty gulf. 0.6 / 0.5 sit in that gulf with margin on both
-// sides. A rewrite is not silently discarded: it's returned with rejected:true so the UI can tell
-// the user "the corrector rewrote this rather than proofreading — likely too broken to QC".
-const QC_MAX_CHANGED_RATIO = 0.6;   // fraction of sentences touched
-const QC_MAX_WORD_EDIT_RATIO = 0.5; // word-level Levenshtein / original word count
-
-function _wordLev(a, b) {
-  const wa = a.split(/\s+/), wb = b.split(/\s+/);
-  const dp = Array.from({ length: wa.length + 1 }, (_, i) => { const r = new Array(wb.length + 1).fill(0); r[0] = i; return r; });
-  for (let j = 0; j <= wb.length; j++) dp[0][j] = j;
-  for (let i = 1; i <= wa.length; i++) for (let j = 1; j <= wb.length; j++)
-    dp[i][j] = wa[i - 1] === wb[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
-  return dp[wa.length][wb.length];
-}
-
-// Pure classifier — returns { verdict, changedSentences, totalSentences, changedRatio,
-// wordEditRatio, rejected, changed }. Kept separate from the LLM call so unit-qc-correct drives it.
-// Verdicts: clean / corrected / rewrite / corrupt. 'corrupt' catches a QC model that mangled the
-// text mechanically rather than proofreading it — the v55_i case: qwen2.5:7b collapsed all spaces
-// inside a quoted sentence, producing a 49-char run-together "word". Signal: the corrected text has
-// a token far longer than any in the original, or lost a large fraction of its spaces. Both are
-// rejected (never presented as an acceptable correction).
-function _qcCorruption(original, corrected) {
-  const tok = s => s.split(/\s+/).filter(Boolean);
-  const maxLen = arr => arr.reduce((m, w) => Math.max(m, w.length), 0);
-  const maxO = maxLen(tok(original)), maxC = maxLen(tok(corrected));
-  // A run-together word: corrected's longest token is >1.5× the original's longest AND ≥25 chars
-  // (avoids false positives on legit long words / compounds near the original's own maximum).
-  const runTogether = maxC >= 25 && maxC > maxO * 1.5;
-  // Wholesale space loss: corrected kept <60% of the original's spaces (interior whitespace should
-  // be preserved by a proofread; a big drop means spaces were eaten).
-  const spO = (original.match(/ /g) || []).length, spC = (corrected.match(/ /g) || []).length;
-  const spaceLoss = spO >= 10 && spC < spO * 0.6;
-  return runTogether || spaceLoss;
-}
-
-function classifyStoryQc(original, corrected) {
-  const changed = storyDiffSentences(original, corrected);
-  const total = splitSentences(original).filter(s => typeof s === 'string').length;
-  const changedRatio = total ? changed.length / total : 0;
-  const words = original.split(/\s+/).filter(Boolean).length;
-  const wordEditRatio = words ? _wordLev(original, corrected) / words : 0;
-  let verdict;
-  if (changed.length === 0) verdict = 'clean';
-  else if (_qcCorruption(original, corrected)) verdict = 'corrupt';  // mangled text, not a proofread
-  else if (changedRatio > QC_MAX_CHANGED_RATIO || wordEditRatio > QC_MAX_WORD_EDIT_RATIO) verdict = 'rewrite';
-  else verdict = 'corrected';
-  return {
-    verdict, rejected: verdict === 'rewrite' || verdict === 'corrupt',
-    changedSentences: changed.length, totalSentences: total,
-    changedRatio: +changedRatio.toFixed(3), wordEditRatio: +wordEditRatio.toFixed(3),
-    changed,
-  };
-}
-
-// Run the QC model over a story. Returns { corrected, story, ...classifier, meta }. Never mutates
-// anything — the caller decides whether to store the proposal. `story` echoes the original so the
-// client can diff without re-fetching. think:false (v55_c) — proofreading is not a reasoning task.
-async function generateStoryQc(story, lang) {
-  if (!story || !story.trim()) throw new Error('QC: empty story');
-  const L = langName(lang);
-  const _t0 = Date.now();
-  console.log(`\n── Story QC ─────────────────────────────────────────`);
-  console.log(`  Lang: ${L}, Model: ${OLLAMA_QC_MODEL}, ${story.length} chars`);
-  const sys = fillPrompt(PROMPTS.storyQc.system, { L });
-  const { text, promptTokens, completionTokens } = await callLLMQC(sys, story,
-    Math.min(4096, Math.ceil(story.length * 1.3)), { think: false });
-  const corrected = stripRaw(text).trim();  // stripRaw already strips <think> internally
-  console.log(`  Response : after ${((Date.now() - _t0) / 1000).toFixed(0)}s (${completionTokens || '?'} tok)`);
-  if (!corrected) throw new Error('QC: model returned empty correction');
-  const c = classifyStoryQc(story, corrected);
-  console.log(`  Verdict  : ${c.verdict} (${c.changedSentences}/${c.totalSentences} sentences, wordΔ ${c.wordEditRatio})`);
-  console.log('────────────────────────────────────────────────────\n');
-  const meta = buildGenMeta({ type: 'story_qc', model: OLLAMA_QC_MODEL, t0: _t0,
-    valid: c.rejected ? 0 : 1, promptTokens, completionTokens });
-  meta.verdict = c.verdict;
-  meta.changedRatio = c.changedRatio;
-  meta.wordEditRatio = c.wordEditRatio;
-  return { corrected, story, verdict: c.verdict, rejected: c.rejected,
-    changedSentences: c.changedSentences, totalSentences: c.totalSentences,
-    changedRatio: c.changedRatio, wordEditRatio: c.wordEditRatio, meta };
-}
 
 // ── Multi-chapter "book" generation ───────────────────────────────────
 // Server-side sequential generation so a PDF book keeps generating even if the

@@ -470,12 +470,25 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-15T12:58:41.315Z",
-      "updatedAt": "2026-06-15T14:11:45.867Z",
+      "updatedAt": "2026-07-14T13:03:36.000Z",
       "tags": [
         "manually curated",
         "children"
       ],
-      "summary": "Das kleine i sucht nach ihrem Platz in der Welt der Zahlen, wo sie von anderen Zahlen oft verwirrt wird. In einer seltsamen Nacht trifft sie auf die Sieben, der ihr sagt, sie seien nicht verwandt. i fühlt sich unwohl und traurig, bis die Null ihr hilft, zu verstehen, dass sie nicht wie andere sein muss, sondern einfach nur i sein kann."
+      "summary": "Das kleine i sucht nach ihrem Platz in der Welt der Zahlen, wo sie von anderen Zahlen oft verwirrt wird. In einer seltsamen Nacht trifft sie auf die Sieben, der ihr sagt, sie seien nicht verwandt. i fühlt sich unwohl und traurig, bis die Null ihr hilft, zu verstehen, dass sie nicht wie andere sein muss, sondern einfach nur i sein kann.",
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 922 194\" style=\"width:100%;max-width:922px;height:auto;display:block\" role=\"img\"><g><title>Kleines i sucht allein ihren Platz in der Welt.</title><rect x=\"11\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"12\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"80\" r=\"15\" fill=\"#e07a5f\"/><rect x=\"45\" y=\"65\" width=\"10\" height=\"15\" fill=\"#2b2b2b\"/><circle cx=\"50\" cy=\"60\" r=\"8\" fill=\"#ffffff\"/><line x1=\"46\" y1=\"62\" x2=\"46\" y2=\"64\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"54\" y1=\"62\" x2=\"54\" y2=\"64\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg></g><g><title>i trifft auf den stolzen Sieben und traurige Zahlen.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#9e9e9e\"/><rect x=\"0\" y=\"70\" width=\"100\" height=\"30\" fill=\"#8d6e63\"/><polygon points=\"20,70 30,20 40,70\" fill=\"#2b2b2b\"/><circle cx=\"30\" cy=\"15\" r=\"8\" fill=\"#ffffff\"/><path d=\"M 60 70 L 60 40 Q 70 30 80 40 L 80 70 Z\" fill=\"#e07a5f\"/><circle cx=\"70\" cy=\"35\" r=\"8\" fill=\"#ffffff\"/><circle cx=\"50\" cy=\"60\" r=\"10\" fill=\"#e5989b\"/><line x1=\"45\" y1=\"55\" x2=\"55\" y2=\"55\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g><g><title>Panik: Acht stürzt zusammen und One greift ein.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#2b2b2b\"/><circle cx=\"30\" cy=\"50\" r=\"20\" fill=\"#e07a5f\"/><circle cx=\"30\" cy=\"40\" r=\"18\" fill=\"#ffffff\"/><path d=\"M 25 35 Q 30 30 35 35 M 25 45 Q 30 50 35 45\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"70\" y=\"20\" width=\"10\" height=\"40\" fill=\"#e5989b\"/><circle cx=\"75\" cy=\"15\" r=\"8\" fill=\"#ffffff\"/><line x1=\"60\" y1=\"60\" x2=\"40\" y2=\"60\" stroke=\"#f2cc8f\" stroke-width=\"3\" stroke-linecap=\"round\"/><circle cx=\"50\" cy=\"75\" r=\"5\" fill=\"#ffffff\"/></svg></g><g><title>Null sitzt neben i und erklärt: Das ist okay.</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"30\" cy=\"50\" r=\"12\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"70\" cy=\"60\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"65\" y=\"45\" width=\"10\" height=\"15\" fill=\"#2b2b2b\"/><circle cx=\"70\" cy=\"40\" r=\"8\" fill=\"#ffffff\"/><line x1=\"66\" y1=\"38\" x2=\"74\" y2=\"38\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><path d=\"M 25 50 Q 30 55 35 50\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g><title>i ist endlich glücklich und einfach nur i.</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#f2cc8f\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"50\" r=\"15\" fill=\"#e07a5f\"/><rect x=\"46\" y=\"35\" width=\"8\" height=\"15\" fill=\"#ffffff\"/><circle cx=\"50\" cy=\"30\" r=\"6\" fill=\"#ffffff\"/><line x1=\"47\" y1=\"28\" x2=\"47\" y2=\"30\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><path d=\"M 45 55 Q 50 60 55 55\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"20\" cy=\"20\" r=\"10\" fill=\"#f2cc8f\"/><line x1=\"20\" y1=\"5\" x2=\"20\" y2=\"10\" stroke=\"#f2cc8f\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"20\" y1=\"30\" x2=\"20\" y2=\"35\" stroke=\"#f2cc8f\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 5,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 1621,
+        "completionTokens": 1779,
+        "ms": 683577,
+        "at": "2026-07-14T13:03:36.000Z"
+      }
     },
     {
       "id": "sl_1698145987",
@@ -591,12 +604,25 @@
       "lang": "en",
       "srcLang": "de",
       "createdAt": "2026-06-04T20:35:36.097Z",
-      "updatedAt": "2026-06-24T09:54:48.333Z",
+      "updatedAt": "2026-07-14T12:49:32.284Z",
       "summary": "Ein Wesen mit langen Ohren und einem blühenden Muster wandert durch ein grasbewachsenes Feld und stößt auf einen Baumfrosch, der es nach seinem Namen fragt. Das Wesen, das sich nicht kennt, beginnt eine Reise, um sich selbst zu finden, und trifft auf verschiedene Tiere, die es an sich erinnern. Am Ende der Reise begegnet es den Zahlen, den Buchstaben und anderen Zahlen, die es zuerst nicht verstehen kann, aber schließlich lernt, dass es zusammenarbeiten kann, um Herausforderungen zu meistern.\n\nFrei nach Mira Lobe.",
       "tags": [
         "manually curated",
         "children"
-      ]
+      ],
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 558 194\" style=\"width:100%;max-width:558px;height:auto;display:block\" role=\"img\"><g><title>Das bunte Tier sucht sich selbst.</title><rect x=\"11\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"12\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"60\" width=\"100\" height=\"40\" fill=\"#81b29a\"/><circle cx=\"50\" cy=\"30\" r=\"20\" fill=\"#e07a5f\"/><ellipse cx=\"40\" cy=\"15\" rx=\"5\" ry=\"15\" fill=\"#e07a5f\"/><ellipse cx=\"60\" cy=\"15\" rx=\"5\" ry=\"15\" fill=\"#e07a5f\"/><circle cx=\"45\" cy=\"28\" r=\"2\" fill=\"#2b2b2b\"/><circle cx=\"55\" cy=\"28\" r=\"2\" fill=\"#2b2b2b\"/><path d=\"M 45 35 Q 50 40 55 35\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g><title>Null und i treffen die Zahlen.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><circle cx=\"20\" cy=\"50\" r=\"15\" fill=\"#ffffff\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"15\" y1=\"45\" x2=\"25\" y2=\"55\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"25\" y1=\"45\" x2=\"15\" y2=\"55\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><circle cx=\"80\" cy=\"50\" r=\"3\" fill=\"#e07a5f\"/><rect x=\"75\" y=\"45\" width=\"10\" height=\"10\" fill=\"none\"/><circle cx=\"50\" cy=\"50\" r=\"12\" fill=\"#9e9e9e\"/><line x1=\"45\" y1=\"48\" x2=\"55\" y2=\"52\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"55\" y1=\"48\" x2=\"45\" y2=\"52\" stroke=\"#2b2b2b\" stroke-width=\"1\" stroke-linecap=\"round\"/></svg></g><g><title>Das Geheimnis von Null wird klar.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"50\" r=\"25\" fill=\"#ffffff\"/><line x1=\"40\" y1=\"40\" x2=\"60\" y2=\"60\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"60\" y1=\"40\" x2=\"40\" y2=\"60\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"80\" cy=\"20\" r=\"5\" fill=\"#f2cc8f\"/><path d=\"M 10 90 Q 50 70 90 90 L 90 100 L 10 100 Z\" fill=\"#457b9d\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 3,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 2045,
+        "completionTokens": 981,
+        "ms": 464200,
+        "at": "2026-07-14T12:49:32.284Z"
+      }
     },
     {
       "id": "sl_1117742356",
@@ -755,8 +781,21 @@
         "tp_1969854345"
       ],
       "createdAt": "2026-04-29T10:30:16.428Z",
-      "updatedAt": "2026-06-05T08:30:42.084Z",
-      "summary": "Dr. Elena Rossi studies yeast metabolic oscillations in her laboratory, observing how yeast cells pulse with life and activity. Her research expands to compare yeast cell oscillations with human cells, revealing complex dynamics and surprising similarities. As Elena and her colleague Marco vary the nutrient sources, they discover that yeast cell oscillations are not limited to proteins but involve genetic transcriptions, hinting at a deeper, spatial pre-classification process within cells."
+      "updatedAt": "2026-07-14T12:36:49.708Z",
+      "summary": "Dr. Elena Rossi studies yeast metabolic oscillations in her laboratory, observing how yeast cells pulse with life and activity. Her research expands to compare yeast cell oscillations with human cells, revealing complex dynamics and surprising similarities. As Elena and her colleague Marco vary the nutrient sources, they discover that yeast cell oscillations are not limited to proteins but involve genetic transcriptions, hinting at a deeper, spatial pre-classification process within cells.",
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 922 194\" style=\"width:100%;max-width:922px;height:auto;display:block\" role=\"img\"><g><title>Elena observes glowing yeast cells under a microscope.</title><rect x=\"11\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"12\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"#a8dadc\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"45\" cy=\"45\" r=\"8\" fill=\"#f2cc8f\"/><circle cx=\"55\" cy=\"55\" r=\"6\" fill=\"#81b29a\"/><circle cx=\"40\" cy=\"55\" r=\"7\" fill=\"#f2cc8f\"/><rect x=\"20\" y=\"80\" width=\"60\" height=\"10\" fill=\"#9e9e9e\"/><circle cx=\"80\" cy=\"30\" r=\"5\" fill=\"#ffffff\"/><rect x=\"75\" y=\"25\" width=\"10\" height=\"10\" fill=\"#9e9e9e\"/></svg></g><g><title>Elena compares yeast and human cell samples side by side.</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"10\" y=\"40\" width=\"35\" height=\"20\" rx=\"10\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"27\" cy=\"50\" r=\"4\" fill=\"#81b29a\"/><circle cx=\"35\" cy=\"45\" r=\"3\" fill=\"#81b29a\"/><rect x=\"55\" y=\"40\" width=\"35\" height=\"20\" rx=\"10\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"72\" cy=\"50\" r=\"6\" fill=\"#e5989b\"/><circle cx=\"80\" cy=\"45\" r=\"4\" fill=\"#e5989b\"/><rect x=\"20\" y=\"70\" width=\"60\" height=\"15\" fill=\"#9e9e9e\"/><circle cx=\"30\" cy=\"65\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"25\" y=\"73\" width=\"10\" height=\"15\" fill=\"#e07a5f\"/></svg></g><g><title>Marco shows Elena data charts of varying oscillation speeds.</title><rect x=\"375\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"376\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#a8dadc\"/><rect x=\"10\" y=\"20\" width=\"80\" height=\"50\" fill=\"#ffffff\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><polyline points=\"15,60 30,40 45,60 60,40 75,60\" fill=\"none\" stroke=\"#e07a5f\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><polyline points=\"15,50 25,50 35,50 45,50 55,50 65,50 75,50\" fill=\"none\" stroke=\"#81b29a\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"85\" cy=\"80\" r=\"10\" fill=\"#e07a5f\"/><rect x=\"75\" y=\"90\" width=\"20\" height=\"10\" fill=\"#9e9e9e\"/></svg></g><g><title>The team realizes genetic transcription also oscillates.</title><rect x=\"557\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"558\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3d405b\"/><circle cx=\"50\" cy=\"50\" r=\"20\" fill=\"none\" stroke=\"#f2cc8f\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"10\" fill=\"#e07a5f\"/><line x1=\"30\" y1=\"50\" x2=\"70\" y2=\"50\" stroke=\"#ffffff\" stroke-width=\"1\" stroke-linecap=\"round\"/><line x1=\"50\" y1=\"30\" x2=\"50\" y2=\"70\" stroke=\"#ffffff\" stroke-width=\"1\" stroke-linecap=\"round\"/><circle cx=\"20\" cy=\"20\" r=\"2\" fill=\"#f2cc8f\"/><circle cx=\"80\" cy=\"80\" r=\"2\" fill=\"#f2cc8f\"/></svg></g><g><title>Elena and Marco struggle to describe the complex phenomenon.</title><rect x=\"739\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#9e9e9e\" stroke-width=\"1\" rx=\"4\"/><svg x=\"740\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#faf7f0\"/><rect x=\"20\" y=\"30\" width=\"60\" height=\"40\" fill=\"#ffffff\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"25\" y1=\"40\" x2=\"75\" y2=\"40\" stroke=\"#9e9e9e\" stroke-width=\"2\" stroke-linecap=\"round\"/><line x1=\"25\" y1=\"50\" x2=\"60\" y2=\"50\" stroke=\"#9e9e9e\" stroke-width=\"2\" stroke-linecap=\"round\"/><circle cx=\"30\" cy=\"80\" r=\"8\" fill=\"#e07a5f\"/><rect x=\"25\" y=\"88\" width=\"10\" height=\"12\" fill=\"#e07a5f\"/><circle cx=\"70\" cy=\"80\" r=\"8\" fill=\"#e5989b\"/><rect x=\"65\" y=\"88\" width=\"10\" height=\"12\" fill=\"#e5989b\"/><path d=\"M 40 20 Q 50 10 60 20 T 80 20\" fill=\"none\" stroke=\"#2b2b2b\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen3.6:35b-a3b",
+        "attempts": null,
+        "valid": 5,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 1291,
+        "completionTokens": 1952,
+        "ms": 703891,
+        "at": "2026-07-14T12:36:49.708Z"
+      }
     },
     {
       "id": "sl_1178867954",
@@ -5799,7 +5838,9 @@
             "completionTokens": 267,
             "ms": 527979,
             "at": "2026-07-07T20:59:57.451Z"
-          }
+          },
+          "qcAt": "2026-07-14T15:48:52.227Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "ls_1783469292209",
@@ -5876,7 +5917,8 @@
             "ms": 823958,
             "at": "2026-07-08T00:08:12.209Z"
           },
-          "qcAt": "2026-07-08T08:08:57.356Z"
+          "qcAt": "2026-07-14T15:54:02.538Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "ls_1783470399834",
@@ -6003,7 +6045,9 @@
             "completionTokens": 689,
             "ms": 710487,
             "at": "2026-07-08T00:26:39.834Z"
-          }
+          },
+          "qcAt": "2026-07-14T15:59:59.061Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "ls_1783470666932_1kvd",
@@ -6036,7 +6080,7 @@
         ]
       },
       "generatedAt": "2026-07-07T20:51:09.382Z",
-      "updatedAt": "2026-07-08T08:08:57.356Z",
+      "updatedAt": "2026-07-14T16:02:16.517Z",
       "id": "tp_17834579975340000254",
       "storyMeta": {
         "type": "story",
@@ -6052,6 +6096,34 @@
         "backfilled": true,
         "source": "generationStats.models.story",
         "origin": "generated"
+      },
+      "storyQcCheckedBy": "qwen3.6:35b-a3b",
+      "storyQcCheckedAt": "2026-07-14T16:02:16.517Z",
+      "storyQcProposal": {
+        "corrected": "Nodeem ech zu Remerschen e Kaffegeschäft hat, hunn ech mech décidéiert, weider ze wandere. D'Plang war, bis no Koblenz ze goen, laang d'Musel. Et war eng schéi Regioun, mat héije Klippen an déifen Dalen. D'Luucht war schéin, awer et war och e bësselchen waarm. Ech hunn vill Leit begéint, déi och wanderen. Ee Mann aus Däitschland war och dobaussen, hien war schonn e puer Deeg op der Reis. Mir hunn e klengt Stéck zesumme geschwat, an hien huet mir vill Tipps fir d'Rees ginn.\n\nSpéider um Dag, hunn ech e schéint Wënzer bei Esch-sur-Alzette entdeckt. D'Wäiner waren fantastesch, an ech hunn e puer Fläschen fir meng Famill zu Doheem kaaft. D'Wanderung war flott, awer ech war och e bësselchen müd. Ech hunn decidéiert, fir dës Nuecht an engem klengen Hotel bei Grevenmacher ze iwwernächten.",
+        "against": "Nodeem ech zu Remerschen e kaffegeschéiert hat, hunn ech mech décidéiert, weider ze wandere. D'Plan war, bis no Koblenz ze goen, laang d'Musel. Et war e schéintt Regioun, mat héije Klippen an déifier Dalen. D'Luucht war schéin, awer et war och e bësselchen waarm. Ech hunn vill Leit begéint, déi och wanderen. Ee Mann aus Däitschland war och dobaus, hien war schonn e puer Deeg op der Reis. Mir hunn e kléngt Stéck zesumme geschwat, an hien huet mir vill Tipps fir d'Rees ginn.\n\nSpéider um Dag, hunn ech e schéint Wënzer bei Esch-sur-Alzette entdeckt. D'Wäiner waren fantastesch, an ech hunn e puer Fläschen fir meng Famill zu Doheem kaaft. D'Wanderung war flott, awer ech war och e bësselchen müd. Ech hunn decidéiert, fir dës Nuecht an engem klengen Hotel bei Grevenmacher ze iwwernächten.",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 6,
+        "totalSentences": 24,
+        "changedRatio": 0.25,
+        "wordEditRatio": 0.052,
+        "meta": {
+          "type": "story_qc",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": null,
+          "valid": 1,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 489,
+          "completionTokens": 275,
+          "ms": 137456,
+          "at": "2026-07-14T16:02:16.517Z",
+          "verdict": "corrected",
+          "changedRatio": 0.25,
+          "wordEditRatio": 0.052
+        },
+        "at": "2026-07-14T16:02:16.517Z"
       }
     },
     {
@@ -7057,7 +7129,9 @@
             "completionTokens": 246,
             "ms": 263834,
             "at": "2026-07-07T14:19:06.020Z"
-          }
+          },
+          "qcAt": "2026-07-14T15:17:52.676Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "ls_1783434938883",
@@ -7128,7 +7202,9 @@
             "completionTokens": 557,
             "ms": 692051,
             "at": "2026-07-07T14:35:38.883Z"
-          }
+          },
+          "qcAt": "2026-07-14T15:22:54.710Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "ls_1783435609209",
@@ -7198,7 +7274,9 @@
             "completionTokens": 600,
             "ms": 617185,
             "at": "2026-07-07T14:46:49.209Z"
-          }
+          },
+          "qcAt": "2026-07-14T15:25:51.567Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "ls_1783438603051",
@@ -7301,7 +7379,9 @@
             "completionTokens": 268,
             "ms": 349538,
             "at": "2026-07-07T15:36:43.051Z"
-          }
+          },
+          "qcAt": "2026-07-14T15:36:49.754Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "ls_1783438681340_i8p5",
@@ -7381,7 +7461,7 @@
         ]
       },
       "generatedAt": "2026-07-07T14:14:42.098Z",
-      "updatedAt": "2026-07-08T00:35:41.701Z",
+      "updatedAt": "2026-07-14T15:38:11.003Z",
       "id": "tp_17834339460840000050",
       "aiStory": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach. D'Sonn schéngt, an d'Lëscht war frësch. D'Waasser war roueg, an ech konnt d'Fësch am Séi gesinn. E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Floss gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Remerschen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur.",
       "storyMeta": {
@@ -7398,6 +7478,34 @@
         "backfilled": true,
         "source": "generationStats.models.story",
         "origin": "generated"
+      },
+      "storyQcCheckedBy": "qwen3.6:35b-a3b",
+      "storyQcCheckedAt": "2026-07-14T15:38:11.003Z",
+      "storyQcProposal": {
+        "corrected": "De Samschdeg moien hunn ech e Spaziergaang laang d'Musel gemaach. D'Sonn schéngt, an d'Lëscht war frësch. D'Waasser war roueg, an ech konnt d'Fësch am Floss gesinn. E puer Leit waren och dobaussen, si sinn op de Vëloen oder hunn einfach sou laang d'Floss gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Réimerchen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur.",
+        "against": "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach. D'Sonn schéngt, an d'Lëscht war frësch. D'Waasser war roueg, an ech konnt d'Fësch am Floss gesinn. E puer Leit waren och dobaus, si sinn op de Vëloen oder hunn einfach sou laang d'Floss gaang.\n\nEch hunn e klenge Paus gemaach an e Café zu Remerschen. Et war ganz agreabel, mam Bléck op d'Musel. Den Dag war perfekt fir e Spaziergaang an der Natur.",
+        "verdict": "corrected",
+        "rejected": false,
+        "changedSentences": 4,
+        "totalSentences": 12,
+        "changedRatio": 0.333,
+        "wordEditRatio": 0.041,
+        "meta": {
+          "type": "story_qc",
+          "model": "qwen3.6:35b-a3b",
+          "attempts": null,
+          "valid": 1,
+          "rejected": 0,
+          "rejectReasons": null,
+          "promptTokens": 359,
+          "completionTokens": 147,
+          "ms": 81248,
+          "at": "2026-07-14T15:38:11.003Z",
+          "verdict": "corrected",
+          "changedRatio": 0.333,
+          "wordEditRatio": 0.041
+        },
+        "at": "2026-07-14T15:38:11.003Z"
       }
     },
     {
@@ -48694,7 +48802,9 @@
               ]
             }
           ],
-          "_checked": "2026-06-26T16:55:52.324Z"
+          "_checked": "2026-06-26T16:55:52.324Z",
+          "qcAt": "2026-07-14T14:18:44.910Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": 1,
@@ -48952,7 +49062,9 @@
                 }
               ]
             }
-          ]
+          ],
+          "qcAt": "2026-07-14T14:32:06.436Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "ls_1781609405629",
@@ -48991,7 +49103,9 @@
                 "2026-06-16T11:37:51.256Z"
               ]
             }
-          ]
+          ],
+          "qcAt": "2026-07-14T14:34:19.057Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "type": "mixed",
@@ -49118,7 +49232,7 @@
         "modelsSource": "backfill:generationStats.model (single-model label)"
       },
       "generatedAt": "2026-06-16T10:11:40.373Z",
-      "updatedAt": "2026-06-30T11:10:47.918Z",
+      "updatedAt": "2026-07-14T14:39:17.057Z",
       "id": "tp_17816054439060000253",
       "storyMeta": {
         "type": "story",
@@ -49134,7 +49248,9 @@
         "backfilled": true,
         "source": "generationStats.model[0]",
         "origin": "generated"
-      }
+      },
+      "storyQcCheckedBy": "qwen3.6:35b-a3b",
+      "storyQcCheckedAt": "2026-07-14T14:39:17.057Z"
     },
     {
       "topic": "Enhancing Interactions",
@@ -49277,7 +49393,9 @@
                 "trainiert."
               ]
             }
-          ]
+          ],
+          "qcAt": "2026-07-14T13:57:19.310Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": 1,
@@ -49420,7 +49538,9 @@
                 "erfüllen."
               ]
             }
-          ]
+          ],
+          "qcAt": "2026-07-14T14:07:21.652Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "ls_1781608199538",
@@ -49469,7 +49589,7 @@
         "modelsSource": "backfill:generationStats.model (single-model label)"
       },
       "generatedAt": "2026-06-16T10:00:17.848Z",
-      "updatedAt": "2026-06-26T16:57:15.264Z",
+      "updatedAt": "2026-07-14T14:08:37.980Z",
       "id": "tp_17816045547280000115",
       "aiStory": "Die App wurde in den nächsten Wochen weiter optimiert und erhielt neue Funktionen. Die Benutzer konnten nun nicht nur Texte generieren und Übungen durchführen, sondern auch interaktive Dialoge mit virtuellen Assistenten durchlaufen. Diese Dialoge basierten auf realen Szenarien und ermöglichten den Lernenden, ihre Kommunikationsfähigkeiten in verschiedenen Kontexten zu trainieren. Die virtuellen Assistenten, die mit den neuesten Sprachmodellen trainiert wurden, konnten sowohl als Partner als auch als Herausforderer fungieren, um die Lernenden in ihre individuellen Bedürfnisse zu passen. Die Benutzer profitierten von dieser interaktiven Lernumgebung, die sowohl ihre Sprachkenntnisse als auch ihre Kommunikationsfähigkeiten stetig verbesserte.",
       "storyMeta": {
@@ -49486,7 +49606,9 @@
         "backfilled": true,
         "source": "generationStats.model[0]",
         "origin": "generated"
-      }
+      },
+      "storyQcCheckedBy": "qwen3.6:35b-a3b",
+      "storyQcCheckedAt": "2026-07-14T14:08:37.980Z"
     },
     {
       "topic": "Developing the App",
@@ -49496,7 +49618,7 @@
       "srcLang": "en",
       "difficulty": 2,
       "storyLen": 150,
-      "story": "Wir entwickeln eine neue LLM-basierte Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfassen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung.",
+      "story": "Wir entwickeln eine neue LLM-basierte Sprachlernapp, bei der Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfassen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien gewährleistet die App eine effektive und anregende Lernumgebung.",
       "storyLang": "target",
       "storyPrompt": "You are a creative writer and German language teacher. Write a short story directly in German on the given topic — aim for 1-2 paragraphs, under 150 words. Prioritise quality over length: stop early rather than pad or repeat. Never repeat a sentence or paragraph in altered form. Avoid repetitive structures. Plain prose only — no headings, no bullets, no markdown. Write entirely in German. Writing style: Academic register, precise terminology, formal structure.\n\nWrite a story for the topic: \"we are developing a novel LLM-based language learning app, where users can gener\". Plain prose, no headings.",
       "storyStyle": "scientific",
@@ -49622,13 +49744,15 @@
                 "Prinzipien."
               ]
             }
-          ]
+          ],
+          "qcAt": "2026-07-14T13:46:42.190Z",
+          "qcBy": "qwen3.6:35b-a3b"
         },
         {
           "id": "aeh_1781607491306",
           "type": "ai_error_hunt",
           "title": "AI Error Hunt",
-          "desc": "Find AI errors that were corrected by a human tutor.",
+          "desc": "Find AI errors that were corrected by a proofreader.",
           "icon": "🔎",
           "aiStory": "Wir entwickeln ein neues LLM-basiertes Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfasst und zu erfüllen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung.",
           "sentences": [
@@ -49638,11 +49762,38 @@
               "reason": ""
             },
             {
+              "ai": "bei dem Benutzer interaktiv und personalisiert lernen können.",
+              "corrected": "bei der Benutzer interaktiv und personalisiert lernen können.",
+              "reason": ""
+            },
+            {
               "ai": "um individuelle Lernbedürfnisse zu erfasst und zu erfüllen.",
               "corrected": "um individuelle Lernbedürfnisse zu erfassen.",
               "reason": ""
+            },
+            {
+              "ai": "Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien,",
+              "corrected": "Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien gewährleistet die App eine effektive und anregende Lernumgebung.",
+              "reason": ""
+            },
+            {
+              "ai": "gewährleistet die App eine effektive und anregende Lernumgebung.",
+              "corrected": null,
+              "reason": ""
             }
-          ]
+          ],
+          "_genMeta": {
+            "type": "ai_error_hunt",
+            "model": "qwen3.6:35b-a3b",
+            "attempts": null,
+            "valid": 5,
+            "rejected": 0,
+            "rejectReasons": null,
+            "promptTokens": 0,
+            "completionTokens": 0,
+            "ms": null,
+            "at": "2026-07-14T13:49:37.669Z"
+          }
         }
       ],
       "generationStats": {
@@ -49668,7 +49819,7 @@
         "modelsSource": "backfill:generationStats.model (single-model label)"
       },
       "generatedAt": "2026-06-16T09:53:35.493Z",
-      "updatedAt": "2026-06-26T16:57:15.280Z",
+      "updatedAt": "2026-07-14T13:49:37.668Z",
       "id": "tp_17816038862680000091",
       "aiStory": "Wir entwickeln ein neues LLM-basiertes Sprachlernapp, bei dem Benutzer interaktiv und personalisiert lernen können. Die App nutzt fortgeschrittene Sprachmodelle, um individuelle Lernbedürfnisse zu erfasst und zu erfüllen. Benutzer können Texte generieren, Übungen durchführen und Feedback erhalten, das ihre Fortschritte und Schwierigkeiten berücksichtigt. Durch kontinuierliche Optimierung basierend auf Benutzerverhalten und lerntheoretischen Prinzipien, gewährleistet die App eine effektive und anregende Lernumgebung.",
       "continuedFromId": null,
@@ -49687,7 +49838,11 @@
         "backfilled": true,
         "source": "generationStats.model[0]",
         "origin": "generated"
-      }
+      },
+      "storyQcCheckedBy": "qwen3.6:35b-a3b",
+      "storyQcCheckedAt": "2026-07-14T13:47:42.364Z",
+      "storyQcBy": "qwen3.6:35b-a3b",
+      "storyQcAt": "2026-07-14T13:49:37.668Z"
     },
     {
       "topic": "Passive Voice",

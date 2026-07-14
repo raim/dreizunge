@@ -187,6 +187,22 @@ assert.ok(/if \(tp\.storyQcProposal\) \{ delete tp\.storyQcProposal; \}/.test(ru
 assert.ok(/includeStory: includeStory !== false/.test(server), 'route defaults includeStory to true');
 assert.ok(/storyQcPending: !!l\.storyQcProposal/.test(server), 'topic-summary payload exposes storyQcPending');
 
+// v55_l regression guard: _runQc is defined at MODULE scope (before boot()), so every function it
+// calls must ALSO be module-scope-visible. generateStoryQc was accidentally nested inside boot()
+// (v55_k), so the real _runQc threw "generateStoryQc is not defined" only in the bulk path. Assert
+// the QC family is defined textually BEFORE boot() — the concrete invariant that was violated.
+{
+  const bootAt = server.indexOf('async function boot()');
+  assert.ok(bootAt > 0, 'boot() found');
+  for (const fn of ['generateStoryQc', 'classifyStoryQc', 'storyDiffSentences', 'splitSentences', '_wordLev', '_qcCorruption']) {
+    const defAt = server.indexOf('function ' + fn + '(');
+    assert.ok(defAt > 0, `${fn} is defined`);
+    assert.ok(defAt < bootAt, `${fn} must be at module scope (defined before boot()), so _runQc — which is also pre-boot — can call it`);
+  }
+  // And _runQc itself is pre-boot (the premise of the above).
+  assert.ok(server.indexOf('async function _runQc(') < bootAt, '_runQc is pre-boot module scope');
+}
+
 // ── 9. Staleness: an edit clears the checked stamp + proposal; accept guards it ─
 const saveStory = server.slice(server.indexOf("url.pathname === '/api/save-story'"), server.indexOf("url.pathname === '/api/story-qc'"));
 assert.ok(/delete saved\.storyQcCheckedBy; delete saved\.storyQcCheckedAt;/.test(saveStory),

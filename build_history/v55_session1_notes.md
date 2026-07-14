@@ -419,3 +419,35 @@ staleness assertions; `unit-qc-skip` updated for the two changed call sites (bot
 
 Suite 100 green, check-inline 0 both builds, APP_VERSION v55_k. First storyline sweep now pays N
 story-QC calls (≈47–77s each on the user's box, measured v55_g); the skip stamp makes re-sweeps cheap.
+
+---
+
+# v55_l — fix: bulk story QC crashed "generateStoryQc is not defined" (scope bug)
+
+User's §81 live test hit `⚠ story QC failed for "Whispers of Words": generateStoryQc is not defined`.
+Root cause: in v55_g I inserted the QC helper family (splitSentences, storyDiffSentences, _wordLev,
+_qcCorruption, classifyStoryQc, generateStoryQc) after storyDiffSentences — NOT realizing that whole
+region is textually INSIDE `boot()` (boot spans lines 2967→3547). Function declarations hoist only
+within their enclosing scope, so these were visible to the routes (also inside boot) but NOT to
+`_runQc`, which is defined at module scope BEFORE boot(). The per-story 🔍 and accept/discard worked
+(routes); only the bulk sweep (_runQc) crashed. Same class as the v55_h stripThink bug — an
+undefined reference the string-only tests structurally cannot see.
+
+**Fix:** moved the entire 151-line QC family out to true module scope, immediately before _runQc, so
+both _runQc (pre-boot) and the routes (in boot) reach it. Single definition of each, verified.
+
+**Why the tests missed it, and the real guard added:** unit-qc-skip EXECUTES _runQc but via a
+string-extract harness with an injected generateStoryQc stub, and its topics had no story — so the
+branch never ran. I added (a) executing story-QC cases to that harness (topic WITH a story → asserts
+generateStoryQc is called, proposal accumulated, skip/force/suppress all work), which pins the LOGIC;
+and crucially (b) a MODULE-SCOPE invariant in unit-qc-correct: every function _runQc calls
+(generateStoryQc, classifyStoryQc, storyDiffSentences, splitSentences, _wordLev, _qcCorruption) must
+be defined textually before boot(). Verified this guard FAILS on the buggy (nested) server and passes
+on the fix — it captures the actual defect, not just the logic. The harness stub alone would NOT have
+caught it (it fabricates the scope); the module-scope guard does.
+
+Lesson compounding from v55_h: string-only and stub-harness tests both fabricate scope/imports and
+will keep missing undefined-reference bugs. The durable fix is invariant checks on the real source
+layout (imports present; callees module-scope). Both now exist for the QC path.
+
+Suite 100 green, check-inline 0 both builds, APP_VERSION v55_l. §81 live test unblocked.

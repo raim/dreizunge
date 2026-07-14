@@ -63,6 +63,7 @@ console.log('  _clearLessonQcStamp: OK');
 
 // ── _runQc skip/stamp behavior ───────────────────────────────────────────────
 let pairCalls = 0;
+let storyQcCalls = 0;
 const okChecker = async () => { pairCalls++; return { ok: true }; };       // always clean
 const stubs = {
   OLLAMA_TRANSLATION_MODEL: 'stub',
@@ -74,6 +75,14 @@ const stubs = {
   qcCheckPair: okChecker,
   qcCheckCloze: async () => { pairCalls++; return { ok: true }; },
   qcCheckSynonymSet: async () => { pairCalls++; return { ok: true }; },
+  // v55_l regression harness: _runQc calls generateStoryQc from the bulk story-QC branch. It lives
+  // at MODULE scope (before _runQc); v55_k accidentally nested it in boot(), so the real _runQc
+  // threw "generateStoryQc is not defined" — invisible to string-only tests AND to a harness whose
+  // topics had no story. Stub it here and drive a topic WITH a story so the branch actually runs.
+  generateStoryQc: async (story) => { storyQcCalls++; return {
+    corrected: story.replace('avuto', 'avute'), verdict: 'corrected', rejected: false,
+    changedSentences: 1, totalSentences: 3, changedRatio: 0.33, wordEditRatio: 0.05,
+    meta: { type: 'story_qc', model: 'qc-stub' } }; },
 };
 const runQc = new Function(...Object.keys(stubs).filter(k => k !== '_last'),
   'async ' + ext(server, '_runQc') + '\nreturn _runQc;')(
@@ -140,6 +149,44 @@ function freshTopic() {
   assert.ok(tp2.lessons[0].vocab[0].qc, 'the flag was written');
 
   console.log('  _runQc: stamp-on-clean, bulk-skip, single/flagged-never-skip, edit-invalidate: OK');
+
+  // ── 7) Bulk story QC (v55_k/l) — EXECUTE the branch, not just grep it ─────────────
+  // This is the case that catches the v55_l "generateStoryQc is not defined" regression: a full
+  // sweep over a topic WITH a story must actually CALL generateStoryQc and accumulate the proposal.
+  let st = { id: 't2', topic: 'S', lang: 'it', srcLang: 'en',
+    story: 'Frase uno qui. Che vita avrebbero avuto. Frase tre qui.',
+    lessons: [{ type: 'standard', title: 'L', vocab: [{ target: 'gatto', source: 'cat' }] }] };
+  storyQcCalls = 0;
+  await runQc('s1', [st], { lessonIdx: null, onlyFlagged: false });
+  assert.strictEqual(storyQcCalls, 1, 'full sweep with a story CALLS generateStoryQc (regression: was not defined)');
+  assert.ok(st.storyQcProposal && st.storyQcProposal.verdict === 'corrected', 'proposal accumulated on the topic');
+  assert.strictEqual(st.storyQcProposal.against, 'Frase uno qui. Che vita avrebbero avuto. Frase tre qui.', 'proposal records the exact original');
+  assert.ok(st.storyQcCheckedBy === 'qc-stub' && st.storyQcCheckedAt, 'story checked-stamp written');
+  assert.strictEqual(stubs._last.storyProposed, 1, 'job payload reports storyProposed');
+
+  // 7b) Re-sweep skips the already-checked, unedited story.
+  storyQcCalls = 0;
+  await runQc('s2', [st], { lessonIdx: null, onlyFlagged: false });
+  assert.strictEqual(storyQcCalls, 0, 'unedited already-checked story is skipped on re-sweep');
+
+  // 7c) force re-checks the story too.
+  storyQcCalls = 0;
+  await runQc('s3', [st], { lessonIdx: null, onlyFlagged: false, force: true });
+  assert.strictEqual(storyQcCalls, 1, 'force re-runs story QC');
+
+  // 7d) includeStory:false (the post-book pass) never calls story QC.
+  let st2 = { id: 't3', topic: 'S2', lang: 'it', story: 'Una frase. Due frasi. Tre.',
+    lessons: [{ type: 'standard', vocab: [{ target: 'a', source: 'b' }] }] };
+  storyQcCalls = 0;
+  await runQc('s4', [st2], { lessonIdx: null, onlyFlagged: false, includeStory: false });
+  assert.strictEqual(storyQcCalls, 0, 'includeStory:false suppresses story QC (post-book pass)');
+  assert.ok(!st2.storyQcProposal, 'no proposal when story QC suppressed');
+
+  // 7e) single-lesson and flagged-only requests never run story QC.
+  storyQcCalls = 0;
+  await runQc('s5', [{ ...st2, storyQcCheckedAt: undefined }], { lessonIdx: 0, onlyFlagged: false });
+  assert.strictEqual(storyQcCalls, 0, 'single-lesson request never runs story QC');
+  console.log('  _runQc bulk story QC: calls generateStoryQc, accumulates, skips, force, suppress: OK');
 
   // ── Wiring guards: the edit + save-story handlers must invalidate the stamp ──────────
   assert.ok(/if \(merged\.qcAt && qcSignature\(orig\) !== qcSignature\(merged\)\)\s*\{\s*_clearLessonQcStamp\(merged\)/.test(server),
