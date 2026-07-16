@@ -705,3 +705,54 @@ asserts the real invariant — every shape coord within 0–100.
 (v55_r, no model call) re-composes with the new layout instantly; boards from before v55_r have no
 stored panels and need one regenerate. Suite 102 green, check-inline 0 both builds, APP_VERSION
 v55_t. Owed: LIVE-TEST §87.
+
+---
+
+# v55_u — QC review: sentence granularity + the whitespace fix that v55_i missed
+
+User (Luxembourgish story): the proofreader removed ONE comma and the review showed sentence 2
+folded into sentence 1's correction (run together, no spaces), then sentence 2 again as a deletion.
+"This should not happen."
+
+**Reproduced, and it was worse than reported.** `splitSentences` breaks on COMMAS (deliberately —
+ai_error_hunt wants short items to hunt in). So removing a comma changed the fragment count 3→2 and
+the LCS re-aligned everything after it:
+  pair0: "De Samschdeg moien," → "De Samschdeg moien hunn ech … gemaach."   (sentence 2 swallowed)
+  pair1: "hunn ech … gemaach."  → "E puer Leit waren och dobaussen,"         (UNRELATED sentences paired!)
+  pair2: "E puer Leit waren och dobaus," → null                              (phantom deletion)
+Every fix after a comma edit addressed the wrong sentence — and since the checkboxes index this
+list, unticking would have applied the wrong revert.
+
+**Fix — a QC-specific sentence splitter, scoped deliberately:**
+- NEW `qcSplitSentences` / `qcDiffSentences` (split on .!? + closing quote/bracket) used ONLY by the
+  review pairs, the client checkbox list, and the accept reconstruction (both story + summary).
+  Result on the user's exact text: 3 clean pairs, each the same sentence before/after.
+- `classifyStoryQc` KEEPS the clause diff. Checked before changing it: the 0.6 threshold was
+  calibrated on CLAUSE ratios by the v55_g spike, and a normal proofread touching 4 of 6 sentences
+  reads 0.67 at sentence granularity → would trip the rewrite guard and FALSE-REJECT good
+  corrections. Left alone; asserted.
+- `ai_error_hunt` keeps clause granularity (short items are the point). Untouched; asserted.
+- Header count now comes from the review pairs (it used the guard's clause numbers, which would no
+  longer match the checkbox list).
+
+**Second bug — whitespace, the half v55_i missed.** `_qcInlineDiff` DROPPED whitespace-only tokens on
+the del/ins branches, so a long insertion ran together ("moienhunnecheSpaziergaang…"). v55_i fixed
+only the one-sided (whole-sentence) path. Now whitespace tokens are emitted as plain text, never
+wrapped and never dropped (HTML collapses any doubling, so emitting from both sides is harmless).
+
+Verified end-to-end through the REAL client code on the user's text — 3 rows, spaces intact:
+  0: De Samschdeg [-moien,-][+moien+] hunn ech e Spaziergaang laang d'Musel gemaach.
+  1: E puer Leit waren och [-dobaus,-][+dobaussen,+] mee net vill.
+  2: Ech hunn e klenge Paus gemaach an e Café zu [-Remerschen.-][+Réimerchen.+]
+
+Tests: the user's exact case (pairs align the same sentence; sentence 2 never merged; no phantom
+one-sided pair), the whitespace invariant (no run-together; whitespace never wrapped in del/ins),
+client/server review-pair order parity re-pointed at qcDiffSentences (+ a comma-edit case), and
+assertions that the guard and ai_error_hunt keep clause granularity. Suite 102 green, check-inline 0
+both builds, APP_VERSION v55_u.
+
+**Known limitation (documented, not fixed):** unticking a pure-DELETION pair (model removed a whole
+sentence) is a no-op — the revert-in-corrected-text reconstruction can't position a re-insertion
+(`indexOf('')`). Sentence granularity makes this rare (the prompt forbids removing content, and a
+model that does usually trips the rewrite guard), but it IS silently wrong if it happens. Fixing it
+needs a positional reconstruction; deferred rather than bolted on.

@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v55_t';
+const APP_VERSION  = 'v55_u';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -1065,7 +1065,55 @@ function storyDiffSentences(aiStory, correctedStory, existingSentences) {
 const QC_MAX_CHANGED_RATIO = 0.6;   // fraction of sentences touched
 const QC_MAX_WORD_EDIT_RATIO = 0.5; // word-level Levenshtein / original word count
 
+// ── QC REVIEW granularity (v55_u): whole sentences, NOT the clause-level splitSentences ─────────
+// `splitSentences` breaks on commas because ai_error_hunt wants SHORT items to hunt in. That's
+// wrong for the QC review: a proofreader removing ONE comma changes the fragment count, so the LCS
+// re-aligns everything after it — sentence 2 gets folded into sentence 1's "correction", unrelated
+// sentences get paired, and a phantom deletion appears (user-reported on a Luxembourgish story).
+// At sentence granularity a comma edit is just a within-sentence word diff, which is also what the
+// per-sentence checkboxes (v55_m) claim to be. ai_error_hunt keeps clause granularity — untouched.
+// NOTE classifyStoryQc's changedRatio deliberately still uses the CLAUSE diff: its 0.6 threshold was
+// calibrated on clause ratios by the v55_g spike, and a normal proofread that touches most sentences
+// would read as 0.67 at sentence granularity and trip the rewrite guard (false reject).
+function qcSplitSentences(text) {
+  const out = [];
+  (text || '').split(/\n\n+/).forEach(para => {
+    para.trim()
+      .split(/(?<=[.!?][""»'\)\]]*)\s+/)   // after a sentence-ender (+ any closing quote/bracket)
+      .map(s => s.trim()).filter(Boolean)
+      .forEach(s => out.push(s));
+  });
+  return out;
+}
+
+// Changed sentence pairs, in order — the list the review checkboxes index into and the accept route
+// reconstructs from. Same {ai, corrected} shape as storyDiffSentences; one side may be '' when a
+// whole sentence was added or removed.
+function qcDiffSentences(aiText, correctedText) {
+  const aArr = qcSplitSentences(aiText), bArr = qcSplitSentences(correctedText);
+  const m = aArr.length, n = bArr.length;
+  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
+    dp[i][j] = aArr[i - 1] === bArr[j - 1] ? dp[i - 1][j - 1] + 1 : Math.max(dp[i - 1][j], dp[i][j - 1]);
+  const ops = []; let i = m, j = n;
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && aArr[i - 1] === bArr[j - 1]) { ops.unshift({ t: 'eq' }); i--; j--; }
+    else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) { ops.unshift({ t: 'ins', c: bArr[j - 1] }); j--; }
+    else { ops.unshift({ t: 'del', a: aArr[i - 1] }); i--; }
+  }
+  const pairs = []; let k = 0;
+  while (k < ops.length) {
+    if (ops[k].t === 'eq') { k++; continue; }
+    const dels = [], ins = [];
+    while (k < ops.length && ops[k].t !== 'eq') { ops[k].t === 'del' ? dels.push(ops[k].a) : ins.push(ops[k].c); k++; }
+    const L = Math.max(dels.length, ins.length);
+    for (let x = 0; x < L; x++) pairs.push({ ai: dels[x] || '', corrected: ins[x] || '' });
+  }
+  return pairs;
+}
+
 function _wordLev(a, b) {
+
   const wa = a.split(/\s+/), wb = b.split(/\s+/);
   const dp = Array.from({ length: wa.length + 1 }, (_, i) => { const r = new Array(wb.length + 1).fill(0); r[0] = i; return r; });
   for (let j = 0; j <= wb.length; j++) dp[0][j] = j;
@@ -4808,7 +4856,10 @@ http.createServer(async (req, res) => {
       let acceptedStory = prop.corrected;
       let acceptedCount = null;
       if (Array.isArray(selected)) {
-        const changed = storyDiffSentences(prop.against, prop.corrected);
+        // v55_u: the REVIEW/selection granularity is qcDiffSentences (sentences), which is what the
+        // client indexes its checkboxes off. Must NOT be storyDiffSentences (clauses) or `selected`
+        // indices would address different fixes than the user ticked.
+        const changed = qcDiffSentences(prop.against, prop.corrected);
         const sel = new Set(selected.map(Number));
         acceptedCount = 0;
         changed.forEach((pair, idx) => {
@@ -4918,7 +4969,10 @@ http.createServer(async (req, res) => {
       let acceptedText = prop.corrected;
       let acceptedCount = null;
       if (Array.isArray(selected)) {
-        const changed = storyDiffSentences(prop.against, prop.corrected);
+        // v55_u: the REVIEW/selection granularity is qcDiffSentences (sentences), which is what the
+        // client indexes its checkboxes off. Must NOT be storyDiffSentences (clauses) or `selected`
+        // indices would address different fixes than the user ticked.
+        const changed = qcDiffSentences(prop.against, prop.corrected);
         const sel = new Set(selected.map(Number));
         acceptedCount = 0;
         changed.forEach((pair, idx) => {

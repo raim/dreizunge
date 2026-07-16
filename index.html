@@ -2807,6 +2807,11 @@ async function runStoryQc() {
 }
 
 // Word-level diff of two sentences → HTML with del/ins marks. Small + dependency-free.
+// Whitespace handling (v55_u): tokens alternate word/space/word/…, and a whitespace-only token must
+// be emitted as PLAIN TEXT, never dropped and never wrapped in <del>/<ins>. Dropping them is what
+// ran words together when a long run was inserted ("moienhunnecheSpaziergaang…"). v55_i fixed this
+// only for whole-sentence (one-sided) pairs; this is the two-sided path. Emitting the space from
+// both sides is harmless — HTML collapses consecutive whitespace.
 function _qcInlineDiff(a, b) {
   const wa = (a||'').split(/(\s+)/), wb = (b||'').split(/(\s+)/);
   const m = wa.length, n = wb.length;
@@ -2814,13 +2819,15 @@ function _qcInlineDiff(a, b) {
   for (let i=m-1;i>=0;i--) for (let j=n-1;j>=0;j--)
     dp[i][j] = wa[i]===wb[j] ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j], dp[i][j+1]);
   let i=0,j=0,out='';
+  const del = s => s.trim() ? '<del style="background:#fdd;color:#900;text-decoration:line-through">'+escHtml(s)+'</del>' : s;
+  const ins = s => s.trim() ? '<ins style="background:#dfd;color:#060;text-decoration:none">'+escHtml(s)+'</ins>' : s;
   while (i<m && j<n) {
     if (wa[i]===wb[j]) { out+=escHtml(wa[i]); i++;j++; }
-    else if (dp[i+1][j]>=dp[i][j+1]) { if(wa[i].trim()) out+='<del style="background:#fdd;color:#900;text-decoration:line-through">'+escHtml(wa[i])+'</del>'; i++; }
-    else { if(wb[j].trim()) out+='<ins style="background:#dfd;color:#060;text-decoration:none">'+escHtml(wb[j])+'</ins>'; j++; }
+    else if (dp[i+1][j]>=dp[i][j+1]) { out+=del(wa[i]); i++; }
+    else { out+=ins(wb[j]); j++; }
   }
-  while (i<m) { if(wa[i].trim()) out+='<del style="background:#fdd;color:#900;text-decoration:line-through">'+escHtml(wa[i])+'</del>'; i++; }
-  while (j<n) { if(wb[j].trim()) out+='<ins style="background:#dfd;color:#060">'+escHtml(wb[j])+'</ins>'; j++; }
+  while (i<m) { out+=del(wa[i]); i++; }
+  while (j<n) { out+=ins(wb[j]); j++; }
   return out;
 }
 
@@ -2852,7 +2859,7 @@ function _renderQcProposalInto(prop, o) {
     ? '<div style="font-weight:700;color:#b45309">' + escHtml(t('qc.corrupt_warn')) + '</div>'
     : isRw
     ? '<div style="font-weight:700;color:#b45309">' + escHtml(t('qc.rewrite_warn')) + '</div>'
-    : '<div style="font-weight:700;color:var(--text)">' + escHtml(t('qc.review_hdr')) + ' (' + prop.changedSentences + '/' + prop.totalSentences + ')</div>';
+    : '<div style="font-weight:700;color:var(--text)">' + escHtml(t('qc.review_hdr')) + ' (' + sents.length + ')</div>';
   const actions = isRw
     ? '<button class="story-repair-btn" style="background:var(--gray-mid);color:var(--text);padding:4px 10px;font-size:12px" onclick="' + o.discardCall + '">' + escHtml(t('qc.discard')) + '</button>'
     : '<button class="story-repair-btn" style="padding:4px 10px;font-size:12px" onclick="' + o.acceptCall + '">' + escHtml(t('qc.accept_selected')) + '</button>'
@@ -2891,19 +2898,18 @@ function _qcSentencePairs(a, b) {
   return ops;
 }
 
-// CHANGED-pair list matching the server's storyDiffSentences EXACTLY: collapse each run of
-// del/ins ops into paired {a,b} entries (dels[x]||'' , ins[x]||''), keep only changed. This is the
-// list the per-fix checkboxes index into — its order MUST equal the server's so `selected` indices
-// map 1:1 (verified by unit-qc-correct). Do NOT index checkboxes off the raw _qcSentencePairs
-// output: its interleaved empty-string one-sided entries do not match the server's pairing.
+// CHANGED-pair list matching the server's qcDiffSentences EXACTLY: SENTENCE granularity (split on
+// .!? — NOT the clause/comma split used by ai_error_hunt). This is the list the per-fix checkboxes
+// index into, so its order MUST equal the server's or `selected` would apply different fixes than
+// the user ticked (verified by unit-qc-correct). v55_u: was clause-level, which folded sentence 2
+// into sentence 1's correction whenever a comma was added/removed.
 function _qcChangedPairs(a, b) {
-  const split = txt => { const r=[]; (txt||'').split(/\n\n+/).forEach((para,pi)=>{ if(pi>0) r.push(''); para.trim().split(/(?<=[.!?,;:"""«»„\u2018\u2019])\s*/).map(s=>s.trim()).filter(Boolean).forEach(s=>r.push(s)); }); return r.filter(s=>s!==''); };
+  const split = txt => { const r=[]; (txt||'').split(/\n\n+/).forEach(para=>{ para.trim().split(/(?<=[.!?][""»'\)\]]*)\s+/).map(s=>s.trim()).filter(Boolean).forEach(s=>r.push(s)); }); return r; };
   const aArr=split(a), bArr=split(b), m=aArr.length, n=bArr.length;
   const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
   for(let i=1;i<=m;i++)for(let j=1;j<=n;j++) dp[i][j]=aArr[i-1]===bArr[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);
-  const ops=[]; let i=0,j=0;
-  // forward walk producing eq/del/ins in order (matches server's unshift-built order)
-  { let ii=m,jj=n,rev=[]; while(ii>0||jj>0){ if(ii>0&&jj>0&&aArr[ii-1]===bArr[jj-1]){rev.push({t:'eq'});ii--;jj--;} else if(jj>0&&(ii===0||dp[ii][jj-1]>=dp[ii-1][jj])){rev.push({t:'ins',c:bArr[jj-1]});jj--;} else {rev.push({t:'del',a:aArr[ii-1]});ii--;} } rev.reverse(); ops.push(...rev); }
+  const ops=[]; let i=m,j=n;
+  while(i>0||j>0){ if(i>0&&j>0&&aArr[i-1]===bArr[j-1]){ops.unshift({t:'eq'});i--;j--;} else if(j>0&&(i===0||dp[i][j-1]>=dp[i-1][j])){ops.unshift({t:'ins',c:bArr[j-1]});j--;} else {ops.unshift({t:'del',a:aArr[i-1]});i--;} }
   const pairs=[]; let k=0;
   while(k<ops.length){ if(ops[k].t==='eq'){k++;continue;} const dels=[],ins=[]; while(k<ops.length&&ops[k].t!=='eq'){ if(ops[k].t==='del')dels.push(ops[k].a); else ins.push(ops[k].c); k++; } const L=Math.max(dels.length,ins.length); for(let x=0;x<L;x++) pairs.push({a:dels[x]||'',b:ins[x]||''}); }
   return pairs; // all entries are "changed" by construction

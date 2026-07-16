@@ -1751,3 +1751,14 @@ Accepting it updates the story AND rebuilds the ai_error_hunt from the original�
 - [ ] An EXISTING storyboard still shows the old sizing until re-composed → 🎬 → 🎨 → pick any
       scheme (even the current one) → it re-composes instantly with the new layout.
 - [ ] Narrow/mobile: boards scale down but panels stay equal-sized across boards.
+
+### 88. v55_u — QC review granularity + whitespace
+- [ ] QC a story where the proofreader adds/removes a COMMA: the review shows ONE row for that
+      sentence with just the comma marked — the following sentence is NOT merged into it, and there
+      is no phantom "deleted sentence" row. (Was the Luxembourgish bug.)
+- [ ] Any row with a multi-word insertion keeps its SPACES (no "moienhunnecheSpaziergaang").
+- [ ] Untick one fix, accept → only the ticked fixes land, and the untouched sentences are
+      byte-identical to before (spacing included).
+- [ ] The header count matches the number of checkbox rows.
+- [ ] The AI error-hunt built on accept still has its usual short clause-sized items (unchanged).
+- [ ] A heavily-corrected story (fixes in most sentences) still reads as 'corrected', NOT 'rewrite'.

@@ -212,21 +212,78 @@ assert.ok(/if \(saved\.storyQcProposal\) \{ delete saved\.storyQcProposal;/.test
 assert.ok(/prop\.against !== undefined && prop\.against !== t\.story[\s\S]{0,140}Story changed since/.test(acceptRoute),
   'accept refuses (409) a proposal whose baseline no longer matches the current story');
 
+// ── 10b. QC review granularity: a comma edit must NOT merge sentences (v55_u) ──
+// User-reported on a Luxembourgish story: the proofreader removed one comma, and because the
+// clause splitter breaks on commas the fragment count changed — sentence 2 was folded into
+// sentence 1's "correction", unrelated sentences got paired, and a phantom deletion appeared.
+// The QC review path now splits on sentence enders only.
+{
+  const qcDiff = new Function(ext(server, 'qcSplitSentences') + '\n' + ext(server, 'qcDiffSentences') + '\nreturn qcDiffSentences;')();
+  const a = "De Samschdeg moien, hunn ech e Spaziergaang laang d'Musel gemaach. E puer Leit waren och dobaus, mee net vill. Ech hunn e klenge Paus gemaach an e Café zu Remerschen.";
+  const b = "De Samschdeg moien hunn ech e Spaziergaang laang d'Musel gemaach. E puer Leit waren och dobaussen, mee net vill. Ech hunn e klenge Paus gemaach an e Café zu Réimerchen.";
+  const pairs = qcDiff(a, b);
+  assert.strictEqual(pairs.length, 3, 'one pair per genuinely-changed sentence (not 3 mis-aligned fragments)');
+  // Each pair must be the SAME sentence before/after — never sentence N paired with sentence N+1.
+  for (const p of pairs) {
+    assert.ok(p.ai && p.corrected, 'no phantom one-sided pair from a comma edit');
+    assert.ok(p.ai.split(/\s+/)[0] === p.corrected.split(/\s+/)[0], `pair aligns the same sentence: ${p.ai.slice(0,20)} vs ${p.corrected.slice(0,20)}`);
+  }
+  // The comma fix stays INSIDE its own sentence — sentence 2 is not swallowed by sentence 1.
+  assert.ok(pairs[0].corrected.endsWith("gemaach."), "sentence 1's correction ends at its own full stop");
+  assert.ok(!/E puer Leit/.test(pairs[0].corrected), 'sentence 2 is NOT merged into sentence 1');
+  // The guard deliberately keeps CLAUSE granularity: its 0.6 threshold was calibrated on clause
+  // ratios, and a normal proofread touching most sentences reads ~0.67 at sentence granularity.
+  const cls = ext(server, 'classifyStoryQc');
+  assert.ok(/storyDiffSentences\(original, corrected\)/.test(cls), 'classifyStoryQc keeps the clause diff (calibrated guard)');
+  assert.ok(!/qcDiffSentences/.test(cls), 'the guard does not switch to sentence granularity (would false-reject)');
+  // ai_error_hunt keeps clause granularity too — short items are easier to hunt.
+  assert.ok(/storyDiffSentences\(t\.aiStory, t\.story/.test(server), 'ai_error_hunt still built from the CLAUSE diff');
+  // The accept routes must reconstruct from the same list the checkboxes index.
+  assert.strictEqual((server.match(/qcDiffSentences\(prop\.against, prop\.corrected\)/g) || []).length, 2,
+    'both accept routes (story + summary) reconstruct from the sentence-level review diff');
+}
+
+// ── 10c. Inline word diff preserves whitespace (v55_u) ────────────────────────
+// Dropping whitespace-only tokens ran inserted words together ("moienhunnecheSpaziergaang…").
+{
+  const clientSrc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const esc = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const inline = new Function('escHtml', ext(clientSrc, '_qcInlineDiff') + '\nreturn _qcInlineDiff;')(esc);
+  // A long insertion: every inserted word must stay space-separated.
+  const out = inline('De Samschdeg moien,', "De Samschdeg moien hunn ech e Spaziergaang laang d'Musel gemaach.");
+  const text = out.replace(/<[^>]+>/g, '');
+  assert.ok(!/moienhunn|echeSpaziergaang|laangd'Musel/.test(text), `no run-together words: ${text}`);
+  assert.ok(/moien hunn ech e Spaziergaang laang d'Musel gemaach\./.test(text), 'inserted run keeps its spacing');
+  // Whitespace is never wrapped in del/ins markup.
+  assert.ok(!/<(del|ins)[^>]*>\s+<\/(del|ins)>/.test(out), 'whitespace-only tokens are not marked up');
+  // The client pair list mirrors the server's sentence granularity.
+  const cliPairs = new Function(ext(clientSrc, '_qcChangedPairs') + '\nreturn _qcChangedPairs;')();
+  const srvDiff = new Function(ext(server, 'qcSplitSentences') + '\n' + ext(server, 'qcDiffSentences') + '\nreturn qcDiffSentences;')();
+  const a2 = 'Eent, zwee. Dräi véier. Fënnef.', b2 = 'Eent zwee. Dräi véier. Fënnef!';
+  const c = cliPairs(a2, b2), s2 = srvDiff(a2, b2);
+  assert.strictEqual(c.length, s2.length, 'client/server review-pair COUNT matches at sentence granularity');
+  s2.forEach((p, i) => assert.strictEqual(c[i].a, p.ai, `client/server review-pair ORDER matches at ${i}`));
+}
+
 console.log('  qc-correct: verdicts (incl. corrupt), guard, generator + routes + bulk + staleness: OK');
 
 // ── 10. Per-sentence selection (v55_m): client/server changed-pair ORDER must align ──
-// The review checkboxes index into the server's changed-pair order. The client derives its rows
-// from _qcChangedPairs; the server reconstructs from storyDiffSentences. If their orderings ever
-// diverge, unchecking fix #k would revert a DIFFERENT fix. Pin them equal.
+// The review checkboxes index into the server's REVIEW pair order (qcDiffSentences — sentence
+// granularity since v55_u, NOT the clause-level storyDiffSentences used by ai_error_hunt). The
+// client derives its rows from _qcChangedPairs; the accept route reconstructs from qcDiffSentences.
+// If their orderings ever diverge, unchecking fix #k would revert a DIFFERENT fix.
 {
-  const srvDiff = new Function(ext(server, 'splitSentences') + '\n' + ext(server, 'storyDiffSentences') + '\nreturn storyDiffSentences;')();
+  const srvDiff = new Function(ext(server, 'qcSplitSentences') + '\n' + ext(server, 'qcDiffSentences') + '\nreturn qcDiffSentences;')();
   const cliChanged = new Function(ext(client, '_qcChangedPairs') + '\nreturn _qcChangedPairs;')();
   const cases = [
     ['Il gatto e nero. La casa e grande. Si chiedevano: "Che vita avuto?" Fine.',
      'Il gatto è nero. La casa è grande. Si chiedevano: "Che vita avute?" Fine.'],
-    ['A. B. C. D.', 'A. X. C. Y.'],
+    ['A x. B y. C z. D w.', 'A x. B q. C z. D v.'],
     ['One two three. Four five six.', 'One two three. Four five six.'],
     ['Solo cambio aqui.', 'Otra cosa distinta nueva.'],
+    // The regression: a comma edit must not re-align the whole rest of the text.
+    ['De Samschdeg moien, hunn ech gemaach. E puer Leit dobaus, mee net vill.',
+     'De Samschdeg moien hunn ech gemaach. E puer Leit dobaussen, mee net vill.'],
   ];
   for (const [a, b] of cases) {
     const s = srvDiff(a, b), c = cliChanged(a, b);
@@ -238,7 +295,7 @@ console.log('  qc-correct: verdicts (incl. corrupt), guard, generator + routes +
 // ── 11. Selective reconstruction: revert-from-corrected applies only chosen fixes ──
 // Mirror the server's accept-route reconstruction (revert unselected pairs in the corrected text).
 {
-  const srvDiff = new Function(ext(server, 'splitSentences') + '\n' + ext(server, 'storyDiffSentences') + '\nreturn storyDiffSentences;')();
+  const srvDiff = new Function(ext(server, 'qcSplitSentences') + '\n' + ext(server, 'qcDiffSentences') + '\nreturn qcDiffSentences;')();
   const reconstruct = (against, corrected, selected) => {
     const changed = srvDiff(against, corrected);
     const sel = new Set(selected.map(Number));
