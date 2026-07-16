@@ -844,3 +844,87 @@ recorded in roadmap_v56:
 
 Suite 102 green on the NEW corpus, check-inline 0 both builds, static rebuilt (now carries the real
 storyboards + full translations), APP_VERSION v55_w.
+
+---
+
+# v55_x — speech: never approximate a missing voice (🗣 pill)
+
+User approved the design (pill, via the 🗣 label). Built in the 3 steps I proposed.
+
+**1. Factored the duplicated resolver FIRST** (the step that stops this becoming the 6th parity
+trap). `_speakChunks` and `_speakChunksThen` each had their own voice-scoring + fallback, and had
+ALREADY drifted: `_speakChunks` toasted "⚠ No {lang} voice — using approximation" and spoke anyway;
+`_speakChunksThen` approximated silently. Now one `_ttsPickVoice(ttsCode)` with deliberate 3-state
+semantics — a voice / `null` (loaded, none match) / `undefined` (not loaded yet, unknown) — plus
+`_ttsMakeUtterance` which returns null when we must not speak. Both paths call them; the test asserts
+neither touches `getVoices()` or builds an utterance itself.
+
+**2. The refusal.** No matching voice → don't speak. The old `else` spoke with the browser default
+(English) because `u.lang` was set but `u.voice` wasn't — that WAS the approximation.
+
+**3. The pill.** The 🗣 label (3 sites) becomes `.tts-pill`; on no-voice it renders an amber
+"🗣 no voice" with a tooltip naming the language. `renderTtsPill` works by CLASS so all footers stay
+in step. `refreshTtsVoiceState()` on tts-language change means the pill warns BEFORE you press play.
+
+**Two judgement calls worth recording:**
+- **Mute is NOT flipped.** The user asked for "auto-mute", but `_ttsNoVoice` deliberately does not
+  set `APP.muted`: mute is the user's CHOICE ("do I want sound"), no-voice is an environment
+  CAPABILITY ("can we produce it") — the same split as the backend pill. Flipping their mute would
+  make their unmute either do nothing or resurrect the approximation. The EFFECT is auto-mute
+  (nothing is spoken); the pill is what makes the silence legible. Asserted.
+- **Right language beats quality.** An espeak Swahili voice still speaks — it's the right language,
+  merely poor. Only a WRONG-language voice is refused. (The separate voice-QUALITY warning,
+  `ttsHasNiceVoice`/unit-tts-voice, is untouched and still passes.)
+
+**The startup trap, handled:** `getVoices()` is async and empty at first. `undefined` (unknown) is
+kept distinct from `null` (none) precisely so the app can't declare "no voice" and mute itself during
+the load window — both the speak path and the proactive check return early on `undefined`. Tested.
+
+Verified by running the real resolver against stubbed voice sets: Swahili+English-only → REFUSED;
+German+German → speaks with Anna; voices-not-loaded → speaks (conservative); espeak-Swahili → speaks.
+New test `unit-tts-no-approximation` (named to avoid the existing `unit-tts-voice`, which covers the
+quality heuristics — I nearly clobbered it). Suite 103 green, check-inline 0 both builds,
+APP_VERSION v55_x. Owed: LIVE-TEST §90 (browser-only — real voices can't be tested here).
+
+**Debt noted in roadmap_v56:** `toast.no_voice` is now unused but still in ui.json translated into 26
+langs (delete on the next pass); the 3 new `tts.*` keys are en-only; and the pill could later host the
+tts selects the way the backend pill hosts the model picker (deliberately not bundled).
+
+---
+
+# v55_y — my v55_x fix was INCOMPLETE: a third speak path still approximated
+
+User, immediately: "when i play a swahili lesson, the swahili word is still read out loud with
+english speech, e.g. Mtu as 'M t u'."
+
+**Cause: there were THREE copies of the voice logic, not two.** v55_x de-duplicated `_speakChunks`
+and `_speakChunksThen` — but `_speakAndAdvance` (the LISTENING-exercise path, i.e. exactly where a
+learner meets a Swahili word) had its own third copy with the same missing `else`: no Swahili voice →
+`match` null → `u.voice` unset but `u.lang='sw-KE'` → browser default English voice spells out "Mtu".
+
+**Why I missed it:** I grepped for the fallback expression I'd already seen (`langVoices[0] || null`
+/ `lv2[0] || null`). The third copy reads `named || exact || prefix` — different variable names, so
+the grep found nothing and I concluded "two paths". Searching for a REMEMBERED SHAPE instead of the
+CAPABILITY (who constructs an utterance / who reads getVoices) is the actual mistake.
+
+**Fix:** `_speakAndAdvance` now uses the shared `_ttsMakeUtterance`/`_ttsNoVoice`. Note it must still
+ADVANCE when it refuses (`setTimeout(doAdvance, 900)`) — otherwise a listening exercise would hang
+forever on the silent item, turning a cosmetic bug into a stuck lesson. Asserted.
+
+**The real repair is the TEST, which is now STRUCTURAL rather than a list of functions I thought of:**
+- Exactly TWO `new SpeechSynthesisUtterance(...)` may exist in the whole client — the shared builder
+  and the silent '' unlock utterance. Anything else is a new duplicate → fail. This catches a 4th
+  copy automatically, wherever it appears and whatever it names its variables.
+- Plus the per-function assertions for all three known paths (uses the shared builder, refuses via
+  the shared handler, never calls getVoices() itself, never builds an utterance itself).
+Verified BOTH ways: re-introduced a duplicate builder → the guard fires with
+`only the shared builder + the silent unlock may construct utterances (found: ["text","text","''"])`;
+removed it → passes.
+
+Suite 103 green, check-inline 0 both builds, APP_VERSION v55_y. LIVE-TEST §90 now also covers the
+listening path (the case that actually bit).
+
+**Lesson for the next duplicated-logic hunt (this is the 5th trap and the 2nd time an incomplete
+de-dup shipped — cf. v55_i whitespace, fixed properly only in v55_u):** enumerate by CAPABILITY, not
+by grepping the expression you already know. "Who constructs an utterance?" finds all three copies;
+"who writes `langVoices[0] || null`?" finds two.

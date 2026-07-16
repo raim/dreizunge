@@ -1772,3 +1772,20 @@ Accepting it updates the story AND rebuilds the ai_error_hunt from the original�
       usual storyboard.empty toast appears — that's the real floor.)
 - [ ] Static build (docs/): the "Backend: Static — built-in lessons only" row is GONE from the
       landing page. The live app still shows its backend row + pill normally.
+
+### 90. v55_x — speech: no approximation, "no voice" pill
+- [ ] Pick a target language your system has NO voice for (e.g. Swahili): pressing 🔊 / a listen
+      exercise produces SILENCE, not an English voice reading it.
+- [ ] v55_y — specifically PLAY A LESSON in that language (the listening path, which was still
+      approximating in v55_x): a word like "Mtu" is NOT spelled out "M t u" by an English voice —
+      it is silent, and the exercise still ADVANCES normally (does not hang on the silent item). A toast explains why, and the 🗣
+      label becomes an amber "🗣 no voice" pill; hovering it names the language and says speech is
+      off for it.
+- [ ] Switch the speech language to one you DO have a voice for → the pill returns to plain 🗣 and
+      speech works normally.
+- [ ] The pill warns BEFORE you press play (change the tts language and watch it update).
+- [ ] Your own MUTE button is untouched by all this: it still shows/toggles your choice. (Muted +
+      no-voice are independent — the pill explains the silence, the mute button doesn't lie.)
+- [ ] STARTUP: load the app fresh — it must NOT flash "no voice" or self-mute while the browser's
+      voice list is still loading.
+- [ ] A language with only a poor/espeak voice still SPEAKS (right language beats quality).

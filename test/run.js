@@ -35,6 +35,7 @@ run('unit: conjugation grouping (item 4)', 'node', [path.join(__dirname, 'unit-c
 run('unit: grammar reinforce note (item 5)', 'node', [path.join(__dirname, 'unit-grammar-reinforce.test.js')]);
 run('unit: editor sync on delete (item 3)', 'node', [path.join(__dirname, 'unit-editor-sync.test.js')]);
 run('unit: tts voice-quality helpers (item 1)', 'node', [path.join(__dirname, 'unit-tts-voice.test.js')]);
+run('unit: tts never approximates a missing voice (v55_x)', 'node', [path.join(__dirname, 'unit-tts-no-approximation.test.js')]);
 run('unit: always-on sound-test row (v49)', 'node', [path.join(__dirname, 'unit-tts-test-row.test.js')]);
 run('unit: lesson-type meta table (item 8)', 'node', [path.join(__dirname, 'unit-lesson-type-meta.test.js')]);
 run('unit: word-count tokenizer (item 8)', 'node', [path.join(__dirname, 'unit-word-count.test.js')]);

@@ -462,7 +462,10 @@
     "storyboard.scheme_night": "Night",
     "storyboard.scheme_mono": "Monochrome",
     "storyboard.scheme_set": "Colour scheme: {name}",
-    "storyboard.no_schemes": "No colour schemes available"
+    "storyboard.no_schemes": "No colour schemes available",
+    "tts.no_voice_silent": "🔇 No {lang} voice installed — speech is off for this language (an English voice reading {lang} would only mislead).",
+    "tts.pill_no_voice": "no voice",
+    "tts.no_voice_hint": "No {lang} voice is installed on this device, so speech is off for it. Install a {lang} voice in your system settings to enable it."
   },
   "nl": {
     "static.pill.tosubmit": "indienen",
@@ -5946,7 +5949,18 @@
     "qc.none_selected": "Nessuna correzione selezionata — seleziona almeno una, o Rifiuta",
     "qc.summary_btn": "Rivedi il riassunto con il modello QC",
     "qc.summary_accepted": "Correzioni al riassunto applicate",
-    "models.pill_hint": "Clicca per scegliere i modelli"
+    "models.pill_hint": "Clicca per scegliere i modelli",
+    "storyboard.scheme": "🎨 Schema colori",
+    "storyboard.scheme_classic": "Classico",
+    "storyboard.scheme_pastel": "Pastello",
+    "storyboard.scheme_vivid": "Vivace",
+    "storyboard.scheme_night": "Notte",
+    "storyboard.scheme_mono": "Monocromatico",
+    "storyboard.scheme_set": "Schema colori: {name}",
+    "storyboard.no_schemes": "Nessuno schema colori disponibile",
+    "tts.no_voice_silent": "🔇 Nessuna voce {lang} installata — la pronuncia è disattivata per questa lingua (una voce inglese che legge {lang} potrebbe confondere).",
+    "tts.pill_no_voice": "nessuna voce",
+    "tts.no_voice_hint": "Non è installata alcuna voce in {lang} su questo dispositivo, quindi la funzione di sintesi vocale è disattivata. Installa una voce in {lang} nelle impostazioni del sistema per attivarla."
   },
   "pl": {
     "static.pill.tosubmit": "do złożenia",
