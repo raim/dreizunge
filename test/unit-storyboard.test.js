@@ -50,8 +50,11 @@ const goodPanel = (caption) => ({ caption, bg: 'sky', shapes: [
     'captions render as <title> tooltips');
   assert.ok(!/<text[^>]*>Scene/.test(svg), 'captions are NOT drawn as visible <text>');
   assert.ok(/<g><title>/.test(svg), 'each panel group leads with its <title> so hover covers the whole panel');
-  // Height dropped the caption band: 170 panel + 2*12 gap = 194, no +30 band.
-  assert.ok(/viewBox="0 0 \d+ 194"/.test(svg), 'outer viewBox height has no caption band (194 = 170 + 2*12)');
+  // v55_t: the canvas is a FIXED 5-panel size regardless of count (922 = 5*(170+12)+12, 194 = 170+2*12),
+  // so a 2-panel board's panels render exactly as large as a 5-panel board's — before, `max-width`
+  // tracked the count and MORE panels came out SMALLER.
+  assert.ok(/viewBox="0 0 922 194"/.test(svg), 'canvas is the fixed 5-panel size (922x194)');
+  assert.ok(/max-width:922px/.test(svg), 'max-width matches the fixed canvas, not the panel count');
   assert.ok(svg.includes('#a8dadc'), 'palette name resolved to hex (sky)');
   assert.ok(!/\bsky\b/.test(svg.replace(/Scene (one|two|three)/g, '')), 'raw palette NAME never emitted as a color');
 }
@@ -81,10 +84,15 @@ const goodPanel = (caption) => ({ caption, bg: 'sky', shapes: [
   ]};
   const { svg } = compose([p, goodPanel('b')]);
   assert.ok(svg, 'composes');
-  const inner = svg.slice(svg.indexOf('<svg x='), svg.indexOf('</svg>'));
+  // Look ONLY at the shapes drawn inside the first panel's nested <svg> — i.e. after that tag's
+  // '>' and before its close. The panel's own x/y/width/height are LAYOUT, not shape coords, and
+  // since v55_t the strip is centred so those offsets vary with the panel count.
+  const openEnd = svg.indexOf('>', svg.indexOf('<svg x=')) + 1;
+  const inner = svg.slice(openEnd, svg.indexOf('</svg>', openEnd));
   const nums = [...inner.matchAll(/(?:x|y|cx|cy|r|width|height|x1|y1|x2|y2)="(-?[\d.e+]+)"/g)]
     .map(m => Number(m[1]));
-  assert.ok(nums.every(n => n >= -1 && n <= 172), 'no shape coordinate escapes the clamp (panel offsets ≤172)');
+  assert.ok(nums.length, 'shape coordinates found inside the panel');
+  assert.ok(nums.every(n => n >= 0 && n <= 100), 'every shape coordinate is clamped into the 0–100 panel viewBox');
   assert.ok(svg.includes('points="0,0 100,100 50,50"'), 'polygon points clamped into 0–100');
   assert.ok(/y="100"[^>]*>edge</.test(svg), 'text y clamped to 100');
 }
@@ -199,6 +207,36 @@ assert.ok(/req\.setTimeout\(timeoutMs/.test(llm) && /reject\(new Error\('Ollama 
 assert.ok(/opts\.think === false \? \{ think: false \} : \{\}/.test(llm), 'think:false sent conditionally in the body');
 assert.ok(/does not support thinking/i.test(llm) && /think: undefined/.test(llm),
   'callLLM retries without think on parameter rejection');
+
+// ── 10. Fixed canvas + centred strip, whatever the panel count (v55_t) ────────
+{
+  const p = { caption: 'c', bg: 'sky', shapes: [{ type: 'rect', x: 0, y: 60, w: 100, h: 40, fill: 'leaf' }] };
+  const PANEL = 170, GAP = 12, W = 5 * (PANEL + GAP) + GAP;
+  let firstVb = null;
+  for (const n of [2, 3, 4, 5]) {
+    const { svg } = compose(Array(n).fill(p), 'classic');
+    const vb = svg.match(/viewBox="([^"]+)"/)[1];
+    // Same canvas for every count — this is what keeps the rendered height (and panel size) constant.
+    if (firstVb === null) firstVb = vb;
+    assert.strictEqual(vb, firstVb, `${n} panels: canvas identical to other counts`);
+    assert.strictEqual(vb, `0 0 ${W} 194`, `${n} panels: canvas is the fixed 5-panel size`);
+    assert.ok(svg.includes(`max-width:${W}px`), `${n} panels: max-width is the fixed canvas`);
+    // The strip is centred: equal empty space either side.
+    const xs = [...svg.matchAll(/<svg x="(\d+)"/g)].map(m => +m[1]);
+    assert.strictEqual(xs.length, n, `${n} panels rendered`);
+    const left = xs[0], right = W - (xs[xs.length - 1] + PANEL);
+    assert.ok(Math.abs(left - right) <= 1, `${n} panels: strip centred (left ${left} ≈ right ${right})`);
+    // Panels are evenly spaced by exactly one GAP.
+    for (let i = 1; i < xs.length; i++) {
+      assert.strictEqual(xs[i] - xs[i - 1], PANEL + GAP, `${n} panels: even spacing at ${i}`);
+    }
+    // Nothing spills outside the canvas.
+    assert.ok(left >= 0 && right >= 0, `${n} panels: strip fits inside the canvas`);
+  }
+  // A full board keeps the original 12px margin (i.e. the fixed canvas is exactly the 5-panel size).
+  const five = compose(Array(5).fill(p), 'classic').svg;
+  assert.ok(/<svg x="12"/.test(five), '5 panels start at the original 12px margin');
+}
 
 console.log('  storyboard: composer whitelist/clamp/escape/floor + stamp + route contract: OK');
 

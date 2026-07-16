@@ -1742,3 +1742,12 @@ Accepting it updates the story AND rebuilds the ai_error_hunt from the original�
 - [ ] The numbers match the static build's for the same storyline.
 - [ ] A storyline whose chapters have no generationStats (very old topics) → the stats block stays
       hidden (no empty bar).
+
+### 87. v55_t — storyboard fixed canvas + centred panels
+- [ ] A 2-panel and a 5-panel storyboard side by side (different storylines): the panels are the
+      SAME size, and both boards are the same height. (Before: the 2-panel board's art was ~2.5×
+      bigger.)
+- [ ] A board with fewer than 5 panels shows the panels CENTRED, with equal empty space either side.
+- [ ] An EXISTING storyboard still shows the old sizing until re-composed → 🎬 → 🎨 → pick any
+      scheme (even the current one) → it re-composes instantly with the new layout.
+- [ ] Narrow/mobile: boards scale down but panels stay equal-sized across boards.

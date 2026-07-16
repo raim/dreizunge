@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v55_s';
+const APP_VERSION  = 'v55_t';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -1764,17 +1764,27 @@ function composeStoryboardSVG(panels, scheme) {
   stats.valid = rendered.length;
   if (rendered.length < MIN_PANELS) return { svg: null, stats };
 
-  const W = rendered.length * (PANEL_PX + GAP) + GAP;
+  // v55_t: the canvas is ALWAYS the full MAX_PANELS width, whatever the panel count, and the strip
+  // is centred in it. Before, W tracked the count, so `max-width:W` made a 2-panel board cap at
+  // ~376px (panels drawn at full size) while a 5-panel board capped at ~922px and got squeezed into
+  // the container — i.e. MORE panels rendered SMALLER. Fixing the canvas fixes the rendered height
+  // (and thus the panel size) across every storyboard; fewer than MAX_PANELS simply leaves empty
+  // space either side rather than scaling the art up.
+  const W = MAX_PANELS * (PANEL_PX + GAP) + GAP;
   // No caption band — the caption is a hover-only <title> inside each panel group (drops the
   // always-on text row per the user's call; panels keep their 170px size, height just loses the
   // band). <title> is also the accessible choice: screen readers announce it.
   const H = PANEL_PX + GAP * 2;
-  // Responsive: viewBox only + max-width, so 2–5 panels fit the storyline card on any device.
+  // Centre the strip: n panels span n*PANEL_PX + (n-1)*GAP (no trailing gap).
+  const stripW = rendered.length * PANEL_PX + (rendered.length - 1) * GAP;
+  const x0 = Math.round((W - stripW) / 2);
+  // Responsive: viewBox only + max-width, so the board scales down on narrow screens but its
+  // aspect ratio — and therefore every panel's size — is now independent of the panel count.
   const parts = [
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto;display:block" role="img">`,
   ];
   rendered.forEach((p, i) => {
-    const x = GAP + i * (PANEL_PX + GAP);
+    const x = x0 + i * (PANEL_PX + GAP);
     // <g> with a leading <title> = hover tooltip over the whole panel (frame + art).
     parts.push(
       `<g>`,

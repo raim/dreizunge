@@ -672,3 +672,36 @@ that the payload ships a projection rather than the full object. Verified it FAI
 projection removed ("/api/lessons projects generationStats") and passes with it.
 
 Suite 102 green, check-inline 0 both builds, APP_VERSION v55_s. Owed: LIVE-TEST §86.
+
+---
+
+# v55_t — storyboard layout: fixed 5-panel canvas, strip centred
+
+User: "the height is set by the number of panels — 5 panels appears smaller than 2; make it fixed
+height assuming 5 panels, don't fill the lateral space if fewer, centre the panels."
+
+**Cause:** the canvas width tracked the panel count (`W = n*(PANEL+GAP)+GAP`) and the SVG carried
+`style="width:100%;max-width:${W}px;height:auto"`. So a 2-panel board capped at max-width 376px and
+drew its panels at full 170px, while a 5-panel board capped at 922px, was squeezed into the ~540px
+container, and drew each panel at ~100px. More panels → smaller art, and a different height per board.
+
+**Fix:** the canvas is ALWAYS the MAX_PANELS size (922×194 = 5*(170+12)+12 by 170+2*12) whatever the
+count, and the strip is centred in it: `stripW = n*PANEL + (n-1)*GAP; x0 = (W - stripW)/2`. Fewer
+panels leave equal empty space either side instead of scaling the art up. A full 5-panel board still
+starts at the original 12px margin (i.e. the fixed canvas IS the old 5-panel canvas — nothing grew).
+
+**Measured, not eyeballed:** rendered 2/3/5-panel boards in a real 540px container and sampled the
+art — panel height is now 62px in ALL THREE (before, a 2-panel board's panels were ~2.5× a 5-panel
+board's). Centring verified per count: 2→285px each side, 3→194, 4→103, 5→12.
+
+Tests: a new section asserts the canvas is identical across counts (2/3/4/5), equals the fixed
+5-panel size, that max-width matches the canvas (not the count), that the strip is centred (|left −
+right| ≤ 1), spacing is exactly one GAP, and nothing spills outside. Also FIXED a latent weakness in
+the clamp test: it sliced from `<svg x=` and so measured the panel's LAYOUT offsets alongside shape
+coords, forcing a loose bound (≤172). Now it isolates the shapes inside the nested panel svg and
+asserts the real invariant — every shape coord within 0–100.
+
+**Existing storyboards** keep their old stored SVG until re-composed: re-picking a colour scheme
+(v55_r, no model call) re-composes with the new layout instantly; boards from before v55_r have no
+stored panels and need one regenerate. Suite 102 green, check-inline 0 both builds, APP_VERSION
+v55_t. Owed: LIVE-TEST §87.
