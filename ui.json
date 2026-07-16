@@ -922,7 +922,18 @@
     "qc.none_selected": "Geen correcties geselecteerd — vink er minstens één aan, of Verwijder",
     "qc.summary_btn": "Bekijk samenvatting met QC-model",
     "qc.summary_accepted": "Samenvatting correcties toegepast",
-    "models.pill_hint": "Klik om modellen te kiezen"
+    "models.pill_hint": "Klik om modellen te kiezen",
+    "storyboard.scheme": "🎨 Kleurenschema",
+    "storyboard.scheme_classic": "Klassiek",
+    "storyboard.scheme_pastel": "Pastel",
+    "storyboard.scheme_vivid": "Levendig",
+    "storyboard.scheme_night": "Donker",
+    "storyboard.scheme_mono": "Monochroom",
+    "storyboard.scheme_set": "Kleurenschema: {name}",
+    "storyboard.no_schemes": "Geen kleurenschema's beschikbaar",
+    "tts.no_voice_silent": "🔇 Geen {lang} stem geïnstalleerd — spraak is uitgeschakeld voor deze taal (een Engelse stem die {lang} voorleest, zou verwarrend zijn).",
+    "tts.pill_no_voice": "geen stem",
+    "tts.no_voice_hint": "Er is geen {lang} stem geïnstalleerd op dit apparaat, waardoor spraak is uitgeschakeld. Installeer een {lang} stem in de systeeminstellingen om deze functie te activeren."
   },
   "pt": {
     "static.pill.tosubmit": "enviar",
@@ -1379,7 +1390,18 @@
     "qc.none_selected": "Nenhuma correção selecionada — marque pelo menos uma, ou Descartar",
     "qc.summary_btn": "Revisar resumo com modelo de QC",
     "qc.summary_accepted": "Correções no resumo aplicadas",
-    "models.pill_hint": "Clique para escolher modelos"
+    "models.pill_hint": "Clique para escolher modelos",
+    "storyboard.scheme": "🎨 Esquema de cores",
+    "storyboard.scheme_classic": "Clássico",
+    "storyboard.scheme_pastel": "Pastel",
+    "storyboard.scheme_vivid": "Vibrante",
+    "storyboard.scheme_night": "Noturno",
+    "storyboard.scheme_mono": "Monocromático",
+    "storyboard.scheme_set": "Esquema de cores: {name}",
+    "storyboard.no_schemes": "Nenhum esquema de cores disponível",
+    "tts.no_voice_silent": "🔇 Sem voz em {lang} instalada — a leitura está desativada para este idioma (uma voz em inglês lendo {lang} pode confundir).",
+    "tts.pill_no_voice": "sem voz",
+    "tts.no_voice_hint": "Não há voz em {lang} instalada neste dispositivo, então a função de fala está desativada. Instale uma voz em {lang} nas configurações do sistema para ativá-la."
   },
   "fr": {
     "static.pill.tosubmit": "à soumettre",
@@ -1836,7 +1858,18 @@
     "qc.none_selected": "Aucune correction sélectionnée — cochez au moins une, ou Rejeter",
     "qc.summary_btn": "Relire le résumé avec le modèle QC",
     "qc.summary_accepted": "Corrections du résumé appliquées",
-    "models.pill_hint": "Cliquez pour choisir les modèles"
+    "models.pill_hint": "Cliquez pour choisir les modèles",
+    "storyboard.scheme": "🎨 Thème de couleurs",
+    "storyboard.scheme_classic": "Classique",
+    "storyboard.scheme_pastel": "Pastel",
+    "storyboard.scheme_vivid": "Vif",
+    "storyboard.scheme_night": "Nuit",
+    "storyboard.scheme_mono": "Monochrome",
+    "storyboard.scheme_set": "Thème : {name}",
+    "storyboard.no_schemes": "Aucun thème disponible",
+    "tts.no_voice_silent": "🔇 Pas de voix {lang} installée — la synthèse vocale est désactivée pour cette langue (une voix anglaise lisant {lang} pourrait induire en erreur).",
+    "tts.pill_no_voice": "pas de voix",
+    "tts.no_voice_hint": "Aucune voix {lang} n'est installée sur cet appareil, donc la synthèse vocale est désactivée. Installez une voix {lang} dans les paramètres de votre système pour l'activer."
   },
   "tr": {
     "static.pill.tosubmit": "gönderebilme",
@@ -2293,7 +2326,18 @@
     "qc.none_selected": "Hiçbir düzeltme seçilmedi — en az birini seçin veya Reddet",
     "qc.summary_btn": "QC modeli ile özet düzeltme",
     "qc.summary_accepted": "Özet düzeltmeleri uygulandı",
-    "models.pill_hint": "Modelleri seçmek için tıklayın"
+    "models.pill_hint": "Modelleri seçmek için tıklayın",
+    "storyboard.scheme": "🎨 Renk şeması",
+    "storyboard.scheme_classic": "Klasik",
+    "storyboard.scheme_pastel": "Pastel",
+    "storyboard.scheme_vivid": "Canlı",
+    "storyboard.scheme_night": "Gece",
+    "storyboard.scheme_mono": "Tek renk",
+    "storyboard.scheme_set": "Renk şeması: {name}",
+    "storyboard.no_schemes": "Kullanılabilir renk şeması yok",
+    "tts.no_voice_silent": "🔇 {lang} sesi yüklü değil — bu dil için konuşma kapalı (İngilizce sesli {lang} okumak yanıltıcı olabilir).",
+    "tts.pill_no_voice": "ses yok",
+    "tts.no_voice_hint": "Bu cihazda {lang} sesi yüklü değil, bu yüzden sesli okuma devre dışı. Sesli okumayı etkinleştirmek için sistem ayarlarınızdan bir {lang} sesi yükleyin."
   },
   "hi": {
     "static.pill.tosubmit": "पेश करने के लिए",
@@ -3207,7 +3251,18 @@
     "qc.none_selected": "Keine Korrekturen ausgewählt — mindestens eine auswählen oder Verwerfen",
     "qc.summary_btn": "Zusammenfassung mit QC-Modell prüfen",
     "qc.summary_accepted": "Zusammenfassungskorrekturen angewendet",
-    "models.pill_hint": "Klicken, um Modelle auszuwählen"
+    "models.pill_hint": "Klicken, um Modelle auszuwählen",
+    "storyboard.scheme": "🎨 Farbschema",
+    "storyboard.scheme_classic": "Klassisch",
+    "storyboard.scheme_pastel": "Pastell",
+    "storyboard.scheme_vivid": "Leuchtend",
+    "storyboard.scheme_night": "Dunkel",
+    "storyboard.scheme_mono": "Monochrom",
+    "storyboard.scheme_set": "Farbschema: {name}",
+    "storyboard.no_schemes": "Keine Farbschemata verfügbar",
+    "tts.no_voice_silent": "🔇 Keine {lang}-Sprachausgabe installiert – die Sprachausgabe ist für diese Sprache deaktiviert (eine englische Stimme, die {lang} vorliest, wäre irreführend).",
+    "tts.pill_no_voice": "keine Stimme",
+    "tts.no_voice_hint": "Auf diesem Gerät ist keine {lang}-Sprache installiert, daher ist die Sprachausgabe deaktiviert. Installieren Sie eine {lang}-Sprache in Ihren Systemeinstellungen, um sie zu aktivieren."
   },
   "ar": {
     "static.pill.tosubmit": "لتقديم",
@@ -3664,7 +3719,18 @@
     "qc.none_selected": "لم يتم تحديد أي تصحيحات — حدد واحدًا على الأقل، أو تجاهل",
     "qc.summary_btn": "مراجعة ملخص باستخدام نموذج QC",
     "qc.summary_accepted": "تم تطبيق تصحيحات الملخص",
-    "models.pill_hint": "انقر لاختيار النماذج"
+    "models.pill_hint": "انقر لاختيار النماذج",
+    "storyboard.scheme": "🎨 نظام الألوان",
+    "storyboard.scheme_classic": "كلاسيكي",
+    "storyboard.scheme_pastel": "باستيل",
+    "storyboard.scheme_vivid": "زاهي",
+    "storyboard.scheme_night": "داكن",
+    "storyboard.scheme_mono": "أحادي اللون",
+    "storyboard.scheme_set": "نظام الألوان: {name}",
+    "storyboard.no_schemes": "لا توجد أنظمة ألوان متاحة",
+    "tts.no_voice_silent": "🔇 لم يتم تثبيت صوت {lang} — تعطيل الصوت لهذه اللغة (قراءة باللغة الإنجليزية لـ {lang} قد يكون مضللاً).",
+    "tts.pill_no_voice": "لا يوجد صوت",
+    "tts.no_voice_hint": "لا يوجد صوت {lang} مثبت على هذا الجهاز، لذا تم تعطيل ميزة التحدث. قم بتثبيت صوت {lang} في إعدادات النظام لتمكينها."
   },
   "sv": {
     "static.pill.tosubmit": "att skicka",
@@ -4121,7 +4187,18 @@
     "qc.none_selected": "Inga korrigeringar valda — markera minst en, eller Avvisa",
     "qc.summary_btn": "Granska sammanfattning med QC-modell",
     "qc.summary_accepted": "Sammanfattningskorrigeringar tillämpade",
-    "models.pill_hint": "Klicka för att välja modeller"
+    "models.pill_hint": "Klicka för att välja modeller",
+    "storyboard.scheme": "🎨 Färgtema",
+    "storyboard.scheme_classic": "Klassiskt",
+    "storyboard.scheme_pastel": "Pastell",
+    "storyboard.scheme_vivid": "Livfullt",
+    "storyboard.scheme_night": "Mörkt",
+    "storyboard.scheme_mono": "Monokromt",
+    "storyboard.scheme_set": "Färgtema: {name}",
+    "storyboard.no_schemes": "Inga färgteman tillgängliga",
+    "tts.no_voice_silent": "🔇 Ingen {lang} röst installerad — tal är avstängt för detta språk (en engelsk röst som läser {lang} skulle bara vilseleda).",
+    "tts.pill_no_voice": "ingen röst",
+    "tts.no_voice_hint": "Ingen {lang}-röst är installerad på enheten, så tal är inaktiverat. Installera en {lang}-röst i dina systeminställningar för att aktivera det."
   },
   "ru": {
     "static.pill.tosubmit": "для отправки",
@@ -4578,7 +4655,18 @@
     "qc.none_selected": "Не выбрано ни одной правки — отметьте хотя бы одну или отклоните.",
     "qc.summary_btn": "Проверить краткое содержание с помощью модели QC",
     "qc.summary_accepted": "Исправления в кратком содержании применены",
-    "models.pill_hint": "Нажмите, чтобы выбрать модели"
+    "models.pill_hint": "Нажмите, чтобы выбрать модели",
+    "storyboard.scheme": "🎨 Цветовая схема",
+    "storyboard.scheme_classic": "Классическая",
+    "storyboard.scheme_pastel": "Пастельная",
+    "storyboard.scheme_vivid": "Яркая",
+    "storyboard.scheme_night": "Ночная",
+    "storyboard.scheme_mono": "Монохромная",
+    "storyboard.scheme_set": "Цветовая схема: {name}",
+    "storyboard.no_schemes": "Нет доступных цветовых схем",
+    "tts.no_voice_silent": "🔇 Не установлен {lang} голос — озвучка отключена для этого языка (чтение {lang} на английском может ввести в заблуждение).",
+    "tts.pill_no_voice": "нет голоса",
+    "tts.no_voice_hint": "Голос на {lang} не установлен на этом устройстве, поэтому функция озвучивания отключена. Установите голос на {lang} в настройках системы, чтобы включить её."
   },
   "zh": {
     "static.pill.tosubmit": "提交",
@@ -5035,7 +5123,18 @@
     "qc.none_selected": "未选择任何修改 — 请至少选择一项，或放弃",
     "qc.summary_btn": "使用QC模型校对摘要",
     "qc.summary_accepted": "摘要修改已应用",
-    "models.pill_hint": "点击选择模型"
+    "models.pill_hint": "点击选择模型",
+    "storyboard.scheme": "🎨 颜色主题",
+    "storyboard.scheme_classic": "经典",
+    "storyboard.scheme_pastel": "柔和",
+    "storyboard.scheme_vivid": "鲜艳",
+    "storyboard.scheme_night": "夜间",
+    "storyboard.scheme_mono": "单色",
+    "storyboard.scheme_set": "颜色主题：{name}",
+    "storyboard.no_schemes": "没有可用的颜色主题",
+    "tts.no_voice_silent": "🔇 未安装 {lang} 语音 — 此语言的语音已关闭（使用英语语音朗读 {lang} 可能会造成误导）。",
+    "tts.pill_no_voice": "无语音",
+    "tts.no_voice_hint": "此设备未安装 {lang} 语音，因此语音功能已关闭。请在系统设置中安装 {lang} 语音以启用该功能。"
   },
   "ko": {
     "static.pill.tosubmit": "제출하기",
@@ -5492,7 +5591,18 @@
     "qc.none_selected": "수정 항목이 선택되지 않았습니다. 하나 이상 선택하거나, 거부",
     "qc.summary_btn": "QC 모델로 요약 교정",
     "qc.summary_accepted": "요약 교정 적용 완료",
-    "models.pill_hint": "모델 선택"
+    "models.pill_hint": "모델 선택",
+    "storyboard.scheme": "🎨 색상 테마",
+    "storyboard.scheme_classic": "기본",
+    "storyboard.scheme_pastel": "파스텔",
+    "storyboard.scheme_vivid": "생생한",
+    "storyboard.scheme_night": "야간",
+    "storyboard.scheme_mono": "흑백",
+    "storyboard.scheme_set": "색상 테마: {name}",
+    "storyboard.no_schemes": "사용 가능한 색상 테마가 없습니다",
+    "tts.no_voice_silent": "🔇 {lang} 음성 설치되지 않음 — 이 언어에 대한 음성 기능은 꺼져 있습니다 (영어로 {lang}를 읽어주는 것은 오해를 불러일으킬 수 있습니다).",
+    "tts.pill_no_voice": "음성 없음",
+    "tts.no_voice_hint": "이 기기에 {lang} 음성 파일이 설치되어 있지 않아 음성 기능이 꺼져 있습니다. 시스템 설정에서 {lang} 음성 파일을 설치하여 기능을 활성화하세요."
   },
   "it": {
     "static.pill.tosubmit": "per inviare",
@@ -6417,7 +6527,18 @@
     "qc.none_selected": "Brak zaznaczonych poprawek — zaznacz przynajmniej jedną lub Odrzuć.",
     "qc.summary_btn": "Sprawdź podsumowanie z modelem QC",
     "qc.summary_accepted": "Poprawki w podsumowaniu zastosowane",
-    "models.pill_hint": "Kliknij, aby wybrać modele"
+    "models.pill_hint": "Kliknij, aby wybrać modele",
+    "storyboard.scheme": "🎨 Schemat kolorów",
+    "storyboard.scheme_classic": "Klasyczny",
+    "storyboard.scheme_pastel": "Pudrowy",
+    "storyboard.scheme_vivid": "Żywy",
+    "storyboard.scheme_night": "Nocny",
+    "storyboard.scheme_mono": "Monochromatyczny",
+    "storyboard.scheme_set": "Schemat kolorów: {name}",
+    "storyboard.no_schemes": "Brak dostępnych schematów kolorów",
+    "tts.no_voice_silent": "🔇 Brak zainstalowanego głosu {lang} — odtwarzanie mowy wyłączone dla tego języka (angielski głos czytający {lang} byłby mylący).",
+    "tts.pill_no_voice": "brak głosu",
+    "tts.no_voice_hint": "Brak zainstalowanego głosu w języku {lang} na tym urządzeniu, więc funkcja odtwarzania mowy jest wyłączona. Zainstaluj głos w języku {lang} w ustawieniach systemu, aby ją włączyć."
   },
   "es": {
     "static.pill.tosubmit": "para enviar",
@@ -6874,7 +6995,18 @@
     "qc.none_selected": "No se seleccionaron correcciones — marca al menos una, o Descartar",
     "qc.summary_btn": "Revisar resumen con modelo de QC",
     "qc.summary_accepted": "Correcciones del resumen aplicadas",
-    "models.pill_hint": "Toca para elegir modelos"
+    "models.pill_hint": "Toca para elegir modelos",
+    "storyboard.scheme": "🎨 Esquema de color",
+    "storyboard.scheme_classic": "Clásico",
+    "storyboard.scheme_pastel": "Pastel",
+    "storyboard.scheme_vivid": "Vibrante",
+    "storyboard.scheme_night": "Oscuro",
+    "storyboard.scheme_mono": "Monocromo",
+    "storyboard.scheme_set": "Esquema de color: {name}",
+    "storyboard.no_schemes": "No hay esquemas de color disponibles",
+    "tts.no_voice_silent": "🔇 No hay voz en {lang} instalada — el habla está desactivada para este idioma (una voz en inglés leyendo {lang} sería engañoso).",
+    "tts.pill_no_voice": "sin voz",
+    "tts.no_voice_hint": "No hay voz en {lang} instalada en este dispositivo, por lo que el audio está desactivado. Instala una voz en {lang} en la configuración de tu sistema para activarla."
   },
   "ja": {
     "static.pill.tosubmit": "提出する",
@@ -7331,7 +7463,18 @@
     "qc.none_selected": "修正候補が選択されていません。少なくとも1つ選択するか、却下してください。",
     "qc.summary_btn": "QCモデルによる要約の添削",
     "qc.summary_accepted": "要約の修正を適用",
-    "models.pill_hint": "モデルを選択するにはクリック"
+    "models.pill_hint": "モデルを選択するにはクリック",
+    "storyboard.scheme": "🎨 色の設定",
+    "storyboard.scheme_classic": "標準",
+    "storyboard.scheme_pastel": "パステル",
+    "storyboard.scheme_vivid": "鮮やか",
+    "storyboard.scheme_night": "夜",
+    "storyboard.scheme_mono": "モノクロ",
+    "storyboard.scheme_set": "色設定: {name}",
+    "storyboard.no_schemes": "利用可能な色設定がありません",
+    "tts.no_voice_silent": "🔇 {lang} の音声がインストールされていません — この言語での音声はオフです (英語で {lang} を読むと誤解を招く可能性があります)。",
+    "tts.pill_no_voice": "音声なし",
+    "tts.no_voice_hint": "このデバイスに{lang}の音声がインストールされていません。システム設定で{lang}の音声をインストールすると、音声機能が利用できます。"
   },
   "he": {
     "static.pill.tosubmit": "לשלוח",
