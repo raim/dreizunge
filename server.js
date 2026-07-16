@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v55_m';
+const APP_VERSION  = 'v55_p';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -1138,6 +1138,33 @@ async function generateStoryQc(story, lang) {
   meta.changedRatio = c.changedRatio;
   meta.wordEditRatio = c.wordEditRatio;
   return { corrected, story, verdict: c.verdict, rejected: c.rejected,
+    changedSentences: c.changedSentences, totalSentences: c.totalSentences,
+    changedRatio: c.changedRatio, wordEditRatio: c.wordEditRatio, meta };
+}
+
+// Summary QC (v55_n): the storyline-summary counterpart of generateStoryQc. Same proofread prompt,
+// same classifier/guard (clean/corrected/rewrite/corrupt), same proposal shape — but there is NO
+// ai_error_hunt (a summary isn't drill text), so acceptance simply writes sl.summary. The summary is
+// in the SOURCE language, so QC runs in srcLang. think:false (v55_c).
+async function generateSummaryQc(summary, srcLang) {
+  if (!summary || !summary.trim()) throw new Error('QC: empty summary');
+  const L = langName(srcLang || 'en');
+  const _t0 = Date.now();
+  console.log(`\n── Summary QC ───────────────────────────────────────`);
+  console.log(`  Lang: ${L}, Model: ${OLLAMA_QC_MODEL}, ${summary.length} chars`);
+  const sys = fillPrompt(PROMPTS.storyQc.system, { L });  // same proofreading prompt (text-agnostic)
+  const { text, promptTokens, completionTokens } = await callLLMQC(sys, summary,
+    Math.min(2048, Math.ceil(summary.length * 1.3)), { think: false });
+  const corrected = stripRaw(text).trim();
+  console.log(`  Response : after ${((Date.now() - _t0) / 1000).toFixed(0)}s (${completionTokens || '?'} tok)`);
+  if (!corrected) throw new Error('QC: model returned empty correction');
+  const c = classifyStoryQc(summary, corrected);
+  console.log(`  Verdict  : ${c.verdict} (${c.changedSentences}/${c.totalSentences} sentences, wordΔ ${c.wordEditRatio})`);
+  console.log('────────────────────────────────────────────────────\n');
+  const meta = buildGenMeta({ type: 'summary_qc', model: OLLAMA_QC_MODEL, t0: _t0,
+    valid: c.rejected ? 0 : 1, promptTokens, completionTokens });
+  meta.verdict = c.verdict; meta.changedRatio = c.changedRatio; meta.wordEditRatio = c.wordEditRatio;
+  return { corrected, summary, verdict: c.verdict, rejected: c.rejected,
     changedSentences: c.changedSentences, totalSentences: c.totalSentences,
     changedRatio: c.changedRatio, wordEditRatio: c.wordEditRatio, meta };
 }
@@ -4734,6 +4761,88 @@ http.createServer(async (req, res) => {
       const t = topicId ? findSavedById(topicId) : null;
       if (!t) return json(res, 404, { error: 'Topic not found' });
       if (t.storyQcProposal) { delete t.storyQcProposal; saveStore(store); }
+      return json(res, 200, { ok: true });
+    }
+
+    // ── Summary QC (v55_n) — the storyline-summary counterpart of story QC ───────
+    // Propose a corrected summary. Never touches sl.summary — stores sl.summaryQcProposal.
+    if (M === 'POST' && url.pathname === '/api/summary-qc') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { slId, srcLang } = body;
+      const sl = slId ? findStoryline(slId) : null;
+      if (!sl) return json(res, 404, { error: 'Storyline not found' });
+      if (!sl.summary || !sl.summary.trim()) return json(res, 400, { error: 'Storyline has no summary to QC' });
+      const _t0 = Date.now();
+      try {
+        const r = await generateSummaryQc(sl.summary, srcLang || sl.srcLang || 'en');
+        sl.summaryQcProposal = { corrected: r.corrected, against: sl.summary, verdict: r.verdict,
+          rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+          changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio, meta: r.meta, at: new Date().toISOString() };
+        upsertStoryline(sl);
+        return json(res, 200, { corrected: r.corrected, original: sl.summary, verdict: r.verdict,
+          rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
+          changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio });
+      } catch(e) {
+        console.error(`  ✗ Summary QC FAILED after ${((Date.now() - _t0) / 1000).toFixed(0)}s: ${e.message}`);
+        return json(res, 500, { error: e.message });
+      }
+    }
+
+    // Accept a summary QC proposal (optionally a per-sentence subset). No error-hunt — a summary
+    // isn't drill text; acceptance simply writes sl.summary. Reuses the story-QC reconstruction
+    // (revert unselected changed pairs in the corrected text; spacing-safe).
+    if (M === 'POST' && url.pathname === '/api/summary-qc/accept') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { slId, selected } = body;
+      const sl = slId ? findStoryline(slId) : null;
+      if (!sl) return json(res, 404, { error: 'Storyline not found' });
+      const prop = sl.summaryQcProposal;
+      if (!prop || !prop.corrected) return json(res, 400, { error: 'No summary QC proposal to accept' });
+      if (prop.rejected) return json(res, 409, { error: 'Proposal was flagged as a rewrite; not acceptable' });
+      if (prop.against !== undefined && prop.against !== sl.summary) {
+        delete sl.summaryQcProposal; upsertStoryline(sl);
+        return json(res, 409, { error: 'Summary changed since this proposal was generated; discarded. Re-run QC.' });
+      }
+      let acceptedText = prop.corrected;
+      let acceptedCount = null;
+      if (Array.isArray(selected)) {
+        const changed = storyDiffSentences(prop.against, prop.corrected);
+        const sel = new Set(selected.map(Number));
+        acceptedCount = 0;
+        changed.forEach((pair, idx) => {
+          if (sel.has(idx)) { acceptedCount++; return; }
+          if (pair.corrected && pair.ai != null) {
+            const at = acceptedText.indexOf(pair.corrected);
+            if (at >= 0) acceptedText = acceptedText.slice(0, at) + pair.ai + acceptedText.slice(at + pair.corrected.length);
+          }
+        });
+        if (acceptedCount === 0) {
+          delete sl.summaryQcProposal; upsertStoryline(sl);
+          return json(res, 200, { ok: true, summary: sl.summary, acceptedCount: 0 });
+        }
+      }
+      sl.summary = acceptedText;
+      sl.summaryQcBy = (prop.meta && prop.meta.model) || OLLAMA_QC_MODEL;
+      sl.summaryQcAt = new Date().toISOString();
+      delete sl.summaryQcProposal;
+      upsertStoryline(sl);
+      console.log(`  ✓ Summary QC accepted for storyline ${slId}${acceptedCount != null ? ` (${acceptedCount} fixes)` : ''}`);
+      return json(res, 200, { ok: true, summary: sl.summary, acceptedCount });
+    }
+
+    if (M === 'POST' && url.pathname === '/api/summary-qc/discard') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { slId } = body;
+      const sl = slId ? findStoryline(slId) : null;
+      if (!sl) return json(res, 404, { error: 'Storyline not found' });
+      if (sl.summaryQcProposal) { delete sl.summaryQcProposal; upsertStoryline(sl); }
       return json(res, 200, { ok: true });
     }
 

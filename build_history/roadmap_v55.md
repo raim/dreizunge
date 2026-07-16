@@ -37,7 +37,10 @@ panels, first attempt). **All functions (v55–v55_e) verified in a live browser
   strip ABOVE the summary in BOTH the storyline screen and the landing card, friendly
   `storyboard.empty` toast on the <2-valid-panels outcome. `escAttr` (not `escHtml`) on the
   aria-labels — the suite's attr-escaping guard caught that live.
-- **Static build:** storylines are baked whole, so `sl.storyboard` rides automatically;
+- **Static build:** storylines are baked whole, so `sl.storyboard` rides automatically — but the
+  landing-card RENDER is duplicated (index.html + build-static.js each inject their own
+  loadSavedList), so v55_p had to add the strip to the static one too; guarded by
+  unit-static-landing-parity (functional: builds a real bundle from a fixture). Display-only;
   display-only in static (no button — `canGenerate` false), renders offline. A hostile caption
   cannot smuggle `</script>` into the inline bake (escaped server-side before storage; probed).
 - Tests: `unit-storyboard` (whitelist/clamp/escape mutation-tested, panel floor, stamp, route,
@@ -86,7 +89,7 @@ pass debt grows by **3 en-only keys**: `storyboard.gen`, `storyboard.title`, `st
    romanizations afterward.
 3. ~~**QC for generated texts (stories, summaries)**~~ — ✅ story QC SHIPPED v55_g (proposal +
    guard + auto ai_error_hunt); the summaries half remains open (see the OPEN section below).
-4. **Collapsible model selection on the home page** — see the OPEN section below.
+4. ~~**Collapsible model selection**~~ — ✅ SHIPPED v55_o (pickers → popover under the backend pill; guarded by unit-model-popover; LIVE-TEST §83).
 
 ## ✅ Script lessons in BOTH directions (SHIPPED in v53)
 User-reported: "arabic->english focusses on the arabic script, but doesn't have exercises for the
@@ -296,7 +299,7 @@ Run as: `node backfill-provenance.js --assume qwen2.5:7b --resolve translategemm
 Guarded by `unit-story-stamp` (corpus invariants: sentinel ↔ `userStory` both ways, every model tagged,
 `'(unknown)'` only where the record is silent, `models` backfilled only for single-model labels).
 
-## OPEN — collapsible model selection on the home page (user, UI)
+## ✅ SHIPPED v55_o — collapsible model selection on the home page
 Live mode shows the model pickers inline on the home page. Make them collapse into the **Backend status
 pill** (click → popover). Client-only (`index.html`), no server change. Browser-only verification, so it
 needs a LIVE-TEST section and there is little the headless suite can assert beyond "the pill exists and
@@ -311,9 +314,7 @@ prompt) returns a correction PROPOSAL (`topic.storyQcProposal`, never overwrites
 set from the spike: corrected band ≤0.21/0.033, the one rewrite 0.938/0.844). Accept applies the
 correction, pins `aiStory` to the original, stamps `storyQcBy`/`storyQcAt`, and rebuilds the
 ai_error_hunt from the real diff. Routes `/api/story-qc` (+`/accept`, `/discard`); guarded by
-`unit-qc-correct` (+ an llm.js import-completeness guard, v55_h); LIVE-TEST §80. **Bulk story QC SHIPPED v55_k** — the storyline 🔍 sweep proofreads each chapter's story too, accumulating one proposal per chapter (green 📝 badge; reviewed per story screen; skip-stamped; staleness-guarded; NOT in the auto post-book pass); LIVE-TEST §81. **STILL OPEN: the SUMMARIES half** — a parallel route over
-`sl.summary` (`generateStorylineSummary`) would reuse `classifyStoryQc` + the same proposal/accept
-shape, minus the ai_error_hunt (summaries aren't story text learners drill). Original spec (kept):
+`unit-qc-correct` (+ an llm.js import-completeness guard, v55_h); LIVE-TEST §80. **Bulk story QC SHIPPED v55_k** — the storyline 🔍 sweep proofreads each chapter's story too, accumulating one proposal per chapter (green 📝 badge; reviewed per story screen; skip-stamped; staleness-guarded; NOT in the auto post-book pass); LIVE-TEST §81. **SUMMARY QC SHIPPED v55_n** — 🔍 on the storyline summary; reuses classifyStoryQc + the shared renderer/reconstruction, no error-hunt; routes `/api/summary-qc` (+/accept, /discard); LIVE-TEST §82. **The QC arc is COMPLETE** (story + bulk + per-sentence + summary; one classifier, one renderer, one reconstruction). Original spec (kept):
 A second model reviews a generated story/summary and returns a **corrected** text the user can accept as the
 new default; the diff then seeds an **error-hunt** lesson automatically — the same lesson type, but with the
 errors made by a model rather than a human. This is a genuinely good fit: the QC role model already exists

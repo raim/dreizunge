@@ -1622,60 +1622,93 @@ and can run ~30 min on qwen3.6:35b-a3b (spike-measured 2.2 tok/s) — the ⏳ ju
 - [x] Static build (docs/): no 🎬 button at all (canGenerate false) — baked storyboards are
       read-only there; deletion is a server-build action. (Expected, not a bug.)
 
-### 80. v55_g — QC for generated texts (🔍 proofread → correction proposal + auto error-hunt)
+### 80. ✅ VERIFIED 2026-07-14 — v55_g QC for generated texts (🔍 proofread → correction proposal + auto error-hunt)
 Server proofreads a story with the QC model; the correction is a PROPOSAL (never auto-applied).
 Accepting it updates the story AND rebuilds the ai_error_hunt from the original↔corrected diff.
-- [ ] Open a topic with a story (server build) → 🔍 appears next to the ✏️ edit toggle. Static
+- [x] Open a topic with a story (server build) → 🔍 appears next to the ✏️ edit toggle. Static
       build (docs/): no 🔍 (canGenerate false).
-- [ ] Click 🔍 → ⏳ while the QC model runs (server console prints `── Story QC ──` with the QC
+- [x] Click 🔍 → ⏳ while the QC model runs (server console prints `── Story QC ──` with the QC
       model + a `Verdict :` line). On return, a review panel opens under the story.
-- [ ] A story with real errors → verdict 'corrected': panel shows a word-level diff (red del /
+- [x] A story with real errors → verdict 'corrected': panel shows a word-level diff (red del /
       green ins) with Accept / Discard. A clean story → "no errors found", no accept button.
-- [ ] Accept → story updates in place; toast; an 🔎 AI Error Hunt lesson appears/updates in the
+- [x] Accept → story updates in place; toast; an 🔎 AI Error Hunt lesson appears/updates in the
       lesson path built from exactly the corrections; reload shows the new story persisted and
       `storyQcBy`/`storyQcAt` on the topic in lessons.json.
-- [ ] The ai_error_hunt is playable and its items ARE the QC corrections (not model-invented).
-- [ ] Discard → panel closes, story unchanged, no lesson built, proposal gone (reload confirms).
-- [ ] Proposal persists across reload if neither accepted nor discarded (re-open the story → panel
+- [x] The ai_error_hunt is playable and its items ARE the QC corrections (not model-invented).
+- [x] Discard → panel closes, story unchanged, no lesson built, proposal gone (reload confirms).
+- [x] Proposal persists across reload if neither accepted nor discarded (re-open the story → panel
       reappears).
-- [ ] REWRITE guard: QC a badly-broken story (e.g. the garbled-Luxembourgish kind) → verdict
+- [x] REWRITE guard: QC a badly-broken story (e.g. the garbled-Luxembourgish kind) → verdict
       'rewrite': panel shows an amber "rewrote rather than corrected" warning and ONLY a Discard
       button (Accept withheld). Forcing accept via API returns 409.
-- [ ] Accept works with Ollama STOPPED after the proposal exists (accept route needs no backend).
+- [x] Accept works with Ollama STOPPED after the proposal exists (accept route needs no backend).
 
 ### 80b. v55_i — QC rejects mechanically-corrupted corrections
-- [ ] If the QC model returns text with run-together words (spaces collapsed, e.g. inside quotes —
+- [x] If the QC model returns text with run-together words (spaces collapsed, e.g. inside quotes —
       a qwen2.5:7b failure mode), the review panel shows the amber "mangled the text" warning and
       ONLY a Discard button; Accept is withheld and a forced accept returns 409.
-- [ ] A legitimate correction with a normal long word is NOT flagged as corrupt.
+- [x] A legitimate correction with a normal long word is NOT flagged as corrupt.
 
 ### 80c. v55_j — QC display + immediate error-hunt
-- [ ] QC a story where a QUOTED sentence has a corrected word → the review panel shows the whole
+- [x] QC a story where a QUOTED sentence has a corrected word → the review panel shows the whole
       old sentence (red) above the whole new sentence (green), WITH spaces intact (no run-together).
-- [ ] Accept → the 🔎 AI Error Hunt appears in the lesson path IMMEDIATELY, no page reload needed.
+- [x] Accept → the 🔎 AI Error Hunt appears in the lesson path IMMEDIATELY, no page reload needed.
 
 ### 81. v55_k — bulk story QC (proposal-accumulation in the storyline sweep)
-- [ ] Storyline 🔍 sweep: server console shows a "Proofreading story: <chapter>…" step PER chapter
+- [x] Storyline 🔍 sweep: server console shows a "Proofreading story: <chapter>…" step PER chapter
       (in addition to lesson checks); the toast reports "N story proposal(s)".
-- [ ] After the sweep, the storyline 🔍 button shows a green 📝<count> for chapters with a pending
+- [x] After the sweep, the storyline 🔍 button shows a green 📝<count> for chapters with a pending
       story proposal (next to the red lesson-flag count). Per-topic 🔍 shows 📝 similarly.
-- [ ] Open a chapter that has a 📝 → its story screen auto-shows the QC review panel (accept/discard
+- [x] Open a chapter that has a 📝 → its story screen auto-shows the QC review panel (accept/discard
       as in §80). Accepting builds the ai_error_hunt (§80c) and drops that chapter's 📝.
-- [ ] Re-run the sweep → already-checked, unedited stories are SKIPPED (console "⏭ skip story …");
+- [x] Re-run the sweep → already-checked, unedited stories are SKIPPED (console "⏭ skip story …");
       only edited/new chapters are re-proofread. Force re-checks all.
-- [ ] Edit a chapter's story while a proposal is pending → the pending proposal is dropped; the next
+- [x] Edit a chapter's story while a proposal is pending → the pending proposal is dropped; the next
       sweep re-proofreads it. Accepting a now-stale proposal (story changed underneath) returns 409.
-- [ ] Book GENERATION's automatic QC does NOT run story QC (no per-chapter proofread step, no 📝
+- [x] Book GENERATION's automatic QC does NOT run story QC (no per-chapter proofread step, no 📝
       appears just from generating) — story QC is opt-in via the sweep only.
 
 ### 80d. v55_m — accept individual corrections (per-sentence checkboxes)
-- [ ] A proposal with ≥2 fixes shows a checkbox per changed sentence (all checked) + a
+- [x] A proposal with ≥2 fixes shows a checkbox per changed sentence (all checked) + a
       "select all / none" toggle.
-- [ ] Untick one fix, Accept → the story gets ONLY the ticked fixes; the unticked sentence keeps
+- [x] Untick one fix, Accept → the story gets ONLY the ticked fixes; the unticked sentence keeps
       its original wording (verify by eye); spacing intact everywhere.
-- [ ] The resulting ai_error_hunt contains only the accepted corrections.
-- [ ] Untick everything + Accept → toast "no corrections selected" (nothing applied). Or if the
+- [x] The resulting ai_error_hunt contains only the accepted corrections.
+- [x] Untick everything + Accept → toast "no corrections selected" (nothing applied). Or if the
       server sees an empty selection, it discards (proposal gone, story unchanged).
-- [ ] Accept with all ticked → identical to the old whole-text accept.
-- [ ] Especially: a proposal that includes a corrected QUOTED sentence — unticking a DIFFERENT
+- [x] Accept with all ticked → identical to the old whole-text accept.
+- [x] Especially: a proposal that includes a corrected QUOTED sentence — unticking a DIFFERENT
       fix must not disturb the quoted one, and vice-versa (index alignment).
+
+### 82. v55_n — summary QC (🔍 on the storyline summary)
+- [ ] Open a storyline WITH a summary → a 🔍 appears in the summary strip header (next to ✏️).
+      No summary, or static build → no 🔍.
+- [ ] Click 🔍 → ⏳ while the QC model runs (console `── Summary QC ──` + verdict line); a review
+      panel opens below the summary with per-sentence checkboxes (same UI as story QC §80d).
+- [ ] Accept (all or a subset) → the summary text updates in place; toast; reload shows the new
+      summary persisted on the storyline + summaryQcBy/summaryQcAt. NO ai_error_hunt is created.
+- [ ] Discard → panel closes, summary unchanged, proposal gone.
+- [ ] Clean summary → "no errors found", no accept button. Rewrite/corrupt → warning + discard only.
+- [ ] Accept works with Ollama stopped after the proposal exists (accept route needs no backend).
+
+### 83. v55_o — collapsible model selection (pickers in a pill popover)
+- [ ] Home page (Ollama up): the backend row shows ONLY the pill (+ the model summary text) —
+      the four selectors are gone from the row. The pill shows a ▾ caret and a "click to choose
+      models" tooltip.
+- [ ] Click the pill → a popover opens under it with Story / Lessons / Translation / QC selectors
+      + the timeout field, stacked vertically. Click the pill again → closes.
+- [ ] Click anywhere outside the popover → closes. Esc → closes. (Clicking INSIDE it — e.g. on a
+      select — must NOT close it.)
+- [ ] Switch a role in the popover → the toast fires, the pill label updates, and the popover
+      STAYS OPEN (you can change several roles in one visit).
+- [ ] Change the timeout in the popover → works as before (toast).
+- [ ] Narrow window (<520px): the popover is usable (fixed, spans the viewport) and doesn't
+      overflow off-screen.
+- [ ] Ollama stopped / static build (docs/): the pill renders plainly — no caret, no tooltip,
+      not clickable, no popover.
+
+### 79f. v55_p — storyboard renders in the STATIC build's landing card
+- [ ] With a storyline that has a storyboard: `node build-static.js`, open docs/index.html OFFLINE →
+      the storyline card on the main page shows the storyboard panels ABOVE the summary strip
+      (display-only; no 🎬 button, since canGenerate is false there).
+- [ ] The live app still shows it identically (no regression).

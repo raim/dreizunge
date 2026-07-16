@@ -481,3 +481,97 @@ client/server duplicated-logic parity trap this project has hit; the test is the
 **Client:** checkboxes + select all/none; Accept sends the checked indices, blocks empty selection with
 a toast, handles acceptedCount. 4 en keys (qc.accept_selected/all/none/none_selected). Suite 100 green,
 check-inline 0 both builds, APP_VERSION v55_m. LIVE-TEST §80/§81 gain a per-sentence-selection check.
+
+---
+
+# v55_n — summary QC (closes the QC arc)
+
+The last unbuilt half of the QC item: proofread a storyline SUMMARY. Simpler than story QC — no
+aiStory, no ai_error_hunt (a summary isn't drill text); acceptance just writes sl.summary.
+
+**Server:** `generateSummaryQc(summary, srcLang)` beside generateStoryQc (module scope, pre-boot) —
+reuses the storyQc proofreading prompt (text-agnostic) and `classifyStoryQc` verbatim (same
+clean/corrected/rewrite/corrupt guard), stamps `summary_qc`. Routes `/api/summary-qc` (+/accept,
+/discard) mirror the story routes: propose stores `sl.summaryQcProposal` (never sl.summary), accept
+reuses the story-QC revert-unselected reconstruction (per-sentence `selected`, spacing-safe, staleness
+409, empty→discard) and writes sl.summary + summaryQcBy/At, no error-hunt. Accept needs no backend.
+
+**Client — shared renderer (parity-trap avoidance, as promised):** factored the story-QC panel into
+`_renderQcProposalInto(prop, {panelId,cbClass,acceptCall,discardCall})` + `_qcSelectedIdx` +
+parametrized `_qcToggleAll`; story QC now delegates to it, summary QC reuses it. `_qcChangedPairs`
+(the server-aligned pairing) stays defined ONCE — no duplicate diff logic for summary. 🔍 button in
+the summary strip header (gated canEdit + summary exists); review panel #sum-qc-panel below it.
+2 en keys (qc.summary_btn, qc.summary_accepted).
+
+**Tests:** unit-qc-correct gains summary-QC coverage — shared classifier, no error-hunt, module-scope
+guard for generateSummaryQc, full route contract (propose/accept/discard, staleness, backend
+asymmetry), and asserts the client shares the renderer (_qcChangedPairs defined once). Runtime
+reconstruction spot-checked. Suite 100 green, check-inline 0 both builds, APP_VERSION v55_n.
+
+**QC ARC COMPLETE:** story QC (v55_g) + bulk story QC (v55_k) + per-sentence accept (v55_m) + summary
+QC (v55_n), all sharing one classifier + one renderer + one reconstruction. Owed: LIVE-TEST §82.
+
+---
+
+# v55_o — collapsible model selection (pickers → popover under the backend pill)
+
+The roadmap's UI item: the four inline model pickers (story/lessons/translation/qc + timeout) cluttered
+the home page's backend row. They now collapse into the **Backend status pill** — click → popover.
+Client-only (`index.html`), no server change, as specced.
+
+**Implementation:** `#bpill` + `#bmodels-pop` live in a new `.bpill-wrap` (position:relative = the
+positioning context); `#bmodels` moved INSIDE the popover; the pill gains a ▾ caret and a `clickable`
+class ONLY when Ollama is up and models are actually listed (so the static build and any /api/models
+failure leave a plain, non-clickable pill rather than a dead affordance). Popover open/close:
+`toggleModelPop`/`openModelPop`/`closeModelPop`, closing on outside-click (containment-checked against
+the wrapper) or Esc, with both listeners attached on open and removed on close. Fields stack vertically
+in the popover (`.bmodels-pop .bmodels{flex-direction:column}`); fixed-position fallback under 520px.
+
+**Two traps avoided (both from this session's lessons):**
+1. `renderModelPicker` no longer touches `box.style.display` — the POPOVER owns visibility. Otherwise a
+   re-render (e.g. after switching a role) would fight the user's open/closed state. `switchModel`
+   deliberately does NOT close the popover; asserted.
+2. `renderPill` rebuilds `pill.className`, which silently wiped the `clickable` class. It happened to
+   self-correct because every caller ran `renderModelPicker()` right after — pure call-order luck. Made
+   it explicit (carry `wasClickable` over) rather than depend on that coupling; asserted.
+
+**Tests:** `unit-model-popover` — markup nesting (#bmodels inside #bmodels-pop, both inside the wrapper),
+visibility ownership (no box.style.display in the picker), clickable-only-under-Ollama incl. the
+fetch-failure path, renderPill class preservation, listener symmetry (every add has a matching remove;
+outside-click deferred a tick so the opening click can't close it), and switchModel not closing the
+popover. The roadmap predicted "little the headless suite can assert beyond the pill exists" — in fact
+the structural contract is exactly where this project's UI bugs live, so it's worth pinning.
+1 en key (`models.pill_hint`). Suite 101 green, check-inline 0 both builds, APP_VERSION v55_o.
+Owed: LIVE-TEST §83 (the visual/interaction proof is browser-only).
+
+---
+
+# v55_p — fix: storyboard missing from the STATIC landing card (build-static parity)
+
+User: "the storyboard is shown on the main page in the saved lessons list in the live version, but
+not the static version." Correct, and a real bug.
+
+**Root cause — a DUPLICATED renderer, not a data problem.** The storyline object is baked whole
+(`cleanedStorylines = rawStorylines`), so `sl.storyboard` WAS in the static bundle all along. But the
+landing card is rendered by TWO separate implementations: `loadSavedList()` in index.html (live) and a
+static `loadSavedList()` injected by build-static.js. v55 added the storyboard strip to the live one
+only — so it rendered live and silently vanished offline. The summary strip worked in both because it
+predates the split. (v55's note "storylines are baked whole, so sl.storyboard rides automatically" was
+right about the DATA and wrong about the RENDER — the roadmap's own "server↔client parity where
+generators are duplicated" rule applies to this pair too.)
+
+**Fix:** added the storyboard strip to build-static.js's landing renderer, mirroring the live one
+(same class/id/aria, ABOVE the summary). Verified functionally: injected a storyboard into a corpus,
+rebuilt, confirmed `slsb-wrap` + the SVG appear in docs/index.html.
+
+**The real guard — `unit-static-landing-parity` (new, FUNCTIONAL not grep):** build-static.js already
+accepts in/out paths, so the test builds a REAL static bundle from a fixture corpus (2-chapter
+storyline carrying both a summary and a storyboard) into a temp dir and asserts the output actually
+renders both strips, in the right order (storyboard above summary), plus a source-level parity check
+that every landing-card hook in the live renderer exists in the static one. Verified it FAILS on the
+reverted fix ("the STATIC landing card renders the storyboard strip") and passes on the fix.
+
+This is the 4th duplicated-logic parity trap this project has hit (server/client generators, the QC
+diff pairing, the QC renderer, now the landing renderer). Pattern for whoever adds the NEXT landing-card
+feature: it must go in BOTH loadSavedList impls, and the parity test's hook list must gain its marker.
+Suite 102 green, check-inline 0 both builds, APP_VERSION v55_p. LIVE-TEST §79 gains a static check.

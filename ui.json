@@ -451,7 +451,10 @@
     "qc.accept_selected": "✓ Accept selected",
     "qc.all": "select all",
     "qc.none": "none",
-    "qc.none_selected": "No corrections selected — tick at least one, or Discard"
+    "qc.none_selected": "No corrections selected — tick at least one, or Discard",
+    "qc.summary_btn": "Proofread summary with QC model",
+    "qc.summary_accepted": "Summary corrections applied",
+    "models.pill_hint": "Click to choose models"
   },
   "nl": {
     "static.pill.tosubmit": "indienen",
@@ -5587,7 +5590,17 @@
     "dialect.review.method_direct": "generazione diretta in dialetto",
     "dialect.review.coverage": "parole del glossario utilizzate: {used} su {total}",
     "dialect.review.show_source": "▸ mostra la versione originale in tedesco standard",
-    "ex.type_translate.q_nolang": "Scrivi questa parola:"
+    "ex.type_translate.q_nolang": "Scrivi questa parola:",
+    "drill.title": "Rivedi i tuoi errori",
+    "drill.desc": "Parole sbagliate, più alcune che già conosci",
+    "drill.cta": "🎯 Rivedi i tuoi errori",
+    "drill.empty": "Niente da rivedere al momento: completa prima una lezione.",
+    "storyboard.gen": "🎬 Genera storyboard",
+    "storyboard.title": "Storyboard",
+    "storyboard.empty": "Il modello non ha generato storyboard utilizzabili: riprova.",
+    "storyboard.regenerate": "🎬 Rigenera storyboard",
+    "storyboard.delete": "🗑 Elimina storyboard",
+    "storyboard.deleted": "Storyboard eliminato"
   },
   "pl": {
     "static.pill.tosubmit": "do złożenia",

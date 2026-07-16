@@ -266,4 +266,40 @@ console.log('  qc-correct: verdicts (incl. corrupt), guard, generator + routes +
 }
 
 console.log('  qc-correct: per-sentence selection order-alignment + selective reconstruction: OK');
+
+// ── 12. Summary QC (v55_n) — reuses classifyStoryQc, no error-hunt ────────────
+const genSum = ext(server, 'generateSummaryQc');
+assert.ok(/classifyStoryQc\(summary, corrected\)/.test(genSum), 'summary QC reuses the shared classifier/guard');
+assert.ok(/callLLMQC\(sys, summary,[\s\S]{0,80}\{ think: false \}\)/.test(genSum), 'summary QC uses think:false');
+assert.ok(/PROMPTS\.storyQc\.system/.test(genSum), 'summary QC reuses the storyQc proofreading prompt');
+assert.ok(/buildGenMeta\(\{ type: 'summary_qc', model: OLLAMA_QC_MODEL/.test(genSum), 'stamped summary_qc with the QC model');
+assert.ok(!/ai_error_hunt|aiStory/.test(genSum), 'summary QC has no error-hunt (summaries are not drill text)');
+// generateSummaryQc must be module-scope (before boot) like generateStoryQc (v55_l lesson).
+{
+  const bootAt = server.indexOf('async function boot()');
+  assert.ok(server.indexOf('function generateSummaryQc(') < bootAt, 'generateSummaryQc is module scope (pre-boot)');
+}
+// Routes: propose stores sl.summaryQcProposal (never sl.summary); accept applies + reconstructs;
+// accept needs no backend; discard removes the proposal.
+const sumPropose = server.slice(server.indexOf("url.pathname === '/api/summary-qc'"), server.indexOf("url.pathname === '/api/summary-qc/accept'"));
+assert.ok(/sl\.summaryQcProposal = \{/.test(sumPropose), 'propose stores summaryQcProposal');
+assert.ok(/against: sl\.summary/.test(sumPropose), 'proposal records the summary it was diffed against');
+assert.ok(!/\bsl\.summary = /.test(sumPropose), 'propose never overwrites sl.summary');
+assert.ok(/active === 'none'/.test(sumPropose), 'propose requires an LLM backend');
+const sumAccept = server.slice(server.indexOf("url.pathname === '/api/summary-qc/accept'"), server.indexOf("url.pathname === '/api/summary-qc/discard'"));
+assert.ok(/if \(prop\.rejected\) return json\(res, 409/.test(sumAccept), 'a rejected summary proposal cannot be accepted');
+assert.ok(/prop\.against !== undefined && prop\.against !== sl\.summary/.test(sumAccept), 'accept guards staleness');
+assert.ok(/acceptedText\.indexOf\(pair\.corrected\)/.test(sumAccept), 'accept reuses the revert-unselected reconstruction (spacing-safe)');
+assert.ok(/sl\.summary = acceptedText;/.test(sumAccept), 'accept writes the (partial) correction to sl.summary');
+assert.ok(/sl\.summaryQcBy = /.test(sumAccept) && /delete sl\.summaryQcProposal;/.test(sumAccept), 'accept stamps + consumes the proposal');
+assert.ok(!/ai_error_hunt/.test(sumAccept), 'accept builds NO error-hunt for a summary');
+assert.ok(!/active === 'none'/.test(sumAccept), 'accept needs no backend (pure application)');
+
+// Client shares the renderer (no duplicate diff/reconstruction logic — parity-trap avoidance).
+assert.ok(/function _renderQcProposalInto\(prop, o\)/.test(client), 'a shared QC-proposal renderer exists');
+assert.ok(/renderStoryQcProposal[\s\S]{0,120}_renderQcProposalInto/.test(client), 'story QC delegates to the shared renderer');
+assert.ok(/_renderQcProposalInto\(APP\._slScreen\._summaryQcProp/.test(client), 'summary QC uses the shared renderer');
+assert.ok((client.match(/function _qcChangedPairs\(/g) || []).length === 1, '_qcChangedPairs defined once (not duplicated for summary)');
+
+console.log('  qc-correct: summary QC (shared classifier/renderer, no error-hunt, module-scope): OK');
 console.log('unit-qc-correct: ALL PASSED');

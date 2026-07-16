@@ -514,8 +514,17 @@ async function loadSavedList() {
       +' data-chain-id="'+chainId+'"'
       +' onclick="event.stopPropagation();shareStorylineById(this.dataset.chainId)">🔗</button>'
       +'</div>';
-    // Read summary strip if stored
+    // Storyboard (v55_p) — the storyline object is baked whole, so sl.storyboard rides along.
+    // MUST mirror index.html's loadSavedList (which renders it ABOVE the summary): this static
+    // loadSavedList is a SEPARATE implementation, so anything added to the landing card there has
+    // to be added here too or it silently vanishes offline. Display-only in static (no 🎬 button —
+    // canGenerate is false); the SVG was server-validated by composeStoryboardSVG before storage.
     const _slSumMeta2=matchSl2||slTitles[chainId]||null;
+    const _slSb2=_slSumMeta2?.storyboard||'';
+    if(_slSb2){
+      html+='<div class="storyline-storyboard" id="slsb-wrap-'+chainId+'" aria-label="'+t('storyboard.title').replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" style="padding:4px 8px;overflow-x:auto">'+_slSb2+'</div>';
+    }
+    // Read summary strip if stored
     const _slSum2=_slSumMeta2?.summary||'';
     if(_slSum2){
       html+='<div class="storyline-story" id="slsum-wrap-'+chainId+'">'
