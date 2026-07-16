@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v55_p';
+const APP_VERSION  = 'v55_s';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -1609,12 +1609,45 @@ async function generateStorylineSummary(topics, stories, vocab, srcLang) {
 // overflow). No <script>, <foreignObject>, or href can be emitted. Caps: ≤5 panels,
 // ≤25 shapes/panel; a panel with 0 valid shapes is invalid; <2 valid panels → svg:null.
 // Self-contained on purpose (helpers nested) so unit-storyboard can extract and run it pure.
-function composeStoryboardSVG(panels) {
-  const PALETTE = {
-    paper:'#faf7f0', ink:'#2b2b2b', accent:'#e07a5f', sky:'#a8dadc', water:'#457b9d',
-    leaf:'#81b29a', sun:'#f2cc8f', earth:'#8d6e63', stone:'#9e9e9e', rose:'#e5989b',
-    night:'#3d405b', white:'#ffffff', none:'none',
-  };
+// Storyboard colour schemes (v55_r). The model only ever emits palette NAMES (paper/ink/sky/…), and
+// the composer maps names → hex — so a "scheme" is just an alternative hex map for the SAME names.
+// Two consequences worth knowing: the prompt needs no change, and re-theming an existing storyboard
+// needs NO model call (re-compose the stored panels). Every scheme MUST define the same keys — the
+// key set is the model's whitelisted colour vocabulary; `none` must stay 'none' everywhere.
+const STORYBOARD_SCHEMES = {
+  classic: { paper:'#faf7f0', ink:'#2b2b2b', accent:'#e07a5f', sky:'#a8dadc', water:'#457b9d',
+             leaf:'#81b29a', sun:'#f2cc8f', earth:'#8d6e63', stone:'#9e9e9e', rose:'#e5989b',
+             night:'#3d405b', white:'#ffffff', none:'none' },
+  pastel:  { paper:'#fffdf7', ink:'#5b5b6b', accent:'#ffb5a7', sky:'#cdeffd', water:'#a8d8ea',
+             leaf:'#b8e0d2', sun:'#ffe5a0', earth:'#d4b8a0', stone:'#d8d8e0', rose:'#ffc8dd',
+             night:'#8f9bb3', white:'#ffffff', none:'none' },
+  vivid:   { paper:'#fffef2', ink:'#1d1d1d', accent:'#ff5714', sky:'#4cc9f0', water:'#0077b6',
+             leaf:'#2ec4b6', sun:'#ffd60a', earth:'#9c6644', stone:'#adb5bd', rose:'#ff477e',
+             night:'#22223b', white:'#ffffff', none:'none' },
+  // Dark scheme: `paper` is the dark ground and `ink` inverts to a light stroke so line art stays
+  // visible on it (the model still just says "ink" / "paper").
+  night:   { paper:'#1a1a24', ink:'#e8e8f0', accent:'#ff6b6b', sky:'#2d3a5c', water:'#1b263b',
+             leaf:'#2f5d50', sun:'#d4a373', earth:'#3e2f2f', stone:'#5c5c66', rose:'#a4506a',
+             night:'#0d0d14', white:'#f0f0f5', none:'none' },
+  mono:    { paper:'#f5f5f2', ink:'#1f1f1f', accent:'#6b6b6b', sky:'#dcdcdc', water:'#9a9a9a',
+             leaf:'#b0b0b0', sun:'#e6e6e6', earth:'#7a7a7a', stone:'#c4c4c4', rose:'#8a8a8a',
+             night:'#3a3a3a', white:'#ffffff', none:'none' },
+};
+const STORYBOARD_SCHEME_DEFAULT = 'classic';
+
+// `scheme` selects the palette; an unknown/absent name falls back to the default (never throws —
+// the palette is still a closed whitelist, so the security properties are unchanged).
+function composeStoryboardSVG(panels, scheme) {
+  // Own-property lookups ONLY. A plain-object map inherits from Object.prototype, so a bare
+  // `MAP[k]` treats '__proto__' / 'constructor' / 'toString' as members: `SCHEMES['__proto__']`
+  // is truthy (→ a bogus scheme passes validation and yields an all-undefined palette), and a
+  // model emitting fill:"constructor" produced fill="function Object() { [native code] }".
+  // Not escapable (no quotes in those values) but it breaks the closed-whitelist guarantee this
+  // function exists to provide, so both lookups are hasOwnProperty-guarded. (v55_r; the hole
+  // predates schemes — it was in the original palette lookup.)
+  const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+  const PALETTE = has(STORYBOARD_SCHEMES, scheme) ? STORYBOARD_SCHEMES[scheme]
+                                                  : STORYBOARD_SCHEMES[STORYBOARD_SCHEME_DEFAULT];
   const MAX_PANELS = 5, MIN_PANELS = 2, MAX_SHAPES = 25, MAX_POINTS = 60, MAX_D = 500;
   const PANEL_PX = 170, GAP = 12;
   const D_RE = /^[MmLlHhVvZzCcSsQqTtAa0-9eE .,+-]+$/;
@@ -1630,7 +1663,7 @@ function composeStoryboardSVG(panels) {
   }
   function col(v, dflt) {
     const k = String(v == null ? '' : v).trim().toLowerCase();
-    return PALETTE[k] !== undefined ? PALETTE[k] : dflt;
+    return has(PALETTE, k) ? PALETTE[k] : dflt;   // own-property only — see the `has` note above
   }
   function paintAttrs(s, dfltFill) {
     const fill   = col(s.fill, dfltFill);
@@ -1767,16 +1800,27 @@ function composeStoryboardSVG(panels) {
 // truncated tail); give the real feature headroom. timeoutMs 60min: this call runs ~30min at
 // the spike-measured 2.2 tok/s on qwen3.6:35b-a3b — it must outlive the 12-min inactivity
 // default without mutating the global request timeout.
-async function generateStorylineStoryboard(topics, stories, vocab, srcLang) {
+// Generate a 2–5 panel SVG storyboard for a storyline from its chapter texts. Same call
+// shape as generateStorylineSummary. Returns { svg, panels, meta } — callers destructure and persist
+// svg + panels + meta (panels are kept so the colour scheme can be changed later WITHOUT another
+// model call; see the /scheme route). `opts.storyStyle` is the chapters' writing style (v55_r: the
+// board should look like the story reads — "children" playful, "horror" foreboding); `opts.scheme`
+// picks the palette. Uses the STORY model. maxTokens 6000 + 60min timeout: see v55/v55_c.
+async function generateStorylineStoryboard(topics, stories, srcLang, opts) {
   srcLang = srcLang || 'en';
+  const { storyStyle = null, scheme = STORYBOARD_SCHEME_DEFAULT } = (opts || {});
   const S = langName(srcLang);
   const _t0 = Date.now();
   console.log(`\n── Storyline storyboard generation ──────────────────`);
-  console.log(`  Chapters : ${topics.length}, Lang: ${S}, Model: ${OLLAMA_MODEL}`);
+  console.log(`  Chapters : ${topics.length}, Lang: ${S}, Model: ${OLLAMA_MODEL}, style: ${storyStyle || '(default)'}, scheme: ${scheme}`);
   const chapterSummaries = topics.map((t, i) =>
     `Chapter ${i + 1}: "${t}"\n${(stories[i] || '').slice(0, 600).replace(/\n/g, ' ')}…`
   ).join('\n\n');
-  const sys  = fillPrompt(PROMPTS.storylineStoryboard.system, { S });
+  // Tone note, using the same style vocabulary the story generator uses (PROMPTS.storyStyles).
+  // 'creative' maps to null → no note, i.e. the model's default look.
+  const styleNote = getStoryStyle(storyStyle);
+  const sys  = fillPrompt(PROMPTS.storylineStoryboard.system, { S })
+             + (styleNote ? `\n\nMatch the story's tone in the artwork: ${styleNote}` : '');
   const user = fillPrompt(PROMPTS.storylineStoryboard.user, { S, chapters: topics.length, chapterSummaries });
   const result = await _callLLM(OLLAMA_MODEL, sys, user, 6000, { timeoutMs: 3600000, think: false });
   // Log arrival BEFORE parsing — a 30-min call that returns garbage must still show it returned
@@ -1791,7 +1835,7 @@ async function generateStorylineStoryboard(topics, stories, vocab, srcLang) {
     console.error(`  ✗ Storyboard: model returned non-array JSON. Raw starts: ${JSON.stringify(stripRaw(result.text).slice(0, 200))}`);
     throw new Error('Storyboard: model returned non-array JSON');
   }
-  const { svg, stats } = composeStoryboardSVG(panels);
+  const { svg, stats } = composeStoryboardSVG(panels, scheme);
   console.log(`  Panels   : ${stats.valid}/${stats.requested} valid${stats.drops.length ? ` (dropped: ${stats.drops.slice(0, 6).join('; ')})` : ''}`);
   if (!svg) throw new Error(`Storyboard: only ${stats.valid} valid panel(s) (need ≥2)`);
   console.log(`  SVG      : ${svg.length} bytes`);
@@ -1800,7 +1844,10 @@ async function generateStorylineStoryboard(topics, stories, vocab, srcLang) {
     type: 'storyline_storyboard', model: OLLAMA_MODEL, t0: _t0, valid: stats.valid,
     promptTokens: result.promptTokens, completionTokens: result.completionTokens,
   });
-  return { svg, meta };
+  meta.storyStyle = storyStyle || null;
+  // `panels` is the model's validated JSON — persisting it is what makes a scheme change free
+  // (re-compose locally instead of another multi-minute generation).
+  return { svg, panels, scheme, meta };
 }
 
 // Generate coherent per-chapter titles + emojis for a whole storyline at once,
@@ -3671,6 +3718,9 @@ http.createServer(async (req, res) => {
         ollamaLessonModel: OLLAMA_LESSON_MODEL,
         ollamaQcModel: OLLAMA_QC_MODEL,
         ollamaLessonFormat: OLLAMA_LESSON_FORMAT,
+        // v55_r: the client's colour-scheme picker reads this — the names live ONLY here, so the
+        // list can never drift out of sync with STORYBOARD_SCHEMES (no duplicated list client-side).
+        storyboardSchemes: Object.keys(STORYBOARD_SCHEMES),
         canGenerate: active !== 'none' });
     }
     // Model picker: list the models Ollama has installed, and which are active per role.
@@ -3729,6 +3779,19 @@ http.createServer(async (req, res) => {
         qcFlags: (l.lessons || []).reduce((n, L) =>
           n + [...(L.vocab||[]), ...(L.sentences||[]), ...(L.items||[]), ...(L.words||[]), ...(L.letters||[])].filter(x => x && (x.qc || x.userFlag)).length, 0),
         storyQcPending: !!l.storyQcProposal,  // a bulk (or manual) story-QC proposal awaiting review
+        // Compact generation-stats projection (v55_s). The storyline screen's stats block reads
+        // exactly these four fields; static mode had them because it ships whole topics, while live
+        // mode showed nothing because this list payload omitted generationStats entirely. Shipping
+        // the FULL object would add ~103KB (+107%) for its per-lesson token breakdown, which no
+        // list consumer reads — this projection costs ~24KB (+25%) and keeps the SAME SHAPE, so the
+        // one renderer works unchanged in both modes. (The lesson page reads the full stats from
+        // the on-demand topic fetch, not from here.)
+        generationStats: l.generationStats ? {
+          totalMs:               l.generationStats.totalMs,
+          model:                 l.generationStats.model,
+          totalPromptTokens:     l.generationStats.totalPromptTokens,
+          totalCompletionTokens: l.generationStats.totalCompletionTokens,
+        } : undefined,
       }));
       list.sort((a,b) => (b.updatedAt||'').localeCompare(a.updatedAt||''));
       return json(res, 200, list);
@@ -4597,22 +4660,32 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
-      const { slId, topics } = body;
+      const { slId, topics, scheme } = body;
       if (!slId || !Array.isArray(topics) || !topics.length)
         return json(res, 400, { error: 'Missing slId or topics' });
       const topicData = topics.map(t => findSaved(t)).filter(Boolean);
       if (!topicData.length) return json(res, 404, { error: 'No topics found' });
       const stories  = topicData.map(t => t.story || '');
       const srcLang  = topicData[0].srcLang || 'en';
-      const vocab    = topicData.flatMap(t =>
-        (t.lessons||[]).flatMap(ls => (ls.vocab||[]).map(v => v.source || v.target))
-      );
+      // v55_r: the board should match how the story READS. Chapters can carry different styles, so
+      // take the MAJORITY style across them (ties → the first chapter's). All-unstyled → null.
+      const _styleCounts = {};
+      for (const t of topicData) if (t.storyStyle) _styleCounts[t.storyStyle] = (_styleCounts[t.storyStyle] || 0) + 1;
+      const storyStyle = Object.keys(_styleCounts).sort((a, b) =>
+        (_styleCounts[b] - _styleCounts[a]) || 0)[0] || null;
       const _sbT0 = Date.now();
       try {
-        const { svg: storyboard, meta: storyboardMeta } = await generateStorylineStoryboard(topics, stories, vocab, srcLang);
+        const { svg: storyboard, panels, scheme: usedScheme, meta: storyboardMeta } =
+          await generateStorylineStoryboard(topics, stories, srcLang,
+            { storyStyle, scheme: Object.prototype.hasOwnProperty.call(STORYBOARD_SCHEMES, scheme) ? scheme : STORYBOARD_SCHEME_DEFAULT });
         const sl = findStoryline(slId);
-        if (sl) { sl.storyboard = storyboard; sl.storyboardMeta = storyboardMeta; upsertStoryline(sl); }
-        return json(res, 200, { storyboard });
+        if (sl) {
+          sl.storyboard = storyboard; sl.storyboardMeta = storyboardMeta;
+          sl.storyboardPanels = panels;      // kept so a scheme change needs no model call
+          sl.storyboardScheme = usedScheme;
+          upsertStoryline(sl);
+        }
+        return json(res, 200, { storyboard, scheme: usedScheme });
       } catch(e) {
         // v55_b: a synchronous ~30-min call MUST NOT fail silently on the server console — the
         // toast is the only other witness and the tab may be long closed. (A dead Ollama runner
@@ -4622,6 +4695,28 @@ http.createServer(async (req, res) => {
         console.error('────────────────────────────────────────────────────\n');
         return json(res, 500, { error: e.message });
       }
+    }
+
+    // Re-colour an existing storyboard (v55_r). NO model call and no backend requirement: the
+    // validated panel JSON is stored, so this just re-composes it with a different palette —
+    // instant, vs. the multi-minute generation. Storyboards made before v55_r have no stored
+    // panels; they must be regenerated once (reported explicitly rather than failing silently).
+    if (M === 'POST' && url.pathname === '/api/storyline-storyboard/scheme') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { slId, scheme } = body;
+      if (!slId) return json(res, 400, { error: 'Missing slId' });
+      if (!Object.prototype.hasOwnProperty.call(STORYBOARD_SCHEMES, scheme)) return json(res, 400, { error: 'Unknown colour scheme' });
+      const sl = findStoryline(slId);
+      if (!sl) return json(res, 404, { error: 'Storyline not found' });
+      if (!Array.isArray(sl.storyboardPanels) || !sl.storyboardPanels.length)
+        return json(res, 409, { error: 'This storyboard predates colour schemes — regenerate it to enable re-colouring.' });
+      const { svg, stats } = composeStoryboardSVG(sl.storyboardPanels, scheme);
+      if (!svg) return json(res, 500, { error: `Re-compose failed (${stats.valid} valid panels)` });
+      sl.storyboard = svg; sl.storyboardScheme = scheme; upsertStoryline(sl);
+      console.log(`  Storyboard re-coloured (${scheme}) for storyline ${slId}`);
+      return json(res, 200, { storyboard: svg, scheme });
     }
 
     // Delete a stored storyboard. No LLM, so no backend requirement (works when Ollama is
@@ -4634,7 +4729,9 @@ http.createServer(async (req, res) => {
       if (!slId) return json(res, 400, { error: 'Missing slId' });
       const sl = findStoryline(slId);
       if (sl && (sl.storyboard !== undefined || sl.storyboardMeta !== undefined)) {
-        delete sl.storyboard; delete sl.storyboardMeta; upsertStoryline(sl);
+        delete sl.storyboard; delete sl.storyboardMeta;
+        delete sl.storyboardPanels; delete sl.storyboardScheme;
+        upsertStoryline(sl);
         console.log(`  Storyboard deleted for storyline ${slId}`);
       }
       return json(res, 200, { ok: true });

@@ -22,8 +22,14 @@ function ext(src, name) {
   return src.slice(at, i);
 }
 
-// The composer is deliberately self-contained (helpers nested) so it can run pure here.
-const compose = new Function(ext(server, 'composeStoryboardSVG') + '\nreturn composeStoryboardSVG;')();
+// The composer is deliberately self-contained (helpers nested) so it can run pure here — except
+// for the v55_r colour schemes, which live at module scope (the routes and /api/info need them
+// too). Pull those consts in alongside it.
+const schemeConsts = (server.match(/const STORYBOARD_SCHEMES = \{[\s\S]*?\n\};/) || [])[0]
+  + '\n' + (server.match(/const STORYBOARD_SCHEME_DEFAULT = '[a-z]+';/) || [])[0];
+assert.ok(/STORYBOARD_SCHEMES/.test(schemeConsts) && /SCHEME_DEFAULT/.test(schemeConsts), 'scheme consts found');
+const compose = new Function(schemeConsts + '\n' + ext(server, 'composeStoryboardSVG') + '\nreturn composeStoryboardSVG;')();
+const SCHEMES = new Function(schemeConsts + '\nreturn STORYBOARD_SCHEMES;')();
 
 const goodPanel = (caption) => ({ caption, bg: 'sky', shapes: [
   { type: 'rect', x: 0, y: 60, w: 100, h: 40, fill: 'leaf' },
@@ -128,7 +134,13 @@ const gen = ext(server, 'generateStorylineStoryboard');
 assert.ok(/Chapters\s*:.*Model:\s*\$\{OLLAMA_MODEL\}/.test(gen), 'console block names the model');
 assert.ok(/buildGenMeta\(\{[\s\S]*type: 'storyline_storyboard'/.test(gen), 'stamped via buildGenMeta');
 assert.ok(/model: OLLAMA_MODEL/.test(gen), 'stamps the STORY model (not the lesson model)');
-assert.ok(/return \{ svg, meta \}/.test(gen), 'returns {svg, meta}');
+assert.ok(/return \{ svg, panels, scheme, meta \}/.test(gen), 'returns {svg, panels, scheme, meta} (panels enable free re-colouring)');
+// v55_r: the artwork should match how the story READS — the chapters' writing style is fed to the
+// prompt using the SAME vocabulary the story generator uses (PROMPTS.storyStyles via getStoryStyle).
+assert.ok(/getStoryStyle\(storyStyle\)/.test(gen), 'generator resolves the story style note');
+assert.ok(/Match the story's tone in the artwork/.test(gen), 'the style note is appended to the system prompt');
+assert.ok(/meta\.storyStyle = storyStyle \|\| null;/.test(gen), 'the stamp records which style was used');
+assert.ok(/composeStoryboardSVG\(panels, scheme\)/.test(gen), 'composes with the requested scheme');
 assert.ok(/_callLLM\(OLLAMA_MODEL, sys, user, 6000, \{ timeoutMs: 3600000, think: false \}\)/.test(gen),
   'token headroom (spike hit the 4096 cap) + per-call 60min timeout (spike ran 30min at 2.2 tok/s) + think:false (v55_c: a live run burned all 6000 tokens inside the reasoning block → empty content)');
 assert.ok(/salvageArray/.test(gen) && /extractArray/.test(gen), 'uses the llm.js JSON-salvage chain');
@@ -144,19 +156,20 @@ assert.ok(prompts.storylineStoryboard?.system && prompts.storylineStoryboard?.us
 assert.ok(/NOT raw SVG|no SVG/i.test(prompts.storylineStoryboard.system), 'prompt forbids raw SVG');
 
 // ── 7. Route: call site destructures and persists svg + stamp together ────────
-const calls = server.match(/^.*await generateStorylineStoryboard\(.*$/gm) || [];
+const calls = server.match(/await generateStorylineStoryboard\(/g) || [];
 assert.strictEqual(calls.length, 1, `exactly one call site (got ${calls.length})`);
-assert.ok(/\{ svg: storyboard, meta: storyboardMeta \}/.test(calls[0]), 'call site destructures {svg, meta}');
+assert.ok(/\{ svg: storyboard, panels, scheme: usedScheme, meta: storyboardMeta \}\s*=\s*\n?\s*await generateStorylineStoryboard\(/.test(server),
+  'call site destructures {svg, panels, scheme, meta}');
 assert.ok(/sl\.storyboard = storyboard;\s*sl\.storyboardMeta = storyboardMeta;/.test(server),
   'persists the stamp beside the storyboard');
-assert.ok(/return json\(res, 200, \{ storyboard \}\);/.test(server), 'route returns a plain string to the client');
+assert.ok(/return json\(res, 200, \{ storyboard, scheme: usedScheme \}\);/.test(server), 'route returns a plain string to the client');
 
 // ── 7b. DELETE route + client toggle-menu wiring (v55_e) ──────────────────────
 // DELETE /api/storyline-storyboard removes svg+meta, needs NO backend (you can always remove a
 // picture), and is idempotent (absent → still 200).
 assert.ok(/M === 'DELETE' && url\.pathname === '\/api\/storyline-storyboard'/.test(server), 'DELETE route exists');
 const delRoute = server.slice(server.indexOf("M === 'DELETE' && url.pathname === '/api/storyline-storyboard'"));
-assert.ok(/delete sl\.storyboard; delete sl\.storyboardMeta; upsertStoryline\(sl\)/.test(delRoute.slice(0, 700)),
+assert.ok(/delete sl\.storyboard; delete sl\.storyboardMeta;[\s\S]{0,80}upsertStoryline\(sl\)/.test(delRoute.slice(0, 800)),
   'DELETE removes both storyboard and its stamp, then persists');
 assert.ok(!/active === 'none'/.test(delRoute.slice(0, 400)), 'DELETE does NOT require an LLM backend');
 assert.ok(/return json\(res, 200, \{ ok: true \}\);/.test(delRoute.slice(0, 800)), 'DELETE is idempotent (always 200)');
@@ -188,4 +201,88 @@ assert.ok(/does not support thinking/i.test(llm) && /think: undefined/.test(llm)
   'callLLM retries without think on parameter rejection');
 
 console.log('  storyboard: composer whitelist/clamp/escape/floor + stamp + route contract: OK');
+
+// ── 9. Colour schemes (v55_r) ─────────────────────────────────────────────────
+// A scheme is an alternative hex map for the SAME palette names, so the model's colour vocabulary
+// (and thus the prompt and the whitelist guarantees) is unchanged. Every scheme must therefore
+// define exactly the same keys — a missing key would silently fall back mid-drawing.
+{
+  const names = Object.keys(SCHEMES);
+  assert.ok(names.length >= 2, 'at least two schemes exist');
+  assert.ok(names.includes('classic'), 'the default scheme exists');
+  const keyset = Object.keys(SCHEMES.classic).sort().join(',');
+  for (const n of names) {
+    assert.strictEqual(Object.keys(SCHEMES[n]).sort().join(','), keyset, `scheme '${n}' defines the same palette keys`);
+    assert.strictEqual(SCHEMES[n].none, 'none', `scheme '${n}' keeps none='none' (the no-fill sentinel)`);
+    for (const [k, v] of Object.entries(SCHEMES[n])) {
+      if (k === 'none') continue;
+      assert.ok(/^#[0-9a-f]{6}$/i.test(v), `scheme '${n}'.${k} is a plain hex colour (got ${v})`);
+    }
+  }
+
+  const panel = { caption: 'c', bg: 'sky', shapes: [
+    { type: 'rect', x: 0, y: 60, w: 100, h: 40, fill: 'leaf' },
+    { type: 'circle', cx: 80, cy: 18, r: 10, fill: 'sun' },
+  ]};
+  // Each scheme actually paints with ITS OWN hexes…
+  for (const n of names) {
+    const { svg } = compose([panel, panel], n);
+    assert.ok(svg, `scheme '${n}' composes`);
+    assert.ok(svg.includes(SCHEMES[n].sky), `scheme '${n}' uses its own sky colour`);
+    assert.ok(svg.includes(SCHEMES[n].leaf), `scheme '${n}' uses its own leaf colour`);
+  }
+  // …and an unknown/absent scheme falls back to the default rather than throwing or emitting junk.
+  // NOTE '__proto__'/'constructor' are the interesting cases: a bare MAP[k] lookup finds inherited
+  // Object.prototype members, so a bogus scheme name used to pass the route's truthiness check and
+  // produce an all-undefined palette. Own-property lookups only (v55_r).
+  for (const bogus of ['nope', '', null, undefined, '__proto__', 'constructor', 'toString', 'hasOwnProperty']) {
+    const { svg } = compose([panel, panel], bogus);
+    assert.ok(svg && svg.includes(SCHEMES.classic.sky), `unknown scheme ${JSON.stringify(bogus)} → classic fallback`);
+  }
+  // The COLOUR whitelist has the same trap: a model emitting fill:"constructor" must NOT resolve to
+  // an inherited member (it emitted fill="function Object() { [native code] }" before the fix).
+  // Every emitted fill/stroke must be a real palette hex or 'none' — nothing else, ever.
+  {
+    const hostile = { caption: 'x', bg: '__proto__', shapes: [
+      { type: 'rect', x: 1, y: 1, w: 9, h: 9, fill: 'constructor' },
+      { type: 'circle', cx: 5, cy: 5, r: 3, fill: '__proto__' },
+      { type: 'circle', cx: 9, cy: 9, r: 2, fill: 'toString', stroke: 'hasOwnProperty' },
+    ]};
+    const { svg } = compose([hostile, panel], 'classic');
+    assert.ok(svg, 'composes despite hostile colour names');
+    const allowed = new Set([...Object.values(SCHEMES.classic)]);
+    for (const m of svg.matchAll(/(?:fill|stroke)="([^"]*)"/g)) {
+      assert.ok(allowed.has(m[1]), `emitted colour must be a palette value, got: ${JSON.stringify(m[1])}`);
+    }
+    assert.ok(!/\[object Object\]|native code/.test(svg), 'no inherited Object member leaks into the SVG');
+  }
+  // Re-composing the SAME panels under two schemes differs only in colour → the panel count and
+  // structure are identical (this is what makes re-colouring safe to do without the model).
+  const a = compose([panel, panel], 'classic').svg, b = compose([panel, panel], 'night').svg;
+  assert.notStrictEqual(a, b, 'different schemes produce different SVGs');
+  assert.strictEqual((a.match(/<svg x=/g) || []).length, (b.match(/<svg x=/g) || []).length, 'same panel count across schemes');
+}
+
+// Re-colour route: no model, no backend requirement, validates the scheme, needs stored panels.
+const schemeRoute = server.slice(server.indexOf("url.pathname === '/api/storyline-storyboard/scheme'"),
+                                 server.indexOf("M === 'DELETE' && url.pathname === '/api/storyline-storyboard'"));
+assert.ok(/if \(!Object\.prototype\.hasOwnProperty\.call\(STORYBOARD_SCHEMES, scheme\)\) return json\(res, 400/.test(schemeRoute),
+  're-colour validates the scheme name with an OWN-property check (a bare lookup lets __proto__ through)');
+assert.ok(/composeStoryboardSVG\(sl\.storyboardPanels, scheme\)/.test(schemeRoute), 're-colour re-composes the STORED panels (no model call)');
+assert.ok(!/_callLLM|generateStorylineStoryboard/.test(schemeRoute), 're-colour never calls the model');
+assert.ok(!/active === 'none'/.test(schemeRoute), 're-colour needs no LLM backend');
+assert.ok(/predates colour schemes/.test(schemeRoute), 'pre-v55_r storyboards get an explicit "regenerate" message, not a silent failure');
+// Generation persists the panels + scheme; delete clears them (no orphaned panels).
+assert.ok(/sl\.storyboardPanels = panels;/.test(server) && /sl\.storyboardScheme = usedScheme;/.test(server),
+  'generate persists panels + scheme');
+assert.ok(/delete sl\.storyboardPanels; delete sl\.storyboardScheme;/.test(server), 'delete clears panels + scheme too');
+// The client must NOT hardcode the scheme list (parity): it reads /api/info.
+assert.ok(/storyboardSchemes: Object\.keys\(STORYBOARD_SCHEMES\)/.test(server), '/api/info exposes the scheme names');
+const client2 = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+assert.ok(/APP\.info && APP\.info\.storyboardSchemes/.test(client2), 'the client reads the scheme list from /api/info');
+for (const n of Object.keys(SCHEMES)) {
+  assert.ok(!new RegExp(`['"]${n}['"]\\s*,\\s*['"]`).test(client2.slice(client2.indexOf('function pickStoryboardScheme'), client2.indexOf('function pickStoryboardScheme') + 900)),
+    `the client does not hardcode scheme '${n}'`);
+}
+console.log(`  storyboard schemes: ${Object.keys(SCHEMES).join(', ')} — key parity, own colours, fallback, free re-colour: OK`);
 console.log('unit-storyboard: ALL PASSED');

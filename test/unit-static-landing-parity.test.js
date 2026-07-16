@@ -83,5 +83,35 @@ for (const hook of ['slsb-wrap-', 'slsum-wrap-']) {
 }
 
 fs.rmSync(tmp, { recursive: true, force: true });
+
+// ── 6. Live/static parity for the storyline screen's generation stats (v55_s) ──
+// The storyline screen renders per-chapter gen stats from APP.savedList entries. Static ships whole
+// topics (so it worked), but the LIVE /api/lessons list payload is a slim summary that omitted
+// generationStats — so the block silently hid itself in live mode (user-reported). The list now
+// carries a compact projection with the SAME SHAPE, so the single renderer works in both modes.
+{
+  const clientSrc = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const srv = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
+  // The renderer's fields — keep this list in step with index.html's sl-screen-stats block.
+  const NEEDED = ['totalMs', 'model', 'totalPromptTokens', 'totalCompletionTokens'];
+  const block = clientSrc.slice(clientSrc.indexOf("getElementById('sl-screen-stats')"),
+                               clientSrc.indexOf("getElementById('sl-screen-stats')") + 700);
+  for (const f of NEEDED) {
+    assert.ok(new RegExp('gs\\.' + f).test(block), `the storyline stats renderer reads gs.${f}`);
+  }
+  // …and the live list payload must provide every one of them.
+  const listProj = srv.slice(srv.indexOf('generationStats: l.generationStats ?'),
+                             srv.indexOf('generationStats: l.generationStats ?') + 420);
+  assert.ok(listProj, '/api/lessons projects generationStats');
+  for (const f of NEEDED) {
+    assert.ok(new RegExp(f + ':\\s*l\\.generationStats\\.' + f).test(listProj),
+      `/api/lessons list payload includes generationStats.${f} (live mode needs it to render stats)`);
+  }
+  // Deliberately a PROJECTION, not the whole object: the per-lesson token breakdown would roughly
+  // double the list payload and no list consumer reads it.
+  assert.ok(!/generationStats: l\.generationStats,/.test(srv), 'the list ships a projection, not the full stats object');
+}
+
 console.log('  static landing parity: storyboard + summary baked, both strips rendered, order matches: OK');
+console.log('  live/static parity: storyline gen-stats fields present in the list payload: OK');
 console.log('unit-static-landing-parity: ALL PASSED');

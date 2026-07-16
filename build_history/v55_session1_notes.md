@@ -575,3 +575,100 @@ This is the 4th duplicated-logic parity trap this project has hit (server/client
 diff pairing, the QC renderer, now the landing renderer). Pattern for whoever adds the NEXT landing-card
 feature: it must go in BOTH loadSavedList impls, and the parity test's hook list must gain its marker.
 Suite 102 green, check-inline 0 both builds, APP_VERSION v55_p. LIVE-TEST §79 gains a static check.
+
+---
+
+# v55_q — cosmetic: globe moved left of the title/tagline (was stacked above)
+
+User request. `.land-top` was `text-align:center` with the globe as a block-ish inline-block above
+`dreizunge` + the tagline. Now: `.land-top` is a centered flex ROW (`gap:14px`) holding the globe and
+a new `.land-titles` column (title over tagline, left-aligned) — the conventional logo/wordmark lockup.
+Dropped the globe's stacked `margin-bottom:8px` and added `flex:none` so it can't shrink; removed the
+tagline's vestigial `align-self:flex-end;margin-bottom:4px` (it did nothing — the old parent wasn't
+flex — but WOULD have pushed the tagline right in the new column). The spin-globe animation is
+untouched.
+
+**Parity checked first** (the v55_p lesson): `build-static.js` has NO copy of the header markup/CSS
+(0 matches) — it inherits index.html's body — so unlike the landing-card renderer there's no second
+place to update. Verified after rebuild: docs/index.html carries `land-titles` + the flex `.land-top`.
+
+**Verified visually-ish:** rendered the real extracted markup+CSS through wkhtmltoimage with debug
+backgrounds and measured the boxes: globe x175–230 (56px) LEFT of title x231–412, vertically centered
+on one row = the requested layout. (The tagline didn't paint and flex `gap` collapsed in that render —
+artifacts of wkhtmltoimage's ancient QtWebKit, not the CSS; modern browsers handle both.)
+
+No test added — pure cosmetics, single-use classes, and a regression here is instantly visible. Suite
+102 green, check-inline 0 both builds, APP_VERSION v55_q. Owed: an eyeball in the browser (LIVE §84).
+
+---
+
+# v55_r — storyboard: story style fed to the model + colour schemes (+ a whitelist hole closed)
+
+User asked two things: (1) do we send the story writing style to the storyboard model? (2) add a
+primitive colour-scheme selection.
+
+**(1) Answer: NO, we didn't — now we do.** `generateStorylineStoryboard(topics, stories, vocab,
+srcLang)` never received the style, so a "children" story and a "horror" story produced
+identically-toned art. (It also took a `vocab` arg it never used — a copy-paste from the summary
+generator; dropped.) Now the route computes the MAJORITY `storyStyle` across the storyline's chapters
+(the user's own framing: "majority of stories used children"; ties → first chapter; all-unstyled →
+null) and the generator appends a tone note built from the SAME vocabulary the story generator uses
+(`PROMPTS.storyStyles` via `getStoryStyle`, so 'creative' → null → no note). The stamp records
+`meta.storyStyle`.
+
+**(2) Colour schemes — 5: classic, pastel, vivid, night, mono.** Key insight that made this cheap:
+the model only ever emits palette NAMES, and the composer maps names → hex — so a scheme is just an
+alternative hex map for the same names. The prompt is unchanged, and **re-colouring needs no model
+call**: the validated panel JSON is now persisted (`sl.storyboardPanels` + `sl.storyboardScheme`), so
+`POST /api/storyline-storyboard/scheme` re-composes locally — instant, vs. the 4–30 min generation.
+Pre-v55_r storyboards have no stored panels and get an explicit "regenerate to enable re-colouring"
+409 rather than a silent failure. DELETE clears panels+scheme too. Client: 🎨 in the 🎬 menu →
+scheme picker; the scheme LIST comes from `/api/info` (`storyboardSchemes: Object.keys(...)`) so it
+can never drift from the server — no hardcoded list (asserted). Unlabelled schemes fall back to a
+capitalized name rather than a raw key. `night` inverts `ink` to a light stroke so line art stays
+visible on the dark ground.
+
+**Bug my own test caught, in the SECURITY BOUNDARY — prototype-chain lookups (predates v55_r).**
+`STORYBOARD_SCHEMES['__proto__']` is truthy → a bogus scheme PASSED the route's validation and
+yielded an all-undefined palette. Worse, the colour whitelist had the same hole since v55: a model
+emitting `fill:"constructor"` produced `fill="function Object() { [native code] }"`, and
+`fill:"__proto__"` → `fill="[object Object]"`. Not escapable (those values contain no quotes, so no
+XSS) but it broke the closed-whitelist guarantee the composer exists to provide. Fixed: ALL palette
+and scheme lookups are now `hasOwnProperty`-guarded, in the composer and both routes. Verified
+before/after: hostile names now resolve to the palette default. Pinned by tests over
+`__proto__`/`constructor`/`toString`/`hasOwnProperty` as both scheme names and colour names, plus an
+invariant that every emitted fill/stroke is a real palette value.
+
+Tests: unit-storyboard gains the scheme section (key parity across all 5 — a missing key would
+silently fall back mid-drawing; each scheme paints its own hexes; fallbacks; free re-colour route
+contract: no model, no backend, own-property validation; client reads the list from /api/info).
+8 en keys. Suite 102 green, check-inline 0 both builds, APP_VERSION v55_r. Owed: LIVE-TEST §85.
+
+---
+
+# v55_s — storyline generation stats now show in LIVE mode (were static-only)
+
+User: stats appear on the static storyline page but not the live one. Correct.
+
+**Root cause — a DATA gap, not a rendering one** (the opposite of v55_p, worth noting: same
+symptom shape, different half). `#sl-screen-stats` is rendered by ONE shared block in index.html
+(not gated on mode) which reads `generationStats` off the `APP.savedList` entries. Static mode sets
+`APP.savedList = STATIC_LESSONS` — whole topic objects, stats included → it rendered. Live mode
+fills savedList from `/api/lessons`, whose list payload is a deliberately slim summary (it already
+notes it "omits the full lessons[]") and which omitted `generationStats` entirely → `s.generationStats`
+undefined → zero lines → the block hid itself. So the feature looked static-only.
+
+**Fix — a compact PROJECTION, not the whole object.** The renderer reads exactly four fields
+(totalMs, model, totalPromptTokens, totalCompletionTokens). Measured against the real corpus:
+shipping the full `generationStats` would add ~103KB to the 94KB list payload (+107%) — almost all of
+it the per-lesson token breakdown, which no list consumer reads; the four-field projection adds ~24KB
+(+25%). It keeps the SAME SHAPE, so the single renderer works unchanged in both modes and the lesson
+page (which reads full stats from the on-demand topic fetch) is untouched. Topics without stats stay
+absent (JSON.stringify drops undefined).
+
+**Guard:** `unit-static-landing-parity` gains a live/static stats-parity block — it reads the fields
+the renderer actually uses out of index.html and asserts the list payload provides every one, plus
+that the payload ships a projection rather than the full object. Verified it FAILS with the
+projection removed ("/api/lessons projects generationStats") and passes with it.
+
+Suite 102 green, check-inline 0 both builds, APP_VERSION v55_s. Owed: LIVE-TEST §86.

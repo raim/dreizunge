@@ -25,8 +25,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* ══ LANDING ═════════════════════════════════════════════════════════ */
 #landing{background:linear-gradient(160deg,#e8f4ff 0%,#f0ffe8 100%);padding:32px 20px 48px}
 .landing-inner{max-width:540px;width:100%}
-.land-top{text-align:center;margin-bottom:24px}
-.flag{font-size:56px;display:block;animation:spin-globe 4s linear infinite;margin-bottom:8px;display:inline-block}
+.land-top{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:24px}
+.land-titles{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.flag{font-size:56px;display:inline-block;flex:none;animation:spin-globe 4s linear infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 @keyframes spin-globe{0%{transform:translateY(0) rotateY(0deg)}25%{transform:translateY(-4px) rotateY(90deg)}50%{transform:translateY(-7px) rotateY(180deg)}75%{transform:translateY(-4px) rotateY(270deg)}100%{transform:translateY(0) rotateY(360deg)}}
 .app-name{font-size:34px;font-weight:900;color:var(--green);letter-spacing:-1px;margin-bottom:4px}
@@ -524,10 +525,13 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <div class="landing-inner">
   <div class="land-top">
     <span class="flag">🌍</span>
-    <div class="app-name">dreizunge</div>
-    <!-- Tagline (localized via app.motto); the running version stays reachable as its
-         tooltip — the visible version display was retired in v49. -->
-    <span id="app-tagline" style="font-size:13px;font-weight:800;color:var(--gray-dark);opacity:.7;align-self:flex-end;margin-bottom:4px">we are the world</span>
+    <!-- v55_q: globe sits to the LEFT of a title/tagline column (was stacked above, centered). -->
+    <div class="land-titles">
+      <div class="app-name">dreizunge</div>
+      <!-- Tagline (localized via app.motto); the running version stays reachable as its
+           tooltip — the visible version display was retired in v49. -->
+      <span id="app-tagline" style="font-size:13px;font-weight:800;color:var(--gray-dark);opacity:.7">we are the world</span>
+    </div>
   </div>
 
   <div class="backend-row">
@@ -6162,12 +6166,56 @@ async function onStorylineStoryboardBtn() {
   const choice = await showChoiceDialog({
     title: t('storyboard.title'),
     choices: [
-      { value: 'regen',  label: t('storyboard.regenerate'), primary: true },
+      { value: 'scheme', label: t('storyboard.scheme'), primary: true },
+      { value: 'regen',  label: t('storyboard.regenerate') },
       { value: 'delete', label: t('storyboard.delete') },
     ],
   });
-  if (choice === 'regen')  await genStorylineStoryboard();
+  if (choice === 'scheme') await pickStoryboardScheme();
+  else if (choice === 'regen')  await genStorylineStoryboard();
   else if (choice === 'delete') await deleteStorylineStoryboard();
+}
+
+// Scheme names come from the server (APP.info.storyboardSchemes) — the list is NEVER duplicated
+// here, so it can't drift from STORYBOARD_SCHEMES. A scheme with no ui.json label falls back to its
+// capitalized name rather than rendering the raw key.
+function _sbSchemeLabel(name) {
+  const k = 'storyboard.scheme_' + name;
+  const s = t(k);
+  return s === k ? (name.charAt(0).toUpperCase() + name.slice(1)) : s;
+}
+
+async function pickStoryboardScheme() {
+  const sl = APP._slScreen;
+  if (!sl) return;
+  const schemes = (APP.info && APP.info.storyboardSchemes) || [];
+  if (!schemes.length) { showToast('⚠ ' + t('storyboard.no_schemes')); return; }
+  const cur = (Array.isArray(APP.storylines) && APP.storylines.find(s => s.id === sl.chainId)?.storyboardScheme) || '';
+  const choice = await showChoiceDialog({
+    title: t('storyboard.scheme'),
+    choices: schemes.map(n => ({ value: n, label: _sbSchemeLabel(n) + (n === cur ? ' ✓' : ''), primary: n === cur })),
+  });
+  if (!choice) return;
+  try {
+    // Free + instant: the server re-composes the STORED panels with the new palette (no model).
+    const r = await fetch('/api/storyline-storyboard/scheme', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slId: sl.chainId, scheme: choice })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Failed');
+    const chainId = sl.chainId;
+    const wrap = document.getElementById('slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_'));
+    if (wrap) { wrap.innerHTML = data.storyboard; wrap.style.display = ''; }
+    if (Array.isArray(APP.storylines)) {
+      const s = APP.storylines.find(x => x.id === chainId);
+      if (s) { s.storyboard = data.storyboard; s.storyboardScheme = data.scheme; }
+    }
+    showToast(t('storyboard.scheme_set', { name: _sbSchemeLabel(data.scheme) }));
+    loadSavedList();
+  } catch(e) {
+    showToast('⚠ ' + e.message.slice(0, 80));
+  }
 }
 
 async function deleteStorylineStoryboard() {

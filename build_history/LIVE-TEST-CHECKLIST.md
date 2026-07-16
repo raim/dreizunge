@@ -1712,3 +1712,33 @@ Accepting it updates the story AND rebuilds the ai_error_hunt from the original�
       the storyline card on the main page shows the storyboard panels ABOVE the summary strip
       (display-only; no 🎬 button, since canGenerate is false there).
 - [ ] The live app still shows it identically (no regression).
+
+### 84. v55_q — header lockup (globe left of title/tagline)
+- [ ] Main page: the rotating globe sits to the LEFT of "dreizunge" + "we are the world" (title
+      above tagline), the group centered as a whole. The globe still spins/bobs.
+- [ ] Narrow window / mobile: the lockup stays on one row and doesn't overflow or wrap oddly.
+- [ ] Static build (docs/): identical header.
+
+### 85. v55_r — storyboard style + colour schemes
+- [ ] Generate a storyboard for a storyline whose chapters use a distinctive style (e.g. "children"
+      or "horror"): the server console's generation header now prints `style: <name>`, and the art
+      should read accordingly (playful vs foreboding). A storyline with no styles prints
+      `style: (default)`.
+- [ ] 🎬 on a storyline WITH a storyboard → the menu now offers 🎨 Colour scheme (first), Regenerate,
+      Delete.
+- [ ] 🎨 → pick a scheme (Classic / Pastel / Vivid / Night / Monochrome; the current one is ticked)
+      → the panels re-colour INSTANTLY (no model call, no ⏳ — the console logs
+      "Storyboard re-coloured"). The landing card updates too.
+- [ ] Night scheme: the art stays legible on the dark ground (ink inverts to a light stroke).
+- [ ] Re-colour works with Ollama STOPPED (the route needs no backend).
+- [ ] A storyboard generated BEFORE v55_r → 🎨 reports "predates colour schemes — regenerate it";
+      after one regenerate, re-colouring works.
+- [ ] Delete a storyboard, then check lessons.json: storyboard, storyboardPanels, storyboardMeta and
+      storyboardScheme are ALL gone (no orphaned panel JSON).
+
+### 86. v55_s — storyline generation stats in LIVE mode
+- [ ] Live app → open a storyline screen: the per-chapter generation stats line(s) now appear at the
+      bottom ("<chapter>: N.Ns · <model> · N tokens"), as they always did in the static build.
+- [ ] The numbers match the static build's for the same storyline.
+- [ ] A storyline whose chapters have no generationStats (very old topics) → the stats block stays
+      hidden (no empty bar).

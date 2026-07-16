@@ -52,11 +52,97 @@
       "lang": "sw",
       "srcLang": "en",
       "createdAt": "2026-07-07T18:37:19.792Z",
-      "updatedAt": "2026-07-07T19:35:36.627Z",
+      "updatedAt": "2026-07-16T08:22:58.121Z",
       "summary": "The story explores the concept of \"Ubuntu,\" the idea that a person's humanity is realized through relationships with others. Mara contemplates this philosophy, reflecting on her father's role in the community and her own friendships. She grapples with the question of what truly defines a person, questioning whether it is solely through connection with others. Ultimately, Mara recognizes the need for continued learning and reflection to fully understand the meaning of being human.",
       "tags": [
         "needs native speaker"
-      ]
+      ],
+      "storyboard": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 376 194\" style=\"width:100%;max-width:376px;height:auto;display:block\" role=\"img\"><g><title>Questioning existence</title><rect x=\"11\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#5c5c66\" stroke-width=\"1\" rx=\"4\"/><svg x=\"12\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#2d3a5c\"/><ellipse cx=\"50\" cy=\"70\" rx=\"50\" ry=\"40\" fill=\"none\" stroke=\"#e8e8f0\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"50\" cy=\"50\" r=\"10\" fill=\"none\" stroke=\"#e8e8f0\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></g><g><title>Reflections on Ubuntu</title><rect x=\"193\" y=\"11\" width=\"172\" height=\"172\" fill=\"none\" stroke=\"#5c5c66\" stroke-width=\"1\" rx=\"4\"/><svg x=\"194\" y=\"12\" width=\"170\" height=\"170\" viewBox=\"0 0 100 100\"><rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"#3e2f2f\"/><rect x=\"10\" y=\"90\" width=\"80\" height=\"10\" fill=\"#5c5c66\"/><rect x=\"10\" y=\"70\" width=\"80\" height=\"20\" fill=\"#2f5d50\"/><circle cx=\"50\" cy=\"50\" r=\"10\" fill=\"none\" stroke=\"#e8e8f0\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><line x1=\"20\" y1=\"50\" x2=\"80\" y2=\"50\" stroke=\"#e8e8f0\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg></g></svg>",
+      "storyboardMeta": {
+        "type": "storyline_storyboard",
+        "model": "qwen2.5:7b",
+        "attempts": null,
+        "valid": 2,
+        "rejected": 0,
+        "rejectReasons": null,
+        "promptTokens": 1024,
+        "completionTokens": 338,
+        "ms": 588623,
+        "at": "2026-07-16T08:21:47.352Z",
+        "storyStyle": "philosophical"
+      },
+      "storyboardPanels": [
+        {
+          "caption": "Questioning existence",
+          "bg": "sky",
+          "shapes": [
+            {
+              "type": "ellipse",
+              "cx": 50,
+              "cy": 70,
+              "rx": 50,
+              "ry": 40,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 10,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 2
+            }
+          ]
+        },
+        {
+          "caption": "Reflections on Ubuntu",
+          "bg": "earth",
+          "shapes": [
+            {
+              "type": "rect",
+              "x": 10,
+              "y": 90,
+              "w": 80,
+              "h": 10,
+              "fill": "stone",
+              "stroke": "none",
+              "sw": 0
+            },
+            {
+              "type": "rect",
+              "x": 10,
+              "y": 70,
+              "w": 80,
+              "h": 20,
+              "fill": "leaf",
+              "stroke": "none",
+              "sw": 0
+            },
+            {
+              "type": "circle",
+              "cx": 50,
+              "cy": 50,
+              "r": 10,
+              "fill": "none",
+              "stroke": "ink",
+              "sw": 2
+            },
+            {
+              "type": "line",
+              "x1": 20,
+              "y1": 50,
+              "x2": 80,
+              "y2": 50,
+              "stroke": "ink",
+              "sw": 2
+            }
+          ]
+        }
+      ],
+      "storyboardScheme": "night"
     },
     {
       "id": "sl_1314409474",
