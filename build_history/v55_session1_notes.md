@@ -756,3 +756,91 @@ sentence) is a no-op — the revert-in-corrected-text reconstruction can't posit
 (`indexOf('')`). Sentence granularity makes this rare (the prompt forbids removing content, and a
 model that does usually trips the rewrite guard), but it IS silently wrong if it happens. Fixing it
 needs a positional reconstruction; deferred rather than bolted on.
+
+---
+
+# v55_v — user TODO triage: 3 small items shipped, the rest → roadmap_v56.md
+
+User sent a TODO list and asked which I could still do; the rest go to a new roadmap.
+
+**Shipped now (all small, all verified):**
+1. **Storyboard console names its storyline** — `Storyline: "<title>" [sl_…]` above the
+   Chapters/Model line. A sweep logged identical headers, so you couldn't tell which board was
+   running/failing. Route passes slId + the storyline's title; guarded in unit-storyboard.
+2. **Storyboard for SINGLE-chapter storylines** ("Yusuf and the Lost Cat"). The ≥2-CHAPTER gate was
+   simply wrong reasoning on my part in v55: panels are SCENES, not chapters — a one-chapter story
+   has an arc to board, and the composer's ≥2-PANEL floor was always the real constraint (a board
+   that can't reach 2 panels already fails with the storyboard.empty toast). Gate → ≥1. The v55
+   LIVE-TEST line asserting "1-chapter → no 🎬" is marked superseded rather than deleted.
+3. **Static: the "Backend: Static — built-in lessons only" row is hidden** (build-static's renderPill
+   override hides `.backend-row`). Nothing to report and nothing to click there — the model picker is
+   already suppressed. Live is untouched.
+Suite 102 green, check-inline 0 both builds, APP_VERSION v55_v. LIVE-TEST §89.
+
+**Roadmapped → `build_history/roadmap_v56.md` (new; roadmap_v55 marked SUPERSEDED/historical):**
+- Clickable storyboard panels → lesson sets (BIG). Flagged the real difficulty up front: the
+  panel↔chapter mapping when counts differ (model must emit a per-panel chapter index — untrusted,
+  so the composer must whitelist/clamp it like every other model value), locking + resume for
+  non-teacher mode, max panels 5→6, up to 12 for >10 chapters at 6 per row (which BREAKS v55_t's
+  one-row fixed canvas — that test must be reworked, not deleted), and the framed board on lesson-set
+  pages. Also noted: existing boards' stored panels lack the chapter field, so they need one
+  regenerate (mirror the v55_r 409).
+- Provenance fields: sources (URLs/DOIs) + generating user defaulting to "admin", above the gen
+  stats, plus a `by <user> · from: <source>` one-liner on the landing card and above the storyboard.
+  MERGED with the pre-existing "text provenance" OPEN section (same work; that section now points at
+  the new spec). Flagged the v55_p landing-card duplicate-renderer trap for whoever builds it.
+- Cumulative token usage (summary/title/QC/storyboard accumulate onto the story/chapter). Flagged the
+  v55_s 4-field projection as a thing that must follow any change to the totals.
+- Speech synthesis: no voice approximation → auto-mute + pill indicator. **Explicitly BLOCKED on the
+  user's updated ui.json** (they're mid-translation) — no ui keys until it arrives, per their
+  instruction.
+- More word-game lessons (crossword from lesson vocab, wordle-like) — cross-referenced from the
+  existing labyrinth section; all client-side over stored vocab, no model calls.
+- The three "where these already added?" items: CHECKED — none were in roadmap_v55, so all three are
+  recorded for the first time: (a) latin script lesson speaks both cases, one read is enough;
+  (b) ⚠ a lesson added with difficulty=3 displays as beginner ("Constanze am Meer") — likely a real
+  bug, with reproduce-first questions noted; (c) beginner mode should restrict lesson TYPES
+  (4-option only; if listening is off, nothing requiring the translation; type-what-you-hear is fine).
+
+---
+
+# v55_w — user's ui.json + lessons.json integrated; speech-synthesis item DIAGNOSED, not built
+
+**Files integrated (merged, not clobbered).**
+- **ui.json:** the user ran the TranslateGemma pass — their file is 455 keys × 30 langs, fully
+  translated, and my session's keys survived it (translated into 26 of 29 langs). Diffed before
+  touching anything: their file == mine MINUS the 8 v55_r colour-scheme keys (added after they
+  started translating), with ZERO conflicting en values and no keys of theirs I lacked. So: base =
+  THEIR translated file, then re-added only those 8 en-only keys. Result 463 en keys × 30 langs.
+  **The standing "1630 keys owed a translation pass" debt is now largely CLEARED** — only the 8
+  scheme keys (+ anything added after) are en-only.
+- **lessons.json:** installed as-is (267 topics, 74 storylines, 11 storyboards — 6 with v55_r panels,
+  5 predating them, so those 5 need one regenerate before re-colouring; 2 pending QC proposals).
+  It had NO `translationMeta` (their machine never ran the v55_f backfill), which `unit-translation-stamp`
+  asserts on every topic — so ran `backfill-provenance.js --write`: 267 stamped
+  (241 generated / 16 skipped-same-model / 8 unknown / 2 user-provided).
+
+**One test failed on the new files, and it was the TEST that was wrong.** `unit-drill` asserted the
+`drill.*` keys were **en-ONLY** "until the TranslateGemma pass" — a debt-tracking device. The user ran
+the pass, so the assertion failed ON SUCCESS. Dropped it; the durable invariant is just that the en
+source key exists. Added a note: don't re-add en-only checks for new keys — pending-translation debt
+belongs in the roadmap/notes, not in a test that goes red when the debt is paid.
+
+**Speech synthesis: DECIDED NOT to build it this session — diagnosed precisely instead.** The ui.json
+blocker is gone, so it's buildable; I stopped anyway because (a) the core UI question is genuinely
+ambiguous and (b) none of it is verifiable here (real voices are browser-only). What I found and
+recorded in roadmap_v56:
+- **The exact defect:** both speak paths end `match = named || langVoices[0] || null; if (match) {…}`.
+  With no matching voice `match` is null → `u.voice` unset but `u.lang` already set → the browser
+  silently substitutes its DEFAULT (English) voice. The missing `else` IS the bug.
+- **The voice logic is DUPLICATED** in `_speakChunks` AND `_speakChunksThen` — the 5th duplicated-logic
+  parity trap here. Factor into one resolver before fixing, or the `else` gets written twice.
+- **Async trap:** `getVoices()` is empty at first; auto-muting during that window would mute the app
+  on startup. `ttsVoiceAvailableFor` is already conservative about exactly this — reuse it.
+- **Open design question — "the pill":** in this codebase "pill" has meant the BACKEND pill (about the
+  LLM, not speech). Speech state today is 7 separate `toggleMute()` buttons; there is no speech pill.
+  Needs the user's answer: extend the existing mute buttons (auto-muted state + "no <lang> voice"
+  tooltip), or add a new speech pill? That decides small-change vs new-UI.
+
+Suite 102 green on the NEW corpus, check-inline 0 both builds, static rebuilt (now carries the real
+storyboards + full translations), APP_VERSION v55_w.

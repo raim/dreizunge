@@ -454,7 +454,15 @@
     "qc.none_selected": "No corrections selected — tick at least one, or Discard",
     "qc.summary_btn": "Proofread summary with QC model",
     "qc.summary_accepted": "Summary corrections applied",
-    "models.pill_hint": "Click to choose models"
+    "models.pill_hint": "Click to choose models",
+    "storyboard.scheme": "🎨 Colour scheme",
+    "storyboard.scheme_classic": "Classic",
+    "storyboard.scheme_pastel": "Pastel",
+    "storyboard.scheme_vivid": "Vivid",
+    "storyboard.scheme_night": "Night",
+    "storyboard.scheme_mono": "Monochrome",
+    "storyboard.scheme_set": "Colour scheme: {name}",
+    "storyboard.no_schemes": "No colour schemes available"
   },
   "nl": {
     "static.pill.tosubmit": "indienen",

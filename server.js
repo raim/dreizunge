@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v55_u';
+const APP_VERSION  = 'v55_w';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -1866,10 +1866,13 @@ function composeStoryboardSVG(panels, scheme) {
 // picks the palette. Uses the STORY model. maxTokens 6000 + 60min timeout: see v55/v55_c.
 async function generateStorylineStoryboard(topics, stories, srcLang, opts) {
   srcLang = srcLang || 'en';
-  const { storyStyle = null, scheme = STORYBOARD_SCHEME_DEFAULT } = (opts || {});
+  const { storyStyle = null, scheme = STORYBOARD_SCHEME_DEFAULT, slId = null, slTitle = null } = (opts || {});
   const S = langName(srcLang);
   const _t0 = Date.now();
   console.log(`\n── Storyline storyboard generation ──────────────────`);
+  // v55_v: name the storyline — a bulk/parallel run otherwise logs identical headers and you can't
+  // tell which board is being generated (or which one failed).
+  console.log(`  Storyline: ${slTitle ? `"${slTitle}"` : '(untitled)'}${slId ? ` [${slId}]` : ''}`);
   console.log(`  Chapters : ${topics.length}, Lang: ${S}, Model: ${OLLAMA_MODEL}, style: ${storyStyle || '(default)'}, scheme: ${scheme}`);
   const chapterSummaries = topics.map((t, i) =>
     `Chapter ${i + 1}: "${t}"\n${(stories[i] || '').slice(0, 600).replace(/\n/g, ' ')}…`
@@ -4735,7 +4738,8 @@ http.createServer(async (req, res) => {
       try {
         const { svg: storyboard, panels, scheme: usedScheme, meta: storyboardMeta } =
           await generateStorylineStoryboard(topics, stories, srcLang,
-            { storyStyle, scheme: Object.prototype.hasOwnProperty.call(STORYBOARD_SCHEMES, scheme) ? scheme : STORYBOARD_SCHEME_DEFAULT });
+            { storyStyle, scheme: Object.prototype.hasOwnProperty.call(STORYBOARD_SCHEMES, scheme) ? scheme : STORYBOARD_SCHEME_DEFAULT,
+              slId, slTitle: (findStoryline(slId) || {}).title || null });
         const sl = findStoryline(slId);
         if (sl) {
           sl.storyboard = storyboard; sl.storyboardMeta = storyboardMeta;

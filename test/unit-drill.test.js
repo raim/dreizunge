@@ -313,9 +313,12 @@ assert.ok(_recordCall < _drillCall,
 const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
 for (const k of ['drill.title', 'drill.desc', 'drill.cta', 'drill.empty']) {
   assert.ok(ui.en[k], `ui.json en has ${k}`);
-  const translated = Object.keys(ui).filter(l => l !== 'en' && ui[l][k]);
-  assert.strictEqual(translated.length, 0, `${k} is en-only until the TranslateGemma pass (found: ${translated})`);
 }
+// NOTE: this used to assert the drill keys were en-ONLY, as a reminder that they were owed a
+// TranslateGemma pass. The user ran that pass (2026-07-16) and they are now translated into 26+
+// languages, so the assertion was asserting a temporary state and has been dropped — the durable
+// invariant is just that the en source key exists. Don't re-add an en-only check for new keys:
+// pending-translation debt belongs in the roadmap/notes, not in a test that fails on success.
 
 console.log(`  drill: size=${DRILL_SIZE} floor=${DRILL_MIN}; wrong-first + padding, deterministic, refuses when unbuildable`);
 console.log('  ephemeral (no topic completion, restores on exit); re-learning decrements only inside a drill');

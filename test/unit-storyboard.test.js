@@ -140,6 +140,9 @@ const goodPanel = (caption) => ({ caption, bg: 'sky', shapes: [
 // ── 6. Generator contract: stamped with the STORY model, headroom + timeout ───
 const gen = ext(server, 'generateStorylineStoryboard');
 assert.ok(/Chapters\s*:.*Model:\s*\$\{OLLAMA_MODEL\}/.test(gen), 'console block names the model');
+// v55_v: the header must also name WHICH storyline — a sweep otherwise logs identical blocks.
+assert.ok(/Storyline: \$\{slTitle/.test(gen), 'console block names the storyline');
+assert.ok(/slId, slTitle: \(findStoryline\(slId\) \|\| \{\}\)\.title/.test(server), 'route passes the storyline id + title');
 assert.ok(/buildGenMeta\(\{[\s\S]*type: 'storyline_storyboard'/.test(gen), 'stamped via buildGenMeta');
 assert.ok(/model: OLLAMA_MODEL/.test(gen), 'stamps the STORY model (not the lesson model)');
 assert.ok(/return \{ svg, panels, scheme, meta \}/.test(gen), 'returns {svg, panels, scheme, meta} (panels enable free re-colouring)');

@@ -1564,7 +1564,8 @@ the client only injects the finished string. Uses the STORY model; the call is s
 and can run ~30 min on qwen3.6:35b-a3b (spike-measured 2.2 tok/s) — the ⏳ just waits.
 
 - [x] Open a storyline with ≥2 chapters → 🎬 appears in the title row NEXT TO 📝 (both
-      gated on canGenerate). Open a 1-chapter storyline → 🎬 does NOT appear.
+      gated on canGenerate). ~~Open a 1-chapter storyline → 🎬 does NOT appear.~~ SUPERSEDED by
+      v55_v (§89): 🎬 now appears for 1-chapter storylines too — panels are scenes, not chapters.
 - [x] Click 🎬 → button shows ⏳ disabled; server console prints
       `── Storyline storyboard generation ──` with `Model: <story model>`.
 - [x] On success: panels appear in the storyline screen ABOVE the summary section; back on
@@ -1762,3 +1763,12 @@ Accepting it updates the story AND rebuilds the ai_error_hunt from the original�
 - [ ] The header count matches the number of checkbox rows.
 - [ ] The AI error-hunt built on accept still has its usual short clause-sized items (unchanged).
 - [ ] A heavily-corrected story (fixes in most sentences) still reads as 'corrected', NOT 'rewrite'.
+
+### 89. v55_v — storyboard small fixes
+- [ ] Generate a storyboard: the server console header now names the storyline
+      (`Storyline: "<title>" [sl_...]`) above the Chapters/Model line.
+- [ ] A SINGLE-chapter storyline (e.g. "Yusuf and the Lost Cat") now offers 🎬, and generates a
+      multi-panel board from that one story's scenes. (If the model can't reach 2 panels, the
+      usual storyboard.empty toast appears — that's the real floor.)
+- [ ] Static build (docs/): the "Backend: Static — built-in lessons only" row is GONE from the
+      landing page. The live app still shows its backend row + pill normally.

@@ -5615,12 +5615,14 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   if (genBtn)    genBtn.style.display    = APP.info.canGenerate ? '' : 'none';
   const summaryBtn = document.getElementById('sl-screen-summary-btn');
   if (summaryBtn) summaryBtn.style.display = APP.info.canGenerate ? '' : 'none';
-  // Storyboard button: also requires ≥2 chapters — the generator's own floor is 2 panels,
-  // and a 1-chapter "storyline" has no arc to board (LIVE-TEST §79).
+  // Storyboard button: needs a story to board, but is NOT gated on chapter count (v55_v). Panels are
+  // SCENES, not chapters — a single-chapter storyline has an arc the model can board in 2+ panels,
+  // and the composer's own ≥2-PANEL floor is the real constraint (it rejects a board that can't
+  // reach two panels, with the storyboard.empty toast).
   const storyboardBtn = document.getElementById('sl-screen-storyboard-btn');
   if (storyboardBtn) {
     storyboardBtn.style.display =
-      (APP.info.canGenerate && (topics || []).length >= 2) ? '' : 'none';
+      (APP.info.canGenerate && (topics || []).length >= 1) ? '' : 'none';
     // Title reflects the button's dual role: generate when empty, menu when a storyboard exists.
     const _hasSb = Array.isArray(APP.storylines)
       && APP.storylines.some(s => s.id === chainId && s.storyboard);

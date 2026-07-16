@@ -268,6 +268,11 @@ function renderPill() {
   if(bmodel) bmodel.textContent = '';
   if(pill) pill.className = 'bpill none';
   if(lbl) lbl.textContent = 'Static — built-in lessons only';
+  // v55_v: hide the whole "Backend: Static — built-in lessons only" row. In the static build there
+  // is no backend to report and nothing to click (no model picker — canGenerate is false), so the
+  // row was pure noise on the landing page. The label above is kept for anything that reads it.
+  const _bRow = document.querySelector('.backend-row');
+  if (_bRow) _bRow.style.display = 'none';
   const genBtn=document.getElementById('gen-btn'); if(genBtn) genBtn.disabled = true;
   const topicInp=document.getElementById('topic-input'); if(topicInp) topicInp.disabled = true;
   // C5: replace entire generation area with static info message

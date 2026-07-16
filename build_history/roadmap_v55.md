@@ -1,4 +1,4 @@
-# Roadmap v55
+# Roadmap v55 — SUPERSEDED by roadmap_v56.md (historical)
 
 **v54 shipped.** This file supersedes `roadmap_v54.md` (now historical). It carries the session
 protocol (unchanged) and every still-open item forward. Start a fresh session by reading this file,
