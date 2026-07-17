@@ -86,6 +86,7 @@ run('unit: story provenance stamp + buildGenMeta model required (v53_d)', 'node'
 run('unit: translation provenance stamp (v55_f)', 'node', [path.join(__dirname, 'unit-translation-stamp.test.js')]);
 run('unit: QC for generated texts — correct + guard (v55_g)', 'node', [path.join(__dirname, 'unit-qc-correct.test.js')]);
 run('unit: collapsible model popover (v55_o)', 'node', [path.join(__dirname, 'unit-model-popover.test.js')]);
+run('unit: added lesson records its difficulty (v56)', 'node', [path.join(__dirname, 'unit-lesson-difficulty.test.js')]);
 run('unit: static landing parity — storyboard+summary (v55_p)', 'node', [path.join(__dirname, 'unit-static-landing-parity.test.js')]);
 run('unit: identical source/target ratio rule, corpus-calibrated (v53_g)', 'node', [path.join(__dirname, 'unit-identical-ratio.test.js')]);
 run('unit: drill lessons — review my mistakes (v54)', 'node', [path.join(__dirname, 'unit-drill.test.js')]);

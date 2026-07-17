@@ -104,12 +104,21 @@ const DE = { name: 'Anna', lang: 'de-DE', localService: true };
   assert.ok(/if \(!u\) \{[\s\S]{0,400}doAdvance/.test(adv), '_speakAndAdvance still advances when it refuses to speak');
 }
 
-// ── 7. Mute stays the user's CHOICE — the no-voice state must not flip it ─────
+// ── 7. Auto-mute on no-voice — and the refusal is what makes it SAFE ─────────
+// v55_x deliberately did NOT set APP.muted, on the theory that mute is the user's choice and
+// unmuting would resurrect the approximation. v55_z reverses that: the user asked for auto-mute
+// twice, and the objection is void because _ttsMakeUtterance REFUSES regardless of mute — so
+// unmuting cannot bring the English-reading-Swahili voice back. Mute = the visible state, the
+// refusal = the guarantee, the pill = the reason (which mute alone cannot express).
 {
   const noVoice = ext(client, '_ttsNoVoice');
-  assert.ok(!/APP\.muted\s*=/.test(noVoice), "_ttsNoVoice must NOT set APP.muted (capability != user choice)");
+  assert.ok(/APP\.muted = true;/.test(noVoice), '_ttsNoVoice auto-mutes (user asked for it)');
+  assert.ok(/updateMuteButtons\(\)/.test(noVoice), 'the mute buttons reflect the auto-mute');
   assert.ok(/APP\._ttsNoVoiceFor = ttsCode/.test(noVoice), 'it records WHICH language has no voice');
-  assert.ok(/renderTtsPill\(\)/.test(noVoice), 'it updates the speech pill');
+  assert.ok(/renderTtsPill\(\)/.test(noVoice), 'it updates the speech pill (the REASON for the silence)');
+  // The safety net: refusal must not depend on the mute state, or unmuting would approximate again.
+  const mk = ext(client, '_ttsMakeUtterance');
+  assert.ok(!/APP\.muted/.test(mk), 'the refusal is independent of mute — unmuting can never resurrect the approximation');
 }
 
 // ── 8. The pill: 3 labels, one renderer, clears again ────────────────────────
@@ -133,6 +142,30 @@ const DE = { name: 'Anna', lang: 'de-DE', localService: true };
     assert.ok(ui.en[k], `ui.json en has ${k}`);
   }
   assert.ok(!/toast\.no_voice/.test(client), "the retired 'using approximation' toast is no longer referenced");
+}
+
+// ── 10. No-voice devices must not SERVE listen exercises at all (v55_z) ──────
+// User: "I still get a 'tap to listen' question ... first swahili vocab lesson". Two gaps:
+// buildStandardExercises (the VOCAB path) had no voice check whatsoever — only the script builder
+// did — and the script builder's filter dropped listen_mcq but left listen_type behind. Both are
+// unanswerable without audio, so both must go on a device with no voice for the language.
+{
+  const std = ext(client, 'buildStandardExercises');
+  assert.ok(/ttsVoiceAvailableFor\(/.test(std), 'the VOCAB builder checks voice availability (it had NO check before)');
+  assert.ok(/e\.type !== 'listen_mcq' && e\.type !== 'listen_type'/.test(std), 'vocab: BOTH listen types are dropped');
+  // Mixed lessons POOL exercises from sibling lessons, so they need the same guard.
+  const mixed = ext(client, 'buildMixedExercises');
+  assert.ok(/ttsVoiceAvailableFor\(/.test(mixed), 'the MIXED builder checks voice availability too');
+  assert.ok(/e\.type !== 'listen_mcq' && e\.type !== 'listen_type'/.test(mixed), 'mixed: BOTH listen types are dropped');
+  const script = ext(client, 'buildIntroScriptExercises');
+  assert.ok(/!ttsVoiceAvailableFor\(lang\)\) exs = exs\.filter\(e => e\.type !== 'listen_mcq' && e\.type !== 'listen_type'\)/.test(script),
+    'script: BOTH listen types are dropped (listen_type used to survive)');
+  // The proactive check runs when the speech selectors are (re)built, and again once the browser's
+  // async voice list arrives — so the pill/auto-mute land before a play attempt, not after silence.
+  assert.ok(/refreshTtsVoiceState\(\)/.test(ext(client, '_buildGlobalTtsSelectors')),
+    'rebuilding the speech selectors re-evaluates voice availability');
+  assert.ok(/addEventListener\('voiceschanged'[\s\S]{0,90}refreshTtsVoiceState/.test(client),
+    're-checks once the async voice list arrives (the first check usually runs while it is empty)');
 }
 
 console.log('  tts: one resolver, refuses wrong-language voices, conservative while loading, pill state: OK');

@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v55_y';
+const APP_VERSION  = 'v56';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -4602,7 +4602,14 @@ http.createServer(async (req, res) => {
         // Compute next available ID (avoid clashing with existing)
         // Generate a stable string ID for the new lesson
         const newLessonId = 'ls_' + Date.now();
-        const newLesson = { ...result.lesson, id: newLessonId };
+        // v56: record the difficulty this lesson was GENERATED at. It was computed above (from the
+        // request, falling back to the topic's) and used for the prompt — but never stored, so an
+        // "advanced" lesson added to a beginner topic displayed as beginner: the lesson list renders
+        // `L.difficulty || topicDiff` (index.html:1215) and fell back. The display was always right;
+        // the data was missing. Only math/intro_script stored it (they need it at PLAY time), which
+        // is why the gap went unnoticed. `...result.lesson` first so a generator that sets its own
+        // difficulty (math, intro_script) still wins.
+        const newLesson = { difficulty: diff, ...result.lesson, id: newLessonId };
         // E0: generators stamp lesson._genMeta (model, attempts, valid, rejected,
         // rejectReasons, tokens, ms, at) so every flow carries it. Fallback only if a
         // generator somehow didn't — keep the lesson annotated regardless.

@@ -10,8 +10,22 @@ const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const ui = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ui.json'), 'utf8'));
 
 // 1) Listen exercises are dropped for dialect lessons (pool filtered before the coverage round).
-assert.ok(/_lessonIsDialect==='function' && _lessonIsDialect\(\)\) \? pool\.filter\(e => e\.type !== 'listen_mcq' && e\.type !== 'listen_type'\)/.test(html),
-  'buildStandardExercises drops listen_mcq + listen_type for dialect');
+// v55_z: this used to pin the exact ternary `(_lessonIsDialect()) ? pool.filter(...)`, which (a)
+// broke the moment the condition gained a second reason and (b) despite its name only ever matched
+// buildMixedExercises — buildStandardExercises had NO such filter, which is how a Swahili vocab
+// lesson kept serving "tap to listen". The gate is now `_noAudio` = dialect OR no-voice, in BOTH
+// builders; assert the INTENT (dialect still silences, both listen types go) not the expression.
+for (const fn of ['buildStandardExercises', 'buildMixedExercises']) {
+  const at = html.indexOf('function ' + fn + '(');
+  assert.ok(at >= 0, 'found ' + fn);
+  const b = html.indexOf('{', at); let d = 0, i = b;
+  for (; i < html.length; i++) { if (html[i] === '{') d++; else if (html[i] === '}') { d--; if (!d) { i++; break; } } }
+  const body = html.slice(at, i);
+  assert.ok(/typeof _lessonIsDialect==='function' && _lessonIsDialect\(\)/.test(body),
+    fn + ' still treats dialect content as having no voice');
+  assert.ok(/e\.type !== 'listen_mcq' && e\.type !== 'listen_type'/.test(body),
+    fn + ' drops listen_mcq + listen_type when there is no audio');
+}
 
 // 2) speak() and speakBodyText() bail out for dialect.
 function fnBody(name){

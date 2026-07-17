@@ -1789,3 +1789,9 @@ Accepting it updates the story AND rebuilds the ai_error_hunt from the original�
 - [ ] STARTUP: load the app fresh — it must NOT flash "no voice" or self-mute while the browser's
       voice list is still loading.
 - [ ] A language with only a poor/espeak voice still SPEAKS (right language beats quality).
+- [ ] v55_z — open a VOCAB lesson in a language with no voice (e.g. "Ubuntu: Reflections on Being",
+      Swahili): there are NO "tap to listen" questions at all (they're unanswerable without audio),
+      the app AUTO-MUTES (the 🔊 buttons show muted), and the 🗣 pill says why. Same for a mixed
+      review lesson and a script lesson.
+- [ ] A language WITH a voice is unaffected: listen questions appear and play normally, and the app
+      does not mute itself.

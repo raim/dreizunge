@@ -928,3 +928,73 @@ listening path (the case that actually bit).
 de-dup shipped — cf. v55_i whitespace, fixed properly only in v55_u):** enumerate by CAPABILITY, not
 by grepping the expression you already know. "Who constructs an utterance?" finds all three copies;
 "who writes `langVoices[0] || null`?" finds two.
+
+---
+
+# v55_z — "tap to listen" on a voice-less language + auto-mute (reversing my v55_x call)
+
+User: 'i still get a "tap to listen" question and sound is not muted when playing the first swahili
+vocab lesson in "Ubuntu: Reflections on Being"'. Two separate defects.
+
+**(1) Listen exercises were still SERVED on a no-voice device.** There is a `ttsVoiceAvailableFor`
+gate — but only `buildIntroScriptExercises` (script lessons) used it, and even there it dropped only
+`listen_mcq`, leaving `listen_type`. **`buildStandardExercises` — the VOCAB path the user hit — had
+no voice check at all.** So Swahili vocab lessons kept serving items that could never be heard.
+Fixed in all three builders (standard, mixed, script): drop BOTH listen types when the device has no
+voice for the target language, reusing the existing dialect-mute treatment (`_noAudio` = dialect OR
+no-voice). Guards are `typeof`-checked because the unit harnesses extract these builders and run
+them with stubs — the existing `_lessonIsDialect` guard is written that way for the same reason.
+
+**(2) Auto-mute — I reversed my v55_x design call.** v55_x deliberately did NOT set `APP.muted`,
+arguing mute is the user's choice and unmuting would resurrect the approximation. The user asked for
+auto-mute twice and reported its absence as a bug, and my objection turned out to be VOID: since
+`_ttsMakeUtterance` now refuses regardless of mute, unmuting cannot bring the English-reading-Swahili
+voice back. So `_ttsNoVoice` now sets `APP.muted` + `updateMuteButtons()`. The split that survives:
+mute = the visible state (what the user asked for), the refusal = the guarantee, the pill = the
+REASON (mute alone can't say "your device has no Swahili voice"). Also made the check PROACTIVE:
+`refreshTtsVoiceState()` runs whenever the speech selectors are (re)built and again on
+`voiceschanged` — so the mute/pill land on lesson open, not after a silent tap.
+
+**Two tests were wrong and had to be corrected (not the code):**
+- `unit-tts-no-approximation` asserted `_ttsNoVoice` must NOT set APP.muted — my own v55_x contract,
+  now inverted with the reasoning recorded inline.
+- `unit-dialect-mute` pinned the EXACT ternary `(_lessonIsDialect()) ? pool.filter(...)`. Two
+  problems: it broke as soon as the condition gained a second reason, and despite its name it only
+  ever matched buildMixedExercises — buildStandardExercises had no such filter, so the test's claim
+  ("buildStandardExercises drops listen_mcq + listen_type") was FALSE the whole time. Rewritten to
+  extract both builders and assert the INTENT. A test that pins an expression instead of a behaviour
+  can assert something that isn't true.
+
+Suite 103 green, check-inline 0 both builds, APP_VERSION v55_z. LIVE-TEST §90 extended.
+
+---
+
+# Session close (v55_z) — handoff
+
+**Shipped this session:** the SVG storyboard (spike → build → delete → tooltips → colour schemes +
+style-aware art → fixed canvas → single-chapter → named console) · the whole QC arc (story → bulk
+sweep → per-sentence accept → summary, one classifier/renderer/reconstruction) · the translation
+provenance stamp · collapsible model selection · the header lockup · speech with no approximation ·
+plus live↔static parity fixes. 24 point releases, v55 → v55_z. Suite 97 → 103.
+
+**Handoff hygiene done at close:** roadmap_v56's speech entry described the v55_x design ("mute
+deliberately untouched") which v55_z REVERSED — a fresh session reading it would have been actively
+misled, so it now documents the final shape. Added a STATE-AT-HANDOFF header (version, corpus, the
+verification debt, the two now-redundant spike scripts).
+
+**The honest lesson of this session, recorded for whoever reads next:** every single defect was found
+by the USER in live use — never by the suite. And three tests were found asserting things that were
+FALSE (`unit-dialect-mute` claimed buildStandardExercises dropped listen exercises; it never did) or
+that missed what they claimed (the hand-picked speak-path list missed the third copy). The suite is
+good at structure and bad at behaviour. Two patterns worth carrying forward:
+1. **Enumerate by CAPABILITY, not by grepping the expression you already know.** "Who constructs an
+   utterance?" finds all three speak paths; "who writes `langVoices[0] || null`?" finds two.
+2. **Assert the invariant, not the expression.** The structural guards that actually caught bugs when
+   re-tested (the utterance-count cap, the module-scope check, the llm.js import check, the
+   client/server order parity, the static landing parity) all pin a PROPERTY. The ones that failed
+   the project pinned a string.
+
+**Recommended next:** (1) the difficulty=3→beginner bug (small, real, headlessly verifiable — the
+only observed defect still open); (2) clear the LIVE-TEST backlog and cut v56; (3) THEN features —
+cumulative tokens is the most self-contained. Explicitly NOT next: clickable storyboard panels (its
+panel↔chapter mapping is unsettled, it breaks v55_t's canvas + test, and it is all browser-verified).

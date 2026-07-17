@@ -1,5 +1,17 @@
 # Roadmap v56
 
+> **STATE AT HANDOFF (2026-07-16): CUT AS `v56`; suite 104 green; check-inline 0 on both builds.**
+> The user's translated `ui.json` (30 langs) and current `lessons.json` (267 topics / 74 storylines /
+> 11 storyboards) are integrated, and `backfill-provenance.js` has been run on that corpus.
+> **⚠ The biggest debt is VERIFICATION, not features:** LIVE-TEST §§72–78 (older sessions) and
+> §79c–§90 are unrun. Every bug found this session — stripThink, the boot()-scope crash, collapsed
+> whitespace, the missing static storyboard, missing live stats, panel sizing, the comma merge, the
+> English-voice-reads-Swahili paths — was found by the USER in live use, NOT by the suite. Three
+> tests were also found asserting things that were false or that missed what they claimed to cover.
+> Recommended before new features: clear the live-test backlog, then cut v56.
+> Redundant now: `spike-storyboard.js`, `spike-qc-correct.js` (both features shipped; kept only for
+> the user's own prompt/threshold tuning — safe to delete).
+
 **v55 shipped.** This file supersedes `roadmap_v55.md` (now historical). It carries the session
 protocol (unchanged) and every still-open item forward, plus the user's TODO triage of 2026-07-14.
 Start a fresh session by reading this file, then `LIVE-TEST-CHECKLIST.md`, then the latest
@@ -75,15 +87,28 @@ LLM call ADDS to that chapter's existing totals rather than being invisible.
 - Decide explicitly whether storyline-level artefacts (summary, storyboard) accumulate onto the
   storyline, onto chapter 1, or spread across chapters — they are not per-chapter work.
 
-### 4. ~~OPEN — speech synthesis: no approximation~~ — ✅ SHIPPED v55_x
-Voice resolution is now ONE function (`_ttsPickVoice`) used by both speak paths; no matching voice →
-**refuse to speak** + the 🗣 label turns into a "no voice" pill naming the language. Mute is
-deliberately untouched (capability vs choice). Guarded by `unit-tts-no-approximation`; LIVE-TEST §90.
-**Still open here:** (a) the pill could host the tts language/voice selects the way the backend pill
-hosts the model picker (v55_o) — would declutter the footer, deliberately not bundled; (b) the retired
-`toast.no_voice` key ("⚠ No {lang} voice — using approximation") is now unused but still in ui.json,
-translated into 26 langs — delete it on the next translate pass; (c) the 3 new `tts.*` keys are
-en-only until that pass.
+### 4. ~~OPEN — speech synthesis: no approximation~~ — ✅ SHIPPED (v55_x → v55_z)
+Final shape after two live-found corrections — read this, not the v55_x description:
+- **One resolver** (`_ttsPickVoice`) used by ALL THREE speak paths. v55_x de-duplicated two and
+  MISSED a third (`_speakAndAdvance`, the listening path) because the grep looked for a remembered
+  expression rather than the capability — the user hit it immediately ("Mtu" spelled out as "M t u").
+  `unit-tts-no-approximation` now enforces this STRUCTURALLY: exactly two `new SpeechSynthesisUtterance`
+  may exist in the client (the shared builder + the silent iOS-unlock utterance), so a 4th copy fails
+  automatically wherever it hides.
+- **No matching voice → refuse to speak** (independent of mute, which is what makes auto-mute safe).
+- **Auto-mute IS set** (`APP.muted` + `updateMuteButtons()`), reversing v55_x's "mute is the user's
+  choice, don't touch it". The objection (unmute would resurrect the approximation) is void because
+  the refusal ignores mute. Mute = visible state, refusal = guarantee, 🗣 pill = the REASON.
+- **Listen exercises are DROPPED** on a no-voice device in all three builders (standard/mixed/script)
+  — `buildStandardExercises` had NO voice check at all, which is why Swahili vocab lessons still
+  served "tap to listen". Both `listen_mcq` AND `listen_type` go (the script builder dropped only the
+  former). Guards are `typeof`-checked because the unit harnesses extract these builders with stubs.
+- Proactive: `refreshTtsVoiceState()` on selector rebuild + `voiceschanged`, so pill/mute land on
+  lesson open rather than after a silent tap. Conservative during the async voice-load window.
+**Still open:** (a) the 🗣 pill could host the tts language/voice selects the way the backend pill
+hosts the model picker (v55_o) — deliberately not bundled; (b) `toast.no_voice` ("⚠ No {lang} voice —
+using approximation") is now unused but still in ui.json translated into 26 langs — delete on the next
+translate pass; (c) the 3 new `tts.*` keys are en-only until then.
 
 ### 5. OPEN — more word-game lesson types (see also the labyrinth item below)
 Beyond the labyrinth/maze idea already recorded: **generate a crossword from the lesson's words**,
@@ -94,10 +119,14 @@ vocab set, so they need no new model calls — the vocab is already stored per l
 Checked: none of these appear in roadmap_v55, so they are recorded here for the first time.
 - **Latin script lesson reads out BOTH cases.** Showing upper+lower case is fine, but it *speaks*
   both — one read is enough. (Look at the script-lesson speak path, not the render.)
-- **⚠ Difficulty of an added lesson may not be stored/displayed.** User generated a new lesson for
-  "Constanze am Meer" with **difficulty=3** and it displays as **beginner**. Reproduce first: is the
-  value lost on the add-lesson path, stored but not read by the display, or is the display showing
-  the TOPIC's difficulty rather than the lesson's? Likely a real bug, not a design gap.
+- ~~**⚠ Difficulty of an added lesson may not be stored/displayed.**~~ ✅ **FIXED in v56.** It was a
+  storage gap, not a display bug: the add-lesson route derived `diff` (request → topic → 2), used it
+  for the prompt, and never wrote it to the lesson. The list already renders
+  `L.difficulty || topicDiff`, so it correctly fell back to the topic's "beginner". Only math /
+  intro_script lessons stored a difficulty (they need it at play time), which is why the gap went
+  unnoticed. Fix: `{ difficulty: diff, ...result.lesson, id }` — written BEFORE the spread so a
+  generator that sets its own difficulty still wins. No backfill needed: the display's fallback
+  already covers the 711 existing lessons without one. Guarded by `unit-lesson-difficulty`.
 - **Beginner mode should restrict lesson TYPES.** In beginner mode, don't add lessons that require
   already knowing the word — only ones where you pick a word from 4 options. And if listening mode is
   OFF, avoid lessons that require already knowing the translation. Lessons with sound where you type

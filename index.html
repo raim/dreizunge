@@ -8212,7 +8212,17 @@ function buildStandardExercises(lesson, lessonIdx){
   const _vis = (L) => APP._teacherMode || !L._hidden;
   const prevV=d.lessons.slice(0,lessonIdx).filter(_vis).flatMap(L=>L.vocab||[]);
   if(prevV.length>=4) pick(prevV,3).forEach(v=>{ const e=mkMcqIE(v,allV); if(e)exs.push(e); });
-  return shuffle(exs).slice(0,12);
+  // v55_z: drop the listen items when this device has no voice for the target language — they are
+  // unanswerable without audio, and until now this builder had NO voice check at all (only the
+  // script builder did), so a Swahili vocab lesson still served "tap to listen" questions that
+  // could never be heard. Dialect lessons have no real voice either — same treatment.
+  // Both guards are `typeof`-checked: the unit harnesses extract these builders and run them with
+  // stubs, so a bare call would throw there (the existing _lessonIsDialect guard is written this way
+  // for the same reason). Unavailable → don't filter, i.e. prior behaviour.
+  const _noAudio = (typeof _lessonIsDialect==='function' && _lessonIsDialect())
+                || (typeof ttsVoiceAvailableFor==='function' && !ttsVoiceAvailableFor(APP.lessonData?.lang || APP.lang));
+  const _exs = _noAudio ? exs.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type') : exs;
+  return shuffle(_exs).slice(0,12);
 }
 // ══ Mixed review (no LLM) — pool exercises from this chapter's EARLIER lessons ══════
 // A `mixed` lesson owns no content; at play time it gathers the sibling lessons that PRECEDE
@@ -8254,7 +8264,16 @@ function buildMixedExercises(lesson, lessonIdx){
   const cap = (typeof lesson?.roundSize === 'number' && lesson.roundSize > 0) ? lesson.roundSize : pool.length;
   // Dialect lessons have no real spoken voice — treat audio as muted, so drop listen-based
   // exercises (they'd be unanswerable without sound) rather than reading dialect words aloud.
-  const pool2 = (typeof _lessonIsDialect==='function' && _lessonIsDialect()) ? pool.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type') : pool;
+  // v55_z: the SAME applies when the device simply has no voice for the target language (e.g. no
+  // Swahili voice installed). This builder had no voice check at all — only buildIntroScriptExercises
+  // did — so a Swahili vocab lesson still served "tap to listen" items that could never be heard.
+  // Both listen types must go: listen_type was left behind even in the script builder's filter.
+  // Both guards are `typeof`-checked: the unit harnesses extract these builders and run them with
+  // stubs, so a bare call would throw there (the existing _lessonIsDialect guard is written this way
+  // for the same reason). Unavailable → don't filter, i.e. prior behaviour.
+  const _noAudio = (typeof _lessonIsDialect==='function' && _lessonIsDialect())
+                || (typeof ttsVoiceAvailableFor==='function' && !ttsVoiceAvailableFor(APP.lessonData?.lang || APP.lang));
+  const pool2 = _noAudio ? pool.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type') : pool;
   return assembleCoverageRound(pool2, cap);
 }
 // ══ Word-forms exercises (fill the blank with the correct form) ══════════════
@@ -8593,7 +8612,9 @@ function buildIntroScriptExercises(lesson) {
   // (not just no TTS code) — otherwise they'd be unanswerable. The muted case is handled live in
   // tLMcq (it shows the transliteration instead), so we only hard-drop on a genuine no-voice device.
   const lang = APP.lessonData?.lang || APP.lang;
-  if (!ttsVoiceAvailableFor(lang)) exs = exs.filter(e => e.type !== 'listen_mcq');
+  // v55_z: drop BOTH listen types — this filter only dropped listen_mcq, so listen_type items
+  // survived on a no-voice device and were equally unanswerable.
+  if (!ttsVoiceAvailableFor(lang)) exs = exs.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type');
   exs = shuffle(exs);
   // Play-time length cap (script lessons only): each letter generates ~2 MCQs + listen items, so
   // a 12-letter lesson is ~29 questions. Re-use the SAME difficulty cut-off a second time here —
@@ -10741,15 +10762,21 @@ function _ttsMakeUtterance(text, ttsCode, rate) {
   return u;
 }
 
-// No installed voice for this language → stay silent and SAY SO via the 🗣 pill. Deliberately does
-// NOT touch APP.muted: mute is the user's CHOICE ("do I want sound"), this is an environment
-// CAPABILITY ("can we produce it") — the same split as the backend pill. Flipping the user's mute
-// would make their unmute either do nothing or resurrect the approximation we just removed.
+// No installed voice for this language → stay silent and SAY SO via the 🗣 pill, and AUTO-MUTE.
+// v55_z: this now sets APP.muted (the user asked for auto-mute twice). My earlier objection — that
+// their unmute would resurrect the English-reading-Swahili approximation — is void: _ttsMakeUtterance
+// REFUSES regardless of mute, so unmuting can't bring it back. The mute is the visible state; the
+// refusal is the guarantee. The 🗣 pill still carries the REASON, which the mute button can't
+// express (mute alone can't say "your device has no Swahili voice").
 function _ttsNoVoice(ttsCode, langCode) {
   const nice = (LANGS[langCode]||{}).name || langCode || ttsCode;
   const isNew = APP._ttsNoVoiceFor !== ttsCode;
   APP._ttsNoVoiceFor = ttsCode; APP._ttsNoVoiceLang = nice;
   try { speechSynthesis.cancel(); } catch(_) {}
+  if (!APP.muted) {
+    APP.muted = true;
+    try { updateMuteButtons(); } catch(_) {}
+  }
   renderTtsPill();
   if (isNew) showToast(t('tts.no_voice_silent', { lang: nice }));
 }
@@ -10914,6 +10941,10 @@ function _buildGlobalTtsSelectors() {
       APP._ttsVoiceName = lv[0]?.name || null;
     }
   });
+
+  // v55_z: re-evaluate voice availability whenever the speech selectors are (re)built —
+  // init, screen change, language change — so the pill/auto-mute happen BEFORE a play attempt.
+  try { refreshTtsVoiceState(); } catch(_) {}
 }
 
 function onTtsLangSelectGlobal(code, id) {
@@ -10928,6 +10959,11 @@ function onTtsLangSelectGlobal(code, id) {
 // Proactively re-evaluate whether the current speech language has a voice, and update the 🗣 pill.
 // Uses _ttsPickVoice so it shares the ONE resolver: undefined (voices still loading) leaves the
 // state untouched — never declare "no voice" during the async getVoices() window.
+// The browser's voice list arrives asynchronously; the first refreshTtsVoiceState() usually runs
+// while it is still empty (→ 'unknown', deliberately no mute). Re-check once it lands.
+if (typeof window !== 'undefined' && window.speechSynthesis && speechSynthesis.addEventListener) {
+  speechSynthesis.addEventListener('voiceschanged', () => { try { refreshTtsVoiceState(); } catch(_) {} });
+}
 function refreshTtsVoiceState() {
   const code = activeTtsCode();
   if (!code) return;
@@ -10935,11 +10971,10 @@ function refreshTtsVoiceState() {
   if (v === undefined) return;                       // not loaded yet — stay quiet
   if (v === null) {
     const lang = APP.ttsLang ? Object.keys(LANGS).find(k => (LANGS[k]||{}).tts === code) : (APP.lessonData?.lang || APP.lang);
-    APP._ttsNoVoiceFor = code;
-    APP._ttsNoVoiceLang = (LANGS[lang]||{}).name || lang || code;
-  } else if (APP._ttsNoVoiceFor) {
-    APP._ttsNoVoiceFor = null; APP._ttsNoVoiceLang = null;
+    _ttsNoVoice(code, lang);   // v55_z: records + auto-mutes + pill, before any play attempt
+    return;
   }
+  if (APP._ttsNoVoiceFor) { APP._ttsNoVoiceFor = null; APP._ttsNoVoiceLang = null; }
   renderTtsPill();
 }
 
