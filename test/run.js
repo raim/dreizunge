@@ -91,6 +91,7 @@ run('unit: static landing parity — storyboard+summary (v55_p)', 'node', [path.
 run('unit: identical source/target ratio rule, corpus-calibrated (v53_g)', 'node', [path.join(__dirname, 'unit-identical-ratio.test.js')]);
 run('unit: drill lessons — review my mistakes (v54)', 'node', [path.join(__dirname, 'unit-drill.test.js')]);
 run('unit: storyline SVG storyboard (v55)', 'node', [path.join(__dirname, 'unit-storyboard.test.js')]);
+run('unit: storyboard panels → lesson navigation (v57)', 'node', [path.join(__dirname, 'unit-storyboard-nav.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);
 run('unit: learned-vocab ledger + my-story wiring (v50)', 'node', [path.join(__dirname, 'unit-learned-vocab.test.js')]);

@@ -463,6 +463,7 @@
     "storyboard.scheme_mono": "Monochrome",
     "storyboard.scheme_set": "Colour scheme: {name}",
     "storyboard.no_schemes": "No colour schemes available",
+    "storyboard.locked_resume": "🔒 Chapter locked — resuming where you left off",
     "tts.no_voice_silent": "🔇 No {lang} voice installed — speech is off for this language (an English voice reading {lang} would only mislead).",
     "tts.pill_no_voice": "no voice",
     "tts.no_voice_hint": "No {lang} voice is installed on this device, so speech is off for it. Install a {lang} voice in your system settings to enable it."

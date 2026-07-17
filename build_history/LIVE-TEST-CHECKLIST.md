@@ -1795,3 +1795,42 @@ Accepting it updates the story AND rebuilds the ai_error_hunt from the original�
       review lesson and a script lesson.
 - [ ] A language WITH a voice is unaffected: listen questions appear and play normally, and the app
       does not mute itself.
+
+### 91. v57 — storyboard panels are clickable lesson navigation
+All browser-only. Use a storyline that HAS a storyboard (e.g. any of the 11 in the corpus) plus,
+for the second block, one WITHOUT (generate fresh).
+
+**Existing boards (equal split, NO regenerate needed):**
+- [ ] Landing page → a storyline card with a storyboard: hovering a panel shows a pointer cursor
+      and a blue hover frame; clicking a panel opens a chapter's lesson-set page (NOT the
+      storyline screen, NOT the storyline header's click target).
+- [ ] With fewer panels than chapters (e.g. 3 panels / 7 chapters): the panels open chapters
+      1, 3, 5 — i.e. the chapter each panel's span STARTS with, spread evenly.
+- [ ] With more panels than chapters: several panels open the SAME chapter (links repeat).
+- [ ] The storyline SCREEN's board behaves identically.
+- [ ] The lesson-set (chapter) page now shows the board ABOVE the ←/→ continued-from/by nav,
+      with a BLUE frame around the panel(s) belonging to THIS chapter; clicking another panel
+      navigates and the frame follows.
+- [ ] A topic with no storyline/storyboard: no board block on its lesson-set page (no empty gap).
+- [ ] Static build (docs/): all of the above works identically on the baked page.
+
+**Locking (student mode — teacher OFF in live, or the static build):**
+- [ ] Fresh progress: clicking a LATE panel does not open the locked chapter — it opens chapter 1
+      and shows the "🔒 Chapter locked — resuming where you left off" toast.
+- [ ] Complete chapter 1's lessons → the panel for chapter 2 now opens chapter 2 directly;
+      a panel for chapter 3+ still resumes at chapter 2.
+- [ ] Teacher mode ON (or any live canGenerate session): every panel deep-links directly, no toast.
+
+**New generations (model-assigned mapping + new layout):**
+- [ ] Generate a storyboard for a MULTI-chapter storyline: server console unchanged
+      (Storyline/Chapters header, Panels line). Open the stored SVG (or DOM-inspect): panels carry
+      `data-chapter="N"` with sensible, non-decreasing chapter numbers; clicks follow them even
+      where they differ from the equal split.
+- [ ] The board renders up to 6 panels in ONE row; panel size matches other boards (fixed-width
+      canvas — a 2-panel board's panels are the same size as a 6-panel board's, centred).
+- [ ] A storyline with >10 chapters: the model may return up to 12 panels; they wrap into TWO rows
+      of 6 (second row centred if partial), panels still equal-sized, and clicks map correctly.
+- [ ] 🎨 re-colour an existing board that HAS data-chapter panels: the links (and two-row layout,
+      if any) survive the recompose. Re-colouring a pre-v57 board keeps working (equal split).
+- [ ] Delete a chapter from a storyline whose board has data-chapter values pointing past the end:
+      clicking such a panel clamps to the last chapter (no error).

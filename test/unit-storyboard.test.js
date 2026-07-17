@@ -50,11 +50,11 @@ const goodPanel = (caption) => ({ caption, bg: 'sky', shapes: [
     'captions render as <title> tooltips');
   assert.ok(!/<text[^>]*>Scene/.test(svg), 'captions are NOT drawn as visible <text>');
   assert.ok(/<g><title>/.test(svg), 'each panel group leads with its <title> so hover covers the whole panel');
-  // v55_t: the canvas is a FIXED 5-panel size regardless of count (922 = 5*(170+12)+12, 194 = 170+2*12),
-  // so a 2-panel board's panels render exactly as large as a 5-panel board's — before, `max-width`
-  // tracked the count and MORE panels came out SMALLER.
-  assert.ok(/viewBox="0 0 922 194"/.test(svg), 'canvas is the fixed 5-panel size (922x194)');
-  assert.ok(/max-width:922px/.test(svg), 'max-width matches the fixed canvas, not the panel count');
+  // v57: the canvas is a FIXED PER_ROW(6)-panel width regardless of count (1104 = 6*(170+12)+12,
+  // 194 = 170+2*12 for a single row), so a 2-panel board's panels render exactly as large as a
+  // 6-panel board's — v55_t's invariant (panel size independent of count), kept under the row layout.
+  assert.ok(/viewBox="0 0 1104 194"/.test(svg), 'canvas is the fixed 6-per-row width, single-row height');
+  assert.ok(/max-width:1104px/.test(svg), 'max-width matches the fixed canvas, not the panel count');
   assert.ok(svg.includes('#a8dadc'), 'palette name resolved to hex (sky)');
   assert.ok(!/\bsky\b/.test(svg.replace(/Scene (one|two|three)/g, '')), 'raw palette NAME never emitted as a color');
 }
@@ -134,7 +134,9 @@ const goodPanel = (caption) => ({ caption, bg: 'sky', shapes: [
   assert.strictEqual(r.svg, null, 'a panel whose shapes ALL fail leaves only 1 valid → null');
   assert.strictEqual(r.stats.valid, 1, 'stats.valid reports the survivor count');
   const six = compose([1, 2, 3, 4, 5, 6].map(i => goodPanel('p' + i)));
-  assert.strictEqual((six.svg.match(/<svg x=/g) || []).length, 5, 'panel cap: 6 requested → 5 rendered');
+  assert.strictEqual((six.svg.match(/<svg x=/g) || []).length, 6, 'panel budget: 6 requested → all 6 rendered (v57)');
+  const thirteen = compose(Array.from({ length: 13 }, (_, i) => goodPanel('p' + i)));
+  assert.strictEqual((thirteen.svg.match(/<svg x=/g) || []).length, 12, 'hard cap: 13 requested → 12 rendered');
 }
 
 // ── 6. Generator contract: stamped with the STORY model, headroom + timeout ───
@@ -151,9 +153,14 @@ assert.ok(/return \{ svg, panels, scheme, meta \}/.test(gen), 'returns {svg, pan
 assert.ok(/getStoryStyle\(storyStyle\)/.test(gen), 'generator resolves the story style note');
 assert.ok(/Match the story's tone in the artwork/.test(gen), 'the style note is appended to the system prompt');
 assert.ok(/meta\.storyStyle = storyStyle \|\| null;/.test(gen), 'the stamp records which style was used');
-assert.ok(/composeStoryboardSVG\(panels, scheme\)/.test(gen), 'composes with the requested scheme');
-assert.ok(/_callLLM\(OLLAMA_MODEL, sys, user, 6000, \{ timeoutMs: 3600000, think: false \}\)/.test(gen),
-  'token headroom (spike hit the 4096 cap) + per-call 60min timeout (spike ran 30min at 2.2 tok/s) + think:false (v55_c: a live run burned all 6000 tokens inside the reasoning block → empty content)');
+assert.ok(/composeStoryboardSVG\(panels, scheme, topics\.length\)/.test(gen),
+  'composes with the requested scheme AND the chapter count (v57: enables per-panel data-chapter links)');
+assert.ok(/_callLLM\(OLLAMA_MODEL, sys, user, maxPanels > 6 \? 12000 : 6000, \{ timeoutMs: 3600000, think: false \}\)/.test(gen),
+  'token headroom scales with the v57 panel budget (12-panel boards need >6000; spike hit the 4096 cap) + per-call 60min timeout (spike ran 30min at 2.2 tok/s) + think:false (v55_c: a live run burned all 6000 tokens inside the reasoning block → empty content)');
+assert.ok(/const maxPanels = topics\.length > 10 \? 12 : 6;/.test(gen),
+  'editorial budget: 6 panels normally, 12 only for >10-chapter storylines (v57)');
+assert.ok(/\{ S, chapters: topics\.length, chapterSummaries, maxPanels \}/.test(gen),
+  'the budget is templated into the user prompt');
 assert.ok(/salvageArray/.test(gen) && /extractArray/.test(gen), 'uses the llm.js JSON-salvage chain');
 assert.ok(/PROMPTS\.storylineStoryboard/.test(gen), 'prompt lives in prompts.json');
 // v55_b observability: a live run died with NOTHING after the header (toast-only 500). Guard:
@@ -211,34 +218,39 @@ assert.ok(/opts\.think === false \? \{ think: false \} : \{\}/.test(llm), 'think
 assert.ok(/does not support thinking/i.test(llm) && /think: undefined/.test(llm),
   'callLLM retries without think on parameter rejection');
 
-// ── 10. Fixed canvas + centred strip, whatever the panel count (v55_t) ────────
+// ── 10. Fixed-width canvas, rows of 6, per-row centring (v55_t reworked for v57) ─
+// v55_t's invariant survives the row layout: PANEL SIZE is identical across every board
+// because the canvas WIDTH is always the full 6-per-row size. What changed: >6 panels wrap
+// into a second row (height is the only thing that grows), and each row centres itself —
+// a full row's centring lands exactly on the original 12px margin.
 {
   const p = { caption: 'c', bg: 'sky', shapes: [{ type: 'rect', x: 0, y: 60, w: 100, h: 40, fill: 'leaf' }] };
-  const PANEL = 170, GAP = 12, W = 5 * (PANEL + GAP) + GAP;
-  let firstVb = null;
-  for (const n of [2, 3, 4, 5]) {
+  const PANEL = 170, GAP = 12, PER_ROW = 6, W = PER_ROW * (PANEL + GAP) + GAP;
+  for (const n of [2, 3, 4, 5, 6, 7, 9, 12]) {
     const { svg } = compose(Array(n).fill(p), 'classic');
+    const rows = Math.ceil(n / PER_ROW);
+    const H = rows * (PANEL + GAP) + GAP;
     const vb = svg.match(/viewBox="([^"]+)"/)[1];
-    // Same canvas for every count — this is what keeps the rendered height (and panel size) constant.
-    if (firstVb === null) firstVb = vb;
-    assert.strictEqual(vb, firstVb, `${n} panels: canvas identical to other counts`);
-    assert.strictEqual(vb, `0 0 ${W} 194`, `${n} panels: canvas is the fixed 5-panel size`);
+    // WIDTH is identical for every count — this is what keeps the rendered panel size constant.
+    assert.strictEqual(vb, `0 0 ${W} ${H}`, `${n} panels: canvas is the fixed width, ${rows}-row height`);
     assert.ok(svg.includes(`max-width:${W}px`), `${n} panels: max-width is the fixed canvas`);
-    // The strip is centred: equal empty space either side.
-    const xs = [...svg.matchAll(/<svg x="(\d+)"/g)].map(m => +m[1]);
-    assert.strictEqual(xs.length, n, `${n} panels rendered`);
-    const left = xs[0], right = W - (xs[xs.length - 1] + PANEL);
-    assert.ok(Math.abs(left - right) <= 1, `${n} panels: strip centred (left ${left} ≈ right ${right})`);
-    // Panels are evenly spaced by exactly one GAP.
-    for (let i = 1; i < xs.length; i++) {
-      assert.strictEqual(xs[i] - xs[i - 1], PANEL + GAP, `${n} panels: even spacing at ${i}`);
+    const pos = [...svg.matchAll(/<svg x="(\d+)" y="(\d+)"/g)].map(m => ({ x: +m[1], y: +m[2] }));
+    assert.strictEqual(pos.length, n, `${n} panels rendered`);
+    for (let r = 0; r < rows; r++) {
+      const inRow = pos.filter(q => q.y === GAP + r * (PANEL + GAP));
+      const expected = Math.min(PER_ROW, n - r * PER_ROW);
+      assert.strictEqual(inRow.length, expected, `${n} panels: row ${r} holds ${expected}`);
+      // The row is centred: equal empty space either side (a full row starts at the 12px margin).
+      const left = inRow[0].x, right = W - (inRow[inRow.length - 1].x + PANEL);
+      assert.ok(Math.abs(left - right) <= 1, `${n} panels row ${r}: centred (left ${left} ≈ right ${right})`);
+      if (expected === PER_ROW) assert.strictEqual(left, GAP, `${n} panels row ${r}: full row starts at the 12px margin`);
+      // Panels are evenly spaced by exactly one GAP within the row.
+      for (let i = 1; i < inRow.length; i++) {
+        assert.strictEqual(inRow[i].x - inRow[i - 1].x, PANEL + GAP, `${n} panels row ${r}: even spacing at ${i}`);
+      }
+      assert.ok(left >= 0 && right >= 0, `${n} panels row ${r}: strip fits inside the canvas`);
     }
-    // Nothing spills outside the canvas.
-    assert.ok(left >= 0 && right >= 0, `${n} panels: strip fits inside the canvas`);
   }
-  // A full board keeps the original 12px margin (i.e. the fixed canvas is exactly the 5-panel size).
-  const five = compose(Array(5).fill(p), 'classic').svg;
-  assert.ok(/<svg x="12"/.test(five), '5 panels start at the original 12px margin');
 }
 
 console.log('  storyboard: composer whitelist/clamp/escape/floor + stamp + route contract: OK');
@@ -309,7 +321,8 @@ const schemeRoute = server.slice(server.indexOf("url.pathname === '/api/storylin
                                  server.indexOf("M === 'DELETE' && url.pathname === '/api/storyline-storyboard'"));
 assert.ok(/if \(!Object\.prototype\.hasOwnProperty\.call\(STORYBOARD_SCHEMES, scheme\)\) return json\(res, 400/.test(schemeRoute),
   're-colour validates the scheme name with an OWN-property check (a bare lookup lets __proto__ through)');
-assert.ok(/composeStoryboardSVG\(sl\.storyboardPanels, scheme\)/.test(schemeRoute), 're-colour re-composes the STORED panels (no model call)');
+assert.ok(/composeStoryboardSVG\(sl\.storyboardPanels, scheme, \(sl\.chapters \|\| \[\]\)\.length\)/.test(schemeRoute),
+  're-colour re-composes the STORED panels (no model call) with the CURRENT chapter count (v57: keeps + re-clamps data-chapter links)');
 assert.ok(!/_callLLM|generateStorylineStoryboard/.test(schemeRoute), 're-colour never calls the model');
 assert.ok(!/active === 'none'/.test(schemeRoute), 're-colour needs no LLM backend');
 assert.ok(/predates colour schemes/.test(schemeRoute), 'pre-v55_r storyboards get an explicit "regenerate" message, not a silent failure');

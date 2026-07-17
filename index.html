@@ -377,6 +377,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .native-check-row{display:none}
 .storyline-story{border-top:1.5px solid var(--gray-mid);background:var(--white)}
 .storyline-story-hdr{display:flex;align-items:center;gap:7px;padding:8px 13px;cursor:pointer;font-size:12px;font-weight:800;color:var(--gray-dark);user-select:none;background:none;border:none;width:100%;font-family:'Nunito',sans-serif;text-align:left}
+/* v57: storyboard panels are lesson-set links wherever the wrapper carries data-sb-chain */
+.storyline-storyboard[data-sb-chain] svg > g{cursor:pointer}
+.storyline-storyboard[data-sb-chain] svg > g:hover > rect{stroke:var(--blue)}
 .storyline-story-hdr:hover{background:var(--gray-light)}
 .storyline-story-arrow{font-size:10px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
 .storyline-story-arrow.open{transform:rotate(180deg)}
@@ -4145,7 +4148,7 @@ async function loadSavedList(){
     // Storyboard rides the same storyline object; render it ABOVE the summary strip.
     const _slSb2 = _slSumMeta?.storyboard || '';
     if (_slSb2) {
-      html += `<div class="storyline-storyboard" id="slsb-wrap-${chainId}" aria-label="${escAttr(t('storyboard.title'))}" style="padding:4px 8px;overflow-x:auto">${_slSb2}</div>`;
+      html += `<div class="storyline-storyboard" id="slsb-wrap-${chainId}" data-sb-chain="${escAttr(chainId)}" aria-label="${escAttr(t('storyboard.title'))}" style="padding:4px 8px;overflow-x:auto">${_slSb2}</div>`;
     }
     const _slSum = _slSumMeta?.summary || '';
     if (_slSum) {
@@ -4750,6 +4753,31 @@ function buildPath(){
     contNav.className='cont-nav';
     document.getElementById('ls-hdr').insertAdjacentElement('afterend',contNav);
   }
+
+  // Storyline storyboard on the chapter page (v57) — sits ABOVE the back/forward nav,
+  // with a frame around the panel(s) belonging to THIS chapter. Clicks are handled by
+  // the shared delegated handler (the wrapper carries data-sb-chain). The SVG is the
+  // server-composed, validated string off the storyline object — same trust model as
+  // the other two render sites.
+  let sbBox=document.getElementById('ls-storyboard');
+  if(!sbBox){
+    sbBox=document.createElement('div');
+    sbBox.id='ls-storyboard';
+    sbBox.className='storyline-storyboard';
+    sbBox.style.cssText='margin:8px 0;overflow-x:auto';
+  }
+  contNav.insertAdjacentElement('beforebegin', sbBox); // (re)anchor above cont-nav
+  const _sbSvg=_ctxSl?.storyboard||'';
+  if(_sbSvg){
+    sbBox.innerHTML=_sbSvg;
+    sbBox.setAttribute('data-sb-chain', _ctxSl.id);
+    sbBox.style.display='';
+    const _sbChIdx=(_ctxSl.chapters||[]).findIndex(cid=>_slById[cid]?.topic===d.topic)+1;
+    try{ _sbMarkCurrentPanels(sbBox, _sbChIdx, (_ctxSl.chapters||[]).length); }catch(_){}
+  } else {
+    sbBox.style.display='none'; sbBox.innerHTML=''; sbBox.removeAttribute('data-sb-chain');
+  }
+
   const { prev: navPrev, nexts: navNexts } = _chapterNeighbors(d);
   const fromLinks=[];
   const byLinks=[];
@@ -5706,7 +5734,8 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // boundary; the client only injects the finished string). Sits ABOVE the summary.
   const _slSb = slMeta?.storyboard || '';
   html += '<div class="storyline-storyboard" id="slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_')
-        + '" aria-label="' + escAttr(t('storyboard.title')) + '" style="margin:8px 0;overflow-x:auto'
+        + '" data-sb-chain="' + escAttr(chainId) + '"'
+        + ' aria-label="' + escAttr(t('storyboard.title')) + '" style="margin:8px 0;overflow-x:auto'
         + (_slSb ? '' : ';display:none') + '">' + _slSb + '</div>';
 
   // Summary section — simple toggle via data-target attribute
@@ -6157,6 +6186,112 @@ function toggleSlSummary(chainId) {
   const el = document.getElementById('slsc-summary-body-' + chainId);
   if (!el) return;
   el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+// ── Storyboard panels as lesson navigation (v57) ─────────────────────────────
+// Every rendered storyboard whose wrapper carries data-sb-chain is clickable: a panel
+// deep-links to the chapter (lesson set) it depicts. ONE delegated document listener
+// serves all render sites — landing cards, storyline screen, lesson-set page — in BOTH
+// the live app and the baked static DOM (no per-render init to forget).
+//
+// Panel↔chapter mapping (the counts rarely match): a panel's data-chapter attribute —
+// the model's per-panel assignment, sanitized by composeStoryboardSVG — wins; any panel
+// without one (ALL pre-v57 boards, per the user's call: no forced regenerate) falls back
+// to a deterministic equal split. One formula covers both directions of mismatch:
+//   chapter(i) = floor(i·C/P) + 1
+// fewer panels than chapters → each panel links to the chapter its span STARTS with;
+// more panels than chapters → links simply repeat (several panels → one lesson set).
+function _sbPanelChapter(i, panelCount, chapterCount, dataVal) {
+  const P = panelCount | 0, C = chapterCount | 0;
+  if (P < 1 || C < 1 || i < 0 || i >= P) return null;
+  // data-chapter is re-clamped HERE against the CURRENT chapter count — stored SVGs can
+  // outlive chapter deletions, so the baked value may be stale.
+  const n = Number(dataVal);
+  if (Number.isInteger(n) && n >= 1) return Math.min(C, n);
+  return Math.floor(i * C / P) + 1;
+}
+
+// Resolve which chapter a panel click actually opens. `chaps` is the storyline's ordered
+// chapter OBJECTS, `completed` is APP.progress.completed, `ch` the 1-based panel target,
+// `free` = teacher mode / canGenerate (navigate anywhere). Student mode applies the SAME
+// lock rule as the storyline screen's chapter cards (fail closed): a chapter is locked
+// unless it is first, has lessons, and its predecessor exists with all lessons complete.
+// A locked target does not dead-end: it RESUMES at the first unlocked, not-yet-complete
+// chapter — the student runs through the underlying lessons in order (reusing the
+// existing progress machinery; clicking a panel again lands where they left off).
+function _sbChapterTarget(chaps, completed, ch, free) {
+  const n = Array.isArray(chaps) ? chaps.length : 0;
+  if (!n) return null;
+  const idx = Math.max(1, Math.min(n, ch | 0)) - 1;
+  if (free) return { chapter: chaps[idx], resumed: false };
+  const _all = c => {
+    const d = (completed || {})[c.topic] || {}; const ls = c.lessons || [];
+    return ls.length > 0 && ls.every(L => d[L.id]);
+  };
+  const _locked = i => {
+    if (i === 0) return false;
+    const c = chaps[i], p = chaps[i - 1];
+    return !(c.lessons || []).length || !p || !(p.lessons || []).length || !_all(p);
+  };
+  if (!_locked(idx)) return { chapter: chaps[idx], resumed: false };
+  for (let i = 0; i < n; i++) if (!_locked(i) && !_all(chaps[i])) return { chapter: chaps[i], resumed: true };
+  return { chapter: chaps[0], resumed: true };
+}
+
+// Open the lesson set behind a panel. Also sets the storyline context (APP._slScreen)
+// so the lesson-set header names THIS storyline — a landing-page panel click would
+// otherwise inherit a stale context from a previously opened storyline.
+async function openStoryboardChapter(chainId, ch) {
+  const sl = (Array.isArray(APP.storylines) ? APP.storylines : []).find(s => s.id === chainId);
+  if (!sl) return;
+  const byId = Object.fromEntries((APP.savedList || []).filter(l => l.id).map(l => [l.id, l]));
+  const chaps = (sl.chapters || []).map(id => byId[id]).filter(Boolean);
+  if (!chaps.length) return;
+  const free = !!(APP.info && APP.info.canGenerate) || !!APP._teacherMode;
+  const target = _sbChapterTarget(chaps, APP.progress?.completed || {}, ch, free);
+  if (!target || !target.chapter) return;
+  const topics = chaps.map(c => c.topic);
+  APP._slScreen = { chainId, encodedChain: encodeURIComponent(JSON.stringify(topics)), topics };
+  if (target.resumed) showToast(t('storyboard.locked_resume'));
+  loadSaved(target.chapter.id || encTopic(target.chapter.topic));
+}
+
+// The single delegated click handler. Panel groups are the outer svg's direct <g>
+// children (the composer emits exactly that structure); index in that list + optional
+// data-chapter is everything the mapping needs.
+function _sbNavClick(e) {
+  const wrap = e.target && e.target.closest ? e.target.closest('.storyline-storyboard[data-sb-chain]') : null;
+  if (!wrap) return;
+  const g = e.target.closest('g');
+  const outer = wrap.querySelector('svg');
+  if (!g || !outer || g.parentNode !== outer) return;
+  const groups = Array.from(outer.children).filter(el => el.tagName && el.tagName.toLowerCase() === 'g');
+  const i = groups.indexOf(g);
+  if (i < 0) return;
+  const chainId = wrap.getAttribute('data-sb-chain');
+  const sl = (Array.isArray(APP.storylines) ? APP.storylines : []).find(s => s.id === chainId);
+  const ch = _sbPanelChapter(i, groups.length, sl ? (sl.chapters || []).length : 0, g.getAttribute('data-chapter'));
+  if (ch == null) return;
+  e.stopPropagation();
+  openStoryboardChapter(chainId, ch);
+}
+document.addEventListener('click', _sbNavClick);
+
+// Lesson-set page: outline the panel(s) belonging to the CURRENT chapter (blue frame on
+// the panel border rect). Uses the same mapping as the click handler, so frame and link
+// can never disagree.
+function _sbMarkCurrentPanels(wrapEl, chapterIdx, chapterCount) {
+  if (!wrapEl || !(chapterIdx >= 1)) return;
+  const outer = wrapEl.querySelector('svg');
+  if (!outer) return;
+  const groups = Array.from(outer.children).filter(el => el.tagName && el.tagName.toLowerCase() === 'g');
+  groups.forEach((g, i) => {
+    const ch = _sbPanelChapter(i, groups.length, chapterCount, g.getAttribute('data-chapter'));
+    const frame = g.querySelector(':scope > rect');
+    if (!frame) return;
+    if (ch === chapterIdx) { frame.style.stroke = 'var(--blue)'; frame.style.strokeWidth = '3'; }
+    else { frame.style.stroke = ''; frame.style.strokeWidth = ''; }
+  });
 }
 
 // Storyboard: clone of genStorylineSummary. NOTE this request is synchronous end-to-end and

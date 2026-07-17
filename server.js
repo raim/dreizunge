@@ -61,7 +61,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v56';
+const APP_VERSION  = 'v57';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -1654,8 +1654,9 @@ async function generateStorylineSummary(topics, stories, vocab, srcLang) {
 // rendered raw), every coordinate is clamped into the 0 0 100 100 panel viewBox, colors
 // resolve through a fixed named palette, path `d` is charset-whitelisted and length-capped,
 // all text is escaped, and panels render inside nested <svg> elements (which also CLIP any
-// overflow). No <script>, <foreignObject>, or href can be emitted. Caps: ≤5 panels,
-// ≤25 shapes/panel; a panel with 0 valid shapes is invalid; <2 valid panels → svg:null.
+// overflow). No <script>, <foreignObject>, or href can be emitted. Caps: ≤12 panels (6 per
+// row, so ≤2 rows), ≤25 shapes/panel; a panel with 0 valid shapes is invalid; <2 valid
+// panels → svg:null.
 // Self-contained on purpose (helpers nested) so unit-storyboard can extract and run it pure.
 // Storyboard colour schemes (v55_r). The model only ever emits palette NAMES (paper/ink/sky/…), and
 // the composer maps names → hex — so a "scheme" is just an alternative hex map for the SAME names.
@@ -1685,7 +1686,13 @@ const STORYBOARD_SCHEME_DEFAULT = 'classic';
 
 // `scheme` selects the palette; an unknown/absent name falls back to the default (never throws —
 // the palette is still a closed whitelist, so the security properties are unchanged).
-function composeStoryboardSVG(panels, scheme) {
+// `chapterCount` (v57, optional): number of chapters in the storyline. When given, each panel's
+// model-supplied `chapter` field (1-based "this panel's scene belongs to chapter N") is sanitized —
+// integer, clamped into 1..chapterCount, anything else dropped — and emitted as a data-chapter
+// attribute on the panel's <g>, which is what makes panels deep-link to lesson sets. The attribute
+// is OPTIONAL on purpose: panels without a valid value get the client-side equal-split fallback
+// (see _sbPanelChapter in index.html), which is also how every pre-v57 board stays clickable.
+function composeStoryboardSVG(panels, scheme, chapterCount) {
   // Own-property lookups ONLY. A plain-object map inherits from Object.prototype, so a bare
   // `MAP[k]` treats '__proto__' / 'constructor' / 'toString' as members: `SCHEMES['__proto__']`
   // is truthy (→ a bogus scheme passes validation and yields an all-undefined palette), and a
@@ -1696,7 +1703,11 @@ function composeStoryboardSVG(panels, scheme) {
   const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
   const PALETTE = has(STORYBOARD_SCHEMES, scheme) ? STORYBOARD_SCHEMES[scheme]
                                                   : STORYBOARD_SCHEMES[STORYBOARD_SCHEME_DEFAULT];
-  const MAX_PANELS = 5, MIN_PANELS = 2, MAX_SHAPES = 25, MAX_POINTS = 60, MAX_D = 500;
+  // v57 layout: 6 panels per row, hard cap 12 (two rows). MAX_PANELS is the composer's
+  // SECURITY bound; the editorial budget (6 normally, 12 only for >10-chapter storylines)
+  // is enforced in the PROMPT (generateStorylineStoryboard) — a model overshooting it is
+  // harmless here (links simply repeat), but nothing beyond 12 ever renders.
+  const MAX_PANELS = 12, PER_ROW = 6, MIN_PANELS = 2, MAX_SHAPES = 25, MAX_POINTS = 60, MAX_D = 500;
   const PANEL_PX = 170, GAP = 12;
   const D_RE = /^[MmLlHhVvZzCcSsQqTtAa0-9eE .,+-]+$/;
   function escXml(s) {
@@ -1796,6 +1807,9 @@ function composeStoryboardSVG(panels, scheme) {
 
   const stats = { requested: Array.isArray(panels) ? panels.length : 0, valid: 0, drops: [] };
   if (!Array.isArray(panels)) return { svg: null, stats };
+  // Untrusted like every other model value: `chapter` must be an integer, clamped into
+  // 1..chapterCount; without a valid chapterCount no data-chapter is ever emitted.
+  const CHAPTERS = Number.isInteger(chapterCount) && chapterCount > 0 ? chapterCount : 0;
   const rendered = [];
   for (const p of panels.slice(0, MAX_PANELS)) {
     if (!p || typeof p !== 'object' || !Array.isArray(p.shapes)) { stats.drops.push('panel: no shapes[]'); continue; }
@@ -1803,42 +1817,47 @@ function composeStoryboardSVG(panels, scheme) {
     const shapes = p.shapes.slice(0, MAX_SHAPES).map(s => shapeToSvg(s, drops)).filter(Boolean);
     stats.drops.push(...drops);
     if (!shapes.length) { stats.drops.push('panel: 0 valid shapes'); continue; }
+    const chN = Number(p.chapter);
     rendered.push({
       bg: col(p.bg, PALETTE.paper),
       caption: String(p.caption || '').slice(0, 70).trim(),
+      chapter: (CHAPTERS && Number.isInteger(chN)) ? Math.max(1, Math.min(CHAPTERS, chN)) : null,
       body: shapes.join(''),
     });
   }
   stats.valid = rendered.length;
   if (rendered.length < MIN_PANELS) return { svg: null, stats };
 
-  // v55_t: the canvas is ALWAYS the full MAX_PANELS width, whatever the panel count, and the strip
-  // is centred in it. Before, W tracked the count, so `max-width:W` made a 2-panel board cap at
-  // ~376px (panels drawn at full size) while a 5-panel board capped at ~922px and got squeezed into
-  // the container — i.e. MORE panels rendered SMALLER. Fixing the canvas fixes the rendered height
-  // (and thus the panel size) across every storyboard; fewer than MAX_PANELS simply leaves empty
-  // space either side rather than scaling the art up.
-  const W = MAX_PANELS * (PANEL_PX + GAP) + GAP;
+  // v55_t established the invariant that PANEL SIZE is identical across every board; v57 keeps
+  // it with a row layout: the canvas is ALWAYS the full PER_ROW width (so a 2-panel and a
+  // 12-panel board render their panels the same size), and boards beyond PER_ROW wrap into
+  // additional rows — height is the only thing that grows. Each row is centred independently
+  // (a full row's centring lands exactly on the original 12px margin).
+  const W = PER_ROW * (PANEL_PX + GAP) + GAP;
+  const rows = Math.ceil(rendered.length / PER_ROW);
   // No caption band — the caption is a hover-only <title> inside each panel group (drops the
   // always-on text row per the user's call; panels keep their 170px size, height just loses the
   // band). <title> is also the accessible choice: screen readers announce it.
-  const H = PANEL_PX + GAP * 2;
-  // Centre the strip: n panels span n*PANEL_PX + (n-1)*GAP (no trailing gap).
-  const stripW = rendered.length * PANEL_PX + (rendered.length - 1) * GAP;
-  const x0 = Math.round((W - stripW) / 2);
+  const H = rows * (PANEL_PX + GAP) + GAP;
   // Responsive: viewBox only + max-width, so the board scales down on narrow screens but its
-  // aspect ratio — and therefore every panel's size — is now independent of the panel count.
+  // aspect ratio — and therefore every panel's size — is independent of the panel count.
   const parts = [
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;height:auto;display:block" role="img">`,
   ];
   rendered.forEach((p, i) => {
-    const x = x0 + i * (PANEL_PX + GAP);
+    const row = Math.floor(i / PER_ROW), col = i % PER_ROW;
+    // Panels in THIS row (the last row may be partial); centre the row's strip.
+    const inRow = Math.min(PER_ROW, rendered.length - row * PER_ROW);
+    const stripW = inRow * PANEL_PX + (inRow - 1) * GAP;
+    const x = Math.round((W - stripW) / 2) + col * (PANEL_PX + GAP);
+    const y = GAP + row * (PANEL_PX + GAP);
     // <g> with a leading <title> = hover tooltip over the whole panel (frame + art).
+    // data-chapter (a sanitized integer, see above) is the panel→lesson-set link target.
     parts.push(
-      `<g>`,
+      `<g${p.chapter ? ` data-chapter="${p.chapter}"` : ''}>`,
       p.caption ? `<title>${escXml(p.caption)}</title>` : '',
-      `<rect x="${x - 1}" y="${GAP - 1}" width="${PANEL_PX + 2}" height="${PANEL_PX + 2}" fill="none" stroke="${PALETTE.stone}" stroke-width="1" rx="4"/>`,
-      `<svg x="${x}" y="${GAP}" width="${PANEL_PX}" height="${PANEL_PX}" viewBox="0 0 100 100">`,
+      `<rect x="${x - 1}" y="${y - 1}" width="${PANEL_PX + 2}" height="${PANEL_PX + 2}" fill="none" stroke="${PALETTE.stone}" stroke-width="1" rx="4"/>`,
+      `<svg x="${x}" y="${y}" width="${PANEL_PX}" height="${PANEL_PX}" viewBox="0 0 100 100">`,
       `<rect x="0" y="0" width="100" height="100" fill="${p.bg}"/>`,
       p.body,
       `</svg>`,
@@ -1851,14 +1870,14 @@ function composeStoryboardSVG(panels, scheme) {
   return { svg, stats };
 }
 
-// Generate a 2–5 panel SVG storyboard for a storyline from its chapter texts. Same call
+// Generate a 2–6 panel (up to 12 for >10-chapter storylines) SVG storyboard for a storyline from its chapter texts. Same call
 // shape as generateStorylineSummary. Returns { svg, meta } — callers destructure and persist
 // BOTH (sl.storyboard + sl.storyboardMeta); a bare assignment would store an object.
 // Uses the STORY model. maxTokens 6000: the live spike hit a 4096 cap (salvage repaired the
 // truncated tail); give the real feature headroom. timeoutMs 60min: this call runs ~30min at
 // the spike-measured 2.2 tok/s on qwen3.6:35b-a3b — it must outlive the 12-min inactivity
 // default without mutating the global request timeout.
-// Generate a 2–5 panel SVG storyboard for a storyline from its chapter texts. Same call
+// Generate a 2–6 panel (up to 12 for >10-chapter storylines) SVG storyboard for a storyline from its chapter texts. Same call
 // shape as generateStorylineSummary. Returns { svg, panels, meta } — callers destructure and persist
 // svg + panels + meta (panels are kept so the colour scheme can be changed later WITHOUT another
 // model call; see the /scheme route). `opts.storyStyle` is the chapters' writing style (v55_r: the
@@ -1877,13 +1896,17 @@ async function generateStorylineStoryboard(topics, stories, srcLang, opts) {
   const chapterSummaries = topics.map((t, i) =>
     `Chapter ${i + 1}: "${t}"\n${(stories[i] || '').slice(0, 600).replace(/\n/g, ' ')}…`
   ).join('\n\n');
+  // Editorial panel budget (v57): 6 panels normally; large storylines (>10 chapters) may use
+  // up to 12 (the composer wraps them into rows of 6). This is a PROMPT rule — the composer's
+  // own hard cap is 12 regardless, so an over-eager model is trimmed, never rejected.
+  const maxPanels = topics.length > 10 ? 12 : 6;
   // Tone note, using the same style vocabulary the story generator uses (PROMPTS.storyStyles).
   // 'creative' maps to null → no note, i.e. the model's default look.
   const styleNote = getStoryStyle(storyStyle);
-  const sys  = fillPrompt(PROMPTS.storylineStoryboard.system, { S })
+  const sys  = fillPrompt(PROMPTS.storylineStoryboard.system, { S, chapters: topics.length, maxPanels })
              + (styleNote ? `\n\nMatch the story's tone in the artwork: ${styleNote}` : '');
-  const user = fillPrompt(PROMPTS.storylineStoryboard.user, { S, chapters: topics.length, chapterSummaries });
-  const result = await _callLLM(OLLAMA_MODEL, sys, user, 6000, { timeoutMs: 3600000, think: false });
+  const user = fillPrompt(PROMPTS.storylineStoryboard.user, { S, chapters: topics.length, chapterSummaries, maxPanels });
+  const result = await _callLLM(OLLAMA_MODEL, sys, user, maxPanels > 6 ? 12000 : 6000, { timeoutMs: 3600000, think: false });
   // Log arrival BEFORE parsing — a 30-min call that returns garbage must still show it returned
   // (v55_b: a live run died silently; the console showed the header and then nothing).
   const _elapsed = ((Date.now() - _t0) / 1000).toFixed(0);
@@ -1896,7 +1919,7 @@ async function generateStorylineStoryboard(topics, stories, srcLang, opts) {
     console.error(`  ✗ Storyboard: model returned non-array JSON. Raw starts: ${JSON.stringify(stripRaw(result.text).slice(0, 200))}`);
     throw new Error('Storyboard: model returned non-array JSON');
   }
-  const { svg, stats } = composeStoryboardSVG(panels, scheme);
+  const { svg, stats } = composeStoryboardSVG(panels, scheme, topics.length);
   console.log(`  Panels   : ${stats.valid}/${stats.requested} valid${stats.drops.length ? ` (dropped: ${stats.drops.slice(0, 6).join('; ')})` : ''}`);
   if (!svg) throw new Error(`Storyboard: only ${stats.valid} valid panel(s) (need ≥2)`);
   console.log(`  SVG      : ${svg.length} bytes`);
@@ -4781,7 +4804,9 @@ http.createServer(async (req, res) => {
       if (!sl) return json(res, 404, { error: 'Storyline not found' });
       if (!Array.isArray(sl.storyboardPanels) || !sl.storyboardPanels.length)
         return json(res, 409, { error: 'This storyboard predates colour schemes — regenerate it to enable re-colouring.' });
-      const { svg, stats } = composeStoryboardSVG(sl.storyboardPanels, scheme);
+      // Pass the CURRENT chapter count: stored panels keep their model-assigned `chapter`
+      // fields (v57), so a re-colour re-emits — and re-clamps — the data-chapter links.
+      const { svg, stats } = composeStoryboardSVG(sl.storyboardPanels, scheme, (sl.chapters || []).length);
       if (!svg) return json(res, 500, { error: `Re-compose failed (${stats.valid} valid panels)` });
       sl.storyboard = svg; sl.storyboardScheme = scheme; upsertStoryline(sl);
       console.log(`  Storyboard re-coloured (${scheme}) for storyline ${slId}`);

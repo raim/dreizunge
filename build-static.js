@@ -527,7 +527,7 @@ async function loadSavedList() {
     const _slSumMeta2=matchSl2||slTitles[chainId]||null;
     const _slSb2=_slSumMeta2?.storyboard||'';
     if(_slSb2){
-      html+='<div class="storyline-storyboard" id="slsb-wrap-'+chainId+'" aria-label="'+t('storyboard.title').replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" style="padding:4px 8px;overflow-x:auto">'+_slSb2+'</div>';
+      html+='<div class="storyline-storyboard" id="slsb-wrap-'+chainId+'" data-sb-chain="'+String(chainId).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" aria-label="'+t('storyboard.title').replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" style="padding:4px 8px;overflow-x:auto">'+_slSb2+'</div>';
     }
     // Read summary strip if stored
     const _slSum2=_slSumMeta2?.summary||'';
