@@ -16,5 +16,6 @@
 
 # data/code tokens
 
+| | data | |
 |----|----|----|
 | bernd | oberlienzer dialektworte | 1|
