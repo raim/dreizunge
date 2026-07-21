@@ -25,7 +25,7 @@
 | | labyrinth lesson + code | 1|
 | | learning assistant | 1|
 | roland | initial development | 1| 
-| roland | letzebuergesch | 1| 
+| | letzebuergesch | 1| 
 | | story from pdf | 1|
 
 
