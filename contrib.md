@@ -21,7 +21,8 @@
 | | arabic stories | 1|
 | yannick | hebrew consulting | 1|
 | peter | arabic consulting | 1|
-| chris | labyrinth lesson + code | 1|
+| chris | initial development | 1|
+| | labyrinth lesson + code | 1|
 | | learning assistant | 1|
 | roland | initial development | 1| 
 | roland | letzebuergesch | 1| 
