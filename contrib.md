@@ -9,6 +9,7 @@
 | dougie | people are not creative | 1| 
 | | student-tailored lessons | 1|
 | | japanese consulting (furigana) | 1|
+| arno | italian consulting | 1|
 | florence | similar words | 1|
 | | letzebuergesh consulting | 1|
 | marie | writing styles | 1|
@@ -26,6 +27,7 @@
 | | learning assistant | 1|
 | roland | initial development | 1| 
 | | letzebuergesch consulting | 1| 
+| | fibonacci original text | 1| 
 | | story from pdf | 1|
 
 
