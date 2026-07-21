@@ -23,6 +23,7 @@
 | yannick | hebrew consulting | 1|
 | peter | arabic consulting | 1|
 | chris | initial development | 1|
+| | LLM tests | 1|
 | | labyrinth lesson + code | 1|
 | | learning assistant | 1|
 | roland | initial development | 1| 
