@@ -2,6 +2,7 @@
 
 # inspo tokens
 
+| | inspo | |
 |----|----|----|
 | alex | script lessons | 1| 
 | | TTS tool suggestion+code | 1|
