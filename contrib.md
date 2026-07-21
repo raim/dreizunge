@@ -21,3 +21,4 @@
 | | data | |
 |----|----|----|
 | bernd | oberlienzer dialektworte | 1|
+| anna | little i story | 5|
