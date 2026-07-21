@@ -3,12 +3,14 @@
 > **STATE AT HANDOFF (2026-07-17): CUT AS `v57`; suite 105 green; check-inline 0 on both builds.**
 > v57 is one feature session on top of v56: **clickable storyboard panels** (roadmap-v56 item 1),
 > shipped in full — mapping, locking, chapter-page board, and the 6/12 panel budget with rows of 6.
-> **⚠ The verification debt carried from v56 is UNCHANGED and has grown by one section:** LIVE-TEST
-> §§72–78, §79c–§90 are still unrun, and §91 (this feature — entirely browser-only) is new. The v56
-> warning stands: every recent defect was found by the USER in live use, not by the suite. Clear the
-> live-test backlog before the next feature.
-> Also owed: the i18n pass now covers **one more en-only key** (`storyboard.locked_resume`) on top of
-> the 1630 already missing (see the translation item below).
+> **Verification backlog: CLOSED 2026-07-20.** The user has exercised all functionality tracked in
+> `LIVE-TEST-CHECKLIST.md` and confirms it broadly works and/or is superseded by planned changes;
+> the checklist is now an ARCHIVE and the live-test procedure is RETIRED (protocol rule 2 amended
+> below — browser-only behaviors are described in session notes instead).
+> **i18n figure corrected 2026-07-20:** the "1630 missing keys" claim carried since v53 was STALE —
+> a translate pass evidently ran without the roadmap being updated. `node translate-ui.js --check`
+> measures the real debt at **29 keys**: `storyboard.locked_resume` (new in v57) × 29 languages.
+> One `translate-ui.js` run clears it.
 
 **v56 shipped** (lesson-difficulty storage fix — see `v56_session1_notes.md`). This file supersedes
 `roadmap_v56.md` (now historical) and carries the session protocol (unchanged) plus every still-open
@@ -43,8 +45,9 @@ Full details + rationale: `v57_session1_notes.md`. What shipped, against the ite
   per-row form.
 - Guarded by the new `unit-storyboard-nav` (mapping table, composer sanitization incl. injection,
   lock/resume behavior table, delegation wiring, render-site hooks) + the reworked `unit-storyboard`.
-- **Owed:** LIVE-TEST §91 (all of it — the feature is entirely browser-verified), and the i18n pass
-  for `storyboard.locked_resume` (en-only).
+- **Owed:** the i18n pass for `storyboard.locked_resume` (en-only; the only missing key project-wide).
+  LIVE-TEST §91 was closed in the 2026-07-20 bulk verification (user); its section text remains the
+  written spec of the intended click/lock/frame behavior.
 
 ## ▶ NEXT BUILD — the 2026-07-14 TODO list (user), largest first
 
@@ -439,10 +442,13 @@ the current one), then `build_history/LIVE-TEST-CHECKLIST.md`, then the most rec
 
 **Definition of Done — before calling any change finished, check ALL that apply:**
 1. **Tests** — suite green + `check-inline` 0; new/changed behavior has a guarding test.
-2. **LIVE-TEST-CHECKLIST.md** — if the change is browser-only or Ollama-only (UI, RTL, TTS,
-   rendering, anything not exercisable headlessly), ADD a numbered section describing exactly what
-   to click and what to expect. *This is the one most often forgotten.* Anything you label
-   "browser-verify owed" in notes MUST have a matching checklist entry.
+2. **Browser-only behavior → session notes** *(amended 2026-07-20; the former
+   LIVE-TEST-CHECKLIST.md is a closed archive — do NOT add sections to it)*. If the change is
+   browser-only or Ollama-only (UI, RTL, TTS, rendering, anything not exercisable headlessly),
+   the session notes MUST contain a short "how to see it work" description — what to click and
+   what to expect — so the user can verify it in normal use. Keep it terse; the burden of proof
+   shifted from a formal checklist run to the user's routine usage, but the DESCRIPTION of intended
+   behavior is still owed.
 3. **i18n** — new user-facing strings go in `ui.json` **`en` only** (never add English text to other
    languages — the user's `translate-ui.js` fills *missing* keys and can't detect English
    fallbacks). List every new key in the session notes + roadmap so the offline translate pass is
@@ -470,7 +476,10 @@ the current one), then `build_history/LIVE-TEST-CHECKLIST.md`, then the most rec
 
 ## OPEN — near-term (do these next)
 
-### 0. Browser / Ollama verification pass — IN PROGRESS (user)
+### 0. Browser / Ollama verification pass — ✅ CLOSED 2026-07-20 (bulk, user)
+All tracked functionality was exercised by the user and broadly works and/or is superseded by
+planned changes; `LIVE-TEST-CHECKLIST.md` is now an archive and the procedure is retired (see
+protocol rule 2). Original section text kept below for the record:
 The interactive checklist (`LIVE-TEST-CHECKLIST.md`) is the gate. Browser-only sections need only
 the static build; the Ollama sections need a local model. **Expect to tune the QC prompts** —
 qwen2.5:7b (and similar small models) are unreliable on "is this distractor also valid?" and
@@ -479,8 +488,11 @@ sound-test row incl. tooltips + flag-follow, motto, QC-skip incl. shift-click fo
 the v49 **QC coverage expansion** live: grammar + conjugation lessons now get flagged, and the
 flags render/dismiss in their editor branches — watch for false positives from a weak model.
 
-### 1. UI translation re-pass with TranslateGemma — OWED (user), now larger
-`node translate-ui.js --check` currently reports **1630 missing keys across 29 languages**:
+### 1. UI translation re-pass with TranslateGemma — OWED (user), now TINY
+**Figure corrected 2026-07-20:** `node translate-ui.js --check` reports **29 missing keys** —
+`storyboard.locked_resume` (new in v57) × 29 languages, nothing else. The "1630 missing" claim
+below was stale (a pass evidently ran, `sw` included at 466/467, without this file being updated).
+One `translate-ui.js` run clears the debt. Historical text kept for the record:
 - **43 en-only keys on every one of the 28 present languages** — `models.*` (×11),
   `dialect.*` (×23), `qc.editor.suggests_by`, `form.use_dialect`, `tts.approx_dialect`, and the
   three `*_nolang` keys (`ex.mcq_source_target.q_nolang`, `ex.badge.mcq_source_target_nolang`,

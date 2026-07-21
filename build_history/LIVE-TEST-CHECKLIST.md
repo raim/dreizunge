@@ -1,5 +1,17 @@
 # Dreizunge — live verification checklist
 
+> ## ⛔ CLOSED 2026-07-20 — this checklist is an ARCHIVE
+> The user has run the app across all functionality tracked below and confirms it **broadly works
+> and/or is superseded by planned changes**. All open boxes in §§1–91 are hereby closed in bulk as
+> *"verified by sustained use / superseded"* — they are intentionally NOT individually ticked, so
+> the file remains an honest record of what was formally stepped through vs. accepted in bulk.
+> **The live-test procedure itself is retired** (protocol amended in `roadmap_v57.md`): future
+> sessions no longer add sections here. Browser-only/Ollama-only behaviors are instead described in
+> the session notes ("how to see it work"), and the user verifies them in normal use. This file
+> stays for archaeology: the per-section descriptions remain the best written record of intended UI
+> behavior for many features.
+
+
 Everything here needs a **real model (qwen2.5:7b) and/or a real browser** and so
 can't be covered by the headless suite. Run `node test/run.js` first — it should
 be green before you bother with any of this. Then work top to bottom.

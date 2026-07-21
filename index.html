@@ -255,15 +255,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 
 /* ══ COMPLETE ════════════════════════════════════════════════════════ */
 #complete-screen{padding:24px 20px 40px;max-width:520px;width:100%;text-align:center;margin:0 auto}
-.trophy{font-size:72px;display:block;margin-bottom:8px;animation:popIn .5s cubic-bezier(.4,0,.2,1)}
-@keyframes popIn{0%{transform:scale(0) rotate(-10deg)}70%{transform:scale(1.1) rotate(2deg)}100%{transform:scale(1) rotate(0)}}
 .comp-title{font-size:28px;font-weight:900;color:var(--text);margin-bottom:4px}
-.comp-sub{font-size:14px;color:var(--gray-dark);margin-bottom:16px}
-.prog-pill{display:inline-block;background:var(--green);color:#fff;border-radius:24px;padding:10px 28px;font-weight:900;font-size:20px;margin-bottom:18px;box-shadow:0 4px 0 #1a7a30}
-.stat-row{display:flex;gap:10px;margin-bottom:20px}
-.stat-box{flex:1;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:12px 8px;box-shadow:var(--shadow-card)}
-.stat-num{font-size:24px;font-weight:900;margin-bottom:2px}
-.stat-lbl{font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.05em}
 .vocab-box{width:100%;background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:14px 16px;margin-bottom:18px;text-align:left;box-shadow:var(--shadow-card)}
 .vocab-hdr{font-size:11px;font-weight:900;color:var(--gray);text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px}.vocab-chip{display:inline-flex;align-items:center;gap:4px;background:var(--gray-light);border:1.5px solid var(--gray-mid);border-radius:20px;padding:3px 10px;font-size:13px;font-weight:700;margin:3px;white-space:nowrap}
 .vrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1.5px solid var(--gray-mid)}
@@ -380,6 +372,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 /* v57: storyboard panels are lesson-set links wherever the wrapper carries data-sb-chain */
 .storyline-storyboard[data-sb-chain] svg > g{cursor:pointer}
 .storyline-storyboard[data-sb-chain] svg > g:hover > rect{stroke:var(--blue)}
+/* v58: provenance one-liner — `by <user> · from: <source>` */
+.prov-line{font-size:11px;color:var(--gray-dark);font-weight:700;line-height:1.5}
+.prov-line a{color:var(--blue);text-decoration:none}.prov-line a:hover{text-decoration:underline}
+.prov-line .prov-user{font-weight:800}
+.prov-line .prov-note{font-weight:600;font-style:italic}
 .storyline-story-hdr:hover{background:var(--gray-light)}
 .storyline-story-arrow{font-size:10px;color:var(--gray-dark);transition:transform .2s;margin-left:auto}
 .storyline-story-arrow.open{transform:rotate(180deg)}
@@ -1046,6 +1043,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
     </div>
   </div>
+  <div class="gen-stats" id="prov-stats" style="padding:6px 16px 0;border-top:1px solid var(--gray-mid);margin:0;display:none"></div>
   <div class="gen-stats" id="gen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
 </div>
@@ -1062,24 +1060,23 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 
 <!-- ══ COMPLETE ════════════════════════════════════════════════════════ -->
 <div id="complete-screen" class="screen">
-  <span class="trophy">🏆</span>
   <div class="comp-title" id="comp-title">Lesson complete!</div>
-  <div class="comp-sub" id="comp-sub"></div>
-  <div class="prog-pill" id="comp-xp">0%</div>
-  <div class="stat-row">
-    <div class="stat-box" id="stat-correct" title="Correct"><div class="stat-num" id="s-correct" style="color:var(--green)">0</div><div class="stat-lbl">✓</div></div>
-    <div class="stat-box" id="stat-mistakes" title="Mistakes"><div class="stat-num" id="s-mistakes" style="color:var(--red)">0</div><div class="stat-lbl">✗</div></div>
-    <div class="stat-box" id="stat-streak" title="Best streak"><div class="stat-num" id="s-streak" style="color:var(--yellow)">0🔥</div><div class="stat-lbl">🔥</div></div>
-    <div class="stat-box" id="stat-flagged" title="Flagged"><div class="stat-num" id="s-flagged" style="color:#ff9600">0⚑</div><div class="stat-lbl">⚑</div></div>
-  </div>
-  <button class="cont-btn" id="comp-next" onclick="afterComplete()">Continue</button>
+  <!-- v60.8: progress bars only — within-chapter, along-story, and %-solved. No trophy / %-pill /
+       stat panels (removed per design; the bars carry the signal). -->
+  <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
+  <!-- v60: exactly two buttons. Next opens the next questions directly; Back returns to the
+       storyline (deck), or the landing page for a solo chapter. -->
+  <button class="cont-btn" id="comp-next" onclick="afterComplete()">Next</button>
+  <button class="cont-btn" id="comp-back" style="margin-top:8px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="compBackToStory()">← Back to story</button>
+  <!-- Teacher-only: drill + full nav pills. Hidden for learners (kept for the editing workflow). -->
   <button class="cont-btn" id="comp-drill" style="display:none;background:var(--yellow);color:var(--text);margin-top:8px" onclick="startDrill()">🎯 Review my mistakes</button>
-  <div id="comp-nav-btns" style="display:none;display:flex;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
+  <div id="comp-nav-btns" style="display:none;flex-wrap:wrap;justify-content:center;margin-top:8px"></div>
   <div id="comp-story-unlocked" style="display:none;margin-top:16px;border:2px solid var(--green);border-radius:var(--radius-lg);padding:12px 16px;text-align:left;background:#f0fff4">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
       <span style="font-size:20px">📖</span>
       <span style="font-size:13px;font-weight:900;color:var(--green-dark)" id="comp-story-unlocked-lbl">Story unlocked!</span>
-      <button class="spk-ico" id="comp-story-spk" style="margin-left:auto" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
+      <button class="spk-ico" id="comp-story-xlate" style="display:none;margin-left:auto;font-size:11px;font-weight:800;background:var(--white);border:1.5px solid var(--gray-mid);border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Nunito,sans-serif" onclick="toggleCompStoryLang()"></button>
+      <button class="spk-ico" id="comp-story-spk" onclick="speakBodyText(null,APP.lessonData?.lang||APP.lang,APP.lessonData?.story||'')" title="Read story aloud">🔊</button>
     </div>
     <div id="comp-story-text" style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic"></div>
   </div>
@@ -1574,12 +1571,7 @@ function applyUIStrings() {
   if (_ovEl) _ovEl.innerHTML = t('static.ai_warning')
     + ' <a href="https://github.com/raim/dreizunge" target="_blank" style="color:#2a4acc">github.com/raim/dreizunge</a>';
   try { updateTtsVoiceNote(); } catch(_){}
-  _setText('comp-next',     t('complete.continue'));
   _setText('comp-title',    t('complete.title'));
-  _setAttr('stat-correct',  'title', t('complete.correct'));
-  _setAttr('stat-mistakes', 'title', t('complete.mistakes'));
-  _setAttr('stat-streak',   'title', t('complete.streak'));
-  _setAttr('stat-flagged',  'title', t('complete.flagged'));
   _setText('words-from-lbl', t('lesson.words_from'));
   // Labels
   const spkLbl = document.querySelector('.form-lbl[for-i-speak]');
@@ -1793,13 +1785,6 @@ function _setVal(id, val, placeholder) {
   if (!el) return;
   if (val !== null && val !== undefined) el.value = val;
   if (placeholder) el.placeholder = placeholder;
-}
-function _setStatLbl(numId, text) {
-  // stat-lbl is a sibling of the num element inside .stat-box
-  const num = document.getElementById(numId);
-  if (!num) return;
-  const lbl = num.parentElement?.querySelector('.stat-lbl');
-  if (lbl) lbl.textContent = text;
 }
 
 
@@ -3746,12 +3731,26 @@ async function renderModelPicker(){
   const roles=[['story','models.story'],['lessons','models.lessons'],['translation','models.translation'],['qc','models.qc']];
   const opts=(sel)=>avail.map(m=>`<option value="${escAttr(m)}"${m===sel?' selected':''}>${escHtml(m)}</option>`).join('');
   const timeoutSec = Math.round((active.timeoutMs||720000)/1000);
+  const _think = active.think || {};
+  // v60.7: per-role reasoning ("thinking") checkboxes — only story + lessons can benefit; OFF by
+  // default. When on, the server bumps that role's token budget + timeout so a reasoning model's
+  // answer survives its <think> block (otherwise: empty response / timeout).
+  const thinkChk = (role) =>
+    `<label class="bmodel-think" title="${escAttr(t('models.think_hint'))}" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;cursor:pointer">`+
+    `<input type="checkbox" ${_think[role]?'checked':''} onchange="switchThink('${role}',this.checked)">🧠</label>`;
   box.innerHTML=roles.map(([role,key])=>
     `<span class="bmodel-field"><label>${escHtml(t(key))}</label>`+
-    `<select data-role="${role}" onchange="switchModel('${role}',this.value)">${opts(active[role])}</select></span>`
+    `<select data-role="${role}" onchange="switchModel('${role}',this.value)">${opts(active[role])}</select>`+
+    ((role==='story'||role==='lessons') ? thinkChk(role) : '')+
+    `</span>`
   ).join('')+
     `<span class="bmodel-field"><label>${escHtml(t('models.timeout'))}</label>`+
-    `<span><input type="number" id="bmodel-timeout" min="30" max="3600" step="30" value="${timeoutSec}" title="${escAttr(t('models.timeout_hint'))}" onchange="switchTimeout(this.value)" style="width:64px"><span style="opacity:.7">s</span></span></span>`;
+    `<span><input type="number" id="bmodel-timeout" min="30" max="3600" step="30" value="${timeoutSec}" title="${escAttr(t('models.timeout_hint'))}" onchange="switchTimeout(this.value)" style="width:64px"><span style="opacity:.7">s</span></span></span>`+
+    // v60.8: global %-solved threshold to complete a chapter (teacher setting). 0 = off (solve
+    // nothing required); 100 = must solve everything. Below it, a chapter stays incomplete and the
+    // learner is offered the drill.
+    `<span class="bmodel-field"><label>${escHtml(t('models.threshold'))}</label>`+
+    `<span><input type="number" id="bmodel-threshold" min="0" max="100" step="5" value="${Math.round((APP.info?.coverageThreshold ?? 1)*100)}" title="${escAttr(t('models.threshold_hint'))}" onchange="switchThreshold(this.value)" style="width:64px"><span style="opacity:.7">%</span></span></span>`;
   setPillClickable(true);
 }
 
@@ -3810,6 +3809,36 @@ async function switchTimeout(sec){
   }catch(_){ showToast(t('models.switch_failed')); }
 }
 
+// v60.7: toggle per-role reasoning ("thinking") for story or lessons. OFF by default; when a role
+// is switched on, the server bumps that role's token budget + timeout so a reasoning model's
+// answer survives its <think> block. Re-renders the picker from the server's authoritative state.
+async function switchThink(role, on){
+  if(role!=='story' && role!=='lessons') return;
+  try{
+    const body={ think:{} }; body.think[role]=!!on;
+    const r=await fetch('/api/models',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    let data={}; try{ data=await r.json(); }catch(_){}
+    if(!r.ok){ showToast((data&&data.error)||t('models.switch_failed')); await renderModelPicker(); return; }
+    showToast(on ? t('models.think_on') : t('models.think_off'));
+    await renderModelPicker();
+  }catch(_){ showToast(t('models.switch_failed')); await renderModelPicker(); }
+}
+
+// v60.8: set the global %-solved threshold to complete a chapter (teacher). Pure config — no
+// backend needed. Value is a percent (0..100) → stored as 0..1.
+async function switchThreshold(pctStr){
+  let pct = parseInt(pctStr, 10);
+  if(!Number.isFinite(pct)) return;
+  pct = Math.max(0, Math.min(100, pct));
+  try{
+    const r=await fetch('/api/coverage-threshold',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({value:pct/100})});
+    let data={}; try{ data=await r.json(); }catch(_){}
+    if(!r.ok){ showToast((data&&data.error)||t('models.switch_failed')); return; }
+    if(APP.info) APP.info.coverageThreshold = (typeof data.value==='number') ? data.value : pct/100;
+    showToast(t('models.threshold_set').replace('{pct}', Math.round((APP.info?.coverageThreshold??1)*100)));
+  }catch(_){ showToast(t('models.switch_failed')); }
+}
+
 // ── library ──
 function _populateLibSelects(saved){
   // Update main lang selects to mark active filter state
@@ -3857,6 +3886,7 @@ function savedItemHtml(s, connector, hideStory) {
       <div class="saved-info">
         <div class="saved-topic">${s.topic} ${diffBadge}</div>
         <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
+        ${provLineHtml(s)}
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
         ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${escJsAttr(s.id||s.topic)}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
@@ -3875,6 +3905,7 @@ function savedItemHtml(s, connector, hideStory) {
           ${t('lesson.read_story_short')}
           <span id="sis-arrow-${sid}" style="font-size:10px">▼</span>
         </div>
+        <span class="story-icon-btn" id="sis-xlate-${sid}" style="display:none;font-size:11px;font-weight:800" onclick="event.stopPropagation();toggleSavedStoryLang('${sid}')"></span>
         <span class="story-icon-btn" onclick="event.stopPropagation();speakBodyText('sis-body-${sid}')" title="${t('lesson.read_aloud')}">🔊</span>
       </div>
       <div class="saved-item-story-body" id="sis-body-${sid}" dir="auto" data-topic="${s.topic.replace(/"/g,'&quot;')}" data-lang="${s.lang||''}"></div>
@@ -4242,7 +4273,17 @@ async function loadSaved(ref){
     const r=await fetch('/api/lessons/load?'+(isId?('id='+ref):('topic='+ref)));
     if(!r.ok) throw new Error('Not found');
     APP.lessonData=await r.json();
-    goLessonSet();
+    // v60: learners skip the lesson-set page entirely. goLessonSet still runs the language/dir
+    // setup and hash update; then, for a learner, we resume at the first unfinished lesson and
+    // auto-start it. A fully-complete chapter has no unfinished lesson → fall back to showing
+    // the page (so a re-opened, done chapter isn't a dead click; the complete card's Next takes
+    // over from there). Teachers always land on the page — their editing hub.
+    await goLessonSet();
+    if(_isLearner()){
+      const idx=_firstUnfinishedLessonIdx(APP.lessonData);
+      if(idx>=0) startLesson(idx);
+      else showComplete(true);   // already complete → review card (full story + Back), not the editor
+    }
   }catch(e){ alert('Could not load: '+e.message); }
 }
 
@@ -4645,7 +4686,22 @@ function setComplete(d) {
     return countedLessons(d).every(L => L.type === 'mixed' || done[L.id]);
   }
   const done = APP.progress?.completed?.[d.topic] || {};
-  return countedLessons(d).every(L => done[L.id]);
+  // Every counted lesson done…
+  if (!countedLessons(d).every(L => done[L.id])) return false;
+  // …AND, when a teacher has set a global %-solved threshold below 100%, the learner's correct-
+  // answer coverage must also meet it (v60.8). This gates CLASSIC sets by mastery, not just
+  // completion — below the bar, the chapter stays incomplete and the completion card offers the
+  // drill as the way up. Teachers/canGenerate are exempt (they're editing, not being graded), and
+  // it only applies to the active topic (coverage reads live state). A threshold of 1 (default)
+  // or a topic with no question universe is a no-op, preserving the historical behavior.
+  if (!APP._teacherMode && APP.lessonData && d.topic === APP.lessonData.topic){
+    const tgt = _coverageTarget();
+    if (tgt < 1){
+      const cov = topicCoverage();
+      if (cov.total > 0 && (cov.solved / cov.total) < tgt) return false;
+    }
+  }
+  return true;
 }
 function buildPath(){
   if(!APP.lessonData)return;
@@ -4903,13 +4959,26 @@ function buildPath(){
     _updateStoryFlagUI();
   } else if(storySec){ storySec.style.display='none'; }
 
+  // Provenance (v58) — above the gen stats, same style
+  renderProvStats(d);
   // Gen stats + repair stats
   const statEl=document.getElementById('gen-stats');
   if(statEl){
     const lines=[];
     if(d.generationStats){
       const gs=d.generationStats;
-      lines.push(`Generated in ${(gs.totalMs/1000).toFixed(1)}s · ${gs.model} · ${((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString()} tokens`);
+      const gsTotal=(gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0);
+      // v59: the totals are CUMULATIVE (post-gen work — QC, added lessons, re-creates — adds
+      // to them). The tooltip breaks the total down: initial generation + per-type tallies.
+      let gsTitle='';
+      if(gs.tokensByType){
+        const by=gs.tokensByType;
+        const post=Object.values(by).reduce((a,n)=>a+n,0);
+        const parts=[`${t('tokens.initial')}: ${(gsTotal-post).toLocaleString()}`,
+          ...Object.keys(by).map(k=>`${k}: ${by[k].toLocaleString()}`)];
+        gsTitle=` title="${escAttr(parts.join(' · '))}"`;
+      }
+      lines.push(`<span${gsTitle}>Generated in ${(gs.totalMs/1000).toFixed(1)}s · ${gs.model} · ${gsTotal.toLocaleString()} tokens</span>`);
     }
     if(d.repairStats&&d.repairStats.repairCount>0){
       const rs=d.repairStats;
@@ -5044,6 +5113,44 @@ function _chapterNeighbors(d){
 // NOTE: kept here (after buildPath) so it lands in the static build's engine slice.
 function _canEdit(){ return !!(APP.info?.canGenerate || APP._teacherMode); }
 
+// ── Learner navigation (v60): skip the lesson-set page ───────────────────────
+// A learner is defined by teacher mode being OFF — independent of canGenerate. (Editing
+// capability is a separate axis: _canEdit() also unlocks on a live backend, but a person can
+// have a backend AND choose the learner experience by turning teacher mode off.) So learner
+// routing keys off _teacherMode alone. Static defaults teacher mode off → learners by default.
+function _isLearner(){ return !APP._teacherMode; }
+
+// The index of the first not-yet-done, learner-visible lesson in APP.lessonData — i.e. where a
+// resume should land. Returns -1 when the chapter is already complete.
+// CRITICAL (v60.1): completion is NOT always "every lesson has a done[id] boolean". A mixed-driven
+// learner set completes by COVERAGE (setComplete/coverageComplete) — its mixed lesson never gets a
+// done[id], so a naive !done[id] scan would return the mixed lesson forever and Next would replay
+// it. So: if the set is already complete under the real rule, return -1; otherwise fall back to the
+// first unfinished counted lesson (for a mixed-driven-but-incomplete set that's the mixed/driver
+// lesson, which is exactly where practice should continue).
+function _firstUnfinishedLessonIdx(d){
+  d = d || APP.lessonData; if(!d) return -1;
+  // setComplete reads APP.lessonData/coverage; only meaningful for the active topic. Guard so a
+  // background call for a different topic can't misfire the coverage branch.
+  if(d === APP.lessonData){ try { if(setComplete(d)) return -1; } catch(_) {} }
+  const done = APP.progress.completed?.[d.topic] || {};
+  return (d.lessons||[]).findIndex(L => !done[L.id] && lessonCountsFor(d, L));
+}
+
+// Resolve the storyline this chapter belongs to (preferring the deck the learner came from),
+// plus its ordered chapter topics + encoded chain — the shape openStorylineScreen wants and the
+// Back/Next buttons need. Null when the chapter is solo.
+function _storylineForTopic(topicKey){
+  const slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  const byId  = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+  const belongs = sl => (sl.chapters||[]).some(cid => byId[cid]?.topic === topicKey);
+  const sl = (APP._slScreen?.chainId && slArr.find(s => s.id===APP._slScreen.chainId && belongs(s)))
+           || slArr.find(belongs);
+  if(!sl) return null;
+  const topics = (sl.chapters||[]).map(cid => byId[cid]?.topic).filter(Boolean);
+  return { sl, byId, topics, enc: encodeURIComponent(JSON.stringify(topics)) };
+}
+
 function startNextLesson(){
   if(!APP.lessonData)return;
   const d=APP.lessonData, done=APP.progress.completed[d.topic]||{};
@@ -5074,11 +5181,41 @@ async function toggleSavedStory(id, topic) {
     const cached=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).find(l=>l.topic===topic);
     const d=cached||(await fetch('/api/lessons/load?topic='+encodeURIComponent(topic)).then(r=>r.json()));
     if(!d.story){ body.innerHTML='<em style="color:var(--gray-dark)">(no story)</em>'; return; }
-    const allVocab=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.target).filter(Boolean).sort((a,b)=>b.length-a.length);
-    let rendered=furiHtml(d.story);
-    if(allVocab.length) rendered = _highlightVocabHtml(rendered, allVocab);
-    body.innerHTML=rendered.split(/\n\n+/).map(p=>'<p dir="auto">'+p.replace(/\n/g,'<br>')+'</p>').join('');
+    // v60.6: stash the loaded topic + current language on the body so the translation toggle can
+    // re-render without re-fetching. Default to the target-language story.
+    _savedStoryCache[id] = d;
+    body.dataset.storyLang = 'target';
+    _renderSavedStory(id);
   }catch(e){ body.innerHTML='<em style="color:var(--gray-dark)">⚠ Could not load story</em>'; }
+}
+
+// v60.6: shared per-card story renderer (target | source), used by toggleSavedStory and its toggle.
+const _savedStoryCache = {};
+function _renderSavedStory(id){
+  const body=document.getElementById('sis-body-'+id);
+  const d=_savedStoryCache[id];
+  if(!body||!d) return;
+  const xlate=d.storyTranslation||'';
+  const showingSource = body.dataset.storyLang==='source' && xlate;
+  const text = showingSource ? xlate : (d.story||'');
+  const allVocab=(d.lessons||[]).flatMap(L=>L.vocab||[]).map(v=>v.target).filter(Boolean).sort((a,b)=>b.length-a.length);
+  let rendered=furiHtml(text);
+  // Vocab highlighting only makes sense on the target-language story.
+  if(!showingSource && allVocab.length) rendered = _highlightVocabHtml(rendered, allVocab);
+  body.innerHTML=rendered.split(/\n\n+/).map(p=>'<p dir="auto">'+p.replace(/\n/g,'<br>')+'</p>').join('');
+  body.setAttribute('dir','auto');
+  // Toggle button: shown only when a translation exists; labels the OTHER language.
+  const btn=document.getElementById('sis-xlate-'+id);
+  if(btn){
+    if(xlate){ btn.style.display=''; btn.textContent = showingSource ? t('story.show_original') : t('story.show_translation'); }
+    else btn.style.display='none';
+  }
+}
+function toggleSavedStoryLang(id){
+  const body=document.getElementById('sis-body-'+id);
+  if(!body) return;
+  body.dataset.storyLang = (body.dataset.storyLang==='source') ? 'target' : 'source';
+  _renderSavedStory(id);
 }
 
 // ── Storyline combined story panel ───────────────────────────────────
@@ -5712,6 +5849,18 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         lines.push(`${escHtml(topic)}: ${(gs.totalMs/1000).toFixed(1)}s · ${gs.model||''} · ${((gs.totalPromptTokens||0)+(gs.totalCompletionTokens||0)).toLocaleString()} tokens`);
       }
     });
+    // v59: storyline-level artefacts (summary, storyboard, retitle, summary-QC) accumulate on
+    // the STORYLINE (sl.tokenUsage) — decided explicitly over "chapter 1" or "spread": that
+    // work belongs to the storyline, so it gets its own line here.
+    if (slMeta?.tokenUsage) {
+      const tu = slMeta.tokenUsage;
+      const tuTotal = (tu.totalPromptTokens || 0) + (tu.totalCompletionTokens || 0);
+      if (tuTotal > 0) {
+        const by = tu.tokensByType || {};
+        const parts = Object.keys(by).map(k => `${escHtml(k)} ${by[k].toLocaleString()}`).join(' · ');
+        lines.push(`<b>${escHtml(t('tokens.storyline'))}</b>: ${tuTotal.toLocaleString()} tokens${parts ? ` (${parts})` : ''}`);
+      }
+    }
     statsEl.innerHTML = lines.join('<br>');
     statsEl.style.display = lines.length ? '' : 'none';
   }
@@ -5733,6 +5882,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // Storyboard — server-composed, validated SVG (composeStoryboardSVG is the security
   // boundary; the client only injects the finished string). Sits ABOVE the summary.
   const _slSb = slMeta?.storyboard || '';
+  html += '<div style="padding:0 4px">' + provLineForChapters(chapterIds.map(cid => _byId[cid]).filter(Boolean)) + '</div>';
   html += '<div class="storyline-storyboard" id="slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_')
         + '" data-sb-chain="' + escAttr(chainId) + '"'
         + ' aria-label="' + escAttr(t('storyboard.title')) + '" style="margin:8px 0;overflow-x:auto'
@@ -6186,6 +6336,97 @@ function toggleSlSummary(chainId) {
   const el = document.getElementById('slsc-summary-body-' + chainId);
   if (!el) return;
   el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+// ── Provenance display (v58) ─────────────────────────────────────────────────
+// ONE rendering path for the `by <user> · from: <source>` line everywhere it appears:
+// landing rows (live AND static — build-static's savedItemHtml calls THIS function, so the
+// two renderers cannot drift on formatting), the storyline screen (aggregated over chapters),
+// and the chapter page (full mode adds the note + the ✎ editor). The <user> part ships INERT
+// per the roadmap: it becomes a link once login exists.
+function _provSrcBits(src, sourceFile){
+  if (src) {
+    const doi = src.url && /^(doi:)?10\./i.test(src.url) ? src.url.replace(/^doi:/i,'') : null;
+    const href = src.url ? (doi ? 'https://doi.org/' + doi : src.url) : null;
+    let label = src.author || '';
+    if (src.licence) label += (label ? ' \u00b7 ' : '') + src.licence;
+    if (!label && href) { try { label = doi ? ('doi:' + doi) : new URL(href).host; } catch(_) { label = src.url; } }
+    if (!label) label = sourceFile || '';
+    return label ? { label, href } : null;
+  }
+  return sourceFile ? { label: sourceFile, href: null } : null;
+}
+function provLineHtml(s, full){
+  if (!s) return '';
+  const user = s.createdBy || 'admin';
+  const bits = _provSrcBits(s.source || null, s.sourceFile || s.storyMeta?.sourceFile || null);
+  let h = `<span class="prov-user">${t('prov.by', { user: escHtml(user) })}</span>`;
+  if (bits) {
+    const lbl = escHtml(bits.label);
+    h += ' \u00b7 ' + escHtml(t('prov.from')) + ': ' + (bits.href
+      ? `<a href="${escAttr(bits.href)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${lbl}</a>`
+      : lbl);
+  }
+  if (full && s.source && s.source.note) h += `<span class="prov-note"> \u2014 ${escHtml(s.source.note)}</span>`;
+  return `<div class="prov-line">${h}</div>`;
+}
+// Storyline screen: aggregate over the deck's chapters — distinct users, distinct sources
+// (capped at 3, "+n" for the rest). Storylines deliberately have NO createdBy of their own:
+// deriving stays truthful once login exists and chapters have different creators.
+function provLineForChapters(chaps){
+  const users = [...new Set((chaps || []).map(c => c.createdBy || 'admin'))];
+  const seen = new Set(); const srcs = [];
+  (chaps || []).forEach(c => {
+    const b = _provSrcBits(c.source || null, c.sourceFile || c.storyMeta?.sourceFile || null);
+    if (b && !seen.has(b.label)) { seen.add(b.label); srcs.push(b); }
+  });
+  let h = `<span class="prov-user">${t('prov.by', { user: escHtml(users.join(', ')) })}</span>`;
+  const shown = srcs.slice(0, 3);
+  if (shown.length) {
+    h += ' \u00b7 ' + escHtml(t('prov.from')) + ': ' + shown.map(b =>
+      b.href ? `<a href="${escAttr(b.href)}" target="_blank" rel="noopener">${escHtml(b.label)}</a>` : escHtml(b.label)).join('; ');
+    if (srcs.length > 3) h += ` +${srcs.length - 3}`;
+  }
+  return `<div class="prov-line">${h}</div>`;
+}
+// Chapter page: the block ABOVE #gen-stats (same style, per the roadmap). Editing is live-only
+// (the static build has no server to persist to) and teacher-gated like every other editor.
+function renderProvStats(d){
+  const el = document.getElementById('prov-stats'); if (!el) return;
+  if (!d) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  const canEdit = typeof STATIC_LESSONS === 'undefined' && _canEdit() && !!d.id;
+  const pencil = canEdit ? `<button class="ico-btn" style="font-size:12px" title="${escAttr(t('prov.edit_title'))}" onclick="openProvEdit()">\u270e</button>` : '';
+  el.innerHTML = `<div style="display:flex;align-items:center;gap:6px">${provLineHtml(d, true)}${pencil}</div>`;
+  el.style.display = '';
+}
+function openProvEdit(){
+  const d = APP.lessonData; if (!d) return;
+  const el = document.getElementById('prov-stats'); if (!el) return;
+  const s = d.source || {};
+  const inp = (id, cap) => `<input id="prov-in-${id}" placeholder="${escAttr(t('prov.' + id))}" value="${escAttr(s[id] || '')}" maxlength="${cap}" style="flex:1;min-width:110px;font-size:12px;font-family:'Nunito',sans-serif;padding:3px 6px;border:1px solid var(--gray-mid);border-radius:5px">`;
+  el.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:2px 0 6px">
+    ${inp('author', 120)}${inp('licence', 80)}${inp('url', 300)}${inp('note', 500)}
+    <button class="ico-btn" style="font-size:12px;font-weight:800" onclick="saveProvEdit(this)">${escHtml(t('prov.save'))}</button>
+    <button class="ico-btn" style="font-size:12px" onclick="renderProvStats(APP.lessonData)">${escHtml(t('dialog.cancel'))}</button>
+  </div>`;
+}
+async function saveProvEdit(btn){
+  const d = APP.lessonData; if (!d || !d.id) return;
+  const v = id => (document.getElementById('prov-in-' + id)?.value || '').trim();
+  const source = { author: v('author'), licence: v('licence'), url: v('url'), note: v('note') };
+  if (btn) btn.disabled = true;
+  try {
+    const r = await fetch('/api/topic-source', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: d.id, source }) });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    // The server is authoritative: it may have dropped an unparseable URL/DOI — mirror
+    // exactly what it kept, and say so if the url was rejected.
+    if (source.url && !(j.source && j.source.url)) showToast(t('prov.url_dropped'));
+    if (j.source) d.source = j.source; else delete d.source;
+    const row = (APP.savedList || []).find(x => x.id === d.id);
+    if (row) { if (j.source) row.source = j.source; else delete row.source; }
+    renderProvStats(d);
+  } catch(e) { showToast('\u26a0 ' + e.message); if (btn) btn.disabled = false; }
 }
 
 // ── Storyboard panels as lesson navigation (v57) ─────────────────────────────
@@ -8843,6 +9084,7 @@ function startLesson(idx){
   C.isGrammar=(lesson.type==='grammar');
   C.isConjugation=(lesson.type==='conjugation');
   C.ehSuspect=new Set(); C.ehChecked=false;
+  delete C._review;   // v60.1: a real round is NOT a review render — must record on completion
   // Per-ROUND set of words answered incorrectly. It was created lazily on the first wrong answer and
   // never cleared, so it accumulated across every lesson in the session. Two consequences, both real:
   //   • a word answered CORRECTLY in a later lesson was still recorded as wrong, because
@@ -10045,10 +10287,13 @@ function topicCoverage(){
 }
 // Target coverage fraction that counts as "set complete" for the coverage model. Default 100%;
 // a topic may override via d.coverageTarget (0–1). Used by coverageComplete().
+// v60.8: the fallback is now the GLOBAL teacher-set threshold (APP.info.coverageThreshold),
+// then 1. Precedence: per-topic coverageTarget > global threshold > 1 (solve everything).
 function _coverageTarget(){
   const d = APP.lessonData;
-  const t = (d && typeof d.coverageTarget === 'number') ? d.coverageTarget : 1;
-  return Math.max(0, Math.min(1, t));
+  if (d && typeof d.coverageTarget === 'number') return Math.max(0, Math.min(1, d.coverageTarget));
+  const g = APP.info && typeof APP.info.coverageThreshold === 'number' ? APP.info.coverageThreshold : 1;
+  return Math.max(0, Math.min(1, g));
 }
 // Is the set complete under the coverage model? Only meaningful for a mixed-driven set; the
 // locked path keeps its lesson-boolean completion (setComplete). Returns true when the solved
@@ -10291,12 +10536,22 @@ function check(){
 }
 
 // ── complete ──
-function showComplete(){
+function showComplete(review){
+  // review=true (v60.1): render the completion card for an ALREADY-complete chapter a learner
+  // re-opened — no fresh round exists, so we neither record progress nor show per-round stats.
+  // A synthetic C keeps the downstream code (which reads APP.cur) working; lessonIdx points at
+  // the last visible lesson purely so `lesson` resolves for the vocab recap.
+  if(review){
+    const _d=APP.lessonData;
+    const _last=(_d.lessons||[]).map((L,i)=>({L,i})).filter(x=>lessonCountsFor(_d,x.L)).pop();
+    APP.cur={ lessonIdx:_last?_last.i:0, correct:0, total:0, mistakes:0, bestStreak:0, flagCount:0, exercises:[], _review:true };
+  }
   const C=APP.cur, lesson=APP.lessonData.lessons[C.lessonIdx], topicKey=APP.lessonData.topic;
   // A drill is ephemeral: it has no entry in lessons.json, so recording completion under its
   // synthetic topic key would leave a phantom topic in progress forever. The learned ledger and the
   // solved store still get written (markSolved / recordLearnedFromLesson) — that is the whole point.
-  if(!C.isErrorHunt && !lesson._drill){
+  // Review mode records nothing (the chapter is already complete).
+  if(!C._review && !C.isErrorHunt && !lesson._drill){
     if(!APP.progress.completed[topicKey]) APP.progress.completed[topicKey]={};
     const prev = APP.progress.completed[topicKey][lesson.id]||{};
     const prevCorrect = typeof prev === 'object' ? (prev.correct||0) : 0;
@@ -10307,15 +10562,9 @@ function showComplete(){
     };
     saveProg();
   }
-  // Update complete screen stats
-  const pct = C.total > 0 ? Math.round(100*C.correct/C.total) : 0;
+  // v60.8: the trophy/%-pill/stat panels were removed — the progress bars (built in
+  // _compProgressHtml, incl. %-solved) carry the signal now. Nothing to populate here.
   const el = id => document.getElementById(id);
-  el('s-correct').textContent  = C.correct||0;
-  el('s-mistakes').textContent = C.mistakes||0;
-  el('s-streak').textContent   = (C.bestStreak||0)+'🔥';
-  el('s-flagged').textContent  = (C.flagCount||0)+'⚑';
-  el('comp-xp').textContent    = pct+'%';
-  el('comp-sub').textContent   = lesson?.title || lesson?.type || '';
 
   // Vocab recap — handle all lesson types
   const vocabBox = document.getElementById('comp-vocab')?.closest('.vocab-box');
@@ -10368,87 +10617,154 @@ function showComplete(){
   // user-specific generation / milestones — see roadmap). Wrong-answered words are flagged for
   // future focus. Guarded so a failure here never breaks the result card.
   try { recordLearnedFromLesson(lesson, C._wrongTargets); } catch(_) {}
-  // "Review my mistakes" — offered only when a round can actually be built. Evaluated AFTER
-  // recordLearnedFromLesson, so this round's mistakes count toward it, and a drill that just cleared
-  // the last wrong word correctly hides the button again.
+  // ── v60 completion card: Next + Back, progress summary, full story on unlock ──
+  // "Next" opens the next questions directly (no lesson-set page for learners): the next
+  // unfinished lesson in THIS chapter, else the first unfinished lesson of the NEXT chapter in
+  // the storyline, else (nothing left) it becomes a second "back to story" affordance.
+  const compNext = el('comp-next');
+  // v60.1: the set may be mixed-driven, where completion is COVERAGE, not per-lesson done[id].
+  // _firstUnfinishedLessonIdx already encodes the real rule (returns -1 when the set is complete,
+  // else the lesson to continue — the mixed/driver lesson for a mixed-driven set). Use it so Next
+  // can't get trapped replaying a mixed lesson whose coverage is already satisfied. A review
+  // render (_review) is by definition already-complete → no in-chapter next.
+  const _setDone = C._review || (()=>{ try { return setComplete(APP.lessonData); } catch(_) { return false; } })();
+  const nextLessonIdx = _setDone ? -1 : _firstUnfinishedLessonIdx(APP.lessonData);
+
+  // Storyline context (shared helper): the deck this chapter belongs to + its ordered chapters.
+  // For a drill, topicKey is synthetic — resolve the deck from the real stashed topic instead so
+  // Back returns to the chapter's story, not the landing page.
+  const _backTopic = (lesson._drill && APP._drillPrev?.topic) ? APP._drillPrev.topic : topicKey;
+  const _slCtx = _storylineForTopic(_backTopic);
+  const sl = _slCtx?.sl || null;
+  const slEnc = _slCtx?.enc || null;
+
+  // Find the next chapter in the deck that still has an unfinished counted lesson.
+  const _nextChapter = () => {
+    if (!_slCtx) return null;
+    const { sl, byId, topics } = _slCtx;
+    const myIdx = topics.indexOf(topicKey);
+    if (myIdx < 0) return null;
+    const ids = sl.chapters || [];
+    for (let i = myIdx + 1; i < ids.length; i++) {
+      const ch = byId[ids[i]];
+      if (!ch) continue;
+      const cDone = APP.progress.completed?.[ch.topic] || {};
+      // A chapter's list projection carries lessonCount but not the lessons themselves; treat
+      // any chapter that isn't fully accounted-for in progress as having work left. loadSaved
+      // will resume it precisely at its first unfinished lesson.
+      const cnt = ch.lessonCount || 0;
+      const doneCount = Object.keys(cDone).length;
+      if (cnt === 0 || doneCount < cnt) return ch;
+    }
+    return null;
+  };
+
+  if (nextLessonIdx >= 0 && !lesson._drill) {
+    // Next lesson in this chapter — start it directly (learners never see the lesson-set page).
+    compNext.textContent = t('complete.next');
+    compNext.style.display = '';
+    compNext.onclick = () => { endDrill(); startLesson(nextLessonIdx); };
+  } else if (!lesson._drill && _nextChapter()) {
+    // Chapter finished → carry straight into the next chapter's first unfinished lesson.
+    const ch = _nextChapter();
+    compNext.textContent = t('complete.next');
+    compNext.style.display = '';
+    compNext.onclick = () => { endDrill(); loadSaved(ch.id || encTopic(ch.topic)); };
+  } else {
+    // Nothing left to do (last lesson of last/solo chapter, or a drill). Next collapses; Back
+    // is the only forward action.
+    compNext.style.display = 'none';
+  }
+
+  // Back-to-story target is stashed for compBackToStory(): the storyline screen if any, else
+  // the landing page (solo chapter). Resolved here so the button and Next agree on the deck.
+  APP._compBack = (sl && slEnc) ? { kind: 'storyline', id: sl.id, enc: slEnc } : { kind: 'landing' };
+  const backBtn = el('comp-back');
+  if (backBtn) {
+    backBtn.textContent = (sl ? t('complete.back_story') : t('complete.back_home'));
+    backBtn.style.display = lesson._drill ? 'none' : '';   // a drill returns via Next/afterComplete
+  }
+
+  // v60.8: teacher-set %-solved threshold gate. Compute BEFORE the progress render so the card
+  // title, the progress hint, and the drill offer all agree. Below threshold on the active topic
+  // (learner only, non-drill) → chapter stays incomplete, drill is the way up.
+  const _teacher = !!APP._teacherMode;
+  let _belowThreshold = false, _threshPct = 100;
+  try {
+    if (!_teacher && !lesson._drill && d.topic === APP.lessonData?.topic){
+      const tgt = _coverageTarget();
+      _threshPct = Math.round(tgt * 100);
+      if (tgt < 1){
+        const cov = topicCoverage();
+        _belowThreshold = cov.total > 0 && (cov.solved / cov.total) < tgt;
+      }
+    }
+  } catch(_) {}
+  // Title reflects the gate: below threshold it's not a "complete" celebration but a "keep going".
+  const _titleEl = el('comp-title');
+  if (_titleEl) _titleEl.textContent = _belowThreshold ? t('complete.keep_going') : t('complete.title');
+
+  // Progress summary — along the storyline AND within the chapter. Skipped for a drill (its
+  // synthetic topic has no chapter progress of its own).
+  const _progEl = el('comp-progress');
+  if (_progEl) {
+    if (lesson._drill) { _progEl.innerHTML = ''; _progEl.style.display = 'none'; }
+    else {
+      _progEl.style.display = '';
+      let _ph = _compProgressHtml(topicKey, _slCtx);
+      if (_belowThreshold) _ph += `<div style="margin-top:8px;font-size:12px;font-weight:800;color:#c0392b;text-align:center">${escHtml(t('complete.below_threshold').replace('{pct}', _threshPct))}</div>`;
+      _progEl.innerHTML = _ph;
+    }
+  }
+
+
   try {
     const _db = document.getElementById('comp-drill');
     if(_db){
-      const _prev = APP._drillPrev;   // during a drill the real pair lives on the stashed topic
+      const _prev = APP._drillPrev;
       const _l = _prev?.lang    || APP.lessonData?.lang    || APP.lang;
       const _s = _prev?.srcLang || APP.lessonData?.srcLang || APP.srcLang;
       _db.textContent = t('drill.cta');
-      _db.style.display = drillAvailable(_l, _s) ? '' : 'none';
+      // Shown for a teacher (review tool) OR a below-threshold learner (required to progress),
+      // whenever a drill round can actually be built.
+      _db.style.display = ((_teacher || _belowThreshold) && drillAvailable(_l, _s)) ? '' : 'none';
     }
   } catch(_) {}
-
-  // Next button priority:
-  // 1. Next lesson set in this topic (if any remain after this one)
-  // 2. If chapter fully done → open storyline screen
-  // 3. If no storyline → back to lesson-set screen
-  const compNext = el('comp-next');
-  const done = APP.progress.completed?.[topicKey] || {};
-  const allLessons = APP.lessonData?.lessons || [];
-  // Visibility predicate from the shared helper (handles teacher-hidden + mixed-only).
-  const _counts = (L) => lessonCountsFor(APP.lessonData, L);
-  const nextLessonIdx = allLessons.findIndex((L, i) => i !== C.lessonIdx && !done[L.id] && _counts(L));
-  // Use the canonical registry label so every type is named correctly (incl. 🔡 script lessons,
-  // word_forms, synonyms…) — the old hardcoded map fell back to "Vocabulary" for anything missing.
-  const typeLabel = idx => {
-    const L = allLessons[idx]; if (!L) return t('lesson.type.vocab');
-    return (L.type === 'intro_script' && L.title) ? L.title : (lessonTypeEmoji(L.type) + ' ' + lessonTypeLabel(L.type));
-  };
-
-  // Resolve storyline
-  const _slArr = Array.isArray(APP.storylines) ? APP.storylines : [];
-  const _byId  = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
-  const _slScreenSl = APP._slScreen?.chainId
-    ? _slArr.find(sl => sl.id === APP._slScreen.chainId && (sl.chapters||[]).some(cid => _byId[cid]?.topic === topicKey))
-    : null;
-  const sl = _slScreenSl || _slArr.find(sl => (sl.chapters||[]).some(cid => _byId[cid]?.topic === topicKey));
-  const slChain = sl ? (sl.chapters||[]).map(cid=>_byId[cid]?.topic).filter(Boolean) : null;
-  const slEnc   = slChain ? encodeURIComponent(JSON.stringify(slChain)) : null;
-
-  // Primary: next lesson or back to lesson set
-  if (nextLessonIdx >= 0) {
-    compNext.textContent = `→ Next: ${typeLabel(nextLessonIdx)}`;
-    compNext.onclick = () => { goLessonSet(); setTimeout(() => startLesson(nextLessonIdx), 80); };
-  } else if (sl && slEnc) {
-    compNext.textContent = '→ ' + (sl.title || t('storyline.title'));
-    compNext.onclick = () => openStorylineScreen(sl.id, slEnc);
-  } else {
-    compNext.textContent = t('complete.continue');
-    compNext.onclick = () => goLessonSet();   // goLessonSet() restores the real topic (see endDrill)
-  }
-
-  // Always show persistent nav buttons: lesson set + storyline (if available)
   const _compNav = document.getElementById('comp-nav-btns');
-  if (_compNav && lesson._drill) {
-    _compNav.innerHTML = '';                 // a drill has no lesson set and no storyline
-    _compNav.style.display = 'none';
-  } else if (_compNav) {
-    const lsTitle = APP.lessonData?.topic || t('lesson.set');
-    let navHtml = `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="goLessonSet()">📚 ${escHtml(lsTitle)}</button>`;
-    if (sl && slEnc) {
-      const slEncAttr = slEnc.replace(/'/g, '%27'); // ' is not escaped by encodeURIComponent; would break the inline onclick
-      navHtml += `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="openStorylineScreen('${sl.id}','${slEncAttr}')">📖 ${escHtml(sl.title||t('storyline.title'))}</button>`;
+  if (_compNav) {
+    if (_teacher && !lesson._drill) {
+      const lsTitle = APP.lessonData?.topic || t('lesson.set');
+      let navHtml = `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="goLessonSet()">📚 ${escHtml(lsTitle)}</button>`;
+      if (sl && slEnc) {
+        const slEncAttr = slEnc.replace(/'/g, '%27');
+        navHtml += `<button class="cont-btn" style="font-size:13px;padding:8px 18px;margin:4px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)" onclick="openStorylineScreen('${sl.id}','${slEncAttr}')">📖 ${escHtml(sl.title||t('storyline.title'))}</button>`;
+      }
+      _compNav.innerHTML = navHtml;
+      _compNav.style.display = 'flex';
+    } else {
+      _compNav.innerHTML = '';
+      _compNav.style.display = 'none';
     }
-    _compNav.innerHTML = navHtml;
-    _compNav.style.display = '';
   }
-  // Story-unlocked card
+
+  // Story-unlocked card: on chapter completion show the FULL chapter story (v60 — was a 200-char
+  // teaser). Same visibility rule as the path: mixed-only/hidden learners unlock on finishing the
+  // COUNTED lessons; teachers/canGenerate always see it.
   const _compStory = document.getElementById('comp-story-unlocked');
   if (_compStory) {
     const _story = APP.lessonData?.story || '';
-    // Respect the same visibility rule as the path: in mixed-only (or with hidden lessons) a
-    // learner finishes the set by completing only the COUNTED lessons, so the story unlocks then —
-    // not only when every raw lesson (incl. hidden ones they never see) is done.
     const _allDone2 = setComplete(APP.lessonData);
     const _showStory = _story && (_allDone2 || APP.info.canGenerate || APP._teacherMode);
     _compStory.style.display = _showStory ? '' : 'none';
     if (_showStory) {
-      const _el = document.getElementById('comp-story-text');
-      if (_el) _el.textContent = _story.slice(0, 200) + (_story.length > 200 ? '…' : '');
+      const _lbl = document.getElementById('comp-story-unlocked-lbl');
+      if (_lbl) _lbl.textContent = _allDone2 ? t('complete.story_unlocked') : t('complete.story_preview');
+      // v60.6: story-translation toggle. When a source-language translation exists (the
+      // auto-translate pass stored it on the topic), offer a button to switch the panel between
+      // the target-language story and its translation. Defaults to the target story; a full story
+      // shows in full, a not-yet-complete teacher preview is truncated the same way in both langs.
+      APP._compStoryLang = 'target';   // reset on every card render
+      _renderCompStory(_allDone2);
       const _spk = document.getElementById('comp-story-spk');
       if (_spk) _spk.style.display = (typeof _lessonIsDialect==='function' && _lessonIsDialect()) ? 'none' : '';
     }
@@ -10456,9 +10772,126 @@ function showComplete(){
   show('complete-screen');
 }
 
+// v60.6: render the completion-card story in the currently-selected language (target | source),
+// and show/hide + label the toggle depending on whether a translation exists.
+function _renderCompStory(allDone){
+  const d = APP.lessonData || {};
+  const _story = d.story || '';
+  const _xlate = d.storyTranslation || '';
+  const showingSource = APP._compStoryLang === 'source' && _xlate;
+  const full = showingSource ? _xlate : _story;
+  const _el = document.getElementById('comp-story-text');
+  if (_el) _el.textContent = allDone ? full : (full.slice(0, 200) + (full.length > 200 ? '…' : ''));
+  const _btn = document.getElementById('comp-story-xlate');
+  if (_btn){
+    if (_xlate){
+      _btn.style.display = '';
+      // The button offers the OTHER language: showing target → "show translation"; showing
+      // source → "show original".
+      _btn.textContent = showingSource ? t('story.show_original') : t('story.show_translation');
+    } else {
+      _btn.style.display = 'none';
+    }
+  }
+  // The 🔊 reads whatever is currently shown.
+  const _spk = document.getElementById('comp-story-spk');
+  if (_spk){
+    const lang = showingSource ? (d.srcLang || 'en') : (d.lang || APP.lang);
+    _spk.setAttribute('onclick', `speakBodyText(null,'${lang}',${showingSource ? 'APP.lessonData?.storyTranslation' : 'APP.lessonData?.story'}||'')`);
+  }
+}
+function toggleCompStoryLang(){
+  APP._compStoryLang = (APP._compStoryLang === 'source') ? 'target' : 'source';
+  _renderCompStory(setComplete(APP.lessonData));
+}
+
+// v60: the progress summary shown on every completion card — the learner's position along the
+// storyline (chapters done / total) and within the current chapter (lessons done / total). Pure
+// string builder off APP.progress + the list projection, so it works in the static build too.
+function _compProgressHtml(topicKey, slCtx){
+  const rowsHtml = (label, done, total, pct) => {
+    const p = total>0 ? Math.round(100*done/total) : 0;
+    return `<div style="margin:6px 0">
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--gray-dark);margin-bottom:3px">
+        <span>${escHtml(label)}</span><span>${done}/${total}</span>
+      </div>
+      <div style="height:8px;background:var(--gray-light);border-radius:4px;overflow:hidden">
+        <div style="height:100%;width:${p}%;background:var(--green);border-radius:4px"></div>
+      </div>
+    </div>`;
+  };
+  // Within the chapter: counted lessons done / total — OR, for a mixed-driven learner set, the
+  // coverage fraction (solved questions ÷ universe), matching buildPath's bar and the real
+  // completion rule. Without this the row reads 0/N forever on a mixed set (its mixed lesson never
+  // gets a done[id]) — the "progress bar doesn't move" symptom.
+  const d = APP.lessonData;
+  const done = APP.progress.completed?.[topicKey] || {};
+  const counted = countedLessons(d);
+  const _mixedDriven = !APP._teacherMode && (d.lessons||[]).some(x => x && x.type === 'mixed' && !x._hidden)
+                       && d.topic === topicKey;
+  let html;
+  if (_mixedDriven){
+    let cov = null; try { cov = topicCoverage(); } catch(_) {}
+    if (cov && cov.total > 0) html = rowsHtml(t('complete.chapter_progress'), cov.solved, cov.total);
+    else html = rowsHtml(t('complete.chapter_progress'), counted.filter(L => done[L.id]).length, counted.length);
+  } else {
+    html = rowsHtml(t('complete.chapter_progress'), counted.filter(L => done[L.id]).length, counted.length);
+  }
+  // Along the storyline: chapters with all their counted work done / total chapters.
+  if (slCtx){
+    const { sl, byId, topics } = slCtx;
+    const total = topics.length;
+    let doneCh = 0;
+    for (const cid of (sl.chapters||[])){
+      const ch = byId[cid]; if(!ch) continue;
+      const cDone = APP.progress.completed?.[ch.topic] || {};
+      // The CURRENT chapter: we have its full lessons, so use the real completion rule.
+      if (ch.topic === topicKey){ if (setComplete(d)) doneCh++; continue; }
+      // OTHER chapters: the list projection ships lessonCount + lessonTypes but NOT the lessons
+      // themselves, so we can't run setComplete. A mixed-driven chapter completes by coverage and
+      // its mixed lesson never gets a done[id], so `done-keys >= lessonCount` under-counts it (the
+      // "story progress shows 0" bug). Detect mixed via lessonTypes: for those, "complete" = the
+      // learner has finished at least the non-mixed lessons AND has any recorded score (they can
+      // only have reached the mixed lesson by clearing the earlier ones). For classic chapters,
+      // keep the exact count.
+      const cnt = ch.lessonCount || 0;
+      const doneKeys = Object.keys(cDone).length;
+      const isMixed = Array.isArray(ch.lessonTypes) && ch.lessonTypes.includes('mixed');
+      if (cnt === 0) continue;
+      if (isMixed){
+        // A mixed chapter has `cnt` lessons of which one is the mixed driver; finishing the set
+        // records the non-mixed lessons (cnt-1) plus coverage. Treat >= cnt-1 recorded as done.
+        if (doneKeys >= Math.max(1, cnt - 1)) doneCh++;
+      } else if (doneKeys >= cnt) doneCh++;
+    }
+    html = rowsHtml(t('complete.story_progress') + (sl.title?(' · '+sl.title):''), doneCh, total) + html;
+  }
+  // v60.8: %-solved bar — the CORRECT-answer coverage (solved questions ÷ topic universe), the
+  // real mastery signal, distinct from the lesson-count "chapter" bar above. Shown for the current
+  // topic whenever it has a question universe. Rendered LAST so it sits directly below the others.
+  try {
+    const cov = topicCoverage();
+    if (cov && cov.total > 0){
+      html += rowsHtml(t('complete.solved'), cov.solved, cov.total);
+    }
+  } catch(_) {}
+  return html;
+}
+
+// Back-to-story button: the storyline deck if this chapter has one, else the landing page.
+function compBackToStory(){
+  endDrill();
+  const b = APP._compBack;
+  if (b && b.kind === 'storyline') openStorylineScreen(b.id, b.enc);
+  else goLandingClean();
+}
+
 function afterComplete() {
-  endDrill();          // finishing a drill restores the real topic before we navigate back
-  goLessonSet();
+  // Reached only by a drill's Next now (the learner card's Next starts the next lesson/chapter
+  // directly, and the no-more-work case hides Next in favor of Back). endDrill restores the real
+  // topic; then behave like Back-to-story.
+  endDrill();
+  compBackToStory();
 }
 
 
@@ -11167,7 +11600,17 @@ function confirmQuit(){
     }
   }
   endDrill();          // quitting mid-drill restores the real topic
-  goLessonSet();
+  // v60.1: learners never see the lesson-set page — quitting a question returns to the storyline
+  // deck (or the landing page for a solo chapter), the same target as the completion card's Back.
+  // Teachers go back to their editing hub as before.
+  if(_isLearner()){
+    const topicKey = APP.lessonData?.topic;
+    const ctx = topicKey ? _storylineForTopic(topicKey) : null;
+    if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
+    else goLandingClean();
+  } else {
+    goLessonSet();
+  }
 }
 
 // ── Import lessons.json ───────────────────────────────────────────────

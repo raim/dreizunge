@@ -45,14 +45,18 @@ assert.ok(!/model: o\.model \|\| OLLAMA_LESSON_MODEL/.test(meta), 'the silent le
 
 // 3. Every call site destructures. A bare `const summary = await generateStorylineSummary(...)`
 //    would assign the OBJECT to sl.summary and render "[object Object]" to the user.
-const calls = server.match(/^.*await generateStorylineSummary\(.*$/gm) || [];
-assert.strictEqual(calls.length, 2, `both call sites found (got ${calls.length})`);
-calls.forEach(c => assert.ok(/\{ text: summary, meta: summaryMeta \}/.test(c),
-  `call site destructures {text, meta} — found: ${c.trim()}`));
+// v59: both call sites now run through the token meter — the destructure moved one level
+// down ({ result: { text, meta }, tokens }) but the shape guard is the same: a bare
+// `const summary = await …` would still assign an OBJECT to sl.summary.
+const calls = server.match(/meterLLMTokens\(\(\) => generateStorylineSummary\(/g) || [];
+assert.strictEqual(calls.length, 2, `both call sites found, metered (got ${calls.length})`);
+const destructured = server.match(/\{ result: \{ text: summary, meta: summaryMeta \}, tokens: _mTok \}\s*=\s*\n?\s*await meterLLMTokens\(\(\) => generateStorylineSummary\(/g) || [];
+assert.strictEqual(destructured.length, 2, 'both call sites destructure {text, meta} through the meter');
 
-// 4. Both call sites persist the stamp beside the summary.
-const persists = server.match(/sl\.summary = summary;\s*sl\.summaryMeta = summaryMeta;/g) || [];
-assert.strictEqual(persists.length, 2, 'both call sites persist sl.summaryMeta');
+// 4. Both call sites persist the stamp beside the summary, and both attribute tokens to the
+//    STORYLINE first (v59 decision: summary is a storyline-level artefact).
+const persists = server.match(/addTokenUsage\(sl, _mTok, 'summary'\);\s*sl\.summary = summary;\s*sl\.summaryMeta = summaryMeta;/g) || [];
+assert.strictEqual(persists.length, 2, 'both call sites accumulate tokens AND persist sl.summaryMeta');
 assert.ok(!/sl\.summary = summary; upsertStoryline/.test(server), 'no call site stores the summary without its stamp');
 
 // 5. The HTTP route still hands the client a plain string.

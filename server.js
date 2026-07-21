@@ -7,10 +7,34 @@ const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
-const { callLLM: _callLLM, ping: pingOllama, release: releaseOllamaModel,
+const { callLLM: _rawCallLLM, ping: pingOllama, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
         stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
+const { AsyncLocalStorage } = require('async_hooks');
 const { buildExport } = require('./export-lessons');
+
+// ── Token metering (v59) ──────────────────────────────────────────────
+// EVERY server-side LLM call converges on _callLLM (the four role wrappers and all direct
+// call sites go through this one function), so this is THE choke point for token accounting —
+// the same philosophy as upsert()'s createdBy stamp: instrument once, impossible to forget at
+// a call site. AsyncLocalStorage (node builtin, zero-dep) scopes the meter per async context,
+// so concurrent jobs (a background QC sweep + a foreground summary) can never cross-attribute.
+// Calls outside any meterLLMTokens scope are counted nowhere here — the initial generation
+// pipeline keeps its own accumulation (generationStats), and wrapping it too would double-count.
+const _tokenALS = new AsyncLocalStorage();
+async function _callLLM(...args) {
+  const r = await _rawCallLLM(...args);
+  const m = _tokenALS.getStore();
+  if (m && r) { m.promptTokens += r.promptTokens | 0; m.completionTokens += r.completionTokens | 0; }
+  return r;
+}
+// Run `fn` with a fresh meter; resolves to { result, tokens }. Tokens of a THROWING scope are
+// lost to accounting (the route 500s) — accepted and documented; the per-topic QC scopes
+// attribute after each topic precisely to keep that window small.
+function meterLLMTokens(fn) {
+  const tokens = { promptTokens: 0, completionTokens: 0 };
+  return _tokenALS.run(tokens, async () => ({ result: await fn(), tokens }));
+}
 
 // ── Prompts (hot-reloaded from prompts.json) ──────────────────────────────────
 let PROMPTS = {};
@@ -61,7 +85,15 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v57';
+const APP_VERSION  = 'v60';
+// v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
+// topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
+// moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
+const SCHEMA_VERSION = 30;
+// The generating user. Login is coming (roadmap); until then every write is 'admin', and the
+// backfill script (backfill-createdby.js) stamps the same onto the existing corpus so the data
+// is EXPLICIT rather than a read-time default.
+const DEFAULT_USER = 'admin';
 const STORAGE_FILE = process.env.LESSONS_FILE || path.join(__dirname, 'lessons.json');
 const UI_FILE     = process.env.UI_FILE || path.join(__dirname, 'ui.json');
 const BACKEND      = (process.env.LLM_BACKEND || 'auto').toLowerCase();
@@ -87,12 +119,38 @@ const OLLAMA_LESSON_FORMAT_ENV = process.env.OLLAMA_LESSON_FORMAT || null;
 const _deriveLessonFormat = m => OLLAMA_LESSON_FORMAT_ENV ||
   (String(m || '').toLowerCase().includes('translategemma') ? 'table' : 'json');
 let OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
+
+// Per-role reasoning (v60.7). Reasoning ("thinking") models emit a <think> block before the
+// answer; for plain prose/JSON that both wastes budget and — with a small num_predict — leaves
+// nothing after the reasoning block is stripped (empty response) or times out. So thinking is OFF
+// opt-in per role. Only the two roles that produce substantial content can benefit: STORY
+// (narrative coherence) and LESSONS (vocabulary/exercise quality). QC and translation are
+// mechanical and stay non-thinking always. When a role's reasoning is ON, its calls (a) pass
+// think:true and (b) get a bumped token budget + timeout so the answer survives the think block.
+const OLLAMA_THINK = { story: false, lessons: false };
+// Multipliers applied to a call's token budget and timeout when that role is thinking. A think
+// block on a 35B-a3b model routinely runs longer than the answer, so both need real headroom.
+const THINK_TOKEN_MULT = 2.5, THINK_TIMEOUT_MULT = 3;
+// Resolve the { think, tokens, timeoutMs } for a role given its base token budget. Non-thinking
+// roles get think:false (which also triggers llm.js's reject-retry for non-reasoning models);
+// thinking roles get think:true + bumped budgets. timeoutMs omitted → the call uses the global.
+function thinkOpts(role, baseTokens) {
+  const on = !!OLLAMA_THINK[role];
+  if (!on) return { think: false, tokens: baseTokens };
+  return {
+    think: true,
+    tokens: Math.ceil((baseTokens || 1024) * THINK_TOKEN_MULT),
+    timeoutMs: Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT),
+  };
+}
+
 // The active model set, and a runtime updater. `setRuntimeModels` accepts any subset of
 // {story, translation, lessons} (plus a convenience `model` that sets all three), recomputes the
 // lesson format from the new lesson model (unless env-pinned), and returns the resulting set.
 function currentModels() {
   return { story: OLLAMA_MODEL, translation: OLLAMA_TRANSLATION_MODEL,
            lessons: OLLAMA_LESSON_MODEL, qc: OLLAMA_QC_MODEL, lessonFormat: OLLAMA_LESSON_FORMAT,
+           think: { story: OLLAMA_THINK.story, lessons: OLLAMA_THINK.lessons },
            timeoutMs: getRequestTimeout() };
 }
 function setRuntimeModels(next) {
@@ -105,6 +163,11 @@ function setRuntimeModels(next) {
   if (transl)  OLLAMA_TRANSLATION_MODEL = transl;
   if (lessons) OLLAMA_LESSON_MODEL      = lessons;
   if (qc)      OLLAMA_QC_MODEL          = qc;
+  // Per-role reasoning toggles: accept think:{story?,lessons?} (only these two roles).
+  if (next.think && typeof next.think === 'object') {
+    if (typeof next.think.story === 'boolean')   OLLAMA_THINK.story   = next.think.story;
+    if (typeof next.think.lessons === 'boolean') OLLAMA_THINK.lessons = next.think.lessons;
+  }
   OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
   return currentModels();
 }
@@ -117,7 +180,8 @@ function loadStore() {
       const data = JSON.parse(fs.readFileSync(STORAGE_FILE, 'utf8'));
       // v29 schema: { schemaVersion:29, storylines:[], topics:[], flags:{} }
       if (data && data.schemaVersion >= 29 && Array.isArray(data.topics)) {
-        return { schemaVersion: 29, topics: data.topics, storylines: data.storylines || [], flags: data.flags || {} };
+        return { schemaVersion: SCHEMA_VERSION, topics: data.topics, storylines: data.storylines || [], flags: data.flags || {},
+                 settings: data.settings || {} };
       }
       // Legacy: { lessons:[] } or bare array
       if (Array.isArray(data)) return { schemaVersion: 0, topics: data, storylines: [], flags: {} };
@@ -125,12 +189,13 @@ function loadStore() {
       console.warn('lessons.json has unexpected shape — starting empty');
     }
   } catch(e) { console.warn('Could not read lessons.json:', e.message); }
-  return { schemaVersion: 29, topics: [], storylines: [], flags: {} };
+  return { schemaVersion: SCHEMA_VERSION, topics: [], storylines: [], flags: {} };
 }
 function saveStore(s) {
   try {
     const out = s.schemaVersion >= 29
-      ? { schemaVersion: 29, storylines: s.storylines || [], topics: s.topics || [], flags: s.flags || {} }
+      ? { schemaVersion: SCHEMA_VERSION, storylines: s.storylines || [], topics: s.topics || [], flags: s.flags || {},
+          ...(s.settings ? { settings: s.settings } : {}) }
       : s; // legacy passthrough (shouldn't happen after migration)
     fs.writeFileSync(STORAGE_FILE, JSON.stringify(out, null, 2), 'utf8');
   } catch(e) {
@@ -370,6 +435,62 @@ function mergeFlagsIntoTopic(existing, incoming) {
   if (incoming.storyEditedAt) { existing.storyEditedAt = incoming.storyEditedAt; applied++; }
   return applied;
 }
+// Provenance (v58): sanitize a user-edited source block into the structured, optional
+// `topic.source = { author, licence, url, note }`. Structured on purpose — the roadmap
+// rejected a free-text description convention because it can't be validated, exported,
+// filtered, and would be mangled by retitle/summary passes. Rules: strings only, trimmed,
+// hard length caps, control characters stripped; `url` additionally must parse as http(s)
+// OR read as a DOI (`10.x/...` or `doi:...`) — anything else is dropped (fail closed, the
+// field is a link target in the UI). Empty fields are OMITTED; all-empty → null (meaning:
+// delete the topic's source). Pure function, no store access — unit-tested directly.
+function sanitizeTopicSource(input) {
+  if (!input || typeof input !== 'object') return null;
+  const clean = (v, cap) => {
+    if (typeof v !== 'string' && typeof v !== 'number') return '';
+    return String(v).replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, cap).trim();
+  };
+  const out = {};
+  const author  = clean(input.author, 120);
+  const licence = clean(input.licence, 80);
+  const note    = clean(input.note, 500);
+  let url = clean(input.url, 300);
+  if (url) {
+    const isDoi = /^(doi:)?10\.\d{4,9}\/\S+$/i.test(url);
+    let isHttp = false;
+    try { const u = new URL(url); isHttp = u.protocol === 'http:' || u.protocol === 'https:'; } catch (_) {}
+    if (!isHttp && !isDoi) url = '';
+  }
+  if (author)  out.author  = author;
+  if (licence) out.licence = licence;
+  if (url)     out.url     = url;
+  if (note)    out.note    = note;
+  return Object.keys(out).length ? out : null;
+}
+
+// Cumulative token accounting (v59): fold a metered scope's tokens into the owning artefact.
+// TOPICS accumulate into generationStats.totalPromptTokens/totalCompletionTokens — the SAME
+// fields the initial generation writes, so "total" finally means total (re-titling, QC runs,
+// added lessons etc. ADD to the chapter's numbers instead of being invisible). STORYLINES get
+// their own `tokenUsage` block for storyline-level artefacts (summary, storyboard, retitle,
+// summary-QC) — the roadmap asked for an explicit decision here: NOT chapter 1, NOT spread
+// across chapters, because that work belongs to the storyline, and the storyline screen shows
+// it as its own line. Both carry a compact per-type tally (tokensByType) for the breakdown.
+function addTokenUsage(target, tokens, type) {
+  if (!target || !tokens) return;
+  const pt = tokens.promptTokens | 0, ct = tokens.completionTokens | 0;
+  if (pt + ct <= 0) return;
+  const isStoryline = Array.isArray(target.chapters);
+  const gs = isStoryline
+    ? (target.tokenUsage = target.tokenUsage || { totalPromptTokens: 0, totalCompletionTokens: 0 })
+    // A topic normally has generationStats from its generation; a defensive shell covers
+    // imported/legacy topics so post-gen work is never dropped on the floor.
+    : (target.generationStats = target.generationStats || { model: '(post-gen)', totalMs: 0, totalPromptTokens: 0, totalCompletionTokens: 0 });
+  gs.totalPromptTokens = (gs.totalPromptTokens || 0) + pt;
+  gs.totalCompletionTokens = (gs.totalCompletionTokens || 0) + ct;
+  const by = gs.tokensByType = gs.tokensByType || {};
+  by[type] = (by[type] || 0) + pt + ct;
+}
+
 function upsert(data) {
   const arr = store.schemaVersion >= 29 ? store.topics : (store.lessons = store.lessons || []) && store.lessons;
   let i;
@@ -389,6 +510,11 @@ function upsert(data) {
   const now = new Date().toISOString();
   const existing = i >= 0 ? arr[i] : null;
   const entry = { ...data, generatedAt: existing?.generatedAt || now, updatedAt: now };
+  // Provenance (v58): every topic carries its generating user. An update preserves the original
+  // creator; a fresh topic is stamped with the current user (constant 'admin' until login ships).
+  // This is THE choke point — all creation routes (generate, book, dialect, save-story, import)
+  // land here, so no per-route stamping to forget.
+  if (!entry.createdBy) entry.createdBy = existing?.createdBy || DEFAULT_USER;
   // Keep the topic's stable id across an update even if the new data omits it.
   if (existing && existing.id && !entry.id) entry.id = existing.id;
   if (i >= 0) arr[i] = entry; else arr.unshift(entry);
@@ -398,6 +524,25 @@ function upsert(data) {
 // ── Flag storage ──────────────────────────────────────────────────────
 function getFlags()  { return store.flags || {}; }
 function setFlags(f) { store.flags = f; saveStore(store); }
+
+// ── Global settings (v60.8) ───────────────────────────────────────────
+// Teacher-set app settings that aren't model choices, persisted alongside the corpus in
+// store.settings. First member: coverageThreshold — the global %-solved a student must reach for a
+// chapter to count complete (a fraction 0–1; default 1 = must solve everything, the historical
+// behavior — teachers opt into a lower pass mark). It becomes the DEFAULT coverage target for
+// every chapter (a topic's own coverageTarget still overrides). Below it, the chapter stays
+// incomplete and the completion card gates on the drill (see the client).
+function getSettings() {
+  const s = store.settings || {};
+  return { coverageThreshold: (typeof s.coverageThreshold === 'number') ? s.coverageThreshold : 1 };
+}
+function setCoverageThreshold(v) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return getSettings();
+  store.settings = { ...(store.settings || {}), coverageThreshold: Math.max(0, Math.min(1, n)) };
+  saveStore(store);
+  return getSettings();
+}
 function getStorylines() {
   const sl = store.storylines || [];
   return Array.isArray(sl) ? sl : Object.entries(sl).map(([k,v]) => ({ id: k, ...v, chapters: [] }));
@@ -683,11 +828,17 @@ function extractKeywords(text, n, lang) {
 }
 
 // ── LLM backends ──────────────────────────────────────────────────────
-function callLLM(system, userMsg, maxTokens) {
-  return _callLLM(OLLAMA_MODEL, system, userMsg, maxTokens);
+function callLLM(system, userMsg, maxTokens, opts) {
+  return _callLLM(OLLAMA_MODEL, system, userMsg, maxTokens, opts);
 }
-function callLLMLesson(system, userMsg, maxTokens) {
-  return _callLLM(OLLAMA_LESSON_MODEL, system, userMsg, maxTokens);
+function callLLMLesson(system, userMsg, maxTokens, opts) {
+  // v60.7: apply the LESSONS reasoning policy here, so all lesson-generation call sites honor the
+  // toggle without each having to thread thinkOpts. When lessons-reasoning is OFF this passes
+  // think:false with the given budget (the safe default that avoids empty-response on a reasoning
+  // model); when ON it bumps the token budget + timeout and passes think:true. An explicit opts
+  // from the caller still wins (spread last) for any future special case.
+  const pol = thinkOpts('lessons', maxTokens);
+  return _callLLM(OLLAMA_LESSON_MODEL, system, userMsg, pol.tokens, { ...pol, ...opts });
 }
 function callLLMTranslation(system, userMsg, maxTokens) {
   return _callLLM(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
@@ -1228,138 +1379,146 @@ async function _runQc(jobId, topics, opts) {
     const tp = topics[ti];
     const lessons = tp.lessons || [];
     let touched = false;
-    for (let li = 0; li < lessons.length; li++) {
-      if (lessonIdx !== null && li !== lessonIdx) continue;
-      const ls = lessons[li];
-      if (onlyFlagged && !_qcLessonUserFlagged(tp, ls)) continue;
-      // Skip lessons already cleared by a prior full QC pass and untouched since. `ls.qcAt`
-      // is stamped at the end of a clean full pass below and cleared on any content edit
-      // (see _clearLessonQcStamp, called from the edit/save-story paths), so its mere
-      // presence means "unchanged since last QC". Only applies to bulk (storyline/chapter)
-      // runs: an explicit single-lesson request (lessonIdx set) or a flagged-only run always
-      // re-checks, so the user can force a re-QC. This is what keeps storyline-/chapter-level
-      // jobs from re-paying for lessons that already passed.
-      // Skip only if the SAME model already cleanly passed this (unedited) lesson — a DIFFERENT QC
-      // model must still run so its verdicts can be collected for comparison.
-      if (lessonIdx === null && !onlyFlagged && !force && ls.qcAt && ls.qcBy === OLLAMA_QC_MODEL) {
-        skipped++;
-        console.log(`    ⏭ skip "${ls.title || ls.type}" (QC'd ${ls.qcAt}, unedited)`);
-        continue;
-      }
-      const _flaggedBefore = flagged;
-      // Per-item QC helper: run a checker; collect the verdict PER MODEL in item.qcByModel so
-      // different QC models can be compared on the same item, while keeping item.qc as the primary
-      // (backward-compatible: apply/dismiss/badges/render read item.qc). A model only ever overwrites
-      // its OWN entry; a model that now says OK drops only its own flag, leaving others' for compare.
-      const _check = async (item, runner, label) => {
-        checked++;
-        let res;
-        try { res = await runner(); } catch (e) { return; }
-        const model = OLLAMA_QC_MODEL;
-        // Migrate a pre-collect single flag into the per-model map so it isn't lost.
-        if (item.qc && !item.qcByModel && item.qc.by)
-          item.qcByModel = { [item.qc.by]: { sug: item.qc.sug, field: item.qc.field, at: item.qc.at } };
-        const hadThisModel = !!(item.qcByModel && item.qcByModel[model]);
-        if (res && !res.ok) {
-          (item.qcByModel || (item.qcByModel = {}))[model] = { sug: res.sug, field: res.field || 'note', at: new Date().toISOString() };
-          item.qc = { ...item.qcByModel[model], by: model };   // primary = this latest flag
-          if (!hadThisModel) flagged++;
-          touched = true;
-          console.log(`    ⚑ flag [${label}] [${model}] "${(res.sug||'').slice(0,60)}"`);
-        } else {
-          // This model says OK → drop only ITS flag; keep other models' flags for comparison.
-          if (hadThisModel) { delete item.qcByModel[model]; cleared++; touched = true; }
-          const remaining = item.qcByModel ? Object.keys(item.qcByModel) : [];
-          if (remaining.length) {
-            const m = remaining[remaining.length - 1];
-            item.qc = { ...item.qcByModel[m], by: m };          // primary = another model's open flag
+    // v59: meter EVERY per-item QC call for this topic in one scope (the checkers discard
+    // token counts internally; the _callLLM meter catches them all) and fold the total into
+    // the chapter's cumulative stats. Nonzero tokens mark the topic touched so the
+    // accumulation is PERSISTED even when every item came back clean.
+    const { tokens: _lqTok } = await meterLLMTokens(async () => {
+      for (let li = 0; li < lessons.length; li++) {
+        if (lessonIdx !== null && li !== lessonIdx) continue;
+        const ls = lessons[li];
+        if (onlyFlagged && !_qcLessonUserFlagged(tp, ls)) continue;
+        // Skip lessons already cleared by a prior full QC pass and untouched since. `ls.qcAt`
+        // is stamped at the end of a clean full pass below and cleared on any content edit
+        // (see _clearLessonQcStamp, called from the edit/save-story paths), so its mere
+        // presence means "unchanged since last QC". Only applies to bulk (storyline/chapter)
+        // runs: an explicit single-lesson request (lessonIdx set) or a flagged-only run always
+        // re-checks, so the user can force a re-QC. This is what keeps storyline-/chapter-level
+        // jobs from re-paying for lessons that already passed.
+        // Skip only if the SAME model already cleanly passed this (unedited) lesson — a DIFFERENT QC
+        // model must still run so its verdicts can be collected for comparison.
+        if (lessonIdx === null && !onlyFlagged && !force && ls.qcAt && ls.qcBy === OLLAMA_QC_MODEL) {
+          skipped++;
+          console.log(`    ⏭ skip "${ls.title || ls.type}" (QC'd ${ls.qcAt}, unedited)`);
+          continue;
+        }
+        const _flaggedBefore = flagged;
+        // Per-item QC helper: run a checker; collect the verdict PER MODEL in item.qcByModel so
+        // different QC models can be compared on the same item, while keeping item.qc as the primary
+        // (backward-compatible: apply/dismiss/badges/render read item.qc). A model only ever overwrites
+        // its OWN entry; a model that now says OK drops only its own flag, leaving others' for compare.
+        const _check = async (item, runner, label) => {
+          checked++;
+          let res;
+          try { res = await runner(); } catch (e) { return; }
+          const model = OLLAMA_QC_MODEL;
+          // Migrate a pre-collect single flag into the per-model map so it isn't lost.
+          if (item.qc && !item.qcByModel && item.qc.by)
+            item.qcByModel = { [item.qc.by]: { sug: item.qc.sug, field: item.qc.field, at: item.qc.at } };
+          const hadThisModel = !!(item.qcByModel && item.qcByModel[model]);
+          if (res && !res.ok) {
+            (item.qcByModel || (item.qcByModel = {}))[model] = { sug: res.sug, field: res.field || 'note', at: new Date().toISOString() };
+            item.qc = { ...item.qcByModel[model], by: model };   // primary = this latest flag
+            if (!hadThisModel) flagged++;
+            touched = true;
+            console.log(`    ⚑ flag [${label}] [${model}] "${(res.sug||'').slice(0,60)}"`);
           } else {
-            if (item.qc) touched = true;
-            delete item.qc; if (item.qcByModel) delete item.qcByModel;
-          }
-        }
-        if (checked % 5 === 0)
-          jobStep(jobId, `[${model}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
-      };
-      // Dispatch by lesson type. vocab/sentences exist on standard lessons; word_forms uses
-      // `items` (cloze); synonyms uses `words` (related-word sets); grammar uses `grammar`
-      // (noun target/source + article/plural); conjugation uses `conjugations` (infinitive +
-      // source translation). intro_script is curated data (human QC only); math and the two
-      // error-hunt types are intentionally out of scope. Anything else falls through to the
-      // generic vocab/sentences scan.
-      let _lessonQcRan = true;
-      if (ls.type === 'word_forms') {
-        for (const item of (ls.items || [])) {
-          if (!item || !item.sentence) continue;
-          await _check(item, () => qcCheckCloze(item, tp.lang, tp.srcLang, item.userFlag?.comment), 'cloze');
-        }
-      } else if (ls.type === 'synonyms') {
-        for (const entry of (ls.words || [])) {
-          if (!entry || !entry.base) continue;
-          await _check(entry, () => qcCheckSynonymSet(entry, tp.lang, tp.srcLang, entry.userFlag?.comment), 'synset');
-        }
-      } else if (ls.type === 'grammar') {
-        // Grammar lessons teach a noun with its article/plural; the target↔source translation
-        // is the checkable pair (article/plural correctness is a separate, morphology-specific
-        // check left for a future dedicated prompt).
-        for (const g of (ls.grammar || [])) {
-          if (!g || !g.target || !g.source) continue;
-          await _check(g, () => qcCheckPair(g.target, g.source, tp.lang, tp.srcLang, g.userFlag?.comment), 'grammar');
-        }
-      } else if (ls.type === 'conjugation') {
-        // Conjugation lessons carry an infinitive (target verb) + its source translation; QC the
-        // translation pair. The per-form morphology is grammatical, not a translation, so it's
-        // out of scope here (a dedicated conjugation-correctness prompt is future work).
-        for (const c of (ls.conjugations || [])) {
-          if (!c || !c.infinitive || !c.source) continue;
-          await _check(c, () => qcCheckPair(c.infinitive, c.source, tp.lang, tp.srcLang, c.userFlag?.comment), 'conjug');
-        }
-      } else if (ls.type === 'intro_script') {
-        // curated letter table — verified by humans (per-letter flag/star/edit), not the LLM.
-        _lessonQcRan = false;
-      } else if (ls.type === 'math' || ls.type === 'error_hunt' || ls.type === 'ai_error_hunt' || ls.type === 'mixed') {
-        // Out of scope: math is procedural, error-hunt correctness is intrinsic to its own
-        // story, and mixed lessons own no items (they pool from their source lessons, which are
-        // QC'd in place). Don't stamp — nothing was examined.
-        _lessonQcRan = false;
-      } else {
-        for (const key of ['vocab', 'sentences']) {
-          const arr = ls[key];
-          if (!Array.isArray(arr)) continue;
-          const lessonIsDialect = !!ls._dialect;
-          for (const item of arr) {
-            if (!item || !item.target || !item.source) continue;
-            // Dialect items get sourceOnly QC (verify gloss, never rewrite the dialect token) —
-            // EXCEPT aiGenerated example sentences: the model authored those, so the dialect side is
-            // NOT ground truth and must be checked too (full pair QC).
-            if ((lessonIsDialect || item._dialect) && !item.aiGenerated) {
-              await _check(item, () => qcCheckDialectPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
+            // This model says OK → drop only ITS flag; keep other models' flags for comparison.
+            if (hadThisModel) { delete item.qcByModel[model]; cleared++; touched = true; }
+            const remaining = item.qcByModel ? Object.keys(item.qcByModel) : [];
+            if (remaining.length) {
+              const m = remaining[remaining.length - 1];
+              item.qc = { ...item.qcByModel[m], by: m };          // primary = another model's open flag
             } else {
-              await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
+              if (item.qc) touched = true;
+              delete item.qc; if (item.qcByModel) delete item.qcByModel;
+            }
+          }
+          if (checked % 5 === 0)
+            jobStep(jobId, `[${model}] QC ${tp.topic} — ${checked} checked, ${flagged} flagged…`);
+        };
+        // Dispatch by lesson type. vocab/sentences exist on standard lessons; word_forms uses
+        // `items` (cloze); synonyms uses `words` (related-word sets); grammar uses `grammar`
+        // (noun target/source + article/plural); conjugation uses `conjugations` (infinitive +
+        // source translation). intro_script is curated data (human QC only); math and the two
+        // error-hunt types are intentionally out of scope. Anything else falls through to the
+        // generic vocab/sentences scan.
+        let _lessonQcRan = true;
+        if (ls.type === 'word_forms') {
+          for (const item of (ls.items || [])) {
+            if (!item || !item.sentence) continue;
+            await _check(item, () => qcCheckCloze(item, tp.lang, tp.srcLang, item.userFlag?.comment), 'cloze');
+          }
+        } else if (ls.type === 'synonyms') {
+          for (const entry of (ls.words || [])) {
+            if (!entry || !entry.base) continue;
+            await _check(entry, () => qcCheckSynonymSet(entry, tp.lang, tp.srcLang, entry.userFlag?.comment), 'synset');
+          }
+        } else if (ls.type === 'grammar') {
+          // Grammar lessons teach a noun with its article/plural; the target↔source translation
+          // is the checkable pair (article/plural correctness is a separate, morphology-specific
+          // check left for a future dedicated prompt).
+          for (const g of (ls.grammar || [])) {
+            if (!g || !g.target || !g.source) continue;
+            await _check(g, () => qcCheckPair(g.target, g.source, tp.lang, tp.srcLang, g.userFlag?.comment), 'grammar');
+          }
+        } else if (ls.type === 'conjugation') {
+          // Conjugation lessons carry an infinitive (target verb) + its source translation; QC the
+          // translation pair. The per-form morphology is grammatical, not a translation, so it's
+          // out of scope here (a dedicated conjugation-correctness prompt is future work).
+          for (const c of (ls.conjugations || [])) {
+            if (!c || !c.infinitive || !c.source) continue;
+            await _check(c, () => qcCheckPair(c.infinitive, c.source, tp.lang, tp.srcLang, c.userFlag?.comment), 'conjug');
+          }
+        } else if (ls.type === 'intro_script') {
+          // curated letter table — verified by humans (per-letter flag/star/edit), not the LLM.
+          _lessonQcRan = false;
+        } else if (ls.type === 'math' || ls.type === 'error_hunt' || ls.type === 'ai_error_hunt' || ls.type === 'mixed') {
+          // Out of scope: math is procedural, error-hunt correctness is intrinsic to its own
+          // story, and mixed lessons own no items (they pool from their source lessons, which are
+          // QC'd in place). Don't stamp — nothing was examined.
+          _lessonQcRan = false;
+        } else {
+          for (const key of ['vocab', 'sentences']) {
+            const arr = ls[key];
+            if (!Array.isArray(arr)) continue;
+            const lessonIsDialect = !!ls._dialect;
+            for (const item of arr) {
+              if (!item || !item.target || !item.source) continue;
+              // Dialect items get sourceOnly QC (verify gloss, never rewrite the dialect token) —
+              // EXCEPT aiGenerated example sentences: the model authored those, so the dialect side is
+              // NOT ground truth and must be checked too (full pair QC).
+              if ((lessonIsDialect || item._dialect) && !item.aiGenerated) {
+                await _check(item, () => qcCheckDialectPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
+              } else {
+                await _check(item, () => qcCheckPair(item.target, item.source, tp.lang, tp.srcLang, item.userFlag?.comment), 'pair');
+              }
             }
           }
         }
+        // Stamp a full (not flagged-only) pass that left the lesson clean, so future bulk runs
+        // skip it. Only when this pass actually ran a checker for the lesson (intro_script is
+        // human-QC'd, never stamped) and produced no new flags for it. A flagged-only pass must
+        // NOT stamp — it didn't examine the whole lesson.
+        if (!onlyFlagged && _lessonQcRan && flagged === _flaggedBefore && !_lessonHasOpenQcFlag(ls)) {
+          ls.qcAt = new Date().toISOString(); ls.qcBy = OLLAMA_QC_MODEL; touched = true;
+        }
       }
-      // Stamp a full (not flagged-only) pass that left the lesson clean, so future bulk runs
-      // skip it. Only when this pass actually ran a checker for the lesson (intro_script is
-      // human-QC'd, never stamped) and produced no new flags for it. A flagged-only pass must
-      // NOT stamp — it didn't examine the whole lesson.
-      if (!onlyFlagged && _lessonQcRan && flagged === _flaggedBefore && !_lessonHasOpenQcFlag(ls)) {
-        ls.qcAt = new Date().toISOString(); ls.qcBy = OLLAMA_QC_MODEL; touched = true;
-      }
-    }
 
-    // Story QC (v55_k): in a full sweep (not flagged-only, not a single-lesson request), also
-    // proofread the chapter's STORY and ACCUMULATE the proposal on the topic — the user reviews
-    // each on its story screen (the panel auto-opens there). This is the bulk counterpart to the
-    // per-story 🔍. Guarded by:
-    //   • includeStory (opts) — on by default for full sweeps; a caller can turn it off.
-    //   • skip if this QC model already checked this (unedited) story — storyQcCheckedBy/At, the
-    //     story analogue of a lesson's qcAt (cleared on story edit). `force` re-checks.
-    //   • never runs for a flagged-only or single-lesson (lessonIdx) request.
-    // Proposals are stored for corrected AND rewrite/corrupt (so the story screen can warn); a
-    // clean story stores no proposal, only the checked stamp. Any pre-existing UNREVIEWED proposal
-    // is left untouched when we skip, so accumulated proposals survive re-sweeps.
+      // Story QC (v55_k): in a full sweep (not flagged-only, not a single-lesson request), also
+      // proofread the chapter's STORY and ACCUMULATE the proposal on the topic — the user reviews
+      // each on its story screen (the panel auto-opens there). This is the bulk counterpart to the
+      // per-story 🔍. Guarded by:
+      //   • includeStory (opts) — on by default for full sweeps; a caller can turn it off.
+      //   • skip if this QC model already checked this (unedited) story — storyQcCheckedBy/At, the
+      //     story analogue of a lesson's qcAt (cleared on story edit). `force` re-checks.
+      //   • never runs for a flagged-only or single-lesson (lessonIdx) request.
+      // Proposals are stored for corrected AND rewrite/corrupt (so the story screen can warn); a
+      // clean story stores no proposal, only the checked stamp. Any pre-existing UNREVIEWED proposal
+      // is left untouched when we skip, so accumulated proposals survive re-sweeps.
+    });
+    if (_lqTok.promptTokens + _lqTok.completionTokens > 0) { addTokenUsage(tp, _lqTok, 'lesson_qc'); touched = true; }
+
     if (includeStory && !onlyFlagged && lessonIdx === null && tp.story && tp.story.trim()) {
       const alreadyChecked = tp.storyQcCheckedBy === OLLAMA_QC_MODEL && tp.storyQcCheckedAt && !force;
       if (alreadyChecked) {
@@ -1367,7 +1526,8 @@ async function _runQc(jobId, topics, opts) {
       } else {
         jobStep(jobId, `[${OLLAMA_QC_MODEL}] Proofreading story: ${tp.topic}…`);
         try {
-          const qr = await generateStoryQc(tp.story, tp.lang || 'it');
+          const { result: qr, tokens: _sqTok } = await meterLLMTokens(() => generateStoryQc(tp.story, tp.lang || 'it'));
+          addTokenUsage(tp, _sqTok, 'story_qc');
           tp.storyQcCheckedBy = OLLAMA_QC_MODEL;
           tp.storyQcCheckedAt = new Date().toISOString();
           if (qr.verdict === 'clean') {
@@ -2943,7 +3103,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   } else {
   try {
     const { text: raw, promptTokens, completionTokens } = await callLLM(sysMeta(srcLang),
-      `Topic: "${topic}". Source language for output: ${langName(srcLang)}. Return the JSON with topic and topicEmoji, all text in ${langName(srcLang)}.`, 256);
+      `Topic: "${topic}". Source language for output: ${langName(srcLang)}. Return the JSON with topic and topicEmoji, all text in ${langName(srcLang)}.`, 256, { think: false });
     meta = extractJSON(raw);
     totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
   } catch(e) {
@@ -2958,7 +3118,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       const S = langName(srcLang);
       const toTranslate = JSON.stringify({ topic: meta.topic || topic });
       const sysTransMeta = fillPrompt(PROMPTS.metaTranslation.system, { S });
-      const { text: rawT, promptTokens: pt, completionTokens: ct } = await callLLM(sysTransMeta, toTranslate, 128);
+      const { text: rawT, promptTokens: pt, completionTokens: ct } = await callLLM(sysTransMeta, toTranslate, 128, { think: false });
       const translated = extractJSON(rawT);
       if (translated.topic) meta.topic = translated.topic;
       totalPromptTokens += pt; totalCompletionTokens += ct;
@@ -3026,8 +3186,15 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
           ? `Previous story (excerpt):\n${prevStory}\n\nNew topic: "${userTopic}". Write the continuation now. Plain prose, no headings.`
           : `Write a story for the topic: "${userTopic}". Plain prose, no headings.`;
       const storySystem = sysStory(lang, !!prevStory, storyLen, userDialect, storyStyle);
+      // v60.7: reasoning is per-role and OFF by default. think:false keeps a story as plain prose
+      // (and, on a reasoning model, avoids spending the whole num_predict inside <think> → empty
+      // response — the v60.5 fix). When the user opts the STORY role into reasoning, thinkOpts
+      // flips think:true AND bumps the token budget + timeout so the answer survives the think
+      // block. (Mirrors the v55_c think:false applied to QC/storyboard.)
+      const _baseStoryTokens = Math.min(4096, Math.ceil((storyLen||300) * 1.5) + 400);
+      const _sOpts = thinkOpts('story', _baseStoryTokens);
       const { text, promptTokens, completionTokens } = await callLLM(
-        storySystem, storyUserMsg, Math.min(2048, Math.ceil((storyLen||300) * 1.5) + 200));
+        storySystem, storyUserMsg, _sOpts.tokens, _sOpts);
       story = text.trim();
       _storyModel = OLLAMA_MODEL;
       _storyMeta = buildGenMeta({ type: 'story', model: OLLAMA_MODEL, t0, valid: story ? 1 : 0,
@@ -3490,20 +3657,24 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
   const topics = chapterIds.map(id => findSavedById(id)).filter(Boolean);
   if (!topics.length) return;
   const stories = topics.map(t => t.story || '');
-  // 1) Per-chapter coherent titles + emojis.
+  // 1) Per-chapter coherent titles + emojis. (v59: metered → storyline 'retitle' bucket,
+  // same attribution as the manual retitle route — one call covers the whole chain.)
   try {
-    const chapterMeta = await generateChapterMeta(stories, base.srcLang, base.lang);
+    const { result: chapterMeta, tokens: _mTok } = await meterLLMTokens(() => generateChapterMeta(stories, base.srcLang, base.lang));
     _applyChapterTitles(topics, chapterMeta, bj);
+    const _slT = getStorylines().find(s => s.id === _chainId(chapterIds))
+              || getStorylines().find(s => chapterIds.every(id => s.chapters.includes(id)));
+    if (_slT) { addTokenUsage(_slT, _mTok, 'retitle'); upsertStoryline(_slT); }
   } catch (e) { console.warn(`  Chapter-title post-pass failed: ${e.message}`); }
   // 2) Whole-storyline title + icon (reuse existing helper).
   try {
     const names = topics.map(t => t.topic);
-    const { title, icon } = await generateStorylineTitle(names, stories, base.srcLang);
+    const { result: { title, icon }, tokens: _mTok } = await meterLLMTokens(() => generateStorylineTitle(names, stories, base.srcLang));
     const slId = _chainId(chapterIds);
     const all = getStorylines();
     const sl = all.find(s => s.id === slId)
             || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
-    if (sl) { sl.title = title; sl.icon = icon || sl.icon || '📖'; upsertStoryline(sl); }
+    if (sl) { addTokenUsage(sl, _mTok, 'retitle'); sl.title = title; sl.icon = icon || sl.icon || '📖'; upsertStoryline(sl); }
   } catch (e) { console.warn(`  Storyline title post-pass failed: ${e.message}`); }
   // 3) Whole-storyline summary in the source language — same as the storyline-page
   // header-row summary (generateStorylineSummary + store on the storyline). Best-effort.
@@ -3511,12 +3682,13 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
     const names = topics.map(t => t.topic);
     const vocab = topics.flatMap(t =>
       (t.lessons || []).flatMap(ls => (ls.vocab || []).map(v => v.source || v.target)));
-    const { text: summary, meta: summaryMeta } = await generateStorylineSummary(names, stories, vocab, base.srcLang);
+    const { result: { text: summary, meta: summaryMeta }, tokens: _mTok } =
+      await meterLLMTokens(() => generateStorylineSummary(names, stories, vocab, base.srcLang));
     const slId = _chainId(chapterIds);
     const all = getStorylines();
     const sl = all.find(s => s.id === slId)
             || all.find(s => chapterIds.every(id => s.chapters.includes(id)));
-    if (sl && summary) { sl.summary = summary; sl.summaryMeta = summaryMeta; upsertStoryline(sl); }
+    if (sl && summary) { addTokenUsage(sl, _mTok, 'summary'); sl.summary = summary; sl.summaryMeta = summaryMeta; upsertStoryline(sl); }
   } catch (e) { console.warn(`  Storyline summary post-pass failed: ${e.message}`); }
   // 4) For file-derived books, record the original uploaded filename on the
   // storyline (so the library can show provenance). Best-effort.
@@ -3755,30 +3927,36 @@ async function _runRecreateJob(jobId, startId, opts) {
     const newLessons = [];
     const stamp = (lesson, suffix) => { lesson.id = 'ls_' + Date.now() + '_' + i + '_' + suffix; lesson._recreated = true; };
     // Gate: this chapter's own standard vocab lesson.
-    try {
-      const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId, { story, vocabMode: null });
-      if (lesson) { stamp(lesson, 'gate'); newLessons.push(lesson); recreated++; }
-    } catch (e) { console.warn(`  [recreate] chapter ${i + 1} gate failed: ${e.message}`); }
-    // Reinforcement from the second chapter on.
-    if (i >= 1) {
-      const parent = prevRef ? findSavedById(prevRef) : null;
-      const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [], sentences: [] };
-      if (arcMode === 'grammar') {
-        for (const rType of arcTypes) {
+    // v59: meter this chapter's whole re-creation (gate + reinforcement, all formats)
+    // and fold it into the chapter's cumulative totals — the roadmap's exact example
+    // ("re-generating ADDS to that chapter's existing totals rather than being invisible").
+    const { tokens: _rcTok } = await meterLLMTokens(async () => {
+      try {
+        const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId, { story, vocabMode: null });
+        if (lesson) { stamp(lesson, 'gate'); newLessons.push(lesson); recreated++; }
+      } catch (e) { console.warn(`  [recreate] chapter ${i + 1} gate failed: ${e.message}`); }
+      // Reinforcement from the second chapter on.
+      if (i >= 1) {
+        const parent = prevRef ? findSavedById(prevRef) : null;
+        const chainVocab = parent ? collectChainVocab(parent.id || prevRef) : { words: [], nouns: [], verbs: [], sentences: [] };
+        if (arcMode === 'grammar') {
+          for (const rType of arcTypes) {
+            try {
+              const rFn = rType === 'synonyms' ? generateSynonyms : generateWordForms;
+              const { lesson } = await rFn(topic.topic, lang, srcLang, diff, jobId, { chainVocab, vocabMode: 'reinforce', story });
+              if (lesson) { stamp(lesson, rType); lesson._arcMode = 'reinforce'; newLessons.push(lesson); recreated++; }
+            } catch (e) { console.warn(`  [recreate] chapter ${i + 1} ${rType} reinforce failed: ${e.message}`); }
+          }
+        } else {
           try {
-            const rFn = rType === 'synonyms' ? generateSynonyms : generateWordForms;
-            const { lesson } = await rFn(topic.topic, lang, srcLang, diff, jobId, { chainVocab, vocabMode: 'reinforce', story });
-            if (lesson) { stamp(lesson, rType); lesson._arcMode = 'reinforce'; newLessons.push(lesson); recreated++; }
-          } catch (e) { console.warn(`  [recreate] chapter ${i + 1} ${rType} reinforce failed: ${e.message}`); }
+            const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId,
+              { story, chainVocab: chainVocab.words || [], vocabMode: 'reinforce' });
+            if (lesson) { stamp(lesson, 'review'); lesson._arcMode = 'reinforce'; if (!lesson.title) lesson.title = 'Review words'; if (!lesson.icon) lesson.icon = '🔁'; newLessons.push(lesson); recreated++; }
+          } catch (e) { console.warn(`  [recreate] chapter ${i + 1} vocab review failed: ${e.message}`); }
         }
-      } else {
-        try {
-          const { lesson } = await generateOneLesson(lang, srcLang, topic.topic, 1, 1, [], story, diff, jobId,
-            { story, chainVocab: chainVocab.words || [], vocabMode: 'reinforce' });
-          if (lesson) { stamp(lesson, 'review'); lesson._arcMode = 'reinforce'; if (!lesson.title) lesson.title = 'Review words'; if (!lesson.icon) lesson.icon = '🔁'; newLessons.push(lesson); recreated++; }
-        } catch (e) { console.warn(`  [recreate] chapter ${i + 1} vocab review failed: ${e.message}`); }
       }
-    }
+    });
+    addTokenUsage(topic, _rcTok, 'recreate');
     topic.lessons = [...(topic.lessons || []), ...newLessons];
     topic.updatedAt = new Date().toISOString();
     saveStore(store);   // persist per-chapter so progress survives a mid-run failure
@@ -3805,6 +3983,8 @@ http.createServer(async (req, res) => {
         // v55_r: the client's colour-scheme picker reads this — the names live ONLY here, so the
         // list can never drift out of sync with STORYBOARD_SCHEMES (no duplicated list client-side).
         storyboardSchemes: Object.keys(STORYBOARD_SCHEMES),
+        // v60.8: global %-solved threshold to complete a chapter (teacher-set, model menu).
+        coverageThreshold: getSettings().coverageThreshold,
         canGenerate: active !== 'none' });
     }
     // Model picker: list the models Ollama has installed, and which are active per role.
@@ -3824,8 +4004,10 @@ http.createServer(async (req, res) => {
       const requested = [body.model, body.story, body.translation, body.lessons, body.qc]
         .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
       const hasTimeout = body.timeoutMs != null && Number.isFinite(parseInt(body.timeoutMs, 10));
-      if (!requested.length && !hasTimeout)
-        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, model, or timeoutMs.' });
+      const hasThink = body.think && typeof body.think === 'object' &&
+        (typeof body.think.story === 'boolean' || typeof body.think.lessons === 'boolean');
+      if (!requested.length && !hasTimeout && !hasThink)
+        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, model, timeoutMs, or think.' });
       if (requested.length) {
         const available = await listOllamaModels();
         if (available.length) {
@@ -3835,8 +4017,10 @@ http.createServer(async (req, res) => {
         }
       }
       if (hasTimeout) setRequestTimeout(body.timeoutMs);
-      const activeModels = requested.length ? setRuntimeModels(body) : currentModels();
-      console.log(`  Models switched → story:${activeModels.story} lessons:${activeModels.lessons}${activeModels.translation!==activeModels.story?` transl:${activeModels.translation}`:''}${activeModels.lessonFormat==='table'?' [table format]':''} timeout:${Math.round(activeModels.timeoutMs/1000)}s`);
+      // A think-only toggle still needs setRuntimeModels (it reads body.think); a model change does
+      // too. Only a timeout-only POST skips it.
+      const activeModels = (requested.length || hasThink) ? setRuntimeModels(body) : currentModels();
+      console.log(`  Models switched → story:${activeModels.story}${activeModels.think.story?'🧠':''} lessons:${activeModels.lessons}${activeModels.think.lessons?'🧠':''}${activeModels.translation!==activeModels.story?` transl:${activeModels.translation}`:''}${activeModels.lessonFormat==='table'?' [table format]':''} timeout:${Math.round(activeModels.timeoutMs/1000)}s`);
       return json(res, 200, { ok: true, active: activeModels });
     }
     if (M === 'GET' && url.pathname === '/api/lessons') {
@@ -3851,6 +4035,13 @@ http.createServer(async (req, res) => {
         continuedFromId: l.continuedFromId || null,
         generatedAt: l.generatedAt,
         updatedAt:   l.updatedAt || l.generatedAt,
+        // Provenance (v58) — the landing card's `by <user> · from: <source>` one-liner needs
+        // these in LIVE mode (static ships whole topics and has them for free — the exact
+        // asymmetry v55_s hit with generationStats). source is tiny (≤4 short strings);
+        // sourceFile covers PDF-generated chapters that predate structured sources.
+        createdBy: l.createdBy || null,
+        source: l.source || null,
+        sourceFile: l.storyMeta?.sourceFile || null,
         lessonCount: l.lessons?.length || 0,
         // Distinct lesson-set types (first-seen order; missing -> 'standard'). The list
         // payload omits the full lessons[] (loaded on demand), so the client storyline
@@ -3888,6 +4079,24 @@ http.createServer(async (req, res) => {
       const s = id ? findSavedById(id) : findSaved(t);
       if (!s) return json(res, 404, { error: 'Not found' });
       return json(res, 200, s);
+    }
+    // Provenance (v58): set / replace / clear a topic's structured source. Sanitization is
+    // entirely in sanitizeTopicSource (pure, unit-tested); a null result CLEARS the field so
+    // the stored data never holds an empty object. Resolved by stable id only — provenance
+    // edits must never fall back to name matching (same-name topics are legal).
+    if (M === 'POST' && url.pathname === '/api/topic-source') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      if (!body.id) return json(res, 400, { error: 'Missing id' });
+      const saved = findSavedById(body.id);
+      if (!saved) return json(res, 404, { error: `Topic not found: ${String(body.id).slice(0, 40)}` });
+      const source = sanitizeTopicSource(body.source);
+      if (source) saved.source = source; else delete saved.source;
+      saved.updatedAt = new Date().toISOString();
+      saveStore(store);
+      console.log(`  Source ${source ? 'set' : 'cleared'}: ${saved.id} "${saved.topic}"${source ? ` — ${Object.keys(source).join('/')}` : ''}`);
+      return json(res, 200, { ok: true, source: source || null });
     }
     if (M === 'POST' && url.pathname === '/api/lessons/save-meta') {
       let body;
@@ -3996,6 +4205,21 @@ http.createServer(async (req, res) => {
     }
     if (M === 'GET' && url.pathname === '/api/flags') {
       return json(res, 200, getFlags());
+    }
+    // v60.8: global %-solved threshold to complete a chapter. Pure config (no Ollama needed), so
+    // NOT behind the /api/models backend guard. GET returns 0..1; POST { value:0..1 } sets it.
+    if (url.pathname === '/api/coverage-threshold') {
+      if (M === 'GET') return json(res, 200, { value: getSettings().coverageThreshold });
+      if (M === 'POST') {
+        let body;
+        try { body = JSON.parse(await readBody(req)); }
+        catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+        if (typeof body.value !== 'number' || !Number.isFinite(body.value))
+          return json(res, 400, { error: 'value must be a number 0..1' });
+        const v = setCoverageThreshold(body.value).coverageThreshold;
+        console.log(`  Coverage threshold set: ${Math.round(v*100)}%`);
+        return json(res, 200, { ok: true, value: v });
+      }
     }
     if (M === 'POST' && url.pathname === '/api/flags') {
       let body;
@@ -4621,7 +4845,11 @@ http.createServer(async (req, res) => {
         const genCtx = { lang, srcLang, topicName, story, diff, jobId, chainVocab, standardOpts, sharedGenOpts, addMathInstr, addMathOps, introScript: addIntroScript || null };
         const genFn = ADD_LESSON_GENERATORS[fmt];
         if (!genFn) throw new Error(`Unsupported lessonFormat: ${fmt}`);
-        result = await genFn(genCtx);
+        // v59: meter the whole generator run (some formats are multi-call) and fold it into
+        // the topic's cumulative totals — an added lesson is this chapter's work.
+        const { result: _genResult, tokens: _alTok } = await meterLLMTokens(() => genFn(genCtx));
+        result = _genResult;
+        addTokenUsage(saved, _alTok, 'add_lesson');
         // Compute next available ID (avoid clashing with existing)
         // Generate a stable string ID for the new lesson
         const newLessonId = 'ls_' + Date.now();
@@ -4700,16 +4928,21 @@ http.createServer(async (req, res) => {
       const lang = topics[0].lang || 'it';
       const out = {};
       try {
+        // v59: both retitle scopes are ONE call each covering the whole storyline, so tokens
+        // go to the STORYLINE bucket (splitting one call across N chapters would be noise).
         if (sc === 'chapters' || sc === 'all') {
-          const chapterMeta = await generateChapterMeta(stories, srcLang, lang);
+          const { result: chapterMeta, tokens: _mTok } = await meterLLMTokens(() => generateChapterMeta(stories, srcLang, lang));
+          addTokenUsage(sl, _mTok, 'retitle');
           _applyChapterTitles(topics, chapterMeta, null);
           out.chapters = topics.map(t => ({ id: t.id, topic: t.topic, emoji: t.topicEmoji || '' }));
         }
         if (sc === 'title' || sc === 'all') {
-          const { title, icon } = await generateStorylineTitle(topics.map(t => t.topic), stories, srcLang);
-          sl.title = title; sl.icon = icon || sl.icon || '📖'; upsertStoryline(sl);
+          const { result: { title, icon }, tokens: _mTok } = await meterLLMTokens(() => generateStorylineTitle(topics.map(t => t.topic), stories, srcLang));
+          addTokenUsage(sl, _mTok, 'retitle');
+          sl.title = title; sl.icon = icon || sl.icon || '📖';
           out.title = title; out.icon = sl.icon;
         }
+        upsertStoryline(sl);   // persists title AND accumulated tokens for either scope
         return json(res, 200, out);
       } catch(e) {
         return json(res, 500, { error: e.message });
@@ -4732,10 +4965,11 @@ http.createServer(async (req, res) => {
         (t.lessons||[]).flatMap(ls => (ls.vocab||[]).map(v => v.source || v.target))
       );
       try {
-        const { text: summary, meta: summaryMeta } = await generateStorylineSummary(topics, stories, vocab, srcLang);
-        // Persist on the storyline object
+        const { result: { text: summary, meta: summaryMeta }, tokens: _mTok } =
+          await meterLLMTokens(() => generateStorylineSummary(topics, stories, vocab, srcLang));
+        // Persist on the storyline object (+ cumulative tokens — storyline-level artefact, v59)
         const sl = findStoryline(slId);
-        if (sl) { sl.summary = summary; sl.summaryMeta = summaryMeta; upsertStoryline(sl); }
+        if (sl) { addTokenUsage(sl, _mTok, 'summary'); sl.summary = summary; sl.summaryMeta = summaryMeta; upsertStoryline(sl); }
         return json(res, 200, { summary });
       } catch(e) {
         return json(res, 500, { error: e.message });
@@ -4766,12 +5000,13 @@ http.createServer(async (req, res) => {
         (_styleCounts[b] - _styleCounts[a]) || 0)[0] || null;
       const _sbT0 = Date.now();
       try {
-        const { svg: storyboard, panels, scheme: usedScheme, meta: storyboardMeta } =
-          await generateStorylineStoryboard(topics, stories, srcLang,
+        const { result: { svg: storyboard, panels, scheme: usedScheme, meta: storyboardMeta }, tokens: _mTok } =
+          await meterLLMTokens(() => generateStorylineStoryboard(topics, stories, srcLang,
             { storyStyle, scheme: Object.prototype.hasOwnProperty.call(STORYBOARD_SCHEMES, scheme) ? scheme : STORYBOARD_SCHEME_DEFAULT,
-              slId, slTitle: (findStoryline(slId) || {}).title || null });
+              slId, slTitle: (findStoryline(slId) || {}).title || null }));
         const sl = findStoryline(slId);
         if (sl) {
+          addTokenUsage(sl, _mTok, 'storyboard');   // storyline-level artefact (v59)
           sl.storyboard = storyboard; sl.storyboardMeta = storyboardMeta;
           sl.storyboardPanels = panels;      // kept so a scheme change needs no model call
           sl.storyboardScheme = usedScheme;
@@ -4845,7 +5080,8 @@ http.createServer(async (req, res) => {
       if (!t.story || !t.story.trim()) return json(res, 400, { error: 'Topic has no story to QC' });
       const _t0 = Date.now();
       try {
-        const r = await generateStoryQc(t.story, t.lang || 'it');
+        const { result: r, tokens: _mTok } = await meterLLMTokens(() => generateStoryQc(t.story, t.lang || 'it'));
+        addTokenUsage(t, _mTok, 'story_qc');   // cumulative per-chapter tokens (v59)
         // Persist the proposal (survives a client refresh; overwrites any prior proposal). Store
         // the exact original it was diffed against, so acceptance can't drift if the story changed.
         t.storyQcProposal = { corrected: r.corrected, against: t.story, verdict: r.verdict,
@@ -4971,7 +5207,8 @@ http.createServer(async (req, res) => {
       if (!sl.summary || !sl.summary.trim()) return json(res, 400, { error: 'Storyline has no summary to QC' });
       const _t0 = Date.now();
       try {
-        const r = await generateSummaryQc(sl.summary, srcLang || sl.srcLang || 'en');
+        const { result: r, tokens: _mTok } = await meterLLMTokens(() => generateSummaryQc(sl.summary, srcLang || sl.srcLang || 'en'));
+        addTokenUsage(sl, _mTok, 'summary_qc');   // storyline-level artefact (v59)
         sl.summaryQcProposal = { corrected: r.corrected, against: sl.summary, verdict: r.verdict,
           rejected: r.rejected, changedSentences: r.changedSentences, totalSentences: r.totalSentences,
           changedRatio: r.changedRatio, wordEditRatio: r.wordEditRatio, meta: r.meta, at: new Date().toISOString() };

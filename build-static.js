@@ -362,6 +362,7 @@ function itemHtml(s, connector) {
       <div class="saved-info">
         <div class="saved-topic">\${s.topic} \${diffBadge}</div>
         <div class="saved-meta"><span class=\"lang-pair-badge\" title=\"\${srcL.name} → \${tL.name}\">\${srcL.flag}→\${tL.flag}</span> \${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
+        \${provLineHtml(s)}
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
         <button class="ico-btn export" title="Export lesson with flags"
@@ -574,7 +575,15 @@ async function loadSaved(ref) {
   const found=isId ? STATIC_LESSONS.find(l=>l.id===ref)
                    : STATIC_LESSONS.find(l=>l.topic.toLowerCase()===dec.toLowerCase());
   if(!found){ alert('Lesson not found.'); return; }
-  APP.lessonData=found; goLessonSet();
+  APP.lessonData=found;
+  await goLessonSet();
+  // v60: learners skip the lesson-set page — resume at the first unfinished lesson and start it.
+  // (In the static build _teacherMode defaults to false, so this is the normal path.)
+  if(typeof _isLearner==='function' && _isLearner()){
+    const idx=_firstUnfinishedLessonIdx(APP.lessonData);
+    if(idx>=0) startLesson(idx);
+    else showComplete(true);   // already complete → review card, not the lesson-set page
+  }
 }
 
 function setTopic(t){ document.getElementById('topic-input').value=t; }

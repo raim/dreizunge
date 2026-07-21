@@ -224,8 +224,8 @@ const v = (source, wrong, seen) => ({ source, wrong, seen });
 
 // ── Ephemeral: the drill must not leak into topic progress ───────────────────
 assert.ok(/const DRILL_TOPIC = '__drill__';/.test(html), 'the drill uses a synthetic topic key');
-assert.ok(/if\(!C\.isErrorHunt && !lesson\._drill\)\{/.test(html),
-  'showComplete does not record topic completion for a drill');
+assert.ok(/if\(!C\._review && !C\.isErrorHunt && !lesson\._drill\)\{/.test(html),
+  'showComplete records no topic completion for a drill (or a v60.1 review render)');
 assert.ok(/if\(lesson&&!C\.isErrorHunt&&!lesson\._drill&&C\.total>0\)\{/.test(html),
   'confirmQuit does not record topic completion for a drill');
 assert.ok(/APP\._drillPrev = prev;/.test(html), 'startDrill stashes the real topic');
@@ -242,13 +242,19 @@ assert.ok(/endDrill\(\);/.test(goLS), 'goLessonSet restores the real topic — t
 assert.ok(goLS.indexOf('endDrill()') < goLS.indexOf('APP.lessonData'),
   'endDrill runs BEFORE goLessonSet reads APP.lessonData');
 // showComplete reassigns the handler, so an assertion that afterComplete calls endDrill proves nothing.
-assert.ok(/compNext\.onclick = \(\) =>/.test(html), 'showComplete does reassign the Continue handler');
-// A drill has no lesson set and no storyline: the completion nav buttons must not offer "__drill__".
-assert.ok(/if \(_compNav && lesson\._drill\) \{[\s\S]*?_compNav\.style\.display = 'none';/.test(html),
-  'the completion nav buttons are hidden for a drill');
-const navBlock = html.slice(html.indexOf('const _compNav'), html.indexOf('// Story-unlocked card'));
-assert.ok(navBlock.indexOf("lesson._drill") < navBlock.indexOf('APP.lessonData?.topic'),
-  'the drill check precedes the topic-titled nav button');
+assert.ok(/compNext\.onclick = \(\) =>/.test(html), 'showComplete does reassign the Next handler');
+// v60: the teacher-only nav pills are hidden for a drill (and for learners entirely). The clean
+// learner card has just Next + Back; a drill hides Back too (it returns via Next/afterComplete).
+assert.ok(/if \(_teacher && !lesson\._drill\) \{/.test(html),
+  'the completion nav pills show only for a teacher on a non-drill card (v60)');
+assert.ok(/_compNav\.innerHTML = '';\s*\n\s*_compNav\.style\.display = 'none';/.test(html),
+  'the nav pills are cleared+hidden otherwise (learner card, or a drill)');
+assert.ok(/backBtn\.style\.display = lesson\._drill \? 'none' : ''/.test(html),
+  'Back-to-story is hidden for a drill (v60)');
+// afterComplete (a drill's Next) restores the real topic then returns to the story.
+const afterC = ext(html, 'afterComplete');
+assert.ok(/endDrill\(\);/.test(afterC) && /compBackToStory\(\)/.test(afterC),
+  'afterComplete restores the real topic and returns to the story');
 // Nothing writes the drill into the saved lesson set.
 assert.ok(!/lessons\.push\(drill\)/.test(html) && !/upsert\(.*drill/.test(html),
   'the drill is never appended to a saved topic');
@@ -298,8 +304,8 @@ assert.ok(!/lessons\.push\(drill\)/.test(html) && !/upsert\(.*drill/.test(html),
 assert.ok(/id="comp-drill"[^>]*onclick="startDrill\(\)"/.test(html), 'result card carries the drill button');
 assert.ok(/style="display:none/.test(html.match(/<button[^>]*id="comp-drill"[^>]*>/)[0]),
   'the button is hidden until availability is computed');
-assert.ok(/_db\.style\.display = drillAvailable\(_l, _s\) \? '' : 'none';/.test(html),
-  'visibility is driven by drillAvailable');
+assert.ok(/_db\.style\.display = \(\(_teacher \|\| _belowThreshold\) && drillAvailable\(_l, _s\)\) \? '' : 'none';/.test(html),
+  'drill shows for a teacher OR a below-threshold learner, when a round can be built (v60.8)');
 // Anchor on the CALL, not the bare name: showComplete's own comments mention
 // recordLearnedFromLesson, so indexOf() on the name matched a comment — a guard that only looked
 // like one, and it passed a mutation that moved the block above the ledger update.

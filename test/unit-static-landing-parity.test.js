@@ -77,7 +77,7 @@ assert.ok(staticFnAt > 0, 'the static-mode block exists');
 //      someone adds a strip to one loadSavedList and forgets the other.
 const client = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const builder = fs.readFileSync(path.join(ROOT, 'build-static.js'), 'utf8');
-for (const hook of ['slsb-wrap-', 'slsum-wrap-', 'data-sb-chain']) {
+for (const hook of ['slsb-wrap-', 'slsum-wrap-', 'data-sb-chain', 'provLineHtml(s)']) {
   assert.ok(client.includes(hook), `live landing renderer emits ${hook}`);
   assert.ok(builder.includes(hook), `static landing renderer emits ${hook} (add it to BOTH loadSavedList impls)`);
 }

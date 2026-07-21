@@ -174,10 +174,12 @@ assert.ok(prompts.storylineStoryboard?.system && prompts.storylineStoryboard?.us
 assert.ok(/NOT raw SVG|no SVG/i.test(prompts.storylineStoryboard.system), 'prompt forbids raw SVG');
 
 // ── 7. Route: call site destructures and persists svg + stamp together ────────
-const calls = server.match(/await generateStorylineStoryboard\(/g) || [];
-assert.strictEqual(calls.length, 1, `exactly one call site (got ${calls.length})`);
-assert.ok(/\{ svg: storyboard, panels, scheme: usedScheme, meta: storyboardMeta \}\s*=\s*\n?\s*await generateStorylineStoryboard\(/.test(server),
-  'call site destructures {svg, panels, scheme, meta}');
+const calls = server.match(/meterLLMTokens\(\(\) => generateStorylineStoryboard\(/g) || [];
+assert.strictEqual(calls.length, 1, `exactly one call site, metered (got ${calls.length})`);
+assert.ok(/\{ result: \{ svg: storyboard, panels, scheme: usedScheme, meta: storyboardMeta \}, tokens: _mTok \}\s*=\s*\n?\s*await meterLLMTokens\(\(\) => generateStorylineStoryboard\(/.test(server),
+  'call site destructures {svg, panels, scheme, meta} through the v59 token meter');
+assert.ok(/addTokenUsage\(sl, _mTok, 'storyboard'\)/.test(server),
+  'storyboard tokens accumulate on the STORYLINE (v59 decision: storyline-level artefact)');
 assert.ok(/sl\.storyboard = storyboard;\s*sl\.storyboardMeta = storyboardMeta;/.test(server),
   'persists the stamp beside the storyboard');
 assert.ok(/return json\(res, 200, \{ storyboard, scheme: usedScheme \}\);/.test(server), 'route returns a plain string to the client');
@@ -214,7 +216,7 @@ assert.ok(/req\.setTimeout\(timeoutMs/.test(llm) && /reject\(new Error\('Ollama 
   'BOTH the socket timeout and the guard timer honor the per-call value');
 // v55_c: think:false plumbing — sent only when requested, and callLLM falls back to a plain
 // retry if the model rejects the parameter (so qwen2.5:7b keeps working as the story model).
-assert.ok(/opts\.think === false \? \{ think: false \} : \{\}/.test(llm), 'think:false sent conditionally in the body');
+assert.ok(/typeof opts\.think === 'boolean' \? \{ think: opts\.think \} : \{\}/.test(llm), 'think sent conditionally in the body (v60.7: true|false)');
 assert.ok(/does not support thinking/i.test(llm) && /think: undefined/.test(llm),
   'callLLM retries without think on parameter rejection');
 

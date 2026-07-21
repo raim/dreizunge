@@ -92,6 +92,13 @@ run('unit: identical source/target ratio rule, corpus-calibrated (v53_g)', 'node
 run('unit: drill lessons — review my mistakes (v54)', 'node', [path.join(__dirname, 'unit-drill.test.js')]);
 run('unit: storyline SVG storyboard (v55)', 'node', [path.join(__dirname, 'unit-storyboard.test.js')]);
 run('unit: storyboard panels → lesson navigation (v57)', 'node', [path.join(__dirname, 'unit-storyboard-nav.test.js')]);
+run('unit: provenance fields — source + createdBy (v58)', 'node', [path.join(__dirname, 'unit-provenance-fields.test.js')]);
+run('unit: cumulative token usage — meter + attribution (v59)', 'node', [path.join(__dirname, 'unit-token-usage.test.js')]);
+run('unit: learner navigation + completion card (v60)', 'node', [path.join(__dirname, 'unit-learner-nav.test.js')]);
+run('unit: reasoning-model safety — think:false on prose/JSON gen (v60.5)', 'node', [path.join(__dirname, 'unit-reasoning-model-safety.test.js')]);
+run('unit: story-translation toggle in read-story panels (v60.6)', 'node', [path.join(__dirname, 'unit-story-translation-toggle.test.js')]);
+run('unit: per-role reasoning toggle (v60.7)', 'node', [path.join(__dirname, 'unit-reasoning-toggle.test.js')]);
+run('unit: clean card + coverage threshold gate (v60.8)', 'node', [path.join(__dirname, 'unit-coverage-threshold.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);
 run('unit: learned-vocab ledger + my-story wiring (v50)', 'node', [path.join(__dirname, 'unit-learned-vocab.test.js')]);

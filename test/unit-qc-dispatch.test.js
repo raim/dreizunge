@@ -36,6 +36,12 @@ const stubs = {
   OLLAMA_TRANSLATION_MODEL: 'stub',
   OLLAMA_QC_MODEL: 'qc-stub',
   jobStep: () => {}, jobDone: () => {},
+  // v59: _runQc meters per-topic token usage; the dispatch/skip logic under test here doesn't
+  // depend on the counts, so the meter keeps its real shape (result passthrough) with zero
+  // tokens (all checkers are stubs) and the accumulator is a no-op — accounting behavior is
+  // covered by unit-token-usage.test.js.
+  meterLLMTokens: async (fn) => ({ result: await fn(), tokens: { promptTokens: 0, completionTokens: 0 } }),
+  addTokenUsage: () => {},
   upsert: () => {},
   _qcStripFuri: t => t,
   _qcLessonUserFlagged: () => true,

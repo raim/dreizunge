@@ -89,3 +89,19 @@ off"). Added to `ui.json` `en` ONLY — goes into the owed TranslateGemma pass w
 - i18n pass (now 1631 missing keys + full `sw`).
 - Existing boards can be "upgraded" to model-assigned links simply by 🎬 → regenerate — worth doing
   for boards whose equal split reads wrong (e.g. a story whose scenes cluster in early chapters).
+
+## Addendum 2026-07-20 — verification backlog closed, procedure retired, i18n figure corrected
+
+- The user exercised all functionality tracked in `LIVE-TEST-CHECKLIST.md` (incl. §91) and confirms
+  it broadly works and/or is superseded by planned changes. **All open boxes closed in bulk**; the
+  checklist is now an ARCHIVE and the live-test procedure is RETIRED. Protocol rule 2 amended in
+  `roadmap_v57.md`: browser-only behavior gets a terse "how to see it work" description in session
+  notes instead of a checklist section.
+- **i18n roadmap figure was stale**: `node translate-ui.js --check` measures the real debt at
+  **29 keys** (`storyboard.locked_resume` × 29 languages), not the long-claimed 1630. Corrected in
+  the roadmap; one translate run clears it.
+- "How to see v57 work" (replacing §91, per the amended rule): on any storyline card with a
+  storyboard, panels show a pointer + blue hover frame and click through to their chapter; with
+  teacher mode OFF, a late panel resumes at the current chapter with the 🔒 toast; the chapter page
+  shows the board above the ←/→ nav with this chapter's panel(s) framed; a fresh generation on a
+  >10-chapter storyline yields up to 12 panels in two rows carrying `data-chapter`.

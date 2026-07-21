@@ -75,7 +75,10 @@ console.log('  every fmt maps to the right generator with the right args: OK');
 const handler = src.slice(src.indexOf("url.pathname === '/api/lessons/add-lesson'"),
   src.indexOf('/api/storyline/recreate-lessons'));
 assert.ok(/const genFn = ADD_LESSON_GENERATORS\[fmt\];/.test(handler), 'handler should look up the registry');
-assert.ok(/result = await genFn\(genCtx\);/.test(handler), 'handler should call the looked-up generator');
+assert.ok(/meterLLMTokens\(\(\) => genFn\(genCtx\)\)/.test(handler),
+  'handler calls the looked-up generator through the v59 token meter (result + tokens)');
+assert.ok(/addTokenUsage\(saved, _alTok, 'add_lesson'\)/.test(handler),
+  'added-lesson tokens fold into the topic cumulative totals (v59)');
 assert.ok(/if \(!genFn\) throw new Error\(`Unsupported lessonFormat: \$\{fmt\}`\)/.test(handler), 'unknown fmt still throws');
 assert.ok(!/if \(fmt === 'standard'\)/.test(handler), 'old fmt if-chain must be gone');
 assert.ok(!/else if \(fmt === 'word_forms'\)/.test(handler), 'old word_forms branch must be gone');

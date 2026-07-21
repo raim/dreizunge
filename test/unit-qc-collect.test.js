@@ -15,6 +15,9 @@ function ext(name) {
 function build(qcModel, pairRes) {
   const stubs = {
     OLLAMA_QC_MODEL: qcModel, jobStep: () => {}, jobDone: () => {}, upsert: () => {},
+    // v59 meter deps (accounting covered by unit-token-usage.test.js)
+    meterLLMTokens: async (fn) => ({ result: await fn(), tokens: { promptTokens: 0, completionTokens: 0 } }),
+    addTokenUsage: () => {},
     _qcStripFuri: t => t, _qcLessonUserFlagged: () => true,
     qcCheckPair: async () => pairRes, qcCheckDialectPair: async () => ({ ok: true }),
     qcCheckCloze: async () => ({ ok: true }), qcCheckSynonymSet: async () => ({ ok: true }),

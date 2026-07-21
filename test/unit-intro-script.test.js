@@ -491,15 +491,16 @@ assert.ok(/type === ['"]letter['"][\s\S]*?delete ls\.exercises/.test(html), 'let
 console.log('  intro_script editor: branch wired + letter array mapping in move/delete/sync: OK');
 
 // ── Result/completion card handles script lessons (was vocab-centric) ────────
-// (a) the "next" button labels a script lesson by its own title, not "Vocabulary"; (b) the
-// "words from this lesson" box has an intro_script branch (letters), not an empty box; (c) the
-// next-lesson search respects the hidden-lesson rule.
-assert.ok(/L\.type === 'intro_script' && L\.title\) \? L\.title/.test(html),
-  'completion next button labels intro_script by its title');
+// v60: the "Next" button is now a plain "Next" (it opens the next questions directly, no per-type
+// label). What still matters for script lessons: (a) the "words from this lesson" box has an
+// intro_script branch (letters), not an empty box; (b) the next-lesson search respects the
+// hidden-lesson rule via lessonCountsFor.
+assert.ok(/compNext\.textContent = t\('complete\.next'\)/.test(html),
+  'completion Next button is a plain "Next" (v60 — opens the next questions directly)');
 assert.ok(/lesson\?\.type === 'intro_script'[\s\S]*?lesson\.letters\|\|\[\]\)\.map/.test(html),
   'completion card shows letters for intro_script lessons');
-assert.ok(/findIndex\(\(L, i\) => i !== C\.lessonIdx && !done\[L\.id\] && _counts\(L\)\)/.test(html),
-  'completion next-lesson search skips hidden lessons (non-teacher)');
+assert.ok(/const nextLessonIdx = _setDone \? -1 : _firstUnfinishedLessonIdx\(APP\.lessonData\)/.test(html),
+  'completion next-lesson uses the coverage-aware _firstUnfinishedLessonIdx (which skips hidden lessons via lessonCountsFor) (v60.1)');
 console.log('  completion card: script-lesson next-label + letters + hidden-skip: OK');
 
 // Completion card handles a MIXED lesson: (a) it has a words branch (was empty — falls through

@@ -69,6 +69,9 @@ const stubs = {
   OLLAMA_TRANSLATION_MODEL: 'stub',
   OLLAMA_QC_MODEL: 'qc-stub',
   jobStep: () => {}, jobDone: (id, d) => { stubs._last = d; }, _last: null,
+  // v59 meter deps (accounting covered by unit-token-usage.test.js)
+  meterLLMTokens: async (fn) => ({ result: await fn(), tokens: { promptTokens: 0, completionTokens: 0 } }),
+  addTokenUsage: () => {},
   upsert: () => {},
   _qcLessonUserFlagged: (tp, ls) => (ls.vocab || []).some(x => x && x.userFlag),
   _lessonHasOpenQcFlag,

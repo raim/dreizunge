@@ -153,10 +153,12 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
     const lib = u.protocol === 'https:' ? https : http;
     const body = JSON.stringify({
       model, stream: false, keep_alive: -1,
-      // opts.think === false disables a reasoning model's thinking phase (top-level /api/chat
-      // field). Only sent when explicitly requested; callLLM retries without it if the model
-      // rejects the parameter (non-thinking models on some Ollama versions).
-      ...(opts && opts.think === false ? { think: false } : {}),
+      // opts.think toggles a reasoning model's thinking phase (top-level /api/chat field).
+      //   think:false — disable thinking (plain prose/JSON; avoids empty-response on small budgets)
+      //   think:true  — enable thinking (opt-in per role; caller must also raise tokens+timeout)
+      // Only sent when explicitly boolean; callLLM retries without it if the model rejects the
+      // parameter (non-thinking models on some Ollama versions).
+      ...(opts && typeof opts.think === 'boolean' ? { think: opts.think } : {}),
       options: { temperature, num_predict: maxTokens || 1024 },
       messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
     });
