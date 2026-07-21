@@ -2,6 +2,7 @@
 
 # inspo tokens
 
+|----|----|----|
 | alex | script lessons | 1| 
 | | TTS tool suggestion+code | 1|
 | | dialects for migrants | 1|
@@ -14,4 +15,5 @@
 
 # data/code tokens
 
+|----|----|----|
 | bernd | oberlienzer dialektworte | 1|
