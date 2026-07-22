@@ -117,7 +117,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v65';
+const APP_VERSION  = 'v66';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -167,6 +167,11 @@ const OLLAMA_THINK = { story: false, lessons: false, tutor: false };
 // Multipliers applied to a call's token budget and timeout when that role is thinking. A think
 // block on a 35B-a3b model routinely runs longer than the answer, so both need real headroom.
 const THINK_TOKEN_MULT = 2.5, THINK_TIMEOUT_MULT = 3;
+// …and an absolute FLOOR. A multiplier alone is not enough: a 50-word story has a base budget of
+// ~475 tokens, so ×2.5 is ~1187 — less than a 35B reasoning model routinely spends inside <think>
+// before writing a word. The answer is then truncated away and the call fails "empty". Reasoning
+// has a fixed cost that does NOT shrink with the requested output length. (v65.1)
+const THINK_MIN_TOKENS = 3000;
 // Resolve the { think, tokens, timeoutMs } for a role given its base token budget. Non-thinking
 // roles get think:false (which also triggers llm.js's reject-retry for non-reasoning models);
 // thinking roles get think:true + bumped budgets. timeoutMs omitted → the call uses the global.
@@ -175,7 +180,7 @@ function thinkOpts(role, baseTokens) {
   if (!on) return { think: false, tokens: baseTokens };
   return {
     think: true,
-    tokens: Math.ceil((baseTokens || 1024) * THINK_TOKEN_MULT),
+    tokens: Math.max(THINK_MIN_TOKENS, Math.ceil((baseTokens || 1024) * THINK_TOKEN_MULT)),
     timeoutMs: Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT),
   };
 }
@@ -947,8 +952,8 @@ function callLLMLesson(system, userMsg, maxTokens, opts) {
   const pol = thinkOpts('lessons', maxTokens);
   return _callLLM(OLLAMA_LESSON_MODEL, system, userMsg, pol.tokens, { ...pol, ...opts });
 }
-function callLLMTranslation(system, userMsg, maxTokens) {
-  return _callLLM(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens);
+function callLLMTranslation(system, userMsg, maxTokens, opts) {
+  return _callLLM(OLLAMA_TRANSLATION_MODEL, system, userMsg, maxTokens, opts);
 }
 // QC pass — its own role (defaults to the translation model). See qcCheckPair et al.
 function callLLMQC(system, userMsg, maxTokens, opts) {
@@ -1884,7 +1889,7 @@ async function generateStorylineTitle(topics, stories, srcLang) {
   ).join('\n\n');
   const sys = fillPrompt(PROMPTS.storylineTitle.system, { S });
   const user = fillPrompt(PROMPTS.storylineTitle.user, { topicList, storyExcerpts, S });
-  const result = await _callLLM(OLLAMA_MODEL, sys, user, 80);
+  const result = await _callLLM(OLLAMA_MODEL, sys, user, 80, { think: false });   // v65.1
   const raw = result.text.replace(/```json|```/g, '').trim();
   console.log(`  Raw response: ${raw.slice(0,120)}`);
   let parsed;
@@ -1913,7 +1918,7 @@ async function generateStorylineSummary(topics, stories, vocab, srcLang) {
   const vocabList = [...new Set(vocab)].slice(0, 40).join(', ');
   const sys = fillPrompt(PROMPTS.storylineSummary.system, { S });
   const user = fillPrompt(PROMPTS.storylineSummary.user, { chapterSummaries, vocabList, S });
-  const result = await _callLLM(OLLAMA_MODEL, sys, user, 400);
+  const result = await _callLLM(OLLAMA_MODEL, sys, user, 400, { think: false });   // v65.1
   const summary = result.text.trim();
   console.log(`  Summary  : ${summary.slice(0,80)}…`);
   console.log('────────────────────────────────────────────────────\n');
@@ -2228,7 +2233,7 @@ async function generateChapterMeta(stories, srcLang, lang) {
   const user = fillPrompt(PROMPTS.chapterTitles.user,   { chapterExcerpts, S, n });
   console.log(`\n── Chapter-title post-pass ──────────────────────────`);
   console.log(`  Chapters : ${n}, Lang: ${S}, Model: ${OLLAMA_MODEL}`);
-  const result = await _callLLM(OLLAMA_MODEL, sys, user, 60 * n + 120);
+  const result = await _callLLM(OLLAMA_MODEL, sys, user, 60 * n + 120, { think: false });   // v65.1: short structured output — never reason
   const raw = result.text;
   let arr;
   try { arr = JSON.parse(stripRaw(raw)); }
@@ -3331,15 +3336,22 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
 
   // ── Translation ───────────────────────────────────────────────────────
   let storyTranslation = userTranslation || null;
-  const shouldAutoTranslate = story && !storyTranslation &&
-    OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL;
+  // v65.1: ALWAYS translate a generated story into the source language when we don't already have a
+  // user-supplied translation. Previously this only ran when the translation model DIFFERED from the
+  // story model, so a single-model setup silently produced no translations at all — which is why the
+  // read-story translation toggle appeared "missing" (it correctly hides when there is nothing to
+  // show). The translation is used three ways: as context for lesson generation (more accurate
+  // vocabulary pairs), as the source text for the read-story toggle, and as the substrate for future
+  // dialect lessons built from story+translation.
+  const shouldAutoTranslate = !!story && !storyTranslation;
 
   if (shouldAutoTranslate) {
     jobStep(jobId, `[${OLLAMA_TRANSLATION_MODEL}] Translating story to ${langName(srcLang)}…`);
     try {
       const t0 = Date.now();
       const { text, promptTokens, completionTokens } = await callLLMTranslation(
-        sysTranslation(lang, srcLang), story, Math.min(2048, Math.ceil(story.length * 1.2)));
+        sysTranslation(lang, srcLang), story, Math.min(2048, Math.ceil(story.length * 1.2)),
+        { think: false });   // v65.1: translation is mechanical — reasoning would only burn the budget
       storyTranslation = text.trim();
       _translationModel = OLLAMA_TRANSLATION_MODEL;
       _translationMeta = buildGenMeta({ type: 'translation', model: OLLAMA_TRANSLATION_MODEL, t0,

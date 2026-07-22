@@ -187,6 +187,25 @@ console.log('  full-story-on-unlock + within/along progress summary: OK');
 }
 console.log('  review mode for a re-opened complete chapter (live+static): OK');
 
+// ── 4c. Chapter storyboard panel on the completion card (v65.1) ─────────────
+{
+  const fn = ext(html, '_renderCompStoryboard');
+  // Reuses the v57 mapping, so the panel shown can never disagree with the one the board links to.
+  assert.ok(/_sbPanelChapter\(i, groups\.length, chapters\.length, g\.getAttribute\('data-chapter'\)\)/.test(fn),
+    'the panel is selected with the SAME mapping the storyboard click handler uses');
+  assert.ok(/const chapterIdx = idx \+ 1;/.test(fn), '_sbPanelChapter is 1-based; the deck index is 0-based');
+  // Cropped to the panel bounding box rather than shrinking the whole board.
+  assert.ok(/out\.setAttribute\('viewBox'/.test(fn), 'a fresh SVG is cropped to the panel bounding box');
+  assert.ok(/querySelectorAll\('defs'\)/.test(fn), 'defs are carried over so gradients/patterns still resolve');
+  // Must never break the card.
+  assert.ok(/catch\(_\)\{ \/\* a malformed board must never break the completion card \*\/ \}/.test(fn),
+    'a malformed storyboard degrades silently');
+  assert.ok(/id="comp-storyboard"/.test(html), 'the card has a storyboard slot');
+  assert.ok(/else _renderCompStoryboard\(topicKey, _slCtx\)/.test(html), 'showComplete renders it for non-drill cards');
+}
+console.log('  chapter storyboard panel on the completion card: OK');
+
+
 // ── 5. Static build parity ────────────────────────────────────────────────────
 {
   const ls = ext(builder, 'loadSaved');

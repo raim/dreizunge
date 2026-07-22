@@ -77,8 +77,12 @@ const findTopic = (env, ut) => env.readStore().topics.find(t => t.userTopic === 
     assert(t1.generationStats.models && t1.generationStats.models.lessons === 'fake-translategemma',
       'provenance: lessons model recorded');
     assert(t1.generationStats.models.story === 'fake', 'provenance: story model recorded');
-    // No separate translation model here → translation did not run.
-    assert(t1.generationStats.models.translation === null, 'provenance: translation null when no distinct model');
+    // v65.1: translation now runs ALWAYS (it feeds lesson generation, the read-story toggle and
+    // future dialect lessons), so a same-model setup still produces one — previously it was skipped
+    // whenever the translation model matched the story model, which silently left most stories
+    // untranslated and made the read-story toggle look broken.
+    assert(t1.generationStats.models.translation === 'fake-translategemma' || t1.generationStats.models.translation === 'fake',
+      'provenance: translation model recorded even without a DISTINCT model (got ' + t1.generationStats.models.translation + ')');
 
     // ── 5) Split translation + table together: story≠translation ≠ lessons ─────────────
     const sw2 = await post(sport, '/api/models', { story: 'fake', translation: 'fake-transl', lessons: 'fake-translategemma' });

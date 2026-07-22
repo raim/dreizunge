@@ -1109,6 +1109,8 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
 <!-- ══ COMPLETE ════════════════════════════════════════════════════════ -->
 <div id="complete-screen" class="screen">
   <div class="comp-title" id="comp-title">Lesson complete!</div>
+  <!-- v65.1: the storyboard panel for THIS chapter, so the learner sees where they are in the arc. -->
+  <div id="comp-storyboard" style="display:none;margin-top:12px"></div>
   <!-- v60.8: progress bars only — within-chapter, along-story, and %-solved. No trophy / %-pill /
        stat panels (removed per design; the bars carry the signal). -->
   <div id="comp-progress" style="margin-top:14px;text-align:left"></div>
@@ -1143,6 +1145,15 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <button class="sl-screen-share" id="sl-screen-storyboard-btn" onclick="onStorylineStoryboardBtn()" title="Generate storyboard" style="display:none">🎬</button>
         <button class="sl-screen-share" id="sl-screen-qc-btn" title="" style="display:none">🔍</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
+      </div>
+      <!-- v65.1: pass mark lives here (teacher mode on a storyline), not in the model menu — it is
+           a pedagogical setting about learners, not a model setting. -->
+      <div id="sl-threshold-row" style="display:none;padding:2px 14px 4px;align-items:center;gap:6px">
+        <span style="font-size:11px;font-weight:800;color:var(--gray-dark)" id="sl-threshold-lbl"></span>
+        <input type="number" id="sl-threshold" min="0" max="100" step="5" onchange="switchThreshold(this.value)"
+               style="width:64px;font-family:Nunito,sans-serif;font-size:12px;padding:3px 6px;border:1.5px solid var(--gray-mid);border-radius:6px">
+        <span style="font-size:11px;opacity:.7">%</span>
+        <span id="sl-threshold-hint" style="font-size:10px;color:var(--gray-dark)"></span>
       </div>
       <div id="sl-tags-row" style="display:none;padding:2px 14px 4px;align-items:center;gap:6px;flex-wrap:wrap">
         <span id="sl-tags-display" style="font-size:11px;color:var(--gray-dark);cursor:pointer" onclick="openSlTagEditor()"></span>
@@ -3934,12 +3945,7 @@ async function renderModelPicker(){
     `</span>`
   ).join('')+
     `<span class="bmodel-field"><label>${escHtml(t('models.timeout'))}</label>`+
-    `<span><input type="number" id="bmodel-timeout" min="30" max="3600" step="30" value="${timeoutSec}" title="${escAttr(t('models.timeout_hint'))}" onchange="switchTimeout(this.value)" style="width:64px"><span style="opacity:.7">s</span></span></span>`+
-    // v60.8: global %-solved threshold to complete a chapter (teacher setting). 0 = off (solve
-    // nothing required); 100 = must solve everything. Below it, a chapter stays incomplete and the
-    // learner is offered the drill.
-    `<span class="bmodel-field"><label>${escHtml(t('models.threshold'))}</label>`+
-    `<span><input type="number" id="bmodel-threshold" min="0" max="100" step="5" value="${Math.round((APP.info?.coverageThreshold ?? 1)*100)}" title="${escAttr(t('models.threshold_hint'))}" onchange="switchThreshold(this.value)" style="width:64px"><span style="opacity:.7">%</span></span></span>`;
+    `<span><input type="number" id="bmodel-timeout" min="30" max="3600" step="30" value="${timeoutSec}" title="${escAttr(t('models.timeout_hint'))}" onchange="switchTimeout(this.value)" style="width:64px"><span style="opacity:.7">s</span></span></span>`;
   setPillClickable(true);
 }
 
@@ -5928,7 +5934,20 @@ function _lessonTypesDropdownHtml(s) {
        + icons
        + '</div>';
 }
+function _refreshSlThreshold(){
+  const row = document.getElementById('sl-threshold-row');
+  if(!row) return;
+  const show = !!APP._teacherMode;          // teacher-mode setting, per the design
+  row.style.display = show ? 'flex' : 'none';
+  if(!show) return;
+  const inp = document.getElementById('sl-threshold');
+  if(inp) inp.value = Math.round((APP.info?.coverageThreshold ?? 1) * 100);
+  const lbl = document.getElementById('sl-threshold-lbl'); if(lbl) lbl.textContent = t('models.threshold');
+  const h = document.getElementById('sl-threshold-hint'); if(h) h.textContent = t('threshold.scope_note');
+}
+
 function _renderStorylineScreen(chainId, encodedChain, topics) {
+  try{ _refreshSlThreshold(); }catch(_){}
   // Title — look up from v29 array first, then legacy object
   const _slArr2 = Array.isArray(APP.storylines) ? APP.storylines : [];
   // Re-resolve chapter names from the storyline's STABLE id chapters so a rename
@@ -10897,6 +10916,9 @@ function showComplete(review){
 
   // Progress summary — along the storyline AND within the chapter. Skipped for a drill (its
   // synthetic topic has no chapter progress of its own).
+  // v65.1: storyboard panel for this chapter (hidden for drills / when there's no board).
+  try { if (lesson._drill) { const b=el('comp-storyboard'); if(b){ b.style.display='none'; b.innerHTML=''; } }
+        else _renderCompStoryboard(topicKey, _slCtx); } catch(_) {}
   const _progEl = el('comp-progress');
   if (_progEl) {
     if (lesson._drill) { _progEl.innerHTML = ''; _progEl.style.display = 'none'; }
@@ -11270,6 +11292,53 @@ function sendTutorMessage(){
   _tutorState.history.push({ role:'student', text });
   _tutorSaveThread(); _tutorRender();
   _tutorSend(false);
+}
+
+// v65.1: show the storyboard panel(s) for the CURRENT chapter on the completion card. Reuses the
+// v57 panel↔chapter mapping (_sbPanelChapter), so the panel shown here can never disagree with the
+// one the storyboard links to. Extracts only the matching group(s) into a fresh SVG cropped to
+// their bounding box, rather than shrinking the whole board to illegibility.
+function _renderCompStoryboard(topicKey, slCtx){
+  const box = document.getElementById('comp-storyboard');
+  if(!box) return;
+  box.style.display = 'none'; box.innerHTML = '';
+  try{
+    const sl = slCtx && slCtx.sl;
+    if(!sl || !sl.storyboard) return;
+    const chapters = sl.chapters || [];
+    const idx = (slCtx.topics || []).indexOf(topicKey);          // 0-based position in the deck
+    if(idx < 0) return;
+    const chapterIdx = idx + 1;                                   // _sbPanelChapter is 1-based
+    const doc = new DOMParser().parseFromString(sl.storyboard, 'image/svg+xml');
+    const outer = doc.querySelector('svg');
+    if(!outer) return;
+    const groups = Array.from(outer.children).filter(el => el.tagName && el.tagName.toLowerCase() === 'g');
+    if(!groups.length) return;
+    const mine = groups.filter((g, i) =>
+      _sbPanelChapter(i, groups.length, chapters.length, g.getAttribute('data-chapter')) === chapterIdx);
+    if(!mine.length) return;
+    // Union bounding box from each panel's own border rect.
+    let x0=Infinity, y0=Infinity, x1=-Infinity, y1=-Infinity;
+    for(const g of mine){
+      const r = g.querySelector(':scope > rect'); if(!r) continue;
+      const x=parseFloat(r.getAttribute('x')||0), y=parseFloat(r.getAttribute('y')||0);
+      const w=parseFloat(r.getAttribute('width')||0), h=parseFloat(r.getAttribute('height')||0);
+      x0=Math.min(x0,x); y0=Math.min(y0,y); x1=Math.max(x1,x+w); y1=Math.max(y1,y+h);
+    }
+    if(!isFinite(x0) || x1<=x0) return;
+    const pad = 4;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const out = document.createElementNS(svgNS, 'svg');
+    out.setAttribute('viewBox', `${x0-pad} ${y0-pad} ${(x1-x0)+pad*2} ${(y1-y0)+pad*2}`);
+    out.setAttribute('width', '100%');
+    out.style.maxHeight = '190px';
+    out.style.display = 'block';
+    // Carry over defs (gradients/patterns the panels may reference).
+    outer.querySelectorAll('defs').forEach(d => out.appendChild(d.cloneNode(true)));
+    for(const g of mine) out.appendChild(g.cloneNode(true));
+    box.appendChild(out);
+    box.style.display = '';
+  }catch(_){ /* a malformed board must never break the completion card */ }
 }
 
 // v60: the progress summary shown on every completion card — the learner's position along the

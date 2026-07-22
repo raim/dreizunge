@@ -54,6 +54,56 @@ console.log('  story generation: per-role thinkOpts (default off) + roomier budg
 }
 console.log('  meta/translation JSON calls: think:false: OK');
 
+// ── 3b. The post-pass calls must never reason (v65.1 regression) ─────────────
+// Reported: chapter-title, storyline-title and storyline-summary post-passes all failed with
+// "Ollama returned empty response" on a reasoning model — even with thinking OFF for the story
+// role — because these three calls never received the v60.5 think:false treatment. Their budgets
+// are tiny (240 / 80 / 400 tokens), so a reasoning model spends the lot before writing anything.
+{
+  for (const [fn, budget] of [['generateChapterMeta', '60 * n + 120'],
+                              ['generateStorylineTitle', '80'],
+                              ['generateStorylineSummary', '400']]) {
+    const at = server.indexOf('async function ' + fn + '(');
+    assert.ok(at > 0, `found ${fn}`);
+    const body = server.slice(at, at + 2000);
+    const wanted = `_callLLM(OLLAMA_MODEL, sys, user, ${budget}, { think: false })`;
+    assert.ok(body.includes(wanted),
+      `${fn} passes think:false (short structured output — reasoning starves it)`);
+  }
+}
+console.log('  post-pass title/summary calls: think:false (v65.1 regression): OK');
+
+// ── 3c. Thinking needs an absolute token FLOOR (v65.1) ──────────────────────
+// Reported: story generation still failed with thinking ON. The multiplier alone is not enough —
+// a 50-word story's base budget is ~475 tokens, so ×2.5 is ~1187, less than a 35B reasoning model
+// spends inside <think> before writing a word.
+{
+  assert.ok(/const THINK_MIN_TOKENS = 3000;/.test(server), 'a floor exists for thinking budgets');
+  assert.ok(/tokens: Math\.max\(THINK_MIN_TOKENS, Math\.ceil\(\(baseTokens \|\| 1024\) \* THINK_TOKEN_MULT\)\)/.test(server),
+    'the thinking budget is max(floor, base × multiplier) — a short output cannot starve reasoning');
+}
+console.log('  thinking token floor (v65.1): OK');
+
+// ── 3d. Story translation always runs (v65.1) ───────────────────────────────
+// Was gated on the translation model DIFFERING from the story model, so a single-model setup
+// produced no translations at all — which is why the read-story translation toggle looked missing.
+{
+  assert.ok(/const shouldAutoTranslate = !!story && !storyTranslation;/.test(server),
+    'translation runs whenever a story exists and none was supplied (no model-difference condition)');
+  // Scoped to the auto-translate DECISION: the same comparison legitimately appears elsewhere
+  // (VRAM release must not free the same model twice; a startup log line).
+  {
+    const at = server.indexOf('const shouldAutoTranslate');
+    const decision = server.slice(at - 600, at + 200);
+    assert.ok(!/OLLAMA_TRANSLATION_MODEL !== OLLAMA_MODEL/.test(decision),
+      'the old model-difference gate is gone from the translate decision');
+  }
+  assert.ok(/sysTranslation\(lang, srcLang\), story,[\s\S]{0,120}\{ think: false \}/.test(server),
+    'the translation call is reasoning-safe too');
+}
+console.log('  story translation: always on + reasoning-safe (v65.1): OK');
+
+
 // ── 4. The empty-response guard message still exists (what the user saw) ──────
 {
   assert.ok(/Ollama returned empty response/.test(llm), 'empty-response guard present');

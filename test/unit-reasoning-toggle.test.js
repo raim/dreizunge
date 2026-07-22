@@ -32,8 +32,8 @@ function extFn(src, name) {
 {
   const OLLAMA_THINK = { story: false, lessons: false };
   const getRequestTimeout = () => 720000;
-  const thinkOpts = new Function('OLLAMA_THINK', 'getRequestTimeout', 'THINK_TOKEN_MULT', 'THINK_TIMEOUT_MULT',
-    extFn(server, 'thinkOpts') + '\nreturn thinkOpts;')(OLLAMA_THINK, getRequestTimeout, 2.5, 3);
+  const thinkOpts = new Function('OLLAMA_THINK', 'getRequestTimeout', 'THINK_TOKEN_MULT', 'THINK_TIMEOUT_MULT', 'THINK_MIN_TOKENS',
+    extFn(server, 'thinkOpts') + '\nreturn thinkOpts;')(OLLAMA_THINK, getRequestTimeout, 2.5, 3, 3000);
 
   assert.deepStrictEqual(thinkOpts('story', 1200), { think: false, tokens: 1200 },
     'OFF → think:false, budget unchanged (safe default)');
@@ -41,6 +41,11 @@ function extFn(src, name) {
   const on = thinkOpts('story', 1200);
   assert.strictEqual(on.think, true, 'ON → think:true');
   assert.strictEqual(on.tokens, 3000, 'ON → tokens ×2.5 (1200→3000)');
+  // v65.1: a FLOOR, because reasoning has a fixed cost that does not shrink with output length.
+  // A 50-word story's base is ~475 tokens; ×2.5 alone left less than a 35B reasoning model spends
+  // inside <think>, so the answer was truncated away and the call failed 'empty'.
+  assert.strictEqual(thinkOpts('story', 475).tokens, 3000, 'ON → a small base is raised to the floor');
+  assert.strictEqual(thinkOpts('story', 4096).tokens, 10240, 'ON → a large base still uses the multiplier');
   assert.strictEqual(on.timeoutMs, 2160000, 'ON → timeout ×3 (720s→2160s)');
   OLLAMA_THINK.story = false;
   assert.strictEqual(thinkOpts('story', 1200).think, false, 'toggling back OFF restores think:false');

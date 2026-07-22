@@ -106,7 +106,13 @@ console.log('  card: below-threshold drill offer + hint: OK');
   assert.ok(/setCoverageThreshold\(body\.value\)\.coverageThreshold/.test(route), 'POST sets + returns the numeric value');
   assert.ok(/value must be a number/.test(route), 'POST validates the value');
   // Client wiring.
-  assert.ok(/onchange="switchThreshold\(this\.value\)"/.test(html), 'model menu has the threshold field');
+  // v65.1: the pass mark moved OFF the model menu — it is a pedagogical setting about learners, not
+  // a model setting — onto the storyline page, shown in teacher mode.
+  assert.ok(/id="sl-threshold"[^>]*onchange="switchThreshold\(this\.value\)"/.test(html),
+    'the threshold field lives on the storyline screen');
+  assert.ok(!/id="bmodel-threshold"/.test(html), 'the threshold field is gone from the model menu');
+  const rt = ext(html, "_refreshSlThreshold");
+  assert.ok(/APP\._teacherMode/.test(rt), 'the threshold row shows only in teacher mode');
   const st = ext(html, 'switchThreshold');
   assert.ok(/\/api\/coverage-threshold/.test(st) && /value:pct\/100/.test(st), 'switchThreshold posts value as a fraction');
   assert.ok(/APP\.info\.coverageThreshold =/.test(st), 'switchThreshold updates the live info so the gate applies immediately');
