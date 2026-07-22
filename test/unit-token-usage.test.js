@@ -126,7 +126,16 @@ console.log('  addTokenUsage: cumulative topic totals, storyline bucket, per-typ
   const gen = server.slice(server.indexOf('let totalPromptTokens = 0, totalCompletionTokens = 0;', server.indexOf('async function generateStory')));
   assert.ok(!/meterLLMTokens/.test(gen.slice(0, 400)), 'initial generation keeps its own accounting (no double count)');
   // The wrapper is THE convergence: the raw import is renamed and used nowhere else.
-  assert.strictEqual((server.match(/_rawCallLLM/g) || []).length, 2, '_rawCallLLM appears exactly twice: import + wrapper');
+  // Word-bounded: _rawCallLLMStream (v64, tutor-only streaming) is a DIFFERENT function that merely
+  // shares the prefix. The guarantee being pinned is that the raw WHOLE-REPLY call is reachable only
+  // through the metering wrapper — so match _rawCallLLM exactly, not as a prefix.
+  assert.strictEqual((server.match(/_rawCallLLM\b/g) || []).length, 2,
+    '_rawCallLLM (whole-reply) appears exactly twice: import + metering wrapper');
+  // The streaming call deliberately bypasses the meter: tutor turns are not attributed to any
+  // artefact, and routing it through the meter would mean touching the choke point every other
+  // feature depends on. It must therefore be used by the tutor wrapper ONLY.
+  assert.strictEqual((server.match(/_rawCallLLMStream\b/g) || []).length, 2,
+    '_rawCallLLMStream appears exactly twice: import + tutor streaming wrapper');
 }
 console.log('  wiring: 12 attribution sites, clean-sweep persistence, no double-count, one convergence: OK');
 

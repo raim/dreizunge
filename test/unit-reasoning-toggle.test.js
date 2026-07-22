@@ -67,11 +67,12 @@ console.log('  wiring: story thinkOpts, callLLMLesson central policy, QC unchang
 {
   const srm = extFn(server, 'setRuntimeModels');
   assert.ok(/next\.think && typeof next\.think === 'object'/.test(srm), 'setRuntimeModels accepts think:{}');
-  assert.ok(/typeof next\.think\.story === 'boolean'/.test(srm) && /typeof next\.think\.lessons === 'boolean'/.test(srm),
-    'only boolean story/lessons think flags are applied (no other roles)');
+  assert.ok(/typeof next\.think\.story === 'boolean'/.test(srm) && /typeof next\.think\.lessons === 'boolean'/.test(srm)
+    && /typeof next\.think\.tutor === 'boolean'/.test(srm),
+    'boolean think flags applied for story, lessons and tutor (v61)');
   const cm = extFn(server, 'currentModels');
-  assert.ok(/think: \{ story: OLLAMA_THINK\.story, lessons: OLLAMA_THINK\.lessons \}/.test(cm),
-    'currentModels exposes think state to the client');
+  assert.ok(/think: \{ story: OLLAMA_THINK\.story, lessons: OLLAMA_THINK\.lessons, tutor: OLLAMA_THINK\.tutor \}/.test(cm),
+    'currentModels exposes think state for all three roles incl. the v61 tutor');
 }
 console.log('  config: setRuntimeModels applies think, currentModels exposes it: OK');
 
@@ -100,9 +101,11 @@ console.log('  llm.js: boolean think + per-call timeout override: OK');
 {
   const rmp = html.slice(html.indexOf('const thinkChk'), html.indexOf("`<span class=\"bmodel-field\"><label>${escHtml(t('models.timeout'))}"));
   assert.ok(/onchange="switchThink\('\$\{role\}',this\.checked\)"/.test(rmp), 'checkbox calls switchThink');
-  assert.ok(/\(role==='story'\|\|role==='lessons'\)/.test(html), 'the checkbox is only rendered for story + lessons');
+  assert.ok(/\(role==='story'\|\|role==='lessons'\|\|role==='tutor'\)/.test(html),
+    'the checkbox is rendered for story, lessons and the v61 tutor — and no other role');
   const st = extFn(html, 'switchThink');
-  assert.ok(/role!=='story' && role!=='lessons'/.test(st), 'switchThink guards to story|lessons only');
+  assert.ok(/role!=='story' && role!=='lessons' && role!=='tutor'/.test(st),
+    'switchThink guards to story|lessons|tutor only');
   assert.ok(/body\.think\[role\]=!!on/.test(st), 'switchThink posts think:{role:bool}');
   assert.ok(/renderModelPicker\(\)/.test(st), 'switchThink re-renders from the server state');
   const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));

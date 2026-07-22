@@ -7,11 +7,43 @@ const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
 const { parseDialectGlossary, buildDialectTopic } = require('./dialect-glossary.js');
-const { callLLM: _rawCallLLM, ping: pingOllama, release: releaseOllamaModel,
+const { callLLM: _rawCallLLM, callLLMStream: _rawCallLLMStream, ping: pingOllama, release: releaseOllamaModel,
         warmup: _warmupLLM, listModels: listOllamaModels, setRequestTimeout, getRequestTimeout,
         stripRaw, extractJSON, extractArray, salvageArray } = require('./llm');
 const { AsyncLocalStorage } = require('async_hooks');
 const { buildExport } = require('./export-lessons');
+const LEARNERS = require('./learners');
+
+// ── Learner sessions (v65) ───────────────────────────────────────────────────
+// Cookie-based, HttpOnly so page scripts can never read the token, SameSite=Lax so it isn't sent
+// on cross-site requests. `Secure` is set only when the request arrived over TLS — forcing it on
+// plain-HTTP LAN use would silently break login.
+const SESSION_COOKIE = 'dz_session';
+function parseCookies(req) {
+  const out = {};
+  const raw = req.headers?.cookie;
+  if (!raw) return out;
+  for (const part of String(raw).split(';')) {
+    const i = part.indexOf('=');
+    if (i < 0) continue;
+    out[part.slice(0, i).trim()] = decodeURIComponent(part.slice(i + 1).trim());
+  }
+  return out;
+}
+function setSessionCookie(req, res, token, maxAgeSec) {
+  const secure = !!(req.socket && req.socket.encrypted) || String(req.headers['x-forwarded-proto'] || '').includes('https');
+  const bits = [`${SESSION_COOKIE}=${encodeURIComponent(token)}`, 'Path=/', 'HttpOnly', 'SameSite=Lax',
+                `Max-Age=${maxAgeSec}`];
+  if (secure) bits.push('Secure');
+  res.setHeader('Set-Cookie', bits.join('; '));
+}
+function clearSessionCookie(res) {
+  res.setHeader('Set-Cookie', `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`);
+}
+// Resolve the logged-in learner for a request, or null.
+function currentLearner(req) {
+  try { return LEARNERS.resolveSession(parseCookies(req)[SESSION_COOKIE]); } catch(_) { return null; }
+}
 
 // ── Token metering (v59) ──────────────────────────────────────────────
 // EVERY server-side LLM call converges on _callLLM (the four role wrappers and all direct
@@ -85,7 +117,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v60';
+const APP_VERSION  = 'v65';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -109,6 +141,10 @@ let OLLAMA_LESSON_MODEL      = process.env.OLLAMA_LESSON_MODEL      || OLLAMA_MO
 // translation-faithfulness check), but is independently settable so you can, e.g., run the story
 // translation on qwen while QC-checking Lëtzebuergesch pairs on translategemma.
 let OLLAMA_QC_MODEL          = process.env.OLLAMA_QC_MODEL          || OLLAMA_TRANSLATION_MODEL;
+// Tutor (v61): the conversational end-of-chapter comprehension tutor. Its own role — a chat model
+// is a different job from lesson JSON generation — defaulting to the story model (both produce
+// natural-language prose). Independently settable in the model menu.
+let OLLAMA_TUTOR_MODEL       = process.env.OLLAMA_TUTOR_MODEL       || OLLAMA_MODEL;
 // (The request timeout lives in llm.js — runtime-adjustable via setRequestTimeout/getRequestTimeout;
 //  there is no separate server-side copy.)
 // Lesson output format: 'json' (default) or 'table' (markdown table, better for
@@ -127,7 +163,7 @@ let OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
 // (narrative coherence) and LESSONS (vocabulary/exercise quality). QC and translation are
 // mechanical and stay non-thinking always. When a role's reasoning is ON, its calls (a) pass
 // think:true and (b) get a bumped token budget + timeout so the answer survives the think block.
-const OLLAMA_THINK = { story: false, lessons: false };
+const OLLAMA_THINK = { story: false, lessons: false, tutor: false };
 // Multipliers applied to a call's token budget and timeout when that role is thinking. A think
 // block on a 35B-a3b model routinely runs longer than the answer, so both need real headroom.
 const THINK_TOKEN_MULT = 2.5, THINK_TIMEOUT_MULT = 3;
@@ -149,8 +185,9 @@ function thinkOpts(role, baseTokens) {
 // lesson format from the new lesson model (unless env-pinned), and returns the resulting set.
 function currentModels() {
   return { story: OLLAMA_MODEL, translation: OLLAMA_TRANSLATION_MODEL,
-           lessons: OLLAMA_LESSON_MODEL, qc: OLLAMA_QC_MODEL, lessonFormat: OLLAMA_LESSON_FORMAT,
-           think: { story: OLLAMA_THINK.story, lessons: OLLAMA_THINK.lessons },
+           lessons: OLLAMA_LESSON_MODEL, qc: OLLAMA_QC_MODEL, tutor: OLLAMA_TUTOR_MODEL,
+           lessonFormat: OLLAMA_LESSON_FORMAT,
+           think: { story: OLLAMA_THINK.story, lessons: OLLAMA_THINK.lessons, tutor: OLLAMA_THINK.tutor },
            timeoutMs: getRequestTimeout() };
 }
 function setRuntimeModels(next) {
@@ -158,15 +195,17 @@ function setRuntimeModels(next) {
   const pick = v => (typeof v === 'string' && v.trim()) ? v.trim() : null;
   const all = pick(next.model);
   const story = pick(next.story) || all, transl = pick(next.translation) || all,
-        lessons = pick(next.lessons) || all, qc = pick(next.qc) || all;
+        lessons = pick(next.lessons) || all, qc = pick(next.qc) || all, tutor = pick(next.tutor) || all;
   if (story)   OLLAMA_MODEL             = story;
   if (transl)  OLLAMA_TRANSLATION_MODEL = transl;
   if (lessons) OLLAMA_LESSON_MODEL      = lessons;
   if (qc)      OLLAMA_QC_MODEL          = qc;
-  // Per-role reasoning toggles: accept think:{story?,lessons?} (only these two roles).
+  if (tutor)   OLLAMA_TUTOR_MODEL       = tutor;
+  // Per-role reasoning toggles: story, lessons, tutor.
   if (next.think && typeof next.think === 'object') {
     if (typeof next.think.story === 'boolean')   OLLAMA_THINK.story   = next.think.story;
     if (typeof next.think.lessons === 'boolean') OLLAMA_THINK.lessons = next.think.lessons;
+    if (typeof next.think.tutor === 'boolean')   OLLAMA_THINK.tutor   = next.think.tutor;
   }
   OLLAMA_LESSON_FORMAT = _deriveLessonFormat(OLLAMA_LESSON_MODEL);
   return currentModels();
@@ -549,6 +588,74 @@ function getStorylines() {
 }
 function setStorylines(arr) { store.storylines = arr; saveStore(store); }
 function findStoryline(slId) { return getStorylines().find(s => s.id === slId) || null; }
+
+// ── Tutor retrieval (v62) ────────────────────────────────────────────────────
+// The persistent tutor can be asked anything from anywhere, but the library is far too large to
+// put in a prompt (hundreds of chapters ≈ tens of thousands of tokens). So we RETRIEVE a small,
+// relevant slice. Three rules, in priority order:
+//   1. SPOILER SAFETY: only ever retrieve from chapters the learner has COMPLETED. This is the
+//      cheap 90% of what a concept graph would buy us — the learner can't be told how a story they
+//      haven't finished turns out. Non-completed chapters are invisible to retrieval, full stop.
+//   2. SCOPE: a question asked on a chapter/lesson screen is about THAT chapter (sent inline by the
+//      client); on a storyline screen it's about that arc; on the landing page it's global.
+//   3. RELEVANCE then RECENCY: within the allowed set, prefer chapters whose text overlaps the
+//      learner's question, then the most recently added. Keyword overlap is a deliberate choice —
+//      it needs no embeddings/vector store and keeps the zero-dependency constraint.
+// Returns a compact context block (bounded chars), never the whole library.
+const _TUTOR_STOPWORDS = new Set(('the a an and or but if then than that this these those is are was were be been being of to in on at by for with from as it its it\'s i you he she they we my your his her their our what which who whom how why when where do does did not no yes can could would should will shall may might must about into over under again more most some any all each').split(' '));
+function _tutorTokens(s) {
+  return String(s || '').toLowerCase().split(/[^\p{L}\p{N}']+/u)
+    .filter(w => w.length > 2 && !_TUTOR_STOPWORDS.has(w));
+}
+function tutorRetrieveContext(opts) {
+  const { question = '', scope = {}, completed = [], lang, srcLang, maxChars = 2400 } = opts || {};
+  const completedSet = new Set(completed);
+  const topics = (store.topics || []).filter(t =>
+    t && t.story && completedSet.has(t.topic) &&
+    (!lang || !t.lang || t.lang === lang) && (!srcLang || !t.srcLang || t.srcLang === srcLang));
+  if (!topics.length) return { text: '', used: [] };
+
+  // Scope narrowing: a storyline question only looks at that storyline's chapters.
+  let pool = topics;
+  if (scope.kind === 'storyline' && scope.storylineId) {
+    const sl = findStoryline(scope.storylineId);
+    if (sl) {
+      const ids = new Set(sl.chapters || []);
+      const inSl = topics.filter(t => ids.has(t.id));
+      if (inSl.length) pool = inSl;
+    }
+  }
+  // The chapter the learner is currently on is sent inline by the client; don't duplicate it here.
+  if (scope.topic) pool = pool.filter(t => t.topic !== scope.topic);
+
+  // Score: keyword overlap with the question (relevance), then recency as the tiebreaker.
+  const qt = new Set(_tutorTokens(question));
+  const scored = pool.map((t, i) => {
+    let overlap = 0;
+    if (qt.size) {
+      const seen = new Set();
+      for (const w of _tutorTokens(t.topic + ' ' + t.story)) {
+        if (qt.has(w) && !seen.has(w)) { seen.add(w); overlap++; }
+      }
+    }
+    return { t, overlap, idx: i };
+  }).sort((a, b) => (b.overlap - a.overlap) || (b.idx - a.idx));
+
+  // Take the best few, as SUMMARIES where we have them (storyline summaries are pre-compressed)
+  // and short story excerpts otherwise, until the char budget is spent.
+  const used = [];
+  let out = '', budget = maxChars;
+  for (const { t, overlap } of scored) {
+    if (budget <= 200) break;
+    // Only include zero-overlap chapters when the question gave us nothing to match on.
+    if (qt.size && overlap === 0 && used.length) continue;
+    const excerpt = String(t.story).replace(/\s+/g, ' ').slice(0, Math.min(600, budget - 120));
+    const block = `— ${t.topic}: ${excerpt}${t.story.length > excerpt.length ? '…' : ''}\n`;
+    out += block; budget -= block.length; used.push(t.topic);
+    if (used.length >= 4) break;
+  }
+  return { text: out.trim(), used };
+}
 function upsertStoryline(sl) {
   const arr = getStorylines();
   const i = arr.findIndex(s => s.id === sl.id);
@@ -846,6 +953,20 @@ function callLLMTranslation(system, userMsg, maxTokens) {
 // QC pass — its own role (defaults to the translation model). See qcCheckPair et al.
 function callLLMQC(system, userMsg, maxTokens, opts) {
   return _callLLM(OLLAMA_QC_MODEL, system, userMsg, maxTokens, opts);
+}
+// Tutor (v61): conversational comprehension tutor. Honors the tutor reasoning toggle (thinkOpts),
+// so a reasoning model gets think:true + bumped budget/timeout when the teacher enables it.
+function callLLMTutor(system, userMsg, maxTokens, opts) {
+  const pol = thinkOpts('tutor', maxTokens);
+  return _callLLM(OLLAMA_TUTOR_MODEL, system, userMsg, pol.tokens, { ...pol, ...opts });
+}
+// v64: streaming variant for the tutor chat only. Same role + reasoning policy; deliberately NOT
+// routed through the v59 metering wrapper (that wraps the whole-reply _callLLM and every other
+// feature depends on it) — tutor turns are not attributed to any artefact, so the route simply
+// reports the final counts itself.
+function callLLMTutorStream(system, userMsg, maxTokens, opts, onDelta) {
+  const pol = thinkOpts('tutor', maxTokens);
+  return _rawCallLLMStream(OLLAMA_TUTOR_MODEL, system, userMsg, pol.tokens, { ...pol, ...opts }, onDelta);
 }
 
 // ── QC: verify source/target pairs with the translation model ─────────────
@@ -3974,11 +4095,69 @@ http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(fs.readFileSync(path.join(__dirname, 'index.html')));
     }
+    // ── Learner accounts + server-side state (v65) ───────────────────────────
+    // The server is the source of truth for a signed-in learner; the client keeps a localStorage
+    // copy as an offline fallback. Credentials and state live in learners.json — deliberately NOT
+    // lessons.json, which build-static bakes into the public docs/ bundle.
+    if (M === 'POST' && url.pathname === '/api/auth/register') {
+      let b; try { b = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const r = LEARNERS.createUser(b.username, b.password);
+      if (r.error) return json(res, 400, { error: r.error });
+      const token = LEARNERS.createSession(r.username);
+      setSessionCookie(req, res, token, 60 * 60 * 24 * 30);
+      console.log(`  Learner registered: ${r.username}`);
+      return json(res, 200, { ok: true, username: r.username });
+    }
+    if (M === 'POST' && url.pathname === '/api/auth/login') {
+      let b; try { b = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const r = LEARNERS.authenticate(b.username, b.password);
+      if (r.error) return json(res, 401, { error: r.error });
+      const token = LEARNERS.createSession(r.username);
+      setSessionCookie(req, res, token, 60 * 60 * 24 * 30);
+      console.log(`  Learner signed in: ${r.username}`);
+      return json(res, 200, { ok: true, username: r.username });
+    }
+    if (M === 'POST' && url.pathname === '/api/auth/logout') {
+      try { LEARNERS.destroySession(parseCookies(req)[SESSION_COOKIE]); } catch(_) {}
+      clearSessionCookie(res);
+      return json(res, 200, { ok: true });
+    }
+    if (M === 'GET' && url.pathname === '/api/auth/me') {
+      const who = currentLearner(req);
+      return json(res, 200, { username: who || null, anyAccounts: LEARNERS.listUsers().length > 0 });
+    }
+    if (M === 'POST' && url.pathname === '/api/auth/password') {
+      const who = currentLearner(req);
+      if (!who) return json(res, 401, { error: 'Not signed in.' });
+      let b; try { b = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const r = LEARNERS.changePassword(who, b.oldPassword, b.newPassword);
+      if (r.error) return json(res, 400, { error: r.error });
+      return json(res, 200, { ok: true });
+    }
+    // Learner state: the whole payload (progress + learned ledger + tutor thread).
+    if (url.pathname === '/api/learner/state') {
+      const who = currentLearner(req);
+      if (!who) return json(res, 401, { error: 'Not signed in.' });
+      if (M === 'GET') return json(res, 200, { username: who, state: LEARNERS.getState(who) });
+      if (M === 'PUT' || M === 'POST') {
+        let b; try { b = JSON.parse(await readBody(req)); } catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+        const r = LEARNERS.setState(who, b.state || b);
+        if (r.error) return json(res, 400, { error: r.error });
+        return json(res, 200, { ok: true, updatedAt: r.updatedAt });
+      }
+    }
+    // Teacher view: who exists and where they are struggling. Requires teacher capability, which on
+    // this server means a live backend (the same gate the editing UI uses) — documented as such.
+    if (M === 'GET' && url.pathname === '/api/learners') {
+      const list = LEARNERS.listUsers().map(u => LEARNERS.summarize(u.username)).filter(Boolean);
+      return json(res, 200, { learners: list });
+    }
     if (M === 'GET' && url.pathname === '/api/info') {
       return json(res, 200, { backend: active, version: APP_VERSION, ollamaModel: OLLAMA_MODEL,
         ollamaTranslationModel: OLLAMA_TRANSLATION_MODEL,
         ollamaLessonModel: OLLAMA_LESSON_MODEL,
         ollamaQcModel: OLLAMA_QC_MODEL,
+        ollamaTutorModel: OLLAMA_TUTOR_MODEL,
         ollamaLessonFormat: OLLAMA_LESSON_FORMAT,
         // v55_r: the client's colour-scheme picker reads this — the names live ONLY here, so the
         // list can never drift out of sync with STORYBOARD_SCHEMES (no duplicated list client-side).
@@ -4001,13 +4180,14 @@ http.createServer(async (req, res) => {
       let body;
       try { body = JSON.parse(await readBody(req)); }
       catch(e) { return json(res, 400, { error: 'Invalid JSON body' }); }
-      const requested = [body.model, body.story, body.translation, body.lessons, body.qc]
+      const requested = [body.model, body.story, body.translation, body.lessons, body.qc, body.tutor]
         .filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
       const hasTimeout = body.timeoutMs != null && Number.isFinite(parseInt(body.timeoutMs, 10));
       const hasThink = body.think && typeof body.think === 'object' &&
-        (typeof body.think.story === 'boolean' || typeof body.think.lessons === 'boolean');
+        (typeof body.think.story === 'boolean' || typeof body.think.lessons === 'boolean'
+         || typeof body.think.tutor === 'boolean');
       if (!requested.length && !hasTimeout && !hasThink)
-        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, model, timeoutMs, or think.' });
+        return json(res, 400, { error: 'Nothing to set. Provide story, translation, lessons, qc, tutor, model, timeoutMs, or think.' });
       if (requested.length) {
         const available = await listOllamaModels();
         if (available.length) {
@@ -4020,7 +4200,7 @@ http.createServer(async (req, res) => {
       // A think-only toggle still needs setRuntimeModels (it reads body.think); a model change does
       // too. Only a timeout-only POST skips it.
       const activeModels = (requested.length || hasThink) ? setRuntimeModels(body) : currentModels();
-      console.log(`  Models switched → story:${activeModels.story}${activeModels.think.story?'🧠':''} lessons:${activeModels.lessons}${activeModels.think.lessons?'🧠':''}${activeModels.translation!==activeModels.story?` transl:${activeModels.translation}`:''}${activeModels.lessonFormat==='table'?' [table format]':''} timeout:${Math.round(activeModels.timeoutMs/1000)}s`);
+      console.log(`  Models switched → story:${activeModels.story}${activeModels.think.story?'🧠':''} lessons:${activeModels.lessons}${activeModels.think.lessons?'🧠':''}${activeModels.translation!==activeModels.story?` transl:${activeModels.translation}`:''}${activeModels.tutor!==activeModels.story||activeModels.think.tutor?` tutor:${activeModels.tutor}${activeModels.think.tutor?'🧠':''}`:''}${activeModels.lessonFormat==='table'?' [table format]':''} timeout:${Math.round(activeModels.timeoutMs/1000)}s`);
       return json(res, 200, { ok: true, active: activeModels });
     }
     if (M === 'GET' && url.pathname === '/api/lessons') {
@@ -5069,6 +5249,115 @@ http.createServer(async (req, res) => {
     // ── QC for generated texts (v55_g) ──────────────────────────────────────────
     // Generate a correction PROPOSAL for a topic's story. Never touches topic.story — stores the
     // proposal under topic.storyQcProposal so the client can show a diff and let the user accept.
+    // Tutor (v61) — end-of-chapter comprehension chat. Stateless: the client sends the chapter
+    // story, the words the learner got wrong / knows, and the conversation so far; the server
+    // assembles the prompt and returns ONE reply. History is flattened into the user message (the
+    // llm layer is single system+user), keeping the LLM plumbing unchanged. `opening:true` asks the
+    // tutor to start the conversation with its first question.
+    if (M === 'POST' && url.pathname === '/api/tutor') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend for the tutor.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const clip = (s, n) => String(s == null ? '' : s).slice(0, n);
+      const srcLang = clip(body.srcLang || 'en', 8), lang = clip(body.lang || 'en', 8);
+      // v62: the tutor is reachable from anywhere, so a chapter story is no longer required — a
+      // global question has none. When present (chapter/lesson scope) it is sent inline by the
+      // client because it is always the most relevant context.
+      const story = clip(body.story, 4000);
+      // Untrusted arrays: cap count + length. wrongWords are the focus; knownWords bound explanations.
+      const arr = (a, cap, len) => (Array.isArray(a) ? a : []).slice(0, cap).map(x => clip(x, len)).filter(Boolean);
+      const wrongWords = arr(body.wrongWords, 40, 60);
+      const knownWords = arr(body.knownWords, 200, 60);
+      // Conversation so far: [{role:'tutor'|'student', text}]. Cap turns + length to bound the prompt.
+      const history = (Array.isArray(body.history) ? body.history : []).slice(-20)
+        .map(m => ({ role: m && m.role === 'student' ? 'student' : 'tutor', text: clip(m && m.text, 800) }))
+        .filter(m => m.text);
+      // v62: scope + completed-chapter whitelist drive retrieval.
+      const scopeIn = (body.scope && typeof body.scope === 'object') ? body.scope : {};
+      const scope = {
+        kind: ['global','storyline','chapter','lesson'].includes(scopeIn.kind) ? scopeIn.kind : 'global',
+        topic: clip(scopeIn.topic, 200) || null,
+        storylineId: clip(scopeIn.storylineId, 80) || null,
+        label: clip(scopeIn.label, 120) || null,
+        // v63: the exercise the learner is looking at. `answer` arrives ONLY once the client says
+        // the question has been answered — before that the server is never told it, so the tutor
+        // cannot leak it however it is asked. Same structural approach as the spoiler whitelist.
+        question: clip(scopeIn.question, 400) || null,
+        answered: scopeIn.answered === true,
+        answer: (scopeIn.answered === true) ? (clip(scopeIn.answer, 120) || null) : null,
+      };
+      const completed = arr(body.completed, 400, 200);
+      // The learner's newest message drives keyword relevance.
+      const lastStudent = [...history].reverse().find(m => m.role === 'student');
+      const retrieved = tutorRetrieveContext({
+        question: lastStudent ? lastStudent.text : '', scope, completed, lang, srcLang });
+      const S = langName(srcLang), L = langName(lang);
+      const sys = fillPrompt(PROMPTS.tutor.system, {
+        S, L,
+        story: story.trim() || '(the learner is not currently inside a chapter)',
+        scope: scope.label ? `${scope.kind} — ${scope.label}` : scope.kind,
+        question: scope.question
+          ? (scope.question + (scope.answered
+              ? `\n(The learner HAS answered. Correct answer: ${scope.answer || '(unknown)'} — you may explain it fully.)`
+              : '\n(The learner has NOT answered yet. You do not know the correct answer. Give a HINT that helps them work it out — never state the answer.)'))
+          : '(the learner is not currently on a question)',
+        retrieved: retrieved.text || '(nothing retrieved — rely on the conversation and the words below)',
+        wrongWords: wrongWords.length ? wrongWords.join(', ') : '(none recorded)',
+        knownWords: knownWords.length ? knownWords.join(', ') : '(none recorded)',
+      });
+      // Build the user turn: the transcript, then either the opening instruction or the student's
+      // latest message (already included as the last history entry when role==='student').
+      let userMsg;
+      if (body.opening || history.length === 0) {
+        userMsg = PROMPTS.tutor.opening;
+      } else {
+        const transcript = history.map(m => (m.role === 'student' ? 'Student: ' : 'Tutor: ') + m.text).join('\n');
+        userMsg = `Conversation so far:\n${transcript}\n\nReply as the tutor (one short turn).`;
+      }
+      const _logReply = (reply) => console.log(`  Tutor [${scope.kind}] reply (${lang}←${srcLang}): ${reply.length} chars${wrongWords.length ? `, focus ${wrongWords.length}w` : ''}${retrieved.used.length ? `, ctx: ${retrieved.used.join(' | ')}` : ''}`);
+
+      // v64: STREAMING (opt-in via body.stream). Server-Sent Events, so the learner sees the reply
+      // appear word by word instead of waiting on "thinking…". The whole-reply JSON path below is
+      // kept intact as a fallback — a client that doesn't ask for a stream, or one whose stream
+      // fails, still works exactly as before.
+      if (body.stream === true) {
+        res.writeHead(200, {
+          'Content-Type': 'text/event-stream; charset=utf-8',
+          'Cache-Control': 'no-cache, no-transform',
+          'Connection': 'keep-alive',
+          'X-Accel-Buffering': 'no',          // don't let a proxy buffer the stream away
+        });
+        const send = (obj) => { try { res.write('data: ' + JSON.stringify(obj) + '\n\n'); } catch(_) {} };
+        let acc = '', aborted = false;
+        req.on('close', () => { aborted = true; });   // learner navigated away / closed the widget
+        try {
+          const { promptTokens, completionTokens } = await callLLMTutorStream(sys, userMsg, 500, null, (delta) => {
+            if (aborted) return;
+            acc += delta;
+            send({ delta });
+          });
+          const reply = stripRaw(acc).trim();
+          if (!aborted) {
+            if (!reply) send({ error: 'Tutor returned an empty reply — try again.' });
+            else { _logReply(reply); send({ done: true, reply, promptTokens, completionTokens }); }
+          }
+        } catch(e) {
+          if (!aborted) send({ error: `Tutor failed: ${e.message}` });
+        }
+        return res.end();
+      }
+
+      try {
+        const { text, promptTokens, completionTokens } = await callLLMTutor(sys, userMsg, 500);
+        const reply = stripRaw(String(text || '')).trim();
+        if (!reply) return json(res, 502, { error: 'Tutor returned an empty reply — try again.' });
+        _logReply(reply);
+        return json(res, 200, { reply, promptTokens, completionTokens });
+      } catch(e) {
+        return json(res, 502, { error: `Tutor failed: ${e.message}` });
+      }
+    }
     if (M === 'POST' && url.pathname === '/api/story-qc') {
       if (active === 'none') return json(res, 503, { error: 'No LLM backend available.' });
       let body;

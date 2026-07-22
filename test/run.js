@@ -99,6 +99,10 @@ run('unit: reasoning-model safety — think:false on prose/JSON gen (v60.5)', 'n
 run('unit: story-translation toggle in read-story panels (v60.6)', 'node', [path.join(__dirname, 'unit-story-translation-toggle.test.js')]);
 run('unit: per-role reasoning toggle (v60.7)', 'node', [path.join(__dirname, 'unit-reasoning-toggle.test.js')]);
 run('unit: clean card + coverage threshold gate (v60.8)', 'node', [path.join(__dirname, 'unit-coverage-threshold.test.js')]);
+run('unit: persistent tutor widget (v62)', 'node', [path.join(__dirname, 'unit-tutor.test.js')]);
+run('unit: tutor retrieval — spoiler-safe + scoped (v62)', 'node', [path.join(__dirname, 'unit-tutor-retrieval.test.js')]);
+run('unit: tutor streaming replies (v64)', 'node', [path.join(__dirname, 'unit-tutor-streaming.test.js')]);
+run('unit: learner accounts + server-side state (v65)', 'node', [path.join(__dirname, 'unit-learners.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);
 run('unit: learned-vocab ledger + my-story wiring (v50)', 'node', [path.join(__dirname, 'unit-learned-vocab.test.js')]);

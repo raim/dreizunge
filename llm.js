@@ -260,4 +260,108 @@ function _releaseOllama(model) {
   });
 }
 
-module.exports = { callLLM, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout };
+// ── Streaming (v64) ──────────────────────────────────────────────────────────
+// A SEPARATE path from callLLM, used only by the tutor chat. Everything else (stories, lessons,
+// QC, translation) keeps the proven whole-reply call: streaming buys nothing for a JSON payload,
+// and confining it to one caller keeps it away from the v59 metering choke point.
+//
+// Reasoning models are the subtlety. stripThink() works on a complete string, but a stream must
+// decide what to emit *before* the end has arrived — and a tag can straddle a chunk boundary
+// ("<thi" + "nk>"). makeThinkFilter returns a stateful function that suppresses reasoning as it
+// streams, holding back only a short tail that could still turn out to be a partial tag.
+function makeThinkFilter() {
+  let buf = '', inThink = false;
+  const OPEN = /<think(?:ing)?>/i, CLOSE = /<\/think(?:ing)?>/i;
+  const TAIL = 10;   // longest partial tag we might be holding ("</thinking" = 10)
+  return {
+    push(chunk) {
+      buf += chunk;
+      let out = '';
+      for (;;) {
+        if (inThink) {
+          const m = buf.match(CLOSE);
+          if (!m) { if (buf.length > TAIL) buf = buf.slice(-TAIL); return out; }  // still thinking
+          buf = buf.slice(m.index + m[0].length); inThink = false; continue;
+        }
+        const m = buf.match(OPEN);
+        if (m) { out += buf.slice(0, m.index); buf = buf.slice(m.index + m[0].length); inThink = true; continue; }
+        // No tag in hand: emit everything except a tail that might be a partial opening tag.
+        if (buf.length > TAIL) { out += buf.slice(0, buf.length - TAIL); buf = buf.slice(-TAIL); }
+        return out;
+      }
+    },
+    // Flush whatever is safely left once the stream ends.
+    end() { const rest = inThink ? '' : buf; buf = ''; return rest; }
+  };
+}
+
+// Stream a chat completion. `onDelta(text)` is called with each emittable fragment (reasoning
+// already removed). Resolves { text, promptTokens, completionTokens } when the model is done.
+// The timeout here is an INACTIVITY timeout: a stream that keeps producing tokens is healthy
+// however long it runs, unlike the stream:false case where the socket is silent throughout.
+function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
+  const temperature = opts?.temperature ?? 0.15;
+  const timeoutMs = (opts && Number.isFinite(Number(opts.timeoutMs)))
+    ? Math.max(30000, Math.min(3600000, Number(opts.timeoutMs)))
+    : OLLAMA_TIMEOUT;
+  return new Promise((resolve, reject) => {
+    const u = new URL('/api/chat', OLLAMA_HOST);
+    const lib = u.protocol === 'https:' ? https : http;
+    const body = JSON.stringify({
+      model, stream: true, keep_alive: -1,
+      ...(opts && typeof opts.think === 'boolean' ? { think: opts.think } : {}),
+      options: { temperature, num_predict: maxTokens || 1024 },
+      messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
+    });
+    const req = lib.request({
+      hostname: u.hostname, port: u.port || (u.protocol === 'https:' ? 443 : 80),
+      path: u.pathname, method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    }, res => {
+      const filter = makeThinkFilter();
+      let line = '', full = '', promptTokens = 0, completionTokens = 0, settled = false;
+      let idle = setTimeout(() => { if (!settled) { settled = true; req.destroy(); reject(new Error('Ollama timeout')); } }, timeoutMs);
+      const bump = () => { clearTimeout(idle); idle = setTimeout(() => { if (!settled) { settled = true; req.destroy(); reject(new Error('Ollama timeout')); } }, timeoutMs); };
+      res.on('data', c => {
+        bump();
+        line += c.toString();
+        // Ollama streams NDJSON: one JSON object per line. A chunk may split a line.
+        let nl;
+        while ((nl = line.indexOf('\n')) >= 0) {
+          const raw = line.slice(0, nl).trim(); line = line.slice(nl + 1);
+          if (!raw) continue;
+          let p; try { p = JSON.parse(raw); } catch(_) { continue; }
+          if (p.error) { if (!settled) { settled = true; clearTimeout(idle); req.destroy(); reject(new Error('Ollama: ' + p.error)); } return; }
+          // Newer Ollama reports reasoning in its own field — never emit it.
+          const piece = p.message?.content || p.response || '';
+          if (piece) {
+            const emit = filter.push(piece);
+            if (emit) { full += emit; try { onDelta && onDelta(emit); } catch(_) {} }
+          }
+          if (p.prompt_eval_count) promptTokens = p.prompt_eval_count;
+          if (p.eval_count) completionTokens = p.eval_count;
+          if (p.done && !settled) {
+            settled = true; clearTimeout(idle);
+            const tail = filter.end();
+            if (tail) { full += tail; try { onDelta && onDelta(tail); } catch(_) {} }
+            const text = full.trim();
+            if (!text) return reject(new Error('Ollama returned only a reasoning block (no answer) — raise num_predict or disable thinking'));
+            return resolve({ text, promptTokens, completionTokens });
+          }
+        }
+      });
+      res.on('end', () => {
+        if (settled) return;
+        settled = true; clearTimeout(idle);
+        const tail = filter.end(); if (tail) full += tail;
+        const text = full.trim();
+        if (!text) return reject(new Error('Ollama returned empty response'));
+        resolve({ text, promptTokens, completionTokens });
+      });
+    });
+    req.on('error', e => reject(new Error('Ollama network: ' + e.message)));
+    req.write(body); req.end();
+  });
+}
+
+module.exports = { callLLM, callLLMStream, makeThinkFilter, ping, listModels, release, warmup, stripThink, stripRaw, extractJSON, extractArray, salvageArray, setRequestTimeout, getRequestTimeout };
