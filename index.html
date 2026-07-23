@@ -6272,7 +6272,18 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     (_succMap[parent.topic] = _succMap[parent.topic] || []).push(l.topic);
   });
 
-  function _renderChapterCard(topic, prevTopic, isFirst) {
+  // A chapter counts as STARTED once any of its lessons has a progress record. Used by the lock
+  // below: the gate exists to stop a learner reading AHEAD, not to confiscate work already done.
+  const _chapterStarted = (t) => {
+    const p = _slCompleted[t] || {};
+    return (byTopic[t]?.lessons || []).some(ls => p[ls.id]);
+  };
+  const _chapterComplete = (t) => {
+    const p = _slCompleted[t] || {};
+    const ls = byTopic[t]?.lessons || [];
+    return ls.length > 0 && ls.every(l => p[l.id]);
+  };
+  function _renderChapterCard(topic, prevTopic, isFirst, chainBlocked) {
     const s = byTopic[topic];
     const _done = _slCompleted[topic] || {};
     const _sets = s?.lessons || [];
@@ -6286,17 +6297,29 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       out += '<div class="path-line' + (_prevAllDone ? ' done' : '') + '" style="height:20px"></div>';
     }
     if (!s) return out + '<div class="lesson-node" style="opacity:.5;width:100%;box-sizing:border-box">' + escHtml(topic) + '</div>';
-    const _isLocked = !APP.info.canGenerate && !APP._teacherMode && !isFirst && (
-      // This chapter's own lessons haven't been generated yet…
-      _sets.length === 0 ||
-      // …or we don't know its predecessor (fail closed — never fall open to "unlocked")…
-      !prevTopic ||
-      // …or the predecessor has no lessons yet / isn't fully completed.
-      (() => {
-        const _pd = _slCompleted[prevTopic] || {}; const _ps = byTopic[prevTopic]?.lessons || [];
-        return _ps.length === 0 || !_ps.every(ls => _pd[ls.id]);
-      })()
-    );
+    // v69.2d (user-reported: "progress skipped the third, still locked chapter"). Two changes:
+    //  • TRANSITIVE: the gate used to inspect only the IMMEDIATE predecessor, so a chapter could be
+    //    unlocked while an ancestor was locked — a locked card sandwiched between reachable ones.
+    //    Exactly what the report showed: adding a lesson to chapter 2 made it incomplete, which
+    //    locked chapter 3, while chapter 4 stayed open because ITS predecessor (3) still had all
+    //    its done-flags. `chainBlocked` now carries "something earlier is unfinished" down the chain.
+    //  • NEVER RE-LOCK STARTED WORK: the gate stops a learner reading AHEAD; it must not confiscate
+    //    a chapter they have already worked on. Without this, making an earlier chapter incomplete
+    //    (by adding a lesson to it, as here) would have locked chapters the learner was midway
+    //    through. Only untouched chapters behind an unfinished chain stay locked.
+    const _isLocked = !APP.info.canGenerate && !APP._teacherMode && !isFirst
+      && !_chapterStarted(topic) && (
+        // This chapter's own lessons haven't been generated yet…
+        _sets.length === 0 ||
+        // …or we don't know its predecessor (fail closed — never fall open to "unlocked")…
+        !prevTopic ||
+        // …or anything earlier in the chain is unfinished.
+        chainBlocked ||
+        (() => {
+          const _pd = _slCompleted[prevTopic] || {}; const _ps = byTopic[prevTopic]?.lessons || [];
+          return _ps.length === 0 || !_ps.every(ls => _pd[ls.id]);
+        })()
+      );
     const _barColor = _pct >= 100 ? 'var(--green)' : 'var(--blue)';
     if (_isLocked) {
       out += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;opacity:.45;pointer-events:none">'
@@ -6317,12 +6340,14 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // Guard: a chapter card is rendered at most once (defends against any residual
   // double-attachment from same-named chapters / multi-parent links).
   const _rendered = new Set();
-  function _renderChain(topic, prevTopic, isFirst, depth) {
+  function _renderChain(topic, prevTopic, isFirst, depth, chainBlocked) {
     if (depth > 20) return ''; // safety
     if (_rendered.has(topic)) return ''; // already rendered elsewhere in the tree
     _rendered.add(topic);
     const _topicSet = new Set(topics);
-    let out = _renderChapterCard(topic, prevTopic, isFirst);
+    let out = _renderChapterCard(topic, prevTopic, isFirst, !!chainBlocked);
+    // Once a chapter in the chain is unfinished, everything after it is behind that gap.
+    const _blockedOnward = !!chainBlocked || !_chapterComplete(topic);
     const allKids = (_succMap[topic] || []).filter(t => !_rendered.has(t));
     const ownKids   = allKids.filter(t => _topicSet.has(t));
     const otherKids = allKids.filter(t => !_topicSet.has(t) && byTopic[t]);
@@ -6330,7 +6355,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     if (kids.length === 0) return out;
     if (kids.length === 1 && ownKids.length === 1) {
       // Simple linear continuation
-      return out + _renderChain(kids[0], topic, false, depth + 1);
+      return out + _renderChain(kids[0], topic, false, depth + 1, _blockedOnward);
     }
     // Branch point — side-by-side columns
     out += '<div style="display:flex;align-items:flex-start;margin-top:0">';
@@ -6342,7 +6367,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       out += '<div style="text-align:center;font-size:10px;font-weight:800;color:var(--gray-dark);padding:4px 0 2px">⑂ ' + String.fromCharCode(65+bi) + '</div>';
       out += '<div class="path-line" style="height:12px;width:2px;margin:0 auto"></div>';
       if (isOwn) {
-        out += _renderChain(kid, topic, false, depth + 1);
+        out += _renderChain(kid, topic, false, depth + 1, _blockedOnward);
       } else {
         // Stub: show first chapter of other branch greyed, non-clickable
         const kidData = byTopic[kid];
@@ -6382,7 +6407,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     _hasPred.add(cur);
   }
   const _roots = topics.filter(t => !_hasPred.has(t));
-  _roots.forEach((root, ri) => { if (ri > 0) html += '<div class="path-line" style="height:20px"></div>'; html += _renderChain(root, null, root === topics[0], 0); });
+  _roots.forEach((root, ri) => { if (ri > 0) html += '<div class="path-line" style="height:20px"></div>'; html += _renderChain(root, null, root === topics[0], 0, false); });
   html += '</div>';
   html += '</div>';
 
@@ -10672,7 +10697,18 @@ const _qidUniverseCache = new Map();
 function _lessonQidUniverse(lessonIdx){
   const d = APP.lessonData; if(!d) return new Set();
   const L = d.lessons?.[lessonIdx]; if(!L) return new Set();
-  const cacheKey = `${d.topic}|${lessonIdx}|${APP._teacherMode?1:0}`;
+  // v69.2e: the AUDIO STATE is part of the key. Which questions a lesson can build depends on it —
+  // v55_z drops listen_* when the target has no voice or the lesson is dialect, and the v69.2
+  // beginner policy drops listen_type while muted. The cache is monotonic (it seeds from the prior
+  // Set so a denominator never shrinks), so without this the union of two audio states accumulated
+  // under one key: after toggling 🔇 the universe kept questions that can no longer be BUILT, hence
+  // never solved, and coverage was permanently capped below 100%. Coverage counts the intersection
+  // of universe and solved, so a per-state universe is safe — solves made in the other state simply
+  // aren't counted while that state is inactive, and are still there when the learner switches back.
+  const _audioKey = ((typeof _lessonIsDialect==='function' && _lessonIsDialect())
+                  || (typeof ttsVoiceAvailableFor==='function' && !ttsVoiceAvailableFor(d.lang || APP.lang)))
+                  ? 'na' : (APP.muted ? 'm' : 'a');
+  const cacheKey = `${d.topic}|${lessonIdx}|${APP._teacherMode?1:0}|${_audioKey}`;
   if(_qidUniverseCache.has(cacheKey)) return _qidUniverseCache.get(cacheKey);
   // Mixed lessons own no questions of their own — their universe is the union of the EARLIER
   // siblings they pool from (matching buildMixedExercises: only lessons before the mixed lesson,

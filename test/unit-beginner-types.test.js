@@ -166,4 +166,38 @@ console.log('  difficulty resolution lesson → topic → 2: OK');
 }
 console.log('  v69.2c: coverage-aware rounds + exact universe derivation: OK');
 
+
+// ── 6. v69.2e: the universe cache is keyed by AUDIO STATE ────────────────────
+// Self-reported follow-up from v69.2c. The buildable set depends on the audio state (v55_z drops
+// listen_* without a voice / in dialect lessons; the beginner policy above drops listen_type while
+// muted), but the cache key was topic|lessonIdx|teacher. Because the cache is MONOTONIC — it seeds
+// from the prior Set so a denominator can never shrink — toggling 🔇 accumulated the union of both
+// states under one key, leaving questions in the denominator that can no longer be BUILT and so can
+// never be solved: coverage permanently capped below 100%, i.e. another way to be stuck below the
+// pass mark. Coverage counts the intersection of universe ∩ solved, so a per-state universe is safe.
+{
+  const uni = ext('_lessonQidUniverse');
+  assert.ok(/const _audioKey =/.test(uni), 'an audio-state component is computed');
+  assert.ok(/\$\{d\.topic\}\|\$\{lessonIdx\}\|\$\{APP\._teacherMode\?1:0\}\|\$\{_audioKey\}/.test(uni),
+    'the cache key includes the audio state');
+  assert.ok(/_lessonIsDialect/.test(uni) && /ttsVoiceAvailableFor/.test(uni) && /APP\.muted/.test(uni),
+    'the audio key covers dialect, missing voice and mute — the three things that change the set');
+  // The three states must produce three distinct keys (else the bug survives the refactor).
+  const mk = (dialect, voice, muted) => {
+    const APP = { _teacherMode: false, muted, lang: 'de' };
+    const d = { topic: 'T', lang: 'de' };
+    return new Function('APP', 'd', 'lessonIdx', '_lessonIsDialect', 'ttsVoiceAvailableFor', `
+      const _audioKey = ((typeof _lessonIsDialect==='function' && _lessonIsDialect())
+                      || (typeof ttsVoiceAvailableFor==='function' && !ttsVoiceAvailableFor(d.lang || APP.lang)))
+                      ? 'na' : (APP.muted ? 'm' : 'a');
+      return \`\${d.topic}|\${lessonIdx}|\${APP._teacherMode?1:0}|\${_audioKey}\`;`)(
+      APP, d, 0, () => dialect, () => voice);
+  };
+  const audible = mk(false, true, false), muted = mk(false, true, true), noVoice = mk(false, false, false);
+  assert.notStrictEqual(audible, muted, 'muted gets its own universe');
+  assert.notStrictEqual(audible, noVoice, 'a voiceless device gets its own universe');
+  assert.strictEqual(noVoice, mk(true, true, false), 'dialect and no-voice share the audio-less universe');
+}
+console.log('  v69.2e: universe cache keyed by audio state (mute/voice/dialect): OK');
+
 console.log('unit-beginner-types: ALL PASSED');

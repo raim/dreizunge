@@ -227,3 +227,72 @@ coverage-aware rounds, exact universe derivation); storyline per-chapter provena
 static-alias parity. Owed unchanged: translate-ui pass (57 en-only keys × 29 langs incl. the stale
 `toast.no_voice` deletion — NOTE this session added NO new keys, so a run started earlier is still
 valid), normal-use verification, native review of `latin.sounds.*`.
+
+## 7. ✅ v69_d — translated `ui.json` adopted after a QC + repair pass
+
+User supplied the completed translation run (all 30 languages, 522 keys, 0 missing — the long-owed
+i18n debt is cleared) and asked for QC, flagging that German "Lernarc" is not a word.
+
+The run was **complete but not clean**: **71 defects repaired** via a new, auditable
+`tools/qc-ui-translations.js` (explicit fix tables; re-runnable on future runs). Full write-up in
+`build_history/v69_ui_translation_qc.md`. Summary:
+- **27 placeholder defects** — the model translated placeholder NAMES (`{word}`→`{woord}`,
+  `{title}`→`{otsikko}`), so substitution would silently fail and users would see literal braces.
+  Renames repaired positionally (translation preserved); drops/inventions repaired per key. The 4
+  entries where placeholders are merely REORDERED were left alone — correct for those word orders.
+- **15 corrupted entries** — cross-script bleed (`es form.arc_script_lbl` was entirely Chinese;
+  Cyrillic spliced into Polish; Chinese in `ro`/`hu`) and model artifacts ("almart", "-Taught",
+  "scribe_"); `hi` had 🔒 instead of 🔡.
+- **29 leading-icon drifts** — the per-concept icon (🔡/🔢/🎭) had been swapped or dropped, so the
+  same lesson type showed different icons per language. Variation-selector-only diffs ignored.
+- **German** — "Lernarc" fixed to "Lernbogen pro Kapitel aufbauen"; plus a false friend that
+  INVERTED a destructive option's meaning ("Lösungen" = solutions, where English says "deletes"),
+  "Datei-Datei", the non-word "Inhaltsbleiben", untranslated "Cancel"/"Flag"/"Unflag", a wrong
+  article, and terminology unified on "Markierung".
+
+Verified after adoption: 0 remaining placeholder defects, 0 garbage tokens, `en` byte-identical,
+`--check` clean, static rebuilt and the new German strings confirmed baked into `docs/index.html`.
+**Left for a native speaker (reported, not auto-fixed):** German register split (22 formal *Sie* vs
+22 informal *du*), untranslated leftovers (nl 30, lb 28, da 26, ro 24 — mostly legitimate loanwords
+but with real misses), and two suspect Finnish/Hebrew phrasings.
+
+## 8. ✅ v69_e — storyline lock coherence + two cheap follow-ups
+
+### (a) The lock skipped a locked chapter (user screenshot, `sl_2123771959`)
+The storyline showed a LOCKED chapter 3 sitting between reachable chapters 2 and 4, with the blue
+progress bar apparently hopping over it. Cause: `_isLocked` inspected only the IMMEDIATE
+predecessor. The user had added a mixed lesson to chapter 2 on 23 Jul (the single diff found when
+their library was adopted), which made chapter 2 incomplete → chapter 3 locked; chapter 4 stayed
+open because ITS predecessor (3) still carried all its done-flags. Fixed in two parts:
+- **Transitive gate**: `chainBlocked` propagates "something earlier is unfinished" down both the
+  linear and the branching recursion, so an untouched chapter can never be reachable behind a gap.
+- **Never re-lock started work**: transitivity ALONE would have locked chapters 3 and 4 — chapters
+  the learner had already played and was midway through. The gate exists to stop reading AHEAD, not
+  to confiscate progress, so any chapter with a progress record stays open. Net effect on the
+  reported screen: chapter 3's 🔒 clears (it is complete), chapter 4 keeps its progress, and a
+  genuinely untouched chapter behind the gap stays locked.
+Guarded in `unit-storyline-lock-hardening` with a behavioural replica of the reported storyline
+(5 chapters: ch2 unfinished by a freshly added lesson, ch3 complete, ch4 partial, ch5 untouched).
+
+### (b) Universe cache ignored the audio state — another stuck-below-threshold path
+Self-reported follow-up from v69.2c, confirmed real. The buildable question set depends on audio
+(v55_z drops `listen_*` without a voice or in dialect lessons; the v69.2 beginner policy drops
+`listen_type` while muted), but the cache key was `topic|lessonIdx|teacher`. Since the cache is
+MONOTONIC (it seeds from the prior Set so a denominator never shrinks), toggling 🔇 accumulated the
+union of both states under one key — leaving questions in the denominator that can no longer be
+BUILT and therefore never solved, capping coverage below 100% permanently. The key now includes an
+audio component (`na` / `m` / `a`). Safe because coverage counts universe ∩ solved: solves made in
+the other state simply aren't counted while it's inactive, and return when the learner switches
+back. Guarded in `unit-beginner-types` §6 (key composition + three distinct states).
+
+### (c) Dead `toast.no_voice` key removed (owed since v55_z)
+Verified unreferenced in client, server, builder and tests, then deleted from all 30 languages.
+521 keys remain; `--check` still reports complete.
+
+### Deferred deliberately → roadmap
+Reconciling the **two definitions of "chapter complete"** (lock/dot use lesson done-flags; the
+completion card enforces coverage against the pass mark). This is the expensive one — the coverage
+functions read `APP.lessonData`, so pricing other chapters means swapping that global and
+re-deriving every universe on each storyline render. The roadmap now carries a cheap design:
+persist the verdict (`APP.progress.chapterDone[topic]`) when `showComplete` finds a chapter at or
+above the mark, and have the lock read that stamp with a done-flag fallback.

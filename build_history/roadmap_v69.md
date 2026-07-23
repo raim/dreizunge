@@ -1,6 +1,6 @@
 # Roadmap v69
 
-> **STATE AT HANDOFF: CUT AS `v69_c` (point release on v69, per the v56 numbering convention);
+> **STATE AT HANDOFF: CUT AS `v69_e` (point release on v69, per the v56 numbering convention);
 > suite 142 checks green; check-inline 0 on both builds.**
 > v69_b adds (see `v69_session1_notes.md`): article-symmetry rule in all three vocab prompts;
 > coverage-driven single-pass mixed rounds + the drill credit-back that finally makes the drill
@@ -52,16 +52,32 @@ cut without successor roadmaps; every open item from roadmap_v65 is carried forw
 ## 🔭 What's left / carried forward (union of roadmap_v65 + the v68/v69 queues)
 
 ### Near-term, concrete
+- **Reconcile the two definitions of "chapter complete" (found v69.2d, deferred as the expensive
+  one).** The storyline lock / green dot / chapter progress bar all use **lesson done-flags**, while
+  the completion card enforces **coverage against the pass mark** (v66.1). They disagree: a chapter
+  can unlock its successor while its own completion card still says "keep going" — exactly what the
+  user hit (all 3 lessons flagged done in `tp_…250`, yet stuck at 10/34 = below the 80% mark).
+  The blocker is cost: `topicCoverage()` / `_lessonQidUniverse()` read `APP.lessonData`, so the
+  storyline screen cannot price other chapters without swapping that global and re-deriving every
+  universe (~16 builder calls per lesson × every lesson in the storyline, on every render).
+  **Suggested cheap path — persist the verdict instead of recomputing it:** when `showComplete`
+  determines a chapter is at/above the mark, stamp `APP.progress.chapterDone[topic]`; the lock and
+  the dot read that stamp when present and fall back to done-flags when absent. No global swap, no
+  render cost, converges as the learner plays, and it is monotonic so old chapters degrade to
+  today's behaviour rather than regressing. Worth doing before the teacher dashboard, which will
+  want a single trustworthy "is this chapter done" answer.
 - **PDF cleanup stage 2 — the model pass** (queued in v68_session3 notes). A server endpoint that
   asks the model to drop remaining NON-NARRATIVE fragments the deterministic rules can't classify
   (e.g. the inline real-estate-ad teaser in the Corriere example, which reads as grammatical full
   sentences). Deterministic-first stays the design: the model is never asked to fix what code fixes
   reliably. Suggested shape: per-chunk, from the upload panel, opt-in button next to the 🧹 toggle.
-- **UI translation re-pass — OWED, figure corrected 2026-07-23:** `node translate-ui.js --check`
-  reports **55 en-only keys × 29 languages = 1595 missing** (the roadmap_v65 "29 missing" claim was
-  stale; 53 keys accumulated over v58–v68, plus v69's `flag.mode.student` and `pdf.cleanup_lbl`).
-  One `translate-ui.js` run clears it. While in there: delete the unused `toast.no_voice` key
-  (26 langs) — owed since v55_z.
+- **UI translation — ✅ DONE in v69_d.** All 30 languages complete (`--check`: "All translations
+  complete!"). The run needed a QC pass: 71 defects repaired (broken placeholders, cross-script
+  corruption, icon drift, German errors) — see `v69_ui_translation_qc.md` and
+  `tools/qc-ui-translations.js`. **Still open from that report:** German register split (22 *Sie*
+  vs 22 *du*), untranslated leftovers (nl 30, lb 28, da 26, ro 24), and the unused `toast.no_voice`
+  key deletion — ✅ DONE in v69_e (verified unreferenced in client, server, builder and tests before
+  removal; 521 keys remain).
 - **Teacher dashboard UI** — `GET /api/learners` summary endpoint exists (v65); nothing renders it.
   Small, high value. Student-mode flags (new in v69) are a natural extra column.
 - **TLS guidance / warning banner** when accounts are used over plain HTTP on a non-loopback host.
