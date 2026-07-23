@@ -1043,7 +1043,9 @@
     "acct.migrated": "De voortgang van dit apparaat is naar je account geüpload.",
     "threshold.scope_note": "Geldt voor alle hoofdstukken",
     "flag.mode.student": "student",
-    "pdf.cleanup_lbl": "🧹 Tekst opschonen (regels samenvoegen, onzin verwijderen)"
+    "pdf.cleanup_lbl": "🧹 Tekst opschonen (regels samenvoegen, onzin verwijderen)",
+    "passmark.inherited": "geërfd",
+    "passmark.clear": "Overheersing opheffen — overnemen"
   },
   "pt": {
     "qc.editor.suggests_by": "⚑ Sugestões de: {model}",
@@ -1565,7 +1567,9 @@
     "acct.migrated": "O progresso deste dispositivo foi enviado para sua conta.",
     "threshold.scope_note": "Aplicável a todos os capítulos.",
     "flag.mode.student": "aluno",
-    "pdf.cleanup_lbl": "🧹 Limpar texto (unir linhas, remover lixo)"
+    "pdf.cleanup_lbl": "🧹 Limpar texto (unir linhas, remover lixo)",
+    "passmark.inherited": "herdado",
+    "passmark.clear": "Remover sobrescrita — herdar"
   },
   "fr": {
     "qc.editor.suggests_by": "⚑ Suggéré par {model} :",
@@ -2087,7 +2091,9 @@
     "acct.migrated": "La progression de cet appareil a été enregistrée dans votre compte.",
     "threshold.scope_note": "S'applique à tous les chapitres",
     "flag.mode.student": "étudiant",
-    "pdf.cleanup_lbl": "🧹 Nettoyer le texte (fusionner les lignes coupées, supprimer les éléments inutiles)"
+    "pdf.cleanup_lbl": "🧹 Nettoyer le texte (fusionner les lignes coupées, supprimer les éléments inutiles)",
+    "passmark.inherited": "hérité",
+    "passmark.clear": "Supprimer la modification — hériter"
   },
   "tr": {
     "qc.editor.suggests_by": "⚑ {model} öneriyor:",
@@ -2609,7 +2615,9 @@
     "acct.migrated": "Bu cihazdaki ilerleme, hesabınıza yüklendi.",
     "threshold.scope_note": "Tüm bölümlere uygulanır",
     "flag.mode.student": "öğrenci",
-    "pdf.cleanup_lbl": "🧹 Metni temizle (satırları birleştir, gereksizleri kaldır)"
+    "pdf.cleanup_lbl": "🧹 Metni temizle (satırları birleştir, gereksizleri kaldır)",
+    "passmark.inherited": "miras alındı",
+    "passmark.clear": "Üst yazmayı kaldır - mirası kullan"
   },
   "hi": {
     "qc.editor.suggests_by": "⚑ {model} का सुझाव:",
@@ -3131,7 +3139,9 @@
     "acct.migrated": "इस डिवाइस की प्रगति आपके खाते में अपलोड की गई।",
     "threshold.scope_note": "सभी अध्यायों पर लागू।",
     "flag.mode.student": "छात्र",
-    "pdf.cleanup_lbl": "🧹 टेक्स्ट साफ़ करें (लाइनें जोड़ें, अनावश्यक हटाएँ)"
+    "pdf.cleanup_lbl": "🧹 टेक्स्ट साफ़ करें (लाइनें जोड़ें, अनावश्यक हटाएँ)",
+    "passmark.inherited": "विरासत में मिला",
+    "passmark.clear": "ओवरराइड हटाएं — विरासत में लें"
   },
   "de": {
     "qc.editor.suggests_by": "⚑ {model} schlägt vor:",
@@ -3653,7 +3663,9 @@
     "acct.migrated": "Der Fortschritt dieses Geräts wurde in Ihr Konto hochgeladen.",
     "threshold.scope_note": "Gilt für alle Kapitel.",
     "flag.mode.student": "Schüler",
-    "pdf.cleanup_lbl": "🧹 Text bereinigen (Zeilen verbinden, unnötige Zeichen entfernen)"
+    "pdf.cleanup_lbl": "🧹 Text bereinigen (Zeilen verbinden, unnötige Zeichen entfernen)",
+    "passmark.inherited": "geerbt",
+    "passmark.clear": "Überschreibung aufheben – erben"
   },
   "ar": {
     "qc.editor.suggests_by": "⚑ يقترح النموذج {model}:",
@@ -4175,7 +4187,9 @@
     "acct.migrated": "تم تحميل تقدمك من هذا الجهاز إلى حسابك.",
     "threshold.scope_note": "ينطبق على جميع الفصول.",
     "flag.mode.student": "طالب",
-    "pdf.cleanup_lbl": "🧹 تنظيف النص (دمج الأسطر المتقطعة، إزالة العناصر غير الضرورية)"
+    "pdf.cleanup_lbl": "🧹 تنظيف النص (دمج الأسطر المتقطعة، إزالة العناصر غير الضرورية)",
+    "passmark.inherited": "موروث",
+    "passmark.clear": "إزالة التعديل — استرجاع الإعداد الافتراضي"
   },
   "sv": {
     "qc.editor.suggests_by": "⚑ {model} föreslår:",
@@ -4697,7 +4711,9 @@
     "acct.migrated": "Den här enhetens framsteg har laddats upp till ditt konto.",
     "threshold.scope_note": "Gäller alla kapitel.",
     "flag.mode.student": "student",
-    "pdf.cleanup_lbl": "🧹 Rensa text (slå ihop rader, ta bort onödigt)"
+    "pdf.cleanup_lbl": "🧹 Rensa text (slå ihop rader, ta bort onödigt)",
+    "passmark.inherited": "ärver",
+    "passmark.clear": "Återställ standard — ärv"
   },
   "ru": {
     "qc.editor.suggests_by": "⚑ {model} предлагает:",
@@ -5219,7 +5235,9 @@
     "acct.migrated": "Ваш прогресс был сохранен в аккаунте.",
     "threshold.scope_note": "Применяется ко всем главам",
     "flag.mode.student": "студент",
-    "pdf.cleanup_lbl": "🧹 Очистить текст (объединить строки, удалить лишнее)"
+    "pdf.cleanup_lbl": "🧹 Очистить текст (объединить строки, удалить лишнее)",
+    "passmark.inherited": "унаследовано",
+    "passmark.clear": "Сбросить переопределение — использовать значение по умолчанию"
   },
   "zh": {
     "qc.editor.suggests_by": "💡 {model} 推荐：",
@@ -5741,7 +5759,9 @@
     "acct.migrated": "此设备的学习进度已上传至您的账户。",
     "threshold.scope_note": "适用于所有章节",
     "flag.mode.student": "学生",
-    "pdf.cleanup_lbl": "🧹 清理文本 (合并换行，去除杂项)"
+    "pdf.cleanup_lbl": "🧹 清理文本 (合并换行，去除杂项)",
+    "passmark.inherited": "继承",
+    "passmark.clear": "清除覆盖 — 继承"
   },
   "ko": {
     "qc.editor.suggests_by": "🤖 {model} 추천:",
@@ -6263,7 +6283,9 @@
     "acct.migrated": "이 기기의 학습 진행 상황이 계정으로 업로드되었습니다.",
     "threshold.scope_note": "모든 챕터에 적용됩니다.",
     "flag.mode.student": "학생",
-    "pdf.cleanup_lbl": "🧹 텍스트 정리 (줄 바꿈 병합, 불필요한 내용 제거)"
+    "pdf.cleanup_lbl": "🧹 텍스트 정리 (줄 바꿈 병합, 불필요한 내용 제거)",
+    "passmark.inherited": "상속됨",
+    "passmark.clear": "재정의 해제 - 상속"
   },
   "it": {
     "qc.editor.suggests_by": "⚑ {model} suggerisce:",
@@ -6785,7 +6807,9 @@
     "acct.migrated": "I tuoi progressi sono stati salvati nell'account.",
     "threshold.scope_note": "Valido per tutti i capitoli",
     "flag.mode.student": "studente",
-    "pdf.cleanup_lbl": "🧹 Pulisci il testo (unisci le righe, rimuovi elementi inutili)"
+    "pdf.cleanup_lbl": "🧹 Pulisci il testo (unisci le righe, rimuovi elementi inutili)",
+    "passmark.inherited": "ereditato",
+    "passmark.clear": "Annulla sovrascrittura — eredita"
   },
   "pl": {
     "qc.editor.suggests_by": "⚑ {model} sugeruje:",
@@ -7307,7 +7331,9 @@
     "acct.migrated": "Postępy z tego urządzenia zostały przesłane do Twojego konta.",
     "threshold.scope_note": "Dotyczy wszystkich rozdziałów",
     "flag.mode.student": "student",
-    "pdf.cleanup_lbl": "🧹 Uporządkuj tekst (połącz wiersze, usuń niepotrzebne znaki)"
+    "pdf.cleanup_lbl": "🧹 Uporządkuj tekst (połącz wiersze, usuń niepotrzebne znaki)",
+    "passmark.inherited": "dziedziczone",
+    "passmark.clear": "Usuń nadpisanie — dziedzicz"
   },
   "es": {
     "qc.editor.suggests_by": "⚑ {model} sugiere:",
@@ -7829,7 +7855,9 @@
     "acct.migrated": "El progreso de este dispositivo se sincronizó con tu cuenta.",
     "threshold.scope_note": "Aplica a todos los capítulos.",
     "flag.mode.student": "estudiante",
-    "pdf.cleanup_lbl": "🧹 Limpiar texto (unir líneas, eliminar elementos innecesarios)"
+    "pdf.cleanup_lbl": "🧹 Limpiar texto (unir líneas, eliminar elementos innecesarios)",
+    "passmark.inherited": "heredado",
+    "passmark.clear": "Eliminar override — heredar"
   },
   "ja": {
     "qc.editor.suggests_by": "⚑ {model} が提案:",
@@ -8351,7 +8379,9 @@
     "acct.migrated": "このデバイスの学習進捗がアカウントにアップロードされました。",
     "threshold.scope_note": "すべての章に適用されます",
     "flag.mode.student": "生徒",
-    "pdf.cleanup_lbl": "🧹 テキストの整理 (改行の結合、不要な文字の削除)"
+    "pdf.cleanup_lbl": "🧹 テキストの整理 (改行の結合、不要な文字の削除)",
+    "passmark.inherited": "継承",
+    "passmark.clear": "上書きを解除 — 継承"
   },
   "he": {
     "qc.editor.suggests_by": "⚑ מציע: {model}",
@@ -8873,7 +8903,9 @@
     "acct.migrated": "ההתקדמות במכשיר זה הועלתה לחשבון שלך.",
     "threshold.scope_note": "חל על כל הפרקים",
     "flag.mode.student": "תלמיד",
-    "pdf.cleanup_lbl": "🧹 ניקוי טקסט (איחוד שורות, הסרת תוכן מיותר)"
+    "pdf.cleanup_lbl": "🧹 ניקוי טקסט (איחוד שורות, הסרת תוכן מיותר)",
+    "passmark.inherited": "ירושה",
+    "passmark.clear": "ביטול הגדרה - ירושה"
   },
   "uk": {
     "qc.editor.suggests_by": "⚑ {model} пропонує:",
@@ -9395,7 +9427,9 @@
     "acct.migrated": "Ваш прогрес на цьому пристрої завантажено в обліковий запис.",
     "threshold.scope_note": "Застосовується до всіх розділів.",
     "flag.mode.student": "студент",
-    "pdf.cleanup_lbl": "🧹 Очистити текст (об'єднати рядки, видалити непотрібне)"
+    "pdf.cleanup_lbl": "🧹 Очистити текст (об'єднати рядки, видалити непотрібне)",
+    "passmark.inherited": "успадковано",
+    "passmark.clear": "Скасувати перевизначення — успадкувати"
   },
   "cs": {
     "qc.editor.suggests_by": "⚑ {model} navrhuje:",
@@ -9917,7 +9951,9 @@
     "acct.migrated": "Pokrok z tohoto zařízení byl nahrán do vašeho účtu.",
     "threshold.scope_note": "Platí pro všechny kapitoly.",
     "flag.mode.student": "student",
-    "pdf.cleanup_lbl": "🧹 Vyčištění textu (spojení řádků, odstranění zbytečností)"
+    "pdf.cleanup_lbl": "🧹 Vyčištění textu (spojení řádků, odstranění zbytečností)",
+    "passmark.inherited": "zděděno",
+    "passmark.clear": "Odstranit přepsání – zdědit"
   },
   "vi": {
     "qc.editor.suggests_by": "💡 {model} gợi ý:",
@@ -10439,7 +10475,9 @@
     "acct.migrated": "Tiến trình trên thiết bị này đã được tải lên tài khoản của bạn.",
     "threshold.scope_note": "Áp dụng cho tất cả các chương.",
     "flag.mode.student": "học sinh",
-    "pdf.cleanup_lbl": "🧹 Làm sạch văn bản (ghép các dòng, loại bỏ dữ liệu thừa)"
+    "pdf.cleanup_lbl": "🧹 Làm sạch văn bản (ghép các dòng, loại bỏ dữ liệu thừa)",
+    "passmark.inherited": "kế thừa",
+    "passmark.clear": "Xóa tùy chỉnh — kế thừa"
   },
   "id": {
     "qc.editor.suggests_by": "⚑ {model} menyarankan:",
@@ -10961,7 +10999,9 @@
     "acct.migrated": "Kemajuan perangkat ini telah diunggah ke akun Anda.",
     "threshold.scope_note": "Berlaku untuk semua bab.",
     "flag.mode.student": "siswa",
-    "pdf.cleanup_lbl": "🧹 Bersihkan teks (gabungkan baris yang terpotong, hapus sampah)"
+    "pdf.cleanup_lbl": "🧹 Bersihkan teks (gabungkan baris yang terpotong, hapus sampah)",
+    "passmark.inherited": "diwarisi",
+    "passmark.clear": "Hapus penimpaan — warisi"
   },
   "ro": {
     "qc.editor.suggests_by": "⚑ Sugerat de {model}:",
@@ -11483,7 +11523,9 @@
     "acct.migrated": "Progresul acestui dispozitiv a fost încărcat în contul tău.",
     "threshold.scope_note": "Se aplică tuturor capitolelor",
     "flag.mode.student": "elev",
-    "pdf.cleanup_lbl": "🧹 Curăță textul (unește liniile, elimină elementele inutile)"
+    "pdf.cleanup_lbl": "🧹 Curăță textul (unește liniile, elimină elementele inutile)",
+    "passmark.inherited": "moștenit",
+    "passmark.clear": "Anulează personalizarea — moștenește"
   },
   "th": {
     "qc.editor.suggests_by": "⚑ {model} แนะนำ:",
@@ -12005,7 +12047,9 @@
     "acct.migrated": "ความคืบหน้าของอุปกรณ์นี้ถูกอัปโหลดไปยังบัญชีของคุณ",
     "threshold.scope_note": "ใช้กับทุกบท",
     "flag.mode.student": "นักเรียน",
-    "pdf.cleanup_lbl": "🧹 ทำความสะอาดข้อความ (รวมบรรทัดที่หัก, ลบข้อมูลที่ไม่จำเป็น)"
+    "pdf.cleanup_lbl": "🧹 ทำความสะอาดข้อความ (รวมบรรทัดที่หัก, ลบข้อมูลที่ไม่จำเป็น)",
+    "passmark.inherited": "สืบทอด",
+    "passmark.clear": "ล้างค่าที่ตั้งไว้ — สืบทอด"
   },
   "el": {
     "qc.editor.suggests_by": "⚑ Προτείνει το {model}:",
@@ -12527,7 +12571,9 @@
     "acct.migrated": "Η πρόοδος αυτής της συσκευής μεταφορτώθηκε στον λογαριασμό σας.",
     "threshold.scope_note": "Ισχύει για όλα τα κεφάλαια.",
     "flag.mode.student": "μαθητής",
-    "pdf.cleanup_lbl": "🧹 Καθαρισμός κειμένου (ένωση γραμμών, αφαίρεση περιττών)"
+    "pdf.cleanup_lbl": "🧹 Καθαρισμός κειμένου (ένωση γραμμών, αφαίρεση περιττών)",
+    "passmark.inherited": "κληρονομικό",
+    "passmark.clear": "Κατάργηση προσαρμογής — κληρονομικό"
   },
   "fi": {
     "qc.editor.suggests_by": "⚑ {model} ehdottaa:",
@@ -13049,7 +13095,9 @@
     "acct.migrated": "Tämän laitteen edistyminen on tallennettu tilillesi.",
     "threshold.scope_note": "Koskee kaikkia lukuja.",
     "flag.mode.student": "opiskelija",
-    "pdf.cleanup_lbl": "🧹 Siivoa tekstiä (yhdistä rivinvaihdot, poista turhat)"
+    "pdf.cleanup_lbl": "🧹 Siivoa tekstiä (yhdistä rivinvaihdot, poista turhat)",
+    "passmark.inherited": "periytynyt",
+    "passmark.clear": "Poista ylikirjoitus — peri"
   },
   "hu": {
     "qc.editor.suggests_by": "⚑ A {model} javaslatai:",
@@ -13571,7 +13619,9 @@
     "acct.migrated": "A készülék előrehaladása feltöltésre került a fiókodba.",
     "threshold.scope_note": "Érvényes minden fejezetre.",
     "flag.mode.student": "diák",
-    "pdf.cleanup_lbl": "🧹 Szöveg tisztítása (sorok összevonása, felesleges elemek eltávolítása)"
+    "pdf.cleanup_lbl": "🧹 Szöveg tisztítása (sorok összevonása, felesleges elemek eltávolítása)",
+    "passmark.inherited": "öröklött",
+    "passmark.clear": "Törölve – örökölj"
   },
   "da": {
     "qc.editor.suggests_by": "⚑ Foreslået af {model}:",
@@ -14093,7 +14143,9 @@
     "acct.migrated": "Denne enheds fremskridt er blevet uploadet til din konto.",
     "threshold.scope_note": "Gælder for alle kapitler.",
     "flag.mode.student": "elev",
-    "pdf.cleanup_lbl": "🧹 Ryd op i teksten (sammenlæg linjer, fjern overflødigt)"
+    "pdf.cleanup_lbl": "🧹 Ryd op i teksten (sammenlæg linjer, fjern overflødigt)",
+    "passmark.inherited": "arvet",
+    "passmark.clear": "Fjern overstyring – arv"
   },
   "ca": {
     "qc.editor.suggests_by": "⚑ Suggerit per {model}:",
@@ -14615,7 +14667,9 @@
     "acct.migrated": "L'avantatge d'aquest dispositiu s'ha carregat al teu compte.",
     "threshold.scope_note": "S'aplica a tots els capítols.",
     "flag.mode.student": "alumne",
-    "pdf.cleanup_lbl": "🧹 Netejar text (unir línies, eliminar elements innecessaris)"
+    "pdf.cleanup_lbl": "🧹 Netejar text (unir línies, eliminar elements innecessaris)",
+    "passmark.inherited": "heretat",
+    "passmark.clear": "Eliminar sobreescritura — heredar"
   },
   "lb": {
     "qc.editor.suggests_by": "⚑ {model} schléit vir:",
@@ -15137,7 +15191,9 @@
     "acct.migrated": "Är Fortschrëtter op deem Apparater sinn an Ärem Kont gespäichert.",
     "threshold.scope_note": "Gëlt fir all Kapitel.",
     "flag.mode.student": "student",
-    "pdf.cleanup_lbl": "🧹 Text opraeimen (Linnen zesummenféieren, Onwichtegt läschen)"
+    "pdf.cleanup_lbl": "🧹 Text opraeimen (Linnen zesummenféieren, Onwichtegt läschen)",
+    "passmark.inherited": "erwechtert",
+    "passmark.clear": "Iwwerschreiwung läschen — erwechteren"
   },
   "sw": {
     "qc.editor.suggests_by": "⚑ {model} inapendekeza:",
@@ -15659,6 +15715,8 @@
     "acct.migrated": "Maendeleo ya kifaa hiki yamehamishwa kwenye akaunti yako.",
     "threshold.scope_note": "Inatumika kwa kila sura.",
     "flag.mode.student": "mwanafunzi",
-    "pdf.cleanup_lbl": "🧹 Safi maandishi (unga mistari iliyounganishwa, ondoa taka)"
+    "pdf.cleanup_lbl": "🧹 Safi maandishi (unga mistari iliyounganishwa, ondoa taka)",
+    "passmark.inherited": "imearifu",
+    "passmark.clear": "Futa marekebisho — arifu"
   }
 }
