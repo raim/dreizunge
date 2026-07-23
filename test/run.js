@@ -108,6 +108,10 @@ run('unit: provenance-stamp source heal (v68.1)', 'node', [path.join(__dirname, 
 run('unit: student-mode flagging + flag-mode stamps (v68.1)', 'node', [path.join(__dirname, 'unit-student-flags.test.js')]);
 run('unit: deterministic PDF/text-upload cleanup (v68.1)', 'node', [path.join(__dirname, 'unit-pdf-cleanup.test.js')]);
 run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);
+run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [path.join(__dirname, 'unit-ui-qc.test.js')]);
+run('unit: error-hunt validation + retry (v69_g)', 'node', [path.join(__dirname, 'unit-error-hunt-validation.test.js')]);
+run('unit: knowledge-aware round composition (v69_h)', 'node', [path.join(__dirname, 'unit-round-composition.test.js')]);
+run('e2e: pass mark per storyline + chapter (v69_i)', 'node', [path.join(__dirname, 'e2e-pass-mark.test.js')]);
 run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);

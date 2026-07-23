@@ -119,8 +119,12 @@ console.log('  difficulty resolution lesson → topic → 2: OK');
   const src = ext('buildStandardExercises');
   assert.ok(/if \(APP\._derivingUniverse\) return _exs;/.test(src),
     'universe derivation gets the full, uncapped, unbiased set');
-  assert.ok(/assembleCoverageRound\(_exs, 12, 1\)/.test(src),
-    'a normal round is coverage-aware with an all-unsolved-first ratio');
+  assert.ok(/assembleCoverageRound\(_exs, 12, 1 - _famShare\)/.test(src),
+    'a normal round is coverage-aware, reserving only the familiar share for review');
+  assert.ok(/typeof FAMILIAR_SHARE === 'number'\) \? FAMILIAR_SHARE : 0\.15/.test(src),
+    'the share is read harness-safely (the unit harnesses extract this builder on its own)');
+  // v69_h: the share is a single named constant, not a magic number scattered around.
+  assert.ok(/const FAMILIAR_SHARE = 0\.15;/.test(html), 'the familiar share is one named constant');
   const uni = ext('_lessonQidUniverse');
   assert.ok(/APP\._derivingUniverse = true;/.test(uni) && /finally \{ APP\._derivingUniverse = _wasDeriving; \}/.test(uni),
     'the flag is set for the enumeration and always restored (nested-safe)');

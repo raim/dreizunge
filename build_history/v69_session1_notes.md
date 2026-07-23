@@ -296,3 +296,183 @@ functions read `APP.lessonData`, so pricing other chapters means swapping that g
 re-deriving every universe on each storyline render. The roadmap now carries a cheap design:
 persist the verdict (`APP.progress.chapterDone[topic]`) when `showComplete` finds a chapter at or
 above the mark, and have the lock read that stamp with a done-flag fallback.
+
+## 9. ✅ v69_f — translation QC becomes tooling + the static storyline-progress bug
+
+### (a) `translate-ui.js`: hardened prompt, validated writes, and a `--qc` mode
+The v69 run proved a prompt alone cannot prevent these defects — the OLD prompt already said
+"preserve ALL {placeholder} tokens exactly as-is" and the model still shipped `{woord}`. So the fix
+is verification, not persuasion. New `ui-qc.js` holds the checks and is shared by BOTH the writer
+and the auditor, so a defect can neither be written nor survive an audit.
+- **Prompt** now names each failure concretely (`{word}` → `{woord}` breaks the app and the user
+  sees the literal text), pins the leading icon, forbids emitting another script, and lists the
+  tokens to leave untranslated. Concreteness is the point: the old abstract rule was ignored.
+- **Every generated value is validated before it is written.** Mechanically repairable defects
+  (localised placeholder names → restored positionally; dropped/swapped leading icon) are fixed and
+  kept; blocking defects (dropped/invented placeholder, foreign script, model artifact, empty) are
+  REJECTED so the key stays missing. That is deliberate: **a missing key falls back to English and
+  is usable; a broken placeholder renders as literal `{woord}` and cannot fall back to anything.**
+  Rejected keys are reported and retried.
+- **`--qc`** audits an existing ui.json against the English source — no backend needed, nothing
+  written. **`--qc --fix`** applies only the safe repairs. **`--qc --retranslate`** deletes the
+  unrepairable values and refills them through the normal translation path (same prompt, same
+  validation). `--qc` deliberately runs even when nothing is missing — that is exactly the case
+  where completeness reports "all complete" and the content is still wrong.
+- Verified by injecting one of every defect class into a scratch copy: all five detected and
+  correctly classified; `--fix` repaired exactly the two safe ones and left the three needing new
+  text. The one-off `tools/qc-ui-translations.js` is retired (superseded).
+- **One genuine defect found in the shipped file** that the earlier one-off scan had missed (it only
+  checked Latin-script languages): `el storyboard.scheme_pastel` was `Παстеλ` — **Cyrillic с
+  (U+0441) and е (U+0435) disguised inside Greek**, visually identical but breaking search and
+  sorting. Fixed to `Παστέλ`. The file now audits clean: 0 blocking, 0 warnings.
+Guarded by the new `unit-ui-qc` (7 sections incl. a standing assertion that the SHIPPED ui.json has
+no blocking defects, so a future bad run cannot be released unnoticed).
+
+### (b) Storyline progress read "0/4" in the static build (user screenshot)
+The completion card's storyline row counts OTHER chapters from `ch.lessonCount` / `ch.lessonTypes` —
+**list-projection fields that only the live API emits** (`server.js` builds them for
+`/api/lessons`). The static build bakes whole topics: full `lessons` arrays, no projection fields.
+So `cnt` was always 0, every chapter hit the `continue`, and the row showed `0/4` however much was
+finished — visible only on the deployed static site, which is exactly where it was reported.
+Fixed to prefer the real lessons when present, counted with the same `lessonCountsFor` rule the rest
+of the app uses, falling back to the projection for the live list. A stale assertion that encoded
+the wrong assumption ("the projection has no lessons[]") was updated, and a behavioural guard now
+exercises BOTH topic shapes: baked (static) and projected (live) must both tally 3 of 4.
+
+## 10. ✅ v69_g — error-hunt: "model returned identical story with no changes"
+
+Reported while adding an error_hunt lesson to "Unwetter zieht weiter" (diff=3, qwen3.6:35b-a3b).
+Two defects behind one message:
+
+**(a) No retry.** Every other generator retries; `generateErrorHunt` made a SINGLE call and threw,
+so one bad response failed the whole add-lesson. Now up to 3 attempts with **escalating, specific**
+feedback — the rejection reason is fed back verbatim ("you returned the story completely
+unchanged", "the text was rephrased", "only N word(s) were altered", "far more than the N
+requested", "much shorter than the story"). A vague "try again" teaches the model nothing.
+**Strategy also changes on the final attempt:** v68.1 set `think:false` because corrupting a story
+is a verbatim rewrite and reasoning models otherwise burned the budget inside `<think>` and timed
+out — but a reasoning model with thinking OFF sometimes just echoes the input, which is exactly the
+reported failure. So: fast path twice, then let it reason (the timeout is already widened either
+way). Tokens accumulate across attempts (retries cost real money), and the final error is
+actionable rather than merely descriptive.
+
+**(b) Validation too weak — the more interesting half.** The only checks were "not empty" and "not
+byte-identical", so a model that changed ONE word, or rephrased the whole text, produced an
+UNPLAYABLE lesson that passed silently. The client pairs tokens BY POSITION, and the prompt already
+demands "copy all other text EXACTLY" — so the corrupted story must keep the same word count and
+differ in a sane number of single words. New `errorHuntChanges()` checks exactly that; the accepted
+band is `[max(2, wanted/2), wanted*2+2]` — models rarely hit the requested count exactly and a
+slightly light lesson is still good, but a rewrite is not. `errorHuntCounts()` is now the single
+source for how many errors are requested, shared by the prompt builder and the validator so they
+cannot police different numbers.
+
+**Test-quality finding:** the fake backend had NO error-hunt branch — the request fell through to
+the vocab default and returned JSON, which the old validation stored as the corrupted story. The
+e2e had been passing on a broken lesson. The fake now does what the prompt asks (same story, single
+words altered in place), and an end-to-end probe confirms the result is playable: word-aligned,
+7 words corrupted at difficulty 3, exactly the number requested. Guarded by the new
+`unit-error-hunt-validation` plus an updated assertion in `unit-reasoning-model-safety` documenting
+the adaptive think flag.
+
+## 11. ✅ v69_h — rounds weighted to material the learner does NOT know
+
+User: "reaching the threshold gets slower and slower, since we get offered the same questions over
+and over again. Is it easy to generate vocab lessons with e.g. only 15% of vocab the learner already
+knows? This can include the complete recorded learner history, but should at least include the
+vocab … of this lesson that was already successfully played."
+
+**It was easy, because the data already existed.** `_learnedLedger(lang, srcLang)` has kept a
+whole-history, CROSS-TOPIC record per word since v57: `{ source, seen, wrong }`, with `wrong` walked
+back down by drills. So both signals the user asked for were already persisted — the per-question
+solved map (this lesson, the minimum they asked for) and the per-word ledger (the full history they
+hoped for). Only the round composition had to change.
+
+`assembleCoverageRound` now sorts the pool into THREE tiers instead of two:
+1. **unsolved here + word not in the ledger** — genuinely new, fills the round;
+2. **unsolved here + word the ledger calls known** — still needed for coverage, spent after tier 1;
+3. **already solved here** — review, limited by the caller's ratio.
+A standard lesson now asks for `1 - FAMILIAR_SHARE` (0.85), so ~15% of a round is familiar material
+and the rest is new — literally the requested mix. "Known" is deliberately conservative: `seen >= 2`
+AND no outstanding `wrong`, so a word met once does not count, and a word still being missed keeps
+coming back.
+
+**The trap avoided:** known words are ORDERED LAST, never EXCLUDED. The pass mark is a fraction of
+the lesson's whole question universe, so dropping known words from rounds would leave those
+questions permanently unsolved and strand coverage below the threshold forever. The existing
+backfill keeps every round full, and a lesson whose words are all known stays fully playable
+(asserted).
+
+Measured on the reported 29-question lesson (perfect play, to 80%): **median 4 rounds**, against 5
+for the pre-v69_c random-12 round. Reserving the 15% review costs about one round versus a pure
+new-material round (median 3) — a deliberate trade for spaced repetition, and a single constant
+(`FAMILIAR_SHARE`) if it should be tuned.
+
+Guarded by the new `unit-round-composition` (ledger semantics incl. the drill-decayed case; tier
+order; round stays full; the all-known lesson; one named constant; typeof-guarded deps). Both new
+dependencies are typeof-guarded because the unit harnesses extract these functions individually —
+the same fragility that bit `_derivingUniverse` in v69.2c.
+
+**Note for the user:** the "same questions over and over" symptom should ALREADY be gone in v69_c
+(rounds became unsolved-first there). If the deployed static site still repeats questions, it is
+running a build older than v69_c — `node build-static.js` + redeploy `docs/`.
+
+## 12. ✅ v69_i — question wording, highlighted {word}, and per-storyline / per-chapter pass marks
+
+### (a) The source→target question no longer names the target language
+`ex.mcq_source_target.q_nolang` became the canonical `ex.mcq_source_target.q` in all 30 languages
+and the old lang-bearing variant was deleted; the client dropped its dialect branch for the
+question (one string for every case now). The BADGE keeps its `_nolang` variant — naming the
+language is right there, above the question, next to the flag→flag direction.
+
+### (b) The asked-about word is highlighted instead of quoted
+Every question string carried its own quote characters, and each language used different ones
+(`""`, `«»`, `„“`, `‘’`, `「」`). The quotes are gone from ui.json — **142 entries stripped across
+30 languages** — and the client now wraps the substituted value in `qWord()` → `.q-word`
+(bold, coloured, underlined). Applied at all 8 question call sites (article, plural, type-plural,
+both synonyms, glyph-order, target→source ×2, source→target). Emphasis is presentational and
+identical in every language, and RTL/CJK strings no longer carry stray Latin quotes.
+`unit-attr-escaping` caught a real bug in this work — `escHtml` used inside a double-quoted
+attribute — before it shipped.
+
+### (c) Pass mark per storyline, overridable per chapter
+Resolution is now **chapter → its storyline → global default**, with the default moved from 1
+("solve everything") to **80%** as requested, in BOTH the server and the client fallback so the two
+cannot disagree about what "unset" means. `d.coverageTarget` already existed, so only the storyline
+level and the UI were new.
+- **One route, both scopes**: `POST /api/pass-mark {scope:'storyline'|'topic', id, value}`. A single
+  handler so the validation and the clearing semantics cannot drift between two near-identical ones.
+- **`value:null` clears** the override by DELETING the field — deliberately not the same as `0`,
+  which is a real setting meaning "no pass mark, anything completes". Both cases are asserted.
+  Out-of-range values clamp rather than error (a typo should not 400).
+- **One control, two mount points**: `#sl-passmark` on the storyline screen and `#ls-passmark` on
+  the lesson-set page ABOVE the lesson chain (asserted by document order). Teacher-only. It shows
+  the EFFECTIVE mark plus an "inherited" label, so a teacher can see at a glance whether the level
+  is overriding or inheriting, and a ✕ appears only when there is an override to clear.
+- Storyline marks apply to **that storyline only** — asserted that setting one does not write onto
+  its chapters. Static needs nothing new: both fields ride along in the baked topics/storylines.
+
+**i18n debt (small, new):** 2 English keys added (`passmark.inherited`, `passmark.clear`) → 58
+missing across 29 languages; they fall back to English until the next `translate-ui.js` run.
+Guards: `e2e-pass-mark` (client wiring + full route behaviour) and an extended precedence section in
+`unit-coverage-threshold` (chapter > storyline > global > 80%, inherit-vs-zero, a storyline without
+a mark not shadowing the global one).
+
+## 13. ✅ v69_j — "sl is not defined" on every storyline open (regression from v69_i)
+
+The v69_i storyline pass-mark block referenced `sl`, which in `_renderStorylineScreen` exists ONLY
+as the arrow parameter of `_slArr2.find(sl => sl.id === chainId)` — the storyline object there is
+`_slById` (a find(), despite the name). Every storyline open threw before rendering. Fixed to use
+`_slById`, plus a null guard: it is undefined when the chain id no longer resolves.
+
+**Why the test suite missed it, and what changed.** The v69_i guard asserted
+`/passMarkRowHtml\('storyline', sl\.id,/` — which matched the source text happily while the
+identifier was undefined at RUNTIME. That is the same blind spot that let the v68.1 TDZ crash
+through: a regex over source cannot see scope. `e2e-pass-mark` now guards the CLASS, not the
+instance: for each call site it resolves the identifier actually passed and proves it is declared
+(`const`/`let`/`var`) or is a parameter of the ENCLOSING function. Verified both ways — restoring
+the original bug makes the suite red, and an independent check confirmed the generic guard (not
+just the literal assertion) is what catches an undeclared identifier.
+
+**Standing lesson for this codebase:** structural assertions are cheap and catch drift, but they
+prove nothing about scope or execution order. Anything that touches a render path wants either a
+behavioural harness or, at minimum, a declared-identifier check like this one.

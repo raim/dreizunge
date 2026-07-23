@@ -117,7 +117,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v69_e';
+const APP_VERSION  = 'v69_j';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -678,7 +678,7 @@ function setFlags(f) { store.flags = f; saveStore(store); }
 // incomplete and the completion card gates on the drill (see the client).
 function getSettings() {
   const s = store.settings || {};
-  return { coverageThreshold: (typeof s.coverageThreshold === 'number') ? s.coverageThreshold : 1 };
+  return { coverageThreshold: (typeof s.coverageThreshold === 'number') ? s.coverageThreshold : 0.8 };   // v69_i: default 80%
 }
 function setCoverageThreshold(v) {
   const n = Number(v);
@@ -2000,11 +2000,30 @@ function sysStory(lang, isContinuation, wordCount, dialect, writingStyle) {
 }
 
 // ── Error-hunt lesson prompt ─────────────────────────────────────────
+// How many errors the prompt asks for. Shared with the validator below so the two cannot drift —
+// validating against a different number than we requested would reject good output (v69_g).
+function errorHuntCounts(difficulty) {
+  return { nSpell: difficulty >= 3 ? 4 : 3, nGrammar: difficulty >= 2 ? 3 : 2 };
+}
 function sysErrorHunt(lang, difficulty) {
   const L = langName(lang);
-  const nSpell   = difficulty >= 3 ? 4 : 3;
-  const nGrammar = difficulty >= 2 ? 3 : 2;
+  const { nSpell, nGrammar } = errorHuntCounts(difficulty);
   return fillPrompt(PROMPTS.errorHunt.system, { L, nSpell, nGrammar });
+}
+
+// Word-level comparison of the corrupted story against the original.
+// The exercise only works if the model SUBSTITUTED words in place: the learner taps a suspect word,
+// and the client pairs tokens by position. The prompt already demands "copy all other text EXACTLY"
+// and "change only a single complete word per error", so the word COUNT must be unchanged — a
+// different count means the model rephrased, which yields a nonsense exercise. Returns
+// { aligned, changed }: aligned=false ⇒ rewritten, changed = how many single words differ.
+function errorHuntChanges(original, corrupted) {
+  const A = String(original || '').trim().split(/\s+/).filter(Boolean);
+  const B = String(corrupted || '').trim().split(/\s+/).filter(Boolean);
+  if (!A.length || A.length !== B.length) return { aligned: false, changed: 0, words: A.length };
+  let changed = 0;
+  for (let i = 0; i < A.length; i++) if (A[i] !== B[i]) changed++;
+  return { aligned: true, changed, words: A.length };
 }
 
 // ── Storyline title prompt ─────────────────────────────────────────────
@@ -2769,21 +2788,65 @@ async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
   const priorHint = priorVocab && priorVocab.length
     ? `\n\nPREFER errors on these words where they appear: ${priorVocab.slice(0,20).map(v=>v.target).join(', ')}`
     : '';
-  const userMsg = `Here is the ${langName(lang)} story:\n\n${story}\n\nReturn the corrupted story now.${priorHint}`;
-  // v68.1: same treatment as the other reasoning-model failures (v55_c/v60.5/v65.1) — corrupting
-  // the story is a verbatim rewrite, not a reasoning task. With `think` unspecified a reasoning
-  // model burned the token budget inside <think>, and the story-length rewrite then overran the
-  // request timeout — the reported "add error-hunt lesson times out". The timeout gets the same
-  // multiplier reasoning would (the OUTPUT is story-length either way, the longest of any lesson).
-  const { text: corrupted, promptTokens, completionTokens } = await _callLLM(
-    OLLAMA_MODEL, sys, userMsg, story.length * 2,
-    { think: false, timeoutMs: Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT) });
-  const corruptedStory = corrupted.trim();
-  if (!corruptedStory || corruptedStory.length < story.length * 0.5)
-    throw new Error('Error-hunt: model returned too short a response');
-  if (corruptedStory === story)
-    throw new Error('Error-hunt: model returned identical story with no changes');
-  console.log(`    Error-hunt: corrupted story ${corruptedStory.length} chars (orig ${story.length})`);
+  const baseMsg = `Here is the ${langName(lang)} story:\n\n${story}\n\nReturn the corrupted story now.${priorHint}`;
+  const { nSpell, nGrammar } = errorHuntCounts(difficulty);
+  const wanted = nSpell + nGrammar;
+  // Accept a band around the request rather than an exact count: models rarely hit it exactly, and
+  // a lesson with 4 findable errors instead of 7 is still a good exercise. Too MANY changes means
+  // it rewrote rather than corrupted.
+  const minChanges = Math.max(2, Math.ceil(wanted / 2));
+  const maxChanges = wanted * 2 + 2;
+
+  // v69_g: this used to be ONE call whose only checks were "not empty" and "not byte-identical", so
+  // a model that echoed the story failed the whole add-lesson outright (reported:
+  // "model returned identical story with no changes"), and a model that changed a single word — or
+  // rephrased the text entirely — produced an unplayable lesson that passed. Now: retry with
+  // ESCALATING, specific feedback, and validate what the exercise actually needs.
+  let promptTokens = 0, completionTokens = 0;
+  let corruptedStory = null, lastProblem = '';
+  const ATTEMPTS = 3;
+  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+    const feedback = lastProblem
+      ? `\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED: ${lastProblem}\nReturn the SAME story again, word for word, but this time introduce exactly ${nSpell} spelling errors and ${nGrammar} grammar errors by altering ${wanted} individual words. Keep every other word, all punctuation and all line breaks byte-identical, and keep the total number of words exactly the same.`
+      : '';
+    // Strategy changes on the final attempt. think:false is right for a verbatim rewrite and was
+    // added in v68.1 to stop reasoning models burning the budget inside <think> and timing out —
+    // but a reasoning model with thinking disabled sometimes just ECHOES the input, which is the
+    // reported failure. So: fast path twice, then let it reason (the timeout is already widened).
+    const useThink = attempt === ATTEMPTS;
+    if (attempt > 1) jobStep(jobId, `[${OLLAMA_MODEL}] Error-hunt retry ${attempt}/${ATTEMPTS}${useThink ? ' (with reasoning)' : ''}…`);
+    let text = '';
+    try {
+      const r = await _callLLM(OLLAMA_MODEL, sys, baseMsg + feedback, story.length * 2,
+        { think: useThink, timeoutMs: Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT) });
+      text = r.text; promptTokens += r.promptTokens || 0; completionTokens += r.completionTokens || 0;
+    } catch (e) {
+      lastProblem = `the request failed (${e.message})`;
+      if (attempt === ATTEMPTS) throw e;      // a transport failure is not something a retry prompt fixes
+      continue;
+    }
+    const cand = String(text || '').trim();
+    const { aligned, changed, words } = errorHuntChanges(story, cand);
+    if (!cand || cand.length < story.length * 0.5) {
+      lastProblem = 'the response was much shorter than the story — you must return the WHOLE story';
+    } else if (cand === story.trim()) {
+      lastProblem = 'you returned the story completely unchanged — not a single word was altered';
+    } else if (!aligned) {
+      lastProblem = `the text was rephrased (${words} words became a different number) — you must keep every other word exactly as it was and only alter single words in place`;
+    } else if (changed < minChanges) {
+      lastProblem = `only ${changed} word(s) were altered, which is too few — alter ${wanted} words`;
+    } else if (changed > maxChanges) {
+      lastProblem = `${changed} words were altered, far more than the ${wanted} requested — change ONLY ${wanted} words and copy the rest exactly`;
+    } else {
+      corruptedStory = cand;
+      console.log(`    Error-hunt: ${changed} word(s) corrupted of ${words} (asked for ${wanted})${attempt > 1 ? ` — attempt ${attempt}` : ''}`);
+      break;
+    }
+    console.warn(`    Error-hunt attempt ${attempt}/${ATTEMPTS} rejected: ${lastProblem}`);
+  }
+  if (!corruptedStory)
+    throw new Error(`Error-hunt: could not get a usable corrupted story after ${ATTEMPTS} attempts — ${lastProblem}. Try a different model, or generate this lesson at a lower difficulty.`);
+
   return {
     lesson: {
       id: 4, type: 'error_hunt',
@@ -4608,6 +4671,36 @@ http.createServer(async (req, res) => {
         console.log(`  Coverage threshold set: ${Math.round(v*100)}%`);
         return json(res, 200, { ok: true, value: v });
       }
+    }
+    // v69_i: per-storyline and per-chapter pass marks. One route for both scopes so the validation
+    // and the null-clearing semantics cannot drift. value:null clears the override, which is NOT
+    // the same as 0 (0 = "no pass mark, anything completes"); the client sends null for "inherit".
+    if (M === 'POST' && url.pathname === '/api/pass-mark') {
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const { scope, id } = body;
+      const clearing = body.value === null;
+      if (!clearing && (typeof body.value !== 'number' || !Number.isFinite(body.value)))
+        return json(res, 400, { error: 'value must be a number 0..1, or null to inherit' });
+      const v = clearing ? null : Math.max(0, Math.min(1, body.value));
+      if (scope === 'storyline') {
+        const sl = findStoryline(id);
+        if (!sl) return json(res, 404, { error: 'Storyline not found' });
+        if (clearing) delete sl.coverageTarget; else sl.coverageTarget = v;
+        upsertStoryline(sl);
+        console.log(`  Pass mark (storyline "${sl.title || sl.id}"): ${clearing ? 'inherit' : Math.round(v*100)+'%'}`);
+        return json(res, 200, { ok: true, value: v });
+      }
+      if (scope === 'topic') {
+        const t = findSavedById(id);
+        if (!t) return json(res, 404, { error: 'Topic not found' });
+        if (clearing) delete t.coverageTarget; else t.coverageTarget = v;
+        upsert(t);
+        console.log(`  Pass mark (chapter "${t.topic}"): ${clearing ? 'inherit' : Math.round(v*100)+'%'}`);
+        return json(res, 200, { ok: true, value: v });
+      }
+      return json(res, 400, { error: "scope must be 'storyline' or 'topic'" });
     }
     if (M === 'POST' && url.pathname === '/api/flags') {
       let body;

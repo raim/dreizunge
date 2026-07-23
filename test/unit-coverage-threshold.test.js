@@ -73,14 +73,34 @@ console.log('  %-solved bar present + reuses story/chapter labels: OK');
 }
 console.log('  setComplete: classic set gated below threshold, exempt at 100%/teacher: OK');
 
-// ── 4. _coverageTarget precedence: per-topic > global > 1 ─────────────────────
+// ── 4. _coverageTarget precedence: chapter > storyline > global > 80% ─────────
+// v69_i (user request): the pass mark is settable per STORYLINE (applies to that storyline only)
+// and per CHAPTER (overrides its storyline), with the global default now 80% rather than "solve
+// everything". Absent at a level means INHERIT — deliberately not the same as 0, which means "no
+// pass mark at all".
 {
-  const mk = (info, d) => new Function('APP', ext(html, '_coverageTarget') + '\nreturn _coverageTarget;')({ info, lessonData: d });
-  assert.strictEqual(mk({ coverageThreshold: 0.7 }, { coverageTarget: 0.9 })({}), 0.9, 'per-topic target wins');
+  const mk = (info, d, storylines, savedList) => new Function('APP',
+    ext(html, '_storylineOfTopic') + '\n' + ext(html, '_coverageTarget') + '\nreturn _coverageTarget;')(
+    { info, lessonData: d, storylines: storylines || [], savedList: savedList || [], _slScreen: null });
+  assert.strictEqual(mk({ coverageThreshold: 0.7 }, { coverageTarget: 0.9 })({}), 0.9, 'per-chapter target wins');
   assert.strictEqual(mk({ coverageThreshold: 0.7 }, {})({}), 0.7, 'falls back to the global threshold');
-  assert.strictEqual(mk({}, {})({}), 1, 'falls back to 1 when neither is set');
+  assert.strictEqual(mk({}, {})({}), 0.8, 'falls back to 80% when nothing is set (v69_i default)');
+
+  // The storyline level sits between them.
+  const saved = [{ id: 'c1', topic: 'Ch1' }];
+  const sls = [{ id: 'sl1', chapters: ['c1'], coverageTarget: 0.5 }];
+  assert.strictEqual(mk({ coverageThreshold: 0.7 }, { id: 'c1', topic: 'Ch1' }, sls, saved)({}), 0.5,
+    'a storyline pass mark beats the global default');
+  assert.strictEqual(mk({ coverageThreshold: 0.7 }, { id: 'c1', topic: 'Ch1', coverageTarget: 0.95 }, sls, saved)({}), 0.95,
+    'and a chapter pass mark beats its storyline');
+  // A storyline WITHOUT a mark must not shadow the global one.
+  const bare = [{ id: 'sl1', chapters: ['c1'] }];
+  assert.strictEqual(mk({ coverageThreshold: 0.7 }, { id: 'c1', topic: 'Ch1' }, bare, saved)({}), 0.7,
+    'a storyline with no mark of its own inherits, it does not reset to the default');
+  // 0 is a real value ("no pass mark"), not "inherit".
+  assert.strictEqual(mk({ coverageThreshold: 0.7 }, { coverageTarget: 0 })({}), 0, '0 is honoured, not treated as unset');
 }
-console.log('  _coverageTarget precedence: topic > global > 1: OK');
+console.log('  _coverageTarget precedence: chapter > storyline > global > 80%: OK');
 
 // ── 5. Card: below-threshold offers the drill + a hint ────────────────────────
 {
@@ -186,8 +206,13 @@ console.log('  static parity: pass mark baked into APP.info: OK');
   assert.ok(/settings: data\.settings \|\| \{\}/.test(server), 'loadStore reads settings back (survives restart)');
   assert.ok(/\.\.\.\(s\.settings \? \{ settings: s\.settings \} : \{\}\)/.test(server), 'saveStore persists settings');
   const gs = ext(server, 'getSettings');
-  assert.ok(/typeof s\.coverageThreshold === 'number'\) \? s\.coverageThreshold : 1/.test(gs),
-    'default threshold is 1 (off / historical) so existing installs do not suddenly gate');
+  // v69_i (user request: "default 80%"): the server default moved from 1 ("solve everything") to
+  // 0.8. This is a deliberate behaviour change — an install that never set a pass mark now gates at
+  // 80% — and it matches the client fallback, so the two cannot disagree about what "unset" means.
+  assert.ok(/typeof s\.coverageThreshold === 'number'\) \? s\.coverageThreshold : 0\.8/.test(gs),
+    'server default pass mark is 80%');
+  assert.ok(/coverageThreshold === 'number' \? APP\.info\.coverageThreshold : 0\.8/.test(html),
+    'and the client falls back to the same 80%');
   assert.ok(/coverageThreshold: getSettings\(\)\.coverageThreshold/.test(server), '/api/info exposes the threshold');
   const route = server.slice(server.indexOf("url.pathname === '/api/coverage-threshold'"),
                              server.indexOf("url.pathname === '/api/coverage-threshold'") + 700);

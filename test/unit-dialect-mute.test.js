@@ -41,11 +41,20 @@ assert.ok(/if\(_lessonIsDialect\(\)\) return;/.test(fnBody('speakBodyText')), 's
 assert.ok(/_lessonIsDialect\(\)\?'':`<button class="spk-ico"/.test(html),
   'tRead hides the 🔊 button for dialect');
 
-// 4) Source→target MCQ uses a no-lang question + badge for dialect.
-assert.ok(/dia \? t\("ex\.mcq_source_target\.q_nolang"/.test(html), 'dialect uses the no-lang MCQ question');
+// 4) Source→target MCQ: the BADGE still has a dialect variant; the QUESTION no longer needs one.
+// v69_i (user request): the question stopped naming the target language for EVERY lesson, not just
+// dialect ones — the badge above it already shows direction (flag→flag) and the language. So the
+// old `.q_nolang` text became the canonical `ex.mcq_source_target.q` and the variant was removed;
+// the dialect branch for the question disappeared with it. A `{lang}` placeholder creeping back
+// into this key would silently reintroduce the language name, so that is asserted directly.
+assert.ok(/const q = t\("ex\.mcq_source_target\.q",\{word:qWord\(furiHtml\(ex\.source\)\)\}\);/.test(html),
+  'one question string for dialect and non-dialect alike');
+assert.ok(!/t\("ex\.mcq_source_target\.q_nolang"/.test(html),
+  'the no-lang question variant is no longer USED by the client (the comment explaining it may stay)');
+assert.ok(!('ex.mcq_source_target.q_nolang' in ui.en), 'and from ui.json (it became the canonical key)');
+assert.ok(!/\{lang\}/.test(ui.en['ex.mcq_source_target.q']), 'the canonical question has no {lang} placeholder');
+// The badge keeps its dialect variant — naming a language is right there, wrong in the question.
 assert.ok(/dia \? t\("ex\.badge\.mcq_source_target_nolang"/.test(html), 'dialect uses the no-lang MCQ badge');
-assert.ok('ex.mcq_source_target.q_nolang' in ui.en, 'no-lang question string exists');
-assert.ok(!/\{lang\}/.test(ui.en['ex.mcq_source_target.q_nolang']), 'no-lang question has no {lang} placeholder');
 assert.ok('ex.badge.mcq_source_target_nolang' in ui.en, 'no-lang badge string exists');
 
 // 5) lBlock renders NO listen button for dialect (used by the "what does X mean" MCQ too).

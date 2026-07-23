@@ -98,11 +98,24 @@ console.log('  helpers: learner gate, resume index (hidden-aware), storyline res
   const prog = ext(html, '_compProgressHtml');
   assert.ok(/topicCoverage\(\)/.test(prog) && /_mixedDriven/.test(prog),
     'the within-chapter progress row shows coverage for a mixed-driven set (bar actually moves)');
-  // Story-progress row: other chapters are counted from the list projection (no lessons[]), so a
-  // mixed chapter (whose mixed lesson never gets a done[id]) must be recognized via lessonTypes,
-  // else finished mixed chapters read as incomplete and the story row shows 0 (reported bug).
-  assert.ok(/ch\.lessonTypes\) && ch\.lessonTypes\.includes\('mixed'\)/.test(prog),
-    'story-progress detects mixed chapters via lessonTypes (projection has no lessons[])');
+  // Story-progress row: for OTHER chapters a mixed chapter (whose mixed lesson never gets a
+  // done[id]) must still be recognised, else finished mixed chapters read as incomplete and the
+  // story row shows 0 (reported bug).
+  // v69_f: the source of that information depends on the build. The live API ships a PROJECTION
+  // (lessonCount/lessonTypes, no lessons[]); the static build bakes whole topics (lessons[], no
+  // projection fields). Reading only the projection made `cnt` 0 in static, so every chapter was
+  // skipped and the row read "0/4" however much was finished — reported from the deployed static
+  // site. Both sources must be accepted, with the real lessons preferred and counted by the same
+  // lessonCountsFor rule the rest of the app uses.
+  assert.ok(/const _chLessons = Array\.isArray\(ch\.lessons\) && ch\.lessons\.length \? ch\.lessons : null;/.test(prog),
+    'story-progress uses the baked lessons when they are present (static build)');
+  assert.ok(/_chLessons \? _chLessons\.filter\(L => lessonCountsFor\(ch, L\)\)\.length\s*:\s*\(ch\.lessonCount \|\| 0\)/.test(prog),
+    'counted with lessonCountsFor, falling back to the live projection count');
+  assert.ok(/Array\.isArray\(ch\.lessonTypes\) \? ch\.lessonTypes/.test(prog)
+         && /_chLessons\.map\(L => L && L\.type\)/.test(prog),
+    'mixed detection accepts lessonTypes (live) or the baked lesson types (static)');
+  assert.ok(/const isMixed = _chTypes\.includes\('mixed'\);/.test(prog),
+    'mixed chapters are still detected');
   assert.ok(/doneKeys >= Math\.max\(1, cnt - 1\)/.test(prog),
     'a finished mixed chapter counts as done (cnt-1 recorded lessons, mixed excluded)');
   assert.ok(/complete\.story_progress/.test(prog), 'the story-progress row is rendered when a storyline exists');
@@ -285,5 +298,58 @@ console.log('  static loadSaved parity + i18n keys: OK')
   }
 }
 console.log('  v68.1 completion-crash cluster: TDZ order, gate scope, mixed resume, stranded-learner routing: OK')
+
+
+// ── 7. v69_f: the storyline row counts chapters in BOTH build shapes ──────────────────────────
+// Reported from the deployed static site: "Geschichte · Chaos der Hagelstürme 0/4" while chapters
+// were finished. Reproduce both topic shapes and check the chapter tally the row is built from.
+{
+  const prog = ext(html, '_compProgressHtml');
+  // Extract just the other-chapters tally so it can be exercised directly.
+  const APP = { _teacherMode: false, progress: { completed: {} } };
+  const lessonCountsFor = (d, L) => !L._hidden;                    // simplified: no mixed folding
+  const _firstVisibleMixedIdx = () => -1;
+  const tally = (chapters, completed) => {
+    APP.progress.completed = completed;
+    let doneCh = 0;
+    for (const ch of chapters) {
+      const cDone = completed[ch.topic] || {};
+      const _chLessons = Array.isArray(ch.lessons) && ch.lessons.length ? ch.lessons : null;
+      const cnt = _chLessons ? _chLessons.filter(L => lessonCountsFor(ch, L)).length : (ch.lessonCount || 0);
+      const doneKeys = Object.keys(cDone).length;
+      const _chTypes = Array.isArray(ch.lessonTypes) ? ch.lessonTypes
+                     : (_chLessons ? _chLessons.map(L => L && L.type).filter(Boolean) : []);
+      const isMixed = _chTypes.includes('mixed');
+      if (cnt === 0) continue;
+      if (isMixed) { if (doneKeys >= Math.max(1, cnt - 1)) doneCh++; }
+      else if (doneKeys >= cnt) doneCh++;
+    }
+    return doneCh;
+  };
+
+  // STATIC shape: whole topics baked (lessons[], no projection fields) — the reported failure.
+  const staticChapters = [
+    { topic: 'A', lessons: [{ id: '1', type: 'vocab' }] },
+    { topic: 'B', lessons: [{ id: '1', type: 'vocab' }, { id: '2', type: 'word_forms' }] },
+    { topic: 'C', lessons: [{ id: '1', type: 'vocab' }, { id: 'm', type: 'mixed' }] },
+    { topic: 'D', lessons: [{ id: '1', type: 'vocab' }] },
+  ];
+  const completed = { A: { 1: {} }, B: { 1: {}, 2: {} }, C: { 1: {} }, D: {} };
+  assert.strictEqual(tally(staticChapters, completed), 3,
+    'static: finished chapters are counted (A, B, and the mixed-driven C) — was 0 before v69_f');
+
+  // LIVE shape: list projection only (lessonCount/lessonTypes, no lessons[]) — must be unchanged.
+  const liveChapters = [
+    { topic: 'A', lessonCount: 1, lessonTypes: ['vocab'] },
+    { topic: 'B', lessonCount: 2, lessonTypes: ['vocab', 'word_forms'] },
+    { topic: 'C', lessonCount: 2, lessonTypes: ['vocab', 'mixed'] },
+    { topic: 'D', lessonCount: 1, lessonTypes: ['vocab'] },
+  ];
+  assert.strictEqual(tally(liveChapters, completed), 3, 'live projection keeps its previous behaviour');
+
+  // A chapter with no lessons at all is still skipped rather than counted as done.
+  assert.strictEqual(tally([{ topic: 'E', lessons: [] }], { E: {} }), 0, 'an empty chapter is not counted');
+}
+console.log('  v69_f: storyline chapter tally works for baked (static) and projected (live) topics: OK');
 
 console.log('unit-learner-nav: ALL PASSED');

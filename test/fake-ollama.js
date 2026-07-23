@@ -134,6 +134,19 @@ const srv = http.createServer(async (req, res) => {
             choices: ['Haus', 'Häuser', 'Hauses', 'Häusern'], correctIndex: 0, explanation: 'Nominativ Singular, neutrum.' },
         ],
       });
+    } else if (/corrupted version by introducing exactly/i.test(sys)) {
+      // v69_g: the error-hunt generator had NO branch here — the request fell through to the vocab
+      // default and returned JSON, which the old server-side checks ("not empty", "not identical")
+      // happily stored as the corrupted story. The e2e was passing on an unplayable lesson. The
+      // fake now does what the prompt asks: return the SAME story with a few single words altered
+      // in place, so the word count is unchanged and the client's positional diff can find them.
+      kind = 'error_hunt';
+      const m = usr.match(/story:\n\n([\s\S]*?)\n\nReturn the corrupted story now\./);
+      const story = m ? m[1] : '';
+      content = story.split(/(\s+)/).map(tok => {
+        if (/^\s+$/.test(tok) || tok.length < 4) return tok;   // keep separators and short words
+        return tok.slice(0, 2) + tok[1] + tok.slice(2);        // double one interior letter
+      }).join('');
     } else if (/Chapter 1:/i.test(usr)) {
       kind = 'chapter_titles'; content = JSON.stringify(['Chapter One', 'Chapter Two', 'Chapter Three']);
     } else if (/Write the continuation now|Write a story for the topic|Plain prose/i.test(usr)) {

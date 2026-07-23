@@ -184,6 +184,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f4f8;color:var(--text);min-he
 .ex-area{width:100%}
 .ex-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:var(--gray-dark);text-transform:uppercase;letter-spacing:.09em;margin-bottom:12px;background:var(--gray-light);padding:5px 12px;border-radius:20px}
 .card{background:var(--white);border-radius:var(--radius-lg);border:2px solid var(--gray-mid);padding:20px;margin-bottom:12px;box-shadow:var(--shadow-card)}
+.q-word{font-weight:900;color:var(--blue-dark);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
 .qtext{font-size:17px;font-weight:700;color:var(--text);line-height:1.5}
 .target-word{color:var(--blue);font-weight:900}
 .target-box{background:var(--blue-light);border:2px solid var(--blue);border-radius:var(--radius);padding:12px 15px;margin:10px 0 4px;display:flex;align-items:center;gap:8px}
@@ -963,6 +964,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </div>
     <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin:6px 0 2px">
       <div id="ls-storyline-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
+  <div id="ls-passmark" style="display:none"></div>
     </div>
     <div style="font-size:11px;font-weight:800;color:var(--gray-dark);padding:2px 0 0;opacity:.8" id="ls-storyline-prog-txt"></div>
   </div>
@@ -1202,6 +1204,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </div>
     <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
   </div>
+  <div id="sl-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-prov" style="padding:6px 16px 0;border-top:1px solid var(--gray-mid);margin:0;display:none"></div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
@@ -5053,6 +5056,16 @@ function buildPath(){
   const _ctxSl = (APP._slScreen?.chainId && _slArr.find(s=>s.id===APP._slScreen.chainId &&
       (s.chapters||[]).some(cid=>_slById[cid]?.topic===d.topic)))
     || _slArr.find(s=>(s.chapters||[]).some(cid=>_slById[cid]?.topic===d.topic));
+  // v69_i: chapter pass mark, above the lesson chain. Inherits from the storyline, then the global
+  // default; an explicit value here overrides both.
+  const _pmEl = document.getElementById('ls-passmark');
+  if (_pmEl) {
+    const _inherit = (_ctxSl && typeof _ctxSl.coverageTarget === 'number') ? _ctxSl.coverageTarget
+      : ((APP.info && typeof APP.info.coverageThreshold === 'number') ? APP.info.coverageThreshold : 0.8);
+    const _h = passMarkRowHtml('topic', d.id || '', (typeof d.coverageTarget === 'number' ? d.coverageTarget : null), _inherit);
+    _pmEl.innerHTML = _h;
+    _pmEl.style.display = _h ? '' : 'none';
+  }
   const _slIconEl  = document.getElementById('ls-storyline-icon');
   const _slTitleEl = document.getElementById('ls-storyline-title');
   const _slBarEl   = document.getElementById('ls-storyline-prog-bar');
@@ -6208,6 +6221,21 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // v68.1 (queued in v68 notes): the provenance/user line sits at the BOTTOM with the generation
   // stats — same style, same placement as the chapter page's #prov-stats — not at the top of the
   // body where it competed with the storyboard/summary for first-glance attention.
+  // v69_i: storyline pass mark — applies to THIS storyline only, inheriting the global default.
+  const pmEl = document.getElementById('sl-passmark');
+  if (pmEl) {
+    // The storyline object in this function is `_slById` (a find(), despite the name). v69_i first
+    // shipped this block referencing a non-existent `sl`, which threw on every storyline open —
+    // `sl` exists here only as the arrow parameter on the find() above. Guarded for a missing
+    // storyline too: _slById is undefined when the chain id no longer resolves.
+    const _slObj = _slById;
+    const _g = (APP.info && typeof APP.info.coverageThreshold === 'number') ? APP.info.coverageThreshold : 0.8;
+    const _h = _slObj
+      ? passMarkRowHtml('storyline', _slObj.id, (typeof _slObj.coverageTarget === 'number' ? _slObj.coverageTarget : null), _g)
+      : '';
+    pmEl.innerHTML = _h;
+    pmEl.style.display = _h ? '' : 'none';
+  }
   const provEl = document.getElementById('sl-screen-prov');
   if (provEl) {
     const _pHtml = provLineForChapters(chapterIds.map(cid => _byId[cid]).filter(Boolean));
@@ -9000,7 +9028,12 @@ function buildStandardExercises(lesson, lessonIdx){
   // the round is coverage-aware, exactly like the mixed lesson's: unsolved questions first, a
   // little review mixed in. First play is unaffected (everything is unsolved); a replay below the
   // pass mark now converges in one or two rounds instead of a dozen.
-  if (typeof assembleCoverageRound === 'function') return assembleCoverageRound(_exs, 12, 1);
+  // v69_h (user request): a replay used to re-serve solved questions at random, so reaching the pass
+  // mark got slower the closer you came to it. The round is now ~85% material the learner has NOT
+  // answered here — new words first, then words the whole-history ledger says are still shaky —
+  // with the remaining ~15% reserved for review of what they already know.
+  const _famShare = (typeof FAMILIAR_SHARE === 'number') ? FAMILIAR_SHARE : 0.15;   // harness-safe
+  if (typeof assembleCoverageRound === 'function') return assembleCoverageRound(_exs, 12, 1 - _famShare);
   return shuffle(_exs).slice(0,12);
 }
 // ══ Mixed review (no LLM) — pool exercises from this chapter's EARLIER lessons ══════
@@ -9169,7 +9202,7 @@ function tMcqArticle(ex) {
   const L = lessonLang();
   return `<div class="ex-badge">🏷️ ${t('ex.badge.mcq_article')}</div>
 <div class="card">
-  <div class="qtext" dir="auto">${t('ex.mcq_article.q', {word: ex.target})}</div>
+  <div class="qtext" dir="auto">${t('ex.mcq_article.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
   ${cGrid(ex.choices, false)}
 </div>`;
@@ -9178,7 +9211,7 @@ function tMcqArticle(ex) {
 function tMcqPlural(ex) {
   return `<div class="ex-badge">🔢 ${t('ex.badge.mcq_plural')}</div>
 <div class="card">
-  <div class="qtext" dir="auto">${t('ex.mcq_plural.q', {word: ex.target})}</div>
+  <div class="qtext" dir="auto">${t('ex.mcq_plural.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
   ${cGrid(ex.choices, false)}
 </div>`;
@@ -9187,7 +9220,7 @@ function tMcqPlural(ex) {
 function tTypePlural(ex) {
   return `<div class="ex-badge">✏️ ${t('ex.badge.type_plural')}</div>
 <div class="card">
-  <div class="qtext" dir="auto">${t('ex.type_plural.q', {word: ex.target})}</div>
+  <div class="qtext" dir="auto">${t('ex.type_plural.q', {word: qWord(escHtml(ex.target))})}</div>
   <div style="margin:8px 0;font-size:13px;color:var(--gray-dark)">${furiHtml(ex.source)}</div>
   <input id="type-in" class="type-input" dir="auto" autocomplete="off" autocorrect="off" spellcheck="false"
     placeholder="${t('ex.type_in_placeholder')}"
@@ -10039,8 +10072,8 @@ function tSynSelect(ex){
     sentenceHtml = `<div dir="auto" style="font-size:17px;font-weight:700;line-height:1.6;margin:4px 0 8px;text-align:start">${sentenceHtml}</div>`;
   }
   const q = isSyn
-    ? `<span style="color:var(--green);font-weight:800">${t('ex.syn.q_synonyms',{word:furiHtml(ex.base)})}</span>`
-    : `<span style="color:var(--red);font-weight:800">${t('ex.syn.q_antonyms',{word:furiHtml(ex.base)})}</span>`;
+    ? `<span style="color:var(--green);font-weight:800">${t('ex.syn.q_synonyms',{word:qWord(furiHtml(ex.base))})}</span>`
+    : `<span style="color:var(--red);font-weight:800">${t('ex.syn.q_antonyms',{word:qWord(furiHtml(ex.base))})}</span>`;
   const badge = isSyn ? t('ex.badge.syn_synonyms') : t('ex.badge.syn_antonyms');
   const gloss = ex.gloss ? `<div dir="auto" style="opacity:.55;font-size:13px;margin-top:-2px;margin-bottom:6px;text-align:start">${escHtml(ex.gloss)}</div>` : '';
   const tiles = ex.choices.map((w,i)=>`<button class="syn-tile" dir="auto" id="st${i}" data-w="${escAttr(w)}" onclick="synToggle(${i},this)">${furiHtml(w)}</button>`).join('');
@@ -10218,10 +10251,18 @@ function tMathCalc(ex){
     `<div class="card">${eq}${cGrid(ex.choices,false)}</div>`;
 }
 
-function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
+// v69_i: the word a question is ABOUT is highlighted rather than quoted. The quote characters were
+// removed from every ui.json question string (each language used its own — "" « » „ “ ‘ ’ 「 」),
+// so the emphasis is now presentational and consistent across languages, and RTL/CJK strings no
+// longer carry stray Latin quotes. Takes ALREADY-SAFE html (furigana/escaped) like its call sites.
+function qWord(html){ return `<span class="q-word">${html}</span>`; }
+function tMcqIE(ex){ const L=lessonLang(); const S=lessonSrcLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div><div style="margin:10px 0">${lBlock(ex.target,ex.pron)}</div>${cGrid(ex.choices,false)}</div>`; }
 function tMcqEI(ex){ const L=lessonLang(); const S=lessonSrcLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang);
   const dia=_lessonIsDialect();
-  const q = dia ? t("ex.mcq_source_target.q_nolang",{word:furiHtml(ex.source)}) : t("ex.mcq_source_target.q",{word:furiHtml(ex.source),lang:Ln});
+  // v69_i (user request): the question no longer names the target language — the badge above it
+  // already shows the direction (flag→flag) and the language name. One string for both the dialect
+  // and the normal case; the old `.q_nolang` variant became the canonical `.q` in ui.json.
+  const q = t("ex.mcq_source_target.q",{word:qWord(furiHtml(ex.source))});
   const badge = dia ? t("ex.badge.mcq_source_target_nolang") : t("ex.badge.mcq_source_target",{lang:Ln});
   return `<div class="ex-badge">${S.flag}→${L.flag} ${badge}</div><div class="card"><div class="qtext" dir="auto">${q}</div>${cGrid(ex.choices,false)}</div>`; }
 function ttsApproxBadge(){
@@ -10248,7 +10289,7 @@ function tLMcq(ex){ const S=lessonSrcLang(); const Sn=localizedLessonLangName(AP
   }
   // When globally muted, the audio gives nothing — fall back to a read-the-target MCQ
   // (show the target word as text, still pick the source). Same data, same check path.
-  if(APP.muted){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:applyFurigana(ex.target)})}</div>${cGrid(ex.choices,false)}</div>`; }
+  if(APP.muted){ const L=lessonLang(); return `<div class="ex-badge">${L.flag}→${S.flag} ${t("ex.badge.mcq_target_source")}</div><div class="card"><div class="qtext" dir="auto">${t("ex.mcq_target_source.q",{word:qWord(applyFurigana(ex.target))})}</div>${cGrid(ex.choices,false)}</div>`; }
   return `<div class="ex-badge">${t("ex.badge.listen_mcq")}${ttsApproxBadge()}</div><div class="card"><div class="qtext" dir="auto" style="margin-bottom:10px">${t("ex.listen_mcq.q",{lang:Sn})}</div>${lBlock(ex.target,ex.pron)}${cGrid(ex.choices,false)}</div>`; }
 function tLType(ex){ const L=lessonLang(); const Ln=localizedLessonLangName(APP.lessonData?.lang||APP.lang);
   const inputHtml = `<input class="type-input" id="type-in" dir="auto" type="text" placeholder="${t("ex.listen_type.placeholder",{lang:Ln})}" oninput="onType()" onkeydown="if(event.key==='Enter'&&!document.getElementById('cbtn').disabled)check()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">`;
@@ -10281,7 +10322,7 @@ function tGlyphOrder(ex){
   const tokens = order.map(i =>
     `<span class="tok" dir="auto" id="t${i}" onclick="addTok(${i})" style="font-size:20px">${escHtml(ex.words[i])}</span>`
   ).join("");
-  const prompt = ex.source ? t("ex.glyph_order.q",{word:furiHtml(ex.source)}) : t("ex.glyph_order.q_plain");
+  const prompt = ex.source ? t("ex.glyph_order.q",{word:qWord(furiHtml(ex.source))}) : t("ex.glyph_order.q_plain");
   return `<div class="ex-badge">⌨️ ${t("ex.badge.glyph_order")}</div><div class="card">`
     + `<div class="qtext" dir="auto" style="margin-bottom:8px">${prompt}</div>`
     + `<div class="sbox" id="sbox" dir="auto"><span class="sbox-ph" dir="auto">${t("ex.glyph_order.placeholder")}</span></div>`
@@ -10783,11 +10824,75 @@ function topicCoverage(){
 // a topic may override via d.coverageTarget (0–1). Used by coverageComplete().
 // v60.8: the fallback is now the GLOBAL teacher-set threshold (APP.info.coverageThreshold),
 // then 1. Precedence: per-topic coverageTarget > global threshold > 1 (solve everything).
+// The storyline a topic belongs to, resolved by chapter id. Prefers the deck the learner navigated
+// in (APP._slScreen) so a chapter shared by two storylines uses the one on screen.
+function _storylineOfTopic(topicObj){
+  if(!topicObj) return null;
+  const arr = Array.isArray(APP.storylines) ? APP.storylines : [];
+  if(!arr.length) return null;
+  const byId = Object.fromEntries((APP.savedList||[]).filter(l=>l.id).map(l=>[l.id,l]));
+  const holds = (sl) => (sl.chapters||[]).some(cid => byId[cid]?.topic === topicObj.topic || cid === topicObj.id);
+  const pref = APP._slScreen?.chainId ? arr.find(s => s.id === APP._slScreen.chainId && holds(s)) : null;
+  return pref || arr.find(holds) || null;
+}
+// v69_i: the pass mark resolves MOST-SPECIFIC FIRST — chapter, then its storyline, then the global
+// default (80%). Each level is an independent override, so a teacher can set one mark for a whole
+// storyline and still make a single hard chapter easier. Absent means "inherit", which is
+// deliberately NOT the same as 0 (0 = no pass mark at all, anything completes).
+// The storyline lookup is typeof-guarded because the coverage harnesses extract this function on
+// its own; the chapter and global levels stay inline so that precedence survives extraction.
 function _coverageTarget(){
   const d = APP.lessonData;
-  if (d && typeof d.coverageTarget === 'number') return Math.max(0, Math.min(1, d.coverageTarget));
-  const g = APP.info && typeof APP.info.coverageThreshold === 'number' ? APP.info.coverageThreshold : 1;
-  return Math.max(0, Math.min(1, g));
+  const clamp = (x) => Math.max(0, Math.min(1, x));
+  if (d && typeof d.coverageTarget === 'number') return clamp(d.coverageTarget);
+  if (typeof _storylineOfTopic === 'function') {
+    try {
+      const sl = _storylineOfTopic(d);
+      if (sl && typeof sl.coverageTarget === 'number') return clamp(sl.coverageTarget);
+    } catch(_) {}
+  }
+  const g = APP.info && typeof APP.info.coverageThreshold === 'number' ? APP.info.coverageThreshold : 0.8;
+  return clamp(g);
+}
+
+// ── Pass-mark control (teacher only) ─────────────────────────────────────────
+// Rendered on the storyline screen (whole deck) and above the lesson chain (this chapter).
+// Shows the EFFECTIVE mark and where it comes from, so a teacher can see at a glance whether this
+// level is overriding or inheriting. Empty input = inherit.
+function passMarkRowHtml(scope, id, own, inherited){
+  if(!_canEdit()) return '';
+  const eff = (typeof own === 'number') ? own : inherited;
+  const src = (typeof own === 'number') ? '' : ` <span style="opacity:.65">(${escHtml(t('passmark.inherited'))})</span>`;
+  return `<div style="display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--gray-dark);padding:6px 12px">
+    <span>🎯 ${escHtml(t('models.threshold'))}</span>
+    <input type="number" min="0" max="100" step="5" value="${Math.round(eff*100)}"
+      id="pm-input-${scope}" style="width:66px;padding:4px 6px;border:1.5px solid var(--gray-mid);border-radius:8px;font-weight:800;text-align:right"
+      onchange="setPassMark('${scope}','${esc(String(id))}',this.value)">
+    <span>%</span>${src}
+    ${(typeof own === 'number') ? `<button class="storyline-hdr-btn" title="${escAttr(t('passmark.clear'))}" onclick="setPassMark('${scope}','${esc(String(id))}','')">✕</button>` : ''}
+  </div>`;
+}
+async function setPassMark(scope, id, raw){
+  const str = String(raw==null?'':raw).trim();
+  const value = str === '' ? null : Math.max(0, Math.min(1, (parseFloat(str)||0)/100));
+  try{
+    const r = await fetch('/api/pass-mark', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ scope, id, value }) });
+    const data = await r.json();
+    if(!r.ok) throw new Error(data.error||'failed');
+    // Reflect locally so the screen updates without a reload, then re-render whichever page is up.
+    if(scope==='storyline'){
+      const sl=(APP.storylines||[]).find(s=>s.id===id);
+      if(sl){ if(value===null) delete sl.coverageTarget; else sl.coverageTarget=value; }
+    } else {
+      const t0=(APP.savedList||[]).find(l=>l.id===id) || (APP.lessonData?.id===id?APP.lessonData:null);
+      if(t0){ if(value===null) delete t0.coverageTarget; else t0.coverageTarget=value; }
+      if(APP.lessonData && APP.lessonData.id===id){ if(value===null) delete APP.lessonData.coverageTarget; else APP.lessonData.coverageTarget=value; }
+    }
+    showToast(t('models.threshold_set').replace('{pct}', Math.round((value===null?_coverageTarget():value)*100)));
+    if(scope==='storyline' && APP._slScreen?.chainId) openStorylineScreen(APP._slScreen.chainId, APP._slScreen.enc);
+    else if(APP.lessonData) buildPath();
+  }catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
 }
 // Is the set complete under the coverage model? Only meaningful for a mixed-driven set; the
 // locked path keeps its lesson-boolean completion (setComplete). Returns true when the solved
@@ -10803,6 +10908,25 @@ function coverageComplete(){
 // unsolved items. Unsolved questions are prioritized; within each bucket we still shuffle for
 // variety and keep the rated/flagged ranking (curated first, flagged last) from the original.
 // `size` caps the round; falls back gracefully when a bucket is short.
+// Is this word already part of the learner's repertoire, per the WHOLE-HISTORY ledger (not just
+// this topic)? `seen` counts finished lessons that taught it; `wrong` is decayed by drills, so a
+// word answered right in a later drill can become "known" again. Deliberately conservative: seen
+// twice AND never outstanding-wrong, so a word met once does not count as learned.
+function _knownWordSet(){
+  try {
+    const d = APP.lessonData;
+    const led = _learnedLedger(d?.lang || APP.lang, d?.srcLang || APP.srcLang);
+    const out = new Set();
+    for (const [w, rec] of Object.entries(led.vocab || {}))
+      if (rec && (rec.seen || 0) >= 2 && !(rec.wrong || 0)) out.add(w);
+    return out;
+  } catch(_) { return new Set(); }
+}
+// Share of a round allowed to be FAMILIAR material — questions already solved here, or questions
+// about words the ledger says are known. The rest is new material. (v69_h, user request: "generate
+// lessons with only e.g. 15% of vocab the learner already knows".)
+const FAMILIAR_SHARE = 0.15;
+
 function assembleCoverageRound(pool, size, unsolvedRatio){
   const topic = APP.lessonData?.topic;
   const solvedSet = topic ? _solvedMap(topic) : {};
@@ -10812,13 +10936,37 @@ function assembleCoverageRound(pool, size, unsolvedRatio){
   // gap, where a review slot is a wasted question. Backfill below still tops the round up from the
   // other bucket, so a fully-solved lesson still yields a full review round at ratio 1.
   const RATIO = (typeof unsolvedRatio === 'number') ? Math.max(0, Math.min(1, unsolvedRatio)) : 0.7;
-  // Split by solved-state using each exercise's qid (resolved to its source lesson).
-  const unsolved = [], review = [];
+  // Split by solved-state using each exercise's qid (resolved to its source lesson), and split the
+  // UNSOLVED bucket again by whether the ledger already knows the word (v69_h). Three tiers, in the
+  // order that reaches the pass mark fastest while keeping the round mostly new material:
+  //   1. unsolved + unknown word  → genuinely new, the bulk of the round
+  //   2. unsolved + known word    → still needed for coverage (its question here is unanswered),
+  //                                 but it is familiar, so it is spent only after tier 1
+  //   3. solved                   → pure review
+  // Tiers 2+3 together are capped at FAMILIAR_SHARE of the round while tier 1 can fill it. Nothing
+  // is EXCLUDED: the backfill below still tops the round up, so a lesson whose words are all known
+  // stays fully playable and its coverage can still reach 100%. That matters — excluding known
+  // words outright would strand the coverage denominator below the threshold forever.
+  // typeof-guarded like the rest of the coverage machinery: the unit harnesses extract this
+  // function on its own, and an unguarded reference would ReferenceError there (and would degrade
+  // the round to the pre-v69_h behaviour rather than failing loudly, which is the safe direction).
+  const known = (typeof _knownWordSet === 'function') ? _knownWordSet() : new Set();
+  const _norm = (typeof stripFuri === 'function') ? stripFuri : (x => x);
+  const _isKnown = (ex) => {
+    if (!known.size) return false;
+    const w = _norm(String(ex.target || ex.correct || '')).trim();
+    return !!w && known.has(w);
+  };
+  const fresh = [], familiarUnsolved = [], review = [];
   for(const ex of pool){
     const id = qid(ex);
-    (id && solvedSet[id] ? review : unsolved).push(ex);
+    if(id && solvedSet[id]) review.push(ex);
+    else (_isKnown(ex) ? familiarUnsolved : fresh).push(ex);
   }
-  const su = shuffle(unsolved), sr = shuffle(review);
+  // New material first, familiar-but-unanswered after it. The share of REVIEW (already-solved) in
+  // the round is governed by the caller's ratio, so "at most ~15% familiar" is expressed there.
+  const su = [...shuffle(fresh), ...shuffle(familiarUnsolved)];
+  const sr = shuffle(review);
   const wantUnsolved = Math.round(N * RATIO);
   const takeU = Math.min(su.length, wantUnsolved);
   const takeR = Math.min(sr.length, N - takeU);
@@ -11753,9 +11901,20 @@ function _compProgressHtml(topicKey, slCtx){
       // learner has finished at least the non-mixed lessons AND has any recorded score (they can
       // only have reached the mixed lesson by clearing the earlier ones). For classic chapters,
       // keep the exact count.
-      const cnt = ch.lessonCount || 0;
+      // v69_f (user-reported, static build): `lessonCount`/`lessonTypes` are LIST-PROJECTION fields
+      // that only the live API emits (server.js builds them for /api/lessons). The static build
+      // bakes whole topics — full `lessons` arrays, no projection fields — so `cnt` was always 0,
+      // every chapter hit the `continue` below, and the storyline row read "0/4" no matter how much
+      // was finished. Prefer the real lessons when they are present (static, and any already-loaded
+      // topic) and count them with the SAME lessonCountsFor rule the rest of the app uses; fall
+      // back to the projection fields for the live list.
+      const _chLessons = Array.isArray(ch.lessons) && ch.lessons.length ? ch.lessons : null;
+      const cnt = _chLessons ? _chLessons.filter(L => lessonCountsFor(ch, L)).length
+                             : (ch.lessonCount || 0);
       const doneKeys = Object.keys(cDone).length;
-      const isMixed = Array.isArray(ch.lessonTypes) && ch.lessonTypes.includes('mixed');
+      const _chTypes = Array.isArray(ch.lessonTypes) ? ch.lessonTypes
+                     : (_chLessons ? _chLessons.map(L => L && L.type).filter(Boolean) : []);
+      const isMixed = _chTypes.includes('mixed');
       if (cnt === 0) continue;
       if (isMixed){
         // A mixed chapter has `cnt` lessons of which one is the mixed driver; finishing the set

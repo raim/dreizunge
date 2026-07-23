@@ -1,6 +1,6 @@
 # Roadmap v69
 
-> **STATE AT HANDOFF: CUT AS `v69_e` (point release on v69, per the v56 numbering convention);
+> **STATE AT HANDOFF: CUT AS `v69_j` (point release on v69, per the v56 numbering convention);
 > suite 142 checks green; check-inline 0 on both builds.**
 > v69_b adds (see `v69_session1_notes.md`): article-symmetry rule in all three vocab prompts;
 > coverage-driven single-pass mixed rounds + the drill credit-back that finally makes the drill
@@ -77,7 +77,12 @@ cut without successor roadmaps; every open item from roadmap_v65 is carried forw
   `tools/qc-ui-translations.js`. **Still open from that report:** German register split (22 *Sie*
   vs 22 *du*), untranslated leftovers (nl 30, lb 28, da 26, ro 24), and the unused `toast.no_voice`
   key deletion — ✅ DONE in v69_e (verified unreferenced in client, server, builder and tests before
-  removal; 521 keys remain).
+  removal; 521 keys remain). **Translation QC is now permanent tooling (v69_f):**
+  `node translate-ui.js --qc [--fix] [--retranslate]`, checks in `ui-qc.js`, shared with the
+  translation writer so generated values are validated before they are written.
+  **OWED again (small):** v69_i added 2 English keys (`passmark.inherited`, `passmark.clear`) →
+  58 missing across 29 languages. One `translate-ui.js` run clears it; they fall back to English
+  until then.
 - **Teacher dashboard UI** — `GET /api/learners` summary endpoint exists (v65); nothing renders it.
   Small, high value. Student-mode flags (new in v69) are a natural extra column.
 - **TLS guidance / warning banner** when accounts are used over plain HTTP on a non-loopback host.

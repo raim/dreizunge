@@ -121,10 +121,17 @@ console.log('  empty-response + reasoning-only guards intact: OK');
   const at = server.indexOf('async function generateErrorHunt(');
   assert.ok(at > 0, 'generateErrorHunt exists');
   const body = server.slice(at, server.indexOf('\n}', at));
-  assert.ok(/\{ think: false, timeoutMs: Math\.ceil\(getRequestTimeout\(\) \* THINK_TIMEOUT_MULT\) \}/.test(body),
-    'error-hunt passes think:false + the reasoning-grade timeout multiplier');
+  assert.ok(/\{ think: useThink, timeoutMs: Math\.ceil\(getRequestTimeout\(\) \* THINK_TIMEOUT_MULT\) \}/.test(body),
+    'error-hunt passes an explicit think flag + the reasoning-grade timeout multiplier');
   assert.ok(!/_callLLM\(OLLAMA_MODEL, sys, userMsg, story\.length \* 2\);/.test(server),
     'the old opts-less error-hunt call shape is gone');
+  // v69_g: the think flag is now ADAPTIVE. think:false is right for a verbatim rewrite (v68.1, it
+  // stopped reasoning models burning the budget inside <think> and timing out), but a reasoning
+  // model with thinking off sometimes ECHOES the story back — the reported
+  // "model returned identical story with no changes". So: fast path first, reasoning as a last
+  // resort, with the widened timeout either way.
+  assert.ok(/const useThink = attempt === ATTEMPTS;/.test(body),
+    'thinking is enabled only on the final attempt (different strategy after the fast path fails)');
 }
 console.log('  error-hunt: think:false + widened timeout: OK');
 

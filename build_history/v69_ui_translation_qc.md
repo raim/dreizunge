@@ -1,7 +1,11 @@
 # QC report — translated `ui.json` (v69_d)
 
-Reviewed the uploaded translation run and repaired **71 entries**. Re-run any time with
-`node tools/qc-ui-translations.js <in.json> <out.json>` — the fix tables are explicit and auditable.
+Reviewed the uploaded translation run and repaired **71 entries**.
+
+**Superseded by tooling (v69_f):** the one-off repair script has been folded into `translate-ui.js`
+as a permanent QC mode — `node translate-ui.js --qc` audits, `--qc --fix` repairs what is safely
+repairable, `--qc --retranslate` re-translates what is not. The checks live in `ui-qc.js` and are
+shared with the translation writer, so a defect can neither be written nor survive an audit.
 
 ## Headline: the run is complete but was NOT clean
 - **Completeness: perfect.** 30 languages, 522 keys, **0 missing**, `en` byte-identical to before.
