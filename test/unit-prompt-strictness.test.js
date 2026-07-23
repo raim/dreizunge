@@ -29,4 +29,20 @@ assert.ok(/coverage\.used > best\.coverage\.used/.test(v2), 'V2 keeps whichever 
 assert.ok(/escalate/.test(v2) && /noticeably MORE of them/.test(v2), 'escalated prompt asks for more glossary words');
 console.log('  dialect prompts + V2 coverage retry: OK');
 
+
+// ── v69.1: article symmetry in vocab pairs ───────────────────────────────────────────────────
+// User-reported (qwen3.6, e.g. tp_17847396989280000125): the source noun came WITH an article,
+// the target noun without ("das Feld" ↔ "campo"). The base-form rule said "with the usual article
+// where applicable" but never demanded SYMMETRY, so the model was free to include it on one side
+// only — which makes MCQ answers inconsistent and teaches the article on the wrong side. All three
+// vocab prompts (JSON, from-text, table) now require both-or-neither.
+{
+  for (const key of ['vocab', 'vocabFromText', 'vocabTable']) {
+    const sys = prompts[key].system;
+    assert.ok(/ARTICLE SYMMETRY/.test(sys), `${key}.system carries the article-symmetry rule`);
+    assert.ok(/BOTH sides/.test(sys) && /NEITHER side/.test(sys) && /never an article on one side only/.test(sys),
+      `${key}.system states both-or-neither explicitly`);
+  }
+}
+console.log('  article symmetry required in all three vocab prompts: OK');
 console.log('unit-prompt-strictness: ALL PASSED');

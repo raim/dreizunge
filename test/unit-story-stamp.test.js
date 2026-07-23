@@ -120,7 +120,25 @@ assert.ok(byOrigin['file-upload'] > 0 && byOrigin['user-pasted'] > 0,
 
 // The live server must stamp origin too, or the migration becomes load-bearing forever.
 assert.ok(/_storyMeta\.origin = 'generated';/.test(server), 'server stamps origin on a generated story');
-assert.ok(/_storyMeta\.origin = 'user-provided';/.test(server), 'server stamps origin on a pasted story');
+// v68.1b — the pasted-story stamp must use the CORPUS vocabulary. It used to write 'user-provided'
+// (not in ORIGINS above), which only the upload post-pass refined away — so the first PASTED story
+// that persisted would have re-reddened the §7b invariant exactly like the missing-source bug did.
+assert.ok(/_storyMeta\.origin = 'user-pasted';/.test(server), 'server stamps origin on a pasted story');
+assert.ok(!/_storyMeta\.origin = 'user-provided';/.test(server),
+  "the out-of-vocabulary 'user-provided' storyMeta origin stamp is gone");
+assert.ok(/sm\.origin === 'user-provided' && sm\.model === '\(user-provided\)'/.test(server),
+  "fixMetaSource refines persisted legacy 'user-provided' origins (guarded on the model sentinel)");
+// v68.1 — …and `source`, or the corpus invariant above (§7: every stamp has a source) breaks on the
+// FIRST live generation after a release, which is exactly what happened: the invariant was only ever
+// satisfied by backfill-provenance.js, and 11 live-written topics turned the suite red. Every live
+// origin assignment must be paired with a source stamp.
+{
+  const so = (server.match(/_storyMeta\.origin = /g) || []).length;
+  const ss = (server.match(/_storyMeta\.source = 'recorded at generation';/g) || []).length;
+  assert.ok(so >= 2 && ss === so, `every live storyMeta origin stamp is paired with a source stamp (${ss}/${so})`);
+  assert.ok(/function fixMetaSource\(\)/.test(server),
+    'the boot heal for pre-v68.1 live-written stamps exists (see unit-meta-source-heal)');
+}
 assert.ok(/t\.storyMeta\.origin = 'file-upload';/.test(server),
   'the sourceFile post-pass refines user-provided → file-upload');
 assert.ok(/const t = findSavedById\(cid\);/.test(server),

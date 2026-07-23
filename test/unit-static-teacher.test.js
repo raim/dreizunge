@@ -24,8 +24,12 @@ assert.ok(html.includes(`\${APP.info.canGenerate&&L.type!=='ai_error_hunt'&&L.ty
   'QC button must stay canGenerate-gated and skip error-hunt types');
 console.log('  edit row gating (non-LLM vs QC): OK');
 
-// Play flag UI is gated by _canEdit (hidden in static non-teacher).
-assert.ok(html.includes('const flagUi = _canEdit() ?'), 'play flag UI must be gated by _canEdit');
+// Play flag UI: DELIBERATELY UN-gated since v68.1 (the queued "flagging/starring in student mode"
+// item) — a static-build learner who spots a wrong pair is the best QC signal there is, and the
+// saved flag records which mode produced it. Only the read-only flag REVIEW banner stays
+// _canEdit-gated (a reviewer surface). unit-student-flags carries the full contract.
+assert.ok(!html.includes('const flagUi = _canEdit() ?'), 'play flag buttons are NOT teacher-gated (v68.1 reversal)');
+assert.ok(html.includes('const flagBanner = (fl && _canEdit())'), 'the flag REVIEW banner stays teacher-gated');
 console.log('  play flag UI gating: OK');
 
 // Lesson-edit persistence goes through the static-aware helper, which no-ops locally

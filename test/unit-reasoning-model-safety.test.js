@@ -112,4 +112,20 @@ console.log('  story translation: always on + reasoning-safe (v65.1): OK');
 }
 console.log('  empty-response + reasoning-only guards intact: OK');
 
+// ── v68.1: the error-hunt generator (the LAST unguarded long structured call) ─────────────────
+// Add-lesson error-hunt timed out on reasoning models: the call passed NO opts, so the model
+// reasoned away its budget and the story-length rewrite overran the request timeout. It must carry
+// think:false (a verbatim rewrite is not a reasoning task) AND a widened timeout — its output is
+// story-length, the longest of any lesson generator.
+{
+  const at = server.indexOf('async function generateErrorHunt(');
+  assert.ok(at > 0, 'generateErrorHunt exists');
+  const body = server.slice(at, server.indexOf('\n}', at));
+  assert.ok(/\{ think: false, timeoutMs: Math\.ceil\(getRequestTimeout\(\) \* THINK_TIMEOUT_MULT\) \}/.test(body),
+    'error-hunt passes think:false + the reasoning-grade timeout multiplier');
+  assert.ok(!/_callLLM\(OLLAMA_MODEL, sys, userMsg, story\.length \* 2\);/.test(server),
+    'the old opts-less error-hunt call shape is gone');
+}
+console.log('  error-hunt: think:false + widened timeout: OK');
+
 console.log('unit-reasoning-model-safety: ALL PASSED');

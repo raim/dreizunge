@@ -102,8 +102,28 @@ console.log('  /api/topic-source contract + list projection: OK');
   assert.strictEqual((client.match(/\nfunction provLineHtml\(/g) || []).length, 1, 'provLineHtml defined exactly once');
   assert.ok(!/function provLineHtml\(/.test(builder), 'build-static does NOT reimplement the formatter — it calls the shared one');
   // Both landing renderers call it (the v55_p two-renderer trap, killed at the formatting level).
-  assert.ok(/\$\{provLineHtml\(s\)\}/.test(client), 'LIVE landing row renders the one-liner');
-  assert.ok(/\\\$\{provLineHtml\(s\)\}/.test(builder), 'STATIC landing row renders the one-liner via the SAME function');
+  // v69.2c: the row renders the one-liner unless the caller opts out via `hideProv` — which only
+  // the STORYLINE SCREEN's chapter cards do (that page shows one aggregate line at the bottom, so
+  // per-chapter repeats were noise). The landing library still renders it.
+  assert.ok(/\$\{hideProv \? '' : provLineHtml\(s\)\}/.test(client), 'LIVE landing row renders the one-liner (opt-out param)');
+  assert.ok(/function savedItemHtml\(s, connector, hideStory, hideProv\)/.test(client),
+    'savedItemHtml takes an explicit hideProv flag');
+  assert.strictEqual((client.match(/savedItemHtml\([^)]*, true, true\)/g) || []).length, 3,
+    'exactly the three storyline-screen chapter-card call sites opt out');
+  // The landing call sites must NOT opt out.
+  assert.ok(/savedItemHtml\(s, false\)\)\.join\(''\)/.test(client), 'the landing orphan rows keep provenance');
+  assert.ok(/\\\$\{hideProv \? '' : provLineHtml\(s\)\}/.test(builder),
+    'STATIC landing row renders the one-liner via the SAME function, with the same opt-out');
+  // Parity trap (v69.2c): the storyline screen's _renderChain is INHERITED from index.html and
+  // calls savedItemHtml(s, false, true, true). The static alias is a SEPARATE implementation — if
+  // it drops the extra args, static chapter cards keep a provenance line the live build removed.
+  assert.ok(/function savedItemHtml\(s, connector, hideStory, hideProv\) \{ return itemHtml\(s, connector, hideStory, hideProv\); \}/.test(builder),
+    'the static alias FORWARDS every argument to itemHtml');
+  const docsFile = path.join(ROOT, 'docs', 'index.html');
+  if (fs.existsSync(docsFile)) {
+    assert.ok(/hideProv \? '' : provLineHtml\(s\)/.test(fs.readFileSync(docsFile, 'utf8')),
+      'the BUILT static artifact carries the opt-out (not just the template)');
+  }
   // Chapter page: block above gen-stats, filled on render, editor is live-only + teacher-gated.
   assert.ok(/id="prov-stats"[^>]*>[\s\S]{0,200}id="gen-stats"/.test(client), '#prov-stats sits ABOVE #gen-stats');
   assert.ok(/renderProvStats\(d\);/.test(client), 'chapter page fills the provenance block');
@@ -113,6 +133,14 @@ console.log('  /api/topic-source contract + list projection: OK');
   // Storyline screen aggregates over chapters (storylines have NO createdBy of their own).
   assert.ok(/provLineForChapters\(chapterIds\.map\(cid => _byId\[cid\]\)\.filter\(Boolean\)\)/.test(client),
     'storyline screen derives its line from the chapters');
+  // v68.1 (queued in the v68 notes): the storyline line sits at the BOTTOM with the generation
+  // stats — a dedicated #sl-screen-prov slot above #sl-screen-stats, mirroring the chapter page's
+  // #prov-stats/#gen-stats pair — no longer injected at the top of the body.
+  assert.ok(/id="sl-screen-prov"[^>]*>[\s\S]{0,200}id="sl-screen-stats"/.test(client),
+    '#sl-screen-prov sits ABOVE #sl-screen-stats (bottom of the screen, gen-stats style)');
+  assert.ok(/getElementById\('sl-screen-prov'\)/.test(client), 'the storyline render fills the bottom slot');
+  assert.ok(!/html \+= '<div style="padding:0 4px">' \+ provLineForChapters/.test(client),
+    'the old top-of-body injection is gone');
   const agg = ext(client, 'provLineForChapters');
   assert.ok(/new Set\(/.test(agg) && /slice\(0, 3\)/.test(agg), 'aggregate: distinct users/sources, capped display');
   // The user link ships INERT (span, not a dead <a>), and source urls are hardened.

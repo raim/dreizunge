@@ -93,6 +93,94 @@ console.log('  _coverageTarget precedence: topic > global > 1: OK');
 }
 console.log('  card: below-threshold drill offer + hint: OK');
 
+// ── 5b. The pass mark is ENFORCED, not merely advisory (v66.1) ───────────────
+// Reported: a learner who had played every lesson but sat below the mark could still press Next
+// and move to the following chapter — _firstUnfinishedLessonIdx returns -1 once every lesson has a
+// done-flag, so the "next chapter" branch was reached. The chapter was marked incomplete, but
+// nothing stopped them leaving it.
+{
+  const sc = ext(html, 'showComplete');
+  // v69.2c: the drill is no longer the FIRST below-threshold branch (it looped — see §5c), but the
+  // v66.1 GUARANTEE is unchanged: below the mark, Next never advances to the next chapter. It
+  // offers progress (next lesson → coverage replay) and falls back to the drill.
+  assert.ok(/\} else if \(_belowThreshold && !lesson\._drill && drillAvailable\(/.test(sc),
+    'the drill remains a below-mark Next option (last resort)');
+  assert.ok(/compNext\.onclick = \(\) => \{ startDrill\(\); \};/.test(sc), 'and it starts that drill');
+  assert.ok(/\} else if \(!lesson\._drill && !_belowThreshold && _nextChapter\(\)\)/.test(sc),
+    'the next-chapter branch refuses to advance while below the mark');
+}
+console.log('  pass mark enforced: cannot advance below the threshold (v66.1): OK');
+
+// ── 5c. The drill flow has an exit AND coverage always has a way up (v69.2) ───────────────────
+// User-reported double dead end (live mode, student): (1) the drill's own completion card had NO
+// forward affordance — every Next branch excluded `_drill` and Back is hidden for drills; masked
+// until v69 because the TDZ crash killed every completion card before it rendered. (2) A
+// SUCCESSFUL drill walks the wrong-counts back down, so drillAvailable goes false while coverage
+// is still short — and a classic chapter then showed the review card with no drill CTA and no
+// Next ("stuck at 10/34"). Fixes: a `_drill` branch FIRST (Next → back into the launching
+// chapter's remaining questions, else its completion/review card), and a coverage-replay fallback
+// (Next → the first counted lesson whose own coverage is short — rounds re-sample, so replaying
+// advances coverage).
+{
+  const sc = ext(html, 'showComplete');
+  const drillAt   = sc.indexOf('if (lesson._drill) {');
+  const nextAt    = sc.indexOf('nextLessonIdx >= 0 && !lesson._drill');
+  const replayAt  = sc.indexOf('_firstCoverageShortLessonIdx() >= 0');
+  const drillCta  = sc.indexOf('_belowThreshold && !lesson._drill && drillAvailable(');
+  assert.ok(drillAt > 0 && drillCta > 0 && drillAt < drillCta,
+    'the drill card gets its own Next branch, ordered BEFORE the drill CTA');
+  // v69.2c (third stuck report): PROGRESS branches must precede the drill CTA. While the drill was
+  // the first below-threshold branch, Next was always "practise your mistakes" — and the drill can
+  // only re-ask wrong VOCAB words, never the sentence questions in the coverage universe, so the
+  // learner looped card → drill → card forever with coverage plateaued. The drill is also offered
+  // as its own #comp-drill button, so Next duplicating it bought nothing.
+  assert.ok(nextAt > 0 && nextAt < drillCta, 'next-unfinished-lesson comes BEFORE the drill CTA');
+  assert.ok(replayAt > 0 && replayAt < drillCta, 'the coverage replay comes BEFORE the drill CTA');
+  assert.ok(/endDrill\(\);\s*const idx = _firstUnfinishedLessonIdx\(APP\.lessonData\);\s*if \(idx >= 0\) startLesson\(idx\); else showComplete\(true\);/.test(sc),
+    'drill Next returns to the launching chapter: resume its questions, else its completion card');
+  assert.ok(/else if \(_belowThreshold && !lesson\._drill && _firstCoverageShortLessonIdx\(\) >= 0\)/.test(sc),
+    'below threshold with no drill → the coverage-replay fallback fires');
+  const helper = ext(html, '_firstCoverageShortLessonIdx');
+  assert.ok(/typeof lessonCoverage !== 'function'/.test(helper), 'the helper is typeof-guarded like its siblings');
+
+  // Behavioral: first coverage-short counted lesson, mixed skipped, -1 when everything is full.
+  const cov = { 0: { solved: 4, total: 4 }, 1: { solved: 1, total: 4 }, 2: { solved: 0, total: 6 } };
+  const APP = { lessonData: { topic: 'T', lessons: [
+    { id: 'a', type: 'standard' }, { id: 'm', type: 'mixed' }, { id: 'b', type: 'standard' },
+  ] } };
+  // Map fixture coverage onto lesson indices: 0→full, 1(mixed)→short-but-skipped, 2→short.
+  const lessonCoverage = (i) => (i === 0 ? cov[0] : i === 1 ? cov[2] : cov[1]);
+  const countedLessons = (d) => d.lessons;
+  const fn = new Function('APP', 'lessonCoverage', 'countedLessons',
+    ext(html, '_firstCoverageShortLessonIdx') + '\nreturn _firstCoverageShortLessonIdx;')(
+    APP, lessonCoverage, countedLessons);
+  assert.strictEqual(fn(), 2, 'returns the first coverage-short NON-mixed lesson (mixed skipped)');
+  const fnFull = new Function('APP', 'lessonCoverage', 'countedLessons',
+    ext(html, '_firstCoverageShortLessonIdx') + '\nreturn _firstCoverageShortLessonIdx;')(
+    APP, () => ({ solved: 4, total: 4 }), countedLessons);
+  assert.strictEqual(fnFull(), -1, 'all lessons at full coverage → -1 (no replay offered)');
+}
+console.log('  v69.2: drill card exits to its chapter; coverage-replay fallback below the mark: OK');
+
+// ── 5d. Static parity: the pass mark is BAKED into the static build (v69.2) ───────────────────
+// User-reported live/static divergence: the threshold lives in the store's settings and is served
+// live via /api/info; the static init hardcoded APP.info without it, so _coverageTarget() fell
+// back to 1 and a below-mark classic chapter offered neither "keep going" nor the drill in static.
+{
+  const builder = fs.readFileSync(path.join(ROOT, 'build-static.js'), 'utf8');
+  assert.ok(/lessonsData\.settings\.coverageThreshold/.test(builder),
+    'build-static derives the pass mark from the store settings');
+  assert.ok(/coverageThreshold: \$\{COVERAGE_THRESHOLD\}/.test(builder),
+    'the static APP.info carries the baked threshold (like the version)');
+  const docs = path.join(ROOT, 'docs', 'index.html');
+  if (fs.existsSync(docs)) {
+    assert.ok(/coverageThreshold: [\d.]+/.test(fs.readFileSync(docs, 'utf8')),
+      'the BUILT static artifact actually contains a numeric threshold');
+  }
+}
+console.log('  static parity: pass mark baked into APP.info: OK');
+
+
 // ── 6. Server: settings persistence + endpoint + /api/info ────────────────────
 {
   assert.ok(/settings: data\.settings \|\| \{\}/.test(server), 'loadStore reads settings back (survives restart)');

@@ -730,6 +730,10 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
             style="font-size:11px;font-weight:700;padding:4px 10px;border:none;background:none;color:var(--blue-dark);cursor:pointer;font-family:Nunito,sans-serif"></button>
         </div>
       </div>
+      <label class="user-story-check-row" id="pdf-cleanup-row" style="display:none">
+        <input type="checkbox" id="pdf-cleanup-cb" onchange="onCleanupToggle()">
+        <span id="pdf-cleanup-lbl">🧹 Clean up text</span>
+      </label>
       <label class="user-story-check-row" id="split-page-row" style="display:none">
         <input type="checkbox" id="split-page-cb" onchange="onSplitModeChange()">
         <span id="split-page-lbl">📄 Split per page</span>
@@ -1198,6 +1202,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </div>
     <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
   </div>
+  <div class="gen-stats sl-screen-stats" id="sl-screen-prov" style="padding:6px 16px 0;border-top:1px solid var(--gray-mid);margin:0;display:none"></div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
 
@@ -1531,7 +1536,7 @@ var APP = {
   storyStyle: loadStoryStyle(),
   lessonFormat: loadLessonFormat(),
   libFilter: 'all',
-  libSrcFilter: 'all',
+  libSrcFilter: (() => { try { return localStorage.getItem('imp3_libsrc') || 'all'; } catch(_) { return 'all'; } })(),   // v67.1: survives reload
   prevLangFilter: null,
   savedList: [],
   progress: loadProg(),
@@ -1648,6 +1653,7 @@ function applyUIStrings() {
   { const ud=document.getElementById('use-dialect-lbl'); if(ud) ud.textContent=t('form.use_dialect'); }
   { const ub=document.getElementById('upload-choose-lbl'); if(ub) ub.textContent=t('form.upload_doc'); }
   { const sp=document.getElementById('split-page-lbl'); if(sp) sp.textContent=t('form.split_per_page'); }
+  { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
   const useTransLbl = document.getElementById('use-translation-lbl');
   if (useTransLbl) useTransLbl.textContent = t('form.translation_cb');
   const storyPanelLbl = document.getElementById('story-panel-lbl');
@@ -2117,7 +2123,10 @@ function onStyleSelect(v){
 function restoreStyleSelect(){
   const sel=document.getElementById('style-select'); if(sel) sel.value=APP.storyStyle;
 }
-const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation','math']);
+// Every value the #format-select picker offers must be accepted here — an option missing from this
+// set is silently rewritten to 'standard' on selection, i.e. a dead menu entry (v68.1: word_forms
+// and synonyms were visible but clamped away, for single AND book/multi-chapter generation).
+const VALID_FORMATS=new Set(['standard','all_types','error_hunt','grammar','conjugation','math','word_forms','synonyms']);
 function onFormatSelect(v){
   APP.lessonFormat=VALID_FORMATS.has(v)?v:'standard'; saveLessonFormat();
   const sel=document.getElementById('format-select'); if(sel) sel.value=APP.lessonFormat;
@@ -2330,11 +2339,16 @@ function selectSrcLang(code, fromForm){
   // context only, leaving the form's selection/filter/selector untouched).
   if(fromForm===undefined) fromForm=true;
   // Globe = reset source library filter (a form/landing concept), keep srcLang unchanged
-  if(code==='all'){ APP.libSrcFilter='all'; const sel=document.getElementById('src-lang-select'); if(sel) sel.value='all'; loadSavedList(); return; }
+  if(code==='all'){ APP.libSrcFilter='all'; try{ localStorage.setItem('imp3_libsrc','all'); }catch(_){}
+    const sel=document.getElementById('src-lang-select'); if(sel) sel.value='all'; loadSavedList(); return; }
   APP.srcLang=code;                       // active render context
   if(fromForm){
     APP.formSrcLang=code; saveSrcLang();  // persist the form's own selection
     APP.libSrcFilter=code;
+    // v67.1: persist the LIBRARY source filter too. The target filter survives a reload only
+    // because it is re-derived from the persisted form language; the source filter had no such
+    // path, so it silently fell back to "all" on every reload (reported).
+    try{ localStorage.setItem('imp3_libsrc', code); }catch(_){}
     const sel=document.getElementById('src-lang-select');
     if(sel && sel.value!==code) sel.value=code;
   }
@@ -3299,6 +3313,7 @@ function goLandingClean(){ history.replaceState(null,'','#'); APP.ttsLang=null; 
 // ══ PDF-to-Storyline ══════════════════════════════════════════════════════════
 let _pdfChunks = [];   // { text, wordCount, title, status }
 let _pdfRawText = '';  // full extracted document text, kept so the slider can re-split
+let _pdfOrig = null;   // { text, pages } as extracted, BEFORE cleanup — the 🧹 toggle re-derives from this
 let _pdfPages = null;  // array of per-page text (PDF only) for per-page splitting
 let _uploadFileName = ''; // original uploaded filename, stored on the storyline
 let _uploadMode = false; // a document has been uploaded and split into chapters
@@ -3320,7 +3335,7 @@ function _setPasteVisible(v){
 // Drop any uploaded document and return to single-paste mode.
 function _clearUpload(){
   if(_pdfBookId) pdfCancelBook();
-  _uploadMode=false; _pdfRawText=''; _pdfPages=null; _pdfChunks=[]; _splitOpen=-1; _chunksDirty=false;
+  _uploadMode=false; _pdfRawText=''; _pdfPages=null; _pdfOrig=null; _pdfChunks=[]; _splitOpen=-1; _chunksDirty=false;
   _uploadFileName='';
   _pdfSelMode=false; _pdfSelections=[];
   const selPanel=document.getElementById('pdf-sel-panel'); if(selPanel) selPanel.style.display='none';
@@ -3352,6 +3367,16 @@ function _updateUploadSliderVis(){
 
 // Re-split the loaded document into chapters: per page (when available + checked)
 // or by length (story-length slider).
+// Derive the working text (full + per-page) from the pristine extraction per the 🧹 checkbox.
+function _applyUploadCleanup(){
+  if(!_pdfOrig) return;
+  const on = !!document.getElementById('pdf-cleanup-cb')?.checked;
+  _pdfRawText = on ? cleanExtractedText(_pdfOrig.text) : _pdfOrig.text;
+  _pdfPages   = Array.isArray(_pdfOrig.pages)
+    ? (on ? _pdfOrig.pages.map(cleanExtractedText) : _pdfOrig.pages.slice())
+    : null;
+}
+function onCleanupToggle(){ _applyUploadCleanup(); _resplitUpload(); }
 function _resplitUpload(){
   if(!_uploadMode || !_pdfRawText) return;
   _splitOpen=-1; _chunksDirty=false;
@@ -3381,7 +3406,15 @@ async function onUploadFileChosen(input){
     if(isPdf){ const r = await _extractPdfText(file); text = r.text; pages = r.pages; }
     else { text = _cleanPlainText(await file.text()); }   // txt/md/markdown/text
     if(!text || text.trim().length < 20){ status.textContent = t('pdf.no_text'); return; }
-    _pdfRawText = text; _pdfPages = pages; _uploadMode = true; _chunksDirty = false;
+    _pdfOrig = { text, pages }; _uploadMode = true; _chunksDirty = false;
+    // v68.1: deterministic cleanup, default ON for PDFs (extraction noise), OFF for plain-text
+    // uploads (usually already intentional). _applyUploadCleanup derives _pdfRawText/_pdfPages
+    // from _pdfOrig per the checkbox, so toggling is lossless both ways.
+    const _clCb = document.getElementById('pdf-cleanup-cb');
+    if (_clCb) _clCb.checked = isPdf;
+    const _clRow = document.getElementById('pdf-cleanup-row');
+    if (_clRow) _clRow.style.display = '';
+    _applyUploadCleanup();
     _uploadFileName = file.name || '';   // preserve original case/extension for storyline provenance
     // Per-page splitting is only offered when the source has page boundaries.
     const spRow = document.getElementById('split-page-row');
@@ -3451,6 +3484,59 @@ function _cleanPdfText(text) {
     .trim();
 }
 
+// ── Deterministic extracted-text cleanup (v68.1, queued in the v68 notes) ─────────────────────
+// PDF extraction leaves two kinds of noise a lesson generator then chews on: FORMATTING newlines
+// (hard wraps mid-sentence — "chicchi fino a tre centimetri\nhanno danneggiato…") and NON-NARRATIVE
+// junk lines (bylines like "di Alessio Ribaudo", nav crumbs, lone dates/URLs, short section
+// headers). Deterministic-first by design (v68 notes): code fixes what code can fix reliably, and
+// only the fragments no rule can classify (e.g. an inline unrelated-article teaser that reads as a
+// full sentence) are left for a later model pass. Pure and order-of-rules deliberate:
+//   1. drop lines with no letters at all (page numbers, dates, separators) and lone URLs — BEFORE
+//      joining, so junk can never be glued into real prose;
+//   2. join a hard wrap: a line NOT ending in sentence-final punctuation (.!?… + closing quotes)
+//      whose next line starts lowercase (optionally after one opening quote/bracket) is a wrapped
+//      sentence, not a new block — joined with a space; blank lines stay paragraph breaks;
+//   3. AFTER joining, drop still-unpunctuated lines with few letters (< 20): what survives rule 2
+//      without a sentence end and without much text is a byline / header / crumb, not narrative.
+// Toggleable in the upload panel (default ON for PDFs, OFF for plain-text files, which are usually
+// already intentional) — the original extraction is kept so the toggle is lossless both ways.
+function cleanExtractedText(text) {
+  const SENT_END = /[.!?…]["'»«”’)\]]*$/u;          // sentence-final punct, closing quotes allowed
+  const lines = String(text || '').replace(/\r\n?/g, '\n').split('\n').map(l => l.replace(/\s+$/, ''));
+  const letters = s => (s.match(/\p{L}/gu) || []).length;
+  // 1. structural junk out first.
+  const kept = lines.filter(l => {
+    const s = l.trim();
+    if (!s) return true;                             // blank lines = paragraph structure, keep
+    if (!letters(s)) return false;                   // digits/punctuation only: page nr, date, ───
+    if (/^(https?:\/\/|www\.)\S+$/i.test(s)) return false;   // lone URL
+    return true;
+  });
+  // 2. join hard wraps (2b: a quote split ACROSS a blank line — «Sembrava un / ⏎ / bombardamento» —
+  // is rejoined when the later line balances the earlier line's unclosed opening quote; without
+  // this the orphaned closer is short + unpunctuated and rule 3 would eat it, truncating the text).
+  const QUOTE_PAIRS = [['«', '»'], ['„', '“'], ['“', '”']];
+  const _unbalancedInto = (before, line) => QUOTE_PAIRS.some(([o, c]) =>
+    (before.split(o).length - 1) > (before.split(c).length - 1) && line.includes(c));
+  const joined = [];
+  for (const raw of kept) {
+    const line = raw.trim();
+    if (line && joined.length >= 2 && joined[joined.length - 1] === ''
+        && joined[joined.length - 2] && _unbalancedInto(joined[joined.length - 2], line)) {
+      joined.pop();                                  // drop the stray blank
+      joined[joined.length - 1] += ' ' + line;
+      continue;
+    }
+    const prev = joined.length ? joined[joined.length - 1] : null;
+    if (line && prev && !SENT_END.test(prev) && /^["'«„“(\[]?\p{Ll}/u.test(line)) {
+      joined[joined.length - 1] = prev + ' ' + line;
+    } else joined.push(line);
+  }
+  // 3. leftover unpunctuated short lines are non-narrative.
+  const out = joined.filter(l => !l || SENT_END.test(l) || letters(l) >= 20);
+  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
 function _splitIntoChunks(text, targetWords) {
   const paras = text.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
   const chunks = []; let cur = [];
@@ -3515,6 +3601,7 @@ function _renderPdfChunks() {
   if (arcRow) arcRow.style.display = (genBtn && genBtn.style.display === '') ? '' : 'none';
   if (arcLbl) arcLbl.textContent = t('form.arc_lbl');
   const spLbl = document.getElementById('split-page-lbl'); if(spLbl) spLbl.textContent = t('form.split_per_page');
+  const clLbl = document.getElementById('pdf-cleanup-lbl'); if(clLbl) clLbl.textContent = t('pdf.cleanup_lbl');
   const selOpen = document.getElementById('pdf-sel-open-btn');
   if (selOpen) {
     const canSel = !!(_uploadMode && _pdfRawText && _pdfChunks.length && _pdfChunks.every(c=>c.status!=='active') && !_pdfSelMode);
@@ -4061,7 +4148,11 @@ function setLibFilter(lang){
   loadSavedList();
 }
 
-function savedItemHtml(s, connector, hideStory) {
+// `hideProv` (v69.2c, user request): omit the per-chapter provenance line. Passed by the STORYLINE
+// SCREEN's chapter cards only — that page carries one aggregate "by … · from …" line at the bottom
+// (v68.1), so repeating it on every chapter card was noise. The landing library keeps its per-topic
+// line: there each row is an independent topic with no aggregate line anywhere.
+function savedItemHtml(s, connector, hideStory, hideProv) {
   const dateStr = s.updatedAt || s.generatedAt;
   const date = dateStr ? new Date(dateStr).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '';
   const enc = encTopic(s.topic);
@@ -4081,7 +4172,7 @@ function savedItemHtml(s, connector, hideStory) {
       <div class="saved-info">
         <div class="saved-topic">${s.topic} ${diffBadge}</div>
         <div class="saved-meta"><span class="lang-pair-badge" title="${srcL.name} → ${tL.name}">${srcL.flag}→${tL.flag}</span> ${s.lessonCount} lesson${s.lessonCount!==1?'s':''} · ${date}${ratingStr}</div>
-        ${provLineHtml(s)}
+        ${hideProv ? '' : provLineHtml(s)}
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
         ${APP.info.canGenerate?`<button class="ico-btn cont" title="Continue story" onclick="continueFromLesson('${escJsAttr(s.id||s.topic)}',${s.difficulty||2},${s.storyLen||300})">↪</button>`:''}
@@ -4476,8 +4567,17 @@ async function loadSaved(ref){
     await goLessonSet();
     if(_isLearner()){
       const idx=_firstUnfinishedLessonIdx(APP.lessonData);
-      if(idx>=0) startLesson(idx);
-      else showComplete(true);   // already complete → review card (full story + Back), not the editor
+      // startLesson returns false when it could not take over the screen (hidden lesson, or a
+      // mixed lesson whose round built empty — e.g. every pooled item is flagged in the static
+      // build). goLessonSet has already rendered the lesson-set page underneath, which a learner
+      // must never see (v60.1) — fall back to the same target as confirmQuit: the storyline deck,
+      // else the landing page.
+      const started = idx>=0 ? (startLesson(idx) !== false) : (showComplete(true), true);
+      if(!started){
+        const ctx=_storylineForTopic(APP.lessonData?.topic);
+        if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
+        else goLandingClean();
+      }
     }
   }catch(e){ alert('Could not load: '+e.message); }
 }
@@ -5329,7 +5429,40 @@ function _firstUnfinishedLessonIdx(d){
   // background call for a different topic can't misfire the coverage branch.
   if(d === APP.lessonData){ try { if(setComplete(d)) return -1; } catch(_) {} }
   const done = APP.progress.completed?.[d.topic] || {};
-  return (d.lessons||[]).findIndex(L => !done[L.id] && lessonCountsFor(d, L));
+  const idx = (d.lessons||[]).findIndex(L => !done[L.id] && lessonCountsFor(d, L));
+  if(idx >= 0) return idx;
+  // v68.1: a mixed-driven set completes by COVERAGE, but the mixed lesson still GETS a done-flag on
+  // every play (showComplete records one, and confirmQuit records partial progress on quit). So
+  // once every counted lesson carries a boolean, the scan above finds nothing even though coverage
+  // is below target — and the set read as "complete": loadSaved rendered the review card instead of
+  // resuming practice, so the learner could never raise coverage again. We're past the setComplete
+  // early-return, so the set is NOT complete: point resume back at the mixed/driver lesson (which
+  // is what the v60.1 contract above always promised for a mixed-driven-but-incomplete set).
+  try {
+    if(!APP._teacherMode && d === APP.lessonData){
+      const mi = _firstVisibleMixedIdx(d);
+      if(mi >= 0) return mi;
+    }
+  } catch(_) {}
+  return -1;
+}
+
+// The first counted, visible, non-mixed lesson whose per-lesson coverage is still short — the
+// REPLAY target when a chapter is below the pass mark and no drill can be built (v69.2). Rounds
+// re-sample on every play, so replaying surfaces fresh questions and advances coverage; without
+// this, a classic (non-mixed) chapter below threshold whose wrong-word drill had been drilled
+// away (the decrement) had no way up at all. typeof-guarded like its siblings (unit harnesses
+// extract callers with stubs). Mixed lessons are skipped: a mixed-driven set resumes via
+// _firstUnfinishedLessonIdx's own mixed fallback.
+function _firstCoverageShortLessonIdx(){
+  const d = APP.lessonData; if(!d) return -1;
+  if (typeof lessonCoverage !== 'function' || typeof countedLessons !== 'function') return -1;
+  for (const L of countedLessons(d)){
+    if (!L || L.type === 'mixed') continue;
+    const idx = d.lessons.indexOf(L);
+    try { const c = lessonCoverage(idx); if (c.total > 0 && c.solved < c.total) return idx; } catch(_){}
+  }
+  return -1;
 }
 
 // Resolve the storyline this chapter belongs to (preferring the deck the learner came from),
@@ -6072,6 +6205,15 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     statsEl.innerHTML = lines.join('<br>');
     statsEl.style.display = lines.length ? '' : 'none';
   }
+  // v68.1 (queued in v68 notes): the provenance/user line sits at the BOTTOM with the generation
+  // stats — same style, same placement as the chapter page's #prov-stats — not at the top of the
+  // body where it competed with the storyboard/summary for first-glance attention.
+  const provEl = document.getElementById('sl-screen-prov');
+  if (provEl) {
+    const _pHtml = provLineForChapters(chapterIds.map(cid => _byId[cid]).filter(Boolean));
+    provEl.innerHTML = _pHtml;
+    provEl.style.display = _pHtml ? '' : 'none';
+  }
 
   // Body: one card per chapter + full story reader
   const body = document.getElementById('sl-screen-body');
@@ -6090,7 +6232,6 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
   // Storyboard — server-composed, validated SVG (composeStoryboardSVG is the security
   // boundary; the client only injects the finished string). Sits ABOVE the summary.
   const _slSb = slMeta?.storyboard || '';
-  html += '<div style="padding:0 4px">' + provLineForChapters(chapterIds.map(cid => _byId[cid]).filter(Boolean)) + '</div>';
   html += '<div class="storyline-storyboard" id="slsb-screen-' + chainId.replace(/[^a-zA-Z0-9_-]/g,'_')
         + '" data-sb-chain="' + escAttr(chainId) + '"'
         + ' aria-label="' + escAttr(t('storyboard.title')) + '" style="margin:8px 0;overflow-x:auto'
@@ -6160,12 +6301,12 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     if (_isLocked) {
       out += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden;opacity:.45;pointer-events:none">'
            + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;z-index:2;pointer-events:none">🔒</div>'
-           + savedItemHtml(s, false, true) + '</div>';
+           + savedItemHtml(s, false, true, true) + '</div>';
     } else {
       out += '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
            + '<div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--gray-mid)">'
            + '<div style="height:100%;width:' + _pct + '%;background:' + _barColor + ';transition:width .3s"></div></div>'
-           + savedItemHtml(s, false, true) + '</div>';
+           + savedItemHtml(s, false, true, true) + '</div>';
     }
     out += _lessonTypesDropdownHtml(s);
     return out;
@@ -6207,7 +6348,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
         const kidData = byTopic[kid];
         out += '<div style="opacity:.5;pointer-events:none">'
              + '<div style="position:relative;border-radius:var(--radius-xl);overflow:hidden">'
-             + savedItemHtml(kidData, false, true)
+             + savedItemHtml(kidData, false, true, true)
              + '</div></div>';
       }
       out += '</div>';
@@ -7943,7 +8084,7 @@ function _flagBoxHtml(li, type, fi, item, applyable){
   let html = '';
   if(boxOpen){
     html += `<div style="margin-top:4px;background:#eef4ff;border-radius:6px;padding:6px 8px">
-      <div style="font-size:11px;font-weight:800;color:var(--blue-dark);margin-bottom:3px">⚑ ${t('qc.editor.user_flag')}</div>
+      <div style="font-size:11px;font-weight:800;color:var(--blue-dark);margin-bottom:3px">⚑ ${t('qc.editor.user_flag')}${item.userFlag?.mode==='student'?` <span style="font-weight:800;background:#fff3c4;color:#8a6d00;border-radius:8px;padding:0 6px" title="${escAttr(item.userFlag.at||'')}">👤 ${t('flag.mode.student')}</span>`:''}</div>
       <textarea id="flag-input-${li}-${type}-${fi}" rows="2" placeholder="${t('qc.editor.flag_placeholder')}" style="width:100%;box-sizing:border-box;font-size:12px;border:1px solid var(--gray-mid);border-radius:4px;padding:4px 6px;font-family:Nunito,sans-serif;resize:vertical">${escHtml(item.userFlag?.comment||'')}</textarea>
       <input id="flag-correct-${li}-${type}-${fi}" placeholder="${t('qc.editor.flag_correct_placeholder')}" value="${escAttr(item.userFlag?.correct||'')}" style="width:100%;box-sizing:border-box;margin-top:4px;font-size:12px;border:1px solid var(--gray-mid);border-radius:4px;padding:4px 6px;font-family:Nunito,sans-serif">
       <div style="display:flex;gap:6px;margin-top:4px;justify-content:flex-end">
@@ -7993,7 +8134,7 @@ async function saveUserFlag(li, type, fi){
   const comment = (ta?.value||'').trim();
   const correct = (cr?.value||'').trim();
   try{ _syncEditorFromDOM(+li); }catch(_){}   // keep concurrent field edits
-  item.userFlag = { comment, correct, at: new Date().toISOString() };
+  item.userFlag = { comment, correct, at: new Date().toISOString(), mode: _flagMode() };
   APP._flagOpen = null;
   try{ await _persistEditorFlags(+li); showToast(t('qc.toast.flag_saved')); }
   catch(e){ showToast(t('qc.toast.save_failed')+': '+e.message); }
@@ -8805,7 +8946,36 @@ function buildStandardExercises(lesson, lessonIdx){
   // for the same reason). Unavailable → don't filter, i.e. prior behaviour.
   const _noAudio = (typeof _lessonIsDialect==='function' && _lessonIsDialect())
                 || (typeof ttsVoiceAvailableFor==='function' && !ttsVoiceAvailableFor(APP.lessonData?.lang || APP.lang));
-  const _exs = _noAudio ? exs.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type') : exs;
+  let _exs = _noAudio ? exs.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type') : exs;
+  // v69.2 (roadmap item, user 2026-07-14): BEGINNER lessons only serve exercises you can answer by
+  // PICKING from four options — plus "hear it, type it", which the user explicitly allowed because
+  // it is transcription, not recall. Two consequences:
+  //   • `order` always goes: assembling a sentence needs word order the beginner hasn't met yet
+  //     (the word bank looks like options but the task is production).
+  //   • `listen_type` goes when there is NO AUDIO — muted or voiceless. Its muted RENDER falls back
+  //     to type_translate ("show the source, type the target"), i.e. exactly the recall-production
+  //     task rule 1 excludes; with audio it stays, because then it really is transcription.
+  //     (This is the "listening OFF → don't require already knowing the translation" clause: the
+  //     audio was the scaffolding, and without it the item silently changes character.)
+  // Difficulty is resolved the way the lesson list displays it: the lesson's own value first, then
+  // the topic's, then the 2 default — so a beginner lesson inside a harder topic is still beginner.
+  // Applies in teacher mode too: this is a property of the LESSON's difficulty, not a visibility
+  // rule, so a teacher previewing a beginner lesson sees what the learner will get.
+  const _diff = (lesson && lesson.difficulty) || (d && d.difficulty) || 2;
+  if (_diff <= 1) {
+    const _muted = !!APP.muted;
+    _exs = _exs.filter(e => e.type !== 'order' && !((_muted || _noAudio) && e.type === 'listen_type'));
+  }
+  // Universe enumeration wants EVERY question this lesson can ask — uncapped and unbiased.
+  if (APP._derivingUniverse) return _exs;
+  // v69.2 (user-reported "the drill doesn't get me past the threshold"): a round used to be a
+  // RANDOM 12 of everything the lesson can ask, so replaying re-asked solved questions at random
+  // and coverage crawled (measured: 5+ perfect replays to reach 80% of a 29-question lesson, and
+  // the drill can only ever cover the vocab words you got wrong — never the sentence items). Now
+  // the round is coverage-aware, exactly like the mixed lesson's: unsolved questions first, a
+  // little review mixed in. First play is unaffected (everything is unsolved); a replay below the
+  // pass mark now converges in one or two rounds instead of a dozen.
+  if (typeof assembleCoverageRound === 'function') return assembleCoverageRound(_exs, 12, 1);
   return shuffle(_exs).slice(0,12);
 }
 // ══ Mixed review (no LLM) — pool exercises from this chapter's EARLIER lessons ══════
@@ -8819,6 +8989,45 @@ function buildMixedExercises(lesson, lessonIdx){
   const lessons = APP.lessonData?.lessons || [];
   const perType = Math.max(1, lesson?.perType || 3);
   const teacher = !!APP._teacherMode;
+  // v69.1 (user request): size the round so ONE pass can reach the topic's coverage target —
+  // needed = ceil(target × universe) − solved. The round then contains exactly `needed` distinct
+  // UNSOLVED questions, collected per earlier sibling by re-deriving its builder until every
+  // wanted qid has an exercise object (builders sample/shuffle, so one derivation surfaces only a
+  // subset — the same convergence idea _lessonQidUniverse uses). perType/roundSize are sampling
+  // knobs of the old replay model and deliberately do NOT cap this path. needed === 0 (target
+  // already met: replay/practice) falls through to the sampled 70/30 round below. All coverage
+  // machinery is typeof-guarded: the unit harnesses extract this builder with stubs, and without
+  // the machinery the builder degrades to the pre-v69.1 sampled round.
+  const _covReady = typeof _lessonQidUniverse==='function' && typeof _solvedMap==='function'
+                 && typeof _coverageTarget==='function' && typeof qid==='function';
+  if (_covReady && APP.lessonData?.topic){
+    const uni = _lessonQidUniverse(lessonIdx);
+    const solved = _solvedMap(APP.lessonData.topic);
+    let done = 0; for (const id of uni) if (solved[id]) done++;
+    const needed = Math.max(0, Math.ceil(_coverageTarget() * uni.size) - done);
+    if (needed > 0){
+      const byQid = new Map();
+      lessons.forEach((sib, i) => {
+        if (i >= lessonIdx || !sib || sib.type === 'mixed') return;
+        if (sib._hidden && !teacher) return;
+        const want = new Set();
+        for (const id of _lessonQidUniverse(i)) if (!solved[id]) want.add(id);
+        for (let r = 0; r < 40 && want.size; r++){
+          let exs; try { exs = lessonTypeMeta(sib.type).build(sib, i) || []; } catch(_) { exs = []; }
+          for (const ex of exs){
+            const id = qid(ex, sib.id);
+            if (id && want.has(id)) { want.delete(id); byQid.set(id, { ...ex, _srcLessonIdx: i }); }
+          }
+        }
+      });
+      let cand = [...byQid.values()];
+      const _noAudioC = (typeof _lessonIsDialect==='function' && _lessonIsDialect())
+                     || (typeof ttsVoiceAvailableFor==='function' && !ttsVoiceAvailableFor(APP.lessonData?.lang || APP.lang));
+      if (_noAudioC) cand = cand.filter(e => e.type !== 'listen_mcq' && e.type !== 'listen_type');
+      if (cand.length) return shuffle(shuffle(cand).slice(0, needed));
+      // Collection came up empty (defensive) → fall through to the sampled round.
+    }
+  }
   const pool = [];
   lessons.forEach((sib, i) => {
     if(i === lessonIdx) return;                 // not itself
@@ -9284,7 +9493,10 @@ function mathNearMissClient(correct, nums, difficulty) {
 
 // ── lesson ──
 function startLesson(idx){
-  if (APP.lessonData?.lessons[idx]?._hidden && !APP._teacherMode) return;
+  // Returns true when the lesson screen actually opened; false on the guard exits below. Learner
+  // routing (loadSaved) relies on this: goLessonSet has already rendered the lesson-set page
+  // underneath, and a silent false would strand a learner on a page they must never see (v68.1).
+  if (APP.lessonData?.lessons[idx]?._hidden && !APP._teacherMode) return false;
   const C=APP.cur;
   const lesson=APP.lessonData.lessons[idx];
   C.lessonIdx=idx;
@@ -9306,7 +9518,7 @@ function startLesson(idx){
   // shouldn't open an empty player — tell the user what to do instead.
   if (lesson.type==='mixed' && (!C.exercises || !C.exercises.length)) {
     showToast(t('mixed.empty'));
-    return;
+    return false;
   }
   C.hearts=3; C.mistakes=0; C.correct=0; C.total=0; C.streak=0; C.bestStreak=0;
   C.answered=false; C.sel=null; C.placed=[]; C.usedIdx=[]; delete C._selPos;
@@ -9316,6 +9528,7 @@ function startLesson(idx){
     if(lesson.type==='ai_error_hunt') renderAiErrorHunt();
     else renderErrorHunt();
   } else renderEx();
+  return true;
 }
 // ── AI-error-hunt renderer ──────────────────────────────────────────────────
 // ── Clause splitter — splits on any punctuation mark, preserves paragraph breaks ──
@@ -9719,7 +9932,10 @@ function renderEx(){
   const rated = _exRatingState(ex);
   const taSty='width:100%;box-sizing:border-box;font-size:13px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:6px 8px;font-family:Nunito,sans-serif;resize:vertical';
   const inSty='width:100%;box-sizing:border-box;margin-top:5px;font-size:13px;border:1.5px solid var(--gray-mid);border-radius:6px;padding:6px 8px;font-family:Nunito,sans-serif';
-  const flagUi = _canEdit() ? (
+  // v68.1 (queued in the v68 notes): flagging/starring is available in STUDENT mode too — a
+  // learner who spots a wrong pair is the best QC signal there is. The saved flag records which
+  // mode produced it (_flagMode); the read-only flag REVIEW banner below stays teacher-only.
+  const flagUi = (
     '<div style="display:flex;justify-content:center;gap:8px;margin-top:8px">'+
       `<button class="flag-btn${rated?' rated':''}" id="ratebtn" onclick="togglePlayRating()" title="${t('rating.play.title')}">${rated?'⭐':'☆'}</button>`+
       `<button class="flag-btn${fl?' flagged':''}" id="flagbtn" onclick="togglePlayFlagForm()" title="${t('ex.flag_title')}">${fl?'⚑':'⚐'}</button>`+
@@ -9732,7 +9948,7 @@ function renderEx(){
         `<button class="flag-btn flagged" onclick="savePlayFlag()">${t('ex.flag_save')}</button>`+
       '</div>'+
     '</div>'
-  ) : '';
+  );
   // #11: when this question is already flagged, surface the flag's content right under
   // the question (read-only) so a reviewer sees it without opening the edit form.
   const flagBanner = (fl && _canEdit()) ? (
@@ -10269,7 +10485,29 @@ function markSolved(ex){
   const id = qid(ex);
   if(!id) return '';
   const m = _solvedMap(topic);
-  if(!m[id]){ m[id] = 1; saveProg(); }      // monotonic; persist only on first solve
+  let changed = false;
+  if(!m[id]){ m[id] = 1; changed = true; }
+  // v69.1: a drill launched from a chapter also CREDITS that chapter. The drill was designed as
+  // "the way up" below the pass mark (v60.8), but its solves landed only under the synthetic
+  // __drill__ topic — the real chapter's coverage never moved, so the drill could never actually
+  // close the gap. Exact by construction: qid = lessonId:type:hash(canonical content), and the
+  // drill builds the SAME exercise shapes over the same words, so re-keying this qid's hash with
+  // each parent lesson id that contains the word yields precisely the chapter questions the
+  // learner just demonstrated. A re-keyed qid outside that lesson's universe is inert (coverage
+  // counts the intersection), so this can only credit real questions.
+  if (typeof DRILL_TOPIC !== 'undefined' && topic === DRILL_TOPIC && APP._drillPrev?.topic){
+    const parent = APP._drillPrev;
+    const pm = _solvedMap(parent.topic);
+    const norm = s => stripFuri(String(s==null?'':s)).trim().toLowerCase();
+    const hash = id.split(':').pop();
+    for (const ls of (parent.lessons || [])){
+      if (!ls || ls.id == null || ls.type === 'mixed') continue;
+      if (!(ls.vocab || []).some(v => v && norm(v.target) === norm(ex.target))) continue;
+      const pq = `${ls.id}:${ex.type}:${hash}`;
+      if (!pm[pq]){ pm[pq] = 1; changed = true; }
+    }
+  }
+  if (changed) saveProg();                  // monotonic; persist only on new solves
   return id;
 }
 // ══ Drill — "review my mistakes" (LLM-free, ephemeral) ═══════════════════════════════
@@ -10424,6 +10662,13 @@ function myStoryPayload(lang, srcLang, cap){
 // the proven-stable qid. Result is cached per (topic, lessonIdx, teacher) — invalidated when
 // the topic changes. Flagged questions are excluded (they're out of the coverage universe).
 const _qidUniverseCache = new Map();
+// v69.2: set on APP while _lessonQidUniverse is enumerating. Builders that CAP or
+// coverage-prioritize their round (buildStandardExercises) must return their FULL exercise set
+// when this is on — otherwise the denominator would be derived from coverage-biased samples and
+// could shrink below the real question set. It also makes derivation EXACT in one pass instead of
+// relying on repeated random 12-slices to eventually surface every question (which could miss rare
+// items entirely). Lives on APP, not a module-level `let`, because the unit harnesses extract
+// these functions individually — a bare identifier would throw ReferenceError there.
 function _lessonQidUniverse(lessonIdx){
   const d = APP.lessonData; if(!d) return new Set();
   const L = d.lessons?.[lessonIdx]; if(!L) return new Set();
@@ -10450,6 +10695,9 @@ function _lessonQidUniverse(lessonIdx){
   const U = prior ? new Set(prior) : new Set();
   let stable = 0;
   const NEEDED = 15, CAP = 120;
+  const _wasDeriving = APP._derivingUniverse;
+  APP._derivingUniverse = true;                   // builders: full set, no cap, no coverage bias
+  try {
   for(let r=0; r<CAP && stable<NEEDED; r++){
     let exs;
     try { exs = lessonTypeMeta(L.type).build(L, lessonIdx) || []; }
@@ -10464,6 +10712,7 @@ function _lessonQidUniverse(lessonIdx){
     }
     stable = (U.size === before) ? stable+1 : 0;
   }
+  } finally { APP._derivingUniverse = _wasDeriving; }
   _qidUniverseCache.set(cacheKey, U);
   return U;
 }
@@ -10518,10 +10767,15 @@ function coverageComplete(){
 // unsolved items. Unsolved questions are prioritized; within each bucket we still shuffle for
 // variety and keep the rated/flagged ranking (curated first, flagged last) from the original.
 // `size` caps the round; falls back gracefully when a bucket is short.
-function assembleCoverageRound(pool, size){
+function assembleCoverageRound(pool, size, unsolvedRatio){
   const topic = APP.lessonData?.topic;
   const solvedSet = topic ? _solvedMap(topic) : {};
   const N = Math.max(1, size || pool.length);
+  // v69.2: the unsolved share is a parameter. Mixed practice keeps the 0.7 blend (some review is
+  // good); a STANDARD lesson replay passes 1 — it is called when the learner is working a coverage
+  // gap, where a review slot is a wasted question. Backfill below still tops the round up from the
+  // other bucket, so a fully-solved lesson still yields a full review round at ratio 1.
+  const RATIO = (typeof unsolvedRatio === 'number') ? Math.max(0, Math.min(1, unsolvedRatio)) : 0.7;
   // Split by solved-state using each exercise's qid (resolved to its source lesson).
   const unsolved = [], review = [];
   for(const ex of pool){
@@ -10529,7 +10783,7 @@ function assembleCoverageRound(pool, size){
     (id && solvedSet[id] ? review : unsolved).push(ex);
   }
   const su = shuffle(unsolved), sr = shuffle(review);
-  const wantUnsolved = Math.round(N * 0.7);
+  const wantUnsolved = Math.round(N * RATIO);
   const takeU = Math.min(su.length, wantUnsolved);
   const takeR = Math.min(sr.length, N - takeU);
   // If review is short, backfill from remaining unsolved (coverage-first); vice-versa.
@@ -10553,12 +10807,17 @@ function _refreshRateBtn(ex){
   const btn=document.getElementById('ratebtn');
   if(btn){ btn.textContent = r?'⭐':'☆'; btn.className='flag-btn'+(r?' rated':''); btn.title = t('rating.play.title'); }
 }
+// Which MODE produced a flag/star (v68.1) — 'teacher' | 'student', keyed off teacher mode alone
+// (canGenerate is the editing axis, not the mode axis — same reasoning as _isLearner, v60.1).
+// Recorded on every new userFlag/userRating/_miscFlags/story-flag entry; fixFlagModes (server)
+// stamps pre-v68.1 flags 'teacher' (only teachers could flag back then).
+function _flagMode(){ return APP._teacherMode ? 'teacher' : 'student'; }
 async function togglePlayRating(){
   const C=APP.cur; if(!C||C.cur>=C.exercises.length) return;
   const ex=C.exercises[C.cur];
   const obj=_exFlagTarget(ex);
   if(!obj){ try{ showToast(t('rating.toast.unresolved')); }catch(_){ } return; }
-  if(obj.userRating) delete obj.userRating; else obj.userRating={ at:new Date().toISOString() };
+  if(obj.userRating) delete obj.userRating; else obj.userRating={ at:new Date().toISOString(), mode:_flagMode() };
   _refreshRateBtn(ex);
   await _persistPlayFlags();
   try{ showToast(obj.userRating?t('rating.toast.added'):t('rating.toast.removed')); }catch(_){}
@@ -10594,7 +10853,7 @@ async function savePlayFlag(){
   const ex=C.exercises[C.cur];
   const comment=(document.getElementById('flag-comment-input')?.value||'').trim();
   const correct=(document.getElementById('flag-correct-input')?.value||'').trim();
-  const flag={ comment, correct, at:new Date().toISOString() };
+  const flag={ comment, correct, at:new Date().toISOString(), mode:_flagMode() };
   const obj=_exFlagTarget(ex);
   if(obj){ obj.userFlag=flag; }
   else { const ls=APP.lessonData?.lessons?.[C.lessonIdx]; if(ls){ (ls._miscFlags=ls._miscFlags||[]).push({ ...flag, exType:ex.type, target:ex.target||ex.correct||'' }); } }
@@ -10624,7 +10883,7 @@ function toggleStoryFlag(){
   if(APP.flagged[k]){
     delete APP.flagged[k]; saveFlagged(); pushFlagToServer(k,null);
   } else {
-    const entry={topic:d.topic,type:'story',flaggedAt:new Date().toISOString()};
+    const entry={topic:d.topic,type:'story',flaggedAt:new Date().toISOString(),mode:_flagMode()};
     APP.flagged[k]=entry; saveFlagged(); pushFlagToServer(k,entry);
   }
   _updateStoryFlagUI();
@@ -10653,6 +10912,17 @@ function normDiacritics(s){
   // Normalize diacritics so é=e, ü=u, ñ=n etc. for forgiving answer evaluation
   return (s||'').replace(/ß/g,'ss').replace(/æ/g,'ae').replace(/œ/g,'oe').replace(/ø/g,'o')
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
+// v69.2 (roadmap item, user-reported 2026-07-14): a two-case script glyph ("A a") is DISPLAYED
+// with both cases but must be SPOKEN once — the TTS read both ("ay… ay"). Collapses ONLY a true
+// case pair (two whitespace-separated tokens that are case-variants of each other); digraphs,
+// multi-character glyphs and everything non-intro pass through untouched. Applied at the SPEAK
+// sites only — the builders keep producing the two-case glyph (display + qid stability + the
+// server/client intro_script parity all depend on it).
+function _glyphSpeakForm(s){
+  const parts = String(s || '').trim().split(/\s+/);
+  if (parts.length === 2 && parts[0].toLowerCase() === parts[1].toLowerCase()) return parts[0];
+  return s;
 }
 function check(){
   const C=APP.cur; if(C.answered){ C.cur++; renderEx(); return; }
@@ -10702,7 +10972,7 @@ function check(){
     fb.className='feedback ok'; fb.innerHTML=`<div class="fb-head">✅</div><div class="fb-body">${revealBody}${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakOk = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
       : ex.type==='type_plural' ? stripFuri(ex.correct)
-      : ex._intro ? stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target)   // speak the GLYPH (target voice), never the Latin romanization ("dh"→"d-h")
+      : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // the GLYPH, once (case pair collapsed), never the Latin romanization ("dh"→"d-h")
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
       : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+stripFuri(ex.plural)
       : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+stripFuri(ex.correct)
@@ -10728,7 +10998,7 @@ function check(){
     fb.className='feedback bad'; fb.innerHTML=`<div class="fb-head">${t('check.wrong')}</div><div class="fb-body">${t('check.correct_answer')} <strong>${_wrongCorrect}</strong>${(ex.type==='word_form'&&ex.explanation)?`<div style="margin-top:4px;font-size:12px;font-weight:600;opacity:.85">💡 ${escHtml(ex.explanation)}</div>`:''}</div>`;
     const speakBad = ex.type==='type_conjugation' ? ex.pronoun+' '+stripFuri(ex.correct)
       : ex.type==='type_plural' ? stripFuri(ex.correct)
-      : ex._intro ? stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target)   // glyph, not romanization
+      : ex._intro ? _glyphSpeakForm(stripFuri(ex._intro==='glyph_sound' ? ex.source : ex.target))   // glyph, once, not romanization
       : ex.type==='mcq_article'      ? ex.article+' '+stripFuri(ex.target)
       : ex.type==='mcq_plural'       ? (ex.article?ex.article+' ':'')+stripFuri(ex.plural)
       : ex.type==='mcq_conjugation'  ? ex.pronoun+' '+stripFuri(ex.correct)
@@ -10827,6 +11097,32 @@ function showComplete(review){
   // user-specific generation / milestones — see roadmap). Wrong-answered words are flagged for
   // future focus. Guarded so a failure here never breaks the result card.
   try { recordLearnedFromLesson(lesson, C._wrongTargets); } catch(_) {}
+  // v60.8: teacher-set %-solved threshold gate. Computed FIRST — the Next wiring below, the card
+  // title, the progress hint, and the drill offer all consume it. (v68.1: this block lived BELOW
+  // the v66.1 Next wiring that reads `_belowThreshold` — a temporal-dead-zone ReferenceError, so
+  // EVERY completion crashed before the card was wired: the learner froze on the last question,
+  // and a review render left the lesson-set page showing. It also tested `d.topic`, but no `d`
+  // exists in this function — swallowed by the try/catch, so the gate silently never fired.)
+  const _teacher = !!APP._teacherMode;
+  let _belowThreshold = false, _threshPct = 100;
+  try {
+    if (!_teacher && !lesson._drill && APP.lessonData?.topic === topicKey){
+      const tgt = _coverageTarget();
+      _threshPct = Math.round(tgt * 100);
+      // v69.1: a MIXED-driven set completes by coverage at ANY target (setComplete/
+      // coverageComplete) — including the default 1.0 — so "below threshold" must fire there
+      // too, or a one-pass mixed round with errors would just replay instead of routing into the
+      // drill (the requested flow: mixed once, then the drill closes the gap; markSolved's drill
+      // credit-back makes the drill actually raise this chapter's coverage). Classic sets keep
+      // the tgt<1 no-op: their completion is lesson booleans, not coverage (v60.8).
+      const _mixedDrv = (APP.lessonData.lessons || []).some(x => x && x.type === 'mixed' && !x._hidden);
+      if (tgt < 1 || _mixedDrv){
+        const cov = topicCoverage();
+        _belowThreshold = cov.total > 0 && (cov.solved / cov.total) < tgt;
+      }
+    }
+  } catch(_) {}
+
   // ── v60 completion card: Next + Back, progress summary, full story on unlock ──
   // "Next" opens the next questions directly (no lesson-set page for learners): the next
   // unfinished lesson in THIS chapter, else the first unfinished lesson of the NEXT chapter in
@@ -10869,12 +11165,57 @@ function showComplete(review){
     return null;
   };
 
-  if (nextLessonIdx >= 0 && !lesson._drill) {
+  // v66.1: ENFORCE the pass mark. Previously a learner who had played every lesson but was below
+  // the threshold still got "Next" → next chapter, because _firstUnfinishedLessonIdx returns -1 once
+  // every lesson has a done-flag. The chapter was correctly marked incomplete, but nothing stopped
+  // them leaving. Now Next becomes "practise your mistakes" and the chapter cannot be left until
+  // the required percentage is reached.
+  if (lesson._drill) {
+    // v69.2 (user-reported dead end): the drill card had NO forward affordance at all — every Next
+    // branch below excludes `_drill`, and Back is hidden for drills ("a drill returns via Next"
+    // was never actually wired). Masked until v69 because the TDZ crash killed every completion
+    // card before it rendered; un-crashed, the drill dead-ended on an almost-empty card. Next now
+    // returns to the LAUNCHING chapter: straight into its remaining questions when a resume target
+    // exists, else its completion/review card — which then shows the right affordance (drill
+    // again, coverage replay, next chapter, or done).
+    compNext.textContent = t('complete.next');
+    compNext.style.display = '';
+    compNext.onclick = () => {
+      endDrill();
+      const idx = _firstUnfinishedLessonIdx(APP.lessonData);
+      if (idx >= 0) startLesson(idx); else showComplete(true);
+    };
+  } else if (nextLessonIdx >= 0 && !lesson._drill) {
     // Next lesson in this chapter — start it directly (learners never see the lesson-set page).
     compNext.textContent = t('complete.next');
     compNext.style.display = '';
     compNext.onclick = () => { endDrill(); startLesson(nextLessonIdx); };
-  } else if (!lesson._drill && _nextChapter()) {
+  } else if (_belowThreshold && !lesson._drill && _firstCoverageShortLessonIdx() >= 0) {
+    // v69.2 (user-reported, the second half of the same dead end): below threshold with NO drill
+    // available. A SUCCESSFUL drill walks the wrong-counts back down (recordLearnedFromLesson's
+    // decrement), so drillAvailable goes false while coverage can still be short (10/34 in the
+    // report) — and a CLASSIC chapter then had no way up: no drill CTA, no Next (review renders
+    // with nextLessonIdx = -1). The only way up for a classic set is REPLAYING — rounds re-sample
+    // on every play, so fresh questions advance coverage. Resume the first counted lesson whose
+    // own coverage is still short.
+    const _covIdx = _firstCoverageShortLessonIdx();
+    compNext.textContent = t('complete.next');
+    compNext.style.display = '';
+    compNext.onclick = () => { startLesson(_covIdx); };
+  } else if (_belowThreshold && !lesson._drill && drillAvailable(APP.lessonData?.lang || APP.lang, APP.lessonData?.srcLang || APP.srcLang)) {
+    // v69.2 (user-reported, third stuck report): the drill used to be the FIRST below-threshold
+    // branch, so while any wrong word remained, Next was ALWAYS "practise your mistakes" — and the
+    // drill can only ever re-ask the vocab words you got wrong, never the sentence questions in
+    // the coverage universe. Result: card → drill → card → drill forever, with coverage plateaued
+    // ("the drill doesn't really help to get beyond the threshold"). The drill is ALSO offered as
+    // its own #comp-drill button whenever it is available, so Next duplicating it bought nothing.
+    // Now Next carries PROGRESS (next lesson, else the coverage replay) and the drill is the
+    // last-resort Next only when there is nothing left to play or replay. v66.1's rule is intact:
+    // no branch below the mark advances to the next chapter.
+    compNext.textContent = t('drill.cta');
+    compNext.style.display = '';
+    compNext.onclick = () => { startDrill(); };
+  } else if (!lesson._drill && !_belowThreshold && _nextChapter()) {
     // Chapter finished → carry straight into the next chapter's first unfinished lesson.
     const ch = _nextChapter();
     compNext.textContent = t('complete.next');
@@ -10895,21 +11236,7 @@ function showComplete(review){
     backBtn.style.display = lesson._drill ? 'none' : '';   // a drill returns via Next/afterComplete
   }
 
-  // v60.8: teacher-set %-solved threshold gate. Compute BEFORE the progress render so the card
-  // title, the progress hint, and the drill offer all agree. Below threshold on the active topic
-  // (learner only, non-drill) → chapter stays incomplete, drill is the way up.
-  const _teacher = !!APP._teacherMode;
-  let _belowThreshold = false, _threshPct = 100;
-  try {
-    if (!_teacher && !lesson._drill && d.topic === APP.lessonData?.topic){
-      const tgt = _coverageTarget();
-      _threshPct = Math.round(tgt * 100);
-      if (tgt < 1){
-        const cov = topicCoverage();
-        _belowThreshold = cov.total > 0 && (cov.solved / cov.total) < tgt;
-      }
-    }
-  } catch(_) {}
+  // (v60.8 threshold gate: computed at the top of the card — see above the Next wiring.)
   // Title reflects the gate: below threshold it's not a "complete" celebration but a "keep going".
   const _titleEl = el('comp-title');
   if (_titleEl) _titleEl.textContent = _belowThreshold ? t('complete.keep_going') : t('complete.title');

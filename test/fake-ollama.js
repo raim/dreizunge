@@ -94,6 +94,24 @@ const srv = http.createServer(async (req, res) => {
     } else if (/Reply EXACTLY one of/i.test(sys)) {
       // QC pair-check: flag the source side with a fixed correction (deterministic).
       kind = 'qc'; content = 'S: KORRIGIERT';
+    } else if (/storyboard panels|illustrator for a language-learning storybook/i.test(sys)) {
+      // v68.1: storyline storyboard — a minimal VALID panel array (composeStoryboardSVG validates
+      // shape types, palette names, and 0-100 coordinates; anything else is discarded).
+      kind = 'storyboard';
+      content = JSON.stringify([
+        { caption: 'A fake beginning', chapter: 1, bg: 'sky',
+          shapes: [ { type: 'rect', x: 0, y: 60, w: 100, h: 40, fill: 'leaf' },
+                    { type: 'circle', cx: 30, cy: 30, r: 10, fill: 'sun' },
+                    { type: 'rect', x: 55, y: 40, w: 20, h: 25, fill: 'earth' },
+                    { type: 'polygon', points: [[55,40],[65,28],[75,40]], fill: 'rose' },
+                    { type: 'line', x1: 10, y1: 90, x2: 90, y2: 90, stroke: 'ink', sw: 2 } ] },
+        { caption: 'A fake ending', chapter: 2, bg: 'night',
+          shapes: [ { type: 'rect', x: 0, y: 70, w: 100, h: 30, fill: 'stone' },
+                    { type: 'circle', cx: 70, cy: 20, r: 8, fill: 'white' },
+                    { type: 'ellipse', cx: 40, cy: 80, rx: 12, ry: 6, fill: 'water' },
+                    { type: 'polyline', points: [[20,60],[30,50],[40,60]], stroke: 'ink', sw: 2 },
+                    { type: 'rect', x: 60, y: 55, w: 18, h: 20, fill: 'earth' } ] },
+      ]);
     } else if (/synonyms[\s\S]*antonyms[\s\S]*homophones/i.test(sys)) {
       // synonyms: base words appear in the fake story so context-sentence attach works.
       kind = 'synonyms';

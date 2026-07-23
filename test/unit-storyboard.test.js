@@ -341,4 +341,26 @@ for (const n of Object.keys(SCHEMES)) {
     `the client does not hardcode scheme '${n}'`);
 }
 console.log(`  storyboard schemes: ${Object.keys(SCHEMES).join(', ')} — key parity, own colours, fallback, free re-colour: OK`);
+
+// ── v68.1: book jobs end with a storyboard, via a helper SHARED with the route ─────────────────
+// The queued v68 item. The route's generate-and-persist body was extracted into
+// _storyboardForStoryline so the manual 🎨 route and the automatic book post-pass cannot drift
+// (majority-style derivation, panel persistence, token metering — one implementation).
+{
+  assert.ok(/async function _storyboardForStoryline\(slId, topicData, scheme\)/.test(server),
+    'the shared generate-and-persist helper exists');
+  const helper = server.slice(server.indexOf('async function _storyboardForStoryline('));
+  assert.ok(/_styleCounts/.test(helper.slice(0, 1600)), 'the v55_r majority-style derivation lives in the helper');
+  // Both callers delegate — and neither re-implements the persist block.
+  const postRoute = server.slice(server.indexOf("M === 'POST' && url.pathname === '/api/storyline-storyboard'"),
+                                 server.indexOf("url.pathname === '/api/storyline-storyboard/scheme'"));
+  assert.ok(/_storyboardForStoryline\(slId, topicData, scheme\)/.test(postRoute), 'the 🎨 route delegates to the helper');
+  assert.ok(!/sl\.storyboardPanels = panels/.test(postRoute), 'the route no longer persists inline (helper owns it)');
+  const bookTail = server.slice(server.indexOf('Storyboard post-pass (v68.1'), server.indexOf('Storyboard post-pass (v68.1') + 1600);
+  assert.ok(/_storyboardForStoryline\(sl\.id, topicData, null\)/.test(bookTail), 'the book post-pass delegates to the helper');
+  assert.ok(/sl && !sl\.storyboard/.test(bookTail), 'the post-pass never overwrites an existing board');
+  assert.ok(/catch \(e\) \{ console\.warn\(`  \[book \$\{bookId\}\] storyboard post-pass error/.test(server),
+    'the post-pass is best-effort — a board failure never fails the book');
+}
+console.log('  book-job storyboard post-pass: shared helper, no-overwrite, best-effort: OK');
 console.log('unit-storyboard: ALL PASSED');

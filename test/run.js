@@ -103,6 +103,12 @@ run('unit: persistent tutor widget (v62)', 'node', [path.join(__dirname, 'unit-t
 run('unit: tutor retrieval — spoiler-safe + scoped (v62)', 'node', [path.join(__dirname, 'unit-tutor-retrieval.test.js')]);
 run('unit: tutor streaming replies (v64)', 'node', [path.join(__dirname, 'unit-tutor-streaming.test.js')]);
 run('unit: learner accounts + server-side state (v65)', 'node', [path.join(__dirname, 'unit-learners.test.js')]);
+run('unit: lesson-id integrity (v67.1)', 'node', [path.join(__dirname, 'unit-lesson-id-integrity.test.js')]);
+run('unit: provenance-stamp source heal (v68.1)', 'node', [path.join(__dirname, 'unit-meta-source-heal.test.js')]);
+run('unit: student-mode flagging + flag-mode stamps (v68.1)', 'node', [path.join(__dirname, 'unit-student-flags.test.js')]);
+run('unit: deterministic PDF/text-upload cleanup (v68.1)', 'node', [path.join(__dirname, 'unit-pdf-cleanup.test.js')]);
+run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);
+run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);
 run('unit: learned-vocab ledger + my-story wiring (v50)', 'node', [path.join(__dirname, 'unit-learned-vocab.test.js')]);
@@ -134,6 +140,7 @@ if (!quick) {
   run('e2e: userPrompt stores full input', 'node', [path.join(__dirname, 'e2e-userprompt.test.js')]);
   run('e2e: dialect glossary import (M1)', 'node', [path.join(__dirname, 'e2e-dialect-import.test.js')]);
   run('e2e: bookjob continuation + arc lessons', 'node', [path.join(__dirname, 'e2e-bookjob.test.js')]);
+  run('e2e: book formats — picker/route parity incl. all_types (v68.1)', 'node', [path.join(__dirname, 'e2e-book-formats.test.js')]);
   run('e2e: book topic not truncated', 'node', [path.join(__dirname, 'e2e-booktopic.test.js')]);
   run('e2e: ui.json hot-reload', 'node', [path.join(__dirname, 'e2e-ui-reload.test.js')]);
   run('e2e: upload filename stored on storyline', 'node', [path.join(__dirname, 'e2e-bookfile.test.js')]);

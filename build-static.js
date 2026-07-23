@@ -49,6 +49,13 @@ let lessonsData;
 try { lessonsData = JSON.parse(fs.readFileSync(lessonsFile, 'utf8')); }
 catch(e) { console.error('Error: could not parse', lessonsFile, '—', e.message); process.exit(1); }
 
+// v69.2 (user-reported): the teacher's global pass mark lives in the store's settings and is
+// served live via /api/info — the static build never baked it, so _coverageTarget() fell back to
+// 1 and a below-mark classic chapter showed neither "keep going" nor the drill in static (the
+// reported live/static drill divergence). Bake it into the static APP.info like the version.
+const COVERAGE_THRESHOLD = (lessonsData.settings && typeof lessonsData.settings.coverageThreshold === 'number')
+  ? Math.max(0, Math.min(1, lessonsData.settings.coverageThreshold)) : 1;
+
 // Support v29 schema (topics[]) and legacy (lessons[])
 const _allTopics = (lessonsData.schemaVersion >= 29 && Array.isArray(lessonsData.topics))
   ? lessonsData.topics : lessonsData.lessons;
@@ -231,7 +238,7 @@ function repopulateContinueSelect(){
 
 
 async function init() {
-  APP.info = { backend: 'none', canGenerate: false, version: '${APP_VERSION}' };
+  APP.info = { backend: 'none', canGenerate: false, version: '${APP_VERSION}', coverageThreshold: ${COVERAGE_THRESHOLD} };
   { const _v=document.getElementById('app-tagline'); if(_v) _v.title='${APP_VERSION}'; }
   try { APP._teacherMode = (localStorage.getItem('dz_teacher_mode') === '1'); } catch (_) { APP._teacherMode = false; }  // remembered across reloads
   // Show teacher mode bar (static only)
@@ -341,7 +348,7 @@ function renderPill() {
   if(styleWrap) styleWrap.style.opacity='0.4';
 }
 
-function itemHtml(s, connector) {
+function itemHtml(s, connector, hideStory, hideProv) {
   const enc=encTopic(s.topic);
   const d=s.difficulty||2;
   const diff={1:'Beginner',2:'Intermediate',3:'Advanced'}[d]||'';
@@ -362,7 +369,7 @@ function itemHtml(s, connector) {
       <div class="saved-info">
         <div class="saved-topic">\${s.topic} \${diffBadge}</div>
         <div class="saved-meta"><span class=\"lang-pair-badge\" title=\"\${srcL.name} → \${tL.name}\">\${srcL.flag}→\${tL.flag}</span> \${count} lesson\${count!==1?'s':''} · \${date}\${ratingStr}</div>
-        \${provLineHtml(s)}
+        \${hideProv ? '' : provLineHtml(s)}
       </div>
       <div class="saved-actions" onclick="event.stopPropagation()">
         <button class="ico-btn export" title="Export lesson with flags"
@@ -382,8 +389,11 @@ function itemHtml(s, connector) {
     </div>
   </div>\`;
 }
-// Alias for live-server compatibility
-function savedItemHtml(s, connector) { return itemHtml(s, connector); }
+// Alias for live-server compatibility. MUST forward every argument: the storyline screen's
+// _renderChain is INHERITED from index.html and calls savedItemHtml(s, false, true, true) — a
+// 2-arg alias silently dropped hideProv, so static chapter cards kept the provenance line the
+// live build had already dropped (v69.2c parity bug, caught by the built-artifact assertion).
+function savedItemHtml(s, connector, hideStory, hideProv) { return itemHtml(s, connector, hideStory, hideProv); }
 
 async function loadSavedList() {
   // Seed storylines: baked-in titles + localStorage overrides
@@ -581,8 +591,14 @@ async function loadSaved(ref) {
   // (In the static build _teacherMode defaults to false, so this is the normal path.)
   if(typeof _isLearner==='function' && _isLearner()){
     const idx=_firstUnfinishedLessonIdx(APP.lessonData);
-    if(idx>=0) startLesson(idx);
-    else showComplete(true);   // already complete → review card, not the lesson-set page
+    // v68.1 (parity with the live loadSaved): startLesson returns false when it could not take
+    // over the screen — a learner must never be left on the lesson-set page goLessonSet rendered.
+    const started = idx>=0 ? (startLesson(idx) !== false) : (showComplete(true), true);
+    if(!started){
+      const ctx=_storylineForTopic(APP.lessonData?.topic);
+      if(ctx && ctx.sl) openStorylineScreen(ctx.sl.id, ctx.enc);
+      else goLandingClean();
+    }
   }
 }
 

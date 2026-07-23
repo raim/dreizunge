@@ -117,7 +117,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v66';
+const APP_VERSION  = 'v69_c';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -134,13 +134,19 @@ const OLLAMA_HOST    = process.env.OLLAMA_HOST    || 'http://localhost:11434';
 // switch models from the UI without restarting the server. They default from env at startup and
 // are read LIVE at every call site (all ~60 reads), so an override takes effect on the next
 // generation. Declared `let`, not `const`, for exactly that reason.
-let OLLAMA_MODEL             = process.env.OLLAMA_MODEL             || 'qwen2.5:7b';
+let OLLAMA_MODEL             = process.env.OLLAMA_MODEL             || 'qwen3.6:35b-a3b';   // v67.1 default
 let OLLAMA_TRANSLATION_MODEL = process.env.OLLAMA_TRANSLATION_MODEL || OLLAMA_MODEL;
 let OLLAMA_LESSON_MODEL      = process.env.OLLAMA_LESSON_MODEL      || OLLAMA_MODEL;
 // QC (source/target verification) is its own role. It defaults to the translation model (QC is a
 // translation-faithfulness check), but is independently settable so you can, e.g., run the story
 // translation on qwen while QC-checking Lëtzebuergesch pairs on translategemma.
-let OLLAMA_QC_MODEL          = process.env.OLLAMA_QC_MODEL          || OLLAMA_TRANSLATION_MODEL;
+// v67.1: QC defaults to a dedicated translation-checking model rather than inheriting the story
+// model — QC is a translation-faithfulness check, and a large reasoning model is both slower and
+// (with thinking off, as QC requires) no better at it.
+// If OLLAMA_MODEL is set explicitly, honour the long-standing "one model for everything" override
+// and let QC follow it; otherwise use the dedicated checker as the out-of-the-box default.
+let OLLAMA_QC_MODEL          = process.env.OLLAMA_QC_MODEL
+                               || (process.env.OLLAMA_MODEL ? OLLAMA_TRANSLATION_MODEL : 'translategemma:12b');
 // Tutor (v61): the conversational end-of-chapter comprehension tutor. Its own role — a chat model
 // is a different job from lesson JSON generation — defaulting to the story model (both produce
 // natural-language prose). Independently settable in the model menu.
@@ -320,19 +326,113 @@ async function ensureUIForLang(lang) {
 
 let store = loadStore();
 
-// Assign IDs to any lessons missing them
-(function fixNullLessonIds() {
+// Assign IDs to any lessons missing them, AND de-duplicate IDs within a topic.
+//
+// v67.1 — this was a real, widespread corruption: learner progress is keyed by lesson id
+// (`progress.completed[topic][lesson.id]`), so two lessons sharing an id inside one topic means
+// finishing one marks the other done. The reported symptom was exactly that — "clicking Next just
+// opens result cards of lessons I haven't solved", and a chapter that could never be completed
+// properly. 90 of 278 topics in a real library were affected.
+//
+// Two causes, both fixed here:
+//   1. the old backfill only filled MISSING ids and never checked for collisions;
+//   2. its hash was derived from topic+type+'auto', so two lessons of the SAME type in one topic
+//      were guaranteed to collide.
+// The replacement is index- and content-aware and verifies uniqueness before assigning.
+//
+// Renaming a duplicate orphans any progress recorded against the collided id. That is the right
+// trade: the collided state was already wrong (it credited lessons the learner never played), so
+// a small, honest reset beats silently keeping bogus completions.
+(function fixLessonIds() {
   const arr = store.schemaVersion >= 29 ? (store.topics||[]) : (store.lessons||[]);
-  let fixed = 0;
+  let assigned = 0, deduped = 0;
   arr.forEach(topic => {
-    (topic.lessons||[]).forEach(ls => {
-      if (!ls.id) {
-        ls.id = 'ls_' + Math.abs((topic.topic+ls.type+'auto').split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
-        fixed++;
+    const seen = new Set();
+    (topic.lessons||[]).forEach((ls, i) => {
+      const mkId = (n) => 'ls_' + Math.abs(
+        (topic.topic + '|' + (ls.type||'vocab') + '|' + i + '|' + n)
+          .split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0, 0));
+      if (!ls.id) { ls.id = mkId(0); assigned++; }
+      else if (seen.has(String(ls.id))) {
+        let n = 1, cand = mkId(n);
+        while (seen.has(cand)) cand = mkId(++n);      // vanishingly unlikely, but bounded
+        ls.id = cand; deduped++;
       }
+      seen.add(String(ls.id));
     });
   });
-  if (fixed > 0) { saveStore(store); console.log(`  Assigned IDs to ${fixed} lesson(s) missing them`); }
+  if (assigned || deduped) {
+    saveStore(store);
+    if (assigned) console.log(`  Assigned IDs to ${assigned} lesson(s) missing them`);
+    if (deduped)  console.log(`  ⚠ Repaired ${deduped} DUPLICATE lesson id(s) — progress for those lessons resets (it was colliding)`);
+  }
+})();
+
+// Heal provenance stamps written live before v68.1: the live server stamped model/origin/tokens on
+// storyMeta/translationMeta but never `source`, so the "every stamp records where its value came
+// from" invariant (unit-story-stamp §7, unit-translation-stamp §4) only held for the one-time
+// backfilled corpus — the first live generation broke the suite. Backfill-provenance.js ALWAYS sets
+// `source`, so a missing `source` provably means "written by the live server at generation time",
+// and 'recorded at generation' is the accurate label for such rows. Idempotent; runs on every boot
+// so a library that skipped this release still heals.
+(function fixMetaSource() {
+  if (store.schemaVersion < 29) return;
+  let healed = 0, refined = 0;
+  // v68.1b — the pre-v68.1 live stamp also wrote origin 'user-provided', which is not in the corpus
+  // origin vocabulary (['generated','dialect-rewrite','file-upload','user-pasted','unknown']); only
+  // upload post-passes refined it away, so a persisted PASTED story kept it. Classify exactly the
+  // way backfill-provenance.js did: chapter of a sourceFile storyline → 'file-upload' (+sourceFile),
+  // otherwise → 'user-pasted'. Guarded on the '(user-provided)' model sentinel so an (unreachable)
+  // model-authored row is never relabelled as an upload.
+  const slByTopic = {};
+  (store.storylines || []).forEach(sl => (sl.chapters || []).forEach(id => { slByTopic[id] = sl; }));
+  (store.topics || []).forEach(t => {
+    const sm = t.storyMeta;
+    if (sm && sm.origin === 'user-provided' && sm.model === '(user-provided)') {
+      const sl = slByTopic[t.id];
+      if (sl && sl.sourceFile) {
+        sm.origin = 'file-upload';
+        if (!sm.sourceFile) sm.sourceFile = String(sl.sourceFile).slice(0, 200);
+      } else {
+        sm.origin = 'user-pasted';
+      }
+      refined++;
+    }
+    for (const k of ['storyMeta', 'translationMeta']) {
+      if (t[k] && !t[k].source) { t[k].source = 'recorded at generation'; healed++; }
+    }
+  });
+  if (healed || refined) {
+    saveStore(store);
+    if (healed)  console.log(`  Healed ${healed} provenance stamp(s) missing \`source\` (pre-v68.1 live writes)`);
+    if (refined) console.log(`  Refined ${refined} legacy 'user-provided' story origin(s) → upload/pasted (pre-v68.1 live writes)`);
+  }
+})();
+
+// Stamp pre-v68.1 flags/stars with the mode that produced them (v68.1). Student-mode flagging
+// ships in v68.1; every flag/rating recorded before it could only have come from a teacher (the
+// play UI was _canEdit-gated and the editor is a teacher surface), so a missing `mode` provably
+// means 'teacher'. New writes always stamp mode ('teacher'|'student') client-side; this heal makes
+// the field universal so consumers never need a fallback. Covers item-level userFlag/userRating,
+// lesson _miscFlags, and story-flag entries in the flags store. Idempotent; runs on every boot.
+(function fixFlagModes() {
+  if (store.schemaVersion < 29) return;
+  let stamped = 0;
+  const ITEM_ARRAYS = ['vocab', 'sentences', 'items', 'words', 'letters', 'grammar', 'conjugations'];
+  (store.topics || []).forEach(t => (t.lessons || []).forEach(ls => {
+    for (const k of ITEM_ARRAYS) (ls[k] || []).forEach(it => {
+      if (it && it.userFlag && !it.userFlag.mode)     { it.userFlag.mode = 'teacher';   stamped++; }
+      if (it && it.userRating && !it.userRating.mode) { it.userRating.mode = 'teacher'; stamped++; }
+    });
+    (ls._miscFlags || []).forEach(f => { if (f && !f.mode) { f.mode = 'teacher'; stamped++; } });
+  }));
+  Object.values(store.flags || {}).forEach(f => {
+    if (f && typeof f === 'object' && !f.mode) { f.mode = 'teacher'; stamped++; }
+  });
+  if (stamped) {
+    saveStore(store);
+    console.log(`  Stamped ${stamped} pre-v68.1 flag(s)/star(s) with mode 'teacher'`);
+  }
 })();
 
 // ── v41 Topic-ID data check ───────────────────────────────────────────
@@ -622,8 +722,20 @@ function tutorRetrieveContext(opts) {
 
   // Scope narrowing: a storyline question only looks at that storyline's chapters.
   let pool = topics;
-  if (scope.kind === 'storyline' && scope.storylineId) {
-    const sl = findStoryline(scope.storylineId);
+  // v66.1: narrow to a single storyline for storyline scope AND for chapter/lesson scope — a
+  // question asked while reading chapter 3 is about THAT arc, not a same-language story from months
+  // ago. Previously only 'storyline' narrowed, so chapter/lesson questions searched the whole
+  // library and could answer with an unrelated story (reported).
+  let slId = scope.storylineId || null;
+  if (!slId && scope.topic) {
+    const cur = (store.topics || []).find(t => t.topic === scope.topic);
+    if (cur) {
+      const owner = getStorylines().find(x => (x.chapters || []).includes(cur.id));
+      if (owner) slId = owner.id;
+    }
+  }
+  if (slId) {
+    const sl = findStoryline(slId);
     if (sl) {
       const ids = new Set(sl.chapters || []);
       const inSl = topics.filter(t => ids.has(t.id));
@@ -959,11 +1071,31 @@ function callLLMTranslation(system, userMsg, maxTokens, opts) {
 function callLLMQC(system, userMsg, maxTokens, opts) {
   return _callLLM(OLLAMA_QC_MODEL, system, userMsg, maxTokens, opts);
 }
+// v66.1: the tutor is handed a "Student: / Tutor:" transcript, so a model will happily continue
+// BOTH sides and invent the learner's answers (reported). Three defences, weakest to strongest:
+// the prompt forbids it, stop-sequences cut generation at a student marker, and this sanitizer
+// truncates anything that still slips through. Only the sanitizer is a guarantee.
+const _TUTOR_STOP = ['\nStudent:', '\nSTUDENT:', '\nStudent :', '\nLearner:', '\nSchüler:'];
+function sanitizeTutorReply(text) {
+  let out = String(text || '');
+  // Cut at the first point the model starts speaking for the learner (or re-labels itself).
+  const markers = [/\n\s*Student\s*:/i, /\n\s*STUDENT\s*:/, /\n\s*Learner\s*:/i,
+                   /\n\s*Sch(ü|ue)ler\s*:/i, /\n\s*Tutor\s*:/i, /\n\s*Studente\s*:/i,
+                   /\n\s*Élève\s*:/i, /\n\s*Alumno\s*:/i];
+  for (const re of markers) {
+    const m = out.match(re);
+    if (m && m.index >= 0) out = out.slice(0, m.index);
+  }
+  // A leading self-label ("Tutor: …") is noise, not content.
+  out = out.replace(/^\s*(Tutor|TUTOR)\s*:\s*/, '');
+  return out.trim();
+}
+
 // Tutor (v61): conversational comprehension tutor. Honors the tutor reasoning toggle (thinkOpts),
 // so a reasoning model gets think:true + bumped budget/timeout when the teacher enables it.
 function callLLMTutor(system, userMsg, maxTokens, opts) {
   const pol = thinkOpts('tutor', maxTokens);
-  return _callLLM(OLLAMA_TUTOR_MODEL, system, userMsg, pol.tokens, { ...pol, ...opts });
+  return _callLLM(OLLAMA_TUTOR_MODEL, system, userMsg, pol.tokens, { stop: _TUTOR_STOP, ...pol, ...opts });
 }
 // v64: streaming variant for the tutor chat only. Same role + reasoning policy; deliberately NOT
 // routed through the v59 metering wrapper (that wraps the whole-reply _callLLM and every other
@@ -971,7 +1103,7 @@ function callLLMTutor(system, userMsg, maxTokens, opts) {
 // reports the final counts itself.
 function callLLMTutorStream(system, userMsg, maxTokens, opts, onDelta) {
   const pol = thinkOpts('tutor', maxTokens);
-  return _rawCallLLMStream(OLLAMA_TUTOR_MODEL, system, userMsg, pol.tokens, { ...pol, ...opts }, onDelta);
+  return _rawCallLLMStream(OLLAMA_TUTOR_MODEL, system, userMsg, pol.tokens, { stop: _TUTOR_STOP, ...pol, ...opts }, onDelta);
 }
 
 // ── QC: verify source/target pairs with the translation model ─────────────
@@ -2220,6 +2352,33 @@ async function generateStorylineStoryboard(topics, stories, srcLang, opts) {
   return { svg, panels, scheme, meta };
 }
 
+// Shared by the /api/storyline-storyboard route and the book-job storyboard post-pass (v68.1) so
+// the two callers cannot drift: derives the majority story style across the chapters (v55_r — the
+// board should match how the story READS; ties → the first chapter's, all-unstyled → null),
+// generates the board, and persists svg + meta + panels + scheme (+ metered tokens, v59) on the
+// storyline when it exists. Returns { storyboard, scheme }.
+async function _storyboardForStoryline(slId, topicData, scheme) {
+  const stories = topicData.map(t => t.story || '');
+  const srcLang = topicData[0].srcLang || 'en';
+  const _styleCounts = {};
+  for (const t of topicData) if (t.storyStyle) _styleCounts[t.storyStyle] = (_styleCounts[t.storyStyle] || 0) + 1;
+  const storyStyle = Object.keys(_styleCounts).sort((a, b) =>
+    (_styleCounts[b] - _styleCounts[a]) || 0)[0] || null;
+  const { result: { svg: storyboard, panels, scheme: usedScheme, meta: storyboardMeta }, tokens: _mTok } =
+    await meterLLMTokens(() => generateStorylineStoryboard(topicData.map(t => t.topic), stories, srcLang,
+      { storyStyle, scheme: Object.prototype.hasOwnProperty.call(STORYBOARD_SCHEMES, scheme) ? scheme : STORYBOARD_SCHEME_DEFAULT,
+        slId, slTitle: (findStoryline(slId) || {}).title || null }));
+  const sl = findStoryline(slId);
+  if (sl) {
+    addTokenUsage(sl, _mTok, 'storyboard');   // storyline-level artefact (v59)
+    sl.storyboard = storyboard; sl.storyboardMeta = storyboardMeta;
+    sl.storyboardPanels = panels;      // kept so a scheme change needs no model call
+    sl.storyboardScheme = usedScheme;
+    upsertStoryline(sl);
+  }
+  return { storyboard, scheme: usedScheme };
+}
+
 // Generate coherent per-chapter titles + emojis for a whole storyline at once,
 // so they read as a set. Returns an array of { title, emoji } (length = stories.length).
 async function generateChapterMeta(stories, srcLang, lang) {
@@ -2611,7 +2770,14 @@ async function generateErrorHunt(story, lang, difficulty, jobId, priorVocab) {
     ? `\n\nPREFER errors on these words where they appear: ${priorVocab.slice(0,20).map(v=>v.target).join(', ')}`
     : '';
   const userMsg = `Here is the ${langName(lang)} story:\n\n${story}\n\nReturn the corrupted story now.${priorHint}`;
-  const { text: corrupted, promptTokens, completionTokens } = await _callLLM(OLLAMA_MODEL, sys, userMsg, story.length * 2);
+  // v68.1: same treatment as the other reasoning-model failures (v55_c/v60.5/v65.1) — corrupting
+  // the story is a verbatim rewrite, not a reasoning task. With `think` unspecified a reasoning
+  // model burned the token budget inside <think>, and the story-length rewrite then overran the
+  // request timeout — the reported "add error-hunt lesson times out". The timeout gets the same
+  // multiplier reasoning would (the OUTPUT is story-length either way, the longest of any lesson).
+  const { text: corrupted, promptTokens, completionTokens } = await _callLLM(
+    OLLAMA_MODEL, sys, userMsg, story.length * 2,
+    { think: false, timeoutMs: Math.ceil(getRequestTimeout() * THINK_TIMEOUT_MULT) });
   const corruptedStory = corrupted.trim();
   if (!corruptedStory || corruptedStory.length < story.length * 0.5)
     throw new Error('Error-hunt: model returned too short a response');
@@ -3266,10 +3432,12 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     story = userStory.trim();
     storyPrompt = userTranslation ? 'User-provided story + translation' : 'User-provided story';
     // `model` says WHO wrote the text (nobody — the user supplied it). `origin` says WHERE it came
-    // from. Coarse here because a chapter is saved before the storyline's sourceFile is known; the
-    // post-pass below refines 'user-provided' → 'file-upload' once it is.
+    // from. Stamped 'user-pasted' (v68.1: was the out-of-vocabulary 'user-provided', which broke the
+    // corpus invariant on the first pasted story) because a chapter is saved before the storyline's
+    // sourceFile is known; the post-pass below refines 'user-pasted' → 'file-upload' once it is.
     _storyMeta = buildGenMeta({ type: 'story', model: '(user-provided)', valid: story ? 1 : 0 });
-    _storyMeta.origin = 'user-provided';
+    _storyMeta.origin = 'user-pasted';
+    _storyMeta.source = 'recorded at generation';
     console.log(`    Using user-provided story (${story.length} chars)${userTranslation?' + translation':''}${userDialect?', dialect: '+userDialect:''}`);
   } else {
     const prevStoryFull = (parentTopic && parentTopic.story) ? parentTopic.story
@@ -3326,6 +3494,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       _storyMeta = buildGenMeta({ type: 'story', model: OLLAMA_MODEL, t0, valid: story ? 1 : 0,
         promptTokens, completionTokens });
       _storyMeta.origin = 'generated';
+      _storyMeta.source = 'recorded at generation';
       storyPrompt = storySystem + '\n\n' + storyUserMsg;
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
       console.log(`    [${OLLAMA_MODEL}] Story (${lang}, ~${storyLen}w): ${Date.now()-t0}ms, ${story.length} chars`);
@@ -3357,6 +3526,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       _translationMeta = buildGenMeta({ type: 'translation', model: OLLAMA_TRANSLATION_MODEL, t0,
         valid: storyTranslation ? 1 : 0, promptTokens, completionTokens });
       _translationMeta.origin = 'generated';
+      _translationMeta.source = 'recorded at generation';
       totalPromptTokens += promptTokens; totalCompletionTokens += completionTokens;
       console.log(`    [${OLLAMA_TRANSLATION_MODEL}] Translation (${lang}→${srcLang}): ${Date.now()-t0}ms, ${storyTranslation.length} chars`);
     } catch(e) {
@@ -3365,6 +3535,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
       // Distinguish a FAILED attempt from one never attempted (both leave storyTranslation null).
       _translationMeta = buildGenMeta({ type: 'translation', model: '(none)', valid: 0 });
       _translationMeta.origin = 'failed';
+      _translationMeta.source = 'recorded at generation';
     }
   }
 
@@ -3376,11 +3547,13 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
     _translationMeta = buildGenMeta({ type: 'translation', model: '(user-provided)',
       valid: storyTranslation ? 1 : 0 });
     _translationMeta.origin = 'user-provided';
+    _translationMeta.source = 'recorded at generation';
   } else if (!_translationMeta && story && OLLAMA_TRANSLATION_MODEL === OLLAMA_MODEL) {
     // No separate translation call: the story model IS the translation model, so the
     // source-language side (when present) came from the story model, not a distinct pass.
     _translationMeta = buildGenMeta({ type: 'translation', model: '(none)', valid: 0 });
     _translationMeta.origin = 'skipped-same-model';
+    _translationMeta.source = 'recorded at generation';
   }
   // Otherwise (_translationMeta stays null): no story, or no translation of any kind → correctly
   // absent, exactly like `models.translation === null`.
@@ -3837,7 +4010,9 @@ async function _titleStorylinePostPass(chapterIds, base, bj) {
       // the topic is self-describing and the library can attribute it without walking the storyline.
       for (const cid of chapterIds) {
         const t = findSavedById(cid);   // chapterIds are ids; findSaved() takes a topic NAME
-        if (t && t.storyMeta && t.storyMeta.origin === 'user-provided') {
+        // 'user-pasted' is what the live stamp writes since v68.1; 'user-provided' is matched too
+        // for robustness against a pre-v68.1 in-flight row (fixMetaSource heals persisted ones).
+        if (t && t.storyMeta && (t.storyMeta.origin === 'user-pasted' || t.storyMeta.origin === 'user-provided')) {
           t.storyMeta.origin = 'file-upload';
           t.storyMeta.sourceFile = String(base.sourceFile).slice(0, 200);
           upsert(t);
@@ -4031,6 +4206,27 @@ async function _runBookJob(bookId, chunks, base) {
         await _runQc(newJob(), qcTopics, { lessonIdx: null, onlyFlagged: false, includeStory: false });
       }
     } catch (e) { console.warn(`  [book ${bookId}] QC post-pass error: ${e.message}`); }
+    // Storyboard post-pass (v68.1, queued in the v68 notes): one whole-storyline board at the end
+    // of every book/multi-chapter job — the same artefact the storyline 🎨 button makes, via the
+    // same shared helper, so the deck opens with its board instead of an empty slot. Runs AFTER
+    // titling (panels caption against the final chapter set) and after QC (a slow board must never
+    // delay content flags). Best-effort; never fails the book. Storyline resolution mirrors the
+    // title/sourceFile post-passes: chain id first, chapters-inclusion fallback.
+    try {
+      const chapterIds = bj.chapters.map(c => c.topicId).filter(Boolean);
+      const topicData = chapterIds.map(id => findSavedById(id)).filter(Boolean);
+      if (topicData.length) {
+        const slId = _chainId(chapterIds);
+        const all = getStorylines();
+        const sl = all.find(s => s.id === slId)
+                || all.find(s => chapterIds.every(id => (s.chapters || []).includes(id)));
+        if (sl && !sl.storyboard) {   // never overwrite a board someone already made
+          bj.status = 'storyboard';
+          await _storyboardForStoryline(sl.id, topicData, null);
+          console.log(`  [book ${bookId}] storyboard post-pass done`);
+        }
+      }
+    } catch (e) { console.warn(`  [book ${bookId}] storyboard post-pass error: ${e.message}`); }
     bj.status = 'done';
   }
   console.log(`  [book ${bookId}] finished: ${bj.status}`);
@@ -4614,7 +4810,7 @@ http.createServer(async (req, res) => {
       if (!resolvedTopic) return json(res, 400, { error: 'Topic too short or missing' });
       if (topic !== resolvedTopic) body.topic = resolvedTopic;
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms'].includes(lessonFormat) ? lessonFormat : 'standard';
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'
       const wcMax = body.userStory ? 2000 : 1000;
       const wc = Math.max(100, Math.min(wcMax, parseInt(storyLen, 10) || 300));
       // contFrom: used for storyline chain tracking AND story continuation context.
@@ -4713,7 +4909,7 @@ http.createServer(async (req, res) => {
       if (!Array.isArray(chaptersIn) || chaptersIn.length === 0)
         return json(res, 400, { error: 'No chapters provided' });
       const diff = Math.max(1, Math.min(3, parseInt(difficulty, 10) || 2));
-      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms'].includes(lessonFormat) ? lessonFormat : 'standard';
+      const fmt  = ['error_hunt','grammar','conjugation','all_types','math','synonyms','word_forms'].includes(lessonFormat) ? lessonFormat : 'standard';   // v68.1: word_forms was missing — the picker offered it but the route clamped it to 'standard'
       // Arc mode: each chapter = a vocab "gate" lesson + one or more reinforcement
       // lessons (grammar/conjugation/synonyms) generated in reinforce mode.
       const _arcTypes = (Array.isArray(arcReinforce) ? arcReinforce : ['word_forms','synonyms'])
@@ -5182,28 +5378,11 @@ http.createServer(async (req, res) => {
         return json(res, 400, { error: 'Missing slId or topics' });
       const topicData = topics.map(t => findSaved(t)).filter(Boolean);
       if (!topicData.length) return json(res, 404, { error: 'No topics found' });
-      const stories  = topicData.map(t => t.story || '');
-      const srcLang  = topicData[0].srcLang || 'en';
-      // v55_r: the board should match how the story READS. Chapters can carry different styles, so
-      // take the MAJORITY style across them (ties → the first chapter's). All-unstyled → null.
-      const _styleCounts = {};
-      for (const t of topicData) if (t.storyStyle) _styleCounts[t.storyStyle] = (_styleCounts[t.storyStyle] || 0) + 1;
-      const storyStyle = Object.keys(_styleCounts).sort((a, b) =>
-        (_styleCounts[b] - _styleCounts[a]) || 0)[0] || null;
+      // Stories / srcLang / majority-style derivation moved into _storyboardForStoryline (v68.1),
+      // shared with the book-job storyboard post-pass so the two callers cannot drift.
       const _sbT0 = Date.now();
       try {
-        const { result: { svg: storyboard, panels, scheme: usedScheme, meta: storyboardMeta }, tokens: _mTok } =
-          await meterLLMTokens(() => generateStorylineStoryboard(topics, stories, srcLang,
-            { storyStyle, scheme: Object.prototype.hasOwnProperty.call(STORYBOARD_SCHEMES, scheme) ? scheme : STORYBOARD_SCHEME_DEFAULT,
-              slId, slTitle: (findStoryline(slId) || {}).title || null }));
-        const sl = findStoryline(slId);
-        if (sl) {
-          addTokenUsage(sl, _mTok, 'storyboard');   // storyline-level artefact (v59)
-          sl.storyboard = storyboard; sl.storyboardMeta = storyboardMeta;
-          sl.storyboardPanels = panels;      // kept so a scheme change needs no model call
-          sl.storyboardScheme = usedScheme;
-          upsertStoryline(sl);
-        }
+        const { storyboard, scheme: usedScheme } = await _storyboardForStoryline(slId, topicData, scheme);
         return json(res, 200, { storyboard, scheme: usedScheme });
       } catch(e) {
         // v55_b: a synchronous ~30-min call MUST NOT fail silently on the server console — the
@@ -5349,7 +5528,7 @@ http.createServer(async (req, res) => {
             acc += delta;
             send({ delta });
           });
-          const reply = stripRaw(acc).trim();
+          const reply = sanitizeTutorReply(stripRaw(acc));
           if (!aborted) {
             if (!reply) send({ error: 'Tutor returned an empty reply — try again.' });
             else { _logReply(reply); send({ done: true, reply, promptTokens, completionTokens }); }
@@ -5362,7 +5541,7 @@ http.createServer(async (req, res) => {
 
       try {
         const { text, promptTokens, completionTokens } = await callLLMTutor(sys, userMsg, 500);
-        const reply = stripRaw(String(text || '')).trim();
+        const reply = sanitizeTutorReply(stripRaw(String(text || '')));
         if (!reply) return json(res, 502, { error: 'Tutor returned an empty reply — try again.' });
         _logReply(reply);
         return json(res, 200, { reply, promptTokens, completionTokens });

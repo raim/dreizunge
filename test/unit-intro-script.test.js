@@ -565,4 +565,28 @@ assert.ok(/window\.SCRIPTS_DATA=/.test(fs.readFileSync(path.join(ROOT, 'build-st
   'static build bakes SCRIPTS_DATA');
 console.log('  registry + route + static-bake wiring: OK');
 
+
+// ── v69.2: a two-case glyph is DISPLAYED as "A a" but SPOKEN once ────────────────────────────
+// User-reported (2026-07-14, carried in the roadmap): the Latin script lesson read out BOTH cases
+// ("ay … ay"). The builders must keep emitting the two-case glyph — display, qid stability and the
+// server/client intro_script parity all depend on it — so the collapse happens at the SPEAK sites.
+{
+  const gs = new Function(ext(html, '_glyphSpeakForm') + '\nreturn _glyphSpeakForm;')();
+  assert.strictEqual(gs('A a'), 'A', 'a true case pair is spoken once');
+  assert.strictEqual(gs('Ä ä'), 'Ä', 'case pairs with diacritics too');
+  assert.strictEqual(gs('B'), 'B', 'a single-case glyph is untouched');
+  assert.strictEqual(gs('Dh dh'), 'Dh', 'multi-character case pairs collapse');
+  // NOT a case pair → never collapsed (two distinct letters/tokens must both be spoken).
+  assert.strictEqual(gs('A b'), 'A b', 'two DIFFERENT letters are left alone');
+  assert.strictEqual(gs('ا'), 'ا', 'a caseless script glyph is untouched');
+  assert.strictEqual(gs(''), '', 'empty input is safe');
+  // Both play speak paths (correct + wrong) route the intro glyph through it.
+  const wraps = (html.match(/_glyphSpeakForm\(stripFuri\(ex\._intro==='glyph_sound' \? ex\.source : ex\.target\)\)/g) || []);
+  assert.strictEqual(wraps.length, 2, `both check() speak sites collapse the case pair (found ${wraps.length})`);
+  // The BUILDER still emits both cases (display contract unchanged).
+  assert.ok(/const glyph = \(L\) => L\.ch \+ \(L\.lower && L\.lower !== L\.ch \? ' ' \+ L\.lower : ''\);/.test(html),
+    'the builder still produces the two-case glyph for display');
+}
+console.log('  two-case glyph: displayed as a pair, spoken once (v69.2): OK');
+
 console.log('unit-intro-script: ALL PASSED');

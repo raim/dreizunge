@@ -10,8 +10,8 @@ const ui = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'ui.json'), 'ut
 // The flag box (now a shared helper) has a correct-version input; saveUserFlag stores
 // {comment, correct, at}.
 assert.ok(html.includes('id="flag-correct-${li}-${type}-${fi}"'), 'flag box missing correct-version input');
-assert.ok(html.includes('item.userFlag = { comment, correct, at: new Date().toISOString() };'),
-  'saveUserFlag must store comment + correct');
+assert.ok(html.includes('item.userFlag = { comment, correct, at: new Date().toISOString(), mode: _flagMode() };'),
+  'saveUserFlag must store comment + correct (+ the producing mode, v68.1)');
 assert.ok(html.includes('function _flagBoxHtml') && html.includes('function _flagBtnHtml'),
   'flag UI helpers missing');
 console.log('  flag box correct-version field: OK');

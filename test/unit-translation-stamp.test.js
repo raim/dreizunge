@@ -35,6 +35,14 @@ assert.ok(/_translationMeta\.origin = 'user-provided';/.test(server), 'user tran
 // skipped: translation model == story model, no separate pass
 assert.ok(/_translationMeta\.origin = 'skipped-same-model';/.test(server),
   "the same-model fold-in is stamped 'skipped-same-model', not null");
+// v68.1 — every live origin stamp is paired with a `source` stamp; without it the §4 corpus
+// invariant (every stamp has a source) was only satisfiable by the one-time backfill and broke on
+// the first live generation. Mirrors unit-story-stamp.
+{
+  const to = (server.match(/_translationMeta\.origin = /g) || []).length;
+  const ts = (server.match(/_translationMeta\.source = 'recorded at generation';/g) || []).length;
+  assert.ok(to >= 4 && ts === to, `every live translationMeta origin stamp is paired with a source stamp (${ts}/${to})`);
+}
 
 // ── 2. Persisted on BOTH upserts, beside storyMeta ───────────────────────────
 // Like storyMeta, a stamp written only on the final upsert would be missing for exactly the topics

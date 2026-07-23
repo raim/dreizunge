@@ -179,11 +179,14 @@ console.log('  full-story-on-unlock + within/along progress summary: OK');
   assert.ok(/function showComplete\(review\)/.test(html), 'showComplete accepts a review flag');
   assert.ok(/if\(review\)\{[\s\S]*?_review:true \}/.test(sc), 'review builds a synthetic no-round C');
   assert.ok(/!C\._review &&/.test(sc), 'review mode records NO progress (chapter already complete)');
-  // loadSaved routes a learner with no unfinished lesson into the review card, not the page.
+  // loadSaved routes a learner with no unfinished lesson into the review card, not the page —
+  // and (v68.1) a FAILED auto-start must not strand the learner on the lesson-set page either.
   const ls = ext(html, 'loadSaved');
-  assert.ok(/else showComplete\(true\)/.test(ls), 'learner + complete chapter → review card (live)');
+  assert.ok(/idx>=0 \? \(startLesson\(idx\) !== false\) : \(showComplete\(true\), true\)/.test(ls),
+    'learner: complete chapter → review card; started lessons are success-checked (live)');
   const lsS = ext(builder, 'loadSaved');
-  assert.ok(/else showComplete\(true\)/.test(lsS), 'learner + complete chapter → review card (static parity)');
+  assert.ok(/idx>=0 \? \(startLesson\(idx\) !== false\) : \(showComplete\(true\), true\)/.test(lsS),
+    'learner: complete chapter → review card; started lessons are success-checked (static parity)');
 }
 console.log('  review mode for a re-opened complete chapter (live+static): OK');
 
@@ -218,6 +221,69 @@ console.log('  chapter storyboard panel on the completion card: OK');
     assert.ok(ui.en[k], `ui.json en has ${k}`);
   }
 }
-console.log('  static loadSaved parity + i18n keys: OK');
+console.log('  static loadSaved parity + i18n keys: OK')
+
+// ── 6. v68.1 — the completion-crash cluster (reported: "solving questions → stuck") ──────────────
+// Three defects, one report. (a) showComplete used `_belowThreshold` (v66.1 Next wiring) ABOVE its
+// `let` declaration — a temporal-dead-zone ReferenceError, so EVERY completion crashed before the
+// card was wired: the learner froze on the last question, and the review render crashing left the
+// lesson-set page (rendered underneath by goLessonSet) showing. (b) The same block tested
+// `d.topic`, but no `d` exists in showComplete — swallowed by its try/catch, so the v60.8 gate
+// silently never fired. (c) The mixed lesson GETS a done-flag on every play (showComplete records
+// one; confirmQuit records partial progress), after which the naive !done[id] scan in
+// _firstUnfinishedLessonIdx found nothing → an INCOMPLETE mixed-driven set read as complete and
+// practice could never resume (the perpetual "threshold can never be reached").
+{
+  // (a) Declaration-before-use, checked on CODE (comments stripped) inside showComplete's body.
+  const sc = ext(html, 'showComplete');
+  const code = sc.replace(/\/\/[^\n]*/g, '');
+  const decl = code.indexOf('let _belowThreshold');
+  assert.ok(decl > 0, 'showComplete declares _belowThreshold');
+  assert.ok(!/(^|[^A-Za-z0-9_$])_belowThreshold/.test(code.slice(0, decl)),
+    'no code path reads _belowThreshold before its declaration (TDZ crash, v68.1)');
+  const declT = code.indexOf('const _teacher');
+  assert.ok(declT > 0 && !/(^|[^A-Za-z0-9_$])_teacher[^M]/.test(code.slice(0, declT)),
+    'no code path reads _teacher before its declaration');
+  // (b) The undefined-`d` guard is gone; the gate keys off the card's own topicKey.
+  assert.ok(!/d\.topic === APP\.lessonData\?\.topic/.test(sc),
+    "the gate no longer references an undefined `d` (it silently disabled the threshold)");
+  assert.ok(/APP\.lessonData\?\.topic === topicKey/.test(sc), 'the gate is scoped to the active topic via topicKey');
+
+  // (c) Behavioral: an incomplete mixed-driven set resumes at the mixed lesson even when every
+  // counted lesson (mixed included) carries a done-flag.
+  const APP = { _teacherMode: false, progress: { completed: {} }, lessonData: null };
+  const fu = new Function('APP', 'lessonCountsFor', 'setComplete', '_firstVisibleMixedIdx',
+    ext(html, '_firstUnfinishedLessonIdx') + '\nreturn _firstUnfinishedLessonIdx;');
+  const mixedIdx = new Function(ext(html, '_firstVisibleMixedIdx') + '\nreturn _firstVisibleMixedIdx;')();
+  const d = { topic: 'MixCh', lessons: [ { id: '1' }, { id: '6', type: 'word_forms' }, { id: 'm', type: 'mixed' } ] };
+  APP.lessonData = d;
+  APP.progress.completed['MixCh'] = { 1: {correct:1,total:2}, 6: {correct:1,total:2}, m: {correct:0,total:3} };
+  const counts = (dd, L) => !L._hidden;
+  let f = fu(APP, counts, () => false, mixedIdx);
+  assert.strictEqual(f(d), 2, 'incomplete mixed-driven set with all done-flags resumes at the MIXED lesson');
+  f = fu(APP, counts, () => true, mixedIdx);
+  assert.strictEqual(f(d), -1, 'a genuinely complete set still returns -1 (review card)');
+  APP._teacherMode = true;
+  f = fu(APP, counts, () => false, mixedIdx);
+  assert.strictEqual(f(d), -1, 'teacher mode keeps the classic done-flag semantics (no mixed fallback)');
+  APP._teacherMode = false;
+  // Classic set (no mixed) below threshold: unchanged — -1, the card's drill gate takes over.
+  const dc = { topic: 'MixCh', lessons: [ { id: '1' }, { id: '6', type: 'word_forms' } ] };
+  APP.lessonData = dc;
+  assert.strictEqual(f(dc), -1, 'a classic set with all done-flags returns -1 (drill gate handles the threshold)');
+
+  // (c) Routing: startLesson signals failure; both loadSaveds route a stranded learner to the
+  // storyline (confirmQuit's target), never leaving the lesson-set page showing.
+  const start = ext(html, 'startLesson');
+  assert.ok((start.match(/return false;/g) || []).length >= 2,
+    'startLesson returns false on both guard exits (hidden lesson, empty mixed round)');
+  assert.ok(/renderEx\(\);\s*return true;/.test(start), 'startLesson returns true once the screen is taken over');
+  for (const [src, label] of [[ext(html, 'loadSaved'), 'live'], [ext(builder, 'loadSaved'), 'static']]) {
+    assert.ok(/if\(!started\)\{/.test(src) && /openStorylineScreen\(ctx\.sl\.id, ctx\.enc\)/.test(src)
+      && /goLandingClean\(\)/.test(src),
+      `a failed auto-start falls back to storyline/landing, not the lesson-set page (${label})`);
+  }
+}
+console.log('  v68.1 completion-crash cluster: TDZ order, gate scope, mixed resume, stranded-learner routing: OK')
 
 console.log('unit-learner-nav: ALL PASSED');

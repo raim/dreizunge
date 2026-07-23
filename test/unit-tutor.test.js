@@ -44,10 +44,38 @@ function extFn(src, name) {
   // The role wrapper routes through thinkOpts so the reasoning toggle + budget bump apply.
   const w = extFn(server, 'callLLMTutor');
   assert.ok(/thinkOpts\('tutor', maxTokens\)/.test(w), 'callLLMTutor applies the tutor reasoning policy');
-  assert.ok(/_callLLM\(OLLAMA_TUTOR_MODEL, system, userMsg, pol\.tokens, \{ \.\.\.pol, \.\.\.opts \}\)/.test(w),
-    'callLLMTutor uses the tutor model and the (possibly bumped) budget');
+  assert.ok(/_callLLM\(OLLAMA_TUTOR_MODEL, system, userMsg, pol\.tokens, \{ stop: _TUTOR_STOP, \.\.\.pol, \.\.\.opts \}\)/.test(w),
+    'callLLMTutor uses the tutor model, the (possibly bumped) budget, and stop-sequences (v66.1)');
 }
 console.log('  tutor model role: own model, runtime-switchable, reasoning-capable, exposed: OK');
+
+// ── 1c. The tutor must never speak for the student (v66.1 regression) ────────
+// Reported: the tutor generated whole fake exchanges, inventing the learner's answers, because the
+// prompt hands it a "Student: / Tutor:" transcript and models continue the pattern. Three defences;
+// the sanitizer is the only guarantee, so it is tested behaviourally.
+{
+  const san = new Function(extFn(server, 'sanitizeTutorReply') + '\nreturn sanitizeTutorReply;')();
+  const runaway = 'Gut gemacht!\nLass uns weitermachen.\nStudent: erfundene Antwort\nTutor: erfundenes Lob';
+  const cleaned = san(runaway);
+  assert.ok(!/Student:/i.test(cleaned), 'an invented student turn is cut away');
+  assert.ok(!/Tutor:/.test(cleaned), 'an invented tutor turn is cut away');
+  assert.ok(cleaned.startsWith('Gut gemacht!'), 'the tutor\'s own first turn survives intact');
+  assert.strictEqual(san('Tutor: Hallo!'), 'Hallo!', 'a leading self-label is stripped');
+  assert.strictEqual(san('Beispiel: das Haus ist groß.'), 'Beispiel: das Haus ist groß.',
+    'a colon in ordinary prose is NOT treated as a speaker label');
+  for (const marker of ['STUDENT: x', 'Studente: x', 'Schüler: x', 'Learner: x']) {
+    assert.ok(!san('Ja!\n' + marker).includes('x'), `the ${marker.split(':')[0]} marker is handled`);
+  }
+  // Stop-sequences are also sent, so generation usually halts before the sanitizer is needed.
+  assert.ok(/const _TUTOR_STOP = \[/.test(server), 'stop sequences are defined');
+  assert.ok(/stop: _TUTOR_STOP/.test(server), 'stop sequences are passed to the model');
+  // …and the prompt forbids it in words.
+  const prompts = JSON.parse(fs.readFileSync(path.join(ROOT, 'prompts.json'), 'utf8'));
+  assert.ok(/NEVER write the student's turn/i.test(prompts.tutor.system), 'the prompt forbids writing the student turn');
+  assert.ok(/CHECK IT/.test(prompts.tutor.system), 'the prompt requires checking the learner\'s target-language production');
+}
+console.log('  tutor never speaks for the student; target-language checking required (v66.1): OK');
+
 
 // ── 1b. /api/models must RECOGNISE a tutor change (v62.1 regression) ─────────
 // Bug: the tutor was wired into setRuntimeModels but omitted from the route's "what changed?"

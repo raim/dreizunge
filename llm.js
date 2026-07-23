@@ -159,7 +159,8 @@ function _callOllama(model, system, userMsg, maxTokens, opts) {
       // Only sent when explicitly boolean; callLLM retries without it if the model rejects the
       // parameter (non-thinking models on some Ollama versions).
       ...(opts && typeof opts.think === 'boolean' ? { think: opts.think } : {}),
-      options: { temperature, num_predict: maxTokens || 1024 },
+      options: { temperature, num_predict: maxTokens || 1024,
+        ...(Array.isArray(opts?.stop) && opts.stop.length ? { stop: opts.stop } : {}) },
       messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
     });
     const req = lib.request({
@@ -310,7 +311,8 @@ function callLLMStream(model, system, userMsg, maxTokens, opts, onDelta) {
     const body = JSON.stringify({
       model, stream: true, keep_alive: -1,
       ...(opts && typeof opts.think === 'boolean' ? { think: opts.think } : {}),
-      options: { temperature, num_predict: maxTokens || 1024 },
+      options: { temperature, num_predict: maxTokens || 1024,
+        ...(Array.isArray(opts?.stop) && opts.stop.length ? { stop: opts.stop } : {}) },
       messages: [{ role: 'system', content: system }, { role: 'user', content: userMsg }]
     });
     const req = lib.request({
