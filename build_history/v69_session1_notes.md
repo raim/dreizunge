@@ -476,3 +476,48 @@ just the literal assertion) is what catches an undeclared identifier.
 **Standing lesson for this codebase:** structural assertions are cheap and catch drift, but they
 prove nothing about scope or execution order. Anything that touches a render path wants either a
 behavioural harness or, at minimum, a declared-identifier check like this one.
+
+## 14. ✅ v69_k — render smoke harness (the gap that let two crashes reach the user)
+
+### Files adopted first
+- **`ui.json`** — the user's translation run on the NEW tooling: 522 keys × 30 languages, `--check`
+  clean, and `--qc` reports **0 errors, 0 warnings**, against **71 defects** on the previous
+  pre-tooling run. Diff vs the shipped file: exactly 58 entries (the 2 new keys × 29 languages),
+  `en` byte-identical — no drift anywhere else. The hardened prompt + write-time validation worked
+  on first contact.
+- **`lessons.json`** — 278 topics, 0 duplicate/missing lesson ids, 0 provenance or flag-mode gaps;
+  booting the server against it changed **nothing** (already healed). Four topics differ from the
+  shipped copy: new lessons the user added while testing (incl. a `mixed` lesson on "Unwetter zieht
+  weiter"). Note: that chapter still has no `error_hunt` lesson, so the v69_g retry work has not yet
+  been exercised against a real model.
+
+### The harness
+Two runtime errors reached the user through a fully green suite — the v68.1 TDZ crash in
+`showComplete` and v69_i's "sl is not defined" in `_renderStorylineScreen`. Both were in render
+paths; both passed every source-level assertion, because **a regex over source cannot see scope or
+execution order**. The only thing that finds that class is executing the code.
+
+`test/lib-dom.js` is a zero-dependency DOM stub (~150 lines) plus a loader that evaluates the whole
+640 KB client engine in a `node:vm` context — the trailing `init();` is the ONLY thing stripped,
+since it is async and network-bound; every function and top-level statement runs as shipped.
+Because a vm context shares its top-level lexical scope across `runInContext` calls, test code can
+reach the client's `const APP` and call its functions directly. Elements are auto-vivified: a null
+from `getElementById` would hide errors behind `if (el)` guards, which is the opposite of the point.
+
+`test/smoke-render.test.js` drives four entry points with fixtures built from the **shipped
+corpus** (a real multi-chapter storyline, real lessons): `buildPath` (learner + teacher),
+`_renderStorylineScreen` (real chain, teacher, and an unresolvable id), `showComplete` (fresh,
+review, below-pass-mark, drill card, teacher) and `renderEx` across every exercise type the fixture
+yields (6: mcq_source_target, listen_type, listen_mcq, read_translate, word_form, syn_select) plus
+the muted branch. It asserts that output was produced and that nothing threw — deliberately NOT what
+the markup looks like, which would freeze the design.
+
+**Verified against both historical bugs rather than assumed:** reintroducing the v69_i identifier
+error fails with `sl is not defined`; reintroducing the v68.1 declaration order fails with
+`Cannot access '_belowThreshold' before initialization` — and `check-inline` passes on that same
+file, exactly as it did when the bug originally shipped. Suite: **147 checks**.
+
+**Known limits (honest scope):** no layout, no styling, no event dispatch, no real parsing of
+assigned `innerHTML`. It catches crashes, undefined references, TDZ violations and bad property
+access on render — not visual regressions, and not anything that only manifests after a user
+gesture. Browser testing is still required for those.

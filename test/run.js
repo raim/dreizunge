@@ -112,6 +112,9 @@ run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [
 run('unit: error-hunt validation + retry (v69_g)', 'node', [path.join(__dirname, 'unit-error-hunt-validation.test.js')]);
 run('unit: knowledge-aware round composition (v69_h)', 'node', [path.join(__dirname, 'unit-round-composition.test.js')]);
 run('e2e: pass mark per storyline + chapter (v69_i)', 'node', [path.join(__dirname, 'e2e-pass-mark.test.js')]);
+// Executes the client's render paths in a stub DOM — the only guard that catches TDZ crashes and
+// undefined references, which source-level assertions provably cannot see (v69_k).
+run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);
 run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);
 run('unit: coverage model (fraction/assembly/complete) — Commit B', 'node', [path.join(__dirname, 'unit-coverage.test.js')]);
