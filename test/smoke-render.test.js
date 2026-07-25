@@ -190,4 +190,48 @@ console.log('  renderEx: muted branch: OK');
 }
 console.log('  no console.error emitted during any render: OK');
 
+
+// ── 7. The teacher dashboard (v69_n) ─────────────────────────────────────────
+// Rendered from live endpoint data, so the panels are exercised directly with representative
+// payloads: a learner with hard words, a student flag, a story flag, and the empty state.
+{
+  seed();
+  shouldNotThrow('teacher dashboard (populated)', `(() => {
+    const learners = [{ username: 'anna', lastSeen: '2026-07-24T10:00:00.000Z',
+      chaptersCompleted: 3, chaptersStarted: 7, wordsLearned: 214,
+      hardestWords: [{ word: 'grandine', wrong: 4 }, { word: 'nube', wrong: 2 }] }];
+    const flags = [
+      { kind: 'item', topicId: 'tp_1', topic: 'Ch', lessonId: '1', target: 'il campo',
+        source: 'das Feld', comment: 'wrong article', correct: 'il campo', mode: 'student',
+        at: '2026-07-24T09:00:00.000Z' },
+      { kind: 'story', topic: 'Ch', type: 'story', mode: 'teacher', at: '2026-07-23T09:00:00.000Z' },
+    ];
+    document.getElementById('td-body').innerHTML =
+      _tdLearnersHtml(learners) + _tdFlagsHtml(flags, { student: 1, teacher: 1 });
+  })();`);
+  const out = C.document.getElementById('td-body').innerHTML;
+  assert.ok(/anna/.test(out), 'the learner row rendered');
+  assert.ok(/grandine/.test(out), 'their hardest words rendered');
+  assert.ok(/wrong article/.test(out), 'the flag comment rendered');
+  assert.ok(out.indexOf('wrong article') < out.indexOf('story'), 'the student report leads');
+
+  // The empty state must render too — that is what a fresh install shows.
+  seed();
+  shouldNotThrow('teacher dashboard (empty)',
+    `document.getElementById('td-body').innerHTML = _tdLearnersHtml([]) + _tdFlagsHtml([], {});`);
+  assert.ok(C.document.getElementById('td-body').innerHTML.length > 0, 'the empty state rendered');
+
+  // v69_r (user report: clicking Learners opened an empty page). The whole open path must always
+  // leave SOMETHING in the body — a backend notice, an error, or the panels — never blank.
+  seed();
+  C.run(`APP.info = { canGenerate: false };`);   // static build / no backend
+  shouldNotThrow('teacher dashboard (no backend)', `openTeacherDashboard();`);
+  {
+    const b = C.document.getElementById('td-body').innerHTML;
+    assert.ok(b && b.length > 0, 'the no-backend case shows a notice, not a blank screen');
+    assert.ok(/backend/i.test(b), 'and the notice explains why');
+  }
+}
+console.log('  teacher dashboard: populated + empty states render: OK');
+
 console.log('smoke-render: ALL PASSED');

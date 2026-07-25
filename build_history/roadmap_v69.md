@@ -1,6 +1,6 @@
 # Roadmap v69
 
-> **STATE AT HANDOFF: CUT AS `v69_k` (point release on v69, per the v56 numbering convention);
+> **STATE AT HANDOFF: CUT AS `v69_t` (point release on v69, per the v56 numbering convention);
 > suite 142 checks green; check-inline 0 on both builds.**
 > v69_b adds (see `v69_session1_notes.md`): article-symmetry rule in all three vocab prompts;
 > coverage-driven single-pass mixed rounds + the drill credit-back that finally makes the drill
@@ -52,25 +52,38 @@ cut without successor roadmaps; every open item from roadmap_v65 is carried forw
 ## 🔭 What's left / carried forward (union of roadmap_v65 + the v68/v69 queues)
 
 ### Near-term, concrete
-- **Reconcile the two definitions of "chapter complete" (found v69.2d, deferred as the expensive
-  one).** The storyline lock / green dot / chapter progress bar all use **lesson done-flags**, while
-  the completion card enforces **coverage against the pass mark** (v66.1). They disagree: a chapter
-  can unlock its successor while its own completion card still says "keep going" — exactly what the
-  user hit (all 3 lessons flagged done in `tp_…250`, yet stuck at 10/34 = below the 80% mark).
-  The blocker is cost: `topicCoverage()` / `_lessonQidUniverse()` read `APP.lessonData`, so the
-  storyline screen cannot price other chapters without swapping that global and re-deriving every
-  universe (~16 builder calls per lesson × every lesson in the storyline, on every render).
-  **Suggested cheap path — persist the verdict instead of recomputing it:** when `showComplete`
-  determines a chapter is at/above the mark, stamp `APP.progress.chapterDone[topic]`; the lock and
-  the dot read that stamp when present and fall back to done-flags when absent. No global swap, no
-  render cost, converges as the learner plays, and it is monotonic so old chapters degrade to
-  today's behaviour rather than regressing. Worth doing before the teacher dashboard, which will
-  want a single trustworthy "is this chapter done" answer.
-- **PDF cleanup stage 2 — the model pass** (queued in v68_session3 notes). A server endpoint that
-  asks the model to drop remaining NON-NARRATIVE fragments the deterministic rules can't classify
-  (e.g. the inline real-estate-ad teaser in the Corriere example, which reads as grammatical full
-  sentences). Deterministic-first stays the design: the model is never asked to fix what code fixes
-  reliably. Suggested shape: per-chunk, from the upload panel, opt-in button next to the 🧹 toggle.
+- **✅ FIXED in v69_q — a book chapter could overwrite a sibling sharing its title.** Root cause was
+  deeper than first diagnosed: `generate()` saves the story EARLY (crash-resilience) with no id, so
+  `upsert` name-dedups THERE — two same-titled chapters merged before `_persistGenerated` ran. Fix:
+  mint the id at the early save (reusing an existing row's id only when title AND chain-parent
+  match, so a real regenerate still updates in place but two siblings never merge), thread the
+  parent's id through `_persistGenerated`, and record `continuedFromId` so chaining is never
+  name-based. **Uncovered while fixing:** `_newTopicId` was nested inside `boot()` (which encloses
+  most of the file), so it was invisible to `generate()` at module scope — my new call was the
+  first from outside boot and threw "not defined"; the minter is now at module scope. Guard:
+  `e2e-book-duplicate-titles` (3 chapters, 2 sharing a title → 3 distinct topics; verified to fail
+  without the fix; a single-topic regenerate still updates in place, not duplicates).
+- **NOTE (not a bug): cleanup floor working as intended.** Same run: chunk 4 hit the v69_o heavy
+  path ("kept 62–64 of 197") and was applied-flagged, correctly. The user's earlier concern is
+  resolved; leaving this note so the next session does not re-investigate it.
+
+- **✅ DONE in v69_l — one definition of "chapter complete".** `setComplete()` is now the single
+  rule (every counted lesson played AND coverage at or above the pass mark). Because it is only
+  authoritative for the ACTIVE topic, its verdict is PERSISTED per chapter
+  (`APP.progress.chapterDone[topic] = { done, n, at }`) and read back by the storyline lock, the
+  green dot and the completion card's story-progress row via one shared `chapterComplete()`.
+  `n` is the counted-lesson count at stamp time, so a chapter that changes shape (a lesson added or
+  removed) invalidates the stamp and falls back to done-flags rather than trusting it. No global
+  swap, no render cost, works in the static build (progress is client-side). Guard:
+  `unit-chapter-complete`.
+- **✅ DONE in v69_m — PDF cleanup stage 2, the model pass.** `POST /api/clean-text` removes
+  non-narrative fragments the deterministic pass cannot classify (ads, "read also" teasers, photo
+  captions, subscription prompts — text that reads as grammatical prose). Contract is DELETION
+  ONLY and the server VERIFIES it: `cleanTextChanges()` checks the result is a word-level
+  SUBSEQUENCE of the input, which rejects rewriting, rewording, translating and reordering in one
+  cheap test, plus a floor (keep ≥40%) against summarising. Retries with specific feedback, same
+  shape as the error-hunt generator. Client: an opt-in ✨ button beside the 🧹 toggle, per chunk,
+  undoable, hidden without a backend (so never in the static build). Guard: `e2e-text-cleanup`.
 - **UI translation — ✅ DONE in v69_d.** All 30 languages complete (`--check`: "All translations
   complete!"). The run needed a QC pass: 71 defects repaired (broken placeholders, cross-script
   corruption, icon drift, German errors) — see `v69_ui_translation_qc.md` and
@@ -83,8 +96,18 @@ cut without successor roadmaps; every open item from roadmap_v65 is carried forw
   ✅ **Cleared in v69_k:** the user's run filled the 2 new keys; `--check` clean, `--qc` reports
   **0 errors and 0 warnings** — versus 71 defects on the previous (pre-tooling) run. The hardened
   prompt plus write-time validation did their job on first contact.
-- **Teacher dashboard UI** — `GET /api/learners` summary endpoint exists (v65); nothing renders it.
-  Small, high value. Student-mode flags (new in v69) are a natural extra column.
+- **✅ DONE in v69_n — teacher dashboard (overview + flag triage).** Teacher-only screen off the
+  library header, hidden without a backend. Panel 1 reads `GET /api/learners`: per learner, chapters
+  **finished** and chapters **started** (both — see the bug below), words known, and their hardest
+  words. Panel 2 reads the new `GET /api/flag-summary`, which unifies item-level flags
+  (`item.userFlag`, inside lessons), lesson `_miscFlags` and story-level flags (the flags store)
+  into one list, newest first, with STUDENT reports leading; clicking one opens the chapter in the
+  existing editor. **Fixed as part of it:** `summarize()` reported
+  `chaptersCompleted = Object.keys(progress.completed).length`, i.e. chapters TOUCHED — a learner
+  who opened ten and finished none read "10". It now prefers the v69_l per-chapter verdict, falls
+  back to "every lesson flagged done" when the library is supplied, and claims nothing when
+  completion is unknowable. Guards: `e2e-teacher-dashboard`, a section in `smoke-render`, and a
+  rewritten `unit-learners` assertion that used to encode the bug.
 - **TLS guidance / warning banner** when accounts are used over plain HTTP on a non-loopback host.
 
 ### Product ideas / larger
@@ -93,11 +116,14 @@ cut without successor roadmaps; every open item from roadmap_v65 is carried forw
 - **Per-learner preferences** (tutor model, difficulty) now that accounts exist.
 - **More word-game lesson types**: crossword from the lesson's words, a wordle-like lesson, other
   word-play games — all client-side over the stored vocab, no model calls.
-- **Beginner mode should restrict lesson TYPES** (recognition-only when beginner; skip
-  translation-recall types when listening is off). A lesson-selection policy — belongs where the
-  mix is chosen per difficulty.
-- **Latin script lesson reads out BOTH cases** — it should speak one. (Speak path of the script
-  lesson, not the render.)
+- **✅ DONE in v69_c — beginner mode restricts lesson TYPES.** At difficulty ≤ 1
+  `buildStandardExercises` drops `order` (production, not a four-option pick) always, and
+  `listen_type` when there is no audio (muted or voiceless), because its muted render degrades to
+  type-the-translation. Guard: `unit-beginner-types`.
+- **✅ DONE in v69_c — Latin script lesson speaks one case.** `_glyphSpeakForm()` collapses a
+  true case pair at the SPEAK sites only ("A a" → "A"); the card still displays both, since qid
+  stability and the server/client `intro_script` parity depend on that string. Guard:
+  `unit-intro-script`.
 - The 🗣 pill could host the tts language/voice selects the way the backend pill hosts the model
   picker (v55_o) — deliberately unbundled.
 

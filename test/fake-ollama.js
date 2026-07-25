@@ -134,6 +134,20 @@ const srv = http.createServer(async (req, res) => {
             choices: ['Haus', 'Häuser', 'Hauses', 'Häusern'], correctIndex: 0, explanation: 'Nominativ Singular, neutrum.' },
         ],
       });
+    } else if (/You clean text extracted from a PDF/i.test(sys)) {
+      // v69_m: deletion-only, as the contract requires — drop any line that looks like page
+      // furniture and copy the rest verbatim. The server verifies the result is a subsequence of
+      // the input, so a fake that "helpfully" reworded anything would (correctly) be rejected.
+      kind = 'text_cleanup';
+      const src = usr.split('\n\nYOUR PREVIOUS ATTEMPT')[0];
+      // FAKE_CLEAN_MODE lets a test drive the two failure modes seen on a real PDF (v69_o):
+      // 'overdelete' keeps only the first line; 'rewrite' violates the deletion-only contract.
+      const mode = process.env.FAKE_CLEAN_MODE || '';
+      if (mode === 'overdelete')      content = src.split('\n')[0].trim();
+      else if (mode === 'rewrite')    content = 'Completely rewritten summary of the passage.';
+      else content = src.split('\n')
+        .filter(l => !/^(ADVERT|Read also|Photo:|Subscribe)/i.test(l.trim()))
+        .join('\n').trim();
     } else if (/corrupted version by introducing exactly/i.test(sys)) {
       // v69_g: the error-hunt generator had NO branch here — the request fell through to the vocab
       // default and returned JSON, which the old server-side checks ("not empty", "not identical")

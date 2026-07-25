@@ -178,11 +178,32 @@ function setState(username, state) {
 }
 
 // A teacher-facing summary: enough to see who is struggling, without dumping the whole ledger.
-function summarize(username) {
+/**
+ * @param username
+ * @param topicsById optional { [topic]: lessons[] } from the shared library, so completion can be
+ *        judged honestly for learners with no v69_l stamps yet.
+ */
+function summarize(username, topicsById) {
   const u = store.users[String(username)];
   if (!u) return null;
   const st = u.state || emptyState();
-  const completed = Object.keys(st.progress?.completed || {}).length;
+  // v69_n: this used to be `Object.keys(progress.completed).length`, i.e. chapters TOUCHED — a
+  // learner who opened ten chapters and finished none read "10". Both numbers are useful, so both
+  // are reported under honest names. `completed` prefers the v69_l per-chapter verdict
+  // (progress.chapterDone), which is coverage-aware and agrees with what the learner sees on the
+  // completion card; without a stamp it falls back to "every lesson of that chapter is flagged
+  // done", which needs the library and so degrades to 0 for that chapter when it is not supplied.
+  const touched = Object.keys(st.progress?.completed || {});
+  const stamps = st.progress?.chapterDone || {};
+  let completed = 0;
+  for (const topic of touched) {
+    const stamp = stamps[topic];
+    if (stamp && typeof stamp.done === 'boolean') { if (stamp.done) completed++; continue; }
+    const lessons = topicsById && topicsById[topic];
+    if (!Array.isArray(lessons) || !lessons.length) continue;      // unknowable → do not claim it
+    const flags = st.progress.completed[topic] || {};
+    if (lessons.every(L => L && L.id != null && flags[L.id])) completed++;
+  }
   let words = 0, struggling = [];
   for (const pair of Object.values(st.progress?.learned || {})) {
     const vocab = (pair && pair.vocab) || {};
@@ -192,7 +213,10 @@ function summarize(username) {
   struggling.sort((a, b) => b.wrong - a.wrong);
   return {
     username: String(username), createdAt: u.createdAt || null, lastSeen: u.lastSeen || null,
-    chaptersCompleted: completed, wordsLearned: words,
+    chaptersCompleted: completed,          // honest: finished, not merely opened (v69_n)
+    chaptersStarted: touched.length,       // what the old field actually counted
+    wordsLearned: words,
+    strugglingCount: struggling.length,
     hardestWords: struggling.slice(0, 15), updatedAt: st.updatedAt || null,
   };
 }

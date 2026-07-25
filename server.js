@@ -117,7 +117,7 @@ function promptExample(P, lang, srcLang) {
 const crypto = require('crypto');
 
 const PORT         = parseInt(process.env.PORT || '3000', 10);
-const APP_VERSION  = 'v69_k';
+const APP_VERSION  = 'v70';
 // v58 provenance: schema 30 = 29 + OPTIONAL topic.source {author,licence,url,note} and
 // topic.createdBy. Readers keep accepting >= 29 (both fields optional); only the WRITE stamp
 // moves, so a v29 file loads untouched and is re-tagged 30 on its next save.
@@ -325,6 +325,26 @@ async function ensureUIForLang(lang) {
 
 
 let store = loadStore();
+
+// v69_q: id minting lives at MODULE scope. It was previously nested inside boot() (which encloses
+// most of the file and is invoked once at startup), so it was visible only to other boot()-nested
+// functions. generate() is defined at module scope — OUTSIDE boot() — so its new call to
+// _newTopicId (the same-title book-collision fix) threw "not defined". Every prior caller happened
+// to be boot()-nested, which is why this never surfaced before. Moving the minter out fixes the
+// call from generate() and removes the latent scope hazard for any future module-scope caller.
+let _idCounter = 0;
+function _newTopicId() {
+  // Numeric id (preserves the client's /^tp_\d+$/ detection). Existing ids are never recomputed;
+  // a name-hash was deliberately dropped so reusing a renamed topic's old name cannot collide.
+  const existing = new Set((store.topics || []).map(t => t.id).filter(Boolean));
+  let id;
+  do {
+    id = 'tp_' + Date.now().toString()
+       + String(_idCounter++ % 100000).padStart(5, '0')
+       + Math.floor(Math.random() * 100).toString().padStart(2, '0');
+  } while (existing.has(id));
+  return id;
+}
 
 // Assign IDs to any lessons missing them, AND de-duplicate IDs within a topic.
 //
@@ -2371,6 +2391,96 @@ async function generateStorylineStoryboard(topics, stories, srcLang, opts) {
   return { svg, panels, scheme, meta };
 }
 
+// Compare a cleaned passage against its source. The contract is DELETION ONLY, so the result must
+// be a SUBSEQUENCE of the input at word level: every kept word appears in the original, in order.
+// That single check rejects rewriting, rewording, translating and reordering in one go — far
+// stronger than a length ratio, and cheap. Returns { ok, kept, total, dropped }.
+function cleanTextChanges(original, cleaned) {
+  const A = String(original || '').split(/\s+/).filter(Boolean);
+  const B = String(cleaned || '').split(/\s+/).filter(Boolean);
+  let i = 0;
+  for (const w of B) {
+    while (i < A.length && A[i] !== w) i++;
+    if (i >= A.length) return { ok: false, kept: B.length, total: A.length, dropped: A.length - B.length };
+    i++;
+  }
+  return { ok: true, kept: B.length, total: A.length, dropped: A.length - B.length };
+}
+
+// Remove non-narrative fragments from an extracted passage (v69_m). Retries with SPECIFIC feedback,
+// exactly like the error-hunt generator: a prompt alone cannot guarantee the contract, so the
+// contract is verified and any violation is fed back in words the model can act on.
+async function cleanNarrativeText(text, lang) {
+  const _t0 = Date.now();
+  const sys = fillPrompt(PROMPTS.textCleanup.system, { L: langName(lang) });
+  // v69_p (user request): announce the work BEFORE the first call and name the model. The old log
+  // only appeared once a chunk had finished, so a slow or stuck pass looked like nothing happening.
+  const _words = String(text).split(/\s+/).filter(Boolean).length;
+  console.log(`  [${OLLAMA_MODEL}] Cleaning text (${_words} words, ${langName(lang)})…`);
+  const ATTEMPTS = 3;
+  const FLOOR = 0.4;
+  let promptTokens = 0, completionTokens = 0, lastProblem = '';
+  let best = null;   // structurally valid but heavy-handed — kept as a fallback, see below
+  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+    const feedback = lastProblem
+      ? `\n\nYOUR PREVIOUS ATTEMPT WAS REJECTED: ${lastProblem}\nReturn the text again, deleting ONLY whole non-narrative fragments and copying everything you keep word for word.`
+      : '';
+    let out = '';
+    try {
+      // v69_o: think stays OFF for every attempt. Escalating to reasoning (as the error-hunt
+      // generator does) is wrong for THIS task: the contract is verbatim copying minus deletions,
+      // which reasoning does not help with, and the observed failure is over-deletion, which it
+      // does not address either. It also cost 36 minutes — base timeout × THINK_TIMEOUT_MULT — on
+      // a 200-word chunk, which is what made a real run look like it had hung. Output length is
+      // bounded by input length here, so the plain request timeout is right.
+      const r = await _callLLM(OLLAMA_MODEL, sys, text + feedback, Math.ceil(text.length * 1.2),
+        { think: false, timeoutMs: getRequestTimeout() });
+      out = String(r.text || '').trim();
+      promptTokens += r.promptTokens || 0; completionTokens += r.completionTokens || 0;
+    } catch(e) {
+      if (attempt === ATTEMPTS) break;          // fall through to the unchanged-text fallback
+      lastProblem = `the request failed (${e.message})`;
+      continue;
+    }
+    const chk = cleanTextChanges(text, out);
+    if (!out) {
+      lastProblem = 'you returned nothing';
+    } else if (!chk.ok) {
+      // The hard contract: anything not a pure deletion is wrong, full stop.
+      lastProblem = 'you rewrote or reworded part of the text — you may only DELETE, never change the words you keep';
+    } else if (chk.kept < chk.total * FLOOR) {
+      // v69_o: heavy deletion is a WARNING, not a verdict. The floor assumed every chunk is mostly
+      // article — but a chunk can legitimately BE mostly furniture (a related-links block, a
+      // footer, a page of teasers), and a real run showed two attempts independently agreeing on
+      // ~32% retention, which is evidence the model is right rather than wrong. So: ask once more
+      // with a pointed hint, but remember the answer and use it if nothing better arrives. The
+      // client surfaces it and the pass is undoable, so the human makes the final call.
+      if (!best || chk.kept > best.chk.kept) best = { text: out, chk };
+      lastProblem = `you kept only ${chk.kept} of ${chk.total} words. If this passage really is mostly advertisements, teasers or links, that is correct — but never delete sentences belonging to the article itself`;
+    } else {
+      console.log(`  Text cleanup: kept ${chk.kept}/${chk.total} words (${chk.dropped} dropped)${attempt > 1 ? `, attempt ${attempt}` : ''}`);
+      return { text: out, kept: chk.kept, total: chk.total, dropped: chk.dropped, heavy: false,
+               tokens: { promptTokens, completionTokens },
+               meta: buildGenMeta({ type: 'text_cleanup', model: OLLAMA_MODEL, t0: _t0, promptTokens, completionTokens }) };
+    }
+    console.warn(`    Text cleanup attempt ${attempt}/${ATTEMPTS} rejected: ${lastProblem}`);
+  }
+  if (best) {
+    console.log(`  Text cleanup: kept ${best.chk.kept}/${best.chk.total} words — HEAVY, flagged for review`);
+    return { text: best.text, kept: best.chk.kept, total: best.chk.total, dropped: best.chk.dropped,
+             heavy: true, note: lastProblem, tokens: { promptTokens, completionTokens },
+             meta: buildGenMeta({ type: 'text_cleanup', model: OLLAMA_MODEL, t0: _t0, promptTokens, completionTokens }) };
+  }
+  // Nothing usable — most likely the model rewrites rather than deletes. Returning the text
+  // UNCHANGED (rather than throwing) keeps a multi-chunk run moving and loses nothing: the caller
+  // is told it was left alone and why.
+  const words = String(text).split(/\s+/).filter(Boolean).length;
+  console.warn(`  Text cleanup: left unchanged — ${lastProblem}`);
+  return { text, kept: words, total: words, dropped: 0, unchanged: true, note: lastProblem,
+           tokens: { promptTokens, completionTokens },
+           meta: buildGenMeta({ type: 'text_cleanup', model: OLLAMA_MODEL, t0: _t0, promptTokens, completionTokens }) };
+}
+
 // Shared by the /api/storyline-storyboard route and the book-job storyboard post-pass (v68.1) so
 // the two callers cannot drift: derives the majority story style across the chapters (v55_r — the
 // board should match how the story READS; ties → the first chapter's, all-unstyled → null),
@@ -3630,8 +3740,24 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   }
 
   // ── Save story early (before lesson generation, so story is never lost) ──
+  // v69_q: mint the id HERE, before the first upsert. This is the true root of the same-title
+  // collision — the early save previously had no id, so two book chapters sharing a headline
+  // dedup-merged at THIS point (before _persistGenerated ever ran), and the second overwrote the
+  // first. `_genTopicId` is threaded through so the final lesson-bearing save updates the same row.
+  let _genTopicId = null;
+  if (store.schemaVersion >= 29) {
+    // Reuse the existing row's id only when this is a genuine in-place regenerate: same title AND
+    // the same chain parent. Without the parent check, two same-titled siblings in one book would
+    // still collide. Otherwise mint a fresh id so siblings stay distinct.
+    const k = (meta.topic || topic || '').trim().toLowerCase();
+    const existing = store.topics.find(l =>
+      l.topic.toLowerCase() === k && (l.lang||'') === (lang||'') && (l.srcLang||'') === (srcLang||'')
+      && ((l.continuedFromId||null) === (continuedFromId||null)));
+    _genTopicId = (existing && existing.id) || _newTopicId();
+  }
   if (story) {
     upsert({
+      ...(_genTopicId ? { id: _genTopicId } : {}),
       topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
       userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
       story, storyLang, storyPrompt,
@@ -3752,6 +3878,7 @@ async function generate(topic, lang, srcLang, difficulty, continuedFrom, storyLe
   const modelLabel = uniqueModels.join(' / ');
   console.log(`  Done in ${(totalMs/1000).toFixed(1)}s — ${totalPromptTokens+totalCompletionTokens} total tokens`);
   return {
+    ...(_genTopicId ? { id: _genTopicId } : {}),   // v69_q: carry the id minted at the early save
     topic: meta.topic || topic, topicEmoji: meta.topicEmoji || '📚',
     userTopic, userPrompt, lang, srcLang, difficulty: difficulty || 2, storyLen,
     story, storyLang, storyPrompt,
@@ -3843,20 +3970,7 @@ async function boot() {
   
 // ── v29 storyline sync ────────────────────────────────────────────────────────
 // Called after upsert to keep storylines[].chapters in sync
-let _idCounter = 0;
-function _newTopicId() {
-  // Mint a fresh topic id. Numeric to preserve the client's /^tp_\d+$/ detection.
-  // Unlike the old name-hash, this cannot collide when a renamed topic's old name
-  // is reused for a new topic. Existing ids are never recomputed.
-  const existing = new Set((store.topics || []).map(t => t.id).filter(Boolean));
-  let id;
-  do {
-    id = 'tp_' + Date.now().toString()
-       + String(_idCounter++ % 100000).padStart(5, '0')
-       + Math.floor(Math.random() * 100).toString().padStart(2, '0');
-  } while (existing.has(id));
-  return id;
-}
+
 function _chainId(topicIds) {
   const j = JSON.stringify(topicIds);
   return 'sl_' + Math.abs(j.split('').reduce((h,c)=>(h*31+c.charCodeAt(0))|0,0));
@@ -3975,18 +4089,32 @@ function newBookJob(titles) {
 
 // Persist a generated chapter the same way the /api/generate handler does:
 // upsert + stable id + storyline sync. Returns the saved topic.
-function _persistGenerated(data, contFrom) {
-  upsert(data);
-  // Re-fetch the EXACT topic we just upserted. findSaved(name) is name-only and can
-  // return a same-named topic from another language run (same PDF in it->en + de->en),
-  // so match upsert's dedup key: name + lang + srcLang.
-  const k = (data.topic || '').trim().toLowerCase();
-  const sameKey = l => l.topic.toLowerCase() === k && (l.lang||'') === (data.lang||'') && (l.srcLang||'') === (data.srcLang||'');
-  let saved = (store.schemaVersion >= 29) ? store.topics.find(sameKey) : findSaved(data.topic);
+//
+// v69_q — `parentId` (the STORED id of the previous chapter) is passed explicitly. Before this,
+// the book loop resolved the parent by NAME (contFrom = parent.topic) and this function upserted
+// the chapter with NO id yet, so `upsert` fell back to its name+lang+srcLang dedup key. When two
+// chapters in one book shared a title (a real PDF gave chapters 3 and 4 the same headline), the
+// second OVERWROTE the first in that id-less window, and the name-based continuedFrom then chained
+// the survivor to itself. Fix: mint the chapter's id BEFORE upsert so identity is always by id, and
+// record continuedFromId so the storyline sync never resolves a parent by name.
+function _persistGenerated(data, contFrom, parentId) {
   if (store.schemaVersion >= 29) {
-    if (saved && !saved.id) { saved.id = _newTopicId(); upsert(saved); saved = store.topics.find(l => l.id === saved.id) || saved; }
-    _syncStorylineForTopic(saved ? saved.id : data.topic, contFrom);
-    saved = (saved && store.topics.find(l => l.id === saved.id)) || store.topics.find(sameKey) || saved;
+    // Assign identity up front. A fresh chapter (no id) gets one now, BEFORE upsert, so a
+    // same-titled sibling generated moments earlier can never be mistaken for this one.
+    if (!data.id) data.id = _newTopicId();
+    // Record the parent link by id. Prefer the explicit parentId the caller threaded through;
+    // fall back to resolving a name only for legacy callers that pass just contFrom.
+    if (parentId) data.continuedFromId = parentId;
+    else if (contFrom && !data.continuedFromId) data.continuedFromId = findSaved(contFrom)?.id || null;
+    if (contFrom && !data.continuedFrom) data.continuedFrom = contFrom;   // keep the human-readable link too
+  }
+  upsert(data);
+  let saved = (store.schemaVersion >= 29)
+    ? (store.topics.find(l => l.id === data.id) || store.topics.find(l => l.topic.toLowerCase() === (data.topic||'').trim().toLowerCase()))
+    : findSaved(data.topic);
+  if (store.schemaVersion >= 29) {
+    _syncStorylineForTopic(saved ? saved.id : data.id, contFrom);
+    saved = (saved && store.topics.find(l => l.id === saved.id)) || saved;
   }
   return saved || data;
 }
@@ -4234,7 +4362,9 @@ async function _runBookJob(bookId, chunks, base) {
         }
       }
 
-      const saved = _persistGenerated(data, contFrom);
+      // v69_q: pass the parent's stored id, not only its name, so chaining is id-based and two
+      // chapters sharing a title cannot collapse onto each other.
+      const saved = _persistGenerated(data, contFrom, parent ? parent.id : null);
       jobDone(jobId, { ...data, fromCache: false });
       bj.chapters[i].status  = 'done';
       bj.chapters[i].topicId = saved.id || null;
@@ -4283,6 +4413,15 @@ async function _runBookJob(bookId, chunks, base) {
         const all = getStorylines();
         const sl = all.find(s => s.id === slId)
                 || all.find(s => chapterIds.every(id => (s.chapters || []).includes(id)));
+        // v69_p (user request): the ✨ upload cleanup is spent BEFORE any storyline exists — it runs
+        // on the upload panel's chunks. The client accumulates that spend and sends it with the
+        // book job, so it can be attributed here rather than vanishing from the ledger.
+        if (sl && base.cleanupTokens && (base.cleanupTokens.promptTokens || base.cleanupTokens.completionTokens)) {
+          addTokenUsage(sl, base.cleanupTokens, 'cleanup');
+          upsertStoryline(sl);
+          console.log(`  [book ${bookId}] upload-cleanup tokens attributed to the storyline: `
+            + `${(base.cleanupTokens.promptTokens||0) + (base.cleanupTokens.completionTokens||0)}`);
+        }
         if (sl && !sl.storyboard) {   // never overwrite a board someone already made
           bj.status = 'storyboard';
           await _storyboardForStoryline(sl.id, topicData, null);
@@ -4420,7 +4559,10 @@ http.createServer(async (req, res) => {
     // Teacher view: who exists and where they are struggling. Requires teacher capability, which on
     // this server means a live backend (the same gate the editing UI uses) — documented as such.
     if (M === 'GET' && url.pathname === '/api/learners') {
-      const list = LEARNERS.listUsers().map(u => LEARNERS.summarize(u.username)).filter(Boolean);
+      // Supply the library so completion can be judged for learners predating the v69_l stamps.
+      const byTopic = {};
+      (store.topics || []).forEach(t => { if (t && t.topic) byTopic[t.topic] = t.lessons || []; });
+      const list = LEARNERS.listUsers().map(u => LEARNERS.summarize(u.username, byTopic)).filter(Boolean);
       return json(res, 200, { learners: list });
     }
     if (M === 'GET' && url.pathname === '/api/info') {
@@ -4654,6 +4796,35 @@ http.createServer(async (req, res) => {
       saveStore(store);
       return json(res, 200, { ok: true });
     }
+    // v69_n — teacher flag triage. Item-level flags live INSIDE lessons (item.userFlag) while
+    // story-level ones live in the flags store, so a teacher had no single place to see what was
+    // reported. Returns both, newest first, with the v69 `mode` so student reports can be picked
+    // out — a learner who flags a wrong pair is the most valuable QC signal there is.
+    if (M === 'GET' && url.pathname === '/api/flag-summary') {
+      const ITEM_ARRAYS = ['vocab', 'sentences', 'items', 'words', 'letters', 'grammar', 'conjugations'];
+      const out = [];
+      (store.topics || []).forEach(t => (t.lessons || []).forEach(ls => {
+        ITEM_ARRAYS.forEach(k => (ls[k] || []).forEach((it, idx) => {
+          if (!it || !it.userFlag) return;
+          out.push({ kind: 'item', topicId: t.id, topic: t.topic, lang: t.lang, srcLang: t.srcLang,
+            lessonId: ls.id, lessonType: ls.type || 'vocab', field: k, index: idx,
+            target: it.target || null, source: it.source || null,
+            comment: it.userFlag.comment || '', correct: it.userFlag.correct || '',
+            mode: it.userFlag.mode || 'teacher', at: it.userFlag.at || null });
+        }));
+        (ls._miscFlags || []).forEach((f, idx) => out.push({ kind: 'misc', topicId: t.id, topic: t.topic,
+          lessonId: ls.id, lessonType: ls.type || 'vocab', index: idx,
+          comment: f.comment || '', mode: f.mode || 'teacher', at: f.at || null }));
+      }));
+      Object.entries(store.flags || {}).forEach(([key, f]) => {
+        if (!f || typeof f !== 'object') return;
+        out.push({ kind: 'story', key, topic: f.topic || null, type: f.type || 'story',
+          mode: f.mode || 'teacher', at: f.flaggedAt || null });
+      });
+      out.sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')));
+      const byMode = out.reduce((m, f) => (m[f.mode] = (m[f.mode] || 0) + 1, m), {});
+      return json(res, 200, { flags: out, total: out.length, byMode });
+    }
     if (M === 'GET' && url.pathname === '/api/flags') {
       return json(res, 200, getFlags());
     }
@@ -4675,6 +4846,21 @@ http.createServer(async (req, res) => {
     // v69_i: per-storyline and per-chapter pass marks. One route for both scopes so the validation
     // and the null-clearing semantics cannot drift. value:null clears the override, which is NOT
     // the same as 0 (0 = "no pass mark, anything completes"); the client sends null for "inherit".
+    // v69_m — stage 2 of the upload cleanup: remove NON-NARRATIVE fragments the deterministic pass
+    // cannot classify (ads, "read also" teasers, captions, subscription prompts) — text that reads
+    // as grammatical prose and so survives every mechanical rule. Deletion-only by contract, and
+    // VERIFIED as such: see cleanTextChanges(). Per chunk, so the model sees a lesson-sized passage.
+    if (M === 'POST' && url.pathname === '/api/clean-text') {
+      if (active === 'none') return json(res, 503, { error: 'No LLM backend.' });
+      let body;
+      try { body = JSON.parse(await readBody(req)); }
+      catch(e) { return json(res, 400, { error: 'Invalid JSON' }); }
+      const text = String(body.text || '');
+      if (text.trim().length < 40) return json(res, 400, { error: 'Text too short to clean.' });
+      if (text.length > 20000) return json(res, 400, { error: 'Text too long — split it first.' });
+      try { return json(res, 200, await cleanNarrativeText(text, body.lang || 'en')); }
+      catch(e) { return json(res, 502, { error: e.message }); }
+    }
     if (M === 'POST' && url.pathname === '/api/pass-mark') {
       let body;
       try { body = JSON.parse(await readBody(req)); }
@@ -5011,6 +5197,12 @@ http.createServer(async (req, res) => {
       // Normalize the chain root (id or name) to a name for downstream context.
       const rootParent = continuedFrom ? (findSavedById(continuedFrom) || findSaved(continuedFrom)) : null;
       const base = { lang: lang || 'it', srcLang: srcLang || 'en', diff, fmt,
+        // v69_p: token spend from the ✨ upload cleanup, which happens BEFORE any storyline exists.
+        // Sanitised here rather than trusted: it is client-supplied and only ever added to a ledger.
+        cleanupTokens: (body.cleanupTokens && typeof body.cleanupTokens === 'object')
+          ? { promptTokens: Math.max(0, Math.min(1e7, body.cleanupTokens.promptTokens | 0)),
+              completionTokens: Math.max(0, Math.min(1e7, body.cleanupTokens.completionTokens | 0)) }
+          : null,
         continuedFrom: rootParent ? rootParent.id : null, userStoryLang: userStoryLang || null,
         arc: arcEnabled, arcTypes: _arcTypes.length ? _arcTypes : ['word_forms','synonyms'],
         arcMode: arcMode === 'grammar' ? 'grammar' : 'vocab',

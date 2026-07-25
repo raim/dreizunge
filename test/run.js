@@ -21,6 +21,7 @@ const failures = [];
 // 1) Static checks — always run.
 run('server.js node --check', 'node', ['--check', path.join(ROOT, 'server.js')]);
 run('inline script: index.html', 'node', [path.join(__dirname, 'check-inline.js'), path.join(ROOT, 'index.html')]);
+run('structure: no screen nested inside another screen (v69_s2)', 'node', [path.join(__dirname, 'unit-screen-structure.test.js')]);
 const docs = path.join(ROOT, 'docs', 'index.html');
 if (fs.existsSync(docs)) run('inline script: docs/index.html', 'node', [path.join(__dirname, 'check-inline.js'), docs]);
 run('ui.json parses', 'node', ['-e', "require(path.join('" + ROOT.replace(/\\/g, '\\\\') + "','ui.json'));console.log('  ui.json: OK')"]);
@@ -112,8 +113,12 @@ run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [
 run('unit: error-hunt validation + retry (v69_g)', 'node', [path.join(__dirname, 'unit-error-hunt-validation.test.js')]);
 run('unit: knowledge-aware round composition (v69_h)', 'node', [path.join(__dirname, 'unit-round-composition.test.js')]);
 run('e2e: pass mark per storyline + chapter (v69_i)', 'node', [path.join(__dirname, 'e2e-pass-mark.test.js')]);
+run('e2e: model text cleanup — deletion-only (v69_m)', 'node', [path.join(__dirname, 'e2e-text-cleanup.test.js')]);
+run('e2e: teacher dashboard — overview + flag triage (v69_n)', 'node', [path.join(__dirname, 'e2e-teacher-dashboard.test.js')]);
+run('e2e: book chapters sharing a title stay distinct (v69_q)', 'node', [path.join(__dirname, 'e2e-book-duplicate-titles.test.js')]);
 // Executes the client's render paths in a stub DOM — the only guard that catches TDZ crashes and
 // undefined references, which source-level assertions provably cannot see (v69_k).
+run('unit: one definition of chapter-complete (v69_l)', 'node', [path.join(__dirname, 'unit-chapter-complete.test.js')]);
 run('smoke: render paths execute (buildPath/storyline/complete/renderEx)', 'node', [path.join(__dirname, 'smoke-render.test.js')]);
 run('unit: beginner-mode exercise types (v69.2)', 'node', [path.join(__dirname, 'unit-beginner-types.test.js')]);
 run('unit: stable per-question IDs (qid) — Commit A', 'node', [path.join(__dirname, 'unit-qid-stability.test.js')]);

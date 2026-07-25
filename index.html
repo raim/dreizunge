@@ -735,6 +735,14 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <input type="checkbox" id="pdf-cleanup-cb" onchange="onCleanupToggle()">
         <span id="pdf-cleanup-lbl">🧹 Clean up text</span>
       </label>
+      <div id="pdf-aiclean-row" style="display:none;text-align:center;margin:2px 0 8px">
+        <button type="button" id="pdf-aiclean-btn" class="cont-btn"
+          style="font-size:12px;padding:6px 14px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)"
+          onclick="aiCleanChunks()">✨ <span id="pdf-aiclean-lbl">Remove ads &amp; boilerplate</span></button>
+        <button type="button" id="pdf-aiclean-undo" class="cont-btn"
+          style="display:none;font-size:12px;padding:6px 12px;margin-left:6px;background:var(--gray-light);color:var(--text);border:1.5px solid var(--gray-mid)"
+          onclick="aiCleanUndo()">↩</button>
+      </div>
       <label class="user-story-check-row" id="split-page-row" style="display:none">
         <input type="checkbox" id="split-page-cb" onchange="onSplitModeChange()">
         <span id="split-page-lbl">📄 Split per page</span>
@@ -939,6 +947,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
           <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importLessons(this)">
         </label>
         <button id="export-static-btn" onclick="exportStatic()" title="Rebuild docs/index.html" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🏗 Static</button>
+        <button id="teacher-dash-btn" onclick="openTeacherDashboard()" title="Teacher dashboard" style="display:none;font-size:12px;font-weight:700;font-family:Nunito,sans-serif;border:1.5px solid var(--gray-mid);border-radius:8px;padding:5px 10px;background:var(--white);cursor:pointer;color:var(--gray-dark)">🎓 <span id="teacher-dash-lbl">Learners</span></button>
         <button class="mute-btn" onclick="toggleMute()" title="Mute" style="font-size:18px;border:none;background:none;cursor:pointer;padding:2px 4px;opacity:.7">🔊</button>
       </div>
     </div>
@@ -964,7 +973,6 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     </div>
     <div style="height:5px;background:var(--gray-mid);border-radius:2px;overflow:hidden;margin:6px 0 2px">
       <div id="ls-storyline-prog-bar" style="height:100%;background:var(--green);border-radius:2px;transition:width .3s;width:0%"></div>
-  <div id="ls-passmark" style="display:none"></div>
     </div>
     <div style="font-size:11px;font-weight:800;color:var(--gray-dark);padding:2px 0 0;opacity:.8" id="ls-storyline-prog-txt"></div>
   </div>
@@ -1095,6 +1103,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
       <button class="story-icon-btn mute-btn" onclick="toggleMute()" title="Mute" style="flex-shrink:0;font-size:18px;opacity:.7">🔊</button><button class="story-icon-btn stop-gen-btn" onclick="stopGeneration()" title="Stop generation" style="flex-shrink:0;font-size:18px;opacity:.7;display:none">🛑</button>
     </div>
   </div>
+  <div id="ls-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
   <div class="gen-stats" id="prov-stats" style="padding:6px 16px 0;border-top:1px solid var(--gray-mid);margin:0;display:none"></div>
   <div class="gen-stats" id="gen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
 </div>
@@ -1152,15 +1161,12 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
         <button class="sl-screen-share" id="sl-screen-qc-btn" title="" style="display:none">🔍</button>
         <button class="sl-screen-share" id="share-storyline-btn" onclick="shareStoryline()" title="Share">🔗</button>
       </div>
-      <!-- v65.1: pass mark lives here (teacher mode on a storyline), not in the model menu — it is
-           a pedagogical setting about learners, not a model setting. -->
-      <div id="sl-threshold-row" style="display:none;padding:2px 14px 4px;align-items:center;gap:6px">
-        <span style="font-size:11px;font-weight:800;color:var(--gray-dark)" id="sl-threshold-lbl"></span>
-        <input type="number" id="sl-threshold" min="0" max="100" step="5" onchange="switchThreshold(this.value)"
-               style="width:64px;font-family:Nunito,sans-serif;font-size:12px;padding:3px 6px;border:1.5px solid var(--gray-mid);border-radius:6px">
-        <span style="font-size:11px;opacity:.7">%</span>
-        <span id="sl-threshold-hint" style="font-size:10px;color:var(--gray-dark)"></span>
-      </div>
+      <!-- v69_r: the v65.1 global-threshold row that used to sit here has been REMOVED. It was a
+           SECOND, older pass-mark control (it set the GLOBAL default via /api/coverage-threshold and
+           lived in this header), which duplicated the v69_i per-storyline control shown at the
+           bottom of this screen (#sl-passmark). Two controls on one page is what the user reported.
+           The per-storyline mark below now solely governs this storyline; the global default is the
+           hierarchy's fallback and no longer belongs on a specific storyline's page. -->
       <div id="sl-tags-row" style="display:none;padding:2px 14px 4px;align-items:center;gap:6px;flex-wrap:wrap">
         <span id="sl-tags-display" style="font-size:11px;color:var(--gray-dark);cursor:pointer" onclick="openSlTagEditor()"></span>
         <button class="storyline-hdr-btn" id="sl-tag-edit-btn" style="font-size:11px;display:none" onclick="openSlTagEditor()">🏷</button>
@@ -1207,6 +1213,20 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
   <div id="sl-passmark" style="border-top:1px solid var(--gray-mid);display:none"></div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-prov" style="padding:6px 16px 0;border-top:1px solid var(--gray-mid);margin:0;display:none"></div>
   <div class="gen-stats sl-screen-stats" id="sl-screen-stats" style="padding:6px 16px 4px;border-top:1px solid var(--gray-mid);margin:0"></div>
+  </div>
+</div>
+
+<div id="teacher-screen" class="screen">
+  <div class="sl-screen">
+    <div class="sl-screen-hdr">
+      <div class="sl-screen-title-row">
+        <button class="sl-screen-home" onclick="goLandingClean()" title="Home">🌍</button>
+        <span class="sl-screen-title" id="td-title" style="cursor:default">🎓</span>
+        <button class="sl-screen-share" onclick="openTeacherDashboard()" title="Refresh">🔄</button>
+      </div>
+    </div>
+    <div class="sl-screen-body" id="td-body"></div>
+  </div>
 </div>
 
 <script>
@@ -1657,6 +1677,7 @@ function applyUIStrings() {
   { const ub=document.getElementById('upload-choose-lbl'); if(ub) ub.textContent=t('form.upload_doc'); }
   { const sp=document.getElementById('split-page-lbl'); if(sp) sp.textContent=t('form.split_per_page'); }
   { const cl=document.getElementById('pdf-cleanup-lbl'); if(cl) cl.textContent=t('pdf.cleanup_lbl'); }
+  { const al=document.getElementById('pdf-aiclean-lbl'); if(al) al.textContent=t('pdf.aiclean_lbl'); }
   const useTransLbl = document.getElementById('use-translation-lbl');
   if (useTransLbl) useTransLbl.textContent = t('form.translation_cb');
   const storyPanelLbl = document.getElementById('story-panel-lbl');
@@ -1777,6 +1798,11 @@ function applyUIStrings() {
   _setText('blbl',                 t('app.checking'));
   const _esBtn = document.getElementById('export-static-btn');
   if (_esBtn) _esBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  // v69_n: the dashboard reads learner accounts and the flag store, both server-side, so it is
+  // hidden without a backend rather than opening an empty screen in the static build.
+  const _tdBtn = document.getElementById('teacher-dash-btn');
+  if (_tdBtn) _tdBtn.style.display = APP.info.canGenerate ? '' : 'none';
+  _setText('teacher-dash-lbl', t('teacher.title'));
   _setText('add-lesson-lbl-card',  '➕ '+t('lib.add_lesson')+':');
   _setText('user-story-clear-btn', '✕ '+t('form.clear_text'));
   _setAttr('user-story-clear-btn', 'title', t('form.clear_text'));
@@ -3375,11 +3401,194 @@ function _applyUploadCleanup(){
   if(!_pdfOrig) return;
   const on = !!document.getElementById('pdf-cleanup-cb')?.checked;
   _pdfRawText = on ? cleanExtractedText(_pdfOrig.text) : _pdfOrig.text;
+  const _fullStats = on ? _lastCleanStats : null;
   _pdfPages   = Array.isArray(_pdfOrig.pages)
     ? (on ? _pdfOrig.pages.map(cleanExtractedText) : _pdfOrig.pages.slice())
     : null;
+  // v69_p (user request): say what the deterministic pass actually did. It runs silently in the
+  // browser, so without this the only evidence was the text looking different.
+  if (on && _fullStats) {
+    const s = _fullStats;
+    console.log(`🧹 Text cleanup (no LLM): ${s.wordsIn} → ${s.wordsOut} words`);
+    console.log(`   ${s.wrapsJoined} wrapped line(s) rejoined · ${s.junkDropped} junk line(s) removed `
+      + `(page numbers, dates, bare URLs) · ${s.shortDropped} unpunctuated fragment(s) removed `
+      + `(bylines, headers, nav)`);
+    if (_pdfPages) console.log(`   applied to the full text and to ${_pdfPages.length} page(s) separately`);
+  } else if (!on) {
+    console.log('🧹 Text cleanup off — using the raw extraction');
+  }
 }
+// ── Teacher dashboard (v69_n) ────────────────────────────────────────────────
+// Two panels: WHO is learning and how far they have got, and WHAT they have reported. Teacher-only
+// and backend-only — learner accounts and the flag store both live server-side, so the button is
+// hidden in the static build rather than showing an empty screen there.
+async function openTeacherDashboard(){
+  console.log('[teacher] opening dashboard…');
+  // The dashboard needs the live server (learner accounts + flag store), so it is teacher/backend
+  // only. If somehow reached without a backend, say so instead of showing a blank screen.
+  show('teacher-screen');
+  const body = document.getElementById('td-body');
+  if(!body){ console.error('[teacher] #td-body not found — screen markup missing from this build'); return; }
+  const title = document.getElementById('td-title');
+  if(title) title.textContent = '🎓 ' + t('teacher.title');
+  if(!body){ console.warn('teacher dashboard: #td-body missing'); return; }
+  if(!APP.info?.canGenerate){
+    body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--gray-dark)">${escHtml(t('teacher.no_backend'))}</div>`;
+    return;
+  }
+  body.innerHTML = `<div style="padding:20px;text-align:center;color:var(--gray-dark)">${escHtml(t('teacher.loading'))}</div>`;
+  let learners = [], flags = [], byMode = {}, err = null;
+  // Fetch each independently: one endpoint failing must not blank the whole screen (previously a
+  // single rejected fetch fell through to a bare error and the panels never rendered).
+  try { const r = await fetch('/api/learners'); if(r.ok) learners = (await r.json()).learners || []; else err = `learners: HTTP ${r.status}`; }
+  catch(e){ err = 'learners: ' + e.message; }
+  try { const r = await fetch('/api/flag-summary'); if(r.ok){ const d = await r.json(); flags = d.flags || []; byMode = d.byMode || {}; } else err = (err?err+'; ':'') + `flags: HTTP ${r.status}`; }
+  catch(e){ err = (err?err+'; ':'') + 'flags: ' + e.message; }
+  // Always render the panels (their own empty states are informative); append any error rather than
+  // replacing everything with it, so a partial failure still shows what did load.
+  let html;
+  try {
+    html = _tdLearnersHtml(learners) + _tdFlagsHtml(flags, byMode);
+  } catch(e){
+    console.error('[teacher] render failed:', e);
+    body.innerHTML = `<div style="padding:24px;text-align:center;color:var(--red)">⚠ ${escHtml(t('teacher.render_error'))}<br><span style="font-size:11px;opacity:.8">${escHtml(e.message)}</span></div>`;
+    return;
+  }
+  if(err) html += `<div style="padding:12px 14px;color:var(--red);font-size:12px">⚠ ${escHtml(err)}</div>`;
+  body.innerHTML = html;
+  console.log(`[teacher] rendered: ${learners.length} learner(s), ${flags.length} flag(s)`);
+}
+function _tdLearnersHtml(learners){
+  const head = `<div style="font-size:13px;font-weight:800;color:var(--gray-dark);padding:10px 12px 4px">👥 ${escHtml(t('teacher.learners'))} (${learners.length})</div>`;
+  if(!learners.length)
+    return head + `<div style="padding:0 14px 14px;font-size:12px;color:var(--gray-dark);opacity:.8">${escHtml(t('teacher.no_learners'))}</div>`;
+  return head + learners.map(l => {
+    const hard = (l.hardestWords||[]).slice(0,6).map(w =>
+      `<span style="display:inline-block;background:var(--gray-light);border-radius:8px;padding:1px 7px;margin:2px 3px 0 0;font-size:11px">${escHtml(w.word)} <b>${w.wrong}×</b></span>`).join('');
+    // Both numbers are shown: "started" is what the old summary actually counted, "completed" is
+    // the coverage-aware verdict (v69_l). Showing only one of them is how the old label misled.
+    return `<div style="border-top:1px solid var(--gray-mid);padding:8px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+        <b style="font-size:14px">${escHtml(l.username)}</b>
+        <span style="font-size:11px;color:var(--gray-dark)">${l.lastSeen ? escHtml(t('teacher.last_seen',{when:_tdWhen(l.lastSeen)})) : ''}</span>
+      </div>
+      <div style="font-size:12px;color:var(--gray-dark);margin-top:2px">
+        ${escHtml(t('teacher.chapters',{done:l.chaptersCompleted||0, started:l.chaptersStarted||0}))}
+        · ${escHtml(t('teacher.words',{n:l.wordsLearned||0}))}
+      </div>
+      ${hard ? `<div style="margin-top:4px"><span style="font-size:11px;color:var(--gray-dark)">${escHtml(t('teacher.hardest'))}</span><br>${hard}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+function _tdFlagsHtml(flags, byMode){
+  const student = flags.filter(f => f.mode === 'student');
+  const head = `<div style="font-size:13px;font-weight:800;color:var(--gray-dark);padding:14px 12px 4px;border-top:1px solid var(--gray-mid)">⚑ ${escHtml(t('teacher.flags'))} (${flags.length}${student.length?` · 👤 ${student.length}`:''})</div>`;
+  if(!flags.length)
+    return head + `<div style="padding:0 14px 16px;font-size:12px;color:var(--gray-dark);opacity:.8">${escHtml(t('teacher.no_flags'))}</div>`;
+  // Student reports first: a learner flagging a wrong pair is the signal most worth acting on.
+  const ordered = [...student, ...flags.filter(f => f.mode !== 'student')].slice(0, 60);
+  return head + ordered.map(f => {
+    const who = f.mode === 'student'
+      ? `<span style="font-weight:800;background:#fff3c4;color:#8a6d00;border-radius:8px;padding:0 6px;font-size:10px">👤 ${escHtml(t('flag.mode.student'))}</span>` : '';
+    const what = f.kind === 'story' ? `📖 ${escHtml(t('teacher.flag_story'))}`
+      : `${escHtml(f.target || '')} ${f.source ? '· ' + escHtml(f.source) : ''}`;
+    const note = f.comment ? `<div style="font-size:11px;color:var(--gray-dark);margin-top:1px">${escHtml(f.comment)}</div>` : '';
+    const fix = f.correct ? `<div style="font-size:11px;color:var(--green);margin-top:1px">→ ${escHtml(f.correct)}</div>` : '';
+    return `<div style="border-top:1px solid var(--gray-mid);padding:7px 14px;cursor:pointer" onclick="_tdOpenFlag(${escAttr(JSON.stringify(f.topicId||''))})">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap">
+        <span style="font-size:13px;font-weight:700">${what}</span>${who}
+      </div>
+      <div style="font-size:11px;color:var(--gray-dark)">${escHtml(f.topic||'')}${f.at?' · '+_tdWhen(f.at):''}</div>
+      ${note}${fix}
+    </div>`;
+  }).join('');
+}
+function _tdWhen(iso){
+  try{ const d=new Date(iso); if(isNaN(d)) return ''; return d.toLocaleDateString(undefined,{day:'numeric',month:'short'}); }catch(_){ return ''; }
+}
+// Jump from a flag to the chapter that carries it, where the existing editor handles the fix.
+function _tdOpenFlag(topicId){
+  if(!topicId) return;
+  const t0 = (APP.savedList||[]).find(l => l.id === topicId);
+  if(t0) loadSaved(t0.topic);
+}
+
 function onCleanupToggle(){ _applyUploadCleanup(); _resplitUpload(); }
+
+// ── Stage 2: the model pass (v69_m) ──────────────────────────────────────────
+// The deterministic pass (cleanExtractedText) fixes what code can fix reliably. What survives it is
+// text that READS like prose but is not part of the article — an advertisement, a "read also"
+// teaser, a photo caption. No rule can classify those, so the model is asked, per chunk, and the
+// SERVER verifies the answer is deletion-only before returning it. Chunk-by-chunk keeps each
+// request lesson-sized and lets partial progress survive a failure.
+let _aiCleanBackup = null;   // chunk texts before the pass, so it is undoable
+let _aiCleanTokens = { promptTokens: 0, completionTokens: 0 };   // spend, attributed on submit
+async function aiCleanChunks(){
+  if(!_pdfChunks.length) return;
+  const btn = document.getElementById('pdf-aiclean-btn');
+  const undo = document.getElementById('pdf-aiclean-undo');
+  if(btn) btn.disabled = true;
+  _aiCleanBackup = _pdfChunks.map(c => c.text);
+  let cleaned = 0, dropped = 0, failed = 0, heavy = 0, untouched = 0;
+  console.log(`✨ AI text cleanup: ${_pdfChunks.length} chunk(s) — removing ads, teasers, captions and navigation…`);
+  for(let i=0; i<_pdfChunks.length; i++){
+    const c = _pdfChunks[i];
+    c.status = 'active'; _renderPdfChunks();
+    try{
+      const r = await fetch('/api/clean-text', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ text: c.text, lang: APP.srcLang || APP.lang || 'en' }) });
+      const data = await r.json();
+      if(!r.ok) throw new Error(data.error || 'failed');
+      if(data.tokens){
+        _aiCleanTokens.promptTokens     += data.tokens.promptTokens || 0;
+        _aiCleanTokens.completionTokens += data.tokens.completionTokens || 0;
+      }
+      console.log(`   chunk ${i+1}/${_pdfChunks.length}: kept ${data.kept}/${data.total} words`
+        + (data.heavy ? ' — HEAVY, check it' : data.unchanged ? ' — left unchanged' : '')
+        + (data.tokens ? ` · ${(data.tokens.promptTokens||0)+(data.tokens.completionTokens||0)} tokens` : ''));
+      if(data.unchanged){ untouched++; }
+      else if(data.text && data.text !== c.text){
+        c.text = data.text;
+        c.wordCount = wordCount(data.text);
+        c.title = _autoTitle(data.text, i);
+        dropped += (data.dropped || 0);
+        // v69_o: a heavy deletion is applied but FLAGGED. The model may well be right (a chunk can
+        // be mostly links or teasers), but the human should look — the pass is undoable.
+        if(data.heavy){ heavy++; c._aiHeavy = true; }
+      }
+      c.status = 'pending'; cleaned++;
+    }catch(e){
+      c.status = 'pending'; failed++;
+      console.warn('clean-text chunk', i, e.message);
+    }
+    _renderPdfChunks();
+  }
+  _chunksDirty = true;
+  const _tot = _aiCleanTokens.promptTokens + _aiCleanTokens.completionTokens;
+  console.log(`✨ AI text cleanup done: ${cleaned} cleaned, ${heavy} heavy, ${untouched} unchanged, `
+    + `${failed} failed · ${dropped} words removed · ${_tot} tokens (charged to the storyline on generate)`);
+  if(btn) btn.disabled = false;
+  if(undo) undo.style.display = '';
+  // Report what actually happened rather than a blanket success: heavy deletions and untouched
+  // chunks are both normal outcomes the user needs to know about.
+  let msg = t('pdf.aiclean_done', { n: dropped });
+  if (failed)    msg = t('pdf.aiclean_partial', { ok: cleaned, fail: failed });
+  if (heavy)     msg += ' · ' + t('pdf.aiclean_heavy', { n: heavy });
+  if (untouched) msg += ' · ' + t('pdf.aiclean_untouched', { n: untouched });
+  showToast(msg);
+}
+function aiCleanUndo(){
+  if(!_aiCleanBackup) return;
+  _pdfChunks.forEach((c,i) => { if(_aiCleanBackup[i] != null){ c.text=_aiCleanBackup[i]; c.wordCount=wordCount(c.text); c.title=_autoTitle(c.text,i); } });
+  _aiCleanBackup = null;
+  // The tokens were really spent, but the text they produced has been discarded, so they are not
+  // charged to the storyline. Logged so the spend is not silently lost.
+  const _spent = _aiCleanTokens.promptTokens + _aiCleanTokens.completionTokens;
+  if(_spent) console.log(`↩ AI cleanup undone — ${_spent} tokens were spent but will not be charged`);
+  _aiCleanTokens = { promptTokens: 0, completionTokens: 0 };
+  const undo = document.getElementById('pdf-aiclean-undo'); if(undo) undo.style.display='none';
+  _renderPdfChunks();
+}
 function _resplitUpload(){
   if(!_uploadMode || !_pdfRawText) return;
   _splitOpen=-1; _chunksDirty=false;
@@ -3417,6 +3626,9 @@ async function onUploadFileChosen(input){
     if (_clCb) _clCb.checked = isPdf;
     const _clRow = document.getElementById('pdf-cleanup-row');
     if (_clRow) _clRow.style.display = '';
+    // The model pass needs a backend, so it never appears in the static build.
+    const _aiRow = document.getElementById('pdf-aiclean-row');
+    if (_aiRow) _aiRow.style.display = APP.info?.canGenerate ? '' : 'none';
     _applyUploadCleanup();
     _uploadFileName = file.name || '';   // preserve original case/extension for storyline provenance
     // Per-page splitting is only offered when the source has page boundaries.
@@ -3503,6 +3715,10 @@ function _cleanPdfText(text) {
 //      without a sentence end and without much text is a byline / header / crumb, not narrative.
 // Toggleable in the upload panel (default ON for PDFs, OFF for plain-text files, which are usually
 // already intentional) — the original extraction is kept so the toggle is lossless both ways.
+// Stats from the most recent deterministic pass, so the caller can report what actually happened
+// (v69_p, user request). Kept as a side channel rather than a changed return type: the function is
+// called from several places that only want the text.
+let _lastCleanStats = null;
 function cleanExtractedText(text) {
   const SENT_END = /[.!?…]["'»«”’)\]]*$/u;          // sentence-final punct, closing quotes allowed
   const lines = String(text || '').replace(/\r\n?/g, '\n').split('\n').map(l => l.replace(/\s+$/, ''));
@@ -3537,7 +3753,16 @@ function cleanExtractedText(text) {
   }
   // 3. leftover unpunctuated short lines are non-narrative.
   const out = joined.filter(l => !l || SENT_END.test(l) || letters(l) >= 20);
-  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  const result = out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  const wc = (x) => String(x).split(/\s+/).filter(Boolean).length;
+  _lastCleanStats = {
+    linesIn:      lines.filter(l => l.trim()).length,
+    junkDropped:  lines.filter(l => l.trim()).length - kept.filter(l => l.trim()).length,
+    wrapsJoined:  kept.filter(l => l.trim()).length - joined.filter(l => l.trim()).length,
+    shortDropped: joined.filter(l => l.trim()).length - out.filter(l => l.trim()).length,
+    wordsIn: wc(text), wordsOut: wc(result),
+  };
+  return result;
 }
 
 function _splitIntoChunks(text, targetWords) {
@@ -3803,6 +4028,10 @@ async function pdfGenerateAll() {
     storyStyle: APP.storyStyle && APP.storyStyle !== 'creative' ? APP.storyStyle : null,
     sourceFile: _uploadFileName || null,
     chunks: _pdfChunks.map(c => ({ title: c.title, text: c.text, wordCount: c.wordCount })),
+    // v69_p: the ✨ cleanup is spent before any storyline exists, so it travels with the job and is
+    // attributed to the storyline server-side. Omitted when nothing was spent.
+    ...( (_aiCleanTokens.promptTokens || _aiCleanTokens.completionTokens)
+         ? { cleanupTokens: { ..._aiCleanTokens } } : {} ),
   };
   if (document.getElementById('pdf-arc-cb')?.checked) {
     body.arc = true;
@@ -4968,7 +5197,74 @@ function lessonCountsFor(d, L) {
 }
 function countedLessons(d) { return (d?.lessons || []).filter(L => lessonCountsFor(d, L)); }
 // Has the learner finished everything that counts in this set? Drives story unlock + 100%.
+// ── Chapter completion: ONE definition, shared (v69_l) ───────────────────────────────────────
+// The app had two. `setComplete()` is the honest rule — every counted lesson played AND coverage
+// at or above the pass mark — but it is only authoritative for the ACTIVE topic, because coverage
+// reads live state (`_lessonQidUniverse` walks `APP.lessonData`). Every OTHER chapter silently
+// degraded to "all lessons have a done-flag", so the storyline lock, the green dot and the
+// story-progress row could call a chapter finished while its own completion card still said
+// "keep going" — exactly the reported case: three lessons flagged done, coverage 10/34, below the
+// 80% mark.
+//
+// Recomputing coverage for other chapters would mean swapping APP.lessonData and re-deriving every
+// universe on each storyline render (~16 builder calls per lesson). Instead the verdict is
+// PERSISTED when it is computable, and read back when it is not. Stored per topic as
+// { done, n, at }: `n` is the counted-lesson count at stamp time, so adding or removing a lesson
+// makes the stamp STALE and the reader falls back to done-flags rather than trusting it — that is
+// the case the user hit when a mixed lesson was added to a finished chapter.
+function _chapterDoneMap(){
+  if(!APP.progress) return {};
+  if(!APP.progress.chapterDone) APP.progress.chapterDone = {};
+  return APP.progress.chapterDone;
+}
+// Record the authoritative verdict for the active topic. Persists only on CHANGE: setComplete runs
+// inside render paths, and writing localStorage on every call would be wasteful.
+function _recordChapterDone(d, done){
+  try {
+    if(!d || !d.topic) return;
+    const n = countedLessons(d).length;
+    const m = _chapterDoneMap();
+    const prev = m[d.topic];
+    if (prev && prev.done === !!done && prev.n === n) return;
+    m[d.topic] = { done: !!done, n, at: new Date().toISOString() };
+    saveProg();
+  } catch(_) {}
+}
+// The single reader every consumer should use. `t` may be a topic object or a list projection —
+// anything with .topic and .lessons.
+function chapterComplete(t){
+  if(!t || !t.topic) return false;
+  const lessons = t.lessons || [];
+  // Active topic → compute it live; that is the definition, and it is already cheap here.
+  if (APP.lessonData && APP.lessonData.topic === t.topic) {
+    try { return !!setComplete(APP.lessonData); } catch(_) {}
+  }
+  // Otherwise trust a stamp that still matches the chapter's shape.
+  try {
+    const rec = _chapterDoneMap()[t.topic];
+    if (rec && typeof rec.done === 'boolean') {
+      const n = (typeof countedLessons === 'function') ? countedLessons(t).length : lessons.length;
+      if (rec.n === n) return rec.done;      // fresh
+    }
+  } catch(_) {}
+  // No usable stamp (never finished under v69_l, or the chapter changed shape) → the historical
+  // rule. Conservative in the right direction: it can only be MORE permissive, never less.
+  const doneFlags = APP.progress?.completed?.[t.topic] || {};
+  const counted = (typeof countedLessons === 'function') ? countedLessons(t) : lessons;
+  return counted.length > 0 && counted.every(L => doneFlags[L.id]);
+}
+
+// Thin wrapper: records the verdict for the ACTIVE topic on every exit, so a future edit inside
+// _setCompleteRaw cannot forget to stamp one of its several `return`s.
 function setComplete(d) {
+  const v = _setCompleteRaw(d);
+  // typeof-guarded so a harness can extract setComplete + _setCompleteRaw without stubbing the
+  // persistence layer; recording is a side effect, never part of the verdict.
+  if (d && APP.lessonData && d.topic === APP.lessonData.topic && typeof _recordChapterDone === 'function')
+    _recordChapterDone(d, v);
+  return v;
+}
+function _setCompleteRaw(d) {
   if (!d) return false;
   // Mixed-driven sets complete by COVERAGE (solved ≥ target of the question universe) AND by
   // finishing every OTHER visible lesson — the error-hunt final test(s) and any lessons placed
@@ -6080,17 +6376,10 @@ function _lessonTypesDropdownHtml(s) {
        + icons
        + '</div>';
 }
-function _refreshSlThreshold(){
-  const row = document.getElementById('sl-threshold-row');
-  if(!row) return;
-  const show = !!APP._teacherMode;          // teacher-mode setting, per the design
-  row.style.display = show ? 'flex' : 'none';
-  if(!show) return;
-  const inp = document.getElementById('sl-threshold');
-  if(inp) inp.value = Math.round((APP.info?.coverageThreshold ?? 1) * 100);
-  const lbl = document.getElementById('sl-threshold-lbl'); if(lbl) lbl.textContent = t('models.threshold');
-  const h = document.getElementById('sl-threshold-hint'); if(h) h.textContent = t('threshold.scope_note');
-}
+// v69_r: the global-threshold header row was removed (it duplicated the per-storyline #sl-passmark
+// control). This is now a no-op kept only so the single call site needs no change; the storyline
+// pass mark is rendered by the #sl-passmark block further down _renderStorylineScreen.
+function _refreshSlThreshold(){ /* removed — see #sl-passmark */ }
 
 function _renderStorylineScreen(chainId, encodedChain, topics) {
   try{ _refreshSlThreshold(); }catch(_){}
@@ -6172,7 +6461,7 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
 
   // Progress summary for storyline screen
   const _slCompleted = APP.progress?.completed || {};
-  let totalSets = 0, doneSets = 0, totalQ = 0, correctQ = 0;
+  let totalSets = 0, doneSets = 0, totalQ = 0, correctQ = 0, doneChapters = 0;
   chapterIds.forEach(cid => {
     const s = _byId[cid];
     if (!s) return;
@@ -6182,6 +6471,8 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       const prog = _slCompleted[topic]?.[ls.id];
       if (prog) { doneSets++; if (typeof prog==='object'){ correctQ+=prog.correct||0; totalQ+=prog.total||0; } }
     });
+    // v69_l: chapter-level completion uses the shared rule (coverage-aware), not the lesson tally.
+    if (chapterComplete(s)) doneChapters++;
   });
   const _slPct = totalSets > 0 ? Math.round(100 * doneSets / totalSets) : 0;
   const _slScorePct = totalQ > 0 ? Math.round(100*correctQ/totalQ) : null;
@@ -6306,11 +6597,9 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
     const p = _slCompleted[t] || {};
     return (byTopic[t]?.lessons || []).some(ls => p[ls.id]);
   };
-  const _chapterComplete = (t) => {
-    const p = _slCompleted[t] || {};
-    const ls = byTopic[t]?.lessons || [];
-    return ls.length > 0 && ls.every(l => p[l.id]);
-  };
+  // v69_l: one definition. Was "every lesson has a done-flag", which disagreed with the completion
+  // card (coverage vs the pass mark) and let a below-mark chapter unlock the next one.
+  const _chapterComplete = (t) => chapterComplete(byTopic[t]);
   function _renderChapterCard(topic, prevTopic, isFirst, chainBlocked) {
     const s = byTopic[topic];
     const _done = _slCompleted[topic] || {};
@@ -11916,6 +12205,11 @@ function _compProgressHtml(topicKey, slCtx){
                      : (_chLessons ? _chLessons.map(L => L && L.type).filter(Boolean) : []);
       const isMixed = _chTypes.includes('mixed');
       if (cnt === 0) continue;
+      // v69_l: when the whole chapter is in hand (static build, or an already-loaded topic), use
+      // the shared coverage-aware rule so this row agrees with the storyline screen and with the
+      // card's own verdict. The live LIST PROJECTION carries no lessons[], so the done-flag
+      // heuristics below stay as the fallback there.
+      if (_chLessons) { if (chapterComplete(ch)) doneCh++; continue; }
       if (isMixed){
         // A mixed chapter has `cnt` lessons of which one is the mixed driver; finishing the set
         // records the non-mixed lessons (cnt-1) plus coverage. Treat >= cnt-1 recorded as done.

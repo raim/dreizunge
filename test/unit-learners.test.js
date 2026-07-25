@@ -113,9 +113,30 @@ console.log('  sessions: hashed at rest, revocable: OK');
   const huge = { progress: { completed: {}, learned: {} }, tutorThread: [], junk: 'x'.repeat(3 * 1024 * 1024) };
   assert.ok(L.setState('anna', huge).error, 'oversized state is refused');
   // Teacher summary: enough to spot a struggling learner, without dumping everything.
+  // v69_n — this assertion used to read `chaptersCompleted === 2` for a learner who had merely
+  // OPENED two chapters: the field was `Object.keys(progress.completed).length`, i.e. chapters
+  // TOUCHED. A learner who opened ten and finished none reported "10". Both numbers are useful, so
+  // both are now reported under honest names, and "completed" is only claimed when it is knowable.
   const sum = L.summarize('anna');
-  assert.strictEqual(sum.chaptersCompleted, 2, 'summary counts completed chapters');
+  assert.strictEqual(sum.chaptersStarted, 2, 'chaptersStarted is what the old field actually counted');
+  assert.strictEqual(sum.chaptersCompleted, 0,
+    'without a completion stamp or the library, completion is NOT claimed');
   assert.strictEqual(sum.wordsLearned, 2, 'summary counts learned words');
+
+  // With the shared library supplied, completion falls back to "every lesson flagged done".
+  const lib = { Ch1: [{ id: 'l1' }], Ch2: [{ id: 'l1' }, { id: 'l2' }] };
+  const sumLib = L.summarize('anna', lib);
+  assert.strictEqual(sumLib.chaptersCompleted, 1,
+    'Ch1 (its only lesson done) counts; Ch2 (l2 never played) does not');
+
+  // A v69_l per-chapter verdict wins over the flag heuristic — it is the coverage-aware answer the
+  // learner actually saw on their completion card.
+  const st2 = JSON.parse(JSON.stringify(st));
+  st2.progress.chapterDone = { Ch1: { done: false, n: 1 }, Ch2: { done: true, n: 2 } };
+  assert.ok(L.setState('anna', st2).ok, 'state with completion stamps saved');
+  const sumStamp = L.summarize('anna', lib);
+  assert.strictEqual(sumStamp.chaptersCompleted, 1, 'the stamped verdict is used, not the flags');
+  assert.ok(L.setState('anna', st).ok, 'restore the original fixture');
   assert.strictEqual(sum.hardestWords[0].word, 'zee', 'the hardest word leads the summary');
   assert.ok(!JSON.stringify(sum).includes('hash') && !JSON.stringify(sum).includes('salt'),
     'the summary never carries credentials');

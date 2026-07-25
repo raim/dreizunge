@@ -356,7 +356,11 @@ console.log(`  storyboard schemes: ${Object.keys(SCHEMES).join(', ')} — key pa
                                  server.indexOf("url.pathname === '/api/storyline-storyboard/scheme'"));
   assert.ok(/_storyboardForStoryline\(slId, topicData, scheme\)/.test(postRoute), 'the 🎨 route delegates to the helper');
   assert.ok(!/sl\.storyboardPanels = panels/.test(postRoute), 'the route no longer persists inline (helper owns it)');
-  const bookTail = server.slice(server.indexOf('Storyboard post-pass (v68.1'), server.indexOf('Storyboard post-pass (v68.1') + 1600);
+  // Slice to the END of the post-pass rather than a fixed byte count: v69_p added the
+  // upload-cleanup token attribution inside this block and pushed the delegation past a 1600-char
+  // window, failing the test for no behavioural reason.
+  const _ppAt = server.indexOf('Storyboard post-pass (v68.1');
+  const bookTail = server.slice(_ppAt, server.indexOf('storyboard post-pass error', _ppAt) + 40);
   assert.ok(/_storyboardForStoryline\(sl\.id, topicData, null\)/.test(bookTail), 'the book post-pass delegates to the helper');
   assert.ok(/sl && !sl\.storyboard/.test(bookTail), 'the post-pass never overwrites an existing board');
   assert.ok(/catch \(e\) \{ console\.warn\(`  \[book \$\{bookId\}\] storyboard post-pass error/.test(server),

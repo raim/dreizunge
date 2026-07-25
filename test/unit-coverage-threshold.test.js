@@ -58,8 +58,13 @@ console.log('  %-solved bar present + reuses story/chapter labels: OK');
   let cov = { solved: 5, total: 10 };
   const topicCoverage = () => cov;
   const _coverageTarget = new Function('APP', ext(html, '_coverageTarget') + '\nreturn _coverageTarget;')(APP);
+  // v69_l: setComplete is now a thin wrapper that records its verdict for the active topic (so the
+  // storyline screen can read a coverage-aware answer for OTHER chapters without recomputing).
+  // The rule itself lives in _setCompleteRaw, so the harness needs both; the recorder is
+  // typeof-guarded away.
   const setComplete = new Function('APP', 'countedLessons', 'topicCoverage', '_coverageTarget',
-    ext(html, 'setComplete') + '\nreturn setComplete;')(APP, countedLessons, topicCoverage, _coverageTarget);
+    ext(html, '_setCompleteRaw') + '\n' + ext(html, 'setComplete') + '\nreturn setComplete;')(
+    APP, countedLessons, topicCoverage, _coverageTarget);
 
   assert.strictEqual(setComplete(APP.lessonData), false, 'all lessons done but 50% solved < 80% → NOT complete (gated)');
   cov = { solved: 8, total: 10 };
@@ -219,16 +224,19 @@ console.log('  static parity: pass mark baked into APP.info: OK');
   assert.ok(/setCoverageThreshold\(body\.value\)\.coverageThreshold/.test(route), 'POST sets + returns the numeric value');
   assert.ok(/value must be a number/.test(route), 'POST validates the value');
   // Client wiring.
-  // v65.1: the pass mark moved OFF the model menu — it is a pedagogical setting about learners, not
-  // a model setting — onto the storyline page, shown in teacher mode.
-  assert.ok(/id="sl-threshold"[^>]*onchange="switchThreshold\(this\.value\)"/.test(html),
-    'the threshold field lives on the storyline screen');
-  assert.ok(!/id="bmodel-threshold"/.test(html), 'the threshold field is gone from the model menu');
-  const rt = ext(html, "_refreshSlThreshold");
-  assert.ok(/APP\._teacherMode/.test(rt), 'the threshold row shows only in teacher mode');
-  const st = ext(html, 'switchThreshold');
-  assert.ok(/\/api\/coverage-threshold/.test(st) && /value:pct\/100/.test(st), 'switchThreshold posts value as a fraction');
-  assert.ok(/APP\.info\.coverageThreshold =/.test(st), 'switchThreshold updates the live info so the gate applies immediately');
+  // v69_r: the OLD v65.1 global-threshold row (`#sl-threshold` + switchThreshold) has been REMOVED
+  // from the storyline header. It was a second, older pass-mark control that duplicated the v69_i
+  // per-storyline control (`#sl-passmark`, at the bottom of the same screen) — the user saw two
+  // controls on one page. The per-storyline mark now solely governs a storyline; the GLOBAL default
+  // is the hierarchy's fallback and no longer has UI on a specific storyline's page.
+  assert.ok(!/id="sl-threshold"/.test(html), 'the old global-threshold header row is gone (no duplicate control)');
+  assert.ok(!/id="sl-threshold-row"/.test(html), 'and its container is gone');
+  assert.ok(!/id="bmodel-threshold"/.test(html), 'the threshold field is not in the model menu either');
+  // The per-storyline control remains, once, at the bottom (asserted in full by e2e-pass-mark).
+  assert.ok((html.match(/id="sl-passmark"/g) || []).length === 1, 'exactly one storyline pass-mark control remains');
+  // The /api/coverage-threshold ENDPOINT stays — it is how the global default (the fallback of the
+  // chapter→storyline→global hierarchy) is set — even though its old on-storyline UI is gone.
+  assert.ok(/setCoverageThreshold/.test(server), 'the global-default endpoint is retained as the hierarchy fallback');
   const ui = JSON.parse(fs.readFileSync(path.join(ROOT, 'ui.json'), 'utf8'));
   for (const k of ['models.threshold', 'models.threshold_hint', 'models.threshold_set', 'complete.keep_going', 'complete.below_threshold'])
     assert.ok(ui.en[k], `ui.json en has ${k}`);

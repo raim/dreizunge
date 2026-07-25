@@ -521,3 +521,319 @@ file, exactly as it did when the bug originally shipped. Suite: **147 checks**.
 assigned `innerHTML`. It catches crashes, undefined references, TDZ violations and bad property
 access on render — not visual regressions, and not anything that only manifests after a user
 gesture. Browser testing is still required for those.
+
+## 15. ✅ v69_l — one definition of "chapter complete" (roadmap item)
+
+The app had two, and they disagreed:
+- **`setComplete()`** — every counted lesson played AND coverage at or above the pass mark. The
+  honest rule, but authoritative only for the ACTIVE topic, because coverage reads live state
+  (`_lessonQidUniverse` walks `APP.lessonData`).
+- **"all lessons carry a done-flag"** — what the storyline lock, the green dot and the completion
+  card's story-progress row used for every OTHER chapter.
+
+So a chapter could unlock its successor, show a green dot and count toward the storyline total
+while its own completion card still said "keep going" — precisely the reported case: three lessons
+flagged done in `tp_…250`, coverage 10/34, pass mark 80%.
+
+**Why the obvious fix was rejected:** recomputing coverage for other chapters means swapping
+`APP.lessonData` and re-deriving every question universe on each storyline render (~16 builder calls
+per lesson × every lesson in the deck). Instead the verdict is **persisted when computable and read
+back when not** — the design sketched in the roadmap.
+
+- `setComplete` became a thin wrapper that records its verdict for the active topic on EVERY exit
+  (a wrapper rather than a call at each `return`, so a future edit cannot miss one); the rule itself
+  is untouched in `_setCompleteRaw`. The recorder is typeof-guarded so harnesses can extract the
+  rule without stubbing persistence, and it writes only when the verdict CHANGES — `setComplete`
+  runs inside render paths.
+- `chapterComplete(t)` is the single reader: live rule for the active topic → fresh stamp →
+  done-flag fallback. All three consumers now call it.
+- **Staleness matters more than freshness here.** The stamp stores `n`, the counted-lesson count it
+  was valid for. Add or remove a lesson — exactly what the user did to "Verwüstete
+  Agrarlandschaften" — and the stamp is ignored, falling back to flags rather than claiming a
+  chapter is finished when it grew. Asserted directly.
+- The fallback can only ever be MORE permissive than the truth, never less, so no learner loses
+  access to something they had.
+- Works in the static build unchanged: progress is client-side, so no server or bake changes.
+
+**Verified against the real library**, not just fixtures: loading the user's `lessons.json` in the
+smoke sandbox, "Die wissenschaftliche Erklärung" with all lessons flagged done reads complete under
+the old rule and NOT complete once the card records the honest below-the-mark verdict — so the
+following chapter stays locked instead of being unlocked by flags alone.
+
+Suite: **148 checks**.
+
+## 16. ✅ v69_m — PDF cleanup stage 2: the model pass (completes the v68 item)
+
+Stage 1 (`cleanExtractedText`, v68.1) fixes what code can fix reliably. What survives it is text
+that READS like prose but is not part of the article — the inline real-estate advertisement in the
+user's Corriere example, "read also" teasers, photo captions, subscription prompts. No mechanical
+rule can classify those, so the model is asked.
+
+**The design point is the contract, not the prompt.** The pass is DELETION ONLY, and the server
+verifies it instead of trusting the instruction: `cleanTextChanges()` checks the returned text is a
+word-level SUBSEQUENCE of the input. That single check rejects rewriting, rewording, translating
+and reordering at once — much stronger than a length ratio, and cheap. A floor (keep ≥ 40% of the
+words) catches the other failure: summarising, or mistaking the article itself for furniture.
+Rejections are fed back in words the model can act on, over up to 3 attempts, with `think:false`
+first and reasoning as a last resort — the same shape as the v69_g error-hunt fix, for the same
+reason: **a prompt cannot guarantee a contract; verification can.**
+
+Client: an opt-in **✨** button beside the 🧹 toggle. It runs **per chunk** (each request stays
+lesson-sized, and one failure cannot lose the rest — failures are counted and reported, not fatal),
+keeps the pre-pass chunk texts so the whole thing is **undoable**, and is hidden when there is no
+backend, so it never appears in the static build.
+
+Verified end to end against a fixture carrying an advert, a teaser and a caption: all three
+removed, both article sentences kept verbatim, the result confirmed to be a true subsequence of the
+input, and the pass provenance-stamped (`type: 'text_cleanup'`) like every other generation. The
+fake backend gained a matching branch — deletion-only, so a fake that "helpfully" reworded anything
+would be rejected by the real verifier.
+
+**i18n debt:** 3 new English keys (`pdf.aiclean_lbl`, `pdf.aiclean_done`, `pdf.aiclean_partial`) →
+87 missing across 29 languages, together with v69_i's two. One `translate-ui.js` run clears them;
+they fall back to English meanwhile.
+
+## 17. ✅ v69_n — teacher dashboard: overview + flag triage
+
+Scoped with the user (aspirational for now — accounts are not yet in use — but built so it is there
+when they are). Teacher-only screen reached from the library header; hidden without a backend,
+because learner accounts and the flag store are both server-side and an empty screen in the static
+build would be worse than no button.
+
+**Panel 1 — who is learning.** Reads `GET /api/learners` (shipped v65, rendered nowhere until now):
+per learner, chapters finished, chapters started, words known, last seen, and their hardest words
+with wrong-counts.
+
+**Panel 2 — what has been reported.** New `GET /api/flag-summary`. Item-level flags live INSIDE
+lessons (`item.userFlag`), lesson notes in `_miscFlags`, and story-level flags in the flags store —
+three places, so a teacher had nowhere to see what had actually been reported. The endpoint unifies
+all three, newest first, and carries enough context (topicId, lessonId, field, index) to open the
+item in the existing editor. **Student reports lead the list**: a learner flagging a wrong pair is
+the QC signal most worth acting on, and v69 made that mode distinction available.
+
+**The bug fixed along the way.** `summarize()` computed
+`chaptersCompleted = Object.keys(progress.completed).length` — chapters TOUCHED, not completed. A
+learner who opened ten chapters and finished none reported "10". Honest counting was not really
+possible before v69_l; now it is. The summary prefers the persisted per-chapter verdict, falls back
+to "every lesson flagged done" when the shared library is passed in (the route now passes it), and
+**claims nothing when completion is unknowable** rather than guessing. Both numbers are reported
+under honest names, since "started" was useful — only mislabelled. The old `unit-learners`
+assertion encoded the bug (`chaptersCompleted === 2` for two merely-opened chapters) and was
+rewritten to document the fix, with new cases for the library fallback and the stamped verdict.
+
+Guards: `e2e-teacher-dashboard` (client wiring + both endpoints against a seeded library carrying a
+student item flag, a teacher flag and a story flag; ordering and editor context asserted) and a new
+section in `smoke-render` that actually RENDERS both panels — populated and empty — since the two
+runtime crashes this project has shipped were both in render paths.
+
+**i18n debt:** 11 new English keys (`teacher.*`) on top of the earlier ones → **406 missing across
+29 languages**. One `translate-ui.js` run clears them; they fall back to English meanwhile.
+
+## 18. ✅ v69_o — text cleanup, corrected by its first real run
+
+User ran v69_m on a real PDF (4 chunks). Three cleaned well — 10, 17 and 3 words dropped. The
+fourth failed twice ("kept 64 of 197", then 62) and then appeared to hang. Two distinct faults, one
+of them a design error of mine:
+
+**(a) The "hang" was a 36-minute call.** Attempt 3 enabled reasoning (`think:true`) with
+`THINK_TIMEOUT_MULT`, i.e. base 12 min × 3, on a 200-word chunk. That escalation was copied from
+the error-hunt generator without re-examining it, and it is wrong here: this contract is verbatim
+copying minus deletions, which reasoning does not help with, and the observed failure was
+OVER-deletion, which reasoning does not address either. Every attempt is now `think:false` with the
+plain request timeout — output length is bounded by input length for this task.
+
+**(b) The 40% floor was wrong as a hard reject.** It assumed every chunk is mostly article. A chunk
+can legitimately BE mostly furniture — a related-links block, a teaser farm, a footer — and two
+attempts independently agreeing on ~32% retention is evidence the model is RIGHT, not that it
+misbehaved. The floor is now a WARNING: a heavy-but-structurally-valid answer is remembered, used
+if nothing better arrives, and returned `heavy: true` with a note. The client applies it, counts it
+and says so ("N heavily cut — check them"); the pass is undoable, so the human makes the final call.
+The subsequence check remains a HARD reject — that is the real contract.
+
+**(c) A run must never stall.** If nothing usable arrives (typically a model that rewrites rather
+than deletes), the text is returned UNCHANGED with `unchanged: true` and the reason, instead of
+throwing — so the remaining chunks still get processed. Reported as "N left unchanged".
+
+Both failure modes are now permanent guards, driven through the real server via a
+`FAKE_CLEAN_MODE` switch in the fake backend (`overdelete` / `rewrite`) rather than asserted from
+source. Two test-authoring notes: `boot()` binds a pid-derived port, so the first server must be
+stopped before the failure-mode servers start (the first version silently talked to the wrong
+backend and looked like a code bug); and an over-broad assertion again matched my own explanatory
+comment — scoped to actual usage, the same lesson as the `q_nolang` case.
+
+**i18n:** 2 more English keys (`pdf.aiclean_heavy`, `pdf.aiclean_untouched`).
+
+## 19. ✅ v69_p — cleanup reporting + cleanup tokens on the storyline
+
+Three user requests, all about being able to SEE what the cleanup did.
+
+**(a) Deterministic pass reports its work.** `cleanExtractedText` now records stats
+(`_lastCleanStats`, a side channel so the return type stays a plain string for its several callers)
+and `_applyUploadCleanup` logs a summary: words in → out, wrapped lines rejoined, junk lines
+removed, unpunctuated fragments removed, and whether it also ran per page. Turning the toggle OFF
+is logged too. Verified against the real Corriere sample: 3 junk lines, 2 wraps rejoined, 2
+fragments dropped, 30 → 22 words.
+
+**(b) The model pass announces itself up front, with the model name.** The old log only appeared
+once a chunk had FINISHED, so a slow pass looked like nothing happening — which is exactly how the
+36-minute stall in v69_o presented. The server now prints `[model] Cleaning text (N words, Lang)…`
+before the first call; the client prints a run header, one line per chunk as it lands (kept/total,
+HEAVY or unchanged, tokens), and a closing summary.
+
+**(c) Cleanup tokens are booked to the storyline.** The ✨ pass is spent BEFORE any storyline
+exists — it runs on the upload panel's chunks — so the spend used to vanish from the ledger. The
+endpoint now returns its `tokens`; the client accumulates them across chunks and sends them with the
+book job; the server sanitises the client-supplied figure (it is only ever added to a ledger, but
+it is still client input) and books it via `addTokenUsage(sl, …, 'cleanup')` in the same place the
+storyboard post-pass resolves the storyline. Undoing the pass clears the pending charge — the
+tokens were really spent, but the text they produced was discarded, so charging the storyline for
+it would be wrong; the discarded spend is logged rather than silently dropped.
+
+Guards: structural (all three) plus a BEHAVIOURAL check that a book job carrying
+`cleanupTokens: {1234, 567}` ends with `tokensByType.cleanup === 1801` on the storyline. One
+test-brittleness fix along the way: `unit-storyboard` sliced a fixed 1600 characters from the
+post-pass anchor, and this change pushed the delegation past it — now sliced to the end of the
+block instead.
+
+## 20. ✅ v69_q — same-title book chapters no longer overwrite each other
+
+The v69 diagnosis (session note above / roadmap) named the upsert name-dedup window; the fix
+required going one layer deeper and turned up a latent scope bug.
+
+**Real root cause — the EARLY save.** `generate()` upserts the story before lessons exist (so a
+crash mid-generation never loses it). That early upsert had NO id, so it deduped by
+name+lang+srcLang. Two chapters in one book sharing a headline merged HERE, before
+`_persistGenerated` (the place the diagnosis pointed at) ever ran. Fix: mint `_genTopicId` at the
+early save and thread it through `generate()`'s return so the final lesson-bearing save updates the
+same row. Reuse an existing row's id only when title AND `continuedFromId` match — so a genuine
+regenerate still updates in place (verified: regenerating one topic twice → 1 row), but two
+same-titled siblings (different parents) stay distinct.
+
+**Chaining by id, not name.** `_persistGenerated` now takes the parent's id explicitly (the book
+loop had it in `parent.id` but was passing `parent.topic`), and records `continuedFromId`. This is
+what stops the survivor of a (now-prevented) merge from chaining to itself.
+
+**Latent scope bug surfaced.** `_newTopicId` was defined at depth 1 — nested inside `boot()`, which
+in this file encloses nearly everything and is called once at startup. Every existing caller was
+also boot-nested, so it worked by accident. `generate()` is at module scope (depth 0, outside
+boot), so its new call to `_newTopicId` threw "ReferenceError: not defined". Chased it via a real
+brace-depth scan after source-level reasoning misled me twice (an unrelated brace imbalance, then
+the wrong assumption that a top-level `function` must hoist — it only hoists within its OWN scope).
+Moved `_newTopicId` + `_idCounter` to true module scope. This removes the hazard for any future
+module-scope caller, not just this one.
+
+Guard: `e2e-book-duplicate-titles` — structural (id minted pre-upsert, parent linked by id, minter
+at module scope) + behavioural (3 chapters with 2 sharing a title → 3 distinct topics, storyline
+lists all 3, nothing chained to itself). Verified it FAILS without the fix (5 topics) and that a
+single-topic regenerate still updates in place. 150 checks green.
+
+## 21. ✅ v69_r — two UI fixes: empty "Learners" page, and pass-mark placement
+
+### (a) Clicking "Learners" opened an empty page
+Could not reproduce from code alone — markup, CSS, endpoints and both renderers were all correct
+(the empty state renders 540 chars). So rather than ship a guess, the open path was made
+FAIL-VISIBLE: it can no longer present blank. Changes to `openTeacherDashboard`:
+- If reached without a backend (`!APP.info.canGenerate`) it shows an explanatory notice
+  (`teacher.no_backend`) instead of the previous silent `if(!_canEdit()) return;` — which, if it
+  ever ran AFTER show(), would leave the switched-to screen empty.
+- The two endpoints are fetched INDEPENDENTLY (not `Promise.all`), so one failing no longer falls
+  through to a bare error that blanks both panels; each panel renders with its own empty state and
+  any error is APPENDED, not substituted.
+Guard: `smoke-render` now opens the dashboard with `canGenerate:false` and asserts the body is
+non-empty and mentions the backend.
+
+### (b) Pass mark: two on the storyline page, none on the lesson-set page
+Root cause: `#ls-passmark` had been inserted INSIDE the lesson-set header's progress-bar wrapper
+(between the bar div and its close), so on the lesson-set page it rendered in the header / got
+visually lost ("none locally"), and the misplacement is what made the storyline page look like it
+carried an extra control. Fix: moved `#ls-passmark` to the BOTTOM of the lesson-set screen, directly
+above `#prov-stats` — the exact mirror of where `#sl-passmark` sits on the storyline screen (just
+above `#sl-screen-prov`), per the user's "bottom position for both". Verified in the smoke sandbox:
+exactly ONE control per page (`pm-input-topic` ×1, `pm-input-storyline` ×1). Guards in
+`e2e-pass-mark`: one slot of each id, chapter control BELOW the chain and above the provenance
+stats, storyline control above its provenance stats.
+
+**i18n:** 1 new key (`teacher.no_backend`).
+
+## 22. ✅ v69_s — the REAL pass-mark duplicate, and dashboard diagnostics
+
+v69_r fixed the wrong thing for the "two controls" report. The user confirmed on v69_r: lesson-set
+control now correct, but the storyline page STILL showed a pass mark in the header AND at the bottom.
+
+**Root cause I had missed: a SECOND, older control.** `#sl-threshold-row` (v65.1) sets the GLOBAL
+default via `/api/coverage-threshold` and lives in the storyline HEADER, shown in teacher mode. My
+v69_i `#sl-passmark` (per-storyline, bottom) was built as a parallel control without removing the
+v65.1 one — so the storyline page carried BOTH. v69_r's placement work never touched the header row
+because I only ever looked at `#sl-passmark`. Fix: removed the header row markup and neutralised
+`_refreshSlThreshold` to a no-op (single call site kept). The `/api/coverage-threshold` endpoint is
+RETAINED — it sets the global default, which is the fallback of the chapter→storyline→global
+hierarchy; only its on-storyline UI is gone (a global setting does not belong on one storyline's
+page). `unit-coverage-threshold` updated: asserts the old row is gone, one `#sl-passmark` remains,
+and the endpoint is retained.
+
+**Empty learner page — still could not reproduce; added instrumentation.** Every code path (incl.
+failing/ rejected fetch, no backend) provably fills the body — verified again in the smoke sandbox
+(654 chars even on a rejected fetch). So on the user's live v69_r the render must be aborting from
+OUTSIDE the function, or a mid-load exception (the concurrent `ui.json` translate run rewriting the
+file mid-read is a live suspect — the console showed repeated "ui.json reloaded"). Made the open
+path log (`[teacher] opening…` / `rendered: N learners, M flags` / explicit error) and wrapped the
+render in a try/catch that writes the error INTO the body (`teacher.render_error`). Next time it is
+empty, the console + on-screen message will name the cause. This is diagnosis-enabling, not a claimed
+fix — stated as such.
+
+**i18n:** +1 key (`teacher.render_error`).
+
+## 23. v69_s2 — dashboard visibility diagnostic (empty page persists)
+
+User on v69_s: console shows `[teacher] opening dashboard…` then `[teacher] rendered: 1 learner(s),
+40 flag(s)` — so the render SUCCEEDS and content is in #td-body — but the page is still blank. That
+rules out every logic/fetch cause and points to the SCREEN element being hidden or zero-size despite
+show() adding .active.
+
+Exhaustively ruled out from source this session:
+- DOM parentage: #teacher-screen is a true sibling of #storyline-screen and #lesson-set, all
+  body-children (confirmed three ways after stripping <script> content, which had polluted earlier
+  regex counts). The −1 depth between lesson-set and storyline-screen is just lesson-set's internal
+  `.ls-inner` wrapper, not a parentage difference.
+- CSS: `.screen{display:none}` / `.screen.active{display:flex}` — no wrapper dependency, no height
+  trap. #teacher-screen carries class="screen" and gets .active (verified in the smoke harness;
+  landing's .active is correctly removed).
+- Render: produces content even on rejected fetch / no backend (654 chars).
+
+Since nothing static explains it, added a computed-visibility probe to openTeacherDashboard that
+logs, after show(): hasActive, display, visibility, opacity, width, height, parent id, and the list
+of `.screen.active` ids. The next click will report the ACTUAL browser state and pin the cause
+(leading candidates: a cached old stylesheet overriding .screen.active, a second active screen
+stacking over it, or a zero-height layout). This is a diagnostic build — NOT a claimed fix.
+
+## 24. ✅ v69_t — empty learner page FIXED (screen was nested in another screen) + latest translations
+
+The v69_s2 computed-visibility probe settled it in one click:
+`{hasActive:true, display:'flex', visibility:'visible', width:0, height:0, parent:'storyline-screen'}`.
+The dashboard content rendered fine (`rendered: 1 learner, 40 flags`) but its SCREEN was a CHILD of
+`#storyline-screen`, which is an inactive `.screen` (display:none) — so the child collapsed to 0×0
+even with `.active`. `parent: "storyline-screen"` was the proof my source analysis had missed.
+
+Root cause: `#storyline-screen` was missing its closing `</div>` (a PRE-EXISTING bug — it only
+"worked" because it was the last screen and the browser auto-closed it at `</body>`). When
+`#teacher-screen` was added after it in v69_n, it was absorbed as a child. Fix: added the missing
+`</div>` so storyline-screen closes at its own end (line 1217) and teacher-screen is a true
+body-level sibling. Verified by bracket-matching the script-stripped HTML and by the browser symptom
+description; removed the diagnostic probe.
+
+**Why it took so long to see:** every regex/brace scan of the raw file was fooled by `</div>` and
+`<div` appearing inside the 640 KB inline `<script>` (JS strings, template literals). The lesson —
+recorded before — is that structural scans MUST strip scripts first. The new guard does exactly
+that.
+
+**Guard:** `unit-screen-structure` parses index.html and docs/index.html with scripts removed and
+asserts no `.screen` is nested inside another `.screen` (which can only display when its parent is
+also active — always a bug). Verified it FAILS on the pre-fix markup (`#teacher-screen is inside
+#storyline-screen`) and passes after. This would have caught the bug the instant the dashboard
+screen was first added.
+
+**Translations:** adopted the user's latest `ui.json` (30 langs, 539 en keys). `en` differs from
+the tree only by `teacher.render_error`, which I added AFTER their export — re-added it (English
+fallback). QC: the only 29 "errors" are that single key missing in the 29 non-English languages;
+zero structural defects, zero broken placeholders, zero cross-script corruption. One
+`translate-ui.js` run clears the remaining key.

@@ -10,6 +10,9 @@
 | | student-tailored lessons | 1|
 | | japanese consulting (furigana) | 1|
 | arno | italian consulting | 1|
+| chilperic | german consulting | 1|
+| | swahili consulting | 1|
+| | initial development | 1|
 | florence | similar words | 1|
 | | letzebuergesh consulting | 1|
 | marie | writing styles | 1|

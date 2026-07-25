@@ -21,10 +21,21 @@ const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
   assert(/function passMarkRowHtml\(scope, id, own, inherited\)/.test(html), 'a single control renders both scopes');
   assert(/id="sl-passmark"/.test(html), 'the storyline screen has a slot');
   assert(/id="ls-passmark"/.test(html), 'the lesson-set page has a slot');
-  // "above the lessons chain": the chapter slot must precede the path list in the document.
+  // v69_r (user report: two controls appeared on the storyline page, none on the lesson-set page).
+  // Exactly ONE slot of each id — a duplicate slot is how a page grows a second control.
+  assert((html.match(/id="ls-passmark"/g) || []).length === 1, 'exactly one lesson-set slot');
+  assert((html.match(/id="sl-passmark"/g) || []).length === 1, 'exactly one storyline slot');
+  // Both sit at the BOTTOM, with the provenance/stats rows — not in the header. The chapter slot
+  // must come AFTER the lesson chain and just before the provenance stats, mirroring the storyline
+  // page (sl-passmark immediately before sl-screen-prov).
   const lsAt = html.indexOf('id="ls-passmark"');
-  const pathAt = html.indexOf('id="path"');
-  assert(lsAt > 0 && (pathAt < 0 || lsAt < pathAt), 'the chapter control sits above the lesson chain');
+  const chainAt = html.indexOf('id="lesson-path"');
+  const provAt = html.indexOf('id="prov-stats"');
+  assert(chainAt > 0 && lsAt > chainAt, 'the chapter control sits BELOW the lesson chain (bottom, not header)');
+  assert(provAt > 0 && lsAt < provAt, 'and directly above the provenance stats');
+  const slAt = html.indexOf('id="sl-passmark"');
+  const slProvAt = html.indexOf('id="sl-screen-prov"');
+  assert(slAt > 0 && slProvAt > 0 && slAt < slProvAt, 'the storyline control sits just above its provenance stats too');
   // Teacher-only: a learner must never see (or set) a pass mark.
   assert(/function passMarkRowHtml[\s\S]{0,200}if\(!_canEdit\(\)\) return '';/.test(html),
     'the control renders only for teachers');
