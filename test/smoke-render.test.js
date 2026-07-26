@@ -20,6 +20,7 @@ const path = require('path');
 const { loadClient, ROOT } = require('./lib-dom');
 
 const store = JSON.parse(fs.readFileSync(path.join(ROOT, 'lessons.json'), 'utf8'));
+const ROOT_HTML = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');   // for CSS-only assertions
 // Pick a chapter that belongs to a storyline and has several lesson types — the richest path.
 const storyline = (store.storylines || []).find(sl => (sl.chapters || []).length >= 2 && sl.storyboard) 
               || (store.storylines || []).find(sl => (sl.chapters || []).length >= 2);
@@ -709,10 +710,7 @@ console.log('  account modal: TLS banner shown/hidden across 4 states: OK');
   // The no-duplicate rule, tested directly rather than left to a scenario that may not arise:
   // whenever the primary action IS the drill, the standalone drill button must be hidden.
   {
-    const dup = C.run(`(function(){
-      const src = document.getElementById('comp-next');
-      return /!_nextIsDrill && \\(_teacher \\|\\| _belowThreshold\\)/.test(String(showComplete));
-    })()`);
+    const dup = C.run(`/!_nextIsDrill && drillAvailable/.test(String(showComplete))`);
     assert.strictEqual(dup, true, 'drill visibility is gated on the primary action not already being the drill');
   }
 
@@ -728,5 +726,222 @@ console.log('  account modal: TLS banner shown/hidden across 4 states: OK');
     'hidden when the lesson has no crossable words');
 }
 console.log('  crossword: availability, render, solve+credit, reject, close, learner entry: OK');
+
+{
+  // ── v70_l: repeat + drill stay available on a FINISHED lesson ────────────
+  // The reported case: every lesson meets its own mark but the STORYLINE mark is higher, so the
+  // story never unlocks — and the completion card offered no way back in, because the buttons were
+  // gated on being below the lesson-level threshold.
+  seed();
+  C.run(`
+    APP.lessonData.topic = 'cw-finished-scenario';
+    APP.lessonData.lessons = [{ id:'fin', type:'standard', vocab:[
+      {target:'HAUS', source:'house'}, {target:'HUND', source:'dog'},
+      {target:'SONNE', source:'sun'},  {target:'NACHT', source:'night'} ] }];
+    APP._teacherMode = false;
+    // Lesson-level coverage SATISFIED — the user's case is precisely this: the lesson mark is met,
+    // so the replay branch never runs, even though coverage is incomplete and the storyline mark is
+    // higher. The per-topic override must be cleared too: coverageTarget takes precedence over the
+    // global threshold, and the fixture topic carries whatever the bundled data happens to set.
+    delete APP.lessonData.coverageTarget;
+    APP.storylines = [];
+    APP.info.coverageThreshold = 0;
+    APP.progress.completed[APP.lessonData.topic] = { fin: true };
+    APP.cur = { lessonIdx:0, correct:4, total:4, mistakes:0, bestStreak:4, flagCount:0, exercises:[] };
+    true;`);
+  // The mechanism: showComplete's replay branch requires _belowThreshold. With the lesson-level
+  // mark satisfied, that branch never runs — so before v70_l the learner got no replay affordance
+  // at all, even though coverage was still incomplete and the storyline mark was higher.
+  assert.ok(C.run(`_firstCoverageShortLessonIdx()`) >= 0,
+    'coverage is still incomplete (so replaying CAN raise it)');
+  shouldNotThrow('showComplete (finished lesson)', `showComplete();`);
+  assert.notStrictEqual(C.document.getElementById('comp-next').textContent, '↻',
+    'the primary action is NOT the repeat here — that branch is gated on being below the mark');
+  const rp = C.document.getElementById('comp-repeat');
+  assert.notStrictEqual(rp.style.display, 'none',
+    'a finished lesson still offers Repeat — the only way to raise coverage toward a higher storyline mark');
+  assert.strictEqual(rp.textContent, '↻', 'and it is the repeat icon');
+  assert.ok(rp.getAttribute('aria-label'), 'with an accessible name');
+  shouldNotThrow('repeatForCoverage', `repeatForCoverage();`);
+
+  // ── v70_l: the crossword highlights the entries under the cursor ─────────
+  seed();
+  C.run(`
+    APP.lessonData.lessons[0] = { id:'cw-hl', type:'standard', vocab:[
+      {target:'HAUS', source:'house'}, {target:'HUND', source:'dog'},
+      {target:'SONNE', source:'sun'},  {target:'NACHT', source:'night'},
+      {target:'STERN', source:'star'}, {target:'BAUM', source:'tree'} ] };
+    APP._cwOpts = { count: 8, src: 'lesson', preferWrong: false };
+    openCrossword(0, 0); true;`);
+  // Read state defensively so a regression fails as a NAMED assertion rather than as a TypeError
+  // thrown inside the sandbox — the latter tells whoever hits it far less.
+  const hl = C.run(`(function(){
+    const S = APP._cw, e = S.grid.entries[0], k = e.row + ',' + e.col;
+    cwFocus(k);
+    const cell = document.getElementById('cw-' + k);
+    const active = S.active ? [...S.active] : null;
+    const other = active ? [...S.owner.keys()].find(x => !(S.owner.get(x) || []).some(ei => S.active.has(ei))) : null;
+    return { cur: S.cur || null, active, curBg: cell.style.background,
+             otherBg: other ? document.getElementById('cw-' + other).style.background : null };
+  })()`);
+  assert.ok(hl.cur, 'the focused cell is tracked (cwFocus records the cursor)');
+  assert.ok(hl.active, 'cwFocus computes the active entry set');
+  assert.ok([...hl.active].length >= 1, 'at least one entry is active under the cursor');
+  assert.notStrictEqual(hl.curBg, 'var(--white)', 'the cursor cell is tinted');
+  if (hl.otherBg !== null)
+    assert.strictEqual(hl.otherBg, 'var(--white)', 'a cell outside the active entries is not tinted');
+
+  // A verdict must win over the highlight: a wrong letter stays red under the cursor.
+  const verdict = C.run(`(function(){
+    const S = APP._cw, e = S.grid.entries[0], k = e.row + ',' + e.col;
+    S.mark[k] = 'bad'; _paintCell(k);
+    return document.getElementById('cw-' + k).style.background;
+  })()`);
+  assert.strictEqual(verdict, '#ffe3e3', 'a wrong letter stays red even under the cursor highlight');
+  C.run(`closeCrossword();`);
+}
+console.log('  repeat on finished lessons + crossword cursor highlight: OK');
+
+{
+  // ── v70_o: user-reported crossword UX ────────────────────────────────────
+  seed();
+  C.run(`
+    APP.lessonData.lessons[0] = { id:'cw-ux', type:'standard', vocab:[
+      {target:'HAUS', source:'house'}, {target:'HUND', source:'dog'},
+      {target:'SONNE', source:'sun'},  {target:'NACHT', source:'night'},
+      {target:'STERN', source:'star'}, {target:'BAUM', source:'tree'} ] };
+    APP._cwOpts = { count: 8, src: 'lesson', preferWrong: false };
+    openCrossword(0, 0); true;`);
+
+  // The clue being answered is shown above the grid, not only highlighted in the list.
+  C.run(`(function(){ const S = APP._cw, e = S.grid.entries[0]; cwFocus(e.row + ',' + e.col); return 1; })()`);
+  const body = C.document.getElementById('cw-body').innerHTML;
+  assert.ok(/cw-clue-now/.test(body), 'the active clue container is rendered above the grid');
+  const nowEl = C.document.getElementById('cw-clue-now');
+  assert.notStrictEqual(nowEl.style.display, 'none', 'and it is shown once the cursor is in an entry');
+  assert.ok(/<b>/.test(nowEl.innerHTML), 'carrying the clue for the entry under the cursor');
+
+  // Typing must step PAST letters a crossing word already supplied.
+  const skipped = C.run(`(function(){
+    const S = APP._cw, e = S.grid.entries[0];
+    const k0 = e.row + ',' + e.col;
+    const k1 = (e.row + (e.dir==='down'?1:0)) + ',' + (e.col + (e.dir==='across'?1:0));
+    const k2 = (e.row + (e.dir==='down'?2:0)) + ',' + (e.col + (e.dir==='across'?2:0));
+    if (!S.owner.has(k2)) return { skip:'n/a' };
+    S.typed[k1] = 'X';
+    S.cur = k0; S.dir = e.dir;
+    document.getElementById('cw-' + k0).value = e.answer[0];
+    cwInput(k0);
+    return { skip: S.cur, k2: k2 };
+  })()`);
+  if (skipped.skip !== 'n/a')
+    assert.strictEqual(skipped.skip, skipped.k2,
+      'the cursor skips a cell already filled by a crossing word');
+
+  // Solving everything turns the green Check into Done, which closes.
+  const done = C.run(`(function(){
+    openCrossword(0, 0);
+    const S = APP._cw;
+    for (const [k, letter] of S.sol) document.getElementById('cw-' + k).value = letter;
+    checkCrossword();
+    const btn = document.getElementById('cw-check-btn');
+    return { allDone: Object.keys(S.done).length === S.grid.entries.length,
+             title: btn.title, isClose: btn.onclick === closeCrossword };
+  })()`);
+  assert.strictEqual(done.allDone, true, 'every entry solved');
+  assert.strictEqual(done.isClose, true, 'the primary button becomes Done and closes the puzzle');
+  assert.ok(done.title, 'and keeps a tooltip');
+
+  // Reopening resets it — a stale Done would close a fresh puzzle instantly.
+  assert.strictEqual(C.run(`(function(){
+    openCrossword(0, 1);
+    return document.getElementById('cw-check-btn').onclick === checkCrossword;
+  })()`), true, 'a fresh puzzle resets the button to Check');
+
+  // Mobile layout is CSS-only, so a stub DOM cannot observe it. Pin the specific regression
+  // instead: `justify-content:center` on the modal pushed content wider than the viewport off BOTH
+  // sides, leaving part of the grid unreachable on a phone. Centring is done with margin:auto now.
+  {
+    const modal = ROOT_HTML.match(/<div id="cw-modal"[^>]*>/);
+    assert.ok(modal, 'the crossword modal exists');
+    assert.ok(!/justify-content:center/.test(modal[0]),
+      'the modal does not centre with justify-content (that clips wide grids off-screen on mobile)');
+    assert.ok(/overflow:auto/.test(modal[0]), 'and it scrolls rather than clipping');
+  }
+  shouldNotThrow('closeCrossword scrolls back', `closeCrossword();`);
+  console.log('  v70_o: active clue, skip-filled advance, Done button, reset on reopen: OK');
+}
+
+
+{
+  // ── v70_m: synonym context is trimmed to the sentence holding the word ───
+  const long = 'Oggi il programma di ricerca è più pluralista. La selezione naturale agisce sui '
+             + 'fenotipi. Le mutazioni sono soltanto una delle sorgenti di variazione.';
+  assert.strictEqual(C.run(`_synContext(${JSON.stringify(long)}, 'selezione')`),
+    'La selezione naturale agisce sui fenotipi.',
+    'the context is the one sentence containing the base word');
+  assert.strictEqual(C.run(`_synContext(${JSON.stringify(long)}, 'mutazioni')`),
+    'Le mutazioni sono soltanto una delle sorgenti di variazione.',
+    'and it follows the word, not a fixed position');
+  // No match: the first sentence beats an arbitrary paragraph.
+  assert.strictEqual(C.run(`_synContext(${JSON.stringify(long)}, 'inesistente')`),
+    'Oggi il programma di ricerca è più pluralista.', 'falls back to the first sentence');
+  // A single sentence is returned whole, not re-cut.
+  assert.strictEqual(C.run(`_synContext('Le previsioni sono buone.', 'previsioni')`),
+    'Le previsioni sono buone.', 'a single sentence passes through');
+  assert.strictEqual(C.run(`_synContext('', 'x')`), '', 'empty context stays empty');
+  assert.strictEqual(C.run(`_synContext(null, null)`), '', 'null is handled');
+  // The stored lesson must NOT be rewritten — trimming is a render-time decision.
+  const rendered = C.run(`(function(){
+    const ex = { type:'syn_select', mode:'synonyms', base:'selezione', gloss:'g',
+                 sentence:${JSON.stringify(long)}, choices:['a','b'], correct:['a'] };
+    const html = tSynSelect(ex);
+    return { html: String(html), stored: ex.sentence };
+  })()`);
+  // The RENDER must use the trimmed context — testing _synContext alone would pass even if
+  // tSynSelect still printed the whole paragraph.
+  assert.ok(/La selezione naturale agisce sui fenotipi\./.test(rendered.html.replace(/<[^>]*>/g, '')),
+    'the rendered card shows the trimmed sentence');
+  assert.ok(!/programma di ricerca/.test(rendered.html.replace(/<[^>]*>/g, '')),
+    'and not the rest of the paragraph');
+  assert.strictEqual(rendered.stored, long, 'rendering does not mutate the stored context');
+  console.log('  synonym context trimmed at render, stored data untouched: OK');
+
+  // ── v70_n: a single ENORMOUS sentence must also be clamped ───────────────
+  // v70_m trimmed to the sentence containing the word — which changed nothing for the ten worst
+  // contexts in the corpus, because each is ONE sentence: 135-word Italian academic prose, and
+  // Arabic passages that use ، ؛ : rather than a full stop at all. Sentence splitting cannot help
+  // there; the window around the word is what does.
+  {
+    const huge = 'Oggi il programma di ricerca evoluzionistico è più pluralista, perché prevede una '
+      + 'molteplicità di fattori e di fenomeni, le sorgenti di variazione non sono soltanto le '
+      + 'mutazioni genetiche, ma anche quelle epigenetiche e quelle dovute al trasferimento '
+      + 'genico orizzontale, mentre la selezione naturale classica si integra alla selezione '
+      + 'sessuale e alla selezione di gruppo, con esiti che restano oggetto di discussione';
+    assert.ok(huge.split(/\s+/).length > 50, 'the fixture really is one long sentence');
+    const out = C.run(`_synContext(${JSON.stringify(huge)}, 'selezione')`);
+    const n = out.split(/\s+/).filter(Boolean).length;
+    assert.ok(n <= 30, `a huge single sentence is clamped (got ${n} words)`);
+    assert.ok(/selezione/.test(out), 'and the clamped window still contains the word');
+    assert.ok(/…/.test(out), 'elision is marked so the learner knows it is an excerpt');
+
+    // Arabic: no full stops at all, so sentence splitting alone would return the whole passage.
+    const ar = 'وقد يقال الزم ذا العقل وذا الكرم، واسترسل إليهما، وإياك ومفارقتهما؛ واصحب الصاحب '
+      + 'إذا كان عاقلاً كريماً أو عاقلاً غير كريمٍ، فالعاقل الكريم كاملٌ، والعاقل غير الكريم أصحبه، '
+      + 'وإن كان غير محمود الخليقة، وأحذر من سوء أخلاقه وانتفع بعقله، والكريم غير العاقل أصحبه';
+    const arOut = C.run(`_synContext(${JSON.stringify(ar)}, 'العقل')`);
+    assert.ok(arOut.split(/\s+/).filter(Boolean).length <= 30,
+      'Arabic prose without full stops is clamped too');
+    assert.ok(/العقل/.test(arOut), 'and keeps the word it is illustrating');
+
+    // A short context is returned untouched — no stray ellipses on normal cards.
+    const shortCtx = C.run(`_synContext('Le previsioni sono buone.', 'previsioni')`);
+    assert.ok(!/…/.test(shortCtx), 'a short context gets no elision marks');
+    console.log(`  long single sentences clamped (it + ar), short ones untouched: OK`);
+  }
+
+}
+
+
 
 console.log('smoke-render: ALL PASSED');

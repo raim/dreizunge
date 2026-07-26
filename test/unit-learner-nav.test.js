@@ -156,7 +156,8 @@ console.log('  loadSaved: learner auto-start, teacher keeps the page: OK');
     'compBackToStory dispatches to the storyline screen or the landing page');
   // Teacher-only extras.
   assert.ok(/const _teacher = !!APP\._teacherMode/.test(sc), 'card teacher gate keys off teacher MODE (v60.1), not _canEdit');
-  assert.ok(/_db\.style\.display = \(!_nextIsDrill && \(_teacher \|\| _belowThreshold\) && drillAvailable/.test(sc),
+  // v70_l: pass-mark gate removed; a below-threshold learner is still covered (superset rule).
+  assert.ok(/_db\.style\.display = \(!_nextIsDrill && drillAvailable/.test(sc),
     'drill shows for a teacher OR a below-threshold learner (v60.8 pass-mark gate)');
   assert.ok(/if \(_teacher && !lesson\._drill\) \{/.test(sc), 'nav pills are teacher-only');
   // The card markup has exactly the two primary buttons wired.
@@ -353,3 +354,15 @@ console.log('  v68.1 completion-crash cluster: TDZ order, gate scope, mixed resu
 console.log('  v69_f: storyline chapter tally works for baked (static) and projected (live) topics: OK');
 
 console.log('unit-learner-nav: ALL PASSED');
+
+// ── v70_m: the account badge must be repainted once UI strings load ─────────
+// init() calls refreshAccountBadge() BEFORE loadUIStrings() has populated UI_STRINGS, so
+// t('acct.signin') returned the raw KEY. It only looked right after a sign-in/out happened to
+// re-run the refresh. The badge is now repainted whenever strings (re)load.
+{
+  const at = html.indexOf('loadUIStrings(code).then(');
+  assert.ok(at > -1, 'the UI-strings reload hook exists');
+  const body = html.slice(at, at + 400);
+  assert.ok(/refreshAccountBadge\(\)/.test(body),
+    'the badge is repainted after UI strings load (otherwise it shows the raw i18n key on first paint)');
+}

@@ -607,3 +607,251 @@ lesson, word-rich hidden lesson, error-hunt. Both halves of the rule verified by
 
 Suite **137** green (`--quick` 118), `check-inline` 0 on both builds, static rebuilt, both builds
 report `v70_j`.
+
+## 11. ✅ v70_k — PDF chapters break on sentences, not paragraphs
+
+**Reproduced before changing anything.** The report was "block selection doesn't work well on the
+cleaned pdf ... it seems to break mid-sentence". Both halves have one cause:
+
+```
+raw:      "…und der Weg wurde"  ⟨blank⟩ "7" ⟨blank⟩  "schmaler, bis er die Hütte erreichte."
+cleaned:  "…und der Weg wurde\n\nschmaler, bis er die Hütte erreichte."
+chunks:   [ "…und der Weg wurde" ] [ "schmaler, bis er die Hütte erreichte." ]
+```
+`_cleanPdfText` correctly drops the page number, but the blank lines around it survive — so a
+sentence spanning a page break becomes two "paragraphs". The old `_splitIntoChunks` split on
+`\n\n+`, so it cut the sentence in half. The same false structure explains the editor: `canSplit`
+required `paras.length > 1`, so on cleaned text whose paragraphs had collapsed the ✂ button
+vanished entirely.
+
+**Fix, in three parts:**
+1. `_sentenceUnits(text)` repairs false paragraph boundaries first — a paragraph that does not END
+   like a sentence followed by one that STARTS lowercase is a wrap, not a break. This is the same
+   heuristic `_cleanPdfText` already applies to wrapped LINES, lifted one level up.
+2. `_splitIntoChunks` accumulates SENTENCES. A paragraph end is preferred as the cut once the chunk
+   is within 70% of target, so natural breaks are still used where they are real; a tail under 35%
+   of target is absorbed rather than left as a stub chapter.
+3. The ✂ editor and `pdfDoSplit` operate on the same units, so a cleaned PDF is always splittable.
+
+**Guarded by an invariant, not by examples:** for four target sizes over a page of prose with
+furniture scattered through it, every chunk but the last must end with sentence-final punctuation,
+AND the concatenated chunks must equal the source word-for-word in order (lossless, no duplication).
+Plus: real paragraph boundaries survive the repair — including the German case where a wrapped line
+starts with a capitalised noun, which must NOT be joined when the previous part already ended a
+sentence.
+
+**One guard was added only after noticing it was missing.** Reverting the paragraph-boundary
+preference did NOT fail the suite: it is a sizing preference, so the no-mid-sentence invariant still
+held. That is defensible, but it meant a real behaviour was unprotected and a future refactor could
+drop it silently. Added an explicit assertion; the revert now fails.
+
+**Not addressed (worth knowing):** `_cleanPdfText`'s wrapped-LINE join requires the continuation to
+start lowercase, so in German a line wrapping onto a capitalised noun is left unjoined. Harmless for
+chunking now that sentences are the unit, but it does leave stray newlines inside sentences in the
+cleaned text.
+
+New test `unit-pdf-chunking` (7 sections). Suite **138** green (`--quick` 119), `check-inline` 0 on
+both builds, static rebuilt, both builds report `v70_k`. No new i18n keys.
+
+## 12. ✅ v70_l — Repeat split from Next; drill ungated; crossword cursor highlight
+
+**The unlock trap, diagnosed.** "The full story is never unlocked if the global storyline threshold
+is 80% while the individual lesson thresholds are lower." The mechanism is `showComplete`'s branch
+order: the replay branch and the drill branch are BOTH gated on `_belowThreshold`, which is computed
+against the CHAPTER's mark. A learner at or above the lesson-level mark but below the storyline's
+therefore fell through every branch — no replay, no drill — while `_nextChapter()` stayed blocked.
+Dead end by construction.
+
+Note `_firstCoverageShortLessonIdx()` means "not fully solved", NOT "below the mark" — it was
+returning a valid target the whole time. The gate above it was the problem, not the target lookup.
+
+**Fix:**
+- **`#comp-repeat` is its own button** (↻), offered on every completion card including a finished
+  lesson, hidden only when the primary action is already the repeat. `repeatForCoverage()` resolves
+  its target at click time: the first coverage-short lesson, else the current one — the fallback
+  being the point, since with lesson marks satisfied there may be no "short" lesson to find.
+- **The drill lost its pass-mark gate.** v60.8 required a below-threshold learner to see it; that
+  still holds, because the new rule is a superset — anyone with mistakes to drill is offered them.
+
+**Three pinned tests updated again** (`unit-drill`, `unit-learner-nav`, `unit-coverage-threshold`).
+They assert the drill-visibility expression as exact source text. Their v60.8 intent is preserved
+and noted in each: the below-threshold learner is still covered.
+
+**Crossword cursor highlight.** `cwFocus` records `S.cur` and computes `S.active`; cells in the
+active across/down entries tint, the cursor cell tints more strongly, and the matching clue lines
+highlight. Painted in place — a re-render would move focus mid-typing — and re-applied after any
+full render so it survives Check and Regenerate. **Verdict colours win:** a wrong letter stays red
+under the highlight, asserted explicitly.
+
+**A guard that failed for the wrong reason.** Reverting the highlight DID fail the suite, but as a
+`TypeError` thrown inside the sandbox (reading `S.active` when it no longer existed) rather than as
+a named assertion. That is a much weaker signal for whoever hits it next. Reading the state
+defensively turned it into "the focused cell is tracked (cwFocus records the cursor)". Third time
+this session that a guard needed work rather than the code: vacuous (v70_f), conditional (v70_g),
+now unclear.
+
+**Item 1 NOT actioned — see the roadmap.** The article/umlaut defects are not present in the
+uploaded snapshot: no `sl_613012330` (storylines are a separate store), Italian 0/107 article
+mismatches, both umlaut hits false positives. The phenomenon is real elsewhere (16/334 German→
+English pairs), so a deterministic QC check is proposed and specified, but it needs an export that
+still CONTAINS the defects before it is worth writing — otherwise the rule gets tuned against
+clean data.
+
+Suite **138** green (`--quick` 119), `check-inline` 0 on both builds, static rebuilt, both builds
+report `v70_l`. No new i18n keys (`complete.repeat` reused).
+
+## 13. ✅ v70_m — synonym context, account badge, refreshed fixture data
+
+**The defects, found.** `sl_613012330` lives in `APP.storylines` (79 of them), not the topic store —
+which is why the first upload appeared not to contain it. Diffing `lessons_witharticles.json`
+against the corrected `lessons.json` shows exactly what was wrong, and exactly what was fixed:
+- **15 article mismatches** across the two chapters ("teoria ← die Theorie"). The user's fix
+  STRIPPED the German article rather than adding an Italian one — except "selezione naturale" →
+  "la selezione naturale", which went the other way. A checker should therefore flag the asymmetry,
+  not prescribe a direction.
+- **`die naturliche Selektion`** — the missing umlaut. **It survives in the corrected file**: the
+  article was removed, the umlaut was not. Also still present: `symbiosi` (should be `simbiosi`).
+  Hand-editing missed both, which is the argument for the deterministic check.
+- Detection heuristic validated: a form whose umlaut-stripped version matches another form that HAS
+  umlauts, **with the same capitalisation**. That case rule is what suppresses `Zahlen`/`zählen`.
+  Specified in the roadmap; not built this release.
+
+**Synonym context trimmed** to the sentence containing the base word, using `_sentenceUnits` from
+v70_k. Measured need: median 13 words but p90 21 and a worst case of **135** — a whole paragraph
+burying the highlighted word. Trimmed at RENDER time, so the full passage stays in the data and in
+the editor; nothing is destroyed by a heuristic. Falls back to the first sentence when the base word
+is not found.
+
+**Account badge showed the raw key.** `init()` calls `refreshAccountBadge()` before
+`loadUIStrings()` has populated `UI_STRINGS`, so `t('acct.signin')` returned `acct.signin`
+literally. It only looked right after a sign-in/out happened to re-run the refresh. Fixed at the
+cause — the badge repaints whenever strings (re)load — which covers first paint AND language
+switches, rather than patching the first paint alone.
+
+**A guard that tested the wrong layer.** The synonym trim initially had five assertions on
+`_synContext` and one that the stored data was not mutated — and reverting the RENDER to use the
+raw sentence passed all of them. The helper was tested; its use was not. Added assertions on
+`tSynSelect`'s output. Fourth guard-quality issue this session (vacuous → conditional → unclear →
+wrong layer), which is a pattern worth naming: **test the caller, not just the helper.**
+
+**Bundled `lessons.json` replaced** with the user's corrected export (280 topics, 79 storylines).
+This broke one smoke scenario that had been silently depending on whichever topic happened to be
+first in the fixture — it inherited that topic's `coverageTarget`, which overrides the global
+threshold. Made explicit (`delete coverageTarget; APP.storylines = []`). Worth remembering: fixture
+data is not a constant, and a scenario that leans on it will break when it changes.
+
+Suite **138** green (`--quick` 119), `check-inline` 0 on both builds, static rebuilt (5.9M), both
+builds report `v70_m`. No new i18n keys.
+
+## 14. ✅ v70_n — the synonym trim did not actually work; now clamped
+
+**Correcting v70_m.** Asked whether the LLM prompt had changed, the answer turned out to be that
+**the context is not model-generated at all** — `findContextSentence` (server.js) picks the first
+STORY sentence containing the word. There is no prompt to change.
+
+Checking that led to a worse finding: **v70_m's trim changed nothing for any of the ten worst
+contexts in the corpus.**
+```
+selezione   135w → 135w   UNCHANGED        العقل   61w → 61w   UNCHANGED
+processi    135w → 135w   UNCHANGED        الثور   53w → 53w   UNCHANGED
+```
+Each is a SINGLE sentence: Italian academic prose running 135 words to one full stop, and Arabic
+classical prose that uses `،` `؛` `:` and no full stop at all. Sentence splitting cannot shorten a
+single sentence. I had measured the median (13 words) and shipped against it, without checking the
+fix against the cases that motivated it. The measurement that mattered was the one I did after
+being asked a follow-up question.
+
+**Now:** `_synClamp` windows `SYN_CONTEXT_MAX_WORDS` (24) around the base word, preferring to start
+just after a nearby clause break (`, ; : — ، ؛ 、`), and marks elision with `…`. Corpus after the
+change: **max 26 words** (was 135), p90 21, median 12 — short contexts pass through untouched, so
+normal cards gain no stray ellipses.
+```
+… i processi selettivi stessi sono molteplici, perché la selezione naturale classica si integra …
+```
+
+**Guards:** a >50-word single sentence must clamp to ≤30 words, still contain the base word, and
+mark elision — plus the same for Arabic prose with no full stop, and a short context asserted to
+gain no ellipses. Verified by reverting the clamp (fails at 61 words).
+
+**Two things logged rather than fixed** (see roadmap): the server still STORES the full passage, so
+the clamp is display-side only; and `_sentenceUnits` splitting only on `.!?…` means Arabic is one
+sentence to it — harmless here, but the v70_k PDF chunker has the same blind spot and would chunk
+an Arabic book far more coarsely.
+
+**The lesson worth keeping:** v70_m's guard was thorough and green while the fix did not work,
+because the test fixture was a multi-sentence paragraph — the shape the fix handled — not the shape
+the user was complaining about. **Test against the data that prompted the report, not a
+convenient synthetic version of it.** Fifth guard-quality issue this session, and the most costly:
+the previous four were caught before shipping.
+
+Suite **138** green (`--quick` 119), `check-inline` 0 on both builds, static rebuilt, both builds
+report `v70_n`. No new i18n keys.
+
+## 15. ✅ v70_o — crossword UX from the first browser pass
+
+Six items from the user's browser pass, all crossword, all invisible to the suite until now.
+
+- **Mobile overflow (the worst one).** The modal used `align-items:center;justify-content:center`.
+  When content is WIDER than the viewport, centring pushes the overflow off BOTH sides and the left
+  edge becomes unreachable — the grid "appeared to the right of the main screen". Now the container
+  scrolls and the panel centres with `margin:auto`, which collapses to flush-left once it no longer
+  fits. The grid also got its own `overflow-x` so a wide puzzle never drags the whole panel sideways.
+- **Grid numbers 8px → 11px**, bolder, in `--blue-dark`.
+- **Active clue above the grid.** Updated from `_cwHighlight`, NOT the renderer: a full re-render
+  rebuilds the inputs and drops focus mid-word. First attempt built it in `_renderCrossword` and it
+  never appeared on focus — caught by the guard.
+- **Advance skips crossing-filled cells.** Stopping on a letter the grid had already supplied made
+  the learner retype it, the opposite of what a crossing is for.
+- **Check becomes Done when everything is solved**, and closes. Reset to Check on open — a stale
+  Done would close a fresh puzzle instantly (asserted).
+- **Closing returns the viewport to the results card**, since the modal scrolls the page on a phone.
+
+**A guard that cannot exist, and what was done instead.** Reverting the mobile-layout fix did NOT
+fail anything: it is pure CSS, and the stub DOM has no layout. Rather than leave it unguarded, the
+specific regression is pinned structurally — the modal must not use `justify-content:center` and
+must scroll. That is a weaker check than behaviour, and it is honest about being one: it catches the
+exact mistake that was made, not the class of mistake.
+
+**Two items from the pass NOT done, logged in the roadmap:** the redundant drill result card (it
+touches the `showComplete` branch chain, which has fixed three user-reported dead ends and is easy
+to re-break — wants its own change), and letter-by-letter diffs for typing exercises (self-contained
+and unit-testable, but a real feature: needs proper alignment, since "hause"/"haus" differs by one
+insertion, not four substitutions).
+
+One new i18n key (`crossword.done`). Suite **138** green (`--quick` 119), `check-inline` 0 on both
+builds, static rebuilt, both builds report `v70_o`.
+
+## 16. ✅ v70_p — translation toggle on the storyline full-story panel
+
+The results card could switch a chapter between target and source; the storyline's combined
+"read full story" dropdown could not. Same contract, so it was built to the same expectations
+rather than inventing a second one.
+
+- `_chainStoryCache[chainId]` holds the loaded chapters, so switching language does not refetch.
+- `_chainStoryLang[chainId]` is **per chain**, not global: two storylines open in one session
+  should not share a setting.
+- The toggle appears only when at least one chapter HAS a translation, labelled with the language
+  it switches TO — the same rule `_renderCompStory` uses.
+- **Per-chapter fallback:** a chapter with no translation shows its original rather than a gap, so
+  a partly translated storyline still reads end to end.
+- **Vocabulary highlighting only runs on TARGET text.** The highlight list is target-language
+  words; running it over a translation would match nothing at best and the wrong spans at worst.
+- 🔊 reads whichever language is shown, in that language. This also replaced a ~700-character
+  inline `onclick` blob with `speakChainStory(chainId)` — same behaviour, now testable.
+
+**Guards** in `unit-story-translation-toggle` (which was source-based; the new block pulls in
+`lib-dom` for a live DOM). Each verified by reverting: the toggle, the per-chapter fallback, and
+the speaker following the shown language.
+
+**Drill result card deliberately NOT done.** It touches the `showComplete` branch chain, which has
+already fixed three user-reported dead ends (v66.1, v69.2). With this session as long as it is, that
+is exactly the change most likely to go wrong quietly — it wants a fresh session with the branch
+order re-read from scratch. Still first in the roadmap's near-term list.
+
+One caveat for whoever picks it up: `toggleChainStory` guards on `body.dataset.loaded`, so the
+chapters are fetched once. The cache is keyed by chain id and never invalidated — if a chapter's
+story is edited while the panel is open, the panel will show the stale copy until the screen is
+rebuilt. Not worth fixing speculatively, but worth knowing.
+
+Suite **138** green (`--quick` 119), `check-inline` 0 on both builds, static rebuilt, both builds
+report `v70_p`. No new i18n keys (`story.show_translation` / `story.show_original` reused).

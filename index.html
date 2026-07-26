@@ -516,8 +516,12 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
     <span>👤</span><span id="acct-name">Sign in</span>
   </button>
 </div>
-    <div id="cw-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;align-items:center;justify-content:center;padding:16px">
-      <div style="background:var(--white);border-radius:14px;padding:16px;max-width:760px;width:100%;max-height:90vh;overflow:auto">
+    <!-- v70_o: `justify-content:center` on a container whose content is wider than the viewport
+         pushes the overflow off BOTH sides, so on a phone the grid sat to the right of the screen
+         and part of it could not be reached at all. The panel centres via `margin:auto` instead,
+         which collapses to flush-left once it no longer fits. -->
+    <div id="cw-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;overflow:auto;padding:12px;-webkit-overflow-scrolling:touch">
+      <div style="background:var(--white);border-radius:14px;padding:14px;max-width:760px;width:auto;min-width:min(100%,320px);margin:auto;box-sizing:border-box">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <div style="flex:1;font-weight:800;font-size:15px">🧩 <span id="cw-title"></span></div>
           <button onclick="closeCrossword()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--gray-dark)" title="Close">✕</button>
@@ -1158,6 +1162,7 @@ html.tgt-rtl .sbox,html.tgt-rtl .wbank{direction:rtl}
        mark the primary becomes REPEAT (↻) rather than Next (→) — the learner picks among repeat,
        drill, crossword and whatever is added later, instead of Next silently meaning one of them. -->
   <div id="comp-actions" style="display:flex;gap:10px;justify-content:center;align-items:center;margin-top:14px;flex-wrap:wrap">
+    <button class="comp-ico" id="comp-repeat" style="display:none" onclick="repeatForCoverage()">↻</button>
     <button class="comp-ico" id="comp-drill" style="display:none" onclick="startDrill()">🎯</button>
     <button class="comp-ico" id="comp-crossword" style="display:none" onclick="openCrosswordFromComplete()">🔠</button>
     <button class="comp-ico primary" id="comp-next" onclick="afterComplete()">→</button>
@@ -2423,6 +2428,7 @@ function selectSrcLang(code, fromForm){
   ['src-lang-select-footer-ls','src-lang-select-footer-sl'].forEach(id=>{const f=document.getElementById(id);if(f&&f.value!==code)f.value=code;});
   updateTranslationLangHint();
   loadUIStrings(code).then(() => {
+    try { refreshAccountBadge(); } catch(_) {}   // v70_m: strings exist now — repaint the badge
     const lbl=document.getElementById('topic-label');
     if(lbl && !document.getElementById('use-story-cb')?.checked) lbl.textContent=topicLabelText();
     if(document.getElementById('saved-list')) loadSavedList();
@@ -3803,23 +3809,67 @@ function cleanExtractedText(text) {
   return result;
 }
 
-function _splitIntoChunks(text, targetWords) {
-  const paras = text.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
-  const chunks = []; let cur = [];
-  const wc = s => s.split(/\s+/).length;
-  paras.forEach(para => {
-    cur.push(para);
-    if (cur.reduce((s,p) => s + wc(p), 0) >= targetWords) {
-      chunks.push(cur.join('\n\n')); cur = [];
-    }
+const _SENT_END_RE = /[.!?…]["'»«”’)\]]*$/u;      // sentence-final punct, closing quotes allowed
+
+// Sentence units, with false paragraph boundaries repaired first.
+//
+// Why the repair (v70_k, user-reported): PDF cleanup DROPS page furniture, and a page number
+// sitting between the two halves of a sentence leaves a blank line where the sentence continues:
+//
+//   "…und der Weg wurde"  ⟨7⟩  "schmaler, bis er die Hütte erreichte."
+//
+// After cleanup that reads as two paragraphs, so any paragraph-based splitter breaks mid-sentence —
+// exactly the reported symptom. A paragraph that does not END like a sentence, followed by one that
+// STARTS lowercase, is a wrap, not a boundary. Same heuristic _cleanPdfText already uses for
+// wrapped lines, applied one level up.
+function _sentenceUnits(text) {
+  const paras = String(text || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  const merged = [];
+  for (const p of paras) {
+    const prev = merged.length ? merged[merged.length - 1] : null;
+    if (prev && !_SENT_END_RE.test(prev) && /^["'«„“(\[]?\p{Ll}/u.test(p)) merged[merged.length - 1] = prev + ' ' + p;
+    else merged.push(p);
+  }
+  const units = [];
+  merged.forEach((p, pi) => {
+    // Trailing punctuation and any closing quote stay WITH the sentence they end.
+    const parts = p.match(/[^.!?…]*[.!?…]+["'»«”’)\]]*|[^.!?…]+$/gu) || [p];
+    const cleaned = parts.map(x => x.trim()).filter(Boolean);
+    cleaned.forEach((sent, si) => units.push({ text: sent, para: pi, endsPara: si === cleaned.length - 1 }));
   });
-  if (cur.length) chunks.push(cur.join('\n\n'));
-  return chunks.map((text, i) => ({
-    text,
-    wordCount: wc(text),
-    title: _autoTitle(text, i),
-    status: 'pending'
-  }));
+  return units;
+}
+// Re-join units into text, keeping paragraph breaks where they were real.
+function _unitsToText(units) {
+  let out = '';
+  units.forEach((u, i) => {
+    if (i === 0) out = u.text;
+    else out += (u.para !== units[i - 1].para ? '\n\n' : ' ') + u.text;
+  });
+  return out;
+}
+// Chunk at SENTENCE boundaries, never inside one. A paragraph end is preferred as the cut point
+// once the chunk is within reach of the target, so natural breaks are still used where they exist.
+function _splitIntoChunks(text, targetWords) {
+  const wc = s => String(s).split(/\s+/).filter(Boolean).length;
+  const units = _sentenceUnits(text);
+  if (!units.length) return [];
+  const chunks = [];
+  let cur = [], words = 0;
+  units.forEach(u => {
+    cur.push(u); words += wc(u.text);
+    const nearTarget = words >= targetWords * 0.7;
+    if (words >= targetWords || (u.endsPara && nearTarget)) { chunks.push(cur); cur = []; words = 0; }
+  });
+  if (cur.length) {
+    // A short tail is absorbed rather than left as a stub chapter.
+    if (chunks.length && wc(_unitsToText(cur)) < targetWords * 0.35) chunks[chunks.length - 1].push(...cur);
+    else chunks.push(cur);
+  }
+  return chunks.map((us, i) => {
+    const text = _unitsToText(us);
+    return { text, wordCount: wc(text), title: _autoTitle(text, i), status: 'pending' };
+  });
 }
 
 function _autoTitle(text, index) {
@@ -3841,13 +3891,13 @@ function _renderPdfChunks() {
   const total = _pdfChunks.reduce((s,c)=>s+c.wordCount,0);
   list.innerHTML = _pdfChunks.map((c, i) => {
     const icon = c.status==='done'?'✅':c.status==='error'?'❌':c.status==='active'?'⏳':'○';
-    const paras = (c.text||'').split(/\n\n+/).map(p=>p.trim()).filter(Boolean);
-    const canSplit = paras.length > 1 && c.status!=='active';
+    const units = _sentenceUnits(c.text||'');
+    const canSplit = units.length > 1 && c.status!=='active';
     const editor = _splitOpen===i
       ? `<div class="pdf-break-editor" id="pdf-break-${i}">` +
-        paras.map((p,pi) =>
-          (pi>0 ? `<button type="button" class="pdf-break-btn" onclick="pdfDoSplit(${i},${pi})">${t('pdf.break_here')}</button>` : '') +
-          `<div class="pdf-break-para">${escHtml(p)}</div>`
+        units.map((u,ui) =>
+          (ui>0 ? `<button type="button" class="pdf-break-btn" onclick="pdfDoSplit(${i},${ui})">${t('pdf.break_here')}</button>` : '') +
+          `<div class="pdf-break-para">${escHtml(u.text)}</div>`
         ).join('') +
         `</div>`
       : '';
@@ -3881,11 +3931,13 @@ function pdfOpenSplit(i){ _splitOpen = (_splitOpen===i) ? -1 : i; _renderPdfChun
 // Insert a chapter break before paragraph `pi`, splitting chunk `i` into two.
 function pdfDoSplit(i, pi){
   const c = _pdfChunks[i]; if(!c) return;
-  const paras = (c.text||'').split(/\n\n+/).map(p=>p.trim()).filter(Boolean);
-  if(pi<=0 || pi>=paras.length) return;
+  // v70_k: sentence units, not paragraphs. On a cleaned PDF the paragraph structure is often gone
+  // (wraps joined, furniture dropped), which left this editor with a single unsplittable block.
+  const units = _sentenceUnits(c.text || '');
+  if(pi<=0 || pi>=units.length) return;
   _chunksDirty = true;
   const wc = wordCount;
-  const a = paras.slice(0,pi).join('\n\n'), b = paras.slice(pi).join('\n\n');
+  const a = _unitsToText(units.slice(0,pi)), b = _unitsToText(units.slice(pi));
   _pdfChunks.splice(i, 1,
     { text:a, wordCount:wc(a), title:c.title, status:'pending' },
     { text:b, wordCount:wc(b), title:_autoTitle(b, i+1), status:'pending' });
@@ -6780,7 +6832,8 @@ function _renderStorylineScreen(chainId, encodedChain, topics) {
       `<div class="storyline-story-hdr" style="flex:1" role="button" tabindex="0" onclick="toggleChainStory('${slscId}')">` +
       '<span style="flex:1">' + t('lesson.read_full_story') + '</span>' +
       `<span class="storyline-story-arrow" id="csarrow-${slscId}">▼</span></div>` +
-      `<span class="story-icon-btn" onclick="event.stopPropagation();(async function(){const sl=APP._slScreen;if(!sl)return;const saved=(typeof STATIC_LESSONS!=='undefined'?STATIC_LESSONS:[]).concat(APP.savedList||[]);const ids=(sl.chapterIds&&sl.chapterIds.length)?sl.chapterIds:(sl.topics||[]).map(tp=>saved.find(l=>l.topic===tp)?.id).filter(Boolean);const stories=await Promise.all(ids.map(async cid=>{const cached=saved.find(l=>l.id===cid);if(cached?.story)return cached.story;try{const r=await fetch('/api/lessons/load?id='+encodeURIComponent(cid));const d=await r.json();return d.story||'';}catch(_){return '';};}));const text=stories.filter(Boolean).join(' ').replace(/\\s+/g,' ').trim();const lang=saved.find(l=>l.id===ids[0])?.lang||'';if(text)speakBodyText('__inline__',lang,text);})()">🔊</span>` +
+      `<span class="story-icon-btn" id="csxlate-${slscId}" style="display:none;font-size:11px;font-weight:800;padding:0 6px" onclick="event.stopPropagation();toggleChainStoryLang('${slscId}')"></span>` +
+      `<span class="story-icon-btn" onclick="event.stopPropagation();speakChainStory('${slscId}')">🔊</span>` +
       `</div>` +
       `<div class="storyline-story-body" id="csbody-${slscId}" data-chain="${escapedChain}"></div>` +
       '</div>';
@@ -9210,25 +9263,71 @@ async function toggleChainStory(chainId) {
       }
       chapters.push(d);
     }
-    _renderChainStory(body, chapters);
+    _chainStoryCache[chainId] = chapters;
+    _renderChainStory(body, chapters, chainId);
   } catch(e) {
     body.innerHTML = '<div class="storyline-story-loading">⚠ Could not load: ' + e.message + '</div>';
   }
 }
 
-function _renderChainStory(body, chapters) {
+// v70_p: chapters are cached per chain so switching language does not refetch them.
+const _chainStoryCache = {};
+// Which language the full-story panel is showing, per chain. Mirrors APP._compStoryLang on the
+// results card, and is deliberately per-chain: two storylines open in one session should not
+// share a setting.
+const _chainStoryLang = {};
+
+function _renderChainStory(body, chapters, chainId) {
+  const showSource = _chainStoryLang[chainId] === 'source';
   const allVocab = chapters.flatMap(d => (d.lessons||[]).flatMap(L => L.vocab||[])).map(v => v.target).filter(Boolean).sort((a,b) => b.length - a.length);
-  function highlight(text) {
+  function highlight(text, isTarget) {
     let t = furiHtml(text);
-    if (allVocab.length) t = _highlightVocabHtml(t, allVocab);
+    // Vocabulary highlighting only applies to the TARGET text — the words are target-language, so
+    // running it over a translation would match nothing at best and the wrong spans at worst.
+    if (isTarget && allVocab.length) t = _highlightVocabHtml(t, allVocab);
     return t.split(/\n\n+/).map(p => '<p dir="auto">' + p.replace(/\n/g,'<br>') + '</p>').join('');
   }
-  body.innerHTML = chapters.map((d, i) =>
-    `<div class="storyline-chapter">` +
-    `<div class="storyline-chapter-hdr">${t('storyline.chapter_hdr',{n:i+1,topic:escHtml(d.topic)})}</div>` +
-    `<div class="storyline-chapter-body">${highlight(d.story || t('chapter.no_story'))}</div>` +
-    `</div>`
-  ).join('');
+  body.innerHTML = chapters.map((d, i) => {
+    const xl = d.storyTranslation || '';
+    // Per chapter: fall back to the original when THIS chapter has no translation, so a partly
+    // translated storyline still reads end to end rather than showing gaps.
+    const useSource = showSource && !!xl;
+    const text = useSource ? xl : (d.story || t('chapter.no_story'));
+    return `<div class="storyline-chapter">` +
+      `<div class="storyline-chapter-hdr">${t('storyline.chapter_hdr',{n:i+1,topic:escHtml(d.topic)})}</div>` +
+      `<div class="storyline-chapter-body">${highlight(text, !useSource)}</div>` +
+      `</div>`;
+  }).join('');
+  _syncChainXlateBtn(chainId, chapters);
+}
+// Show the toggle only when at least one chapter HAS a translation, and label it with the language
+// it would switch TO — the same contract as the results card's button.
+function _syncChainXlateBtn(chainId, chapters){
+  const btn = document.getElementById('csxlate-' + chainId);
+  if (!btn) return;
+  const any = (chapters || []).some(d => d && d.storyTranslation);
+  if (!any){ if (btn.style) btn.style.display = 'none'; return; }
+  if (btn.style) btn.style.display = '';
+  btn.textContent = (_chainStoryLang[chainId] === 'source') ? t('story.show_original') : t('story.show_translation');
+}
+function toggleChainStoryLang(chainId){
+  const chapters = _chainStoryCache[chainId];
+  if (!chapters) return;
+  _chainStoryLang[chainId] = (_chainStoryLang[chainId] === 'source') ? 'target' : 'source';
+  const body = document.getElementById('csbody-' + chainId);
+  if (body) _renderChainStory(body, chapters, chainId);
+}
+// The 🔊 reads whatever is currently shown, like the results card's does.
+function speakChainStory(chainId){
+  const chapters = _chainStoryCache[chainId];
+  if (!chapters || !chapters.length) return;
+  const showSource = _chainStoryLang[chainId] === 'source';
+  const text = chapters.map(d => (showSource && d.storyTranslation) ? d.storyTranslation : (d.story || ''))
+    .filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+  if (!text) return;
+  const first = chapters[0] || {};
+  const lang = showSource ? (first.srcLang || APP.srcLang || 'en') : (first.lang || APP.lang || '');
+  speakBodyText('__inline__', lang, text);
 }
 
 // ── exercises ──
@@ -9860,6 +9959,15 @@ function _compIco(btn, icon, label){
   btn.title = label;
   try { btn.setAttribute('aria-label', label); } catch(_) {}
 }
+// v70_l: replay to raise coverage. Separate from Next so BOTH can be offered — a finished lesson
+// still needs a way back in when the storyline's pass mark is higher than the lesson-level ones.
+function repeatForCoverage(){
+  const idx = (typeof _firstCoverageShortLessonIdx === 'function') ? _firstCoverageShortLessonIdx() : -1;
+  const target = idx >= 0 ? idx : APP.cur?.lessonIdx;
+  if (target == null || target < 0) return;
+  if (typeof endDrill === 'function') endDrill();
+  startLesson(target);
+}
 function openCrosswordFromComplete(){
   const idx = APP.cur?.lessonIdx;
   if (idx == null) return;
@@ -9888,6 +9996,7 @@ function openCrossword(lessonIdx, attempt){
   m.style.display = 'flex';
   const ttl = document.getElementById('cw-title'); if (ttl) ttl.textContent = t('crossword.title');
   _compIco(document.getElementById('cw-check-btn'), '✓', t('crossword.check'));
+  { const _cb = document.getElementById('cw-check-btn'); if (_cb) _cb.onclick = checkCrossword; }
   _compIco(document.getElementById('cw-solve-btn'), '👁', t('crossword.solve'));
   _compIco(document.getElementById('cw-regen-btn'), '🎲', t('crossword.regenerate'));
   _renderCrosswordOptions();
@@ -9912,6 +10021,12 @@ function closeCrossword(){
   const m = document.getElementById('cw-modal');
   if (m) m.style.display = 'none';
   APP._cw = null;
+  // v70_o: the modal scrolls the page on a phone, so closing it could leave the viewport parked
+  // somewhere unrelated. Put the learner back on the card they came from.
+  try {
+    const card = document.getElementById('comp-actions') || document.getElementById('complete-card');
+    if (card && typeof card.scrollIntoView === 'function') card.scrollIntoView({ block: 'center' });
+  } catch(_) {}
 }
 function _renderCrosswordOptions(){
   const host = document.getElementById('cw-options'); if (!host) return;
@@ -9939,6 +10054,62 @@ function cwFocus(k){
   const S = APP._cw; if (!S) return;
   const dirs = (S.owner.get(k) || []).map(ei => S.grid.entries[ei].dir);
   if (!dirs.includes(S.dir) && dirs.length) S.dir = dirs[0];
+  S.cur = k;
+  _cwHighlight();
+}
+// The entries the cursor is inside — one across, one down where they cross.
+function _cwActiveEntries(){
+  const S = APP._cw; if (!S || !S.cur) return [];
+  return (S.owner.get(S.cur) || []);
+}
+// Repaint cells and clue lines for the current cursor. Done in place rather than by re-rendering:
+// rebuilding the grid would move focus and interrupt typing.
+function _cwHighlight(){
+  const S = APP._cw; if (!S) return;
+  const active = new Set(_cwActiveEntries());
+  S.active = active;
+  for (const k of S.owner.keys()) _paintCell(k);
+  // The clue panel above the grid follows the cursor. Updated here rather than in the renderer:
+  // a full re-render would rebuild the inputs and drop focus mid-word.
+  const now = document.getElementById('cw-clue-now');
+  if (now){
+    const act = [...active].map(ei => S.grid.entries[ei]).filter(Boolean);
+    if (act.length){
+      now.innerHTML = act.map(e => '<div><b>' + e.num + ' '
+        + escHtml(e.dir === 'across' ? t('crossword.across') : t('crossword.down'))
+        + '</b> · ' + escHtml(e.clue) + ' <span style="color:var(--gray-dark)">(' + e.len + ')</span></div>').join('');
+      if (now.style) now.style.display = '';
+    } else if (now.style) now.style.display = 'none';
+  }
+  S.grid.entries.forEach((e, ei) => {
+    const li = document.getElementById('cw-clue-' + ei);
+    if (!li || !li.style) return;
+    const on = active.has(ei);
+    li.style.background = on ? '#eef4ff' : '';
+    li.style.fontWeight = on ? '800' : '';
+    li.style.borderRadius = '4px';
+  });
+}
+// Step forward to the next cell that still NEEDS a letter. Cells already filled by a crossing word
+// are skipped: stopping on them made the learner retype letters the grid had given them, which is
+// the opposite of the help a crossing is supposed to be. Stops at the end of the entry rather than
+// wrapping into another one.
+function _cwAdvance(k){
+  const S = APP._cw; if (!S) return false;
+  const dr = S.dir === 'down' ? 1 : 0, dc = S.dir === 'across' ? 1 : 0;
+  const p = k.split(','); let r = +p[0], c = +p[1];
+  for (let step = 0; step < 32; step++){
+    r += dr; c += dc;
+    const nk = r + ',' + c;
+    if (!S.owner.has(nk)) return false;               // end of the entry
+    if (!S.typed[nk]) {                               // an empty cell — go there
+      const nx = document.getElementById('cw-' + nk);
+      if (nx && typeof nx.focus === 'function'){ nx.focus(); if (typeof nx.select === 'function') nx.select(); }
+      S.cur = nk; _cwHighlight();
+      return true;
+    }
+  }
+  return false;
 }
 function _cwMove(k, dr, dc){
   const S = APP._cw; if (!S) return false;
@@ -9984,8 +10155,7 @@ function cwInput(k){
   // A retyped cell is no longer judged — stale red on a letter since changed would mislead.
   if (S.mark[k]) { delete S.mark[k]; _paintCell(k); }
   if (!ch) return;
-  const p = k.split(','); const r = +p[0], c = +p[1];
-  if (!_cwMove(k, S.dir === 'down' ? 1 : 0, S.dir === 'down' ? 0 : 1)){ /* end of entry: stay put */ }
+  _cwAdvance(k);
   // Every cell filled → check without being asked. Nothing is lost by it: Check never clears
   // letters, so an early auto-check just colours what is there.
   if (S.owner.size && Object.keys(S.typed).length >= S.owner.size) checkCrossword();
@@ -9995,9 +10165,15 @@ function _paintCell(k){
   const el = document.getElementById('cw-' + k); if (!el || !el.style) return;
   const m = S.mark[k];
   const locked = (S.owner.get(k) || []).some(ei => S.done[ei]);
-  el.style.background  = m === 'bad' ? '#ffe3e3' : (m === 'ok' || locked) ? '#d8f5d8' : 'var(--white)';
+  // Verdict colours win: a wrong letter stays red even while the cursor is in its entry, and the
+  // highlight only tints cells that carry no verdict yet.
+  const inActive = S.active && (S.owner.get(k) || []).some(ei => S.active.has(ei));
+  const isCur = S.cur === k;
+  el.style.background  = m === 'bad' ? '#ffe3e3' : (m === 'ok' || locked) ? '#d8f5d8'
+                       : isCur ? '#dbe7ff' : inActive ? '#eef4ff' : 'var(--white)';
   el.style.color       = m === 'bad' ? '#b00020' : (m === 'ok' || locked) ? '#0a7a28' : 'var(--text)';
-  el.style.borderColor = m === 'bad' ? '#e05a5a' : (m === 'ok' || locked) ? '#5ec27a' : 'var(--gray-dark)';
+  el.style.borderColor = m === 'bad' ? '#e05a5a' : (m === 'ok' || locked) ? '#5ec27a'
+                       : (isCur || inActive) ? 'var(--blue)' : 'var(--gray-dark)';
 }
 function _renderCrossword(){
   const S = APP._cw; const host = document.getElementById('cw-body');
@@ -10015,7 +10191,7 @@ function _renderCrossword(){
       const bd = m === 'bad' ? '#e05a5a' : (m === 'ok' || locked) ? '#5ec27a' : 'var(--gray-dark)';
       const num = S.startNum.get(k);
       grid += '<div style="position:relative;width:30px;height:30px">'
-        + (num ? '<span style="position:absolute;top:0;left:1px;font-size:8px;font-weight:800;color:var(--gray-dark);pointer-events:none;z-index:1">' + num + '</span>' : '')
+        + (num ? '<span style="position:absolute;top:-1px;left:2px;font-size:11px;font-weight:900;color:var(--blue-dark);pointer-events:none;z-index:1;line-height:1">' + num + '</span>' : '')
         + '<input id="cw-' + k + '" maxlength="1" value="' + escHtml(S.typed[k] || '') + '"'
         + ' oninput="cwInput(\'' + k + '\')" onfocus="cwFocus(\'' + k + '\')" onkeydown="cwKey(\'' + k + '\', event)"'
         + ' style="width:30px;height:30px;text-align:center;font-weight:800;font-size:15px;text-transform:uppercase;'
@@ -10028,14 +10204,17 @@ function _renderCrossword(){
 
   const list = dir => g.entries.filter(e => e.dir === dir)
     .map(e => { const ei = g.entries.indexOf(e);
-      return '<li style="margin-bottom:3px' + (S.done[ei] ? ';opacity:.5;text-decoration:line-through' : '') + '">'
+      return '<li id="cw-clue-' + ei + '" style="padding:1px 4px;margin-bottom:3px' + (S.done[ei] ? ';opacity:.5;text-decoration:line-through' : '') + '">'
         + '<b>' + e.num + '.</b> ' + escHtml(e.clue) + ' <span style="color:var(--gray-dark)">(' + e.len + ')</span></li>'; })
     .join('');
 
   const total = g.entries.length, solvedN = Object.keys(S.done).length;
-  host.innerHTML =
+  // v70_o: the highlight alone made you look back and forth to the clue list. The clue you are
+  // actually answering now sits directly above the grid.
+  const nowHtml = '<div id="cw-clue-now" style="display:none;margin-bottom:8px;padding:7px 10px;background:#eef4ff;border-left:3px solid var(--blue);border-radius:6px;font-size:13px;line-height:1.45"></div>';
+  host.innerHTML = nowHtml +
     '<div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">'
-    + '<div>' + grid + '</div>'
+    + '<div style="overflow-x:auto;max-width:100%">' + grid + '</div>'
     + '<div style="flex:1;min-width:180px;font-size:12px;line-height:1.5">'
     +   '<div style="font-weight:800;margin-bottom:3px">' + t('crossword.across') + '</div><ul style="margin:0 0 10px 16px;padding:0">' + list('across') + '</ul>'
     +   '<div style="font-weight:800;margin-bottom:3px">' + t('crossword.down') + '</div><ul style="margin:0 0 0 16px;padding:0">' + list('down') + '</ul>'
@@ -10046,6 +10225,7 @@ function _renderCrossword(){
     +   (g.topped ? ' · <span style="font-weight:700;color:var(--gray-dark)">' + t('crossword.topped_up') + '</span>' : '')
     +   (g.skipped.length ? ' · <span style="font-weight:700;color:var(--gray-dark)">' + t('crossword.skipped_n', { n: g.skipped.length }) + '</span>' : '')
     + '</div>';
+  if (S.cur) _cwHighlight();          // a full render replaces the markup; restore the cursor tint
 }
 function _cwSyncFromDom(){
   const S = APP._cw; if (!S) return;
@@ -10082,7 +10262,24 @@ function checkCrossword(){
   });
   _renderCrossword();
   if (newly && typeof showToast === 'function') showToast(t('crossword.correct_n', { n: newly }));
+  // v70_o: fully solved — the same green button becomes Done, so finishing does not require
+  // hunting for the ✕ in the corner.
+  _cwSyncDoneButton();
   return { solved: newly, credited, wrong };
+}
+// The primary action is Check while anything is unsolved, and Done once everything is.
+function _cwSyncDoneButton(){
+  const S = APP._cw; if (!S) return false;
+  const btn = document.getElementById('cw-check-btn'); if (!btn) return false;
+  const allDone = S.grid.entries.length > 0 && Object.keys(S.done).length >= S.grid.entries.length;
+  if (allDone){
+    _compIco(btn, '✓', t('crossword.done'));
+    btn.onclick = closeCrossword;
+  } else {
+    _compIco(btn, '✓', t('crossword.check'));
+    btn.onclick = checkCrossword;
+  }
+  return allDone;
 }
 // Reveal. Credits NOTHING — coverage must mean the learner produced the word, not that they asked
 // to be shown it. The flag latches so a later Check cannot launder a reveal into credit.
@@ -10092,6 +10289,7 @@ function solveCrossword(){
   for (const [k, letter] of S.sol){ S.typed[k] = letter; S.mark[k] = 'ok'; }
   S.grid.entries.forEach((e, ei) => { S.done[ei] = 1; });
   _renderCrossword();
+  _cwSyncDoneButton();
   if (typeof showToast === 'function') showToast(t('crossword.revealed'));
   return S.grid.entries.length;
 }
@@ -11024,12 +11222,59 @@ function tWordForm(ex){
 }
 // Synonyms/antonyms in context: the base word shown inside its story sentence
 // (highlighted), pick the word similar/opposite to it. Reuses the syn ui entries.
+// v70_m: a synonym card's context should be the ONE sentence containing the word. Generated
+// contexts are sometimes a whole paragraph — measured on real data: median 13 words, but a p90 of
+// 21 and a worst case of 135, which buries the highlighted word in a wall of text.
+//
+// Trimmed at RENDER time rather than by rewriting stored lessons: the full passage stays in the
+// data (and in the editor, where a teacher may want it), and nothing is destroyed by a heuristic.
+const SYN_CONTEXT_MAX_WORDS = 24;
+// Clause-ish boundaries, including the marks Arabic actually uses (، ؛) and the CJK comma. A
+// 135-word Italian period and a 61-word Arabic passage are ONE sentence each — sentence splitting
+// alone cannot shorten them, which is why v70_m's first attempt changed nothing for the ten worst
+// cases in the corpus. This clamps to a window around the word instead.
+const _SYN_CLAUSE_RE = /[,;:—–،؛。、]$/u;
+function _synClamp(sentence, base, maxWords){
+  const words = String(sentence).split(/\s+/).filter(Boolean);
+  if (words.length <= maxWords) return String(sentence).trim();
+  const norm = x => String(x).toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
+  const b = norm(base);
+  let at = b ? words.findIndex(w => norm(w) === b) : -1;
+  if (at < 0 && b) at = words.findIndex(w => norm(w).includes(b));
+  if (at < 0) at = 0;
+  const half = Math.floor(maxWords / 2);
+  let start = Math.max(0, at - half);
+  let end = Math.min(words.length, start + maxWords);
+  start = Math.max(0, end - maxWords);
+  // Prefer to begin just after a nearby clause break, so the window reads as a phrase rather than
+  // starting mid-clause. Only look a few words back, and never past the target word.
+  for (let i = start; i < Math.min(at, start + 6); i++){
+    if (_SYN_CLAUSE_RE.test(words[i])) { start = i + 1; break; }
+  }
+  end = Math.min(words.length, start + maxWords);
+  const out = words.slice(start, end).join(' ');
+  return (start > 0 ? '… ' : '') + out + (end < words.length ? ' …' : '');
+}
+// The context shown on a synonym card: the sentence containing the word, clamped to a readable
+// window if that sentence is itself enormous.
+function _synContext(sentence, base){
+  const full = String(sentence == null ? '' : sentence).trim();
+  if (!full) return '';
+  const units = (typeof _sentenceUnits === 'function') ? _sentenceUnits(full) : [];
+  let pick = full;
+  if (units.length > 1){
+    const needle = String(base || '').trim().toLowerCase();
+    const hit = needle ? units.find(u => u.text.toLowerCase().includes(needle)) : null;
+    pick = (hit || units[0]).text;
+  }
+  return _synClamp(pick, base, SYN_CONTEXT_MAX_WORDS);
+}
 function tSynSelect(ex){
   const isSyn = ex.mode==='synonyms';
   // Optional context: the base word highlighted in its story sentence.
   let sentenceHtml = '';
   if(ex.sentence){
-    sentenceHtml = escHtml(ex.sentence);
+    sentenceHtml = escHtml(_synContext(ex.sentence, ex.base));
     if(ex.base){
       const re = new RegExp('('+ex.base.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','i');
       sentenceHtml = sentenceHtml.replace(re, '<span style="color:var(--blue);font-weight:900;text-decoration:underline">$1</span>');
@@ -12421,12 +12666,24 @@ function showComplete(review){
       _compIco(_db, '🎯', t('drill.cta'));
       // Shown for a teacher (review tool) OR a below-threshold learner (required to progress),
       // whenever a drill round can actually be built.
-      // Hidden when Next already IS the drill — two identical targets side by side is noise.
-      _db.style.display = (!_nextIsDrill && (_teacher || _belowThreshold) && drillAvailable(_l, _s)) ? '' : 'none';
+      // v70_l: no longer gated on the pass mark. v60.8 required a below-threshold learner to see
+      // this; that still holds — it is now simply offered to everyone who HAS mistakes to drill.
+      // Hiding it once a lesson was "finished" left a learner below the STORYLINE mark with no
+      // route back in. Still hidden when Next already IS the drill: two identical targets is noise.
+      _db.style.display = (!_nextIsDrill && drillAvailable(_l, _s)) ? '' : 'none';
     }
     // v70_e: crossword practice over the words just studied. Offered to EVERYONE — unlike the
     // drill it is not a remediation tool, and it credits the same coverage, so it is also a way up
     // for a below-mark learner. Shown only when the lesson can actually make a puzzle.
+    // Repeat is offered on every completion card, finished or not: replaying re-samples the round
+    // and raises coverage, which is the only way up when the storyline mark exceeds the lesson ones.
+    const _rp = document.getElementById('comp-repeat');
+    if(_rp){
+      _compIco(_rp, '↻', t('complete.repeat'));
+      const _replayable = (typeof _firstCoverageShortLessonIdx === 'function' && _firstCoverageShortLessonIdx() >= 0)
+                          || (APP.cur?.lessonIdx != null && !lesson._drill);
+      _rp.style.display = (_replayable && !_nextIsRepeat) ? '' : 'none';
+    }
     const _cw = document.getElementById('comp-crossword');
     if(_cw){
       _compIco(_cw, '🔠', t('crossword.play'));

@@ -21,7 +21,7 @@
    `ALL CHECKS PASSED (136 checks)`, and a failing run reads `FAILED <n> of 136: <labels>`.
    **Quote that line — never hand-derive the figure.** A hand-derived count drifted to 152 against
    an actual 133 and sat in two documents unnoticed; that is what the self-report exists to prevent.
-   Currently **137** (132 `test/*.test.js` files + 5 static checks). `--quick` reports **118**,
+   Currently **138** (133 `test/*.test.js` files + 5 static checks). `--quick` reports **119**,
    skipping the e2e steps — a smaller number there is correct, not a regression.
 
 ---
@@ -62,6 +62,21 @@ The v69 line is done and verified. Headline items, so the next session doesn't r
 - **v70 (harness)** — **the runner reports its own check count.** `ALL CHECKS PASSED (136 checks)`,
   `FAILED <n> of 136: …`. Counted at one site inside `run()`, so the figure cannot drift from the
   steps executed. Quote it; never hand-derive it.
+- **v70_p** — **Translation toggle on the storyline "read full story" panel**, matching the one on
+  the results-card story panels. 🔊 reads whichever language is shown.
+- **v70_o** — **Crossword UX from the browser pass:** mobile overflow fixed, larger grid numbers,
+  active clue shown above the grid, cursor skips crossing-filled cells, Check becomes Done when
+  solved, viewport returns to the results card on close.
+- **v70_n** — **Synonym context CLAMPED, not just sentence-split.** v70_m's trim changed nothing
+  for the ten worst contexts (each is one enormous sentence). Now windowed around the word.
+- **v70_m** — **Synonym context trimmed to one sentence; account badge no longer shows a raw i18n
+  key; bundled `lessons.json` refreshed** (280 topics, 79 storylines, user's corrected export).
+- **v70_l** — **Repeat split from Next; drill no longer gated on the pass mark.** A finished
+  lesson still offers a way back in, which is what a learner needs when the STORYLINE mark is
+  higher than the lesson-level ones. Crossword highlights the entries under the cursor.
+- **v70_k** — **PDF chapters break on sentences, not paragraphs.** Fixes user-reported
+  mid-sentence chapter breaks caused by cleanup dropping page furniture between the halves of a
+  sentence. The manual ✂ editor now offers sentence break points too.
 - **v70_j** — **crossword: thin lessons top up from earlier ones.** Availability follows the pool
   a puzzle would actually use, so a lesson whose vocabulary is article+noun phrases still offers a
   crossword. Availability is now CONTENT-based, not type-based.
@@ -92,6 +107,39 @@ The v69 line is done and verified. Headline items, so the next session doesn't r
 ## 🔭 Open work carried into v70
 
 ### Near-term, concrete
+- **[NEXT, from the browser pass — still open] Drill result card is redundant.** A drill session shows its own
+  completion card; it should return to the card the learner came from instead. Touches the
+  `showComplete` branch chain and `APP._drillPrev`, so it wants its own change — the branch order
+  there has fixed three user-reported dead ends already (v66.1, v69.2) and is easy to re-break.
+- **[NEXT, from the browser pass] Typing exercises should show a letter-by-letter diff.** When a
+  typed answer is wrong, show BOTH the typed text and the correct one, marking the exact
+  differing characters. Affects `listen_type` and any free-text answer. Self-contained: a diff
+  helper plus a render branch, fully unit-testable (alignment for insertions/deletions, not just
+  positional comparison — "hause"/"haus" differs by one insertion, not four substitutions).
+- **[small] Clamp the synonym context SERVER-side too.** `findContextSentence` (server.js) returns
+  the first story sentence containing the word, uncapped — so a 135-word period gets stored in full.
+  The client clamps it for display (v70_n), so nothing is broken, but the stored data stays bloated
+  and any other consumer of `words[].sentence` sees the full passage. Duplicating the clamp would
+  create a second definition that can drift; the honest options are to share the helper or to accept
+  display-side-only. Decide before adding a third consumer.
+- **[i18n] `_sentenceUnits` only splits on `.!?…`.** Arabic prose uses `،` `؛` `:` and often has no
+  full stop for a whole passage, so it is treated as ONE sentence. The v70_n clamp makes this
+  harmless for synonym cards, but PDF chapter splitting (v70_k) has the same blind spot: an Arabic
+  book would chunk far more coarsely than a European one. Not yet reported, but real.
+- **[quality, NEXT — now specified against real data] Deterministic vocab QC.** The pre-edit export
+  `lessons_witharticles.json` reproduced both defects in `sl_613012330` ("Evolution im Wandel",
+  it←de, chapters `tp_17850556692850000017` / `tp_17850563037020000196`). Two rules, both validated:
+  - **Article mismatch** — source carries a `der/die/das/ein…` article, target carries none.
+    **15 hits** in those two chapters ("teoria ← die Theorie"). Corpus-wide: 16/334 de→en pairs.
+    NOTE the user's own fix went the other way — they stripped the GERMAN article rather than adding
+    an Italian one (except "selezione naturale" → "la selezione naturale"), so the check should
+    FLAG the asymmetry, not prescribe which side to change.
+  - **Missing umlaut** — a word whose umlaut-stripped form matches another form in the corpus that
+    HAS umlauts, **with the same capitalisation**. Catches `naturliche` vs `natürliche`; the case
+    rule suppresses the `Zahlen`/`zählen` false positive. Only 2 candidates corpus-wide, 1 real.
+  - **Still unfixed in the user's corrected file:** `naturliche Selektion` (umlaut) and `symbiosi`
+    (Italian: `simbiosi`). Good evidence the check is worth having — hand-editing missed them.
+  - Surface through the existing per-item flag UI; no model call needed.
 - ~~**[small, test hygiene] `e2e-*` tests registered outside the `if (!quick)` block**~~ —
   **✅ done in the v70_b line.** It was SIX, not seven (the earlier count included the v70_b e2e
   before it was moved). `--quick` is now 117 steps in ~10s and genuinely spawns no servers, guarded
@@ -227,7 +275,7 @@ baseline (`node test/run.js` + `node test/check-inline.js`) before touching anyt
    enough — no more hand-editing `build-static.js`.
    **Point releases use an alphabetic suffix** (user, v70): the base cut is the bare number and is
    implicitly `a`, so the sequence is `v70` → `v70_b` → `v70_c` → … — the same convention the v69
-   line ran (`v69` → `v69_b` → … → `v69_t`). **The next release off this tree is `v70_k`** (`v70_j`
+   line ran (`v69` → `v69_b` → … → `v69_t`). **The next release off this tree is `v70_q`** (`v70_p`
    shipped). A new base number (`v71`) is a fresh cut, not a point release. Roadmaps are per BASE
    version, so point releases do not each get one — `roadmap_v70.md` stays current through the
    whole v70 line.

@@ -116,6 +116,7 @@ run('unit: lesson-id integrity (v67.1)', 'node', [path.join(__dirname, 'unit-les
 run('unit: provenance-stamp source heal (v68.1)', 'node', [path.join(__dirname, 'unit-meta-source-heal.test.js')]);
 run('unit: student-mode flagging + flag-mode stamps (v68.1)', 'node', [path.join(__dirname, 'unit-student-flags.test.js')]);
 run('unit: deterministic PDF/text-upload cleanup (v68.1)', 'node', [path.join(__dirname, 'unit-pdf-cleanup.test.js')]);
+run('unit: sentence-based PDF chunking (v70_k)', 'node', [path.join(__dirname, 'unit-pdf-chunking.test.js')]);
 run('unit: coverage-driven mixed round + drill credit-back (v69.1)', 'node', [path.join(__dirname, 'unit-mixed-coverage-round.test.js')]);
 run('unit: ui translation QC (validator + translate-ui --qc) (v69_f)', 'node', [path.join(__dirname, 'unit-ui-qc.test.js')]);
 run('unit: error-hunt validation + retry (v69_g)', 'node', [path.join(__dirname, 'unit-error-hunt-validation.test.js')]);

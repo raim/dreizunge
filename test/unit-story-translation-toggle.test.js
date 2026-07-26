@@ -127,3 +127,63 @@ console.log('  saved-item card: target-with-highlight, toggle to plain translati
 console.log('  markup + cache + static parity + i18n: OK');
 
 console.log('unit-story-translation-toggle: ALL PASSED');
+
+// ── v70_p: the storyline "read full story" panel gets the same toggle ────────
+// The results card could switch a chapter between target and source; the storyline's combined
+// full-story dropdown could not. Same contract, so it is tested against the same expectations.
+{
+  // This file is otherwise source-based; the toggle needs a live DOM to exercise.
+  const { loadClient } = require('./lib-dom');
+  const C2 = loadClient({ quiet: true });
+  const chapters = [
+    { topic: 'Ch one', lang: 'it', srcLang: 'de', story: 'La selezione naturale.', storyTranslation: 'Die natürliche Selektion.', lessons: [] },
+    { topic: 'Ch two', lang: 'it', srcLang: 'de', story: 'Le mutazioni.',          storyTranslation: 'Die Mutationen.',           lessons: [] },
+  ];
+  C2.run(`APP.lang='it'; APP.srcLang='de'; _chainStoryCache['ch1'] = ${JSON.stringify(chapters)}; true;`);
+  const body = C2.document.getElementById('csbody-ch1');
+  const btn  = C2.document.getElementById('csxlate-ch1');
+
+  C2.run(`_renderChainStory(document.getElementById('csbody-ch1'), _chainStoryCache['ch1'], 'ch1');`);
+  assert.ok(/La selezione naturale/.test(body.innerHTML), 'target text renders by default');
+  assert.ok(!/natürliche Selektion/.test(body.innerHTML), 'and not the translation');
+  assert.notStrictEqual(btn.style.display, 'none', 'the toggle is offered when a translation exists');
+
+  C2.run(`toggleChainStoryLang('ch1');`);
+  assert.ok(/natürliche Selektion/.test(body.innerHTML), 'toggling shows the translation');
+  assert.ok(/Die Mutationen/.test(body.innerHTML), 'for every chapter, not just the first');
+  assert.ok(!/La selezione naturale/.test(body.innerHTML), 'and hides the original');
+
+  C2.run(`toggleChainStoryLang('ch1');`);
+  assert.ok(/La selezione naturale/.test(body.innerHTML), 'toggling back restores the original');
+
+  // A chapter with no translation falls back to its original rather than showing a gap.
+  C2.run(`_chainStoryCache['ch2'] = [
+    { topic:'A', lang:'it', srcLang:'de', story:'Uno.', storyTranslation:'Eins.', lessons:[] },
+    { topic:'B', lang:'it', srcLang:'de', story:'Due.', lessons:[] } ];
+    _chainStoryLang['ch2'] = 'source';
+    _renderChainStory(document.getElementById('csbody-ch2'), _chainStoryCache['ch2'], 'ch2');`);
+  const b2 = C2.document.getElementById('csbody-ch2').innerHTML;
+  assert.ok(/Eins\./.test(b2), 'the translated chapter shows its translation');
+  assert.ok(/Due\./.test(b2), 'the untranslated chapter still shows its original');
+
+  // No translations at all → no toggle.
+  C2.run(`_chainStoryCache['ch3'] = [{ topic:'C', lang:'it', srcLang:'de', story:'Tre.', lessons:[] }];
+    _renderChainStory(document.getElementById('csbody-ch3'), _chainStoryCache['ch3'], 'ch3');`);
+  assert.strictEqual(C2.document.getElementById('csxlate-ch3').style.display, 'none',
+    'no toggle when nothing is translated');
+
+  // 🔊 reads whatever is shown — the results card behaves the same way.
+  const spoken = C2.run(`(function(){
+    let got = null;
+    const orig = globalThis.speakBodyText;
+    globalThis.speakBodyText = (a, lang, text) => { got = { lang, text }; };
+    _chainStoryLang['ch1'] = 'source';
+    speakChainStory('ch1');
+    globalThis.speakBodyText = orig;
+    return got;
+  })()`);
+  assert.ok(/natürliche Selektion/.test(spoken.text), 'the speaker reads the translation when shown');
+  assert.strictEqual(spoken.lang, 'de', 'and uses the source language for it');
+
+  console.log('  v70_p: storyline full-story translation toggle + speaker: OK');
+}

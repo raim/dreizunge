@@ -111,7 +111,9 @@ console.log('  _coverageTarget precedence: chapter > storyline > global > 80%: O
 {
   const sc = ext(html, 'showComplete');
   assert.ok(/let _belowThreshold = false, _threshPct = 100;/.test(sc), 'card computes below-threshold state');
-  assert.ok(/_db\.style\.display = \(!_nextIsDrill && \(_teacher \|\| _belowThreshold\) && drillAvailable/.test(sc),
+  // v70_l: no longer gated on the pass mark — offered whenever a drill round exists, which still
+  // includes every below-threshold learner the v60.8 rule was written to protect.
+  assert.ok(/_db\.style\.display = \(!_nextIsDrill && drillAvailable/.test(sc),
     'the drill is offered to a below-threshold learner (not just teachers)');
   assert.ok(/complete\.below_threshold/.test(sc) && /complete\.keep_going/.test(sc),
     'a below-threshold hint + "keep going" title are shown');
